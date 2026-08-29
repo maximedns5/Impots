@@ -434,3 +434,29 @@ Consequence, and it binds on the UI: **the population tab reports reform deltas,
 never baseline levels of RSA, PPA or the income distribution**, and it links to
 this report. Closing these gaps means modelling self-employment and disability
 income, or moving to ERFS (branch C, D-012) — where all of it is observed.
+
+## D-016 — Branch C (ERFS) is planned now; A''s income gaps are not patched
+Date: 2026-08-29 · Status: accepted · Plan: `docs/PHASE1C_ERFS.md`
+
+D-012 recorded that ERFS access exists and left branch C as a scheduling
+question. It is now decided: **plan the migration now, and do not spend effort
+closing branch A''s income gaps in the meantime.**
+
+Reasoning. The reconciliation report's four failing lines have one cause — 13.5 M
+adults with no modelled income — and closing it inside the open-data branch means
+building a self-employment and disability income model by hand, roughly a month of
+work that ERFS deletes on arrival. The §4.1 parquet schema was designed as the
+seam and holds: only `skeleton.py` and `incomes.py` are rewritten.
+
+The argument that decided it is not the failing lines, though. It is that A'
+*calibrates* the wage level, which spends the wage-bill margin and leaves the
+income-tax residual only semi-independent — it tests the tax schedule applied to a
+distribution whose level we chose. Under ERFS incomes are observed, the wage bill
+moves back to the validation column, and the income-tax line becomes a real test.
+No amount of patching A' can produce that.
+
+Consequence, and it is a constraint on the repository rather than a preference:
+ERFS is not redistributable. Nothing ERFS-derived may be committed, the CI fixture
+stays EEC-derived, and only aggregates are published. `docs/PHASE1C_ERFS.md` §5
+lists the checks; a pre-commit hook refusing anything under `data/` would make
+them mechanical, and should exist before the data does.
