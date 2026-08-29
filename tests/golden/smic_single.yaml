@@ -1,0 +1,25 @@
+name: smic_single
+description: >
+  One adult at the 2024 SMIC (12 x 1 801.80 €). Below the tax threshold, so the
+  décote wipes the IR out entirely and the prime d'activité is the dominant
+  transfer. This case distinguishes "zero because the law says zero" from "zero
+  because the wiring is broken": ir = 0 is correct, af = 0 is correct (no
+  children), and ppa is emphatically non-zero.
+year: 2024
+tier: full
+household:
+  adults:
+    - {salaire_brut_annuel: 21621.60, annee_naissance: 1995}
+expected:
+  ir: 0
+  af: 0
+  # Re-anchored by D-011. Under the single-year wiring: ppa = 2 369.60,
+  # rsa = 740.07, revenu_disponible = 20 365.80. Two things moved, in opposite
+  # directions, which is why this case is worth keeping: the phantom RSA
+  # (740.07 -> 0) disappears, and the prime d'activité *rises* (2 369.60 ->
+  # 2 794.04) because it is no longer ramping up from an empty reference quarter
+  # through the first months of the year. Net effect on disposable income: -470 €.
+  ppa: 2794.04
+  rsa: 0
+  salaire_net: 17115.53
+  revenu_disponible: 19895.59

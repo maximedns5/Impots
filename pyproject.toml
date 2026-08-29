@@ -1,0 +1,61 @@
+[project]
+name = "impots"
+version = "0.0.0"
+description = "A transparent, layered simulator of the French tax system"
+requires-python = ">=3.11"
+dependencies = [
+  # Phase 0 engine. Pinned exactly: openfisca-france ships weekly and golden
+  # values move with the law (docs/PHASE0_SPEC.md §1, §7.10).
+  "openfisca-france==176.0.8",
+  "openfisca-core==44.7.0",
+  # Phase 0 API
+  "fastapi>=0.110",
+  "uvicorn[standard]",
+  "pydantic>=2.6",
+  # Phase 1 population pipeline. The EEC fichier détail is parquet and the
+  # population is 353 420 rows; this is where a dataframe finally earns its place.
+  "polars>=1.0",
+  "pyarrow>=15",
+]
+
+[project.scripts]
+impots = "impots.population.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest", "pyyaml", "httpx", "ruff"]
+# Dataframe/ML stack for phases 1+. Deliberately NOT a Phase 0 dependency:
+# nothing in the household calculator needs a dataframe (spec §1).
+data = ["pandas", "dbnomics", "scikit-learn"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+  "ignore::DeprecationWarning",
+  # openfisca-france divides by a zero head-count for household members with no
+  # employer (children). Noise from the library, not from anything we compute.
+  "ignore:invalid value encountered:RuntimeWarning",
+  "ignore:divide by zero encountered:RuntimeWarning",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+# Pinned explicitly: a ruff release that widens its defaults must not turn a
+# green CI red without anyone choosing to adopt the new rules.
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501"]  # line length is handled by the formatter, not the linter
+
+[tool.ruff.lint.per-file-ignores]
+# The smoke test starts a timer and *then* imports openfisca, so that it can
+# report how long loading the tax-benefit system actually takes. Left exactly as
+# the Phase 0 spec published it — it is the reference the golden values come from.
+"scripts/verify_openfisca.py" = ["E402", "E702"]

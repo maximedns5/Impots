@@ -1,0 +1,209 @@
+/* Logic check for ui/index.html — run with `node ui/check.mjs` from the repo root.
+ *
+ * Deliberately outside pytest and outside CI (docs/DECISIONS.md D-003): it needs
+ * node, and the Python project should not grow a JavaScript toolchain for one
+ * file. Run it by hand after touching the page.
+ *
+ * It loads the page's <script> under a minimal DOM shim and a stubbed fetch, then
+ * drives the interactions that carry real logic: prefilling the reform panel from
+ * current law, showing case T only when it can apply, sending only the knobs the
+ * user actually moved, and colouring the Δ column by "better off" rather than by
+ * "bigger".
+ */
+import fs from "node:fs";
+import assert from "node:assert/strict";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const html = fs.readFileSync(path.join(here, "index.html"), "utf8");
+const js = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+
+/* Minimal DOM good enough for this page: elements are bags of properties with
+   innerHTML, dataset, hidden and event handlers. */
+const els = new Map();
+function make(id) {
+  if (els.has(id)) return els.get(id);
+  const listeners = {};
+  const el = {
+    id, innerHTML: "", textContent: "", value: "", checked: false, hidden: false,
+    disabled: false, style: {}, dataset: {},
+    classList: { _s: new Set(), add(c) { this._s.add(c); }, remove(c) { this._s.delete(c); },
+                 toggle(c, on) { on ? this._s.add(c) : this._s.delete(c); },
+                 contains(c) { return this._s.has(c); } },
+    setAttribute(k, v) { this["attr_" + k] = v; },
+    getAttribute(k) { return this["attr_" + k]; },
+    addEventListener(t, fn) { (listeners[t] ||= []).push(fn); },
+    fire(t, ev) { (listeners[t] || []).forEach((fn) => fn(ev)); },
+  };
+  els.set(id, el); return el;
+}
+/* Seed each element from its markup, so the shim reflects the page's own
+   defaults (a `checked` attribute, a selected <option>) instead of inventing them. */
+for (const m of html.matchAll(/<(\w+)([^>]*\bid="([^"]+)"[^>]*)>/g)) {
+  const [, tag, attrs, id] = m;
+  const el = make(id);
+  el.checked = /\bchecked\b/.test(attrs);
+  const value = attrs.match(/\bvalue="([^"]*)"/);
+  if (value) el.value = value[1];
+  if (tag === "select") {
+    const block = html.slice(m.index, html.indexOf("</select>", m.index));
+    const selected = block.match(/<option[^>]*\bvalue="([^"]*)"[^>]*\bselected\b/);
+    const first = block.match(/<option[^>]*\bvalue="([^"]*)"/);
+    el.value = selected ? selected[1] : first ? first[1] : "";
+  }
+}
+for (const id of new Set([...html.matchAll(/id="([^"]+)"/g)].map((m) => m[1]))) make(id);
+globalThis.document = {
+  getElementById: (id) => els.get(id) ?? make(id),
+  addEventListener() {},
+  querySelector: () => null,
+};
+globalThis.location = { protocol: "http:", origin: "http://localhost:8000" };
+const calls = [];
+globalThis.fetch = async (url, opts) => {
+  calls.push({ url, opts });
+  if (url.endsWith("/health")) return { json: async () => ({ warm: true, openfisca_france: "176.0.8", openfisca_core: "44.7.0" }) };
+  if (url.includes("/parameters/ir")) return { json: async () => LAW };
+  if (url.includes("/population/baseline")) return { ok: true, json: async () => POPULATION };
+  if (url.includes("/population/simulate")) return { ok: true, json: async () => POPULATION_RUN };
+  return { ok: true, json: async () => RESULT };
+};
+const RECON = [
+  { label: "Masse salariale brute", simulated: 1.1e12, published: 1.11e12, residual: -0.004,
+    use: "calibration", status: "calibrated (spent)", source: "INSEE comptes nationaux (D11)" },
+  { label: "Impôt sur le revenu — barème", simulated: 1.08e11, published: 9.9e10,
+    residual: 0.089, use: "validation", status: "within tolerance", source: "DGFiP" },
+  { label: "RSA", simulated: 2.5e10, published: 1.2e10, residual: 1.06,
+    use: "validation", status: "OUTSIDE tolerance", source: "CNAF / DREES" },
+];
+const POPULATION = {
+  meta: { vintage: "2024", branch: "A' — EEC household structure, synthetic incomes (D-012)",
+          households: 31.45e6, persons: 67.08e6, tier: "full", sampled_households: null,
+          note: "Population synthétique construite à partir de données ouvertes. Voir reports/reconciliation.md.",
+          limitations: ["**No income is observed.**", "b", "c", "d", "e", "f"] },
+  totals: {}, totals_reform: {}, deltas: {}, reform_cost: null,
+  deciles: Array.from({ length: 10 }, (_, i) => ({
+    decile: i + 1, n_households: 3.1e6, mean_niveau_de_vie: 8000 + i * 4000,
+    mean_baseline: 20000, mean_reform: null, mean_delta: null,
+    share_winners: null, share_losers: null, share_unaffected: null })),
+  reconciliation: RECON, timings: {},
+};
+const POPULATION_RUN = {
+  ...POPULATION,
+  meta: { ...POPULATION.meta, tier: "quick", sampled_households: 20000,
+          note: POPULATION.meta.note + " Ce résultat porte sur un sous-échantillon déterministe de 20 000 ménages repondérés." },
+  deltas: { ir: 4.9e8, rsa: 1e5 }, reform_cost: -4.9e8,
+  deciles: Array.from({ length: 10 }, (_, i) => ({
+    decile: i + 1, n_households: 3.1e6, mean_niveau_de_vie: 8000 + i * 4000,
+    mean_baseline: 20000, mean_reform: 20000 - (i === 9 ? 156 : 0),
+    mean_delta: i === 9 ? -156 : 0,
+    share_winners: 0, share_losers: i === 9 ? 0.023 : 0, share_unaffected: i === 9 ? 0.977 : 1 })),
+  timings: { total_s: 41 },
+};
+const LAW = {
+  year: 2024,
+  bareme: [{threshold:0,rate:0},{threshold:11497,rate:0.11},{threshold:29315,rate:0.30},
+           {threshold:83823,rate:0.41},{threshold:180294,rate:0.45}],
+  decote: { seuil_celib: 889, seuil_couple: 1470, taux: 0.4525 },
+  plafond_qf_demi_part: 1791,
+  csg_activite: { imposable: 0.024, deductible: 0.068 },
+};
+const ROWS = (ir) => ({ salaire_super_brut: 37919.8, salaire_brut: 30000, salaire_net: 23747.93,
+  salaire_imposable: 24602.7, cotisations_salariales: 3393, cotisations_employeur: 10069.8,
+  csg_deductible: 2004.3, csg_imposable: 707.4, crds: 147.38, ir,
+  ir_avant_reductions: 1171.03, parts_fiscales: 1.0, revenu_fiscal_reference: 22142.7,
+  af: 0, ppa: 213.42, rsa: 607.75, aide_logement: 0, revenu_disponible: 23908.48 });
+const RESULT = { baseline: ROWS(812), reform: ROWS(1012), delta: { ...ROWS(200), revenu_disponible: -200, salaire_net: 0 },
+  emtr: 0.4979, emtr_reform: 0.52, tier: "full", year: 2024, historique_revenus: false,
+  timings: { build_ms: 3, compute_ms: 480, emtr_ms: 900, total_ms: 1390, reform_cache_hit: true },
+  engine: { openfisca_france: "176.0.8" } };
+
+const mod = await import("data:text/javascript;base64," + Buffer.from(js).toString("base64"));
+await new Promise((r) => setTimeout(r, 30));   // let boot() settle
+
+const $ = (id) => els.get(id);
+const ok = (name, fn) => { try { fn(); console.log("  ok   " + name); } catch (e) { console.log("  FAIL " + name + " — " + e.message); process.exitCode = 1; } };
+
+console.log("boot");
+ok("health chip filled from /health", () => assert.match($("engine").innerHTML, /176\.0\.8/));
+ok("reform panel prefilled from current law", () => {
+  assert.equal(Number($("dCelib").value), 889);
+  assert.equal(Number($("dTaux").value), 45.25);
+  assert.match($("baremeRows").innerHTML, /180294/);
+});
+ok("no reform is sent when nothing was touched", () => assert.equal($("reformState").textContent, "droit courant"));
+
+console.log("household");
+ok("case T hidden with no children", () => assert.equal($("isoleWrap").hidden, true));
+ok("case T appears for a lone parent", () => {
+  $("addChild").onclick(); assert.equal($("isoleWrap").hidden, false);
+});
+ok("case T hidden again for a couple", () => {
+  $("two").onclick(); assert.equal($("isoleWrap").hidden, true);
+  assert.equal($("marie").checked, true, "two adults must be married/pacsed");
+  $("one").onclick();
+});
+
+console.log("reform diffing");
+ok("moving the top rate sends only ir_bareme", () => {
+  $("baremeRows").fire("input", { target: { dataset: { rate: "4" }, value: "50" } });
+  assert.match($("reformState").textContent, /1 paramètre modifié/);
+});
+ok("resetting returns to droit courant", () => {
+  $("reset").onclick(); assert.equal($("reformState").textContent, "droit courant");
+});
+ok("changing the décote sends only that knob", () => {
+  $("dCelib").value = "2000"; $("dCelib").fire("input", {});
+  assert.match($("reformState").textContent, /1 paramètre modifié/);
+  $("reset").onclick();
+});
+
+console.log("rendering");
+ok("three columns and a bold bottom line", async () => {
+  $("full").checked = true; $("full").onchange({ target: { checked: true } });
+  $("go").onclick();
+});
+await new Promise((r) => setTimeout(r, 60));
+ok("table rendered with Δ column", () => {
+  const out = $("out").innerHTML;
+  assert.match(out, /Droit courant/); assert.match(out, /Votre réforme/);
+  assert.match(out, /Revenu disponible/);
+  assert.match(out, /class="down">\+200/, "a tax rise must read red");
+  assert.match(out, /class="down">−200/, "less disposable income must read red");
+  assert.match(out, /49,8 %/, "EMTR shown as a percentage");
+  assert.match(out, /D-005/, "the missing-history caveat must be shown");
+});
+ok("no logement is sent until a statut is chosen", () => {
+  const body = JSON.parse(calls.at(-1).opts.body);
+  assert.equal(body.household.logement, undefined,
+    "ticking the benefits box must not assume a tenancy the user never stated");
+});
+console.log("population tab");
+$("tabPop").onclick();
+await new Promise((r) => setTimeout(r, 40));
+ok("L1 banner filled from the baseline endpoint", () => {
+  assert.match($("l1Note").textContent, /Population synthétique/);
+  assert.match($("l1Vintage").textContent, /millésime 2024/);
+  assert.ok($("l1Limits").innerHTML.includes("<li>"), "limitations must be listed");
+});
+ok("foyer pane hidden while population is shown", () => {
+  assert.equal($("paneFoyer").hidden, true);
+  assert.equal($("panePop").hidden, false);
+});
+ok("pricing with no reform is refused before any request", () => {
+  $("reset").onclick();                       // back to droit courant
+  const before = calls.length;
+  $("goPop").onclick();
+  assert.equal(calls.length, before, "must not call the API with an empty reform");
+  assert.match($("popOut").innerHTML, /Aucune réforme/);
+});
+
+ok("payload carries the new flags", () => {
+  const body = JSON.parse(calls.find((c) => c.url.endsWith("/simulate") && c.opts).opts.body);
+  assert.equal(body.tier, "full");
+  assert.equal(body.historique_revenus, true, "D-011: history is the default");
+  assert.equal(body.household.couple_marie_ou_pacse, false);
+  assert.equal(body.household.parent_isole, true, "lone parent claims case T by default");
+  assert.equal(body.reform, null, "an untouched panel must send no reform");
+});

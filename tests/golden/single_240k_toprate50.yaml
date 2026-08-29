@@ -1,0 +1,33 @@
+name: single_240k_toprate50
+description: >
+  single_240k under a reform that lifts the top marginal rate from 45 % to 50 %,
+  leaving every other bracket at current law.
+
+  The delta is checkable by hand, and was checked:
+    240 000 € brut
+      -> ~198 726 € salaire imposable
+      -> ~184 300 € revenu fiscal de référence, after the capped 10 % abattement
+      -> 184 300 - 180 294 = ~4 006 € sits above the top threshold
+      -> 5 points x ~4 006 € = ~200 €
+  Reform IR - baseline IR must therefore be +200 €, and it is. Any wrapper bug in
+  bracket indexing, in the ParameterScale/MarginalRateTaxScale distinction, or in
+  the sign convention would move this number away from an independently derivable
+  answer.
+year: 2024
+tier: light
+household:
+  adults:
+    - {salaire_brut_annuel: 240000, annee_naissance: 1980}
+reform:
+  ir_bareme:
+    - {threshold: 0,      rate: 0.00}
+    - {threshold: 11497,  rate: 0.11}
+    - {threshold: 29315,  rate: 0.30}
+    - {threshold: 83823,  rate: 0.41}
+    - {threshold: 180294, rate: 0.50}
+expected:
+  ir: 59668
+expected_reform:
+  ir: 59868
+expected_delta:
+  ir: 200

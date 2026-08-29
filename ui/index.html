@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impôts — calculateur de foyer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   « Cerfa moderne » — l'aiguille d'un instrument de mesure sur du papier
+   administratif. Filets plutôt qu'ombres, chiffres tabulaires, capitales
+   espacées. Rien ne bouge sans raison : c'est un instrument, pas une vitrine.
+   ========================================================================== */
+:root {
+  --paper:      #f6f3ea;
+  --paper-deep: #eee9dc;
+  --card:       #fffdf7;
+  --ink:        #16150f;
+  --ink-soft:   #524f42;
+  --ink-faint:  #8b8676;
+  --rule:       #d9d3c1;
+  --rule-soft:  #e7e2d3;
+  --bleu:       #1b3a6b;
+  --bleu-soft:  #e8edf5;
+  --rouge:      #b4342a;
+  --vert:       #2c6247;
+  --ochre:      #a8760f;
+
+  --serif: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans:  "Instrument Sans", "Avenir Next", "Segoe UI", Helvetica, sans-serif;
+  --mono:  "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --step: 4px;
+  --shell: 1360px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  /* very faint laid-paper grain: two crossing hairline gradients */
+  background-image:
+    repeating-linear-gradient(0deg, rgba(22,21,15,.018) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(22,21,15,.012) 0 1px, transparent 1px 4px);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" 0;
+}
+
+.shell { max-width: var(--shell); margin: 0 auto; padding: 0 28px 96px; }
+
+/* ---------------------------------------------------------------- masthead */
+.masthead {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap;
+  padding: 40px 0 16px;
+  border-bottom: 2px solid var(--ink);
+}
+.wordmark {
+  font-family: var(--serif);
+  font-optical-sizing: auto;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  font-weight: 600;
+  font-size: clamp(38px, 5.5vw, 62px);
+  letter-spacing: -.025em;
+  line-height: .92;
+  margin: 0;
+}
+.wordmark .accent { color: var(--bleu); }
+.tagline {
+  margin: 8px 0 0; max-width: 46ch;
+  color: var(--ink-soft); font-size: 14px; line-height: 1.45;
+}
+.engine {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: .02em;
+  color: var(--ink-soft); text-align: right; padding-bottom: 6px;
+}
+.engine .dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ink-faint); margin-right: 7px; vertical-align: 1px;
+}
+.engine .dot.ok   { background: var(--vert); }
+.engine .dot.down { background: var(--rouge); }
+.engine b { font-weight: 600; color: var(--ink); }
+
+/* ------------------------------------------------------------------ layout */
+.columns {
+  display: grid;
+  grid-template-columns: minmax(330px, 400px) minmax(0, 1fr);
+  gap: 0;
+  align-items: start;
+}
+.col-form  { padding: 28px 32px 96px 0; border-right: 1px solid var(--rule); }
+.col-out   { padding: 28px 0 28px 32px; min-width: 0; }
+@media (max-width: 940px) {
+  .columns { grid-template-columns: 1fr; }
+  .col-form { border-right: 0; border-bottom: 1px solid var(--rule); padding: 24px 0; }
+  .col-out { padding: 24px 0; }
+}
+
+/* ------------------------------------------------------------------ blocks */
+.block { margin-bottom: 30px; }
+.block-title {
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .13em; color: var(--ink-soft);
+  margin: 0 0 12px; padding-bottom: 7px;
+  border-bottom: 1px solid var(--rule);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+}
+.block-title .num {
+  font-family: var(--mono); font-size: 10px; color: var(--ink-faint);
+  letter-spacing: .04em; font-weight: 400;
+}
+
+label, .lbl {
+  display: block; font-size: 12px; font-weight: 500; color: var(--ink-soft);
+  margin-bottom: 5px; letter-spacing: .005em;
+}
+input[type=number], input[type=text], select {
+  width: 100%; font-family: var(--mono); font-size: 14px; font-weight: 500;
+  color: var(--ink); background: var(--card);
+  border: 1px solid var(--rule); border-radius: 2px;
+  padding: 8px 10px; font-variant-numeric: tabular-nums;
+  transition: border-color .12s ease, background .12s ease;
+}
+input:focus, select:focus {
+  outline: none; border-color: var(--bleu);
+  background: #fff; box-shadow: 0 0 0 3px var(--bleu-soft);
+}
+input:disabled { color: var(--ink-faint); background: var(--paper-deep); }
+select { font-family: var(--sans); }
+
+.field-row { display: grid; grid-template-columns: 1fr 96px; gap: 10px; margin-bottom: 12px; }
+.field-row.tri { grid-template-columns: 1fr 1fr; }
+
+/* segmented control for the number of adults */
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.seg button {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  padding: 7px 16px; border: 0; background: var(--card); color: var(--ink-soft);
+  cursor: pointer; transition: background .12s ease, color .12s ease;
+}
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+.check { display: flex; gap: 9px; align-items: flex-start; margin: 12px 0; cursor: pointer; }
+.check input { width: 15px; height: 15px; margin: 2px 0 0; accent-color: var(--bleu); flex: none; cursor: pointer; }
+.check span { font-size: 13px; color: var(--ink); line-height: 1.4; }
+.check .sub { display: block; font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+.check input:disabled + span { color: var(--ink-faint); }
+.inert { opacity: .45; pointer-events: none; }
+
+.person {
+  border-left: 2px solid var(--rule); padding: 2px 0 2px 14px; margin-bottom: 14px;
+  position: relative;
+}
+.person .who {
+  font-family: var(--mono); font-size: 10.5px; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--ink-faint); margin-bottom: 7px;
+}
+.person .drop {
+  position: absolute; right: 0; top: -2px;
+  border: 0; background: none; color: var(--ink-faint); cursor: pointer;
+  font-family: var(--mono); font-size: 15px; line-height: 1; padding: 2px 4px;
+}
+.person .drop:hover { color: var(--rouge); }
+
+.mini {
+  font-family: var(--sans); font-size: 12px; font-weight: 500;
+  background: none; border: 1px dashed var(--rule); border-radius: 2px;
+  color: var(--ink-soft); padding: 7px 12px; cursor: pointer; width: 100%;
+  transition: border-color .12s ease, color .12s ease;
+}
+.mini:hover { border-color: var(--bleu); color: var(--bleu); border-style: solid; }
+
+.note {
+  font-size: 11.5px; line-height: 1.5; color: var(--ink-faint);
+  border-left: 2px solid var(--rule-soft); padding-left: 11px; margin: 14px 0 0;
+}
+.note b { color: var(--ink-soft); font-weight: 600; }
+
+/* ------------------------------------------------------- reform disclosure */
+details.reform { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+details.reform > summary {
+  list-style: none; cursor: pointer; padding: 14px 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+details.reform > summary::-webkit-details-marker { display: none; }
+.sum-title {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .13em; color: var(--ink);
+}
+.sum-state { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+details.reform[open] .chev { transform: rotate(90deg); }
+.chev { transition: transform .16s ease; display: inline-block; color: var(--ink-faint); }
+.reform-body { padding: 4px 0 20px; }
+
+table.bareme { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+table.bareme th {
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--ink-faint); text-align: left; padding: 0 0 6px; font-weight: 600;
+}
+table.bareme th:last-child, table.bareme td:last-child { width: 30px; }
+table.bareme td { padding: 0 0 7px; }
+table.bareme td.pair { padding-right: 8px; }
+table.bareme input { padding: 6px 8px; font-size: 13px; }
+table.bareme .drop {
+  border: 0; background: none; color: var(--ink-faint);
+  cursor: pointer; font-family: var(--mono); font-size: 14px; padding: 4px;
+}
+table.bareme .drop:hover { color: var(--rouge); }
+
+.reset {
+  font-family: var(--sans); font-size: 11.5px; font-weight: 500;
+  background: none; border: 0; color: var(--bleu); cursor: pointer;
+  padding: 0; text-decoration: underline; text-underline-offset: 3px;
+}
+.reset:disabled { color: var(--ink-faint); cursor: default; text-decoration: none; }
+
+/* ------------------------------------------------------------------ action */
+.action { position: sticky; bottom: 0; padding: 18px 0 0; background: linear-gradient(to top, var(--paper) 62%, transparent); }
+button.go {
+  width: 100%; font-family: var(--sans); font-size: 14px; font-weight: 600;
+  letter-spacing: .02em; color: var(--paper); background: var(--ink);
+  border: 0; border-radius: 2px; padding: 13px; cursor: pointer;
+  transition: background .14s ease;
+}
+button.go:hover:not(:disabled) { background: var(--bleu); }
+button.go:disabled { background: var(--ink-faint); cursor: progress; }
+
+/* ----------------------------------------------------------- honesty strip */
+.honesty {
+  border: 1px solid var(--ink); border-left-width: 4px;
+  background: var(--card); padding: 13px 16px; margin-bottom: 22px;
+}
+.honesty .tag {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--bleu);
+  display: block; margin-bottom: 4px;
+}
+.honesty p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink); }
+
+/* ------------------------------------------------------------------ results */
+.results-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 10px;
+}
+.results-head h2 {
+  font-family: var(--serif); font-variation-settings: "opsz" 40;
+  font-weight: 600; font-size: 24px; letter-spacing: -.01em; margin: 0;
+}
+.timings { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+
+table.out { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table.out thead th {
+  font-family: var(--sans); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .11em; color: var(--ink-soft);
+  padding: 0 0 9px; text-align: right; white-space: nowrap;
+}
+table.out thead th:first-child { text-align: left; width: 42%; }
+table.out thead tr { border-bottom: 1.5px solid var(--ink); }
+table.out thead th.d { color: var(--bleu); }
+
+table.out tbody td {
+  padding: 7px 0; border-bottom: 1px solid var(--rule-soft);
+  text-align: right; font-family: var(--mono); font-size: 13.5px; font-weight: 500;
+  white-space: nowrap;
+}
+table.out tbody td:first-child {
+  text-align: left; font-family: var(--sans); font-weight: 400;
+  font-size: 13.5px; color: var(--ink-soft); white-space: normal;
+}
+table.out tbody td:nth-child(2), table.out tbody td:nth-child(3) { padding-left: 18px; }
+table.out tbody td.d { padding-left: 18px; }
+
+tr.grp td {
+  padding: 20px 0 5px; border-bottom: 1px solid var(--rule);
+  font-family: var(--sans) !important; font-size: 10px !important; font-weight: 600 !important;
+  text-transform: uppercase; letter-spacing: .11em; color: var(--ink) !important;
+}
+tr.sub td:first-child { padding-left: 16px; color: var(--ink-faint); font-size: 12.5px; }
+tr.sub td { color: var(--ink-soft); font-weight: 400; }
+tr.total td {
+  border-top: 1.5px solid var(--ink); border-bottom: 2px solid var(--ink);
+  padding: 12px 0; font-size: 16px; font-weight: 600; color: var(--ink);
+}
+tr.total td:first-child { font-family: var(--sans) !important; font-weight: 600; color: var(--ink) !important; font-size: 14px; }
+
+.up   { color: var(--vert); }
+.down { color: var(--rouge); }
+.nil  { color: var(--ink-faint); }
+.na   { color: var(--ink-faint); font-family: var(--mono); }
+
+/* EMTR callout */
+.emtr {
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  border: 1px solid var(--rule); border-left: 3px solid var(--ochre);
+  background: var(--card); padding: 12px 16px; margin-top: 20px;
+}
+.emtr .k {
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft);
+}
+.emtr .v { font-family: var(--mono); font-size: 21px; font-weight: 600; }
+.emtr .exp { font-size: 11.5px; color: var(--ink-faint); flex-basis: 100%; line-height: 1.45; }
+
+/* L3 / L4 placeholders — the layers that do not exist yet, drawn as absent */
+.layers { margin-top: 26px; border-top: 1px solid var(--rule); }
+.layer {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 13px 0; border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink-faint);
+}
+.layer .name { font-size: 12.5px; }
+.layer .name b { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-soft); font-weight: 600; margin-right: 8px; }
+.layer .bar {
+  flex: 1; height: 7px; min-width: 60px;
+  background: repeating-linear-gradient(135deg, var(--rule-soft) 0 5px, transparent 5px 10px);
+  border: 1px solid var(--rule-soft);
+}
+.layer .soon {
+  font-family: var(--mono); font-size: 10.5px; text-transform: uppercase;
+  letter-spacing: .1em; white-space: nowrap;
+}
+
+/* tabs */
+.tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--ink); margin-bottom: 22px; }
+.tabs button {
+  font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; padding: 10px 18px; border: 0; background: none;
+  color: var(--ink-faint); cursor: pointer; position: relative; top: 1.5px;
+  border-bottom: 1.5px solid transparent; transition: color .12s ease;
+}
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--bleu); }
+.tabs button:hover { color: var(--ink); }
+.tabs .layer-tag {
+  font-family: var(--mono); font-size: 9px; color: var(--bleu); margin-right: 6px;
+  letter-spacing: .04em;
+}
+
+/* L1 banner — the population's own honesty strip */
+.l1 {
+  border: 1px solid var(--ochre); border-left-width: 4px; background: #fdfaf2;
+  padding: 13px 16px; margin-bottom: 20px;
+}
+.l1 .tag {
+  font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ochre); display: block; margin-bottom: 4px;
+}
+.l1 p { margin: 0 0 8px; font-size: 12.5px; line-height: 1.5; }
+.l1 details { margin-top: 8px; }
+.l1 summary {
+  cursor: pointer; font-size: 11.5px; color: var(--ink-soft);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.l1 ul { margin: 8px 0 0; padding-left: 18px; }
+.l1 li { font-size: 11.5px; line-height: 1.55; color: var(--ink-soft); margin-bottom: 4px; }
+.l1 .vintage {
+  font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint);
+  display: block; margin-top: 8px; letter-spacing: .02em;
+}
+
+/* the one chart: mean delta by decile */
+.chart { margin: 4px 0 22px; }
+.chart .row {
+  display: grid; grid-template-columns: 34px 1fr 92px; align-items: center;
+  gap: 10px; padding: 3px 0;
+}
+.chart .lbl2 {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-soft); text-align: right;
+}
+.chart .track { position: relative; height: 18px; background: var(--paper-deep); }
+.chart .zero { position: absolute; top: -2px; bottom: -2px; width: 1px; background: var(--ink-faint); }
+.chart .bar { position: absolute; top: 2px; bottom: 2px; }
+.chart .bar.pos { background: var(--vert); }
+.chart .bar.neg { background: var(--rouge); }
+.chart .val {
+  font-family: var(--mono); font-size: 11.5px; font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.chart .wl { display: flex; height: 4px; margin-top: 2px; }
+.chart .wl i { display: block; height: 100%; }
+.chart .wl .w { background: var(--vert); opacity: .45; }
+.chart .wl .l { background: var(--rouge); opacity: .45; }
+.chart .wl .u { background: var(--rule); }
+.chart-legend {
+  font-size: 11px; color: var(--ink-faint); margin: 6px 0 0 44px; line-height: 1.5;
+}
+
+.headline {
+  border-top: 1.5px solid var(--ink); border-bottom: 2px solid var(--ink);
+  padding: 14px 0; margin-bottom: 20px;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.headline .k { font-size: 13px; font-weight: 600; }
+.headline .v { font-family: var(--mono); font-size: 26px; font-weight: 600; }
+.headline .sub { flex-basis: 100%; font-size: 11.5px; color: var(--ink-faint); line-height: 1.5; }
+
+table.recon { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table.recon th {
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .11em;
+  color: var(--ink-soft); text-align: right; padding: 0 0 8px; border-bottom: 1.5px solid var(--ink);
+}
+table.recon th:first-child { text-align: left; }
+table.recon td {
+  padding: 6px 0; border-bottom: 1px solid var(--rule-soft); text-align: right;
+  font-family: var(--mono); font-size: 12.5px;
+}
+table.recon td:first-child { text-align: left; font-family: var(--sans); font-size: 12.5px; }
+table.recon td.st { font-family: var(--sans); font-size: 11px; }
+.ok2 { color: var(--vert); } .bad2 { color: var(--rouge); } .spent { color: var(--ink-faint); font-style: italic; }
+
+/* states */
+.state { padding: 40px 0; }
+.skel { height: 13px; background: var(--rule-soft); border-radius: 2px; margin-bottom: 14px; animation: pulse 1.3s ease-in-out infinite; }
+.skel:nth-child(2n) { width: 78%; } .skel:nth-child(3n) { width: 61%; }
+@keyframes pulse { 0%,100% { opacity: .5 } 50% { opacity: .95 } }
+.loading-copy { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); margin-bottom: 18px; }
+
+.err { border: 1px solid var(--rouge); border-left-width: 4px; background: #fdf4f3; padding: 14px 16px; }
+.err h3 { margin: 0 0 6px; font-family: var(--sans); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--rouge); }
+.err ul { margin: 0; padding-left: 18px; }
+.err li, .err p { font-size: 13px; color: var(--ink); line-height: 1.5; margin: 3px 0; }
+.err code {
+  display: block; font-family: var(--mono); font-size: 12px; background: var(--paper-deep);
+  border: 1px solid var(--rule); padding: 9px 11px; margin-top: 9px; user-select: all;
+  white-space: pre-wrap; word-break: break-all;
+}
+.empty { color: var(--ink-faint); font-size: 13.5px; max-width: 46ch; line-height: 1.6; }
+
+footer {
+  margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rule);
+  font-size: 11.5px; color: var(--ink-faint); line-height: 1.6;
+}
+footer code { font-family: var(--mono); font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="masthead">
+    <div>
+      <h1 class="wordmark">Imp<span class="accent">ô</span>ts</h1>
+      <p class="tagline">
+        Un foyer, une réforme, des montants exacts. Couche mécanique du simulateur —
+        l'impôt et les prestations tels que la loi les calcule, sans réaction comportementale.
+      </p>
+    </div>
+    <div class="engine" id="engine"><span class="dot"></span>connexion au moteur…</div>
+  </header>
+
+  <div class="columns">
+
+    <!-- ============================== FORM ============================== -->
+    <section class="col-form">
+
+      <div class="block">
+        <h2 class="block-title"><span>Le foyer</span><span class="num">01</span></h2>
+
+        <div class="lbl">Adultes</div>
+        <div class="seg" role="group" aria-label="Nombre d'adultes">
+          <button type="button" id="one" aria-pressed="true">1 adulte</button>
+          <button type="button" id="two" aria-pressed="false">2 adultes</button>
+        </div>
+
+        <label class="check" id="marieWrap" style="margin-top:14px">
+          <input type="checkbox" id="marie" disabled>
+          <span>Mariés ou pacsés
+            <span class="sub">La v1 modélise une personne seule ou un couple marié/pacsé.
+              Le concubinage (deux foyers fiscaux) viendra plus tard.</span>
+          </span>
+        </label>
+
+        <div id="adults" style="margin-top:16px"></div>
+
+        <div class="lbl" style="margin-top:20px">Enfants à charge</div>
+        <div id="children"></div>
+        <button type="button" class="mini" id="addChild">+ ajouter un enfant</button>
+
+        <label class="check" id="isoleWrap" hidden>
+          <input type="checkbox" id="isole" checked>
+          <span>Parent isolé (case T)
+            <span class="sub">Une demi-part supplémentaire, accordée au parent qui vit seul
+              avec ses enfants à charge. Décochez si vous vivez en couple sans être
+              marié·e ni pacsé·e — la demi-part n'est alors pas due.</span>
+          </span>
+        </label>
+
+        <p class="note">
+          Hypothèses par défaut : <b>salarié·e du privé</b>, non cadre, aucun autre revenu
+          (ni foncier, ni capital, ni indépendant). Seuls le salaire brut et l'année de
+          naissance sont renseignés ; tout le reste prend la valeur par défaut du moteur.
+        </p>
+      </div>
+
+      <div class="block">
+        <h2 class="block-title"><span>Prestations et logement</span><span class="num">02</span></h2>
+
+        <label class="check">
+          <input type="checkbox" id="full">
+          <span>Calculer aussi les prestations
+            <span class="sub">Ajoute AF, prime d'activité, RSA, aide au logement et le revenu
+              disponible. Passe en calcul complet : comptez ~3 s au lieu de ~0,5 s.</span>
+          </span>
+        </label>
+
+        <label class="check" id="histWrap" hidden>
+          <input type="checkbox" id="hist" checked>
+          <span>Reporter les revenus sur les deux années précédentes
+            <span class="sub">RSA et prime d'activité sont calculés sur le trimestre précédent,
+              l'aide au logement sur douze mois glissants antérieurs. Sans historique, le moteur
+              voit un foyer sans ressources sur ces périodes et verse trop : pour un salaire de
+              30 000 € en location, ~2 500 € de revenu disponible en trop (11 %). Coché par
+              défaut ; décochez pour reproduire le câblage mono-année de la phase 0
+              (D-005, D-011). Le foyer est supposé en régime stationnaire : même salaire,
+              même logement sur les trois années.</span>
+          </span>
+        </label>
+
+        <div id="housing" hidden>
+          <div class="field-row tri" style="margin-top:6px">
+            <div>
+              <label for="statut">Statut d'occupation</label>
+              <select id="statut">
+                <option value="" selected>— non renseigné (aucune aide au logement) —</option>
+                <optgroup label="Ouvrent droit à une aide au logement">
+                  <option value="locataire_vide">Locataire (vide)</option>
+                  <option value="locataire_meuble">Locataire (meublé)</option>
+                  <option value="locataire_hlm">Locataire HLM</option>
+                  <option value="locataire_foyer">Locataire en foyer</option>
+                </optgroup>
+                <optgroup label="Aide au logement toujours nulle">
+                  <option value="proprietaire">Propriétaire</option>
+                  <option value="primo_accedant">Primo-accédant</option>
+                  <option value="loge_gratuitement">Logé gratuitement</option>
+                  <option value="sans_domicile">Sans domicile</option>
+                </optgroup>
+              </select>
+            </div>
+            <div id="zoneCell">
+              <label for="zone">Zone APL</label>
+              <select id="zone">
+                <option value="1">Zone 1 — Paris et proche couronne</option>
+                <option value="2" selected>Zone 2 — grandes agglomérations</option>
+                <option value="3">Zone 3 — reste du territoire</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div id="loyerCell">
+              <label for="loyer">Loyer mensuel (€)</label>
+              <input type="number" id="loyer" value="700" min="0" step="10">
+            </div>
+            <div>
+              <label for="emtr">TMI effectif</label>
+              <label class="check" style="margin:6px 0 0">
+                <input type="checkbox" id="emtr">
+                <span style="font-size:12px">calculer</span>
+              </label>
+            </div>
+          </div>
+          <p class="note">
+            Tant que le statut n'est pas renseigné, aucun logement n'est déclaré au moteur et
+            l'aide au logement vaut zéro : les prestations affichées ne supposent que ce que
+            vous avez saisi. Statut <i>et</i> loyer sont ensuite tous deux nécessaires : l'un sans l'autre donne <b>0</b>,
+            sans erreur. Hypothèses implicites du moteur, non modifiables ici : logement non
+            conventionné, hors colocation, hors résidence CROUS. Le taux marginal effectif ajoute
+            deux simulations complètes (~1 s).
+          </p>
+        </div>
+      </div>
+
+      <details class="reform" id="reformPanel">
+        <summary>
+          <span class="sum-title"><span class="chev">›</span>&nbsp; 03 &nbsp;·&nbsp; Votre réforme</span>
+          <span class="sum-state" id="reformState">droit courant</span>
+        </summary>
+        <div class="reform-body">
+
+          <div class="lbl" style="margin-top:4px">Barème de l'impôt sur le revenu</div>
+          <table class="bareme">
+            <thead><tr><th class="pair">Seuil (€)</th><th>Taux (%)</th><th></th></tr></thead>
+            <tbody id="baremeRows"></tbody>
+          </table>
+          <button type="button" class="mini" id="addBracket">+ ajouter une tranche</button>
+
+          <div class="field-row tri" style="margin-top:20px">
+            <div><label for="dCelib">Décote — seuil célibataire (€)</label>
+                 <input type="number" id="dCelib" step="1"></div>
+            <div><label for="dCouple">Décote — seuil couple (€)</label>
+                 <input type="number" id="dCouple" step="1"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="dTaux">Décote — taux (%)</label>
+                 <input type="number" id="dTaux" step="0.01"></div>
+            <div><label for="qf">Plafond par demi-part (€)</label>
+                 <input type="number" id="qf" step="1"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="csgI">CSG activité — imposable (%)</label>
+                 <input type="number" id="csgI" step="0.1"></div>
+            <div><label for="csgD">CSG activité — déductible (%)</label>
+                 <input type="number" id="csgD" step="0.1"></div>
+          </div>
+
+          <button type="button" class="reset" id="reset" disabled>réinitialiser au droit courant</button>
+          <p class="note">
+            Les valeurs affichées sont lues dans l'arbre de paramètres du moteur, pas recopiées.
+            Seuls les champs que vous modifiez sont envoyés comme réforme ; le reste demeure au
+            droit courant. Le barème est un remplacement complet, de 2 à 5 tranches.
+          </p>
+        </div>
+      </details>
+
+      <div class="action">
+        <button class="go" id="go">Calculer</button>
+      </div>
+    </section>
+
+    <!-- ============================= RESULTS ============================ -->
+    <section class="col-out">
+
+      <div class="tabs" role="tablist">
+        <button id="tabFoyer" role="tab" aria-selected="true">
+          <span class="layer-tag">L2</span>Un foyer</button>
+        <button id="tabPop" role="tab" aria-selected="false">
+          <span class="layer-tag">L1+L2</span>Population</button>
+      </div>
+
+      <div id="paneFoyer">
+      <div class="honesty">
+        <span class="tag">Ce que ce chiffre est, et n'est pas</span>
+        <p>Couche mécanique (L2) : effet au premier jour, à droit constant, sans réaction
+           comportementale. Les couches comportementale et macro arriveront en phase 3.</p>
+      </div>
+
+      <div class="results-head">
+        <h2 id="outTitle">Résultat</h2>
+        <span class="timings" id="timings"></span>
+      </div>
+
+      <div id="out">
+        <p class="empty">
+          Décrivez un foyer à gauche, puis lancez le calcul. Sans réforme, l'outil affiche
+          simplement ce que le foyer paie et reçoit au droit courant — c'est déjà utile.
+        </p>
+      </div>
+
+      <div class="layers">
+        <div class="layer">
+          <span class="name"><b>L3</b>réponse comportementale</span>
+          <span class="bar"></span><span class="soon">à venir · phase 3</span>
+        </div>
+        <div class="layer">
+          <span class="name"><b>L4</b>bouclage macroéconomique</span>
+          <span class="bar"></span><span class="soon">à venir · phase 3</span>
+        </div>
+      </div>
+
+      </div><!-- /paneFoyer -->
+
+      <section id="panePop" hidden>
+        <div class="l1">
+          <span class="tag">Ce que cette population est</span>
+          <p id="l1Note">chargement…</p>
+          <details>
+            <summary>Ce que cette population ne sait pas faire</summary>
+            <ul id="l1Limits"></ul>
+          </details>
+          <span class="vintage" id="l1Vintage"></span>
+        </div>
+
+        <div class="results-head">
+          <h2>Effet de la réforme sur la France entière</h2>
+          <span class="timings" id="popTimings"></span>
+        </div>
+
+        <p class="empty" id="popIntro">
+          Modifiez un paramètre dans le panneau « Votre réforme » à gauche, puis lancez le
+          chiffrage. Sans réforme il n'y a rien à chiffrer : les niveaux de référence sont
+          dans le rapport de réconciliation, pas ici.
+        </p>
+        <div class="action" style="position:static; padding:0 0 20px">
+          <button class="go" id="goPop">Chiffrer sur la population</button>
+        </div>
+
+        <div id="popOut"></div>
+      </section>
+
+      <footer id="foot">
+        Valeurs calculées par OpenFisca-France. Ancrages de non-régression vérifiés à ±2 € ;
+        ce sont des repères sur <i>cette</i> version du moteur, pas des attestations fiscales.
+      </footer>
+    </section>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* Served by the API at `/`, or opened straight off the filesystem. In the second
+   case there is no origin to speak of, so fall back to the documented port. */
+const API = location.protocol.startsWith("http") ? location.origin : "http://localhost:8000";
+const UVICORN = "uvicorn impots.api.main:app --reload";
+
+const eur  = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+const eur2 = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const $ = (id) => document.getElementById(id);
+
+/* ------------------------------------------------------------------ state */
+let lawParams = null;      // current law, from GET /parameters/ir
+let brackets  = [];        // [{threshold, rate}] shown in the reform panel
+const state = { adults: 1, children: [] };
+
+/* --------------------------------------------------------- household form */
+function adultRow(i) {
+  const salary = i === 0 ? 30000 : 25000;
+  const born   = i === 0 ? 1990 : 1992;
+  return `
+    <div class="person">
+      <div class="who">Adulte ${i + 1}</div>
+      <div class="field-row">
+        <div>
+          <label for="sal${i}">Salaire brut annuel (€)</label>
+          <input type="number" id="sal${i}" value="${salary}" min="0" step="500">
+        </div>
+        <div>
+          <label for="born${i}">Naissance</label>
+          <input type="number" id="born${i}" value="${born}" min="1920" max="2026" step="1">
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderAdults() {
+  $("adults").innerHTML = Array.from({ length: state.adults }, (_, i) => adultRow(i)).join("");
+  $("one").setAttribute("aria-pressed", String(state.adults === 1));
+  $("two").setAttribute("aria-pressed", String(state.adults === 2));
+  // Two adults must be a couple in v1; one adult cannot be.
+  $("marie").disabled = state.adults === 1;
+  $("marie").checked  = state.adults === 2;
+}
+
+/* Case T only exists for a lone adult with dependent children. */
+function syncIsole() {
+  const eligible = state.adults === 1 && state.children.length > 0;
+  $("isoleWrap").hidden = !eligible;
+  if (!eligible) $("isole").checked = true;   // back to the inferred default
+}
+
+function renderChildren() {
+  $("children").innerHTML = state.children.map((year, i) => `
+    <div class="person">
+      <button type="button" class="drop" data-child="${i}" title="retirer">×</button>
+      <div class="who">Enfant ${i + 1}</div>
+      <label for="ch${i}">Année de naissance</label>
+      <input type="number" id="ch${i}" value="${year}" min="1920" max="2026" step="1"
+             data-childyear="${i}">
+    </div>`).join("");
+  $("addChild").disabled = state.children.length >= 8;
+  $("addChild").textContent = state.children.length >= 8
+    ? "maximum de 8 enfants atteint" : "+ ajouter un enfant";
+  syncIsole();
+}
+
+$("one").onclick = () => { state.adults = 1; renderAdults(); syncIsole(); };
+$("two").onclick = () => { state.adults = 2; renderAdults(); syncIsole(); };
+$("addChild").onclick = () => {
+  if (state.children.length >= 8) return;
+  state.children.push(2015 + state.children.length);
+  renderChildren();
+};
+$("children").addEventListener("click", (e) => {
+  const i = e.target.dataset.child;
+  if (i !== undefined) { state.children.splice(Number(i), 1); renderChildren(); }
+});
+$("children").addEventListener("input", (e) => {
+  const i = e.target.dataset.childyear;
+  if (i !== undefined) state.children[Number(i)] = Number(e.target.value);
+});
+/* Loyer and zone mean nothing until a statut is chosen, and nothing is sent for
+   them either — say so visually rather than leaving them looking live. */
+function syncHousing() {
+  const chosen = !!$("statut").value;
+  $("loyerCell").classList.toggle("inert", !chosen);
+  $("zoneCell").classList.toggle("inert", !chosen);
+}
+$("statut").addEventListener("change", syncHousing);
+
+$("full").onchange = (e) => {
+  $("housing").hidden = !e.target.checked;
+  $("histWrap").hidden = !e.target.checked;
+  syncHousing();
+  if (!e.target.checked) { $("emtr").checked = false; }
+};
+
+/* ---------------------------------------------------------- reform panel */
+function renderBrackets() {
+  $("baremeRows").innerHTML = brackets.map((b, i) => `
+    <tr>
+      <td class="pair">
+        <input type="number" step="1" min="0" value="${b.threshold}"
+               data-th="${i}" ${i === 0 ? "disabled title='la première tranche commence toujours à 0 €'" : ""}>
+      </td>
+      <td><input type="number" step="0.1" min="0" max="100"
+                 value="${+(b.rate * 100).toFixed(4)}" data-rate="${i}"></td>
+      <td>${i >= 2 ? `<button type="button" class="drop" data-delb="${i}" title="retirer">×</button>` : ""}</td>
+    </tr>`).join("");
+  $("addBracket").disabled = brackets.length >= 5;
+  $("addBracket").textContent = brackets.length >= 5
+    ? "5 tranches au maximum en v1" : "+ ajouter une tranche";
+  markDirty();
+}
+
+$("baremeRows").addEventListener("input", (e) => {
+  const { th, rate } = e.target.dataset;
+  if (th   !== undefined) brackets[+th].threshold = Number(e.target.value);
+  if (rate !== undefined) brackets[+rate].rate = Number(e.target.value) / 100;
+  markDirty();
+});
+$("baremeRows").addEventListener("click", (e) => {
+  const i = e.target.dataset.delb;
+  if (i !== undefined && brackets.length > 2) { brackets.splice(+i, 1); renderBrackets(); }
+});
+$("addBracket").onclick = () => {
+  if (brackets.length >= 5) return;
+  const last = brackets[brackets.length - 1];
+  brackets.push({ threshold: Math.round(last.threshold * 2 + 10000), rate: Math.min(1, last.rate + 0.05) });
+  renderBrackets();
+};
+
+function fillLaw() {
+  brackets = lawParams.bareme.map((b) => ({ threshold: b.threshold, rate: b.rate }));
+  $("dCelib").value  = lawParams.decote.seuil_celib;
+  $("dCouple").value = lawParams.decote.seuil_couple;
+  $("dTaux").value   = +(lawParams.decote.taux * 100).toFixed(4);
+  $("qf").value      = lawParams.plafond_qf_demi_part;
+  $("csgI").value    = +(lawParams.csg_activite.imposable * 100).toFixed(4);
+  $("csgD").value    = +(lawParams.csg_activite.deductible * 100).toFixed(4);
+  renderBrackets();
+}
+$("reset").onclick = () => { if (lawParams) fillLaw(); };
+["dCelib", "dCouple", "dTaux", "qf", "csgI", "csgD"].forEach((id) =>
+  $(id).addEventListener("input", markDirty));
+
+/* Only the knobs the user actually moved are sent. An identity reform would
+   double the compute time to prove that nothing changed. */
+function reformSpec() {
+  if (!lawParams) return null;
+  const spec = {};
+  const near = (a, b) => Math.abs(a - b) < 1e-9;
+
+  const law = lawParams.bareme;
+  const changed = brackets.length !== law.length || brackets.some(
+    (b, i) => !near(b.threshold, law[i].threshold) || !near(b.rate, law[i].rate));
+  if (changed) spec.ir_bareme = brackets.map((b) => ({ threshold: b.threshold, rate: b.rate }));
+
+  const scalar = (id, path, scale = 1) => {
+    const shown = Number($(id).value) / scale;
+    if (!near(shown, path)) return shown;
+    return undefined;
+  };
+  const put = (key, value) => { if (value !== undefined && !Number.isNaN(value)) spec[key] = value; };
+  put("decote_seuil_celib",      scalar("dCelib", lawParams.decote.seuil_celib));
+  put("decote_seuil_couple",     scalar("dCouple", lawParams.decote.seuil_couple));
+  put("decote_taux",             scalar("dTaux", lawParams.decote.taux, 100));
+  put("plafond_qf_demi_part",    scalar("qf", lawParams.plafond_qf_demi_part));
+  put("csg_activite_imposable",  scalar("csgI", lawParams.csg_activite.imposable, 100));
+  put("csg_activite_deductible", scalar("csgD", lawParams.csg_activite.deductible, 100));
+
+  return Object.keys(spec).length ? spec : null;
+}
+
+function markDirty() {
+  const spec = reformSpec();
+  const n = spec ? Object.keys(spec).length : 0;
+  $("reformState").textContent = n ? `${n} paramètre${n > 1 ? "s" : ""} modifié${n > 1 ? "s" : ""}` : "droit courant";
+  $("reformState").style.color = n ? "var(--bleu)" : "";
+  $("reset").disabled = !n;
+}
+
+/* -------------------------------------------------------------- payload */
+function payload() {
+  const adults = Array.from({ length: state.adults }, (_, i) => ({
+    salaire_brut_annuel: Number($(`sal${i}`).value),
+    annee_naissance: Number($(`born${i}`).value),
+  }));
+  const household = {
+    adults,
+    children: state.children.map((y) => ({ annee_naissance: Number(y) })),
+    couple_marie_ou_pacse: state.adults === 2,
+  };
+  if (state.adults === 1 && state.children.length > 0) {
+    household.parent_isole = $("isole").checked;
+  }
+  const full = $("full").checked;
+  if (full && $("statut").value) {
+    household.logement = {
+      statut: $("statut").value,
+      loyer_mensuel: Number($("loyer").value),
+      zone_apl: Number($("zone").value),
+    };
+  }
+  return {
+    household,
+    year: 2024,
+    reform: reformSpec(),
+    tier: full ? "full" : "light",
+    emtr: full && $("emtr").checked,
+    historique_revenus: $("hist").checked,
+  };
+}
+
+/* -------------------------------------------------------------- results */
+const GROUPS = [
+  { title: "Rémunération", rows: [
+    ["salaire_super_brut",     "Coût du travail (super-brut)", "up"],
+    ["salaire_brut",           "Salaire brut",                 "up"],
+    ["cotisations_salariales", "Cotisations salariales",       "down", true],
+    ["cotisations_employeur",  "Cotisations employeur",        "down", true],
+    ["csg_deductible",         "CSG déductible",               "down", true],
+    ["csg_imposable",          "CSG imposable",                "down", true],
+    ["crds",                   "CRDS",                         "down", true],
+    ["salaire_net",            "Salaire net",                  "up"],
+    ["salaire_imposable",      "Salaire imposable",            "flat"],
+  ]},
+  { title: "Impôt sur le revenu", rows: [
+    ["parts_fiscales",          "Parts fiscales",               "flat", false, "count"],
+    ["revenu_fiscal_reference", "Revenu fiscal de référence",   "flat"],
+    ["ir_avant_reductions",     "IR après plafonnement du QF",  "down", true],
+    ["ir",                      "Impôt sur le revenu",          "down"],
+  ]},
+  { title: "Prestations", tier: "full", rows: [
+    ["af",            "Allocations familiales", "up"],
+    ["ppa",           "Prime d'activité",       "up"],
+    ["rsa",           "RSA",                    "up"],
+    ["aide_logement", "Aide au logement",       "up"],
+  ]},
+];
+
+function money(v, kind) {
+  if (v === null || v === undefined) return `<span class="na">—</span>`;
+  if (kind === "count") return v.toFixed(1).replace(".", ",");
+  return eur.format(v) + " €";
+}
+
+/* `good` says which direction is welcome for this row, so the Δ colour means
+   "better off" rather than merely "bigger". */
+function delta(v, good, kind) {
+  if (v === null || v === undefined) return `<span class="na">—</span>`;
+  if (Math.abs(v) < 0.005) return `<span class="nil">—</span>`;
+  const shown = (v > 0 ? "+" : "−") + (kind === "count"
+    ? Math.abs(v).toFixed(1).replace(".", ",")
+    : eur.format(Math.abs(v)) + " €");
+  if (good === "flat") return `<span class="nil">${shown}</span>`;
+  const better = (good === "up") ? v > 0 : v < 0;
+  return `<span class="${better ? "up" : "down"}">${shown}</span>`;
+}
+
+function render(data) {
+  const hasReform = !!data.reform;
+  const full = data.tier === "full";
+  const line = (label, key, good, sub, kind) => {
+    const b = data.baseline[key];
+    if (b === null || b === undefined) return "";
+    return `<tr class="${sub ? "sub" : ""}">
+      <td>${label}</td>
+      <td>${money(b, kind)}</td>
+      ${hasReform ? `<td>${money(data.reform[key], kind)}</td>
+                     <td class="d">${delta(data.delta[key], good, kind)}</td>` : ""}
+    </tr>`;
+  };
+
+  let body = "";
+  for (const group of GROUPS) {
+    if (group.tier === "full" && !full) continue;
+    const rows = group.rows.map(([k, l, g, sub, kind]) => line(l, k, g, sub, kind)).join("");
+    if (!rows.trim()) continue;
+    body += `<tr class="grp"><td colspan="${hasReform ? 4 : 2}">${group.title}</td></tr>${rows}`;
+  }
+  if (full) {
+    const b = data.baseline.revenu_disponible;
+    body += `<tr class="total">
+      <td>Revenu disponible</td>
+      <td>${money(b)}</td>
+      ${hasReform ? `<td>${money(data.reform.revenu_disponible)}</td>
+                     <td class="d">${delta(data.delta.revenu_disponible, "up")}</td>` : ""}
+    </tr>`;
+  }
+
+  let html = `<table class="out">
+    <thead><tr>
+      <th></th><th>Droit courant</th>
+      ${hasReform ? `<th>Votre réforme</th><th class="d">Δ</th>` : ""}
+    </tr></thead>
+    <tbody>${body}</tbody>
+  </table>`;
+
+  if (data.emtr !== null && data.emtr !== undefined) {
+    const pct = (x) => (x * 100).toFixed(1).replace(".", ",") + " %";
+    html += `<div class="emtr">
+      <span class="k">Taux marginal effectif</span>
+      <span class="v">${pct(data.emtr)}</span>
+      ${data.emtr_reform !== null && data.emtr_reform !== undefined
+        ? `<span class="k">sous réforme</span><span class="v">${pct(data.emtr_reform)}</span>` : ""}
+      <span class="exp">Part de 100 € de salaire brut supplémentaire qui n'atteint pas le revenu
+        disponible : impôt, cotisations, CSG et extinction des prestations réunis. Calculé par
+        différence finie — le moteur n'expose aucune variable de taux marginal.</span>
+    </div>`;
+  }
+
+  if (full) {
+    html += `<p class="note" style="margin-top:18px">
+      Prestations calculées <b>à partir des champs renseignés</b> : sans bloc logement,
+      l'aide au logement vaut zéro. ${data.historique_revenus
+        ? `Revenus reportés sur ${data.year - 2} et ${data.year - 1} — régime stationnaire : les
+           périodes de référence du RSA, de la prime d'activité et de l'aide au logement sont
+           donc renseignées.`
+        : `<b>Sans historique de revenus</b> (câblage mono-année de la phase 0) : les périodes de
+           référence du RSA (trimestre précédent) et de l'aide au logement (douze mois glissants
+           antérieurs) sont vides, le moteur y lit un revenu nul et verse trop. Artefact
+           documenté dans <code>docs/DECISIONS.md</code> (D-005, D-011).`}
+    </p>`;
+  }
+
+  $("out").innerHTML = html;
+  $("outTitle").textContent = hasReform ? "Droit courant, votre réforme, et l'écart" : "Au droit courant";
+  const t = data.timings;
+  $("timings").textContent =
+    `${Math.round(t.total_ms)} ms · construction ${Math.round(t.build_ms)} ms` +
+    (t.reform_cache_hit === true ? " · réforme en cache" : "") +
+    (t.emtr_ms ? ` · TMI ${Math.round(t.emtr_ms)} ms` : "");
+}
+
+/* --------------------------------------------------------------- errors */
+function showError(title, messages, code) {
+  $("out").innerHTML = `<div class="err">
+    <h3>${title}</h3>
+    ${messages.length > 1
+      ? `<ul>${messages.map((m) => `<li>${escapeHtml(m)}</li>`).join("")}</ul>`
+      : `<p>${escapeHtml(messages[0] || "")}</p>`}
+    ${code ? `<code>${escapeHtml(code)}</code>` : ""}
+  </div>`;
+  $("timings").textContent = "";
+}
+const escapeHtml = (s) => String(s).replace(/[&<>"]/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* 422 bodies are surfaced verbatim: the API's wording is more precise than any
+   paraphrase this page could invent. */
+function detailMessages(detail) {
+  if (typeof detail === "string") return [detail];
+  if (Array.isArray(detail)) return detail.map((d) => {
+    const where = Array.isArray(d.loc) ? d.loc.filter((p) => p !== "body").join(" › ") : "";
+    return where ? `${where} : ${d.msg}` : d.msg;
+  });
+  return [JSON.stringify(detail)];
+}
+
+/* ---------------------------------------------------------------- submit */
+async function run() {
+  const body = payload();
+  const full = body.tier === "full";
+  $("go").disabled = true;
+  $("go").textContent = "Calcul en cours…";
+  $("out").innerHTML =
+    `<div class="state">
+       <p class="loading-copy">${full
+         ? "cascade complète des prestations · comptez ~3 s"
+         : "impôt et salaire · comptez ~0,5 s"}</p>
+       ${'<div class="skel"></div>'.repeat(7)}
+     </div>`;
+  $("timings").textContent = "";
+
+  try {
+    const response = await fetch(`${API}/simulate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      showError(`Requête refusée (${response.status})`, detailMessages(data.detail));
+      return;
+    }
+    render(data);
+  } catch (error) {
+    showError("Moteur injoignable", [
+      `Aucune réponse de ${API}. Lancez l'API dans le dossier du dépôt, puis relancez le calcul.`,
+    ], UVICORN);
+  } finally {
+    $("go").disabled = false;
+    $("go").textContent = "Calculer";
+  }
+}
+$("go").onclick = run;
+document.addEventListener("keydown", (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === "Enter") run();
+});
+
+/* ------------------------------------------------------------ population */
+let baselineMeta = null;
+
+function showTab(which) {
+  const population = which === "population";
+  $("tabFoyer").setAttribute("aria-selected", String(!population));
+  $("tabPop").setAttribute("aria-selected", String(population));
+  $("paneFoyer").hidden = population;
+  $("panePop").hidden = !population;
+}
+$("tabFoyer").onclick = () => showTab("foyer");
+$("tabPop").onclick = () => { showTab("population"); loadPopulationMeta(); };
+
+async function loadPopulationMeta() {
+  if (baselineMeta) return;
+  try {
+    const response = await fetch(`${API}/population/baseline`);
+    if (!response.ok) {
+      const body = await response.json();
+      $("l1Note").textContent = detailMessages(body.detail).join(" ");
+      return;
+    }
+    const data = await response.json();
+    baselineMeta = data;
+    $("l1Note").textContent = data.meta.note;
+    $("l1Limits").innerHTML = data.meta.limitations
+      .map((limit) => `<li>${limit.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")}</li>`).join("");
+    $("l1Vintage").textContent =
+      `millésime ${data.meta.vintage} · ${data.meta.branch} · ` +
+      `${eur.format(Math.round(data.meta.households / 1e6 * 10) / 10)} M ménages, ` +
+      `${eur.format(Math.round(data.meta.persons / 1e6 * 10) / 10)} M personnes`;
+  } catch (error) {
+    $("l1Note").textContent =
+      `Moteur injoignable (${API}). Lancez l'API, puis \`impots population build\`.`;
+  }
+}
+
+/* One chart, horizontal, mean Δ by decile. A bar chart because the question is
+   "who gains and who loses", which is a comparison of magnitudes across an
+   ordered category — the one thing bars do better than anything else. */
+function decileChart(deciles) {
+  const deltas = deciles.map((d) => d.mean_delta ?? 0);
+  const extent = Math.max(...deltas.map(Math.abs), 1);
+  return `<div class="chart">${deciles.map((d) => {
+    const delta = d.mean_delta ?? 0;
+    const width = (Math.abs(delta) / extent) * 50;
+    const left = delta >= 0 ? 50 : 50 - width;
+    const w = (d.share_winners ?? 0) * 100, l = (d.share_losers ?? 0) * 100;
+    return `<div class="row">
+      <span class="lbl2">D${d.decile}</span>
+      <span>
+        <span class="track">
+          <i class="zero" style="left:50%"></i>
+          <i class="bar ${delta >= 0 ? "pos" : "neg"}"
+             style="left:${left}%;width:${width}%"></i>
+        </span>
+        <span class="wl" title="gagnants / perdants / inchangés">
+          <i class="w" style="width:${w}%"></i><i class="l" style="width:${l}%"></i>
+          <i class="u" style="width:${100 - w - l}%"></i>
+        </span>
+      </span>
+      <span class="val ${delta > 0 ? "up" : delta < 0 ? "down" : "nil"}">
+        ${delta >= 0 ? "+" : "−"}${eur.format(Math.abs(Math.round(delta)))} €</span>
+    </div>`;
+  }).join("")}</div>
+  <p class="chart-legend">Δ moyen de revenu disponible par ménage, par décile de niveau de vie
+    (D1 = les 10 % les plus modestes). La bande fine sous chaque barre indique la part de
+    <span class="up">gagnants</span>, de <span class="down">perdants</span> et de ménages
+    inchangés (moins de 10 € par an).</p>`;
+}
+
+function reconTable(lines) {
+  const rows = lines.map((line) => {
+    const residual = line.residual === null ? "—"
+      : `${line.residual >= 0 ? "+" : "−"}${(Math.abs(line.residual) * 100).toFixed(1)} %`;
+    const cls = line.use === "calibration" ? "spent"
+      : line.status === "within tolerance" ? "ok2" : "bad2";
+    const status = line.use === "calibration" ? "calibré (dépensé)"
+      : line.status === "within tolerance" ? "dans la tolérance"
+      : line.status === "not modelled" ? "non modélisé" : "hors tolérance";
+    return `<tr><td>${escapeHtml(line.label)}</td><td>${residual}</td>
+      <td class="st ${cls}">${status}</td><td class="st">${escapeHtml(line.source)}</td></tr>`;
+  }).join("");
+  return `<h2 style="font-family:var(--serif);font-weight:600;font-size:19px;margin:26px 0 10px">
+      Réconciliation avec les totaux publiés</h2>
+    <p class="note" style="border:0;padding:0;margin:0 0 12px">
+      Une ligne <i>calibrée</i> a été dépensée : le modèle a été ajusté pour l'atteindre, donc
+      l'atteindre ne prouve rien. Les lignes de validation, elles, n'ont pas été ajustées.
+      Rapport complet : <code>reports/reconciliation.md</code>.</p>
+    <table class="recon">
+      <thead><tr><th>Ligne</th><th>Écart</th><th>Statut</th><th>Source</th></tr></thead>
+      <tbody>${rows}</tbody></table>`;
+}
+
+async function runPopulation() {
+  const spec = reformSpec();
+  if (!spec) {
+    $("popOut").innerHTML = `<div class="err"><h3>Aucune réforme</h3>
+      <p>Modifiez au moins un paramètre dans le panneau « Votre réforme » à gauche.
+         Le chiffrage porte sur l'écart au droit courant, pas sur les niveaux.</p></div>`;
+    return;
+  }
+  $("goPop").disabled = true;
+  $("goPop").textContent = "Chiffrage en cours…";
+  $("popIntro").hidden = true;
+  $("popOut").innerHTML = `<div class="state">
+    <p class="loading-copy">20 000 ménages, cascade complète des prestations · comptez ~30 s</p>
+    ${'<div class="skel"></div>'.repeat(9)}</div>`;
+  try {
+    const response = await fetch(`${API}/population/simulate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reform: spec, year: 2024, tier: "quick" }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      showPopError(`Requête refusée (${response.status})`, detailMessages(data.detail));
+      return;
+    }
+    renderPopulation(data);
+  } catch (error) {
+    showPopError("Moteur injoignable", [
+      `Aucune réponse de ${API}. Lancez l'API, et vérifiez que la population a été construite.`,
+    ]);
+  } finally {
+    $("goPop").disabled = false;
+    $("goPop").textContent = "Chiffrer sur la population";
+  }
+}
+$("goPop").onclick = runPopulation;
+
+function showPopError(title, messages) {
+  $("popOut").innerHTML = `<div class="err"><h3>${title}</h3>
+    ${messages.map((m) => `<p>${escapeHtml(m)}</p>`).join("")}
+    <code>uvicorn impots.api.main:app
+impots population build</code></div>`;
+}
+
+function renderPopulation(data) {
+  const cost = data.reform_cost ?? 0;
+  const raises = cost < 0;
+  const bn = (x) => (Math.abs(x) / 1e9).toFixed(1).replace(".", ",");
+  let html = `<div class="headline">
+      <span class="k">${raises ? "La réforme rapporte" : "La réforme coûte"}</span>
+      <span class="v ${raises ? "up" : "down"}">${bn(cost)} Md €</span>
+      <span class="sub">Effet au premier jour sur le revenu disponible des ménages, à
+        comportement inchangé. ${escapeHtml(data.meta.note)}</span>
+    </div>`;
+
+  const rows = [["ir", "Impôt sur le revenu"], ["csg_imposable", "CSG imposable"],
+                ["af", "Allocations familiales"], ["ppa", "Prime d'activité"],
+                ["rsa", "RSA"], ["aide_logement", "Aides au logement"]]
+    .filter(([k]) => data.deltas[k] !== undefined && Math.abs(data.deltas[k]) > 5e6);
+  if (rows.length) {
+    html += `<table class="out" style="margin-bottom:24px"><thead><tr>
+        <th></th><th>Δ national</th></tr></thead><tbody>` +
+      rows.map(([k, label]) =>
+        `<tr><td>${label}</td><td class="${data.deltas[k] > 0 ? "down" : "up"}">
+          ${data.deltas[k] >= 0 ? "+" : "−"}${bn(data.deltas[k])} Md €</td></tr>`).join("") +
+      `</tbody></table>`;
+  }
+
+  html += decileChart(data.deciles);
+  html += reconTable(data.reconciliation);
+  $("popOut").innerHTML = html;
+  const t = data.timings || {};
+  $("popTimings").textContent =
+    `${data.meta.sampled_households ? eur.format(data.meta.sampled_households) + " ménages · " : ""}` +
+    `${t.total_s ? t.total_s + " s" : ""}`;
+}
+
+/* ----------------------------------------------------------------- boot */
+async function boot() {
+  renderAdults();
+  renderChildren();
+  syncIsole();
+  syncHousing();
+  try {
+    const health = await (await fetch(`${API}/health`)).json();
+    $("engine").innerHTML =
+      `<span class="dot ${health.warm ? "ok" : ""}"></span>` +
+      `openfisca-france <b>${health.openfisca_france}</b> · core <b>${health.openfisca_core}</b>`;
+    lawParams = await (await fetch(`${API}/parameters/ir?year=2024`)).json();
+    fillLaw();
+  } catch (error) {
+    $("engine").innerHTML = `<span class="dot down"></span>moteur injoignable`;
+    showError("Moteur injoignable", [
+      `Impossible de joindre ${API}. Lancez l'API dans le dossier du dépôt :`,
+    ], UVICORN);
+  }
+}
+boot();
+</script>
+</body>
+</html>

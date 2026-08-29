@@ -1,0 +1,33 @@
+name: single_30k
+description: >
+  One adult, no children, no housing input. The reference case: it is the one
+  every other number is sanity-checked against, and the one used to warm the API.
+year: 2024
+tier: full
+household:
+  adults:
+    - {salaire_brut_annuel: 30000, annee_naissance: 1990}
+expected:
+  salaire_brut: 30000
+  salaire_net: 23747.93
+  salaire_imposable: 24602.70
+  ir: 812
+  parts_fiscales: 1.0
+  # Childless, and no housing input was supplied: zero is the right answer here,
+  # not a wiring failure. The golden cases exist partly to tell those apart.
+  af: 0
+  aide_logement: 0
+  ppa: 213.42
+  # Re-anchored by D-011 (2026-08-28), which made `historique_revenus` the default.
+  # Under the old single-year wiring these read rsa = 607.75 and
+  # revenu_disponible = 23 908.48: RSA is assessed on the *previous quarter's*
+  # resources, and supplying salary for 2024 alone left Oct-Dec 2023 reading as
+  # zero income, so the engine paid a month of RSA to a 30 k€ earner. With two
+  # years of history on file that phantom disappears. See D-005 for the
+  # measurement and D-011 for the decision.
+  rsa: 0
+  revenu_disponible: 23148.28
+# EMTR by finite difference (+100 EUR/yr of gross on the first adult): the 11 %
+# IR bracket plus employee contributions plus CSG. There is no marginal-rate
+# variable in openfisca — this is computed, not read.
+expected_emtr: 0.4979

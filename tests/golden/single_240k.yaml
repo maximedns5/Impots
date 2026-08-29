@@ -1,0 +1,13 @@
+name: single_240k
+description: >
+  One adult well into the top bracket. The baseline half of the reform pair
+  below; also the case where the 10 % abattement hits its ceiling.
+year: 2024
+tier: light
+household:
+  adults:
+    - {salaire_brut_annuel: 240000, annee_naissance: 1980}
+expected:
+  ir: 59668
+  revenu_fiscal_reference: 184299.78
+  parts_fiscales: 1.0

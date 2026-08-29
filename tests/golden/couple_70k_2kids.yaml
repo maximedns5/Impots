@@ -1,0 +1,29 @@
+name: couple_70k_2kids
+description: >
+  Married/pacsé couple, two salaries, two children. Exercises the whole entity
+  wiring: both adults in declarants/parents/(personne_de_reference|conjoint),
+  both children in personnes_a_charge and in both enfants roles.
+  nbptr = 3.0 (2 adults + 2 children at a half-part each) is the load-bearing
+  assertion — if the personnes_a_charge wiring were wrong it would read 2.0.
+year: 2024
+tier: full
+household:
+  adults:
+    - {salaire_brut_annuel: 45000, annee_naissance: 1985}
+    - {salaire_brut_annuel: 25000, annee_naissance: 1987}
+  children:
+    - {annee_naissance: 2015}
+    - {annee_naissance: 2018}
+  couple_marie_ou_pacse: true
+expected:
+  salaire_brut: 70000
+  salaire_net: 55406.86
+  ir: 1274
+  parts_fiscales: 3.0
+  af: 1771.44
+  # Re-anchored by D-011: revenu_disponible was 58 181.96 under the single-year
+  # wiring, which credited this couple 1 133.58 € of phantom January RSA on a
+  # 70 k€ household income. Allocations familiales are unaffected — AF is not
+  # means-tested on a lookback quarter, which is why this line did not move.
+  rsa: 0
+  revenu_disponible: 55895.45
