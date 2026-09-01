@@ -1,4 +1,4 @@
-"""`impots population …` — build, run, reconcile.
+"""`impots …` — the command line for both populations.
 
 Population runs are batch jobs: a full-tier run over 199 451 households is
 minutes, not seconds (§1.1), so the CLI writes parquet and the API reads it. The
@@ -45,6 +45,17 @@ KNOWN_LIMITATIONS = [
 ]
 
 
+def spaced(value: float, decimals: int = 0) -> str:
+    """A number with French thousands separators.
+
+    Exists because `f"...{x:,}...".replace(",", " ")` over a whole string also
+    replaces the commas in the prose around it. That has now happened three times
+    — in a report caveat, in a CLI line, and in a dict repr — so the formatting
+    lives in one place that can only ever see a number.
+    """
+    return f"{value:,.{decimals}f}".replace(",", " ")
+
+
 def _load_reform(path: str | None) -> ReformSpec | None:
     if path is None:
         return None
@@ -59,11 +70,12 @@ def _print_aggregates(agg: aggregate_module.Aggregates) -> None:
     if agg.deciles:
         print("\n  deciles of niveau de vie (EUR per consumption unit per year):")
         for row in agg.deciles:
-            line = f"    D{row.decile:<2} mean {row.mean_niveau_de_vie:9,.0f}".replace(",", " ")
+            line = f"    D{row.decile:<2} mean {spaced(row.mean_niveau_de_vie):>9}"
             if row.mean_delta is not None:
-                line += (f"   Δ {row.mean_delta:+9,.0f}"
+                sign = "+" if row.mean_delta >= 0 else "−"
+                line += (f"   Δ {sign}{spaced(abs(row.mean_delta)):>8}"
                          f"   winners {row.share_winners:5.1%}"
-                         f"  losers {row.share_losers:5.1%}").replace(",", " ")
+                         f"  losers {row.share_losers:5.1%}")
             print(line)
     if agg.reform_cost is not None:
         direction = "costs" if agg.reform_cost > 0 else "raises"
@@ -97,7 +109,8 @@ def cmd_manifest(_: argparse.Namespace) -> int:
 def cmd_build(args: argparse.Namespace) -> int:
     path, provenance = build(vintage=args.vintage, seed=args.seed, raking=not args.no_raking)
     print(f"wrote {path}")
-    print(f"  {provenance['rows']:,} persons in {provenance['households']:,} households")
+    print(f"  {spaced(provenance['rows'])} persons in "
+          f"{spaced(provenance['households'])} households")
     incomes = provenance["incomes"]
     print(f"  employees {incomes['employees'] / 1e6:.2f} M · "
           f"gross wages {incomes['gross_wages_after_calibration'] / 1e9:.0f} bn "
@@ -111,8 +124,7 @@ def cmd_build(args: argparse.Namespace) -> int:
               f"weight ratios {raking['weight_ratio_range'][0]:.2f}-"
               f"{raking['weight_ratio_range'][1]:.2f} · "
               f"{raking['clipped_households']} clipped · "
-              f"effective sample {raking['effective_sample_size']:,.0f} households"
-              .replace(",", " "))
+              f"effective sample {spaced(raking['effective_sample_size'])} households")
         for name, before in raking["fit_before"].items():
             print(f"    {name:16} worst miss {before:6.2%} -> {raking['fit_after'][name]:6.2%}")
     else:
@@ -218,6 +230,87 @@ def cmd_reconcile(args: argparse.Namespace) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- #
+# firms
+# --------------------------------------------------------------------------- #
+def cmd_firms_build(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from impots.entreprises.build import build as build_firms
+
+    path, provenance = build_firms(
+        cells_path=Path(args.cells) if args.cells else None, seed=args.seed
+    )
+    stats = provenance["population"]
+    print(f"wrote {path}")
+    if provenance["cells_are_synthetic"]:
+        print("  NOTE: built from the synthetic CI fixture, not from SIRENE x ESANE. "
+              "Nothing computed from it is a claim about France.")
+    print(f"  {stats['cells']} cells -> {spaced(stats['rows'])} synthetic firms "
+          f"standing for {stats['weighted_firms'] / 1e6:.2f} M")
+    print(f"  turnover {spaced(stats['weighted_turnover'] / 1e9)} bn · "
+          f"value added {spaced(stats['weighted_value_added'] / 1e9)} bn · "
+          f"taxable profit {spaced(stats['weighted_taxable_profit'] / 1e9)} bn")
+    print(f"  loss-making {stats['share_loss_making']:.1%} · "
+          f"fiscal/accounting ratio {stats['fiscal_to_accounting']}")
+    worst = max(abs(e) for e in stats["calibration_error"].values())
+    print(f"  published cell totals reproduced to {worst:.1e} relative")
+    return 0
+
+
+def cmd_firms_run(args: argparse.Namespace) -> int:
+    from impots.entreprises import aggregate as firm_aggregate
+    from impots.entreprises import runner as firm_runner
+    from impots.entreprises.build import PROCESSED as FIRM_PROCESSED
+    from impots.entreprises.reforms import FirmReformSpec
+
+    path = FIRM_PROCESSED / f"firms_{args.vintage}.parquet"
+    if not path.exists():
+        print(f"{path} not found — run `impots entreprises build` first", file=sys.stderr)
+        return 1
+
+    reform = None
+    if args.reform:
+        reform = FirmReformSpec.model_validate(
+            json.loads(Path(args.reform).read_text(encoding="utf-8"))
+        )
+    result = firm_runner.run(pl_read(path), year=args.year, reform=reform)
+    print(f"priced {spaced(result.n_firms)} firms in {result.timings}")
+    print(f"  guards {result.guards}")
+
+    agg = firm_aggregate.aggregate(result.firms)
+    print(f"\n  {agg.n_firms / 1e6:.2f} M firms · turnover {spaced(agg.turnover / 1e9)} bn · "
+          f"{agg.share_zero_is:.1%} pay no IS")
+    print("\n  weighted totals (bn EUR):")
+    for name, value in agg.totals.items():
+        line = f"    {name:26} {value / 1e9:9.2f}"
+        if name in agg.deltas:
+            line += f"   Δ {agg.deltas[name] / 1e9:+8.2f}"
+        print(line)
+    print("\n  effective rate on profit, by size:")
+    for row in agg.by_size:
+        line = (f"    {row.taille:6} n={row.n_firms / 1e6:6.3f} M  "
+                f"mean {row.mean_effective_rate:6.1%}  median {row.median_effective_rate:6.1%}  "
+                f"no tax {row.share_zero_tax:5.1%}")
+        print(line)
+    if agg.cells and agg.deltas:
+        print("\n  most affected sector x size cells:")
+        for cell in sorted(agg.cells, key=lambda c: -abs(c.mean_delta or 0.0))[:6]:
+            print(f"    {cell.naf_section} {cell.taille:6} mean Δ "
+                  f"{spaced(cell.mean_delta or 0.0):>12} EUR   "
+                  f"affected {cell.share_affected:5.1%}")
+    if agg.reform_cost is not None:
+        direction = "costs" if agg.reform_cost > 0 else "raises"
+        print(f"\n  the reform {direction} {abs(agg.reform_cost) / 1e9:.2f} bn EUR")
+    return 0
+
+
+def pl_read(path: object) -> object:
+    import polars as pl
+
+    return pl.read_parquet(path)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="impots", description=__doc__)
     subcommands = parser.add_subparsers(dest="group", required=True)
@@ -253,9 +346,27 @@ def main(argv: list[str] | None = None) -> int:
                                  "show every line before and after (D-017)")
     reconciler.set_defaults(func=cmd_reconcile)
 
+    firms = subcommands.add_parser("entreprises", help="the firm module")
+    firm_actions = firms.add_subparsers(dest="action", required=True)
+
+    firm_builder = firm_actions.add_parser("build", help="build the firm population parquet")
+    firm_builder.add_argument("--cells", help="path to a sector x size cell table (JSON); "
+                                             "defaults to the synthetic CI fixture")
+    firm_builder.add_argument("--seed", type=int, default=None)
+    firm_builder.set_defaults(func=cmd_firms_build)
+
+    firm_runner_parser = firm_actions.add_parser("run", help="price a firm-tax reform")
+    firm_runner_parser.add_argument("--vintage", default="fixture")
+    firm_runner_parser.add_argument("--year", type=int, default=2026)
+    firm_runner_parser.add_argument("--reform", help="path to a FirmReformSpec JSON file")
+    firm_runner_parser.set_defaults(func=cmd_firms_run)
+
     args = parser.parse_args(argv)
     if getattr(args, "seed", 0) is None:
-        from impots.population.skeleton import SEED as DEFAULT_SEED
+        if args.group == "entreprises":
+            from impots.entreprises.population import SEED as DEFAULT_SEED
+        else:
+            from impots.population.skeleton import SEED as DEFAULT_SEED
 
         args.seed = DEFAULT_SEED
     return int(args.func(args))
