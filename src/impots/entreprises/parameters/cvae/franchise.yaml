@@ -1,0 +1,12 @@
+description: "Franchise : la CVAE n'est pas due en deca de ce montant (CGI art. 1586 septies)"
+# Depuis l'imposition 2024 il n'existe plus de cotisation MINIMUM : le mecanisme a ete
+# remplace par une franchise. La CVAE est due a partir de 64 €, pas de 63 €.
+metadata:
+  unit: currency
+  reference:
+    2024-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048846991
+values:
+  2024-01-01:
+    value: 63
+  2030-01-01:
+    value: null

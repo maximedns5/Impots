@@ -1,0 +1,10 @@
+description: "Fin de la bande de lissage vers le taux majore (LF 2025 art. 48, IV-B, 2e al.)"
+metadata:
+  unit: currency
+  reference:
+    2025-01-01: https://www.legifrance.gouv.fr/eli/loi/2025/2/14/2025-127/jo/article_48
+values:
+  2025-01-01:
+    value: 3100000000
+  2027-01-01:
+    value: null

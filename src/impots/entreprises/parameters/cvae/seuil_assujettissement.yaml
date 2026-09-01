@@ -1,0 +1,12 @@
+description: "CA au-dela duquel une entreprise entre dans le champ de la CVAE (CGI art. 1586 ter, I)"
+# Seuil de CHAMP, pas de paiement : en dessous de 500 000 € le taux est nul, donc rien
+# n'est du. Confondre les deux ferait payer 348 000 entreprises qui ne doivent rien.
+metadata:
+  unit: currency
+  reference:
+    2010-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048847020
+values:
+  2010-01-01:
+    value: 152500
+  2030-01-01:
+    value: null

@@ -1,0 +1,10 @@
+description: "CA en deca duquel le degrevement s'applique (CGI art. 1586 quater, II)"
+metadata:
+  unit: currency
+  reference:
+    2010-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048860944
+values:
+  2010-01-01:
+    value: 2000000
+  2030-01-01:
+    value: null

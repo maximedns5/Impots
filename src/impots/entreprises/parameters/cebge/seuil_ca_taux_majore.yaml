@@ -1,0 +1,12 @@
+description: "CA a partir duquel le taux majore s'applique (LF 2025 art. 48, IV-B)"
+# Non modifie par la LF 2026. Le taux de 20,6 % exige que les DEUX exercices soient
+# sous 3 Md€ ; le taux de 41,2 % se declenche si l'UN OU L'AUTRE atteint 3 Md€.
+metadata:
+  unit: currency
+  reference:
+    2025-01-01: https://www.legifrance.gouv.fr/eli/loi/2025/2/14/2025-127/jo/article_48
+values:
+  2025-01-01:
+    value: 3000000000
+  2027-01-01:
+    value: null

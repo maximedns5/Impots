@@ -30,7 +30,23 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "cs_abattement": ("impot_societes", "contribution_sociale", "abattement"),
     "c3s_taux": ("c3s", "taux"),
     "c3s_abattement": ("c3s", "abattement"),
+    "cvae_taux_max": ("cvae", "taux_max"),
+    "cvae_degrevement": ("cvae", "degrevement", "montant"),
 }
+
+#: The CEBGE knob is paired rather than scalar, and these are the paths one tranche
+#: writes to: its threshold, its rate, and the top of the 100 M€ band over which the
+#: rate ramps up from zero. The band is *derived* from the threshold rather than
+#: exposed, so a reform cannot leave a threshold and its smoothing band inconsistent
+#: — which would silently tax a firm at a rate the spec never asked for.
+CEBGE_TRANCHE_PATHS: tuple[tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]], ...] = (
+    (("cebge", "seuil_ca"), ("cebge", "taux_base"), ("cebge", "lissage", "borne_haute")),
+    (
+        ("cebge", "seuil_ca_taux_majore"),
+        ("cebge", "taux_majore"),
+        ("cebge", "lissage", "borne_haute_taux_majore"),
+    ),
+)
 
 
 class CebgeTranche(BaseModel):
@@ -53,10 +69,14 @@ class FirmReformSpec(BaseModel):
     cs_abattement: Annotated[float, Field(ge=0, le=1_000_000_000)] | None = None
     c3s_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     c3s_abattement: Annotated[float, Field(ge=0, le=1_000_000_000)] | None = None
+    cvae_taux_max: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    cvae_degrevement: Annotated[float, Field(ge=0, le=1_000_000)] | None = None
     cebge_seuils_et_taux: list[CebgeTranche] | None = Field(
         default=None,
-        description="Paired thresholds and rates for the CEBGE. A threshold without "
-        "its rate is not a policy, so they move together or not at all.",
+        max_length=len(CEBGE_TRANCHE_PATHS),
+        description="Paired thresholds and rates for the CEBGE, lowest first. A "
+        "threshold without its rate is not a policy, so they move together or not at "
+        "all. At most two tranches, matching the statute's own shape.",
     )
 
     @model_validator(mode="after")
@@ -91,6 +111,25 @@ def resolve(parameters: Any, path: tuple[str, ...]) -> Any:
     return node
 
 
+def _largeur(parameters: Any, instant: str) -> float:
+    """Width of the CEBGE smoothing bands, or a refusal.
+
+    The CEBGE lapses after its second exercice, and its parameters go null with it.
+    A reform that revives it in a later year therefore has no band width to derive
+    the smoothing from — and inventing 100 M€ back would be putting a number into
+    the tree that no source supports for that year. Refusing says so out loud.
+    """
+    width = resolve(parameters, ("cebge", "lissage", "largeur"))(instant)
+    if width is None:
+        raise ValueError(
+            f"la CEBGE n'existe plus au {instant} : ses paramètres sont nuls, donc la "
+            "largeur de la bande de lissage n'est pas définie et le barème réformé "
+            "serait une falaise. Rétablir la CEBGE demande un paramétrage daté, pas "
+            "un curseur."
+        )
+    return float(width)
+
+
 def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
     """The `Reform` applying `spec` from `{year}-01-01`.
 
@@ -99,6 +138,7 @@ def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
     same here.
     """
     start = periods.instant(f"{year}-01-01")
+    instant = f"{year}-01-01"
     reform_name = f"impots-firm-reform:{name}"
 
     class FirmReform(Reform):
@@ -110,6 +150,16 @@ def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
                     value = getattr(spec, knob)
                     if value is not None:
                         resolve(parameters, path).update(start=start, value=value)
+                largeur = _largeur(parameters, instant) if spec.cebge_seuils_et_taux else 0.0
+                for tranche, paths in zip(
+                    spec.cebge_seuils_et_taux or (), CEBGE_TRANCHE_PATHS, strict=False
+                ):
+                    seuil_path, taux_path, borne_path = paths
+                    resolve(parameters, seuil_path).update(start=start, value=tranche.seuil_ca)
+                    resolve(parameters, taux_path).update(start=start, value=tranche.taux)
+                    resolve(parameters, borne_path).update(
+                        start=start, value=tranche.seuil_ca + largeur
+                    )
                 return parameters
 
             self.modify_parameters(modifier_function=modify)
@@ -135,6 +185,29 @@ def verify_scales(system: Any, spec: FirmReformSpec, year: int) -> None:
         got = float(resolve(system.parameters, path)(instant))
         if abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0):
             problems.append(f"{knob}: demandé {wanted}, appliqué {got}")
+    if not spec.cebge_seuils_et_taux:
+        if problems:
+            raise AssertionError(
+                "les paramètres appliqués ne correspondent pas à la réforme demandée — "
+                + " ; ".join(problems)
+            )
+        return
+    largeur = _largeur(system.parameters, instant)
+    for index, (tranche, paths) in enumerate(
+        zip(spec.cebge_seuils_et_taux or (), CEBGE_TRANCHE_PATHS, strict=False)
+    ):
+        seuil_path, taux_path, borne_path = paths
+        for label, path, wanted_value in (
+            ("seuil_ca", seuil_path, tranche.seuil_ca),
+            ("taux", taux_path, tranche.taux),
+            ("borne de lissage", borne_path, tranche.seuil_ca + largeur),
+        ):
+            got = float(resolve(system.parameters, path)(instant))
+            if abs(got - wanted_value) > 1e-9 * max(abs(wanted_value), 1.0):
+                problems.append(
+                    f"cebge_seuils_et_taux[{index}].{label}: demandé {wanted_value}, "
+                    f"appliqué {got}"
+                )
     if problems:
         raise AssertionError(
             "les paramètres appliqués ne correspondent pas à la réforme demandée — "

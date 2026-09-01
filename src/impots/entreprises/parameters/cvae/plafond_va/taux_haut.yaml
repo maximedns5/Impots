@@ -1,0 +1,10 @@
+description: "Plafond de la VA en % du CA, CA > 7,6 M€ (CGI art. 1586 sexies, I-7)"
+metadata:
+  unit: /1
+  reference:
+    2010-01-01: https://bofip.impots.gouv.fr/bofip/13223-PGP.html/identifiant=BOI-CVAE-BASE-20-20-20251119
+values:
+  2010-01-01:
+    value: 0.85
+  2030-01-01:
+    value: null

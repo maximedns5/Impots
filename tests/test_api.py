@@ -434,3 +434,137 @@ def test_population_simulate_refuses_an_empty_reform(client: TestClient) -> None
     response = client.post("/population/simulate", json={"reform": {}, "year": 2024})
     assert response.status_code == 422
     assert "réforme est requise" in response.text
+
+
+# --------------------------------------------------------------------------- #
+# Firms (spec §4)
+#
+# These do NOT skip in CI. The firm population is built from
+# `tests/fixtures/firm_cells.json`, which is invented and committed, so the whole
+# chain — cells, draw, engine, HTTP — runs on every machine. That is the payoff of
+# putting the cell table behind a JSON seam rather than behind a download.
+# --------------------------------------------------------------------------- #
+@pytest.fixture(scope="module", autouse=True)
+def firm_population() -> None:
+    """Build the firm population from the committed fixture if it is not there."""
+    from impots.entreprises.build import FIXTURE_CELLS, PROCESSED, build
+
+    if not (PROCESSED / "firms_fixture.parquet").exists():
+        build(FIXTURE_CELLS)
+
+
+IS_30_REFORM = {"reform": {"is_taux_normal": 0.30}, "year": 2026}
+
+
+def test_firm_baseline_serves_the_synthetic_population(client: TestClient) -> None:
+    body = client.get("/entreprises/baseline").json()
+    assert body["meta"]["n_firms"] > 1e6
+    assert body["meta"]["turnover"] > 1e12
+    assert body["totals"]["impot_societes"] > 0
+    assert body["totals"]["c3s"] > 0
+    assert len(body["by_size"]) == 4
+    assert body["deltas"] == {}, "a baseline has nothing to compare itself to"
+    assert body["reform_cost"] is None
+
+
+def test_firm_baseline_admits_the_cells_are_invented(client: TestClient) -> None:
+    """The fixture cells are made up. A run on them that did not say so would be
+    the single most misleading thing this module could publish."""
+    meta = client.get("/entreprises/baseline").json()["meta"]
+    assert meta["cells_are_synthetic"] is True
+    assert "synthétique" in meta["note"]
+
+
+def test_firm_baseline_states_its_limitations(client: TestClient) -> None:
+    """Same rule as the household banner (D-015): the gaps travel with the numbers."""
+    limitations = client.get("/entreprises/baseline").json()["meta"]["limitations"]
+    joined = " ".join(limitations).lower()
+    assert "report déficitaire" in joined, "the loss carry-forward gap biases IS upward"
+    assert "intégration fiscale" in joined
+    assert "ratio fiscal/comptable" in joined, "the scalar that dominates the IS residual"
+    assert "cfe" in client.get("/entreprises/baseline").json()["meta"]["note"].lower()
+
+
+def test_firm_reform_is_priced_synchronously(client: TestClient) -> None:
+    """No sampling, no quick tier, no batch job (§4). If this ever needs a tier, the
+    test should fail rather than the endpoint quietly grow one."""
+    started = time.perf_counter()
+    response = client.post("/entreprises/simulate", json=IS_30_REFORM)
+    elapsed = time.perf_counter() - started
+    assert response.status_code == 200
+    assert elapsed < 2.0, f"a firm reform took {elapsed:.2f}s"
+    assert "sampled" not in response.text
+
+
+def test_firm_reform_raises_money_and_lands_on_the_largest(client: TestClient) -> None:
+    body = client.post("/entreprises/simulate", json=IS_30_REFORM).json()
+    assert body["deltas"]["impot_societes"] > 0
+    assert body["reform_cost"] < 0, "raising the IS rate must raise money"
+    by_size = {row["taille"]: row for row in body["by_size"]}
+    cells = {(c["naf_section"], c["taille"]): c for c in body["cells"]}
+    ge = [c for key, c in cells.items() if key[1] == "GE"]
+    micro = [c for key, c in cells.items() if key[1] == "micro"]
+    assert min(c["mean_delta"] for c in ge) > max(c["mean_delta"] for c in micro), (
+        "a rise in the normal rate must hit large firms harder than micro ones"
+    )
+    assert by_size["GE"]["mean_effective_rate"] > by_size["micro"]["mean_effective_rate"]
+
+
+def test_c3s_is_a_turnover_tax_and_its_abattement_shows(client: TestClient) -> None:
+    """The mechanical point of carrying C3S separately: it is levied on turnover
+    above a 19 M EUR abattement, so it behaves nothing like the IS.
+
+    Two consequences, both asserted here because both are load-bearing for the
+    incidence table. It reaches firms that owe no income tax at all — no IS rate
+    change can do that. And the abattement makes the share of firms touched rise
+    monotonically with size: micro firms are shielded outright, GE firms are all
+    caught. If a future refactor drops the abattement, this profile flattens and
+    this test is what notices."""
+    body = client.post(
+        "/entreprises/simulate", json={"reform": {"c3s_taux": 0.0032}, "year": 2026}
+    ).json()
+    assert body["deltas"]["c3s"] > 0
+    assert body["deltas"]["impot_societes"] == pytest.approx(0.0), (
+        "C3S is not modelled as deductible from the IS base, so it must not move IS"
+    )
+    assert client.get("/entreprises/baseline").json()["meta"]["share_zero_is"] > 0.2, (
+        "a population with no loss-makers cannot show what C3S does"
+    )
+    affected: dict[str, list[float]] = {}
+    for cell in body["cells"]:
+        affected.setdefault(cell["taille"], []).append(cell["share_affected"])
+    assert max(affected["micro"]) == 0.0, "no micro firm reaches the 19 M EUR abattement"
+    assert min(affected["GE"]) > 0.95, "large firms are all above it"
+    reach = [max(affected[size]) for size in ("micro", "PME", "ETI", "GE")]
+    assert reach == sorted(reach), f"C3S reach must rise with size, got {reach}"
+
+
+def test_firm_response_carries_no_firm_level_output(client: TestClient) -> None:
+    """§4: sector x size only. Every financial is a draw inside a published cell, so
+    a named firm or a top-tail row would be the least reliable number in the model
+    dressed up as the most interesting one."""
+    body = client.post("/entreprises/simulate", json=IS_30_REFORM).json()
+    assert set(body) == {
+        "meta", "totals", "totals_reform", "deltas", "reform_cost",
+        "cells", "by_size", "timings",
+    }
+    assert all(set(cell) >= {"naf_section", "taille", "n_firms"} for cell in body["cells"])
+    raw = client.post("/entreprises/simulate", json=IS_30_REFORM).text
+    assert "firm_id" not in raw, "no firm identifier may reach the client"
+
+
+def test_firm_simulate_refuses_an_empty_reform(client: TestClient) -> None:
+    response = client.post("/entreprises/simulate", json={"reform": {}, "year": 2026})
+    assert response.status_code == 422
+    assert "réforme est requise" in response.text
+
+
+def test_unknown_firm_knob_is_refused(client: TestClient) -> None:
+    """Same posture as the household side: a misspelt knob must not be a no-op that
+    silently prices current law and calls it a reform."""
+    response = client.post(
+        "/entreprises/simulate",
+        json={"reform": {"is_taux_norml": 0.30}, "year": 2026},
+    )
+    assert response.status_code == 422
+    assert "is_taux_norml" in response.text

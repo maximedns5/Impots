@@ -1,0 +1,10 @@
+description: "CA en deca duquel le taux de CVAE est nul (I-a) — CGI art. 1586 quater"
+metadata:
+  unit: currency
+  reference:
+    2010-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048860944
+values:
+  2010-01-01:
+    value: 500000
+  2030-01-01:
+    value: null

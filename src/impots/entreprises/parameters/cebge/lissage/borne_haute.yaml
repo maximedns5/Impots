@@ -1,0 +1,19 @@
+description: "Fin de la bande de lissage du taux de CEBGE (LF 2025 art. 48, IV-A, 2e al.)"
+# Le taux monte lineairement de 0 % au seuil d'entree jusqu'au taux plein 100 M€ plus
+# haut. Sans ce lissage une entreprise a 1,50 Md€ paierait d'un coup ce qu'une
+# entreprise a 1,49 Md€ ne paie pas du tout. DATES PAR ANNEE CIVILE, sous l'hypothese
+# d'exercices calendaires (D-020). La CEBGE porte sur les DEUX PREMIERS EXERCICES CLOS
+# a compter du 31 decembre 2025 : pour un exercice calendaire, l'exercice 2025 est le
+# premier et l'exercice 2026 le second. Une entreprise cloturant au 30 juin est
+# touchee sur 30/06/2026 et 30/06/2027, ce que ce parametrage ne sait pas representer.
+metadata:
+  unit: currency
+  reference:
+    2026-01-01: https://www.legifrance.gouv.fr/eli/loi/2026/2/19/2026-103/jo/article_12
+values:
+  2025-01-01:
+    value: 1100000000
+  2026-01-01:
+    value: 1600000000
+  2027-01-01:
+    value: null

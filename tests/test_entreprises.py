@@ -32,13 +32,21 @@ YEAR = "2026"
 RELATIVE_TOLERANCE = 1e-5
 
 
-def simulate(system: object, chiffre_affaires: list[float], benefice: list[float]) -> object:
+def simulate(
+    system: object,
+    chiffre_affaires: list[float],
+    benefice: list[float],
+    valeur_ajoutee: list[float] | None = None,
+    year: str = YEAR,
+) -> object:
     builder = SimulationBuilder()
     builder.create_entities(system)
     builder.declare_person_entity("entreprise", np.arange(len(chiffre_affaires)))
     simulation = builder.build(system)
-    simulation.set_input("chiffre_affaires", YEAR, np.array(chiffre_affaires, dtype=np.float64))
-    simulation.set_input("benefice_imposable", YEAR, np.array(benefice, dtype=np.float64))
+    simulation.set_input("chiffre_affaires", year, np.array(chiffre_affaires, dtype=np.float64))
+    simulation.set_input("benefice_imposable", year, np.array(benefice, dtype=np.float64))
+    if valeur_ajoutee is not None:
+        simulation.set_input("valeur_ajoutee", year, np.array(valeur_ajoutee, dtype=np.float64))
     return simulation
 
 
@@ -485,3 +493,194 @@ def test_c3s_reform_reaches_loss_makers(
     agg = firm_aggregate.aggregate(result.firms)
     assert agg.deltas["c3s"] > 0
     assert agg.deltas["impot_societes"] == 0.0, "a turnover tax does not move profit tax"
+
+
+# --------------------------------------------------------------------------- #
+# CVAE (CGI art. 1586 ter à septies)
+# --------------------------------------------------------------------------- #
+#: The three worked examples DGFiP publishes for the 2026 millésime (BOFiP
+#: BOI-CVAE-LIQ-10 n° 65 and notice 1329-AC). They pin the schedule AND the
+#: rounding rule at once, which is why they are the first thing tested.
+CVAE_CONTROL_POINTS = ((2_700_000.0, 0.0008), (6_200_000.0, 0.0017), (40_100_000.0, 0.0028))
+
+
+def implied_cvae_rate(simulation: object, index: int, turnover: float, va: float) -> float:
+    """Back out the rate the engine applied, from the euros it charged."""
+    cvae = float(simulation.calculate("cvae", YEAR)[index])  # type: ignore[attr-defined]
+    degrevement = 188.0 if turnover <= 2_000_000 else 0.0
+    return (cvae + degrevement) / va
+
+
+@pytest.mark.parametrize(("turnover", "expected_rate"), CVAE_CONTROL_POINTS)
+def test_cvae_matches_the_published_worked_examples(
+    tbs: object, turnover: float, expected_rate: float
+) -> None:
+    """DGFiP's own examples. A schedule that misses these is wrong regardless of how
+    convincingly it is derived."""
+    va = 0.30 * turnover
+    simulation = simulate(tbs, [turnover], [0.05 * turnover], [va])
+    assert close(implied_cvae_rate(simulation, 0, turnover, va), expected_rate)
+
+
+def test_cvae_rate_is_rounded_to_the_hundredth_of_a_point(tbs: object) -> None:
+    """The rounding is not cosmetic. Unrounded, a CA of 2.7 M€ gives 0.08272 %; the
+    statute rounds it to 0.08 %, which is 3.3 % less tax. Dropping the rule turns the
+    schedule into a continuous function and biases the bottom of it by several
+    percent — the CVAE analogue of the barème-collapse defect (D-007)."""
+    turnover, va = 2_700_000.0, 810_000.0
+    unrounded = 0.00094 * (turnover - 500_000) / 2_500_000
+    assert unrounded == pytest.approx(0.0008272), "the unrounded rate must differ"
+    simulation = simulate(tbs, [turnover], [0.0], [va])
+    applied = implied_cvae_rate(simulation, 0, turnover, va)
+    assert close(applied, 0.0008)
+    assert not close(applied, unrounded)
+
+
+def test_cvae_is_nil_below_the_rate_threshold_not_the_scope_threshold(tbs: object) -> None:
+    """Two thresholds that are constantly conflated: 152 500 € puts a firm in scope
+    and on the filing hook, but the rate is nil until 500 000 €. Using the scope
+    threshold as the payment threshold would charge some 350 000 firms that owe
+    nothing."""
+    turnovers = [140_000.0, 300_000.0, 499_999.0, 600_000.0]
+    simulation = simulate(tbs, turnovers, [0.0] * 4, [0.3 * t for t in turnovers])
+    cvae = simulation.calculate("cvae", YEAR)  # type: ignore[attr-defined]
+    assert list(cvae[:3]) == [0.0, 0.0, 0.0]
+    assert cvae[3] == 0.0, "at 600 k€ the rate is tiny and the franchise still absorbs it"
+
+
+def test_cvae_franchise_is_owed_from_64_euros_not_63(tbs: object) -> None:
+    """Since 2024 there is no minimum contribution, only a franchise: 'si le montant
+    est inférieur ou égal à 63 €, la CVAE n'est pas due'. Strictly greater, so the
+    first euro owed is the 64th."""
+    p = tbs.parameters(f"{YEAR}-01-01")  # type: ignore[attr-defined]
+    assert p.cvae.franchise == 63
+
+    # A firm engineered to land either side of the franchise by moving its VA alone.
+    # Note the rate used to size it: 0.09 %, the rounded one the engine applies — not
+    # the 0.094 % the formula produces before rounding. Sizing this with the unrounded
+    # rate puts both firms under the franchise and the test passes for the wrong
+    # reason, which is what it did on the first attempt.
+    turnover = 3_000_000.0  # top of the first bracket, no dégrèvement above 2 M€
+    rate = 0.0009
+    just_under = [(63.0 / rate)]
+    just_over = [(64.5 / rate)]
+    under = simulate(tbs, [turnover], [0.0], just_under)
+    over = simulate(tbs, [turnover], [0.0], just_over)
+    assert under.calculate("cvae", YEAR)[0] == 0.0  # type: ignore[attr-defined]
+    assert over.calculate("cvae", YEAR)[0] > 63.0  # type: ignore[attr-defined]
+
+
+def test_cvae_value_added_is_capped_as_a_share_of_turnover(tbs: object) -> None:
+    """80 % below 7.6 M€ of turnover and 85 % above. It bites only on labour-heavy
+    firms, but when it bites it sets the assiette outright."""
+    turnover = 5_000_000.0
+    uncapped = simulate(tbs, [turnover], [0.0], [4_500_000.0])
+    at_cap = simulate(tbs, [turnover], [0.0], [4_000_000.0])
+    assert uncapped.calculate("cvae", YEAR)[0] == pytest.approx(  # type: ignore[attr-defined]
+        at_cap.calculate("cvae", YEAR)[0]  # type: ignore[attr-defined]
+    ), "VA above 80 % of CA must be cut back to the cap, so both firms pay the same"
+
+
+def test_cvae_is_abolished_from_2030(tbs: object) -> None:
+    """The LF 2025 trajectory ends in abrogation, last imposition due for 2029. The
+    parameters go null and the formula must return zero rather than raise."""
+    simulation = simulate(tbs, [40_000_000.0], [1_000_000.0], [12_000_000.0], year="2030")
+    assert simulation.calculate("cvae", "2030")[0] == 0.0  # type: ignore[attr-defined]
+
+
+def test_cvae_rate_rose_in_2026_rather_than_falling(tbs: object) -> None:
+    """The counter-intuitive fact worth pinning: LF 2025 deferred the phase-out by
+    three years, so the maximum rate goes back UP from 0.19 % in 2025 to 0.28 % in
+    2026. A reader assuming a monotone phase-out would code the wrong number."""
+    p = tbs.parameters  # type: ignore[attr-defined]
+    assert p("2025-01-01").cvae.taux_max == pytest.approx(0.0019)
+    assert p("2026-01-01").cvae.taux_max == pytest.approx(0.0028)
+    assert p("2029-01-01").cvae.taux_max == pytest.approx(0.0009)
+
+
+# --------------------------------------------------------------------------- #
+# CEBGE (LF 2025 art. 48, prorogé par LF 2026 art. 12)
+# --------------------------------------------------------------------------- #
+def cebge_rate(simulation: object, index: int, year: str = YEAR) -> float:
+    """The rate the engine applied, backed out of the euros charged."""
+    cebge = float(simulation.calculate("cebge", year)[index])  # type: ignore[attr-defined]
+    assiette = float(simulation.calculate("impot_societes", year)[index])  # type: ignore[attr-defined]
+    return cebge / assiette
+
+
+def test_cebge_smoothing_reproduces_the_published_example(tbs: object) -> None:
+    """BOFiP BOI-IS-AUT-60 § 270: turnover of 1.045 bn in the first exercice gives a
+    rate of 9.27 %, not 20.6 %. Without the smoothing band a firm at 1.50 bn would pay
+    in full what a firm at 1.49 bn does not pay at all."""
+    simulation = simulate(tbs, [1_045_000_000.0], [40_000_000.0], year="2025")
+    assert close(cebge_rate(simulation, 0, "2025"), 0.0927)
+
+
+def test_cebge_interpolates_between_the_two_rates_above_3bn(tbs: object) -> None:
+    """BOFiP § 290: at 3.08 bn the rate is 20.6 + (41.2 - 20.6) x 0.8 = 37.08 %. This
+    band interpolates between two rates rather than ramping from zero, and coding it
+    like the lower band would charge 16.48 points too little."""
+    simulation = simulate(tbs, [3_080_000_000.0], [100_000_000.0])
+    assert close(cebge_rate(simulation, 0), 0.3708)
+
+
+def test_cebge_thresholds_and_rates_by_turnover(tbs: object) -> None:
+    """The whole 2026 profile in one pass, including both ends."""
+    turnovers = [1_400_000_000.0, 1_600_000_000.0, 2_000_000_000.0, 3_500_000_000.0]
+    simulation = simulate(tbs, turnovers, [100_000_000.0] * 4)
+    rates = [cebge_rate(simulation, i) for i in range(4)]
+    assert rates[0] == 0.0, "below 1.5 bn the second exercice is not liable at all"
+    assert close(rates[1], 0.206), "at the top of the band, the full lower rate"
+    assert close(rates[2], 0.206)
+    assert close(rates[3], 0.412), "above 3.1 bn, the higher rate in full"
+
+
+def test_cebge_base_is_the_two_year_average_of_is(tbs: object) -> None:
+    """The base is the mean of this exercice's IS and the previous one's, so a firm
+    whose profit halved still pays on the average. Absent a prior year the model
+    assumes stationarity — which the formula on `is_avant_report` makes explicit
+    rather than defaulting the term to zero and silently halving every base."""
+    turnover = 2_000_000_000.0
+    stationary = simulate(tbs, [turnover], [100_000_000.0])
+    assert close(cebge_rate(stationary, 0), 0.206), "stationarity: average == this year"
+
+    builder = SimulationBuilder()
+    builder.create_entities(tbs)
+    builder.declare_person_entity("entreprise", np.arange(1))
+    given_history = builder.build(tbs)
+    given_history.set_input("chiffre_affaires", YEAR, np.array([turnover]))
+    given_history.set_input("benefice_imposable", YEAR, np.array([100_000_000.0]))
+    given_history.set_input("is_avant_report", YEAR, np.array([0.0]))
+    charged = float(given_history.calculate("cebge", YEAR)[0])
+    this_year_is = float(given_history.calculate("impot_societes", YEAR)[0])
+    assert close(charged, 0.5 * this_year_is * 0.206), (
+        "a supplied prior-year IS of zero must halve the base, not be ignored"
+    )
+
+
+def test_cebge_lapses_after_the_second_exercice(tbs: object) -> None:
+    """Self-limiting by exercice count: the two first exercices closed on or after
+    31 December 2025, which for a calendar filer is FY2025 and FY2026."""
+    simulation = simulate(tbs, [5_000_000_000.0], [500_000_000.0], year="2027")
+    assert simulation.calculate("cebge", "2027")[0] == 0.0  # type: ignore[attr-defined]
+
+
+def test_cebge_reform_moves_its_smoothing_band_with_its_threshold(tbs: object) -> None:
+    """The paired knob's real job. A reform that moved the threshold but left the
+    100 M€ ramp where it was would tax firms at a rate nobody asked for — either a
+    cliff or a band running backwards."""
+    spec = FirmReformSpec(cebge_seuils_et_taux=[{"seuil_ca": 500_000_000, "taux": 0.30}])
+    reformed = firm_system.reformed_for(spec, 2026)
+    p = reformed.parameters(f"{YEAR}-01-01")
+    assert p.cebge.seuil_ca == 500_000_000
+    assert p.cebge.taux_base == pytest.approx(0.30)
+    assert p.cebge.lissage.borne_haute == 600_000_000, "band must follow the threshold"
+    verify_scales(reformed, spec, 2026)
+
+
+def test_cebge_knob_refuses_more_tranches_than_the_statute_has(tbs: object) -> None:
+    with pytest.raises(ValueError, match="at most 2|too_long|2 items"):
+        FirmReformSpec(cebge_seuils_et_taux=[
+            {"seuil_ca": 1e9, "taux": 0.2}, {"seuil_ca": 3e9, "taux": 0.4},
+            {"seuil_ca": 5e9, "taux": 0.5},
+        ])

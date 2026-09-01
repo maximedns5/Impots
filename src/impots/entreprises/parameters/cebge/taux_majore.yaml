@@ -1,0 +1,10 @@
+description: "Taux de la CEBGE, CA >= 3 Md€ (LF 2025 art. 48, IV-B)"
+metadata:
+  unit: /1
+  reference:
+    2025-01-01: https://www.legifrance.gouv.fr/eli/loi/2025/2/14/2025-127/jo/article_48
+values:
+  2025-01-01:
+    value: 0.412
+  2027-01-01:
+    value: null

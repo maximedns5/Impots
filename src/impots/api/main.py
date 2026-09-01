@@ -35,6 +35,11 @@ from impots.api.schemas import (
     MIN_YEAR,
     QUICK_TIER_HOUSEHOLDS,
     DecileRow,
+    FirmCell,
+    FirmMeta,
+    FirmResponse,
+    FirmSimulateRequest,
+    FirmSizeRow,
     HealthResponse,
     IRParameters,
     PopulationMeta,
@@ -294,6 +299,134 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
             **{k: float(v) for k, v in result.timings.items()},
             "total_s": round(time.perf_counter() - started, 2),
         },
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Firms (L0/L2 for entreprises)
+# --------------------------------------------------------------------------- #
+FIRM_VINTAGE = os.environ.get("IMPOTS_FIRM_VINTAGE", "fixture")
+
+FIRM_NOTE = (
+    "Population d'entreprises synthétique : effectifs et agrégats par secteur × taille "
+    "issus de sources publiques, financiers de chaque entreprise tirés paramétriquement "
+    "à l'intérieur de sa cellule. Résultats au niveau secteur × taille uniquement — "
+    "aucun résultat par entreprise, aucune affirmation sur le haut de la distribution. "
+    "La CFE n'est pas simulée : elle dépend de valeurs locatives communales et de "
+    "milliers de taux locaux, et une imitation plausible serait pire qu'un trou déclaré."
+)
+
+FIRM_LIMITATIONS = [
+    "**Aucun financier d'entreprise n'est observé.** SIRENE donne les effectifs par "
+    "cellule, ESANE les agrégats ; ni l'un ni l'autre ne publie une entreprise. Tout "
+    "montant individuel est un tirage paramétrique dans une cellule publiée.",
+    "**Pas de report déficitaire.** Les déficits d'une vraie entreprise réduisent son "
+    "impôt les années suivantes ; il faudrait des panels d'entreprises qui ne sont pas "
+    "en accès libre. Ce biais pousse l'IS simulé vers le haut, mécaniquement.",
+    "**Pas d'intégration fiscale.** Les groupes sont modélisés comme des unités légales "
+    "indépendantes, ce qui surestime le nombre d'entreprises au taux réduit.",
+    "**Pas de crédits d'impôt** (CIR et autres) : l'IS simulé est un IS avant créances.",
+    "**Le ratio fiscal/comptable est un scalaire national unique.** Le résultat fiscal "
+    "n'est pas le résultat comptable, et aucune source ouverte ne publie l'écart par "
+    "entreprise. Ce seul choix domine l'écart sur l'IS.",
+    "**Exercices supposés calendaires.** SIRENE et ESANE ne portent pas de dates "
+    "d'exercice, alors que le taux normal bascule sur les exercices *ouverts* et la "
+    "tranche à taux réduit sur les exercices *clos* (D-020).",
+    "**L'assiette de CVAE est approchée par la valeur ajoutée comptable.** Les loyers, "
+    "le crédit-bail et la location-gérance sont des consommations intermédiaires en "
+    "comptabilité mais ne sont pas déductibles de la valeur ajoutée fiscale : la CVAE "
+    "simulée est donc sous-estimée, d'autant plus que l'entreprise loue ses actifs. Le "
+    "biais est corrélé au secteur, il ne se corrige donc pas par un facteur global "
+    "(D-021).",
+    "**La CEBGE est calculée sur un seul exercice.** Son assiette légale est la moyenne "
+    "de l'IS de deux exercices et ses seuils se testent sur deux années ; la population "
+    "n'a qu'une année, donc l'exercice précédent est supposé identique. Les entrées et "
+    "sorties de champ créées par le seuil de 1,5 Md€ du second exercice — précisément là "
+    "où le rendement 2026 se joue — ne sont pas représentées (D-022).",
+]
+
+
+@lru_cache(maxsize=1)
+def _firm_population() -> Any:
+    import polars as pl
+
+    from impots.entreprises.build import PROCESSED as FIRM_PROCESSED
+
+    path = FIRM_PROCESSED / f"firms_{FIRM_VINTAGE}.parquet"
+    if not path.exists():
+        raise HTTPException(
+            status_code=503,
+            detail="Aucune population d'entreprises n'a été construite. Lancez "
+                   "`impots entreprises build`.",
+        )
+    return pl.read_parquet(path)
+
+
+def _firm_response(aggregates: Any, year: int, timings: dict[str, float]) -> FirmResponse:
+    from impots.entreprises.build import PROCESSED as FIRM_PROCESSED
+
+    manifest = FIRM_PROCESSED / f"firms_{FIRM_VINTAGE}.manifest.json"
+    synthetic = True
+    if manifest.exists():
+        synthetic = bool(json.loads(manifest.read_text(encoding="utf-8"))["cells_are_synthetic"])
+    note = FIRM_NOTE
+    if synthetic:
+        note = (
+            "ATTENTION : population construite à partir de cellules synthétiques de test, "
+            "pas de SIRENE × ESANE. Rien de ce qui suit n'est une affirmation sur la "
+            "France. " + note
+        )
+    return FirmResponse(
+        meta=FirmMeta(
+            vintage=FIRM_VINTAGE, year=year, cells_are_synthetic=synthetic,
+            n_firms=aggregates.n_firms, turnover=aggregates.turnover,
+            share_zero_is=aggregates.share_zero_is,
+            note=note, limitations=FIRM_LIMITATIONS,
+        ),
+        totals=aggregates.totals,
+        totals_reform=aggregates.totals_reform,
+        deltas=aggregates.deltas,
+        reform_cost=aggregates.reform_cost,
+        cells=[FirmCell.model_validate(vars(cell)) for cell in aggregates.cells],
+        by_size=[FirmSizeRow.model_validate(vars(row)) for row in aggregates.by_size],
+        timings=timings,
+    )
+
+
+@app.get("/entreprises/baseline", response_model=FirmResponse)
+def firms_baseline(year: int = Query(default=2026, ge=2022, le=2030)) -> FirmResponse:
+    """Current-law firm aggregates, incidence table and effective-rate profile."""
+    from impots.entreprises import aggregate as firm_aggregate
+    from impots.entreprises import runner as firm_runner
+
+    started = time.perf_counter()
+    result = firm_runner.run(_firm_population(), year=year)
+    aggregates = firm_aggregate.aggregate(result.firms)
+    return _firm_response(
+        aggregates, year,
+        {**result.timings, "total_s": round(time.perf_counter() - started, 3)},
+    )
+
+
+@app.post("/entreprises/simulate", response_model=FirmResponse)
+def firms_simulate(request: FirmSimulateRequest) -> FirmResponse:
+    """Price a firm-tax reform. Synchronous: the whole population runs in
+    milliseconds, so there is no quick tier here."""
+    from impots.entreprises import aggregate as firm_aggregate
+    from impots.entreprises import runner as firm_runner
+
+    started = time.perf_counter()
+    try:
+        result = firm_runner.run(_firm_population(), year=request.year, reform=request.reform)
+    except firm_runner.FirmRunError as error:
+        raise HTTPException(status_code=500, detail=str(error)) from error
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+
+    aggregates = firm_aggregate.aggregate(result.firms)
+    return _firm_response(
+        aggregates, request.year,
+        {**result.timings, "total_s": round(time.perf_counter() - started, 3)},
     )
 
 

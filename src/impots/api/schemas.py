@@ -18,6 +18,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from impots.entreprises.reforms import FirmReformSpec
+
 # Year window Phase 0 will answer for. The golden values are 2024; the engine
 # holds law well outside this range, but nothing here has been checked against it.
 MIN_YEAR = 2022
@@ -399,4 +401,81 @@ class PopulationResponse(BaseModel):
     reform_cost: float | None = None
     deciles: list[DecileRow] = Field(default_factory=list)
     reconciliation: list[ReconciliationLine] = Field(default_factory=list)
+    timings: dict[str, float] = Field(default_factory=dict)
+
+
+# --------------------------------------------------------------------------- #
+# Firms (Phase 2) — PHASE2_SPEC §4
+#
+# Synchronous: the whole IS population prices in well under a second, so there is
+# no quick tier and no batch machinery on this side.
+# --------------------------------------------------------------------------- #
+class FirmSimulateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    reform: FirmReformSpec
+    year: Annotated[int, Field(ge=2022, le=MAX_YEAR + 4)] = 2026
+
+    @model_validator(mode="after")
+    def _check_reform(self) -> FirmSimulateRequest:
+        if self.reform.is_empty():
+            raise ValueError(
+                "Une réforme est requise : sans réforme, /entreprises/baseline sert "
+                "les agrégats de référence sans refaire tourner le moteur."
+            )
+        return self
+
+
+class FirmCell(BaseModel):
+    """One sector x size cell of the incidence table."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    naf_section: str
+    taille: str
+    n_firms: float
+    turnover: float
+    tax_baseline: float
+    mean_effective_rate: float
+    tax_reform: float | None = None
+    mean_delta: float | None = None
+    delta_effective_rate: float | None = None
+    share_affected: float | None = None
+
+
+class FirmSizeRow(BaseModel):
+    """The effective-rate profile — the firm analogue of the interdecile ratio."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    taille: str
+    n_firms: float
+    mean_effective_rate: float
+    median_effective_rate: float
+    share_zero_tax: float
+
+
+class FirmMeta(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    vintage: str
+    year: int
+    cells_are_synthetic: bool
+    n_firms: float
+    turnover: float
+    share_zero_is: float
+    note: str
+    limitations: list[str]
+
+
+class FirmResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    meta: FirmMeta
+    totals: dict[str, float]
+    totals_reform: dict[str, float] = Field(default_factory=dict)
+    deltas: dict[str, float] = Field(default_factory=dict)
+    reform_cost: float | None = None
+    cells: list[FirmCell] = Field(default_factory=list)
+    by_size: list[FirmSizeRow] = Field(default_factory=list)
     timings: dict[str, float] = Field(default_factory=dict)

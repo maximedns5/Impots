@@ -1,0 +1,18 @@
+description: "Pente du bareme CVAE, tranche 10 - 50 M€ (CGI art. 1586 quater, I-d)"
+metadata:
+  unit: /1
+  reference:
+    2026-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048860944
+values:
+  2024-01-01:
+    value: 0.00019
+  2025-01-01:
+    value: 0.00013
+  2026-01-01:
+    value: 0.00019
+  2028-01-01:
+    value: 0.00013
+  2029-01-01:
+    value: 6e-05
+  2030-01-01:
+    value: null

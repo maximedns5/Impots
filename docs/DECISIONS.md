@@ -700,3 +700,115 @@ The normal rate carries **no value before 2022** on purpose: from 2019 to 2021 i
 was a two-bracket scale that also depended on turnover, which this module does not
 encode, and a query for an earlier year now resolves to nothing and fails loudly
 rather than returning a flat rate that never existed.
+
+## D-021 — CVAE: encoded in full, on an assiette that is a declared proxy
+Date: 2026-09-01 · Status: accepted · Evidence: CGI art. 1586 ter–septies confirmed against Légifrance and BOFiP BOI-CVAE-LIQ-10 (19/11/2025); DGFiP notice 1329-AC millésime 2026
+
+The CVAE placeholder is gone; the schedule is encoded from the primary text. Four
+things the confirmation settled, each of which the obvious implementation gets
+wrong.
+
+**The rate schedule is continuous, not marginal.** Each bracket formula yields the
+*average* rate applied to the whole value added — there are no stacked brackets, so
+the household module's barème machinery does not apply here and `verify_scales`
+has nothing barème-shaped to guard. That is a change from what D-007's note
+anticipated, recorded here so the next reader does not go looking for it.
+
+**The rate is rounded to the hundredth of a percentage point, half-up.** Skipping
+this turns a step function into a continuous one and moves the rate by up to ±6 %
+at the bottom of the schedule. Three official worked examples (CA 2.7 M€ → 0.08 %,
+6.2 M€ → 0.17 %, 40.1 M€ → 0.28 %) pin the formulas and the rounding together and
+are kept as tests. Sizing a franchise test with the *unrounded* rate made it pass
+for the wrong reason on the first attempt, which is now written into the test.
+
+**The 2026 rate goes up, not down.** LF 2025 art. 62 deferred the phase-out by
+three years, so the maximum rate returns from 0.19 % (2025) to 0.28 % (2026)
+before resuming its decline and lapsing in 2030. Anyone assuming a monotone
+phase-out codes the wrong number, so the trajectory is a test.
+
+**Two thresholds that are not the same threshold.** 152 500 € puts a firm in
+scope; the rate is nil below 500 000 €. And since 2024 there is no minimum
+contribution, only a franchise — the CVAE is owed from 64 €, not 63 €.
+
+**What is not right, and cannot be made right from open data.** The base is the
+*accounting* value added from ESANE, because no open source publishes the fiscal
+one. Rents, crédit-bail and location-gérance are intermediate consumption in
+accounting but are **not** deductible from the CVAE base, so the simulated
+assiette is understated — most for firms that lease their assets, which is
+correlated with sector. The bias therefore distorts the incidence table and not
+only the total, and cannot be removed by a single national factor. It is in the L1
+banner and in the reconciliation report, not only here.
+
+## D-022 — CEBGE: encoded on a stationarity assumption, stated rather than hidden
+Date: 2026-09-01 · Status: accepted · Evidence: LF 2025 art. 48 and LF 2026 art. 12 confirmed against Légifrance/JO; BOFiP BOI-IS-AUT-60 (12/08/2026)
+
+The CEBGE is real, renewed, and not in the CGI: it lives in article 48 of the LF
+2025, amended in place by article 12 of the LF 2026. A parameter store keyed on
+CGI articles needs a slot for it, which is why it sits at the tree's root.
+
+**Two features dominate the yield and the naive reading has neither.** The base is
+the **average of two exercices' IS**, so a firm whose profit collapsed still pays
+on the average. And each threshold carries a **100 M€ smoothing band** over which
+the rate ramps linearly — without it a firm at 1.50 bn would pay in full what a
+firm at 1.49 bn does not pay at all. The upper band interpolates *between* the two
+rates (20.6 % → 41.2 %) rather than ramping from zero; coding it like the lower
+band undercharges by 16.5 points. Both published worked examples are tests.
+
+**The population has one year, and the statute tests two.** Liability, rate and
+smoothing all read turnover across the current and preceding exercice, and the
+base needs the prior exercice's IS. Our firms have a single year. Rather than
+default the prior term to zero — which would silently halve every base, the exact
+shape of D-005 and D-011 — `is_avant_report` carries a **formula** returning this
+year's IS, so the assumption is stationarity, it is visible in the code, and a
+population that supplies a real prior year overrides it because an input beats a
+formula.
+
+**What that assumption costs.** The second exercice's threshold is 1.5 bn tested
+on *that exercice alone*, disregarding the prior year. So a firm at 1.2 bn in 2026
+after 1.1 bn in 2025 leaves the tax it was in the year before, and a firm crossing
+1.5 bn enters. Those entries and exits are precisely where the 2026 yield moves,
+and a stationary population cannot show them. Declared in the banner; it is a
+reason the CEBGE line is reported as mechanical arithmetic and not as a forecast.
+
+**Reviving a lapsed CEBGE is refused, not improvised.** The parameters go null
+after the second exercice. A reform knob that moved the threshold in a later year
+would have no band width to derive the smoothing from, and putting 100 M€ back
+would be inserting a number no source supports for that year. The knob raises with
+that sentence instead. Relatedly, a fully-null parameter is *removed* from the
+OpenFisca tree rather than set to `None`: the guard is `hasattr`, and an `is None`
+check raises `ParameterNotFoundError` from inside a formula instead of returning
+zero.
+
+## D-023 — The firm parameters rest on research whose adversarial pass ran once
+Date: 2026-09-01 · Status: accepted · Evidence: workflow wf_ec6ad4bc-ac8 — 6 of 11 agents returned
+
+The legislation confirmation behind D-020, D-021 and D-022 was run as a fan-out
+with a verifier per topic. **Six of eleven agents returned; one verifier out of
+five did.** The IS core was verified. CVAE, the CEBGE, the C3S and the validation
+figures rest on a single agent's confirmation each, unverified.
+
+That is worth recording because of what the one completed verification found. It
+returned `SCOPE_PROBLEM` with twelve defects against a report whose *values* were
+all correct — among them a **verbatim quote that does not exist on the page it
+cites, carried under `confirmed_against_primary: true`**, and a single un-pinned
+Légifrance URL backing four differently-dated rows, which resolves to the current
+text and so "confirms" a 2002 parameter against the 2026 statute.
+
+So the prior is explicit: on this evidence a single-agent confirmation gets the
+numbers right and the citations wrong. The values encoded in D-021 and D-022 are
+internally consistent, reproduce five published worked examples the agents did not
+author, and match the statutory structure — that is real evidence, and it is why
+they were encoded. Their **citations** are not yet at the standard the IS core's
+are, and the parameter YAML carries the URLs as given.
+
+Consequences taken now, rather than left as intent:
+
+* No firm figure is published as validated on the strength of these citations. The
+  reconciliation report's fidelity column says which lines rest on confirmed
+  sources and which on unverified ones.
+* The IS-core corrections the verifier listed — date-pinned URLs per parameter
+  version, the groupe-fiscal member exclusion, the ordering of the 42 500 € slice
+  after deficit imputation — are open work, not silently absorbed.
+* Re-running the four missing verifiers is the first item of firm-module work, and
+  it is cheap. It is not a blocker for the module's arithmetic, which is what
+  P2 gates on.

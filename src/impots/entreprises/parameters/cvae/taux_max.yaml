@@ -1,0 +1,28 @@
+description: "Taux maximal de CVAE, CA > 50 M€ (CGI art. 1586 quater, I-e)"
+# Trajectoire d'extinction reportee de trois ans par la LF 2025 (loi 2025-127 art. 62)
+# : le taux REMONTE de 0,19 % (2025) a 0,28 % (2026), il ne baisse pas. La CVAE est
+# abrogee au 1er janvier 2030, derniere imposition due au titre de 2029 — d'ou la
+# valeur nulle.
+metadata:
+  unit: /1
+  reference:
+    2026-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048860944
+values:
+  2010-01-01:
+    value: 0.015
+  2021-01-01:
+    value: 0.0075
+  2023-01-01:
+    value: 0.00375
+  2024-01-01:
+    value: 0.0028
+  2025-01-01:
+    value: 0.0019
+  2026-01-01:
+    value: 0.0028
+  2028-01-01:
+    value: 0.0019
+  2029-01-01:
+    value: 0.0009
+  2030-01-01:
+    value: null

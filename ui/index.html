@@ -416,6 +416,38 @@ table.recon td:first-child { text-align: left; font-family: var(--sans); font-si
 table.recon td.st { font-family: var(--sans); font-size: 11px; }
 .ok2 { color: var(--vert); } .bad2 { color: var(--rouge); } .spent { color: var(--ink-faint); font-style: italic; }
 
+/* firm tab */
+.firm-knobs {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
+  gap: 12px 16px; margin-bottom: 18px;
+}
+.rate-chart { margin: 4px 0 20px; }
+.rate-chart .row {
+  display: grid; grid-template-columns: 56px 1fr 116px; align-items: center;
+  gap: 12px; padding: 5px 0;
+}
+.rate-chart .lbl3 {
+  font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); text-align: right;
+}
+.rate-chart .bar2 {
+  position: relative; height: 20px; background: var(--paper-deep);
+}
+.rate-chart .fill { position: absolute; top: 2px; bottom: 2px; left: 0; background: var(--bleu); }
+.rate-chart .fill.after { background: var(--rouge); opacity: .55; }
+.rate-chart .med {
+  position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ink);
+}
+.rate-chart .headline {
+  position: absolute; top: -3px; bottom: -3px; width: 1px;
+  background: var(--ink-faint);
+}
+.rate-chart .num2 {
+  font-family: var(--mono); font-size: 12px; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+table.cells td.pos { color: var(--rouge); }
+table.cells td.neg { color: var(--vert); }
+
 /* states */
 .state { padding: 40px 0; }
 .skel { height: 13px; background: var(--rule-soft); border-radius: 2px; margin-bottom: 14px; animation: pulse 1.3s ease-in-out infinite; }
@@ -631,6 +663,8 @@ footer code { font-family: var(--mono); font-size: 11px; }
           <span class="layer-tag">L2</span>Un foyer</button>
         <button id="tabPop" role="tab" aria-selected="false">
           <span class="layer-tag">L1+L2</span>Population</button>
+        <button id="tabFirms" role="tab" aria-selected="false">
+          <span class="layer-tag">L0</span>Entreprises</button>
       </div>
 
       <div id="paneFoyer">
@@ -691,6 +725,49 @@ footer code { font-family: var(--mono); font-size: 11px; }
         </div>
 
         <div id="popOut"></div>
+      </section>
+
+      <section id="paneFirms" hidden>
+        <div class="l1">
+          <span class="tag">Ce que cette population d'entreprises est</span>
+          <p id="firmNote">chargement…</p>
+          <details>
+            <summary>Ce que ce module ne sait pas faire</summary>
+            <ul id="firmLimits"></ul>
+          </details>
+          <span class="vintage" id="firmVintage"></span>
+        </div>
+
+        <div class="results-head">
+          <h2>Fiscalité des entreprises</h2>
+          <span class="timings" id="firmTimings"></span>
+        </div>
+
+        <div class="lbl" style="margin-bottom:8px">Votre réforme — impôt sur les sociétés</div>
+        <div class="firm-knobs">
+          <div><label for="fTauxNormal">Taux normal (%)</label>
+               <input type="number" id="fTauxNormal" step="0.5" placeholder="25"></div>
+          <div><label for="fTauxReduit">Taux réduit PME (%)</label>
+               <input type="number" id="fTauxReduit" step="0.5" placeholder="15"></div>
+          <div><label for="fPlafond">Tranche à taux réduit (€)</label>
+               <input type="number" id="fPlafond" step="500" placeholder="42500"></div>
+          <div><label for="fC3sTaux">Taux C3S (%)</label>
+               <input type="number" id="fC3sTaux" step="0.01" placeholder="0.16"></div>
+          <div><label for="fC3sAbat">Abattement C3S (€)</label>
+               <input type="number" id="fC3sAbat" step="1000000" placeholder="19000000"></div>
+          <div><label for="fCvaeTaux">Taux maximal CVAE (%)</label>
+               <input type="number" id="fCvaeTaux" step="0.01" placeholder="0.28"></div>
+        </div>
+        <p class="note" style="margin-top:0">
+          Laissez un champ vide pour le maintenir au droit courant. Les réformes portent sur
+          l'IS, ses contributions additionnelles, la CVAE et la C3S ; la CFE n'est pas
+          simulée. La CEBGE se réforme par paires seuil/taux, hors de ce panneau.
+        </p>
+        <div class="action" style="position:static; padding:14px 0 22px">
+          <button class="go" id="goFirms">Chiffrer sur les entreprises</button>
+        </div>
+
+        <div id="firmOut"></div>
       </section>
 
       <footer id="foot">
@@ -1109,14 +1186,19 @@ document.addEventListener("keydown", (e) => {
 let baselineMeta = null;
 
 function showTab(which) {
-  const population = which === "population";
-  $("tabFoyer").setAttribute("aria-selected", String(!population));
-  $("tabPop").setAttribute("aria-selected", String(population));
-  $("paneFoyer").hidden = population;
-  $("panePop").hidden = !population;
+  for (const [name, button, pane] of [
+    ["foyer", "tabFoyer", "paneFoyer"],
+    ["population", "tabPop", "panePop"],
+    ["entreprises", "tabFirms", "paneFirms"],
+  ]) {
+    const active = which === name;
+    $(button).setAttribute("aria-selected", String(active));
+    $(pane).hidden = !active;
+  }
 }
 $("tabFoyer").onclick = () => showTab("foyer");
 $("tabPop").onclick = () => { showTab("population"); loadPopulationMeta(); };
+$("tabFirms").onclick = () => { showTab("entreprises"); loadFirmMeta(); };
 
 async function loadPopulationMeta() {
   if (baselineMeta) return;
@@ -1275,6 +1357,166 @@ function renderPopulation(data) {
     `${data.meta.sampled_households ? eur.format(data.meta.sampled_households) + " ménages · " : ""}` +
     `${t.total_s ? t.total_s + " s" : ""}`;
 }
+
+/* ------------------------------------------------------------ entreprises */
+let firmMeta = null;
+
+const FIRM_KNOBS = [
+  ["fTauxNormal", "is_taux_normal", 100],
+  ["fTauxReduit", "is_taux_reduit", 100],
+  ["fPlafond",    "is_plafond_taux_reduit", 1],
+  ["fC3sTaux",    "c3s_taux", 100],
+  ["fC3sAbat",    "c3s_abattement", 1],
+  ["fCvaeTaux",   "cvae_taux_max", 100],
+];
+
+function firmReformSpec() {
+  const spec = {};
+  for (const [id, key, scale] of FIRM_KNOBS) {
+    const raw = $(id).value;
+    if (raw !== "" && raw !== null && !Number.isNaN(Number(raw))) spec[key] = Number(raw) / scale;
+  }
+  return Object.keys(spec).length ? spec : null;
+}
+
+async function loadFirmMeta() {
+  if (firmMeta) return;
+  try {
+    const response = await fetch(`${API}/entreprises/baseline`);
+    if (!response.ok) {
+      $("firmNote").textContent = detailMessages((await response.json()).detail).join(" ");
+      return;
+    }
+    const data = await response.json();
+    firmMeta = data;
+    $("firmNote").textContent = data.meta.note;
+    $("firmLimits").innerHTML = data.meta.limitations
+      .map((l) => `<li>${l.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")}</li>`).join("");
+    $("firmVintage").textContent =
+      `millésime ${data.meta.vintage} · année ${data.meta.year} · ` +
+      `${eur.format(Math.round(data.meta.n_firms / 1e4) / 100)} M entreprises · ` +
+      `${(data.meta.share_zero_is * 100).toFixed(1).replace(".", ",")} % ne paient pas d'IS`;
+    renderFirms(data);
+  } catch (error) {
+    $("firmNote").textContent =
+      `Moteur injoignable (${API}). Lancez l'API, puis \`impots entreprises build\`.`;
+  }
+}
+
+/* The one chart the spec allows, and the module's signature output: the effective
+   rate on profit by firm size. The vertical hairline is the headline 25 % rate —
+   the point being how far the realised rate sits from it, and in which direction. */
+function rateChart(rows, headline = 0.25) {
+  const extent = Math.max(...rows.map((r) => r.mean_effective_rate), headline) * 1.25;
+  return `<div class="rate-chart">${rows.map((r) => `
+    <div class="row">
+      <span class="lbl3">${r.taille}</span>
+      <span class="bar2">
+        <i class="fill" style="width:${(r.mean_effective_rate / extent) * 100}%"></i>
+        <i class="med" style="left:${(r.median_effective_rate / extent) * 100}%"
+           title="médiane"></i>
+        <i class="headline" style="left:${(headline / extent) * 100}%"></i>
+      </span>
+      <span class="num2">${(r.mean_effective_rate * 100).toFixed(1).replace(".", ",")} %</span>
+    </div>`).join("")}</div>
+  <p class="chart-legend" style="margin-left:68px">
+    Taux effectif moyen sur le bénéfice imposable ; le trait noir est la médiane, le trait fin
+    le taux normal de 25 %. Les grandes entreprises dépassent le taux nominal parce que la C3S
+    frappe le chiffre d'affaires, bénéfice ou non.</p>`;
+}
+
+function renderFirms(data) {
+  const bn = (x) => (Math.abs(x) / 1e9).toFixed(2).replace(".", ",");
+  let html = "";
+
+  if (data.reform_cost !== null && data.reform_cost !== undefined) {
+    const raises = data.reform_cost < 0;
+    html += `<div class="headline">
+      <span class="k">${raises ? "La réforme rapporte" : "La réforme coûte"}</span>
+      <span class="v ${raises ? "up" : "down"}">${bn(data.reform_cost)} Md €</span>
+      <span class="sub">Effet mécanique au premier jour, à comportement inchangé. Aucune
+        incidence : qui supporte réellement l'impôt sur les sociétés est une question
+        comportementale, donc de phase 3.</span>
+    </div>`;
+  }
+
+  const rows = [["impot_societes", "Impôt sur les sociétés"],
+                ["contribution_sociale_is", "Contribution sociale sur l'IS"],
+                ["cebge", "Contribution exceptionnelle (CEBGE)"],
+                ["cvae", "CVAE"], ["c3s", "C3S"]];
+  html += `<table class="out"><thead><tr><th></th><th>Droit courant</th>` +
+    (data.deltas && Object.keys(data.deltas).length ? `<th class="d">Δ</th>` : "") +
+    `</tr></thead><tbody>` +
+    rows.filter(([k]) => data.totals[k] !== undefined).map(([k, label]) => {
+      const delta = data.deltas ? data.deltas[k] : undefined;
+      const cell = delta === undefined ? "" :
+        `<td class="d ${delta > 0 ? "down" : delta < 0 ? "up" : "nil"}">${
+          Math.abs(delta) < 5e6 ? "—" : (delta > 0 ? "+" : "−") + bn(delta) + " Md €"}</td>`;
+      return `<tr><td>${label}</td><td>${bn(data.totals[k])} Md €</td>${cell}</tr>`;
+    }).join("") + `</tbody></table>`;
+
+  html += `<h2 style="font-family:var(--serif);font-weight:600;font-size:19px;margin:26px 0 10px">
+      Taux effectif par taille d'entreprise</h2>` + rateChart(data.by_size);
+
+  if (data.cells.length) {
+    const withDelta = data.cells.some((c) => c.mean_delta !== null && c.mean_delta !== undefined);
+    const shown = [...data.cells].sort((a, b) =>
+      Math.abs(b.mean_delta ?? b.tax_baseline) - Math.abs(a.mean_delta ?? a.tax_baseline)).slice(0, 12);
+    html += `<h2 style="font-family:var(--serif);font-weight:600;font-size:19px;margin:26px 0 10px">
+        Incidence par secteur et taille</h2>
+      <table class="out cells"><thead><tr>
+        <th>Secteur</th><th>Taille</th><th>Entreprises</th><th>Taux effectif</th>
+        ${withDelta ? `<th class="d">Δ moyen</th><th>Concernées</th>` : ""}
+      </tr></thead><tbody>` + shown.map((c) => `
+        <tr><td>${escapeHtml(c.naf_section)}</td><td>${escapeHtml(c.taille)}</td>
+        <td>${eur.format(Math.round(c.n_firms))}</td>
+        <td>${(c.mean_effective_rate * 100).toFixed(1).replace(".", ",")} %</td>
+        ${withDelta ? `<td class="d ${(c.mean_delta ?? 0) > 0 ? "pos" : "neg"}">${
+          (c.mean_delta ?? 0) >= 0 ? "+" : "−"}${eur.format(Math.abs(Math.round(c.mean_delta ?? 0)))} €</td>
+          <td>${((c.share_affected ?? 0) * 100).toFixed(0)} %</td>` : ""}</tr>`).join("")
+      + `</tbody></table>
+      <p class="note">Sections NAF × classes de taille. Aucun résultat par entreprise :
+        chaque financier est un tirage à l'intérieur d'une cellule publiée, donc seule la
+        cellule a un sens.</p>`;
+  }
+
+  $("firmOut").innerHTML = html;
+  const t = data.timings || {};
+  $("firmTimings").textContent = t.total_s ? `${Math.round(t.total_s * 1000)} ms` : "";
+}
+
+async function runFirms() {
+  const spec = firmReformSpec();
+  if (!spec) {
+    $("firmOut").innerHTML = `<div class="err"><h3>Aucune réforme</h3>
+      <p>Modifiez au moins un paramètre ci-dessus. Le chiffrage porte sur l'écart au droit
+         courant ; les niveaux de référence sont déjà affichés.</p></div>`;
+    if (firmMeta) renderFirms(firmMeta);
+    return;
+  }
+  $("goFirms").disabled = true;
+  $("goFirms").textContent = "Chiffrage…";
+  try {
+    const response = await fetch(`${API}/entreprises/simulate`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reform: spec, year: 2026 }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      $("firmOut").innerHTML = `<div class="err"><h3>Requête refusée (${response.status})</h3>` +
+        detailMessages(data.detail).map((m) => `<p>${escapeHtml(m)}</p>`).join("") + `</div>`;
+      return;
+    }
+    renderFirms(data);
+  } catch (error) {
+    $("firmOut").innerHTML = `<div class="err"><h3>Moteur injoignable</h3>
+      <p>Aucune réponse de ${API}.</p><code>uvicorn impots.api.main:app</code></div>`;
+  } finally {
+    $("goFirms").disabled = false;
+    $("goFirms").textContent = "Chiffrer sur les entreprises";
+  }
+}
+$("goFirms").onclick = runFirms;
 
 /* ----------------------------------------------------------------- boot */
 async function boot() {
