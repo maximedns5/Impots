@@ -1,0 +1,11 @@
+description: Fraction du bénéfice imposable au taux réduit PME
+metadata:
+  unit: currency
+  reference:
+    2023-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044983233
+values:
+  # Relevé de 38 120 € à 42 500 € par la loi de finances pour 2023 (art. 37).
+  2022-01-01:
+    value: 38120
+  2023-01-01:
+    value: 42500

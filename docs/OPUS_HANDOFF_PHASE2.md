@@ -19,9 +19,11 @@ comment.
 Working rules:
 
 1. **First actions**: full test suite green; `python scripts/verify_firm_engine.py`
-   green; then close the §0.5 pre-flight ledger P1→P5 in order (LICENSE,
-   data/ pre-commit guard, calibrate.py, CROSSCHECK consequence in the README,
-   ERFS request status). Each is one commit with its decision-log entry.
+   green; then the REVISED §0.5 pre-flight (2026-09-01): the old P1–P4 are
+   closed — what blocks you is extracting and TESTING the shared reconciliation
+   machinery out of `population/reconcile.py` before building the firm report
+   on it. Read `docs/AUDIT_2026-09-01.md` §04 and §07 first: the weight-defect
+   and formatter-defect entries are the regression tests to write.
 2. **The ERFS interrupt rule stands**: the day Progedo delivers, pause Phase 2,
    run the Phase 1C migration, come back.
 3. Firm golden tests use RELATIVE tolerance 1e-5 (float32, spec §1.4) — never

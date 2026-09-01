@@ -1,0 +1,8 @@
+description: Abattement d'assiette de la C3S (CSS art. L137-31)
+metadata:
+  unit: currency
+  reference:
+    2016-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000036392544
+values:
+  2016-01-01:
+    value: 19000000

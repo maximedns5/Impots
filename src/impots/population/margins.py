@@ -17,23 +17,8 @@ listed there rather than buried in a constant.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Literal
-
-Use = Literal["calibration", "validation", "context"]
-
-
-@dataclass(frozen=True)
-class Figure:
-    value: float
-    unit: str
-    year: int
-    scope: str
-    source: str
-    url: str
-    use: Use
-    caveat: str = ""
-
+from impots.reporting import Figure, Use
+from impots.reporting import figures_by_use as _figures_by_use
 
 # --------------------------------------------------------------------------- #
 # Wage distribution — INSEE Base Tous Salariés 2024
@@ -375,12 +360,4 @@ HOUSEHOLDS = Figure(
 
 def figures_by_use(use: Use) -> dict[str, Figure]:
     """Every module-level `Figure` declared with the given use."""
-    found: dict[str, Figure] = {}
-    for name, value in list(globals().items()):
-        if isinstance(value, Figure) and value.use == use:
-            found[name] = value
-        elif isinstance(value, dict):
-            for key, item in value.items():
-                if isinstance(item, Figure) and item.use == use:
-                    found[f"{name}[{key}]"] = item
-    return found
+    return _figures_by_use(globals(), use)

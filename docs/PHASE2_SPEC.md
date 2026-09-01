@@ -22,15 +22,33 @@ A new package, `src/impots/entreprises/`, that answers: **what does a change to 
 
 ---
 
-## 0.5 Pre-flight — the consolidated debt ledger, closed before firm code
+## 0.5 Pre-flight — revised 2026-09-01 after the Phase 0/1 audit
 
-In dependency order; each is one commit with its decision-log entry. Skip any already done — check, don't assume.
+The original P1–P4 (LICENSE, data/ pre-commit guard, calibrate.py, CROSSCHECK)
+are **closed** — verified in the tree on 2026-09-01. What remains, in order:
 
-* **P1 — LICENSE.** `AGPL-3.0-or-later` text at repo root, README licence section (code AGPL; data licensing independent: EEC Licence Ouverte, ERFS non-redistributable), `pyproject.toml` licence field. Close D-001's licence half; log D-018 (fork-vs-contribute is also settled there: in-repo package, OpenFisca conventions, offer upstream when substantial — review §2).
-* **P2 — the data/ pre-commit guard** (review §4, due *before* the ERFS request): a hook refusing any commit adding files under `data/` (allowlist `.gitkeep`, `*.manifest.json`, `MANIFEST.json`), plus a CI step asserting the tree contains no data files. This now also protects the firm pipeline's raw drops.
-* **P3 — `calibrate.py`** per D-017/review §1: margins-agnostic IPF raking, bounds [0.2, 5], convergence + bounds tests; one documented run on the A' population (households-by-type × age-sex) with before/after in the reconciliation report. The same module reweights the firm population (§3.4) — write it margin-set-generic.
-* **P4 — CROSSCHECK: done 2026-08-29, record the consequence.** Both cases matched the DGFiP simulator **to the euro** (812/812, 1 274/1 274; RFR and parts identical; details in tests/golden/CROSSCHECK.md). The engine's IR chain now has external corroboration. Update the README's correctness paragraph accordingly — the publication blocker is lifted for the *household mechanical* layer only; A'-population and firm numbers keep their banners.
-* **P5 — ERFS.** Confirm the Progedo request is submitted (docs/PHASE1C_ERFS.md §2). Phase 1C outranks Phase 2 the day the data arrives: pause firm work, do the migration, return. Plan for the interruption instead of resenting it.
+* **P1 — test `reconcile.py` before it gets a sibling.** The audit's top open
+  item: the module that generates the credibility page has 345 untested lines
+  and has carried two real defects. Phase 2 will produce a *second*
+  reconciliation report; do not copy untested machinery. Extract the shared
+  report engine (tolerance evaluation, take-up bridges, spent/validation
+  separation, formatting — the euro-vs-ratio formatter bug is the regression
+  test to write first) into a tested module both reports use. This is the one
+  genuinely blocking item.
+* **P2 — CI tree-assert completeness.** The pre-commit hook exists
+  (`.githooks/`, `core.hooksPath`); confirm the CI workflow also refuses data
+  files in the tree (the hook alone doesn't protect a clone that never set
+  hooksPath), and that CI has run at least once on a real runner — which
+  requires the remote Max owns (audit action 5). Firm code may start before
+  this lands, but nothing merges after it exists.
+* **P3 — ERFS request** (Max, ten minutes, still unsent as of the audit): not
+  blocking firm work, but the interrupt rule below depends on it being in
+  flight. Chase it at every handoff until sent.
+* **P4 — audit follow-ups that do NOT block Phase 2**, tracked so silence isn't
+  drift: the CAF cross-check (benefit levels have no independent validation),
+  and the full-N reconciliation rerun (the committed comparison ran on a 50k
+  sample after the full run was OOM-killed on the 8 GB machine — the reviewing
+  session has offered to run it in the cloud container).
 
 ---
 
@@ -111,8 +129,8 @@ Per cell: CA, VA, EBE, résultat totals/means from ESANE ("caractéristiques com
 ### 3.4 Calibration vs validation, restated for firms
 **Spent**: firm counts per NAF×size cell (SIRENE), aggregate CA and VA per sector (ESANE), using P3's `calibrate.py` where reweighting is needed. **Validation, untouched**: IS net receipts, C3S receipts, CVAE receipts, CS 3.3 % receipts, share of firms at zero IS, effective-rate-by-size profile (DGFiP/CPO publish one — the most informative shape line, the firm analogue of D9/D1). Declared tolerances: C3S ±10 %, CVAE ±15 %, IS **±20 %** (heroic: profit dispersion + fiscal/comptable + no carry-forward all land here; declare, don't hide), zero-IS share ±10 pts.
 
-### 3.5 Guards
-NaN=0; CA ≥ 0; VA ≤ CA (flag violations); every cell's simulated count equals its calibrated count to the unit.
+### 3.5 Guards — extended 2026-09-01 with the audit's weight lessons
+NaN=0; CA ≥ 0; VA ≤ CA (flag violations); every cell's simulated count equals its calibrated count to the unit. **Plus, from the Phase 1 defect table** (household weights summed instead of averaged: ×2.2 on every aggregate; PPS rescaled on top of self-weighting: ×2.8 — both silent, all guards green): every weighting step asserts a **weight identity** — the weighted firm count and weighted CA total immediately after the step equal the values immediately before it (or the calibration target, where the step *is* calibration), to 1e-6 relative. Any sampling scheme states in a comment whether it is self-weighting, and a test proves the claim.
 
 ---
 
@@ -125,6 +143,15 @@ API: `POST /entreprises/simulate` `{reform: FirmReformSpec, year}` → the three
 ---
 
 ## 5. Testing
+
+**Source discipline first** (audit finding: all six agents that fetched external
+statistics came back with scope problems on adversarial re-check — a superseded
+national-accounts vintage as a calibration target, a per-part RFR read as a
+total). Every published figure entering §3.4's ledger — calibration or
+validation — is recorded with its exact source URL, vintage, and unit, and is
+**re-checked adversarially against a second source or the primary table** before
+first use; the check is noted next to the value in the reconciliation report's
+method notes.
 
 - Hand-derivable golden cases (the §1.4 prototype pattern): PME at the 42 500 € kink; CS 3.3 % at the 763 k abattement; CEBGE at each threshold; CVAE at barème edges; C3S at 19 M — each computed independently in the YAML comment, relative tolerance 1e-5.
 - Barème read-back tests for every scale-shaped parameter (D-007 portability).
