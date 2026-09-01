@@ -59,9 +59,42 @@ def test_parameters_resolve_by_date(tbs: object) -> None:
     operation on the tree."""
     p = tbs.parameters  # type: ignore[attr-defined]
     assert p.impot_societes.taux_normal("2026-01-01") == 0.25
-    assert p.impot_societes.taux_normal("2021-01-01") == pytest.approx(0.265)
-    assert p.impot_societes.plafond_taux_reduit("2022-01-01") == 38_120
     assert p.impot_societes.plafond_taux_reduit("2026-01-01") == 42_500
+
+
+def test_the_reduced_rate_slice_widened_for_fy2022_not_fy2023(tbs: object) -> None:
+    """Confirmed against Légifrance, and it caught an error in the first encoding.
+
+    The three parameters on the same page of CGI 219-I do not switch on the same
+    event. The 25 % rate and the 10 M€ turnover ceiling switch on exercices
+    *ouverts*; the 42 500 € profit slice switches on exercices **clos** à compter du
+    31 décembre 2022. For a calendar-year firm that means FY2022 already gets
+    42 500 €, and dating it from 2023 — the obvious reading — over-taxes every
+    small firm by 660 € for a whole year.
+    """
+    p = tbs.parameters.impot_societes  # type: ignore[attr-defined]
+    assert p.plafond_taux_reduit("2021-01-01") == 38_120
+    assert p.plafond_taux_reduit("2022-01-01") == 42_500
+
+
+def test_the_normal_rate_has_no_value_before_2022(tbs: object) -> None:
+    """From 2019 to 2021 the normal rate was a two-bracket scale that also depended
+    on turnover. This module does not encode that, so an earlier query resolves to
+    nothing and any formula using it fails — rather than silently applying a flat
+    rate that never existed."""
+    assert tbs.parameters.impot_societes.taux_normal("2021-01-01") is None  # type: ignore[attr-defined]
+
+
+def test_the_two_pme_turnover_thresholds_are_separate(tbs: object) -> None:
+    """They diverged in 2021 and sharing one constant would wrongly exempt every
+    firm between 7.63 M€ and 10 M€ from the contribution sociale.
+
+    CGI 219-I-b moved its reduced-rate ceiling to 10 M€; CSS art. 235 ter ZC left
+    the contribution sociale exemption at 7.63 M€.
+    """
+    p = tbs.parameters.impot_societes  # type: ignore[attr-defined]
+    assert p.plafond_ca_taux_reduit("2026-01-01") == 10_000_000
+    assert p.contribution_sociale.seuil_ca_exoneration("2026-01-01") == 7_630_000
 
 
 def test_no_parameter_node_is_a_python_keyword(tbs: object) -> None:

@@ -2,10 +2,19 @@ description: Fraction du bénéfice imposable au taux réduit PME
 metadata:
   unit: currency
   reference:
-    2023-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044983233
+    2022-01-01: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006308387
 values:
-  # Relevé de 38 120 € à 42 500 € par la loi de finances pour 2023 (art. 37).
-  2022-01-01:
+  # CGI art. 219-I-b. Relevé de 38 120 € à 42 500 € par la LF 2023 (art. 37).
+  #
+  # Trigger: exercices CLOS à compter du 31 décembre 2022 — NOT "ouverts", unlike
+  # the normal rate and the CA ceiling on the same page. For a calendar-year firm
+  # that means the 42 500 € slice already applies to FY2022, which is why the value
+  # changes at 2022-01-01 and not at 2023-01-01. Getting this wrong under-taxes
+  # nobody but over-taxes every small firm by 660 € for a whole year.
+  #
+  # The 100 000 € figure proposed in the PLF 2026 was NOT enacted; 42 500 € stands.
+  # Confirmed against Légifrance 2026-09-01.
+  2002-01-01:
     value: 38120
-  2023-01-01:
+  2022-01-01:
     value: 42500

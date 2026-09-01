@@ -657,3 +657,46 @@ covered — salaried households, no capital income, no réductions or crédits.
 Nothing else moved: the population's benefit levels remain unpublishable (D-015),
 the golden benefit lines were never covered by this check (the DGFiP IR simulator
 has no equivalent), and the corresponding CAF cross-check remains undone.
+
+## D-020 — Firm-tax parameters: what the primary sources changed
+Date: 2026-09-01 · Status: accepted · Evidence: legislation confirmation against Légifrance/BOFiP
+
+PHASE2_SPEC marks its tax parameters `[ENACTED]` — checked against secondary
+sources, to be confirmed against the primary text during M1. The confirmation ran
+and changed three things.
+
+**The PLF 2026 proposal to raise the reduced-rate slice from 42 500 € to
+100 000 € was never enacted.** 42 500 € stands. The spec flagged this as the
+figure to confirm and it was right to.
+
+**The three parameters on the same page of CGI 219-I do not switch on the same
+event, and the first encoding got one wrong.** The 25 % normal rate and the 10 M€
+turnover ceiling apply to exercices *ouverts* from their dates; the 42 500 €
+profit slice applies to exercices **clos à compter du 31 décembre 2022**. For a
+calendar-year firm that means FY2022 already gets 42 500 €. Dating it from 2023 —
+which is what "raised by the LF 2023" invites — over-taxes every eligible small
+firm by 660 € for a full year. Corrected, and pinned by a test that says why.
+
+**The two PME turnover thresholds diverged in 2021 and must never share a
+constant.** CGI 219-I-b moved the reduced-rate ceiling to 10 M€; CSS art. 235 ter
+ZC left the contribution sociale exemption at 7.63 M€. Reusing one "PME CA
+threshold" would wrongly exempt every firm between them. They were already
+separate parameters here, which is the trap not falling.
+
+**Two biases recorded rather than fixed**, because the population cannot support
+the fix:
+
+* *Exercice dates.* Every firm is treated as calendar-year, since SIRENE and
+  ESANE carry no exercice dates. A firm straddling the calendar year is taxed at
+  the wrong rate in a transition year, and the prorata rules cut in opposite
+  directions for the two thresholds — turnover is scaled **up** to twelve months,
+  the profit slice **down**.
+* *Group scope.* Conseil d'État, 13 March 2025, n° 481538 held that the turnover
+  test applies to the whole group holding a company, integrated or not — wider
+  than the statute read alone. Intégration fiscale is out of scope (§0), so the
+  eligible population here is over-stated at the margin.
+
+The normal rate carries **no value before 2022** on purpose: from 2019 to 2021 it
+was a two-bracket scale that also depended on turnover, which this module does not
+encode, and a query for an earlier year now resolves to nothing and fails loudly
+rather than returning a flat rate that never existed.
