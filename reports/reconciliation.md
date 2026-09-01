@@ -33,7 +33,7 @@ A figure used to **calibrate** the population is *spent*. The model was tuned to
 | RSA | 25.5 bn € | 12.4 bn € | +103.0% | +106.2% | ±25% | OUTSIDE tolerance | CNAF / DREES |
 | Aides au logement | 11.7 bn € | 16.0 bn € | -27.5% | -26.8% | ±25% | OUTSIDE tolerance | CNAF / DREES |
 | Niveau de vie médian | 22 780 | 25 920 | -12.7% | -12.1% | ±15% | within tolerance | INSEE Filosofi 2023 |
-| Rapport interdécile D9/D1 | 5 | 4 | +40.6% | +39.4% | ±15% | OUTSIDE tolerance | INSEE Filosofi 2023 |
+| Rapport interdécile D9/D1 | 4.88 | 3.50 | +40.6% | +39.4% | ±15% | OUTSIDE tolerance | INSEE Filosofi 2023 |
 
 ### What raking changed, and what it did not (D-017)
 

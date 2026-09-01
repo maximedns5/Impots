@@ -68,6 +68,12 @@ def _fmt(value: float | None, unit: str) -> str:
         return f"{value / 1e9:,.1f} bn €".replace(",", " ")
     if unit == "count":
         return f"{value / 1e6:,.2f} M".replace(",", " ")
+    # Ratios and euro amounts share the "raw" unit but not the right precision.
+    # Rounding to integers rendered an interdecile ratio of 4.88 as "5" against a
+    # published "3.5" shown as "4" — on the page whose whole job is stating how far
+    # off the model is.
+    if abs(value) < 100:
+        return f"{value:,.2f}".replace(",", " ")
     return f"{value:,.0f}".replace(",", " ")
 
 
