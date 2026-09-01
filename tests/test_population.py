@@ -24,6 +24,14 @@ from impots.population.aggregate import (
     weighted_quantiles,
 )
 from impots.population.build import SCHEMA
+from impots.population.calibrate import (
+    MAX_ITERATIONS,
+    Margin,
+    household_type,
+    rake,
+    standard_margins,
+    with_cells,
+)
 from impots.population.incomes import attach_incomes, quantile_curve, sample_curve
 from impots.population.runner import run, subsample
 from impots.population.skeleton import build_skeleton
@@ -325,3 +333,156 @@ def test_indifference_band_is_applied(population: pl.DataFrame) -> None:
     for row in agg.deciles:
         assert row.share_winners + row.share_losers + row.share_unaffected == pytest.approx(1.0)
     assert INDIFFERENCE_EUR == 10.0
+
+
+# --------------------------------------------------------------------------- #
+# raking (D-017)
+# --------------------------------------------------------------------------- #
+def test_raking_converges_and_hits_its_margins() -> None:
+    """A synthetic frame deliberately off its margins must be brought onto them."""
+    rng = np.random.default_rng(0)
+    n = 600
+    frame = pl.DataFrame({
+        "household_id": [f"h{i}" for i in range(n)],
+        "weight": rng.uniform(50, 500, n),
+        "hh_type": ["a"] * 400 + ["b"] * 200,
+        "age_sex": ["x_male"] * 300 + ["x_female"] * 300,
+    })
+    margin = Margin("t", "household", "hh_type", {"a": 100_000.0, "b": 100_000.0})
+    raked, diagnostics = rake(frame, [margin])
+
+    assert diagnostics.converged
+    assert diagnostics.iterations <= MAX_ITERATIONS
+    totals = raked.group_by("hh_type").agg(pl.col("weight").sum())
+    for row in totals.iter_rows():
+        assert row[1] == pytest.approx(100_000.0, rel=1e-6)
+    assert max(diagnostics.fit_after.values()) < 1e-6
+
+
+def test_raking_respects_the_weight_ratio_bounds() -> None:
+    """An unreachable margin must be clipped, not chased.
+
+    Unbounded raking will happily hand one household a weight of 40 000 to close a
+    margin, and that household then dominates every aggregate it appears in.
+    """
+    frame = pl.DataFrame({
+        "household_id": ["h0", "h1"],
+        "weight": [100.0, 100.0],
+        "hh_type": ["a", "b"],
+    })
+    # 'a' is asked for 50x its weight; the bound allows 5x.
+    margin = Margin("t", "household", "hh_type", {"a": 5_000.0, "b": 100.0})
+    raked, diagnostics = rake(frame, [margin], bounds=(0.2, 5.0))
+
+    ratios = raked["weight"].to_numpy() / 100.0
+    assert ratios.max() <= 5.0 + 1e-9
+    assert ratios.min() >= 0.2 - 1e-9
+    assert diagnostics.clipped_households >= 1
+    # and the miss is reported rather than hidden
+    assert diagnostics.fit_after["t"] > 0.5
+
+
+def test_raking_keeps_one_weight_per_household() -> None:
+    """Every member of a household is scaled by the same factor.
+
+    Letting members of one household drift apart would break every household-level
+    aggregate downstream — which is the whole reason the adjustment for a
+    person-level margin is averaged over the household in the first place.
+    """
+    frame = pl.DataFrame({
+        "household_id": ["h0", "h0", "h0", "h1", "h1"],
+        "weight": [10.0, 10.0, 10.0, 20.0, 20.0],
+        "hh_type": ["a", "a", "a", "b", "b"],
+    })
+    raked, _ = rake(frame, [Margin("t", "household", "hh_type", {"a": 60.0, "b": 20.0})])
+    for household in ("h0", "h1"):
+        weights = raked.filter(pl.col("household_id") == household)["weight"].to_numpy()
+        assert np.allclose(weights, weights[0])
+
+
+def test_person_level_margin_moves_the_right_direction() -> None:
+    """A household spanning several cells takes the mean of their factors."""
+    frame = pl.DataFrame({
+        "household_id": ["h0", "h0", "h1", "h1"],
+        "weight": [100.0, 100.0, 100.0, 100.0],
+        "age_sex": ["young_male", "young_male", "old_female", "old_female"],
+    })
+    targets = {"young_male": 400.0, "old_female": 100.0}
+    raked, diagnostics = rake(frame, [Margin("a", "person", "age_sex", targets)])
+    young = raked.filter(pl.col("age_sex") == "young_male")["weight"].to_numpy()
+    old = raked.filter(pl.col("age_sex") == "old_female")["weight"].to_numpy()
+    assert young[0] > 100.0, "an under-represented cell must be scaled up"
+    assert old[0] < 100.0, "an over-represented cell must be scaled down"
+    assert diagnostics.fit_after["a"] < 1e-6
+
+
+def test_raking_needs_a_margin() -> None:
+    with pytest.raises(ValueError, match="at least one margin"):
+        rake(pl.DataFrame({"household_id": ["h0"], "weight": [1.0]}), [])
+
+
+def test_household_typology_matches_insee_categories(population: pl.DataFrame) -> None:
+    """Derived from entity roles, not from the EEC's TYPLOG5, so the same margin
+    survives the move to ERFS (D-016)."""
+    typed = household_type(population)
+    assert set(typed["hh_type"].unique()) <= set(margins.HOUSEHOLDS_BY_TYPE)
+    counts = typed.group_by("household_id").agg(pl.col("hh_type").n_unique().alias("n"))
+    assert counts["n"].max() == 1, "a household has exactly one type"
+
+
+def test_an_adult_child_at_home_is_not_a_complex_household() -> None:
+    """INSEE counts a child of the family at any age; our tax roles stop at
+    rattachement age. Conflating the two put 2.6 M households in 'complexe'
+    against a census 1.1 M."""
+    frame = pl.DataFrame({
+        "household_id": ["h"] * 3,
+        "weight": [1.0] * 3,
+        "age": [58, 56, 30],
+        "role_menage": ["personne_de_reference", "conjoint", "autre"],
+    })
+    assert household_type(frame)["hh_type"][0] == "couple_avec_enfant"
+
+
+def test_a_lodger_of_similar_age_is_a_complex_household() -> None:
+    frame = pl.DataFrame({
+        "household_id": ["h"] * 3,
+        "weight": [1.0] * 3,
+        "age": [58, 56, 61],
+        "role_menage": ["personne_de_reference", "conjoint", "autre"],
+    })
+    assert household_type(frame)["hh_type"][0] == "complexe"
+
+
+def test_standard_margins_hold_age_sex_as_a_drift_constraint(population: pl.DataFrame) -> None:
+    """Its targets are the population's own 15+ totals, because EXTRIAN is already
+    calibrated on sex and age: the instruction is 'do not move these'."""
+    framed = with_cells(population)
+    margin_list = standard_margins(framed)
+    names = {margin.name for margin in margin_list}
+    assert names == {"household_type", "age_sex"}
+
+    age_sex = next(m for m in margin_list if m.name == "age_sex")
+    assert all(not cell.startswith("under_15") for cell in age_sex.targets), (
+        "synthesised children were never in EXTRIAN's calibration and must not be pinned"
+    )
+    weight = framed["weight"].to_numpy()
+    cells = framed["age_sex"].to_numpy()
+    for cell, target in age_sex.targets.items():
+        assert float(weight[cells == cell].sum()) == pytest.approx(target, rel=1e-12)
+
+
+def test_household_margins_sum_to_the_published_total() -> None:
+    """Raking to components that do not add up to their own total makes IPF chase a
+    contradiction it can never close."""
+    assert sum(margins.HOUSEHOLDS_BY_TYPE.values()) == pytest.approx(
+        margins.HOUSEHOLDS.value, abs=1.0
+    )
+
+
+def test_a_margin_the_model_is_fitted_to_is_marked_spent() -> None:
+    """D-014's rule, enforced rather than remembered: the household count became a
+    calibration target the moment raking started aiming at it, and presenting it as
+    validation would be claiming credit for hitting what we tuned to."""
+    assert margins.HOUSEHOLDS.use == "calibration"
+    assert margins.TOTAL_GROSS_WAGES.use == "calibration"
+    assert margins.IR_BAREME_ON_2024_INCOME.use == "validation"

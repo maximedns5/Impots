@@ -95,7 +95,7 @@ def cmd_manifest(_: argparse.Namespace) -> int:
 
 
 def cmd_build(args: argparse.Namespace) -> int:
-    path, provenance = build(vintage=args.vintage, seed=args.seed)
+    path, provenance = build(vintage=args.vintage, seed=args.seed, raking=not args.no_raking)
     print(f"wrote {path}")
     print(f"  {provenance['rows']:,} persons in {provenance['households']:,} households")
     incomes = provenance["incomes"]
@@ -105,6 +105,18 @@ def cmd_build(args: argparse.Namespace) -> int:
     print(f"  pensioners {incomes['pensioners'] / 1e6:.2f} M · "
           f"pensions {incomes['pensions_total'] / 1e9:.0f} bn")
     print(f"  synthesised children {provenance['skeleton']['children_synthesised']:,}")
+    raking = provenance.get("raking")
+    if raking:
+        print(f"  raked in {raking['iterations']} iterations · "
+              f"weight ratios {raking['weight_ratio_range'][0]:.2f}-"
+              f"{raking['weight_ratio_range'][1]:.2f} · "
+              f"{raking['clipped_households']} clipped · "
+              f"effective sample {raking['effective_sample_size']:,.0f} households"
+              .replace(",", " "))
+        for name, before in raking["fit_before"].items():
+            print(f"    {name:16} worst miss {before:6.2%} -> {raking['fit_after'][name]:6.2%}")
+    else:
+        print("  NOT raked (--no-raking)")
     return 0
 
 
@@ -162,15 +174,47 @@ def cmd_reconcile(args: argparse.Namespace) -> int:
     if not population.exists():
         print(f"{population} not found — run `impots population build` first", file=sys.stderr)
         return 1
+    unraked = None
+    if args.compare_unraked:
+        # Build the same population without the calibration step and run it, so the
+        # report can show what raking did to every line (D-017) rather than only to
+        # the margins it was fitted on.
+        #
+        # Run FIRST and released before the raked pass begins. A full-tier run over
+        # 199 451 households holds a couple of GB; holding two at once is what an
+        # 8 GB machine gets killed for, and the two runs need nothing from each
+        # other except their aggregates.
+        import gc
+
+        from impots.population.build import build_frame
+
+        print("  building and running the unraked vintage for comparison…")
+        frame, _ = build_frame(raking=False)
+        unraked_result = run(frame, year=args.year, tier="full", sample=args.sample)
+        unraked = aggregate_module.aggregate(unraked_result.households)
+        del frame, unraked_result
+        gc.collect()
+
     result = run(population, year=args.year, tier="full", sample=args.sample)
     agg = aggregate_module.aggregate(result.households)
-    path = reconcile_module.write(agg, vintage=args.vintage, notes=KNOWN_LIMITATIONS)
+
+    path = reconcile_module.write(
+        agg, vintage=args.vintage, notes=KNOWN_LIMITATIONS, unraked=unraked,
+        sample=args.sample,
+    )
     print(f"wrote {path}")
     print(f"wrote {_write_baseline_summary(agg, args.vintage, args.sample)}")
+    was = (
+        {line.label: line.residual for line in reconcile_module.build_lines(unraked)}
+        if unraked else {}
+    )
     for line in reconcile_module.build_lines(agg):
-        if line.use == "validation":
-            residual = "—" if line.residual is None else f"{line.residual:+7.1%}"
-            print(f"  {line.label:34} {residual}  {line.status}")
+        if line.use != "validation":
+            continue
+        residual = "—" if line.residual is None else f"{line.residual:+7.1%}"
+        previous = was.get(line.label)
+        shift = "" if previous is None else f"   (was {previous:+7.1%})"
+        print(f"  {line.label:34} {residual}  {line.status}{shift}")
     return 0
 
 
@@ -186,6 +230,9 @@ def main(argv: list[str] | None = None) -> int:
     builder = actions.add_parser("build", help="build the population parquet")
     builder.add_argument("--vintage", default="2024")
     builder.add_argument("--seed", type=int, default=None)
+    builder.add_argument("--no-raking", action="store_true",
+                         help="skip the calibration step (D-017); used to produce the "
+                              "unraked comparison in the reconciliation report")
     builder.set_defaults(func=cmd_build)
 
     runner_parser = actions.add_parser("run", help="run a reform over the population")
@@ -201,6 +248,9 @@ def main(argv: list[str] | None = None) -> int:
     reconciler.add_argument("--vintage", default="2024")
     reconciler.add_argument("--year", type=int, default=2024)
     reconciler.add_argument("--sample", type=int, default=None)
+    reconciler.add_argument("--compare-unraked", action="store_true",
+                            help="also build and run the population without raking, and "
+                                 "show every line before and after (D-017)")
     reconciler.set_defaults(func=cmd_reconcile)
 
     args = parser.parse_args(argv)

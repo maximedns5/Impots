@@ -332,13 +332,44 @@ CHILDREN_DISTRIBUTION = Figure(
            "keeps the two roughly aligned but does not make them identical.",
 )
 
+#: Households by type — the raking margin that actually does work (D-017).
+#: Census 2023 counts, France. Our household is a dwelling-quarter and INSEE's is
+#: a dwelling, which is why the total (31.27 M) is compared rather than imposed.
+#: `couple_sans_enfant` is published rounded (7.80 M) and is carried here as the
+#: residual against the household total, so the parts sum to the whole exactly.
+#: Raking to components that do not add up to their own total makes IPF chase a
+#: contradiction, and `test_household_margins_sum_to_the_published_total` pins it.
+HOUSEHOLDS_BY_TYPE: dict[str, float] = {
+    "personne_seule": 12_224_900.0,
+    "couple_sans_enfant": 7_799_800.0,
+    "couple_avec_enfant": 7_162_000.0,
+    "monoparentale": 2_965_000.0,
+    "complexe": 1_123_000.0,
+}
+
+HOUSEHOLD_TYPES = Figure(
+    value=31_274_700.0, unit="count", year=2023,
+    scope="Ménages par type, France — exploitation complémentaire du recensement",
+    source="INSEE, recensement de la population 2023",
+    url="https://www.insee.fr/fr/statistiques/2381486", use="calibration",
+    caveat="Spent once raking runs against it. INSEE's household is a dwelling; "
+           "ours is a dwelling-quarter, and the typology is derived from entity "
+           "roles rather than from the EEC's TYPLOG5 so that the same margin "
+           "survives the move to ERFS.",
+)
+
 #: Households, from the census. Reproduced by construction from EEC weights
 #: (31.45 M against ~31 M published), which is a check on the weighting rather
 #: than on the model.
 HOUSEHOLDS = Figure(
-    value=31.0e6, unit="count", year=2022, scope="Nombre de ménages, France",
-    source="INSEE, recensement de la population 2022",
-    url="https://www.insee.fr/fr/statistiques/8268533", use="context",
+    value=31_274_700.0, unit="count", year=2023, scope="Nombre de ménages, France",
+    source="INSEE, recensement de la population 2023 — exploitation complémentaire",
+    url="https://www.insee.fr/fr/statistiques/2381486", use="calibration",
+    caveat="Spent since D-017: HOUSEHOLDS_BY_TYPE sums to exactly this, and raking "
+           "targets it. It was a validation line only while nothing was fitted to "
+           "it — and it was previously compared against the 2022 count (31.0 M), "
+           "which flattered the residual to +0.0 % against a target the raking was "
+           "not even aiming at.",
 )
 
 

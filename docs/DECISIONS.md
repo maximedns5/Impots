@@ -467,7 +467,7 @@ them mechanical, and should exist before the data does.
 
 
 ## D-017 — Raking (`calibrate.py`): build it, as Branch-C infrastructure
-Date: 2026-09-01 · Status: accepted, **not yet implemented** · Rationale: `docs/REVIEW_2026-08-29.md` §1
+Date: 2026-09-01 · Status: accepted and **implemented** · Rationale: `docs/REVIEW_2026-08-29.md` §1
 
 Phase 1 shipped without spec §4.3's IPF raking; the omission was reported rather
 than buried, and the reviewing session ruled on it.
@@ -495,6 +495,73 @@ Ruling:
   saying so is worth having; if AF or the foyer counts move, better still.
 * The income-mass scaling stays as-is for A' — it dies with ERFS — and the
   wage-bill margin stays marked spent (D-014 already handles that correctly).
+
+### What was built
+
+`calibrate.py`: margins-agnostic IPF, bounds [0.2, 5], convergence and bounds
+test-asserted. Two margin sets, per the ruling. Two things in it are worth
+knowing about:
+
+**Raking runs before incomes, and the order is load-bearing.** Its margins are
+purely demographic, so it needs nothing incomes produce — while incomes calibrate
+the wage bill against the weights in force. Raking afterwards silently moves the
+wage bill off the target it was just scaled onto, leaving a spent calibration
+margin that no longer holds. Built in the wrong order first; caught by checking
+the wage bill after the change, which is now exact to 0.0000 %.
+
+**A household spans several age×sex cells but carries one weight**, so textbook
+IPF does not apply to a person-level margin. The household's adjustment is the
+mean of its members' cell factors, weighted by membership — integrated household
+weighting. Letting members of one household drift apart would break every
+household-level aggregate downstream, and there is a test pinning that they do not.
+
+**The household typology had to be fixed before it could be a margin.** Mapping
+every `role_menage == "autre"` member to "ménage complexe" put 2.6 M households
+there against a census 1.1 M, by counting every adult child living at home as an
+unrelated person — INSEE counts a child of the family at any age, while our tax
+roles stop at rattachement age (D-013). A member younger than the reference
+person now counts as a child of the family. Worst margin miss fell from 133 % to
+41 % on that correction alone, before any raking.
+
+### What it did
+
+Converged in 25 iterations. Weight ratios 0.84 to 1.81, **nothing clipped**.
+Effective sample size 143 973 of 199 451 households — the precision cost, and a
+modest one.
+
+| Margin | worst miss before | after |
+|---|---|---|
+| Households by type | 41.5 % | 0.84 % |
+| Age band × sex (drift) | 2.2 % | 0.00 % |
+
+And on the validation lines, from `reconcile --compare-unraked`:
+
+| Line | unraked | raked |
+|---|---|---|
+| Ménages | +1.5 % | **+0.0 %** |
+| IR — barème | +6.6 % | +8.7 % |
+| Salaires déclarés | −4.2 % | −3.1 % |
+| Foyers imposés | −2.6 % | −2.2 % |
+| Allocations familiales | −25.6 % | −25.2 % |
+| RSA | +103.0 % | +106.2 % |
+| Niveau de vie médian | −12.7 % | −12.1 % |
+| Rapport interdécile | +40.6 % | +39.4 % |
+
+**The honest reading.** The ménage count goes to its target because that is the
+margin — calibrated, spent, and no evidence of anything. Everywhere else the
+effect is under three points and mixed in direction: income tax and RSA get
+slightly worse, the distribution and the foyer counts slightly better. Both passes
+ran on a 50 000-household subsample selected proportional to weight, so raking
+changes *which* households are drawn as well as how they are weighted, and
+movements of about a point are sampling noise rather than signal.
+
+So the prediction that this would be near-identity on A' was roughly right about
+the *size* of the effect and wrong about the reason it was worth doing. The
+correction it makes is to household composition, which the aggregate household
+count hid; the population's large residuals are an income-modelling failure and no
+reweighting was ever going to close them (D-015). The value banked here is that
+Branch C now has a calibration stage waiting for it, and that the report says
+plainly what raking did not fix.
 
 ## D-018 — Licence: AGPL-3.0-or-later, and the firm package is an in-repo extension
 Date: 2026-09-01 · Status: accepted · Closes **both** open questions in D-001

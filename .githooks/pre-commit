@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Refuse to commit data files (D-016, docs/PHASE1C_ERFS.md §5).
+#
+# ERFS arrives under an agreement forbidding redistribution. That rule currently
+# lives in a decision log, which is one distracted `git add -A` from being
+# fiction. This hook makes it mechanical.
+#
+# Install:  git config core.hooksPath .githooks
+# (core.hooksPath is local config and does NOT survive a clone — the CI job in
+#  .github/workflows/test.yml asserts the same property on the pushed tree, which
+#  is the backstop for anyone who forgets.)
+set -euo pipefail
+exec scripts/check_no_data_committed.py --staged

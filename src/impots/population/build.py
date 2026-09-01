@@ -17,6 +17,7 @@ import numpy as np
 import polars as pl
 
 from impots.population import margins
+from impots.population.calibrate import rake, standard_margins, with_cells
 from impots.population.incomes import attach_incomes
 from impots.population.ingest import load_manifest
 from impots.population.skeleton import SEED, build_skeleton
@@ -52,10 +53,61 @@ SCHEMA: dict[str, pl.DataType] = {
 }
 
 
-def build(vintage: str = "2024", seed: int = SEED) -> tuple[Path, dict]:
-    """Build the population and write it, with a manifest of what went into it."""
+def build_frame(
+    seed: int = SEED, raking: bool = True
+) -> tuple[pl.DataFrame, dict]:
+    """The population frame and its provenance, without writing anything.
+
+    Split out so the reconciliation report can build a raked and an unraked
+    vintage in one process and compare them line by line (D-017).
+    """
+    path_free, provenance = _build(seed=seed, raking=raking)
+    return path_free, provenance
+
+
+def build(
+    vintage: str = "2024", seed: int = SEED, raking: bool = True
+) -> tuple[Path, dict]:
+    """Build the population and write it, with a manifest of what went into it.
+
+    `raking` reweights households onto published margins (D-017). On by default:
+    it converges, clips nothing, and takes the household-type miss from 41.5 % to
+    under 1 %. Pass `raking=False` to reproduce the unraked vintage — which is how
+    the before/after in the reconciliation report is produced.
+    """
+    frame, provenance = _build(seed=seed, raking=raking)
+
+    PROCESSED.mkdir(parents=True, exist_ok=True)
+    path = PROCESSED / f"population_{vintage}.parquet"
+    frame.write_parquet(path)
+    provenance = {"vintage": vintage, **provenance}
+    (PROCESSED / f"population_{vintage}.manifest.json").write_text(
+        json.dumps(provenance, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    return path, provenance
+
+
+def _build(seed: int, raking: bool) -> tuple[pl.DataFrame, dict]:
     children = {key: np.array(value) for key, value in margins.CHILDREN_PER_FAMILY.items()}
     frame, skeleton_stats = build_skeleton(children_per_household=children, seed=seed)
+
+    # Raking runs BEFORE incomes, and the order is load-bearing. Its margins are
+    # purely demographic, so it needs nothing incomes produce — while incomes
+    # calibrate the wage bill against the weights in force. Rake afterwards and the
+    # reweighting silently moves the wage bill off the target it was just scaled
+    # onto, leaving a spent calibration margin that no longer holds.
+    rake_diagnostics = None
+    if raking:
+        frame = with_cells(frame)
+        frame, diagnostics = rake(frame, standard_margins(frame))
+        rake_diagnostics = asdict(diagnostics)
+        if not diagnostics.converged:
+            raise RuntimeError(
+                f"raking did not converge in {diagnostics.iterations} iterations "
+                f"(max change {diagnostics.max_change:.2e}). A population raked to "
+                "margins it cannot reach is worse than an unraked one: refusing."
+            )
+
     frame, income_stats = attach_incomes(frame, seed=seed)
 
     missing = set(SCHEMA) - set(frame.columns)
@@ -63,12 +115,7 @@ def build(vintage: str = "2024", seed: int = SEED) -> tuple[Path, dict]:
         raise RuntimeError(f"population frame is missing columns {sorted(missing)}")
     frame = frame.select(list(SCHEMA)).cast(SCHEMA)
 
-    PROCESSED.mkdir(parents=True, exist_ok=True)
-    path = PROCESSED / f"population_{vintage}.parquet"
-    frame.write_parquet(path)
-
     provenance = {
-        "vintage": vintage,
         "built": date.today().isoformat(),
         "seed": seed,
         "rows": frame.height,
@@ -80,8 +127,6 @@ def build(vintage: str = "2024", seed: int = SEED) -> tuple[Path, dict]:
         },
         "skeleton": asdict(skeleton_stats),
         "incomes": asdict(income_stats),
+        "raking": rake_diagnostics,
     }
-    (PROCESSED / f"population_{vintage}.manifest.json").write_text(
-        json.dumps(provenance, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
-    return path, provenance
+    return frame, provenance

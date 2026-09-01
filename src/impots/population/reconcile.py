@@ -168,16 +168,33 @@ def build_lines(agg: Aggregates) -> list[Line]:
                  "the most informative single line in this table."),
         ]
 
-    lines.append(Line("Ménages", agg.households, margins.HOUSEHOLDS.value, "count",
-                      "INSEE recensement", "validation", TOLERANCE["distribution"],
-                      "Reproduced from the EEC weights; a check on the weighting, not "
-                      "on the model."))
+    lines.append(Line(
+        "Ménages", agg.households, margins.HOUSEHOLDS.value, "count",
+        "INSEE recensement", margins.HOUSEHOLDS.use, TOLERANCE["calibration"],
+        "**Spent by raking (D-017).** Until raking existed this was a free check on "
+        "the EEC weights; now the household-type margin sums to exactly this figure, "
+        "so hitting it is the calibration working, not evidence about the model. The "
+        "residual is what IPF's alternation between the two margin sets leaves behind.",
+    ))
     return lines
 
 
-def render(agg: Aggregates, vintage: str, notes: list[str] | None = None) -> str:
-    """The report, as markdown."""
+def render(
+    agg: Aggregates,
+    vintage: str,
+    notes: list[str] | None = None,
+    unraked: Aggregates | None = None,
+    sample: int | None = None,
+) -> str:
+    """The report, as markdown.
+
+    `unraked` adds the before/after that D-017 requires: every line as it stood
+    without calibration, next to where it stands with it, **whichever direction it
+    moved**. A report that showed only the lines raking improved would be an
+    advertisement, not a reconciliation.
+    """
     lines = build_lines(agg)
+    before = {line.label: line.residual for line in build_lines(unraked)} if unraked else {}
     failing = [
         line for line in lines
         if line.use == "validation" and line.status == "OUTSIDE tolerance"
@@ -214,22 +231,59 @@ def render(agg: Aggregates, vintage: str, notes: list[str] | None = None) -> str
             f"{_fmt(line.published, line.unit)} | {residual} | {line.source} |"
         )
 
+    raked_column = " Before raking |" if before else ""
+    raked_dashes = " ---: |" if before else ""
     out += [
         "",
         "## Validation lines (untouched by calibration)",
         "",
-        "| Line | Simulated | Published | Residual | Tolerance | Status | Source |",
-        "|---|---:|---:|---:|---:|---|---|",
+        f"| Line | Simulated | Published |{raked_column} Residual | Tolerance | Status | Source |",
+        f"|---|---:|---:|{raked_dashes}---:|---:|---|---|",
     ]
     for line in lines:
         if line.use != "validation":
             continue
         residual = "—" if line.residual is None else f"{line.residual:+.1%}"
+        was = ""
+        if before:
+            previous = before.get(line.label)
+            was = f" {'—' if previous is None else f'{previous:+.1%}'} |"
         out.append(
             f"| {line.label} | {_fmt(line.simulated, line.unit)} | "
-            f"{_fmt(line.published, line.unit)} | {residual} | ±{line.tolerance:.0%} | "
+            f"{_fmt(line.published, line.unit)} |{was} {residual} | ±{line.tolerance:.0%} | "
             f"{line.status} | {line.source} |"
         )
+
+    if before:
+        out += [
+            "",
+            "### What raking changed, and what it did not (D-017)",
+            "",
+            "The *Before raking* column is the same population built with "
+            "`--no-raking`. Read it with two cautions.",
+            "",
+            "**Small movements are noise.** " + (
+                # Space the thousands separator on the NUMBER, not on the sentence:
+                # `.replace(",", " ")` over the whole string eats the punctuation.
+                f"Both passes were run on a deterministic {sample:,} household "
+                .replace(",", " ")
+                + "subsample, and the selection is proportional to weight — so raking "
+                "changes which households are drawn, not only how they are weighted. "
+                "Aggregate sampling noise at this size is on the order of a point, "
+                "which is larger than most of the shifts below."
+                if sample else
+                "Both passes were run over the full population, so the differences "
+                "are the reweighting rather than sampling."
+            ),
+            "",
+            "**Raking fitted what it was aimed at and little else.** The ménage count "
+            "goes to its target because that *is* the margin — it is calibrated, and "
+            "spent. Everywhere else the effect is small and mixed in direction: the "
+            "population's large residuals are a failure of income modelling, not of "
+            "weighting, and no reweighting was ever going to close them (D-015). "
+            "Reporting the lines that got worse alongside the ones that improved is "
+            "the point of showing this column at all.",
+        ]
 
     out += ["", "### What each line means", ""]
     for line in lines:
@@ -278,8 +332,14 @@ def render(agg: Aggregates, vintage: str, notes: list[str] | None = None) -> str
     return "\n".join(out) + "\n"
 
 
-def write(agg: Aggregates, vintage: str, notes: list[str] | None = None) -> Path:
+def write(
+    agg: Aggregates,
+    vintage: str,
+    notes: list[str] | None = None,
+    unraked: Aggregates | None = None,
+    sample: int | None = None,
+) -> Path:
     REPORTS.mkdir(parents=True, exist_ok=True)
     path = REPORTS / "reconciliation.md"
-    path.write_text(render(agg, vintage, notes), encoding="utf-8")
+    path.write_text(render(agg, vintage, notes, unraked, sample), encoding="utf-8")
     return path

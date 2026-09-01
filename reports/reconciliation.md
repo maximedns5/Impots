@@ -1,6 +1,6 @@
 # Reconciliation report
 
-**Population vintage**: `2024` · **Generated**: 2026-08-28 by `impots population reconcile` · **Engine**: openfisca-france 176.0.8
+**Population vintage**: `2024` · **Generated**: 2026-09-01 by `impots population reconcile` · **Engine**: openfisca-france 176.0.8
 
 How far the synthetic population's simulated aggregates sit from published national totals. This page is the product, not an appendix: a distributional number is worth what this table says it is worth.
 
@@ -12,28 +12,36 @@ A figure used to **calibrate** the population is *spent*. The model was tuned to
 
 | Line | Simulated | Published | Residual | Source |
 |---|---:|---:|---:|---|
-| Masse salariale brute | 1 107.7 bn € | 1 111.7 bn € | -0.4% | INSEE comptes nationaux (D11) |
+| Masse salariale brute | 1 097.4 bn € | 1 111.7 bn € | -1.3% | INSEE comptes nationaux (D11) |
 | Pensions et retraites | — | 400.4 bn € | — | DGFiP |
 | Allocations chômage | — | 35.9 bn € | — | Unédic |
+| Ménages | 31.01 M | 31.27 M | -0.8% | INSEE recensement |
 
 ## Validation lines (untouched by calibration)
 
-| Line | Simulated | Published | Residual | Tolerance | Status | Source |
-|---|---:|---:|---:|---:|---|---|
-| Impôt sur le revenu — barème | 107.7 bn € | 98.8 bn € | +8.9% | ±10% | within tolerance | DGFiP |
-| Impôt sur le revenu — recettes nettes | 107.7 bn € | 88.0 bn € | +22.4% | ±10% | OUTSIDE tolerance | budget.gouv.fr |
-| Salaires déclarés (imposables) | 911.3 bn € | 932.1 bn € | -2.2% | ±10% | within tolerance | DGFiP |
-| Foyers fiscaux | 34.99 M | 41.64 M | -16.0% | ±10% | OUTSIDE tolerance | DGFiP |
-| Foyers imposés | 19.22 M | 19.68 M | -2.3% | ±10% | within tolerance | DGFiP |
-| Allocations familiales | 10.4 bn € | 13.8 bn € | -24.6% | ±25% | within tolerance | CNAF / DREES |
-| Prime d'activité (bridge-adjusted) | 7.8 bn € | 10.7 bn € | -27.2% | ±13% | OUTSIDE tolerance | CNAF / DREES |
-| Prime d'activité | 13.4 bn € | 10.7 bn € | +25.6% | ±25% | OUTSIDE tolerance | CNAF / DREES |
-| RSA (bridge-adjusted) | 18.8 bn € | 12.4 bn € | +52.1% | ±14% | OUTSIDE tolerance | CNAF / DREES |
-| RSA | 25.5 bn € | 12.4 bn € | +106.0% | ±25% | OUTSIDE tolerance | CNAF / DREES |
-| Aides au logement | 11.9 bn € | 16.0 bn € | -25.3% | ±25% | OUTSIDE tolerance | CNAF / DREES |
-| Niveau de vie médian | 22 646 | 25 920 | -12.6% | ±15% | within tolerance | INSEE Filosofi 2023 |
-| Rapport interdécile D9/D1 | 5 | 4 | +41.3% | ±15% | OUTSIDE tolerance | INSEE Filosofi 2023 |
-| Ménages | 31.45 M | 31.00 M | +1.5% | ±15% | within tolerance | INSEE recensement |
+| Line | Simulated | Published | Before raking | Residual | Tolerance | Status | Source |
+|---|---:|---:| ---: |---:|---:|---|---|
+| Impôt sur le revenu — barème | 107.4 bn € | 98.8 bn € | +6.6% | +8.7% | ±10% | within tolerance | DGFiP |
+| Impôt sur le revenu — recettes nettes | 107.4 bn € | 88.0 bn € | +19.8% | +22.1% | ±10% | OUTSIDE tolerance | budget.gouv.fr |
+| Salaires déclarés (imposables) | 902.9 bn € | 932.1 bn € | -4.2% | -3.1% | ±10% | within tolerance | DGFiP |
+| Foyers fiscaux | 35.09 M | 41.64 M | -16.1% | -15.7% | ±10% | OUTSIDE tolerance | DGFiP |
+| Foyers imposés | 19.26 M | 19.68 M | -2.6% | -2.2% | ±10% | within tolerance | DGFiP |
+| Allocations familiales | 10.3 bn € | 13.8 bn € | -25.6% | -25.2% | ±25% | OUTSIDE tolerance | CNAF / DREES |
+| Prime d'activité (bridge-adjusted) | 7.4 bn € | 10.7 bn € | -27.3% | -30.2% | ±13% | OUTSIDE tolerance | CNAF / DREES |
+| Prime d'activité | 12.8 bn € | 10.7 bn € | +25.5% | +20.4% | ±25% | within tolerance | CNAF / DREES |
+| RSA (bridge-adjusted) | 18.8 bn € | 12.4 bn € | +49.8% | +52.2% | ±14% | OUTSIDE tolerance | CNAF / DREES |
+| RSA | 25.5 bn € | 12.4 bn € | +103.0% | +106.2% | ±25% | OUTSIDE tolerance | CNAF / DREES |
+| Aides au logement | 11.7 bn € | 16.0 bn € | -27.5% | -26.8% | ±25% | OUTSIDE tolerance | CNAF / DREES |
+| Niveau de vie médian | 22 780 | 25 920 | -12.7% | -12.1% | ±15% | within tolerance | INSEE Filosofi 2023 |
+| Rapport interdécile D9/D1 | 5 | 4 | +40.6% | +39.4% | ±15% | OUTSIDE tolerance | INSEE Filosofi 2023 |
+
+### What raking changed, and what it did not (D-017)
+
+The *Before raking* column is the same population built with `--no-raking`. Read it with two cautions.
+
+**Small movements are noise.** Both passes were run on a deterministic 50 000 household subsample, and the selection is proportional to weight — so raking changes which households are drawn, not only how they are weighted. Aggregate sampling noise at this size is on the order of a point, which is larger than most of the shifts below.
+
+**Raking fitted what it was aimed at and little else.** The ménage count goes to its target because that *is* the margin — it is calibrated, and spent. Everywhere else the effect is small and mixed in direction: the population's large residuals are a failure of income modelling, not of weighting, and no reweighting was ever going to close them (D-015). Reporting the lines that got worse alongside the ones that improved is the point of showing this column at all.
 
 ### What each line means
 
@@ -53,11 +61,11 @@ A figure used to **calibrate** the population is *spent*. The model was tuned to
 * **Aides au logement** — No published take-up bridge for this benefit; judged on the flat ±25 % benefit tolerance.
 * **Niveau de vie médian** — Mean of decile 5, against the published median: close but not the same statistic. Filosofi is a 2023 vintage in 2023 euros.
 * **Rapport interdécile D9/D1** — A pure shape statistic, unaffected by the wage level we calibrated — the most informative single line in this table.
-* **Ménages** — Reproduced from the EEC weights; a check on the weighting, not on the model.
+* **Ménages** — **Spent by raking (D-017).** Until raking existed this was a free check on the EEC weights; now the household-type margin sums to exactly this figure, so hitting it is the calibration working, not evidence about the model. The residual is what IPF's alternation between the two margin sets leaves behind.
 
 ## Verdict
 
-**8 validation line(s) outside declared tolerance**: Impôt sur le revenu — recettes nettes (+22%), Foyers fiscaux (-16%), Prime d'activité (bridge-adjusted) (-27%), Prime d'activité (+26%), RSA (bridge-adjusted) (+52%), RSA (+106%), Aides au logement (-25%), Rapport interdécile D9/D1 (+41%)
+**8 validation line(s) outside declared tolerance**: Impôt sur le revenu — recettes nettes (+22%), Foyers fiscaux (-16%), Allocations familiales (-25%), Prime d'activité (bridge-adjusted) (-30%), RSA (bridge-adjusted) (+52%), RSA (+106%), Aides au logement (-27%), Rapport interdécile D9/D1 (+39%)
 
 Per §5 of the Phase 1 specification these are stated, not smoothed over. The known causes are listed below; none of them is fixed by tuning, and tuning to close them would spend the very lines that make this table worth reading.
 
@@ -79,6 +87,8 @@ Per §5 of the Phase 1 specification these are stated, not smoothed over. The kn
 | `CHILDREN_DISTRIBUTION` | 2023 | Familles avec au moins un enfant de moins de 25 ans, France | [INSEE, recensement de la population — séries famille](https://www.insee.fr/fr/statistiques/8268533) |
 | `CHILDREN_UNDER_15` | 2023 | Enfants des familles âgés de 0 à 14 ans, France hors Mayotte, logements ordinaires | [INSEE, recensement de la population 2023](https://www.insee.fr/fr/statistiques/2381486) |
 | `DECLARED_PENSIONS` | 2024 | Pensions, retraites et rentes déclarées | [DGFiP](https://www.impots.gouv.fr/statistiques) |
+| `HOUSEHOLDS` | 2023 | Nombre de ménages, France | [INSEE, recensement de la population 2023 — exploitation complémentaire](https://www.insee.fr/fr/statistiques/2381486) |
+| `HOUSEHOLD_TYPES` | 2023 | Ménages par type, France — exploitation complémentaire du recensement | [INSEE, recensement de la population 2023](https://www.insee.fr/fr/statistiques/2381486) |
 | `TOTAL_GROSS_WAGES` | 2024 | D11 « salaires et traitements bruts », ensemble de l'économie, comptes nationaux base 2020, compte SEMI-DÉFINITIF — tous secteurs, tous employeurs | [INSEE, « Les comptes de la Nation en 2025 » (29 mai 2026), tableau 6205](https://www.insee.fr/fr/statistiques/8988833) |
 | `UNEMPLOYMENT_BENEFIT_SPEND` | 2024 | Allocations chômage et aides au reclassement versées par l'Assurance chômage | [Unédic, Situation financière de l'Assurance chômage 2025-2027 (juin 2025)](https://www.unedic.org/publications) |
 | `BENEFIT_RECIPIENTS[af]` | 2024 | Allocataires AF au 31/12, CAF, France entière | [CNAF](https://www.caf.fr/allocataires/caf-du-nord/statistiques) |
@@ -97,7 +107,6 @@ Per §5 of the Phase 1 specification these are stated, not smoothed over. The kn
 | `NIVEAU_DE_VIE_D9_D1` | 2023 | Rapport interdécile D9/D1 du niveau de vie | [INSEE, Filosofi 2023](https://www.insee.fr/fr/statistiques/8402386) |
 | `NIVEAU_DE_VIE_GINI` | 2023 | Indice de Gini du niveau de vie, métropole | [INSEE, Filosofi 2023](https://www.insee.fr/fr/statistiques/8402386) |
 | `NIVEAU_DE_VIE_MEDIAN` | 2023 | Médiane du niveau de vie, France métropolitaine, ménages fiscaux en logement ordinaire | [INSEE, Filosofi 2023](https://www.insee.fr/fr/statistiques/8402386) |
-| `HOUSEHOLDS` | 2022 | Nombre de ménages, France | [INSEE, recensement de la population 2022](https://www.insee.fr/fr/statistiques/8268533) |
 | `NET_TO_GROSS_RATIO` | 2024 | Salariés du secteur privé, ensemble : salaire net / salaire brut | [INSEE, Base Tous Salariés 2024](https://www.insee.fr/fr/statistiques/8568701) |
 | `PRIVATE_EMPLOYEES` | 2024 | Effectif salarié moyen annuel du secteur privé, champ Urssaf | [Urssaf Caisse nationale](https://open.urssaf.fr/explore/dataset/masse-salariale-du-secteur-prive/) |
 | `PRIVATE_WAGE_BILL` | 2024 | Masse salariale du secteur privé (champ Urssaf), France entière | [Urssaf Caisse nationale, open.urssaf.fr](https://open.urssaf.fr/explore/dataset/masse-salariale-du-secteur-prive/) |

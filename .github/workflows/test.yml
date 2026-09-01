@@ -6,6 +6,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  # The pre-commit hook that enforces this lives in .githooks/, and
+  # core.hooksPath is local config that does not survive a clone. This job is the
+  # backstop: it asserts the property on the pushed tree, for everyone who never
+  # ran `git config core.hooksPath .githooks`.
+  no-data-committed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: No data files in the tree (D-016)
+        run: python scripts/check_no_data_committed.py --tree
+
   pytest:
     runs-on: ubuntu-latest
     steps:

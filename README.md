@@ -62,6 +62,18 @@ startup complete*.
 `ui/index.html` also works opened straight off the filesystem — it falls back to
 `http://localhost:8000`, which is what the permissive CORS policy is for.
 
+After cloning, install the data guard — `core.hooksPath` is local config and does
+not travel with the repository:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+It refuses any commit that adds a file under `data/` (D-016): ERFS microdata is
+not redistributable, and a compliance rule that lives only in a decision log is
+one distracted `git add -A` from being fiction. CI asserts the same on the pushed
+tree for anyone who forgets.
+
 Run the tests with `pytest` (a few minutes; most of it is openfisca computing).
 `node ui/check.mjs` checks the page's logic and is deliberately outside CI — D-003.
 
@@ -76,10 +88,16 @@ curl -o data/raw/FD_EEC_2024.parquet \
 curl -o data/raw/Varmod_EEC_2024.csv \
   https://www.insee.fr/fr/statistiques/fichier/8632441/Varmod_EEC_2024.csv
 impots population manifest       # record checksums; the pipeline refuses unmanifested inputs
-impots population build          # -> data/processed/population_2024.parquet, ~2 s
+impots population build          # -> data/processed/population_2024.parquet, ~5 s
 impots population reconcile      # -> reports/reconciliation.md, ~3 min
 impots population run --reform my_reform.json --sample 20000
 ```
+
+`build` rakes the household weights onto published margins (D-017) before
+attaching incomes — the order matters, since incomes calibrate the wage bill
+against whatever weights are in force. `--no-raking` reproduces the unraked
+vintage, and `reconcile --compare-unraked` builds both and shows every line
+before and after.
 
 `scripts/verify_eec.py` re-runs the M0 reconnaissance against the raw file, and
 `scripts/verify_population_engine.py` is the population-scale engine gate — run it
