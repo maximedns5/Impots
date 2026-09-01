@@ -1,7 +1,11 @@
 description: "Degrevement complementaire de CVAE (CGI art. 1586 quater, II)"
-# BOI-CVAE-LIQ-10 n° 78 porte encore la trajectoire LF 2024 (188 / 125 / 63 pour
-# 2024-2026) : c'est un residu non mis a jour, contredit par le n° 170 du meme
-# document et par l'article en vigueur. Valeur retenue pour 2026 : 188 €.
+# Valeur retenue pour 2026 : 188 €, confirmee a l'article 1586 quater II en vigueur,
+# au n° 170 de BOI-CVAE-LIQ-10 et a la notice DGFiP 1329-AC millesime 2026.
+# NOTE DE VERIFICATION : une premiere redaction de ce commentaire affirmait que le
+# n° 78 du meme BOFiP portait encore la trajectoire LF 2024 (188/125/63 pour
+# 2024-2026) et mettait en garde contre lui. La contre-verification n'a pas retrouve
+# cette phrase — le n° 78 traite des dates d'exercice au sein d'un groupe economique.
+# L'avertissement etait donc dirige contre une source correcte, et il est retire.
 metadata:
   unit: currency
   reference:

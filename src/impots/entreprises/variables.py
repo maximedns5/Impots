@@ -162,7 +162,17 @@ class c3s(Variable):
     label = "Contribution sociale de solidarité des sociétés (CSS art. L137-30 s.)"
     documentation = """An abattement, not a threshold: a firm one euro over 19 M€ of
     turnover pays 0.16 % of that one euro, not of 19 000 001 €. Getting this wrong
-    puts a cliff into the effective-rate profile that does not exist."""
+    puts a cliff into the effective-rate profile that does not exist.
+
+    **The base is the PREVIOUS year's turnover, and this formula uses the current
+    year's.** C3S due in year N is assessed on year N-1 turnover: "la C3S 2025 assise
+    sur le chiffre d'affaires 2024". Our population has one year, so the two are the
+    same number here — the same stationarity assumption the CEBGE carries (D-022),
+    and the same consequence: simulated C3S is overstated by roughly one year of
+    nominal turnover growth, and firms that crossed the 19 M€ abattement during the
+    year are placed on the wrong side of it. Declared rather than silently absorbed,
+    because the reconciliation line for C3S is graded against receipts booked in a
+    year whose base is the year before."""
 
     def formula(entreprise, period, parameters):
         p = parameters(period).c3s

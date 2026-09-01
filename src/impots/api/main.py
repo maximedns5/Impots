@@ -338,6 +338,11 @@ FIRM_LIMITATIONS = [
     "simulée est donc sous-estimée, d'autant plus que l'entreprise loue ses actifs. Le "
     "biais est corrélé au secteur, il ne se corrige donc pas par un facteur global "
     "(D-021).",
+    "**La C3S est assise sur le chiffre d'affaires de l'année précédente**, que la "
+    "population n'a pas : elle est donc calculée sur celui de l'année simulée. La C3S "
+    "simulée est surestimée d'environ une année de croissance nominale du chiffre "
+    "d'affaires, et les entreprises ayant franchi l'abattement de 19 M€ en cours "
+    "d'année sont placées du mauvais côté (D-021).",
     "**La CEBGE est calculée sur un seul exercice.** Son assiette légale est la moyenne "
     "de l'IS de deux exercices et ses seuils se testent sur deux années ; la population "
     "n'a qu'une année, donc l'exercice précédent est supposé identique. Les entrées et "

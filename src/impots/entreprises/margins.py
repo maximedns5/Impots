@@ -107,7 +107,21 @@ C3S = Figure(
     scope="C3S encaissée, tous redevables",
     source="Rapport à la Commission des comptes de la Sécurité sociale, mai 2026",
     url=CCSS_2026, use="validation",
-    caveat="Cross-checked to the euro-million against INSEE tableau 3.217.",
+    caveat="Cross-checked to the euro-million against INSEE tableau 3.217. Note the "
+           "base year: C3S booked in 2025 is assessed on 2024 turnover, while the model "
+           "charges it on the simulated year's own turnover — so the comparison is off "
+           "by one year of nominal growth, in the direction of overstating the model.",
+)
+
+IS_NET_DGFIP = Figure(
+    value=61.8e9, unit="EUR", year=2025,
+    scope="IS net et contribution sociale sur les bénéfices, encaissements DGFiP tous "
+          "affectataires",
+    source="DGFiP Statistiques n° 43, mars 2026, tableau 1", url=DGFIP_STAT_39,
+    use="context",
+    caveat="A third published 2025 headline, 1.9 bn above the budget line because it "
+           "bundles the contribution sociale. Recorded so that a reader grading this "
+           "model against 'the DGFiP figure' knows which of the three they have.",
 )
 
 CVAE = Figure(
@@ -115,9 +129,11 @@ CVAE = Figure(
     scope="CVAE, ligne 1497 du budget de l'État",
     source="Exécution budgétaire 2025 ; Voies et moyens tome I, PLF 2026",
     url=BUDGET_2025, use="validation",
-    caveat="National accounts put 2025 at 3.749 bn on an accrual basis. Both are 2025, at "
-           "a 0.19 % maximum rate; the model runs 2026 at 0.28 %, so the published figure "
-           "is not a target for the simulated year and is scaled in the note.",
+    caveat="Three perimeters, all 2025: budget line 1497 at 4.024 bn (State share only), "
+           "DGFiP collections all-affectataires at 4.5 bn (the ~0.5 bn difference is the "
+           "taxe additionnelle pour frais de CCI, which the model does not levy), and "
+           "national accounts at 3.749 bn on an accrual basis. All at a 0.19 % maximum "
+           "rate against a simulated year at 0.28 %.",
 )
 
 # --------------------------------------------------------------------------- #
@@ -173,13 +189,19 @@ IMPLICIT_RATE_PME = Figure(
 
 AVERAGE_RATE_ON_PROFITS = Figure(
     value=0.2426, unit="ratio", year=2024,
-    scope="IS brut rapporté aux bénéfices déclarés des entreprises bénéficiaires",
+    scope="Série publiée « Taux moyen d'imposition », graphique 2 de DGFiP Stat n° 39 "
+          "(valeur 2024 : 24,256 %) — IS brut rapporté aux bénéfices déclarés",
     source="DGFiP Statistiques n° 39, septembre 2025, graphique 2",
     url=DGFIP_STAT_39, use="validation",
-    caveat="Loss-makers leave BOTH sides here, which is why this series orders the sizes "
-           "the opposite way from the INSEE implicit rate. The model's own effective rate "
-           "sits between the two objects: its denominator is taxable profit, like this one, "
-           "but loss-makers stay in the average at zero, like the other.",
+    caveat="The construction is named on purpose. Tableau 2 of the same publication gives "
+           "24.32 % for what looks like the same ratio, and graphique 2's own denominator "
+           "gives 24.34 % — three constructions within one publication, differing by 0.08 "
+           "point. This line is the one the 'who pays' reconciliation is graded on, so it "
+           "is pinned to the published series and held there. Separately: loss-makers "
+           "leave BOTH sides here, which is why this series orders the sizes the opposite "
+           "way from the INSEE implicit rate. The model's own statistic is a third object "
+           "again — denominator is taxable profit, like this one, but loss-makers stay in "
+           "the average at zero, like the other.",
 )
 
 

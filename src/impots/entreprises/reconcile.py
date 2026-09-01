@@ -103,8 +103,11 @@ def build_lines(agg: FirmAggregates, year: int) -> list[Line]:
             margins.C3S, "C3S", totals.get("c3s"), TOLERANCE["instrument"],
             "The cleanest line in the table: the base is turnover, which is calibrated per "
             "cell, and the rate is a flat 0.16 % above a 19 M€ abattement. A residual here "
-            "is almost entirely the distribution of turnover *within* cells — the one "
-            "thing in the population that no published source constrains.",
+            "is almost entirely the distribution of turnover *within* cells — the one thing "
+            "in the population that no published source constrains. Two known offsets "
+            "first: receipts booked in a year are assessed on the *previous* year's "
+            "turnover, which the model does not have, and the sectoral caps for banks and "
+            "commissionnaires are not modelled.",
             source="CCSS",
         ),
         Line.from_figure(

@@ -854,3 +854,75 @@ because C3S and CVAE hit turnover and value added whether or not there is a
 profit. DGFiP's average rate on profits orders the sizes the other way again.
 Three objects, three orderings — and choosing whichever one the model resembles
 would be the purest available form of calibrating to a validation line.
+
+## D-025 — The verification completed, and what it did to D-023
+Date: 2026-09-01 · Status: accepted · Supersedes the caveat in D-023 · Evidence: workflow wf_ec6ad4bc-ac8, 12/12 agents, 5/5 verifiers
+
+D-023 recorded that four of the five adversarial verifiers had not returned and
+that CVAE, the CEBGE, the C3S and the validation figures therefore rested on
+single-agent confirmation. They have all returned now. **Every one came back
+`SCOPE_PROBLEM` except the firm-data agent, which came back `WRONG`.**
+
+**No encoded value was refuted.** The C3S verifier is the plainest: *"I attempted
+to refute all 12 reported parameters and could not break a single numeric value."*
+The CVAE verifier independently re-derived the 2025/2028 bracket coefficients this
+repo encodes, finding the 0.176 % / 0.175 % discontinuity that those exact numbers
+produce at 10 M€ — a corroboration that would have been impossible if the
+coefficients were invented. The CEBGE rates were attacked directly and held: a
+secondary source had reported them halved to 10.3 % / 20.6 %, and the verifier
+showed 10.3 % is BOFiP's worked *example* of the smoothed rate at 1.55 bn, not a
+statutory rate. Acting on that "correction" would have halved a correct parameter.
+
+**What the verifiers changed here, and it is all real:**
+
+* *A warning aimed at a correct source, removed.* The dégrèvement parameter carried
+  a comment saying BOI-CVAE-LIQ-10 n° 78 still held the stale LF 2024 trajectory.
+  The verifier fetched the document and found n° 78 is about exercice dates within
+  a group; the sentence does not exist. Warning withdrawn, and the withdrawal is
+  written into the file so it is not re-added.
+* *The CEBGE's ordinal count is not expressible by date, demonstrated.* BOI-IS-AUT-60
+  § 320 and § 325 give two companies **closing on the same day, 31/12/2026**, one in
+  its first exercice at a 1 bn threshold and one deemed in its second at 1.5 bn. No
+  date-keyed parameter tree can express that. The majority case is kept and the
+  parameter file now carries the refutation rather than a vague "assumes calendar
+  exercices".
+* *C3S is assessed on the previous year's turnover, and the model uses the current
+  year's.* The verifier named this exact implementation — `0.16 % × max(0, CA_N −
+  19 M€)` graded against receipts booked in N — as an off-by-one-year error. It is
+  unfixable in a one-year population, so it is declared in the formula, in the
+  banner and on the report line: simulated C3S is overstated by about one year of
+  nominal turnover growth.
+* *The effective-rate line's construction is now named.* DGFiP Statistiques n° 39
+  contains three constructions of "the" average rate on profits — 24.26 % (the
+  published series), 24.32 % (Tableau 2) and 24.34 % (graphique 2's own
+  denominator). This is the single line the "who pays" reconciliation is graded on,
+  so it is pinned to the published series explicitly rather than left to drift to
+  whichever number is nearest.
+* *Three IS perimeters, not two.* DGFiP Statistiques n° 43 publishes 61.8 bn for
+  2025 — 1.9 bn above the budget line, because it bundles the contribution sociale.
+  Recorded as context so that a reader grading this model against "the DGFiP figure"
+  knows which of the three they hold. Likewise CVAE has four published perimeters,
+  and the ~0.5 bn between two of them is the taxe additionnelle CCI the model does
+  not levy.
+
+**One accidental benefit of an assumption.** The verifier showed the CEBGE's
+second-year rate is **non-monotonic in current-year turnover** — with prior-year CA
+at 3.5 bn, a firm at 1.55 bn pays 10.3 %, at 1.59 bn pays 18.5 %, and at 1.60 bn
+jumps to 41.2 % — and warned that an implementation testing the rate bands in
+statutory order returns 41.2 % for the first case. The model does not have this bug,
+for two reasons worth separating: the band order in the formula happens to be
+correct, and the stationarity assumption (D-022) collapses the two turnover tests
+into one so the pathological case cannot arise at all. The assumption removes a real
+discontinuity. That is a limitation, not a feature — the model cannot price a reform
+whose effect runs through that cliff.
+
+**The firm-data agent returned `WRONG`, with 15 problems.** That is the SIRENE ×
+ESANE research for the real cell table — the one thing standing between this module
+and a meaningful reconciliation. Nothing from it has been used: the committed cell
+table is invented. It must be re-run before any real cell table is built, and until
+then the ship gate stays where D-024 left it.
+
+**The IS-core corrections remain open.** Date-pinned Légifrance URLs per parameter
+version, the groupe-fiscal member exclusion, and the ordering of the 42 500 € slice
+after deficit imputation and the zone abattements. None affects a value; all affect
+whether a future reader can re-find what was confirmed.

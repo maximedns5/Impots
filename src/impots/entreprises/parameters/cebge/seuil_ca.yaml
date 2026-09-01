@@ -8,6 +8,15 @@ description: "CA a partir duquel la CEBGE est due (LF 2025 art. 48, II ; LF 2026
 # pour un exercice calendaire, l'exercice 2025 est le premier et l'exercice 2026 le
 # second. Une entreprise cloturant au 30 juin est touchee sur 30/06/2026 et
 # 30/06/2027, ce que ce parametrage ne sait pas representer.
+# CE PARAMETRAGE PAR DATE NE PEUT PAS ETRE EXACT, et la contre-verification le
+# demontre par l'exemple. « Premier » et « second » exercice sont un RANG propre a
+# chaque entreprise, pas une periode. BOI-IS-AUT-60 § 320 : une societe creee le
+# 1er fevrier 2025 qui ne clot rien en 2025 cloture le 31/12/2026 son PREMIER
+# exercice, seuil 1 Md€. § 325 : une societe creee le 2 janvier 2026 qui cloture le
+# 31/12/2026 est reputee dans la situation du SECOND exercice, seuil 1,5 Md€. Meme
+# date de cloture, deux seuils : aucun arbre de parametres date ne sait exprimer
+# cela. Le rang majoritaire est retenu (exercice calendaire, 2025 = 1er,
+# 2026 = 2nd) et l'ecart est declare (D-022).
 metadata:
   unit: currency
   reference:
