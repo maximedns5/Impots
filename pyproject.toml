@@ -3,6 +3,11 @@ name = "impots"
 version = "0.0.0"
 description = "A transparent, layered simulator of the French tax system"
 requires-python = ">=3.11"
+# Determined, not chosen: openfisca-core and openfisca-france are both
+# AGPL-3.0-or-later and this package imports them directly, so anything
+# distributed here is a derivative work. See docs/DECISIONS.md D-017.
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
 dependencies = [
   # Phase 0 engine. Pinned exactly: openfisca-france ships weekly and golden
   # values move with the law (docs/PHASE0_SPEC.md §1, §7.10).
@@ -28,7 +33,9 @@ dev = ["pytest", "pyyaml", "httpx", "ruff"]
 data = ["pandas", "dbnomics", "scikit-learn"]
 
 [build-system]
-requires = ["setuptools>=68"]
+# 77 is where setuptools learned PEP 639 (`license` as an SPDX expression plus
+# `license-files`). Below that the metadata above is silently dropped.
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
@@ -55,7 +62,9 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 ignore = ["E501"]  # line length is handled by the formatter, not the linter
 
 [tool.ruff.lint.per-file-ignores]
-# The smoke test starts a timer and *then* imports openfisca, so that it can
-# report how long loading the tax-benefit system actually takes. Left exactly as
-# the Phase 0 spec published it — it is the reference the golden values come from.
-"scripts/verify_openfisca.py" = ["E402", "E702"]
+# The verify_* scripts are reference gates published alongside the phase specs and
+# kept as written: they start a timer and *then* import openfisca so they can
+# report load time (E402), and they pack assertions onto one line to stay readable
+# as a checklist (E702). They are the reference the golden values come from;
+# reformatting them would make the spec and the repo disagree over whitespace.
+"scripts/verify_*.py" = ["E402", "E702"]

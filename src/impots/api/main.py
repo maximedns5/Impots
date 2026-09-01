@@ -17,6 +17,8 @@ and must not survive contact with a deployment.
 from __future__ import annotations
 
 import json
+import logging
+import os
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -49,7 +51,29 @@ from impots.engine.reforms import read_ir_parameters
 
 UI_FILE = Path(__file__).resolve().parents[3] / "ui" / "index.html"
 
+#: Where this running version's Corresponding Source can be obtained.
+#:
+#: AGPL section 13 obliges anyone who lets users interact with a modified version
+#: *over a network* to offer those users its source. A local tool triggers nothing;
+#: the moment this is hosted, it does. Reading it from the environment rather than
+#: hardcoding a repository URL is the point: a fork that deploys must advertise its
+#: own source, not ours.
+SOURCE_URL = os.environ.get("IMPOTS_SOURCE_URL") or None
+LICENCE = "AGPL-3.0-or-later"
+
 _state: dict[str, Any] = {"warm": False, "warm_up_ms": None}
+
+
+def _is_loopback_only() -> bool:
+    """Whether this process was told to bind to localhost only.
+
+    Best-effort: uvicorn's host is not visible from inside the app, so read the
+    same environment variable uvicorn does and treat an unset host as the
+    loopback default. Wrong in the safe direction — an unusual launch produces a
+    warning that need not have been printed, never silence when one was needed.
+    """
+    host = os.environ.get("UVICORN_HOST", "127.0.0.1")
+    return host in {"127.0.0.1", "localhost", "::1"}
 
 
 @asynccontextmanager
@@ -57,6 +81,14 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     """Pay the cold-start cost before the first request rather than inside it."""
     _state["warm_up_ms"] = warm_up()
     _state["warm"] = True
+    if SOURCE_URL is None and not _is_loopback_only():
+        # Not an abstract worry: this app serves a UI to whoever can reach it, and
+        # AGPL section 13 makes offering them the source a condition of doing so.
+        logging.getLogger("impots").warning(
+            "Bound beyond localhost with no IMPOTS_SOURCE_URL set. AGPL section 13 "
+            "requires offering the Corresponding Source to anyone interacting with "
+            "this server over a network. Set IMPOTS_SOURCE_URL to a URL serving it."
+        )
     yield
 
 
@@ -87,6 +119,8 @@ def health() -> HealthResponse:
         openfisca_france=engine["openfisca_france"],
         openfisca_core=engine["openfisca_core"],
         warm=bool(_state["warm"]),
+        licence=LICENCE,
+        source_url=SOURCE_URL,
     )
 
 

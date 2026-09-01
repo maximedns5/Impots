@@ -14,11 +14,15 @@ tax law solo is not a viable use of the time available.
 Consequence: the project inherits AGPL-3.0 and OpenFisca's issue backlog.
 
 ## D-001 — Open questions, not yet decided
-- Is a live academic affiliation available? Decides whether L1 is synthesised
-  from open data or built on real ERFS/BDF extracts via ADISP.
+- ~~Is a live academic affiliation available?~~ **Resolved 2026-08-28 (D-012):**
+  yes — ERFS via Quetelet-Progedo is available. Phase 1 shipped on open data
+  anyway (branch A'); the migration is planned in D-016.
 - Households first, or firms first? Firms are the real gap; households are the
   easier start.
-- Contribute the firm package to the OpenFisca org, or fork?
+- Contribute the firm package to the OpenFisca org, or fork? **Now the live
+  question**: D-017 makes the licence AGPL either way, so this is about
+  maintenance and reach, not about licensing.
+- ~~What licence?~~ **Resolved 2026-09-01 (D-017):** AGPL-3.0-or-later.
 - What does v1 explicitly refuse to answer?
 
 ## D-002 — Phase 0 verified against openfisca-france 176.0.8 before handoff
@@ -460,3 +464,129 @@ ERFS is not redistributable. Nothing ERFS-derived may be committed, the CI fixtu
 stays EEC-derived, and only aggregates are published. `docs/PHASE1C_ERFS.md` §5
 lists the checks; a pre-commit hook refusing anything under `data/` would make
 them mechanical, and should exist before the data does.
+
+
+## D-017 — Raking (`calibrate.py`): build it, as Branch-C infrastructure
+Date: 2026-09-01 · Status: accepted, **not yet implemented** · Rationale: `docs/REVIEW_2026-08-29.md` §1
+
+Phase 1 shipped without spec §4.3's IPF raking; the omission was reported rather
+than buried, and the reviewing session ruled on it.
+
+My argument for skipping it — that `EXTRIAN` is already calibrated by INSEE on
+sex×age, so re-raking would be near-identity — is accepted as far as it goes and
+found to miss the point. **Raking is joint.** Keeping sex×age in the margin set
+is not there to move those margins; it is there to *constrain* the adjustment
+made to the others. And the +1.5 % ménages against −0.0 % individuals pair is not
+the clean bill I read it as: at fixed persons, 1.5 % too many households means
+household size runs about 1.5 % small — a composition skew, mild here, and
+exactly what a household-type margin corrects.
+
+Ruling:
+
+* Build `calibrate.py`: margins-agnostic IPF, weight-ratio bounds [0.2, 5],
+  convergence and bounds tests. It sits on **Branch C's** critical path, not A''s
+  — ERFS arrives weighted to its own vintage, two or three years stale, and must
+  be re-raked to simulation-year margins. Both branches need it and the Progedo
+  waiting window is the slot for it.
+* Run it once on A' with two margin sets: households by type (RP), and
+  age-band × sex as drift constraints. No region margin — the EEC has none
+  (M0_RECON §4.3). Record before/after for **every** reconciliation line
+  whichever way they move: if the effect is as small as I predicted, the report
+  saying so is worth having; if AF or the foyer counts move, better still.
+* The income-mass scaling stays as-is for A' — it dies with ERFS — and the
+  wage-bill margin stays marked spent (D-014 already handles that correctly).
+
+## D-018 — Licence: AGPL-3.0-or-later, and the firm package is an in-repo extension
+Date: 2026-09-01 · Status: accepted · Closes **both** open questions in D-001
+
+`LICENSE` holds the verbatim GNU AGPL v3 text; `pyproject.toml` declares
+`license = "AGPL-3.0-or-later"` under PEP 639, which is why the build now
+requires setuptools >= 77.
+
+**Determined rather than chosen.** `openfisca-core` and `openfisca-france` are
+both AGPL-3.0-or-later, and this package imports them directly, so anything
+distributed is a derivative work and must be AGPL-compatible. Dual-licensing was
+never available: you cannot relicense someone else's copyleft. The alternative
+considered and rejected was splitting the tree — putting the parts that do not
+import openfisca (`margins.py`, the reconciliation machinery, the EEC skeleton)
+under a permissive licence and keeping the rest AGPL. It is legitimate, and it
+buys nothing at this size against real ongoing maintenance.
+
+**What is actually live is section 13**, which is what separates AGPL from GPL:
+anyone who lets users interact with a modified version *over a network* must offer
+those users its Corresponding Source. Running the calculator locally triggers
+nothing. Hosting it does — and Phase 0 deferred deployment precisely as out of
+scope, which is why this had not bitten yet.
+
+So the obligation is engineered rather than documented:
+
+* `IMPOTS_SOURCE_URL` names a URL serving this version's source. Read from the
+  environment, not hardcoded, so a fork that deploys advertises **its own**
+  source rather than ours.
+* `GET /health` reports `licence` and `source_url`; the UI footer renders the
+  link, and shows no link at all when the server has not been told — a missing
+  offer is a deployment that has not met the condition, and hiding it would be
+  worse than showing it.
+* Startup logs a warning when the server is bound beyond localhost with no source
+  URL set.
+
+**What this forecloses, stated plainly:** a closed hosted version of this software
+is not possible, now or later. If that ever mattered it would have to be decided
+before the Phase 2 firm package is written, not after — which is why D-001's
+"contribute upstream or fork?" is now the live question rather than a distant one.
+
+**One argument the analysis undersold**, and the reviewing session was right to
+put it back: for *this* project section 13 is not a cost, it is the thesis. The
+product's signature is showing its working. A licence under which nobody can host
+a closed fork of the honesty machine is the licence that matches the mission.
+
+**Data is not covered.** Code licensing and data licensing are independent. The
+INSEE Enquête Emploi is Licence Ouverte / Etalab 2.0 (redistribution with
+attribution — what makes the committed CI fixture legal); ERFS is restricted and
+non-redistributable (D-016, `docs/PHASE1C_ERFS.md` §5). The AGPL changes neither.
+
+### D-001's other half, settled in the same entry
+
+Since the licence is AGPL either way, "contribute the firm package upstream or
+fork?" was never a licensing question — it is about maintenance and reach, and it
+is cheaper to settle before any firm code exists than after.
+
+The Phase 2 firm package is developed **in-repo, as an independent extension
+package following OpenFisca conventions** — YAML dated parameters,
+openfisca-test-format YAML cases — AGPL like everything else, and structured so
+it can be *offered* upstream once it has substance (IS, C3S, CFE encoded and
+tested). Contribution is the goal; the fork-shaped start is the schedule. Gating
+Phase 2 on OpenFisca-org governance and review latency, which the Phase 0 audit
+measured as thin, would trade a month of work for a queue.
+
+*(Not legal advice. For anything with stakes beyond this repository, a lawyer,
+not a language model.)*
+
+
+## D-019 — The DGFiP cross-check passed; the publication blocker is lifted for IR
+Date: 2026-09-01 · Status: accepted · Evidence: `tests/golden/CROSSCHECK.md`
+
+Phase 1 spec §0.5 P2 kept `CROSSCHECK.md` a blocker for publication, not for
+development: golden tests prove this wrapper reads openfisca-france consistently,
+and cannot prove openfisca-france is right. Done on 2026-08-29 against the
+official simulator (simulateur-ir-ifi.impots.gouv.fr, revenus 2024, modèle
+simplifié), driven through the browser by the reviewing session with Max present.
+The arithmetic is DGFiP's own, so independence from OpenFisca holds.
+
+| Case | Our `ir` | DGFiP | Our `rfr` | DGFiP |
+|---|---|---|---|---|
+| `single_30k` | 812 € | **812 €** | 22 143 € | **22 143 €** |
+| `couple_70k_2kids` | 1 274 € | **1 274 €** | 51 661 € | **51 661 €** |
+
+Zero difference on both, and the intermediates agree too: droits simples 1 171 /
+décote 359 / 1 part for the single, 1 889 / 615 / 3 parts for the couple — which
+are exactly what `ir_plaf_qf`, the décote and `nbptr` report. Agreement on the
+intermediates matters more than agreement on the total: two engines can reach the
+same final figure through different errors, and these did not.
+
+**What this licenses and what it does not.** The household calculator's income-tax
+path is now independently validated and may be described as correct for the cases
+covered — salaried households, no capital income, no réductions or crédits.
+Nothing else moved: the population's benefit levels remain unpublishable (D-015),
+the golden benefit lines were never covered by this check (the DGFiP IR simulator
+has no equivalent), and the corresponding CAF cross-check remains undone.

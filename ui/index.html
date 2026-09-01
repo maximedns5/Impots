@@ -696,6 +696,7 @@ footer code { font-family: var(--mono); font-size: 11px; }
       <footer id="foot">
         Valeurs calculées par OpenFisca-France. Ancrages de non-régression vérifiés à ±2 € ;
         ce sont des repères sur <i>cette</i> version du moteur, pas des attestations fiscales.
+        <span id="licence"></span>
       </footer>
     </section>
   </div>
@@ -1286,6 +1287,16 @@ async function boot() {
     $("engine").innerHTML =
       `<span class="dot ${health.warm ? "ok" : ""}"></span>` +
       `openfisca-france <b>${health.openfisca_france}</b> · core <b>${health.openfisca_core}</b>`;
+    /* AGPL section 13: anyone interacting with this over a network must be offered
+       the Corresponding Source. The link is only shown when the server has been
+       told where its source lives — a missing link is a deployment that has not
+       met the condition, and saying nothing would hide that. */
+    if (health.licence) {
+      $("licence").innerHTML = health.source_url
+        ? ` Logiciel libre sous <b>${escapeHtml(health.licence)}</b> — `
+          + `<a href="${escapeHtml(health.source_url)}" style="color:var(--bleu)">code source</a>.`
+        : ` Logiciel libre sous <b>${escapeHtml(health.licence)}</b>.`;
+    }
     lawParams = await (await fetch(`${API}/parameters/ir?year=2024`)).json();
     fillLaw();
   } catch (error) {

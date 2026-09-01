@@ -106,8 +106,12 @@ the smallest complete demonstration that the reform machinery does what it says.
   income in a measured case. Read `docs/DECISIONS.md` D-005 before quoting any
   benefit figure; the `historique_revenus` flag turns the defect off.
 * **Golden values are regression anchors, not tax advice.** They pin this wrapper
-  against openfisca-france 176.0.8. `tests/golden/CROSSCHECK.md` is where they get
-  checked against the DGFiP's own simulator, by a human, once.
+  against openfisca-france 176.0.8. They have also been checked against the
+  DGFiP's own simulator — `tests/golden/CROSSCHECK.md`, done 2026-08-29, both
+  households agreeing **to the euro** on income tax and on revenu fiscal de
+  référence, and matching on the intermediates (droits simples, décote, parts)
+  too. That is the one check in the project that could have caught a systematic
+  error rather than a regression, and it passed.
 
 ### And about the population specifically
 
@@ -129,5 +133,18 @@ French rules-as-code DSL.
 
 ## Licence
 
-Undecided — note that building on OpenFisca-France (AGPL-3.0) makes this AGPL.
-Decide before Phase 2.
+**AGPL-3.0-or-later** ([`LICENSE`](LICENSE)). Inherited rather than chosen:
+`openfisca-core` and `openfisca-france` are AGPL-3.0-or-later and this package
+imports them, so anything distributed here is a derivative work. Dual-licensing
+is not available — you cannot relicense someone else's copyleft.
+
+**If you host this**, AGPL section 13 obliges you to offer everyone who reaches it
+over a network the Corresponding Source of *your* version. Set
+`IMPOTS_SOURCE_URL` to a URL serving your source: `GET /health` reports it, the UI
+footer links it, and the server logs a warning at startup if it is bound beyond
+localhost without one. Running it on your own machine triggers nothing.
+
+Data is licensed separately from code and the AGPL does not reach it. The INSEE
+Enquête Emploi is Licence Ouverte / Etalab 2.0 (redistribution with attribution,
+which is what makes `tests/fixtures/eec_sample.parquet` committable). ERFS, if the
+population moves to it, is **not** redistributable — see `docs/PHASE1C_ERFS.md` §5.

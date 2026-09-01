@@ -308,6 +308,15 @@ class HealthResponse(BaseModel):
     openfisca_france: str
     openfisca_core: str
     warm: bool
+    licence: str = "AGPL-3.0-or-later"
+    source_url: str | None = Field(
+        default=None,
+        description="Where this running version's Corresponding Source can be obtained. "
+        "AGPL section 13 requires offering it to anyone interacting with the software "
+        "over a network; set IMPOTS_SOURCE_URL before deploying. None means the "
+        "server has not been told, which is only acceptable when it is not reachable "
+        "by anyone else.",
+    )
 
 
 # --------------------------------------------------------------------------- #

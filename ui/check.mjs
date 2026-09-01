@@ -63,7 +63,9 @@ globalThis.location = { protocol: "http:", origin: "http://localhost:8000" };
 const calls = [];
 globalThis.fetch = async (url, opts) => {
   calls.push({ url, opts });
-  if (url.endsWith("/health")) return { json: async () => ({ warm: true, openfisca_france: "176.0.8", openfisca_core: "44.7.0" }) };
+  if (url.endsWith("/health")) return { json: async () => ({
+    warm: true, openfisca_france: "176.0.8", openfisca_core: "44.7.0",
+    licence: "AGPL-3.0-or-later", source_url: "https://example.org/impots.git" }) };
   if (url.includes("/parameters/ir")) return { json: async () => LAW };
   if (url.includes("/population/baseline")) return { ok: true, json: async () => POPULATION };
   if (url.includes("/population/simulate")) return { ok: true, json: async () => POPULATION_RUN };
@@ -131,6 +133,10 @@ ok("reform panel prefilled from current law", () => {
   assert.equal(Number($("dCelib").value), 889);
   assert.equal(Number($("dTaux").value), 45.25);
   assert.match($("baremeRows").innerHTML, /180294/);
+});
+ok("licence and source link shown in the footer", () => {
+  assert.match($("licence").innerHTML, /AGPL-3\.0-or-later/);
+  assert.match($("licence").innerHTML, /example\.org/, "AGPL s13: the source offer must be reachable");
 });
 ok("no reform is sent when nothing was touched", () => assert.equal($("reformState").textContent, "droit courant"));
 

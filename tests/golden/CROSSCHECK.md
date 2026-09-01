@@ -4,7 +4,14 @@
 cannot prove openfisca-france is right. This file is where that second question
 gets answered, by a human, against the tax administration's own calculator.
 
-**Status: not yet done.** Fill in the results column and change this line.
+**Status: DONE — 2026-08-29. Both cases agree with the DGFiP simulator to the euro.**
+
+Method: run against the official simulator (simulateur-ir-ifi.impots.gouv.fr,
+"Calcul de l'impôt 2025 sur les revenus 2024", modèle simplifié — the 2025 build
+computes client-side in `calc.js`), driven through the browser by the reviewing
+Claude session with Max present; the arithmetic is DGFiP's own, so the check's
+independence from OpenFisca holds. Intermediate figures recorded below for
+future localisation of any drift.
 
 It stays a blocker for *publication*, not for development (Phase 1 spec §0.5, P2):
 Phase 1 work proceeds, but no public claim of correctness is made until a human
@@ -54,8 +61,8 @@ One adult born 1990, no children, no other income.
 |---|---|
 | Our engine, `ir` | **812 €** |
 | Our engine, `revenu_fiscal_reference` | 22 143 € |
-| DGFiP simulator | _to fill_ |
-| Difference | _to fill_ |
+| DGFiP simulator | **812 €** (RFR 22 143 €; droits simples 1 171 €; décote 359 €; parts 1; TMI 11 %) |
+| Difference | **0 € on IR, 0 € on RFR** |
 
 ### `couple_70k_2kids`
 
@@ -74,8 +81,8 @@ Two adults born 1985 and 1987, married or pacsed, two children born 2015 and
 |---|---|
 | Our engine, `ir` | **1 274 €** |
 | Our engine, `revenu_fiscal_reference` | 51 661 € |
-| DGFiP simulator | _to fill_ |
-| Difference | _to fill_ |
+| DGFiP simulator | **1 274 €** (RFR 51 661 €; droits simples 1 889 €; décote 615 €; parts 3; TMI 11 %) |
+| Difference | **0 € on IR, 0 € on RFR** |
 
 ## Reading the result
 
