@@ -258,6 +258,45 @@ def cmd_firms_build(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_firms_reconcile(args: argparse.Namespace) -> int:
+    from impots.entreprises import aggregate as firm_aggregate
+    from impots.entreprises import reconcile as firm_reconcile
+    from impots.entreprises import runner as firm_runner
+    from impots.entreprises.build import PROCESSED as FIRM_PROCESSED
+
+    path = FIRM_PROCESSED / f"firms_{args.vintage}.parquet"
+    if not path.exists():
+        print(f"{path} not found — run `impots entreprises build` first", file=sys.stderr)
+        return 1
+
+    manifest_path = FIRM_PROCESSED / f"firms_{args.vintage}.manifest.json"
+    manifest = (
+        json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest_path.exists()
+        else {"cells_are_synthetic": True, "population": {}}
+    )
+    result = firm_runner.run(pl_read(path), year=args.year)
+    agg = firm_aggregate.aggregate(result.firms)
+    synthetic = bool(manifest.get("cells_are_synthetic", True))
+    report = firm_reconcile.write(
+        agg, args.vintage, args.year, synthetic,
+        manifest.get("population", {}).get("fiscal_to_accounting"),
+    )
+    print(f"wrote {report}")
+
+    lines = firm_reconcile.build_lines(agg, args.year)
+    outside = [line for line in lines if line.status.startswith("OUTSIDE")]
+    print(f"  {len(lines)} lines, {len(outside)} outside tolerance")
+    for line in outside:
+        print(f"    {line.label:38} {line.residual:+7.1%} (±{line.tolerance:.0%})")
+    if synthetic:
+        print(
+            "\n  NOTE: the cell table is the committed fixture and is invented. These "
+            "residuals\n  are arithmetic about a fiction and validate nothing."
+        )
+    return 0
+
+
 def cmd_firms_run(args: argparse.Namespace) -> int:
     from impots.entreprises import aggregate as firm_aggregate
     from impots.entreprises import runner as firm_runner
@@ -360,6 +399,13 @@ def main(argv: list[str] | None = None) -> int:
     firm_runner_parser.add_argument("--year", type=int, default=2026)
     firm_runner_parser.add_argument("--reform", help="path to a FirmReformSpec JSON file")
     firm_runner_parser.set_defaults(func=cmd_firms_run)
+
+    firm_reconciler = firm_actions.add_parser(
+        "reconcile", help="generate reports/reconciliation_entreprises.md"
+    )
+    firm_reconciler.add_argument("--vintage", default="fixture")
+    firm_reconciler.add_argument("--year", type=int, default=2026)
+    firm_reconciler.set_defaults(func=cmd_firms_reconcile)
 
     args = parser.parse_args(argv)
     if getattr(args, "seed", 0) is None:

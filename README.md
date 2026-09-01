@@ -16,7 +16,7 @@ what a tax reform does, and is explicit about how much each answer can be truste
 The layering is the product: a user sees the mechanical number, the behavioural
 band and the macro fan stacked, each labelled.
 
-## Status — Phases 0 and 1 are built
+## Status — Phases 0 and 1 are built; Phase 2 is in progress
 
 **Phase 0 — one household. Any reform. Exact numbers.** Describe a household,
 optionally edit the IR barème, décote, plafond du quotient familial or CSG rates,
@@ -31,14 +31,25 @@ de vie — with a [reconciliation report](reports/reconciliation.md) that states
 by line, how far it sits from published totals and which of those lines were spent
 on calibration and therefore prove nothing.
 
+**Phase 2 — the firm side.** IS, its contributions additionnelles, the CEBGE, the
+CVAE and the C3S, priced mechanically over a synthetic firm population built from
+published sector × size cells. A firm reform is priced inside an HTTP request —
+about 500 000 firms in hundredths of a second — so there is no quick tier and no
+batch job. It has [its own reconciliation report](reports/reconciliation_entreprises.md).
+The engine and its parameters are done; the population is still running on an
+invented cell table, so **no figure on that page validates anything yet**.
+
 ```
 src/impots/engine/       typed wrapper over openfisca-france — household scale (L2)
 src/impots/population/   the synthetic population and distributional engine (L1)
-src/impots/api/          five FastAPI endpoints
-ui/index.html            the calculator and the population tab, one file, no build step
+src/impots/entreprises/  the firm tax system, its own parameter tree and population
+src/impots/reporting.py  the shared report engine — the spent/validation rule lives here
+src/impots/guards.py     weight identities and the checks both weighting defects needed
+src/impots/api/          seven FastAPI endpoints
+ui/index.html            three tabs — household, population, firms — one file, no build
 tests/golden/            household regression anchors, ±2 €
-tests/fixtures/          a 400-household EEC sample so CI needs no network
-reports/                 the reconciliation report, generated
+tests/fixtures/          a 400-household EEC sample and an invented firm cell table
+reports/                 the two reconciliation reports, generated
 docs/                    the phase specs, the decision log, parameters, sources
 ```
 
@@ -143,6 +154,31 @@ the smallest complete demonstration that the reform machinery does what it says.
   quoting any level.
 * **No capital income, no self-employment income, no réductions d'impôt.** The top
   of the distribution is a construction.
+
+### And about the firm module specifically
+
+* **No firm financial is observed.** SIRENE gives counts per sector × size cell and
+  ESANE gives that cell's totals; neither publishes a firm. Every individual amount
+  is a parametric draw inside a published cell, so results exist at cell level only
+  — no firm-level output, and no top-tail claims.
+* **The cell table is still invented.** The committed fixture holds 1.10 M firms
+  against 2.72 M real ones, so every line of the firm reconciliation report sits
+  60–70 % low. That is the fixture, not the engine, and the report says so above
+  its own table. Load a real cell table before quoting anything from it.
+* **One scalar dominates the IS residual**: the national fiscal-to-accounting
+  ratio. Fiscal result is not accounting result and no open source publishes the
+  difference per firm (D-024).
+* **No loss carry-forward, no intégration fiscale, no crédits d'impôt.** The first
+  biases IS upward, the second over-counts firms at the reduced rate, the third
+  means the simulated IS is an IS before créances.
+* **CFE is absent on purpose.** It turns on communal valeur locative and thousands
+  of local rates; a plausible-looking imitation would be worse than a declared hole.
+* **The CVAE base is a proxy** — accounting value added, which does not add back
+  the rents and crédit-bail that are not deductible from the fiscal one, so CVAE is
+  understated and the bias is correlated with sector (D-021).
+* **The CEBGE is computed on one exercice** where the statute uses two, so the
+  entries and exits created by its second-year threshold — where the 2026 yield
+  actually moves — are not represented (D-022).
 
 ## Non-goals
 

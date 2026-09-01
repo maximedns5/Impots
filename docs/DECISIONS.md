@@ -812,3 +812,45 @@ Consequences taken now, rather than left as intent:
 * Re-running the four missing verifiers is the first item of firm-module work, and
   it is cheap. It is not a blocker for the module's arithmetic, which is what
   P2 gates on.
+
+## D-024 — Firm tolerances, and why the IS gate is deliberately wide
+Date: 2026-09-01 · Status: accepted · Evidence: reports/reconciliation_entreprises.md
+
+Declared tolerances for the firm reconciliation: calibration ±1 %, IS ±20 %,
+other instruments ±25 %, shape ±15 %.
+
+**±20 % on IS looks lax and is the point.** One modelling choice — the single
+national fiscal-to-accounting ratio — dominates that residual, and it is a free
+parameter in the sense that nothing outside the model pins it. A tighter gate
+would not make the model better; it would make tuning that ratio until the line
+goes green the cheapest way to pass, and a margin spent that way can never be
+evidence again. The gate is set where it is so that passing it means the
+*mechanics* are right, and the report carries the ratio's value in its method
+notes so a reader can judge the choice rather than inherit it.
+
+**±25 % on the other instruments** because their bases are proxies (accounting
+value added for CVAE, D-021), or their published year is not the simulated one
+(the CEBGE's 2025 figure is its first exercice at a 1 bn threshold; the model runs
+the second at 1.5 bn).
+
+**The comparator choice matters more than the tolerance.** The model computes IS
+before any crédit d'impôt, so it is judged against the national accounts' "IS
+avant crédits d'impôt" (69.5 bn, 2025) and not against net budget receipts
+(59.9 bn), which are net of 24.6 bn of remboursements and are shown only to size
+the gap. Picking the closer of the two after seeing the result would be
+calibrating to a validation line.
+
+**On the fixture, every line is outside tolerance, and that is the correct
+outcome.** The committed cell table is invented and holds 1.10 M firms against
+2.72 M real ones, so the residuals run at −60 % to −72 % more or less uniformly.
+The report says so above the table, in those words, rather than in a footnote. The
+ship gate is not met and cannot be met until a real cell table is loaded; what the
+fixture demonstrates is that the machinery runs end to end.
+
+**One line is expected to have the wrong sign** and is tagged `context` for that
+reason. INSEE's implicit rate falls with firm size (denominator is ENE over all
+firms, so loss-makers drag it down); the model's effective rate rises with size,
+because C3S and CVAE hit turnover and value added whether or not there is a
+profit. DGFiP's average rate on profits orders the sizes the other way again.
+Three objects, three orderings — and choosing whichever one the model resembles
+would be the purest available form of calibrating to a validation line.

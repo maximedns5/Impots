@@ -679,8 +679,103 @@ def test_cebge_reform_moves_its_smoothing_band_with_its_threshold(tbs: object) -
 
 
 def test_cebge_knob_refuses_more_tranches_than_the_statute_has(tbs: object) -> None:
-    with pytest.raises(ValueError, match="at most 2|too_long|2 items"):
+    with pytest.raises(ValueError, match=r"at most 2 items after validation, not 3"):
         FirmReformSpec(cebge_seuils_et_taux=[
             {"seuil_ca": 1e9, "taux": 0.2}, {"seuil_ca": 3e9, "taux": 0.4},
             {"seuil_ca": 5e9, "taux": 0.5},
         ])
+
+
+# --------------------------------------------------------------------------- #
+# the reconciliation report (§5)
+# --------------------------------------------------------------------------- #
+@pytest.fixture(scope="module")
+def firm_aggregates() -> object:
+    from impots.entreprises.build import FIXTURE_CELLS, load_cells
+
+    cells, ratio, _ = load_cells(FIXTURE_CELLS)
+    firms, _ = build_firms(cells, fiscal_to_accounting=ratio)
+    return firm_aggregate.aggregate(firm_runner.run(firms, 2026).firms)
+
+
+def test_every_published_figure_carries_a_source_and_a_url() -> None:
+    """Nothing downstream may hardcode a statistic. A figure without a citation is
+    indistinguishable from one somebody remembered."""
+    from impots.entreprises import margins
+
+    for use in ("calibration", "validation", "context"):
+        for name, figure in margins.figures_by_use(use).items():
+            assert figure.source, f"{name} has no source"
+            assert figure.url.startswith("http"), f"{name} has no usable url"
+            assert figure.scope, f"{name} does not say what it counts"
+
+
+def test_a_calibration_target_is_never_printed_as_validation(firm_aggregates: object) -> None:
+    """The rule the whole report rests on. `Line.from_figure` takes `use` from the
+    figure, so a spent margin cannot be re-tagged at the point of display — which is
+    exactly what happened to the household ménage count before raking existed."""
+    from impots.entreprises import margins, reconcile
+
+    spent = {figure.value for figure in margins.figures_by_use("calibration").values()}
+    for line in reconcile.build_lines(firm_aggregates, 2026):
+        if line.published in spent:
+            assert line.use == "calibration", (
+                f"{line.label} compares against a calibration target but is tagged "
+                f"{line.use!r}"
+            )
+
+
+def test_the_report_leads_with_the_synthetic_cell_warning(firm_aggregates: object) -> None:
+    """The fixture cells are invented. A tidy residual table with no warning invites
+    exactly the wrong conclusion, so the warning goes above the table, not in a
+    footnote."""
+    from impots.entreprises import reconcile
+
+    report = reconcile.render(firm_aggregates, "fixture", 2026, cells_are_synthetic=True)
+    assert "These residuals mean nothing" in report
+    assert report.index("These residuals mean nothing") < report.index("| Line |")
+
+    real = reconcile.render(firm_aggregates, "2024", 2026, cells_are_synthetic=False)
+    assert "These residuals mean nothing" not in real
+
+
+def test_the_report_names_the_ratio_that_dominates_it(firm_aggregates: object) -> None:
+    """§3.3 requires the fiscal-to-accounting ratio in the method notes: it is one
+    scalar and it moves the IS line more than anything else in the model."""
+    from impots.entreprises import reconcile
+
+    report = reconcile.render(
+        firm_aggregates, "fixture", 2026, fiscal_to_accounting=0.82
+    )
+    assert "0.820" in report
+    assert "No loss carry-forward" in report
+    assert "No CFE" in report
+
+
+def test_the_effective_rate_gap_is_context_and_expected_to_disagree(
+    firm_aggregates: object,
+) -> None:
+    """The two published effective-rate series order firm sizes in opposite
+    directions because they measure different objects. The model resembles neither,
+    so this line is context — tagging it validation would let the report claim credit
+    for whichever series it happened to match."""
+    from impots.entreprises import reconcile
+
+    lines = {line.label: line for line in reconcile.build_lines(firm_aggregates, 2026)}
+    gap = lines["Écart de taux effectif GE − PME"]
+    assert gap.use == "context"
+    assert gap.published < 0, "INSEE's implicit rate falls with size"
+    assert gap.simulated > 0, "the model's rises with size, because turnover taxes bite"
+
+
+def test_the_ship_gate_line_is_the_national_accounts_figure(firm_aggregates: object) -> None:
+    """Which published IS number the model is judged against is most of the work. It
+    computes IS before any crédit d'impôt, so the comparator is the national-accounts
+    'avant crédits' line — not the net budget receipts, which are shown alongside and
+    are missed high by construction."""
+    from impots.entreprises import margins, reconcile
+
+    lines = {line.label: line for line in reconcile.build_lines(firm_aggregates, 2026)}
+    assert lines["Impôt sur les sociétés"].published == margins.IS_AVANT_CREDITS.value
+    assert lines["Impôt sur les sociétés"].tolerance == 0.20
+    assert lines["IS — recettes nettes (pour mémoire)"].use == "context"
