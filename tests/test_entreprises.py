@@ -11,11 +11,19 @@ engine — an engine that agrees with itself proves nothing.
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
+import polars as pl
 import pytest
 from openfisca_core.simulation_builder import SimulationBuilder
 
+from impots import guards
+from impots.entreprises import aggregate as firm_aggregate
+from impots.entreprises import runner as firm_runner
 from impots.entreprises import system as firm_system
+from impots.entreprises.population import Cell, build_firms
 from impots.entreprises.reforms import SCALAR_KNOBS, FirmReformSpec, resolve, verify_scales
 
 YEAR = "2026"
@@ -288,3 +296,159 @@ def test_unknown_knobs_are_refused() -> None:
     """The reform surface is a whitelist: raw parameter paths must not get through."""
     with pytest.raises(ValueError, match="Extra inputs"):
         FirmReformSpec.model_validate({"impot_societes.taux_normal": 0.3})
+
+
+# --------------------------------------------------------------------------- #
+# the synthetic firm population (§3)
+#
+# Runs on tests/fixtures/firm_cells.json — invented cells with a realistic shape.
+# SIRENE and ESANE stay out of the tree and CI has no network.
+# --------------------------------------------------------------------------- #
+FIXTURE = Path(__file__).parent / "fixtures" / "firm_cells.json"
+
+
+def load_cells() -> tuple[list[Cell], float]:
+    raw = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    return [Cell(**cell) for cell in raw["cells"]], raw["fiscal_to_accounting"]
+
+
+@pytest.fixture(scope="module")
+def firm_population() -> tuple[pl.DataFrame, object]:
+    cells, ratio = load_cells()
+    return build_firms(cells, fiscal_to_accounting=ratio)
+
+
+def test_published_cell_totals_are_reproduced_exactly(
+    firm_population: tuple[pl.DataFrame, object],
+) -> None:
+    """Firm counts, turnover and value added are what the build calibrates on, so
+    they are reproduced exactly rather than approximately — and that is checked,
+    not assumed. Both Phase 1 weighting defects were steps that quietly moved a
+    total while every other guard stayed green."""
+    _, stats = firm_population
+    for name, error in stats.calibration_error.items():  # type: ignore[attr-defined]
+        assert abs(error) < 1e-9, f"{name} drifted by {error:+.2e}"
+
+
+def test_calibrated_totals_match_the_published_cells(
+    firm_population: tuple[pl.DataFrame, object],
+) -> None:
+    firms, _ = firm_population
+    cells, _ratio = load_cells()
+    assert firms["weight"].sum() == pytest.approx(sum(c.n_firms for c in cells), rel=1e-12)
+    assert guards.weighted_total(firms, "chiffre_affaires") == pytest.approx(
+        sum(c.turnover_total for c in cells), rel=1e-9
+    )
+    assert guards.weighted_total(firms, "valeur_ajoutee") == pytest.approx(
+        sum(c.value_added_total for c in cells), rel=1e-9
+    )
+
+
+def test_loss_share_matches_the_published_probability(
+    firm_population: tuple[pl.DataFrame, object],
+) -> None:
+    """P(loss) is the ONLY loss mechanism.
+
+    The first version drew profit margins that could go negative and *then* applied
+    the Bernoulli, zeroing a second tranche of firms on top: the realised loss
+    share came out at 49 % against a specified 28 %. The share of firms paying no
+    IS is a validation line (§3.4), so that bug would have made the line measure
+    the build rather than the model.
+    """
+    _, stats = firm_population
+    cells, _ = load_cells()
+    total = sum(c.n_firms for c in cells)
+    expected = sum(c.n_firms * c.p_loss for c in cells) / total
+    assert stats.share_loss_making == pytest.approx(expected, abs=0.02)  # type: ignore[attr-defined]
+
+
+def test_population_is_deterministic() -> None:
+    cells, ratio = load_cells()
+    first, _ = build_firms(cells, fiscal_to_accounting=ratio)
+    second, _ = build_firms(cells, fiscal_to_accounting=ratio)
+    assert first.equals(second)
+
+
+def test_value_added_never_exceeds_turnover(
+    firm_population: tuple[pl.DataFrame, object],
+) -> None:
+    _, stats = firm_population
+    assert stats.cells_with_va_above_ca == 0  # type: ignore[attr-defined]
+
+
+def test_no_negative_financials(firm_population: tuple[pl.DataFrame, object]) -> None:
+    firms, _ = firm_population
+    for column in ("chiffre_affaires", "valeur_ajoutee", "benefice_imposable", "weight"):
+        assert (firms[column].to_numpy() >= 0).all(), column
+
+
+def test_an_empty_skeleton_is_refused() -> None:
+    with pytest.raises(ValueError, match="needs a published skeleton"):
+        build_firms([], fiscal_to_accounting=0.8)
+
+
+# --------------------------------------------------------------------------- #
+# running the population
+# --------------------------------------------------------------------------- #
+def test_run_preserves_the_weighted_totals(
+    firm_population: tuple[pl.DataFrame, object],
+) -> None:
+    """A run reweights nothing, so any drift in the weighted firm count or turnover
+    is a bug in the run itself (§3.5)."""
+    firms, _ = firm_population
+    result = firm_runner.run(firms, 2026)
+    assert result.guards["weighted_firms"] == pytest.approx(firms["weight"].sum(), rel=1e-12)
+    assert result.guards["weighted_turnover"] == pytest.approx(
+        guards.weighted_total(firms, "chiffre_affaires"), rel=1e-9
+    )
+
+
+def test_run_refuses_a_population_missing_inputs() -> None:
+    """A variable that silently takes its default computes a plausible tax forever."""
+    with pytest.raises(firm_runner.FirmRunError, match="missing required inputs"):
+        firm_runner.run(pl.DataFrame({"weight": [1.0], "chiffre_affaires": [1e6]}), 2026)
+
+
+def test_effective_rate_rises_with_firm_size(
+    firm_population: tuple[pl.DataFrame, object],
+) -> None:
+    """The shape the module exists to show: turnover taxes and the surcharges make
+    large firms pay a higher share of profit than the headline rate, while the
+    reduced rate pulls the small end down."""
+    firms, _ = firm_population
+    agg = firm_aggregate.aggregate(firm_runner.run(firms, 2026).firms)
+    rates = {row.taille: row.mean_effective_rate for row in agg.by_size}
+    assert rates["micro"] < rates["PME"] < rates["ETI"] < rates["GE"]
+
+
+def test_zero_is_share_is_reported(firm_population: tuple[pl.DataFrame, object]) -> None:
+    """The scalar that decides whether the IS line means anything at all (§3.3)."""
+    firms, _ = firm_population
+    agg = firm_aggregate.aggregate(firm_runner.run(firms, 2026).firms)
+    assert 0.20 < agg.share_zero_is < 0.50
+
+
+def test_a_reform_moves_the_incidence_table(
+    firm_population: tuple[pl.DataFrame, object],
+) -> None:
+    firms, _ = firm_population
+    result = firm_runner.run(firms, 2026, reform=FirmReformSpec(is_taux_normal=0.28))
+    agg = firm_aggregate.aggregate(result.firms)
+    assert agg.deltas["impot_societes"] > 0
+    assert agg.reform_cost is not None and agg.reform_cost < 0, "a rate rise raises money"
+    # A rise in the normal rate cannot touch a firm whose whole profit sits in the
+    # reduced-rate slice, so the smallest cells must move least.
+    by_size = {row.taille: row for row in agg.cells if row.naf_section == "C"}
+    assert abs(by_size["micro"].mean_delta or 0) < abs(by_size["GE"].mean_delta or 0)
+
+
+def test_c3s_reform_reaches_loss_makers(
+    firm_population: tuple[pl.DataFrame, object],
+) -> None:
+    """C3S is charged on turnover, so raising it touches firms that pay no IS at
+    all — the incidence a profit-tax reform cannot reproduce."""
+    firms, _ = firm_population
+    result = firm_runner.run(firms, 2026, reform=FirmReformSpec(c3s_taux=0.0032))
+    agg = firm_aggregate.aggregate(result.firms)
+    assert agg.deltas["c3s"] > 0
+    assert agg.deltas["impot_societes"] == 0.0, "a turnover tax does not move profit tax"

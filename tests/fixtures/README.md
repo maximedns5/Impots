@@ -22,3 +22,18 @@ of the real data, not from its size.
 ERFS-derived may replace this file.** ERFS arrives under a signed agreement that
 forbids redistribution; this fixture must stay EEC-derived or become fully
 synthetic.
+
+
+## `firm_cells.json`
+
+Twelve synthetic sector × size cells for the firm module (PHASE2_SPEC §5).
+
+**Invented, not published.** SIRENE and ESANE stay out of the repository — the
+data-commit guard enforces it, and CI has no network anyway. These numbers were
+written to have the right *shape*: a long tail of micro firms, a handful of very
+large ones, value added around a third of turnover, and loss shares inside the
+published 25-40 % band. That is enough to exercise the pipeline, the calibration
+identities and the guards.
+
+Nothing computed from this fixture is a claim about France. The real cell table is
+built locally from SIRENE × ESANE and never committed.

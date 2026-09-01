@@ -1,0 +1,27 @@
+{
+  "_comment": [
+    "Synthetic sector x size cells for CI (PHASE2_SPEC §5).",
+    "NOT published data: SIRENE and ESANE stay out of the tree, enforced by the",
+    "data-commit guard, and CI has no network. These numbers are invented to have",
+    "the right SHAPE — a long tail of micro firms, a handful of very large ones,",
+    "value added around a third of turnover, loss shares in the published 25-40 %",
+    "band — so the pipeline is exercised on something structurally realistic.",
+    "Nothing computed from them is a claim about France."
+  ],
+  "vintage": "fixture",
+  "fiscal_to_accounting": 0.82,
+  "cells": [
+    {"naf_section": "C", "taille": "micro", "n_firms": 240000, "turnover_total": 43200000000, "value_added_total": 14688000000, "result_total": 2160000000, "p_loss": 0.36},
+    {"naf_section": "C", "taille": "PME",   "n_firms": 34000,  "turnover_total": 108800000000, "value_added_total": 32640000000, "result_total": 5440000000, "p_loss": 0.29},
+    {"naf_section": "C", "taille": "ETI",   "n_firms": 2600,   "turnover_total": 176800000000, "value_added_total": 45968000000, "result_total": 9724000000, "p_loss": 0.23},
+    {"naf_section": "C", "taille": "GE",    "n_firms": 180,    "turnover_total": 342000000000, "value_added_total": 75240000000, "result_total": 20520000000, "p_loss": 0.19},
+    {"naf_section": "G", "taille": "micro", "n_firms": 410000, "turnover_total": 82000000000, "value_added_total": 24600000000, "result_total": 3690000000, "p_loss": 0.38},
+    {"naf_section": "G", "taille": "PME",   "n_firms": 48000,  "turnover_total": 172800000000, "value_added_total": 46656000000, "result_total": 7776000000, "p_loss": 0.31},
+    {"naf_section": "G", "taille": "ETI",   "n_firms": 3100,   "turnover_total": 254200000000, "value_added_total": 58466000000, "result_total": 11439000000, "p_loss": 0.24},
+    {"naf_section": "G", "taille": "GE",    "n_firms": 210,    "turnover_total": 441000000000, "value_added_total": 88200000000, "result_total": 22050000000, "p_loss": 0.20},
+    {"naf_section": "M", "taille": "micro", "n_firms": 330000, "turnover_total": 46200000000, "value_added_total": 18480000000, "result_total": 2772000000, "p_loss": 0.34},
+    {"naf_section": "M", "taille": "PME",   "n_firms": 26000,  "turnover_total": 62400000000, "value_added_total": 23712000000, "result_total": 4368000000, "p_loss": 0.27},
+    {"naf_section": "M", "taille": "ETI",   "n_firms": 1400,   "turnover_total": 79800000000, "value_added_total": 27132000000, "result_total": 5586000000, "p_loss": 0.22},
+    {"naf_section": "M", "taille": "GE",    "n_firms": 70,     "turnover_total": 105000000000, "value_added_total": 31500000000, "result_total": 7350000000, "p_loss": 0.18}
+  ]
+}
