@@ -645,3 +645,45 @@ def test_a_dead_channel_says_so_rather_than_reporting_zero(client: TestClient) -
         assert channels[key]["central"] is None
         assert channels[key]["message"], f"{key} reports nothing at all"
     assert "cotisation patronale" in channels["c2_employment"]["message"]
+
+
+@needs_population
+def test_a_cliff_reform_is_flagged_and_a_broad_one_is_not(client: TestClient) -> None:
+    """The two backtest cases, as the flag's specification (D-046).
+
+    The 2025 allègements step moves two cliffs and overshoots its published cost by
+    107 %; the barème indexation moves the whole scale and overshoots by 10 %. The
+    flag must separate them, because the difference is exactly the thing it points at.
+    """
+    cliff = client.post("/population/simulate", json={
+        "reform": {"bandeau_maladie_plafond": 2.25, "bandeau_famille_plafond": 3.3},
+        "year": 2024, "tier": "quick",
+    }).json()["narrow_band"]
+    assert cliff["flagged"], f"the cliff case must flag; share was {cliff['share']}"
+    assert cliff["share"] > 0.7, "and not marginally"
+    assert "D-015" in cliff["caveat"]
+
+    bareme = client.post("/population/simulate", json={
+        "reform": {"ir_bareme": [
+            {"threshold": 0, "rate": 0.00}, {"threshold": 10777, "rate": 0.11},
+            {"threshold": 27478, "rate": 0.30}, {"threshold": 78570, "rate": 0.41},
+            {"threshold": 168994, "rate": 0.45}],
+            "decote_seuil_celib": 833, "decote_seuil_couple": 1378,
+            "decote_taux": 0.4525, "plafond_qf_demi_part": 1678},
+        "year": 2024, "tier": "quick",
+    }).json()["narrow_band"]
+    assert not bareme["flagged"], f"the barème case must not; share was {bareme['share']}"
+    assert bareme["caveat"] == ""
+
+
+@needs_population
+def test_the_flag_does_not_touch_the_mechanical_number(client: TestClient) -> None:
+    """Metadata, never an adjustment. The flag is computed from the same run and must
+    leave every figure exactly where it was."""
+    body = client.post("/population/simulate", json={
+        "reform": {"bandeau_maladie_plafond": 2.25}, "year": 2024, "tier": "quick",
+    }).json()
+    assert body["narrow_band"]["flagged"]
+    # The cost is the double-entry-checked one, untouched by the flag.
+    assert body["reform_cost"] is not None
+    assert abs(body["reform_cost"]) > 1e8

@@ -358,6 +358,19 @@ class EmtrDecile(BaseModel):
     emtr_mean: float
 
 
+class NarrowBandFlag(BaseModel):
+    """Whether a reform's yield rests on a narrow wage band (D-046)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    share: float
+    flagged: bool
+    window: float
+    share_threshold: float
+    thresholds: list[float] = Field(default_factory=list)
+    caveat: str = ""
+
+
 class BehaviouralBand(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -480,6 +493,7 @@ class PopulationResponse(BaseModel):
     reform_cost: float | None = None
     deciles: list[DecileRow] = Field(default_factory=list)
     emtr_deciles: list[EmtrDecile] = Field(default_factory=list)
+    narrow_band: NarrowBandFlag | None = None
     reconciliation: list[ReconciliationLine] = Field(default_factory=list)
     behavioural: Behavioural | None = None
     timings: dict[str, float] = Field(default_factory=dict)

@@ -304,6 +304,93 @@ def _employer_inputs(request: Any, frame: Any, households: Any, agg: Any) -> dic
     }
 
 
+def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
+    """How much of this reform's movement comes from near its own thresholds.
+
+    Measured per threshold FAMILY against the income each family is defined on — the
+    barème and décote on taxable salary, the allègement plafonds on gross wage — and
+    the largest share wins. Comparing a SMIC multiple against taxable income would
+    put every threshold in the wrong place on the axis.
+    """
+    import numpy as np
+
+    from impots import narrow_band as narrow_band_module
+    from impots.api.schemas import NarrowBandFlag
+
+    if "revenu_disponible_reform" not in households.columns:
+        return None
+    smic = _smic_annual(request.year)
+    spec = request.reform.model_dump(exclude_none=True)
+
+    taxable_knobs = {"ir_bareme", "decote_seuil_celib", "decote_seuil_couple",
+                     "plafond_qf_demi_part"}
+    wage_knobs = {"allegement_general_plafond", "bandeau_maladie_plafond",
+                  "bandeau_famille_plafond"}
+
+    weights = households["weight"].to_numpy()
+    disposable_move = (
+        households["revenu_disponible_reform"].to_numpy()
+        - households["revenu_disponible"].to_numpy()
+    )
+    cost_move = (
+        households["salaire_super_brut_reform"].to_numpy()
+        - households["salaire_super_brut"].to_numpy()
+        if "salaire_super_brut_reform" in households.columns
+        else np.zeros(len(weights))
+    )
+
+    # The wage family is measured PER EARNER, not per household. A plafond is an
+    # individual threshold: a two-earner household at 1.5 SMIC each has a household
+    # gross of 3 SMIC and sits inside a 3.3-SMIC window while neither earner is
+    # anywhere near it. Measured at household level the cliff case scored 56 % against
+    # a 50 % bar — the right side of the line, for the wrong reason and by too little.
+    wage_income, wage_move, wage_weights = (
+        households["salaire_brut"].to_numpy(), cost_move, weights
+    )
+    if frame is not None:
+        import polars as pl
+
+        earners = frame.filter(pl.col("salaire_brut_annuel") > 0)
+        by_household = dict(zip(households["household_id"].to_list(), cost_move,
+                                strict=False))
+        counts = (
+            earners.group_by("household_id").len()
+            .rename({"len": "n"}).to_dicts()
+        )
+        per_household_count = {row["household_id"]: row["n"] for row in counts}
+        ids = earners["household_id"].to_list()
+        wage_income = earners["salaire_brut_annuel"].to_numpy()
+        # Each earner carries their household's movement, split evenly among them.
+        wage_move = np.array([
+            by_household.get(h, 0.0) / max(per_household_count.get(h, 1), 1) for h in ids
+        ])
+        wage_weights = earners["weight"].to_numpy()
+
+    families = [
+        ({k: v for k, v in spec.items() if k in taxable_knobs},
+         households["salaire_imposable"].to_numpy(), disposable_move, weights),
+        ({k: v for k, v in spec.items() if k in wage_knobs},
+         wage_income, wage_move, wage_weights),
+    ]
+    best = None
+    for subset, income, movement, group_weights in families:
+        if not subset:
+            continue
+        thresholds = narrow_band_module.household_thresholds(
+            type(request.reform).model_validate(subset), smic
+        )
+        result = narrow_band_module.measure(income, movement, group_weights, thresholds)
+        if best is None or result.share > best.share:
+            best = result
+    if best is None:
+        return None
+    return NarrowBandFlag(
+        share=best.share, flagged=best.flagged, window=best.window,
+        share_threshold=best.share_threshold, thresholds=best.thresholds,
+        caveat=best.caveat,
+    )
+
+
 def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None) -> Any:
     """The band for a household reform, or a mechanical-only answer with its reason."""
     import numpy as np
@@ -384,6 +471,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
         _behavioural(request, frame, agg, result.households)
         if request.behavioural else None
     )
+    narrow_band = _narrow_band(request, result.households, frame)
     return PopulationResponse(
         meta=PopulationMeta(
             vintage=POPULATION_VINTAGE, branch=summary["branch"],
@@ -399,6 +487,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
         ),
         totals=agg.totals, totals_reform=agg.totals_reform, deltas=agg.deltas,
         reform_cost=agg.reform_cost, behavioural=behavioural,
+        narrow_band=narrow_band,
         deciles=[DecileRow.model_validate(vars(row)) for row in agg.deciles],
         reconciliation=[
             ReconciliationLine.model_validate(line) for line in summary["reconciliation"]

@@ -1689,3 +1689,51 @@ came back `None` for every reform without an employer term — the household ref
 which is to say most of them. It had been that way for two commits and no existing
 test noticed, because they assert on `deltas` rather than on the cost. The double
 entry found it on its first run.
+
+## D-046 — The narrow-band flag: constants, and why they are where they are
+Date: 2026-09-03 · Status: accepted · Evidence: the two backtest cases
+
+The backtest suite measured the failure; the runtime now points at it whenever a user
+walks into it. Per reform, the share of what it moves that comes from households close
+to one of **its own** thresholds. Above a declared share, the API and UI carry the
+D-015 caveat. It adjusts nothing.
+
+**Window: ±15 % of the threshold.** Set from the instrument that motivated the flag,
+not from taste: the 2025 step moved the maladie ceiling from about 2.5 to 2.25 SMIC,
+an 11 % move, and a window narrower than the move itself would miss the households the
+measure acts on. Wide enough to hold a real cliff step, narrow enough that a reform
+touching the whole distribution does not sit inside it everywhere.
+
+**Share: 50 %.** Below it a reform is broad-based and its total does not hinge on the
+density anywhere in particular; above it the total is mostly one band's population.
+
+**Measured per threshold family, against the income that family is defined on** — the
+barème and décote on taxable salary, the plafonds on gross wage — and the largest
+share wins. Comparing a SMIC multiple against taxable income would put every threshold
+in the wrong place on the axis.
+
+**And the wage family is measured per EARNER, not per household**, which is the
+difference between a flag that works and one that happens to work. A plafond is an
+individual threshold: a two-earner household at 1.5 SMIC each has a household gross of
+3 SMIC and sits inside a 3.3-SMIC window while neither earner is near it. At household
+level the cliff case scored **56 %** against a 50 % bar — the right side of the line,
+for the wrong reason and by six points. Per earner it scores **78 %**.
+
+Measured on the real population, against a 50 % bar:
+
+| reform | share | flagged |
+|---|---:|---|
+| allègements 2025 step (two cliffs) | 78.1 % | **yes** |
+| barème indexation LFI 2024 | 25.0 % | no |
+| réduction générale 1.6 → 2.0 SMIC | 19.9 % | no |
+| top rate 45 → 50 % | 0.1 % | no |
+
+The third row is the one that shows the flag is measuring the right thing rather than
+just "is this an employer knob". Extending the réduction générale is an allègement
+reform and does *not* flag — because the réduction is degressive, so its yield is
+spread across everyone below the ceiling rather than concentrated between two of them.
+Cliffs flag; slopes do not.
+
+A rate change with no threshold of its own — a CSG rate, the décote rate — contributes
+nothing and correctly leaves the share at zero: it moves everyone it touches
+proportionally and cannot concentrate a yield anywhere.
