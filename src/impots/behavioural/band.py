@@ -78,6 +78,8 @@ def compute(
     taxable_base: np.ndarray | None = None,
     weights: np.ndarray | None = None,
     top_decile: np.ndarray | None = None,
+    production_tax_baseline: float = 0.0,
+    production_tax_reform: float = 0.0,
     draws: int = DRAWS,
     seed: int = SEED,
 ) -> BehaviouralResult:
@@ -99,9 +101,13 @@ def compute(
         ))
     results.append(channel_module.employment_at_the_smic(store, reform))
     results.append(channel_module.contribution_incidence(store, reform))
-    results.append(channel_module.production_tax_investment(
-        store, reform, mechanical_delta=mechanical, draws=draws, rng=rng,
-    ))
+    if production_tax_baseline and production_tax_reform:
+        results.append(channel_module.production_tax_investment(
+            store, reform, production_tax_baseline=production_tax_baseline,
+            production_tax_reform=production_tax_reform, draws=draws, rng=rng,
+        ))
+    else:
+        results.append(channel_module.production_tax_investment(store, reform))
 
     metrics: dict[str, tuple[tuple[str, ...], float]] = {}
     if have_household_inputs and any(r.key == "c1_eti" and r.applies for r in results):
@@ -114,7 +120,10 @@ def compute(
 
     verdict = grading_module.grade(store, metrics)
 
-    live = [r for r in results if r.applies and r.draws is not None]
+    # Only channels denominated in revenue enter the revenue band. C4 reports a
+    # percentage change in investment, and adding it to euros would be a category
+    # error that happens to typecheck.
+    live = [r for r in results if r.applies and r.draws is not None and r.unit == "EUR"]
     band = None
     if live:
         # Channels are summed draw by draw at a shared seed, so their correlation is
@@ -130,6 +139,10 @@ def compute(
         channels=[
             {"key": r.key, "label": r.label, "applies": r.applies,
              "central": r.central, "unit": r.unit, "message": r.message,
+             "band": (None if r.draws is None else
+                      {"p10": float(np.percentile(r.draws, 10)),
+                       "p50": float(np.percentile(r.draws, 50)),
+                       "p90": float(np.percentile(r.draws, 90))}),
              "grade": verdict.per_channel.get(r.key),
              "diagnostics": r.diagnostics}
             for r in results

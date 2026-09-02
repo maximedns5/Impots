@@ -435,7 +435,9 @@ def _firm_population() -> Any:
     return pl.read_parquet(path)
 
 
-def _firm_response(aggregates: Any, year: int, timings: dict[str, float]) -> FirmResponse:
+def _firm_response(
+    aggregates: Any, year: int, timings: dict[str, float], request: Any = None
+) -> FirmResponse:
     from impots.entreprises.build import PROCESSED as FIRM_PROCESSED
 
     manifest = FIRM_PROCESSED / f"firms_{FIRM_VINTAGE}.manifest.json"
@@ -462,6 +464,8 @@ def _firm_response(aggregates: Any, year: int, timings: dict[str, float]) -> Fir
         reform_cost=aggregates.reform_cost,
         cells=[FirmCell.model_validate(vars(cell)) for cell in aggregates.cells],
         by_size=[FirmSizeRow.model_validate(vars(row)) for row in aggregates.by_size],
+        behavioural=(_firm_behavioural(request, aggregates) if request is not None
+                     and aggregates.deltas else None),
         timings=timings,
     )
 
@@ -479,6 +483,24 @@ def firms_baseline(year: int = Query(default=2026, ge=2022, le=2030)) -> FirmRes
         aggregates, year,
         {**result.timings, "total_s": round(time.perf_counter() - started, 3)},
     )
+
+
+def _firm_behavioural(request: Any, agg: Any) -> Any:
+    """The investment band for a production-tax reform, reported in per cent.
+
+    Never folded into the revenue figures: investment is not revenue, and the band is
+    centred on zero because the evaluation behind it found nothing robust (D-037).
+    """
+    from impots.api.schemas import Behavioural
+    from impots.behavioural import band as band_module
+
+    baseline_tax = agg.totals.get("cvae", 0.0)
+    reformed_tax = agg.totals_reform.get("cvae", baseline_tax)
+    computed = band_module.compute(
+        mechanical=-(agg.reform_cost or 0.0), reform=request.reform,
+        production_tax_baseline=baseline_tax, production_tax_reform=reformed_tax,
+    )
+    return Behavioural(**computed.as_dict())
 
 
 @app.post("/entreprises/simulate", response_model=FirmResponse)
@@ -500,6 +522,7 @@ def firms_simulate(request: FirmSimulateRequest) -> FirmResponse:
     return _firm_response(
         aggregates, request.year,
         {**result.timings, "total_s": round(time.perf_counter() - started, 3)},
+        request=request,
     )
 
 

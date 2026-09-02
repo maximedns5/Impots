@@ -1358,3 +1358,57 @@ backtest suite in this domain has to work with.
 expressible historical articles are re-swept.* Coverage is what killed cases 3, 4 and
 5, so coverage growing is the event that makes new cases possible. The employer-
 contribution knobs are the first trigger.
+
+## D-037 — C4 wakes: bounds read from the tables, and it is still a zero
+Date: 2026-09-02 · Status: accepted · Evidence: IPP Rapport n° 60, manifested (sha256 e8234692…)
+
+D-031 removed every production-tax investment row because the only dimensionally
+valid one had **no published value** — its bounds were derived and then marked
+confirmed. The verdict's ruling was that the report itself publishes intervals, and
+that the conclusion should come from the table rather than from anyone's summary of
+it. The report is now in `data/raw/` with a manifest entry, and its tables were read.
+
+**The bounds exist, and the channel wakes.** Tableau 4.2 (p. 143) and Tableau 4.3
+(p. 144) give the synthetic-difference-in-differences effect on log corporate
+investment for two treatment comparisons, each with its standard error and its own
+first stage:
+
+| comparison | Δlog CET | effect on log investment | 95 % interval, per unit \|Δlog tax\| |
+|---|---:|---:|---|
+| group 1 vs 3 | −0.6323 | +0.0221 (0.0110) | [+0.001, +0.069] |
+| group 2 vs 3 | −0.3491 | −0.0035 (0.0108) | [−0.071, +0.051] |
+
+The band is the union: **[−0.071, +0.069], centred on zero.**
+
+**Zero is the authors' position, not a convenient rounding.** p. 12: *"On ne détecte
+en revanche pas d'effet sur les exportations ou l'investissement."* p. 14: *"le
+rapport trouve peu de résultats empiriques clairs."* And p. 142 explains why their
+own positive coefficients are not enough: *"Si la méthode échoue dans le cas de
+variables telles que le CA ou la masse salariale, il est naturel d'interpréter les
+résultats positifs sur l'investissement avec une grande prudence."* The same
+synthetic DiD produces implausible negative effects on turnover and the wage bill.
+
+**What the derivation does not resolve, stated rather than smoothed.** The report
+notes (p. 141) that its method weights units differently per variable, so dividing an
+outcome by a first stage crosses two samples — the N differ, 235 456 against 255 304.
+The report also publishes balance-sheet-ratio effects on an *identical* sample, all
+positive and significant, which would support a positive central value. They are not
+used, because the authors place the whole set under the same caution. Confidence is
+`low` and the band's width carries the disagreement instead of resolving it.
+
+**Two implementation consequences.**
+
+*C4 reports per cent of investment, never euros, and is never summed into the revenue
+band.* Investment is not revenue; adding them is a category error that typechecks. The
+band assembly now sums only channels denominated in EUR, and every channel carries its
+own band in its own unit.
+
+*The driver stays in logs.* −0.63 log points is a **47 %** cut, not a 63 % one, and an
+earlier row died partly for exactly that conversion. Keeping the parameter, the
+support bound and the channel arithmetic all in log space removes the opportunity.
+
+**What the band says.** Halving the CVAE rate moves corporate investment by somewhere
+between −3.0 % and +2.8 %, centred on zero. A band that wide is not a null dressed up
+— it is the honest statement that a serious evaluation could not rule out effects of
+several per cent in either direction, which is more informative than silence and quite
+different from a tightly estimated zero.

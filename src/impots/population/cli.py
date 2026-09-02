@@ -102,6 +102,13 @@ KNOWN_SOURCES: dict[str, tuple[str, str]] = {
         "dgfip_stat_39_limpot-sur-le-benefice-2024-des-entreprises_publi.pdf",
         "DGFiP Statistiques n° 39 — l'impôt sur le bénéfice 2024 des entreprises",
     ),
+    "ipp_rapport60_impots_production_2025.pdf": (
+        "https://www.ipp.eu/wp-content/uploads/2025/10/FS_ImpotsProductions-9.pdf",
+        "IPP Rapport n° 60, octobre 2025 — « La baisse des impôts de production : "
+        "ciblage et évaluation ». The evaluation behind the C4 behavioural channel; "
+        "its confidence intervals are read from its own tables, never from a summary "
+        "(D-026, D-031).",
+    ),
     "insee_ia112_taux_implicite_is_2016_2022.xlsx": (
         "https://www.insee.fr/fr/statistiques/fichier/8630968/IA112.xlsx",
         "INSEE Analyses n° 112 — taux implicite d'IS par taille d'entreprise",

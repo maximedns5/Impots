@@ -365,6 +365,10 @@ class BehaviouralChannel(BaseModel):
     label: str
     applies: bool
     central: float | None = None
+    band: BehaviouralBand | None = None
+    """The channel's own band, in its own unit. C4 reports a percentage change in
+    investment, which is why a channel carries a band separately from the revenue one
+    it may or may not belong in."""
     unit: str = "EUR"
     message: str = ""
     grade: str | None = None

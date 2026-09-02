@@ -1,41 +1,77 @@
-# Réponse de l'investissement aux impôts de production — AUCUNE LIGNE NE SURVIT.
+# Réponse de l'investissement aux impôts de production — la bande centrée sur zéro,
+# avec des bornes LUES dans les tableaux, pas dérivées d'un résumé.
 #
-# Le canal C4 devait porter une bande centrée sur zéro, avec l'incertitude de
-# l'étude : la réponse honnête à « la baisse de CVAE a-t-elle relancé
-# l'investissement ? » est « on a cherché, sérieusement, et on n'a rien trouvé »,
-# et la largeur de la bande distingue un zéro serré d'un zéro qui ne peut rien
-# exclure. Cette bande n'est pas encodable en l'état.
+# Une première version de ce fichier ne portait aucune ligne : la seule ligne
+# dimensionnellement correcte n'avait aucune valeur publiée, et ses bornes avaient
+# été fabriquées puis marquées « confirmées ». Le rapport a depuis été téléchargé,
+# manifesté (data/raw/ipp_rapport60_impots_production_2025.pdf, sha256 e8234692…) et
+# ses tableaux lus directement.
 #
-# Le canal rapporte donc « aucune preuve utilisable » plutôt que d'hériter d'une
-# valeur non publiée. C'est la règle du §2 appliquée : une ligne qui meurt est
-# retirée, et son canal rétrécit visiblement.
+# UNITÉS : semi-élasticité de l'investissement corporel par unité de |Δ log| de la
+# CET. Le régresseur du rapport est en logs, et la bande reste en logs pour éviter
+# exactement la conversion inversée qui avait tué une ligne précédente : −0,6323 point
+# de log est une BAISSE de 46,9 % (exp(−0,6323) = 0,531), pas de 63,2 %.
 
-parameters: {}
+parameters:
+  production_tax_investment:
+    value: {central: 0.0, low: -0.071, high: 0.069, distribution: uniform}
+    applies_to: >
+      Variation de l'investissement corporel des entreprises en réponse à une baisse
+      proportionnelle des impôts de production (CET : CVAE + CFE), par unité de
+      variation du log de l'impôt. Évaluée sur la réforme de 2021.
+    responds_to_knobs: [cvae_taux_max, cvae_degrevement]
+    support:
+      estimated_on: >
+        Différence en différences synthétique, deux comparaisons de groupes de
+        traitement. Groupe 1 contre groupe 3 : premier étage log CET −0,6323
+        (soit une baisse de 46,9 %). Groupe 2 contre groupe 3 : −0,3491.
+      max_variation_graded_in_support: 0.6323
+    source:
+      citation: >
+        IPP, Rapport n° 60, octobre 2025, « La baisse des impôts de production :
+        ciblage et évaluation » — Tableau 4.2 p. 143 (groupe 1 vs groupe 3) et
+        Tableau 4.3 p. 144 (groupe 2 vs groupe 3), lignes « Log investissement
+        corporel (brut des cessions) ». Commentaire des auteurs p. 142.
+      url: https://www.ipp.eu/wp-content/uploads/2025/10/FS_ImpotsProductions-9.pdf
+      vintage: "2025-10"
+      quote: >-
+        Si la méthode échoue dans le cas de variables telles que le CA ou la masse
+        salariale, il est naturel d'interpréter les résultats positifs sur
+        l'investissement avec une grande prudence.
+    verifier:
+      verdict: CONFIRMED
+      date: 2026-09-02
+      ref: "lecture directe du PDF manifesté ; dérivation ci-dessous"
+      note: >
+        DÉRIVATION, en clair. Tableau 4.2 : coefficient +0,0221 (écart-type 0,0110),
+        soit un intervalle à 95 % de [+0,00054 ; +0,04366] ; rapporté à son propre
+        premier étage de 0,6323, cela donne [+0,0009 ; +0,0690]. Tableau 4.3 :
+        −0,0035 (0,0108), intervalle [−0,02467 ; +0,01767] ; rapporté à 0,3491, cela
+        donne [−0,0707 ; +0,0506]. La bande est l'union des deux, [−0,071 ; +0,069],
+        et elle contient zéro parce que les deux comparaisons se contredisent : la
+        plus grande baisse donne un effet positif significatif, la plus petite un
+        effet négatif non significatif.
 
-removed:
-  production_tax_investment: >
-    La seule ligne dimensionnellement correcte — une élasticité — n'a AUCUNE valeur
-    publiée. Ses bornes (0, -0,20, +0,15) ont été dérivées, pas lues, et portaient
-    néanmoins confirmed_against_primary: true : exactement le drapeau qui avait
-    couvert la citation fabriquée trouvée en phase 2. La citation, elle, est
-    authentique — mais un extrait vérifié ne confirme pas un nombre non publié.
-    Deuxième défaut, indépendant : le ratio dont elle sortait divise un premier étage
-    (Log CET) par un résultat (Log investissement) estimés sur des ÉCHANTILLONS
-    REPONDÉRÉS DIFFÉRENTS, ce que les auteurs signalent eux-mêmes comme une limite
-    de la méthode une page avant la mise en garde citée. Ce n'est pas un estimateur
-    à variables instrumentales.
-  production_tax_investment_rdd_763m: >
-    Conversion à l'envers : +0,86 point de log de CET est une HAUSSE de 136 %, pas
-    une baisse de 57,7 %. Le seuil déclaré appliquait en silence l'hypothèse miroir,
-    que les auteurs énoncent sans la tester.
-  production_tax_investment_cfe_sdid: >
-    Effet de niveau trimestriel (investissement rapporté au bilan 2019), pas une
-    élasticité. Le garder à côté des autres ferait comparer des grandeurs
-    incommensurables : un garde-fou qui compare une variation d'impôt à 0,37 puis
-    applique 0,00054 commet une erreur d'unités sans rien signaler.
-  production_tax_investment_cet_sdid: >
-    Même défaut d'unités, et issu du même échantillon repondéré que la ligne
-    principale.
-  production_tax_investment_rdd_2m: >
-    Coefficient de discontinuité en points de log sur une population que les auteurs
-    jugent eux-mêmes non extrapolable ; conservé au dossier, pas dans le magasin.
+        CENTRE À ZÉRO, ET C'EST LA POSITION DES AUTEURS, pas un arrondi commode.
+        p. 12 : « On ne détecte en revanche pas d'effet sur les exportations ou
+        l'investissement. » p. 14 : « le rapport trouve peu de résultats empiriques
+        clairs concernant les effets de la réforme sur l'activité et l'investissement
+        des entreprises les plus ciblées. » Et p. 142, les auteurs eux-mêmes
+        expliquent pourquoi leurs propres coefficients positifs ne suffisent pas :
+        la même méthode produit des effets négatifs invraisemblables sur le chiffre
+        d'affaires et la masse salariale.
+
+        CE QUE LA DÉRIVATION NE RÉSOUT PAS. Le rapport signale p. 141 que la DDS
+        pondère les unités différemment selon la variable étudiée, si bien que
+        diviser un résultat par un premier étage mélange deux échantillons — les N
+        diffèrent (235 456 contre 255 304). Le rapport publie aussi des effets sur
+        ratios de bilan, sur échantillon identique cette fois, tous positifs et
+        significatifs ; ils ne sont pas retenus ici parce que les auteurs rangent
+        l'ensemble sous la même mise en garde. Confiance « low » pour cette raison,
+        et la largeur de la bande porte le désaccord plutôt que de le trancher.
+    confidence: low
+    note: >
+      Une bande centrée sur zéro n'est pas une absence de réponse : c'est le résultat
+      d'une recherche sérieuse qui n'a rien trouvé de robuste, et sa LARGEUR dit
+      combien on aurait pu manquer. ±7 % d'investissement par unité de log d'impôt
+      n'exclut pas grand-chose — ce qui est l'information.

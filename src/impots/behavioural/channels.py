@@ -209,41 +209,56 @@ C4_KEYS = ("production_tax_investment",)
 
 
 def production_tax_investment(
-    store: Store, reform: Any, *, mechanical_delta: float, draws: int,
-    rng: np.random.Generator, **_: Any,
+    store: Store, reform: Any, *, production_tax_baseline: float = 0.0,
+    production_tax_reform: float = 0.0, draws: int = 1, rng: Any = None, **_: Any,
 ) -> ChannelResult:
-    """Investment response to a production-tax cut — a band centred on zero.
+    """Investment response to a production-tax cut — the band centred on zero.
 
-    The best French evidence (IPP's evaluation of the 2021 CVAE/CFE halving) is a
-    null. Encoding it as a band centred on zero *with the study's uncertainty* says
-    something the absence of a line cannot: not "we did not look", but "it was looked
-    for, carefully, and not found — and here is how precisely zero is estimated". A
-    null that cannot rule out large effects is a different object from a tight zero,
-    and the width of this band is what tells them apart.
+    Reported in **per cent of corporate investment**, not in euros, and therefore
+    never summed into the revenue band. Investment is not revenue: adding the two
+    would be a category error that happens to typecheck.
+
+    The driver is the change in the LOG of the production tax, because that is the
+    regressor in the study. Keeping it in logs also avoids the conversion that killed
+    an earlier version of this row: −0.63 log points is a 47 % cut, not a 63 % one.
+
+    A band centred on zero is not an absence of a finding. It is a serious search that
+    turned up nothing robust, and its WIDTH says how much could have been missed —
+    which is more informative than silence and quite different from a tight zero.
     """
     applicable = _claimed(store, reform, C4_KEYS)
     if not applicable:
         return ChannelResult(
             key="c4_investment", label="Investissement et impôts de production",
-            applies=False,
+            applies=False, unit="%",
             message="Mécanique seulement — aucun canal fondé sur des preuves n'est "
                     "câblé pour cet instrument.",
         )
     if "production_tax_investment" not in store:
         return ChannelResult(
             key="c4_investment", label="Investissement et impôts de production",
-            applies=False,
+            applies=False, unit="%",
             message="Aucune élasticité utilisable : la ligne n'a pas survécu à la "
                     "vérification des sources.",
         )
+    if production_tax_baseline <= 0 or production_tax_reform <= 0:
+        raise ChannelInputMissing(
+            "C4 needs the production tax before and after, both strictly positive; "
+            f"got {production_tax_baseline} and {production_tax_reform}"
+        )
     parameter = store["production_tax_investment"]
-    response = parameter.draw(rng, draws) * mechanical_delta
+    delta_log = float(np.log(production_tax_reform / production_tax_baseline))
+    response = parameter.draw(rng, draws) * abs(delta_log) * np.sign(-delta_log)
     return ChannelResult(
         key="c4_investment", label="Investissement et impôts de production",
-        applies=True, draws=response,
-        message="Aucune réponse d'investissement détectable ; la bande porte "
-                "l'incertitude de l'étude, pas une absence de mesure.",
-        diagnostics={"knobs": applicable, "centred_on_zero": parameter.central == 0.0},
+        applies=True, draws=response, unit="%",
+        message="Aucune réponse d'investissement robuste n'est détectable ; la bande "
+                "porte l'incertitude de l'étude, pas une absence de mesure.",
+        diagnostics={
+            "knobs": applicable,
+            "delta_log_production_tax": round(delta_log, 5),
+            "centred_on_zero": parameter.central == 0.0,
+        },
     )
 
 

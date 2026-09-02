@@ -265,20 +265,6 @@ def test_c2_and_c3_report_that_they_have_no_lever() -> None:
         assert "cotisation patronale" in result.message
 
 
-def test_c4_is_a_band_centred_on_zero() -> None:
-    """A null that cannot rule out large effects is a different object from a tight
-    zero, and the width of this band is what tells them apart."""
-    store = Store(parameters={"production_tax_investment": parameter(
-        "production_tax_investment", 0.0, -0.05, 0.05, knobs=("cvae_*",))})
-    result = channels.production_tax_investment(
-        store, FakeReform(cvae_taux_max=0.005), mechanical_delta=1.0e9,
-        draws=2000, rng=np.random.default_rng(3),
-    )
-    assert result.applies
-    assert result.central == pytest.approx(0.0, abs=2e7)
-    assert result.draws is not None and result.draws.std() > 1e6
-
-
 # --------------------------------------------------------------------------- #
 # the Lucas guardrail
 # --------------------------------------------------------------------------- #
@@ -485,3 +471,81 @@ def test_marginal_rates_rise_across_the_distribution_and_top_out_high() -> None:
     assert medians == sorted(medians)
     assert medians[-1] > 0.60
     assert all(-0.2 <= m <= 1.5 for m in medians)
+
+
+# --------------------------------------------------------------------------- #
+# C4, revived from the report's own tables (D-037)
+# --------------------------------------------------------------------------- #
+def production_tax_store() -> Store:
+    """The shipped bounds, so a change to the YAML that breaks them fails here."""
+    from impots.behavioural.store import load as load_real
+
+    return load_real()
+
+
+def test_the_c4_band_is_centred_on_zero_and_read_from_the_tables() -> None:
+    """The bounds are the union of two published 95 % intervals, each scaled by its
+    own first stage. They straddle zero because the two comparisons disagree: the
+    larger cut shows a significant positive effect, the smaller an insignificant
+    negative one. That disagreement IS the null."""
+    parameter = production_tax_store()["production_tax_investment"]
+    assert parameter.central == 0.0
+    assert parameter.low == pytest.approx(-0.071, abs=0.001)
+    assert parameter.high == pytest.approx(0.069, abs=0.001)
+    assert parameter.confidence == "low"
+    assert parameter.support.max_variation_graded_in_support == pytest.approx(0.6323)
+    # The derivation has to stay checkable from the printed coefficients.
+    assert pytest.approx(0.069, abs=0.001) == (0.0221 + 1.96 * 0.0110) / 0.6323
+    assert pytest.approx(-0.071, abs=0.001) == (-0.0035 - 1.96 * 0.0108) / 0.3491
+
+
+def test_c4_reports_per_cent_of_investment_not_euros() -> None:
+    """Investment is not revenue. A channel that returned euros here would be summed
+    into the revenue band by a machine that cannot tell the difference."""
+    result = channels.production_tax_investment(
+        production_tax_store(), FakeReform(cvae_taux_max=0.0014),
+        production_tax_baseline=3.28e9, production_tax_reform=1.64e9,
+        draws=4000, rng=np.random.default_rng(1),
+    )
+    assert result.applies
+    assert result.unit == "%"
+    assert result.central == pytest.approx(0.0, abs=0.005)
+    assert result.diagnostics["delta_log_production_tax"] == pytest.approx(-0.693, abs=0.001)
+
+
+def test_c4_is_never_summed_into_the_revenue_band() -> None:
+    """The category error this guards is one that typechecks."""
+    result = band_module.compute(
+        mechanical=-4.5e8, reform=FakeReform(cvae_taux_max=0.0014),
+        store=production_tax_store(),
+        production_tax_baseline=3.28e9, production_tax_reform=1.64e9,
+    )
+    live = [c for c in result.channels if c["applies"]]
+    assert [c["key"] for c in live] == ["c4_investment"]
+    assert result.band is None, (
+        "a percentage change in investment must not become a euro band"
+    )
+    assert live[0]["band"] is not None, "the channel still reports its own band"
+
+
+def test_a_bigger_tax_cut_moves_investment_further() -> None:
+    """Linear in the log change, so the response scales with the reform. If it did
+    not, the support bound would be meaningless."""
+    common = dict(store=production_tax_store(), reform=FakeReform(cvae_taux_max=0.001),
+                  draws=2000, rng=None)
+    small = channels.production_tax_investment(
+        production_tax_baseline=3.0e9, production_tax_reform=2.7e9,
+        **{**common, "rng": np.random.default_rng(5)})
+    large = channels.production_tax_investment(
+        production_tax_baseline=3.0e9, production_tax_reform=1.0e9,
+        **{**common, "rng": np.random.default_rng(5)})
+    assert np.ptp(large.draws) > 3 * np.ptp(small.draws)
+
+
+def test_c4_fails_loudly_without_a_production_tax_to_move() -> None:
+    with pytest.raises(channels.ChannelInputMissing, match="strictly positive"):
+        channels.production_tax_investment(
+            production_tax_store(), FakeReform(cvae_taux_max=0.0014),
+            production_tax_baseline=0.0, production_tax_reform=1.0,
+            draws=4, rng=np.random.default_rng(0),
+        )
