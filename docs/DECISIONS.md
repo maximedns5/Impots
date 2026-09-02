@@ -1602,3 +1602,50 @@ have exposed was a test that could never have failed on the machine that wrote i
 Nothing else surfaced — no path, timeout, cache or fixture problem. The
 `needs_population` / `needs_primary` skip marks did their job: 31 tests skip on a
 clean checkout and 295 run.
+
+## D-044 — `update()` may never create, and the verify audit that came with it
+Date: 2026-09-02 · Status: accepted · Closes the class D-042 found an instance of
+
+D-042 fixed the instance: check the parameter exists before writing it. The verdict
+ruled the generalisation, and this is it. **Every reform write now goes through
+`impots.parameters.update_existing`**, which resolves the target against the tree *as
+the year's formula sees it* and refuses otherwise. Creating a parameter is still
+possible — through `create_parameter`, which has a different name so that choosing it
+shows up in a diff. Nothing calls it yet.
+
+`ParameterWriteError` subclasses `ValueError` deliberately: the API maps those to 422,
+and asking for a knob the requested year does not have is the caller's mistake. A knob
+aimed at the 2026 allègements now returns 422 with the parameter path in the message
+rather than 500.
+
+The scale brackets go through `update_bracket`. Indexed rather than named, they cannot
+be conjured the way a named child can — but the count of *active* brackets is smaller
+than the list at most dates, so an index can be in range and still name a bracket the
+year ignores. And routing every write through one module is what turns "no direct
+writes" from a habit into a property a test asserts.
+
+### The audit, and it found the pattern twice
+
+The verdict asked for every `verify_*` to be checked once for the shared-write-path
+shape — a check comparing against whatever the write path now contains rather than
+against an independently constructed expectation — and for the result to be recorded
+either way. It was found twice, both latent, both now closed.
+
+* **`verify_allegements`** enumerated which plafonds to check from the **reformed**
+  tree. If the write path had created a child, verify would have found it and compared
+  it against itself. The enumeration now comes from the baseline, and a plafond present
+  in current law but missing from the reformed system is reported as a reform that
+  *deleted* a ceiling rather than moved it — a failure mode the old shape could not
+  express.
+* **`verify_scales`** read the CEBGE smoothing width out of the **reformed** tree and
+  then derived its expected bound as `seuil + largeur`. No knob writes that width
+  today, so it was latent; had one ever been added, the expectation would have moved
+  with the thing it was checking. It now reads from the baseline.
+
+`verify_bareme` was clean: it compares the evaluated scale bracket by bracket against
+the user's spec, which is as independent a source as exists here.
+
+The general form is worth stating because it outlives these two: **a verification is
+only as good as its causal independence from the thing it verifies.** A read-back that
+shares a write path can only tell you the write happened, never that it landed where
+the formula looks.

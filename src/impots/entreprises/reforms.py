@@ -19,6 +19,8 @@ from openfisca_core import periods
 from openfisca_core.reforms import Reform
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from impots.parameters import resolve, update_existing
+
 #: knob -> path in the parameter tree. Never `is`: a node of that name breaks
 #: attribute access on the parameter tree, since it is a Python keyword.
 SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
@@ -104,13 +106,6 @@ class FirmReformSpec(BaseModel):
         return not self.model_dump(exclude_none=True)
 
 
-def resolve(parameters: Any, path: tuple[str, ...]) -> Any:
-    node = parameters
-    for part in path:
-        node = getattr(node, part)
-    return node
-
-
 def _largeur(parameters: Any, instant: str) -> float:
     """Width of the CEBGE smoothing bands, or a refusal.
 
@@ -149,17 +144,19 @@ def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
                 for knob, path in SCALAR_KNOBS.items():
                     value = getattr(spec, knob)
                     if value is not None:
-                        resolve(parameters, path).update(start=start, value=value)
+                        update_existing(parameters, path, start=start, value=value,
+                                        instant=instant)
                 largeur = _largeur(parameters, instant) if spec.cebge_seuils_et_taux else 0.0
                 for tranche, paths in zip(
                     spec.cebge_seuils_et_taux or (), CEBGE_TRANCHE_PATHS, strict=False
                 ):
                     seuil_path, taux_path, borne_path = paths
-                    resolve(parameters, seuil_path).update(start=start, value=tranche.seuil_ca)
-                    resolve(parameters, taux_path).update(start=start, value=tranche.taux)
-                    resolve(parameters, borne_path).update(
-                        start=start, value=tranche.seuil_ca + largeur
-                    )
+                    update_existing(parameters, seuil_path, start=start,
+                                    value=tranche.seuil_ca, instant=instant)
+                    update_existing(parameters, taux_path, start=start,
+                                    value=tranche.taux, instant=instant)
+                    update_existing(parameters, borne_path, start=start,
+                                    value=tranche.seuil_ca + largeur, instant=instant)
                 return parameters
 
             self.modify_parameters(modifier_function=modify)
@@ -192,7 +189,12 @@ def verify_scales(system: Any, spec: FirmReformSpec, year: int) -> None:
                 + " ; ".join(problems)
             )
         return
-    largeur = _largeur(system.parameters, instant)
+    # From the BASELINE, not from the system under test: the expected smoothing bound
+    # is `seuil + largeur`, so reading `largeur` out of the reformed tree would let a
+    # reform that moved it define the answer it is checked against.
+    from impots.entreprises.system import baseline as _baseline
+
+    largeur = _largeur(_baseline().parameters, instant)
     for index, (tranche, paths) in enumerate(
         zip(spec.cebge_seuils_et_taux or (), CEBGE_TRANCHE_PATHS, strict=False)
     ):

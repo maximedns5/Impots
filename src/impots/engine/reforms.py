@@ -34,6 +34,8 @@ from typing import TYPE_CHECKING, Any
 from openfisca_core import periods
 from openfisca_core.reforms import Reform
 
+from impots.parameters import resolve, update_bracket, update_existing
+
 if TYPE_CHECKING:  # pragma: no cover - typing only
     from impots.api.schemas import ReformSpec
 
@@ -95,14 +97,6 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
 }
 
 
-def resolve(parameters: Any, path: tuple[str, ...]) -> Any:
-    """Walk a dotted parameter path on a parameter tree."""
-    node = parameters
-    for part in path:
-        node = getattr(node, part)
-    return node
-
-
 def active_bracket_count(bareme_node: Any, instant: Any) -> int:
     """How many of the scale's brackets carry a value at `instant`.
 
@@ -137,11 +131,9 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                     _apply_bareme(parameters, spec.ir_bareme, start)
                 for knob, path in SCALAR_KNOBS.items():
                     value = getattr(spec, knob)
-                    if value is None:
-                        continue
-                    parent = resolve(parameters, path[:-1])
-                    require_child(parent(instant), path[-1], path[:-1], instant)
-                    resolve(parameters, path).update(start=start, value=value)
+                    if value is not None:
+                        update_existing(parameters, path, start=start, value=value,
+                                        instant=instant, superseded_by=SUPERSEDED_BY)
                 for knob, path in PLAFOND_KNOBS.items():
                     value = getattr(spec, knob, None)
                     if value is not None:
@@ -162,32 +154,6 @@ SUPERSEDED_BY = {
     "entreprises_de_moins_de_50_salaries": "t_delta_petites_entreprises",
     "entreprises_de_50_salaries_et_plus": "t_delta_grandes_entreprises",
 }
-
-
-def require_child(node_at_instant: Any, name: str, path: tuple[str, ...], instant: str) -> None:
-    """Refuse to write a parameter the year's formula does not have.
-
-    Read-back is not enough on its own, and this is the case that proves it:
-    `update()` CREATES a child that does not exist, so writing
-    `entreprises_de_moins_de_50_salaries` into the 2026 node succeeds, the read-back
-    finds exactly the value it just wrote, and labour cost moves by 0.00. The reform
-    reports success and does nothing.
-
-    So existence is checked BEFORE the write, against the node as the formula sees it.
-    """
-    if hasattr(node_at_instant, name):
-        return
-    replacement = SUPERSEDED_BY.get(name)
-    hint = (
-        f" Ce paramètre a été remplacé par « {replacement} » : la refonte de 2026 ne "
-        f"reparamètre pas les allègements, elle les remplace."
-        if replacement else ""
-    )
-    raise ValueError(
-        f"le paramètre « {name} » n'existe pas dans {'.'.join(path)} au {instant}, "
-        f"donc l'écrire ne changerait rien — `update()` créerait simplement un enfant "
-        f"que la formule de cette année ne lit pas.{hint}"
-    )
 
 
 def plafond_children(node: Any) -> tuple[str, ...]:
@@ -221,7 +187,8 @@ def _apply_plafond(
             "et écrire dans le vide serait pire que refuser"
         )
     for name in children:
-        getattr(node, name).update(start=start, value=value)
+        update_existing(parameters, (*path, name), start=start, value=value,
+                        instant=instant)
 
 
 def _apply_bareme(parameters: Any, brackets: list[Any], start: Any) -> None:
@@ -234,8 +201,8 @@ def _apply_bareme(parameters: Any, brackets: list[Any], start: Any) -> None:
             f"{active} d'actives à cette date ; v1 ne crée pas de tranche supplémentaire"
         )
     for i, bracket in enumerate(brackets):
-        node.brackets[i].rate.update(start=start, value=bracket.rate)
-        node.brackets[i].threshold.update(start=start, value=bracket.threshold)
+        update_bracket(node, i, active=active, start=start,
+                       rate=bracket.rate, threshold=bracket.threshold)
     # Neutralise the leftover active brackets. They take the top threshold and a
     # rate of ZERO: brackets sharing a threshold are merged by *summing* their
     # rates, so 0 leaves the top rate untouched while repeating the top rate would
@@ -243,8 +210,8 @@ def _apply_bareme(parameters: Any, brackets: list[Any], start: Any) -> None:
     # outright — this is the way to make one vanish.
     top = brackets[-1]
     for j in range(len(brackets), active):
-        node.brackets[j].rate.update(start=start, value=0.0)
-        node.brackets[j].threshold.update(start=start, value=top.threshold)
+        update_bracket(node, j, active=active, start=start,
+                       rate=0.0, threshold=top.threshold)
 
 
 def read_ir_parameters(tax_benefit_system: Any, year: int) -> dict[str, Any]:
@@ -301,16 +268,31 @@ def verify_allegements(tax_benefit_system: Any, spec: ReformSpec, year: int) -> 
         if abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0):
             problems.append(f"{knob} : demandé {wanted}, appliqué {got}")
 
+    # The set of plafonds to check comes from the BASELINE tree, not the reformed
+    # one. Taking it from the system under test would let the write path define its
+    # own expectation — the shared-path pattern that let D-042 self-confirm. Creation
+    # is impossible now, so this is belt and braces; it is also the only version of
+    # this check that stays correct if that ever changes.
+    from impots.engine.system import baseline as _baseline
+
+    reference = _baseline().parameters
     for knob, path in PLAFOND_KNOBS.items():
         wanted = getattr(spec, knob, None)
         if wanted is None:
             continue
         node = resolve(tax_benefit_system.parameters, path)(instant)
-        children = plafond_children(node)
+        children = plafond_children(resolve(reference, path)(instant))
         if not children:
             problems.append(f"{knob} : le nœud ne porte aucun plafond à {instant}")
             continue
         for name in children:
+            if not hasattr(node, name):
+                problems.append(
+                    f"{knob}.{name} : présent dans le droit courant, absent du "
+                    f"système réformé — la réforme a supprimé un plafond au lieu "
+                    f"de le déplacer"
+                )
+                continue
             got = float(getattr(node, name))
             if abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0):
                 problems.append(

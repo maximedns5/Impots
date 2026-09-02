@@ -121,3 +121,97 @@ def test_the_rule_would_catch_the_defect_it_was_written_for() -> None:
         and "magnitude" not in (ast.get_source_segment(bad, node) or "")
     ]
     assert hits, "the checker does not catch the defect it exists for"
+
+
+# --------------------------------------------------------------------------- #
+# update() may never create (D-044)
+# --------------------------------------------------------------------------- #
+#: Modules that write to a parameter tree to build a reform.
+REFORM_MODULES = (
+    SRC / "engine" / "reforms.py",
+    SRC / "entreprises" / "reforms.py",
+)
+
+
+class DirectParameterWrite(ast.NodeVisitor):
+    """Finds `<anything>.update(start=..., value=...)` outside the safe helper."""
+
+    def __init__(self) -> None:
+        self.hits: list[tuple[int, str]] = []
+
+    def visit_Call(self, node: ast.Call) -> None:
+        func = node.func
+        if isinstance(func, ast.Attribute) and func.attr == "update":
+            keywords = {kw.arg for kw in node.keywords}
+            if {"start", "value"} <= keywords:
+                self.hits.append((node.lineno, "update(start=…, value=…)"))
+        self.generic_visit(node)
+
+
+@pytest.mark.parametrize("module", REFORM_MODULES, ids=lambda p: p.parent.name)
+def test_a_reform_module_never_writes_a_parameter_directly(module: Path) -> None:
+    """`update()` creates a child that does not exist, silently.
+
+    That is not a small wart. The 2026 refonte replaced
+    `entreprises_de_moins_de_50_salaries` with `t_delta_petites_entreprises`; writing
+    the old name **succeeded**, the read-back then found exactly the value it had
+    itself just written and passed, and labour cost moved by 0.00 — a reform reporting
+    success while doing nothing, arriving through the guard built to catch that.
+
+    So reform writes go through `impots.parameters.update_existing`, which checks the
+    target against the tree as the year's formula sees it. Creating a parameter is
+    still possible through `create_parameter`, which has a different name so that
+    doing it is a decision someone typed. This test keeps the door shut."""
+    visitor = DirectParameterWrite()
+    visitor.visit(ast.parse(module.read_text(encoding="utf-8")))
+    assert not visitor.hits, (
+        f"{module.parent.name}/{module.name} writes a parameter directly at "
+        + ", ".join(f"line {line}" for line, _ in visitor.hits)
+        + " — use impots.parameters.update_existing, or create_parameter if creating "
+          "is genuinely intended"
+    )
+
+
+def test_the_write_guard_catches_the_defect_it_was_written_for() -> None:
+    """A structural test that cannot fail is a comment."""
+    bad = "resolve(parameters, path).update(start=start, value=value)\n"
+    visitor = DirectParameterWrite()
+    visitor.visit(ast.parse(bad))
+    assert visitor.hits, "the checker does not catch the defect it exists for"
+
+
+def test_creating_a_parameter_has_its_own_name() -> None:
+    """The point of the split. If both operations shared a name, choosing between
+    them would not be visible in a diff."""
+    from impots import parameters as parameters_module
+
+    assert hasattr(parameters_module, "update_existing")
+    assert hasattr(parameters_module, "create_parameter")
+    assert parameters_module.update_existing is not parameters_module.create_parameter
+
+
+def test_existence_is_read_from_the_evaluated_tree_not_the_editable_one() -> None:
+    """An editable node answers `hasattr` for every child defined at ANY date, so
+    asking it what exists in 2024 also returns 2025's parameters. That is how a knob
+    can write into a year that is not the one being reformed."""
+    from impots.engine.system import baseline
+    from impots.parameters import exists_at
+
+    path = (
+        "prelevements_sociaux", "reductions_cotisations_sociales",
+        "allegement_general", "ensemble_des_entreprises",
+        "entreprises_de_moins_de_50_salaries",
+    )
+    parameters = baseline().parameters
+    assert exists_at(parameters, path, "2024-01-01")
+    assert not exists_at(parameters, path, "2026-01-01"), (
+        "the 2026 refonte replaced this parameter; the evaluated tree must say so"
+    )
+    # The editable tree cannot tell them apart, which is the whole reason for `exists_at`.
+    node = parameters
+    for part in path[:-1]:
+        node = getattr(node, part)
+    assert hasattr(node, path[-1]), (
+        "if the editable tree ever stops answering for a superseded child, this test "
+        "is over-specified and the distinction it guards may have gone away"
+    )
