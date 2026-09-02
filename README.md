@@ -1,5 +1,7 @@
 # Impôts — a transparent simulator of French taxation
 
+[![test](https://github.com/maximedns5/Impots/actions/workflows/test.yml/badge.svg)](https://github.com/maximedns5/Impots/actions/workflows/test.yml)
+
 Not a predictive model of the French economy. A layered simulator that computes
 what a tax reform does, and is explicit about how much each answer can be trusted.
 

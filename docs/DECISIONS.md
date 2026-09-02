@@ -1569,3 +1569,36 @@ is now checked *before* the write, against the node as the year's formula sees i
 the refusal names the replacement so a reader is not left hunting. The check is
 surgical — `plafond` survives the 2026 rewrite and its knob still works, because the
 concept survives even though the rate parameters do not.
+
+## D-043 — CI has run, it was green on the first try, and why that is not luck
+Date: 2026-09-02 · Status: accepted · Evidence: 5 runs on github.com/maximedns5/Impots, 5 successes
+
+The hardening brief opens by saying the workflow "has never executed on a real
+runner". That was true when it was written and is no longer: **five runs, five
+successes, no red run in the project's history.** The README now carries the badge.
+
+The brief asks for this to be said plainly if the first run was green, because it is
+a result rather than a non-event. It was — and it was green for a reason worth
+recording, since the same reason is reusable.
+
+**The first push was rehearsed against a clean tree.** Before pushing, `git archive
+HEAD` was exported to a temporary directory and the suite run there with nothing
+under `data/` but the two files git actually tracks. That is what CI sees, and it is
+not what a working copy looks like: this repository's `data/` holds 86 manifested
+inputs locally and two committed files remotely.
+
+The rehearsal caught exactly one failure, and it was a real one. A provenance test
+called `require_sourced` on an invented filename and matched the resulting message —
+which passes locally, where the manifest exists, and fails on a fresh checkout, where
+a different error fires first. **The test was asserting its environment rather than
+its behaviour.** It now writes its own two-entry manifest and checks both cases it
+cares about.
+
+So the rule, and it costs four minutes: **rehearse on `git archive HEAD` before the
+first push of anything that touches data paths, manifests or fixtures.** A red first
+run would have been recoverable; the interesting part is that the failure it would
+have exposed was a test that could never have failed on the machine that wrote it.
+
+Nothing else surfaced — no path, timeout, cache or fixture problem. The
+`needs_population` / `needs_primary` skip marks did their job: 31 tests skip on a
+clean checkout and 295 run.
