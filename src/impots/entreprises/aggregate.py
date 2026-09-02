@@ -41,6 +41,7 @@ class CellRow:
     n_firms: float
     turnover: float
     tax_baseline: float
+    is_brut: float
     mean_effective_rate: float
     tax_reform: float | None = None
     mean_delta: float | None = None
@@ -68,6 +69,9 @@ class FirmAggregates:
     by_size: list[SizeRow] = field(default_factory=list)
     n_firms: float = 0.0
     turnover: float = 0.0
+    taxable_profit: float = 0.0
+    """Weighted bénéfice imposable. Needed because the informative IS statistic is
+    the rate on it, not the level — the level is calibrated (D-027)."""
     share_zero_is: float = 0.0
     """Share of firms paying no IS. The scalar that decides whether the IS line
     means anything at all (§3.3)."""
@@ -127,6 +131,7 @@ def aggregate(firms: pl.DataFrame) -> FirmAggregates:
         deltas=deltas,
         n_firms=float(weights.sum()),
         turnover=_weighted(firms["chiffre_affaires"].to_numpy(), weights),
+        taxable_profit=_weighted(profit, weights),
         share_zero_is=float(weights[is_paid <= 0].sum() / weights.sum()) if weights.sum() else 0.0,
         # A reform that reduces firm tax costs the budget that much.
         reform_cost=-deltas.get("prelevements_entreprise") if deltas else None,
@@ -157,6 +162,7 @@ def aggregate(firms: pl.DataFrame) -> FirmAggregates:
                 n_firms=float(w.sum()),
                 turnover=_weighted(firms["chiffre_affaires"].to_numpy()[mask], w),
                 tax_baseline=_weighted(baseline_tax[mask], w),
+                is_brut=_weighted(is_paid[mask], w),
                 mean_effective_rate=_weighted_mean(effective[mask], w),
             )
             if delta is not None and reform_tax is not None:

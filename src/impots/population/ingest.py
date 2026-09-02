@@ -94,7 +94,7 @@ def write_manifest(entries: list[dict[str, Any]]) -> Path:
     for entry in entries:
         path = RAW / entry["filename"]
         files[entry["filename"]] = {
-            "url": entry["url"],
+            "url": entry.get("url"),
             "sha256": sha256_of(path),
             "bytes": path.stat().st_size,
             "downloaded": entry.get("downloaded", date.today().isoformat()),

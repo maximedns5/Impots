@@ -102,16 +102,56 @@ CEBGE = Figure(
            "payers, so this line sizes the instrument rather than scoring the year.",
 )
 
+#: C3S receipts by the year they were BOOKED. A tax assessed on prior-year turnover
+#: has to be graded against the year after the turnover it was computed on: a
+#: population whose turnover is 2023 produces the C3S booked in 2024. Declaring the
+#: mismatch as a bias was the weaker answer; selecting the comparable vintage is the
+#: correct comparison, and `reconcile` does the selection from the population's own
+#: vintage rather than from whichever figure is nearest.
+C3S_BY_BOOKING_YEAR: dict[int, Figure] = {}
+
 C3S = Figure(
     value=5.337e9, unit="EUR", year=2025,
     scope="C3S encaissée, tous redevables",
     source="Rapport à la Commission des comptes de la Sécurité sociale, mai 2026",
     url=CCSS_2026, use="validation",
-    caveat="Cross-checked to the euro-million against INSEE tableau 3.217. Note the "
-           "base year: C3S booked in 2025 is assessed on 2024 turnover, while the model "
-           "charges it on the simulated year's own turnover — so the comparison is off "
-           "by one year of nominal growth, in the direction of overstating the model.",
+    caveat="Cross-checked to the euro-million against INSEE tableau 3.217. Assessed on "
+           "2024 turnover: C3S due in year N is levied on year N-1 turnover.",
 )
+
+C3S_2024 = Figure(
+    value=5.228e9, unit="EUR", year=2024,
+    scope="C3S encaissée en 2024, assise sur le chiffre d'affaires 2023",
+    source="Rapport à la Commission des comptes de la Sécurité sociale, mai 2026 ; "
+           "INSEE tableau 3.217", url=CCSS_2026, use="validation",
+    caveat="The comparable vintage for a population whose turnover is 2023.",
+)
+
+C3S_BY_BOOKING_YEAR.update({2024: C3S_2024, 2025: C3S})
+
+
+def c3s_for_turnover_year(vintage: int | None) -> tuple[Figure, str]:
+    """The C3S receipt assessed on `vintage` turnover, i.e. the one booked a year later.
+
+    Returns the figure and a sentence saying why it is the right one. Falls back to
+    the most recent receipt when the vintage is unknown or unpublished, and says so —
+    a fallback that quietly picked the nearest figure would be the whole problem.
+    """
+    if vintage is not None and (vintage + 1) in C3S_BY_BOOKING_YEAR:
+        figure = C3S_BY_BOOKING_YEAR[vintage + 1]
+        return figure, (
+            f"Graded against the C3S booked in {vintage + 1}, which is the receipt "
+            f"assessed on {vintage} turnover — the vintage this population carries. "
+            f"C3S due in year N is levied on year N-1 turnover, so comparing against "
+            f"the same year's receipt would be off by a year of nominal growth."
+        )
+    latest = max(C3S_BY_BOOKING_YEAR)
+    return C3S_BY_BOOKING_YEAR[latest], (
+        f"No published receipt is assessed on this population's turnover vintage "
+        f"({vintage}), so the {latest} booking is shown instead. That receipt is "
+        f"assessed on {latest - 1} turnover and the comparison is off by the "
+        f"difference in years — read it as an order of magnitude, not a residual."
+    )
 
 IS_NET_DGFIP = Figure(
     value=61.8e9, unit="EUR", year=2025,
@@ -203,6 +243,59 @@ AVERAGE_RATE_ON_PROFITS = Figure(
            "again — denominator is taxable profit, like this one, but loss-makers stay in "
            "the average at zero, like the other.",
 )
+
+
+TAXABLE_PROFIT = Figure(
+    value=283.950641563e9, unit="EUR", year=2024,
+    scope="Bénéfices déclarés par les entreprises bénéficiaires à l'IS, toutes tailles",
+    source="DGFiP Statistiques n° 39, septembre 2025, tableau 2",
+    url=DGFIP_STAT_39, use="calibration",
+    caveat="**Spent.** The cell table's fiscal-to-accounting ratio is computed to "
+           "reproduce this total exactly, so hitting it is the build working. Its "
+           "consequence travels: the IS *level* is calibrated through it, and only the "
+           "IS *rate* on the synthetic distribution stays free.",
+)
+
+IS_BRUT_BY_SIZE: dict[str, float] = {
+    "micro": 14.03225e9, "PME": 19.224701e9, "ETI": 16.208329e9, "GE": 19.58231e9,
+}
+"""IS brut by size class, DGFiP Statistiques n° 39 tableau 2 (2024). The profile the
+firm module exists to reproduce, and untouched by any calibration here."""
+
+
+#: IS brut by DGFiP sector grouping, with the NAF sections each covers.
+#:
+#: THE MODULE'S BEST VALIDATION DIMENSION, and the only one of the two obvious ones
+#: that is like-for-like. Size cannot be graded against DGFiP: its TPE/PME/ETI/GE
+#: buckets are fiscal, INSEE's MIC/PME/ETI/GE are the LME decree applied to profiled
+#: enterprises, and the two do not coincide — DGFiP counts 220 600 PME where INSEE
+#: counts 164 000, so a by-size residual measures the taxonomy gap rather than the
+#: model. Sectors are NAF in both sources, so a by-sector residual measures the model.
+#:
+#: Nothing in the cell table is calibrated by sector: the sector shape comes from
+#: Ésane and the calibration is national and by size class, so these lines are free.
+IS_BRUT_BY_SECTOR: dict[str, tuple[float, tuple[str, ...]]] = {
+    "Industrie": (15.229616141e9, ("B", "C", "D", "E")),
+    "Commerce, transports, hébergement": (18.914007452e9, ("G", "H", "I")),
+    "Construction": (4.981431577e9, ("F",)),
+    "Activités spécialisées et de soutien": (9.167166289e9, ("M", "N")),
+    "Activités immobilières": (3.859014398e9, ("L",)),
+    "Information et communication": (3.529089404e9, ("J",)),
+}
+
+IS_BY_SECTOR_SOURCE = "DGFiP Statistiques n° 39, septembre 2025, tableau 1 (millésime 2024)"
+
+
+def is_sector_figure(label: str, value: float) -> Figure:
+    """A published sector IS total, as a Figure so it carries its own `use`."""
+    return Figure(
+        value=value, unit="EUR", year=2024,
+        scope=f"IS brut des entreprises imposées à l'IS — {label}",
+        source=IS_BY_SECTOR_SOURCE, url=DGFIP_STAT_39, use="validation",
+        caveat="Free: the cell table's sector shape comes from Ésane and its "
+               "calibration is national and by size, so nothing here was fitted to "
+               "this figure.",
+    )
 
 
 def figures_by_use(use: Use) -> dict[str, Figure]:

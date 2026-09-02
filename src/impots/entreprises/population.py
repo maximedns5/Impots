@@ -40,10 +40,14 @@ from impots import guards
 
 SEED = 20260101
 
-#: Dispersion of turnover within a cell, as the sigma of a lognormal. Assumed,
-#: not published: ESANE gives cell means and totals, not quantiles, so the shape
-#: inside a cell cannot be calibrated and is declared instead. Firm turnover is
-#: famously heavy-tailed even within narrow cells, which is why this is large.
+#: Fallback dispersion of turnover within a cell, as the sigma of a lognormal.
+#:
+#: Used only where no fitted value is available. INSEE Focus 372's complementary
+#: table 3 publishes value-added quartiles by broad sector and size class, and
+#: `entreprises.cells` turns them into a per-cell sigma — so this constant is now
+#: the exception rather than the rule. It is kept deliberately fat because the
+#: cells that fall back to it are the ones whose values Ésane suppressed, which are
+#: not the well-behaved ones.
 TURNOVER_SIGMA = 1.4
 
 #: Correlation between a firm's value-added margin and its profit margin, drawn
@@ -71,6 +75,12 @@ class Cell:
     result_total: float
     p_loss: float
     """Share of firms in the cell declaring no taxable profit."""
+    sigma: float | None = None
+    """Lognormal dispersion of size *within* the cell, fitted to published value-added
+    quartiles where they exist. `None` falls back to `TURNOVER_SIGMA`, which is an
+    assumption and a bad one: the fitted values run from 0.68 to 3.1 across cells,
+    so a single constant is wrong in both directions at once. It mattered most at
+    the CEBGE thresholds, where an over-fat tail invents firms above 1.5 bn."""
 
 
 @dataclass
@@ -102,7 +112,7 @@ def _draw_cell(
     count = min(firms_per_cell, max(round(cell.n_firms), 1))
     weight = cell.n_firms / count
 
-    turnover = rng.lognormal(0.0, TURNOVER_SIGMA, count)
+    turnover = rng.lognormal(0.0, cell.sigma or TURNOVER_SIGMA, count)
     turnover *= cell.turnover_total / (turnover.sum() * weight)
 
     # Value-added and profit margins drawn jointly: the correlation is what gives

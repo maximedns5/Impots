@@ -317,6 +317,15 @@ FIRM_NOTE = (
 )
 
 FIRM_LIMITATIONS = [
+    "**Le niveau de l'IS est calibré, son taux ne l'est pas.** Le ratio "
+    "fiscal/comptable de la table de cellules est calculé pour reproduire exactement "
+    "le bénéfice imposable publié par la DGFiP : atteindre le total d'IS publié est "
+    "donc de l'arithmétique. Ce qui reste libre — et ce qu'il faut lire — est le taux "
+    "moyen produit par le barème sur une distribution synthétique, et les lignes par "
+    "secteur (D-027).",
+    "**Trois des six lignes sectorielles sont hors tolérance** : industrie +74 %, "
+    "activités immobilières −91 %, information et communication −70 %. Deux "
+    "hypothèses sont consignées, aucune n'a été testée.",
     "**Aucun financier d'entreprise n'est observé.** SIRENE donne les effectifs par "
     "cellule, ESANE les agrégats ; ni l'un ni l'autre ne publie une entreprise. Tout "
     "montant individuel est un tirage paramétrique dans une cellule publiée.",

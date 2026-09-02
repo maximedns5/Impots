@@ -926,3 +926,134 @@ then the ship gate stays where D-024 left it.
 version, the groupe-fiscal member exclusion, and the ordering of the 42 500 € slice
 after deficit imputation and the zone abattements. None affects a value; all affect
 whether a future reader can re-find what was confirmed.
+
+## D-026 — Calibration inputs never pass through an agent's prose
+Date: 2026-09-02 · Status: accepted · Evidence: two measured failures of the alternative
+
+**The principle.** A figure the model is calibrated to must be computed by tested
+code from a primary file whose sha256 is in `data/raw/MANIFEST.json`. Agents locate
+files and adversarially verify what the code computed. **They are never the source
+of record for a figure.**
+
+This is not a judgement about agents in general; it is a conclusion from two
+measurements of the same method on the same kind of task:
+
+* Phase 1 put six statistics through research agents. Six came back with scope
+  problems.
+* Phase 2's firm-data agent — the SIRENE/ESANE research for the cell table — came
+  back **`WRONG`**, with fifteen problems.
+
+A third data point runs the other way and is why the verifier layer stays: the one
+IS-core verifier that completed found a **fabricated verbatim quote carried under
+`confirmed_against_primary: true`**, in a report whose values were otherwise all
+correct. Agents are good at attacking a claim and unreliable at being one.
+
+**What changed in the code.** `entreprises/cells.py` computes the whole cell table
+from three manifested spreadsheets — INSEE Ésane 2023, INSEE Focus 372, DGFiP
+Statistiques 39 — and `impots population manifest` now checksums *every* file in
+`data/raw/`, recording a null URL and an explicit "not reproducible by a third
+party" note for the 79 that have no recorded source. The gap is visible instead of
+silent, which is the point.
+
+**The one figure still outside the rule**, and it is deliberately the only one:
+`P_LOSS_BY_SIZE`. Loss-making is a *count*, and no machine-readable source
+publishes it per size class — Ésane has no loss counts and DGFiP's data file has
+loss *amounts*. It is read from INSEE Références 2023 fiche 3.6, cited at its
+definition, and flagged in the provenance so it cannot be mistaken for a computed
+figure.
+
+## D-027 — The cell table, and what four verifiers did to it
+Date: 2026-09-02 · Status: accepted · Evidence: reports/reconciliation_entreprises.md (vintage 2023); workflow wf_8c8764da-bd4, 5/5 agents
+
+The firm module runs on a cell table computed from three manifested files — INSEE
+Ésane 2023, INSEE Focus 372, DGFiP Statistiques 39 — rather than on the invented
+fixture. **The first version of it was wrong in four material ways, and the
+verifiers found all four.** Recording the corrected state alongside what it looked
+like before, because the difference is the argument for the method.
+
+### What the verification found
+
+Two of four returned `WRONG`. None of it was arguable.
+
+**The published split I estimated.** Ésane merges "ETI ou GE" into one class at the
+`a21` level, so the code split it using national mean turnover per firm. Focus 372
+**publishes that split**, in the same workbook: figure 3b for turnover and 3c for
+value added, by broad sector. The estimate was out by up to 7 points on turnover and
+12 on value added — 128 bn and 39 bn misallocated against a table two sheets away.
+Estimating what a file already publishes is precisely the failure D-026 exists to
+stop, and it happened inside the module written to implement D-026.
+
+**The haircut that ignored its own distribution.** Half of Ésane's micro-enterprises
+are not liable to IS, so the code scaled the micro class by 0.51 — counts *and*
+values alike, removing 334 bn of turnover. But the firms that fall out are the
+*smallest*: micro-entrepreneurs, not micro SARLs. Under the lognormal this module
+itself fits to that class (σ ≈ 2.6–3.1), the smallest half holds between 0.1 % and
+2 % of turnover. The module was fitting a heavy-tailed distribution and then
+adjusting it as though it were uniform. Now the value share comes from the fitted
+lognormal's own tail: `1 − Φ(Φ⁻¹(1−p) − σ)`.
+
+**The floor that zeroed whole sectors.** A cell's published résultat is net of its
+own loss-makers. The code took `max(net, 0)` — so every cell with a negative
+aggregate got a taxable base of exactly zero, including 8 057 information-and-
+communication PMEs turning over 46.8 bn, and the whole of real-estate ETI and GE.
+Losses are now added back across a size class in proportion to value added, an
+assumption that cannot zero a sector.
+
+**The guard that guarded nothing.** `"IS" in label.upper()` also matches the
+"entreprises à l'IR" row directly beneath, because ENTREPRISES contains IS. The
+right row was being selected by publication order alone; a reordered sheet would
+have silently substituted the 4.7 M income-tax count for the 2.7 M corporation-tax
+one and moved every level in the table with it.
+
+Two further fixes came from the one verifier that returned `CONFIRMED` and still
+found latent defects: Ésane's note de lecture declares **two** missing-data codes
+(`S` and `N`) where the reader handled one, and a suppressed value on a surviving
+cell was being coerced to zero, contradicting the module's own stated rule.
+
+### What I had got wrong about my own results
+
+D-027's first draft offered two hypotheses for the failing sector lines — a champ
+gap for immobilier, and the régime mère-fille for industrie. **Both were guesses,
+and the real cause of the two worst was a code defect.** Fixing the floor took
+information-et-communication from −70 % to −21 % and immobilier from −91 % to
+−71 %. The lesson is the ordering: a residual gets a mechanical explanation before
+it gets an economic one, and I reached for the economics first.
+
+### Where it stands
+
+Every instrument line is inside tolerance: **IS −0.2 %**, the free rate test
+**+0.6 %**, contribution sociale −3.9 %, **CEBGE +23.1 %** (it was +45 % before the
+dispersion was fitted and the haircut corrected), CVAE −18.4 %, **C3S +1.2 %**.
+
+Four of six sector lines pass — Commerce/transports +2.0 %, Construction +16.8 %,
+Activités spécialisées +17.7 %, and information-et-communication now near the edge
+at −21.4 %. Two remain out: **industrie +38.3 %** and **activités immobilières
+−70.9 %**. No hypothesis is recorded for either this time. DGFiP counts 587 000
+IS-liable firms in immobilier against a small fraction of that in Ésane's marchand
+field, which *looks* like champ — but that is exactly the kind of guess the last
+draft got wrong, so the lines stay red and unexplained until something is measured.
+
+### Three things that are now true of the method
+
+**The fiscal-to-accounting ratio is computed, not chosen.** D-024 set the IS
+tolerance at ±20 % because that scalar was free and a tighter gate would have
+invited tuning it. It is derived now, so there is nothing to tune.
+
+**The IS *level* is calibrated and the report says so.** Reproducing the taxable-
+profit total by construction makes landing near the published IS total mostly
+arithmetic. Taxable profit moved into the calibration table as spent, and the
+informative line — the aggregate rate on profits, where the denominator is
+calibrated and the numerator is not — was added beside it.
+
+**By-size cannot be validated against DGFiP; by-sector can.** DGFiP's TPE/PME/ETI/GE
+are fiscal buckets and INSEE's are the LME decree applied to profiled enterprises;
+DGFiP counts 220 600 PME where INSEE counts 164 000. A by-size residual measures the
+taxonomy gap, which is the same category error the C3S vintage fix corrected.
+Sectors are NAF in both sources, so the six sector lines are the module's real
+evidence.
+
+**And the dispersion inside a cell stopped being an assumption.** Focus 372 publishes
+value-added quartiles, which fit a lognormal σ directly. The fitted values run 0.68
+to 3.14 against the single assumed 1.4 — wrong in both directions at once. It
+mattered most where it was least visible: too fat a tail invents firms above the
+CEBGE's 1.5 bn threshold.

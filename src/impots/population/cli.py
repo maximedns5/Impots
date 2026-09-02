@@ -83,8 +83,77 @@ def _print_aggregates(agg: aggregate_module.Aggregates) -> None:
               "of household disposable income")
 
 
+#: Raw inputs whose canonical URL is known. Anything in data/raw/ that is NOT here
+#: gets manifested with a null url and an explicit "not reproducible" note, because
+#: an unmanifested file that backs a figure is exactly the gap D-026 closes: a
+#: checksum without a URL proves the file has not changed, not where it came from.
+KNOWN_SOURCES: dict[str, tuple[str, str]] = {
+    "FD_EEC_2024.parquet": (
+        "https://www.insee.fr/fr/statistiques/fichier/8632441/FD_EEC_2024.parquet",
+        "Enquête Emploi en Continu 2024, fichier détail",
+    ),
+    "Varmod_EEC_2024.csv": (
+        "https://www.insee.fr/fr/statistiques/fichier/8632441/Varmod_EEC_2024.csv",
+        "Dictionnaire des variables et modalités de l'EEC 2024",
+    ),
+    "dgfip_stat_39_impot_benefice_2024.pdf": (
+        "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/"
+        "0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num39_09/"
+        "dgfip_stat_39_limpot-sur-le-benefice-2024-des-entreprises_publi.pdf",
+        "DGFiP Statistiques n° 39 — l'impôt sur le bénéfice 2024 des entreprises",
+    ),
+    "insee_ia112_taux_implicite_is_2016_2022.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8630968/IA112.xlsx",
+        "INSEE Analyses n° 112 — taux implicite d'IS par taille d'entreprise",
+    ),
+    "insee_entfra2023_fiche36_impot_societes.pdf": (
+        "https://www.insee.fr/fr/statistiques/fichier/7678564/ENTFRA23-F20.pdf",
+        "INSEE Références, Les entreprises en France 2023, fiche « Impôt sur les "
+        "sociétés » — the source of P_LOSS_BY_SIZE, the one figure in the cell table "
+        "read from a publication rather than computed (D-026)",
+    ),
+    "ccss_mai2026_comptes_secu_resultats2025.pdf": (
+        "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2026/"
+        "CCSS%20mai%202026_assembl%c3%a9_V2.pdf",
+        "Rapport à la Commission des comptes de la Sécurité sociale, mai 2026 — C3S",
+    ),
+    "insee_cn2025_t3217_principaux_impots_par_categorie.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx",
+        "INSEE comptes nationaux, tableau 3.217 — principaux impôts par catégorie",
+    ),
+    "urssaf_c3s_notice_mars2026.pdf": (
+        "https://www.urssaf.fr/files/live/sites/urssaffr/files/outils-documentation/"
+        "guides/C3S-Notice.pdf",
+        "Notice URSSAF C3S — confirms the base is prior-year turnover",
+    ),
+    "Dictionnaire_EEC_2024.pdf": (
+        "https://www.insee.fr/fr/statistiques/fichier/8632441/"
+        "EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
+        "Dictionnaire des codes de l'EEC 2024",
+    ),
+    "insee_esane2023_caracteristiques_par_taille.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8611562/"
+        "DD_esane23m23ep_caracteristiques_taille.xlsx",
+        "INSEE Ésane 2023 — caractéristiques comptables et financières par secteur "
+        "(NAF a10/a21/a88/a272) et catégorie d'entreprise. The firm cell table's shape.",
+    ),
+    "insee_focus372_tissu_productif_categorie_2023.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8675639/IF372.xlsx",
+        "INSEE Focus n° 372 — le tissu productif par catégorie d'entreprise. Splits "
+        "Ésane's merged ETI/GE class and publishes the value-added dispersion.",
+    ),
+    "dgfip_stat_39_impot_benefice_2024_donnees.xlsx": (
+        "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/"
+        "0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num39_09/"
+        "dgfip_stat_39_limpot-sur-le-benefice-2024-des-entreprises.xlsx",
+        "DGFiP Statistiques n° 39 — données des figures. The fiscal control totals: "
+        "IS-liable firm count, résultat fiscal and bénéfices by size and by sector.",
+    ),
+}
+
+
 def cmd_manifest(_: argparse.Namespace) -> int:
-    """Re-record the checksums of the raw inputs."""
+    """Re-record the checksums of every raw input, named or not."""
     known = {
         "FD_EEC_2024.parquet": (
             "https://www.insee.fr/fr/statistiques/fichier/8632441/FD_EEC_2024.parquet",
@@ -95,14 +164,29 @@ def cmd_manifest(_: argparse.Namespace) -> int:
             "Dictionnaire des variables et modalités de l'EEC 2024",
         ),
     }
-    entries = [
-        {"filename": name, "url": url, "licence": "Licence Ouverte / Etalab 2.0",
-         "description": description}
-        for name, (url, description) in known.items()
-        if (RAW / name).exists()
-    ]
+    known = {**known, **KNOWN_SOURCES}
+    entries = []
+    unnamed = 0
+    for file in sorted(RAW.iterdir()):
+        if not file.is_file() or file.name == "MANIFEST.json":
+            continue
+        if file.name in known:
+            url, description = known[file.name]
+        else:
+            unnamed += 1
+            url, description = None, (
+                "URL not recorded. The checksum proves this file has not changed; it "
+                "does not prove where it came from, so nothing computed from it is "
+                "reproducible by a third party (D-026)."
+            )
+        entries.append({"filename": file.name, "url": url,
+                        "licence": "Licence Ouverte / Etalab 2.0" if url else "unknown",
+                        "description": description})
     path = write_manifest(entries)
     print(f"wrote {path} with {len(entries)} inputs")
+    if unnamed:
+        print(f"  {unnamed} carry no source URL and are not reproducible by a third "
+              f"party — run with a URL added to KNOWN_SOURCES to fix one")
     return 0
 
 
@@ -284,7 +368,9 @@ def cmd_firms_reconcile(args: argparse.Namespace) -> int:
     )
     print(f"wrote {report}")
 
-    lines = firm_reconcile.build_lines(agg, args.year)
+    lines = firm_reconcile.build_lines(
+        agg, args.year, firm_reconcile._vintage_year(args.vintage)
+    )
     outside = [line for line in lines if line.status.startswith("OUTSIDE")]
     print(f"  {len(lines)} lines, {len(outside)} outside tolerance")
     for line in outside:

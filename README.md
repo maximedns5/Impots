@@ -36,8 +36,10 @@ CVAE and the C3S, priced mechanically over a synthetic firm population built fro
 published sector × size cells. A firm reform is priced inside an HTTP request —
 about 500 000 firms in hundredths of a second — so there is no quick tier and no
 batch job. It has [its own reconciliation report](reports/reconciliation_entreprises.md).
-The engine and its parameters are done; the population is still running on an
-invented cell table, so **no figure on that page validates anything yet**.
+The population is built from published INSEE and DGFiP tables by tested code, and
+the report's free test — total IS over total taxable profit, where the denominator
+is calibrated and the numerator is not — lands within 1.2 % of the published
+average rate. Three of its six sector lines pass and three fail, all six visible.
 
 ```
 src/impots/engine/       typed wrapper over openfisca-france — household scale (L2)
@@ -161,13 +163,17 @@ the smallest complete demonstration that the reform machinery does what it says.
   ESANE gives that cell's totals; neither publishes a firm. Every individual amount
   is a parametric draw inside a published cell, so results exist at cell level only
   — no firm-level output, and no top-tail claims.
-* **The cell table is still invented.** The committed fixture holds 1.10 M firms
-  against 2.72 M real ones, so every line of the firm reconciliation report sits
-  60–70 % low. That is the fixture, not the engine, and the report says so above
-  its own table. Load a real cell table before quoting anything from it.
-* **One scalar dominates the IS residual**: the national fiscal-to-accounting
-  ratio. Fiscal result is not accounting result and no open source publishes the
-  difference per firm (D-024).
+* **The IS *level* is calibrated; the IS *rate* is not.** The cell table's
+  fiscal-to-accounting ratio is computed to reproduce DGFiP's published taxable
+  profit, so landing near the published IS total is mostly arithmetic. What is free
+  is the rate the statutory schedule produces on a synthetic distribution, and the
+  by-sector lines. Read those (D-027).
+* **Three of six sector lines are outside tolerance**: industrie +74 %, activités
+  immobilières −91 %, information et communication −70 %. Two hypotheses are
+  recorded and neither has been tested; the lines stay red until one is.
+* **The CEBGE line is at +45 % and rests entirely on the top tail** — 198 firms
+  above 3 bn of turnover carry 10.6 of its 10.9 bn. This module disclaims top-tail
+  claims, so that line is at the edge of what a cell-based population can price.
 * **No loss carry-forward, no intégration fiscale, no crédits d'impôt.** The first
   biases IS upward, the second over-counts firms at the reduced rate, the third
   means the simulated IS is an IS before créances.

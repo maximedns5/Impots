@@ -19,6 +19,7 @@ dependencies = [
   "pydantic>=2.6",
   # Phase 1 population pipeline. The EEC fichier détail is parquet and the
   # population is 353 420 rows; this is where a dataframe finally earns its place.
+  "openpyxl>=3.1",
   "polars>=1.0",
   "pyarrow>=15",
 ]

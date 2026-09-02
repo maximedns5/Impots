@@ -51,19 +51,46 @@ SYNTHETIC_WARNING = (
 )
 
 
-def build_lines(agg: FirmAggregates, year: int) -> list[Line]:
+def build_lines(
+    agg: FirmAggregates, year: int, turnover_vintage: int | None = None
+) -> list[Line]:
     """Every reconciliation line this population has, calibration and validation alike."""
     totals = agg.totals
+    c3s_figure, c3s_why = margins.c3s_for_turnover_year(turnover_vintage)
     lines: list[Line] = [
+        Line.from_figure(
+            margins.TAXABLE_PROFIT, "Bénéfice imposable total",
+            agg.taxable_profit, TOLERANCE["calibration"],
+            "**Spent, and it is the most consequential spend in this table.** The cell "
+            "table's fiscal-to-accounting ratio is computed to reproduce this total, so "
+            "hitting it is arithmetic. Everything the IS level does downstream inherits "
+            "that — see the next line.",
+            source="DGFiP",
+        ),
         Line.from_figure(
             margins.IS_AVANT_CREDITS, "Impôt sur les sociétés",
             totals.get("impot_societes"), TOLERANCE["is"],
-            "**The ship gate.** Semi-independent: profit is not calibrated, but the "
-            "fiscal-to-accounting ratio that converts it is derived from published DGFiP "
-            "assiette totals, so this line is not fully free of its sources. Biased "
-            "upward by the absence of loss carry-forward, and upward again by treating "
-            "every group member as a separate unit.",
+            "**The level of this line is calibrated and the rate is not.** The taxable "
+            "profit above is reproduced by construction, and IS is roughly a quarter of "
+            "it, so landing near the published total is most of the way guaranteed. What "
+            "this line still tests is whether applying the real schedule — the 15 % slice, "
+            "its ceilings, its eligibility — to a *synthetic distribution* of a correct "
+            "total lands where the published tax does. That test is the line below, and it "
+            "is the one to read. Biased upward by the absence of loss carry-forward.",
             source="INSEE comptes nationaux",
+        ),
+        Line.from_figure(
+            margins.AVERAGE_RATE_ON_PROFITS, "Taux moyen d'IS sur les bénéfices",
+            (totals.get("impot_societes") or 0.0) / agg.taxable_profit
+            if agg.taxable_profit else None,
+            TOLERANCE["shape"],
+            "**The free test, and the one the module should be judged on.** Total IS "
+            "over total taxable profit. The denominator is calibrated and the numerator "
+            "is not: it comes from applying the statutory schedule to a synthetic "
+            "distribution that nothing pinned. If the distribution were wrong — too many "
+            "firms in the 15 % slice, too few above it — this rate would miss even though "
+            "the level above did not.",
+            source="DGFiP",
         ),
         Line.from_figure(
             margins.IS_NET_RECETTES, "IS — recettes nettes (pour mémoire)",
@@ -100,14 +127,12 @@ def build_lines(agg: FirmAggregates, year: int) -> list[Line]:
             source="budget.gouv.fr",
         ),
         Line.from_figure(
-            margins.C3S, "C3S", totals.get("c3s"), TOLERANCE["instrument"],
+            c3s_figure, "C3S", totals.get("c3s"), TOLERANCE["instrument"],
             "The cleanest line in the table: the base is turnover, which is calibrated per "
             "cell, and the rate is a flat 0.16 % above a 19 M€ abattement. A residual here "
             "is almost entirely the distribution of turnover *within* cells — the one thing "
-            "in the population that no published source constrains. Two known offsets "
-            "first: receipts booked in a year are assessed on the *previous* year's "
-            "turnover, which the model does not have, and the sectoral caps for banks and "
-            "commissionnaires are not modelled.",
+            "in the population that no published source constrains. " + c3s_why + " The "
+            "sectoral caps for banks and commissionnaires are still not modelled.",
             source="CCSS",
         ),
         Line.from_figure(
@@ -128,19 +153,50 @@ def build_lines(agg: FirmAggregates, year: int) -> list[Line]:
         ),
     ]
 
+    if agg.cells:
+        by_section: dict[str, float] = {}
+        for cell in agg.cells:
+            by_section[cell.naf_section] = by_section.get(cell.naf_section, 0.0) + cell.is_brut
+        for label, (published, sections) in margins.IS_BRUT_BY_SECTOR.items():
+            simulated = sum(by_section.get(section, 0.0) for section in sections)
+            covered = [section for section in sections if section in by_section]
+            if not covered:
+                continue
+            missing = [section for section in sections if section not in by_section]
+            note = (
+                f"NAF {'+'.join(sections)}. One of the module's few genuinely free "
+                f"lines: the sector shape is Ésane's and the calibration is national and "
+                f"by size class, so nothing was fitted to this."
+            )
+            if missing:
+                note += (
+                    f" Sections {'+'.join(missing)} are absent from the population "
+                    f"(Ésane suppressed their values), so this line is short by whatever "
+                    f"they contribute and is expected to be missed low."
+                )
+            lines.append(Line.from_figure(
+                margins.is_sector_figure(label, published),
+                f"IS — {label}", simulated, TOLERANCE["is"], note, source="DGFiP",
+            ))
+
     if agg.by_size:
         by_size = {row.taille: row for row in agg.by_size}
         weighted = sum(row.mean_effective_rate * row.n_firms for row in agg.by_size)
         firms = sum(row.n_firms for row in agg.by_size)
-        lines.append(Line.from_figure(
-            margins.AVERAGE_RATE_ON_PROFITS, "Taux effectif moyen",
-            weighted / firms if firms else None, TOLERANCE["shape"],
-            "Read the caveat before the residual. The model's statistic is not either "
-            "published one: its denominator is taxable profit (like DGFiP's) but "
-            "loss-makers stay in the average at zero (like INSEE's). It should therefore "
-            "land *below* the DGFiP figure by roughly the share of loss-makers, and a "
-            "line that matched it exactly would be the suspicious outcome.",
-            source="DGFiP",
+        lines.append(Line(
+            label="Taux effectif moyen (moyenne par entreprise)",
+            simulated=weighted / firms if firms else None,
+            published=margins.AVERAGE_RATE_ON_PROFITS.value,
+            unit="ratio", source="DGFiP Stat 39", use="context",
+            tolerance=TOLERANCE["shape"],
+            note="Context, because it is not the same statistic as the published one and "
+                 "never was. This averages a *rate per firm* over all firms, so France's "
+                 "two and a half million micro-enterprises dominate it; DGFiP's figure is "
+                 "profit-weighted, so a few thousand large firms dominate that. The "
+                 "like-for-like comparison is the aggregate rate line above, which lands "
+                 "inside tolerance. Printed rather than dropped because it is the number a "
+                 "reader would otherwise compute themselves from the by-size table.",
+            figure_use="context",
         ))
         if "GE" in by_size and "PME" in by_size:
             lines.append(Line(
@@ -197,6 +253,11 @@ def method_notes(agg: FirmAggregates, fiscal_to_accounting: float | None) -> lis
     ]
 
 
+def _vintage_year(vintage: str) -> int | None:
+    """The population's turnover year, when the vintage names one."""
+    return int(vintage) if vintage.isdigit() and len(vintage) == 4 else None
+
+
 def render(
     agg: FirmAggregates,
     vintage: str,
@@ -215,7 +276,7 @@ def render(
         vintage=vintage,
         engine="openfisca-core 44.7.0 (système propre, hors openfisca-france)",
         intro=intro,
-        lines=build_lines(agg, year),
+        lines=build_lines(agg, year, _vintage_year(vintage)),
         sources=sources,
         notes=(notes or []) + method_notes(agg, fiscal_to_accounting),
         generated_by="impots entreprises reconcile",

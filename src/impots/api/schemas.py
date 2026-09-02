@@ -436,6 +436,7 @@ class FirmCell(BaseModel):
     n_firms: float
     turnover: float
     tax_baseline: float
+    is_brut: float
     mean_effective_rate: float
     tax_reform: float | None = None
     mean_delta: float | None = None
