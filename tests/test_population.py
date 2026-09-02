@@ -486,3 +486,77 @@ def test_a_margin_the_model_is_fitted_to_is_marked_spent() -> None:
     assert margins.HOUSEHOLDS.use == "calibration"
     assert margins.TOTAL_GROSS_WAGES.use == "calibration"
     assert margins.IR_BAREME_ON_2024_INCOME.use == "validation"
+
+
+# --------------------------------------------------------------------------- #
+# The public cost has two sides (D-039)
+# --------------------------------------------------------------------------- #
+def test_an_employer_contribution_reform_has_a_cost_at_all() -> None:
+    """Found while building the behavioural layer, and it was a mechanical bug.
+
+    `reform_cost` was Δ household disposable income alone. An employer-contribution
+    reform changes what the state COLLECTS without moving disposable income — the
+    gain lands on the firm — so extending the réduction générale from 1.6 to 2 SMIC
+    reported a cost of exactly **zero** while cutting labour cost by 17.7 bn.
+
+    Note which quantity is used: `cotisations_employeur` is gross of the allègements
+    and does not move when one changes, so the delta comes from
+    Δ(salaire_super_brut − salaire_brut), which is what is actually paid.
+    """
+    import polars as pl
+
+    from impots.api.schemas import ReformSpec
+    from impots.population.build import PROCESSED
+    from impots.population.runner import run as population_run
+
+    population = PROCESSED / "population_2024.parquet"
+    if not population.exists():
+        pytest.skip("no population built in this checkout")
+
+    result = population_run(
+        pl.read_parquet(population), year=2024,
+        reform=ReformSpec.model_validate({"allegement_general_plafond": 2.0}),
+        tier="full", sample=20_000,
+    )
+    from impots.population import aggregate as aggregate_module
+
+    aggregates = aggregate_module.aggregate(result.households)
+
+    assert aggregates.employer_contribution_delta < -1e9, (
+        "extending the réduction générale must reduce employer contributions paid"
+    )
+    assert aggregates.reform_cost is not None and aggregates.reform_cost > 1e9, (
+        "a reform that cuts labour cost by billions cannot cost the state nothing"
+    )
+    assert aggregates.reform_cost == pytest.approx(
+        -aggregates.employer_contribution_delta, rel=0.05
+    ), "with disposable income unmoved, the cost IS the contribution loss"
+    # The bug hid because the gross measure genuinely does not move.
+    assert abs(aggregates.deltas.get("cotisations_employeur", 0.0)) < 1e6
+
+
+def test_a_household_reform_is_unaffected_by_the_employer_term() -> None:
+    """The correction must not move any number it has no business moving: an income
+    tax reform touches no employer contribution, so its cost is what it always was."""
+    import polars as pl
+
+    from impots.api.schemas import ReformSpec
+    from impots.population.build import PROCESSED
+    from impots.population.runner import run as population_run
+
+    population = PROCESSED / "population_2024.parquet"
+    if not population.exists():
+        pytest.skip("no population built in this checkout")
+
+    result = population_run(
+        pl.read_parquet(population), year=2024,
+        reform=ReformSpec.model_validate({"plafond_qf_demi_part": 1000.0}),
+        tier="full", sample=20_000,
+    )
+    from impots.population import aggregate as aggregate_module
+
+    aggregates = aggregate_module.aggregate(result.households)
+    assert aggregates.employer_contribution_delta == pytest.approx(0.0, abs=1e6)
+    assert aggregates.reform_cost == pytest.approx(
+        aggregates.deltas["revenu_disponible"], rel=1e-9
+    )

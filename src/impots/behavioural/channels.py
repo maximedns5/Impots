@@ -32,7 +32,22 @@ NET_OF_TAX_FLOOR = 0.05
 
 
 class ChannelInputMissing(RuntimeError):
-    """A channel was asked for a response it has no inputs to compute."""
+    """A channel was handed inputs it cannot use."""
+
+
+def _unsupplied(key: str, label: str, unit: str, needed: str) -> ChannelResult:
+    """The caller did not supply this channel's inputs at all.
+
+    Distinct from `ChannelInputMissing`, and the distinction is the whole point. A
+    channel that was PROMISED data and handed something empty raises — that is the
+    Phase 1 lesson, where inputs were computed and then silently dropped and every
+    guard stayed green. A channel whose caller simply did not compute its inputs for
+    this run has nothing wrong with it and says so.
+    """
+    return ChannelResult(
+        key=key, label=label, applies=False, unit=unit,
+        message=f"Non calculé : ce chiffrage ne fournit pas {needed}.",
+    )
 
 
 @dataclass
@@ -45,6 +60,15 @@ class ChannelResult:
     """One value per Monte Carlo draw, in euros of revenue (negative = costs the
     state). None when the channel does not apply."""
     unit: str = "EUR"
+    in_revenue_band: bool = False
+    """Whether this channel's draws are a change in STATE REVENUE that belongs in the
+    headline band.
+
+    Declared per channel rather than inferred from the unit, because the unit does not
+    settle it. C3 is denominated in euros and must still stay out: it reallocates a
+    contribution change between employers and wages, and the mechanical total is
+    identical at both ends of its range. Adding it would count the same euros twice.
+    C2 is in jobs and C4 in per cent, so those two are excluded twice over."""
     message: str = ""
     diagnostics: dict[str, Any] = field(default_factory=dict)
 
@@ -114,8 +138,12 @@ def elasticity_of_taxable_income(
                     f"survécu à la vérification des sources.",
             diagnostics={"missing_parameters": missing},
         )
-    for name, array in (("emtr_baseline", emtr_baseline), ("emtr_reform", emtr_reform),
-                        ("taxable_base", taxable_base), ("weights", weights)):
+    supplied = {"emtr_baseline": emtr_baseline, "emtr_reform": emtr_reform,
+                "taxable_base": taxable_base, "weights": weights}
+    if all(array is None for array in supplied.values()):
+        return _unsupplied("c1_eti", "Réponse du revenu imposable", "EUR",
+                           "les taux marginaux des ménages")
+    for name, array in supplied.items():
         if array is None or not len(array):
             raise ChannelInputMissing(f"C1 needs {name}; it is empty")
 
@@ -140,6 +168,7 @@ def elasticity_of_taxable_income(
 
     return ChannelResult(
         key="c1_eti", label="Réponse du revenu imposable", applies=True, draws=revenue,
+        in_revenue_band=True,
         message="La base imposable réagit au taux marginal ; l'effet est un retour "
                 "(ou une perte) sur le rendement mécanique.",
         diagnostics={
@@ -157,48 +186,197 @@ def elasticity_of_taxable_income(
 # --------------------------------------------------------------------------- #
 # C2 — employment at the SMIC, C3 — incidence: wired, and dormant in v1
 # --------------------------------------------------------------------------- #
-C2_KEYS = ("employment_elasticity_smic",)
+C2_KEYS = (
+    "employment_elasticity_smic",
+    "employment_elasticity_at_fadeout",
+    "employment_fadeout_smic_multiple",
+)
 C3_KEYS = ("passthrough_benefit_linked", "passthrough_unlinked")
 
-#: Why C2 and C3 report nothing in v1, stated once and reused.
-#:
-#: Both price employer social contributions, and **no reform knob moves one**. The
-#: household ReformSpec exposes the barème, the décote, the plafond du quotient
-#: familial and the two CSG rates; CSG is an employee contribution, and the spec
-#: itself names `csg_activite_*` as the example of a knob no channel claims. So these
-#: channels are complete and tested but have nothing to attach to until an
-#: employer-contribution knob exists — which is an engine change, not a behavioural
-#: one, and is deliberately not smuggled in here.
 NO_EMPLOYER_KNOB = (
-    "Mécanique seulement : aucun paramètre de cotisation patronale n'est exposé par "
-    "le simulateur, donc rien ne déclenche ce canal. Le canal est écrit et testé ; "
-    "il attend un levier."
+    "Mécanique seulement : aucun paramètre de cotisation patronale n'est bougé par "
+    "cette réforme, donc rien ne déclenche ce canal."
 )
 
 
+def employment_elasticity_profile(
+    smic_multiple: np.ndarray, at_smic: float, at_fadeout: float, fadeout: float
+) -> np.ndarray:
+    """Elasticity by wage, in multiples of the SMIC.
+
+    The French evidence gives two points and a direction: an elasticity around −0.43
+    at the minimum wage, and a curve that declines to about −0.1 by twice it. **The
+    straight line between them is this project's construction, not the
+    literature's**, and above the fade-out the response is zero — not a small
+    constant. An earlier version carried −0.2 above 2 SMIC on the strength of a
+    Swedish study that was never cited and whose downloaded PDF turned out to be a
+    different paper; that row is gone, and refusing to extrapolate is what replaced it.
+    """
+    span = max(fadeout - 1.0, 1e-9)
+    fraction = np.clip((smic_multiple - 1.0) / span, 0.0, 1.0)
+    interpolated = at_smic + fraction * (at_fadeout - at_smic)
+    return np.where(smic_multiple <= fadeout, interpolated, 0.0)
+
+
 def employment_at_the_smic(
-    store: Store, reform: Any, **_: Any
+    store: Store,
+    reform: Any,
+    *,
+    smic_multiple: np.ndarray | None = None,
+    relative_cost_change: np.ndarray | None = None,
+    weights: np.ndarray | None = None,
+    draws: int = 1,
+    rng: Any = None,
+    **_: Any,
 ) -> ChannelResult:
-    """Jobs gained or lost when labour cost moves at and around the minimum wage."""
+    """Jobs gained or lost when labour cost moves at and around the minimum wage.
+
+    Worked example, hand-derived and pinned in the tests: one job at the SMIC whose
+    labour cost falls 2 %. At an elasticity of −0.43 the response is
+    −0.43 × (−0.02) = +0.0086 jobs — 0.86 % of a job, which for a weighted cell of
+    100 000 such workers is 860 jobs.
+
+    One round only, and stated: the wage-bill and contribution feedback of those jobs
+    is reported, never iterated back into the tax calculation. Iterating is general
+    equilibrium and belongs to a layer this project has not built.
+    """
     applicable = _claimed(store, reform, C2_KEYS)
+    if not applicable:
+        return ChannelResult(
+            key="c2_employment", label="Emploi au voisinage du SMIC",
+            applies=False, unit="emplois", message=NO_EMPLOYER_KNOB,
+        )
+    missing = [key for key in C2_KEYS if key not in store]
+    if missing:
+        return ChannelResult(
+            key="c2_employment", label="Emploi au voisinage du SMIC",
+            applies=False, unit="emplois",
+            message=f"Aucune élasticité utilisable : {', '.join(missing)} n'a pas "
+                    f"survécu à la vérification des sources.",
+            diagnostics={"missing_parameters": missing},
+        )
+    supplied = {"smic_multiple": smic_multiple,
+                "relative_cost_change": relative_cost_change, "weights": weights}
+    if all(array is None for array in supplied.values()):
+        return _unsupplied("c2_employment", "Emploi au voisinage du SMIC", "emplois",
+                           "le profil de salaires ni la variation du coût du travail")
+    for name, array in supplied.items():
+        if array is None or not len(array):
+            raise ChannelInputMissing(f"C2 needs {name}; it is empty")
+
+    fadeout = store["employment_fadeout_smic_multiple"].central
+    at_fadeout = store["employment_elasticity_at_fadeout"].central
+    smic_draws = store["employment_elasticity_smic"].draw(rng, draws)
+
+    # The response is linear in the SMIC elasticity, so each draw only rescales the
+    # part of the profile anchored there. Split it once rather than building a
+    # draws x individuals matrix.
+    profile_at_one = employment_elasticity_profile(
+        smic_multiple, 1.0, 0.0, fadeout)          # weight on the SMIC elasticity
+    profile_at_fade = employment_elasticity_profile(
+        smic_multiple, 0.0, 1.0, fadeout)          # weight on the fade-out value
+    # SIGN, spelled out because it is the easy thing to get backwards. The
+    # elasticity is NEGATIVE and a cut makes `relative_cost_change` negative, so
+    # their product is positive: cheaper labour, more jobs. There is no extra
+    # negation, and a first version that had one reported 99 000 jobs LOST from a
+    # 1.5 % cut in labour cost.
+    exposure = weights * relative_cost_change
+    anchor = float(np.sum(exposure * profile_at_one))
+    tail = float(np.sum(exposure * profile_at_fade)) * at_fadeout
+    jobs = smic_draws * anchor + tail
+
+    below = float(weights[smic_multiple <= fadeout].sum() / weights.sum()) if weights.sum() else 0.0
     return ChannelResult(
-        key="c2_employment", label="Emploi au voisinage du SMIC",
-        applies=False, unit="emplois",
-        message=NO_EMPLOYER_KNOB if not applicable else
-                "Élasticité disponible mais aucun coût du travail n'a bougé.",
-        diagnostics={"knobs": applicable},
+        key="c2_employment", label="Emploi au voisinage du SMIC", applies=True,
+        draws=jobs, unit="emplois",
+        message="L'emploi réagit au coût du travail sous deux fois le SMIC ; "
+                "au-dessus, aucune réponse n'est appliquée faute de preuve.",
+        diagnostics={
+            "knobs": applicable,
+            "share_of_workers_below_fadeout": round(below, 4),
+            "fadeout_smic_multiple": fadeout,
+            "interpolation": "linéaire entre le SMIC et le seuil — construction de ce "
+                             "projet, pas de la littérature",
+        },
     )
 
 
-def contribution_incidence(store: Store, reform: Any, **_: Any) -> ChannelResult:
-    """Who bears an employer contribution — reallocates, never changes the total."""
+#: How a moved contribution is classified for incidence. French maladie and famille
+#: contributions are **not** benefit-linked — cover is universal, so a worker's own
+#: entitlement does not depend on what was paid — and the réduction générale spans
+#: contributions of both kinds at once. So no knob here selects a single class, and
+#: C3 reports the RANGE between the two assumptions rather than picking one.
+LINKAGE_IS_MIXED = (
+    "Aucun de ces leviers ne bouge une cotisation d'une seule classe : la maladie et "
+    "la famille sont universelles en France, donc non contributives, et la réduction "
+    "générale porte sur des cotisations des deux natures à la fois. La fourchette "
+    "couvre les deux hypothèses d'incidence au lieu d'en choisir une."
+)
+
+
+def contribution_incidence(
+    store: Store,
+    reform: Any,
+    *,
+    contribution_delta: float = 0.0,
+    draws: int = 1,
+    rng: Any = None,
+    **_: Any,
+) -> ChannelResult:
+    """Who bears a change in employer contributions — reallocates, never changes totals.
+
+    The band is the incidence uncertainty made visible: at one end the whole change
+    reaches wages, at the other it stays with the employer. The mechanical total is
+    identical under both, which is exactly why this is a separate line and not an
+    adjustment to the revenue figure.
+    """
     applicable = _claimed(store, reform, C3_KEYS)
+    if not applicable:
+        return ChannelResult(
+            key="c3_incidence", label="Incidence des cotisations patronales",
+            applies=False, unit="EUR", message=NO_EMPLOYER_KNOB,
+        )
+    missing = [key for key in C3_KEYS if key not in store]
+    if missing:
+        return ChannelResult(
+            key="c3_incidence", label="Incidence des cotisations patronales",
+            applies=False, unit="EUR",
+            message=f"Aucune élasticité utilisable : {', '.join(missing)} n'a pas "
+                    f"survécu à la vérification des sources.",
+            diagnostics={"missing_parameters": missing},
+        )
+    if contribution_delta is None:
+        return _unsupplied("c3_incidence", "Incidence des cotisations patronales",
+                           "EUR", "la variation mécanique des cotisations patronales")
+    if not contribution_delta:
+        return ChannelResult(
+            key="c3_incidence", label="Incidence des cotisations patronales",
+            applies=False, unit="EUR",
+            message="Cette réforme ne déplace aucune cotisation patronale : il n'y a "
+                    "rien à répartir entre entreprises et salaires.",
+        )
+    half = max(draws // 2, 1)
+    passthrough = np.concatenate([
+        store["passthrough_unlinked"].draw(rng, draws - half),
+        store["passthrough_benefit_linked"].draw(rng, half),
+    ])
+    # SIGN: `contribution_delta` is the change in the EMPLOYER's bill, so a cut is
+    # negative — and a cut that passes through fully makes wages RISE by its amount.
+    # Positive here therefore means workers gain.
+    to_wages = -passthrough * contribution_delta
     return ChannelResult(
-        key="c3_incidence", label="Incidence des cotisations patronales",
-        applies=False, unit="EUR",
-        message=NO_EMPLOYER_KNOB if not applicable else
-                "Élasticité disponible mais aucune cotisation patronale n'a bougé.",
-        diagnostics={"knobs": applicable},
+        key="c3_incidence", label="Incidence des cotisations patronales", applies=True,
+        draws=to_wages, unit="EUR",
+        message="Part de la variation de cotisations qui atteint les salaires — "
+                "positif signifie que les salariés y gagnent. Le "
+                "total mécanique est le même aux deux bouts de la fourchette : c'est "
+                "la répartition entre entreprises et salariés qui change. "
+                + LINKAGE_IS_MIXED,
+        diagnostics={
+            "knobs": applicable,
+            "contribution_delta": contribution_delta,
+            "linkage": "mixte — fourchette entre non liée (0,0) et liée (1,0)",
+        },
     )
 
 

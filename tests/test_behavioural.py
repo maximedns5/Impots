@@ -549,3 +549,130 @@ def test_c4_fails_loudly_without_a_production_tax_to_move() -> None:
             production_tax_baseline=0.0, production_tax_reform=1.0,
             draws=4, rng=np.random.default_rng(0),
         )
+
+
+# --------------------------------------------------------------------------- #
+# C2 and C3, awake (D-038)
+# --------------------------------------------------------------------------- #
+def employer_store() -> Store:
+    from impots.behavioural.store import load as load_real
+
+    return load_real()
+
+
+def test_the_employment_profile_interpolates_between_two_published_points() -> None:
+    """−0.43 at the SMIC, −0.1 at twice it, nothing above. The straight line between
+    is this project's construction and is labelled as such; the zero above is a
+    refusal to extrapolate, replacing a constant −0.2 that rested on an uncited
+    Swedish study whose downloaded PDF was a different paper."""
+    profile = channels.employment_elasticity_profile(
+        np.array([1.0, 1.5, 2.0, 2.5]), -0.43, -0.1, 2.0
+    )
+    assert profile[0] == pytest.approx(-0.43)
+    assert profile[1] == pytest.approx(-0.265)
+    assert profile[2] == pytest.approx(-0.10)
+    assert profile[3] == 0.0, "no response is applied above the fade-out"
+
+
+def test_a_labour_cost_cut_creates_jobs() -> None:
+    """The sign, pinned. The elasticity is negative and a cut makes the cost change
+    negative, so their product is positive. A first version carried an extra negation
+    and reported 99 000 jobs LOST from a 1.5 % cut in labour cost.
+
+    Worked example: one job at the SMIC whose labour cost falls 2 %. At −0.43 the
+    response is −0.43 × −0.02 = +0.0086 jobs, so a weighted cell of 100 000 such
+    workers gains 860."""
+    store = Store(parameters={
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=("allegement_general_*",)),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=("allegement_general_*",)),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
+    })
+    result = channels.employment_at_the_smic(
+        store, FakeReform(allegement_general_plafond=1.8),
+        smic_multiple=np.array([1.0]), relative_cost_change=np.array([-0.02]),
+        weights=np.array([100_000.0]), draws=8, rng=np.random.default_rng(0),
+    )
+    assert result.applies
+    assert result.unit == "emplois"
+    assert result.central == pytest.approx(860.0, abs=1.0)
+
+
+def test_no_employment_response_is_applied_above_the_fade_out() -> None:
+    store = Store(parameters={
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=("allegement_general_*",)),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=("allegement_general_*",)),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
+    })
+    result = channels.employment_at_the_smic(
+        store, FakeReform(allegement_general_plafond=1.8),
+        smic_multiple=np.array([3.0]), relative_cost_change=np.array([-0.02]),
+        weights=np.array([100_000.0]), draws=8, rng=np.random.default_rng(0),
+    )
+    assert result.central == pytest.approx(0.0, abs=1e-9)
+
+
+def test_a_contribution_cut_passed_through_raises_wages() -> None:
+    """The other sign. `contribution_delta` is the employer's bill, so a cut is
+    negative — and a cut that passes through fully makes wages RISE by its amount."""
+    result = channels.contribution_incidence(
+        employer_store(), FakeReform(bandeau_famille_taux=0.0),
+        contribution_delta=-2.0e9, draws=4000, rng=np.random.default_rng(1),
+    )
+    assert result.applies
+    assert result.central > 0, "workers must gain from a contribution cut"
+    assert result.draws.max() <= 2.3e9
+
+
+def test_c3_spans_both_incidence_assumptions_rather_than_choosing() -> None:
+    """No French knob moves a contribution of a single linkage class — maladie and
+    famille cover is universal, and the réduction générale spans both kinds — so the
+    range IS the answer, and the distributional statement inherits it visibly."""
+    result = channels.contribution_incidence(
+        employer_store(), FakeReform(bandeau_famille_taux=0.0),
+        contribution_delta=-1.0e9, draws=4000, rng=np.random.default_rng(2),
+    )
+    draws = result.draws
+    assert np.percentile(draws, 5) < 0.15e9, "one end must be near no pass-through"
+    assert np.percentile(draws, 95) > 0.85e9, "the other must be near full"
+
+
+def test_c3_is_a_reallocation_and_never_enters_the_revenue_band() -> None:
+    """It is denominated in euros and must still stay out: the mechanical total is
+    identical at both ends of its range, so adding it counts the same euros twice.
+    Membership is declared per channel, never inferred from the unit."""
+    result = band_module.compute(
+        mechanical=-2.0e9, reform=FakeReform(bandeau_famille_taux=0.0),
+        store=employer_store(), contribution_delta=-2.0e9,
+    )
+    live = {c["key"] for c in result.channels if c["applies"]}
+    assert "c3_incidence" in live
+    assert result.band is None, "a reallocation must not become a revenue band"
+
+
+def test_c2_can_never_claim_to_be_in_support() -> None:
+    """Two of its three rows cannot say how far they carry — the fade-out point and
+    the threshold are descriptive, and the interpolation between them is this
+    project's own. So the channel is graded an extrapolation however small the reform,
+    which is the guardrail refusing to launder a construction as evidence."""
+    result = band_module.compute(
+        mechanical=-1.0e8, reform=FakeReform(allegement_general_plafond=1.7),
+        store=employer_store(), smic_multiple=np.array([1.1]),
+        relative_cost_change=np.array([-0.001]), earner_weights=np.array([1000.0]),
+    )
+    assert result.channels
+    assert result.grade == "illustrative"
+
+
+def test_c2_fails_loudly_without_a_wage_profile() -> None:
+    with pytest.raises(channels.ChannelInputMissing, match="smic_multiple"):
+        channels.employment_at_the_smic(
+            employer_store(), FakeReform(allegement_general_plafond=1.8),
+            smic_multiple=np.array([]), relative_cost_change=np.array([]),
+            weights=np.array([]), draws=4, rng=np.random.default_rng(0),
+        )

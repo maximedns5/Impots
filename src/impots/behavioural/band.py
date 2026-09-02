@@ -78,6 +78,10 @@ def compute(
     taxable_base: np.ndarray | None = None,
     weights: np.ndarray | None = None,
     top_decile: np.ndarray | None = None,
+    smic_multiple: np.ndarray | None = None,
+    relative_cost_change: np.ndarray | None = None,
+    earner_weights: np.ndarray | None = None,
+    contribution_delta: float | None = None,
     production_tax_baseline: float = 0.0,
     production_tax_reform: float = 0.0,
     draws: int = DRAWS,
@@ -99,8 +103,14 @@ def compute(
                         else np.zeros(len(weights), dtype=bool)),
             draws=draws, rng=rng,
         ))
-    results.append(channel_module.employment_at_the_smic(store, reform))
-    results.append(channel_module.contribution_incidence(store, reform))
+    results.append(channel_module.employment_at_the_smic(
+        store, reform, smic_multiple=smic_multiple,
+        relative_cost_change=relative_cost_change, weights=earner_weights,
+        draws=draws, rng=rng,
+    ))
+    results.append(channel_module.contribution_incidence(
+        store, reform, contribution_delta=contribution_delta, draws=draws, rng=rng,
+    ))
     if production_tax_baseline and production_tax_reform:
         results.append(channel_module.production_tax_investment(
             store, reform, production_tax_baseline=production_tax_baseline,
@@ -110,6 +120,12 @@ def compute(
         results.append(channel_module.production_tax_investment(store, reform))
 
     metrics: dict[str, tuple[tuple[str, ...], float]] = {}
+    if relative_cost_change is not None and len(relative_cost_change):
+        metrics["c2_employment"] = (
+            channel_module.C2_KEYS, float(np.max(np.abs(relative_cost_change)))
+        )
+    if contribution_delta:
+        metrics["c3_incidence"] = (channel_module.C3_KEYS, 0.0)
     if have_household_inputs and any(r.key == "c1_eti" and r.applies for r in results):
         metrics["c1_eti"] = (
             channel_module.C1_KEYS,
@@ -120,10 +136,11 @@ def compute(
 
     verdict = grading_module.grade(store, metrics)
 
-    # Only channels denominated in revenue enter the revenue band. C4 reports a
-    # percentage change in investment, and adding it to euros would be a category
-    # error that happens to typecheck.
-    live = [r for r in results if r.applies and r.draws is not None and r.unit == "EUR"]
+    # Only channels that actually move state revenue enter the headline band, and
+    # each one says so itself. Inferring it from the unit would put C3 in — it is
+    # denominated in euros and reallocates them, so the mechanical total is the same
+    # at both ends of its range and adding it would count the same euros twice.
+    live = [r for r in results if r.applies and r.draws is not None and r.in_revenue_band]
     band = None
     if live:
         # Channels are summed draw by draw at a shared seed, so their correlation is

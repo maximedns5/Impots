@@ -1,0 +1,202 @@
+# Cotisations patronales : emploi au voisinage du SMIC (C2) et incidence (C3).
+#
+# Ces canaux étaient écrits depuis la phase 3 mais dormants, faute d'un levier : le
+# cahier des charges les avait câblés sur un paramètre que le simulateur n'a jamais
+# porté (D-032). Le levier existe maintenant (D-038), et voici les élasticités.
+
+parameters:
+  # ------------------------------------------------------------------------- #
+  # C2 — emploi
+  # ------------------------------------------------------------------------- #
+  employment_elasticity_smic:
+    value: {central: -0.43, low: -0.52, high: -0.31, distribution: triangular}
+    applies_to: >
+      Élasticité de l'emploi au coût du travail au voisinage du SMIC, en nombre de
+      postes. Estimée sur les allègements Fillon de 2003, panel équilibré
+      d'établissements.
+    responds_to_knobs:
+      [allegement_general_*, bandeau_maladie_*, bandeau_famille_*]
+    support:
+      estimated_on: >
+        Variations moyennes de coût du travail par bande dans Bunel & L'Horty (2012),
+        tableau 6 : −4,0 %, −2,2 %, −1,0 %, +1,2 %, +3,1 %. La borne retient les
+        moyennes de bande et non leurs bords, parce que la bande basse
+        (« inférieur à −3 % ») est ouverte.
+      max_variation_graded_in_support: 0.04
+    source:
+      citation: >
+        Bunel & L'Horty, « The Effects of Reduced Social Security Contributions on
+        Employment », Économie et Statistique n° 429-430, 2012, tableaux 5 et 7.
+      url: https://www.insee.fr/fr/statistiques/fichier/1377767/ES429F.pdf
+      vintage: "2012"
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-02
+      ref: wf_0acd2e4f-b5b
+      note: >
+        Le seuil de 0,04 est CONFIRMÉ et correctement dérivé. Deux corrections au
+        rapport initial, appliquées ici. (1) L'affirmation que l'élasticité en ETP
+        dépasse systématiquement celle en postes est fausse : au quantile 25 du
+        tableau 7 l'ETP vaut −0,229 contre −0,318 en postes, soit 28 % de MOINS — et
+        c'est précisément la cellule dont la borne basse était tirée. (2) Le panel est
+        équilibré, donc il exclut par construction les créations et disparitions
+        d'établissements : ce seuil couvre la marge intensive des survivants, pas
+        l'emploi total.
+    confidence: medium
+    note: >
+      Une seconde estimation française (Bunel, Gilles & L'Horty, 2009) donne −0,25 sur
+      la même réforme ; elle n'est pas chargée séparément parce qu'elle mesure la même
+      chose sur le même événement, et l'intervalle retenu la contient.
+
+  employment_elasticity_at_fadeout:
+    value: {central: -0.1, low: -0.1, high: -0.1, distribution: uniform}
+    applies_to: >
+      Élasticité de l'emploi au coût du travail à deux fois le SMIC — le point où la
+      littérature française situe l'extinction de l'effet.
+    responds_to_knobs:
+      [allegement_general_*, bandeau_maladie_*, bandeau_famille_*]
+    support:
+      estimated_on: >
+        Point terminal d'une courbe décroissante décrite par le Groupe d'experts sur
+        le SMIC. Ce n'est pas une estimation indépendante : c'est la valeur que la
+        courbe atteint au seuil.
+      max_variation_graded_in_support: null
+    source:
+      citation: >
+        Groupe d'experts sur le SMIC, rapport 2025 — la courbe d'élasticité décroît
+        « pour atteindre −0,1 au niveau de deux fois le Smic ».
+      url: https://www.strategie.gouv.fr/publications/rapport-groupe-dexperts-smic-2025
+      vintage: "2025"
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-02
+      ref: wf_0acd2e4f-b5b
+      note: >
+        CE QUE CETTE LIGNE NE DIT PAS, et c'est le motif du garde-fou nul. La source
+        donne une valeur AU seuil de 2 SMIC ; elle ne dit rien de ce qui se passe
+        au-dessus. Une version antérieure encodait une élasticité constante de −0,2
+        au-delà, en s'appuyant en partie sur une étude suédoise qui n'était citée
+        nulle part et dont le PDF téléchargé était en réalité un autre article. Cette
+        ligne a été retirée : au-dessus de 2 SMIC, ce canal ne répond rien plutôt que
+        d'inventer une constante.
+
+        L'interpolation linéaire entre l'élasticité au SMIC et cette valeur est une
+        construction de ce projet, pas de la littérature. Elle est déclarée comme
+        telle et le canal la nomme dans sa sortie.
+    confidence: low
+
+  employment_fadeout_smic_multiple:
+    value: {central: 2.0, low: 2.0, high: 2.0, distribution: uniform}
+    applies_to: >
+      Multiple du SMIC au-delà duquel aucune réponse d'emploi n'est appliquée.
+    responds_to_knobs:
+      [allegement_general_*, bandeau_maladie_*, bandeau_famille_*]
+    support:
+      estimated_on: "Seuil descriptif, pas une quantité estimée."
+      max_variation_graded_in_support: null
+    source:
+      citation: "Groupe d'experts sur le SMIC, rapport 2025."
+      url: https://www.strategie.gouv.fr/publications/rapport-groupe-dexperts-smic-2025
+      vintage: "2025"
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-02
+      ref: wf_0acd2e4f-b5b
+      note: >
+        Le tableau de départ annonçait un effacement « vers 1,6 SMIC » sans source.
+        La littérature situe le point à 2 SMIC. Noter aussi un désaccord officiel que
+        le rapport initial présentait comme un accord : Bozio-Wasmer retiennent −0,6
+        au SMIC quand le Groupe d'experts retient −0,8 en modulant de −0,9 à −0,6 —
+        deux organismes officiels séparés d'un tiers. Aucune des deux n'est chargée
+        ici ; l'élasticité vient d'une estimation, pas d'une calibration.
+    confidence: low
+
+  # ------------------------------------------------------------------------- #
+  # C3 — incidence
+  # ------------------------------------------------------------------------- #
+  passthrough_benefit_linked:
+    value: {central: 1.0, low: 0.85, high: 1.1, distribution: triangular}
+    applies_to: >
+      Part d'une variation de cotisation patronale LIÉE à une prestation que le
+      salarié perçoit, répercutée sur le salaire. Une cotisation liée se comporte
+      comme un salaire différé : le salarié la « paie » en salaire.
+    responds_to_knobs: [bandeau_maladie_*, bandeau_famille_*, allegement_general_*]
+    support:
+      estimated_on: >
+        Réformes néerlandaises L1 et L2. Variation maximale de coût du travail au
+        bord de la bande traitée : 7,5 points × 0,286 × 0,697 ≈ 1,49 %.
+      max_variation_graded_in_support: 0.015
+    source:
+      citation: >
+        Bozio, Breda, Grenet & Guillouzouic, « Does Tax-Benefit Linkage Matter for the
+        Incidence of Payroll Taxes? », Review of Economic Studies 93(3), 2026,
+        1536-1573.
+      url: https://doi.org/10.1093/restud/rdaf059
+      vintage: "2026"
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-02
+      ref: wf_0acd2e4f-b5b
+      note: >
+        La chasse aux citations fabriquées est revenue VIDE sur cette famille : les
+        dix-neuf extraits ont été retrouvés mot pour mot dans le PDF publié. Le seuil
+        de 0,015 tient, avec une réserve à énoncer : c'est le plafond au BORD de la
+        bande traitée, alors que le poids de l'estimation est à la moyenne (0,69 %).
+        Graduer à 0,007 serait défendable et plus strict ; 0,015 est retenu comme
+        bord extérieur, et le dire est la moitié du travail.
+    confidence: high
+
+  passthrough_unlinked:
+    value: {central: 0.0, low: -0.06, high: 0.25, distribution: triangular}
+    applies_to: >
+      Part d'une variation de cotisation patronale NON liée à une prestation,
+      répercutée sur le salaire. L'estimation est proche de zéro : la cotisation
+      reste sur l'employeur.
+    responds_to_knobs: [bandeau_maladie_*, bandeau_famille_*, allegement_general_*]
+    support:
+      estimated_on: >
+        Réforme néerlandaise NL2 seule. Variation de coût du travail d'environ 1,8 %.
+      max_variation_graded_in_support: 0.018
+    source:
+      citation: >
+        Bozio, Breda, Grenet & Guillouzouic, Review of Economic Studies 93(3), 2026 —
+        tableau 4 p. 1561.
+      url: https://doi.org/10.1093/restud/rdaf059
+      vintage: "2026"
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-02
+      ref: wf_0acd2e4f-b5b
+      note: >
+        CORRECTION DE SEUIL. Le rapport initial donnait 0,041, tiré entièrement de la
+        réforme NL3 — que l'article classe lui-même comme une réforme d'IMPÔT SUR LES
+        SOCIÉTÉS (tableau 1 p. 1544, en-tête du tableau 4 p. 1561, « the corporate
+        income tax reform NL3 »), et non comme une cotisation non liée. Retiré à
+        environ 0,018, la variation de la seule NL2. Un seuil deux fois trop large
+        aurait laissé passer comme « dans le champ » des réformes que rien n'appuie.
+    confidence: high
+
+# Lignes retirées, avec leur motif.
+removed:
+  passthrough_meta_linked_literature: >
+    Bornes 0,85–1,20 inventées et portées sous confirmed_against_primary: true.
+    L'article ne publie, p. 1568, que deux moyennes ponctuelles (103 % et 16 %) — ni
+    dispersion, ni intervalle, ni min/max. Un intervalle de jugement présenté comme
+    celui de la littérature.
+  passthrough_meta_unlinked_literature: >
+    Même défaut, mêmes bornes inventées.
+  passthrough_employee_side_no_linkage: >
+    Borne haute de 1,00 inventée — aucune estimation du tableau 4 ne vaut 1,00 — et
+    les écarts-types omis, alors que l'intervalle à 95 % sur 0,89 court d'environ
+    0,24 à 1,54. Retirée plutôt que corrigée : elle porte sur l'incidence côté
+    SALARIÉ, qui n'est pas ce que C3 réalloue.
+  employment_elasticity_above_fadeout: >
+    Élasticité constante de −0,2 au-dessus de 2 SMIC. Reposait en partie sur une
+    étude suédoise citée nulle part, dont le fichier téléchargé était un autre
+    article ; et la citation avancée donne une valeur AU seuil, pas au-dessus. Le
+    canal ne répond rien au-dessus de 2 SMIC plutôt que d'inventer une constante.
+  employment_elasticity_smic_official_calibration_total: >
+    Calibration officielle (−0,6) présentée comme corroborant l'estimation, alors que
+    le Groupe d'experts retient −0,8 en modulant de −0,9 à −0,6 : un désaccord d'un
+    tiers entre deux organismes officiels, donné pour un accord. Une calibration
+    n'est pas une estimation et n'entre pas dans le magasin.

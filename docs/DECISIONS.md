@@ -1412,3 +1412,105 @@ between −3.0 % and +2.8 %, centred on zero. A band that wide is not a null dre
 — it is the honest statement that a serious evaluation could not rule out effects of
 several per cent in either direction, which is more informative than silence and quite
 different from a tightly estimated zero.
+
+## D-038 — The employer-contribution knobs, and the trap in their parameter node
+Date: 2026-09-02 · Status: accepted · Evidence: paths introspected live against openfisca-france 176.0.8
+
+C2 and C3 were written in Phase 3 against a knob the ReformSpec never had — a spec
+error on the record (D-032). Seven knobs now exist: the réduction générale's plafond
+and its two rates, and each bandeau's plafond and rate.
+
+**Every path was introspected rather than taken from the brief**, which is how two
+things surfaced. The maladie bandeau's parameters live under `alleg_gen.mmid`, not
+under the `mmid` of `cotisations_securite_sociale_regime_general` — that one carries
+the 13 %/7 % rates the bandeau reduces, not the reduction itself.
+
+**And the plafond node changes shape by year.** `plafond` before 2024;
+`plafond_smic_courant` **and** `plafond_smic_2023_12_31` during 2024;
+`plafond_smic_2025_01_01` from 2025. Worse, the 2024 formula reads
+`max(plafond_smic_courant × smic, plafond_smic_2023_12_31 × smic_2023-12)` — so
+writing one child leaves the other winning the max and the reform doing **nothing**,
+with no error raised anywhere. The knob writes every child the year's formula reads,
+and `verify_allegements` reads them all back per D-007.
+
+A second-order version of the same trap: `update()` *creates* a child that did not
+exist, so asking the editable tree which plafonds exist returns every one ever
+defined — including next year's. Discovery is done on the node evaluated **at** the
+instant, so a 2024 reform cannot silently move the 2025 ceiling.
+
+**The worked examples are hand-checkable** because both bandeaux are flat rates above
+a cliff. At 2.83 SMIC, removing the famille bandeau costs exactly 0.018 × 60 000 =
+1 080 €, and extending the maladie cliff past the worker saves exactly 0.06 × 60 000
+= 3 600 €. Also pinned: the réduction générale reaches nothing at that wage, and its
+plafond and rate are not interchangeable — just above the ceiling, extending it is
+worth several times raising the rate, and well below the ranking reverses.
+
+## D-039 — The public cost had one side, and employer reforms fell through it
+Date: 2026-09-02 · Status: accepted · Evidence: found by wiring C2
+
+`Aggregates.reform_cost` was the change in household disposable income. That is the
+right measure for every reform this project had priced until now, because a household
+gain is a state loss.
+
+An employer-contribution reform is not one of those. It changes what the state
+**collects** without moving disposable income at all — the gain lands on the firm. So
+extending the réduction générale from 1.6 to 2 SMIC reported a public cost of
+**exactly zero** while cutting labour cost by 17.7 bn. The headline would have read
+*« la réforme coûte 0,00 Md € »*.
+
+The cost now has both terms. The employer side is measured as Δ(salaire_super_brut −
+salaire_brut), **not** as Δ`cotisations_employeur`: that variable is gross of the
+allègements and does not move when one changes — it is why the bug was invisible, and
+a test asserts the gross measure still reads zero so the next reader does not
+"simplify" back to it.
+
+Two things worth naming. This was a **mechanical** defect found by building the
+behavioural layer on top of it — the layer boundary held, and the traffic across it
+ran the useful way. And the correction moves no number it has no business moving: a
+household reform's employer term is zero, so its cost is what it always was, which is
+also a test.
+
+## D-040 — C2 and C3 awake, and what they refuse to say
+Date: 2026-09-02 · Status: accepted
+
+**C2 — employment.** −0.43 at the SMIC (Bunel & L'Horty 2012, support 0.04
+confirmed), declining to −0.1 at twice it, and **zero above**. The straight line
+between the two published points is this project's construction and is labelled as
+such in the store, in the channel's diagnostics and in the UI. The zero above is a
+refusal: an earlier row carried a constant −0.2 there, resting partly on a Swedish
+study that was cited nowhere and whose downloaded PDF turned out to be a different
+paper. **C2 can therefore never grade `in-support`** — two of its three rows cannot
+say how far they carry — and that is the guardrail refusing to launder a construction
+as evidence, not a defect.
+
+**C3 — incidence.** 1.0 for benefit-linked contributions, 0.0 for unlinked. No French
+knob moves a contribution of a single class: maladie and famille cover is universal,
+so a worker's entitlement does not depend on what was paid, and the réduction
+générale spans both kinds at once. **The range is the answer** — the distributional
+statement inherits the incidence uncertainty visibly, which is what the spec asked
+for. C3 is denominated in euros and is still kept **out** of the revenue band: it
+reallocates, the mechanical total is identical at both ends, and adding it would count
+the same euros twice. Membership in the band is declared per channel rather than
+inferred from the unit, precisely because the unit does not settle it.
+
+**Two sign errors, caught by asking what the number should look like.** A first
+version reported 99 000 jobs **lost** from a 1.5 % cut in labour cost — an extra
+negation on top of an already-negative elasticity. And a contribution cut passed
+through fully was reported as wages **falling**. Both directions are now pinned by
+tests that state the expected sign in their names.
+
+**A distinction the channels now draw.** Inputs *not supplied by the caller* are
+different from inputs *promised and broken*. The second raises — that is the Phase 1
+lesson, where quantities were computed and silently dropped while every guard stayed
+green. The first reports "not computed" with a reason. Conflating them made two
+channels raise on reforms that simply did not concern them.
+
+**Corrections applied from the verifiers.** `passthrough_unlinked`'s support was
+0.041, taken wholly from a reform the paper itself classifies as an **income tax**
+change; it is 0.018, the variation of the one reform that actually identifies it. A
+threshold twice too wide would have graded as "in support" reforms that nothing
+supports. Four further rows were removed: two whose ranges were invented under
+`confirmed_against_primary: true` when the paper publishes only two point averages,
+one employee-side row with a fabricated upper bound and suppressed standard errors,
+and one official *calibration* presented as corroborating the estimate when the two
+bodies differ by a third.

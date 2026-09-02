@@ -114,11 +114,53 @@ class Aggregates:
     households: float = 0.0
     persons: float = 0.0
     reform_cost: float | None = None
-    """Positive = the reform costs the public finances; negative = it raises money."""
+    """Positive = the reform costs the public finances; negative = it raises money.
+
+    Two terms, and for a long time only one of them. Household disposable income is
+    what the state hands over on the household side. But an employer-contribution
+    reform changes what the state COLLECTS without moving disposable income at all —
+    the gain lands on the firm — so a cost measured on households alone reported
+    exactly zero for a reform costing 17.7 bn. Both terms are counted now (D-039)."""
+    employer_contribution_delta: float = 0.0
+    """Change in employer contributions actually paid, net of allègements. Derived as
+    Δ(salaire_super_brut − salaire_brut) rather than from `cotisations_employeur`,
+    which is gross of the allègements and therefore does not move when one changes."""
 
 
 def _total(frame: pl.DataFrame, column: str, weights: np.ndarray) -> float:
     return float((frame[column].to_numpy() * weights).sum())
+
+
+def _employer_contribution_delta(frame: pl.DataFrame, weights: np.ndarray) -> float:
+    """Change in employer contributions paid, net of allègements.
+
+    `cotisations_employeur` is gross of the allègements, so it does not move when one
+    changes — it showed a delta of exactly zero for a reform that cut labour cost by
+    17.7 bn. The difference between super-brut and brut is what is actually paid.
+    """
+    needed = ("salaire_super_brut", "salaire_brut",
+              "salaire_super_brut_reform", "salaire_brut_reform")
+    if not all(column in frame.columns for column in needed):
+        return 0.0
+    paid = _total(frame, "salaire_super_brut", weights) - _total(frame, "salaire_brut", weights)
+    paid_reform = (
+        _total(frame, "salaire_super_brut_reform", weights)
+        - _total(frame, "salaire_brut_reform", weights)
+    )
+    return paid_reform - paid
+
+
+def _public_cost(deltas: dict[str, float], employer_delta: float) -> float | None:
+    """What the reform costs the public finances, both sides of it.
+
+    Households gain what the state gives up, so Δ disposable income is a cost as it
+    stands. Employers paying LESS means the state collects less, so a negative
+    employer delta is also a cost — hence the subtraction.
+    """
+    household = deltas.get("revenu_disponible")
+    if household is None and not employer_delta:
+        return None
+    return (household or 0.0) - employer_delta
 
 
 def aggregate(result_households: pl.DataFrame) -> Aggregates:
@@ -135,6 +177,7 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
     }
     totals_reform: dict[str, float] = {}
     deltas: dict[str, float] = {}
+    employer_delta = _employer_contribution_delta(frame, weights)
     if has_reform:
         for name in totals:
             reform_column = f"{name}_reform"
@@ -152,7 +195,8 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
             totals=totals, counts=counts, totals_reform=totals_reform, deltas=deltas,
             households=float(weights.sum()),
             persons=float((frame["n_persons"].to_numpy() * weights).sum()),
-            reform_cost=deltas.get("revenu_disponible"),
+            employer_contribution_delta=employer_delta,
+            reform_cost=_public_cost(deltas, employer_delta),
         )
 
     baseline = frame["revenu_disponible"].to_numpy().astype(np.float64)
@@ -202,5 +246,6 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
         households=float(weights.sum()),
         persons=float((frame["n_persons"].to_numpy() * weights).sum()),
         # A reform that raises disposable income costs the budget that much.
-        reform_cost=deltas.get("revenu_disponible"),
+        employer_contribution_delta=employer_delta,
+        reform_cost=_public_cost(deltas, employer_delta),
     )

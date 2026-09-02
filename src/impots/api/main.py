@@ -261,7 +261,50 @@ def population_baseline() -> PopulationResponse:
 BEHAVIOURAL_EMTR_HOUSEHOLDS = 3_000
 
 
-def _behavioural(request: Any, frame: Any, agg: Any) -> Any:
+def _smic_annual(year: int) -> float:
+    """The annual SMIC, read from the parameter tree rather than written down."""
+    from impots.engine.system import baseline as engine_baseline
+
+    smic = engine_baseline().parameters(f"{year}-01-01").marche_travail.salaire_minimum.smic
+    return float(smic.smic_b_horaire) * float(smic.nb_heures_travail_mensuel) * 12.0
+
+
+def _employer_inputs(request: Any, frame: Any, households: Any, agg: Any) -> dict[str, Any]:
+    """What C2 and C3 need, or nothing when the reform moves no employer contribution.
+
+    C2 grades by wage, so the SMIC multiple comes from individual salaries; the change
+    in labour cost is only available per household, so every earner in a household
+    carries their household's rate. Exact for the single-earner households that are
+    most of them, an approximation otherwise, and stated.
+    """
+    import numpy as np
+    import polars as pl
+
+    if "salaire_super_brut_reform" not in households.columns:
+        return {}
+    cost = households["salaire_super_brut"].to_numpy()
+    cost_reform = households["salaire_super_brut_reform"].to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        rate = np.where(cost > 0, (cost_reform - cost) / np.maximum(cost, 1e-9), 0.0)
+    if not np.any(np.abs(rate) > 1e-12):
+        return {}
+
+    by_household = dict(zip(households["household_id"].to_list(), rate, strict=False))
+    earners = frame.filter(pl.col("salaire_brut_annuel") > 0)
+    smic = _smic_annual(request.year)
+    return {
+        "smic_multiple": earners["salaire_brut_annuel"].to_numpy() / max(smic, 1.0),
+        "relative_cost_change": np.array(
+            [by_household.get(h, 0.0) for h in earners["household_id"].to_list()]
+        ),
+        "earner_weights": earners["weight"].to_numpy(),
+        # NOT deltas["cotisations_employeur"] — that figure is gross of the
+        # allègements and reported exactly zero for a reform costing 17.7 bn (D-039).
+        "contribution_delta": agg.employer_contribution_delta,
+    }
+
+
+def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None) -> Any:
     """The band for a household reform, or a mechanical-only answer with its reason."""
     import numpy as np
 
@@ -270,13 +313,15 @@ def _behavioural(request: Any, frame: Any, agg: Any) -> Any:
     from impots.behavioural import emtr as emtr_module
 
     mechanical = -(agg.reform_cost or 0.0)
+    employer = _employer_inputs(request, frame, run_households, agg) if run_households is not None else {}
     emtr_result = emtr_module.cached(
         frame, POPULATION_VINTAGE, year=request.year, reform=request.reform,
         sample=BEHAVIOURAL_EMTR_HOUSEHOLDS,
     )
     households = emtr_result.with_earnings
     if households.is_empty() or "emtr_reform" not in households.columns:
-        computed = band_module.compute(mechanical=mechanical, reform=request.reform)
+        computed = band_module.compute(
+            mechanical=mechanical, reform=request.reform, **employer)
         return Behavioural(**computed.as_dict())
 
     weights = households["weight"].to_numpy()
@@ -299,6 +344,7 @@ def _behavioural(request: Any, frame: Any, agg: Any) -> Any:
 
     computed = band_module.compute(
         mechanical=mechanical, reform=request.reform,
+        **employer,
         emtr_baseline=households["emtr"].to_numpy(),
         emtr_reform=households["emtr_reform"].to_numpy(),
         taxable_base=base, weights=weights, top_decile=top,
@@ -334,7 +380,10 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
 
     agg = aggregate_module.aggregate(result.households)
     summary = _baseline_summary()
-    behavioural = _behavioural(request, frame, agg) if request.behavioural else None
+    behavioural = (
+        _behavioural(request, frame, agg, result.households)
+        if request.behavioural else None
+    )
     return PopulationResponse(
         meta=PopulationMeta(
             vintage=POPULATION_VINTAGE, branch=summary["branch"],
