@@ -693,6 +693,31 @@ footer code { font-family: var(--mono); font-size: 11px; }
                  <input type="number" id="csgD" step="0.1"></div>
           </div>
 
+          <div class="lbl" style="margin:18px 0 8px">Cotisations patronales</div>
+          <p class="note" style="margin:0 0 10px">
+            Les plafonds sont en multiples du SMIC. Ces leviers ne changent rien au
+            revenu disponible des ménages : ils déplacent le coût du travail, donc ce
+            que l'État encaisse et ce que l'entreprise paie.
+          </p>
+          <div class="field-row tri">
+            <div><label for="agPlaf">Réduction générale — plafond (SMIC)</label>
+                 <input type="number" id="agPlaf" step="0.05" placeholder="1,6"></div>
+            <div><label for="agTaux">Réduction générale — taux &lt;50 sal. (%)</label>
+                 <input type="number" id="agTaux" step="0.1" placeholder="31,94"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="bmPlaf">Bandeau maladie — plafond (SMIC)</label>
+                 <input type="number" id="bmPlaf" step="0.05" placeholder="2,5"></div>
+            <div><label for="bmTaux">Bandeau maladie — taux (%)</label>
+                 <input type="number" id="bmTaux" step="0.1" placeholder="6"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="bfPlaf">Bandeau famille — plafond (SMIC)</label>
+                 <input type="number" id="bfPlaf" step="0.05" placeholder="3,5"></div>
+            <div><label for="bfTaux">Bandeau famille — taux (%)</label>
+                 <input type="number" id="bfTaux" step="0.1" placeholder="1,8"></div>
+          </div>
+
           <button type="button" class="reset" id="reset" disabled>réinitialiser au droit courant</button>
           <p class="note">
             Les valeurs affichées sont lues dans l'arbre de paramètres du moteur, pas recopiées.
@@ -1009,6 +1034,21 @@ function reformSpec() {
   put("plafond_qf_demi_part",    scalar("qf", lawParams.plafond_qf_demi_part));
   put("csg_activite_imposable",  scalar("csgI", lawParams.csg_activite.imposable, 100));
   put("csg_activite_deductible", scalar("csgD", lawParams.csg_activite.deductible, 100));
+
+  /* Employer contributions. These have no published-law block in /parameters/ir, so
+     they read as "set if filled" rather than "set if different from current law" —
+     leaving one blank keeps the law, which is what the placeholder shows. */
+  const filled = (id, scale = 1) => {
+    const raw = $(id).value;
+    return raw === "" || Number.isNaN(Number(raw)) ? undefined : Number(raw) / scale;
+  };
+  put("allegement_general_plafond",             filled("agPlaf"));
+  put("allegement_general_taux_moins_de_50",    filled("agTaux", 100));
+  put("allegement_general_taux_50_et_plus",     filled("agTaux", 100));
+  put("bandeau_maladie_plafond",                filled("bmPlaf"));
+  put("bandeau_maladie_taux",                   filled("bmTaux", 100));
+  put("bandeau_famille_plafond",                filled("bfPlaf"));
+  put("bandeau_famille_taux",                   filled("bfTaux", 100));
 
   return Object.keys(spec).length ? spec : null;
 }
@@ -1448,9 +1488,34 @@ function renderBand(data) {
     }
   }
 
+  const incidence = b.channels.find((c) => c.key === "c3_incidence" && c.applies);
+  let split = "";
+  if (incidence && incidence.band) {
+    const total = Math.abs(incidence.band.p90) || 1;
+    const lo = Math.max(0, Math.min(1, incidence.band.p10 / total));
+    const hi = Math.max(0, Math.min(1, incidence.band.p90 / total));
+    split = `<div style="margin-top:14px">
+        <div class="k" style="margin-bottom:6px">Qui en profite — fourchette d'incidence</div>
+        <div class="scale" style="height:26px">
+          <i class="axis" style="top:12px"></i>
+          <i class="span" style="left:${lo * 100}%;width:${(hi - lo) * 100}%;top:7px"></i>
+          <i class="tick" style="left:${lo * 100}%;top:4px"></i>
+          <i class="tick" style="left:${hi * 100}%;top:4px"></i>
+        </div>
+        <p class="why" style="margin-top:2px">De ${bn(incidence.band.p10)} à
+          ${bn(incidence.band.p90)} Md € atteignent les salaires ; le reste demeure à
+          l'entreprise. <b>Le total mécanique est identique aux deux bouts</b> — c'est
+          la répartition qui change, pas le coût. Aucun levier français ne déplace une
+          cotisation d'une seule nature, alors l'outil montre la fourchette au lieu de
+          choisir.</p>
+      </div>`;
+  }
+
   const channels = b.channels.map((c) => `<div class="chan">
       <span>${escapeHtml(c.label)}</span>
       <span class="amt">${c.central === null || c.central === undefined ? "—"
+        : c.unit === "emplois" ? Math.round(c.central).toLocaleString("fr-FR") + " emplois"
+        : c.unit === "%" ? (c.central * 100).toFixed(2).replace(".", ",") + " %"
         : bn(c.central) + " Md €"}</span>
       <span class="msg">${escapeHtml(c.message)}</span>
     </div>`).join("");
@@ -1463,6 +1528,7 @@ function renderBand(data) {
       ${scale}
       <p class="why">${escapeHtml(b.grade_reason)}</p>
       ${b.notes.map((n) => `<p class="why">${escapeHtml(n)}</p>`).join("")}
+      ${split}
       <details>
         <summary>Par canal, et sur quoi la bande repose</summary>
         ${channels}
