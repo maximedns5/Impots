@@ -18,6 +18,8 @@ from dataclasses import dataclass, field
 import numpy as np
 import polars as pl
 
+from impots.guards import sector_balance
+
 #: A reform moves a household by less than this and we call it unaffected. Below
 #: about ten euros a year the answer is dominated by rounding inside the engine
 #: and by the arbitrariness of a synthetic income, not by the reform.
@@ -121,6 +123,9 @@ class Aggregates:
     reform changes what the state COLLECTS without moving disposable income at all —
     the gain lands on the firm — so a cost measured on households alone reported
     exactly zero for a reform costing 17.7 bn. Both terms are counted now (D-039)."""
+    balance: dict[str, float] = field(default_factory=dict)
+    """Double-entry check (D-045): the reported cost against the same figure
+    reconstituted from the individual instrument deltas."""
     employer_contribution_delta: float = 0.0
     """Change in employer contributions actually paid, net of allègements. Derived as
     Δ(salaire_super_brut − salaire_brut) rather than from `cotisations_employeur`,
@@ -184,6 +189,9 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
             if reform_column in frame.columns:
                 totals_reform[name] = _total(frame, reform_column, weights)
                 deltas[name] = totals_reform[name] - totals[name]
+    # AFTER the deltas exist, not before: computed above, `cost` read an empty dict
+    # and came back None for every reform without an employer term.
+    cost = _public_cost(deltas, employer_delta)
 
     units = consumption_units(
         frame["n_aged_14_plus"].to_numpy(), frame["n_children_under_14"].to_numpy()
@@ -196,7 +204,12 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
             households=float(weights.sum()),
             persons=float((frame["n_persons"].to_numpy() * weights).sum()),
             employer_contribution_delta=employer_delta,
-            reform_cost=_public_cost(deltas, employer_delta),
+            reform_cost=cost,
+            balance=(
+                sector_balance(deltas, reform_cost=cost,
+                               employer_contribution_delta=employer_delta)
+                if cost is not None else {}
+            ),
         )
 
     baseline = frame["revenu_disponible"].to_numpy().astype(np.float64)
@@ -247,5 +260,10 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
         persons=float((frame["n_persons"].to_numpy() * weights).sum()),
         # A reform that raises disposable income costs the budget that much.
         employer_contribution_delta=employer_delta,
-        reform_cost=_public_cost(deltas, employer_delta),
+        reform_cost=cost,
+        balance=(
+            sector_balance(deltas, reform_cost=cost,
+                           employer_contribution_delta=employer_delta)
+            if cost is not None else {}
+        ),
     )

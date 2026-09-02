@@ -779,3 +779,21 @@ def test_the_ship_gate_line_is_the_national_accounts_figure(firm_aggregates: obj
     assert lines["Impôt sur les sociétés"].published == margins.IS_AVANT_CREDITS.value
     assert lines["Impôt sur les sociétés"].tolerance == 0.20
     assert lines["IS — recettes nettes (pour mémoire)"].use == "context"
+
+
+def test_a_firm_reform_balances_against_its_components() -> None:
+    """Double entry on the firm side (D-045). `prelevements_entreprise` is an
+    OpenFisca formula sum; the guard adds the reported instruments up separately. An
+    instrument wired into one and not the other shows here rather than as a quietly
+    wrong headline."""
+    from impots.guards import SectorBalanceError, firm_balance
+
+    deltas = {"impot_societes": 2.0e9, "contribution_sociale_is": 0.1e9,
+              "cebge": 0.0, "cvae": 0.0, "c3s": 0.0,
+              "prelevements_entreprise": 2.1e9}
+    balance = firm_balance(deltas, reform_cost=-2.1e9)
+    assert balance["unexplained"] == pytest.approx(0.0, abs=1e6)
+
+    # An instrument that moved the total without being reported as a component.
+    with pytest.raises(SectorBalanceError, match="somme des instruments"):
+        firm_balance(dict(deltas, prelevements_entreprise=3.5e9), reform_cost=-3.5e9)

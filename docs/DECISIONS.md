@@ -1649,3 +1649,43 @@ The general form is worth stating because it outlives these two: **a verificatio
 only as good as its causal independence from the thing it verifies.** A read-back that
 shares a write path can only tell you the write happened, never that it landed where
 the formula looks.
+
+## D-045 — Double entry, and the first version of it that did not work
+Date: 2026-09-03 · Status: accepted · Evidence: the 17.7 bn bug, re-expressed as a test
+
+Every reform run now checks its own headline against the instruments that moved. The
+household side compares `reform_cost` with the figure reconstituted from the reported
+receipts, transfers and the employer-contribution delta; the firm side compares it
+with the sum of the five firm instruments, where `prelevements_entreprise` is an
+OpenFisca formula and the components are added up separately.
+
+**The first version of this guard did not work, and how it failed is worth more than
+the guard.** It asserted the sectors balance — `households + firms + state = 0` — with
+the state's side written in terms of the firm's. Removing the firm term moved both
+sides together and the identity balanced at zero. Tested against the exact bug it was
+written for, it passed. That is D-044's shape appearing *inside the guard meant to
+enforce D-044*: a check is only as good as its independence from the thing it checks,
+and writing one side in terms of the other is the easiest way to lose that without
+noticing.
+
+The bug was never an accounting *inconsistency*. The accounting was consistent;
+`reform_cost` reported one sector out of two. So the thing to check is not that the
+sectors balance — they will, being derived from each other — but that **the headline
+agrees with the sum of the instruments**, assembled by the guard and computed
+elsewhere. Re-expressed, the 17.7 bn reform under the pre-D-039 cost now breaches by
+100 %, and the guard is surgical: an income-tax reform has no employer term, so the
+old household-only cost was always right for it and still passes.
+
+**The tolerance is a measurement, not a preference.** `revenu_disponible` runs over the
+whole benefits cascade, which is wider than the instruments this runner reports
+individually: a 10.4 bn CSG rise pulls 0.066 % of itself through the complément
+familial, the ARS and minima that have no row. The floor is 0.1 % — an order of
+magnitude below the failure it guards, and the residual is named `unexplained` rather
+than "residual" so the number means something when read.
+
+**And the guard caught a regression I had just introduced.** Wiring it revealed that
+`cost` was being computed before the deltas dictionary was populated, so `reform_cost`
+came back `None` for every reform without an employer term — the household reforms,
+which is to say most of them. It had been that way for two commits and no existing
+test noticed, because they assert on `deltas` rather than on the cost. The double
+entry found it on its first run.

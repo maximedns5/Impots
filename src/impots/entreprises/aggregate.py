@@ -21,6 +21,7 @@ import numpy as np
 import polars as pl
 
 from impots.entreprises.runner import INSTRUMENTS
+from impots.guards import firm_balance
 
 #: A firm moved by less than this counts as unaffected. Below a hundred euros a
 #: year the answer is dominated by the parametric draw that produced the firm, not
@@ -77,6 +78,9 @@ class FirmAggregates:
     means anything at all (§3.3)."""
     reform_cost: float | None = None
     """Positive = the reform costs the public finances."""
+    balance: dict[str, float] = field(default_factory=dict)
+    """Double-entry check (D-045): the reported cost against the same figure
+    reconstituted from the individual instruments."""
 
 
 def _weighted(values: np.ndarray, weights: np.ndarray) -> float:
@@ -135,6 +139,10 @@ def aggregate(firms: pl.DataFrame) -> FirmAggregates:
         share_zero_is=float(weights[is_paid <= 0].sum() / weights.sum()) if weights.sum() else 0.0,
         # A reform that reduces firm tax costs the budget that much.
         reform_cost=-deltas.get("prelevements_entreprise") if deltas else None,
+        balance=(
+            firm_balance(deltas, reform_cost=-deltas["prelevements_entreprise"])
+            if deltas.get("prelevements_entreprise") is not None else {}
+        ),
     )
 
     if "naf_section" not in firms.columns or "taille" not in firms.columns:

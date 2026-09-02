@@ -560,3 +560,91 @@ def test_a_household_reform_is_unaffected_by_the_employer_term() -> None:
     assert aggregates.reform_cost == pytest.approx(
         aggregates.deltas["revenu_disponible"], rel=1e-9
     )
+
+
+# --------------------------------------------------------------------------- #
+# Double entry (D-045)
+# --------------------------------------------------------------------------- #
+def test_the_identity_kills_the_seventeen_billion_bug() -> None:
+    """The regression test the guard exists for.
+
+    Before D-039, `reform_cost` was Δ household disposable income alone, so extending
+    the réduction générale reported a public cost of exactly zero while moving 17.7 bn
+    of labour cost. Re-express that here by feeding the guard the old, household-only
+    cost: it must refuse.
+    """
+    from impots.guards import SectorBalanceError, sector_balance
+
+    # As measured: households unmoved, employers paying 17.68 bn less.
+    deltas = {"revenu_disponible": 0.0, "ir": 0.0, "salaire_super_brut": -17.68e9}
+    employer_delta = -17.68e9
+
+    # Today's cost passes.
+    balance = sector_balance(deltas, reform_cost=17.68e9,
+                             employer_contribution_delta=employer_delta)
+    assert balance["unexplained"] == pytest.approx(0.0, abs=1e6)
+
+    # The pre-D-039 cost does not.
+    with pytest.raises(SectorBalanceError, match="coût annoncé"):
+        sector_balance(deltas, reform_cost=0.0,
+                       employer_contribution_delta=employer_delta)
+
+
+def test_the_identity_is_surgical_about_which_reforms_it_refuses() -> None:
+    """A guard that fired on everything would be noise. An income-tax reform has no
+    employer term, so the household-only cost was always right for it and must still
+    pass — the guard refuses the omission, not the shape."""
+    from impots.guards import sector_balance
+
+    deltas = {"revenu_disponible": -0.662e9, "ir": 0.662e9}
+    balance = sector_balance(deltas, reform_cost=-0.662e9, employer_contribution_delta=0.0)
+    assert balance["unexplained"] == pytest.approx(0.0, abs=1e6)
+
+
+def test_the_identity_tolerates_only_unreported_benefit_leakage() -> None:
+    """The floor is 0.1 %, set from a measurement rather than a preference: a 10.4 bn
+    CSG reform leaks 0.066 % through family benefits and minima that have no row of
+    their own. Twice that leakage must still pass; a hundred times it must not."""
+    from impots.guards import SectorBalanceError, sector_balance
+
+    deltas = {"revenu_disponible": -10.4451e9, "csg_imposable": 10.8194e9,
+              "ppa": 0.3531e9, "rsa": 0.0072e9, "af": 0.0067e9}
+    sector_balance(deltas, reform_cost=-10.4451e9)  # 0.066 %: passes
+
+    deltas_worse = dict(deltas, revenu_disponible=-9.4e9)
+    with pytest.raises(SectorBalanceError):
+        sector_balance(deltas_worse, reform_cost=-9.4e9)
+
+
+@pytest.mark.skipif(
+    not (Path(__file__).resolve().parents[1] / "data" / "processed"
+         / "population_2024.parquet").exists(),
+    reason="no population built in this checkout",
+)
+def test_every_reform_shape_balances_on_the_real_population() -> None:
+    """Four reforms across three instrument families, on the real population. The
+    guard runs inside `aggregate`, so this asserts it did not raise and that the
+    reconstituted cost is the reported one."""
+    import polars as pl
+
+    from impots.api.schemas import ReformSpec
+    from impots.population import aggregate as aggregate_module
+    from impots.population.build import PROCESSED
+    from impots.population.runner import run as population_run
+
+    frame = pl.read_parquet(PROCESSED / "population_2024.parquet")
+    for reform in (
+        {"plafond_qf_demi_part": 1000.0},
+        {"decote_taux": 0.50},
+        {"csg_activite_imposable": 0.034},
+        {"allegement_general_plafond": 2.0},
+    ):
+        aggregates = aggregate_module.aggregate(
+            population_run(frame, year=2024, reform=ReformSpec.model_validate(reform),
+                           tier="full", sample=20_000).households
+        )
+        assert aggregates.balance, reform
+        assert aggregates.balance["reform_cost"] == pytest.approx(
+            aggregates.balance["expected_cost"],
+            rel=1e-3, abs=5e6,
+        ), reform
