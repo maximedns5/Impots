@@ -45,6 +45,35 @@ PATH_PLAFOND_QF_DEMI_PART = (
 )
 PATH_CSG_ACTIVITE = ("prelevements_sociaux", "contributions_sociales", "csg", "activite")
 
+_REDUCTIONS = ("prelevements_sociaux", "reductions_cotisations_sociales")
+PATH_ALLEGEMENT_GENERAL = (*_REDUCTIONS, "allegement_general", "ensemble_des_entreprises")
+#: The maladie bandeau's parameters live under `alleg_gen.mmid`, NOT under the
+#: `mmid` of `cotisations_securite_sociale_regime_general` — that one carries the
+#: contribution rates the bandeau reduces (13 % / 7 %), not the reduction itself.
+PATH_BANDEAU_MALADIE = (*_REDUCTIONS, "alleg_gen", "mmid")
+PATH_BANDEAU_FAMILLE = (*_REDUCTIONS, "allegement_cotisation_allocations_familiales")
+
+#: Every child name a bandeau plafond has carried. The node's shape CHANGES BY YEAR
+#: — `plafond` before 2024, `plafond_smic_courant` **and** `plafond_smic_2023_12_31`
+#: during 2024, `plafond_smic_2025_01_01` from 2025 — so a knob pinned to one child
+#: silently stops working when the tree moves under it.
+#:
+#: Worse, in 2024 the formula takes `max(plafond_smic_courant × smic,
+#: plafond_smic_2023_12_31 × smic_2023-12)`. Writing one child alone can therefore
+#: change nothing at all, because the other term still wins the max. So a plafond
+#: knob writes EVERY child present at the instant, and `verify_allegements` reads
+#: them all back.
+BANDEAU_PLAFOND_CHILDREN = (
+    "plafond", "plafond_smic", "plafond_smic_courant",
+    "plafond_smic_2023_12_31", "plafond_smic_2025_01_01",
+)
+
+#: Knobs that write a value to every plafond child a node has at the instant.
+PLAFOND_KNOBS: dict[str, tuple[str, ...]] = {
+    "bandeau_maladie_plafond": PATH_BANDEAU_MALADIE,
+    "bandeau_famille_plafond": PATH_BANDEAU_FAMILLE,
+}
+
 #: knob name -> path of the scalar parameter it moves
 SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "decote_seuil_celib": (*PATH_DECOTE, "seuil_celib"),
@@ -53,6 +82,16 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "plafond_qf_demi_part": PATH_PLAFOND_QF_DEMI_PART,
     "csg_activite_imposable": (*PATH_CSG_ACTIVITE, "imposable"),
     "csg_activite_deductible": (*PATH_CSG_ACTIVITE, "deductible"),
+    # Employer social contributions. The channels that price these (C2, C3) were
+    # written in Phase 3 against a knob that did not exist — a spec error on the
+    # record (D-032). These are it.
+    "allegement_general_plafond": (*PATH_ALLEGEMENT_GENERAL, "plafond"),
+    "allegement_general_taux_50_et_plus": (
+        *PATH_ALLEGEMENT_GENERAL, "entreprises_de_50_salaries_et_plus"),
+    "allegement_general_taux_moins_de_50": (
+        *PATH_ALLEGEMENT_GENERAL, "entreprises_de_moins_de_50_salaries"),
+    "bandeau_maladie_taux": (*PATH_BANDEAU_MALADIE, "taux"),
+    "bandeau_famille_taux": (*PATH_BANDEAU_FAMILLE, "reduction"),
 }
 
 
@@ -86,6 +125,7 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
     `test_no_mutation` is the standing proof of that.
     """
     start = periods.instant(f"{year}-01-01")
+    instant = f"{year}-01-01"
     reform_name = f"impots-user-reform:{name}"
 
     class UserReform(Reform):
@@ -99,11 +139,49 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                     value = getattr(spec, knob)
                     if value is not None:
                         resolve(parameters, path).update(start=start, value=value)
+                for knob, path in PLAFOND_KNOBS.items():
+                    value = getattr(spec, knob, None)
+                    if value is not None:
+                        _apply_plafond(parameters, path, value, start, instant)
                 return parameters
 
             self.modify_parameters(modifier_function=modify)
 
     return UserReform
+
+
+def plafond_children(node: Any) -> tuple[str, ...]:
+    """The plafond children a bandeau node carries **at a given instant**.
+
+    Must be called on a node already evaluated at that instant, never on the editable
+    tree: an editable `ParameterNode` answers `hasattr` for every child defined at
+    *any* date, so asking it which plafonds exist in 2024 returns the 2025 one too.
+    Writing to that child is not an error and produces no warning — it simply lands
+    where the year's formula never looks, or, worse, where a later year's does.
+    """
+    return tuple(name for name in BANDEAU_PLAFOND_CHILDREN if hasattr(node, name))
+
+
+def _apply_plafond(
+    parameters: Any, path: tuple[str, ...], value: float, start: Any, instant: str
+) -> None:
+    """Set the plafonds the year's formula actually reads, and only those.
+
+    In 2024 that is two of them, because the formula takes a max over both — writing
+    one alone leaves the other winning the max and the reform doing nothing. Refuses
+    outright when the node carries no plafond at that instant: a knob that writes
+    nowhere is precisely the failure this design exists to prevent.
+    """
+    node = resolve(parameters, path)
+    children = plafond_children(node(instant))
+    if not children:
+        raise ValueError(
+            f"le nœud {'.'.join(path)} ne porte aucun plafond au {instant} "
+            f"(cherché : {', '.join(BANDEAU_PLAFOND_CHILDREN)}) — l'arbre a bougé, "
+            "et écrire dans le vide serait pire que refuser"
+        )
+    for name in children:
+        getattr(node, name).update(start=start, value=value)
 
 
 def _apply_bareme(parameters: Any, brackets: list[Any], start: Any) -> None:
@@ -157,6 +235,55 @@ def read_ir_parameters(tax_benefit_system: Any, year: int) -> dict[str, Any]:
             "deductible": float(csg.deductible(instant)),
         },
     }
+
+
+def verify_allegements(tax_benefit_system: Any, spec: ReformSpec, year: int) -> None:
+    """Read back every allègement knob, and refuse a system that did not take them.
+
+    D-007 made portable to a node whose *shape* moves. The employer-contribution
+    plafonds are the sharpest case in the tree: their child names change by year, and
+    during 2024 the formula takes a max over two of them — so writing one child and
+    seeing no error is entirely compatible with having changed nothing. This reads
+    back every child that was written, at the instant it was written for.
+    """
+    instant = f"{year}-01-01"
+    problems: list[str] = []
+
+    for knob in (
+        "allegement_general_plafond", "allegement_general_taux_50_et_plus",
+        "allegement_general_taux_moins_de_50", "bandeau_maladie_taux",
+        "bandeau_famille_taux",
+    ):
+        wanted = getattr(spec, knob, None)
+        if wanted is None:
+            continue
+        got = float(resolve(tax_benefit_system.parameters, SCALAR_KNOBS[knob])(instant))
+        if abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0):
+            problems.append(f"{knob} : demandé {wanted}, appliqué {got}")
+
+    for knob, path in PLAFOND_KNOBS.items():
+        wanted = getattr(spec, knob, None)
+        if wanted is None:
+            continue
+        node = resolve(tax_benefit_system.parameters, path)(instant)
+        children = plafond_children(node)
+        if not children:
+            problems.append(f"{knob} : le nœud ne porte aucun plafond à {instant}")
+            continue
+        for name in children:
+            got = float(getattr(node, name))
+            if abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0):
+                problems.append(
+                    f"{knob}.{name} : demandé {wanted}, appliqué {got} — le plafond "
+                    f"effectif est un max sur ces enfants, donc un seul non appliqué "
+                    f"suffit à annuler la réforme"
+                )
+
+    if problems:
+        raise AssertionError(
+            "les allègements appliqués ne correspondent pas à la réforme demandée — "
+            + " ; ".join(problems)
+        )
 
 
 def verify_bareme(tax_benefit_system: Any, spec: ReformSpec, year: int) -> None:

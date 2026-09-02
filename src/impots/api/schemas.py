@@ -139,6 +139,15 @@ class ReformSpec(BaseModel):
     plafond_qf_demi_part: Annotated[float, Field(ge=0, le=100_000)] | None = None
     csg_activite_imposable: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     csg_activite_deductible: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    # Employer social contributions (D-038). Plafonds are in multiples of the SMIC,
+    # which is why their ceiling is 10 and not 1: 1.6 is today's réduction générale.
+    allegement_general_plafond: Annotated[float, Field(ge=0.0, le=10.0)] | None = None
+    allegement_general_taux_50_et_plus: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    allegement_general_taux_moins_de_50: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    bandeau_maladie_plafond: Annotated[float, Field(ge=0.0, le=10.0)] | None = None
+    bandeau_maladie_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    bandeau_famille_plafond: Annotated[float, Field(ge=0.0, le=10.0)] | None = None
+    bandeau_famille_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
 
     @model_validator(mode="after")
     def _check_bareme(self) -> ReformSpec:

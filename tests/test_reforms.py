@@ -290,3 +290,120 @@ def test_bareme_over_five_brackets_is_rejected() -> None:
         ReformSpec.model_validate(
             {"ir_bareme": [{"threshold": i * 10000, "rate": 0.1 * i} for i in range(6)]}
         )
+
+
+# --------------------------------------------------------------------------- #
+# Employer social contributions (D-038)
+#
+# The knobs C2 and C3 were written against in Phase 3 and that the ReformSpec did
+# not have. Every case here is hand-derivable: the two bandeaux are flat rates above
+# a cliff, so their effect on labour cost is a multiplication anyone can check.
+# --------------------------------------------------------------------------- #
+from impots.engine.reforms import (  # noqa: E402
+    BANDEAU_PLAFOND_CHILDREN,
+    PATH_BANDEAU_FAMILLE,
+    PATH_BANDEAU_MALADIE,
+    plafond_children,
+    verify_allegements,
+)
+
+#: Well above every allègement cliff in 2024 — 60 000 EUR is about 2.83 SMIC — so the
+#: réduction générale and both bandeaux are exhausted and the arithmetic is clean.
+HIGH_SALARY = 60_000.0
+
+
+def labour_cost(salary: float, reform: dict | None, year: int = 2024) -> tuple[float, float]:
+    """(baseline, reformed) annual labour cost for one single-adult household."""
+    household = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": salary, "annee_naissance": 1990}]}
+    )
+    spec = None if reform is None else ReformSpec.model_validate(reform)
+    result = compute(household, year, reform=spec, tier="light")
+    reformed = result.baseline if spec is None else result.reform
+    return result.baseline["salaire_super_brut"], reformed["salaire_super_brut"]
+
+
+def test_removing_the_famille_bandeau_costs_exactly_its_rate() -> None:
+    """The bandeau famille is a flat 1.8 % of gross below its cliff. Above the cliff
+    it is nothing; below it, removing it raises labour cost by 1.8 % of gross and by
+    nothing else. 0.018 x 60 000 = 1 080 EUR, checkable on paper."""
+    base, reformed = labour_cost(HIGH_SALARY, {"bandeau_famille_taux": 0.0})
+    assert reformed - base == pytest.approx(0.018 * HIGH_SALARY, abs=1.0)
+
+
+def test_extending_the_maladie_bandeau_saves_exactly_its_rate() -> None:
+    """The maladie bandeau is a flat 6 % below a cliff that sits at about 2.5 SMIC in
+    2024. A worker at 2.83 SMIC is above it and gets nothing; moving the cliff to
+    3 SMIC brings them inside, worth 0.06 x 60 000 = 3 600 EUR."""
+    base, reformed = labour_cost(HIGH_SALARY, {"bandeau_maladie_plafond": 3.0})
+    assert base - reformed == pytest.approx(0.06 * HIGH_SALARY, abs=1.0)
+
+
+def test_the_reduction_generale_reaches_only_below_its_plafond() -> None:
+    """Its whole design. A worker at 2.83 SMIC is far above the 1.6 SMIC ceiling, so
+    neither its rate nor its ceiling can touch them — and a knob that moved labour
+    cost there would mean the allègement was being applied where it does not exist."""
+    for reform in ({"allegement_general_taux_moins_de_50": 0.40},
+                   {"allegement_general_plafond": 2.0}):
+        base, reformed = labour_cost(HIGH_SALARY, reform)
+        assert reformed == pytest.approx(base, abs=1.0), reform
+
+
+def test_raising_the_plafond_helps_where_raising_the_rate_barely_does() -> None:
+    """The two knobs are not interchangeable, and a reform panel that treated them as
+    one lever would mislead. Just above the ceiling (1.65 SMIC) the réduction is
+    nearly exhausted, so extending the ceiling is worth several times more than
+    raising the rate; well below it (1.2 SMIC) the ranking reverses."""
+    just_above_base, just_above_plafond = labour_cost(30_000, {"allegement_general_plafond": 2.0})
+    _, just_above_taux = labour_cost(30_000, {"allegement_general_taux_moins_de_50": 0.40})
+    assert (just_above_base - just_above_plafond) > 3 * (just_above_base - just_above_taux)
+
+    well_below_base, well_below_plafond = labour_cost(21_600, {"allegement_general_plafond": 2.0})
+    _, well_below_taux = labour_cost(21_600, {"allegement_general_taux_moins_de_50": 0.40})
+    assert (well_below_base - well_below_taux) > 10 * (well_below_base - well_below_plafond)
+
+
+@pytest.mark.parametrize(
+    ("year", "expected"),
+    [
+        (2023, ("plafond",)),
+        (2024, ("plafond_smic_courant", "plafond_smic_2023_12_31")),
+        (2025, ("plafond_smic_2025_01_01",)),
+    ],
+)
+def test_the_plafond_knob_writes_where_that_year_reads(
+    year: int, expected: tuple[str, ...]
+) -> None:
+    """The node's shape moves under the knob. In 2024 the formula takes a MAX over two
+    children, so writing one alone leaves the other winning and the reform doing
+    nothing at all — with no error anywhere. The knob writes every child the year
+    actually reads, and none that it does not."""
+    spec = ReformSpec.model_validate({"bandeau_maladie_plafond": 3.0})
+    node = resolve(reformed_for(spec, year).parameters, PATH_BANDEAU_MALADIE)(f"{year}-01-01")
+    assert set(plafond_children(node)) == set(expected)
+    for name in expected:
+        assert float(getattr(node, name)) == pytest.approx(3.0)
+
+
+def test_the_plafond_knob_does_not_write_into_another_year() -> None:
+    """`update()` CREATES a child that did not exist, so asking the editable tree
+    which plafonds exist returns every one ever defined — including next year's. A
+    2024 reform must not silently move the 2025 ceiling."""
+    spec = ReformSpec.model_validate({"bandeau_famille_plafond": 4.0})
+    node = resolve(reformed_for(spec, 2024).parameters, PATH_BANDEAU_FAMILLE)("2024-01-01")
+    written = set(plafond_children(node))
+    assert "plafond_smic_2025_01_01" not in written
+    assert written <= set(BANDEAU_PLAFOND_CHILDREN)
+
+
+def test_the_read_back_refuses_a_reform_that_did_not_take() -> None:
+    """D-007, on the knob whose node changes shape. The read-back compares the tree
+    against what was asked; a spec claiming a value the system does not carry must be
+    refused rather than served."""
+    applied = ReformSpec.model_validate({"bandeau_maladie_plafond": 3.0})
+    system = reformed_for(applied, 2024)
+    verify_allegements(system, applied, 2024)  # the honest case passes
+
+    claimed = ReformSpec.model_validate({"bandeau_maladie_plafond": 9.0})
+    with pytest.raises(AssertionError, match=r"plafond effectif est un max|demandé 9\.0"):
+        verify_allegements(system, claimed, 2024)
