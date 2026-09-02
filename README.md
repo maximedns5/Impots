@@ -16,7 +16,7 @@ what a tax reform does, and is explicit about how much each answer can be truste
 The layering is the product: a user sees the mechanical number, the behavioural
 band and the macro fan stacked, each labelled.
 
-## Status — Phases 0 and 1 are built; Phase 2 is in progress
+## Status — Phases 0–2 are built; Phase 3 is in progress
 
 **Phase 0 — one household. Any reform. Exact numbers.** Describe a household,
 optionally edit the IR barème, décote, plafond du quotient familial or CSG rates,
@@ -41,10 +41,20 @@ the report's free test — total IS over total taxable profit, where the denomin
 is calibrated and the numerator is not — lands within 1.2 % of the published
 average rate. Three of its six sector lines pass and three fail, all six visible.
 
+**Phase 3 — the band.** Official French costings are mechanical by design; FIPECO's
+own position is that behavioural responses are "difficult, often impossible to
+measure". This project's claim is that showing the band honestly — as a range with
+its evidence attached and its applicability graded — beats omitting it. Raising the
+top rate from 45 % to 50 % yields +0.66 bn mechanically; the taxable-income response
+gives back about a third of that, and the band says so with the paper it rests on and
+a grade saying whether the reform is inside the evidence. **One channel of four is
+live**: the other three are written, tested, and honest about why they report nothing.
+
 ```
 src/impots/engine/       typed wrapper over openfisca-france — household scale (L2)
 src/impots/population/   the synthetic population and distributional engine (L1)
 src/impots/entreprises/  the firm tax system, its own parameter tree and population
+src/impots/behavioural/  elasticities, channels, marginal rates, bands (L3)
 src/impots/reporting.py  the shared report engine — the spent/validation rule lives here
 src/impots/guards.py     weight identities and the checks both weighting defects needed
 src/impots/api/          seven FastAPI endpoints
@@ -156,6 +166,28 @@ the smallest complete demonstration that the reform machinery does what it says.
   quoting any level.
 * **No capital income, no self-employment income, no réductions d'impôt.** The top
   of the distribution is a construction.
+
+### And about the behavioural band specifically
+
+* **The mechanical number never changes.** The band is a range *around* it, drawn
+  subordinate to it, and a regression test asserts that turning the band on moves no
+  mechanical figure by a single euro.
+* **One channel of four is live.** The taxable-income response works. Employment at
+  the SMIC and contribution incidence both price employer social contributions, and
+  **no reform knob in this simulator moves one** — so they say that rather than
+  returning a zero (D-032). The production-tax investment channel reports **no usable
+  evidence**: its only dimensionally-valid row had no published value and died under
+  verification (D-031).
+* **The best-identified French elasticity is missing on purpose.** Capital income
+  responds far more sharply than labour income, and this population carries none until
+  ERFS lands. The UI says so where a capital knob would appear. Any band on a reform
+  touching the top is understated for that reason.
+* **Five of the seed table's rows died.** `eti_all` is 0.02, not the 0.05 that was
+  written down; the two labour-supply scalars turned out to be averages their cited
+  paper never states. A row that dies is removed and its channel narrows visibly —
+  the removals are in the YAML with their reasons.
+* **A reform larger than the evidence gets a widened band and the word
+  "extrapolation"**, never a confident number (D-031, D-034).
 
 ### And about the firm module specifically
 

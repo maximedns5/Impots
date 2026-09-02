@@ -1128,3 +1128,123 @@ model's sector split really is wrong at that boundary, and the pooled one says t
 mass is in the right place. Neither is dropped. What is *not* claimed is that this
 explains the residual completely — 16.2 % is inside the gate, not at zero, and the
 information-et-communication line remains at −21.4 % with no diagnostic run.
+
+## D-031 — The behavioural store, and the five rows that died in it
+Date: 2026-09-02 · Status: accepted · Evidence: workflow wf_0acd2e4f-b5b, 10/10 agents, 5/5 verifiers
+
+Phase 3's characteristic failure is that **a band computed from a bad parameter looks
+exactly like a band computed from a good one**. So the store's one hard rule is that
+a row without a verifier verdict cannot load, enforced in code and tested. `WRONG`
+refuses too; `SCOPE_PROBLEM` loads, because Phase 2 measured what that verdict means
+— citations needing repair while the values hold — and refusing it would discard
+every parameter this project has.
+
+The fan-out ran the D-025 pattern over five parameter families: five researchers, five
+adversaries. **Every verdict came back `SCOPE_PROBLEM`, and five rows died.**
+
+**What the seed table got wrong.** `docs/PARAMETERS.md` was a reviewer-compiled table
+and the spec said to treat every row as unverified input. It was right to.
+
+* `eti_all` is **0.02**, not 0.05. The seed's value appears in no specification of the
+  cited paper; 0.02 is stable across six.
+* `labour_supply_intensive` (0.10) and `labour_supply_extensive` (0.30) have **no
+  defensible primary basis at all**. Bargain-Orsini-Peichl reports France
+  disaggregated by sex and marital status — eight rows, running 0.02 to 0.145 — and
+  the seed's two scalars are averages the paper never states. Both removed.
+* `passthrough_unlinked` is **0.0**, not 0.15.
+
+**The correction that matters most is not a value but a bound.** `eti_top_decile`'s
+support was filed at 0.06 — a *cumulative* 1999-2003 change — while the estimator
+works on one-year differences. The verifier re-derived the largest single-year move
+from the paper (0.0317) and checked the chain against a printed table to four decimal
+places. **0.06 → 0.03**, which halves the reform size this project will call
+"in-support". A guardrail set from the wrong window is worse than none, because it
+looks strict.
+
+**C4 has no channel, and that is the honest v1.** The production-tax investment row
+was to carry a band centred on zero with the study's uncertainty — the informative
+answer to "did the CVAE cut raise investment?". Its only dimensionally-valid row is
+an elasticity **with no published value**: the bounds were derived, not read, and
+carried `confirmed_against_primary: true` — the exact flag that hid the fabricated
+quote found in Phase 2. Its underlying ratio also divides a first stage by an outcome
+estimated on *differently reweighted samples*, which the authors themselves flag as a
+limitation of the method one page before the caveat that was quoted. The other four
+rows are dimensionally incommensurable — a quarterly level effect of 0.00054 beside
+log-point coefficients — and the verifier's warning is exact: guardrail code
+comparing a reform against one and applying the other "will silently commit a units
+error". All five removed. The channel reports **no usable evidence**.
+
+Removed rows stay in the YAML under `removed:` with their reason, so a channel that
+narrows shows why in the data and not only in this log.
+
+## D-032 — C2 and C3 have no lever, and the spec assumed one
+Date: 2026-09-02 · Status: accepted
+
+PHASE3_SPEC lists four v1 channels. Two of them — employment at the SMIC, and
+employer-contribution incidence — price **employer social contributions**, and no
+reform knob in this simulator moves one. The household spec exposes the barème, the
+décote, the plafond du quotient familial and the two CSG rates; CSG is an *employee*
+contribution, and the spec itself names `csg_activite_*` as its example of a knob no
+channel claims.
+
+Adding an employer-contribution knob is an engine change with its own verification
+burden — the allègements généraux are a barème, not a scalar — and it is not smuggled
+in under a behavioural phase. So both channels are written, tested, and dormant, and
+they say so: *"aucun paramètre de cotisation patronale n'est exposé par le
+simulateur, donc rien ne déclenche ce canal."*
+
+That leaves v1 with **one live channel**, C1. Stating that plainly is worth more than
+four channels of which three quietly return zero.
+
+## D-033 — What the EMTR machinery measures, and the choice inside it
+Date: 2026-09-02 · Status: accepted
+
+Marginal rates are a finite difference: OpenFisca has no `taux_marginal_imposition`.
+Two choices are worth recording because neither is forced.
+
+**The step goes to earners, and the denominator counts them.** Bumping every individu
+by 100 € would turn people with no earnings into earners, which is a different
+experiment. So this is a household's marginal rate on an extra euro spread across the
+earners it has — not a primary earner's rate and not a second earner's. A household
+with no earnings has no marginal rate on labour at all, and is recorded as such rather
+than given a zero, because zero would say "keeps every euro".
+
+**Full tier, not as a technicality.** The PPA and RSA tapers are most of the marginal
+rate at low wages. A light-tier EMTR would produce a tidy distribution that is simply
+wrong at the bottom, which is where the policy argument lives. On the 2024 population,
+median EMTR runs from 20.8 % in the first decile of marginal rates to 63.5 % in the
+tenth, and the households in that top decile are poor, not rich.
+
+The band is opt-in over HTTP because it costs two more full-tier runs. Baseline rates
+and whole results are both memoised on disk, keyed on the sample size as well as the
+reform — a subsample is a different population, not a cheaper view of the same one.
+
+## D-034 — What the first band says, and what it does not
+Date: 2026-09-02 · Status: accepted · Evidence: /population/simulate, 2024 population
+
+Raising the top rate from 45 % to 50 % yields **+0.662 bn** mechanically. With the
+taxable-income response, the band is **+0.36 to +0.50 bn**, median +0.43 bn: the
+response gives back about **35 %** of the mechanical yield, and the reform grades
+`in-support`.
+
+Four things that number is not.
+
+It is **not a forecast**. It is what the measured elasticities imply at constant
+everything else, over one year, on a synthetic population whose top tail is a
+construction (D-015). It is graded in-support because a five-point rate move sits
+inside the identifying variation of the underlying reforms — barely, now that the
+bound is 0.03 for the top decile.
+
+It **omits the best-identified French elasticity there is.** Capital income responds
+far more sharply than labour income, and the population carries no capital income
+until ERFS lands, so no capital channel exists. The UI says this where a capital knob
+would appear. A band that silently omitted it would understate the response to any
+reform touching the top.
+
+It rests on a **short-run** elasticity whose own authors argue the long-run value —
+the one relevant to judging a barème — is lower.
+
+And the band's width comes from ranges that are **specification spreads, not
+confidence intervals**, for the top-decile row. That is labelled in the store rather
+than papered over: the published interval is tighter, and narrowing to it was left
+undone rather than guessed at.

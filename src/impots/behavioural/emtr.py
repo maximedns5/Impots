@@ -104,6 +104,7 @@ def compute(
     reform: Any = None,
     sample: int | None = None,
     step: float = EMTR_STEP,
+    vintage: str | None = None,
 ) -> EmtrResult:
     """Marginal rates for every household, under current law and optionally a reform.
 
@@ -129,8 +130,28 @@ def compute(
     guards: dict[str, Any] = {}
     timings: dict[str, float] = {}
 
+    # The baseline rates do not depend on the reform, so they are memoised on disk:
+    # the second reform priced against the same population pays half as much. Keyed on
+    # the sample size too, because a subsample is a different population.
     started = time.perf_counter()
-    columns = {"emtr": _rate(frame, baseline(), year, earners, step, guards, "baseline")}
+    cache = (
+        PROCESSED / f"emtr_baseline_{vintage}_{year}_{sample or 'full'}_{int(step)}.parquet"
+        if vintage else None
+    )
+    if cache is not None and cache.exists():
+        cached_rates = pl.read_parquet(cache)
+        if cached_rates.height == per_household.height:
+            columns = {"emtr": cached_rates["emtr"].to_numpy()}
+            guards["baseline_cached"] = True
+        else:  # the population moved under the cache; recompute rather than trust it
+            columns = {"emtr": _rate(frame, baseline(), year, earners, step, guards,
+                                     "baseline")}
+    else:
+        columns = {"emtr": _rate(frame, baseline(), year, earners, step, guards,
+                                 "baseline")}
+    if cache is not None and not cache.exists():
+        PROCESSED.mkdir(parents=True, exist_ok=True)
+        pl.DataFrame({"emtr": columns["emtr"]}).write_parquet(cache)
     timings["baseline_s"] = round(time.perf_counter() - started, 2)
 
     if reform is not None and not reform.is_empty():
@@ -197,9 +218,17 @@ def distribution(result: EmtrResult, deciles: int = 10) -> list[dict[str, float]
     return rows
 
 
-def cache_key(vintage: str, year: int, reform: Any = None) -> str:
+def cache_key(
+    vintage: str, year: int, reform: Any = None, sample: int | None = None
+) -> str:
+    """A fingerprint of everything the rates depend on.
+
+    The sample size is in the key because a subsample is a different population, not
+    a cheaper view of the same one — omitting it would serve 3 000 households' rates
+    for a request that asked for 20 000.
+    """
     payload = json.dumps(
-        {"vintage": vintage, "year": year,
+        {"vintage": vintage, "year": year, "sample": sample,
          "reform": None if reform is None else reform.model_dump(exclude_none=True)},
         sort_keys=True, default=str,
     )
@@ -210,12 +239,14 @@ def cached(
     population: pl.DataFrame | Path, vintage: str, year: int = 2024, reform: Any = None,
     sample: int | None = None,
 ) -> EmtrResult:
-    """`compute`, memoised on disk. Minutes the first time, milliseconds after."""
-    path = PROCESSED / f"emtr_{vintage}_{cache_key(vintage, year, reform)}.parquet"
+    """`compute`, memoised on disk. A minute and a half the first time, milliseconds
+    after — which matters most for the same reform priced twice, since a user
+    adjusting one knob and re-running is the normal way this tool is used."""
+    path = PROCESSED / f"emtr_{vintage}_{cache_key(vintage, year, reform, sample)}.parquet"
     if path.exists():
         return EmtrResult(households=pl.read_parquet(path), year=year,
                           guards={"cached": True})
-    result = compute(population, year=year, reform=reform, sample=sample)
+    result = compute(population, year=year, reform=reform, sample=sample, vintage=vintage)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     result.households.write_parquet(path)
     return result

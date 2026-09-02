@@ -1,0 +1,118 @@
+# Elasticity of taxable income — the one channel with a live instrument in v1.
+#
+# UNITS, declared because the verifier found the omission a real defect: every
+# `max_variation_graded_in_support` below is in LEVEL POINTS of the net-of-tax
+# marginal rate (1 - τ'), as a fraction. The estimator's own regressor is the change
+# in log(1 - τ'), which for these reforms runs about 1.5x larger — the paper's own
+# worked case is a 10.28-point move reported as a 15.47 % log change. Grading in
+# levels is therefore the conservative direction, and it is a choice, not an oversight.
+
+thresholds:
+  # A band beyond its evidence is widened by this factor and labelled an
+  # extrapolation. A convention, not a measurement, and named as one.
+  extrapolation_widening: 2.0
+
+parameters:
+  eti_all:
+    value: {central: 0.02, low: 0.01, high: 0.02, distribution: triangular}
+    applies_to: >
+      Réponse du revenu imposable au taux de rétention marginal, ensemble des foyers
+      fiscaux au-dessus du 10e centile, années de revenus 1998-2004, composition
+      familiale stable. Le décile inférieur est exclu par construction : ce n'est pas
+      une élasticité « de toute la population » au sens courant.
+    responds_to_knobs: [ir_bareme, decote_*, plafond_qf_demi_part]
+    support:
+      estimated_on: >
+        Deux réformes : l'abaissement du plafond du quotient familial entre 1997 et
+        1998, et les baisses successives du barème entre 2000 et 2003. Estimateur de
+        Gruber-Saez sur différences À UN AN, donc la variation subie par observation
+        est d'un an, jamais cumulée sur la période.
+      max_variation_graded_in_support: 0.10
+    source:
+      citation: >
+        Cabannes, Houdré et Landais, « Comment le revenu imposable des ménages aisés
+        réagit-il à sa taxation ? », Économie et Statistique n° 467-468, 2014,
+        p. 141-162 — valeur au résumé p. 141 et Tableau 3 p. 154.
+      url: https://www.insee.fr/fr/statistiques/fichier/2122577/ES467F.pdf
+      vintage: "2014"
+      quote: >-
+        Sur l'ensemble des ménages fiscaux, l'élasticité estimée du revenu imposable
+        par rapport au taux de rétention marginal est très faible, de l'ordre de 0,02.
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-02
+      ref: wf_0acd2e4f-b5b
+      note: >
+        Deux corrections appliquées ici. (1) La valeur du tableau de départ (0,05)
+        n'existe nulle part dans l'article : la valeur publiée est 0,02, stable sur
+        six spécifications. (2) La borne haute proposée de 0,05 était justifiée en
+        important l'estimation de Lehmann (0,217), qui mesure le revenu d'activité
+        BRUT et une réponse de marge extensive — deux objets différents. Retirée.
+        L'intervalle retenu 0,01-0,02 est l'écart entre les spécifications publiées,
+        pas un intervalle de confiance ; il est étroit parce que l'estimation l'est.
+        Le seuil de 0,10 est un plancher de jugement conservateur : le maximum
+        littéral de la variation identifiante atteint 0,24 pour quelques
+        configurations familiales étroites (Graphique II).
+    confidence: high
+    note: >
+      Élasticité de COURT TERME, et les auteurs disent eux-mêmes que la valeur de
+      long terme — la seule pertinente pour juger d'un barème — a plusieurs raisons
+      d'être plus faible. La bande ne couvre pas cet écart.
+
+  eti_top_decile:
+    value: {central: 0.31, low: 0.15, high: 0.50, distribution: triangular}
+    applies_to: >
+      Réponse du revenu imposable au taux de rétention marginal, décile supérieur
+      (P90-100) des foyers fiscaux, 1998-2004. Pas la tranche supérieure et pas le
+      centile supérieur : les auteurs ont dû élargir au décile entier pour obtenir
+      une estimation utilisable, ce qui suppose une réponse homogène sur tout le décile.
+    responds_to_knobs: [ir_bareme, decote_*, plafond_qf_demi_part]
+    support:
+      estimated_on: >
+        Mêmes réformes, mais la variation identifiante est mince dans ce groupe : les
+        baisses de barème ont déplacé tout le monde presque également, et l'écart
+        résiduel est porté par le plafonnement du quotient familial, qui à ces
+        niveaux de revenu ne mord que sur les familles très nombreuses.
+      max_variation_graded_in_support: 0.03
+    source:
+      citation: >
+        Cabannes, Houdré et Landais, Économie et Statistique n° 467-468, 2014 —
+        0,31 au résumé p. 141 et Tableau 4 p. 156 (modèle 6) ; variantes 0,15 et
+        0,45 p. 158 et Tableau 5 ; 0,50 au modèle 5 du Tableau 4.
+      url: https://www.insee.fr/fr/statistiques/fichier/2122577/ES467F.pdf
+      vintage: "2014"
+      quote: >-
+        Les différences de variations au sein de ce groupe sont très faibles car
+        elles sont simplement portées par les rares ménages ayant tellement d'enfants
+        qu'ils ne sont pas touchés par le plafonnement du quotient familial.
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-02
+      ref: wf_0acd2e4f-b5b
+      note: >
+        CORRECTION PRINCIPALE, et elle resserre le garde-fou d'un facteur deux : le
+        seuil proposé de 0,06 était une variation CUMULÉE 1999-2003, alors que
+        l'estimateur travaille sur des différences à un an. Le plus grand mouvement
+        annuel se dérive de l'article : Graphique III donne les barres de la 7e
+        tranche (0,0163 / 0,0104 / 0,065 / 0,029 en log), Tableau 1 donne le taux
+        net de 2003 à 0,5191, d'où 2002 = 0,5191·exp(-0,029) = 0,5043 — exactement
+        le 1-0,4958 imprimé — et 2001 = 0,4726. Écart annuel maximal 0,0317, arrondi
+        à 0,03. L'intervalle 0,15-0,50 n'est PAS un intervalle de confiance : ce sont
+        des variantes de scénario et une autre pondération, et l'intervalle publié
+        est plus étroit. Étiqueté comme tel plutôt que resserré, faute d'avoir pu
+        relire la delta-méthode.
+    confidence: medium
+    note: >
+      L'instrument est faible dans ce groupe : le R² partiel de Shea vaut 0,029
+      contre 0,104-0,149 pour les spécifications sur population totale. Les auteurs
+      jugent la statistique satisfaisante ; elle reste la plus faible de l'article.
+
+# Lignes retirées : elles apparaissent ici, avec leur motif, plutôt que d'être
+# supprimées — un canal qui rétrécit doit montrer pourquoi.
+removed:
+  eti_labour_income_low_earners: >
+    Mesure le revenu d'activité BRUT et une réponse de marge extensive, pas le revenu
+    imposable. Charger les deux dans le même canal reviendrait à additionner deux
+    objets différents. Écartée aussi pour une raison de traçabilité : la citation par
+    numéro de série CREST résout vers un autre article, et le PDF n'est plus
+    récupérable derrière un mur anti-robot.

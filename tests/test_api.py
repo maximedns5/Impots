@@ -546,7 +546,7 @@ def test_firm_response_carries_no_firm_level_output(client: TestClient) -> None:
     body = client.post("/entreprises/simulate", json=IS_30_REFORM).json()
     assert set(body) == {
         "meta", "totals", "totals_reform", "deltas", "reform_cost",
-        "cells", "by_size", "timings",
+        "cells", "by_size", "behavioural", "timings",
     }
     assert all(set(cell) >= {"naf_section", "taille", "n_firms"} for cell in body["cells"])
     raw = client.post("/entreprises/simulate", json=IS_30_REFORM).text
@@ -568,3 +568,80 @@ def test_unknown_firm_knob_is_refused(client: TestClient) -> None:
     )
     assert response.status_code == 422
     assert "is_taux_norml" in response.text
+
+
+# --------------------------------------------------------------------------- #
+# The behavioural band (Phase 3, §7)
+#
+# Opt-in, because the marginal rates it needs are two more full-tier runs. These
+# tests use the same module-scoped client, so the band is paid for once.
+# --------------------------------------------------------------------------- #
+@needs_population
+def test_the_band_is_absent_unless_asked_for(client: TestClient) -> None:
+    """The mechanical answer stays fast by default; nothing about it changes."""
+    body = client.post("/population/simulate", json=TOP_RATE_50_REFORM).json()
+    assert body["behavioural"] is None
+
+
+@needs_population
+def test_the_band_never_moves_the_mechanical_number(client: TestClient) -> None:
+    """The layer boundary, asserted over HTTP. A reader taking only the mechanical
+    figure must get exactly what they would have got without Phase 3."""
+    without = client.post("/population/simulate", json=TOP_RATE_50_REFORM).json()
+    with_band = client.post(
+        "/population/simulate", json={**TOP_RATE_50_REFORM, "behavioural": True}
+    ).json()
+    assert with_band["reform_cost"] == without["reform_cost"]
+    assert with_band["totals"] == without["totals"]
+    assert with_band["deltas"] == without["deltas"]
+    assert with_band["behavioural"]["mechanical"] == pytest.approx(
+        -without["reform_cost"]
+    )
+
+
+@needs_population
+def test_the_band_prices_the_response_to_a_top_rate_rise(client: TestClient) -> None:
+    """A 45 % -> 50 % top rate. The mechanical yield is positive; the taxable-income
+    response gives part of it back, so the band must sit BELOW the mechanical figure
+    and still be positive — a response that reversed the sign of a five-point rate
+    rise would be a modelling error, not a finding."""
+    body = client.post(
+        "/population/simulate", json={**TOP_RATE_50_REFORM, "behavioural": True}
+    ).json()
+    behavioural = body["behavioural"]
+    band = behavioural["band"]
+    assert band is not None, "the store has verified elasticities; a band must appear"
+    assert band["p10"] < band["p50"] < band["p90"]
+    assert band["p50"] < behavioural["mechanical"]
+    assert band["p10"] > 0
+
+
+@needs_population
+def test_the_band_reports_its_grade_and_its_provenance(client: TestClient) -> None:
+    """§4 and §7: the grade is data, not decoration, and a band must be traceable to
+    the evidence that produced it."""
+    behavioural = client.post(
+        "/population/simulate", json={**TOP_RATE_50_REFORM, "behavioural": True}
+    ).json()["behavioural"]
+    assert behavioural["grade"] in {"in-support", "illustrative", "no-evidence"}
+    assert behavioural["grade_reason"]
+    assert behavioural["seed"] and behavioural["draws"]
+    assert "eti_all" in behavioural["parameters_vintage"]
+    assert behavioural["emtr_households"] > 0
+
+
+@needs_population
+def test_a_dead_channel_says_so_rather_than_reporting_zero(client: TestClient) -> None:
+    """C2 and C3 have no lever, and C4's only dimensionally-valid row died under
+    verification. All three must say so — a zero would be a false claim about
+    behaviour, where the sentence is a true claim about the evidence."""
+    channels = {
+        c["key"]: c for c in client.post(
+            "/population/simulate", json={**TOP_RATE_50_REFORM, "behavioural": True}
+        ).json()["behavioural"]["channels"]
+    }
+    for key in ("c2_employment", "c3_incidence", "c4_investment"):
+        assert channels[key]["applies"] is False
+        assert channels[key]["central"] is None
+        assert channels[key]["message"], f"{key} reports nothing at all"
+    assert "cotisation patronale" in channels["c2_employment"]["message"]

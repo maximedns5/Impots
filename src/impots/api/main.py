@@ -250,6 +250,60 @@ def population_baseline() -> PopulationResponse:
     )
 
 
+#: Households the behavioural EMTR runs on. Smaller than the mechanical subsample
+#: because a marginal rate costs two full-tier runs, and the band is a range anyway —
+#: a band whose sampling noise is well inside its own width loses nothing by being
+#: computed on fewer households. The number is reported so nobody has to guess.
+BEHAVIOURAL_EMTR_HOUSEHOLDS = 3_000
+
+
+def _behavioural(request: Any, frame: Any, agg: Any) -> Any:
+    """The band for a household reform, or a mechanical-only answer with its reason."""
+    import numpy as np
+
+    from impots.api.schemas import Behavioural
+    from impots.behavioural import band as band_module
+    from impots.behavioural import emtr as emtr_module
+
+    mechanical = -(agg.reform_cost or 0.0)
+    emtr_result = emtr_module.cached(
+        frame, POPULATION_VINTAGE, year=request.year, reform=request.reform,
+        sample=BEHAVIOURAL_EMTR_HOUSEHOLDS,
+    )
+    households = emtr_result.with_earnings
+    if households.is_empty() or "emtr_reform" not in households.columns:
+        computed = band_module.compute(mechanical=mechanical, reform=request.reform)
+        return Behavioural(**computed.as_dict())
+
+    weights = households["weight"].to_numpy()
+    # Taxable base per household: what C1's response applies to. Deciles of it give
+    # the top-decile split the two ETI parameters need.
+    base = households["n_earners"].to_numpy() * 0.0
+    frame_base = (
+        frame.group_by("household_id")
+        .agg(__import__("polars").col("salaire_brut_annuel").sum().alias("base"))
+        .sort("household_id")
+    )
+    lookup = dict(zip(frame_base["household_id"].to_list(),
+                      frame_base["base"].to_list(), strict=False))
+    base = np.array([lookup.get(h, 0.0) for h in households["household_id"].to_list()])
+    order = np.argsort(base)
+    cumulative = np.cumsum(weights[order])
+    top = np.zeros(len(base), dtype=bool)
+    if cumulative[-1] > 0:
+        top[order[cumulative >= 0.9 * cumulative[-1]]] = True
+
+    computed = band_module.compute(
+        mechanical=mechanical, reform=request.reform,
+        emtr_baseline=households["emtr"].to_numpy(),
+        emtr_reform=households["emtr_reform"].to_numpy(),
+        taxable_base=base, weights=weights, top_decile=top,
+    )
+    payload = computed.as_dict()
+    payload["emtr_households"] = int(households.height)
+    return Behavioural(**payload)
+
+
 @app.post("/population/simulate", response_model=PopulationResponse)
 def population_simulate(request: PopulationSimulateRequest) -> PopulationResponse:
     """Price a reform over the synthetic population — quick tier only.
@@ -276,6 +330,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
 
     agg = aggregate_module.aggregate(result.households)
     summary = _baseline_summary()
+    behavioural = _behavioural(request, frame, agg) if request.behavioural else None
     return PopulationResponse(
         meta=PopulationMeta(
             vintage=POPULATION_VINTAGE, branch=summary["branch"],
@@ -290,7 +345,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
             limitations=summary["limitations"],
         ),
         totals=agg.totals, totals_reform=agg.totals_reform, deltas=agg.deltas,
-        reform_cost=agg.reform_cost,
+        reform_cost=agg.reform_cost, behavioural=behavioural,
         deciles=[DecileRow.model_validate(vars(row)) for row in agg.deciles],
         reconciliation=[
             ReconciliationLine.model_validate(line) for line in summary["reconciliation"]

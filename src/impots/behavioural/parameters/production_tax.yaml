@@ -1,0 +1,41 @@
+# Réponse de l'investissement aux impôts de production — AUCUNE LIGNE NE SURVIT.
+#
+# Le canal C4 devait porter une bande centrée sur zéro, avec l'incertitude de
+# l'étude : la réponse honnête à « la baisse de CVAE a-t-elle relancé
+# l'investissement ? » est « on a cherché, sérieusement, et on n'a rien trouvé »,
+# et la largeur de la bande distingue un zéro serré d'un zéro qui ne peut rien
+# exclure. Cette bande n'est pas encodable en l'état.
+#
+# Le canal rapporte donc « aucune preuve utilisable » plutôt que d'hériter d'une
+# valeur non publiée. C'est la règle du §2 appliquée : une ligne qui meurt est
+# retirée, et son canal rétrécit visiblement.
+
+parameters: {}
+
+removed:
+  production_tax_investment: >
+    La seule ligne dimensionnellement correcte — une élasticité — n'a AUCUNE valeur
+    publiée. Ses bornes (0, -0,20, +0,15) ont été dérivées, pas lues, et portaient
+    néanmoins confirmed_against_primary: true : exactement le drapeau qui avait
+    couvert la citation fabriquée trouvée en phase 2. La citation, elle, est
+    authentique — mais un extrait vérifié ne confirme pas un nombre non publié.
+    Deuxième défaut, indépendant : le ratio dont elle sortait divise un premier étage
+    (Log CET) par un résultat (Log investissement) estimés sur des ÉCHANTILLONS
+    REPONDÉRÉS DIFFÉRENTS, ce que les auteurs signalent eux-mêmes comme une limite
+    de la méthode une page avant la mise en garde citée. Ce n'est pas un estimateur
+    à variables instrumentales.
+  production_tax_investment_rdd_763m: >
+    Conversion à l'envers : +0,86 point de log de CET est une HAUSSE de 136 %, pas
+    une baisse de 57,7 %. Le seuil déclaré appliquait en silence l'hypothèse miroir,
+    que les auteurs énoncent sans la tester.
+  production_tax_investment_cfe_sdid: >
+    Effet de niveau trimestriel (investissement rapporté au bilan 2019), pas une
+    élasticité. Le garder à côté des autres ferait comparer des grandeurs
+    incommensurables : un garde-fou qui compare une variation d'impôt à 0,37 puis
+    applique 0,00054 commet une erreur d'unités sans rien signaler.
+  production_tax_investment_cet_sdid: >
+    Même défaut d'unités, et issu du même échantillon repondéré que la ligne
+    principale.
+  production_tax_investment_rdd_2m: >
+    Coefficient de discontinuité en points de log sur une population que les auteurs
+    jugent eux-mêmes non extrapolable ; conservé au dossier, pas dans le magasin.

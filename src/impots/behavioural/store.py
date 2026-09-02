@@ -194,6 +194,11 @@ def load(directory: Path | None = None, *, strict: bool = True) -> Store:
     for path in sorted(directory.glob("*.yaml")):
         document = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         store.thresholds.update(document.get("thresholds") or {})
+        # Rows a verifier killed stay in the file under `removed`, with the reason.
+        # Deleting them outright would make a channel narrow with no visible cause;
+        # keeping them here means the store itself records what was tried and refused.
+        for key, reason in (document.get("removed") or {}).items():
+            store.rejected[key] = str(reason)
         for key, raw in (document.get("parameters") or {}).items():
             parameter = _parse(key, raw)
             verdict = parameter.verifier.verdict

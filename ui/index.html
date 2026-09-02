@@ -310,6 +310,58 @@ tr.total td:first-child { font-family: var(--sans) !important; font-weight: 600;
 .emtr .v { font-family: var(--mono); font-size: 21px; font-weight: 600; }
 .emtr .exp { font-size: 11.5px; color: var(--ink-faint); flex-basis: 100%; line-height: 1.45; }
 
+/* L3 — the behavioural band. Deliberately quieter than the mechanical figure:
+   it is a range AROUND that number, never a replacement for it. */
+.band {
+  margin: 22px 0 6px; padding: 16px 18px;
+  background: var(--paper-deep); border-left: 3px solid var(--ink-faint);
+}
+.band .top {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.band .k {
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft);
+}
+.band .grade {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em;
+  padding: 2px 7px; border: 1px solid var(--rule);
+}
+.band .grade.in-support { color: var(--vert); border-color: var(--vert); }
+.band .grade.illustrative { color: var(--rouge); border-color: var(--rouge); }
+.band .grade.no-evidence { color: var(--ink-faint); }
+.band .scale { position: relative; height: 34px; margin: 4px 0 10px; }
+.band .axis {
+  position: absolute; top: 16px; left: 0; right: 0; height: 1px;
+  background: var(--rule);
+}
+.band .span {
+  position: absolute; top: 11px; height: 11px;
+  background: var(--bleu); opacity: .28;
+}
+.band .tick { position: absolute; top: 8px; width: 1px; height: 17px; background: var(--bleu); }
+.band .mech { position: absolute; top: 4px; width: 2px; height: 25px; background: var(--ink); }
+.band .mechlab, .band .p50lab {
+  position: absolute; top: 0; font-family: var(--mono); font-size: 10px;
+  color: var(--ink-soft); transform: translateX(-50%); white-space: nowrap;
+}
+.band .nums {
+  font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums;
+}
+.band .why { font-size: 12px; color: var(--ink-soft); line-height: 1.5; margin: 8px 0 0; }
+.band details { margin-top: 10px; }
+.band summary { font-size: 12px; cursor: pointer; color: var(--ink-soft); }
+.band .chan {
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 14px;
+  padding: 8px 0; border-top: 1px solid var(--rule-soft); font-size: 12px;
+}
+.band .chan .msg { grid-column: 1 / -1; color: var(--ink-faint); font-size: 11.5px; }
+.band .chan .amt { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.band .off {
+  font-family: var(--mono); font-size: 12.5px; margin-top: 2px;
+}
+
 /* L3 / L4 placeholders — the layers that do not exist yet, drawn as absent */
 .layers { margin-top: 26px; border-top: 1px solid var(--rule); }
 .layer {
@@ -689,7 +741,7 @@ footer code { font-family: var(--mono); font-size: 11px; }
       <div class="layers">
         <div class="layer">
           <span class="name"><b>L3</b>réponse comportementale</span>
-          <span class="bar"></span><span class="soon">à venir · phase 3</span>
+          <span class="bar"></span><span class="soon">onglet Population</span>
         </div>
         <div class="layer">
           <span class="name"><b>L4</b>bouclage macroéconomique</span>
@@ -722,6 +774,12 @@ footer code { font-family: var(--mono); font-size: 11px; }
         </p>
         <div class="action" style="position:static; padding:0 0 20px">
           <button class="go" id="goPop">Chiffrer sur la population</button>
+          <label class="lbl" style="display:flex;align-items:center;gap:7px;
+                 margin-top:10px;font-size:11.5px;text-transform:none;letter-spacing:0">
+            <input type="checkbox" id="wantBand" style="width:auto;margin:0">
+            Ajouter la bande comportementale (L3) — deux passages de plus, comptez
+            une minute et demie
+          </label>
         </div>
 
         <div id="popOut"></div>
@@ -1293,13 +1351,15 @@ async function runPopulation() {
   $("goPop").textContent = "Chiffrage en cours…";
   $("popIntro").hidden = true;
   $("popOut").innerHTML = `<div class="state">
-    <p class="loading-copy">20 000 ménages, cascade complète des prestations · comptez ~30 s</p>
+    <p class="loading-copy">20 000 ménages, cascade complète des prestations · comptez
+      ${$("wantBand").checked ? "~1 min 30 avec la bande L3" : "~30 s"}</p>
     ${'<div class="skel"></div>'.repeat(9)}</div>`;
   try {
     const response = await fetch(`${API}/population/simulate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reform: spec, year: 2024, tier: "quick" }),
+      body: JSON.stringify({ reform: spec, year: 2024, tier: "quick",
+                             behavioural: $("wantBand").checked }),
     });
     const data = await response.json();
     if (!response.ok) {
@@ -1325,6 +1385,71 @@ function showPopError(title, messages) {
 impots population build</code></div>`;
 }
 
+/* The band, drawn under the mechanical figure and never over it. The black tick is
+   the mechanical number; the blue span is the range a behavioural response would put
+   around it. A reader who looks only at the headline is not misled. */
+function renderBand(data) {
+  const b = data.behavioural;
+  if (!b) return "";
+  const bn = (x) => (x / 1e9).toFixed(2).replace(".", ",");
+  const grade = { "in-support": "dans le champ des preuves",
+                  "illustrative": "extrapolation",
+                  "no-evidence": "aucune preuve" }[b.grade] || b.grade;
+
+  let scale = "";
+  if (b.band) {
+    const lo = Math.min(b.band.p10, b.mechanical);
+    const hi = Math.max(b.band.p90, b.mechanical);
+    const pad = (hi - lo) * 0.12 || 1;
+    const at = (x) => ((x - lo + pad) / (hi - lo + 2 * pad)) * 100;
+    scale = `<div class="scale">
+        <i class="axis"></i>
+        <i class="span" style="left:${at(b.band.p10)}%;width:${at(b.band.p90) - at(b.band.p10)}%"></i>
+        <i class="tick" style="left:${at(b.band.p10)}%"></i>
+        <i class="tick" style="left:${at(b.band.p90)}%"></i>
+        <i class="tick" style="left:${at(b.band.p50)}%;height:19px;top:7px"></i>
+        <i class="mech" style="left:${at(b.mechanical)}%"></i>
+        <span class="mechlab" style="left:${at(b.mechanical)}%">mécanique</span>
+      </div>
+      <div class="nums">${bn(b.band.p10)} — <b>${bn(b.band.p50)}</b> — ${bn(b.band.p90)} Md €
+        <span style="color:var(--ink-faint)">(p10 · médiane · p90)</span></div>`;
+    if (b.mechanical) {
+      const offset = (b.band.p50 - b.mechanical) / b.mechanical;
+      scale += `<div class="off">La réponse comportementale ${offset < 0 ? "rend" : "ajoute"}
+        ${Math.abs(offset * 100).toFixed(0)} % du rendement mécanique.</div>`;
+    }
+  }
+
+  const channels = b.channels.map((c) => `<div class="chan">
+      <span>${escapeHtml(c.label)}</span>
+      <span class="amt">${c.central === null || c.central === undefined ? "—"
+        : bn(c.central) + " Md €"}</span>
+      <span class="msg">${escapeHtml(c.message)}</span>
+    </div>`).join("");
+
+  return `<div class="band">
+      <div class="top">
+        <span class="k">Bande comportementale (L3)</span>
+        <span class="grade ${b.grade}">${grade}</span>
+      </div>
+      ${scale}
+      <p class="why">${escapeHtml(b.grade_reason)}</p>
+      ${b.notes.map((n) => `<p class="why">${escapeHtml(n)}</p>`).join("")}
+      <details>
+        <summary>Par canal, et sur quoi la bande repose</summary>
+        ${channels}
+        <p class="why">Tirage de Monte-Carlo à graine fixe (${b.seed}) sur
+          ${b.draws.toLocaleString("fr-FR")} réplications ; taux marginaux calculés sur
+          ${b.emtr_households ? b.emtr_households.toLocaleString("fr-FR") : "—"} ménages.
+          Élasticités chargées : ${escapeHtml(b.parameters_vintage)}.</p>
+        <p class="why"><b>Le revenu du capital n'a aucun canal ici</b>, alors que
+          l'élasticité la mieux identifiée de France le concerne : la population de
+          synthèse ne porte aucun revenu du capital tant que l'ERFS n'est pas
+          disponible. Rien n'est affirmé sur ces réformes — c'est un trou déclaré.</p>
+      </details>
+    </div>`;
+}
+
 function renderPopulation(data) {
   const cost = data.reform_cost ?? 0;
   const raises = cost < 0;
@@ -1334,7 +1459,7 @@ function renderPopulation(data) {
       <span class="v ${raises ? "up" : "down"}">${bn(cost)} Md €</span>
       <span class="sub">Effet au premier jour sur le revenu disponible des ménages, à
         comportement inchangé. ${escapeHtml(data.meta.note)}</span>
-    </div>`;
+    </div>` + renderBand(data);
 
   const rows = [["ir", "Impôt sur le revenu"], ["csg_imposable", "CSG imposable"],
                 ["af", "Allocations familiales"], ["ppa", "Prime d'activité"],

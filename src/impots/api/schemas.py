@@ -14,7 +14,7 @@ reads as "pays 200 EUR more tax".
 from __future__ import annotations
 
 from itertools import pairwise
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -333,12 +333,62 @@ PopulationTier = Literal["quick"]
 QUICK_TIER_HOUSEHOLDS = 20_000
 
 
+class BehaviouralBand(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    p10: float
+    p50: float
+    p90: float
+    unit: str = "EUR"
+
+
+class BehaviouralChannel(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    key: str
+    label: str
+    applies: bool
+    central: float | None = None
+    unit: str = "EUR"
+    message: str = ""
+    grade: str | None = None
+    diagnostics: dict[str, Any] = Field(default_factory=dict)
+
+
+class Behavioural(BaseModel):
+    """The band around a mechanical figure (L3).
+
+    `mechanical` is repeated here on purpose: a client reading this block must be
+    able to see that the band is a range *around* the mechanical number and never a
+    replacement for it.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    mechanical: float
+    band: BehaviouralBand | None = None
+    grade: str
+    grade_reason: str = ""
+    channels: list[BehaviouralChannel] = Field(default_factory=list)
+    seed: int
+    draws: int
+    parameters_vintage: str = ""
+    notes: list[str] = Field(default_factory=list)
+    emtr_households: int | None = None
+    """How many households the marginal rates were computed on, when a channel needed
+    them. Stated because it is a subsample and the band inherits its noise."""
+
+
 class PopulationSimulateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     reform: ReformSpec
     year: Annotated[int, Field(ge=MIN_YEAR, le=MAX_YEAR)] = 2024
     tier: PopulationTier = "quick"
+    behavioural: bool = False
+    """Opt-in, because the marginal rates a behavioural band needs are two more
+    full-tier runs. Off by default so the mechanical answer stays fast, and the
+    response says how many households the rates were computed on when it is on."""
 
     @model_validator(mode="after")
     def _check_reform(self) -> PopulationSimulateRequest:
@@ -401,6 +451,7 @@ class PopulationResponse(BaseModel):
     reform_cost: float | None = None
     deciles: list[DecileRow] = Field(default_factory=list)
     reconciliation: list[ReconciliationLine] = Field(default_factory=list)
+    behavioural: Behavioural | None = None
     timings: dict[str, float] = Field(default_factory=dict)
 
 
@@ -479,4 +530,5 @@ class FirmResponse(BaseModel):
     reform_cost: float | None = None
     cells: list[FirmCell] = Field(default_factory=list)
     by_size: list[FirmSizeRow] = Field(default_factory=list)
+    behavioural: Behavioural | None = None
     timings: dict[str, float] = Field(default_factory=dict)
