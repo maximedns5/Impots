@@ -32,6 +32,7 @@ A figure used to **calibrate** is *spent*. The model was tuned to hit it, so hit
 | IS — Activités spécialisées et de soutien | 10.8 bn € | 9.2 bn € | +17.7% | ±20% | within tolerance | DGFiP |
 | IS — Activités immobilières | 1.1 bn € | 3.9 bn € | -70.9% | ±20% | OUTSIDE tolerance | DGFiP |
 | IS — Information et communication | 2.8 bn € | 3.5 bn € | -21.4% | ±20% | OUTSIDE tolerance | DGFiP |
+| IS — Industrie et activités immobilières | 22.2 bn € | 19.1 bn € | +16.2% | ±20% | within tolerance | DGFiP |
 
 ### What each line means
 
@@ -51,6 +52,7 @@ A figure used to **calibrate** is *spent*. The model was tuned to hit it, so hit
 * **IS — Activités spécialisées et de soutien** — NAF M+N. One of the module's few genuinely free lines: the sector shape is Ésane's and the calibration is national and by size class, so nothing was fitted to this.
 * **IS — Activités immobilières** — NAF L. One of the module's few genuinely free lines: the sector shape is Ésane's and the calibration is national and by size class, so nothing was fitted to this.
 * **IS — Information et communication** — NAF J. One of the module's few genuinely free lines: the sector shape is Ésane's and the calibration is national and by size class, so nothing was fitted to this.
+* **IS — Industrie et activités immobilières** — Pooled because Ésane and DGFiP draw the boundary between these two differently: Ésane classifies profiled enterprises and consolidates a group's property arm into industry, DGFiP classifies legal units and taxes it in real estate. Two measurements say so rather than one hypothesis — Ésane's firm count over DGFiP's is 1.90-2.22 in every sector but immobilier, where it is 0.48, and 88 % of the industrie overshoot sits in ETI and GE. The unpooled lines stay in the table and stay red.
 * **Taux effectif moyen (moyenne par entreprise)** — Context, because it is not the same statistic as the published one and never was. This averages a *rate per firm* over all firms, so France's two and a half million micro-enterprises dominate it; DGFiP's figure is profit-weighted, so a few thousand large firms dominate that. The like-for-like comparison is the aggregate rate line above, which lands inside tolerance. Printed rather than dropped because it is the number a reader would otherwise compute themselves from the by-size table.
 * **Écart de taux effectif GE − PME** — Context only, and it is expected to have the WRONG SIGN. INSEE's implicit rate falls with size because its denominator is ENE over all firms including loss-makers; the model's rises with size because C3S and CVAE hit turnover and value added whether or not there is a profit. The two measure different objects, and picking whichever one the model resembles would be calibrating to a validation line.
 

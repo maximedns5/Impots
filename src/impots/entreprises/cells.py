@@ -104,6 +104,10 @@ P_LOSS_SOURCE = (
 #: Ésane reports in millions of euros.
 MILLIONS = 1e6
 
+#: The DGFiP row carrying the IS-liable firm count, matched in full. Whitespace is
+#: normalised before comparison because the published cell has a trailing space.
+IS_FIRM_COUNT_LABEL = "Nombre d'entreprises à l'IS"
+
 
 class CellBuildError(RuntimeError):
     """The primary files cannot produce a cell table as they stand."""
@@ -151,8 +155,18 @@ def _sheet(path: Path, name: str) -> Any:
         raise CellBuildError(
             "openpyxl is required to read the primary spreadsheets: pip install openpyxl"
         ) from error
+    if path.parent == RAW:
+        # D-028: a file with no recorded source cannot back a published figure. Only
+        # enforced for the real raw tree, so tests may build their own workbooks.
+        from impots.population.ingest import UnmanifestedInput, require_sourced
+
+        try:
+            require_sourced(path.name)
+        except UnmanifestedInput as error:
+            raise CellBuildError(str(error)) from error
     if not path.exists():
-        raise CellBuildError(f"{path} not found — run `impots entreprises fetch` first")
+        raise CellBuildError(f"{path} not found — download it and record it with "
+                             "`impots population manifest`")
     workbook = openpyxl.load_workbook(path, data_only=True)
     if name not in workbook.sheetnames:
         raise CellBuildError(f"{path.name} has no sheet {name!r}; got {workbook.sheetnames}")
@@ -304,13 +318,15 @@ def read_dgfip(path: Path) -> dict[str, Any]:
     graph = _sheet(path, "Graphique 1")
     is_firms = None
     for row in range(1, graph.max_row + 1):
-        label = str(graph.cell(row, 2).value or "").replace("\u2019", "'")
-        # NOT `"IS" in label.upper()`: the word ENTREPRISES contains IS, so that test
-        # also passes for the "entreprises à l'IR" row sitting directly underneath,
-        # and the right row was being picked by publication order alone. A reordered
-        # sheet would have silently substituted the 4.7 M income-tax count for the
-        # 2.7 M corporation-tax one and shifted every level in this table with it.
-        if label.startswith("Nombre d'entreprises à l") and "l'IS" in label:
+        label = " ".join(str(graph.cell(row, 2).value or "").replace("\u2019", "'").split())
+        # WHOLE-LABEL EQUALITY, deliberately. Substring tests against a French display
+        # string are banned in ingest and this row is why: `"IS" in label.upper()` is
+        # also true of "Nombre d'entreprises à l'IR" directly beneath, because
+        # ENTREPRISES contains IS. The right row was being selected by publication
+        # order alone, and a reordered sheet would have substituted the 4.7 M
+        # income-tax count for the 2.7 M corporation-tax one, moving every level in
+        # this table with it. Even `"l'IS" in label` is the wrong shape of test.
+        if label == IS_FIRM_COUNT_LABEL:
             values = [graph.cell(row, c).value for c in range(3, graph.max_column + 1)]
             numbers = [v for v in values if isinstance(v, (int, float))]
             if numbers:

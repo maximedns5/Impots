@@ -179,6 +179,19 @@ def build_lines(
                 f"IS — {label}", simulated, TOLERANCE["is"], note, source="DGFiP",
             ))
 
+    if agg.cells:
+        by_section = {}
+        for cell in agg.cells:
+            by_section[cell.naf_section] = by_section.get(cell.naf_section, 0.0) + cell.is_brut
+        for label, (published, sections, why) in margins.POOLED_SECTORS.items():
+            simulated = sum(by_section.get(section, 0.0) for section in sections)
+            if not simulated:
+                continue
+            lines.append(Line.from_figure(
+                margins.is_sector_figure(label, published),
+                f"IS — {label}", simulated, TOLERANCE["is"], why, source="DGFiP",
+            ))
+
     if agg.by_size:
         by_size = {row.taille: row for row in agg.by_size}
         weighted = sum(row.mean_effective_rate * row.n_firms for row in agg.by_size)

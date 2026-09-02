@@ -164,29 +164,41 @@ def cmd_manifest(_: argparse.Namespace) -> int:
             "Dictionnaire des variables et modalités de l'EEC 2024",
         ),
     }
+    from impots.population.ingest import QUARANTINE
+
     known = {**known, **KNOWN_SOURCES}
-    entries = []
-    unnamed = 0
-    for file in sorted(RAW.iterdir()):
-        if not file.is_file() or file.name == "MANIFEST.json":
-            continue
-        if file.name in known:
-            url, description = known[file.name]
-        else:
-            unnamed += 1
-            url, description = None, (
-                "URL not recorded. The checksum proves this file has not changed; it "
-                "does not prove where it came from, so nothing computed from it is "
-                "reproducible by a third party (D-026)."
-            )
-        entries.append({"filename": file.name, "url": url,
+    QUARANTINE.mkdir(parents=True, exist_ok=True)
+    candidates = [f for f in RAW.iterdir() if f.is_file() and f.name != "MANIFEST.json"]
+    candidates += [f for f in QUARANTINE.iterdir() if f.is_file()]
+
+    entries, quarantined, released = [], 0, 0
+    for file in sorted(candidates, key=lambda f: f.name):
+        sourced = file.name in known
+        # A sourced file belongs in data/raw/; an unsourced one belongs out of the way,
+        # so that its presence in the tree can never be mistaken for provenance (D-028).
+        # Adding a URL to KNOWN_SOURCES releases it on the next run.
+        target = (RAW if sourced else QUARANTINE) / file.name
+        if file != target:
+            file.rename(target)
+            released += sourced
+            quarantined += not sourced
+        url, description = known.get(file.name, (None, (
+            "Source URL not recorded, so nothing computed from this file is "
+            "reproducible by a third party. Quarantined under data/raw/_unsourced/ "
+            "(D-028): the checksum still tracks it, and pipeline code refuses to open "
+            "it. Re-source it if something needs it."
+        )))
+        entries.append({"filename": file.name, "path": target, "url": url,
+                        "quarantined": not sourced,
                         "licence": "Licence Ouverte / Etalab 2.0" if url else "unknown",
                         "description": description})
     path = write_manifest(entries)
-    print(f"wrote {path} with {len(entries)} inputs")
-    if unnamed:
-        print(f"  {unnamed} carry no source URL and are not reproducible by a third "
-              f"party — run with a URL added to KNOWN_SOURCES to fix one")
+    sourced_count = sum(1 for e in entries if e["url"])
+    print(f"wrote {path} with {len(entries)} inputs, {sourced_count} sourced")
+    if quarantined:
+        print(f"  moved {quarantined} unsourced file(s) to data/raw/_unsourced/")
+    if released:
+        print(f"  released {released} newly-sourced file(s) back to data/raw/")
     return 0
 
 

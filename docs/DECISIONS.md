@@ -1057,3 +1057,74 @@ value-added quartiles, which fit a lognormal σ directly. The fitted values run 
 to 3.14 against the single assumed 1.4 — wrong in both directions at once. It
 mattered most where it was least visible: too fat a tail invents firms above the
 CEBGE's 1.5 bn threshold.
+
+## D-028 — Provenance is a property of the tree, not a fact about it
+Date: 2026-09-02 · Status: accepted · Evidence: reviewer audit, 2026-09-02 addendum
+
+The reviewer verified directly that none of the 73 unsourced files in `data/raw/`
+was reachable from any code under `src/`. That was true. It was true *by audit* —
+a statement about one afternoon — and this decision makes it true by construction.
+
+**Two mechanisms.** `require_sourced()` refuses to open a raw input whose manifest
+entry has no URL, and it is called from both readers that touch published files.
+And every unsourced file moves to `data/raw/_unsourced/`, keeping its manifest
+entry marked `quarantined`, so that its presence in the tree can never be read as
+provenance. Adding a URL to `KNOWN_SOURCES` releases it on the next `impots
+population manifest`. 73 files moved; 12 remain sourced, which is every file the
+pipeline actually opens.
+
+The distinction being enforced: a checksum proves a file has not *changed*; only a
+URL proves where it came from. A figure computed from a file with the first and not
+the second is reproducible by nobody.
+
+Tests carry both halves — the assertion itself, and a static check that every data
+filename named in an ingest module resolves to a manifest entry with a URL and no
+quarantine flag.
+
+## D-029 — Two standing rules, promoted from lessons
+Date: 2026-09-02 · Status: accepted
+
+**Mechanical before economic.** A residual gets a mechanical explanation attempt,
+and the *failure* of that attempt recorded, before any economic hypothesis is
+written down. Adopted because it was violated to visible cost: D-027's first draft
+offered a champ story for immobilier and the régime mère-fille for industrie, and
+the real cause of the two worst lines was a `max(net, 0)` that zeroed every cell
+with a negative aggregate. The rule binds reviewers too.
+
+**Codes, not labels.** No substring matching against a French display string
+anywhere in ingest. `"IS" in label.upper()` is true of *"Nombre d'entreprises à
+l'IR"*, because ENTREPRISES contains IS; the corporation-tax row was being selected
+by publication order alone, and a reordered sheet would have swapped a 4.7 M count
+for a 2.7 M one and moved every level in the firm table with it. Logic keys on a
+code, or compares a whole label. A test walks the ingest modules' ASTs and fails on
+any `<string> in <label-ish name>` — and it caught the first repair, which had
+replaced the vacuous test with a narrower substring rather than with equality.
+
+## D-030 — The two red sector lines are one perimeter effect, measured
+Date: 2026-09-02 · Status: accepted · Evidence: the reviewer's two diagnostics, run
+
+D-027 left industrie at +38.3 % and activités immobilières at −70.9 % red and
+deliberately unexplained. Under the mechanical-before-economic rule the reviewer
+proposed two cheap checks. Both were run and both point the same way.
+
+**Check 1 — a quantity the model never touches.** Ésane's firm count divided by
+DGFiP's runs at 1.90, 2.00, 2.12, 2.17 and 2.22 across five sectors — that ratio is
+just the IS-liability rate — and at **0.48** for activités immobilières. A fourfold
+outlier against an otherwise flat pattern, on counts the model does not use.
+
+**Check 2 — where the residual sits.** 88 % of the industrie overshoot is in ETI
+and GE (18.6 bn of 21.1 bn), which is the signature of group structure rather than
+of base construction.
+
+**The mechanism both indicate.** Ésane classifies *profiled enterprises*, so an
+industrial group's property arm is consolidated into industry; DGFiP classifies
+*legal units* and taxes that arm in real estate. The two residuals carry opposite
+signs because they are the same activity, counted on either side of a boundary the
+two sources draw differently. **Pooled, the pair lands at +16.2 %** — inside the
+±20 % gate.
+
+The report now carries all three lines: the two unpooled ones stay red, because the
+model's sector split really is wrong at that boundary, and the pooled one says the
+mass is in the right place. Neither is dropped. What is *not* claimed is that this
+explains the residual completely — 16.2 % is inside the gate, not at zero, and the
+information-et-communication line remains at −21.4 % with no diagnostic run.

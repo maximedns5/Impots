@@ -283,6 +283,36 @@ IS_BRUT_BY_SECTOR: dict[str, tuple[float, tuple[str, ...]]] = {
     "Information et communication": (3.529089404e9, ("J",)),
 }
 
+#: Sector groupings whose boundary the two sources draw differently, pooled so the
+#: boundary stops mattering.
+#:
+#: Measured, not hypothesised (the mechanical-before-economic rule). Ésane's firm
+#: count divided by DGFiP's runs at 1.90-2.22 in every sector — the IS-liability rate
+#: — **except activités immobilières, at 0.48**, a fourfold outlier on a quantity this
+#: model never touches. And 88 % of the industrie overshoot sits in ETI and GE. Both
+#: point at one mechanism: Ésane classifies *profiled enterprises*, so an industrial
+#: group's property arm is consolidated into industrie, while DGFiP taxes it as a
+#: *legal unit* in immobilier. The two residuals have opposite signs because they are
+#: the same activity counted on either side of a boundary the sources draw
+#: differently.
+#:
+#: Individually the two lines miss by +38 % and -71 %. Pooled they land at +16 %,
+#: inside the gate. Both are reported: the pair says the model's sector split is
+#: wrong at that boundary, the pooled line says the mass is in the right place.
+POOLED_SECTORS: dict[str, tuple[float, tuple[str, ...], str]] = {
+    "Industrie et activités immobilières": (
+        15.229616141e9 + 3.859014398e9,
+        ("B", "C", "D", "E", "L"),
+        "Pooled because Ésane and DGFiP draw the boundary between these two "
+        "differently: Ésane classifies profiled enterprises and consolidates a group's "
+        "property arm into industry, DGFiP classifies legal units and taxes it in real "
+        "estate. Two measurements say so rather than one hypothesis — Ésane's firm "
+        "count over DGFiP's is 1.90-2.22 in every sector but immobilier, where it is "
+        "0.48, and 88 % of the industrie overshoot sits in ETI and GE. The unpooled "
+        "lines stay in the table and stay red.",
+    ),
+}
+
 IS_BY_SECTOR_SOURCE = "DGFiP Statistiques n° 39, septembre 2025, tableau 1 (millésime 2024)"
 
 

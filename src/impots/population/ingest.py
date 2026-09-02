@@ -34,12 +34,15 @@ class UnmanifestedInput(RuntimeError):
 @dataclass(frozen=True)
 class ManifestEntry:
     filename: str
-    url: str
+    url: str | None
     sha256: str
     bytes: int
     downloaded: str
     licence: str
     description: str
+    quarantined: bool = False
+    """True when the file has no recorded source and has been moved out of the way
+    (D-028). Its checksum is still tracked; it just cannot back a published figure."""
 
 
 def sha256_of(path: Path) -> str:
@@ -60,6 +63,36 @@ def load_manifest() -> dict[str, ManifestEntry]:
     return {name: ManifestEntry(filename=name, **entry) for name, entry in raw["files"].items()}
 
 
+#: Where a raw file with no recorded source is kept. Its manifest entry stays — the
+#: checksum still proves the file has not changed — but its presence in the tree can
+#: no longer be mistaken for provenance, which is the confusion D-028 closes.
+QUARANTINE = RAW / "_unsourced"
+
+
+def require_sourced(filename: str) -> None:
+    """Refuse to open a raw input that has no recorded source (D-028).
+
+    A checksum without a URL proves a file has not changed; it does not prove where
+    it came from, so nothing computed from it is reproducible by anyone else. An
+    audit found this true of the pipeline already — no unsourced file was reachable
+    from `src/`. This makes it true by construction instead, which is the difference
+    between a fact and a property.
+    """
+    manifest = load_manifest()
+    entry = manifest.get(filename)
+    if entry is None:
+        raise UnmanifestedInput(
+            f"{filename} is not in {MANIFEST_PATH.name}; add it with "
+            "`impots population manifest` so the vintage it came from is on record."
+        )
+    if not entry.url:
+        raise UnmanifestedInput(
+            f"{filename} has no source URL in {MANIFEST_PATH.name}, so nothing computed "
+            "from it is reproducible by a third party. Record its canonical URL in "
+            "KNOWN_SOURCES and re-run `impots population manifest` (D-028)."
+        )
+
+
 def verified_path(filename: str) -> Path:
     """The path to a raw input, after checking it against the manifest.
 
@@ -73,6 +106,7 @@ def verified_path(filename: str) -> Path:
             f"{filename} is not in {MANIFEST_PATH.name}; add it with `impots population manifest` "
             "so the vintage it came from is on record."
         )
+    require_sourced(filename)
     entry = manifest[filename]
     path = RAW / filename
     if not path.exists():
@@ -92,9 +126,10 @@ def write_manifest(entries: list[dict[str, Any]]) -> Path:
     """(Re)write the manifest from files present in data/raw/."""
     files: dict[str, Any] = {}
     for entry in entries:
-        path = RAW / entry["filename"]
+        path = Path(entry.get("path") or (RAW / entry["filename"]))
         files[entry["filename"]] = {
             "url": entry.get("url"),
+            "quarantined": entry.get("quarantined", False),
             "sha256": sha256_of(path),
             "bytes": path.stat().st_size,
             "downloaded": entry.get("downloaded", date.today().isoformat()),
