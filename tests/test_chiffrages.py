@@ -125,15 +125,28 @@ def test_the_known_misses_are_the_size_they_are_documented_to_be() -> None:
         assert not case.passes(run_case(case)), f"{key}: a documented miss that no longer misses"
 
 
-def test_a_one_sided_case_fails_when_it_exceeds_the_published_figure() -> None:
-    """The bound has to be read in MAGNITUDE. For a cost the published figure is
-    negative, so a simulated value further below it is a larger cost — an overshoot —
-    while the signed residual reads negative and looks like an undershoot. Written on
-    the signed residual, a one-sided test passes exactly the cases it should fail, and
-    the barème indexation case was the one that exposed it."""
-    case = next(c for c in CASES if c.bound == "lower")
+@pytest.mark.parametrize(
+    "case", [c for c in CASES if c.bound == "lower"] or [None], ids=lambda c: c.key if c else "none"
+)
+def test_a_one_sided_case_fails_when_it_exceeds_the_published_figure(
+    case: chiffrages.Case | None,
+) -> None:
+    """Every one-sided case, not just the first. The bound has to be read in
+    MAGNITUDE: for a cost the published figure is negative, so a simulated value
+    further below it is a larger cost — an overshoot — while the signed residual reads
+    negative and looks like an undershoot. Written on the signed residual, a one-sided
+    test passes exactly the cases it should fail, which is what the barème-indexation
+    case did until it was measured."""
+    if case is None:
+        pytest.skip("no one-sided cases in the suite")
     published = case.published.signed
-    # Mirror-encoded, so the simulator reports the opposite sign to the article.
-    assert not case.passes(-published * 1.10), "overshooting by 10 % must fail"
-    assert case.passes(-published * 0.90), "undershooting inside tolerance must pass"
-    assert not case.passes(-published * 0.10), "undershooting by 90 % must also fail"
+    sign = -1.0 if case.mirror else 1.0
+    assert not case.passes(sign * published * (1.0 + 0.5 * case.tolerance)), (
+        f"{case.key}: exceeding the published figure must fail a lower bound"
+    )
+    assert case.passes(sign * published * (1.0 - 0.5 * case.tolerance)), (
+        f"{case.key}: undershooting inside the tolerance must pass"
+    )
+    assert not case.passes(sign * published * (1.0 - 2.0 * case.tolerance)), (
+        f"{case.key}: undershooting past the tolerance must fail"
+    )

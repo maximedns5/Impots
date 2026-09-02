@@ -1312,3 +1312,49 @@ The green case, the CEBGE, is recorded as **not independent evidence**: zeroing 
 rates reproduces a reconciliation line the project already grades. It is kept as an
 end-to-end check that knob, tree and runner agree, and labelled so nobody counts it
 twice.
+
+## D-036 — Post-mortems on the five dead chiffrage cases
+Date: 2026-09-02 · Status: accepted · Required by the Phase 3 verdict
+
+Eight historical articles were located for the backtest suite and five died under
+source-checking. Why each died is data — about how verifiable the official record
+actually is, and about where this simulator's coverage stops.
+
+**1. LFI 2023 barème indexation (6,2 Md€) — wrong basis, and a fabricated locator.**
+The figure is a **budget-year cash** number, not an assiette one, so the
+prélèvement-à-la-source grids revalorised on 1 January 2023 are inside it — and the
+case's own caveat singled that component out as harmless. Separately, its source
+locator named a section heading that does not exist in the cited document, carried
+under `confirmed_against_primary: true`. *Class: the published figure is not the
+object it appears to be.*
+
+**2. PLF 2025 indexation (3,7 Md€) — costed on a text that never became law.**
+The PLF indexed at 2,0 %; the enacted LF 2025 indexed at 1,8 %. Those values governed
+nobody's tax. The suite grades historical **law**, and a costing of a superseded draft
+grades nothing. Its base also straddled two revenue years with no published
+decomposition. *Class: draft costing mistaken for enacted law.*
+
+**3. IS rate 28 → 25 % (4,1 Md€) — the spec did not express the article.**
+The 4,1 Md€ is measured against the **LFI 2017 trajectory**, not against a flat 28 %,
+and that counterfactual also carried the PME turnover-ceiling rise the article
+suppressed — a second instrument the case ignored. *Class: a costing whose
+counterfactual is another law.*
+
+**4. CVAE trajectory steps — inexpressible at their own years.** Rejected during
+location: the firm module could not price any year before 2024 (fixed since, floor now
+2022), and the steps interact with the dégrèvement and the taxe additionnelle CCI,
+which the knobs do not carry. *Class: coverage.*
+
+**5. Décote revaluations — no separately published figure.** Each rides inside a
+barème-indexation costing and is never priced alone. *Class: the record does not
+isolate the instrument.*
+
+**Three of the five are failures of the official record's verifiability, not of this
+project** — a figure that is not what it looks like, a draft mistaken for law, a
+counterfactual that is itself a law. That is worth knowing about the material any
+backtest suite in this domain has to work with.
+
+**Standing rule, from the verdict.** *Every time a knob is added to a ReformSpec, the
+expressible historical articles are re-swept.* Coverage is what killed cases 3, 4 and
+5, so coverage growing is the event that makes new cases possible. The employer-
+contribution knobs are the first trigger.

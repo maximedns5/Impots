@@ -134,3 +134,33 @@ by hand inside the open-data branch is roughly a month of work that ERFS deletes
 The one exception is anything that survives the migration: the guards, the
 reconciliation machinery, the take-up bridge, and raking if it is added — those
 are branch-independent and keep their value.
+
+---
+
+## §6 addendum — the migration's acceptance test (2026-09-02)
+
+**The barème-indexation backtest re-runs before anything else on the ERFS
+population.** `tests/chiffrages/ir_bareme_indexation_lfi2024.yaml`, and it is the
+acceptance test for this migration rather than one check among many.
+
+Why that case and not the reconciliation table. It currently misses by **+10 % in
+magnitude**: the model produces a larger effect than the state's published costing
+while moving a strict *subset* of the instruments that costing covers. Vintage drift
+is a few percent, and the missing base — capital income, indépendants,
+réductions/crédits — pushes the other way. What is left points at the synthetic
+income distribution carrying more mass in the bracket-crossing region than the real
+one, which is D-015 measured against an external figure for the first time instead of
+declared.
+
+Real observed incomes are exactly the thing that should fix it. So:
+
+* **Expected**: the overshoot collapses. Not necessarily to zero — the missing
+  instruments still bias the simulated figure *down*, so the case should end up
+  inside its one-sided band rather than at parity.
+* **If it does not collapse**, the migration has a problem that the reconciliation
+  table would take much longer to surface, because a distributional error that
+  survives real incomes is not a distributional error — it is a wiring one.
+* Either way the result is recorded before any other Phase 1C work proceeds.
+
+The suite's other two cases are firm-side and unaffected by this migration; they are
+the control group.
