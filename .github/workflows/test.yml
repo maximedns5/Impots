@@ -66,8 +66,17 @@ jobs:
       # is exercised locally.
       # GitHub runners are slower and noisier than a laptop; the timing assertions
       # exist to catch an accidental benefits cascade, not to benchmark CI.
+      # `-m ""` overrides the default gate in pyproject, which excludes the tests
+      # that need a full population pass. CI is where minutes are cheap, so it runs
+      # everything it can.
+      #
+      # Worth stating plainly: those tests currently SKIP here anyway, because CI has
+      # no built population — the EEC file is 11.7 MB and downloading it is not CI's
+      # job. So the full pass genuinely runs only on a machine that has the data.
+      # `-m ""` is what makes CI pick them up the day that changes, rather than
+      # silently continuing to skip a suite everyone believes is running.
       - name: Tests
-        run: pytest -q
+        run: pytest -q -m ""
         env:
           IMPOTS_SKIP_PERF: "1"
 

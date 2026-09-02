@@ -237,6 +237,20 @@ the smallest complete demonstration that the reform machinery does what it says.
   entries and exits created by its second-year threshold — where the 2026 yield
   actually moves — are not represented (D-022).
 
+### Running the tests
+
+```
+pytest                 # the gate: everything but the full-population tests, ~1 min 45
+pytest -m ""           # everything, ~20 min — run it before pushing
+pytest -m slow         # only the population runs
+```
+
+The split exists because local test pain is how green suites rot. The slow tests are
+marked, never weakened: each runs a 20 000-household pass through the full benefits
+cascade and takes about a minute. They skip on a checkout without a built population,
+which is why CI passes them over today — `-m ""` there is what picks them up the day
+the data is available.
+
 ## Non-goals
 
 CGE. DSGE/HANK. Agent-based macro. Dynamic pension microsimulation. A third

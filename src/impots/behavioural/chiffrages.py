@@ -78,6 +78,14 @@ class Case:
     tolerance_reason: str
     description: str = ""
     caveat: str = ""
+    tier: Literal["light", "full"] = "full"
+    """Which engine tier this case needs.
+
+    `full` by default, because most costs run through `revenu_disponible`, which the
+    light tier does not compute at all — a light run of the barème indexation returns
+    zero, not an approximation. A case whose cost is entirely employer-side reads the
+    same either way and runs three times faster: measured, the 2025 allègements step
+    gives +4.146 bn on both tiers in 19 s against 63 s."""
     bound: Literal["two-sided", "lower"] = "two-sided"
     """`lower` when the simulator can express only PART of what the published figure
     costs, so the honest test is an inequality.
@@ -165,6 +173,7 @@ def _case(path: Path, raw: dict[str, Any]) -> Case:
         tolerance_reason=raw.get("tolerance_reason", ""),
         description=raw.get("description", ""),
         caveat=raw.get("caveat", ""),
+        tier=raw.get("tier", "full"),
         bound=raw.get("bound", "two-sided"),
         mirror=bool(raw.get("mirror", False)),
         expect_red=bool(raw.get("expect_red", False)),

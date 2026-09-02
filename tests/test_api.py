@@ -365,11 +365,20 @@ needs_population = pytest.mark.skipif(
     reason="no population built — run `impots population build && impots population reconcile`",
 )
 
+
+def population_test(function):
+    """Needs the population, and therefore takes about a minute.
+
+    Composed so the two facts travel together: every test that runs the population is
+    also a test the default gate skips, and forgetting the second mark is how a fast
+    gate quietly stops being fast."""
+    return needs_population(pytest.mark.slow(function))
+
 TOP_RATE_50_REFORM = {"reform": {"ir_bareme": TOP_RATE_50["ir_bareme"]}, "year": 2024,
                       "tier": "quick"}
 
 
-@needs_population
+@population_test
 def test_population_baseline_serves_a_precomputed_file(client: TestClient) -> None:
     """It must not run the engine: a full-tier population run is minutes."""
     body = client.get("/population/baseline").json()
@@ -380,7 +389,7 @@ def test_population_baseline_serves_a_precomputed_file(client: TestClient) -> No
     assert body["reconciliation"], "the baseline must carry its own reconciliation"
 
 
-@needs_population
+@population_test
 def test_population_baseline_states_its_limitations(client: TestClient) -> None:
     """D-015: the banner is not optional. A population whose RSA runs at +106 %
     must say so wherever its numbers are shown."""
@@ -392,7 +401,7 @@ def test_population_baseline_states_its_limitations(client: TestClient) -> None:
     assert "reconciliation" in meta["note"].lower()
 
 
-@needs_population
+@population_test
 def test_population_reconciliation_marks_calibrated_lines_as_spent(client: TestClient) -> None:
     """§4.3's rule, visible on the wire: a line the model was tuned to may not be
     presented as evidence that the model is right."""
@@ -404,7 +413,7 @@ def test_population_reconciliation_marks_calibrated_lines_as_spent(client: TestC
             assert line["status"] == "calibrated (spent)"
 
 
-@needs_population
+@population_test
 def test_population_simulate_prices_a_reform(client: TestClient) -> None:
     """A 50 % top rate must raise money, and land on the top decile only."""
     body = client.post("/population/simulate", json=TOP_RATE_50_REFORM).json()
@@ -419,7 +428,7 @@ def test_population_simulate_prices_a_reform(client: TestClient) -> None:
     )
 
 
-@needs_population
+@population_test
 def test_population_simulate_says_it_sampled(client: TestClient) -> None:
     """The quick tier answers a different-precision question and must say so."""
     note = client.post("/population/simulate", json=TOP_RATE_50_REFORM).json()["meta"]["note"]
@@ -427,7 +436,7 @@ def test_population_simulate_says_it_sampled(client: TestClient) -> None:
     assert "20 000" in note
 
 
-@needs_population
+@population_test
 def test_population_simulate_refuses_an_empty_reform(client: TestClient) -> None:
     """Without a reform there is nothing to price, and the baseline endpoint already
     serves the levels — running the engine to prove that would be a waste."""
@@ -576,14 +585,14 @@ def test_unknown_firm_knob_is_refused(client: TestClient) -> None:
 # Opt-in, because the marginal rates it needs are two more full-tier runs. These
 # tests use the same module-scoped client, so the band is paid for once.
 # --------------------------------------------------------------------------- #
-@needs_population
+@population_test
 def test_the_band_is_absent_unless_asked_for(client: TestClient) -> None:
     """The mechanical answer stays fast by default; nothing about it changes."""
     body = client.post("/population/simulate", json=TOP_RATE_50_REFORM).json()
     assert body["behavioural"] is None
 
 
-@needs_population
+@population_test
 def test_the_band_never_moves_the_mechanical_number(client: TestClient) -> None:
     """The layer boundary, asserted over HTTP. A reader taking only the mechanical
     figure must get exactly what they would have got without Phase 3."""
@@ -599,7 +608,7 @@ def test_the_band_never_moves_the_mechanical_number(client: TestClient) -> None:
     )
 
 
-@needs_population
+@population_test
 def test_the_band_prices_the_response_to_a_top_rate_rise(client: TestClient) -> None:
     """A 45 % -> 50 % top rate. The mechanical yield is positive; the taxable-income
     response gives part of it back, so the band must sit BELOW the mechanical figure
@@ -616,7 +625,7 @@ def test_the_band_prices_the_response_to_a_top_rate_rise(client: TestClient) -> 
     assert band["p10"] > 0
 
 
-@needs_population
+@population_test
 def test_the_band_reports_its_grade_and_its_provenance(client: TestClient) -> None:
     """§4 and §7: the grade is data, not decoration, and a band must be traceable to
     the evidence that produced it."""
@@ -630,7 +639,7 @@ def test_the_band_reports_its_grade_and_its_provenance(client: TestClient) -> No
     assert behavioural["emtr_households"] > 0
 
 
-@needs_population
+@population_test
 def test_a_dead_channel_says_so_rather_than_reporting_zero(client: TestClient) -> None:
     """C2 and C3 have no lever, and C4's only dimensionally-valid row died under
     verification. All three must say so — a zero would be a false claim about
@@ -647,7 +656,7 @@ def test_a_dead_channel_says_so_rather_than_reporting_zero(client: TestClient) -
     assert "cotisation patronale" in channels["c2_employment"]["message"]
 
 
-@needs_population
+@population_test
 def test_a_cliff_reform_is_flagged_and_a_broad_one_is_not(client: TestClient) -> None:
     """The two backtest cases, as the flag's specification (D-046).
 
@@ -676,7 +685,7 @@ def test_a_cliff_reform_is_flagged_and_a_broad_one_is_not(client: TestClient) ->
     assert bareme["caveat"] == ""
 
 
-@needs_population
+@population_test
 def test_the_flag_does_not_touch_the_mechanical_number(client: TestClient) -> None:
     """Metadata, never an adjustment. The flag is computed from the same run and must
     leave every figure exactly where it was."""

@@ -491,6 +491,7 @@ def test_a_margin_the_model_is_fitted_to_is_marked_spent() -> None:
 # --------------------------------------------------------------------------- #
 # The public cost has two sides (D-039)
 # --------------------------------------------------------------------------- #
+@pytest.mark.slow
 def test_an_employer_contribution_reform_has_a_cost_at_all() -> None:
     """Found while building the behavioural layer, and it was a mechanical bug.
 
@@ -535,6 +536,7 @@ def test_an_employer_contribution_reform_has_a_cost_at_all() -> None:
     assert abs(aggregates.deltas.get("cotisations_employeur", 0.0)) < 1e6
 
 
+@pytest.mark.slow
 def test_a_household_reform_is_unaffected_by_the_employer_term() -> None:
     """The correction must not move any number it has no business moving: an income
     tax reform touches no employer contribution, so its cost is what it always was."""
@@ -621,6 +623,7 @@ def test_the_identity_tolerates_only_unreported_benefit_leakage() -> None:
          / "population_2024.parquet").exists(),
     reason="no population built in this checkout",
 )
+@pytest.mark.slow
 def test_every_reform_shape_balances_on_the_real_population() -> None:
     """Four reforms across three instrument families, on the real population. The
     guard runs inside `aggregate`, so this asserts it did not raise and that the

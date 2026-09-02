@@ -1737,3 +1737,46 @@ Cliffs flag; slopes do not.
 A rate change with no threshold of its own — a CSG rate, the décote rate — contributes
 nothing and correctly leaves the share at zero: it moves everyone it touches
 proportionally and cannot concentrate a yield anywhere.
+
+## D-047 — Tiering the suite: 23 minutes to 1 min 45, with nothing removed
+Date: 2026-09-03 · Status: accepted · Evidence: measured before and after
+
+The verdict's reasoning is the operative part: *local test pain is how green suites
+rot.* Nothing here is deleted or weakened — the work is measurement, re-tiering and a
+mark.
+
+**Two real speedups first, both from measuring rather than marking.**
+
+*A chiffrage case runs at the tier its instruments need.* Measured per case: the 2025
+allègements step gives **+4.146 bn on both tiers**, in 19 s light against 63 s full,
+because its cost is entirely employer-side and `salaire_super_brut` exists in the
+light tier. The barème indexation gives **zero** on the light tier — not an
+approximation, zero, because the light tier does not compute `revenu_disponible` at
+all. So the tier is a per-case field, `full` by default, and the light case is light
+on evidence rather than on hope.
+
+*A test was running each case twice.* The pinned-miss assertion called `run_case`
+once for the residual and again for the pass check — two full population runs per
+case, for one measurement. Fixed. Those two changes alone took the chiffrage suite
+from 470 s to 166 s.
+
+**Then the mark.** Profiling showed fourteen tests at about 65 s each, every one a
+20 000-household pass. They carry `slow`; `pyproject.toml` sets the default run to
+`-m 'not slow'`.
+
+| | before | after |
+|---|---:|---:|
+| default gate | 23 min 29 | **1 min 44** |
+| full pass | 23 min 29 | 14 min 40 |
+| tests | 396 | 423 |
+
+In `test_api.py` the two facts are composed into one decorator: a test that needs the
+population is also a test the gate skips, and remembering the second mark separately
+is how a fast gate quietly stops being fast.
+
+**Where the full pass actually runs, said plainly.** CI now uses `-m ""`, but those
+tests **skip there anyway** — CI has no built population, by design, since the EEC
+file is 11.7 MB and downloading it is not CI's job. So the full pass genuinely runs
+only on a machine that has the data, and `-m ""` in CI is what will pick them up the
+day that changes rather than silently skipping a suite everyone believes is running.
+The README carries the three commands and the same caveat.

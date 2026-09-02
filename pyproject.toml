@@ -44,6 +44,14 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# The default run is the gate: everything except the tests that need a full
+# population pass. Those are not weakened or deleted — they are marked, and CI runs
+# them on every push with `-m ""`. Local test pain is how green suites rot, so the
+# gate is kept fast enough to run without thinking about it.
+addopts = "-m 'not slow'"
+markers = [
+  "slow: needs a 20 000-household population run (about a minute each); excluded from the default gate, always run in CI",
+]
 filterwarnings = [
   "ignore::DeprecationWarning",
   # openfisca-france divides by a zero head-count for household members with no

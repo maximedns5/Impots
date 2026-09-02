@@ -53,7 +53,7 @@ def run_case(case: chiffrages.Case) -> float:
     frame = pl.read_parquet(PROCESSED / "population_2024.parquet")
     result = population_run(
         frame, year=case.year, reform=ReformSpec.model_validate(case.reform),
-        tier="full", sample=20_000,
+        tier=case.tier, sample=20_000,
     )
     return -(aggregate_module.aggregate(result.households).reform_cost or 0.0)
 
@@ -89,6 +89,7 @@ def available(case: chiffrages.Case) -> bool:
     return path.exists()
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c.key)
 def test_case_lands_within_its_declared_tolerance(case: chiffrages.Case) -> None:
     if not available(case):
@@ -110,6 +111,7 @@ def test_case_lands_within_its_declared_tolerance(case: chiffrages.Case) -> None
     assert case.passes(simulated), message
 
 
+@pytest.mark.slow
 def test_the_known_misses_are_the_size_they_are_documented_to_be() -> None:
     """A red case still has to be pinned. A finding that drifts silently is not a
     finding — the write-up quotes a simulated cost a third too large, so the number
@@ -121,9 +123,11 @@ def test_the_known_misses_are_the_size_they_are_documented_to_be() -> None:
         case = next(c for c in CASES if c.key == key)
         if not available(case):
             pytest.skip(f"no {case.scope} population built in this checkout")
-        residual = case.residual(run_case(case))
+        # Once, not twice: each of these is a full population run.
+        simulated = run_case(case)
+        residual = case.residual(simulated)
         assert residual == pytest.approx(expected, abs=0.03), key
-        assert not case.passes(run_case(case)), f"{key}: a documented miss that no longer misses"
+        assert not case.passes(simulated), f"{key}: a documented miss that no longer misses"
 
 
 @pytest.mark.parametrize(

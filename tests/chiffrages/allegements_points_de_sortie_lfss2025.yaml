@@ -28,6 +28,7 @@ published:
       AG : abaissement du point de sortie des réductions de cotistations patronales
       d'assurance maladie (à 2,25 smic) et d'allocations famiales (à 3,3 smic)
     checked: 2026-09-02
+tier: light
 tolerance: 0.25
 tolerance_reason: >
   ±25 %, the tolerance this project already declares for an instrument. Nothing wider
