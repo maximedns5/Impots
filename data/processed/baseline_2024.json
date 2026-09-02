@@ -303,5 +303,67 @@
     "**Age is banded.** The EEC gives five age groups; exact ages are drawn inside them, so any threshold that does not fall on a band edge is fuzzy for an individual household and only right on average.",
     "**Benefits assume 100 % take-up.** OpenFisca computes legal entitlement; DREES measures non-take-up of RSA at 33-37 % of eligible households.",
     "**Assortative mating is absent.** Two earners in a household are drawn independently, which flattens the top of the household income distribution."
+  ],
+  "emtr_deciles": [
+    {
+      "decile": 1,
+      "households": 1704182.7175688893,
+      "emtr_median": 0.208125,
+      "emtr_mean": 0.20689799972038975
+    },
+    {
+      "decile": 2,
+      "households": 1705733.3842818728,
+      "emtr_median": 0.31683593750000005,
+      "emtr_mean": 0.30526713719223486
+    },
+    {
+      "decile": 3,
+      "households": 1708834.7177078398,
+      "emtr_median": 0.3221484375,
+      "emtr_mean": 0.3213767109044163
+    },
+    {
+      "decile": 4,
+      "households": 1691777.3838650212,
+      "emtr_median": 0.32806640625000005,
+      "emtr_mean": 0.32789209894401156
+    },
+    {
+      "decile": 5,
+      "households": 1719689.3846987244,
+      "emtr_median": 0.376923828125,
+      "emtr_mean": 0.3720360338940863
+    },
+    {
+      "decile": 6,
+      "households": 1702632.0508559057,
+      "emtr_median": 0.41859375,
+      "emtr_mean": 0.41996994713399366
+    },
+    {
+      "decile": 7,
+      "households": 1684024.0503001036,
+      "emtr_median": 0.42730468749999995,
+      "emtr_mean": 0.4266662889905617
+    },
+    {
+      "decile": 8,
+      "households": 1738297.3852545265,
+      "emtr_median": 0.430546875,
+      "emtr_mean": 0.4494002634366637
+    },
+    {
+      "decile": 9,
+      "households": 1702632.0508559057,
+      "emtr_median": 0.5154492187499999,
+      "emtr_mean": 0.5171984781752809
+    },
+    {
+      "decile": 10,
+      "households": 1711936.0511338068,
+      "emtr_median": 0.63537109375,
+      "emtr_mean": 0.7050595284429726
+    }
   ]
 }

@@ -437,3 +437,51 @@ def test_an_empty_store_yields_a_mechanical_only_answer() -> None:
     assert result.band is None
     assert result.grade == "no-evidence"
     assert result.notes
+
+
+# --------------------------------------------------------------------------- #
+# the marginal-rate distribution, golden-pinned per population vintage
+# --------------------------------------------------------------------------- #
+BASELINE_ARTIFACT = (
+    Path(__file__).resolve().parents[1] / "data" / "processed" / "baseline_2024.json"
+)
+
+#: Decile medians of the effective marginal rate, 2024 vintage, 20 000-household
+#: sample. Pinned because this distribution is a published product: it moves when the
+#: engine changes, and it should move for that reason and no other.
+EMTR_MEDIANS_2024 = [0.208, 0.317, 0.322, 0.328, 0.377, 0.419, 0.427, 0.431, 0.515, 0.635]
+
+
+@pytest.mark.skipif(
+    not BASELINE_ARTIFACT.exists(), reason="no baseline artifact in this checkout"
+)
+def test_the_marginal_rate_distribution_is_pinned() -> None:
+    import json
+
+    rows = json.loads(BASELINE_ARTIFACT.read_text(encoding="utf-8")).get("emtr_deciles")
+    if not rows:
+        pytest.skip("baseline artifact carries no EMTR distribution yet")
+    assert [row["decile"] for row in rows] == list(range(1, 11))
+    for row, expected in zip(rows, EMTR_MEDIANS_2024, strict=True):
+        assert row["emtr_median"] == pytest.approx(expected, abs=0.002), (
+            f"decile {row['decile']} moved; if that is intended, repin it and say why"
+        )
+
+
+@pytest.mark.skipif(
+    not BASELINE_ARTIFACT.exists(), reason="no baseline artifact in this checkout"
+)
+def test_marginal_rates_rise_across_the_distribution_and_top_out_high() -> None:
+    """Two claims about France worth failing on. The distribution is monotone by
+    construction (they are deciles of the rate), and its top decile sits above 60 % —
+    which is the fact the table exists to show, since those households are not the
+    richest but the ones losing benefits as they earn."""
+    import json
+
+    rows = json.loads(BASELINE_ARTIFACT.read_text(encoding="utf-8")).get("emtr_deciles")
+    if not rows:
+        pytest.skip("baseline artifact carries no EMTR distribution yet")
+    medians = [row["emtr_median"] for row in rows]
+    assert medians == sorted(medians)
+    assert medians[-1] > 0.60
+    assert all(-0.2 <= m <= 1.5 for m in medians)

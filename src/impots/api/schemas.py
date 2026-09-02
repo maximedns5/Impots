@@ -333,6 +333,22 @@ PopulationTier = Literal["quick"]
 QUICK_TIER_HOUSEHOLDS = 20_000
 
 
+class EmtrDecile(BaseModel):
+    """One decile of the marginal-rate distribution — deciles of EMTR, not of income.
+
+    Worth its own table rather than a footnote: France's marginal-rate distribution
+    has a long right tail created by benefit tapers overlapping income tax, and the
+    households in that tail are poor, not rich.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    decile: int
+    households: float
+    emtr_median: float
+    emtr_mean: float
+
+
 class BehaviouralBand(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -450,6 +466,7 @@ class PopulationResponse(BaseModel):
     deltas: dict[str, float] = Field(default_factory=dict)
     reform_cost: float | None = None
     deciles: list[DecileRow] = Field(default_factory=list)
+    emtr_deciles: list[EmtrDecile] = Field(default_factory=list)
     reconciliation: list[ReconciliationLine] = Field(default_factory=list)
     behavioural: Behavioural | None = None
     timings: dict[str, float] = Field(default_factory=dict)

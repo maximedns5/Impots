@@ -1388,6 +1388,34 @@ impots population build</code></div>`;
 /* The band, drawn under the mechanical figure and never over it. The black tick is
    the mechanical number; the blue span is the range a behavioural response would put
    around it. A reader who looks only at the headline is not misled. */
+/* France's marginal-rate distribution, as its own table. Deciles of EMTR, not of
+   income — and the point of showing it is that the top decile of marginal rates is
+   not the top decile of earners: benefit tapers overlapping income tax put poor
+   households at the highest rates in the country. */
+function renderEmtr(rows) {
+  if (!rows || !rows.length) return "";
+  const worst = Math.max(...rows.map((r) => r.emtr_mean));
+  return `<h2 style="font-family:var(--serif);font-weight:600;font-size:19px;margin:28px 0 6px">
+      Taux marginaux effectifs</h2>
+    <p class="note" style="margin-top:0">Déciles de <em>taux marginal</em>, pas de revenu.
+      Un euro gagné en plus, et ce qu'il en reste après impôt et retrait de prestations.
+      Les ménages du dernier décile ne sont pas les plus aisés : ce sont ceux dont les
+      prestations se retirent en même temps que l'impôt arrive.</p>
+    <div class="rate-chart">${rows.map((r) => `
+      <div class="row">
+        <span class="lbl3">D${r.decile}</span>
+        <span class="bar2">
+          <i class="fill" style="width:${(r.emtr_mean / worst) * 100}%"></i>
+          <i class="med" style="left:${(r.emtr_median / worst) * 100}%" title="médiane"></i>
+        </span>
+        <span class="num2">${(r.emtr_mean * 100).toFixed(1).replace(".", ",")} %</span>
+      </div>`).join("")}</div>
+    <p class="chart-legend" style="margin-left:68px">Moyenne pondérée par décile ; le
+      trait noir est la médiane. Les taux sont bornés à 150 % — au-delà, un euro gagné
+      coûte plus qu'il ne rapporte, ce qui arrive réellement là où deux dégressivités
+      se chevauchent.</p>`;
+}
+
 function renderBand(data) {
   const b = data.behavioural;
   if (!b) return "";
@@ -1459,7 +1487,7 @@ function renderPopulation(data) {
       <span class="v ${raises ? "up" : "down"}">${bn(cost)} Md €</span>
       <span class="sub">Effet au premier jour sur le revenu disponible des ménages, à
         comportement inchangé. ${escapeHtml(data.meta.note)}</span>
-    </div>` + renderBand(data);
+    </div>` + renderBand(data) + renderEmtr(data.emtr_deciles);
 
   const rows = [["ir", "Impôt sur le revenu"], ["csg_imposable", "CSG imposable"],
                 ["af", "Allocations familiales"], ["ppa", "Prime d'activité"],

@@ -35,6 +35,7 @@ from impots.api.schemas import (
     MIN_YEAR,
     QUICK_TIER_HOUSEHOLDS,
     DecileRow,
+    EmtrDecile,
     FirmCell,
     FirmMeta,
     FirmResponse,
@@ -244,6 +245,9 @@ def population_baseline() -> PopulationResponse:
         ),
         totals=summary["totals"],
         deciles=[DecileRow.model_validate(row) for row in summary["deciles"]],
+        emtr_deciles=[
+            EmtrDecile.model_validate(row) for row in summary.get("emtr_deciles", [])
+        ],
         reconciliation=[
             ReconciliationLine.model_validate(line) for line in summary["reconciliation"]
         ],

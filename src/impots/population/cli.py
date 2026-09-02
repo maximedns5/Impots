@@ -354,6 +354,45 @@ def cmd_firms_build(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_emtr(args: argparse.Namespace) -> int:
+    """Compute the marginal-rate distribution and fold it into the baseline artifact.
+
+    One extra full-tier pass with salaries bumped by 100 EUR. Minutes, and worth it:
+    France's EMTR distribution is a product in its own right, not a diagnostic.
+    """
+    from impots.behavioural import emtr as emtr_module
+    from impots.population.build import PROCESSED
+
+    population = PROCESSED / f"population_{args.vintage}.parquet"
+    if not population.exists():
+        print(f"{population} not found — run `impots population build` first",
+              file=sys.stderr)
+        return 1
+
+    result = emtr_module.compute(
+        pl_read(population), year=args.year, sample=args.sample,
+        vintage=args.vintage if args.sample is None else None,
+    )
+    rows = emtr_module.distribution(result)
+    print(f"marginal rates for {spaced(result.households.height)} households "
+          f"in {result.timings}")
+    print(f"  guards {result.guards}")
+    print(f"\n  {'decile':>6} {'ménages':>12} {'médiane':>9} {'moyenne':>9}")
+    for row in rows:
+        print(f"  {row['decile']:>6} {spaced(row['households']):>12} "
+              f"{row['emtr_median']:>8.1%} {row['emtr_mean']:>8.1%}")
+
+    baseline_path = PROCESSED / f"baseline_{args.vintage}.json"
+    if baseline_path.exists():
+        summary = json.loads(baseline_path.read_text(encoding="utf-8"))
+        summary["emtr_deciles"] = rows
+        baseline_path.write_text(
+            json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
+        print(f"\n  folded into {baseline_path.name}")
+    return 0
+
+
 def cmd_firms_reconcile(args: argparse.Namespace) -> int:
     from impots.entreprises import aggregate as firm_aggregate
     from impots.entreprises import reconcile as firm_reconcile
@@ -482,6 +521,15 @@ def main(argv: list[str] | None = None) -> int:
                             help="also build and run the population without raking, and "
                                  "show every line before and after (D-017)")
     reconciler.set_defaults(func=cmd_reconcile)
+
+    emtr_parser = actions.add_parser(
+        "emtr", help="marginal-rate distribution, folded into the baseline artifact"
+    )
+    emtr_parser.add_argument("--vintage", default="2024")
+    emtr_parser.add_argument("--year", type=int, default=2024)
+    emtr_parser.add_argument("--sample", type=int, default=None,
+                             help="households to sample; omit for the full population")
+    emtr_parser.set_defaults(func=cmd_emtr)
 
     firms = subcommands.add_parser("entreprises", help="the firm module")
     firm_actions = firms.add_subparsers(dest="action", required=True)
