@@ -47,9 +47,30 @@ def manifest() -> dict[str, dict]:
 # --------------------------------------------------------------------------- #
 # provenance
 # --------------------------------------------------------------------------- #
-def test_an_unsourced_file_cannot_be_opened() -> None:
-    """The assertion itself, on a name that is certainly not sourced."""
-    with pytest.raises(UnmanifestedInput, match=r"not in MANIFEST|no source URL"):
+def test_an_unsourced_file_cannot_be_opened(tmp_path: Path, monkeypatch) -> None:
+    """The assertion itself, against a manifest this test writes.
+
+    Hermetic on purpose. An earlier version called `require_sourced` on a made-up
+    name and matched the resulting message — which passes locally, where the manifest
+    exists, and fails on a clean checkout, where the manifest is absent and a
+    different error fires first. So the test was asserting the environment, not the
+    behaviour. It now builds both cases it cares about.
+    """
+    manifest = tmp_path / "MANIFEST.json"
+    manifest.write_text(json.dumps({"generated": "2026-09-03", "files": {
+        "sourced.xlsx": {"url": "https://example.invalid/x.xlsx", "sha256": "a" * 64,
+                         "bytes": 1, "downloaded": "2026-09-03", "licence": "Etalab",
+                         "description": "", "quarantined": False},
+        "unsourced.xlsx": {"url": None, "sha256": "b" * 64, "bytes": 1,
+                           "downloaded": "2026-09-03", "licence": "unknown",
+                           "description": "", "quarantined": True},
+    }}), encoding="utf-8")
+    monkeypatch.setattr("impots.population.ingest.MANIFEST_PATH", manifest)
+
+    require_sourced("sourced.xlsx")  # a URL on record: allowed
+    with pytest.raises(UnmanifestedInput, match="no source URL"):
+        require_sourced("unsourced.xlsx")
+    with pytest.raises(UnmanifestedInput, match="not in MANIFEST"):
         require_sourced("a-file-nobody-recorded.xlsx")
 
 
