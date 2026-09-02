@@ -173,12 +173,18 @@ the smallest complete demonstration that the reform machinery does what it says.
 * **The mechanical number never changes.** The band is a range *around* it, drawn
   subordinate to it, and a regression test asserts that turning the band on moves no
   mechanical figure by a single euro.
-* **One channel of four is live.** The taxable-income response works. Employment at
-  the SMIC and contribution incidence both price employer social contributions, and
-  **no reform knob in this simulator moves one** — so they say that rather than
-  returning a zero (D-032). The production-tax investment channel reports **no usable
-  evidence**: its only dimensionally-valid row had no published value and died under
-  verification (D-031).
+* **All four channels are live.** The taxable-income response, employment at the
+  SMIC, contribution incidence, and the production-tax investment band — the last
+  centred on zero with bounds read from the evaluation's own tables (D-037). The
+  employer-contribution knobs that C2 and C3 had been waiting for since Phase 3 now
+  exist (D-038).
+* **C2 can never claim to be "in support"**, by design: two of its three rows cannot
+  say how far they carry, and the line between its two published points is this
+  project's construction rather than the literature's. The guardrail refuses to
+  launder a construction as evidence (D-040).
+* **C3 reports a range, not a number.** No French lever moves a contribution of a
+  single linkage class, so the tool shows both incidence assumptions. The mechanical
+  total is identical at both ends — it is the split that moves, not the cost.
 * **The best-identified French elasticity is missing on purpose.** Capital income
   responds far more sharply than labour income, and this population carries none until
   ERFS lands. The UI says so where a capital knob would appear. Any band on a reform
@@ -190,10 +196,15 @@ the smallest complete demonstration that the reform machinery does what it says.
 * **A reform larger than the evidence gets a widened band and the word
   "extrapolation"**, never a confident number (D-031, D-034).
 * **The chiffrage backtest suite grades the mechanical engine against the state's own
-  arithmetic** on historical articles — independent of everything the band adds. Three
-  cases ship from eight located: five died under source-checking, and **two of the
-  three survivors are red**, each with its finding written up rather than tuned away
-  (D-035).
+  arithmetic** on historical articles — independent of everything the band adds. Four
+  cases ship; five more died under source-checking, and **three of the four survivors
+  are red**, each with its finding written up rather than tuned away (D-035, D-041).
+* **The two red household cases are the project's sharpest self-measurement.** The
+  barème indexation overshoots by 10 % on an instrument with progressive brackets; the
+  2025 allègements step overshoots by **107 %** on two narrow cliffs. The contrast
+  says the synthetic population's error is not a level shift but a mis-shaped density
+  — and that any reform whose yield turns on the mass in a narrow wage band is badly
+  overstated until real incomes arrive (D-041).
 
 ### And about the firm module specifically
 

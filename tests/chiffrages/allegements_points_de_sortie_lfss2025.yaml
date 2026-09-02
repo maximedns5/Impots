@@ -1,0 +1,67 @@
+key: allegements_points_de_sortie_lfss2025
+article: "LFSS 2025 (loi n° 2025-199 du 28 février 2025) — abaissement des points de sortie"
+year: 2024
+scope: household
+description: >
+  Abaissement du point de sortie du bandeau maladie de 2,5 à 2,25 SMIC et du bandeau
+  famille de 3,5 à 3,3 SMIC. L'article est rejoué tel quel sur le droit 2024 : la
+  référence porte encore les anciens plafonds, donc le Δ EST la mesure. C'est le
+  premier cas produit par la règle de re-balayage de D-036 — les leviers de
+  cotisations patronales étant nouveaux, les articles exprimables ont été rebalayés.
+reform:
+  bandeau_maladie_plafond: 2.25
+  bandeau_famille_plafond: 3.3
+published:
+  amount_eur: 2.0e9
+  sign: yield
+  basis: annee-pleine
+  source:
+    document: >
+      Commission des comptes de la Sécurité sociale, rapport de mai 2026, tableau 2
+      « Principales mesures en 2025 », ligne « AG : abaissement du point de sortie des
+      réductions de cotisations patronales d'assurance maladie (à 2,25 smic) et
+      d'allocations familiales (à 3,3 smic) » — 1,6 Md€ CNAM et 0,4 Md€ CNAF.
+      Fichier déjà manifesté : data/raw/ccss_mai2026_comptes_secu_resultats2025.pdf.
+    url: https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2026/CCSS%20mai%202026_assembl%c3%a9_V2.pdf
+    page: "p. 45 imprimée (p. 47 du PDF)"
+    quote: >-
+      AG : abaissement du point de sortie des réductions de cotistations patronales
+      d'assurance maladie (à 2,25 smic) et d'allocations famiales (à 3,3 smic)
+    checked: 2026-09-02
+tolerance: 0.25
+tolerance_reason: >
+  ±25 %, the tolerance this project already declares for an instrument. Nothing wider
+  is defensible for a measure whose published figure and whose simulated one are both
+  clean quantities: the article moves two parameters, both expressible, and the
+  population is one year from the measure's vintage.
+expect_red: true
+caveat: >
+  RED BY A FACTOR OF TWO, AND IT IS THE MOST INFORMATIVE RESULT IN THE SUITE.
+  Simulated 4.15 Md€ against a published 2.0 Md€: +107 %.
+
+  Mechanical explanations first (D-029), and both fail. *Vintage*: re-encoding the
+  case at 2025 as a mirror — putting the ceilings back to 2,5 and 3,5 against 2025
+  law and the 2025 SMIC — gives 4.84 Md€, or +142 %. The alternative encoding is
+  WORSE, so the year is not the problem. *Scope*: the published figure is on the
+  régimes de base, 1,6 CNAM plus 0,4 CNAF, and both bandeaux are CNAM and CNAF
+  measures, so nothing is missing from the comparator.
+
+  What is left is the population's wage distribution, and this case measures it far
+  more sharply than the barème one does. Both bandeaux are **cliffs**: below the
+  ceiling the reduction is a flat rate, above it there is nothing. Lowering a ceiling
+  therefore removes the whole reduction from everyone between the old and new one, so
+  the yield is proportional to the MASS IN THAT BAND ALONE — 2,25 to 2,5 SMIC, and
+  3,3 to 3,5 SMIC. A population carrying too many earners there overshoots directly
+  and without damping.
+
+  So this is a second external measurement of D-015, on a different instrument, and it
+  is much larger than the first: the barème-indexation case reads +10 % on an
+  instrument whose brackets are progressive, this one reads +107 % on two narrow
+  cliffs. That contrast is the finding. It says the synthetic income distribution's
+  error is not a gentle level shift but a mis-shaped density, and that any reform
+  whose yield depends on the mass in a narrow wage band will be badly overstated
+  until the population carries observed incomes.
+
+  Under D-035's rule this is the acceptance test's companion: PHASE1C_ERFS §6 says the
+  barème case re-runs first on the ERFS population. This one should re-run second, and
+  it is the more demanding of the two.

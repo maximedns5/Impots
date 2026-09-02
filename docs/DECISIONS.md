@@ -1514,3 +1514,58 @@ supports. Four further rows were removed: two whose ranges were invented under
 one employee-side row with a fabricated upper bound and suppressed standard errors,
 and one official *calibration* presented as corroborating the estimate when the two
 bodies differ by a third.
+
+## D-041 — The re-sweep, and the sharpest measurement of D-015 yet
+Date: 2026-09-02 · Status: accepted · Evidence: tests/chiffrages/allegements_points_de_sortie_lfss2025.yaml
+
+D-036's standing rule fired for the first time: new knobs, so the expressible
+historical articles were re-swept. The employer-contribution knobs make the LFSS 2025
+step of the allègements refonte expressible, and its published figure was already in
+the repository — CCSS mai 2026, table 2, in a file manifested for the C3S line.
+
+**The case is red by a factor of two, and that is the most useful result in the
+suite.** Simulated 4.15 Md€ against a published 2.0 Md€: **+107 %**.
+
+**Mechanical explanations tried first, and both fail.** Re-encoding at 2025 as a
+mirror — ceilings back to 2.5 and 3.5 against 2025 law and the 2025 SMIC — gives
+4.84 Md€, or +142 %: the alternative encoding is *worse*, so the vintage is not the
+cause. And the published figure is 1.6 CNAM plus 0.4 CNAF, which is exactly the two
+branches the two bandeaux belong to, so nothing is missing from the comparator.
+
+**What is left is the shape of the synthetic income distribution, and this instrument
+measures it far more sharply than the barème does.** Both bandeaux are **cliffs**:
+below the ceiling a flat rate, above it nothing. Lowering a ceiling removes the whole
+reduction from everyone between the old and the new one, so the yield is proportional
+to the mass in that band **alone** — 2.25 to 2.5 SMIC, and 3.3 to 3.5 SMIC. A
+population with too many earners there overshoots directly, with nothing to damp it.
+
+**The contrast between the two red cases is the finding.** The barème indexation reads
++10 % on an instrument with progressive brackets; this reads +107 % on two narrow
+cliffs. So D-015's error is not a gentle level shift in the synthetic distribution —
+it is a mis-shaped density, and any reform whose yield turns on the mass in a narrow
+wage band will be badly overstated until the population carries observed incomes.
+PHASE1C_ERFS §6 makes the barème case the migration's acceptance test; this one
+should re-run second, and it is the more demanding of the two.
+
+## D-042 — Read-back is not enough: check the parameter exists before writing it
+Date: 2026-09-02 · Status: accepted · Evidence: the 2026 refonte, found during the re-sweep
+
+The re-sweep surfaced a defect in the knobs added the same day, and it is a new shape
+of an old failure.
+
+**The 2026 refonte does not reparameterise the allègements. It replaces them.** Both
+bandeaux disappear and the réduction générale becomes a power function — `puissance`,
+`t_min`, `t_delta_petites_entreprises` — reaching 3 SMIC. So
+`entreprises_de_moins_de_50_salaries` does not exist in 2026.
+
+Writing to it anyway **succeeded**. `update()` creates a child that does not exist; the
+D-007 read-back then found exactly the value it had just written and passed; and
+labour cost moved by **0.00**. A reform that reports success and does nothing, with
+every guard green — the failure this project keeps finding, arriving this time through
+the guard built to catch it.
+
+**The lesson is precise: reading back a child you created proves nothing.** Existence
+is now checked *before* the write, against the node as the year's formula sees it, and
+the refusal names the replacement so a reader is not left hunting. The check is
+surgical — `plafond` survives the 2026 rewrite and its knob still works, because the
+concept survives even though the rate parameters do not.

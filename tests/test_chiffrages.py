@@ -116,7 +116,8 @@ def test_the_known_misses_are_the_size_they_are_documented_to_be() -> None:
     is held there. Signed negative because the case is mirror-encoded: the model
     overshoots the article's cost in magnitude."""
     for key, expected in (("c3s_abattement_lfss2016", -0.34),
-                          ("ir_bareme_indexation_lfi2024", -0.104)):
+                          ("ir_bareme_indexation_lfi2024", -0.104),
+                          ("allegements_points_de_sortie_lfss2025", 1.073)):
         case = next(c for c in CASES if c.key == key)
         if not available(case):
             pytest.skip(f"no {case.scope} population built in this checkout")

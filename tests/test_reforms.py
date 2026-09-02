@@ -407,3 +407,61 @@ def test_the_read_back_refuses_a_reform_that_did_not_take() -> None:
     claimed = ReformSpec.model_validate({"bandeau_maladie_plafond": 9.0})
     with pytest.raises(AssertionError, match=r"plafond effectif est un max|demandé 9\.0"):
         verify_allegements(system, claimed, 2024)
+
+
+def test_a_knob_is_refused_where_its_parameter_no_longer_exists() -> None:
+    """The silent no-op, and the reason read-back alone is not enough.
+
+    The 2026 refonte does not reparameterise the allègements — it REPLACES them. Both
+    bandeaux vanish and the réduction générale becomes a power function
+    (`puissance`, `t_min`, `t_delta_*`) reaching 3 SMIC. Writing the old child name
+    there still *succeeds*, because `update()` creates a child that does not exist;
+    the read-back then finds exactly the value it just wrote and passes; and labour
+    cost moves by 0.00. The reform reports success and does nothing.
+
+    So existence is checked BEFORE the write, against the node as the year's formula
+    sees it — and the message names what replaced the parameter."""
+    for knob, value in (("allegement_general_taux_moins_de_50", 0.45),
+                        ("bandeau_famille_taux", 0.0),
+                        ("bandeau_maladie_plafond", 2.5)):
+        with pytest.raises(ValueError, match=r"n'existe pas|aucun plafond"):
+            reformed_for(ReformSpec.model_validate({knob: value}), 2026)
+
+
+def test_the_refusal_names_what_replaced_the_parameter() -> None:
+    """A refusal that only says 'no' sends the reader hunting. This one says where
+    the instrument went."""
+    with pytest.raises(ValueError, match="t_delta_petites_entreprises"):
+        reformed_for(
+            ReformSpec.model_validate({"allegement_general_taux_moins_de_50": 0.45}), 2026
+        )
+
+
+def test_knobs_that_survive_the_refonte_still_work() -> None:
+    """The refusal must be surgical. The réduction générale's plafond outlives the
+    2026 rewrite — the concept survives even though the rate parameters do not — so
+    refusing it too would be over-correcting."""
+    system = reformed_for(ReformSpec.model_validate({"allegement_general_plafond": 2.5}), 2026)
+    node = resolve(
+        system.parameters,
+        ("prelevements_sociaux", "reductions_cotisations_sociales",
+         "allegement_general", "ensemble_des_entreprises"),
+    )("2026-01-01")
+    assert float(node.plafond) == pytest.approx(2.5)
+
+
+def test_the_2025_refonte_step_is_expressible() -> None:
+    """The re-sweep's own precondition (D-036's standing rule). LFSS 2025 lowered the
+    maladie ceiling from 2.5 to 2.25 SMIC and the famille one from 3.5 to 3.3, and
+    both are knobs — so the article can be replayed against 2024 law, which is what a
+    backtest case needs."""
+    system = reformed_for(
+        ReformSpec.model_validate(
+            {"bandeau_maladie_plafond": 2.25, "bandeau_famille_plafond": 3.3}
+        ),
+        2024,
+    )
+    maladie = resolve(system.parameters, PATH_BANDEAU_MALADIE)("2024-01-01")
+    famille = resolve(system.parameters, PATH_BANDEAU_FAMILLE)("2024-01-01")
+    assert {float(getattr(maladie, n)) for n in plafond_children(maladie)} == {2.25}
+    assert {float(getattr(famille, n)) for n in plafond_children(famille)} == {3.3}

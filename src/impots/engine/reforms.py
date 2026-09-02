@@ -137,8 +137,11 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                     _apply_bareme(parameters, spec.ir_bareme, start)
                 for knob, path in SCALAR_KNOBS.items():
                     value = getattr(spec, knob)
-                    if value is not None:
-                        resolve(parameters, path).update(start=start, value=value)
+                    if value is None:
+                        continue
+                    parent = resolve(parameters, path[:-1])
+                    require_child(parent(instant), path[-1], path[:-1], instant)
+                    resolve(parameters, path).update(start=start, value=value)
                 for knob, path in PLAFOND_KNOBS.items():
                     value = getattr(spec, knob, None)
                     if value is not None:
@@ -148,6 +151,43 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
             self.modify_parameters(modifier_function=modify)
 
     return UserReform
+
+
+#: What replaced an instrument, for the message when a knob no longer applies.
+#: The 2026 refonte does not reparameterise the allègements — it REPLACES them. Both
+#: bandeaux disappear and the réduction générale becomes a power function
+#: (`puissance`, `t_min`, `t_delta_*`) extending to 3 SMIC. A knob pointing at the old
+#: children is not merely stale there; it names something that no longer exists.
+SUPERSEDED_BY = {
+    "entreprises_de_moins_de_50_salaries": "t_delta_petites_entreprises",
+    "entreprises_de_50_salaries_et_plus": "t_delta_grandes_entreprises",
+}
+
+
+def require_child(node_at_instant: Any, name: str, path: tuple[str, ...], instant: str) -> None:
+    """Refuse to write a parameter the year's formula does not have.
+
+    Read-back is not enough on its own, and this is the case that proves it:
+    `update()` CREATES a child that does not exist, so writing
+    `entreprises_de_moins_de_50_salaries` into the 2026 node succeeds, the read-back
+    finds exactly the value it just wrote, and labour cost moves by 0.00. The reform
+    reports success and does nothing.
+
+    So existence is checked BEFORE the write, against the node as the formula sees it.
+    """
+    if hasattr(node_at_instant, name):
+        return
+    replacement = SUPERSEDED_BY.get(name)
+    hint = (
+        f" Ce paramètre a été remplacé par « {replacement} » : la refonte de 2026 ne "
+        f"reparamètre pas les allègements, elle les remplace."
+        if replacement else ""
+    )
+    raise ValueError(
+        f"le paramètre « {name} » n'existe pas dans {'.'.join(path)} au {instant}, "
+        f"donc l'écrire ne changerait rien — `update()` créerait simplement un enfant "
+        f"que la formule de cette année ne lit pas.{hint}"
+    )
 
 
 def plafond_children(node: Any) -> tuple[str, ...]:
