@@ -183,6 +183,22 @@ class c3s(Variable):
 # --------------------------------------------------------------------------- #
 # CEBGE et CVAE
 # --------------------------------------------------------------------------- #
+def _dated(node, *path):
+    """Whether a parameter exists at this instant, walking a path safely.
+
+    A parameter whose values are all null is *removed* from the tree rather than set
+    to `None`, so presence is `hasattr` and not an `is None` check. Getting that
+    wrong raises `ParameterNotFoundError` from inside a formula instead of returning
+    zero — and because the total variable computes every instrument unconditionally,
+    one undated sub-parameter takes down every run for that year.
+    """
+    for name in path:
+        if not hasattr(node, name):
+            return False
+        node = getattr(node, name)
+    return True
+
+
 def _arrondi_au_pas(taux, pas):
     """Round a rate half-up to a step, the way both statutes require.
 
@@ -220,10 +236,7 @@ class cebge(Variable):
     def formula(entreprise, period, parameters):
         p = parameters(period).cebge
         ca = entreprise("chiffre_affaires", period)
-        # A parameter whose values are all null is *removed* from the tree, not set
-        # to None — so this is `hasattr`, not an `is None` check. Getting that wrong
-        # raises ParameterNotFoundError deep in a formula instead of returning zero.
-        if not hasattr(p, "taux_base"):  # after the second exercice, the tax is gone
+        if not _dated(p, "taux_base"):  # outside its two exercices, the tax is gone
             return np.zeros_like(ca)
 
         # Base: the mean of this exercice's IS and the previous one's, before any
@@ -276,7 +289,15 @@ class cvae(Variable):
     def formula(entreprise, period, parameters):
         p = parameters(period).cvae
         ca = entreprise("chiffre_affaires", period)
-        if not hasattr(p, "taux_max"):  # abrogée au 1er janvier 2030
+        # The guard has to cover the WHOLE schedule, not just the ceiling rate. An
+        # earlier version checked `taux_max` alone — which is dated from 2010 — and
+        # then reached into `bareme.pente_t1`, which is dated from 2024 because the
+        # pre-2024 bracket coefficients were never verified against the primary text.
+        # The result was that no firm run at any year before 2024 could complete at
+        # all: `prelevements_entreprise` always computes CVAE, so a
+        # ParameterNotFoundError from deep inside this formula killed the whole run.
+        # It surfaced when a backtest case tried to price a 2016 measure.
+        if not _dated(p, "taux_max") or not _dated(p, "bareme", "pente_t1"):
             return np.zeros_like(ca)
 
         bornes, bareme = p.bornes, p.bareme

@@ -1,0 +1,56 @@
+key: cebge_creation_lfi2025
+article: "LFI 2025, art. 48 (déposé comme PLF 2025, art. 11)"
+year: 2025
+scope: firm
+description: >
+  Création de la contribution exceptionnelle sur les bénéfices des grandes
+  entreprises. Le réformé encode le MIROIR de l'article — l'abrogation, taux mis à
+  zéro sur les deux tranches — parce que l'arbre de paramètres porte déjà la CEBGE
+  en 2025 : rejouer l'article serait un no-op contre la référence. La grandeur
+  comparée aux 8 Md€ est donc |Δ|.
+reform:
+  cebge_seuils_et_taux:
+    - {seuil_ca: 1000000000, taux: 0.0}
+    - {seuil_ca: 3000000000, taux: 0.0}
+published:
+  amount_eur: 8.0e9
+  sign: yield
+  basis: unstated
+  source:
+    document: >
+      PLF 2025 — Évaluations préalables des articles, article 11, § 4.2.1
+      « Incidences budgétaires »
+    url: http://www2.assemblee-nationale.fr/static/17/Annexes-DL/PLF-2025/PLF-2025_Evaluations%20prealables.pdf
+    page: "p. 123"
+    quote: >-
+      Le rendement de la contribution exceptionnelle est estimé à 8 Md€ en 2025 et
+      4 Md€ en 2026.
+    checked: 2026-09-02
+mirror: true
+tolerance: 0.25
+tolerance_reason: >
+  ±25 %, the tolerance `reconcile.py` already declares for this instrument — not the
+  ±15 % first proposed, which the case breaches. It was proposed at ±15 % and argued
+  at length to be "justifiée plutôt qu'héritée", and then never run: the actual
+  residual is +19 %. A tolerance argued but not executed is a guess, and this one is
+  now set from a figure the project already defends elsewhere.
+
+  The millésime is otherwise near-ideal — the évaluation préalable states its estimate
+  was made on firms' 2023 results, which is exactly this cell table's vintage.
+caveat: >
+  THIS CASE IS NOT INDEPENDENT EVIDENCE, and saying so is the point of the entry.
+  Zeroing both CEBGE rates makes the backtest delta numerically identical to the
+  baseline CEBGE aggregate that `reconcile.py` already grades against the published
+  receipt. It re-runs an existing validation line under another name. It is kept
+  because it is a genuine end-to-end check that the reform knob, the parameter tree
+  and the runner agree — but it must not be counted as a second, independent test.
+
+  The whole figure rests on roughly 400 firms, so it depends entirely on the synthetic
+  top tail of the turnover distribution — the one thing this population explicitly
+  disclaims (§4). And the model prices the two-exercice average as a single year
+  (D-022), which the enacted text does not.
+
+  The realised outturn is 7.520 Md€ (PLRG 2025, ligne 1441), 94 % of the forecast this
+  case grades against. The suite tests L2 against the state's own mechanical
+  arithmetic, so the forecast is the target; the outturn is recorded here because the
+  stretch goal in §5 asks whether the band contains it.

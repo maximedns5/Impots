@@ -48,6 +48,18 @@ REQUIRED_INPUTS = (
 )
 
 
+#: Earliest year this module can price. Not an oversight: before 2022 the normal IS
+#: rate depended on BOTH turnover and a profit tranche — 28 % up to 500 k€ then 31 %
+#: above it for large firms in 2020, 33 1/3 % in 2019 — and this system carries a
+#: single scalar rate. Encoding those years means encoding a two-dimensional schedule,
+#: which is a modelling change, not a parameter change.
+#:
+#: The limit is stated here because it surfaced the hard way: a backtest case tried to
+#: price a 2016 measure and got `ParameterNotFoundError` from inside a CVAE formula,
+#: which says nothing about the actual cause.
+EARLIEST_YEAR = 2022
+
+
 class FirmRunError(RuntimeError):
     """The population cannot be run as it stands."""
 
@@ -103,6 +115,15 @@ def run(
     reform: FirmReformSpec | None = None,
 ) -> FirmRunResult:
     """Price current law and, optionally, one reform over the firm population."""
+    if year < EARLIEST_YEAR:
+        raise FirmRunError(
+            f"le module entreprises ne sait pas chiffrer {year} : avant "
+            f"{EARLIEST_YEAR}, le taux normal de l'IS dépendait à la fois du chiffre "
+            f"d'affaires et d'une tranche de bénéfice (28 % jusqu'à 500 k€ puis 31 % "
+            f"au-delà en 2020, 33 1/3 % en 2019), et ce système ne porte qu'un taux "
+            f"scalaire. Encoder ces années demande un barème à deux dimensions, pas "
+            f"un paramètre de plus."
+        )
     missing = set(REQUIRED_INPUTS) - set(population.columns)
     if missing:
         raise FirmRunError(f"population is missing required inputs {sorted(missing)}")

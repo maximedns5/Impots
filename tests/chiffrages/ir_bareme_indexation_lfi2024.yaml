@@ -1,0 +1,94 @@
+key: ir_bareme_indexation_lfi2024
+article: "LFI 2024 (loi n° 2023-1322 du 29 décembre 2023), art. 2"
+year: 2023
+scope: household
+description: >
+  Indexation de 4,8 % du barème de l'IR, de la décote et du plafond du quotient
+  familial au titre des revenus de 2023. Le réformé encode l'état AVANT — le barème
+  des revenus 2022 — parce que la référence openfisca au millésime 2023 porte déjà
+  l'état APRÈS : rejouer l'article serait un Δ nul. Le backtest compare donc AVANT
+  contre APRÈS à population constante, et |Δ| est la grandeur chiffrée.
+reform:
+  ir_bareme:
+    - {threshold: 0, rate: 0.00}
+    - {threshold: 10777, rate: 0.11}
+    - {threshold: 27478, rate: 0.30}
+    - {threshold: 78570, rate: 0.41}
+    - {threshold: 168994, rate: 0.45}
+  decote_seuil_celib: 833
+  decote_seuil_couple: 1378
+  decote_taux: 0.4525
+  plafond_qf_demi_part: 1678
+published:
+  amount_eur: 6.1e9
+  sign: cost
+  basis: annee-pleine
+  source:
+    document: >
+      PLF 2024 — Évaluations préalables des articles, article 2, § 4.2.1
+      « Incidences budgétaires »
+    url: https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/705211/file/Evaluations%20pr%C3%A9alables%20des%20articles%20du%20projet%20de%20loi.pdf
+    page: "p. 18"
+    quote: >-
+      En l'absence d'indexation du barème de l'IR pour tenir compte de l'inflation
+      entre 2022 et 2023, le rendement de l'IR aurait été majoré d'environ 6,1 Md€ au
+      titre des revenus de 2023.
+    checked: 2026-09-02
+mirror: true
+bound: lower
+expect_red: true
+tolerance: 0.35
+tolerance_reason: >
+  ONE-SIDED, and that is the substance rather than a detail. The article indexes the
+  scale, the décote and the plafond du quotient familial — all three expressible — but
+  also the floors and ceilings of the 10 % déduction forfaitaire for professional
+  expenses, the 10 % abattement on pensions, and several specific QF caps, none of
+  which this simulator exposes. Every one of those is inside the 6,1 Md€. The
+  expressible instruments are therefore a strict subset of what was costed, and the
+  simulated figure must land BELOW the published one. A symmetric ±20 % window, which
+  was first proposed, would have put half its area in a region the case itself says
+  is unreachable.
+
+  The 35 % depth is set by what is missing rather than by what would fit: the
+  déduction forfaitaire and the pension abattement bear on the taxable income of a
+  population that is almost entirely employees and pensioners, so their omission is
+  large here, not marginal.
+
+  This is also the cleanest of the three indexation cases on basis. Its figure is a
+  pure assiette quantity — "au titre des revenus de 2023" — with no cash or
+  prélèvement-à-la-source component, which is what killed the LFI 2023 case.
+caveat: >
+  RED, AND THE MISS IS THE FINDING. Simulated 6.74 Md€ against a published 6.10 Md€:
+  the model produces an effect **10 % LARGER** than the state's, while moving a strict
+  SUBSET of the instruments the state costed. Both facts together are the result —
+  either number alone would be unremarkable.
+
+  Mechanical explanations first (D-029), and neither closes it. Vintage: the
+  population is calibrated to 2024 and run against the 2023 barème, so roughly a year
+  of nominal drift pushes households up through fixed thresholds and inflates the
+  measured effect — but a year of drift is a few percent, not ten, and it cannot
+  explain the sign against the missing instruments, which push the other way. Missing
+  base: no capital income, no self-employment income, no réductions or crédits — all
+  of which would REDUCE the simulated cost, widening the gap rather than closing it.
+
+  What is left points at the synthetic income distribution itself: to overshoot by
+  10 % while omitting the déduction forfaitaire and pension abattement indexations,
+  the population must carry more mass in the bracket-crossing region than the real
+  one does. That is consistent with D-015 — 13.5 M adults with no modelled income
+  concentrate the rest of the distribution — and it is the first time this suite has
+  measured that concentration against an external figure rather than declaring it.
+
+  Two sibling cases were located and both died under verification, which is worth
+  recording because it is what the source-checking is for. The LFI 2023 indexation
+  (6,2 Md€) turned out to be a **budget-year cash** figure and not an assiette one, so
+  the revalorised PAS grids sit inside it — and its source locator named a section
+  heading that does not exist in the cited document, carried under
+  `confirmed_against_primary: true`. The PLF 2025 indexation was costed at 2,0 % while
+  the enacted LF 2025 indexed at 1,8 %: those values never governed anyone's tax, and
+  this suite grades historical *law*.
+
+  What this population cannot represent, all of it pushing the simulated cost down:
+  no capital income, no self-employment income, no réductions or crédits d'impôt. The
+  published chiffrage rests on 500 000 real declarations including the DOM réfactions.
+  And the top of a synthesised distribution is where it is least reliable, which is
+  exactly where the 41 % and 45 % brackets and the QF cap bite.

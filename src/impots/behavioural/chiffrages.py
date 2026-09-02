@@ -78,6 +78,27 @@ class Case:
     tolerance_reason: str
     description: str = ""
     caveat: str = ""
+    bound: Literal["two-sided", "lower"] = "two-sided"
+    """`lower` when the simulator can express only PART of what the published figure
+    costs, so the honest test is an inequality.
+
+    The barème indexations are the case that forced this. Each article indexes the
+    scale, the décote and the plafond du quotient familial — all expressible — but
+    ALSO the 10 % déduction forfaitaire floors and ceilings, the abattement on
+    pensions, and several specific QF caps, none of which this simulator exposes.
+    Those are inside the published cost. So the expressible subset is a strict subset
+    of what was costed, the simulated figure MUST land below it, and a symmetric
+    window would have half its area in a region the case itself says should never be
+    reached. Landing above the published figure is a finding, not a pass."""
+    mirror: bool = False
+    """The reform encodes the article's REVERSE.
+
+    Needed more often than it looks. Where an article's end state is already the law
+    the parameter tree carries, replaying it is a no-op against the baseline, so the
+    case has to run the repeal instead — and the resulting delta then carries the
+    opposite sign to the published figure. Declared per case rather than inferred,
+    because a sign flipped by accident turns a green case red at twice the magnitude
+    and a red one green."""
     expect_red: bool = False
     """Set when a case is known to miss and the miss is written up. It still runs and
     still reports its residual — this only stops a documented finding from failing
@@ -85,9 +106,31 @@ class Case:
 
     def residual(self, simulated: float) -> float:
         published = self.published.signed
+        if self.mirror:
+            simulated = -simulated
         return (simulated - published) / abs(published) if published else float("nan")
 
+    def magnitude_residual(self, simulated: float) -> float:
+        """How much bigger the simulated effect is than the published one, in size.
+
+        Distinct from `residual`, and the distinction is not pedantic: for a COST the
+        published figure is negative, so a simulated value further below it is a
+        *larger* cost — an overshoot — while the signed residual reads negative, which
+        looks like an undershoot. A one-sided test written on the signed residual
+        passes exactly the cases it should fail.
+        """
+        published = abs(self.published.signed)
+        if self.mirror:
+            simulated = -simulated
+        return (abs(simulated) - published) / published if published else float("nan")
+
     def passes(self, simulated: float) -> bool:
+        if self.bound == "lower":
+            # The expressible instruments are a strict subset of what was costed, so
+            # the simulated effect must be SMALLER — and not smaller by more than the
+            # tolerance. Exceeding the published figure means something is wrong,
+            # however close the number looks.
+            return -self.tolerance <= self.magnitude_residual(simulated) <= 0.0
         return abs(self.residual(simulated)) <= self.tolerance
 
 
@@ -122,6 +165,8 @@ def _case(path: Path, raw: dict[str, Any]) -> Case:
         tolerance_reason=raw.get("tolerance_reason", ""),
         description=raw.get("description", ""),
         caveat=raw.get("caveat", ""),
+        bound=raw.get("bound", "two-sided"),
+        mirror=bool(raw.get("mirror", False)),
         expect_red=bool(raw.get("expect_red", False)),
     )
 

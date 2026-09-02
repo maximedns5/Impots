@@ -59,6 +59,7 @@ src/impots/reporting.py  the shared report engine — the spent/validation rule 
 src/impots/guards.py     weight identities and the checks both weighting defects needed
 src/impots/api/          seven FastAPI endpoints
 ui/index.html            three tabs — household, population, firms — one file, no build
+tests/chiffrages/        historical PLF costings, compared against the mechanical engine
 tests/golden/            household regression anchors, ±2 €
 tests/fixtures/          a 400-household EEC sample and an invented firm cell table
 reports/                 the two reconciliation reports, generated
@@ -188,6 +189,11 @@ the smallest complete demonstration that the reform machinery does what it says.
   the removals are in the YAML with their reasons.
 * **A reform larger than the evidence gets a widened band and the word
   "extrapolation"**, never a confident number (D-031, D-034).
+* **The chiffrage backtest suite grades the mechanical engine against the state's own
+  arithmetic** on historical articles — independent of everything the band adds. Three
+  cases ship from eight located: five died under source-checking, and **two of the
+  three survivors are red**, each with its finding written up rather than tuned away
+  (D-035).
 
 ### And about the firm module specifically
 

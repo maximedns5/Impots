@@ -1248,3 +1248,67 @@ And the band's width comes from ranges that are **specification spreads, not
 confidence intervals**, for the top-decile row. That is labelled in the store rather
 than papered over: the published interval is tighter, and narrowing to it was left
 undone rather than guessed at.
+
+## D-035 — The chiffrage suite: three cases from eight, and two of them red
+Date: 2026-09-02 · Status: accepted · Evidence: workflows wf_bad98eea-d5e and wf_a42cf764-e0a
+
+PHASE3_SPEC §5 asks for **at least five** historical cases. The suite ships with
+**three**, because eight were located and five died under adversarial source-checking.
+Shipping three that survive beats five with two rotten, and the deaths are the more
+useful record.
+
+**What died, and why it matters that it did.**
+
+* *LFI 2023 barème indexation (6,2 Md€).* The figure is a **budget-year cash** number,
+  not an assiette one — so the revalorised prélèvement-à-la-source grids are inside
+  it, which the case's own caveat declared harmless. And its source locator named a
+  section heading that **does not exist** in the cited document, carried under
+  `confirmed_against_primary: true`. That is the third time in this project that flag
+  has sat on something unverifiable.
+* *PLF 2025 indexation (3,7 Md€).* Costed at 2,0 % while the enacted LF 2025 indexed
+  at **1,8 %**. Those values never governed anyone's tax, and this suite grades
+  historical *law*.
+* *IS rate 28 → 25 % (4,1 Md€).* Unrunnable, and its spec did not express the article:
+  the 4,1 Md€ is measured against the LFI 2017 trajectory, which also carried a second
+  instrument the case ignored.
+
+**Two structural defects the checking exposed, both now fixed in code.**
+
+*The firm module could not price any year before 2024.* `prelevements_entreprise`
+computes CVAE unconditionally, and the CVAE guard checked `taux_max` — dated from
+2010 — before reaching into `bareme.pente_t1`, dated from 2024 because the earlier
+bracket coefficients were never verified. Every backdated run died with a
+`ParameterNotFoundError` naming a CVAE parameter, which says nothing about the cause.
+The guard now covers the whole schedule, and years before 2022 fail with a sentence
+explaining the real limit: the pre-2022 normal rate depended on turnover *and* a
+profit tranche at once, and this system carries a scalar rate.
+
+*A one-sided bound has to be read in magnitude.* Each barème indexation also indexes
+the déduction forfaitaire floors, the pension abattement and several specific QF caps
+— none expressible here, all inside the published cost. So the expressible subset
+must produce a *smaller* effect, and the test is an inequality. But for a cost the
+published figure is negative, so a simulated value further below it is a **larger**
+cost while the signed residual reads negative and looks like an undershoot. Written on
+the signed residual, the one-sided test passes exactly the cases it should fail.
+
+**Two of the three cases are red, and both are findings.**
+
+*C3S abattement, −34 %.* The obvious explanation — ten years of nominal turnover
+growth — is refuted by the model's own aggregate, which lands within 1,2 % of the
+published receipt. The level is right, so the miss is the **distribution of turnover
+within the 3,25–19 M€ band** — precisely the quantity the reconciliation report can
+only declare as unconstrained. The case converts a declared assumption into a measured
+error of about a third.
+
+*Barème indexation 2024, +10 % in magnitude.* The model produces a **larger** effect
+than the state's while moving a strict **subset** of the instruments. Both halves
+together are the result. Vintage drift is a few percent, not ten; the missing base
+(capital, indépendants, réductions) pushes the other way. What remains points at the
+synthetic income distribution carrying more mass in the bracket-crossing region than
+the real one — consistent with D-015, and the first external measurement of that
+concentration rather than a declaration of it.
+
+The green case, the CEBGE, is recorded as **not independent evidence**: zeroing its
+rates reproduces a reconciliation line the project already grades. It is kept as an
+end-to-end check that knob, tree and runner agree, and labelled so nobody counts it
+twice.

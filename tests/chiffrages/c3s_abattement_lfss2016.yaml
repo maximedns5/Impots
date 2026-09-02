@@ -1,0 +1,57 @@
+key: c3s_abattement_lfss2016
+article: "LFSS 2016, art. 9 (déposé comme PLFSS 2016, art. 8)"
+year: 2024
+scope: firm
+description: >
+  Relèvement de l'abattement d'assiette de la C3S de 3,25 M€ à 19 M€, étape 2 du
+  Pacte de responsabilité. Le réformé encode le MIROIR — le retour à 3,25 M€ — parce
+  que 19 M€ est le droit courant et n'a jamais bougé depuis. La formule du dépôt,
+  assiette = max(CA − abattement, 0) × taux, est exactement l'objet chiffré.
+reform:
+  c3s_abattement: 3250000
+published:
+  amount_eur: 1.0e9
+  sign: cost
+  basis: annee-pleine
+  source:
+    document: >
+      PLFSS 2016 — Annexe 10, fiches d'évaluation préalable, article 8, V.1
+      « Impact financier global »
+    url: https://www.assemblee-nationale.fr/14/pdf/projets/pl3106-ei.pdf
+    page: "p. 27"
+    quote: >-
+      Afin de garantir un gain pour les entreprises de 1 Md€ en 2016, l'abattement
+      d'assiette est porté de 3,25 M€ à 19 M€.
+    checked: 2026-09-02
+mirror: true
+tolerance: 0.25
+tolerance_reason: >
+  ±25 %, the instrument tolerance this project already declares for C3S. Deliberately
+  NOT the ±35 % first proposed: at ±35 % this case clears by nine tenths of a point,
+  and a band set before the case was ever run that then clears by less than one point
+  is not a justified tolerance — it is a number that happens to fit.
+expect_red: true
+caveat: >
+  RED, AND THE MISS IS THE FINDING. Simulated |Δ| is 1.34 Md€ against a published
+  1.00 Md€: +34 %.
+
+  Mechanical explanation first (D-029), and it holds. The obvious story — ten years of
+  nominal turnover growth inflating the 3,25–19 M€ band — is refuted by the model's
+  own aggregate: baseline C3S comes out at 5.29 Md€ against a published 5.23 Md€ for
+  the comparable vintage, a miss of 1.2 %. The level is essentially exact, so the
+  overshoot is not a scale error. It is the DISTRIBUTION OF TURNOVER WITHIN THE
+  3,25–19 M€ BAND, which is precisely the quantity `reconcile.py` already names as
+  "the one thing in the population that no published source constrains": Ésane
+  publishes cell means and totals, never quantiles, so the spread inside a cell is
+  fitted from a broad-sector value-added dispersion and carried across.
+
+  This case is therefore worth more red than green. It converts an assumption the
+  reconciliation report can only declare into a measured error of about a third, on a
+  band of turnover where the assumption bites hardest.
+
+  Second-order, and unresolved: the case runs at 2024 rather than at the article's
+  2016, because this module cannot price years before 2022 — the pre-2022 normal IS
+  rate depended on turnover and on a profit tranche at once. The 2016 law also levied
+  0,13 % plus a separate 0,03 % additional contribution rather than the single 0,16 %
+  the tree carries from the 2018 recodification; the two aggregate to the same rate,
+  so the arithmetic is unaffected.
