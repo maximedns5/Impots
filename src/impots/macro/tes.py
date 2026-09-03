@@ -83,6 +83,20 @@ IMPORT_FINAL_USE_OVERRIDES = {
 }
 
 
+#: Rows below the 37 products that carry the reconciliation to acquisition prices.
+#: Found by reading the sheet, not assumed: the symmetric table is published at BASIC
+#: prices, so its totals are about 200 bn short of GDP until taxes less subsidies on
+#: products and the two corrections are added back.
+RECONCILIATION_ROWS = {
+    "domestique": "TOTAL",
+    "importations_caf": "UTILISATION DE PRODUITS IMPORT",
+    "taxes_moins_subventions": "TAXES MOINS SUBVENTIONS SUR LES PRODUITS",
+    "correction_territoriale": "CORRECTION TERRITORIALE",
+    "correction_caf_fab": "CORRECTION CAF FAB",
+    "prix_acquisition": "TOTAL AU PRIX D",
+}
+
+
 class TesError(RuntimeError):
     """The input-output table cannot be read as expected."""
 
@@ -183,6 +197,50 @@ def _subcolumn(sheet: Any, header_column: int, subcode: str, key: str) -> int:
         f"final-use column {key!r}: no sub-column {subcode!r} under its header at "
         f"column {header_column}"
     )
+
+
+def gdp(table: Tes, raw: Path | None = None) -> float:
+    """GDP at market prices, in millions of euros, from the table's own identity.
+
+    Needed because the employment coefficients are published per POINT OF GDP, so
+    converting them to a job count requires the GDP the point is a point of. The
+    multiplier itself does not: a GDP response per point of GDP of impulse, applied to
+    an impulse in euros, gives euros with the level cancelling.
+
+    GDP = total final uses at acquisition prices − total imports. Reading the domestic
+    sheet alone gives a figure about 210 bn short, because the symmetric table is
+    published at BASIC prices; the reconciliation rows below the products carry taxes
+    less subsidies on products and the territorial and CAF/FAB corrections.
+    """
+    sheet = _sheet((raw or RAW) / f"insee_TES_symetrique_A38_{table.vintage}.xlsx",
+                   DOMESTIC_SHEET)
+    finals = _find(sheet, HEADER_ROW, "Total des emplois finals", exact=True)
+    uses = _find(sheet, HEADER_ROW, "Total des emplois", exact=True)
+    if finals is None or uses is None:
+        raise TesError("cannot locate the final-use totals for the GDP identity")
+    rows = _reconciliation_rows(sheet)
+    acquisition = _number(sheet.cell(rows["prix_acquisition"], finals).value)
+    imports = _number(sheet.cell(rows["importations_caf"], uses).value)
+    return acquisition - imports
+
+
+def _reconciliation_rows(sheet: Any) -> dict[str, int]:
+    """Locate the reconciliation rows by their printed labels, not by offset."""
+    found: dict[str, int] = {}
+    for row in range(FIRST_PRODUCT_ROW, sheet.max_row + 1):
+        label = " ".join(str(sheet.cell(row, 2).value or "").split()).upper()
+        if not label:
+            continue
+        for key, marker in RECONCILIATION_ROWS.items():
+            if key not in found and label.startswith(marker.upper()):
+                found[key] = row
+    missing = set(RECONCILIATION_ROWS) - set(found)
+    if missing:
+        raise TesError(
+            f"reconciliation rows {sorted(missing)} not found; the sheet layout may "
+            f"have changed and GDP must not be guessed from an offset"
+        )
+    return found
 
 
 def _final_uses(sheet: Any, product_rows: list[tuple[int, str]],

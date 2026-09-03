@@ -2092,3 +2092,71 @@ therefore leaves `multiplier_regime_shift` loaded, sourced, and with an empty
 
 The general lesson is the one D-026 keeps teaching: a ratio computed from two published
 numbers is a NEW estimate, and inherits none of their authority.
+
+## D-058 — A second double count, one level up: leakage is already in the multiplier
+
+`PHASE4_SPEC.md` §1 asks the input-output layer to supply "the import-leakage correction
+to the impulse, **which scales the aggregate impulse handed to B3**". Following that
+instruction with a Mésange multiplier would have subtracted France's import propensity
+twice, removing roughly a quarter of every effect — silently, and plausibly enough that
+nothing downstream would have looked wrong.
+
+Mésange's multipliers are already net of import crowding-out. The document says so where
+it explains the first-year public-investment figure: « l'effet multiplicateur l'emporte
+nettement sur **l'éviction par les importations**, avec un accroissement de l'activité de
+1,31 point de PIB ». Every variant table carries an Importations row, and the employer-
+contribution commentary discusses the trade balance deteriorating through import
+dynamism. The leakage is inside the model.
+
+This is the same shape as the Type I rule one level down, and the resolution is the
+same: **computed, reported, and not applied.** The measurement is real and §1 was right
+to demand it rather than let it be assumed — 27.4 % for a consumption-shaped impulse,
+33.6 % for capital formation, both channels counted. It does its legitimate work inside
+B2, whose output shares already exclude the directly imported part of final demand. The
+aggregate path takes the impulse whole.
+
+The spec's instruction was safe for the multiplier it imagined — a generic literature
+range that might not embed French import behaviour — and unsafe for the one M1 actually
+found. That is the third time in this phase that a rule written against one design has
+had to be re-derived against the design that survived contact with the sources.
+
+`test_leakage_is_reported_but_not_applied` asserts the median equals the central
+multiplier times the undiminished impulse, and separately asserts that the
+leakage-applied figure differs by more than 20 % — a kill test that would be vacuous
+without the second half.
+
+## D-059 — What the fan can and cannot say, after the verification took two of its dimensions
+
+§1 specifies a Monte Carlo over four dimensions. Two of them no longer exist, and the
+fan reports their absence rather than their zero.
+
+**No revenue-feedback loop.** The elasticity row returned WRONG (D-055), so Δdéficit
+stops at mechanical plus behavioural and this layer does not close the public balance.
+§1's closing identity is not implemented because its parameter is not sourced.
+
+**No usable cycle scenario.** The regime magnitude is sourced, and it is established on
+the SPENDING side: Gechert and Rannenberg's controlled coefficient is +0.769 for a
+downswing while the upswing coefficient is −0.049 and not significant. Every instrument
+this repository simulates is fiscal. Applying the shift to them would contradict the
+paper that supplies it, so `multiplier_regime_shift` loads with an empty
+`responds_to_knobs` and the toggle refuses itself **with its reason printed** rather than
+contributing a silent zero. The decomposition therefore reports 100 % parameter
+uncertainty — a fact about the evidence, not a property of the method, and the
+assumptions strip says which.
+
+**What remains** is instrument-specific multipliers and employment at one, two and three
+years, with a width from cross-study dispersion whose scope problem rides on every
+number: those dispersions pool countries, horizons and identification strategies, and are
+not the sampling error of France's multiplier at a horizon. The resulting fan is wide —
+a five-billion CSG cut gives a first-year GDP band from −2.4 to +6.7 bn — and that width
+is the honest reading of the literature rather than a defect of the arithmetic.
+
+Two smaller decisions inside it. The triangular draw is scaled so its standard deviation
+equals the published one (half-width = sd·√6); the SHAPE is a stated convention, since
+both papers report the distributions as non-normal and multimodal and nothing available
+characterises them further. And employment carries the multiplier's uncertainty
+**proportionally**, because no source gives employment a dispersion of its own and within
+a variant jobs and output move together at the model's own calibration — an assumption,
+and the only one available.
+
+The L4 banner ships without a numeric factor, per D-057.

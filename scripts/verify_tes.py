@@ -110,6 +110,21 @@ def audit(table, jobs) -> bool:
     passed &= check("total_emplois = total_emplois_finals + intermediate consumption",
                     gap <= BALANCE_TOLERANCE_MEUR, f"off by {gap:.3f} M EUR")
 
+    # GDP, because the employment coefficients are published per point of it.
+    product = tes.gdp(table)
+    passed &= check(
+        "GDP reconciles at acquisition prices",
+        1.5e6 < product < 4.0e6,
+        f"{product / 1e3:,.1f} bn — table identity, NOT cross-checked against a "
+        f"published GDP; the only anchor is Mésange's «1 % du PIB ex ante, soit 22 Md€ "
+        f"en 2015»",
+    )
+    basic = table.final_uses["total_emplois_finals"].sum() - table.imported.sum()
+    passed &= check("and exceeds the basic-price figure, as it must",
+                    product > basic,
+                    f"+{(product - basic) / 1e3:,.0f} bn of taxes less subsidies and "
+                    f"corrections")
+
     # 2 — the import matrix. Non-negativity is NOT asserted: it is false on correct
     # data. What is asserted is that the negatives are few and named, and that every
     # quantity propagation will actually divide by stays in range.
