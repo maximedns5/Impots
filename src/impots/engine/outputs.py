@@ -73,6 +73,17 @@ REGISTRY: tuple[Row, ...] = (
         label="Parts fiscales"),
     Row("revenu_fiscal_reference", "rfr", "foyer_fiscal", "year", "light", False,
         label="Revenu fiscal de référence"),
+    # The niches (B3). Zero unless a household declares a base, which is exactly what
+    # the population does — and reporting them as an explicit zero rather than not at
+    # all is what makes the omission visible where a reader will look for it.
+    #
+    # Not negated: the engine already stores these positive, unlike
+    # `impot_revenu_restant_a_payer`. And no double-count risk in the balance guard —
+    # `ir` is already net of both, and it is `ir` the guard reconstitutes from.
+    Row("reductions", "reductions", "foyer_fiscal", "year", "light", False,
+        label="Réductions d'impôt"),
+    Row("credits_impot", "credits_impot", "foyer_fiscal", "year", "light", False,
+        label="Crédits d'impôt"),
     # --- benefits block: famille, monthly — full tier only ---------------------
     Row("af", "af", "famille", "month", "full", False,
         label="Allocations familiales"),

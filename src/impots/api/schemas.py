@@ -70,6 +70,91 @@ class Logement(BaseModel):
     zone_apl: Annotated[int, Field(ge=1, le=3)] = 2
 
 
+class Niches(BaseModel):
+    """Bases for the réductions and crédits d'impôt (B3).
+
+    Without them every niche is zero, which is why the population's income tax is a
+    BARÈME figure and is validated against the barème line (98.84 bn) rather than
+    against net receipts: the 19.53 bn of réductions and crédits nationally is money
+    the model had no way to express.
+
+    **Amounts are for the simulated year only, not spread across the income history.**
+    The three-year history exists to give means-tested benefits a realistic reference
+    period; asserting three identical years of charitable giving would be a different
+    claim, and one nobody made.
+
+    Every rate below was verified by computation rather than read off a rate table:
+    5 000 € of home help returns a 2 500 € credit, 1 000 € of donations 660 € or 750 €
+    depending on the class, 200 € of union dues 132 €.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    salarie_domicile: Annotated[float, Field(ge=0, le=100_000)] = 0.0
+    """Sommes versées pour l'emploi d'un salarié à domicile (case 7DB). A CRÉDIT at
+    50 %, so it reaches households with no tax to reduce — which is why it is the
+    largest niche and why it cannot be imputed to taxpayers alone."""
+    salarie_domicile_aides_percues: Annotated[float, Field(ge=0, le=100_000)] = 0.0
+    """Aides perçues for that employment — APA, PCH, CESU préfinancé (case 7DR). They
+    reduce the eligible base, so omitting them overstates the credit."""
+    dons_oeuvres: Annotated[float, Field(ge=0, le=1_000_000)] = 0.0
+    """Dons to organismes d'intérêt général (case 7UF) — 66 %."""
+    dons_aide_personnes_en_difficulte: Annotated[float, Field(ge=0, le=1_000_000)] = 0.0
+    """Dons to organismes d'aide aux personnes en difficulté (case 7UD) — 75 %. A
+    separate case because the rate and the ceiling both differ."""
+    frais_garde_par_enfant: Annotated[list[float], Field(max_length=3)] = Field(
+        default_factory=list)
+    """Frais de garde, PER CHILD under six (cases 7GA, 7GB, 7GC in order).
+
+    A list rather than a total because the ceiling applies per child: splitting one
+    total equally would give a different — and generally larger — credit than an
+    uneven real split whenever the ceiling binds.
+
+    **THE ENGINE APPLIES NO ELIGIBILITY TEST**, and an earlier version of this
+    docstring said it did. Measured: a household with a fifteen-year-old gets the
+    credit, and so does a household with NO CHILDREN AT ALL. These cases are
+    declaration boxes and openfisca trusts the declarant, exactly as the paper form
+    does — eligibility is the administration's job, not the formula's. So the wire
+    format checks it instead: `situations.assert_niche_eligibility` refuses more
+    childcare amounts than there are children young enough to have them."""
+    cotisations_syndicales: Annotated[list[float], Field(max_length=2)] = Field(
+        default_factory=list)
+    """Union dues, PER ADULT in order (case 7AC). Individual-level, unlike every other
+    niche here, because the entitlement follows the member and not the foyer. Checked
+    against the number of adults for the same reason as the childcare list."""
+    enfants_college: Annotated[int, Field(ge=0, le=MAX_CHILDREN)] = 0
+    enfants_lycee: Annotated[int, Field(ge=0, le=MAX_CHILDREN)] = 0
+    enfants_superieur: Annotated[int, Field(ge=0, le=MAX_CHILDREN)] = 0
+    """Counts of children in education (cases 7EA, 7EC, 7EF) — flat amounts per child,
+    not a rate on a base: 61 €, 153 € and 183 € respectively as computed. Their sum is
+    checked against the household's dependants, since the engine will otherwise grant a
+    school-fees reduction to a childless foyer."""
+
+    @property
+    def declared_school_children(self) -> int:
+        return self.enfants_college + self.enfants_lycee + self.enfants_superieur
+
+
+#: Niche field -> the déclaration case it writes. One source of truth, so the wire
+#: format, the situation builder and the tests cannot disagree about which box a field
+#: lands in. Every case was enumerated out of the live variable registry, not from a
+#: form: `f7d*` alone also contains five PME-subscription boxes and an invalidity flag,
+#: and picking a plausible-looking name would have been picking the wrong one.
+NICHE_CASES: dict[str, str] = {
+    "salarie_domicile": "f7db",
+    "salarie_domicile_aides_percues": "f7dr",
+    "dons_oeuvres": "f7uf",
+    "dons_aide_personnes_en_difficulte": "f7ud",
+    "enfants_college": "f7ea",
+    "enfants_lycee": "f7ec",
+    "enfants_superieur": "f7ef",
+}
+#: The per-child childcare cases, in the order the list fills them.
+NICHE_GARDE_CASES: tuple[str, ...] = ("f7ga", "f7gb", "f7gc")
+#: Individual-level, so it is written onto the adults rather than the foyer fiscal.
+NICHE_SYNDICALES_CASE = "f7ac"
+
+
 class HouseholdInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -84,6 +169,9 @@ class HouseholdInput(BaseModel):
         "explicitly to false for a lone filer who does not in fact live alone.",
     )
     logement: Logement | None = None
+    niches: Niches | None = None
+    """Réductions and crédits d'impôt bases. Absent means every niche is zero, which
+    is the engine answering as asked and not a wiring gap."""
 
     def resolved_parent_isole(self) -> bool:
         """Whether to claim case T for this household."""
@@ -186,6 +274,31 @@ class ReformSpec(BaseModel):
     and a knob aimed at them would move nothing."""
     al_minoration_forfaitaire: Annotated[float, Field(ge=0, le=1_000)] | None = None
     """The 2017 flat cut to housing benefit — five euros a month."""
+    # IR niches (B3). Rates as fractions, ceilings in euros except
+    # `dons_plafond_part_rfr`, which is a SHARE of the revenu fiscal de référence, and
+    # `plafond_global_niches`, which caps the lot.
+    saldom_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    saldom_plafond: Annotated[float, Field(ge=0, le=200_000)] | None = None
+    gardenf_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    gardenf_plafond: Annotated[float, Field(ge=0, le=100_000)] | None = None
+    """Per CHILD, not per household — 3 500 EUR today, and the ceiling that makes an
+    uneven split of the same total worth more than an even one."""
+    dons_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    dons_plafond_part_rfr: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """A share of the revenu fiscal de référence — 20 % today, not a euro amount."""
+    dons_coluche_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    dons_coluche_plafond: Annotated[float, Field(ge=0, le=100_000)] | None = None
+    """The 75 % rate for donations to organisations helping people in difficulty, and
+    the euro ceiling above which the ordinary 66 % takes over."""
+    cotisations_syndicales_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    frais_scolarite_college: Annotated[float, Field(ge=0, le=10_000)] | None = None
+    frais_scolarite_lycee: Annotated[float, Field(ge=0, le=10_000)] | None = None
+    frais_scolarite_superieur: Annotated[float, Field(ge=0, le=10_000)] | None = None
+    """Flat amounts per child — 61, 153 and 183 EUR — not rates on a base."""
+    plafond_global_niches: Annotated[float, Field(ge=0, le=1_000_000)] | None = None
+    """The global cap on réductions and crédits, 10 000 EUR. It bites only on a
+    household claiming more than that, so a chiffrage of it says nothing about anyone
+    else."""
 
     @model_validator(mode="after")
     def _check_bareme(self) -> ReformSpec:
@@ -312,6 +425,12 @@ class ResultRows(BaseModel):
     ir_avant_reductions: float
     parts_fiscales: float
     revenu_fiscal_reference: float
+    reductions: float
+    credits_impot: float
+    """Réductions and crédits d'impôt. Zero for a household that declares no base,
+    which is every household in the synthetic population — the 19.53 bn of niches
+    nationally is why the population's IR is validated against the barème line and not
+    against net receipts."""
     # benefits block (famille) — full tier only
     af: float | None = None
     ppa: float | None = None
@@ -575,6 +694,25 @@ class Macro(BaseModel):
     missing. Carried so the client can show what the fan does NOT describe."""
 
 
+class NicheBlindSpot(BaseModel):
+    """A reform moved a niche this population cannot answer for (B3).
+
+    Present rather than absent is the whole point: without it the response would carry
+    a confident zero, and a confident zero here reads as "this credit does nothing"
+    when it means "this population declares no such spending".
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    knobs: list[str]
+    declared_base_eur: float
+    """Réductions plus crédits across the population. Zero is the whole problem."""
+    national_niches_eur: float = 19.53e9
+    """What the omission is worth nationally, for scale — DGFiP, against a barème
+    yield of 98.84 bn."""
+    message: str
+
+
 class PopulationSimulateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -655,6 +793,7 @@ class PopulationResponse(BaseModel):
     reconciliation: list[ReconciliationLine] = Field(default_factory=list)
     behavioural: Behavioural | None = None
     macro: Macro | None = None
+    niche_blind_spot: NicheBlindSpot | None = None
     timings: dict[str, float] = Field(default_factory=dict)
 
 

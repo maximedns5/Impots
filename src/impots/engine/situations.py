@@ -103,6 +103,18 @@ def _constant(variable_name: str, value: Any, years: list[int]) -> dict[str, Any
     return dict.fromkeys(_period_keys(variable_name, years), value)
 
 
+def _this_year(variable_name: str, value: Any, year: int) -> dict[str, Any]:
+    """Write a value onto the target year ONLY, never onto the income history.
+
+    `_spread` and `_constant` both write every covered year, which is right for a
+    salary or a housing status — the history is there so means-tested benefits get a
+    realistic reference period. It is wrong for a niche base: a donation declared in
+    2024 is a 2024 fact, and copying it to 2023 and 2022 would assert three identical
+    years of charitable giving that nobody claimed.
+    """
+    return dict.fromkeys(_period_keys(variable_name, [year]), value)
+
+
 def _coerce_enum(variable_name: str, value: Any) -> Any:
     """Accept either an enum member name or its integer index for an Enum variable.
 
@@ -178,9 +190,20 @@ def build_situation(
     if household.logement is not None:
         menage.update(_housing_inputs(household.logement, years))
 
+    if household.niches is not None:
+        from impots.api import schemas
+
+        assert_niche_eligibility(household, year)
+        for index, amount in enumerate(household.niches.cotisations_syndicales):
+            if index < len(adult_ids) and amount:
+                individus[adult_ids[index]][schemas.NICHE_SYNDICALES_CASE] = _this_year(
+                    schemas.NICHE_SYNDICALES_CASE, float(amount), year)
+
     foyer_fiscal: dict[str, Any] = {"declarants": list(adult_ids)}
     if child_ids:
         foyer_fiscal["personnes_a_charge"] = list(child_ids)
+    if household.niches is not None:
+        foyer_fiscal.update(_niche_inputs(household.niches, year))
     if household.resolved_parent_isole():
         # `caseT` — "parent isolé au 1er janvier". Worth half a part, and the only
         # lever for it: `nbptr` multiplies the `isol` parameter by caseT directly,
@@ -200,6 +223,78 @@ def build_situation(
         },
         "menages": {MENAGE_ID: menage},
     }
+
+
+#: A child is under six at 1 January of `year` when born in `year - 6` or later. Only
+#: the birth YEAR is carried, so a child born on 1 January of `year - 6` is treated as
+#: eligible when they are in fact exactly six — the one day of the year this is wrong,
+#: and stated rather than silently rounded.
+CHILDCARE_MAX_AGE = 6
+
+
+def assert_niche_eligibility(household: Any, year: int) -> None:
+    """Refuse niche declarations the household cannot support.
+
+    **openfisca applies no eligibility test to these cases and this is not an
+    oversight**: they are boxes on the 2042, and the engine trusts the declarant the
+    way the paper form does. Measured — a household with a fifteen-year-old receives
+    the childcare credit, and so does a household with no children at all.
+
+    That is fine for a tax engine and wrong for a calculator someone uses to decide
+    something, so the check lives here. It raises ValueError, which the API turns into
+    a 422 rather than a 500.
+    """
+    niches = getattr(household, "niches", None)
+    if niches is None:
+        return
+
+    claimed = [amount for amount in niches.frais_garde_par_enfant if amount]
+    eligible = sum(
+        1 for child in household.children
+        if child.annee_naissance >= year - CHILDCARE_MAX_AGE
+    )
+    if len(claimed) > eligible:
+        raise ValueError(
+            f"frais_garde_par_enfant déclare {len(claimed)} enfant(s) gardé(s) mais le "
+            f"foyer ne compte que {eligible} enfant(s) de moins de {CHILDCARE_MAX_AGE} "
+            f"ans au 1er janvier {year}. Le moteur ne vérifie pas l'âge — il ferait le "
+            f"calcul sans broncher, et même pour un foyer sans enfant."
+        )
+
+    dues = [amount for amount in niches.cotisations_syndicales if amount]
+    if len(dues) > len(household.adults):
+        raise ValueError(
+            f"cotisations_syndicales déclare {len(dues)} adhérent(s) pour "
+            f"{len(household.adults)} adulte(s) dans le foyer."
+        )
+
+    scolarises = niches.declared_school_children
+    if scolarises > len(household.children):
+        raise ValueError(
+            f"les frais de scolarité déclarent {scolarises} enfant(s) scolarisé(s) pour "
+            f"{len(household.children)} enfant(s) à charge."
+        )
+
+
+def _niche_inputs(niches: Any, year: int) -> dict[str, Any]:
+    """Foyer-fiscal-level réduction and crédit bases, on the target year only.
+
+    Zero-valued fields are omitted rather than written as zero. Both produce the same
+    answer, but an input dict that lists only what the household actually declared is
+    what a reader can check against a paper 2042.
+    """
+    from impots.api import schemas
+
+    inputs: dict[str, Any] = {}
+    for field, case in schemas.NICHE_CASES.items():
+        value = getattr(niches, field, 0)
+        if value:
+            inputs[case] = _this_year(case, value, year)
+    for index, amount in enumerate(niches.frais_garde_par_enfant):
+        if index < len(schemas.NICHE_GARDE_CASES) and amount:
+            case = schemas.NICHE_GARDE_CASES[index]
+            inputs[case] = _this_year(case, float(amount), year)
+    return inputs
 
 
 def _housing_inputs(logement: Any, years: list[int]) -> dict[str, Any]:

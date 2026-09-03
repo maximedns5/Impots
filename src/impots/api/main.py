@@ -392,6 +392,34 @@ def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
     )
 
 
+def _niche_blind_spot(request: Any, agg: Any) -> Any:
+    """Flag a niche reform the population cannot price, or return None.
+
+    Never raises: the rest of the reform may be perfectly answerable, and refusing the
+    whole request over one blind knob would hide a valid mechanical figure.
+    """
+    from impots.api.schemas import NicheBlindSpot
+    from impots.engine.reforms import NICHE_KNOBS
+    from impots.guards import niche_blind_spot
+
+    knobs = tuple(request.reform.model_dump(exclude_none=True))
+    blind = niche_blind_spot(knobs, agg.totals, NICHE_KNOBS)
+    if not blind:
+        return None
+    return NicheBlindSpot(
+        knobs=list(blind),
+        declared_base_eur=0.0,
+        message=(
+            "Cette population ne déclare AUCUNE réduction ni crédit d'impôt : les "
+            f"leviers {', '.join(blind)} n'ont donc rien sur quoi s'appliquer et leur "
+            "coût affiché est nul par absence de base, non par absence d'effet. "
+            "Nationalement ces dispositifs représentent 19,53 Md€ contre un barème de "
+            "98,84 Md€ (DGFiP). Le calculateur foyer par foyer, lui, les chiffre "
+            "exactement dès que la dépense est saisie."
+        ),
+    )
+
+
 def _macro(request: Any, agg: Any) -> Any:
     """The L4 fan, or a block explaining why there is not one.
 
@@ -559,6 +587,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
         if request.behavioural else None
     )
     narrow_band = _narrow_band(request, result.households, frame)
+    blind_spot = _niche_blind_spot(request, agg)
     macro = _macro(request, agg) if getattr(request, "macro", False) else None
     return PopulationResponse(
         meta=PopulationMeta(
@@ -575,7 +604,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
         ),
         totals=agg.totals, totals_reform=agg.totals_reform, deltas=agg.deltas,
         reform_cost=agg.reform_cost, behavioural=behavioural,
-        narrow_band=narrow_band, macro=macro,
+        narrow_band=narrow_band, macro=macro, niche_blind_spot=blind_spot,
         deciles=[DecileRow.model_validate(vars(row)) for row in agg.deciles],
         reconciliation=[
             ReconciliationLine.model_validate(line) for line in summary["reconciliation"]

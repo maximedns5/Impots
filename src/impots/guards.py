@@ -18,7 +18,7 @@ around every weighting step in the firm module.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 
 import numpy as np
 import polars as pl
@@ -162,6 +162,34 @@ BALANCE_FLOOR_EUR = 5.0e6
 #: magnitude below the failure this guard exists for — the 17.7 bn labour-cost reform
 #: whose public cost read zero, which breaches it by 100 %.
 BALANCE_RTOL = 1e-3
+
+
+#: The niche outputs a reform can move. If a reform touches a niche knob and these are
+#: zero across the population, the reform's cost is zero because the DATA is missing,
+#: not because the instrument does nothing.
+NICHE_TOTALS = ("reductions", "credits_impot")
+
+
+def niche_blind_spot(
+    knobs: Iterable[str], totals: dict[str, float], niche_knobs: Iterable[str],
+) -> tuple[str, ...]:
+    """Niche knobs this reform moves that the population cannot answer for.
+
+    The most dangerous output this project could produce is a confident zero. A reader
+    who cuts the home-help credit from 50 % to 30 % and is told the reform costs
+    0 EUR will conclude the credit is worthless; the truth is that the synthetic
+    population declares no home-help spending at all, so there is nothing for the rate
+    to apply to. The 19.53 bn of réductions and crédits nationally is money this
+    population has no way to express.
+
+    Returns the offending knobs, empty when there is nothing to warn about — either
+    because the reform touches no niche, or because the population has bases.
+    """
+    touched = tuple(sorted(set(knobs) & set(niche_knobs)))
+    if not touched:
+        return ()
+    declared = sum(abs(totals.get(name, 0.0)) for name in NICHE_TOTALS)
+    return () if declared > 0.0 else touched
 
 
 class SectorBalanceError(RuntimeError):

@@ -48,12 +48,21 @@ as the DGFiP run (browser, official simulator, two or three households,
 recorded box by box). The reviewing session can drive it with Max present.
 *Cost: an hour. Closes the oldest unvalidated surface.*
 
-**B3 · IR niches — réductions and crédits d'impôt.** The 19.5 bn € the model
-knowingly omits, and the stated reason the IR-net line misses by +22 %.
-Encoding the biggest handful (dons, emploi à domicile, garde d'enfants…) as
-knobs narrows that gap, makes the net-yield line meaningful, and opens a
-whole family of chiffrage cases. *Cost: medium; openfisca carries most
-formulas already — this is wiring, imputation of take-up bases, and goldens.*
+**B3 · IR niches — réductions and crédits d'impôt.** **HALF DONE (2026-09-03,
+D-064 to D-067).** The household calculator now prices the five biggest niches
+exactly — seven declaration cases as wire-format fields, thirteen knobs on
+their rates and ceilings, every rate measured rather than tabulated — and the
+Voies et Moyens costs are sourced per numbered dispositif (11.6 bn of 19.53 bn,
+about 59 %). **The imputation is NOT done**, so the population still declares
+no base and the IR-net line is unchanged; what the tool does instead is refuse
+to print the confident zero a niche reform would otherwise produce. Three
+things fell out worth knowing before resuming: the Voies et Moyens columns are
+BUDGETARY years, so a 2024-income model compares against the 2025 column
+(D-067); openfisca applies no eligibility test to these cases at all (D-065);
+and there is a phantom parameter tree for the home-help credit whose values are
+identical to the live one (D-064). *Remaining cost: the imputation, with the
+decile files already on disk and two factor-of-a-thousand traps already
+identified in them.*
 
 **B4 · Capital-income knobs, mechanical only.** PFU rate and base as
 ReformSpec knobs now, clearly banner-limited ("population carries no capital
@@ -143,10 +152,10 @@ banner is the permanent answer.
 
 ## Recommended sequence
 
-With ERFS able to interrupt at any point: **B1** (prestations knobs — wakes
-the spending side, covers the other half of the debate) → **B2** (CAF
-cross-check, an hour) → **C1 + C2** (public repo + methods page — the
+With ERFS able to interrupt at any point: ~~**B1**~~ (done 2026-09-03) →
+~~**B3** first half~~ (done 2026-09-03) → **B2** (CAF cross-check, an hour,
+needs Max at a browser) → **C1 + C2** (public repo + methods page — the
 mission, at zero hosting cost) → **C6** (two or three live-debate analyses,
 which becomes the material for **C4/C5**) → ERFS when it lands → reopen
-**C3** (deployment) with the migrated population. B3/B4 slot in wherever a
-session has appetite; D2 gets written the first quiet week.
+**C3** (deployment) with the migrated population. B3's imputation and **B4**
+slot in wherever a session has appetite; D2 gets written the first quiet week.

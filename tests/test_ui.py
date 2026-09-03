@@ -196,3 +196,62 @@ def test_the_amount_knobs_are_not_scaled(source: str):
                         ("al_minoration_forfaitaire", "alMino")):
         line = next(ln for ln in source.splitlines() if f'put("{knob}"' in ln)
         assert f'filled("{field}")' in line, f"{knob} is being scaled and should not be"
+
+
+# --- IR niches (B3) -----------------------------------------------------------------
+
+
+@pytest.mark.parametrize("field", [
+    "nSaldom", "nSaldomAides", "nDons", "nDonsColuche",
+    "nGarde1", "nGarde2", "nGarde3", "nSynd1", "nSynd2",
+    "nCollege", "nLycee", "nSup",
+])
+def test_every_niche_base_input_exists(source: str, field: str):
+    assert f'id="{field}"' in source
+
+
+@pytest.mark.parametrize("knob", [
+    "saldom_taux", "saldom_plafond", "gardenf_taux", "gardenf_plafond",
+    "dons_taux", "dons_coluche_taux", "cotisations_syndicales_taux",
+    "plafond_global_niches",
+])
+def test_every_exposed_niche_knob_is_wired(source: str, knob: str):
+    assert f'put("{knob}"' in source
+
+
+def test_the_niche_payload_sends_only_what_was_declared(source: str):
+    """"Declared nothing" must stay distinguishable from "declared zero"."""
+    body = _function(source, "nichesPayload")
+    assert "return declared ? niches : null" in body
+
+
+def test_the_childcare_list_trims_trailing_zeros(source: str):
+    """The API maps the list positionally onto 7GA/7GB/7GC, so a trailing zero would
+    claim a third child's costs."""
+    body = _function(source, "nichesPayload")
+    assert "garde.pop()" in body and "syndicales.pop()" in body
+
+
+def test_the_niche_panel_explains_the_per_child_ceiling(source: str):
+    """The measured fact that decided the wire format belongs on screen."""
+    assert "par enfant" in source
+    assert "1 750" in source and "3 000" in source
+
+
+def test_the_panel_says_the_credits_are_refundable(source: str):
+    """A foyer can leave this panel with a negative tax, and should be told so."""
+    assert "impôt négatif" in source
+
+
+def test_the_blind_spot_renderer_exists_and_runs_before_the_headline(source: str):
+    """A warning under a number is a warning the reader reaches too late."""
+    assert "function renderNicheBlindSpot(" in source
+    render = _function(source, "renderPopulation")
+    assert "renderNicheBlindSpot(data)" in render
+    assert render.index("renderNicheBlindSpot(data)") < render.index('class="headline"')
+
+
+def test_the_blind_spot_names_the_stake(source: str):
+    body = _function(source, "renderNicheBlindSpot")
+    assert "national_niches_eur" in body
+    assert "declared_base_eur" in body

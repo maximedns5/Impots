@@ -2316,3 +2316,108 @@ unlock is a hypothesis about the sources, not a reading of them.** The knobs are
 worth having for the other two reasons B1 gave — half the fiscal debate, and the EMTR
 machinery now has `ppa_pente`, the single parameter that most directly sets the marginal
 rate a working household on the prime d'activité faces.
+
+## D-064 — The IR niches, and a phantom parameter tree that would have passed a read-back
+
+`WHAT_NOW.md` B3: the 19.53 bn of réductions and crédits was the stated reason the
+model's income tax is validated against the barème (98.84 bn) rather than net receipts.
+The formulas were never missing — openfisca carries all of them — but nothing could
+supply a base, so `reductions` and `credits_impot` were zero for every household with no
+way to make them otherwise.
+
+Seven declaration cases are now wire-format fields and thirteen knobs move their rates
+and ceilings. **No rate was read off a table**: each was measured by running a household
+through the engine, then checked against the parameter the tree prints. Agreement
+between the two is the evidence, and this increment is exactly why.
+
+**`impot_revenu.credits_impots.aide_a_domicile` is a complete phantom tree.** It
+resolves non-null at 2024-01-01, documents itself as «CGI - art 199. sexdecies» — the
+article that governs the home-help credit — and carries the *same value at every leaf*
+as the live node: rate 0.5, invalidity ceiling 20 000, increment 1 500, first-year
+ceilings 15 000 and 18 000. No formula in openfisca-france reads it. And
+`aide_a_domicile` is the more natural name for "home help" than the live
+`emploi_salarie_domicile`, so it is precisely what a careful implementer reaches for.
+
+A read-back could not have caught it, because the dead tree answers the same values as
+the live one. That makes three shapes of one failure: `update()` silently creating an
+absent child (D-044), published-but-derived plafonds the AF formula never consults
+(D-062), and now a duplicate tree for the same article. **Resolving non-null is not the
+property that matters; being read is.**
+`test_every_knob_aims_at_a_node_some_formula_reads` now requires every knob's node to
+appear somewhere in openfisca's model source, and its kill test asserts the phantom stays
+invisible so the rule cannot pass vacuously.
+
+One measured fact decided the wire format. The childcare ceiling is **per child**: the
+same 6 000 € yields 1 750 € on one child and 3 000 € split across two. A single total
+divided equally would have overstated the credit by 71 % for the first household, so
+`frais_garde_par_enfant` is a list and the UI carries the even-split convenience with its
+own label.
+
+## D-065 — The engine applies no eligibility test, and my docstring said it did
+
+Measured: a household with a fifteen-year-old receives the childcare credit, and so does
+a household with **no children at all**. These cases are boxes on the 2042 and openfisca
+trusts the declarant exactly as the paper form does — eligibility is the administration's
+job, not the formula's. That is correct behaviour for a tax engine.
+
+It is wrong for a calculator someone uses to decide something, and the first version of
+`Niches.frais_garde_par_enfant`'s docstring asserted the opposite: "the engine decides
+eligibility from the children's ages". It does not. The claim was written in the same
+sitting that built the field, and an adversarial pass caught it by testing the premise
+rather than reading the sentence.
+
+`situations.assert_niche_eligibility` now refuses more childcare amounts than there are
+children under six at 1 January, more union dues than adults, and more school children
+than dependants, raising `ValueError` so the API answers 422. Its kill test proves the
+premise: it injects the case past the wire format and shows openfisca computing a
+childcare credit for a childless foyer without complaint.
+
+The age boundary carries its own honest limit: only the birth *year* is available, so a
+child born on 1 January of `year - 6` is treated as eligible when they are in fact
+exactly six. One day a year, stated in the constant's comment rather than rounded away.
+
+## D-066 — The confident zero, refused
+
+No household in the synthetic population declares any niche base, so `reductions` and
+`credits_impot` total exactly 0.0000 bn. Cut the home-help credit from 50 % to 30 % and
+the reform costs **exactly 0 €**.
+
+That is the most dangerous output this project could produce. A reader told "0 €"
+concludes the credit is worthless; the truth is that the population has no home-help
+spending for the rate to apply to, and the omission is worth 19.53 bn nationally.
+
+`guards.niche_blind_spot` detects a reform touching a niche knob on a population with no
+bases, and the response carries a block naming the knobs, the declared base and the
+national stake. It renders **above** the headline, because a warning underneath is one
+the reader reaches after believing the number. It falls silent as soon as the population
+has bases — the half that keeps it from becoming permanent furniture — and silent on any
+reform that touches no niche.
+
+## D-067 — Voies et Moyens columns are budgetary years, not income years
+
+The annexe's cost columns are **budgetary**, and budgetary year N carries the dispositif
+assessed on the **revenus N−1**. A model simulating 2024 incomes compares against the
+column labelled **2025**.
+
+Three of five research passes got this wrong in the same direction, and one presented
+the resulting 3.4 % discrepancy as a reassuring cross-check when the discrepancy *was*
+the lag; corrected, the same comparison closes to 0.19 %. **A residual small enough to
+feel like validation is the most dangerous size for a systematic error to be.**
+
+The correction is not free and both columns stay printed: the right-vintage figure is a
+**forecast**, and the PLF 2025 forecast for the same dispositif in 2024 came in at
+6 724 M € against a realised 6 420 M €, a 4.5 % overshoot. Neither column is a clean
+comparator, so `docs/B3_IR_NICHES.md` §3 gives both and says why.
+
+Sourced from the PDF on disk, read by this session rather than taken from the research
+prose: saldom 6 420 / 7 029 (n° 110246, 4 909 243 bénéficiaires), garde 1 737 / 1 799
+(110203), dons 1 990 / 2 204 (110201), scolarité 221 / 229 and 217 / 225 (110215,
+110242), syndicales 149 / 156 (110202). Five families, **11.6 bn of 19.53 bn — about
+59 %**, so a complete imputation of them would still leave two fifths unmodelled.
+
+**What did NOT get settled, and is not being propagated.** openfisca places `ci_saldom`
+in the globally-capped list, and the cap measurably destroys entitlement — 7 500 € of
+home-help credit plus 3 500 € of childcare credit yields 10 000 €, not 11 000 €. Whether
+art. 199 sexdecies genuinely belongs to the enumeration of art. 200-0 A could not be
+confirmed: Légifrance returned 403 to the research pass and 404 to a second attempt. It
+is recorded as a question with its measured consequence attached, not as a finding.

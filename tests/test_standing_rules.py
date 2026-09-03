@@ -215,3 +215,83 @@ def test_existence_is_read_from_the_evaluated_tree_not_the_editable_one() -> Non
         "if the editable tree ever stops answering for a superseded child, this test "
         "is over-specified and the distinction it guards may have gone away"
     )
+
+
+# --- every knob must aim at a parameter some FORMULA reads --------------------------
+
+#: Where openfisca-france's formulas live. A parameter node no file here mentions
+#: cannot be feeding any calculation.
+OPENFISCA_MODEL = (
+    Path(__import__("openfisca_france").__file__).parent / "model"
+)
+
+#: The trap this rule exists for, and the third of its kind in this project.
+#:
+#: `impot_revenu.credits_impots.aide_a_domicile` is a COMPLETE PHANTOM TREE for the
+#: home-help credit: it cites the same CGI article in its own documentation as the live
+#: node, carries the same values at every leaf (taux 0.5, plafond_invalide 20 000,
+#: plafond_additionnel 1 500), resolves non-null at 2024-01-01 — and no formula reads
+#: it. Its name is the MORE natural one for "home help" than the live
+#: `emploi_salarie_domicile`, so it is exactly what a careful implementer would pick.
+#:
+#: Two earlier shapes of the same failure: `update()` silently creating an absent child
+#: (D-044), and published-but-derived plafonds the AF formula never consults (D-062).
+#: Resolving non-null is not enough. Being read is the property that matters.
+PHANTOM_NODE = ("impot_revenu", "credits_impots", "aide_a_domicile")
+
+
+def _node_is_referenced(name: str) -> bool:
+    """Whether any openfisca model file mentions this parameter node by name."""
+    return any(
+        name in path.read_text(encoding="utf-8", errors="ignore")
+        for path in OPENFISCA_MODEL.rglob("*.py")
+    )
+
+
+def test_every_knob_aims_at_a_node_some_formula_reads() -> None:
+    """A knob pointing at a parameter no formula reads writes successfully and moves
+    nothing — silently, and with a read-back that confirms it."""
+    from impots.engine.reforms import SCALAR_KNOBS
+
+    orphans = []
+    for knob, path in sorted(SCALAR_KNOBS.items()):
+        # A formula references the containing node, not usually the leaf, so either
+        # counts as evidence that this branch of the tree is live.
+        if not any(_node_is_referenced(segment) for segment in path[-2:]):
+            orphans.append((knob, ".".join(path)))
+    assert not orphans, (
+        "these knobs aim at parameter nodes no openfisca formula mentions, so a reform "
+        f"moving them would change nothing: {orphans}"
+    )
+
+
+def test_the_rule_fires_on_the_phantom_that_motivated_it() -> None:
+    """The kill test. `aide_a_domicile` must be invisible to the model, or this rule
+    has stopped testing anything."""
+    assert not _node_is_referenced(PHANTOM_NODE[-1]), (
+        "openfisca now references aide_a_domicile — either it was wired up, in which "
+        "case this rule needs a new phantom to prove itself on, or the grep broke"
+    )
+    assert _node_is_referenced("emploi_salarie_domicile"), (
+        "the live home-help node is no longer referenced, which would mean the grep is "
+        "finding nothing and the rule above passes vacuously"
+    )
+
+
+def test_the_phantom_is_indistinguishable_by_read_back() -> None:
+    """Why a read-back could not have caught it: the values are identical.
+
+    Both trees answer 0.5 for the rate and 20 000 for the invalidity ceiling at
+    2024-01-01. A guard that writes a value and reads it back would confirm the write
+    to the dead tree exactly as convincingly as to the live one.
+    """
+    from impots.engine.reforms import resolve
+    from impots.engine.system import baseline
+
+    parameters = baseline().parameters
+    live = resolve(parameters, ("impot_revenu", "credits_impots",
+                                "emploi_salarie_domicile", "taux"))("2024-01-01")
+    phantom = resolve(parameters, (*PHANTOM_NODE, "taux"))("2024-01-01")
+    assert live == phantom == 0.5
+    assert resolve(parameters, (*PHANTOM_NODE, "plafond", "plafond_invalide"))(
+        "2024-01-01") == 20_000

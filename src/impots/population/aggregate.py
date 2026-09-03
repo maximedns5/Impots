@@ -32,6 +32,7 @@ INSTRUMENTS = (
     "salaire_brut", "salaire_super_brut", "salaire_net", "salaire_imposable",
     "cotisations_salariales", "cotisations_employeur",
     "csg_deductible", "csg_imposable", "crds", "ir",
+    "reductions", "credits_impot",
     "af", "ppa", "rsa", "aide_logement", "aefa",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
 )

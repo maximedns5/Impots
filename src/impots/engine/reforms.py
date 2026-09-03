@@ -81,6 +81,26 @@ PATH_AL_MINORATION = (
     "minoration_forfaitaire",
 )
 
+# --------------------------------------------------------------------------- #
+# IR niches (B3) — réductions and crédits d'impôt.
+#
+# Every path below was read out of the tree at 2024-01-01 and every value cross-checked
+# against a COMPUTED outcome: 5 000 EUR of home help returns 2 500, so the rate really
+# is the 0.5 the tree prints; 6 000 on one child returns 1 750, so the ceiling really is
+# the 3 500 per child. Agreement between the parameter and the behaviour is the check —
+# either alone can be a parameter the formula never reads (D-062).
+_RI = ("impot_revenu", "calcul_reductions_impots")
+_CI = ("impot_revenu", "credits_impots")
+PATH_NICHE_SALDOM = (*_CI, "emploi_salarie_domicile")
+PATH_NICHE_GARDENF = (*_CI, "gardenf")
+PATH_NICHE_DONS = (*_RI, "dons")
+PATH_NICHE_SYNDICALES = (*_CI, "cotisations_syndicales")
+PATH_NICHE_SCOLARITE = (*_RI, "enfants_scolarises")
+#: The global cap on niches — 10 000 EUR, and the single most argued-over number in
+#: this family. It binds only on households claiming more than that, which is why its
+#: knob has to be verified on one that does.
+PATH_PLAFOND_GLOBAL_NICHES = (*_CI, "plaf_nich", "plafond")
+
 _REDUCTIONS = ("prelevements_sociaux", "reductions_cotisations_sociales")
 PATH_ALLEGEMENT_GENERAL = (*_REDUCTIONS, "allegement_general", "ensemble_des_entreprises")
 #: The maladie bandeau's parameters live under `alleg_gen.mmid`, NOT under the
@@ -156,7 +176,31 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "af_majoration_plafond_par_enfant": (
         *PATH_AF_RESSOURCES, "majoration_plafond_par_enfant_supplementaire"),
     "al_minoration_forfaitaire": PATH_AL_MINORATION,
+    # IR niches (B3).
+    "saldom_taux": (*PATH_NICHE_SALDOM, "taux"),
+    "saldom_plafond": (*PATH_NICHE_SALDOM, "plafond"),
+    "gardenf_taux": (*PATH_NICHE_GARDENF, "taux"),
+    "gardenf_plafond": (*PATH_NICHE_GARDENF, "plafond"),
+    "dons_taux": (*PATH_NICHE_DONS, "taux_reduction"),
+    "dons_plafond_part_rfr": (*PATH_NICHE_DONS, "plafond_dons"),
+    "dons_coluche_taux": (*PATH_NICHE_DONS, "dons_coluche", "taux"),
+    "dons_coluche_plafond": (*PATH_NICHE_DONS, "dons_coluche", "plafond"),
+    "cotisations_syndicales_taux": (*PATH_NICHE_SYNDICALES, "taux"),
+    "frais_scolarite_college": (*PATH_NICHE_SCOLARITE, "college"),
+    "frais_scolarite_lycee": (*PATH_NICHE_SCOLARITE, "lycee"),
+    "frais_scolarite_superieur": (*PATH_NICHE_SCOLARITE, "universite"),
+    "plafond_global_niches": PATH_PLAFOND_GLOBAL_NICHES,
 }
+
+#: Knobs that move an IR niche. Grouped for the same three reasons the prestations are:
+#: the UI panels them apart, and a reader needs to know which levers only bite on a
+#: household that actually declares the corresponding base.
+NICHE_KNOBS = frozenset({
+    "saldom_taux", "saldom_plafond", "gardenf_taux", "gardenf_plafond",
+    "dons_taux", "dons_plafond_part_rfr", "dons_coluche_taux", "dons_coluche_plafond",
+    "cotisations_syndicales_taux", "frais_scolarite_college", "frais_scolarite_lycee",
+    "frais_scolarite_superieur", "plafond_global_niches",
+})
 
 #: Knobs that move a transfer rather than a levy. Kept as a set because three
 #: different layers need to know: the double-entry guard signs them the other way, the

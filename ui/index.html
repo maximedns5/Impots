@@ -740,9 +740,70 @@ footer code { font-family: var(--mono); font-size: 11px; }
         </div>
       </div>
 
+      <details class="reform" id="nichesPanel">
+        <summary>
+          <span class="sum-title"><span class="chev">›</span>&nbsp; 03 &nbsp;·&nbsp; Réductions et crédits d'impôt</span>
+          <span class="sum-state" id="nichesState">aucune déclarée</span>
+        </summary>
+        <div class="reform-body">
+          <p class="note" style="margin:4px 0 14px">
+            Ce que le foyer déclare, pas une réforme. Sans rien ici, tous les dispositifs
+            valent zéro — c'est l'état de la population synthétique, et la raison pour
+            laquelle son impôt se compare au barème (98,8 Md€) et non aux recettes nettes.
+            Deux d'entre eux sont des <b>crédits</b> : ils sont remboursés même sans impôt
+            à réduire, si bien qu'un foyer peut sortir d'ici avec un impôt négatif.
+          </p>
+          <div class="field-row tri">
+            <div><label for="nSaldom">Salarié à domicile — sommes versées (€/an)</label>
+                 <input type="number" id="nSaldom" step="100" placeholder="0"></div>
+            <div><label for="nSaldomAides">… dont aides perçues (APA, PCH, CESU préfinancé)</label>
+                 <input type="number" id="nSaldomAides" step="100" placeholder="0"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="nDons">Dons aux œuvres (€/an) — 66 %</label>
+                 <input type="number" id="nDons" step="50" placeholder="0"></div>
+            <div><label for="nDonsColuche">Dons aide aux personnes en difficulté — 75 %</label>
+                 <input type="number" id="nDonsColuche" step="50" placeholder="0"></div>
+          </div>
+          <p class="note" style="margin:2px 0 8px">
+            Frais de garde : <b>par enfant</b> de moins de 6 ans, parce que le plafond de
+            3 500 € s'applique enfant par enfant. 6 000 € sur un seul enfant donnent
+            1 750 € de crédit ; 3 000 € sur chacun de deux en donnent 3 000.
+          </p>
+          <div class="field-row tri">
+            <div><label for="nGarde1">Garde — enfant 1 (€/an)</label>
+                 <input type="number" id="nGarde1" step="100" placeholder="0"></div>
+            <div><label for="nGarde2">Garde — enfant 2 (€/an)</label>
+                 <input type="number" id="nGarde2" step="100" placeholder="0"></div>
+            <div><label for="nGarde3">Garde — enfant 3 (€/an)</label>
+                 <input type="number" id="nGarde3" step="100" placeholder="0"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="nSynd1">Cotisations syndicales — adulte 1 (€/an)</label>
+                 <input type="number" id="nSynd1" step="10" placeholder="0"></div>
+            <div><label for="nSynd2">Cotisations syndicales — adulte 2 (€/an)</label>
+                 <input type="number" id="nSynd2" step="10" placeholder="0"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="nCollege">Enfants au collège</label>
+                 <input type="number" id="nCollege" step="1" min="0" placeholder="0"></div>
+            <div><label for="nLycee">Enfants au lycée</label>
+                 <input type="number" id="nLycee" step="1" min="0" placeholder="0"></div>
+            <div><label for="nSup">Enfants dans le supérieur</label>
+                 <input type="number" id="nSup" step="1" min="0" placeholder="0"></div>
+          </div>
+          <p class="note">
+            Montants annuels, pour l'année simulée seulement : ils ne sont pas recopiés sur
+            l'historique de revenus, qui n'existe que pour donner aux prestations une période
+            de référence réaliste. Les frais de scolarité sont des montants forfaitaires par
+            enfant (61 €, 153 €, 183 €), pas un taux sur une dépense.
+          </p>
+        </div>
+      </details>
+
       <details class="reform" id="reformPanel">
         <summary>
-          <span class="sum-title"><span class="chev">›</span>&nbsp; 03 &nbsp;·&nbsp; Votre réforme</span>
+          <span class="sum-title"><span class="chev">›</span>&nbsp; 04 &nbsp;·&nbsp; Votre réforme</span>
           <span class="sum-state" id="reformState">droit courant</span>
         </summary>
         <div class="reform-body">
@@ -832,6 +893,38 @@ footer code { font-family: var(--mono); font-size: 11px; }
           <div class="field-row tri">
             <div><label for="alMino">Aide au logement — minoration (€/mois)</label>
                  <input type="number" id="alMino" step="1" placeholder="5"></div>
+          </div>
+
+          <div class="lbl" style="margin:18px 0 8px">Réductions et crédits d'impôt</div>
+          <p class="note" style="margin:0 0 10px">
+            Ces leviers ne mordent que sur un foyer qui déclare la dépense correspondante,
+            en 03. Le plafond global est à lire à part : il ne touche que les foyers
+            cumulant plus que lui, si bien qu'un chiffrage de ce seul levier ne dit rien
+            du reste de la distribution.
+          </p>
+          <div class="field-row tri">
+            <div><label for="kSaldomTaux">Salarié à domicile — taux (%)</label>
+                 <input type="number" id="kSaldomTaux" step="1" placeholder="50"></div>
+            <div><label for="kSaldomPlaf">Salarié à domicile — plafond (€)</label>
+                 <input type="number" id="kSaldomPlaf" step="500" placeholder="12 000"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="kGardeTaux">Frais de garde — taux (%)</label>
+                 <input type="number" id="kGardeTaux" step="1" placeholder="50"></div>
+            <div><label for="kGardePlaf">Frais de garde — plafond par enfant (€)</label>
+                 <input type="number" id="kGardePlaf" step="100" placeholder="3 500"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="kDonsTaux">Dons — taux (%)</label>
+                 <input type="number" id="kDonsTaux" step="1" placeholder="66"></div>
+            <div><label for="kDonsColTaux">Dons aide aux personnes — taux (%)</label>
+                 <input type="number" id="kDonsColTaux" step="1" placeholder="75"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="kSyndTaux">Cotisations syndicales — taux (%)</label>
+                 <input type="number" id="kSyndTaux" step="1" placeholder="66"></div>
+            <div><label for="kPlafGlobal">Plafond global des niches (€)</label>
+                 <input type="number" id="kPlafGlobal" step="500" placeholder="10 000"></div>
           </div>
 
           <button type="button" class="reset" id="reset" disabled>réinitialiser au droit courant</button>
@@ -1188,6 +1281,18 @@ function reformSpec() {
   put("af_plafond_tranche_2_base",              filled("afPlaf2"));
   put("al_minoration_forfaitaire",              filled("alMino"));
 
+  /* IR niches. The global cap is the one to read carefully: it bites only on foyers
+     claiming more than it, so a chiffrage of it describes the top of the distribution
+     and nobody else. */
+  put("saldom_taux",                            filled("kSaldomTaux", 100));
+  put("saldom_plafond",                         filled("kSaldomPlaf"));
+  put("gardenf_taux",                           filled("kGardeTaux", 100));
+  put("gardenf_plafond",                        filled("kGardePlaf"));
+  put("dons_taux",                              filled("kDonsTaux", 100));
+  put("dons_coluche_taux",                      filled("kDonsColTaux", 100));
+  put("cotisations_syndicales_taux",            filled("kSyndTaux", 100));
+  put("plafond_global_niches",                  filled("kPlafGlobal"));
+
   return Object.keys(spec).length ? spec : null;
 }
 
@@ -1197,6 +1302,40 @@ function markDirty() {
   $("reformState").textContent = n ? `${n} paramètre${n > 1 ? "s" : ""} modifié${n > 1 ? "s" : ""}` : "droit courant";
   $("reformState").style.color = n ? "var(--bleu)" : "";
   $("reset").disabled = !n;
+}
+
+/* The niche bases the foyer declares. Sent only when something is filled: an input
+   dict listing exactly what was declared is what a reader can check against a paper
+   2042, and it keeps "declared nothing" distinguishable from "declared zero".
+
+   The childcare amounts are a LIST because the 3 500 EUR ceiling applies per child —
+   collapsing them into one total and splitting it equally would report a different,
+   generally larger, credit than the household actually gets. */
+function nichesPayload() {
+  const num = (id) => {
+    const raw = $(id).value;
+    return raw === "" || Number.isNaN(Number(raw)) ? 0 : Number(raw);
+  };
+  const garde = [num("nGarde1"), num("nGarde2"), num("nGarde3")];
+  const syndicales = [num("nSynd1"), num("nSynd2")];
+  const niches = {
+    salarie_domicile: num("nSaldom"),
+    salarie_domicile_aides_percues: num("nSaldomAides"),
+    dons_oeuvres: num("nDons"),
+    dons_aide_personnes_en_difficulte: num("nDonsColuche"),
+    enfants_college: num("nCollege"),
+    enfants_lycee: num("nLycee"),
+    enfants_superieur: num("nSup"),
+  };
+  /* Trailing zeros are trimmed rather than sent: the API maps the list positionally
+     onto cases 7GA/7GB/7GC, and a trailing zero would claim a third child's costs. */
+  while (garde.length && garde[garde.length - 1] === 0) garde.pop();
+  while (syndicales.length && syndicales[syndicales.length - 1] === 0) syndicales.pop();
+  if (garde.length) niches.frais_garde_par_enfant = garde;
+  if (syndicales.length) niches.cotisations_syndicales = syndicales;
+  const declared = Object.entries(niches).some(([, v]) =>
+    Array.isArray(v) ? v.some((x) => x !== 0) : v !== 0);
+  return declared ? niches : null;
 }
 
 /* -------------------------------------------------------------- payload */
@@ -1213,6 +1352,8 @@ function payload() {
   if (state.adults === 1 && state.children.length > 0) {
     household.parent_isole = $("isole").checked;
   }
+  const niches = nichesPayload();
+  if (niches) household.niches = niches;
   const full = $("full").checked;
   if (full && $("statut").value) {
     household.logement = {
@@ -1709,6 +1850,27 @@ function renderBand(data) {
    and the missing instruments are on screen, with the reason each one is missing.
 
    It never turns a fan into a number. There is no mean anywhere in this function. */
+/* The confident zero this project refuses to print. A niche reform on a population
+   with no declared bases costs 0 EUR, and 0 EUR reads as "this credit does nothing".
+   Drawn ABOVE the headline, not below it, because by the time a reader reaches a
+   footnote they have already believed the number. */
+function renderNicheBlindSpot(data) {
+  const b = data.niche_blind_spot;
+  if (!b) return "";
+  return `<div class="fan absent" style="border-left-color:var(--rouge)">
+    <div class="top"><span class="k" style="color:var(--rouge)">
+      Ce chiffrage ne peut pas répondre</span></div>
+    <p class="why">${escapeHtml(b.message)}</p>
+    <dl class="strip" style="margin-top:10px">
+      <dt>Leviers concernés</dt><dd>${b.knobs.map(escapeHtml).join(", ")}</dd>
+      <dt>Base déclarée dans la population</dt>
+      <dd class="warn">${b.declared_base_eur.toFixed(0)} €</dd>
+      <dt>Enjeu national</dt>
+      <dd>${(b.national_niches_eur / 1e9).toFixed(2).replace(".", ",")} Md €</dd>
+    </dl>
+  </div>`;
+}
+
 function renderFan(data) {
   const m = data.macro;
   if (!m) return "";
@@ -1830,7 +1992,7 @@ function renderPopulation(data) {
   const cost = data.reform_cost ?? 0;
   const raises = cost < 0;
   const bn = (x) => (Math.abs(x) / 1e9).toFixed(1).replace(".", ",");
-  let html = `<div class="headline">
+  let html = renderNicheBlindSpot(data) + `<div class="headline">
       <span class="k">${raises ? "La réforme rapporte" : "La réforme coûte"}</span>
       <span class="v ${raises ? "up" : "down"}">${bn(cost)} Md €</span>
       <span class="sub">Effet au premier jour sur le revenu disponible des ménages, à
