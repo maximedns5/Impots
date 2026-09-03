@@ -2004,3 +2004,91 @@ genuine uncertainty about a French reform. Conservative, and a choice.
 
 Both rows load with `verdict: null` like the rest. D-053 is unchanged: the store still
 refuses everything.
+
+## D-055 — The verification cost ten agents and paid for itself twice over
+
+Ten adversarial verifiers over the five M1 rows, two lenses each, ref `wf_8caa3e5e-1e6`.
+**113 findings. One WRONG, nine SCOPE_PROBLEM.**
+
+**No transcription error anywhere.** All 48 Mésange values, all 28 IMK columns, every
+page reference: exact, including the CSG/IR trap where both read 0.41 in year one.
+D-026's first half — parse from the primary file with tested code — did its job
+completely. Every single defect was in what the numbers were said to MEAN.
+
+That is worth stating plainly, because it is the fourth phase in a row where the same
+split appears: **the arithmetic is fine and the scope is wrong.** Phase 1 gave six scope
+problems out of six statistics; Phase 2's firm-data pass returned fifteen; Phase 3's
+`eti_all` was killed by a scope error, not a typo. A verification that only re-checks
+digits would have passed everything here.
+
+**The most consequential finding is specific to this repository.** Mésange's four
+labour-tax variants are NON-TARGETED — a uniform 3.7-point cut landing 80 % on qualified
+workers — and the document publishes a targeted counterpart at encadré 14, concentrated
+on 1 to 1.6 SMIC, landing 44 % on unqualified workers whose labour demand is more
+elastic. Phase 3's entire allègements-généraux work moves exactly those knobs, and
+`responds_to_knobs: [cotisations_*]` would have handed every one of them the uniform
+multiplier: **290 000 jobs at three years instead of 403 000, an understatement of
+39 %**. The ninth variant is now parsed and `shocks.targets_low_wages` routes to it from
+the reform's knobs, since the deltas cannot tell the two apart.
+
+Four more that changed behaviour rather than wording: the VAT shock is **1.18 point of
+GDP ex ante** for one point net (the state pays about 15 % of its own VAT), so a reform
+costed gross took a multiplier overstated by 18 %; only the fiscal variants are ex ante
+at all, the two spending ones being shocks in volume; employment is in **full-time
+equivalents**, not persons, which now coexists in this layer with `io_layer`'s
+person-counts and must never be added to them; and the long horizons are determined by a
+specification choice rather than measured — employer contributions give 1.73 at LT under
+wage setting and 0.25 under a Phillips curve — so `usable_horizons` stops at three years,
+which is where §0 had independently already refused to go.
+
+## D-056 — I violated D-026 twice, in the file that proclaims it
+
+The rule this project cares most about is that calibration inputs never pass through
+prose. I broke it twice in one sitting, the same way both times, and the verifiers found
+both.
+
+* `revenue_elasticity.yaml`'s `note` carried "1,5 en 2017 et 2022, 0,4 en 2023". **None
+  of those figures is in the cited document.** It prints 0.84 (2020), 1.15 (2021), 1.48
+  (2022), and cannot print a 2023 value at all, being dated February 2023. They came
+  from a search-engine summary.
+* `dispersion.yaml`'s `quote:` field set a **paraphrase in quotation position**. Gechert
+  writes "Reported multipliers vary with study-design, whose influence should be laid
+  open when drawing policy conclusions". The file printed a search result's rewording.
+
+The pattern is exact and worth naming, because it is not the failure D-026 was written
+to prevent and the existing tests were blind to it. **Values were computed from primary
+files by tested code, while the prose around them — quotes, notes, characterisations —
+came from whatever was to hand.** D-026 was honoured in the half that had a test and
+violated in the half that did not. `test_the_multiplier_yaml_contains_no_multipliers`
+proves no number is transcribed; nothing proved the sentences were read.
+
+`test_every_quote_is_verbatim_in_its_source` now compares every `quote:` field to its
+PDF letter by letter, surviving hyphenation and ligatures but not paraphrase. The rule
+extends: **a `quote:` is a quotation or it is not a `quote:`**, and a `note:` may not
+carry a figure the cited document does not print.
+
+## D-057 — Correction to D-054: the banner's factor is not a measurement
+
+D-054 said the L4 banner's "l'éventail des estimations crédibles pour un même choc varie
+d'un facteur 3 à 5" turned out to be a measured quantity, on the strength of
+RLO/RUP = 1.37/0.39 = 3.5. **That was wrong**, and the reasoning was wrong in three ways
+at once.
+
+The 3.5 is a ratio of two RAW subsample means. The same paper's controlled estimate
+contradicts it: the meta-regression's regime effect is **additive** — "spending
+multipliers to significantly increase by about 0.6 to 0.8 units during a downturn" —
+with RLO at +0.769 (0.143, significant at 1 %) and **RUP at −0.049 (0.097), not
+significant**. There is therefore no measured upswing multiplier to divide by. No
+controlled reading reproduces 3.5 (2.52 and 2.08 depending on specification), the
+authors write that the reference multiplier "should not be interpreted as the true
+multiplier since it depends on the reference specification", and **nothing in either
+paper yields 5**.
+
+The banner must describe dispersion qualitatively. The honest statement available is
+that a downturn adds something like 0.6 to 0.8 to a SPENDING multiplier, which is not a
+factor, does not apply to the tax instruments this repository actually simulates, and
+therefore leaves `multiplier_regime_shift` loaded, sourced, and with an empty
+`responds_to_knobs` — a row nothing may currently use.
+
+The general lesson is the one D-026 keeps teaching: a ratio computed from two published
+numbers is a NEW estimate, and inherits none of their authority.

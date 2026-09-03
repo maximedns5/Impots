@@ -21,6 +21,7 @@ deliberately partial, and the gaps are the interesting part.
 
 from __future__ import annotations
 
+import fnmatch
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -35,6 +36,19 @@ from impots.macro.tes import Tes
 #: `crds` rides with `csg` because it is the same instrument in every respect that
 #: matters to a macro model: a proportional levy on the same base, collected together.
 #: That is a judgement, and it is here rather than buried so it can be argued with.
+#: Knobs whose reforms are CONCENTRATED ON LOW WAGES, and which must therefore route
+#: employer contributions to the targeted variant rather than the uniform one.
+#:
+#: This is the defect the adversarial pass called the most exploitable, and it is
+#: specific to this project: the whole allègements-généraux work of Phase 3 moves these
+#: knobs, and the uniform variant would have understated its employment effect by 39 %
+#: at three years (290 000 against 403 000) because a uniform cut lands 80 % on
+#: qualified workers while an allègement between 1 and 1.6 SMIC lands 44 % on
+#: unqualified ones, whose labour demand is more elastic.
+TARGETED_EMPLOYER_KNOBS = (
+    "allegement_general_*", "bandeau_maladie_*", "bandeau_famille_*",
+)
+
 INSTRUMENT_MAP = {
     "ir": "impot_sur_le_revenu",
     "csg_imposable": "csg",
@@ -62,13 +76,14 @@ UNMAPPED = {
 UNMAPPED_REASONS = {
     "transfert": (
         "Mésange ne publie pas de variante de transfert. La variante « dépense publique "
-        "générique » en contient (« prestations sociales en espèces »), mais c'est un "
-        "COMPOSITE — investissement, salaires publics et transferts dans une proportion "
-        "fixe — et le document dit lui-même que ses composantes se transmettent à des "
-        "vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent "
-        "0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la "
-        "dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un "
-        "canal qui se trompe d'un facteur deux."
+        "générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la "
+        "composition exacte : 8 % investissement public, 25 % rémunérations publiques, "
+        "9 % prestations en nature, 12 % consommations intermédiaires et 46 % "
+        "prestations sociales en espèces — et le document dit que ces composantes se "
+        "transmettent à des vitesses différentes. L'emprunter surestimerait : les "
+        "méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts "
+        "contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal "
+        "qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
     ),
     "fiscalité des entreprises": (
         "Aucune variante d'impôt sur les sociétés en section 4. Les instruments "
@@ -85,6 +100,7 @@ UNMAPPED_REASONS = {
 #: for when the decile differentiation died.
 ALLOCATION_BASIS = {
     "impot_sur_le_revenu": "consommation_finale_menages",
+    "cotisations_employeurs_ciblees": "fbcf",
     "csg": "consommation_finale_menages",
     "cotisations_salaries": "consommation_finale_menages",
     "cotisations_employeurs": "fbcf",
@@ -148,13 +164,31 @@ class Impulse:
         }
 
 
+def targets_low_wages(knobs: tuple[str, ...] | None) -> bool:
+    """Whether this reform's knobs concentrate on low wages.
+
+    Decided from the KNOBS the reform moved, not from its deltas: the population layer
+    reports one employer-contribution total either way, so the delta cannot tell a
+    uniform rate cut from an allègement.
+    """
+    return any(
+        fnmatch.fnmatch(knob, pattern)
+        for knob in (knobs or ())
+        for pattern in TARGETED_EMPLOYER_KNOBS
+    )
+
+
 def build(deltas: dict[str, float], *, year: int,
-          reform_cost: float | None = None) -> Impulse:
+          reform_cost: float | None = None,
+          knobs: tuple[str, ...] | None = None) -> Impulse:
     """Map lower-layer deltas onto instrument impulses.
 
     `deltas` are receipts-positive as the population layer reports them — a tax rise is
-    a positive delta — so each is negated into the expansionary convention.
+    a positive delta — so each is negated into the expansionary convention. `knobs` are
+    the reform's own knob names, needed only to tell a targeted employer-contribution
+    reform from a uniform one, which the deltas cannot.
     """
+    targeted = targets_low_wages(knobs)
     by_instrument: dict[str, float] = {}
     unmapped: dict[str, float] = {}
     for name, value in deltas.items():
@@ -162,6 +196,8 @@ def build(deltas: dict[str, float], *, year: int,
             continue
         if name in INSTRUMENT_MAP:
             variant = INSTRUMENT_MAP[name]
+            if variant == "cotisations_employeurs" and targeted:
+                variant = "cotisations_employeurs_ciblees"
             by_instrument[variant] = by_instrument.get(variant, 0.0) - value
         elif name in UNMAPPED:
             unmapped[name] = -value

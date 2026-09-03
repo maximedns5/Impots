@@ -1,7 +1,7 @@
 # M1 — The macro parameter fan-out
 
 **Date**: 2026-09-03 · **Gate**: PHASE4_SPEC.md §2 · **Reproduce**: `pytest tests/test_macro_parameters.py`
-**Status**: sources located and parsed; **the independent adversarial pass has not run, so the store loads nothing.** Five rows sourced, three rows dead, two superseded.
+**Status**: **verified 2026-09-03** (ten adversarial verifiers, ref `wf_8caa3e5e-1e6`). One row returned WRONG and is dead; four returned SCOPE_PROBLEM and load with their scope repaired. 113 findings; the corrections are in §9.
 
 The spec asked for four parameter families and warned that its own seeds were
 reviewer-compiled and suspect by precedent. They were. Two of the four families have a
@@ -90,21 +90,35 @@ therefore replaced rather than filled, and the Okun search that motivated it tur
 only tertiary sources — Wikipedia and secondary summaries of Blanchard-Cohen — which
 would not have passed sourcing anyway.
 
-## 4. Revenue-GDP elasticity: 1.07, and a refusal that came with it
+## 4. Revenue-GDP elasticity — **WRONG, and dead**
 
-HCFP, *L'élasticité des prélèvements obligatoires au PIB*, note méthodologique
-n° 2023-1, février 2023, Tableau 2 p. 7, équation (2): **1.07** over 1991–2021, R² 0.88,
-"toutefois statistiquement non différente de l'unité". The band [0.98, 1.16] is derived
-from the published t-statistic of 24.68 (σ = 0.0434, ±2σ) and contains equation (1)'s
-1.01 — a derivation, flagged as one, and first on the list for the adversarial pass.
+This row was authored at 1.07 with a band [0.98, 1.16] derived from the published
+t-statistic. It went first on the list for the adversarial pass, which was right, and it
+came back **WRONG** on five counts. Three are fatal:
 
-The same document **forbids** something the spec would have allowed. §1 makes cycle
-state a toggle on the multipliers, and it would be natural to vary the revenue
-elasticity with it too. HCFP tests exactly that (tableau 4) under three definitions —
-output gap, nominal growth, real growth — and finds none significant. The one detectable
-regime (0.92 below 1.6 % growth, 1.1 above) is "à la limite de la significativité au
-seuil de 5 %" and "pourrait même être rejetée". Making this row cycle-dependent would
-promote noise to a parameter. Recorded as a removed row.
+* the `note` carried **figures that appear nowhere in the document** — "1.5 in 2017 and
+  2022, 0.4 in 2023". The only published annual elasticities are Table 5 p. 14: **0.84
+  (2020), 1.15 (2021), 1.48 (2022)**, and no 2023 figure can exist in a note dated
+  February 2023. Those numbers came from a search-engine summary. See §9.
+* **R² 0.88 was read from the wrong column.** Table 2 prints R² only for equation (1);
+  the cell for equation (2) is empty, and p. 8 says R² "n'est défini que lorsque
+  l'équation estimée comprend une constante". 0.89 % came from (2), 0.88 from (1).
+* the band is **twenty times too narrow for its use**. σ = coefficient/t is the
+  sampling error of the mean slope (±0.087 ≈ ±0.96 bn); forecast uncertainty is the
+  equation's residual (0.89 % ≈ ±19.7 bn).
+
+Two more: HCFP's preferred specification is not 1.07 alone but Table 3 equation (4),
+1.05 on GDP plus 0.60 on the private wage share (regression sd 0.89 % → 0.74 %), which
+is what HCFP itself applies in Table 5. And the refusal of cycle-dependence I recorded
+was **backwards**: Table 4 prints 0.18** (t = 2.29), and Table 5 *applies* the cyclical
+term in HCFP's own re-reading. The truth is weaker and more interesting than either
+version — the effect is marginally significant and might be rejected once the
+uncertainty on the 1.6 % threshold is allowed for.
+
+**What dies with it: B3 has no revenue-feedback loop.** Δdeficit stops at mechanical
+plus behavioural, and the fan does not claim to close the public balance. A correct row
+needs the three-term specification with a band drawn from the residual — sourcing work
+to redo, not a number to patch.
 
 ## 5. What is dead, and what dies with it
 
@@ -162,20 +176,19 @@ Two open-access IMK meta-regressions, downloaded, manifested and parsed by
 | RAV — regime not distinguished | 0.75 | 0.96 | 1.28 | 1 078 |
 | RLO — downturn | **1.37** | 1.08 | 0.79 | 449 |
 
-**The centres cross-validate.** Mésange's year-one income tax is 0.41 against a TAX mean
-of 0.44 and 0.54; public investment 1.31 against INVEST 1.22 and 1.36; generic public
-spending 0.78 against SPEND 0.90 and 1.00. One official French model and two
-international meta-analyses land in the same place by unrelated routes, which is the
-only external check available on the Mésange parse.
+**The centres sit in the same region** — Mésange's year-one income tax 0.41 against TAX
+means of 0.44 and 0.54, public investment 1.31 against INVEST 1.22 and 1.36. I first
+wrote that they "cross-validate"; the verification refuted that for two comparisons of
+three when tested against the meta mean's own standard error, and the comparison is not
+homogeneous in horizon anyway (Table 1 pools one to twelve years). The agreement is
+reassuring to look at and is not evidence.
 
 **The architecture that follows**: centre from Mésange (French, official, dated, per
-instrument and per horizon), **relative** width from IMK dispersion. Composing them in
-relative terms is what makes them combinable at all — they measure different objects,
-and only their composition has meaning.
+instrument and per horizon), **absolute** width from IMK dispersion — the standard
+deviation, not the coefficient of variation. §9 explains why that changed.
 
-**The banner's copy turns out to be a measurement.** "L'éventail des estimations
-crédibles pour un même choc varie d'un facteur 3 à 5" — RLO/RUP is 1.37/0.39 = **3.5**.
-The line describes a number in the literature, not a figure of speech.
+**The banner's "facteur 3 à 5" is NOT a measurement**, contrary to what I first wrote
+here and in D-054. See §9.
 
 **The scope problem, which is the first thing the adversarial pass should attack**: these
 dispersions are *across studies* — different countries, horizons, identification
@@ -195,3 +208,63 @@ source.
 
 * The independent adversarial pass, now over **five** sourced rows.
 * ERFS remains the interrupt that outranks all of this.
+
+## 9. The adversarial pass, 2026-09-03
+
+Ten verifiers, two lenses per row — one checking every digit against the printed table,
+one attacking what the numbers are said to mean. Ref `wf_8caa3e5e-1e6`. **113 findings.**
+
+**No transcription error, anywhere.** All 48 Mésange values, all 28 IMK columns, every
+page reference: exact. The CSG/IR trap — both 0.41 in year one — is correctly passed.
+Parsing from primary files by tested code did what D-026 says it does.
+
+**Every verdict was about scope.** One WRONG, nine SCOPE_PROBLEM. The rule that a scope
+problem means the citations need repair while the values hold turned out to understate
+it: several repairs changed behaviour.
+
+### What changed in the code
+
+| Finding | Consequence |
+|---|---|
+| The four labour-tax variants are **non-targeted**, and the document publishes a **targeted** counterpart (encadré 14, 1–1.6 SMIC) | A ninth variant is parsed, and `shocks.targets_low_wages` routes allègements to it. Phase 3's entire allègements work would otherwise have taken the uniform multiplier and **understated employment by 39 % at three years** — 290k against 403k. The single most consequential finding. |
+| The VAT shock is **1.18 pt ex ante** for 1 pt net, the state paying ~15 % of its own VAT | `VariantSpec.ex_ante_points`. A VAT reform costed gross — the usual PLF convention — took a multiplier overstated by 18 %. |
+| Only the **fiscal** variants are ex ante; the two spending variants are shocks **in volume** | The support field described three lines of eight wrongly. |
+| Employment is in **full-time equivalents**, not persons | The row said persons. Note `io_layer` counts *persons*, from the national accounts: two employment units now coexist in this layer and must not be added. |
+| The long horizons are **specification-determined**, not measured — employer contributions run 1.73 at LT under wage-setting and 0.25 under a Phillips curve | `usable_horizons` stops at three years. Independently, §0 already refused horizons past three years; the two reasons agree. |
+| `depense_publique` is a **composite**: 8 % public investment, 25 % public wages, 9 % in-kind, 12 % intermediate, **46 % cash benefits** — and overlaps `investissement_public` | Recorded, with the overlap declared in `NON_ORTHOGONAL`. It also strengthens B1's refusal to route transfers through it. |
+| Its long-run employment is **−42k market but +26k total including public** | Reporting the market figure alone inverts the conclusion. |
+| Simulation conditions — permanent shock, constant real rates, constant nominal exchange rates, **no endogenous policy reaction** — appeared nowhere | Now in `applies_to` and destined for the assumptions strip. |
+| The dispersion **sd is nearly flat** across families (0.43–0.89) while means vary fourfold | The width is now the **absolute sd**. The coefficient of variation mostly reported the inverse of the mean, and combined with a normal law it fixed P(k<0) at 20.7 % for every fiscal lever regardless of the French centre. |
+| The papers say multipliers are **"by and large not normally distributed"**, multimodal | `distribution: normal` removed. The triangular draw is now labelled a convention, not a measurement. |
+| The regime effect is **additive** (RLO +0.769, se 0.143, ***) and the upswing coefficient is **not significant** (−0.049, se 0.097) | `imk.regime_effect()` parses the controlled coefficients. The ratio of raw means has no counterpart in the paper. |
+| RAV is "average **or unspecified**" and RLO is "downswing **or crisis**" | Both glosses had dropped a load-bearing half. |
+
+### The correction I owe the record
+
+**The L4 banner's "facteur 3 à 5" is not a measured quantity.** D-054 said it was, on
+the strength of RLO/RUP = 1.37/0.39 = 3.5. That is a ratio of two raw subsample means
+which the same paper's controlled estimate contradicts; no controlled reading reproduces
+it (2.52, 2.08 depending on specification); the denominator's coefficient is not
+significantly different from zero; the authors write that κ "should not be interpreted
+as the true multiplier"; and **nothing anywhere yields 5**. The banner should describe
+dispersion qualitatively and stop.
+
+### Two D-026 violations, by me, in the same sitting
+
+Both the same mechanism, and neither caught by any existing test:
+
+1. the elasticity row's `note` carried annual figures from a **search-engine summary**,
+   not from the cited document, which prints different ones;
+2. `dispersion.yaml`'s `quote:` field set a **paraphrase in quotation position**. The
+   paper says "Reported multipliers vary with study-design, whose influence should be
+   laid open when drawing policy conclusions"; the file printed a search result's
+   rewording of it.
+
+The pattern is exact: values were being computed from primary files by tested code
+while the **prose around them** — quotes, notes, characterisations — came from wherever
+was convenient, and nothing checked the prose. D-026 was being honoured in the half that
+had a test and violated in the half that did not.
+
+`test_every_quote_is_verbatim_in_its_source` now compares every `quote:` field against
+its PDF letter by letter. It fails on a paraphrase and passes a real quotation through
+hyphenation and ligature differences.

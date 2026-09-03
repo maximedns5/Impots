@@ -67,14 +67,33 @@ DOCUMENTS = {
     "wp139": "imk_wp139_2014_gechert_rannenberg_regime_dependent.pdf",
 }
 
-#: What the regime columns of WP139 mean. Spelled out because "RLO" is the single most
-#: consequential three letters in this file: it is the downturn multiplier, and the
-#: spec's unsourced "1.3-2.5 in slack" seed lands next to it.
+#: What the regime columns of WP139 mean, in the paper's OWN words (Table 3, PDF p13):
+#: "RAV — average or unspecified regime", "RUP — upswing regime", "RLO — downswing or
+#: crisis regime". The earlier glosses here dropped two load-bearing halves: RAV is not
+#: merely "regime not distinguished" but also studies reporting an AVERAGE regime, and
+#: RLO covers CRISIS as well as downswing — which is why its subsample is not a
+#: description of an ordinary French slowdown.
 REGIMES = {
-    "RAV": "toutes phases confondues — l'étude ne distingue pas le régime",
-    "RUP": "haut de cycle",
-    "RLO": "bas de cycle",
+    "RAV": "régime moyen OU non spécifié (average or unspecified regime)",
+    "RUP": "haut de cycle (upswing regime)",
+    "RLO": "bas de cycle OU CRISE (downswing or crisis regime)",
 }
+
+#: The regime rows of WP139's meta-regression, Table 4. Parsed rather than transcribed,
+#: like everything else here.
+#:
+#: These are what the paper actually concludes, and they differ from the raw subsample
+#: means in two ways that matter. The effect is ADDITIVE — "spending multipliers to
+#: significantly increase by about 0.6 to 0.8 units during a downturn" — not a ratio;
+#: and the UPSWING coefficient is NOT significant in the base specification, so there is
+#: no measured "upturn multiplier" to divide by.
+REGIME_TABLE_PAGE = 17
+REGIME_ROWS = ("RUP", "RLO")
+
+#: Significance stars extract as U+2217 ASTERISK OPERATOR, not ASCII "*". Written as an
+#: escape rather than as the character itself so the two cannot be confused by eye in
+#: this source file either — which is the same failure, one level up.
+STARS = "*\u2217"
 
 
 class ImkError(RuntimeError):
@@ -105,6 +124,54 @@ class Stats:
         if self.mean == 0:
             raise ImkError(f"{self.column}: a mean of zero has no coefficient of variation")
         return abs(self.sd / self.mean)
+
+
+@dataclass(frozen=True)
+class RegimeEffect:
+    """One regime coefficient from the meta-regression, with its standard error."""
+
+    regime: str
+    coefficient: float
+    standard_error: float
+    stars: int
+    """Significance as printed: 3 for ***, 2 for **, 1 for *, 0 for none. RUP prints
+    none in the base specification, which is the finding — there is no measured
+    upswing effect to build a ratio on."""
+
+    @property
+    def significant(self) -> bool:
+        return self.stars >= 2
+
+
+def regime_effect(raw: Path | None = None) -> dict[str, RegimeEffect]:
+    """The controlled regime coefficients of WP139, Table 4, base specification.
+
+    Additive units of multiplier, not a ratio. `regime_effect()["RLO"].coefficient` is
+    how much a DOWNTURN adds to a spending multiplier, all else controlled.
+    """
+    path = (raw or RAW) / DOCUMENTS["wp139"]
+    if not path.exists():
+        raise ImkError(f"{path} not found — download it and record it in the manifest")
+    text = " ".join(_lines(str(path))[:])
+    found: dict[str, RegimeEffect] = {}
+    for regime in REGIME_ROWS:
+        # "RLO 0.769(0.143)***0.653(0.126)***..." — the first pair is column (1), the
+        # base specification the paper calls best practice. The stars extract as U+2217
+        # ASTERISK OPERATOR, not ASCII: matching only "*" silently reads every
+        # coefficient as non-significant, which inverts this row's whole finding.
+        match = re.search(
+            rf"{regime}\s+(-?\d+\.\d+)\s*\(\s*(\d+\.\d+)\s*\)\s*([{STARS}]*)", text)
+        if match is None:
+            raise ImkError(
+                f"regime coefficient {regime!r} not found in table 4. The paper may "
+                f"have been revised — do not fall back to the raw subsample means, "
+                f"which are what this function exists to replace."
+            )
+        found[regime] = RegimeEffect(
+            regime=regime, coefficient=float(match.group(1)),
+            standard_error=float(match.group(2)), stars=len(match.group(3)),
+        )
+    return found
 
 
 def _normalise(line: str) -> str:

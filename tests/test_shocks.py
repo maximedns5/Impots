@@ -47,6 +47,43 @@ def test_every_mapped_instrument_has_a_published_variant():
     assert set(shocks.ALLOCATION_BASIS) <= set(mesange.VARIANTS)
 
 
+# --- targeted versus uniform, the pass's most exploitable finding -------------------
+
+
+def test_an_allegement_routes_to_the_targeted_variant():
+    """Phase 3's whole allègements work moves these knobs.
+
+    Routed to the uniform variant it would have understated employment by 39 % at three
+    years. The deltas cannot tell the two apart — the population layer reports one
+    employer-contribution total either way — so the decision is made from the knobs.
+    """
+    for knob in ("allegement_general_plafond", "bandeau_maladie_taux",
+                 "bandeau_famille_plafond"):
+        impulse = shocks.build({"employer_contributions": -5.0e9}, year=2026,
+                               knobs=(knob,))
+        assert set(impulse.by_instrument) == {"cotisations_employeurs_ciblees"}, knob
+
+
+def test_a_uniform_contribution_reform_keeps_the_uniform_variant():
+    impulse = shocks.build({"employer_contributions": -5.0e9}, year=2026,
+                           knobs=("cotisation_maladie_taux",))
+    assert set(impulse.by_instrument) == {"cotisations_employeurs"}
+
+
+def test_no_knobs_means_uniform():
+    """The conservative default: an unlabelled reform does not claim targeting."""
+    impulse = shocks.build({"employer_contributions": -5.0e9}, year=2026)
+    assert set(impulse.by_instrument) == {"cotisations_employeurs"}
+
+
+def test_the_targeted_route_does_not_change_the_amount():
+    """Routing picks a multiplier, never rescales the impulse."""
+    uniform = shocks.build({"employer_contributions": -5.0e9}, year=2026)
+    targeted = shocks.build({"employer_contributions": -5.0e9}, year=2026,
+                            knobs=("allegement_general_plafond",))
+    assert uniform.total == targeted.total == pytest.approx(5.0e9)
+
+
 def test_an_unrecognised_delta_raises_rather_than_vanishing():
     """Kill test: a silently dropped delta makes the shock smaller than the reform."""
     with pytest.raises(shocks.ShockError, match="neither mapped"):
@@ -63,6 +100,8 @@ def test_transfers_get_no_multiplier_and_say_why(delta):
     assert delta in impulse.unmapped
     reason = impulse.reasons()[delta]
     assert "0,39" in reason and "composite" in reason.lower()
+    # The measured composition, added after the adversarial pass read p106.
+    assert "46 %" in reason
 
 
 @pytest.mark.parametrize("delta", ["impot_societes", "cvae", "c3s", "cebge"])

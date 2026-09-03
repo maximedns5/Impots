@@ -1,19 +1,25 @@
 # The fan's width, and the one sourced statement about the cycle (PHASE4_SPEC §2, §3).
 #
-# Mésange gives a centre per instrument per horizon and no interval. These two rows give
-# the width, from cross-study dispersion, which is what the L4 banner is describing when
-# it says the range of credible estimates for one shock varies by a factor of three to
-# five. That is not a property of this model. It is a property of the literature, and it
-# is measured here rather than asserted.
+# NO VALUES LIVE IN THIS FILE — `impots.macro.imk` parses the tables.
 #
-# NO VALUES LIVE IN THIS FILE either — `impots.macro.imk` parses the descriptive tables.
+# BOTH ROWS WERE REWRITTEN AFTER THE ADVERSARIAL PASS OF 2026-09-03, which returned
+# SCOPE_PROBLEM on each with twenty-six findings between them. Two of those findings
+# changed the arithmetic and one changed a user-facing claim:
 #
-# THE SCOPE PROBLEM, WRITTEN WHERE IT CANNOT BE MISSED: these dispersions are across
-# STUDIES — different countries, horizons, identification strategies, model classes.
-# Gechert's own conclusion is that reported multipliers vary with study design. They are
-# therefore NOT the sampling error of France's multiplier at a given horizon, and a fan
-# built on them is wider than the genuine uncertainty about a French reform. That is the
-# conservative direction, and it is a choice, not an oversight.
+#   * the width is now the ABSOLUTE standard deviation, not the coefficient of
+#     variation. The sd is what is stable across impulse families (0.43 to 0.89);
+#     dividing it by a mean that varies far more manufactured a "relative width" the
+#     source never measured.
+#   * the regime effect is ADDITIVE, from the meta-regression's controlled coefficient,
+#     not a ratio of raw subsample means.
+#   * the L4 banner's "facteur 3 à 5" is NOT a measured quantity. See the note on
+#     `multiplier_regime_shift`.
+#
+# THE SCOPE PROBLEM THAT SURVIVES EVERY REWRITE: these dispersions are across STUDIES —
+# different countries, horizons, identification strategies, model classes, and pooled
+# over horizons of one to twelve years. Gechert's conclusion is that reported
+# multipliers vary with study design. They are NOT the sampling error of France's
+# multiplier at a given horizon, and no arrangement of them becomes that.
 
 thresholds:
   extrapolation_widening: 2.0
@@ -22,55 +28,85 @@ source_table:
   reader: impots.macro.imk
   citation: >
     Gechert, « What fiscal policy is most effective? A Meta Regression Analysis », IMK
-    Working Paper n° 117, 2013, tableau 1 p. 11 (104 études, 1 069 multiplicateurs) ;
-    Gechert et Rannenberg, « Are Fiscal Multipliers Regime-Dependent? A Meta Regression
-    Analysis », IMK Working Paper n° 139, 2014, tableau 1 p. 6 (98 études, 1 882
-    observations, ventilées par régime).
+    Working Paper n° 117, 2013, tableau 1 p. 11 imprimée (PDF p. 13) — 104 études,
+    1 069 multiplicateurs ; Gechert et Rannenberg, « Are Fiscal Multipliers
+    Regime-Dependent? A Meta Regression Analysis », IMK Working Paper n° 139, 2014,
+    tableau 1 p. 6 imprimée et tableau 4 p. 15 imprimée (PDF p. 17) — 98 études,
+    1 882 observations.
   url: https://www.econstor.eu/bitstream/10419/105983/1/imk-wp_117_2013.pdf
   vintage: "2013-2014"
   quote: >-
-    Reported multipliers vary with study-design, thus, policy consulting based on a
-    certain multiplier study should lay open by how much specification affects the
-    results.
+    Reported multipliers vary with study-design, whose influence should be laid open
+    when drawing policy conclusions.
 
 parameters:
   multiplier_dispersion:
     value:
-      from_source_table: coefficient_of_variation
+      from_source_table: sd
       document: wp117
-      distribution: normal
+      distribution: triangular
     applies_to: >
-      Dispersion RELATIVE des multiplicateurs rapportés, par famille d'instrument :
-      écart-type inter-études rapporté à la moyenne. S'applique en largeur autour du
-      centre de Mésange, jamais en niveau — les deux sources mesurent des objets
-      différents et seule leur composition a un sens : le centre est français, daté et
-      propre à l'instrument, la largeur est internationale et sans horizon.
+      ÉCART-TYPE INTER-ÉTUDES des multiplicateurs rapportés, par famille d'instrument,
+      en points de multiplicateur. S'ajoute et se retranche au centre français de
+      Mésange : c'est une largeur ABSOLUE, et la version précédente de cette ligne
+      utilisait un coefficient de variation, ce qui était une erreur de méthode et non
+      de chiffre.
+
+      POURQUOI L'ÉCART-TYPE ET NON LE COEFFICIENT DE VARIATION. Sur les huit familles
+      d'impulsion, l'écart-type est presque plat — 0,43 / 0,47 / 0,57 / 0,66 / 0,77 /
+      0,79 / 0,82 / 0,89, une amplitude relative de 25 % — tandis que les moyennes
+      varient d'un facteur quatre. Le rapport des deux mesure donc surtout l'inverse de
+      la moyenne, pas une largeur relative que quiconque aurait mesurée. Composé en
+      relatif, il produisait en outre un artefact : une probabilité fixe de
+      multiplicateur négatif de 20,7 % pour tout levier fiscal, indépendante du centre
+      français, et une bande deux fois plus large autour de l'impôt sur le revenu
+      qu'autour des cotisations employeurs pour la seule raison que Mésange donne 0,41
+      à l'un et 0,20 à l'autre la première année.
+
+      LA FAMILLE « TAX » EST UN SEUL SEAU. Le papier l'écrit : « We do not distinguish
+      between the various types of taxation », et le tableau 3 la définit comme « tax
+      reliefs to private sector ». TVA, impôt sur le revenu, CSG et impôt sur les
+      sociétés y sont confondus, alors que Mésange les sépare. La largeur importée est
+      donc commune là où le centre est spécifique.
     responds_to_knobs: [ir_bareme, csg_*, cotisations_*, tva_*]
     support:
       estimated_on: >
-        1 069 multiplicateurs de 104 études, toutes économies avancées, horizons et
-        méthodes confondus. Il n'y a PAS de sous-échantillon France exploitable.
+        1 069 multiplicateurs de 104 études, économies avancées, HORIZONS D'UN À DOUZE
+        ANS CONFONDUS (figure 3), méthodes et classes de modèles confondues. Aucun
+        sous-échantillon France exploitable. La comparaison avec un centre Mésange daté
+        à un an n'est donc pas homogène en horizon, et rien dans la source ne permet de
+        la rendre homogène.
       max_variation_graded_in_support: null
     verifier:
-      verdict: null
-      date: null
-      ref: null
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-03
+      ref: wf_8caa3e5e-1e6
       note: >
-        NON VÉRIFIÉ. À attaquer en priorité : (1) le coefficient de variation suppose que
-        la dispersion est proportionnelle au centre, ce qui est une hypothèse de forme et
-        non une lecture — pour la famille TAX, l'écart-type (0,66) dépasse la moyenne
-        (0,54), donc une bande symétrique en relatif traverse zéro ; (2) composer une
-        dispersion inter-études avec un centre Mésange suppose que les deux décrivent le
-        même objet, ce qui est douteux à un an ; (3) le support est nul, donc cette ligne
-        n'est jamais gradable « in-support ».
-    confidence: medium
+        Les quinze colonnes ont été relues chiffre par chiffre et le lecteur les
+        reproduit exactement ; les effectifs se recoupent même entre blocs (SPEND 412 +
+        CONS 173 + INVEST 112 + MILIT 24 = 721 = GSPEND). Tout le verdict porte sur la
+        portée, et trois corrections sont appliquées ci-dessus : passage à l'écart-type
+        absolu, abandon de la loi normale, et mention que TAX est un seau indifférencié.
+        DEUX FAUTES DE L'AUTEUR SONT CORRIGÉES ICI PLUTÔT QU'ATTÉNUÉES. La citation
+        portée par ce fichier n'était PAS verbatim : le papier écrit « Reported
+        multipliers vary with study-design, whose influence should be laid open when
+        drawing policy conclusions », là où le champ `quote` reproduisait une
+        paraphrase de moteur de recherche. Et la ligne singularisait TAX comme seule
+        famille d'écart-type supérieur à la moyenne, alors qu'elles sont cinq sur
+        quinze.
+        RESTE OUVERT : l'affirmation « les centres concordent » ne résiste pas à un test
+        formel contre l'erreur-type de la moyenne méta pour deux comparaisons sur trois ;
+        elle est retirée de la note ci-dessous et ne doit pas reparaître.
+    confidence: low
     note: >
-      LES CENTRES CONCORDENT, ce qui est le seul contrôle croisé disponible et il est
-      rassurant : Mésange donne 0,41 à un an pour l'impôt sur le revenu contre une
-      moyenne TAX de 0,44 (WP139) et 0,54 (WP117) ; 1,31 pour l'investissement public
-      contre INVEST 1,22 et 1,36 ; 0,78 pour la dépense publique contre SPEND 0,90 et
-      1,00. Un modèle français officiel et deux méta-analyses internationales tombent au
-      même endroit, par des chemins sans rapport.
+      LOI NON NORMALE, ET LA SOURCE LE DIT. La version précédente déclarait
+      `distribution: normal` ; le papier écrit que « multipliers of the subgroups are by
+      and large not normally distributed, which is confirmed by Doornik-Hansen
+      probabilities », et parle de distributions MULTIMODALES. Aucune loi ici n'est donc
+      une mesure. Le tirage triangulaire est une CONVENTION assumée, du même statut que
+      `extrapolation_widening`, choisie parce que les seules statistiques publiées sont
+      moyenne, médiane, écart-type, minimum et maximum — pas parce qu'elle décrirait la
+      forme, que la source déclare inconnaissable à partir de ces cinq nombres.
 
   multiplier_regime_shift:
     value:
@@ -78,37 +114,51 @@ parameters:
       document: wp139
       distribution: uniform
     applies_to: >
-      Moyenne des multiplicateurs rapportés PAR RÉGIME conjoncturel : RUP (haut de
-      cycle) 0,39, RAV (régime non distingué) 0,75, RLO (bas de cycle) 1,37. C'est la
-      seule affirmation sourcée dont dispose ce dépôt sur ce que devient un
-      multiplicateur en bas de cycle.
+      Moyennes brutes par régime, conservées pour la description seulement : RUP (haut
+      de cycle) 0,39, RAV (régime MOYEN ou non spécifié) 0,75, RLO (bas de cycle OU
+      CRISE) 1,37. Les glossaires précédents en avaient perdu deux moitiés porteuses :
+      RAV n'est pas seulement « non distingué » mais aussi « moyen », et RLO couvre les
+      CRISES autant que les ralentissements — son sous-échantillon ne décrit donc pas un
+      ralentissement français ordinaire.
+
+      L'AMPLEUR UTILISABLE N'EST PAS ICI mais dans `imk.regime_effect()`, qui lit le
+      coefficient CONTRÔLÉ du tableau 4 : bas de cycle +0,769 (écart-type 0,143,
+      significatif à 1 %), haut de cycle −0,049 (0,097) NON SIGNIFICATIF. L'effet est
+      ADDITIF en points de multiplicateur — le résumé du papier dit « spending
+      multipliers to significantly increase by about 0.6 to 0.8 units during a
+      downturn » — et il ne vaut que du côté DÉPENSE.
     responds_to_knobs: []
     support:
       estimated_on: >
         449 observations en bas de cycle, 355 en haut, 1 078 sans distinction. La
-        définition du « bas de cycle » est celle de chaque étude primaire, et elles ne
-        s'accordent pas : c'est la principale faiblesse de la ligne.
+        définition du bas de cycle est celle de chaque étude primaire, et elles ne
+        s'accordent pas. Les auteurs avertissent que « the figures pool all kinds of
+        economic regimes and models ».
       max_variation_graded_in_support: null
     verifier:
-      verdict: null
-      date: null
-      ref: null
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-03
+      ref: wf_8caa3e5e-1e6
       note: >
-        NON VÉRIFIÉ. À attaquer : (1) ces moyennes sont BRUTES, non corrigées du plan
-        d'étude, alors que la méta-régression du même papier estime l'effet contrôlé à
-        0,6-0,8 point pour la DÉPENSE seulement — l'écart brut 1,37 contre 0,39 mélange
-        l'effet de régime et la composition de l'échantillon ; (2) le papier conclut que
-        les multiplicateurs d'IMPÔT ne sont PAS sensibles au régime, ce que les colonnes
-        de régime, agrégées tous instruments confondus, ne montrent pas ; (3) la
-        littérature reste contestée (Ramey et Zubairy trouvent des multiplicateurs sous
-        l'unité quel que soit le sous-emploi).
+        Chiffres exacts, portée fausse sur trois points désormais corrigés : les
+        glossaires de régime, la forme de l'effet (additive et non multiplicative), et
+        le statut du haut de cycle (non significatif, donc pas de dénominateur).
+        LA CORRECTION LA PLUS VISIBLE POUR L'UTILISATEUR : le « facteur 3 à 5 » de la
+        bannière L4 N'EST PAS UNE MESURE, contrairement à ce que D-054 a affirmé. Le
+        3,5 est le rapport de deux moyennes BRUTES que le résultat contrôlé du même
+        papier contredit ; aucune lecture contrôlée ne le redonne (2,52 en colonne 1,
+        2,08 sur les VAR seuls) ; et le 5 n'a AUCUNE source. Les auteurs disqualifient
+        en outre explicitement le dénominateur : « κ should not be interpreted as the
+        true multiplier since it depends on the reference specification ». La bannière
+        doit décrire une dispersion qualitative, pas un facteur chiffré.
     confidence: low
     note: >
       NE SERT PAS À ESTIMER, ET C'EST DÉLIBÉRÉ. §1 exige que l'état du cycle soit un
-      SCÉNARIO choisi par l'utilisateur et affiché, jamais une grandeur tirée. Cette
-      ligne fournit l'AMPLEUR sourcée du décalage entre deux scénarios, pas une
-      probabilité d'être dans l'un ou l'autre. Le rapport RLO/RUP vaut 3,5, ce qui est
-      d'ailleurs d'où vient le « facteur 3 à 5 » de la bannière L4 : cette copie décrit
-      une dispersion mesurée, pas une figure de style.
-      RESTRICTION : le papier ne trouve l'effet de régime que du côté DÉPENSE. Un
-      décalage appliqué aux instruments fiscaux irait contre sa conclusion explicite.
+      SCÉNARIO choisi par l'utilisateur et affiché, jamais tiré. Cette ligne fournit
+      l'ampleur sourcée de l'écart entre deux scénarios affichés, pas une probabilité
+      d'être dans l'un ou l'autre.
+      RESTRICTION HÉRITÉE DU PAPIER : l'effet de régime n'est établi que du côté
+      DÉPENSE. Or les leviers de ce dépôt sont fiscaux, et `responds_to_knobs` est donc
+      VIDE — appliquer le décalage à un instrument fiscal irait contre la source qui le
+      justifie. En l'état, aucune réforme simulée ici ne peut légitimement l'utiliser :
+      la ligne est chargée, sourcée, et sans emploi.

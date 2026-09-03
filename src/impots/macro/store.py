@@ -61,6 +61,15 @@ class TableParameter:
     key: str
     values: dict[str, tuple[float, ...]]
     horizons: tuple[str, ...]
+    """Every horizon the source publishes."""
+    usable_horizons: tuple[str, ...]
+    """The subset this project will read. Narrower than `horizons` for the Mésange
+    rows, and for two independent reasons that agree: §0 refuses any horizon past three
+    years, and the sensitivity analysis shows the long columns are determined by a
+    specification choice rather than measured — employer contributions run 1.73 at LT
+    under wage-setting and 0.25 under a Phillips curve. Reading a column the source
+    publishes but the project will not stand behind is how an unusable figure reaches a
+    reader."""
     applies_to: str
     support: Support
     source: Source
@@ -77,14 +86,19 @@ class TableParameter:
                 f"published variant have no multiplier and must not borrow one; "
                 f"have {sorted(self.values)}"
             )
-        if horizon not in self.horizons:
-            raise KeyError(f"{self.key}: no horizon {horizon!r}; have {self.horizons}")
+        if horizon not in self.usable_horizons:
+            published = " (published but not usable here)" if horizon in self.horizons else ""
+            raise KeyError(
+                f"{self.key}: horizon {horizon!r}{published}; usable horizons are "
+                f"{self.usable_horizons}"
+            )
         return self.values[instrument][self.horizons.index(horizon)]
 
     def profile(self, instrument: str) -> tuple[float, ...]:
+        """The usable horizons only, in order — never the published tail."""
         if instrument not in self.values:
             raise KeyError(f"{self.key}: no instrument {instrument!r}")
-        return self.values[instrument]
+        return tuple(self.at(instrument, h) for h in self.usable_horizons)
 
 
 @dataclass
@@ -161,11 +175,20 @@ def _table(key: str, raw: dict[str, Any], declared: dict[str, Any],
     # argument for the reader, so a second document is a data change, not a code change.
     options = {k: v for k, v in value.items()
                if k not in ("from_source_table", "distribution")}
+    declared_usable = options.pop("usable_horizons", None)
     values, horizons = reader.table(value["from_source_table"], raw=raw_dir, **options)
+    usable = tuple(declared_usable) if declared_usable else horizons
+    unknown = set(usable) - set(horizons)
+    if unknown:
+        raise MissingSourceTable(
+            f"{key}: usable_horizons names {sorted(unknown)}, which the source does "
+            f"not publish; it has {horizons}"
+        )
     return TableParameter(
         key=key,
         values=values,
         horizons=horizons,
+        usable_horizons=usable,
         applies_to=raw.get("applies_to", ""),
         responds_to_knobs=tuple(raw.get("responds_to_knobs") or ()),
         support=_support(raw.get("support") or {}), source=_source(declared),
