@@ -70,6 +70,19 @@ FINAL_USE_MARKERS: dict[str, tuple[str, bool, str | None]] = {
 }
 
 
+#: The import sheet prints the same final-use blocks under two different total labels,
+#: so the two totals need an override there. Everything else matches by the same header.
+#:
+#: Reading them matters more than it looks: final demand for a product is met partly by
+#: domestic production and partly by imports, and only the first sets off a Leontief
+#: round. Without this block the direct import channel is invisible and the leakage
+#: correction reports roughly half of what it should.
+IMPORT_FINAL_USE_OVERRIDES = {
+    "total_emplois_finals": "Total des emplois finals en importations",
+    "total_emplois": "Total des emplois en importations",
+}
+
+
 class TesError(RuntimeError):
     """The input-output table cannot be read as expected."""
 
@@ -86,6 +99,11 @@ class Tes:
     imported: np.ndarray
     """The same, for imported product. Its row sums are the leakage §1 needs."""
     final_uses: dict[str, np.ndarray]
+    """Final uses met by DOMESTIC production, by product."""
+    imported_final_uses: dict[str, np.ndarray]
+    """The same final uses met by IMPORTS. Together with `final_uses` these give the
+    domestic/import split of each category of final demand — the direct leakage channel,
+    which is invisible if only the domestic sheet is read."""
     total_output: np.ndarray
     """Total resources of each product at basic prices, domestic production only."""
     vintage: str
@@ -165,6 +183,23 @@ def _subcolumn(sheet: Any, header_column: int, subcode: str, key: str) -> int:
         f"final-use column {key!r}: no sub-column {subcode!r} under its header at "
         f"column {header_column}"
     )
+
+
+def _final_uses(sheet: Any, product_rows: list[tuple[int, str]],
+                overrides: dict[str, str]) -> dict[str, np.ndarray]:
+    """Every final-use column of one sheet, matched by its own headers."""
+    uses: dict[str, np.ndarray] = {}
+    for key, (marker, exact, subcode) in FINAL_USE_MARKERS.items():
+        column = _find(sheet, HEADER_ROW, overrides.get(key, marker), exact=exact)
+        if column is None:
+            raise TesError(
+                f"final-use column {key!r} not found from its header on sheet "
+                f"{sheet.title!r}"
+            )
+        if subcode is not None:
+            column = _subcolumn(sheet, column, subcode, key)
+        uses[key] = np.array([_number(sheet.cell(r, column).value) for r, _ in product_rows])
+    return uses
 
 
 def _geometry(sheet: Any) -> tuple[list[tuple[int, str]], list[tuple[int, str]]]:
@@ -247,16 +282,10 @@ def load(vintage: str = "2023SD", raw: Path | None = None) -> Tes:
         for r, _ in import_rows
     ])
 
-    final_uses = {}
-    for key, (marker, exact, subcode) in FINAL_USE_MARKERS.items():
-        column = _find(domestic_sheet, HEADER_ROW, marker, exact=exact)
-        if column is None:
-            raise TesError(f"final-use column {key!r} not found from its header")
-        if subcode is not None:
-            column = _subcolumn(domestic_sheet, column, subcode, key)
-        final_uses[key] = np.array(
-            [_number(domestic_sheet.cell(r, column).value) for r, _ in product_rows]
-        )
+    final_uses = _final_uses(domestic_sheet, product_rows, {})
+    imported_final_uses = _final_uses(
+        import_sheet, import_rows, IMPORT_FINAL_USE_OVERRIDES
+    )
     total_output = final_uses["total_emplois"]
 
     if domestic.shape != (n, n) or imported.shape != (n, n):
@@ -265,8 +294,8 @@ def load(vintage: str = "2023SD", raw: Path | None = None) -> Tes:
         )
     return Tes(
         branches=branches, labels=labels, domestic=domestic, imported=imported,
-        final_uses=final_uses, total_output=total_output,
-        vintage=vintage, source_file=name,
+        final_uses=final_uses, imported_final_uses=imported_final_uses,
+        total_output=total_output, vintage=vintage, source_file=name,
     )
 
 
