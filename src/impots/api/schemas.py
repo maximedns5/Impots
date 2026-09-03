@@ -119,6 +119,14 @@ class IRBracket(BaseModel):
     rate: Annotated[float, Field(ge=0.0, le=1.0)]
 
 
+#: The 2024 legal values of the two AF modulation ceilings, needed only so that a
+#: reform moving ONE of them can be checked against the other's baseline. Pinned here
+#: rather than read from the tree because a validator must not need a tax-benefit
+#: system: `test_af_plafond_baselines_match_the_tree` keeps them honest.
+AF_PLAFOND_TRANCHE_1_BASE_2024 = 62_474.0
+AF_PLAFOND_TRANCHE_2_BASE_2024 = 87_430.0
+
+
 class ReformSpec(BaseModel):
     """A whitelist of named knobs, never raw parameter paths.
 
@@ -148,6 +156,36 @@ class ReformSpec(BaseModel):
     bandeau_maladie_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     bandeau_famille_plafond: Annotated[float, Field(ge=0.0, le=10.0)] | None = None
     bandeau_famille_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    # Prestations (B1) — the spending side of the debate. Monthly amounts in euros,
+    # rates as fractions, income ceilings in euros per year. The upper bounds are
+    # deliberately generous: this tool exists to price proposals, including ones
+    # nobody has made, and a bound tight enough to be "realistic" would be a
+    # political judgement wearing a validation's clothes.
+    rsa_montant_de_base: Annotated[float, Field(ge=0, le=5_000)] | None = None
+    ppa_montant_de_base: Annotated[float, Field(ge=0, le=5_000)] | None = None
+    ppa_pente: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """The share of activity income added back before the taper — 61 % today. The
+    single parameter that most directly sets the marginal rate a working household on
+    the prime d'activité faces."""
+    ppa_bonification_taux_max: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    bmaf: Annotated[float, Field(ge=0, le=5_000)] | None = None
+    """The base every family benefit is a multiple of. Broad: it moves AF, CF, ASF and
+    the rest together, not one of them."""
+    af_taux_2_enfants: Annotated[float, Field(ge=0.0, le=5.0)] | None = None
+    af_taux_3_enfants: Annotated[float, Field(ge=0.0, le=5.0)] | None = None
+    af_modulation_taux_tranche_2: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    af_modulation_taux_tranche_3: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """Setting both modulation tranches to 1 restores universal family allowances,
+    which is a live proposal and is now one knob."""
+    af_plafond_tranche_1_base: Annotated[float, Field(ge=0, le=1_000_000)] | None = None
+    af_plafond_tranche_2_base: Annotated[float, Field(ge=0, le=1_000_000)] | None = None
+    af_majoration_plafond_par_enfant: Annotated[float, Field(ge=0, le=100_000)] | None = None
+    """The modulation ceilings the formula actually reads. It builds its own threshold
+    from the `_base` value plus one majoration per child; the published
+    `plafond_tranche_1` / `plafond_tranche_2` are derived figures no formula consults,
+    and a knob aimed at them would move nothing."""
+    al_minoration_forfaitaire: Annotated[float, Field(ge=0, le=1_000)] | None = None
+    """The 2017 flat cut to housing benefit — five euros a month."""
 
     @model_validator(mode="after")
     def _check_bareme(self) -> ReformSpec:
@@ -170,6 +208,34 @@ class ReformSpec(BaseModel):
         thresholds = [b.threshold for b in self.ir_bareme]
         if any(a >= b for a, b in pairwise(thresholds)):
             raise ValueError(f"Les seuils doivent être strictement croissants ; reçu {thresholds}.")
+        return self
+
+    @model_validator(mode="after")
+    def _check_af_plafonds(self) -> ReformSpec:
+        """The two modulation ceilings must stay ordered.
+
+        Inverting them is not caught anywhere downstream: the AF formula branches on
+        `above tranche 1` then `above tranche 2`, so a tranche-1 ceiling above the
+        tranche-2 one produces a household that is in neither band and receives an
+        amount belonging to neither rate. Measured, not theorised — lifting only the
+        first ceiling gave a 150 k household 2 214 EUR where full rate is 1 771.
+
+        The unset ceiling keeps its legal value, so a reform moving one must be checked
+        against the other's baseline, not against nothing.
+        """
+        low, high = self.af_plafond_tranche_1_base, self.af_plafond_tranche_2_base
+        if low is None and high is None:
+            return self
+        effective_low = low if low is not None else AF_PLAFOND_TRANCHE_1_BASE_2024
+        effective_high = high if high is not None else AF_PLAFOND_TRANCHE_2_BASE_2024
+        if effective_low > effective_high:
+            raise ValueError(
+                f"Le plafond de tranche 1 ({effective_low:,.0f} €) doit rester "
+                f"inférieur ou égal à celui de tranche 2 ({effective_high:,.0f} €) : "
+                f"au-dessus, un foyer n'est dans aucune des deux tranches et perçoit "
+                f"un montant qui ne correspond à aucun taux."
+                .replace(",", " ")
+            )
         return self
 
     def is_empty(self) -> bool:
@@ -251,6 +317,15 @@ class ResultRows(BaseModel):
     ppa: float | None = None
     rsa: float | None = None
     aide_logement: float | None = None
+    aefa: float | None = None
+    """The prime de Noël. It rides on RSA eligibility rather than being reformed
+    directly, which is how it went unitemised until the double-entry guard found it."""
+    crds_pfam: float | None = None
+    crds_logement: float | None = None
+    crds_mini: float | None = None
+    """CRDS levied on the benefits above — NEGATIVE, as the engine stores it, because a
+    benefit's net value is `gross + crds`. Shown rather than folded in so a reader can
+    see that the reported benefit is gross and the disposable income is not."""
     # bottom line (ménage) — full tier only
     revenu_disponible: float | None = None
     # unnormalised engine output, debug requests only

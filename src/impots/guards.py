@@ -134,7 +134,18 @@ STATE_RECEIPTS = (
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.
-STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement")
+#: `aefa` — the prime de Noël — joined this list when the prestations knobs arrived.
+#: It is not a benefit anyone reforms directly, but it rides on RSA ELIGIBILITY, so any
+#: reform that moves the RSA threshold moves it too. Leaving it out made a national RSA
+#: reform miss by 0.99 %, which is what the guard is for.
+#: The CRDS entries are NEGATIVE as openfisca stores them, and they belong here rather
+#: than among the receipts: a household's benefit is `gross + crds`, `revenu_disponible`
+#: uses the net figure, and the population reports the gross one. Netting them here
+#: makes the reconstitution the state's actual burden. Without them a national AF
+#: reform missed by 0.50 % — five times the tolerance, and exactly 0.5 % of the AF
+#: moved, which is the CRDS rate.
+STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "aefa",
+                   "crds_pfam", "crds_logement", "crds_mini")
 
 #: The identity is checked in absolute euros against a floor, and relatively above it.
 #: A reform moving a few million is not worth a relative test; one moving billions is.

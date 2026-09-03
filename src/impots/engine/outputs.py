@@ -82,6 +82,25 @@ REGISTRY: tuple[Row, ...] = (
         label="RSA"),
     Row("aide_logement", "aide_logement", "famille", "month", "full", False,
         label="Aide au logement"),
+    # The prime de Noël. Itemised because the double-entry guard found it leaking:
+    # raising the RSA base brings households into ELIGIBILITY, and eligibility carries
+    # this flat 152.45 EUR with it. It sits inside `revenu_disponible` through
+    # `minima_sociaux`, so a reconstitution from the four other transfers came up
+    # 36 M EUR short on a national RSA reform — 0.99 %, ten times the tolerance.
+    Row("aefa", "aefa", "famille", "year", "full", False,
+        label="Aide exceptionnelle de fin d'année (prime de Noël)"),
+    # CRDS levied ON the benefits above. Negative as openfisca stores it, because a
+    # benefit's net value is `gross + crds`. Itemised for the same reason as `aefa`:
+    # `revenu_disponible` carries benefits NET, the population reports them GROSS, and
+    # the 0.5 % between the two is exactly what made a national AF reform miss by
+    # 0.50 %. Entered on the transfer side, where it nets the benefit down to what the
+    # state actually bears.
+    Row("crds_pfam", "crds_pfam", "famille", "year", "full", False,
+        label="CRDS sur prestations familiales"),
+    Row("crds_logement", "crds_logement", "famille", "month", "full", False,
+        label="CRDS sur aides au logement"),
+    Row("crds_mini", "crds_mini", "famille", "month", "full", False,
+        label="CRDS sur minima sociaux"),
     # --- bottom line: ménage, annual — full tier only --------------------------
     Row("revenu_disponible", "revenu_disponible", "menage", "year", "full", False,
         label="Revenu disponible"),

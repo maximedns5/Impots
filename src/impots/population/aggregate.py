@@ -32,7 +32,8 @@ INSTRUMENTS = (
     "salaire_brut", "salaire_super_brut", "salaire_net", "salaire_imposable",
     "cotisations_salariales", "cotisations_employeur",
     "csg_deductible", "csg_imposable", "crds", "ir",
-    "af", "ppa", "rsa", "aide_logement", "revenu_disponible",
+    "af", "ppa", "rsa", "aide_logement", "aefa",
+    "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
 )
 
 #: Weighted counts rather than euro totals — reported alongside, never summed in.

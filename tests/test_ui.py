@@ -158,3 +158,41 @@ def test_the_file_stays_single_and_buildless(source: str):
     """It must open from file:// — no bundler, no framework, no external script."""
     assert "<script src=" not in source
     assert "import " not in source.split("<script>")[-1][:2000]
+
+
+# --- prestations (B1) ---------------------------------------------------------------
+
+
+@pytest.mark.parametrize("knob", [
+    "rsa_montant_de_base", "ppa_montant_de_base", "ppa_pente", "bmaf",
+    "af_modulation_taux_tranche_2", "af_modulation_taux_tranche_3",
+    "af_plafond_tranche_1_base", "af_plafond_tranche_2_base",
+    "al_minoration_forfaitaire",
+])
+def test_every_exposed_prestation_knob_is_wired(source: str, knob: str):
+    assert f'put("{knob}"' in source
+
+
+def test_the_prestations_panel_exists_and_explains_the_ceiling_rule(source: str):
+    assert "Prestations</div>" in source
+    assert "L'autre moitié du débat" in source
+    assert "aucune des\n            deux" in source or "n'est dans aucune des" in source
+
+
+def test_the_rate_knobs_are_sent_as_fractions(source: str):
+    """The panel takes percentages; the API takes fractions. A missing /100 would be a
+    silent factor-of-a-hundred reform."""
+    for knob, field in (("ppa_pente", "ppaPente"),
+                        ("af_modulation_taux_tranche_2", "afMod2"),
+                        ("af_modulation_taux_tranche_3", "afMod3")):
+        assert f'put("{knob}",' in source
+        line = next(ln for ln in source.splitlines() if f'put("{knob}"' in ln)
+        assert f'filled("{field}", 100)' in line, f"{knob} is not divided by 100"
+
+
+def test_the_amount_knobs_are_not_scaled(source: str):
+    """Euros are euros — dividing one of these by 100 would be the mirror mistake."""
+    for knob, field in (("rsa_montant_de_base", "rsaBase"), ("bmaf", "bmafIn"),
+                        ("al_minoration_forfaitaire", "alMino")):
+        line = next(ln for ln in source.splitlines() if f'put("{knob}"' in ln)
+        assert f'filled("{field}")' in line, f"{knob} is being scaled and should not be"

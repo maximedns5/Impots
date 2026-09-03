@@ -798,6 +798,42 @@ footer code { font-family: var(--mono); font-size: 11px; }
                  <input type="number" id="bfTaux" step="0.1" placeholder="1,8"></div>
           </div>
 
+          <div class="lbl" style="margin:18px 0 8px">Prestations</div>
+          <p class="note" style="margin:0 0 10px">
+            L'autre moitié du débat. Montants mensuels en euros, taux en pourcentage,
+            plafonds de ressources annuels. Le plafond de tranche 1 doit rester
+            inférieur à celui de tranche 2 : au-dessus, un foyer n'est dans aucune des
+            deux et perçoit un montant qui ne correspond à aucun taux.
+          </p>
+          <div class="field-row tri">
+            <div><label for="rsaBase">RSA — montant de base (€/mois)</label>
+                 <input type="number" id="rsaBase" step="5" placeholder="607,75"></div>
+            <div><label for="ppaBase">Prime d'activité — base (€/mois)</label>
+                 <input type="number" id="ppaBase" step="5" placeholder="595,25"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="ppaPente">Prime d'activité — pente (%)</label>
+                 <input type="number" id="ppaPente" step="1" placeholder="61"></div>
+            <div><label for="bmafIn">BMAF (€/mois)</label>
+                 <input type="number" id="bmafIn" step="1" placeholder="445,93"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="afMod2">AF — modulation tranche 2 (%)</label>
+                 <input type="number" id="afMod2" step="5" placeholder="50"></div>
+            <div><label for="afMod3">AF — modulation tranche 3 (%)</label>
+                 <input type="number" id="afMod3" step="5" placeholder="25"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="afPlaf1">AF — plafond tranche 1, base (€/an)</label>
+                 <input type="number" id="afPlaf1" step="1000" placeholder="62 474"></div>
+            <div><label for="afPlaf2">AF — plafond tranche 2, base (€/an)</label>
+                 <input type="number" id="afPlaf2" step="1000" placeholder="87 430"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="alMino">Aide au logement — minoration (€/mois)</label>
+                 <input type="number" id="alMino" step="1" placeholder="5"></div>
+          </div>
+
           <button type="button" class="reset" id="reset" disabled>réinitialiser au droit courant</button>
           <p class="note">
             Les valeurs affichées sont lues dans l'arbre de paramètres du moteur, pas recopiées.
@@ -1136,6 +1172,21 @@ function reformSpec() {
   put("bandeau_maladie_taux",                   filled("bmTaux", 100));
   put("bandeau_famille_plafond",                filled("bfPlaf"));
   put("bandeau_famille_taux",                   filled("bfTaux", 100));
+
+  /* Prestations. Same "set if filled" convention as the employer knobs. Each AF
+     ceiling is sent on its own; if that leaves tranche 1 above tranche 2 the API
+     refuses the request, and its message — which says why a foyer would then be in
+     neither tranche — is surfaced verbatim like every other 422. Better a refusal the
+     reader can act on than a silent pairing they did not ask for. */
+  put("rsa_montant_de_base",                    filled("rsaBase"));
+  put("ppa_montant_de_base",                    filled("ppaBase"));
+  put("ppa_pente",                              filled("ppaPente", 100));
+  put("bmaf",                                   filled("bmafIn"));
+  put("af_modulation_taux_tranche_2",           filled("afMod2", 100));
+  put("af_modulation_taux_tranche_3",           filled("afMod3", 100));
+  put("af_plafond_tranche_1_base",              filled("afPlaf1"));
+  put("af_plafond_tranche_2_base",              filled("afPlaf2"));
+  put("al_minoration_forfaitaire",              filled("alMino"));
 
   return Object.keys(spec).length ? spec : null;
 }

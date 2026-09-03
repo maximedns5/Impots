@@ -47,6 +47,40 @@ PATH_PLAFOND_QF_DEMI_PART = (
 )
 PATH_CSG_ACTIVITE = ("prelevements_sociaux", "contributions_sociales", "csg", "activite")
 
+# --------------------------------------------------------------------------- #
+# Prestations (B1). The other half of French fiscal debate: until now this tool
+# could reform taxes but not transfers, which meant it could price an austerity
+# package's revenue side and say nothing about its spending side.
+#
+# Every path below was READ OUT OF THE TREE at 2024-01-01, not transcribed from
+# documentation. Two things that reading found and an assumption would have missed:
+# `rsa.rsa_m.pente` exists as a child but its value is null at this instant, so the
+# RSA taper is not parameterised and is not a knob; and the housing formula is nested
+# per region and per family size, which is why only its one flat scalar appears here.
+_MINIMA = ("prestations_sociales", "solidarite_insertion", "minima_sociaux")
+PATH_RSA_MONTANT = (*_MINIMA, "rsa", "rsa_m", "montant_de_base_du_rsa")
+PATH_PPA = (*_MINIMA, "ppa", "pa_m")
+
+_FAMILIALES = ("prestations_sociales", "prestations_familiales")
+#: The base monthly amount every family benefit is a multiple of. Moving it moves AF,
+#: CF, ASF and the rest together — a broad instrument, and labelled as one.
+PATH_BMAF = (*_FAMILIALES, "bmaf", "bmaf")
+_AF = (*_FAMILIALES, "prestations_generales", "af")
+PATH_AF_TAUX = (*_AF, "af_cm", "taux")
+PATH_AF_MODULATION = (*_AF, "af_cm", "modulation")
+PATH_AF_RESSOURCES = (*_AF, "af_cond_ress")
+
+#: The 2017 flat cut to housing benefit — five euros a month, and one of the most
+#: argued-over scalars in the French welfare system. The rest of the housing formula
+#: is nested per region (métropole, DOM, Mayotte, Saint-Pierre-et-Miquelon) and per
+#: number of dependants, with a node shape that varies by year: the same trap as the
+#: bandeau plafonds (D-044), and it needs its own increment rather than a knob bolted
+#: on here.
+PATH_AL_MINORATION = (
+    "prestations_sociales", "aides_logement", "allocations_logement", "locatif",
+    "minoration_forfaitaire",
+)
+
 _REDUCTIONS = ("prelevements_sociaux", "reductions_cotisations_sociales")
 PATH_ALLEGEMENT_GENERAL = (*_REDUCTIONS, "allegement_general", "ensemble_des_entreprises")
 #: The maladie bandeau's parameters live under `alleg_gen.mmid`, NOT under the
@@ -94,7 +128,46 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
         *PATH_ALLEGEMENT_GENERAL, "entreprises_de_moins_de_50_salaries"),
     "bandeau_maladie_taux": (*PATH_BANDEAU_MALADIE, "taux"),
     "bandeau_famille_taux": (*PATH_BANDEAU_FAMILLE, "reduction"),
+    # Prestations (B1) — the spending side.
+    "rsa_montant_de_base": PATH_RSA_MONTANT,
+    "ppa_montant_de_base": (*PATH_PPA, "montant_de_base"),
+    # The 61 % of activity income added back before the taper: the single parameter
+    # that most directly sets the marginal rate faced by working households on PPA,
+    # and therefore the one the EMTR machinery has been waiting for.
+    "ppa_pente": (*PATH_PPA, "majoration_ressources_revenus_activite"),
+    "ppa_bonification_taux_max": (*PATH_PPA, "bonification", "taux_bonification_max"),
+    "bmaf": PATH_BMAF,
+    "af_taux_2_enfants": (*PATH_AF_TAUX, "enf2"),
+    "af_taux_3_enfants": (*PATH_AF_TAUX, "enf3"),
+    # The 2015 modulation: allocations halve above one income threshold and quarter
+    # above a second. Setting both tranches to 1 restores universality, which is a
+    # live proposal and now a single knob.
+    "af_modulation_taux_tranche_2": (*PATH_AF_MODULATION, "taux_tranche_2"),
+    "af_modulation_taux_tranche_3": (*PATH_AF_MODULATION, "taux_tranche_3"),
+    # `plafond_tranche_1` and `plafond_tranche_2` exist in the tree, accept a write,
+    # and are NEVER READ BY THE FORMULA: they are the published values already
+    # including two children's worth of majoration (62 474 + 2 x 6 246 = 74 966). The
+    # formula computes its own ceiling from `_base` plus `nb_enf_tot` majorations.
+    # Pointing a knob at the derived value writes successfully and moves nothing — the
+    # D-044 failure in a new shape, caught here only because the verification runs a
+    # household through the engine instead of reading back what it just wrote.
+    "af_plafond_tranche_1_base": (*PATH_AF_RESSOURCES, "plafond_tranche_1_base"),
+    "af_plafond_tranche_2_base": (*PATH_AF_RESSOURCES, "plafond_tranche_2_base"),
+    "af_majoration_plafond_par_enfant": (
+        *PATH_AF_RESSOURCES, "majoration_plafond_par_enfant_supplementaire"),
+    "al_minoration_forfaitaire": PATH_AL_MINORATION,
 }
+
+#: Knobs that move a transfer rather than a levy. Kept as a set because three
+#: different layers need to know: the double-entry guard signs them the other way, the
+#: macro layer looks for a spending instrument, and the UI groups them apart.
+PRESTATION_KNOBS = frozenset({
+    "rsa_montant_de_base", "ppa_montant_de_base", "ppa_pente",
+    "ppa_bonification_taux_max", "bmaf", "af_taux_2_enfants", "af_taux_3_enfants",
+    "af_modulation_taux_tranche_2", "af_modulation_taux_tranche_3",
+    "af_plafond_tranche_1_base", "af_plafond_tranche_2_base",
+    "af_majoration_plafond_par_enfant", "al_minoration_forfaitaire",
+})
 
 
 def active_bracket_count(bareme_node: Any, instant: Any) -> int:

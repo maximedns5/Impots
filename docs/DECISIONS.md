@@ -2244,3 +2244,75 @@ D-058 made visible rather than buried in a decision file.
 checks on the single file, including regressions pinning the mechanical and behavioural
 presentation that §4 requires to be unchanged, and one asserting the file stays
 buildless and free of external scripts.
+
+## D-062 — The prestations knobs, and the two things the double-entry guard found
+
+`WHAT_NOW.md` B1: the tool could reform taxes but not transfers, which meant it could
+price an austerity package's revenue side and say nothing about its spending side.
+Thirteen knobs now cover RSA, the prime d'activité, family allowances and the flat
+housing cut. Every path was **read out of the tree**, and every knob is verified by
+running a household through the engine and looking at the benefit that came out.
+
+**That verification method is the point, because a read-back would have passed a defect.**
+`af_cond_ress.plafond_tranche_1` and `plafond_tranche_2` exist, accept a write, and are
+never read by the AF formula: they are published figures already including two
+children's majoration (62 474 + 2 × 6 246 = 74 966), while the formula builds its own
+ceiling from the `_base` value plus one majoration per child. A knob aimed at them
+writes successfully, warns nothing, and moves nothing. This is D-044's failure in a new
+shape — not a created child this time, but a *derived* parameter — and only an outcome
+check could see it. The knobs point at `_base`, and the defect is kept as a regression.
+
+Two more findings from measuring rather than assuming. The AF modulation compares
+against **base ressources** — net income, two years back — not gross salary, so a
+ceiling set near gross income does nothing: a test written against gross would have
+passed for the wrong reason. And `rsa.rsa_m.pente` exists as a child with a **null value
+at this instant**, so the RSA taper is not parameterised and is deliberately not a knob.
+
+**The two ceilings need a guard.** Lifting tranche 1 alone above an untouched tranche 2
+puts a household in neither band: a 150 k family came out at 2 214 € where the full rate
+is 1 771. A validator refuses an inverted pair, checking a one-sided move against the
+other ceiling's legal value, and it ships with both halves of its kill test.
+
+### What the double-entry guard caught, which is why it exists
+
+A national RSA reform missed by **0.99 %** — ten times tolerance. The cause: raising the
+RSA base brings households into **eligibility**, and eligibility carries the prime de
+Noël (`aefa`, a flat 152.45 €) which sits inside `revenu_disponible` and was in none of
+the itemised transfers. 36 M€ on 3.66 bn.
+
+With that fixed, a national AF reform missed by **0.50 %** in the other direction —
+exactly the CRDS rate. `revenu_disponible` sums `af_nettes_crds`, so it carries benefits
+**net**, while the population reports them **gross**. The benefit-side CRDS
+(`crds_pfam`, `crds_logement`, `crds_mini`) is now itemised on the *transfer* side,
+where it nets the benefit down to what the state actually bears. The AF reform now
+reconstitutes to 0.0000 %.
+
+Neither was found by reading code. Both were found by a guard whose whole job is to
+notice that the headline and the instruments disagree, and both would have quietly
+biased every prestation costing the tool will ever produce.
+
+## D-063 — B1 does not wake the regime row, and the reason is worth keeping
+
+`WHAT_NOW.md` argued that prestations knobs would constitute a **spending instrument**
+and thereby wake `multiplier_regime_shift`, which has been loaded and unusable since
+M1. Measured: they do not. A prestation reform still returns *no macro path at all*.
+
+The expectation conflated two different blockers. The regime row is dormant because the
+effect it carries is established on the spending side while every instrument this
+repository simulates is fiscal — but the thing that would make a transfer reform usable
+is a **transfer multiplier**, and there is none. Mésange publishes no transfer variant;
+its generic public-spending variant is a composite that is 46 % cash benefits but whose
+components the document says transmit at different speeds; and borrowing it would
+overstate by two to three, since IMK puts transfers at 0.39 and 0.54 against 1.01 and
+0.90 for spending (D-052).
+
+So adding a spending *instrument* does not supply a spending *multiplier*. The macro
+layer correctly reports "aucun instrument de cette réforme n'a de multiplicateur
+publié", and `multiplier_regime_shift` stays loaded, sourced and unused.
+
+This is the sixth expectation in this project to meet the primary sources and lose, and
+the pattern is stable enough to state: **a document's reasoning about what a change will
+unlock is a hypothesis about the sources, not a reading of them.** The knobs are still
+worth having for the other two reasons B1 gave — half the fiscal debate, and the EMTR
+machinery now has `ppa_pente`, the single parameter that most directly sets the marginal
+rate a working household on the prime d'activité faces.
