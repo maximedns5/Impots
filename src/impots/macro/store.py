@@ -35,14 +35,14 @@ from impots.behavioural.store import (
     UnverifiedParameter,
     Verifier,
 )
-from impots.macro import mesange
+from impots.macro import imk, mesange
 
 PARAMETERS = Path(__file__).resolve().parent / "parameters"
 
 #: Readers a `source_table` block may name. A YAML file cannot nominate arbitrary
 #: import paths: the point of parsing from the primary file is that the parser is
 #: reviewed code, and an open-ended importer would hand that property back.
-READERS = {"impots.macro.mesange": mesange}
+READERS = {"impots.macro.mesange": mesange, "impots.macro.imk": imk}
 
 
 class MissingSourceTable(RuntimeError):
@@ -156,18 +156,22 @@ def _table(key: str, raw: dict[str, Any], declared: dict[str, Any],
             f"{key}: source_table names reader {reader_name!r}, which is not one of "
             f"{sorted(READERS)}. Readers are reviewed code, not a YAML import path."
         )
-    row = raw["value"]["from_source_table"]
-    variants = reader.load(raw=raw_dir) if raw_dir else reader.load()
+    value = raw["value"]
+    # Everything in the value block other than the row name and the distribution is an
+    # argument for the reader, so a second document is a data change, not a code change.
+    options = {k: v for k, v in value.items()
+               if k not in ("from_source_table", "distribution")}
+    values, horizons = reader.table(value["from_source_table"], raw=raw_dir, **options)
     return TableParameter(
         key=key,
-        values={name: variant.rows[row] for name, variant in variants.items()},
-        horizons=reader.HORIZONS,
+        values=values,
+        horizons=horizons,
         applies_to=raw.get("applies_to", ""),
         responds_to_knobs=tuple(raw.get("responds_to_knobs") or ()),
         support=_support(raw.get("support") or {}), source=_source(declared),
         verifier=_verifier(raw.get("verifier") or {}),
         confidence=raw.get("confidence", "medium"),
-        distribution=raw["value"].get("distribution", "triangular"),
+        distribution=value.get("distribution", "triangular"),
         note=raw.get("note", ""),
     )
 

@@ -1961,3 +1961,46 @@ checks confirms itself, and this project has now measured that failure four time
 So the store refuses, `strict=False` reports what is missing and why, and the five dead
 rows carry their reasons in `Store.removed` so a feature can say "no usable evidence,
 because …" rather than quietly having fewer inputs.
+
+## D-054 — The fan's width, and a banner line that turned out to be a measurement
+
+D-052 recorded `multiplier_confidence_band` as dead and named it the blocker for M3.
+It is resolved, and the resolution changed the architecture rather than filling a hole.
+
+Two open-access IMK meta-regressions are now on disk, manifested and parsed by
+`impots.macro.imk`: Gechert (2013), 104 studies and 1 069 reported multipliers, and
+Gechert and Rannenberg (2014), 98 studies and 1 882 observations broken out by cycle
+regime.
+
+**The centre and the width come from different places, and neither could supply the
+other.** Mésange gives a French, official, dated value per instrument per horizon and no
+interval. IMK gives dispersion across studies and no horizon. Composed in **relative**
+terms — a coefficient of variation applied around the Mésange centre — they combine;
+composed in levels they would not, since they measure different objects.
+
+**The centres cross-validate, which is the only external check the Mésange parse has.**
+Year-one income tax 0.41 against TAX means of 0.44 and 0.54; public investment 1.31
+against INVEST 1.22 and 1.36; generic public spending 0.78 against SPEND 0.90 and 1.00.
+An official French model and two international meta-analyses land in the same place by
+unrelated routes.
+
+**The L4 banner's copy is a measured quantity, not a rhetorical one.** "L'éventail des
+estimations crédibles pour un même choc varie d'un facteur 3 à 5": the downturn mean is
+1.37 against 0.39 in an upturn, a ratio of **3.5**. The sentence was specified before
+anyone checked; it survives checking.
+
+**`multiplier_slack_state` is superseded rather than revived.** The replacement is not an
+estimator: §1 requires cycle state to be a user-visible scenario, never drawn, and the
+new row supplies the sourced *size of the gap* between two displayed scenarios. It also
+inherits a restriction the paper states explicitly — the regime effect appears on the
+**spending** side, and tax multipliers are not regime-sensitive, so shifting a tax
+instrument with it would contradict the source that justifies it.
+
+The dominant caveat rides on every row: these dispersions are across studies with
+different countries, horizons and identification strategies. Gechert's own conclusion is
+that reported multipliers vary with study design, so this is **not** the sampling error
+of France's multiplier at a given horizon, and the resulting fan is wider than the
+genuine uncertainty about a French reform. Conservative, and a choice.
+
+Both rows load with `verdict: null` like the rest. D-053 is unchanged: the store still
+refuses everything.

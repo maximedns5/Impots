@@ -1,7 +1,7 @@
 # M1 — The macro parameter fan-out
 
 **Date**: 2026-09-03 · **Gate**: PHASE4_SPEC.md §2 · **Reproduce**: `pytest tests/test_macro_parameters.py`
-**Status**: sources located and parsed; **the independent adversarial pass has not run, so the store loads nothing.** Three rows sourced, five rows dead.
+**Status**: sources located and parsed; **the independent adversarial pass has not run, so the store loads nothing.** Five rows sourced, three rows dead, two superseded.
 
 The spec asked for four parameter families and warned that its own seeds were
 reviewer-compiled and suspect by precedent. They were. Two of the four families have a
@@ -110,8 +110,8 @@ promote noise to a parameter. Recorded as a removed row.
 
 | Row | Why | What stops working |
 |---|---|---|
-| `multiplier_slack_state` | Mésange is linear; the literature is openly split (Auerbach-Gorodnichenko up to 2.5 in recession, Ramey-Zubairy below unity regardless of slack) | nothing — §1 already required cycle state to be a **scenario, user-visible, never estimated**. The fan does not draw on this dimension; it computes at a stated state. |
-| `multiplier_confidence_band` | Mésange publishes no interval, and its own sensitivity analysis (§4.4, four hypothesis sets) is **degenerate at one year** — 1.31 everywhere for public investment, −0.32 everywhere for VAT. The only movement is employer contributions under a Phillips curve (0.29 vs 0.20). | **B3 has no sourced width.** A credible band is cross-model dispersion and needs a meta-analysis this repo does not have on disk. This is the open blocker for M3. |
+| `multiplier_slack_state` | as posed, dead: Mésange is linear, and the literature is openly split (Auerbach-Gorodnichenko up to 2.5 in recession, Ramey-Zubairy below unity regardless) | **superseded** by `multiplier_regime_shift`, which measures the *scenario gap* rather than an estimate; see §7 |
+| `multiplier_confidence_band` | as posed, dead: Mésange publishes no interval and its sensitivity analysis (§4.4, four hypothesis sets) is **degenerate at one year** — 1.31 everywhere for public investment, −0.32 everywhere for VAT | **superseded** by `multiplier_dispersion`; see §7 |
 | `multiplier_impot_societes` | no corporate-tax variant in section 4 | firm-side reforms get no aggregate multiplier; they must not borrow the employer-contributions one, which runs through labour cost, not capital cost |
 | `revenue_elasticity_by_cycle_state` | HCFP tests it and finds it insignificant | the revenue loop closes at one elasticity, stated |
 | `mpc_by_income_position` | the French HFCS evidence (Arrondel, Lamarche, Savignac) measures propensity to consume **wealth** along the **wealth** distribution — 0.5 centime per euro on average, 11 centimes for financial wealth below the median, zero in the top decile. That is not consumption out of an increment of **income** by **income** decile. | **B1 does not differentiate the consumption impulse by decile.** It applies one bridge and says so — which §1 explicitly provided for. |
@@ -141,8 +141,57 @@ The three rows most worth attacking, in order:
    assumption, and the VAT and carbon-tax rows depend on it entirely;
 3. **"LT" is not a year** — it must never reach a dated horizon profile.
 
-## 7. Open
+## 7. The width, found where Mésange could not supply it
 
-* The independent adversarial pass on the three sourced rows.
-* A cross-model dispersion source for the multiplier band — the M3 blocker.
+The two rows below arrive unverified like the rest — §6 is unchanged by them.
+
+Two open-access IMK meta-regressions, downloaded, manifested and parsed by
+`impots.macro.imk` under the same no-transcription rule:
+
+* **WP117** (Gechert 2013) — 104 studies, 1 069 reported multipliers;
+* **WP139** (Gechert and Rannenberg 2014) — 98 studies, 1 882 observations, broken out
+  by cycle regime.
+
+| | mean | sd | cv | N |
+|---|---:|---:|---:|---:|
+| TAX (WP117) | 0.54 | 0.66 | **1.22** | 240 |
+| GSPEND (WP117) | 1.01 | 0.78 | 0.77 | 721 |
+| INVEST (WP117) | 1.36 | 0.89 | 0.65 | 112 |
+| TAX (WP139) | 0.44 | 0.69 | **1.57** | 318 |
+| RUP — upturn | 0.39 | 0.77 | 1.97 | 355 |
+| RAV — regime not distinguished | 0.75 | 0.96 | 1.28 | 1 078 |
+| RLO — downturn | **1.37** | 1.08 | 0.79 | 449 |
+
+**The centres cross-validate.** Mésange's year-one income tax is 0.41 against a TAX mean
+of 0.44 and 0.54; public investment 1.31 against INVEST 1.22 and 1.36; generic public
+spending 0.78 against SPEND 0.90 and 1.00. One official French model and two
+international meta-analyses land in the same place by unrelated routes, which is the
+only external check available on the Mésange parse.
+
+**The architecture that follows**: centre from Mésange (French, official, dated, per
+instrument and per horizon), **relative** width from IMK dispersion. Composing them in
+relative terms is what makes them combinable at all — they measure different objects,
+and only their composition has meaning.
+
+**The banner's copy turns out to be a measurement.** "L'éventail des estimations
+crédibles pour un même choc varie d'un facteur 3 à 5" — RLO/RUP is 1.37/0.39 = **3.5**.
+The line describes a number in the literature, not a figure of speech.
+
+**The scope problem, which is the first thing the adversarial pass should attack**: these
+dispersions are *across studies* — different countries, horizons, identification
+strategies. Gechert's own conclusion is that reported multipliers vary with study design.
+They are therefore not the sampling error of France's multiplier at a given horizon, and
+a fan built on them is wider than the genuine uncertainty about a French reform. That is
+the conservative direction, and it is a choice.
+
+And `multiplier_regime_shift` is deliberately **not an estimator**. §1 requires cycle
+state to be a user-visible scenario, never drawn. The row supplies the sourced *size* of
+the gap between two displayed scenarios. It also carries a restriction the paper is
+explicit about: the regime effect is found on the **spending** side, and tax multipliers
+are not regime-sensitive — so applying a shift to tax instruments would contradict the
+source.
+
+## 8. Open
+
+* The independent adversarial pass, now over **five** sourced rows.
 * ERFS remains the interrupt that outranks all of this.

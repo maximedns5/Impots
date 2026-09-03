@@ -48,6 +48,7 @@ def test_non_strict_reports_what_is_missing_instead_of_raising():
     assert reported.parameters == {} and reported.tables == {}
     assert set(reported.rejected) == {
         "multiplier_by_instrument", "employment_by_instrument", "revenue_gdp_elasticity",
+        "multiplier_dispersion", "multiplier_regime_shift",
     }
     for reason in reported.rejected.values():
         assert "CONFIRMED" in reason
@@ -171,6 +172,28 @@ def test_every_dead_row_says_why(key):
     """A channel that shrinks must show why — not merely have fewer inputs."""
     reason = store.load(strict=False).why_removed(key)
     assert len(reason) > 200, f"{key} was removed without a real reason"
+
+
+@needs_source
+def test_the_meta_analyses_supply_the_width_mesange_cannot(tmp_path: Path):
+    """The centres cross-validate: three unrelated sources land in the same place."""
+    from impots.macro import imk
+
+    wp117, wp139 = imk.load("wp117"), imk.load("wp139")
+    tax = [wp117["TAX"].mean, wp139["TAX"].mean]
+    assert min(tax) < 0.41 + 0.25 and max(tax) > 0.41 - 0.25, "Mésange IR sits among them"
+    assert wp117["INVEST"].mean == pytest.approx(1.36) and wp139["INVEST"].mean == pytest.approx(1.22)
+    # The property the L4 banner describes, measured rather than asserted.
+    assert wp117["TAX"].coefficient_of_variation > 1.0, "tax-side sd exceeds its mean"
+    assert wp139["RLO"].mean / wp139["RUP"].mean == pytest.approx(3.5, abs=0.1)
+
+
+@needs_source
+def test_a_statistic_the_tables_do_not_carry_raises():
+    from impots.macro import imk
+
+    with pytest.raises(imk.ImkError, match="no statistic"):
+        imk.table("skewness", document="wp117")
 
 
 def test_the_two_seeds_the_spec_supplied_are_both_dead_or_sourced():

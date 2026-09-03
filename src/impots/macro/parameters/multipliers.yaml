@@ -114,7 +114,12 @@ parameters:
 # supprimées — un canal qui rétrécit doit montrer pourquoi.
 removed:
   multiplier_slack_state: >
-    L'état du cycle n'a AUCUNE source ici. Mésange est un modèle linéaire sans état
+    MORTE SOUS LA FORME DEMANDÉE, REMPLACÉE PAR `multiplier_regime_shift`
+    (dispersion.yaml), qui mesure autre chose et le dit : les moyennes par régime de
+    Gechert et Rannenberg (2014), 1,37 en bas de cycle contre 0,39 en haut sur 1 882
+    observations, servent d'AMPLEUR à un décalage entre deux scénarios affichés, jamais
+    de multiplicateur tiré au sort. Le motif d'origine tient toujours pour la forme
+    initiale : l'état du cycle n'a AUCUNE source ici. Mésange est un modèle linéaire sans état
     conjoncturel : il ne peut pas produire un multiplicateur « en bas de cycle », et
     l'amorce 1,3-2,5 du cahier des charges ne vient pas de lui. La littérature
     internationale est ouvertement contestée sur ce point — Auerbach et Gorodnichenko
@@ -125,7 +130,11 @@ removed:
     affiché comme tel, jamais une estimation, ce que §1 demandait déjà. Le fan ne tire
     pas sur cette dimension ; il se calcule à état donné et affiche lequel.
   multiplier_confidence_band: >
-    Mésange ne publie pas d'intervalle de confiance, et son analyse de sensibilité
+    MORTE SOUS LA FORME DEMANDÉE, REMPLACÉE PAR `multiplier_dispersion`
+    (dispersion.yaml) : la largeur ne vient pas de Mésange mais de la dispersion
+    inter-études des méta-analyses IMK, composée en RELATIF autour du centre français.
+    Le motif d'origine reste vrai et explique pourquoi il a fallu aller la chercher
+    ailleurs : Mésange ne publie pas d'intervalle de confiance, et son analyse de sensibilité
     (§4.4, quatre jeux d'hypothèses) donne à UN AN des valeurs identiques au centième
     près — 1,31 partout pour l'investissement public, -0,32 partout pour la TVA. La
     seule exception est la baisse de cotisations employeurs sous courbe de Phillips

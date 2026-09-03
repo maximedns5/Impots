@@ -197,3 +197,16 @@ def _pages(path: str) -> tuple[tuple[int, tuple[str, ...]], ...]:
         (i + 1, tuple(_normalise(line) for line in (page.extract_text() or "").splitlines()))
         for i, page in enumerate(pypdf.PdfReader(path).pages)
     )
+
+
+def table(row: str, raw: Path | None = None) -> tuple[dict[str, tuple[float, ...]], tuple[str, ...]]:
+    """One row of every variant, as (values by instrument, horizons).
+
+    The adapter the parameter store addresses every reader through, so that adding a
+    source does not mean adding a branch to the store.
+    """
+    variants = load(raw=raw)
+    missing = [key for key, variant in variants.items() if row not in variant.rows]
+    if missing:
+        raise MesangeError(f"row {row!r} absent from variants {missing}")
+    return {key: variant.rows[row] for key, variant in variants.items()}, HORIZONS

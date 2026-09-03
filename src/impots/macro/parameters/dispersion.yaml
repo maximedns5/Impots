@@ -1,0 +1,114 @@
+# The fan's width, and the one sourced statement about the cycle (PHASE4_SPEC §2, §3).
+#
+# Mésange gives a centre per instrument per horizon and no interval. These two rows give
+# the width, from cross-study dispersion, which is what the L4 banner is describing when
+# it says the range of credible estimates for one shock varies by a factor of three to
+# five. That is not a property of this model. It is a property of the literature, and it
+# is measured here rather than asserted.
+#
+# NO VALUES LIVE IN THIS FILE either — `impots.macro.imk` parses the descriptive tables.
+#
+# THE SCOPE PROBLEM, WRITTEN WHERE IT CANNOT BE MISSED: these dispersions are across
+# STUDIES — different countries, horizons, identification strategies, model classes.
+# Gechert's own conclusion is that reported multipliers vary with study design. They are
+# therefore NOT the sampling error of France's multiplier at a given horizon, and a fan
+# built on them is wider than the genuine uncertainty about a French reform. That is the
+# conservative direction, and it is a choice, not an oversight.
+
+thresholds:
+  extrapolation_widening: 2.0
+
+source_table:
+  reader: impots.macro.imk
+  citation: >
+    Gechert, « What fiscal policy is most effective? A Meta Regression Analysis », IMK
+    Working Paper n° 117, 2013, tableau 1 p. 11 (104 études, 1 069 multiplicateurs) ;
+    Gechert et Rannenberg, « Are Fiscal Multipliers Regime-Dependent? A Meta Regression
+    Analysis », IMK Working Paper n° 139, 2014, tableau 1 p. 6 (98 études, 1 882
+    observations, ventilées par régime).
+  url: https://www.econstor.eu/bitstream/10419/105983/1/imk-wp_117_2013.pdf
+  vintage: "2013-2014"
+  quote: >-
+    Reported multipliers vary with study-design, thus, policy consulting based on a
+    certain multiplier study should lay open by how much specification affects the
+    results.
+
+parameters:
+  multiplier_dispersion:
+    value:
+      from_source_table: coefficient_of_variation
+      document: wp117
+      distribution: normal
+    applies_to: >
+      Dispersion RELATIVE des multiplicateurs rapportés, par famille d'instrument :
+      écart-type inter-études rapporté à la moyenne. S'applique en largeur autour du
+      centre de Mésange, jamais en niveau — les deux sources mesurent des objets
+      différents et seule leur composition a un sens : le centre est français, daté et
+      propre à l'instrument, la largeur est internationale et sans horizon.
+    responds_to_knobs: [ir_bareme, csg_*, cotisations_*, tva_*]
+    support:
+      estimated_on: >
+        1 069 multiplicateurs de 104 études, toutes économies avancées, horizons et
+        méthodes confondus. Il n'y a PAS de sous-échantillon France exploitable.
+      max_variation_graded_in_support: null
+    verifier:
+      verdict: null
+      date: null
+      ref: null
+      note: >
+        NON VÉRIFIÉ. À attaquer en priorité : (1) le coefficient de variation suppose que
+        la dispersion est proportionnelle au centre, ce qui est une hypothèse de forme et
+        non une lecture — pour la famille TAX, l'écart-type (0,66) dépasse la moyenne
+        (0,54), donc une bande symétrique en relatif traverse zéro ; (2) composer une
+        dispersion inter-études avec un centre Mésange suppose que les deux décrivent le
+        même objet, ce qui est douteux à un an ; (3) le support est nul, donc cette ligne
+        n'est jamais gradable « in-support ».
+    confidence: medium
+    note: >
+      LES CENTRES CONCORDENT, ce qui est le seul contrôle croisé disponible et il est
+      rassurant : Mésange donne 0,41 à un an pour l'impôt sur le revenu contre une
+      moyenne TAX de 0,44 (WP139) et 0,54 (WP117) ; 1,31 pour l'investissement public
+      contre INVEST 1,22 et 1,36 ; 0,78 pour la dépense publique contre SPEND 0,90 et
+      1,00. Un modèle français officiel et deux méta-analyses internationales tombent au
+      même endroit, par des chemins sans rapport.
+
+  multiplier_regime_shift:
+    value:
+      from_source_table: mean
+      document: wp139
+      distribution: uniform
+    applies_to: >
+      Moyenne des multiplicateurs rapportés PAR RÉGIME conjoncturel : RUP (haut de
+      cycle) 0,39, RAV (régime non distingué) 0,75, RLO (bas de cycle) 1,37. C'est la
+      seule affirmation sourcée dont dispose ce dépôt sur ce que devient un
+      multiplicateur en bas de cycle.
+    responds_to_knobs: []
+    support:
+      estimated_on: >
+        449 observations en bas de cycle, 355 en haut, 1 078 sans distinction. La
+        définition du « bas de cycle » est celle de chaque étude primaire, et elles ne
+        s'accordent pas : c'est la principale faiblesse de la ligne.
+      max_variation_graded_in_support: null
+    verifier:
+      verdict: null
+      date: null
+      ref: null
+      note: >
+        NON VÉRIFIÉ. À attaquer : (1) ces moyennes sont BRUTES, non corrigées du plan
+        d'étude, alors que la méta-régression du même papier estime l'effet contrôlé à
+        0,6-0,8 point pour la DÉPENSE seulement — l'écart brut 1,37 contre 0,39 mélange
+        l'effet de régime et la composition de l'échantillon ; (2) le papier conclut que
+        les multiplicateurs d'IMPÔT ne sont PAS sensibles au régime, ce que les colonnes
+        de régime, agrégées tous instruments confondus, ne montrent pas ; (3) la
+        littérature reste contestée (Ramey et Zubairy trouvent des multiplicateurs sous
+        l'unité quel que soit le sous-emploi).
+    confidence: low
+    note: >
+      NE SERT PAS À ESTIMER, ET C'EST DÉLIBÉRÉ. §1 exige que l'état du cycle soit un
+      SCÉNARIO choisi par l'utilisateur et affiché, jamais une grandeur tirée. Cette
+      ligne fournit l'AMPLEUR sourcée du décalage entre deux scénarios, pas une
+      probabilité d'être dans l'un ou l'autre. Le rapport RLO/RUP vaut 3,5, ce qui est
+      d'ailleurs d'où vient le « facteur 3 à 5 » de la bannière L4 : cette copie décrit
+      une dispersion mesurée, pas une figure de style.
+      RESTRICTION : le papier ne trouve l'effet de régime que du côté DÉPENSE. Un
+      décalage appliqué aux instruments fiscaux irait contre sa conclusion explicite.
