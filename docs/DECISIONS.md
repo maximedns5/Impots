@@ -1874,3 +1874,90 @@ Two, taken by Max and recorded here so they stop being re-litigated:
 The Phase 4 exclusions stand and are refusals, not deferrals: no forecast, no
 DSGE/CGE/HANK/ABM under any framing, no monetary policy, no debt dynamics beyond
 arithmetic, no horizon past three years, and never a point estimate.
+
+## D-051 — Both multiplier seeds were wrong, in the way summaries are wrong
+
+`PHASE4_SPEC.md` §2 proposed "0.2–0.6 tax-side, 0.5–1.2 spending-side, 1.3–2.5 in
+slack", and flagged them as reviewer-compiled and suspect by precedent. Measured against
+Mésange (INSEE/DG Trésor G2017/04, section 4):
+
+* **tax-side 0.2–0.6 is a year-one range wearing no horizon.** The tax variants run
+  0.20–0.51 at one year and 0.72–0.90 at three. Applied at three years, the seed
+  understates by about a third.
+* **spending-side 0.5–1.2 excludes its own most important case.** Public investment is
+  1.31 at one year and 1.38 at two, above the ceiling.
+* **1.3–2.5 in slack has no source.** Mésange is linear and has no cycle state.
+
+Neither is a fabrication; both are the kind of half-remembered summary that stops being
+true the moment a horizon is attached. `eti_all` died at 2.5× its true value by the same
+mechanism, which is why these were checked rather than loaded. **Fourth phase running,
+same finding: a compiled range is a hypothesis about a document, not a reading of one.**
+
+The replacement is not a wider band but a **profile**: eight instruments × six horizons,
+parsed from the PDF, with the employment response attached to each. And it replaces the
+spec's "Okun-style" employment row outright — at three years a point of GDP through
+employer contributions yields 290k jobs against 107k through generic public spending,
+so an aggregate employment-output elasticity would be wrong about one of them by a
+factor near three.
+
+**No multiplier value lives in a YAML file.** Forty-eight figures retyped into
+configuration is precisely the transcription D-026 forbids, so `multipliers.yaml`
+declares `from_source_table: gdp` and `impots.macro.mesange` parses the document.
+`test_the_multiplier_yaml_contains_no_multipliers` enforces that there is nothing to
+drift.
+
+Two conventions are assumptions and are labelled as such on every row that carries them:
+the sign flip that brings contractionary variants into one convention rests on the
+model's linearity, and the identifying shock is exactly one point of GDP, so a larger
+reform extrapolates the model rather than reading it.
+
+## D-052 — Two rows die, and the second one takes a feature with it
+
+**`multiplier_slack_state`.** No source. Mésange cannot answer it, and the international
+literature is openly split — Auerbach and Gorodnichenko reach 2.5 in recession, Ramey
+and Zubairy find multipliers below unity irrespective of slack. Importing a number into
+that disagreement would be picking a side by default of formatting. Nothing is lost:
+§1 already required cycle state to be a **scenario, user-visible, never estimated**. The
+fan does not draw on this dimension; it computes at a stated state and shows which.
+
+**`mpc_by_income_position`.** The French evidence measures the wrong object. Arrondel,
+Lamarche and Savignac (HFCS) estimate the propensity to consume **wealth**, varying
+along the **wealth** distribution — about 0.5 centime per euro on average, 11 centimes
+for financial wealth below the median, zero in the top decile. B1 needs consumption out
+of an increment of **income**, by **income** decile. Loading one for the other repeats
+exactly what killed `eti_labour_income_low_earners`: two different objects summed into
+one channel because they share a name. **Consequence, accepted: B1 does not
+differentiate the consumption impulse by decile.** It applies one bridge and states it,
+which §1 explicitly provided for.
+
+**`revenue_elasticity_by_cycle_state`** dies for the opposite reason — the source
+forbids it. HCFP tests cycle dependence three ways (output gap, nominal growth, real
+growth) and finds none significant; the one detectable regime is "à la limite de la
+significativité" and "pourrait même être rejetée". Varying this row with the cycle would
+promote noise to a parameter.
+
+**`multiplier_confidence_band`** is the one that hurts. Mésange publishes no interval,
+and its own sensitivity analysis is **degenerate at one year** — 1.31 for public
+investment under every one of four hypothesis sets, −0.32 for VAT under all of them. A
+band drawn from it would be an artefact of a model that is deterministic in the short
+run by construction. The credible band is cross-model dispersion, which needs a
+meta-analysis this repo does not have on disk. **B3 therefore has no sourced width, and
+that is the open blocker for M3** — recorded here rather than papered over with a
+convention, because a fan whose width is invented is the one output of this project that
+would be actively misleading.
+
+## D-053 — The macro store loads nothing, and that is the correct state
+
+Every M1 row carries `verdict: null`, so `impots.macro.store.load()` raises and no macro
+feature can produce a number.
+
+The values were located, downloaded, manifested and parsed from the primary documents by
+tested code — D-026's first half. Its second half is that the figures are then
+*adversarially verified by someone other than whoever computed them*, and no independent
+pass has run. Reading my own parsed tables back off the screen is exactly the read-back
+verification D-044 recorded as a blind spot: a check sharing a path with the thing it
+checks confirms itself, and this project has now measured that failure four times.
+
+So the store refuses, `strict=False` reports what is missing and why, and the five dead
+rows carry their reasons in `Store.removed` so a feature can say "no usable evidence,
+because …" rather than quietly having fewer inputs.

@@ -1,0 +1,141 @@
+# Fiscal multipliers by instrument (PHASE4_SPEC §2).
+#
+# NO VALUES LIVE IN THIS FILE. Every number is parsed from the published PDF by
+# `impots.macro.mesange`, per D-026: calibration inputs are computed from the primary
+# file by tested code, never retyped into a table. What lives here is what a PDF
+# cannot carry — scope, support, the verifier's verdict, and the reasons a row is
+# narrower than someone might wish.
+#
+# THE SPEC'S SEEDS WERE WRONG, and this is the record of how. §2 proposed "0.2-0.6
+# tax-side, 0.5-1.2 spending-side, 1.3-2.5 in slack", flagged as reviewer-compiled and
+# suspect by precedent. Measured against the source:
+#
+#   * tax-side 0.2-0.6 is a YEAR-ONE range wearing no horizon. Mésange's tax-side
+#     variants run 0.20-0.51 at one year and 0.72-0.90 at three. A band applied at
+#     three years understates by about a third.
+#   * spending-side 0.5-1.2 excludes its own most important case: public investment
+#     is 1.31 at one year and 1.38 at two, above the seed's ceiling.
+#   * 1.3-2.5 in slack has NO source here at all. Mésange is a linear model with no
+#     cycle state; it cannot answer the question. See `removed:` below.
+
+thresholds:
+  # A reform impulse larger than the shock the variant was simulated on is an
+  # extrapolation, widened by this factor and labelled one. Same convention as the
+  # behavioural store, named as a convention rather than a measurement.
+  extrapolation_widening: 2.0
+
+source_table:
+  reader: impots.macro.mesange
+  file: insee_G2017-04_mesange.pdf
+  citation: >
+    Bardaji, Campagne, Khder, Lafféter, Simon et al., « Le modèle macroéconométrique
+    Mésange : réestimation et nouveautés », INSEE Document de travail G2017/04 /
+    DG Trésor, mai 2017, section 4 « Principales variantes », p. 100-139.
+  url: https://www.insee.fr/fr/statistiques/fichier/2848300/G2017-04.pdf
+  vintage: "2017"
+  quote: >-
+    La modélisation retenue constitue une approximation linéaire résumée en quelques
+    paramètres clés, connus et estimés avec une marge d'incertitude.
+
+parameters:
+  multiplier_by_instrument:
+    value:
+      from_source_table: gdp
+      distribution: triangular
+    applies_to: >
+      Réponse du PIB en volume à un choc permanent de 1 point de PIB sur l'instrument,
+      en écart au compte central, aux horizons 1, 2, 3, 5 et 10 ans et à long terme.
+      Huit instruments : investissement public, dépense publique générique,
+      cotisations employeurs, cotisations salariés, TVA, CSG, impôt sur le revenu,
+      taxe carbone. Un instrument absent de cette liste n'a PAS de multiplicateur et
+      ne doit pas emprunter celui d'un voisin.
+    responds_to_knobs: [ir_bareme, csg_*, cotisations_*, tva_*]
+    support:
+      estimated_on: >
+        Chocs d'exactement 1 point de PIB, ex ante, permanents et non financés. La
+        variation identifiante est donc d'un point de PIB : une réforme plus grande
+        est une extrapolation du modèle, pas une lecture de ses résultats.
+      max_variation_graded_in_support: 1.0
+    verifier:
+      verdict: null
+      date: null
+      ref: null
+      note: >
+        NON VÉRIFIÉ — la passe adversariale indépendante n'a pas été exécutée. Les
+        valeurs sont extraites du PDF primaire par du code testé (D-026) et non
+        recopiées, et les tables ont été relues à l'écran ; ce n'est pas la même chose
+        qu'une vérification par un tiers, et le chargeur refuse donc cette ligne.
+        Points à attaquer en priorité : (1) la convention de signe ci-dessous suppose
+        une symétrie que le modèle impose et que personne n'a mesurée ; (2) le
+        multiplicateur de la TVA est lu sur une hausse et retourné ; (3) l'horizon
+        « LT » n'est pas une année et ne doit pas se retrouver dans un profil daté.
+    confidence: high
+    note: >
+      CONVENTION DE SIGNE, et c'est une hypothèse, pas une lecture : Mésange publie
+      certaines variantes en hausse et d'autres en baisse. Le lecteur les ramène toutes
+      à « réponse du PIB par point de PIB d'impulsion expansionniste », ce qui suppose
+      qu'une hausse d'impôt coûte ce qu'une baisse égale rapporte. Le modèle l'impose
+      par linéarité ; la littérature sur les asymétries ne le confirme pas.
+
+  employment_by_instrument:
+    value:
+      from_source_table: emploi_milliers
+      distribution: triangular
+    applies_to: >
+      Emploi salarié marchand, en milliers, pour le même choc de 1 point de PIB et aux
+      mêmes horizons. C'est le lien emploi-activité que §2 demandait sous forme
+      « d'Okun » : il est ici PROPRE À L'INSTRUMENT, ce qu'une loi d'Okun agrégée ne
+      peut pas être — 92 000 emplois à un an pour l'investissement public contre 83 000
+      pour les cotisations employeurs, mais 201 000 contre 290 000 à trois ans.
+    responds_to_knobs: [ir_bareme, csg_*, cotisations_*, tva_*]
+    support:
+      estimated_on: >
+        Mêmes variantes, même choc d'un point de PIB. L'emploi non marchand n'est pas
+        dans cette ligne : le modèle le traite en exogène.
+      max_variation_graded_in_support: 1.0
+    verifier:
+      verdict: null
+      date: null
+      ref: null
+      note: >
+        NON VÉRIFIÉ — même passe manquante. À attaquer : l'emploi est en milliers de
+        personnes et non en pourcentage, donc il ne se met pas à l'échelle d'une
+        réforme comme un multiplicateur ; toute mise à l'échelle linéaire hors du
+        voisinage d'un point de PIB est une extrapolation.
+    confidence: high
+    note: >
+      Ces chiffres remplacent la loi d'Okun que le cahier des charges demandait, et
+      pas par commodité : une élasticité emploi-croissance agrégée appliquée après coup
+      appliquerait le même contenu en emplois à une baisse de cotisations ciblée sur le
+      SMIC et à un point de TVA, alors que le modèle mesure un facteur trois entre eux
+      à trois ans.
+
+# Lignes retirées : elles apparaissent ici avec leur motif plutôt que d'être
+# supprimées — un canal qui rétrécit doit montrer pourquoi.
+removed:
+  multiplier_slack_state: >
+    L'état du cycle n'a AUCUNE source ici. Mésange est un modèle linéaire sans état
+    conjoncturel : il ne peut pas produire un multiplicateur « en bas de cycle », et
+    l'amorce 1,3-2,5 du cahier des charges ne vient pas de lui. La littérature
+    internationale est ouvertement contestée sur ce point — Auerbach et Gorodnichenko
+    obtiennent jusqu'à 2,5 en récession, Ramey et Zubairy trouvent des multiplicateurs
+    inférieurs à l'unité quel que soit le degré de sous-emploi — et importer un chiffre
+    dans ce désaccord reviendrait à choisir un camp par défaut de mise en forme.
+    CONSÉQUENCE ASSUMÉE : l'état du cycle reste un SCÉNARIO choisi par l'utilisateur et
+    affiché comme tel, jamais une estimation, ce que §1 demandait déjà. Le fan ne tire
+    pas sur cette dimension ; il se calcule à état donné et affiche lequel.
+  multiplier_confidence_band: >
+    Mésange ne publie pas d'intervalle de confiance, et son analyse de sensibilité
+    (§4.4, quatre jeux d'hypothèses) donne à UN AN des valeurs identiques au centième
+    près — 1,31 partout pour l'investissement public, -0,32 partout pour la TVA. La
+    seule exception est la baisse de cotisations employeurs sous courbe de Phillips
+    (0,29 contre 0,20). Autrement dit, la dispersion à court terme de ce modèle est
+    nulle par construction, et une bande tirée de sa sensibilité serait un artefact.
+    La bande crédible est INTER-MODÈLES, et elle a besoin d'une méta-analyse que ce
+    dépôt n'a pas encore sur disque. Tant qu'elle manque, le fan n'a pas de largeur
+    sourcée pour cette dimension.
+  multiplier_impot_societes: >
+    Mésange ne publie pas de variante d'impôt sur les sociétés en section 4. Les
+    canaux entreprises n'héritent donc PAS du multiplicateur des cotisations
+    employeurs : les deux instruments passent par des mécanismes différents dans le
+    modèle (coût du travail contre coût du capital), et le second n'est pas mesuré ici.

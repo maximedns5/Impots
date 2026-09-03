@@ -1,0 +1,87 @@
+# Elasticity of compulsory levies to GDP, and the marginal propensity to consume
+# (PHASE4_SPEC §2). The second is dead; see `removed:`.
+#
+# The elasticity closes B3's loop: Δdéficit = mécanique + comportemental + retour de
+# recettes macro. It is the one place in the macro layer where a single number moves
+# every fiscal figure, so it gets the tightest sourcing.
+
+thresholds:
+  extrapolation_widening: 2.0
+
+parameters:
+  revenue_gdp_elasticity:
+    value: {central: 1.07, low: 0.98, high: 1.16, distribution: normal}
+    applies_to: >
+      Élasticité de la croissance SPONTANÉE des prélèvements obligatoires — à
+      législation inchangée — au taux de croissance du PIB EN VALEUR, en moyenne
+      annuelle. Ce n'est pas l'élasticité d'un impôt particulier : c'est l'agrégat, et
+      il ne doit pas être appliqué à un instrument isolé.
+    responds_to_knobs: []
+    support:
+      estimated_on: >
+        Régression sur 1991-2021, 31 observations annuelles. R² de 0,88, écart-type de
+        régression 0,89 %, et la relation passe cinq tests de spécification standard
+        (autocorrélation, hétéroscédasticité, normalité, deux tests de stabilité).
+      max_variation_graded_in_support: null
+    source:
+      citation: >
+        Haut Conseil des finances publiques, « L'élasticité des prélèvements
+        obligatoires au PIB : définition, interprétation et limites », note
+        méthodologique n° 2023-1, février 2023 — Tableau 2 p. 7, équation (2).
+      url: https://www.hcfp.fr/sites/default/files/2023-02/Note%20m%C3%A9thodologique%20HCFP%202023-1.pdf
+      vintage: "2023"
+      quote: >-
+        On obtient alors une meilleure relation en retirant la constante et on obtient
+        une élasticité moyenne de 1,07, toutefois statistiquement non différente de
+        l'unité.
+    verifier:
+      verdict: null
+      date: null
+      ref: null
+      note: >
+        NON VÉRIFIÉ — passe adversariale indépendante non exécutée. La bande 0,98-1,16
+        est DÉRIVÉE, pas publiée : le tableau donne le coefficient 1,07 et sa
+        statistique de Student 24,68, d'où un écart-type de 0,0434 et ±2 σ. C'est
+        exactement le genre de dérivation que la passe doit attaquer, avec trois autres
+        points : (1) l'équation (1), avec constante, donne 1,01 et la bande la contient,
+        ce qui est voulu ; (2) le PIB de la régression est en VALEUR, et l'utiliser
+        contre un PIB en volume introduirait l'inflation deux fois ; (3) le seuil de
+        support est laissé nul faute d'une variation identifiante interprétable, ce qui
+        rend cette ligne non gradable « in-support » — une absence de borne n'est pas
+        une borne permissive.
+    confidence: high
+    note: >
+      L'élasticité est UNITAIRE À LA MOYENNE et très instable d'une année sur l'autre :
+      1,5 en 2017 et 2022, 0,4 en 2023. Le fan porte donc sur une moyenne pluriannuelle
+      et n'a rien à dire d'une année particulière, ce qui doit rester lisible dans la
+      bande d'hypothèses.
+
+# Lignes retirées.
+removed:
+  revenue_elasticity_by_cycle_state: >
+    Le cahier des charges fait varier les multiplicateurs selon l'état du cycle, et il
+    serait tentant d'en faire autant ici. La source l'interdit. Le HCFP teste
+    précisément cette hypothèse (tableau 4) sous trois formes — output gap, croissance
+    en valeur, croissance en volume — et conclut que ni l'output gap ni la croissance
+    en valeur n'affectent significativement le lien. Le seul régime détectable
+    (élasticité 0,92 sous 1,6 % de croissance contre 1,1 au-dessus) est « à la limite
+    de la significativité au seuil de 5 % » et « pourrait même être rejeté » une fois
+    tenue compte l'incertitude sur le seuil de 1,6 % lui-même. Une dépendance
+    conjoncturelle de cette ligne serait donc du bruit promu en paramètre.
+  mpc_by_income_position: >
+    RIEN DE FRANÇAIS NE MESURE CET OBJET. §2 demandait une propension marginale à
+    consommer par position dans la distribution des revenus, « evidence française
+    d'abord », sur base HFCS. Les travaux français disponibles — Arrondel, Lamarche et
+    Savignac sur données HFCS — estiment la propension à consommer LE PATRIMOINE, et
+    la font varier le long de la distribution DE PATRIMOINE : environ 0,5 centime par
+    euro de richesse en moyenne, 11 centimes pour la richesse financière sous la
+    médiane, zéro pour le dernier décile. Ce n'est pas la propension à consommer un
+    supplément de REVENU par décile de revenu, qui est ce dont B1 aurait besoin.
+    Charger l'un pour l'autre reviendrait à additionner deux objets différents —
+    exactement le motif pour lequel `eti_labour_income_low_earners` a été retirée en
+    phase 3, et le précédent est contraignant.
+    CONSÉQUENCE ASSUMÉE : B1 ne différencie PAS l'impulsion de consommation par décile.
+    Il applique un pont unique et le déclare, ce que §1 prévoyait explicitement
+    (« decile-differentiated only if the fan-out verifies a source; otherwise one
+    bridge, stated »). La fonctionnalité meurt visiblement plutôt que de tourner sur
+    une propension importée.
