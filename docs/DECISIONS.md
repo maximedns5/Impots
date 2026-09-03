@@ -1780,3 +1780,97 @@ file is 11.7 MB and downloading it is not CI's job. So the full pass genuinely r
 only on a machine that has the data, and `-m ""` in CI is what will pick them up the
 day that changes rather than silently skipping a suite everyone believes is running.
 The README carries the three commands and the same caveat.
+
+## D-048 — The input-output table is not non-negative, and the spec said it would be
+
+`PHASE4_SPEC.md` §3 asks the M0 gate to assert "the import matrix present and
+non-negative". The import matrix is present. It is not non-negative, and the assertion
+fails on correct data.
+
+One cell, in the 2023 semi-definitive vintage, in both matrices:
+
+```
+KZ -> LZ   domestic  -23 893.2 M EUR      imported  -309.4 M EUR
+```
+
+Financial services against the real-estate branch: the SIFIM adjustment, whose interest
+component on household housing loans is booked as household final consumption rather
+than as intermediate consumption of real estate. Published data — the product balance
+closes on it to 0.000 M€ — and absent from the 2022 definitive vintage, so a feature of
+the semi-definitive publication rather than a permanent one.
+
+**The cell is kept as published.** Clamping it to zero would break a balance identity
+that currently closes exactly, in exchange for a property nothing downstream requires.
+Reality wins over the spec, on the record, which is the standing rule.
+
+What replaced the assertion is the set of properties propagation actually rests on,
+each measured rather than assumed:
+
+* negatives few enough to enumerate and name — ceiling 5, since a scattering would mean
+  a misread sheet rather than an accounting convention;
+* per-cell import shares in [0, 1] — 0.0000 to 0.9918;
+* per-branch import shares in [0, 1] — 0.000 to 0.725;
+* every output multiplier at least unity — 1.000 (TZ) to 2.156 (KZ).
+
+That last one is the substantive replacement. Non-negativity was never the thing worth
+having; "a unit of final demand raises total output, for every branch" is, and it
+survives the negative cell. Measured consequences: one negative technical coefficient
+(−0.0586), two negative entries in the Leontief inverse (largest 0.0883), ρ = 0.4591,
+and zeroing the cell would move branch multipliers by at most 0.130.
+
+**The IO layer may never assume non-negativity of this table.**
+
+## D-049 — The gate found two silent misreads, which is the argument for gates
+
+Neither would have raised. Both would have biased every number the macro layer produced,
+and the M0 discipline — the gate written *before* the propagation code — is the only
+reason either was found.
+
+**Both totals read the same column.** "Total des emplois" is a substring of "Total des
+emplois finals", which sits to its left. A substring match returned the same column for
+both; the two totals came back identical at 3 245.8 bn; and the balance identity closed
+**anyway**, because it was comparing a column against itself. This is the same failure
+mode as D-045's first double-entry guard: a check that shares a path with the thing it
+checks will confirm itself. Found by reading the numbers, not by the code failing.
+
+**Final consumption meant households alone.** Four columns sit under one merged header
+— Ménages / APU / ISBLSM / TOTAL — with the institutional sector on the code row
+beneath. Matching the header takes its leftmost column: 1 158.7 bn where the total is
+1 888.2 bn, a 730 bn omission. The aggregate balance stayed green throughout, because
+it rests on a separate published column that is correct either way. It surfaced only
+from adding the components up by hand.
+
+The gate now asserts each total against its own components, which is the check that can
+catch a wrong column where a headline identity structurally cannot. All four close to
+0.000 M€. The reader raises on a missing sub-column rather than falling back to the
+header — the fallback *is* the bug.
+
+The institutional split is kept rather than collapsed into a total: a public-spending
+shock and a household-transfer shock enter through different columns, and the MPC that
+applies to one does not apply to the other.
+
+Two smaller ones, same character: the employment nomenclature is hierarchical, so three
+branches carry an A17 code with a different letter and suffix-matching left ten
+unmatched — a zero-fill would have made ten branches contribute no jobs to any shock,
+so it raises instead. And the year headers are strings, so an `isinstance(..., int)`
+lookup found no years and reported it as a missing year.
+
+Recorded because the pattern now has four instances (D-045, D-044's read-back, and both
+above): **a verification that shares a path with what it verifies is not a
+verification.** Every check added here compares two independently-published quantities.
+
+## D-050 — Owner decisions of 2026-09-03
+
+Two, taken by Max and recorded here so they stop being re-litigated:
+
+* **Deployment stays private.** No public instance. The AGPL licence and the public
+  repository stand; what does not follow is a hosted service, which would put fidelity
+  labels in front of readers who have not read the caveats.
+* **The Phase 4 fork is the macro fan** — not the reform-authoring UI, not the
+  historical backtest suite. The macro layer is where the project's remaining
+  credibility risk is concentrated, so it gets built under the tightest guardrails
+  rather than deferred.
+
+The Phase 4 exclusions stand and are refusals, not deferrals: no forecast, no
+DSGE/CGE/HANK/ABM under any framing, no monetary policy, no debt dynamics beyond
+arithmetic, no horizon past three years, and never a point estimate.

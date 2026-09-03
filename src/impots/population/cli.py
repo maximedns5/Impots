@@ -109,6 +109,25 @@ KNOWN_SOURCES: dict[str, tuple[str, str]] = {
         "its confidence intervals are read from its own tables, never from a summary "
         "(D-026, D-031).",
     ),
+    "insee_TES_symetrique_A38_2023SD.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8574722/"
+        "TES_symetrique_A38_2023SD.xlsx",
+        "INSEE, comptes nationaux base 2020 — tableau entrées-sorties symétrique A38, "
+        "année 2023, version semi-définitive. Domestic and import matrices; the basis "
+        "of the L4 sectoral composition and its import-leakage correction (D-049).",
+    ),
+    "insee_TES_symetrique_A38_2022DEF.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8574722/"
+        "TES_symetrique_A38_2022DEF.xlsx",
+        "The same, année 2022, version définitive — carried so the vintage choice can "
+        "be checked against a settled year rather than only asserted.",
+    ),
+    "insee_cn2024_t6208_emploi_par_branche_a38.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8574683/T_6208.xlsx",
+        "INSEE, comptes nationaux — tableau 6.208, emploi intérieur total par branche "
+        "en nombre de personnes (38 postes). Same accounts vintage as the TES; the "
+        "source of the employment coefficients.",
+    ),
     "insee_ia112_taux_implicite_is_2016_2022.xlsx": (
         "https://www.insee.fr/fr/statistiques/fichier/8630968/IA112.xlsx",
         "INSEE Analyses n° 112 — taux implicite d'IS par taille d'entreprise",
