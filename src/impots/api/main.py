@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import os
 import time
 from collections.abc import AsyncIterator
@@ -391,6 +392,92 @@ def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
     )
 
 
+def _macro(request: Any, agg: Any) -> Any:
+    """The L4 fan, or a block explaining why there is not one.
+
+    Never raises. A reform with no published multiplier, or a checkout without the
+    primary sources on disk, both produce `available: false` with a reason — the fan
+    being unavailable is the designed outcome for most reforms, not an error.
+    """
+    from impots.api.schemas import (
+        Macro,
+        MacroAssumptions,
+        MacroBranch,
+        MacroDecomposition,
+        MacroQuantiles,
+    )
+    from impots.macro import fan as fan_module
+    from impots.macro import io_layer, shocks
+    from impots.macro import store as store_module
+    from impots.macro import tes as tes_module
+
+    knobs = tuple(request.reform.model_dump(exclude_none=True))
+    try:
+        impulse = shocks.build(
+            agg.deltas, year=request.year, reform_cost=agg.reform_cost, knobs=knobs)
+    except shocks.ShockError as error:
+        return Macro(available=False, unavailable_because=str(error))
+
+    uncovered = {name: reason for name, reason in impulse.reasons().items()}
+    if not impulse.by_instrument:
+        return Macro(
+            available=False, uncovered=uncovered,
+            unavailable_because=(
+                "Aucun instrument de cette réforme n'a de multiplicateur publié : il n'y "
+                "a pas de trajectoire macro à tracer."
+            ),
+        )
+
+    try:
+        table = tes_module.load()
+        jobs = tes_module.employment(table.branches, table.base_year)
+        store = store_module.load()
+        composition = io_layer.composition(
+            table, shocks.allocation(table, impulse), jobs, use="consommation_finale")
+        result = fan_module.run(
+            impulse, store, gdp_eur=tes_module.gdp(table) * 1e6, composition=composition)
+    except (tes_module.TesError, io_layer.IoLayerError, fan_module.FanError,
+            store_module.MissingSourceTable, RuntimeError) as error:
+        return Macro(available=False, uncovered=uncovered,
+                     unavailable_because=f"Couche macro indisponible : {error}")
+
+    strip = result.assumptions
+    branches = sorted(
+        range(table.n), key=lambda i: composition.output_shares[i], reverse=True)[:12]
+    return Macro(
+        available=True,
+        uncovered=uncovered,
+        gdp={h: MacroQuantiles(p10=q.p10, p50=q.p50, p90=q.p90, unit="EUR")
+             for h, q in result.gdp_eur.items()},
+        jobs={h: MacroQuantiles(p10=q.p10, p50=q.p50, p90=q.p90, unit="milliers ETP")
+              for h, q in result.jobs_thousands_etp.items()},
+        decomposition=[
+            MacroDecomposition(
+                horizon=h, parameter=d.parameter, scenario=d.scenario,
+                scenario_available=d.scenario_available,
+                scenario_unavailable_because=d.scenario_unavailable_because)
+            for h, d in result.decomposition.items()
+        ],
+        composition=[
+            MacroBranch(
+                code=table.branches[i], label=table.labels[i].title(),
+                output_share=float(composition.output_shares[i]),
+                employment_share=float(composition.employment_shares[i]))
+            for i in branches
+        ],
+        assumptions=MacroAssumptions(
+            cycle_state=strip.cycle_state, design=strip.design,
+            leakage=None if math.isnan(strip.leakage) else strip.leakage,
+            leakage_applied=strip.leakage_applied, horizons=list(strip.horizons),
+            parameters_vintage=strip.parameters_vintage, grade=strip.grade,
+            covered_share=strip.covered_share, instruments=list(strip.instruments),
+            simulation_conditions=strip.simulation_conditions,
+            caveats=list(strip.caveats), banner=strip.banner,
+        ),
+        notes=list(result.notes),
+    )
+
+
 def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None) -> Any:
     """The band for a household reform, or a mechanical-only answer with its reason."""
     import numpy as np
@@ -472,6 +559,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
         if request.behavioural else None
     )
     narrow_band = _narrow_band(request, result.households, frame)
+    macro = _macro(request, agg) if getattr(request, "macro", False) else None
     return PopulationResponse(
         meta=PopulationMeta(
             vintage=POPULATION_VINTAGE, branch=summary["branch"],
@@ -487,7 +575,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
         ),
         totals=agg.totals, totals_reform=agg.totals_reform, deltas=agg.deltas,
         reform_cost=agg.reform_cost, behavioural=behavioural,
-        narrow_band=narrow_band,
+        narrow_band=narrow_band, macro=macro,
         deciles=[DecileRow.model_validate(vars(row)) for row in agg.deciles],
         reconciliation=[
             ReconciliationLine.model_validate(line) for line in summary["reconciliation"]

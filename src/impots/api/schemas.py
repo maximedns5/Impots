@@ -421,6 +421,85 @@ class Behavioural(BaseModel):
     them. Stated because it is a subsample and the band inherits its noise."""
 
 
+# --------------------------------------------------------------------------- #
+# Macro (Phase 4, L4) — PHASE4_SPEC §4
+#
+# The fan never renders without its strip, so the strip is REQUIRED on this block
+# rather than optional: a client cannot receive quantiles without also receiving the
+# cycle state, the design, the leakage, the horizon, the vintage and the grade.
+# --------------------------------------------------------------------------- #
+class MacroQuantiles(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    p10: float
+    p50: float
+    p90: float
+    unit: str
+
+
+class MacroDecomposition(BaseModel):
+    """Where the spread comes from, reported separately (§1)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    horizon: str
+    parameter: float
+    scenario: float
+    scenario_available: bool
+    scenario_unavailable_because: str = ""
+
+
+class MacroBranch(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    code: str
+    label: str
+    output_share: float
+    employment_share: float
+
+
+class MacroAssumptions(BaseModel):
+    """Everything §4 forbids the fan to render without."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    cycle_state: str
+    design: str
+    leakage: float | None = None
+    leakage_applied: bool
+    horizons: list[str]
+    parameters_vintage: str
+    grade: str
+    covered_share: float
+    instruments: list[str]
+    simulation_conditions: str
+    caveats: list[str] = Field(default_factory=list)
+    banner: str
+
+
+class Macro(BaseModel):
+    """The macro fan (L4).
+
+    `unavailable` is not an error state. Most reforms this repository can express have
+    no macro path at all — transfers and corporate instruments have no published
+    multiplier — and saying so with a reason is the designed outcome, not a failure.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    available: bool
+    unavailable_because: str = ""
+    gdp: dict[str, MacroQuantiles] = Field(default_factory=dict)
+    jobs: dict[str, MacroQuantiles] = Field(default_factory=dict)
+    decomposition: list[MacroDecomposition] = Field(default_factory=list)
+    composition: list[MacroBranch] = Field(default_factory=list)
+    assumptions: MacroAssumptions | None = None
+    notes: list[str] = Field(default_factory=list)
+    uncovered: dict[str, str] = Field(default_factory=dict)
+    """Instruments the reform moved that have no multiplier, with the reason each is
+    missing. Carried so the client can show what the fan does NOT describe."""
+
+
 class PopulationSimulateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -431,6 +510,10 @@ class PopulationSimulateRequest(BaseModel):
     """Opt-in, because the marginal rates a behavioural band needs are two more
     full-tier runs. Off by default so the mechanical answer stays fast, and the
     response says how many households the rates were computed on when it is on."""
+    macro: bool = False
+    """Opt-in, and cheap — the fan is a thousand draws over a parsed table. Off by
+    default because most reforms have no macro path and a block saying so on every
+    response would be noise."""
 
     @model_validator(mode="after")
     def _check_reform(self) -> PopulationSimulateRequest:
@@ -496,6 +579,7 @@ class PopulationResponse(BaseModel):
     narrow_band: NarrowBandFlag | None = None
     reconciliation: list[ReconciliationLine] = Field(default_factory=list)
     behavioural: Behavioural | None = None
+    macro: Macro | None = None
     timings: dict[str, float] = Field(default_factory=dict)
 
 

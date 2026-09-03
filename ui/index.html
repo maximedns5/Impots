@@ -395,6 +395,72 @@ tr.total td:first-child { font-family: var(--sans) !important; font-weight: 600;
   letter-spacing: .1em; white-space: nowrap;
 }
 
+/* L4 — the macro fan. Quieter again than L3, and deliberately so: it is the layer
+   with the least evidence behind it, and the design should not let it compete with a
+   mechanical figure that is arithmetic. Hatched rule on the left, no fill colour of its
+   own, numbers in mono so they read as measurements rather than as claims. */
+.fan {
+  margin: 22px 0 6px; padding: 16px 18px;
+  background: var(--paper-deep);
+  border-left: 3px solid transparent;
+  border-image: repeating-linear-gradient(180deg, var(--ink-faint) 0 4px, transparent 4px 8px) 1;
+}
+.fan.absent { border-image: none; border-left: 3px solid var(--rule); }
+.fan .top {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 4px;
+}
+.fan .k {
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft);
+}
+.fan .grade {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em;
+  padding: 2px 7px; border: 1px solid var(--rule);
+}
+.fan .grade.in-support { color: var(--vert); border-color: var(--vert); }
+.fan .grade.illustrative { color: var(--rouge); border-color: var(--rouge); }
+.fan .banner {
+  font-size: 12px; line-height: 1.55; color: var(--ink-soft);
+  margin: 6px 0 16px; padding-left: 10px; border-left: 1px solid var(--rule);
+}
+.fan h4 {
+  font-family: var(--sans); font-size: 10.5px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-faint); margin: 18px 0 8px;
+}
+/* the fan chart: one row per horizon, p10-p90 span with a p50 tick, zero marked */
+.fan .frow { display: grid; grid-template-columns: 46px 1fr 148px; align-items: center; gap: 10px; padding: 5px 0; }
+.fan .fh { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+.fan .ftrack { position: relative; height: 20px; }
+.fan .faxis { position: absolute; top: 10px; left: 0; right: 0; height: 1px; background: var(--rule); }
+.fan .fzero { position: absolute; top: 2px; width: 1px; height: 17px; background: var(--ink-faint); }
+.fan .fspan { position: absolute; top: 6px; height: 9px; background: var(--bleu); opacity: .22; }
+.fan .fmed { position: absolute; top: 3px; width: 2px; height: 15px; background: var(--bleu); }
+.fan .fnum {
+  font-family: var(--mono); font-size: 11.5px; font-variant-numeric: tabular-nums;
+  color: var(--ink-soft); text-align: right; white-space: nowrap;
+}
+/* assumptions strip — required, never optional: the fan may not render without it */
+.fan .strip {
+  display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px;
+  font-size: 11.5px; margin-top: 6px;
+}
+.fan .strip dt { color: var(--ink-faint); font-family: var(--sans); }
+.fan .strip dd { margin: 0; color: var(--ink-soft); font-family: var(--mono); font-size: 11px; }
+.fan .warn { color: var(--rouge); }
+.fan .decomp { font-size: 12px; color: var(--ink-soft); line-height: 1.55; }
+.fan .dbar { display: flex; height: 8px; margin: 6px 0 4px; border: 1px solid var(--rule); }
+.fan .dbar i { display: block; height: 100%; }
+.fan .dbar .par { background: var(--bleu); opacity: .35; }
+.fan .dbar .sce { background: var(--ink-faint); opacity: .3; }
+.fan .why { font-size: 12px; color: var(--ink-soft); line-height: 1.5; margin: 8px 0 0; }
+.fan details { margin-top: 12px; }
+.fan summary { font-size: 12px; cursor: pointer; color: var(--ink-soft); }
+.fan .comp { display: grid; grid-template-columns: 40px 1fr 56px; gap: 3px 10px; align-items: center; font-size: 11.5px; margin-top: 8px; }
+.fan .comp .cb { height: 7px; background: var(--bleu); opacity: .3; }
+.fan .comp .cn { font-family: var(--mono); font-size: 11px; text-align: right; color: var(--ink-soft); }
+.fan ul.reasons { margin: 8px 0 0; padding-left: 18px; font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; }
+
 /* tabs */
 .tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--ink); margin-bottom: 22px; }
 .tabs button {
@@ -783,8 +849,8 @@ footer code { font-family: var(--mono); font-size: 11px; }
           <span class="bar"></span><span class="soon">onglet Population</span>
         </div>
         <div class="layer">
-          <span class="name"><b>L4</b>bouclage macroéconomique</span>
-          <span class="bar"></span><span class="soon">à venir · phase 3</span>
+          <span class="name"><b>L4</b>ordre de grandeur macroéconomique</span>
+          <span class="bar"></span><span class="soon">onglet Population</span>
         </div>
       </div>
 
@@ -818,6 +884,13 @@ footer code { font-family: var(--mono); font-size: 11px; }
             <input type="checkbox" id="wantBand" style="width:auto;margin:0">
             Ajouter la bande comportementale (L3) — deux passages de plus, comptez
             une minute et demie
+          </label>
+          <label class="lbl" style="display:flex;align-items:center;gap:7px;
+                 margin-top:7px;font-size:11.5px;text-transform:none;letter-spacing:0">
+            <input type="checkbox" id="wantMacro" style="width:auto;margin:0">
+            Ajouter l'ordre de grandeur macroéconomique (L4) — quasi instantané, et
+            souvent indisponible : la plupart des instruments n'ont pas de multiplicateur
+            publié
           </label>
         </div>
 
@@ -1413,7 +1486,8 @@ async function runPopulation() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reform: spec, year: 2024, tier: "quick",
-                             behavioural: $("wantBand").checked }),
+                             behavioural: $("wantBand").checked,
+                             macro: $("wantMacro").checked }),
     });
     const data = await response.json();
     if (!response.ok) {
@@ -1573,6 +1647,134 @@ function renderBand(data) {
     </div>`;
 }
 
+/* L4 — the macro fan. Three rules govern this renderer, and all three are refusals.
+
+   It never draws without its assumptions strip: §4 forbids the fan to render without
+   the cycle state, the design, the leakage, the horizon, the vintage and the grade, so
+   the strip is built in the same expression as the chart rather than beside it.
+
+   It shows what it does NOT describe. A reform is usually only partly covered — most
+   instruments this project can express have no published multiplier — so the coverage
+   and the missing instruments are on screen, with the reason each one is missing.
+
+   It never turns a fan into a number. There is no mean anywhere in this function. */
+function renderFan(data) {
+  const m = data.macro;
+  if (!m) return "";
+  const reasons = Object.entries(m.uncovered || {});
+
+  if (!m.available) {
+    return `<div class="fan absent">
+      <div class="top"><span class="k">L4 · couche macro</span></div>
+      <p class="why">${escapeHtml(m.unavailable_because)}</p>
+      ${reasons.length ? `<ul class="reasons">${reasons.map(([k, why]) =>
+        `<li><b>${escapeHtml(k)}</b> — ${escapeHtml(why)}</li>`).join("")}</ul>` : ""}
+    </div>`;
+  }
+
+  const a = m.assumptions;
+  const md = (x) => (x / 1e9).toFixed(1).replace(".", ",");
+  const k = (x) => Math.round(x).toLocaleString("fr-FR");
+  const grade = { "in-support": "dans le champ des preuves",
+                  "illustrative": "extrapolation",
+                  "no-evidence": "aucune preuve" }[a.grade] || a.grade;
+
+  /* One shared scale across horizons, always including zero: a fan whose rows each had
+     their own scale would make a widening band look stable. */
+  const chart = (series, fmt, unit) => {
+    const vals = Object.values(series).flatMap((q) => [q.p10, q.p90]).concat([0]);
+    const lo = Math.min(...vals), hi = Math.max(...vals);
+    const pad = (hi - lo) * 0.06 || 1;
+    const x = (v) => ((v - lo + pad) / (hi - lo + 2 * pad)) * 100;
+    return `<div>${Object.entries(series).map(([h, q]) => `
+      <div class="frow">
+        <span class="fh">${h} an${h === "1" ? "" : "s"}</span>
+        <span class="ftrack">
+          <i class="faxis"></i>
+          <i class="fzero" style="left:${x(0)}%"></i>
+          <i class="fspan" style="left:${x(q.p10)}%;width:${Math.max(x(q.p90) - x(q.p10), 0.5)}%"></i>
+          <i class="fmed" style="left:${x(q.p50)}%"></i>
+        </span>
+        <span class="fnum">${fmt(q.p10)} … <b>${fmt(q.p50)}</b> … ${fmt(q.p90)}</span>
+      </div>`).join("")}
+      <p class="chart-legend" style="margin-left:56px">p10 … médiane … p90 ${unit}.
+        Le trait vertical fin marque zéro.</p></div>`;
+  };
+
+  const d = m.decomposition[0] || {};
+  const total = (d.parameter || 0) + (d.scenario || 0);
+  const parShare = total > 0 ? (d.parameter / total) * 100 : 100;
+
+  return `<div class="fan">
+    <div class="top">
+      <span class="k">L4 · ordre de grandeur macroéconomique</span>
+      <span class="grade ${a.grade}">${escapeHtml(grade)}</span>
+    </div>
+    <p class="banner">${escapeHtml(a.banner)}</p>
+
+    <h4>Produit intérieur brut · écart au compte central</h4>
+    ${chart(m.gdp, (v) => md(v) + " Md", "en milliards d'euros")}
+
+    <h4>Emploi salarié marchand</h4>
+    ${chart(m.jobs, (v) => k(v), "en milliers d'équivalents temps plein — à ne pas additionner aux personnes comptées ailleurs")}
+
+    <h4>D'où vient l'éventail</h4>
+    <div class="decomp">
+      <div class="dbar">
+        <i class="par" style="width:${parShare}%"></i>
+        <i class="sce" style="width:${100 - parShare}%"></i>
+      </div>
+      <p style="margin:0">${parShare.toFixed(0)} % de l'écart vient de l'incertitude sur
+        les <b>paramètres</b>, ${(100 - parShare).toFixed(0)} % du choix de
+        <b>scénario</b>.
+        ${d.scenario_available ? "" :
+          `<br><span class="warn">Le scénario conjoncturel ne peut pas être varié ici.</span>
+           ${escapeHtml(d.scenario_unavailable_because || "")}`}</p>
+    </div>
+
+    <h4>Hypothèses</h4>
+    <dl class="strip">
+      <dt>État du cycle</dt><dd>${escapeHtml(a.cycle_state)}</dd>
+      <dt>Construction</dt><dd>${escapeHtml(a.design)}</dd>
+      <dt>Fuite à l'importation</dt>
+      <dd>${a.leakage === null || a.leakage === undefined ? "non calculée"
+            : (a.leakage * 100).toFixed(1).replace(".", ",") + " %"}
+          ${a.leakage_applied ? "" : "<span class=\"warn\">— calculée, non appliquée</span>"}</dd>
+      <dt>Horizon</dt><dd>${a.horizons.join(", ")} ans</dd>
+      <dt>Part de la réforme couverte</dt>
+      <dd${a.covered_share < 0.9 ? ' class="warn"' : ""}>${(a.covered_share * 100).toFixed(0)} %
+          ${a.instruments.length ? "(" + a.instruments.join(", ") + ")" : ""}</dd>
+      <dt>Millésime des paramètres</dt><dd>${escapeHtml(a.parameters_vintage)}</dd>
+      <dt>Conditions de simulation</dt><dd>${escapeHtml(a.simulation_conditions)}</dd>
+    </dl>
+
+    ${reasons.length ? `<h4>Ce que cet éventail ne décrit pas</h4>
+      <ul class="reasons">${reasons.map(([key, why]) =>
+        `<li><b>${escapeHtml(key)}</b> — ${escapeHtml(why)}</li>`).join("")}</ul>` : ""}
+
+    <details>
+      <summary>Composition sectorielle du choc de premier tour</summary>
+      <div class="comp">${m.composition.map((b) => `
+        <span class="fh">${escapeHtml(b.code)}</span>
+        <span class="cb" style="width:${(b.output_share / m.composition[0].output_share) * 100}%"></span>
+        <span class="cn">${(b.output_share * 100).toFixed(1).replace(".", ",")} %</span>`).join("")}</div>
+      <p class="chart-legend" style="margin-left:0">Part de la production domestique de
+        premier tour, par branche. Une composition, pas un montant : la table
+        entrées-sorties dit où le choc atterrit, le multiplicateur dit combien il pèse.</p>
+    </details>
+
+    ${a.caveats.length ? `<details>
+      <summary>Réserves attachées aux instruments mobilisés</summary>
+      <ul class="reasons">${a.caveats.map((c) => `<li>${escapeHtml(c)}</li>`).join("")}</ul>
+    </details>` : ""}
+
+    <details>
+      <summary>Ce que cette couche ne fait pas</summary>
+      <ul class="reasons">${(m.notes || []).map((n) => `<li>${escapeHtml(n)}</li>`).join("")}</ul>
+    </details>
+  </div>`;
+}
+
 function renderPopulation(data) {
   const cost = data.reform_cost ?? 0;
   const raises = cost < 0;
@@ -1582,7 +1784,7 @@ function renderPopulation(data) {
       <span class="v ${raises ? "up" : "down"}">${bn(cost)} Md €</span>
       <span class="sub">Effet au premier jour sur le revenu disponible des ménages, à
         comportement inchangé. ${escapeHtml(data.meta.note)}</span>
-    </div>` + renderNarrowBand(data) + renderBand(data) + renderEmtr(data.emtr_deciles);
+    </div>` + renderNarrowBand(data) + renderBand(data) + renderFan(data) + renderEmtr(data.emtr_deciles);
 
   const rows = [["ir", "Impôt sur le revenu"], ["csg_imposable", "CSG imposable"],
                 ["af", "Allocations familiales"], ["ppa", "Prime d'activité"],

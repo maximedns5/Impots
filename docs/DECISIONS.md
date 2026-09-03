@@ -2208,3 +2208,39 @@ disagree.
 The episode's quotes are checked verbatim against the report by the same guard the
 parameter store now carries (D-056). A validation line taken from a search summary would
 be worse than a parameter taken from one, since it decides whether the layer ships.
+
+## D-061 — The fan on screen, and the three refusals built into the renderer
+
+M5 puts L4 in front of a reader. Three properties are enforced by tests rather than by
+intention, because each is one careless edit away from being lost.
+
+**It never renders without its assumptions strip.** §4 lists what must accompany the
+quantiles — cycle state, design, leakage, horizon, vintage, grade — so the strip is
+built in the same expression as the chart, and `test_the_strip_is_not_hidden_behind_a_disclosure`
+asserts it precedes any `<details>`. A strip inside a disclosure is a strip the reader
+can leave closed.
+
+**It shows what it does not describe.** Most reforms this repository can express have no
+macro path: transfers and corporate instruments have no published multiplier. So the
+covered share is on screen, flagged when it falls below 90 %, and every uncovered
+instrument is listed with the reason it is missing. An unavailable fan is a block with a
+reason, never an error and never an empty space.
+
+**It never turns a fan into a number.** There is no mean in the renderer, and a test
+asserts the word does not appear. p10, median, p90, on a scale shared across horizons and
+always including zero — a per-row scale would make a widening band look stable.
+
+Visually L4 is quieter than L3, which is quieter than the mechanical figure. That
+ordering is the evidence ordering: arithmetic, then a band with elasticities behind it,
+then an order of magnitude drawn from a literature that disagrees with itself. The
+hatched left rule on the L4 block is doing that work.
+
+The banner ships without a numeric factor (D-057), the employment unit is named on screen
+as full-time equivalents so it cannot be added to the person-counts the input-output
+layer reports, and the leakage line says "calculée, non appliquée" with its reason —
+D-058 made visible rather than buried in a decision file.
+
+**The UI had no tests at all before this.** `tests/test_ui.py` adds twenty-five static
+checks on the single file, including regressions pinning the mechanical and behavioural
+presentation that §4 requires to be unchanged, and one asserting the file stays
+buildless and free of external scripts.

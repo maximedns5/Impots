@@ -227,3 +227,81 @@ def test_an_oversized_reform_grades_illustrative(loaded, gdp):
     huge = _run(loaded, gdp, {"ir": -60.0e9})
     assert modest.assumptions.grade == "in-support"
     assert huge.assumptions.grade == "illustrative"
+
+
+# --- the API block ------------------------------------------------------------------
+
+
+def _request(**knobs):
+    import types
+
+    from impots.api.schemas import ReformSpec
+
+    return types.SimpleNamespace(reform=ReformSpec(**knobs), year=2024, macro=True)
+
+
+class _Agg:
+    def __init__(self, deltas, cost):
+        self.deltas, self.reform_cost = deltas, cost
+
+
+def test_the_api_block_carries_the_whole_strip():
+    """§4 forbids the fan to render without it, so the schema requires it."""
+    from impots.api import main
+
+    block = main._macro(_request(csg_activite_imposable=0.08),
+                        _Agg({"csg_imposable": -5.0e9}, -5.0e9))
+    assert block.available
+    strip = block.assumptions
+    assert strip is not None
+    for field in ("cycle_state", "design", "horizons", "parameters_vintage", "grade",
+                  "covered_share", "simulation_conditions", "banner"):
+        assert getattr(strip, field) not in (None, "", [])
+    assert strip.leakage_applied is False
+    assert strip.horizons == ["1", "2", "3"]
+
+
+def test_the_api_block_reports_uncovered_instruments_with_reasons():
+    from impots.api import main
+
+    block = main._macro(_request(csg_activite_imposable=0.08),
+                        _Agg({"csg_imposable": -5.0e9, "rsa": 1.0e9}, -4.0e9))
+    assert "rsa" in block.uncovered
+    assert "0,39" in block.uncovered["rsa"]
+    assert block.assumptions.covered_share < 1.0
+
+
+def test_a_reform_with_no_macro_path_is_unavailable_not_an_error():
+    """Most reforms this repository can express have no multiplier. That is designed."""
+    from impots.api import main
+
+    block = main._macro(_request(csg_activite_imposable=0.08),
+                        _Agg({"rsa": 1.0e9}, 1.0e9))
+    assert block.available is False
+    assert "multiplicateur publié" in block.unavailable_because
+    assert "rsa" in block.uncovered
+
+
+def test_an_allegement_reform_routes_to_the_targeted_variant_through_the_api():
+    """The knobs reach the router, which is the only place the targeting is visible."""
+    from impots.api import main
+
+    uniform = main._macro(_request(csg_activite_imposable=0.08),
+                          _Agg({"employer_contributions": -5.0e9}, -5.0e9))
+    targeted = main._macro(_request(allegement_general_plafond=1.8),
+                           _Agg({"employer_contributions": -5.0e9}, -5.0e9))
+    assert uniform.assumptions.instruments == ["cotisations_employeurs"]
+    assert targeted.assumptions.instruments == ["cotisations_employeurs_ciblees"]
+    assert targeted.jobs["3"].p50 > uniform.jobs["3"].p50
+
+
+def test_the_api_block_never_raises_on_a_missing_source(tmp_path, monkeypatch):
+    """A checkout without the primary sources gets a reason, not a 500."""
+    from impots.api import main
+    from impots.macro import tes as tes_module
+
+    monkeypatch.setattr(tes_module, "RAW", tmp_path)
+    block = main._macro(_request(csg_activite_imposable=0.08),
+                        _Agg({"csg_imposable": -5.0e9}, -5.0e9))
+    assert block.available is False
+    assert "indisponible" in block.unavailable_because
