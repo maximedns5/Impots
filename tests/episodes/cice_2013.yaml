@@ -1,0 +1,74 @@
+# M4 — validation episode: the CICE, and the acceptance gate for the macro layer.
+#
+# THE RULE THAT GOVERNS THIS FILE: if the fan misses this band, stop and understand.
+# Do NOT widen a parameter to pass. That is calibrating to a validation line, and §4.3
+# forbids it for the mechanical layer for exactly the reason it must be forbidden here —
+# a band tuned until it contains the answer has stopped being evidence about anything.
+#
+# THE SOURCE DISAVOWS THIS USE, and it is recorded rather than glossed. Mésange's note 79
+# says of the targeted variant that « son impact ne permet pas d'évaluer l'effet de
+# mesures d'allègement de cotisations spécifiquement mises en place au cours des
+# dernières années » — which is precisely the CICE. Its conclusion (p141) adds that the
+# results « n'ont cependant pas vocation à être directement transposés à l'évaluation des
+# politiques économiques passées », which is precisely a backtest. This episode is
+# therefore a SANITY CHECK on the machinery's order of magnitude, not a validation of the
+# parameters, and it cannot be cited as evidence that the multipliers are right.
+
+name: cice_2013
+label: Crédit d'impôt pour la compétitivité et l'emploi
+
+shock:
+  # 18 bn is the figure the evaluation itself uses when judging the cost against the
+  # employment effect, so the two are commensurate by construction.
+  cost_eur: 18.0e9
+  year: 2016
+  delta: employer_contributions
+  # The CICE targeted wages below 2.5 SMIC. Mésange publishes a uniform variant (all
+  # wages) and a targeted one (1 to 1.6 SMIC, more concentrated than the CICE). Neither
+  # is the CICE, and the truth is bracketed by them — so the episode runs BOTH and
+  # requires both to pass, rather than picking whichever agrees.
+  variants: [uniform, targeted]
+
+gdp:
+  value_eur: 2200.0e9
+  vintage: "2015"
+  source: >
+    Mésange, INSEE G2017/04, p101 : « les variantes fiscales sont effectuées à hauteur
+    de 1 % du PIB ex ante, soit un montant de 22 Md€ en 2015 ». Le PIB de l'année du
+    CICE retenu ici est donc celui contre lequel les variantes elles-mêmes sont
+    normalisées, ce qui évite d'introduire un troisième millésime. L'écart avec 2016 est
+    d'environ 1,5 %, immatériel pour une fourchette qui couvre un facteur quatre.
+
+expected:
+  # The span across published methods, not a confidence interval.
+  jobs_thousands_low: 100
+  jobs_thousands_high: 400
+  horizon: "3"
+  source:
+    citation: >
+      France Stratégie, « Évaluation du crédit d'impôt pour la compétitivité et
+      l'emploi : synthèse des travaux d'approfondissement », septembre 2020.
+    url: https://www.strategie-plan.gouv.fr/publications/evaluation-credit-dimpot-competitivite-lemploi-synthese-travaux-dapprofondissement
+    quote: >-
+      L'effet total reste estimé à 100 000 emplois environ, ce qui est faible, rapporté
+      au coût du CICE – de l'ordre de 18 milliards d'euros en 2016.
+    high_quote: >-
+      Dans un deuxième temps, l'OFCE injecte les résultats obtenus dans les services sur
+      l'emploi et les salaires dans un modèle macroéconomique, pour tenir compte des
+      effets de bouclage intersectoriel, lesquels conduisent à doubler l'estimation des
+      effets emploi, qui passent à 400 000.
+  note: >
+    Les deux bornes sont deux MÉTHODES, pas deux scénarios : 100 000 est l'estimation
+    micro-économétrique de TEPP sur données d'entreprises, 400 000 l'estimation
+    macro-sectorielle de l'OFCE une fois injectée dans un modèle macroéconomique avec
+    bouclage intersectoriel. Le rapport signale lui-même que la borne haute paraît
+    élevée. Une troisième lecture, 160 000, est NETTE du financement de la mesure.
+    C'est cette dernière qui n'est PAS comparable au fan : les variantes Mésange sont
+    explicitement « non financées par des baisses d'autres dépenses publiques ou des
+    hausses de recettes », donc le fan produit une grandeur BRUTE.
+
+acceptance:
+  # Containment alone is trivially satisfiable by a wide enough fan, so the median must
+  # also land inside the band. Both conditions, or the gate proves nothing.
+  fan_must_contain: true
+  median_must_be_inside: true

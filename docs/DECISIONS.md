@@ -2160,3 +2160,51 @@ a variant jobs and output move together at the model's own calibration — an as
 and the only one available.
 
 The L4 banner ships without a numeric factor, per D-057.
+
+## D-060 — The CICE gate passes, and the source it rests on disavows the use
+
+The acceptance gate for the macro layer: the employment fan must contain the range
+published evaluations span for the CICE. It does, on both bracketing variants, **and
+the median lands inside the range too** — which is the half that makes containment mean
+anything, since a wide enough fan contains every estimate ever published.
+
+| | p10 | median | p90 | contains 100–400k | median inside |
+|---|---:|---:|---:|:---:|:---:|
+| uniform variant | −39k | **239k** | 517k | yes | yes |
+| targeted variant | −35k | **332k** | 699k | yes | yes |
+
+Nothing was tuned. The parameters are exactly what M1's verification left standing, and
+the gate was run once.
+
+**The band is sourced to methods, not scenarios.** France Stratégie's 2020 synthesis:
+"L'effet total reste estimé à 100 000 emplois environ" (TEPP, micro-econometric, on firm
+data) and 400 000 for OFCE's macro-sectoral estimate once intersectoral feedback is
+injected into a macro model — the report notes the upper figure looks high. A third
+reading, 160 000, is **net of the measure's financing** and is deliberately excluded:
+Mésange's variants are explicitly unfinanced, so the fan produces a gross figure and
+comparing it to a net one would compare two different quantities.
+
+**Two variants, because neither is the CICE.** The CICE targeted wages below 2.5 SMIC;
+Mésange publishes a uniform variant covering all wages and a targeted one concentrated
+between 1 and 1.6 SMIC. The truth is bracketed, so the episode runs both and requires
+both to pass rather than picking whichever agrees.
+
+**The source disavows this use, and the episode file says so.** Mésange's note 79: the
+targeted variant's « impact ne permet pas d'évaluer l'effet de mesures d'allègement de
+cotisations spécifiquement mises en place au cours des dernières années » — which is the
+CICE exactly. Its conclusion: the results « n'ont cependant pas vocation à être
+directement transposés à l'évaluation des politiques économiques passées » — which is a
+backtest exactly. So this episode is a **sanity check on the machinery's order of
+magnitude, not a validation of the parameters**, and it may not later be cited as
+evidence that the multipliers are right. Recording that in the file is what stops the
+citation happening.
+
+The p10 is negative in both rows. That is the honest consequence of a width taken from
+cross-study dispersion whose standard deviation exceeds the central tax multiplier: the
+literature does contain reported multipliers below zero. It is not a claim that the CICE
+plausibly destroyed jobs; it is a statement about how much the published estimates
+disagree.
+
+The episode's quotes are checked verbatim against the report by the same guard the
+parameter store now carries (D-056). A validation line taken from a search summary would
+be worse than a parameter taken from one, since it decides whether the layer ships.
