@@ -13,12 +13,19 @@ what a tax reform does, and is explicit about how much each answer can be truste
 | L1 | A calibrated synthetic population of households and firms | aggregates good, tails weak |
 | L2 | Mechanical simulation: who pays what on day one | 1–3% on aggregates |
 | L3 | Behavioural response, as a Monte Carlo band over published elasticities | a range, never a number |
-| L4 | Macro closure, as a fan chart | illustrative only |
+| L4 | Macro order of magnitude and sectoral composition, as a fan | wide by construction, and often unavailable |
 
 The layering is the product: a user sees the mechanical number, the behavioural
-band and the macro fan stacked, each labelled.
+band and the macro fan stacked, each labelled — and each drawn quieter than the one
+above it, because that is the order of the evidence behind them.
 
-## Status — Phases 0–2 are built; Phase 3 is in progress
+L4 is honest about being mostly unavailable. Transfers and corporate instruments have
+no published French multiplier, so a reform touching only those gets a block saying so
+with the reason, not a number. When it does apply, the fan is wide: the width comes from
+how much published studies disagree with each other, which for tax instruments exceeds
+the central estimate itself.
+
+## Status — Phases 0–4 are built
 
 **Phase 0 — one household. Any reform. Exact numbers.** Describe a household,
 optionally edit the IR barème, décote, plafond du quotient familial or CSG rates,
@@ -52,11 +59,29 @@ gives back about a third of that, and the band says so with the paper it rests o
 a grade saying whether the reform is inside the evidence. **One channel of four is
 live**: the other three are written, tested, and honest about why they report nothing.
 
+**Phase 4 — the macro fan.** Order of magnitude and sectoral composition, never a
+forecast. Multipliers and employment come per instrument and per horizon from Mésange,
+the model INSEE and the DG Trésor maintain jointly, parsed out of the published PDF
+rather than retyped; the width comes from two IMK meta-regressions of 104 and 98 studies.
+The input-output table supplies **shape** — where a shock lands by branch, and how much
+leaks abroad — and never size, because the literature's multipliers already contain
+input-output propagation and import crowding-out. Getting that boundary wrong in either
+direction is a double count, and both are refused by tests.
+
+Most of what this layer refuses is the interesting part. There is no revenue-feedback
+loop, because the elasticity row failed verification. There is no cycle-state scenario
+for tax instruments, because the regime effect is established on the spending side only.
+Transfers get no multiplier rather than borrowing the generic-spending one, which would
+overstate by a factor of two to three. The acceptance gate is the CICE: the employment
+fan must contain what published evaluations span, 100k to 400k, **and** its median must
+land inside — it does, on both bracketing variants, with nothing tuned.
+
 ```
 src/impots/engine/       typed wrapper over openfisca-france — household scale (L2)
 src/impots/population/   the synthetic population and distributional engine (L1)
 src/impots/entreprises/  the firm tax system, its own parameter tree and population
 src/impots/behavioural/  elasticities, channels, marginal rates, bands (L3)
+src/impots/macro/        input-output table, multipliers, shocks, the fan (L4)
 src/impots/reporting.py  the shared report engine — the spent/validation rule lives here
 src/impots/guards.py     weight identities and the checks both weighting defects needed
 src/impots/api/          seven FastAPI endpoints
