@@ -42,27 +42,31 @@ participation-tax-rate machinery where France's EMTRs actually peak (the
 allègements knobs: verified paths, read-back, kill tests, chiffrage re-sweep.
 *Cost: one solid increment. Value: highest of anything on this page.*
 
-**B2 · The CAF cross-check.** Benefit levels still have no independent
-validation of any kind — the audit said so and it is still true. Same method
-as the DGFiP run (browser, official simulator, two or three households,
-recorded box by box). The reviewing session can drive it with Max present.
-*Cost: an hour. Closes the oldest unvalidated surface.*
+**B2 · The CAF cross-check.** **PREPARED, NOT RUN (2026-09-03, D-070).**
+`tests/golden/CROSSCHECK_CAF.md` carries three households covering AF, PPA, RSA
+and AL, with our figures computed and the estimator's column blank. It needs a
+browser and Max: the CAF estimator sits behind reCAPTCHA, and D-019's rule —
+do not fabricate the numbers — holds. **Read the file's warning first**: 
+mesdroitssociaux.gouv.fr, mes-aides.org and ESTIME are all powered by OpenFisca,
+so checking against them compares our engine with itself and would pass
+perfectly while proving nothing. *Cost: an hour with the CAF's own tool.*
 
-**B3 · IR niches — réductions and crédits d'impôt.** **HALF DONE (2026-09-03,
-D-064 to D-067).** The household calculator now prices the five biggest niches
+**B3 · IR niches — réductions and crédits d'impôt.** **DONE (2026-09-03,
+D-064 to D-069).** The household calculator now prices the five biggest niches
 exactly — seven declaration cases as wire-format fields, thirteen knobs on
 their rates and ceilings, every rate measured rather than tabulated — and the
 Voies et Moyens costs are sourced per numbered dispositif (11.6 bn of 19.53 bn,
-about 59 %). **The imputation is NOT done**, so the population still declares
-no base and the IR-net line is unchanged; what the tool does instead is refuse
-to print the confident zero a niche reform would otherwise produce. Three
-things fell out worth knowing before resuming: the Voies et Moyens columns are
-BUDGETARY years, so a 2024-income model compares against the 2025 column
-(D-067); openfisca applies no eligibility test to these cases at all (D-065);
-and there is a phantom parameter tree for the home-help credit whose values are
-identical to the live one (D-064). *Remaining cost: the imputation, with the
-decile files already on disk and two factor-of-a-thousand traps already
-identified in them.*
+about 59 %). The imputation is done too (D-068): bases drawn from the DGFiP decile
+table move the IR-net line from **+22.5 % to +10.4 %**. It is opt-in and off by
+default because it is a CALIBRATION — the niche totals then match DGFiP by
+construction and that source is spent. Four things fell out worth knowing: the
+Voies et Moyens columns are BUDGETARY years (D-067); openfisca applies no
+eligibility test to these cases at all (D-065); there is a phantom parameter
+tree for the home-help credit whose values match the live one exactly (D-064);
+and the barème reconciliation line was reading the NET figure, hidden for as
+long as every niche was zero (D-069). *Still open: the global cap cannot be
+priced even with imputation — a decile-mean draw has no tail — and about 45 %
+of the niches remain unmodelled.*
 
 **B4 · Capital-income knobs, mechanical only.** PFU rate and base as
 ReformSpec knobs now, clearly banner-limited ("population carries no capital

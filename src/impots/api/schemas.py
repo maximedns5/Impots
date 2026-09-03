@@ -425,6 +425,9 @@ class ResultRows(BaseModel):
     ir_avant_reductions: float
     parts_fiscales: float
     revenu_fiscal_reference: float
+    ir_avant_niches: float
+    """After the décote, before réductions and crédits — the quantity the published
+    barème figure measures."""
     reductions: float
     credits_impot: float
     """Réductions and crédits d'impôt. Zero for a household that declares no base,
@@ -727,6 +730,13 @@ class PopulationSimulateRequest(BaseModel):
     """Opt-in, and cheap — the fan is a thousand draws over a parsed table. Off by
     default because most reforms have no macro path and a block saying so on every
     response would be noise."""
+    impute_niches: bool = False
+    """Hand out réduction and crédit bases from the published DGFiP decile table, so a
+    niche reform costs something. Opt-in and OFF BY DEFAULT because it is a
+    CALIBRATION: the niche totals then match DGFiP by construction, and the net-yield
+    reconciliation line stops being independent evidence for that component. It also
+    costs an extra baseline pass, since the deciles are of a quantity the first pass
+    has to compute."""
 
     @model_validator(mode="after")
     def _check_reform(self) -> PopulationSimulateRequest:

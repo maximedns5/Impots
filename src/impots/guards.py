@@ -170,8 +170,23 @@ BALANCE_RTOL = 1e-3
 NICHE_TOTALS = ("reductions", "credits_impot")
 
 
+#: Knobs that need WITHIN-DECILE dispersion, which the imputation cannot supply.
+#:
+#: The global cap binds only on foyers claiming more than 10 000 EUR. The imputation
+#: gives every claimant in a decile the same base — a count and a total are all the
+#: DGFiP publishes — so the largest imputed credit is a decile mean, about 1 900 EUR in
+#: the top decile, and NOBODY reaches the cap. Measured: with bases imputed, moving the
+#: cap from 10 000 to 4 000 still costs exactly 0.000 bn.
+#:
+#: So this knob keeps returning a confident zero after imputation has silenced the flag
+#: for every other niche, which is the worse failure: a warning that goes away without
+#: the problem going away.
+DISPERSION_DEPENDENT_KNOBS = frozenset({"plafond_global_niches"})
+
+
 def niche_blind_spot(
     knobs: Iterable[str], totals: dict[str, float], niche_knobs: Iterable[str],
+    *, bases_are_imputed: bool = False,
 ) -> tuple[str, ...]:
     """Niche knobs this reform moves that the population cannot answer for.
 
@@ -189,7 +204,14 @@ def niche_blind_spot(
     if not touched:
         return ()
     declared = sum(abs(totals.get(name, 0.0)) for name in NICHE_TOTALS)
-    return () if declared > 0.0 else touched
+    if declared <= 0.0:
+        return touched
+    # Bases exist, so most knobs can now be priced. The ones that need a tail cannot:
+    # a decile-mean imputation has no dispersion, and the cap only ever binds in the
+    # tail it does not have.
+    if bases_are_imputed:
+        return tuple(sorted(set(touched) & DISPERSION_DEPENDENT_KNOBS))
+    return ()
 
 
 class SectorBalanceError(RuntimeError):

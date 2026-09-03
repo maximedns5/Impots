@@ -403,9 +403,23 @@ def _niche_blind_spot(request: Any, agg: Any) -> Any:
     from impots.guards import niche_blind_spot
 
     knobs = tuple(request.reform.model_dump(exclude_none=True))
-    blind = niche_blind_spot(knobs, agg.totals, NICHE_KNOBS)
+    imputed = getattr(request, "impute_niches", False)
+    blind = niche_blind_spot(knobs, agg.totals, NICHE_KNOBS, bases_are_imputed=imputed)
     if not blind:
         return None
+    if imputed:
+        return NicheBlindSpot(
+            knobs=list(blind), declared_base_eur=float(
+                agg.totals.get("reductions", 0.0) + agg.totals.get("credits_impot", 0.0)),
+            message=(
+                f"Les bases sont imputées, mais {', '.join(blind)} ne peut toujours pas "
+                "être chiffré : le plafond global ne mord que sur les foyers cumulant "
+                "plus de 10 000 € d'avantages, or l'imputation donne à chaque "
+                "bénéficiaire d'un décile le MÊME montant — un décile n'a ni queue ni "
+                "dispersion. Le crédit imputé le plus élevé avoisine 1 900 €, personne "
+                "n'atteint le plafond, et un coût nul ici ne dit rien du dispositif."
+            ),
+        )
     return NicheBlindSpot(
         knobs=list(blind),
         declared_base_eur=0.0,
@@ -574,6 +588,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
         result = population_run(
             frame, year=request.year, reform=request.reform, tier="full",
             sample=QUICK_TIER_HOUSEHOLDS,
+            impute_niches=getattr(request, "impute_niches", False),
         )
     except WiringError as error:  # pragma: no cover - guarded upstream
         raise HTTPException(status_code=500, detail=str(error)) from error

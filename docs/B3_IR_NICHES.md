@@ -1,7 +1,7 @@
 # B3 — Réductions et crédits d'impôt
 
 **Date**: 2026-09-03 · **Menu item**: `WHAT_NOW.md` B3 · **Reproduce**: `pytest tests/test_niches.py -m ""`
-**Status**: the household calculator prices the five biggest niches exactly, and thirteen reform knobs move them. **The population still declares none of them** — see §6, which is the honest boundary of this increment.
+**Status**: the household calculator prices the five biggest niches exactly, thirteen reform knobs move them, and the population can now be given bases from the published DGFiP decile table (§8). The net-yield reconciliation line moves from **+22.5 % to +10.4 %**.
 
 The 19.53 bn € of réductions and crédits is the stated reason the model's income tax is
 validated against the barème line (98.84 bn) rather than against net receipts. It was
@@ -117,11 +117,10 @@ eligibility from the children's ages" — it does not, and the claim is correcte
 children under six at 1 January, more union dues than adults, and more school children
 than dependants. It raises `ValueError`, which the API turns into a 422.
 
-## 6. What the population still cannot do — and the confident zero it refuses to print
+## 6. The confident zero, and why the flag still matters after imputation
 
-**No household in the synthetic population declares any niche base**, so `reductions`
-and `credits_impot` total exactly 0.0000 bn nationally. Nothing in this increment
-changed that.
+Without imputation, no household declares any niche base, so `reductions` and
+`credits_impot` total exactly 0.0000 bn.
 
 The consequence is a trap. Cut the home-help credit from 50 % to 30 % on this population
 and the reform costs **exactly 0 €** — and a reader told "0 €" concludes the credit is
@@ -157,3 +156,83 @@ has bases, which is the half that stops it becoming furniture.
 * `f7df`, the old réduction base for retirees, is **dead** (`end = 2016-12-31`) and its
   cerfa box has been recycled for Scellier carry-forwards under `f7df_2024`. A knob or
   input aimed at "7DF" today would land on property investment relief.
+
+## 8. The imputation (added 2026-09-03)
+
+`impots population run --impute-niches`, or `impute_niches: true` on the API, hands out
+bases from the DGFiP table of niche amounts and claimant counts **by decile of revenu
+fiscal de référence per part**. It costs one extra baseline pass, because the decile a
+foyer belongs to depends on a quantity the first pass has to compute.
+
+| | without | with |
+|---|---:|---:|
+| Réductions | 0.000 bn | 2.06 bn |
+| Crédits d'impôt | 0.000 bn | 8.66 bn |
+| **IR — barème** vs 98.84 | **+8.7 %** | **+8.7 %** |
+| **IR — recettes nettes** vs 87.99 | **+22.5 %** | **+10.4 %** |
+
+The imputed total lands within **1.0 %** of the 10.605 bn target — sampling noise on the
+20 000-household quick tier, and a check on the draw rather than on anything true.
+
+**The barème line does not move, and that is the test.** Niches are subtracted after the
+barème, so a correct imputation cannot touch it. It moving would have meant the
+comparator was wrong — which it was, until this increment (§9).
+
+### What it is, in the project's own vocabulary
+
+A **calibration**, and its source is now spent: `margins.NICHE_CREDITS_BY_DECILE` carries
+`use="calibration"`, and `IR_NET_YIELD`'s caveat says in as many words that the line is
+no longer independent evidence for the niche component. The barème line is untouched and
+stays the clean one.
+
+### Three artefacts, none of them visible in the output
+
+1. **Every claimant in a decile receives the same base.** A count and a total are all
+   DGFiP publishes, so the mean is all there is. A reform's incidence therefore comes out
+   as a ten-step function, and any feature finer than a decile is an artefact.
+2. **Who claims is arbitrary.** The draw is seeded and conditioned only on the decile.
+   Real claiming correlates with children, age and home ownership; this uses none of
+   them, so the number of claimants per decile is right and their identity is not.
+3. **About 45 % of the niches are still missing** — 10.6 bn imputed of 19.53 bn. Scolarité
+   is deliberately excluded: its cases are counts of children while the published column
+   aggregates the three levels into one amount, so the split cannot be recovered.
+
+### The global cap is still unpriceable, and the flag survives to say so
+
+Moving the cap from 10 000 € to 4 000 € costs **exactly 0.000 bn even with bases in
+place**. Artefact 1 is why: the cap binds only on foyers claiming more than it, the
+imputation gives every claimant a decile mean, and the largest of those is about 1 900 €.
+Nobody reaches the cap because nobody can.
+
+That is the more dangerous failure — a warning that disappears while the problem does
+not — so `guards.DISPERSION_DEPENDENT_KNOBS` keeps the blind-spot flag firing for this
+one knob when the bases are imputed, and only for it. A population with genuine
+dispersion (an ERFS-based one) would silence it legitimately.
+
+### Two traps the file itself sets
+
+Both were flagged by the verification pass and both are now guarded:
+
+* the same workbook is denominated in **thousands** of euros for the 2018–2021 vintages
+  and in **euros** from 2022 — the 2018 sheet reads 4 860 210 where 2023 reads
+  6 019 895 605, and both mean about six billion. `brackets()` asserts the total lands
+  in a plausible band and refuses the 2018 sheet outright.
+* the published decile bounds are **not contiguous**: decile 1 ends at 1 972 while
+  decile 2 begins at 1 972.1667, and there are nine such slivers. Banding on the printed
+  pairs drops every foyer in one, silently, and the claimant count then misses its target
+  for no visible reason. Each band runs to the *next* band's lower bound instead.
+
+## 9. What the imputation exposed: the barème line read the wrong quantity
+
+The reconciliation's barème line compared `ir` — the figure **net** of réductions and
+crédits — against a published target that is explicitly **gross** of them. It was
+correct only because every household's niches were zero, so the two coincided.
+
+Turning imputation on made them differ, and the line appeared to *improve* from +8.7 %
+to −1.7 %. Nothing had improved; the comparison had started measuring a different thing.
+
+Fixed by adding `ir_avant_niches` (openfisca's `ip_net`: after the décote, before the
+article 199 réductions) and reading the barème line on that. The historical figure moves
+slightly, from +9.1 % to **+8.7 %**, because `ir` also carried the sign convention and
+the réduction sous condition de revenus — so the old number was wrong by 0.35 bn as well
+as by construction.

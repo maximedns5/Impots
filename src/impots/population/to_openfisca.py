@@ -134,10 +134,66 @@ def _group_frame(frame: pl.DataFrame, key: str, columns: list[str]) -> pl.DataFr
     return frame.group_by(key).agg([pl.col(c).first() for c in columns]).sort(key)
 
 
+def _set_niche_inputs(
+    simulation: Any, tax_benefit_system: Any, year: int,
+    bases: dict[str, Any], frame: pl.DataFrame, foyer_ids: Any,
+) -> None:
+    """Write imputed niche bases onto the simulation, on the right entity.
+
+    Raises on a case the system does not carry or an array of the wrong length: a
+    mis-shaped input is not an error in openfisca, it is a silent zero.
+    """
+    # `foyer_ids` is sorted, and `frame` is sorted by person_id with exactly one
+    # principal declarant per foyer, so sorting the declarants by foyer_id puts them in
+    # the same order as `foyer_ids`. Asserted rather than assumed: if it ever stops
+    # holding, every union-dues figure would land on the wrong household silently.
+    is_principal = (frame["role_foyer"] == "declarant_principal").to_numpy()
+    declarant_foyers = _text(frame["foyer_id"])[is_principal]
+    order = np.argsort(declarant_foyers, kind="stable")
+    if not np.array_equal(declarant_foyers[order], foyer_ids):
+        raise WiringError(
+            "the principal declarants do not line up one-to-one with the foyers "
+            "fiscaux; an individual-level niche would land on the wrong household"
+        )
+    principal_rows = np.flatnonzero(is_principal)[order]
+
+    for case, values in bases.items():
+        variable = tax_benefit_system.variables.get(case)
+        if variable is None:
+            raise WiringError(f"niche case {case!r} is not an OpenFisca variable")
+        values = np.asarray(values, dtype=np.float64)
+        if values.shape != (foyer_ids.size,):
+            raise WiringError(
+                f"niche case {case!r} has {values.shape}, expected ({foyer_ids.size},) "
+                f"— one value per foyer fiscal, in `foyer_ids` order"
+            )
+        if variable.entity.key == "foyer_fiscal":
+            simulation.set_input(case, str(year), values)
+        elif variable.entity.key == "individu":
+            # Scattered onto the principal declarant. A foyer-shaped array written to
+            # an individual variable is silently dropped, not rejected.
+            individual = np.zeros(frame.height, dtype=np.float64)
+            individual[principal_rows] = values
+            simulation.set_input(case, str(year), individual)
+        else:
+            raise WiringError(
+                f"niche case {case!r} lives on {variable.entity.key}, which this "
+                f"wiring does not handle"
+            )
+
+
 def build_simulation(
-    frame: pl.DataFrame, tax_benefit_system: Any, year: int
+    frame: pl.DataFrame, tax_benefit_system: Any, year: int,
+    niche_bases: dict[str, Any] | None = None,
 ) -> PopulationSimulation:
-    """Wire a population frame into a vectorised simulation for `year`."""
+    """Wire a population frame into a vectorised simulation for `year`.
+
+    `niche_bases` maps a déclaration case to an array ordered by `foyer_ids`, in euros
+    and for the simulated year only. Individual-level cases — `f7ac` is the only one —
+    are scattered onto each foyer's principal declarant, since the entitlement follows
+    the member and openfisca will silently ignore a foyer-shaped array written to an
+    individual variable.
+    """
     check_role_vocabulary(tax_benefit_system)
 
     required = {
@@ -217,6 +273,10 @@ def build_simulation(
     if foyer.height != foyer_ids.size:
         raise WiringError("foyer-level frame does not line up with the declared foyers")
     simulation.set_input("caseT", str(year), foyer["parent_isole"].to_numpy().astype(bool))
+
+    if niche_bases:
+        _set_niche_inputs(
+            simulation, tax_benefit_system, year, niche_bases, frame, foyer_ids)
 
     return PopulationSimulation(
         simulation=simulation,

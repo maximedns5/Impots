@@ -61,18 +61,22 @@ def build_lines(agg: Aggregates) -> list[Line]:
         ),
         Line.from_figure(
             margins.IR_BAREME_ON_2024_INCOME, "Impôt sur le revenu — barème",
-            totals.get("ir"), TOLERANCE["ir"],
-            "The right comparator for this model: our households have none of the "
-            "réductions et crédits d'impôt (19.5 bn) that separate the barème from the "
-            "net yield, and no capital income.",
+            totals.get("ir_avant_niches"), TOLERANCE["ir"],
+            "Read on `ir_avant_niches` — after the décote, before réductions and "
+            "crédits — which is what the published figure measures. It read `ir` until "
+            "B3, and got away with it only because no household declared a niche; once "
+            "they did, the line appeared to improve to -1.7 % by comparing a net figure "
+            "with a gross target. Still no capital income on either side.",
             source="DGFiP",
         ),
         Line.from_figure(
             margins.IR_NET_YIELD, "Impôt sur le revenu — recettes nettes",
             totals.get("ir"), TOLERANCE["ir"],
-            "Shown for completeness and expected to be missed high: this figure is net "
-            "of réductions/crédits and includes the PFU on capital income, neither of "
-            "which the model has.",
+            "Net of réductions and crédits. The model now imputes about 10.7 bn of "
+            "them from the DGFiP decile table, so THIS LINE IS PART-CALIBRATED and is "
+            "no longer independent evidence for the niche component; the barème line "
+            "above is the clean one. Roughly 45 % of the niches are still missing, and "
+            "the PFU on capital income is missing from our side entirely.",
             source="budget.gouv.fr",
         ),
         Line.from_figure(

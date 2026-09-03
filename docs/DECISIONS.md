@@ -2421,3 +2421,89 @@ home-help credit plus 3 500 € of childcare credit yields 10 000 €, not 11 00
 art. 199 sexdecies genuinely belongs to the enumeration of art. 200-0 A could not be
 confirmed: Légifrance returned 403 to the research pass and 404 to a second attempt. It
 is recorded as a question with its measured consequence attached, not as a finding.
+
+## D-068 — The niche imputation, and what spending a calibration target costs
+
+`WHAT_NOW.md` B3 asked for imputation of take-up bases so that the IR-net line becomes
+meaningful. Done: the population can be given réduction and crédit bases from the DGFiP
+table of amounts and claimant counts **by decile of revenu fiscal de référence per
+part**, and the net-yield line moves from **+22.5 % to +10.4 %**.
+
+Opt-in and off by default, because it is a **calibration**. The niche totals then match
+DGFiP by construction — the imputed 10.71 bn against a 10.605 bn target is a check on
+the draw, not evidence of anything. `margins.NICHE_CREDITS_BY_DECILE` carries
+`use="calibration"` and is now spent; `IR_NET_YIELD`'s caveat says in as many words that
+the line is no longer independent for the niche component. **The barème line is
+untouched and stays the clean one** — and its not moving is the test that the imputation
+is correct, since niches are subtracted after the barème.
+
+**Three artefacts, stated because none is visible in the output.** Every claimant in a
+decile receives the same base — a count and a total are all DGFiP publishes, so the
+incidence of a reform comes out as a ten-step function and anything finer is an artefact.
+Who claims is a seeded draw conditioned only on the decile, so the *number* of claimants
+is right and their *identity* is arbitrary. And about 45 % of the niches are still
+missing: 10.6 bn imputed of 19.53 bn, with scolarité deliberately excluded because its
+cases are counts of children while the published column aggregates the three levels.
+
+**The global cap is still unpriceable, and the flag survives to say so.** Moving it from
+10 000 € to 4 000 € costs exactly 0.000 bn *even with bases in place*: the cap binds only
+above 10 000 €, the imputation gives every claimant a decile mean, and the largest of
+those is about 1 900 €. Nobody reaches the cap because nobody can. That is a worse
+failure than the original zero — a warning that disappears while the problem does not —
+so `DISPERSION_DEPENDENT_KNOBS` keeps the blind-spot flag firing for that one knob when
+the bases are imputed, and a population with genuine dispersion would silence it
+legitimately.
+
+Two traps the source file sets, both now guarded. The workbook is denominated in
+**thousands** of euros for the 2018-2021 vintages and in **euros** from 2022 — the 2018
+sheet reads 4 860 210 where 2023 reads 6 019 895 605, and both mean about six billion; a
+plausibility band refuses the wrong convention outright. And the published decile bounds
+are **not contiguous** — decile 1 ends at 1 972 while decile 2 begins at 1 972.1667, nine
+such slivers in all — so each band runs to the next band's lower bound instead of its own
+printed upper, or every foyer in a sliver would be dropped silently and the claimant
+count would miss its target for no visible reason.
+
+## D-069 — The barème line was reading the net figure, and only zero niches hid it
+
+The reconciliation's barème line compared `ir` — **net** of réductions and crédits —
+against a published target that is explicitly **gross** of them. It was right only
+because every household's niches were zero, so the two quantities coincided.
+
+Turning imputation on made them differ, and the line appeared to **improve from +8.7 %
+to −1.7 %**. Nothing had improved. The comparison had started measuring a different
+thing, and in the direction that looks like success — which is how this kind of defect
+survives review.
+
+Fixed by adding `ir_avant_niches` (openfisca's `ip_net`: after the décote, before the
+article 199 réductions) and reading the barème line on it. The historical figure moves
+from +9.1 % to **+8.7 %**: `ir` also carried the sign convention and the réduction sous
+condition de revenus, so the old number was wrong by 0.35 bn as well as wrong by
+construction. `test_the_bareme_comparator_is_not_the_net_figure` pins both halves.
+
+The general form is worth keeping: **a comparison that is correct only because one side
+is identically zero is not correct, it is untested.** Two earlier instances in this
+project were the double-entry guard that balanced because both sides were derived from
+each other (D-045) and the read-back that confirmed its own write (D-044).
+
+## D-070 — The CAF cross-check is prepared, not done
+
+The 2026-09-01 audit's oldest open gap: benefit levels have no independent validation of
+any kind, where income tax has had one since D-019. `tests/golden/CROSSCHECK_CAF.md` now
+carries three households — a lone parent on half-time SMIC, a modest couple, and a single
+person with no income — chosen so that between them AF, PPA, RSA and AL are each
+exercised at a level where being wrong would show. Our figures are computed and recorded;
+the estimator's column is deliberately blank.
+
+**This session did not run it and did not fake it.** The DGFiP check was browser-driven
+with Max present; the CAF estimator is a portal application behind Google reCAPTCHA, and
+working around a bot protection is neither acceptable nor a check worth having. D-019's
+instruction — *do not fabricate the numbers* — applies here.
+
+**The trap the file exists to prevent** is worth stating on its own, because it is easy
+to fall into and would produce a confident, meaningless pass:
+`mesdroitssociaux.gouv.fr`, `mes-aides.org` and ESTIME are all **powered by OpenFisca**.
+Checking our benefit figures against them compares openfisca-france with itself. They are
+also the most findable French benefit simulators there are, so an hour spent on one of
+them would end in perfect agreement and zero information. The CAF's own estimator is the
+Caisse nationale's production arithmetic, and that independence is the only reason the
+exercise is worth doing.

@@ -168,14 +168,57 @@ def _extract(
     return results
 
 
+def _impute_niches(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any]:
+    """Draw niche bases from the published decile table, keyed on RFR per part.
+
+    Needs a simulation that has already been built, because the decile a foyer falls
+    into depends on its revenu fiscal de référence — which is an output, not an input.
+    That is the whole reason this costs a second pass.
+    """
+    from impots.population import niches as niches_module
+
+    simulation = built.simulation
+    rfr = np.asarray(simulation.calculate("rfr", str(year)), dtype=np.float64)
+    parts = np.asarray(simulation.calculate("nbptr", str(year)), dtype=np.float64)
+    # A foyer with no parts would be a wiring failure upstream; guard rather than
+    # divide, so it surfaces here instead of as a silent decile-1 assignment.
+    if (parts <= 0).any():
+        raise WiringError("a foyer fiscal reports zero parts; RFR per part is undefined")
+    rfr_per_part = rfr / parts
+
+    # Foyer weight: the MEAN of member weights, matching the household convention in
+    # `run` — EXTRIAN is an individual weight but the survey weights a dwelling
+    # together, and summing would multiply every foyer-level total by foyer size.
+    weights = (
+        frame.group_by("foyer_id").agg(pl.col("weight").mean().alias("weight"))
+        .sort("foyer_id")["weight"].to_numpy().astype(np.float64)
+    )
+    if weights.shape != rfr_per_part.shape:
+        raise WiringError(
+            f"foyer weights {weights.shape} do not line up with RFR {rfr_per_part.shape}")
+    return niches_module.impute(rfr_per_part, weights, year=year)
+
+
 def run(
     population: pl.DataFrame | Path,
     year: int = 2024,
     reform: ReformSpec | None = None,
     tier: Tier = "light",
     sample: int | None = None,
+    impute_niches: bool = False,
 ) -> RunResult:
-    """Run the population through current law and, optionally, one reform."""
+    """Run the population through current law and, optionally, one reform.
+
+    `impute_niches` hands out réduction and crédit d'impôt bases from the published
+    DGFiP decile table before the figures are taken. It costs one extra baseline pass,
+    because the deciles are of revenu fiscal de référence per part and that is not
+    known until a first pass has computed it.
+
+    **It is a calibration.** The national niche total then matches DGFiP by
+    construction and cannot afterwards be cited as evidence of anything —
+    `population.niches` says so at length, and `margins.NICHE_CREDITS_BY_DECILE`
+    carries `use="calibration"`.
+    """
     frame = pl.read_parquet(population) if isinstance(population, Path) else population
     if sample is not None:
         frame = subsample(frame, sample)
@@ -188,6 +231,13 @@ def run(
     built = build_simulation(frame, baseline(), year)
     timings["build_s"] = round(time.perf_counter() - started, 2)
 
+    niche_bases: dict[str, Any] | None = None
+    if impute_niches:
+        started = time.perf_counter()
+        niche_bases = _impute_niches(built, frame, year)
+        built = build_simulation(frame, baseline(), year, niche_bases)
+        timings["impute_s"] = round(time.perf_counter() - started, 2)
+
     started = time.perf_counter()
     baseline_rows = _extract(built, frame, tier, guards)
     timings["baseline_s"] = round(time.perf_counter() - started, 2)
@@ -195,7 +245,8 @@ def run(
     columns: dict[str, np.ndarray] = dict(baseline_rows)
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
-        reformed_built = build_simulation(frame, reformed_for(reform, year), year)
+        reformed_built = build_simulation(
+            frame, reformed_for(reform, year), year, niche_bases)
         reform_guards: dict[str, Any] = {}
         reform_rows = _extract(reformed_built, frame, tier, reform_guards)
         guards["nbptr_min_reform"] = reform_guards["nbptr_min"]

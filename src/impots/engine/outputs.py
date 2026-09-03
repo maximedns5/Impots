@@ -80,6 +80,13 @@ REGISTRY: tuple[Row, ...] = (
     # Not negated: the engine already stores these positive, unlike
     # `impot_revenu_restant_a_payer`. And no double-count risk in the balance guard —
     # `ir` is already net of both, and it is `ir` the guard reconstitutes from.
+    # The comparator for the published barème line: after décote, BEFORE the article
+    # 199 réductions and crédits. Equal to `ir` exactly while no household declares a
+    # niche, which is why the reconciliation got away with reading `ir` until B3's
+    # imputation made the two differ — and made the barème line appear to improve from
+    # +9.1 % to -1.7 % by comparing the wrong quantity.
+    Row("ir_avant_niches", "ip_net", "foyer_fiscal", "year", "light", False,
+        label="Impôt après décote, avant réductions et crédits"),
     Row("reductions", "reductions", "foyer_fiscal", "year", "light", False,
         label="Réductions d'impôt"),
     Row("credits_impot", "credits_impot", "foyer_fiscal", "year", "light", False,

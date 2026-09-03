@@ -97,6 +97,33 @@ PRIVATE_EMPLOYEES = Figure(
 )
 
 # --------------------------------------------------------------------------- #
+# IR niches — the second CALIBRATION target, and it is now spent (B3).
+#
+# The population is given réduction and crédit bases until it reproduces this table,
+# so the niche totals match it by construction and can never be cited as validation.
+# What it costs is named on IR_NET_YIELD below: that line is no longer independent
+# evidence for the niche component. The barème line is unaffected and stays clean,
+# because niches are subtracted after the barème — which is exactly what
+# `test_the_bareme_line_is_untouched_by_imputation` asserts.
+# --------------------------------------------------------------------------- #
+NICHE_CREDITS_BY_DECILE = Figure(
+    value=10.605e9, unit="EUR", year=2024,
+    scope="Cinq dispositifs (emploi à domicile, frais de garde, cotisations "
+          "syndicales, dons aux œuvres, dons aux personnes en difficulté), montants et "
+          "nombres de foyers par décile de RFR par part, millésime des revenus 2024",
+    source="DGFiP, données d'assiette IR par décile de RFR par part",
+    url="https://www.impots.gouv.fr/impot-sur-le-revenu",
+    use="calibration",
+    caveat="Spent. About 10.6 bn of the 19.53 bn of réductions and crédits: the other "
+           "45 % has no imputation, and scolarité is excluded because its déclaration "
+           "cases are counts of children while the published column aggregates the "
+           "three levels into one amount. Within a decile every claimant receives the "
+           "same base, because a count and a total are all that is published — so a "
+           "reform's incidence comes out as a ten-step function and anything finer is "
+           "an artefact.",
+)
+
+# --------------------------------------------------------------------------- #
 # Income tax — VALIDATION only. Never a calibration target.
 # --------------------------------------------------------------------------- #
 DGFIP_URL = "https://www.impots.gouv.fr/statistiques"
@@ -106,8 +133,11 @@ IR_NET_YIELD = Figure(
     scope="Impôt sur le revenu, recettes nettes de l'État, exécution budgétaire",
     source="budget.gouv.fr, exécution 2024", url="https://www.budget.gouv.fr/", use="validation",
     caveat="State budget outturn. Includes the prélèvement forfaitaire unique on "
-           "capital income (~7.9 bn in 2025), which Phase 1 does not model at all — "
-           "so the model is expected to land BELOW this figure by roughly that much.",
+           "capital income (~7.9 bn in 2025), which Phase 1 does not model at all. "
+           "PART-CALIBRATED SINCE B3: with niche imputation on, about 10.6 bn of the "
+           "réductions and crédits separating this figure from the barème are drawn "
+           "from NICHE_CREDITS_BY_DECILE, so this line is no longer independent "
+           "evidence for that component. The barème line above is the clean one.",
 )
 
 IR_BAREME_ON_2024_INCOME = Figure(
