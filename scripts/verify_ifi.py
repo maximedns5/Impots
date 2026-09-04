@@ -41,7 +41,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from impots.patrimoine import ifi_cells
+from impots.patrimoine import bareme, ifi_cells
 
 #: The two published routes to a tranche's IFI are rounded differently in the source,
 #: so they are not expected to agree to the cent — but a percent apart would mean we
@@ -66,36 +66,13 @@ def check(label: str, ok: bool, detail: str = "") -> bool:
 
 
 def barometer(year: int) -> list[tuple[float, float]]:
-    """The IFI scale as (threshold, marginal rate), read from the engine's tree."""
-    from openfisca_france import FranceTaxBenefitSystem
-
-    node = (FranceTaxBenefitSystem()
-            .get_parameters_at_instant(f"{year}-01-01")
-            .taxation_capital.impot_fortune_immobiliere_ifi_partir_2018.bareme)
-    return list(zip(node.thresholds, node.rates, strict=True))
+    """The IFI scale as (threshold, marginal rate). Kept as a name the gate's prose
+    uses; the implementation lives in `patrimoine.bareme`, shared with the cells."""
+    return bareme.scale_at(year)
 
 
-def tax_on(base: float, scale: list[tuple[float, float]]) -> float:
-    """Marginal-rate tax on `base`, before décote, plafonnement and réductions."""
-    total = 0.0
-    for index, (threshold, rate) in enumerate(scale):
-        upper = scale[index + 1][0] if index + 1 < len(scale) else float("inf")
-        total += max(0.0, min(base, upper) - threshold) * rate
-    return total
-
-
-def invert(tax: float, scale: list[tuple[float, float]]) -> float:
-    """The base that produces `tax` under the scale. Monotone, so bisection is exact
-    enough and cannot be fooled by a bracket boundary the way an algebraic inversion
-    written per-bracket can."""
-    low, high = 0.0, 1.0e9
-    for _ in range(200):
-        mid = (low + high) / 2.0
-        if tax_on(mid, scale) < tax:
-            low = mid
-        else:
-            high = mid
-    return (low + high) / 2.0
+tax_on = bareme.tax_on
+invert = bareme.invert
 
 
 def audit() -> bool:
@@ -138,7 +115,7 @@ def audit() -> bool:
     print("\n4. Le barème inversé place la base moyenne DANS sa tranche")
     reconstructed = 0.0
     for tranche in tranches:
-        implied = invert(tranche.mean_ifi_eur, scale)
+        implied = bareme.invert(tranche.mean_ifi_eur, scale)
         reconstructed += implied * tranche.foyers
         inside = tranche.lower_eur <= implied <= tranche.upper_eur
         passed &= check(f"{tranche.label:14}", inside,

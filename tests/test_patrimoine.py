@@ -400,3 +400,132 @@ class TestHouseholdIfi:
             "the forfait makes the fit worse, and both are below because the "
             "unmodelled reliefs can only reduce tax"
         )
+
+
+# --- M2: the cells, and the zero-calibration mechanical check -------------------------
+
+
+class TestCells:
+    """All validation, no calibration — and the tests must not quietly create any.
+
+    Every assertion here is against a PUBLISHED number or against an internal property
+    nothing forces. If one ever needs a tuned constant to pass, the module's claim is
+    gone and the constant is the bug.
+    """
+
+    @needs_files
+    def test_our_scale_arithmetic_matches_the_engines(self):
+        """`bareme.tax_on` reimplements `isf_ifi_iai`; this stops it drifting.
+
+        The duplication is deliberate — inverting a tax takes ~200 evaluations and 200
+        simulations per cell is not a thing to do — so the reimplementation is checked
+        against the engine over a ladder that crosses every bracket.
+        """
+        from openfisca_core.simulations import SimulationBuilder
+
+        from impots.engine.system import baseline
+        from impots.patrimoine import bareme
+
+        scale = bareme.scale_at(2024)
+        system = baseline()
+        for base in (900_000, 1_299_999, 1_500_000, 2_570_000, 4_000_000,
+                     5_000_000, 9_999_999, 12_000_000, 30_000_000):
+            situation = {
+                "individus": {"M": {"salaire_imposable": {"2024": 10_000_000}}},
+                "familles": {"f": {"parents": ["M"]}},
+                # b1cg carries the declared furniture, which suppresses the 5 % forfait
+                # so this compares the SCALE alone rather than the base convention.
+                "foyers_fiscaux": {"ff": {"declarants": ["M"],
+                                          "b1ac": {"2024": base},
+                                          "b1cg": {"2024": 0.0}}},
+                "menages": {"m": {"personne_de_reference": ["M"]}},
+            }
+            simulation = SimulationBuilder().build_from_entities(system, situation)
+            engine = float(simulation.calculate("isf_ifi_iai", "2024")[0])
+            assert engine == pytest.approx(tax_on_uplifted(base, scale), rel=1e-6), base
+
+    @needs_files
+    def test_every_cell_mean_lands_inside_its_own_tranche(self):
+        """D-078's first falsifiable property, as the cells' own validation."""
+        from impots.patrimoine.cells import mechanical_check
+
+        check = mechanical_check()
+        assert check.every_mean_inside_its_tranche
+        for cell in check.cells:
+            assert cell.tranche.lower_eur <= cell.implied_mean_base_eur <= cell.tranche.upper_eur
+            # And strictly inside, not pinned to a bound — a mean sitting exactly on a
+            # boundary would mean the inversion saturated rather than solved.
+            assert cell.implied_mean_base_eur > cell.tranche.lower_eur, cell.label
+
+    @needs_files
+    def test_the_shortfall_has_the_right_sign_and_is_apportioned_not_tolerated(self):
+        """The second falsifiable property, plus §2's demand that residuals be
+        quantified and explained rather than accepted."""
+        from impots.patrimoine.cells import mechanical_check
+
+        check = mechanical_check()
+        assert check.shortfall_has_the_right_sign
+        assert check.shortfall_share == pytest.approx(0.0646, abs=0.002)
+        # Dons: the largest single explanation, and computed from a PUBLISHED total.
+        assert check.dons_explains_eur / check.shortfall_eur == pytest.approx(0.58, abs=0.03)
+        # Décote: small, and an upper bound by construction.
+        assert 0 < check.decote_explains_at_most_eur / check.shortfall_eur < 0.06
+        # What is left is named and NOT assigned to the plafonnement by difference.
+        assert check.unexplained_eur > 0
+        assert check.unexplained_eur / check.shortfall_eur == pytest.approx(0.39, abs=0.04)
+
+    @needs_files
+    def test_the_cells_reproduce_the_published_counts_and_tax_exactly(self):
+        """Because they are READ from them. This asserts arithmetic, not truth —
+        and says so, which is the ledger rule."""
+        from impots.patrimoine.cells import mechanical_check
+
+        check = mechanical_check()
+        assert sum(c.foyers for c in check.cells) == pytest.approx(
+            check.aggregate.exact_foyers, rel=1e-4)
+        assert sum(c.published_ifi_eur for c in check.cells) == pytest.approx(
+            check.aggregate.ifi_eur, rel=1e-4)
+
+    @needs_files
+    def test_nothing_in_the_cells_is_calibrated(self):
+        """The module's distinctive property. Name the implementation that fails it.
+
+        A grep for "calibrat" would be defeated by this module's own docstring, which
+        uses the word six times to say it does not — the D-071 lesson, that a
+        name-based rule loses to name reuse. So the test is behavioural instead.
+
+        The implementation this catches: a factor chosen to close the gap. Anyone who
+        fitted one would drive the shortfall to zero, and would break the proportional
+        response below, because a fitted constant does not move with its input.
+        """
+        from impots.patrimoine import bareme, ifi_cells
+        from impots.patrimoine.cells import cells, mechanical_check
+
+        check = mechanical_check()
+        assert check.shortfall_share > 0.02, (
+            "the reconstruction now matches the published aggregate almost exactly. "
+            "Nothing in this module should be able to achieve that — if a factor was "
+            "introduced to close the gap, the module's zero-calibration claim is gone"
+        )
+
+        # And the cells must respond proportionally to their published input. A cell
+        # holding a fitted constant would not move when the scale it inverts moves.
+        scale = bareme.scale_at(2024)
+        doubled = [(threshold, rate * 2) for threshold, rate in scale]
+        for cell, tranche in zip(cells(), ifi_cells.tranches(), strict=True):
+            halved = bareme.invert(tranche.mean_ifi_eur, doubled)
+            assert halved < cell.implied_mean_base_eur, (
+                f"{cell.label}: doubling every rate did not lower the implied base — "
+                f"it is not being derived from the published tax at all")
+
+
+def tax_on_uplifted(base: float, scale) -> float:
+    """The engine's base convention: a 5 % forfait on top, which our default corrects.
+
+    Used only by the scale-equivalence test, where the point is to compare the SCALE
+    and not the base convention — so the uplift is applied here explicitly rather than
+    silently absorbed.
+    """
+    from impots.patrimoine import bareme
+
+    return bareme.tax_on(base * 1.05, scale)

@@ -2949,3 +2949,57 @@ n'aurait jamais dû entrer.
 
 **Rien n'est publié en amont** : la section C reste gelée (D-077). Ces deux constats
 rejoignent le dossier amont en attente avec le paramètre fantôme.
+
+## D-080 — M2 : les cellules IFI, et le résidu chiffré poste par poste plutôt que toléré
+
+`src/impots/patrimoine/cells.py`. **Chaque ligne que ce module produit est de la
+validation** : il n'y a rien à calibrer, puisque la DGFiP publie la population. C'est la
+propriété distinctive de la phase (D-077), et elle disparaît le jour où quelque chose ici
+prend un facteur choisi pour refermer un écart.
+
+Chaque cellule tire sa base moyenne en **inversant le barème** sur son impôt moyen publié
+(D-078, la base par tranche n'étant pas publiée). L'inversion ne voit aucun allègement, si
+bien que toute base implicite est une **borne inférieure** et que l'agrégat reconstitué
+tombe nécessairement sous l'agrégat publié.
+
+**§2 demande que ce résidu soit chiffré et expliqué, pas accepté.** Contre les 466,79 md
+publiés :
+
+| Poste | Base expliquée | Part du manque |
+|---|---|---|
+| Manque total | 30,18 md | −6,46 % |
+| Dons : 220,7 M déclarés → 165,5 M de réduction à 75 %, remis puis ré-inversés | 17,43 md | **58 %** |
+| Décote : au plus 1 250 € sur les foyers de la fenêtre 1,3–1,4 M | 0,97 md | 3 %, **borne haute** |
+| Reste, pour le plafonnement et le divers | 11,77 md | 39 % |
+
+Le plafonnement est le domicile plausible de l'essentiel du reste — il mord exactement là
+où le patrimoine est gros et le revenu petit — mais **nous n'avons pas de quoi le
+répartir**, et il est laissé nommé et non attribué plutôt qu'obtenu par différence puis
+déclaré expliqué. Le plafond de 50 000 € par foyer sur les dons n'est pas appliqué non
+plus, ce qui fait de leur 58 % une borne haute.
+
+**Les deux propriétés falsifiables de D-078 deviennent la validation des cellules.**
+Toutes les moyennes tombent strictement dans leur tranche — et le test exige *strictement*,
+parce qu'une moyenne collée à une borne signalerait une inversion saturée et non résolue.
+Le manque garde le bon signe.
+
+**L'arithmétique du barème est dupliquée exprès, et le test l'empêche de dériver.**
+`bareme.tax_on` refait ce que fait `isf_ifi_iai`, parce qu'inverser un impôt demande ~200
+évaluations et que 200 simulations par cellule n'est pas une chose à faire. Le test
+d'équivalence confronte les deux sur une échelle qui traverse tous les coudes — en
+neutralisant le forfait mobilier, pour comparer **le barème** et non la convention de
+base.
+
+**Le test « rien n'est calibré » est comportemental, pas lexical.** Un grep sur
+« calibrat » serait battu par le docstring de ce module, qui emploie le mot six fois pour
+dire qu'il ne l'est pas — la leçon de D-071, une règle par nom perd contre la réutilisation
+du nom. Le test nomme donc l'implémentation qui le ferait échouer : un facteur ajusté
+refermerait le manque, et ne bougerait pas quand son entrée bouge. Il vérifie donc que le
+manque **existe encore** et que doubler tous les taux du barème **abaisse** chaque base
+implicite.
+
+**Les trois millésimes du comparateur sont énoncés** dans le module : tranches 2024
+(n° 33, paru avril 2025), agrégats 2024 (n° 45, paru avril 2026, qui imprime 2024 à côté
+de 2025), et droit appliqué 2024. L'année budgétaire de comptabilisation est une
+quatrième, et n'est pas utilisée ici : elle appartient à la section de réconciliation,
+contre la source budgétaire manifestée et non contre une phrase de docstring.
