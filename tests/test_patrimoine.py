@@ -194,3 +194,209 @@ def test_the_gate_passes_and_is_the_thing_that_gates():
     from scripts.verify_ifi import audit
 
     assert audit() is True
+
+
+# --- M1: the household calculator ----------------------------------------------------
+
+
+class TestHouseholdIfi:
+    """Hand-derived goldens at every kink, plus the two engine defects they exposed.
+
+    Every case here carries income. That is not decoration: the plafonnement caps
+    IFI-plus-income-tax at 75 % of income, so a foyer with no income owes NO IFI
+    whatever its wealth. A golden built without income would price zero and prove
+    nothing — the zero-masked comparison, in the module's first test file.
+    """
+
+    INCOME = 400_000.0
+
+    @staticmethod
+    def bareme(base: float) -> float:
+        """The 2024 IFI scale, written out independently of the engine."""
+        brackets = ((800_000, 1_300_000, 0.005), (1_300_000, 2_570_000, 0.007),
+                    (2_570_000, 5_000_000, 0.010), (5_000_000, 10_000_000, 0.0125),
+                    (10_000_000, float("inf"), 0.015))
+        return sum(max(0.0, min(base, high) - low) * rate for low, high, rate in brackets)
+
+    def priced(self, base: float, **kwargs):
+        from impots.patrimoine.ifi import IfiInputs, price
+
+        return price(IfiInputs(autres_immeubles_batis=base,
+                               revenu_imposable=self.INCOME, **kwargs))
+
+    def test_the_plafonnement_abates_everything_at_zero_income(self):
+        """Measured, and the reason every other case here carries income."""
+        from impots.patrimoine.ifi import IfiInputs, price
+
+        poor = price(IfiInputs(autres_immeubles_batis=2_000_000, revenu_imposable=0.0))
+        assert poor.values["isf_ifi_iai"] == pytest.approx(7_400.0)
+        assert poor.ifi == pytest.approx(0.0), (
+            "a foyer with no income owes no IFI — the plafonnement caps at 75 % of "
+            "nothing. Any golden written without income prices zero for this reason "
+            "and tests nothing at all."
+        )
+        assert self.priced(2_000_000).ifi == pytest.approx(7_400.0)
+
+    # 1 300 001 is deliberately absent: it sits INSIDE the décote window, so its tax
+    # is not the bare scale. It is covered by the décote test instead.
+    @pytest.mark.parametrize("base", [1_500_000, 2_000_000, 2_570_000,
+                                      3_000_000, 5_000_000, 8_000_000, 10_000_000])
+    def test_every_bareme_kink_matches_hand_arithmetic(self, base):
+        """The scale, bracket by bracket, against an independent implementation."""
+        result = self.priced(base)
+        expected = self.bareme(base)
+        assert result.values["isf_ifi_iai"] == pytest.approx(expected, abs=0.01), base
+        # And with no décote and no relief above 1.4 M, the tax IS the scale — until
+        # the plafonnement bites, which it does not at this income below ~11 M.
+        if base <= 10_000_000:
+            assert result.ifi == pytest.approx(expected, abs=0.01), base
+
+    @pytest.mark.parametrize(("base", "expected_decote"), [
+        (1_300_001, 1_250.0 - 0.0125), (1_350_000, 625.0), (1_400_000, 0.0)])
+    def test_the_decote_window_matches_its_formula(self, base, expected_decote):
+        """17 500 − 1,25 % × base, over 1,3–1,4 M and nowhere else."""
+        result = self.priced(base)
+        assert result.decote == pytest.approx(expected_decote, abs=0.02), base
+        assert result.ifi == pytest.approx(self.bareme(base) - expected_decote, abs=0.02)
+
+    def test_the_decote_is_absent_outside_its_window(self):
+        assert self.priced(1_450_000).decote == pytest.approx(0.0)
+        assert self.priced(3_000_000).decote == pytest.approx(0.0)
+
+    def test_the_residence_principale_abattement_is_thirty_percent(self):
+        from impots.patrimoine.ifi import IfiInputs, price
+
+        result = price(IfiInputs(residence_principale=3_000_000,
+                                 revenu_imposable=self.INCOME))
+        assert result.values["isf_ifi_imm_bati"] == pytest.approx(2_100_000.0)
+        assert result.ifi == pytest.approx(self.bareme(2_100_000.0), abs=0.01)
+
+    def test_the_passif_is_deducted_from_the_base(self):
+        from impots.patrimoine.ifi import IfiInputs, price
+
+        result = price(IfiInputs(autres_immeubles_batis=3_000_000,
+                                 passif_deductible=500_000,
+                                 revenu_imposable=self.INCOME))
+        assert result.assiette == pytest.approx(2_500_000.0)
+
+    def test_the_dons_reduction_is_seventy_five_percent_capped_at_fifty_thousand(self):
+        from impots.patrimoine.ifi import IfiInputs, price
+
+        base = 5_000_000
+        plain = self.priced(base).ifi
+        giving = price(IfiInputs(autres_immeubles_batis=base, revenu_imposable=self.INCOME,
+                                 dons_organismes_interet_general=10_000)).ifi
+        assert plain - giving == pytest.approx(7_500.0, abs=0.01), "75 % of 10 000"
+        # And the cap: a donation big enough to exceed 50 000 of relief is capped.
+        huge = price(IfiInputs(autres_immeubles_batis=20_000_000,
+                               revenu_imposable=5_000_000,
+                               dons_organismes_interet_general=200_000)).ifi
+        uncapped = price(IfiInputs(autres_immeubles_batis=20_000_000,
+                                   revenu_imposable=5_000_000)).ifi
+        assert uncapped - huge == pytest.approx(50_000.0, abs=0.01), "capped at 50 000"
+
+    # --- the two defects the goldens exposed ------------------------------------------
+
+    def test_no_ifi_below_the_liability_threshold_and_the_tax_is_monotone(self):
+        """CGI art. 964: liable only above 1,3 M. openfisca charges from 800 k.
+
+        The engine's `isf_ifi_iai` for 2018+ is `bareme.calc(assiette)` with no
+        eligibility test, so it charges 500 EUR at 900 000 and 2 500 EUR at 1 299 999.
+        The tell that this is a defect and not a reading: it makes the tax
+        NON-MONOTONIC — 1 299 999 owing 2 500 EUR while 1 300 000 owes 1 250 EUR,
+        because the décote begins only at the threshold. A tax that falls as the base
+        rises is not a policy anyone wrote.
+        """
+        for base in (900_000, 1_200_000, 1_299_999, 1_300_000):
+            assert self.priced(base).ifi == pytest.approx(0.0), base
+        previous = -1.0
+        for base in (1_300_001, 1_350_000, 1_400_000, 1_500_000, 2_000_000, 5_000_000):
+            current = self.priced(base).ifi
+            assert current >= previous, f"IFI fell between bases at {base}"
+            previous = current
+
+    def test_the_engine_alone_would_tax_below_the_threshold(self):
+        """The kill test for the guard above: without our gate the defect is there.
+
+        A correction with no demonstration that it corrects something is decoration —
+        the standing rule in its final form.
+        """
+        from openfisca_core.simulations import SimulationBuilder
+
+        from impots.engine.system import baseline
+
+        situation = {
+            "individus": {"M": {"salaire_imposable": {"2024": 400_000}}},
+            "familles": {"f": {"parents": ["M"]}},
+            "foyers_fiscaux": {"ff": {"declarants": ["M"], "b1ac": {"2024": 1_299_999}}},
+            "menages": {"m": {"personne_de_reference": ["M"]}},
+        }
+        simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+        raw = -float(simulation.calculate("isf_ifi", "2024")[0])
+        # 2 517,48 rather than 2 500, and the difference is instructive: the raw engine
+        # ALSO applies the 5 % forfait, which lifts 1 299 999 to 1 364 999 — over the
+        # threshold and into the décote window. So the two defects interact, and the
+        # uncorrected engine charges a foyer that owes nothing a figure arrived at
+        # through a window it should never have entered.
+        assert raw == pytest.approx(2_517.48, abs=0.05), (
+            "the engine no longer taxes below the threshold — if openfisca has fixed "
+            "this, remove our gate rather than keeping a correction that corrects "
+            "nothing"
+        )
+        assert raw > 2_000.0, "the magnitude is the point, not the decimals"
+
+    def test_the_forfait_mobilier_correction_is_switchable_and_quantified(self):
+        """The contested one. Ours by default, theirs on request, difference visible.
+
+        openfisca applies a 5 % forfait mobilier to the IFI base, arguing from CGI
+        art. 973 (IFI values follow DMTG rules) and art. 764 I-3° (meubles meublants
+        floored at 5 %). Our reading: art. 965 puts only immovable property in the
+        base, so a furniture-valuation floor has nothing to value. The data leans our
+        way — see `test_the_published_data_prefers_the_correction`.
+        """
+        from impots.patrimoine.ifi import IfiInputs, openfisca_reading, price
+
+        inputs = IfiInputs(autres_immeubles_batis=2_000_000, revenu_imposable=400_000)
+        ours, theirs = price(inputs), openfisca_reading(inputs)
+        assert ours.assiette == pytest.approx(2_000_000.0)
+        assert theirs.assiette == pytest.approx(2_100_000.0), "5 % uplift"
+        assert ours.ifi == pytest.approx(7_400.0, abs=0.01)
+        assert theirs.ifi == pytest.approx(8_100.0, abs=0.01)
+        assert theirs.ifi / ours.ifi - 1 == pytest.approx(0.0946, abs=0.001)
+
+    @needs_files
+    def test_the_published_data_prefers_the_correction(self):
+        """Not two lawyers arguing: the DGFiP aggregate discriminates.
+
+        Reconstructing the aggregate base from the published per-tranche tax gives
+        -6.46 % against the independently published aggregate without the forfait, and
+        -10.92 % with it. Every unmodelled relief lowers tax and so pushes the
+        reconstruction DOWN, which puts the truth above both — so the reading that
+        lands closer from below is the better one.
+        """
+        from scripts.verify_ifi import barometer, tax_on
+
+        aggregate = ifi_cells.aggregate()
+        scale = barometer(ifi_cells.TRANCHE_YEAR)
+
+        def reconstruct(uplift: float) -> float:
+            total = 0.0
+            for tranche in ifi_cells.tranches():
+                low, high = 0.0, 1e9
+                for _ in range(200):
+                    mid = (low + high) / 2
+                    if tax_on(mid * (1 + uplift), scale) < tranche.mean_ifi_eur:
+                        low = mid
+                    else:
+                        high = mid
+                total += (low + high) / 2 * tranche.foyers
+            return total
+
+        without = reconstruct(0.0) / aggregate.base_eur - 1
+        with_forfait = reconstruct(0.05) / aggregate.base_eur - 1
+        assert without == pytest.approx(-0.0646, abs=0.002)
+        assert with_forfait == pytest.approx(-0.1092, abs=0.002)
+        assert without > with_forfait, (
+            "the forfait makes the fit worse, and both are below because the "
+            "unmodelled reliefs can only reduce tax"
+        )

@@ -2876,3 +2876,76 @@ les tranches restent lues sur n° 33.
 **Le contrôle fantôme est passé** sur `impot_fortune_immobiliere_ifi_partir_2018` : lu par
 une formule, barème exactement celui qu'annonce §1. Le portail assert aussi que
 `aide_a_domicile` reste, lui, non lu — la garde ne peut pas passer à vide.
+
+## D-079 — M1 : l'IFI au foyer, et deux défauts du moteur que les goldens ont sortis
+
+Calculateur IFI au foyer (`src/impots/patrimoine/ifi.py`), entrées en forme 2042-IFI,
+goldens dérivés à la main à chaque coude du barème, dans la fenêtre de décote, sur
+l'abattement RP, le passif, les dons et leur plafond. La chaîne reste **celle du
+moteur** — `assiette_isf_ifi` → `isf_ifi_iai` → `decote_isf_ifi` → `isf_ifi_avant_plaf`
+→ `isf_ifi_apres_plaf` → `isf_ifi` — parce que la réutiliser fait hériter gratuitement
+de la décote, du plafonnement à 75 % et du plafond des dons.
+
+**Sans revenu, l'IFI vaut ZÉRO.** Le plafonnement plafonne IFI + IR à 75 % du revenu ;
+à revenu nul, le plafond est nul et tout l'IFI est abattu. Mesuré : 2 M€ de base
+donnent 7 400 € de barème et **0 €** d'IFI à revenu nul, 7 400 € dès 50 000 € de
+salaire. Tous les goldens du module portent donc un revenu. Un golden sans revenu
+aurait affiché zéro et n'aurait rien testé — la comparaison masquée par un zéro, dans
+le premier fichier de test du module.
+
+### Défaut 1 — le moteur impose sous le seuil d'assujettissement, et rend l'impôt non monotone
+
+CGI art. 964 : l'IFI est dû par ceux dont le patrimoine immobilier net taxable
+**excède 1 300 000 €**. En dessous, rien. Or `isf_ifi_iai` en version 2018+ vaut
+`bareme.calc(assiette)` **sans aucun test d'éligibilité**. Mesuré : **500 €** à
+900 000 €, **2 500 €** à 1 299 999 €.
+
+Ce qui prouve que c'est un défaut et non une lecture : **l'impôt devient non
+monotone**. 1 299 999 € doit 2 500 €, 1 300 000 € doit 1 250 € — franchir le seuil
+**divise l'impôt par deux**, parce que la décote ne commence qu'au seuil. Un impôt qui
+baisse quand la base monte n'est la politique de personne.
+
+La formule ISF 1989-2017 portait bien une garde — `(assiette >= bareme.rates[1])` —
+mais elle compare une assiette en euros au **taux** 0,007 et non au seuil : toujours
+vraie. Cette garde-là n'a donc jamais fonctionné non plus.
+
+Notre calculateur applique le seuil, **lu dans l'arbre** (la borne inférieure de la
+décote, qui est le même 1 300 000 par construction) plutôt qu'écrit en dur. Et la
+correction embarque son test-témoin : `test_the_engine_alone_would_tax_below_the_threshold`
+échoue si openfisca corrige un jour, ce qui est le bon moment pour retirer notre garde
+plutôt que de garder une correction qui ne corrige rien.
+
+### Défaut 2 — le forfait mobilier de 5 %, qui est CONTESTÉ et non une coquille
+
+`assiette_isf_ifi` majore la base de 5 % au titre du forfait mobilier. Ce n'est **pas**
+un copier-coller : le paramètre porte sa propre documentation et un raisonnement
+juridique réel — art. 973 CGI renvoie l'évaluation des biens IFI aux règles des DMTG,
+et art. 764 I-3° plancher les meubles meublants à 5 %. Le fichier ISF annule d'ailleurs
+son propre forfait au 2018-01-01, et un fichier IFI neuf a été créé à 0,05. C'était une
+décision.
+
+Notre lecture diffère : **art. 965 ne met que de l'immobilier dans la base**. L'art. 973
+dit comment **évaluer ce qui est dans la base** ; l'art. 764 plancher une classe d'actifs
+que la base IFI exclut entièrement. Importer ce plancher revient à taxer les meubles à
+travers un impôt dont la base n'en contient aucun.
+
+**Et les données tranchent, ce qui évite de s'en tenir à deux lectures.** Reconstituer
+la base agrégée depuis l'impôt publié par tranche donne **−6,46 %** contre l'agrégat
+publié indépendamment **sans** forfait, et **−10,92 % avec**. Tous les postes non
+modélisés — décote, plafonnement, dons — baissent l'impôt et poussent donc la
+reconstitution **vers le bas** : la vérité est au-dessus des deux, et la lecture qui
+s'en approche par en dessous est la meilleure. Le forfait éloigne de 4,46 points.
+
+Preuve indicative, pas démonstration : un allègement assez gros sauverait le forfait.
+La correction est donc **par défaut mais commutable** — `forfait_mobilier=False` par
+défaut, `openfisca_reading()` calcule l'autre, et l'écart est reportable (+9,5 % d'impôt
+sur une base de 2 M€) plutôt qu'enfoui.
+
+**Les deux défauts interagissent**, ce qui est le détail le plus parlant : sur un foyer
+à 1 299 999 €, le moteur brut applique d'abord le forfait, ce qui porte la base à
+1 364 999 € — **au-dessus du seuil et dans la fenêtre de décote** — puis facture
+2 517,48 €. Un foyer qui ne doit rien se voit ainsi taxé au travers d'une fenêtre où il
+n'aurait jamais dû entrer.
+
+**Rien n'est publié en amont** : la section C reste gelée (D-077). Ces deux constats
+rejoignent le dossier amont en attente avec le paramètre fantôme.
