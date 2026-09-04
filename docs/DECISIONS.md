@@ -2783,3 +2783,96 @@ familles monoparentales éligibles, et cela devient visible seulement parce que
 l'instrument a enfin une ligne. Aucune ligne de validation n'est ouverte pour l'ASF dans
 cet incrément — il faudrait une figure publiée choisie et versée au registre — mais le
 niveau est noté ici pour qu'il ne passe pas inaperçu.
+
+## D-077 — Décision du propriétaire : la phase suivante est le module patrimoine, publication toujours différée
+
+Décision du propriétaire, 2026-09-04, consignée comme `docs/PHASE5_SPEC.md` le demande :
+**la phase 5 est le module patrimoine** — IFI exactement, ISF ressuscité et plancher de
+type Zucman honnêtement. Les trajectoires restent sur l'étagère comme l'autre option
+spécifiée en principe. **La publication reste différée** : toute la section C du handoff
+prestations est gelée, et le brouillon d'issue amont (`docs/UPSTREAM_ISSUE_DRAFT.md`,
+D-075) continue d'attendre, prêt et non publié.
+
+**Pourquoi cette phase peut être honnête**, et c'est la raison de l'avoir choisie : la
+DGFiP publie l'IFI par tranche de patrimoine taxable — effectifs, base, impôt dû. Cette
+table **est** la population. Le module n'a donc presque rien à synthétiser, et la ligne de
+base devient une **vérification mécanique à calibration zéro** au lieu d'un ajustement.
+C'est l'inverse exact de la situation de D-015. Corollaire à tenir : si l'on se surprend à
+ajuster quoi que ce soit sur la table n° 33, c'est le dessin du module qui échoue, pas
+qui a besoin d'aide.
+
+**Hors périmètre, à refuser** : succession/DMTG (une phase entière à soi), **patrimoine
+synthétique au niveau ménage** — les cellules seulement, une queue haute synthétisée
+serait l'erreur D-015 exactement aux percentiles où elle est la moins survivable —, les
+trajectoires, et tout canal de migration au-delà d'une bande étiquetée basse confiance.
+
+### État du reliquat prestations (§B du handoff précédent), mesuré et non supposé
+
+Le handoff demande de vérifier avant de commencer, et de n'interleaver qu'au mot du
+propriétaire, pas par défaut. Mesuré :
+
+* **Boutons : livrés.** 16 boutons prestations, chacun avec un ménage sur lequel il
+  déplace une sortie (`tests/knob_cases.py`), et le registre est complet par test.
+* **UI : partielle, 28 boutons sur 40 exposés.** Manquent notamment les **trois boutons
+  forfait logement du RSA** ajoutés à l'incrément précédent, `af_taux_2_enfants`,
+  `af_taux_3_enfants`, `af_majoration_plafond_par_enfant`, `ppa_bonification_taux_max`,
+  et cinq boutons de niches.
+* **Goldens d'exemple travaillé : absents.** §B demandait au moins un changement de base
+  RSA et un changement de pente PPA dérivés à la main, le second montrant le déplacement
+  du taux marginal effectif. `tests/golden/` n'en porte aucun.
+* **Re-balayage des chiffrages : absent.** La suite compte quatre cas ; le backtest de la
+  modulation AF de 2015 n'y est pas.
+
+Le reliquat est donc réel et reste ouvert. Il n'est pas repris ici : la phase 5 commence.
+
+## D-078 — M0 patrimoine : le spec se trompe sur ce que la DGFiP publie, et la vérification de remplacement est meilleure
+
+Portail `scripts/verify_ifi.py`, vert. Détail complet dans `docs/M0_IFI.md`.
+
+**`PHASE5_SPEC.md` §2 fonde tout le module sur une table qui n'existe pas.** Il annonce
+que la publication DGFiP donne, par tranche, « redevable counts, taxable base, tax due »,
+et que la vérification mécanique consiste à appliquer notre barème à la **base publiée par
+tranche**. Lecture faite des quatre millésimes, feuille par feuille : **la base par
+tranche n'est pas publiée**. Ce qui l'est : les parts de foyers et d'IFI et l'IFI moyen
+par tranche (n° 33, Graphique 3), et l'effectif, la base, l'IFI et les dons **en agrégat
+seulement** (n° 45, Tableau 1). Quatre tranches, pas six — l'assujettissement commence à
+1,3 M, donc la tranche 0,8–1,3 M du barème n'apparaît jamais dans la distribution.
+
+**La vérification de remplacement n'est pas plus faible, et c'est le point.** Inverser le
+barème sur l'IFI moyen de chaque tranche donne la base moyenne implicite ; l'agrégat
+reconstitué est ensuite confronté à l'agrégat publié **indépendamment**. Rien n'est
+ajusté : l'impôt par tranche et la base agrégée sont deux publications distinctes, et
+c'est notre arithmétique qui les relie. Deux propriétés falsifiables en sortent :
+
+1. **la base moyenne implicite doit tomber dans sa propre tranche** — rien ne l'y force,
+   et un barème mal lu l'en fait sortir. Mesuré : 1,7052 / 3,1772 / 6,0747 / 14,7126 M€,
+   les quatre dedans ;
+2. **le manque doit avoir le bon signe** — décote, plafonnement et réduction dons baissent
+   tous l'impôt, donc inverser l'impôt doit sous-estimer la base. Mesuré **−6,46 %**. Un
+   manque de signe inverse aurait dit que l'arithmétique est fausse, pas incomplète.
+
+**La table s'est vérifiée elle-même.** Les deux routes publiées vers l'IFI d'une tranche —
+sa part du total, et son IFI moyen fois son effectif — sont deux nombres distincts de la
+publication et concordent à **+0,003 %**. C'est un contrôle de notre lecture, pas une
+tautologie.
+
+**Trois pièges, tous du type déjà catalogué.** (a) L'en-tête ment sur les unités :
+`Patrimoine net total (M€)` contient 466 792 714 707, soit des **euros** — le piège des
+niches à l'envers, refusé par une bande de plausibilité plutôt que cru. (b) Les feuilles
+ne sont pas adressables par coordonnées : le libellé est en colonne 2 dans n° 45, le bloc
+de données commence ligne 26 sous un graphique dans n° 33 ; les deux lecteurs **cherchent**
+leur bloc par forme. (c) Les bornes de tranche sont vérifiées contre les libellés du
+fichier, pour qu'une publication qui recouperait ses tranches échoue bruyamment.
+
+**Et l'effectif publié est arrondi.** 186 100 à la centaine, alors que base ÷ moyenne
+publiée vaut **186 094,000** — entier à six décimales, ce qui l'identifie comme le vrai.
+Les cellules sont bâties dessus : 0,0032 % d'erreur gratuite sous chaque figure de la
+phase est précisément ce qui ne se voit jamais.
+
+**Un millésime que le spec ignore.** `n° 45` (avril 2026) publie l'IFI 2025 — 193 600
+foyers, 2,3319 md — et porte 2024 en colonne de comparaison. Les deux sont manifestés ;
+les tranches restent lues sur n° 33.
+
+**Le contrôle fantôme est passé** sur `impot_fortune_immobiliere_ifi_partir_2018` : lu par
+une formule, barème exactement celui qu'annonce §1. Le portail assert aussi que
+`aide_a_domicile` reste, lui, non lu — la garde ne peut pas passer à vide.
