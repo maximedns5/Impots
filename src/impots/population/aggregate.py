@@ -31,6 +31,7 @@ N_DECILES = 10
 INSTRUMENTS = (
     "salaire_brut", "salaire_super_brut", "salaire_net", "salaire_imposable",
     "cotisations_salariales", "cotisations_employeur",
+    "retraite_imposable", "chomage_brut",
     "csg_deductible", "csg_imposable", "crds", "ir",
     "ir_avant_niches", "reductions", "credits_impot",
     "af", "ppa", "rsa", "aide_logement", "aefa",

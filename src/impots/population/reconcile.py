@@ -50,14 +50,25 @@ def build_lines(agg: Aggregates) -> list[Line]:
             source="INSEE comptes nationaux (D11)",
         ),
         Line.from_figure(
-            margins.DECLARED_PENSIONS, "Pensions et retraites", None,
-            TOLERANCE["calibration"],
-            "Calibrated: the pension mass was scaled to hit this.", source="DGFiP",
+            margins.DECLARED_PENSIONS, "Pensions et retraites",
+            totals.get("retraite_imposable"), TOLERANCE["calibration"],
+            "Calibrated: the pension mass was scaled to hit this — and now actually "
+            "compared against it. This line passed a hardcoded `None` until the "
+            "zero-masked sweep, so it printed «calibrated (spent)» beside an empty "
+            "cell: a target declared hit by a comparison that never ran. CONDITIONALLY "
+            "VALID: the published scope includes RENTES VIAGÈRES, which the model does "
+            "not carry, so the simulated side is short by that much.",
+            source="DGFiP",
         ),
         Line.from_figure(
-            margins.UNEMPLOYMENT_BENEFIT_SPEND, "Allocations chômage", None,
-            TOLERANCE["calibration"],
-            "Calibrated: the benefit mass was scaled to hit this.", source="Unédic",
+            margins.UNEMPLOYMENT_BENEFIT_SPEND, "Allocations chômage",
+            totals.get("chomage_brut"), TOLERANCE["calibration"],
+            "Calibrated: the benefit mass was scaled to hit this — and now actually "
+            "compared, for the same reason as the pension line above. CONDITIONALLY "
+            "VALID: the published figure is Unédic SPEND, so it counts only indemnified "
+            "unemployment; unindemnified unemployed are identically zero on both sides "
+            "here and would break the correspondence if either side gained them.",
+            source="Unédic",
         ),
         Line.from_figure(
             margins.IR_BAREME_ON_2024_INCOME, "Impôt sur le revenu — barème",

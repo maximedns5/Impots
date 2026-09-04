@@ -147,18 +147,42 @@ class Line:
 
     @property
     def status(self) -> str:
-        if self.use == "calibration":
-            return "calibrated (spent)"
+        """What this line actually establishes.
+
+        **"calibration" describes a line's USE, never its outcome**, and conflating the
+        two printed a pass where no comparison had happened. The old version returned
+        "calibrated (spent)" before looking at anything: a pension line that passes
+        `None` as its simulated value — because no pension row is extracted at all —
+        rendered as "Pensions et retraites | — | 400,4 bn € | calibrated (spent)" beside
+        the note "the pension mass was scaled to hit this". That is the claim that a
+        target was met, printed by a line that had compared nothing. And a calibration
+        line missing its own target by 3.8 % against a ±1 % tolerance rendered the same
+        way, and `passes` said True.
+
+        So: absence of a comparison is reported first and as itself, and a calibration
+        line that HAS a value is graded against its target like any other — being a
+        calibration explains why hitting it proves little, not why missing it is fine.
+        """
         if self.simulated is None:
             return "not modelled"
         residual = self.residual
         assert residual is not None
         within = abs(residual) <= self.tolerance * (1.0 + TOLERANCE_SLACK)
+        if self.use == "calibration":
+            return "calibrated (spent)" if within else "calibrated, OFF TARGET"
         return "within tolerance" if within else "OUTSIDE tolerance"
 
     @property
     def passes(self) -> bool:
-        return self.use != "validation" or self.status != "OUTSIDE tolerance"
+        """A validation line must land inside tolerance; a calibration line must hit
+        the target it was fitted to; a line that compared nothing passes nothing.
+
+        The last two clauses are new. A calibration that misses is a broken fit, not a
+        licence — and "not modelled" was previously indistinguishable from success on a
+        calibration line, because the calibration branch returned before looking.
+        """
+        return self.status in ("within tolerance", "calibrated (spent)") or (
+            self.use == "context")
 
 
 def format_value(value: float | None, unit: str) -> str:

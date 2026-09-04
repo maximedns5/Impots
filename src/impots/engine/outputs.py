@@ -58,6 +58,26 @@ REGISTRY: tuple[Row, ...] = (
         label="Cotisations salariales"),
     Row("cotisations_employeur", "cotisations_employeur", "individu", "month", "light", True,
         label="Cotisations employeur"),
+    # The allègements, made visible. `cotisations_employeur` above sums the GROSS
+    # employer contributions and does not net them out — the reductions land in
+    # `salaire_super_brut` instead. So a reader who moved an allègement knob and watched
+    # the contributions row saw nothing move, while the labour cost had changed by
+    # hundreds of euros. Three rows rather than one, matching the three knob families.
+    Row("allegement_general", "allegement_general", "individu", "month", "light", False,
+        label="Réduction générale de cotisations patronales"),
+    Row("allegement_bandeau_maladie", "allegement_cotisation_maladie", "individu",
+        "month", "light", False, label="Bandeau maladie"),
+    Row("allegement_bandeau_famille", "allegement_cotisation_allocations_familiales",
+        "individu", "month", "light", False, label="Bandeau famille"),
+    # Pensions and unemployment benefit. Added because their reconciliation lines
+    # passed a hardcoded `None` as the simulated value and no row extracted the
+    # quantity — so the lines could never fill, and printed "calibrated (spent)"
+    # anyway, which is the claim that a target was hit by a comparison that never
+    # happened. The quantities were in the simulation the whole time.
+    Row("retraite_imposable", "retraite_imposable", "individu", "month", "light", False,
+        label="Pensions et retraites imposables"),
+    Row("chomage_brut", "chomage_brut", "individu", "month", "light", False,
+        label="Allocations chômage brutes"),
     Row("csg_deductible", "csg_deductible_salaire", "individu", "month", "light", True,
         label="CSG déductible"),
     Row("csg_imposable", "csg_imposable_salaire", "individu", "month", "light", True,

@@ -2507,3 +2507,66 @@ also the most findable French benefit simulators there are, so an hour spent on 
 them would end in perfect agreement and zero information. The CAF's own estimator is the
 Caisse nationale's production arithmetic, and that independence is the only reason the
 exercise is worth doing.
+
+## D-071 — A fourth read-back-blind parameter, and the grep rule that could not catch it
+
+`af_cm.modulation.taux_tranche_1` resolves to 1.0 at 2024-01-01 and the AF formula never
+reads it: `taux_helper` hardcodes the full rate as `(base_ressources <= plafond1) * 1`.
+A knob aimed at it writes successfully and moves nothing — measured, halving it left a
+two-child family's allocations at 1 771,44 € to the centime. It is not shipped.
+
+**The standing rule from D-064 passed it**, and the reason is worth keeping. That rule
+required a knob's parameter node to appear somewhere in openfisca's model source. Two
+things defeat it here: `modulation` is referenced (its siblings are read), and
+`taux_tranche_1` is referenced too — under `af_maj_dom.majoration_premier_enfant`, an
+unrelated parameter that happens to reuse the leaf name. **A name-based rule is defeated
+by name reuse**, and no refinement of the grep fixes that.
+
+So the rule is replaced by outcome coverage: `tests/knob_cases.py` carries one household
+per knob on which it demonstrably moves an output, and `test_knobs.py` runs all forty.
+Four shapes of one failure are now on the record — a silently created child (D-044), a
+derived parameter the formula recomputes (D-062), a duplicate tree for the same article
+(D-064), and a rate superseded by a literal (here). Every one resolves non-null and every
+one passes a read-back. **Running a household is the only check that has caught all
+four.**
+
+One knob is exempt, with the reason recorded and its own negative test:
+`allegement_general_taux_50_et_plus` governs employers of fifty or more, and
+`HouseholdInput` cannot express one — the engine reads every foyer as a small employer.
+The parameter IS read by the formula on the other branch, so the levier is real and it is
+the wire format that cannot reach it. The exemption fails the day an effectif becomes
+declarable, which is the right moment to turn it into a case.
+
+**A near-miss worth recording.** Three employer knobs were briefly read as dead because
+they were watched on `cotisations_employeur` — which is GROSS of the allègements, the
+reductions landing in `salaire_super_brut` instead. Deleting them would have been a
+mistake caused by watching the wrong row. Three new output rows (`allegement_general`,
+`allegement_bandeau_maladie`, `allegement_bandeau_famille`) make the reductions visible,
+because a reader who moves an allègement knob and sees the contributions row unchanged is
+being misled by the table, not by the engine.
+
+## D-072 — A report line that claimed a target was hit without comparing anything
+
+`reporting.Line.status` returned `"calibrated (spent)"` for any line whose `use` was
+calibration — **before** checking whether a simulated value existed and before computing
+a residual. Two lines pass a hardcoded `None`, because no output row extracted the
+quantity. The report therefore printed
+
+    Pensions et retraites | — | 400,4 bn € | calibrated (spent)
+
+beside the note "the pension mass was scaled to hit this": the assertion that a target
+was met, printed by a line that had compared nothing. `passes` returned True. A third
+line, "Part sans bénéfice imposable", missed its own target by 3.8 % against a ±1 %
+tolerance and rendered identically.
+
+Fixed: absence of a comparison is reported first and as itself, and a calibration line
+that HAS a value is graded against its target like any other. Being a calibration
+explains why *hitting* it proves little — it never explained why *missing* it would be
+fine.
+
+**And the quantities existed all along.** Adding the two rows the lines needed makes them
+compare: pensions +1.1 %, unemployment +0.8 %, against a ±10 % calibration tolerance.
+Both pass. Nobody knew, because nothing had ever asked.
+
+The class this belongs to is the one the reviewer ruled on: a comparison that cannot
+fail is not a comparison. Here it could not even run.

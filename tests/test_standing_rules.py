@@ -217,81 +217,62 @@ def test_existence_is_read_from_the_evaluated_tree_not_the_editable_one() -> Non
     )
 
 
-# --- every knob must aim at a parameter some FORMULA reads --------------------------
-
-#: Where openfisca-france's formulas live. A parameter node no file here mentions
-#: cannot be feeding any calculation.
-OPENFISCA_MODEL = (
-    Path(__import__("openfisca_france").__file__).parent / "model"
-)
-
-#: The trap this rule exists for, and the third of its kind in this project.
-#:
-#: `impot_revenu.credits_impots.aide_a_domicile` is a COMPLETE PHANTOM TREE for the
-#: home-help credit: it cites the same CGI article in its own documentation as the live
-#: node, carries the same values at every leaf (taux 0.5, plafond_invalide 20 000,
-#: plafond_additionnel 1 500), resolves non-null at 2024-01-01 — and no formula reads
-#: it. Its name is the MORE natural one for "home help" than the live
-#: `emploi_salarie_domicile`, so it is exactly what a careful implementer would pick.
-#:
-#: Two earlier shapes of the same failure: `update()` silently creating an absent child
-#: (D-044), and published-but-derived plafonds the AF formula never consults (D-062).
-#: Resolving non-null is not enough. Being read is the property that matters.
-PHANTOM_NODE = ("impot_revenu", "credits_impots", "aide_a_domicile")
+# --- every knob must MOVE AN OUTCOME ------------------------------------------------
+#
+# This replaced a grep rule, and the replacement is the point.
+#
+# The old rule required a knob's parameter node to appear somewhere in openfisca's model
+# source. It passed `af_cm.modulation.taux_tranche_1`: a parameter that resolves to 1.0,
+# that the AF formula never reads — `taux_helper` hardcodes the full rate as
+# `(base_ressources <= plafond1) * 1` — and whose leaf name occurs in the source anyway,
+# under `af_maj_dom.majoration_premier_enfant`, an unrelated parameter reusing it.
+#
+# So a name cannot settle it. Three earlier shapes of the same class were a silently
+# created child (D-044), a derived parameter the formula recomputes (D-062) and a
+# duplicate tree for the same article (D-064); this is the fourth, a parameter
+# superseded by a literal. Every one of them resolves non-null, and every one of them
+# would pass a read-back. Running a household is the only check that does not.
 
 
-def _node_is_referenced(name: str) -> bool:
-    """Whether any openfisca model file mentions this parameter node by name."""
-    return any(
-        name in path.read_text(encoding="utf-8", errors="ignore")
-        for path in OPENFISCA_MODEL.rglob("*.py")
-    )
-
-
-def test_every_knob_aims_at_a_node_some_formula_reads() -> None:
-    """A knob pointing at a parameter no formula reads writes successfully and moves
-    nothing — silently, and with a read-back that confirms it."""
+def test_every_knob_either_moves_an_outcome_or_says_why_not() -> None:
+    """No knob may ship without a household on which it demonstrably moves something."""
+    import knob_cases
     from impots.engine.reforms import SCALAR_KNOBS
 
-    orphans = []
-    for knob, path in sorted(SCALAR_KNOBS.items()):
-        # A formula references the containing node, not usually the leaf, so either
-        # counts as evidence that this branch of the tree is live.
-        if not any(_node_is_referenced(segment) for segment in path[-2:]):
-            orphans.append((knob, ".".join(path)))
-    assert not orphans, (
-        "these knobs aim at parameter nodes no openfisca formula mentions, so a reform "
-        f"moving them would change nothing: {orphans}"
+    covered = set(knob_cases.CASES) | set(knob_cases.EXEMPT)
+    missing = sorted(set(SCALAR_KNOBS) - covered)
+    assert not missing, (
+        f"these knobs have neither an outcome case nor a recorded exemption: {missing}. "
+        f"A knob with no case is a knob nobody has watched move."
     )
+    stale = sorted(covered - set(SCALAR_KNOBS))
+    assert not stale, f"cases for knobs that no longer exist: {stale}"
 
 
-def test_the_rule_fires_on_the_phantom_that_motivated_it() -> None:
-    """The kill test. `aide_a_domicile` must be invisible to the model, or this rule
-    has stopped testing anything."""
-    assert not _node_is_referenced(PHANTOM_NODE[-1]), (
-        "openfisca now references aide_a_domicile — either it was wired up, in which "
-        "case this rule needs a new phantom to prove itself on, or the grep broke"
-    )
-    assert _node_is_referenced("emploi_salarie_domicile"), (
-        "the live home-help node is no longer referenced, which would mean the grep is "
-        "finding nothing and the rule above passes vacuously"
-    )
+def test_every_exemption_carries_a_real_reason() -> None:
+    """An unexplained exemption is where a dead knob would hide."""
+    import knob_cases
+
+    for knob, reason in knob_cases.EXEMPT.items():
+        assert len(reason) > 200, f"{knob} is exempt without a checkable reason"
+        assert "Vérifié" in reason, (
+            f"{knob}'s exemption must record what was MEASURED, not merely argued"
+        )
 
 
-def test_the_phantom_is_indistinguishable_by_read_back() -> None:
-    """Why a read-back could not have caught it: the values are identical.
+def test_the_dead_modulation_rate_is_not_a_knob() -> None:
+    """`taux_tranche_1` resolves to 1.0 and no formula reads it.
 
-    Both trees answer 0.5 for the rate and 20 000 for the invalidity ceiling at
-    2024-01-01. A guard that writes a value and reads it back would confirm the write
-    to the dead tree exactly as convincingly as to the live one.
+    Kept as a regression because it is the most inviting of the four: the other two
+    modulation rates ARE knobs, so the missing third looks like an oversight rather
+    than a finding.
     """
-    from impots.engine.reforms import resolve
+    from impots.engine.reforms import SCALAR_KNOBS, resolve
     from impots.engine.system import baseline
 
-    parameters = baseline().parameters
-    live = resolve(parameters, ("impot_revenu", "credits_impots",
-                                "emploi_salarie_domicile", "taux"))("2024-01-01")
-    phantom = resolve(parameters, (*PHANTOM_NODE, "taux"))("2024-01-01")
-    assert live == phantom == 0.5
-    assert resolve(parameters, (*PHANTOM_NODE, "plafond", "plafond_invalide"))(
-        "2024-01-01") == 20_000
+    assert "af_modulation_taux_tranche_1" not in SCALAR_KNOBS
+    path = ("prestations_sociales", "prestations_familiales", "prestations_generales",
+            "af", "af_cm", "modulation", "taux_tranche_1")
+    assert resolve(baseline().parameters, path)("2024-01-01") == 1.0, (
+        "it still resolves, which is exactly why resolving is not the test"
+    )

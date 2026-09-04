@@ -59,6 +59,11 @@ PATH_CSG_ACTIVITE = ("prelevements_sociaux", "contributions_sociales", "csg", "a
 # per region and per family size, which is why only its one flat scalar appears here.
 _MINIMA = ("prestations_sociales", "solidarite_insertion", "minima_sociaux")
 PATH_RSA_MONTANT = (*_MINIMA, "rsa", "rsa_m", "montant_de_base_du_rsa")
+#: The forfait logement — a flat deduction from the RSA for a household that is housed,
+#: expressed as a share of the base amount and stepped by household size. It is the
+#: second dial of the RSA after the base itself, and it moves the benefit DOWN: a
+#: household with housing is treated as already receiving part of its needs in kind.
+PATH_RSA_FORFAIT_LOGEMENT = (*_MINIMA, "rsa", "rsa_fl", "forfait_logement")
 PATH_PPA = (*_MINIMA, "ppa", "pa_m")
 
 _FAMILIALES = ("prestations_sociales", "prestations_familiales")
@@ -150,6 +155,10 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "bandeau_famille_taux": (*PATH_BANDEAU_FAMILLE, "reduction"),
     # Prestations (B1) — the spending side.
     "rsa_montant_de_base": PATH_RSA_MONTANT,
+    "rsa_forfait_logement_1_personne": (*PATH_RSA_FORFAIT_LOGEMENT, "taux_1_personne"),
+    "rsa_forfait_logement_2_personnes": (*PATH_RSA_FORFAIT_LOGEMENT, "taux_2_personnes"),
+    "rsa_forfait_logement_3_personnes_ou_plus": (
+        *PATH_RSA_FORFAIT_LOGEMENT, "taux_3_personnes_ou_plus"),
     "ppa_montant_de_base": (*PATH_PPA, "montant_de_base"),
     # The 61 % of activity income added back before the taper: the single parameter
     # that most directly sets the marginal rate faced by working households on PPA,
@@ -202,11 +211,24 @@ NICHE_KNOBS = frozenset({
     "frais_scolarite_superieur", "plafond_global_niches",
 })
 
+#: `af_cm.modulation.taux_tranche_1` is NOT a knob, and the reason is the fourth
+#: instance of the read-back-blind class. It exists, resolves to 1.0 at 2024-01-01, and
+#: the AF formula never reads it: `taux_helper` hardcodes the full rate as
+#: `(base_ressources <= plafond1) * 1`. A knob aimed at it writes successfully and moves
+#: nothing — measured, halving it left a two-child family's AF at 1 771,44 EUR.
+#:
+#: No name-based rule can catch this one. `modulation` is referenced in the model, and
+#: so is `taux_tranche_1` — but only under `af_maj_dom.majoration_premier_enfant`, a
+#: different parameter that happens to reuse the leaf name. Only an outcome test settles
+#: it, which is why `test_every_knob_moves_an_outcome` replaced the grep rule.
+
 #: Knobs that move a transfer rather than a levy. Kept as a set because three
 #: different layers need to know: the double-entry guard signs them the other way, the
 #: macro layer looks for a spending instrument, and the UI groups them apart.
 PRESTATION_KNOBS = frozenset({
-    "rsa_montant_de_base", "ppa_montant_de_base", "ppa_pente",
+    "rsa_montant_de_base", "rsa_forfait_logement_1_personne",
+    "rsa_forfait_logement_2_personnes", "rsa_forfait_logement_3_personnes_ou_plus",
+    "ppa_montant_de_base", "ppa_pente",
     "ppa_bonification_taux_max", "bmaf", "af_taux_2_enfants", "af_taux_3_enfants",
     "af_modulation_taux_tranche_2", "af_modulation_taux_tranche_3",
     "af_plafond_tranche_1_base", "af_plafond_tranche_2_base",

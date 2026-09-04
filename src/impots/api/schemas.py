@@ -250,6 +250,13 @@ class ReformSpec(BaseModel):
     # nobody has made, and a bound tight enough to be "realistic" would be a
     # political judgement wearing a validation's clothes.
     rsa_montant_de_base: Annotated[float, Field(ge=0, le=5_000)] | None = None
+    rsa_forfait_logement_1_personne: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    rsa_forfait_logement_2_personnes: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    rsa_forfait_logement_3_personnes_ou_plus: Annotated[
+        float, Field(ge=0.0, le=1.0)] | None = None
+    """The forfait logement, as a share of the RSA base, stepped by household size
+    (12 %, 16 %, 16.5 %). It is DEDUCTED, so raising it lowers the benefit — the one
+    knob in this family whose sign runs the other way."""
     ppa_montant_de_base: Annotated[float, Field(ge=0, le=5_000)] | None = None
     ppa_pente: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     """The share of activity income added back before the taper — 61 % today. The
@@ -417,6 +424,14 @@ class ResultRows(BaseModel):
     salaire_imposable: float
     cotisations_salariales: float
     cotisations_employeur: float
+    retraite_imposable: float
+    chomage_brut: float
+    allegement_general: float
+    allegement_bandeau_maladie: float
+    allegement_bandeau_famille: float
+    """The employer-contribution reductions. Reported separately because
+    `cotisations_employeur` is GROSS of them: without these rows a reform to the
+    allègements moved nothing a reader could see."""
     csg_deductible: float
     csg_imposable: float
     crds: float
