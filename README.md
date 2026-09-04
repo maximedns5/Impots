@@ -188,12 +188,21 @@ the smallest complete demonstration that the reform machinery does what it says.
   any kind. Every euro is drawn from a published distribution and calibrated to a
   published total (`docs/M0_RECON.md`, D-012).
 * **Reform deltas are the product; baseline levels are not.** The income tax total
-  reconciles to +8.9 % of the published barème and foyers imposés to −2.3 %, but
-  RSA runs at +106 % and the interdecile ratio at +41 %, because 13.5 M adults —
-  the self-employed and the inactive — have no modelled income. Read D-015 before
-  quoting any level.
-* **No capital income, no self-employment income, no réductions d'impôt.** The top
-  of the distribution is a construction.
+  reconciles to +8.8 % of the published barème and foyers imposés to −1.9 %,
+  but RSA runs at +113 % and its allocataire count at +96 %, because 13.5 M adults
+  — the self-employed and the inactive — have no modelled income. Read D-015
+  before quoting any level.
+* **Several lines are inside their tolerance only because a component is empty**,
+  and each says so in its own note. The zero-masked sweep (D-073,
+  `docs/ZERO_MASKED_SWEEP.md`) checked every line, household and firm, for
+  comparisons valid only because one side is identically zero. Two examples of the
+  class: prime d'activité passes at ±25 % and would not if the 8.01 M
+  primo-accédant households carried a housing payment; the two INSEE distribution
+  lines pass with no capital income on our side and a target that includes it.
+* **No capital income and no self-employment income.** The top of the distribution
+  is a construction. Réductions and crédits d'impôt now exist, but only under
+  `--impute-niches`, only five families of them, and only as a decile mean per
+  claimant (D-066, `docs/B3_IR_NICHES.md`).
 
 ### And about the behavioural band specifically
 

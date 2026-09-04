@@ -409,8 +409,24 @@ def test_population_reconciliation_marks_calibrated_lines_as_spent(client: TestC
     uses = {line["use"] for line in lines}
     assert "calibration" in uses and "validation" in uses
     for line in lines:
-        if line["use"] == "calibration":
-            assert line["status"] == "calibrated (spent)"
+        if line["use"] != "calibration":
+            continue
+        # NOT "always (spent)". D-072 made calibration lines compare, and a calibration
+        # line that MISSES its target must say so — being a calibration explains why
+        # hitting it proves little, never why missing it would be fine. The property
+        # that matters on the wire is that it is never dressed as validation.
+        assert line["status"] in ("calibrated (spent)", "calibrated, OFF TARGET")
+        assert not line["status"].startswith("within"), (
+            f"{line['label']} is a spent calibration target presented as a validation "
+            f"verdict"
+        )
+    # And on the artefact this endpoint serves, all four should currently be on target.
+    # They were not until the sampler was fixed (D-074): the pension line read +2.29 %
+    # and the unemployment line -2.40 % against a ±2 % tolerance, and both were the
+    # subsample's bias rather than the calibration's error.
+    off = [line["label"] for line in lines
+           if line["use"] == "calibration" and line["status"] == "calibrated, OFF TARGET"]
+    assert not off, f"calibration targets missed: {off}"
 
 
 @population_test

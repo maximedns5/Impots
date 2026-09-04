@@ -34,12 +34,14 @@ INSTRUMENTS = (
     "retraite_imposable", "chomage_brut",
     "csg_deductible", "csg_imposable", "crds", "ir",
     "ir_avant_niches", "reductions", "credits_impot",
-    "af", "ppa", "rsa", "aide_logement", "aefa",
+    "af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
 )
 
 #: Weighted counts rather than euro totals — reported alongside, never summed in.
-COUNTS = ("n_foyers", "n_foyers_imposes", "n_persons", "n_dependants")
+COUNTS = ("n_foyers", "n_foyers_imposes", "n_persons", "n_dependants",
+          "n_allocataires_af", "n_allocataires_ppa", "n_allocataires_rsa",
+          "n_allocataires_aide_logement")
 
 
 def consumption_units(n_aged_14_plus: np.ndarray, n_children_under_14: np.ndarray) -> np.ndarray:
@@ -113,6 +115,19 @@ class Aggregates:
     """Weighted national total per instrument, in EUR."""
     counts: dict[str, float] = field(default_factory=dict)
     """Weighted counts (foyers, foyers imposés, persons, dependants)."""
+    niveau_de_vie_quantiles: dict[int, float] = field(default_factory=dict)
+    """p10/p50/p90 of niveau de vie, PERSON-weighted, in EUR — keyed by percentile.
+
+    Separate from `deciles` on purpose, and the two must not be confused. `deciles`
+    ranks and weights by HOUSEHOLD, which is what a reform's incidence table needs.
+    INSEE's published niveau de vie statistics are person-weighted QUANTILES, so
+    reconciling against them needs this. The reconciliation lines read decile MEANS
+    against published quantiles until the zero-masked sweep, and that wrong estimator
+    was the larger half of both residuals — on the report's own run, roughly -12 %
+    against -5 % on the median and +39 % against +4 % on D9/D1, more than any
+    modelling gap. The lines compute the comparison from their own pass rather than
+    quoting these, for the reason in D-072.
+    """
     totals_reform: dict[str, float] = field(default_factory=dict)
     deltas: dict[str, float] = field(default_factory=dict)
     deciles: list[DecileRow] = field(default_factory=list)
@@ -219,6 +234,12 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
     niveau_de_vie = baseline / units
     decile_index = weighted_decile_index(niveau_de_vie, weights)
 
+    # Person-weighted, because a niveau de vie quantile describes PEOPLE: a published
+    # median is the person in the middle, not the household in the middle.
+    person_weights = weights * frame["n_persons"].to_numpy().astype(np.float64)
+    cuts = weighted_quantiles(niveau_de_vie, person_weights, np.array([0.1, 0.5, 0.9]))
+    quantiles = {10: float(cuts[0]), 50: float(cuts[1]), 90: float(cuts[2])}
+
     reform_values = (
         frame["revenu_disponible_reform"].to_numpy().astype(np.float64)
         if "revenu_disponible_reform" in frame.columns
@@ -256,6 +277,7 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
     return Aggregates(
         totals=totals,
         counts=counts,
+        niveau_de_vie_quantiles=quantiles,
         totals_reform=totals_reform,
         deltas=deltas,
         deciles=rows,

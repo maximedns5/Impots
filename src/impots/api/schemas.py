@@ -455,6 +455,8 @@ class ResultRows(BaseModel):
     rsa: float | None = None
     aide_logement: float | None = None
     aefa: float | None = None
+    cf: float | None = None
+    asf: float | None = None
     """The prime de Noël. It rides on RSA eligibility rather than being reformed
     directly, which is how it went unitemised until the double-entry guard found it."""
     crds_pfam: float | None = None

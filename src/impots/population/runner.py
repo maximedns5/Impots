@@ -52,17 +52,48 @@ class RunResult:
 def subsample(frame: pl.DataFrame, households: int, seed: int = SAMPLE_SEED) -> pl.DataFrame:
     """A deterministic subsample of `households` ménages that estimates the same totals.
 
-    Selection is with probability proportional to household weight, which makes the
-    design **self-weighting**: under PPS the inclusion probability of household *i*
-    is n·w_i/W, so the Horvitz-Thompson weight w_i/π_i collapses to the constant
-    W/n. Every selected household therefore carries the same total weight,
-    regardless of how heavy it was in the full file.
+    **Certainty stratum, then SYSTEMATIC PPS on the rest.** Both halves are necessary,
+    and the first one is why this function was rewritten.
 
-    Getting this wrong is easy and quiet. Rescaling the *original* weights so they
-    sum back to W — the obvious move — over-weights exactly the households PPS
-    already over-selected, and inflated every aggregate here by a factor of 2.8
-    before it was caught. There is no error and no NaN; the totals are simply
-    wrong, which is why the quick tier is checked against a full run in the tests.
+    Probability-proportional-to-size selection is self-weighting: if the inclusion
+    probability of household *i* is π_i = n·w_i/W, the Horvitz-Thompson weight w_i/π_i
+    collapses to the constant W/n, so every survivor carries the same population weight
+    regardless of how heavy it was in the full file. That is the design this function
+    implements, and the constant weight is only correct if π_i really is n·w_i/W.
+
+    **It was not.** The previous implementation drew with
+    `np.random.default_rng().choice(..., replace=False, p=...)`, which is NOT PPS
+    sampling: numpy draws sequentially and renormalises the remaining probabilities
+    after each draw, so a heavy unit's realised inclusion probability saturates towards
+    1 instead of reaching n·w_i/W. Measured on a synthetic heavy-tailed population, the
+    six heaviest units had assumed π of 1.80 down to 1.31 — values above 1, which is
+    already the proof, since no inclusion probability can exceed one — against realised
+    π of 0.94 down to 0.86, while the lightest units came in at 1.5x their assumed π.
+    Weighting every survivor at W/n on top of that is a BIAS, not noise: the same
+    experiment estimated a heavy-tailed total at -10.05 % of truth, where
+    Horvitz-Thompson with the realised π returned +0.03 %.
+
+    On this population the bias GREW with the sample, which is the signature that
+    distinguishes it from sampling error: the pension mass, calibrated to hit its target
+    exactly on the full frame, came out at +1.12 % at n=20 000, +2.34 % at n=50 000 and
+    +6.39 % at n=100 000. Unemployment benefit went +0.55 %, -2.61 %, -5.80 %. A larger
+    sample was making every reported figure worse.
+
+    The fix has two parts.
+
+    1. **The certainty stratum.** When n·w_i/W >= 1 no design can give unit *i* the
+       inclusion probability the self-weighting argument assumes, because that number
+       exceeds 1. Such units are taken with certainty and keep their OWN weight. Removing
+       them shrinks W and n for the remainder, which can push further units over the
+       line, so this iterates to a fixed point.
+    2. **Systematic PPS (Madow) on the rest**, over a randomly permuted order: one
+       uniform start in [0, W_r/k), then k regular steps through the cumulative weight.
+       Every remaining unit then has π_i = k·w_i/W_r exactly, which is <= 1 by
+       construction of the stratum, so the constant weight W_r/k is exactly right.
+
+    Total weight is preserved either way — W_certain + k·(W_r/k) = W — which is why the
+    test that checked only the total could not fail and did not catch any of this. The
+    guard that does is `test_subsample_is_unbiased_for_a_heavy_tailed_total`.
     """
     # MEAN, matching the household weight the runner aggregates with. Using the
     # sum here instead makes the two disagree by household size: PPS then selects
@@ -80,16 +111,21 @@ def subsample(frame: pl.DataFrame, households: int, seed: int = SAMPLE_SEED) -> 
 
     rng = np.random.default_rng(seed)
     weights = household_weights["hw"].to_numpy().astype(np.float64)
-    probabilities = weights / weights.sum()
-    chosen = np.sort(rng.choice(total, size=households, replace=False, p=probabilities))
+    certain, sampled = _pps_certainty_split(weights, households, rng)
+
+    chosen = np.concatenate([certain, sampled])
     keep = household_weights["household_id"].to_numpy()[chosen]
 
-    # Each survivor stands for W/n of population weight, spread across its members
-    # in the proportions the survey gave them.
-    target = weights.sum() / households
+    # Certainty units keep their own weight (π = 1); the rest are self-weighting at
+    # W_rest / k, spread across each household's members in the proportions the survey
+    # gave them.
+    remainder_weight = weights.sum() - weights[certain].sum()
+    per_sampled = remainder_weight / sampled.size if sampled.size else 0.0
+    targets = np.concatenate([weights[certain], np.full(sampled.size, per_sampled)])
+
     scale = pl.DataFrame({
         "household_id": keep,
-        "_hh_scale": target / weights[chosen],
+        "_hh_scale": targets / weights[chosen],
     })
     return (
         frame.filter(pl.col("household_id").is_in(keep))
@@ -97,6 +133,51 @@ def subsample(frame: pl.DataFrame, households: int, seed: int = SAMPLE_SEED) -> 
         .with_columns((pl.col("weight") * pl.col("_hh_scale")).alias("weight"))
         .drop("_hh_scale")
     )
+
+
+def _pps_certainty_split(
+    weights: np.ndarray, households: int, rng: np.random.Generator
+) -> tuple[np.ndarray, np.ndarray]:
+    """Indices taken with certainty, and indices drawn by systematic PPS.
+
+    Split out because the fixed-point loop is the part that is easy to get subtly
+    wrong, and it deserves its own test rather than only being exercised through a
+    full subsample.
+    """
+    total = weights.size
+    certain = np.zeros(total, dtype=bool)
+    while True:
+        free = ~certain
+        k = households - int(certain.sum())
+        if k <= 0:
+            break
+        remainder = float(weights[free].sum())
+        if remainder <= 0:
+            break
+        # π would be >= 1 for these, which no design can deliver.
+        newly = free & (k * weights >= remainder)
+        if not newly.any():
+            break
+        certain |= newly
+
+    free_index = np.flatnonzero(~certain)
+    k = households - int(certain.sum())
+    if k <= 0:  # pragma: no cover - only if every unit is a certainty unit
+        return np.sort(np.flatnonzero(certain)), np.array([], dtype=np.int64)
+    if k >= free_index.size:  # pragma: no cover - degenerate, take everything
+        return np.sort(np.flatnonzero(certain)), free_index
+
+    # Systematic PPS over a RANDOM permutation: without the shuffle the selection
+    # would depend on the arbitrary household_id ordering, and neighbouring ids in
+    # this population are not independent.
+    order = rng.permutation(free_index)
+    free_weights = weights[order]
+    step = free_weights.sum() / k
+    start = rng.uniform(0.0, step)
+    cumulative = np.cumsum(free_weights)
+    picks = np.searchsorted(cumulative, start + step * np.arange(k), side="right")
+    picks = np.clip(picks, 0, order.size - 1)
+    return np.sort(np.flatnonzero(certain)), np.sort(order[picks])
 
 
 def _household_index(frame: pl.DataFrame, key: str, household_ids: np.ndarray) -> np.ndarray:
@@ -155,6 +236,27 @@ def _extract(
     results["n_foyers_imposes"] = _to_households(
         (ir_per_foyer < -0.5).astype(np.float64), foyer_index, n_households
     )
+
+    # Allocataire counts, at FAMILLE level and in December.
+    #
+    # `margins.BENEFIT_RECIPIENTS` carries four `use="validation"` figures that were
+    # printed in the report's Sources table with no line comparing anything to them —
+    # the D-072 defect in the counts: a target that looks spent and never was. The
+    # zero-masked sweep found them.
+    #
+    # December, not the year: the published figures are stocks au 31/12, and an annual
+    # read counts every famille entitled at any point, which is a larger and different
+    # number. Famille, not ménage: an allocataire is a famille, and a ménage can hold
+    # more than one — counting ménages would understate by exactly the households that
+    # contain two claiming familles.
+    # Full tier only: these are the benefit variables, and the light tier exists
+    # precisely so a caller can skip computing them.
+    if tier == "full":
+        for key in ("af", "ppa", "rsa", "aide_logement"):
+            monthly = built.calculate(key, month=12)
+            results[f"n_allocataires_{key}"] = _to_households(
+                (monthly > 0.5).astype(np.float64), famille_index, n_households
+            )
 
     for row in outputs.rows_for(tier):
         array = built.calculate(row.variable, add=row.period == "month")

@@ -2,37 +2,52 @@
   "vintage": "2024",
   "branch": "A' — EEC household structure, synthetic incomes (D-012)",
   "households": 31013334.259670414,
-  "persons": 66990662.80094368,
-  "sampled_households": 50000,
+  "persons": 67423672.38924026,
+  "sampled_households": null,
   "totals": {
-    "salaire_brut": 1097421598263.8281,
-    "salaire_super_brut": 1457053601813.891,
-    "salaire_net": 871628650547.2979,
-    "salaire_imposable": 902911237314.707,
-    "cotisations_salariales": 121158093722.60332,
-    "cotisations_employeur": 402860251683.3876,
-    "csg_deductible": 73352268522.07794,
-    "csg_imposable": 25889035944.578262,
-    "crds": 5393549156.146976,
-    "ir": 107449692300.61417,
-    "af": 10301372983.900532,
-    "ppa": 12824348223.02832,
-    "rsa": 25490399583.57854,
-    "aide_logement": 11712494505.060257,
-    "revenu_disponible": 1278970490644.6758
+    "salaire_brut": 1107684670335.9775,
+    "salaire_super_brut": 1469809918322.4492,
+    "salaire_net": 879771834967.0569,
+    "salaire_imposable": 911347103586.6213,
+    "cotisations_salariales": 122299008348.85452,
+    "cotisations_employeur": 406300920292.58887,
+    "retraite_imposable": 400209299927.53174,
+    "chomage_brut": 35994828387.043144,
+    "csg_deductible": 74038559611.64764,
+    "csg_imposable": 26131256348.370502,
+    "crds": 5444011740.331932,
+    "ir": 107703508933.91048,
+    "ir_avant_niches": 107525107399.12921,
+    "reductions": 0.0,
+    "credits_impot": 0.0,
+    "af": 10611035321.898708,
+    "ppa": 13190609944.57383,
+    "rsa": 26297668745.40188,
+    "aide_logement": 12139562609.024488,
+    "aefa": 717213318.5108211,
+    "cf": 1164512805.151852,
+    "asf": 9037775415.236559,
+    "crds_pfam": -127830541.11793232,
+    "crds_logement": -61008050.27111019,
+    "crds_mini": -65953048.405810624,
+    "revenu_disponible": 1281444606734.4487
   },
   "counts": {
-    "n_foyers": 35087866.11470591,
-    "n_foyers_imposes": 19256799.508514553,
-    "n_persons": 66990662.80094368,
-    "n_dependants": 16928938.638983693
+    "n_foyers": 35335119.46643769,
+    "n_foyers_imposes": 19307597.622604176,
+    "n_persons": 67423672.38924026,
+    "n_dependants": 17225240.23489006,
+    "n_allocataires_af": 4165325.9551283303,
+    "n_allocataires_ppa": 5127469.28308621,
+    "n_allocataires_rsa": 3612512.375302098,
+    "n_allocataires_aide_logement": 4765097.55239393
   },
   "deciles": [
     {
       "decile": 1,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 8100.532351268192,
-      "mean_baseline": 11608.699433251953,
+      "n_households": 3101397.0262679257,
+      "mean_niveau_de_vie": 8105.749997823491,
+      "mean_baseline": 11613.118260613075,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -41,9 +56,9 @@
     },
     {
       "decile": 2,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 13316.310213658717,
-      "mean_baseline": 18770.50161640625,
+      "n_households": 3101257.919880599,
+      "mean_niveau_de_vie": 13280.533244440407,
+      "mean_baseline": 18967.741945396967,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -52,9 +67,9 @@
     },
     {
       "decile": 3,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 16842.012949402804,
-      "mean_baseline": 25681.985569726563,
+      "n_households": 3101267.4624514533,
+      "mean_niveau_de_vie": 16762.59050570315,
+      "mean_baseline": 25751.191153465672,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -63,9 +78,9 @@
     },
     {
       "decile": 4,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 19990.62643064163,
-      "mean_baseline": 30012.659607812504,
+      "n_households": 3101452.3080158294,
+      "mean_niveau_de_vie": 19938.26055976026,
+      "mean_baseline": 30000.041457971645,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -74,9 +89,9 @@
     },
     {
       "decile": 5,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 22780.069606960955,
-      "mean_baseline": 34425.12882226562,
+      "n_households": 3101258.2706736857,
+      "mean_niveau_de_vie": 22763.39193742339,
+      "mean_baseline": 34430.30926461376,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -85,9 +100,9 @@
     },
     {
       "decile": 6,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 25755.7226073546,
-      "mean_baseline": 40367.44613984375,
+      "n_households": 3101208.0478260666,
+      "mean_niveau_de_vie": 25747.435460796158,
+      "mean_baseline": 40421.48981529479,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -96,9 +111,9 @@
     },
     {
       "decile": 7,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 29217.06136911041,
-      "mean_baseline": 45649.97640039063,
+      "n_households": 3101413.4506785646,
+      "mean_niveau_de_vie": 29148.51053484092,
+      "mean_baseline": 45625.532514684346,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -107,9 +122,9 @@
     },
     {
       "decile": 8,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 33365.985024910915,
-      "mean_baseline": 52020.406842968754,
+      "n_households": 3101451.866318601,
+      "mean_niveau_de_vie": 33274.23992489476,
+      "mean_baseline": 51878.064415803085,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -118,9 +133,9 @@
     },
     {
       "decile": 9,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 39535.18916268657,
-      "mean_baseline": 60524.71033671875,
+      "n_households": 3101343.861336402,
+      "mean_niveau_de_vie": 39461.71462590919,
+      "mean_baseline": 60953.47159138768,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -129,9 +144,9 @@
     },
     {
       "decile": 10,
-      "n_households": 3101333.4259670414,
-      "mean_niveau_de_vie": 61933.58166965261,
-      "mean_baseline": 93332.2252703125,
+      "n_households": 3101284.046221286,
+      "mean_niveau_de_vie": 61946.83127880708,
+      "mean_baseline": 93550.75420435016,
       "mean_reform": null,
       "mean_delta": null,
       "share_winners": null,
@@ -142,146 +157,182 @@
   "reconciliation": [
     {
       "label": "Masse salariale brute",
-      "simulated": 1097421598263.8281,
+      "simulated": 1107684670335.9775,
       "published": 1111650000000.0,
-      "residual": -0.012799353875924901,
+      "residual": -0.0035670666702851683,
       "use": "calibration",
       "status": "calibrated (spent)",
       "source": "INSEE comptes nationaux (D11)"
     },
     {
       "label": "Pensions et retraites",
-      "simulated": null,
+      "simulated": 400209299927.53174,
       "published": 400400000000.0,
-      "residual": null,
+      "residual": -0.00047627390726334706,
       "use": "calibration",
       "status": "calibrated (spent)",
       "source": "DGFiP"
     },
     {
       "label": "Allocations chômage",
-      "simulated": null,
+      "simulated": 35994828387.043144,
       "published": 35900000000.0,
-      "residual": null,
+      "residual": 0.002641459249112632,
       "use": "calibration",
       "status": "calibrated (spent)",
       "source": "Unédic"
     },
     {
       "label": "Impôt sur le revenu — barème",
-      "simulated": 107449692300.61417,
+      "simulated": 107525107399.12921,
       "published": 98840000000.0,
-      "residual": 0.0871073684805157,
+      "residual": 0.08787037028661682,
       "use": "validation",
       "status": "within tolerance",
       "source": "DGFiP"
     },
     {
       "label": "Impôt sur le revenu — recettes nettes",
-      "simulated": 107449692300.61417,
+      "simulated": 107703508933.91048,
       "published": 87990000000.0,
-      "residual": 0.22115799864318864,
+      "residual": 0.22404260636334206,
       "use": "validation",
       "status": "OUTSIDE tolerance",
       "source": "budget.gouv.fr"
     },
     {
       "label": "Salaires déclarés (imposables)",
-      "simulated": 902911237314.707,
+      "simulated": 911347103586.6213,
       "published": 932100000000.0,
-      "residual": -0.03131505491395015,
+      "residual": -0.02226466732472765,
       "use": "validation",
       "status": "within tolerance",
       "source": "DGFiP"
     },
     {
       "label": "Foyers fiscaux",
-      "simulated": 35087866.11470591,
+      "simulated": 35335119.46643769,
       "published": 41635259,
-      "residual": -0.15725596627834326,
+      "residual": -0.15131740944765848,
       "use": "validation",
       "status": "OUTSIDE tolerance",
       "source": "DGFiP"
     },
     {
       "label": "Foyers imposés",
-      "simulated": 19256799.508514553,
+      "simulated": 19307597.622604176,
       "published": 19681757,
-      "residual": -0.021591440819305197,
+      "residual": -0.019010466260498182,
       "use": "validation",
       "status": "within tolerance",
       "source": "DGFiP"
     },
     {
       "label": "Allocations familiales",
-      "simulated": 10301372983.900532,
+      "simulated": 10611035321.898708,
       "published": 13770000000.0,
-      "residual": -0.2518973867900849,
+      "residual": -0.2294091995716261,
       "use": "validation",
-      "status": "OUTSIDE tolerance",
+      "status": "within tolerance",
       "source": "CNAF / DREES"
     },
     {
       "label": "Prime d'activité (bridge-adjusted)",
-      "simulated": 7434404766.972939,
+      "simulated": 7646730402.651495,
       "published": 10650000000.0,
-      "residual": -0.3019338246973766,
+      "residual": -0.28199714529093944,
       "use": "validation",
       "status": "OUTSIDE tolerance",
       "source": "CNAF / DREES"
     },
     {
       "label": "Prime d'activité",
-      "simulated": 12824348223.02832,
+      "simulated": 13190609944.57383,
       "published": 10650000000.0,
-      "residual": 0.20416415239702546,
+      "residual": 0.23855492437312953,
       "use": "validation",
       "status": "within tolerance",
       "source": "CNAF / DREES"
     },
     {
       "label": "RSA (bridge-adjusted)",
-      "simulated": 18812103013.7111,
+      "simulated": 19407873612.842716,
       "published": 12360000000.0,
-      "residual": 0.5220148069345552,
+      "residual": 0.5702163117186663,
       "use": "validation",
       "status": "OUTSIDE tolerance",
       "source": "CNAF / DREES"
     },
     {
       "label": "RSA",
-      "simulated": 25490399583.57854,
+      "simulated": 26297668745.40188,
       "published": 12360000000.0,
-      "residual": 1.0623300633963222,
+      "residual": 1.127643102378793,
       "use": "validation",
       "status": "OUTSIDE tolerance",
       "source": "CNAF / DREES"
     },
     {
       "label": "Aides au logement",
-      "simulated": 11712494505.060257,
+      "simulated": 12139562609.024488,
       "published": 15990000000.0,
-      "residual": -0.2675112879887269,
+      "residual": -0.24080283871016328,
+      "use": "validation",
+      "status": "within tolerance",
+      "source": "CNAF / DREES"
+    },
+    {
+      "label": "Allocataires AF",
+      "simulated": 4165325.9551283303,
+      "published": 4752000.0,
+      "residual": -0.12345834277602474,
+      "use": "validation",
+      "status": "within tolerance",
+      "source": "CNAF / DREES"
+    },
+    {
+      "label": "Allocataires prime d'activité",
+      "simulated": 5127469.28308621,
+      "published": 4812900,
+      "residual": 0.06535961334875218,
+      "use": "validation",
+      "status": "within tolerance",
+      "source": "CNAF / DREES"
+    },
+    {
+      "label": "Foyers allocataires du RSA",
+      "simulated": 3612512.375302098,
+      "published": 1840200,
+      "residual": 0.9631085617335606,
       "use": "validation",
       "status": "OUTSIDE tolerance",
       "source": "CNAF / DREES"
     },
     {
+      "label": "Allocataires d'une aide au logement",
+      "simulated": 4765097.55239393,
+      "published": 5809400,
+      "residual": -0.17976080965436536,
+      "use": "validation",
+      "status": "within tolerance",
+      "source": "CNAF / DREES"
+    },
+    {
       "label": "Niveau de vie médian",
-      "simulated": 22780.069606960955,
+      "simulated": 24634.8926404348,
       "published": 25920.0,
-      "residual": -0.12113928985490141,
+      "residual": -0.04957975924248459,
       "use": "validation",
       "status": "within tolerance",
       "source": "INSEE Filosofi 2023"
     },
     {
       "label": "Rapport interdécile D9/D1",
-      "simulated": 4.880566788489781,
+      "simulated": 3.627614251102944,
       "published": 3.5,
-      "residual": 0.3944476538542232,
+      "residual": 0.036461214600841174,
       "use": "validation",
-      "status": "OUTSIDE tolerance",
+      "status": "within tolerance",
       "source": "INSEE Filosofi 2023"
     },
     {
@@ -303,67 +354,5 @@
     "**Age is banded.** The EEC gives five age groups; exact ages are drawn inside them, so any threshold that does not fall on a band edge is fuzzy for an individual household and only right on average.",
     "**Benefits assume 100 % take-up.** OpenFisca computes legal entitlement; DREES measures non-take-up of RSA at 33-37 % of eligible households.",
     "**Assortative mating is absent.** Two earners in a household are drawn independently, which flattens the top of the household income distribution."
-  ],
-  "emtr_deciles": [
-    {
-      "decile": 1,
-      "households": 1704182.7175688893,
-      "emtr_median": 0.208125,
-      "emtr_mean": 0.20689799972038975
-    },
-    {
-      "decile": 2,
-      "households": 1705733.3842818728,
-      "emtr_median": 0.31683593750000005,
-      "emtr_mean": 0.30526713719223486
-    },
-    {
-      "decile": 3,
-      "households": 1708834.7177078398,
-      "emtr_median": 0.3221484375,
-      "emtr_mean": 0.3213767109044163
-    },
-    {
-      "decile": 4,
-      "households": 1691777.3838650212,
-      "emtr_median": 0.32806640625000005,
-      "emtr_mean": 0.32789209894401156
-    },
-    {
-      "decile": 5,
-      "households": 1719689.3846987244,
-      "emtr_median": 0.376923828125,
-      "emtr_mean": 0.3720360338940863
-    },
-    {
-      "decile": 6,
-      "households": 1702632.0508559057,
-      "emtr_median": 0.41859375,
-      "emtr_mean": 0.41996994713399366
-    },
-    {
-      "decile": 7,
-      "households": 1684024.0503001036,
-      "emtr_median": 0.42730468749999995,
-      "emtr_mean": 0.4266662889905617
-    },
-    {
-      "decile": 8,
-      "households": 1738297.3852545265,
-      "emtr_median": 0.430546875,
-      "emtr_mean": 0.4494002634366637
-    },
-    {
-      "decile": 9,
-      "households": 1702632.0508559057,
-      "emtr_median": 0.5154492187499999,
-      "emtr_mean": 0.5171984781752809
-    },
-    {
-      "decile": 10,
-      "households": 1711936.0511338068,
-      "emtr_median": 0.63537109375,
-      "emtr_mean": 0.7050595284429726
-    }
   ]
 }

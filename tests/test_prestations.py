@@ -106,9 +106,20 @@ def test_each_knob_moves_its_benefit(knob: str):
     )
 
 
-def test_every_prestation_knob_is_covered_here():
-    """A knob added without a case would otherwise ship unverified."""
-    assert set(CASES) == PRESTATION_KNOBS
+def test_every_prestation_knob_is_covered_somewhere():
+    """A knob added without a case would otherwise ship unverified.
+
+    Coverage lives in `tests/knob_cases.py`, which is the single registry every knob
+    must appear in; this file's own CASES are the subset with extra assertions on top.
+    Duplicating the completeness check here is how it drifted when the RSA forfait
+    knobs arrived.
+    """
+    from knob_cases import CASES as REGISTRY
+    from knob_cases import EXEMPT
+
+    uncovered = sorted(PRESTATION_KNOBS - set(REGISTRY) - set(EXEMPT))
+    assert not uncovered, f"prestation knobs with no outcome case: {uncovered}"
+    assert set(CASES) <= PRESTATION_KNOBS
 
 
 def test_the_third_child_rate_does_nothing_to_a_two_child_family():
@@ -324,3 +335,63 @@ def test_the_guard_would_still_fail_without_the_new_lines():
     with pytest.raises(guards.SectorBalanceError, match="ne correspond pas"):
         guards.sector_balance({k: v for k, v in af_reform.items() if k != "crds_pfam"},
                               reform_cost=cost)
+
+
+# --- the three things the prestations handoff said to watch --------------------------
+
+
+def test_transfer_signs_survive_both_directions():
+    """Watch-item 1. A transfer inverts the flow: a household gain is a state cost.
+
+    The sign-error class this guards against cost the allègements increment a headline
+    of 99 000 jobs "lost" from a cost CUT. Both directions, and both mis-signings.
+    """
+    from impots import guards
+
+    guards.sector_balance({"rsa": 3.6e9}, reform_cost=3.6e9)
+    guards.sector_balance({"rsa": -3.6e9}, reform_cost=-3.6e9)
+    # A levy runs the other way, and still balances.
+    guards.sector_balance({"ir": 2.0e9}, reform_cost=-2.0e9)
+    # Mis-signed: a benefit rise announced as a gain for the state.
+    with pytest.raises(guards.SectorBalanceError):
+        guards.sector_balance({"rsa": 3.6e9}, reform_cost=-3.6e9)
+    with pytest.raises(guards.SectorBalanceError):
+        guards.sector_balance({"rsa": -3.6e9}, reform_cost=3.6e9)
+
+
+def test_no_elasticity_row_claims_a_transfer_knob():
+    """Watch-item 2, at the store level.
+
+    The labour-supply rows that would speak to a taper reform died in the Phase 3
+    fan-out. Until a verified row exists, a PPA-taper reform must report mechanical
+    only — never an implicit response.
+    """
+    from impots.behavioural import store as behavioural_store
+
+    loaded = behavioural_store.load()
+    for knob in ("ppa_pente", "rsa_montant_de_base", "af_taux_2_enfants",
+                 "bmaf", "al_minoration_forfaitaire"):
+        claiming = [p.key for p in loaded.parameters.values() if p.claims(knob)]
+        assert not claiming, (
+            f"{knob} is claimed by {claiming} — a transfer knob has acquired a "
+            f"behavioural channel, which needs its own verified row and a decision "
+            f"entry, not a silent inheritance"
+        )
+    # The control: an income-tax knob IS claimed, so the check above is not vacuous.
+    assert [p.key for p in loaded.parameters.values() if p.claims("decote_taux")]
+
+
+def test_a_transfer_reform_has_no_macro_path():
+    """Watch-item 3. Transfers are the spending instrument the fan waited for — and
+    the fan still cannot price them, because no transfer MULTIPLIER survived M1.
+
+    D-063: adding a spending instrument does not supply a spending multiplier. Mésange
+    publishes no transfer variant, and the composite would overstate by two to three.
+    """
+    from impots.macro import shocks
+
+    impulse = shocks.build({"rsa": 3.0e9, "af": 0.8e9}, year=2026)
+    assert impulse.by_instrument == {}
+    assert impulse.covered_share == 0.0
+    for reason in impulse.reasons().values():
+        assert "0,39" in reason

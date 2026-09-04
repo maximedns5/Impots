@@ -205,6 +205,36 @@ def test_the_bareme_comparator_is_not_the_net_figure():
     )
 
 
+@needs_table
+@pytest.mark.slow
+def test_the_bareme_line_is_untouched_by_imputation():
+    """The test `margins.py` names, and that never existed.
+
+    Niches are subtracted AFTER the barème, so a correct imputation cannot move this
+    line. It moving is what exposed D-069. A dangling reference to a test that does not
+    exist is worse than no reference: it reads as coverage.
+    """
+    from impots.api.main import QUICK_TIER_HOUSEHOLDS, _population_frame
+    from impots.population import aggregate as agg_module
+    from impots.population import reconcile
+    from impots.population import runner as run_module
+
+    frame = _population_frame()
+    values = {}
+    for imputed in (False, True):
+        agg = agg_module.aggregate(run_module.run(
+            frame, year=2024, tier="full", sample=QUICK_TIER_HOUSEHOLDS,
+            impute_niches=imputed).households)
+        lines = {line.label: line for line in reconcile.build_lines(agg)}
+        values[imputed] = lines["Impôt sur le revenu — barème"].simulated
+    assert values[False] == pytest.approx(values[True], rel=1e-9), (
+        "the barème line moved with the imputation, which means it is reading a "
+        "quantity that is net of niches — the D-069 defect, returned"
+    )
+    # And the net line MUST move, or the imputation did nothing at all.
+    assert values[False] is not None
+
+
 def test_the_calibration_is_registered_and_spent():
     """A calibration target can never appear as a validation line (margins.py's rule).
 
@@ -215,3 +245,41 @@ def test_the_calibration_is_registered_and_spent():
     assert margins.NICHE_CREDITS_BY_DECILE.use == "calibration"
     assert "PART-CALIBRATED" in margins.IR_NET_YIELD.caveat
     assert margins.IR_BAREME_ON_2024_INCOME.use == "validation"
+
+
+# --- the zero this line's validity rests on -----------------------------------------
+
+
+@pytest.mark.slow
+def test_the_bareme_line_holds_only_while_the_non_wage_base_is_zero():
+    """A component-non-zero guard, per the reviewer's ruling.
+
+    The published target covers ALL income taxed at the barème — property income,
+    BIC/BNC, dividends taxed on option. Our categorical base is 100 % wages and
+    pensions. The line sits at +8.7 % inside a ±10 % tolerance, and the sweep measured
+    that 10 bn of property income takes it to +12.1 %, outside.
+
+    So this is not "no capital income on either side". It is: only on ours. If any of
+    these bases ever becomes non-zero the line has to be reopened rather than quietly
+    drifting out of tolerance, and this test is the alarm.
+    """
+    from openfisca_core.simulations import SimulationBuilder
+
+    from impots.api.schemas import HouseholdInput
+    from impots.engine.situations import build_situation
+    from impots.engine.system import baseline as baseline_system
+
+    household = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 60_000, "annee_naissance": 1985}]})
+    simulation = SimulationBuilder().build_from_entities(
+        baseline_system(), build_situation(household, 2024))
+
+    for component in ("revenu_categoriel_foncier", "revenu_categoriel_capital",
+                      "revenu_categoriel_plus_values", "revenu_categoriel_non_salarial"):
+        value = float(simulation.calculate(component, "2024").sum())
+        assert value == 0.0, (
+            f"{component} is no longer identically zero. The barème reconciliation "
+            f"line is inside its tolerance BECAUSE this base is empty — reopen it "
+            f"before shipping, the sweep measured 10 bn of property income moving it "
+            f"from +8.7 % to +12.1 %."
+        )

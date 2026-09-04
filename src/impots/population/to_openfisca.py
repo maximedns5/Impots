@@ -70,14 +70,21 @@ class PopulationSimulation:
     famille_ids: np.ndarray
     n_persons: int
 
-    def calculate(self, variable: str, add: bool = False) -> np.ndarray:
+    def calculate(
+        self, variable: str, add: bool = False, month: int | None = None
+    ) -> np.ndarray:
         """Compute one variable, with the guards that separate noise from bugs.
 
         All-population runs legitimately emit `RuntimeWarning: divide by zero`
         from openfisca's own formulas on zero-income households. A NaN is not
         legitimate: it is how the role bug surfaces.
+
+        `month` reads a single month instead of the year. The published allocataire
+        counts are stocks *au 31 décembre*, and an annual read would count everyone
+        entitled at any point in the year — a different statistic, larger, and the
+        difference is exactly the churn the published figure excludes.
         """
-        period = str(self.year)
+        period = str(self.year) if month is None else f"{self.year}-{month:02d}"
         result = (
             self.simulation.calculate_add(variable, period)
             if add

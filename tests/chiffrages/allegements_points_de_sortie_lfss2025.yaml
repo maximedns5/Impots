@@ -38,7 +38,13 @@ tolerance_reason: >
 expect_red: true
 caveat: >
   RED BY A FACTOR OF TWO, AND IT IS THE MOST INFORMATIVE RESULT IN THE SUITE.
-  Simulated 4.15 Md€ against a published 2.0 Md€: +107 %.
+  Simulated 4.23 Md€ against a published 2.0 Md€: +112 %, measured on the FULL
+  population. The figure first recorded here was 4.15 Md€ / +107 %, taken from a
+  20 000-household subsample drawn by a sampler later found to be biased (D-074); the
+  same case on the same subsample now reads +122 %, and the 0.10 between that and the
+  sample-free +112 % is the draw. This case is the reason the pin moved: it is the most
+  sample-sensitive in the suite, because its yield depends on the mass in a narrow wage
+  band and a subsample estimates that mass badly.
 
   Mechanical explanations first (D-029), and both fail. *Vintage*: re-encoding the
   case at 2025 as a mirror — putting the ceilings back to 2,5 and 3,5 against 2025
@@ -57,7 +63,7 @@ caveat: >
 
   So this is a second external measurement of D-015, on a different instrument, and it
   is much larger than the first: the barème-indexation case reads +10 % on an
-  instrument whose brackets are progressive, this one reads +107 % on two narrow
+  instrument whose brackets are progressive, this one reads +112 % on two narrow
   cliffs. That contrast is the finding. It says the synthetic income distribution's
   error is not a gentle level shift but a mis-shaped density, and that any reform
   whose yield depends on the mass in a narrow wage band will be badly overstated

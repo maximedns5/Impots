@@ -2565,8 +2565,221 @@ explains why *hitting* it proves little — it never explained why *missing* it 
 fine.
 
 **And the quantities existed all along.** Adding the two rows the lines needed makes them
-compare: pensions +1.1 %, unemployment +0.8 %, against a ±10 % calibration tolerance.
+compare: pensions +1.1 %, unemployment +0.8 %, against the calibration tolerance.
+*(Corrigé par D-074 : cette tolérance est de ±2 %, non de ±10 % comme écrit ici d'abord, et les deux chiffres ci-dessus étaient ceux d'un sous-échantillon de 20 000 produit par un échantillonneur biaisé. Sur la population complète les deux lignes valent −0,05 % et +0,26 %.)*
 Both pass. Nobody knew, because nothing had ever asked.
 
 The class this belongs to is the one the reviewer ruled on: a comparison that cannot
 fail is not a comparison. Here it could not even run.
+
+## D-073 — Le balayage des comparaisons masquées, et deux lignes qui comparaient la mauvaise statistique
+
+Verdict du relecteur : *une comparaison qui n'est juste que parce qu'un des deux côtés est
+identiquement nul n'est pas juste, elle n'est pas testée*. Balayage exécuté sur toutes les
+lignes de réconciliation, ménages et entreprises. Le registre complet est
+`docs/ZERO_MASKED_SWEEP.md` ; ce qui est décidé ici est ce qui a changé dans le code.
+
+**Le résultat le plus important n'est pas un zéro.** Deux lignes de distribution
+comparaient la mauvaise statistique : la moyenne du décile 5 face à une médiane publiée,
+et un rapport de moyennes de déciles face à un rapport de seuils. Corrigé en quantiles
+pondérés par personne — ce que l'INSEE publie —, le niveau de vie médian passe de −12,2 %
+à −5,0 % et D9/D1 de +39,1 % à +3,6 % sur la population complète. Plus de la moitié de
+chaque résidu était un choix d'estimateur. Les deux notes de ligne calculent cet écart
+**depuis leur propre passage** plutôt que de le recopier, pour la raison de D-072 : une
+affirmation sur une comparaison, écrite là où la comparaison n'a pas été faite, est le
+défaut lui-même. Le tableau de déciles reste pondéré par ménage, qui est ce dont l'incidence
+d'une réforme a besoin, et un test interdit que la correction y fuie.
+
+**Deux lignes qui s'améliorent grâce à un changement que nous avons fait** sont exactement
+le mouvement qu'il faut suspecter. C'est la raison de la note, du registre et du test
+plutôt que d'un simple commit.
+
+**Quatre figures `use="validation"` étaient imprimées dans la table des sources sans
+qu'aucune ligne ne compare quoi que ce soit à elles** — les comptes d'allocataires AF,
+PPA, RSA, AL. C'est D-072 d'un cran au-dessus : non pas une comparaison masquée par un
+zéro, mais une cible qui *avait l'air* dépensée sans l'avoir jamais été. Les quatre
+lignes existent maintenant, comptées au niveau **famille** et en **décembre** parce que
+la cible est un stock au 31/12 ; l'une d'elles, le RSA, sort à **+96,3 %**.
+
+**Ce que le balayage a établi et qui n'est pas corrigé ici**, par ordre de gravité :
+`loyer_mensuel` est identiquement nul chez 8,01 M de ménages primo-accédants, ce qui
+applique à tort le forfait logement de la PPA et du RSA — et corriger la population fera
+**sortir la PPA de sa tolérance** (+22,5 points mesurés), ce qui est le bon résultat et
+la raison de le faire délibérément. Suivent sept lignes IS sectorielles jamais balayées dont
+trois hors tolérance, un « taux effectif moyen » dont le numérateur porte cinq
+prélèvements et non l'IS, et le secteur public non câblé — sur une ligne structurellement
+incapable de le détecter.
+
+**Une figure a dû être mesurée deux fois.** Le balayage annonçait que D9/D1 sortirait de
+sa tolérance dès 10 % de capital ajouté. Notre propre mesure donne +5,5 points de
+résidu, ce qui la laisse dedans. Le sens était bon, la magnitude non. D-026 tient : la prose d'un agent n'est
+jamais la source d'une figure, y compris quand elle vient d'un balayage que nous avons
+nous-même commandé.
+
+**Et un drapeau qui n'existait nulle part.** Deux des lignes masquées n'avaient aucune
+autre lecture *disponible* : le générateur du rapport ne passait jamais `impute_niches`,
+et `docs/B3_IR_NICHES.md` documentait un `--impute-niches` qui n'existait sur aucune
+commande — une référence pendante, qui se lit comme une couverture. Le drapeau existe
+maintenant sur `population run` et `population reconcile`, à faux par défaut. Mesuré :
+l'IR net passe de +22,5 % à +10,4 %, les foyers imposés de −2,3 % à −8,8 %, **et la ligne
+barème ne bouge pas d'un centième**. C'est cette troisième ligne qui dit que la correction
+est juste plutôt que seulement favorable.
+
+## D-074 — Le sous-échantillon n'était pas un tirage PPS, et le test qui le gardait ne pouvait pas échouer
+
+Trouvé en corrigeant l'échec de gate laissé par D-073 : deux lignes de calibration
+sortaient de leur tolérance de ±2 % — pensions à +2,29 %, chômage à −2,40 % — alors que la
+calibration atteint sa cible **exactement** sur la frame complète (mesuré : −0,0000 % et
++0,0000 %). Le résidu ne pouvait donc venir que du tirage.
+
+**Et il grandissait avec la taille du tirage.** Masse des pensions : +1,12 % à n=20 000,
++2,34 % à 50 000, **+6,39 % à 100 000**. Chômage : +0,55 %, −2,61 %, **−5,80 %**. Une
+erreur d'échantillonnage décroît en 1/√n ; une erreur qui croît est un **biais**.
+
+La cause : `np.random.default_rng().choice(..., replace=False, p=w)` **n'est pas un tirage
+PPS**. numpy tire séquentiellement et renormalise les probabilités restantes après chaque
+tirage, si bien que la probabilité d'inclusion réalisée d'une unité lourde **sature vers
+1** au lieu d'atteindre n·w/W. Le code attribuait ensuite à chaque survivant le poids
+constant W/n, qui n'est correct **que si** π = n·w/W.
+
+Mesuré sur une population synthétique à queue lourde : les six unités les plus lourdes ont
+un π supposé de 1,80 à 1,31 — **des valeurs supérieures à 1, ce qui est déjà la preuve,
+aucune probabilité d'inclusion ne pouvant excéder un** — contre un π réalisé de 0,94 à
+0,86, tandis que les plus légères ressortent à 1,5× leur π supposé. Sur une variable
+corrélée au poids, l'estimateur est biaisé de **−18,7 %** ; Horvitz-Thompson avec les π
+réellement réalisés rend +0,03 %.
+
+**Le test qui gardait cela ne pouvait pas échouer.** `test_subsample_preserves_total_weight`
+vérifie que le poids total est conservé — or W_certain + k·(W_reste/k) = W **par
+construction**, quel que soit le plan de sondage. C'est exactement la classe que D-073
+balayait, dans l'échantillonneur lui-même.
+
+**La correction, en deux parties.** (1) Une **strate exhaustive** : quand n·w/W ≥ 1, aucun
+plan ne peut donner à l'unité la probabilité que l'argument d'auto-pondération suppose,
+puisque ce nombre dépasse 1. Ces unités sont prises avec certitude et **gardent leur propre
+poids** ; les retirer réduit W et n pour le reste, ce qui peut en faire basculer d'autres,
+donc la boucle itère jusqu'au point fixe. (2) **PPS systématique (Madow)** sur le reste,
+dans un ordre permuté aléatoirement : π = k·w/W_reste exactement, ≤ 1 par construction de
+la strate, donc le poids constant W_reste/k est exact.
+
+Après correction, l'erreur **décroît** avec n comme elle le doit, et les quatre lignes de
+calibration rentrent : masse salariale −0,09 %, pensions +0,43 %, chômage −1,00 %.
+
+**Une alerte qui n'en était pas une, et qui vaut d'être écrite.** Sur le tirage de
+50 000 la ligne du barème est passée de +8,5 % à +10,9 %, donc hors de sa tolérance de
+±10 %, et cela a d'abord été rapporté comme le prix honnête de la correction. C'était
+faux. La population **complète**, sans aucun échantillonnage, donne **+8,8 %**, dans la
+tolérance. Le +10,9 % était la variance d'un seul tirage, pas un biais. La leçon est
+celle du reste de ce projet : un seul tirage n'établit rien, et la population complète
+est le seul arbitre.
+
+Vérifié en mesurant plutôt qu'en supposant. Sur quatre graines à n=50 000, le résidu du
+barème vaut +6,90 %, +10,23 %, +8,18 % et +9,62 % — **moyenne +8,73 %** contre +8,8 % sur
+la population complète, soit **0,07 point d'écart**, et un **écart-type de 1,49 point par
+tirage**. L'échantillonneur corrigé est donc sans biais sur cette ligne, et le bruit d'un
+seul tirage y est du même ordre que la tolérance de ±10 % elle-même. C'est la raison de
+fond de produire le rapport **sur la population complète**, ce qui retire la question de
+l'échantillonnage de la page de crédibilité au lieu de la commenter.
+
+**La garde a dû être écrite deux fois.** La première version tirait une variable à queue
+lourde **indépendante du poids** et ne détectait rien (+0,34 %) : le biais porte sur la
+corrélation entre la variable et le poids. La garde retenue prend `y = w`, le cas le plus
+net, et **embarque l'ancien échantillonneur comme témoin négatif** — une garde dont on n'a
+jamais montré qu'elle échoue est une garde que personne n'a testée.
+
+## D-075 — Ce que la vérification adverse a ajouté à D-064, avant de le signaler en amont
+
+Préparation de l'item A2 du handoff : signaler le paramètre fantôme en amont. Cinq
+affirmations de D-064 ont été soumises à réfutation adverse à deux angles chacune, puis
+tout ce qui portait le rapport a été **remesuré à la main** (D-026 : la prose d'un agent
+n'est jamais la source d'une figure, y compris quand elle vient d'un balayage que nous
+avons commandé).
+
+**Ce qui tient, reproduit ici même.** Sur un foyer dont le crédit de référence est
+**non nul** — 5 000 EUR, la vérification anti-zéro-masqué sans laquelle la démonstration
+ne vaudrait rien — écrire 0,9 dans `aide_a_domicile.taux` via une `Reform` réussit, se
+relit à 0,9, et laisse `ci_saldom` à **5 000,0**. La même écriture sur
+`emploi_salarie_domicile.taux` le porte à **9 000,0**. Sept feuilles sur sept identiques
+au 2024-01-01. Zéro occurrence de `aide_a_domicile` dans les `.py` du paquet.
+
+**Ce que D-064 ne disait pas.** L'identité des valeurs ne vaut qu'à partir du 2017-01-01 ;
+avant, le nœud fantôme n'a **aucune** valeur et un accès au 2015-01-01 lève
+`ParameterNotFoundError`. Et la chronologie est l'inverse de l'intuition : `aide_a_domicile`
+est arrivé **le premier** (2022-11-16, import des barèmes IPP, chaque feuille portant encore
+son `ipp_csv_id`), sans jamais être branché ; le dossier réellement lu a été créé **deux ans
+plus tard** à côté. Ce n'est donc pas un renommage dont on aurait oublié de supprimer
+l'original, c'est un import jamais câblé que le dossier câblé a redoublé. Il continue d'être
+entretenu comme vivant — `last_value_still_valid_on: "2025-02-24"`.
+
+**Et ce n'est pas un cas isolé.** Balayage de l'arbre entier : 4 645 chemins, 3 432 non nuls
+au 2024-01-01, **715 lus par aucune formule**. Ce chiffre est une borne basse produite par
+notre propre outil et ne prouve rien seul. Ce qui compte, et que **nous avons vérifié à la
+main un par un**, ce sont les nœuds morts portant les **mêmes valeurs qu'un jumeau vivant** :
+il y en a **six**, pas un — le premier jet du rapport en annonçait un seul et se trompait.
+
+Les six reproduisent, en amont et sans que nous y soyons pour rien, **les trois formes que ce
+projet avait cataloguées séparément** :
+
+* l'arbre dupliqué pour le même article (D-064) — `aide_a_domicile` ;
+* le paramètre **dérivé** que les formules recalculent (D-062) — `csg.activite.taux_global`
+  vaut 0,092, soit exactement `deductible` 0,068 + `imposable` 0,024, et n'est lu nulle part ;
+* le nom qui **défait une règle par grep** (D-071) — `taux_global` existe bien dans le
+  source, mais sous `csg.remplacement.allocations_chomage` et sous `taxation_capital`,
+  jamais sous `csg.activite`. Un grep sur la feuille conclut « utilisé » et se trompe,
+  exactement comme il l'avait fait pour `af_cm.modulation.taux_tranche_1`.
+
+Le plus piégeux du lot n'est aucun de ceux-là : `csg.remplacement.allocations_chomage.abattement`
+est **au bon endroit dans l'arbre**, décrit pour cela, avec le bon barème — et les formules
+CSG sur le chômage vont chercher `csg.activite.abattement` de côté. Qui réforme l'abattement
+de CSG sur le chômage écrit dans le nœud mort.
+
+**Rien n'a été publié.** Le brouillon est prêt, en français, au format du template amont ; le
+dépôt aval n'y est pas nommé. Trois décisions restent au propriétaire du dépôt : publier ou
+non, sous quel compte, et signaler ou non le doublon comme une classe plutôt qu'un cas.
+
+## D-076 — Ce que l'échantillonneur corrigé a fait remonter : cf, asf, et un chiffrage épinglé sur du bruit
+
+Deux échecs de gate après D-074, tous deux réels, tous deux des conséquences directes du
+passage à un échantillonnage sans biais.
+
+**Le garde d'écriture double a trouvé une troisième fuite.** Une réforme nationale de la
+CSG bouclait à +0,11 % contre un plancher de 0,1 % : 11,86 M€ inexpliqués sur 10,6 md. La
+mesure des postes désigne exactement `cf` (complément familial, 3,59 M€) et `asf`
+(allocation de soutien familial, 8,23 M€) — 11,82 M€, le résidu à l'arrondi près. Les deux
+sont sous condition de ressources, donc une réforme qui change le revenu net les déplace ;
+les deux sont dans `revenu_disponible` via `prestations_familiales` ; aucune n'avait de
+ligne. Les voici itemisées, comme `aefa` et la CRDS sur prestations l'ont été en D-062.
+
+**La fuite était là avant, et c'est le tirage biaisé qui la maintenait sous le plancher.**
+C'est le sens de la correction : un échantillonneur qui se trompe peut faire passer un
+garde aussi bien qu'il peut le faire échouer.
+
+**Un chiffrage était épinglé sur une valeur de tirage.** Le cas
+`allegements_points_de_sortie_lfss2025` — le plus sensible au tirage de toute la suite,
+parce que son rendement dépend de la masse salariale dans une bande étroite — était épinglé
+à +107 %. Sur la **population complète**, sans aucun échantillonnage, il vaut **+112 %**
+(4,23 md€ contre 2,0 md€ publiés) ; sur le sous-échantillon de 20 000 il vaut maintenant
++122 %. Le +107 % venait de l'échantillonneur biaisé, et les 10 points entre +112 % et
++122 % sont le tirage.
+
+Le cas est donc réépinglé sur sa valeur **sans échantillon**, avec une tolérance de ±0,15
+qui couvre le bruit de tirage mesuré, et la fiche du chiffrage porte les trois chiffres
+plutôt qu'un seul. Réépingler sur +122 % aurait figé un artefact d'échantillonnage dans
+une fiche dont le rôle est précisément d'empêcher un constat de dériver en silence.
+
+**Une contrainte machine, notée parce qu'elle a coûté deux essais.** Un passage plein
+tarif avec réforme sur les 199 451 ménages tient deux simulations en mémoire simultanément
+et se fait tuer par l'OOM killer (SIGKILL, exit 137, mesuré). Le passage de réconciliation,
+qui n'a qu'un système, tient. La valeur sans échantillon n'est donc pas disponible pour
+tous les cas de la suite, et c'est pourquoi la tolérance reste par cas.
+
+**Ce que les deux nouvelles lignes montrent, et qui n'est pas rassurant.** Une fois
+itemisées, `cf` vaut 1,17 md€ et `asf` **9,04 md€** sur la population complète. La CNAF
+publie une ASF de l'ordre de 2 md€. Le modèle est donc environ 4,5 fois trop haut sur cette
+prestation — soit, ramené au barème mensuel d'environ 187 € par enfant, quelque 4 M
+d'enfants bénéficiaires contre à peu près 1,4 M réels. Ce n'est pas une régression
+introduite ici : c'est D-015 sur un instrument de plus, la population portant trop de
+familles monoparentales éligibles, et cela devient visible seulement parce que
+l'instrument a enfin une ligne. Aucune ligne de validation n'est ouverte pour l'ASF dans
+cet incrément — il faudrait une figure publiée choisie et versée au registre — mais le
+niveau est noté ici pour qu'il ne passe pas inaperçu.

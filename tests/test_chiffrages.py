@@ -116,17 +116,37 @@ def test_the_known_misses_are_the_size_they_are_documented_to_be() -> None:
     """A red case still has to be pinned. A finding that drifts silently is not a
     finding — the write-up quotes a simulated cost a third too large, so the number
     is held there. Signed negative because the case is mirror-encoded: the model
-    overshoots the article's cost in magnitude."""
-    for key, expected in (("c3s_abattement_lfss2016", -0.34),
-                          ("ir_bareme_indexation_lfi2024", -0.104),
-                          ("allegements_points_de_sortie_lfss2025", 1.073)):
+    overshoots the article's cost in magnitude.
+
+    **The tolerance is per case, and the reason is measured.** Household cases run on a
+    deterministic 20 000-household subsample, so their residual carries the draw's noise
+    as well as the model's error, and the allègements case is the one where that matters:
+    the sampler fix (D-074) moved it from +1.073 to +1.219 on the subsample, while the
+    same case run on the FULL population — no sampling at all — gives **+1.115**. The
+    0.104 between those two is the draw, not the model, and the earlier +1.073 was the
+    biased sampler.
+
+    So this case is pinned at its sample-free value with a tolerance that covers the
+    measured draw noise. The firm case does not sample and the IR case moves little, so
+    both keep the tight ±0.03. The sample-free value cannot simply be used for every
+    case: a full-tier reform run over 199 451 households holds two simulations at once
+    and is killed for memory on this machine (SIGKILL, measured) — the baseline-only
+    reconciliation run fits, a reform run does not.
+    """
+    for key, expected, tolerance in (
+        ("c3s_abattement_lfss2016", -0.34, 0.03),
+        ("ir_bareme_indexation_lfi2024", -0.104, 0.03),
+        # Pinned on the full population; ±0.15 covers the 0.104 of subsample noise
+        # measured between the sampled and sample-free runs of this same case.
+        ("allegements_points_de_sortie_lfss2025", 1.115, 0.15),
+    ):
         case = next(c for c in CASES if c.key == key)
         if not available(case):
             pytest.skip(f"no {case.scope} population built in this checkout")
         # Once, not twice: each of these is a full population run.
         simulated = run_case(case)
         residual = case.residual(simulated)
-        assert residual == pytest.approx(expected, abs=0.03), key
+        assert residual == pytest.approx(expected, abs=tolerance), key
         assert not case.passes(simulated), f"{key}: a documented miss that no longer misses"
 
 

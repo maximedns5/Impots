@@ -33,7 +33,7 @@ from impots.population.calibrate import (
     with_cells,
 )
 from impots.population.incomes import attach_incomes, quantile_curve, sample_curve
-from impots.population.runner import run, subsample
+from impots.population.runner import _pps_certainty_split, run, subsample
 from impots.population.skeleton import build_skeleton
 from impots.population.to_openfisca import (
     ROLE_VOCABULARY,
@@ -228,6 +228,122 @@ def test_subsample_preserves_total_weight(population: pl.DataFrame) -> None:
         sampled.group_by("household_id").agg(pl.col("weight").mean())["weight"].sum()
     )
     assert sampled_weight == pytest.approx(full_weight, rel=1e-9)
+
+
+def test_subsample_is_unbiased_and_the_old_sampler_was_not() -> None:
+    """The guard the total-weight check could not be, with its own kill test built in.
+
+    `test_subsample_preserves_total_weight` holds BY CONSTRUCTION — W_certain plus
+    k·(W_rest/k) is W whatever the design does — so it passed throughout the period when
+    the sampler was biased. It is a comparison that cannot fail.
+
+    The previous implementation drew with `rng.choice(replace=False, p=w)`, which is not
+    PPS: numpy renormalises the remaining probabilities after each draw, so a heavy
+    unit's realised inclusion probability saturates towards 1 instead of reaching
+    n·w/W, and weighting every survivor at the constant W/n on top of that biases every
+    total. On the real population the tell was that the error GREW with the sample: the
+    pension mass, which the calibration hits exactly on the full frame, came out at
+    +1.12 % at n=20 000, +2.34 % at 50 000 and +6.39 % at 100 000.
+
+    The bias is largest for a variable CORRELATED with the weight, which is why the
+    first version of this test — a heavy-tailed variable drawn independently — missed it
+    at +0.34 % and had to be thrown away. `y = w` is the sharpest case and the one used
+    here.
+
+    The old sampler is reimplemented below as a NEGATIVE CONTROL. A guard that has never
+    been shown to fail is a guard nobody has tested.
+    """
+    size, draw, reps = 200, 60, 1_500
+    weights = np.exp(np.random.default_rng(0).standard_normal(size) * 1.2)
+    y = weights  # perfectly correlated with the weight: the sharpest case
+    truth = float((weights * y).sum())
+
+    def new_estimate(seed: int) -> float:
+        certain, sampled = _pps_certainty_split(
+            weights, draw, np.random.default_rng(seed))
+        rest = weights.sum() - weights[certain].sum()
+        per = rest / sampled.size if sampled.size else 0.0
+        return float((weights[certain] * y[certain]).sum() + per * y[sampled].sum())
+
+    def old_estimate(seed: int) -> float:
+        """`rng.choice(replace=False, p=)` plus a constant W/n weight — the defect."""
+        chosen = np.random.default_rng(seed).choice(
+            size, size=draw, replace=False, p=weights / weights.sum())
+        return float((weights.sum() / draw) * y[chosen].sum())
+
+    new_bias = np.mean([new_estimate(s) for s in range(reps)]) / truth - 1
+    old_bias = np.mean([old_estimate(s) for s in range(reps)]) / truth - 1
+
+    assert abs(new_bias) < 0.02, (
+        f"the subsample estimates a weight-correlated total at {new_bias:+.2%} of "
+        f"truth. The design is meant to be exactly unbiased — a systematic offset means "
+        f"the realised inclusion probabilities are not the ones the constant weight "
+        f"assumes."
+    )
+    assert old_bias < -0.05, (
+        f"the old sampler came out at {old_bias:+.2%}, which means this test can no "
+        f"longer distinguish a biased design from a sound one — fix the test, not the "
+        f"assertion"
+    )
+
+
+def test_the_certainty_stratum_takes_units_no_design_could_reach() -> None:
+    """A unit with n·w/W >= 1 cannot have that inclusion probability, because it
+    exceeds one. Taking it with certainty at its own weight is the only correct move,
+    and the loop must iterate: removing heavy units shrinks W and n for the rest, which
+    can push further units over the line."""
+    weights = np.array([500.0, 400.0, 300.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+    certain, sampled = _pps_certainty_split(weights, 4, np.random.default_rng(0))
+    assert set(certain.tolist()) == {0, 1, 2}, (
+        "the three heavy units must be certainty units — with n=4 and W=1207, "
+        "4·500/1207 is 1.66, which is not a probability")
+    assert sampled.size == 1
+    assert sampled[0] >= 3, "the sampled unit must come from the light remainder"
+
+    # And with no heavy unit there is no certainty stratum at all.
+    certain, sampled = _pps_certainty_split(
+        np.ones(10), 4, np.random.default_rng(0))
+    assert certain.size == 0 and sampled.size == 4
+
+
+BUILT_POPULATION = (
+    Path(__file__).resolve().parents[1] / "data" / "processed" / "population_2024.parquet"
+)
+
+
+@pytest.mark.slow
+@pytest.mark.skipif(not BUILT_POPULATION.exists(),
+                    reason="no population built — run `impots population build`")
+def test_the_subsample_recovers_the_calibrated_masses() -> None:
+    """The outcome check on the real frame, which is what found the defect.
+
+    Three income masses are calibrated to hit their published target EXACTLY on the
+    full frame, so any residual a subsample shows is the sampler and nothing else. That
+    makes them the sharpest available probe, and it is why the reconciliation report's
+    calibration lines were reading OFF TARGET.
+    """
+    # The REAL frame, not the small fixture: these masses are calibrated on the real
+    # population and the fixture's are not, so the fixture cannot express the property.
+    population = pl.read_parquet(BUILT_POPULATION)
+    columns = ("pension_annuelle", "chomage_annuel", "salaire_brut_annuel")
+
+    def mass(frame: pl.DataFrame, column: str) -> float:
+        return float(frame.select((pl.col(column) * pl.col("weight")).sum()).item())
+
+    households = population["household_id"].n_unique()
+    for column in columns:
+        if column not in population.columns:  # pragma: no cover - frame vintage
+            continue
+        truth = mass(population, column)
+        errors = [
+            mass(subsample(population, households // 4, seed=seed), column) / truth - 1
+            for seed in range(4)
+        ]
+        assert abs(float(np.mean(errors))) < 0.02, (
+            f"{column} comes back at {np.mean(errors):+.2%} of its full-frame mass "
+            f"across four seeds. That mass is calibrated exactly, so this is the "
+            f"sampler, not the model."
+        )
 
 
 def test_subsample_is_deterministic(population: pl.DataFrame) -> None:

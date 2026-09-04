@@ -144,7 +144,7 @@ STATE_RECEIPTS = (
 #: makes the reconstitution the state's actual burden. Without them a national AF
 #: reform missed by 0.50 % — five times the tolerance, and exactly 0.5 % of the AF
 #: moved, which is the CRDS rate.
-STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "aefa",
+STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",
                    "crds_pfam", "crds_logement", "crds_mini")
 
 #: The identity is checked in absolute euros against a floor, and relatively above it.

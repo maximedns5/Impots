@@ -120,6 +120,18 @@ REGISTRY: tuple[Row, ...] = (
         label="RSA"),
     Row("aide_logement", "aide_logement", "famille", "month", "full", False,
         label="Aide au logement"),
+    # Complément familial and allocation de soutien familial. Itemised for the third
+    # time in this project's history for the same reason, and found the same way: the
+    # double-entry guard. Both are means-tested, so a CSG reform that changes net income
+    # moves them; both sit inside `revenu_disponible` through `prestations_familiales`;
+    # neither had a row. Measured on a national CSG reform, `cf` moved 3.59 M EUR and
+    # `asf` 8.23 M EUR, and the guard's unexplained residual was 11.86 M EUR — the sum,
+    # to within rounding. Cf. `aefa` above and the benefit-side CRDS below: a benefit the
+    # runner does not report is a benefit the cost reconstitution cannot see.
+    Row("cf", "cf", "famille", "month", "full", False,
+        label="Complément familial"),
+    Row("asf", "asf", "famille", "month", "full", False,
+        label="Allocation de soutien familial"),
     # The prime de Noël. Itemised because the double-entry guard found it leaking:
     # raising the RSA base brings households into ELIGIBILITY, and eligibility carries
     # this flat 152.45 EUR with it. It sits inside `revenu_disponible` through

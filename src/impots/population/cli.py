@@ -260,7 +260,8 @@ def cmd_run(args: argparse.Namespace) -> int:
         print(f"{population} not found — run `impots population build` first", file=sys.stderr)
         return 1
     reform = _load_reform(args.reform)
-    result = run(population, year=args.year, reform=reform, tier=args.tier, sample=args.sample)
+    result = run(population, year=args.year, reform=reform, tier=args.tier,
+                 sample=args.sample, impute_niches=args.impute_niches)
     print(f"ran {result.n_households:,} households / {result.n_persons:,} persons "
           f"({result.tier} tier{f', sample {result.sampled:,}' if result.sampled else ''})")
     print(f"  timings {result.timings} · guards {result.guards}")
@@ -329,7 +330,14 @@ def cmd_reconcile(args: argparse.Namespace) -> int:
         del frame, unraked_result
         gc.collect()
 
-    result = run(population, year=args.year, tier="full", sample=args.sample)
+    # `impute_niches` is off by default, and that is a reported fact rather than a
+    # detail: two lines of the report — the net IR yield and the count of foyers
+    # imposés — compare a figure that is GROSS of réductions and crédits against a
+    # target that is net of them, and they do so only because this flag is off. The
+    # zero-masked sweep (D-073) measured the second at 6.4 points. There was no way to
+    # produce the other reading at all until this flag existed.
+    result = run(population, year=args.year, tier="full", sample=args.sample,
+                 impute_niches=args.impute_niches)
     agg = aggregate_module.aggregate(result.households)
 
     path = reconcile_module.write(
@@ -513,7 +521,13 @@ def pl_read(path: object) -> object:
     return pl.read_parquet(path)
 
 
-def main(argv: list[str] | None = None) -> int:
+def build_parser() -> argparse.ArgumentParser:
+    """The CLI surface, separate from running it so that tests can read it.
+
+    A flag that exists only inside `main` can be asserted about only by grepping, and
+    grep is exactly what let a dead parameter survive a standing rule (see
+    `tests/knob_cases.py`).
+    """
     parser = argparse.ArgumentParser(prog="impots", description=__doc__)
     subcommands = parser.add_subparsers(dest="group", required=True)
     population = subcommands.add_parser("population", help="the L1 synthetic population")
@@ -537,12 +551,22 @@ def main(argv: list[str] | None = None) -> int:
     runner_parser.add_argument("--tier", choices=["light", "full"], default="full")
     runner_parser.add_argument("--sample", type=int, default=None,
                                help="run a deterministic subsample of N households")
+    runner_parser.add_argument(
+        "--impute-niches", action="store_true",
+        help="draw réduction and crédit d'impôt bases from the published DGFiP decile "
+             "table before taking the figures (D-066). It is a CALIBRATION: the national "
+             "niche total then matches DGFiP by construction")
     runner_parser.set_defaults(func=cmd_run)
 
     reconciler = actions.add_parser("reconcile", help="generate reports/reconciliation.md")
     reconciler.add_argument("--vintage", default="2024")
     reconciler.add_argument("--year", type=int, default=2024)
     reconciler.add_argument("--sample", type=int, default=None)
+    reconciler.add_argument(
+        "--impute-niches", action="store_true",
+        help="draw réduction and crédit d'impôt bases from the published decile table "
+             "(D-066). Off by default, which leaves the net-IR and foyers-imposés "
+             "lines comparing a gross figure against a net target (D-073)")
     reconciler.add_argument("--compare-unraked", action="store_true",
                             help="also build and run the population without raking, and "
                                  "show every line before and after (D-017)")
@@ -579,6 +603,11 @@ def main(argv: list[str] | None = None) -> int:
     firm_reconciler.add_argument("--year", type=int, default=2026)
     firm_reconciler.set_defaults(func=cmd_firms_reconcile)
 
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
     args = parser.parse_args(argv)
     if getattr(args, "seed", 0) is None:
         if args.group == "entreprises":
