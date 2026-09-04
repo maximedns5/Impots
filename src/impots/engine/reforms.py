@@ -81,6 +81,18 @@ PATH_AF_RESSOURCES = (*_AF, "af_cond_ress")
 #: number of dependants, with a node shape that varies by year: the same trap as the
 #: bandeau plafonds (D-044), and it needs its own increment rather than a knob bolted
 #: on here.
+#: Wealth tax (Phase 5). The IFI node's children are exactly `bareme`, `decote`,
+#: `forfait_mobilier`, `plaf`, `reduc_exo` and `reduc_impot` — measured, and the
+#: absence matters: **there is no seuil d'assujettissement parameter**. The 1,3 M
+#: liability threshold that PHASE5_SPEC §3 asks for a knob on exists in the tree ONLY
+#: as the décote's lower bound, which is why `ifi_decote_borne_inferieure` is the knob
+#: that moves it. That is the "classic confusion" the spec warned about, resolved by
+#: looking rather than by assuming a parameter with the obvious name exists.
+_IFI = ("taxation_capital", "impot_fortune_immobiliere_ifi_partir_2018")
+PATH_IFI_DECOTE = (*_IFI, "decote")
+PATH_IFI_DONS = (*_IFI, "reduc_impot",
+                 "reduction_dons_certains_organismes_interet_general")
+
 PATH_AL_MINORATION = (
     "prestations_sociales", "aides_logement", "allocations_logement", "locatif",
     "minoration_forfaitaire",
@@ -185,6 +197,22 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "af_majoration_plafond_par_enfant": (
         *PATH_AF_RESSOURCES, "majoration_plafond_par_enfant_supplementaire"),
     "al_minoration_forfaitaire": PATH_AL_MINORATION,
+    # --- IFI (Phase 5) --------------------------------------------------------------
+    # Every one of these was verified by RUNNING A HOUSEHOLD, and four of them looked
+    # dead on the first try because the household did not exercise them: the décote
+    # knobs need an assiette inside the 1,3-1,4 M window, and the dons ceiling needs a
+    # donation large enough to reach it. Watching one household and concluding "dead"
+    # is the near-miss that nearly deleted three working employer knobs (D-071).
+    "ifi_decote_parametre": (*PATH_IFI_DECOTE, "parametre_calcul_decote"),
+    "ifi_decote_taux": (*PATH_IFI_DECOTE, "taux_decote"),
+    "ifi_decote_borne_inferieure": (*PATH_IFI_DECOTE, "borne_inferieure_decote"),
+    "ifi_decote_borne_superieure": (*PATH_IFI_DECOTE, "borne_superieure_decote"),
+    "ifi_plafonnement_taux": (*_IFI, "plaf", "plafonnement_taux_imposition"),
+    "ifi_abattement_residence_principale": (
+        *_IFI, "reduc_exo", "abattement_residence_principale"),
+    "ifi_dons_taux": (*PATH_IFI_DONS, "taux"),
+    "ifi_dons_plafond": (*PATH_IFI_DONS, "limite_reduction"),
+    "ifi_forfait_mobilier": (*_IFI, "forfait_mobilier", "majoration_forfaitaire"),
     # IR niches (B3).
     "saldom_taux": (*PATH_NICHE_SALDOM, "taux"),
     "saldom_plafond": (*PATH_NICHE_SALDOM, "plafond"),
@@ -209,6 +237,17 @@ NICHE_KNOBS = frozenset({
     "dons_taux", "dons_plafond_part_rfr", "dons_coluche_taux", "dons_coluche_plafond",
     "cotisations_syndicales_taux", "frais_scolarite_college", "frais_scolarite_lycee",
     "frais_scolarite_superieur", "plafond_global_niches",
+})
+
+#: Knobs that move the IFI (Phase 5). Grouped for the same reason as the niches: the UI
+#: panels them apart, and every one of them bites only on a foyer that declares real
+#: estate AND has income — with no income the plafonnement abates the whole tax and
+#: every one of these looks dead.
+IFI_KNOBS = frozenset({
+    "ifi_decote_parametre", "ifi_decote_taux", "ifi_decote_borne_inferieure",
+    "ifi_decote_borne_superieure", "ifi_plafonnement_taux",
+    "ifi_abattement_residence_principale", "ifi_dons_taux", "ifi_dons_plafond",
+    "ifi_forfait_mobilier",
 })
 
 #: `af_cm.modulation.taux_tranche_1` is NOT a knob, and the reason is the fourth

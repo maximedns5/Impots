@@ -25,11 +25,35 @@ _TBS: FranceTaxBenefitSystem | None = None
 
 
 def baseline() -> FranceTaxBenefitSystem:
-    """The current-law tax-benefit system. Built once per process (~3 s)."""
+    """The current-law tax-benefit system, as WE read the law. Built once (~3 s).
+
+    Not raw openfisca: `patrimoine.corrections` is applied on top, carrying two
+    documented departures on the IFI (D-079) — the missing liability threshold, which
+    makes openfisca's IFI non-monotonic, and the 5 % forfait mobilier, which is
+    contested and labelled so. Each correction ships with a legal citation, a measured
+    demonstration and a kill test that fails the day openfisca changes its mind.
+
+    They are applied HERE rather than in the wealth module so there is one IFI figure in
+    this codebase rather than a corrected one inside `patrimoine` and a raw one on the
+    wire. Both bite only on a foyer declaring real-estate wealth, and nothing else in
+    this project declares any, so the blast radius is nil — which the full suite proves
+    rather than this docstring asserting.
+    """
     global _TBS
     if _TBS is None:
-        _TBS = FranceTaxBenefitSystem()
+        from impots.patrimoine.corrections import apply_to
+
+        _TBS = apply_to(FranceTaxBenefitSystem())
     return _TBS
+
+
+def uncorrected_baseline() -> FranceTaxBenefitSystem:
+    """Raw openfisca, with none of our corrections. For kill tests and comparisons only.
+
+    Kept as a named function so that any code wanting the reference implementation says
+    so out loud, and so the kill tests have something honest to compare against.
+    """
+    return FranceTaxBenefitSystem()
 
 
 def reform_key(spec: ReformSpec, year: int) -> str:

@@ -155,6 +155,42 @@ NICHE_GARDE_CASES: tuple[str, ...] = ("f7ga", "f7gb", "f7gc")
 NICHE_SYNDICALES_CASE = "f7ac"
 
 
+class Patrimoine(BaseModel):
+    """A 2042-IFI-shaped wealth declaration, in euros.
+
+    Field names are the form's language; the codes they map to are in
+    `impots.patrimoine.ifi.CASES`, which is the single place the mapping lives.
+
+    Note what is NOT here: any financial wealth. The IFI base is real estate only
+    (CGI art. 965), so there is nowhere to declare shares, deposits or life insurance —
+    and that absence is the correct model of the tax rather than a gap in the form.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    residence_principale: Annotated[float, Field(ge=0, le=1e9)] = 0.0
+    """Gross value. The 30 % abattement is the engine's to apply, not the caller's."""
+    autres_immeubles_batis: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+    bois_et_forets: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+    biens_ruraux_loues_long_terme: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+    parts_groupements_forestiers_agricoles: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+    autres_biens_non_batis: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+    meubles_meublants_declares: Annotated[float, Field(ge=0, le=1e9)] = 0.0
+    passif_deductible: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+    dons_organismes_interet_general: Annotated[float, Field(ge=0, le=1e8)] = 0.0
+
+    # --- ISF only ---------------------------------------------------------------------
+    # Financial wealth. The IFI base excludes it entirely (CGI art. 965), so under
+    # current law these are declared and IGNORED — the engine reads them at 2017 and
+    # drops them silently at 2024. They matter only under an ISF revival, which is why
+    # `patrimoine.regimes` exists. Declaring them without the revival is not an error and
+    # not a no-op to hide: `RegimeNote` on the result says they were dropped.
+    droits_sociaux_non_exoneres: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+    valeurs_mobilieres: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+    liquidites: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+    droits_sociaux_conserves_six_ans: Annotated[float, Field(ge=0, le=1e10)] = 0.0
+
+
 class HouseholdInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -172,6 +208,12 @@ class HouseholdInput(BaseModel):
     niches: Niches | None = None
     """Réductions and crédits d'impôt bases. Absent means every niche is zero, which
     is the engine answering as asked and not a wiring gap."""
+    patrimoine: Patrimoine | None = None
+    """IFI declaration. Absent means no real estate wealth, hence no IFI.
+
+    A warning that costs nothing to give: IFI is abated entirely by the plafonnement
+    when the foyer has no income, so a wealth declaration with zero salary prices zero.
+    That is the law working, not the model failing."""
 
     def resolved_parent_isole(self) -> bool:
         """Whether to claim case T for this household."""
@@ -213,6 +255,15 @@ class IRBracket(BaseModel):
 #: system: `test_af_plafond_baselines_match_the_tree` keeps them honest.
 AF_PLAFOND_TRANCHE_1_BASE_2024 = 62_474.0
 AF_PLAFOND_TRANCHE_2_BASE_2024 = 87_430.0
+
+
+#: The IFI décote as it stands at 2024-01-01, so a one-sided knob move is judged
+#: against the real other side rather than against nothing. Read from the tree by
+#: `test_the_ifi_decote_constants_match_the_tree`, not trusted here.
+IFI_DECOTE_PARAMETRE_2024 = 17_500.0
+IFI_DECOTE_TAUX_2024 = 0.0125
+IFI_DECOTE_BORNE_INF_2024 = 1_300_000.0
+IFI_DECOTE_BORNE_SUP_2024 = 1_400_000.0
 
 
 class ReformSpec(BaseModel):
@@ -280,6 +331,20 @@ class ReformSpec(BaseModel):
     `plafond_tranche_1` / `plafond_tranche_2` are derived figures no formula consults,
     and a knob aimed at them would move nothing."""
     al_minoration_forfaitaire: Annotated[float, Field(ge=0, le=1_000)] | None = None
+
+    # --- IFI (Phase 5) ---------------------------------------------------------------
+    # Bounds are wide on purpose: this is a policy simulator and an IFI reform may
+    # legitimately move a threshold a long way. What is NOT allowed is a combination
+    # that turns the décote into a surcharge — see `_check_ifi_decote`.
+    ifi_decote_parametre: Annotated[float, Field(ge=0, le=1_000_000)] | None = None
+    ifi_decote_taux: Annotated[float, Field(ge=0, le=1)] | None = None
+    ifi_decote_borne_inferieure: Annotated[float, Field(ge=0, le=50_000_000)] | None = None
+    ifi_decote_borne_superieure: Annotated[float, Field(ge=0, le=50_000_000)] | None = None
+    ifi_plafonnement_taux: Annotated[float, Field(ge=0, le=5)] | None = None
+    ifi_abattement_residence_principale: Annotated[float, Field(ge=0, le=1)] | None = None
+    ifi_dons_taux: Annotated[float, Field(ge=0, le=1)] | None = None
+    ifi_dons_plafond: Annotated[float, Field(ge=0, le=10_000_000)] | None = None
+    ifi_forfait_mobilier: Annotated[float, Field(ge=0, le=1)] | None = None
     """The 2017 flat cut to housing benefit — five euros a month."""
     # IR niches (B3). Rates as fractions, ceilings in euros except
     # `dons_plafond_part_rfr`, which is a SHARE of the revenu fiscal de référence, and
@@ -328,6 +393,63 @@ class ReformSpec(BaseModel):
         thresholds = [b.threshold for b in self.ir_bareme]
         if any(a >= b for a, b in pairwise(thresholds)):
             raise ValueError(f"Les seuils doivent être strictement croissants ; reçu {thresholds}.")
+        return self
+
+    @model_validator(mode="after")
+    def _check_ifi_decote(self) -> ReformSpec:
+        """The décote must stay a relief, and its window must stay ordered.
+
+        `decote_isf_ifi` is `parametre - taux x assiette` with **no floor at zero**, and
+        `isf_ifi_avant_reduction` subtracts it. So a décote driven negative does not
+        vanish — it is subtracted as a negative and RAISES the tax. Measured: on an
+        assiette of 1 350 000 EUR, moving `taux_decote` from 0,0125 to 0,02 makes the
+        décote -9 500 EUR and the tax 2 225 -> 12 350 EUR. A relief that becomes a
+        surcharge is not a reform anyone means to express, and nothing downstream
+        refuses it.
+
+        The check is at the window's UPPER bound. `parametre - taux x assiette` FALLS as
+        the assiette rises, so the décote is smallest at the top of the window and that
+        is the only end where it can go negative. The first version of this validator
+        checked the lower bound and passed a reform that produced a -2 500 EUR décote —
+        caught by `test_each_knob_moves_its_output`, which saw the tax rise where it
+        should have fallen. In force the window is exactly calibrated so the décote
+        reaches zero at 1,4 M, so ANY widening of the upper bound without a matching
+        rise in the parameter goes negative.
+
+        Values default to the ones in force so a one-sided move is judged against the
+        real other side (the D-062 rule).
+        """
+        parametre = (self.ifi_decote_parametre
+                     if self.ifi_decote_parametre is not None
+                     else IFI_DECOTE_PARAMETRE_2024)
+        taux = self.ifi_decote_taux if self.ifi_decote_taux is not None else IFI_DECOTE_TAUX_2024
+        lower = (self.ifi_decote_borne_inferieure
+                 if self.ifi_decote_borne_inferieure is not None
+                 else IFI_DECOTE_BORNE_INF_2024)
+        upper = (self.ifi_decote_borne_superieure
+                 if self.ifi_decote_borne_superieure is not None
+                 else IFI_DECOTE_BORNE_SUP_2024)
+
+        if {self.ifi_decote_borne_inferieure, self.ifi_decote_borne_superieure} != {None} \
+                and lower >= upper:
+            raise ValueError(
+                f"La fenêtre de décote de l'IFI serait vide ou inversée : borne "
+                f"inférieure {lower:,.0f} EUR contre borne supérieure {upper:,.0f} EUR. "
+                f"Aucun foyer n'y entrerait."
+            )
+        touched = {self.ifi_decote_parametre, self.ifi_decote_taux,
+                   self.ifi_decote_borne_superieure}
+        if touched != {None}:
+            at_upper = parametre - taux * upper
+            if at_upper < 0:
+                raise ValueError(
+                    f"Cette décote d'IFI serait NÉGATIVE et augmenterait l'impôt : au "
+                    f"sommet de la fenêtre ({upper:,.0f} EUR) elle vaut "
+                    f"{at_upper:,.0f} EUR. La formule ne la borne pas à zéro, si bien "
+                    f"qu'un allègement négatif est retranché comme tel et alourdit "
+                    f"l'impôt. Relever le paramètre, baisser le taux, ou resserrer la "
+                    f"borne supérieure."
+                )
         return self
 
     @model_validator(mode="after")
@@ -457,6 +579,10 @@ class ResultRows(BaseModel):
     aefa: float | None = None
     cf: float | None = None
     asf: float | None = None
+    ifi: float | None = None
+    """Impôt sur la fortune immobilière, POSITIVE. Zero for all but ~186 000 foyers
+    nationally, and zero for any foyer with no income whatever its wealth — the
+    plafonnement caps IFI plus income tax at 75 % of income (D-079)."""
     """The prime de Noël. It rides on RSA eligibility rather than being reformed
     directly, which is how it went unitemised until the double-entry guard found it."""
     crds_pfam: float | None = None

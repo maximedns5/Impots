@@ -46,11 +46,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from impots.parameters import update_existing
+from impots.patrimoine import corrections
 
-#: The IFI forfait's parameter path, and the date the correction is written from.
-FORFAIT_PATH = ("taxation_capital", "impot_fortune_immobiliere_ifi_partir_2018",
-                "forfait_mobilier", "majoration_forfaitaire")
+#: Re-exported for callers that used to import it from here; the correction itself
+#: now lives in `patrimoine.corrections`, applied to the project's baseline.
+FORFAIT_PATH = corrections.FORFAIT_PATH
 
 #: The declaration cases this module fills, and what each one is.
 #: Names are the 2042-IFI's own; the codes are what openfisca reads.
@@ -64,6 +64,11 @@ CASES = {
     "meubles_meublants_declares": "b1cg",
     "passif_deductible": "b2gh",
     "dons_organismes_interet_general": "b2nc",
+    # ISF-only. Read at 2017, silently dropped at 2024 — see `patrimoine.regimes`.
+    "droits_sociaux_conserves_six_ans": "b1cb",
+    "droits_sociaux_non_exoneres": "b1cd",
+    "valeurs_mobilieres": "b1ce",
+    "liquidites": "b1cf",
 }
 
 #: The chain, in the order it computes. Reported whole because a reader who sees only
@@ -93,7 +98,17 @@ class IfiInputs:
     enfants: int = 0
 
     def cases(self) -> dict[str, float]:
-        return {code: getattr(self, name) for name, code in CASES.items()}
+        """Only the fields this dataclass carries.
+
+        `CASES` also maps the four ISF-only financial cases, which the wire model
+        `schemas.Patrimoine` has and this one does not: `IfiInputs` describes an IFI
+        declaration, and the IFI base has no financial wealth in it (CGI art. 965).
+        Iterating `CASES` blindly asked for attributes that do not exist here — a real
+        failure caught by a test, and the fix is to skip rather than to add fields that
+        would misdescribe the tax.
+        """
+        return {code: getattr(self, name) for name, code in CASES.items()
+                if hasattr(self, name)}
 
 
 @dataclass
@@ -124,31 +139,16 @@ class IfiResult:
 
 
 def _system(year: int, forfait_mobilier: bool) -> Any:
-    """The tax-benefit system to price with, corrected unless asked otherwise."""
-    from impots.engine.system import baseline
+    """The tax-benefit system to price with.
 
-    if forfait_mobilier:
-        return baseline()
+    `baseline()` already carries BOTH corrections (see `patrimoine.corrections`), so the
+    default path just uses it. Asking for the forfait means asking for openfisca's own
+    reading, which is `uncorrected_baseline()` — the raw reference implementation, named
+    out loud so nothing reaches for it by accident.
+    """
+    from impots.engine.system import baseline, uncorrected_baseline
 
-    from openfisca_core.reforms import Reform
-
-    instant = f"{year}-01-01"
-
-    class NoForfaitMobilier(Reform):
-        name = "IFI sans forfait mobilier (CGI art. 965)"
-
-        def apply(self) -> None:
-            def modify(parameters: Any) -> Any:
-                # update_existing, not a bare update: D-044's rule. Writing a
-                # parameter the year's formula does not read would read back fine and
-                # change nothing, which is the failure this project has met four times.
-                update_existing(parameters, FORFAIT_PATH, start=instant, value=0.0,
-                                instant=instant)
-                return parameters
-
-            self.modify_parameters(modifier_function=modify)
-
-    return NoForfaitMobilier(baseline())
+    return uncorrected_baseline() if forfait_mobilier else baseline()
 
 
 def price(inputs: IfiInputs, year: int = 2024, *,
@@ -187,29 +187,10 @@ def price(inputs: IfiInputs, year: int = 2024, *,
     simulation = SimulationBuilder().build_from_entities(system, situation)
     values = {name: float(simulation.calculate(name, period)[0]) for name in CHAIN}
 
-    # THE SEUIL D'ASSUJETTISSEMENT, which openfisca does not apply.
-    #
-    # CGI art. 964: the IFI is owed by those whose net taxable real-estate wealth
-    # EXCEEDS 1 300 000 EUR. Below that there is no tax at all. `isf_ifi_iai` for 2018+
-    # is `bareme.calc(assiette)` with no eligibility test, so the engine charges the
-    # 0,5 % bracket to everyone from 800 000 upward: measured, 500 EUR at 900 000 and
-    # 2 500 EUR at 1 299 999.
-    #
-    # The tell that this is a defect rather than a reading is that it makes the tax
-    # NON-MONOTONIC — 1 299 999 pays 2 500 EUR and 1 300 000 pays 1 250 EUR, because
-    # the décote starts only at the threshold. A tax that falls as the base rises is
-    # not a policy anyone wrote.
-    #
-    # Unlike the forfait mobilier this is not contested: art. 964 is explicit, and the
-    # 1989-2017 formula did carry a gate (though `bareme.rates[1]`, comparing a base in
-    # euros against a RATE of 0,007, which is always true — so that gate never worked
-    # either). The threshold is READ from the tree rather than written here: it is the
-    # décote's own lower bound, which is the same 1 300 000 by construction.
-    threshold = _liability_threshold(system, year)
-    if values["assiette_isf_ifi"] <= threshold:
-        for name in ("isf_ifi_iai", "decote_isf_ifi", "isf_ifi_avant_plaf",
-                     "isf_ifi_apres_plaf", "isf_ifi"):
-            values[name] = 0.0
+    # The seuil gate is NOT applied here: it lives in `patrimoine.corrections`, on the
+    # baseline system, so every path in the project sees the same IFI. Applying it here
+    # too would be a second implementation of the same rule, and the two would drift.
+    # `openfisca_reading()` deliberately does not get it, which is the point of it.
 
     return IfiResult(
         inputs=inputs, year=year, forfait_mobilier=forfait_mobilier, values=values,

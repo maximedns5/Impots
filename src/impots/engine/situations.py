@@ -204,6 +204,8 @@ def build_situation(
         foyer_fiscal["personnes_a_charge"] = list(child_ids)
     if household.niches is not None:
         foyer_fiscal.update(_niche_inputs(household.niches, year))
+    if household.patrimoine is not None:
+        foyer_fiscal.update(_patrimoine_inputs(household.patrimoine, year))
     if household.resolved_parent_isole():
         # `caseT` — "parent isolé au 1er janvier". Worth half a part, and the only
         # lever for it: `nbptr` multiplies the `isol` parameter by caseT directly,
@@ -274,6 +276,25 @@ def assert_niche_eligibility(household: Any, year: int) -> None:
             f"les frais de scolarité déclarent {scolarises} enfant(s) scolarisé(s) pour "
             f"{len(household.children)} enfant(s) à charge."
         )
+
+
+def _patrimoine_inputs(patrimoine: Any, year: int) -> dict[str, Any]:
+    """The 2042-IFI cases, written for the target year only.
+
+    `_this_year` and not a multi-year block: wealth is assessed at 1 January of the
+    year being priced, and writing a wealth stock across several periods would make
+    the engine tax it in each of them.
+
+    The field-to-case mapping lives in `impots.patrimoine.ifi.CASES` and is imported
+    rather than restated, so the two cannot drift apart.
+    """
+    from impots.patrimoine.ifi import CASES
+
+    return {
+        code: _this_year(code, getattr(patrimoine, field), year)
+        for field, code in CASES.items()
+        if getattr(patrimoine, field, 0.0)
+    }
 
 
 def _niche_inputs(niches: Any, year: int) -> dict[str, Any]:

@@ -151,6 +151,11 @@ REGISTRY: tuple[Row, ...] = (
         label="CRDS sur aides au logement"),
     Row("crds_mini", "crds_mini", "famille", "month", "full", False,
         label="CRDS sur minima sociaux"),
+    # Wealth tax. NEGATED: openfisca stores taxes as negative, and every other tax row
+    # here is reported positive. Full tier only — it costs a foyer-level pass and is
+    # zero for all but ~186 000 foyers nationally.
+    Row("ifi", "isf_ifi", "foyer_fiscal", "year", "full", True,
+        label="Impôt sur la fortune immobilière"),
     # --- bottom line: ménage, annual — full tier only --------------------------
     Row("revenu_disponible", "revenu_disponible", "menage", "year", "full", False,
         label="Revenu disponible"),

@@ -3003,3 +3003,123 @@ implicite.
 de 2025), et droit appliqué 2024. L'année budgétaire de comptabilisation est une
 quatrième, et n'est pas utilisée ici : elle appartient à la section de réconciliation,
 contre la source budgétaire manifestée et non contre une phrase de docstring.
+
+## D-081 — M3 : les boutons IFI, le régime ISF, et trois affirmations du spec que la mesure renverse
+
+### Les boutons : neuf, et quatre ont failli passer pour morts
+
+Neuf boutons IFI, chacun vérifié **en faisant tourner un ménage** et en regardant l'impôt
+bouger. Quatre — les trois paramètres de décote et le plafond des dons — n'ont rien bougé
+au premier essai, non parce qu'ils sont morts mais parce que le ménage ne les exerçait
+pas : la décote ne mord que dans la fenêtre 1,3–1,4 M, et le plafond des dons ne se voit
+qu'avec des dons assez gros pour l'atteindre. C'est exactement le quasi-accident de D-071,
+où trois boutons employeur ont failli être supprimés parce qu'on regardait la mauvaise
+ligne. **Un ménage ne suffit jamais à déclarer un bouton mort.**
+
+**Il n'existe pas de paramètre de seuil d'assujettissement.** Les enfants du nœud IFI
+sont exactement `bareme`, `decote`, `forfait_mobilier`, `plaf`, `reduc_exo`, `reduc_impot`
+— mesuré. Le seuil de 1,3 M dont §3 demande un bouton n'existe dans l'arbre que comme
+**borne inférieure de la décote**, et c'est donc `ifi_decote_borne_inferieure` qui le
+déplace. La « confusion classique » que le spec annonçait est réelle, et elle se règle en
+regardant plutôt qu'en supposant qu'un paramètre au nom évident existe.
+
+**La décote n'a pas de plancher à zéro, et un bouton peut la retourner en surtaxe.**
+`decote_isf_ifi` vaut `parametre − taux × assiette` sans `max(0, …)`, et
+`isf_ifi_avant_reduction` la retranche. Mesuré : sur une assiette de 1,35 M, porter le
+taux de 0,0125 à 0,02 donne une décote de **−9 500 €** et fait passer l'impôt de 2 225 à
+12 350 €. Un validateur refuse désormais ces combinaisons. **Sa première version vérifiait
+la mauvaise borne** — elle testait l'entrée de la fenêtre alors que la décote est la plus
+petite au sommet — et a laissé passer une décote de −2 500 € ; c'est
+`test_each_knob_moves_its_output` qui l'a attrapée, en voyant l'impôt monter là où il
+devait descendre.
+
+### Le régime ISF : identique en barème, différent en base — et un cinquième fantôme
+
+**Tous les paramètres ISF-2017 sont identiques aux paramètres IFI-2024** : barème, bornes
+et taux de décote, plafonnement à 75 %, abattement RP à 30 %, forfait à 5 %. Vérifié un à
+un. Un « retour de l'ISF » n'est donc pas un autre barème : c'est **le même barème sur une
+base plus large**. Cela rend la réforme bien plus facile à raisonner et bien plus difficile
+à rater.
+
+Ce que le moteur cache : `isf_droits_sociaux` et `isf_actions_sal` portent
+`end = "2017-12-31"` et renvoient zéro après 2017 sans qu'aucune formule tourne.
+`assiette_isf_ifi.formula_2018_01_01` les appelle toujours — elles valent simplement zéro.
+Les cases b1cb/b1cd/b1ce/b1cf sont donc lues en 2017 et **abandonnées en silence** en 2024,
+et ce silence EST toute la différence ISF/IFI dans ce moteur.
+
+**Écrire le nœud ISF en 2024 est un cinquième fantôme.** Ressusciter tout le nœud
+`impot_solidarite_fortune_isf_1989_2017` au 2024-01-01 réussit, se relit correctement, et
+déplace l'impôt de **zéro** : aucune formule sélectionnée en 2024 ne lit ce nœud. Le
+« (dated parameters exist) » de §3 est vrai et sans effet.
+
+**`update_variable` ne lève pas une date de fin, et échoue en silence.** Redéfinir la
+variable sans `end` et appeler `update_variable` ne lève rien et laisse `end` au
+2017-12-31 — la docstring d'openfisca-core le dit : « All attributes of the updated
+variable that are not explicitly overridden by the new variable will stay unchanged ».
+C'est la classe aveugle-à-la-relecture dans l'API des variables et non dans l'arbre des
+paramètres. `replace_variable` marche, parce qu'il supprime puis recharge.
+
+Et la copie doit être **littérale** : `Variable.set()` lit `attributes.pop(...)` sur le
+`__dict__` **propre** de la classe, si bien qu'une sous-classe arrive sans aucun attribut
+et se fait rejeter pour « Missing attribute 'value_type' ». Échec bruyant au moins.
+
+Mesuré de bout en bout : un ménage 2024 avec 2 M d'immobilier et 2,5 M de valeurs
+mobilières paie **7 400 €** sous l'IFI et **30 690 €** sous l'ISF ressuscité, assiette
+2 000 000 contre 4 500 000, le système de référence restant intact.
+
+### Les corrections passent dans la ligne de base, pour qu'il n'y ait qu'un chiffre
+
+Les deux corrections de D-079 s'appliquent désormais à `engine.system.baseline()`.
+Livrer une ligne de sortie nommée `ifi` dont on sait qu'elle est fausse n'est pas une
+chose à faire. Le rayon d'action est nul et c'est la suite complète qui le prouve : les
+deux ne mordent que sur un foyer déclarant de l'immobilier, et rien d'autre dans ce projet
+n'en déclare. `uncorrected_baseline()` existe, nommé à voix haute, pour les tests-témoins.
+
+### Le plancher de type Zucman n'est pas chiffrable, et le refus est le résultat
+
+§2 ancre la cellule ≥ 100 M sur l'IPP Note 92. **Cette note ne contient aucun chiffre de
+patrimoine.** Vérifié contre le PDF : son unique tableau s'intitule « Distribution des
+revenus en 2016 » et ses deux colonnes en euros sont « Revenu fiscal » et « Revenu
+économique » ; les auteurs excluent explicitement le patrimoine de leur mesure, qui
+« n'inclut ni les variations de patrimoine, ni les revenus latents non encore réalisés ».
+
+**Et elle contient un nombre fait pour être mal lu** : la ligne P99,9998 porte `75` foyers
+et `150 040 000` — un montant à neuf chiffres à côté d'un petit effectif, dans une note sur
+les milliardaires. C'est le seuil de **revenu économique annuel** d'entrée dans les
+0,0002 % les plus riches, pas un seuil de patrimoine. Bâtir une cellule « ≥ 100 M » dessus
+échangerait silencieusement une dimension de revenu contre une dimension de patrimoine, et
+le chiffre obtenu aurait l'air parfaitement raisonnable.
+
+Trois raisons indépendantes rendent le plancher non chiffrable ici, et le module les
+énonce plutôt que de rendre un nombre : la tranche haute publiée est **ouverte** au-dessus
+de 10 M ; nos cellules ne portent que de l'immobilier alors que le plancher porte sur le
+patrimoine **total** ; et le plancher se crédite de l'**impôt sur le revenu**, pas de
+l'IFI. Cette dernière n'est pas théorique : l'arithmétique correcte contre l'IFI rend
+**zéro pour tout plafond posé**, parce que le taux marginal de 1,5 % de l'IFI sur toute la
+base au-dessus de 10 M dépasse 2 % sur le seul excédent au-dessus de 100 M. Un zéro produit
+par une comparaison mal posée est pire qu'un refus, donc le calcul est conservé,
+inatteignable et testé, pour que personne ne le redérive et ne livre le zéro.
+
+### L'incertitude de cellule, et pourquoi la méthode du spec ne tient pas
+
+§2 propose de borner par « masse à la moyenne publiée contre uniforme sur la tranche ».
+**Une loi uniforme sur [a, b] a pour moyenne (a+b)/2, qui n'est pas la moyenne publiée** —
+mesuré, 1,935 M contre 1,7052 M sur la première tranche : elle contredit la donnée qu'elle
+prétend respecter, et n'est l'extrême de rien.
+
+L'encadrement honnête porte sur les lois réellement compatibles avec le publié : support
+dans [a, b] et moyenne imposée. Sur cette famille et pour un impôt convexe, le **minimum**
+est la masse ponctuelle à la moyenne (Jensen) et le **maximum** la loi à deux points sur
+les bornes qui reproduit la moyenne. Les deux sont atteints, donc l'intervalle est serré et
+non seulement valide.
+
+Propriété qui rend l'outil crédible : **la largeur est nulle là où le placement ne peut pas
+compter**. Les tranches publiées coïncident exactement avec les tranches du barème, donc
+l'impôt y est affine et E[f(W)] = f(E[W]) ; la ligne de base ne porte aucune incertitude de
+placement, et une réforme qui ne bouge que des taux non plus. Elle n'apparaît que lorsqu'une
+réforme met un coude **dans** une tranche : porter le seuil à 2 M ouvre une bande de
+[0 ; 175,3] M€, parce que la donnée publiée ne peut pas dire combien des 137 705 foyers de
+la première tranche sont au-dessus de 2 M.
+
+Et la tranche haute étant **ouverte**, aucun maximum n'existe pour elle : `extremal()`
+refuse plutôt que de substituer un plafond commode.

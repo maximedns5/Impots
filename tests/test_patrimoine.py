@@ -323,7 +323,10 @@ class TestHouseholdIfi:
         """
         from openfisca_core.simulations import SimulationBuilder
 
-        from impots.engine.system import baseline
+        # UNCORRECTED: `baseline()` now carries our corrections, so this must reach for
+        # the reference implementation explicitly. That it has to is the point — the
+        # correction is live on every other path.
+        from impots.engine.system import uncorrected_baseline
 
         situation = {
             "individus": {"M": {"salaire_imposable": {"2024": 400_000}}},
@@ -331,7 +334,8 @@ class TestHouseholdIfi:
             "foyers_fiscaux": {"ff": {"declarants": ["M"], "b1ac": {"2024": 1_299_999}}},
             "menages": {"m": {"personne_de_reference": ["M"]}},
         }
-        simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+        simulation = SimulationBuilder().build_from_entities(
+            uncorrected_baseline(), situation)
         raw = -float(simulation.calculate("isf_ifi", "2024")[0])
         # 2 517,48 rather than 2 500, and the difference is instructive: the raw engine
         # ALSO applies the 5 % forfait, which lifts 1 299 999 to 1 364 999 — over the
@@ -423,6 +427,8 @@ class TestCells:
         """
         from openfisca_core.simulations import SimulationBuilder
 
+        # The CORRECTED baseline, so the forfait is off and the assiette is the base.
+        # This compares the SCALE, and the base convention would otherwise confound it.
         from impots.engine.system import baseline
         from impots.patrimoine import bareme
 
@@ -442,7 +448,7 @@ class TestCells:
             }
             simulation = SimulationBuilder().build_from_entities(system, situation)
             engine = float(simulation.calculate("isf_ifi_iai", "2024")[0])
-            assert engine == pytest.approx(tax_on_uplifted(base, scale), rel=1e-6), base
+            assert engine == pytest.approx(bareme.tax_on(base, scale), rel=1e-6), base
 
     @needs_files
     def test_every_cell_mean_lands_inside_its_own_tranche(self):
@@ -519,13 +525,287 @@ class TestCells:
                 f"it is not being derived from the published tax at all")
 
 
-def tax_on_uplifted(base: float, scale) -> float:
-    """The engine's base convention: a 5 % forfait on top, which our default corrects.
+class TestPlacement:
+    """The bracket over placements the published data permits.
 
-    Used only by the scale-equivalence test, where the point is to compare the SCALE
-    and not the base convention — so the uplift is applied here explicitly rather than
-    silently absorbed.
+    The property that makes this trustworthy is that it produces ZERO width where
+    placement cannot matter. A bracket that is always wide is not measuring anything.
     """
-    from impots.patrimoine import bareme
 
-    return bareme.tax_on(base * 1.05, scale)
+    @needs_files
+    def test_no_published_tranche_contains_a_bareme_kink(self):
+        """The structural fact the whole class rests on.
+
+        Published tranches are 1,3-2,57 / 2,57-5 / 5-10 / 10-∞; barème thresholds are
+        0,8 / 1,3 / 2,57 / 5 / 10. They coincide, so tax is AFFINE inside every cell and
+        E[f(W)] = f(E[W]) exactly. If DGFiP ever re-cuts its tranches this fails, and it
+        should: the baseline would then carry placement uncertainty it does not have now.
+        """
+        from impots.patrimoine import bareme, placement
+        from impots.patrimoine.cells import cells
+
+        scale = bareme.scale_at(2024)
+        for cell in cells():
+            assert not placement.has_interior_kink(cell, scale), cell.label
+
+    @needs_files
+    def test_the_baseline_band_is_a_point_not_an_interval(self):
+        """Zero width where placement cannot matter — the anti-theatre check."""
+        from impots.patrimoine import bareme, placement
+        from impots.patrimoine.cells import cells
+
+        scale = bareme.scale_at(2024)
+        for cell in cells()[:-1]:  # the open cell is handled separately
+            low, high = placement.band(cell, scale)
+            assert high - low == pytest.approx(0.0, abs=1.0), (
+                f"{cell.label}: the bracket invented {high - low:,.0f} EUR of width on a "
+                f"tranche the scale does not cut"
+            )
+
+    @needs_files
+    def test_both_placements_reproduce_the_published_mean(self):
+        """What makes them consistent with the publication rather than alternatives.
+
+        A uniform placement — which PHASE5_SPEC §2 proposes — would NOT: uniform on
+        [1,3 M, 2,57 M] has mean 1,935 M against the implied 1,7052 M, so it contradicts
+        the published tax it is supposed to respect.
+        """
+        from impots.patrimoine import placement
+        from impots.patrimoine.cells import cells
+
+        for cell in cells()[:-1]:
+            for built in (placement.point_mass(cell),
+                          placement.extremal(cell)):
+                assert built.mean() == pytest.approx(cell.implied_mean_base_eur, rel=1e-9)
+                assert sum(share for _, share in built.points) == pytest.approx(1.0)
+        # And the uniform mean really does differ, which is why it was not used.
+        first = cells()[0]
+        uniform_mean = (first.tranche.lower_eur + first.tranche.upper_eur) / 2
+        assert abs(uniform_mean - first.implied_mean_base_eur) > 200_000
+
+    @needs_files
+    def test_a_reform_that_cuts_a_tranche_opens_a_real_band(self):
+        """And the width is a fact about the publication, not a modelling choice.
+
+        Moving the seuil to 2 M puts a kink inside the first tranche. At the point
+        placement every foyer sits at 1,7052 M and nobody pays; at the mean-preserving
+        spread some sit at 2,57 M and do. The published numbers cannot distinguish these,
+        so the answer is an interval and saying otherwise would be inventing a density.
+        """
+        from impots.patrimoine import placement
+        from impots.patrimoine.cells import cells
+
+        moved = [(2_000_000.0, 0.007), (2_570_000.0, 0.01),
+                 (5_000_000.0, 0.0125), (10_000_000.0, 0.015)]
+        first = cells()[0]
+        assert placement.has_interior_kink(first, moved)
+        low, high = placement.band(first, moved)
+        assert low == pytest.approx(0.0, abs=1.0), "point placement sits below the seuil"
+        assert high > 100e6, "the spread placement puts real mass above it"
+
+    @needs_files
+    def test_the_open_top_cell_refuses_an_invented_ceiling(self):
+        """The finding that decides whether a Zucman floor is priceable here at all.
+
+        The last tranche runs from 10 M with no published ceiling, so the maximising
+        placement can put mass arbitrarily high and no upper bound exists. Supplying a
+        convenient default would be exactly the invented density this class refuses.
+        """
+        from impots.patrimoine import bareme, placement
+        from impots.patrimoine.cells import cells
+
+        top = cells()[-1]
+        assert top.tranche.upper_eur == float("inf")
+        with pytest.raises(placement.PlacementError, match="open at the top"):
+            placement.extremal(top)
+        # With a sourced ceiling it prices, and the answer MOVES with the ceiling —
+        # which is the point: the number is a function of an assumption, not a fact.
+        scale = bareme.scale_at(2024)
+        _, high_50 = placement.band(top, scale, ceiling=50e6)
+        _, high_200 = placement.band(top, scale, ceiling=200e6)
+        assert high_200 > high_50
+
+    @needs_files
+    def test_the_reform_band_prices_both_sides_under_the_same_placement(self):
+        """Otherwise the band would carry a placement difference as if it were policy."""
+        from impots.patrimoine import bareme, placement
+        from impots.patrimoine.cells import cells
+
+        scale = bareme.scale_at(2024)
+        doubled = [(t, r * 2) for t, r in scale]
+        band = placement.reform_band(cells(), scale, doubled)
+        # Rates only, no kink moved: the band must be a point despite a huge reform.
+        assert band.is_a_point, (
+            f"doubling every rate opened a {band.width_eur:,.0f} EUR band, but it moves "
+            f"no threshold — the width would be placement leaking into policy"
+        )
+        assert band.low_eur > 1e9
+        assert band.open_cell_excluded is True, "the top cell has no bounded spread"
+
+
+# --- M3: regimes, corrections, and the floor that cannot be priced --------------------
+
+
+class TestRegimes:
+    """The ISF revival, and the silent-failure API it had to route around."""
+
+    def test_the_isf_and_ifi_parameters_are_identical(self):
+        """The finding that shapes the whole regime switch.
+
+        Every ISF-2017 parameter equals its IFI-2024 counterpart — barème, décote,
+        plafonnement, abattement, forfait. So an ISF revival is not a different schedule:
+        it is the same schedule on a WIDER BASE. If this ever stops being true the
+        regime module's premise is gone and it must be rewritten, not patched.
+        """
+        from openfisca_france import FranceTaxBenefitSystem
+
+        system = FranceTaxBenefitSystem()
+
+        def read(node, year, path):
+            current = system.get_parameters_at_instant(f"{year}-01-01").taxation_capital
+            for part in (node + "." + path).split("."):
+                current = getattr(current, part)
+            return current
+
+        isf, ifi = "impot_solidarite_fortune_isf_1989_2017", \
+                   "impot_fortune_immobiliere_ifi_partir_2018"
+        old, new = read(isf, 2017, "bareme"), read(ifi, 2024, "bareme")
+        assert list(old.thresholds) == list(new.thresholds)
+        assert list(old.rates) == list(new.rates)
+        for path in ("decote.borne_inferieure_decote", "decote.taux_decote",
+                     "decote.parametre_calcul_decote", "plaf.plafonnement_taux_imposition",
+                     "reduc_exo.abattement_residence_principale",
+                     "forfait_mobilier.majoration_forfaitaire"):
+            assert read(isf, 2017, path) == read(ifi, 2024, path), path
+
+    def test_the_financial_base_is_retired_at_2017_and_the_revival_lifts_it(self):
+        """And the baseline must be untouched afterwards."""
+        from openfisca_france import FranceTaxBenefitSystem
+
+        from impots.engine.system import baseline
+        from impots.patrimoine.regimes import RETIRED_AT_2017, is_revived, isf_1989_2017
+
+        raw = FranceTaxBenefitSystem()
+        for name in RETIRED_AT_2017:
+            assert str(raw.get_variable(name).end) == "2017-12-31", name
+        assert not is_revived(baseline())
+        assert is_revived(isf_1989_2017(baseline()))
+        assert not is_revived(baseline()), "the revival mutated the shared baseline"
+
+    def test_update_variable_would_have_failed_silently(self):
+        """The kill test for choosing `replace_variable`, and a documented API trap.
+
+        `update_variable` keeps every attribute the new class does not override — the
+        core's own docstring says so — so redefining the variable without an `end` leaves
+        the 2017 end date in place, raises nothing, and prices unchanged. That is the
+        read-back-blind class in the variable API rather than the parameter tree.
+        """
+        from openfisca_core.reforms import Reform
+        from openfisca_core.variables import Variable
+        from openfisca_france.model.prelevements_obligatoires import isf as module
+
+        from impots.engine.system import baseline
+
+        class NaiveRevival(Reform):
+            def apply(self) -> None:
+                original = module.isf_droits_sociaux
+                namespace = {k: v for k, v in vars(original).items()
+                             if not k.startswith("__")}
+                namespace.pop("end", None)
+                self.update_variable(type("isf_droits_sociaux", (Variable,), namespace))
+
+        naive = NaiveRevival(baseline())
+        assert str(naive.get_variable("isf_droits_sociaux").end) == "2017-12-31", (
+            "update_variable now clears an inherited end date — if core changed this, "
+            "the docstring in patrimoine.regimes is stale and replace_variable may no "
+            "longer be necessary"
+        )
+
+    def test_financial_wealth_is_taxed_under_isf_and_ignored_under_ifi(self):
+        """The regime difference, priced end to end on one household."""
+        from openfisca_core.simulations import SimulationBuilder
+
+        from impots.api.schemas import HouseholdInput
+        from impots.engine.situations import build_situation
+        from impots.engine.system import baseline
+        from impots.patrimoine.regimes import isf_1989_2017
+
+        household = HouseholdInput.model_validate({
+            "adults": [{"salaire_brut_annuel": 1_200_000, "annee_naissance": 1970}],
+            "patrimoine": {"autres_immeubles_batis": 2_000_000,
+                           "valeurs_mobilieres": 2_500_000}})
+        situation = build_situation(household, 2024)
+
+        def priced(system):
+            simulation = SimulationBuilder().build_from_entities(system, situation)
+            return (float(simulation.calculate("assiette_isf_ifi", "2024")[0]),
+                    -float(simulation.calculate("isf_ifi", "2024")[0]))
+
+        ifi_base, ifi_tax = priced(baseline())
+        isf_base, isf_tax = priced(isf_1989_2017(baseline()))
+        assert ifi_base == pytest.approx(2_000_000.0), "financial wealth is dropped"
+        assert isf_base == pytest.approx(4_500_000.0), "and revived"
+        assert isf_tax > ifi_tax * 3
+
+
+class TestCorrections:
+    """Every departure from openfisca carries its citation and its kill test."""
+
+    def test_each_correction_names_a_kill_test_that_exists(self):
+        """A correction whose kill test does not exist cannot be retired when openfisca
+        fixes the thing it corrects, so it would live forever."""
+        from pathlib import Path
+
+        from impots.patrimoine.corrections import CORRECTIONS
+
+        source = Path("tests/test_patrimoine.py").read_text(encoding="utf-8")
+        assert CORRECTIONS
+        for correction in CORRECTIONS:
+            assert correction.citation.startswith("CGI art."), correction.name
+            assert correction.decision.startswith("D-0"), correction.name
+            assert f"def {correction.kill_test}" in source, (
+                f"{correction.name} names kill test {correction.kill_test}, which does "
+                f"not exist — the correction could never be retired"
+            )
+
+    def test_the_corrected_baseline_is_what_every_path_uses(self):
+        """One IFI figure in the codebase, not a corrected one and a raw one."""
+        from impots.api.schemas import HouseholdInput
+        from impots.engine import compute
+        from impots.patrimoine.ifi import IfiInputs, price
+
+        wire = compute(HouseholdInput.model_validate({
+            "adults": [{"salaire_brut_annuel": 1_200_000, "annee_naissance": 1970}],
+            "patrimoine": {"autres_immeubles_batis": 2_000_000}}), 2024, tier="full")
+        module = price(IfiInputs(autres_immeubles_batis=2_000_000,
+                                 revenu_imposable=1_200_000 * 0.78))
+        assert wire.baseline["ifi"] == pytest.approx(7_400.0, abs=0.01)
+        assert module.ifi == pytest.approx(wire.baseline["ifi"], abs=0.01)
+
+
+class TestZucmanFloor:
+    """A refusal with its reasons is a result."""
+
+    @needs_files
+    def test_the_floor_is_refused_and_says_why(self):
+        from impots.patrimoine import bareme, zucman
+        from impots.patrimoine.cells import cells
+
+        with pytest.raises(zucman.ZucmanAnchorError) as raised:
+            zucman.price_floor(cells(), bareme.scale_at(2024), threshold_eur=100e6,
+                               rate=0.02, assumed_ceiling_eur=500e6)
+        message = str(raised.value)
+        assert "CONSTRUCTION" in message
+        assert "ouverte" in message.lower()
+        assert "revenu" in message.lower(), "the income-tax credit reason must be given"
+
+    def test_the_requirements_are_data_so_the_refusal_cannot_drift(self):
+        from impots.patrimoine.zucman import REQUIREMENTS, why_not_priceable
+
+        missing = [what for what, have, _ in REQUIREMENTS if not have]
+        assert len(missing) == 3, "three independent reasons, not one"
+        text = why_not_priceable()
+        for what in missing:
+            assert what in text
+        # And the one thing we DO have is recorded, so the list is not just a complaint.
+        assert any(have for _, have, _ in REQUIREMENTS)

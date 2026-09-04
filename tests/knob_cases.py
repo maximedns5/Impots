@@ -57,6 +57,30 @@ LOCATAIRE_PPA = {**TEMPS_PARTIEL,
                               "zone_apl": 1}}
 NICHE_FOYER = {**AISE_2_ENFANTS}
 
+# --- IFI households ------------------------------------------------------------------
+# Every one carries INCOME, and that is not decoration: the plafonnement caps IFI plus
+# income tax at 75 % of income, so a wealthy foyer with no salary owes NO IFI and every
+# IFI knob would look dead. Measured: 2 M of real estate gives 7 400 EUR of barème and
+# 0 EUR of tax at zero income.
+def _riche(patrimoine: dict, salaire: int = 900_000) -> dict:
+    return {"adults": [{"salaire_brut_annuel": salaire, "annee_naissance": 1970}],
+            "patrimoine": patrimoine}
+
+#: Assiette 3,5 M — well clear of the décote window, so the barème knobs bite cleanly.
+IFI_RICHE = _riche({"residence_principale": 1_000_000,
+                    "autres_immeubles_batis": 2_500_000,
+                    "dons_organismes_interet_general": 20_000})
+#: Assiette 1,35 M — INSIDE the décote window. The décote knobs moved nothing on a
+#: household above 1,4 M, which is how three of them briefly looked dead.
+IFI_DECOTE = _riche({"autres_immeubles_batis": 1_350_000}, salaire=400_000)
+#: Assiette 1,25 M — BELOW the window, so moving its lower bound pulls this foyer in.
+IFI_SOUS_LE_SEUIL = _riche({"autres_immeubles_batis": 1_250_000}, salaire=400_000)
+#: Assiette 1,45 M — just ABOVE the window, so moving its upper bound pulls it in.
+IFI_AU_DESSUS = _riche({"autres_immeubles_batis": 1_450_000}, salaire=400_000)
+#: Dons big enough to reach the 50 000 EUR ceiling: 100 000 x 75 % = 75 000.
+IFI_GROS_DONS = _riche({"autres_immeubles_batis": 12_000_000,
+                        "dons_organismes_interet_general": 100_000}, salaire=3_000_000)
+
 #: knob -> (household, niches to declare or None, output row, value, expected sign of
 #: the change in that row). Sign is +1 when the output RISES.
 CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
@@ -125,6 +149,25 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
     "frais_scolarite_lycee": (NICHE_FOYER, {"enfants_lycee": 1}, "ir", 300.0, -1),
     "frais_scolarite_superieur": (
         NICHE_FOYER, {"enfants_superieur": 1}, "ir", 400.0, -1),
+    # --- IFI -----------------------------------------------------------------------
+    # `ifi_decote_borne_inferieure` is the knob that moves the SEUIL D'ASSUJETTISSEMENT.
+    # There is no separate seuil parameter — the IFI node's children are bareme, decote,
+    # forfait_mobilier, plaf, reduc_exo, reduc_impot, and nothing else. That is the
+    # "classic confusion" PHASE5_SPEC §3 warned about, settled by looking.
+    "ifi_decote_parametre": (IFI_DECOTE, None, "ifi", 25_000.0, -1),
+    "ifi_decote_taux": (IFI_DECOTE, None, "ifi", 0.008, -1),
+    # Lowering the lower bound RAISES this foyer's tax, and that is the point: the same
+    # parameter is the seuil d'assujettissement, so a foyer at 1,25 M goes from owing
+    # nothing to owing something. The sign is the evidence that the knob moves the seuil.
+    "ifi_decote_borne_inferieure": (IFI_SOUS_LE_SEUIL, None, "ifi", 1_200_000.0, +1),
+    # TIGHTENING the upper bound, not widening it: widening without raising the
+    # parameter drives the décote negative, which `_check_ifi_decote` now refuses.
+    "ifi_decote_borne_superieure": (IFI_DECOTE, None, "ifi", 1_320_000.0, +1),
+    "ifi_plafonnement_taux": (IFI_RICHE, None, "ifi", 0.375, -1),
+    "ifi_abattement_residence_principale": (IFI_RICHE, None, "ifi", 0.15, +1),
+    "ifi_dons_taux": (IFI_RICHE, None, "ifi", 0.375, +1),
+    "ifi_dons_plafond": (IFI_GROS_DONS, None, "ifi", 20_000.0, +1),
+    "ifi_forfait_mobilier": (IFI_RICHE, None, "ifi", 0.05, +1),
     "plafond_global_niches": (
         {**NICHE_FOYER, "children": [{"annee_naissance": 2019},
                                      {"annee_naissance": 2021},
