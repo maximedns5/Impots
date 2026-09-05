@@ -1,0 +1,1022 @@
+{
+  "generated": "2026-09-04",
+  "files": {
+    "Dictionnaire_EEC_2024.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
+      "quarantined": false,
+      "sha256": "2d200d603e0dcd6c9edb329b8422045eeeef772884c4057a96749f36e26cade0",
+      "bytes": 854712,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Dictionnaire des codes de l'EEC 2024"
+    },
+    "FD_EEC_2024.parquet": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/FD_EEC_2024.parquet",
+      "quarantined": false,
+      "sha256": "d8d865004ece040c82c8919dcfeb5f51f3b7979705ed50379842a5c7c6201520",
+      "bytes": 11664752,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Enquête Emploi en Continu 2024, fichier détail"
+    },
+    "Varmod_EEC_2024.csv": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/Varmod_EEC_2024.csv",
+      "quarantined": false,
+      "sha256": "d802c4b8d7ceb464301d66e3156f8d182979896e62a313bb834489af9e8c8816",
+      "bytes": 214939,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Dictionnaire des variables et modalités de l'EEC 2024"
+    },
+    "budget_execution_2025_recettes_fiscales_nettes.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "eda213b2f07165151aab1fd8a86c56d3764df181ceb0a8a3a62235d71213aed4",
+      "bytes": 635932,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "ccomptes_budget_etat_2025_resultats_gestion.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "4c741e5aa9cb62799aa84fa618096b06c0ecc5ac6409366795a3aeb8268e8f23",
+      "bytes": 4304319,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "ccss_mai2026_comptes_secu_resultats2025.pdf": {
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2026/CCSS%20mai%202026_assembl%c3%a9_V2.pdf",
+      "quarantined": false,
+      "sha256": "b7f578c5f0573753204cc05c61ea98fe10b7b9a57ea73f4a2880685bdd61a0ba",
+      "bytes": 5597842,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Rapport à la Commission des comptes de la Sécurité sociale, mai 2026 — C3S"
+    },
+    "cnaf_allocataires_prestations_national_mensuel.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "13c0406a0becd77c0489af80eb673571d4314b387f2614f799543567822d3b60",
+      "bytes": 86791,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "cnaf_analyses_statistiques_07_depenses_prestations_2024.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "0d0c4be692ead6534ba9ffcc80a99711ca6b1f8b7b0696ffdf8c5ca8c829edfc",
+      "bytes": 455319,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "cnaf_depenses_tous_regimes_national_2013_2024.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "12b508ad9bf633879c9c53f2901c01ff794ea7863a2e4389a67bd0c748621993",
+      "bytes": 139320,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "dgfip_1329_ac_notice_cvae_2026.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "bc86e38ffa1a31af56f2fcadfb09b2dc5b0a7f5b0ba0679e771a95c26679198a",
+      "bytes": 324271,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "dgfip_1329_def_notice_cvae_2025.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "341092520dd75ad16a82472d882f059f23490cd86305e7c386bfd27d04f14f51",
+      "bytes": 361578,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "dgfip_stat_32_ir_2023.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "4dd3dbf8a30e00d8560c57551083ae4296bcc2aef9dab150dc130c133abb14f9",
+      "bytes": 1290733,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "dgfip_stat_32_ir_2023_tables.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "d8721958c326fb381818bddcf112f783f8f9af0dc1845fac49b43eb499292029",
+      "bytes": 40607,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "dgfip_stat_35_impots_production_2023.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "afe37a7a528c84712c0291f13e84f512ac7615114f22b0455ff0d9a1b3bd5674",
+      "bytes": 274711,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "dgfip_stat_39_impot_benefice_2024.pdf": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num39_09/dgfip_stat_39_limpot-sur-le-benefice-2024-des-entreprises_publi.pdf",
+      "quarantined": false,
+      "sha256": "8b474509c70e1fc36035380d5adc25bcec54cf9fc535697c79494a6348252859",
+      "bytes": 300885,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 39 — l'impôt sur le bénéfice 2024 des entreprises"
+    },
+    "dgfip_stat_39_impot_benefice_2024_donnees.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num39_09/dgfip_stat_39_limpot-sur-le-benefice-2024-des-entreprises.xlsx",
+      "quarantined": false,
+      "sha256": "9637d62fc2f33c36bad5999025e8b077799ab23d5e6630039d1e0f3c4ab82308",
+      "bytes": 66743,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 39 — données des figures. The fiscal control totals: IS-liable firm count, résultat fiscal and bénéfices by size and by sector."
+    },
+    "dgfip_stat_43_recettes_fiscales_dgfip_2025.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "33d68935df30ad59b40f33c8c7c2fb5f6f06e732c69051dce7343f2011c1b597",
+      "bytes": 275716,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "dgfip_stat_47_impots_production_2024.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "0741d10e8cb0027a332801e5d5286060de776521ecd1654049f88ec3572b0c69",
+      "bytes": 349332,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "dgfip_stat_47_impots_production_2024_donnees.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "04586e7d3439edda0258c9ae336c6dcf45b4781d18d94b35722645199fb0d1ea",
+      "bytes": 40901,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "drees_ER1370_non_recours_RSA.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "dd2f52dbb12cf6f278126b79a48dddec4eb913a8e2605969ab6dd32b7e919f6e",
+      "bytes": 279194,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "drees_ER1370_non_recours_RSA_donnees.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "39093bf20583de5ebf52a448d97d4f4e0f219525368e5424af18374b2044f616",
+      "bytes": 46016,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "drees_ER1379_non_recours_prime_activite.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "222853d711e012ee3bb36d423a8381a8e1edfb019d341dbe163e8cd06262ac13",
+      "bytes": 286280,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "drees_ER1379_non_recours_prime_activite_donnees.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "03aefa4575c3b20433db7030691fe564550894e75ccf941dfd2f1eace558898f",
+      "bytes": 58229,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "drees_panorama_minima_sociaux_2025.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "495d5d4d6cfc10058ced8ecec19a7e440d42a3ca9739fc6d70ee36cb18968deb",
+      "bytes": 6912704,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "erfs_2024_distribution_niveaux_de_vie.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "1e485ca348684f272e781de8a32631a1aa20369dc5509ab2465d39feadbcf2b4",
+      "bytes": 16017,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "erfs_2024_ip2117_figures.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "df80d57ee7449f1a766ca8fc2ba59721bc735a41a18ee63e2d807b43f6dad026",
+      "bytes": 41175,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "filosofi_2023_all_geo.zip": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "f3822a78e3f55fa842a2dd9b0f155d4341057f986eec38048c74a20486979b78",
+      "bytes": 5362858,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "filosofi_2023_note_accompagnement.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "3979fbbc67ae9ac5af977c952aa960ef3ce8e170568512c18acf14b66fae87b2",
+      "bytes": 43666,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "filosofi_2023_sources_methodes.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "81ca4feb998177ba4cee414f026176f26310b8084e4490c6c33bfe45f0c718dc",
+      "bytes": 409780,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_TES_symetrique_A38_2022DEF.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8574722/TES_symetrique_A38_2022DEF.xlsx",
+      "quarantined": false,
+      "sha256": "db4189aa708c10122dadf09c17f8bb49e1dd45561f93bf5527abe8473a29aa73",
+      "bytes": 66185,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "The same, année 2022, version définitive — carried so the vintage choice can be checked against a settled year rather than only asserted."
+    },
+    "insee_TES_symetrique_A38_2023SD.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8574722/TES_symetrique_A38_2023SD.xlsx",
+      "quarantined": false,
+      "sha256": "319076fac8a04885a70ae1ad2c7c2b7a2dd27c3e436ed2fad81eabaa591846e6",
+      "bytes": 66298,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE, comptes nationaux base 2020 — tableau entrées-sorties symétrique A38, année 2023, version semi-définitive. Domestic and import matrices; the basis of the L4 sectoral composition and its import-leakage correction (D-049)."
+    },
+    "insee_annexe_ir_apu_2025_20260326.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "51a10c6a10dfe4b1bb2879a1d64ab3a4bb47b15ec0d8f26c54f7ee9bd72ea0e4",
+      "bytes": 741580,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_bts_2024_sexe_age.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "85de7eee481db948635be343dffb4d4c4d93086cb90053c78bfae246cf21b1dd",
+      "bytes": 5856748,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_bts_2024_sexe_pcs.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "2428ee4b64551acea0c5daf0b06bc7141917847e702fb5c692e8cc30ae4109ca",
+      "bytes": 5039880,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_cn2024_t6205_salaires_traitements_bruts_par_branche.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "1a36a05e3848f3ad911c21a49f3e2537144a1da88d75026dfb800e24504c16d5",
+      "bytes": 51863,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_cn2024_t6208_emploi_par_branche_a38.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8574683/T_6208.xlsx",
+      "quarantined": false,
+      "sha256": "51a94b81aff103eb6654e4fc69e666188b8b532f9be34055de522ef03e3e175d",
+      "bytes": 52777,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE, comptes nationaux — tableau 6.208, emploi intérieur total par branche en nombre de personnes (38 postes). Same accounts vintage as the TES; the source of the employment coefficients."
+    },
+    "insee_cn2024_t7301_compte_administrations_publiques_S13.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "7c7c09fc41dda9af3d13137f25da69af7c411fcbf9e3957c9950f510e3f6c877",
+      "bytes": 63699,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_cn2025_t3217_principaux_impots_par_categorie.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx",
+      "quarantined": false,
+      "sha256": "589b94cf953d0fdb6e07b123dcadfd11b831e866096ec0cfb0911d62ae432790",
+      "bytes": 53683,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE comptes nationaux, tableau 3.217 — principaux impôts par catégorie"
+    },
+    "insee_ecrt2025_F26_deciles_pcs_sexe_2023.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "1158b73b3d885ec7fe1e36b713594fba43886bd9002b1ff9663bf94501d2f1e2",
+      "bytes": 27625,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_ecrt2026_F26_prive_individus_2024.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "5e3b2648ca13be5192585473cbe46e6ebd11622b6a9b5e132b5441436436b262",
+      "bytes": 24753,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_ecrt2026_F30_revenu_salarial_2023.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "c6b2d697d461e6b8c0f07c2cae5a720358dd83a8cc28b642455bd76bc4994854",
+      "bytes": 20414,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_entfra2023_fiche36_impot_societes.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/7678564/ENTFRA23-F20.pdf",
+      "quarantined": false,
+      "sha256": "aa597d933ce69c7911e055174a5d15f24c46d531e25fb926d08e36d2fa0fdf16",
+      "bytes": 130497,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE Références, Les entreprises en France 2023, fiche « Impôt sur les sociétés » — the source of P_LOSS_BY_SIZE, the one figure in the cell table read from a publication rather than computed (D-026)"
+    },
+    "insee_esane2023_caracteristiques_par_taille.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8611562/DD_esane23m23ep_caracteristiques_taille.xlsx",
+      "quarantined": false,
+      "sha256": "1bdb514e8d052d1837486d1711bcc89178c9fef501b04e3b3a986da975fb65e4",
+      "bytes": 186994,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE Ésane 2023 — caractéristiques comptables et financières par secteur (NAF a10/a21/a88/a272) et catégorie d'entreprise. The firm cell table's shape."
+    },
+    "insee_focus372_tissu_productif_categorie_2023.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8675639/IF372.xlsx",
+      "quarantined": false,
+      "sha256": "b895bc0bd7c780c35183476b2c2dab72283ba7dda9651e8d74f361876eb6db8d",
+      "bytes": 165205,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE Focus n° 372 — le tissu productif par catégorie d'entreprise. Splits Ésane's merged ETI/GE class and publishes the value-added dispersion."
+    },
+    "insee_fporsoc25_F16_revenu_salarial_2022.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "8b83278729106bd67bce8e94fc4ca604bb48c2253a140c164e59c7d6e8c5494b",
+      "bytes": 16297,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_ia112_taux_implicite_is_2016_2022.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8630968/IA112.xlsx",
+      "quarantined": false,
+      "sha256": "9d48545b48b7a83662242c9f674e9259ce90a4c186a61211581577d3f1202e01",
+      "bytes": 27068,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE Analyses n° 112 — taux implicite d'IS par taille d'entreprise"
+    },
+    "insee_ip2079_salaires_prive_2024.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "34b7e19cce45d8a5bc7a83f125d00d694ea6266e06b94531f8815a957f5b7d11",
+      "bytes": 42082,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_ip2100_fonction_publique_etat_2024.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "2f6af041d8ba335b2a49cde3be698f34d0fe486717a96b5097274e9578c5f5f7",
+      "bytes": 86498,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_ip2101_fonction_publique_territoriale_2024.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "d1594c0747e530d0ebfb4bde1f6472b33d57f2f4192db8cc5b539f5aee9bdbf5",
+      "bytes": 131814,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_ip2102_fonction_publique_hospitaliere_2024.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "448f4da2e190d4b7780494f2ba289e35059248990da6abb061f27960821cfcb2",
+      "bytes": 136897,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_marc_salaires_fonction_publique.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "e93b1376586372efb8384f5e1510624e30380b0dd4feb2c9a780667748b517c7",
+      "bytes": 14920,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_nomenclature_categories_juridiques_2022-09.xls": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "6bcd5d133b2b5847bef372c175c9d5bbf72313aa0c897c1521c34d25b6a56672",
+      "bytes": 38400,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_SL_ENF1.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "8c46392736d6fb34967d258e855f9ec296e98921fae84fd7e68b75cc22433df5",
+      "bytes": 15330,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_SL_ENF2.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "59d09c885f44f7a3ff7afd77b1b0fb6ffe3271c8184c1a83f5de0576d19d5796",
+      "bytes": 13779,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_SL_ENF3.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "fe885fff17624bc260bba89518c5f2159d96416d4c3975a87dcd198b07214682",
+      "bytes": 15024,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_SL_FAM1.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "c059e8453f274e647b6a121743edf18e05b2cdfcec5b9730e3958567a7acee0d",
+      "bytes": 31282,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_SL_FAM2.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "15b4a9b3de13d720d78b29bf3db3b7696b678747f6e67ae27d4d7778fa64d226",
+      "bytes": 21184,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_SL_FAM3.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "8a5d631bf0eb176fc88cd7ccc6e64872ac56cae92f997dbec7c180ef17a2942c",
+      "bytes": 13474,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_SL_FAM4.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "a7f76b7bf6b266bad555864b1eb0e86e27e640517ee9c4040691faa295b7674b",
+      "bytes": 16326,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_SL_MEN1_personnes_par_menage.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "757fbd26c3e74c5d9d39d8127238b692decd351ba00418a17b04da0b24058b4d",
+      "bytes": 14094,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_SL_MEN2_structure_familiale.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "7ef4862a37f7ac322e737ba3100e5e6a10e5303bf6d17e59c9d9cb441b0eac63",
+      "bytes": 20585,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_td_FAM1_type_famille_nb_enfants_moins25.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "182a2039408c0bb4b78b71c00d2890f2096882dc86da6f0669a1032711a995f4",
+      "bytes": 3076,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_td_FAM5.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "e3efa006aa3b5ef1995f007646e8ff6dd732e7fd32afe5ee7ba934e79cb3a3e3",
+      "bytes": 2604,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2022_td_FAM6.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "97db20c99d99aacc98cdb5d82e4729dbe5fc5c55357e9f350c49439563b1d4ea",
+      "bytes": 2563,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2023_TD_FAM1v1_familles_type_nb_enfants_moins25.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "de45d72827504f434b85de223300b643856886e36fbc6afb1bd6a8ecf64cbba6",
+      "bytes": 5555483,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2023_TD_FAM6v1_enfants_par_age_et_type_famille.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "9a00565d003ac0068663d58aee761637c573246443ecd7584b6dac5d289e1c77",
+      "bytes": 5771668,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2023_enfants_familles_par_age_et_type.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "8560a6e9f85edcbb163e7e258dc0115dd41b2c6e1a4f34c72d59663c18fe8c6f",
+      "bytes": 18270,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2023_familles_enfants_moins18_structure.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "b87bda767997668b95974396615ec6f536a0098bbc1f3538626c2e2a2ee075b7",
+      "bytes": 10868,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2023_menages_structure_familiale.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "33ad53ebf18011a45883a92794bb6b92ee38bc553b226f4191edaa2af3b8a1e5",
+      "bytes": 59081,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_rp2023_taille_des_menages.xlsx": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "59c669711ba6937779f2a1d1636cf7eae580a9e1cfbe3f5249d91a59eaf9ce3b",
+      "bytes": 21854,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_series_longues_prive_CS2_taux_cotisations_salariales.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "b062ebbfaad97a8693551c784e646514b1dc1a4557ac35959fc227aaf11c8283",
+      "bytes": 3677,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_series_longues_prive_CS3_taux_cotisations_salariales.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "766569d875fd1dbd30f1b695c0f623654d3b6a51fa68c2d537ea6669325567de",
+      "bytes": 3817,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_series_longues_prive_EQTP02.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "b6c9ffa886472a4cb726e9b02c67d4f448b55952bc1696b58111f28b7f8d46b6",
+      "bytes": 7753,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_series_longues_prive_EQTP08.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "0d9e7c8fed0d4d6555f234417ef8bc92cc6c75c4c3d17e8d72454b16cead120f",
+      "bytes": 6008,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_series_longues_prive_PRELEV35.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "9dd282ce566e7e6b0078b1c059b8bf035e961b8aeda0527e4c65d90f77a009cb",
+      "bytes": 1376,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_series_longues_prive_TC02b.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "3bad010b0b29366efe8b0ede4fd285c438c146defa80d513f91a805899e6a48b",
+      "bytes": 11047,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_series_longues_prive_TC08.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "24759b2a4bad3469db306027ce1280ca9d9feafdd4221b76a87ffda2f8006fa5",
+      "bytes": 13439,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_series_longues_prive_metadonnees.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "2e1b5973e4770d3f74065dcc3ca7ead059902f1fada8619ab5bd8c51bff24d00",
+      "bytes": 40064,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "ipp_rapport60_impots_production_2025.pdf": {
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/10/FS_ImpotsProductions-9.pdf",
+      "quarantined": false,
+      "sha256": "e8234692f2235de1d90f5f7fc4e3f9a15da131b26aa51cc87558940e2295ba60",
+      "bytes": 6860285,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "IPP Rapport n° 60, octobre 2025 — « La baisse des impôts de production : ciblage et évaluation ». The evaluation behind the C4 behavioural channel; its confidence intervals are read from its own tables, never from a summary (D-026, D-031)."
+    },
+    "urssaf_annuel_effectifs_masse_salariale_secteur_prive_france_entiere_na88.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "26efbf31a276142b9a5d7390b3c68db95ba75b73d31ba87ed069651389ff6388",
+      "bytes": 328391,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "urssaf_annuel_effectifs_masse_salariale_secteur_prive_par_tranche_entreprise.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "ed14cc24226ace81df266eab1cd40d598bcce6ad6b38c53772d451121f3feaec",
+      "bytes": 11683,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "urssaf_c3s_notice_mars2026.pdf": {
+      "url": "https://www.urssaf.fr/files/live/sites/urssaffr/files/outils-documentation/guides/C3S-Notice.pdf",
+      "quarantined": false,
+      "sha256": "fdde4b6550bf3f27c9896c602d184c87b865493036401e261ba8152e559a52cd",
+      "bytes": 1884616,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Notice URSSAF C3S — confirms the base is prior-year turnover"
+    },
+    "urssaf_masse_salariale_trimestrielle_secteur_prive_france_entiere.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "4418d04b8afc3cf200c2ff946429c762269f05cb47997971c4568396963ca037",
+      "bytes": 14388,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "urssaf_particuliers_employeurs_2024.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "20eff88e911f654e261c6bd092ecaba3f6c03c512d11e7d5e334541df46790bb",
+      "bytes": 50360,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "urssaf_trimestriel_effectifs_masse_salariale_secteur_prive_france_entiere_na88.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "c9a7da50bbf0f5c9deea450db4e52f9bbf8d1484d7dd6b5f29721ddcafce835c",
+      "bytes": 1572724,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "voies_et_moyens_tome1_plf2025.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "c01eccd5eb0a96912b0ad84b5db354fc3c9eaf80bd7db20c023e10057ab5648b",
+      "bytes": 1563676,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "voies_et_moyens_tome1_plf2026.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "4703605df8bfd1b4a20b1889839ebc1ea5a9b434eb4460eb2b40749e107371a0",
+      "bytes": 1099987,
+      "downloaded": "2026-09-03",
+      "licence": "unknown",
+      "description": "Source URL not recorded, so nothing computed from this file is reproducible by a third party. Quarantined under data/raw/_unsourced/ (D-028): the checksum still tracks it, and pipeline code refuses to open it. Re-source it if something needs it."
+    },
+    "insee_G2017-04_mesange.pdf": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/2848300/G2017-04.pdf",
+      "quarantined": false,
+      "sha256": "a90bc25445928e3f5573eab4bcecae0670480c28cee5a66e68a60c1030032150",
+      "bytes": 1801071,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab",
+      "description": "Bardaji, Campagne, Khder et al., « Le modèle macroéconométrique Mésange : réestimation et nouveautés », INSEE Document de travail G2017/04, mai 2017. Section 4 « Principales variantes » : multiplicateurs par instrument et profils 1/2/3/5/10 ans et LT, avec la réponse de l'emploi."
+    },
+    "hcfp_note_methodologique_2023-1_elasticite_po.pdf": {
+      "url": "https://www.hcfp.fr/sites/default/files/2023-02/Note%20m%C3%A9thodologique%20HCFP%202023-1.pdf",
+      "quarantined": false,
+      "sha256": "f932c9b5770f002ef6e21a09331b5a22c2c13b76d750bdd9d769891025c27697",
+      "bytes": 489683,
+      "downloaded": "2026-09-03",
+      "licence": "Haut Conseil des finances publiques — publication officielle",
+      "description": "HCFP, « L'élasticité des prélèvements obligatoires au PIB », note méthodologique n° 2023-1, février 2023. Tableau 2 p. 7 : élasticité moyenne estimée 1,07 sur 1991-2021."
+    },
+    "imk_wp117_2013_gechert_meta_regression.pdf": {
+      "url": "https://www.econstor.eu/bitstream/10419/105983/1/imk-wp_117_2013.pdf",
+      "quarantined": false,
+      "sha256": "4b5350969f656d6d4a88ec8c9f2fc4677d16a04fa5f473bad2c5aace0c8f621a",
+      "bytes": 1361763,
+      "downloaded": "2026-09-03",
+      "licence": "EconStor — accès ouvert, IMK / Hans-Böckler-Stiftung",
+      "description": "Gechert, « What fiscal policy is most effective? A Meta Regression Analysis », IMK Working Paper n° 117, 2013. Tableau 1 p. 11 : statistiques descriptives de 1 069 multiplicateurs rapportés par 104 études, par instrument et par classe de modèle. Source de la DISPERSION inter-études, que Mésange ne peut pas fournir."
+    },
+    "imk_wp139_2014_gechert_rannenberg_regime_dependent.pdf": {
+      "url": "https://www.econstor.eu/bitstream/10419/106005/1/imk-wp_139_2014.pdf",
+      "quarantined": false,
+      "sha256": "ad8415979ccae933b623b2c25465636082e174197636f77c23de51a0da199678",
+      "bytes": 908163,
+      "downloaded": "2026-09-03",
+      "licence": "EconStor — accès ouvert, IMK / Hans-Böckler-Stiftung",
+      "description": "Gechert et Rannenberg, « Are Fiscal Multipliers Regime-Dependent? A Meta Regression Analysis », IMK Working Paper n° 139, 2014. Tableau 1 p. 6 : 1 882 observations de 98 études, ventilées par RÉGIME conjoncturel (RAV/RUP/RLO)."
+    },
+    "france_strategie_2020_rapport_cice.pdf": {
+      "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/2020/CICE/fs-2020-rapport-cice2020-16septembre-final18h.pdf",
+      "quarantined": false,
+      "sha256": "3118138d2c2deda5a69260a7de52a3e5c9c54a7001ecfa6a7b0456bc65ff49d4",
+      "bytes": 2498552,
+      "downloaded": "2026-09-03",
+      "licence": "France Stratégie — publication officielle",
+      "description": "France Stratégie, « Évaluation du crédit d'impôt pour la compétitivité et l'emploi : synthèse des travaux d'approfondissement », septembre 2020. Ligne de validation M4 : effet emploi du CICE, 100 000 (TEPP, micro) à 400 000 (OFCE, macro avec bouclage intersectoriel), 160 000 net du financement."
+    },
+    "plf2026_voies_et_moyens_tome2.pdf": {
+      "url": "https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1087933/file/Voies_et_moyens_Tome_2_2026.pdf",
+      "quarantined": false,
+      "sha256": "f8fdf8072037fbc0cff1839c880718f184ea0c011572ae43bf58a12b20142214",
+      "bytes": 1556078,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab — publication officielle",
+      "description": "Annexe au PLF 2026, « Voies et moyens, tome II — Évaluation des voies et moyens : dépenses fiscales », 252 pages. Chaque dispositif porte un numéro et trois colonnes de coût. ATTENTION AU MILLÉSIME : la colonne d'une année BUDGÉTAIRE N porte le dispositif assis sur les REVENUS N-1, si bien que le chiffre comparable à une simulation des revenus 2024 est la colonne « prévision 2025 »."
+    },
+    "plf2025_voies_et_moyens_tome2.pdf": {
+      "url": "https://www2.assemblee-nationale.fr/static/17/Annexes-DL/PLF-2025/Voies_et_moyens_Tome_2_2025.pdf",
+      "quarantined": false,
+      "sha256": "037fa53f1d04a07a6fd2f79e2d2bf25f063bc94f3e21ea8750bf1b81d66e4d45",
+      "bytes": 4321007,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab — publication officielle",
+      "description": "Le même document pour le PLF 2025, 247 pages — millésime de contre-vérification."
+    },
+    "dgfip_ir_credits_impot_par_decile_rfr_2024.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25535_ir_ci_deciles_rfr_par_part.xlsx",
+      "quarantined": false,
+      "sha256": "c7578465e0a5101bcca0f21a0f37f21291c092f2c9dcfcc40c8e9bff5a44797c",
+      "bytes": 118865,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab — publication officielle",
+      "description": "DGFiP, crédits d'impôt sur le revenu ventilés par décile de RFR par part. La clé de répartition dont une imputation aurait besoin. Les déciles sont ceux de la population des BÉNÉFICIAIRES du dispositif, pas des foyers fiscaux."
+    },
+    "dgfip_ir_reductions_par_decile_rfr.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/1_statistiques/1_impots_particuliers/ir/nid_25536_ir_ri_deciles_rfr_par_part.xlsx",
+      "quarantined": false,
+      "sha256": "b9425ecfe7188e670198ce45350b5441d35462826d0b2e5ff9aeac604512a63f",
+      "bytes": 56734,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab — publication officielle",
+      "description": "DGFiP, réductions d'impôt ventilées par décile de RFR par part. Même réserve, et une seconde : l'en-tête « montants en milliers d'euros » est vrai pour les millésimes 2018-2021 et FAUX à partir de 2022 — un piège de facteur mille."
+    },
+    "dgfip_stat_41_impot_revenu_2024_donnees.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.xlsx",
+      "quarantined": false,
+      "sha256": "0d7fd5b950231738da88f7f62827fbd41da8247dac6ca1f3d93812452a76a4f8",
+      "bytes": 44115,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab — publication officielle",
+      "description": "DGFiP Statistiques n° 41 (novembre 2025), données de l'impôt sur le revenu."
+    },
+    "dgfip_stat_41_impot_revenu_2024.pdf": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.pdf",
+      "quarantined": false,
+      "sha256": "ffc54026d9082e97d34705a677b7eb20d81536cc952f07f444243a62fc2ecb5a",
+      "bytes": 390007,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab — publication officielle",
+      "description": "DGFiP Statistiques n° 41 (novembre 2025), publication."
+    },
+    "dlf_top8_depenses_fiscales_ir2018_deciles.xls": {
+      "url": "https://data.economie.gouv.fr/api/v2/catalog/datasets/liste-des-8-depenses-fiscales-les-plus-couteuses-parmi-celles-relatives-a-limpot/attachments/top_8_depenses_fiscales_ir2018_fl_sc_xls",
+      "quarantined": false,
+      "sha256": "7b9146326f3e254a24950ad4bc03fb1b836683d494fb7f96f1093c9d06ab6800",
+      "bytes": 101888,
+      "downloaded": "2026-09-03",
+      "licence": "Licence Ouverte / Etalab — publication officielle",
+      "description": "DLF via data.economie.gouv.fr : les huit dépenses fiscales d'IR les plus coûteuses, ventilées par décile, millésime 2018."
+    },
+    "an_qe15_27130_frais_scolarite_repartition_deciles.html": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "5fc0f88ff51f43e643c9d8c1e99425887217005190537226a54df8151d76ce30",
+      "bytes": 268251,
+      "downloaded": "2026-09-03",
+      "licence": null,
+      "description": "Téléchargé pendant la recherche B3 sans que son URL ait pu être confrontée aux octets sur disque. Mis en quarantaine : sa présence dans l'arbre ne vaut pas provenance et il ne peut pas soutenir un chiffre publié."
+    },
+    "ccomptes_neb_2026_depenses_fiscales.pdf": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "6093843af07cbea9596381183d87e28c165d34af29755ccf48d42567adac5e54",
+      "bytes": 1170723,
+      "downloaded": "2026-09-03",
+      "licence": null,
+      "description": "Téléchargé pendant la recherche B3 sans que son URL ait pu être confrontée aux octets sur disque. Mis en quarantaine : sa présence dans l'arbre ne vaut pas provenance et il ne peut pas soutenir un chiffre publié."
+    },
+    "dgfip_ir_declarations_2042_nat.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "40df4b5c6649ea1647730a5e173aa7bcfc96af66990ef39de49d7c0a00411f8d",
+      "bytes": 1281848,
+      "downloaded": "2026-09-03",
+      "licence": null,
+      "description": "Téléchargé pendant la recherche B3 sans que son URL ait pu être confrontée aux octets sur disque. Mis en quarantaine : sa présence dans l'arbre ne vaut pas provenance et il ne peut pas soutenir un chiffre publié."
+    },
+    "dgfip_ir_declarations_2042_nat_cases_7ac_7ae_7ag.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "02f493c4f5eb4d53882aa223ba996a1d66ef95824be462f22fa47f9734ccab8c",
+      "bytes": 3467,
+      "downloaded": "2026-09-03",
+      "licence": null,
+      "description": "Téléchargé pendant la recherche B3 sans que son URL ait pu être confrontée aux octets sur disque. Mis en quarantaine : sa présence dans l'arbre ne vaut pas provenance et il ne peut pas soutenir un chiffre publié."
+    },
+    "dgfip_ir_declarations_2042_nationales_2006_2024.csv": {
+      "url": null,
+      "quarantined": true,
+      "sha256": "e984973355e0a27ede6d9f9a2b6880ebb3ca552bfb72ed589d761a47cf697e82",
+      "bytes": 1281850,
+      "downloaded": "2026-09-03",
+      "licence": null,
+      "description": "Téléchargé pendant la recherche B3 sans que son URL ait pu être confrontée aux octets sur disque. Mis en quarantaine : sa présence dans l'arbre ne vaut pas provenance et il ne peut pas soutenir un chiffre publié."
+    },
+    "dgfip_stats_33_ifi_2024.pdf": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num33_04/dgfip_stats_ifi_2024.pdf",
+      "quarantined": false,
+      "sha256": "bb4750482fb36c111a038b061769d6f27d6125a04b9d0f76e89d2dc9e5b6bc5a",
+      "bytes": 481432,
+      "downloaded": "2026-09-04",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 33 (avril 2025) — L'impôt sur la fortune immobilière en 2024"
+    },
+    "dgfip_stats_33_ifi_2024.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num33_04/dgfip_stats_ifi_2024.xlsx",
+      "quarantined": false,
+      "sha256": "f35f5788504616220fe709d8e51df3d604ae79df4ab2d0681858a3ded3739765",
+      "bytes": 364968,
+      "downloaded": "2026-09-04",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "n° 33, annexe de données : Graphique 3 porte la répartition par tranche"
+    },
+    "dgfip_stats_45_ifi_2025.pdf": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2026/num45_04/dgfip_stat_45_ifi_2025.pdf",
+      "quarantined": false,
+      "sha256": "90a63cbf1c22ab3b19337551b01cc1d813ffb8c47fa33feb4271f97e91bf7dad",
+      "bytes": 262842,
+      "downloaded": "2026-09-04",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 45 (avril 2026) — l'IFI en 2025, millésime que PHASE5_SPEC ignore"
+    },
+    "dgfip_stats_45_ifi_2025.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2026/num45_04/dgfip_stat_45.xlsx",
+      "quarantined": false,
+      "sha256": "626c8f24676102ae887b740bfd0f978bb59ce5d8c33d6fb608ac8439a9ea7c1b",
+      "bytes": 47488,
+      "downloaded": "2026-09-04",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "n° 45, annexe : Tableau 1 porte les agrégats 2024 ET 2025 (effectif, base, IFI, dons)"
+    },
+    "dgfip_stats_23_ifi_2023.pdf": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2024/num23_04/dgfip_stats_ifi_2023.pdf",
+      "quarantined": false,
+      "sha256": "4edd91fd86a4d609624ebbe72c0b79ca5483f5899214f70727ea165f15f1b58f",
+      "bytes": 638768,
+      "downloaded": "2026-09-04",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 23 (avril 2024) — l'IFI en 2023"
+    },
+    "dgfip_stats_23_ifi_2023.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2024/num23_04/dgfip_stats_ifi_2023.xlsx",
+      "quarantined": false,
+      "sha256": "486099edaabeded259992452ea274c9187859f3e410f38effec424f78a84d717",
+      "bytes": 366189,
+      "downloaded": "2026-09-04",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "n° 23, annexe : Graphique 3 porte la composition du patrimoine par tranche (§4)"
+    },
+    "dgfip_stats_15_ifi_2022.pdf": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2023/num15_04/dgfip_statistiques_15_2023.pdf",
+      "quarantined": false,
+      "sha256": "6a559efbff8d515d198e85038060367f53fcd2d97ab97ea2c314fe49951c4b0d",
+      "bytes": 1157638,
+      "downloaded": "2026-09-04",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "DGFiP Statistiques n° 15 (avril 2023) — l'IFI en 2022"
+    },
+    "dgfip_stats_15_ifi_2022.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2023/num15_04/dgfip_statistiques_15_2023.xlsx",
+      "quarantined": false,
+      "sha256": "19c7706215c33edcbca8f62dc935bdf086caa8f87b11a66a87fc25111f9ef67e",
+      "bytes": 103170,
+      "downloaded": "2026-09-04",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "n° 15, annexe de données"
+    },
+    "ipp_note92_milliardaires.pdf": {
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/05/92_Note_IPP_Billionaires-version-actualisee.pdf",
+      "quarantined": false,
+      "sha256": "743769b021997edbcd9f30971508c196b676ce3645ef5e75abc71e8a82cd99df",
+      "bytes": 2173467,
+      "downloaded": "2026-09-04",
+      "licence": "IPP — usage cité",
+      "description": "IPP Note 92 — « Quels impôts les milliardaires paient-ils ? », version actualisée. Source de la cellule d'extension >= 100 M pour un plancher de type Zucman (§2)"
+    }
+  }
+}

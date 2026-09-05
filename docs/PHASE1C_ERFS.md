@@ -16,17 +16,48 @@ would throw away.
 
 ## 1. Why this is not a marginal improvement
 
-The reconciliation report's failures have a single measured cause: **13.5 M adults
+The reconciliation report's failures have one dominant measured cause: **13.5 M adults
 have no modelled income** — 3.87 M self-employed and 9.6 M inactive below the
 retirement proxy. Zero-income adults form zero-income familles and claim RSA.
 
+It shows up in two shapes, and the second is the one that took longest to see. The
+obvious one is the bottom: a population with too many zero incomes over-claims
+means-tested benefits. The other is that emptying 13.5 M adults out of the distribution
+**mis-shapes the density everywhere else**, so any reform whose yield depends on the mass
+in a narrow wage band is badly out — measured at +112 % on a published costing. Neither
+is fixed by reweighting; both are fixed by observing incomes.
+
 | Line | A' today | Cause | Under ERFS |
 |---|---|---|---|
-| RSA | +106 % | zero-income adults | incomes observed |
-| Interdecile D9/D1 | +41 % | the bottom is too poor | observed |
-| Foyers fiscaux | −16 % | tax units inferred from dwelling structure | declared |
-| Prime d'activité | −27 % vs bridge | income distribution near the taper | observed |
-| Allocations familiales | −25 % | children synthesised; AF is income-modulated | observed |
+| RSA | +113 % | zero-income adults | incomes observed |
+| Allocataires du RSA | +96 % | the same, counted in foyers rather than euros | observed |
+| Chiffrage allègements 2025 | +112 % | mass in a narrow wage band | observed |
+| Foyers fiscaux | −15 % | tax units inferred from dwelling structure | declared |
+| Prime d'activité | −28 % vs bridge | income distribution near the taper | observed |
+| Allocations familiales | −23 % | children synthesised; AF is income-modulated | observed |
+
+**The interdecile ratio is no longer on this list, and removing it strengthens the
+case rather than weakening it.** It sat here at +41 %, cited as the headline proof that
+the synthetic distribution's *shape* was wrong. The zero-masked sweep (D-073) found that
+most of that number was a **wrong estimator**: the line compared a ratio of decile MEANS
+against INSEE's ratio of person-weighted THRESHOLDS. Read as the statistic INSEE actually
+publishes, it is **+3,6 %** — inside tolerance.
+
+So the honest version of the argument is narrower and better evidenced. The synthetic
+distribution does not fail across its broad shape; it fails **at thresholds and in the
+zero-income population**, which is exactly what ERFS fixes. The evidence that stands:
+
+* the **+112 % allègements backtest** — a published costing, missed by a factor of two,
+  because the yield depends on the mass between 2,25 and 2,5 SMIC and a synthetic
+  distribution puts the wrong number of people in a narrow band (D-076);
+* the **RSA lines**, +113 % in euros and +96 % in allocataires, driven by the 13.5 M
+  adults with no modelled income;
+* **`asf` at 9,0 md against a published ~2 md** — one more instrument, same cause;
+* **no capital income at all**, which the two distribution lines are inside tolerance
+  *because of* rather than despite (D-080).
+
+A case that cites the line that fell would invite exactly the correction it just
+received. These four stood.
 
 **The deeper reason, which is easy to miss.** In A' the wage level is *calibrated*
 to a published wage bill, which spends that margin (§4.3) and leaves the income-tax

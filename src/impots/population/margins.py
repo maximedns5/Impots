@@ -300,8 +300,16 @@ NIVEAU_DE_VIE_GINI = Figure(
 NIVEAU_DE_VIE_D9_D1 = Figure(
     value=3.5, unit="ratio", year=2023, scope="Rapport interdécile D9/D1 du niveau de vie",
     source="INSEE, Filosofi 2023", url=FILOSOFI_URL, use="validation",
-    caveat="The single most informative validation line for branch A': it is a pure "
-           "shape statistic, unaffected by the wage-bill level we calibrated on.",
+    caveat="A pure shape statistic, unaffected by the wage-bill level we calibrated "
+           "on — but no longer the branch's most informative line, and the demotion is "
+           "on the record. It read +39 % and was cited as the headline proof that the "
+           "synthetic distribution's shape was wrong; most of that was a WRONG "
+           "ESTIMATOR, a ratio of decile means against INSEE's ratio of person-weighted "
+           "thresholds (D-073). Read as published, +3,6 %. What carries that argument "
+           "now is the +112 % allègements backtest, which is a published costing and "
+           "does not depend on our choice of statistic. Still conditionally valid: this "
+           "line sits inside tolerance with NO capital income on our side and capital "
+           "in the target.",
 )
 
 #: Number of dependent children (under 25, INSEE's "enfant d'une famille") by

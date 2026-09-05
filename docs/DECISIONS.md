@@ -3177,3 +3177,44 @@ de la formule, n'est donc pas la solution la plus propre : c'est la seule juste.
 Vérifié à la main de bout en bout : un barème à deux tranches — 1 % dès 1,3 M, 2 % dès
 5 M — sur une base de 20 M donne 3,7 M × 1 % + 15 M × 2 % = **337 000 €**, et le moteur
 rend 337 000,00 €.
+
+## D-083 — Le balayage du récit : la « défaillance la plus informative » de la phase 1 n'était pas celle qu'on croyait
+
+Dette de relecture, ordonnée en pré-vol de M4. D-073 a fait passer le rapport interdécile
+de +39,1 % à **+3,6 %** en le lisant comme l'INSEE le publie — des seuils pondérés par
+personne, et non un rapport de moyennes de déciles. Plusieurs documents racontaient encore
+l'ancienne histoire, et un projet dont les documents survivent à leurs propres corrections
+n'a pas de récit, il a des sédiments.
+
+**Ce qui est tombé.** La ligne interdécile était citée comme la preuve maîtresse que la
+*forme* de la distribution synthétique était fausse — « la ligne la plus informative de la
+branche A' », dans `margins.py`, dans `PHASE1C_ERFS.md`, dans l'audit du 1er septembre.
+L'essentiel de ce +39 % était un **mauvais estimateur**, pas un défaut de population.
+
+**Ce qui tient, et qui porte désormais l'argument.** Rien de tout cela ne dépend d'un
+choix de statistique :
+
+* le **backtest des allègements 2025 à +112 %** — un chiffrage publié, manqué d'un facteur
+  deux, parce que le rendement dépend de la masse entre 2,25 et 2,5 SMIC (D-076) ;
+* les **lignes RSA**, +113 % en euros et +96 % en allocataires ;
+* l'**ASF à 9,0 md contre ~2 md publiés**, un instrument de plus, même cause ;
+* l'**absence totale de revenus du capital**, à cause de laquelle les deux lignes de
+  distribution sont dans leur tolérance plutôt que malgré (D-080).
+
+**Le dossier ERFS ne s'en trouve pas affaibli, il s'en trouve mieux argumenté.** La thèse
+n'est plus « la forme d'ensemble est fausse » mais « elle échoue **aux seuils et dans la
+population à revenu nul** » — ce que l'ERFS corrige précisément. Vider 13,5 M d'adultes de
+la distribution déforme la densité partout ailleurs, et c'est cela que le backtest mesure.
+Un dossier qui citerait la ligne tombée appellerait exactement la correction qu'elle vient
+de recevoir.
+
+**Documents mis à jour** : `PHASE1C_ERFS.md` (le tableau des causes, la thèse en une
+phrase), `AUDIT_2026-09-01.md` (deux encadrés de correction plutôt qu'une réécriture — un
+audit se corrige au vu de tous, il ne se repeint pas), `margins.py` (le `caveat` de la
+figure, qui se disait « la plus informative »).
+
+**Et une leçon d'épistémologie que l'audit avait ratée**, notée là où il la ratait : être
+**non dépensée** est nécessaire pour qu'une ligne dise quelque chose, et non suffisant. La
+ligne interdécile était non dépensée et ne disait rien, parce qu'elle comparait la mauvaise
+statistique. L'indépendance vis-à-vis de la calibration est un mode de défaillance ;
+comparer le comparable en est un autre, et l'audit ne vérifiait que le premier.
