@@ -3123,3 +3123,57 @@ la première tranche sont au-dessus de 2 M.
 
 Et la tranche haute étant **ouverte**, aucun maximum n'existe pour elle : `extremal()`
 refuse plutôt que de substituer un plafond commode.
+
+## D-082 — Le barème de l'IFI devient un bouton, et la fusion silencieuse qui dictait sa forme
+
+M3 avait livré neuf boutons IFI sans le principal. Un jeu de boutons auquel manque son
+levier de tête se lit comme complet alors qu'il ne l'est pas, ce que ce projet traite
+comme un défaut. Trois boutons de plus, tous vérifiés en faisant tourner un ménage :
+
+| Bouton | Ménage qui l'exerce | Mesuré |
+|---|---|---|
+| `ifi_bareme` (échelle) | 20 M de bâti, 5 M de salaire | 248 190 → 398 190 € en doublant le taux du haut |
+| `ifi_plafond_reductions` | 12 M + 100 k de dons | 198 190 → 238 190 € en abaissant le plafond |
+| `ifi_non_bati_seuil` | bois, ruraux, groupements | 15 180 → 15 440 € |
+| `ifi_non_bati_taux_bois_forets` | idem | 12 690 → 14 690 € |
+
+Les deux derniers sont **morts sur un foyer qui ne détient que du bâti**, et ont donc
+leur propre ménage. C'est la même discipline que pour la décote : un ménage ne suffit
+jamais à déclarer un bouton mort.
+
+**`ifi_plafond_reductions` vise le nœud vivant, et son jumeau est mort.**
+`plafond_somme_trois_reductions_pme_fcip_fip_pme_dons` est lu ;
+`plafond_somme_reduction_pme_fcip_fip_pme` porte le même 50 000 et n'est lu par personne
+— l'un des six sosies morts trouvés en amont (D-075). Un bouton visant le jumeau
+s'écrirait sans erreur et ne bougerait rien.
+
+### La fusion de tranches, et pourquoi la garde ne peut pas être dans le chemin d'écriture
+
+**Deux tranches au même seuil sont FUSIONNÉES par le moteur, et leurs taux ADDITIONNÉS.**
+Mesuré sur le barème IFI : écrire le seuil de la tranche 0 à 1 300 000 fait passer cinq
+tranches à quatre et le taux de tête à **0,012 = 0,005 + 0,007**. La bande 1,3–2,57 M
+double en silence. Rien ne lève.
+
+La garde ne peut pas être posée dans `update_bracket`, parce que **le moteur s'appuie
+délibérément sur cette fusion** : `_apply_bareme` neutralise les tranches actives en
+surplus en leur donnant le seuil du haut et un taux **zéro**, où additionner est
+inoffensif. Interdire les seuils égaux casserait le mécanisme légitime.
+
+La protection va donc là où le barème entier est visible — le validateur de spec —
+exactement comme pour l'IR. Et le validateur porte **son propre test-témoin** :
+`test_the_merge_is_real_and_sums_the_rates` mesure la fusion sur le moteur et échoue si
+openfisca cesse un jour de fusionner, moment où le validateur deviendrait sans objet.
+
+**Le premier seuil n'est PAS forcé à zéro, contrairement à l'IR.** Le barème de l'IR doit
+couvrir chaque euro de revenu ; l'IFI exonère tout ce qui est sous 800 000 **en n'y ayant
+aucune tranche**. Recopier la règle de l'IR interdirait le barème légal lui-même.
+
+**Et le seuil d'assujettissement ne pouvait décidément pas être un bouton de paramètre.**
+Les deux contournements ont été mesurés et corrompent tous deux le barème : porter le
+seuil de la tranche 0 à 1,3 M fusionne les tranches (bande à 1,2 %), et le porter à
+1 299 999,99 supprime la bande à 0,5 %. La garde de `patrimoine.corrections`, au niveau
+de la formule, n'est donc pas la solution la plus propre : c'est la seule juste.
+
+Vérifié à la main de bout en bout : un barème à deux tranches — 1 % dès 1,3 M, 2 % dès
+5 M — sur une base de 20 M donne 3,7 M × 1 % + 15 M × 2 % = **337 000 €**, et le moteur
+rend 337 000,00 €.

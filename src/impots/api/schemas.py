@@ -253,6 +253,9 @@ class IRBracket(BaseModel):
 #: reform moving ONE of them can be checked against the other's baseline. Pinned here
 #: rather than read from the tree because a validator must not need a tax-benefit
 #: system: `test_af_plafond_baselines_match_the_tree` keeps them honest.
+#: Active brackets in the IFI scale at 2024: 800 k, 1,3 M, 2,57 M, 5 M, 10 M.
+IFI_BAREME_BRACKETS = 5
+
 AF_PLAFOND_TRANCHE_1_BASE_2024 = 62_474.0
 AF_PLAFOND_TRANCHE_2_BASE_2024 = 87_430.0
 
@@ -345,6 +348,16 @@ class ReformSpec(BaseModel):
     ifi_dons_taux: Annotated[float, Field(ge=0, le=1)] | None = None
     ifi_dons_plafond: Annotated[float, Field(ge=0, le=10_000_000)] | None = None
     ifi_forfait_mobilier: Annotated[float, Field(ge=0, le=1)] | None = None
+    ifi_plafond_reductions: Annotated[float, Field(ge=0, le=10_000_000)] | None = None
+    ifi_non_bati_seuil: Annotated[float, Field(ge=0, le=10_000_000)] | None = None
+    ifi_non_bati_taux_bois_forets: Annotated[float, Field(ge=0, le=1)] | None = None
+    ifi_bareme: list[IRBracket] | None = Field(
+        default=None,
+        description="Complete replacement of the active IFI scale: 1 to 5 brackets, "
+        "thresholds strictly increasing. UNLIKE the IR scale the first threshold is NOT "
+        "0 — the IFI's exempt band below 800 000 EUR is the ABSENCE of a bracket, not a "
+        "zero-rated one, and a scale starting at 0 taxes from the first euro.",
+    )
     """The 2017 flat cut to housing benefit — five euros a month."""
     # IR niches (B3). Rates as fractions, ceilings in euros except
     # `dons_plafond_part_rfr`, which is a SHARE of the revenu fiscal de référence, and
@@ -393,6 +406,40 @@ class ReformSpec(BaseModel):
         thresholds = [b.threshold for b in self.ir_bareme]
         if any(a >= b for a, b in pairwise(thresholds)):
             raise ValueError(f"Les seuils doivent être strictement croissants ; reçu {thresholds}.")
+        return self
+
+    @model_validator(mode="after")
+    def _check_ifi_bareme(self) -> ReformSpec:
+        """Strictly increasing thresholds, and the reason is not tidiness.
+
+        openfisca MERGES brackets that share a threshold, by SUMMING their rates.
+        Measured on the IFI scale: writing bracket 0's threshold to 1 300 000 turns five
+        brackets into four and the head rate into 0,012 — the sum of 0,005 and 0,007 —
+        so the 1,3-2,57 M band silently doubles. Nothing raises. The engine's own
+        surplus-bracket trick relies on that merge (with a rate of ZERO, where summing
+        is harmless), which is exactly why a user-supplied scale must never reach it
+        with a live rate.
+
+        The first threshold is deliberately NOT forced to 0, unlike the IR scale: the
+        IFI exempts everything below 800 000 by having no bracket there.
+        """
+        if self.ifi_bareme is None:
+            return self
+        count = len(self.ifi_bareme)
+        if not 1 <= count <= IFI_BAREME_BRACKETS:
+            raise ValueError(
+                f"Le barème de l'IFI compte {IFI_BAREME_BRACKETS} tranches actives ; "
+                f"{count} fournies. Les tranches sont remplacées sur place, aucune n'est "
+                f"ajoutée."
+            )
+        thresholds = [bracket.threshold for bracket in self.ifi_bareme]
+        if any(a >= b for a, b in pairwise(thresholds)):
+            raise ValueError(
+                f"Les seuils du barème de l'IFI doivent être strictement croissants ; "
+                f"reçu {thresholds}. Deux tranches au même seuil sont FUSIONNÉES par "
+                f"le moteur et leurs taux ADDITIONNÉS, sans erreur : le barème obtenu "
+                f"ne serait pas celui demandé."
+            )
         return self
 
     @model_validator(mode="after")

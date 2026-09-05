@@ -80,6 +80,14 @@ IFI_AU_DESSUS = _riche({"autres_immeubles_batis": 1_450_000}, salaire=400_000)
 #: Dons big enough to reach the 50 000 EUR ceiling: 100 000 x 75 % = 75 000.
 IFI_GROS_DONS = _riche({"autres_immeubles_batis": 12_000_000,
                         "dons_organismes_interet_general": 100_000}, salaire=3_000_000)
+#: Non-bâti — bois, biens ruraux, parts de groupements. The non-bâti knobs are dead on a
+#: foyer holding only bâti, which is why they get their own household rather than a
+#: verdict from the one above.
+IFI_NON_BATI = _riche({"autres_immeubles_batis": 2_500_000,
+                       "bois_et_forets": 800_000,
+                       "biens_ruraux_loues_long_terme": 500_000,
+                       "parts_groupements_forestiers_agricoles": 500_000},
+                      salaire=400_000)
 
 #: knob -> (household, niches to declare or None, output row, value, expected sign of
 #: the change in that row). Sign is +1 when the output RISES.
@@ -168,6 +176,11 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
     "ifi_dons_taux": (IFI_RICHE, None, "ifi", 0.375, +1),
     "ifi_dons_plafond": (IFI_GROS_DONS, None, "ifi", 20_000.0, +1),
     "ifi_forfait_mobilier": (IFI_RICHE, None, "ifi", 0.05, +1),
+    # Lowering the ceiling on the SUM of réductions leaves less relief, so tax rises.
+    "ifi_plafond_reductions": (IFI_GROS_DONS, None, "ifi", 10_000.0, +1),
+    # Both non-bâti knobs shrink an exemption, so both raise the tax.
+    "ifi_non_bati_seuil": (IFI_NON_BATI, None, "ifi", 50_000.0, +1),
+    "ifi_non_bati_taux_bois_forets": (IFI_NON_BATI, None, "ifi", 0.5, +1),
     "plafond_global_niches": (
         {**NICHE_FOYER, "children": [{"annee_naissance": 2019},
                                      {"annee_naissance": 2021},

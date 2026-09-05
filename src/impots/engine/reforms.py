@@ -213,6 +213,17 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "ifi_dons_taux": (*PATH_IFI_DONS, "taux"),
     "ifi_dons_plafond": (*PATH_IFI_DONS, "limite_reduction"),
     "ifi_forfait_mobilier": (*_IFI, "forfait_mobilier", "majoration_forfaitaire"),
+    # The ceiling on the SUM of IFI réductions. Its twin
+    # `plafond_somme_reduction_pme_fcip_fip_pme` carries the same 50 000 and is read by
+    # nothing — one of the dead look-alikes found upstream (D-075). Aiming a knob at the
+    # twin would write successfully and move nothing, so the name here matters.
+    "ifi_plafond_reductions": (
+        *_IFI, "reduc_impot", "plafond_somme_trois_reductions_pme_fcip_fip_pme_dons"),
+    # Non-bâti: bois et forêts, biens ruraux. Exercised only by a foyer that declares
+    # some — measured on b1bc/b1be/b1bh, dead on a foyer holding only bâti.
+    "ifi_non_bati_seuil": (*_IFI, "forfait_mobilier", "non_bati", "seuil"),
+    "ifi_non_bati_taux_bois_forets": (
+        *_IFI, "forfait_mobilier", "non_bati", "taux_bois_forets"),
     # IR niches (B3).
     "saldom_taux": (*PATH_NICHE_SALDOM, "taux"),
     "saldom_plafond": (*PATH_NICHE_SALDOM, "plafond"),
@@ -247,7 +258,8 @@ IFI_KNOBS = frozenset({
     "ifi_decote_parametre", "ifi_decote_taux", "ifi_decote_borne_inferieure",
     "ifi_decote_borne_superieure", "ifi_plafonnement_taux",
     "ifi_abattement_residence_principale", "ifi_dons_taux", "ifi_dons_plafond",
-    "ifi_forfait_mobilier",
+    "ifi_forfait_mobilier", "ifi_plafond_reductions", "ifi_non_bati_seuil",
+    "ifi_non_bati_taux_bois_forets",
 })
 
 #: `af_cm.modulation.taux_tranche_1` is NOT a knob, and the reason is the fourth
@@ -307,6 +319,9 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
             def modify(parameters: Any) -> Any:
                 if spec.ir_bareme is not None:
                     _apply_bareme(parameters, spec.ir_bareme, start)
+                if spec.ifi_bareme is not None:
+                    _apply_bareme(parameters, spec.ifi_bareme, start,
+                                  path=(*_IFI, "bareme"))
                 for knob, path in SCALAR_KNOBS.items():
                     value = getattr(spec, knob)
                     if value is not None:
@@ -369,9 +384,15 @@ def _apply_plafond(
                         instant=instant)
 
 
-def _apply_bareme(parameters: Any, brackets: list[Any], start: Any) -> None:
-    """Replace the active IR scale with the user's brackets, collapsing the surplus."""
-    node = resolve(parameters, PATH_BAREME)
+def _apply_bareme(parameters: Any, brackets: list[Any], start: Any,
+                  path: tuple[str, ...] = PATH_BAREME) -> None:
+    """Replace the active scale with the user's brackets, collapsing the surplus.
+
+    `path` defaults to the IR scale; the IFI passes its own. The machinery is shared
+    because the surplus-bracket trick below is subtle enough that a second copy of it
+    would be a second place to get it wrong.
+    """
+    node = resolve(parameters, path)
     active = active_bracket_count(node, start)
     if len(brackets) > active:
         raise ValueError(

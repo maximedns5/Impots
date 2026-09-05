@@ -809,3 +809,113 @@ class TestZucmanFloor:
             assert what in text
         # And the one thing we DO have is recorded, so the list is not just a complaint.
         assert any(have for _, have, _ in REQUIREMENTS)
+
+
+class TestIfiBareme:
+    """The scale knob, and the silent merge the validator exists to prevent."""
+
+    def test_the_merge_is_real_and_sums_the_rates(self):
+        """Measured on the engine, not assumed. This is the kill test for the validator.
+
+        Writing bracket 0's threshold onto bracket 1's makes openfisca collapse the two
+        and SUM their rates: five brackets become four and the head rate becomes 0,012,
+        which is 0,005 + 0,007. Nothing raises. The 1,3-2,57 M band silently doubles.
+
+        The engine's own surplus-bracket trick depends on this merge — with a rate of
+        ZERO, where summing is harmless — so it cannot simply be forbidden in the write
+        path. The protection has to sit where the whole scale is visible, which is the
+        spec validator.
+        """
+        from openfisca_core.reforms import Reform
+
+        from impots.engine.system import baseline
+
+        instant = "2024-01-01"
+
+        def scale_of(system):
+            node = (system.get_parameters_at_instant(instant).taxation_capital
+                    .impot_fortune_immobiliere_ifi_partir_2018.bareme)
+            return list(zip(node.thresholds, node.rates, strict=True))
+
+        class Collide(Reform):
+            def apply(self) -> None:
+                def modify(parameters):
+                    brackets = (parameters.taxation_capital
+                                .impot_fortune_immobiliere_ifi_partir_2018.bareme.brackets)
+                    brackets[0].threshold.update(start=instant, value=1_300_000.0)
+                    return parameters
+
+                self.modify_parameters(modifier_function=modify)
+
+        assert len(scale_of(baseline())) == 5
+        merged = scale_of(Collide(baseline()))
+        assert len(merged) == 4, "the merge no longer happens — the validator may be moot"
+        assert merged[0] == (1_300_000.0, pytest.approx(0.012)), "0,005 + 0,007"
+
+    def test_the_validator_refuses_equal_thresholds(self):
+        import pydantic
+
+        from impots.api.schemas import ReformSpec
+
+        with pytest.raises(pydantic.ValidationError, match="FUSIONNÉES"):
+            ReformSpec(ifi_bareme=[{"threshold": 1_300_000, "rate": 0.005},
+                                   {"threshold": 1_300_000, "rate": 0.007}])
+        # And a legitimate scale is accepted, so the guard is not simply refusing.
+        ReformSpec(ifi_bareme=[{"threshold": 1_300_000, "rate": 0.01},
+                               {"threshold": 5_000_000, "rate": 0.02}])
+
+    def test_the_first_threshold_is_not_forced_to_zero_unlike_the_ir_scale(self):
+        """The IFI exempts everything below 800 000 by having NO bracket there.
+
+        The IR validator requires a first threshold of 0 because a marginal scale must
+        cover every euro of income. Copying that rule here would forbid the actual legal
+        scale, whose first bracket starts at 800 000.
+        """
+        import pydantic
+
+        from impots.api.schemas import ReformSpec
+
+        ReformSpec(ifi_bareme=[{"threshold": 800_000, "rate": 0.005},
+                               {"threshold": 1_300_000, "rate": 0.007}])
+        with pytest.raises(pydantic.ValidationError):
+            ReformSpec(ir_bareme=[{"threshold": 800_000, "rate": 0.005},
+                                  {"threshold": 1_300_000, "rate": 0.007}])
+
+    def test_the_scale_knob_prices_end_to_end_and_matches_hand_arithmetic(self):
+        from impots.api.schemas import HouseholdInput, ReformSpec
+        from impots.engine import compute
+
+        household = HouseholdInput.model_validate({
+            "adults": [{"salaire_brut_annuel": 5_000_000, "annee_naissance": 1970}],
+            "patrimoine": {"autres_immeubles_batis": 20_000_000}})
+        two_brackets = ReformSpec.model_validate({"ifi_bareme": [
+            {"threshold": 1_300_000, "rate": 0.01},
+            {"threshold": 5_000_000, "rate": 0.02}]})
+        result = compute(household, 2024, reform=two_brackets, tier="full")
+        # 3,7 M at 1 % plus 15 M at 2 %, by hand.
+        expected = (5_000_000 - 1_300_000) * 0.01 + (20_000_000 - 5_000_000) * 0.02
+        assert expected == pytest.approx(337_000.0)
+        assert result.reform["ifi"] == pytest.approx(expected, abs=0.01)
+        assert result.baseline["ifi"] == pytest.approx(248_190.0, abs=0.01)
+
+    def test_replacing_five_brackets_with_two_does_not_leave_a_live_surplus(self):
+        """The surplus-collapse trick, checked on the IFI scale rather than assumed.
+
+        Leftover active brackets take the top threshold and a rate of ZERO. If they took
+        a non-zero rate the merge would MULTIPLY the top rate instead of leaving it
+        alone, and the answer above would be wrong by exactly that factor.
+        """
+        from impots.api.schemas import ReformSpec
+        from impots.engine.reforms import make_reform
+        from impots.engine.system import baseline
+
+        spec = ReformSpec.model_validate({"ifi_bareme": [
+            {"threshold": 1_300_000, "rate": 0.01},
+            {"threshold": 5_000_000, "rate": 0.02}]})
+        reformed = make_reform(spec, 2024, "test-ifi-scale")(baseline())
+        node = (reformed.get_parameters_at_instant("2024-01-01").taxation_capital
+                .impot_fortune_immobiliere_ifi_partir_2018.bareme)
+        scale = list(zip(node.thresholds, node.rates, strict=True))
+        assert scale[0] == (1_300_000.0, pytest.approx(0.01))
+        assert scale[-1][1] == pytest.approx(0.02), (
+            "the top rate was multiplied by the collapsed surplus brackets")
