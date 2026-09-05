@@ -2,6 +2,11 @@ data/raw/*
 data/interim/*
 data/processed/*
 !data/**/.gitkeep
+# Provenance, not data. The manifest carries URLs, SHA-256 hashes, byte counts,
+# download dates and licences for every raw input — no observation from any of them.
+# It is the reproducibility spine: without it, a checkout cannot tell which vintage of
+# which publication a figure came from. Ruled in, 2026-09-05.
+!data/raw/MANIFEST.json
 __pycache__/
 .venv/
 *.parquet

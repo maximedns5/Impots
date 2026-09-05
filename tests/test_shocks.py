@@ -166,6 +166,19 @@ def test_unmapped_deltas_still_count_towards_the_balance():
 
 @needs_tes
 def test_the_allocation_totals_the_impulse(table):
+    """The FULL impulse, and the word full is the whole test.
+
+    Named in the guard audit as a candidate for decoration — "the allocation sums to
+    what went in" sounds true by construction — so the implementation that makes it
+    fail is written down here. `allocation` spreads the impulse over the published
+    final-use columns INCLUDING imported final uses, precisely so that the total is
+    preserved: import leakage is computed and reported downstream, never applied here.
+
+    So this fails if anyone nets leakage out inside the allocation, which is the exact
+    double count Phase 4 caught twice (D-054's Type II round, and the 27,4 % / 33,6 %
+    import channels). A sum short of the impulse means leakage has been applied twice
+    by the time the fan sees it.
+    """
     impulse = shocks.build({"ir": -3.0e9}, year=2026)
     demand = shocks.allocation(table, impulse)
     assert demand.sum() == pytest.approx(3.0e9, rel=1e-9)

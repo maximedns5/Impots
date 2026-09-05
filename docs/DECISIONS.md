@@ -3218,3 +3218,62 @@ figure, qui se disait « la plus informative »).
 ligne interdécile était non dépensée et ne disait rien, parce qu'elle comparait la mauvaise
 statistique. L'indépendance vis-à-vis de la calibration est un mode de défaillance ;
 comparer le comparable en est un autre, et l'audit ne vérifiait que le premier.
+
+## D-084 — L'audit « nommez l'implémentation qui la ferait échouer », et ce qu'il a trouvé
+
+Seconde dette de relecture, ordonnée en pré-vol de M4. La règle, dans sa forme finale :
+**pour chaque garde et chaque test, nommer l'implémentation qui le ferait échouer ; un
+contrôle sans implémentation défaillante est de la décoration.** Le précédent est la garde
+de conservation du poids de l'échantillonneur PPS, vraie par construction sous n'importe
+quel plan de sondage, verte pendant toute la période où l'estimateur était biaisé (D-074).
+
+### Les huit gardes de `guards.py` : toutes saines
+
+| Garde | Lève | Test-témoin |
+|---|---|---|
+| `weight_identity` | oui | `catches_the_summed_weight_defect`, `catches_the_rescaled_pps_defect` |
+| `no_nan` | oui | accepte du propre, lève sur NaN et inf |
+| `non_negative` | oui | accepte, lève sur un négatif |
+| `not_greater` | compte | vérifié à 1 et à 0 |
+| `niche_blind_spot` | signale | vérifié dans les deux sens, plus le cas où il doit se taire |
+| `sector_balance` | oui | deux témoins |
+| `firm_balance` | oui | un témoin |
+| `weighted_total` | non — c'est un utilitaire, pas une garde | sans objet |
+
+**Et le premier outil que j'ai écrit pour cet audit était lui-même faux** : un scanner par
+expression régulière a déclaré « 0 test-témoin » pour cinq gardes qui en ont. La règle
+s'applique à l'outillage de l'audit comme au reste, et c'est la lecture à la main qui a
+tranché.
+
+### Les 579 tests : 47 portent la signature du risque, cinq relus, cinq valides
+
+Signature retenue : un nom en *preserv*, *sums_to*, *agree*, *matches*, *identity*,
+*total*, *deterministic* — ce qui annonce une propriété potentiellement vraie par
+construction. Les cinq plus exposés ont été relus ligne à ligne :
+
+* `test_total_is_the_sum_of_the_parts` — échoue si le moteur change la composition de
+  `prelevements_entreprise` ; la liste des cinq prélèvements est écrite **indépendamment**
+  dans le test. Valide, et c'est exactement le défaut trouvé côté firmes (numérateur à
+  cinq prélèvements là où on lisait « IS »).
+* `test_the_allocation_totals_the_impulse` — **valide, et sa valeur n'était pas écrite**.
+  Elle l'est maintenant : l'allocation répartit sur les emplois finals *y compris
+  importés*, précisément pour que le total soit conservé, la fuite étant calculée et
+  reportée en aval et jamais appliquée là. Le test échoue donc si quelqu'un déduit la
+  fuite dans l'allocation — le double compte que la phase 4 a attrapé deux fois.
+* `test_household_margins_sum_to_the_published_total` — confronte deux figures **publiées
+  séparément** ; échoue sur une faute de transcription ou un millésime mélangé. Valide.
+* `test_published_cell_totals_are_reproduced_exactly` — vérifie l'erreur de calibration
+  contre zéro ; échoue sur une étape de construction qui déplace un total en silence,
+  c'est-à-dire les deux défauts de pondération de la phase 1. Valide.
+* `test_run_preserves_the_weighted_totals` — compare la valeur enregistrée par la garde à
+  un recalcul frais depuis la frame d'entrée ; échoue si un passage repondère. Valide.
+
+### Conclusion, et la seule décoration connue
+
+L'inventaire est sain. La seule garde connue sans implémentation défaillante reste
+`test_subsample_preserves_total_weight`, déjà identifiée en D-074, **conservée
+délibérément** et accompagnée depuis de
+`test_subsample_is_unbiased_and_the_old_sampler_was_not`, qui embarque l'ancien
+échantillonneur comme témoin négatif. Une garde vraie par construction n'est pas à
+supprimer si elle documente une invariance réelle ; elle est à **accompagner** d'une garde
+qui, elle, peut échouer.
