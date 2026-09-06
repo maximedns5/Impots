@@ -927,6 +927,58 @@ footer code { font-family: var(--mono); font-size: 11px; }
                  <input type="number" id="kPlafGlobal" step="500" placeholder="10 000"></div>
           </div>
 
+          <div class="lbl" style="margin:18px 0 8px">Patrimoine — IFI</div>
+          <p class="note" style="margin:0 0 10px">
+            L'IFI ne porte que sur l'immobilier : il n'y a pas de case pour les titres ni
+            les liquidités, et cette absence est la définition de l'impôt (CGI art. 965),
+            pas un manque du formulaire. Attention à un piège du droit : le plafonnement
+            limite IFI + impôt sur le revenu à 75&nbsp;% du revenu, si bien qu'un foyer
+            sans revenu ne doit <em>aucun</em> IFI quel que soit son patrimoine.
+          </p>
+          <div class="field-row tri">
+            <div><label for="patRP">Résidence principale (€)</label>
+                 <input type="number" id="patRP" step="10000" placeholder="0"></div>
+            <div><label for="patAutres">Autres immeubles bâtis (€)</label>
+                 <input type="number" id="patAutres" step="10000" placeholder="0"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="patPassif">Passif déductible (€)</label>
+                 <input type="number" id="patPassif" step="10000" placeholder="0"></div>
+            <div><label for="patDons">Dons (€)</label>
+                 <input type="number" id="patDons" step="1000" placeholder="0"></div>
+          </div>
+
+          <div class="lbl" style="margin:18px 0 8px">Les deux cadrans</div>
+          <p class="note" style="margin:0 0 10px" id="dialsNote">
+            <strong>Le cadran de taux et le cadran d'application, côte à côte, parce que
+            la preuve dit que le second pèse plus.</strong> Garbinti, Goupille-Lebret,
+            Munoz, Stantcheva et Zucman ne détectent <em>aucune</em> réponse du patrimoine
+            déclaré aux coudes purs du barème — leurs quatre élasticités sont
+            statistiquement indistinguables de zéro — alors que les réponses aux
+            obligations déclaratives sont <strong>dix fois</strong> plus grandes.
+            Le cadran d'application ne change rien au calcul mécanique : les obligations
+            déclaratives ne sont pas un paramètre du code des impôts. Il n'agit que sur la
+            bande comportementale, et son effet est en points de croissance annuelle du
+            patrimoine déclaré, jamais en euros de la bande — cumuler une croissance
+            demande un horizon.
+          </p>
+          <div class="field-row tri">
+            <div><label for="ifiPlafTaux">Plafonnement — taux (%)</label>
+                 <input type="number" id="ifiPlafTaux" step="1" placeholder="75"></div>
+            <div><label for="ifiAbattRP">Abattement résidence principale (%)</label>
+                 <input type="number" id="ifiAbattRP" step="1" placeholder="30"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="ifiDonsTaux">Dons — taux (%)</label>
+                 <input type="number" id="ifiDonsTaux" step="1" placeholder="75"></div>
+            <div><label for="ifiObligations">Obligations déclaratives</label>
+                 <select id="ifiObligations">
+                   <option value="">inchangées</option>
+                   <option value="renforcees">renforcées</option>
+                   <option value="allegees">allégées</option>
+                 </select></div>
+          </div>
+
           <button type="button" class="reset" id="reset" disabled>réinitialiser au droit courant</button>
           <p class="note">
             Les valeurs affichées sont lues dans l'arbre de paramètres du moteur, pas recopiées.
@@ -1093,6 +1145,29 @@ const $ = (id) => document.getElementById(id);
 /* ------------------------------------------------------------------ state */
 let lawParams = null;      // current law, from GET /parameters/ir
 let brackets  = [];        // [{threshold, rate}] shown in the reform panel
+/* The IFI declaration. Sent only when something is filled, like the niches: an absent
+   block means no real-estate wealth, which is the engine answering as asked rather than
+   a wiring gap. Note there is no field for financial wealth — the IFI base is real
+   estate only (CGI art. 965), and that absence is the tax's definition. */
+function patrimoinePayload() {
+  const fields = {
+    residence_principale: "patRP",
+    autres_immeubles_batis: "patAutres",
+    passif_deductible: "patPassif",
+    dons_organismes_interet_general: "patDons",
+  };
+  const payload = {};
+  let any = false;
+  for (const [key, id] of Object.entries(fields)) {
+    const node = document.getElementById(id);
+    if (node && node.value !== "" && Number(node.value) > 0) {
+      payload[key] = Number(node.value);
+      any = true;
+    }
+  }
+  return any ? payload : null;
+}
+
 const state = { adults: 1, children: [] };
 
 /* --------------------------------------------------------- household form */
@@ -1293,6 +1368,16 @@ function reformSpec() {
   put("cotisations_syndicales_taux",            filled("kSyndTaux", 100));
   put("plafond_global_niches",                  filled("kPlafGlobal"));
 
+  /* IFI. `ifi_obligations_declaratives` is the one lever here that touches NO parameter:
+     disclosure requirements are not in the tax code, so it leaves the mechanical figure
+     untouched and moves the behavioural band alone. It is sent as a string, not a
+     number, because it is a regime and not a rate. */
+  put("ifi_plafonnement_taux",                  filled("ifiPlafTaux", 100));
+  put("ifi_abattement_residence_principale",    filled("ifiAbattRP", 100));
+  put("ifi_dons_taux",                          filled("ifiDonsTaux", 100));
+  const obligations = document.getElementById("ifiObligations");
+  if (obligations && obligations.value) put("ifi_obligations_declaratives", obligations.value);
+
   return Object.keys(spec).length ? spec : null;
 }
 
@@ -1354,6 +1439,8 @@ function payload() {
   }
   const niches = nichesPayload();
   if (niches) household.niches = niches;
+  const patrimoine = patrimoinePayload();
+  if (patrimoine) household.patrimoine = patrimoine;
   const full = $("full").checked;
   if (full && $("statut").value) {
     household.logement = {
@@ -1390,6 +1477,9 @@ const GROUPS = [
     ["revenu_fiscal_reference", "Revenu fiscal de référence",   "flat"],
     ["ir_avant_reductions",     "IR après plafonnement du QF",  "down", true],
     ["ir",                      "Impôt sur le revenu",          "down"],
+  ]},
+  { title: "Patrimoine", tier: "full", rows: [
+    ["ifi", "Impôt sur la fortune immobilière", "down"],
   ]},
   { title: "Prestations", tier: "full", rows: [
     ["af",            "Allocations familiales", "up"],

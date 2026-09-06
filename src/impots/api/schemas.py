@@ -351,6 +351,18 @@ class ReformSpec(BaseModel):
     ifi_plafond_reductions: Annotated[float, Field(ge=0, le=10_000_000)] | None = None
     ifi_non_bati_seuil: Annotated[float, Field(ge=0, le=10_000_000)] | None = None
     ifi_non_bati_taux_bois_forets: Annotated[float, Field(ge=0, le=1)] | None = None
+    ifi_obligations_declaratives: Literal["allegees", "renforcees"] | None = Field(
+        default=None,
+        description="Régime déclaratif de l'IFI. LE SEUL LEVIER DE CE SIMULATEUR QUI NE "
+        "TOUCHE AUCUN PARAMÈTRE : les obligations déclaratives ne sont pas dans le code "
+        "des impôts sous forme de paramètre, donc ce cadran ne change RIEN au calcul "
+        "mécanique et n'agit que sur la bande comportementale (canal C6). C'est voulu et "
+        "c'est la raison d'être du module : la même étude qui ne détecte aucune réponse "
+        "aux coudes de taux trouve des réponses DIX FOIS plus grandes aux obligations "
+        "déclaratives. Un simulateur de fortune avec un cadran de taux et sans cadran "
+        "d'application mettrait le petit levier dans la main de l'utilisateur en cachant "
+        "le grand.",
+    )
     ifi_bareme: list[IRBracket] | None = Field(
         default=None,
         description="Complete replacement of the active IFI scale: 1 to 5 brackets, "

@@ -1,0 +1,155 @@
+# Réponses comportementales à l'impôt sur la fortune (M4).
+#
+# LE CAHIER DES CHARGES SE TROMPE SUR LES TROIS CHIFFRES QU'IL ANNONCE, et c'est la
+# vérification adverse qui l'a établi, contre ma propre lecture d'abord.
+#
+#   « real elasticity ~0.05 »        -> 0,05 n'apparaît nulle part dans l'article.
+#   « reporting/enforcement ~0.55 »  -> « 0.55 » y figure deux fois : un TAUX marginal
+#                                       de 2010 (0,55 %) et une cellule d'annexe.
+#                                       Aucune élasticité d'application n'existe.
+#   « Spain 0.64 »                   -> « 0.64 » : ZÉRO occurrence. « Spain » : une, dans
+#                                       un titre de bibliographie. L'article ne porte
+#                                       aucune élasticité espagnole, même citée.
+#
+# Et ma propre première lecture était fausse aussi : j'avais retenu 0,02–0,13 comme la
+# fourchette des coudes purs, en prenant la phrase du résumé pour l'ensemble. Le résumé ne
+# cite que les deux panneaux DYNAMIQUES ; la figure 1 en porte quatre, et le plus grand —
+# 0,14 (0,11) — est au-dessus du plafond que j'avais annoncé.
+#
+# Source unique, manifestée : data/raw/ggmsz_french_wealth_tax.pdf
+#   Garbinti, Goupille-Lebret, Munoz, Stantcheva & Zucman, « Tax Design, Information, and
+#   Elasticities: Evidence From the French Wealth Tax », révision 2026, 73 pages.
+
+parameters:
+
+  # ------------------------------------------------------------------------- #
+  # Le taux : une réponse que l'article ne parvient pas à détecter
+  # ------------------------------------------------------------------------- #
+  wealth_tax_rate_elasticity:
+    value: {central: 0.0, low: 0.0, high: 0.36, distribution: triangular}
+    applies_to: >
+      Élasticité du patrimoine taxable déclaré au taux marginal, estimée par bunching aux
+      COUDES PURS du barème de l'ISF (2e et 3e seuils, 2006-2010) — c'est-à-dire aux
+      seuils où le taux change SANS que les obligations déclaratives changent. Les seuils
+      qui font les deux à la fois donnent des réponses bien plus grandes, et ne sont pas
+      identifiants pour le taux.
+    responds_to_knobs: [ifi_bareme, ifi_decote_*, ifi_plafonnement_taux]
+    support:
+      estimated_on: >
+        Quatre estimations, figure 1 p. 36 : statique 2e seuil 0,08 (0,06) ; dynamique
+        2e seuil 0,13 (0,04) ; statique 3e seuil 0,14 (0,11) ; dynamique 3e seuil
+        0,02 (0,10). Les auteurs concluent p. 11 qu'on ne peut pas rejeter l'absence de
+        bunching et que les élasticités impliquées sont indistinguables de zéro.
+
+        LA VALEUR CENTRALE EST ZÉRO, et ce n'est pas une prudence : c'est le résultat de
+        l'article. Le plafond de 0,36 est la plus grande estimation plus deux écarts-types
+        (0,14 + 2 x 0,11), donc la bande couvre l'incertitude d'échantillonnage au lieu de
+        s'arrêter aux points estimés — une bande plus étroite que les écarts-types de sa
+        propre source serait plus fausse que pas de bande du tout.
+      max_variation_graded_in_support: 0.02
+    source:
+      citation: >
+        Garbinti, Goupille-Lebret, Munoz, Stantcheva & Zucman, « Tax Design, Information,
+        and Elasticities: Evidence From the French Wealth Tax », NBER WP 31333, révision
+        2026 — figure 1 p. 36 pour les quatre estimations, p. 11 pour l'absence de
+        bunching détectable.
+      url: https://gabriel-zucman.eu/files/GGMSZ2026.pdf
+      vintage: "2026"
+      quote: >-
+        We cannot reject the null hypothesis of no bunching at kinks, and the implied
+        elasticities are small and statistically indistinguishable from zero.
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-05
+      ref: wf_a7fcf340-7a1
+      note: >
+        Deux corrections appliquées ici, toutes deux contre ma lecture initiale. (1) La
+        fourchette des coudes purs va de 0,02 à 0,14 et non à 0,13 : le résumé p. 4 ne
+        cite que les panneaux dynamiques et omet les statiques, dont le 0,14 (0,11) qui
+        est la plus grande estimation de coude pur de l'article. (2) La valeur centrale de
+        0,075 que j'avais calculée n'existe nulle part et n'est même pas la moyenne des
+        quatre (0,0925) ; elle est remplacée par zéro, qui est la conclusion des auteurs.
+
+        LE PROBLÈME DE PÉRIMÈTRE, qui est la raison du verdict. Les estimations portent
+        sur l'ISF de 2006-2010, dont la base est le patrimoine TOTAL. Nos réformes portent
+        sur l'IFI, dont la base est immobilière. Un patrimoine immobilier se déplace moins
+        facilement qu'un portefeuille : appliquer une élasticité estimée sur du total à de
+        l'immobilier seul surestime probablement la réponse. Comme la valeur centrale est
+        zéro, le biais joue sur le seul plafond de la bande, ce qui est le sens où il est
+        supportable.
+
+  # ------------------------------------------------------------------------- #
+  # L'application : le résultat principal de l'article, et ce n'est PAS une élasticité
+  # ------------------------------------------------------------------------- #
+  wealth_disclosure_growth_effect_pp:
+    value: {central: 0.28, low: 0.13, high: 0.50, distribution: triangular}
+    applies_to: >
+      Effet d'un ALLÈGEMENT des obligations déclaratives sur la croissance annuelle du
+      patrimoine DÉCLARÉ, en POINTS DE POURCENTAGE de taux de croissance. Ce n'est pas une
+      élasticité et ne doit jamais être multipliée par une variation de taux : l'unité est
+      un point de croissance annuelle, pas un rapport à un prix.
+
+      Le signe est celui de l'effet mesuré (un allègement RÉDUIT le patrimoine déclaré de
+      ce nombre de points). Un durcissement symétrique est l'hypothèse du cadran
+      d'application, et c'est une hypothèse, pas une mesure : l'article n'observe que le
+      relâchement.
+    responds_to_knobs: [ifi_obligations_declaratives]
+    support:
+      estimated_on: >
+        Réforme de simplification française de 2011-2012, qui a supprimé la déclaration
+        détaillée sous un seuil de patrimoine. ITT de 0,50 pp pour le groupe juste en
+        dessous du seuil et les groupes plus bas, 0,13 pp pour le groupe juste au-dessus,
+        0,28 pp en poolant tous les groupes traités — contre une croissance de 2,2 % dans
+        le groupe de contrôle, soit environ 20 % et 15 % de réduction respectivement.
+      max_variation_graded_in_support: 0.0
+    source:
+      citation: >
+        Mêmes auteurs et même article — p. 4 pour le 0,50 pp et les 20 %, p. 20 pour la
+        fourchette 0,50 / 0,13 pp par groupe, p. 28 pour le 0,28 pp poolé et les 15 %.
+      url: https://gabriel-zucman.eu/files/GGMSZ2026.pdf
+      vintage: "2026"
+      quote: >-
+        The average annual growth rate reduction equals 0.5 percentage points, equivalent
+        to 20% of the control group's wealth growth rate in 2012.
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-09-05
+      ref: wf_a7fcf340-7a1
+      note: >
+        L'article ne contient AUCUNE élasticité d'application : « enforcement elasticity »
+        et « reporting elasticity » y figurent zéro fois, et la seule formulation voisine
+        est qualitative en annexe théorique. Le « ~0,55 » du cahier des charges est donc
+        sans source, et la piste qui aurait pu le sauver est CIRCULAIRE : l'équivalence
+        « de 0,7 % à 2,84 % » est calculée par les auteurs EN SUPPOSANT une élasticité de
+        0,13, si bien qu'elle ne peut pas servir à en établir une.
+
+        Cette ligne charge donc la grandeur réellement mesurée, dans ses propres unités.
+        Le verdict est SCOPE_PROBLEM pour trois raisons énoncées plutôt que corrigées :
+        l'effet est sur un TAUX DE CROISSANCE et non sur un niveau, donc son effet cumulé
+        dépend d'un horizon — et ce projet refuse les horizons au-delà de trois ans ; il
+        est mesuré sur un ALLÈGEMENT et appliqué par symétrie à un durcissement ; et il
+        porte sur la base ISF totale, pas sur l'immobilier de l'IFI.
+
+        Ce que l'article établit solidement et qui survit à tout cela : les réponses aux
+        obligations déclaratives sont DIX FOIS plus grandes que les réponses aux coudes de
+        taux — un rapport d'ITT, 0,28 pp contre au plus 0,03 pp. C'est la conclusion qui
+        justifie qu'un cadran d'application existe à côté du cadran de taux.
+
+# Lignes essayées et REFUSÉES. Gardées ici plutôt que supprimées : un canal qui rétrécit
+# sans cause visible est pire qu'un canal absent, et le magasin doit porter la trace de ce
+# qui a été tenté.
+removed:
+  wealth_elasticity_spain_benchmark: >
+    Le cahier des charges annonce « Spain 0.64 as a low-confidence benchmark ». Vérifié
+    sur l'article désigné : « 0.64 » y compte ZÉRO occurrence, « Spain » une seule, dans
+    un titre de bibliographie, et « Spanish » aucune. Duran-Cabré et al. et Agrawal et al.
+    sont cités deux fois chacun, sans qu'aucun chiffre ne leur soit jamais attaché.
+    L'article ne peut donc servir de provenance à 0,64 sous AUCUNE forme — ni comme
+    estimation, ni comme repère cité. La ligne ne charge pas. Elle pourra revenir le jour
+    où quelqu'un manifeste la source espagnole elle-même et la fait vérifier ; recopier un
+    chiffre depuis un cahier des charges est exactement ce que D-026 interdit.
+
+  wealth_migration_response: >
+    Aucune source manifestée. Le cahier des charges la classait déjà « low-confidence or
+    absent » ; elle est absente, et un canal de migration inventé serait la bande
+    confiante et fausse que la règle permanente refuse.

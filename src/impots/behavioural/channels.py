@@ -440,9 +440,169 @@ def production_tax_investment(
     )
 
 
+# --------------------------------------------------------------------------- #
+# C5 — reported wealth and the tax rate: the band that is centred on zero because
+#      the study could not detect a response
+# --------------------------------------------------------------------------- #
+C5_KEYS = ("wealth_tax_rate_elasticity",)
+
+
+def wealth_rate_response(
+    store: Store, reform: Any, *, wealth_base_eur: float = 0.0,
+    marginal_rate_baseline: float = 0.0, marginal_rate_reform: float = 0.0,
+    draws: int = 1, rng: Any = None, **_: Any,
+) -> ChannelResult:
+    """Response of REPORTED taxable wealth to the marginal rate.
+
+    Centred on zero, and that is the finding rather than a hedge: Garbinti et al.
+    cannot reject the null of no bunching at pure tax kinks, and their four implied
+    elasticities are statistically indistinguishable from zero. The band's WIDTH is
+    what carries the information — how large a response their data could have missed.
+
+    The driver is the change in the NET-OF-TAX retention rate, (1 - t), in logs, which
+    is the object an elasticity of this kind is defined against. Using the change in
+    the tax rate itself would be a different quantity that happens to have the same
+    sign.
+    """
+    applicable = _claimed(store, reform, C5_KEYS)
+    if not applicable:
+        return ChannelResult(
+            key="c5_wealth_rate", label="Patrimoine déclaré et taux", applies=False,
+            message="Mécanique seulement — aucun canal fondé sur des preuves n'est "
+                    "câblé pour cet instrument.",
+        )
+    if "wealth_tax_rate_elasticity" not in store:
+        return ChannelResult(
+            key="c5_wealth_rate", label="Patrimoine déclaré et taux", applies=False,
+            message="Aucune élasticité utilisable : la ligne n'a pas survécu à la "
+                    "vérification des sources.",
+        )
+    if wealth_base_eur <= 0:
+        raise ChannelInputMissing(
+            "C5 needs the taxable wealth base in euros, strictly positive; got "
+            f"{wealth_base_eur}"
+        )
+    retention_before = 1.0 - marginal_rate_baseline
+    retention_after = 1.0 - marginal_rate_reform
+    if retention_before <= 0 or retention_after <= 0:
+        raise ChannelInputMissing(
+            "C5 needs marginal rates strictly below 1 at both ends; got "
+            f"{marginal_rate_baseline} and {marginal_rate_reform}"
+        )
+    delta_log = float(np.log(retention_after / retention_before))
+    parameter = store["wealth_tax_rate_elasticity"]
+    # Base moves with the retention rate; revenue is the base change times the rate.
+    base_change = parameter.draw(rng, draws) * delta_log * wealth_base_eur
+    revenue = base_change * marginal_rate_reform
+    return ChannelResult(
+        key="c5_wealth_rate", label="Patrimoine déclaré et taux", applies=True,
+        draws=revenue, in_revenue_band=True,
+        message="Bande centrée sur ZÉRO : l'étude ne détecte aucune réponse du "
+                "patrimoine déclaré aux coudes purs du barème. La largeur dit ce "
+                "qu'elle aurait pu manquer, pas ce qu'elle a trouvé.",
+        diagnostics={
+            "knobs": applicable,
+            "delta_log_retention": round(delta_log, 6),
+            "centred_on_zero": parameter.central == 0.0,
+        },
+    )
+
+
+# --------------------------------------------------------------------------- #
+# C6 — disclosure requirements: the module's signature, and NOT in euros
+# --------------------------------------------------------------------------- #
+C6_KEYS = ("wealth_disclosure_growth_effect_pp",)
+
+#: The horizon over which a growth-rate effect is reported. ONE year, stated rather
+#: than assumed: the measured object is a change in the annual growth RATE, so its
+#: cumulated effect depends entirely on how long it is allowed to run, and this
+#: project refuses horizons beyond three years.
+DISCLOSURE_HORIZON_YEARS = 1
+
+
+def disclosure_response(
+    store: Store, reform: Any, *, wealth_base_eur: float = 0.0,
+    draws: int = 1, rng: Any = None, **_: Any,
+) -> ChannelResult:
+    """Reported wealth and the disclosure regime — the enforcement dial's channel.
+
+    Reported in **per cent of the reported base over one year**, never in euros of the
+    headline band, and the reason is the unit rather than caution. What Garbinti et al.
+    measure is a change in the annual GROWTH RATE of reported wealth — 0,28 pp pooled,
+    against a 2,2 % control growth. Turning that into a revenue figure requires a
+    horizon, and a cumulated growth effect over an unstated horizon is precisely the
+    confidently-wrong number this project refuses. The one-year euro equivalent is in
+    the diagnostics, with the horizon named.
+
+    THE SIGN IS AN ASSUMPTION AND IS LABELLED ONE. The reform studied LOOSENED
+    disclosure and reported wealth fell. We apply the same magnitude with the opposite
+    sign to a tightening, because that is the only thing the evidence permits — but the
+    study observed only the loosening, and behavioural responses are not obliged to be
+    symmetric.
+
+    Why this dial exists at all: the same paper finds responses to disclosure are TEN
+    TIMES those to rate kinks. A wealth-tax simulator with a rate dial and no
+    enforcement dial would put the small lever in the user's hand and hide the large one.
+    """
+    applicable = _claimed(store, reform, C6_KEYS)
+    if not applicable:
+        return ChannelResult(
+            key="c6_disclosure", label="Obligations déclaratives", applies=False,
+            unit="%",
+            message="Mécanique seulement — aucun canal fondé sur des preuves n'est "
+                    "câblé pour cet instrument.",
+        )
+    if "wealth_disclosure_growth_effect_pp" not in store:
+        return ChannelResult(
+            key="c6_disclosure", label="Obligations déclaratives", applies=False,
+            unit="%",
+            message="Aucune mesure utilisable : la ligne n'a pas survécu à la "
+                    "vérification des sources.",
+        )
+    direction = _disclosure_direction(reform)
+    if direction == 0:
+        return ChannelResult(
+            key="c6_disclosure", label="Obligations déclaratives", applies=False,
+            unit="%", message="Régime déclaratif inchangé.",
+        )
+    parameter = store["wealth_disclosure_growth_effect_pp"]
+    # Percentage points of annual growth, applied over the stated horizon.
+    percent = parameter.draw(rng, draws) * direction * DISCLOSURE_HORIZON_YEARS
+    equivalent = float(np.median(percent)) / 100.0 * wealth_base_eur
+    return ChannelResult(
+        key="c6_disclosure", label="Obligations déclaratives", applies=True,
+        draws=percent, unit="%",
+        message="En POINTS de croissance annuelle du patrimoine déclaré, sur un an, et "
+                "jamais en euros de la bande : cumuler un effet de croissance suppose "
+                "un horizon. Le signe d'un durcissement est une hypothèse de symétrie "
+                "— l'étude n'observe qu'un allègement.",
+        diagnostics={
+            "knobs": applicable,
+            "direction": direction,
+            "horizon_years": DISCLOSURE_HORIZON_YEARS,
+            "one_year_base_equivalent_eur": round(equivalent, 2),
+            "ten_times_the_rate_channel": True,
+        },
+    )
+
+
+def _disclosure_direction(reform: Any) -> int:
+    """+1 tightening, -1 loosening, 0 unchanged.
+
+    Tightening RAISES reported wealth, which is why it takes the positive sign against
+    a measured effect whose own sign was a fall under loosening.
+    """
+    if reform is None:
+        return 0
+    value = getattr(reform, "ifi_obligations_declaratives", None)
+    return {"renforcees": 1, "allegees": -1}.get(value or "", 0)
+
+
 CHANNELS = (
     ("c1_eti", C1_KEYS),
     ("c2_employment", C2_KEYS),
     ("c3_incidence", C3_KEYS),
     ("c4_investment", C4_KEYS),
+    ("c5_wealth_rate", C5_KEYS),
+    ("c6_disclosure", C6_KEYS),
 )

@@ -919,3 +919,249 @@ class TestIfiBareme:
         assert scale[0] == (1_300_000.0, pytest.approx(0.01))
         assert scale[-1][1] == pytest.approx(0.02), (
             "the top rate was multiplied by the collapsed surplus brackets")
+
+
+# --- M4: the composition scaling ------------------------------------------------------
+
+
+class TestComposition:
+    """Banded, flat, and refusing the per-tranche factor the spec asked for."""
+
+    SOURCE = ifi_cells.RAW / "insee_rpm2023_patrimoine_composition.html"
+
+    @pytest.mark.skipif(not SOURCE.exists(), reason="INSEE source not downloaded")
+    def test_the_p99_composition_matches_the_published_row(self):
+        """The transcription, checked letter by letter against the manifested file.
+
+        D-026: a figure this project uses comes from the file, not from prose about the
+        file. The row is «Supérieur à P99» in figure 1 and reads 27 36 5 29 3 -4 -3.
+        """
+        import re
+
+        from impots.patrimoine.composition import P99_COMPOSITION
+
+        text = self.SOURCE.read_text(encoding="utf-8", errors="ignore")
+        label = "Supérieur à P99"
+        index = text.find(label)
+        assert index > 0, "the published row is no longer in the file"
+        # AFTER the label: "P99" itself contains a 99 that would be read as the first
+        # column. The first version of this test asserted 99 == 27 and was right to.
+        after = text[index + len(label):index + len(label) + 400]
+        block = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", after))
+        numbers = [float(n) for n in re.findall(r"-?\d+", block)[:7]]
+        assert numbers[:5] == [27.0, 36.0, 5.0, 29.0, 3.0], block[:160]
+        assert P99_COMPOSITION["financier"] == 27.0
+        assert P99_COMPOSITION["immobilier"] == 36.0
+        assert (P99_COMPOSITION["professionnel"]
+                + P99_COMPOSITION["professionnel_entreprise"]) == 34.0
+
+    def test_professional_wealth_is_excluded_because_the_isf_exempted_it(self):
+        """The legal point worth 34 points of base.
+
+        Biens professionnels were outside the ISF base (CGI arts. 885 N-R, per the last
+        paragraph of art. 885 A). Counting them would make the factor 100/36 = 2,78
+        instead of 66/36 = 1,83 — a 34-point error in every ISF figure the module could
+        produce, resting on a legal fact rather than on arithmetic.
+        """
+        from impots.patrimoine.composition import (
+            ISF_TAXABLE_COMPONENTS,
+            P99_COMPOSITION,
+            raw_ratio,
+        )
+
+        assert "professionnel" not in ISF_TAXABLE_COMPONENTS
+        assert "professionnel_entreprise" not in ISF_TAXABLE_COMPONENTS
+        assert raw_ratio() == pytest.approx(66.0 / 36.0, rel=1e-9)
+        naive = sum(v for v in P99_COMPOSITION.values() if v > 0) / P99_COMPOSITION["immobilier"]
+        assert naive == pytest.approx(100.0 / 36.0, rel=1e-9)
+        assert naive - raw_ratio() > 0.9, "the mistake this test exists to prevent"
+
+    def test_the_factor_is_a_band_and_never_a_point(self):
+        from impots.patrimoine.composition import factor
+
+        band = factor()
+        assert band.width > 0.15, "a band this narrow would be pretending to precision"
+        assert band.low < band.central < band.high
+        low, high = band.scale(466.79e9)
+        assert high > low
+        assert 800e9 < low < 900e9 and 900e9 < high < 1_000e9
+
+    def test_the_per_tranche_factor_is_refused_with_its_reason(self):
+        """One published fractile above D9, four tranches. The refusal is the result."""
+        from impots.patrimoine import composition
+
+        with pytest.raises(composition.CompositionError) as raised:
+            composition.per_tranche_factor()
+        message = str(raised.value)
+        assert "PAR TRANCHE" in message
+        assert "P99" in message
+        assert "top 5" in message, "the BdF limitation must be cited, not just implied"
+
+    def test_the_banque_de_france_source_states_its_own_limit(self):
+        """Manifested for its limitation, not its numbers — so the limitation is checked.
+
+        The handoff named the DWA as the composition source. Its methodology says it
+        cannot go finer than the top 10 % or top 5 %, and IFI redevables are the top
+        0,45 %. That sentence is why this module reads INSEE instead.
+        """
+        source = ifi_cells.RAW / "bdf_comptes_distributionnels_methodologie_2024.pdf"
+        if not source.exists():
+            pytest.skip("BdF methodology not downloaded")
+        pypdf = pytest.importorskip("pypdf")
+        import re
+
+        text = "\n".join(page.extract_text() or ""
+                         for page in pypdf.PdfReader(str(source)).pages)
+        flat = re.sub(r"\s+", " ", text)
+        assert "ne permettent pas pour le moment d’aller plus finement que le top 10%" in flat
+
+    def test_the_degraded_mode_is_available_and_assumes_nothing(self):
+        """Degraded-but-true beats confidently scaled, by standing ruling."""
+        from impots.patrimoine.composition import IFI_BASE_LOWER_BOUND
+
+        low, high = IFI_BASE_LOWER_BOUND.scale(466.79e9)
+        assert low == high == pytest.approx(466.79e9)
+        assert IFI_BASE_LOWER_BOUND.width == 0.0
+
+    def test_the_vintages_are_stated_and_are_three_different_years(self):
+        from impots.patrimoine.composition import VINTAGES
+
+        assert set(VINTAGES) == {"composition", "cells", "law_priced"}
+        assert "2020-2021" in VINTAGES["composition"]
+        assert "2024" in VINTAGES["cells"]
+
+
+# --- M4: the behavioural channels and the enforcement dial ----------------------------
+
+
+class TestWealthChannels:
+    """Two channels, deliberately different units, and a dial that moves no parameter."""
+
+    @staticmethod
+    def _store():
+        from impots.behavioural import store
+
+        return store.load()
+
+    def test_the_brief_s_three_figures_are_not_in_the_paper(self):
+        """0-for-3, and the store records the refusals rather than hiding them.
+
+        The brief asserted "~0.05", "~0.55" and "Spain 0.64". Verified against the PDF:
+        0.05 and 0.64 have zero occurrences, and 0.55 appears twice as a 2010 marginal
+        RATE and an appendix cell. A row that quietly vanished would make a channel
+        narrow with no visible cause.
+        """
+        store = self._store()
+        assert "wealth_elasticity_spain_benchmark" in store.rejected
+        assert "0.64" in store.rejected["wealth_elasticity_spain_benchmark"]
+        assert "wealth_migration_response" in store.rejected
+        assert "wealth_elasticity_spain_benchmark" not in store.parameters
+
+    def test_the_rate_elasticity_is_centred_on_zero_and_covers_its_standard_errors(self):
+        """Central zero is the paper's conclusion, not a hedge.
+
+        And the ceiling is the largest estimate plus two standard errors — 0,14 + 2 ×
+        0,11 — because a band narrower than its own source's sampling uncertainty would
+        be more wrong than no band at all.
+        """
+        parameter = self._store()["wealth_tax_rate_elasticity"]
+        assert parameter.central == 0.0
+        assert parameter.low == 0.0
+        assert parameter.high == pytest.approx(0.36, abs=0.001)
+        assert parameter.high > 0.14 + 0.11, "must cover more than one standard error"
+
+    def test_the_disclosure_row_is_not_an_elasticity(self):
+        """Its unit is percentage points of annual growth. Multiplying it by a rate
+        change would be a category error that happens to typecheck."""
+        parameter = self._store()["wealth_disclosure_growth_effect_pp"]
+        assert parameter.key.endswith("_pp")
+        assert parameter.low >= 0.13 and parameter.high <= 0.50
+        assert parameter.central == pytest.approx(0.28)
+        assert "élasticité" in parameter.applies_to.lower()
+        assert "jamais" in parameter.applies_to.lower(), "the warning must be in the row"
+
+    def test_the_two_channels_are_disjoint(self):
+        """A rate reform must not fire the enforcement channel, and vice versa."""
+        import numpy as np
+
+        from impots.api.schemas import ReformSpec
+        from impots.behavioural import channels
+
+        store = self._store()
+        rate = ReformSpec.model_validate({"ifi_bareme": [
+            {"threshold": 1_300_000, "rate": 0.01},
+            {"threshold": 5_000_000, "rate": 0.02}]})
+        dial = ReformSpec(ifi_obligations_declaratives="renforcees")
+
+        assert channels.wealth_rate_response(
+            store, rate, wealth_base_eur=466e9, marginal_rate_baseline=0.007,
+            marginal_rate_reform=0.02, draws=64, rng=np.random.default_rng(0)).applies
+        assert not channels.disclosure_response(store, rate, wealth_base_eur=466e9).applies
+        assert channels.disclosure_response(
+            store, dial, wealth_base_eur=466e9, draws=64,
+            rng=np.random.default_rng(0)).applies
+        assert not channels.wealth_rate_response(
+            store, dial, wealth_base_eur=466e9, marginal_rate_baseline=0.007,
+            marginal_rate_reform=0.007).applies
+
+    def test_the_disclosure_channel_stays_out_of_the_revenue_band(self):
+        """Because its unit is a growth rate, and cumulating one needs a horizon.
+
+        The one-year euro equivalent is offered in the diagnostics with the horizon
+        named, which is the honest half of the trade.
+        """
+        import numpy as np
+
+        from impots.api.schemas import ReformSpec
+        from impots.behavioural import channels
+
+        result = channels.disclosure_response(
+            self._store(), ReformSpec(ifi_obligations_declaratives="renforcees"),
+            wealth_base_eur=466.79e9, draws=256, rng=np.random.default_rng(1))
+        assert result.unit == "%"
+        assert result.in_revenue_band is False
+        assert result.diagnostics["horizon_years"] == 1
+        assert result.diagnostics["one_year_base_equivalent_eur"] > 0
+
+    def test_tightening_and_loosening_have_opposite_signs(self):
+        """And the symmetry is an ASSUMPTION, said so in the row and here.
+
+        The study observed a loosening. Applying the same magnitude to a tightening is
+        the only thing the evidence permits, and it is not a measurement.
+        """
+        import numpy as np
+
+        from impots.api.schemas import ReformSpec
+        from impots.behavioural import channels
+
+        store = self._store()
+        tighten = channels.disclosure_response(
+            store, ReformSpec(ifi_obligations_declaratives="renforcees"),
+            wealth_base_eur=466e9, draws=256, rng=np.random.default_rng(2))
+        loosen = channels.disclosure_response(
+            store, ReformSpec(ifi_obligations_declaratives="allegees"),
+            wealth_base_eur=466e9, draws=256, rng=np.random.default_rng(2))
+        assert tighten.central > 0 > loosen.central
+        assert tighten.central == pytest.approx(-loosen.central, rel=1e-9)
+        assert "hypothèse de symétrie" in tighten.message
+
+    def test_the_enforcement_dial_moves_no_mechanical_output(self):
+        """The only lever here that changes nothing in the calculation.
+
+        Disclosure requirements are not a parameter of the tax code, so this dial acts
+        on the behavioural band alone. It is therefore deliberately NOT in SCALAR_KNOBS,
+        whose standing rule is that every knob moves an output — a rule this dial would
+        fail for the right reason.
+        """
+        from impots.api.schemas import HouseholdInput, ReformSpec
+        from impots.engine import compute
+        from impots.engine.reforms import SCALAR_KNOBS
+
+        assert "ifi_obligations_declaratives" not in SCALAR_KNOBS
+        household = HouseholdInput.model_validate({
+            "adults": [{"salaire_brut_annuel": 1_200_000, "annee_naissance": 1970}],
+            "patrimoine": {"autres_immeubles_batis": 3_000_000}})
+        result = compute(household, 2024,
+                         reform=ReformSpec(ifi_obligations_declaratives="renforcees"),
+                         tier="full")
+        assert result.reform["ifi"] == pytest.approx(result.baseline["ifi"], abs=0.01)

@@ -255,3 +255,52 @@ def test_the_blind_spot_names_the_stake(source: str):
     body = _function(source, "renderNicheBlindSpot")
     assert "national_niches_eur" in body
     assert "declared_base_eur" in body
+
+
+# --- Phase 5: the patrimoine tab and the two dials ------------------------------------
+
+
+def test_the_ifi_row_and_its_inputs_are_wired(source: str):
+    """A result row with no way to fill its inputs would print zero forever."""
+    assert 'patrimoinePayload()' in source
+    assert "household.patrimoine = patrimoine" in source
+    for field in ("patRP", "patAutres", "patPassif", "patDons"):
+        assert f'id="{field}"' in source, field
+    assert '["ifi", "Impôt sur la fortune immobilière", "down"]' in source
+
+
+def test_the_enforcement_dial_sits_beside_the_rate_dial(source: str):
+    """The module's signature, and it has to be VISIBLE beside the rate to do its job.
+
+    The evidence says reported wealth responds to disclosure design roughly ten times
+    more than to the rate. A simulator that offered the rate dial and hid the
+    enforcement one would put the small lever in the user's hand.
+    """
+    assert 'id="ifiObligations"' in source
+    assert 'value="renforcees"' in source and 'value="allegees"' in source
+    dials = source.index("Les deux cadrans")
+    rate = source.index('id="ifiPlafTaux"')
+    dial = source.index('id="ifiObligations"')
+    assert dials < rate < dial, "the two dials must be in one block, rate first"
+    assert "dix fois" in source[dials:dial], "the ten-times finding must be on screen"
+
+
+def test_the_screen_says_the_enforcement_dial_changes_no_mechanical_figure(source: str):
+    """Otherwise a user moves it, sees the IFI unchanged, and concludes it is broken."""
+    block = source[source.index("Les deux cadrans"):source.index('id="ifiObligations"')]
+    assert "ne change rien au calcul mécanique" in block
+    assert "points de croissance" in block, "its unit must be named, not implied"
+
+
+def test_the_zero_income_trap_is_stated_where_the_wealth_is_entered(source: str):
+    """The plafonnement abates the whole IFI at zero income, so a wealthy foyer with no
+    salary prices zero. A user who met that without warning would read it as a bug."""
+    block = source[source.index("Patrimoine — IFI"):source.index('id="patPassif"')]
+    assert "sans revenu" in block and "aucun" in block
+
+
+def test_the_absence_of_financial_wealth_is_explained_not_merely_absent(source: str):
+    """There is no field for securities, and that is the tax's definition rather than a
+    gap in the form. Saying so is what stops it being read as an omission."""
+    block = source[source.index("Patrimoine — IFI"):source.index('id="patRP"')]
+    assert "965" in block, "the article that defines the base must be cited"

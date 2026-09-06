@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-04",
+  "generated": "2026-09-05",
   "files": {
     "Dictionnaire_EEC_2024.pdf": {
       "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
@@ -1017,6 +1017,33 @@
       "downloaded": "2026-09-04",
       "licence": "IPP — usage cité",
       "description": "IPP Note 92 — « Quels impôts les milliardaires paient-ils ? », version actualisée. Source de la cellule d'extension >= 100 M pour un plancher de type Zucman (§2)"
+    },
+    "insee_rpm2023_patrimoine_composition.html": {
+      "url": "https://www.insee.fr/fr/statistiques/7941439?sommaire=7941491",
+      "quarantined": false,
+      "sha256": "4e2aae05bcddebe1435a3fd84f33ad6422279f87b55f4ed99938c64233442695",
+      "bytes": 479695,
+      "downloaded": "2026-09-05",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "INSEE, « En vingt ans, les inégalités de patrimoine se sont accrues » (Les revenus et le patrimoine des ménages, éd. 2023). Figure 1 donne la composition du patrimoine brut par fractile, ligne « Supérieur à P99 » : 27 financier / 36 immobilier / 5 professionnel / 29 professionnel d'entreprise / 3 résiduel / -4 dette privée / -3 dette professionnelle. Enquête HVP 2020-2021, 10 250 ménages répondants. Source de la mise à l'échelle de composition (M4)."
+    },
+    "bdf_comptes_distributionnels_methodologie_2024.pdf": {
+      "url": "https://www.banque-france.fr/system/files/2024-02/Donnees_et_methodologie_comptes%20distributionnels%20de%20patrimoine%20des%20m%C3%A9nages_2024_02_07.pdf",
+      "quarantined": false,
+      "sha256": "5f16534e7f6d5d1f716d385d85622cb6f58c31997f92e96c1c575b7cd32cd39b",
+      "bytes": 921145,
+      "downloaded": "2026-09-05",
+      "licence": "Banque de France — usage cité",
+      "description": "Banque de France, données et méthodologie des comptes distributionnels de patrimoine des ménages (7 février 2024). MANIFESTÉ POUR SA LIMITE, pas pour ses chiffres : note 12 énonce que les données publiées « ne permettent pas pour le moment d'aller plus finement que le top 10% ou le top 5% ». C'est la pièce qui établit que la source nommée par le handoff ne peut pas porter l'échelle IFI."
+    },
+    "ggmsz_french_wealth_tax.pdf": {
+      "url": "https://gabriel-zucman.eu/files/GGMSZ2026.pdf",
+      "quarantined": false,
+      "sha256": "17a0027e270924a860df16780559c1e6d87353352fd0cc61b64251db5b72857c",
+      "bytes": 10695167,
+      "downloaded": "2026-09-05",
+      "licence": "NBER working paper — usage cité",
+      "description": "Garbinti, Goupille-Lebret, Munoz, Stantcheva & Zucman, « Tax Design, Information, and Elasticities: Evidence From the French Wealth Tax », NBER WP 31333, révision 2026, 73 pages. Source unique des deux lignes comportementales patrimoine (D-086) : figure 1 p. 36 pour les quatre élasticités de coude pur — 0,08 (0,06), 0,13 (0,04), 0,14 (0,11), 0,02 (0,10), toutes indistinguables de zéro — et p. 4 / p. 20 / p. 28 pour l'effet des obligations déclaratives en points de croissance. Ne contient NI « 0.05 », NI d'élasticité d'application, NI de chiffre espagnol, contrairement à ce qu'annonçait le cahier des charges."
     }
   }
 }

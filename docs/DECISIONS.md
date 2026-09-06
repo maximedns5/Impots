@@ -3277,3 +3277,165 @@ délibérément** et accompagnée depuis de
 échantillonneur comme témoin négatif. Une garde vraie par construction n'est pas à
 supprimer si elle documente une invariance réelle ; elle est à **accompagner** d'une garde
 qui, elle, peut échouer.
+
+## D-085 — M4.1 : la mise à l'échelle de composition, bandée et PLATE, et la source du cahier des charges qui ne peut pas la porter
+
+§4 demande un facteur de composition **par tranche** — patrimoine total sur immobilier
+taxable — sourcé sur les comptes distributionnels de la Banque de France et les agrégats
+HVP, porté comme une bande.
+
+**La source nommée ne peut pas descendre à notre niveau, et elle le dit elle-même.** Note
+12 de la méthodologie BdF : « Les données expérimentales actuellement publiées ne
+permettent pas pour le moment d'aller plus finement que le top 10% ou le top 5% ». Les
+redevables de l'IFI sont ~186 000 foyers sur ~41,6 M, soit le **top 0,45 %** : la coupe la
+plus fine des comptes distributionnels est un ordre de grandeur trop grossière. Le fichier
+est manifesté **pour cette phrase**, pas pour ses chiffres.
+
+**Ce qui existe est l'HVP de l'INSEE**, dont la coupe la plus fine au-dessus du neuvième
+décile est **une seule ligne** — « Supérieur à P99 », lue dans la publication et vérifiée
+caractère par caractère par un test : financier 27 · immobilier 36 · professionnel 5 ·
+professionnel d'entreprise 29 · résiduel 3 · dette privée −4 · dette professionnelle −3.
+
+**Une ligne au-dessus de D9, quatre tranches à couvrir.** Le facteur par tranche n'est donc
+**pas sourçable**, et `per_tranche_factor()` lève avec sa raison plutôt que d'être absent.
+Le facteur livré est **PLAT**, et la planéité est une limite énoncée, pas une hypothèse
+d'uniformité : la composition se déplace vers le financier et le professionnel quand le
+patrimoine monte, donc un facteur plat **sous-estime** une base ISF en haut de la fourchette
+et la surestime en bas.
+
+### Le point de droit qui vaut 34 points de base
+
+**34 % du patrimoine du centile supérieur est professionnel** (5 + 29), et les **biens
+professionnels étaient exonérés d'ISF** — CGI art. 885 N à 885 R, par le dernier alinéa de
+l'art. 885 A (BOFiP). Le facteur n'est donc pas total-sur-immobilier :
+
+* faux : 100 / 36 = **2,78**
+* juste : (27 + 36 + 3) / 36 = **1,83**
+
+Se tromper là-dessus aurait gonflé de 34 points la base de **toutes** les figures ISF que
+ce module peut produire, et cela tient à un fait juridique, pas à l'arithmétique. Le test
+`test_professional_wealth_is_excluded_because_the_isf_exempted_it` calcule les deux et
+exige qu'ils diffèrent, pour que l'erreur ne puisse pas revenir en silence.
+
+### Pourquoi la bande est large, et dans quel sens chaque raison pousse
+
+Bande retenue : **[1,83 ; 2,06]**, centre 1,95. Le plafond est **dérivé** — on applique la
+dette privée au seul dénominateur, (27+36+3)/(36−4) = 2,06 — et non choisi. Ce n'est pas
+un intervalle de confiance et cela ne prétend pas l'être : c'est l'éventail que la donnée
+publiée autorise.
+
+* **Deux classements différents.** P99 range les *ménages* par patrimoine **total** (seuil
+  2,2 M€ brut) ; les tranches IFI rangent des *foyers* par **immobilier taxable** au-delà
+  de 1,3 M. Un ménage avec 1 M de pierre et 10 M de titres est dans P99 et ne paie aucun
+  IFI. Ce ne sont pas les mêmes gens — le piège exact qui a coulé l'ancrage IPP (D-081).
+* **Abattement RP et dette.** Le 36 % de l'HVP est de l'immobilier **brut** ; la base IFI
+  est nette de dette et amputée de 30 % sur la résidence principale. Le vrai dénominateur
+  est plus petit, donc le vrai facteur est **plus haut**.
+* **Couverture du haut par l'enquête.** 10 250 ménages répondants ; la cellule P99 est
+  mince et les enquêtes patrimoine sous-couvrent notoirement le très haut, là où le
+  financier se concentre. Pousse **aussi vers le haut**.
+* **Ménages contre foyers fiscaux.** Deux unités différentes.
+
+Ordre de grandeur en sortie : sur les 466,79 md de base IFI publiée, la bande donne une
+base ISF de **856 à 963 md**. À vérifier en M5 contre les statistiques ISF 2017 publiées,
+qui sont le seul point de contrôle réel — et c'est précisément le backtest que le cahier
+des charges programme.
+
+**Le mode dégradé est livré et n'est pas un échec.** `IFI_BASE_LOWER_BOUND` chiffre un ISF
+sur la seule base IFI, composition non modélisée, borne basse explicite. Règle permanente :
+dégradé-mais-vrai vaut mieux que confiant-et-mis-à-l'échelle.
+
+## D-086 — M4.2 : les lignes comportementales du patrimoine, et un cahier des charges à 0 sur 3
+
+Le cahier des charges annonçait trois chiffres. **Aucun des trois n'existe dans l'article
+qu'il désigne.** Vérifié par fan-out adverse à deux lentilles par affirmation, puis
+recontrôlé à la main dans le PDF.
+
+| Annoncé | Ce que porte l'article |
+|---|---|
+| « real elasticity ~0,05 » | 0,05 : **zéro occurrence**. Quatre estimations réelles : 0,08 (0,06) · 0,13 (0,04) · 0,14 (0,11) · 0,02 (0,10) |
+| « reporting/enforcement ~0,55 » | « 0.55 » figure deux fois : un **taux marginal** de 2010 (0,55 %) et une cellule d'annexe. **Aucune élasticité d'application n'existe** |
+| « Spain 0,64 » | « 0.64 » : **zéro occurrence**. « Spain » : une, dans un titre de bibliographie. Aucune élasticité espagnole, même citée |
+
+**Et ma propre lecture était fausse aussi.** J'avais retenu 0,02–0,13 comme fourchette des
+coudes purs, en prenant la phrase du résumé p. 4 pour l'ensemble. Ce résumé ne cite que les
+deux panneaux **dynamiques** ; la figure 1 p. 36 en porte **quatre**, et le plus grand —
+**0,14 (0,11)** — dépasse le plafond que j'avais annoncé. Vérifié moi-même dans la figure
+après le verdict. La règle vaut pour le lecteur autant que pour le cahier des charges : le
+résumé d'un article n'est pas l'article.
+
+### Ce qui charge
+
+**`wealth_tax_rate_elasticity` — centre ZÉRO, bande [0 ; 0,36].** Le centre n'est pas une
+prudence, c'est le résultat : « We cannot reject the null hypothesis of no bunching at
+kinks, and the implied elasticities are small and statistically indistinguishable from
+zero » (p. 11). Le plafond est la plus grande estimation plus deux écarts-types
+(0,14 + 2 × 0,11) : **une bande plus étroite que les écarts-types de sa propre source
+serait plus fausse que pas de bande du tout**. Verdict SCOPE_PROBLEM — estimé sur l'ISF
+2006-2010, dont la base est le patrimoine total, appliqué à un IFI immobilier qui se
+déplace moins facilement ; comme le centre est zéro, le biais ne joue que sur le plafond.
+
+**`wealth_disclosure_growth_effect_pp` — le résultat principal de l'article, dans ses
+propres unités.** Ce n'est **pas** une élasticité et cela ne doit jamais être multiplié par
+une variation de taux : l'unité est le **point de pourcentage de croissance annuelle du
+patrimoine déclaré**. ITT de 0,50 pp juste sous le seuil, 0,13 pp juste au-dessus, 0,28 pp
+en poolant — contre 2,2 % de croissance de contrôle, soit ~20 % et ~15 %.
+
+La piste qui aurait pu sauver le « 0,55 » est **circulaire** : l'équivalence « de 0,7 % à
+2,84 % » est calculée par les auteurs **en supposant** une élasticité de 0,13, donc elle ne
+peut pas en établir une.
+
+Ce qui survit et justifie le cadran d'application : les réponses aux obligations
+déclaratives sont **dix fois** celles aux coudes de taux — un rapport d'ITT, 0,28 pp contre
+au plus 0,03 pp.
+
+### Ce qui ne charge pas, et reste écrit
+
+Deux lignes en `removed:`, avec leur raison, parce qu'un canal qui rétrécit sans cause
+visible est pire qu'un canal absent. Le repère espagnol pourra revenir le jour où quelqu'un
+manifeste la source espagnole **elle-même** et la fait vérifier : recopier un chiffre depuis
+un cahier des charges est exactement ce que D-026 interdit. La migration reste absente,
+faute de source.
+
+**Restent pour clore M4** : câbler les canaux sur ces deux lignes, et le cadran
+d'application à côté du cadran de taux — dont la forme est désormais dictée par la mesure,
+puisque l'effet d'application se mesure en points de croissance et non en élasticité.
+
+## D-087 — M4.3 : les deux canaux patrimoine, et le cadran qui ne bouge aucun paramètre
+
+**C5 — patrimoine déclaré et taux.** Le moteur est la variation du taux de rétention
+(1 − t) en logs, parce que c'est l'objet contre lequel une élasticité de ce type est
+définie ; prendre la variation du taux lui-même serait une autre grandeur qui a le même
+signe. Bande **centrée sur zéro**, dans la bande de revenus.
+
+**C6 — obligations déclaratives.** En **points de croissance annuelle du patrimoine
+déclaré**, jamais en euros de la bande, et c'est l'unité qui le décide, pas la prudence :
+cumuler un effet de croissance suppose un horizon, et un effet cumulé sur un horizon tu
+est exactement le nombre confiant-et-faux que ce projet refuse. L'équivalent un an en
+euros est dans les diagnostics, l'horizon nommé à côté.
+
+**La symétrie est une hypothèse et porte l'étiquette.** L'étude observe un ALLÈGEMENT des
+obligations, suivi d'une baisse du patrimoine déclaré. Appliquer la même amplitude en sens
+inverse à un durcissement est tout ce que la preuve autorise, et ce n'est pas une mesure.
+
+### Le cadran d'application, seul levier du simulateur qui ne touche aucun paramètre
+
+`ifi_obligations_declaratives` ∈ {allegees, renforcees}. Les obligations déclaratives ne
+sont **pas** un paramètre du code des impôts : ce cadran ne change rien au calcul mécanique
+et n'agit que sur la bande. Il est donc **délibérément hors de `SCALAR_KNOBS`**, dont la
+règle permanente est que tout bouton déplace une sortie — règle qu'il échouerait pour la
+bonne raison. Un test vérifie qu'il laisse l'IFI mécanique inchangé au centime.
+
+C'est la signature du module, promise depuis le premier audit du projet, et elle repose sur
+un fait mesuré : **les réponses aux obligations déclaratives valent dix fois celles aux
+coudes de taux** — 0,28 pp d'ITT contre au plus 0,03 pp. Un simulateur de fortune muni d'un
+cadran de taux et privé de cadran d'application mettrait le petit levier dans la main de
+l'utilisateur en cachant le grand.
+
+Ordre de grandeur mesuré sur la base publiée de 466,79 md : un durcissement rend +0,295
+point de croissance, soit ~1,38 md de base déclarée sur un an. Le triplement du taux
+marginal (0,7 % → 2 %) rend, lui, une bande de −30 à −2 M€ de recettes, centrée à
+−12,9 M€. Les deux cadrans ne jouent pas dans la même cour, et c'est le résultat.
+
+**Les deux canaux sont disjoints**, vérifié : une réforme de barème ne déclenche pas C6, et
+le cadran seul ne déclenche pas C5.
