@@ -3439,3 +3439,112 @@ marginal (0,7 % → 2 %) rend, lui, une bande de −30 à −2 M€ de recettes,
 
 **Les deux canaux sont disjoints**, vérifié : une réforme de barème ne déclenche pas C6, et
 le cadran seul ne déclenche pas C5.
+
+## D-088 — M5 : l'onglet patrimoine, la section de réconciliation, et une ligne budgétaire qui n'est pas le bon comparateur
+
+### La section : tout est validation ou contexte, et le tableau de calibration est VIDE
+
+C'est la propriété distinctive du module et elle se voit sur la page : le rapport ménages
+porte quatre lignes de calibration, celui-ci n'en porte aucune. La DGFiP publie la
+population, donc les cellules sont **lues** et non ajustées, et il n'y a aucune marge à
+dépenser. Un test exige que le tableau « Calibration targets » ne contienne que son
+en-tête — le vide **est** la preuve, et il cesse de l'être dès que quelqu'un y ajoute une
+ligne.
+
+**Une seule ligne est réellement falsifiable**, et c'est le contrôle mécanique de M2 :
+base agrégée reconstituée par inversion du barème, **−6,46 %** contre un agrégat publié
+séparément, tolérance déclarée ±12 %. Les deux autres sont du contexte et le disent :
+l'IFI total « pour mémoire » reproduit la publication **par construction** — les cellules
+en sont lues — et l'afficher comme validation serait la comparaison masquée dans sa forme
+la plus pure, un contrôle qui ne peut pas échouer imprimé comme s'il le pouvait.
+
+### La ligne budgétaire n'est pas le comparateur, et §6 se contredisait
+
+`PHASE5_SPEC` §6 demande de comparer « total IFI yield vs the budget line (~2,2-2,3 bn
+recent years) ». **Les deux moitiés de cette phrase ne désignent pas la même série.**
+Vérifié moi-même dans les sources manifestées :
+
+* bulletin statistique n° 45, millésime d'imposition 2024 : **2 159 M€** ;
+* ligne budgétaire 1406, exécution 2024 : **2 739 M€** (Voies et moyens, annexe au PLF
+  2026, tome I, p. 23) ;
+* écart **+26,9 %**, entièrement comptable.
+
+La ligne budgétaire est sur base d'**encaissement** et agrège les avis courants, les
+émissions antérieures non recouvrées et le contrôle fiscal ; le bulletin est sur base
+d'**émission**, qui est ce que le moteur calcule. Suivre §6 à la lettre aurait imprimé
+plus d'un quart de l'impôt comme erreur de modèle.
+
+**Et ce n'est pas notre déduction** : l'éditeur des deux séries l'écrit dans le bulletin
+même d'où viennent les cellules (n° 33, encadré 1), vérifié dans le fichier manifesté —
+« Les données budgétaires publiées par ailleurs peuvent donc être différentes des montants
+présentés dans cette publication. » Un test le relit dans le PDF, pour que l'affirmation ne
+survive pas à la phrase.
+
+La ligne budgétaire figure donc en **contexte**, non notée, avec l'écart nommé. Piège noté
+au passage : **2 739 M€ figure aussi page 29** du même document, pour les accises sur le
+gaz. Un grep sur le nombre trouve d'abord la mauvaise ligne.
+
+### L'onglet UI, et trois choses qu'un lecteur prendrait pour des bogues
+
+Déclaration IFI, ligne de résultat, et **les deux cadrans côte à côte** — la signature du
+module. Trois avertissements à l'écran, chacun tenu par un test : le cadran d'application
+**ne change rien au calcul mécanique** (sinon on le bouge, on voit l'IFI inchangé, on
+conclut qu'il est cassé) ; un foyer **sans revenu ne doit aucun IFI** quel que soit son
+patrimoine, à cause du plafonnement ; et **l'absence de case pour les titres est la
+définition de l'impôt** (CGI art. 965), pas un manque du formulaire.
+
+### Ce qui reste ouvert, et pourquoi
+
+**Le backtest ISF-2017 n'est pas fait, faute de source.** Le fan-out lancé pour la trouver
+a vu **six agents sur sept caler**, et la passe de vérification adverse n'a jamais tourné ;
+seul l'agent budgétaire a rendu, et ses chiffres ont été revérifiés à la main ici. La
+question restée sans réponse — le passage ISF 2017 → IFI 2018 donne-t-il un facteur de
+composition **mesuré** plutôt que le [1,83 ; 2,06] tiré d'une enquête — est donc ouverte,
+et je ne lui invente pas de réponse.
+
+**Et le garde de provenance a mordu sur mon propre travail** pour la première fois : le PDF
+de Garbinti et al. est resté un jour dans `data/raw/` sans être manifesté, alors que ses
+chiffres servaient déjà deux lignes du magasin comportemental.
+
+## D-089 — Le facteur de composition « mesuré » n'existe pas : le passage ISF→IFI a changé la population de 64 %
+
+Question laissée ouverte par D-088, et refermée ici — par un refus, qui est le bon
+résultat. L'idée était séduisante : l'ISF a été remplacé par l'IFI au 1er janvier 2018, donc
+le rapport entre la base ISF 2017 et la base IFI 2018 serait un facteur de composition
+**mesuré**, bien meilleur que le [1,83 ; 2,06] tiré d'une enquête (D-085).
+
+**Il ne l'est pas, et l'écart n'est pas un détail.** Vérifié moi-même dans le rapport du
+Sénat n° 42 (2019-2020), manifesté :
+
+| Tranche de patrimoine net taxable | Redevables ISF 2017 exonérés d'IFI | Part de la tranche |
+|---|---|---|
+| 1,3 – 2,57 M€ | 190 237 | **74 %** |
+| 2,57 – 5 M€ | 31 366 | 43 % |
+| 5 – 10 M€ | 5 281 | 26 % |
+| > 10 M€ | 1 317 | **18 %** |
+| **Total** | **228 201** | **64 %** |
+
+**64 % des redevables de l'ISF sortent entièrement de l'impôt**, et le taux de sortie va de
+74 % en bas à 18 % en haut. Le rapport des bases agrégées confondrait donc un effet de
+composition avec un effet de sélection **massif et non uniforme entre tranches**. Ce serait
+un nombre qui a l'air mesuré et qui mesure autre chose — exactement le piège que le même
+projet a évité sur l'ancrage IPP (D-081) et sur le fractile P99 (D-085).
+
+**Le gradient s'explique, et l'explication confirme le refus.** Ce n'est pas que les hauts
+patrimoines soient plus immobiliers — l'enquête dit l'inverse. C'est un effet de **seuil** :
+avec 15 M€ de patrimoine total, il suffit d'en avoir 1,3 M€ en pierre pour rester redevable
+de l'IFI, alors qu'avec 1,4 M€ de total il faut que la quasi-totalité le soit. Le taux de
+sortie décroît donc avec la richesse pour une raison arithmétique, sans rien dire de la
+composition.
+
+La bande de composition reste donc celle de D-085 — **[1,83 ; 2,06], plate, tirée de
+l'HVP** — avec ses limites déjà écrites. Aucune source mesurée ne la remplace.
+
+**Ce que ces tableaux valent quand même**, et c'est réel : ils sont la meilleure
+description publiée de ce qu'a fait le changement de régime, par tranche. Ils serviront au
+backtest ISF-2017 le jour où sa source arrivera, et ils bornent déjà l'ordre de grandeur :
+le gain cumulé pour les sortants est de **1 655 M€**, à comparer aux ~2,2 md d'IFI émis.
+
+**Le backtest ISF-2017 reste sans source.** Ni le rapport du Sénat ni les bulletins DGFiP
+que nous détenons ne donnent l'ISF 2017 par tranche en effectifs, base ET impôt. Le
+candidat suivant est le rapport IPP n° 46 sur le plafonnement de l'ISF, non encore lu.

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-05",
+  "generated": "2026-09-06",
   "files": {
     "Dictionnaire_EEC_2024.pdf": {
       "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
@@ -1044,6 +1044,24 @@
       "downloaded": "2026-09-05",
       "licence": "NBER working paper — usage cité",
       "description": "Garbinti, Goupille-Lebret, Munoz, Stantcheva & Zucman, « Tax Design, Information, and Elasticities: Evidence From the French Wealth Tax », NBER WP 31333, révision 2026, 73 pages. Source unique des deux lignes comportementales patrimoine (D-086) : figure 1 p. 36 pour les quatre élasticités de coude pur — 0,08 (0,06), 0,13 (0,04), 0,14 (0,11), 0,02 (0,10), toutes indistinguables de zéro — et p. 4 / p. 20 / p. 28 pour l'effet des obligations déclaratives en points de croissance. Ne contient NI « 0.05 », NI d'élasticité d'application, NI de chiffre espagnol, contrairement à ce qu'annonçait le cahier des charges."
+    },
+    "vm_tome1_plf2026_recettes.pdf": {
+      "url": "https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1087930/file/PLF%202026%20-%20V&M%20TI%20-%20Evaluations%20des%20recettes.pdf",
+      "quarantined": false,
+      "sha256": "4703605df8bfd1b4a20b1889839ebc1ea5a9b434eb4460eb2b40749e107371a0",
+      "bytes": 1099987,
+      "downloaded": "2026-09-06",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Évaluation des voies et moyens, annexe au PLF 2026, tome I. Page 23 : « Impôt sur la fortune immobilière (ligne 1406) — RETOUR SUR 2024 : Les recettes se sont élevées à 2 739 M€ en 2024 ». C'est la LIGNE BUDGÉTAIRE, sur base d'encaissement, à ne pas confondre avec les 2 159 M€ d'émissions du bulletin statistique n° 45 — écart de +26,9 % qui est comptable et non un écart de modèle. Attention : 2 739 M€ figure AUSSI page 29 pour les accises sur le gaz."
+    },
+    "senat_r19_042_isf_ifi_transition.html": {
+      "url": "https://www.senat.fr/rap/r19-042-1/r19-042-16.html",
+      "quarantined": false,
+      "sha256": "3daf07837c33f7adcda3c3b931fe3d7ab4dc5fb178be8004067417bab223c3e4",
+      "bytes": 283155,
+      "downloaded": "2026-09-06",
+      "licence": "Sénat — usage cité",
+      "description": "Sénat, rapport d'information n° 42 (2019-2020), « Transformation de l'ISF en IFI et création du PFU : un premier bilan ». Porte DEUX tableaux qui ferment la question du facteur de composition mesuré : les redevables de l'IFI 2018 par tranche (103 917 / 22 899 / 4 767 / 1 139, total 132 722) et les redevables de l'ISF 2017 EXONÉRÉS d'IFI 2018 par tranche (190 237 / 31 366 / 5 281 / 1 317, total 228 201, soit 64 % de tous les redevables de l'ISF, gain cumulé 1 655 M€). Le taux d'exonération varie de 74 % dans la tranche basse à 18 % dans la haute."
     }
   }
 }

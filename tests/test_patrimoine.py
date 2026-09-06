@@ -1165,3 +1165,95 @@ class TestWealthChannels:
                          reform=ReformSpec(ifi_obligations_declaratives="renforcees"),
                          tier="full")
         assert result.reform["ifi"] == pytest.approx(result.baseline["ifi"], abs=0.01)
+
+
+# --- M5: the reconciliation section ---------------------------------------------------
+
+
+class TestPatrimoineReconciliation:
+    """All validation or context — the ledger property, asserted rather than claimed."""
+
+    @needs_files
+    def test_the_calibration_table_is_empty_and_that_is_the_point(self):
+        """The module's distinctive property, visible on the page.
+
+        DGFiP publishes the population, so the cells are read rather than fitted and
+        there is no margin to spend. The household report has four calibration lines;
+        this one must have none. The empty table IS the proof, and it stops being proof
+        the moment anyone adds a row to it.
+        """
+        from impots.patrimoine import reconcile
+
+        lines = reconcile.build_lines()
+        assert lines, "a section with no lines proves nothing either"
+        assert not [line for line in lines if line.use == "calibration"]
+        report = reconcile.render()
+        table = report[report.index("## Calibration targets (spent)"):
+                       report.index("## Validation lines")]
+        assert "|---|" in table, "the header must still render"
+        assert table.count("\n|") == 2, "header and separator only — no data rows"
+
+    @needs_files
+    def test_the_model_is_not_judged_against_the_budget_line(self):
+        """The spec said to, and following it would have printed accounting as error.
+
+        Line 1406 books 2 739 M EUR for exécution 2024; the statistical bulletin reports
+        2 159 M EUR for the same assessment year. The +26,9 % between them is basis, not
+        model: the budget line is cash collection including prior-year recovery and
+        contrôle fiscal, and the bulletin is émissions, which is what the engine computes.
+        """
+        from impots.patrimoine import reconcile
+
+        budget = next(line for line in reconcile.build_lines() if "1406" in line.label)
+        assert budget.use == "context"
+        assert budget.simulated is None, "scoring it would be the mistake"
+        assert budget.status == "not modelled"
+        ratio = reconcile.IFI_LIGNE_BUDGETAIRE.value / reconcile.IFI_EMISSIONS.value - 1
+        assert ratio == pytest.approx(0.269, abs=0.005)
+
+    @needs_files
+    def test_dgfip_itself_says_the_two_series_differ(self):
+        """Not our inference — the publisher of both, in the bulletin the cells come from.
+
+        Checked against the manifested file so the claim cannot outlive the sentence.
+        """
+        import re
+
+        source = ifi_cells.RAW / "dgfip_stats_33_ifi_2024.pdf"
+        if not source.exists():
+            pytest.skip("n° 33 not downloaded")
+        pypdf = pytest.importorskip("pypdf")
+        text = "\n".join(page.extract_text() or ""
+                         for page in pypdf.PdfReader(str(source)).pages)
+        flat = re.sub(r"\s+", " ", text)
+        assert ("Les données budgétaires publiées par ailleurs peuvent donc être "
+                "différentes des montants présentés dans cette publication") in flat
+
+    @needs_files
+    def test_the_tautological_line_is_labelled_context_not_validation(self):
+        """The cells are read from the publication, so their sum reproduces it.
+
+        Presenting that as validation would be the zero-masked class in its purest form:
+        a comparison that cannot fail, printed as though it could.
+        """
+        from impots.patrimoine import reconcile
+
+        line = next(x for x in reconcile.build_lines() if "pour mémoire" in x.label)
+        assert line.use == "context"
+        assert line.residual == pytest.approx(0.0, abs=1e-4)
+        # The load-bearing claim, not a word I expected to find: the cells are READ from
+        # this publication, so the note must say so where a reader meets the zero.
+        note = line.note or ""
+        assert "LUES" in note and "pas validation" in note
+
+    @needs_files
+    def test_the_falsifiable_line_carries_its_decomposition(self):
+        """§2 asks that the residual be quantified, not tolerated."""
+        from impots.patrimoine import reconcile
+
+        line = next(x for x in reconcile.build_lines() if "inversé" in x.label)
+        assert line.use == "validation"
+        assert line.residual == pytest.approx(-0.0646, abs=0.002)
+        note = line.note or ""
+        for fragment in ("dons", "décote", "plafonnement", "nommé et non attribué"):
+            assert fragment in note, fragment
