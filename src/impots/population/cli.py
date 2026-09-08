@@ -849,6 +849,74 @@ def cmd_chiffrage_report(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_fiche(args: argparse.Namespace) -> int:
+    """Render the fiche de chiffrage for a registered scenario (F4).
+
+    Runs the population, assembles the honesty stack, and writes markdown. The run is
+    done HERE rather than read from a file so the fiche and its numbers come from the
+    same execution — a fiche assembled from a stale run is a fiche that disagrees with
+    itself and says nothing about it.
+    """
+    from datetime import date as _date
+
+    from impots import scenarios as scenarios_module
+    from impots.api.schemas import PopulationResponse
+    from impots.fiche import FicheError, Provenance, render
+
+    directory = Path(args.dir) if args.dir else None
+    try:
+        scenario = scenarios_module.load(args.scenario, directory)
+    except scenarios_module.ScenarioError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    population = PROCESSED / f"population_{args.vintage}.parquet"
+    if not population.exists():
+        print(f"{population} not found — run `impots population build` first",
+              file=sys.stderr)
+        return 1
+
+    from fastapi.testclient import TestClient
+
+    from impots.api.main import app
+
+    print(f"  chiffrage de « {args.scenario} » sur {args.sample:,} ménages…"
+          .replace(",", " "), flush=True)
+    payload = {"year": args.year,
+               "reform": scenario.reform.model_dump(exclude_none=True, mode="json"),
+               "behavioural": not args.no_behavioural, "macro": not args.no_macro}
+    reply = TestClient(app).post("/population/simulate", json=payload)
+    if reply.status_code != 200:
+        print(f"la simulation a échoué ({reply.status_code}) : {reply.text[:300]}",
+              file=sys.stderr)
+        return 1
+
+    commit = ""
+    try:
+        from impots.preregistration import head_commit
+        commit = head_commit()[:7]
+    except Exception:  # pragma: no cover - outside a repo
+        pass
+
+    try:
+        text = render(PopulationResponse.model_validate(reply.json()),
+                      Provenance(titre=args.titre or scenario.name,
+                                 source=scenario.source,
+                                 date=_date.today().isoformat(),
+                                 scenario=scenario.name, commit=commit,
+                                 preregistre=args.preregistre))
+    except FicheError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    out = Path(args.out) if args.out else (
+        Path(__file__).resolve().parents[3] / "reports" / f"fiche_{scenario.name}.md")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(text, encoding="utf-8")
+    print(f"  -> {out} ({len(text.splitlines())} lignes)")
+    return 0
+
+
 def pl_read(path: object) -> object:
     import polars as pl
 
@@ -1031,7 +1099,23 @@ def build_parser() -> argparse.ArgumentParser:
     reporter.add_argument("--dir")
     reporter.set_defaults(func=cmd_chiffrage_report)
 
+    fiche_parser = subcommands.add_parser(
+        "fiche", help="render the fiche de chiffrage for a scenario (F4)")
+    fiche_parser.add_argument("scenario")
+    fiche_parser.add_argument("--titre")
+    fiche_parser.add_argument("--vintage", default="2024")
+    fiche_parser.add_argument("--year", type=int, default=2024)
+    fiche_parser.add_argument("--sample", type=int, default=20_000)
+    fiche_parser.add_argument("--no-behavioural", action="store_true")
+    fiche_parser.add_argument("--no-macro", action="store_true")
+    fiche_parser.add_argument("--preregistre", action="store_true",
+                              help="state in 6.3 that this chiffrage is pre-registered")
+    fiche_parser.add_argument("--out")
+    fiche_parser.add_argument("--dir")
+    fiche_parser.set_defaults(func=cmd_fiche)
+
     return parser
+
 
 
 

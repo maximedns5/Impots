@@ -52,7 +52,16 @@ It also found a bug in our own double-entry guard on its first real run
 (D-093): the identity scaled its residual by the reform's net, which the
 solver drives to zero by construction.
 
-**F3 · Trajectories (multi-year).** The other Phase-5 finalist, still the
+**F3 · Trajectories (multi-year).** **GATED, 2026-09-08 — D-099.** The M0 gate
+(`docs/M0_TRAJECTORIES.md`) measured the premise and overturned it: the dated
+tree encodes the future on TWO parameters out of sixty-two (the CVAE and its
+dégrèvement, ending 2030), and reconducts 2026 everywhere else. So a barème
+freeze cannot be priced against a baseline that is already frozen — F3's first
+deliverable is a second, indexed counterfactual, not a knob. Spec written:
+`docs/F3_SPEC.md`. The gate also found the firm engine crashing at 2029 on a
+YAML value parsed as a string; fixed and guarded. Original text follows.
+
+The other Phase-5 finalist, still the
 biggest modelling item: price reforms over 2024–2030 paths using the dated
 tree that already encodes the future (CVAE trajectory, CEBGE expiry);
 **indexation policy as a knob** — the barème-freeze stealth tax priced per
@@ -61,7 +70,14 @@ the honest hard part: uprate mechanically (wage/price indices, stated),
 never re-synthesise. *Effort: a full phase with a spec. Value: every
 existing knob gains a time dimension.*
 
-**F4 · The fiche de chiffrage generator.** One exportable report per reform
+**F4 · The fiche de chiffrage generator.** ~~One exportable report per reform~~
+**DONE, 2026-09-08 — D-098.** `impots fiche <scenario>`; shaped on the real
+évaluation préalable skeleton read in F1. Three rules with kill tests: a
+mechanical figure never appears without its band or the reason there is none;
+the fan never renders without its assumptions strip; a section a model cannot
+write is marked, not omitted. Original text follows.
+
+One exportable report per reform
 assembling the whole honesty stack — mechanical figure, behavioural band
 with channels and grade, cell-bound and composition intervals where they
 apply, fan with assumptions strip, narrow-band and zero-base warnings, data

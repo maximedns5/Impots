@@ -4230,3 +4230,127 @@ dépensés au registre de calibration, et une catégorie de revenu de plus dont 
 distribution intra-cellule est une fiction déclarée. Ce qu'elle achèterait : les boutons de
 taux du PFU au niveau population, la CSG sur les revenus du capital, et une part de
 l'incidence du haut de distribution. Ce qu'elle n'achèterait pas : la CDHR.
+
+## D-098 — F4 : la fiche de chiffrage, et trois branches que seul un rendu réel a montrées
+
+**2026-09-08 · `src/impots/fiche.py`, `tests/test_fiche.py`, `impots fiche`**
+
+Une fiche par réforme, assemblant tout l'étage d'honnêteté. **Elle reprend le plan d'une
+évaluation préalable** — mêmes six sections, même numérotation, relevés sur les 599 pages
+du PLF 2026 manifestées en F1 — parce que c'est le document qu'un lecteur français de
+chiffrage sait déjà lire. Qui sait où est le 4.2.1 y trouvera notre chiffre.
+
+**Ce qui diffère, c'est ce que le 4.2.1 CONTIENT.** La fiche officielle y met un nombre
+dans un tableau de cinq lignes. « Non chiffrable » figure dans cinq des vingt-neuf fiches
+fiscales du PLF 2026, ce qui est honnête ; les vingt-quatre autres donnent un point sans
+intervalle, ce qui ne l'est pas. La nôtre y met la pile : mécanique, bande avec son grade,
+canaux, éventail avec son bandeau, avertissements.
+
+**Trois règles, chacune avec son test qui tue** — et un générateur de rapport est
+exactement l'endroit où elles se relâcheraient, parce qu'un nombre nu se met mieux en page
+qu'un nombre qualifié.
+
+1. **Un chiffre mécanique ne paraît jamais seul** : soit la bande est à côté, soit la
+   RAISON qu'il n'y en ait pas est à côté.
+2. **L'éventail ne se rend jamais sans son bandeau d'hypothèses.** Le modèle de fil rend
+   déjà le bandeau obligatoire, l'interface a son propre test ; la fiche est la troisième
+   surface et ne devait pas être la faible.
+3. **Une section qu'un modèle ne peut pas remplir est MARQUÉE, pas omise.** Les sections
+   1, 2, 3 et 5 — diagnostic, options, dispositif juridique, consultations — sont des
+   jugements, pas des grandeurs. Les supprimer laisserait un document qui RESSEMBLE à une
+   évaluation préalable complète, et un lecteur en conclurait que le jugement manquant a
+   été porté. C'est la différence entre un chiffrage et une contrefaçon.
+
+### Trois défauts que seul un rendu sur réponse réelle a montrés
+
+* **`BehaviouralChannel.band` est un `BehaviouralBand`, pas une paire.** Mon
+  `c.band[0]` plantait — et la branche n'avait jamais tourné en vrai, parce qu'aucun canal
+  ne s'appliquait aux réformes essayées d'abord. Une branche non testée dans un moteur de
+  rendu dont le métier est d'imprimer des bandes.
+* **Les canaux étaient imbriqués dans la branche « bande présente ».** Un allègement
+  employeur ne produit AUCUNE bande d'ensemble — la réforme dépasse le support des
+  élasticités, donc le grade est « illustrative » et la bande est retenue — pendant que
+  deux canaux s'appliquent avec leurs bandes propres, dont **+17 113 emplois
+  [15 056 ; 19 093]**. Le lecteur recevait « pas de bande » et rien d'autre. **Retenir ce
+  qui a été calculé sous-estime aussi gravement qu'un point nu surestime.** Les canaux
+  sont désormais imprimés dans les deux cas, avec la phrase qui empêche de les additionner
+  ou de les prendre pour la bande d'ensemble.
+* **La typographie mangeait la prose.** `.replace(",", …)` appliqué à des f-strings
+  entières transformait les virgules de phrase en séparateurs de milliers : « EEC
+  household structure, synthetic incomes » sortait « structure  synthetic ». Et `:.4g`
+  rendait 9 770 165 637 en « 9.77e+09 » — de la notation scientifique, dans un document
+  français, à propos d'euros. Corrigé par des formateurs qui ne touchent que des nombres.
+
+### Et la forme D-044 une seconde fois dans la même session
+
+`test_every_section_a_model_cannot_write_is_printed_with_its_reason` était paramétré sur
+`fiche.NOT_OURS` — **la collection qu'il teste**. Vider `NOT_OURS` laissait les 27 tests
+verts pendant que la fiche supprimait silencieusement toutes ses sections déclinées.
+C'est exactement ce que j'avais corrigé quelques heures plus tôt dans
+`test_scenarios.py`, et je l'ai réécrit. Les quatre numéros sont maintenant en toutes
+lettres, avec un test séparé qui vérifie que la collection les contient.
+
+**Le motif mérite d'être nommé comme habitude et non comme accident** : quand on écrit un
+test paramétré, la source des paramètres doit venir d'ailleurs que du code testé. Que je
+l'aie refait le jour même où je l'ai documenté dit que la vigilance ne suffit pas — il
+faut la question, posée à chaque test paramétré : **d'où viennent ces paramètres ?**
+
+**Et mon propre kill test s'est trompé d'abord** : muter `NOT_OURS = (` en `= () or (`
+produit `() or (…)`, qui vaut le tuple non vide. Le test passait, j'ai cru qu'il ne mordait
+pas, et c'était la mutation qui était fausse. Vérifier qu'un test échoue demande de
+vérifier aussi que la mutation fait ce qu'on croit.
+
+## D-099 — Gate M0 des trajectoires : l'arbre ne code pas l'avenir, et le moteur mourait en 2029
+
+**2026-09-08 · `docs/M0_TRAJECTORIES.md`, `docs/F3_SPEC.md`**
+
+**La feuille de route annonçait « l'arbre daté qui code déjà l'avenir ». Mesuré : deux
+paramètres sur soixante-deux.** `exists_at` répond « oui » jusqu'en 2032 pour presque tout,
+et c'est trompeur — openfisca reconduit indéfiniment la dernière valeur datée. La bonne
+mesure n'est pas l'existence mais le CHANGEMENT.
+
+* **Ménages** : 4 chemins sur 52 bougent après 2026, et une seule fois, en 2027 (bmaf, RSA,
+  PPA base et bonification). À partir de 2028, tout l'étage est le droit 2027 reconduit.
+* **Entreprises** : 2 chemins sur 10 — la CVAE et son dégrèvement — portent une vraie
+  trajectoire, et le paramètre **cesse d'exister** en 2030 : l'arbre encode la suppression.
+  Exécuté : CVAE 3,282 md en 2026 puis 2,222 / 1,066 / 0,000, et un décrochage de 9,3 md
+  entre 2026 et 2027 qui est l'expiration de la CEBGE.
+
+La feuille de route avait donc raison sur ses deux exemples et tort sur la généralisation.
+
+**Le problème central que cela crée, et il est structurel.** Le barème IR est **déjà gelé**
+dans la référence à partir de 2026. Chiffrer un gel de barème contre cette référence, c'est
+chiffrer un changement contre lui-même : zéro par construction — la forme exacte de
+l'article 9 du PLF 2026 (D-095) et du champ `mirror` de la suite de backtests. Le premier
+livrable de F3 n'est donc pas un bouton, c'est **une seconde référence** : une
+contrefactuelle indexée sur une hypothèse de prix déclarée. Et les deux chiffres se
+publient ensemble, parce qu'ils répondent à deux questions différentes et sont vrais tous
+les deux.
+
+**Un défaut trouvé en ouvrant le gate.** Le moteur entreprises tournait en 2026, 2030 et
+2031 et **plantait en 2029** : `cvae/bareme/pente_t3.yaml` portait `value: 6e-05`, que YAML
+1.1 lit comme la CHAÎNE `'6e-05'` faute de point décimal. La chaîne traversait tout et
+mourait à la multiplication, une seule année, au milieu de la plage qu'une phase de
+trajectoires balaie par définition. Personne ne l'avait vu parce que personne n'avait fait
+tourner 2029.
+
+**C'est notre fichier, pas celui d'openfisca.** Mon premier réflexe a été de le classer en
+huitième artefact amont ; vérification faite, il est à nous. Troisième fois de la journée
+qu'une vérification avant annonce change la réponse.
+`test_every_parameter_value_we_ship_is_a_number` balaie désormais les 41 fichiers de
+paramètres et refuse toute valeur non numérique — en se limitant structurellement aux blocs
+`values:` datés, parce que le magasin comportemental écrit aussi `value:` et y met
+légitimement un dictionnaire.
+
+**Et ce garde a d'abord été INERTE**, ce qui est le fait le plus instructif du lot. Il
+testait `isinstance(key, str)` sur les dates ; or YAML rend un `datetime.date`. Aucune clé
+ne correspondait, le bloc n'était jamais inspecté, et le test passait avec la valeur cassée
+en place. Trouvé uniquement parce que j'ai exigé que le kill test morde **et vérifié que ma
+mutation faisait bien ce que je croyais** — une première tentative de mutation
+(`= () or (…)`) laissait le tuple non vide et m'avait fait croire à un test faible alors
+que la mutation était fausse.
+
+**Quatre contrôles inertes en une session** — le test paramétré sur `BANDED_QUANTITIES`, la
+constante non épinglée de D-093, le test paramétré sur `NOT_OURS`, et ce garde de dates.
+La troisième question permanente (« a-t-on déjà vu ce contrôle échouer ? ») n'est pas une
+précaution occasionnelle : c'est la seule chose qui les a tous trouvés.

@@ -81,6 +81,23 @@ threshold, a ratio or an individual average rate is out of reach of a
 fractile imputation. Nothing is built past the gate; building the imputation
 is the owner's call.
 
+**F4 is done — D-098.** `impots fiche <scenario>` assembles the whole honesty
+stack into one exportable document shaped on the real évaluation préalable
+skeleton. Rendering it against live responses found three defects that reading
+the code had not: a channel band indexed as a pair, channels hidden whenever
+the overall band was withheld (an employer reform computes +17 113 jobs
+[15 056 ; 19 093] and the reader saw «no band» and nothing else), and French
+typography eating the prose commas.
+
+**F3 is gated, not built — D-099.** The M0 gate overturned the roadmap's
+premise: the dated tree encodes the future on two parameters out of
+sixty-two. A barème freeze priced against an already-frozen baseline returns
+zero by construction, so F3's first deliverable is a second indexed
+counterfactual, not a knob. `docs/F3_SPEC.md` is written against what was
+measured. The gate also found the firm engine dying at 2029 on a YAML value
+parsed as a string — one year, in the middle of the range a trajectory phase
+sweeps, unseen because nobody had run 2029.
+
 Two standing decisions for the owner, recorded and not taken:
 pre-registration integrity is internal-grade (a commit hash in a private
 repo). If external credibility ever matters, a timestamp OUTSIDE the repo is

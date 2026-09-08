@@ -1,0 +1,11 @@
+{
+  "name": "allegement_2smic",
+  "year": 2024,
+  "created": "2026-09-08",
+  "source": "variante interne : allègement général étendu à 2 SMIC",
+  "note": "",
+  "tags": [],
+  "reform": {
+    "allegement_general_plafond": 2.0
+  }
+}

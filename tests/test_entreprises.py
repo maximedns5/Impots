@@ -797,3 +797,74 @@ def test_a_firm_reform_balances_against_its_components() -> None:
     # An instrument that moved the total without being reported as a component.
     with pytest.raises(SectorBalanceError, match="somme des instruments"):
         firm_balance(dict(deltas, prelevements_entreprise=3.5e9), reform_cost=-3.5e9)
+
+
+def test_every_parameter_value_we_ship_is_a_number() -> None:
+    """A YAML scalar that looks numeric is not always parsed as one.
+
+    `value: 6e-05` parses as the STRING '6e-05' — YAML 1.1 requires a decimal point and
+    a signed exponent for a float, so `6e-05`, `1e10` and `1.0e10` are all strings while
+    `6.0e-05` and `0.00006` are floats. The string reaches the formula intact, and the
+    engine dies at exactly the year that value applies:
+
+        variables.py:313  bareme.base_t3 + bareme.pente_t3 * (ca - bornes.t2_t3)
+        UFuncNoLoopError: ufunc 'multiply' … (dtype('<U5'), dtype('float32'))
+
+    Measured before the fix: the firm engine ran at 2026, 2030 and 2031 and CRASHED at
+    2029 — one year, in the middle of the range a trajectory phase would sweep. Found
+    while gating F3; nothing else would have run 2029.
+
+    Fails on any parameter value we ship that is not a number or null.
+    """
+    from pathlib import Path
+
+    import yaml
+
+    root = Path(__file__).resolve().parents[1] / "src" / "impots"
+    offenders: list[str] = []
+
+    def is_date(key: object) -> bool:
+        """YAML parses an unquoted `2029-01-01` as a `datetime.date`, NOT a string.
+
+        The first version checked `isinstance(key, str)`, so no key ever matched, the
+        block was never inspected and the guard was inert — it passed with the broken
+        value still in place. Caught only by insisting the kill test actually bite.
+        """
+        import datetime
+
+        if isinstance(key, (datetime.date, datetime.datetime)):
+            return True
+        return isinstance(key, str) and len(key) == 10 and key[4] == key[7] == "-"
+
+    def walk(node: object, path: str) -> None:
+        """Only inspect `values:` blocks keyed by DATES — the openfisca parameter shape.
+
+        Scoped structurally rather than by directory, because the behavioural store also
+        writes `value:` and means something else by it: a `{central, low, high,
+        distribution}` dict, which is correct there and would be a false positive here.
+        A path-based exclusion would drift the first time a store moves.
+        """
+        if isinstance(node, dict):
+            values = node.get("values")
+            if isinstance(values, dict) and any(is_date(k) for k in values):
+                for when, entry in values.items():
+                    if not isinstance(entry, dict) or "value" not in entry:
+                        continue
+                    v = entry["value"]
+                    if not isinstance(v, (int, float, bool, type(None))):
+                        offenders.append(
+                            f"{path} @ {when}: value={v!r} ({type(v).__name__})")
+            for key, child in node.items():
+                walk(child, f"{path}/{key}")
+
+    files = sorted(root.glob("*/parameters/**/*.yaml"))
+    assert files, "aucun fichier de paramètres trouvé — le test ne prouverait rien"
+    checked = 0
+    for path in files:
+        document = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        if isinstance(document, dict) and isinstance(document.get("values"), dict):
+            checked += 1
+        walk(document, str(path.relative_to(root)))
+    assert checked >= 20, f"seulement {checked} fichiers de barème inspectés"
+    assert not offenders, ("valeurs de paramètre non numériques :\n  "
+                           + "\n  ".join(offenders))
