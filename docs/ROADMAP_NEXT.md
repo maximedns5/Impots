@@ -52,7 +52,13 @@ It also found a bug in our own double-entry guard on its first real run
 (D-093): the identity scaled its residual by the reform's net, which the
 solver drives to zero by construction.
 
-**F3 · Trajectories (multi-year).** **GATED, 2026-09-08 — D-099.** The M0 gate
+**F3 · Trajectories (multi-year).** **GATED then M1 BUILT, 2026-09-08 —
+D-099, D-101.** M1 landed: two references, neither defaulted, and the 2028
+barème freeze measured at +0,000 md against `reconduit` and −7,073 md against
+`indexe` at 2 %/yr. M2 (population uprating) is the next increment and is the
+honest hard part. Gate detail follows.
+
+**GATED, 2026-09-08 — D-099.** The M0 gate
 (`docs/M0_TRAJECTORIES.md`) measured the premise and overturned it: the dated
 tree encodes the future on TWO parameters out of sixty-two (the CVAE and its
 dégrèvement, ending 2030), and reconducts 2026 everywhere else. So a barème
@@ -86,7 +92,17 @@ préalable annex, but with the uncertainty grammar no official fiche carries.
 *Effort: one increment, mostly assembly. Value: the project's identity in a
 single artefact; also what C2 (methods page) would one day be built from.*
 
-**F5 · Taxe foncière from the REI.** A new base, and genuinely open: the
+**F5 · Taxe foncière from the REI.** **GATED, 2026-09-08 — D-100.**
+`docs/M0_REI.md`: the bâti reads to +0,9 % against the published 43,1 Md€
+(and the headline 55,1 Md€ is the WRONG comparator — it includes annexes and
+management fees); the non bâti misses 60 % and is pinned as failing. The
+column map is recorded: the file never says «foncier», it says FB and FNB.
+One limit the entry did not anticipate: the REI is COMMUNAL and this
+population has no commune, so F5 delivers a per-commune model, not a
+per-household one — no decile incidence without a further source. Original
+text follows.
+
+A new base, and genuinely open: the
 DGFiP REI file (data.gouv) carries per-commune rates and bases. Cell design
 (commune × base), TF knobs national and local, validation against published
 TF receipts. The last big open-data tax with no open model. *Effort: a

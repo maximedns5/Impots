@@ -4354,3 +4354,107 @@ que la mutation était fausse.
 constante non épinglée de D-093, le test paramétré sur `NOT_OURS`, et ce garde de dates.
 La troisième question permanente (« a-t-on déjà vu ce contrôle échouer ? ») n'est pas une
 précaution occasionnelle : c'est la seule chose qui les a tous trouvés.
+
+## D-100 — Gate M0 du REI (F5) : le bâti valide à +0,9 %, le non bâti manque 60 %
+
+**2026-09-08 · `docs/M0_REI.md`**
+
+**Verdict : oui pour le foncier bâti, non en l'état pour le non bâti.** Rien construit
+au-delà du gate.
+
+**Le marais annoncé est réel et a maintenant une carte.** REI 2025 : 34 907 communes ×
+**1043 colonnes**, 112 Mo, manifesté. Quatre pièges, relevés en les rencontrant :
+
+1. **le CSV est en LATIN-1** — la lecture UTF-8 échoue à l'octet 10082, et un
+   `errors="replace"` donnerait des libellés corrompus sans lever d'erreur ;
+2. séparateur point-virgule, décimal virgule ;
+3. **le foncier n'est jamais nommé « foncier »** : chercher `FONCIER|BÂTI` dans les titres
+   ramène 9 variables sur 1043 et **aucune n'est une base ni un taux de TF**. Les vraies
+   colonnes ont des titres en « FB » (118) et « FNB » (57). Un gate qui aurait cherché le
+   mot aurait conclu que le fichier ne porte pas la taxe foncière ;
+4. la CFE occupe **500 des 1043 colonnes** — ce n'est pas un fichier de TF.
+
+**La validation, et son périmètre est la moitié de l'information.** DGFiP Statistiques
+n° 46 met en avant **55,1 Md€**, qui **inclut taxes annexes et frais de gestion** ; le
+comparateur d'une reconstitution base × taux est la phrase suivante : « hors taxes annexes
+et frais de gestion, **43,1 Md€** ». Prendre le chiffre mis en avant aurait donné −21 % et
+fait conclure à un modèle faux.
+
+    commune seule                40,154 md   -6,84 %
+    commune + intercommunalité   42,773 md   -0,76 %
+    + TSE, GEMAPI, TASA          43,483 md   +0,89 %
+
+Les deux dernières encadrent le publié à moins de 1 %. Le document ne dit pas lesquelles de
+ces strates comptent parmi les « taxes annexes » qu'il exclut : les deux sont données,
+aucune n'est choisie.
+
+**CE QUE CETTE VALIDATION NE PROUVE PAS.** La publication n° 46 est tirée du même REI. La
+comparaison valide **la lecture du fichier** — bonnes colonnes, bon facteur cent sur les
+taux — et **pas un modèle**. C'est la distinction du registre de calibration appliquée à
+une source externe : une ligne qui colle parce qu'elle vient de la même source ne dit rien
+du monde.
+
+**Le non bâti échoue et l'échec est publié.** Ma lecture donne 1,089 md contre 2,7 md
+publiés, soit **−59,7 %**. Strates manquantes non trouvées dans le temps du gate. La
+tolérance n'est pas élargie pour l'absorber : le bâti est validé, le non bâti ne l'est pas,
+les deux faits sont épinglés, et F5 devrait traiter le non bâti comme un M1 à part entière.
+
+**Et une limite que la feuille de route ne mentionnait pas.** Le REI est **communal** ; la
+population de ce projet n'a ni commune ni valeur locative. **Une TF par ménage n'est pas
+atteignable depuis ce fichier seul.** F5 livrerait un modèle par commune — donc pas
+d'incidence par décile sans une source supplémentaire. Une phase qui promettrait la
+distribution promettrait ce qu'elle ne peut pas tenir.
+
+## D-101 — F3 M1 : les deux références, et le gel du barème enfin chiffrable
+
+**2026-09-08 · `src/impots/trajectoires.py`, `tests/test_trajectoires.py`**
+
+Le gate M0 (D-099) avait mesuré le problème : le barème IR est **gelé depuis 2026** — 2026,
+2027 et 2028 portent tous les seuils de 2025 — donc chiffrer un gel contre le droit courant
+rend zéro, parce que le droit courant EST le gel.
+
+**Deux références, et chaque chiffre nomme la sienne.**
+
+* `reconduit` — le droit courant prolongé. C'est la référence **légale** : personne n'a
+  voté d'indexation au-delà de 2025, et l'impôt dû en 2028 se calcule vraiment sur les
+  seuils de 2025.
+* `indexe` — le même droit dont le barème, la décote et le plafond par demi-part sont
+  indexés sur une hypothèse de prix **déclarée**.
+
+**Mesuré de bout en bout sur le moteur réel**, gel du barème en 2028 :
+
+    référence « reconduit »   +0,000 md€
+    référence « indexe » (2 %) −7,073 md€
+
+**Les deux sont vrais et répondent à deux questions différentes.** Le zéro n'est pas un
+bug : il n'y a rien à geler qui ne le soit déjà. Les 7,07 md sont l'impôt discret, et il
+n'existe comme nombre que parce que la seconde référence existe. C'est la démonstration que
+`indexe` était nécessaire et non un raffinement.
+
+**Aucun défaut nulle part.** `reference` est obligatoire, et une liste BLANCHE la valide —
+D-094 : une référence mal orthographiée qui retomberait sur « reconduit » publierait un
+zéro pour un gel et l'appellerait un résultat. `indexe` exige en plus l'hypothèse ET sa
+source.
+
+**L'hypothèse est FOURNIE, jamais prévue.** Les refus de la phase 4 tiennent : ce projet ne
+prévoit pas l'inflation. Chiffrer « si les prix montent de X » est de l'arithmétique ;
+choisir X ne nous appartient pas, et `Indexation` refuse de le faire — pas de taux par
+défaut, source obligatoire.
+
+**Deux honnêtetés portées par chaque résultat plutôt que par un document annexe :**
+
+* `indexe` est une **borne inférieure** de ce qu'une vraie indexation coûterait — une loi
+  d'indexation déplace aussi les planchers et plafonds de la déduction de 10 %,
+  l'abattement sur les pensions et plusieurs plafonds spécifiques de quotient familial, que
+  ce module n'expose pas ;
+* **la population n'est pas vieillie** — M2 n'existe pas, donc une trajectoire applique le
+  droit d'une année future à une population 2024. `Trajectory.caveat` le dit sur chaque
+  résultat.
+
+**Le test qui compte** est `test_a_freeze_against_current_law_costs_exactly_nothing`, et
+son moteur d'essai **dérive** le zéro d'un écart de seuils au lieu de le coder en dur — la
+première version rendait 0,0 dans les deux branches et aurait passé quoi qu'il arrive
+(ruff l'a signalé, `RUF034`). Son jumeau
+`test_the_indexed_reference_is_not_folded_into_the_measure` vérifie la soustraction :
+sans elle, une réforme nulle chiffrée contre `indexe` reviendrait chargée du coût entier
+de l'indexation — un très gros nombre attribué à une mesure qui ne fait rien.

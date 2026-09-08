@@ -1107,6 +1107,24 @@
       "downloaded": "2026-09-08",
       "licence": "DGFiP — Licence Ouverte",
       "description": "DGFiP Statistiques n° 41 — tableaux. LE fichier du gate F1b. Tableau 2 : impôt au barème et impôt hors barème (+ CEHR) par décile de RFR par part, AVEC les lignes « dont dernier centième » et « dont dernier millième » — la granularité publiée descend donc au millime, pas seulement au décile. Moyennes par foyer de l'impôt hors barème : 4 € au 1er dixième, 68 € au 9e, 2 290 € au dernier dixième, 19 423 € au dernier centième, 135 784 € au dernier millime ; total 10,32 Md€ (+ 1,98 Md€ CEHR). Tableau 1 : décomposition des revenus déclarés par catégorie, dont RCM 70,09 Md€. ATTENTION : la colonne hors barème AGRÈGE le PFU et la CEHR — la parenthèse isole la CEHR, il faut la soustraire pour obtenir le PFU seul."
+    },
+    "rei_2025.zip": {
+      "url": "https://data.economie.gouv.fr/api/v2/catalog/datasets/impots-locaux-fichier-de-recensement-des-elements-dimposition-a-la-fiscalite-dir/attachments/rei_2025_fichier_notice_tracezip",
+      "quarantined": false,
+      "sha256": "8bd3745d2851ea1da6d3b9f4ee5a9f5c3b8aa87523785c9f69ee69b6606ced2c",
+      "bytes": 18486782,
+      "downloaded": "2026-09-08",
+      "licence": "DGFiP — Licence Ouverte v2.0 (Etalab)",
+      "description": "DGFiP, REI 2025 — recensement des éléments d'imposition à la fiscalité directe locale. Archive : REI_2025.csv (112 Mo, 34 907 communes x 1043 colonnes), la notice, et TRACE_REI_2025.xlsx qui est le DICTIONNAIRE des 1043 variables — sans lui le fichier est illisible.\nPIÈGES DE LECTURE relevés au gate F5 : (1) le CSV est en LATIN-1, pas en UTF-8 — la lecture échoue à l'octet 10082 ; (2) séparateur POINT-VIRGULE, décimal VIRGULE ; (3) le foncier bâti n'est JAMAIS nommé « foncier » — les titres commencent par « FB » (118 variables) et « FNB » (57), et chercher « foncier » ne ramène que 9 variables, aucune utile. La CFE occupe 500 des 1043 colonnes.\nCOLONNES UTILES : E11/E12 base nette et taux commune, E31/E32 intercommunalité, E51/E52 TSE, E51gGEMAPI/E52gGEMAPI, E51TASA/E52TASA. Les taux sont en POURCENTAGE. F21..F83 portent la TEOM, qui roule sur la même base sans être de la TF."
+    },
+    "dgfip_stat_46_tf_2025.pdf": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2026/num46_05/dgfip_stat_46_tf_2026.pdf",
+      "quarantined": false,
+      "sha256": "eb1ecd012caba1222f1beba0601d35f455b2dd939fcac2a2a95761f36bf1daef",
+      "bytes": 701095,
+      "downloaded": "2026-09-08",
+      "licence": "DGFiP — Licence Ouverte v2.0 (Etalab)",
+      "description": "DGFiP Statistiques n° 46 (mai 2026), « En 2025, la taxe foncière progresse de 2,4 % ». LE comparateur du gate F5, et son périmètre est la moitié de l'information : « Hors taxes annexes et frais de gestion, les montants dus de TFPB sont de 43,1 Md€ en 2025 ». Le 55,1 Md€ mis en avant les INCLUT et n'est pas le bon comparateur d'une reconstitution base x taux. TFPNB : 2,7 Md€, en baisse de 5,8 %. Tableau 1 : locaux d'habitation 41,35 Md€ (95,5 % des locaux) ; industriels 2,9 Md€.\nCIRCULARITÉ À DÉCLARER : cette publication est tirée du même REI. La comparaison valide la LECTURE du fichier, pas le modèle."
     }
   }
 }

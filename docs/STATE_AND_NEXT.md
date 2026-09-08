@@ -98,6 +98,23 @@ measured. The gate also found the firm engine dying at 2029 on a YAML value
 parsed as a string — one year, in the middle of the range a trajectory phase
 sweeps, unseen because nobody had run 2029.
 
+**F5 is gated — D-100.** `docs/M0_REI.md`: the foncier bâti reads to +0,9 %
+against the published 43,1 Md€ (the headline 55,1 Md€ is the wrong
+comparator), the non bâti misses 60 % and is pinned as failing, and the
+column map is recorded — the REI never says «foncier», it says FB and FNB.
+One limit the roadmap did not anticipate: the REI is COMMUNAL and this
+population has no commune, so F5 delivers a per-commune model, not
+per-household incidence.
+
+**F3 M1 is built — D-101.** Two references, neither defaulted: `reconduit`
+(current law extended, the legal one) and `indexe` (barème, décote and
+plafond QF uprated on a DECLARED price hypothesis — supplied, never
+forecast). Measured end to end: the 2028 barème freeze costs +0,000 md
+against `reconduit` and −7,073 md against `indexe` at 2 %/yr. Both true,
+different questions, and the stealth tax exists as a number only because the
+second reference does. M2 (population uprating) is next and every result says
+the population is not yet aged.
+
 Two standing decisions for the owner, recorded and not taken:
 pre-registration integrity is internal-grade (a commit hash in a private
 repo). If external credibility ever matters, a timestamp OUTSIDE the repo is
