@@ -49,6 +49,9 @@ from impots.api.schemas import (
     PopulationSimulateRequest,
     ReconciliationLine,
     ResultRows,
+    ScenarioDetail,
+    ScenarioListResponse,
+    ScenarioSummary,
     SimulateRequest,
     SimulateResponse,
     Timings,
@@ -793,6 +796,49 @@ def firms_simulate(request: FirmSimulateRequest) -> FirmResponse:
         aggregates, request.year,
         {**result.timings, "total_s": round(time.perf_counter() - started, 3)},
         request=request,
+    )
+
+
+@app.get("/scenarios", response_model=ScenarioListResponse)
+def scenarios_list() -> ScenarioListResponse:
+    """The registered scenarios (F2). Reads files; never runs the engine.
+
+    Read only, and there is no POST. A scenario's value is its DATE, and a date the HTTP
+    surface can mint is a date anyone can mint — registration belongs in the CLI, where
+    it lands in the working tree and gets committed (D-092).
+    """
+    from impots import scenarios as scenarios_module
+
+    summaries, unreadable = [], {}
+    for name in scenarios_module.available():
+        try:
+            scenario = scenarios_module.load(name)
+        except scenarios_module.ScenarioError as error:
+            unreadable[name] = str(error)
+            continue
+        summaries.append(_scenario_summary(scenario))
+    return ScenarioListResponse(scenarios=summaries, unreadable=unreadable)
+
+
+@app.get("/scenarios/{name}", response_model=ScenarioDetail)
+def scenarios_show(name: str) -> ScenarioDetail:
+    """One scenario with its reform, so the UI can load it into the knob panel."""
+    from impots import scenarios as scenarios_module
+
+    if name not in scenarios_module.available():
+        raise HTTPException(status_code=404, detail=f"scénario « {name} » inconnu")
+    try:
+        scenario = scenarios_module.load(name)
+    except scenarios_module.ScenarioError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    return ScenarioDetail(reform=scenario.reform, **vars(_scenario_summary(scenario)))
+
+
+def _scenario_summary(scenario: Any) -> ScenarioSummary:
+    return ScenarioSummary(
+        name=scenario.name, year=scenario.year, created=scenario.created,
+        source=scenario.source, note=scenario.note, tags=list(scenario.tags),
+        knobs=sorted(scenario.reform.model_dump(exclude_none=True)),
     )
 
 

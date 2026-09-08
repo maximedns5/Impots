@@ -1086,3 +1086,39 @@ class FirmResponse(BaseModel):
     by_size: list[FirmSizeRow] = Field(default_factory=list)
     behavioural: Behavioural | None = None
     timings: dict[str, float] = Field(default_factory=dict)
+
+
+class ScenarioSummary(BaseModel):
+    """One registered scenario, as the UI's scenario picker needs it.
+
+    READ ONLY, and there is no write counterpart on purpose. Registering a scenario is
+    what dates it, and a date the HTTP surface can produce is a date anyone can produce:
+    pre-registration lives in the CLI, where it lands in the working tree and gets
+    committed. See D-092.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    year: int
+    created: str
+    source: str
+    note: str = ""
+    tags: list[str] = Field(default_factory=list)
+    knobs: list[str] = Field(default_factory=list)
+
+
+class ScenarioDetail(ScenarioSummary):
+    """A scenario with its reform, so the UI can load it into the knob panel."""
+
+    reform: ReformSpec
+
+
+class ScenarioListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    scenarios: list[ScenarioSummary] = Field(default_factory=list)
+    unreadable: dict[str, str] = Field(default_factory=dict)
+    """Names that no longer validate, with the reason. Listed rather than hidden: a
+    scenario that silently vanishes from the picker is a chiffrage that silently stops
+    being confrontable."""

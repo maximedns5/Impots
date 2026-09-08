@@ -3548,3 +3548,482 @@ le gain cumulé pour les sortants est de **1 655 M€**, à comparer aux ~2,2 md
 **Le backtest ISF-2017 reste sans source.** Ni le rapport du Sénat ni les bulletins DGFiP
 que nous détenons ne donnent l'ISF 2017 par tranche en effectifs, base ET impôt. Le
 candidat suivant est le rapport IPP n° 46 sur le plafonnement de l'ISF, non encore lu.
+
+## D-090 — Le backtest ISF-2017, et un sixième défaut du moteur trouvé en le construisant
+
+Le seul chiffre **hors échantillon** du module patrimoine. Tout le reste compare le
+moteur à des données dont les cellules sont issues ; ici l'ISF est mort en 2017, les
+chiffres ont été publiés en 2023 à partir de dossiers fiscaux que ce projet n'a jamais
+touchés, et rien n'a été ajusté dessus.
+
+**L'URL du handoff était morte.** `uploads/2023/10/Rapport_IPP_46_ISFplaf-2.pdf` renvoie
+404 ; le fichier a été redéposé en juin 2025 sous `uploads/2025/06/46_…`. La session de
+relecture disait la source « localisée, lue et confirmée » — elle l'était, mais le lien
+ne résolvait plus. Relevé sur la page de publication et manifesté.
+
+**Et le tableau annoncé n'est pas celui qui sert.** Le handoff attend du tableau 1.1
+l'ISF par tranche, avant et après plafonnement. Le tableau 1.1 donne les **effectifs** par
+tranche et, pour toutes les colonnes monétaires, seulement la **part attribuable aux
+foyers plafonnés** — aucun montant, aucune base. C'est le **tableau 1.2** qui porte les
+niveaux, par statut de plafonnement plutôt que par tranche, et c'est lui qui rend le
+backtest possible.
+
+### Le résultat
+
+Ménage moyen reconstruit poste par poste — ses composantes somment au total publié **à la
+décimale près**, dans les deux groupes, ce qui est le contrôle de la lecture — puis passé
+dans la chaîne ISF du moteur à la période 2017.
+
+| | nous | publié | écart |
+|---|---|---|---|
+| plafonnés, avant plafonnement | 152 725 € | 153 417 € | **−0,5 %** |
+| plafonnés, après plafonnement | 53 987 € | 49 483 € | +9,1 % |
+| non-plafonnés | 30 918 € | 25 821 € | **+19,7 %** |
+
+**Le −0,5 % est en partie deux erreurs qui s'annulent, et le dire est le point.** Jensen
+tire vers le bas — un ménage moyen passé dans un barème convexe sous-estime l'impôt moyen
+— et les **réductions ISF-PME et dons**, que nous ne modélisons pas, tirent vers le haut.
+Sur les non-plafonnés, dont les patrimoines font le tiers, la seconde domine et donne
++19,7 %. Sur les plafonnés elles se compensent à peu près. Un backtest qui tombe à un
+demi-point parce que deux effets non modélisés s'annulent n'est pas un backtest qui tombe
+là parce que tout est juste, et le module ne revendique pas le second.
+
+**La tolérance n'a pas été élargie pour absorber le manque.** Un groupe passe, l'autre non,
+et les deux faits sont épinglés : un backtest qui admet tout ne mesure rien.
+
+**Le +9,1 % sur le plafonnement s'explique mécaniquement**, vérifié et non affirmé. Le
+plafonnement compare l'ensemble des impôts à 75 % du revenu ; notre ménage n'a que du
+salaire, faute d'une composition de revenu publiée, et produit donc 34 893 € d'impôts
+plafonnables contre les 51 154 € publiés (IR 32 486 + prélèvements sociaux 18 668). Les
+prélèvements sociaux manquants sur les revenus du capital font moins mordre le plafond. Ce
+que le plafond reproduit, en revanche, c'est sa **forme** : −64,7 % de l'impôt d'avant
+contre −67,7 % publiés, sur un mécanisme qui vaut les deux tiers de la note.
+
+### Sixième défaut du moteur : le mobilier déclaré compté deux fois
+
+`isf_droits_sociaux` somme `b1cg` — le mobilier déclaré — et `assiette_isf_ifi` le
+**rajoute** ensuite comme forfait mobilier. Mesuré : 1 000 000 € déclarés donnent une
+assiette de **2 000 000 €**.
+
+L'art. 764 I-3° fait des 5 % un **plancher**, « la preuve contraire étant aussi réservée » :
+déclarer la valeur réelle **remplace** la présomption, elle ne s'y ajoute pas. Être taxé
+deux fois pour avoir usé d'une option légale n'est la politique de personne, et cela frappe
+précisément le contribuable qui déclare au lieu de présumer.
+
+**Invisible jusqu'ici, et pas par chance** : `isf_droits_sociaux` porte
+`end = "2017-12-31"`, donc à 2024 il vaut zéro, b1cg n'est pas dans le total et l'ajouter
+une fois est correct. Le défaut n'apparaît que là où cette variable est vivante — en 2017,
+**et à 2024 sous notre propre résurrection de l'ISF**, qui relève la date de fin et
+ramène le double compte avec la base financière. Corrigé, avec son test-témoin, et le
+rayon d'action à 2024 est nul — ce que la suite prouve.
+
+### Le mapping décide de la réponse, donc le mauvais est épinglé comme tel
+
+« Valeur titres avec contrôle » ne doit **pas** aller en `b1cb` : ce case applique
+`taux_actions_conservees_6_ans` = 0,25, soit l'exonération de 75 % des titres sous
+engagement de conservation, que le total post-abattements du rapport n'applique
+manifestement pas — ses colonnes avant et après abattements ne diffèrent que de 647 k€ sur
+13 929 k€, soit l'abattement résidence principale et peu d'autre. Y router les titres
+exonérerait 1 045 k€ que le rapport compte encore, et fait passer le résultat de −0,5 % à
+**−10,7 %**. Un test épingle la mauvaise lecture comme mauvaise.
+
+**Détail de cohérence noté** : les quatre effectifs de tranche du tableau 1.1 somment à
+356 231 contre 356 229 annoncés — deux foyers d'écart, arrondi interne à la publication,
+consigné plutôt que réconcilié.
+
+## D-091 — Clôture de la phase 5 : le dossier amont, la règle du pointeur, et l'état réel du reliquat
+
+### Le dossier amont porte maintenant six constats, et aucun n'est publié
+
+`docs/UPSTREAM_ISSUE_DRAFT.md` devient un dossier indexé plutôt qu'un brouillon d'issue
+unique : l'arbre fantôme `aide_a_domicile`, six sosies morts de plus, l'IFI facturé sous
+son seuil d'assujettissement avec la non-monotonie qui le prouve, le forfait mobilier de
+5 % sur une base immobilière (contesté, argumenté des deux côtés), la garde ISF qui compare
+des euros à un taux, et le double compte de `b1cg`. Plus un septième côté `openfisca-core` :
+`update_variable` n'efface pas une date de fin et ne le signale pas.
+
+Quatre des six ont la même forme : un paramètre ou une formule qui **résout, accepte une
+écriture, se relit correctement et ne fait rien** — ou le fait deux fois. Aucune relecture
+ne les attrape. C'est l'argument du dossier, et c'est aussi le résumé de ce que ce projet a
+appris en six phases.
+
+### La règle du pointeur, née d'un incident
+
+`docs/SOURCE_POINTERS.md`. Un passage de relais transmet des **identifiants** — titre,
+éditeur, numéro, date, **sujet** du tableau visé, et le **sha256** dès que le fichier est
+manifesté — **jamais une URL nue comme référence porteuse**. L'implémenteur re-résout au
+moment de l'usage.
+
+Deux corollaires appris le même jour. Une URL peut être **périmée alors que l'index de
+recherche la sert encore** : le chemin de 2023 était toujours renvoyé après le redépôt de
+2025, et c'est la **page de publication** de l'éditeur qui portait le bon. Et un numéro de
+tableau n'est pas un identifiant suffisant : le cahier des charges nommait « tableau 1.1 »
+pour des montants que seul le tableau des niveaux porte.
+
+Le fichier liste les neuf sources porteuses de la phase avec leur sha256 et le **sujet** à
+transmettre. Deux d'entre elles sont manifestées **pour ce qu'elles ne contiennent pas** —
+l'IPP Note 92 qui n'a aucun chiffre de patrimoine, la méthodologie BdF qui énonce sa propre
+limite. C'est délibéré : établir qu'une source ne porte pas ce qu'on lui prêtait est un
+résultat, et le perdre coûterait le même travail une seconde fois.
+
+### Le reliquat, vérifié plutôt que supposé
+
+| Item | État |
+|---|---|
+| Balayage du récit | **fait** — 308043c |
+| Audit « nommez l'implémentation qui la ferait échouer » | **fait** — 26e6650 |
+| Backtest modulation AF 2015 | **ouvert** — la suite compte quatre chiffrages, aucun n'est celui-là |
+| Goldens d'exemple travaillé (base RSA, pente PPA) | **ouvert** — les cinq goldens sont tous IR/salaire |
+| Boutons exposés dans l'UI | **31 sur 52** — et le dénominateur a monté, la phase 5 ayant ajouté douze boutons IFI dont trois seulement sont câblés à l'écran |
+
+Le chiffre d'UI mérite d'être lu correctement : il n'a pas empiré par régression, il a
+empiré parce que le jeu de boutons s'est enrichi plus vite que l'écran. Les onze boutons
+IFI non exposés sont les plus fins — bornes de décote, seuils non bâti, plafond des
+réductions — et l'onglet patrimoine porte déjà les leviers principaux.
+
+## D-092 — Le solveur budgétairement neutre ne résout que sur l'étage mécanique, et le refus est la fonctionnalité
+
+**2026-09-08 · F2 · `src/impots/scenarios.py`, `tests/test_scenarios.py`**
+
+La feuille de route demande, pour F2, « un solveur de neutralité budgétaire — étant
+donné une réforme qui coûte X, trouver par recherche de racine le déplacement de barème
+ou de taux qui l'annule, étage mécanique uniquement, honnête par construction ». La
+clôture de la phase 5 ajoutait la condition qui fait toute la différence : « le solveur
+doit REFUSER de résoudre sur des grandeurs en bande, avec le refus testé ».
+
+**Pourquoi c'est un choix de conception et non une limitation à lever plus tard.** Le
+chiffre mécanique est un nombre. La bande comportementale, l'éventail macro, l'incertitude
+de cellule et la bande de composition sont des **intervalles**. « La valeur du bouton qui
+annule un intervalle » n'est pas une question bien posée : toute valeur de bouton dont
+l'intervalle contient zéro y répond, et une recherche de racine rendrait celle qu'elle a
+croisée en premier. Le résultat serait un nombre faux portant exactement la provenance
+d'un nombre vrai — le mode de défaillance que ce projet redoute le plus.
+
+`BANDED_QUANTITIES` nomme les quatre grandeurs refusées avec, pour chacune, la raison pour
+laquelle elle est un intervalle. `refuse_banded()` est publique et séparée, pour que
+l'appelant puisse poser la question avant de dépenser des minutes à en découvrir la
+réponse. Le refus est atteignable depuis la ligne de commande (`--quantity`) précisément
+pour qu'il ne soit pas une branche morte.
+
+**Deux propriétés d'honnêteté, chacune avec son test qui tue.**
+
+1. **Une exécution qui ne converge pas ne rend PAS sa dernière itérée.** C'est la
+   propriété la plus susceptible d'être « corrigée » par quelqu'un qui trouve `None`
+   gênant. `test_a_run_that_does_not_converge_does_not_return_its_last_iterate` échoue à
+   la seconde où le retour final devient `SolverResult(knob, x1, f1, …)` — vérifié en
+   cassant le code, pas en le lisant : le test tombe sur `value=0.376`.
+2. **Un coût qui ne change pas de signe sur l'intervalle n'a pas de racine, et on le
+   dit.** Le solveur ne rend pas une borne, il rend les deux coûts et la phrase « aucune
+   valeur de ce bouton n'y neutralise la réforme ».
+
+**Sécante plutôt que bissection, et la raison est le coût.** Chaque évaluation est un
+tirage de population — des minutes, pas des millisecondes — donc l'écart entre 8 et 40
+évaluations est l'écart entre un outil et un travail par lots. Le prix de ce choix est que
+la sécante peut diverger là où la bissection ne le peut pas, d'où trois garde-fous : un
+plafond d'évaluations, un repli sur le milieu quand la sécante sort de l'intervalle, et le
+non-retour de la dernière itérée ci-dessus. **Le repli n'est pas décoratif** : sans lui, la
+sécante propose 62,05 pour un bouton borné à 1,0 par le modèle de fil — donc une exécution
+de population dépensée pour découvrir une erreur de validation. Vérifié en le neutralisant.
+
+**La tolérance est large et c'est un aveu, pas un réglage.** 50 M EUR par défaut, parce
+que le chiffre mécanique lui-même sort d'un sous-échantillon de 20 000 ménages dont le
+bruit d'échantillonnage sur un agrégat national est de cet ordre (D-074). Une tolérance
+plus serrée poursuivrait le tirage.
+
+**La provenance fait partie de l'objet `Scenario`, et l'enregistrement est immuable.**
+`source` et `created` sont obligatoires, et `save()` refuse d'écraser. Un scénario existe
+pour **préenregistrer** un chiffrage — F2 existe pour que F1 soit possible : chiffrer le
+PLF 2027 la semaine de sa publication, avec des chiffrages datés et versionnés,
+confrontables ensuite aux évaluations préalables puis au réalisé. Réécrire un fichier
+laisserait réviser un chiffrage en gardant sa date, ce que le préenregistrement est
+exactement fait pour empêcher. Une révision est un nouveau scénario sous un nouveau nom.
+
+**La comparaison A/B affiche les étages en bande et ne les différencie pas.** La
+différence de deux intervalles est un intervalle. `LayerComparison.comparable` est faux
+pour tout étage en bande, `mechanical_gap` rend `None` plutôt que zéro quand la
+comparaison n'a pas pu être faite, et
+`test_comparison_differences_the_mechanical_layer_and_only_that` échoue si quelqu'un
+ajoute la soustraction.
+
+**Ce que le solveur ne fait pas, énoncé plutôt que découvert.** `ir_bareme` n'est pas
+soluble : c'est un barème complet, pas un scalaire, et une recherche de racine se fait sur
+un scalaire. `ifi_obligations_declaratives` non plus : c'est un régime, envoyé comme une
+chaîne. `scalar_knobs()` est **dérivée** du modèle de fil et non tenue à la main, si bien
+qu'un bouton ajouté à `ReformSpec` devient soluble le jour où il atterrit — 54 boutons
+aujourd'hui.
+
+**Et cette dérivation s'est trompée une première fois, ce qui vaut d'être noté.** Elle
+sondait `{bouton: 0.5}` et déclarait scalaire ce qui validait. Quatre boutons
+authentiquement scalaires — `af_plafond_tranche_2_base` et les trois `ifi_decote_*` — ont
+des validateurs CROISÉS : 0,5 seul est refusé parce que le plafond de tranche 2 doit
+dépasser celui de tranche 1 et que les trois paramètres de décote sont couplés. La sonde
+lisait ce refus comme « pas un scalaire » et le solveur les écartait avec un message qui
+nommait le mauvais problème. Corrigé en lisant l'ANNOTATION plutôt qu'en sondant une
+valeur. Le test porte les quatre noms.
+
+**Et cette phrase-ci était fausse aussi**, dans sa première rédaction : « les bornes
+restent appliquées là où elles doivent l'être, à la première évaluation ». Non. Elles
+l'étaient à la SECONDE, après qu'une exécution de population complète avait déjà été
+payée pour la première borne — et sous la forme d'une `ValidationError` pydantic brute
+qui échappait au solveur et à la ligne de commande en trace de pile. `knob_pricer` expose
+désormais `price.validate`, et le solveur valide les DEUX bornes avant d'évaluer quoi que
+ce soit. Le cas vivant est `ifi_decote_taux` : déclaré `ge=0, le=1` mais refusé au-delà de
+0,0125 par un validateur croisé, si bien qu'encadrer sur l'intervalle déclaré est une
+chose raisonnable à faire et mérite une réponse en millisecondes. Le cahier des charges parlait d'un « déplacement de barème » ; le
+faire supposerait un scalaire qui paramètre le barème, et ce scalaire n'existe pas dans le
+modèle. Le refus le dit, et dit quoi ajouter pour le lever.
+
+## D-093 — Le contrôle de partie double divisait une fuite constante par un net que le solveur annule exprès
+
+> **Corrigé deux fois par D-094, le même jour.** La forme du brut donnée ci-dessous —
+> `abs(receipts) + abs(transfers)` — est FAUSSE : elle somme les seaux avant la valeur
+> absolue, donc elle s'effondre pour une réforme dont les deux bras sont dans le même
+> seau. Et `firm_balance` ne partage pas la constante des ménages. Lire D-094 avec
+> celle-ci.
+
+**2026-09-08 · F2 · `src/impots/guards.py`, `tests/test_population.py`**
+
+**Trouvé par le solveur, pas par une relecture.** La première résolution réelle — RSA
+socle à 700 EUR, payé par la CSG — est tombée à sa troisième évaluation sur
+`SectorBalanceError` : « écart de +305 719 EUR (+0,57 %) », alors que les instruments
+avaient bougé de 3,7 md d'un côté et 3,67 md de l'autre. Le solveur ne s'est pas trompé.
+La garde, si.
+
+**Le mécanisme.** `sector_balance` comparait l'écart inexpliqué à
+`max(|coût|, |coût reconstitué|, plancher)` — c'est-à-dire au **net**. Or la tolérance de
+0,1 % a toujours été pensée comme « une part de la TAILLE de la réforme », et le net n'est
+un bon indicateur de taille que tant que la réforme ne se compense pas elle-même. **Le
+solveur de neutralité budgétaire en construit exprès qui se compensent** : il cherche la
+valeur de bouton qui annule le net. À l'itérée qui intéresse l'utilisateur, le
+dénominateur s'effondre et une fuite fixe est divisée par presque rien.
+
+**Mesuré plutôt que supposé**, cinq réformes à 8 000 ménages :
+
+| réforme | brut | net | résidu | /brut |
+|---|---|---|---|---|
+| rsa 700 | 3,545 md | +3 545 M | 303 660 EUR | 8,57e-05 |
+| csg +0,5 pt | 5,625 md | −5 245 M | 2 188 EUR | 3,89e-07 |
+| rsa 700 + csg 2,9 | 9,171 md | −1 699 M | 305 868 EUR | 3,34e-05 |
+| rsa 700 + csg 3,05 | 10,862 md | −3 268 M | 307 200 EUR | 2,83e-05 |
+| décote 60 % | 1,909 md | −1 909 M | −30 EUR | −1,59e-08 |
+
+Le résidu est **constant à environ 305 000 EUR partout où le bras RSA apparaît**, et
+quasi nul là où il n'apparaît pas. Ce n'est donc pas du bruit flottant — du bruit
+flottant croîtrait avec le brut, et les 5,6 md de la CSG seule n'en produisent que
+2 188 EUR. C'est la fuite de ce bras-là à travers des instruments non reportés, exactement
+ce que `BALANCE_RTOL` existe pour tolérer, et elle ne rétrécit pas parce qu'un second bras
+annule le titre. **Seul le dénominateur bouge.**
+
+**Le correctif est une SECONDE allocation, pas un relâchement.** `BALANCE_GROSS_RTOL`
+vaut 3e-4 — trois fois et demie le plus grand rapport mesuré, et **plus serré** que
+`BALANCE_RTOL` à 1e-3. Comme le brut n'est jamais inférieur au net, une constante plus
+serrée sur le brut ne peut pas relâcher une réforme que le test au net jugeait déjà : elle
+ne mord que là où le test au net a cessé de vouloir dire quelque chose.
+`test_the_gross_allowance_is_tighter_than_the_net_one` échoue si quelqu'un inverse
+l'ordre.
+
+**Trois tests qui tuent, dont un qui vise le correctif lui-même.**
+
+* `test_an_offsetting_reform_is_not_accused_of_an_imbalance` rejoue les chiffres exacts de
+  l'échec. Vérifié en neutralisant l'allocation brute : il tombe.
+* `test_a_sector_that_moved_without_entering_the_cost_is_caught_at_a_zero_net` **vise le
+  correctif** : même forme compensée, même net quasi nul, mais un milliard de transferts
+  omis du coût. C'est la seule façon dont ce correctif pourrait être faux, donc c'est le
+  test qui compte.
+* `test_the_original_failure_still_breaches_under_the_gross_scale` rejoue la réforme à
+  17,7 md de coût du travail annoncée à zéro — celle pour laquelle la garde a été écrite.
+  Elle la refuse toujours, à 100 % du brut.
+
+`firm_balance` portait la même forme et reçoit la même allocation : une réforme
+entreprises qui monte un impôt pour en baisser un autre a le même net quasi nul et le même
+brut en milliards.
+
+**Le message dit désormais les deux échelles** — « x % du net et y % du brut » — parce
+qu'un lecteur qui voit « +0,57 % » sans savoir de quoi ne peut pas juger si la garde a
+trouvé quelque chose.
+
+**Ce que cet incident dit du reste.** Une garde restée verte pendant toute la phase 1
+n'était verte que parce que rien ne l'avait poussée dans le régime où elle se dégrade. F2
+l'y a poussée dès sa première utilisation réelle. C'est le même motif que le biais
+d'échantillonnage de D-074 : le contrôle existait, passait, et ne pouvait pas échouer là
+où il fallait. **Chercher les gardes dont le dénominateur peut tendre vers zéro** est
+désormais une question à poser aux suivantes.
+
+### D-092, addendum — la première résolution réelle, de bout en bout
+
+Enregistrée ici parce qu'une machinerie dont personne n'a jamais montré la sortie n'est
+pas une machinerie dont on sait qu'elle marche.
+
+    impots scenario save rsa_700 --reform … --source "variante interne : RSA socle à 700 EUR/mois"
+    impots scenario compare rsa_700 rsa_700_af_40 --sample 8000
+    impots scenario solve csg_activite_imposable --on rsa_700 --low 0.024 --high 0.20 \
+        --sample 8000 --tolerance 300e6
+
+**A/B.** RSA socle à 700 EUR/mois coûte **3,54 md**. Le même plus les AF deux enfants
+portées à 40 % de la BMAF coûte **4,67 md**. Écart mécanique **+1,12 md**. Seul l'étage
+mécanique est différencié ; les étages en bande sont affichés côte à côte.
+
+**Solveur.** Coût +3,545 md au taux de droit courant (2,4 %), −178,454 md à 20 % : le
+signe change, donc une racine existe dans l'intervalle. La sécante la trouve en **une
+seule itération supplémentaire** — trois évaluations en tout :
+
+    csg_activite_imposable = 2,743 %   coût résiduel -0,053 md EUR
+
+Soit **+0,343 point de CSG activité imposable** pour financer le RSA à 700 EUR. Trois
+tirages de population, pas quarante : c'est ce que la sécante achète, et c'est ce qui rend
+l'outil utilisable la semaine où le PLF paraît plutôt que le mois suivant.
+
+Le chiffre porte le bruit d'échantillonnage de 8 000 ménages et la tolérance déclarée de
+300 M EUR le dit. Ce n'est pas un chiffrage publiable ; c'est la démonstration que la
+chaîne tourne. Un chiffrage se ferait au tirage complet, avec une tolérance annoncée en
+conséquence.
+
+**Et c'est cette résolution qui a trouvé D-093** : à sa troisième évaluation — celle qui
+approche la neutralité, donc exactement celle qui intéresse — la garde de partie double
+a refusé la course. La garde avait tort, et elle avait tort depuis toujours ; il fallait
+un outil qui pousse le net vers zéro pour le montrer.
+
+## D-094 — Ce que la relecture adverse du 8 septembre a trouvé, y compris deux erreurs dans D-093 lui-même
+
+**2026-09-08 · F2 · relecture en éventail, 5 dimensions, verdicts vérifiés indépendamment**
+
+Avant de committer F2, cinq relecteurs indépendants ont attaqué l'incrément (solveur,
+refus, garde D-093, refonte de l'interface, câblage), et chaque constat a été soumis à un
+sceptique chargé de le RÉFUTER. Vingt et un constats bruts, neuf non réfutés. **J'ai
+revérifié à la main chacun de ceux qui portent** — la règle permanente veut qu'un éventail
+ne soit jamais le seul chemin vers un fait porteur, et elle a bien servi : sur les points
+de garde, le sceptique avait raison sur deux points et tort sur un troisième.
+
+### Les deux erreurs dans D-093, c'est-à-dire dans le correctif lui-même
+
+**1. Le brut sommait les SEAUX, pas les mouvements.** J'avais écrit
+`gross = abs(receipts) + abs(transfers)`, où `receipts` et `transfers` sont déjà des
+sommes sur leur seau. Une réforme dont les deux bras sont dans le MÊME seau — RSA en
+hausse, AF en baisse, tous deux des transferts — les voit se compenser AVANT que la valeur
+absolue n'intervienne. Mesuré : sur « rsa 700 + af −20 % », la forme par seau lisait
+2,713 md contre un mouvement réel de 5,165 md ; dans le cas extrême (rsa +3,673 md, af
+−3,670 md) elle lisait 3,0 M contre 7,34 md, soit **0,04 % de la vérité**, et la garde
+refusait une exécution correcte à « 10 % du brut ».
+
+**C'est exactement le défaut que D-093 décrivait, dans une autre forme.** J'avais corrigé
+la forme sur laquelle j'avais testé, et le test que j'avais écrit s'accordait avec elle.
+Le brut est désormais la somme des |mouvements| instrument par instrument.
+
+**2. `firm_balance` achetait de l'indulgence avec ce qu'elle ne mesure pas.** Le résidu du
+côté entreprises mesure par construction le mouvement HORS `FIRM_COMPONENTS` ; l'échelonner
+sur le mouvement DEDANS est un non-sens. Avec la constante des ménages, une réforme
+compensée de 40 md achetait 12 M EUR d'indulgence et avalait une fuite réelle de 5 M EUR
+hors périmètre — que l'ancienne garde au net attrapait.
+
+**Et les deux côtés ne tolèrent pas la même chose**, ce qui est la raison de fond. Le
+contrôle ménages sanctionne une FUITE : `revenu_disponible` traverse une cascade plus large
+que les instruments reportés, d'où un résidu réel mesuré jusqu'à 8,55e-05 du brut. Le
+contrôle entreprises n'en sanctionne aucune : `FIRM_COMPONENTS` est une seconde route
+indépendante vers le même total OpenFisca, donc un instrument dans l'une et pas dans
+l'autre EST le défaut à trouver. Mesuré sur quatre réformes réelles à période 2026, le
+résidu entreprises vaut **5,43e-08 du brut** — de l'accumulation flottante, quatre ordres
+de grandeur en dessous. D'où `FIRM_BALANCE_GROSS_RTOL = 1e-6`, environ dix-huit fois le
+pire mesuré, contre 3e-4 côté ménages.
+
+**Un constat de sceptique REJETÉ, vérifié à la main** : il affirmait que
+`employer_contribution_delta` « s'annule algébriquement de `unexplained` ». Faux — il entre
+dans `expected_cost` (vérifié : le coût reconstitué passe de −17,68 md à −0,00 md quand on
+le fournit). Il gonfle bien le brut, mais c'est un mouvement légitime qui doit y compter
+une fois.
+
+### Le reste, corrigé
+
+* **Le refus était une liste NOIRE.** `if quantity in BANDED_QUANTITIES` laissait passer
+  « behavioral » (orthographe anglaise), « Behavioural », « cell-bound », « macro » avec
+  une espace finale et la chaîne vide — tous répondus par un nombre mécanique convergé,
+  indiscernable d'une vraie réponse. C'est le repli silencieux que ce module entier existe
+  pour empêcher. Désormais `SOLVABLE_QUANTITIES = {"mechanical"}`, une liste BLANCHE : une
+  liste noire refuse ce qu'elle reconnaît, et l'appelant qui a le plus besoin d'être refusé
+  est celui qui a mal tapé le nom. **Et la ligne de commande refusait APRÈS avoir chargé la
+  population** ; elle refuse maintenant en 0,4 s, ce qui est tout l'intérêt d'avoir rendu
+  `refuse_banded` publique.
+
+* **`load()` n'enveloppait que la validation du ReformSpec.** Une écriture tronquée, un
+  marqueur de conflit ou un `created` manquant ressortaient en `JSONDecodeError` ou
+  `KeyError` bruts — traces de pile pour `impots scenario list`, erreur 500 pour
+  `GET /scenarios`, et **un seul mauvais fichier emportait tous les bons**.
+
+* **Le nom d'un scénario était interpolé dans un chemin.** `Scenario(name="../plf2027")`
+  écrivait hors du dossier, là où `available()` ne le liste jamais : un chiffrage qui a
+  l'air enregistré et ne l'est pas. Refusé plutôt qu'assaini — renommer en silence ce
+  qu'on vous a demandé est une surprise de plus.
+
+* **« Aucune valeur de ce bouton n'y neutralise la réforme »** était une affirmation
+  universelle tirée de deux échantillons. Un coût qui passe sous la cible et remonte à
+  l'intérieur de l'intervalle a deux racines et deux bornes de même signe. Le message dit
+  désormais ce qu'il sait.
+
+* **`max_iterations=1` n'était pas honoré** : l'encadrement coûte deux évaluations, donc
+  le plafond était dépassé du double. Refusé.
+
+* **Le contrôle d'aller-retour de l'interface était unidirectionnel et posé à la mauvaise
+  question.** Il ne signalait jamais les boutons que le panneau AJOUTE — charger un seul
+  taux d'allègement en envoie deux — et il criait au loup sur un bouton dont la valeur
+  ÉGALE le droit courant, parce qu'il se comparait à `reformSpec()` au lieu du contenu des
+  champs. Et l'avertissement imprimait une cause unique codée en dur (« un même champ
+  pilote plusieurs boutons ») y compris pour un bouton qui n'a aucun champ — ce qui est le
+  cas de `scenarios/rsa_700_af_40.json`, dans ce dépôt même.
+
+### Un test qui ne pouvait pas échouer, dans le test du refus phare
+
+`test_the_solver_refuses_every_banded_quantity` était paramétré sur
+`sorted(sc.BANDED_QUANTITIES)` — **le dictionnaire même qu'il teste**. Retirer une entrée
+retirait son propre cas de test : la suite passait de 35 verts à 33 verts, tout verts,
+pendant que le solveur répondait par un nombre à `quantity="cell_bound"`. C'est la forme
+D-044 exactement, et elle s'était installée dans la garde du refus qui définit F2. Les
+quatre noms sont désormais écrits en toutes lettres.
+
+**Et la garde de D-093 n'était pas épinglée** : `test_the_gross_allowance_is_tighter...`
+n'affirmait que `gross < net`, si bien que porter la constante à 9,9e-4 — tripler la
+tolérance réelle — laissait toute la suite verte. Les deux constantes sont maintenant
+épinglées à leur valeur, avec leur mesure en commentaire : une tolérance qu'on peut
+élargir sans qu'un test s'en aperçoive est une tolérance que personne ne défend.
+
+### Ce qu'il faut en retenir
+
+Trois des neuf constats non réfutés portaient sur du code écrit le jour même **pour
+corriger un autre défaut**, et deux d'entre eux sur le correctif de D-093. Un correctif
+n'hérite pas de la vigilance qui l'a motivé. La question de D-093 — « le dénominateur de
+ce contrôle peut-il tendre vers zéro ? » — doit se doubler d'une seconde : **« ai-je testé
+le correctif sur une autre forme que celle qui m'a alerté ? »**
+
+### D-094, addendum — `make full` ne pouvait pas enregistrer un échec
+
+Trouvé en lisant la sortie du gate plutôt qu'en croyant sa ligne de journal, et c'est le
+défaut le plus gênant de la journée parce qu'il porte sur l'instrument de discipline
+lui-même. `reports/full_pass_log.md` s'annonce comme « le seul enregistrement attestant
+que la suite complète est verte », et la règle attachée veut qu'« aucune passe de
+relecture ne sorte sans une ligne plus récente que le travail qu'elle rapporte ».
+
+    out=$$($(VENV)/python -m pytest -q -m "" 2>&1 | tail -1); \
+    status=$$?; \
+
+**`$?` après un tube rend le code de sortie du DERNIER maillon.** `tail` réussit toujours.
+Donc `status` valait 0 quoi qu'il arrive, `result` valait **toujours PASS**, et
+`exit $$status` sortait toujours 0. Le fichier était structurellement incapable de dire
+autre chose que « vert ».
+
+Pire : la sortie de pytest, capturée dans `$out` puis passée à un `sed` que BSD refuse
+(`.*?` n'existe pas en ERE POSIX), n'était **jamais imprimée**. Une exécution complète en
+échec n'affichait donc rien du tout — j'ai moi-même annoncé « gate PASSED, 60m45s » sur la
+seule foi de cette ligne, et cette annonce ne reposait sur rien.
+
+pytest écrit désormais dans un fichier, son code de sortie est lu directement, la ligne de
+résumé est toujours affichée et un échec imprime ses quarante dernières lignes. Vérifié
+**dans les deux sens** avec un faux pytest sortant 0 puis 1 :
+
+    | PASS | ... | 816 passed, 2 skipped, 220 deselected |     exit 0
+    | FAIL | ... | 3 failed, 813 passed |                      exit 2
+
+Les lignes antérieures du journal portent un avertissement en tête de fichier : elles ne
+sont pas des preuves. La colonne `tests` vide y est le symptôme visible du même bug.
+
+**Ce que ça ajoute aux deux questions de D-093 et D-094** : quand un contrôle ne peut
+produire qu'un seul verdict, il n'a jamais rien vérifié. Un test vert dont on n'a jamais
+vu la version rouge est une hypothèse, pas une mesure — ce que ce projet impose déjà aux
+gardes du modèle, et qu'il n'avait pas imposé à son propre outillage.

@@ -154,6 +154,38 @@ before and after.
 `scripts/verify_population_engine.py` is the population-scale engine gate — run it
 before and after any change to the runner.
 
+### Naming a reform, and making it pay for itself
+
+A scenario is a reform with provenance attached: what it encodes, and when it was
+written. Both are required, and a saved scenario is never overwritten — the point is
+to **pre-register** a chiffrage so it can be confronted later with the évaluation
+préalable and eventually the outturn, and a chiffrage that can be revised after the
+fact while keeping its date is not one.
+
+```bash
+impots scenario save rsa_700 --reform rsa700.json \
+  --source "variante interne : RSA socle porté à 700 EUR/mois"
+impots scenario compare rsa_700 rsa_700_af_40 --sample 8000
+impots scenario solve csg_activite_imposable --on rsa_700 \
+  --low 0.024 --high 0.20 --sample 8000 --tolerance 300e6
+```
+
+The comparison prints both reforms layer by layer and differences **only** the
+mechanical one: the difference of two intervals is an interval, so the behavioural
+band and the macro fan are shown side by side and left undifferenced.
+
+The solver root-finds one scalar knob against the mechanical cost. On the run above it
+converged in three population draws — RSA socle at 700 € costs 3.54 bn, and
+**+0.343 points of CSG activité imposable** pays for it. It refuses to solve against a
+banded quantity, refuses a knob that is not a single number, and when it does not
+converge it says so rather than handing back its last try. Those refusals are the
+feature; see D-092.
+
+They are also how one of our own guards got caught. The double-entry identity scaled
+its residual by the reform's *net* cost — and a budget-neutral solver drives that to
+zero on purpose, so at exactly the iterate you care about it divided a fixed 305 000 €
+leakage by nothing and refused a correct run. D-093.
+
 ### Try this
 
 A single earning 240 000 € under a top rate lifted from 45 % to 50 % pays exactly

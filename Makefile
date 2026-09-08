@@ -1,5 +1,18 @@
 # Impôts — the two test invocations, and the one that has to leave a trace.
 #
+# TWO BUGS LIVED IN `full` UNTIL 2026-09-08, and the second one mattered.
+#
+#   * `sed -E 's/.*?(...)'` — BSD sed's ERE has no lazy `.*?`, so it errored out on every
+#     run and the log's `tests` column was silently empty. Cosmetic.
+#   * `out=$$(... | tail -1); status=$$?` captured the exit status of `tail`, which always
+#     succeeds. So `result` was ALWAYS PASS and `exit $$status` always 0. The file this
+#     comment calls "the only record that the full suite is green" was structurally
+#     incapable of recording anything else, and it swallowed pytest's summary line on the
+#     way — a failing full run printed nothing and logged PASS.
+#
+# pytest now writes to a file, its status is read directly, and a failure prints its last
+# forty lines. Verified both ways by forcing a failure (D-094).
+#
 # `make gate` is what you run while working: everything except the tests that need a
 # full population pass, about 1 min 45. `make full` is the whole suite, and it appends
 # a line to reports/full_pass_log.md — because CI cannot run those tests (it has no
@@ -26,11 +39,15 @@ full:
 	@test -f $(LOG) || printf '# Full-pass log\n\nOne line per `make full`. CI cannot run the population tests — it has no\npopulation, by design — so this file is the only record that the full suite is\ngreen. No review handoff goes out without a line newer than the work it reports.\n\n| date | commit | result | duration | tests |\n|---|---|---|---|---|\n' > $(LOG)
 	@$(VENV)/ruff check src tests scripts
 	@start=$$(date +%s); \
-	 out=$$($(VENV)/python -m pytest -q -m "" 2>&1 | tail -1); \
+	 out=$$(mktemp); \
+	 $(VENV)/python -m pytest -q -m "" > $$out 2>&1; \
 	 status=$$?; \
 	 elapsed=$$(( $$(date +%s) - start )); \
-	 counts=$$(printf '%s' "$$out" | sed -E 's/.*?([0-9]+ passed[^,]*(, [0-9]+ [a-z]+)*).*/\1/'); \
+	 counts=$$(tail -1 $$out | sed -E 's/ in [0-9].*$$//'); \
 	 result=$$( [ $$status -eq 0 ] && echo PASS || echo FAIL ); \
+	 [ $$status -eq 0 ] || tail -40 $$out; \
+	 tail -1 $$out; \
+	 rm -f $$out; \
 	 printf '| %s | `%s` | %s | %dm%02ds | %s |\n' \
 	   "$$(date +%Y-%m-%d)" "$$(git rev-parse --short HEAD)" "$$result" \
 	   $$(( elapsed / 60 )) $$(( elapsed % 60 )) "$$counts" >> $(LOG); \

@@ -1,0 +1,12 @@
+{
+  "name": "rsa_700_af_40",
+  "year": 2024,
+  "created": "2026-09-08",
+  "source": "variante interne : RSA 700 EUR + AF 2 enfants portées à 40 % de la BMAF",
+  "note": "Le bras B de la comparaison A/B.",
+  "tags": [],
+  "reform": {
+    "rsa_montant_de_base": 700.0,
+    "af_taux_2_enfants": 0.4
+  }
+}

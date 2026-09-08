@@ -515,6 +515,218 @@ def cmd_firms_run(args: argparse.Namespace) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- #
+# F2 — scenarios, A/B, and the budget-neutral solver
+# --------------------------------------------------------------------------- #
+
+
+def _scenario_dir(args: argparse.Namespace) -> Path | None:
+    return Path(args.dir) if getattr(args, "dir", None) else None
+
+
+def cmd_scenario_save(args: argparse.Namespace) -> int:
+    """Register a scenario. Dated at save time, and never overwritten.
+
+    The date is stamped here rather than taken from a flag: a pre-registration whose
+    date the author chooses is not one.
+    """
+    from datetime import date as _date
+
+    from impots import scenarios as scenarios_module
+
+    try:
+        reform = _load_reform(args.reform)
+    except OSError as error:
+        print(f"--reform illisible : {error}", file=sys.stderr)
+        return 1
+    except json.JSONDecodeError as error:
+        print(f"--reform n'est pas du JSON : {error}", file=sys.stderr)
+        return 1
+    except Exception as error:  # pydantic ValidationError, a ValueError subclass
+        print(f"--reform ne valide pas : {error}", file=sys.stderr)
+        return 1
+    if reform is None:
+        print("--reform is required: a scenario is a reform with provenance attached",
+              file=sys.stderr)
+        return 1
+    try:
+        scenario = scenarios_module.Scenario(
+            name=args.name, reform=reform, year=args.year,
+            created=_date.today().isoformat(), source=args.source,
+            note=args.note or "", tags=tuple(args.tag or ()))
+        path = scenario.save(_scenario_dir(args))
+    except scenarios_module.ScenarioError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    knobs = sorted(reform.model_dump(exclude_none=True))
+    print(f"enregistré {path}")
+    print(f"  {len(knobs)} bouton(s) : {', '.join(knobs)}")
+    print(f"  daté du {scenario.created} — le fichier ne sera pas réécrit")
+    return 0
+
+
+def cmd_scenario_list(args: argparse.Namespace) -> int:
+    from impots import scenarios as scenarios_module
+
+    directory = _scenario_dir(args)
+    names = scenarios_module.available(directory)
+    if not names:
+        print("aucun scénario enregistré")
+        return 0
+    for name in names:
+        try:
+            scenario = scenarios_module.load(name, directory)
+        except scenarios_module.ScenarioError as error:
+            # Named, and the listing carries on. A truncated write used to abort the
+            # whole command with a JSONDecodeError, taking every scenario that sorts
+            # after it down with the bad one.
+            print(f"  {name:24} ILLISIBLE — {error}")
+            continue
+        knobs = len(scenario.reform.model_dump(exclude_none=True))
+        print(f"  {name:24} {scenario.created}  {knobs:2} bouton(s)  {scenario.source}")
+    return 0
+
+
+def cmd_scenario_show(args: argparse.Namespace) -> int:
+    from impots import scenarios as scenarios_module
+
+    try:
+        scenario = scenarios_module.load(args.name, _scenario_dir(args))
+    except scenarios_module.ScenarioError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    print(json.dumps(scenario.to_dict(), indent=2, ensure_ascii=False))
+    return 0
+
+
+def cmd_scenario_compare(args: argparse.Namespace) -> int:
+    """Price two scenarios and lay the layers side by side.
+
+    Only the mechanical layer is differenced, and the report says so where a banded
+    layer appears: the difference of two intervals is an interval.
+    """
+    import polars as pl
+
+    from impots import scenarios as scenarios_module
+
+    directory = _scenario_dir(args)
+    try:
+        left = scenarios_module.load(args.a, directory)
+        right = scenarios_module.load(args.b, directory)
+    except scenarios_module.ScenarioError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    population = PROCESSED / f"population_{args.vintage}.parquet"
+    if not population.exists():
+        print(f"{population} not found — run `impots population build` first",
+              file=sys.stderr)
+        return 1
+    frame = pl.read_parquet(population)
+
+    def price(scenario):
+        return scenarios_module.mechanical_price(
+            scenario, frame=frame, households=args.sample)
+
+    comparison = scenarios_module.compare(left, right, price)
+    width = max(len(left.name), len(right.name), 12)
+    print(f"\n  {'':22} {left.name:>{width}} {right.name:>{width}}")
+    print(f"  {'-' * (24 + 2 * width)}")
+    for layer in comparison.layers:
+        if layer.comparable:
+            print(f"  {layer.layer:22} {layer.a / 1e9:>{width}.2f} "
+                  f"{layer.b / 1e9:>{width}.2f}   (md EUR)")
+        else:
+            print(f"  {layer.layer:22} {layer.a!s:>{width}} {layer.b!s:>{width}}")
+        if layer.note:
+            print(f"    {layer.note}")
+    gap = comparison.mechanical_gap
+    if gap is not None:
+        print(f"\n  écart mécanique : {gap / 1e9:+.2f} md EUR "
+              f"({right.name} moins {left.name})")
+    print(f"\n  Sous-échantillon de {args.sample:,} ménages repondérés."
+          .replace(",", " "))
+    print("  Les étages en bande sont AFFICHÉS et non DIFFÉRENCIÉS : la différence de "
+          "deux\n  intervalles est un intervalle, pas un nombre.")
+    return 0
+
+
+def cmd_scenario_solve(args: argparse.Namespace) -> int:
+    """Root-find one knob against the MECHANICAL cost. Refuses anything else."""
+    import polars as pl
+
+    from impots import scenarios as scenarios_module
+
+    # FIRST, before the parquet is read and before a single household is priced. The
+    # module makes `refuse_banded` public precisely so a caller can ask the question
+    # without paying for the answer, and a CLI that loads the population and only then
+    # refuses has thrown that away.
+    try:
+        scenarios_module.refuse_banded(args.quantity)
+    except scenarios_module.ScenarioError as error:
+        print(f"\n{error}", file=sys.stderr)
+        return 1
+
+    directory = _scenario_dir(args)
+    base = None
+    if args.on:
+        try:
+            base = scenarios_module.load(args.on, directory).reform
+        except scenarios_module.ScenarioError as error:
+            print(str(error), file=sys.stderr)
+            return 1
+
+    population = PROCESSED / f"population_{args.vintage}.parquet"
+    if not population.exists():
+        print(f"{population} not found — run `impots population build` first",
+              file=sys.stderr)
+        return 1
+    frame = pl.read_parquet(population)
+
+    try:
+        price = scenarios_module.knob_pricer(
+            args.knob, year=args.year, base=base, frame=frame, households=args.sample)
+    except scenarios_module.ScenarioError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    def traced(value: float) -> float:
+        cost = price(value)
+        print(f"    {args.knob} = {value:<12.6g} coût {cost / 1e9:+8.3f} md EUR",
+              flush=True)
+        return cost
+
+    print(f"\n  Recherche de racine sur « {args.knob} » dans "
+          f"[{args.low:g}, {args.high:g}], cible {args.target / 1e9:+.2f} md EUR")
+    if base is not None:
+        print(f"  au-dessus du scénario « {args.on} »")
+    print(f"  chaque évaluation est un tirage de {args.sample:,} ménages\n"
+          .replace(",", " "))
+
+    try:
+        result = scenarios_module.solve_budget_neutral(
+            args.knob, traced, bracket=(args.low, args.high), target_eur=args.target,
+            quantity=args.quantity, tolerance_eur=args.tolerance,
+            max_iterations=args.max_evaluations)
+    except scenarios_module.ScenarioError as error:
+        print(f"\n{error}", file=sys.stderr)
+        return 1
+
+    print()
+    if result.converged:
+        print(f"  {args.knob} = {result.value:.6g}")
+        print(f"  coût résiduel {result.cost_at_value / 1e9:+.3f} md EUR "
+              f"en {result.iterations} évaluations — {result.message}")
+        print(f"\n  Tolérance déclarée : {args.tolerance / 1e9:.2f} md EUR. Elle est "
+              f"large parce que le\n  chiffre mécanique lui-même porte le bruit "
+              f"d'échantillonnage du tirage (D-074).")
+    else:
+        print(f"  PAS DE RÉPONSE en {result.iterations} évaluations.")
+        print(f"  {result.message}")
+        return 2
+    return 0
+
+
 def pl_read(path: object) -> object:
     import polars as pl
 
@@ -603,7 +815,65 @@ def build_parser() -> argparse.ArgumentParser:
     firm_reconciler.add_argument("--year", type=int, default=2026)
     firm_reconciler.set_defaults(func=cmd_firms_reconcile)
 
+    scenario = subcommands.add_parser(
+        "scenario", help="named reforms: save, compare, and solve for neutrality (F2)")
+    scenario_actions = scenario.add_subparsers(dest="action", required=True)
+
+    saver = scenario_actions.add_parser("save", help="register a dated scenario")
+    saver.add_argument("name")
+    saver.add_argument("--reform", required=True, help="path to a ReformSpec JSON file")
+    saver.add_argument("--source", required=True,
+                       help="the article or proposal this encodes — required, because a "
+                            "chiffrage without one cannot be graded later")
+    saver.add_argument("--year", type=int, default=2024)
+    saver.add_argument("--note", default="")
+    saver.add_argument("--tag", action="append")
+    saver.add_argument("--dir", help="scenario directory (default: scenarios/)")
+    saver.set_defaults(func=cmd_scenario_save)
+
+    lister = scenario_actions.add_parser("list", help="list registered scenarios")
+    lister.add_argument("--dir")
+    lister.set_defaults(func=cmd_scenario_list)
+
+    shower = scenario_actions.add_parser("show", help="print one scenario as JSON")
+    shower.add_argument("name")
+    shower.add_argument("--dir")
+    shower.set_defaults(func=cmd_scenario_show)
+
+    comparer = scenario_actions.add_parser("compare", help="price two scenarios side by side")
+    comparer.add_argument("a")
+    comparer.add_argument("b")
+    comparer.add_argument("--vintage", default="2024")
+    comparer.add_argument("--sample", type=int, default=20_000)
+    comparer.add_argument("--dir")
+    comparer.set_defaults(func=cmd_scenario_compare)
+
+    solver = scenario_actions.add_parser(
+        "solve", help="find the knob value that neutralises a reform (mechanical only)")
+    solver.add_argument("knob")
+    solver.add_argument("--on", help="scenario the knob is varied on top of")
+    solver.add_argument("--low", type=float, required=True)
+    solver.add_argument("--high", type=float, required=True)
+    solver.add_argument("--target", type=float, default=0.0,
+                        help="target mechanical cost in EUR (default 0 = neutral)")
+    solver.add_argument("--tolerance", type=float, default=50e6,
+                        help="what counts as hitting the target, in EUR")
+    solver.add_argument("--max-evaluations", type=int, default=12,
+                        help="each evaluation is a population run")
+    solver.add_argument("--quantity", default="mechanical",
+                        help="kept so the refusal is reachable from the CLI. NOT "
+                             "restricted by `choices`: argparse would reject an unknown "
+                             "value with its own generic message, and the whole point is "
+                             "that the module's refusal — which says WHY a banded "
+                             "quantity is not solvable — is the thing the caller reads")
+    solver.add_argument("--vintage", default="2024")
+    solver.add_argument("--year", type=int, default=2024)
+    solver.add_argument("--sample", type=int, default=20_000)
+    solver.add_argument("--dir")
+    solver.set_defaults(func=cmd_scenario_solve)
+
     return parser
+
 
 
 def main(argv: list[str] | None = None) -> int:

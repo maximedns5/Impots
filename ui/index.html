@@ -808,6 +808,21 @@ footer code { font-family: var(--mono); font-size: 11px; }
         </summary>
         <div class="reform-body">
 
+          <!-- F2 · scénarios enregistrés. Lecture seule : un scénario vaut ce que vaut
+               sa date, et une date que l'interface pourrait fabriquer ne vaut rien.
+               L'enregistrement se fait en ligne de commande, où il atterrit dans l'arbre
+               de travail et se versionne (D-092). -->
+          <div class="field-row" id="scenarioRow" hidden>
+            <div style="flex:1">
+              <label for="scenarioPick">Charger un scénario enregistré</label>
+              <select id="scenarioPick"></select>
+            </div>
+            <div style="align-self:end">
+              <button type="button" class="mini" id="scenarioLoad">charger</button>
+            </div>
+          </div>
+          <p class="note" id="scenarioNote" hidden></p>
+
           <div class="lbl" style="margin-top:4px">Barème de l'impôt sur le revenu</div>
           <table class="bareme">
             <thead><tr><th class="pair">Seuil (€)</th><th>Taux (%)</th><th></th></tr></thead>
@@ -1287,15 +1302,91 @@ $("addBracket").onclick = () => {
   renderBrackets();
 };
 
+/* THE knob table. One entry per knob, and the THREE directions are all derived from
+   it: reading the panel into a ReformSpec, resetting the panel to current law, and
+   loading a saved scenario back into the panel (F2).
+
+   Before this table each direction was written by hand, and only one direction existed.
+   A hand-written inverse map is exactly the shape of bug this project keeps finding: it
+   agrees with its forward map on the day it is written and drifts the first time a knob
+   is added. Deriving all three means a knob added here is loadable, resettable and
+   sendable at once, or in none of them.
+
+   `law` present  -> the knob has a published current value: show it, and send only when
+                     the user has moved it away.
+   `law` absent   -> "set if filled": there is no /parameters block for it, so a blank
+                     box means current law and a filled one means a reform.
+   `scale`        -> what the box shows divided by what the API wants (100 for percents). */
+const KNOBS = [
+  { knob: "decote_seuil_celib",  id: "dCelib", law: (p) => p.decote.seuil_celib },
+  { knob: "decote_seuil_couple", id: "dCouple", law: (p) => p.decote.seuil_couple },
+  { knob: "decote_taux",         id: "dTaux",  law: (p) => p.decote.taux, scale: 100 },
+  { knob: "plafond_qf_demi_part", id: "qf",    law: (p) => p.plafond_qf_demi_part },
+  { knob: "csg_activite_imposable",  id: "csgI", law: (p) => p.csg_activite.imposable, scale: 100 },
+  { knob: "csg_activite_deductible", id: "csgD", law: (p) => p.csg_activite.deductible, scale: 100 },
+
+  /* Employer social contributions (D-038). One input drives BOTH allègement rates:
+     the panel cannot express them separately, which `applyScenario` reports rather
+     than silently flattening. */
+  { knob: "allegement_general_plafond",          id: "agPlaf" },
+  { knob: "allegement_general_taux_moins_de_50", id: "agTaux", scale: 100 },
+  { knob: "allegement_general_taux_50_et_plus",  id: "agTaux", scale: 100 },
+  { knob: "bandeau_maladie_plafond", id: "bmPlaf" },
+  { knob: "bandeau_maladie_taux",    id: "bmTaux", scale: 100 },
+  { knob: "bandeau_famille_plafond", id: "bfPlaf" },
+  { knob: "bandeau_famille_taux",    id: "bfTaux", scale: 100 },
+
+  /* Prestations. Each AF ceiling is sent on its own; if that leaves tranche 1 above
+     tranche 2 the API refuses the request, and its message — which says why a foyer
+     would then be in neither tranche — is surfaced verbatim like every other 422.
+     Better a refusal the reader can act on than a silent pairing they did not ask for. */
+  { knob: "rsa_montant_de_base", id: "rsaBase" },
+  { knob: "ppa_montant_de_base", id: "ppaBase" },
+  { knob: "ppa_pente",           id: "ppaPente", scale: 100 },
+  { knob: "bmaf",                id: "bmafIn" },
+  { knob: "af_modulation_taux_tranche_2", id: "afMod2", scale: 100 },
+  { knob: "af_modulation_taux_tranche_3", id: "afMod3", scale: 100 },
+  { knob: "af_plafond_tranche_1_base",    id: "afPlaf1" },
+  { knob: "af_plafond_tranche_2_base",    id: "afPlaf2" },
+  { knob: "al_minoration_forfaitaire",    id: "alMino" },
+
+  /* IR niches. The global cap is the one to read carefully: it bites only on foyers
+     claiming more than it, so a chiffrage of it describes the top of the distribution
+     and nobody else. */
+  { knob: "saldom_taux",    id: "kSaldomTaux", scale: 100 },
+  { knob: "saldom_plafond", id: "kSaldomPlaf" },
+  { knob: "gardenf_taux",    id: "kGardeTaux", scale: 100 },
+  { knob: "gardenf_plafond", id: "kGardePlaf" },
+  { knob: "dons_taux",         id: "kDonsTaux", scale: 100 },
+  { knob: "dons_coluche_taux", id: "kDonsColTaux", scale: 100 },
+  { knob: "cotisations_syndicales_taux", id: "kSyndTaux", scale: 100 },
+  { knob: "plafond_global_niches",       id: "kPlafGlobal" },
+
+  /* IFI. `ifi_obligations_declaratives` is NOT here: it is a regime, sent as a string,
+     and it touches no parameter at all — disclosure requirements are not in the tax
+     code, so it leaves the mechanical figure untouched and moves the behavioural band
+     alone. It is handled beside the table, not inside it. */
+  { knob: "ifi_plafonnement_taux",               id: "ifiPlafTaux", scale: 100 },
+  { knob: "ifi_abattement_residence_principale", id: "ifiAbattRP", scale: 100 },
+  { knob: "ifi_dons_taux",                       id: "ifiDonsTaux", scale: 100 },
+];
+
+/* Back to current law — ALL of it. The old version reset the six IR boxes and left
+   every prestation, employer, niche and IFI knob filled, so a button labelled
+   "réinitialiser au droit courant" returned a panel that was not current law and a
+   dirty counter that still said so. Deriving it from KNOBS is what makes "all of it"
+   true and keeps it true as knobs are added. */
 function fillLaw() {
   brackets = lawParams.bareme.map((b) => ({ threshold: b.threshold, rate: b.rate }));
-  $("dCelib").value  = lawParams.decote.seuil_celib;
-  $("dCouple").value = lawParams.decote.seuil_couple;
-  $("dTaux").value   = +(lawParams.decote.taux * 100).toFixed(4);
-  $("qf").value      = lawParams.plafond_qf_demi_part;
-  $("csgI").value    = +(lawParams.csg_activite.imposable * 100).toFixed(4);
-  $("csgD").value    = +(lawParams.csg_activite.deductible * 100).toFixed(4);
+  for (const k of KNOBS) {
+    const el = $(k.id);
+    if (!el) continue;
+    el.value = k.law ? +(k.law(lawParams) * (k.scale || 1)).toFixed(6) : "";
+  }
+  const obligations = document.getElementById("ifiObligations");
+  if (obligations) obligations.value = "";
   renderBrackets();
+  markDirty();
 }
 $("reset").onclick = () => { if (lawParams) fillLaw(); };
 ["dCelib", "dCouple", "dTaux", "qf", "csgI", "csgD"].forEach((id) =>
@@ -1313,72 +1404,98 @@ function reformSpec() {
     (b, i) => !near(b.threshold, law[i].threshold) || !near(b.rate, law[i].rate));
   if (changed) spec.ir_bareme = brackets.map((b) => ({ threshold: b.threshold, rate: b.rate }));
 
-  const scalar = (id, path, scale = 1) => {
-    const shown = Number($(id).value) / scale;
-    if (!near(shown, path)) return shown;
-    return undefined;
-  };
-  const put = (key, value) => { if (value !== undefined && !Number.isNaN(value)) spec[key] = value; };
-  put("decote_seuil_celib",      scalar("dCelib", lawParams.decote.seuil_celib));
-  put("decote_seuil_couple",     scalar("dCouple", lawParams.decote.seuil_couple));
-  put("decote_taux",             scalar("dTaux", lawParams.decote.taux, 100));
-  put("plafond_qf_demi_part",    scalar("qf", lawParams.plafond_qf_demi_part));
-  put("csg_activite_imposable",  scalar("csgI", lawParams.csg_activite.imposable, 100));
-  put("csg_activite_deductible", scalar("csgD", lawParams.csg_activite.deductible, 100));
+  for (const k of KNOBS) {
+    const el = $(k.id);
+    if (!el) continue;
+    const scale = k.scale || 1;
+    if (k.law) {
+      const shown = Number(el.value) / scale;
+      if (!Number.isNaN(shown) && !near(shown, k.law(lawParams))) spec[k.knob] = shown;
+    } else if (el.value !== "" && !Number.isNaN(Number(el.value))) {
+      spec[k.knob] = Number(el.value) / scale;
+    }
+  }
 
-  /* Employer contributions. These have no published-law block in /parameters/ir, so
-     they read as "set if filled" rather than "set if different from current law" —
-     leaving one blank keeps the law, which is what the placeholder shows. */
-  const filled = (id, scale = 1) => {
-    const raw = $(id).value;
-    return raw === "" || Number.isNaN(Number(raw)) ? undefined : Number(raw) / scale;
-  };
-  put("allegement_general_plafond",             filled("agPlaf"));
-  put("allegement_general_taux_moins_de_50",    filled("agTaux", 100));
-  put("allegement_general_taux_50_et_plus",     filled("agTaux", 100));
-  put("bandeau_maladie_plafond",                filled("bmPlaf"));
-  put("bandeau_maladie_taux",                   filled("bmTaux", 100));
-  put("bandeau_famille_plafond",                filled("bfPlaf"));
-  put("bandeau_famille_taux",                   filled("bfTaux", 100));
-
-  /* Prestations. Same "set if filled" convention as the employer knobs. Each AF
-     ceiling is sent on its own; if that leaves tranche 1 above tranche 2 the API
-     refuses the request, and its message — which says why a foyer would then be in
-     neither tranche — is surfaced verbatim like every other 422. Better a refusal the
-     reader can act on than a silent pairing they did not ask for. */
-  put("rsa_montant_de_base",                    filled("rsaBase"));
-  put("ppa_montant_de_base",                    filled("ppaBase"));
-  put("ppa_pente",                              filled("ppaPente", 100));
-  put("bmaf",                                   filled("bmafIn"));
-  put("af_modulation_taux_tranche_2",           filled("afMod2", 100));
-  put("af_modulation_taux_tranche_3",           filled("afMod3", 100));
-  put("af_plafond_tranche_1_base",              filled("afPlaf1"));
-  put("af_plafond_tranche_2_base",              filled("afPlaf2"));
-  put("al_minoration_forfaitaire",              filled("alMino"));
-
-  /* IR niches. The global cap is the one to read carefully: it bites only on foyers
-     claiming more than it, so a chiffrage of it describes the top of the distribution
-     and nobody else. */
-  put("saldom_taux",                            filled("kSaldomTaux", 100));
-  put("saldom_plafond",                         filled("kSaldomPlaf"));
-  put("gardenf_taux",                           filled("kGardeTaux", 100));
-  put("gardenf_plafond",                        filled("kGardePlaf"));
-  put("dons_taux",                              filled("kDonsTaux", 100));
-  put("dons_coluche_taux",                      filled("kDonsColTaux", 100));
-  put("cotisations_syndicales_taux",            filled("kSyndTaux", 100));
-  put("plafond_global_niches",                  filled("kPlafGlobal"));
-
-  /* IFI. `ifi_obligations_declaratives` is the one lever here that touches NO parameter:
-     disclosure requirements are not in the tax code, so it leaves the mechanical figure
-     untouched and moves the behavioural band alone. It is sent as a string, not a
-     number, because it is a regime and not a rate. */
-  put("ifi_plafonnement_taux",                  filled("ifiPlafTaux", 100));
-  put("ifi_abattement_residence_principale",    filled("ifiAbattRP", 100));
-  put("ifi_dons_taux",                          filled("ifiDonsTaux", 100));
   const obligations = document.getElementById("ifiObligations");
-  if (obligations && obligations.value) put("ifi_obligations_declaratives", obligations.value);
+  if (obligations && obligations.value) spec.ifi_obligations_declaratives = obligations.value;
 
   return Object.keys(spec).length ? spec : null;
+}
+
+/* Load a registered scenario into the panel (F2).
+
+   It CLEARS first, through fillLaw, so knobs the previous scenario set do not survive
+   into this one — a stale knob would price a reform nobody asked for, and it would look
+   exactly like the reform they did.
+
+   Then it CHECKS ITSELF, IN BOTH DIRECTIONS. The panel is not a faithful view of every
+   ReformSpec: some knobs have no box at all, and one box drives BOTH allègement rates.
+   So after loading it reports
+
+     lost  — a knob in the scenario that the panel could not take, and WHY (no field of
+             its own, or a field it shares with another knob);
+     added — a knob the panel will now SEND that the scenario never asked for, which is
+             what a shared field does: load one allègement rate and the panel sends two.
+
+   The first version checked one direction only, and checked it against `reformSpec()`
+   rather than against the boxes. That was wrong twice. It missed every added knob, and
+   it cried wolf on a scenario knob whose value happens to EQUAL current law — the box
+   takes the value correctly, `reformSpec` rightly omits it because it is not a change,
+   and the old check read that omission as a failure to load. Comparing against what the
+   INPUT actually holds is the question we meant to ask. */
+function applyScenario(reform) {
+  fillLaw();
+  if (reform.ir_bareme) {
+    brackets = reform.ir_bareme.map((b) => ({ threshold: b.threshold, rate: b.rate }));
+    renderBrackets();
+  }
+  for (const k of KNOBS) {
+    const value = reform[k.knob];
+    const el = $(k.id);
+    if (value === undefined || value === null || !el) continue;
+    el.value = +(value * (k.scale || 1)).toFixed(6);
+  }
+  const obligations = document.getElementById("ifiObligations");
+  if (obligations && reform.ifi_obligations_declaratives) {
+    obligations.value = reform.ifi_obligations_declaratives;
+  }
+  markDirty();
+
+  const near = (a, b) => Math.abs(a - b) < 1e-6;
+  const byKnob = {};
+  const idCount = {};
+  for (const k of KNOBS) { byKnob[k.knob] = k; idCount[k.id] = (idCount[k.id] || 0) + 1; }
+
+  const lost = [];
+  for (const key of Object.keys(reform)) {
+    if (key === "ir_bareme") {
+      const want = reform.ir_bareme;
+      const ok = brackets.length === want.length && want.every(
+        (b, i) => near(b.threshold, brackets[i].threshold) && near(b.rate, brackets[i].rate));
+      if (!ok) lost.push({ knob: key, why: "barème non repris" });
+      continue;
+    }
+    if (key === "ifi_obligations_declaratives") {
+      if (!obligations || obligations.value !== reform[key]) {
+        lost.push({ knob: key, why: "pas de champ dans le panneau" });
+      }
+      continue;
+    }
+    const k = byKnob[key];
+    if (!k || !$(k.id)) { lost.push({ knob: key, why: "pas de champ dans le panneau" }); continue; }
+    const held = Number($(k.id).value) / (k.scale || 1);
+    if (!near(held, reform[key])) {
+      lost.push({ knob: key, why: idCount[k.id] > 1
+        ? "champ partagé avec un autre bouton" : "valeur non reprise par le champ" });
+    }
+  }
+
+  const back = reformSpec() || {};
+  const added = Object.keys(back).filter(
+    (key) => !(key in reform) && !(typeof back[key] === "number"
+      && typeof reform[key] === "number" && near(back[key], reform[key])));
+
+  return { lost, added };
 }
 
 function markDirty() {
@@ -2272,6 +2389,87 @@ async function runFirms() {
 $("goFirms").onclick = runFirms;
 
 /* ----------------------------------------------------------------- boot */
+/* F2 · the scenario picker. Populated from GET /scenarios; silent when the API is not
+   running, because a picker is a convenience and the panel works without it.
+
+   Each option carries its DATE and its SOURCE, which is the whole point: a scenario is a
+   pre-registered chiffrage, and one without a date and an article is a saved slider
+   position. There is no "save" button here and there will not be one — a date the
+   interface can mint is a date anyone can mint, so registration stays in the CLI where
+   it lands in the working tree and gets committed (D-092). */
+let scenarioIndex = {};
+
+async function loadScenarioList() {
+  const row = document.getElementById("scenarioRow");
+  const pick = document.getElementById("scenarioPick");
+  if (!row || !pick) return;
+  let payload;
+  try {
+    const response = await fetch(`${API}/scenarios`);
+    if (!response.ok) return;
+    payload = await response.json();
+  } catch { return; }
+  if (!payload.scenarios || !payload.scenarios.length) return;
+
+  scenarioIndex = {};
+  pick.innerHTML = '<option value="">\u2014</option>';
+  for (const scenario of payload.scenarios) {
+    scenarioIndex[scenario.name] = scenario;
+    const option = document.createElement("option");
+    option.value = scenario.name;
+    option.textContent = `${scenario.name} \u2014 ${scenario.created} \u2014 ${scenario.source}`;
+    pick.appendChild(option);
+  }
+  /* Scenarios that no longer validate are NAMED, not hidden. One that silently vanishes
+     from the picker is a chiffrage that silently stops being confrontable. */
+  const unreadable = Object.keys(payload.unreadable || {});
+  if (unreadable.length) {
+    const note = document.getElementById("scenarioNote");
+    note.textContent = `Scénarios illisibles, non proposés : ${unreadable.join(", ")}. `
+      + "Un bouton a été renommé ou ses bornes ont bougé depuis l'enregistrement.";
+    note.hidden = false;
+  }
+  row.hidden = false;
+}
+
+document.getElementById("scenarioLoad").addEventListener("click", async () => {
+  const name = document.getElementById("scenarioPick").value;
+  const note = document.getElementById("scenarioNote");
+  if (!name) return;
+  let detail;
+  try {
+    const response = await fetch(`${API}/scenarios/${encodeURIComponent(name)}`);
+    if (!response.ok) throw new Error(String(response.status));
+    detail = await response.json();
+  } catch {
+    note.textContent = `« ${name} » n'a pas pu être lu.`;
+    note.hidden = false;
+    return;
+  }
+  const reform = {};
+  for (const [key, value] of Object.entries(detail.reform || {})) {
+    if (value !== null && value !== undefined) reform[key] = value;
+  }
+  const { lost, added } = applyScenario(reform);
+  const stamp = `« ${name} », ${detail.created} \u2014 ${detail.source}`;
+  const problems = [];
+  /* Each knob carries ITS OWN reason. The first version printed one hard-coded cause —
+     "un même champ pilote plusieurs boutons" — for every case, which is simply wrong for
+     a knob that has no field at all, and this repo's own rsa_700_af_40 scenario is
+     exactly that case. */
+  for (const item of lost) problems.push(`${item.knob} (${item.why})`);
+  if (added.length) {
+    problems.push(`et le panneau AJOUTE ${added.join(", ")}, que le scénario ne demande pas`);
+  }
+  note.textContent = problems.length
+    ? `${stamp}. ATTENTION : ${problems.join(" ; ")}. `
+      + "Le chiffrage à l'écran n'est PAS celui du scénario ; utiliser la ligne de "
+      + "commande pour celui-ci."
+    : stamp;
+  note.hidden = false;
+  document.getElementById("reformPanel").open = true;
+});
+
 async function boot() {
   renderAdults();
   renderChildren();
@@ -2294,6 +2492,7 @@ async function boot() {
     }
     lawParams = await (await fetch(`${API}/parameters/ir?year=2024`)).json();
     fillLaw();
+    await loadScenarioList();
   } catch (error) {
     $("engine").innerHTML = `<span class="dot down"></span>moteur injoignable`;
     showError("Moteur injoignable", [

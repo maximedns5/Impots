@@ -767,3 +767,145 @@ def test_every_reform_shape_balances_on_the_real_population() -> None:
             aggregates.balance["expected_cost"],
             rel=1e-3, abs=5e6,
         ), reform
+
+
+# --- D-093: the identity near a root ------------------------------------------------
+
+
+def test_an_offsetting_reform_is_not_accused_of_an_imbalance() -> None:
+    """The regression F2's solver found. Fails if the gross allowance is removed.
+
+    Measured, at the third evaluation of `impots scenario solve csg_activite_imposable
+    --on rsa_700`: prélèvements +3.726 bn, transferts +3.673 bn, cost -52.9 M, and an
+    unexplained 305 719 EUR that is the RSA arm's leakage — the same 305 000 EUR the
+    RSA reform carries on its own, where it is 0.009 % and passes. It does not shrink
+    because a second arm cancels the headline; only the denominator does.
+    """
+    from impots.guards import sector_balance
+
+    deltas = {"csg_imposable": 3.726241248e9, "rsa": 3.673019346e9}
+    balance = sector_balance(deltas, reform_cost=-52.916184e6)
+    assert balance["unexplained"] == pytest.approx(305.7e3, rel=0.05)
+
+
+def test_a_sector_that_moved_without_entering_the_cost_is_caught_at_a_zero_net() -> None:
+    """THE kill test for the fix: the allowance must not be a licence.
+
+    Same offsetting shape, same near-zero net, but a whole billion of transfers left out
+    of the reported cost. Fails if the gross allowance is set loose enough to swallow a
+    real omission — which is the only way this fix could be wrong.
+    """
+    from impots.guards import SectorBalanceError, sector_balance
+
+    deltas = {"csg_imposable": 3.726241248e9, "rsa": 3.673019346e9}
+    with pytest.raises(SectorBalanceError, match="du brut"):
+        sector_balance(deltas, reform_cost=-52.916184e6 + 1.0e9)
+
+
+def test_the_gross_allowance_is_tighter_than_the_net_one() -> None:
+    """It is a SECOND allowance, not a replacement. Fails if someone raises
+    BALANCE_GROSS_RTOL above BALANCE_RTOL, which would silently relax every reform the
+    net test used to judge — since gross is never smaller than net."""
+    from impots.guards import BALANCE_GROSS_RTOL, BALANCE_RTOL
+
+    assert BALANCE_GROSS_RTOL < BALANCE_RTOL
+
+
+def test_both_gross_allowances_are_pinned_to_their_measurements() -> None:
+    """Fails on ANY change to either constant, which is the point.
+
+    The first version asserted only `gross < net`, so 9.9e-4 — tripling the household
+    guard's real tolerance — left the whole suite green. A tolerance that can be widened
+    without a test noticing is a tolerance nobody is defending.
+
+    Household 3e-4: 3.5x the worst ratio measured over five reforms (8.55e-05, the RSA
+    arm's leakage through unreported instruments). Firm 1e-6: ~18x the worst measured
+    over four firm reforms (5.43e-08, which is float accumulation and nothing else,
+    because the firm identity sanctions no leakage). Both tables are in D-093. Changing
+    either means re-measuring and rewriting that decision, not editing a number.
+    """
+    from impots.guards import BALANCE_GROSS_RTOL, FIRM_BALANCE_GROSS_RTOL
+
+    assert BALANCE_GROSS_RTOL == 3e-4
+    assert FIRM_BALANCE_GROSS_RTOL == 1e-6
+    assert FIRM_BALANCE_GROSS_RTOL < BALANCE_GROSS_RTOL
+
+
+def test_gross_sums_the_movements_not_the_buckets() -> None:
+    """THE bug in the first version of the D-093 fix, found by adversarial review.
+
+    `abs(receipts) + abs(transfers)` sums each BUCKET first, so a reform whose two arms
+    sit in the same bucket — RSA up, AF down, both transfers — has them cancel before the
+    abs() runs. It read 3.0 M against a true movement of 7.34 bn: 0.04 % of the truth,
+    and the guard refused a correct run at "10 % of gross". The fix agreed with the one
+    shape it had been tested on and failed the shape it was written for.
+
+    Fails if the bucket form comes back.
+    """
+    from impots.guards import sector_balance
+
+    # Both arms in STATE_TRANSFERS, netting to 3 M on 7.34 bn of movement, plus the same
+    # 305 719 EUR leakage the CSG-financed run carries.
+    deltas = {"rsa": 3.673019346e9, "af": -3.670e9}
+    balance = sector_balance(deltas, reform_cost=3.019346e6 + 305_719)
+    assert balance["unexplained"] == pytest.approx(305_719, rel=0.01)
+
+
+def test_an_omission_is_caught_when_both_arms_share_a_bucket() -> None:
+    """The kill test for the test above: the corrected gross must not be a licence."""
+    from impots.guards import SectorBalanceError, sector_balance
+
+    deltas = {"rsa": 3.673019346e9, "af": -3.670e9}
+    with pytest.raises(SectorBalanceError):
+        sector_balance(deltas, reform_cost=3.019346e6 + 1.0e9)
+
+
+def test_the_firm_guard_does_not_buy_allowance_with_movement_it_cannot_see() -> None:
+    """The firm residual measures movement OUTSIDE FIRM_COMPONENTS, so scaling it by
+    movement INSIDE them buys indulgence against exactly what it cannot detect.
+
+    With the household constant (3e-4) a 40 bn offsetting firm reform bought 12 M EUR of
+    allowance and swallowed a genuine 5 M EUR instrument leaking outside the perimeter —
+    which the old net-scaled guard caught. Fails if FIRM_BALANCE_GROSS_RTOL is raised to
+    the household value.
+    """
+    from impots.guards import SectorBalanceError, firm_balance
+
+    deltas = {"impot_societes": -20.0e9, "cvae": 20.0e9}
+    with pytest.raises(SectorBalanceError):
+        firm_balance(deltas, reform_cost=-5.0e6)
+    # And the measured float noise on that same reform still passes: 5.43e-08 x 40 bn.
+    firm_balance(deltas, reform_cost=-2_172.0)
+
+
+def test_the_original_failure_still_breaches_under_the_gross_scale() -> None:
+    """The 17.7 bn labour-cost reform whose public cost read zero. Fails if the gross
+    allowance is what lets it through — the whole point is that it cannot."""
+    from impots.guards import SectorBalanceError, sector_balance
+
+    deltas = {"revenu_disponible": 0.0, "ir": 0.0, "salaire_super_brut": -17.68e9}
+    with pytest.raises(SectorBalanceError, match="coût annoncé"):
+        sector_balance(deltas, reform_cost=0.0, employer_contribution_delta=-17.68e9)
+
+
+def test_the_firm_identity_carries_its_own_allowance_not_the_household_one() -> None:
+    """A firm reform that raises one instrument to pay for cutting another has a
+    near-zero net and billions of gross, exactly like the household case — so it needs a
+    gross allowance too. But a much SMALLER one, and the reason is what each side
+    tolerates rather than a preference.
+
+    The household identity sanctions leakage: `revenu_disponible` runs through a cascade
+    wider than the reported instruments, measured at up to 8.55e-05 of gross. The firm
+    identity sanctions none: FIRM_COMPONENTS is a second independent route to the same
+    OpenFisca total, so an instrument in one and not the other IS the bug. Measured, the
+    firm residual is 5.43e-08 of gross — float accumulation, four orders smaller.
+
+    This case is exactly neutral (net zero, 8 bn of gross), so the gross allowance of
+    8 000 EUR is what binds, not the floor-derived net allowance of 5 000.
+    """
+    from impots.guards import SectorBalanceError, firm_balance
+
+    deltas = {"impot_societes": -4.0e9, "cvae": 4.0e9}
+    firm_balance(deltas, reform_cost=6_000.0)  # float noise on 8 bn: passes
+    with pytest.raises(SectorBalanceError):
+        firm_balance(deltas, reform_cost=500e3)  # half a million: does not

@@ -1,0 +1,11 @@
+{
+  "name": "rsa_700",
+  "year": 2024,
+  "created": "2026-09-08",
+  "source": "variante interne : RSA socle porté à 700 EUR/mois",
+  "note": "Le scénario de coût qui sert de base au solveur F2.",
+  "tags": [],
+  "reform": {
+    "rsa_montant_de_base": 700.0
+  }
+}

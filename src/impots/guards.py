@@ -163,6 +163,63 @@ BALANCE_FLOOR_EUR = 5.0e6
 #: whose public cost read zero, which breaches it by 100 %.
 BALANCE_RTOL = 1e-3
 
+#: The same allowance, expressed against the reform's GROSS movement instead of its net.
+#:
+#: BALANCE_RTOL was always meant as «a share of the reform's size», and
+#: `max(|reform_cost|, |expected_cost|)` is a fine proxy for size — right up until a
+#: reform offsets itself. F2's budget-neutral solver builds such reforms ON PURPOSE:
+#: it root-finds the knob value that drives the net to zero, so at exactly the iterate
+#: the user cares about, the proxy collapses and a fixed leakage is divided by nothing.
+#:
+#: That is not hypothetical. The first real solve — RSA socle at 700 EUR, paid for by
+#: the CSG — failed the guard at its third evaluation with «+0.57 %» on an unexplained
+#: 305 719 EUR, while the instruments had moved 3.7 bn each way.
+#:
+#: MEASURED, ACROSS FIVE REFORMS, at 8 000 households (D-093):
+#:
+#:     réforme               brut       net        résidu      /brut
+#:     rsa 700              3.545 md   +3 545 M   303 660 EUR  8.57e-05
+#:     csg +0,5 pt          5.625 md   -5 245 M     2 188 EUR  3.89e-07
+#:     rsa 700 + csg 2,9    9.171 md   -1 699 M   305 868 EUR  3.34e-05
+#:     rsa 700 + csg 3,05  10.862 md   -3 268 M   307 200 EUR  2.83e-05
+#:     décote 60 %          1.909 md   -1 909 M       -30 EUR -1.59e-08
+#:
+#: The residual is CONSTANT at about 305 000 EUR wherever the RSA arm appears and
+#: vanishes where it does not — it is that arm's leakage through unreported instruments,
+#: exactly what BALANCE_RTOL exists to tolerate, and it does not shrink because a second
+#: arm cancels the headline. Only the denominator moves.
+#:
+#: 3e-4 is three and a half times the largest ratio measured. It is TIGHTER than
+#: BALANCE_RTOL, so it never relaxes a reform the net test already judged: it is a
+#: second allowance that only binds where the net test has stopped meaning anything.
+BALANCE_GROSS_RTOL = 3e-4
+
+#: The firm side's own gross allowance, and it is 300 times tighter — because the two
+#: sides tolerate different things.
+#:
+#: The household identity sanctions LEAKAGE: `revenu_disponible` runs through the whole
+#: benefits cascade, wider than the instruments the runner reports, so a real reform
+#: leaves a real residual (measured up to 8.55e-05 of gross). The firm identity sanctions
+#: nothing of the kind: `prelevements_entreprise` is an OpenFisca formula and
+#: FIRM_COMPONENTS is a second, independent route to the same number, so an instrument in
+#: one and not the other IS the bug to catch. The only benign residual is float
+#: accumulation.
+#:
+#: MEASURED, four firm reforms on the real 2023 cells at period 2026:
+#:
+#:     IS 25 -> 30 %      15.526 md brut   -843 EUR    5.43e-08
+#:     C3S x2              5.289 md brut    +18 EUR    3.31e-09
+#:     IS 30 % + CVAE 0   17.886 md brut   -539 EUR    3.01e-08
+#:     IS 26 % + CVAE 0    5.465 md brut    +43 EUR    7.79e-09   (net -745 M: the
+#:                                                                 near-neutral shape)
+#:
+#: 1e-6 is roughly eighteen times the worst of those. Reusing BALANCE_GROSS_RTOL here
+#: would have bought 12 M EUR of allowance on a 40 bn offsetting reform and swallowed a
+#: genuine 5 M EUR instrument leaking outside FIRM_COMPONENTS — which the old net-scaled
+#: guard caught. A relaxation justified by household leakage has no business on a side
+#: that has none.
+FIRM_BALANCE_GROSS_RTOL = 1e-6
+
 
 #: The niche outputs a reform can move. If a reform touches a niche knob and these are
 #: zero across the population, the reform's cost is zero because the DATA is missing,
@@ -224,6 +281,7 @@ def sector_balance(
     reform_cost: float,
     employer_contribution_delta: float = 0.0,
     rtol: float = BALANCE_RTOL,
+    gross_rtol: float = BALANCE_GROSS_RTOL,
     floor: float = BALANCE_FLOOR_EUR,
 ) -> dict[str, float]:
     """Assert that the reported public cost equals what the instruments say moved.
@@ -253,16 +311,31 @@ def sector_balance(
     expected_cost = -state_gain
     unexplained = reform_cost - expected_cost
 
+    # The reform's SIZE: the sum of the ABSOLUTE movements, instrument by instrument.
+    #
+    # NOT `abs(receipts) + abs(transfers)`, which is what the first version of this fix
+    # computed and which is wrong in exactly the case the fix was written for. Those two
+    # are already SUMS over their buckets, so a reform whose arms sit in the SAME bucket
+    # — RSA up, AF down, both transfers — has them cancel before the abs() ever runs. On
+    # a real such reform the bucket form read 2.713 bn against a true movement of
+    # 5.165 bn, and in the extreme (rsa +3.673 bn, af -3.670 bn) it read 3.0 M against
+    # 7.34 bn: 0.04 % of the truth, and the guard refused a correct run at "10 % of
+    # gross". The fix agreed with the one shape it had been tested on. See D-093.
+    gross = (sum(abs(deltas.get(name, 0.0)) for name in STATE_RECEIPTS)
+             + sum(abs(deltas.get(name, 0.0)) for name in STATE_TRANSFERS)
+             + abs(employer_contribution_delta))
     scale = max(abs(reform_cost), abs(expected_cost), floor)
-    if abs(unexplained) > rtol * scale:
+    allowed = max(rtol * scale, gross_rtol * gross)
+    if abs(unexplained) > allowed:
         raise SectorBalanceError(
             f"le coût annoncé ne correspond pas à ce que les instruments ont bougé : "
             f"coût rapporté {reform_cost:+,.0f} EUR contre {expected_cost:+,.0f} EUR "
             f"reconstitué depuis les postes (prélèvements {receipts:+,.0f}, "
             f"transferts {transfers:+,.0f}, cotisations patronales "
             f"{employer_contribution_delta:+,.0f}), soit un écart de "
-            f"{unexplained:+,.0f} EUR ({unexplained / scale:+.2%}). Un secteur "
-            f"a bougé sans entrer dans le coût, ou l'inverse."
+            f"{unexplained:+,.0f} EUR — {unexplained / scale:+.2%} du net et "
+            f"{unexplained / gross if gross else 0:+.3%} du brut ({gross:+,.0f} EUR). "
+            f"Un secteur a bougé sans entrer dans le coût, ou l'inverse."
         )
     return {
         "reform_cost": reform_cost,
@@ -285,9 +358,14 @@ def firm_balance(
     *,
     reform_cost: float,
     rtol: float = BALANCE_RTOL,
+    gross_rtol: float = FIRM_BALANCE_GROSS_RTOL,
     floor: float = BALANCE_FLOOR_EUR,
 ) -> dict[str, float]:
     """Assert a firm reform's cost equals the sum of the instruments that moved.
+
+    Carries the same gross-scaled allowance as `sector_balance`, for the same reason: a
+    firm reform that raises one instrument to pay for cutting another has a near-zero net
+    and billions of gross, and the net is not a measure of its size (D-093).
 
     The firm side has no household term, so the double entry is between the total the
     engine computes and the components this guard adds. A new instrument wired into
@@ -297,8 +375,10 @@ def firm_balance(
     components = sum(deltas.get(name, 0.0) for name in FIRM_COMPONENTS)
     expected_cost = -components
     unexplained = reform_cost - expected_cost
+    gross = sum(abs(deltas.get(name, 0.0)) for name in FIRM_COMPONENTS)
     scale = max(abs(reform_cost), abs(expected_cost), floor)
-    if abs(unexplained) > rtol * scale:
+    allowed = max(rtol * scale, gross_rtol * gross)
+    if abs(unexplained) > allowed:
         missing = {
             name: value for name, value in deltas.items()
             if name not in FIRM_COMPONENTS and abs(value) > floor
