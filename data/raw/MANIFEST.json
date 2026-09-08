@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-06",
+  "generated": "2026-09-08",
   "files": {
     "Dictionnaire_EEC_2024.pdf": {
       "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
@@ -1062,6 +1062,15 @@
       "downloaded": "2026-09-06",
       "licence": "Sénat — usage cité",
       "description": "Sénat, rapport d'information n° 42 (2019-2020), « Transformation de l'ISF en IFI et création du PFU : un premier bilan ». Porte DEUX tableaux qui ferment la question du facteur de composition mesuré : les redevables de l'IFI 2018 par tranche (103 917 / 22 899 / 4 767 / 1 139, total 132 722) et les redevables de l'ISF 2017 EXONÉRÉS d'IFI 2018 par tranche (190 237 / 31 366 / 5 281 / 1 317, total 228 201, soit 64 % de tous les redevables de l'ISF, gain cumulé 1 655 M€). Le taux d'exonération varie de 74 % dans la tranche basse à 18 % dans la haute."
+    },
+    "ipp_rapport46_isf_plafonnement.pdf": {
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/06/46_Rapport_IPP_46_ISFplaf-2.pdf",
+      "quarantined": false,
+      "sha256": "aa6250072ea72d9b76d926dca9121d80136999c29a9adebd122b90f086d262ba",
+      "bytes": 4461075,
+      "downloaded": "2026-09-08",
+      "licence": "IPP — usage cité",
+      "description": "IPP, Rapport n° 46 (octobre 2023), « Le plafonnement de l'impôt sur la fortune ». Source du backtest ISF-2017. ATTENTION à l'URL : celle du handoff (uploads/2023/10/…) renvoie 404, le fichier ayant été redéposé en juin 2025 sous uploads/2025/06/46_… — l'URL ci-dessus est celle qui résout, relevée sur la page de publication.\nTableau 1.1 (p. idx 22) : effectifs de redevables ISF 2017 par tranche — 356 229 au total, 257 729 / 91 426 / 6 639 / 437 — et PARTS des foyers plafonnés, PAS des montants par tranche.\nTableau 1.2 (p. idx 24) : les NIVEAUX, par statut de plafonnement. Foyers plafonnés : patrimoine taxable 13 929,1 k€ avant abattements, ISF 153 416,6 € avant plafonnement et 49 482,9 € après. Non-plafonnés : 4 727,3 k€, 25 820,9 € des deux côtés. Millésime : déclarations 2017, revenus de référence 2016."
     }
   }
 }

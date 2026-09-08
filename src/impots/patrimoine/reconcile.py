@@ -93,6 +93,35 @@ IFI_LIGNE_BUDGETAIRE = Figure(
            "n° 33. Le modèle ne doit PAS être jugé contre cette ligne.",
 )
 
+IPP_URL = "https://www.ipp.eu/wp-content/uploads/2025/06/46_Rapport_IPP_46_ISFplaf-2.pdf"
+
+#: The ISF-2017 backtest's two comparators. OUT OF SAMPLE, and the only such figures the
+#: module has: the ISF died in 2017, these were published in 2023 from records this
+#: project has never touched, and nothing was tuned to them.
+ISF_2017_PLAFONNES = Figure(
+    value=153_416.6, unit="EUR", year=2017,
+    scope="ISF moyen avant plafonnement, foyers plafonnés, déclarations 2017",
+    source="IPP, Rapport n° 46 (octobre 2023), tableau des niveaux par statut",
+    url=IPP_URL, use="validation",
+    caveat="Millésimes : déclarations 2017, revenus de référence 2016. Le ménage moyen "
+           "est reconstruit poste par poste ; ses composantes somment au total publié à "
+           "la décimale près, dans les deux groupes.",
+)
+
+ISF_2017_NON_PLAFONNES = Figure(
+    value=25_820.9, unit="EUR", year=2017,
+    scope="ISF moyen, foyers non plafonnés, déclarations 2017",
+    source="IPP, Rapport n° 46 (octobre 2023), tableau des niveaux par statut",
+    url=IPP_URL, use="validation",
+    caveat="Même source, même millésime. Ce groupe MANQUE sa tolérance, et le manque est "
+           "gardé : élargir la tolérance pour l'absorber aurait fait un backtest qui "
+           "admet tout, donc qui ne mesure rien.",
+)
+
+#: Declared tolerance on the ISF backtest, reasoned rather than chosen — see
+#: `patrimoine.backtest`. One group passes it, one does not, and both are reported.
+TOLERANCE_BACKTEST = 0.05
+
 #: Declared tolerance on the inversion check. Wide, and the width is reasoned: the
 #: shortfall it measures is the reliefs the inversion cannot see, and M2 apportions them
 #: — 58 % dons, up to 3 % décote, the rest plafonnement. A tight tolerance here would be
@@ -156,6 +185,56 @@ def build_lines(year: int = ifi_cells.TRANCHE_YEAR) -> list[Line]:
             f"suivre la lettre aurait imprimé un quart de l'impôt comme erreur de "
             f"modèle.",
             source="Voies et moyens, PLF 2026",
+        ),
+        *_backtest_lines(),
+    ]
+
+
+def _backtest_lines() -> list[Line]:
+    """The ISF-2017 backtest — the module's only out-of-sample comparison.
+
+    Reported exactly as measured: one group inside tolerance, one outside and kept
+    outside. The passing figure is NOT sold as a clean validation, because two
+    unmodelled effects of opposite sign partly cancel in it.
+    """
+    from impots.patrimoine import backtest as bt
+
+    capped, non_capped = bt.run_all()
+    return [
+        Line.from_figure(
+            ISF_2017_PLAFONNES, "ISF 2017 — foyers plafonnés, avant plafonnement",
+            capped.avant_plafonnement, TOLERANCE_BACKTEST,
+            f"**Le seul chiffre hors échantillon du module.** L'ISF est mort en 2017 ; "
+            f"ces montants ont été publiés en 2023 à partir de dossiers que ce projet "
+            f"n'a jamais touchés, et rien n'a été ajusté dessus.\n\n"
+            f"**Et le {capped.residual_avant:+.1%} n'est pas vendu comme une validation "
+            f"propre.** Deux effets non modélisés jouent en sens contraire : Jensen tire "
+            f"vers le bas — un ménage moyen dans un barème convexe sous-estime l'impôt "
+            f"moyen — et les réductions ISF-PME et dons, absentes de notre calcul, "
+            f"tirent vers le haut. Sur ce groupe elles se compensent à peu près ; sur "
+            f"l'autre, la seconde domine. Tomber à un demi-point parce que deux erreurs "
+            f"s'annulent n'est pas tomber là parce que tout est juste.\n\n"
+            f"Le plafonnement, lui, reproduit sa FORME : {capped.plafonnement_effect:+.1%} "
+            f"de l'impôt d'avant contre {capped.published_plafonnement_effect:+.1%} "
+            f"publiés, sur un mécanisme qui vaut les deux tiers de la note. L'écart "
+            f"d'après plafonnement ({capped.residual_apres:+.1%}) a une cause mécanique "
+            f"vérifiée : notre ménage n'a que du salaire et produit 34 893 € d'impôts "
+            f"plafonnables contre 51 154 € publiés, si bien que le plafond mord moins.",
+            source="IPP",
+        ),
+        Line.from_figure(
+            ISF_2017_NON_PLAFONNES, "ISF 2017 — foyers non plafonnés",
+            non_capped.avant_plafonnement, TOLERANCE_BACKTEST,
+            f"**Manque assumé, à {non_capped.residual_avant:+.1%}, et gardé rouge.** La "
+            f"cause est nommée : les réductions ISF-PME (jusqu'à 45 000 €) et dons à "
+            f"75 % réduisaient l'impôt réellement payé, et le montant publié en est net "
+            f"quand le nôtre n'en déduit rien. Ces patrimoines font le tiers de ceux du "
+            f"groupe plafonné, donc quelques milliers d'euros de réduction pèsent lourd "
+            f"sur un impôt de 25 821 €.\n\n"
+            f"La tolérance n'a pas été élargie pour l'absorber. Un backtest qui admet "
+            f"tout ne mesure rien, et un manque de {non_capped.residual_avant:+.1%} avec "
+            f"un mécanisme nommé vaut mieux qu'une tolérance étirée pour l'avaler.",
+            source="IPP",
         ),
     ]
 

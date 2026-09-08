@@ -1,6 +1,6 @@
 # Reconciliation report — patrimoine (IFI)
 
-**Vintage**: `2024` · **Generated**: 2026-09-06 by `impots patrimoine reconcile` · **Engine**: openfisca-france 176.0.8, corrigé (D-079)
+**Vintage**: `2024` · **Generated**: 2026-09-08 by `impots patrimoine reconcile` · **Engine**: openfisca-france 176.0.8, corrigé (D-079)
 
 **Aucune ligne de cette section n'est calibrée.** C'est la propriété distinctive du module et la raison d'avoir choisi cette phase : la DGFiP publie la population, donc les cellules sont LUES et non ajustées, et il n'y a aucune marge à dépenser. Le rapport ménages porte quatre lignes de calibration et le dit ; celui-ci n'en porte aucune.
 
@@ -20,6 +20,8 @@ A figure used to **calibrate** is *spent*. The model was tuned to hit it, so hit
 | Line | Simulated | Published | Residual | Tolerance | Status | Source |
 |---|---:|---:|---:|---:|---|---|
 | Base agrégée — barème inversé | 436.6 bn € | 466.8 bn € | -6.5% | ±12% | within tolerance | DGFiP |
+| ISF 2017 — foyers plafonnés, avant plafonnement | 152 725 € | 153 417 € | -0.5% | ±5% | within tolerance | IPP |
+| ISF 2017 — foyers non plafonnés | 30 918 € | 25 821 € | +19.7% | ±5% | OUTSIDE tolerance | IPP |
 
 ### What each line means
 
@@ -34,10 +36,20 @@ Décomposé plutôt que toléré : les dons expliquent 58% du manque (montant pu
 L'éditeur des deux séries le dit lui-même, dans le bulletin d'où viennent les cellules : « Les données budgétaires publiées par ailleurs peuvent donc être différentes des montants présentés dans cette publication. »
 
 `PHASE5_SPEC` §6 demandait de comparer « vs the budget line (~2,2-2,3 bn) » : les deux moitiés de cette phrase ne désignent pas la même série, et suivre la lettre aurait imprimé un quart de l'impôt comme erreur de modèle.
+* **ISF 2017 — foyers plafonnés, avant plafonnement** — **Le seul chiffre hors échantillon du module.** L'ISF est mort en 2017 ; ces montants ont été publiés en 2023 à partir de dossiers que ce projet n'a jamais touchés, et rien n'a été ajusté dessus.
+
+**Et le -0.5% n'est pas vendu comme une validation propre.** Deux effets non modélisés jouent en sens contraire : Jensen tire vers le bas — un ménage moyen dans un barème convexe sous-estime l'impôt moyen — et les réductions ISF-PME et dons, absentes de notre calcul, tirent vers le haut. Sur ce groupe elles se compensent à peu près ; sur l'autre, la seconde domine. Tomber à un demi-point parce que deux erreurs s'annulent n'est pas tomber là parce que tout est juste.
+
+Le plafonnement, lui, reproduit sa FORME : -64.7% de l'impôt d'avant contre -67.7% publiés, sur un mécanisme qui vaut les deux tiers de la note. L'écart d'après plafonnement (+9.1%) a une cause mécanique vérifiée : notre ménage n'a que du salaire et produit 34 893 € d'impôts plafonnables contre 51 154 € publiés, si bien que le plafond mord moins.
+* **ISF 2017 — foyers non plafonnés** — **Manque assumé, à +19.7%, et gardé rouge.** La cause est nommée : les réductions ISF-PME (jusqu'à 45 000 €) et dons à 75 % réduisaient l'impôt réellement payé, et le montant publié en est net quand le nôtre n'en déduit rien. Ces patrimoines font le tiers de ceux du groupe plafonné, donc quelques milliers d'euros de réduction pèsent lourd sur un impôt de 25 821 €.
+
+La tolérance n'a pas été élargie pour l'absorber. Un backtest qui admet tout ne mesure rien, et un manque de +19.7% avec un mécanisme nommé vaut mieux qu'une tolérance étirée pour l'avaler.
 
 ## Verdict
 
-Every validation line is within its declared tolerance.
+**1 validation line(s) outside declared tolerance**: ISF 2017 — foyers non plafonnés (+19.7%)
+
+These are stated, not smoothed over. The known causes are listed below; none of them is fixed by tuning, and tuning to close them would spend the very lines that make this table worth reading.
 
 ## Known limitations
 

@@ -188,16 +188,26 @@ class Line:
 def format_value(value: float | None, unit: str) -> str:
     """Render a value for a report table.
 
-    Units are coarse on purpose — `EUR`, `count`, or anything else — because the
-    reports deal in national aggregates, ratios and head-counts and nothing else.
     Values below `DECIMAL_BELOW` keep two decimals: they are ratios, and rounding
     a ratio of 4.88 to "5" against a published "4" misstates the very thing the
     report exists to state.
+
+    **Euros are scaled to their magnitude, and they did not use to be.** This
+    formatter assumed "the reports deal in national aggregates and nothing else",
+    which stopped being true when the ISF-2017 backtest added PER-HOUSEHOLD lines:
+    a published mean of 25 821 EUR rendered as "0.0 bn €", on the page whose whole
+    job is saying how far the model is from its target. Same class as the
+    interdecile ratio that printed "5" against a published "4" — a formatter whose
+    assumption about its input had quietly expired.
     """
     if value is None:
         return "—"
     if unit == "EUR":
-        return f"{value / 1e9:,.1f} bn €".replace(",", " ")
+        if abs(value) >= 1e9:
+            return f"{value / 1e9:,.1f} bn €".replace(",", " ")
+        if abs(value) >= 1e6:
+            return f"{value / 1e6:,.1f} M €".replace(",", " ")
+        return f"{value:,.0f} €".replace(",", " ")
     if unit == "count":
         return f"{value / 1e6:,.2f} M".replace(",", " ")
     if abs(value) < DECIMAL_BELOW:

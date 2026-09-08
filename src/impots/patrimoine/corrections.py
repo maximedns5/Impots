@@ -83,6 +83,14 @@ CORRECTIONS: tuple[Correction, ...] = (
         kill_test="test_the_engine_alone_would_tax_below_the_threshold",
     ),
     Correction(
+        name="isf_forfait_mobilier_double_compte",
+        citation="CGI art. 764 I-3° — le forfait de 5 % est un PLANCHER, « la preuve "
+                 "contraire étant aussi réservée » : la valeur déclarée REMPLACE la "
+                 "présomption, elle ne s'y ajoute pas",
+        decision="D-090",
+        kill_test="test_the_engine_alone_counts_declared_furniture_twice",
+    ),
+    Correction(
         name="ifi_forfait_mobilier",
         citation="CGI art. 965 — la base de l'IFI est immobilière ; art. 764 I-3° "
                  "plancher les meubles meublants, qui n'y sont pas",
@@ -118,6 +126,7 @@ def apply_to(system: Any, *, year: int = 2024) -> Any:
 
             self.modify_parameters(modifier_function=modify)
             self.update_variable(_gated_isf_ifi())
+            self.update_variable(_assiette_without_double_count())
 
     return LegalCorrections(system)
 
@@ -152,3 +161,72 @@ def _gated_isf_ifi() -> Any:
             return due * (assiette > seuil)
 
     return isf_ifi
+
+
+def _assiette_without_double_count() -> Any:
+    """`assiette_isf_ifi`, with declared furniture counted once instead of twice.
+
+    THE DEFECT. `isf_droits_sociaux` sums `isf_actions_sal + b1cc + b1cd + b1ce + b1cf +
+    b1cg` — it INCLUDES b1cg, the declared movable property. `assiette_isf_ifi` then adds
+    `forf_mob = (b1cg != 0) * b1cg` on top of a total that already contains it. Measured
+    at 2017: b1cg of 1 000 000 EUR produces an assiette of 2 000 000 EUR.
+
+    THE LAW. Art. 764 I-3° floors meubles meublants at 5 % of the rest of the estate,
+    «la preuve contraire étant aussi réservée» — so a taxpayer may declare their actual
+    value INSTEAD of accepting the presumption. Declaring replaces the forfait; it does
+    not stack with it. Being taxed twice for using a legal option is not a policy anyone
+    wrote, and it penalises exactly the taxpayer who declares rather than presumes.
+
+    WHY IT WAS INVISIBLE UNTIL NOW. `isf_droits_sociaux` carries `end = "2017-12-31"`, so
+    at 2024 it returns zero, b1cg is not in the total, and adding it once is correct. The
+    defect only appears where that variable is LIVE — at 2017, and at 2024 under our own
+    ISF revival, which lifts the end date and brings the double count back with the
+    financial base. Measured: the revived system gives 2 000 000 EUR for the same
+    declaration the IFI prices at 1 000 000.
+
+    The fix subtracts b1cg from the financial component only WHERE THAT COMPONENT IS
+    LIVE, so IFI-2024 behaviour is unchanged to the euro — which the suite proves rather
+    than this docstring asserting.
+    """
+    from openfisca_core.model_api import YEAR, Variable, max_, where
+    from openfisca_france.entities import FoyerFiscal
+
+    def _assiette(foyer_fiscal, period, node):
+        """The shared arithmetic; only the parameter node differs by era."""
+        bati = foyer_fiscal("isf_ifi_imm_bati", period)
+        non_bati = foyer_fiscal("isf_ifi_imm_non_bati", period)
+        droits_sociaux = foyer_fiscal("isf_droits_sociaux", period)
+        b1cg = foyer_fiscal("b1cg", period)
+        b2gh = foyer_fiscal("b2gh", period)
+        # b1cg is inside droits_sociaux WHEN that variable is live. Remove it there, so
+        # the declared value enters exactly once, through forf_mob below.
+        financier = where(droits_sociaux > 0, max_(droits_sociaux - b1cg, 0),
+                          droits_sociaux)
+        total = bati + non_bati + financier
+        forf_mob = ((b1cg != 0) * b1cg
+                    + (b1cg == 0) * total * node.forfait_mobilier.majoration_forfaitaire)
+        return total + forf_mob - b2gh
+
+    class assiette_isf_ifi(Variable):
+        value_type = float
+        entity = FoyerFiscal
+        label = "Assiette de l'ISF-IFI, mobilier déclaré compté une seule fois"
+        definition_period = YEAR
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006310333"
+
+        # Three dated variants, mirroring the engine's own: each era reads ITS OWN
+        # parameter node. A single formula reading the IFI node raised
+        # ParameterNotFoundError at 2017, which is the loud failure that caught it.
+        def formula_2018_01_01(foyer_fiscal, period, parameters):
+            node = parameters(period).taxation_capital.impot_fortune_immobiliere_ifi_partir_2018
+            return _assiette(foyer_fiscal, period, node)
+
+        def formula_1989_01_01(foyer_fiscal, period, parameters):
+            node = parameters(period).taxation_capital.impot_solidarite_fortune_isf_1989_2017
+            return _assiette(foyer_fiscal, period, node)
+
+        def formula(foyer_fiscal, period, parameters):
+            node = parameters(period).taxation_capital.impot_grandes_fortunes_1982_1986
+            return _assiette(foyer_fiscal, period, node)
+
+    return assiette_isf_ifi

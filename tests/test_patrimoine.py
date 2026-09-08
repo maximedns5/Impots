@@ -1257,3 +1257,205 @@ class TestPatrimoineReconciliation:
         note = line.note or ""
         for fragment in ("dons", "décote", "plafonnement", "nommé et non attribué"):
             assert fragment in note, fragment
+
+
+# --- The ISF-2017 backtest: the module's only out-of-sample number --------------------
+
+
+class TestIsfBacktest:
+    """Published in 2023 from records this project never touched, and nothing tuned."""
+
+    def test_the_published_components_sum_to_the_published_total(self):
+        """The reading's own check, and it is exact in both groups.
+
+        A transcription slip in any asset line would break this immediately, which is
+        why it comes before any comparison against the engine.
+        """
+        from impots.patrimoine.backtest import GROUPS
+
+        for group in GROUPS:
+            assert group.components_sum() == pytest.approx(
+                group.patrimoine_taxable_pre_abattements, abs=1.0), group.label
+
+    def test_table_1_1_carries_counts_and_shares_but_no_amounts(self):
+        """The brief expected per-tranche ISF there. It is not there.
+
+        Table 1.1's money columns are SHARES attributable to capped households, so the
+        per-tranche design the handoff describes cannot be built from it — which is why
+        the backtest is built on Table 1.2's levels instead.
+        """
+        from impots.patrimoine.backtest import (
+            CAPPED_SHARE_2017,
+            TOTAL_REDEVABLES_2017,
+            TRANCHE_COUNTS_2017,
+        )
+
+        # The published tranche counts sum to 356 231 against a published total of
+        # 356 229 — two foyers apart, which is rounding inside the publication and not a
+        # misreading. Asserted exactly rather than smoothed with an approx: if the gap
+        # ever changes, the table has been re-cut and the reading must be redone.
+        assert sum(TRANCHE_COUNTS_2017.values()) - TOTAL_REDEVABLES_2017 == 2
+        assert set(CAPPED_SHARE_2017) == set(TRANCHE_COUNTS_2017)
+        assert CAPPED_SHARE_2017["> 50 M€"] == 72.54, "the report's headline figure"
+        # Shares, in per cent — not euros. If any of these ever exceeds 100 the column
+        # has been misread as an amount.
+        assert all(0 <= share <= 100 for share in CAPPED_SHARE_2017.values())
+
+    def test_the_capped_group_lands_within_tolerance_before_the_cap(self):
+        """The result: -0,5 % on a tax this project had never priced.
+
+        The barème, the abattement, the passif and the whole composition have to be
+        right together to land there.
+        """
+        from impots.patrimoine.backtest import (
+            PLAFONNES,
+            TOLERANCE_PRE_PLAFONNEMENT,
+            run,
+        )
+
+        result = run(PLAFONNES)
+        assert abs(result.residual_avant) < TOLERANCE_PRE_PLAFONNEMENT
+        assert result.residual_avant == pytest.approx(-0.005, abs=0.01)
+
+    def test_the_non_capped_group_misses_and_the_miss_is_kept(self):
+        """+19,7 %, and the tolerance was NOT widened to swallow it.
+
+        A backtest that admits everything measures nothing. The miss has a named cause —
+        the ISF réductions we do not model, which are a large share of a small tax — and
+        keeping it visible is worth more than a tolerance stretched to cover it.
+        """
+        from impots.patrimoine.backtest import (
+            NON_PLAFONNES,
+            TOLERANCE_PRE_PLAFONNEMENT,
+            run,
+        )
+
+        result = run(NON_PLAFONNES)
+        assert result.residual_avant > TOLERANCE_PRE_PLAFONNEMENT
+        assert result.residual_avant == pytest.approx(0.197, abs=0.02)
+
+    def test_the_two_groups_miss_in_opposite_directions(self):
+        """Which is why the -0,5 % is not claimed as a clean validation.
+
+        Jensen pushes a mean-household figure DOWN; the unmodelled réductions push it UP.
+        On the capped group they roughly offset. If both residuals ever acquire the same
+        sign, that reasoning is wrong and the docstring needs rewriting.
+        """
+        from impots.patrimoine.backtest import run_all
+
+        capped, non_capped = run_all()
+        assert capped.residual_avant < 0 < non_capped.residual_avant
+
+    def test_the_cap_reproduces_its_shape(self):
+        """The mechanism under test is worth two thirds of the bill, and we get -64,7 %
+        of it against a published -67,7 %."""
+        from impots.patrimoine.backtest import PLAFONNES, run
+
+        result = run(PLAFONNES)
+        assert result.published_plafonnement_effect == pytest.approx(-0.677, abs=0.005)
+        assert result.plafonnement_effect == pytest.approx(-0.647, abs=0.02)
+        # And the non-capped group must have NO cap, which is what defines it.
+        from impots.patrimoine.backtest import NON_PLAFONNES
+
+        assert run(NON_PLAFONNES).plafonnement_effect == pytest.approx(0.0, abs=1e-9)
+
+    def test_routing_controlled_shares_to_b1cb_would_ruin_it(self):
+        """The mapping decides the answer, so the wrong one is pinned as wrong.
+
+        b1cb applies `taux_actions_conservees_6_ans` = 0,25 — the 75 % exoneration for
+        shares under an engagement de conservation — which the report's own
+        post-abattement total does not apply. Sending controlled shares there exempts
+        1 045 k EUR the report still counts.
+        """
+        from openfisca_core.simulations import SimulationBuilder
+
+        from impots.engine.system import baseline
+        from impots.patrimoine.backtest import PLAFONNES
+
+        wrong = dict(PLAFONNES.cases())
+        wrong["b1ce"] = PLAFONNES.titres_cotes
+        wrong["b1cb"] = PLAFONNES.titres_avec_controle
+        situation = {
+            "individus": {"M": {"salaire_imposable": {"2017": PLAFONNES.revenu_fiscal_reference}}},
+            "familles": {"f": {"parents": ["M"]}},
+            "foyers_fiscaux": {"ff": {"declarants": ["M"],
+                                      **{k: {"2017": v} for k, v in wrong.items()}}},
+            "menages": {"m": {"personne_de_reference": ["M"]}},
+        }
+        simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+        mis_mapped = float(simulation.calculate("isf_ifi_avant_plaf", "2017")[0])
+        residual = mis_mapped / PLAFONNES.isf_avant_plafonnement - 1
+        assert residual == pytest.approx(-0.107, abs=0.02), (
+            "the b1cb mapping no longer ruins the fit — either the exoneration rate "
+            "changed or the report's convention did, and the mapping must be re-argued"
+        )
+
+    def test_the_engine_alone_counts_declared_furniture_twice(self):
+        """Kill test for the third correction (D-090).
+
+        b1cg is summed into `isf_droits_sociaux` AND added again as the forfait mobilier,
+        so declaring 1 000 000 EUR of furniture at 2017 produces a 2 000 000 EUR base.
+        Art. 764 I-3° makes the 5 % a FLOOR with «la preuve contraire étant aussi
+        réservée» — declaring replaces the presumption rather than stacking with it.
+        """
+        from openfisca_core.simulations import SimulationBuilder
+
+        from impots.engine.system import baseline, uncorrected_baseline
+
+        def assiette(system):
+            situation = {
+                "individus": {"M": {"salaire_imposable": {"2017": 300_000}}},
+                "familles": {"f": {"parents": ["M"]}},
+                "foyers_fiscaux": {"ff": {"declarants": ["M"],
+                                          "b1cg": {"2017": 1_000_000}}},
+                "menages": {"m": {"personne_de_reference": ["M"]}},
+            }
+            simulation = SimulationBuilder().build_from_entities(system, situation)
+            return float(simulation.calculate("assiette_isf_ifi", "2017")[0])
+
+        assert assiette(uncorrected_baseline()) == pytest.approx(2_000_000.0), (
+            "the engine no longer double-counts declared furniture — if openfisca fixed "
+            "it, remove our correction rather than keeping one that corrects nothing")
+        assert assiette(baseline()) == pytest.approx(1_000_000.0)
+
+    def test_the_correction_leaves_ifi_2024_untouched(self):
+        """Its blast radius, asserted where it would be felt.
+
+        At 2024 `isf_droits_sociaux` is retired, so b1cg is not in the total and adding
+        it once is right. The correction must therefore change nothing there.
+        """
+        from openfisca_core.simulations import SimulationBuilder
+
+        from impots.engine.system import baseline
+        from impots.patrimoine.regimes import isf_1989_2017
+
+        def assiette(system):
+            situation = {
+                "individus": {"M": {"salaire_imposable": {"2024": 300_000}}},
+                "familles": {"f": {"parents": ["M"]}},
+                "foyers_fiscaux": {"ff": {"declarants": ["M"],
+                                          "b1cg": {"2024": 1_000_000}}},
+                "menages": {"m": {"personne_de_reference": ["M"]}},
+            }
+            simulation = SimulationBuilder().build_from_entities(system, situation)
+            return float(simulation.calculate("assiette_isf_ifi", "2024")[0])
+
+        assert assiette(baseline()) == pytest.approx(1_000_000.0)
+        # And the revival, which re-enables the financial base, must not bring it back.
+        assert assiette(isf_1989_2017(baseline())) == pytest.approx(1_000_000.0)
+
+    def test_the_five_percent_forfait_still_applies_when_nothing_is_declared(self):
+        """The correction must not have removed the presumption itself."""
+        from openfisca_core.simulations import SimulationBuilder
+
+        from impots.engine.system import baseline
+
+        situation = {
+            "individus": {"M": {"salaire_imposable": {"2017": 300_000}}},
+            "familles": {"f": {"parents": ["M"]}},
+            "foyers_fiscaux": {"ff": {"declarants": ["M"], "b1ce": {"2017": 1_000_000}}},
+            "menages": {"m": {"personne_de_reference": ["M"]}},
+        }
+        simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+        assert float(simulation.calculate("assiette_isf_ifi", "2017")[0]) == pytest.approx(
+            1_050_000.0)

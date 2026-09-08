@@ -1,3 +1,32 @@
+# Dossier amont openfisca-france — six constats, aucun publié
+
+**Rien de ce fichier n'a été publié.** La section C du cahier des charges est gelée par le
+propriétaire ; ce dossier attend, prêt. Chaque constat ci-dessous a été **mesuré sur le
+paquet installé**, pas déduit, et porte le test qui le tient dans notre suite.
+
+| # | Constat | Nature | Où c'est mesuré |
+|---|---|---|---|
+| 1 | `impot_revenu.credits_impots.aide_a_domicile` — arbre fantôme complet, mêmes sept valeurs que le nœud vivant, lu par aucune formule | défaut net | D-064, D-075 ; brouillon d'issue ci-dessous |
+| 2 | Six sosies morts de plus, mêmes valeurs qu'un jumeau vivant, lus par personne — dont un **agrégat dérivé** (`csg.activite.taux_global` = 0,092 = 0,068 + 0,024) et un abattement chômage **au bon endroit** que les formules contournent | défaut net | D-075 |
+| 3 | L'IFI est facturé **sous le seuil d'assujettissement** (CGI art. 964) : 500 € à 900 k€, 2 500 € à 1 299 999 €. L'impôt en devient **non monotone** — 1 299 999 doit 2 500 €, 1 300 000 en doit 1 250 | défaut net | D-079 ; `corrections.py` |
+| 4 | Le forfait mobilier de 5 % appliqué à la base IFI (art. 965 : base immobilière) | **contesté**, argumenté des deux côtés | D-079 |
+| 5 | La garde ISF compare une assiette en euros à `bareme.rates[1]` = 0,007, donc toujours vraie : elle n'a jamais fonctionné | défaut net | D-081 |
+| 6 | `b1cg` **compté deux fois** dès que la base financière est vivante : sommé dans `isf_droits_sociaux` puis rajouté comme forfait mobilier. 1 M€ déclaré → 2 M€ d'assiette, contre l'art. 764 I-3° où les 5 % sont un plancher que la déclaration **remplace** | défaut net | D-090 ; `corrections.py` |
+
+**Un septième, côté `openfisca-core`** et de nature différente :
+`update_variable` **n'efface pas une date de fin** et ne le signale pas — redéfinir une
+variable sans `end` laisse l'ancienne en place, sans erreur, et le calcul ne bouge pas.
+C'est la classe aveugle-à-la-relecture dans l'API des variables plutôt que dans l'arbre des
+paramètres. `replace_variable` fonctionne. Documenté dans la docstring de core, donc
+signalable comme demande de clarté plutôt que comme bogue (D-081).
+
+**Ce que le dossier vaut ensemble** : quatre des six sont des paramètres ou des formules
+qui *résolvent*, *acceptent une écriture*, *se relisent correctement* et **ne font rien** —
+ou font deux fois quelque chose. Aucune relecture ne les attrape ; seul le passage d'un
+ménage les révèle. C'est l'argument que le premier brouillon développe.
+
+---
+
 # Phantom parameter `impot_revenu.credits_impots.aide_a_domicile` — draft d'issue amont + décisions à prendre
 
 ## 1. BOTTOM LINE
