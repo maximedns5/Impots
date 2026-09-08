@@ -56,6 +56,38 @@ the dict it was testing.
 
 **F1 — the PLF 2027, priced the week it publishes**, with dated,
 pre-registered, committed chiffrages. Early October. F2 exists for this.
+
+**Both preparation pieces are done — D-095.** `docs/PLF2027_COVERAGE.md` is
+the coverage triage, built on the PLF 2026's real article structure and
+verified by tests rather than asserted; `src/impots/chiffrages.py` is the
+grading harness, with the three questions answered at birth and a red-light
+test that must pass before any real case enters. Publication week is now
+execution: read the articles, map to categories, register, commit.
+
+**The headline is 1 of 29 fiscal articles — 3.4 %.** Three more have their
+parameters in the tree but no taxpayer in this population to exercise them,
+so wiring them would publish a confident zero. Twenty-three are outside the
+model's structure or its data. That number is a pre-registered limitation
+because it was decided in September; decided in October it would have been
+an excuse.
+
+**F1b's gate is run and its verdict is written — D-097.** An RCM imputation
+from published DGFiP fractiles is feasible and honest for the PFU (a
+proportional tax's yield depends only on each cell's total, which is
+published down to the top millime) and unusable for the CDHR (a ratio-defined
+measure needs within-cell dispersion no fractile table contains, at any
+fineness). The generalisation is the reusable part: any measure defined on a
+threshold, a ratio or an individual average rate is out of reach of a
+fractile imputation. Nothing is built past the gate; building the imputation
+is the owner's call.
+
+Two standing decisions for the owner, recorded and not taken:
+pre-registration integrity is internal-grade (a commit hash in a private
+repo). If external credibility ever matters, a timestamp OUTSIDE the repo is
+needed at registration time — a public commit, a published hash. And whether
+to build the RCM imputation F1b cleared: the cost is one increment, the price
+is two more totals spent on the calibration ledger and one more income
+category whose within-cell distribution is a declared fiction.
 Everything else in `docs/ROADMAP_NEXT.md` (F4 fiche de chiffrage, F3
 trajectories, F5 taxe foncière, F6 EMTR explorer, F7 DMTG gate) comes after.
 
@@ -67,7 +99,9 @@ UI knob count at 31 exposed of 52 defined.
 
 * **CAF cross-check**: prepared, not done, D-070 — needs Max at a browser;
   reCAPTCHA is never worked around.
-* **ERFS**: submitted, waiting; interrupts everything on arrival; acceptance
+* **Real income microdata (ERFS)**: NOT AVAILABLE for the foreseeable
+  future (D-096). The interrupt rule is dormant, not dead — if the data ever
+  arrives, Phase 1C and its acceptance test fire exactly as written; acceptance
   test is the barème-indexation backtest.
 * **Upstream issue draft** and all of WHAT_NOW section C (publication,
   deployment, public repo): deferred by the owner; nothing posts.
@@ -92,7 +126,11 @@ spec, on the record.
 Two added the same day. From D-093, a question to ask of every guard: **can
 this check's denominator go to zero?** A guard whose tolerance is relative to
 a quantity the tool can drive to zero is green until someone drives it there.
-From D-094, the one that follows it: **did I test the fix on a shape other
+From D-095, a fourth, earned twice in one session: **what is this number the
+difference of, exactly?** Both false alarms that day — a "dead" `taux_cdhr`
+and a "dead" `cvae_taux_max` — were the same mistake, comparing a thing with
+itself: once a memoised tree against itself, once `totals` where
+`totals_reform` was meant. From D-094, the one that follows D-093: **did I test the fix on a shape other
 than the one that alerted me?** Two of that day's nine confirmed findings were
 in the fix written hours earlier — a correction does not inherit the vigilance
 that motivated it. And a third, from the same day: **have I ever seen this

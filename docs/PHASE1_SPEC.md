@@ -153,7 +153,7 @@ Weights live in this file and in aggregation — **never inside OpenFisca**.
 Skeleton per M0 branch. Incomes, v1 discipline:
 - Wages: EEC wage variable where present; where absent/banded, hot-deck imputation within age×sex×CS×region strata (QRF is a v2 upgrade, not v1).
 - Unemployment benefit & pensions: impute from status via published aggregate distributions (DREES/UNEDIC), acknowledged **LOW fidelity**.
-- **No capital income in v1.** Consequence, stated verbatim in the UI and reconciliation report: *the top of the distribution is wrong; nothing above the ~95th percentile is publishable*. (CSG on capital, PFU, IFI: absent. This is the honest cost of open data — ERFS via branch C shrinks it.)
+- **No capital income in v1.** Consequence, stated verbatim in the UI and reconciliation report: *the top of the distribution is wrong; nothing above the ~95th percentile is publishable*. (CSG on capital, PFU, IFI: absent. This is the honest cost of open data — real income microdata via branch C would shrink it, and since D-096 that unlock is a door far away rather than a queue. F1b tests whether published tranche-level statistics can open part of it without microdata.)
 
 ### 4.3 `calibrate.py` — raking, with a hard epistemic rule
 

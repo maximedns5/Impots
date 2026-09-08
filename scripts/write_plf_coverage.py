@@ -1,0 +1,187 @@
+#!/usr/bin/env python
+"""Regenerate docs/PLF2027_COVERAGE.md from the checked triage table.
+
+The document is generated rather than written so its numbers cannot drift from the rows
+they summarise — the mechanism the review asked to spread to every hand-written figure in
+`reports/`. Editing the .md by hand is a mistake: edit `src/impots/plf_coverage.py`, which
+the tests check against the code it describes, and run this.
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from impots.plf_coverage import (
+    ARTICLES,
+    NO_FICHE,
+    SOURCE,
+    YIELD_AMBIGUOUS,
+    engine_ready_but_blind,
+    priceable_today,
+    priceable_yield_meur,
+    quantified_yield_meur,
+    share_of_yield,
+    share_priceable,
+)
+
+CASE = {"priceable_now": "**chiffrable**", "small_knob": "petit bouton",
+        "population_blind": "population aveugle", "not_priceable": "non chiffrable"}
+OUT = Path(__file__).resolve().parents[1] / "docs" / "PLF2027_COVERAGE.md"
+
+
+def pct(x: float) -> str:
+    """A percentage in French: comma decimal, non-breaking space before the sign."""
+    return f"{x * 100:.1f}".replace(".", ",") + "\u00a0%"
+
+
+def meur(x: float) -> str:
+    """Millions of euros with French thousands separators."""
+    return f"{x:,.0f}".replace(",", "\u00a0") + "\u00a0M EUR"
+
+
+def french(count: int) -> str:
+    words = {1: "un", 2: "deux", 3: "trois", 22: "vingt-deux", 23: "vingt-trois",
+             24: "vingt-quatre", 25: "vingt-cinq", 26: "vingt-six"}
+    return words.get(count, str(count))
+
+
+def build() -> str:
+    lines: list[str] = []
+    w = lines.append
+    total = len(ARTICLES)
+    priceable = len(priceable_today())
+    blind = len(engine_ready_but_blind())
+    refused = sum(1 for a in ARTICLES if a.bucket == "not_priceable")
+    out_of_reach = refused - blind
+
+    w("# Triage de couverture — quels articles d'un PLF cet outil sait-il chiffrer ?")
+    w("")
+    w("**Généré depuis `src/impots/plf_coverage.py` par `scripts/write_plf_coverage.py`.**")
+    w("Chaque nombre de ce document est calculé depuis la table ; aucun n'est saisi. Et")
+    w("chaque affirmation de la table sur le code — un bouton nommé, un chemin de")
+    w("paramètre — est vérifiée par `tests/test_plf_coverage.py`, parce qu'un triage qui")
+    w("dérive du code qu'il décrit est pire que pas de triage : il sera cru le jour J.")
+    w("")
+    w("## Pourquoi maintenant, et pourquoi sur le PLF 2026")
+    w("")
+    w("Le PLF 2027 arrive début octobre. Décider ce jour-là ce que l'outil sait chiffrer,")
+    w("c'est le décider sous pression et la réponse déjà sous les yeux — la condition")
+    w("exacte où « on n'a pas su chiffrer X » devient une excuse au lieu d'une limite.")
+    w("Décidé maintenant, chaque refus est **préenregistré**.")
+    w("")
+    w("Le texte 2027 n'existe pas et deviner ses numéros d'articles serait la fabrication")
+    w("que ce projet interdit. Ce qui survit à une renumérotation, c'est la **catégorie** :")
+    w("les catégories sont le livrable, les numéros 2026 n'en sont que la preuve.")
+    w("")
+    w(f"> {SOURCE}")
+    w("")
+    w("## Le chiffre, et il est mauvais")
+    w("")
+    w(f"Sur **{total} articles fiscaux** d'un vrai PLF, **{priceable}** produit aujourd'hui")
+    w(f"un chiffre que cet outil peut défendre — soit **{pct(share_priceable())}**.")
+    w(f"**{french(blind).capitalize()} autres** ont leurs paramètres dans l'arbre mais")
+    w("aucun contribuable dans cette population pour les exercer : les câbler publierait un")
+    w(f"zéro confiant. Les **{french(out_of_reach)}** restants sont hors de la structure du")
+    w("modèle ou hors de ses données.")
+    w("")
+    w(f"Un outil qui prétendrait chiffrer tout un PLF mentirait sur {french(refused)}")
+    w("articles. Ce document existe pour que ce chiffre soit connu en septembre plutôt")
+    w("qu'en octobre.")
+    w("")
+    w("## Le second chiffre, qui dit le contraire du premier")
+    w("")
+    w("Compter les articles met un droit de timbre au même poids qu'une contribution à")
+    w("quatre milliards. Compter les euros ne le fait pas — et l'ordre s'inverse.")
+    w("")
+    from impots.plf_coverage import YIELDS_2026_MEUR
+
+    w(f"L'annexe des évaluations préalables **ne chiffre que {len(YIELDS_2026_MEUR)}")
+    w(f"articles sur {total}** : {len(NO_FICHE)} n'ont aucune fiche (l'obligation organique")
+    w("ne couvre pas les dispositions du domaine exclusif des lois de finances) et")
+    w(f"{len(YIELD_AMBIGUOUS)} portent une fiche dont le montant n'est pas déterminable —")
+    w("« non chiffrable » selon l'annexe elle-même, ou contradictoire.")
+    w("")
+    w(f"Sur les **{meur(quantified_yield_meur())}** d'impact première année que l'annexe")
+    w(f"quantifie, cet outil en chiffre **{meur(priceable_yield_meur())}**, soit")
+    w(f"**{pct(share_of_yield())}**.")
+    w("")
+    w("La raison est entière dans un seul article : la contribution exceptionnelle sur les")
+    w("bénéfices des grandes entreprises, seul article chiffrable, est **le plus gros")
+    w(f"montant quantifié de toute l'annexe** — {meur(priceable_yield_meur())} en 2026.")
+    w(f"**{pct(share_priceable())} des articles, {pct(share_of_yield())} des euros.**")
+    w("Les deux chiffres sont vrais et il faut les donner ensemble :")
+    w("l'un seul flatte, l'autre seul accable.")
+    w("")
+    w("Une mise en garde sur ce second chiffre, et elle est structurelle : son dénominateur")
+    w("n'est pas le PLF, c'est **la part du PLF que l'annexe chiffre**. Les articles sans")
+    w("fiche et les « non chiffrables » en sont exclus, pas mis à zéro — les compter à zéro")
+    w("gonflerait la part ; les compter à leur valeur inconnue est impossible. La direction")
+    w("du biais est donc inconnue, et c'est pour cela qu'elle est dite.")
+    w("")
+    w("## Deux drapeaux que les trois cases ne peuvent pas porter")
+    w("")
+    w("Le cahier des charges demande exactement une case par article, et `bucket` la porte.")
+    w("Mais « chiffrable » cachait deux questions indépendantes, et les confondre est")
+    w("précisément la façon dont un zéro confiant se publie :")
+    w("")
+    w("* `engine_ready` — les paramètres existent et la formule les lit : il ne manque que")
+    w("  le câblage ;")
+    w("* `population_can_exercise` — la population synthétique contient réellement des")
+    w("  contribuables que la mesure atteint.")
+    w("")
+    w("Et une **quatrième case**, `population_blind`, née de cette distinction : le moteur")
+    w("saurait, la population ne peut pas. La câbler publierait un zéro confiant, ce qui")
+    w("est pire qu'un refus puisque cela porte la provenance d'une vraie réponse. Chaque")
+    w("article de cette case doit nommer ce qui **ouvrirait la porte** — une porte")
+    w("lointaine reste une porte, et le document ne doit mentir dans aucun des deux sens.")
+    w("")
+    w("**L'article 2 (CDHR) a forcé la distinction.** Ses paramètres résolvent, sa variable")
+    w("tourne, et elle mord : −75 836 EUR sur un foyer à 2 M EUR de dividendes. À la")
+    w("lettre, c'est un « petit bouton ». Mais la CDHR est un complément portant le taux")
+    w("moyen à 20 %, qu'un contribuable purement salarié dépasse déjà — donc sur une")
+    w("population sans revenus du capital l'assiette est vide **par construction**, et la")
+    w("câbler publierait 0,00 EUR face à un rendement d'environ un milliard.")
+    w("")
+    w("## La table")
+    w("")
+    w("| art. | catégorie | case | moteur | population | boutons | conf. |")
+    w("|---|---|---|---|---|---|---|")
+    for a in ARTICLES:
+        w(f"| {a.numero} | {a.categorie[:44]} | {CASE[a.bucket]} | "
+          f"{'prêt' if a.engine_ready else '—'} | "
+          f"{'oui' if a.population_can_exercise else 'aveugle'} | "
+          f"{', '.join(a.knobs) or '—'} | {a.confiance} |")
+    w("")
+    w("## Les raisons, article par article")
+    w("")
+    for a in ARTICLES:
+        w(f"### Article {a.numero} — {a.categorie}")
+        w("")
+        w(f"*{a.intitule}*")
+        w("")
+        head = f"**{CASE[a.bucket]}**"
+        if a.banners:
+            head += f" · bannières : {', '.join(a.banners)}"
+        if a.paths:
+            head += " · chemins : `" + "`, `".join(".".join(p) for p in a.paths) + "`"
+        w(head)
+        w("")
+        w(a.raison)
+        if a.unlock:
+            w("")
+            w(f"**Ce qui l'ouvrirait :** {a.unlock}")
+        w("")
+    w("## Ce qu'il faut en faire en octobre")
+    w("")
+    w("Lire les articles publiés, rattacher chacun à une catégorie ci-dessus, prendre la")
+    w("case. Là où le texte 2027 porte une catégorie absente d'ici, c'est une décision de")
+    w("triage **nouvelle** : la prendre, l'écrire, et dire qu'elle a été prise le jour même")
+    w("et non d'avance. La différence compte : un refus préenregistré est une limite, un")
+    w("refus improvisé est une excuse.")
+    w("")
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    OUT.write_text(build(), encoding="utf-8")
+    print(f"{OUT} — {len(build().splitlines())} lignes")

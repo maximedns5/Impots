@@ -255,7 +255,8 @@ the smallest complete demonstration that the reform machinery does what it says.
   total is identical at both ends — it is the split that moves, not the cost.
 * **The best-identified French elasticity is missing on purpose.** Capital income
   responds far more sharply than labour income, and this population carries none until
-  ERFS lands. The UI says so where a capital knob would appear. Any band on a reform
+  real income microdata is available — not in prospect (D-096). The UI says so where a
+  capital knob would appear. Any band on a reform
   touching the top is understated for that reason.
 * **Five of the seed table's rows died.** `eti_all` is 0.02, not the 0.05 that was
   written down; the two labour-supply scalars turned out to be averages their cited

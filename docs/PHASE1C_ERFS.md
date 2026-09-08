@@ -1,7 +1,13 @@
 # Branch C — moving the population onto ERFS
 
-**Status**: planned, not started · **Decided**: 2026-08-29 (D-016) · **Prerequisite**: Phase 1 as built
-**Access**: available — Max holds a Quetelet-Progedo account
+**Status: PLAN ON THE SHELF.** Owner decision, 2026-09-08 (D-096): ERFS access is not
+available for the foreseeable future, and the project plans **without** it. This document
+is not stale and is not cancelled — it is complete, and it fires exactly as written the
+day real income microdata arrives, acceptance test included. What changed is the
+planning assumption, not the plan.
+
+**Decided**: 2026-08-29 (D-016) · **Prerequisite**: Phase 1 as built
+**Access**: unavailable for the foreseeable future (was: Quetelet-Progedo account)
 
 Branch A' (D-012) built the population from the open EEC because that is what was
 reachable. The EEC carries real household structure and **no income of any kind**,

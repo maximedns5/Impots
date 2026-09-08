@@ -17,9 +17,11 @@ is not a clean bill: at fixed persons, 1.5 % too many households means household
 size runs about 1.5 % small — a composition skew, mild here, and precisely what a
 household-type margin corrects.
 
-D-017 puts this on **Branch C's** critical path rather than A''s. ERFS arrives
-weighted to its own vintage, two or three years stale, and must be re-raked to
-simulation-year margins before anything it produces is comparable.
+D-017 puts this on **Branch C's** critical path rather than A''s. Real income
+microdata arrives weighted to its own vintage, two or three years stale, and must be
+re-raked to simulation-year margins before anything it produces is comparable. (Branch C
+is a plan on the shelf since D-096 — ERFS access is unavailable for the foreseeable
+future — but the requirement is a property of any such source, not of ERFS.)
 
 ## The one methodological choice worth arguing about
 

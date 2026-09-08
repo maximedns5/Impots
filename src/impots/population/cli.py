@@ -727,6 +727,128 @@ def cmd_scenario_solve(args: argparse.Namespace) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- #
+# F1 — pre-registered chiffrages
+# --------------------------------------------------------------------------- #
+
+
+def cmd_chiffrage_register(args: argparse.Namespace) -> int:
+    """Price a registered scenario and pre-register the result.
+
+    The pricing happens HERE rather than being passed in, so the figure in the file is one
+    this command computed on a tree whose commit it also records. A chiffrage typed by hand
+    into a YAML file records a claim; one computed here records a run.
+    """
+    import polars as pl
+
+    from impots import preregistration as chiffrages_module
+    from impots import scenarios as scenarios_module
+
+    try:
+        tolerance = chiffrages_module.Tolerance(
+            relative=args.tolerance_relative,
+            absolute_eur=args.tolerance_absolute,
+            rationale=args.tolerance_rationale)
+    except chiffrages_module.ChiffrageError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    directory = Path(args.dir) if args.dir else None
+    try:
+        scenario = scenarios_module.load(args.scenario)
+    except scenarios_module.ScenarioError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    population = PROCESSED / f"population_{args.vintage}.parquet"
+    if not population.exists():
+        print(f"{population} not found — run `impots population build` first",
+              file=sys.stderr)
+        return 1
+
+    print(f"  chiffrage de « {args.scenario} » sur {args.sample:,} ménages…"
+          .replace(",", " "), flush=True)
+    priced = scenarios_module.mechanical_price(
+        scenario, frame=pl.read_parquet(population), households=args.sample)
+
+    try:
+        path = chiffrages_module.register(
+            args.case, mechanical_eur=priced["mechanical"], tolerance=tolerance,
+            population_vintage=args.vintage, sample=args.sample,
+            scenario=args.scenario, note=args.note or "", directory=directory)
+    except chiffrages_module.ChiffrageError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    print(f"préenregistré {path}")
+    print(f"  mécanique {priced['mechanical'] / 1e9:+.3f} md EUR")
+    print(f"  toléré {tolerance.relative:.0%} ou "
+          f"{tolerance.absolute_eur / 1e6:.0f} M EUR, au choix du plus large")
+    print("\n  CE FICHIER N'EST PAS ENCORE UN PRÉENREGISTREMENT : le commit l'est.")
+    print(f"  `git add {path} && git commit` — tant qu'il n'est pas committé, "
+          f"la notation le refusera.")
+    return 0
+
+
+def cmd_chiffrage_list(args: argparse.Namespace) -> int:
+    from impots import preregistration as chiffrages_module
+
+    directory = Path(args.dir) if args.dir else None
+    names = chiffrages_module.available(directory)
+    if not names:
+        print("aucun chiffrage préenregistré")
+        return 0
+    for name in names:
+        try:
+            case = chiffrages_module.load(name, directory)
+        except chiffrages_module.ChiffrageError as error:
+            print(f"  {name:26} ILLISIBLE — {error}")
+            continue
+        state = "noté" if case.comparator else "en attente d'un comparateur"
+        print(f"  {name:26} {case.pre_registered[:10]}  "
+              f"{case.mechanical_eur / 1e9:+8.3f} md  {state}")
+    return 0
+
+
+def cmd_chiffrage_grade(args: argparse.Namespace) -> int:
+    """Grade one case against the official figure. Refuses more than it computes."""
+    from impots import preregistration as chiffrages_module
+
+    directory = Path(args.dir) if args.dir else None
+    try:
+        case = chiffrages_module.load(args.case, directory)
+        chiffrages_module.verify_tolerance_unchanged(args.case, directory)
+        verdict = chiffrages_module.grade(case)
+    except chiffrages_module.ChiffrageError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    print(f"\n  {verdict.case} — **{verdict.verdict}** ({verdict.direction})")
+    print(f"  simulé  {verdict.simulated_eur / 1e9:+.3f} md")
+    print(f"  publié  {verdict.published_eur / 1e9:+.3f} md  "
+          f"({case.comparator.source}, {case.comparator.vintage}, "
+          f"{case.comparator.perimeter}, {case.comparator.net_of})")
+    relative = ("n/a — un écart relatif à zéro n'est pas un nombre"
+                if verdict.relative_gap is None else f"{verdict.relative_gap:+.1%}")
+    print(f"  écart   {verdict.gap_eur / 1e9:+.3f} md ({relative})")
+    print(f"  toléré  {verdict.allowed_eur / 1e9:.3f} md — borne {verdict.binding}, "
+          f"déclarée le {case.pre_registered[:10]}")
+    return 0 if verdict.verdict == "within" else 2
+
+
+def cmd_chiffrage_report(args: argparse.Namespace) -> int:
+    from impots import preregistration as chiffrages_module
+
+    directory = Path(args.dir) if args.dir else None
+    text = chiffrages_module.report(directory)
+    out = Path(args.out) if args.out else Path(__file__).resolve().parents[3] / "reports" / "chiffrages_preregistres.md"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(text, encoding="utf-8")
+    print(text)
+    print(f"  -> {out}")
+    return 0
+
+
 def pl_read(path: object) -> object:
     import polars as pl
 
@@ -872,7 +994,45 @@ def build_parser() -> argparse.ArgumentParser:
     solver.add_argument("--dir")
     solver.set_defaults(func=cmd_scenario_solve)
 
+    chiffrage = subcommands.add_parser(
+        "chiffrage", help="pre-registered chiffrages and their grades (F1)")
+    chiffrage_actions = chiffrage.add_subparsers(dest="action", required=True)
+
+    registrar = chiffrage_actions.add_parser(
+        "register", help="price a scenario and pre-register the figure")
+    registrar.add_argument("case")
+    registrar.add_argument("--scenario", required=True)
+    registrar.add_argument("--tolerance-relative", type=float, required=True,
+                           help="share of the published figure, e.g. 0.20")
+    registrar.add_argument("--tolerance-absolute", type=float, required=True,
+                           help="floor in EUR — what makes a chiffrage published at zero "
+                                "gradable at all")
+    registrar.add_argument("--tolerance-rationale", required=True,
+                           help="why THIS tolerance, stated before the answer is known")
+    registrar.add_argument("--vintage", default="2024")
+    registrar.add_argument("--sample", type=int, default=20_000)
+    registrar.add_argument("--note", default="")
+    registrar.add_argument("--dir")
+    registrar.set_defaults(func=cmd_chiffrage_register)
+
+    chiffrage_lister = chiffrage_actions.add_parser("list", help="list the cases")
+    chiffrage_lister.add_argument("--dir")
+    chiffrage_lister.set_defaults(func=cmd_chiffrage_list)
+
+    grader = chiffrage_actions.add_parser(
+        "grade", help="grade one case against the published figure")
+    grader.add_argument("case")
+    grader.add_argument("--dir")
+    grader.set_defaults(func=cmd_chiffrage_grade)
+
+    reporter = chiffrage_actions.add_parser(
+        "report", help="regenerate reports/chiffrages.md")
+    reporter.add_argument("--out")
+    reporter.add_argument("--dir")
+    reporter.set_defaults(func=cmd_chiffrage_report)
+
     return parser
+
 
 
 

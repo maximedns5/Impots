@@ -4027,3 +4027,206 @@ sont pas des preuves. La colonne `tests` vide y est le symptôme visible du mêm
 produire qu'un seul verdict, il n'a jamais rien vérifié. Un test vert dont on n'a jamais
 vu la version rouge est une hypothèse, pas une mesure — ce que ce projet impose déjà aux
 gardes du modèle, et qu'il n'avait pas imposé à son propre outillage.
+
+## D-095 — La préparation de F1 : un triage qui se vérifie, un barème qui se prouve rouge, et un chiffre de couverture de 3,4 %
+
+**2026-09-08 · F1 · `src/impots/plf_coverage.py`, `src/impots/chiffrages.py`,
+`scripts/write_plf_coverage.py`, `docs/PLF2027_COVERAGE.md`**
+
+Les deux pièces que le cahier des charges de préparation demandait, plus ce que leur
+construction a trouvé.
+
+### 1. Le triage, bâti sur le texte réel et vérifié par des tests
+
+Le PLF 2027 n'existe pas ; deviner ses numéros d'articles serait la fabrication que ce
+projet interdit. Le triage est donc bâti sur le **texte 2026 réel** — Assemblée nationale
+n° 1906, manifesté `88ef308e62a2`, découpé mécaniquement en 82 articles dont 29 fiscaux —
+et ce sont les **catégories**, pas les numéros, qui sont le livrable.
+
+**Le chiffre est mauvais et c'est l'intérêt du document. 1 article sur 29 — 3,4 % —
+produit aujourd'hui un chiffre défendable.** Trois autres ont leurs paramètres dans
+l'arbre mais aucun contribuable dans la population pour les exercer ; vingt-trois sont
+hors structure ou hors données. Le savoir en septembre est une limite préenregistrée ; le
+découvrir en octobre serait une excuse.
+
+**Le triage est du CODE VÉRIFIÉ, pas de la prose.** `tests/test_plf_coverage.py` contrôle
+que chaque bouton nommé existe verbatim dans le modèle de fil et que chaque chemin de
+paramètre résout au 2026-01-01. Un document qui dérive du code qu'il décrit est pire que
+pas de document : il sera cru le jour J, sous pression. Le `.md` est **généré** et un test
+échoue si quelqu'un l'édite à la main.
+
+### 2. Deux drapeaux que les trois cases ne pouvaient pas porter
+
+Le cahier des charges demandait exactement une case par article. « Chiffrable » cachait
+deux questions indépendantes, et les confondre est la façon même dont un zéro confiant se
+publie : `engine_ready` (les paramètres existent et la formule les lit) et
+`population_can_exercise` (la population contient des contribuables que la mesure atteint).
+
+**L'article 2, la CDHR, a forcé la distinction.** Ses cinq paramètres résolvent, sa
+variable tourne, et elle mord : **−75 836 EUR** sur un foyer à 2 M EUR de dividendes. À la
+lettre, c'est un « petit bouton » — du câblage. Mais la CDHR porte le taux moyen à 20 %, et
+un contribuable purement salarié le dépasse déjà : sur une population **sans revenus du
+capital**, l'assiette est vide par construction et le câblage publierait 0,00 EUR contre un
+rendement d'environ un milliard. Une case ne dit pas cela ; deux drapeaux le disent.
+
+### 3. Quatre pièges qui auraient produit un faux chiffre en octobre
+
+* **L'article 9 (dons Coluche) aurait chiffré exactement zéro.** Le bouton est exact et le
+  paramètre vivant — mais **l'arbre de référence porte déjà le plafond à 2 000 EUR depuis
+  2025-01-01**, la mesure ayant été votée. Chiffrer l'article contre cette base, c'est
+  chiffrer un changement contre lui-même. Et même contre un contrefactuel à 1 000 EUR,
+  l'assiette imputée va de 157 à 447 EUR par décile sans dispersion intra-décile : aucun
+  foyer de cette population n'atteint l'un ou l'autre plafond.
+* **L'article 11 (CVAE) n'est pas exprimable avec un bouton.** `cvae_taux_max` ne gouverne
+  que la tranche au-dessus de 50 M EUR. Mesuré : cette tranche porte **71,9 %** de la CVAE
+  de référence, et **205 959 des 213 730** redevables pondérés — 96,4 % — sont en dessous
+  et ne voient aucun changement de taux, alors que l'article déplace les six coefficients
+  du barème ensemble.
+* **L'article 5 cache une mesure atteignable dans un paquet de vingt-trois.** Son 12°
+  abroge l'article 199 quater F, la réduction pour frais de scolarité, pour laquelle trois
+  boutons existent et sont vivants. Le paquet est hors structure ; cette sous-mesure ne
+  l'est pas.
+* **Une réforme CDHR déplacerait les déciles sans déplacer la ligne IR affichée.** Mesuré :
+  porter `taux_cdhr` de 20 à 30 % déplace `revenu_disponible` de 205 400 EUR et
+  `impot_revenu_restant_a_payer` de rien du tout — or c'est ce dernier que le registre
+  publie comme `ir`. Comme `STATE_RECEIPTS` ne porte aucune ligne CDHR, **la garde de
+  partie double refuserait la course**, ce qui est le bon comportement et constitue le
+  prérequis de câblage à satisfaire avant que le bouton puisse exister.
+
+### 4. Le barème de notation, avec les trois questions posées à la naissance
+
+`chiffrages.py` : un cas YAML par chiffrage, la tolérance **déclarée avant** que le chiffre
+officiel existe, le comparateur avec sa discipline complète (source, millésime, périmètre,
+net de quoi), et une note `within`/`outside` avec sa direction.
+
+* **Question 1 — le dénominateur peut-il tendre vers zéro ?** Oui, et pas en théorie : un
+  article chiffré « sans impact budgétaire » publie 0. Une tolérance purement relative
+  exigerait alors une précision infinie. Une tolérance est donc une **paire**, relative et
+  absolue, l'indulgence étant la plus large des deux, et `binding` dit laquelle a tranché.
+  C'est la leçon de D-093 appliquée **avant** l'incident.
+* **Question 2 — testé sur une autre forme ?** La notation est exercée sur un comparateur
+  nul, un comparateur négatif, des signes opposés, et chaque borne mordant à son tour.
+* **Question 3 — a-t-on déjà vu ce contrôle échouer ?** `test_the_harness_grades_red` est
+  le premier test du fichier : un cas d'essai portant un écart connu doit être noté
+  `outside` avant qu'aucun cas réel n'entre. Un barème dont on n'a jamais vu le voyant
+  rouge n'est pas un barème, c'est un espoir — exactement le défaut de `make full`.
+
+**Et la règle qui fait tenir le reste : `verify_tolerance_unchanged` lit la tolérance dans
+l'HISTORIQUE GIT, pas dans le fichier.** Une tolérance élargie une fois le chiffre officiel
+connu transforme chaque manqué en réussi et laisse un fichier trait pour trait identique à
+un fichier honnête. Le fichier ne peut pas attraper cela — il ne montre que sa dernière
+version. Git s'en souvient. Un cas jamais committé refuse d'être noté : **le commit EST le
+préenregistrement**.
+
+**L'intégrité est de qualité INTERNE et le dit.** Le témoin est un hash de commit dans un
+dépôt privé plus une ligne datée dans le journal de passe. C'est honnête en interne et ne
+convaincrait personne à l'extérieur, le propriétaire du dépôt pouvant réécrire l'histoire.
+Si la crédibilité externe devient un enjeu, il faudrait un horodatage **hors du dépôt** au
+moment de l'enregistrement — un commit public, un hash publié. C'est une décision du
+propriétaire : elle est **enregistrée comme option, pas prise**.
+
+### 5. Une garde née d'une erreur de mesure de la session
+
+En sondant si `taux_cdhr` était un bouton vivant, j'ai écrit 0,30 dans `baseline()` et
+comparé le résultat à `baseline()` — **le même objet**, la fonction étant mémoïsée. L'impôt
+n'a pas bougé et la lecture évidente était « paramètre mort, huitième artefact amont ». Il
+n'est pas mort : sur deux systèmes distincts il porte la CDHR de −75 836 à −281 236. La
+mesure comparait un arbre à lui-même — la forme D-044 dans un script de cinq lignes.
+
+Le chemin de production n'a jamais été en cause (`Reform(tbs)` clone d'abord, ce que
+`test_no_mutation` prouve). Mais le piège était réel, alors `update_existing` **refuse
+désormais une écriture visant l'arbre partagé de `baseline()`**, avec son test qui tue et
+son test miroir prouvant qu'un système à soi passe toujours. Une garde qui ne se déclenche
+qu'en dehors du chemin de production n'y coûte rien et convertit une réponse fausse
+silencieuse en message.
+
+**Et j'ai refait la même faute une seconde fois dans la même session**, en lisant
+`totals` au lieu de `totals_reform` pour juger le bouton CVAE : delta +0,000, « bouton
+mort ». C'est le piège de D-071 mot pour mot — trois boutons employeur avaient failli être
+déclarés morts parce qu'on regardait la mauvaise ligne. Corrigé : le bouton porte
+−0,759 md. **Deux fausses alertes en une session, toutes deux de la forme « comparer une
+chose à elle-même ».** La quatrième question à poser : *de quoi ce nombre est-il la
+différence, exactement ?*
+
+## D-096 — L'ERFS n'arrive pas : la règle d'interruption devient dormante, pas morte
+
+**2026-09-08 · décision du propriétaire, consignée**
+
+L'accès à l'ERFS n'est **pas disponible dans un avenir prévisible**. Le projet planifie
+désormais **sans**.
+
+**Ce qui ne change pas.** `docs/PHASE1C_ERFS.md` n'est ni périmé ni annulé : il est
+complet, et il se déclenche exactement tel qu'il est écrit — test d'acceptation compris,
+le backtest d'indexation du barème — le jour où des microdonnées de revenus réelles
+arrivent. La règle d'interruption garde son rang au-dessus de tout. Ce qui change est
+l'hypothèse de planification, pas le plan.
+
+**Ce qui change.** Un balayage, un commit : toute bannière, tout avertissement, tout
+document qui disait ou laissait entendre « en attendant l'ERFS (bientôt) » dit désormais
+« en attendant des microdonnées de revenus réelles ». Même honnêteté, sans fausse
+imminence — `DATA_DOWNLOADS.md` ne dit plus « soumettre maintenant, 2 à 6 semaines de
+délai », `WHAT_NOW.md` ne dit plus « quand Progedo livrera », `ROADMAP_NEXT.md` ne dit plus
+« la file est à cinq semaines et plus », et `calibrate.py` parle de la propriété générale
+d'une source rétrospective plutôt que de l'ERFS.
+
+**Et le triage continue de nommer l'ERFS comme la serrure.** Une porte lointaine reste une
+porte : les articles classés `population_blind` portent un champ `unlock` obligatoire — le
+dataclass refuse de se construire sans — qui dit ce qui ouvrirait chacun. Le document ne
+doit mentir dans aucun des deux sens : ni promettre une arrivée, ni faire passer un refus
+de données pour un refus définitif. Le contraire d'une fausse imminence n'est pas un faux
+définitif.
+
+**La conséquence de fond, qui n'est pas administrative.** Les revenus du capital resteront
+absents de la population. C'est ce qui rend la CDHR non chiffrable (D-095), et c'est ce qui
+ferme les canaux comportementaux de capital que PHASE3_SPEC refusait déjà « jusqu'à
+l'ERFS ». F1b existe pour tester si des statistiques **publiées** par tranche ouvrent une
+partie de cette porte sans microdonnées — la question est posée, la réponse n'est pas
+supposée.
+
+## D-097 — Gate F1b : le PFU est imputable depuis des données publiées, la CDHR ne l'est pas
+
+**2026-09-08 · `docs/F1B_CAPITAL_GATE.md`**
+
+Le refus de l'article 2 avait nommé le trou — la population ne porte aucun revenu du
+capital. Ce gate demande ce que les données **publiées** permettent, puisque les
+microdonnées ne viendront pas (D-096). Verdict : **oui pour le PFU, non pour la CDHR.**
+
+**Le cahier des charges se trompait sur sa source.** Il annonçait « des revenus de
+capitaux mobiliers par tranche de RFR » dans les statistiques IR de la DGFiP. Ce n'est pas
+publié. Ce qui l'est, dans DGFiP Statistiques n° 41 (tableaux manifestés), c'est l'**impôt
+hors barème par fractile** — un impôt, pas une assiette. L'assiette est **dérivable** :
+10,32 Md€ de PFU au titre de l'IR divisés par 12,8 % donnent 80,6 Md€, à comparer aux
+70,09 Md€ de RCM plus une vingtaine de milliards de plus-values du tableau 1, soit 9 %
+d'écart — que l'option pour le barème explique. Deux routes indépendantes vers le même
+ordre de grandeur, ce qui rend la dérivation utilisable.
+
+**Et il se trompait sur la raison du refus attendu**, ce qui est la partie réutilisable.
+Il prévoyait que la CDHR resterait refusée « parce qu'elle mord dans le centile supérieur,
+où une imputation par tranche est trop grossière ». Or la granularité publiée descend au
+**millime** — le tableau 2 porte « dont dernier centième » et « dont dernier millième ».
+L'argument de finesse ne tient donc pas. Le vrai refus est plus fort :
+
+**Un impôt PROPORTIONNEL ne dépend que de l'assiette totale de chaque cellule, jamais de
+sa dispersion interne.** L'artefact « tous les foyers d'une cellule reçoivent la même
+base » n'entame pas le rendement d'un changement de taux du PFU : la somme est la somme.
+**La CDHR, elle, est définie sur un RATIO** — elle porte le taux moyen à 20 % du RFR pour
+ceux qui sont en dessous. Une imputation uniforme donne à tous les foyers d'une cellule le
+même ratio, donc les met tous du même côté du seuil : la CDHR frapperait les 41 000 foyers
+du millime ou aucun, selon le côté où tombe la moyenne. Le rendement serait un artefact du
+placement de cette moyenne, sautant de zéro à des milliards au franchissement d'un seuil
+que rien dans les données ne fixe.
+
+Ce n'est pas « trop grossier », c'est **mal posé** : la mesure est définie sur une
+dispersion que la source ne contient à aucun fractile. **Et la règle généralise** : toute
+mesure définie sur un seuil, un ratio ou un taux moyen individuel est hors d'atteinte
+d'une imputation par fractile, quelle que soit sa finesse — ce qui inclut le plafonnement
+de l'IFI et toute contribution différentielle future. C'est la même forme que le plafond
+des dons Coluche (D-095) : un bouton correct sur une assiette dont l'imputation a aplati
+la dispersion qui portait tout l'effet.
+
+**Rien n'est construit.** Le gate décide que la question a une réponse ; construire
+l'imputation RCM appartient au propriétaire. Son prix est permanent : deux totaux de plus
+dépensés au registre de calibration, et une catégorie de revenu de plus dont la
+distribution intra-cellule est une fiction déclarée. Ce qu'elle achèterait : les boutons de
+taux du PFU au niveau population, la CSG sur les revenus du capital, et une part de
+l'incidence du haut de distribution. Ce qu'elle n'achèterait pas : la CDHR.

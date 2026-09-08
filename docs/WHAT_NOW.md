@@ -12,8 +12,11 @@ a plan: the owner picks.
 
 ## A. Armed and waiting — will fire on an external event
 
-**A1 · The ERFS migration (Phase 1C).** Loaded since D-016, acceptance test
-ready (the barème-indexation backtest). When Progedo delivers: real incomes
+**A1 · The migration to real income microdata (Phase 1C).** Loaded since
+D-016, acceptance test ready (the barème-indexation backtest). **Not
+scheduled — ERFS access is unavailable for the foreseeable future (D-096),
+so this is a plan on the shelf rather than work in a queue.** If real income
+microdata ever arrives: real incomes
 replace the synthetic ones, which fixes the three failing benefit lines (RSA
 +106 %, AL, AF), collapses the D-015 density error the cliffs backtest
 measured at +107 %, moves the wage bill from calibration to validation
@@ -105,7 +108,7 @@ recommended shape whenever reopened: household calculator public first
 (validated, caveat-free), population/firm/macro tabs behind beta banners with
 the deltas-only and refusal rules they already enforce. Needs: small host,
 quick-tier limits, AGPL §13 link — the repo being public (C1) makes this a
-formality. *Cheapest after ERFS lands; possible any time.*
+formality. *Cheapest with real income microdata; possible any time, and since D-096 there is no reason to wait for it.*
 
 **C4 · Upstream and allies.** D-018's posture was "offer when substantial".
 The firm package now carries verified IS/CVAE/C3S/CEBGE parameters — that is
@@ -160,6 +163,6 @@ With ERFS able to interrupt at any point: ~~**B1**~~ (done 2026-09-03) →
 ~~**B3** first half~~ (done 2026-09-03) → **B2** (CAF cross-check, an hour,
 needs Max at a browser) → **C1 + C2** (public repo + methods page — the
 mission, at zero hosting cost) → **C6** (two or three live-debate analyses,
-which becomes the material for **C4/C5**) → ERFS when it lands → reopen
+which becomes the material for **C4/C5**) → real income microdata if it ever becomes available (D-096) → reopen
 **C3** (deployment) with the migrated population. B3's imputation and **B4**
 slot in wherever a session has appetite; D2 gets written the first quiet week.

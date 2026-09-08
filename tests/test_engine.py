@@ -415,3 +415,39 @@ def test_history_is_the_default() -> None:
     that credits phantom benefits."""
     assert len(build_situation(SINGLE, 2024)["individus"]["adulte_0"]["salaire_de_base"]) == 36
     assert compute(SINGLE, 2024, tier="full").historique_revenus is True
+
+
+def test_a_write_aimed_at_the_shared_baseline_is_refused() -> None:
+    """`baseline()` is memoised, so writing to its tree mutates every later read.
+
+    The production path never does this — `Reform(tbs)` clones first, which
+    `test_no_mutation` proves — but an ad-hoc probe does, and the failure is SILENT: the
+    script then compares the mutated tree against itself, the number does not move, and
+    a live parameter looks dead. That is exactly what happened while checking whether
+    `taux_cdhr` was a real knob (it is: -75 836 to -281 236 on two distinct systems).
+
+    Fails if the guard is removed from `update_existing`.
+    """
+    from impots.engine.system import baseline
+    from impots.parameters import ParameterWriteError, update_existing
+
+    path = ("impot_revenu", "contributions_exceptionnelles",
+            "contribution_differentielle_hauts_revenus", "taux_cdhr")
+    with pytest.raises(ParameterWriteError, match="mémoïsé"):
+        update_existing(baseline().parameters, path, start="2026-01-01",
+                        value=0.30, instant="2026-01-01")
+
+
+def test_the_guard_does_not_block_a_system_of_ones_own() -> None:
+    """The kill test for the guard above: refusing everything would prove nothing."""
+    from openfisca_france import FranceTaxBenefitSystem
+
+    from impots.parameters import update_existing
+
+    fresh = FranceTaxBenefitSystem()
+    path = ("impot_revenu", "contributions_exceptionnelles",
+            "contribution_differentielle_hauts_revenus", "taux_cdhr")
+    update_existing(fresh.parameters, path, start="2026-01-01",
+                    value=0.30, instant="2026-01-01")
+    node = fresh.parameters("2026-01-01").impot_revenu.contributions_exceptionnelles
+    assert float(node.contribution_differentielle_hauts_revenus.taux_cdhr) == 0.30

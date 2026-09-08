@@ -18,7 +18,7 @@ Every headline number gains its band. A reform's result becomes three stacked an
 5. Population baseline artifacts include the EMTR distribution by decile (§6).
 6. API and UI expose the band; the mechanical number is unchanged everywhere; all prior suites green.
 
-**Out of scope — refuse**: macro/GE closure (L4 — multipliers, price feedback: Phase 4's decision, not this one); indirect taxes; **capital-income channels** (dividend/PFU response, the best-identified French elasticity of all — structurally impossible until ERFS lands, because the population carries no capital income; say so in the UI where a capital knob would appear); migration/expatriation; firm investment response beyond §3-C4's zero-band; dynamic/multi-year responses.
+**Out of scope — refuse**: macro/GE closure (L4 — multipliers, price feedback: Phase 4's decision, not this one); indirect taxes; **capital-income channels** (dividend/PFU response, the best-identified French elasticity of all — structurally impossible until real income microdata is available, because the population carries no capital income; say so in the UI where a capital knob would appear. Since D-096 that is a far-away door rather than an imminent one; F1b tests whether published tranche-level statistics open part of it); migration/expatriation; firm investment response beyond §3-C4's zero-band; dynamic/multi-year responses.
 
 ---
 

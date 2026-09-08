@@ -1071,6 +1071,42 @@
       "downloaded": "2026-09-08",
       "licence": "IPP — usage cité",
       "description": "IPP, Rapport n° 46 (octobre 2023), « Le plafonnement de l'impôt sur la fortune ». Source du backtest ISF-2017. ATTENTION à l'URL : celle du handoff (uploads/2023/10/…) renvoie 404, le fichier ayant été redéposé en juin 2025 sous uploads/2025/06/46_… — l'URL ci-dessus est celle qui résout, relevée sur la page de publication.\nTableau 1.1 (p. idx 22) : effectifs de redevables ISF 2017 par tranche — 356 229 au total, 257 729 / 91 426 / 6 639 / 437 — et PARTS des foyers plafonnés, PAS des montants par tranche.\nTableau 1.2 (p. idx 24) : les NIVEAUX, par statut de plafonnement. Foyers plafonnés : patrimoine taxable 13 929,1 k€ avant abattements, ISF 153 416,6 € avant plafonnement et 49 482,9 € après. Non-plafonnés : 4 727,3 k€, 25 820,9 € des deux côtés. Millésime : déclarations 2017, revenus de référence 2016."
+    },
+    "plf2026_texte_an_b1906.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B1906.html",
+      "quarantined": false,
+      "sha256": "88ef308e62a21ce5c56af0aca6b5d3db2fd1f281631ae7df6cdbd237ab6788bc",
+      "bytes": 6049228,
+      "downloaded": "2026-09-08",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 1906 (17e législature) : projet de loi de finances pour 2026, articles avec exposé des motifs. Manifesté pour la PRÉPARATION de F1 : c'est la structure d'articles réelle sur laquelle le triage de couverture PLF 2027 est bâti, faute de pouvoir bâtir sur un texte 2027 qui n'existe pas encore.\nLes titres d'articles sont portés par les <h6> sous la forme « ARTICLE n : intitulé » ; la section fiscale est « I – Impôts et ressources autorisées / B – Mesures fiscales », articles 2 à 30. 82 articles au total, dont l'article liminaire.\nATTENTION : le PLF 2026 a été adopté par 49.3 le 2 février 2026 puis promulgué (LOI n° 2026-103 du 19 février 2026) — le texte manifesté ici est le PROJET déposé, pas la loi votée. C'est le bon comparateur pour une structure de dépôt."
+    },
+    "plf2026_evaluations_prealables.pdf": {
+      "url": "https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1087921/file/PLF%202026_Evaluations%20pr%C3%A9alables_Vdef.pdf",
+      "quarantined": false,
+      "sha256": "9f53516f81391e0574aec89a9c0315e8caa6c30f9ecf1a6327d64b1fb8cb9fea",
+      "bytes": 5402161,
+      "downloaded": "2026-09-08",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "PLF 2026, évaluations préalables des articles (599 p.). Source des rendements par article pour le second titre du triage F1, et le MODÈLE du comparateur que les chiffrages préenregistrés attendront pour le PLF 2027.\nSTRUCTURE : chaque fiche s'ouvre sur « ARTICLE n : » suivi de « Évaluation préalable de l'article » ; le rendement est en 4.2.1. ATTENTION, il n'a PAS de forme unique — tableau à 5 colonnes, chronique à 13 colonnes (art. 11), ou simple phrase en prose (art. 4 : « un gain pour l'État de 4 Md€ en 2026 »). Un extracteur qui ne cherche que des tableaux rate l'article le plus gros.\nPIÈGE D'UNITÉ : l'unité est déclarée PAR FICHE et varie — art. 5 et 6 en MILLIARDS, les autres en MILLIONS. Et l'art. 2 est contradictoire : en-tête « en millions d'euros », cellule « 1,5 », note de méthode « revue à 1,5 Md€ ». Même piège que l'en-tête « (M€) » sur des cellules en euros de DGFiP n° 45.\n11 des 29 articles fiscaux n'ont AUCUNE fiche (hors du champ de l'obligation organique), et plusieurs fiches disent « non chiffrable »."
+    },
+    "dgfip_stat_41_ir_2024.pdf": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.pdf",
+      "quarantined": false,
+      "sha256": "ffc54026d9082e97d34705a677b7eb20d81536cc952f07f444243a62fc2ecb5a",
+      "bytes": 390007,
+      "downloaded": "2026-09-08",
+      "licence": "DGFiP — Licence Ouverte",
+      "description": "DGFiP Statistiques n° 41 (novembre 2025), « L'impôt sur le revenu 2024 ». Source du GATE F1b. Porte le TOTAL national des revenus de capitaux mobiliers — 70,09 Md€ en 2024, +32,1 %, 4,55 % du revenu déclaré — et l'encadré 1 qui donne la mécanique du PFU (30 % = 12,8 IR + 17,2 PS, option barème possible). Ne porte AUCUNE ventilation des RCM par tranche : la ventilation publiée porte sur l'IMPÔT hors barème, pas sur l'assiette."
+    },
+    "dgfip_stat_41_ir_2024_tables.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num41_11/dgfip_stat_41.xlsx",
+      "quarantined": false,
+      "sha256": "0d7fd5b950231738da88f7f62827fbd41da8247dac6ca1f3d93812452a76a4f8",
+      "bytes": 44115,
+      "downloaded": "2026-09-08",
+      "licence": "DGFiP — Licence Ouverte",
+      "description": "DGFiP Statistiques n° 41 — tableaux. LE fichier du gate F1b. Tableau 2 : impôt au barème et impôt hors barème (+ CEHR) par décile de RFR par part, AVEC les lignes « dont dernier centième » et « dont dernier millième » — la granularité publiée descend donc au millime, pas seulement au décile. Moyennes par foyer de l'impôt hors barème : 4 € au 1er dixième, 68 € au 9e, 2 290 € au dernier dixième, 19 423 € au dernier centième, 135 784 € au dernier millime ; total 10,32 Md€ (+ 1,98 Md€ CEHR). Tableau 1 : décomposition des revenus déclarés par catégorie, dont RCM 70,09 Md€. ATTENTION : la colonne hors barème AGRÈGE le PFU et la CEHR — la parenthèse isole la CEHR, il faut la soustraire pour obtenir le PFU seul."
     }
   }
 }

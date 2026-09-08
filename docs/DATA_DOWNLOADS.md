@@ -9,7 +9,7 @@ curl on Max's own network).
 
 | What | Where | Status |
 |---|---|---|
-| **ERFS fichier détail** (latest vintage) + documentation | Quetelet-Progedo / data.progedo.fr — the request per docs/PHASE1C_ERFS.md §2, under Max's account | **Submit now if not done** — 2-6 weeks lead time gates the whole 1C migration. NEVER into git (D-016). |
+| **ERFS fichier détail** (latest vintage) + documentation | Quetelet-Progedo / data.progedo.fr — the request per docs/PHASE1C_ERFS.md §2 | **Not available for the foreseeable future** (D-096). The 1C migration is a plan on the shelf, not a queue being waited on. If access ever opens, nothing about the plan changes. NEVER into git (D-016). |
 | EEC FD 2024 (parquet + Varmod + dictionnaire PDF) | insee.fr/fr/statistiques/8632441 | done (M0) |
 | Filosofi latest tables | insee.fr + data.gouv.fr | done if used by reconcile; re-pull the 2023 vintage tables if only partials are on disk |
 

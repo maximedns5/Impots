@@ -2,7 +2,8 @@
 
 Two parts: the closure work that finishes what is open (Session A, do first),
 and a proposed feature backlog for the phases after (F1–F8, owner picks the
-order; a recommended sequence closes the file). ERFS interrupts everything on
+order; a recommended sequence closes the file). The real-income-microdata
+interrupt is DORMANT, not dead (D-096): it still outranks everything on
 arrival, as always.
 
 ---
@@ -99,7 +100,8 @@ COICOP aggregates with an explicit "no distribution until BDF 2026 arrives
 matters more than anything else on this page) **→ F4 → F3 as the next full
 phase → F5 → F6**, with F7's gate run whenever a session has spare room and
 F8 parked. Standing items outside the queue: CAF cross-check (owner,
-30 min), Progedo account check (the ERFS queue is at five-plus weeks),
+30 min); real income microdata is not available for the foreseeable future
+(D-096), so nothing is being waited on there;
 upstream dossier and all publication (owner). The maintenance charter gets
 written the first quiet week — after F1's pre-registrations are in, quiet
 weeks exist again.
