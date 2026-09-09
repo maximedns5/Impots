@@ -698,3 +698,49 @@ def test_the_cli_lists_around_a_malformed_file(tmp_path, capsys):
     out = capsys.readouterr().out
     assert "aaa" in out and "ILLISIBLE" in out
     assert "bon" in out, "le bon scénario a disparu derrière le mauvais"
+
+
+# --- F3 M5 (S2): the trajectory endpoints -------------------------------------------
+
+
+def test_the_trajectory_endpoints_are_read_only(client_with_scenarios):
+    """A trajectory is N population runs twice over — minutes per year — so it is
+    produced by the CLI and only READ over HTTP. Fails the day a POST appears."""
+    client, _ = client_with_scenarios
+    routes = {(r.path, m) for r in client.app.routes
+              for m in getattr(r, "methods", set())}
+    writes = {(p, m) for p, m in routes
+              if p.startswith("/trajectoires") and m in {"POST", "PUT", "DELETE", "PATCH"}}
+    assert not writes, f"surface d'écriture apparue : {writes}"
+
+
+def test_an_unknown_trajectory_is_a_404(client_with_scenarios):
+    client, _ = client_with_scenarios
+    assert client.get("/trajectoires/jamais_vue").status_code == 404
+
+
+def test_a_trajectory_name_that_is_a_path_is_refused(client_with_scenarios):
+    """The name reaches a file path, so it takes the same identifier rule as scenarios
+    and chiffrages (D-094). Fails if it is interpolated unguarded."""
+    client, _ = client_with_scenarios
+    assert client.get("/trajectoires/..%2F..%2Fetc").status_code in (404, 422)
+
+
+def test_the_committed_trajectory_artefact_validates(client_with_scenarios):
+    """The worked example on disk must parse through the wire model — a artefact the UI
+    cannot read is an artefact that will fail silently in a browser."""
+    from pathlib import Path
+
+    from impots.api.schemas import TrajectoryResponse
+
+    path = Path(__file__).resolve().parents[1] / "reports" / "trajectoire_gel_bareme.json"
+    if not path.exists():
+        pytest.skip("trajectoire non calculée")
+    payload = TrajectoryResponse.model_validate_json(path.read_text(encoding="utf-8"))
+    assert payload.years, "artefact vide"
+    assert payload.banner.startswith("Ce qui est chiffré")
+    bases = {y.basis for y in payload.years}
+    assert bases <= {"legislated", "reconducted"}
+    # The uprating class must widen with the horizon — the fact M5 asks to make visible.
+    widths = [abs(y.uprating_aged_eur - y.uprating_frozen_eur) for y in payload.years]
+    assert widths[-1] > widths[0], "la classe vieillissement doit s'élargir avec l'horizon"

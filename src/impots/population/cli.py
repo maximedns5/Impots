@@ -917,6 +917,111 @@ def cmd_fiche(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_trajectoire(args: argparse.Namespace) -> int:
+    """Price a scenario year by year and write the artefact the UI and fiche read (F3 M5).
+
+    Two population runs per year — the frozen population and the aged one — because the
+    uprating uncertainty class IS that pair (D-107). At the default sample that is minutes
+    per year, which is why this is a CLI batch job and not an HTTP request.
+    """
+    import json as _json
+    from datetime import date as _date
+    from typing import Any
+
+    import polars as pl
+
+    from impots import scenarios as scenarios_module
+    from impots import trajectoires as tj
+    from impots import uprating as up
+    from impots.api.schemas import ReformSpec
+    from impots.population import aggregate as agg_mod
+    from impots.population.runner import run as population_run
+
+    directory = Path(args.dir) if args.dir else None
+    try:
+        scenario = scenarios_module.load(args.scenario, directory)
+        tj.require_reference(args.reference)
+        hypothesis = up.Uprating(wage=args.wage, price=args.price,
+                                 source=args.hypothesis_source, base_year=args.base_year)
+    except (scenarios_module.ScenarioError, tj.TrajectoryError,
+            up.UpratingError) as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    population = PROCESSED / f"population_{args.vintage}.parquet"
+    if not population.exists():
+        print(f"{population} not found — run `impots population build` first",
+              file=sys.stderr)
+        return 1
+    frame = pl.read_parquet(population)
+    reform = scenario.reform.model_dump(exclude_none=True, mode="json")
+
+    from impots.engine.reforms import read_ir_parameters
+    from impots.engine.system import baseline as engine_baseline
+
+    tbs = engine_baseline()
+    indexation = (tj.Indexation(rate=args.price, source=args.hypothesis_source)
+                  if args.reference == "indexe" else None)
+
+    def runner(pop: object, year: int):
+        """A `run` callable for `tj.price`: reform dict -> mechanical cost.
+
+        Routed through `tj.price` rather than run directly so the REFERENCE is actually
+        applied — the first version validated `--reference` and then ignored it, pricing
+        the reform against current law whichever was asked for. Against `indexe` the cost
+        is the difference between indexed-plus-reform and indexed-alone, and skipping that
+        subtraction would have folded the whole cost of indexation into every figure.
+        """
+        def run(spec: dict[str, Any] | None) -> float:
+            if not spec:
+                return 0.0
+            result = population_run(pop, year=year,
+                                    reform=ReformSpec.model_validate(spec),
+                                    tier="full", sample=args.sample)
+            return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
+        return run
+
+    def price(pop: object, year: int) -> float:
+        return tj.price(year, args.reference, reform=reform,
+                        law=read_ir_parameters(tbs, year), run=runner(pop, year),
+                        indexation=indexation).mechanical_eur
+
+    rows = []
+    for year in range(args.start, args.end + 1):
+        print(f"  {year}…", flush=True)
+        frozen = price(frame, year)
+        aged = price(up.uprate(frame, year, hypothesis), year)
+        rows.append(tj.year_uncertainty(
+            year, basis=tj.basis_for(args.side, year), frozen_eur=frozen,
+            aged_eur=aged, base_year=args.start))
+
+    payload = {
+        "scenario": scenario.name, "titre": args.titre or scenario.name,
+        "source": scenario.source, "reference": args.reference,
+        "computed": _date.today().isoformat(),
+        "banner": ("Ce qui est chiffré : ce droit, sur la France d'aujourd'hui, "
+                   "avec l'argent de demain."),
+        "uprating_note": up.caveat(args.start, hypothesis),
+        "years": [{
+            "year": r.year, "basis": r.basis, "mechanical_eur": r.mechanical_eur,
+            "uprating_frozen_eur": r.uprating_eur[0],
+            "uprating_aged_eur": r.uprating_eur[1],
+            "behavioural_low_eur": (r.behavioural_eur or [None, None])[0],
+            "behavioural_high_eur": (r.behavioural_eur or [None, None])[1],
+            "behavioural_grade": r.behavioural_grade,
+            "fan_shown": r.fan is not None, "fan_note": r.fan_note,
+        } for r in rows],
+    }
+    out = Path(__file__).resolve().parents[3] / "reports" / f"trajectoire_{scenario.name}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(_json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+                   encoding="utf-8")
+    print(f"  -> {out}")
+    for r in rows:
+        print(f"     {r.line()}")
+    return 0
+
+
 def pl_read(path: object) -> object:
     import polars as pl
 
@@ -1114,7 +1219,29 @@ def build_parser() -> argparse.ArgumentParser:
     fiche_parser.add_argument("--dir")
     fiche_parser.set_defaults(func=cmd_fiche)
 
+    trajectoire = subcommands.add_parser(
+        "trajectoire", help="price a scenario year by year and write the artefact (F3 M5)")
+    trajectoire.add_argument("scenario")
+    trajectoire.add_argument("--start", type=int, default=2026)
+    trajectoire.add_argument("--end", type=int, default=2030)
+    trajectoire.add_argument("--reference", required=True,
+                             choices=["reconduit", "indexe"],
+                             help="no default: the two answer different questions")
+    trajectoire.add_argument("--side", default="menages",
+                             choices=["menages", "entreprises"])
+    trajectoire.add_argument("--wage", type=float, required=True)
+    trajectoire.add_argument("--price", type=float, required=True)
+    trajectoire.add_argument("--hypothesis-source", required=True,
+                             help="where the indices come from — declared, never forecast")
+    trajectoire.add_argument("--base-year", type=int, default=2024)
+    trajectoire.add_argument("--vintage", default="2024")
+    trajectoire.add_argument("--sample", type=int, default=8_000)
+    trajectoire.add_argument("--titre")
+    trajectoire.add_argument("--dir")
+    trajectoire.set_defaults(func=cmd_trajectoire)
+
     return parser
+
 
 
 

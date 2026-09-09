@@ -139,7 +139,19 @@ ARTICLES: tuple[Article, ...] = (
         knobs=(),
         paths=(),
         engine_ready=True, population_can_exercise=False,
-        unlock='real income microdata (ERFS, PHASE1C_ERFS.md — plan on the shelf since D-096). The CDHR bites where the effective rate is below 20 %, i.e. on capital income, which this population has none of. F1b tests whether published RCM-by-tranche statistics open a PART of this — probably enough for PFU rate knobs, probably NOT enough for the CDHR, which lives inside the top percentile where tranche-level imputation is too coarse to be honest.',
+        unlock=(
+            "real income microdata (ERFS, PHASE1C_ERFS.md — plan on the shelf since "
+            "D-096). Le refus relève de la CLASSE « seuil sur ratio » (D-105.2) : la "
+            "CDHR est définie par un seuil portant sur un RATIO — le taux moyen "
+            "d'imposition rapporté au RFR — donc une imputation uniforme dans la cellule "
+            "met tous les foyers du même côté du seuil de 20 %, et le rendement saute de "
+            "zéro à des milliards selon le placement de la moyenne. Ce n'est PAS une "
+            "question de finesse : la granularité publiée descend au millime (DGFiP "
+            "n° 41) et cela ne suffit pas, parce que le placement intra-cellule EST la "
+            "réponse. Aucune imputation par fractile n'ouvrira cette porte, si fine "
+            "soit-elle ; seules des microdonnées le peuvent. F1b (D-097) a mesuré que la "
+            "même source ouvre en revanche le PFU, qui est proportionnel."
+        ),
         confiance='haute',
         raison="data. Aucun knob CDHR/CEHR n'existe dans knobs.json, et les paramètres openfisca existent bien (impot_revenu.contributions_exceptionnelles.contribution_differentielle_hauts_revenus.{taux_cdhr, seuil_celibataire, seuil_couple, taux_acompte, taux_penalite_acompte} résolvent True au 2026-01-01, avec taux_cdhr = 0,20 et seuil = 250 000, et openfisca porte déjà les variables contribution_differentielle_hauts_revenus*) — donc le câblage serait facile. Ce n'est pas pour autant du small_knob : le câbler produirait un zéro confiant. La CDHR ne mord que sur les foyers dont le taux moyen d'imposition est INFÉRIEUR à 20 % du RFR au-dessus de 250 k€, c'est-à-dire exactement les foyers que cette population ne sait pas construire. KNOWN_LIMITATIONS : « No capital income, no property income — the top of the distribution is a construction; nothing above roughly the 95th percentile is publishable » et « N",
     ),

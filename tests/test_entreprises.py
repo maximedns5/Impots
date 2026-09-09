@@ -868,3 +868,61 @@ def test_every_parameter_value_we_ship_is_a_number() -> None:
     assert checked >= 20, f"seulement {checked} fichiers de barème inspectés"
     assert not offenders, ("valeurs de paramètre non numériques :\n  "
                            + "\n  ".join(offenders))
+
+
+# --- F5 M0 backfill: the REI guard, and proof it can go red (D-105.4) ----------------
+
+
+def _rei_module():
+    import importlib.util
+    import sys
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[1] / "scripts" / "verify_rei.py"
+    spec = importlib.util.spec_from_file_location("verify_rei", path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["verify_rei"] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_the_rei_guard_passes_on_the_manifested_vintage() -> None:
+    """The gate's numbers, re-run as assertions rather than remembered.
+
+    A finding measured once is a finding; a script that re-runs it is a guard that stays.
+    Skipped where the archive is absent, since it is 18 MB and not committed.
+    """
+    from pathlib import Path
+
+    if not (Path(__file__).resolve().parents[1] / "data" / "raw" / "rei_2025.zip").exists():
+        pytest.skip("REI non téléchargé")
+    assert _rei_module().main() == 0
+
+
+def test_the_rei_guard_goes_red_when_the_reading_moves() -> None:
+    """THE kill test. A guard whose red light has never been seen is not a guard.
+
+    Moving the published comparator by a factor of two must make the reconstruction fail
+    — which proves the national check is comparing something rather than merely printing
+    it. Fails if `main` stops returning non-zero on a failed assertion, or if the
+    tolerance is ever widened enough to swallow a doubled target.
+    """
+    from pathlib import Path
+
+    if not (Path(__file__).resolve().parents[1] / "data" / "raw" / "rei_2025.zip").exists():
+        pytest.skip("REI non téléchargé")
+    module = _rei_module()
+    module.PUBLISHED_FB_EUR = module.PUBLISHED_FB_EUR * 2
+    assert module.main() == 1
+
+
+def test_the_non_bati_hole_is_pinned_as_failing() -> None:
+    """The known 60 % shortfall is asserted AS a shortfall, deliberately.
+
+    Pinning a hole keeps it visible, and a later reading that fixes it will fail this
+    assertion and force the D-entry recording the fix. Fails if someone quietly relaxes
+    the pin instead.
+    """
+    module = _rei_module()
+    assert pytest.approx(-0.597, abs=0.001) == module.FNB_MEASURED_SHORTFALL
+    assert module.PUBLISHED_FNB_EUR == 2.7e9

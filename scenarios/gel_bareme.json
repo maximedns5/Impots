@@ -1,0 +1,32 @@
+{
+  "name": "gel_bareme",
+  "year": 2024,
+  "created": "2026-09-09",
+  "source": "variante interne : gel du barème IR (le barème 2028 reconduit)",
+  "note": "",
+  "tags": [],
+  "reform": {
+    "ir_bareme": [
+      {
+        "threshold": 0.0,
+        "rate": 0.0
+      },
+      {
+        "threshold": 11600.0,
+        "rate": 0.11
+      },
+      {
+        "threshold": 29579.0,
+        "rate": 0.3
+      },
+      {
+        "threshold": 84577.0,
+        "rate": 0.41
+      },
+      {
+        "threshold": 181917.0,
+        "rate": 0.45
+      }
+    ]
+  }
+}

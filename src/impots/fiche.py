@@ -43,9 +43,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-#: The French thousands separator, written as an escape rather than typed: a literal
-#: non-breaking space is invisible in a diff and indistinguishable from an ordinary one.
-THIN_SPACE = "\u202f"
+from impots.reporting import num_fr as _num
+from impots.reporting import pct_fr as _pct
 
 #: Sections of a real évaluation préalable that a model must not write, with the reason.
 #: Printed in the fiche rather than dropped: see rule 3 in the module docstring.
@@ -91,31 +90,16 @@ class Provenance:
     scenario: str = ""
     commit: str = ""
     preregistre: bool = False
+    trajectoire: tuple[Any, ...] = ()
+    """`YearUncertainty` rows, when this fiche prices a trajectory (F3 M5).
+
+    Empty for a single-year chiffrage, which is every existing caller."""
+    uprating: Any = None
+    """The declared ageing hypothesis behind the trajectory, or None."""
 
 
-def _num(value: float, decimals: int = 0) -> str:
-    """A number with French thousands separators — and ONLY the number.
-
-    The first version applied `.replace(",", THIN_SPACE)` to whole f-strings, which also
-    ate the commas of the prose they contained: «EEC household structure, synthetic
-    incomes» came out as «EEC household structure  synthetic incomes». Formatting the
-    number alone is the fix, and it is why this helper exists rather than a `.replace`
-    at each call site.
-    """
-    # Order matters: Python writes «1,234.56», French wants «1 234,56». Swapping in
-    # place would turn the thousands comma into a decimal comma and produce «1 234 56».
-    text = f"{value:,.{decimals}f}"
-    return text.replace(",", "\x00").replace(".", ",").replace("\x00", THIN_SPACE)
 
 
-def _pct(value: float, decimals: int = 0) -> str:
-    """A percentage in French typography: a narrow no-break space before the sign.
-
-    Python's `:.0%` gives «22%». French sets «22 %». It is a small thing and it is the
-    kind of small thing that tells a French reader whether a document was written for
-    them or translated at them.
-    """
-    return f"{value * 100:.{decimals}f}".replace(".", ",") + THIN_SPACE + "%"
 
 
 def _eur(value: float | None) -> str:
@@ -129,6 +113,13 @@ def _eur(value: float | None) -> str:
     # a loss, and dropping the «+» makes the reader supply it from context.
     sign = "+" if value >= 0 else "-"
     return f"{sign}{_num(abs(value))} €"
+
+
+def _width(value: float) -> str:
+    """A magnitude, unsigned. A width has no direction, and «±+210 M€» reads as a typo
+    because it is one: the ± already carries the two-sidedness."""
+    text = _eur(abs(value))
+    return text[1:] if text.startswith("+") else text
 
 
 def _band(low: float, mid: float, high: float, unit: str) -> str:
@@ -196,6 +187,11 @@ def render(response: Any, provenance: Provenance) -> str:
     w("### 4.2.1. Incidences budgétaires")
     w("")
     _budget(w, response)
+
+    if provenance.trajectoire:
+        w("### 4.2.1 bis. Trajectoire pluriannuelle")
+        w("")
+        _trajectory(w, provenance)
 
     w("### 4.3. Description synthétique de la méthode d'évaluation utilisée")
     w("")
@@ -426,3 +422,59 @@ def _method(w: Any, response: Any) -> None:
             w("Elles sont imprimées ici plutôt que reléguées à un rapport annexe : une")
             w("fiche qui tait ses lignes rouges demande qu'on la croie sur parole.")
             w("")
+
+
+def _trajectory(w: Any, provenance: Provenance) -> None:
+    """The per-year table (F3 M5). Points, never a curve.
+
+    A smooth line drawn through annual points suggests intermediate values that were not
+    computed, and the ones that were are the only ones this model has.
+
+    THE TWO UNCERTAINTY CLASSES GET THEIR OWN COLUMNS and are never added. `uprating` is
+    the frozen/aged pair measured at M2; `behavioural` is the band. Summing them would
+    assert an independence nobody established and hide which of the two is doing the work
+    — on the 2028 barème freeze it is the uprating class (D-107).
+    """
+    w("> **Ce qui est chiffré : ce droit, sur la France d\u2019aujourd\u2019hui, avec "
+      "l\u2019argent de demain.**")
+    w("")
+    if provenance.uprating is not None:
+        from impots.uprating import caveat as uprating_caveat
+
+        first = provenance.trajectoire[0].year
+        w(uprating_caveat(first, provenance.uprating))
+        w("")
+
+    w("| année | base | mécanique | vieillissement (figée → vieillie) | comportement | éventail |")
+    w("|---|---|---|---|---|---|")
+    for row in provenance.trajectoire:
+        frozen, aged = row.uprating_eur
+        span = f"{_eur(frozen)} → {_eur(aged)} (±{_width(row.uprating_width_eur)})"
+        if row.behavioural_eur is None:
+            behavioural = f"— ({row.behavioural_grade})"
+        else:
+            low, high = row.behavioural_eur
+            behavioural = f"[{_eur(low)} ; {_eur(high)}] ({row.behavioural_grade})"
+        fan = "oui" if row.fan is not None else "non"
+        w(f"| {row.year} | {row.basis} | {_eur(row.mechanical_eur)} | {span} | "
+          f"{behavioural} | {fan} |")
+    w("")
+    w("**Les deux classes d\u2019incertitude ne sont pas additionnées.** Le "
+      "vieillissement et le comportement répondent à deux questions différentes — de "
+      "combien l\u2019hypothèse de prix déplace ce chiffre, et de combien le "
+      "comportement pourrait le déplacer. Les fusionner affirmerait une indépendance que "
+      "personne n\u2019a établie et effacerait la seule information exploitable : "
+      "laquelle des deux fait le travail.")
+    w("")
+    w("**Les bases, année par année.** Une année `legislated` porte des paramètres qu\u2019un "
+      "législateur a fixés ; une année `reconducted` reporte la dernière valeur votée, ce "
+      "qui est juste en droit et probablement dépassé — la référence choisie décide alors "
+      "du chiffre.")
+    w("")
+    refused = [r for r in provenance.trajectoire if r.fan is None]
+    if refused:
+        w("**Éventail macro, refusé pour certaines années :**")
+        w("")
+        for row in refused:
+            w(f"* {row.year} — {row.fan_note}")
+        w("")

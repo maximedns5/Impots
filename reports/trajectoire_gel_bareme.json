@@ -1,0 +1,59 @@
+{
+  "scenario": "gel_bareme",
+  "titre": "Gel du barème IR",
+  "source": "variante interne : gel du barème IR (le barème 2028 reconduit)",
+  "reference": "indexe",
+  "computed": "2026-09-09",
+  "banner": "Ce qui est chiffré : ce droit, sur la France d'aujourd'hui, avec l'argent de demain.",
+  "uprating_note": "Population vieillie mécaniquement de 2024 à 2026 — salaires 2,5 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (2,5 % / 2 % ronds, déclarés, non prévus). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "years": [
+    {
+      "year": 2026,
+      "basis": "legislated",
+      "mechanical_eur": -2568997296.7331543,
+      "uprating_frozen_eur": -2373396167.270996,
+      "uprating_aged_eur": -2568997296.7331543,
+      "behavioural_low_eur": null,
+      "behavioural_high_eur": null,
+      "behavioural_grade": "aucune bande",
+      "fan_shown": false,
+      "fan_note": "2026 est dans l'horizon déclaré de 3 ans, mais aucun éventail n'a été calculé pour cette année — l'étage macro n'a pas été demandé, ou il a refusé pour une raison qui lui est propre."
+    },
+    {
+      "year": 2027,
+      "basis": "legislated",
+      "mechanical_eur": -5310591582.241699,
+      "uprating_frozen_eur": -4703040364.094727,
+      "uprating_aged_eur": -5310591582.241699,
+      "behavioural_low_eur": null,
+      "behavioural_high_eur": null,
+      "behavioural_grade": "aucune bande",
+      "fan_shown": false,
+      "fan_note": "2027 est dans l'horizon déclaré de 3 ans, mais aucun éventail n'a été calculé pour cette année — l'étage macro n'a pas été demandé, ou il a refusé pour une raison qui lui est propre."
+    },
+    {
+      "year": 2028,
+      "basis": "reconducted",
+      "mechanical_eur": -8231489459.772705,
+      "uprating_frozen_eur": -6999794859.363525,
+      "uprating_aged_eur": -8231489459.772705,
+      "behavioural_low_eur": null,
+      "behavioural_high_eur": null,
+      "behavioural_grade": "aucune bande",
+      "fan_shown": false,
+      "fan_note": "2028 est dans l'horizon déclaré de 3 ans, mais aucun éventail n'a été calculé pour cette année — l'étage macro n'a pas été demandé, ou il a refusé pour une raison qui lui est propre."
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_eur": -11339862942.902832,
+      "uprating_frozen_eur": -9267551917.385498,
+      "uprating_aged_eur": -11339862942.902832,
+      "behavioural_low_eur": null,
+      "behavioural_high_eur": null,
+      "behavioural_grade": "aucune bande",
+      "fan_shown": false,
+      "fan_note": "2029 est dans l'horizon déclaré de 3 ans, mais aucun éventail n'a été calculé pour cette année — l'étage macro n'a pas été demandé, ou il a refusé pour une raison qui lui est propre."
+    }
+  ]
+}

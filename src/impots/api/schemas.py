@@ -1122,3 +1122,45 @@ class ScenarioListResponse(BaseModel):
     """Names that no longer validate, with the reason. Listed rather than hidden: a
     scenario that silently vanishes from the picker is a chiffrage that silently stops
     being confrontable."""
+
+
+class TrajectoryYear(BaseModel):
+    """One year of a trajectory, with its uncertainty classes kept apart (F3 M5)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    year: int
+    basis: str
+    mechanical_eur: float
+    uprating_frozen_eur: float
+    uprating_aged_eur: float
+    behavioural_low_eur: float | None = None
+    behavioural_high_eur: float | None = None
+    behavioural_grade: str = ""
+    fan_shown: bool = False
+    fan_note: str = ""
+
+
+class TrajectoryResponse(BaseModel):
+    """A precomputed trajectory. Read from a file; never runs the engine.
+
+    A trajectory is N population runs — one per year, twice over for the frozen/aged
+    pair — so it is a batch job and lives in the CLI, like every other population run.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    scenario: str
+    titre: str
+    source: str
+    reference: str
+    computed: str
+    banner: str
+    uprating_note: str = ""
+    years: list[TrajectoryYear] = Field(default_factory=list)
+
+
+class TrajectoryListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    trajectoires: list[str] = Field(default_factory=list)

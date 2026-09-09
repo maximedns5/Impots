@@ -461,6 +461,24 @@ tr.total td:first-child { font-family: var(--sans) !important; font-weight: 600;
 .fan .comp .cn { font-family: var(--mono); font-size: 11px; text-align: right; color: var(--ink-soft); }
 .fan ul.reasons { margin: 8px 0 0; padding-left: 18px; font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; }
 
+/* the trajectory view: one row per YEAR, the frozen->aged span with the aged tick,
+   zero marked — the same idiom as the fan chart, because it is the same kind of
+   quantity: a preferred point inside a measured span. No curve: a smooth line through
+   annual points would suggest values that were never computed. */
+.traj .trow { display: grid; grid-template-columns: 46px 96px 1fr 132px; align-items: center; gap: 10px; padding: 5px 0; }
+.traj .ty { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+.traj .tb { font-family: var(--sans); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); }
+.traj .tb.recond { color: var(--rouge); }
+.traj .ttrack { position: relative; height: 20px; }
+.traj .taxis { position: absolute; top: 10px; left: 0; right: 0; height: 1px; background: var(--rule); }
+.traj .tzero { position: absolute; top: 2px; width: 1px; height: 17px; background: var(--ink-faint); }
+.traj .tspan { position: absolute; top: 6px; height: 9px; background: var(--bleu); opacity: .22; }
+.traj .taged { position: absolute; top: 3px; width: 2px; height: 15px; background: var(--bleu); }
+.traj .tnum { font-family: var(--mono); font-size: 11.5px; font-variant-numeric: tabular-nums; color: var(--ink-soft); text-align: right; white-space: nowrap; }
+.traj .tbanner { font-size: 12.5px; line-height: 1.55; margin: 0 0 12px; padding: 8px 12px; border-left: 2px solid var(--ink); background: var(--paper-deep); }
+.traj .tnote { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; margin: 10px 0 0; }
+.traj .tlegend { font-size: 11px; color: var(--ink-faint); margin: 8px 0 0 152px; line-height: 1.5; }
+
 /* tabs */
 .tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--ink); margin-bottom: 22px; }
 .tabs button {
@@ -1062,6 +1080,10 @@ footer code { font-family: var(--mono); font-size: 11px; }
           </details>
           <span class="vintage" id="l1Vintage"></span>
         </div>
+
+        <!-- F3 M5 · trajectoire pluriannuelle, lue depuis un artefact
+             précalculé par `impots trajectoire`. Masquée s'il n'y en a pas. -->
+        <div id="trajHost" hidden></div>
 
         <div class="results-head">
           <h2>Effet de la réforme sur la France entière</h2>
@@ -2470,6 +2492,76 @@ document.getElementById("scenarioLoad").addEventListener("click", async () => {
   document.getElementById("reformPanel").open = true;
 });
 
+/* F3 M5 · the trajectory view. Reads a PRECOMPUTED artefact: a trajectory is N
+   population runs twice over, so it is a batch job (`impots trajectoire`) and never an
+   HTTP request. Silent when none exists — the panel works without it. */
+async function loadTrajectoires() {
+  const host = document.getElementById("trajHost");
+  if (!host) return;
+  let names;
+  try {
+    const response = await fetch(`${API}/trajectoires`);
+    if (!response.ok) return;
+    names = (await response.json()).trajectoires || [];
+  } catch { return; }
+  if (!names.length) return;
+
+  let payload;
+  try {
+    const one = await fetch(`${API}/trajectoires/${encodeURIComponent(names[0])}`);
+    if (!one.ok) return;
+    payload = await one.json();
+  } catch { return; }
+  renderTrajectoire(host, payload);
+}
+
+function renderTrajectoire(host, t) {
+  const years = t.years || [];
+  if (!years.length) return;
+  /* The scale spans every value AND both ends of every uprating span, so the widening
+     is visible rather than clipped. Zero is always inside: a trajectory that never
+     crosses zero still needs it drawn, or the reader cannot tell cost from yield. */
+  const values = [0];
+  for (const y of years) {
+    values.push(y.mechanical_eur, y.uprating_frozen_eur, y.uprating_aged_eur);
+  }
+  const lo = Math.min(...values), hi = Math.max(...values), span = (hi - lo) || 1;
+  const pos = (v) => ((v - lo) / span) * 100;
+  const md = (v) => (v / 1e9).toFixed(2).replace(".", ",");
+
+  const rows = years.map((y) => {
+    const a = pos(Math.min(y.uprating_frozen_eur, y.uprating_aged_eur));
+    const b = pos(Math.max(y.uprating_frozen_eur, y.uprating_aged_eur));
+    const recond = y.basis === "reconducted";
+    return `<div class="trow">
+      <div class="ty">${y.year}</div>
+      <div class="tb${recond ? " recond" : ""}">${escapeHtml(y.basis)}</div>
+      <div class="ttrack">
+        <div class="taxis"></div>
+        <div class="tzero" style="left:${pos(0)}%"></div>
+        <div class="tspan" style="left:${a}%;width:${Math.max(b - a, 0.4)}%"></div>
+        <div class="taged" style="left:${pos(y.mechanical_eur)}%"></div>
+      </div>
+      <div class="tnum">${md(y.mechanical_eur)} md€</div>
+    </div>`;
+  }).join("");
+
+  host.innerHTML = `<div class="traj">
+    <p class="tbanner"><b>${escapeHtml(t.banner)}</b></p>
+    ${rows}
+    <p class="tlegend">Un point par année, jamais une courbe : une ligne lissée
+      suggérerait des valeurs qui n'ont pas été calculées. La barre claire est l'écart
+      entre population figée et population vieillie — la classe d'incertitude
+      « vieillissement », mesurée et non supposée. Le trait plein est le chiffre vieilli.</p>
+    <p class="tnote">${escapeHtml(t.uprating_note || "")}</p>
+    <p class="tnote"><b>Référence « ${escapeHtml(t.reference)} ».</b> Une année
+      <i>legislated</i> porte des paramètres qu'un législateur a fixés ; une année
+      <i>reconducted</i> reporte la dernière valeur votée, et la référence choisie décide
+      alors du chiffre.</p>
+  </div>`;
+  host.hidden = false;
+}
+
 async function boot() {
   renderAdults();
   renderChildren();
@@ -2493,6 +2585,7 @@ async function boot() {
     lawParams = await (await fetch(`${API}/parameters/ir?year=2024`)).json();
     fillLaw();
     await loadScenarioList();
+    await loadTrajectoires();
   } catch (error) {
     $("engine").innerHTML = `<span class="dot down"></span>moteur injoignable`;
     showError("Moteur injoignable", [

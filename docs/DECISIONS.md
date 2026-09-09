@@ -4458,3 +4458,399 @@ première version rendait 0,0 dans les deux branches et aurait passé quoi qu'il
 `test_the_indexed_reference_is_not_folded_into_the_measure` vérifie la soustraction :
 sans elle, une réforme nulle chiffrée contre `indexe` reviendrait chargée du coût entier
 de l'indexation — un très gros nombre attribué à une mesure qui ne fait rien.
+
+## D-102 — F3 M2 : vieillir la population, et perdre sa calibration en le faisant
+
+**2026-09-09 · `src/impots/uprating.py`, `src/impots/reporting.py`, `reconcile.py`**
+
+**Vieillir, jamais re-synthétiser.** Re-tirer une population chaque année déplacerait
+l'identité des ménages, et une trajectoire par ménage ne voudrait plus rien dire : le
+« même » ménage en 2028 serait un autre tirage. Les lignes, la structure et les poids sont
+donc laissés tels quels ; seules les colonnes monétaires bougent, sur **deux indices** —
+salaires et prix — parce qu'ils ne montent pas ensemble et qu'un indice unique le
+supposerait en silence.
+
+**Ce que cela coûte est le milestone, pas une note de bas de page.** Une population
+vieillie **n'est plus calibrée** : tous les totaux dépensés au registre l'ont été sur
+l'année de base, et il n'existe pas de total publié pour une année future. Une
+réconciliation de 2028 comparerait un simulé 2028 à un publié 2024 — deux chiffres qui ne
+portent pas sur la même chose.
+
+**D'où la condition d'achèvement, et elle est tenue.** `reporting.Line` refuse tout verdict
+de tolérance quand `population_year` et `comparator_year` diffèrent, **avant même d'évaluer
+l'écart** — un verdict lâche se lirait comme une validation, et il n'y a rien ici à
+valider. Mesuré de bout en bout sur la population réelle :
+
+    année de base   2 calibrées, 2 hors cible, 9 dans la tolérance, 8 hors tolérance
+    vieillie 2028   21 lignes « not comparable (population vieillie) », aucune ne passe
+
+Vérifié dans les deux sens : retirer le refus fait tomber les tests du vieilli, et
+remplacer « les millésimes diffèrent » par « un millésime est posé » fait tomber ceux de
+l'année de base.
+
+**Le vieillissement change matériellement le chiffre**, ce qui justifie le milestone plutôt
+que de le décorer. Gel du barème 2028 contre la référence indexée :
+
+    population 2024 figée   -7,073 md€
+    population vieillie     -8,339 md€   (+18 %)
+
+Les revenus montent, davantage de foyers franchissent des seuils gelés, et le gel mord plus
+fort. Chiffrer une trajectoire sur une population figée sous-estime donc l'impôt discret.
+
+**Trois limites, portées par chaque résultat parce qu'aucune n'est visible dans la
+sortie** : la structure des ménages ne bouge pas ; les poids ne sont pas recalés (il
+n'existe pas de marge publiée pour une année future) ; les âges n'avancent pas
+délibérément — une population plus vieille avec autant d'enfants serait pire qu'une
+population uniformément figée. Ce qui est chiffré est « ce droit, sur la France
+d'aujourd'hui, avec l'argent de demain ».
+
+**Et un doublon supprimé au passage.** Le formateur typographique français avait été écrit
+deux fois : une fois dans `fiche` (D-098) et une seconde, en pire, dans le premier jet
+d'`uprating`, qui imprimait « +2.5% » dans un document français. `num_fr` et `pct_fr` vivent
+désormais dans `reporting`. **Le déplacement a changé un défaut** — la version partagée
+partait sur une décimale là où celle de la fiche en avait zéro — et deux tests de la fiche
+l'ont attrapé. Un formateur dupliqué est un formateur qui diverge ; un défaut déplacé est
+un défaut qui se propage.
+
+## D-103 — F3 M3 : les boutons gagnent une dimension temporelle, et chaque année dit sur quoi elle repose
+
+**2026-09-09 · `src/impots/trajectoires.py`, `tests/test_trajectoires.py`**
+
+Chaque bouton devient chiffrable année par année, et chaque résultat porte sa **base** :
+
+* `legislated` — un législateur a fixé les paramètres de cette année ; la valeur de
+  l'arbre EST la loi, et le chiffre ne dépend d'aucune hypothèse ;
+* `reconducted` — aucun législateur ne s'est encore prononcé, l'arbre reporte la dernière
+  valeur. C'est juste en droit tant que rien n'est voté, **et très probablement dépassé** —
+  ce qui est exactement pourquoi le choix de référence décide alors du chiffre.
+
+**La frontière est MESURÉE, pas déclarée.** `last_legislated_year` parcourt les chemins de
+paramètres connus année par année et rend la dernière année où une valeur change. Mesuré :
+**ménages 2027**, **entreprises 2030**. Coder 2027 et 2030 en dur ferait mentir le module
+la première fois qu'une LFI légifère plus loin ; les dériver fait que la classification se
+met à jour toute seule et que le test d'épinglage tombe bruyamment à la place.
+
+**La disparition d'un paramètre compte comme une législation.** Les paramètres de la CVAE
+**cessent d'exister** en 2030 : cette absence EST la suppression, pas un trou. C'est ce qui
+rend le côté entreprises légiféré jusqu'en 2030 et non 2029. Vérifié en cassant la règle —
+ignorer les années manquantes ramène la frontière à 2029 et fait tomber deux tests.
+
+**Une troisième situation, que la spec n'avait pas prévue, est sortie de l'écriture.**
+Indexer une année **déjà légiférée** — 2026, par exemple — ne rétablit pas une indexation
+manquante : cela **écrase un barème voté** par une contrefactuelle. C'est légitime, et ce
+n'est pas la même affirmation qu'indexer 2029. Les deux notes sont désormais distinctes,
+et l'avertissement porte le mot ATTENTION.
+
+**Mesuré de bout en bout**, IS ramené à 26 % :
+
+    2026  -3,105 md€  legislated     (la CEBGE encore active élargit l'assiette IS)
+    2027  -2,735 md€  legislated
+    2028  -2,735 md€  legislated
+    2029  -2,735 md€  legislated
+    2030  -2,735 md€  legislated
+    2031  -2,735 md€  reconducted
+
+**Et une lenteur qui n'était pas un détail.** `last_legislated_year` lit 52 chemins sur
+neuf années, et `basis_for` l'appelait une fois par année de chaque balayage : la suite de
+tests passait de 18 s à **181 s** sans faire tourner le moteur une seule fois. Mise en
+cache — l'arbre ne change pas dans un processus, donc le cache ne peut pas rancir.
+
+## D-104 — Trois contradictions entre PHASE6_SPEC et le terrain, relevées avant de l'exécuter
+
+**2026-09-09 · lecture de `docs/PHASE6_SPEC.md` contre l'état du dépôt**
+
+La spec le demande elle-même : « quand la vérité de terrain d'une étape contredit ce
+document, la contradiction est le constat ». Trois, relevées avant de commencer S1.
+
+**1. S3 est déjà fait, et son verdict est plus fort que celui que la spec anticipe.** La
+spec programme le gate capital « avant S4, ordre dur ». Il a été exécuté le 2026-09-08 —
+D-097, `docs/F1B_CAPITAL_GATE.md`. Surtout, la spec en énonce l'attente ainsi : la CDHR
+resterait refusée parce qu'elle « mord dans le centile supérieur ; le niveau de tranche est
+trop grossier ». **Cette raison est fausse** : la granularité publiée descend au
+**millime** — DGFiP n° 41 porte « dont dernier centième » et « dont dernier millième ». Le
+vrai refus est plus fort et se généralise : la CDHR est définie sur un **ratio**, donc une
+imputation uniforme met tous les foyers d'une cellule du même côté du seuil de 20 %, et le
+rendement sauterait de zéro à des milliards selon le placement de la moyenne. Ce n'est pas
+« trop grossier », c'est **mal posé**, et cela vaut pour toute mesure définie sur un seuil,
+un ratio ou un taux moyen individuel. L'entrée article 2 du triage cite déjà ce verdict.
+
+**2. Le « projection-vs-projection gate (RESF) » : deux sources de vérité avaient
+divergé.** *(Amendé le 2026-09-09 — voir D-105.)* J'avais écrit que l'offre « n'a jamais
+été offerte ». **C'est faux, et la correction importe** : l'offre existe bel et bien, dans
+`REVIEW_2026-08-29.md`, § « One optional line class, offered to the gate — not a
+softening ». Ce que j'ai vérifié est exact — zéro occurrence de RESF dans tout
+`DECISIONS.md`, y compris D-102 qui est le verdict M2 — et la conclusion tirée de ces
+éléments était raisonnable ; elle était fausse quand même, parce que je cherchais dans le
+fichier où les décisions sont censées vivre et que celle-ci vivait ailleurs.
+
+Le constat n'est donc pas « la spec renvoie à une option inexistante » mais **« un lecteur
+diligent pouvait manquer une décision engageante en lisant le fichier des décisions »**.
+La correction est structurelle et vaut mieux que la mienne : toute décision du fichier de
+relecture qui engage du travail reçoit désormais une souche dans `DECISIONS.md` (D-105).
+L'offre RESF reste **optionnelle** — à prendre en S2 ou à décliner avec motif.
+
+**3. La route d'ingestion du REI que la spec juge « probablement meilleure » ne marche
+pas.** S6 annonce « le même jeu de données interrogeable sur data.economie.gouv.fr (API
+Opendatasoft — probablement la meilleure route d'ingestion) ». Mesuré, deux fois : cette
+API rend **records=0, champs=0** — c'est une coquille sans enregistrements. La route qui
+marche est la liste de ressources de data.gouv.fr, qui pointe vers des archives ZIP
+annuelles ; le REI 2025 y est, manifesté (D-100).
+
+**Un manque, non une contradiction** : S6 M0 exige un `scripts/verify_rei.py` qui asserte
+les identités par commune. Le gate D-100 a fait ces vérifications **en ligne** et a
+enregistré ses chiffres, mais n'a pas laissé de script rejouable. Si S6 démarre, le script
+est à écrire — et l'écrire ferait passer les contrôles du gate de « mesurés une fois » à
+« rejouables », ce qui est la différence entre un constat et un garde-fou.
+
+## D-105 — Index des décisions prises dans le fichier de relecture (rattrapage de souches)
+
+**2026-09-09 · règle nouvelle et rattrapage · `docs/REVIEW_2026-08-29.md`**
+
+**La règle, posée par le relecteur et exécutée ici.** Toute décision, tout arbitrage et
+toute offre du fichier de relecture qui **crée, ordonne ou conditionne du travail** reçoit
+une **souche d'entrée D au moment où elle est écrite** — une ligne, pointant vers la
+section — de sorte que `DECISIONS.md` soit un index complet de ce qui engage.
+
+**Pourquoi.** Une session a audité `DECISIONS.md` — là où les décisions sont censées
+vivre — pour savoir si une offre existait, n'a rien trouvé, et a conclu correctement
+**depuis ses éléments** qu'il n'y en avait pas. L'offre existait, dans le fichier de
+relecture. Deux sources de vérité avaient divergé, et le défaut n'est ni dans l'audit ni
+dans l'offre : il est dans le fait qu'un lecteur diligent pouvait manquer une décision
+engageante en lisant le fichier des décisions. Cf. D-104, dont la cause est corrigée
+ci-dessous.
+
+### Souches, offres encore ouvertes de ce fichier
+
+* **D-105.1 · Classe de ligne « projection contre projection » (RESF)** — OFFERTE, non
+  prise. § « One optional line class, offered to the gate — not a softening ». L'annexe
+  RESF de chaque PLF publie la trajectoire pluriannuelle de recettes du gouvernement ;
+  comparer notre base vieillie à ce chemin donnerait un contexte aux années futures **sans
+  jamais valoir validation** — aucun pass/fail, seulement une distance, les deux millésimes
+  énoncés. Conditionnée à un gate M0 : si le périmètre du comparateur ne peut pas être
+  épinglé, la classe n'est pas créée. Le refus de millésime de D-102 est intact dans les
+  deux cas. **Statut : à prendre ou à décliner avec motif en S2.**
+* **D-105.2 · La classe de refus « seuil sur ratio »** — RÈGLE. § « The CDHR: my refusal
+  was wrong and the right one is stronger ». Tout instrument défini par un **seuil portant
+  sur un ratio ou une grandeur par unité** est catégoriquement non chiffrable depuis des
+  moyennes de cellule, **si fines soient-elles**, parce que le placement intra-cellule EST
+  la réponse. Même famille que les constats de falaise, vue de l'autre côté. **Le triage
+  cite la classe, plus l'ancienne conjecture** — appliqué ci-dessous.
+* **D-105.3 · Les ancres de spec se mesurent avant de s'écrire** — RÈGLE, escalade de la
+  règle du pointeur. Une route, un jeu de données, un point d'accès inscrit dans une spec
+  est **mesuré avant d'être écrit** quand mesurer est bon marché, et **étiqueté NON MESURÉ**
+  quand ça ne l'est pas. Née de « probablement la meilleure route d'ingestion », écrite
+  depuis un résultat de recherche et non depuis une mesure, pour un point d'accès vide.
+* **D-105.4 · `scripts/verify_rei.py`** — ORDONNÉ. § « The verify_rei.py gap: backfill
+  ordered ». Rejouer les chiffres de D-100 comme assertions. Fait dans le même commit.
+
+### Souches, décisions déjà exécutées
+
+* **Article 2 gagne une quatrième case** (`population_blind`) — fait, D-095/D-104.
+* **Le titre gagne un second dénominateur** (part des articles ET part du rendement) —
+  fait, D-095.
+* **L'aphorisme du formateur rejoint la doctrine** : « un formateur dupliqué diverge ; un
+  défaut déplacé se propage », avec son corollaire — consolider une infrastructure partagée
+  est un changement de rayon d'action silencieux. Fait, D-102.
+* **Les trois limites déclarées tiennent telles quelles** — aucune action, enregistré pour
+  que personne ne prenne plus tard la retenue pour un oubli. D-102.
+
+## D-106 — `verify_rei.py` : le constat du gate devient un garde-fou qui reste
+
+**2026-09-09 · `scripts/verify_rei.py`, `tests/test_entreprises.py` · exécute D-105.4**
+
+Le gate F5 (D-100) avait mesuré une fois et écrit les chiffres. C'est un constat. Le script
+les rejoue comme **assertions** : lancé après tout changement de millésime du REI, il tombe
+sur les pièges au lieu de laisser un lecteur les redécouvrir.
+
+Six familles d'assertions, une par piège : l'encodage latin-1 (asserté explicitement,
+parce que le correctif tentant — `errors="replace"` — corrompt les libellés **sans lever
+d'erreur**) ; la forme, 34 907 lignes et 1043 colonnes ; le fait que le fichier ne dise
+jamais « foncier » ; l'identité base × taux par commune ; la reconstruction nationale
+contre le BON comparateur ; et le trou du non bâti.
+
+**Deux choses valent d'être notées.**
+
+**Le comparateur est asserté dans les deux sens.** Le script vérifie que la reconstruction
+tombe près de 43,1 md **et LOIN de 55,1 md**. Le second est le chiffre que la publication
+met en avant, taxes annexes et frais de gestion compris ; le confondre donne −21 % et
+condamnerait une lecture juste. Un garde qui ne vérifie que la bonne cible ne protège pas
+contre le choix de la mauvaise.
+
+**Le trou du non bâti est épinglé COMME trou.** −59,7 % est asserté comme devant rester
+tel. Épingler un manque le garde visible, et une lecture ultérieure qui le corrige fera
+**échouer** cette assertion — ce qui force l'entrée D qui enregistre la correction, au lieu
+de la laisser passer en silence.
+
+**Et le script a attrapé sa propre assertion, plus paresseuse que le constat dont elle
+venait.** J'avais asserté « aucune des variables trouvées en cherchant « foncier » ne porte
+BASE ou TAUX » ; ça échoue sur deux lignes CFE titrées « CFE - BASES BRUTES : PROPRIÉTÉS
+NON BÂTIES », qui ne sont pas de la taxe foncière. L'affirmation juste est plus étroite et
+plus utile : **aucune des variables trouvées n'est l'une des dix-huit colonnes dont un
+modèle TF a besoin**. Le premier lancement du garde a donc corrigé le garde.
+
+**Le kill test.** Doubler le comparateur publié doit faire rougir le script — ce qui prouve
+que le contrôle national compare quelque chose au lieu de l'imprimer. Un garde dont on n'a
+jamais vu le voyant rouge n'est pas un garde ; c'est la troisième question permanente,
+posée à la naissance.
+
+## D-107 — S1 / F3 M4 : la bande année par année, et le vieillissement devient une classe nommée
+
+**2026-09-09 · `src/impots/trajectoires.py`, `tests/test_trajectoires.py`**
+
+Chaque année d'une trajectoire porte désormais : le chiffre mécanique, sa base
+(`legislated`/`reconducted`, D-103), **deux classes d'incertitude tenues séparées**, et
+l'éventail macro ou son refus.
+
+### Le vieillissement devient une classe, et elle est MESURÉE
+
+La grammaire d'incertitude du projet gardait déjà visibles paramètre / scénario /
+cellule / composition. Il s'y ajoute **`uprating`**, et sa largeur n'est pas supposée :
+c'est la paire figée/vieillie de M2. Sur le gel du barème 2028 :
+
+    population 2024 figée   -7,073 md€
+    population vieillie     -8,339 md€     -> classe « vieillissement » : 1,266 md€
+
+**Plus large que bien des bandes comportementales, et invisible tant qu'on ne la nomme
+pas.** Le titre reste le chiffre vieilli, qui est le plus complet.
+
+### Les deux classes ne sont JAMAIS fusionnées
+
+Il n'y a délibérément ni `total` ni bande combinée. Les additionner affirmerait une
+indépendance que personne n'a établie **et** détruirait la seule information exploitable :
+laquelle des deux fait le travail. Sur le gel 2028 c'est le vieillissement qui domine, et
+un intervalle fusionné le cacherait. `test_the_two_classes_are_never_merged_into_one_band`
+échoue le jour où une propriété combinée apparaît — vérifié en en ajoutant une.
+
+### Le refus d'horizon macro s'impose PAR ANNÉE, pas par réforme
+
+Une trajectoire 2024-2030 n'est pas « dans l'horizon » ou « hors » en bloc : 2027 est à un
+an et 2032 à six. Montrer un seul éventail pour la réforme étirerait en silence un
+multiplicateur à trois ans sur six. Chaque année est donc jugée sur sa propre distance.
+
+**L'horizon est LU dans le magasin**, pas écrit : `usable_horizons` vaut `["1","2","3"]`
+dans `multipliers.yaml`, plafonné à trois pour deux raisons indépendantes et convergentes
+— le refus posé par §0, et la mesure montrant que les colonnes longues sont déterminées par
+un choix de spécification plutôt qu'observées (cotisations employeurs : 1,73 à LT en
+« wage setting » contre 0,25 sous courbe de Phillips, un facteur sept).
+
+**Et ma première lecture du magasin était vide.** Je lisais `store.parameters` alors que
+tout multiplicateur porte `from_source_table` et atterrit dans `store.tables` : la fonction
+levait « aucun horizon utilisable » là où trois l'étaient. Le mauvais conteneur, pas le
+mauvais magasin — deuxième fois dans cette session qu'un conteneur mal choisi produit un
+vide convaincant (cf. `totals` contre `totals_reform`, D-095).
+
+### L'applicabilité se grade PAR ANNÉE
+
+Une réforme dans le support en 2026 peut en sortir en 2030, les revenus vieillis dérivant
+hors de la plage d'estimation des élasticités. Chaque année apporte donc son propre verdict
+au lieu de reporter celui de la première — mesurer, pas supposer.
+
+### Une incohérence attrapée en la regardant tourner
+
+« L'horizon autorise un éventail » et « un éventail a été calculé » sont deux affirmations
+différentes, et la première version imprimait la seconde en pensant la première : un
+lecteur voyait « l'éventail est montré » à côté de « pas d'éventail ». Les trois cas —
+autorisé et présent, autorisé et absent, refusé — disent maintenant chacun ce qui est vrai.
+
+## D-108 — Le gate « projection contre projection » (RESF) : NON, pour deux raisons indépendantes
+
+**2026-09-09 · exécute D-105.1 · `data/raw/resf_2026.pdf` manifesté**
+
+L'offre du relecteur : comparer notre base vieillie à la trajectoire de recettes du
+gouvernement — jamais un pass/fail, seulement une distance, les deux millésimes énoncés —
+pour donner un contexte aux années futures sans faire semblant de valider. Conditionnée à
+un gate : **le périmètre du comparateur peut-il être épinglé ?**
+
+**Il ne peut pas. La classe de ligne n'est pas créée.**
+
+**Raison 1 — la série par impôt s'arrête en 2026, et les années à servir commencent en
+2027.** Le RESF 2026 porte bien un tableau de recettes par impôt (p. 85-92) : IR 94,9 Md€
+en 2025, TVA nette budgétaire 96,8, recettes fiscales nettes 325,7. Mais **sur 2025 et 2026
+seulement**. Toute la matière qui court jusqu'à 2029 est **agrégée** — soldes publics,
+ratio d'endettement, dépense primaire nette en points de PIB — et ne descend à aucun impôt.
+Or les années qu'une ligne « projection contre projection » servirait sont précisément
+celles que le refus de millésime rend non comparables : 2027 et au-delà. Le comparateur
+manque exactement là où la classe existerait.
+
+**Raison 2 — et elle serait fatale même si la série allait jusqu'en 2030.** Le chiffre par
+impôt du RESF est **budgétaire** : des recettes encaissées par l'État sur un exercice, avec
+le calendrier du prélèvement à la source et les prélèvements sur assiettes. Ce modèle
+calcule l'**impôt dû au titre d'une année de revenus**. Ce sont deux grandeurs
+différentes, le rapport ne publie pas le pont entre elles, et les rapprocher sans ce pont
+serait précisément la comparaison de périmètre non épinglé que le gate devait exclure.
+
+**Deux raisons indépendantes qui concluent pareil**, ce qui est le cas confortable : la
+première pourrait tomber si un RESF futur publiait une série par impôt jusqu'en 2030 ; la
+seconde tiendrait quand même.
+
+**Ce qui ne change pas.** Le refus de millésime de D-102 est intact — il l'était dans les
+deux branches du gate, et l'offre le disait. Les années vieillies restent « not
+comparable », sans contexte chiffré, et c'est l'état honnête plutôt qu'un manque.
+
+**Le RESF reste manifesté**, comme la note IPP n° 92 et la méthodologie Banque de France
+l'ont été en phase 5 : **pour ce qu'il ne contient pas**. Une source dont on a établi
+qu'elle ne porte pas ce qu'on lui prêtait est un résultat, et le reperdre coûterait le même
+travail une seconde fois.
+
+## D-109 — S2 / F3 M5 : les sorties de trajectoire, et la phase F3 se ferme
+
+**2026-09-09 · `fiche.py`, `trajectoires.py`, `ui/index.html`, `api/`, `impots trajectoire`**
+
+Quatre livrables, dont un qui s'est soldé par un refus.
+
+### 1. La fiche porte la trajectoire
+
+Une section 4.2.1 bis, un tableau par année : base, mécanique, **la paire figée → vieillie**
+(pas seulement sa largeur — montrer « ±1,27 md€ » cacherait dans quel sens le
+vieillissement déplace le chiffre, et il l'éloigne de zéro), la bande comportementale et
+son grade, l'éventail ou son refus. **Les deux classes ne sont jamais additionnées**, et la
+fiche dit pourquoi. Les années dont l'éventail est refusé sont listées **une par une** avec
+leur motif, le refus étant posé par année et non par réforme.
+
+### 2. L'exemple travaillé, calculé pour de bon
+
+`impots trajectoire gel_bareme --reference indexe` sur 4 000 ménages :
+
+    2026  legislated    -2,569 md€   vieillissement ±0,196
+    2027  legislated    -5,311 md€   vieillissement ±0,608
+    2028  reconducted   -8,231 md€   vieillissement ±1,232
+    2029  reconducted  -11,340 md€   vieillissement ±2,072
+
+**Le chiffre ET son incertitude croissent avec l'horizon** — ce que M5 demandait de rendre
+visible. Contre `reconduit`, la même trajectoire rend **+0,000 md€ chaque année** : la
+propriété falsifiable de M1, reproduite sur quatre ans.
+
+**Et la première version de la commande validait `--reference` puis l'ignorait**,
+chiffrant la réforme contre le droit courant quelle que soit la référence demandée. Les
+quatre zéros étaient donc justes pour la mauvaise raison. Corrigé en passant par
+`tj.price`, qui applique la référence — et pour `indexe` fait la soustraction sans laquelle
+le coût entier de l'indexation se serait replié dans chaque chiffre.
+
+### 3. La vue d'interface, sur les conventions du dépôt
+
+Une ligne par année, l'idiome du graphique d'éventail réutilisé parce que c'est la même
+sorte de grandeur — un point préféré dans un intervalle mesuré : `tspan` pour l'écart
+figée→vieillie, `taged` pour le chiffre retenu, zéro toujours tracé. **Aucune courbe** :
+une ligne lissée suggérerait des valeurs jamais calculées, et un test le refuse
+(`<path`, `polyline`, `<svg` bannis du rendu). Les années `reconducted` sont visuellement
+distinctes, pas seulement étiquetées. La bannière est imprimée **verbatim depuis
+l'artefact**.
+
+**L'artefact est PRÉCALCULÉ et les points d'accès sont en lecture seule.** Une trajectoire
+est N exécutions de population **deux fois** — figée et vieillie — soit des minutes par
+année. La règle §1.1 du projet s'applique telle quelle : les travaux par lots vivent dans
+la ligne de commande, et seule la lecture passe par HTTP.
+
+### 4. Le gate RESF : non — cf. D-108
+
+### 5. Le re-balayage des chiffrages : la machinerie est prête, le comparateur est en quarantaine
+
+Les articles pluriannuels sont désormais exprimables — la trajectoire CVAE et l'expiration
+de la CEBGE sont dans l'arbre et mesurées (D-099). Mais un cas de backtest CVAE
+pluriannuel a besoin d'une série de recettes CVAE publiée, et **les cinq fichiers DGFiP
+d'impôts de production du dépôt sont tous en quarantaine** (URL non enregistrée, D-028) :
+rien de calculé à partir d'eux n'est reproductible par un tiers. Le balayage conclut donc
+que la machinerie est prête et que **le déblocage est une source, pas du code** — retrouver
+la publication avec son URL, la manifester, et le cas devient écrivable. Noté plutôt que
+contourné : bâtir sur un fichier en quarantaine reviendrait à produire un chiffre que
+personne ne peut refaire.

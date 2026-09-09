@@ -111,6 +111,28 @@ class Line:
     Kept separately so `render` can refuse a line whose own tagging has drifted
     away from its figure's — the defect that shipped in the population report.
     """
+    population_year: int | None = None
+    """The year of the population this line was simulated on, when it is not the
+    comparator's own year.
+
+    Set only by a trajectory: an UPRATED population is no longer calibrated, because
+    every total on the spent side of the ledger was fitted to the base year. Comparing a
+    2028 simulation to a 2024 published total is not a loose comparison, it is not a
+    comparison at all — the two numbers are of different things. Leaving it None means
+    «same year», which is every existing line and why they are unaffected."""
+    comparator_year: int | None = None
+    """The year the published figure describes. Paired with `population_year`."""
+
+    @property
+    def vintages_match(self) -> bool:
+        """Whether this line compares two figures about the same year.
+
+        Both None — the ordinary case — counts as matching: the reconciliation of a base
+        year has always compared like with like and nothing here changes it.
+        """
+        if self.population_year is None or self.comparator_year is None:
+            return True
+        return self.population_year == self.comparator_year
 
     @classmethod
     def from_figure(
@@ -165,6 +187,12 @@ class Line:
         """
         if self.simulated is None:
             return "not modelled"
+        if not self.vintages_match:
+            # A trajectory line: an uprated population against a base-year total. This
+            # returns BEFORE any tolerance is evaluated, because a tolerance verdict here
+            # would be read as validation and there is nothing being validated. F3 M2's
+            # completion condition is exactly this refusal.
+            return "not comparable (population vieillie)"
         residual = self.residual
         assert residual is not None
         within = abs(residual) <= self.tolerance * (1.0 + TOLERANCE_SLACK)
@@ -183,6 +211,37 @@ class Line:
         """
         return self.status in ("within tolerance", "calibrated (spent)") or (
             self.use == "context")
+
+
+#: The French thousands separator, written as an escape: a literal narrow no-break space
+#: is invisible in a diff and indistinguishable from an ordinary one.
+THIN_SPACE = "\u202f"
+
+
+def num_fr(value: float, decimals: int = 0) -> str:
+    """A number in French typography — and ONLY the number.
+
+    Order matters: Python writes «1,234.56», French wants «1 234,56». Swapping in place
+    would turn the thousands comma into a second decimal comma and give «1 234 56».
+
+    Lives here rather than in each renderer because it was written twice already — once
+    in `fiche` and once, worse, in a first draft of `uprating` that printed «+2.5%» in a
+    French document. A formatter duplicated is a formatter that diverges.
+    """
+    text = f"{value:,.{decimals}f}"
+    return text.replace(",", "\x00").replace(".", ",").replace("\x00", THIN_SPACE)
+
+
+def pct_fr(value: float, decimals: int = 0) -> str:
+    """A percentage in French typography: comma decimal, narrow space before the sign.
+
+    Python's `:.0%` gives «22%». French sets «22 %».
+
+    Zero decimals by default because most call sites want «22 %» rather than «22,0 %»;
+    a caller wanting decimals asks for them. The default matters: moving it from 0 to 1
+    silently reworded every percentage in the fiche, which two tests caught.
+    """
+    return num_fr(value * 100, decimals) + THIN_SPACE + "%"
 
 
 def format_value(value: float | None, unit: str) -> str:

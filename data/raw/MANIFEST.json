@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-08",
+  "generated": "2026-09-09",
   "files": {
     "Dictionnaire_EEC_2024.pdf": {
       "url": "https://www.insee.fr/fr/statistiques/fichier/8632441/EEC%202024%20_%20Dictionnaire%20des%20codes%20_%20Fichier%20detail_2024.pdf",
@@ -1125,6 +1125,15 @@
       "downloaded": "2026-09-08",
       "licence": "DGFiP — Licence Ouverte v2.0 (Etalab)",
       "description": "DGFiP Statistiques n° 46 (mai 2026), « En 2025, la taxe foncière progresse de 2,4 % ». LE comparateur du gate F5, et son périmètre est la moitié de l'information : « Hors taxes annexes et frais de gestion, les montants dus de TFPB sont de 43,1 Md€ en 2025 ». Le 55,1 Md€ mis en avant les INCLUT et n'est pas le bon comparateur d'une reconstitution base x taux. TFPNB : 2,7 Md€, en baisse de 5,8 %. Tableau 1 : locaux d'habitation 41,35 Md€ (95,5 % des locaux) ; industriels 2,9 Md€.\nCIRCULARITÉ À DÉCLARER : cette publication est tirée du même REI. La comparaison valide la LECTURE du fichier, pas le modèle."
+    },
+    "resf_2026.pdf": {
+      "url": "https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1087924/file/RESF%202026.pdf",
+      "quarantined": false,
+      "sha256": "79d577f3068315c500b6f749c40d2e59450424a31061ce0d46646317ab04996e",
+      "bytes": 4008164,
+      "downloaded": "2026-09-09",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Rapport économique, social et financier annexé au PLF 2026 (198 p.). Manifesté POUR LE GATE « projection contre projection » (D-105.1), et le gate a dit NON — cf. D-108. Manifesté quand même, comme les deux sources de la phase 5 gardées pour ce qu'elles NE contiennent PAS : refaire la recherche coûterait le même travail.\nCE QU'IL PORTE : un tableau de recettes PAR IMPÔT aux pages 85-92, mais sur 2025 et 2026 SEULEMENT (IR 94,9 Md€ en 2025, TVA nette budgétaire 96,8, recettes fiscales nettes 325,7). La matière pluriannuelle qui va jusqu'à 2029 est AGRÉGÉE — soldes publics, ratio d'endettement, dépense primaire nette en % du PIB — et ne descend à aucun impôt.\nET LE CHIFFRE PAR IMPÔT EST BUDGÉTAIRE : recettes encaissées par l'État sur un exercice, avec le calendrier du PAS et les prélèvements sur assiettes, et non l'impôt dû au titre d'une année de revenus — qui est ce que ce modèle calcule. Le rapport ne publie pas le pont entre les deux."
     }
   }
 }

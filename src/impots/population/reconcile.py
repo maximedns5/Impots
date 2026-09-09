@@ -157,12 +157,19 @@ def _estimator_note(correct: float, decile_mean: float, target: float) -> str:
     )
 
 
-def build_lines(agg: Aggregates) -> list[Line]:
+def build_lines(agg: Aggregates, population_year: int | None = None,
+                comparator_year: int | None = None) -> list[Line]:
     """Every reconciliation line this population has, calibration and validation alike.
 
     `Line.from_figure` takes each line's `use` from the figure it came from, so a
     calibration target cannot be presented as validation — which is exactly what
     happened to the ménage count before raking existed.
+
+    `population_year` and `comparator_year` are set only by a TRAJECTORY, and only when
+    they differ: an uprated population reproduces no published total, because there are
+    none for a future year. Every line then reports «not comparable» instead of a
+    tolerance verdict — F3 M2's completion condition (D-102). Left at None, which is
+    every existing caller, nothing changes.
     """
     totals = agg.totals
     lines: list[Line] = [
@@ -383,6 +390,12 @@ def build_lines(agg: Aggregates) -> list[Line]:
         "residual is what IPF's alternation between the two margin sets leaves behind.",
         source="INSEE recensement",
     ))
+
+    if population_year is not None and comparator_year is not None:
+        for line in lines:
+            line.population_year = population_year
+            line.comparator_year = comparator_year
+
     return lines
 
 

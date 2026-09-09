@@ -606,3 +606,67 @@ def test_the_warning_does_not_hard_code_a_single_cause(source: str):
     picker = picker[:picker.index("\nasync function boot")]
     assert "item.why" in picker, "the note does not use each knob's own reason"
     assert "AJOUTE" in picker, "the note never mentions added knobs"
+
+
+# --- F3 M5 (S2): the trajectory view -------------------------------------------------
+
+
+def test_the_trajectory_banner_is_shipped_verbatim(source: str):
+    """Prescribed word for word by the phase spec, and it is the one thing a reader must
+    not have to infer. It travels in the artefact, so the renderer prints what it is
+    given — this pins that the renderer does not paraphrase it."""
+    body = _function(source, "renderTrajectoire")
+    assert "escapeHtml(t.banner)" in body, "la bannière doit venir de l'artefact"
+
+
+def test_the_trajectory_is_points_never_a_curve(source: str):
+    """F3 M5's rule. A smooth line through annual points suggests values that were not
+    computed, and the ones that were are the only ones this model has.
+
+    Fails if a path/polyline/curve appears in the renderer.
+    """
+    body = _function(source, "renderTrajectoire")
+    for banned in ("<path", "polyline", "<svg", "curve", "bezier"):
+        assert banned not in body.lower(), f"{banned} : la trajectoire serait une courbe"
+    assert "trow" in body, "une ligne par année"
+
+
+def test_the_frozen_aged_pair_is_drawn_not_just_the_headline(source: str):
+    """M2's ruling: the pair IS the uprating measurement. Drawing only the aged figure
+    would hide the class entirely, and on the worked example it reaches ±2 md€."""
+    body = _function(source, "renderTrajectoire")
+    assert "uprating_frozen_eur" in body and "uprating_aged_eur" in body
+    assert "tspan" in body and "taged" in body
+
+
+def test_zero_is_always_inside_the_trajectory_scale(source: str):
+    """A trajectory that never crosses zero still needs zero drawn, or a reader cannot
+    tell a cost from a yield. Fails if the scale is computed from the values alone."""
+    body = _function(source, "renderTrajectoire")
+    assert "const values = [0]" in body
+    assert "tzero" in body
+
+
+def test_the_basis_is_shown_per_year_and_reconducted_is_marked(source: str):
+    """`reconducted` years are the ones where the reference decides the answer, so they
+    are visually distinct rather than merely labelled."""
+    body = _function(source, "renderTrajectoire")
+    assert 'y.basis === "reconducted"' in body
+    assert "recond" in body
+    assert ".traj .tb.recond" in source, "le style distinctif doit exister"
+
+
+def test_the_trajectory_view_is_silent_without_an_artefact(source: str):
+    """A trajectory is a batch job; the panel must work when none has been computed.
+    Fails if the loader throws or renders an empty frame."""
+    body = _function(source, "loadTrajectoires")
+    assert "if (!names.length) return;" in body
+    assert "catch { return; }" in body
+
+
+def test_the_trajectory_view_reads_a_precomputed_artefact(source: str):
+    """N population runs twice over is minutes per year — it cannot sit behind a
+    synchronous request, which is the rule every population run in this project follows."""
+    body = _function(source, "loadTrajectoires")
+    assert "/trajectoires" in body
+    assert "population/simulate" not in body

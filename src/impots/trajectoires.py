@@ -42,6 +42,7 @@ says so on every result rather than leaving it to a reader who may not know.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Any
 
 #: The last year the IR barème was actually indexed. Measured, not assumed: read through
@@ -243,3 +244,309 @@ def sweep(
     require_reference(reference)
     return [price(year, reference, reform=reform, law=law_for(year),
                   run=run_for(year), indexation=indexation) for year in years]
+
+
+# --------------------------------------------------------------------------- #
+# M3 — the knobs gain a time dimension, and every year says what it rests on
+# --------------------------------------------------------------------------- #
+
+#: The two sides, and how far the parameter tree has actually been legislated on each.
+#:
+#: MEASURED, NOT DECLARED. `last_legislated_year` walks the known parameter paths year by
+#: year and reports the last year at which any value CHANGES — including a change to
+#: absent, which is how the tree encodes the CVAE's abolition. Measured today: households
+#: 2027, firms 2030. Hard-coding those would make the module lie the first time an LFI
+#: legislates further out; deriving them means the classification updates itself and the
+#: pinning test fails loudly instead.
+SIDES = ("menages", "entreprises")
+
+#: What a year's figure rests on.
+#:
+#: `legislated` — a legislator has set the parameters for this year. The tree's value is
+#: the law.
+#: `reconducted` — no legislator has spoken about this year yet, so the tree carries the
+#: last value forward. That is legally correct absent new legislation AND very likely to
+#: be superseded, which is exactly why the choice of reference decides the answer.
+BASES = ("legislated", "reconducted")
+
+
+def _paths_for(side: str) -> dict[str, tuple[str, ...]]:
+    if side == "menages":
+        from impots.engine.reforms import SCALAR_KNOBS
+
+        return dict(SCALAR_KNOBS)
+    import pathlib
+    import re
+
+    source = (pathlib.Path(__file__).resolve().parents[2]
+              / "src" / "impots" / "entreprises" / "reforms.py").read_text(encoding="utf-8")
+    return {m[0]: tuple(x.strip().strip("\"'") for x in m[1].split(","))
+            for m in re.findall(r'"(\w+)":\s*\(([^)]*)\)', source)}
+
+
+def _parameters_for(side: str) -> Any:
+    if side == "menages":
+        from impots.engine.system import baseline
+
+        return baseline().parameters
+    from impots.entreprises.system import baseline as firm_baseline
+
+    return firm_baseline().parameters
+
+
+@lru_cache(maxsize=8)
+def last_legislated_year(side: str, horizon: int = 2032) -> int:
+    """The last year at which any known parameter on `side` changes value.
+
+    Cached: the walk reads 52 household paths across nine years, each read building a
+    parameter node, and `basis_for` calls it once per year of every sweep. Uncached it
+    dominated the runtime of a trajectory that does no engine work at all. The tree does
+    not change within a process, so the cache cannot go stale.
+
+    A change to ABSENT counts: the CVAE's parameters cease to exist in 2030, and that
+    disappearance is the abolition, not a gap. Treating it as a change is what makes the
+    firm side legislated through 2030 rather than through 2029.
+    """
+    if side not in SIDES:
+        raise TrajectoryError(f"côté inconnu : {side}. Les côtés sont {list(SIDES)}.")
+    parameters = _parameters_for(side)
+    years = list(range(2024, horizon + 1))
+    last = years[0]
+    for path in _paths_for(side).values():
+        previous, seen = None, False
+        for year in years:
+            try:
+                node = parameters(f"{year}-01-01")
+                for part in path:
+                    if part:
+                        node = getattr(node, part)
+                value: float | None = float(node)
+            except Exception:
+                value = None
+            if seen and value != previous:
+                last = max(last, year)
+            previous, seen = value, True
+    return last
+
+
+def basis_for(side: str, year: int) -> str:
+    """Whether `year` on `side` rests on legislation or on reconduction."""
+    return "legislated" if year <= last_legislated_year(side) else "reconducted"
+
+
+def basis_note(side: str, year: int, reference: str) -> str:
+    """What must be said about a year, given what it rests on and which reference.
+
+    Two cases the spec names, and a third that fell out of writing it.
+    """
+    basis = basis_for(side, year)
+    last = last_legislated_year(side)
+    if basis == "legislated" and reference == "reconduit":
+        return (f"{year} est LÉGIFÉRÉ côté {side} : l'arbre porte les paramètres qu'un "
+                f"législateur a fixés pour cette année (dernier changement en {last}). "
+                f"Ce chiffre ne dépend d'aucune hypothèse.")
+    if basis == "legislated" and reference == "indexe":
+        # The third case, and it is not the one the spec anticipated: indexing a year the
+        # legislator HAS addressed does not restore a missing indexation, it overwrites a
+        # voted barème with a counterfactual one. Legitimate, and a different claim.
+        return (f"ATTENTION : {year} est LÉGIFÉRÉ côté {side}, et la référence « indexe » "
+                f"y REMPLACE le barème voté par un barème indexé. Ce n'est pas rétablir "
+                f"une indexation manquante, c'est écraser une loi existante par une "
+                f"contrefactuelle. Légitime, mais ce n'est pas la même affirmation qu'au "
+                f"delà de {last}.")
+    return (f"{year} est RECONDUIT côté {side} : aucun législateur ne s'est encore "
+            f"prononcé sur cette année (dernier changement en {last}), et l'arbre "
+            f"reporte la dernière valeur. C'est juste en droit tant que rien n'est voté, "
+            f"et très probablement dépassé. La référence choisie — ici « {reference} » — "
+            f"décide donc du chiffre, et il faut la lire avec lui.")
+
+
+@dataclass(frozen=True)
+class KnobYear:
+    """One knob, one year, one side: the figure and what it rests on."""
+
+    knob: str
+    side: str
+    year: int
+    reference: str
+    basis: str
+    mechanical_eur: float
+    note: str
+
+    def line(self) -> str:
+        return (f"{self.year} · {self.knob} · {self.mechanical_eur / 1e9:+.3f} md€ · "
+                f"{self.basis}")
+
+
+def sweep_knob(
+    knob: str,
+    side: str,
+    years: range,
+    *,
+    reference: str,
+    run_for: Any,
+    value: Any = None,
+) -> list[KnobYear]:
+    """Price one knob across years, each result carrying what its year rests on.
+
+    `run_for(year)` returns a callable taking the reform dict — the same injection the
+    rest of this module uses, so the time dimension is testable without a population.
+    """
+    require_reference(reference)
+    if side not in SIDES:
+        raise TrajectoryError(f"côté inconnu : {side}. Les côtés sont {list(SIDES)}.")
+    out: list[KnobYear] = []
+    for year in years:
+        cost = float(run_for(year)({knob: value} if value is not None else None))
+        out.append(KnobYear(
+            knob=knob, side=side, year=year, reference=reference,
+            basis=basis_for(side, year), mechanical_eur=cost,
+            note=basis_note(side, year, reference)))
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# M4 (S1) — the band, year by year, with its classes kept apart
+# --------------------------------------------------------------------------- #
+
+#: The uncertainty classes a trajectory carries, and the rule that governs them: they are
+#: reported SEPARATELY and never summed. The project's uncertainty grammar already keeps
+#: parameter / scenario / cell-bound / composition visible; a trajectory adds one.
+#:
+#: `uprating` is the class this milestone names, and it is MEASURED rather than assumed:
+#: its width is the frozen/aged pair from M2. On the 2028 barème freeze that pair is
+#: -7,073 md€ against a frozen 2024 population and -8,339 md€ against an aged one, so the
+#: uprating hypothesis is worth 1,27 md€ of spread on that reform in that year — more than
+#: many behavioural bands, and invisible unless it is named.
+UNCERTAINTY_CLASSES = ("uprating", "behavioural")
+
+
+def max_fan_horizon_years() -> int:
+    """How many years past a reform the macro fan may be shown, read from the store.
+
+    Derived, not written: `usable_horizons` is ["1","2","3"] in `multipliers.yaml`, capped
+    at three for two independent and converging reasons — §0's refusal of any horizon past
+    three years, and the measurement that the long columns are determined by a
+    specification choice rather than observed (employer contributions run 1,73 at LT under
+    wage-setting and 0,25 under a Phillips curve, a factor of seven). Reading it from the
+    store means a store that narrows narrows the trajectory too.
+    """
+    from impots.macro import store as store_module
+
+    # BOTH containers: a row carrying `from_source_table` — which every multiplier does —
+    # lands in `store.tables`, not `store.parameters`. Reading only the latter returned an
+    # empty set and this function raised, claiming no horizon was usable when three were.
+    store = store_module.load()
+    rows = list(store.tables.values()) + list(store.parameters.values())
+    horizons = {int(h) for row in rows
+                for h in getattr(row, "usable_horizons", ()) if str(h).isdigit()}
+    if not horizons:
+        raise TrajectoryError(
+            "aucun horizon utilisable dans le magasin macro : l'éventail ne peut être "
+            "montré pour aucune année, et le dire vaut mieux que de supposer trois ans.")
+    return max(horizons)
+
+
+@dataclass(frozen=True)
+class YearUncertainty:
+    """One year of a trajectory, with every class kept apart.
+
+    There is deliberately NO combined band and no `total` property. The two classes answer
+    different questions — «how much does the price hypothesis move this figure» and «how
+    much might behaviour move it» — and adding them would assert an independence nobody
+    has established while destroying the only information a reader can act on: which of
+    the two is doing the work. On the 2028 freeze the uprating class is the larger, and a
+    single merged interval would hide that.
+    """
+
+    year: int
+    basis: str
+    mechanical_eur: float
+    """Priced on the AGED population — the headline, because it is the more complete."""
+    uprating_eur: tuple[float, float]
+    """(frozen, aged). The uprating class, measured rather than assumed."""
+    behavioural_eur: tuple[float, float] | None
+    behavioural_grade: str
+    behavioural_note: str
+    fan: Any | None
+    fan_note: str
+
+    @property
+    def uprating_width_eur(self) -> float:
+        return abs(self.uprating_eur[1] - self.uprating_eur[0])
+
+    def line(self) -> str:
+        parts = [f"{self.year} · {self.basis} · {self.mechanical_eur / 1e9:+.3f} md€",
+                 f"vieillissement ±{self.uprating_width_eur / 1e9:.3f}"]
+        if self.behavioural_eur is not None:
+            low, high = self.behavioural_eur
+            parts.append(f"comportement [{low / 1e9:+.3f} ; {high / 1e9:+.3f}] "
+                         f"({self.behavioural_grade})")
+        else:
+            parts.append(f"comportement : {self.behavioural_grade}")
+        parts.append("éventail" if self.fan is not None else "pas d'éventail")
+        return " · ".join(parts)
+
+
+def fan_note_for(year: int, base_year: int, horizon: int) -> tuple[bool, str]:
+    """Whether the fan may be shown for `year`, and the sentence either way.
+
+    THE HORIZON REFUSAL BINDS PER YEAR, NOT PER REFORM. A 2024-2030 trajectory is not
+    «inside the horizon» or «outside» it as a whole: 2026 is two years out and 2030 is
+    six, and showing one fan for the reform would silently extend a three-year multiplier
+    across six. So each year is judged on its own distance.
+    """
+    distance = year - base_year
+    if distance <= horizon:
+        return True, (f"{year} est à {distance} an(s) de {base_year}, dans l'horizon "
+                      f"déclaré de {horizon} ans : l'éventail est montré.")
+    return False, (
+        f"Pas d'éventail pour {year} : {distance} ans après {base_year}, au-delà de "
+        f"l'horizon utilisable de {horizon} ans. Ce refus est POSÉ PAR ANNÉE et non par "
+        f"réforme — montrer un seul éventail pour la trajectoire étendrait en silence un "
+        f"multiplicateur à trois ans sur six. La borne vient du magasin macro, où les "
+        f"colonnes longues se sont révélées déterminées par un choix de spécification "
+        f"plutôt que mesurées.")
+
+
+def year_uncertainty(
+    year: int,
+    *,
+    basis: str,
+    frozen_eur: float,
+    aged_eur: float,
+    behavioural: Any = None,
+    base_year: int,
+    horizon: int | None = None,
+    fan: Any = None,
+) -> YearUncertainty:
+    """Assemble one year's uncertainty, classes apart.
+
+    `behavioural` is whatever the behavioural layer returned FOR THIS YEAR — graded per
+    year, not once for the reform. A reform in support in 2026 can be out of support by
+    2030 as uprated incomes drift from the range the elasticities were estimated on, and
+    that is measured by grading each year rather than carrying 2026's verdict forward.
+    """
+    horizon = max_fan_horizon_years() if horizon is None else horizon
+    allowed, note = fan_note_for(year, base_year, horizon)
+    if allowed and fan is None:
+        # «Permitted» and «present» are different, and the note said the first while the
+        # line said the second. A reader would have read «l'éventail est montré» beside
+        # «pas d'éventail» and been right to distrust both.
+        note = (f"{year} est dans l'horizon déclaré de {horizon} ans, mais aucun "
+                f"éventail n'a été calculé pour cette année — l'étage macro n'a pas été "
+                f"demandé, ou il a refusé pour une raison qui lui est propre.")
+    band = None
+    grade = "aucune bande"
+    grade_note = ""
+    if behavioural is not None:
+        raw = getattr(behavioural, "band", None)
+        if raw is not None:
+            band = (float(raw.p10), float(raw.p90))
+        grade = str(getattr(behavioural, "grade", "aucune bande"))
+        grade_note = str(getattr(behavioural, "grade_reason", ""))
+    return YearUncertainty(
+        year=year, basis=basis, mechanical_eur=aged_eur,
+        uprating_eur=(frozen_eur, aged_eur), behavioural_eur=band,
+        behavioural_grade=grade, behavioural_note=grade_note,
+        fan=(fan if allowed else None), fan_note=note)

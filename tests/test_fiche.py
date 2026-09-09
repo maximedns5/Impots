@@ -24,6 +24,7 @@ from impots.api.schemas import (
     PopulationMeta,
     PopulationResponse,
 )
+from impots.reporting import THIN_SPACE
 
 PROVENANCE = fiche.Provenance(
     titre="Essai", source="variante interne", date="2026-09-08", scenario="essai")
@@ -142,7 +143,7 @@ def test_the_fiche_refuses_a_fan_without_its_assumptions_strip():
 def test_a_fan_renders_with_its_strip():
     text = fiche.render(response(macro=fan_block()), PROVENANCE)
     assert "bas de cycle" in text
-    assert f"fuite 22{fiche.THIN_SPACE}%" in text, "typographie française attendue"
+    assert f"fuite 22{THIN_SPACE}%" in text, "typographie française attendue"
     assert "**PIB, 1 an**" in text
     assert "Pas une prévision." in text
 
@@ -217,7 +218,7 @@ def test_number_formatting_does_not_eat_the_prose():
     """
     text = fiche.render(response(), PROVENANCE)
     assert "structure EEC, revenus synthétiques" in text, "les virgules de prose ont sauté"
-    assert f"31{fiche.THIN_SPACE}013{fiche.THIN_SPACE}334 ménages" in text
+    assert f"31{THIN_SPACE}013{THIN_SPACE}334 ménages" in text
 
 
 def test_a_delta_keeps_its_sign():
@@ -227,7 +228,7 @@ def test_a_delta_keeps_its_sign():
     assert fiche._eur(-792.0).startswith("-")
     text = fiche.render(response(), PROVENANCE)
     assert "+792 €" in text
-    assert f"77{fiche.THIN_SPACE}%" in text, "les parts aussi en typographie française"
+    assert f"77{THIN_SPACE}%" in text, "les parts aussi en typographie française"
 
 
 def test_magnitudes_are_rendered_in_the_right_unit():
@@ -292,7 +293,7 @@ def test_channels_are_printed_even_when_the_overall_band_is_withheld():
         "bande d'ensemble ; il faut le dire")
 
 
-NB = fiche.THIN_SPACE
+NB = THIN_SPACE
 
 
 @pytest.mark.parametrize("value,unit,expected", [
@@ -311,5 +312,103 @@ def test_channel_quantities_are_readable_in_their_own_unit(value, unit, expected
 def test_french_decimals_and_thousands_do_not_collide():
     """Python writes «1,234.56»; French wants «1 234,56». Swapping in place would turn
     the thousands comma into a second decimal comma and give «1 234 56»."""
-    assert fiche._num(1_234_567.89, 2) == f"1{fiche.THIN_SPACE}234{fiche.THIN_SPACE}567,89"
-    assert fiche._num(999.5, 0) == "1 000".replace(" ", fiche.THIN_SPACE)
+    assert fiche._num(1_234_567.89, 2) == f"1{THIN_SPACE}234{THIN_SPACE}567,89"
+    assert fiche._num(999.5, 0) == "1 000".replace(" ", THIN_SPACE)
+
+
+# --- F3 M5 (S2): the fiche extended to trajectories ---------------------------------
+
+
+def trajectory_rows():
+    from impots import trajectoires as tj
+
+    return tuple(
+        tj.year_uncertainty(y, basis=basis, frozen_eur=f, aged_eur=a,
+                            base_year=2026, horizon=3)
+        for y, basis, f, a in (
+            (2026, "legislated", -2.399e9, -2.609e9),
+            (2028, "reconducted", -7.073e9, -8.339e9),
+            (2030, "reconducted", -11.0e9, -13.4e9)))
+
+
+def test_a_trajectory_fiche_carries_the_banner_verbatim():
+    """The sentence is prescribed word for word by the phase spec, and it is the one
+    thing a reader must not have to infer: the population is today's France with
+    tomorrow's money. Fails on any rewording."""
+    text = fiche.render(response(), fiche.Provenance(
+        titre="X", source="s", date="2026-09-09", trajectoire=trajectory_rows()))
+    assert ("Ce qui est chiffré : ce droit, sur la France d’aujourd’hui, "
+            "avec l’argent de demain.") in text
+
+
+def test_the_per_year_table_names_both_classes_separately():
+    """Fails if the two uncertainty classes are merged into one column.
+
+    They answer different questions and on this trajectory the uprating class is the
+    larger; a single interval would hide which is doing the work.
+    """
+    text = fiche.render(response(), fiche.Provenance(
+        titre="X", source="s", date="2026-09-09", trajectoire=trajectory_rows()))
+    assert "| année | base | mécanique | vieillissement" in text
+    assert "comportement" in text
+    assert "ne sont pas additionnées" in text
+
+
+def test_the_table_shows_the_frozen_aged_pair_not_just_a_width():
+    """M2's ruling: the pair IS the measurement. Showing only «±1,27 Md€» would hide
+    which direction ageing moves the figure, and it moves it away from zero."""
+    text = fiche.render(response(), fiche.Provenance(
+        titre="X", source="s", date="2026-09-09", trajectoire=trajectory_rows()))
+    assert "-7,07 Md€ → -8,34 Md€" in text
+
+
+def test_the_band_widens_visibly_with_the_horizon():
+    """F3 M5 asks for the widening to be visible. On this trajectory it runs 210 M€ in
+    2026 to 2,40 Md€ in 2030 — a fact about the further year being less known, and the
+    reason a trajectory is points rather than a curve."""
+    text = fiche.render(response(), fiche.Provenance(
+        titre="X", source="s", date="2026-09-09", trajectoire=trajectory_rows()))
+    assert "±210 M€" in text and "±2,40 Md€" in text
+
+
+def test_a_width_is_unsigned():
+    """«±+210 M€» reads as a typo because it is one: the ± already carries the
+    two-sidedness. Fails if the signed formatter comes back for widths."""
+    assert fiche._width(210e6) == "210 M€"
+    assert fiche._width(-1.266e9) == "1,27 Md€"
+
+
+def test_the_bases_are_named_per_year():
+    text = fiche.render(response(), fiche.Provenance(
+        titre="X", source="s", date="2026-09-09", trajectoire=trajectory_rows()))
+    assert "| 2026 | legislated |" in text
+    assert "| 2028 | reconducted |" in text
+    assert "reporte la dernière valeur votée" in text
+
+
+def test_the_years_that_lost_their_fan_say_why():
+    """The horizon refusal binds per year, so the fiche lists the years it dropped and
+    the reason — not one blanket sentence for the reform."""
+    text = fiche.render(response(), fiche.Provenance(
+        titre="X", source="s", date="2026-09-09", trajectoire=trajectory_rows()))
+    assert "Éventail macro, refusé pour certaines années" in text
+    assert "2030 —" in text
+
+
+def test_a_single_year_fiche_is_unchanged_by_the_trajectory_code():
+    """Every existing caller passes no trajectory, and must render exactly as before."""
+    text = fiche.render(response(), PROVENANCE)
+    assert "4.2.1 bis" not in text
+    assert "argent de demain" not in text
+
+
+def test_the_uprating_hypothesis_rides_on_the_trajectory_fiche():
+    """The ageing indices are a declared hypothesis, so they travel with the figures."""
+    from impots.uprating import Uprating
+
+    hypo = Uprating(wage=0.025, price=0.02, source="2,5 % / 2 % ronds", base_year=2024)
+    text = fiche.render(response(), fiche.Provenance(
+        titre="X", source="s", date="2026-09-09",
+        trajectoire=trajectory_rows(), uprating=hypo))
+    assert "2,5 % / 2 % ronds" in text
+    assert "n'est plus calibrée" in text

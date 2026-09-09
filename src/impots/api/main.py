@@ -55,6 +55,8 @@ from impots.api.schemas import (
     SimulateRequest,
     SimulateResponse,
     Timings,
+    TrajectoryListResponse,
+    TrajectoryResponse,
 )
 from impots.engine import baseline, compute, versions, warm_up
 from impots.engine.reforms import read_ir_parameters
@@ -840,6 +842,36 @@ def _scenario_summary(scenario: Any) -> ScenarioSummary:
         source=scenario.source, note=scenario.note, tags=list(scenario.tags),
         knobs=sorted(scenario.reform.model_dump(exclude_none=True)),
     )
+
+
+TRAJECTORIES = Path(__file__).resolve().parents[3] / "reports"
+
+
+@app.get("/trajectoires", response_model=TrajectoryListResponse)
+def trajectoires_list() -> TrajectoryListResponse:
+    """Precomputed trajectories. Reads files; never runs the engine.
+
+    A trajectory is N population runs twice over — one per year for the frozen and the
+    aged population — so it is a batch job and lives in the CLI, like every other
+    population run (§1.1).
+    """
+    return TrajectoryListResponse(trajectoires=sorted(
+        path.stem.removeprefix("trajectoire_")
+        for path in TRAJECTORIES.glob("trajectoire_*.json")))
+
+
+@app.get("/trajectoires/{name}", response_model=TrajectoryResponse)
+def trajectoires_show(name: str) -> TrajectoryResponse:
+    from impots.scenarios import ScenarioError, _check_name
+
+    try:
+        _check_name(name)
+    except ScenarioError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    path = TRAJECTORIES / f"trajectoire_{name}.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail=f"trajectoire « {name} » inconnue")
+    return TrajectoryResponse.model_validate_json(path.read_text(encoding="utf-8"))
 
 
 @app.get("/", include_in_schema=False)
