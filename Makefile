@@ -24,6 +24,7 @@
 
 VENV ?= .venv/bin
 LOG  := reports/full_pass_log.md
+DURATIONS := reports/full_pass_durations.md
 
 .PHONY: gate full lint report
 
@@ -53,6 +54,14 @@ full:
 	   counts="$${counts:-interrompu, aucun résumé produit}"; \
 	 else result=FAIL; fi; \
 	 [ "$$result" = FAIL ] && tail -40 $$out; \
+	 : "--durations écrit son bloc dans \$$out, que seul tail -1 lisait avant"; \
+	 : "de le supprimer : le drapeau était INERTE en cas de succès. D-117."; \
+	 awk "/slowest .* durations/,0" $$out > $(DURATIONS).tmp; \
+	 { printf "# Où passe la passe complète\n\n"; \
+	   printf "%s · \`%s\` · %s\n\n\`\`\`\n" \
+	     "$$(date +%Y-%m-%d)" "$$(git rev-parse --short HEAD)" "$$counts"; \
+	   cat $(DURATIONS).tmp; printf "\`\`\`\n"; } > $(DURATIONS); \
+	 rm -f $(DURATIONS).tmp; \
 	 tail -1 $$out; \
 	 rm -f $$out; \
 	 printf '| %s | `%s` | %s | %dm%02ds | %s |\n' \

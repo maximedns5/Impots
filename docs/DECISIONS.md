@@ -5339,3 +5339,51 @@ paramètre demande une passe moteur par cas, prévu en v2), la construction de p
 classement ordonne **ce qui a pu être mesuré**, pas l'ensemble des erreurs du modèle. Le lire
 autrement serait exactement l'erreur que ce budget existe pour éviter, et le rapport le dit
 dans son propre texte.
+
+## D-117 — Le drapeau `--durations` était inerte, et je l'avais ajouté pour répondre à une question
+
+**2026-09-10.** Quatrième défaut trouvé dans le gate lui-même, et le premier que j'ai
+**fabriqué en corrigeant le troisième**.
+
+D-114 ajoutait `--durations=15` à la cible `full` avec une justification explicite : « pour
+que le prochain "pourquoi est-ce si long ?" se réponde depuis le journal plutôt que d'être
+redérivé ». La passe suivante a été verte — `1338 passed, 2 skipped, 60m44s` sur `2917acf` —
+et le fichier de sortie faisait **180 octets**. Aucune ligne de durée.
+
+La cause : pytest écrit dans `$out`, la recette n'en imprime que `tail -1` en cas de succès
+(`tail -40` seulement en cas d'ÉCHEC), puis `rm -f $$out`. Le bloc de durées était produit,
+écrit, puis supprimé sans jamais être lu. **Le drapeau tournait et ne servait à rien.**
+
+C'est la troisième question permanente prise par l'autre bout : je demande « ai-je déjà vu
+ce contrôle échouer ? » ; il fallait demander **« ai-je déjà vu cette sortie exister ? »**.
+Ajouter un instrument et ne pas vérifier que son résultat survit revient exactement au même
+défaut — quelque chose qui a l'air de mesurer et ne mesure rien.
+
+Corrigé : le bloc est extrait par `awk "/slowest .* durations/,0"` vers
+`reports/full_pass_durations.md`, avec la date, le commit et les comptes. **Vérifié en
+faisant tourner les lignes exactes de la recette sur une vraie sortie pytest courte** — pas
+sur un fichier fabriqué, et pas en se contentant de `make -n`.
+
+### Et la correction elle-même contenait un no-op silencieux
+
+Mon script de correction faisait deux substitutions. La première portait
+`assert old in s` ; la seconde, non — elle cherchait `LOG = reports/...` alors que le
+fichier écrit `LOG  := reports/...`. **`str.replace` ne signale rien quand le motif est
+absent** : `DURATIONS` n'a jamais été défini, et la recette redirigeait vers une chaîne
+vide. Attrapé en relisant `grep "^DURATIONS"` juste après, qui ne rendait rien.
+
+La règle qui en sort, et elle vaut au-delà des Makefile : **toute substitution de texte
+porte son ancrage assertif**, sinon un remplacement qui ne remplace rien passe pour un
+succès. Deux substitutions, une assertion : c'est celle sans assertion qui a échoué.
+
+### Ce que la passe a par ailleurs établi
+
+`2917acf` · **1338 passed, 2 skipped, 60m44s**, machine au calme. Deux sauts et non cinq :
+les budgets de temps ont tourné. Et la passe précédente n'avait jamais abouti — je l'avais
+lancée avec un `&` dans un appel de premier plan au lieu du mode fond du harnais, si bien
+que le shell et toute sa descendance ont été moissonnés à la fin de l'appel
+(`make: *** [full] Terminated: 15`). **Aucune ligne n'a été écrite au journal** dans ce
+cas-là, contrairement au cas D-113 : quand `make` lui-même reçoit SIGTERM, le `printf` de
+fin de recette ne tourne jamais. Le journal ne peut donc pas enregistrer sa propre mort par
+le haut, et c'est une limite à connaître plutôt qu'un défaut à corriger — un journal écrit
+par un processus tué ne serait pas plus fiable.
