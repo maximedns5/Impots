@@ -1022,6 +1022,57 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_emtr_explorer(args: argparse.Namespace) -> int:
+    """Sweep a household type across the income range and write the artefact (F6 / S5).
+
+    Four full-tier runs for the whole curve, not two per point: the sweep is a synthetic
+    frame priced in one pass by the machinery the behavioural layer already uses.
+    """
+    import json as _json
+    from datetime import date as _date
+
+    from impots import emtr_explorer as explorer
+
+    reform = None
+    if args.reform:
+        try:
+            reform = _load_reform(args.reform)
+        except Exception as error:
+            print(f"--reform ne valide pas : {error}", file=sys.stderr)
+            return 1
+
+    try:
+        curve = explorer.curve(args.type, year=args.year, reform=reform,
+                               step=args.step, maximum=args.max)
+    except explorer.ExplorerError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    payload = {
+        "household_type": curve.household_type, "label": curve.label,
+        "year": curve.year, "computed": _date.today().isoformat(),
+        "step_eur": args.step, "reform": curve.reform,
+        "points": [{"salaire_brut_annuel": p.salaire_brut_annuel, "emtr": p.emtr,
+                    "emtr_reform": p.emtr_reform} for p in curve.points],
+        "peak_eur": curve.peak.salaire_brut_annuel, "peak_emtr": curve.peak.emtr,
+        "cliffs_eur": [p.salaire_brut_annuel for p in curve.cliffs],
+        "crossings_eur": list(curve.crossings()),
+    }
+    out = (Path(__file__).resolve().parents[3] / "reports"
+           / f"emtr_{curve.household_type}.json")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(_json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+                   encoding="utf-8")
+    print(f"  {curve.label}")
+    print(f"  -> {out} ({len(curve.points)} points)")
+    print(f"  pic {curve.peak.emtr:.1%} à {curve.peak.salaire_brut_annuel:,.0f} EUR"
+          .replace(",", " "))
+    if curve.cliffs:
+        print(f"  falaises à {[int(p.salaire_brut_annuel) for p in curve.cliffs]} — "
+              f"leur HAUTEUR est un artefact du pas de 100 EUR, pas un taux subi")
+    return 0
+
+
 def pl_read(path: object) -> object:
     import polars as pl
 
@@ -1240,7 +1291,17 @@ def build_parser() -> argparse.ArgumentParser:
     trajectoire.add_argument("--dir")
     trajectoire.set_defaults(func=cmd_trajectoire)
 
+    emtr_parser = subcommands.add_parser(
+        "emtr", help="sweep a household type across the income range (F6)")
+    emtr_parser.add_argument("type")
+    emtr_parser.add_argument("--year", type=int, default=2024)
+    emtr_parser.add_argument("--step", type=float, default=500.0)
+    emtr_parser.add_argument("--max", type=float, default=60_000.0)
+    emtr_parser.add_argument("--reform", help="path to a ReformSpec JSON file")
+    emtr_parser.set_defaults(func=cmd_emtr_explorer)
+
     return parser
+
 
 
 

@@ -21,3 +21,6 @@ green. No review handoff goes out without a line newer than the work it reports.
 | 2026-09-08 | `81510fa` | PASS | 56m46s | 1168 passed, 5 skipped, 18 warnings |
 | 2026-09-08 | `9b0a5aa` | PASS | 66m30s | 1197 passed, 2 skipped, 18 warnings |
 | 2026-09-09 | `cc4a629` | PASS | 60m53s | 1262 passed, 2 skipped, 18 warnings |
+| 2026-09-09 | `f593847` | TUÉ | 214m11s | interrompu par l'opérateur, PAS un échec : deux passes concurrentes après un réveil de veille, charge 110 sur 8 cœurs. La colonne comptes portait des points de progression, pas un résumé. Voir D-113. |
+| 2026-09-09 | `f593847` | TUÉ | 195m51s | interrompu par l'opérateur, PAS un échec : deux passes concurrentes après un réveil de veille, charge 110 sur 8 cœurs. La colonne comptes portait des points de progression, pas un résumé. Voir D-113. |
+| 2026-09-09 | `f593847` | PASS | 82m49s | 1313 passed, 2 skipped, 18 warnings |

@@ -479,6 +479,22 @@ tr.total td:first-child { font-family: var(--sans) !important; font-weight: 600;
 .traj .tnote { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; margin: 10px 0 0; }
 .traj .tlegend { font-size: 11px; color: var(--ink-faint); margin: 8px 0 0 152px; line-height: 1.5; }
 
+/* the EMTR explorer: one row per income point, the rate as a bar, 50 % and 100 % marked.
+   Same idiom as the decile chart — a signed magnitude per row — because it is the same
+   kind of quantity. A CLIFF (rate > 100 %) is marked, never plotted as a taper: its
+   height is an artefact of the 100 EUR step, not a rate anybody faces. */
+.emtr .erow { display: grid; grid-template-columns: 72px 1fr 58px; align-items: center; gap: 10px; padding: 2px 0; }
+.emtr .ex { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); text-align: right; }
+.emtr .etrack { position: relative; height: 13px; background: var(--paper-deep); }
+.emtr .ehalf { position: absolute; top: -2px; bottom: -2px; left: 50%; width: 1px; background: var(--ink-faint); }
+.emtr .ebar { position: absolute; top: 2px; bottom: 2px; left: 0; background: var(--bleu); opacity: .55; }
+.emtr .ebar.cliff { background: var(--rouge); opacity: .75; }
+.emtr .ebar.ref { background: none; border-right: 1.5px solid var(--ink); opacity: 1; }
+.emtr .ev { font-family: var(--mono); font-size: 10.5px; font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-soft); }
+.emtr .ev.cliff { color: var(--rouge); }
+.emtr .enote { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; margin: 10px 0 0; }
+.emtr .ehead { font-size: 12.5px; margin: 0 0 8px; }
+
 /* tabs */
 .tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--ink); margin-bottom: 22px; }
 .tabs button {
@@ -1084,6 +1100,9 @@ footer code { font-family: var(--mono); font-size: 11px; }
         <!-- F3 M5 · trajectoire pluriannuelle, lue depuis un artefact
              précalculé par `impots trajectoire`. Masquée s'il n'y en a pas. -->
         <div id="trajHost" hidden></div>
+
+        <!-- F6 · explorateur EMTR, lu depuis un balayage précalculé. -->
+        <div id="emtrHost" hidden></div>
 
         <div class="results-head">
           <h2>Effet de la réforme sur la France entière</h2>
@@ -2562,6 +2581,68 @@ function renderTrajectoire(host, t) {
   host.hidden = false;
 }
 
+/* F6 · the EMTR explorer. Reads a PRECOMPUTED sweep: four full-tier runs per curve,
+   so it is a batch job (`impots emtr <type>`) like every other full-tier run. */
+async function loadEmtrCurves() {
+  const host = document.getElementById("emtrHost");
+  if (!host) return;
+  let names;
+  try {
+    const response = await fetch(`${API}/emtr`);
+    if (!response.ok) return;
+    names = (await response.json()).courbes || [];
+  } catch { return; }
+  if (!names.length) return;
+  try {
+    const one = await fetch(`${API}/emtr/${encodeURIComponent(names[0])}`);
+    if (!one.ok) return;
+    renderEmtrCurve(host, await one.json());
+  } catch { /* silencieux : l'explorateur est un supplément, pas le panneau */ }
+}
+
+function renderEmtrCurve(host, c) {
+  const points = c.points || [];
+  if (!points.length) return;
+  const cliffs = new Set((c.cliffs_eur || []).map(Number));
+  /* The scale runs to 100 %, never to the peak: scaling to a 147 % cliff would squash
+     every real rate into the left third and make the tapers unreadable. A cliff is
+     drawn full-width and marked, because its height is not a rate anybody faces. */
+  const rows = points.map((p) => {
+    const cliff = cliffs.has(Number(p.salaire_brut_annuel)) || p.emtr > 1;
+    const width = Math.max(0, Math.min(p.emtr, 1)) * 100;
+    const ref = (p.emtr_reform === null || p.emtr_reform === undefined) ? "" :
+      `<div class="ebar ref" style="width:${Math.max(0, Math.min(p.emtr_reform, 1)) * 100}%"></div>`;
+    return `<div class="erow">
+      <div class="ex">${Math.round(p.salaire_brut_annuel).toLocaleString("fr-FR")} €</div>
+      <div class="etrack">
+        <div class="ehalf"></div>
+        <div class="ebar${cliff ? " cliff" : ""}" style="width:${width}%"></div>
+        ${ref}
+      </div>
+      <div class="ev${cliff ? " cliff" : ""}">${(p.emtr * 100).toFixed(0)}&nbsp;%</div>
+    </div>`;
+  }).join("");
+
+  const cliffNote = (c.cliffs_eur || []).length
+    ? `<p class="enote"><b>Falaises à ${c.cliffs_eur.map((v) => Math.round(v).toLocaleString("fr-FR") + " €").join(", ")}.</b>
+       Un taux au-dessus de 100 % signifie qu'un euro de salaire brut en plus laisse le
+       ménage <i>moins</i> riche. Leur EMPLACEMENT est un constat ; leur HAUTEUR est un
+       artefact du pas de 100 € de la différence finie — une falaise qui retire 47 € se
+       lit 147 %, et la même mesurée sur 500 € se lirait 109 %. À ne jamais citer comme
+       un taux subi.</p>` : "";
+
+  host.innerHTML = `<div class="emtr">
+    <p class="ehead"><b>Taux marginal effectif — ${escapeHtml(c.label)}</b>, ${c.year}.</p>
+    ${rows}
+    ${cliffNote}
+    <p class="enote">Le trait vertical est 50 %. La barre s'arrête à 100 % : la mettre à
+      l'échelle du pic écraserait tous les taux réels dans le tiers gauche. Ce ménage est
+      <b>construit</b>, pas tiré : c'est une règle graduée, pas un échantillon, et on n'en
+      lit aucune distribution.</p>
+  </div>`;
+  host.hidden = false;
+}
+
 async function boot() {
   renderAdults();
   renderChildren();
@@ -2586,6 +2667,7 @@ async function boot() {
     fillLaw();
     await loadScenarioList();
     await loadTrajectoires();
+    await loadEmtrCurves();
   } catch (error) {
     $("engine").innerHTML = `<span class="dot down"></span>moteur injoignable`;
     showError("Moteur injoignable", [

@@ -194,7 +194,12 @@ class Line:
             # completion condition is exactly this refusal.
             return "not comparable (population vieillie)"
         residual = self.residual
-        assert residual is not None
+        if residual is None:
+            # `published == 0`: a relative residual against zero is not a large number,
+            # it is not a number — the same reasoning the chiffrage harness applies
+            # (D-095). The first version asserted it away and crashed on the first line
+            # that legitimately targeted zero.
+            return "not comparable (cible nulle)"
         within = abs(residual) <= self.tolerance * (1.0 + TOLERANCE_SLACK)
         if self.use == "calibration":
             return "calibrated (spent)" if within else "calibrated, OFF TARGET"

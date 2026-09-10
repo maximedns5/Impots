@@ -670,3 +670,61 @@ def test_the_trajectory_view_reads_a_precomputed_artefact(source: str):
     body = _function(source, "loadTrajectoires")
     assert "/trajectoires" in body
     assert "population/simulate" not in body
+
+
+# --- F6 (S5): the EMTR explorer ------------------------------------------------------
+
+
+def test_a_cliff_is_marked_not_plotted_as_a_taper(source: str):
+    """THE honesty rule of the explorer.
+
+    A rate above 100 % means an extra euro of gross leaves the household worse off — a
+    real feature. But its HEIGHT is an artefact of the 100 EUR finite-difference step: a
+    cliff withdrawing 47 EUR reads 147 %, the same cliff over 500 EUR reads 109 %. Fails
+    if cliffs stop being distinguished, which would let a reader quote «147 %» as a rate
+    somebody faces.
+    """
+    body = _function(source, "renderEmtrCurve")
+    assert "cliff" in body
+    assert "artefact du pas de 100" in source
+    assert "jamais citer comme" in source
+    assert ".emtr .ebar.cliff" in source, "les falaises doivent être visuellement distinctes"
+
+
+def test_the_scale_stops_at_one_hundred_per_cent(source: str):
+    """Scaling to a 147 % cliff would squash every real rate into the left third and make
+    the tapers — the thing the explorer exists to show — unreadable."""
+    body = _function(source, "renderEmtrCurve")
+    assert "Math.min(p.emtr, 1)" in body
+    assert "écraserait tous les taux réels" in source
+
+
+def test_the_curve_says_its_household_is_constructed(source: str):
+    """A sweep is a ruler, not a sample. An EMTR curve without its household type is a
+    curve of nothing in particular: the rate at 24 000 EUR differs entirely between a
+    single tenant and a couple with two children."""
+    body = _function(source, "renderEmtrCurve")
+    assert "escapeHtml(c.label)" in body
+    assert "pas un échantillon" in source
+    assert "aucune distribution" in source
+
+
+def test_the_explorer_reads_a_precomputed_sweep(source: str):
+    """Four full-tier runs per curve — a batch job, like every other full-tier run."""
+    body = _function(source, "loadEmtrCurves")
+    assert "/emtr" in body
+    assert "simulate" not in body
+
+
+def test_the_explorer_is_silent_without_a_sweep(source: str):
+    body = _function(source, "loadEmtrCurves")
+    assert "if (!names.length) return;" in body
+    assert "catch { return; }" in body
+
+
+def test_the_fifty_per_cent_line_is_drawn(source: str):
+    """The threshold the crossings are computed against, made visible on the chart so a
+    reader can see the taper edges rather than take them on trust."""
+    body = _function(source, "renderEmtrCurve")
+    assert "ehalf" in body
+    assert ".emtr .ehalf" in source

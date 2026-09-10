@@ -40,12 +40,19 @@ full:
 	@$(VENV)/ruff check src tests scripts
 	@start=$$(date +%s); \
 	 out=$$(mktemp); \
-	 $(VENV)/python -m pytest -q -m "" > $$out 2>&1; \
+	 $(VENV)/python -m pytest -q -m "" --durations=15 > $$out 2>&1; \
 	 status=$$?; \
 	 elapsed=$$(( $$(date +%s) - start )); \
-	 counts=$$(tail -1 $$out | sed -E 's/ in [0-9].*$$//'); \
-	 result=$$( [ $$status -eq 0 ] && echo PASS || echo FAIL ); \
-	 [ $$status -eq 0 ] || tail -40 $$out; \
+	 counts=$$(grep -E '[0-9]+ (passed|failed|error)' $$out | tail -1 \
+	   | sed -E 's/ in [0-9].*$$//'); \
+	 : "un run TUÉ (SIGINT 130, SIGTERM 143) n'est PAS un échec de la suite, et"; \
+	 : "les deux se lisaient FAIL avec des points de progression en guise de"; \
+	 : "comptes — indiscernables dans le journal. D-113."; \
+	 if [ $$status -eq 0 ]; then result=PASS; \
+	 elif [ $$status -ge 128 ] || [ $$status -eq 2 ]; then result=TUÉ; \
+	   counts="$${counts:-interrompu, aucun résumé produit}"; \
+	 else result=FAIL; fi; \
+	 [ "$$result" = FAIL ] && tail -40 $$out; \
 	 tail -1 $$out; \
 	 rm -f $$out; \
 	 printf '| %s | `%s` | %s | %dm%02ds | %s |\n' \

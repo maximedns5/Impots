@@ -4854,3 +4854,322 @@ que la machinerie est prête et que **le déblocage est une source, pas du code*
 la publication avec son URL, la manifester, et le cas devient écrivable. Noté plutôt que
 contourné : bâtir sur un fichier en quarantaine reviendrait à produire un chiffre que
 personne ne peut refaire.
+
+## D-110 — S5 / F6 : l'explorateur EMTR, et une falaise dont la hauteur ne veut rien dire
+
+**2026-09-09 · `src/impots/emtr_explorer.py`, `impots emtr`, `ui/index.html`**
+
+**Aucune affirmation de modèle nouvelle** : tout sort de machinerie déjà écrite et déjà
+testée — le moteur, la différence finie de `behavioural.emtr`, le tier complet. Ce qui est
+neuf, c'est que les taux deviennent **lisibles** au lieu d'arriver en statistique de
+distribution.
+
+### Le constat de D-033, retrouvé par l'autre bout
+
+D-033 mesurait sur la population : l'EMTR médian va de 20,8 % au premier décile de taux
+marginaux à **63,5 %** au dixième, et **les ménages de ce dixième sont pauvres, pas
+riches**. Un célibataire locataire balayé sur la plage de revenus se tient à **63,5-63,6 %
+entre 24 000 et 28 000 EUR** — le même nombre, obtenu d'un ménage construit au lieu d'un
+décile de population. Cet accord est tout l'intérêt de l'explorateur : la statistique
+devient un endroit sur une courbe, et le mécanisme se voit — les pentes du RSA et de la
+prime d'activité qui s'empilent, se dépilent, puis la première tranche d'IR par-dessus.
+
+### Une falaise, et pourquoi sa hauteur ne doit jamais être citée
+
+Le balayage rend **147,3 % à 8 000 EUR**. Un taux au-dessus de 100 % signifie qu'un euro de
+brut en plus laisse le ménage **moins riche** — c'est réel et c'est ce que l'explorateur
+doit montrer. Mais **sa hauteur est un artefact du pas de la différence finie** : mesurée
+sur 100 EUR, une falaise qui retire 47 EUR se lit 147 % ; la même mesurée sur 500 EUR se
+lirait 109 %. **L'EMPLACEMENT est un constat, la HAUTEUR est une propriété de
+l'instrument.** `Curve.cliffs` les nomme, le rendu les marque en rouge sans les tracer
+comme des pentes, et l'échelle s'arrête à 100 % — la mettre à l'échelle du pic écraserait
+tous les taux réels dans le tiers gauche et rendrait illisible exactement ce qu'on veut
+montrer.
+
+### Quatre exécutions pour toute la courbe, pas deux par point
+
+Un ménage au tier complet avec son EMTR coûte ~2,5 s : soixante points chiffrés un par un,
+deux fois pour la référence et la réforme, font **cinq minutes**. Or
+`behavioural.emtr.compute` chiffre déjà une **trame entière** en une passe. Un balayage est
+donc une trame synthétique d'un ménage par point de revenu, et la courbe coûte les quatre
+exécutions d'un EMTR de population. Passer par ce chemin lui fait aussi hériter de ses
+gardes au lieu de s'en inventer.
+
+**Le tier complet n'est pas négociable ici**, et D-033 dit pourquoi : la pente du RSA et de
+la prime d'activité fait l'essentiel du taux marginal aux bas salaires. Une courbe en tier
+léger serait nette et fausse exactement là où l'argument politique se joue.
+
+### Une règle graduée, pas un échantillon
+
+Chaque point pèse 1 et porte `synthetic=True`. Un balayage n'est l'échantillon de personne :
+c'est **un** type de ménage promené sur une plage de revenus. En lire une distribution
+reviendrait à en lire une sur une règle graduée, et les poids sont ce qui permettrait
+d'essayer. Le type de ménage est imprimé en toutes lettres, parce qu'une courbe d'EMTR sans
+son ménage est une courbe de rien en particulier : à 24 000 EUR, un célibataire locataire et
+un couple avec deux enfants ne sont pas au même endroit du paysage.
+
+## D-111 — S6 / F5 : la taxe foncière sur cellules publiées, et l'impôt d'un ménage qu'on ne peut pas calculer
+
+**2026-09-09 · `src/impots/foncier/{cells,knobs,reconcile}.py`**
+
+**Le premier module du projet dont les cellules ne sont pas une construction.** Chaque base
+et chaque taux est lu du REI tel que la DGFiP l'a publié : aucune imputation, aucun tirage,
+aucune cellule ajustée à un total. Cela change ce qu'EST le contrôle de base. Ailleurs la
+réconciliation demande « notre population synthétique reproduit-elle un total publié » ;
+ici elle demande « **notre arithmétique sur LEURS bases reproduit-elle LEURS produits** »,
+commune par commune. C'est une question bien plus forte, et elle a une réponse bien plus
+nette.
+
+### L'identité, et le terme qui y manquait
+
+La forme évidente est `base × taux = produit`. Sur 34 819 communes elle tient à 0,023 %
+d'écart médian — déjà de l'arrondi. Mais le REI publie aussi un **lissage** (`E16`) que
+**13 430 communes** portent, et l'ajouter fait tomber leur écart médian de 0,0355 % à
+0,0012 %. L'identité retenue est donc
+
+    base × taux / 100 + lissage = produit
+
+et le lissage n'est pas une correction qu'on applique en douce : c'est un terme publié du
+calcul qu'une lecture à deux facteurs omet purement et simplement. Écart médian d'ensemble
+après ajout : **0,0059 %**, p99 **0,405 %**.
+
+**55 communes sur 34 819 restent au-delà de 1 %**, la pire à 5,97 %, et **aucune ne porte
+de lissage** — le terme n'est donc pas ce qui leur manque. Leur taux effectif est sous leur
+taux publié (base 227 676 à 19,40 % devrait rendre 44 169 ; le REI dit 41 682, soit 18,31 %
+effectif), ce qui désigne un abattement ou une exonération que ce module ne lit pas.
+Épinglées comme **inexpliquées** : un résidu nommé est une piste, un résidu absorbé dans une
+tolérance est un mensonge à barres d'erreur. **Et j'avais épinglé 79 avant de mesurer avec
+le lissage** — la constante suit désormais la mesure et non l'inverse.
+
+### Trois leviers, et l'intuition sur leur ordre était fausse
+
+Coefficient de revalorisation national (le plus chaud fiscalement : depuis la LF 2017 il
+vaut 1 + l'IPCH de novembre N-1, donc le modifier change une RÈGLE d'indexation et non un
+taux) ; changement de taux national ; changement de taux sur un ensemble de communes — la
+forme honnête de la plupart des vraies questions de TF, puisque c'est le niveau où la
+décision se prend.
+
+    revalorisation +3,2 %     +1,2849 md€
+    revalorisation +1,0 %     +0,4015 md€
+    taux national +1 point    +1,0796 md€
+    taux +1 pt sur Paris      +0,0898 md€   (une commune, 8 % du point national)
+
+**Un point de revalorisation vaut MOINS qu'un point de taux** — 0,40 contre 1,08 md€ —
+parce qu'un point de revalorisation est 1 % de base tandis qu'un point de taux est un point
+sur un taux moyen proche de 20 %, soit une hausse relative de 5 %. Mon premier jet de
+docstring affirmait le contraire, d'intuition ; l'arithmétique l'a contredit.
+
+**Et la garde de l'ensemble vide a attrapé son auteur** : mon premier essai « Paris » usait
+75101-75120, qui sont des arrondissements et ne correspondent à aucune commune — Paris est
+une commune, 75056. Un zéro venu d'un ensemble vide se lit « la mesure est gratuite » et
+est indiscernable d'un vrai zéro tant que personne ne compte.
+
+### La surface s'arrête à la commune, et c'est le constat
+
+**Ce modèle ne peut pas calculer la taxe foncière d'un ménage, et ce n'est pas une limite
+temporaire.** La TF d'un logement est la valeur locative cadastrale de CE logement
+multipliée par les taux de sa commune. Les taux sont publiés ; la valeur locative d'un
+logement individuel ne l'est par aucune source ouverte. D'où l'absence d'extension du
+calculateur : afficher le taux de la commune à côté des autres chiffres d'un ménage se
+lirait comme une estimation de son impôt à tous les coups. **Le refus est la
+fonctionnalité.**
+
+### Deux défauts trouvés en assemblant
+
+**`Line.status` plantait sur une cible nulle.** `residual` rend `None` quand
+`published == 0`, et `status` l'écartait par une assertion : toute ligne visant
+légitimement zéro levait une `AssertionError`. Corrigé en « not comparable (cible nulle) »
+— un résidu relatif à zéro n'est pas un grand nombre, ce n'est pas un nombre, exactement le
+raisonnement du barème de chiffrages (D-095).
+
+**Et c'est en le heurtant que j'ai vu l'erreur de catégorie.** Je poussais l'audit
+d'identité dans le gabarit `Line`, qui compare un simulé à une CIBLE publiée ; or l'identité
+compare un calcul au chiffre de la MÊME source, par commune, avec zéro pour cible. Ce n'est
+pas une ligne de réconciliation, c'est un audit, et il est rendu comme tel.
+
+## D-112 — La charte de maintenance est de l'infrastructure, et elle est testée comme telle
+
+**Phase 6 S7, 2026-09-09.** `docs/CHARTER.md` : six sections — le rituel de montée de
+version d'openfisca, le cycle annuel des lois de finances, le calendrier de
+rafraîchissement des millésimes, la cadence de passe complète, les cinq questions
+permanentes, et ce que la maintenance ne fait jamais.
+
+### Pourquoi une charte plutôt qu'un README
+
+Ce projet a produit cent onze entrées D, et une entrée D raconte un incident. Une charte
+raconte le **rituel** qui empêche l'incident de se reproduire, ce qui est une autre chose et
+manquait. La différence est celle entre « voici pourquoi ce garde existe » et « voici quoi
+faire lundi quand openfisca sort une version ». Le second lecteur n'aura pas lu les cent
+onze.
+
+### La règle qui la rend utile : une maintenance suit les mêmes règles qu'une construction
+
+Rien n'est « juste une mise à jour ». Les pires défauts de ce projet sont arrivés par des
+chemins qui avaient l'air routiniers — `value: 6e-05` lu comme une chaîne par YAML 1.1 dans
+NOTRE fichier, un `$?` lu après un tube qui ne rendait que PASS, quatre contrôles inertes
+en une session. Aucun n'est venu d'un travail qui se savait délicat.
+
+Deux prescriptions portent l'essentiel :
+
+**Un golden ne se ré-ancre qu'avec une entrée D citant le texte qui l'a déplacé.** Numéro
+d'article, date, effet. Sans citation, un golden ré-ancré est un test qu'on a fait taire, et
+il est trait pour trait identique à un test honnêtement remis à jour.
+
+**Un kill test qui passe au vert est une entrée D, pas un test à supprimer.** Sept artefacts
+amont sont recensés ; le jour où l'amont en corrige un, la tentation sera de retirer le
+garde. C'est le moment exact où il faut écrire ce qui a changé.
+
+### Elle est testée, et le premier test a trouvé son auteur
+
+`tests/test_charter.py` — huit tests. La charte affirme des choses sur ce dépôt : que les
+scripts `verify_*.py` existent, que le calendrier cite des sources que le manifeste porte
+vraiment, que les artefacts qu'elle nomme ont leur entrée D, qu'il y a cinq questions
+permanentes. **Une charte qui décrit un dépôt qui n'existe plus est pire que rien : elle
+sera suivie.**
+
+Le compte des questions permanentes en est l'illustration : ma première version balayait
+tout le fichier avec `^\d\. \*\*` et trouvait **neuf** questions — les étapes numérotées du
+rituel de montée de version et du cycle LF étaient comptées avec. Le test a échoué à sa
+première exécution, ce qui est la seule preuve qu'il sait échouer. Corrigé en découpant la
+section, avec la raison en commentaire pour que le prochain lecteur ne « simplifie » pas la
+découpe.
+
+### Ce que la charte interdit explicitement
+
+Élargir une tolérance pour faire passer une ligne ; supprimer un test devenu gênant ;
+recopier un chiffre depuis un cahier des charges, un résumé ou une recherche ; publier quoi
+que ce soit. Le premier est le plus dangereux parce qu'il est le plus discret — une
+tolérance élargie après coup transforme chaque manqué en réussi et laisse un fichier
+indiscernable d'un fichier honnête. Le dernier est du ressort du propriétaire et le reste.
+
+### Post-scriptum : la charte affirmait six mauvaises entrées, et son test ne pouvait pas le voir
+
+Écrite de mémoire, la section 1 recensait les artefacts amont comme « D-044, D-062, D-064,
+D-071, D-081, D-090 ». **Trois sur six n'ont rien à voir avec l'amont** — D-062 est le jeu
+de leviers prestations. Le vrai registre est la table de `docs/UPSTREAM_ISSUE_DRAFT.md` :
+six constats côté `openfisca-france`, un septième côté `openfisca-core`, mesurés en D-064,
+D-075, D-079, D-081, D-090 et clos par D-091.
+
+Le test l'a laissé passer parce qu'il vérifiait que les six entrées **existaient** dans le
+journal. Elles existaient. **L'existence n'est pas l'appartenance** — c'est la forme D-044
+pour la cinquième fois de ce projet : un contrôle dérivé d'autre chose que ce qu'il
+contrôle ne peut pas échouer quand ce qu'il contrôle est faux.
+
+Corrigé des deux côtés. La charte **pointe** désormais le registre au lieu d'en recopier une
+liste, parce qu'une liste recopiée diverge, et c'est exactement ce qui venait d'arriver. Le
+test lit la table du dossier, compte ses lignes, et exige que la charte porte le pointeur —
+vérifié en le retirant : il échoue.
+
+**Et c'est le paragraphe d'à côté qui l'a déclenché.** Je citais « D-072 » pour les leviers
+prestations dans `WHAT_NOW.md`, également de mémoire ; en le vérifiant (D-072 est une ligne
+de rapport, D-062 est la bonne) j'ai regardé la charte écrite dix minutes plus tôt. Les
+numéros remémorés sont des graines de recherche et rien de plus — la charte le dit dans sa
+propre section 6, et l'a enfreint dans sa section 1.
+
+## D-113 — Une passe tuée s'écrivait ÉCHEC, avec des points de progression en guise de comptes
+
+**2026-09-09, en répondant à « comment va la passe ? ».** Elle n'allait pas. Deux `make
+full` tournaient en parallèle — celle de 12h52 et celle de 13h10 — depuis **3 h 30 et
+3 h 11**, contre 60 minutes de norme sur les huit dernières passes. Aucune n'avait fini.
+
+### Le diagnostic, et ce qui l'a donné
+
+La charge valait **110,64 sur 8 cœurs**, en hausse (110 / 82 / 40 sur 1, 5 et 15 minutes).
+Ce n'était ni le swap — 350 Mo de RSS chacune, 29 % de mémoire libre — ni les deux pytest,
+qui ne consommaient qu'un cœur chacun. La signature était ailleurs : `trustd`,
+`searchpartyuseragent`, `accessoryupdaterd`, `amsengagementd`, `IDSBlastDoorService`,
+`CloudKeychainProxy` — **tous démarrés dans la même fenêtre de trois minutes**. C'est un
+réveil de veille, et la ruée des démons qui suit.
+
+**Ce que cela vaut pour le gate, indépendamment de la cause** : `quiet_machine` saute les
+tests de rythme quand la charge dépasse le nombre de cœurs, et sa docstring documente déjà
+6,5 s contre 18 s pour le même calcul à charge 33. À charge 110, aucune des deux passes
+n'aurait été verte au sens de la charte — elle l'écrit noir sur blanc en §4. Les deux ont
+été tuées, et **une seule** sera relancée au calme.
+
+### Le vrai défaut : l'instrument, pas la machine
+
+Les tuer a écrit deux lignes au journal :
+
+    | 2026-09-09 | f593847 | FAIL | 214m11s | ....................................... |
+
+**Une passe tuée est indiscernable d'une suite en échec.** Deux erreurs dans la même ligne :
+
+1. `result` valait FAIL dès que `status != 0`, alors que 130 (SIGINT) et 143 (SIGTERM)
+   disent « on m'a interrompu », pas « le code est faux ». Un futur lecteur — ou moi dans
+   trois semaines — aurait lu deux échecs sur `f593847` et cherché une régression qui
+   n'existe pas.
+2. `counts=$(tail -1 $out …)` prenait la **dernière ligne quelle qu'elle soit**. Sur un run
+   interrompu c'est une ligne de points de progression. La colonne comptes affichait donc
+   trente-neuf points là où elle promet un résumé.
+
+Corrigé : `grep -E '[0-9]+ (passed|failed|error)'` pour n'accepter qu'une ligne qui
+ressemble à un résumé, et un `if/elif/else` qui rend PASS, TUÉ ou FAIL. Vérifié sur les cinq
+codes de sortie (0, 1, 2, 130, 143) et sur les deux formes de sortie.
+
+**Et ma première vérification était fausse.** J'ai testé la logique avec une chaîne
+`[ … ] && echo PASS || { … ; } && echo TUÉ || echo FAIL`, qui imprimait « TUÉ » en plus de
+« PASS » pour status=0. Le défaut était dans ma paraphrase, pas dans le Makefile — mais je
+l'aurais lu comme un défaut du Makefile si le bruit avait été moins visible. C'est le
+corollaire de la troisième question permanente : **vérifier que la mutation fait bien ce
+qu'on croit**, et ici, vérifier le banc d'essai avant l'objet. Retesté avec la vraie
+structure `if/elif/else` dans `/bin/sh`.
+
+Les deux lignes du journal sont **annotées TUÉ, pas effacées** : un journal de passes dont
+on retire les lignes gênantes ne vaut rien, et l'annotation porte la raison.
+
+### La ligne à retenir
+
+Le journal de passe complète est l'unique preuve que la suite est verte, puisque la CI ne
+peut pas faire tourner les tests de population. **C'est de l'infrastructure de mesure, et
+elle reçoit le même traitement que le code de modèle** — comme le `$?` lu après un tube qui
+ne rendait que PASS, trouvé au même endroit quelques jours plus tôt. Deux défauts dans la
+même cible, tous deux du côté qui décide si le travail est bon.
+
+## D-114 — Le marqueur `slow` affirmait tourner en CI, et je l'ai compté à 14 au lieu de 217
+
+**2026-09-09, en répondant à « pourquoi est-ce si long ? ».** La passe complète prend une
+heure ; expliquer pourquoi a sorti deux erreurs, l'une dans le dépôt et l'autre dans ma
+réponse.
+
+### Le marqueur mentait, et dans le sens dangereux
+
+Sa description disait : « excluded from the default gate, **always run in CI** ». C'est
+faux. La CI lance bien `pytest -q -m ""`, mais ces tests **sautent** faute de population
+construite — le workflow le dit lui-même en commentaire (« those tests currently SKIP here
+anyway… `-m ""` is what makes CI pick them up the day that changes, rather than silently
+continuing to skip a suite everyone believes is running »), et l'en-tête du journal de passe
+le dit aussi (« CI cannot run the population tests — it has no population, by design »).
+
+**Deux sources de vérité disaient l'inverse l'une de l'autre, et la fausse était celle que
+pytest affiche** avec `--markers`. Un lecteur qui la croit saute l'heure locale en pensant
+que la CI couvre le terrain — exactement le défaut que le commentaire du workflow nomme.
+Corrigé, en pointant les deux autres sources plutôt qu'en réécrivant une troisième version.
+
+**Et la correction elle-même a cassé le fichier** : une chaîne TOML simple ne peut pas
+courir sur plusieurs lignes, `tomllib` a refusé le fichier. Rattrapé parce que j'ai vérifié
+le parse au lieu de supposer qu'un remplacement de texte est inoffensif. Refait en chaîne
+multi-lignes, puis vérifié que le marqueur **filtre encore** et pas seulement qu'il se lit.
+
+### Mon compte était faux d'un facteur quinze
+
+J'ai annoncé « 14 tests slow ». C'est le nombre de **décorateurs** —
+`grep -c "pytest.mark.slow"`. Le nombre de **tests** est **217** : la paramétrisation les
+multiplie, et `-m 'slow'` en collecte 217 sur 1 315.
+
+L'erreur est celle de la cinquième question permanente prise à l'envers : je savais demander
+d'où viennent les paramètres d'un test paramétré, et pas que compter les décorateurs n'est
+pas compter les tests. Un grep sur le code source compte des occurrences syntaxiques ;
+seule la collecte compte des cas. **La mesure était à une commande de distance et je ne l'ai
+pas lancée** parce que la passe tournait — mais `--collect-only` coûte deux secondes et
+n'aurait rien perturbé.
+
+### Ce qui rend la question répondable la prochaine fois
+
+`--durations=15` ajouté à la cible `full`. Chaque passe laissera désormais la distribution
+de son heure dans sa sortie, au lieu qu'on la redérive d'un coût unitaire documenté et d'une
+arithmétique. Vérifié que le bloc de durées ne perturbe pas l'extraction des comptes : ses
+lignes (`62.11s call …`) ne ressemblent pas à un résumé et le `grep` les ignore.
+
+**Passe de référence de cette entrée** : `1313 passed, 2 skipped, 18 warnings` en 82m49s,
+machine au calme, **2 sauts et non 5** — les budgets de temps ont donc réellement tourné.

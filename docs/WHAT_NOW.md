@@ -1,12 +1,18 @@
 # What we can do now
 
-**Status when written**: the four-layer architecture is complete (2026-09-03).
-Legislation as code, calibrated population, mechanical simulation validated to
-the euro, behavioural bands on verified evidence, macro fan with enforced
-refusals. CI green, ~450 tests, every guard carrying its kill test. This
-document is the full menu of what is possible from here — every option, its
-cost, what it needs, and a recommended sequence at the end. It is a menu, not
-a plan: the owner picks.
+**Status: re-triaged 2026-09-09, after Phase 6 closed.** The four-layer
+architecture was completed 2026-09-03; since then the project has added the
+reform composer and its budget-neutral solver, the fiche de chiffrage
+generator, the pre-registration harness, the PLF coverage triage, multi-year
+trajectories on uprated populations, the EMTR explorer, taxe foncière at
+commune resolution, and a maintenance charter that is itself under test. CI
+green, **1 315 tests**, every guard carrying its kill test.
+
+This document is the full menu of what is possible from here — every option,
+its cost, what it needs, and a recommended sequence at the end. **It is a
+menu, not a plan: the owner picks.** For what the project IS today rather
+than what it could do next, read `docs/STATE_AND_NEXT.md`; for the steady
+state, `docs/CHARTER.md`.
 
 ---
 
@@ -33,7 +39,7 @@ this stays on the shelf by design.
 
 ## B. Model improvements possible today — no new data needed
 
-**B1 · Benefits/prestations knobs — the recommended next build.** The RSA,
+**B1 · Benefits/prestations knobs.** **DONE (2026-09-03, D-062).** The RSA,
 prime d'activité, AF and AL parameters are already in openfisca-france; the
 population already computes them. Adding a prestations knob set (barème RSA,
 taper rates, AF modulation, AL parameters) does three things at once: covers
@@ -43,7 +49,9 @@ but not transfers), constitutes a **spending instrument** — which wakes
 participation-tax-rate machinery where France's EMTRs actually peak (the
 63.5 % top-EMTR households the fan already found). Same recipe as the
 allègements knobs: verified paths, read-back, kill tests, chiffrage re-sweep.
-*Cost: one solid increment. Value: highest of anything on this page.*
+*Done: the knob set shipped with two double-entry leaks the balance guard
+caught. The spending instrument it unlocked is live, and the EMTR machinery it
+exercised became F6's explorer (S5).*
 
 **B2 · The CAF cross-check.** **PREPARED, NOT RUN (2026-09-03, D-070).**
 `tests/golden/CROSSCHECK_CAF.md` carries three households covering AF, PPA, RSA
@@ -71,15 +79,21 @@ long as every niche was zero (D-069). *Still open: the global cap cannot be
 priced even with imputation — a decile-mean draw has no tail — and about 45 %
 of the niches remain unmodelled.*
 
-**B4 · Capital-income knobs, mechanical only.** PFU rate and base as
-ReformSpec knobs now, clearly banner-limited ("population carries no capital
-income until ERFS") so the *household calculator* can price them exactly even
-though the population cannot. Prepares the ERFS moment. *Cost: small.*
+**B4 · Capital-income knobs, mechanical only.** **DONE, and its gate has run
+(F1b / Phase 6 S3, `docs/F1B_CAPITAL_GATE.md`).** PFU rate and base are
+ReformSpec knobs, banner-limited ("population carries no capital income until
+ERFS"), so the *household calculator* prices them exactly though the population
+cannot. **What remains is an owner decision, not a task**: the gate cleared the
+RCM imputation, and whether to build it is a judgement about how much imputed
+capital income this project wants to carry.
 
-**B5 · Population vintage refresh.** The population simulates 2024. An
-uprating pass to a 2025/2026 baseline (wage growth, SMIC steps, demographic
-margins) keeps current-year reforms honest. *Cost: small-medium, recurring
-annually — belongs in the maintenance charter (D2).*
+**B5 · Population vintage refresh.** **DONE as mechanical uprating (F3 M2,
+`src/impots/uprating.py`)** — and the milestone's real product was the cost:
+an uprated population is **no longer calibrated**, so `reporting.Line` now
+refuses a tolerance verdict when the population year and the comparator year
+differ. Structure, ages and weights do not move; a trajectory is «this law, on
+today's France, with tomorrow's money». The recurring half is in
+`docs/CHARTER.md` §3.
 
 **B6 · Open diagnostics, if still open.** The industrie/immobilier
 perimeter check (profiled-enterprise vs legal-unit classification — the
@@ -134,7 +148,9 @@ stress test, and content for C2/C5. The tool exists to answer exactly these.
 
 ## D. Sustainability
 
-**D1 · Full-pass log discipline** (ruled 2026-09-03) if not yet landed.
+**D1 · Full-pass log discipline.** **DONE**, and the target itself had to be
+fixed: it read `$?` after a pipe and could only ever report PASS. Verified to
+fail in both directions since.
 
 **D2 · The maintenance charter.** The steady-state rules the project now
 needs more than features: the openfisca pin-bump ritual (monthly, deliberate,
@@ -142,7 +158,10 @@ with the golden re-anchor procedure and a D-entry per bump), the annual
 loi-de-finances cycle (new barèmes arrive via the bump; new chiffrage cases
 per LF article; vintage refreshes for Filosofi/Ésane/TES; B5's population
 uprating), and the review cadence. One page, written once, followed
-thereafter. *The reviewing session will draft it on request.*
+thereafter. **DONE — `docs/CHARTER.md` (D-112), and it is tested**: eight tests
+assert the repository it describes still exists, because a charter that
+describes a repository that no longer exists is worse than none — it will be
+followed.
 
 **D3 · A bigger runner for full-N work.** The 8 GB machine OOM-killed the
 full-population comparison once already; the cloud container has the

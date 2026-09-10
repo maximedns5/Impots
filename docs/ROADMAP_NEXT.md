@@ -126,14 +126,34 @@ like the Zucman floor. *Do not build past the gate without the owner.*
 COICOP aggregates with an explicit "no distribution until BDF 2026 arrives
 (~2027-28)" banner. Honest but thin; ranks last while F1–F6 exist.
 
-## Recommended sequence
+## Recommended sequence — **re-triaged 2026-09-09, after Phase 6 closed**
 
-**A → F2 → F1** (the composer exists before the PLF drops — that timing
-matters more than anything else on this page) **→ F4 → F3 as the next full
-phase → F5 → F6**, with F7's gate run whenever a session has spare room and
-F8 parked. Standing items outside the queue: CAF cross-check (owner,
-30 min); real income microdata is not available for the foreseeable future
-(D-096), so nothing is being waited on there;
-upstream dossier and all publication (owner). The maintenance charter gets
-written the first quiet week — after F1's pre-registrations are in, quiet
-weeks exist again.
+**A, F2, F1, F4, F3, F5 and F6 are DONE.** The sequence below is what remains,
+and it is short by design: building has reached the point where maintenance is
+the real work.
+
+1. **The PLF 2027 week, early October.** Not a choice and not a queue item —
+   it interrupts anything. `docs/CHARTER.md` §2 carries the cycle.
+2. **Maintenance, per the charter**, in the weeks either side: pin bumps
+   (deliberate, ~monthly, never automatic), the nine-source vintage calendar,
+   full passes with a log line fresher than the work it covers.
+3. **F7's gate** whenever a session has spare room. Gate only. Never past it
+   without the owner.
+4. **F8 · aggregate VAT: still parked, re-checked 2026-09-09.** It waits on
+   Budget de Famille 2026, expected ~2027-28. Nothing in Phase 6 moved it, and
+   nothing before that data can move it.
+
+**Outside the queue, and owner's alone:** the CAF cross-check (30 min at a
+browser; reCAPTCHA never bypassed), the F1b build decision (the gate cleared —
+what remains is a judgement, not a task), the upstream dossier, and all
+publication and deployment. Real income microdata is not available for the
+foreseeable future (D-096), so nothing is being waited on there; the ERFS plan
+is dormant, not dead, and fires if access ever materialises.
+
+**One identified blocker on a known-desirable case:** the multi-year CVAE
+chiffrage needs a sourced production-tax series, and every series to hand is
+quarantined. It is written down here so it is not rediscovered as a surprise.
+
+The full menu of options, with costs, is `docs/WHAT_NOW.md`. What the tool IS,
+rather than what it could become, is `docs/STATE_AND_NEXT.md` and
+`docs/PHASE6_CLOSING.md`.

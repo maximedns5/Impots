@@ -1164,3 +1164,38 @@ class TrajectoryListResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     trajectoires: list[str] = Field(default_factory=list)
+
+
+class EmtrCurvePoint(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    salaire_brut_annuel: float
+    emtr: float
+    emtr_reform: float | None = None
+
+
+class EmtrCurveResponse(BaseModel):
+    """A precomputed EMTR sweep (F6). Read from a file; never runs the engine.
+
+    Four full-tier runs per curve, so it is a batch job like every other full-tier run.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    household_type: str
+    label: str
+    year: int
+    computed: str
+    step_eur: float
+    reform: dict[str, Any] | None = None
+    points: list[EmtrCurvePoint] = Field(default_factory=list)
+    peak_eur: float
+    peak_emtr: float
+    cliffs_eur: list[float] = Field(default_factory=list)
+    crossings_eur: list[float] = Field(default_factory=list)
+
+
+class EmtrCurveListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    courbes: list[str] = Field(default_factory=list)

@@ -50,7 +50,11 @@ testpaths = ["tests"]
 # gate is kept fast enough to run without thinking about it.
 addopts = "-m 'not slow'"
 markers = [
-  "slow: needs a 20 000-household population run (about a minute each); excluded from the default gate, always run in CI",
+  """slow: needs a 20 000-household population run (about a minute each); excluded \
+from the default gate. CI INVOKES these (-m '') but they SKIP there for want of a \
+built population, so `make full` on a machine holding the data is the only place \
+they actually run. The earlier text said 'always run in CI', which was false in \
+the dangerous direction: it would let a reader skip the local hour. See D-114.""",
 ]
 filterwarnings = [
   "ignore::DeprecationWarning",

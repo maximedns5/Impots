@@ -36,6 +36,8 @@ from impots.api.schemas import (
     MIN_YEAR,
     QUICK_TIER_HOUSEHOLDS,
     DecileRow,
+    EmtrCurveListResponse,
+    EmtrCurveResponse,
     EmtrDecile,
     FirmCell,
     FirmMeta,
@@ -872,6 +874,27 @@ def trajectoires_show(name: str) -> TrajectoryResponse:
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"trajectoire « {name} » inconnue")
     return TrajectoryResponse.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+@app.get("/emtr", response_model=EmtrCurveListResponse)
+def emtr_list() -> EmtrCurveListResponse:
+    """Precomputed EMTR sweeps. Reads files; never runs the engine (four full-tier runs)."""
+    return EmtrCurveListResponse(courbes=sorted(
+        path.stem.removeprefix("emtr_") for path in TRAJECTORIES.glob("emtr_*.json")))
+
+
+@app.get("/emtr/{name}", response_model=EmtrCurveResponse)
+def emtr_show(name: str) -> EmtrCurveResponse:
+    from impots.scenarios import ScenarioError, _check_name
+
+    try:
+        _check_name(name)
+    except ScenarioError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    path = TRAJECTORIES / f"emtr_{name}.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail=f"courbe « {name} » inconnue")
+    return EmtrCurveResponse.model_validate_json(path.read_text(encoding="utf-8"))
 
 
 @app.get("/", include_in_schema=False)
