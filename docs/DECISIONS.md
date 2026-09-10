@@ -5173,3 +5173,92 @@ lignes (`62.11s call …`) ne ressemblent pas à un résumé et le `grep` les ig
 
 **Passe de référence de cette entrée** : `1313 passed, 2 skipped, 18 warnings` en 82m49s,
 machine au calme, **2 sauts et non 5** — les budgets de temps ont donc réellement tourné.
+
+## D-115 — A0 : le budget d'exactitude, et la source qui n'était pas celle qu'on croyait
+
+**Phase 7 S-A0, 2026-09-10.** `src/impots/accuracy.py` + `tests/test_accuracy.py`. Le
+classement produit ici ordonne les leviers L1-L6 de toute la phase : **un mauvais classement
+ne produit pas un mauvais nombre, il produit une phase gaspillée.** D'où le traitement
+d'infrastructure de mesure, et le kill test écrit AVANT qu'aucun cas réel ne soit chiffré,
+comme la spec l'ordonne.
+
+### Trois classes, et une part qui ne se calcule jamais entre elles
+
+Les sources déclarées par la spec n'ont pas le même statut épistémique, et la pire chose que
+ce module pouvait faire était de les mettre sur un même axe sans le dire.
+
+* `sampled` — une loi nommée et tirable existe. C'est exactement `Parameter.draw` du store
+  comportemental et les graines de placement. La part de variance y est une **mesure**.
+* `swing` — seules deux **bornes** existent. La largeur est mesurable honnêtement, mais la
+  convertir en part de variance suppose une forme sur l'intervalle. `VARIANCE_OF_A_RANGE =
+  12.0` isole cette convention dans une constante nommée, pour qu'on puisse la contester en
+  un endroit au lieu d'auditer une expression.
+* `unmeasured` — la spec déclare la source, le dépôt n'a ni loi ni bornes. Elle est
+  **rapportée sans part**, jamais omise : une source absente d'un budget se lit « elle ne
+  compte pas ».
+
+**Les parts se calculent DANS une classe et jamais entre elles.** Sinon on classe les
+conventions, et la campagne partirait vers la source dont la convention est la plus
+généreuse.
+
+### La paire vieillie/gelée n'est pas un intervalle d'uprating
+
+`YearUncertainty.uprating_eur` vaut `(frozen, aged)` et sa largeur s'affiche partout
+« vieillissement ± ». Dans son contexte c'est honnête. Comme source d'incertitude, c'est
+faux, et `population/cli.py` le dit : `frozen = price(frame, year)` chiffre la frame 2024
+**brute** — des revenus qui n'ont pas bougé d'un euro — contre `aged` qui chiffre la frame
+vieillie. La largeur mesure donc **vieillir contre ne pas vieillir**, pas l'écart entre une
+hypothèse haute et une hypothèse basse. Personne n'a « zéro pendant cinq ans » dans son
+incertitude sur les salaires.
+
+L'injecter telle quelle aurait donné à A0 un grand nombre attribué à la mauvaise chose, il
+aurait très probablement classé en tête, et **la campagne entière serait partie vers une
+grandeur qui n'est pas une erreur**. C'est la quatrième question permanente — « de quoi ce
+nombre est-il la différence, exactement ? » — arrivant au seul endroit où se tromper coûte
+une phase et non un chiffre. Les bornes d'un `swing` sont donc **nommées** et c'est vérifié
+par un test : une source qui ne peut pas nommer ses bornes ne peut pas glisser un
+contre-factuel à la place d'une borne basse.
+
+### L'inventaire réel des sources, qui n'est pas celui d'une lecture naïve de la spec
+
+La taxonomie fait autorité et existait déjà : `scenarios.BANDED_QUANTITIES` nomme quatre
+classes d'intervalle — behavioural, macro, cell_bound, composition. Mesuré au gate :
+
+* **Store comportemental** : 10 lignes, dont **2 dégénérées** (`employment_elasticity_at_
+  fadeout`, `employment_fadeout_smic_multiple`, low == high). `in_revenue_band=True`
+  n'apparaît que **deux fois** dans `channels.py` (C1 ETI, C5 patrimoine) : seules trois
+  lignes peuvent déplacer un euro. Une étude Sobol « sur le store » est en réalité une étude
+  à trois paramètres pour la plupart des réformes, et le dire change ce qu'on peut en
+  conclure.
+* **cell_bound** : existe côté **patrimoine** (`placement.band` rend un (bas, haut) exact),
+  **n'existe pas** côté entreprises ni foncier. Ce que le côté entreprises a à la place est
+  une **mesure de placement tirable** (`build_firms(seed=…)`, qui reproduit effectif, chiffre
+  d'affaires et valeur ajoutée à moins de 1e-9) — et **une seule graine a jamais été
+  tirée**. Cette source est donc `unmeasured` aujourd'hui, et A0 la mesurera pour la
+  première fois.
+* **composition** : `CompositionFactor(low, central, high)`, plat, sourcé sur un seul
+  fractile (D-085). Un `swing`, et le fichier dit lui-même « rien ici n'est un intervalle de
+  confiance ».
+* **Les boutons de réforme ne sont pas une source.** Ce sont les points de conception fixes.
+  Les bornes `ge`/`le` de `ReformSpec` sont de la validation d'entrée — le schéma l'écrit —
+  et non une plage crédible pour un paramètre voté. Les prendre pour une incertitude
+  inventerait une barre d'erreur sur un nombre que le législateur fixe exactement.
+
+### Le kill test, et ce qu'il a attrapé chez son auteur
+
+Trois sources synthétiques d'amplitudes 100 : 10 : 1, **paramétré sur LAQUELLE domine** — un
+classeur figé passe n'importe quel arrangement unique. Vérifié en mutant le classeur : tri
+ascendant → 7 échecs ; ordre de déclaration sans tri → 4 échecs, et **jamais sur
+l'arrangement `loud`**, ce qui est exactement la raison d'être de la paramétrisation.
+
+**Et mon échantillonneur synthétique n'échantillonnait pas.** Première version :
+`(seed * k) % p`, évaluée en seed, seed+1, seed+2 — c'est une **progression arithmétique**,
+pas un tirage, et la variance est invariante par translation : deux graines de base
+différentes rendaient des variances égales au dernier bit. Attrapé par le test de
+déterminisme, pas par les tests de classement — **une rampe passe tous les tests de
+classement**, puisque les amplitudes 100 : 10 : 1 y survivent. Remplacé par le finaliseur
+splitmix64, dont l'avalanche disperse des graines consécutives.
+
+C'est la cinquième question permanente sous un autre angle : je savais demander d'où
+viennent les paramètres d'un test paramétré ; je n'avais pas demandé si mon générateur
+générait quelque chose.
