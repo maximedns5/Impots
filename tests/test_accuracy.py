@@ -190,3 +190,70 @@ def test_a_different_seed_moves_the_variances_but_not_the_ranking() -> None:
     b = accuracy.budget_for("s", "s", 10e9, accuracy.synthetic_case(), draws=64, seed=99)
     assert [c.source for c in a.ranked("sampled")] == [c.source for c in b.ranked("sampled")]
     assert a.ranked("sampled")[0].variance != b.ranked("sampled")[0].variance
+
+
+# --------------------------------------------------- the reference cases (A0's design points)
+
+def test_there_is_exactly_one_reference_reform_per_declared_family() -> None:
+    """Eight families, eight cases. Fails if a family is dropped or doubled — a budget
+    missing a family reads as a family with no uncertainty."""
+    from impots import accuracy_cases
+
+    families = [c.family for c in accuracy_cases.REFERENCE_REFORMS]
+    assert len(families) == len(set(families)) == 8, families
+    assert set(families) == {"barème", "allègements", "prestations", "niches",
+                             "IS", "CVAE", "IFI", "trajectoire"}
+
+
+def test_a_reference_reform_that_does_not_move_is_refused() -> None:
+    """The guard that CVAE's no-op produced.
+
+    `cvae_taux_max = 0,0028` is the value in force, so that case priced at -0,0000 md€ and
+    its placement variance was exactly zero — which the report rendered as «placement
+    contributes 0,0 % to CVAE», a sentence about a reform that did nothing.
+    """
+    from impots import accuracy_cases
+
+    noop = accuracy_cases.ReferenceReform(
+        key="noop", label="no-op", family="CVAE", chain="firm",
+        knob="cvae_taux_max", value=0.0028)
+    with pytest.raises(ValueError, match="n'est pas une réforme"):
+        accuracy_cases.central_for(noop)
+
+
+def test_every_cheap_reference_reform_actually_moves() -> None:
+    """The positive half: each firm/patrimoine case clears the threshold.
+
+    Both halves are needed. A refusal test alone would pass on a module that refused
+    everything, and this project has shipped a denylist-shaped refusal before.
+    """
+    from impots import accuracy_cases
+
+    for case in accuracy_cases.REFERENCE_REFORMS:
+        if case.chain in ("firm", "patrimoine"):
+            assert abs(accuracy_cases.central_for(case)) > \
+                accuracy_cases.MOVES_EPSILON_EUR, case.key
+
+
+def test_the_ifi_placement_bound_is_open_because_the_reform_cuts_a_tranche() -> None:
+    """At an unchanged barème this bound is a POINT by construction — the patrimoine tests
+    assert that zero width themselves. A0's first IFI case used the unchanged barème and
+    would have reported a rigorous zero about a case built so it could not move."""
+    from impots import accuracy_cases
+
+    swing = accuracy_cases.ifi_cell_bound_swing()
+    low, high = swing("concentre"), swing("extremal")
+    assert abs(high - low) > 100e6, (
+        f"largeur {abs(high - low):,.0f} EUR : la réforme de référence ne coupe aucune "
+        f"tranche, et l'encadrement ne mesure rien")
+
+
+def test_every_unmeasured_source_names_why() -> None:
+    """Three of the spec's declared sources have neither a law nor bounds today. Each must
+    say so in its own words — an UNMEASURED row without a reason is an oversight."""
+    from impots import accuracy_cases
+
+    for case in accuracy_cases.REFERENCE_REFORMS:
+        for source in accuracy_cases.sources_for(case, households=1000):
+            if source.method == "unmeasured":
+                assert len(source.unmeasured_reason) > 60, (case.key, source.key)

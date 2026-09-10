@@ -5262,3 +5262,80 @@ splitmix64, dont l'avalanche disperse des graines consécutives.
 C'est la cinquième question permanente sous un autre angle : je savais demander d'où
 viennent les paramètres d'un test paramétré ; je n'avais pas demandé si mon générateur
 générait quelque chose.
+
+## D-116 — A0 tourne : trois mesures, deux cas construits pour ne rien pouvoir dire
+
+**Phase 7 A0, 2026-09-10.** `src/impots/accuracy_cases.py`, `scripts/accuracy_budget.py`,
+`reports/accuracy_budget.md`. Huit réformes de référence, une par famille d'instrument,
+committées comme données : si les cas bougeaient d'un passage à l'autre, le score d'un
+levier serait un fait sur la réforme que quelqu'un a choisie cette semaine-là.
+
+### Ce qui est mesuré, dont une première
+
+| famille | source | contribution relative | méthode |
+|---|---|---|---|
+| IFI | placement intra-tranche | **17,44 %** | swing |
+| CVAE | placement intra-cellule | **2,52 %** | sampled, 128 tirages |
+| IS | placement intra-cellule | **0,46 %** | sampled, 128 tirages |
+
+**Le placement des entreprises n'avait jamais été tiré à une seconde graine.** Une seule,
+20260101, a produit tous les chiffres entreprises que ce projet a publiés. A0 la tire
+correctement : sur l'IS à 30 %, −15,5262 md€ avec un écart-type de placement de 0,0717 md€.
+
+**Et la lecture qui vaut plus que le classement : le placement pèse cinq fois plus, en
+relatif, sur la CVAE que sur l'IS** — même mesure, même tirage. La raison est structurelle,
+pas statistique : la CVAE est un instrument à coudes, l'IS est quasi linéaire sur la tranche
+qui porte l'assiette, et un placement qui fait passer des entreprises de part et d'autre
+d'un coude change le résultat là où une transformation linéaire l'absorbe. C'est l'argument
+du refus seuil-sur-ratio (D-105.2), rencontré cette fois par la mesure et non par le
+raisonnement.
+
+### Deux cas de référence construits pour ne rien pouvoir dire, et le garde qui en sort
+
+**CVAE.** Mon premier cas était `cvae_taux_max = 0,0028` — **la valeur en vigueur**. La
+réforme chiffrait −0,0000 md€, sa variance de placement valait exactement zéro, et le
+rapport l'a écrit : « placement, part 0,0 % ». Une phrase sur la CVAE qui était en réalité
+une phrase sur une réforme qui ne fait rien. Porté à 0,5 % : −1,8545 md€, et la source
+apparaît.
+
+**IFI.** Mon premier cas était le barème inchangé. Or `placement.band` rend un **point** à
+barème inchangé — les tests patrimoine l'affirment eux-mêmes comme garde anti-théâtre
+(« the baseline band is a point, not an interval »), puisque seule une réforme qui coupe une
+tranche ouvre l'encadrement. Le cas mesurait donc rigoureusement zéro. Porté au seuil à
+2 M€ : largeur 0,1753 md€ sur −1,0052 md€.
+
+**Et en corrigeant l'IFI j'ai fabriqué un barème non monotone** : j'avais réécrit le seuil
+de 800 k€ en 2 M€ **en laissant 1,3 M€ derrière**, donnant `[(2,0 M€, …), (1,3 M€, …), …]`.
+Le module a rendu un nombre sans broncher. Le seuil d'assujettissement est la ligne 1,3 M€,
+et l'élever supprime la ligne 800 k€ — c'est le barème que les tests patrimoine utilisent
+pour ce cas exact. Une vérification de monotonie est maintenant dans le code.
+
+`central_for` refuse désormais tout cas de référence sous 50 M€ de chiffrage — **une
+réforme nulle rend toute part de variance calculée dessus une affirmation sur le néant.**
+C'est la règle permanente « une comparaison n'est pas testée tant que les deux côtés ne sont
+pas non nuls », arrivée dans un endroit nouveau. Vérifié dans les deux sens : la valeur
+0,0028 est refusée, les trois cas retenus passent.
+
+### La résolution de l'instrument, qui n'est pas une source
+
+Douze tirages de sous-échantillon à n = 4 000 sur la décote : écart-type **0,0427 md€, soit
+1,37 %**. **Cette variance vaut exactement zéro en production** — `run(sample=None)` chiffre
+la frame entière. Ce n'est donc pas une erreur du modèle, et la classer comme telle enverrait
+la phase 7 vers une grandeur qui n'existe pas quand le modèle tourne. Elle est rapportée dans
+sa propre section, et ce qu'elle borne est la **finesse d'A0 lui-même** : à 1,37 %, une
+source qui pèse 0,46 % est indiscernable du bruit de tirage sur un sous-échantillon de cette
+taille. La contribution IS est donc mesurée sur la chaîne entreprises, qui n'échantillonne
+pas — et il fallait le dire.
+
+C'est le jumeau du piège de l'uprating (D-115) : deux grandeurs qui ressemblent à de
+l'incertitude et n'en sont pas, toutes deux repérées par la même question.
+
+### Ce que ce passage NE dit pas
+
+Quatre des huit cas n'ont **aucune source mesurable aujourd'hui**, et trois sources déclarées
+par la spec sont NON MESURÉES avec leur raison — le store comportemental (attribuer par
+paramètre demande une passe moteur par cas, prévu en v2), la construction de population
+(reconstruire à une seconde graine est un gate en soi), l'uprating (bornes à sourcer). Le
+classement ordonne **ce qui a pu être mesuré**, pas l'ensemble des erreurs du modèle. Le lire
+autrement serait exactement l'erreur que ce budget existe pour éviter, et le rapport le dit
+dans son propre texte.
