@@ -5595,3 +5595,76 @@ artefacts déclarés — « tous les foyers d'une cellule reçoivent la même ba
 tirées sur graine.
 
 Le gate autorise donc L1, avec sa facture énoncée d'avance.
+
+## D-121 — L1 construit : la queue recalée, et le prix qu'elle coûte au total calibré
+
+**Phase 7 L1, 2026-09-11.** `src/impots/population/top_tail.py`, `tests/test_top_tail.py`.
+Le gate (D-120) avait autorisé le levier et énoncé sa facture d'avance ; voici la
+construction, et la facture s'est révélée plus grosse que prévue.
+
+### Ce que le recalage fait
+
+Mesuré sur la population complète, moyenne de RFR par part, avant et après :
+
+| bande | cible | avant | après |
+|---|---|---|---|
+| 2e au 9e dixième | — | −9,4 % à +9,2 % | **±0,9 %** |
+| 90–99 % | 49 072 € | +6,7 % | −0,2 % |
+| 99–99,9 % | 135 570 € | −11,6 % | +0,8 % |
+| **99,9–100 %** | 916 590 € | **−64,3 %** | **+7,8 %** |
+
+Le millième supérieur passe de 327 271 € à 987 747 €. Toutes les autres bandes rentrent à
+moins d'un point.
+
+### C'est une REDISTRIBUTION, et c'est ce que la conversion emboîtée→disjointe révèle
+
+n° 41 publie « dernier dixième », puis « dont dernier centième » et « dont dernier millième »
+**à l'intérieur**. Les traiter comme trois bandes séparées compterait le millième trois fois
+et produirait des cibles qu'aucune distribution ne peut satisfaire ensemble. Converties en
+bandes disjointes, elles disent : 90–99 **descend** (×0,94), 99–99,9 monte (×1,13),
+99,9–100 monte de ×2,80 — et les dixièmes 5 à 9 descendent de 3 à 8 %.
+
+Un simple abondement du sommet était donc impossible : **le centile supérieur manque 36 md€
+quand le dixième entier n'en manque que 23**, si bien qu'ajouter au centile ferait dépasser
+le dixième sa propre moyenne publiée. La distribution synthétique n'est pas seulement courte
+en haut, elle est **comprimée aux deux bouts**.
+
+### Le prix : −2,03 % sur le total des revenus
+
+Le recalage ne peut PAS à la fois coller aux fractiles publiés et préserver le total
+calibré. Mesuré : 1 548,0 → 1 516,5 md€, soit **−2,03 %**, et 61,84 M de foyers pondérés
+déplacés. La masse salariale était calibrée ; le recalage la déplace de deux points.
+
+Ce n'est pas une contradiction entre sources — la masse salariale (comptes nationaux) et le
+RFR des foyers déclarants ne mesurent pas le même périmètre — mais c'en est une pour NOTRE
+population, qui ne peut pas satisfaire les deux. Le chiffre est **rendu par `apply`** et non
+absorbé : une calibration qui déplace en silence un total auquel le modèle est calibré est
+exactement la forme d'une ligne qui se valide elle-même.
+
+### Trois artefacts déclarés, dont un qui laisse un résidu visible
+
+1. **Le facteur est uniforme dans une bande.** Un foyer au 99,91e centile reçoit le même
+   ×2,80 qu'un foyer au 99,99e. La donnée publiée ne les distingue pas, et inventer un
+   gradient intra-bande serait inventer une densité — même artefact et même refus que
+   l'imputation des niches.
+2. **L'appartenance aux fractiles est calculée AVANT le recalage et non recalculée.** Le
+   recalage fait franchir les frontières, d'où le **+7,8 %** résiduel au millième :
+   `residuals()` le publie au lieu d'itérer jusqu'à ce qu'un nombre soit joli. Une passe est
+   la chose honnête à livrer, le résidu la chose honnête à publier.
+3. **La composition interne d'un foyer est préservée.** Un seul facteur multiplie toutes les
+   colonnes monétaires, donc le mélange salaire/pension/chômage ne bouge pas. **Ce n'est pas
+   neutre** : le vrai millième supérieur est bien plus riche en capital et en BNC que le
+   nôtre, et multiplier des salaires ne sait pas représenter cela. Le recalage rend le
+   NIVEAU juste et laisse la COMPOSITION aussi fausse qu'elle l'était.
+
+### Deux défauts attrapés dans ma propre construction
+
+**`BANDS` fabriquait « 1e dixième » quand la publication écrit « 1er dixième ».** Un libellé
+qui ne correspond pas n'est pas une erreur : c'est une bande **silencieusement non recalée**.
+Sans effet aujourd'hui — le premier dixième est publié « n.s. » et n'a aucune cible — et un
+piège le jour où il en aurait une.
+
+**Et `apply` fabriquait ses `band_factors`** à partir d'une médiane, dans un `zip` à un seul
+élément : un champ qui avait l'air de rapporter les facteurs par bande et n'en rapportait
+aucun. Corrigé en faisant rendre à `factors()` le tableau ET le dictionnaire, qui est la
+seule source où ils existent.
