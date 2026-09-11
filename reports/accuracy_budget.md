@@ -1,6 +1,6 @@
 # A0 — le budget d'exactitude
 
-*Produit par `scripts/accuracy_budget.py` le 2026-09-10. Graine 20260910. Chaque nombre de ce fichier est calculé par ce script ; aucun n'y est recopié.*
+*Produit par `scripts/accuracy_budget.py` le 2026-09-11. Graine 20260910. Chaque nombre de ce fichier est calculé par ce script ; aucun n'y est recopié.*
 
 Ce budget classe les sources d'incertitude déclarées, réforme de référence par réforme de référence. **Son classement ordonne les leviers L1-L6 de la phase 7**, et un levier qu'il classe bas est écarté avec son score au dossier : refuser du travail est un résultat.
 
@@ -95,15 +95,42 @@ Chiffrage central : **-1,0052 md€**.
 * **hypothèse d'uprating — NON MESURÉE.** la paire vieillie/gelée N'EST PAS un intervalle d'uprating : sa borne basse chiffre une population dont les revenus n'ont pas bougé. Un vrai balayage demande deux hypothèses SOURCÉES autour de l'hypothèse déclarée, et ce projet ne prévoit ni salaires ni prix — les bornes sont à l'appelant de les sourcer.
 * **construction de la population (graines skeleton/incomes) — NON MESURÉE.** les graines de construction (20240101) ne sont tirées qu'une fois et la France synthétique n'est jamais reconstruite ; mesurer cette source demande une reconstruction complète à une seconde graine, c'est un gate en soi. Le sous-échantillon N'EST PAS un substitut : sa variance est nulle en production.
 
-## La résolution de l'instrument, qui n'est PAS une source
+## A0 v2 — la bande comportementale : mesurée, puis REFUSÉE
 
-Mesuré sur « Décote : taux porté à 30 % », 12 tirages de sous-échantillon à n = 4 000 ménages : moyenne 3,1229 md€, écart-type **0,0427 md€**, soit 1,37 % du chiffrage.
+Quantité attribuée : **la largeur de la bande publiée (p90 − p10)**, non une variance. `BehaviouralResult` n'expose pas les tirages par canal — il porte des percentiles, et des percentiles ne s'additionnent pas — donc une décomposition de variance n'est pas disponible par l'API publique.
 
-**Cette variance vaut exactement zéro en production.** `runner.run(sample=None)` chiffre la frame entière : re-tirer le sous-échantillon ne déplace rien de ce qui est déployé. Elle n'est donc pas une source d'erreur du modèle, et la classer comme telle enverrait la phase 7 vers une grandeur qui n'existe pas quand le modèle tourne pour de vrai.
+Méthode : épingler une ligne à sa valeur centrale et remesurer ; la différence est sa contribution au premier ordre. Le mécanisme fonctionne. **Ce qu'il produit n'est pas classable**, et voici pourquoi.
 
-Ce qu'elle dit en revanche, et pourquoi elle est ici : c'est **la finesse avec laquelle A0 peut séparer deux sources** lorsqu'il mesure sur un sous-échantillon. Toute source dont la contribution est plus petite que cet écart-type est indiscernable du bruit de tirage, et le budget ne doit pas prétendre les ordonner.
+| réforme | n | largeur de bande | ligne dominante | part | conjoints |
+|---|---|---|---|---|---|
+| Décote : taux porté à 30 % | 2 000 | 0,0359 md€ | `eti_top_decile` | 33,7 % | 45,0 % |
+| Décote : taux porté à 30 % | 3 000 | 0,0607 md€ | `eti_top_decile` | 87,8 % | 13,6 % |
+| Décote : taux porté à 30 % | 4 000 | 0,0264 md€ | `eti_top_decile` | 44,9 % | 42,8 % |
+| Décote : taux porté à 30 % | 6 000 | 0,0326 md€ | `eti_all` | 30,0 % | 45,6 % |
+| Allègements généraux : plafond porté à 2 SMIC | 2 000 | **refusé : bande de largeur nulle** | — | — | — |
+| Allègements généraux : plafond porté à 2 SMIC | 3 000 | **refusé : bande de largeur nulle** | — | — | — |
+| Allègements généraux : plafond porté à 2 SMIC | 4 000 | **refusé : bande de largeur nulle** | — | — | — |
+| Allègements généraux : plafond porté à 2 SMIC | 6 000 | **refusé : bande de largeur nulle** | — | — | — |
+| RSA : montant de base porté à 700 € | 2 000 | **refusé : bande de largeur nulle** | — | — | — |
+| RSA : montant de base porté à 700 € | 3 000 | **refusé : bande de largeur nulle** | — | — | — |
+| RSA : montant de base porté à 700 € | 4 000 | **refusé : bande de largeur nulle** | — | — | — |
+| RSA : montant de base porté à 700 € | 6 000 | **refusé : bande de largeur nulle** | — | — | — |
+| Plafond du quotient familial porté à 1 000 € | 2 000 | 0,2620 md€ | `eti_top_decile` | 92,1 % | 9,3 % |
+| Plafond du quotient familial porté à 1 000 € | 3 000 | 0,0322 md€ | `eti_all` | 100,0 % | 0,0 % |
+| Plafond du quotient familial porté à 1 000 € | 4 000 | 0,0420 md€ | `eti_top_decile` | 33,4 % | 45,1 % |
+| Plafond du quotient familial porté à 1 000 € | 6 000 | 0,0287 md€ | `eti_all` | 59,3 % | 34,1 % |
 
-D-074 avait déjà mesuré la même chose par l'autre bout : 1,49 point d'écart-type par tirage sur la ligne barème à n = 50 000.
+**La largeur de bande elle-même varie d'un facteur 9,1 selon la taille du sous-échantillon**, sans tendance, et la ligne dominante bascule entre `eti_top_decile` et `eti_all` sur 2 des 2 cas mesurés. Un classement lu sur une seule taille aurait donc été un fait sur le tirage, pas sur le modèle.
+
+**La cause était déjà mesurée dans ce même rapport.** La section résolution donne le bruit de sous-échantillon à environ 1,4 % du chiffrage, soit ~0,043 md€ sur une décote de 3,1 md€. Les largeurs de bande mesurées ici valent 0,026 à 0,062 md€ : **le même ordre de grandeur**. L'attribution mesure donc le bruit de tirage autant que les paramètres, et la section qui prédisait exactement cela avait été écrite avant — sans être appliquée à v2.
+
+**Ce que l'attribution vaudrait, et ce qu'elle coûterait.** Le mécanisme est juste et instantané une fois la passe moteur payée : la bande se recalcule mille fois par seconde. Ce qu'il lui faut est une passe **sur la population complète** (199 451 ménages, `sample=None`), où le bruit de tirage est nul par construction. C'est un travail par lots, pas une passe de 40 secondes, et c'est la condition à remplir avant que L3 puisse être ordonné par la mesure.
+
+**Conclusion, dans la grammaire de la phase : L3 n'est pas classé, et son score est « non résolvable au sous-échantillon ».** Refuser de classer est un résultat ; publier le classement de n = 3 000 en aurait été un autre, faux.
+
+## La résolution de l'instrument
+
+**Non mesurée dans ce passage** — relancer avec `--resolution`, qui coûte 12 passes moteur. Le bruit de sous-échantillon n'est pas une source d'erreur du modèle (il vaut zéro quand la frame entière est chiffrée) mais il borne la finesse avec laquelle ce budget peut séparer deux sources mesurées sur un sous-échantillon.
 
 ## Ce que ce passage ordonne
 

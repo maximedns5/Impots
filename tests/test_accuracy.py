@@ -14,6 +14,7 @@ that returns a constant order passes any single arrangement.
 from __future__ import annotations
 
 import math
+import typing
 
 import pytest
 
@@ -257,3 +258,59 @@ def test_every_unmeasured_source_names_why() -> None:
         for source in accuracy_cases.sources_for(case, households=1000):
             if source.method == "unmeasured":
                 assert len(source.unmeasured_reason) > 60, (case.key, source.key)
+
+
+# ------------------------------------------------ A0 v2: the behavioural attribution
+
+def test_pinning_a_degenerate_row_is_refused() -> None:
+    """A row with low == high cannot change the sample: `Parameter.draw` returns a
+    constant for it. Pinning it would score a rigorous zero, and a zero in a ranking
+    reads as «measured, and it does not matter»."""
+    from impots import accuracy_behavioural as ab
+    from impots.behavioural.store import load
+
+    store = load()
+    degenerate = [k for k, p in store.parameters.items() if p.low == p.high]
+    assert degenerate, "le store n'a plus de ligne dégénérée : ce test ne teste plus rien"
+    with pytest.raises(ab.AttributionError, match="ligne constante"):
+        ab.pin(store, degenerate[0])
+
+
+def test_pinning_does_not_mutate_the_shared_store() -> None:
+    """`store.load()` is memoised. A pin that mutated it would silently change every later
+    evaluation in the process — the trap that made a live knob look dead in D-095, where a
+    memoised baseline was compared against itself."""
+    from impots import accuracy_behavioural as ab
+    from impots.behavioural.store import load
+
+    store = load()
+    key = next(k for k, p in store.parameters.items() if p.low != p.high)
+    before = (store.parameters[key].low, store.parameters[key].high)
+
+    pinned = ab.pin(store, key)
+
+    assert (store.parameters[key].low, store.parameters[key].high) == before
+    assert pinned.parameters[key].low == pinned.parameters[key].high
+    assert load().parameters[key].low == before[0], "le store mémoïsé a été muté"
+
+
+def test_a_zero_width_band_is_refused_rather_than_attributed() -> None:
+    """A pure transfer reform moves no revenue-band channel, so the published band has zero
+    width. Sharing zero out between parameters would produce a ranking of nothing — which
+    is exactly what the RSA case does, and it is refused by name."""
+    from impots import accuracy_behavioural as ab
+
+    class _Result:
+        band = None
+        grade = "sans objet"
+        channels: typing.ClassVar[list[dict]] = []
+
+    assert ab.band_width(_Result()) == 0.0
+
+
+def test_the_attribution_refuses_an_empty_store() -> None:
+    from impots import accuracy_behavioural as ab
+    from impots.behavioural.store import Store
+
+    with pytest.raises(ab.AttributionError, match="store vide"):
+        ab.attribute("x", {}, store=Store(parameters={}))

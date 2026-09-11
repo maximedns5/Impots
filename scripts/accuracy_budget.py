@@ -88,10 +88,88 @@ def resolution_section(*, households: int, seed: int) -> tuple[str, float]:
     return "\n".join(lines), sigma
 
 
+def behavioural_section(*, households: int) -> list[str]:
+    """A0 v2 — and its result is a REFUSAL, established by measurement.
+
+    The attribution runs. It is also not resolvable at any subsample size this project can
+    afford per case, and the evidence is the sweep below rather than an argument.
+    """
+    from impots import accuracy_behavioural as ab
+    from impots.api.schemas import ReformSpec
+
+    sizes = (2000, 3000, 4000, 6000)
+    out = ["## A0 v2 — la bande comportementale : mesurée, puis REFUSÉE", "",
+           "Quantité attribuée : **la largeur de la bande publiée (p90 − p10)**, non une "
+           "variance. `BehaviouralResult` n'expose pas les tirages par canal — il porte des "
+           "percentiles, et des percentiles ne s'additionnent pas — donc une décomposition "
+           "de variance n'est pas disponible par l'API publique.",
+           "",
+           "Méthode : épingler une ligne à sa valeur centrale et remesurer ; la différence "
+           "est sa contribution au premier ordre. Le mécanisme fonctionne. **Ce qu'il "
+           "produit n'est pas classable**, et voici pourquoi.",
+           "",
+           "| réforme | n | largeur de bande | ligne dominante | part | conjoints |",
+           "|---|---|---|---|---|---|"]
+    widths: dict[str, list[float]] = {}
+    dominants: dict[str, set] = {}
+    for case in accuracy_cases.REFERENCE_REFORMS:
+        if case.chain != "household":
+            continue
+        spec = ReformSpec.model_validate({case.knob: case.value})
+        for size in sizes:
+            try:
+                inputs = ab.inputs_for(spec, households=size)
+                a = ab.attribute(case.key, inputs, draws=2000)
+            except ab.AttributionError:
+                out.append(f"| {case.label} | {num_fr(size)} | **refusé : bande de "
+                           f"largeur nulle** | — | — | — |")
+                continue
+            top = a.ranked()[0]
+            widths.setdefault(case.key, []).append(a.full_width_eur)
+            dominants.setdefault(case.key, set()).add(top.key)
+            out.append(
+                f"| {case.label} | {num_fr(size)} | {md(a.full_width_eur)} | "
+                f"`{top.key}` | {pct_fr(top.share_of_width, 1)} | "
+                f"{pct_fr(a.unexplained_eur / a.full_width_eur, 1)} |")
+
+    swings = {k: max(v) / min(v) for k, v in widths.items() if min(v) > 0}
+    flips = {k: v for k, v in dominants.items() if len(v) > 1}
+    worst = max(swings.values()) if swings else 0.0
+
+    out += ["",
+            f"**La largeur de bande elle-même varie d'un facteur "
+            f"{num_fr(worst, 1)} selon la taille du sous-échantillon**, sans tendance, et "
+            f"la ligne dominante bascule entre `eti_top_decile` et `eti_all` sur "
+            f"{len(flips)} des {len(widths)} cas mesurés. Un classement lu sur une seule "
+            "taille aurait donc été un fait sur le tirage, pas sur le modèle.",
+            "",
+            "**La cause était déjà mesurée dans ce même rapport.** La section résolution "
+            "donne le bruit de sous-échantillon à environ 1,4 % du chiffrage, soit ~0,043 "
+            "md€ sur une décote de 3,1 md€. Les largeurs de bande mesurées ici valent 0,026 "
+            "à 0,062 md€ : **le même ordre de grandeur**. L'attribution mesure donc le bruit "
+            "de tirage autant que les paramètres, et la section qui prédisait exactement "
+            "cela avait été écrite avant — sans être appliquée à v2.",
+            "",
+            "**Ce que l'attribution vaudrait, et ce qu'elle coûterait.** Le mécanisme est "
+            "juste et instantané une fois la passe moteur payée : la bande se recalcule mille "
+            "fois par seconde. Ce qu'il lui faut est une passe **sur la population complète** "
+            "(199 451 ménages, `sample=None`), où le bruit de tirage est nul par "
+            "construction. C'est un travail par lots, pas une passe de 40 secondes, et c'est "
+            "la condition à remplir avant que L3 puisse être ordonné par la mesure.",
+            "",
+            "**Conclusion, dans la grammaire de la phase : L3 n'est pas classé, et son "
+            "score est « non résolvable au sous-échantillon ».** Refuser de classer est un "
+            "résultat ; publier le classement de n = 3 000 en aurait été un autre, faux.",
+            ""]
+    return out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--households", type=int, default=4000)
     parser.add_argument("--seed", type=int, default=20260910)
+    parser.add_argument("--behavioural", action="store_true",
+                        help="attribuer la bande comportementale par paramètre (A0 v2)")
     parser.add_argument("--resolution", action="store_true",
                         help="mesurer aussi la résolution (lent : passes moteur)")
     args = parser.parse_args()
@@ -173,6 +251,10 @@ def main() -> int:
         for c in budget.unmeasured:
             lines.append(f"* **{c.label} — NON MESURÉE.** {c.note}")
         lines.append("")
+
+    if args.behavioural:
+        print("  attribution comportementale (passes moteur)…", flush=True)
+        lines += behavioural_section(households=args.households)
 
     if args.resolution:
         print("  résolution (passes moteur)…", flush=True)

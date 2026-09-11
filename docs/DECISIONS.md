@@ -5387,3 +5387,79 @@ cas-là, contrairement au cas D-113 : quand `make` lui-même reçoit SIGTERM, le
 fin de recette ne tourne jamais. Le journal ne peut donc pas enregistrer sa propre mort par
 le haut, et c'est une limite à connaître plutôt qu'un défaut à corriger — un journal écrit
 par un processus tué ne serait pas plus fiable.
+
+## D-118 — A0 v2 : l'attribution comportementale fonctionne, et son résultat est un refus
+
+**Phase 7, 2026-09-11.** `src/impots/accuracy_behavioural.py`. Le mécanisme est juste, il
+tourne, il est instantané une fois la passe moteur payée — et **ce qu'il produit n'est pas
+classable**. C'est le résultat, établi par la mesure et non par l'argument.
+
+### Ce qui est attribué, et pourquoi ce n'est pas une variance
+
+Mon premier jet attribuait la **variance**, en lisant les tirages par canal sur le résultat.
+`BehaviouralResult` **ne les expose pas** : il porte `band` en trois percentiles et
+`channels` en dicts de trois percentiles ; les tableaux de tirages sont locaux à `compute`
+et meurent avec elle. J'avais écrit `result._channel_results` — un attribut inventé. Des
+percentiles ne s'additionnent pas, donc aucune décomposition de variance n'est disponible
+par l'API publique, et aller chercher les internes des canaux ferait dépendre l'attribution
+d'une forme privée.
+
+La quantité attribuée est donc **la largeur de la bande publiée, p90 − p10**. Deux mérites :
+elle est honnêtement accessible, et c'est le nombre qu'un lecteur de fiche voit. Ce n'est
+PAS une décomposition de variance et le module ne l'appelle jamais ainsi : les contributions
+ne sont pas normalisées à 100 %, et l'écart — les effets conjoints — est une ligne du
+tableau.
+
+### Le garde qui compte : refuser quand le grade bouge
+
+`compute` applique `grading.widen` avant de prendre la bande : un canal noté
+*illustrative* voit sa bande étirée d'un facteur deux autour de sa médiane. **Si épingler un
+paramètre change le grade, les deux largeurs diffèrent par un étirement post hoc autant que
+par le paramètre**, et leur différence serait la somme de deux choses sans rapport présentée
+comme une. Quatrième question permanente, à l'endroit où elle aurait fait le plus de dégâts.
+Le grade est donc relevé à chaque évaluation et toute ligne où il a bougé est refusée.
+
+### Le résultat : non résolvable au sous-échantillon
+
+Balayé sur quatre tailles, deux cas :
+
+| n | décote : largeur / dominante | plafond QF : largeur / dominante |
+|---|---|---|
+| 2 000 | 0,0359 md€ / `eti_top_decile` 33,7 % | 0,2620 md€ / `eti_top_decile` 92,1 % |
+| 3 000 | 0,0607 md€ / `eti_top_decile` 87,8 % | 0,0322 md€ / **`eti_all` 100,0 %** |
+| 4 000 | 0,0264 md€ / `eti_top_decile` 44,9 % | 0,0420 md€ / `eti_top_decile` 33,4 % |
+| 6 000 | 0,0326 md€ / **`eti_all` 30,0 %** | 0,0287 md€ / **`eti_all` 59,3 %** |
+
+**La largeur de bande varie d'un facteur 9,1 selon la taille du sous-échantillon**, sans
+tendance, et la ligne dominante bascule sur les deux cas. Un classement lu sur une seule
+taille est un fait sur le tirage, pas sur le modèle.
+
+**La cause était déjà mesurée dans le même rapport, par moi, une section plus haut.** La
+résolution de l'instrument donne le bruit de sous-échantillon à ~1,4 % du chiffrage, soit
+~0,043 md€ sur une décote de 3,1 md€. Les largeurs de bande valent 0,026 à 0,062 md€ — **le
+même ordre de grandeur**. J'avais écrit noir sur blanc qu'« une source dont la contribution
+est plus petite que cet écart-type est indiscernable du bruit de tirage », puis construit
+v2 sans appliquer la phrase.
+
+### Ce que j'ai failli publier
+
+Après **un seul cas** (n = 3 000), j'ai lu « `eti_top_decile` porte 87,8 % de la bande » et
+j'allais en faire un fait général sur le store — d'autant plus séduisant qu'il était
+contre-intuitif : une réforme de décote, instrument des ménages modestes, dont l'incertitude
+serait portée par l'élasticité du décile supérieur. Le second cas a rendu `eti_all` à 100 %.
+Le balayage a rendu les deux, selon la taille.
+
+C'est la deuxième question permanente — **ai-je testé sur une autre forme que celle qui m'a
+alerté ?** — et la réponse était non jusqu'à ce que je la pose.
+
+### Ce qu'il faudrait
+
+Une passe sur la **population complète** (199 451 ménages, `sample=None`), où le bruit de
+tirage est nul par construction. C'est un travail par lots, pas une passe de quarante
+secondes. **L3 n'est donc pas classé, et son score au dossier est « non résolvable au
+sous-échantillon »** — la spec dit que refuser du travail est un résultat ; publier le
+classement de n = 3 000 en aurait été un autre, faux.
+
+Et une réforme de pure prestation (RSA, allègements) est **refusée** plutôt que classée :
+aucun canal de revenu ne s'y applique, la bande publiée est de largeur nulle, et répartir
+zéro entre des paramètres produirait un classement de rien.
