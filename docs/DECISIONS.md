@@ -5463,3 +5463,74 @@ classement de n = 3 000 en aurait été un autre, faux.
 Et une réforme de pure prestation (RSA, allègements) est **refusée** plutôt que classée :
 aucun canal de revenu ne s'y applique, la bande publiée est de largeur nulle, et répartir
 zéro entre des paramètres produirait un classement de rien.
+
+## D-119 — Gate L4 : le taux effectif sectoriel n'est pas dans le fichier, et le déficit est un flux
+
+**Phase 7 L4 M0, 2026-09-11.** `scripts/verify_stat39.py`. Le levier L4 est celui que A0 a
+classé en tête ; sa spec porte un item **NON MESURÉ** explicite — « quelle publication DGFiP
+porte le stock de déficits reportables : le gate le découvre ». Il le découvre, et il
+découvre aussi que le premier item ne peut pas être construit tel qu'il est formulé.
+
+### Item 1 : « des taux effectifs sectoriels tirés de Stat 39 » — impossible
+
+Le Tableau 1 porte bien une ventilation **par secteur** : dix secteurs, résultat fiscal et
+IS brut, qui somment au total à **0,00e+00 près** une fois écartée la ligne « dont industrie
+manufacturière » (un sous-ensemble d'Industrie ; l'inclure double-compterait 31,4 md€, et
+c'est l'exactitude de la somme qui prouve que l'exclusion est la bonne).
+
+Mais leur rapport n'est pas un taux effectif, et **le fichier le prouve sur ses propres
+chiffres** : IS brut / résultat fiscal vaut **40,1 %** au niveau agrégé contre un taux normal
+de **25 %**, et « Autres activités » atteint **125,8 %**. Un impôt ne peut pas dépasser sa
+base. Les deux colonnes ne partagent donc pas de périmètre.
+
+La raison est dans une autre feuille du même classeur. Graphique 2 décompose le **bénéfice
+imposable** par taux, et l'identité tombe :
+
+    B.I. 283,65 md€  +  déficit −111,9 md€  =  171,75  contre  172,0 publié   (−0,17 %)
+
+**Le résultat fiscal est NET des déficits ; l'IS est assis sur la base POSITIVE.** Sur le bon
+dénominateur le taux redevient sain : IS / bénéfice imposable = **24,34 %**, à 0,08 point du
+« taux moyen d'imposition » que la publication calcule elle-même (24,26 %), et juste sous les
+25 % comme la tranche à 15 % l'implique.
+
+**Or le bénéfice imposable n'est publié que nationalement, ventilé par TAUX et non par
+secteur.** La ventilation sectorielle existe donc uniquement sur le mauvais dénominateur.
+Construire des « taux effectifs sectoriels » depuis ces tables produirait des taux supérieurs
+à 100 % — la spec supposait une grandeur que la source ne porte pas.
+
+### Item 2 : le stock de déficits reportables — réponse mesurée, et c'est non
+
+Graphique 2 porte le déficit **imputé chaque année** : −65,4 / −60,2 / −100,9 / −83,1 /
+−113,3 / −101,8 / −111,9 md€ de 2018 à 2024. C'est un **flux** — ce qui a été absorbé — et
+non le **stock** de ce qui reste à absorber. La forme le dit : un stock ne ferait pas ces
+allers-retours d'une année sur l'autre. **Stat 39 ne porte pas le stock.** L'étiquette NON
+MESURÉE de la spec est donc levée par un constat négatif, qui est un résultat : chercher
+ailleurs, ou renoncer, mais pas construire sur ce fichier en croyant l'avoir.
+
+### Deux pièges de lecture, dont un déjà vu deux fois
+
+Dans Graphique 2, **les libellés sont en colonne 1** (pas 0, les données commencent ligne 21
+sous un bloc de titre) et **toutes les valeurs sont des chaînes** — `'18.223428762'`. Un
+filtre `isinstance(x, float)` rend une série vide et une somme de zéro **sans erreur**.
+C'est la troisième fois que cette classe apparaît dans ce projet : les colonnes à virgule
+décimale du REI, le `value: 6e-05` lu comme une chaîne par YAML 1.1, et maintenant un
+classeur DGFiP. Ici le script a planté bruyamment parce que la clé n'existait pas — de la
+chance, pas de la conception, et le commentaire le dit.
+
+**Et un défaut de millésime dans la source elle-même** : l'en-tête de colonne du Tableau 1
+annonce « Variation 2022/2023 » alors que le titre du même tableau dit « variation du
+résultat fiscal entre 2023 et 2024 ». Sur une publication de septembre 2025 portant sur
+2024, c'est l'en-tête qui a tort. Non corrigé de notre côté : nous ne lisons pas cette
+colonne, et la noter suffit.
+
+### Ce que L4 devient
+
+L'item « ratios sectoriels » est **écarté avec son constat**, pas reporté : la donnée
+n'existe pas dans la source que la spec désignait. L'item « stock de déficits » est **ouvert
+et non résolu** — aucune publication n'a été trouvée qui le porte, et la règle du pointeur
+interdit d'en nommer une sans l'avoir confrontée aux octets. Ce qui reste de L4 est le
+diagnostic de périmètre industrie/immobilier, qui n'est pas bloqué par de la donnée.
+
+Refuser du travail est un résultat, dit la spec de phase. Ici le refus est mesuré, il est
+rejouable (`scripts/verify_stat39.py`, neuf assertions), et il épargne une construction qui
+aurait produit des taux effectifs supérieurs à 100 % avant que quiconque s'en aperçoive.
