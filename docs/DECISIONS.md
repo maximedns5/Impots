@@ -5534,3 +5534,64 @@ diagnostic de périmètre industrie/immobilier, qui n'est pas bloqué par de la 
 Refuser du travail est un résultat, dit la spec de phase. Ici le refus est mesuré, il est
 rejouable (`scripts/verify_stat39.py`, neuf assertions), et il épargne une construction qui
 aurait produit des taux effectifs supérieurs à 100 % avant que quiconque s'en aperçoive.
+
+## D-120 — Gate L1 : la queue haute manque les deux tiers de son revenu, et c'est mesuré
+
+**Phase 7 L1 M0, 2026-09-11.** `scripts/gate_l1_top_tail.py`. Contrairement à L4, ce gate
+autorise son levier — et le chiffre qu'il rend est assez gros pour changer la lecture de
+plusieurs lignes du modèle.
+
+### La mesure
+
+RFR par part fiscale, moyenne par fractile, population complète contre DGFiP n° 41
+Tableau 2 :
+
+| fractile | publié | simulé | écart |
+|---|---|---|---|
+| 3e au 9e dixième | — | — | **+0,3 % à +9,2 %** |
+| dernier dixième | 65 532 € | 61 186 € | −6,6 % |
+| **dont dernier centième** | 213 672 € | 140 677 € | **−34,2 %** |
+| **dont dernier millième** | 916 590 € | 327 271 € | **−64,3 %** |
+
+La distribution synthétique est **trop resserrée** : le 2e dixième est 9,4 % trop bas, les
+dixièmes 5 à 9 sont 3,6 à 9,2 % trop hauts, et l'extrémité s'effondre. Au millième supérieur
+il manque près des deux tiers du revenu.
+
+**Et cette grandeur-là est résolvable**, contrairement à celle de A0 v2 : n = 20 000 et la
+population complète donnent 327 734 € et 327 271 €, soit 0,1 % d'écart. n = 4 000 rend
+253 811 € — sans surprise, le millième supérieur d'un échantillon de 4 000 foyers, c'est
+quatre foyers. Le gate mesure donc aux trois tailles et publie l'écart plutôt qu'un chiffre.
+
+### Ce que la mesure implique pour les lignes existantes
+
+Trois lectures du rapport de réconciliation reposent sur cette queue et doivent être relues
+à la lumière de ce chiffre : la ligne barème (dont le résidu est déjà déclaré comme un
+PLANCHER), le rapport interdécile D9/D1, et toute question CDHR — la contribution mord au
+centile supérieur, là où il manque un tiers du revenu.
+
+### Le piège de lecture, et il a failli refuser le levier
+
+Le Tableau 2 a **24 colonnes**, et son en-tête de groupe (« RFR par part fiscale ») est une
+ligne AU-DESSUS de l'en-tête de colonne (« Moyenne (en €) »). Lu sur les dix premières
+colonnes, le tableau semble ne publier que de l'IMPÔT par fractile — et j'ai commencé par
+écrire exactement cela, en concluant que L1 était impossible **pour la même raison que L4 la
+veille** : la ventilation existe, mais sur la mauvaise grandeur.
+
+C'était faux. La colonne 3 est un revenu, et les 916 590 € du millième supérieur sont une
+moyenne de RFR par part. Ce qui a rattrapé l'erreur est d'avoir lu **les 24 colonnes** avant
+de conclure, au lieu des 10 qui tenaient à l'écran.
+
+**La leçon n'est pas « lire tout le fichier ».** C'est que je venais de refuser un levier
+pour une raison de forme précise, et que cette forme est devenue le motif que je cherchais
+dans le fichier suivant. Un refus fraîchement écrit est un biais, pas une grille de lecture.
+
+### Ce que construire L1 coûtera, à dire avant de commencer
+
+Caler la queue sur les fractiles publiés **dépense n° 41 comme source de validation** : une
+fois le calage fait, les lignes IR du haut de distribution s'ajustent par construction et ne
+peuvent plus être citées comme preuve de quoi que ce soit. C'est la même règle que pour
+l'imputation des niches (D-064 et suivants) : opt-in, inscrit au registre des dépenses,
+artefacts déclarés — « tous les foyers d'une cellule reçoivent la même base », identités
+tirées sur graine.
+
+Le gate autorise donc L1, avec sa facture énoncée d'avance.
