@@ -5668,3 +5668,56 @@ piège le jour où il en aurait une.
 élément : un champ qui avait l'air de rapporter les facteurs par bande et n'en rapportait
 aucun. Corrigé en faisant rendre à `factors()` le tableau ET le dictionnaire, qui est la
 seule source où ils existent.
+
+## D-122 — L1 câblé : le levier s'applique, et la source qu'il dépense est refusée
+
+**Phase 7 L1, suite et fin, 2026-09-12.** D-121 livrait le module et ses tests et je l'ai
+annoncé « construit ». **Il ne l'était pas** : `top_tail` n'était appelé par rien — ni
+drapeau sur `run()`, ni enregistrement de la dépense. La spec disait « opt-in,
+spent-registered » et aucune des deux moitiés n'existait. Un composant mesuré et testé hors
+du pipeline n'est pas un levier ; c'est la pire des situations, celle où quelqu'un supposera
+plus tard que le recalage est actif.
+
+### Moitié une : le drapeau, et un ordre qui porte
+
+`run(..., rake_top_tail=False)`, off par défaut — une calibration qui tournerait sauf
+demande contraire serait le pire défaut imaginable : tout l'aval serait ajusté et personne
+ne le saurait. `_rake_top_tail` suit la forme de `_impute_niches`, et pour la même raison :
+la bande d'un foyer dépend de son RFR par part, qui est une SORTIE, d'où une passe
+supplémentaire.
+
+**Le recalage passe AVANT l'imputation des niches, et l'ordre est porteur.** Les bases de
+niches sont distribuées par décile de RFR par part ; le recalage déplace le RFR par part.
+Imputer d'abord distribuerait des bases selon un classement que le recalage invalide
+ensuite — une population plausible que personne ne pourrait relier à un défaut. L'ordre est
+asserté sur le source, pas seulement commenté.
+
+Vérifié de bout en bout à n = 20 000 : `salaire_brut` passe de 1 120,668 à 1 103,397 md€
+(−1,54 %, cohérent avec les −2,03 % de la population complète), les gardes
+`top_tail_total_shift` et `top_tail_foyers_moved` apparaissent, le chronométrage `rake_s`
+aussi. Drapeau à False : aucune des trois.
+
+### Moitié deux : la dépense est refusée, pas seulement documentée
+
+`Line.raked_top_tail` rend **« not comparable (queue recalée) »** avant toute évaluation de
+tolérance. C'est la condition d'achèvement de L1 et l'analogue exact de celle de F3 M2 : une
+fois le recalage passé, les lignes IR du haut collent aux fractiles publiés par
+construction, et un verdict de tolérance rapporterait **le recalage qui fonctionne** plutôt
+que le modèle qui a raison.
+
+Champ séparé de `population_year` plutôt que fondu dedans, parce que les deux refus n'ont
+pas la même raison : une population vieillie est comparée à la mauvaise ANNÉE, une
+population recalée à un chiffre auquel elle a été ajustée. Deux raisons, deux messages, et un
+test qui exige qu'ils diffèrent.
+
+Le kill test accompagne le refus : **la même ligne sans le drapeau doit rendre un vrai
+verdict**, sinon le refus ne prouve rien sur le drapeau.
+
+### La leçon, qui n'est pas sur le code
+
+J'ai écrit « L1 construit » sur un module que rien n'appelait. Les tests passaient, la
+mesure était juste, le docstring promettait « opt-in, spent-registered » — et la promesse
+tenait lieu d'implémentation. **Un docstring qui décrit un câblage absent est la forme
+documentaire du contrôle qui ne peut pas échouer** : il se relit correctement et ne fait
+rien. C'est la question « ai-je déjà vu cette sortie exister ? » (D-117) appliquée non à une
+sortie mais à un point d'entrée.

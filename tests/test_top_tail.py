@@ -120,3 +120,64 @@ def test_residuals_report_the_miss_rather_than_asserting_it_away(toy) -> None:
     assert residuals, "aucun résidu rendu : le contrôle ne contrôle rien"
     for label, value in residuals.items():
         assert value == pytest.approx(-1 / 11, abs=1e-9), label
+
+
+# ----------------------------------------------- the wiring, which is half the lever
+
+def test_the_rake_is_off_by_default() -> None:
+    """A calibration that ran unless you asked it not to would be the worst possible
+    default: every figure downstream would be fitted, and nobody would know."""
+    import inspect
+
+    from impots.population.runner import run
+
+    parameter = inspect.signature(run).parameters["rake_top_tail"]
+    assert parameter.default is False
+
+
+def test_the_rake_runs_before_the_niche_imputation() -> None:
+    """The order is load-bearing and therefore asserted on the source.
+
+    Niche bases are handed out by DECILE OF RFR PER PART, and the rake moves RFR per part.
+    Imputing first would distribute bases by a ranking the rake then invalidates — a
+    plausible population that nobody could trace back to a defect.
+    """
+    from pathlib import Path
+
+    source = Path("src/impots/population/runner.py").read_text(encoding="utf-8")
+    body = source[source.index("def run("):]
+    assert body.index("if rake_top_tail:") < body.index("if impute_niches:"), (
+        "le recalage doit précéder l'imputation des niches")
+
+
+def test_a_raked_line_refuses_a_tolerance_verdict() -> None:
+    """L1's completion condition, and the exact analogue of F3 M2's.
+
+    After the rake the top IR lines fit n° 41 by construction. A tolerance verdict on them
+    would report the rake working rather than the model being right.
+    """
+    from impots.reporting import Line
+
+    raked = Line(label="IR au barème", simulated=100.0, published=100.0, unit="EUR",
+                 tolerance=0.10, use="validation", source="DGFiP n° 41",
+                 raked_top_tail=True)
+    assert raked.status == "not comparable (queue recalée)"
+
+    # And the kill: the SAME line without the flag must return a real verdict, or the
+    # refusal above proves nothing about the flag.
+    plain = Line(label="IR au barème", simulated=100.0, published=100.0, unit="EUR",
+                 tolerance=0.10, use="validation", source="DGFiP n° 41")
+    assert plain.status != "not comparable (queue recalée)"
+
+
+def test_the_two_refusals_are_distinguishable() -> None:
+    """An uprated population is compared to the wrong YEAR; a raked one to a figure it was
+    fitted to. Two reasons, two messages — a reader deserves to know which applies."""
+    from impots.reporting import Line
+
+    aged = Line(label="x", simulated=1.0, published=1.0, unit="EUR", tolerance=0.1,
+                use="validation", source="s", population_year=2028, comparator_year=2024)
+    raked = Line(label="x", simulated=1.0, published=1.0, unit="EUR", tolerance=0.1,
+                 use="validation", source="s", raked_top_tail=True)
+    assert aged.status != raked.status
+    assert "vieillie" in aged.status and "recalée" in raked.status

@@ -123,6 +123,20 @@ class Line:
     comparator_year: int | None = None
     """The year the published figure describes. Paired with `population_year`."""
 
+    raked_top_tail: bool = False
+    """True when the population was raked onto DGFiP n° 41's fractiles (L1, D-121).
+
+    **The rake SPENDS n° 41 and everything downstream of the income distribution's upper
+    tail.** After it runs, the top IR lines fit the published fractiles by construction:
+    they are calibration, not validation, and a tolerance verdict on them would report the
+    rake working rather than the model being right.
+
+    It is a separate field from `population_year` rather than folded into it because the
+    two refusals have different reasons and a reader deserves to be told which applies. An
+    uprated population is compared to the wrong YEAR; a raked one is compared to a figure
+    it was fitted to.
+    """
+
     @property
     def vintages_match(self) -> bool:
         """Whether this line compares two figures about the same year.
@@ -187,6 +201,11 @@ class Line:
         """
         if self.simulated is None:
             return "not modelled"
+        if self.raked_top_tail:
+            # Returns BEFORE any tolerance is evaluated, for the same reason the vintage
+            # refusal below does: the line was fitted to this comparator, so a verdict
+            # would read as validation while validating nothing. L1's completion condition.
+            return "not comparable (queue recalée)"
         if not self.vintages_match:
             # A trajectory line: an uprated population against a base-year total. This
             # returns BEFORE any tolerance is evaluated, because a tolerance verdict here

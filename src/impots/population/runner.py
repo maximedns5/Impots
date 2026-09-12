@@ -301,6 +301,37 @@ def _impute_niches(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any]
     return niches_module.impute(rfr_per_part, weights, year=year)
 
 
+def _rake_top_tail(built: Any, frame: pl.DataFrame, year: int) -> tuple[pl.DataFrame, Any]:
+    """Rake the income distribution's upper tail onto DGFiP n° 41's fractiles (L1, D-121).
+
+    Needs a simulation that has already been built, for the same reason `_impute_niches`
+    does: the band a foyer falls into depends on its RFR per part, which is an OUTPUT. That
+    is why this costs an extra pass rather than being a frame transformation.
+
+    **It runs BEFORE the niche imputation, and the order is load-bearing.** The niche
+    deciles are deciles of RFR per part; the rake moves RFR per part. Imputing first would
+    hand out niche bases by a decile ranking the rake then invalidates.
+    """
+    from impots.population import top_tail as top_tail_module
+
+    simulation = built.simulation
+    rfr = np.asarray(simulation.calculate("rfr", str(year)), dtype=np.float64)
+    parts = np.asarray(simulation.calculate("nbptr", str(year)), dtype=np.float64)
+    if (parts <= 0).any():
+        raise WiringError("a foyer fiscal reports zero parts; RFR per part is undefined")
+
+    grouped = (frame.group_by("foyer_id").agg(pl.col("weight").mean().alias("weight"))
+               .sort("foyer_id"))
+    weights = grouped["weight"].to_numpy().astype(np.float64)
+    if weights.shape != rfr.shape:
+        raise WiringError(
+            f"foyer weights {weights.shape} do not line up with RFR {rfr.shape}")
+
+    per_foyer, band_factors = top_tail_module.factors(rfr / parts, weights)
+    return top_tail_module.apply(frame, grouped["foyer_id"].to_list(), per_foyer,
+                                 band_factors)
+
+
 def run(
     population: pl.DataFrame | Path,
     year: int = 2024,
@@ -308,6 +339,7 @@ def run(
     tier: Tier = "light",
     sample: int | None = None,
     impute_niches: bool = False,
+    rake_top_tail: bool = False,
 ) -> RunResult:
     """Run the population through current law and, optionally, one reform.
 
@@ -332,6 +364,17 @@ def run(
     started = time.perf_counter()
     built = build_simulation(frame, baseline(), year)
     timings["build_s"] = round(time.perf_counter() - started, 2)
+
+    # L1's rake, BEFORE the niche imputation: the niche deciles are deciles of RFR per
+    # part, and the rake moves RFR per part.
+    rake: Any = None
+    if rake_top_tail:
+        started = time.perf_counter()
+        frame, rake = _rake_top_tail(built, frame, year)
+        built = build_simulation(frame, baseline(), year)
+        timings["rake_s"] = round(time.perf_counter() - started, 2)
+        guards["top_tail_total_shift"] = rake.total_shift
+        guards["top_tail_foyers_moved"] = rake.foyers_moved
 
     niche_bases: dict[str, Any] | None = None
     if impute_niches:
