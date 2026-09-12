@@ -27,3 +27,4 @@ green. No review handoff goes out without a line newer than the work it reports.
 | 2026-09-10 | `2917acf` | PASS | 60m44s | 1338 passed, 2 skipped, 18 warnings |
 | 2026-09-11 | `b66d49f` | PASS | 65m12s | 1340 passed, 5 skipped, 18 warnings |
 | 2026-09-11 | `db1ab7f` | PASS | 58m57s | 1352 passed, 2 skipped, 18 warnings |
+| 2026-09-12 | `31741ae` | PASS | 58m16s (horloge 359m, machine en veille) | 1356 passed, 2 skipped, 18 warnings |

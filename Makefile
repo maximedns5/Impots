@@ -44,8 +44,12 @@ full:
 	 $(VENV)/python -m pytest -q -m "" --durations=15 > $$out 2>&1; \
 	 status=$$?; \
 	 elapsed=$$(( $$(date +%s) - start )); \
-	 counts=$$(grep -E '[0-9]+ (passed|failed|error)' $$out | tail -1 \
-	   | sed -E 's/ in [0-9].*$$//'); \
+	 summary=$$(grep -E '[0-9]+ (passed|failed|error)' $$out | tail -1); \
+	 counts=$$(printf '%s' "$$summary" | sed -E 's/ in [0-9].*$$//'); \
+	 : "pytest IMPRIME sa propre durée et le grep ci-dessus la jetait. elapsed est un"; \
+	 : "écart de date +%s, donc de l'horloge murale : il compte le temps où la machine"; \
+	 : "DORT. Une passe de 58m16s a été journalisée « 359m55s ». D-123."; \
+	 worked=$$(printf '%s' "$$summary" | sed -nE 's/.* in ([0-9]+)\.[0-9]+s.*/\1/p'); \
 	 : "un run TUÉ (SIGINT 130, SIGTERM 143) n'est PAS un échec de la suite, et"; \
 	 : "les deux se lisaient FAIL avec des points de progression en guise de"; \
 	 : "comptes — indiscernables dans le journal. D-113."; \
@@ -64,9 +68,15 @@ full:
 	 rm -f $(DURATIONS).tmp; \
 	 tail -1 $$out; \
 	 rm -f $$out; \
-	 printf '| %s | `%s` | %s | %dm%02ds | %s |\n' \
+	 : "La colonne durée porte le temps TRAVAILLÉ ; l'horloge murale ne la suit que"; \
+	 : "quand elle en diverge de plus de 20 %, et alors elle est nommée comme telle."; \
+	 dur="$$(( $${worked:-$$elapsed} / 60 ))m$$(printf '%02d' $$(( $${worked:-$$elapsed} % 60 )))s"; \
+	 if [ -n "$$worked" ] && [ $$elapsed -gt $$(( worked * 12 / 10 )) ]; then \
+	   dur="$$dur (horloge $$(( elapsed / 60 ))m, machine en veille)"; \
+	 fi; \
+	 printf '| %s | `%s` | %s | %s | %s |\n' \
 	   "$$(date +%Y-%m-%d)" "$$(git rev-parse --short HEAD)" "$$result" \
-	   $$(( elapsed / 60 )) $$(( elapsed % 60 )) "$$counts" >> $(LOG); \
+	   "$$dur" "$$counts" >> $(LOG); \
 	 tail -1 $(LOG); \
 	 exit $$status
 

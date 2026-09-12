@@ -5721,3 +5721,38 @@ tenait lieu d'implémentation. **Un docstring qui décrit un câblage absent est
 documentaire du contrôle qui ne peut pas échouer** : il se relit correctement et ne fait
 rien. C'est la question « ai-je déjà vu cette sortie exister ? » (D-117) appliquée non à une
 sortie mais à un point d'entrée.
+
+## D-123 — La colonne durée mesurait l'horloge murale, sommeil compris
+
+**2026-09-12.** Cinquième défaut trouvé dans le journal de passe, et le troisième que ce
+projet y trouve depuis qu'il a décidé de regarder son instrument avec les mêmes dents que
+son modèle.
+
+La passe sur `31741ae` s'est journalisée **PASS, 359m55s** — six fois la norme — avec
+`1356 passed, 2 skipped`. Rien n'avait ralenti : les quinze tests les plus lents étaient aux
+mêmes temps qu'à la passe précédente (266 s contre 290 s pour le plus lourd). Le temps
+n'était donc pas dans les tests.
+
+**Et pytest disait la réponse dans la ligne que je jetais.** Son résumé porte
+« in 3496.55s (0:58:16) » : la suite a travaillé **58 minutes**. `elapsed` est un écart de
+`date +%s`, donc de l'**horloge murale** — il compte les cinq heures pendant lesquelles la
+machine a dormi. Le `sed -E 's/ in [0-9].*$//'` qui fabrique la colonne « comptes » coupait
+précisément la durée réelle avant de la lire.
+
+Un lecteur futur comparant « 359m55s » à la norme d'une heure conclurait à une catastrophe
+qui n'a pas eu lieu. C'est la même famille que D-113 (un run tué écrit ÉCHEC) et D-117 (le
+bloc de durées produit puis supprimé) : **l'information existait, était produite, et était
+détruite par le code chargé de la rapporter.**
+
+Corrigé : la colonne porte le temps **travaillé**, lu dans le résumé de pytest ; l'horloge
+murale ne la suit que lorsqu'elle en diverge de plus de 20 %, et alors elle est **nommée**
+— « 58m16s (horloge 359m, machine en veille) ». Un run tué, qui ne produit aucun résumé,
+retombe sur l'horloge murale, faute de mieux et en le sachant.
+
+Vérifié sur la vraie ligne de résumé de la passe concernée et sur le cas sans résumé. **La
+ligne déjà écrite a été corrigée dans le journal plutôt que laissée** : elle affirmait une
+durée fausse, et un journal de passes dont on tolère une ligne fausse ne vaut pas plus que
+l'absence de journal.
+
+**Ce que la passe établit par ailleurs** : `31741ae`, **1356 passed, 2 skipped**, deux sauts
+et non cinq — les budgets de temps ont tourné. L1 câblé est vert.
