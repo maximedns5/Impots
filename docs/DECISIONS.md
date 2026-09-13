@@ -6053,3 +6053,79 @@ manifestés** : un instantané d'archive n'est pas le fichier de l'éditeur, et 
 intermédiaire dans la provenance de la donnée qui porterait l'échéancier de remboursement et
 le taux implicite est une décision qui revient au propriétaire, pas à la session. R1 reste
 **PARTIEL**, identifiants au dossier.
+
+## D-130 — Amendement §3 : un encours à DEUX BLOCS, et la date qui faussait le partage
+
+**Phase 8 M0, 2026-09-13.** Amendement à `PHASE8_SPEC.md` §3, demandé par l'addendum
+2026-09-13 (bis) et à écrire avant toute ligne de code §3.
+
+### Le défaut de périmètre, et pourquoi le tolérancer aurait été pire que de le laisser
+
+L'ancre R2 (programme 117, **58,615 md€**) est la charge d'intérêt de la dette **de l'ÉTAT**.
+L'encours b₀ de §3.1 (**3 536,1 md€**) est celui de **toutes les APU** au sens de Maastricht.
+Le troisième kill test de §3.2 — taux implicite × encours ≈ ancre R2 — **échouerait donc sur
+le périmètre**, et un implémenteur qui l'élargirait jusqu'à le faire passer aurait calibré
+une erreur de périmètre dans le module. C'est la forme exacte que ce projet refuse partout
+ailleurs : une tolérance qui absorbe un défaut le rend indiscernable de son absence.
+
+### Le partage, mesuré à date commune
+
+| bloc | 2025T4 | part |
+|---|---|---|
+| **Bloc 1** — État négociable, par ligne (AFT) | **2 737,0 md€** | 79,1 % |
+| **Bloc 2** — État non négociable | 85,7 md€ | 2,5 % |
+| **Bloc 2** — ODAC + APUL + ASSO | 637,8 md€ | 18,4 % |
+| **Bloc 2**, total | **723,5 md€** | 20,9 % |
+| somme | **3 460,5 md€** | — |
+| APU publié (INSEE, 2025T4) | 3 460,5 md€ | écart **+2,2 × 10⁻¹⁶** |
+
+Bloc 1 porte la machinerie fine de maturité et est ancré sur P117. Bloc 2 est porté à un taux
+implicite agrégé, avec sa bannière de bloc grossier.
+
+### La date faussait le partage d'un facteur douze
+
+Premier calcul : INSEE État (Maastricht) **2 889,0 md€ au 2026T1** contre AFT dette
+négociable **2 882,0 md€ au 31 juillet 2026** → composante non négociable de l'État ≈
+**7 md€**. C'est faux, et faux de façon plausible.
+
+Les deux chiffres ne sont pas à la même date, et entre les deux il y a quatre mois
+d'émissions : le bulletin n° 435 donne la série négociable **fin 2023 / fin 2024 / fin 2025 /
+fin juin 2026 / fin juillet 2026 = 2 430 / 2 602 / 2 737 / 2 858 / 2 882**. À **date
+commune** (fin 2025 contre 2025T4) : 2 822,7 − 2 737,0 = **85,7 md€**. **Douze fois le
+chiffre obtenu en différenciant deux dates.**
+
+Quatrième question permanente — « de quoi ce nombre est-il la différence, exactement ? » —
+appliquée à deux sources dont chacune est juste. Le module définira donc ses deux blocs **à
+une date unique et déclarée**, et c'est une contrainte de construction, pas une préférence
+de présentation.
+
+### Le kill test du partage
+
+Bloc 1 + Bloc 2 = total APU **par construction** de Bloc 2 (résidu) : cette égalité ne teste
+rien. Le vrai test est que **Bloc 1 seul reproduise le total CT+MLT du bulletin**. Mesuré au
+31 juillet 2026 : MLT **2 662** + CT **220** = **2 882** = encours négociable publié — exact.
+
+Seconde ancre, au niveau total : **intérêts des APU (D.41, comptes nationaux)**, qui vérifie
+Bloc 1 + Bloc 2 ensemble. **NON MESURÉE** tant qu'elle n'est pas localisée dans les fichiers
+CN manifestés.
+
+### Les trois fichiers AFT, manifestés
+
+Servis par l'éditeur, capturés dans un navigateur interactif sur la machine du propriétaire
+(l'AFT rend 403 à tout client scripté ; aucun intermédiaire d'archive). **Les sha256 ont été
+RECALCULÉS depuis les octets sur disque**, jamais recopiés depuis l'addendum — une relecture
+qui recopie l'attente du relecteur ne vérifie rien (D-042). Les trois concordent, tailles
+comprises.
+
+`aft_encours_detaille_oat_2026-09-13.html` (108 515 o, 59 ISIN distincts),
+`aft_encours_detaille_btf_2026-09-13.html` (73 692 o, 30 ISIN),
+`aft_bulletin_mensuel_435_aout_2026.pdf` (890 202 o, 7 p.).
+
+**Durée de vie moyenne, mesurée** : dette négociable **8 ans et 163 jours**, MLT 9 ans et
+42 jours, court terme 128 jours. L'« attendu ≈ 8-9 ans » de la spec est désormais un nombre
+avec un fichier derrière.
+
+**Règle de provenance actée** : les instantanés Wayback sont admissibles en reconnaissance,
+**jamais comme entrée manifestée**. Et le parse HTML (ISIN, coupon, échéance) ira dans un
+script de vérification avec kill tests, comme `verify_rei.py` — jamais en ligne dans le
+moteur.

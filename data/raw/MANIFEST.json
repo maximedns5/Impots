@@ -1169,6 +1169,30 @@
       "sha256": "2715898f5466cd9089dad97d99b0ad0365a54eea9b3bdb2cdfb3f3bb76314e34",
       "bytes": 1838293,
       "retrieved": "2026-09-13"
+    },
+    "aft_encours_detaille_oat_2026-09-13.html": {
+      "description": "Agence France Trésor, « Encours détaillé des OAT » — capture de la page telle que SERVIE PAR L'ÉDITEUR le 2026-09-13, dans une session de navigateur interactive sur la machine du propriétaire (aft.gouv.fr rend 403 à tout client scripté ; aucun intermédiaire d'archive, aucun contournement). Porte 59 codes ISIN distincts avec libellé (coupon et échéance) et encours. R1 Bloc 1. LE PARSE (ISIN/coupon/échéance) VA DANS UN SCRIPT DE VÉRIFICATION AVEC KILL TESTS, comme verify_rei.py, jamais en ligne dans le moteur.",
+      "url": "https://www.aft.gouv.fr/fr/encours-detaille-oat",
+      "sha256": "74cad2492271f0a58b8873769690e46fc3a3358affd0d77c30e8d5a717b652dc",
+      "bytes": 108515,
+      "retrieved": "2026-09-13",
+      "capture": "navigateur interactif, machine du propriétaire"
+    },
+    "aft_encours_detaille_btf_2026-09-13.html": {
+      "description": "Agence France Trésor, « Encours détaillé des BTF » — même capture, même date, même méthode. 30 codes ISIN distincts. R1 Bloc 1, partie court terme.",
+      "url": "https://www.aft.gouv.fr/fr/encours-detaille-btf",
+      "sha256": "3dba70cca3311d38c69c92c677be4cb1e8ff1a3d6fd3dc7d78ab45a5d3baed61",
+      "bytes": 73692,
+      "retrieved": "2026-09-13",
+      "capture": "navigateur interactif, machine du propriétaire"
+    },
+    "aft_bulletin_mensuel_435_aout_2026.pdf": {
+      "description": "Agence France Trésor, Bulletin mensuel n° 435, août 2026, 7 p. R1 : LA DURÉE DE VIE MOYENNE, MESURÉE — dette négociable 8 ans et 163 jours, MLT 9 ans et 42 jours, court terme 128 jours (dernière colonne). L'« attendu ≈ 8-9 ans » de la spec est désormais un nombre avec un fichier derrière. Porte aussi l'encours au 31 juillet 2026 : dette négociable 2 882 md€ = MLT 2 662 + CT 220, et le tableau par ligne (ISIN, coupon, échéance, encours) qui complète les deux captures HTML.",
+      "url": "https://www.aft.gouv.fr/fr/publications/bulletins-mensuels",
+      "sha256": "a28f3d02d3360a2ffe42e16309bbc3cb2ddd3cea01930965e31a85b14c0fca5f",
+      "bytes": 890202,
+      "retrieved": "2026-09-13",
+      "capture": "navigateur interactif, machine du propriétaire"
     }
   }
 }
