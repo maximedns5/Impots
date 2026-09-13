@@ -6129,3 +6129,62 @@ avec un fichier derrière.
 **jamais comme entrée manifestée**. Et le parse HTML (ISIN, coupon, échéance) ira dans un
 script de vérification avec kill tests, comme `verify_rei.py` — jamais en ligne dans le
 moteur.
+
+## D-131 — M1 §3.1 : l'identité de dette, ses refus, et le backtest qui est bloqué
+
+**Phase 8 M1, 2026-09-13.** `src/impots/dette/path.py`, `tests/test_dette.py` (15 tests).
+
+### Ce qui est construit
+
+La récurrence `b_{t+1} = b_t (1+r_t)/(1+g_t) − p_{t+1} + sfa_{t+1}`, en ratio au PIB. C'est
+de l'arithmétique, exacte à ses entrées près — **toute l'honnêteté du module est donc dans
+les refus, pas dans l'algèbre**, et chaque refus porte son kill test.
+
+* **Aucune trajectoire sans scénario de dépense NOMMÉ.** C'est le refus qui définit la
+  phase. La dépense publique pèse ~57 % du PIB et seule la tranche des transferts est
+  microsimulée ici : une trajectoire où les recettes bougent et où la dépense reste tue
+  laisserait entendre que l'impôt porte seul l'ajustement — une implication que personne
+  n'a écrite et que tout le monde lirait. **Aucun défaut n'est appliqué** : un défaut ici
+  serait une affirmation politique déguisée en valeur par défaut d'ingénierie.
+* **Aucun vocabulaire de probabilité dans le nom d'un scénario.** Rien ici n'a de modèle de
+  probabilité. Le contrôle est **de forme denylist**, et le module le dit : une nouvelle
+  façon d'écrire « probable » passerait. La version allowlist exigerait d'énumérer d'avance
+  tout nom acceptable, ce que la « trajectoire personnalisée » interdit. La limite est
+  énoncée plutôt que cachée — `refuse_banded` est au dossier pour avoir fait l'inverse.
+* **Plafond d'horizon à 10 ans.** Au-delà, « l'arithmétique est exacte et vide ». Refusé par
+  son nom, jamais tronqué en silence : une trajectoire raccourcie sans le dire ressemble à
+  une trajectoire finie.
+* **Le signe du solde primaire est SURPLUS POSITIF**, et il a son propre test. La
+  littérature est partagée sur cette convention, et l'inverser retourne toutes les
+  trajectoires en les laissant parfaitement plausibles.
+
+**Trois mutations, trois captures.** Défaut silencieux au lieu du refus → le test du
+scénario tombe. Plafond en `> cap+1` → le test d'horizon tombe. Signe du solde inversé →
+deux tests tombent, dont la reconstruction de la décomposition §3.6. Les gardes savent
+échouer.
+
+### Le backtest 2019→2025 est BLOQUÉ, et c'est ma propre règle qui me l'oppose
+
+L'addendum débloquait « §3.1 + le backtest 2019→2025 + §3.2 sur le Bloc 1 ». Le backtest ne
+l'est pas, et le constat mérite d'être précis.
+
+Le backtest exige la **SFA réalisée** — « omettre un terme réalisé et passer, c'est ajuster,
+pas tester ». Or la SFA réalisée ne peut pas être dérivée de l'identité que le code
+implémente : **elle passerait alors par construction**, ce qui est la forme D-044 appliquée
+à un backtest entier. Il faut donc des composantes indépendantes : encours (manifesté),
+PIB (manifesté), **et le compte des APU — capacité de financement et intérêts D.41**.
+
+Ce compte est sur le disque : `insee_cn2024_t7301_compte_administrations_publiques_S13.xlsx`.
+Il est **en quarantaine** dans `data/raw/_unsourced/` — sha256 présent, **URL de source
+jamais enregistrée**, donc rien de ce qui en sortirait n'est reproductible par un tiers
+(D-026). Je ne l'ouvre pas comme entrée porteuse.
+
+« Localiser n'est pas manifester » était ma phrase pour les items R4-R8 restants ; elle
+m'est opposée ici, et c'est correct. **Le backtest attend qu'un compte des APU sourcé soit
+manifesté**, et cela figure sur la liste de téléchargement.
+
+### Ce qui reste de M1
+
+§3.2 sur le Bloc 1 (taux implicite depuis la structure de maturité) est débloqué : les trois
+fichiers AFT sont manifestés. Le parse HTML ira dans un script de vérification avec kill
+tests, jamais en ligne dans le moteur — règle actée à l'addendum.
