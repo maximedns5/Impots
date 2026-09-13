@@ -286,10 +286,17 @@ IS_BRUT_BY_SECTOR: dict[str, tuple[float, tuple[str, ...]]] = {
 #: Sector groupings whose boundary the two sources draw differently, pooled so the
 #: boundary stops mattering.
 #:
-#: Measured, not hypothesised (the mechanical-before-economic rule). Ésane's firm
-#: count divided by DGFiP's runs at 1.90-2.22 in every sector — the IS-liability rate
-#: — **except activités immobilières, at 0.48**, a fourfold outlier on a quantity this
-#: model never touches. And 88 % of the industrie overshoot sits in ETI and GE. Both
+#: Measured, not hypothesised (the mechanical-before-economic rule), and re-verified at
+#: Phase 7 C1 by `scripts/verify_perimetre.py`. Ésane's firm count divided by DGFiP's runs
+#: at 1.90-2.22 across the sectors inside Ésane's «principalement marchands» champ — the
+#: IS-liability rate — **except activités immobilières, at 0.48**, a fourfold outlier on a
+#: quantity this model never touches.
+#:
+#: SCOPE, corrected at C1: an earlier wording said «in every sector». It is not every
+#: sector — administration reaches 8.94, autres activités 4.33, finance 0.70, agriculture
+#: 0.12. Those four sit OUTSIDE the market champ and are not comparable on a firm count.
+#: Scoped to the champ the claim is exact, and immobilier is then the SOLE outlier, which
+#: is what makes the diagnosis work rather than merely fit. And 88 % of the industrie overshoot sits in ETI and GE. Both
 #: point at one mechanism: Ésane classifies *profiled enterprises*, so an industrial
 #: group's property arm is consolidated into industrie, while DGFiP taxes it as a
 #: *legal unit* in immobilier. The two residuals have opposite signs because they are
@@ -307,8 +314,8 @@ POOLED_SECTORS: dict[str, tuple[float, tuple[str, ...], str]] = {
         "differently: Ésane classifies profiled enterprises and consolidates a group's "
         "property arm into industry, DGFiP classifies legal units and taxes it in real "
         "estate. Two measurements say so rather than one hypothesis — Ésane's firm "
-        "count over DGFiP's is 1.90-2.22 in every sector but immobilier, where it is "
-        "0.48, and 88 % of the industrie overshoot sits in ETI and GE. The unpooled "
+        "count over DGFiP's is 1.90-2.22 across the market champ but 0.48 in "
+        "immobilier, and 88 % of the industrie overshoot sits in ETI and GE. The unpooled "
         "lines stay in the table and stay red.",
     ),
 }

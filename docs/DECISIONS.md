@@ -5756,3 +5756,111 @@ l'absence de journal.
 
 **Ce que la passe établit par ailleurs** : `31741ae`, **1356 passed, 2 skipped**, deux sauts
 et non cinq — les budgets de temps ont tourné. L1 câblé est vert.
+
+## D-124 — Une marque posée par composition est invisible à un grep du décorateur
+
+**2026-09-13, C3 partiel.** J'avais relayé un constat depuis le bloc de durées de D-117 :
+« huit des quinze tests les plus lents sont des tests API, chacun payant sa propre passe
+plein tarif, et aucun n'est marqué slow ». **Les trois parties sont fausses**, et la
+vérification les défait une à une.
+
+**Neuf, pas huit.** Compté depuis le fichier : 9 `test_api.py`, 3 `test_population.py`, 1
+chacun pour `test_scenarios`, `test_niche_imputation`, `test_knobs`.
+
+**Les quinze sont marqués slow, sans exception.** Vérifié par comparaison d'ensembles :
+`pytest --collect-only -m slow` en collecte 217, et **zéro** des quinze plus lents en est
+absent. La porte rapide (`addopts = "-m 'not slow'"`) les saute donc déjà tous. Il n'y a pas
+de test lourd non marqué, et rien à corriger.
+
+**Les POST tournent en tier « quick »**, pas plein tarif ; seules les passes de taux
+marginal de la bande sont plein tarif, et le client à portée de module les paie une fois par
+conception — le fichier le dit dans son propre en-tête.
+
+### La cause mécanique, nommée avant toute autre explication
+
+`tests/test_api.py:375` définit `population_test = needs_population(pytest.mark.slow(f))`.
+**La marque est appliquée par composition, à travers un enrobage.** Un `grep
+"pytest.mark.slow"` la trouve sur les six autres (test_population 610/655/742,
+test_scenarios 373, test_niche_imputation 209) et **ne la trouve jamais** sur les neuf tests
+API. Mon compte de « 14 tests slow » à D-114 venait du même grep, et j'avais déjà corrigé ce
+chiffre une fois — de 14 décorateurs à 217 cas — sans voir que le grep manquait aussi des
+fichiers entiers.
+
+Et le décorateur explique lui-même pourquoi il compose : « composé pour que les deux faits
+voyagent ensemble : tout test qui fait tourner la population est aussi un test que la porte
+rapide saute, et oublier la seconde marque est la façon dont une porte rapide cesse
+discrètement d'être rapide ». La bonne pratique du dépôt est exactement ce que mon outil de
+lecture ne savait pas voir.
+
+### La règle
+
+**Pour connaître les marques d'un test, on demande à pytest, on ne grep pas le source.**
+`--collect-only -m slow` contre l'ensemble attendu ; une comparaison d'ensembles, pas une
+recherche de motif. Un grep du décorateur littéral rend un sous-ensemble silencieux dès
+qu'une marque passe par un enrobage, une fixture paramétrée ou un `pytestmark` de module.
+
+Même famille que D-113, D-117 et D-123 : **l'instrument, pas le modèle.** Quatre fois de
+suite, le défaut était dans ce qui rapporte et non dans ce qui calcule.
+
+### Et le suivi tentant est refusé
+
+Mémoïser la baseline entre tests API achèterait de vraies minutes (neuf tests à 60-130 s).
+**Refusé par défaut** : la quasi-fausse-découverte née d'une baseline mémoïsée est déjà au
+dossier (D-095), et un cache qui laisse des tests de population se confirmer mutuellement
+achète des minutes contre du risque de justesse. Si quelqu'un le veut quand même : derrière
+un kill test d'empoisonnement de cache — corrompre délibérément une entrée, un test
+dépendant DOIT échouer — et une clé incluant réforme, tier, graine et somme de contrôle de
+la population. Sans cet appétit, la passe complète coûte ce que coûte l'honnêteté.
+
+## D-125 — C1 : le diagnostic de périmètre tient, et sa portée était surdite
+
+**Phase 7 C1, 2026-09-13.** `scripts/verify_perimetre.py`. La procédure de l'addendum du
+2026-09-02 — deux contrôles mécaniques avant toute hypothèse économique — était réputée
+n'avoir jamais tourné. Elle avait tourné : sa conclusion était écrite dans
+`margins.POOLED_SECTORS`. **Rien ne la vérifiait**, exactement l'état où étaient les
+constats REI avant `verify_rei.py` : une mesure faite une fois, crue ensuite.
+
+### Les deux contrôles, rejoués
+
+**Un — sur une grandeur que le modèle ne touche pas.** Effectifs d'entreprises par secteur,
+Ésane brut sur DGFiP : **1,90 à 2,22** dans le champ marchand — c'est le taux
+d'assujettissement à l'IS — et **0,48 pour les activités immobilières**. Deux sources qui
+divergent d'un facteur quatre sur un comptage qu'aucune réforme ne peut déplacer : le résidu
+est de périmètre, pas de modèle.
+
+**Deux — décomposition du résidu par taille.** **88,4 %** de l'IS industrie modélisé est en
+ETI et GE. Concentration dans les grandes unités : effet de groupe. Une répartition uniforme
+aurait désigné la construction d'assiette.
+
+**Et le résidu lui-même** : industrie modélisée 21,055 md€ contre 15,230 publié, **+38,3 %**
+— le chiffre au dossier, reproduit.
+
+**État terminal de C1 : cause mécanique nommée.** Ésane classe des entreprises *profilées*,
+la DGFiP des *unités légales* ; le bras immobilier d'un groupe industriel est consolidé dans
+l'industrie d'un côté, imposé dans l'immobilier de l'autre. Les deux résidus ont des signes
+opposés parce que c'est la même activité comptée des deux côtés d'une frontière que les
+sources tracent différemment.
+
+### La correction : « dans tous les secteurs » était faux
+
+L'énoncé disait que le rapport vaut 1,90-2,22 **« in every sector »**. Ce n'est pas le cas :
+administration 8,94, autres activités 4,33, finance 0,70, agriculture 0,12. Ces quatre-là
+sont **hors du champ « principalement marchands »** d'Ésane — que `cells.py` nomme déjà — et
+ne sont pas comparables sur un effectif.
+
+Ramené au champ marchand, l'énoncé est exact, et **l'immobilier devient le seul aberrant** :
+la portée corrigée rend le diagnostic plus fort, pas plus faible. Un quantificateur
+universel non vérifié avait transformé un constat net en affirmation fausse.
+
+### Deux pièges de lecture, tous deux silencieux
+
+**Ésane ne déclare aucune dimension.** `ws.max_row` vaut 1, `calculate_dimension()` rend
+« A1:A1 », et un `iter_rows` sans `max_row` explicite **ne rend rien du tout** — un ensemble
+vide qui a l'air d'un résultat. Mon premier passage de ce contrôle a construit un
+dictionnaire vide et n'a échoué que parce que `min()` a levé dessus.
+
+**La colonne d'effectifs de Stat 39 est titrée « en milliers » et porte des unités.**
+« Tous secteurs » vaut 2 718 376,9, et le Graphique 1 confirme 2,718 **millions**
+d'entreprises. Multiplier par mille, comme l'en-tête l'ordonne, met tous les rapports à
+0,00 — ce qu'a fait mon premier jet. La charte nomme cette classe (« un en-tête d'unité qui
+ment ») ; c'est la première fois qu'elle est rencontrée dans ce fichier.
