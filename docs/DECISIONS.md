@@ -5864,3 +5864,67 @@ dictionnaire vide et n'a échoué que parce que `min()` a levé dessus.
 d'entreprises. Multiplier par mille, comme l'en-tête l'ordonne, met tous les rapports à
 0,00 — ce qu'a fait mon premier jet. La charte nomme cette classe (« un en-tête d'unité qui
 ment ») ; c'est la première fois qu'elle est rencontrée dans ce fichier.
+
+## D-126 — C2 : la clé de répartition existe par dispositif, et deux pièges avant tout calcul
+
+**Phase 7 C2, 2026-09-13.** Le gate de L5 demandait si la couverture des niches peut
+dépasser ~55 %. **La donnée existe** : les deux fichiers DGFiP de répartition portent les
+montants et les effectifs **par dispositif** et par décile de RFR par part, millésime 2024 —
+23 crédits d'impôt et 31 réductions, 54 lignes en tout.
+
+### Le piège qui aurait faussé tout taux de couverture
+
+Les 54 lignes totalisent **27,11 md€**, alors que les Voies et Moyens chiffrent les RICI à
+19,53 md€. L'écart n'est pas une erreur de lecture : les fichiers **mélangent des dépenses
+fiscales et des crédits mécaniques d'impôt déjà payé** —
+
+* CI prélèvement forfaitaire versé sur RCM : **7 648 M€**
+* Crédit d'impôt sur revenus étrangers imposés en France : **3 658 M€**
+* impôt payé à l'étranger, retenue à la source des non-résidents, régularisation du
+  prélèvement libératoire : ~513 M€ de plus
+
+Près de **11,9 md€ sur 27,11 ne sont pas des niches** : ce sont des imputations d'impôt déjà
+acquitté. Un taux de couverture calculé sur ce dénominateur gonflerait la performance avec
+des dispositifs qui ne sont pas l'objet. La question « quelle part des niches est
+modélisée ? » n'a de sens qu'après ce tri.
+
+### L'état par candidat, mesuré
+
+Les cinq familles déjà modélisées pèsent ~11,1 md€ dans ce fichier (saldom 6 507, garde
+1 796, dons 2 147, scolarité 468, syndicales 155). Les plus gros non modélisés, confrontés à
+ce qu'openfisca sait calculer :
+
+| dispositif | 2024 | openfisca |
+|---|---|---|
+| Investissement locatif Pinel | 1 544 M€ | **oui** (`duflot_pinel_denormandie_metropole`/`_om`) |
+| Investissements outre-mer (entreprise) | 750 M€ | à vérifier (la variable trouvée est du logement) |
+| Accueil en établissement (EHPAD) | 307 M€ | à vérifier (les variables trouvées sont l'APA) |
+| Investissement locatif Scellier | 258 M€ | **aucune variable** → refusé avec motif |
+| CI agriculture biologique | 157 M€ | **aucune variable** → refusé avec motif |
+| Frais de comptabilité | 146 M€ | **oui** (`frais_de_comptabilite`) |
+| Souscriptions au capital de PME | 101 M€ | **oui** (`cappme`) |
+
+Immédiatement constructibles : **~1 791 M€**. Refusés faute de variable amont : Scellier et
+agriculture biologique.
+
+### Trois pièges de lecture dans ces fichiers, tous silencieux
+
+1. **La colonne de décile porte des chaînes** — `'       1'`, avec des espaces de tête. Un
+   filtre `isinstance(v, (int, float))` rend zéro ligne de données **sans erreur**, et le
+   classement sort vide comme s'il n'y avait aucun dispositif. C'est ce qu'a fait mon
+   premier passage.
+2. **L'en-tête d'unité ment.** Une note dit « (montants en milliers d'euros) ». Les valeurs
+   sont en **euros** : la somme du CI emploi salarié à domicile vaut 6,507 md€, à 1,4 % des
+   6,420 md€ réalisés des Voies et Moyens, alors qu'en milliers elle donnerait 6 507 md€.
+   **Troisième en-tête d'unité mensonger du projet, deuxième de la journée** après celui de
+   Stat 39. Vérifié que `niches.py` n'applique aucun facteur 1000 — le code existant est
+   juste.
+3. Les feuilles portent un préfixe de ligne variable (`PAR_004`, `PAR_XXX`, ou rien selon le
+   millésime), donc l'en-tête ne se trouve pas à un numéro de ligne fixe.
+
+### Ce que C2 n'est PAS
+
+**Rien n'a été construit.** Le gate dit que la donnée existe, nomme les candidats, chiffre le
+gain accessible et refuse deux dispositifs faute de variable amont. La couverture n'a pas
+bougé. Ce travail reste ouvert, avec son classement au dossier, et je le dis plutôt que de
+laisser « C2 » cocher une case.
