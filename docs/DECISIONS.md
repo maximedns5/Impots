@@ -5995,3 +5995,61 @@ validation, et elle vaut pour son propre processus.
 **Le reliquat qui part en phase 8 sans être clos** : C2 n'a rien construit. La donnée existe,
 les candidats sont classés et chiffrés (~1 791 M€), la couverture des niches n'a pas bougé.
 Dit ici pour qu'il ne se découvre pas au détour d'un handoff.
+
+## D-129 — La charge d'intérêt 2026 vaut 58,6 md€, pas 77 : l'ancre de presse était une projection 2028
+
+**Phase 8 M0, 2026-09-13.** Premier constat du gate de reconnaissance, et il corrige la spec
+avant qu'une ligne de code de la phase ne soit écrite.
+
+`PHASE8_SPEC.md` §1 R2 annonçait : « Secondary press puts the 2026 charge near €77 bn —
+**UNMEASURED until the mission document is manifested.** » L'étiquette était la bonne ; la
+mesure la contredit.
+
+Manifesté : le projet annuel de performances (bleu budgétaire) du PLF 2026, mission
+« Engagements financiers de l'État », 117 pages, sha256 `2715898f5466cd90…`. Tableau
+« RÉCAPITULATION DES CRÉDITS PAR PROGRAMME ET TITRE POUR 2025, 2026, 2027 ET 2028 »,
+programme 117 :
+
+| colonne | montant |
+|---|---|
+| LFI 2025 | 54,207 md€ |
+| **PLF 2026** | **58,615 md€** |
+| prévision indicative 2027 | 68,660 md€ |
+| prévision indicative 2028 | **76,676 md€** |
+
+**Les ~77 md€ sont la projection indicative 2028.** La charge 2026 vaut 58,615 md€, et poser
+t₀ sur 77 aurait surestimé l'ancre de **31 %** — dans un module dont toute l'arithmétique est
+taux implicite × encours, cela déplace le taux implicite de moitié.
+
+### Ce qui rend le rattachement des colonnes sûr
+
+Le document imprime les variations à côté des montants : **+8,13 %, +17,14 %, +11,67 %**.
+Elles se reproduisent exactement depuis les quatre valeurs. Le rattachement n'est donc pas une
+lecture au jugé d'une colonne parmi quatre : il est **vérifié par une identité interne au
+document**.
+
+C'est le piège « colonnes d'année budgétaire » que le handoff signalait pour les Voies et
+Moyens — « incident on record » — rencontré dans un autre document que celui pour lequel
+l'avertissement avait été écrit. L'avertissement portait sur la source ; le piège portait sur
+la forme.
+
+### Et l'ancre de dette, elle, tient
+
+Même gate, `insee_ir158_dette_t1_2026.pdf` (sha256 `71475685591aca39…`) : « la dette publique
+au sens de Maastricht s'établit à **3 536,1 Md€** », « **117,5 %** du PIB ». Exactement le
+chiffre que la spec portait en [VERIFIED], **désormais lu dans le fichier manifesté plutôt
+que relayé**. Deux ancres au même gate : l'une confirmée, l'autre renversée, et seule la
+lecture des octets distinguait les deux.
+
+### R1 : l'AFT refuse les clients scriptés
+
+`www.aft.gouv.fr` rend **403** sur tout : page d'encours, bulletins mensuels, chaque fichier
+sous `/files/medias-aft/`, avec ou sans User-Agent de navigateur. Vérifié **depuis la machine
+du propriétaire**, qui atteint insee.fr et data.gouv.fr sans peine — ce n'est donc pas le
+blocage proxy du conteneur que le handoff décrivait, c'est un refus côté éditeur.
+
+Des instantanés `web.archive.org` existent et portent des sha256 stables. **Ils ne sont pas
+manifestés** : un instantané d'archive n'est pas le fichier de l'éditeur, et interposer un
+intermédiaire dans la provenance de la donnée qui porterait l'échéancier de remboursement et
+le taux implicite est une décision qui revient au propriétaire, pas à la session. R1 reste
+**PARTIEL**, identifiants au dossier.
