@@ -5928,3 +5928,49 @@ agriculture biologique.
 gain accessible et refuse deux dispositifs faute de variable amont. La couverture n'a pas
 bougé. Ce travail reste ouvert, avec son classement au dossier, et je le dis plutôt que de
 laisser « C2 » cocher une case.
+
+## D-127 — C3 : les 55 communes épinglées, l'hypothèse d'abattement à moitié fausse
+
+**Phase 7 C3, 2026-09-13.** État terminal des 55 communes du REI dont l'identité
+`base × taux / 100 + lissage = produit` ne reproduit pas le produit publié à 1 % près.
+
+### La recherche de la cause, et son résultat négatif
+
+L'hypothèse au dossier était « un abattement ou une exonération que ce module ne lit pas ».
+Elle est **testable** : si un tel terme existe, il est publié quelque part dans les 1 043
+colonnes du REI. Balayage sur les 55 communes, **454 colonnes non nulles testées** : aucune
+ne reproduit l'écart. La plus proche, `BAMINTPT1`, en est à **71 % d'erreur médiane**.
+
+**État terminal : épinglé, avec la tentative au dossier** — ce que le handoff autorise
+explicitement comme clôture au même titre qu'une cause nommée.
+
+### Et l'hypothèse était à moitié fausse
+
+La note affirmait « leur taux effectif est sous leur taux publié », au pluriel universel.
+Mesuré : **46 des 55 ont effectivement un calculé supérieur au publié — mais 9 vont dans
+l'autre sens.** Un abattement non lu ne peut pas faire percevoir PLUS que l'identité ne
+prédit. L'hypothèse ne couvre donc au mieux que 46 cas sur 55, et la note le dit désormais.
+
+**Deuxième quantificateur universel non vérifié de la journée**, après « dans tous les
+secteurs » de C1. Les deux venaient d'un constat juste dont la portée avait été élargie
+sans être mesurée.
+
+### L'ordre de grandeur, pour que l'épinglage soit lisible
+
+Écart net **34 886 € sur 43,487 md€**, soit **8,0 × 10⁻⁷** du produit national — moins d'un
+millionième. Cela ne rend pas l'anomalie acceptable, cela dit ce qu'il en coûte de la
+laisser ouverte, ce qui est l'information dont un lecteur a besoin pour décider s'il y
+revient.
+
+### Un défaut dans ma propre mesure, et le garde qui l'a attrapé
+
+J'ai d'abord recompté **54** au lieu de 55, et j'ai failli le porter au débit du module. La
+cause est chez moi : le module divise par le produit **publié**, j'ai divisé par le produit
+**calculé**. Deux dénominateurs, deux erreurs relatives, et une commune qui bascule de part
+et d'autre du seuil de 1 %. Le choix du module est le bon — le publié est la grandeur de
+référence.
+
+Et la correction de la note a d'abord échoué sur une `assert old in s` : le texte était
+replié sur plusieurs lignes et mon ancrage ne correspondait à rien. **L'assertion a fait
+exactement son travail** — rien n'a été écrit — là où le `str.replace` sans ancrage de
+D-117 avait silencieusement ne rien faire et laissé croire à un succès. La règle tenait.

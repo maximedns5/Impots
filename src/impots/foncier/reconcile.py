@@ -67,8 +67,13 @@ def identity_audit(cells: cells_module.Cells) -> dict[str, Any]:
             "bases et les taux sont PUBLIÉS, rien n'a été ajusté à rien, et cet audit "
             "vérifie une IDENTITÉ. Les communes restantes au-delà de 1 % sont épinglées "
             "comme inexpliquées (D-111) — aucune ne porte de lissage, donc ce terme "
-            "n'est pas ce qui manque ; leur taux effectif est sous leur taux publié, ce "
-            "qui désigne un abattement que ce module ne lit pas."),
+            "n'est pas ce qui manque. 46 des 55 ont un taux effectif SOUS leur taux "
+            "publié, ce qui désignerait un abattement non lu ; mais 9 vont dans "
+            "l'AUTRE sens, qu'aucun abattement n'explique. Les 454 colonnes non nulles "
+            "du REI ont été balayées sur ces communes et aucune ne reproduit l'écart, "
+            "la plus proche à 71 % près (C3, D-127). L'écart net vaut 34 886 € sur "
+            "43,487 md€, soit 8,0e-07 du produit national : épinglé avec la tentative "
+            "au dossier, pas expliqué."),
     }
 
 
