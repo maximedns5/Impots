@@ -158,7 +158,8 @@ def _estimator_note(correct: float, decile_mean: float, target: float) -> str:
 
 
 def build_lines(agg: Aggregates, population_year: int | None = None,
-                comparator_year: int | None = None) -> list[Line]:
+                comparator_year: int | None = None,
+                raked_top_tail: bool = False) -> list[Line]:
     """Every reconciliation line this population has, calibration and validation alike.
 
     `Line.from_figure` takes each line's `use` from the figure it came from, so a
@@ -170,6 +171,17 @@ def build_lines(agg: Aggregates, population_year: int | None = None,
     none for a future year. Every line then reports «not comparable» instead of a
     tolerance verdict — F3 M2's completion condition (D-102). Left at None, which is
     every existing caller, nothing changes.
+
+    `raked_top_tail` is L1's analogue, set by the CALLER THAT RAKED so the refusal cannot
+    be forgotten at a call site: a population fitted to n° 41's fractiles can no longer
+    validate anything downstream of the income distribution. It is applied to every
+    VALIDATION line rather than a hand-picked list — a calibration line already claims
+    nothing, refusing one line too many is the safe direction, and validating one fitted
+    line is the failure this ledger exists to prevent.
+
+    NAME COLLISION, noted because it is a trap: `unraked` elsewhere in this module means
+    the IPF WEIGHT raking, a different operation. This flag is the top-tail INCOME rake
+    (D-121, D-122).
     """
     totals = agg.totals
     lines: list[Line] = [
@@ -396,6 +408,10 @@ def build_lines(agg: Aggregates, population_year: int | None = None,
             line.population_year = population_year
             line.comparator_year = comparator_year
 
+    if raked_top_tail:
+        import dataclasses
+        lines = [dataclasses.replace(line, raked_top_tail=True)
+                 if line.use == "validation" else line for line in lines]
     return lines
 
 

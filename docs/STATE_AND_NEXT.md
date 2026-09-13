@@ -1,6 +1,6 @@
-# State of the project, and the directions open — 2026-09-09 (post-Phase 6)
+# State of the project, and the directions open — 2026-09-13 (post-Phase 7)
 
-Supersedes the 2026-09-09 in-flight version. For any next session: read
+Supersedes the 2026-09-09 post-Phase-6 version. For any next session: read
 this, `docs/CHARTER.md`, and the review file's last addenda.
 
 ## Where the project stands, whole-arc
@@ -40,6 +40,29 @@ every error in both directions.
 Two backfills ran before S1, at the reviewer's order: the missing D-entry
 stubs, and `scripts/verify_rei.py`, which turned the REI gate's findings
 into assertions that stay.
+
+## Phase 7 — the accuracy campaign, closed 2026-09-13
+
+A0 ran and its ranking held through the campaign: IFI placement 17,44 %, CVAE
+placement 2,52 %, IS placement 0,46 %. **L1 landed** — the top tail raked onto
+DGFiP n° 41, the top millième from −64,3 % to +7,8 %, opt-in and spent-registered,
+at a stated price of −2,03 % on the national income total. **L4's two data items
+were refused with their findings**; its perimeter diagnostic is verified and
+replayable. **L3 is recorded unresolvable** at subsample scale. **C2's gate is
+open and nothing was built** — ~1 791 M€ of niches are buildable, with the ranking
+on the record. **C3's 55 communes are pinned** after a 454-column sweep found
+nothing.
+
+Full report: `docs/PHASE7_CLOSING.md`. Five instrument defects found and fixed, none
+in the model.
+
+## Armed and waiting — the dormant interrupts
+
+* **ERFS microdata** (D-096): dormant, not dead. Fires if access ever materialises.
+* **L2, the take-up layer** (new, 2026-09-13): dormant. **Blocker** — both DREES
+  non-recours files sit in D-026 quarantine, so nothing computed from them is
+  reproducible. **Wake condition** — a sourced, manifested take-up file. Until then
+  the grade-time bridges stand and the benefit lines stay as they are.
 
 ## The calendar item that is not a choice
 
@@ -82,9 +105,14 @@ that week. What remains is an owner decision (below), not a task.
 
 ## What the next session does if nobody says otherwise
 
-Maintenance, per `docs/CHARTER.md` — and nothing more. Building has reached
-the point where the charter's cadence (pin bumps, vintage refreshes on the
-nine-source calendar, full passes) is the real work until the PLF drops.
+**Nothing, until the reviewer's verdict on `docs/PHASE7_CLOSING.md`.** Phase 8 is
+written (`docs/PHASE8_SPEC.md`, `docs/OPUS_HANDOFF_PHASE8.md`) and **starts only
+after C4 is reviewed** — the owner's sequencing, on the record.
+
+Between the two, maintenance per `docs/CHARTER.md` and nothing more: pin bumps,
+vintage refreshes on the nine-source calendar, full passes. The one unblocked piece
+of build work left over from Phase 7 is C2's niche extension, ranked and costed in
+D-126.
 
 ## Standing, unchanged
 

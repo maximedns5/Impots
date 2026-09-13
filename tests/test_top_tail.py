@@ -181,3 +181,53 @@ def test_the_two_refusals_are_distinguishable() -> None:
                  use="validation", source="s", raked_top_tail=True)
     assert aged.status != raked.status
     assert "vieillie" in aged.status and "recalée" in raked.status
+
+
+def test_a_raked_population_refuses_every_validation_line_by_construction() -> None:
+    """C4's hard condition: the refusal must be structural, not remembered per call site.
+
+    A population fitted to n° 41's fractiles can no longer validate anything downstream of
+    the income distribution. If one validation line still renders a verdict, that is a
+    defect in the refusal — not a validation to report.
+    """
+    from impots.population import reconcile
+    from impots.population.aggregate import Aggregates
+
+    # Every line needs a SIMULATED VALUE or `status` returns "not modelled" first — and
+    # rightly so: absence of a comparison is reported as itself (D-072). A test on an
+    # empty Aggregates would pass against a rake flag that does nothing at all.
+    class _Filled(dict):
+        def get(self, key, default=None):
+            return 1.0e9
+
+    agg = Aggregates(totals=_Filled(), counts=_Filled(), deltas={})
+    plain = reconcile.build_lines(agg)
+    raked = reconcile.build_lines(agg, raked_top_tail=True)
+
+    validation = [line for line in raked if line.use == "validation"]
+    assert validation, "aucune ligne de validation : le test ne testerait rien"
+    assert all(line.status == "not comparable (queue recalée)" for line in validation), (
+        [line.label for line in validation
+         if line.status != "not comparable (queue recalée)"])
+
+    # The kill: without the flag those same lines must NOT refuse, or the assertion above
+    # would pass on a function that refuses unconditionally.
+    same = [line for line in plain if line.use == "validation"]
+    assert not any(line.status == "not comparable (queue recalée)" for line in same)
+
+
+def test_calibration_lines_are_untouched_by_the_rake_flag() -> None:
+    """A calibration line already claims nothing, so it neither gains nor needs the
+    refusal — and marking it would blur the two reasons a line can decline to speak."""
+    from impots.population import reconcile
+    from impots.population.aggregate import Aggregates
+
+    class _Filled(dict):
+        def get(self, key, default=None):
+            return 1.0e9
+
+    raked = reconcile.build_lines(Aggregates(totals=_Filled(), counts=_Filled(),
+                                             deltas={}), raked_top_tail=True)
+    calibration = [line for line in raked if line.use == "calibration"]
+    assert calibration
+    assert not any(line.raked_top_tail for line in calibration)
