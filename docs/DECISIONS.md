@@ -6188,3 +6188,64 @@ manifesté**, et cela figure sur la liste de téléchargement.
 §3.2 sur le Bloc 1 (taux implicite depuis la structure de maturité) est débloqué : les trois
 fichiers AFT sont manifestés. Le parse HTML ira dans un script de vérification avec kill
 tests, jamais en ligne dans le moteur — règle actée à l'addendum.
+
+## D-132 — §3.2 : le parc AFT se reconstitue, et un séparateur de milliers valait 4×10¹⁰
+
+**Phase 8 M1 §3.2, 2026-09-14.** `scripts/verify_aft.py` — le parse par ligne, en script de
+vérification avec kill tests comme l'addendum l'a tranché, jamais en ligne dans le moteur.
+
+### Le kill test du Bloc 1 passe
+
+Bloc 1 + Bloc 2 = total APU tient **par construction** de Bloc 2 comme résidu : cette
+égalité ne teste rien. Le vrai test est que le Bloc 1 seul reproduise les totaux que l'AFT
+publie elle-même. Mesuré sur les 103 titres du bulletin n° 435 :
+
+| | reconstruit | publié | écart |
+|---|---|---|---|
+| moyen et long terme | 2 662,3 md€ | 2 662 | **+0,010 %** |
+| court terme | 219,6 md€ | 220 | −0,163 % |
+| **total négociable** | **2 881,9 md€** | **2 882** | **−0,003 %** |
+| dont indexés | 312,8 md€ | 313 | −0,076 % |
+
+Tolérance **0,5 %**, mesurée à l'implémentation et non choisie : la ligne la plus lâche est
+le court terme à 0,163 %, ce qui est l'arrondi de chiffres que le bulletin imprime au md€.
+
+### Le séparateur de milliers, qui vaut 4×10¹⁰
+
+**Trois conventions cohabitent dans le même document** : `24 030 000` séparé par U+202F
+seul ; `24  030  000` par U+202F suivi d'une espace ordinaire ; et l'espace
+ordinaire **seule**, qui n'est pas un séparateur mais une **frontière de colonne**.
+
+Confondre les deux fusionne l'encours avec le démembré qui le suit. FR0000571218 se lit
+alors **44 514 880 458 968 967 100** au lieu de 44 514 880 458 — **4 × 10¹⁰ fois sa valeur**,
+et cela reste un entier valide. Mon premier parse faisait exactement cela, et le total MLT
+sortait à 2,2 × 10²³ euros ; un défaut moins spectaculaire aurait été plus dangereux.
+
+La règle : **le séparateur EXIGE l'espace fine**, une espace ordinaire peut la suivre, une
+espace ordinaire seule sépare des colonnes. Et la date est retirée **avant** toute lecture
+de nombre, sans quoi « 24 septembre 2026 24 030 000 000 » colle l'année à l'encours.
+
+Ce projet écrit lui-même U+202F (`reporting.THIN_SPACE`) pour la typographie française ; il
+lui fallait apprendre à le relire.
+
+### La page HTML des OAT ne porte que du nominal
+
+`Encours détaillé des OAT` liste **59 lignes, toutes nominales** — aucune OATi, aucune
+OAT€i. Les indexées pèsent **313 md€, près de 11 %** de l'encours négociable. **Un Bloc 1
+bâti sur cette seule page les omettrait en silence.** Le bulletin est donc la source
+complète par ligne, et les deux pages HTML sont un recoupement, pas l'entrée.
+
+### Et mon assertion était plus grossière que le constat
+
+Premier jet : « OATi n'apparaît pas dans la page ». Elle échouait — parce que le mot
+figure dans le **menu de navigation** du site. J'ai testé le document là où le constat porte
+sur les **lignes de données**. C'est l'erreur exacte de la première version de
+`verify_rei.py`, qui butait sur des lignes CFE. Resserré sur les cellules de libellé.
+
+### Deux mesures fausses avant celle-ci, toutes deux par comparaison de grandeurs distinctes
+
+J'ai d'abord cru le parse incomplet : 103 lignes extraites contre « 65 OAT + 7 OATi +
+14 OAT€i » lus dans le bulletin. Ces 86 étaient un **comptage d'occurrences du mot** dans
+tout le texte — titres et prose compris — et non un comptage de titres. Le PDF porte
+exactement 103 ISIN, tous capturés. Comparer un compte de lignes à un compte de mots est la
+quatrième question permanente, encore.
