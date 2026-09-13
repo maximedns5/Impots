@@ -5974,3 +5974,24 @@ Et la correction de la note a d'abord échoué sur une `assert old in s` : le te
 replié sur plusieurs lignes et mon ancrage ne correspondait à rien. **L'assertion a fait
 exactement son travail** — rien n'a été écrit — là où le `str.replace` sans ancrage de
 D-117 avait silencieusement ne rien faire et laissé croire à un succès. La règle tenait.
+
+## D-128 — La porte de relecture de la phase 7 est levée par le propriétaire
+
+**2026-09-13.** Le handoff de clôture posait : « **Gate: Phase 8 M0 starts after C4 is
+reviewed, not before.** Owner's sequencing request, now on the record. » Le propriétaire a
+demandé explicitement de démarrer la phase 8 maintenant.
+
+**La porte était la sienne ; il la lève.** C'est enregistré ici plutôt que passé sous
+silence, parce qu'une séquence inscrite au dossier ne s'enjambe pas en silence — et parce
+que le handoff dit lui-même « divergences from spec are expected and go to DECISIONS.md ».
+
+**Ce que cela change et ce que cela ne change pas.** `docs/PHASE7_CLOSING.md` reste non
+relu : aucun relecteur n'a donné de verdict sur C1-C4, et ce rapport ne devient pas juste
+parce que la phase suivante commence. La phase 7 est **exécutée et verte**
+(`76f0c49`, 1358 passed, 2 skipped, passe journalisée) — elle n'est pas **validée**. La
+distinction est exactement celle que ce projet fait partout ailleurs entre une mesure et une
+validation, et elle vaut pour son propre processus.
+
+**Le reliquat qui part en phase 8 sans être clos** : C2 n'a rien construit. La donnée existe,
+les candidats sont classés et chiffrés (~1 791 M€), la couverture des niches n'a pas bougé.
+Dit ici pour qu'il ne se découvre pas au détour d'un handoff.
