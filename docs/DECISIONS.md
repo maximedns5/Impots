@@ -6249,3 +6249,62 @@ J'ai d'abord cru le parse incomplet : 103 lignes extraites contre « 65 OAT + 7 
 tout le texte — titres et prose compris — et non un comptage de titres. Le PDF porte
 exactement 103 ISIN, tous capturés. Comparer un compte de lignes à un compte de mots est la
 quatrième question permanente, encore.
+
+## D-133 — §3.2 : le taux implicite du Bloc 1, et un kill test inerte attrapé par mutation
+
+**Phase 8 M1 §3.2, 2026-09-14.** `src/impots/dette/maturite.py`,
+`tests/test_dette_maturite.py` (9 tests). Les quatre kill tests de la spec passent.
+
+### Les quatre, et pourquoi trois sont sur des portefeuilles CONSTRUITS
+
+| kill test | résultat |
+|---|---|
+| roulement nul + déficit nul → taux constant | **1,00 % sur 5 ans**, taux de marché à 3 % qui ne fuit pas |
+| roulement intégral immédiat → taux = taux de marché | **3,50 % en an 1**, exact |
+| échéancier = encours manifesté | **2 881,9 md€**, écart 0,00e+00 |
+| marché = implicite courant → charge an 1 ≈ ancre P117 | **52,78 md€ contre 58,615**, −9,9 % |
+
+« Roulement nul » et « roulement intégral » **n'existent pas dans le parc réel** : un test
+qui ne voit que les données réelles ne sait pas distinguer un roulement juste d'un
+roulement cassé. D'où les portefeuilles construits.
+
+### L'écart de −9,9 % est un écart de PÉRIMÈTRE, mesuré et non resserré
+
+P117 est une charge **budgétaire** sur toute la dette de l'État. Ce module somme des jambes
+de coupon et **omet la provision d'indexation** — simplification déclarée, et **signée** :
+elle ne peut que sous-estimer. Vérification de taille : 2 % d'inflation sur les 312,8 md€
+indexés font **6,3 md€**, ce qui couvre largement les 5,8 md€ d'écart.
+
+Le test assère donc **le signe et l'ordre de grandeur**, pas seulement « dans la tolérance ».
+Une tolérance dans laquelle une erreur de périmètre tient à l'aise est une erreur de
+périmètre avec un certificat.
+
+### Trois simplifications nommées
+
+1. **Lignes indexées portées à leur coupon RÉEL sur leur encours INDEXÉ.** La jambe de
+   coupon est juste ; c'est la provision d'indexation qui manque. §3.2 offrait le choix
+   entre modéliser l'inflation du scénario et porter un coupon réel fixe : c'est le second.
+2. **Les BTF n'ont pas de coupon** — ce sont des titres à escompte. Leur coût arrive par le
+   **roulement**, et comme ils échoient tous dans l'année ils roulent intégralement en an 1
+   au taux du scénario. La machinerie le fait sans cas particulier, ce qui est la raison de
+   le modéliser ainsi plutôt que d'imputer un coupon synthétique.
+3. **La structure d'émission BTF/OAT est tenue à l'observé**, défaut de scénario nommé.
+
+### Le kill test qui ne pouvait pas échouer, attrapé par mutation
+
+Trois mutations lancées : fuite du taux de marché dans le stock gelé → 3 échecs ; coupon
+ancien non retiré au roulement → 3 échecs ; **lignes déjà échues jetées → 0 échec.**
+
+Le test de report en avant était **inerte**. Il tournait sur le bulletin manifesté, dont
+l'échéance la plus proche est le **5 août 2026** quand `as_of` vaut le **31 juillet 2026** :
+**zéro titre déjà échu**, donc une prémisse qui ne se produit jamais et un test qui passe
+contre une implémentation qui les jette.
+
+Forme D-044, dans un fichier **dont le docstring explique lui-même** pourquoi trois des
+quatre kill tests sont construits. Je l'ai écrit, puis j'ai fait l'inverse à la quatrième.
+Réécrit sur un portefeuille construit portant une ligne échue en 2020 ; la mutation est
+maintenant attrapée.
+
+C'est la troisième question permanente qui a servi, et elle n'a servi que parce que la
+mutation a été lancée : **les neuf tests passaient**, et rien dans leur lecture ne
+distinguait le test vivant du test mort.
