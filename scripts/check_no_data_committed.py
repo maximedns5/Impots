@@ -60,6 +60,9 @@ ERFS_NAME_ALLOWED = {
     "docs/OPUS_HANDOFF_NO_ERFS.md": "handoff prose, written when the posture was no-ERFS",
     "docs/PHASE1C_ERFS.md": "the branch-C plan: variable names and method, no values",
     "docs/M0_PHASE8.md": "recon report, metadata only",
+    "scripts/verify_erfs.py": (
+        "the E1 inventory: checksums, counts, column names and format agreement. "
+        "Reads the delivery, prints no value from any row, and is opt-in."),
 }
 
 #: The absolute workspace path must never be hardcoded in CODE. Documents may state where

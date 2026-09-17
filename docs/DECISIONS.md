@@ -6388,3 +6388,73 @@ supprimer**, y compris dans un nettoyage qu'on croit porter sur ce qu'on vient d
 sondes affichaient « code retour 0 » alors que le garde refusait. Relancé sans tube : 1, 1,
 0 — les bons. Le défaut que ce projet a trouvé dans son propre Makefile, reproduit dans mon
 shell deux semaines plus tard.
+
+## D-135 — Interruption ERFS, E1 : l'inventaire formel, et le piège de casse
+
+**2026-09-17.** `scripts/verify_erfs.py`. **Métadonnées seules** : empreintes, comptages,
+noms de colonnes, accord entre deux encodages. **Aucune valeur de ligne n'apparaît nulle
+part**, et rien de ce qui suit n'a quitté cette machine.
+
+### L'inventaire
+
+| fichier | octets | sha256 (16) |
+|---|---|---|
+| `fpr_menage_2022.csv` | 10 974 882 | `0bced584a8a4649b…` |
+| `fpr_indiv_2022.csv` | 79 214 326 | `887c5ba0c3701945…` |
+| `fpr_menage_2022.dta` | 30 156 170 | `f1541057bff7d193…` |
+| `fpr_indiv_2022.dta` | 332 462 106 | `1d1fda6585443eb0…` |
+| `Format_lil-1696_stata.txt` | 91 884 | `85ffdc67ed0d0af2…` |
+
+**Les quatre tailles attendues par l'addendum sont confirmées au octet près.**
+
+**Comptages contre le publié.** Le document de méthodologie livré avec les données écrit
+« 92 000 individus pour environ 44 000 ménages ». Mesuré : **91 921 individus** (−0,09 %) et
+**43 684 ménages** (−0,72 %). Tolérance 2 %, large **exprès** : épingler à quatre chiffres
+une donnée que la source qualifie d'« environ » serait inventer une précision qu'elle
+récuse. Schéma : **87 colonnes** au ménage, **467** à l'individu, séparateur `;`, latin-1.
+
+### Le parse CSV, confirmé par l'autorité Stata
+
+C'est la raison de garder la paire `.dta`. Ni pandas ni pyreadstat ne sont installés, et
+ajouter une dépendance compilée pour lire quatre nombres serait un mauvais marché : le
+format 111 place `nvar` aux octets 4-5, `nobs` aux 6-9, puis les noms en champs de 33 octets
+terminés par NUL. **En-tête décodé à la main, avec `struct` seul.**
+
+Accord : 87 × 43 684 et 467 × 91 921 des deux côtés, **noms identiques et dans le même
+ordre**.
+
+### Le piège de casse, qui ne lève jamais
+
+**Stata minusculise les noms de variables ; le CSV les conserve.** Les divergences sont
+**toutes** de casse — et elles sont massives : **37 des 87** colonnes ménage et **443 des
+467** colonnes individu portent des majuscules côté CSV.
+
+Un code qui croiserait des noms issus du `.dta` avec les colonnes du CSV **sélectionnerait
+le vide sans rien lever** — 443 colonnes sur 467 introuvables, une jointure qui rend zéro
+ligne, une moyenne sur un tableau vide. C'est exactement la famille de défauts que ce projet
+collectionne : l'Ésane sans `max_row`, la colonne de déciles en chaînes, le séparateur fin de
+l'AFT. Épinglé par une assertion qui **exige** des divergences et exige qu'elles soient
+toutes de casse.
+
+**Trois kill tests lancés, trois captures** : un comptage attendu faux → échec ; la tolérance
+resserrée à 0,1 % → échec ; le décalage de l'en-tête Stata d'un octet → 4 échecs.
+
+### Un écart avec l'addendum, énoncé plutôt que suivi en silence
+
+L'addendum autorise : « The documentation PDFs are public and may be manifested into
+`data/raw/` normally. » **Je ne les y ai pas copiés.** `data/raw/` est **dans l'arbre du
+dépôt**, et E0 pose que tout ce qui est ERFS sous l'arbre git est une infraction que le garde
+refuse — les fichiers s'appellent `Dictionnaire ERFS 2022_FPR.pdf`,
+`EEC2022_Dictionnaire_des_codes_FPR.pdf`. Les deux règles se contredisent sur ce point précis,
+et la prudence dit de ne pas faire entrer d'ERFS-nommé sous l'arbre pour un gain nul.
+
+**Les empreintes sont donc prises SUR PLACE et enregistrées ici** — c'est tout ce que
+« manifester » apporte :
+
+`Dictionnaire ERFS 2022_FPR.pdf` 488 560 o `0a0ef10af680ea8a…` · `Méthodologie_ERFS_2022.pdf`
+275 720 o `d06fa2395ae7d707…` · `Liste_Variables_FPR_2022.xls` 25 926 o `9334620bee8077e5…` ·
+`EEC2022_Dictionnaire_des_codes_FPR.pdf` 5 092 795 o `27666eb99d43c791…`.
+
+**À trancher par le relecteur** : copier la documentation publique sous `data/raw/` malgré
+son nom, ou la laisser dans la livraison avec ses empreintes au journal. J'ai pris la
+seconde ; la première est défendable et ce n'est pas à moi de renverser E0 pour elle.
