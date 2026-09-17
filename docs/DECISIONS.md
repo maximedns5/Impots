@@ -6458,3 +6458,66 @@ et la prudence dit de ne pas faire entrer d'ERFS-nommé sous l'arbre pour un gai
 **À trancher par le relecteur** : copier la documentation publique sous `data/raw/` malgré
 son nom, ou la laisser dans la livraison avec ses empreintes au journal. J'ai pris la
 seconde ; la première est défendable et ce n'est pas à moi de renverser E0 pour elle.
+
+## D-136 — E2 préenregistré, et un .gitignore qui a avalé le code qu'il protégeait
+
+**2026-09-17.** Le tableau de validation E2 est préenregistré **avant tout chiffre ERFS**.
+Et en le committant j'ai découvert que **trois commits antérieurs de cette interruption
+étaient incomplets**, en silence.
+
+### Le défaut : un garde assez large pour avaler sa propre implémentation
+
+Le bloc `.gitignore` posé en E0 contenait `*erfs*` et `*ERFS*`. Ces motifs n'ignorent pas
+seulement des données : ils ignorent **`src/impots/erfs/`** — c'est-à-dire le code qui met en
+œuvre la protection. Conséquences, toutes muettes :
+
+* `e8aa748` (« E0 : les rails ») **ne contenait pas `src/impots/erfs/config.py`**. J'ai
+  rapporté une configuration locale construite ; seuls le garde, le `.gitignore` et les
+  documents étaient entrés.
+* `20aeecf` (« E1 : l'inventaire ») **ne contenait pas `scripts/verify_erfs.py`**. J'ai
+  rapporté un script de vérification avec kill tests ; il n'était pas dans git.
+* Le commit du préenregistrement E2 **n'a rien committé du tout** — « nothing to commit,
+  working tree clean » — alors que quatre fichiers venaient d'être écrits.
+
+**`git add -A` a rapporté un succès en n'ajoutant rien.** C'est la forme que ce projet
+collectionne : une opération qui réussit sans rien faire, et un rapport qui la croit. Trois
+de mes comptes rendus ont donc surestimé ce qui avait atterri, et je le dis ici parce qu'un
+journal qui tait ça ne vaut rien.
+
+### La correction, et pourquoi elle ne desserre rien
+
+Les deux rails visent désormais des **extensions de données**, pas tout chemin contenant
+« erfs » :
+
+* `.gitignore` : `*erfs*.csv`, `*erfs*.dta`, `*erfs*.parquet`, `fpr_*.csv`, … et
+  `lil-1696*`. Une source `.py` n'est plus ignorée.
+* le garde : un fichier ERFS-nommé reste refusé, **sauf** une source `.py` sous `src/`,
+  `tests/` ou `scripts/` — **du code Python ne peut pas ÊTRE une microdonnée**.
+
+**Re-prouvé après desserrage**, ce qui est la moitié qui compte : `tests/fpr_menage_sample.csv`
+refusé, `src/impots/erfs_extract.parquet` refusé, `data/interim/erfs_join.dta` refusé, et un
+chemin absolu écrit en dur **à l'intérieur de `src/impots/erfs/`** refusé. L'exemption `.py`
+n'ouvre donc aucun trou.
+
+### Le préenregistrement lui-même
+
+Cinq axes, trois rendent un verdict. **A1** parts de revenu par décile, ±10 % — les déciles 5
+à 9 sont déjà mesurés à +3,6/+9,2 % contre Filosofi, comparateur différent et non dépensé,
+donc 10 % admet le connu et refuse le pire quand 20 % n'aurait rien pu refuser. **A2**
+composition × quartile de revenu, ±15 % — les deux marges ont été rakées SÉPARÉMENT, leur
+joint n'est contraint par rien, et c'est l'axe où une calibration par marges peut être exacte
+et fausse à la fois. **A3** masse d'éligibilité aux prestations, ±20 % — la réconciliation
+compare une dépense à travers un pont de non-recours ; l'effectif éligible est une autre
+grandeur.
+
+**Deux axes sans verdict, déclarés d'avance.** Les queues : en bas des revenus quasi nuls
+font exploser tout résidu relatif, en haut **les deux sources sous-comptent** — la nôtre de
+64,3 % avant L1, et l'ERFS la sienne parce qu'une enquête ne voit pas le sommet. Comparer
+deux sous-comptages ne mesure ni l'un ni l'autre. Et le joint capital, qui **échoue par
+construction** : la population porte identiquement zéro revenu du capital, donc −100 % est
+une absence et non une mesure. Ce que cet axe doit rendre est la grandeur que le gate F1b
+n'avait pas : **quelle part des ménages ERFS porte un revenu du capital**.
+
+**Le refus de source dépensée de L1 ne s'applique pas ici** : la population n'a jamais été
+ajustée sur l'ERFS, sur aucun axe. Les verdicts contre l'ERFS sont donc légitimes, et c'est
+toute la valeur de cette interruption.

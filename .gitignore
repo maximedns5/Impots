@@ -32,12 +32,22 @@ __pycache__/
 # tree and is reached through an untracked local config. These patterns exist so that a
 # stray copy inside the repository is never staged in the first place; the guard is what
 # refuses one that gets past them, and it is the guard that carries the kill tests.
-*erfs*
-*ERFS*
-fpr_*
+# DATA EXTENSIONS ONLY. The first version of this block was `*erfs*` / `*ERFS*`, which
+# ignored `src/impots/erfs/` — the code implementing the protection — and `git add -A`
+# then reported success while adding nothing. A guard broad enough to swallow its own
+# implementation is not strict, it is broken.
+*erfs*.csv
+*erfs*.dta
+*erfs*.parquet
+*erfs*.sav
+*erfs*.sas7bdat
+*ERFS*.csv
+*ERFS*.dta
+*ERFS*.parquet
+fpr_*.csv
+fpr_*.dta
+fpr_*.parquet
+fpr_*.sav
+fpr_*.sas7bdat
 lil-1696*
 .impots.local
-# The two planning documents and the recon report predate the delivery and hold no values.
-!docs/OPUS_HANDOFF_NO_ERFS.md
-!docs/PHASE1C_ERFS.md
-!docs/M0_PHASE8.md

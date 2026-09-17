@@ -85,8 +85,15 @@ def erfs_name_offenders(paths: list[str]) -> list[str]:
         if path == GUARD_ITSELF or path in ERFS_NAME_ALLOWED:
             continue
         lowered = path.lower()
-        if any(pattern in lowered for pattern in ERFS_NAME_PATTERNS):
-            out.append(path)
+        if not any(pattern in lowered for pattern in ERFS_NAME_PATTERNS):
+            continue
+        # Python source cannot BE microdata. `src/impots/erfs/` holds the config and the
+        # scorecard; refusing them would refuse the machinery that enforces the rules —
+        # which the first version of this guard did, together with a .gitignore broad
+        # enough to hide the refusal behind a silent no-op `git add`.
+        if path.endswith(".py") and path.startswith(("src/", "tests/", "scripts/")):
+            continue
+        out.append(path)
     return out
 
 
