@@ -42,6 +42,68 @@ MICRODATA_KEYS = ("household_id", "person_id", "foyer_id", "famille_id", "IDENT"
 #: An aggregates summary has no business being large.
 MAX_AGGREGATE_BYTES = 1_000_000
 
+# ---------------------------------------------------------------- the ERFS extension
+#
+# E0(3) of the ERFS interrupt. The delivery (Quetelet-Progedo/ADISP lil-1696, millésime
+# 2022, version FPR) lives OUTSIDE this tree at the owner's instruction, and the code
+# reaches it through an untracked local config. Two things are refused here.
+
+#: Name patterns that betray an ERFS artefact anywhere in the tree — not only under data/,
+#: because a fixture in tests/ or a golden in reports/ would be exactly as forbidden and
+#: exactly as easy to add by accident.
+ERFS_NAME_PATTERNS = ("erfs", "fpr_", "lil-" "1696")
+
+#: Tracked files whose NAME matches above and which are legitimate: project documents that
+#: DISCUSS ERFS. They carry variable names and plans, never values. Listed one by one —
+#: a pattern-shaped exemption would let a real offender in behind a plausible filename.
+ERFS_NAME_ALLOWED = {
+    "docs/OPUS_HANDOFF_NO_ERFS.md": "handoff prose, written when the posture was no-ERFS",
+    "docs/PHASE1C_ERFS.md": "the branch-C plan: variable names and method, no values",
+    "docs/M0_PHASE8.md": "recon report, metadata only",
+}
+
+#: The absolute workspace path must never be hardcoded in CODE. Documents may state where
+#: the delivery lives — the review file's ruling does, and that is a matter of record —
+#: but a path literal in src/, tests/ or scripts/ is the thing E0(1) forbids: it would make
+#: the code work on one machine and silently fail, or silently read nothing, on any other.
+WORKSPACE_DIR_NAME = "lil-" "1696"
+CODE_ROOTS = ("src/", "tests/", "scripts/", "Makefile", "pyproject.toml")
+
+#: This script must NAME the patterns it refuses, so it necessarily contains them. Excluded
+#: by exact path rather than by a rule, so the exclusion cannot widen: a second file wanting
+#: the same exemption has to be added here deliberately.
+GUARD_ITSELF = "scripts/check_no_data_committed.py"
+
+
+def erfs_name_offenders(paths: list[str]) -> list[str]:
+    """Tracked paths whose name says ERFS and which are not on the short allowlist."""
+    out = []
+    for path in paths:
+        if path == GUARD_ITSELF or path in ERFS_NAME_ALLOWED:
+            continue
+        lowered = path.lower()
+        if any(pattern in lowered for pattern in ERFS_NAME_PATTERNS):
+            out.append(path)
+    return out
+
+
+def workspace_path_offenders(paths: list[str]) -> list[str]:
+    """Tracked CODE carrying the delivery's absolute path as a literal."""
+    out = []
+    for path in paths:
+        if path == GUARD_ITSELF or not path.startswith(CODE_ROOTS):
+            continue
+        full = ROOT / path
+        if not full.exists() or full.stat().st_size > 2_000_000:
+            continue
+        try:
+            text = full.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+        if f"/{WORKSPACE_DIR_NAME}" in text:
+            out.append(path)
+    return out
+
 
 def allowed(path: str) -> str | None:
     for pattern, reason in ALLOWED.items():
@@ -82,7 +144,7 @@ def candidates(mode: str) -> list[str]:
     out = subprocess.run(
         command, capture_output=True, text=True, check=True, cwd=ROOT
     ).stdout
-    return [line for line in out.splitlines() if line.startswith("data/")]
+    return out.splitlines()
 
 
 def main() -> int:
@@ -91,9 +153,29 @@ def main() -> int:
         print(f"usage: {Path(__file__).name} [--staged|--tree]", file=sys.stderr)
         return 2
 
+    tracked = candidates(mode)
+
+    erfs_named = erfs_name_offenders(tracked)
+    hardcoded = workspace_path_offenders(tracked)
+    if erfs_named or hardcoded:
+        print("Refusing: the ERFS compliance rails (E0).", file=sys.stderr)
+        for path in erfs_named:
+            print(f"  ERFS-named in the tree: {path}", file=sys.stderr)
+        for path in hardcoded:
+            print(f"  workspace path hardcoded: {path}", file=sys.stderr)
+        print(
+            "\nERFS 2022 FPR (lil-" "1696) is held under a signed convention: nothing "
+            "ERFS-derived\nenters git — files, fixtures, goldens and test data included — "
+            "and the delivery path\nis reached through an untracked local config, never a "
+            "literal. A document may STATE\nwhere the data lives; code may not embed it.",
+            file=sys.stderr)
+        return 1
+
     refused: list[str] = []
     problems: list[str] = []
-    for path in candidates(mode):
+    for path in tracked:
+        if not path.startswith("data/"):
+            continue
         reason = allowed(path)
         if reason is None:
             refused.append(path)

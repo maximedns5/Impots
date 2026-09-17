@@ -6308,3 +6308,83 @@ maintenant attrapée.
 C'est la troisième question permanente qui a servi, et elle n'a servi que parce que la
 mutation a été lancée : **les neuf tests passaient**, et rien dans leur lecture ne
 distinguait le test vivant du test mort.
+
+## D-134 — Interruption ERFS, E0 : les rails avant le premier octet
+
+**2026-09-17.** L'interruption ERFS se déclenche. Le propriétaire détient **ERFS 2022,
+version FPR, livraison lil-1696**, obtenue par sa propre convention Quetelet-Progedo/ADISP.
+E0 pose les rails ; **aucun octet de donnée n'a été lu** à ce stade.
+
+### Route et millésime
+
+* **Route** : ADISP (Quetelet-Progedo), livraison **lil-1696**.
+* **Millésime** : **2022**, version FPR (fichier de production et de recherche).
+* **Référence de convention** : **NON RENSEIGNÉE — demandée au propriétaire.** Le handoff
+  annonçait que le document « se trouve à côté des fichiers » ; il n'y est pas. Recherche
+  faite sur toute la livraison (`convention`, `diffusion`, `contrat`, `engagement`,
+  `charte`, `licence`) : aucun document de ce type. La livraison ne porte que les tables,
+  la documentation méthodologique et les formulaires CERFA publics.
+
+### Les quatre règles de conformité
+
+1. **Rien d'ERFS-dérivé dans git** — fichiers, fixtures, goldens, données de test comprises.
+2. **Aucune valeur de ligne** dans une sortie, un journal, un message d'erreur ou un
+   document : schéma, dictionnaire, comptages et agrégats au-dessus d'un plancher de
+   diffusion, rien d'autre.
+3. **Tout est opt-in et absent de la CI.**
+4. **Aucun transit par le nuage** : ni les octets ERFS ni aucune sortie dérivée de lignes ne
+   quittent cette machine. Le relecteur s'est lié à la même règle ; cette session aussi, et
+   c'est pourquoi rien de tout ceci n'ira dans un document distant ou un artefact.
+
+### Plancher de diffusion : 11 ménages, PAR DÉFAUT et non par lecture
+
+Le handoff demandait de lire le plancher dans la clause de diffusion de la convention et de
+le citer. **La convention est introuvable dans la livraison**, donc le plancher retenu est
+le défaut que le handoff lui-même fixe — **11 ménages** — et il est enregistré **comme un
+défaut, pas comme une citation**. La distinction compte : un plancher cité engage la
+convention, un plancher par défaut engage seulement notre prudence, et confondre les deux
+serait exactement le genre d'ancrage relayé que ce projet refuse ailleurs.
+
+**Même traitement pour les rapports** : la question de savoir si des agrégats non
+divulgatifs peuvent figurer dans des rapports committés se tranche par la clause. Faute de
+clause, **conservateur** : rien d'ERFS-dérivé dans un rapport committé jusqu'à lecture.
+
+### Les rails, et leurs kill tests vus tomber
+
+**Emplacement.** Livraison déplacée de `~/Downloads/lil-1696` vers `~/Dev/lil-1696`, à côté
+du dépôt et hors de son arbre. Même volume, déplacement instantané, `Downloads` vidé.
+Vérifié : **rien d'ERFS-microdonnées dans l'arbre du dépôt**, ni dans l'index, ni dans
+l'historique. Quatre correspondances de nom examinées une à une plutôt qu'effacées par
+réflexe : deux documents de plan (noms de variables, aucune valeur) et deux publications
+INSEE agrégées, non suivies et déjà ignorées.
+
+**Configuration locale** (`src/impots/erfs/config.py`) : variable d'environnement
+`IMPOTS_ERFS_DIR`, sinon `~/.impots.local`. **Aucun défaut, pas même l'emplacement réglé** —
+un chemin par défaut marcherait sur une machine et lirait zéro ligne en silence sur toutes
+les autres, la forme que ce projet a rencontrée à l'Ésane sans `max_row` et à la colonne de
+déciles en chaînes.
+
+**Garde étendu** (`scripts/check_no_data_committed.py`), deux refus, chacun **prouvé sur un
+offenseur factice** :
+
+* un fichier nommé `fpr_menage_sample.csv` mis en index → refusé, code 1 ;
+* le chemin absolu de la livraison écrit en dur dans `src/` → refusé, code 1 ;
+* un document qui **nomme** la livraison → **accepté**, parce que la règle porte sur un
+  littéral de chemin dans du CODE et non sur le droit d'un document à dire où vivent les
+  données. Le fichier de revue le dit déjà, et c'est légitime.
+
+Le garde doit **nommer** les motifs qu'il refuse, donc il se contient lui-même : il
+s'exclut **par chemin exact**, pas par règle, pour que l'exemption ne puisse pas s'élargir.
+
+### Deux erreurs de ma part pendant la pose des rails
+
+**J'ai détruit des fixtures de test.** Pour nettoyer un offenseur factice j'ai fait
+`rm -rf tests/fixtures`, or ce répertoire existait : `README.md`, `firm_cells.json` et
+`eec_sample.parquet` — les 51 Ko sous Licence Ouverte **qui font tourner la CI**. Restaurés
+par `git checkout`, 77 tests repassent. La règle que je m'applique : **regarder avant de
+supprimer**, y compris dans un nettoyage qu'on croit porter sur ce qu'on vient de créer.
+
+**Et j'ai lu un code de retour à travers un tube**, exactement le défaut D-113 : mes trois
+sondes affichaient « code retour 0 » alors que le garde refusait. Relancé sans tube : 1, 1,
+0 — les bons. Le défaut que ce projet a trouvé dans son propre Makefile, reproduit dans mon
+shell deux semaines plus tard.
