@@ -96,6 +96,34 @@ def test_the_unlock_names_microdata_where_that_is_the_unlock():
     assert "microdata" in cdhr.unlock and "D-096" in cdhr.unlock
 
 
+def test_the_cdhr_unlock_records_that_erfs_was_tried_and_did_not_open_it():
+    """D-141. The previous assertion could not have caught the lie it was guarding.
+
+    D-096 named « des microdonnées de revenus (ERFS) » as the unlock. The ERFS 2022 FPR
+    was then obtained and the gate re-run, and it did NOT open: the CDHR's population
+    lives entirely in the last centile, which a household survey undercounts by its
+    SAMPLING DESIGN rather than by its granularity. Leaving ERFS named as the key would
+    send the next reader to fetch a key already known not to turn.
+
+    The old test asserted only that « microdata » and « D-096 » appear — both of which
+    stayed true the whole time the clause was false. This one names the implementation
+    that would make it fail: an unlock reverting to « real income microdata (ERFS ... ) »
+    passes the old assertions and fails these.
+    """
+    from impots.plf_coverage import ARTICLES as A
+
+    cdhr = next(a for a in A if a.numero == 2)
+    assert "D-141" in cdhr.unlock, (
+        "la clause doit dater le ré-examen : sans lui, « microdonnées » se relit comme "
+        "une porte jamais essayée")
+    assert "POTE" in cdhr.unlock or "échantillon lourd" in cdhr.unlock, (
+        "une clause d'unlock doit dire CE QUI ouvrirait la porte ; « des microdonnées » "
+        "ne le dit plus, puisque des microdonnées ont été essayées sans succès")
+    assert "PAS l'ERFS" in cdhr.unlock, (
+        "l'ERFS doit être nommée comme essayée-et-insuffisante, sinon le prochain "
+        "lecteur refera le chemin")
+
+
 def test_both_headlines_are_computed_and_disagree():
     """THE reason the brief asked for two.
 

@@ -188,3 +188,90 @@ reconstruction dont la sélection ne mord sur personne rendrait 0,0 Md€, et un
 jambes sont mal posées rendrait un multiple. Les deux sortent de la bande, et aucune
 tolérance ne sera élargie ensuite — l'élargir après coup serait décrire le résidu et
 l'appeler un verdict.
+
+## 7. Le verdict du ré-examen — le refus tient, mais plus rien de ce qui le portait
+
+Trois jambes pouvaient porter un refus. **Deux cèdent**, et il faut le dire avant de
+conclure : un refus qui survit parce qu'on n'a pas regardé ses appuis n'est pas un refus,
+c'est une habitude.
+
+**Jambe 1 — le rendement. ELLE NE PORTE PAS.** La reconstruction fruste préenregistrée
+rend **3,03 md€** contre 1,50 publié, soit 2,02× : hors de la bande [0,75 ; 3,0] **d'un
+pour cent**. La tolérance n'est pas élargie — mais un dépassement d'un pour cent ne
+soutient aucune conclusion, et l'autopsie explique tout l'écart. *La livraison ne porte
+aucune colonne d'impôt au prélèvement forfaitaire* : `rev_financier_prelev_lib_imputes`
+est le REVENU soumis au prélèvement, jamais le prélèvement. La jambe fiscale était donc
+amputée du PFU — 2,29 md€ sur les 70 ménages concernés — c'est-à-dire exactement l'impôt
+que la CDHR compte dans son numérateur. Reconstitué à 12,8 %, le rendement tombe à
+**0,99 md€**, dans la bande. *Post hoc, donc sans valeur probante pour le verdict* — mais
+parfaitement probant pour ceci : **le rendement ne fournit pas de motif de refus.**
+
+**Jambe 2 — le plancher de divulgation. ELLE NE PORTE PAS NON PLUS.** La sélection réelle
+laisse **36 contributeurs** non pondérés, sous le plancher de 50 : la garde refuse le
+tableau, et c'est le comportement correct. Mais ce plancher est le NÔTRE — D-140 a établi
+que la convention n'en fixe aucun — et au défaut de 11 ménages du cahier des charges, ces
+36 passeraient. Un refus qui bascule avec un paramètre que nous avons choisi après coup
+n'est pas un refus, c'est une préférence.
+
+*Et au passage, le §6 s'est trompé.* Il annonçait que « le refus ne pourra pas s'appuyer
+sur la rareté », sur la foi de 109 ménages sous 20 %. Ce 109 appliquait le seuil de 250 k€
+à tout le monde ; le seuil légal est de 500 k€ pour un couple, et 22 472 des 42 831
+ménages en sont un. La population tombe alors à 70 au-dessus du seuil et 36 contributeurs.
+La rareté mord donc, exactement là où le préenregistrement disait qu'elle ne mordrait pas.
+C'est consigné plutôt que corrigé en silence.
+
+**Jambe 3 — la bande sans verdict d'E2. ELLE PORTE, ET ELLE EST LA SEULE.** Le tableau de
+validation classe le dernier centile en `no_verdict`, et sa raison est textuelle :
+*l'ERFS sous-compte sa propre queue — une enquête ne voit pas le sommet, et c'est la
+raison d'être de la DGFiP n° 41*. La CDHR vit **entièrement** dans ce centile. Trancher
+sur elle, c'est rendre un verdict précisément là où le dépôt s'est engagé, par commit et
+avant tout chiffre ERFS, à n'en rendre aucun. C'est la seule des trois jambes qui ne
+dépende d'aucun choix fait après avoir vu les données.
+
+**Refus reconduit — sur la jambe 3 seule, et le motif du §3 est mort.** La CDHR n'est plus
+« mal posée » : avec de la dispersion réelle, elle se pose très bien. Elle est
+**inobservable dans cette source**, ce qui est une affirmation entièrement différente et
+bien plus étroite.
+
+**Conséquence sur la serrure, et c'est le vrai acquis.** D-096 nommait comme clé « des
+microdonnées de revenus réelles, l'ERFS ». **La clé a été obtenue, essayée, et elle
+n'ouvre pas.** Laisser cette clause en l'état ferait dire au code une chose fausse et
+enverrait le prochain lecteur refaire ce chemin. La serrure n'est pas « des microdonnées »
+— c'est **une source qui VOIT LE SOMMET** : l'échantillon lourd de la DGFiP, le fichier
+POTE, un appariement exhaustif. Aucune enquête auprès des ménages n'ouvrira cette porte,
+si fine que soit sa dispersion, parce que le défaut est dans son plan de sondage et non
+dans sa granularité. `plf_coverage.py` est corrigé en conséquence.
+
+## 8. Ré-examen de la couche PFU — elle s'ouvre, mais PAS par l'ERFS
+
+Le §2 concluait que le PFU passe depuis les données publiées, parce que **le rendement
+d'un impôt proportionnel ne dépend que de l'assiette totale**. Rien n'infirme cela, et
+l'ERFS confirme l'ordre de grandeur : 71,6 md€ d'assiette capital des ménages ordinaires
+en 2022, hors plus-values, contre ~80,6 md€ dérivés de la DGFiP n° 41 pour 2024 — 11 %
+d'écart sur deux millésimes distants de deux ans et deux périmètres distincts. Deux routes
+indépendantes, même ordre : la dérivation du §2 tient.
+
+**Mais l'ERFS ne doit pas construire cette couche, pour deux raisons mesurées.**
+
+**(1) 44,7 % de son assiette capital est IMPUTÉE, pas observée.** La décomposition :
+39,63 md€ de valeurs mobilières brutes déclarées (15 245 ménages) contre **32,00 md€ de
+revenus financiers au prélèvement libératoire imputés par l'INSEE** (30 824 ménages). Le
+second terme n'est pas une observation : c'est le produit d'un modèle d'imputation de
+l'INSEE. Bâtir la couche PFU dessus importerait ce modèle **en le présentant comme de la
+microdonnée** — c'est-à-dire le défaut même que le §3 reprochait à l'imputation par
+fractile, relocalisé et rendu invisible parce qu'il arrive sous une étiquette de
+microdonnée. Le défaut déclaré est préférable au défaut hérité.
+
+**(2) Le prix serait le tableau de validation lui-même.** E2 tient sa valeur d'un seul
+fait : la population synthétique n'a JAMAIS été ajustée sur l'ERFS, sur aucun axe. Une
+couche PFU bâtie sur l'ERFS ferait de l'ERFS une cible de calibration, et A1, A2 et A3
+cesseraient le jour même d'être des verdicts — exactement ce qui est arrivé aux fractiles
+de la DGFiP n° 41, dépensés par le recalage L1. On ne dépense pas le dernier comparateur
+indépendant pour gagner 11 % de précision sur une assiette que la route publiée fournit
+déjà.
+
+**Verdict : la couche PFU s'ouvre sur la route PUBLIÉE du §2, et l'ERFS lui est réservée
+comme VALIDATION.** C'est le rôle que l'axe A4 du tableau lui assigne déjà, mot pour mot :
+« quelle PART des ménages ERFS porte un revenu du capital ». La réponse est mesurée et
+consignée ici ; elle reste un constat, pas un verdict. La décision de construire appartient
+au propriétaire, et E3 reste « rien ».

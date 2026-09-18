@@ -6769,3 +6769,81 @@ Les manquements exposent aux articles **226-13 et 226-14** du code pénal (un an
 226-16 à 226-24. Cela ne change pas ce que fait le projet — rien ne publie — mais cela change
 ce qui devra être fait **le jour où quelque chose publiera**, et c'est désormais au dossier
 plutôt que dans un tiroir.
+
+## D-141 — Les deux gates du ré-examen : la clé ERFS a été essayée, et elle n'ouvre pas la CDHR
+
+**Contexte.** L'interruption ERFS prévoyait après E2 « des gates de ré-examen, pas des
+promesses » pour la CDHR et pour la couche population du PFU. E3 reste « rien » : ces deux
+gates DÉCIDENT, ils ne construisent pas et ne recalibrent rien.
+
+**Le déclencheur est dans le code.** `plf_coverage.py` donnait comme `unlock` de l'article 2
+« real income microdata (ERFS) ». La condition est remplie. Le ré-examen n'était donc pas
+une faveur mais une obligation que le dépôt s'était imposée — et le motif du refus F1b
+(« imputation uniforme dans la cellule, donc tous les foyers du même côté du seuil ») visait
+un défaut de l'IMPUTATION. L'ERFS porte de la dispersion réelle : **ce motif est mort.**
+
+**Méthode : critère préenregistré par commit `04f96ce`, avant tout rendement.** Bande
+[0,75 ; 3,0] md€ autour des 1,50 md€ publiés — un facteur 2, argumenté depuis trois erreurs
+de proxy nommées et signées (IRPP simulé par l'INSEE et non liquidé par la DGFiP ; `revdecm`
+du ménage et non RFR retraité du foyer ; millésime 2022 antérieur à une CDHR à seuils
+nominaux). Les deux issues écrites d'avance.
+
+**Résultat — trois jambes, deux cèdent.**
+
+| jambe | mesure | porte le refus ? |
+|---|---|---|
+| rendement | 3,03 md€ contre 1,50 — hors bande **d'un pour cent** | **non** |
+| plancher de divulgation | 36 contributeurs < 50 | **non** |
+| bande sans verdict d'E2 | la CDHR vit tout entière dans le dernier centile | **oui, seule** |
+
+*Jambe 1.* La tolérance n'est pas élargie — mais un dépassement d'un pour cent ne soutient
+rien, et l'autopsie post hoc explique tout l'écart : **la livraison ne porte aucune colonne
+d'impôt au prélèvement forfaitaire.** `rev_financier_prelev_lib_imputes` est le REVENU
+soumis au prélèvement, jamais le prélèvement. La jambe fiscale était amputée du PFU —
+2,29 md€ sur les 70 ménages concernés, l'impôt même que la CDHR compte au numérateur.
+Rétabli à 12,8 %, le rendement tombe à 0,99 md€, dans la bande. Sans valeur probante pour
+le verdict, mais probant pour ceci : **le rendement ne fournit aucun motif de refus.**
+
+*Jambe 2.* Le plancher de 50 est le NÔTRE (D-140 : la convention n'en fixe aucun) ; au
+défaut de 11 du cahier des charges, ces 36 passeraient. Un refus qui bascule avec un
+paramètre choisi après coup est une préférence, pas un refus.
+
+*Et le préenregistrement s'est trompé,* ce qui est consigné plutôt que corrigé en silence.
+Le §6 annonçait « le refus ne pourra pas s'appuyer sur la rareté », sur la foi de 109
+ménages sous 20 %. Ce 109 appliquait 250 k€ à tout le monde ; le seuil légal est 500 k€ pour
+un couple, et 22 472 des 42 831 ménages en sont un. La population réelle est de 70 au-dessus
+du seuil, 36 contributeurs. La rareté mord exactement là où le préenregistrement la disait
+absente.
+
+*Jambe 3, la seule qui tienne.* E2 classe le dernier centile en `no_verdict` parce que
+l'ERFS sous-compte sa propre queue — une enquête ne voit pas le sommet. Trancher sur la
+CDHR, c'est rendre un verdict là où le dépôt s'est engagé, par commit et avant tout chiffre
+ERFS, à n'en rendre aucun. C'est la seule jambe qui ne dépende d'aucun choix postérieur aux
+données.
+
+**Décision 1 — refus de la CDHR reconduit, sur la jambe 3 seule, et la serrure est
+renommée.** La CDHR n'est plus « mal posée » : avec de la dispersion réelle elle se pose
+très bien. Elle est **inobservable dans cette source**, affirmation bien plus étroite. La
+clé n'est donc pas « des microdonnées » — essayées, sans succès — mais **une source qui VOIT
+LE SOMMET** : échantillon lourd DGFiP, POTE. Le défaut est dans le PLAN DE SONDAGE, pas dans
+la granularité, et aucune enquête auprès des ménages ne l'ouvrira. `plf_coverage.py` est
+corrigé : laisser « ERFS » en serrure enverrait le prochain lecteur chercher une clé déjà
+connue pour ne pas tourner.
+
+**Le test qui gardait cette clause ne pouvait pas la prendre en défaut.** Il n'affirmait que
+la présence de « microdata » et « D-096 » — vraies pendant tout le temps où la clause était
+fausse. C'est la forme D-044. Remplacé par un test qui nomme l'implémentation qui le fait
+échouer, et **vu échouer** sur la clause rétablie.
+
+**Décision 2 — la couche PFU s'ouvre, mais PAS par l'ERFS.** Deux raisons mesurées.
+**(a) 44,7 % de l'assiette capital de l'ERFS est IMPUTÉE** : 39,63 md€ déclarés contre
+32,00 md€ de revenus financiers imputés par l'INSEE. Bâtir dessus importerait un modèle
+d'imputation **sous une étiquette de microdonnée** — le défaut du §3, relocalisé et rendu
+invisible. **(b) Le prix serait le tableau lui-même** : une couche PFU bâtie sur l'ERFS en
+ferait une cible de calibration, et A1/A2/A3 cesseraient d'être des verdicts le jour même,
+comme les fractiles de la n° 41 dépensés par le recalage L1. La route publiée du §2 fournit
+déjà l'assiette (71,6 md€ ERFS 2022 contre ~80,6 md€ dérivés n° 41 2024 : deux routes
+indépendantes, même ordre). **L'ERFS reste la validation**, rôle que l'axe A4 lui assigne
+déjà mot pour mot.
+
+**Ce que ces gates ne décident pas.** Construire ou non. E3 reste « rien ».

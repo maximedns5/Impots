@@ -140,8 +140,17 @@ ARTICLES: tuple[Article, ...] = (
         paths=(),
         engine_ready=True, population_can_exercise=False,
         unlock=(
-            "real income microdata (ERFS, PHASE1C_ERFS.md — plan on the shelf since "
-            "D-096). Le refus relève de la CLASSE « seuil sur ratio » (D-105.2) : la "
+            "income microdata THAT SEES THE TOP — échantillon lourd DGFiP / POTE. "
+            "PAS l'ERFS : la clé nommée par D-096 a été OBTENUE (millésime 2022, "
+            "FPR) et essayée, et elle n'ouvre pas (D-141). Le motif « seuil sur "
+            "ratio » (D-105.2) est MORT — il visait l'imputation uniforme dans la "
+            "cellule, et des microdonnées portent de la dispersion réelle ; la "
+            "reconstruction rend 0,99 md€ contre 1,50 publié une fois sa jambe PFU "
+            "rétablie. Ce qui refuse est autre : la CDHR vit tout entière dans le "
+            "dernier centile, qu'une enquête auprès des ménages sous-compte par "
+            "construction — bande classée sans verdict par le tableau E2, préenregistrée "
+            "avant tout chiffre ERFS. Le défaut est dans le PLAN DE SONDAGE, pas dans "
+            "la granularité : aucune enquête ne l'ouvrira. Historique : la "
             "CDHR est définie par un seuil portant sur un RATIO — le taux moyen "
             "d'imposition rapporté au RFR — donc une imputation uniforme dans la cellule "
             "met tous les foyers du même côté du seuil de 20 %, et le rendement saute de "
