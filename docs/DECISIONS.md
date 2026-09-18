@@ -6926,3 +6926,42 @@ ferait tomber.**
 (voir `docs/M1_BACKTEST_INPUTS.md`). Construire la machinerie et sa garde sans les données
 est délibéré — cela retire la fausse affirmation du module tout de suite, au lieu de la
 laisser en place jusqu'aux téléchargements.
+
+## D-144 — §3.6 : une tranche non calculée n'est jamais tracée à zéro
+
+La décomposition de l'éventail de dette (§3.6) rend quatre tranches nommées — mécanique,
+bande comportementale, éventail macro, grille de scénarios — parce qu'une enveloppe unique
+répond à « quelle est l'incertitude », question sur laquelle personne ne peut agir, quand
+quatre tranches répondent à « incertain À CAUSE DE QUOI », qui est la question réellement
+posée.
+
+**Le défaut que ce module existe pour empêcher.** Si la bande comportementale n'a pas été
+chiffrée et qu'on la rend quand même, elle sort en largeur nulle : une ligne plate à côté
+de trois larges, qui se lit « le comportement ne déplace pas cette trajectoire ». C'est une
+affirmation forte, faite par accident, sur une grandeur que personne n'a mesurée. D'où
+trois gardes, chacune avec le test qui nomme l'implémentation qui la ferait tomber :
+
+1. **`computed=False` interdit de porter la moindre valeur.** L'implémentation qui échoue :
+   garder les nombres « au cas où » à côté du drapeau — le rendu lit les nombres.
+2. **`width_at` renvoie `None`, pas `0.0`**, pour une tranche non calculée. `None` force
+   chaque appelant à traiter l'absence ; `0.0` la laisse se moyenner en silence.
+3. **`dominant_source` REFUSE de désigner un vainqueur tant qu'une tranche manque.** Celle
+   qui manque pourrait être la plus large, et « l'éventail macro domine » se lirait comme
+   un constat sur le monde au lieu d'un artefact de ce qui a été calculé.
+
+**Aucune enveloppe combinée, et aucun `total`.** Même refus que `YearUncertainty` pour le
+chiffrage des réformes, pour la même raison : additionner les tranches affirmerait une
+indépendance que personne n'a établie et détruirait la seule information que l'affichage
+porte. Le test qui l'interdit lit **les deux surfaces** — attributs de classe ET champs de
+dataclass — parce que `hasattr` seul ne voit pas un champ déclaré sans défaut : un
+`total: tuple[...]` passerait à travers. Ce trou a été **vu** : le test échoue bien sur le
+champ injecté, à la ligne de l'assertion sur les champs.
+
+**Les sources sont une liste blanche.** Une tranche hors des quatre est refusée plutôt que
+rendue sous un nom que le lecteur devrait interpréter — la version denylist de cette idée
+est déjà au dossier comme défaut.
+
+**Ce qui n'est pas fait.** Les tranches « bande » et « éventail » viennent du chiffrage
+d'une réforme (§3.4) et arrivent donc en ENTRÉE ; ce module les rend, il ne les calcule
+pas. Une décomposition M1 les porte légitimement en `computed=False` avec leur motif, et
+c'est précisément le cas que les gardes ci-dessus rendent lisible au lieu de faux.
