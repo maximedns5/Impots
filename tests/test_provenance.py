@@ -130,3 +130,54 @@ def test_a_quarantined_file_still_carries_its_checksum() -> None:
     for entry in quarantined:
         assert entry["sha256"] and entry["bytes"] > 0
         assert entry["url"] is None
+
+
+@needs_manifest
+def test_the_real_manifest_loads_through_the_loader_production_uses() -> None:
+    """THE check that was missing, and that a 69-minute pass found instead of a test.
+
+    Every other assertion in this file reads `MANIFEST.json` as raw JSON via the local
+    `manifest()` helper. None of them ever constructed a `ManifestEntry`. So eighteen
+    hand-added entries — Phase 8's AFT/dette files and the ERFS documentation — sat in
+    the file for days writing `retrieved` where the generator writes `downloaded`, and
+    nothing noticed until `require_sourced()` raised `TypeError` from deep inside
+    `tests/test_cells.py`, eight failures at once and an hour into the gate.
+
+    **A manifest that parses as JSON is not a manifest that loads.** The tests checked
+    the first and production needs the second. That is the D-044 shape: a check taking a
+    different route than the thing it protects, so the thing can break while the check
+    stays green.
+
+    The implementation that fails this test: adding an entry by hand in a shape the
+    dataclass does not accept — which is exactly what happened, and what the kill test
+    below reproduces deliberately.
+    """
+    from impots.population.ingest import load_manifest
+
+    loaded = load_manifest()
+    raw = manifest()
+    assert set(loaded) == set(raw), (
+        "le chargeur et le JSON brut ne voient pas les mêmes fichiers")
+    assert loaded, "un manifeste vide se chargerait sans erreur et ne prouverait rien"
+
+
+def test_an_entry_in_an_unknown_shape_is_refused_rather_than_ignored(
+        tmp_path: Path, monkeypatch) -> None:
+    """The kill test for the assertion above, and the regression it reproduces.
+
+    `retrieved` is the field the eighteen hand-written entries used. Loading must FAIL
+    on it rather than skip the entry: an unknown field silently dropped would mean a
+    file whose provenance nobody recorded is read as one whose provenance is fine.
+    """
+    from impots.population.ingest import load_manifest
+
+    bad = tmp_path / "MANIFEST.json"
+    bad.write_text(json.dumps({"generated": "2026-09-18", "files": {
+        "hand_written.xlsx": {"url": "https://example.invalid/x.xlsx",
+                              "sha256": "c" * 64, "bytes": 1,
+                              "retrieved": "2026-09-18", "description": ""},
+    }}), encoding="utf-8")
+    monkeypatch.setattr("impots.population.ingest.MANIFEST_PATH", bad)
+
+    with pytest.raises(TypeError, match="retrieved"):
+        load_manifest()

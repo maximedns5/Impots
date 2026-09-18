@@ -43,6 +43,12 @@ class ManifestEntry:
     quarantined: bool = False
     """True when the file has no recorded source and has been moved out of the way
     (D-028). Its checksum is still tracked; it just cannot back a published figure."""
+    capture: str | None = None
+    """For a page captured rather than downloaded as a file: how and when. A web page
+    has no stable bytes, so the capture IS the provenance."""
+    provenance: str | None = None
+    """A route that is not a URL — a delivery, a hand copy. Carried rather than dropped
+    because « d'où vient ce fichier » has an answer here even when no URL does."""
 
 
 def sha256_of(path: Path) -> str:
