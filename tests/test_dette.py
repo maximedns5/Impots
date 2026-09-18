@@ -144,3 +144,109 @@ def test_exactly_the_horizon_is_allowed() -> None:
 def test_the_banner_names_what_is_not_simulated() -> None:
     """The standing banner is load-bearing text, so it is asserted rather than trusted."""
     assert "57" in dette.BANNER and "microsimulées" in dette.BANNER
+
+
+# ------------------------------------------------ §6.1 backtest
+
+
+def _realized(year, *, sfa, published, r=0.02, g=0.03, p=-0.01):
+    return dette.RealizedYear(year=year, r=r, g=g, primary_balance=p, sfa=sfa,
+                        published_ratio=published)
+
+
+def test_the_realized_year_cannot_be_built_without_its_sfa():
+    """THE guard §6.1 exists for, and it is carried by the TYPE rather than a check.
+
+    `YearInputs.sfa` defaults to 0,0, so any dette.backtest reading that field is unable to
+    tell a realized zero from an unset one. `dette.RealizedYear` drops the default, which
+    turns « j'ai oublié l'ajustement flux-stocks » from a silent fit into a TypeError.
+
+    The implementation that fails this test: giving `dette.RealizedYear.sfa` a default, i.e.
+    exactly the shortcut that would make `dette.backtest` accept `YearInputs` directly.
+    """
+    with pytest.raises(TypeError):
+        dette.RealizedYear(year=2019, r=0.02, g=0.03, primary_balance=-0.01,
+                     published_ratio=0.98)  # type: ignore[call-arg]
+
+
+def test_an_identically_zero_sfa_series_is_refused():
+    """A realized SFA that is zero every year is the default wearing a realized label.
+
+    Not bannered — REFUSED. Elsewhere a null SFA is an owned simplification for a
+    projection; here it is half of what the test measures, so accepting it would let a
+    dette.backtest « pass » by dropping a realized term, which is the definition of a fit.
+    """
+    years = [_realized(2019 + i, sfa=0.0, published=0.98) for i in range(3)]
+    with pytest.raises(dette.DebtError, match="identiquement nul"):
+        dette.backtest(0.98, years, tolerance=0.01)
+
+
+def test_one_nonzero_sfa_is_enough_to_clear_that_refusal():
+    """The kill test's twin: the refusal must key on the SERIES, not on any zero.
+
+    A realized SFA legitimately IS zero in some years. A guard rejecting every zero
+    would be unusable, and would be discovered only once real data arrived.
+    """
+    years = [_realized(2019, sfa=0.0, published=0.98),
+             _realized(2020, sfa=0.004, published=1.15)]
+    assert len(dette.backtest(0.98, years, tolerance=1.0)) == 2
+
+
+def test_years_with_a_gap_are_refused_rather_than_chained_across_it():
+    """The recurrence carries b_t into b_{t+1}. A missing year would make one year's
+    carry-forward stand in for another's, and the path would still look like a path."""
+    years = [_realized(2019, sfa=0.004, published=0.98),
+             _realized(2021, sfa=0.004, published=1.15)]
+    with pytest.raises(dette.DebtError, match="consécutives"):
+        dette.backtest(0.98, years, tolerance=0.01)
+
+
+def test_a_backtest_needs_no_spending_scenario_unlike_a_projection():
+    """The asymmetry, asserted so it cannot be « tidied » into symmetry later.
+
+    `project` refuses without a named spending scenario because future spending is a
+    choice nobody made. Past spending is already a fact inside the realized primary
+    balance, so demanding a scenario here would imply a choice that was never made.
+    """
+    years = [_realized(2019 + i, sfa=0.004, published=0.98) for i in range(3)]
+    assert dette.backtest(0.98, years, tolerance=1.0)  # no `spending=` argument at all
+
+
+def test_the_residual_chains_on_the_model_not_on_the_published_path():
+    """THE test that distinguishes a dette.backtest from seven one-year checks.
+
+    An implementation that restarts each year from the PUBLISHED ratio would re-anchor
+    the path at every step, so errors could never accumulate and the residuals would
+    stay small whatever the model did. Here the published path is held FLAT while the
+    inputs drive the modelled ratio up, so a correct implementation's residual GROWS
+    year on year; the re-anchoring implementation's would not.
+    """
+    years = [_realized(2019 + i, sfa=0.01, published=1.00, r=0.05, g=0.0, p=-0.02)
+             for i in range(4)]
+    points = dette.backtest(1.00, years, tolerance=10.0)
+    residuals = [abs(p.residual) for p in points]
+    assert residuals == sorted(residuals), "les résidus doivent s'accumuler"
+    assert residuals[-1] > residuals[0] * 2, (
+        "l'écart final doit être nettement plus grand que le premier ; s'il ne l'est "
+        "pas, la trajectoire a été re-calée sur le publié à chaque pas et le test ne "
+        "mesure plus que des transitions d'un an isolées")
+
+
+def test_the_residual_sign_says_which_way_the_model_missed():
+    """Signed, because « off by 2 points » does not say whether we over- or
+    under-predicted the debt, and the two have opposite diagnoses."""
+    year = _realized(2019, sfa=0.0, published=0.50, r=0.05, g=0.0, p=-0.02)
+    second = _realized(2020, sfa=0.01, published=0.50)
+    points = dette.backtest(1.00, [year, second], tolerance=10.0)
+    assert points[0].residual > 0, "modèle au-dessus du publié ⇒ résidu positif"
+
+
+def test_a_zero_tolerance_is_refused_because_nothing_could_ever_leave_the_band():
+    years = [_realized(2019, sfa=0.004, published=0.98)]
+    with pytest.raises(dette.DebtError, match="tolérance"):
+        dette.backtest(0.98, years, tolerance=0.0)
+
+
+def test_an_empty_backtest_is_refused():
+    with pytest.raises(dette.DebtError, match="aucune année"):
+        dette.backtest(0.98, [], tolerance=0.01)

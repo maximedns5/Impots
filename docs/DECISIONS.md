@@ -6856,3 +6856,73 @@ nos règles. L'historique git conserve les figures retirées (`0da23f4`) ; le d�
 publie rien, le fait est consigné plutôt que tu.
 
 **Ce que ces gates ne décident pas.** Construire ou non. E3 reste « rien ».
+
+## D-142 — Un manifeste qui s'analyse en JSON n'est pas un manifeste qui se charge
+
+**Symptôme.** La passe complète du 2026-09-18 est tombée rouge : 8 échecs dans
+`test_cells.py`, tous une seule `TypeError` —
+`ManifestEntry.__init__() got an unexpected keyword argument 'retrieved'`.
+
+**Cause.** Dix-huit entrées du manifeste — les fichiers AFT/dette de la phase 8 et la
+documentation ERFS — ont été écrites À LA MAIN plutôt que par
+`impots population manifest`. Elles portaient `retrieved` là où le générateur écrit
+`downloaded`, et ni `licence` ni `quarantined`. `load_manifest()` refusait donc de
+construire la moindre entrée. **Conséquence : `require_sourced()` levait une `TypeError`
+au lieu de faire respecter D-028, depuis plusieurs jours.** Il échouait FERMÉ, ce qui est
+la seule chance dans cette affaire : une divergence de schéma qui aurait été absorbée en
+silence aurait laissé passer des fichiers sans provenance.
+
+**Pourquoi aucun test ne l'a vu.** Toutes les assertions de `test_provenance.py` lisent
+`MANIFEST.json` comme du JSON brut, par un helper local. **Aucune n'a jamais construit de
+`ManifestEntry`.** Les tests vérifiaient le CONTENU du fichier ; la production a besoin
+qu'il se CHARGE. C'est la forme D-044 — un contrôle qui emprunte une autre route que la
+chose qu'il protège, si bien que la chose peut casser pendant que le contrôle reste vert.
+Une heure de passe a fait le travail d'un test unitaire.
+
+**Correction, en trois parties.** Les 18 entrées normalisées, ordre des clés stabilisé
+pour que la prochaine édition manuelle produise un diff lisible ; `capture` et
+`provenance` AJOUTÉS à `ManifestEntry` plutôt que jetés, parce qu'ils répondent
+réellement à « d'où vient ce fichier » pour une page capturée et pour une livraison sans
+URL ; et le garde manquant — le vrai manifeste doit se charger par la fonction que la
+production appelle — avec son test de mise à mort qui reproduit exprès la forme
+`retrieved`. **Les deux ont été VUS échouer** : le nouveau garde tombe sur le manifeste
+d'avant et passe sur celui d'après ; `test_cells.py` passe de 8 échecs à 23 réussites.
+
+**Règle qui en sort.** Une entrée de manifeste écrite à la main est une entrée écrite dans
+un schéma que rien ne vérifie. Le générateur reste la voie normale ; quand la main est
+inévitable, le garde de chargement est ce qui rattrape.
+
+## D-143 — Le module affirmait faire respecter une garde qui n'existait pas
+
+**`dette/path.py` écrivait : « `backtest` prend sfa sans défaut et refuse None —
+l'asymétrie est appliquée, pas documentée ».** Or `backtest` n'existait pas. La seule
+phrase qui se réclamait d'une application était la seule chose qui n'était que de la
+documentation. C'est pire qu'une fonction manquante : un lecteur en ressortait convaincu
+qu'une garde était en place.
+
+**La garde est maintenant portée par le TYPE.** `RealizedYear.sfa` n'a pas de défaut, donc
+le terme ne peut pas être omis — au lieu de simplement ne pas devoir l'être. La raison est
+mesurable : `YearInputs.sfa` vaut 0,0 par défaut, ce qui est CORRECT pour une projection,
+et c'est précisément pourquoi un backtest ne peut pas lire ce champ — un défaut à zéro est
+indiscernable d'un zéro réalisé.
+
+**Trois décisions de conception, chacune avec le test qui nomme l'implémentation qui la
+ferait tomber.**
+
+1. **Une série de SFA identiquement nulle est REFUSÉE**, pas bannerisée : ailleurs un SFA
+   nul est une simplification assumée ; ici il est la moitié de ce que le test mesure. Le
+   test jumeau vérifie qu'un zéro ISOLÉ passe, sinon la garde serait inutilisable sur des
+   données réelles et on ne l'apprendrait qu'à leur arrivée.
+2. **La récurrence enchaîne sur le ratio MODÉLISÉ, jamais sur le publié.** Repartir du
+   publié chaque année re-calerait la trajectoire à chaque pas et transformerait un
+   backtest de sept ans en sept transitions d'un an isolées — qui passeraient toujours. Le
+   test tient le publié à plat et exige que les résidus s'accumulent.
+3. **Aucun scénario de dépense n'est demandé**, contrairement à `project`. La dépense
+   future est un choix que personne n'a fait ; la dépense passée est un fait déjà contenu
+   dans le solde primaire réalisé. Exiger un scénario ici laisserait croire qu'on en a
+   choisi un.
+
+**Ce que cela ne fait pas.** Le backtest §6.1 n'est pas NOTÉ : il attend trois entrées
+(voir `docs/M1_BACKTEST_INPUTS.md`). Construire la machinerie et sa garde sans les données
+est délibéré — cela retire la fausse affirmation du module tout de suite, au lieu de la
+laisser en place jusqu'aux téléchargements.

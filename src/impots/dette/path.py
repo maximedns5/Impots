@@ -31,9 +31,12 @@ WHAT THIS MODULE REFUSES, AND WHY EACH REFUSAL IS A GUARD RATHER THAN A CONVENTI
 THE ONE INPUT THAT MAY NOT BE INVENTED. `sfa` defaults to zero for a PROJECTION, with a
 banner saying so, because nobody can source a future stock-flow adjustment. For the
 BACKTEST it is mandatory and must be realized: a backtest that drops a realized term and
-still reproduces the path has been fitted, not tested. `backtest` therefore takes sfa
-without a default and refuses None — the asymmetry between the two entry points is the
-whole point and is enforced, not documented.
+still reproduces the path has been fitted, not tested. The asymmetry between the two entry
+points is the whole point, and it is carried by the TYPE: `backtest` takes `RealizedYear`,
+whose `sfa` has no default, so the term cannot be omitted rather than merely should not be.
+`YearInputs.sfa` defaults to 0,0 and that is correct for a projection — which is exactly
+why a backtest may not read it, since a default of zero is indistinguishable from a
+realized zero.
 """
 
 from __future__ import annotations
@@ -192,5 +195,104 @@ def project(b0: float, years: list[YearInputs], *,
     for entry in years:
         point = step(ratio, entry)
         out.append(point)
+        ratio = point.ratio
+    return out
+
+# ---------------------------------------------------------------- §6.1 backtest
+
+@dataclass(frozen=True)
+class RealizedYear:
+    """One REALIZED year. Every term is an observation, and `sfa` has NO default.
+
+    This type exists precisely because `YearInputs.sfa` defaults to 0,0. A backtest
+    reading that field could not distinguish « l'ajustement flux-stocks réalisé vaut
+    zéro » from « l'appelant ne l'a jamais renseigné » — and those two are the
+    difference between a test and a fit. Dropping the default moves the refusal from a
+    runtime check that can be forgotten to a constructor that cannot be called without
+    the term.
+    """
+
+    year: int
+    r: float
+    """Implicit nominal rate REALIZED: charge d'intérêts D.41 rapportée au stock."""
+    g: float
+    """Nominal GDP growth REALIZED."""
+    primary_balance: float
+    """Solde primaire réalisé sur PIB, EXCÉDENT POSITIF — même convention que
+    `YearInputs`, restatée parce qu'une inversion de signe ici retourne toute la
+    trajectoire en gardant une allure plausible."""
+    sfa: float
+    """Ajustement flux-stocks RÉALISÉ. Sans défaut, exprès."""
+    published_ratio: float
+    """Le b_t publié, pour la comparaison année par année."""
+
+
+@dataclass(frozen=True)
+class BacktestPoint:
+    year: int
+    modelled_ratio: float
+    published_ratio: float
+    residual: float
+    """modelled − published, en points de PIB. Signé : le sens porte l'information."""
+    within: bool
+
+
+def backtest(b0: float, years: list[RealizedYear], *, tolerance: float) -> list[BacktestPoint]:
+    """L'identité §3.1 sur des entrées RÉALISÉES, comparée au b publié.
+
+    **Aucun scénario de dépense n'est demandé, et c'est délibéré.** `project` en exige
+    un parce que la dépense FUTURE est un choix que personne n'a fait ; la dépense
+    PASSÉE est un fait déjà contenu dans le solde primaire réalisé. Réclamer un scénario
+    ici laisserait croire qu'on en a choisi un, alors qu'on n'a rien choisi du tout.
+
+    **L'asymétrie sur le SFA est ce que cette fonction fait respecter.** Elle est portée
+    par le type : `RealizedYear.sfa` n'a pas de défaut. S'y ajoute un refus que le type
+    ne peut pas porter — une série identiquement nulle sur toutes les années, qui est la
+    signature du défaut de `YearInputs` recopié sous une étiquette « réalisé ».
+    """
+    if not years:
+        raise DebtError("aucune année réalisée : un backtest sans année ne teste rien")
+    if len(years) > HORIZON_CAP_YEARS:
+        raise DebtError(
+            f"{len(years)} années réalisées, plafond {HORIZON_CAP_YEARS}")
+
+    ordered = sorted(years, key=lambda y: y.year)
+    expected = list(range(ordered[0].year, ordered[0].year + len(ordered)))
+    if [y.year for y in ordered] != expected:
+        raise DebtError(
+            f"les années réalisées ne sont pas consécutives ({[y.year for y in ordered]}) : "
+            f"la récurrence enchaîne b_t sur b_{{t+1}}, donc un trou ferait passer le "
+            f"report d'une année pour celui d'une autre, sans erreur visible.")
+    if any(y.sfa is None for y in ordered):
+        raise DebtError(
+            "un ajustement flux-stocks vaut None : il est OBLIGATOIRE pour un backtest. "
+            "Un backtest qui laisse tomber un terme réalisé et reproduit quand même la "
+            "trajectoire a été ajusté, pas testé.")
+    if all(y.sfa == 0.0 for y in ordered):
+        raise DebtError(
+            f"l'ajustement flux-stocks est identiquement nul sur les {len(ordered)} "
+            f"années : historiquement il ne l'est pas, et cette série est la signature "
+            f"du défaut de `YearInputs.sfa` recopié sous une étiquette « réalisé ». "
+            f"REFUSÉ plutôt qu'accepté avec bannière, parce qu'ici le terme n'est pas "
+            f"une simplification assumée mais la moitié de ce que le test mesure.")
+    if tolerance <= 0:
+        raise DebtError(
+            "une tolérance nulle ou négative : un backtest dont rien ne peut sortir de "
+            "la bande ne mesure rien.")
+
+    out: list[BacktestPoint] = []
+    ratio = b0
+    for entry in ordered:
+        point = step(ratio, YearInputs(
+            year=entry.year, r=entry.r, g=entry.g,
+            primary_balance=entry.primary_balance, sfa=entry.sfa))
+        residual = point.ratio - entry.published_ratio
+        out.append(BacktestPoint(
+            year=entry.year, modelled_ratio=point.ratio,
+            published_ratio=entry.published_ratio, residual=residual,
+            within=abs(residual) <= tolerance))
+        # Le report enchaîne sur le MODÈLE, pas sur le publié. Repartir du publié
+        # chaque année re-calerait la trajectoire à chaque pas et ne testerait plus que
+        # sept transitions d'un an isolées — ce qui passerait toujours.
         ratio = point.ratio
     return out
