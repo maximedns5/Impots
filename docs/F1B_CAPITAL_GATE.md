@@ -135,3 +135,56 @@ une ligne CDHR au registre de sortie et à `STATE_RECEIPTS`. Mesuré (D-095) : p
 `impots_directs` mais pas dans la ligne que le registre publie comme `ir`. La garde de
 partie double refuserait la course — comportement correct, et prérequis à satisfaire avant
 que le bouton existe.
+
+---
+
+## 6. Ré-examen sur l'ERFS — le critère, préenregistré AVANT tout rendement
+
+**Ce qui a changé, et pourquoi le refus ne peut pas être simplement reconduit.** Le refus
+du §3 tient à une phrase précise : *« une imputation uniforme dans la cellule donne à
+chaque foyer du dernier millime le même revenu du capital, donc le même ratio »*. C'est un
+défaut de l'IMPUTATION, pas de la CDHR. L'ERFS porte de la dispersion réelle, foyer par
+foyer, et non des moyennes de cellule — **donc cette raison-là disparaît**. Elle ne peut
+pas être répétée ; la répéter serait maintenir un verdict après la disparition de son
+motif.
+
+Le déclencheur est inscrit dans le code lui-même : `plf_coverage.py` donne comme `unlock`
+de l'article 2 « real income microdata (ERFS) ». La condition est remplie. Le ré-examen
+n'est donc pas une faveur, c'est une obligation que le dépôt s'était imposée.
+
+**Ce qui est déjà mesuré au moment où ces lignes sont écrites**, et qui ne porte donc
+AUCUNE valeur probante — c'est dit plutôt que dissimulé : 198 ménages de l'ERFS déclarent
+≥ 250 k€ (`revdecm`), 50 déclarent ≥ 500 k€, et 109 des premiers affichent un taux
+apparent sous 20 %. La population n'est pas vide, et le plancher de divulgation ne la
+refuse pas. **Le refus ne pourra donc pas s'appuyer sur la rareté.**
+
+**LE CRITÈRE, préenregistré avant tout calcul de rendement.** La CDHR est reconstructible
+sur l'ERFS si et seulement si une reconstruction fruste reproduit le rendement publié —
+1,5 Md€, article 2 du PLF 2026 — **à un facteur 2 près**, soit la bande [0,75 ; 3,0] Md€.
+
+Pourquoi un facteur 2 et non 10 % : les trois jambes sont des approximations déclarées et
+chacune a un signe. `IRPP` est l'impôt SIMULÉ par l'INSEE, pas l'impôt liquidé par la
+DGFiP ; `revdecm` est le revenu déclaré du MÉNAGE, pas le RFR retraité du FOYER ; et le
+millésime 2022 précède la CDHR, dont les seuils sont NOMINAUX — un niveau de revenu
+inférieur d'environ 8 % fait passer des foyers sous le seuil sans qu'aucune erreur de
+modèle soit en cause. Une bande serrée mesurerait la somme de ces trois écarts, pas la
+question posée. Un facteur 2 est assez large pour les absorber et assez étroit pour
+échouer si la queue manque — **et c'est la queue qui est testée**, puisque le rendement de
+la CDHR vient de la composition des revenus tout en haut.
+
+**Ce critère peut échouer dans les deux sens, et les deux issues sont écrites d'avance :**
+
+* **Dans la bande** — la reconstruction tient, la raison du §3 a disparu et rien ne l'a
+  remplacée : **le gate s'ouvre**, l'article 2 change de `bucket`, et le refus est levé.
+* **Hors bande** — le refus est reconduit, mais **pour un motif mesuré et non supposé**,
+  et ce motif était lui-même préenregistré : le tableau de validation E2 classe le dernier
+  centile en `no_verdict` parce que *l'ERFS sous-compte sa propre queue — une enquête ne
+  voit pas le sommet, et c'est la raison d'être de la DGFiP n° 41*. La CDHR vit
+  ENTIÈREMENT dans cette bande. Trancher sur elle reviendrait à rendre un verdict là où
+  E2 s'est engagé, par commit et avant tout chiffre ERFS, à n'en rendre aucun.
+
+L'implémentation qui ferait échouer ce critère est précisément celle qui compte : une
+reconstruction dont la sélection ne mord sur personne rendrait 0,0 Md€, et une dont les
+jambes sont mal posées rendrait un multiple. Les deux sortent de la bande, et aucune
+tolérance ne sera élargie ensuite — l'élargir après coup serait décrire le résidu et
+l'appeler un verdict.
