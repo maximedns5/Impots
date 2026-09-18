@@ -280,6 +280,7 @@ def sector_balance(
     *,
     reform_cost: float,
     employer_contribution_delta: float = 0.0,
+    aggregate_deltas: dict[str, float] | None = None,
     rtol: float = BALANCE_RTOL,
     gross_rtol: float = BALANCE_GROSS_RTOL,
     floor: float = BALANCE_FLOOR_EUR,
@@ -302,11 +303,28 @@ def sector_balance(
     A reform that moves 17.7 bn of labour cost and reports a public cost of zero
     breaches this by 100 %.
     """
+    aggregate_deltas = aggregate_deltas or {}
+    # An instrument present on BOTH sides would be counted twice, and the identity would
+    # then demand a headline that double-counts it — a breach the guard would blame on
+    # the headline. Refused by name (§2.2, M2): the aggregate layer is a SEPARATE set of
+    # instruments, never a second spelling of a micro one.
+    collision = sorted(set(aggregate_deltas) & (set(STATE_RECEIPTS) | set(STATE_TRANSFERS)))
+    if collision:
+        raise SectorBalanceError(
+            f"instrument(s) {collision} présent(s) à la fois dans les postes micro et "
+            f"dans la couche agrégée : ils seraient comptés DEUX FOIS, et l'identité "
+            f"réclamerait alors un coût annoncé qui les double lui aussi. La couche "
+            f"agrégée est un jeu d'instruments distinct, jamais une seconde orthographe.")
+
     receipts = sum(deltas.get(name, 0.0) for name in STATE_RECEIPTS)
     transfers = sum(deltas.get(name, 0.0) for name in STATE_TRANSFERS)
+    # Bucket B receipts, entering with the same sign convention as the micro ones: more
+    # collected is a gain to the state.
+    aggregate = sum(aggregate_deltas.values())
     # What the state collects, across both sides. Employers paying less is a fall in
     # receipts, so the delta enters with its own sign.
-    state_gain = receipts - transfers + employer_contribution_delta
+    state_gain = (receipts - transfers + employer_contribution_delta
+                  + aggregate)
     # A cost to the state is the negative of what it gains.
     expected_cost = -state_gain
     unexplained = reform_cost - expected_cost
@@ -323,7 +341,8 @@ def sector_balance(
     # gross". The fix agreed with the one shape it had been tested on. See D-093.
     gross = (sum(abs(deltas.get(name, 0.0)) for name in STATE_RECEIPTS)
              + sum(abs(deltas.get(name, 0.0)) for name in STATE_TRANSFERS)
-             + abs(employer_contribution_delta))
+             + abs(employer_contribution_delta)
+             + sum(abs(v) for v in aggregate_deltas.values()))
     scale = max(abs(reform_cost), abs(expected_cost), floor)
     allowed = max(rtol * scale, gross_rtol * gross)
     if abs(unexplained) > allowed:
@@ -332,7 +351,8 @@ def sector_balance(
             f"coût rapporté {reform_cost:+,.0f} EUR contre {expected_cost:+,.0f} EUR "
             f"reconstitué depuis les postes (prélèvements {receipts:+,.0f}, "
             f"transferts {transfers:+,.0f}, cotisations patronales "
-            f"{employer_contribution_delta:+,.0f}), soit un écart de "
+            f"{employer_contribution_delta:+,.0f}, agrégats {aggregate:+,.0f}), "
+            f"soit un écart de "
             f"{unexplained:+,.0f} EUR — {unexplained / scale:+.2%} du net et "
             f"{unexplained / gross if gross else 0:+.3%} du brut ({gross:+,.0f} EUR). "
             f"Un secteur a bougé sans entrer dans le coût, ou l'inverse."
@@ -341,6 +361,7 @@ def sector_balance(
         "reform_cost": reform_cost,
         "expected_cost": expected_cost,
         "state_gain": state_gain,
+        "aggregate": aggregate,
         "unexplained": unexplained,
     }
 

@@ -7012,3 +7012,28 @@ les gardes sont censées attraper.
 de partie double s'auto-équilibrait, c'est au dossier. Et les instruments eux-mêmes (TVA,
 accises) attendent leurs ancres, qui sont des téléchargements. Le moteur et sa surface de
 refus ne dépendaient d'aucun des deux, et sont livrés d'abord.
+
+## D-146 — La partie double s'étend à la couche agrégée, et on l'a vue casser
+
+La DoD de M2 demandait l'identité de partie double **étendue sur la couche agrégée et
+testée contre un grand-livre cassé**. `sector_balance` prend désormais
+`aggregate_deltas`, les instruments du seau B entrant du côté des prélèvements avec la
+même convention de signe que les postes micro.
+
+**Le test que l'histoire de cette garde imposait.** La première version écrivait le côté
+État en fonction du côté entreprises : retirer le terme entreprises déplaçait les deux
+côtés ensemble et l'identité s'équilibrait à zéro — elle ne pouvait pas attraper le bogue
+pour lequel elle existait. L'extension devait donc être montrée **indépendante du chiffre
+annoncé** : on prend un scénario qui équilibre AVEC le terme agrégé, on retire ce seul
+argument, et l'identité doit casser. Une implémentation qui reconstruirait le côté agrégé
+depuis `reform_cost` continuerait de passer — c'est précisément celle qu'on exclut.
+
+**Un risque nouveau, gardé là où il naît.** Un instrument présent des DEUX côtés serait
+compté deux fois, et l'identité réclamerait alors un coût annoncé qui le double lui aussi
+— puis imputerait l'écart au chiffre annoncé, envoyant le lecteur corriger la seule chose
+qui était juste. Refusé par son nom.
+
+**Rétrocompatibilité mesurée, pas supposée.** Les sept scénarios des tests existants
+(RSA avec et sans `aefa`, AF avec et sans `crds_pfam`, les trois conventions de signe) ont
+été rejoués directement : comportement identique. Ils vivent dans le jeu `slow`, donc
+c'était la façon de le vérifier sans lancer la passe longue.

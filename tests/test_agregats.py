@@ -209,3 +209,72 @@ def test_a_component_without_a_code_is_refused() -> None:
 def test_an_instrument_with_no_components_is_refused() -> None:
     with pytest.raises(AggregateError, match="aucun composant"):
         _instrument(components=())
+
+
+# --------------------------------------------------------------------------- #
+# M2 DoD — the double-entry identity, extended and tested against a broken ledger
+# --------------------------------------------------------------------------- #
+def test_a_mixed_micro_and_aggregate_scenario_balances() -> None:
+    """A bundle spanning both layers must close across both."""
+    from impots import guards
+
+    result = guards.sector_balance({"ir": 1e9}, reform_cost=-3e9,
+                                   aggregate_deltas={"tva": 2e9})
+    assert result["unexplained"] == pytest.approx(0.0, abs=1.0)
+    assert result["aggregate"] == pytest.approx(2e9)
+
+
+def test_the_identity_fires_on_a_deliberately_broken_ledger() -> None:
+    """M2's DoD, stated as such: tested against a ledger broken ON PURPOSE.
+
+    The TVA moved 2 md€ and the headline reports only the IR. That is exactly the shape
+    of the bug the original guard was written for — one sector moving without entering
+    the reported cost — now reproduced across the aggregate layer.
+    """
+    from impots import guards
+
+    with pytest.raises(guards.SectorBalanceError, match="ne correspond pas"):
+        guards.sector_balance({"ir": 1e9}, reform_cost=-1e9,
+                              aggregate_deltas={"tva": 2e9})
+
+
+def test_the_aggregate_term_is_load_bearing_and_not_derived_from_the_headline() -> None:
+    """THE test the first double-entry guard's history demands.
+
+    That guard wrote the state's side in terms of the firm's, so removing the firm term
+    moved both sides together and the identity balanced at zero — it could not catch the
+    bug it existed for. So the extension must be shown to be INDEPENDENT of the headline:
+    take a scenario that balances WITH the aggregate term, drop only that argument, and
+    the identity must break. An implementation that reconstructed the aggregate side from
+    `reform_cost` would keep passing here, and that is the implementation being excluded.
+    """
+    from impots import guards
+
+    guards.sector_balance({"ir": 1e9}, reform_cost=-3e9, aggregate_deltas={"tva": 2e9})
+    with pytest.raises(guards.SectorBalanceError, match="ne correspond pas"):
+        guards.sector_balance({"ir": 1e9}, reform_cost=-3e9)
+
+
+def test_an_instrument_on_both_sides_is_refused_as_a_double_count() -> None:
+    """The risk the extension creates, guarded where it is created.
+
+    Counted twice, the identity would demand a headline that double-counts it too — and
+    would then blame the breach on the headline, sending the reader to fix the one thing
+    that was right.
+    """
+    from impots import guards
+
+    with pytest.raises(guards.SectorBalanceError, match="DEUX FOIS"):
+        guards.sector_balance({"ir": 1e9}, reform_cost=-2e9,
+                              aggregate_deltas={"ir": 1e9})
+
+
+def test_an_aggregate_receipts_rise_is_a_gain_to_the_state() -> None:
+    """Sign convention, asserted in both directions — a sign error here inverts the
+    whole bundle while still balancing internally."""
+    from impots import guards
+
+    guards.sector_balance({}, reform_cost=-2e9, aggregate_deltas={"tva": 2e9})
+    guards.sector_balance({}, reform_cost=2e9, aggregate_deltas={"tva": -2e9})
+    with pytest.raises(guards.SectorBalanceError):
+        guards.sector_balance({}, reform_cost=2e9, aggregate_deltas={"tva": 2e9})
