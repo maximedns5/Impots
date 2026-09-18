@@ -88,6 +88,12 @@ def _print_aggregates(agg: aggregate_module.Aggregates) -> None:
 #: an unmanifested file that backs a figure is exactly the gap D-026 closes: a
 #: checksum without a URL proves the file has not changed, not where it came from.
 KNOWN_SOURCES: dict[str, tuple[str, str]] = {
+    "insee_cn2025_t7301_compte_administrations_publiques_S13.xlsx": (
+        "https://www.insee.fr/fr/statistiques/fichier/8988833/T_7301_fr.xlsx",
+        "INSEE, comptes nationaux annuels base 2020, tableau 7.301 — compte des "
+        "administrations publiques (S13), millésime 2025 (1949→2025). D41 et B9 : les "
+        "entrées r et p du backtest de dette §6.1.",
+    ),
     "FD_EEC_2024.parquet": (
         "https://www.insee.fr/fr/statistiques/fichier/8632441/FD_EEC_2024.parquet",
         "Enquête Emploi en Continu 2024, fichier détail",

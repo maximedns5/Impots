@@ -1309,6 +1309,15 @@
       "description": "Formulaire CERFA 2042, document public.",
       "quarantined": false,
       "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "insee_cn2025_t7301_compte_administrations_publiques_S13.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988833/T_7301_fr.xlsx",
+      "sha256": "9c020cff6650162ffdec9c116f7bc288a6ac0084c2e0f5cc1ac8b572445d1845",
+      "bytes": 62089,
+      "downloaded": "2026-09-18",
+      "licence": "unknown",
+      "description": "INSEE, Comptes nationaux annuels base 2020, tableau 7.301 « Compte des administrations publiques (S13) », MILLÉSIME 2025 : couverture 1949→2025. Porte D41 Intérêts (en RESSOURCES et en EMPLOIS — l'intérêt net est la différence) et B9 capacité/besoin de financement. Entrées r et p du backtest §6.1. Supersède insee_cn2024_t7301_...S13.xlsx, qui s'arrête en 2024 et reste en quarantaine faute d'URL.",
+      "quarantined": false
     }
   }
 }

@@ -70,6 +70,37 @@ Le reste de la liste de téléchargement de la phase 8 (accises DGDDI, COICOP, v
 mobilité, DMTO, CIR, taxe sur les salaires, TASCOM/TGAP/TTF) concerne §2 et M2, pas §6.1,
 et ne bloque pas ce backtest.
 
+## 4bis. Mise à jour du 2026-09-18 — deux des trois entrées sont tombées
+
+**Le compte des APU est arrivé, et c'est le MILLÉSIME 2025.** Le fichier déposé par le
+propriétaire n'était pas celui que le dépôt détenait : 62 089 octets contre 63 699, et une
+empreinte différente. Vérifié avant tout usage, précisément parce qu'un même nom de fichier
+sur deux millésimes est la façon la plus simple de certifier des octets que personne n'a
+téléchargés. C'est donc une entrée NOUVELLE, pas une URL recollée sur l'ancienne.
+
+Il couvre **1949 → 2025**, soit les sept années de §6.1 d'un coup, et rend le fichier
+millésime 2024 redondant — celui-ci reste en quarantaine, faute d'URL, et n'a plus besoin
+d'en recevoir une.
+
+L'URL a été récupérée depuis les métadonnées de téléchargement de macOS
+(`kMDItemWhereFroms`) plutôt que ressaisie :
+`https://www.insee.fr/fr/statistiques/fichier/8988833/T_7301_fr.xlsx` — identifiant 8988833,
+le même lot de publication que le PIB déjà manifesté (8988797). Licence enregistrée
+`unknown`, comme son jumeau de lot : la page n'a pas été lue ici, et une licence supposée
+n'est pas une licence constatée.
+
+**Vérifié, valeurs à l'appui** : les sept années portent `D41` en ressources ET en emplois
+— l'intérêt NET est leur différence, et les confondre fausserait `r` d'un facteur proche de
+deux — ainsi que `B9`. Deux contrôles de vraisemblance passent : `B9` 2020 à −207 md€ est
+bien l'année Covid, et l'intérêt net 2025 (62,2 md€, toutes APU) se place juste au-dessus
+de l'ancre programme 117 (58,6 md€, État seul), ce qui est le bon ordre pour des périmètres
+emboîtés.
+
+**Il reste UNE entrée, et une seule : l'ajustement flux-stocks** (§3). Le backtest ne
+tournera pas sans lui, et c'est voulu — `backtest` prend le SFA sans défaut, refuse `None`,
+et refuse aussi une série identiquement nulle, qui est la signature du défaut recopié sous
+une étiquette « réalisé ».
+
 ## 5. Une correction, au passage
 
 Le premier contrôle mené ici a conclu que **76 des 144 fichiers du manifeste étaient absents
