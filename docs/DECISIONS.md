@@ -6615,3 +6615,63 @@ s'improvise pas après avoir vu le chiffre.
 
 **E3 reste « rien ».** Aucun recalage. Le tableau part au relecteur ; les dépenses se
 décident ensuite, une par une, au registre.
+
+## D-138 — A3 : la FORME des prestations est fausse, et dans un sens qui se lit
+
+**2026-09-18.** Mesuré après le commit de méthode `cde6383`, jamais avant.
+
+| quartile de niveau de vie | ERFS | nous | écart | ±20 % |
+|---|---|---|---|---|
+| Q1 | 57,4 % | **69,3 %** | +21 % | HORS |
+| Q2 | 23,9 % | 17,8 % | −25 % | HORS |
+| Q3 | 12,2 % | 9,4 % | −23 % | HORS |
+| Q4 | 6,5 % | **3,5 %** | −46 % | HORS |
+
+**Les quatre quartiles sont hors bande, et le motif est monotone** : notre masse de
+prestations est **trop concentrée en bas**. L'ERFS en place 42,6 % au-dessus du premier
+quartile ; nous, 30,7 %. Plus on monte, plus l'écart se creuse — jusqu'à moitié moins que
+l'observé au dernier quartile.
+
+### Ce que ce constat ajoute, et ce qu'il ne prouve pas
+
+**Il ajoute un défaut de CIBLAGE, invisible sur les lignes existantes.** La réconciliation
+mesure des masses de dépense à travers des ponts de non-recours ; elle ne peut pas voir *où*
+la prestation atterrit dans la distribution. A3 le voit, et c'est le pire des deux cas que le
+préenregistrement envisageait : « si la forme est fausse, [le défaut] est de ciblage, ce qui
+est plus grave ».
+
+**Il ne prouve pas** que tout l'écart est du modèle, et deux réserves doivent voyager avec :
+
+1. **Les paniers ne sont pas identiques.** Nous sommons `ppa + rsa + aide_logement + af` ;
+   l'ERFS somme `PPA + prest_precarite_rsa + prest_logement + prest_fam_petite_enfance +
+   prest_fam_autres`. Les prestations familiales montent plus haut dans la distribution que
+   les minima sociaux, donc une part de l'écart des quartiles hauts est un écart de
+   périmètre et non de ciblage. Nommé plutôt que corrigé : corriger demanderait d'apparier
+   dispositif à dispositif, ce qui se préenregistre.
+2. **Le non-recours n'est neutre que s'il est uniforme.** Le préenregistrement l'a dit :
+   « un non-recours uniforme sur la distribution laisse la forme intacte ». Il ne l'est
+   probablement pas — le non-recours du RSA est plus fort en bas — mais cela jouerait dans
+   le sens **inverse** de l'écart mesuré : un non-recours concentré en bas rendrait la forme
+   ERFS *moins* basse, donc l'écart réel serait **plus grand** que celui affiché, pas plus
+   petit.
+
+### Le lien avec A2, qui n'est probablement pas une coïncidence
+
+A2 a montré que nos familles monoparentales sont **trop riches** (+66 % au Q2, +82 % au Q3)
+et que les ménages « autres » sont **absents**. Ce sont précisément les ménages qui portent
+des prestations. Si les monoparentales sont mal placées dans la distribution, la forme de la
+masse de prestations l'est aussi — **le défaut de joint de A2 et le défaut de ciblage de A3
+peuvent être la même erreur vue deux fois**, et c'est une hypothèse à tester, pas un
+résultat.
+
+### État du tableau E2
+
+| axe | verdict |
+|---|---|
+| A1 parts de revenu par décile (D2-D9) | **PASSE**, motif systématique +3,7 à +5,7 % |
+| A2 composition × revenu | **ÉCHEC**, 10 cases, dont une catégorie absente |
+| A3 forme des prestations | **ÉCHEC**, 4 quartiles sur 4 |
+| A4 capital | échec par construction ; rend 79,0 % des ménages, 8,63 % du revenu |
+| queues D1/D10 | sans verdict, par préenregistrement |
+
+**E3 reste « rien ».** Aucun recalage n'est tiré de ceci ; le tableau part au relecteur.
