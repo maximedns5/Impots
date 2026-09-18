@@ -6704,3 +6704,68 @@ documentation n'est suivie par git ; l'arbre est propre pour le garde ; et une v
 glissée sous `data/raw/` — `fpr_menage_2022.csv` copié en `erfs_probe.csv` et forcé dans
 l'index — **est toujours refusée, code 1**. Élargir l'emplacement autorisé n'a pas élargi ce
 qui peut entrer dans git.
+
+## D-140 — La convention est retrouvée, et elle ne fixe AUCUN seuil chiffré
+
+**2026-09-18.** D-134 enregistrait un plancher de divulgation de 11 ménages « PAR DÉFAUT et
+non par lecture », faute de convention. La convention a été retrouvée et lue. Elle change la
+réponse, mais pas dans le sens attendu.
+
+### Ce qui est maintenant connu
+
+**Référence** : Progedo-ADISP, **demande n° 38715** — *engagement de confidentialité auprès
+du Comité du Secret Statistique*, signé le **2025-09-03** à Boulogne-Billancourt. Le
+document n'était pas dans la livraison : il est dans `~/Downloads`, en **scan** (5 caractères
+de texte extractible sur six pages), donc invisible à toute recherche par contenu. Retrouvé
+par nom, rendu en image, et lu.
+
+### Elle ne fixe aucun seuil, et c'est le constat
+
+L'engagement impose une **obligation de RÉSULTAT**, pas un seuil :
+
+> « de manière générale, toute procédure nécessaire dans le but d'empêcher l'identification
+> directe ou indirecte d'unités statistiques individuelles »
+
+et renvoie les nombres à « les règles générales du secret statistique » et aux « règles de
+secret éventuellement spécifiques à certaines sources (**disponibles dans leur documentation
+ou auprès des producteurs**) ». J'ai suivi ce renvoi : la méthodologie ERFS, le dictionnaire
+FPR et le dictionnaire des codes EEC **n'énoncent aucune règle de case** — ils décrivent des
+tables de diffusion, pas un seuil.
+
+**Il n'y a donc rien à citer, et le 11 du handoff n'a jamais été dans la convention.**
+
+### Ce qui remplace le défaut : un mécanisme, pas un meilleur nombre
+
+`src/impots/erfs/disclosure.py`. Trois choix, chacun tiré de l'obligation de résultat :
+
+* **le plancher est un argument OBLIGATOIRE, sans défaut** — puisque aucune source ne le
+  fixe, tout nombre est le choix de quelqu'un, et le forcer à être passé le maintient un
+  choix plutôt qu'une constante que personne ne réexamine ;
+* **le comptage est NON PONDÉRÉ** — une pondération transforme trois ménages en milliers de
+  personnes et ne divulgue pas moins pour autant ;
+* **une case fine refuse le TABLEAU ENTIER**, pas seulement elle-même : retirer une case d'un
+  tableau dont les marges sont publiées la laisse retrouvable par soustraction. Une
+  suppression que l'arithmétique défait n'est pas une suppression.
+
+**Et l'argument qui rend le nombre manquant sans importance** : la case la plus fine publiée
+par E2 porte **163 ménages non pondérés**. Un plancher de 11, 50 ou 100 ne change **rien** à
+ce qui a été publié. Le plancher suggéré passe donc à **50**, très au-dessus du défaut qu'il
+remplace, et il ne coûte rien parce qu'il ne mordra que sur ce que personne ne voulait
+publier.
+
+### Trois obligations que personne n'avait relevées, parce que le document manquait
+
+1. **Stockage chiffré pendant le travail** — « stocker les données sur un serveur sécurisé ou
+   dans un espace crypté ». Vérifié : **FileVault est actif**. L'obligation est satisfaite au
+   niveau du volume. Le répertoire est en outre passé de `drwxr-xr-x` à `drwx------`.
+2. **Destruction des fichiers à l'issue du travail de recherche.** C'est une obligation
+   datée, pas une bonne pratique, et elle n'était nulle part au dossier.
+3. **Information du diffuseur** : toute communication ou publication doit lui être signalée
+   avec ses références, ainsi qu'au Comité du secret statistique — et, **pour les travaux sur
+   données d'origine fiscale**, au bureau des études statistiques en matière fiscale de la
+   DGFiP. Les sources doivent être citées selon le modèle fourni.
+
+Les manquements exposent aux articles **226-13 et 226-14** du code pénal (un an, 15 000 €) et
+226-16 à 226-24. Cela ne change pas ce que fait le projet — rien ne publie — mais cela change
+ce qui devra être fait **le jour où quelque chose publiera**, et c'est désormais au dossier
+plutôt que dans un tiroir.
