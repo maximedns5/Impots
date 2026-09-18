@@ -6521,3 +6521,97 @@ n'avait pas : **quelle part des ménages ERFS porte un revenu du capital**.
 **Le refus de source dépensée de L1 ne s'applique pas ici** : la population n'a jamais été
 ajustée sur l'ERFS, sur aucun axe. Les verdicts contre l'ERFS sont donc légitimes, et c'est
 toute la valeur de cette interruption.
+
+## D-137 — E2 : le tableau de validation ERFS, et le joint que le raking n'avait jamais contraint
+
+**2026-09-18.** Mesuré **après** le commit de préenregistrement `090cb6d`, jamais avant.
+Moteur **au millésime 2022** contre **ERFS 2022**, tables ménage et individu, **agrégats
+pondérés seulement**. Rien n'a quitté cette machine.
+
+**Divulgation, vérifiée et non supposée** : la plus petite case publiée ci-dessous compte
+**163 ménages non pondérés**, quinze fois le plancher de 11. Aucune valeur de ligne
+n'apparaît. La ligne prudente de D-134 portait sur un fichier de rapport committé en
+l'absence de clause ; la règle 2 du handoff **autorise explicitement** « aggregates above a
+disclosure floor », et c'est exactement ce qui suit.
+
+### A1 — parts du revenu par décile : PASSE sur les huit déciles à verdict
+
+Pondéré **personne**, des deux côtés. Ce point a failli être manqué : ma première passe ERFS
+utilisait `wprm`, le poids **ménage**, alors que la statistique publiée — et le module
+`aggregate` de ce projet, qui le dit dans son propre commentaire — pondère par **personne**.
+L'ERFS porte `wpri` pour cela. Comparer les deux conventions aurait reproduit l'erreur
+d'estimateur que la réconciliation avait déjà corrigée une fois.
+
+| décile | ERFS | nous | écart |
+|---|---|---|---|
+| D2 | 5,25 % | 4,97 % | −5,5 % |
+| D3 | 6,36 % | 6,26 % | −1,6 % |
+| D4 | 7,34 % | 7,42 % | +1,1 % |
+| D5 | 8,21 % | 8,52 % | **+3,7 %** |
+| D6 | 9,16 % | 9,63 % | **+5,1 %** |
+| D7 | 10,27 % | 10,83 % | **+5,5 %** |
+| D8 | 11,67 % | 12,34 % | **+5,7 %** |
+| D9 | 13,88 % | 14,53 % | **+4,7 %** |
+
+Les huit tiennent la bande de ±10 %. **Mais le motif est systématique** : D5 à D9 sont hauts
+de +3,7 à +5,7 %. C'est **la même distorsion**, dans le même sens et du même ordre, que celle
+mesurée au gate L1 contre DGFiP n° 41 (+3,6 à +9,2 % sur ces déciles). Deux comparateurs
+indépendants, dont un jamais dépensé, disent la même chose : la distribution est **tassée
+vers le milieu supérieur**.
+
+D1 (−9,7 %) et D10 (−8,3 %) sont **sans verdict par préenregistrement**, et le restent.
+
+### A2 — composition × quartile : ÉCHEC, dix cases hors bande, et c'est le résultat du jour
+
+| quartile | composition | ERFS | nous | écart |
+|---|---|---|---|---|
+| Q2 | Monoparentale | 10,7 % | 17,8 % | **+66 %** |
+| Q3 | Monoparentale | 6,7 % | 12,1 % | **+82 %** |
+| Q4 | Monoparentale | 4,2 % | 5,7 % | +33 % |
+| Q3 | Personne seule | 16,2 % | 20,6 % | +27 % |
+| Q4 | Personne seule | 12,4 % | 18,8 % | **+51 %** |
+| Q1–Q4 | **Autre** | 2,2 à 5,0 % | **0,0 %** | **−100 %** |
+
+Trois constats, et aucun n'était visible sur les marges :
+
+1. **Les ménages « autres » n'existent pas chez nous.** Zéro, dans les quatre quartiles ;
+   l'ERFS en compte 2,2 à 5,0 %. Notre France synthétique ne porte **aucun ménage à trois
+   adultes ou plus** — ni cohabitation, ni multigénérationnel. Ce n'est pas un écart de
+   calage, c'est une catégorie absente.
+2. **Nos familles monoparentales sont beaucoup trop riches** : +66 % au Q2, +82 % au Q3.
+   Elles devraient être concentrées en bas ; elles sont étalées vers le haut.
+3. **Nos personnes seules le sont aussi**, et de plus en plus haut : +13 % au Q1, +51 % au Q4.
+
+**C'est exactement ce que le préenregistrement annonçait comme l'axe le plus informatif** :
+le raking a atteint les marges type-de-ménage ET personne **séparément**, et leur **joint**
+n'était contraint par rien. Une population peut toucher ses deux marges et se tromper
+lourdement sur leur croisement — ici elle le fait, et aucune ligne de réconciliation
+existante ne pouvait le voir.
+
+### A4 — le capital : échec par construction, et la grandeur que F1b n'avait pas
+
+La population synthétique porte **zéro** revenu du capital ; le résidu est −100 % et n'est
+pas une mesure. Ce que l'axe **rend**, en revanche, est ce que le gate F1b cherchait :
+
+* **79,0 %** des ménages ERFS portent un revenu du capital — dont 71,4 % un revenu financier
+  (prélèvement libératoire et imputés), 33,9 % des valeurs mobilières, 13,8 % du foncier ;
+* masse : **107,3 md€**, soit **8,63 %** du revenu disponible ;
+* **62,2 %** de cette masse est détenue par le dernier décile de niveau de vie.
+
+Un modèle qui ignore le capital ignore donc **8,6 % du revenu disponible**, concentré aux
+deux tiers dans le dernier décile — c'est-à-dire précisément là où le gate L1 venait déjà de
+recaler la queue.
+
+### Ce que E2 ne fait pas
+
+**A3 (masse d'éligibilité aux prestations) n'est pas mesurée** dans cette passe. Et il faut
+dire pourquoi plutôt que la laisser tomber : c'est le seul axe préenregistré qui ne soit
+**pas invariant au niveau**. Nos revenus sont calibrés sur 2024, l'ERFS observe 2022, et les
+seuils d'éligibilité sont nominaux : un écart de niveau de ~8 % entre les deux millésimes
+déplacerait mécaniquement l'effectif éligible sans qu'aucune erreur de modèle soit en cause.
+A1, A2 et A4 sont des parts et des joints, donc insensibles au niveau ; A3 ne l'est pas.
+Le mesurer demande soit de déflater, soit de l'assumer — et ce choix se préenregistre, il ne
+s'improvise pas après avoir vu le chiffre.
+
+**E3 reste « rien ».** Aucun recalage. Le tableau part au relecteur ; les dépenses se
+décident ensuite, une par une, au registre.
