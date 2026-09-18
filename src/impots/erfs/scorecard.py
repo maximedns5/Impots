@@ -119,17 +119,29 @@ AXES: tuple[Axis, ...] = (
              "peut être exacte et fausse à la fois, donc la bande est plus large que A1 "
              "(une case croisée porte moins d'effectif) mais reste refusante."),
          expected="Inconnu. C'est l'axe le plus informatif du tableau."),
-    Axis(key="a3_prestations_mass",
-         label="Masse d'éligibilité aux prestations (effectif, pas dépense)",
+    Axis(key="a3_prestations_shape",
+         label="Prestations : FORME de la distribution par quartile, pas niveau",
          tolerance=0.20,
          rationale=(
-             "20 % relatif sur l'EFFECTIF éligible. Les lignes de réconciliation comparent "
-             "une DÉPENSE à travers un pont de non-recours ; l'effectif éligible est une "
-             "autre grandeur, qu'aucune calibration n'a touchée. La bande est large parce "
-             "que l'éligibilité dépend de règles que l'ERFS ne porte pas toutes — mais "
-             "elle refuse encore : D-015 mesurait une erreur de densité de +107 %."),
-         expected="Écart attendu, direction inconnue ; les trois lignes prestations sont "
-                  "rouges depuis la phase 1."),
+             "20 % relatif sur la PART de la masse de prestations tombant dans chaque "
+             "quartile de niveau de vie — une FORME, pas un niveau. Deux raisons, "
+             "préenregistrées avant toute mesure et non trouvées après.\n\n"
+             "(1) NIVEAU CONTAMINÉ PAR LE MILLÉSIME. C'est le seul axe non invariant au "
+             "niveau : nos revenus sont calibrés sur 2024, l'ERFS observe 2022, et les "
+             "seuils d'éligibilité sont NOMINAUX. Un écart de niveau d'environ 8 % entre "
+             "les deux millésimes déplacerait l'effectif éligible sans qu'aucune erreur de "
+             "modèle soit en cause.\n\n"
+             "(2) LES DEUX CÔTÉS NE MESURENT PAS LA MÊME CHOSE. Notre moteur calcule un "
+             "DROIT ; l'ERFS observe un VERSEMENT, donc après non-recours. Comparer les "
+             "effectifs mesurerait le non-recours, pas le modèle — et le non-recours est "
+             "déjà porté par les ponts DREES de la réconciliation.\n\n"
+             "La forme échappe aux deux : elle demande « les prestations vont-elles à la "
+             "bonne PARTIE de la distribution ? », question à laquelle ni le millésime ni "
+             "le non-recours ne répondent à notre place — un non-recours uniforme sur la "
+             "distribution laisse la forme intacte."),
+         expected="Inconnu. Si la forme est juste alors que les niveaux sont rouges depuis "
+                  "la phase 1, le défaut est de niveau ; si la forme est fausse, il est de "
+                  "ciblage, ce qui est plus grave et invisible sur les lignes actuelles."),
     Axis(key="a4_capital_joint",
          label="Revenus du capital : présence et jointure avec le revenu",
          tolerance=0.0,
