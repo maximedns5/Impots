@@ -7037,3 +7037,43 @@ qui était juste. Refusé par son nom.
 (RSA avec et sans `aefa`, AF avec et sans `crds_pfam`, les trois conventions de signe) ont
 été rejoués directement : comportement identique. Ils vivent dans le jeu `slow`, donc
 c'était la façon de le vérifier sans lancer la passe longue.
+
+## D-147 — Les entrées réalisées du backtest, et les deux pièges des fichiers publiés
+
+`dette/comptes.py` assemble les entrées de §6.1 depuis trois fichiers manifestés, chacun
+ouvert par `require_sourced` : le compte des APU (7.301, millésime 2025), le PIB (T_1101)
+et le détail de la dette Maastricht. Deux pièges s'y trouvaient, et chacun est épinglé par
+un contrôle plutôt que par un commentaire.
+
+**Piège 1 — `D41` apparaît DEUX FOIS.** Les APU paient ET reçoivent des intérêts ; la
+charge qui entre dans l'identité est le NET, emplois moins ressources. Lire la seule ligne
+d'emplois surestime de toute la jambe de ressources — 67,5 contre 62,2 md€ en 2025, soit
+8 % — et comme `r` est cette charge divisée par le stock, l'erreur atterrit entière sur le
+taux. L'assembleur exige DEUX lignes `D41` et refuse par son nom s'il n'en trouve qu'une :
+un millésime qui fusionnerait les jambes rendrait sinon le net égal au brut, en silence.
+
+**Piège 2 — le stock de dette est en MILLIONS quand tout ce qui l'entoure est en
+milliards.** 2019T4 se lit 2 387 398,96, c'est-à-dire 2 387,4 md€. Une confusion vaut un
+facteur mille qui s'analyse encore comme un nombre et se trace encore comme une courbe.
+L'unité n'est donc pas affirmée en commentaire : `check_units` divise le stock par le PIB
+et exige de retrouver le ratio PUBLIÉ. Lue en milliards, la série échoue d'un facteur
+mille ; mesurée sur les vraies données, elle concorde à 0,02 % au pire. Classe de
+l'en-tête menteur, traitée comme cette classe doit l'être.
+
+**Contrôles de vraisemblance à réponse connue**, qui tomberaient les premiers si
+l'assembleur lisait la mauvaise ligne ou la mauvaise colonne : 2020 doit être le déficit le
+plus profond de la fenêtre (−207 md€), le PIB 2020 doit RECULER, et la charge nette doit
+environ doubler entre 2020 et 2025. Aucune tolérance n'est dépensée : ce sont des FORMES.
+
+**Le SFA reste la seule entrée manquante, et son refus dit où le trouver.** Il ne viendra
+d'aucun millésime de la 7.301 — ce n'est pas une opération du SEC mais le pont entre B.9 et
+la variation du stock. Le message nomme les tableaux de notification EDP et Eurostat
+`gov_10dd_edpt1`, et un test vérifie que « 7.301 » figure dans le refus : sans cela, le
+prochain lecteur irait le chercher dans une version plus récente du même fichier. Un refus
+qui ne dit pas ce qui le lèverait est indiscernable d'un mur.
+
+**Un défaut attrapé dans le test, encore.** Le premier fixture du contrôle d'unités
+utilisait la valeur CORRECTE en la nommant « mal lue » ; le test échouait donc en
+annonçant que la garde ne se déclenchait pas, alors qu'elle avait raison de se taire.
+Corrigé — et c'est la deuxième fois de la session qu'un test de mise à mort mal posé se
+fait passer pour une garde inerte.
