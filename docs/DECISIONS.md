@@ -6675,3 +6675,32 @@ résultat.
 | queues D1/D10 | sans verdict, par préenregistrement |
 
 **E3 reste « rien ».** Aucun recalage n'est tiré de ceci ; le tableau part au relecteur.
+
+## D-139 — La documentation publique rejoint `data/raw/`, sur décision du propriétaire
+
+**2026-09-18.** D-135 avait relevé une contradiction entre l'addendum (« the documentation
+PDFs are public and may be manifested into `data/raw/` normally ») et la règle E0 (tout ERFS
+sous l'arbre git est refusé), et avait tranché **conservateur** en laissant les fichiers dans
+la livraison. **Le propriétaire tranche l'inverse : les mettre dans `data/raw/` et tout
+ignorer.** C'est sa décision, elle lève la contradiction, et elle est appliquée.
+
+**Dix fichiers copiés, dix empreintes confrontées à l'original** — une copie n'est pas fidèle
+parce qu'elle vient de `cp`, elle l'est parce qu'on l'a vérifiée : dictionnaire FPR,
+méthodologie, liste des variables, dictionnaire des codes EEC, questionnaire EEC, fichier de
+formats Stata, et les quatre CERFA 2042. Manifeste : 144 entrées.
+
+**Ce qui n'y est pas et n'y sera jamais** : les deux tables. `fpr_menage_2022.csv` et
+`fpr_indiv_2022.csv` restent dans la livraison, hors de l'arbre.
+
+**Un renommage, parce que l'extension mentait.** `Liste_Variables_FPR_2022.xls` est un
+classeur **OOXML** — magie `PK`, `[Content_Types].xml`. openpyxl le refuse sur son extension,
+xlrd sur son contenu ; les deux erreurs se contredisent et aucune ne dit la vérité. Copié en
+`.xlsx`, qui est ce qu'il est. Quatrième en-tête ou extension menteur de ce projet, après le
+« en milliers » de Stat 39, le « (montants en milliers d'euros) » des fichiers de niches, et
+la colonne d'effectifs du Tableau 1.
+
+**Les rails tiennent après la décision, et c'est la moitié qui compte.** Vérifié : aucune
+documentation n'est suivie par git ; l'arbre est propre pour le garde ; et une vraie donnée
+glissée sous `data/raw/` — `fpr_menage_2022.csv` copié en `erfs_probe.csv` et forcé dans
+l'index — **est toujours refusée, code 1**. Élargir l'emplacement autorisé n'a pas élargi ce
+qui peut entrer dans git.

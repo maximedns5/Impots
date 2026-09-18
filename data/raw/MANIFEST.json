@@ -1193,6 +1193,86 @@
       "bytes": 890202,
       "retrieved": "2026-09-13",
       "capture": "navigateur interactif, machine du propriétaire"
+    },
+    "erfs_2022_fpr_dictionnaire.pdf": {
+      "description": "INSEE/ADISP, « Dictionnaire ERFS 2022 — version FPR ». Documentation publique livrée avec lil-1696. Le dictionnaire des variables des deux tables.",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "0a0ef10af680ea8a0e077fa13ce3eec9a5bb6324056331e68d1421572648d8b7",
+      "bytes": 488560,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "erfs_2022_methodologie.pdf": {
+      "description": "INSEE, « Méthodologie ERFS 2022 ». LE COMPARATEUR DE COMPTAGE DE E1 : « 92 000 individus pour environ 44 000 ménages » (mesuré 91 921 / 43 684).",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "d06fa2395ae7d7071912cbbac98a3fb26303bd8f64637c0ecb15980228b89054",
+      "bytes": 275720,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "erfs_2022_fpr_liste_variables.xlsx": {
+      "description": "INSEE/ADISP, liste des variables FPR 2022 (feuilles INDIV et MENAGE, avec libellés). RENOMMÉ EN .xlsx : le fichier livré porte l'extension .xls et son contenu est un classeur OOXML (magie PK, [Content_Types].xml) — openpyxl le refuse sur l'extension, xlrd sur le contenu. L'extension mentait.",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "9334620bee8077e515a5834ddf0fcd36b7b9346f75cb6e7cb42e893a92f57fd2",
+      "bytes": 25926,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "erfs_2022_eec_dictionnaire_codes_fpr.pdf": {
+      "description": "INSEE, dictionnaire des codes de l'enquête Emploi 2022, version FPR.",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "27666eb99d43c791902de3c0205b7f775d42585eb3f003d33629cb5c91a57704",
+      "bytes": 5092795,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "erfs_2022_eec_t4_questionnaire.pdf": {
+      "description": "INSEE, questionnaire de l'enquête Emploi, 4e trimestre 2022.",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "7f0fb03e0964ca1d78120840064b0ae8f6a7991be50b6a8dcc3b9a07f6dde706",
+      "bytes": 867739,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "erfs_2022_formats_stata.txt": {
+      "description": "Libellés de valeurs (label define) que les CSV ne portent pas. Source des modalités TYPLOG5 utilisées par l'axe A2.",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "85ffdc67ed0d0af244bd870584624cb44a6d1ca69b8b7d9747e0faef3585acd4",
+      "bytes": 91884,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "cerfa_2042_4318.pdf": {
+      "description": "Formulaire CERFA 2042, document public.",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "a306518ce3e7feff29a797f2c020ee04c9b28df23ae2302cf526bd9f8f25eea9",
+      "bytes": 180649,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "cerfa_2042_4319.pdf": {
+      "description": "Formulaire CERFA 2042, document public.",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "50318181413a0b71d0dd8c0e2cd94adf1e03ea50692aee7441b60b1948d486bf",
+      "bytes": 231584,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "cerfa_2042_4359.pdf": {
+      "description": "Formulaire CERFA 2042, document public.",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "b30daa44f0aa29ec00d5d78457e009a41141264ce6ee6cceca2a22f0615a72ce",
+      "bytes": 741175,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
+    },
+    "cerfa_2042_4384.pdf": {
+      "description": "Formulaire CERFA 2042, document public.",
+      "url": "livraison ADISP lil-1696 (Quetelet-Progedo) — documentation publique ; les données elles-mêmes ne sont PAS ici et ne le seront jamais",
+      "sha256": "d3a64187ea12b8ccb89c2b3c0dcc7c1468cf29d0eee38d128583ccb7484d392a",
+      "bytes": 217504,
+      "retrieved": "2026-09-18",
+      "provenance": "copié depuis la livraison, empreinte confrontée à l'original"
     }
   }
 }

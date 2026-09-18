@@ -51,3 +51,12 @@ fpr_*.sav
 fpr_*.sas7bdat
 lil-1696*
 .impots.local
+# Owner's ruling (2026-09-18): the delivery's PUBLIC documentation may sit under
+# data/raw/, and all of it is ignored. `data/raw/*` at the top of this file already
+# covers it; these lines are belt and braces, and they name the extensions the
+# documentation actually uses so that a stray .csv or .dta can never ride in behind a
+# rule written for PDFs.
+data/raw/erfs_*.pdf
+data/raw/erfs_*.xlsx
+data/raw/erfs_*.txt
+data/raw/cerfa_*.pdf
