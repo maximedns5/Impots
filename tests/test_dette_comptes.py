@@ -160,3 +160,49 @@ def test_assembling_with_a_supplied_sfa_produces_one_realized_year_each() -> Non
         assert 0.9 < entry.published_ratio < 1.3
     # 2020: GDP fell. If g came out positive the year alignment would be wrong.
     assert next(y for y in years if y.year == 2020).g < 0
+
+
+# --------------------------------------------------------------------------- #
+# the tautology: an SFA derived from the path the backtest must reproduce
+# --------------------------------------------------------------------------- #
+@needs_files
+def test_a_derived_sfa_is_refused_by_type_not_by_value() -> None:
+    """The refusal keys on PROVENANCE, which is the only thing that distinguishes it.
+
+    A derived SFA and a published one can hold the very same number; what separates them
+    is where they came from. So the guard cannot test magnitude — it tests the type, and
+    `ImpliedSfa` exists solely to carry that provenance through a float.
+    """
+    implied = comptes.sfa_implied_by_identity(YEARS)
+    assert all(isinstance(v, comptes.ImpliedSfa) for v in implied.values())
+    with pytest.raises(DebtError, match="DÉRIVÉ"):
+        comptes.realized_years(YEARS, sfa=implied)
+    # The SAME numbers, stripped of their provenance, pass — proving the guard is about
+    # where the series came from and not about what it contains.
+    bare = {y: float(v) for y, v in implied.items()}
+    assert len(comptes.realized_years(YEARS, sfa=bare)) == len(YEARS)
+
+
+@needs_files
+def test_the_derived_sfa_would_score_a_near_perfect_backtest_measuring_nothing() -> None:
+    """WHY that guard exists, demonstrated rather than asserted.
+
+    Feeding the identity an SFA computed as `Δdette − déficit` closes it by construction.
+    Measured here: the modelled path tracks the published one to under 0,05 point of GDP
+    across seven years — a score any honest tolerance waves through, produced by a
+    backtest in which no model error could ever appear.
+
+    This test is what stops the guard from looking like excessive caution. If someone
+    removes `ImpliedSfa` on the grounds that the derivation « is just the SFA », this
+    number is the answer.
+    """
+    from impots.dette.path import backtest
+
+    implied = comptes.sfa_implied_by_identity(YEARS)
+    assembled = comptes.realized_years(YEARS, sfa={y: float(implied[y]) for y in YEARS})
+    points = backtest(comptes.opening_ratio(YEARS[0]), assembled, tolerance=10.0)
+    worst = max(abs(p.residual) for p in points)
+    assert worst < 0.0005, (
+        f"résidu maximal {worst * 100:.4f} pt — attendu quasi nul PAR CONSTRUCTION ; "
+        f"s'il ne l'est plus, la dérivation a changé et l'argument de la garde avec elle")
+    assert all(p.within for p in points)

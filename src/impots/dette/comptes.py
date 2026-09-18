@@ -230,6 +230,39 @@ def check_units(years: list[int]) -> dict[int, float]:
     return residuals
 
 
+class ImpliedSfa(float):
+    """An SFA DERIVED from the identity the backtest is supposed to test.
+
+    A float subclass rather than a plain value, so that `realized_years` can REFUSE it by
+    type. The refusal has to be mechanical: this is the most tempting shortcut on the
+    board, the derivation takes one line, and the resulting backtest reports a perfect
+    match — which is exactly why it must be impossible rather than discouraged.
+    """
+
+
+def sfa_implied_by_identity(years: list[int]) -> dict[int, ImpliedSfa]:
+    """The SFA as the residual `Δdette − déficit`, in points of GDP.
+
+    **NEVER usable as an input to the backtest, and the type enforces it.** The backtest
+    asks whether the identity reproduces the published debt path. Feeding it an SFA
+    derived from that same path closes the identity BY CONSTRUCTION: the residual is zero
+    by arithmetic, no model error can ever show, and the test reports a perfect score
+    while measuring nothing. That is the D-044 shape in its purest form — a check derived
+    from the thing it checks cannot fail when that thing is wrong.
+
+    What it IS for: cross-checking the PUBLISHED series once it is manifested. Agreement
+    validates the extraction; disagreement localises a perimeter difference. Both are
+    findings. Neither is a backtest.
+    """
+    span = [years[0] - 1, *years]
+    stocks = debt(span)
+    accounts = apu_account(years)
+    product = gdp(years)
+    return {y: ImpliedSfa(((stocks[y][0] - stocks[y - 1][0])
+                           + accounts[y].net_lending_eur) / product[y])
+            for y in years}
+
+
 def realized_years(years: list[int], *, sfa: dict[int, float]) -> list[RealizedYear]:
     """Assemble §6.1's realized inputs. **`sfa` is mandatory and must cover every year.**
 
@@ -240,6 +273,17 @@ def realized_years(years: list[int], *, sfa: dict[int, float]) -> list[RealizedY
     if not years:
         raise DebtError("aucune année demandée")
     ordered = sorted(years)
+    derived = sorted(y for y, v in sfa.items() if isinstance(v, ImpliedSfa))
+    if derived:
+        raise DebtError(
+            f"ajustement flux-stocks DÉRIVÉ fourni pour {derived} : refusé. Il a été "
+            f"calculé comme le résidu « Δdette − déficit », c'est-à-dire depuis la "
+            f"trajectoire même que le backtest doit reproduire. L'identité se refermerait "
+            f"PAR CONSTRUCTION, le résidu serait nul par arithmétique, aucune erreur de "
+            f"modèle ne pourrait jamais apparaître — et le test rendrait un score parfait "
+            f"en ne mesurant rien. Il faut la série PUBLIÉE (notification EDP, Eurostat "
+            f"gov_10dd_edpt1) ; `sfa_implied_by_identity` ne sert qu'à la recouper.")
+
     missing = [y for y in ordered if y not in sfa]
     if missing:
         raise DebtError(

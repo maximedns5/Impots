@@ -7077,3 +7077,34 @@ utilisait la valeur CORRECTE en la nommant « mal lue » ; le test échouait don
 annonçant que la garde ne se déclenchait pas, alors qu'elle avait raison de se taire.
 Corrigé — et c'est la deuxième fois de la session qu'un test de mise à mort mal posé se
 fait passer pour une garde inerte.
+
+## D-148 — L'ajustement flux-stocks DÉRIVÉ est refusé par son TYPE
+
+**Le raccourci le plus tentant du tableau.** Le SFA se dérive en une ligne : c'est le
+résidu `Δdette − déficit`, et les deux termes sont déjà au dépôt. Les valeurs obtenues sont
+même plausibles — +2,99 points de PIB en 2020 (accumulation de trésorerie de l'année
+Covid), +1,15 en 2024.
+
+**Et il rendrait le backtest tautologique.** §6.1 demande si l'identité reproduit la
+trajectoire de dette publiée. Lui fournir un SFA calculé DEPUIS cette trajectoire referme
+l'identité par construction : le résidu est nul par arithmétique, aucune erreur de modèle
+ne peut apparaître, et le test rend un score parfait en ne mesurant rien. C'est la forme
+D-044 à l'état pur — un contrôle dérivé de la chose qu'il contrôle ne peut pas échouer
+quand cette chose est fausse.
+
+**Mesuré plutôt qu'affirmé.** Nourri du SFA dérivé, le backtest suit la trajectoire publiée
+**à moins de 0,022 point de PIB sur sept ans**. Toute tolérance honnête laisse passer cela
+sans un murmure. Ce chiffre est consigné dans un test, précisément pour que la garde ne
+passe pas plus tard pour une prudence excessive : si quelqu'un retire `ImpliedSfa` au motif
+que « la dérivation, c'est bien le SFA », c'est la réponse.
+
+**La garde est portée par le TYPE, pas par une valeur.** `sfa_implied_by_identity` rend des
+`ImpliedSfa`, sous-classe de `float`, et `realized_years` les refuse par `isinstance`. Un
+SFA dérivé et un SFA publié peuvent porter exactement le même nombre ; ce qui les sépare est
+leur PROVENANCE, donc c'est la provenance qu'on transporte. Le test jumeau vérifie que les
+mêmes valeurs, dépouillées de leur type, PASSENT — sans quoi la garde porterait sur les
+magnitudes, ce qui serait une autre garde et une fausse.
+
+**À quoi sert alors la dérivation.** À recouper la série PUBLIÉE quand elle arrivera :
+l'accord valide l'extraction, le désaccord localise une différence de périmètre. Les deux
+sont des constats. Aucun n'est un backtest.
