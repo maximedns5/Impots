@@ -6965,3 +6965,50 @@ est déjà au dossier comme défaut.
 d'une réforme (§3.4) et arrivent donc en ENTRÉE ; ce module les rend, il ne les calcule
 pas. Une décomposition M1 les porte légitimement en `computed=False` avec leur motif, et
 c'est précisément le cas que les gardes ci-dessus rendent lisible au lieu de faux.
+
+## D-145 — La couche agrégée (§2.2) : ce qu'elle refuse est ce qui la rend utilisable
+
+Le seau B chiffre sur une **assiette nationale statique** : une ancre de recettes, une
+structure de taux telle que votée, et une reprise qui tient l'assiette fixe. Il n'y a
+aucune population derrière, et il n'y en aura jamais — c'est exactement pourquoi la
+surface de refus existe.
+
+**Quatre gardes, chacune avec le test qui nomme l'implémentation qui la ferait tomber.**
+
+1. **L'ancre est lue DEPUIS LE MANIFESTE, jamais depuis une prose.** `ReceiptsAnchor`
+   refuse un fichier absent du manifeste, en quarantaine, ou sans URL. C'est D-028
+   appliqué à l'endroit où un nombre ENTRE, et non seulement là où un fichier s'ouvre.
+   L'implémentation qui échoue : croire l'ancre sur parole parce que « ça vient de
+   l'INSEE ». (Cette garde ne pouvait pas fonctionner avant D-142 : `load_manifest()`
+   levait une `TypeError`.)
+2. **Aucune sortie distributionnelle, jamais.** Une requête par décile est refusée PAR
+   SON NOM, avec sa propre classe d'exception parce que l'interface doit l'AFFICHER au
+   lieu de l'avaler. Répartir un total national sur une population qui n'a jamais servi à
+   le calculer produirait un tableau par décile indiscernable d'un vrai. C'est une **liste
+   blanche** : trois sorties possibles, tout le reste refusé — une liste noire ne peut pas
+   refuser une requête que personne n'a pensé à interdire.
+3. **La ventilation d'assiette doit reproduire l'ancre publiée.** Si `Σ taux × assiette`
+   manque les recettes publiées au-delà de la tolérance, l'instrument REFUSE de reprendre
+   les taux. Discipline du Bloc 1 de l'AFT : on reconstruit le total publié, ou on ne
+   continue pas. L'implémentation qui échoue : avertir et poursuivre — un chiffre repris
+   sur une ventilation non validée est aussi net qu'un juste.
+4. **Une élasticité absente se dit, elle ne se montre pas à zéro.** Pas de ligne de preuve
+   ⇒ « aucune réponse comportementale modélisée » AVEC SON MOTIF. Un instrument sans bande
+   et sans raison est refusé à la construction, et une bande fournie avec le grade
+   « no-evidence » l'est aussi : elle se lirait comme mesurée.
+
+**Codes, pas libellés.** Les composants sont clés par code ; un taux fourni pour un code
+inconnu est refusé et non ignoré, parce qu'ignoré il chiffrerait la réforme à zéro.
+
+**Un défaut attrapé dans le TEST, pas dans le moteur.** L'aide `_instrument` faisait
+`components or DÉFAUT` : un tuple VIDE étant falsy, le test « aucun composant » recevait
+le défaut et n'affirmait rien. Il a échoué, ce qui est la seule façon dont ce genre de
+chose se découvre ; remplacé par une sentinelle. La règle générale : `x or défaut` n'est
+pas `x if x is None else défaut`, et la différence porte exactement sur les cas vides que
+les gardes sont censées attraper.
+
+**Ce qui n'est PAS fait.** La DoD de M2 demande aussi l'identité de partie double
+**étendue à la couche agrégée et testée contre un grand-livre cassé** — la première garde
+de partie double s'auto-équilibrait, c'est au dossier. Et les instruments eux-mêmes (TVA,
+accises) attendent leurs ancres, qui sont des téléchargements. Le moteur et sa surface de
+refus ne dépendaient d'aucun des deux, et sont livrés d'abord.
