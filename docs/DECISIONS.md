@@ -6792,8 +6792,8 @@ nominaux). Les deux issues écrites d'avance.
 
 | jambe | mesure | porte le refus ? |
 |---|---|---|
-| rendement | 3,03 md€ contre 1,50 — hors bande **d'un pour cent** | **non** |
-| plancher de divulgation | 36 contributeurs < 50 | **non** |
+| rendement | hors bande de **moins de deux pour cent** (chiffre non publiable) | **non** |
+| plancher de divulgation | contributeurs sous le plancher de 50 | **non** |
 | bande sans verdict d'E2 | la CDHR vit tout entière dans le dernier centile | **oui, seule** |
 
 *Jambe 1.* La tolérance n'est pas élargie — mais un dépassement d'un pour cent ne soutient
@@ -6801,7 +6801,7 @@ rien, et l'autopsie post hoc explique tout l'écart : **la livraison ne porte au
 d'impôt au prélèvement forfaitaire.** `rev_financier_prelev_lib_imputes` est le REVENU
 soumis au prélèvement, jamais le prélèvement. La jambe fiscale était amputée du PFU —
 2,29 md€ sur les 70 ménages concernés, l'impôt même que la CDHR compte au numérateur.
-Rétabli à 12,8 %, le rendement tombe à 0,99 md€, dans la bande. Sans valeur probante pour
+Rétabli à 12,8 %, le rendement rentre dans la bande. Sans valeur probante pour
 le verdict, mais probant pour ceci : **le rendement ne fournit aucun motif de refus.**
 
 *Jambe 2.* Le plancher de 50 est le NÔTRE (D-140 : la convention n'en fixe aucun) ; au
@@ -6812,7 +6812,7 @@ paramètre choisi après coup est une préférence, pas un refus.
 Le §6 annonçait « le refus ne pourra pas s'appuyer sur la rareté », sur la foi de 109
 ménages sous 20 %. Ce 109 appliquait 250 k€ à tout le monde ; le seuil légal est 500 k€ pour
 un couple, et 22 472 des 42 831 ménages en sont un. La population réelle est de 70 au-dessus
-du seuil, 36 contributeurs. La rareté mord exactement là où le préenregistrement la disait
+du seuil, et les contributeurs tombent sous le plancher. La rareté mord exactement là où le préenregistrement la disait
 absente.
 
 *Jambe 3, la seule qui tienne.* E2 classe le dernier centile en `no_verdict` parce que
@@ -6845,5 +6845,14 @@ comme les fractiles de la n° 41 dépensés par le recalage L1. La route publié
 déjà l'assiette (71,6 md€ ERFS 2022 contre ~80,6 md€ dérivés n° 41 2024 : deux routes
 indépendantes, même ordre). **L'ERFS reste la validation**, rôle que l'axe A4 lui assigne
 déjà mot pour mot.
+
+**Un manquement, relevé sur nous-mêmes.** La première rédaction portait les chiffres
+de la reconstruction CDHR, tous dérivés d'une cellule de moins de 50 ménages — donc sous
+le plancher que le paragraphe voisin invoquait. Écrire « la garde refuse ce tableau »
+au-dessus du tableau refusé est la forme de défaut que ce dépôt traque ailleurs. Corrigé
+en bandes (§9 du gate). Cela ne renforce pas la jambe 2 — au plancher de 11 ces effectifs
+passeraient — mais cela lie : **le gate CDHR ne peut pas publier sa propre preuve** sous
+nos règles. L'historique git conserve les figures retirées (`0da23f4`) ; le dépôt ne
+publie rien, le fait est consigné plutôt que tu.
 
 **Ce que ces gates ne décident pas.** Construire ou non. E3 reste « rien ».

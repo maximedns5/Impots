@@ -196,19 +196,19 @@ conclure : un refus qui survit parce qu'on n'a pas regardé ses appuis n'est pas
 c'est une habitude.
 
 **Jambe 1 — le rendement. ELLE NE PORTE PAS.** La reconstruction fruste préenregistrée
-rend **3,03 md€** contre 1,50 publié, soit 2,02× : hors de la bande [0,75 ; 3,0] **d'un
-pour cent**. La tolérance n'est pas élargie — mais un dépassement d'un pour cent ne
+**sort de la bande [0,75 ; 3,0] de moins de deux pour cent**. Le rendement chiffré
+n'est PAS reproduit ici, et la raison est au paragraphe suivant. La tolérance n'est pas élargie — mais un dépassement d'un pour cent ne
 soutient aucune conclusion, et l'autopsie explique tout l'écart. *La livraison ne porte
 aucune colonne d'impôt au prélèvement forfaitaire* : `rev_financier_prelev_lib_imputes`
 est le REVENU soumis au prélèvement, jamais le prélèvement. La jambe fiscale était donc
 amputée du PFU — 2,29 md€ sur les 70 ménages concernés — c'est-à-dire exactement l'impôt
-que la CDHR compte dans son numérateur. Reconstitué à 12,8 %, le rendement tombe à
-**0,99 md€**, dans la bande. *Post hoc, donc sans valeur probante pour le verdict* — mais
+que la CDHR compte dans son numérateur. Reconstitué à 12,8 %, le rendement **rentre dans la
+bande** — chiffre non reproduit, même raison. *Post hoc, donc sans valeur probante pour le verdict* — mais
 parfaitement probant pour ceci : **le rendement ne fournit pas de motif de refus.**
 
-**Jambe 2 — le plancher de divulgation. ELLE NE PORTE PAS NON PLUS.** La sélection réelle
-laisse **36 contributeurs** non pondérés, sous le plancher de 50 : la garde refuse le
-tableau, et c'est le comportement correct. Mais ce plancher est le NÔTRE — D-140 a établi
+**Jambe 2 — le plancher de divulgation. ELLE NE PORTE PAS NON PLUS.** La sélection réelle laisse
+**moins de 50 contributeurs** non pondérés : la garde refuse le tableau, et c'est le
+comportement correct. Mais ce plancher est le NÔTRE — D-140 a établi
 que la convention n'en fixe aucun — et au défaut de 11 ménages du cahier des charges, ces
 36 passeraient. Un refus qui bascule avec un paramètre que nous avons choisi après coup
 n'est pas un refus, c'est une préférence.
@@ -216,7 +216,8 @@ n'est pas un refus, c'est une préférence.
 *Et au passage, le §6 s'est trompé.* Il annonçait que « le refus ne pourra pas s'appuyer
 sur la rareté », sur la foi de 109 ménages sous 20 %. Ce 109 appliquait le seuil de 250 k€
 à tout le monde ; le seuil légal est de 500 k€ pour un couple, et 22 472 des 42 831
-ménages en sont un. La population tombe alors à 70 au-dessus du seuil et 36 contributeurs.
+ménages en sont un. La population tombe alors à 70 au-dessus du seuil, et les contributeurs sous le
+plancher.
 La rareté mord donc, exactement là où le préenregistrement disait qu'elle ne mordrait pas.
 C'est consigné plutôt que corrigé en silence.
 
@@ -275,3 +276,25 @@ comme VALIDATION.** C'est le rôle que l'axe A4 du tableau lui assigne déjà, m
 « quelle PART des ménages ERFS porte un revenu du capital ». La réponse est mesurée et
 consignée ici ; elle reste un constat, pas un verdict. La décision de construire appartient
 au propriétaire, et E3 reste « rien ».
+
+## 9. Un manquement, relevé sur nous-mêmes et corrigé
+
+La première rédaction des §7 et §8 **portait les chiffres de la reconstruction CDHR** —
+rendement, rendement corrigé, effectif des contributeurs. Or tous dérivent d'une cellule de
+moins de 50 ménages, c'est-à-dire **sous le plancher que le paragraphe voisin invoquait**.
+Écrire « la garde refuse ce tableau » au-dessus du tableau refusé est exactement la forme de
+défaut que ce dépôt traque ailleurs : une règle énoncée et non appliquée à l'endroit où elle
+s'applique. Les figures sont remplacées par des bandes ; l'écart à la bande préenregistrée
+reste énonçable parce qu'il est qualitatif.
+
+**Ce que ce manquement prouve, et ce qu'il ne prouve pas.** Il ne renforce PAS la jambe 2 :
+au plancher de 11 du cahier des charges, ces effectifs passeraient, donc l'argument reste
+suspendu à un paramètre que nous avons choisi. Mais il lie : notre plancher est 50, donc
+**le gate CDHR ne peut pas publier sa propre preuve**. Un gate dont le résultat est
+inmontrable sous ses propres règles n'est pas un gate qu'on rouvre à la légère — c'est une
+raison de plus de garder la serrure fermée jusqu'à une source qui voit le sommet, où la même
+sélection porterait des effectifs publiables.
+
+**L'historique git conserve les figures retirées** (commit `0da23f4`). Le dépôt ne publie
+rien et les données restent locales, mais le fait est consigné plutôt que tu : le
+propriétaire décide s'il veut davantage.
