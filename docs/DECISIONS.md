@@ -7108,3 +7108,104 @@ magnitudes, ce qui serait une autre garde et une fausse.
 **À quoi sert alors la dérivation.** À recouper la série PUBLIÉE quand elle arrivera :
 l'accord valide l'extraction, le désaccord localise une différence de périmètre. Les deux
 sont des constats. Aucun n'est un backtest.
+
+## D-149 — La population de test était composée de millionnaires, et rien ne pouvait le voir
+
+`attach_incomes` répartit un total national publié entre les pondérations qu'on lui donne.
+C'est correct pour la trame à laquelle il a été écrit — l'EEC complète, dont les poids
+*sont* le pays — et cela ne dit rien sur la nature de la trame reçue. La fixture commitée
+pèse **0,199 %** du nombre de ménages publié, et la même masse salariale nationale
+répartie sur elle donne :
+
+| | tel que les tests tournaient | cible mise à l'échelle de la trame |
+|---|---|---|
+| salaire annuel brut moyen | **20 640 710 €** | 41 146 € |
+| plus bas salaire de la population | 3 029 168 € | 6 038 € |
+| foyers payant la CEHR | 397 sur 439 | 1 sur 439 |
+| foyers sous l'entrée du barème | 42 sur 439 | 179 sur 439 |
+| prime d'activité, total pondéré | **0 €** | 20,2 M€ |
+| allocations familiales | 9,7 M€ | 24,4 M€ |
+
+La colonne de droite est le bon ordre de grandeur — le salaire brut moyen du privé publié
+par l'INSEE est proche de 40 k€, et la CEHR revient à une poignée de foyers au lieu de la
+quasi-totalité. Ce n'est pas une correspondance : 41 % des foyers tombent sous l'entrée du
+barème contre 52,8 % publiés, et ce résidu est l'affaire de la population synthétique
+elle-même (D-015). La colonne de gauche, elle, n'est pas un ordre de grandeur du tout, et
+c'est la population contre laquelle tournait chaque test à l'échelle nationale du dépôt.
+
+**Ce que cela coûtait, c'est de la couverture, et la prime d'activité en donne la forme
+exacte.** `ppa` valait identiquement zéro : toute assertion qu'on aurait pu écrire à son
+sujet ici ne pouvait pas échouer — la classe même sur laquelle le relecteur a tranché lors
+de l'incrément d'imputation, arrivée par la fixture de test plutôt que par une ligne de
+réconciliation. La décote, les tranches basses et chaque pente de prestation étaient dans
+la même position : inatteignables, parce que personne dans la population de test n'était
+assez pauvre pour les rencontrer. La suite était verte tout du long, et à juste titre :
+rien de ce qu'elle affirmait n'était faux. Elle l'affirmait simplement d'un pays de
+millionnaires.
+
+**Le correctif n'est pas une mise à l'échelle automatique.** La dériver silencieusement
+changerait la calibration du build réel — l'EEC complète pèse environ 97 % du nombre
+publié, donc un facteur automatique sortirait la masse salariale de la cible nationale sur
+laquelle elle est délibérément dépensée (D-014). `attach_incomes` prend désormais
+`targets_scale` et **refuse** une trame pesant moins de la moitié du pays quand on ne lui
+en donne pas. L'ancien comportement reste atteignable en passant `1,0` explicitement, et un
+test fait exactement cela, gardant les millionnaires comme la régression qui plaide pour la
+mise à l'échelle.
+
+Les chiffres du produit ne bougent pas : sur l'EEC complète l'échelle vaut 1,0 et chaque
+cible est le chiffre national qu'elle était.
+
+## D-150 — La garde du raking refusait la mauvaise condition, sous un message qui décrivait la bonne
+
+`build` acceptait une population rakée sur le seul `diagnostics.converged`, levant sinon :
+*« A population raked to margins it cannot reach is worse than an unraked one:
+refusing. »* La convergence est une propriété de l'**itération** — les poids ont cessé de
+bouger. Atteindre une marge est une propriété du **résultat**. La phrase décrit la seconde
+et le code testait la première.
+
+Elles se séparent exactement quand le jeu de marges est incohérent, parce que l'IPF se pose
+alors sur un point fixe qui n'en satisfait aucune. Mesuré sur la fixture commitée, qui est
+ce cas : convergence en **34 itérations**, variation maximale de poids **8,05e-07**,
+**aucun écrêtage**, ratios de poids 0,69–3,56 bien à l'intérieur des bornes — et
+`fit_after` de la marge « ménages par type » à **0,998**. Une marge publiée manquée d'un
+facteur 520, que le build aurait emportée sans un mot.
+
+Les deux marges de `standard_margins` sont ce qui se disjoint ici : ménages-par-type est un
+effectif publié absolu (31,27 M), tandis qu'âge×sexe est une contrainte de dérive visant
+les totaux de personnes de la trame *elle-même*. Sur l'EEC complète elles sont compatibles
+et D-017 en a mesuré le résultat — pire écart 0,84 %, aucun écrêtage. Sur un échantillon
+elles ne le sont pas, et le niveau ne bouge jamais parce que la contrainte de dérive le
+rappelle à chaque passe.
+
+`check_rake_result` teste désormais les deux conditions, avec une borne d'ajustement à
+**10 %** : lâche contre les 0,84 % mesurés par D-017, ce qui laisse un ordre de grandeur de
+marge pour un changement de millésime, et très loin des 99,8 % qu'elle existe pour refuser.
+La ligne « Ménages » du rapport de réconciliation reste le contrôle fin ; ceci est le
+filet qui refuse un ajustement qui n'en est pas un.
+
+Les deux moitiés ont leur test de mise à mort, et celle qui compte tourne sur la fixture
+réelle du dépôt plutôt que sur un mock — le défaut est dans le dépôt, donc le test peut
+simplement le désigner.
+
+## D-151 — Deux leviers hors de TOUTE règle de couverture, parce qu'aucune ne quantifiait sur eux
+
+Chaque revendication de couverture du dépôt quantifiait sur `SCALAR_KNOBS` — 52 leviers.
+`ReformSpec` expose 57 champs : ces 52, `ir_bareme` (un barème, pas un scalaire), deux
+`PLAFOND_KNOBS` — `bandeau_maladie_plafond` et `bandeau_famille_plafond`, qui écrivent tous
+les enfants `plafond` que le nœud porte à l'instant — et les champs de déclaration. Les
+deux plafonds étaient hors du registre, hors d'`EXEMPT`, et hors de toute règle : **aucune
+règle ne pouvait les signaler manquants, parce qu'aucune ne portait sur eux.**
+
+Ce n'est pas une omission de forme. Tout test du dépôt qui nomme ces leviers relit l'arbre
+de paramètres ou vérifie quels enfants ont été écrits — précisément la propriété dont
+D-071 a établi qu'elle ne peut pas détecter un levier mort. Un plafond de bandeau qui
+cesserait silencieusement de bouger le coût du travail passerait chaque contrôle du dépôt.
+
+**Fermé par la mesure, pas par l'argument.** Les deux sont désormais des cas du registre,
+déplacés en portant le plafond SOUS le ménage plutôt qu'au-dessus, ce qui retire la
+réduction : `allegement_bandeau_famille` 1 080,00 → 0,00 € à 60 000 € brut (2,83 SMIC,
+plafond 3,5 → 2,0 ; le montant est 1,80 % du salaire), et `allegement_bandeau_maladie`
+2 700,00 → 0,00 à 45 000 € (2,12 SMIC, plafond 2,5 → 1,5 ; 6,00 %), `salaire_super_brut`
+montant exactement d'autant dans les deux cas. La règle permanente quantifie maintenant sur
+`SCALAR_KNOBS | PLAFOND_KNOBS`, dans les deux sens, et son test de mise à mort a été vu
+échouer : supprimer l'un des deux cas la fait tomber en nommant ce levier.
