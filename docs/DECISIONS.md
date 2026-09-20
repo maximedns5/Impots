@@ -7313,3 +7313,51 @@ paramètres porte bien les quatre taux de TVA, mesurés au 2024-01-01 — 0,20 /
 puisque la ventilation EST l'ancre. Épinglé par un test dont le nom le dit, pour que
 personne ne lise plus tard ce zéro comme une validation : le contrôle n'a rien
 d'indépendant à comparer ici.
+
+## D-154 — M3 : la revendication de couverture existe, et deux gates rendent leur verdict
+
+**§2.4 fait de « le maximum d'instruments » une revendication auditable** : chaque
+instrument de l'inventaire est chiffré (A/B), sous gate avec le gate nommé (C), ou refusé
+avec la raison affichée (D). `instrument_coverage.py` porte cette table et
+`COVERAGE_INSTRUMENTS.md` en est le rendu — aucun chiffre saisi, tout calculé.
+
+**Trente instruments, seize chiffrés — 53 %.** Neuf l'ont été par cette phase ; le reste
+était déjà en place. Le nombre qui compte est ailleurs : **six lignes sont classées sans
+être chiffrées**, et les compter gonflerait la revendication de 53 % à 73 %. Classer la
+TVA et les quatre accises en seau B dit où elles iront, pas qu'elles y sont. La
+distinction est portée par `priced()` contre `classified_but_unbuilt()`, et un test la
+tient.
+
+**Chaque nom que la table prononce est résolu contre le code.** Un bouton, un champ de
+`FirmReformSpec`, un instrument agrégé : 30 cas paramétrés, plus la moitié tueuse qui
+fabrique une ligne nommant un levier inexistant et vérifie que l'assertion tombe. C'est
+la discipline de `plf_coverage.py` appliquée à l'univers des instruments — un triage qui
+dérive du code qu'il décrit sera cru le jour J.
+
+**Le seuil de §2.4 n'a jamais été enregistré**, et c'est le constat le plus important
+ici. §9 l'attend comme entrée de ce journal — « Threshold for the §2.4 coverage
+universe » — et il n'existe ni dans `M0_PHASE8.md` ni ici. Sans seuil il n'y a pas
+d'univers ; sans univers la revendication n'est pas auditable, seulement plausible. Donc
+le document compte des LIGNES et le dit, en rappelant que compter des lignes met un droit
+de timbre au même poids qu'une contribution à quatre milliards — la raison même pour
+laquelle `PLF2027_COVERAGE.md` publie deux titres qui se contredisent. **C'est une
+décision du propriétaire, pas une que cette session peut prendre à sa place.**
+
+### Les deux gates de M3, tranchés autant qu'ils peuvent l'être
+
+**CIR — le gate ne peut pas être tranché, et la raison est mesurable.** §2.3.3 le
+conditionne aux publications GECIR du MESR, qui doivent soutenir une reprise sur créance
+avec la distinction créance/décaissement explicite. Cherché sur les 145 entrées du
+manifeste : **aucune publication GECIR, aucun fichier MESR**. Le gate ne peut donc aller
+ni vers « chiffré avec bannière » ni vers D — les deux issues demandent d'avoir lu la
+source. Il reste C, et ce qui est désormais au dossier est que son verrou est un
+téléchargement identifié, pas une question ouverte.
+
+**TH résidences secondaires et TF part ménages — bloqués sur un fichier, pas sur une
+question.** `rei_2025.zip` EST manifesté et sourcé, et `verify_rei.py` existe : M0 le
+note déjà (« ne pas ré-importer »). La recon R7 n'a pas tourné ici faute du fichier sur
+cette machine. Le verdict C→B se tranche le jour où elle tourne. Et une chose est déjà
+au dossier sans qu'elle attende quoi que ce soit : **le partage ménages/entreprises de la
+taxe foncière est lui-même NON MESURÉ**. S'il n'existe aucun partage publié, l'instrument
+chiffre le total avec le partage étiqueté « scénario » — jamais un partage inventé
+présenté comme une donnée.
