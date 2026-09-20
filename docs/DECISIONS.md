@@ -7265,3 +7265,51 @@ ceci tourne sans aucun fichier de `data/raw/` et sans accès réseau : le proxy 
 n'ont donc pas pu être lues, et aucune n'est écrite nulle part — en saisir une de
 mémoire est exactement ce que `ReceiptsAnchor` existe pour refuser. Les six instruments
 constructibles le sont sur la machine du propriétaire, pas ici.
+
+## D-153 — Les instruments proportionnels du seau B, déclarés sans un seul chiffre
+
+**Le problème que ce branchement résout.** `ReceiptsAnchor` exige un `amount_eur`, et
+tout l'objet de cette classe est que ce nombre soit traçable jusqu'à un fichier
+manifesté. Or une ancre écrite dans un module Python est un souvenir en habits de
+source : l'entrée de manifeste posée à côté prouve qu'un document existe, pas que le
+nombre en est sorti. Donc les euros ne sont pas dans le code.
+
+`data/processed/receipts_anchors.json` porte une ligne par instrument ; il se génère sur
+une machine disposant de `data/raw/` et il est gitignoré, exactement comme la table de
+cellules firmes. `agregats/anchors.py` le lit et le garde :
+
+* **`vintage_convention` n'a pas de défaut** — `budget`, `revenus` ou
+  `comptabilite_nationale` — et une ligne sans elle est refusée. C'est D-067 posé à
+  l'entrée du chiffre : les colonnes des Voies et Moyens sont des années budgétaires, et
+  trois fois déjà la convention du comparateur a été l'erreur entière.
+* **La provenance est revérifiée ici**, pas déduite de l'existence du fichier :
+  `verify()` refuse une entrée en quarantaine ou sans URL. C'est le piège de D-152 —
+  la copie naturelle des Voies et Moyens EST en quarantaine pendant qu'un jumeau sourcé
+  identique à l'octet dort à côté sous un autre nom.
+* **Deux lignes pour un instrument sont refusées**, sinon celle qui gagne dépend de
+  l'ordre du fichier : un chiffre choisi par accident.
+
+**Neuf instruments, déclarés structurellement.** TSN, TTF, taxe sur les salaires,
+versement mobilité, DMTO, TASCOM, TGAP, forfait social, taxe d'apprentissage — code,
+libellé, document d'ancre, et la raison de l'absence de bande. Rien d'autre. Les quatre
+dernières ne sont pas groupées en une « tranche petites taxes » : §2.3.3 dit « une ligne
+chacune, une ancre chacune », et les grouper ferait compter 1 là où la revendication de
+couverture doit compter 4.
+
+**Un facteur d'échelle n'est pas un taux, et le moteur ne sait pas les distinguer.**
+Une reprise proportionnelle se modélise `rate=1.0, base=recettes` : arithmétiquement
+exact, et illisible — un composant à 1,0 se lit comme un impôt à 100 %. Le composant est
+donc construit à un seul endroit, son code et son libellé disent « FACTEUR D'ÉCHELLE,
+pas un taux », et un test l'épingle. Vu échouer en renommant le libellé « Taux ».
+
+**Ce qui n'y est pas, et pourquoi.** Ni la TVA ni les accises. La TVA n'est rien de plus
+qu'une reprise proportionnelle tant que la ventilation par taux (COICOP, R5) manque, et
+les accises sont tarif × volume. Les chiffrer proportionnellement quand même produirait
+un nombre de la bonne forme et du mauvais sens. À noter tout de même : l'arbre de
+paramètres porte bien les quatre taux de TVA, mesurés au 2024-01-01 — 0,20 / 0,10 /
+0,055 / 0,021 — donc c'est l'assiette qui manque, pas la structure de taux.
+
+**Et le résidu de `check_base_split` vaut 0 par construction sur ces instruments**,
+puisque la ventilation EST l'ancre. Épinglé par un test dont le nom le dit, pour que
+personne ne lise plus tard ce zéro comme une validation : le contrôle n'a rien
+d'indépendant à comparer ici.

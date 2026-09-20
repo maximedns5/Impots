@@ -114,6 +114,39 @@ plutôt que de faire semblant que le lien est reproductible (D-142).
 millésimes est la façon la plus simple de certifier des octets que personne n'a
 téléchargés — c'est exactement ce qui s'est produit avec la 7.301.
 
+## La table d'ancres, et comment la remplir
+
+Le branchement existe depuis D-153 : les neuf instruments à reprise proportionnelle sont
+**déclarés dans le code sans aucun chiffre**, et leurs euros sont lus depuis
+`data/processed/receipts_anchors.json` — généré sur une machine qui a `data/raw/`,
+gitignoré comme la table de cellules firmes. Un test refuse tout littéral monétaire dans
+`src/impots/agregats/instruments.py`, et on l'a vu échouer en y écrivant un montant.
+
+Une ligne par instrument :
+
+```json
+{"instrument": "tsn", "year": 2025, "amount_eur": 0.0,
+ "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+ "vintage_convention": "budget", "note": "ligne X des Voies et Moyens tome I"}
+```
+
+`vintage_convention` n'a **pas de défaut** et vaut `budget`, `revenus` ou
+`comptabilite_nationale` : une ligne sans elle est refusée au chargement. C'est la garde
+de D-067 posée à l'entrée du chiffre, parce que trois fois déjà la convention de
+millésime du comparateur a été l'erreur entière. Une ligne pointant un fichier absent du
+manifeste ou en quarantaine est refusée aussi, et deux lignes pour un même instrument
+également — sinon celle qui gagne dépend de l'ordre du fichier.
+
+Les codes attendus : `tsn`, `ttf`, `taxe_sur_les_salaires`, `versement_mobilite`,
+`dmto`, `tascom`, `tgap`, `forfait_social`, `taxe_apprentissage`. Un instrument sans
+ligne n'est pas construit avec un substitut : il est **nommé manquant**, pour que la
+revendication de couverture (§2.4) compte ce qui existe et non ce qui a été déclaré.
+
+Tant que la table n'existe pas, `load_anchors()` lève `AnchorTableMissing` en renvoyant
+vers ce document. Ce n'est pas un défaut : c'est l'état attendu de tout dépôt sans
+`data/raw/`, et l'interface doit le dire plutôt que d'afficher un instrument sans
+chiffre derrière.
+
 ## Ce qui peut donc être construit sans un seul téléchargement
 
 Six instruments à reprise proportionnelle : TSN, TTF, taxe sur les salaires,
