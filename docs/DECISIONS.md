@@ -7209,3 +7209,36 @@ plafond 3,5 → 2,0 ; le montant est 1,80 % du salaire), et `allegement_bandeau_
 montant exactement d'autant dans les deux cas. La règle permanente quantifie maintenant sur
 `SCALAR_KNOBS | PLAFOND_KNOBS`, dans les deux sens, et son test de mise à mort a été vu
 échouer : supprimer l'un des deux cas la fait tomber en nommant ce levier.
+
+## D-152 — Les ancres de M2 sont là, et trois d'entre elles sont en quarantaine
+
+**Mesuré contre le manifeste plutôt que supposé** : 145 fichiers, **69 sourcés, 76 en
+quarantaine**. Et les trois documents vers lesquels on tend la main pour une ancre de
+recettes du seau B — `voies_et_moyens_tome1_plf2026.pdf`,
+`budget_execution_2025_recettes_fiscales_nettes.pdf`,
+`ccomptes_budget_etat_2025_resultats_gestion.pdf` — sont tous les trois **en
+quarantaine**, donc `ReceiptsAnchor.verify()` les refuse par leur nom. Un agent qui
+ancrerait dessus verrait le moteur refuser et conclurait, à tort, que l'ancre manque.
+
+**Elle ne manque pas.** `vm_tome1_plf2026_recettes.pdf` est sourcé, avec URL, et porte
+le **même sha256 que la copie en quarantaine** — `4703605d…`. Le même document est
+manifesté deux fois, une fois utilisable et une fois non. La règle qui en sort tient en
+une ligne : *avant de conclure qu'une ancre manque, chercher le jumeau sourcé par sa
+somme de contrôle.* Une entrée en quarantaine n'est pas l'absence d'une source, c'est
+l'absence d'une URL, et la même source peut être au dépôt sous un autre nom.
+
+**Ce qui manque réellement est l'assiette, pas l'ancre.** Cherché sur tout le manifeste,
+clés et métadonnées : `coicop`, `cctn`, `dgec`, `ofdt`, `tabac`, `dgddi`, `alcool`,
+`ticfe`, `ticgn`, `versement mobilité`, `dmto`, `tascom`, `tgap`, `forfait social`,
+`apprentissage` — **zéro correspondance sourcée**. Donc les instruments en tarif ×
+volume (les accises) et la ventilation par taux de la TVA sont bloqués sur des
+téléchargements, tandis que les six instruments à reprise proportionnelle — TSN, TTF,
+taxe sur les salaires, versement mobilité, DMTO, petites taxes — ont tout ce qu'il leur
+faut. `docs/M2_ANCHORS.md` porte le détail et la liste de téléchargements.
+
+**Et une limite de l'environnement, dite plutôt que contournée.** La session qui écrit
+ceci tourne sans aucun fichier de `data/raw/` et sans accès réseau : le proxy refuse
+`assemblee-nationale.fr`, `insee.fr`, `ofdt.fr` et `ec.europa.eu`. Les valeurs d'ancre
+n'ont donc pas pu être lues, et aucune n'est écrite nulle part — en saisir une de
+mémoire est exactement ce que `ReceiptsAnchor` existe pour refuser. Les six instruments
+constructibles le sont sur la machine du propriétaire, pas ici.
