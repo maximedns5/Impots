@@ -7210,6 +7210,29 @@ montant exactement d'autant dans les deux cas. La règle permanente quantifie ma
 `SCALAR_KNOBS | PLAFOND_KNOBS`, dans les deux sens, et son test de mise à mort a été vu
 échouer : supprimer l'un des deux cas la fait tomber en nommant ce levier.
 
+**Et la première version de ce correctif a fait tomber la CI, ce qui est la remarque
+ci-dessus retournée contre elle.** Le contrat est porté par DEUX tests :
+`test_standing_rules.py::test_every_knob_either_moves_an_outcome_or_says_why_not` et
+`test_knobs.py::test_the_registry_and_the_knob_list_agree`. Le premier a été élargi, le
+second oublié — donc ajouter les deux plafonds au registre a mis `CASES | EXEMPT` en
+avance de deux sur `SCALAR_KNOBS`, et la copie oubliée a échoué : *« Extra items in the
+left set : bandeau_maladie_plafond, bandeau_famille_plafond »*.
+
+Pourquoi la porte locale ne l'a pas vu : `test_knobs.py` porte
+`pytestmark = pytest.mark.slow` au niveau du MODULE, et la porte est `-m 'not slow'`.
+Une comparaison d'ensembles qui coûte des microsecondes est désélectionnée parce que le
+fichier qui la porte fait aussi tourner cinquante réformes. La CI, elle, tourne `-m ""`
+et l'a vue tout de suite.
+
+Deux règles en sortent, toutes deux payées :
+
+* **Un contrat porté par deux tests n'est pas élargi tant que les deux ne le sont pas.**
+  Chercher les copies par le contrat, pas par le nom du fichier qu'on est en train
+  d'éditer.
+* **Avant de pousser un changement qui touche un registre, lancer la sélection de la CI
+  (`-m ""`) sur les modules concernés, pas la porte.** « Vert en local » et « vert en
+  CI » sont deux affirmations différentes, et c'est la seconde qui compte.
+
 ## D-152 — Les ancres de M2 sont là, et trois d'entre elles sont en quarantaine
 
 **Mesuré contre le manifeste plutôt que supposé** : 145 fichiers, **69 sourcés, 76 en
