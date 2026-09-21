@@ -7463,3 +7463,111 @@ inconditionnelle. `EXPLORER_EXAMPLE.md` se rend depuis la table d'ancres, donc
 **le test s'abstient quand la table réelle est présente** — exiger alors l'égalité avec
 la version fixture ferait échouer le test précisément là où le document est le plus
 juste.
+
+## D-156 — M5 : le panneau réindustrialisation, et la comparaison qu'il refuse de faire
+
+**§9 attend « Benchmark perimeter statement (our priced aggregate vs D.29) ». La voici,
+et c'est la garde centrale de ce panneau plutôt qu'une note de bas de page.**
+
+Notre agrégat chiffré d'impôts de production est un SOUS-ENSEMBLE de la D.29 nationale :
+la CFE est en seau C, sous gate, donc absente. Comparer cet agrégat à la D.29 d'un autre
+pays produit un écart faux d'exactement la taille du déficit de couverture — et ce nombre
+a l'air parfaitement normal. Sur les ordres de grandeur du test, l'écart France–Allemagne
+passe de +3,57 à −0,52 point de valeur ajoutée selon qu'on prend notre agrégat ou le
+total national, c'est-à-dire qu'il **change de signe**.
+
+Donc : `benchmark()` compare **national à national**, et notre couverture s'affiche à
+côté comme un taux, jamais dans la même colonne. La comparaison interdite a sa propre
+fonction, `refuse_priced_against_national()`, pour être testable en tant que telle
+plutôt que seulement évitée par convention.
+
+### Le refus qui définit le panneau
+
+`BANNER` est un CHAMP de `Panel`, vérifié à la construction, pas une décoration
+d'affichage — §5.1 en fait un refus affiché et non silencieux. Un panneau d'instruments
+sans cette phrase se lit comme un modèle de réindustrialisation.
+
+La raison du refus mérite d'être écrite en entier, parce qu'elle n'est pas « on ne sait
+pas faire » : **une affirmation de transformation structurelle demanderait un modèle de
+localisation et d'entrée de firmes dont la bande honnête, à l'échelle d'un pays, contient
+le zéro ET les deux signes.** En rendre le centre serait rendre un chiffre dont
+l'intervalle contient son propre contraire. « Bande ou rien » dit alors : rien.
+
+### Le périmètre D.29 ne se décide pas dans le code
+
+Savoir si le forfait social, la TGAP ou les DMTO sont des « autres impôts sur la
+production » est une question de comptabilité nationale. Ce module déclare donc des
+lignes **candidates** — du texte, un seau, aucun classement — et lit le verdict dans une
+table générée depuis `insee_cn2025_t3217_principaux_impots_par_categorie.xlsx`, qui EST
+au manifeste et sourcé. Sans la table, refus nommé. De mémoire, ce serait une
+réminiscence (D-026), et le classement d'un instrument dans un agrégat comparé entre pays
+est exactement le genre de détail qui se retient de travers.
+
+**Et le total national ne peut pas être dérivé de nos propres instruments.** Le reconstruire
+en les sommant refermerait l'écart de périmètre à zéro par construction, et ce zéro se
+lirait comme « couverture complète » alors qu'il ne dirait rien — la forme exacte du piège
+que D-153 a épinglé un étage plus bas sur `check_base_split`. `NationalAggregate` refuse
+le drapeau `derived_from_priced` par son nom.
+
+### La ligne C4 dit si elle est dans son support, et §5.2 ne le demandait pas
+
+§5.2 veut que la bande centrée sur zéro se rende « dès qu'un instrument d'impôt de
+production bouge ». Mais elle a été estimée sur la CET — CVAE plus CFE, réforme de 2021
+(IPP Rapport n° 60). La rendre pour un mouvement de la taxe sur les salaires
+l'extrapole hors de sa base d'estimation.
+
+On la rend quand même, parce que taire la seule évaluation existante serait pire, **et on
+écrit sur la ligne elle-même qu'elle est hors support**, grade « illustrative » au lieu de
+« in-support ». C'est un ajout à la lettre de la spec, et la spec aurait laissé passer une
+bande de l'IPP affichée comme si elle portait sur un instrument que l'IPP n'a pas étudié.
+
+La bande est identifiée par sa PROPRIÉTÉ, pas par son nom : si la bande fournie cesse de
+contenir zéro, ce n'est plus la « zéro-bande » de §5.2, et `c4_row()` refuse — la
+substituer en silence changerait le sens du panneau sans changer son étiquette.
+
+### Secteur : composition pour les instruments B, incidence pour les A seulement
+
+`sector_view()` **n'a pas de paramètre `kind`**, et c'est la garde : un appelant qui
+pourrait choisir entre « composition » et « incidence » finirait par choisir. Le seau
+décide. Pour un instrument agrégé, toute lecture d'incidence lève, parce qu'il est chiffré
+sur une assiette nationale statique sans population derrière — le même refus que
+`AggregateInstrument.output('decile')`, au même endroit de la pile.
+
+### Le piège du re-rendu : le numérateur bouge, le dénominateur non
+
+`rerender()` fait bouger la D.29 par la réforme et **tient la valeur ajoutée fixe**, en le
+disant à l'endroit où le ratio s'affiche. Une baisse d'impôt de production qui ferait
+croître la VA abaisserait le ratio davantage ; ce panneau ne le chiffre pas, et la ligne
+C4 dit précisément que l'évaluation existante ne détecte pas cette réponse. Lire le
+mouvement comme un effet de croissance serait lui prêter ce que le panneau refuse de
+modéliser. Vu échouer avec un multiplicateur de 1,002 sur la VA : la charge tombait de
+−0,25 à −0,38 point sans que rien ne signale d'où venait la différence.
+
+L'écart de périmètre EN EUROS est inchangé par un scénario, et un test le tient :
+réformer la CVAE ne chiffre pas la CFE d'un coup.
+
+La fuite de la composition de premier tour est **affichée et jamais réintégrée** —
+l'incident de la phase 4, porté ici plutôt que réappris : renormaliser les parts de
+branches ferait retomber 100 % de l'impulsion sur des branches françaises, ce qui est
+faux d'exactement la taille de la fuite.
+
+### Vingt-trois gardes, toutes vues échouer
+
+Les trois tueurs de §5.3 sont là sous leur nom — baisse d'impôt de production → ligne C4
+ET bannière ; millésimes discordants → refus ; requête sectorielle sur un instrument B →
+« composition, pas incidence » présent et affirmation d'incidence absente. Les vingt
+autres sont les gardes que le module ajoute de lui-même, dont la plus importante n'est
+dans aucun des trois : la comparaison chiffré-contre-national.
+
+### Ce qu'il manque pour que ce panneau rende des chiffres
+
+Trois fichiers, dont **un seul n'est pas au manifeste** :
+
+* **Eurostat `gov_10a_taxag` (D.29 par pays) — ABSENT du manifeste.** Zéro entrée
+  Eurostat sur les 145. Sans lui il n'y a pas de comparateur, et `Comparator` refuse déjà
+  toute instance sans fichier source. C'est le seul téléchargement neuf que M5 demande.
+* `insee_cn2025_t3217_principaux_impots_par_categorie.xlsx` — manifesté et **sourcé**,
+  absent de cette machine. Il tranche l'appartenance à la D.29 et donne le total national.
+* `insee_TES_symetrique_A38_2023SD.xlsx` — manifesté et **sourcé**, absent de cette
+  machine. Il donne la valeur ajoutée par branche, dénominateur de la charge, et alimente
+  déjà `macro/tes.py` et `macro/io_layer.py`.
