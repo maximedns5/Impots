@@ -307,11 +307,17 @@ def _fragile(evaluation: Evaluation, target_eur: float) -> tuple[bool, str]:
                        f"de mesure.")
     low, high = evaluation.band
     if low <= target_eur <= high:
-        return True, (f"FRAGILE : la bande [{low / 1e9:+.2f} ; {high / 1e9:+.2f}] md€ "
-                      f"enjambe la cible de {target_eur / 1e9:+.2f} md€ — mécaniquement "
+        return True, (f"FRAGILE : la bande [{low / 1e9:+.3f} ; {high / 1e9:+.3f}] md€ "
+                      f"enjambe la cible de {target_eur / 1e9:+.3f} md€ — mécaniquement "
                       f"atteinte, et l'intervalle des preuves contient l'échec.")
-    return False, (f"bande [{low / 1e9:+.2f} ; {high / 1e9:+.2f}] md€, entièrement "
-                   f"{'au-dessus' if low > target_eur else 'en dessous'} de la cible.")
+    # La MARGE est dite, pas seulement le côté. Sans elle, une bande qui s'arrête à
+    # 0,6199 md€ sous une cible de 0,62 md€ s'affiche « [… ; +0,62] md€, entièrement en
+    # dessous de la cible » : la phrase se contredit à l'œil, et un lecteur qui prend un
+    # message de garde en défaut cesse de lire les suivants.
+    marge = (low - target_eur) if low > target_eur else (target_eur - high)
+    return False, (f"bande [{low / 1e9:+.3f} ; {high / 1e9:+.3f}] md€, entièrement "
+                   f"{'au-dessus' if low > target_eur else 'en dessous'} de la cible, "
+                   f"avec {marge / 1e9:.3f} md€ de marge.")
 
 
 def search(

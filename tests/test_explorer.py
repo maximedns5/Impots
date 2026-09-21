@@ -269,6 +269,9 @@ def test_a_band_entirely_above_the_target_is_not_fragile_and_says_so() -> None:
         evaluate=_linear({"a": 100 * BN}, band_halfwidth=1 * BN))
     assert not candidates[0].fragile
     assert "au-dessus" in candidates[0].fragility_reason
+    assert "de marge" in candidates[0].fragility_reason, (
+        "le côté seul se contredit à l'œil dès que l'arrondi rapproche la borne de la "
+        "cible ; la marge est ce qui rend la phrase vérifiable")
 
 
 def test_an_absent_band_is_not_read_as_an_absence_of_fragility() -> None:

@@ -7361,3 +7361,105 @@ au dossier sans qu'elle attende quoi que ce soit : **le partage ménages/entrepr
 taxe foncière est lui-même NON MESURÉ**. S'il n'existe aucun partage publié, l'instrument
 chiffre le total avec le partage étiqueté « scénario » — jamais un partage inventé
 présenté comme une donnée.
+
+## D-155 — M4 : la liste blanche v1 de l'explorateur, et trois gardes qui n'en étaient pas
+
+**§9 attend cette entrée, la voici.** L'explorateur d'objectif (§4) n'accepte comme
+CIBLE que `mechanical` — la liste blanche v1 tient en un mot. Comme CONTRAINTES il
+accepte trois codes : `mechanical_total`, `decile_1_3_net_loss`, `per_instrument_bound`.
+
+**`decile_1_3_net_loss` est admissible parce qu'elle est MÉCANIQUE, pas parce qu'elle
+est distributionnelle.** C'est la distinction de §4.1 et elle mérite d'être écrite : un
+delta de revenu disponible par décile, calculé sur la population, sans bande, est un
+scalaire mécanique comme un autre. Ce qui est refusé, ce n'est pas le registre
+distributionnel, c'est l'intervalle. Optimiser sur une bande n'est pas une question mal
+répondue, c'est une question mal posée : toute valeur dont l'intervalle contient la
+cible y répond, et la recherche rendrait celle qu'elle a croisée en premier — un
+candidat choisi par l'ordre de la grille.
+
+**La surface neuve a reçu ses propres tests, et elle en avait besoin.** §4.2 l'exige en
+ces termes — « the new surface gets its own tests, not inherited confidence » — parce
+que `refuse_banded` porte un historique denylist→allowlist réparé, et qu'un historique
+réparé transporte la confiance sans transporter la preuve. Les tests ont trouvé trois
+choses, toutes corrigées dans le module plutôt que contournées dans le test.
+
+### 1. Le refus d'objectif avait une branche MORTE
+
+Deux sorties : le diagnostic délégué à `refuse_banded`, puis un « hors liste blanche »
+atteignable seulement si `refuse_banded` avait ACCEPTÉ la grandeur. Les deux listes
+étant égales aujourd'hui, cette seconde branche ne pouvait pas s'exécuter. Elle se
+lisait comme une garde et ne protégeait rien — et le jour où quelqu'un resserre la liste
+de l'explorateur sous celle du solveur, elle serait devenue vivante sans jamais avoir
+été vue tourner. Une seule sortie désormais, qui nomme toujours la liste blanche.
+
+### 2. Les contraintes étaient vérifiées puis IGNORÉES
+
+Le code passait la liste blanche, et rien ne s'en servait ensuite. La recherche rendait
+exactement les mêmes candidats avec et sans contrainte, sous un tableau qui aurait porté
+la ligne « contrainte : perte nette déciles 1–3 ≤ 0 ». C'est la forme exacte du défaut
+que `reprice()` refuse un étage plus bas — un taux fourni pour un composant inconnu et
+ignoré en silence chiffre la réforme à zéro. Les contraintes sont appliquées, les
+candidats retirés sont nommés dans le journal, et **une contrainte dont l'évaluation n'a
+pas mesuré la valeur est refusée** : « pas mesuré » traité comme « respectée » est la
+seule des deux lectures qu'on ne peut pas défendre.
+
+### 3. Une affirmation d'arithmétique, fausse, dans un docstring de test
+
+Le test de la grille annonçait que `0.98 + 3 * 0.01` dérive à 1,0099999999999998. C'est
+faux : la somme retombe pile sur 1,01, et la mutation qui retirait l'arrondi de `grid()`
+restait verte. L'arrondi EST porteur — `[0,90 ; 1,00]` au pas de 1 donne
+0,9400000000000001 sans lui — donc le test a changé de cas plutôt que de disparaître.
+C'est la troisième fois dans ce projet qu'un commentaire affirme une propriété que
+personne n'a fait tourner (D-075 en est la trace la plus coûteuse). La règle tient :
+**une affirmation vérifiable dans un docstring se vérifie avant d'être écrite.**
+
+### Le plafond arithmétique, et les deux sens d'un tableau vide
+
+`ceiling_eur()` calcule `Σ (f_max − 1) × ancre` AVANT la recherche. Sans lui, « aucun
+candidat » a deux sens indiscernables — la cible est hors d'atteinte par arithmétique,
+ou elle est atteignable et la grille l'a manquée — et le lecteur accuse toujours la
+recherche. C'est ce qui rend le §1 du document de §4.4 lisible : la cible de +20 md€
+vaut dix-neuf fois ce que ±2 points sur les neuf instruments proportionnels peuvent
+produire, et aucun pas de grille plus fin n'y changera rien.
+
+**Le fait est en soi le plus utile de la page** : la tranche de couverture de §2.3.3
+élargit ce que le laboratoire sait chiffrer, elle ne donne pas de quoi boucler une
+dizaine de milliards. Ces ordres de grandeur sont du côté des grandes assiettes.
+
+### L'exemple de §4.4, et pourquoi il porte un encadré
+
+`docs/EXPLORER_EXAMPLE.md` est généré : aucun chiffre n'y est saisi. Il lit la VRAIE
+table d'ancres quand elle existe et retombe sinon sur la fixture des tests, dont les
+montants sont inventés — l'encadré d'avertissement suit la source et disparaîtra de
+lui-même le jour où `data/processed/receipts_anchors.json` sera remplie. Coder la
+bannière en dur mentirait dans l'un des deux cas, et ce serait celui où la page dit vrai.
+
+Deux choses ont dû être corrigées dans la page elle-même :
+
+* **La bande illustrative marquait les 2 442 candidats fragiles.** Posée en absolu à
+  0,6 md€ sur une cible de 0,62 md€, elle enjambait tout. Un drapeau qui s'allume
+  toujours est un drapeau qu'on apprend à ignorer — `test_explorer.py` l'interdit
+  explicitement, et la page le violait pendant que le test passait. La bande est
+  proportionnelle désormais, et la page montre un candidat marqué ET un qui ne l'est pas.
+* **La garde `bande inversée` a arrêté un vrai défaut du script**, sur un paquet à
+  −0,96 md€ : une demi-largeur prise en `Δ × (1 ± part)` s'inverse dès que le paquet
+  coûte au lieu de rapporter. Elle se prend sur la valeur absolue.
+
+Et le nombre d'ex æquo affiché porte sa réserve : les ancres de la fixture sont des
+montants ronds, donc les substitutions tombent juste (0,014 + 0,016 + 0,020 = 0,050
+md€). Sur des ancres publiées ce seraient des quasi-égalités. L'argument contre « voici
+l'optimum » ne change pas de nature, mais le nombre est une propriété de la fixture.
+
+### Une garde anti-dérive pour les documents générés
+
+`test_explorer_example.py` rejoue le rendu et le compare au fichier commité. C'est D-154
+retourné contre lui-même : « un triage qui dérive du code qu'il décrit sera cru le jour
+J » vaut pour toute page générée, et `COVERAGE_INSTRUMENTS.md` n'avait pas cette garde.
+Elle lui est ajoutée ici, la page étant déjà à jour.
+
+Les deux gardes ne se comportent pas pareil, et la différence vient de ce qu'elles
+gardent. `COVERAGE_INSTRUMENTS.md` se rend depuis le code seul : la comparaison est
+inconditionnelle. `EXPLORER_EXAMPLE.md` se rend depuis la table d'ancres, donc
+**le test s'abstient quand la table réelle est présente** — exiger alors l'égalité avec
+la version fixture ferait échouer le test précisément là où le document est le plus
+juste.

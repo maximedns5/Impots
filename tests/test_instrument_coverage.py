@@ -126,3 +126,33 @@ def test_no_row_carries_a_euro_figure() -> None:
         text = f"{instrument.note} {instrument.reason}"
         money = re.findall(r"\d[\d\s]*(?:md€|Md€|M€|milliards?)", text)
         assert not money, f"{instrument.code}: chiffre de recettes dans la table: {money}"
+
+
+# --------------------------------------------------------------------------- #
+# la garde anti-dérive du document rendu (D-155)
+# --------------------------------------------------------------------------- #
+def test_the_committed_coverage_document_is_what_the_script_renders() -> None:
+    """D-154 retourné contre lui-même : « un triage qui dérive du code qu'il décrit sera
+    cru le jour J » vaut aussi pour la page qui le publie.
+
+    La comparaison est inconditionnelle ici, contrairement à celle de
+    `test_explorer_example.py` : cette page se rend depuis le code seul, sans lire un
+    fichier de données, donc son rendu attendu est le même sur toute machine.
+
+    Tombe dès qu'on édite `docs/COVERAGE_INSTRUMENTS.md` à la main — vérifié.
+    """
+    import importlib.util
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    script = root / "scripts" / "write_instrument_coverage.py"
+    spec = importlib.util.spec_from_file_location("write_instrument_coverage", script)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+
+    doc = root / "docs" / "COVERAGE_INSTRUMENTS.md"
+    assert doc.read_text(encoding="utf-8") == module.render(), (
+        "docs/COVERAGE_INSTRUMENTS.md a dérivé de scripts/write_instrument_coverage.py — "
+        "relancer le script plutôt que d'éditer la page.")
