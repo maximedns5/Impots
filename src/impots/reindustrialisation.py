@@ -294,6 +294,30 @@ class Burden:
         for code, amount in self.priced_eur.items():
             if amount < 0:
                 raise ReindustrialisationError(f"{code} : montant négatif {amount}")
+        # QUESTION 1 DE LA BALAYAGE M6 — un dénominateur qui ne contient pas son
+        # numérateur. Notre agrégat est un SOUS-ENSEMBLE de la D.29 : il ne peut pas la
+        # dépasser. Mesuré avant d'être gardé : 38 md€ chiffrés contre 10 md€ nationaux
+        # rendaient « 380 % de couverture, écart −28,0 md€ », imprimés par `statement()`
+        # comme s'ils voulaient dire quelque chose. En vrai cela ne vient jamais d'une
+        # couverture : cela vient d'une erreur d'unité ou du mauvais fichier — et le
+        # symptôme envoie le lecteur réparer celui des deux nombres qui était juste.
+        if self.priced_total_eur > self.national.d29_total_eur:
+            raise ReindustrialisationError(
+                f"agrégat chiffré {self.priced_total_eur / 1e9:.1f} md€ SUPÉRIEUR à la "
+                f"D.29 nationale {self.national.d29_total_eur / 1e9:.1f} md€. Un "
+                f"sous-ensemble ne dépasse pas l'ensemble qui le contient : ce n'est pas "
+                f"un problème de couverture, c'est une erreur d'unité ou un fichier qui "
+                f"n'est pas celui qu'on croit. Rendu tel quel, le panneau afficherait "
+                f"une couverture supérieure à 100 % et un écart de périmètre négatif.")
+        if (self.unpriced
+                and self.priced_total_eur == self.national.d29_total_eur):
+            raise ReindustrialisationError(
+                f"couverture de 100 % alors que {sorted(self.unpriced)} sont nommées non "
+                f"chiffrées. Les deux affirmations ne peuvent pas être vraies ensemble : "
+                f"soit la liste des lignes manquantes est fausse, soit le total national "
+                f"l'est. Un 100 % obtenu dans ces conditions se lirait comme une "
+                f"couverture complète, qui est exactement ce que ce panneau ne peut pas "
+                f"revendiquer tant que la CFE est sous gate.")
         missing = [c for c in self.unpriced if c not in self.unpriced_reason]
         if missing:
             raise ReindustrialisationError(

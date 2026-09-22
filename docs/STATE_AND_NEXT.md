@@ -1,122 +1,182 @@
-# State of the project, and the directions open — 2026-09-13 (post-Phase 7)
+# State of the project, and the directions open — 2026-09-22 (post-Phase 8)
 
-Supersedes the 2026-09-09 post-Phase-6 version. For any next session: read
-this, `docs/CHARTER.md`, and the review file's last addenda.
+Supersedes the 2026-09-13 post-Phase-7 version. For any next session: read
+this, `docs/CHARTER.md`, `docs/PHASE8_SPEC.md`, and the review file's last
+addenda.
 
 ## Where the project stands, whole-arc
 
-Six weeks from the first audit, the tool prices household taxation exactly
+Seven weeks from the first audit, the tool prices household taxation exactly
 (DGFiP-validated; niches, prestations, allègements as knobs), firms
-(IS/CVAE/C3S/CEBGE on real DGFiP-Ésane cells, every line in tolerance),
-wealth (IFI exact, ISF revival, backtested out-of-sample against IPP's 2017
-tables), behavioural effects as bands on adversarially-verified evidence, a
-macro fan that refuses to be a number, and — added in Phase 6 — taxe
-foncière from the REI at commune resolution.
+(IS/CVAE/C3S/CEBGE on real DGFiP-Ésane cells), wealth (IFI exact, ISF revival,
+backtested out-of-sample against IPP's 2017 tables), taxe foncière from the REI
+at commune resolution, behavioural effects as bands on adversarially-verified
+evidence, and a macro fan that refuses to be a number.
 
-Around the model: a reform composer with a budget-neutral solver, the fiche
-de chiffrage generator, a pre-registration harness whose integrity lives in
-git history rather than in the file it protects, the PLF coverage triage
-(29 fiscal articles, four buckets, two headline denominators), multi-year
-trajectories with populations uprated and never re-synthesised, an EMTR
-explorer, and a maintenance charter that is itself under test.
+Phase 8 added the **policy laboratory** on top of that: a debt-dynamics spine
+that refuses to draw a path without a named spending scenario, an aggregate
+instrument engine for taxes with no population behind them, an auditable
+coverage claim over the instrument universe, an objective explorer that hands
+back candidates rather than an optimum, and a reindustrialization panel whose
+defining feature is what it will not answer.
 
-**1 315 tests**, seven replayable `verify_*.py` gate scripts, CI green on an
-instrument that has been shown to fail, and **113 decision entries** recording
-every error in both directions.
+**1 596 tests**, eleven replayable `verify_*.py` gate scripts, and **157 decision
+entries** recording every error in both directions.
 
-## Phase 6 — closed 2026-09-09
+## Phase 8 — the policy laboratory, closed 2026-09-22
 
 | | | |
 |---|---|---|
-| S1 | F3 M4 — the band, year by year | done |
-| S2 | F3 M5 — trajectory outputs; F3 closes | done |
-| S3 | F1b — the capital-income gate | **gate run, cleared; the build is the owner's call** |
-| S4 | PLF 2027 week | **armed, calendar-triggered, early October** |
-| S5 | F6 — the EMTR/ATR explorer | done |
-| S6 | F5 — taxe foncière from the REI | done (D-111) |
-| S7 | the maintenance charter | done (D-112) |
-| S8 | wrap | this document |
+| M0 | Recon (§1) | done, pre-branch |
+| M1 | Debt closure (§3) | done — `dette/`, spending-scenario refusal kill-tested |
+| M2 | Aggregate engine + produits (§2.2–2.3.1) | **partial** — engine + 9 instruments (D-153); TVA and the four accises blocked on downloads |
+| M3 | Entreprises + personnes (§2.3.2–3) | **partial** — coverage claim (D-154); CIR and TH/TF gates blocked on files |
+| M4 | Objective explorer (§4) | done — D-155, worked example rendered |
+| M5 | Reindustrialization panel (§5) | done — D-156 |
+| M6 | Consolidation | this document, D-157 |
 
-Two backfills ran before S1, at the reviewer's order: the missing D-entry
-stubs, and `scripts/verify_rei.py`, which turned the REI gate's findings
-into assertions that stay.
+**Thirty instruments, sixteen priced — 53 %.** The number that matters is the
+other one: **six lines are classified without being priced**, and counting them
+would inflate the claim to 73 %. `COVERAGE_INSTRUMENTS.md` renders both, every
+figure computed and none typed.
 
-## Phase 7 — the accuracy campaign, closed 2026-09-13
+### What Phase 8 refuses, and where each refusal lives
 
-A0 ran and its ranking held through the campaign: IFI placement 17,44 %, CVAE
-placement 2,52 %, IS placement 0,46 %. **L1 landed** — the top tail raked onto
-DGFiP n° 41, the top millième from −64,3 % to +7,8 %, opt-in and spent-registered,
-at a stated price of −2,03 % on the national income total. **L4's two data items
-were refused with their findings**; its perimeter diagnostic is verified and
-replayable. **L3 is recorded unresolvable** at subsample scale. **C2's gate is
-open and nothing was built** — ~1 791 M€ of niches are buildable, with the ranking
-on the record. **C3's 55 communes are pinned** after a 454-column sweep found
-nothing.
+* **A debt path without a named spending scenario** — `dette/path.py`. The
+  spending choice moves the trajectory more than the tax package being explored;
+  a chart that leaves it unstated implies tax carries the adjustment alone.
+* **A distributional output from an aggregate instrument** —
+  `agregats/engine.py`. No population behind the number; a decile table split
+  off a national total is indistinguishable from a real one.
+* **A banded objective or constraint** — `explorer.py`. Optimising *on* an
+  interval is not a badly answered question, it is a badly posed one.
+* **A structural-transformation outcome** — `reindustrialisation.py`. « Combien
+  d'usines ? » needs a model class whose honest band, at country scale, contains
+  both signs.
+* **A receipts anchor from memory** — `agregats/anchors.py`. The euros live in a
+  generated table, never in code.
 
-Full report: `docs/PHASE7_CLOSING.md`. Five instrument defects found and fixed, none
-in the model.
+## M6 — the guards sweep, and what it found
+
+The three questions applied instrument by instrument over everything the branch
+added. **Forty-nine guards were mutated and seen to fail** in the closing pass,
+on top of the kill halves that live permanently in the test files.
+
+**Question 1 — can a denominator tend to zero?** Two findings, one fixed and one
+reported:
+
+* **Fixed.** `Burden` accepted a priced aggregate larger than the national D.29
+  that is supposed to contain it — 38 md€ against 10 md€ printed as « 380 % de
+  couverture, écart −28,0 md€ ». That never comes from coverage: it comes from a
+  unit error or the wrong file, and the symptom sends the reader to fix whichever
+  of the two numbers was right. Guarded, and the guard was tested on three other
+  shapes (equality with lines missing, equality with nothing missing, and
+  preservation through a scenario re-render).
+* **Reported, not fixed — `population/calibrate.py` is fenced to Phase 7 (§8).**
+  A margin cell whose published target is **zero** is skipped by both
+  `_apply_margin` and `_fit`, so it is never measured. Measured rather than read:
+  a four-household rake with a target of 0 on one category keeps **2.0
+  households** there, converges in two iterations, and `check_rake_result` —
+  D-150's own guard — **accepts it**. Whether any published margin target is
+  actually zero cannot be checked on a machine without `data/raw/`. This is §10's
+  own rule looking back at us: *a comparison correct only because one side is
+  zero is untested.*
+
+Checked and clean: `explorer.grid()`, `check_base_split` (the anchor is guarded
+strictly positive at construction), the income mass denominators (each guarded
+`if mass > 0`), and the raking divisions themselves.
+
+**Question 2 — will the fix be tested on a shape other than the one that
+alerted?** Applied to the perimeter guard above; three other shapes, one of which
+must *pass*, because a guard that refuses honest full coverage would forbid the
+state the project is working towards.
+
+**Question 3 — will we have seen this check fail?** Every guard in
+`explorer.py`, `reindustrialisation.py`, `agregats/anchors.py`,
+`agregats/engine.py`, and the three population guards of D-149/D-150 was mutated
+and its test seen to go red. `instrument_coverage.py` carries its own permanent
+kill half — `test_the_claim_would_fail_if_a_name_went_stale` fabricates a row
+naming a lever nobody has.
+
+## Blocked on downloads — the owner's machine, not this one
+
+The container running Phase 8 had **no `data/raw/` and no network**. No anchor
+value, no GDP, no value added, and no comparator could be read here — which is
+why the aggregate layer keeps its figures in generated tables and refuses when
+they are absent.
+
+| what | for | state |
+|---|---|---|
+| COICOP consumption split (R5) | TVA per-rate base | not manifested |
+| CCTN / DGEC / DGDDI / OFDT volumes | the four accises | not manifested |
+| **Eurostat `gov_10a_taxag`** | **M5's benchmark** | **not manifested — the one new download Phase 8 asks for** |
+| GECIR / MESR publications | the CIR gate | not manifested |
+| `insee_cn2025_t3217_principaux_impots_par_categorie.xlsx` | D.29 perimeter + national total | manifested, **sourced**, absent here |
+| `insee_TES_symetrique_A38_2023SD.xlsx` | value added, M5 denominator | manifested, **sourced**, absent here |
+| `insee_cn2025_pib_T1101_1103.xlsx`, `insee_dette_maastricht_detail.xlsx` | §6.1 debt backtest | manifested, **sourced**, absent here |
+| `rei_2025.zip` | TH RS / TF recon | manifested, **sourced**, absent here |
+
+145 files manifested: **69 sourced, 76 in D-028 quarantine.** A quarantined file
+carries a checksum and no URL — the bytes are unchanged, their provenance is not
+proved.
+
+## Owner calls, on the record and not to be chased
+
+* **Skip-vs-fail for the data-dependent tests.** Eighteen CI items — twelve
+  failures and six errors — are missing-file failures, red on `main` at its own
+  head too. The population tests **skip** on exactly this absence; `test_accuracy`,
+  `test_top_tail`, `test_trajectoires` and `test_zero_masked` **fail** on it. So no
+  checkout without the private data can ever be green, and the red carries no
+  information. Turning a test into a skip to make a PR green is not a move any
+  session should make unasked.
+* **The §2.4 coverage threshold.** §9 expects it in the decision log; it exists
+  in neither `M0_PHASE8.md` nor `DECISIONS.md`. Without a threshold there is no
+  universe, so `COVERAGE_INSTRUMENTS.md` counts **lines** and says so — which
+  weighs a droit de timbre like a four-billion contribution.
+* **`make full`.** Not run by the Phase 8 sessions: the handoff forbids running
+  it unasked, and the eighteen data-dependent items would be red under it
+  regardless. **M6's DoD item « `make full` green with the pass logged » is
+  therefore NOT met, and is stated unmet rather than quietly dropped.**
+* **The reviewer's verdict** on Phase 8, to be appended here.
 
 ## Armed and waiting — the dormant interrupts
 
-* **ERFS microdata** (D-096): dormant, not dead. Fires if access ever materialises.
-* **L2, the take-up layer** (new, 2026-09-13): dormant. **Blocker** — both DREES
-  non-recours files sit in D-026 quarantine, so nothing computed from them is
-  reproducible. **Wake condition** — a sourced, manifested take-up file. Until then
-  the grade-time bridges stand and the benefit lines stay as they are.
-
-## The calendar item that is not a choice
-
-**PLF 2027, early October — S4 interrupts anything.** The runbook, harness
-and triage are ready. When the text publishes: manifest it, re-derive the
-triage (the re-sweep rule — levers have changed since, so articles that were
-inexpressible may not be any more), wire the pre-identified knobs, register
-chiffrages with tolerances fixed **at registration**.
-
-F3 makes this materially stronger than last year: multi-year articles get
-priced per year, each with its basis labelled legislated or reconducted, and
-the fan's horizon refusal binds per year rather than for the whole run.
-
-The F1b gate has run and cleared, so the CDHR is no longer a blocker for
-that week. What remains is an owner decision (below), not a task.
+* **PLF 2027, early October — S4 interrupts anything.** Runbook, harness and
+  triage ready. When the text publishes: manifest it, re-derive the triage (the
+  re-sweep rule), wire the pre-identified knobs, register chiffrages with
+  tolerances fixed **at registration**.
+* **ERFS microdata** (D-096): dormant, not dead.
+* **L2, the take-up layer**: dormant. Both DREES non-recours files sit in D-026
+  quarantine, so nothing computed from them is reproducible. Wakes on a sourced,
+  manifested take-up file.
 
 ## Directions open — the owner picks
 
-* **F1b's build: the RCM imputation.** The gate cleared. Whether to build it
-  is a judgement about how much imputed capital income the project wants to
-  carry, and it was left to the owner deliberately.
+* **Finish M2 and M3** the day the downloads land: TVA per-rate, the four
+  accises, the CIR verdict, the TH/TF recon. All four are blocked on files, not
+  on questions.
+* **§6.1's debt backtest** — the two INSEE files are sourced and manifested.
+* **F1b's build: the RCM imputation.** Gate cleared; building it is a judgement
+  about how much imputed capital income to carry.
 * **F7 — succession/DMTG.** Gate only, never past it without the owner.
-  Re-triaged 2026-09-09: still worth a reconnaissance session, still
-  authorised no further.
-* **F8 — aggregate VAT.** Re-triaged 2026-09-09: **still waiting on Budget de
-  Famille 2026, expected ~2027-28.** Unchanged and correctly parked; nothing
-  about Phase 6 moved it.
-* **The CAF cross-check.** Prepared since 2026-09-03, 30 minutes at a
-  browser, owner-only. **No reCAPTCHA circumvention under any
-  circumstances.** Unchanged.
-* **The upstream dossier** (7 catalogued artefacts, each with a kill test)
-  and **all publication and deployment**: owner's, deferred, no pressure.
-  Each phase widens the gap between what this tool does and what any public
-  tool does; the option ripens by itself.
-* **Zucman**: closed, reopen condition on the record. **ERFS**: dormant, not
-  dead (D-096) — fires if access ever materialises.
-* **A sourced production-tax series** is the one identified blocker on a
-  known-desirable case: the multi-year CVAE chiffrage needs it, and every
-  series to hand is quarantined.
+* **F8 — aggregate VAT.** Still waiting on Budget de Famille 2026 (~2027-28).
+* **The CAF cross-check.** 30 minutes at a browser, owner-only. **No reCAPTCHA
+  circumvention under any circumstances.**
+* **The upstream dossier** and **all publication and deployment**: owner's,
+  deferred. The input-hardening precondition (the path-traversal finding) stands.
 
 ## What the next session does if nobody says otherwise
 
-**Nothing, until the reviewer's verdict on `docs/PHASE7_CLOSING.md`.** Phase 8 is
-written (`docs/PHASE8_SPEC.md`, `docs/OPUS_HANDOFF_PHASE8.md`) and **starts only
-after C4 is reviewed** — the owner's sequencing, on the record.
+**Nothing, until the reviewer's verdict on Phase 8.** Then, in order: whichever
+of M2/M3's blocked pieces have had their files land, and §6.1's backtest.
 
-Between the two, maintenance per `docs/CHARTER.md` and nothing more: pin bumps,
-vintage refreshes on the nine-source calendar, full passes. The one unblocked piece
-of build work left over from Phase 7 is C2's niche extension, ranked and costed in
-D-126.
+Maintenance per `docs/CHARTER.md` otherwise — pin bumps, vintage refreshes on the
+nine-source calendar, full passes.
 
 ## Standing, unchanged
 
 ERFS microdata is not redistributable; only aggregates leave it. `data/` is
-committed by allowlist only. Do not fabricate the numbers. The review file's
-addenda, all of them, including the five standing questions and «reality
-beats every spec, on the record».
+committed by allowlist only. Do not fabricate the numbers. Calibration inputs via
+files only (D-026); a figure from memory is a recollection. Banded or absent,
+never confidently wrong. The review file's addenda, all of them, including the
+five standing questions and « reality beats every spec, on the record ».

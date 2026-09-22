@@ -520,3 +520,57 @@ def test_the_scenario_view_always_carries_the_banner_and_the_c4_row() -> None:
     rendu = rerender(_burden(), {"cvae_c3s": -5 * BN}, band=C4_BAND).render()
     assert BANNER in rendu
     assert "centrée sur zéro" in rendu
+
+
+# --------------------------------------------------------------------------- #
+# M6 — la question 1 du balayage, et la question 2 appliquée à sa réponse
+# --------------------------------------------------------------------------- #
+def test_a_priced_aggregate_larger_than_the_national_total_is_refused() -> None:
+    """QUESTION 1 : un dénominateur qui ne contient pas son numérateur.
+
+    Mesuré avant d'être gardé — 38 md€ chiffrés contre 10 md€ nationaux rendaient
+    « 380 % de couverture, écart −28,0 md€ », que `statement()` imprimait sans broncher.
+    En vrai cela ne vient jamais d'une couverture : cela vient d'une erreur d'unité ou du
+    mauvais fichier, et le symptôme envoie réparer celui des deux nombres qui était juste.
+    """
+    with pytest.raises(ReindustrialisationError, match="erreur d'unité"):
+        _burden(priced_eur={"cvae_c3s": 38 * BN},
+                national=_national(d29_total_eur=10 * BN),
+                unpriced=(), unpriced_reason={})
+
+
+def test_full_coverage_claimed_beside_named_missing_lines_is_refused() -> None:
+    """QUESTION 2, forme n° 1 : l'égalité, pas le dépassement.
+
+    Une couverture de 100 % pendant que la CFE est nommée manquante est une
+    contradiction — les deux affirmations ne peuvent pas être vraies ensemble — et elle
+    ne déclenche PAS la garde de dépassement, qui est stricte.
+    """
+    with pytest.raises(ReindustrialisationError, match="ne peuvent pas être vraies"):
+        _burden(priced_eur={"cvae_c3s": 100 * BN})
+
+
+def test_full_coverage_with_nothing_missing_is_allowed() -> None:
+    """QUESTION 2, forme n° 2 : la garde doit DISCRIMINER.
+
+    Chiffrer 100 % de la D.29 sans ligne manquante est une revendication cohérente. Une
+    garde qui refuserait aussi ce cas interdirait l'état vers lequel le projet travaille.
+    """
+    charge = _burden(priced_eur={"cvae_c3s": 100 * BN}, unpriced=(), unpriced_reason={})
+    assert charge.coverage_of_d29 == pytest.approx(1.0)
+    assert charge.gap_eur == pytest.approx(0.0)
+
+
+def test_the_containment_property_survives_a_scenario() -> None:
+    """QUESTION 2, forme n° 3 : la propriété tient-elle APRÈS un re-rendu ?
+
+    La forme qui a alerté est une construction directe ; celle-ci passe par `rerender()`,
+    qui reconstruit un `Burden` et applique donc la même garde. Le même delta s'applique
+    aux deux côtés, donc l'inclusion est préservée — le test le mesure plutôt que de le
+    supposer, parce qu'une asymétrie future entre les deux côtés serait invisible sans lui.
+    """
+    charge = _burden()
+    for delta in (-5 * BN, -12 * BN, +12 * BN):   # −12 amène la CVAE à 0 pile
+        vue = rerender(charge, {"cvae_c3s": delta}, band=C4_BAND)
+        assert vue.after.priced_total_eur <= vue.after.national.d29_total_eur
+        assert vue.after.coverage_of_d29 <= 1.0

@@ -7571,3 +7571,101 @@ Trois fichiers, dont **un seul n'est pas au manifeste** :
 * `insee_TES_symetrique_A38_2023SD.xlsx` — manifesté et **sourcé**, absent de cette
   machine. Il donne la valeur ajoutée par branche, dénominateur de la charge, et alimente
   déjà `macro/tes.py` et `macro/io_layer.py`.
+
+## D-157 — M6 : le balayage des gardes, et ce qu'une question a trouvé dans la garde d'à côté
+
+**Les trois questions, posées instrument par instrument à tout ce que la branche a
+ajouté.** Quarante-neuf gardes mutées et VUES échouer dans la passe de clôture — 12 pour
+l'explorateur, 23 pour le panneau, 11 sur le moteur agrégé et les ancres, 3 sur les
+gardes de population de D-149/D-150 — en plus des moitiés tueuses qui vivent en
+permanence dans les fichiers de test.
+
+### Question 1 : un dénominateur peut-il tendre vers zéro ?
+
+**Trouvé et corrigé — `Burden` acceptait un sous-ensemble plus grand que son ensemble.**
+Notre agrégat chiffré d'impôts de production EST un sous-ensemble de la D.29 nationale ;
+rien ne vérifiait qu'il ne la dépassait pas. Mesuré avant d'être gardé : 38 md€ chiffrés
+contre 10 md€ nationaux rendaient « 380 % de couverture, écart −28,0 md€ », et
+`statement()` imprimait les deux sans broncher.
+
+Ce cas ne vient jamais d'un problème de couverture. Il vient d'une **erreur d'unité** —
+des millions lus comme des euros — ou d'un fichier qui n'est pas celui qu'on croit. Et le
+symptôme, une couverture aberrante, envoie le lecteur réparer celui des deux nombres qui
+était juste. C'est la raison pour laquelle le message de refus nomme l'unité et le
+fichier, et pas la couverture.
+
+**Trouvé et NON corrigé, parce que le fichier appartient à la phase 7.** §8 est explicite :
+« Phase 8 does not touch population/calibrate.py […] Any Phase 8 need discovered there
+becomes a note to the reviewer, not an edit. » Donc ceci est la note.
+
+`_apply_margin` et `_fit` sautent toute cellule de marge dont la cible est nulle —
+`if current <= 0 or target <= 0: continue`. Le garde empêche bien une division par zéro,
+et à ce titre il est correct. Sa conséquence l'est moins : **une cible publiée à zéro
+n'est jamais mesurée.**
+
+Mesuré plutôt que lu. Un rake de quatre ménages, deux catégories, cible « a » = 4 et
+cible « b » = **0** :
+
+```
+convergé=True  itérations=2
+poids restant dans la catégorie « b » dont la cible est 0 : 2.0
+check_rake_result : ACCEPTÉ
+```
+
+Deux ménages restent là où la marge publiée dit qu'il n'y en a aucun, le rake déclare
+avoir convergé, et **`check_rake_result` — la garde de D-150, écrite par la phase 8 —
+l'accepte**, parce que le `worst` qu'elle lit vient de `_fit`, qui a sauté la cellule.
+`MAX_MARGIN_MISS` ne peut structurellement pas voir ce manquement.
+
+C'est §10 qui nous regarde : *« une comparaison juste seulement parce qu'un côté vaut zéro
+n'est pas testée »*. Ici elle n'est pas juste — elle est **sautée** parce qu'un côté vaut
+zéro, ce qui est la version plus silencieuse du même défaut.
+
+**Ce que cette note ne tranche pas** : aucune marge publiée n'a pu être inspectée ici,
+faute de `data/raw/`. Si aucune cible réelle ne vaut zéro, le défaut est latent et
+gratuit à corriger ; s'il en existe une, une cellule entière échappe depuis toujours au
+contrôle de calage. La question se règle en regardant les marges, et c'est la phase 7 qui
+les tient.
+
+**Vérifiés et propres** : `explorer.grid()` (le pas est gardé strictement positif),
+`check_base_split` (l'ancre est gardée strictement positive à la construction), les masses
+de `incomes.py` (chacune sous `if mass > 0`), et les divisions du rake elles-mêmes. Le
+soupçon initial portait sur ces dernières — il était faux, et le dire est le résultat du
+balayage autant que les deux trouvailles.
+
+### Question 2 : le correctif est-il testé sur une autre forme que celle qui alerte ?
+
+La forme qui a alerté est le DÉPASSEMENT, construit directement. Trois autres :
+
+* **l'égalité avec des lignes nommées manquantes** — 100 % de couverture pendant que la
+  CFE est déclarée non chiffrée est une contradiction, et elle ne déclenche pas la garde
+  de dépassement, qui est stricte ;
+* **l'égalité sans rien de manquant** — qui doit PASSER. Une garde qui refuserait aussi ce
+  cas interdirait l'état vers lequel le projet travaille, et une garde qui interdit la
+  réussite est un défaut déguisé en rigueur ;
+* **la propriété après un re-rendu de scénario** — le même delta s'applique aux deux
+  côtés, donc l'inclusion est préservée ; le test le MESURE, parce qu'une asymétrie future
+  entre les deux côtés serait invisible sans lui.
+
+### Question 3 : aura-t-on vu ce contrôle échouer ?
+
+Mécaniquement, pas sur parole. Chaque garde a été remplacée par `if False:` ou par sa
+négation, et le test correspondant devait virer au rouge. Une garde dont le test reste
+vert n'est pas une garde : c'est une ligne de code avec un nom rassurant — et cette passe
+en a déjà attrapé une chez elle, la branche morte du refus de l'explorateur (D-155).
+
+`instrument_coverage.py` n'a pas eu besoin d'être muté : sa moitié tueuse est PERMANENTE,
+dans le fichier de test — `test_the_claim_would_fail_if_a_name_went_stale` fabrique une
+ligne nommant un levier que personne n'a et vérifie que l'assertion tombe. C'est la forme
+forte : la mutation d'une passe se perd, un test de mise à mort reste.
+
+### Ce que M6 ne peut pas cocher, et qui est dit plutôt que laissé tomber
+
+**`make full` n'a pas été lancé.** Le handoff l'interdit sans demande explicite, et les
+dix-huit lignes rouges dépendantes des données le seraient de toute façon. Donc la DoD de
+M6 — « `make full` green with the pass logged » — **n'est PAS remplie**, et ce document le
+déclare au lieu de la faire disparaître. Un jalon dont on raye discrètement le critère
+qu'on n'a pas atteint est un jalon qui ment sur sa propre définition.
+
+De même, **le verdict du relecteur** reste à apposer : il n'appartient à aucune session de
+se le délivrer.
