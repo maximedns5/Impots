@@ -140,16 +140,25 @@ proved.
   them. **So M6's DoD item « `make full` green with the pass logged » is HALF
   met: the pass is logged, it is not green**, and it cannot be on a checkout
   without `data/raw/`. Stated unmet rather than quietly dropped.
-* **The previous logged pass was already red, on `main`, before Phase 8.**
-  `46bc81f` (2026-09-18) logged `8 failed, 1393 passed, 4 skipped` — the only
-  FAIL in seventeen passes before this one, and **on a machine that had the
-  data** (4 skipped, against 138 here). Those eight are therefore NOT the
-  missing-file set, they are on `main` rather than on this branch, and no full
-  pass was logged between that one and this one. The charter's own rule — *no
-  review handoff goes out without a line newer than the work it reports* — was
-  unmet for the nine commits that landed Phase 8. **Which eight tests failed
-  cannot be recovered from here**: the log records counts, not names, and
-  identifying them needs a machine with `data/raw/`.
+* **The previous logged pass was red — and those eight were already fixed.**
+  `46bc81f` (2026-09-18) logged `8 failed, 1393 passed, 4 skipped`, the only FAIL
+  in seventeen passes. **They are identified and closed, in D-142**: all eight
+  were in `test_cells.py`, all one `TypeError` —
+  `ManifestEntry.__init__() got an unexpected keyword argument 'retrieved'` —
+  from eighteen manifest entries hand-written with the generator's field names
+  wrong. `load_manifest()` could not build a single entry, so `require_sourced()`
+  had been raising instead of enforcing D-028 for days. Fixed in `238907b`, four
+  commits later, which is on `main` and on this branch; `test_cells.py` went from
+  8 failures to 23 passes. **Verified here**: the real manifest loads all 145
+  entries through the production loader, the guard and its kill test both run
+  under the default gate, and `test_cells.py` gives 15 passed + 8 skipped — the
+  eight that skip for want of the non-redistributable spreadsheets are the same
+  eight, and 15 + 8 is D-142's 23.
+
+  What was actually unmet is narrower and now closed: **no full pass was logged
+  between `46bc81f` and 2026-09-23**, so for nine commits the charter's rule —
+  *no review handoff goes out without a line newer than the work it reports* —
+  had nothing to point at. The 2026-09-23 line is that newer line.
 * **The reviewer's verdict** on Phase 8, to be appended here.
 
 ## Armed and waiting — the dormant interrupts

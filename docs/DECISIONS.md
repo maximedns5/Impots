@@ -7681,10 +7681,37 @@ n'a été journalisée entre celle-là et celle-ci**. La règle de la charte —
 de relecture ne part sans une ligne plus récente que le travail qu'il rapporte » — n'était
 pas tenue pour les neuf commits qui ont posé la phase 8.
 
-**Lesquels des huit, on ne peut pas le savoir d'ici** : le journal enregistre des comptes,
-pas des noms, et `full_pass_durations.md` ne porte que des temps. Les identifier demande
-une machine avec `data/raw/`. C'est le constat le plus important de M6 et il n'appartient
-pas à cette session de le résoudre.
+**CORRECTION, apportée ici plutôt qu'ailleurs, le 2026-09-23.** Cette entrée a d'abord
+affirmé qu'on ne pouvait pas savoir d'ici lesquels des huit avaient échoué — « le journal
+enregistre des comptes, pas des noms ». C'était **faux**, et d'une façon qui mérite d'être
+gardée : le journal ne les nomme pas, mais **le dépôt les documente depuis le 2026-09-18**,
+dans D-142, quatre commits après la passe rouge. Chercher dans `reports/` était le bon
+réflexe au mauvais endroit ; la réponse était dans ce fichier-ci.
+
+**Les huit, donc.** Tous dans `test_cells.py`, tous la même `TypeError` —
+`ManifestEntry.__init__() got an unexpected keyword argument 'retrieved'`. Dix-huit
+entrées de manifeste écrites à la main portaient `retrieved` là où le générateur écrit
+`downloaded` ; `load_manifest()` ne construisait plus une seule entrée, donc
+`require_sourced()` levait au lieu de faire respecter D-028, depuis plusieurs jours.
+Corrigés dans `238907b` — sur `main` comme sur cette branche — avec le garde manquant et
+son test de mise à mort.
+
+**Vérifié ici, et pas seulement lu :** le vrai manifeste charge ses 145 entrées par la
+fonction que la production appelle ; `test_the_real_manifest_loads_through_the_loader_production_uses`
+et son tueur `test_an_entry_in_an_unknown_shape_is_refused_rather_than_ignored` ne portent
+aucun marqueur, donc tournent sous le gate par défaut et pas seulement sous `-m ""` — le
+piège de D-075 n'est pas là ; et `test_cells.py` rend **15 réussites et 8 sauts**, les huit
+sautés étant ceux qui demandent les tableurs non redistribuables. 15 + 8 = 23, exactement
+ce que D-142 annonce.
+
+**Ce qui n'était donc pas tenu est plus étroit, et est clos** : aucune passe complète n'a
+été journalisée entre `46bc81f` et le 2026-09-23, si bien que pendant neuf commits la règle
+de la charte — « aucun dossier de relecture ne part sans une ligne plus récente que le
+travail qu'il rapporte » — n'avait rien à désigner. La ligne du 2026-09-23 est cette ligne.
+
+**La leçon qui reste, et elle est pour les sessions suivantes :** un rouge au journal de
+passe n'est pas une question ouverte tant qu'on n'a pas cherché son entrée D. Le journal
+dit qu'il s'est passé quelque chose ; `DECISIONS.md` dit quoi.
 
 De même, **le verdict du relecteur** reste à apposer : il n'appartient à aucune session de
 se le délivrer.
