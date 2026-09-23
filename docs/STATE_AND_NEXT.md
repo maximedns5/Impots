@@ -133,10 +133,23 @@ proved.
   in neither `M0_PHASE8.md` nor `DECISIONS.md`. Without a threshold there is no
   universe, so `COVERAGE_INSTRUMENTS.md` counts **lines** and says so — which
   weighs a droit de timbre like a four-billion contribution.
-* **`make full`.** Not run by the Phase 8 sessions: the handoff forbids running
-  it unasked, and the eighteen data-dependent items would be red under it
-  regardless. **M6's DoD item « `make full` green with the pass logged » is
-  therefore NOT met, and is stated unmet rather than quietly dropped.**
+* **`make full`.** **Run on 2026-09-23 at the owner's request, and logged.**
+  `12 failed, 1443 passed, 138 skipped, 6 errors in 50m25s` at `3101fff`. The
+  eighteen red items are byte-identical to the set measured on CI and on a
+  pristine worktree of the parent commit — nothing M4, M5 or M6 added is among
+  them. **So M6's DoD item « `make full` green with the pass logged » is HALF
+  met: the pass is logged, it is not green**, and it cannot be on a checkout
+  without `data/raw/`. Stated unmet rather than quietly dropped.
+* **The previous logged pass was already red, on `main`, before Phase 8.**
+  `46bc81f` (2026-09-18) logged `8 failed, 1393 passed, 4 skipped` — the only
+  FAIL in seventeen passes before this one, and **on a machine that had the
+  data** (4 skipped, against 138 here). Those eight are therefore NOT the
+  missing-file set, they are on `main` rather than on this branch, and no full
+  pass was logged between that one and this one. The charter's own rule — *no
+  review handoff goes out without a line newer than the work it reports* — was
+  unmet for the nine commits that landed Phase 8. **Which eight tests failed
+  cannot be recovered from here**: the log records counts, not names, and
+  identifying them needs a machine with `data/raw/`.
 * **The reviewer's verdict** on Phase 8, to be appended here.
 
 ## Armed and waiting — the dormant interrupts

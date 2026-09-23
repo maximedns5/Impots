@@ -7661,11 +7661,30 @@ forte : la mutation d'une passe se perd, un test de mise à mort reste.
 
 ### Ce que M6 ne peut pas cocher, et qui est dit plutôt que laissé tomber
 
-**`make full` n'a pas été lancé.** Le handoff l'interdit sans demande explicite, et les
-dix-huit lignes rouges dépendantes des données le seraient de toute façon. Donc la DoD de
-M6 — « `make full` green with the pass logged » — **n'est PAS remplie**, et ce document le
-déclare au lieu de la faire disparaître. Un jalon dont on raye discrètement le critère
-qu'on n'a pas atteint est un jalon qui ment sur sa propre définition.
+**`make full` a été lancé le 2026-09-23, à la demande du propriétaire, et journalisé.**
+`12 failed, 1443 passed, 138 skipped, 6 errors in 50m25s` sur `3101fff`. Les dix-huit
+lignes rouges sont **identiques au caractère près** à celles mesurées sur CI et sur un
+worktree vierge du commit parent : rien de ce que M4, M5 ou M6 ont ajouté n'y figure.
+
+Donc la DoD de M6 — « `make full` green with the pass logged » — est **à moitié remplie :
+la passe est journalisée, elle n'est pas verte**, et elle ne peut pas l'être sur une copie
+sans `data/raw/`. Ce document le déclare au lieu de le faire disparaître : un jalon dont
+on raye discrètement le critère qu'on n'a pas atteint est un jalon qui ment sur sa propre
+définition.
+
+**Et la passe précédente au journal était DÉJÀ rouge, sur `main`, avant la phase 8.**
+`46bc81f` (2026-09-18) : `8 failed, 1393 passed, 4 skipped` — le seul FAIL des dix-sept
+passes antérieures, et **sur une machine qui avait les données** (4 sautés, contre 138
+ici). Ces huit-là ne sont donc PAS le lot des fichiers manquants : ce sont huit échecs
+réels sur `main`, neuf commits avant la base de cette branche, et **aucune passe complète
+n'a été journalisée entre celle-là et celle-ci**. La règle de la charte — « aucun dossier
+de relecture ne part sans une ligne plus récente que le travail qu'il rapporte » — n'était
+pas tenue pour les neuf commits qui ont posé la phase 8.
+
+**Lesquels des huit, on ne peut pas le savoir d'ici** : le journal enregistre des comptes,
+pas des noms, et `full_pass_durations.md` ne porte que des temps. Les identifier demande
+une machine avec `data/raw/`. C'est le constat le plus important de M6 et il n'appartient
+pas à cette session de le résoudre.
 
 De même, **le verdict du relecteur** reste à apposer : il n'appartient à aucune session de
 se le délivrer.
