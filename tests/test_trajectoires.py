@@ -325,6 +325,19 @@ class _Behavioural:
         self.band, self.grade, self.grade_reason = band, grade, reason
 
 
+#: L'horizon passé aux tests UNITAIRES de `year_uncertainty`. Ces tests vérifient
+#: l'assemblage des classes d'incertitude — vieillissement, comportement, note — et
+#: aucune de leurs assertions ne lit l'éventail : c'est mesuré, pas supposé, par
+#: `test_the_class_fields_do_not_depend_on_the_horizon` ci-dessous. Sans cette injection,
+#: `year_uncertainty` chargeait le magasin macro ENTIER pour son horizon par défaut, donc
+#: trois PDF (IMK wp117, wp139, Mésange), et cinq tests de pure logique échouaient faute
+#: d'un fichier qu'ils ne lisent pas. La valeur 3 suit la convention des deux tests
+#: voisins qui passaient déjà `horizon=3`. La LECTURE du magasin réel — que l'horizon
+#: vient bien de lui et vaut 3 — reste l'affaire du test d'intégration
+#: `test_the_macro_horizon_is_read_from_the_store`, qui n'est pas touché.
+UNIT_HORIZON = 3
+
+
 def test_the_uprating_class_is_measured_by_the_frozen_aged_pair():
     """The class this milestone names, measured rather than assumed.
 
@@ -334,7 +347,7 @@ def test_the_uprating_class_is_measured_by_the_frozen_aged_pair():
     unless named. Fails if the width stops being derived from the pair.
     """
     u = tj.year_uncertainty(2028, basis="reconducted", frozen_eur=-7.073e9,
-                            aged_eur=-8.339e9, base_year=2026)
+                            aged_eur=-8.339e9, base_year=2026, horizon=UNIT_HORIZON)
     assert u.uprating_eur == (-7.073e9, -8.339e9)
     assert u.uprating_width_eur == pytest.approx(1.266e9, abs=1e6)
     assert u.mechanical_eur == -8.339e9, "le titre est le chiffre vieilli, le plus complet"
@@ -348,7 +361,7 @@ def test_the_two_classes_are_never_merged_into_one_band():
     the uprating class is the larger one, and a merged interval would hide that.
     """
     u = tj.year_uncertainty(2028, basis="reconducted", frozen_eur=-7.073e9,
-                            aged_eur=-8.339e9, base_year=2026,
+                            aged_eur=-8.339e9, base_year=2026, horizon=UNIT_HORIZON,
                             behavioural=_Behavioural(_Band(-8.9e9, -7.8e9), "illustrative"))
     assert not hasattr(u, "total"), "une bande combinée est apparue"
     assert not hasattr(u, "combined_eur")
@@ -362,7 +375,7 @@ def test_the_uprating_class_can_be_the_larger_one():
     """The reason for keeping them apart, made concrete: on this reform the price
     hypothesis moves the figure more than behaviour does."""
     u = tj.year_uncertainty(2028, basis="reconducted", frozen_eur=-7.073e9,
-                            aged_eur=-8.339e9, base_year=2026,
+                            aged_eur=-8.339e9, base_year=2026, horizon=UNIT_HORIZON,
                             behavioural=_Behavioural(_Band(-8.6e9, -8.1e9), "illustrative"))
     behavioural_width = abs(u.behavioural_eur[1] - u.behavioural_eur[0])
     assert u.uprating_width_eur > behavioural_width
@@ -431,11 +444,11 @@ def test_the_behavioural_grade_is_taken_per_year_not_carried_forward():
     supplies its own verdict, and the two years below disagree on purpose.
     """
     early = tj.year_uncertainty(2026, basis="legislated", frozen_eur=-1e9, aged_eur=-1e9,
-                                base_year=2026,
+                                base_year=2026, horizon=UNIT_HORIZON,
                                 behavioural=_Behavioural(_Band(-1.1e9, -0.9e9),
                                                          "in-support"))
     late = tj.year_uncertainty(2030, basis="reconducted", frozen_eur=-1e9,
-                               aged_eur=-1.4e9, base_year=2026,
+                               aged_eur=-1.4e9, base_year=2026, horizon=UNIT_HORIZON,
                                behavioural=_Behavioural(None, "illustrative",
                                                         "hors du support en 2030"))
     assert early.behavioural_grade == "in-support"
@@ -446,7 +459,27 @@ def test_the_behavioural_grade_is_taken_per_year_not_carried_forward():
 
 def test_a_year_without_a_behavioural_block_says_so_rather_than_implying_zero():
     u = tj.year_uncertainty(2028, basis="reconducted", frozen_eur=-1e9, aged_eur=-1e9,
-                            base_year=2026)
+                            base_year=2026, horizon=UNIT_HORIZON)
     assert u.behavioural_eur is None
     assert u.behavioural_grade == "aucune bande"
     assert "comportement : aucune bande" in u.line()
+
+
+def test_the_class_fields_do_not_depend_on_the_horizon():
+    """Ce qui autorise `UNIT_HORIZON` : les champs que lisent les tests unitaires des
+    classes d'incertitude sont IDENTIQUES quel que soit l'horizon.
+
+    Mesuré avant d'injecter l'horizon dans ces tests, à 1, 3 et 10 ans : mêmes verdicts.
+    Ce test garde la propriété. Le jour où l'assemblage des classes dépendrait de
+    l'horizon, `UNIT_HORIZON` deviendrait une hypothèse cachée dans des tests qui se
+    croient unitaires, et c'est ici que cela se verrait — pas dans un test qui passe.
+    """
+    def champs(horizon: int):
+        u = tj.year_uncertainty(2028, basis="reconducted", frozen_eur=-7.073e9,
+                                aged_eur=-8.339e9, base_year=2026, horizon=horizon,
+                                behavioural=_Behavioural(_Band(-8.9e9, -7.8e9),
+                                                         "illustrative", "raison"))
+        return (u.uprating_eur, u.uprating_width_eur, u.mechanical_eur,
+                u.behavioural_eur, u.behavioural_grade, u.behavioural_note)
+
+    assert champs(1) == champs(UNIT_HORIZON) == champs(10)

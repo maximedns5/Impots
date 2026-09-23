@@ -628,3 +628,30 @@ def as_cell_table(cells: list[Cell], provenance: CellProvenance) -> dict[str, An
         "provenance": asdict(provenance),
         "cells": [asdict(cell) for cell in cells],
     }
+
+
+def write_cell_table(vintage: str = "2023", raw: Path | None = None) -> Path:
+    """Construit la table de cellules depuis les trois tableurs publiés et l'écrit.
+
+    LE MAILLON QUI MANQUAIT. `build_cells()` et `as_cell_table()` existaient, et
+    `load_cells()` lisait `data/processed/firm_cells_2023.json` — mais aucune commande
+    n'écrivait ce fichier : il n'était produit que par un appel à la main, nulle part
+    consigné. Un artefact dérivé sans commande qui le produit est un artefact que la CI
+    ne peut pas reconstruire et qu'un lecteur ne peut pas refaire.
+
+    Écrit en `.part` puis renommé : une construction interrompue ne laisse pas derrière
+    elle un JSON tronqué que `load_cells` lirait à moitié.
+    """
+    import json
+    import os
+
+    from impots.donnees import PROCESSED
+
+    cells, provenance = build_cells(raw=raw, vintage=vintage)
+    PROCESSED.mkdir(parents=True, exist_ok=True)
+    out = PROCESSED / f"firm_cells_{vintage}.json"
+    partial = out.with_name(out.name + ".part")
+    partial.write_text(json.dumps(as_cell_table(cells, provenance), ensure_ascii=False,
+                                  indent=2), encoding="utf-8")
+    os.replace(partial, out)
+    return out

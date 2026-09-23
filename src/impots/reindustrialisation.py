@@ -40,6 +40,8 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from impots.donnees import PROCESSED
+
 #: La bannière permanente de §5.1, au mot près. `panel()` ne rend rien sans elle.
 BANNER = (
     "ce panneau chiffre des instruments et des compositions ; il ne modélise pas la "
@@ -72,8 +74,9 @@ REFUSED_OUTCOMES: dict[str, str] = {
 #: il n'est simplement pas sur toutes les machines.
 PERIMETER_DOCUMENT = "insee_cn2025_t3217_principaux_impots_par_categorie.xlsx"
 
-#: Généré là où `data/raw/` existe, gitignoré comme les autres tables traitées.
-PERIMETER_TABLE = Path("data/processed/d29_perimeter.json")
+#: Généré là où `data/raw/` existe, gitignoré comme les autres tables traitées. Ancré à
+#: la racine du dépôt, et non au répertoire courant.
+PERIMETER_TABLE = PROCESSED / "d29_perimeter.json"
 
 #: Les seaux dont le moteur porte le secteur. §5.2 : le moteur de cellules porte le
 #: secteur pour les instruments A ; les instruments B entrent au niveau national.

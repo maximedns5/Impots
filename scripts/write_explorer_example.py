@@ -23,6 +23,11 @@ from impots import guards
 from impots.agregats import instruments as inst
 from impots.agregats.anchors import ANCHOR_TABLE, AnchorTableMissing, load_anchors
 from impots.dette import path as dette
+from impots.donnees import ROOT
+
+#: Affiché RELATIF à la racine : le document est commité, et un chemin absolu y ferait
+#: entrer la machine de celui qui l'a rendu — et casserait le test anti-dérive ailleurs.
+ANCHOR_TABLE_SHOWN = ANCHOR_TABLE.relative_to(ROOT)
 
 OUT = Path("docs/EXPLORER_EXAMPLE.md")
 FIXTURE = Path("tests/fixtures/receipts_anchors_fixture.json")
@@ -71,7 +76,7 @@ BAND_SHARE_ILLUSTRATIVE = 0.08
 def _anchors() -> tuple[dict, str, bool]:
     """La vraie table si elle existe, sinon la fixture — et de quoi l'écrire en haut."""
     try:
-        return load_anchors(), f"`{ANCHOR_TABLE}`", True
+        return load_anchors(), f"`{ANCHOR_TABLE_SHOWN}`", True
     except AnchorTableMissing:
         return load_anchors(FIXTURE), f"`{FIXTURE}`", False
 
@@ -181,7 +186,7 @@ def render() -> str:
           f"chaîne — recherche, drapeaux, partie double, trajectoire — soit visible en "
           f"entier sur une copie du dépôt sans `data/raw/`.")
         a("> ")
-        a(f"> Le jour où `{ANCHOR_TABLE}` est remplie (voir `docs/M2_ANCHORS.md`), "
+        a(f"> Le jour où `{ANCHOR_TABLE_SHOWN}` est remplie (voir `docs/M2_ANCHORS.md`), "
           f"`python scripts/write_explorer_example.py` réécrit ce même document avec les "
           f"montants publiés, et cet encadré disparaît de lui-même.")
     else:

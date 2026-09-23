@@ -61,20 +61,48 @@ jobs:
       - name: Lint
         run: ruff check src tests scripts
 
-      # The population tests run against tests/fixtures/eec_sample.parquet, so CI
-      # needs neither network access nor the 11.7 MB INSEE file. The full-data path
-      # is exercised locally.
+      # THE DATA CHAIN, which CI did not have. Eighteen tests failed here after 47
+      # minutes, each on the FIRST missing file of its chain — and the trace named only
+      # that first file: the macro store alone reads three PDFs, not the one its error
+      # showed. `impots data` derives the list from the readers' own constants, so it
+      # asks for everything the suite reads rather than what the last failure printed.
+      #
+      # Raw sources are cached keyed on the manifest: they are immutable by sha256, so a
+      # cache hit is correct by construction, and any manifest change re-fetches. The
+      # derived artefacts are NOT cached — they are rebuilt from verified sources every
+      # run, because a stale population silently reused is the failure this whole chain
+      # exists to prevent. Every source is Licence Ouverte or open access (see the
+      # manifest); none is committed (D-016) — they live in the runner, not the tree.
+      - name: Restore the raw sources (keyed on their manifest checksums)
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw/*
+            !data/raw/MANIFEST.json
+          key: raw-sources-${{ hashFiles('data/raw/MANIFEST.json') }}
+
+      # By manifest entry only: URL, byte count and sha256 are checked BEFORE the file
+      # is renamed into place, so a publication that changed under the same URL fails
+      # here, loudly, instead of producing plausible numbers downstream (D-007).
+      - name: Fetch the raw sources the suite reads
+        run: impots data fetch --profile tests
+
+      - name: Build the derived artefacts
+        run: |
+          impots entreprises cells
+          impots population build
+
+      # Fails in about a second, listing every missing or invalid dependency with the
+      # command that produces it — before the 47-minute run, not during it.
+      - name: Preflight — every dependency present and valid
+        run: impots data check --profile tests
+
       # GitHub runners are slower and noisier than a laptop; the timing assertions
       # exist to catch an accidental benefits cascade, not to benchmark CI.
       # `-m ""` overrides the default gate in pyproject, which excludes the tests
       # that need a full population pass. CI is where minutes are cheap, so it runs
-      # everything it can.
-      #
-      # Worth stating plainly: those tests currently SKIP here anyway, because CI has
-      # no built population — the EEC file is 11.7 MB and downloading it is not CI's
-      # job. So the full pass genuinely runs only on a machine that has the data.
-      # `-m ""` is what makes CI pick them up the day that changes, rather than
-      # silently continuing to skip a suite everyone believes is running.
+      # everything it can — and with the data chain above, the population tests that
+      # used to skip here for want of a built population now have one.
       - name: Tests
         run: pytest -q -m ""
         env:

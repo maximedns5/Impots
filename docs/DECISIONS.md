@@ -7715,3 +7715,110 @@ dit qu'il s'est passé quelque chose ; `DECISIONS.md` dit quoi.
 
 De même, **le verdict du relecteur** reste à apposer : il n'appartient à aucune session de
 se le délivrer.
+
+## D-158 — La chaîne de données, qui n'existait pas, et trois défauts qu'elle cachait
+
+**Symptôme.** `pytest -q -m ""` : 12 échecs et 6 erreurs, tous sur un fichier absent —
+`population_2024.parquet`, `firm_cells_2023.json`, deux classeurs DGFiP, un PDF IMK. Le
+diagnostic de départ en comptait cinq. **Ce n'était pas cinq fichiers, et ce n'était pas
+seulement des fichiers.**
+
+**Cause racine.** Aucune chaîne de préparation n'existait sous forme exécutable. Aucune
+fonction de téléchargement dans le dépôt ; `DATA_DOWNLOADS.md` décrivait un processus
+manuel (« downloaded on the Mac ») ; le workflow CI écrivait lui-même que télécharger
+« n'est pas le travail de la CI ». Les tests dépendants échouaient donc, un par un, sur
+le PREMIER fichier manquant de leur chaîne.
+
+### Trois défauts que « fichier absent » masquait
+
+1. **Aucune commande n'écrivait `firm_cells_2023.json`.** `build_cells()` et
+   `as_cell_table()` existaient, `load_cells()` lisait le fichier — mais rien ne
+   l'écrivait : il n'était produit que par un appel à la main, nulle part consigné. Et le
+   commentaire au-dessus de `FIRM_CELLS` disait « Committed », alors que
+   `data/processed/*` est gitignoré et que ce fichier n'a jamais été dans l'historique
+   git. C'est en partie pourquoi personne n'a cherché la commande qui le produit : il n'y
+   en avait pas. `impots entreprises cells` l'écrit désormais, en `.part` puis renommé.
+2. **La trace ne nommait que le premier document manquant.** `max_fan_horizon_years()`
+   charge le store macro ENTIER, qui matérialise TROIS documents — IMK wp117, IMK wp139,
+   Mésange — et valide chaque horizon déclaré contre sa source. Récupérer le seul wp117
+   que la trace montrait aurait fait échouer le run suivant sur wp139, puis sur Mésange.
+   Trois cycles de 47 minutes.
+3. **Quatre modules résolvaient `data/...` par rapport au répertoire COURANT** —
+   `accuracy_cases`, `top_tail`, et deux que j'ai écrits en M2/M5 en recopiant le style
+   du premier. Un fichier présent se lisait « absent » dès qu'on lançait hors de la racine.
+
+### Ce qui a été construit
+
+**`impots.donnees` et `impots data check|fetch|prepare`.** Le profil `tests` est DÉRIVÉ
+des constantes des lecteurs eux-mêmes — `ifi_cells.TRANCHE_FILE`, `top_tail.WORKBOOK`,
+les `document` des YAML du store — et non d'une liste recopiée : un préflight qui vérifie
+moins que ce que le code lit est la forme D-044. Dix sources brutes (16,8 Mo, toutes sous
+licence ouverte, toutes sourcées au manifeste) et deux artefacts dérivés.
+
+Le téléchargement passe par `ingest.load_manifest()`, le chargeur de production (D-142),
+refuse la quarantaine (D-028), et n'écrit un fichier que si sa taille ET son sha256
+égalent le manifeste — sinon le `.part` est supprimé. La table de cellules FICTIVE des
+tests a exactement la forme de la vraie et se charge par le même `load_cells` : le
+validateur lit `cells_are_synthetic` et la refuse, pour qu'une copie à cet emplacement ne
+fasse jamais tourner les tests d'exactitude sur douze cellules inventées.
+
+**Le préflight rend son verdict en 0,84 s au lieu de 47 minutes**, et `make full` le lance
+d'abord : il s'arrête en 0,57 s et n'écrit AUCUNE ligne au journal — un essai avorté n'est
+pas une passe. La CI restaure les sources en cache (clé : le manifeste), les télécharge au
+besoin, reconstruit les deux artefacts à chaque run (jamais mis en cache : une population
+périmée réutilisée en silence est l'échec que cette chaîne existe pour empêcher), puis
+lance le préflight avant la suite.
+
+### Le découplage — seulement là où la dépendance était incidente
+
+**Le refus d'une réforme no-op se décide sans donnée.** `central_for` chargeait les
+cellules avant de constater que `cvae_taux_max = 0,0028` est la valeur EN VIGUEUR. L'arbre
+de paramètres suffit à le prouver. `structural_noop()` est volontairement étroit : chaîne
+entreprises, levier scalaire, égalité EXACTE, aux DEUX bornes de l'année — dans le doute,
+on mesure. **Et la moitié mesurée reste testée** : sans un test dédié, la branche
+`MOVES_EPSILON_EUR` n'aurait plus eu de test qui la fasse tourner, puisque le refus
+structurel intercepte désormais le seul cas qui l'exerçait.
+
+**Déclarer une source ne lit plus la donnée qu'il faut pour la tirer.** `sources_for`
+construisait l'échantillonneur entreprises et l'encadrement IFI, donc chargeait cellules
+et tranches, alors que `test_every_unmeasured_source_names_why` ne vérifie que des
+métadonnées. Les deux sont paresseux : chargés au premier tirage, une seule fois.
+
+**L'horizon des tests unitaires de trajectoire est injecté, et prouvé incident.** Les
+cinq tests ne lisent aucun champ d'éventail ; mesuré avec l'horizon à 1, 3 et 10 : mêmes
+verdicts, et un test garde cette propriété. Ils passent `horizon=UNIT_HORIZON`, comme le
+faisaient déjà deux tests voisins. **`max_fan_horizon_years()` n'est pas touché** : le
+store valide l'horizon contre le document source, et lire seulement les déclarations YAML
+affaiblirait cette garantie en production. Le test d'intégration
+`test_the_macro_horizon_is_read_from_the_store` reste entier, et reste dépendant du PDF.
+
+### Trouvé en écrivant les tests
+
+**Deux classes `Cell`** de mêmes nom et champs — `entreprises/cells.py`, ce qu'écrit
+l'écrivain, et `entreprises/population.py`, ce que construit `load_cells`. Identiques
+aujourd'hui, le JSON faisant frontière. Le jour où l'une gagne un champ, `load_cells`
+lèverait une `TypeError` au chargement : la forme exacte de D-142. Un test compare
+désormais les deux définitions. Les unifier serait un refactor hors du périmètre ; la
+garde suffit à ce que la dérive se voie.
+
+Et un de mes propres tests affirmait plus qu'il ne vérifiait : « reads the cells once »
+avec un seul tirage, qui ne pouvait pas voir une relecture au second. Corrigé avant
+d'être commité.
+
+### Vingt-deux gardes, vues échouer — et deux qui ne peuvent pas l'être
+
+Chaque garde neuve a été mutée et son test vu virer au rouge. Deux défenses en profondeur
+ne sont PAS comptées comme testées : la vérification de TAILLE seule (le sha256 la
+subsume — un fichier de mauvaise taille a forcément un autre sha256, aucun test ne peut
+l'isoler) et l'atomicité du renommage (inobservable dans un test séquentiel).
+
+### Ce que cette entrée ne peut pas affirmer
+
+**Rien n'a été téléchargé ici.** Le proxy de ce conteneur refuse `www.impots.gouv.fr`,
+`www.econstor.eu` et `www.insee.fr` (403 au CONNECT) : les cinq dépendances n'ont donc pas
+pu être vérifiées présentes et lisibles sur cette machine, et la suite complète n'a pas été
+relancée — elle ne ferait que reproduire les rouges dépendants des données. La CI GitHub a
+un accès réseau ouvert ; qu'INSEE et la DGFiP servent ces fichiers à ses runners n'est pas
+vérifié d'ici. **Et construire la population en CI fera TOURNER les tests de population
+qui y sautaient jusqu'ici** — c'est le but, mais ils n'ont jamais tourné en CI, et leur
+durée comme leur verdict y sont inconnus.

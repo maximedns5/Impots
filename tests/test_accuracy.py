@@ -314,3 +314,151 @@ def test_the_attribution_refuses_an_empty_store() -> None:
 
     with pytest.raises(ab.AttributionError, match="store vide"):
         ab.attribute("x", {}, store=Store(parameters={}))
+
+
+# ------------------------------- the data dependency, decoupled where it was incidental
+
+def test_a_structural_noop_is_refused_before_any_data_is_read(monkeypatch) -> None:
+    """`central_for` chargeait les cellules AVANT de pouvoir constater qu'une réforme qui
+    remet un paramètre à sa valeur en vigueur ne bouge rien. L'arbre de paramètres suffit
+    à le prouver : le refus vient donc avant tout chargement, et ce test le garantit en
+    faisant exploser l'échantillonneur s'il est appelé."""
+    from impots import accuracy_cases
+
+    def interdit(*_a, **_k):
+        raise AssertionError("l'échantillonneur ne devait pas être construit")
+
+    monkeypatch.setattr(accuracy_cases, "firm_placement_sampler", interdit)
+    noop = accuracy_cases.ReferenceReform(
+        key="noop", label="no-op", family="CVAE", chain="firm",
+        knob="cvae_taux_max", value=0.0028)
+    with pytest.raises(ValueError, match="n'est pas une réforme") as caught:
+        accuracy_cases.central_for(noop)
+    assert "sans tirer d'échantillon" in str(caught.value)
+
+
+def test_the_measured_threshold_still_refuses_what_barely_moves(monkeypatch) -> None:
+    """LA moitié qui serait devenue non testée. Le refus structurel intercepte maintenant
+    le cas 0,0028 AVANT la mesure ; sans ce test, la branche `MOVES_EPSILON_EUR` — celle
+    qui refuse une réforme réelle dont l'effet MESURÉ est négligeable — n'aurait plus aucun
+    test qui la fasse tourner. L'échantillonneur est injecté : c'est la logique du seuil
+    qui est testée ici, la mesure réelle l'est par le test suivant, sur les vraies cellules.
+    """
+    from impots import accuracy_cases
+
+    monkeypatch.setattr(accuracy_cases, "firm_placement_sampler",
+                        lambda knob, value: (lambda seed: 1e6))
+    presque = accuracy_cases.ReferenceReform(
+        key="presque", label="presque rien", family="CVAE", chain="firm",
+        knob="cvae_taux_max", value=0.0029)
+    assert not accuracy_cases.structural_noop(presque)
+    with pytest.raises(ValueError, match="sous le seuil"):
+        accuracy_cases.central_for(presque)
+
+
+def test_a_real_reform_falls_through_to_the_measurement(monkeypatch) -> None:
+    """La garde doit DISCRIMINER : une valeur qui n'est pas celle en vigueur n'est jamais
+    refusée structurellement — elle est mesurée, et le chiffre mesuré est rendu."""
+    from impots import accuracy_cases
+
+    monkeypatch.setattr(accuracy_cases, "firm_placement_sampler",
+                        lambda knob, value: (lambda seed: 4.2e9))
+    case = accuracy_cases.reform("cvae")
+    assert accuracy_cases.central_for(case) == 4.2e9
+
+
+def test_no_committed_reference_reform_is_a_structural_noop() -> None:
+    """Protège « les réformes réellement présentes dépassent MOVES_EPSILON_EUR » du côté
+    structurel, sans donnée : aucune des réformes de référence ne remet un paramètre à sa
+    valeur en vigueur. Le côté mesuré reste `test_every_cheap_reference_reform_actually_moves`,
+    sur les vraies cellules."""
+    from impots import accuracy_cases
+
+    for case in accuracy_cases.REFERENCE_REFORMS:
+        assert not accuracy_cases.structural_noop(case), case.key
+
+
+def test_the_structural_check_is_exact_and_not_a_tolerance() -> None:
+    """Dans le doute, on mesure. Une valeur voisine de celle en vigueur n'est PAS un no-op
+    structurel : un faux refus serait pire qu'un chargement inutile."""
+    from impots import accuracy_cases
+
+    voisin = accuracy_cases.ReferenceReform(
+        key="v", label="v", family="CVAE", chain="firm", knob="cvae_taux_max",
+        value=0.0028 + 1e-12)
+    assert not accuracy_cases.structural_noop(voisin)
+
+
+def test_declaring_the_sources_of_a_case_reads_no_data(tmp_path, monkeypatch) -> None:
+    """`sources_for` DÉCLARE des sources ; il ne doit pas exiger les données qu'il faut pour
+    les TIRER. Le chemin des cellules pointe vers un fichier inexistant et le tirage des
+    tranches IFI explose : la déclaration réussit quand même, et c'est le TIRAGE qui échoue
+    — là où la donnée est réellement lue."""
+    from impots import accuracy_cases
+
+    monkeypatch.setattr(accuracy_cases, "FIRM_CELLS", tmp_path / "absent.json")
+
+    def pas_de_tranches():
+        raise FileNotFoundError("tranches IFI lues trop tôt")
+
+    monkeypatch.setattr("impots.patrimoine.cells.cells", pas_de_tranches)
+
+    firm = accuracy_cases.sources_for(accuracy_cases.reform("cvae"), households=10)
+    placement = next(s for s in firm if s.method == "sampled")
+    with pytest.raises(FileNotFoundError):
+        placement.sample(1)
+
+    ifi = accuracy_cases.sources_for(accuracy_cases.reform("ifi"), households=10)
+    bound = next(s for s in ifi if s.method == "swing")
+    with pytest.raises(FileNotFoundError, match="trop tôt"):
+        bound.swing("concentre")
+
+
+def test_the_lazy_sampler_reads_the_cells_once(monkeypatch) -> None:
+    """Paresseux ne veut pas dire relu à chaque tirage : 128 tirages, un chargement.
+
+    Écrit d'abord avec un seul tirage — ce qui ne pouvait pas voir une relecture au
+    second, sous un nom qui prétendait le contraire. Deux tirages, sur le VRAI moteur
+    entreprises et les cellules de la fixture : c'est la mise en cache qui est testée,
+    pas les chiffres, qui ne disent rien de la France.
+    """
+    from impots import accuracy_cases
+    from impots.entreprises import build as build_module
+
+    vraie_lecture = build_module.load_cells
+    lectures: list[str] = []
+
+    def compter(path):
+        lectures.append(str(path))
+        return vraie_lecture(path)
+
+    # Le chemin pointe vers un fichier qui EXISTE (la fixture), pour que le contrôle
+    # d'existence du chargeur passe et que ce soit bien la lecture qui soit comptée.
+    monkeypatch.setattr(accuracy_cases, "FIRM_CELLS", build_module.FIXTURE_CELLS)
+    monkeypatch.setattr(build_module, "load_cells", compter)
+    sample = accuracy_cases.firm_placement_sampler("cvae_taux_max", 0.005)
+    assert lectures == [], "rien ne doit être lu à la construction"
+    sample(1)
+    sample(2)
+    assert len(lectures) == 1
+
+
+def test_a_parameter_that_changes_during_the_year_is_not_a_structural_noop(
+        monkeypatch) -> None:
+    """La seconde borne. Si le paramètre vaut la valeur de la réforme au 1er janvier mais
+    change avant le 31 décembre, la réforme N'EST PAS neutre : elle l'écrase sur le reste
+    de l'année. Le refus structurel doit alors se taire et laisser mesurer.
+
+    Sans ce test, vérifier une seule des deux bornes passait inaperçu : l'arbre réel ne
+    change pas `cvae_taux_max` en 2026, donc aucun autre test ne distingue les deux.
+    """
+    from impots import accuracy_cases
+
+    def en_deux_temps(_parameters, _path):
+        return lambda instant: 0.0028 if instant.endswith("-01-01") else 0.0040
+
+    monkeypatch.setattr("impots.parameters.resolve", en_deux_temps)
+    case = accuracy_cases.ReferenceReform(
+        key="mi_annee", label="m", family="CVAE", chain="firm", knob="cvae_taux_max",
+        value=0.0028)
+    assert not accuracy_cases.structural_noop(case)

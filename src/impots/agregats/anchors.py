@@ -34,9 +34,13 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from impots.agregats.engine import AggregateError, ReceiptsAnchor
+from impots.donnees import PROCESSED
 
-#: Generated, not committed — like `data/processed/firm_cells_*.json`.
-ANCHOR_TABLE = Path("data/processed/receipts_anchors.json")
+#: Generated, not committed — like `data/processed/firm_cells_*.json`. Anchored at the
+#: repository root: it was `Path("data/processed/...")`, relative to the CURRENT
+#: directory, a style I copied from `accuracy_cases.py` without noticing it was the
+#: odd one out — every other reader in the repo anchors its paths here.
+ANCHOR_TABLE = PROCESSED / "receipts_anchors.json"
 
 #: Which calendar a row's `year` is on. There is no default, and that is the guard:
 #: every one of these has been the whole error at least once in this project.

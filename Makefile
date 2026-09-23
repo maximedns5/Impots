@@ -21,12 +21,20 @@
 #
 # The rule that goes with it: no review handoff goes out without a full-pass line newer
 # than the work it reports.
+#
+# `make data` is the bootstrap: it downloads every raw source the suite reads BY ITS
+# MANIFEST ENTRY (URL, size, sha256 — a byte off and nothing is written), builds the two
+# derived artefacts (the population, the firm cell table), then runs the preflight.
+# `make full` runs that PREFLIGHT FIRST and stops in about a second if a dependency is
+# missing — it used to find out one file at a time, 47 minutes in, on whichever file each
+# failing test happened to open first. A full pass that cannot be green is not started,
+# and so is not logged: the log records passes, not aborted attempts.
 
 VENV ?= .venv/bin
 LOG  := reports/full_pass_log.md
 DURATIONS := reports/full_pass_durations.md
 
-.PHONY: gate full lint report
+.PHONY: gate full lint report data data-check
 
 gate:
 	$(VENV)/ruff check src tests scripts
@@ -35,7 +43,13 @@ gate:
 lint:
 	$(VENV)/ruff check src tests scripts
 
-full:
+data:
+	$(VENV)/impots data prepare --profile tests
+
+data-check:
+	@$(VENV)/impots data check --profile tests
+
+full: data-check
 	@mkdir -p reports
 	@test -f $(LOG) || printf '# Full-pass log\n\nOne line per `make full`. CI cannot run the population tests — it has no\npopulation, by design — so this file is the only record that the full suite is\ngreen. No review handoff goes out without a line newer than the work it reports.\n\n| date | commit | result | duration | tests |\n|---|---|---|---|---|\n' > $(LOG)
 	@$(VENV)/ruff check src tests scripts

@@ -116,7 +116,8 @@ def _sheet(workbook: str, name: str, raw: Path | None = None):
         raise IfiCellError("openpyxl is required") from error
     path = (raw or RAW) / workbook
     if not path.exists():
-        raise IfiCellError(f"{path} not found — download it and manifest it")
+        raise IfiCellError(f"{path} not found — download it and manifest it "
+                           f"(`impots data fetch {path.name}`)")
     book = openpyxl.load_workbook(path, data_only=True)
     if name not in book.sheetnames:
         raise IfiCellError(
