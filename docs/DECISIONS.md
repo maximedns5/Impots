@@ -7895,3 +7895,50 @@ parce qu'elle est la forme D-044 commise dans un test :
 **Note d'intégrité.** `imk.load()` ne vérifie pas le sha256 lui-même : l'étape de
 téléchargement est la seule garde d'intégrité de ces deux PDF, et c'est pourquoi elle n'est
 pas relâchée mais déplacée sur une empreinte qui a un sens.
+
+## D-160 — Le profil déclarait UN des deux fichiers d'un lecteur, et sa garde était une seconde liste écrite de mémoire
+
+**Le symptôme.** Premier passage complet de la chaîne en CI (`f1e5837`) : les quatre étapes
+passent — récupération des sources, construction des artefacts dérivés, préflight vert,
+« 13 dépendances présentes et valides » — puis la suite tombe. Localement, la même tête
+donne **1697 passés, 0 échec**. Un échec qui ne se reproduit pas est une différence
+d'environnement, jamais un test à sauter (§7 du handoff).
+
+**Reproduit avant d'être corrigé.** Les 23 fichiers du manifeste que le code NOMME sans
+que le profil les déclare ont été écartés en local — par liens durs, pour ne rien détruire
+— puis la suite relancée. Résultat : **25 échecs, 1569 passés**, et la première ligne de
+progression de pytest est **identique octet pour octet** à celle de la CI. La reproduction
+était donc fidèle, et elle a donné les NOMS que la CI n'avait pas pu imprimer : son job
+avait été tué (SIGTERM, code 143) avant le résumé — la forme D-113, un run tué et un run
+en échec qui se lisent pareil.
+
+**La cause, unique.** Les 25 échecs viennent d'un seul fichier :
+`dgfip_stats_45_ifi_2025.xlsx`. `patrimoine/ifi_cells.py` déclare **DEUX** entrées —
+`TRANCHE_FILE` et `AGGREGATE_FILE` — et le profil n'en déclarait qu'une. C'est la forme
+D-151 : un contrat porté par deux constantes n'est pas élargi tant que les deux ne le sont
+pas.
+
+**Pourquoi la garde ne l'a pas vu, et c'est le vrai enseignement.**
+`test_the_profile_is_built_from_the_readers_own_constants` existait, et son docstring
+disait exactement la bonne chose : « un préflight qui vérifie moins que ce que le code lit
+est la forme D-044 ». Mais il ÉNUMÉRAIT les constantes À LA MAIN, et son énumération
+omettait `AGGREGATE_FILE` — la même omission que le profil. **Deux listes écrites de
+mémoire par la même personne s'accordent entre elles et se trompent ensemble.** La garde
+qui dénonçait la forme D-044 la commettait.
+
+**La correction, en deux moitiés qui doivent rester indépendantes.** Le profil reste une
+DÉCLARATION explicite et relisible — on veut pouvoir la lire et la discuter. Le test, lui,
+dérive désormais son attente **par introspection** des modules lecteurs : toute constante
+en majuscules dont la valeur est un nom de fichier de données doit figurer au profil. Si
+les deux côtés dérivaient de la même source, la garde ne pourrait plus attraper ce que la
+déclaration oublie — elle serait à nouveau tautologique.
+
+**Vu échouer**, en retirant du profil la ligne ajoutée : la garde nomme
+`dgfip_stats_45_ifi_2025.xlsx` et tombe. Puis vérifié dans les conditions de la CI, fichiers
+hors profil écartés : `test_patrimoine.py` et `test_accuracy.py` rendent **115 passés,
+3 sautés** là où ils donnaient 25 échecs.
+
+**Ce que le préflight ne pouvait pas dire.** Il ne vérifie que ce que le profil DÉCLARE.
+Un profil incomplet le traverse au vert, et les fichiers absents ressortent cinquante
+minutes plus tard, au milieu de la suite — c'est-à-dire exactement le défaut que D-158
+existait pour abolir, déplacé d'un cran.

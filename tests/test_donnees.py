@@ -246,10 +246,33 @@ def test_the_profile_is_built_from_the_readers_own_constants() -> None:
     from impots.patrimoine import ifi_cells
     from impots.population import ingest, top_tail
 
-    attendus = {ifi_cells.TRANCHE_FILE, top_tail.WORKBOOK.name, cells.ESANE_FILE,
-                cells.FOCUS_FILE, cells.DGFIP_FILE, ingest.EEC_PARQUET, ingest.EEC_VARMOD,
-                *donnees._fichiers_du_store_macro()}
-    assert attendus <= set(donnees.bruts(donnees.profil("tests")))
+    # DÉRIVÉ PAR INTROSPECTION, jamais énuméré à la main. La version précédente listait
+    # les constantes une à une, et cette liste OMETTAIT `ifi_cells.AGGREGATE_FILE` : deux
+    # listes écrites de mémoire par la même personne s'accordent entre elles et se
+    # trompent ensemble. C'est la forme D-044 commise dans la garde qui la dénonce, et
+    # elle a coûté 25 échecs en CI (D-160).
+    #
+    # Le profil reste une DÉCLARATION explicite et relisible ; ce test dérive son attente
+    # d'ailleurs. Les deux côtés doivent rester indépendants, sinon la garde ne peut plus
+    # attraper ce que la déclaration oublie.
+    extensions = (".xlsx", ".xls", ".csv", ".pdf", ".parquet", ".zip", ".html")
+    attendus = set(donnees._fichiers_du_store_macro())
+    for module in (cells, ifi_cells, ingest, top_tail):
+        for nom in dir(module):
+            if not nom.isupper():
+                continue
+            valeur = getattr(module, nom)
+            fichier = (valeur if isinstance(valeur, str)
+                       else getattr(valeur, "name", None) if isinstance(valeur, Path)
+                       else None)
+            if isinstance(fichier, str) and fichier.endswith(extensions):
+                attendus.add(fichier)
+
+    manquants = attendus - set(donnees.bruts(donnees.profil("tests")))
+    assert not manquants, (
+        f"le profil ne déclare pas {sorted(manquants)} — des fichiers que les lecteurs "
+        f"NOMMENT pourtant. Le préflight passerait au vert et la suite tomberait dessus "
+        f"bien plus tard, ce que la chaîne de données existe pour empêcher.")
 
 
 def test_every_raw_file_of_the_profile_is_fetchable_from_the_real_manifest() -> None:

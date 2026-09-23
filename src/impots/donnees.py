@@ -184,6 +184,11 @@ def profil_tests() -> tuple[Brut | Derive, ...]:
                   for f in _fichiers_du_store_macro())
     return (
         Brut(ifi_cells.TRANCHE_FILE, "tranches IFI publiées (test_accuracy, encadrement IFI)"),
+        # `ifi_cells` lit DEUX fichiers. Le profil n'en déclarait qu'un, et les 25 échecs
+        # de la CI en venaient tous (D-160) : le préflight passait au vert, puis la suite
+        # tombait cinquante minutes plus tard sur un fichier absent — exactement ce que la
+        # chaîne de données devait abolir.
+        Brut(ifi_cells.AGGREGATE_FILE, "agrégats IFI publiés (test_patrimoine, test_accuracy)"),
         Brut(top_tail.WORKBOOK.name, "cibles des hauts revenus (test_top_tail)"),
         *macro,
         Brut(cells.ESANE_FILE, "cellules entreprises — entrée"),
