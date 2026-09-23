@@ -7822,3 +7822,76 @@ un accès réseau ouvert ; qu'INSEE et la DGFiP servent ces fichiers à ses runn
 vérifié d'ici. **Et construire la population en CI fera TOURNER les tests de population
 qui y sautaient jusqu'ici** — c'est le but, mais ils n'ont jamais tourné en CI, et leur
 durée comme leur verdict y sont inconnus.
+
+## D-159 — EconStor ré-estampille ses PDF à chaque requête : l'empreinte devient normalisée
+
+**Le constat.** La CI de la PR #1 s'arrêtait à l'étape `fetch` : huit sources sur dix
+passaient la garde de checksum, les deux PDF IMK d'EconStor échouaient — **avec exactement
+la taille du manifeste**. Deux runners GitHub, à quelques secondes d'écart, avaient reçu
+des octets différents. Mesuré à nouveau ici, réseau ouvert : **six téléchargements, six
+sha256 bruts distincts**, tous de la bonne taille.
+
+Ce n'est donc PAS un changement de millésime, et **aucune empreinte brute ne pourra jamais
+correspondre à un téléchargement neuf.**
+
+**Le diagnostic, avant tout correctif.** Comparaison octet à octet de deux téléchargements
+entre eux et avec la copie du propriétaire. Cinq champs diffèrent, tous de longueur fixe,
+et **rien d'autre** :
+
+| champ | emplacement |
+|---|---|
+| `/CreationDate (D:…+02'00')` | dictionnaire Info |
+| `/ModDate (D:…+02'00')` | dictionnaire Info |
+| `<dc:date>` | paquet XMP |
+| `<xmp:MetadataDate>` | paquet XMP |
+| `<xmp:CreateDate>` | paquet XMP |
+| `/ID [<hex32> <hex32>]` | trailer |
+
+64 et 62 octets diffèrent entre deux téléchargements neufs ; 84 et 86 contre la copie du
+propriétaire — l'écart est plus grand simplement parce que la date diffère sur plus de
+chiffres. EconStor régénère le document avec Apache FOP à chaque requête : le contenu est
+identique, l'horodatage et l'identifiant sont neufs. C'est le **cas A** du handoff.
+
+**La règle.** `pdf-stamp-v1`, dans `src/impots/donnees.py` : nommée et versionnée, pour
+qu'un changement de ce qui est neutralisé soit un changement visible dans le manifeste et
+dans un diff. Chaque gabarit a EXACTEMENT la longueur de ce qu'il remplace, et
+`normaliser` le vérifie — un gabarit plus court décalerait tout le reste du fichier et on
+comparerait des octets qui ne se correspondent plus.
+
+**Déclarée par entrée, jamais implicite.** Deux entrées sur 145 la portent. Le `sha256`
+brut reste inscrit : c'est la provenance de la copie du propriétaire. `normalized_sha256`
+est ce sur quoi un téléchargement neuf est jugé. Les 143 autres sources gardent la
+comparaison brute — affaiblir la vérification de sources qui n'ont jamais prouvé en avoir
+besoin serait payer le défaut d'un éditeur avec la garantie de tous les autres.
+
+**La preuve de complétude, qui est le cœur de l'affaire.** Une normalisation incomplète
+laisserait passer une empreinte qui rebouge au téléchargement suivant. Vérifié : la copie
+du propriétaire et deux téléchargements NEUFS donnent **la même** empreinte normalisée,
+pour les deux fichiers, alors que leurs empreintes brutes sont toutes différentes. Puis
+bout en bout, copies écartées comme sur un clone neuf : `telecharger` accepte, et
+`_conforme` accepte ce que `telecharger` vient d'écrire.
+
+**Le contrat est porté par DEUX fonctions (D-151).** `telecharger` et `_conforme` passent
+toutes deux par `empreinte`/`attendu`. Si une seule connaissait la normalisation, `fetch`
+écrirait un fichier que `check` déclarerait aussitôt non conforme et la CI oscillerait sans
+que rien ne soit faux. Un test le vérifie, et il a été VU échouer en remettant `_conforme`
+à la comparaison brute.
+
+**Ce que la règle n'ignore PAS.** Un octet de contenu modifié reste refusé. Le test de mise
+à mort correspondant a demandé **quatre tentatives**, et l'histoire vaut d'être consignée
+parce qu'elle est la forme D-044 commise dans un test :
+
+1. l'injection d'une règle élargie changeait la longueur — c'est la garde de taille qui
+   tombait, pas celle qu'on voulait éprouver ;
+2. une règle élargie à longueur préservée laissait dépasser un octet de la différence, donc
+   le test passait sans rien démontrer ;
+3. en masquant TOUT, le test passait encore — et c'est là qu'apparaît la vraie cause : le
+   corps altéré faisait **un octet de moins** que le corps de référence, si bien que
+   `telecharger` refusait sur la TAILLE et que la comparaison d'empreinte n'était jamais
+   exercée. Le test passait pour une raison autre que celle qu'il annonçait ;
+4. corps altéré aligné à l'octet près : le test passe avec la vraie règle et TOMBE quand la
+   normalisation masque tout.
+
+**Note d'intégrité.** `imk.load()` ne vérifie pas le sha256 lui-même : l'étape de
+téléchargement est la seule garde d'intégrité de ces deux PDF, et c'est pourquoi elle n'est
+pas relâchée mais déplacée sur une empreinte qui a un sens.

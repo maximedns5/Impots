@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import re
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Iterable
@@ -246,11 +247,90 @@ def _entree(fichier: str):
     return entree
 
 
-def _conforme(chemin: Path, entree) -> bool:
-    from impots.population.ingest import sha256_of
+#: Règle de normalisation « pdf-stamp-v1 » (D-159).
+#:
+#: EconStor régénère le PDF à chaque requête avec Apache FOP : le contenu est identique,
+#: mais l'horodatage et l'identifiant du document sont réécrits. Trois téléchargements ont
+#: donné trois sha256 pour exactement la même taille. Aucune empreinte BRUTE ne peut donc
+#: correspondre à un téléchargement neuf, et ce n'est pas un changement de millésime.
+#:
+#: Les CINQ champs ci-dessous sont ceux que le diagnostic a MESURÉS comme variables, et
+#: rien d'autre. Chaque remplacement a EXACTEMENT la longueur de ce qu'il remplace —
+#: `normaliser` le vérifie et lève si ce n'est pas le cas, parce qu'une normalisation qui
+#: change la taille déplacerait tout le reste du fichier et comparerait des octets décalés.
+_PDF_STAMP_V1: tuple[tuple[re.Pattern[bytes], bytes], ...] = (
+    (re.compile(rb"/CreationDate \(D:\d{14}[+\-]\d{2}'\d{2}'\)"),
+     b"/CreationDate (D:00000000000000+00'00')"),
+    (re.compile(rb"/ModDate \(D:\d{14}[+\-]\d{2}'\d{2}'\)"),
+     b"/ModDate (D:00000000000000+00'00')"),
+    (re.compile(rb"<dc:date>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+\-]\d{2}:\d{2}</dc:date>"),
+     b"<dc:date>0000-00-00T00:00:00+00:00</dc:date>"),
+    (re.compile(rb"<xmp:MetadataDate>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+\-]\d{2}:\d{2}"
+                rb"</xmp:MetadataDate>"),
+     b"<xmp:MetadataDate>0000-00-00T00:00:00+00:00</xmp:MetadataDate>"),
+    (re.compile(rb"<xmp:CreateDate>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+\-]\d{2}:\d{2}"
+                rb"</xmp:CreateDate>"),
+     b"<xmp:CreateDate>0000-00-00T00:00:00+00:00</xmp:CreateDate>"),
+    (re.compile(rb"/ID \[<[0-9A-Fa-f]{32}> <[0-9A-Fa-f]{32}>\]"),
+     b"/ID [<" + b"0" * 32 + b"> <" + b"0" * 32 + b">]"),
+)
 
-    return (chemin.exists() and chemin.stat().st_size == entree.bytes
-            and sha256_of(chemin) == entree.sha256)
+NORMALISATIONS: dict[str, tuple[tuple[re.Pattern[bytes], bytes], ...]] = {
+    "pdf-stamp-v1": _PDF_STAMP_V1,
+}
+
+
+def normaliser(donnees: bytes, regle: str) -> bytes:
+    """Neutralise les champs d'horodatage d'un PDF ré-estampillé, et RIEN d'autre.
+
+    La règle est nommée et versionnée : changer ce qui est neutralisé change le nom, donc
+    se voit dans le manifeste et dans un diff. Une règle inconnue est refusée plutôt
+    qu'ignorée — ignorée, elle rendrait les octets bruts et la comparaison passerait pour
+    normalisée alors qu'elle ne le serait pas.
+    """
+    motifs = NORMALISATIONS.get(regle)
+    if motifs is None:
+        raise DonneesError(
+            f"normalisation « {regle} » inconnue (connues : {sorted(NORMALISATIONS)}). "
+            f"Refusée plutôt qu'ignorée : ignorée, elle laisserait passer une comparaison "
+            f"brute sous une étiquette normalisée.")
+    sortie = donnees
+    for motif, gabarit in motifs:
+        sortie = motif.sub(gabarit, sortie)
+    if len(sortie) != len(donnees):
+        raise DonneesError(
+            f"la normalisation « {regle} » a changé la taille ({len(donnees)} → "
+            f"{len(sortie)}) : un gabarit n'a pas la longueur de ce qu'il remplace, et "
+            f"tout le reste du fichier s'en trouverait décalé.")
+    return sortie
+
+
+def empreinte(donnees: bytes, entree) -> str:
+    """Le sha256 sur lequel `entree` doit être jugée : normalisé si elle le déclare."""
+    if entree.normalization:
+        return hashlib.sha256(normaliser(donnees, entree.normalization)).hexdigest()
+    return hashlib.sha256(donnees).hexdigest()
+
+
+def attendu(entree) -> str:
+    """L'empreinte attendue, du même côté du contrat que `empreinte`."""
+    if entree.normalization:
+        if not entree.normalized_sha256:
+            raise DonneesError(
+                f"{entree.filename} : déclare « {entree.normalization} » mais ne porte "
+                f"aucun `normalized_sha256`. Sans lui il n'y a rien à comparer, et le "
+                f"fichier serait accepté sans vérification.")
+        return entree.normalized_sha256
+    return entree.sha256
+
+
+def _conforme(chemin: Path, entree) -> bool:
+    # D-151 : ce contrat est porté par DEUX fonctions — celle-ci et `telecharger`. Les
+    # deux passent par `empreinte`/`attendu`, sans quoi `fetch` accepterait un fichier que
+    # `check` déclarerait ensuite non conforme.
+    if not (chemin.exists() and chemin.stat().st_size == entree.bytes):
+        return False
+    return empreinte(chemin.read_bytes(), entree) == attendu(entree)
 
 
 def telecharger(fichier: str, *, ouvrir: Callable = urllib.request.urlopen,
@@ -268,30 +348,39 @@ def telecharger(fichier: str, *, ouvrir: Callable = urllib.request.urlopen,
         return Telechargement(fichier, "déjà présent")
     RAW.mkdir(parents=True, exist_ok=True)
     partiel = cible.with_name(cible.name + ".part")
-    empreinte = hashlib.sha256()
+    blocs: list[bytes] = []
     taille = 0
     try:
         requete = urllib.request.Request(entree.url, headers={"User-Agent": USER_AGENT})
         with ouvrir(requete, timeout=timeout) as reponse, partiel.open("wb") as sortie:
             for bloc in iter(lambda: reponse.read(1 << 20), b""):
-                empreinte.update(bloc)
+                blocs.append(bloc)
                 taille += len(bloc)
                 sortie.write(bloc)
     except (urllib.error.URLError, OSError, TimeoutError) as exc:
         partiel.unlink(missing_ok=True)
         hote = entree.url.split("/")[2]
         return Telechargement(fichier, "échec", f"{hote} injoignable — {exc}")
-    obtenu = empreinte.hexdigest()
-    if taille != entree.bytes or obtenu != entree.sha256:
+    # D-151 : MÊME règle que `_conforme`, via les mêmes deux fonctions. Un contrat porté
+    # par deux fonctions n'est pas élargi tant que les deux ne le sont pas.
+    obtenu = empreinte(b"".join(blocs), entree)
+    exige = attendu(entree)
+    if taille != entree.bytes or obtenu != exige:
         partiel.unlink(missing_ok=True)
+        precision = (f" (empreinte « {entree.normalization} »)" if entree.normalization
+                     else "")
         return Telechargement(
             fichier, "échec",
             f"le fichier servi ne correspond PAS au manifeste — {taille} octets contre "
-            f"{entree.bytes} attendus, sha256 {obtenu[:16]}… contre {entree.sha256[:16]}…. "
+            f"{entree.bytes} attendus, sha256{precision} {obtenu[:16]}… contre "
+            f"{exige[:16]}…. "
             f"Rien n'est écrit : si la publication a changé de millésime, c'est une "
             f"décision à consigner (D-004), pas une mise à jour silencieuse.")
     os.replace(partiel, cible)
-    return Telechargement(fichier, "téléchargé", f"{taille:,} octets, sha256 vérifié".replace(",", " "))
+    detail = f"{taille:,} octets, sha256 vérifié".replace(",", " ")
+    if entree.normalization:
+        detail += f" après normalisation « {entree.normalization} »"
+    return Telechargement(fichier, "téléchargé", detail)
 
 
 # --------------------------------------------------------------------------- #

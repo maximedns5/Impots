@@ -809,7 +809,9 @@
       "downloaded": "2026-09-03",
       "licence": "EconStor — accès ouvert, IMK / Hans-Böckler-Stiftung",
       "description": "Gechert, « What fiscal policy is most effective? A Meta Regression Analysis », IMK Working Paper n° 117, 2013. Tableau 1 p. 11 : statistiques descriptives de 1 069 multiplicateurs rapportés par 104 études, par instrument et par classe de modèle. Source de la DISPERSION inter-études, que Mésange ne peut pas fournir.",
-      "quarantined": false
+      "quarantined": false,
+      "normalization": "pdf-stamp-v1",
+      "normalized_sha256": "6f31a36b20deb0d8bd0ca158263b016225b5276e51726d03ff03211d23743f8c"
     },
     "imk_wp139_2014_gechert_rannenberg_regime_dependent.pdf": {
       "url": "https://www.econstor.eu/bitstream/10419/106005/1/imk-wp_139_2014.pdf",
@@ -818,7 +820,9 @@
       "downloaded": "2026-09-03",
       "licence": "EconStor — accès ouvert, IMK / Hans-Böckler-Stiftung",
       "description": "Gechert et Rannenberg, « Are Fiscal Multipliers Regime-Dependent? A Meta Regression Analysis », IMK Working Paper n° 139, 2014. Tableau 1 p. 6 : 1 882 observations de 98 études, ventilées par RÉGIME conjoncturel (RAV/RUP/RLO).",
-      "quarantined": false
+      "quarantined": false,
+      "normalization": "pdf-stamp-v1",
+      "normalized_sha256": "9e8b773e6330ccdecdb004d2da10a4fcbdf1dd8dc86ff57672846b62d53a3c0c"
     },
     "france_strategie_2020_rapport_cice.pdf": {
       "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/2020/CICE/fs-2020-rapport-cice2020-16septembre-final18h.pdf",

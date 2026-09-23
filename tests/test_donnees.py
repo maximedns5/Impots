@@ -348,3 +348,157 @@ def test_the_writer_and_the_reader_define_the_same_cell() -> None:
         return [(f.name, str(f.type), f.default) for f in fields(cls)]
 
     assert champs(cells.Cell) == champs(population.Cell)
+
+
+# --------------------------------------------------------------------------- #
+# la normalisation « pdf-stamp-v1 » (D-159)
+# --------------------------------------------------------------------------- #
+def _pdf(horodatage: str = "20260903111124", identifiant: str = "A" * 32,
+         corps: bytes = b"contenu de page, identique d'un service a l'autre\n" * 32) -> bytes:
+    """Un PDF minimal estampillé comme EconStor estampille les siens.
+
+    Les cinq champs que le diagnostic a mesurés comme variables, dans leurs formes
+    exactes — et du contenu autour, pour qu'un test puisse le modifier et voir la garde
+    refuser.
+    """
+    iso = (f"{horodatage[:4]}-{horodatage[4:6]}-{horodatage[6:8]}T"
+           f"{horodatage[8:10]}:{horodatage[10:12]}:{horodatage[12:14]}+02:00")
+    return (
+        b"%PDF-1.4\n/Creator (Apache FOP Version 2.8)\n"
+        + f"/CreationDate (D:{horodatage}+02'00')\n".encode()
+        + f"/ModDate (D:{horodatage}+02'00')\n".encode()
+        + f"<dc:date>{iso}</dc:date>\n".encode()
+        + f"<xmp:MetadataDate>{iso}</xmp:MetadataDate>\n".encode()
+        + f"<xmp:CreateDate>{iso}</xmp:CreateDate>\n".encode()
+        + corps
+        + f"trailer\n<</ID [<{identifiant}> <{identifiant}>]>>\n%%EOF\n".encode())
+
+
+def _entree_normalisee(donnees_pdf: bytes) -> ManifestEntry:
+    return ManifestEntry(
+        filename="imk.pdf", url="https://www.econstor.invalid/imk.pdf",
+        sha256=hashlib.sha256(donnees_pdf).hexdigest(), bytes=len(donnees_pdf),
+        downloaded="2026-09-03", licence="inconnue", description="working paper IMK",
+        normalization="pdf-stamp-v1",
+        normalized_sha256=hashlib.sha256(
+            donnees.normaliser(donnees_pdf, "pdf-stamp-v1")).hexdigest())
+
+
+@pytest.fixture
+def depot_imk(tmp_path, monkeypatch):
+    """Un dépôt dont l'unique entrée déclare la normalisation."""
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    monkeypatch.setattr(donnees, "RAW", raw)
+    entree = _entree_normalisee(_pdf())
+    monkeypatch.setattr("impots.population.ingest.load_manifest",
+                        lambda: {"imk.pdf": entree})
+    return raw
+
+
+def test_a_re_stamped_pdf_is_accepted_because_only_the_stamp_moved(depot_imk) -> None:
+    """LE cas pour lequel la règle existe.
+
+    EconStor régénère le PDF à chaque requête : horodatage et /ID neufs, contenu
+    identique. Trois téléchargements, trois sha256 bruts — aucune empreinte brute ne peut
+    donc correspondre. Ici le fichier servi porte un AUTRE horodatage et un AUTRE
+    identifiant que celui dont le manifeste a pris l'empreinte, et il doit passer.
+    """
+    servi = _pdf(horodatage="20260923172842", identifiant="B" * 32)
+    entree = donnees._entree("imk.pdf")
+    assert hashlib.sha256(servi).hexdigest() != entree.sha256, (
+        "le PDF servi doit différer en BRUT, sinon le test ne teste rien")
+
+    resultat = donnees.telecharger("imk.pdf", ouvrir=_servir(servi))
+    assert resultat.etat == "téléchargé"
+    assert "pdf-stamp-v1" in resultat.detail
+
+
+def test_a_byte_changed_OUTSIDE_the_stamped_fields_is_still_refused(depot_imk) -> None:
+    """LA garde de mise à mort : la règle ne doit pas s'être élargie au contenu.
+
+    L'implémentation qui échoue ici est la tentation évidente — normaliser plus largement
+    (tout ce qui ressemble à une date, ou le trailer entier) jusqu'à ce que « ça passe ».
+    Un octet de contenu modifié est un fichier différent, et le reste.
+    """
+    # MÊME LONGUEUR que la ligne de référence, à l'octet près. Sans cela `telecharger`
+    # refuserait sur la TAILLE et ce test passerait sans jamais exercer la comparaison
+    # d'empreinte normalisée — il l'a fait, et c'est ainsi qu'on l'a découvert.
+    reference = b"contenu de page, identique d'un service a l'autre\n"
+    altere = b"contenu de page, ALTERE    d'un service a l'autre\n"
+    assert len(altere) == len(reference), "le test doit isoler l'empreinte, pas la taille"
+    falsifie = _pdf(corps=reference * 31 + altere)
+    resultat = donnees.telecharger("imk.pdf", ouvrir=_servir(falsifie))
+
+    assert resultat.etat == "échec"
+    assert "ne correspond PAS au manifeste" in resultat.detail
+    assert not (depot_imk / "imk.pdf").exists()
+    assert not list(depot_imk.glob("*.part"))
+
+
+def test_fetch_and_check_return_the_same_verdict_on_the_same_file(depot_imk) -> None:
+    """Le piège D-151 : un contrat porté par DEUX fonctions.
+
+    `telecharger` accepte le fichier et `_conforme` le relit ensuite — au préflight, et au
+    raccourci « déjà présent ». Si une seule des deux connaissait la normalisation, `fetch`
+    écrirait un fichier que `check` déclarerait aussitôt non conforme, et la CI
+    oscillerait sans que rien ne soit faux.
+    """
+    servi = _pdf(horodatage="20260923172842", identifiant="C" * 32)
+    assert donnees.telecharger("imk.pdf", ouvrir=_servir(servi)).etat == "téléchargé"
+
+    entree = donnees._entree("imk.pdf")
+    assert donnees._conforme(depot_imk / "imk.pdf", entree), (
+        "check refuse ce que fetch vient d'accepter — le contrat n'est porté que d'un côté")
+
+    def interdit(requete, timeout):
+        raise AssertionError("le fichier est conforme : aucun appel réseau ne devait avoir lieu")
+
+    assert donnees.telecharger("imk.pdf", ouvrir=interdit).etat == "déjà présent"
+
+
+def test_an_entry_without_a_normalization_keeps_the_raw_comparison(depot) -> None:
+    """Les 143 autres entrées ne changent pas de régime.
+
+    La normalisation est déclarée PAR ENTRÉE. Une règle implicite, ou appliquée à tout ce
+    qui finit en .pdf, affaiblirait la vérification de sources qui n'ont jamais prouvé en
+    avoir besoin.
+    """
+    entree = donnees._entree("source.xlsx")
+    assert entree.normalization is None
+    assert donnees.attendu(entree) == entree.sha256
+    assert donnees.empreinte(CONTENU, entree) == EMPREINTE
+    assert donnees.telecharger("source.xlsx",
+                               ouvrir=_servir(CONTENU[:-1] + b"X")).etat == "échec"
+
+
+def test_an_unknown_normalization_is_refused_rather_than_ignored() -> None:
+    """Ignorée, elle rendrait les octets bruts et une comparaison BRUTE passerait pour
+    normalisée — c'est-à-dire une garde qui ment sur ce qu'elle a vérifié."""
+    with pytest.raises(donnees.DonneesError, match="inconnue"):
+        donnees.normaliser(_pdf(), "pdf-stamp-v2")
+
+
+def test_a_declared_normalization_without_its_digest_is_refused() -> None:
+    """Sans `normalized_sha256` il n'y a rien à comparer : le fichier serait accepté sans
+    vérification du tout, ce qui est pire que la comparaison brute qu'on remplace."""
+    entree = ManifestEntry(
+        filename="imk.pdf", url="https://www.econstor.invalid/imk.pdf",
+        sha256="0" * 64, bytes=10, downloaded="2026-09-03", licence="inconnue",
+        description="", normalization="pdf-stamp-v1")
+    with pytest.raises(donnees.DonneesError, match="normalized_sha256"):
+        donnees.attendu(entree)
+
+
+def test_the_normalization_preserves_length_and_only_touches_the_five_fields() -> None:
+    """La taille est le second contrôle, indépendant du sha256 : un gabarit plus court
+    décalerait tout le fichier et on comparerait des octets qui ne se correspondent plus.
+    """
+    avant = _pdf(horodatage="20260923172842", identifiant="D" * 32)
+    apres = donnees.normaliser(avant, "pdf-stamp-v1")
+    assert len(apres) == len(avant)
+    differents = [i for i, (x, y) in enumerate(zip(avant, apres, strict=True)) if x != y]
+    assert differents, "la normalisation n'a rien changé — elle ne normalise donc rien"
+    # Le corps de page doit être intact d'un bout à l'autre.
+    assert b"contenu de page, identique d'un service a l'autre" in apres
+    assert apres.count(b"contenu de page") == avant.count(b"contenu de page")
