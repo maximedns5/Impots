@@ -8084,3 +8084,50 @@ les chiffres tirés de l'INSEE, et leur différence redonne l'ajustement dériv�
 2021→2025 avec un SFA reconstruit depuis les composantes, ou attend-il les deux années
 manquantes ? La tolérance se pré-enregistre après ce choix, pas avant — la fenêtre fait
 partie de la méthode.
+
+## D-164 — L'étape 2 du runbook existait comme un commentaire bash
+
+**Ce que la répétition à blanc a trouvé.** Le runbook chiffre l'étape 2 — re-dériver le
+triage sur les vrais articles — à « 2 à 4 heures », et la décrit ainsi : *« découper le
+texte comme en 2026 : les <h6> portent ARTICLE n : intitulé »*. C'est un commentaire dans
+un bloc bash. **Aucun script ne le faisait.** Le jour de la parution, quelqu'un réécrivait
+un extracteur sous la pression, sur un texte de six millions de caractères.
+
+`scripts/split_plf_articles.py` le remplace, et il a été mis au point **contre le texte
+2026, dont la réponse est connue** : `plf_coverage` a trié 29 articles fiscaux. Le
+découpage en trouve 30 dans la section fiscale — les 29, plus l'article 1
+« Autorisation de percevoir les impôts existants », formalité reconduite chaque année et
+non une mesure. **Cet écart d'exactement un est la vérification**, et un test le fige.
+
+**Trois défauts du script, tous attrapés parce qu'il tournait contre une réponse connue.**
+C'est l'argument de la répétition à blanc, et il vaut d'être détaillé :
+
+1. **Rattachement par égalité stricte** : sept articles échouaient, dont la CEBGE, que le
+   texte porte en article 4. Elle était annoncée à la fois « absente du texte » et
+   « inconnue du triage » — deux erreurs opposées sur une seule mesure. Cause :
+   `plf_coverage` stocke des intitulés **tronqués** vers 110 caractères. Corrigé en
+   rattachement par préfixe.
+2. **Bornage à la section fiscale rendant ZÉRO article sur 82.** Le titre normalisé
+   commence par le chiffre romain (« i impots et ressources autorisees ») et le test
+   utilisait `startswith`. Visiblement faux, donc vu immédiatement.
+3. **Les 53 articles de crédits, garanties et dotations remontaient comme « décisions de
+   triage neuves »**, noyant les vraies. Le bornage les écarte tout en les extrayant.
+
+**Le rattachement ne se fait JAMAIS par numéro**, et c'est la décision de conception qui
+porte le script. Entre le dépôt et le texte voté, les articles sont renumérotés ; un
+rattachement par numéro attribuerait le triage d'une mesure à une autre et produirait un
+**chiffrage plausible sur le mauvais article** — le pire résultat possible, puisqu'il ne
+ressemble pas à une panne. Le numéro n'est que de l'affichage, et un test l'épingle.
+
+**Le refus qui compte.** Un texte dont les `<h6>` ont changé de forme est REFUSÉ, pas rendu
+vide. Une liste vide se lit « rien à chiffrer » et non « panne » — exactement la forme du
+défaut de 2026 où un extracteur ne cherchant que des tableaux a raté l'article le plus gros
+de toute l'annexe. Un plancher de plausibilité (20 articles) refuse aussi un découpage
+partiel. Les deux ont été vus échouer, et leur jumeau vérifie qu'ils laissent passer le cas
+correct.
+
+**Un écart réel, à trancher le jour J.** L'article des dons ne se rattache pas : le triage
+porte « …organismes d'aide aux **personnes en difficulté** », le texte dit « …aux **plus
+démunis** ». L'intitulé a été remanié. Le script le signale au lieu de l'apparier de force,
+ce qui est le bon comportement : un rattachement forcé sur un intitulé divergent est
+précisément la façon de chiffrer la mauvaise mesure.
