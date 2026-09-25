@@ -8287,3 +8287,55 @@ sera décomposé avant d'être commenté.
 s'applique dans l'autre sens aussi : un résidu quasi nul partout n'est pas une validation,
 c'est ce qu'une identité exacte doit rendre, et il ne prouve que l'absence d'erreur de
 saisie.
+
+## D-168 — §6.1 est noté : cinq années dans la bande, et un zéro qui cachait deux erreurs
+
+**Le résultat, contre la tolérance préenregistrée en `c6c5db4` (±0,10 pt de PIB) :**
+
+| an | r | g | p | sfa | modèle | publié | résidu |
+|---|---|---|---|---|---|---|---|
+| 2021 | +1,29 % | +8,19 % | −5,22 % | +0,003 % | 1,1281 | 1,1279 | **+0,015 pt** |
+| 2022 | +1,76 % | +5,82 % | −2,87 % | +0,054 % | 1,1140 | 1,1137 | **+0,039 pt** |
+| 2023 | +1,63 % | +6,78 % | −3,66 % | −0,170 % | 1,0953 | 1,0951 | **+0,019 pt** |
+| 2024 | +1,76 % | +3,58 % | −3,90 % | +1,162 % | 1,1267 | 1,1263 | **+0,031 pt** |
+| 2025 | +1,88 % | +1,90 % | −2,99 % | +0,062 % | 1,1569 | 1,1569 | **+0,001 pt** |
+
+Aucune année hors bande. Le résidu maximal, +0,039 pt en 2022, vaut 40 % de la tolérance.
+
+**LA DÉCOMPOSITION, qui est le vrai résultat.** §6.1 exige qu'un petit résidu soit
+décomposé avant d'être fêté, et c'est ici qu'elle paie. Le préenregistrement annonçait un
+terme de millésime d'environ 0,03 pt **en 2025**. Or 2025 affiche le PLUS PETIT résidu de
+la série. Naïvement : « l'année la plus incertaine est la mieux reproduite ». En réalité :
+
+| an | résidu | erreur PROPRE de l'année |
+|---|---|---|
+| 2021 | +0,015 | +0,015 |
+| 2022 | +0,039 | +0,024 |
+| 2023 | +0,019 | −0,018 |
+| 2024 | +0,031 | +0,013 |
+| 2025 | +0,001 | **−0,031** |
+
+L'erreur propre de 2025 vaut **−0,031 pt**, et le terme de millésime — mesuré à part, comme
+l'écart entre le SFA implicite côté INSEE et le SFA publié côté Eurostat — vaut
+**+0,031 pt** (0,92 md€). Même grandeur, signe opposé au report de 2024. **Le zéro de 2025
+est la somme de deux erreurs qui s'annulent**, et c'est exactement ce que la règle du
+résidu dangereux existe pour attraper.
+
+Le préenregistrement avait donc **raison sur la cause et tort sur sa manifestation** : il
+prédisait le plus gros résidu là où se trouve le plus petit. Consigné ainsi plutôt que
+présenté comme une prédiction réussie.
+
+**Pourquoi les résidus ne s'empilent pas.** Le report est multiplié par (1+r)/(1+g) à
+chaque pas ; sur cette fenêtre g dépasse r partout, donc le facteur reste sous 1 et une
+erreur passée décroît. Ce n'est pas une qualité du modèle mais l'arithmétique de la boule
+de neige — et elle s'éteint : le facteur 2025 vaut **0,9998**. Dès que le taux implicite
+rattrape la croissance nominale, l'amortissement disparaît et les erreurs s'accumulent.
+
+**Ce que ce backtest ne prouve pas.** L'identité est arithmétique : un résidu quasi nul est
+ce qu'elle DOIT rendre, et il ne prouve que l'absence d'erreur de saisie, de signe, d'unité
+ou de périmètre. Les erreurs propres résiduelles (≤ 0,024 pt hors 2025) restent dans
+l'ordre des termes nommés d'avance — écart composantes/différence et dénominateur du ratio
+publié. Aucune n'est inexpliquée.
+
+**Portée.** Cinq années, un seul millésime. 2020 et son ajustement de +69 md€ sont hors
+fenêtre, et c'était la plus exigeante. M1 est clos sur cette portée-là, énoncée.
