@@ -8339,3 +8339,35 @@ publié. Aucune n'est inexpliquée.
 
 **Portée.** Cinq années, un seul millésime. 2020 et son ajustement de +69 md€ sont hors
 fenêtre, et c'était la plus exigeante. M1 est clos sur cette portée-là, énoncée.
+
+## D-169 — Correction de D-166 : le rapport CCSS n'était pas en quarantaine
+
+**D-166 affirmait** que `ccss_mai2026_comptes_secu_resultats2025.pdf` était « déjà au
+manifeste mais en quarantaine — il lui manque une URL, pas un téléchargement », et j'en ai
+fait la recommandation la moins chère du carnet.
+
+**C'est faux sur cette branche.** Le fichier porte une URL, n'est pas en quarantaine, et vit
+dans `data/raw/`. La phrase venait d'un relevé de fichiers manquants fait plusieurs jours
+plus tôt **sur `main`**, avant que cette branche ne le source. J'ai réutilisé un constat au
+lieu de relire l'état courant — la même faute que D-166 reprochait au document qu'il
+corrigeait, commise dans la correction elle-même.
+
+**Ce que la relecture donne réellement.** Le fichier est là, donc rien à télécharger pour
+les quatre ancres « Sécurité sociale ». Mais « le fichier est là » n'est pas « l'ancre est
+en main », et c'est précisément la confusion que D-166 dénonçait. Lecture des 256 pages :
+
+| instrument | dans le rapport CCSS | état |
+|---|---|---|
+| forfait social | série nette, 6 360 / 6 300 / 6 551 / 6 758 M€ | **ancre exploitable** |
+| taxe sur les salaires | présent, montants en tableau | à parser |
+| accise tabacs | présent, montants en tableau | à parser |
+| accise alcools | présent, montants en tableau | à parser |
+
+Extraire les trois derniers demande un parse de tableau PDF : c'est du travail M2, que la
+consigne gèle. Consigné ici pour que la liste de téléchargements ne porte pas une ligne
+inutile, et pour que la prochaine session ne reparte pas du constat périmé.
+
+**La leçon, qui est celle de la semaine.** Un constat daté n'est pas un fait courant. Trois
+fois en deux jours : le profil « en main (VM tome I) » établi sans ouvrir le fichier, la
+liste d'ancres écrite dans un conteneur sans données, et maintenant une quarantaine relevée
+sur une autre branche. Le remède est le même chaque fois — relire avant d'affirmer.

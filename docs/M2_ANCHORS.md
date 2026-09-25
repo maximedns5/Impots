@@ -119,10 +119,19 @@ ce sont des recettes affectées, qui ne figurent pas au budget de l'État par co
 **Ce qu'il faut demander, en plus de ce que la liste ci-dessous porte déjà :**
 
 * **Les recettes affectées à la Sécurité sociale** (taxe sur les salaires, forfait social,
-  accises tabacs et alcools) : annexe recettes du PLFSS, ou le rapport de la CCSS. Note :
-  `ccss_mai2026_comptes_secu_resultats2025.pdf` est **déjà au manifeste mais en
-  quarantaine** — il lui manque une URL, pas un téléchargement. C'est le même piège que la
-  7.301, et il se lève de la même façon.
+  accises tabacs et alcools). **Correction du 2026-09-25 : le rapport CCSS n'est PAS en
+  quarantaine.** Cette phrase, écrite ici la veille, venait d'un relevé fait sur `main`
+  avant que cette branche ne source le fichier ; relu sur la branche,
+  `ccss_mai2026_comptes_secu_resultats2025.pdf` porte une URL, n'est pas en quarantaine, et
+  vit dans `data/raw/`. Aucun téléchargement n'est donc nécessaire pour ces quatre-là.
+
+  **Mais « le fichier est là » n'est pas « l'ancre est en main »** — c'est exactement
+  l'erreur que ce document a commise sur les Voies et Moyens. Vérifié par lecture des
+  256 pages : le **forfait social** porte une série nette et exploitable
+  (6 360 / 6 300 / 6 551 / 6 758 M€) ; la **taxe sur les salaires**, les **tabacs** et les
+  **alcools** sont présents mais leurs montants vivent dans des tableaux qu'un balayage
+  naïf n'atteint pas. Les extraire est un travail de parse — donc du M2, pas de la
+  préparation de liste, et il n'est pas commencé ici.
 * **Les recettes locales** (versement mobilité, DMTO, TASCOM) : les états DGFiP/DGCL de
   fiscalité locale. Aucun candidat au manifeste.
 
