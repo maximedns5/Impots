@@ -8131,3 +8131,49 @@ porte « …organismes d'aide aux **personnes en difficulté** », le texte dit 
 démunis** ». L'intitulé a été remanié. Le script le signale au lieu de l'apparier de force,
 ce qui est le bon comportement : un rattachement forcé sur un intitulé divergent est
 précisément la façon de chiffrer la mauvaise mesure.
+
+## D-165 — `make ci-local` : la vérification d'environnement neuf, sans minute de runner
+
+**Ce que `make full` ne peut pas faire.** Il vérifie la correction, jamais l'ENVIRONNEMENT,
+parce qu'il tourne dans celui du propriétaire. `pypdf` a traversé quinze passes locales
+vertes en étant cassé sur chaque runner (D-161), et son message — « pypdf is required » —
+se lit comme un défaut de DONNÉES, si bien qu'il a été rangé parmi les rouges « fichiers
+manquants ». C'est la valeur propre de la CI : un arbre propre, un venv reconstruit depuis
+le seul `pyproject.toml`, un `data/raw/` ne portant que ce que git suit. Le dépôt est privé,
+les minutes se sont épuisées en pleine revue, et cette vérification ne doit pas dépendre
+d'un quota.
+
+**Deux modes, et le rapide est le plus utile.** `make ci-deps` mesure **15 secondes** —
+worktree jetable, venv neuf sans les paquets du système, installation depuis le seul
+`pyproject.toml`, puis tentative d'import de chaque module tiers que `src/`, `tests/` et
+`scripts/` nomment. `make ci-local` y ajoute la chaîne de données et le sous-ensemble
+rapide, soit les étapes du job `fast` dans leur ordre. L'estimation annoncée était « ≈ 2 min »
+pour le mode rapide ; le cache d'`uv` le ramène à quinze secondes, et c'est mesuré.
+
+**La logique a déménagé dans le paquet, et c'est la décision qui compte.**
+`impots.dependances` porte désormais le scan AST ; le test qui garde la propriété ET le
+script qui la vérifie lisent de là. Elle vivait dans `tests/test_donnees.py` et allait
+vivre une seconde fois dans le script : **deux copies d'un contrat dérivent** (D-151), et
+c'est la forme que ce dépôt invoque assez souvent pour ne pas la commettre ici. La copie
+dans `test_donnees.py` est supprimée, pas laissée à vieillir.
+
+**Élargir le scan à `tests/` et `scripts/` a fait apparaître deux modules locaux** que le
+scan de `src/` seul ne voyait pas : `scripts` importé comme paquet de chemin, et
+`tests/knob_cases.py`. Les deux sont nommés **un par un** dans une table explicite. Un motif
+— « tout ce qui ressemble à un script » — écarterait aussi une vraie distribution
+homonyme, et deviner est précisément ce qui a laissé passer `pypdf`.
+
+**Vu échouer.** Sur une branche jetable dont `pyproject.toml` ne déclare plus `pypdf` :
+`MANQUANTS : ['pypdf (ModuleNotFoundError)']`, code 1, en treize secondes. L'option `--ref`
+existe pour cela — et sert aussi à éprouver une branche avant de la fusionner.
+
+**Deux défauts du script, attrapés en le lançant.** Un PATH restreint « pour isoler »
+empêchait de trouver `uv` : l'isolation qui compte est celle du VENV, pas celle du PATH.
+Et il a refusé un worktree dont le HEAD ne portait pas encore le module — comportement
+voulu : **il juge l'arbre COMMITTÉ, pas la copie de travail.**
+
+**Une méprise de manipulation, consignée parce qu'elle se répétera.** Le test de mise à
+mort s'est fait sur une branche jetable, et `git commit -am` y a emporté une modification
+de travail sans rapport — l'option `--ref` elle-même — perdue avec la branche supprimée.
+Sur une branche jetable, committer par `-a` ramasse tout ce qui traîne. Rétabli, puis
+committé avant toute manipulation de branche.

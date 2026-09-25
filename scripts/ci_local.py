@@ -153,6 +153,10 @@ def main() -> int:
                         help="s'arrêter après la vérification des imports (≈ 2 min)")
     parser.add_argument("--garder", action="store_true",
                         help="ne pas retirer le worktree, pour inspecter après un échec")
+    parser.add_argument("--ref", default="HEAD",
+                        help="la référence à juger (défaut HEAD). Sert à éprouver une "
+                             "branche avant de la fusionner — et à vérifier que cette "
+                             "vérification sait échouer, sur une branche jetable")
     args = parser.parse_args()
 
     base = Path(tempfile.mkdtemp(prefix="impots-ci-"))
@@ -166,12 +170,12 @@ def main() -> int:
 
     try:
         print("=== CI locale : environnement NEUF, aucune minute de runner ===")
-        code, sortie = _run(["git", "worktree", "add", "--detach", str(worktree), "HEAD"],
-                            cwd=RACINE)
+        code, sortie = _run(["git", "worktree", "add", "--detach", str(worktree),
+                             args.ref], cwd=RACINE)
         if code != 0:
             print(f"  ÉCHEC création du worktree :\n{sortie[-600:]}", file=sys.stderr)
             return 1
-        dire("ok", "worktree jetable", str(worktree))
+        dire("ok", f"worktree jetable sur « {args.ref} »", str(worktree))
         suivis = sorted(p.name for p in (worktree / "data" / "raw").glob("*"))
         dire("ok", "data/raw ne contient que ce que git suit", str(suivis))
 
