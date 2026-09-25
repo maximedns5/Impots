@@ -74,6 +74,58 @@ Cherché sur l'ensemble du manifeste, clés et métadonnées : `coicop`, `cctn`,
 `ofdt`, `tabac`, `dgddi`, `alcool`, `ticfe`, `ticgn`, `versement mobilité`, `dmto`,
 `tascom`, `tgap`, `forfait social`, `apprentissage`. **Zéro correspondance sourcée.**
 
+## CORRECTION DU 2026-09-25 — la table ci-dessus est fausse pour six instruments
+
+**Le document a été écrit dans un conteneur sans `data/raw/` et sans réseau**, ce qu'il
+annonce lui-même. Sa colonne « ancre `R` » disait donc « en main (VM tome I) » sur la foi
+du manifeste, sans jamais OUVRIR le fichier. Vérifié ici, sur la machine qui l'a : six des
+neuf instruments n'ont **aucune ligne de recette** dans ce document, et la raison est
+structurelle — ce sont des recettes qui ne vont pas à l'État.
+
+**Mesuré dans `vm_tome1_plf2026_recettes.pdf`, 102 pages, texte extrait :**
+
+| instrument | ligne État | montant publié | verdict |
+|---|---|---|---|
+| TSN | **1430** | **785 M€** (exécution 2024) | ancre en main |
+| TTF | **1797** | **1 332 M€** (exécution 2024) | ancre en main |
+| TGAP | **1756** | **1 150 M€** (exécution 2024) | ancre en main |
+| accises énergies (nettes) | 1501–1504 | **20,2 md€** (exéc. 2024) ; 22,9 au PLF 2026 | ancre en main |
+| TVA (nette) | — (agrégat) | **96,8 md€** (exéc. 2024) ; 109,1 au PLF 2026 | ancre en main |
+| taxe sur les salaires | **aucune** | — | affectée à la Sécu : **autre source** |
+| forfait social | **aucune** | — | affecté à la Sécu : **autre source** |
+| taxe d'apprentissage | **aucune** | — | France compétences : **autre source** |
+| versement mobilité | aucune (mention en PSR de compensation) | — | recette des AOM : **autre source** |
+| DMTO | aucune (mention en fonds de péréquation) | — | recette départementale : **autre source** |
+| TASCOM | aucune (mention dans un CCF) | — | recette locale : **autre source** |
+| accise tabacs | **aucune** | — | affectée à la Sécu : **autre source** |
+| accise alcools | **aucune** | — | affectée à la Sécu : **autre source** |
+
+**La convention de colonne, relevée mot pour mot** et non déduite : « Exécution 2024 |
+LFI 2025 | Révisé 2025 | Écart | PLF 2026 | Écart ». Une ancre doit dire LAQUELLE, et
+`vintage_convention` vaut `budget` pour toutes ces lignes.
+
+**Un piège de millésime dans le document même** : jusqu'au 31 décembre 2025, l'accise
+ex-TICPE était à la ligne 1501 et les autres accises énergies regroupées ailleurs ; le
+découpage 1501/1502/1503/1504 est **nouveau**. Une ancre qui nomme une ligne sans nommer
+son millésime pointera la mauvaise recette dès la publication suivante.
+
+**Ce que cela change pour M2.** Trois instruments seulement sont ancrables depuis la source
+que le document nommait — TSN, TTF, TGAP — plus la TVA et les accises énergies en agrégat.
+**Six exigent une source que le dépôt n'a pas**, et ce n'est pas un oubli de téléchargement :
+ce sont des recettes affectées, qui ne figurent pas au budget de l'État par construction.
+
+## La liste de téléchargements — révisée le 2026-09-25
+
+**Ce qu'il faut demander, en plus de ce que la liste ci-dessous porte déjà :**
+
+* **Les recettes affectées à la Sécurité sociale** (taxe sur les salaires, forfait social,
+  accises tabacs et alcools) : annexe recettes du PLFSS, ou le rapport de la CCSS. Note :
+  `ccss_mai2026_comptes_secu_resultats2025.pdf` est **déjà au manifeste mais en
+  quarantaine** — il lui manque une URL, pas un téléchargement. C'est le même piège que la
+  7.301, et il se lève de la même façon.
+* **Les recettes locales** (versement mobilité, DMTO, TASCOM) : les états DGFiP/DGCL de
+  fiscalité locale. Aucun candidat au manifeste.
+
 ## La liste de téléchargements
 
 Pour chacun : le document exact, comment reconnaître le bon, et le contrôle à faire
@@ -101,10 +153,16 @@ une seconde chance de se tromper pareil.
    L'historique post-2022 est heurté (bouclier tarifaire) : il faut les tarifs datés,
    pas un taux courant. **Ancrer sur la dernière année close**, et la ligne doit dire
    laquelle.
-6. **L'ajustement flux-stocks (M1 §6.1), toujours manquant.** Hors M2 mais toujours
-   le chemin le plus court vers un jalon clos : Eurostat `gov_10dd_edpt1`, dimension
-   `na_item` = *stock-flow adjustment*, France, annuel, 2019→2025. Les instructions
-   détaillées sont au §4 du handoff M2 et ne sont pas répétées ici.
+6. **L'ajustement flux-stocks (M1 §6.1), toujours manquant — ET LE CODE DONNÉ ICI ÉTAIT
+   FAUX.** Vérifié à l'API de diffusion le 2026-09-25 (D-163) : `gov_10dd_edpt1` existe
+   mais ses 18 postes ne contiennent **aucun** ajustement flux-stocks, et `gov_10dd_sfa`,
+   annoncé par ailleurs, rend **HTTP 404**. La bonne table est **`gov_10dd_edpt3`**,
+   « Transition from the deficit/surplus to the change in debt ». Deux réserves qui
+   comptent : **2019 et 2020 sont ABSENTS pour la France** sur ce poste, donc Eurostat seul
+   ne couvre pas la fenêtre de §6.1 ; et le SFA n'y est pas une ligne mais un jeu de
+   COMPOSANTES (`F_ASS`, `ORADJ`, `K61`, `KX`, `YA3`) dont la somme diffère de la
+   différence `GD_CH − B9_T3` de 0,3 à 0,5 md€ — c'est cet écart qui en fait une mesure
+   indépendante, et la sortie du piège de D-148.
 
 **Pour tout export Eurostat personnalisé, l'URL n'est pas stable** — elle pointe un
 UUID de session. Enregistrer le code du dataset et la requête dans `provenance`

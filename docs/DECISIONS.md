@@ -8177,3 +8177,51 @@ mort s'est fait sur une branche jetable, et `git commit -am` y a emporté une mo
 de travail sans rapport — l'option `--ref` elle-même — perdue avec la branche supprimée.
 Sur une branche jetable, committer par `-a` ramasse tout ce qui traîne. Rétabli, puis
 committé avant toute manipulation de branche.
+
+## D-166 — D : la liste d'ancres M2 était fausse pour six instruments sur neuf
+
+**Ce que D demandait** : préparer la liste exacte des ancres M2 à télécharger, sans
+commencer M2. La liste existait déjà — `docs/M2_ANCHORS.md`, écrite à M2 (D-152). D est
+donc devenu une VÉRIFICATION, et c'est ce qu'elle a rendu de plus utile.
+
+**Pourquoi elle était fausse, et la raison est honorable.** Le document l'annonce
+lui-même : il a été écrit dans un conteneur **sans `data/raw/` et sans réseau**. Sa colonne
+« ancre `R` : en main (VM tome I) » reposait donc sur la présence du fichier au manifeste,
+**sans jamais l'ouvrir**. Cette machine l'a ; il suffisait de lire.
+
+**Mesuré dans les 102 pages des Voies et moyens tome I.** Trois instruments seulement ont
+une ligne de recette de l'État : TSN (ligne 1430, 785 M€ en exécution 2024), TTF
+(ligne 1797, 1 332 M€) et TGAP (ligne 1756, 1 150 M€). Plus deux agrégats : accises
+énergies nettes 20,2 md€ et TVA nette 96,8 md€, même millésime.
+
+**Six n'y sont pas, et ce n'est pas un oubli de téléchargement.** Taxe sur les salaires,
+forfait social, accises tabacs et alcools sont **affectés à la Sécurité sociale** ; taxe
+d'apprentissage à France compétences ; versement mobilité, DMTO et TASCOM sont des recettes
+**locales**. Aucun ne figure au budget de l'État par construction. Le document les donnait
+tous les neuf comme ancrables depuis ce seul fichier.
+
+**Deux fausses pistes, suivies puis abandonnées, consignées parce qu'elles sont
+instructives.** J'ai d'abord lu les lignes 1785-1789 comme les instruments cherchés : ce
+sont les **produits des jeux** (Française des jeux, casinos, paris hippiques et sportifs).
+Puis les lignes 1705-1706 comme le DMTO : ce sont les mutations à titre **GRATUIT**
+(donations 4,9 md€, successions 16,0 md€). Deux numéros plausibles, deux mesures
+différentes — et un chiffrage bâti dessus aurait été net, crédible et faux. C'est pourquoi
+une ancre nomme sa ligne ET son intitulé.
+
+**La convention de colonne, relevée mot pour mot** : « Exécution 2024 | LFI 2025 | Révisé
+2025 | Écart | PLF 2026 | Écart ». Elle n'est pas déduite, et `vintage_convention` vaut
+`budget` pour toutes ces lignes (D-067).
+
+**Un piège de millésime dans le document lui-même** : le découpage 1501/1502/1503/1504 des
+accises énergies est NOUVEAU — jusqu'au 31 décembre 2025, l'ex-TICPE était seule en 1501 et
+les autres regroupées ailleurs. Une ancre qui nomme un numéro de ligne sans son millésime
+pointera la mauvaise recette dès la publication suivante.
+
+**Une ancre se lève sans téléchargement.** `ccss_mai2026_comptes_secu_resultats2025.pdf`
+est **déjà au manifeste, en quarantaine** : il lui manque une URL, pas des octets. C'est
+exactement le cas de la table 7.301, et il se lève de la même façon — une URL ajoutée à
+`KNOWN_SOURCES`. C'est le chemin le plus court vers les quatre ancres « Sécurité sociale ».
+
+**Rien de M2 n'a été commencé**, conformément à la consigne. Le document porte la
+correction, la liste de téléchargements est révisée, et l'item 6 — qui nommait le mauvais
+dataset Eurostat — est corrigé avec les réserves de D-163.
