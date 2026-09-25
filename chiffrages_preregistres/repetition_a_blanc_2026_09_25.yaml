@@ -1,0 +1,26 @@
+case: repetition_a_blanc_2026_09_25
+pre_registered: '2026-09-25T12:51:27+00:00'
+commit: db128e27804390ecec5caf5865c1a8cb6e2fa9b0
+scenario: gel_bareme
+reform: null
+population_vintage: '2024'
+sample: 2000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 1114572713.2912598
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.2
+  absolute_eur: 200000000.0
+  rationale: 'Répétition à blanc du runbook PLF 2027, aucune mesure réelle. Bande
+    de 20 % relatif et 200 M€ absolu reprise du gabarit 2026 : le relatif seul exigerait
+    une précision infinie d''un article chiffré à zéro, et l''absolu seul laisserait
+    passer n''importe quoi sur un gros article.'
+note: ''
+bound: two-sided
+mirror: false
+comparator: null
