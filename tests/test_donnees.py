@@ -527,74 +527,8 @@ def test_the_normalization_preserves_length_and_only_touches_the_five_fields() -
     assert apres.count(b"contenu de page") == avant.count(b"contenu de page")
 
 
-# --------------------------------------------------------------------------- #
-# les dépendances déclarées (D-161)
-# --------------------------------------------------------------------------- #
-#: Les distributions dont le nom d'import diffère du nom de paquet. Table EXPLICITE :
-#: une normalisation automatique « devinerait », et deviner est ce qui a laissé passer
-#: `pypdf` pendant des semaines.
-ALIAS_DISTRIBUTIONS = {"yaml": "pyyaml", "sklearn": "scikit-learn"}
-
-#: Modules qui ne sont pas des paquets : des scripts du dépôt importés après un
-#: `sys.path.insert`. Nommés un par un, jamais par motif.
-MODULES_LOCAUX = {"impots", "verify_aft"}
+# Les dépendances déclarées ont déménagé dans `impots.dependances`, avec leurs tests
+# dans `tests/test_dependances.py` (D-165) : la même logique vivait ici ET dans
+# `scripts/ci_local.py`, et deux copies d'un contrat dérivent (D-151).
 
 
-def test_every_third_party_import_is_a_declared_dependency() -> None:
-    """Un import non déclaré marche jusqu'au jour où l'environnement est neuf.
-
-    **Mesuré, pas supposé (D-161).** `pypdf` était importé par le store macro et le
-    parse AFT, et déclaré NULLE PART. Il ne vient d'aucune transitive : il n'existait
-    que sur la machine du propriétaire, installé à la main. Sur un environnement neuf —
-    donc sur chaque runner de CI — `imk.load()` levait « pypdf is required », qui se lit
-    comme un défaut de DONNÉES et a été classé comme tel. `numpy`, lui, arrivait par
-    hasard via polars/pyarrow, pour une trentaine de fichiers.
-
-    L'implémentation qui fait tomber ce test : importer un paquet dans `src/` sans
-    l'ajouter à `pyproject.toml` — exactement ce qui s'est produit.
-    """
-    import ast
-    import re
-    import sys
-    import tomllib
-    from pathlib import Path
-
-    racine = Path(__file__).resolve().parents[1]
-    projet = tomllib.loads((racine / "pyproject.toml").read_text(encoding="utf-8"))["project"]
-    def normaliser(nom: str) -> str:
-        """PEP 503 : minuscules, et `-`, `_`, `.` équivalents.
-
-        Sans cela `openfisca_core` (nom d'IMPORT) ne correspond pas à `openfisca-core`
-        (nom de DISTRIBUTION) et la garde accuse deux paquets parfaitement déclarés.
-        Elle l'a fait, ce qui est la bonne façon de s'en apercevoir.
-        """
-        return re.sub(r"[-_.]+", "-", nom.lower())
-
-    declarees = set()
-    for ligne in (projet.get("dependencies", [])
-                  + [x for v in projet.get("optional-dependencies", {}).values() for x in v]):
-        declarees.add(normaliser(re.split(r"[<>=!\[ ]", ligne)[0]))
-
-    manquants: dict[str, str] = {}
-    for fichier in (racine / "src").rglob("*.py"):
-        arbre = ast.parse(fichier.read_text(encoding="utf-8"))
-        for noeud in ast.walk(arbre):
-            if isinstance(noeud, ast.Import):
-                noms = [a.name for a in noeud.names]
-            elif isinstance(noeud, ast.ImportFrom) and noeud.level == 0 and noeud.module:
-                noms = [noeud.module]
-            else:
-                continue
-            for nom in noms:
-                tete = nom.split(".")[0]
-                if not tete or tete in sys.stdlib_module_names or tete in MODULES_LOCAUX:
-                    continue
-                distribution = normaliser(ALIAS_DISTRIBUTIONS.get(tete, tete))
-                if distribution not in declarees:
-                    manquants.setdefault(distribution,
-                                         str(fichier.relative_to(racine)))
-
-    assert not manquants, (
-        f"importés par src/ mais absents de pyproject.toml : {manquants}. Ils "
-        f"fonctionnent tant que l'environnement les porte par accident, et cassent le "
-        f"jour où il est neuf — sur un runner, par exemple.")

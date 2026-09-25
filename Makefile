@@ -34,7 +34,7 @@ VENV ?= .venv/bin
 LOG  := reports/full_pass_log.md
 DURATIONS := reports/full_pass_durations.md
 
-.PHONY: gate full lint report data data-check
+.PHONY: gate full lint report data data-check ci-local ci-deps
 
 gate:
 	$(VENV)/ruff check src tests scripts
@@ -48,6 +48,16 @@ data:
 
 data-check:
 	@$(VENV)/impots data check --profile tests
+
+# LA VÉRIFICATION QUE `make full` NE PEUT PAS FAIRE. Elle tourne dans l'environnement du
+# propriétaire, donc elle ne voit pas ce que cet environnement porte par accident : `pypdf`
+# a survécu à quinze passes vertes tout en étant cassé sur chaque runner (D-161). Ces deux
+# cibles rejouent la CI dans un arbre et un venv NEUFS, sans une minute d'Actions.
+ci-deps:
+	$(VENV)/python scripts/ci_local.py --deps
+
+ci-local:
+	$(VENV)/python scripts/ci_local.py
 
 full: data-check
 	@mkdir -p reports
