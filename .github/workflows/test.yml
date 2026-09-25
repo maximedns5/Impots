@@ -34,14 +34,18 @@ jobs:
       - name: No data files in the tree (D-016)
         run: python scripts/check_no_data_committed.py --tree
 
-  # LE JOB QUI TOURNE SUR CHAQUE POUSSÉE. Mesuré sur un arbre sans aucune donnée :
-  # `-m "not slow"` fait 1 481 tests en 6 min 39 s, contre ~65 min pour la suite
-  # complète, et cinq tests seulement y réclamaient un fichier. Le profil « rapide »
-  # porte exactement ces six fichiers (~4 Mo) et AUCUN artefact dérivé : la
-  # construction de la population, qui est l'étape chère, n'a pas lieu ici.
+  # LE JOB QUI TOURNE SUR CHAQUE POUSSÉE.
   #
-  # Ce job est aussi la garde de suffisance du profil « rapide » : s'il manque un
-  # fichier, il rougit en sept minutes au lieu de soixante-cinq.
+  # Mesuré dans un arbre neuf, chaîne de données complète, machine au repos :
+  # `-m "not slow"` fait 1 366 passés et 115 sautés en **11 min 16 s**, contre
+  # ~65 min en local pour la suite entière. Le même écart en CI : l'étape Tests de la
+  # suite complète y a pris 46 min, donc ce job devrait y tenir sous la dizaine de
+  # minutes.
+  #
+  # Deux chiffres FAUX ont précédé celui-ci, et ils sont consignés en D-161 plutôt
+  # qu'effacés : 6 min 39 s, mesuré sans données — rapide parce que cinq tests
+  # échouaient d'emblée ; puis 25 min 39 s, mesuré pendant que TROIS pytest se
+  # disputaient la machine. Une durée relevée sous contention n'est pas une durée.
   fast:
     runs-on: ubuntu-latest
     steps:

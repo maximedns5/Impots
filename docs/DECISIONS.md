@@ -7961,9 +7961,26 @@ remplacée allait jusqu'au bout.
 1. `push:` restreint à `main` — le run `pull_request` couvre déjà le travail de branche.
 2. Groupe `concurrency` avec `cancel-in-progress`, **sauf sur `main`**, dont on veut que
    la ligne d'historique reste complète.
-3. Découpage rapide/complet. Mesuré : `-m "not slow"` fait 1 481 tests là où la suite
-   entière en fait 1 702, et **c'est là qu'est tout le gain**. La suite complète ne tourne
-   plus que sur `main`, à la demande, ou sur une PR portant le label `full-suite`.
+3. Découpage rapide/complet. Mesuré, arbre neuf et machine au repos :
+   `-m "not slow"` rend **1 366 passés, 115 sautés, en 11 min 16 s**, là où la suite
+   entière fait 1 702 tests en ~65 min local (46 min sur un runner). **C'est là qu'est
+   tout le gain.** La suite complète ne tourne plus que sur `main`, à la demande, ou sur
+   une PR portant le label `full-suite`. Ordre de grandeur par poussée de PR :
+   **~100 min → ~10 min.**
+
+**Deux durées fausses ont précédé la bonne, et elles restent écrites.** D'abord
+6 min 39 s, relevé sur un arbre SANS données : rapide parce que cinq tests échouaient
+d'emblée au lieu de tourner. Puis 25 min 39 s, annoncé au propriétaire comme une
+correction — et relevé pendant que **trois** processus pytest se disputaient la machine,
+dont un oublié depuis deux heures. Une durée mesurée sous contention n'est pas une durée,
+et la seconde erreur était pire que la première parce qu'elle se présentait comme un
+rectificatif.
+
+La cause de la confusion vaut d'être nommée : le `pgrep` qui surveillait la fin des runs
+ne correspondait pas à leur ligne de commande réelle, si bien qu'il annonçait
+« terminé » sur des processus bien vivants, et que des journaux tronqués se lisaient comme
+des runs tués. **Un contrôle qui ne contrôle pas ce qu'il prétend** — la forme même que ce
+dépôt traque dans son code, commise dans l'outillage qui le mesure.
 
 **Ce qui est RETIRÉ après mesure, et pourquoi c'est la partie utile de cette entrée.**
 
