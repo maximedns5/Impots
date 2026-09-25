@@ -7942,3 +7942,59 @@ hors profil écartés : `test_patrimoine.py` et `test_accuracy.py` rendent **115
 Un profil incomplet le traverse au vert, et les fichiers absents ressortent cinquante
 minutes plus tard, au milieu de la suite — c'est-à-dire exactement le défaut que D-158
 existait pour abolir, déplacé d'un cran.
+
+## D-161 — Le coût de la CI, mesuré — et `pypdf` qui n'était déclaré nulle part
+
+**Le déclencheur.** L'allocation de minutes Actions du dépôt s'est épuisée en pleine
+revue : les jobs ne démarrent plus du tout (`steps=0`, « recent account payments have
+failed or your spending limit needs to be increased »). Le dépôt est PRIVÉ, donc les
+minutes sont facturées. Avant de toucher quoi que ce soit, on mesure.
+
+**Où passait l'argent.** `test.yml` se déclenchait sur `push:` SANS filtre **et** sur
+`pull_request:`. Sur une branche de PR, le job le plus cher tournait donc **deux fois par
+poussée**, à ~50 min pièce : ~100 min par poussée, soit une vingtaine de poussées pour
+2 000 minutes. Il n'y avait par ailleurs **aucun groupe `concurrency`**, donc une poussée
+remplacée allait jusqu'au bout.
+
+**Ce qui est fait.**
+
+1. `push:` restreint à `main` — le run `pull_request` couvre déjà le travail de branche.
+2. Groupe `concurrency` avec `cancel-in-progress`, **sauf sur `main`**, dont on veut que
+   la ligne d'historique reste complète.
+3. Découpage rapide/complet. Mesuré : `-m "not slow"` fait 1 481 tests là où la suite
+   entière en fait 1 702, et **c'est là qu'est tout le gain**. La suite complète ne tourne
+   plus que sur `main`, à la demande, ou sur une PR portant le label `full-suite`.
+
+**Ce qui est RETIRÉ après mesure, et pourquoi c'est la partie utile de cette entrée.**
+
+* **Le cache des artefacts dérivés.** Proposé en supposant la construction coûteuse.
+  Relevé des durées d'étapes d'un vrai run : fetch 36 s, **construction 6 s**, préflight
+  1 s, tests **2 774 s**. Cacher aurait gagné 0,2 % en échange de la garantie, écrite dans
+  le workflow, qu'une population périmée n'est jamais réutilisée en silence. Prémisse
+  fausse, proposition abandonnée.
+* **Un second profil « rapide ».** Écrit, puis retiré. Il aurait fait gagner ~35 s et
+  coûté une seconde liste à maintenir suffisante — et la mesure a montré qu'il ne l'était
+  PAS : `test_accuracy` lit `firm_cells_2023.json`, un artefact DÉRIVÉ. Une liste qui
+  dérive en silence fait rougir le job rapide pour un fichier manquant au lieu d'un vrai
+  défaut. Les deux jobs partagent désormais le profil unique.
+
+**LE DÉFAUT QUE CETTE MESURE A DÉTERRÉ, et il n'a rien à voir avec le coût.** En rejouant
+la chaîne dans un arbre NEUF, `test_the_macro_horizon_is_read_from_the_store` échoue sur
+`ImkError: pypdf is required to read the IMK working papers`. **`pypdf` n'était déclaré
+nulle part** dans `pyproject.toml` — ni en dépendance, ni en extra — et il n'arrive par
+aucune transitive. Il n'existait que sur la machine du propriétaire, installé à la main il
+y a longtemps. Sur **chaque runner de CI**, le store macro était donc cassé depuis
+toujours, et son message — « pypdf is required » — se lit comme un défaut de DONNÉES ; il
+a été rangé parmi les rouges « fichiers manquants » et compté comme tel.
+
+`numpy` est dans le même cas en moins grave : importé par une trentaine de fichiers de
+`src/`, il n'arrivait que par transitive de polars/pyarrow. Les deux sont désormais
+déclarés.
+
+**La garde.** Un test parcourt les imports de `src/` par AST et exige que chaque paquet
+tiers figure au `pyproject.toml`, avec normalisation PEP 503 — `openfisca_core` (import)
+et `openfisca-core` (distribution) sont le même paquet, et la première version de la garde
+a accusé deux paquets parfaitement déclarés, ce qui est la bonne façon de s'en apercevoir.
+Les deux tables d'exception — alias de distribution, modules locaux — sont EXPLICITES :
+deviner est précisément ce qui a laissé passer `pypdf`. **Vue échouer** en retirant `pypdf`
+du `pyproject.toml` : elle le nomme, et nomme le fichier qui l'importe.

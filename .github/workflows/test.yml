@@ -1,9 +1,23 @@
 name: test
 
 on:
+  # `push:` sans filtre déclenchait un run SUR CHAQUE BRANCHE, en plus du run
+  # `pull_request:` du même commit : le job le plus cher tournait DEUX FOIS par
+  # poussée. Sur une branche de PR, le run `pull_request` couvre déjà le travail ;
+  # le run `push` n'ajoutait qu'une facture. Restreint à `main`, qui n'a pas de
+  # run `pull_request` et a donc besoin du sien.
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
+
+# Sans ce groupe, une poussée qui en remplace une autre laisse la précédente aller
+# jusqu'au bout — cinquante minutes de runner pour un commit que personne ne
+# regardera plus. `cancel-in-progress` ne s'applique PAS à `main` : on veut que la
+# ligne d'historique de la branche par défaut reste complète.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   # The pre-commit hook that enforces this lives in .githooks/, and
@@ -20,8 +34,80 @@ jobs:
       - name: No data files in the tree (D-016)
         run: python scripts/check_no_data_committed.py --tree
 
+  # LE JOB QUI TOURNE SUR CHAQUE POUSSÉE. Mesuré sur un arbre sans aucune donnée :
+  # `-m "not slow"` fait 1 481 tests en 6 min 39 s, contre ~65 min pour la suite
+  # complète, et cinq tests seulement y réclamaient un fichier. Le profil « rapide »
+  # porte exactement ces six fichiers (~4 Mo) et AUCUN artefact dérivé : la
+  # construction de la population, qui est l'étape chère, n'a pas lieu ici.
+  #
+  # Ce job est aussi la garde de suffisance du profil « rapide » : s'il manque un
+  # fichier, il rougit en sept minutes au lieu de soixante-cinq.
+  fast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Pin check
+        run: |
+          python - <<'PYPIN'
+          from importlib.metadata import version
+          assert version("openfisca-france") == "176.0.8", version("openfisca-france")
+          assert version("openfisca-core") == "44.7.0", version("openfisca-core")
+          print("pins OK")
+          PYPIN
+
+      - name: Lint
+        run: ruff check src tests scripts
+
+      - name: Restore the raw sources (keyed on their manifest checksums)
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw/*
+            !data/raw/MANIFEST.json
+          key: raw-sources-${{ hashFiles('data/raw/MANIFEST.json') }}
+
+      # LE MÊME profil que la suite complète, délibérément. Un second profil, réduit,
+      # a été écrit puis retiré : mesuré, il faisait gagner ~35 s (fetch 36 s + build
+      # 6 s en CI) et coûtait une seconde liste à garder suffisante, qui dérive en
+      # silence et fait rougir ce job pour un fichier manquant au lieu d'un vrai
+      # défaut. Tout le gain est dans `-m "not slow"`, pas dans les données.
+      - name: Fetch the raw sources
+        run: impots data fetch --profile tests
+
+      - name: Build the derived artefacts
+        run: |
+          impots entreprises cells
+          impots population build
+
+      - name: Preflight — every dependency present and valid
+        run: impots data check --profile tests
+
+      - name: Tests (fast subset)
+        run: pytest -q -m "not slow"
+        env:
+          IMPOTS_SKIP_PERF: "1"
+
+  # LA SUITE COMPLÈTE — 1 702 tests, ~50 min de runner, avec la construction de la
+  # population. Elle ne tourne PLUS sur chaque poussée de branche : sur une PR, le job
+  # `fast` ci-dessus couvre le travail courant, et celle-ci se lance sur `main`, à la
+  # demande (`workflow_dispatch`), ou sur une PR portant le label `full-suite`.
   pytest:
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || github.ref == 'refs/heads/main'
+      || contains(github.event.pull_request.labels.*.name, 'full-suite')
     steps:
       - uses: actions/checkout@v4
 
@@ -97,12 +183,14 @@ jobs:
       - name: Preflight — every dependency present and valid
         run: impots data check --profile tests
 
-      # GitHub runners are slower and noisier than a laptop; the timing assertions
-      # exist to catch an accidental benefits cascade, not to benchmark CI.
-      # `-m ""` overrides the default gate in pyproject, which excludes the tests
-      # that need a full population pass. CI is where minutes are cheap, so it runs
-      # everything it can — and with the data chain above, the population tests that
-      # used to skip here for want of a built population now have one.
+      # `-m ""` overrides the default gate in pyproject, which excludes the tests that
+      # need a full population pass.
+      #
+      # An earlier version of this comment said "CI is where minutes are cheap". On a
+      # PRIVATE repository they are not: this workflow ran on `push:` AND
+      # `pull_request:`, so the fifty-minute job ran twice per push, and the account's
+      # Actions allowance ran out mid-review. The sentence is corrected rather than
+      # deleted, because it is the assumption that produced the bill.
       - name: Tests
         run: pytest -q -m ""
         env:
