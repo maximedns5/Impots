@@ -8015,3 +8015,72 @@ a accusé deux paquets parfaitement déclarés, ce qui est la bonne façon de s'
 Les deux tables d'exception — alias de distribution, modules locaux — sont EXPLICITES :
 deviner est précisément ce qui a laissé passer `pypdf`. **Vue échouer** en retirant `pypdf`
 du `pyproject.toml` : elle le nomme, et nomme le fichier qui l'importe.
+
+## D-162 — Répétition à blanc du runbook PLF 2027 : la chaîne n'avait jamais tourné pour de vrai
+
+**Pourquoi maintenant.** Le PLF 2027 paraît début octobre et §8 lui donne préséance sur tout.
+Le relecteur a durci la recommandation : A tout de suite, rien ne passe devant. La répétition
+porte sur les étapes 0 à 4 du runbook, celles qui doivent marcher **le jour même**.
+
+**Le constat qui justifie l'exercice.** `impots chiffrage list` répondait
+« aucun chiffrage préenregistré » : le registre n'avait **jamais** porté un seul cas. La
+machinerie est pourtant bien testée — vingt tests dans `test_preregistration.py`, dont
+`test_a_tolerance_widened_after_the_fact_is_caught`. Mais tous tournent sur `tmp_path` avec
+un dépôt git fabriqué. **Aucun n'avait exercé la vraie CLI contre le vrai répertoire et le
+vrai historique git**, c'est-à-dire exactement l'écart qui a coûté deux défauts cette
+semaine (le chargeur de manifeste testé en JSON brut, le profil testé par une liste à la
+main). C'est la question permanente : *ai-je déjà vu cette sortie exister ?*
+
+**Ce que la répétition a exercé, en vrai.** `chiffrage register` sur le scénario
+`gel_bareme`, 2 000 ménages : mécanique +1,115 md€, fichier écrit, et la CLI rappelant
+d'elle-même que **le fichier n'est pas le préenregistrement, le commit l'est**. Puis commit,
+puis `verify_tolerance_unchanged` → ACCEPTÉ, avec l'historique git lu correctement. Puis
+tolérance élargie de 0,20 à 0,95 et recommittée → **REFUSÉ**, en nommant le nombre de
+changements et les deux valeurs. La garde fonctionne sur le vrai dépôt, pas seulement en
+bac à sable. Le registre a ensuite été remis à vide : il repart propre pour le PLF.
+
+**Trois frictions relevées, aucune bloquante.**
+
+1. `chiffrages_preregistres/` n'existe pas dans l'arbre — mais `save()` fait
+   `mkdir(parents=True)`, donc il naît au premier enregistrement. Vérifié, pas supposé.
+2. `reforms/` que le runbook cite en exemple n'existe pas non plus ; c'est un chemin
+   d'ENTRÉE que l'opérateur fournit, pas un répertoire que la commande crée. À créer le
+   jour J, ou à écrire les réformes ailleurs.
+3. L'étape 0 exige « une ligne verte au journal ET un arbre propre ». La dernière ligne
+   verte porte `9442046` et la tête a avancé depuis. **Il faudra relancer `make full` avant
+   d'enregistrer le premier chiffrage**, sinon le hash de commit ne témoigne de rien.
+
+## D-163 — La route du SFA : les DEUX codes annoncés étaient faux, et 2019-2020 manquent
+
+**Vérifié à la source plutôt que recopié.** Le relecteur indiquait Eurostat
+`gov_10dd_sfa` ; j'avais écrit `gov_10dd_edpt1`. Interrogation de l'API de diffusion :
+
+* `gov_10dd_sfa` → **HTTP 404, ce dataset n'existe pas** ;
+* `gov_10dd_edpt1` → existe (« Government deficit/surplus, debt and associated data ») mais
+  ses 18 postes ne contiennent **aucun** ajustement flux-stocks : B9, GD, D41PAY, B1GQ — tout
+  pour l'identité SAUF le terme qui nous manque.
+
+**La bonne table est `gov_10dd_edpt3`**, « Transition from the deficit/surplus to the change
+in debt ». C'est littéralement le pont cherché.
+
+**Et elle confirme la série dérivée, au décimal.** `B9_T3` et `GD_CH` y valent exactement
+les chiffres tirés de l'INSEE, et leur différence redonne l'ajustement dérivé : −0,2 en
+2021, +1,0 en 2022, −4,3 en 2023, **+33,7 en 2024**. Le calcul de D-148 était juste.
+
+**Deux découvertes qui changent le plan de §6.1.**
+
+1. **Eurostat ne publie pas le SFA comme une ligne ; il publie ses COMPOSANTES**
+   (`F_ASS`, `ORADJ`, `K61`, `KX`, `YA3`). Leur somme n'égale pas la différence : 0,1 contre
+   −0,2 ; 1,4 contre 1,0 ; −4,8 contre −4,3 ; 34,1 contre 33,7. **Cet écart de 0,3 à 0,5 md€
+   est précisément ce qui fait des composantes une mesure INDÉPENDANTE** plutôt qu'une
+   resoustraction. C'est la sortie du piège de D-148 : bâtir le SFA depuis ses composantes
+   publiées n'est pas le dériver de la trajectoire à reproduire.
+2. **2019 et 2020 sont ABSENTS de cette table pour la France**, sur ce poste, cette unité et
+   ce secteur. La fenêtre de §6.1 commence en 2019 : Eurostat seul **ne peut pas** la
+   couvrir. Il faudra les tableaux de notification EDP de l'INSEE pour ces deux années, ou
+   accepter un backtest 2021→2025 qui le DIT.
+
+**Ce qui n'est pas tranché ici**, et appartient au propriétaire : §6.1 tourne-t-il sur
+2021→2025 avec un SFA reconstruit depuis les composantes, ou attend-il les deux années
+manquantes ? La tolérance se pré-enregistre après ce choix, pas avant — la fenêtre fait
+partie de la méthode.
