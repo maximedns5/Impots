@@ -8225,3 +8225,65 @@ exactement le cas de la table 7.301, et il se lève de la même façon — une U
 **Rien de M2 n'a été commencé**, conformément à la consigne. Le document porte la
 correction, la liste de téléchargements est révisée, et l'item 6 — qui nommait le mauvais
 dataset Eurostat — est corrigé avec les réserves de D-163.
+
+## D-167 — §6.1 tournera sur 2021→2025, et la tolérance est fixée AVANT le premier résidu
+
+**La fenêtre, et pourquoi elle n'est pas 2019→2025.** Deux notifications EDP ont été
+examinées. Celle d'avril 2026 couvre 2022→2025 ; celle d'octobre 2022 couvre 2018→2021 et
+porte donc les années manquantes — mais **sur un autre millésime**, et le raccord est
+interdit :
+
+| md€ | notification oct-2022 | millésime courant (INSEE 2025 / Eurostat) |
+|---|---|---|
+| déficit 2019 | −74,7 | −58,2 |
+| dette 2019 | 2 374,9 | 2 387,4 |
+| **SFA 2019** | **−10,6** | **+8,4** |
+
+Une révision de **16,5 md€** sur le déficit 2019 fait **CHANGER DE SIGNE** l'ajustement de
+cette année-là. Raccorder les deux produirait au joint 2021/2022 une rupture indiscernable
+d'une erreur de modèle — la cinquième fois que la convention de millésime du comparateur
+serait l'erreur entière. La fenêtre est donc **2021→2025, un seul millésime**, et le
+backtest le DIRA plutôt que de laisser croire à sept ans.
+
+**Ce que la fenêtre coûte, énoncé plutôt qu'enfoui.** On perd 2020 et son ajustement de
++69 md€, de loin le plus grand de la série et l'année la plus exigeante pour l'identité. Le
+backtest en est plus facile, et c'est un fait sur sa portée, pas un détail.
+
+**Le SFA vient des COMPOSANTES publiées**, pas de la différence `Δdette − déficit` :
+`F_ASS + ORADJ + K61 + KX + YA3`. Leur somme s'écarte de la différence de 0,3 à 0,5 md€, et
+**c'est cet écart qui en fait une mesure indépendante** — la sortie du piège de D-148, où
+un SFA dérivé refermait l'identité par construction avec un résidu de 0,022 pt.
+
+### La tolérance : ±0,10 point de PIB par année
+
+**Fixée ici, avant tout calcul de résidu.** Elle est argumentée depuis les termes d'erreur
+NOMMÉS, chacun mesuré ou borné à l'avance :
+
+| terme | ordre de grandeur | années concernées |
+|---|---|---|
+| écart de millésime SFA (Eurostat avril 2026) contre dette/PIB (INSEE 2025) | ≈ 0,03 pt | **2025 seule** |
+| écart composantes / différence (l'indépendance elle-même) | 0,01 à 0,017 pt | toutes |
+| dénominateur du ratio publié (« PIB annuel en données brutes », note de bas de page) | ≤ 0,02 pt | toutes |
+| arrondis (fichiers au million, ratio à quatre décimales) | négligeable | toutes |
+
+Somme des termes nommés : **au plus ≈ 0,05 pt**. La bande est donc à environ deux fois ce
+que l'on sait devoir absorber.
+
+**Pourquoi 0,10 et pas 0,20 — l'argument qui décide.** La bande doit rester SOUS la
+signature du défaut que ce module existe pour éviter. Confondre `D41` emplois avec `D41`
+net surestime la charge de ~8 %, soit ~5 md€ sur ~3 000 md€ de PIB : **≈ 0,17 pt**. À 0,20
+la garde laisserait passer précisément cette erreur ; à 0,10 elle la refuse. Les autres
+classes sont plus grosses encore — une erreur d'unité vaut mille fois, une inversion de
+signe du solde primaire environ 5 pt.
+
+**Ce qui est attendu, écrit d'avance pour qu'un échec prévu ne passe pas pour une
+découverte.** L'identité est arithmétique : le résidu doit être quasi nul sur 2021→2024, où
+les deux sources concordent à la décimale. **2025 est l'année où un résidu est ATTENDU**,
+d'environ 0,03 pt, pour la cause nommée ci-dessus — millésime à demi finalisé. Un résidu
+2025 dans cet ordre n'est donc PAS un succès du modèle : c'est le terme de millésime, et il
+sera décomposé avant d'être commenté.
+
+**Échec = une année hors bande SANS cause mécanique nommée.** La règle du résidu dangereux
+s'applique dans l'autre sens aussi : un résidu quasi nul partout n'est pas une validation,
+c'est ce qu'une identité exacte doit rendre, et il ne prouve que l'absence d'erreur de
+saisie.
