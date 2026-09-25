@@ -250,3 +250,55 @@ def test_a_zero_tolerance_is_refused_because_nothing_could_ever_leave_the_band()
 def test_an_empty_backtest_is_refused():
     with pytest.raises(dette.DebtError, match="aucune année"):
         dette.backtest(0.98, [], tolerance=0.01)
+
+
+# ------------------------------------------------ §3.1 la charnière de la boule de neige
+def test_the_snowball_factor_crossing_one_turns_damping_into_compounding() -> None:
+    """LA propriété que le backtest §6.1 ne pouvait PAS éprouver.
+
+    Sur 2021-2025 la croissance nominale dépasse le taux implicite partout, donc le report
+    (1+r)/(1+g) reste sous 1 et une erreur passée DÉCROÎT. Ce n'est pas une qualité du
+    modèle : c'est l'arithmétique, et elle s'éteint. Le facteur mesuré en 2025 vaut 0,9998
+    (D-168) — la fenêtre du backtest s'arrête juste avant la charnière.
+
+    Tout ce que §3 projette vit de l'autre côté. Ce test y met une erreur initiale et
+    vérifie les deux régimes : sous la charnière elle s'efface, au-dessus elle enfle. Une
+    implémentation qui amortirait dans les deux sens — par exemple en repartant du ratio
+    publié à chaque pas — passerait le backtest et échouerait ici.
+    """
+    ecart = 0.010                      # un point de départ faux d'un point de PIB
+
+    def derive(r: float, g: float, annees: int = 8) -> float:
+        """L'écart entre deux trajectoires identiques sauf par leur b0."""
+        juste, faux = 1.10, 1.10 + ecart
+        for annee in range(2030, 2030 + annees):
+            entree = dette.YearInputs(year=annee, r=r, g=g, primary_balance=0.0)
+            juste = dette.step(juste, entree).ratio
+            faux = dette.step(faux, entree).ratio
+        return faux - juste
+
+    sous = derive(r=0.018, g=0.038)    # régime 2021-2024 : g bien au-dessus de r
+    au_dessus = derive(r=0.038, g=0.018)   # régime inverse, celui que §3 projette
+
+    assert sous < ecart, "sous la charnière, un écart initial doit s'amortir"
+    assert au_dessus > ecart, "au-dessus, il doit enfler"
+    assert au_dessus > sous * 1.3, (
+        f"les deux régimes doivent être nettement distincts : {sous:.5f} contre "
+        f"{au_dessus:.5f}. S'ils se ressemblent, le report ne dépend pas de (1+r)/(1+g) "
+        f"et la boule de neige n'est pas modélisée")
+
+
+def test_at_the_hinge_an_initial_error_neither_grows_nor_fades() -> None:
+    """Le cas limite, épinglé parce qu'il est le seul où l'on peut prédire la réponse.
+
+    À r = g exactement, le facteur vaut 1 : un écart initial se transporte tel quel,
+    indéfiniment. C'est le point où l'amortissement observé sur 2021-2025 cesse, et il
+    n'est pas loin — le facteur 2025 vaut déjà 0,9998.
+    """
+    ecart, ratio_juste, ratio_faux = 0.010, 1.10, 1.11
+    for annee in range(2030, 2045):
+        entree = dette.YearInputs(year=annee, r=0.025, g=0.025, primary_balance=0.0)
+        ratio_juste = dette.step(ratio_juste, entree).ratio
+        ratio_faux = dette.step(ratio_faux, entree).ratio
+    assert abs((ratio_faux - ratio_juste) - ecart) < 1e-9, (
+        "à r = g l'écart doit être strictement conservé sur quinze ans")

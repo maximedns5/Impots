@@ -8371,3 +8371,28 @@ inutile, et pour que la prochaine session ne reparte pas du constat périmé.
 fois en deux jours : le profil « en main (VM tome I) » établi sans ouvrir le fichier, la
 liste d'ancres écrite dans un conteneur sans données, et maintenant une quarantaine relevée
 sur une autre branche. Le remède est le même chaque fois — relire avant d'affirmer.
+
+## D-170 — La charnière de la boule de neige, que le backtest ne pouvait pas éprouver
+
+**Le constat qui l'appelle.** §6.1 a montré que les résidus ne s'empilent pas sur
+2021-2025, et la raison n'est pas une qualité du modèle : le report est multiplié par
+(1+r)/(1+g), et sur cette fenêtre la croissance nominale dépasse le taux implicite
+partout. Une erreur passée décroît donc mécaniquement. **Le facteur mesuré en 2025 vaut
+0,9998** (D-168) : la fenêtre du backtest s'arrête juste avant la charnière.
+
+**Pourquoi cela compte au-delà de M1.** Tout ce que §3 projette vit de l'autre côté. Dès
+que le taux implicite rattrape la croissance nominale, le facteur passe au-dessus de 1 et
+une erreur initiale — de donnée, de scénario, d'ancre — **enfle** au lieu de s'effacer.
+Aucun test ne couvrait ce régime, parce que la seule fenêtre de données disponible est
+entièrement du côté amortissant.
+
+**Deux tests, sur des trajectoires construites plutôt que sur des données.** Le premier
+place un écart initial d'un point de PIB et vérifie les deux régimes : sous la charnière il
+s'amortit, au-dessus il enfle, et les deux doivent être nettement distincts. Le second
+épingle le cas limite r = g, le seul dont la réponse se prédit exactement : l'écart se
+transporte **tel quel**, à 1e-9 près sur quinze ans.
+
+**Vus échouer**, en remplaçant le report par un facteur constant — une implémentation qui
+amortirait dans les deux sens. Elle **passe le backtest §6.1** sans broncher, puisque toute
+la fenêtre est amortissante, et tombe ici. C'est précisément le trou que ces deux tests
+comblent : un backtest ne peut éprouver que le régime que ses données contiennent.
