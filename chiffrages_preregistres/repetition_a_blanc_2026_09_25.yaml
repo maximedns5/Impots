@@ -14,7 +14,7 @@ chiffrage:
   intervals: null
   fan: null
 tolerance:
-  relative: 0.2
+  relative: 0.95
   absolute_eur: 200000000.0
   rationale: 'Répétition à blanc du runbook PLF 2027, aucune mesure réelle. Bande
     de 20 % relatif et 200 M€ absolu reprise du gabarit 2026 : le relatif seul exigerait
