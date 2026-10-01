@@ -1,9 +1,23 @@
 name: test
 
 on:
+  # `push:` sans filtre déclenchait un run SUR CHAQUE BRANCHE, en plus du run
+  # `pull_request:` du même commit : le job le plus cher tournait DEUX FOIS par
+  # poussée. Sur une branche de PR, le run `pull_request` couvre déjà le travail ;
+  # le run `push` n'ajoutait qu'une facture. Restreint à `main`, qui n'a pas de
+  # run `pull_request` et a donc besoin du sien.
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
+
+# Sans ce groupe, une poussée qui en remplace une autre laisse la précédente aller
+# jusqu'au bout — cinquante minutes de runner pour un commit que personne ne
+# regardera plus. `cancel-in-progress` ne s'applique PAS à `main` : on veut que la
+# ligne d'historique de la branche par défaut reste complète.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   # The pre-commit hook that enforces this lives in .githooks/, and
@@ -20,8 +34,84 @@ jobs:
       - name: No data files in the tree (D-016)
         run: python scripts/check_no_data_committed.py --tree
 
+  # LE JOB QUI TOURNE SUR CHAQUE POUSSÉE.
+  #
+  # Mesuré dans un arbre neuf, chaîne de données complète, machine au repos :
+  # `-m "not slow"` fait 1 366 passés et 115 sautés en **11 min 16 s**, contre
+  # ~65 min en local pour la suite entière. Le même écart en CI : l'étape Tests de la
+  # suite complète y a pris 46 min, donc ce job devrait y tenir sous la dizaine de
+  # minutes.
+  #
+  # Deux chiffres FAUX ont précédé celui-ci, et ils sont consignés en D-161 plutôt
+  # qu'effacés : 6 min 39 s, mesuré sans données — rapide parce que cinq tests
+  # échouaient d'emblée ; puis 25 min 39 s, mesuré pendant que TROIS pytest se
+  # disputaient la machine. Une durée relevée sous contention n'est pas une durée.
+  fast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Pin check
+        run: |
+          python - <<'PYPIN'
+          from importlib.metadata import version
+          assert version("openfisca-france") == "176.0.8", version("openfisca-france")
+          assert version("openfisca-core") == "44.7.0", version("openfisca-core")
+          print("pins OK")
+          PYPIN
+
+      - name: Lint
+        run: ruff check src tests scripts
+
+      - name: Restore the raw sources (keyed on their manifest checksums)
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw/*
+            !data/raw/MANIFEST.json
+          key: raw-sources-${{ hashFiles('data/raw/MANIFEST.json') }}
+
+      # LE MÊME profil que la suite complète, délibérément. Un second profil, réduit,
+      # a été écrit puis retiré : mesuré, il faisait gagner ~35 s (fetch 36 s + build
+      # 6 s en CI) et coûtait une seconde liste à garder suffisante, qui dérive en
+      # silence et fait rougir ce job pour un fichier manquant au lieu d'un vrai
+      # défaut. Tout le gain est dans `-m "not slow"`, pas dans les données.
+      - name: Fetch the raw sources
+        run: impots data fetch --profile tests
+
+      - name: Build the derived artefacts
+        run: |
+          impots entreprises cells
+          impots population build
+
+      - name: Preflight — every dependency present and valid
+        run: impots data check --profile tests
+
+      - name: Tests (fast subset)
+        run: pytest -q -m "not slow"
+        env:
+          IMPOTS_SKIP_PERF: "1"
+
+  # LA SUITE COMPLÈTE — 1 702 tests, ~50 min de runner, avec la construction de la
+  # population. Elle ne tourne PLUS sur chaque poussée de branche : sur une PR, le job
+  # `fast` ci-dessus couvre le travail courant, et celle-ci se lance sur `main`, à la
+  # demande (`workflow_dispatch`), ou sur une PR portant le label `full-suite`.
   pytest:
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || github.ref == 'refs/heads/main'
+      || contains(github.event.pull_request.labels.*.name, 'full-suite')
     steps:
       - uses: actions/checkout@v4
 
@@ -61,20 +151,50 @@ jobs:
       - name: Lint
         run: ruff check src tests scripts
 
-      # The population tests run against tests/fixtures/eec_sample.parquet, so CI
-      # needs neither network access nor the 11.7 MB INSEE file. The full-data path
-      # is exercised locally.
-      # GitHub runners are slower and noisier than a laptop; the timing assertions
-      # exist to catch an accidental benefits cascade, not to benchmark CI.
-      # `-m ""` overrides the default gate in pyproject, which excludes the tests
-      # that need a full population pass. CI is where minutes are cheap, so it runs
-      # everything it can.
+      # THE DATA CHAIN, which CI did not have. Eighteen tests failed here after 47
+      # minutes, each on the FIRST missing file of its chain — and the trace named only
+      # that first file: the macro store alone reads three PDFs, not the one its error
+      # showed. `impots data` derives the list from the readers' own constants, so it
+      # asks for everything the suite reads rather than what the last failure printed.
       #
-      # Worth stating plainly: those tests currently SKIP here anyway, because CI has
-      # no built population — the EEC file is 11.7 MB and downloading it is not CI's
-      # job. So the full pass genuinely runs only on a machine that has the data.
-      # `-m ""` is what makes CI pick them up the day that changes, rather than
-      # silently continuing to skip a suite everyone believes is running.
+      # Raw sources are cached keyed on the manifest: they are immutable by sha256, so a
+      # cache hit is correct by construction, and any manifest change re-fetches. The
+      # derived artefacts are NOT cached — they are rebuilt from verified sources every
+      # run, because a stale population silently reused is the failure this whole chain
+      # exists to prevent. Every source is Licence Ouverte or open access (see the
+      # manifest); none is committed (D-016) — they live in the runner, not the tree.
+      - name: Restore the raw sources (keyed on their manifest checksums)
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw/*
+            !data/raw/MANIFEST.json
+          key: raw-sources-${{ hashFiles('data/raw/MANIFEST.json') }}
+
+      # By manifest entry only: URL, byte count and sha256 are checked BEFORE the file
+      # is renamed into place, so a publication that changed under the same URL fails
+      # here, loudly, instead of producing plausible numbers downstream (D-007).
+      - name: Fetch the raw sources the suite reads
+        run: impots data fetch --profile tests
+
+      - name: Build the derived artefacts
+        run: |
+          impots entreprises cells
+          impots population build
+
+      # Fails in about a second, listing every missing or invalid dependency with the
+      # command that produces it — before the 47-minute run, not during it.
+      - name: Preflight — every dependency present and valid
+        run: impots data check --profile tests
+
+      # `-m ""` overrides the default gate in pyproject, which excludes the tests that
+      # need a full population pass.
+      #
+      # An earlier version of this comment said "CI is where minutes are cheap". On a
+      # PRIVATE repository they are not: this workflow ran on `push:` AND
+      # `pull_request:`, so the fifty-minute job ran twice per push, and the account's
+      # Actions allowance ran out mid-review. The sentence is corrected rather than
+      # deleted, because it is the assumption that produced the bill.
       - name: Tests
         run: pytest -q -m ""
         env:

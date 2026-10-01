@@ -263,6 +263,72 @@ def sfa_implied_by_identity(years: list[int]) -> dict[int, ImpliedSfa]:
             for y in years}
 
 
+SFA_FILE = "eurostat_gov_10dd_edpt3_fr_sfa.json"
+
+#: Les cinq composantes publiées de l'ajustement flux-stocks. Leur SOMME est l'ajustement,
+#: et c'est ce qui en fait une mesure INDÉPENDANTE plutôt qu'une resoustraction : elle
+#: diffère de `GD_CH − B9_T3` de 0,3 à 0,5 md€, et cet écart est la sortie du piège de
+#: D-148. Reconstruire le SFA par la différence rendrait le backtest tautologique.
+SFA_COMPOSANTES: tuple[str, ...] = ("F_ASS", "ORADJ", "K61", "KX", "YA3")
+
+
+def sfa_publie(years: list[int]) -> dict[int, float]:
+    """L'ajustement flux-stocks, en points de PIB, depuis les composantes publiées.
+
+    **Couverture : 2021→2025 pour la France.** La table EDP ne publie qu'une fenêtre
+    glissante ; 2019 et 2020 n'y sont pas, et les notifications antérieures qui les
+    portent sont sur un AUTRE millésime — le déficit 2019 y vaut 74,7 md€ contre 58,2 au
+    millésime courant, un écart de 16,5 md€ qui fait CHANGER DE SIGNE l'ajustement 2019
+    (−10,6 contre +8,4). Les raccorder produirait une rupture de millésime au joint
+    2021/2022, indiscernable d'une erreur de modèle (D-167).
+    """
+    import json
+
+    from impots.population.ingest import require_sourced
+
+    require_sourced(SFA_FILE)
+    chemin = RAW / SFA_FILE
+    if not chemin.exists():
+        raise DebtError(
+            f"{SFA_FILE} est au manifeste mais absent de {RAW} : "
+            f"`impots data fetch {SFA_FILE}`.")
+    donnees = json.loads(chemin.read_text(encoding="utf-8"))
+    postes = donnees["dimension"]["na_item"]["category"]["index"]
+    temps = donnees["dimension"]["time"]["category"]["index"]
+    valeurs = donnees.get("value", {})
+    manquants = [c for c in SFA_COMPOSANTES if c not in postes]
+    if manquants:
+        raise DebtError(
+            f"{SFA_FILE} : composantes {manquants} absentes du fichier. La somme porterait "
+            f"sur moins de postes qu'annoncé et rendrait un ajustement trop petit, sans "
+            f"erreur — un défaut qui se lit comme une mesure.")
+
+    produit = gdp(years)
+    sortie: dict[int, float] = {}
+    for annee in years:
+        cle = str(annee)
+        if cle not in temps:
+            raise DebtError(
+                f"{SFA_FILE} : {annee} hors de la couverture du fichier "
+                f"({min(temps)}–{max(temps)}).")
+        total = 0.0
+        vus = 0
+        for composante in SFA_COMPOSANTES:
+            position = postes[composante] * len(temps) + temps[cle]
+            brute = valeurs.get(str(position))
+            if brute is None:
+                continue
+            total += float(brute) * 1e6          # le fichier est en MILLIONS d'euros
+            vus += 1
+        if vus == 0:
+            raise DebtError(
+                f"{SFA_FILE} : aucune composante renseignée pour {annee}. Une somme sur "
+                f"zéro poste vaut 0,0 et se lirait comme « ajustement nul », qui est une "
+                f"affirmation. La couverture France s'arrête en 2021 vers le bas.")
+        sortie[annee] = total / produit[annee]
+    return sortie
+
+
 def realized_years(years: list[int], *, sfa: dict[int, float]) -> list[RealizedYear]:
     """Assemble §6.1's realized inputs. **`sfa` is mandatory and must cover every year.**
 

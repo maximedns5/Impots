@@ -55,10 +55,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from impots.donnees import RAW
+
 #: DGFiP Statistiques n° 41 (novembre 2025), Tableau 2, column «RFR par part fiscale —
 #: Moyenne (en €)». READ, never typed: a comparator copied by hand is one nobody can
 #: re-derive, and this file is the whole basis of the calibration.
-WORKBOOK = Path("data/raw/dgfip_stat_41_ir_2024_tables.xlsx")
+#: Ancré à la racine du dépôt — c'était `Path("data/raw/...")`, relatif au répertoire
+#: COURANT, si bien qu'un classeur présent se lisait « absent » hors de la racine.
+WORKBOOK = RAW / "dgfip_stat_41_ir_2024_tables.xlsx"
 
 #: The money columns a foyer's factor multiplies. Named as data so a column added to the
 #: population cannot be silently left behind — the same reason `uprating.UPRATED` is a
@@ -119,6 +123,12 @@ def published_targets(workbook: Path | None = None) -> dict[str, float]:
     import openpyxl
 
     path = workbook or WORKBOOK
+    if not Path(path).exists():
+        # Même type qu'avant — seul le message change : l'erreur brute d'openpyxl ne
+        # disait ni d'où vient le classeur, ni quelle commande le produit.
+        raise FileNotFoundError(
+            f"{path} not found — `impots data fetch {Path(path).name}` le télécharge "
+            f"depuis son entrée de manifeste ; `impots data check` liste le reste.")
     book = openpyxl.load_workbook(path, read_only=True, data_only=True)
     published: dict[str, float] = {}
     for row in book["Tableau 2"].iter_rows(min_row=5, max_row=16, max_col=4,

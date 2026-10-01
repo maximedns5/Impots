@@ -18,6 +18,17 @@ because the population pipeline should be exercised on real EEC codes rather tha
 on invented ones: every silent-failure mode found in Phase 1 came from the shape
 of the real data, not from its size.
 
+**The incomes attached to it are scaled, and must be.** `attach_incomes` calibrates
+a published *national* total — the wage bill, the pension mass, the unemployment
+mass — onto whatever weights it is given. These 400 dwellings weight to 0.20 % of
+France, so the national wage bill divided among them made the poorest earner in the
+test population a millionaire: a mean annual salary of 20.6 M€, the CEHR on 397 of
+439 foyers, and the prime d'activité identically zero. Tests using this fixture pass
+`targets_scale=household_share_of_france(frame)`, which brings the mean wage to
+41 k€ and the benefit side back to life; `attach_incomes` refuses the frame outright
+if nobody says what it represents (D-149). Nothing computed from this fixture is a
+claim about France either way — it is 400 dwellings.
+
 **If the population ever moves to ERFS microdata (branch C, D-012), nothing
 ERFS-derived may replace this file.** ERFS arrives under a signed agreement that
 forbids redistribution; this fixture must stay EEC-derived or become fully

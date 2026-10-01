@@ -206,3 +206,91 @@ def test_the_derived_sfa_would_score_a_near_perfect_backtest_measuring_nothing()
         f"résidu maximal {worst * 100:.4f} pt — attendu quasi nul PAR CONSTRUCTION ; "
         f"s'il ne l'est plus, la dérivation a changé et l'argument de la garde avec elle")
     assert all(p.within for p in points)
+
+
+# --------------------------------------------------------------------------- #
+# §6.1 — le backtest noté, tolérance préenregistrée en c6c5db4 (D-167)
+# --------------------------------------------------------------------------- #
+FENETRE = list(range(2021, 2026))
+
+#: ±0,10 point de PIB. Préenregistrée PAR COMMIT avant le premier résidu : la valeur vit
+#: dans l'historique git, et l'élargir après coup y laisse une trace qu'une relecture du
+#: fichier ne peut pas cacher (`verify_tolerance_unchanged`, même principe).
+TOLERANCE_61 = 0.0010
+
+
+@needs_files
+def test_the_debt_identity_reproduces_the_published_path_2021_2025() -> None:
+    """§6.1. Cinq années, un seul millésime, SFA reconstruit depuis ses composantes.
+
+    La fenêtre s'arrête en 2021 vers le bas et le DIT : les notifications qui portent
+    2019-2020 sont sur un autre millésime, où le déficit 2019 diffère de 16,5 md€ et où
+    l'ajustement de cette année CHANGE DE SIGNE (D-167).
+    """
+    from impots.dette.path import backtest
+
+    sfa = comptes.sfa_publie(FENETRE)
+    annees = comptes.realized_years(FENETRE, sfa=sfa)
+    points = backtest(comptes.opening_ratio(FENETRE[0]), annees, tolerance=TOLERANCE_61)
+
+    hors = [(p.year, round(p.residual * 100, 3)) for p in points if not p.within]
+    assert not hors, f"années hors bande sans cause mécanique nommée : {hors}"
+    assert len(points) == len(FENETRE)
+
+
+@needs_files
+def test_the_2025_residual_is_small_only_because_two_errors_cancel() -> None:
+    """LA raison pour laquelle un résidu quasi nul se décompose avant d'être fêté.
+
+    Le préenregistrement annonçait un terme de millésime d'environ 0,03 pt en 2025. Le
+    résidu de 2025 est pourtant le PLUS PETIT de la série (+0,001 pt) — parce que l'erreur
+    propre de l'année (−0,031) annule presque exactement le résidu reporté de 2024
+    (+0,031). Lire la colonne des résidus aurait fait conclure que 2025 est la meilleure
+    année, alors qu'elle porte le défaut connu.
+
+    L'implémentation qui fait tomber ce test : aucune — il fige un CONSTAT. S'il casse,
+    c'est que le terme de millésime a bougé, et il faudra le renommer, pas l'élargir.
+    """
+    from impots.dette.path import backtest
+
+    sfa = comptes.sfa_publie(FENETRE)
+    annees = comptes.realized_years(FENETRE, sfa=sfa)
+    points = backtest(comptes.opening_ratio(FENETRE[0]), annees, tolerance=TOLERANCE_61)
+
+    par_an = {p.year: p for p in points}
+    a2025 = next(a for a in annees if a.year == 2025)
+    facteur = (1 + a2025.r) / (1 + a2025.g)
+    epsilon = par_an[2025].residual - par_an[2024].residual * facteur
+
+    # Le terme de millésime, mesuré INDÉPENDAMMENT : SFA implicite côté INSEE contre SFA
+    # publié côté Eurostat.
+    stocks = comptes.debt([2024, 2025])
+    implicite = ((stocks[2025][0] - stocks[2024][0])
+                 + comptes.apu_account([2025])[2025].net_lending_eur)
+    pib = comptes.gdp([2025])[2025]
+    millesime = implicite / pib - sfa[2025]
+
+    assert abs(par_an[2025].residual) < 0.0002, "2025 doit bien afficher un résidu quasi nul"
+    assert epsilon < -0.0002, "son erreur PROPRE doit être nettement négative"
+    assert abs(epsilon + millesime) < 0.0002, (
+        f"l'erreur propre de 2025 ({epsilon:+.5f}) doit être l'opposé du terme de "
+        f"millésime mesuré à part ({millesime:+.5f}) — sinon la cause nommée dans D-167 "
+        f"n'est pas celle qui agit")
+
+
+@needs_files
+def test_residuals_damp_rather_than_accumulate_because_growth_exceeds_the_rate() -> None:
+    """Pourquoi les résidus ne s'empilent pas sur cinq ans.
+
+    Le report est multiplié par (1+r)/(1+g) à chaque pas. Sur cette fenêtre g dépasse r
+    partout, donc le facteur reste sous 1 et une erreur passée DÉCROÎT. Ce n'est pas une
+    propriété du modèle, c'est l'arithmétique de la boule de neige — et elle cesse de
+    jouer dès que r rattrape g, ce que 2025 (facteur 0,9998) montre déjà.
+    """
+    sfa = comptes.sfa_publie(FENETRE)
+    annees = comptes.realized_years(FENETRE, sfa=sfa)
+    facteurs = {a.year: (1 + a.r) / (1 + a.g) for a in annees}
+    assert all(f < 1.0 for f in facteurs.values()), facteurs
+    assert facteurs[2025] > 0.99, (
+        "2025 approche 1 : la croissance nominale ne dépasse presque plus le taux "
+        "implicite, et l'amortissement des erreurs passées disparaît avec elle")

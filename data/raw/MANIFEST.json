@@ -809,7 +809,9 @@
       "downloaded": "2026-09-03",
       "licence": "EconStor — accès ouvert, IMK / Hans-Böckler-Stiftung",
       "description": "Gechert, « What fiscal policy is most effective? A Meta Regression Analysis », IMK Working Paper n° 117, 2013. Tableau 1 p. 11 : statistiques descriptives de 1 069 multiplicateurs rapportés par 104 études, par instrument et par classe de modèle. Source de la DISPERSION inter-études, que Mésange ne peut pas fournir.",
-      "quarantined": false
+      "quarantined": false,
+      "normalization": "pdf-stamp-v1",
+      "normalized_sha256": "6f31a36b20deb0d8bd0ca158263b016225b5276e51726d03ff03211d23743f8c"
     },
     "imk_wp139_2014_gechert_rannenberg_regime_dependent.pdf": {
       "url": "https://www.econstor.eu/bitstream/10419/106005/1/imk-wp_139_2014.pdf",
@@ -818,7 +820,9 @@
       "downloaded": "2026-09-03",
       "licence": "EconStor — accès ouvert, IMK / Hans-Böckler-Stiftung",
       "description": "Gechert et Rannenberg, « Are Fiscal Multipliers Regime-Dependent? A Meta Regression Analysis », IMK Working Paper n° 139, 2014. Tableau 1 p. 6 : 1 882 observations de 98 études, ventilées par RÉGIME conjoncturel (RAV/RUP/RLO).",
-      "quarantined": false
+      "quarantined": false,
+      "normalization": "pdf-stamp-v1",
+      "normalized_sha256": "9e8b773e6330ccdecdb004d2da10a4fcbdf1dd8dc86ff57672846b62d53a3c0c"
     },
     "france_strategie_2020_rapport_cice.pdf": {
       "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/2020/CICE/fs-2020-rapport-cice2020-16septembre-final18h.pdf",
@@ -1318,6 +1322,16 @@
       "licence": "unknown",
       "description": "INSEE, Comptes nationaux annuels base 2020, tableau 7.301 « Compte des administrations publiques (S13) », MILLÉSIME 2025 : couverture 1949→2025. Porte D41 Intérêts (en RESSOURCES et en EMPLOIS — l'intérêt net est la différence) et B9 capacité/besoin de financement. Entrées r et p du backtest §6.1. Supersède insee_cn2024_t7301_...S13.xlsx, qui s'arrête en 2024 et reste en quarantaine faute d'URL.",
       "quarantined": false
+    },
+    "eurostat_gov_10dd_edpt3_fr_sfa.json": {
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10dd_edpt3?format=JSON&geo=FR&sector=S13&unit=MIO_EUR&na_item=GD_CH&na_item=B9_T3&na_item=F_ASS&na_item=ORADJ&na_item=K61&na_item=KX&na_item=YA3",
+      "sha256": "2e05bbc7b1f375616e66c8c5de29e47c147251020a824a85b836ed1e4bec9441",
+      "bytes": 4337,
+      "downloaded": "2026-09-25",
+      "licence": "Eurostat — réutilisation autorisée avec mention de la source",
+      "description": "Eurostat gov_10dd_edpt3 « Transition from the deficit/surplus to the change in debt », France, S13, M€. Porte B9_T3, GD_CH et les cinq composantes de l'ajustement flux-stocks (F_ASS, ORADJ, K61, KX, YA3). Millésime de la notification EDP d'avril 2026 ; champ 'updated' = 2026-04-22. COUVERTURE : 2021→2025 pour la France — 2019 et 2020 n'y figurent pas, la table EDP ne publiant qu'une fenêtre glissante (D-163, D-167).",
+      "quarantined": false,
+      "provenance": "API de diffusion Eurostat, URL de requête stable et reproductible — PAS un export personnalisé du databrowser, dont l'URL pointe un UUID de session. Vérifié byte-identique sur deux téléchargements successifs ; le champ 'updated' porte la date de publication, pas celle de la requête."
     }
   }
 }

@@ -1,0 +1,88 @@
+{
+  "_comment": [
+    "INVENTED VALUES. Not a claim about France, in the way tests/fixtures/firm_cells.json",
+    "is not: the amounts below were written to have a plausible SHAPE and nothing else.",
+    "They exist so the anchor-table path — parsing, provenance, vintage convention,",
+    "instrument construction, refusal surface — is exercised on a checkout that has no",
+    "data/raw/. The real table is generated on a machine that does, is gitignored, and",
+    "its values come out of the documents named in docs/M2_ANCHORS.md.",
+    "The manifest_file names ARE real and sourced, because the provenance guard is the",
+    "one thing here that must not be faked: pointing a fixture at an invented filename",
+    "would test the parser and skip the check that matters."
+  ],
+  "generated": "fixture — not generated from any document",
+  "anchors": [
+    {
+      "instrument": "tsn",
+      "year": 2025,
+      "amount_eur": 700000000.0,
+      "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+      "vintage_convention": "budget",
+      "note": "valeur inventée"
+    },
+    {
+      "instrument": "ttf",
+      "year": 2025,
+      "amount_eur": 2500000000.0,
+      "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+      "vintage_convention": "budget",
+      "note": "valeur inventée"
+    },
+    {
+      "instrument": "taxe_sur_les_salaires",
+      "year": 2025,
+      "amount_eur": 16000000000.0,
+      "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+      "vintage_convention": "budget",
+      "note": "valeur inventée"
+    },
+    {
+      "instrument": "versement_mobilite",
+      "year": 2025,
+      "amount_eur": 10000000000.0,
+      "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+      "vintage_convention": "budget",
+      "note": "valeur inventée"
+    },
+    {
+      "instrument": "dmto",
+      "year": 2025,
+      "amount_eur": 14000000000.0,
+      "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+      "vintage_convention": "budget",
+      "note": "valeur inventée"
+    },
+    {
+      "instrument": "tascom",
+      "year": 2025,
+      "amount_eur": 1000000000.0,
+      "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+      "vintage_convention": "budget",
+      "note": "valeur inventée"
+    },
+    {
+      "instrument": "tgap",
+      "year": 2025,
+      "amount_eur": 800000000.0,
+      "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+      "vintage_convention": "budget",
+      "note": "valeur inventée"
+    },
+    {
+      "instrument": "forfait_social",
+      "year": 2025,
+      "amount_eur": 5000000000.0,
+      "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+      "vintage_convention": "budget",
+      "note": "valeur inventée"
+    },
+    {
+      "instrument": "taxe_apprentissage",
+      "year": 2025,
+      "amount_eur": 2000000000.0,
+      "manifest_file": "vm_tome1_plf2026_recettes.pdf",
+      "vintage_convention": "budget",
+      "note": "valeur inventée"
+    }
+  ]
+}

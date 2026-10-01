@@ -8,6 +8,8 @@ from the shape of the real data.
 
 from __future__ import annotations
 
+import re
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -27,12 +29,21 @@ from impots.population.build import SCHEMA
 from impots.population.calibrate import (
     MAX_ITERATIONS,
     Margin,
+    RakeDiagnostics,
+    RakingRefused,
+    check_rake_result,
     household_type,
     rake,
     standard_margins,
     with_cells,
 )
-from impots.population.incomes import attach_incomes, quantile_curve, sample_curve
+from impots.population.incomes import (
+    IncomeScaleError,
+    attach_incomes,
+    household_share_of_france,
+    quantile_curve,
+    sample_curve,
+)
 from impots.population.runner import _pps_certainty_split, run, subsample
 from impots.population.skeleton import build_skeleton
 from impots.population.to_openfisca import (
@@ -47,10 +58,23 @@ FIXTURE = Path(__file__).parent / "fixtures" / "eec_sample.parquet"
 
 @pytest.fixture(scope="module")
 def population() -> pl.DataFrame:
-    """The fixture population, built exactly as `impots population build` does."""
+    """The fixture population, built as `impots population build` does at 1/500 scale.
+
+    Not *exactly* as `build` does, and the difference is the point. `build` runs on
+    the full EEC, whose weights are the country, so it hands `attach_incomes` the
+    national wage bill and every household gets a plausible share of it. This frame
+    is 400 dwellings weighting to 0.20 % of France, and the same national target
+    divided among them made the poorest earner in the test population a millionaire
+    (D-149). The targets are scaled to what the frame actually represents.
+
+    Raking is skipped here for a related reason: the household-type margin is an
+    absolute published count, unreachable from 400 dwellings, and the build gate
+    now refuses the result rather than accepting a fixed point that meets no margin
+    (D-150, `test_raking_can_converge_on_a_margin_it_never_reaches`).
+    """
     children = {key: np.array(value) for key, value in margins.CHILDREN_PER_FAMILY.items()}
     frame, _ = build_skeleton(children_per_household=children, source=pl.read_parquet(FIXTURE))
-    frame, _ = attach_incomes(frame)
+    frame, _ = attach_incomes(frame, targets_scale=household_share_of_france(frame))
     return frame
 
 
@@ -183,10 +207,15 @@ def test_wage_curve_reproduces_published_deciles() -> None:
 
 
 def test_wage_bill_is_calibrated(population: pl.DataFrame) -> None:
-    """The one calibration on incomes, and therefore spent (§4.3)."""
+    """The one calibration on incomes, and therefore spent (§4.3).
+
+    The target is the national wage bill scaled to the share of France this frame
+    represents. On the full EEC that scale is 1.0 and this is the national figure.
+    """
     weight = population["weight"].to_numpy()
     total = float((population["salaire_brut_annuel"].to_numpy() * weight).sum())
-    assert total == pytest.approx(margins.TOTAL_GROSS_WAGES.value, rel=1e-6)
+    share = household_share_of_france(population)
+    assert total == pytest.approx(margins.TOTAL_GROSS_WAGES.value * share, rel=1e-6)
 
 
 def test_only_employees_earn_wages(population: pl.DataFrame) -> None:
@@ -909,3 +938,129 @@ def test_the_firm_identity_carries_its_own_allowance_not_the_household_one() -> 
     firm_balance(deltas, reform_cost=6_000.0)  # float noise on 8 bn: passes
     with pytest.raises(SectorBalanceError):
         firm_balance(deltas, reform_cost=500e3)  # half a million: does not
+# --------------------------------------------------------------------------- #
+# what a population-scale check is worth if it cannot fail (D-149, D-150)
+# --------------------------------------------------------------------------- #
+def _skeleton() -> pl.DataFrame:
+    """The fixture skeleton, before any income is attached."""
+    children = {key: np.array(value) for key, value in margins.CHILDREN_PER_FAMILY.items()}
+    frame, _ = build_skeleton(children_per_household=children, source=pl.read_parquet(FIXTURE))
+    return frame
+
+
+def test_a_sample_cannot_silently_carry_the_national_wage_bill() -> None:
+    """The kill test for D-149.
+
+    `attach_incomes` divides a published national total among whatever weights it
+    is handed. Handed 0.2 % of France, it used to make 0.2 % of France rich, and
+    said nothing.
+    """
+    with pytest.raises(IncomeScaleError, match=re.escape("0.20%")):
+        attach_incomes(_skeleton())
+
+
+def test_the_country_itself_is_never_refused() -> None:
+    """The other half: the refusal must not fire on the frame `build` actually uses.
+
+    The full EEC weights to within a percent of the published household count. This
+    stands in for it by inflating the fixture's weights onto that count — the same
+    shape, at the country's size — and asserts both that it passes and that it gets
+    the national target rather than a scaled one.
+    """
+    frame = _skeleton()
+    frame = frame.with_columns(
+        pl.col("weight") / household_share_of_france(frame)
+    )
+    assert household_share_of_france(frame) == pytest.approx(1.0, rel=1e-9)
+
+    scaled, stats = attach_incomes(frame)
+    assert stats.targets_scale == 1.0
+    weighted = float(
+        (scaled["salaire_brut_annuel"].to_numpy() * scaled["weight"].to_numpy()).sum()
+    )
+    assert weighted == pytest.approx(margins.TOTAL_GROSS_WAGES.value, rel=1e-6)
+
+
+def test_the_unscaled_sample_is_kept_as_the_defect_it_was() -> None:
+    """What shipped until D-149, reproduced on demand and pinned.
+
+    Every earner a millionaire, which is not a curiosity: it moves the whole test
+    population into one corner of the tax code. Kept because the numbers are the
+    argument for the scaling, and a reader who removes it should have to delete
+    this.
+    """
+    frame, _ = attach_incomes(_skeleton(), targets_scale=1.0)
+    wages = frame["salaire_brut_annuel"].to_numpy()
+    earners = wages[wages > 0]
+    assert earners.min() > 3_000_000.0
+    assert earners.mean() > 20_000_000.0
+
+
+def test_the_scaled_population_has_plausible_wages(population: pl.DataFrame) -> None:
+    """And what it looks like once the target matches the frame.
+
+    The band is wide — this is 400 dwellings, and the point is the order of
+    magnitude, not the euro. INSEE's mean private gross annual wage is ~40 k€.
+    """
+    wages = population["salaire_brut_annuel"].to_numpy()
+    earners = wages[wages > 0]
+    assert 25_000.0 < earners.mean() < 60_000.0
+    assert earners.min() < 100_000.0
+
+
+def test_the_scaled_population_reaches_the_bottom_of_the_distribution(
+    population: pl.DataFrame,
+) -> None:
+    """The test that would have caught D-149, stated as what the fixture must exercise.
+
+    A population of millionaires exercises the top bracket and nothing else: the
+    prime d'activité came out identically zero, so every assertion that could have
+    been made about it here was vacuous, and 397 of 439 foyers paid the contribution
+    exceptionnelle sur les hauts revenus, which starts at 250 000 € of revenu fiscal
+    de référence for a single person.
+    """
+    result = run(population, 2024, tier="full")
+    totals = aggregate(result.households).totals
+    assert totals["ppa"] > 0.0, "no household is poor enough to claim the prime d'activité"
+    assert totals["af"] > 0.0
+    assert totals["rsa"] > 0.0
+
+    from impots.engine.system import baseline
+
+    simulation = build_simulation(population, baseline(), 2024)
+    cehr = simulation.calculate("contribution_exceptionnelle_hauts_revenus", 2024)
+    ip_net = simulation.calculate("ip_net", 2024)
+    assert (cehr != 0).mean() < 0.05, "the CEHR is not a mass tax"
+    assert (ip_net == 0).mean() > 0.20, "nobody sits below the entry into the barème"
+
+
+def test_raking_can_converge_on_a_margin_it_never_reaches() -> None:
+    """The kill test for D-150, run on the committed fixture rather than a mock.
+
+    Two margins that cannot both hold — an absolute published household count, and
+    a drift constraint pinning the frame's own person totals — and IPF settles at a
+    fixed point meeting neither. `converged` says True the whole way.
+    """
+    frame = with_cells(_skeleton())
+    _, diagnostics = rake(frame, standard_margins(frame))
+
+    assert diagnostics.converged
+    assert diagnostics.max_change < 1e-6
+    assert diagnostics.clipped_households == 0
+    assert diagnostics.fit_after["household_type"] > 0.9
+
+    with pytest.raises(RakingRefused, match="coming to rest"):
+        check_rake_result(diagnostics)
+
+
+def test_a_raking_that_did_reach_its_margins_is_accepted() -> None:
+    """The other half. A fit inside the bound passes, and a non-converged one does not."""
+    good = RakeDiagnostics(
+        converged=True, iterations=25, max_change=1e-9, clipped_households=0,
+        weight_ratio_range=(0.84, 1.81), effective_sample_size=143_973.0,
+        fit_before={"household_type": 0.415}, fit_after={"household_type": 0.0084},
+    )
+    check_rake_result(good)
+
+    with pytest.raises(RakingRefused, match="did not converge"):
+        check_rake_result(replace(good, converged=False))

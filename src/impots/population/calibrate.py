@@ -64,6 +64,25 @@ MAX_ITERATIONS = 200
 #: Final weight may not fall below 0.2x or rise above 5x its starting value.
 WEIGHT_RATIO_BOUNDS = (0.2, 5.0)
 
+#: The worst relative miss a margin may still have when the raking stops.
+#:
+#: **Convergence is not fit, and the difference is not academic.** `TOLERANCE`
+#: above is met when the weights stop moving, which is a property of the
+#: iteration; whether any margin was reached is a property of the result, and IPF
+#: on two mutually inconsistent margins reaches a fixed point that satisfies
+#: neither. Measured on the committed test fixture: converged in 34 iterations at
+#: a maximum weight change of 8.1e-07, with the published household-type margin
+#: missed by 99.8 % — nothing clipped, no warning, no failure (D-150).
+#:
+#: 10 % is loose against D-017's measured 0.84 % on the real population, and the
+#: reconciliation report's ménage line remains the sharp check. This is the
+#: backstop that refuses a fit that is not a fit at all.
+MAX_MARGIN_MISS = 0.10
+
+class RakingRefused(RuntimeError):
+    """The raking produced something the build will not carry forward."""
+
+
 Level = Literal["household", "person"]
 
 
@@ -103,6 +122,42 @@ class RakeDiagnostics:
     fit_before: dict[str, float] = field(default_factory=dict)
     fit_after: dict[str, float] = field(default_factory=dict)
     """Worst relative miss per margin, before and after."""
+
+
+def check_rake_result(diagnostics: RakeDiagnostics) -> None:
+    """Refuse a raking that did not come to rest, or that came to rest off its margins.
+
+    Two conditions, and until D-150 only the first was checked — under a message
+    that described the second. `converged` is a property of the iteration: the
+    weights stopped moving. Whether any margin was *reached* is a property of the
+    result, and the two come apart precisely when the margin set is inconsistent,
+    because IPF then settles at a fixed point that satisfies none of it.
+
+    The committed test fixture is that case in the repository: 400 dwellings raked
+    onto an absolute published household count they are three orders of magnitude
+    short of, converging in 34 iterations, nothing clipped, the margin missed by
+    99.8 %, and accepted.
+    """
+    if not diagnostics.converged:
+        raise RakingRefused(
+            f"raking did not converge in {diagnostics.iterations} iterations "
+            f"(max change {diagnostics.max_change:.2e}). A population raked to "
+            "margins it cannot reach is worse than an unraked one: refusing."
+        )
+    worst = max(diagnostics.fit_after.values(), default=0.0)
+    if worst > MAX_MARGIN_MISS:
+        off = {
+            name: f"{miss:.1%}"
+            for name, miss in diagnostics.fit_after.items()
+            if miss > MAX_MARGIN_MISS
+        }
+        raise RakingRefused(
+            f"raking converged in {diagnostics.iterations} iterations and is still "
+            f"{worst:.1%} off its margins, against a {MAX_MARGIN_MISS:.0%} bound: "
+            f"{off}. Converging is the weights coming to rest; it is not the margins "
+            "being met. A population raked to margins it cannot reach is worse than "
+            "an unraked one: refusing."
+        )
 
 
 def _household_table(frame: pl.DataFrame, margins: list[Margin]) -> pl.DataFrame:
