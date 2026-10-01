@@ -1,5 +1,10 @@
 # Handoff — faire fonctionner la PR #1, en local, à partir du 2026-09-24
 
+> **CLOS le 2026-10-01 — à ne plus suivre.** La mission est accomplie : empreinte
+> normalisée pour EconStor (D-159), profil corrigé (D-160), passe complète verte sur
+> `a9ea26f`, CI verte après D-171, et la PR #1 fusionnée dans `main` par la PR #2
+> (`1e12460`). Conservé pour son récit ; l'état courant est dans `docs/STATE_AND_NEXT.md`.
+
 **Pour la session Claude Code qui tourne sur la machine du propriétaire.** Cette machine
 a le réseau ouvert ; la session cloud qui a écrit ce document ne l'avait pas (le proxy
 refusait `www.insee.fr`, `www.impots.gouv.fr` et `www.econstor.eu`). Tout ce qui suit est
