@@ -39,11 +39,17 @@ directions.
   `9442046`, `a9ea26f`). `main`'s head is newer: `d8f8076` touched only the two
   pass reports, and `aa869dd` the import guard, `ci_local` and two test files
   (D-171), so no full pass has been logged on `1e12460` itself.
-* **CI on `main`, run 36882194476 on `1e12460`**: in progress when this was
-  written (15:22 UTC). `perf` and `no-data-committed` passed; `fast` and the full
-  `pytest` job were running, the full job's fetch, build and preflight steps
-  green. It is the first full-suite run on a runner with the data chain. This
-  line is replaced by its result when it lands.
+* **CI on `main`, run 36882194476 on `1e12460` — the full suite has still never
+  finished on a runner.** `fast` passed (1 388 passed, 120 skipped, 221 deselected,
+  11 min 23 s), and so did `perf` and `no-data-committed`. The full `pytest` job
+  fetched, built and preflighted cleanly, then ran 73 min of tests until the
+  runner received a shutdown signal (16:25:36 UTC), at about 63 % of the suite;
+  the job is marked failed. **Up to that point it had printed only passes and
+  skips — no test had failed or errored.** It is the second full job to die
+  before its summary on a runner: `f1e5837`'s was SIGTERMed (D-160). The cause is
+  not established. It is not the concurrency group, since `cancel-in-progress` is
+  off on `main`, and not a timeout, since none is set. At the observed rate the
+  suite needs about two hours there, against one locally.
 * **CI on PRs** runs `fast`, `perf` and `no-data-committed`. The full suite runs
   only on `main`, on dispatch, or on a PR labelled `full-suite` (D-161). `fast`
   was green on `aa869dd`: 1 388 passed, 120 skipped, 10 min 57 s.
@@ -166,6 +172,10 @@ download list.
   is never measured: a four-household rake with a zero target keeps 2.0 households
   there, converges, and D-150's own guard accepts it (D-157). Whether any published
   target is zero has not been checked.
+* **Whether the full suite runs in CI at all.** It has never completed on a
+  runner: two attempts, both killed before their summary. A larger runner,
+  splitting the slow tests, or keeping the full suite local as `make full` each
+  costs something different, and the minutes are billed.
 * **ERFS documentation location** (D-135): left in the delivery with its digests
   recorded, rather than copied under `data/raw/`. Defensible either way; the
   reviewer's to rule.
