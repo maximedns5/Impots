@@ -56,6 +56,13 @@ LOCATAIRE_PPA = {**TEMPS_PARTIEL,
                  "logement": {"statut": "locataire_vide", "loyer_mensuel": 700,
                               "zone_apl": 1}}
 NICHE_FOYER = {**AISE_2_ENFANTS}
+#: Les deux plafonds de bandeau sont exprimés en multiples de SMIC, donc le ménage doit
+#: se trouver DANS le bandeau pour qu'en abaisser le plafond le lui retire. Au SMIC 2024
+#: d'environ 21 203 EUR brut, 45 000 EUR font 2,12 SMIC — sous le plafond maladie de 2,5
+#: et sous le plafond famille de 3,5 — et 60 000 EUR font 2,83 SMIC, au-dessus du maladie
+#: et sous le famille.
+DEUX_SMIC = {"adults": [{"salaire_brut_annuel": 45_000, "annee_naissance": 1990}]}
+TROIS_SMIC = {"adults": [{"salaire_brut_annuel": 60_000, "annee_naissance": 1990}]}
 
 # --- IFI households ------------------------------------------------------------------
 # Every one carries INCOME, and that is not decoration: the plafonnement caps IFI plus
@@ -108,6 +115,17 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
         SMIC, None, "allegement_general", 0.40, +1),
     "bandeau_maladie_taux": (SMIC, None, "allegement_bandeau_maladie", 0.02, -1),
     "bandeau_famille_taux": (SMIC, None, "allegement_bandeau_famille", 0.01, -1),
+    # Les deux PLAFOND_KNOBS. Ils étaient hors de TOUTE règle de couverture jusqu'à
+    # D-151 : le registre ne quantifiait que sur SCALAR_KNOBS, donc aucune règle ne
+    # pouvait les signaler manquants, et tout autre test qui les nomme relit l'arbre ou
+    # vérifie quels enfants ont été écrits — la forme D-044 exactement, dans les leviers
+    # censés s'en garder. Déplacés en portant le plafond SOUS le ménage, ce qui retire la
+    # réduction : mesuré 1 080,00 -> 0,00 EUR sur le famille (1,80 % du salaire) et
+    # 2 700,00 -> 0,00 sur le maladie (6,00 %), `salaire_super_brut` montant d'autant.
+    "bandeau_famille_plafond": (
+        TROIS_SMIC, None, "allegement_bandeau_famille", 2.0, -1),
+    "bandeau_maladie_plafond": (
+        DEUX_SMIC, None, "allegement_bandeau_maladie", 1.5, -1),
     # --- prestations ----------------------------------------------------------------
     "rsa_montant_de_base": (LOGE_SEUL, None, "rsa", 700.0, +1),
     "rsa_forfait_logement_1_personne": (LOGE_SEUL, None, "rsa", 0.30, -1),

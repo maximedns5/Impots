@@ -17,7 +17,12 @@ import numpy as np
 import polars as pl
 
 from impots.population import margins
-from impots.population.calibrate import rake, standard_margins, with_cells
+from impots.population.calibrate import (
+    check_rake_result,
+    rake,
+    standard_margins,
+    with_cells,
+)
 from impots.population.incomes import attach_incomes
 from impots.population.ingest import load_manifest
 from impots.population.skeleton import SEED, build_skeleton
@@ -101,12 +106,7 @@ def _build(seed: int, raking: bool) -> tuple[pl.DataFrame, dict]:
         frame = with_cells(frame)
         frame, diagnostics = rake(frame, standard_margins(frame))
         rake_diagnostics = asdict(diagnostics)
-        if not diagnostics.converged:
-            raise RuntimeError(
-                f"raking did not converge in {diagnostics.iterations} iterations "
-                f"(max change {diagnostics.max_change:.2e}). A population raked to "
-                "margins it cannot reach is worse than an unraked one: refusing."
-            )
+        check_rake_result(diagnostics)
 
     frame, income_stats = attach_incomes(frame, seed=seed)
 

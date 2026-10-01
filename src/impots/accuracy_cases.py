@@ -32,13 +32,27 @@ UNMEASURED here, with that as its reason, rather than quietly proxied by the sub
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 from impots.accuracy import Source
+from impots.donnees import PROCESSED
 
-#: The firm cell table and its vintage. Committed, so a budget re-run reads the same cells.
-FIRM_CELLS = Path("data/processed/firm_cells_2023.json")
+#: The firm cell table and its vintage — GENERATED, not committed. `data/processed/*` is
+#: gitignored and this file has never been in git history; the comment here used to say
+#: « Committed », which is part of why nobody looked for the command that produces it.
+#: There was none: `impots entreprises cells` writes it now, from the three published
+#: spreadsheets, and `impots data check` says when it is missing. A re-run reads the same
+#: cells because the build is deterministic from checksummed sources, not because the
+#: output is versioned.
+#:
+#: Anchored at the repository root. It was `Path("data/processed/...")`, relative to the
+#: CURRENT directory, so a file that was present read as absent outside the root.
+FIRM_CELLS = PROCESSED / "firm_cells_2023.json"
+
+#: L'année que la chaîne entreprises chiffre. Une seule constante, lue par
+#: l'échantillonneur ET par le refus structurel, pour que les deux ne jugent jamais
+#: deux années différentes.
+FIRM_YEAR = 2026
 
 #: Draw counts. The firm placement chain costs ~0,2 s a draw, so it can afford a real
 #: sample; the household chain costs ~15 s a call and cannot. Stated rather than tuned:
@@ -108,6 +122,43 @@ REFERENCE_REFORMS: tuple[ReferenceReform, ...] = (
 MOVES_EPSILON_EUR = 50e6
 
 
+def structural_noop(case: ReferenceReform) -> bool:
+    """Vrai SEULEMENT quand la réforme ne change rien de façon prouvable — sans donnée.
+
+    `central_for` chargeait les cellules entreprises avant de pouvoir constater qu'une
+    réforme qui remet un paramètre à sa valeur en vigueur ne bouge rien. Ce constat ne
+    demande pas d'échantillon : `make_reform` écrit la valeur dans l'arbre à partir du
+    1er janvier ; si elle est ÉGALE à la valeur en vigueur sur toute l'année chiffrée,
+    l'arbre réformé EST l'arbre de base, et le chiffrage vaut zéro par construction.
+
+    Volontairement étroit, parce qu'un faux refus serait pire qu'un chargement inutile :
+
+    * chaîne entreprises seulement, et levier SCALAIRE seulement — un levier apparié (la
+      CEBGE) dérive sa bande de lissage et n'est pas décidé ici ;
+    * égalité EXACTE, pas une tolérance — dans le doute, on mesure ;
+    * aux DEUX bornes de l'année — un paramètre qui change en cours d'année n'est pas
+      « en vigueur » au sens où la réforme le laisserait intact.
+
+    Tout ce qui n'est pas prouvé nul ici retombe sur la MESURE, et le seuil
+    `MOVES_EPSILON_EUR` continue de refuser ce qui, mesuré, ne bouge pas.
+    """
+    if case.chain != "firm":
+        return False
+    from impots.entreprises.reforms import SCALAR_KNOBS
+
+    if case.knob not in SCALAR_KNOBS:
+        return False
+    from impots.entreprises.system import baseline
+    from impots.parameters import resolve
+
+    parameter = resolve(baseline().parameters, SCALAR_KNOBS[case.knob])
+    for instant in (f"{FIRM_YEAR}-01-01", f"{FIRM_YEAR}-12-31"):
+        in_force = parameter(instant)
+        if in_force is None or float(in_force) != float(case.value):
+            return False
+    return True
+
+
 def central_for(case: ReferenceReform) -> float:
     """The case's central figure — and a refusal if the case does not move.
 
@@ -126,6 +177,14 @@ def central_for(case: ReferenceReform) -> float:
     until both sides are non-zero. So the check lives here, once, rather than being
     remembered per case.
     """
+    if structural_noop(case):
+        raise ValueError(
+            f"{case.key} : {case.knob} = {case.value} est la valeur EN VIGUEUR en "
+            f"{FIRM_YEAR} — la réforme n'écrit aucun paramètre qui diffère du barème, donc "
+            f"son chiffrage vaut zéro par construction. Ce n'est pas une réforme, et toute "
+            f"part de variance calculée dessus parlerait du néant plutôt que de la famille "
+            f"{case.family}. Refusé sans tirer d'échantillon : l'arbre de paramètres suffit "
+            f"à le prouver.")
     if case.chain == "firm":
         value = firm_placement_sampler(case.knob, case.value)(20260101)
     elif case.chain == "patrimoine":
@@ -170,12 +229,26 @@ def firm_placement_sampler(knob: str, value: float) -> Any:
     from impots.entreprises.population import build_firms
     from impots.entreprises.reforms import FirmReformSpec
 
-    cells, ratio, _vintage = load_cells(FIRM_CELLS)
+    # Le levier est validé TOUT DE SUITE — c'est gratuit et sans donnée, et un levier
+    # inconnu doit tomber à la déclaration. Les cellules, elles, ne sont chargées qu'au
+    # premier tirage : `sources_for` DÉCLARE les sources d'un cas, et déclarer une source
+    # ne doit pas exiger les données qu'il faut pour la TIRER. C'est ce couplage qui
+    # faisait échouer `test_every_unmeasured_source_names_why`, un test de métadonnées.
     spec = FirmReformSpec.model_validate({knob: value})
+    loaded: list[tuple[Any, float]] = []
 
     def sample(seed: int) -> float:
+        if not loaded:
+            if not FIRM_CELLS.exists():
+                raise FileNotFoundError(
+                    f"{FIRM_CELLS} not found — aucune donnée ne l'accompagne : il se "
+                    f"CONSTRUIT par `impots entreprises cells` depuis Ésane × Focus 372 × "
+                    f"DGFiP n° 39. `impots data prepare --profile tests` fait les deux.")
+            cells, ratio, _vintage = load_cells(FIRM_CELLS)
+            loaded.append((cells, ratio))
+        cells, ratio = loaded[0]
         firms, _stats = build_firms(cells, fiscal_to_accounting=ratio, seed=seed)
-        result = runner_module.run(firms, year=2026, reform=spec)
+        result = runner_module.run(firms, year=FIRM_YEAR, reform=spec)
         cost = aggregate_module.aggregate(result.firms).reform_cost
         if cost is None:
             raise RuntimeError(f"{knob}: aucun coût de réforme rendu")
@@ -245,9 +318,14 @@ def ifi_cell_bound_swing() -> Any:
                 (5_000_000.0, 0.0125), (10_000_000.0, 0.015)]
     if [t for t, _r in reformed] != sorted(t for t, _r in reformed):
         raise ValueError("barème réformé non monotone")
-    band = placement_module.reform_band(cells(), baseline, reformed)
+    # Même règle que pour l'échantillonneur entreprises : le barème réformé est vérifié
+    # tout de suite (sans donnée), les tranches publiées ne sont lues qu'au premier appel.
+    bands: list[Any] = []
 
     def swing(endpoint: str) -> float:
+        if not bands:
+            bands.append(placement_module.reform_band(cells(), baseline, reformed))
+        band = bands[0]
         return band.low_eur if endpoint == "concentre" else band.high_eur
 
     return swing

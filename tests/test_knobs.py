@@ -78,7 +78,19 @@ def test_each_exempt_knob_really_cannot_be_moved(knob: str):
 
 
 def test_the_registry_and_the_knob_list_agree():
-    assert set(CASES) | set(EXEMPT) == set(SCALAR_KNOBS)
+    """`PLAFOND_KNOBS` autant que `SCALAR_KNOBS`, depuis D-151 — et cette copie-ci a été
+    oubliée au premier passage, ce qui est la remarque de D-151 retournée contre elle.
+
+    Deux tests portent le même contrat : celui-ci et
+    `test_standing_rules.py::test_every_knob_either_moves_an_outcome_or_says_why_not`.
+    Élargir le second sans le premier a fait tomber celui-ci en CI — parce que ce module
+    porte `pytestmark = pytest.mark.slow` et que la porte locale (`-m 'not slow'`) ne le
+    voit pas. Deux registres d'un seul contrat, dont un invisible à la porte : c'est
+    exactement la forme décrite par D-151, rencontrée en la corrigeant.
+    """
+    from impots.engine.reforms import PLAFOND_KNOBS
+
+    assert set(CASES) | set(EXEMPT) == set(SCALAR_KNOBS) | set(PLAFOND_KNOBS)
 
 
 def test_the_allegement_rows_exist_because_the_gross_row_hides_them():

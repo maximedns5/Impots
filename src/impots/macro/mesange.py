@@ -269,7 +269,8 @@ def load(raw: Path | None = None) -> dict[str, Variant]:
     """
     path = (raw or RAW) / SOURCE_FILE
     if not path.exists():
-        raise MesangeError(f"{path} not found — download it and record it in the manifest")
+        raise MesangeError(f"{path} not found — download it and record it in the manifest "
+                           f"(`impots data fetch {path.name}`)")
     if importlib.util.find_spec("pypdf") is None:  # pragma: no cover - environment
         raise MesangeError("pypdf is required to read the Mésange document")
 

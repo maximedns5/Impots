@@ -22,6 +22,17 @@ dependencies = [
   "openpyxl>=3.1",
   "polars>=1.0",
   "pyarrow>=15",
+  # numpy est importé en une trentaine d'endroits de `src/`. Il arrivait jusqu'ici
+  # PAR HASARD, en dépendance transitive de polars/pyarrow : un jour où l'une d'elles
+  # cesse d'en avoir besoin, trente fichiers cassent d'un coup.
+  "numpy>=1.26",
+  # pypdf lit les trois documents du store macro et le bulletin AFT. Il n'était
+  # déclaré NULLE PART et n'arrive par aucune transitive : il n'existait que sur la
+  # machine du propriétaire, où il avait été installé à la main. Sur tout
+  # environnement neuf — y compris chaque runner de CI — `imk.load()` levait
+  # « pypdf is required », message qui se lit comme un défaut de DONNÉES et qui a été
+  # classé comme tel (D-161).
+  "pypdf>=4.0",
 ]
 
 [project.scripts]

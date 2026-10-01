@@ -33,6 +33,20 @@ from impots.population import margins
 
 SEED = 20240101
 
+#: A frame representing less than this share of the published household count is a
+#: sample, not the country, and cannot carry a national calibration target.
+#:
+#: The bound is loose on purpose. It exists to separate *the country* (the full EEC,
+#: which weights to within a percent of `margins.HOUSEHOLDS`) from *a sample* (the
+#: committed test fixture, at 0.20 %). Nothing sits between them, and a tighter bound
+#: would start refusing vintages over a difference that raking is there to fix.
+REPRESENTATIVE_SHARE_MIN = 0.5
+
+
+class IncomeScaleError(RuntimeError):
+    """A national income target was about to be calibrated onto a fraction of France."""
+
+
 #: Standard normal quantile at 0.9 — the deciles are converted through this.
 Z90 = 1.2815515655446004
 
@@ -92,6 +106,12 @@ class IncomeStats:
     renters: float
     rent_total: float
     people_without_modelled_income: float
+    targets_scale: float = 1.0
+    """What the three national targets were multiplied by before calibration.
+
+    1.0 for the country. Anything else says the frame is a sample and the totals
+    below are that sample's share of the national figure, not the figure itself.
+    """
 
 
 def lognormal_from_deciles(d1: float, median: float, d9: float) -> tuple[float, float]:
@@ -193,10 +213,52 @@ def _draw_net_eqtp(frame: pl.DataFrame, rng: np.random.Generator) -> np.ndarray:
     return draws
 
 
+def household_share_of_france(frame: pl.DataFrame) -> float:
+    """What fraction of the published household count this frame's weights represent.
+
+    Household weight is the mean of the members' weights, matching `calibrate.py`
+    and `runner.py`: the survey weights a whole dwelling together.
+    """
+    households = (
+        frame.group_by("household_id").agg(pl.col("weight").mean())["weight"].sum()
+    )
+    return float(households) / margins.HOUSEHOLDS.value
+
+
 def attach_incomes(
-    frame: pl.DataFrame, seed: int = SEED
+    frame: pl.DataFrame, seed: int = SEED, targets_scale: float | None = None
 ) -> tuple[pl.DataFrame, IncomeStats]:
-    """Add `salaire_brut_annuel`, `pension_annuelle`, `chomage_annuel`, `loyer_mensuel`."""
+    """Add `salaire_brut_annuel`, `pension_annuelle`, `chomage_annuel`, `loyer_mensuel`.
+
+    `targets_scale` multiplies the three national calibration targets — the wage
+    bill, the pension mass and the unemployment mass — before they are imposed on
+    this frame. It exists because **the calibration divides a national total among
+    whatever weights it is handed**, and says nothing about whether those weights
+    are the country. Handed a sample, it makes the sample rich: the committed
+    400-household fixture came out with a mean annual salary of 20.6 M€ and a
+    minimum of 3.0 M€, which put 397 of its 439 foyers into the contribution
+    exceptionnelle sur les hauts revenus and left the prime d'activité identically
+    zero (D-149).
+
+    Left as `None` on a frame that is the country, it is 1.0 and nothing changes.
+    Left as `None` on a sample, this raises rather than quietly producing
+    millionaires. A caller who genuinely wants the national target on a sample —
+    reproducing the pre-D-149 vintage — passes `1.0` explicitly and says so.
+    """
+    share = household_share_of_france(frame)
+    if targets_scale is None:
+        if share < REPRESENTATIVE_SHARE_MIN:
+            published = f"{margins.HOUSEHOLDS.value:,.0f}".replace(",", " ")
+            bill = f"{margins.TOTAL_GROSS_WAGES.value / 1e9:,.0f}".replace(",", " ")
+            raise IncomeScaleError(
+                f"this frame's weights represent {share:.2%} of the published "
+                f"household count ({published}), so calibrating the national wage "
+                f"bill onto it would divide {bill} bn € among a sample and make "
+                "every household in it rich. Pass `targets_scale=` — "
+                f"{share:.6f} scales the targets to this frame — or 1.0 to insist."
+            )
+        targets_scale = 1.0
+
     rng = np.random.default_rng(seed)
     n = frame.height
     weight = frame["weight"].to_numpy().astype(np.float64)
@@ -211,7 +273,7 @@ def attach_incomes(
     wages = np.where(employee, gross_annual, 0.0)
 
     before = float((wages * weight).sum())
-    target = margins.TOTAL_GROSS_WAGES.value
+    target = margins.TOTAL_GROSS_WAGES.value * targets_scale
     # The one calibration on incomes, and therefore spent: the wage bill can never
     # afterwards appear as a validation line (§4.3).
     factor = target / before if before > 0 else 1.0
@@ -226,7 +288,7 @@ def attach_incomes(
     )
     pension_mass = float((pension_draw * weight).sum())
     pensions = (
-        pension_draw * (margins.DECLARED_PENSIONS.value / pension_mass)
+        pension_draw * (margins.DECLARED_PENSIONS.value * targets_scale / pension_mass)
         if pension_mass > 0
         else pension_draw
     )
@@ -238,7 +300,8 @@ def attach_incomes(
     )
     chomage_mass = float((chomage_draw * weight).sum())
     chomage = (
-        chomage_draw * (margins.UNEMPLOYMENT_BENEFIT_SPEND.value / chomage_mass)
+        chomage_draw
+        * (margins.UNEMPLOYMENT_BENEFIT_SPEND.value * targets_scale / chomage_mass)
         if chomage_mass > 0
         else chomage_draw
     )
@@ -278,5 +341,6 @@ def attach_incomes(
         renters=float(((rent > 0) * weight).sum()),
         rent_total=float((rent * 12 * weight).sum()),
         people_without_modelled_income=float((no_income * weight).sum()),
+        targets_scale=targets_scale,
     )
     return enriched, stats

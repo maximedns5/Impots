@@ -49,6 +49,13 @@ class ManifestEntry:
     provenance: str | None = None
     """A route that is not a URL — a delivery, a hand copy. Carried rather than dropped
     because « d'où vient ce fichier » has an answer here even when no URL does."""
+    normalization: str | None = None
+    """Named, versioned rule applied before hashing, for a publisher that re-stamps the
+    file on every request (D-159). Declared PER ENTRY and never implicit: the eight other
+    sources keep the raw comparison, and a change of rule is a visible change of name."""
+    normalized_sha256: str | None = None
+    """The digest AFTER `normalization`. `sha256` stays the raw digest of the owner's copy
+    — that remains its provenance — and this is what a fresh download is judged on."""
 
 
 def sha256_of(path: Path) -> str:

@@ -394,6 +394,66 @@ def cmd_firms_build(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_firms_cells(args: argparse.Namespace) -> int:
+    """Écrit `data/processed/firm_cells_{vintage}.json` — le maillon qui manquait."""
+    from impots.entreprises.cells import write_cell_table
+
+    path = write_cell_table(vintage=args.vintage)
+    print(f"wrote {path}")
+    return 0
+
+
+# data — la chaîne de préparation (impots.donnees)
+
+def _afficher_etats(etats) -> int:
+    rouges = [e for e in etats if not e.ok]
+    largeur = max(len(e.chemin) for e in etats)
+    for e in etats:
+        marque = "OK " if e.ok else "KO "
+        print(f"  {marque} {e.chemin:<{largeur}}  {e.detail}")
+        if not e.ok:
+            print(f"      {'':<{largeur}}  → {e.reparer}   ({e.pour})")
+    if rouges:
+        print(f"\n{len(rouges)} dépendance(s) manquante(s) ou invalide(s) sur {len(etats)}. "
+              f"La suite qui les lit échouerait : rien n'est lancé.")
+        return 1
+    print(f"\n{len(etats)} dépendances présentes et valides.")
+    return 0
+
+
+def cmd_data_check(args: argparse.Namespace) -> int:
+    from impots import donnees
+
+    print(f"préflight — profil « {args.profile} »")
+    return _afficher_etats(donnees.verifier(donnees.profil(args.profile),
+                                            profil_nom=args.profile))
+
+
+def cmd_data_fetch(args: argparse.Namespace) -> int:
+    from impots import donnees
+
+    noms = args.files or donnees.bruts(donnees.profil(args.profile))
+    echecs = 0
+    for nom in noms:
+        resultat = donnees.telecharger(nom)
+        echecs += resultat.etat == "échec"
+        print(f"  {resultat.etat:<13} {nom}  {resultat.detail}")
+    if echecs:
+        print(f"\n{echecs} téléchargement(s) en échec sur {len(noms)}.")
+        return 1
+    return 0
+
+
+def cmd_data_prepare(args: argparse.Namespace) -> int:
+    from impots import donnees
+
+    telechargements, etats = donnees.preparer(args.profile)
+    for t in telechargements:
+        print(f"  {t.etat:<13} {t.fichier}  {t.detail}")
+    print()
+    return _afficher_etats(etats)
+
+
 def cmd_emtr(args: argparse.Namespace) -> int:
     """Compute the marginal-rate distribution and fold it into the baseline artifact.
 
@@ -1145,6 +1205,25 @@ def build_parser() -> argparse.ArgumentParser:
                              help="households to sample; omit for the full population")
     emtr_parser.set_defaults(func=cmd_emtr)
 
+    data = subcommands.add_parser(
+        "data", help="the data chain: what the suite reads, where it comes from, how to "
+                     "produce it")
+    data_actions = data.add_subparsers(dest="action", required=True)
+    data_check = data_actions.add_parser(
+        "check", help="preflight — list every missing or invalid dependency and the "
+                      "command that fixes it; exits 1 if any")
+    data_check.add_argument("--profile", default="tests")
+    data_check.set_defaults(func=cmd_data_check)
+    data_fetch = data_actions.add_parser(
+        "fetch", help="download raw sources by their manifest URL, verifying size and sha256")
+    data_fetch.add_argument("--profile", default="tests")
+    data_fetch.add_argument("files", nargs="*", help="manifest filenames (default: the profile)")
+    data_fetch.set_defaults(func=cmd_data_fetch)
+    data_prepare = data_actions.add_parser(
+        "prepare", help="fetch, build the derived artefacts, then check — the bootstrap")
+    data_prepare.add_argument("--profile", default="tests")
+    data_prepare.set_defaults(func=cmd_data_prepare)
+
     firms = subcommands.add_parser("entreprises", help="the firm module")
     firm_actions = firms.add_subparsers(dest="action", required=True)
 
@@ -1153,6 +1232,12 @@ def build_parser() -> argparse.ArgumentParser:
                                              "defaults to the synthetic CI fixture")
     firm_builder.add_argument("--seed", type=int, default=None)
     firm_builder.set_defaults(func=cmd_firms_build)
+
+    firm_cells = firm_actions.add_parser(
+        "cells", help="build the REAL sector x size cell table from the three published "
+                      "spreadsheets (Ésane, Focus 372, DGFiP n° 39)")
+    firm_cells.add_argument("--vintage", default="2023")
+    firm_cells.set_defaults(func=cmd_firms_cells)
 
     firm_runner_parser = firm_actions.add_parser("run", help="price a firm-tax reform")
     firm_runner_parser.add_argument("--vintage", default="fixture")

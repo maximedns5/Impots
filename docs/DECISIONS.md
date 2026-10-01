@@ -7108,3 +7108,1354 @@ magnitudes, ce qui serait une autre garde et une fausse.
 **À quoi sert alors la dérivation.** À recouper la série PUBLIÉE quand elle arrivera :
 l'accord valide l'extraction, le désaccord localise une différence de périmètre. Les deux
 sont des constats. Aucun n'est un backtest.
+
+## D-149 — La population de test était composée de millionnaires, et rien ne pouvait le voir
+
+`attach_incomes` répartit un total national publié entre les pondérations qu'on lui donne.
+C'est correct pour la trame à laquelle il a été écrit — l'EEC complète, dont les poids
+*sont* le pays — et cela ne dit rien sur la nature de la trame reçue. La fixture commitée
+pèse **0,199 %** du nombre de ménages publié, et la même masse salariale nationale
+répartie sur elle donne :
+
+| | tel que les tests tournaient | cible mise à l'échelle de la trame |
+|---|---|---|
+| salaire annuel brut moyen | **20 640 710 €** | 41 146 € |
+| plus bas salaire de la population | 3 029 168 € | 6 038 € |
+| foyers payant la CEHR | 397 sur 439 | 1 sur 439 |
+| foyers sous l'entrée du barème | 42 sur 439 | 179 sur 439 |
+| prime d'activité, total pondéré | **0 €** | 20,2 M€ |
+| allocations familiales | 9,7 M€ | 24,4 M€ |
+
+La colonne de droite est le bon ordre de grandeur — le salaire brut moyen du privé publié
+par l'INSEE est proche de 40 k€, et la CEHR revient à une poignée de foyers au lieu de la
+quasi-totalité. Ce n'est pas une correspondance : 41 % des foyers tombent sous l'entrée du
+barème contre 52,8 % publiés, et ce résidu est l'affaire de la population synthétique
+elle-même (D-015). La colonne de gauche, elle, n'est pas un ordre de grandeur du tout, et
+c'est la population contre laquelle tournait chaque test à l'échelle nationale du dépôt.
+
+**Ce que cela coûtait, c'est de la couverture, et la prime d'activité en donne la forme
+exacte.** `ppa` valait identiquement zéro : toute assertion qu'on aurait pu écrire à son
+sujet ici ne pouvait pas échouer — la classe même sur laquelle le relecteur a tranché lors
+de l'incrément d'imputation, arrivée par la fixture de test plutôt que par une ligne de
+réconciliation. La décote, les tranches basses et chaque pente de prestation étaient dans
+la même position : inatteignables, parce que personne dans la population de test n'était
+assez pauvre pour les rencontrer. La suite était verte tout du long, et à juste titre :
+rien de ce qu'elle affirmait n'était faux. Elle l'affirmait simplement d'un pays de
+millionnaires.
+
+**Le correctif n'est pas une mise à l'échelle automatique.** La dériver silencieusement
+changerait la calibration du build réel — l'EEC complète pèse environ 97 % du nombre
+publié, donc un facteur automatique sortirait la masse salariale de la cible nationale sur
+laquelle elle est délibérément dépensée (D-014). `attach_incomes` prend désormais
+`targets_scale` et **refuse** une trame pesant moins de la moitié du pays quand on ne lui
+en donne pas. L'ancien comportement reste atteignable en passant `1,0` explicitement, et un
+test fait exactement cela, gardant les millionnaires comme la régression qui plaide pour la
+mise à l'échelle.
+
+Les chiffres du produit ne bougent pas : sur l'EEC complète l'échelle vaut 1,0 et chaque
+cible est le chiffre national qu'elle était.
+
+## D-150 — La garde du raking refusait la mauvaise condition, sous un message qui décrivait la bonne
+
+`build` acceptait une population rakée sur le seul `diagnostics.converged`, levant sinon :
+*« A population raked to margins it cannot reach is worse than an unraked one:
+refusing. »* La convergence est une propriété de l'**itération** — les poids ont cessé de
+bouger. Atteindre une marge est une propriété du **résultat**. La phrase décrit la seconde
+et le code testait la première.
+
+Elles se séparent exactement quand le jeu de marges est incohérent, parce que l'IPF se pose
+alors sur un point fixe qui n'en satisfait aucune. Mesuré sur la fixture commitée, qui est
+ce cas : convergence en **34 itérations**, variation maximale de poids **8,05e-07**,
+**aucun écrêtage**, ratios de poids 0,69–3,56 bien à l'intérieur des bornes — et
+`fit_after` de la marge « ménages par type » à **0,998**. Une marge publiée manquée d'un
+facteur 520, que le build aurait emportée sans un mot.
+
+Les deux marges de `standard_margins` sont ce qui se disjoint ici : ménages-par-type est un
+effectif publié absolu (31,27 M), tandis qu'âge×sexe est une contrainte de dérive visant
+les totaux de personnes de la trame *elle-même*. Sur l'EEC complète elles sont compatibles
+et D-017 en a mesuré le résultat — pire écart 0,84 %, aucun écrêtage. Sur un échantillon
+elles ne le sont pas, et le niveau ne bouge jamais parce que la contrainte de dérive le
+rappelle à chaque passe.
+
+`check_rake_result` teste désormais les deux conditions, avec une borne d'ajustement à
+**10 %** : lâche contre les 0,84 % mesurés par D-017, ce qui laisse un ordre de grandeur de
+marge pour un changement de millésime, et très loin des 99,8 % qu'elle existe pour refuser.
+La ligne « Ménages » du rapport de réconciliation reste le contrôle fin ; ceci est le
+filet qui refuse un ajustement qui n'en est pas un.
+
+Les deux moitiés ont leur test de mise à mort, et celle qui compte tourne sur la fixture
+réelle du dépôt plutôt que sur un mock — le défaut est dans le dépôt, donc le test peut
+simplement le désigner.
+
+## D-151 — Deux leviers hors de TOUTE règle de couverture, parce qu'aucune ne quantifiait sur eux
+
+Chaque revendication de couverture du dépôt quantifiait sur `SCALAR_KNOBS` — 52 leviers.
+`ReformSpec` expose 57 champs : ces 52, `ir_bareme` (un barème, pas un scalaire), deux
+`PLAFOND_KNOBS` — `bandeau_maladie_plafond` et `bandeau_famille_plafond`, qui écrivent tous
+les enfants `plafond` que le nœud porte à l'instant — et les champs de déclaration. Les
+deux plafonds étaient hors du registre, hors d'`EXEMPT`, et hors de toute règle : **aucune
+règle ne pouvait les signaler manquants, parce qu'aucune ne portait sur eux.**
+
+Ce n'est pas une omission de forme. Tout test du dépôt qui nomme ces leviers relit l'arbre
+de paramètres ou vérifie quels enfants ont été écrits — précisément la propriété dont
+D-071 a établi qu'elle ne peut pas détecter un levier mort. Un plafond de bandeau qui
+cesserait silencieusement de bouger le coût du travail passerait chaque contrôle du dépôt.
+
+**Fermé par la mesure, pas par l'argument.** Les deux sont désormais des cas du registre,
+déplacés en portant le plafond SOUS le ménage plutôt qu'au-dessus, ce qui retire la
+réduction : `allegement_bandeau_famille` 1 080,00 → 0,00 € à 60 000 € brut (2,83 SMIC,
+plafond 3,5 → 2,0 ; le montant est 1,80 % du salaire), et `allegement_bandeau_maladie`
+2 700,00 → 0,00 à 45 000 € (2,12 SMIC, plafond 2,5 → 1,5 ; 6,00 %), `salaire_super_brut`
+montant exactement d'autant dans les deux cas. La règle permanente quantifie maintenant sur
+`SCALAR_KNOBS | PLAFOND_KNOBS`, dans les deux sens, et son test de mise à mort a été vu
+échouer : supprimer l'un des deux cas la fait tomber en nommant ce levier.
+
+**Et la première version de ce correctif a fait tomber la CI, ce qui est la remarque
+ci-dessus retournée contre elle.** Le contrat est porté par DEUX tests :
+`test_standing_rules.py::test_every_knob_either_moves_an_outcome_or_says_why_not` et
+`test_knobs.py::test_the_registry_and_the_knob_list_agree`. Le premier a été élargi, le
+second oublié — donc ajouter les deux plafonds au registre a mis `CASES | EXEMPT` en
+avance de deux sur `SCALAR_KNOBS`, et la copie oubliée a échoué : *« Extra items in the
+left set : bandeau_maladie_plafond, bandeau_famille_plafond »*.
+
+Pourquoi la porte locale ne l'a pas vu : `test_knobs.py` porte
+`pytestmark = pytest.mark.slow` au niveau du MODULE, et la porte est `-m 'not slow'`.
+Une comparaison d'ensembles qui coûte des microsecondes est désélectionnée parce que le
+fichier qui la porte fait aussi tourner cinquante réformes. La CI, elle, tourne `-m ""`
+et l'a vue tout de suite.
+
+Deux règles en sortent, toutes deux payées :
+
+* **Un contrat porté par deux tests n'est pas élargi tant que les deux ne le sont pas.**
+  Chercher les copies par le contrat, pas par le nom du fichier qu'on est en train
+  d'éditer.
+* **Avant de pousser un changement qui touche un registre, lancer la sélection de la CI
+  (`-m ""`) sur les modules concernés, pas la porte.** « Vert en local » et « vert en
+  CI » sont deux affirmations différentes, et c'est la seconde qui compte.
+
+## D-152 — Les ancres de M2 sont là, et trois d'entre elles sont en quarantaine
+
+**Mesuré contre le manifeste plutôt que supposé** : 145 fichiers, **69 sourcés, 76 en
+quarantaine**. Et les trois documents vers lesquels on tend la main pour une ancre de
+recettes du seau B — `voies_et_moyens_tome1_plf2026.pdf`,
+`budget_execution_2025_recettes_fiscales_nettes.pdf`,
+`ccomptes_budget_etat_2025_resultats_gestion.pdf` — sont tous les trois **en
+quarantaine**, donc `ReceiptsAnchor.verify()` les refuse par leur nom. Un agent qui
+ancrerait dessus verrait le moteur refuser et conclurait, à tort, que l'ancre manque.
+
+**Elle ne manque pas.** `vm_tome1_plf2026_recettes.pdf` est sourcé, avec URL, et porte
+le **même sha256 que la copie en quarantaine** — `4703605d…`. Le même document est
+manifesté deux fois, une fois utilisable et une fois non. La règle qui en sort tient en
+une ligne : *avant de conclure qu'une ancre manque, chercher le jumeau sourcé par sa
+somme de contrôle.* Une entrée en quarantaine n'est pas l'absence d'une source, c'est
+l'absence d'une URL, et la même source peut être au dépôt sous un autre nom.
+
+**Ce qui manque réellement est l'assiette, pas l'ancre.** Cherché sur tout le manifeste,
+clés et métadonnées : `coicop`, `cctn`, `dgec`, `ofdt`, `tabac`, `dgddi`, `alcool`,
+`ticfe`, `ticgn`, `versement mobilité`, `dmto`, `tascom`, `tgap`, `forfait social`,
+`apprentissage` — **zéro correspondance sourcée**. Donc les instruments en tarif ×
+volume (les accises) et la ventilation par taux de la TVA sont bloqués sur des
+téléchargements, tandis que les six instruments à reprise proportionnelle — TSN, TTF,
+taxe sur les salaires, versement mobilité, DMTO, petites taxes — ont tout ce qu'il leur
+faut. `docs/M2_ANCHORS.md` porte le détail et la liste de téléchargements.
+
+**Et une limite de l'environnement, dite plutôt que contournée.** La session qui écrit
+ceci tourne sans aucun fichier de `data/raw/` et sans accès réseau : le proxy refuse
+`assemblee-nationale.fr`, `insee.fr`, `ofdt.fr` et `ec.europa.eu`. Les valeurs d'ancre
+n'ont donc pas pu être lues, et aucune n'est écrite nulle part — en saisir une de
+mémoire est exactement ce que `ReceiptsAnchor` existe pour refuser. Les six instruments
+constructibles le sont sur la machine du propriétaire, pas ici.
+
+## D-153 — Les instruments proportionnels du seau B, déclarés sans un seul chiffre
+
+**Le problème que ce branchement résout.** `ReceiptsAnchor` exige un `amount_eur`, et
+tout l'objet de cette classe est que ce nombre soit traçable jusqu'à un fichier
+manifesté. Or une ancre écrite dans un module Python est un souvenir en habits de
+source : l'entrée de manifeste posée à côté prouve qu'un document existe, pas que le
+nombre en est sorti. Donc les euros ne sont pas dans le code.
+
+`data/processed/receipts_anchors.json` porte une ligne par instrument ; il se génère sur
+une machine disposant de `data/raw/` et il est gitignoré, exactement comme la table de
+cellules firmes. `agregats/anchors.py` le lit et le garde :
+
+* **`vintage_convention` n'a pas de défaut** — `budget`, `revenus` ou
+  `comptabilite_nationale` — et une ligne sans elle est refusée. C'est D-067 posé à
+  l'entrée du chiffre : les colonnes des Voies et Moyens sont des années budgétaires, et
+  trois fois déjà la convention du comparateur a été l'erreur entière.
+* **La provenance est revérifiée ici**, pas déduite de l'existence du fichier :
+  `verify()` refuse une entrée en quarantaine ou sans URL. C'est le piège de D-152 —
+  la copie naturelle des Voies et Moyens EST en quarantaine pendant qu'un jumeau sourcé
+  identique à l'octet dort à côté sous un autre nom.
+* **Deux lignes pour un instrument sont refusées**, sinon celle qui gagne dépend de
+  l'ordre du fichier : un chiffre choisi par accident.
+
+**Neuf instruments, déclarés structurellement.** TSN, TTF, taxe sur les salaires,
+versement mobilité, DMTO, TASCOM, TGAP, forfait social, taxe d'apprentissage — code,
+libellé, document d'ancre, et la raison de l'absence de bande. Rien d'autre. Les quatre
+dernières ne sont pas groupées en une « tranche petites taxes » : §2.3.3 dit « une ligne
+chacune, une ancre chacune », et les grouper ferait compter 1 là où la revendication de
+couverture doit compter 4.
+
+**Un facteur d'échelle n'est pas un taux, et le moteur ne sait pas les distinguer.**
+Une reprise proportionnelle se modélise `rate=1.0, base=recettes` : arithmétiquement
+exact, et illisible — un composant à 1,0 se lit comme un impôt à 100 %. Le composant est
+donc construit à un seul endroit, son code et son libellé disent « FACTEUR D'ÉCHELLE,
+pas un taux », et un test l'épingle. Vu échouer en renommant le libellé « Taux ».
+
+**Ce qui n'y est pas, et pourquoi.** Ni la TVA ni les accises. La TVA n'est rien de plus
+qu'une reprise proportionnelle tant que la ventilation par taux (COICOP, R5) manque, et
+les accises sont tarif × volume. Les chiffrer proportionnellement quand même produirait
+un nombre de la bonne forme et du mauvais sens. À noter tout de même : l'arbre de
+paramètres porte bien les quatre taux de TVA, mesurés au 2024-01-01 — 0,20 / 0,10 /
+0,055 / 0,021 — donc c'est l'assiette qui manque, pas la structure de taux.
+
+**Et le résidu de `check_base_split` vaut 0 par construction sur ces instruments**,
+puisque la ventilation EST l'ancre. Épinglé par un test dont le nom le dit, pour que
+personne ne lise plus tard ce zéro comme une validation : le contrôle n'a rien
+d'indépendant à comparer ici.
+
+## D-154 — M3 : la revendication de couverture existe, et deux gates rendent leur verdict
+
+**§2.4 fait de « le maximum d'instruments » une revendication auditable** : chaque
+instrument de l'inventaire est chiffré (A/B), sous gate avec le gate nommé (C), ou refusé
+avec la raison affichée (D). `instrument_coverage.py` porte cette table et
+`COVERAGE_INSTRUMENTS.md` en est le rendu — aucun chiffre saisi, tout calculé.
+
+**Trente instruments, seize chiffrés — 53 %.** Neuf l'ont été par cette phase ; le reste
+était déjà en place. Le nombre qui compte est ailleurs : **six lignes sont classées sans
+être chiffrées**, et les compter gonflerait la revendication de 53 % à 73 %. Classer la
+TVA et les quatre accises en seau B dit où elles iront, pas qu'elles y sont. La
+distinction est portée par `priced()` contre `classified_but_unbuilt()`, et un test la
+tient.
+
+**Chaque nom que la table prononce est résolu contre le code.** Un bouton, un champ de
+`FirmReformSpec`, un instrument agrégé : 30 cas paramétrés, plus la moitié tueuse qui
+fabrique une ligne nommant un levier inexistant et vérifie que l'assertion tombe. C'est
+la discipline de `plf_coverage.py` appliquée à l'univers des instruments — un triage qui
+dérive du code qu'il décrit sera cru le jour J.
+
+**Le seuil de §2.4 n'a jamais été enregistré**, et c'est le constat le plus important
+ici. §9 l'attend comme entrée de ce journal — « Threshold for the §2.4 coverage
+universe » — et il n'existe ni dans `M0_PHASE8.md` ni ici. Sans seuil il n'y a pas
+d'univers ; sans univers la revendication n'est pas auditable, seulement plausible. Donc
+le document compte des LIGNES et le dit, en rappelant que compter des lignes met un droit
+de timbre au même poids qu'une contribution à quatre milliards — la raison même pour
+laquelle `PLF2027_COVERAGE.md` publie deux titres qui se contredisent. **C'est une
+décision du propriétaire, pas une que cette session peut prendre à sa place.**
+
+### Les deux gates de M3, tranchés autant qu'ils peuvent l'être
+
+**CIR — le gate ne peut pas être tranché, et la raison est mesurable.** §2.3.3 le
+conditionne aux publications GECIR du MESR, qui doivent soutenir une reprise sur créance
+avec la distinction créance/décaissement explicite. Cherché sur les 145 entrées du
+manifeste : **aucune publication GECIR, aucun fichier MESR**. Le gate ne peut donc aller
+ni vers « chiffré avec bannière » ni vers D — les deux issues demandent d'avoir lu la
+source. Il reste C, et ce qui est désormais au dossier est que son verrou est un
+téléchargement identifié, pas une question ouverte.
+
+**TH résidences secondaires et TF part ménages — bloqués sur un fichier, pas sur une
+question.** `rei_2025.zip` EST manifesté et sourcé, et `verify_rei.py` existe : M0 le
+note déjà (« ne pas ré-importer »). La recon R7 n'a pas tourné ici faute du fichier sur
+cette machine. Le verdict C→B se tranche le jour où elle tourne. Et une chose est déjà
+au dossier sans qu'elle attende quoi que ce soit : **le partage ménages/entreprises de la
+taxe foncière est lui-même NON MESURÉ**. S'il n'existe aucun partage publié, l'instrument
+chiffre le total avec le partage étiqueté « scénario » — jamais un partage inventé
+présenté comme une donnée.
+
+## D-155 — M4 : la liste blanche v1 de l'explorateur, et trois gardes qui n'en étaient pas
+
+**§9 attend cette entrée, la voici.** L'explorateur d'objectif (§4) n'accepte comme
+CIBLE que `mechanical` — la liste blanche v1 tient en un mot. Comme CONTRAINTES il
+accepte trois codes : `mechanical_total`, `decile_1_3_net_loss`, `per_instrument_bound`.
+
+**`decile_1_3_net_loss` est admissible parce qu'elle est MÉCANIQUE, pas parce qu'elle
+est distributionnelle.** C'est la distinction de §4.1 et elle mérite d'être écrite : un
+delta de revenu disponible par décile, calculé sur la population, sans bande, est un
+scalaire mécanique comme un autre. Ce qui est refusé, ce n'est pas le registre
+distributionnel, c'est l'intervalle. Optimiser sur une bande n'est pas une question mal
+répondue, c'est une question mal posée : toute valeur dont l'intervalle contient la
+cible y répond, et la recherche rendrait celle qu'elle a croisée en premier — un
+candidat choisi par l'ordre de la grille.
+
+**La surface neuve a reçu ses propres tests, et elle en avait besoin.** §4.2 l'exige en
+ces termes — « the new surface gets its own tests, not inherited confidence » — parce
+que `refuse_banded` porte un historique denylist→allowlist réparé, et qu'un historique
+réparé transporte la confiance sans transporter la preuve. Les tests ont trouvé trois
+choses, toutes corrigées dans le module plutôt que contournées dans le test.
+
+### 1. Le refus d'objectif avait une branche MORTE
+
+Deux sorties : le diagnostic délégué à `refuse_banded`, puis un « hors liste blanche »
+atteignable seulement si `refuse_banded` avait ACCEPTÉ la grandeur. Les deux listes
+étant égales aujourd'hui, cette seconde branche ne pouvait pas s'exécuter. Elle se
+lisait comme une garde et ne protégeait rien — et le jour où quelqu'un resserre la liste
+de l'explorateur sous celle du solveur, elle serait devenue vivante sans jamais avoir
+été vue tourner. Une seule sortie désormais, qui nomme toujours la liste blanche.
+
+### 2. Les contraintes étaient vérifiées puis IGNORÉES
+
+Le code passait la liste blanche, et rien ne s'en servait ensuite. La recherche rendait
+exactement les mêmes candidats avec et sans contrainte, sous un tableau qui aurait porté
+la ligne « contrainte : perte nette déciles 1–3 ≤ 0 ». C'est la forme exacte du défaut
+que `reprice()` refuse un étage plus bas — un taux fourni pour un composant inconnu et
+ignoré en silence chiffre la réforme à zéro. Les contraintes sont appliquées, les
+candidats retirés sont nommés dans le journal, et **une contrainte dont l'évaluation n'a
+pas mesuré la valeur est refusée** : « pas mesuré » traité comme « respectée » est la
+seule des deux lectures qu'on ne peut pas défendre.
+
+### 3. Une affirmation d'arithmétique, fausse, dans un docstring de test
+
+Le test de la grille annonçait que `0.98 + 3 * 0.01` dérive à 1,0099999999999998. C'est
+faux : la somme retombe pile sur 1,01, et la mutation qui retirait l'arrondi de `grid()`
+restait verte. L'arrondi EST porteur — `[0,90 ; 1,00]` au pas de 1 donne
+0,9400000000000001 sans lui — donc le test a changé de cas plutôt que de disparaître.
+C'est la troisième fois dans ce projet qu'un commentaire affirme une propriété que
+personne n'a fait tourner (D-075 en est la trace la plus coûteuse). La règle tient :
+**une affirmation vérifiable dans un docstring se vérifie avant d'être écrite.**
+
+### Le plafond arithmétique, et les deux sens d'un tableau vide
+
+`ceiling_eur()` calcule `Σ (f_max − 1) × ancre` AVANT la recherche. Sans lui, « aucun
+candidat » a deux sens indiscernables — la cible est hors d'atteinte par arithmétique,
+ou elle est atteignable et la grille l'a manquée — et le lecteur accuse toujours la
+recherche. C'est ce qui rend le §1 du document de §4.4 lisible : la cible de +20 md€
+vaut dix-neuf fois ce que ±2 points sur les neuf instruments proportionnels peuvent
+produire, et aucun pas de grille plus fin n'y changera rien.
+
+**Le fait est en soi le plus utile de la page** : la tranche de couverture de §2.3.3
+élargit ce que le laboratoire sait chiffrer, elle ne donne pas de quoi boucler une
+dizaine de milliards. Ces ordres de grandeur sont du côté des grandes assiettes.
+
+### L'exemple de §4.4, et pourquoi il porte un encadré
+
+`docs/EXPLORER_EXAMPLE.md` est généré : aucun chiffre n'y est saisi. Il lit la VRAIE
+table d'ancres quand elle existe et retombe sinon sur la fixture des tests, dont les
+montants sont inventés — l'encadré d'avertissement suit la source et disparaîtra de
+lui-même le jour où `data/processed/receipts_anchors.json` sera remplie. Coder la
+bannière en dur mentirait dans l'un des deux cas, et ce serait celui où la page dit vrai.
+
+Deux choses ont dû être corrigées dans la page elle-même :
+
+* **La bande illustrative marquait les 2 442 candidats fragiles.** Posée en absolu à
+  0,6 md€ sur une cible de 0,62 md€, elle enjambait tout. Un drapeau qui s'allume
+  toujours est un drapeau qu'on apprend à ignorer — `test_explorer.py` l'interdit
+  explicitement, et la page le violait pendant que le test passait. La bande est
+  proportionnelle désormais, et la page montre un candidat marqué ET un qui ne l'est pas.
+* **La garde `bande inversée` a arrêté un vrai défaut du script**, sur un paquet à
+  −0,96 md€ : une demi-largeur prise en `Δ × (1 ± part)` s'inverse dès que le paquet
+  coûte au lieu de rapporter. Elle se prend sur la valeur absolue.
+
+Et le nombre d'ex æquo affiché porte sa réserve : les ancres de la fixture sont des
+montants ronds, donc les substitutions tombent juste (0,014 + 0,016 + 0,020 = 0,050
+md€). Sur des ancres publiées ce seraient des quasi-égalités. L'argument contre « voici
+l'optimum » ne change pas de nature, mais le nombre est une propriété de la fixture.
+
+### Une garde anti-dérive pour les documents générés
+
+`test_explorer_example.py` rejoue le rendu et le compare au fichier commité. C'est D-154
+retourné contre lui-même : « un triage qui dérive du code qu'il décrit sera cru le jour
+J » vaut pour toute page générée, et `COVERAGE_INSTRUMENTS.md` n'avait pas cette garde.
+Elle lui est ajoutée ici, la page étant déjà à jour.
+
+Les deux gardes ne se comportent pas pareil, et la différence vient de ce qu'elles
+gardent. `COVERAGE_INSTRUMENTS.md` se rend depuis le code seul : la comparaison est
+inconditionnelle. `EXPLORER_EXAMPLE.md` se rend depuis la table d'ancres, donc
+**le test s'abstient quand la table réelle est présente** — exiger alors l'égalité avec
+la version fixture ferait échouer le test précisément là où le document est le plus
+juste.
+
+## D-156 — M5 : le panneau réindustrialisation, et la comparaison qu'il refuse de faire
+
+**§9 attend « Benchmark perimeter statement (our priced aggregate vs D.29) ». La voici,
+et c'est la garde centrale de ce panneau plutôt qu'une note de bas de page.**
+
+Notre agrégat chiffré d'impôts de production est un SOUS-ENSEMBLE de la D.29 nationale :
+la CFE est en seau C, sous gate, donc absente. Comparer cet agrégat à la D.29 d'un autre
+pays produit un écart faux d'exactement la taille du déficit de couverture — et ce nombre
+a l'air parfaitement normal. Sur les ordres de grandeur du test, l'écart France–Allemagne
+passe de +3,57 à −0,52 point de valeur ajoutée selon qu'on prend notre agrégat ou le
+total national, c'est-à-dire qu'il **change de signe**.
+
+Donc : `benchmark()` compare **national à national**, et notre couverture s'affiche à
+côté comme un taux, jamais dans la même colonne. La comparaison interdite a sa propre
+fonction, `refuse_priced_against_national()`, pour être testable en tant que telle
+plutôt que seulement évitée par convention.
+
+### Le refus qui définit le panneau
+
+`BANNER` est un CHAMP de `Panel`, vérifié à la construction, pas une décoration
+d'affichage — §5.1 en fait un refus affiché et non silencieux. Un panneau d'instruments
+sans cette phrase se lit comme un modèle de réindustrialisation.
+
+La raison du refus mérite d'être écrite en entier, parce qu'elle n'est pas « on ne sait
+pas faire » : **une affirmation de transformation structurelle demanderait un modèle de
+localisation et d'entrée de firmes dont la bande honnête, à l'échelle d'un pays, contient
+le zéro ET les deux signes.** En rendre le centre serait rendre un chiffre dont
+l'intervalle contient son propre contraire. « Bande ou rien » dit alors : rien.
+
+### Le périmètre D.29 ne se décide pas dans le code
+
+Savoir si le forfait social, la TGAP ou les DMTO sont des « autres impôts sur la
+production » est une question de comptabilité nationale. Ce module déclare donc des
+lignes **candidates** — du texte, un seau, aucun classement — et lit le verdict dans une
+table générée depuis `insee_cn2025_t3217_principaux_impots_par_categorie.xlsx`, qui EST
+au manifeste et sourcé. Sans la table, refus nommé. De mémoire, ce serait une
+réminiscence (D-026), et le classement d'un instrument dans un agrégat comparé entre pays
+est exactement le genre de détail qui se retient de travers.
+
+**Et le total national ne peut pas être dérivé de nos propres instruments.** Le reconstruire
+en les sommant refermerait l'écart de périmètre à zéro par construction, et ce zéro se
+lirait comme « couverture complète » alors qu'il ne dirait rien — la forme exacte du piège
+que D-153 a épinglé un étage plus bas sur `check_base_split`. `NationalAggregate` refuse
+le drapeau `derived_from_priced` par son nom.
+
+### La ligne C4 dit si elle est dans son support, et §5.2 ne le demandait pas
+
+§5.2 veut que la bande centrée sur zéro se rende « dès qu'un instrument d'impôt de
+production bouge ». Mais elle a été estimée sur la CET — CVAE plus CFE, réforme de 2021
+(IPP Rapport n° 60). La rendre pour un mouvement de la taxe sur les salaires
+l'extrapole hors de sa base d'estimation.
+
+On la rend quand même, parce que taire la seule évaluation existante serait pire, **et on
+écrit sur la ligne elle-même qu'elle est hors support**, grade « illustrative » au lieu de
+« in-support ». C'est un ajout à la lettre de la spec, et la spec aurait laissé passer une
+bande de l'IPP affichée comme si elle portait sur un instrument que l'IPP n'a pas étudié.
+
+La bande est identifiée par sa PROPRIÉTÉ, pas par son nom : si la bande fournie cesse de
+contenir zéro, ce n'est plus la « zéro-bande » de §5.2, et `c4_row()` refuse — la
+substituer en silence changerait le sens du panneau sans changer son étiquette.
+
+### Secteur : composition pour les instruments B, incidence pour les A seulement
+
+`sector_view()` **n'a pas de paramètre `kind`**, et c'est la garde : un appelant qui
+pourrait choisir entre « composition » et « incidence » finirait par choisir. Le seau
+décide. Pour un instrument agrégé, toute lecture d'incidence lève, parce qu'il est chiffré
+sur une assiette nationale statique sans population derrière — le même refus que
+`AggregateInstrument.output('decile')`, au même endroit de la pile.
+
+### Le piège du re-rendu : le numérateur bouge, le dénominateur non
+
+`rerender()` fait bouger la D.29 par la réforme et **tient la valeur ajoutée fixe**, en le
+disant à l'endroit où le ratio s'affiche. Une baisse d'impôt de production qui ferait
+croître la VA abaisserait le ratio davantage ; ce panneau ne le chiffre pas, et la ligne
+C4 dit précisément que l'évaluation existante ne détecte pas cette réponse. Lire le
+mouvement comme un effet de croissance serait lui prêter ce que le panneau refuse de
+modéliser. Vu échouer avec un multiplicateur de 1,002 sur la VA : la charge tombait de
+−0,25 à −0,38 point sans que rien ne signale d'où venait la différence.
+
+L'écart de périmètre EN EUROS est inchangé par un scénario, et un test le tient :
+réformer la CVAE ne chiffre pas la CFE d'un coup.
+
+La fuite de la composition de premier tour est **affichée et jamais réintégrée** —
+l'incident de la phase 4, porté ici plutôt que réappris : renormaliser les parts de
+branches ferait retomber 100 % de l'impulsion sur des branches françaises, ce qui est
+faux d'exactement la taille de la fuite.
+
+### Vingt-trois gardes, toutes vues échouer
+
+Les trois tueurs de §5.3 sont là sous leur nom — baisse d'impôt de production → ligne C4
+ET bannière ; millésimes discordants → refus ; requête sectorielle sur un instrument B →
+« composition, pas incidence » présent et affirmation d'incidence absente. Les vingt
+autres sont les gardes que le module ajoute de lui-même, dont la plus importante n'est
+dans aucun des trois : la comparaison chiffré-contre-national.
+
+### Ce qu'il manque pour que ce panneau rende des chiffres
+
+Trois fichiers, dont **un seul n'est pas au manifeste** :
+
+* **Eurostat `gov_10a_taxag` (D.29 par pays) — ABSENT du manifeste.** Zéro entrée
+  Eurostat sur les 145. Sans lui il n'y a pas de comparateur, et `Comparator` refuse déjà
+  toute instance sans fichier source. C'est le seul téléchargement neuf que M5 demande.
+* `insee_cn2025_t3217_principaux_impots_par_categorie.xlsx` — manifesté et **sourcé**,
+  absent de cette machine. Il tranche l'appartenance à la D.29 et donne le total national.
+* `insee_TES_symetrique_A38_2023SD.xlsx` — manifesté et **sourcé**, absent de cette
+  machine. Il donne la valeur ajoutée par branche, dénominateur de la charge, et alimente
+  déjà `macro/tes.py` et `macro/io_layer.py`.
+
+## D-157 — M6 : le balayage des gardes, et ce qu'une question a trouvé dans la garde d'à côté
+
+**Les trois questions, posées instrument par instrument à tout ce que la branche a
+ajouté.** Quarante-neuf gardes mutées et VUES échouer dans la passe de clôture — 12 pour
+l'explorateur, 23 pour le panneau, 11 sur le moteur agrégé et les ancres, 3 sur les
+gardes de population de D-149/D-150 — en plus des moitiés tueuses qui vivent en
+permanence dans les fichiers de test.
+
+### Question 1 : un dénominateur peut-il tendre vers zéro ?
+
+**Trouvé et corrigé — `Burden` acceptait un sous-ensemble plus grand que son ensemble.**
+Notre agrégat chiffré d'impôts de production EST un sous-ensemble de la D.29 nationale ;
+rien ne vérifiait qu'il ne la dépassait pas. Mesuré avant d'être gardé : 38 md€ chiffrés
+contre 10 md€ nationaux rendaient « 380 % de couverture, écart −28,0 md€ », et
+`statement()` imprimait les deux sans broncher.
+
+Ce cas ne vient jamais d'un problème de couverture. Il vient d'une **erreur d'unité** —
+des millions lus comme des euros — ou d'un fichier qui n'est pas celui qu'on croit. Et le
+symptôme, une couverture aberrante, envoie le lecteur réparer celui des deux nombres qui
+était juste. C'est la raison pour laquelle le message de refus nomme l'unité et le
+fichier, et pas la couverture.
+
+**Trouvé et NON corrigé, parce que le fichier appartient à la phase 7.** §8 est explicite :
+« Phase 8 does not touch population/calibrate.py […] Any Phase 8 need discovered there
+becomes a note to the reviewer, not an edit. » Donc ceci est la note.
+
+`_apply_margin` et `_fit` sautent toute cellule de marge dont la cible est nulle —
+`if current <= 0 or target <= 0: continue`. Le garde empêche bien une division par zéro,
+et à ce titre il est correct. Sa conséquence l'est moins : **une cible publiée à zéro
+n'est jamais mesurée.**
+
+Mesuré plutôt que lu. Un rake de quatre ménages, deux catégories, cible « a » = 4 et
+cible « b » = **0** :
+
+```
+convergé=True  itérations=2
+poids restant dans la catégorie « b » dont la cible est 0 : 2.0
+check_rake_result : ACCEPTÉ
+```
+
+Deux ménages restent là où la marge publiée dit qu'il n'y en a aucun, le rake déclare
+avoir convergé, et **`check_rake_result` — la garde de D-150, écrite par la phase 8 —
+l'accepte**, parce que le `worst` qu'elle lit vient de `_fit`, qui a sauté la cellule.
+`MAX_MARGIN_MISS` ne peut structurellement pas voir ce manquement.
+
+C'est §10 qui nous regarde : *« une comparaison juste seulement parce qu'un côté vaut zéro
+n'est pas testée »*. Ici elle n'est pas juste — elle est **sautée** parce qu'un côté vaut
+zéro, ce qui est la version plus silencieuse du même défaut.
+
+**Ce que cette note ne tranche pas** : aucune marge publiée n'a pu être inspectée ici,
+faute de `data/raw/`. Si aucune cible réelle ne vaut zéro, le défaut est latent et
+gratuit à corriger ; s'il en existe une, une cellule entière échappe depuis toujours au
+contrôle de calage. La question se règle en regardant les marges, et c'est la phase 7 qui
+les tient.
+
+**Vérifiés et propres** : `explorer.grid()` (le pas est gardé strictement positif),
+`check_base_split` (l'ancre est gardée strictement positive à la construction), les masses
+de `incomes.py` (chacune sous `if mass > 0`), et les divisions du rake elles-mêmes. Le
+soupçon initial portait sur ces dernières — il était faux, et le dire est le résultat du
+balayage autant que les deux trouvailles.
+
+### Question 2 : le correctif est-il testé sur une autre forme que celle qui alerte ?
+
+La forme qui a alerté est le DÉPASSEMENT, construit directement. Trois autres :
+
+* **l'égalité avec des lignes nommées manquantes** — 100 % de couverture pendant que la
+  CFE est déclarée non chiffrée est une contradiction, et elle ne déclenche pas la garde
+  de dépassement, qui est stricte ;
+* **l'égalité sans rien de manquant** — qui doit PASSER. Une garde qui refuserait aussi ce
+  cas interdirait l'état vers lequel le projet travaille, et une garde qui interdit la
+  réussite est un défaut déguisé en rigueur ;
+* **la propriété après un re-rendu de scénario** — le même delta s'applique aux deux
+  côtés, donc l'inclusion est préservée ; le test le MESURE, parce qu'une asymétrie future
+  entre les deux côtés serait invisible sans lui.
+
+### Question 3 : aura-t-on vu ce contrôle échouer ?
+
+Mécaniquement, pas sur parole. Chaque garde a été remplacée par `if False:` ou par sa
+négation, et le test correspondant devait virer au rouge. Une garde dont le test reste
+vert n'est pas une garde : c'est une ligne de code avec un nom rassurant — et cette passe
+en a déjà attrapé une chez elle, la branche morte du refus de l'explorateur (D-155).
+
+`instrument_coverage.py` n'a pas eu besoin d'être muté : sa moitié tueuse est PERMANENTE,
+dans le fichier de test — `test_the_claim_would_fail_if_a_name_went_stale` fabrique une
+ligne nommant un levier que personne n'a et vérifie que l'assertion tombe. C'est la forme
+forte : la mutation d'une passe se perd, un test de mise à mort reste.
+
+### Ce que M6 ne peut pas cocher, et qui est dit plutôt que laissé tomber
+
+**`make full` a été lancé le 2026-09-23, à la demande du propriétaire, et journalisé.**
+`12 failed, 1443 passed, 138 skipped, 6 errors in 50m25s` sur `3101fff`. Les dix-huit
+lignes rouges sont **identiques au caractère près** à celles mesurées sur CI et sur un
+worktree vierge du commit parent : rien de ce que M4, M5 ou M6 ont ajouté n'y figure.
+
+Donc la DoD de M6 — « `make full` green with the pass logged » — est **à moitié remplie :
+la passe est journalisée, elle n'est pas verte**, et elle ne peut pas l'être sur une copie
+sans `data/raw/`. Ce document le déclare au lieu de le faire disparaître : un jalon dont
+on raye discrètement le critère qu'on n'a pas atteint est un jalon qui ment sur sa propre
+définition.
+
+**Et la passe précédente au journal était DÉJÀ rouge, sur `main`, avant la phase 8.**
+`46bc81f` (2026-09-18) : `8 failed, 1393 passed, 4 skipped` — le seul FAIL des dix-sept
+passes antérieures, et **sur une machine qui avait les données** (4 sautés, contre 138
+ici). Ces huit-là ne sont donc PAS le lot des fichiers manquants : ce sont huit échecs
+réels sur `main`, neuf commits avant la base de cette branche, et **aucune passe complète
+n'a été journalisée entre celle-là et celle-ci**. La règle de la charte — « aucun dossier
+de relecture ne part sans une ligne plus récente que le travail qu'il rapporte » — n'était
+pas tenue pour les neuf commits qui ont posé la phase 8.
+
+**CORRECTION, apportée ici plutôt qu'ailleurs, le 2026-09-23.** Cette entrée a d'abord
+affirmé qu'on ne pouvait pas savoir d'ici lesquels des huit avaient échoué — « le journal
+enregistre des comptes, pas des noms ». C'était **faux**, et d'une façon qui mérite d'être
+gardée : le journal ne les nomme pas, mais **le dépôt les documente depuis le 2026-09-18**,
+dans D-142, quatre commits après la passe rouge. Chercher dans `reports/` était le bon
+réflexe au mauvais endroit ; la réponse était dans ce fichier-ci.
+
+**Les huit, donc.** Tous dans `test_cells.py`, tous la même `TypeError` —
+`ManifestEntry.__init__() got an unexpected keyword argument 'retrieved'`. Dix-huit
+entrées de manifeste écrites à la main portaient `retrieved` là où le générateur écrit
+`downloaded` ; `load_manifest()` ne construisait plus une seule entrée, donc
+`require_sourced()` levait au lieu de faire respecter D-028, depuis plusieurs jours.
+Corrigés dans `238907b` — sur `main` comme sur cette branche — avec le garde manquant et
+son test de mise à mort.
+
+**Vérifié ici, et pas seulement lu :** le vrai manifeste charge ses 145 entrées par la
+fonction que la production appelle ; `test_the_real_manifest_loads_through_the_loader_production_uses`
+et son tueur `test_an_entry_in_an_unknown_shape_is_refused_rather_than_ignored` ne portent
+aucun marqueur, donc tournent sous le gate par défaut et pas seulement sous `-m ""` — le
+piège de D-075 n'est pas là ; et `test_cells.py` rend **15 réussites et 8 sauts**, les huit
+sautés étant ceux qui demandent les tableurs non redistribuables. 15 + 8 = 23, exactement
+ce que D-142 annonce.
+
+**Ce qui n'était donc pas tenu est plus étroit, et est clos** : aucune passe complète n'a
+été journalisée entre `46bc81f` et le 2026-09-23, si bien que pendant neuf commits la règle
+de la charte — « aucun dossier de relecture ne part sans une ligne plus récente que le
+travail qu'il rapporte » — n'avait rien à désigner. La ligne du 2026-09-23 est cette ligne.
+
+**La leçon qui reste, et elle est pour les sessions suivantes :** un rouge au journal de
+passe n'est pas une question ouverte tant qu'on n'a pas cherché son entrée D. Le journal
+dit qu'il s'est passé quelque chose ; `DECISIONS.md` dit quoi.
+
+De même, **le verdict du relecteur** reste à apposer : il n'appartient à aucune session de
+se le délivrer.
+
+## D-158 — La chaîne de données, qui n'existait pas, et trois défauts qu'elle cachait
+
+**Symptôme.** `pytest -q -m ""` : 12 échecs et 6 erreurs, tous sur un fichier absent —
+`population_2024.parquet`, `firm_cells_2023.json`, deux classeurs DGFiP, un PDF IMK. Le
+diagnostic de départ en comptait cinq. **Ce n'était pas cinq fichiers, et ce n'était pas
+seulement des fichiers.**
+
+**Cause racine.** Aucune chaîne de préparation n'existait sous forme exécutable. Aucune
+fonction de téléchargement dans le dépôt ; `DATA_DOWNLOADS.md` décrivait un processus
+manuel (« downloaded on the Mac ») ; le workflow CI écrivait lui-même que télécharger
+« n'est pas le travail de la CI ». Les tests dépendants échouaient donc, un par un, sur
+le PREMIER fichier manquant de leur chaîne.
+
+### Trois défauts que « fichier absent » masquait
+
+1. **Aucune commande n'écrivait `firm_cells_2023.json`.** `build_cells()` et
+   `as_cell_table()` existaient, `load_cells()` lisait le fichier — mais rien ne
+   l'écrivait : il n'était produit que par un appel à la main, nulle part consigné. Et le
+   commentaire au-dessus de `FIRM_CELLS` disait « Committed », alors que
+   `data/processed/*` est gitignoré et que ce fichier n'a jamais été dans l'historique
+   git. C'est en partie pourquoi personne n'a cherché la commande qui le produit : il n'y
+   en avait pas. `impots entreprises cells` l'écrit désormais, en `.part` puis renommé.
+2. **La trace ne nommait que le premier document manquant.** `max_fan_horizon_years()`
+   charge le store macro ENTIER, qui matérialise TROIS documents — IMK wp117, IMK wp139,
+   Mésange — et valide chaque horizon déclaré contre sa source. Récupérer le seul wp117
+   que la trace montrait aurait fait échouer le run suivant sur wp139, puis sur Mésange.
+   Trois cycles de 47 minutes.
+3. **Quatre modules résolvaient `data/...` par rapport au répertoire COURANT** —
+   `accuracy_cases`, `top_tail`, et deux que j'ai écrits en M2/M5 en recopiant le style
+   du premier. Un fichier présent se lisait « absent » dès qu'on lançait hors de la racine.
+
+### Ce qui a été construit
+
+**`impots.donnees` et `impots data check|fetch|prepare`.** Le profil `tests` est DÉRIVÉ
+des constantes des lecteurs eux-mêmes — `ifi_cells.TRANCHE_FILE`, `top_tail.WORKBOOK`,
+les `document` des YAML du store — et non d'une liste recopiée : un préflight qui vérifie
+moins que ce que le code lit est la forme D-044. Dix sources brutes (16,8 Mo, toutes sous
+licence ouverte, toutes sourcées au manifeste) et deux artefacts dérivés.
+
+Le téléchargement passe par `ingest.load_manifest()`, le chargeur de production (D-142),
+refuse la quarantaine (D-028), et n'écrit un fichier que si sa taille ET son sha256
+égalent le manifeste — sinon le `.part` est supprimé. La table de cellules FICTIVE des
+tests a exactement la forme de la vraie et se charge par le même `load_cells` : le
+validateur lit `cells_are_synthetic` et la refuse, pour qu'une copie à cet emplacement ne
+fasse jamais tourner les tests d'exactitude sur douze cellules inventées.
+
+**Le préflight rend son verdict en 0,84 s au lieu de 47 minutes**, et `make full` le lance
+d'abord : il s'arrête en 0,57 s et n'écrit AUCUNE ligne au journal — un essai avorté n'est
+pas une passe. La CI restaure les sources en cache (clé : le manifeste), les télécharge au
+besoin, reconstruit les deux artefacts à chaque run (jamais mis en cache : une population
+périmée réutilisée en silence est l'échec que cette chaîne existe pour empêcher), puis
+lance le préflight avant la suite.
+
+### Le découplage — seulement là où la dépendance était incidente
+
+**Le refus d'une réforme no-op se décide sans donnée.** `central_for` chargeait les
+cellules avant de constater que `cvae_taux_max = 0,0028` est la valeur EN VIGUEUR. L'arbre
+de paramètres suffit à le prouver. `structural_noop()` est volontairement étroit : chaîne
+entreprises, levier scalaire, égalité EXACTE, aux DEUX bornes de l'année — dans le doute,
+on mesure. **Et la moitié mesurée reste testée** : sans un test dédié, la branche
+`MOVES_EPSILON_EUR` n'aurait plus eu de test qui la fasse tourner, puisque le refus
+structurel intercepte désormais le seul cas qui l'exerçait.
+
+**Déclarer une source ne lit plus la donnée qu'il faut pour la tirer.** `sources_for`
+construisait l'échantillonneur entreprises et l'encadrement IFI, donc chargeait cellules
+et tranches, alors que `test_every_unmeasured_source_names_why` ne vérifie que des
+métadonnées. Les deux sont paresseux : chargés au premier tirage, une seule fois.
+
+**L'horizon des tests unitaires de trajectoire est injecté, et prouvé incident.** Les
+cinq tests ne lisent aucun champ d'éventail ; mesuré avec l'horizon à 1, 3 et 10 : mêmes
+verdicts, et un test garde cette propriété. Ils passent `horizon=UNIT_HORIZON`, comme le
+faisaient déjà deux tests voisins. **`max_fan_horizon_years()` n'est pas touché** : le
+store valide l'horizon contre le document source, et lire seulement les déclarations YAML
+affaiblirait cette garantie en production. Le test d'intégration
+`test_the_macro_horizon_is_read_from_the_store` reste entier, et reste dépendant du PDF.
+
+### Trouvé en écrivant les tests
+
+**Deux classes `Cell`** de mêmes nom et champs — `entreprises/cells.py`, ce qu'écrit
+l'écrivain, et `entreprises/population.py`, ce que construit `load_cells`. Identiques
+aujourd'hui, le JSON faisant frontière. Le jour où l'une gagne un champ, `load_cells`
+lèverait une `TypeError` au chargement : la forme exacte de D-142. Un test compare
+désormais les deux définitions. Les unifier serait un refactor hors du périmètre ; la
+garde suffit à ce que la dérive se voie.
+
+Et un de mes propres tests affirmait plus qu'il ne vérifiait : « reads the cells once »
+avec un seul tirage, qui ne pouvait pas voir une relecture au second. Corrigé avant
+d'être commité.
+
+### Vingt-deux gardes, vues échouer — et deux qui ne peuvent pas l'être
+
+Chaque garde neuve a été mutée et son test vu virer au rouge. Deux défenses en profondeur
+ne sont PAS comptées comme testées : la vérification de TAILLE seule (le sha256 la
+subsume — un fichier de mauvaise taille a forcément un autre sha256, aucun test ne peut
+l'isoler) et l'atomicité du renommage (inobservable dans un test séquentiel).
+
+### Ce que cette entrée ne peut pas affirmer
+
+**Rien n'a été téléchargé ici.** Le proxy de ce conteneur refuse `www.impots.gouv.fr`,
+`www.econstor.eu` et `www.insee.fr` (403 au CONNECT) : les cinq dépendances n'ont donc pas
+pu être vérifiées présentes et lisibles sur cette machine, et la suite complète n'a pas été
+relancée — elle ne ferait que reproduire les rouges dépendants des données. La CI GitHub a
+un accès réseau ouvert ; qu'INSEE et la DGFiP servent ces fichiers à ses runners n'est pas
+vérifié d'ici. **Et construire la population en CI fera TOURNER les tests de population
+qui y sautaient jusqu'ici** — c'est le but, mais ils n'ont jamais tourné en CI, et leur
+durée comme leur verdict y sont inconnus.
+
+## D-159 — EconStor ré-estampille ses PDF à chaque requête : l'empreinte devient normalisée
+
+**Le constat.** La CI de la PR #1 s'arrêtait à l'étape `fetch` : huit sources sur dix
+passaient la garde de checksum, les deux PDF IMK d'EconStor échouaient — **avec exactement
+la taille du manifeste**. Deux runners GitHub, à quelques secondes d'écart, avaient reçu
+des octets différents. Mesuré à nouveau ici, réseau ouvert : **six téléchargements, six
+sha256 bruts distincts**, tous de la bonne taille.
+
+Ce n'est donc PAS un changement de millésime, et **aucune empreinte brute ne pourra jamais
+correspondre à un téléchargement neuf.**
+
+**Le diagnostic, avant tout correctif.** Comparaison octet à octet de deux téléchargements
+entre eux et avec la copie du propriétaire. Cinq champs diffèrent, tous de longueur fixe,
+et **rien d'autre** :
+
+| champ | emplacement |
+|---|---|
+| `/CreationDate (D:…+02'00')` | dictionnaire Info |
+| `/ModDate (D:…+02'00')` | dictionnaire Info |
+| `<dc:date>` | paquet XMP |
+| `<xmp:MetadataDate>` | paquet XMP |
+| `<xmp:CreateDate>` | paquet XMP |
+| `/ID [<hex32> <hex32>]` | trailer |
+
+64 et 62 octets diffèrent entre deux téléchargements neufs ; 84 et 86 contre la copie du
+propriétaire — l'écart est plus grand simplement parce que la date diffère sur plus de
+chiffres. EconStor régénère le document avec Apache FOP à chaque requête : le contenu est
+identique, l'horodatage et l'identifiant sont neufs. C'est le **cas A** du handoff.
+
+**La règle.** `pdf-stamp-v1`, dans `src/impots/donnees.py` : nommée et versionnée, pour
+qu'un changement de ce qui est neutralisé soit un changement visible dans le manifeste et
+dans un diff. Chaque gabarit a EXACTEMENT la longueur de ce qu'il remplace, et
+`normaliser` le vérifie — un gabarit plus court décalerait tout le reste du fichier et on
+comparerait des octets qui ne se correspondent plus.
+
+**Déclarée par entrée, jamais implicite.** Deux entrées sur 145 la portent. Le `sha256`
+brut reste inscrit : c'est la provenance de la copie du propriétaire. `normalized_sha256`
+est ce sur quoi un téléchargement neuf est jugé. Les 143 autres sources gardent la
+comparaison brute — affaiblir la vérification de sources qui n'ont jamais prouvé en avoir
+besoin serait payer le défaut d'un éditeur avec la garantie de tous les autres.
+
+**La preuve de complétude, qui est le cœur de l'affaire.** Une normalisation incomplète
+laisserait passer une empreinte qui rebouge au téléchargement suivant. Vérifié : la copie
+du propriétaire et deux téléchargements NEUFS donnent **la même** empreinte normalisée,
+pour les deux fichiers, alors que leurs empreintes brutes sont toutes différentes. Puis
+bout en bout, copies écartées comme sur un clone neuf : `telecharger` accepte, et
+`_conforme` accepte ce que `telecharger` vient d'écrire.
+
+**Le contrat est porté par DEUX fonctions (D-151).** `telecharger` et `_conforme` passent
+toutes deux par `empreinte`/`attendu`. Si une seule connaissait la normalisation, `fetch`
+écrirait un fichier que `check` déclarerait aussitôt non conforme et la CI oscillerait sans
+que rien ne soit faux. Un test le vérifie, et il a été VU échouer en remettant `_conforme`
+à la comparaison brute.
+
+**Ce que la règle n'ignore PAS.** Un octet de contenu modifié reste refusé. Le test de mise
+à mort correspondant a demandé **quatre tentatives**, et l'histoire vaut d'être consignée
+parce qu'elle est la forme D-044 commise dans un test :
+
+1. l'injection d'une règle élargie changeait la longueur — c'est la garde de taille qui
+   tombait, pas celle qu'on voulait éprouver ;
+2. une règle élargie à longueur préservée laissait dépasser un octet de la différence, donc
+   le test passait sans rien démontrer ;
+3. en masquant TOUT, le test passait encore — et c'est là qu'apparaît la vraie cause : le
+   corps altéré faisait **un octet de moins** que le corps de référence, si bien que
+   `telecharger` refusait sur la TAILLE et que la comparaison d'empreinte n'était jamais
+   exercée. Le test passait pour une raison autre que celle qu'il annonçait ;
+4. corps altéré aligné à l'octet près : le test passe avec la vraie règle et TOMBE quand la
+   normalisation masque tout.
+
+**Note d'intégrité.** `imk.load()` ne vérifie pas le sha256 lui-même : l'étape de
+téléchargement est la seule garde d'intégrité de ces deux PDF, et c'est pourquoi elle n'est
+pas relâchée mais déplacée sur une empreinte qui a un sens.
+
+## D-160 — Le profil déclarait UN des deux fichiers d'un lecteur, et sa garde était une seconde liste écrite de mémoire
+
+**Le symptôme.** Premier passage complet de la chaîne en CI (`f1e5837`) : les quatre étapes
+passent — récupération des sources, construction des artefacts dérivés, préflight vert,
+« 13 dépendances présentes et valides » — puis la suite tombe. Localement, la même tête
+donne **1697 passés, 0 échec**. Un échec qui ne se reproduit pas est une différence
+d'environnement, jamais un test à sauter (§7 du handoff).
+
+**Reproduit avant d'être corrigé.** Les 23 fichiers du manifeste que le code NOMME sans
+que le profil les déclare ont été écartés en local — par liens durs, pour ne rien détruire
+— puis la suite relancée. Résultat : **25 échecs, 1569 passés**, et la première ligne de
+progression de pytest est **identique octet pour octet** à celle de la CI. La reproduction
+était donc fidèle, et elle a donné les NOMS que la CI n'avait pas pu imprimer : son job
+avait été tué (SIGTERM, code 143) avant le résumé — la forme D-113, un run tué et un run
+en échec qui se lisent pareil.
+
+**La cause, unique.** Les 25 échecs viennent d'un seul fichier :
+`dgfip_stats_45_ifi_2025.xlsx`. `patrimoine/ifi_cells.py` déclare **DEUX** entrées —
+`TRANCHE_FILE` et `AGGREGATE_FILE` — et le profil n'en déclarait qu'une. C'est la forme
+D-151 : un contrat porté par deux constantes n'est pas élargi tant que les deux ne le sont
+pas.
+
+**Pourquoi la garde ne l'a pas vu, et c'est le vrai enseignement.**
+`test_the_profile_is_built_from_the_readers_own_constants` existait, et son docstring
+disait exactement la bonne chose : « un préflight qui vérifie moins que ce que le code lit
+est la forme D-044 ». Mais il ÉNUMÉRAIT les constantes À LA MAIN, et son énumération
+omettait `AGGREGATE_FILE` — la même omission que le profil. **Deux listes écrites de
+mémoire par la même personne s'accordent entre elles et se trompent ensemble.** La garde
+qui dénonçait la forme D-044 la commettait.
+
+**La correction, en deux moitiés qui doivent rester indépendantes.** Le profil reste une
+DÉCLARATION explicite et relisible — on veut pouvoir la lire et la discuter. Le test, lui,
+dérive désormais son attente **par introspection** des modules lecteurs : toute constante
+en majuscules dont la valeur est un nom de fichier de données doit figurer au profil. Si
+les deux côtés dérivaient de la même source, la garde ne pourrait plus attraper ce que la
+déclaration oublie — elle serait à nouveau tautologique.
+
+**Vu échouer**, en retirant du profil la ligne ajoutée : la garde nomme
+`dgfip_stats_45_ifi_2025.xlsx` et tombe. Puis vérifié dans les conditions de la CI, fichiers
+hors profil écartés : `test_patrimoine.py` et `test_accuracy.py` rendent **115 passés,
+3 sautés** là où ils donnaient 25 échecs.
+
+**Ce que le préflight ne pouvait pas dire.** Il ne vérifie que ce que le profil DÉCLARE.
+Un profil incomplet le traverse au vert, et les fichiers absents ressortent cinquante
+minutes plus tard, au milieu de la suite — c'est-à-dire exactement le défaut que D-158
+existait pour abolir, déplacé d'un cran.
+
+## D-161 — Le coût de la CI, mesuré — et `pypdf` qui n'était déclaré nulle part
+
+**Le déclencheur.** L'allocation de minutes Actions du dépôt s'est épuisée en pleine
+revue : les jobs ne démarrent plus du tout (`steps=0`, « recent account payments have
+failed or your spending limit needs to be increased »). Le dépôt est PRIVÉ, donc les
+minutes sont facturées. Avant de toucher quoi que ce soit, on mesure.
+
+**Où passait l'argent.** `test.yml` se déclenchait sur `push:` SANS filtre **et** sur
+`pull_request:`. Sur une branche de PR, le job le plus cher tournait donc **deux fois par
+poussée**, à ~50 min pièce : ~100 min par poussée, soit une vingtaine de poussées pour
+2 000 minutes. Il n'y avait par ailleurs **aucun groupe `concurrency`**, donc une poussée
+remplacée allait jusqu'au bout.
+
+**Ce qui est fait.**
+
+1. `push:` restreint à `main` — le run `pull_request` couvre déjà le travail de branche.
+2. Groupe `concurrency` avec `cancel-in-progress`, **sauf sur `main`**, dont on veut que
+   la ligne d'historique reste complète.
+3. Découpage rapide/complet. Mesuré, arbre neuf et machine au repos :
+   `-m "not slow"` rend **1 366 passés, 115 sautés, en 11 min 16 s**, là où la suite
+   entière fait 1 702 tests en ~65 min local (46 min sur un runner). **C'est là qu'est
+   tout le gain.** La suite complète ne tourne plus que sur `main`, à la demande, ou sur
+   une PR portant le label `full-suite`. Ordre de grandeur par poussée de PR :
+   **~100 min → ~10 min.**
+
+**Deux durées fausses ont précédé la bonne, et elles restent écrites.** D'abord
+6 min 39 s, relevé sur un arbre SANS données : rapide parce que cinq tests échouaient
+d'emblée au lieu de tourner. Puis 25 min 39 s, annoncé au propriétaire comme une
+correction — et relevé pendant que **trois** processus pytest se disputaient la machine,
+dont un oublié depuis deux heures. Une durée mesurée sous contention n'est pas une durée,
+et la seconde erreur était pire que la première parce qu'elle se présentait comme un
+rectificatif.
+
+La cause de la confusion vaut d'être nommée : le `pgrep` qui surveillait la fin des runs
+ne correspondait pas à leur ligne de commande réelle, si bien qu'il annonçait
+« terminé » sur des processus bien vivants, et que des journaux tronqués se lisaient comme
+des runs tués. **Un contrôle qui ne contrôle pas ce qu'il prétend** — la forme même que ce
+dépôt traque dans son code, commise dans l'outillage qui le mesure.
+
+**Ce qui est RETIRÉ après mesure, et pourquoi c'est la partie utile de cette entrée.**
+
+* **Le cache des artefacts dérivés.** Proposé en supposant la construction coûteuse.
+  Relevé des durées d'étapes d'un vrai run : fetch 36 s, **construction 6 s**, préflight
+  1 s, tests **2 774 s**. Cacher aurait gagné 0,2 % en échange de la garantie, écrite dans
+  le workflow, qu'une population périmée n'est jamais réutilisée en silence. Prémisse
+  fausse, proposition abandonnée.
+* **Un second profil « rapide ».** Écrit, puis retiré. Il aurait fait gagner ~35 s et
+  coûté une seconde liste à maintenir suffisante — et la mesure a montré qu'il ne l'était
+  PAS : `test_accuracy` lit `firm_cells_2023.json`, un artefact DÉRIVÉ. Une liste qui
+  dérive en silence fait rougir le job rapide pour un fichier manquant au lieu d'un vrai
+  défaut. Les deux jobs partagent désormais le profil unique.
+
+**LE DÉFAUT QUE CETTE MESURE A DÉTERRÉ, et il n'a rien à voir avec le coût.** En rejouant
+la chaîne dans un arbre NEUF, `test_the_macro_horizon_is_read_from_the_store` échoue sur
+`ImkError: pypdf is required to read the IMK working papers`. **`pypdf` n'était déclaré
+nulle part** dans `pyproject.toml` — ni en dépendance, ni en extra — et il n'arrive par
+aucune transitive. Il n'existait que sur la machine du propriétaire, installé à la main il
+y a longtemps. Sur **chaque runner de CI**, le store macro était donc cassé depuis
+toujours, et son message — « pypdf is required » — se lit comme un défaut de DONNÉES ; il
+a été rangé parmi les rouges « fichiers manquants » et compté comme tel.
+
+`numpy` est dans le même cas en moins grave : importé par une trentaine de fichiers de
+`src/`, il n'arrivait que par transitive de polars/pyarrow. Les deux sont désormais
+déclarés.
+
+**La garde.** Un test parcourt les imports de `src/` par AST et exige que chaque paquet
+tiers figure au `pyproject.toml`, avec normalisation PEP 503 — `openfisca_core` (import)
+et `openfisca-core` (distribution) sont le même paquet, et la première version de la garde
+a accusé deux paquets parfaitement déclarés, ce qui est la bonne façon de s'en apercevoir.
+Les deux tables d'exception — alias de distribution, modules locaux — sont EXPLICITES :
+deviner est précisément ce qui a laissé passer `pypdf`. **Vue échouer** en retirant `pypdf`
+du `pyproject.toml` : elle le nomme, et nomme le fichier qui l'importe.
+
+## D-162 — Répétition à blanc du runbook PLF 2027 : la chaîne n'avait jamais tourné pour de vrai
+
+**Pourquoi maintenant.** Le PLF 2027 paraît début octobre et §8 lui donne préséance sur tout.
+Le relecteur a durci la recommandation : A tout de suite, rien ne passe devant. La répétition
+porte sur les étapes 0 à 4 du runbook, celles qui doivent marcher **le jour même**.
+
+**Le constat qui justifie l'exercice.** `impots chiffrage list` répondait
+« aucun chiffrage préenregistré » : le registre n'avait **jamais** porté un seul cas. La
+machinerie est pourtant bien testée — vingt tests dans `test_preregistration.py`, dont
+`test_a_tolerance_widened_after_the_fact_is_caught`. Mais tous tournent sur `tmp_path` avec
+un dépôt git fabriqué. **Aucun n'avait exercé la vraie CLI contre le vrai répertoire et le
+vrai historique git**, c'est-à-dire exactement l'écart qui a coûté deux défauts cette
+semaine (le chargeur de manifeste testé en JSON brut, le profil testé par une liste à la
+main). C'est la question permanente : *ai-je déjà vu cette sortie exister ?*
+
+**Ce que la répétition a exercé, en vrai.** `chiffrage register` sur le scénario
+`gel_bareme`, 2 000 ménages : mécanique +1,115 md€, fichier écrit, et la CLI rappelant
+d'elle-même que **le fichier n'est pas le préenregistrement, le commit l'est**. Puis commit,
+puis `verify_tolerance_unchanged` → ACCEPTÉ, avec l'historique git lu correctement. Puis
+tolérance élargie de 0,20 à 0,95 et recommittée → **REFUSÉ**, en nommant le nombre de
+changements et les deux valeurs. La garde fonctionne sur le vrai dépôt, pas seulement en
+bac à sable. Le registre a ensuite été remis à vide : il repart propre pour le PLF.
+
+**Trois frictions relevées, aucune bloquante.**
+
+1. `chiffrages_preregistres/` n'existe pas dans l'arbre — mais `save()` fait
+   `mkdir(parents=True)`, donc il naît au premier enregistrement. Vérifié, pas supposé.
+2. `reforms/` que le runbook cite en exemple n'existe pas non plus ; c'est un chemin
+   d'ENTRÉE que l'opérateur fournit, pas un répertoire que la commande crée. À créer le
+   jour J, ou à écrire les réformes ailleurs.
+3. L'étape 0 exige « une ligne verte au journal ET un arbre propre ». La dernière ligne
+   verte porte `9442046` et la tête a avancé depuis. **Il faudra relancer `make full` avant
+   d'enregistrer le premier chiffrage**, sinon le hash de commit ne témoigne de rien.
+
+## D-163 — La route du SFA : les DEUX codes annoncés étaient faux, et 2019-2020 manquent
+
+**Vérifié à la source plutôt que recopié.** Le relecteur indiquait Eurostat
+`gov_10dd_sfa` ; j'avais écrit `gov_10dd_edpt1`. Interrogation de l'API de diffusion :
+
+* `gov_10dd_sfa` → **HTTP 404, ce dataset n'existe pas** ;
+* `gov_10dd_edpt1` → existe (« Government deficit/surplus, debt and associated data ») mais
+  ses 18 postes ne contiennent **aucun** ajustement flux-stocks : B9, GD, D41PAY, B1GQ — tout
+  pour l'identité SAUF le terme qui nous manque.
+
+**La bonne table est `gov_10dd_edpt3`**, « Transition from the deficit/surplus to the change
+in debt ». C'est littéralement le pont cherché.
+
+**Et elle confirme la série dérivée, au décimal.** `B9_T3` et `GD_CH` y valent exactement
+les chiffres tirés de l'INSEE, et leur différence redonne l'ajustement dérivé : −0,2 en
+2021, +1,0 en 2022, −4,3 en 2023, **+33,7 en 2024**. Le calcul de D-148 était juste.
+
+**Deux découvertes qui changent le plan de §6.1.**
+
+1. **Eurostat ne publie pas le SFA comme une ligne ; il publie ses COMPOSANTES**
+   (`F_ASS`, `ORADJ`, `K61`, `KX`, `YA3`). Leur somme n'égale pas la différence : 0,1 contre
+   −0,2 ; 1,4 contre 1,0 ; −4,8 contre −4,3 ; 34,1 contre 33,7. **Cet écart de 0,3 à 0,5 md€
+   est précisément ce qui fait des composantes une mesure INDÉPENDANTE** plutôt qu'une
+   resoustraction. C'est la sortie du piège de D-148 : bâtir le SFA depuis ses composantes
+   publiées n'est pas le dériver de la trajectoire à reproduire.
+2. **2019 et 2020 sont ABSENTS de cette table pour la France**, sur ce poste, cette unité et
+   ce secteur. La fenêtre de §6.1 commence en 2019 : Eurostat seul **ne peut pas** la
+   couvrir. Il faudra les tableaux de notification EDP de l'INSEE pour ces deux années, ou
+   accepter un backtest 2021→2025 qui le DIT.
+
+**Ce qui n'est pas tranché ici**, et appartient au propriétaire : §6.1 tourne-t-il sur
+2021→2025 avec un SFA reconstruit depuis les composantes, ou attend-il les deux années
+manquantes ? La tolérance se pré-enregistre après ce choix, pas avant — la fenêtre fait
+partie de la méthode.
+
+## D-164 — L'étape 2 du runbook existait comme un commentaire bash
+
+**Ce que la répétition à blanc a trouvé.** Le runbook chiffre l'étape 2 — re-dériver le
+triage sur les vrais articles — à « 2 à 4 heures », et la décrit ainsi : *« découper le
+texte comme en 2026 : les <h6> portent ARTICLE n : intitulé »*. C'est un commentaire dans
+un bloc bash. **Aucun script ne le faisait.** Le jour de la parution, quelqu'un réécrivait
+un extracteur sous la pression, sur un texte de six millions de caractères.
+
+`scripts/split_plf_articles.py` le remplace, et il a été mis au point **contre le texte
+2026, dont la réponse est connue** : `plf_coverage` a trié 29 articles fiscaux. Le
+découpage en trouve 30 dans la section fiscale — les 29, plus l'article 1
+« Autorisation de percevoir les impôts existants », formalité reconduite chaque année et
+non une mesure. **Cet écart d'exactement un est la vérification**, et un test le fige.
+
+**Trois défauts du script, tous attrapés parce qu'il tournait contre une réponse connue.**
+C'est l'argument de la répétition à blanc, et il vaut d'être détaillé :
+
+1. **Rattachement par égalité stricte** : sept articles échouaient, dont la CEBGE, que le
+   texte porte en article 4. Elle était annoncée à la fois « absente du texte » et
+   « inconnue du triage » — deux erreurs opposées sur une seule mesure. Cause :
+   `plf_coverage` stocke des intitulés **tronqués** vers 110 caractères. Corrigé en
+   rattachement par préfixe.
+2. **Bornage à la section fiscale rendant ZÉRO article sur 82.** Le titre normalisé
+   commence par le chiffre romain (« i impots et ressources autorisees ») et le test
+   utilisait `startswith`. Visiblement faux, donc vu immédiatement.
+3. **Les 53 articles de crédits, garanties et dotations remontaient comme « décisions de
+   triage neuves »**, noyant les vraies. Le bornage les écarte tout en les extrayant.
+
+**Le rattachement ne se fait JAMAIS par numéro**, et c'est la décision de conception qui
+porte le script. Entre le dépôt et le texte voté, les articles sont renumérotés ; un
+rattachement par numéro attribuerait le triage d'une mesure à une autre et produirait un
+**chiffrage plausible sur le mauvais article** — le pire résultat possible, puisqu'il ne
+ressemble pas à une panne. Le numéro n'est que de l'affichage, et un test l'épingle.
+
+**Le refus qui compte.** Un texte dont les `<h6>` ont changé de forme est REFUSÉ, pas rendu
+vide. Une liste vide se lit « rien à chiffrer » et non « panne » — exactement la forme du
+défaut de 2026 où un extracteur ne cherchant que des tableaux a raté l'article le plus gros
+de toute l'annexe. Un plancher de plausibilité (20 articles) refuse aussi un découpage
+partiel. Les deux ont été vus échouer, et leur jumeau vérifie qu'ils laissent passer le cas
+correct.
+
+**Un écart réel, à trancher le jour J.** L'article des dons ne se rattache pas : le triage
+porte « …organismes d'aide aux **personnes en difficulté** », le texte dit « …aux **plus
+démunis** ». L'intitulé a été remanié. Le script le signale au lieu de l'apparier de force,
+ce qui est le bon comportement : un rattachement forcé sur un intitulé divergent est
+précisément la façon de chiffrer la mauvaise mesure.
+
+## D-165 — `make ci-local` : la vérification d'environnement neuf, sans minute de runner
+
+**Ce que `make full` ne peut pas faire.** Il vérifie la correction, jamais l'ENVIRONNEMENT,
+parce qu'il tourne dans celui du propriétaire. `pypdf` a traversé quinze passes locales
+vertes en étant cassé sur chaque runner (D-161), et son message — « pypdf is required » —
+se lit comme un défaut de DONNÉES, si bien qu'il a été rangé parmi les rouges « fichiers
+manquants ». C'est la valeur propre de la CI : un arbre propre, un venv reconstruit depuis
+le seul `pyproject.toml`, un `data/raw/` ne portant que ce que git suit. Le dépôt est privé,
+les minutes se sont épuisées en pleine revue, et cette vérification ne doit pas dépendre
+d'un quota.
+
+**Deux modes, et le rapide est le plus utile.** `make ci-deps` mesure **15 secondes** —
+worktree jetable, venv neuf sans les paquets du système, installation depuis le seul
+`pyproject.toml`, puis tentative d'import de chaque module tiers que `src/`, `tests/` et
+`scripts/` nomment. `make ci-local` y ajoute la chaîne de données et le sous-ensemble
+rapide, soit les étapes du job `fast` dans leur ordre. L'estimation annoncée était « ≈ 2 min »
+pour le mode rapide ; le cache d'`uv` le ramène à quinze secondes, et c'est mesuré.
+
+**La logique a déménagé dans le paquet, et c'est la décision qui compte.**
+`impots.dependances` porte désormais le scan AST ; le test qui garde la propriété ET le
+script qui la vérifie lisent de là. Elle vivait dans `tests/test_donnees.py` et allait
+vivre une seconde fois dans le script : **deux copies d'un contrat dérivent** (D-151), et
+c'est la forme que ce dépôt invoque assez souvent pour ne pas la commettre ici. La copie
+dans `test_donnees.py` est supprimée, pas laissée à vieillir.
+
+**Élargir le scan à `tests/` et `scripts/` a fait apparaître deux modules locaux** que le
+scan de `src/` seul ne voyait pas : `scripts` importé comme paquet de chemin, et
+`tests/knob_cases.py`. Les deux sont nommés **un par un** dans une table explicite. Un motif
+— « tout ce qui ressemble à un script » — écarterait aussi une vraie distribution
+homonyme, et deviner est précisément ce qui a laissé passer `pypdf`.
+
+**Vu échouer.** Sur une branche jetable dont `pyproject.toml` ne déclare plus `pypdf` :
+`MANQUANTS : ['pypdf (ModuleNotFoundError)']`, code 1, en treize secondes. L'option `--ref`
+existe pour cela — et sert aussi à éprouver une branche avant de la fusionner.
+
+**Deux défauts du script, attrapés en le lançant.** Un PATH restreint « pour isoler »
+empêchait de trouver `uv` : l'isolation qui compte est celle du VENV, pas celle du PATH.
+Et il a refusé un worktree dont le HEAD ne portait pas encore le module — comportement
+voulu : **il juge l'arbre COMMITTÉ, pas la copie de travail.**
+
+**Une méprise de manipulation, consignée parce qu'elle se répétera.** Le test de mise à
+mort s'est fait sur une branche jetable, et `git commit -am` y a emporté une modification
+de travail sans rapport — l'option `--ref` elle-même — perdue avec la branche supprimée.
+Sur une branche jetable, committer par `-a` ramasse tout ce qui traîne. Rétabli, puis
+committé avant toute manipulation de branche.
+
+## D-166 — D : la liste d'ancres M2 était fausse pour six instruments sur neuf
+
+**Ce que D demandait** : préparer la liste exacte des ancres M2 à télécharger, sans
+commencer M2. La liste existait déjà — `docs/M2_ANCHORS.md`, écrite à M2 (D-152). D est
+donc devenu une VÉRIFICATION, et c'est ce qu'elle a rendu de plus utile.
+
+**Pourquoi elle était fausse, et la raison est honorable.** Le document l'annonce
+lui-même : il a été écrit dans un conteneur **sans `data/raw/` et sans réseau**. Sa colonne
+« ancre `R` : en main (VM tome I) » reposait donc sur la présence du fichier au manifeste,
+**sans jamais l'ouvrir**. Cette machine l'a ; il suffisait de lire.
+
+**Mesuré dans les 102 pages des Voies et moyens tome I.** Trois instruments seulement ont
+une ligne de recette de l'État : TSN (ligne 1430, 785 M€ en exécution 2024), TTF
+(ligne 1797, 1 332 M€) et TGAP (ligne 1756, 1 150 M€). Plus deux agrégats : accises
+énergies nettes 20,2 md€ et TVA nette 96,8 md€, même millésime.
+
+**Six n'y sont pas, et ce n'est pas un oubli de téléchargement.** Taxe sur les salaires,
+forfait social, accises tabacs et alcools sont **affectés à la Sécurité sociale** ; taxe
+d'apprentissage à France compétences ; versement mobilité, DMTO et TASCOM sont des recettes
+**locales**. Aucun ne figure au budget de l'État par construction. Le document les donnait
+tous les neuf comme ancrables depuis ce seul fichier.
+
+**Deux fausses pistes, suivies puis abandonnées, consignées parce qu'elles sont
+instructives.** J'ai d'abord lu les lignes 1785-1789 comme les instruments cherchés : ce
+sont les **produits des jeux** (Française des jeux, casinos, paris hippiques et sportifs).
+Puis les lignes 1705-1706 comme le DMTO : ce sont les mutations à titre **GRATUIT**
+(donations 4,9 md€, successions 16,0 md€). Deux numéros plausibles, deux mesures
+différentes — et un chiffrage bâti dessus aurait été net, crédible et faux. C'est pourquoi
+une ancre nomme sa ligne ET son intitulé.
+
+**La convention de colonne, relevée mot pour mot** : « Exécution 2024 | LFI 2025 | Révisé
+2025 | Écart | PLF 2026 | Écart ». Elle n'est pas déduite, et `vintage_convention` vaut
+`budget` pour toutes ces lignes (D-067).
+
+**Un piège de millésime dans le document lui-même** : le découpage 1501/1502/1503/1504 des
+accises énergies est NOUVEAU — jusqu'au 31 décembre 2025, l'ex-TICPE était seule en 1501 et
+les autres regroupées ailleurs. Une ancre qui nomme un numéro de ligne sans son millésime
+pointera la mauvaise recette dès la publication suivante.
+
+**Une ancre se lève sans téléchargement.** `ccss_mai2026_comptes_secu_resultats2025.pdf`
+est **déjà au manifeste, en quarantaine** : il lui manque une URL, pas des octets. C'est
+exactement le cas de la table 7.301, et il se lève de la même façon — une URL ajoutée à
+`KNOWN_SOURCES`. C'est le chemin le plus court vers les quatre ancres « Sécurité sociale ».
+
+**Rien de M2 n'a été commencé**, conformément à la consigne. Le document porte la
+correction, la liste de téléchargements est révisée, et l'item 6 — qui nommait le mauvais
+dataset Eurostat — est corrigé avec les réserves de D-163.
+
+## D-167 — §6.1 tournera sur 2021→2025, et la tolérance est fixée AVANT le premier résidu
+
+**La fenêtre, et pourquoi elle n'est pas 2019→2025.** Deux notifications EDP ont été
+examinées. Celle d'avril 2026 couvre 2022→2025 ; celle d'octobre 2022 couvre 2018→2021 et
+porte donc les années manquantes — mais **sur un autre millésime**, et le raccord est
+interdit :
+
+| md€ | notification oct-2022 | millésime courant (INSEE 2025 / Eurostat) |
+|---|---|---|
+| déficit 2019 | −74,7 | −58,2 |
+| dette 2019 | 2 374,9 | 2 387,4 |
+| **SFA 2019** | **−10,6** | **+8,4** |
+
+Une révision de **16,5 md€** sur le déficit 2019 fait **CHANGER DE SIGNE** l'ajustement de
+cette année-là. Raccorder les deux produirait au joint 2021/2022 une rupture indiscernable
+d'une erreur de modèle — la cinquième fois que la convention de millésime du comparateur
+serait l'erreur entière. La fenêtre est donc **2021→2025, un seul millésime**, et le
+backtest le DIRA plutôt que de laisser croire à sept ans.
+
+**Ce que la fenêtre coûte, énoncé plutôt qu'enfoui.** On perd 2020 et son ajustement de
++69 md€, de loin le plus grand de la série et l'année la plus exigeante pour l'identité. Le
+backtest en est plus facile, et c'est un fait sur sa portée, pas un détail.
+
+**Le SFA vient des COMPOSANTES publiées**, pas de la différence `Δdette − déficit` :
+`F_ASS + ORADJ + K61 + KX + YA3`. Leur somme s'écarte de la différence de 0,3 à 0,5 md€, et
+**c'est cet écart qui en fait une mesure indépendante** — la sortie du piège de D-148, où
+un SFA dérivé refermait l'identité par construction avec un résidu de 0,022 pt.
+
+### La tolérance : ±0,10 point de PIB par année
+
+**Fixée ici, avant tout calcul de résidu.** Elle est argumentée depuis les termes d'erreur
+NOMMÉS, chacun mesuré ou borné à l'avance :
+
+| terme | ordre de grandeur | années concernées |
+|---|---|---|
+| écart de millésime SFA (Eurostat avril 2026) contre dette/PIB (INSEE 2025) | ≈ 0,03 pt | **2025 seule** |
+| écart composantes / différence (l'indépendance elle-même) | 0,01 à 0,017 pt | toutes |
+| dénominateur du ratio publié (« PIB annuel en données brutes », note de bas de page) | ≤ 0,02 pt | toutes |
+| arrondis (fichiers au million, ratio à quatre décimales) | négligeable | toutes |
+
+Somme des termes nommés : **au plus ≈ 0,05 pt**. La bande est donc à environ deux fois ce
+que l'on sait devoir absorber.
+
+**Pourquoi 0,10 et pas 0,20 — l'argument qui décide.** La bande doit rester SOUS la
+signature du défaut que ce module existe pour éviter. Confondre `D41` emplois avec `D41`
+net surestime la charge de ~8 %, soit ~5 md€ sur ~3 000 md€ de PIB : **≈ 0,17 pt**. À 0,20
+la garde laisserait passer précisément cette erreur ; à 0,10 elle la refuse. Les autres
+classes sont plus grosses encore — une erreur d'unité vaut mille fois, une inversion de
+signe du solde primaire environ 5 pt.
+
+**Ce qui est attendu, écrit d'avance pour qu'un échec prévu ne passe pas pour une
+découverte.** L'identité est arithmétique : le résidu doit être quasi nul sur 2021→2024, où
+les deux sources concordent à la décimale. **2025 est l'année où un résidu est ATTENDU**,
+d'environ 0,03 pt, pour la cause nommée ci-dessus — millésime à demi finalisé. Un résidu
+2025 dans cet ordre n'est donc PAS un succès du modèle : c'est le terme de millésime, et il
+sera décomposé avant d'être commenté.
+
+**Échec = une année hors bande SANS cause mécanique nommée.** La règle du résidu dangereux
+s'applique dans l'autre sens aussi : un résidu quasi nul partout n'est pas une validation,
+c'est ce qu'une identité exacte doit rendre, et il ne prouve que l'absence d'erreur de
+saisie.
+
+## D-168 — §6.1 est noté : cinq années dans la bande, et un zéro qui cachait deux erreurs
+
+**Le résultat, contre la tolérance préenregistrée en `c6c5db4` (±0,10 pt de PIB) :**
+
+| an | r | g | p | sfa | modèle | publié | résidu |
+|---|---|---|---|---|---|---|---|
+| 2021 | +1,29 % | +8,19 % | −5,22 % | +0,003 % | 1,1281 | 1,1279 | **+0,015 pt** |
+| 2022 | +1,76 % | +5,82 % | −2,87 % | +0,054 % | 1,1140 | 1,1137 | **+0,039 pt** |
+| 2023 | +1,63 % | +6,78 % | −3,66 % | −0,170 % | 1,0953 | 1,0951 | **+0,019 pt** |
+| 2024 | +1,76 % | +3,58 % | −3,90 % | +1,162 % | 1,1267 | 1,1263 | **+0,031 pt** |
+| 2025 | +1,88 % | +1,90 % | −2,99 % | +0,062 % | 1,1569 | 1,1569 | **+0,001 pt** |
+
+Aucune année hors bande. Le résidu maximal, +0,039 pt en 2022, vaut 40 % de la tolérance.
+
+**LA DÉCOMPOSITION, qui est le vrai résultat.** §6.1 exige qu'un petit résidu soit
+décomposé avant d'être fêté, et c'est ici qu'elle paie. Le préenregistrement annonçait un
+terme de millésime d'environ 0,03 pt **en 2025**. Or 2025 affiche le PLUS PETIT résidu de
+la série. Naïvement : « l'année la plus incertaine est la mieux reproduite ». En réalité :
+
+| an | résidu | erreur PROPRE de l'année |
+|---|---|---|
+| 2021 | +0,015 | +0,015 |
+| 2022 | +0,039 | +0,024 |
+| 2023 | +0,019 | −0,018 |
+| 2024 | +0,031 | +0,013 |
+| 2025 | +0,001 | **−0,031** |
+
+L'erreur propre de 2025 vaut **−0,031 pt**, et le terme de millésime — mesuré à part, comme
+l'écart entre le SFA implicite côté INSEE et le SFA publié côté Eurostat — vaut
+**+0,031 pt** (0,92 md€). Même grandeur, signe opposé au report de 2024. **Le zéro de 2025
+est la somme de deux erreurs qui s'annulent**, et c'est exactement ce que la règle du
+résidu dangereux existe pour attraper.
+
+Le préenregistrement avait donc **raison sur la cause et tort sur sa manifestation** : il
+prédisait le plus gros résidu là où se trouve le plus petit. Consigné ainsi plutôt que
+présenté comme une prédiction réussie.
+
+**Pourquoi les résidus ne s'empilent pas.** Le report est multiplié par (1+r)/(1+g) à
+chaque pas ; sur cette fenêtre g dépasse r partout, donc le facteur reste sous 1 et une
+erreur passée décroît. Ce n'est pas une qualité du modèle mais l'arithmétique de la boule
+de neige — et elle s'éteint : le facteur 2025 vaut **0,9998**. Dès que le taux implicite
+rattrape la croissance nominale, l'amortissement disparaît et les erreurs s'accumulent.
+
+**Ce que ce backtest ne prouve pas.** L'identité est arithmétique : un résidu quasi nul est
+ce qu'elle DOIT rendre, et il ne prouve que l'absence d'erreur de saisie, de signe, d'unité
+ou de périmètre. Les erreurs propres résiduelles (≤ 0,024 pt hors 2025) restent dans
+l'ordre des termes nommés d'avance — écart composantes/différence et dénominateur du ratio
+publié. Aucune n'est inexpliquée.
+
+**Portée.** Cinq années, un seul millésime. 2020 et son ajustement de +69 md€ sont hors
+fenêtre, et c'était la plus exigeante. M1 est clos sur cette portée-là, énoncée.
+
+## D-169 — Correction de D-166 : le rapport CCSS n'était pas en quarantaine
+
+**D-166 affirmait** que `ccss_mai2026_comptes_secu_resultats2025.pdf` était « déjà au
+manifeste mais en quarantaine — il lui manque une URL, pas un téléchargement », et j'en ai
+fait la recommandation la moins chère du carnet.
+
+**C'est faux sur cette branche.** Le fichier porte une URL, n'est pas en quarantaine, et vit
+dans `data/raw/`. La phrase venait d'un relevé de fichiers manquants fait plusieurs jours
+plus tôt **sur `main`**, avant que cette branche ne le source. J'ai réutilisé un constat au
+lieu de relire l'état courant — la même faute que D-166 reprochait au document qu'il
+corrigeait, commise dans la correction elle-même.
+
+**Ce que la relecture donne réellement.** Le fichier est là, donc rien à télécharger pour
+les quatre ancres « Sécurité sociale ». Mais « le fichier est là » n'est pas « l'ancre est
+en main », et c'est précisément la confusion que D-166 dénonçait. Lecture des 256 pages :
+
+| instrument | dans le rapport CCSS | état |
+|---|---|---|
+| forfait social | série nette, 6 360 / 6 300 / 6 551 / 6 758 M€ | **ancre exploitable** |
+| taxe sur les salaires | présent, montants en tableau | à parser |
+| accise tabacs | présent, montants en tableau | à parser |
+| accise alcools | présent, montants en tableau | à parser |
+
+Extraire les trois derniers demande un parse de tableau PDF : c'est du travail M2, que la
+consigne gèle. Consigné ici pour que la liste de téléchargements ne porte pas une ligne
+inutile, et pour que la prochaine session ne reparte pas du constat périmé.
+
+**La leçon, qui est celle de la semaine.** Un constat daté n'est pas un fait courant. Trois
+fois en deux jours : le profil « en main (VM tome I) » établi sans ouvrir le fichier, la
+liste d'ancres écrite dans un conteneur sans données, et maintenant une quarantaine relevée
+sur une autre branche. Le remède est le même chaque fois — relire avant d'affirmer.
+
+## D-170 — La charnière de la boule de neige, que le backtest ne pouvait pas éprouver
+
+**Le constat qui l'appelle.** §6.1 a montré que les résidus ne s'empilent pas sur
+2021-2025, et la raison n'est pas une qualité du modèle : le report est multiplié par
+(1+r)/(1+g), et sur cette fenêtre la croissance nominale dépasse le taux implicite
+partout. Une erreur passée décroît donc mécaniquement. **Le facteur mesuré en 2025 vaut
+0,9998** (D-168) : la fenêtre du backtest s'arrête juste avant la charnière.
+
+**Pourquoi cela compte au-delà de M1.** Tout ce que §3 projette vit de l'autre côté. Dès
+que le taux implicite rattrape la croissance nominale, le facteur passe au-dessus de 1 et
+une erreur initiale — de donnée, de scénario, d'ancre — **enfle** au lieu de s'effacer.
+Aucun test ne couvrait ce régime, parce que la seule fenêtre de données disponible est
+entièrement du côté amortissant.
+
+**Deux tests, sur des trajectoires construites plutôt que sur des données.** Le premier
+place un écart initial d'un point de PIB et vérifie les deux régimes : sous la charnière il
+s'amortit, au-dessus il enfle, et les deux doivent être nettement distincts. Le second
+épingle le cas limite r = g, le seul dont la réponse se prédit exactement : l'écart se
+transporte **tel quel**, à 1e-9 près sur quinze ans.
+
+**Vus échouer**, en remplaçant le report par un facteur constant — une implémentation qui
+amortirait dans les deux sens. Elle **passe le backtest §6.1** sans broncher, puisque toute
+la fenêtre est amortissante, et tombe ici. C'est précisément le trou que ces deux tests
+comblent : un backtest ne peut éprouver que le régime que ses données contiennent.
+
+## D-171 — Cinq tests verts en local, rouges sur le runner : la route de pytest, pas le code
+
+**Le constat.** Le run de la PR #2 (`98e0ff1`, même arbre que `d8f8076`) est le premier à
+exécuter des tests depuis ceux de `f1e5837` le 23 septembre : les six runs suivants se sont
+arrêtés en 3 à 14 secondes, sans runner (D-161). Son job `fast` rend
+`5 failed, 1381 passed, 120 skipped`. Les cinq sont dans `test_patrimoine.py` et tombent
+tous sur leur première instruction, `from scripts.verify_ifi import …` :
+`ModuleNotFoundError: No module named 'scripts'`. Sur le même code, la passe complète
+locale est verte (`a9ea26f`, 1 724 passés).
+
+**La cause.** `scripts/` n'est pas un paquet : sans `__init__.py`, `scripts.verify_ifi` ne
+se résout que si la racine du dépôt est sur `sys.path`. `python -m pytest` l'y met — c'est
+ce que lancent `make gate`, `make full` et `make ci-local`. Le `pytest` nu de la CI ne l'y
+met pas : en mode `prepend`, pytest n'ajoute que `tests/`. Même code, deux routes, deux
+`sys.path`. **Reproduit avant correction**, sans les fichiers DGFiP (impots.gouv.fr est
+injoignable depuis le conteneur de cette session) : un fichier de tranches vide, dans un
+répertoire temporaire hors dépôt, laisse `needs_files` passer jusqu'à l'import. `pytest`
+nu rend alors les cinq `ModuleNotFoundError` du runner ; `python -m pytest` importe sans
+erreur.
+
+**Pourquoi rien ne l'a vu depuis la Phase 5.** L'import date de `9652669` (4 septembre).
+Les cinq tests sont gardés par `needs_files`, et aucun runner n'avait le fichier de
+tranches IFI avant la chaîne de données (D-158) : ils y étaient sautés. Le job `fast` ne
+reçoit les données qu'avec D-161 (`e455e02`), et aucun run n'a démarré ensuite avant
+celui-ci. Le job complet les avait dès D-158 et a tourné sur `f1e5837` : s'il a atteint
+`test_patrimoine.py` avant d'être tué, ces cinq tests y sont tombés sur l'import, comptés
+parmi les 25 échecs que D-160 attribue au seul fichier agrégé. La reproduction de D-160
+(115 passés « sous conditions CI ») ne pouvait réussir que par une route qui met la racine
+sur `sys.path` : fidèle aux données, pas à la commande. Déduit, pas observé — ce job n'a
+imprimé aucun nom.
+
+**Deux contrôles l'avaient sous les yeux.**
+
+1. `make ci-local` (D-165), écrit pour rejouer le job `fast` dans un environnement neuf,
+   lançait `python -m pytest`. Une vérification qui prend une autre route que ce qu'elle
+   protège (D-044) : avec les données, elle passait là où le runner tombe.
+2. La garde des imports (D-161) voyait `from scripts.verify_ifi` — et `MODULES_LOCAUX`
+   portait `scripts`, « quand un test l'importe comme paquet de chemin ». L'exception
+   avait été écrite pour que la garde se taise sur exactement l'import qui casse.
+
+**Ce qui est fait.**
+
+* `test_patrimoine.py` charge `scripts/verify_ifi.py` par son chemin, comme `test_macro.py`
+  charge `verify_tes`. Plus aucun fichier de `src/`, `tests/` ou `scripts/` n'importe
+  `scripts` comme paquet.
+* `scripts` sort de `MODULES_LOCAUX`. La garde lit l'AST au lieu d'importer, donc elle
+  signale cette forme d'import quelle que soit la route. **Vue échouer** avant la
+  correction de `test_patrimoine.py` : elle nomme `scripts` et le fichier. L'absence est
+  épinglée comme `pypdf` l'est ; **vu échouer** en remettant l'entrée.
+* `ci_local` lance `COMMANDE_TESTS`, la commande du job `fast` mot pour mot, et un test la
+  compare au workflow. **Vu échouer** avec `python -m pytest` : il nomme les deux
+  commandes.
+* Après correction, la même sonde donne le même résultat dans les deux routes : un test
+  passe, et les quatre qui lisent les données tombent sur le fichier vide ou absent — ce
+  qu'on attend d'une sonde sans données, et ce n'est plus l'import.
+
+**Ce qui n'est pas fait.** `make gate` et `make full` gardent `python -m pytest` : la route
+locale diffère encore de celle de la CI. La garde des imports couvre cette forme-ci dans
+les deux routes ; changer la commande du propriétaire est un choix sur son flux de
+travail, pas une correction. La passe complète n'est pas relancée : sans les fichiers IFI,
+les cinq tests restent sautés dans ce conteneur, et c'est le prochain run du job `fast`,
+qui les télécharge, qui les fait tourner pour de vrai.

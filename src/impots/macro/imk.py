@@ -151,7 +151,8 @@ def regime_effect(raw: Path | None = None) -> dict[str, RegimeEffect]:
     """
     path = (raw or RAW) / DOCUMENTS["wp139"]
     if not path.exists():
-        raise ImkError(f"{path} not found — download it and record it in the manifest")
+        raise ImkError(f"{path} not found — download it and record it in the manifest "
+                       f"(`impots data fetch {path.name}`)")
     text = " ".join(_lines(str(path))[:])
     found: dict[str, RegimeEffect] = {}
     for regime in REGIME_ROWS:
@@ -205,7 +206,8 @@ def load(document: str, raw: Path | None = None) -> dict[str, Stats]:
         raise ImkError(f"unknown document {document!r}; have {sorted(DOCUMENTS)}")
     path = (raw or RAW) / DOCUMENTS[document]
     if not path.exists():
-        raise ImkError(f"{path} not found — download it and record it in the manifest")
+        raise ImkError(f"{path} not found — download it and record it in the manifest "
+                       f"(`impots data fetch {path.name}`)")
     if importlib.util.find_spec("pypdf") is None:  # pragma: no cover - environment
         raise ImkError("pypdf is required to read the IMK working papers")
 

@@ -96,7 +96,7 @@ bien l'année Covid, et l'intérêt net 2025 (62,2 md€, toutes APU) se place j
 de l'ancre programme 117 (58,6 md€, État seul), ce qui est le bon ordre pour des périmètres
 emboîtés.
 
-**Il reste UNE entrée, et une seule : l'ajustement flux-stocks** (§3). Le backtest ne
+**~~Il reste UNE entrée, et une seule : l'ajustement flux-stocks~~** (levée le 2026-09-25 — voir §6, la route annoncée était fausse) (§3). Le backtest ne
 tournera pas sans lui, et c'est voulu — `backtest` prend le SFA sans défaut, refuse `None`,
 et refuse aussi une série identiquement nulle, qui est la signature du défaut recopié sous
 une étiquette « réalisé ».
@@ -109,3 +109,35 @@ fichiers non sourcés vers `data/raw/_unsourced/`. Les 76 sont présents, et les
 étaient exactement les 76 en quarantaine — une coïncidence parfaite qui aurait dû alerter
 tout de suite. Consigné parce que la conclusion fausse était alarmante et aurait déclenché
 une campagne de téléchargement inutile.
+
+---
+
+## 6. CLOS le 2026-09-25 — et la dernière entrée n'était pas celle annoncée
+
+**Ce document annonçait « il reste UNE entrée, et une seule : l'ajustement flux-stocks ».**
+C'était exact sur la quantité et faux sur la route. Trois corrections, chacune vérifiée à
+la source :
+
+1. **Le code de dataset donné ici était faux.** `gov_10dd_edpt1` existe mais ses dix-huit
+   postes ne portent AUCUN ajustement flux-stocks ; `gov_10dd_sfa`, proposé par ailleurs,
+   rend **HTTP 404**. La bonne table est **`gov_10dd_edpt3`**, « Transition from the
+   deficit/surplus to the change in debt » (D-163).
+2. **Aucun téléchargement n'était nécessaire.** L'API de diffusion Eurostat sert une URL de
+   requête **stable et reproductible**, byte-identique sur deux appels, dont le champ
+   `updated` porte la date de publication et non celle de la requête. Elle est manifestée
+   telle quelle — contrairement à un export personnalisé du databrowser, dont l'URL pointe
+   un UUID de session.
+3. **La fenêtre a dû reculer de 2019 à 2021.** Les notifications EDP qui portent 2019-2020
+   sont sur un autre millésime : le déficit 2019 y vaut 74,7 md€ contre 58,2 aujourd'hui,
+   et l'ajustement de cette année **change de signe** (−10,6 contre +8,4). Le raccord aurait
+   produit au joint 2021/2022 une rupture indiscernable d'une erreur de modèle (D-167).
+
+**§6.1 est noté** (D-168) : cinq années, un seul millésime, aucune hors de la bande de
+±0,10 pt de PIB préenregistrée par commit avant le premier résidu. Le résidu maximal vaut
++0,039 pt, et le zéro apparent de 2025 s'est révélé être **deux erreurs qui s'annulent** —
+la décomposition l'a montré, la colonne des résidus l'aurait caché.
+
+**Ce qui reste hors portée, dit plutôt qu'enfoui** : 2019 et 2020, donc l'ajustement de
++69 md€ de l'année Covid, la plus exigeante de la série. Le rouvrir demanderait une source
+de millésime COURANT couvrant ces deux années ; ni Eurostat ni les deux notifications
+examinées ne la fournissent.
