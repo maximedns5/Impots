@@ -146,6 +146,12 @@ ETAPES_CHAINE = (
     ("préflight", ["impots", "data", "check", "--profile", "tests"]),
 )
 
+#: La commande de test du job `fast`, MOT POUR MOT. `python -m pytest` met la racine du
+#: dépôt sur `sys.path`, le `pytest` nu de la CI non : avec la première, ce script a
+#: rejoué la CI en résolvant un import qu'elle ne résout pas (D-171). Un test la compare
+#: au workflow.
+COMMANDE_TESTS = ["pytest", "-q", "-m", "not slow"]
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -203,7 +209,7 @@ def main() -> int:
                     break
             if not echecs:
                 dire("..", "sous-ensemble rapide `-m \"not slow\"` (≈ 11 min)")
-                code, _ = _run(["python", "-m", "pytest", "-q", "-m", "not slow"],
+                code, _ = _run(COMMANDE_TESTS,
                                cwd=worktree, env_venv=venv, journal=base / "pytest.log")
                 resume = (base / "pytest.log").read_text(encoding="utf-8").splitlines()
                 derniere = next((x for x in reversed(resume)

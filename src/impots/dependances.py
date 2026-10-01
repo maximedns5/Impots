@@ -35,8 +35,9 @@ MODULES_LOCAUX: frozenset[str] = frozenset({
     "impots",
     # scripts du dépôt, importés après un `sys.path.insert(str(RACINE / "scripts"))`
     "verify_aft", "split_plf_articles", "write_plf_coverage", "ci_local",
-    # `scripts` lui-même, quand un test l'importe comme paquet de chemin
-    "scripts",
+    # PAS `scripts` : ce n'est pas un paquet. `from scripts.x import …` ne se résout que
+    # sous `python -m pytest`, qui met la racine sur `sys.path` ; le `pytest` nu de la CI
+    # ne l'y met pas (D-171). Absent d'ici, la garde des imports le signale.
     # aide de test vivant dans tests/ : `tests/knob_cases.py`, importé par test_knobs
     "knob_cases",
 })

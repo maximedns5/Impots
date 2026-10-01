@@ -7,10 +7,13 @@ a survécu ainsi des semaines, cassé sur chaque runner, en signalant « pypdf i
 
 from __future__ import annotations
 
+import importlib.util
 import json
+import shlex
 from pathlib import Path
 
 import pytest
+import yaml
 
 from impots import dependances as dep
 
@@ -40,6 +43,16 @@ def test_pypdf_is_declared_since_it_was_the_one_that_broke_ci() -> None:
     """Épinglé nommément : c'est la dépendance qui manquait, et son retrait doit rougir."""
     assert "pypdf" in dep.declarees()
     assert "numpy" in dep.declarees()
+
+
+def test_scripts_is_not_a_local_module_since_importing_it_broke_ci() -> None:
+    """`scripts/` n'est pas un paquet. `from scripts.verify_ifi import …` ne se résolvait
+    que sous `python -m pytest` (make, make ci-local), qui met la racine du dépôt sur
+    `sys.path` ; le `pytest` nu de la CI ne l'y met pas, et cinq tests de test_patrimoine
+    sont tombés sur le premier runner qui avait leurs données (D-171). Le lister ici
+    ferait taire la garde ci-dessus sur cette forme d'import : un script se charge par
+    son chemin, comme test_macro charge verify_tes."""
+    assert "scripts" not in dep.MODULES_LOCAUX
 
 
 # --------------------------------------------------------------------------- #
@@ -98,3 +111,29 @@ def test_local_modules_are_named_one_by_one_never_matched_by_pattern(tmp_path) -
     assert "knob_cases" in dep.MODULES_LOCAUX
     racine = _projet(tmp_path, [], "import verify_aft\n")
     assert dep.non_declarees(racines=("src",), racine=racine) == {}
+
+
+# --------------------------------------------------------------------------- #
+# la route : ci_local rejoue la commande de la CI, pas celle du Makefile
+# --------------------------------------------------------------------------- #
+def _ci_local():
+    spec = importlib.util.spec_from_file_location(
+        "ci_local", dep.RACINE / "scripts" / "ci_local.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_ci_local_runs_the_fast_job_test_command_word_for_word() -> None:
+    """`make ci-local` existe pour rejouer le job `fast`. Il lançait `python -m pytest`
+    quand le job lance `pytest` : la première route met la racine du dépôt sur
+    `sys.path`, la seconde non, et `from scripts.verify_ifi import …` passait chez lui en
+    échouant sur le runner (D-171). Une vérification qui prend une autre route que ce
+    qu'elle protège (D-044)."""
+    workflow = yaml.safe_load(
+        (dep.RACINE / ".github" / "workflows" / "test.yml").read_text(encoding="utf-8"))
+    commandes = [shlex.split(etape["run"]) for etape in workflow["jobs"]["fast"]["steps"]
+                 if etape.get("run", "").lstrip().startswith("pytest")]
+    rejouee = _ci_local().COMMANDE_TESTS
+    assert commandes == [rejouee], (
+        f"le job `fast` lance {commandes}, ci_local lance {rejouee}")

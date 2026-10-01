@@ -11,7 +11,10 @@ destroy the claim it was meant to protect.
 
 from __future__ import annotations
 
+import importlib.util
+import sys
 from itertools import pairwise
+from pathlib import Path
 
 import pytest
 
@@ -19,8 +22,28 @@ from impots.patrimoine import ifi_cells
 
 pytest.importorskip("openpyxl")
 
+ROOT = Path(__file__).resolve().parents[1]
 HAVE = (ifi_cells.RAW / ifi_cells.TRANCHE_FILE).exists()
 needs_files = pytest.mark.skipif(not HAVE, reason="data/raw/ has no DGFiP IFI bulletin")
+
+
+def _gate():
+    """`scripts/verify_ifi.py`, loaded by path as test_macro loads verify_tes.
+
+    `scripts/` is not a package: `from scripts.verify_ifi import …` resolved only under
+    `python -m pytest`, which puts the repo root on sys.path. CI runs bare `pytest`, which
+    does not, and these tests failed on the first runner that had their data (D-171).
+    """
+    spec = importlib.util.spec_from_file_location("verify_ifi", ROOT / "scripts" / "verify_ifi.py")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["verify_ifi"] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture(scope="module")
+def gate():
+    return _gate()
 
 
 # --- reading the publication ---------------------------------------------------------
@@ -130,7 +153,7 @@ def test_the_two_published_routes_to_a_tranches_ifi_agree():
 
 
 @needs_files
-def test_inverting_the_bareme_puts_each_mean_base_inside_its_own_tranche():
+def test_inverting_the_bareme_puts_each_mean_base_inside_its_own_tranche(gate):
     """The falsifiable half of the reformulated check. Nothing forces this.
 
     The base per tranche is not published, so the mechanical check inverts the barème
@@ -138,7 +161,7 @@ def test_inverting_the_bareme_puts_each_mean_base_inside_its_own_tranche():
     rate off, the exempt band mishandled — would put an implied mean outside its own
     bracket. Measured: 1.7052, 3.1772, 6.0747, 14.7126 M€, all inside.
     """
-    from scripts.verify_ifi import barometer, invert
+    barometer, invert = gate.barometer, gate.invert
 
     scale = barometer(ifi_cells.TRANCHE_YEAR)
     for tranche in ifi_cells.tranches():
@@ -150,7 +173,7 @@ def test_inverting_the_bareme_puts_each_mean_base_inside_its_own_tranche():
 
 
 @needs_files
-def test_the_reconstructed_base_falls_short_by_the_amount_the_reliefs_predict():
+def test_the_reconstructed_base_falls_short_by_the_amount_the_reliefs_predict(gate):
     """The other falsifiable half: the residual's SIGN is the test.
 
     Décote, plafonnement and the dons reduction all lower tax, so inverting tax must
@@ -158,7 +181,7 @@ def test_the_reconstructed_base_falls_short_by_the_amount_the_reliefs_predict():
     wrong rather than incomplete. Measured -6.46 % against an independently published
     aggregate, with dons alone worth about 165 M EUR of tax relief.
     """
-    from scripts.verify_ifi import barometer, invert
+    barometer, invert = gate.barometer, gate.invert
 
     aggregate = ifi_cells.aggregate()
     scale = barometer(ifi_cells.TRANCHE_YEAR)
@@ -173,13 +196,13 @@ def test_the_reconstructed_base_falls_short_by_the_amount_the_reliefs_predict():
 
 
 @needs_files
-def test_the_bareme_is_the_engines_and_its_node_is_read_by_a_formula():
+def test_the_bareme_is_the_engines_and_its_node_is_read_by_a_formula(gate):
     """The phantom check the handoff demands on every node in this namespace.
 
     `aide_a_domicile` is one namespace away from these parameters, resolves non-null,
     and is read by nothing (D-064, D-075). Resolving is not the property that matters.
     """
-    from scripts.verify_ifi import _is_read, barometer
+    _is_read, barometer = gate._is_read, gate.barometer
 
     assert barometer(2024) == [
         (800_000, 0.005), (1_300_000, 0.007), (2_570_000, 0.01),
@@ -190,8 +213,8 @@ def test_the_bareme_is_the_engines_and_its_node_is_read_by_a_formula():
 
 
 @needs_files
-def test_the_gate_passes_and_is_the_thing_that_gates():
-    from scripts.verify_ifi import audit
+def test_the_gate_passes_and_is_the_thing_that_gates(gate):
+    audit = gate.audit
 
     assert audit() is True
 
@@ -369,7 +392,7 @@ class TestHouseholdIfi:
         assert theirs.ifi / ours.ifi - 1 == pytest.approx(0.0946, abs=0.001)
 
     @needs_files
-    def test_the_published_data_prefers_the_correction(self):
+    def test_the_published_data_prefers_the_correction(self, gate):
         """Not two lawyers arguing: the DGFiP aggregate discriminates.
 
         Reconstructing the aggregate base from the published per-tranche tax gives
@@ -378,7 +401,7 @@ class TestHouseholdIfi:
         reconstruction DOWN, which puts the truth above both — so the reading that
         lands closer from below is the better one.
         """
-        from scripts.verify_ifi import barometer, tax_on
+        barometer, tax_on = gate.barometer, gate.tax_on
 
         aggregate = ifi_cells.aggregate()
         scale = barometer(ifi_cells.TRANCHE_YEAR)

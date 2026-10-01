@@ -8396,3 +8396,66 @@ transporte **tel quel**, à 1e-9 près sur quinze ans.
 amortirait dans les deux sens. Elle **passe le backtest §6.1** sans broncher, puisque toute
 la fenêtre est amortissante, et tombe ici. C'est précisément le trou que ces deux tests
 comblent : un backtest ne peut éprouver que le régime que ses données contiennent.
+
+## D-171 — Cinq tests verts en local, rouges sur le runner : la route de pytest, pas le code
+
+**Le constat.** Le run de la PR #2 (`98e0ff1`, même arbre que `d8f8076`) est le premier à
+exécuter des tests depuis ceux de `f1e5837` le 23 septembre : les six runs suivants se sont
+arrêtés en 3 à 14 secondes, sans runner (D-161). Son job `fast` rend
+`5 failed, 1381 passed, 120 skipped`. Les cinq sont dans `test_patrimoine.py` et tombent
+tous sur leur première instruction, `from scripts.verify_ifi import …` :
+`ModuleNotFoundError: No module named 'scripts'`. Sur le même code, la passe complète
+locale est verte (`a9ea26f`, 1 724 passés).
+
+**La cause.** `scripts/` n'est pas un paquet : sans `__init__.py`, `scripts.verify_ifi` ne
+se résout que si la racine du dépôt est sur `sys.path`. `python -m pytest` l'y met — c'est
+ce que lancent `make gate`, `make full` et `make ci-local`. Le `pytest` nu de la CI ne l'y
+met pas : en mode `prepend`, pytest n'ajoute que `tests/`. Même code, deux routes, deux
+`sys.path`. **Reproduit avant correction**, sans les fichiers DGFiP (impots.gouv.fr est
+injoignable depuis le conteneur de cette session) : un fichier de tranches vide, dans un
+répertoire temporaire hors dépôt, laisse `needs_files` passer jusqu'à l'import. `pytest`
+nu rend alors les cinq `ModuleNotFoundError` du runner ; `python -m pytest` importe sans
+erreur.
+
+**Pourquoi rien ne l'a vu depuis la Phase 5.** L'import date de `9652669` (4 septembre).
+Les cinq tests sont gardés par `needs_files`, et aucun runner n'avait le fichier de
+tranches IFI avant la chaîne de données (D-158) : ils y étaient sautés. Le job `fast` ne
+reçoit les données qu'avec D-161 (`e455e02`), et aucun run n'a démarré ensuite avant
+celui-ci. Le job complet les avait dès D-158 et a tourné sur `f1e5837` : s'il a atteint
+`test_patrimoine.py` avant d'être tué, ces cinq tests y sont tombés sur l'import, comptés
+parmi les 25 échecs que D-160 attribue au seul fichier agrégé. La reproduction de D-160
+(115 passés « sous conditions CI ») ne pouvait réussir que par une route qui met la racine
+sur `sys.path` : fidèle aux données, pas à la commande. Déduit, pas observé — ce job n'a
+imprimé aucun nom.
+
+**Deux contrôles l'avaient sous les yeux.**
+
+1. `make ci-local` (D-165), écrit pour rejouer le job `fast` dans un environnement neuf,
+   lançait `python -m pytest`. Une vérification qui prend une autre route que ce qu'elle
+   protège (D-044) : avec les données, elle passait là où le runner tombe.
+2. La garde des imports (D-161) voyait `from scripts.verify_ifi` — et `MODULES_LOCAUX`
+   portait `scripts`, « quand un test l'importe comme paquet de chemin ». L'exception
+   avait été écrite pour que la garde se taise sur exactement l'import qui casse.
+
+**Ce qui est fait.**
+
+* `test_patrimoine.py` charge `scripts/verify_ifi.py` par son chemin, comme `test_macro.py`
+  charge `verify_tes`. Plus aucun fichier de `src/`, `tests/` ou `scripts/` n'importe
+  `scripts` comme paquet.
+* `scripts` sort de `MODULES_LOCAUX`. La garde lit l'AST au lieu d'importer, donc elle
+  signale cette forme d'import quelle que soit la route. **Vue échouer** avant la
+  correction de `test_patrimoine.py` : elle nomme `scripts` et le fichier. L'absence est
+  épinglée comme `pypdf` l'est ; **vu échouer** en remettant l'entrée.
+* `ci_local` lance `COMMANDE_TESTS`, la commande du job `fast` mot pour mot, et un test la
+  compare au workflow. **Vu échouer** avec `python -m pytest` : il nomme les deux
+  commandes.
+* Après correction, la même sonde donne le même résultat dans les deux routes : un test
+  passe, et les quatre qui lisent les données tombent sur le fichier vide ou absent — ce
+  qu'on attend d'une sonde sans données, et ce n'est plus l'import.
+
+**Ce qui n'est pas fait.** `make gate` et `make full` gardent `python -m pytest` : la route
+locale diffère encore de celle de la CI. La garde des imports couvre cette forme-ci dans
+les deux routes ; changer la commande du propriétaire est un choix sur son flux de
+travail, pas une correction. La passe complète n'est pas relancée : sans les fichiers IFI,
+les cinq tests restent sautés dans ce conteneur, et c'est le prochain run du job `fast`,
+qui les télécharge, qui les fait tourner pour de vrai.
