@@ -119,6 +119,35 @@ def pin_benefit_history(simulation: Any, year: int) -> None:
         simulation.set_input("aide_logement", month, simulation.calculate("aide_logement", month))
 
 
+#: The inputs that open the AAH, the ASI or the ASS. No field writes them yet: a situation
+#: carries them only when someone adds them, as the D-179 tests do.
+MINIMA_INPUTS = ("taux_incapacite", "pensions_invalidite", "handicap", "ass_precondition_remplie")
+
+
+def has_benefit_cascade(situation: dict[str, Any]) -> bool:
+    """Whether `pin_benefit_history` has anything to protect in this situation.
+
+    A dwelling opens the housing aid's circle with the RSA (D-178). An AAH opens another,
+    dwelling or not: the ASPA and the ASI count the household's AAH of the three months
+    before. `revenu_disponible` computed first reaches the AAH of a month through the
+    PAJE's childcare supplement, under the CRDS of the IFI cap, and beneath that AAH the
+    ASI of the month before reads a family base where the AAH of earlier months is cut to
+    zero. That base stays cached for the rest of the computation, and the partner's ASPA
+    or ASI read it: 1 800 EUR of disposable income by evaluation order on an unhoused
+    couple (D-179).
+
+    The housing-aid pin closes this circle too, as a side effect. Each month's housing
+    aid, zero without a dwelling but evaluated all the same, reaches that month's ASPA
+    through its student-grant test, which reads the RSA's resources. No AAH is on the
+    stack there, so the family base it caches counts the AAH in full. The D-179 tests
+    guard that. A household with neither a dwelling nor one of `MINIMA_INPUTS` has no
+    circle to close, and its full tier keeps its cost.
+    """
+    housed = "statut_occupation_logement" in situation["menages"][MENAGE_ID]
+    return housed or any(
+        name in person for person in situation["individus"].values() for name in MINIMA_INPUTS)
+
+
 def adult_id(i: int) -> str:
     return f"adulte_{i}"
 

@@ -635,3 +635,57 @@ def test_a_renters_emtr_compares_two_computations_of_the_same_kind(
     by_hand = 1.0 - (bumped - result.baseline["revenu_disponible"]) / EMTR_STEP
     assert result.emtr == pytest.approx(by_hand, abs=1e-3)
     assert 0.0 < result.emtr < 1.0
+
+
+#: Beside an AAH recipient, the partner whose minimum reads the AAH of the three months
+#: before: an ASPA pensioner, and an ASI recipient (invalidity pension and handicap).
+AAH_PARTNERS = {
+    "aspa": ({"salaire_brut_annuel": 0, "annee_naissance": 1955, "pension_annuelle": 5_000},
+             {}),
+    "asi": ({"salaire_brut_annuel": 0, "annee_naissance": 1972},
+            {"pensions_invalidite": 250.0, "handicap": True}),
+}
+
+
+@pytest.mark.parametrize("partner", sorted(AAH_PARTNERS))
+def test_an_aah_recipients_emtr_beside_a_partners_minimum_compares_like_with_like(
+    partner: str, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The ASPA and the ASI count the household's other minima over the three months
+    before, an AAH among them. `revenu_disponible` computed first reaches the AAH of a
+    month through the PAJE's childcare supplement, and beneath it the ASI of the month
+    before reads a family base where the AAH of earlier months is cut to zero; the
+    partner's minimum then read that base. On the unhoused AAH + ASPA couple, the ASPA of
+    January to March came out at 1 012, 831 and 507 EUR instead of 183. The registry
+    order did not cut it. Housed, the D-178 pin protected the base; without a dwelling,
+    the builder skipped that pin, and the EMTR compared one order with the other: -16.19
+    beside the ASPA pensioner and -17.61 beside the ASI recipient, against 0.23 by hand.
+
+    No field reaches the AAH yet: the taux d'incapacité, and the partner's invalidity
+    inputs, are written into the situation the way a field would write them, on every
+    covered month. Both legs of the hand computation go through `compute` (D-179)."""
+    from impots.engine import situations
+
+    original = situations.build_situation
+    bump = {"on": False}
+    person, partner_inputs = AAH_PARTNERS[partner]
+
+    def with_disability(household, year, historique_revenus=True):
+        situation = original(household, year, historique_revenus)
+        covered = [month for y in situations.covered_years(year, historique_revenus)
+                   for month in situations.months(y)]
+        situation["individus"]["adulte_0"]["taux_incapacite"] = dict.fromkeys(covered, 0.8)
+        for name, value in partner_inputs.items():
+            situation["individus"]["adulte_1"][name] = dict.fromkeys(covered, value)
+        return perturb_first_adult(situation, year, EMTR_STEP) if bump["on"] else situation
+
+    monkeypatch.setattr(situations, "build_situation", with_disability)
+    couple = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 6_000, "annee_naissance": 1975}, person],
+         "couple_marie_ou_pacse": True})
+    result = compute(couple, 2024, tier="full", emtr=True)
+    bump["on"] = True
+    bumped = compute(couple, 2024, tier="full").baseline["revenu_disponible"]
+    by_hand = 1.0 - (bumped - result.baseline["revenu_disponible"]) / EMTR_STEP
+    assert result.emtr == pytest.approx(by_hand, abs=1e-3)
+    assert 0.0 < result.emtr < 1.0
