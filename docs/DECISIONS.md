@@ -8844,3 +8844,107 @@ un constat. Les enregistrements PLF 2027 n'en dépendent pas. Ils enregistrent l
 mécanique de `scenarios.mechanical_price`, qui passe par l'ordre du `runner`. Recalculé sur
 la fixture pour 2026, il est identique au centime avant et après, deltas compris : art. 2,
 +5 827 182,89 € ; art. 3, −2 699 251,40 €.
+
+## D-177 — Le chômage : la même spirale, et le RFR de N-2 épinglé à la construction
+
+**Le point de départ.** D-176 avait trouvé la spirale sœur du chômage sans la corriger :
+l'IR assis sur le brut, la CSG et la CRDS absentes du RD au-dessus du plancher du SMIC, et
+un résultat qui dépend de l'ordre. Elle proposait de fermer la régression en fournissant le
+RFR des années antérieures à l'historique. **Cela n'aurait pas suffi, et la mesure le
+montre.**
+
+**Pourquoi.** openfisca coupe toute évaluation imbriquée d'une variable à une autre période
+(`max_spiral_loops = 1`), que la régression se termine ou non. Dans l'appel de l'impôt sur
+le revenu, `rni` de 2024 est sur la pile. La CSG du chômage de 2024 demande le RFR de 2022,
+qui demande `rni` de 2022 : coupé, mis à zéro, quoi qu'il y ait plus bas. Journalisé sur un
+chômeur de 30 000 €, la première coupe de l'appel de l'IR est `rni@2022`, sous
+`chomage_imposable@2024-01 > csg_deductible_chomage > csg_imposable_chomage > rfr@2022`.
+Fournir le RFR de N-3 et de N-4 ne touche pas à cette coupe-là.
+
+**La correction : le RFR de N-2, calculé d'abord puis épinglé.** C'est
+`engine.situations.pin_rfr_n_2`, appelée par les deux constructeurs (`compute._build` et
+`to_openfisca.build_simulation`) une fois toutes les entrées posées. Calculé seul, le RFR
+de N-2 déroule la chaîne de l'année N-2 en entier. La seule coupe est alors le RFR de N-4
+lui-même : 36 coupes journalisées, toutes sur `rfr@2020`, une année où rien n'est fourni.
+Épinglé, il n'est plus rouvert par aucun calcul ultérieur, dans quelque ordre que ce soit.
+Le chômage n'est pas épinglé, puisque c'est un montant brut : c'est son taux qui l'est, à
+travers le RFR qui le fixe.
+
+**L'hypothèse que la correction ajoute.** La CSG de N-2 lit le RFR de N-4, une année sans
+revenu : elle est donc exonérée, et le revenu de remplacement de N-2 entre brut dans le RFR
+de N-2. Pour le chômeur de 30 000 €, ce RFR vaut 27 000 € au lieu de 25 992 € net de la CSG
+déductible. L'écart ne joue qu'au voisinage d'un seuil de taux, et seulement au-dessus du
+plancher du SMIC.
+
+**Mesuré, sur `545c1f7` puis après.** Cinq ménages synthétiques propriétaires : chômage de
+30 000 €, de 40 000 €, à côté d'un salaire, sous le plancher, à côté d'une pension.
+
+| | avant | après |
+|---|---:|---:|
+| ménages qui bougent d'un ordre à l'autre | 4 sur 5, jusqu'à 1 262 € | 0 |
+| IR du chômeur de 30 000 € | 1 588 €, sur le brut | 1 426 €, net de la CSG déductible |
+| RD du même chômeur | 28 112,34 € (registre), 28 412,00 € (RD d'abord) | 26 599,18 € dans les deux |
+| prélèvements chômage dans le RD, `chomage_net` d'abord | 1 645,69 € sur 6 253,61 € dus | 6 253,61 € |
+
+Les montants dus se retrouvent à la main : 98,25 % de l'allocation (l'abattement de
+1,75 %), à 3,8 % de CSG déductible, 2,4 % de CSG non déductible et 0,5 % de CRDS, soit
+1 974,83 € à 30 000 €.
+
+Sur la population de la fixture (400 logements) :
+* avant, `chomage_net` calculé d'abord laissait 0,56 € de prélèvements sur 340 213,03 €
+  dus, en pondéré ; après, 340 213,41 € ;
+* dans l'ordre du `runner`, celui du rapport, 2 ménages sur 400 bougent. Le RD pondéré
+  baisse de 232 745 (−0,0092 %) et l'IR de 45 033 (−0,0218 %, un seul ménage, −348 €). La
+  médiane, le D1 et le D9 sont identiques au centime, comme les totaux de PPA, de RSA et
+  d'aides au logement ;
+* 12 ménages sur 400 bougent encore d'un ordre à l'autre, tous locataires, de +22 € à
+  +352 € : c'est la cascade des prestations seule (D-176). Le retraité dont le conjoint
+  touche du chômage ne bouge plus que de ce que la cascade fait bouger son ménage : +142,14 €
+  au lieu de +255,05 €, les 112,91 € de CRDS sur sa pension étant partis.
+
+**Le chemin ménage.** Aucun cas exprimable ne bouge : les cinq cas d'or, les retraités de
+D-176 et un salaire de 600 000 € sont identiques au centime. Le format d'entrée n'a pas de
+chômage. Le constructeur ménage est quand même épinglé, parce que la régression y existe
+structurellement et qu'un champ chômage la rouvrirait ; un test écrit le chômage dans la
+situation comme le ferait ce champ. Le calcul y devient aussi plus rapide : la chaîne de N-2
+est calculée une fois au lieu d'être coupée, purgée et recalculée. Médianes : palier léger
+de 0,95 s à 0,67 s, palier complet de 2,99 s à 2,57 s. Côté population, sur la fixture, le
+palier complet passe de 3,60 s à 3,03 s et le palier léger de 0,81 s à 0,92 s.
+
+**Les enregistrements PLF 2027 : à trancher par le propriétaire.** Contrairement à D-176,
+cette correction déplace un chiffre enregistré. Sur la fixture, le coût mécanique de l'art. 2
+(revalorisation du barème) passe de 5 827 182,89 € à 5 821 100,83 € (−0,10 %), parce que
+l'IR des chômeurs au-dessus du plancher est désormais assis sur le net. L'art. 3 ne bouge
+pas. Fusionner cette branche dans `claude/plf2027` avant les enregistrements, c'est
+enregistrer sur ce moteur ; après, c'est enregistrer sur l'ancien. Les deux se défendent, et
+chaque enregistrement consigne son commit, mais le choix revient au propriétaire et se fait
+avant de lancer `chiffrage register`.
+
+**Les caches EMTR.** `to_openfisca.WIRING` passe à « D-177 » : les fichiers écrits sous
+D-176 ne sont plus servis.
+
+**Vus échouer.** Les 3 tests ajoutés échouaient sur `545c1f7`, chacun pour sa raison :
+* l'ordre, côté population : 4 ménages sur 5 bougent, jusqu'à 1 261,97 € ;
+* l'IR et le RD à la main : un IR de 1 588 € au lieu de 1 426 € ;
+* l'EMTR d'un chômeur, côté ménage, le chômage étant écrit dans la situation : −2,6797 au
+  lieu de 0,3169.
+
+Après correction, les 3 passent, ainsi que les 11 tests de D-175 et D-176. `make gate`
+donne 1 429 réussis, 172 ignorés et 12 échecs : ce sont les 12 de D-176, qui échouent à
+l'identique sans ces corrections, faute de données dans ce conteneur.
+
+**Ce qui reste.**
+* **La cascade des prestations** (D-176) : 12 ménages locataires de la fixture, de +22 € à
+  +352 €. Elle n'est pas traitée ici.
+* **Les prélèvements de N-1** lisent le RFR de N-3, une année sans revenu : ils sont
+  exonérés. Les regards en arrière des prestations (le trimestre de référence de la PPA et
+  du RSA, les douze mois de l'aide au logement) voient donc le chômage de N-1 sans CSG,
+  au-dessus du plancher. Sur la fixture, aucun de ces totaux n'a bougé d'un euro.
+* **D-176 est corrigée sur un point** : fournir le RFR des années antérieures à
+  l'historique n'aurait pas suffi, pour la raison donnée plus haut.
+
+**Ce que le propriétaire refait.** D'abord `make full`, puis la réconciliation. À la
+différence de D-176, `reports/reconciliation.md` et `data/processed/baseline_2024.json`
+doivent bouger un peu : sur la fixture, l'IR de −0,02 % et le RD de −0,01 %, soit de l'ordre
+de −0,02 md€ et −0,12 md€ une fois transposés. Le niveau de vie ne devrait pas bouger.
+Ensuite, la décision de calendrier ci-dessus.

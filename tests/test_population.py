@@ -1112,3 +1112,83 @@ def test_a_pensioners_disposable_income_does_not_depend_on_evaluation_order() ->
     np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
     taxable = built.calculate("retraite_imposable", add=True)
     np.testing.assert_allclose(taxable, frame["pension_annuelle"].to_numpy(), atol=0.5)
+
+
+# --------------------------------------------------------------------------- #
+# unemployment benefit — the same spiral, and the RFR of N-2 (D-177)
+# --------------------------------------------------------------------------- #
+def _unemployed() -> pl.DataFrame:
+    """Unemployment benefit above the SMIC floor (30 000 and 40 000 EUR), beside a
+    salary, below the floor (18 000) and beside a pension. Owners, no rent: the
+    benefits cascade has spirals of its own (D-176), which this test is not about."""
+    rows = [
+        ("h0", 45, "personne_de_reference", "declarant_principal", "demandeur", 0, 0, 30_000),
+        ("h1", 45, "personne_de_reference", "declarant_principal", "demandeur", 0, 0, 40_000),
+        ("h2", 50, "personne_de_reference", "declarant_principal", "demandeur", 35_000, 0, 0),
+        ("h2", 48, "conjoint", "conjoint", "conjoint", 0, 0, 25_000),
+        ("h3", 45, "personne_de_reference", "declarant_principal", "demandeur", 0, 0, 18_000),
+        ("h4", 70, "personne_de_reference", "declarant_principal", "demandeur", 0, 22_000, 0),
+        ("h4", 62, "conjoint", "conjoint", "conjoint", 0, 0, 7_000),
+    ]
+    return pl.DataFrame({
+        "person_id": list(range(len(rows))),
+        "household_id": [row[0] for row in rows],
+        "foyer_id": [f"{row[0]}#0" for row in rows],
+        "famille_id": [f"{row[0]}#0" for row in rows],
+        "weight": [1.0] * len(rows),
+        "age": [row[1] for row in rows],
+        "role_menage": [row[2] for row in rows],
+        "role_foyer": [row[3] for row in rows],
+        "role_famille": [row[4] for row in rows],
+        "salaire_brut_annuel": [float(row[5]) for row in rows],
+        "pension_annuelle": [float(row[6]) for row in rows],
+        "chomage_annuel": [float(row[7]) for row in rows],
+        "statut_occupation": ["proprietaire"] * len(rows),
+        "zone_apl": ["zone_2"] * len(rows),
+        "loyer_mensuel": [0.0] * len(rows),
+        "parent_isole": [False] * len(rows),
+    })
+
+
+def test_unemployment_benefit_prices_the_same_whatever_is_computed_first() -> None:
+    """The runner's order against `revenu_disponible` first, as for pensions in D-176.
+
+    Measured on the code before D-177: 4 ménages of 5 moved, by up to 1 262 EUR. The
+    30 000 EUR chômeur kept 28 112.34 EUR in the runner's order and 28 412.00 EUR
+    computed first, and the CSG and CRDS owed on it reached neither."""
+    from impots.engine.system import baseline
+
+    frame = _unemployed()
+    runner = run(frame, 2024, tier="full").households
+    built = build_simulation(frame, baseline(), 2024)
+    first = built.calculate("revenu_disponible")
+    np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
+
+
+def test_unemployment_benefit_is_taxed_and_levied_net_of_its_csg() -> None:
+    """By hand, on the 30 000 EUR chômeur. The CSG on unemployment benefit is assessed
+    on 98.25 % of it (the 1.75 % abatement): 3.8 % deductible, 2.4 % not, and 0.5 % of
+    CRDS. Above the SMIC floor all three are due, and the income tax is assessed on the
+    benefit net of the deductible part — read here off a simulation where that net
+    amount is an INPUT, which no spiral can reach.
+
+    Before D-177 the runner's income tax was 1 588 EUR, assessed on the gross 30 000;
+    on the net it is 1 426 EUR."""
+    from impots.engine.system import baseline
+
+    frame = _unemployed()
+    households = run(frame, 2024, tier="full").households
+    h0 = households.filter(pl.col("household_id") == "h0")
+    assiette = 30_000 * 0.9825
+    net_taxable = 30_000 - 0.038 * assiette
+
+    oracle = build_simulation(frame, baseline(), 2024)
+    taxable = frame["chomage_annuel"].to_numpy() / 12.0
+    taxable[0] = net_taxable / 12.0
+    for month in range(1, 13):
+        oracle.simulation.set_input("chomage_imposable", f"2024-{month:02d}", taxable)
+    ir_on_net = -oracle.calculate("impot_revenu_restant_a_payer")[0]
+
+    assert h0["ir"][0] == pytest.approx(ir_on_net, abs=0.5)
+    levies = (0.038 + 0.024 + 0.005) * assiette
+    assert h0["revenu_disponible"][0] == pytest.approx(30_000 - levies - h0["ir"][0], abs=1.0)
