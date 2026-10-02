@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -35,6 +36,7 @@ import numpy as np
 import polars as pl
 
 from impots.engine.system import baseline, reformed_for
+from impots.identifiants import millesime
 from impots.population.runner import subsample
 from impots.population.to_openfisca import build_simulation
 
@@ -135,7 +137,8 @@ def compute(
     # the sample size too, because a subsample is a different population.
     started = time.perf_counter()
     cache = (
-        PROCESSED / f"emtr_baseline_{vintage}_{year}_{sample or 'full'}_{int(step)}.parquet"
+        PROCESSED
+        / f"emtr_baseline_{millesime(vintage)}_{year}_{sample or 'full'}_{int(step)}.parquet"
         if vintage else None
     )
     if cache is not None and cache.exists():
@@ -235,6 +238,25 @@ def cache_key(
     return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
 
+#: One distinct reform, one file. Unbounded, whoever chooses reforms over HTTP chooses
+#: the disk used (D-173); the most recently used are kept.
+CACHE_MAX = 64
+
+
+def _make_room(vintage: str) -> None:
+    """Keep at most `CACHE_MAX - 1` reform files, so the one about to be written fits.
+
+    Only names this cache writes are touched — the 16-hex key — never a baseline file or
+    anything else in data/processed. Evicting BEFORE the write is what guarantees the
+    newest result survives, whatever the clock's resolution.
+    """
+    own = re.compile(rf"emtr_{re.escape(vintage)}_[0-9a-f]{{16}}\.parquet")
+    files = sorted((p for p in PROCESSED.glob(f"emtr_{vintage}_*.parquet")
+                    if own.fullmatch(p.name)), key=lambda p: p.stat().st_mtime_ns)
+    for stale in files[: max(len(files) - (CACHE_MAX - 1), 0)]:
+        stale.unlink(missing_ok=True)
+
+
 def cached(
     population: pl.DataFrame | Path, vintage: str, year: int = 2024, reform: Any = None,
     sample: int | None = None,
@@ -242,11 +264,14 @@ def cached(
     """`compute`, memoised on disk. A minute and a half the first time, milliseconds
     after — which matters most for the same reform priced twice, since a user
     adjusting one knob and re-running is the normal way this tool is used."""
+    vintage = millesime(vintage)
     path = PROCESSED / f"emtr_{vintage}_{cache_key(vintage, year, reform, sample)}.parquet"
     if path.exists():
+        path.touch()  # most recently USED, not most recently written, survives eviction
         return EmtrResult(households=pl.read_parquet(path), year=year,
                           guards={"cached": True})
     result = compute(population, year=year, reform=reform, sample=sample, vintage=vintage)
     PROCESSED.mkdir(parents=True, exist_ok=True)
+    _make_room(vintage)
     result.households.write_parquet(path)
     return result

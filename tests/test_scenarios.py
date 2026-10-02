@@ -503,13 +503,15 @@ def test_an_unknown_scenario_is_a_404(client_with_scenarios):
 
 
 @pytest.mark.parametrize("name", ["../evade", "a/b", "..", ".", "/abs", "x" * 65,
-                                  "-leading", " space"])
+                                  "-leading", " space", "plf2027\n"])
 def test_a_scenario_name_that_is_a_path_is_refused(name):
     """Fails if `save` goes back to `directory / f"{name}.json"` unguarded.
 
     `Scenario(name="../plf2027").save(d)` wrote OUTSIDE the scenario directory, where
     `available()` never lists it: a chiffrage that looks registered and is not. Refused
     rather than sanitised — silently renaming what someone asked for is its own surprise.
+    The trailing newline passed `re.match` with `$`, which matches before a final `\n`
+    (D-173).
     """
     with pytest.raises(sc.ScenarioError):
         make(name=name)
@@ -522,6 +524,34 @@ def test_a_saved_scenario_lands_inside_its_directory(tmp_path):
     assert sc.available(tmp_path) == ["plf2027.art3-v2"]
 
 
+def test_saving_refuses_to_write_through_a_planted_link(tmp_path):
+    """Fails if `save` goes back to `exists()` then `write_text`.
+
+    A dangling link answers False to `exists()`, and `write_text` follows it: the
+    scenario lands wherever the link points, outside the directory the listing reads
+    (D-173). Exclusive creation refuses a link, dangling or not, in one system call.
+    """
+    dossier = tmp_path / "scenarios"
+    dossier.mkdir()
+    dehors = tmp_path / "dehors.json"
+    (dossier / "essai.json").symlink_to(dehors)
+    with pytest.raises(sc.ScenarioError):
+        make().save(dossier)
+    assert not dehors.exists()
+
+
+def test_loading_refuses_a_scenario_that_is_a_link(tmp_path):
+    """The read half: a link in the directory serves a file that lives elsewhere."""
+    ailleurs = tmp_path / "ailleurs"
+    ailleurs.mkdir()
+    make().save(ailleurs)
+    dossier = tmp_path / "scenarios"
+    dossier.mkdir()
+    (dossier / "essai.json").symlink_to(ailleurs / "essai.json")
+    with pytest.raises(sc.ScenarioError, match="lien"):
+        sc.load("essai", dossier)
+
+
 @pytest.mark.parametrize("content,fragment", [
     ('{"name": "x", "year": 2024,', "illisible"),
     ("pas du json du tout", "illisible"),
@@ -529,6 +559,20 @@ def test_a_saved_scenario_lands_inside_its_directory(tmp_path):
     ('{"name": "x", "year": 2024, "source": "s", "reform": {}}', "incomplet"),
     ('{"name": "x", "year": "pas un entier", "created": "2026-01-01",'
      ' "source": "s", "reform": {}}', "incomplet"),
+    # D-173: a non-string field escaped as AttributeError and 500'd the listing; a
+    # string of tags became one tag per letter; the name inside the file chose the
+    # name of every output derived from it; an infinite threshold validated.
+    ('{"name": "casse", "year": 2024, "created": "2026-01-01", "source": 7,'
+     ' "reform": {}}', "incomplet"),
+    ('{"name": "casse", "year": 2024, "created": "2026-01-01", "source": "s",'
+     ' "note": 7, "reform": {}}', "incomplet"),
+    ('{"name": "casse", "year": 2024, "created": "2026-01-01", "source": "s",'
+     ' "tags": "abc", "reform": {}}', "incomplet"),
+    ('{"name": "autre", "year": 2024, "created": "2026-01-01", "source": "s",'
+     ' "reform": {}}', "déclare"),
+    ('{"name": "casse", "year": 2024, "created": "2026-01-01", "source": "s",'
+     ' "reform": {"ir_bareme": [{"threshold": 0, "rate": 0.1},'
+     ' {"threshold": Infinity, "rate": 0.5}]}}', "ne valide plus"),
 ])
 def test_every_way_a_file_can_be_wrong_is_a_scenario_error(tmp_path, content, fragment):
     """Fails if `load` wraps only the ReformSpec validation, as the first version did.
@@ -719,11 +763,18 @@ def test_an_unknown_trajectory_is_a_404(client_with_scenarios):
     assert client.get("/trajectoires/jamais_vue").status_code == 404
 
 
-def test_a_trajectory_name_that_is_a_path_is_refused(client_with_scenarios):
+@pytest.mark.parametrize("name", ["%2E%2E", "alpha%0A"])
+def test_a_trajectory_name_that_is_a_path_is_refused(client_with_scenarios, name):
     """The name reaches a file path, so it takes the same identifier rule as scenarios
-    and chiffrages (D-094). Fails if it is interpolated unguarded."""
+    and chiffrages (D-094). Fails if it is interpolated unguarded.
+
+    Exactly 422, through forms the router lets reach the handler. The first version
+    sent `..%2F..%2Fetc`, which the router answers itself with a 404 before the handler
+    runs, and it accepted 404 — so deleting the guard left it green (D-173). The
+    trailing newline is the form that passed `re.match` with `$`.
+    """
     client, _ = client_with_scenarios
-    assert client.get("/trajectoires/..%2F..%2Fetc").status_code in (404, 422)
+    assert client.get(f"/trajectoires/{name}").status_code == 422
 
 
 def test_the_committed_trajectory_artefact_validates(client_with_scenarios):

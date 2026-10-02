@@ -7,6 +7,7 @@ timing assertions meaningless.
 
 from __future__ import annotations
 
+import json
 import time
 from collections.abc import Iterator
 from typing import Any
@@ -712,3 +713,62 @@ def test_the_flag_does_not_touch_the_mechanical_number(client: TestClient) -> No
     # The cost is the double-entry-checked one, untouched by the flag.
     assert body["reform_cost"] is not None
     assert abs(body["reform_cost"]) > 1e8
+
+
+def test_a_non_finite_threshold_is_refused_before_any_simulation(client: TestClient) -> None:
+    """`Infinity` is JSON to Python's parser and was a valid float to the schema: an
+    infinite IR threshold reached the engine, failed its read-back and came out as a
+    500 (D-173). Sent as raw bytes, because a well-behaved client cannot even encode it.
+    """
+    reform = {"ir_bareme": [{"threshold": 0, "rate": 0.1},
+                            {"threshold": float("inf"), "rate": 0.5}]}
+    response = client.post("/simulate", content=json.dumps({**SINGLE_30K, "reform": reform}),
+                           headers={"content-type": "application/json"})
+    assert response.status_code == 422
+
+
+def test_an_oversized_body_is_refused_before_it_is_parsed(client: TestClient) -> None:
+    """No limit existed: the body was read whole into memory, whatever its size (D-173).
+    The largest legitimate request — a household and a full reform — is a few kilobytes.
+    """
+    corps = b'{"padding": "' + b"a" * 100_000 + b'"}'
+    response = client.post("/simulate", content=corps,
+                           headers={"content-type": "application/json"})
+    assert response.status_code == 413
+
+
+def test_every_model_the_api_accepts_refuses_non_finite_numbers() -> None:
+    """Derived from the routes, never listed by hand: a hand-written list of models is a
+    second copy of the API's surface, and two copies drift (D-151, D-160). Fails if a
+    model reachable from any request body lets `Infinity` or `NaN` through (D-173)."""
+    import inspect
+    import typing
+
+    import pydantic
+
+    def types(annotation):
+        yield annotation
+        for argument in typing.get_args(annotation):
+            yield from types(argument)
+
+    seen: set[type] = set()
+
+    def walk(model: type) -> None:
+        if model in seen:
+            return
+        seen.add(model)
+        for field in model.model_fields.values():
+            for kind in types(field.annotation):
+                if inspect.isclass(kind) and issubclass(kind, pydantic.BaseModel):
+                    walk(kind)
+
+    for route in app.routes:
+        body = getattr(route, "body_field", None)
+        if body is not None:
+            for kind in types(body.field_info.annotation):
+                if inspect.isclass(kind) and issubclass(kind, pydantic.BaseModel):
+                    walk(kind)
+    assert len(seen) >= 10, f"the walk found too few input models to be trusted: {seen}"
+    lenient = sorted(m.__name__ for m in seen if m.model_config.get("allow_inf_nan", True))
+    assert not lenient, f"accept Infinity/NaN: {lenient}"
+

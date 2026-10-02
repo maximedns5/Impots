@@ -27,9 +27,11 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from impots.api.schemas import (
     MAX_YEAR,
@@ -62,6 +64,7 @@ from impots.api.schemas import (
 )
 from impots.engine import baseline, compute, versions, warm_up
 from impots.engine.reforms import read_ir_parameters
+from impots.identifiants import millesime
 
 UI_FILE = Path(__file__).resolve().parents[3] / "ui" / "index.html"
 
@@ -116,6 +119,67 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+#: The largest legitimate request — one household and a complete reform — is a few
+#: kilobytes. Without a limit, a body is read whole into memory whatever its size (D-173).
+MAX_BODY_BYTES = 64 * 1024
+
+
+class BodyLimit:
+    """Refuses a request body over `MAX_BODY_BYTES` with a 413, before it is parsed.
+
+    The declared `content-length` is checked first. A body sent without one, or longer
+    than it declared, is counted as it arrives and cut off at the limit.
+    """
+
+    def __init__(self, app: Any, limit: int = MAX_BODY_BYTES) -> None:
+        self.app = app
+        self.limit = limit
+
+    def _message(self) -> str:
+        return f"Corps de requête trop volumineux : au plus {self.limit} octets."
+
+    async def __call__(self, scope: dict, receive: Any, send: Any) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        declared = dict(scope.get("headers") or ()).get(b"content-length")
+        if declared is not None and declared.isdigit() and int(declared) > self.limit:
+            await JSONResponse({"detail": self._message()}, status_code=413)(
+                scope, receive, send)
+            return
+        seen = 0
+
+        async def counted() -> dict:
+            nonlocal seen
+            message = await receive()
+            if message["type"] == "http.request":
+                seen += len(message.get("body", b""))
+                if seen > self.limit:
+                    raise HTTPException(status_code=413, detail=self._message())
+            return message
+
+        await self.app(scope, counted, send)
+
+
+app.add_middleware(BodyLimit)
+
+
+def _json_safe(value: Any) -> Any:
+    """JSON has no infinity, and a 422 echoes the input it refused: refusing `Infinity`
+    then crashed while writing the refusal (D-173). Non-finite floats become text."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return str(value)
+    if isinstance(value, dict):
+        return {key: _json_safe(item) for key, item in value.items()}
+    if isinstance(value, list | tuple):
+        return [_json_safe(item) for item in value]
+    return value
+
+
+@app.exception_handler(RequestValidationError)
+async def _validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
+    return JSONResponse(status_code=422,
+                        content={"detail": _json_safe(jsonable_encoder(exc.errors()))})
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -641,7 +705,8 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
 # --------------------------------------------------------------------------- #
 # Firms (L0/L2 for entreprises)
 # --------------------------------------------------------------------------- #
-FIRM_VINTAGE = os.environ.get("IMPOTS_FIRM_VINTAGE", "fixture")
+# It names the parquet read below, so it takes the vintage rule (D-173).
+FIRM_VINTAGE = millesime(os.environ.get("IMPOTS_FIRM_VINTAGE", "fixture"))
 
 FIRM_NOTE = (
     "Population d'entreprises synthétique : effectifs et agrégats par secteur × taille "

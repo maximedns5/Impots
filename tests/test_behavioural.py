@@ -676,3 +676,24 @@ def test_c2_fails_loudly_without_a_wage_profile() -> None:
             smic_multiple=np.array([]), relative_cost_change=np.array([]),
             weights=np.array([]), draws=4, rng=np.random.default_rng(0),
         )
+
+
+def test_the_reform_cache_keeps_a_bounded_number_of_files(tmp_path, monkeypatch):
+    """Every distinct reform priced with the behavioural band wrote one parquet into
+    data/processed, and nothing ever removed one: whoever chose reforms over HTTP chose
+    the disk used (D-173). The newest are kept."""
+    import polars as pl
+
+    from impots.api.schemas import ReformSpec
+    from impots.behavioural import emtr
+
+    monkeypatch.setattr(emtr, "PROCESSED", tmp_path)
+    monkeypatch.setattr(emtr, "CACHE_MAX", 3, raising=False)
+    monkeypatch.setattr(emtr, "compute", lambda population, **k: emtr.EmtrResult(
+        households=pl.DataFrame({"x": [1]}), year=k.get("year", 2024)))
+    reformes = [ReformSpec(decote_taux=0.10 + i / 100) for i in range(6)]
+    for reforme in reformes:
+        emtr.cached(pl.DataFrame(), "2024", reform=reforme)
+    assert len(list(tmp_path.glob("emtr_2024_*.parquet"))) == 3
+    derniere = emtr.cache_key("2024", 2024, reformes[-1], None)
+    assert (tmp_path / f"emtr_2024_{derniere}.parquet").exists()

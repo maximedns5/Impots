@@ -43,10 +43,29 @@ def load_cells(path: Path) -> tuple[list[Cell], float, str]:
     return cells, float(raw["fiscal_to_accounting"]), str(raw.get("vintage", "unknown"))
 
 
+def _declared_synthetic(path: Path) -> bool:
+    """Synthetic unless the table itself says otherwise, and the fixture always.
+
+    The flag used to follow the file's PATH: a copy of the fixture, or a third-party
+    table declaring `"vintage": "fixture"`, overwrote the population the API serves by
+    default and stripped its synthetic-cells warning (D-173). A real table carries
+    `"cells_are_synthetic": false`, written by `as_cell_table`.
+    """
+    if path == FIXTURE_CELLS:
+        return True
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    return raw.get("cells_are_synthetic", True) is not False
+
+
 def build(cells_path: Path | None = None, seed: int = SEED) -> tuple[Path, dict]:
     """Build the firm population and write it with a provenance manifest."""
+    from impots.identifiants import millesime
+
     path = cells_path or FIXTURE_CELLS
     cells, ratio, vintage = load_cells(path)
+    # Read FROM the file it was given, and it names the files written below: the
+    # file's content must not choose where this writes (D-173).
+    vintage = millesime(vintage)
     firms, stats = build_firms(cells, fiscal_to_accounting=ratio, seed=seed)
 
     missing = set(SCHEMA) - set(firms.columns)
@@ -63,7 +82,7 @@ def build(cells_path: Path | None = None, seed: int = SEED) -> tuple[Path, dict]
         "built": date.today().isoformat(),
         "seed": seed,
         "cells_from": str(path.name),
-        "cells_are_synthetic": path == FIXTURE_CELLS,
+        "cells_are_synthetic": _declared_synthetic(path),
         "population": asdict(stats),
     }
     (PROCESSED / f"firms_{vintage}.manifest.json").write_text(

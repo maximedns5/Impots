@@ -532,3 +532,28 @@ def test_the_normalization_preserves_length_and_only_touches_the_five_fields() -
 # `scripts/ci_local.py`, et deux copies d'un contrat dérivent (D-151).
 
 
+def test_a_download_stops_reading_once_it_passes_the_manifest_size(depot):
+    """Fails if `telecharger` reads to the end before comparing sizes. The stream was
+    kept whole in memory, so a server sending more than it announced chose how much
+    this process held (D-173). The manifest's byte count bounds the read."""
+    lus: list[int] = []
+
+    class _Bavarde(_Reponse):
+        def read(self, n=-1):
+            bloc = super().read(n)
+            lus.append(len(bloc))
+            return bloc
+
+    resultat = donnees.telecharger(
+        "source.xlsx", ouvrir=lambda requete, timeout: _Bavarde(CONTENU * 4096))
+    assert resultat.etat == "échec"
+    assert sum(lus) <= len(CONTENU) + (1 << 20)
+    assert not (depot / "source.xlsx").exists()
+    assert not (depot / "source.xlsx.part").exists()
+
+
+def test_an_unknown_file_is_a_refusal_not_a_traceback(depot, capsys):
+    from impots.population import cli
+
+    assert cli.main(["data", "fetch", "inconnu.xlsx"]) == 2
+    assert "inconnu.xlsx" in capsys.readouterr().err

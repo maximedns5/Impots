@@ -80,6 +80,9 @@ def build(
     under 1 %. Pass `raking=False` to reproduce the unraked vintage — which is how
     the before/after in the reconciliation report is produced.
     """
+    from impots.identifiants import millesime
+
+    vintage = millesime(vintage)  # a file name, checked before the minutes of work (D-173)
     frame, provenance = _build(seed=seed, raking=raking)
 
     PROCESSED.mkdir(parents=True, exist_ok=True)

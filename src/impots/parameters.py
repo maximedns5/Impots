@@ -21,6 +21,7 @@ inherited.
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 
@@ -165,3 +166,17 @@ def create_parameter(
     indistinguishable from a typo.
     """
     resolve(parameters, path).update(start=start, value=value)
+
+
+def differs(got: float, wanted: float) -> bool:
+    """A read-back mismatch, failing closed on anything non-finite.
+
+    `abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0)` let both through: NaN compares
+    false with everything, and a tolerance relative to an infinite request is itself
+    infinite. An infinite CEBGE threshold priced a repeal at +3,24 md€ on the fixture
+    without a word (D-173). One rule, read by every read-back on both sides.
+    """
+    if not (math.isfinite(got) and math.isfinite(wanted)):
+        return True
+    return abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0)
+

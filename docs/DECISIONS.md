@@ -8494,3 +8494,93 @@ de population — faux depuis D-161 pour le premier point, depuis D-158 pour le 
 **Pas de nouveau test.** La décision porte sur la configuration et se lit dans le
 workflow. L'épingler par un test ajouterait une garde à une suite dont le volume est
 précisément la question qui a mené ici.
+
+## D-173 — Le durcissement des entrées : ce que la garde des noms ne couvrait pas
+
+**Le déclencheur.** L'ordre permanent du relecteur (`REVIEW_2026-08-29.md`, autour de la
+ligne 883) : avant toute décision de déploiement, une passe de durcissement sur chaque
+chaîne fournie par l'utilisateur — noms de scénario, chemins, JSON de réforme. Seul le nom
+de scénario avait été traité (D-094). Choisi par le propriétaire le 2026-10-02.
+
+**La méthode.** Une cartographie de chaque entrée — routes HTTP, commandes, fichiers
+fournis, variables d'environnement — jusqu'à chaque puits : chemin de fichier, parcours
+d'attributs, exécution, rendu, travail non borné. Aucun `eval`, `pickle` ni `yaml.load`
+non sûr ; aucun parcours d'attributs piloté par une chaîne libre. Chaque constat retenu a
+été vérifié dans le code avant d'être corrigé, et chaque correction a son test, vu échouer
+sur le code d'avant.
+
+**Ce qui était ouvert, et ce qui est fait.**
+
+1. **La garde des noms laissait passer un saut de ligne final.** `re.match` avec `$`
+   s'arrête avant un `\n` final : `GET /trajectoires/gel_bareme%0A` franchissait la garde.
+   → `fullmatch`.
+2. **Son test HTTP ne pouvait pas échouer.** Il envoyait `..%2F..%2Fetc`, que le routeur
+   refuse lui-même par un 404 avant le gestionnaire, et il acceptait 404 : supprimer la
+   garde le laissait vert. → deux formes qui atteignent le gestionnaire, et exactement 422.
+3. **`save` faisait `exists()` puis `write_text`** : un lien pendant répond faux à
+   `exists()`, et `write_text` le suit hors du dossier ; `load` lisait à travers un lien.
+   Scénarios ET chiffrages. → création exclusive (le mode « x » refuse toute entrée
+   existante, lien compris, en un appel système) ; un lien est refusé à la lecture.
+4. **Un fichier de scénario mal formé faisait encore tomber la liste.** Une `source` non
+   textuelle levait `AttributeError`, hors des exceptions attrapées : la promesse de D-094
+   n'était pas tenue. Des étiquettes données en chaîne devenaient une étiquette par lettre.
+   Et le nom déclaré DANS le fichier, jamais comparé au nom du fichier, nommait toutes les
+   sorties dérivées : `a.json` écrivait `fiche_b.md`. → types vérifiés, nom déclaré comparé.
+5. **Le millésime, même classe que le nom de scénario, n'était pas traité.** Six sites
+   l'interpolent dans un nom de fichier, et `entreprises build --cells` le lisait DANS le
+   fichier fourni. → `impots.identifiants.millesime`, en `type=` des douze `--vintage` de
+   la CLI, à chaque écrivain, et sur `IMPOTS_FIRM_VINTAGE`.
+6. **Le drapeau « cellules synthétiques » suivait le CHEMIN du fichier, pas son contenu.**
+   Une table tierce déclarant `"vintage": "fixture"` écrasait la population que l'API sert
+   par défaut et lui retirait son avertissement. → synthétique, sauf déclaration contraire
+   de la table elle-même.
+7. **`Infinity` est du JSON pour l'analyseur de Python, et `ge=0` est vrai de lui.** Un
+   seuil infini passait les treize modèles d'entrée. Côté ménages, la relecture du barème
+   le refusait par une 500 ; côté entreprises, elle l'ACCEPTAIT — une tolérance relative à
+   une demande infinie est elle-même infinie, et un écart NaN ne se compare à rien.
+   **Mesuré sur `f02b8cc`**, population fixture, 2025 : `POST /entreprises/simulate` avec un
+   seuil infini répond 200, la recette CEBGE passe de 3,24 md€ à 0 et la réforme est
+   chiffrée +3,24 md€ — une abrogation, sans un mot. →
+   `allow_inf_nan=False` sur chaque modèle d'entrée, vérifié par un test qui DÉRIVE la
+   liste des routes plutôt que de la recopier (D-160) ; et une seule règle de relecture,
+   `parameters.differs`, qui refuse le non-fini, lue par les quatre relectures des deux
+   côtés (D-151).
+8. **Et le refus lui-même plantait.** La 422 de FastAPI recopie la valeur refusée, et le
+   JSON n'a pas d'infini : refuser `Infinity` levait une exception en écrivant le refus. →
+   un gestionnaire qui rend les flottants non finis en texte.
+9. **Aucune limite de taille de corps** : une requête était lue entière en mémoire. → 413
+   au-delà de 64 Kio, sur la longueur déclarée puis à la réception.
+10. **Le cache EMTR écrivait un fichier par réforme distincte, sans jamais en retirer** :
+    qui choisissait les réformes par HTTP choisissait le disque occupé. → 64 fichiers au
+    plus ; les plus récemment UTILISÉS restent, et la place est faite avant l'écriture,
+    pour que le résultat neuf survive quelle que soit la résolution de l'horloge.
+11. **Le téléchargement lisait tout le flux en mémoire avant de comparer sa taille au
+    manifeste.** → la lecture s'arrête dès que le manifeste est dépassé.
+12. **Un nom de fichier ou de profil inconnu dans `impots data` sortait en trace de pile.**
+    → un refus lisible, code 2.
+
+**Vus échouer.** Les 29 cas ajoutés échouaient tous sur le code d'avant, chacun pour sa
+raison — 500 au lieu de 422, 422 au lieu de 413, un fichier écrit à travers un lien, un
+lien lu, six fichiers de cache au lieu de trois, 8 Mo lus pour un fichier de 2 Ko. Le test
+de relecture entreprises a été réécrit quand la clé de cache du moteur s'est mise à
+revalider, puis vu échouer de nouveau en remettant l'ancienne comparaison dans `differs`.
+
+**Ce qui n'est PAS fait — des décisions du propriétaire, au moment du déploiement.**
+
+* **La CORS ouverte** (`allow_origins=["*"]`) est voulue et documentée : elle permet
+  d'ouvrir `ui/index.html` depuis le disque. Elle permet aussi à n'importe quelle page
+  web de piloter une API qui tourne en local. La restreindre casse cet usage : à trancher.
+* **L'authentification, la limitation de débit et un plafond de concurrence** pour
+  `POST /population/simulate`, qui coûte 30 s à 1 min 30 par appel : des choix
+  d'hébergement.
+* **Défense en profondeur dans l'interface** : quelques insertions HTML non échappées,
+  toutes alimentées par des constantes du serveur, et le lien `IMPOTS_SOURCE_URL` sans
+  contrôle de schéma. Non exploitables aujourd'hui ; consignés.
+* **Opérateur seulement** : `--out`, `--dir` et `--reform` écrivent ou lisent où on le
+  leur dit, par conception ; `ci_local --ref` sans séparateur `--` ; les grilles de
+  `impots emtr` et les boucles d'années non bornées.
+
+**La règle pour la suite**, qui est celle du relecteur : toute nouvelle surface d'entrée
+reçoit cette passe à sa naissance. Un identifiant qui devient un chemin passe par
+`_check_name` ou `millesime` ; un modèle de requête prend `INPUT_CONFIG`, et le test
+dérivé des routes le vérifie.
