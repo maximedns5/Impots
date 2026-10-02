@@ -601,3 +601,37 @@ def test_an_unemployed_persons_emtr_compares_two_computations_of_the_same_kind(
     by_hand = 1.0 - (bumped - result.baseline["revenu_disponible"]) / EMTR_STEP
     assert result.emtr == pytest.approx(by_hand, abs=1e-3)
     assert 0.0 < result.emtr < 1.0
+
+
+def test_a_renters_emtr_compares_two_computations_of_the_same_kind(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Housing aid and the RSA feed each other through the months: the aid's
+    neutralisation reads the RSA of the month before, whose forfait logement reads the
+    aid of that month. With the aid of N on the stack, openfisca cut the aid of N-1 to
+    zero, and the prime d'activité of January to March lost the forfait logement of its
+    reference quarter. The EMTR's bumped leg, `revenu_disponible` first, fell into that;
+    its base, through the registry, did not. Before D-178 a single renter on 17 000 EUR
+    was reported a marginal rate of -0.68, and on 9 000 EUR of -1.36.
+
+    Both legs of the hand computation go through `compute`, the bumped one by perturbing
+    the situation it builds."""
+    from impots.engine import situations
+
+    original = situations.build_situation
+    bump = {"on": False}
+
+    def bumped_on_demand(household, year, historique_revenus=True):
+        situation = original(household, year, historique_revenus)
+        return perturb_first_adult(situation, year, EMTR_STEP) if bump["on"] else situation
+
+    monkeypatch.setattr(situations, "build_situation", bumped_on_demand)
+    renter = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 17_000, "annee_naissance": 1984}],
+         "logement": {"statut": "locataire_vide", "loyer_mensuel": 700, "zone_apl": 2}})
+    result = compute(renter, 2024, tier="full", emtr=True)
+    bump["on"] = True
+    bumped = compute(renter, 2024, tier="full").baseline["revenu_disponible"]
+    by_hand = 1.0 - (bumped - result.baseline["revenu_disponible"]) / EMTR_STEP
+    assert result.emtr == pytest.approx(by_hand, abs=1e-3)
+    assert 0.0 < result.emtr < 1.0

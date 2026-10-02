@@ -43,11 +43,18 @@ class ComputeResult:
     emtr_reform: float | None = None
 
 
-def _build(tax_benefit_system: Any, situation: dict[str, Any], year: int) -> Any:
+def _build(tax_benefit_system: Any, situation: dict[str, Any], year: int, tier: Tier) -> Any:
     """A simulation with every input set and the RFR of N-2 pinned before anything
-    else is asked of it — see `situations.pin_rfr_n_2` (D-177)."""
+    else is asked of it — see `situations.pin_rfr_n_2` (D-177) — and, for the full
+    tier, the housing aid pinned month by month (`situations.pin_benefit_history`,
+    D-178). The light tier never asks for a benefit and does not pay for the second.
+    Nor does a household without housing inputs: it cannot receive housing aid, so it
+    has no cascade to pin, and its full-tier request keeps its D-177 cost."""
     simulation = SimulationBuilder().build_from_entities(tax_benefit_system, situation)
     situations.pin_rfr_n_2(simulation, year)
+    housed = "statut_occupation_logement" in situation["menages"][situations.MENAGE_ID]
+    if tier == "full" and housed:
+        situations.pin_benefit_history(simulation, year)
     return simulation
 
 
@@ -80,7 +87,7 @@ def _emtr(
     the real figure badly.
     """
     perturbed = situations.perturb_first_adult(situation, year, EMTR_STEP)
-    simulation = _build(tax_benefit_system, perturbed, year)
+    simulation = _build(tax_benefit_system, perturbed, year, "full")
     bumped = float(simulation.calculate("revenu_disponible", str(year))[0])
     return round(1.0 - (bumped - base_disposable) / EMTR_STEP, 4)
 
@@ -113,9 +120,10 @@ def compute(
     build_ms = (time.perf_counter() - started) * 1000.0
 
     compute_started = time.perf_counter()
-    baseline_rows = outputs.extract(_build(baseline_system, situation, year), year, tier, debug)
+    baseline_rows = outputs.extract(
+        _build(baseline_system, situation, year, tier), year, tier, debug)
     reform_rows = (
-        outputs.extract(_build(reformed_system, situation, year), year, tier, debug)
+        outputs.extract(_build(reformed_system, situation, year, tier), year, tier, debug)
         if reformed_system is not None
         else None
     )

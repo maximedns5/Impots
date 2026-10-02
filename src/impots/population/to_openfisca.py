@@ -1,7 +1,7 @@
 """Population frame -> a vectorised OpenFisca simulation (PHASE1_SPEC §1, §4.4).
 
 This is the most dangerous module in the project. Both of the failure modes the
-Phase 1 spec calls out live here, and three that the spec does not mention.
+Phase 1 spec calls out live here, and four that the spec does not mention.
 
 **#1 — roles are flattened *subrole* keys.** `join_with_persons` matches each role
 string against `entity.flattened_roles`. The intuitive names from the JSON path
@@ -45,6 +45,16 @@ to the cut and read as the exemption. The income tax then assessed a 30 000 EUR
 chômeur on the gross amount, and `revenu_disponible` missed the CSG and CRDS owed. The RFR
 of N-2 is now computed first and pinned, by `engine.situations.pin_rfr_n_2`, which the
 household builder calls too (D-177).
+
+**#6 — housing aid and the RSA, month by month.** The aid's neutralisation reads the
+RSA of the month before, whose forfait logement reads the aid of that month. With the
+aid of one month on the stack, the aid of the month before was cut to zero, and the
+prime d'activité of January to March lost the forfait logement of its reference
+quarter: 12 renter ménages of the fixture moved by up to 352 EUR between the runner's
+order and `revenu_disponible` first, the order of the population EMTR. Before the first
+non-fiscal variable, `PopulationSimulation.calculate` now pins the aid month by month,
+oldest first, by `engine.situations.pin_benefit_history`, which the household builder
+calls for its full tier too (D-178).
 """
 
 from __future__ import annotations
@@ -56,7 +66,8 @@ import numpy as np
 import polars as pl
 from openfisca_core.simulation_builder import SimulationBuilder
 
-from impots.engine.situations import pin_rfr_n_2
+from impots.engine.outputs import LIGHT_ROWS
+from impots.engine.situations import pin_benefit_history, pin_rfr_n_2
 
 #: Years of income history written behind the simulated year. Two, because the
 #: longest reference window is the aide au logement's rolling twelve months
@@ -69,8 +80,15 @@ HISTORY_YEARS = 2
 #: file written under one wiring is never served under another. Change it whenever a
 #: change here moves a number: D-176 moved every pensioner's revenu disponible in the
 #: order the population EMTR reads it, D-177 the income tax and the revenu disponible of
-#: every chômeur above the SMIC floor.
-WIRING = "D-177"
+#: every chômeur above the SMIC floor, D-178 the prime d'activité of renters in the order
+#: the population EMTR reads it.
+WIRING = "D-178"
+
+#: What the light tier, the rake and the niche imputation ask of a simulation: the
+#: fiscal block, which never reaches a benefit. Anything else first pins the benefit
+#: history (failure mode #6), once, so the light tier never pays for it.
+FISCAL_VARIABLES = frozenset(
+    {row.variable for row in LIGHT_ROWS} | {"nbptr", "rfr", "impot_revenu_restant_a_payer"})
 
 #: entity -> the flattened subrole keys it accepts. Asserted, not trusted.
 ROLE_VOCABULARY: dict[str, tuple[str, ...]] = {
@@ -100,6 +118,7 @@ class PopulationSimulation:
     foyer_ids: np.ndarray
     famille_ids: np.ndarray
     n_persons: int
+    benefits_pinned: bool = False
 
     def calculate(
         self, variable: str, add: bool = False, month: int | None = None
@@ -115,6 +134,10 @@ class PopulationSimulation:
         entitled at any point in the year — a different statistic, larger, and the
         difference is exactly the churn the published figure excludes.
         """
+        if not self.benefits_pinned and variable not in FISCAL_VARIABLES:
+            # Failure mode #6: before the first benefit, whoever asks for it.
+            pin_benefit_history(self.simulation, self.year)
+            self.benefits_pinned = True
         period = str(self.year) if month is None else f"{self.year}-{month:02d}"
         result = (
             self.simulation.calculate_add(variable, period)
