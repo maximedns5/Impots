@@ -9058,3 +9058,93 @@ quatre budgets de temps du moteur et de l'API passent, machine au repos.
 d'aides au logement bougent un peu (+0,06 % sur la fixture), le reste ne devrait pas
 bouger. Une bande comportementale qui lirait l'EMTR de population (le canal de l'élasticité
 du revenu imposable) bougerait pour les locataires de la zone de la PPA.
+
+## D-179 — L'AAH, l'ASS et l'ASI : mesurées, et un couple sans logement corrigé
+
+**Le point de départ.** D-178 avait laissé l'AAH, l'ASS et l'ASI hors de sa mesure. Elles
+valent zéro dans la population, faute d'entrées d'éligibilité, et « le jour où un champ
+handicap entrera, il faudra mesurer de nouveau ». La mesure est faite ici sans attendre ce
+champ : les entrées sont écrites à la main dans la situation, sur chaque mois de N-2 à N,
+comme les tests de D-177 y écrivaient le chômage.
+
+**Ce qui les ouvre.** Pour l'AAH, `taux_incapacite`. Pour l'ASI, `pensions_invalidite`, ou
+`handicap` avec une retraite. Pour l'ASS, `ass_precondition_remplie` et `activite` à
+chômeur. Aucun champ de l'API ni colonne de la population ne les écrit. L'ASPA, elle, est
+déjà atteinte : 65 ans et une petite pension suffisent. 12 familles de la fixture la
+touchent, 76 089 € en tout.
+
+**Mesuré, dans trois ordres.** L'ordre du registre, `revenu_disponible` calculé d'abord, et
+un ordre chronologique : l'AAH, l'ASS, l'ASI et l'ASPA calculées mois par mois de janvier
+N-1 à décembre N, chacune épinglée, puis le RD.
+* **Côté ménage, logé.** 9 ménages types, chacun seul ou en couple selon le cas : AAH sans
+  revenu, à temps partiel ou en couple ; ASS ; ASI ; AAH avec une ASI ; ASPA ; un couple
+  ASPA et AAH. Le RD est identique dans les trois ordres, au centime. Sur un balayage de
+  21 points de salaire ou de pension, il l'est aussi, et l'EMTR rendu égale celui de deux
+  jambes chronologiques à 0,0001 près.
+* **Côté population.** Sur la fixture telle quelle, aucun ménage ne bouge d'un ordre à
+  l'autre, ASPA comprise. Des éligibilités ont ensuite été injectées : 30 AAH, 15 ASS et 8
+  ASI, soit 30, 14 et 4 allocataires. Puis une AAH chez les 15 conjoints d'un adulte de 65
+  ans ou plus. Aucun ménage ne bouge.
+* **Les coupes.** Elles sont nombreuses, de 414 à 1 166 par calcul. Beaucoup portent sur
+  des valeurs non nulles : l'AAH de 2022 et 2023, et l'aide au logement lue par la
+  majoration pour la vie autonome. Là où elles sont lues, elles sont multipliées par zéro
+  (une exclusion d'éligibilité), ou purgées avant d'atteindre le RD.
+
+**Ce qui bougeait : un couple sans logement, côté ménage.** Le constructeur sautait
+l'épinglage de D-178 pour un ménage sans logement : « sans logement, pas d'aide au logement,
+donc pas de cascade ». C'était faux dès qu'une AAH entre. Prenons un couple sans logement :
+une AAH et un conjoint à l'ASPA (5 000 € de pension, né en 1955). Son RD valait 18 943,38 €
+dans l'ordre du registre et 20 743,64 € calculé d'abord. L'ASPA de janvier à mars valait
+1 012,02 €, 830,71 € et 506,92 € au lieu de 183,13 €. À côté d'une ASI, l'écart était de
+1 942,74 €, et de 1 641,95 € si l'AAH travaille à temps partiel. Il faut les deux : une AAH,
+et un conjoint à l'ASPA ou à l'ASI. Sans l'une ou l'autre, aucun des 12 cas sans logement
+mesurés ne bougeait.
+
+**Pourquoi.** L'ASPA et l'ASI comptent les minima du foyer des trois mois précédents, AAH
+comprise. Calculé d'abord, `revenu_disponible` atteint l'AAH d'un mois par le complément de
+libre choix du mode de garde, sous la CRDS du plafonnement de l'IFI
+(`isf_ifi > … > crds_paje > paje_cmg > aah`). Sous cette AAH, l'ASI du mois précédent lit
+une base familiale où l'AAH des mois antérieurs est coupée à zéro. Cette base reste en
+cache jusqu'à la fin du calcul, et l'ASPA ou l'ASI du conjoint la lisent.
+
+**Pourquoi l'épinglage de D-178 le corrige : par effet de bord.** L'aide au logement de
+chaque mois est nulle sans logement, mais évaluée quand même. Elle atteint l'ASPA de ce mois
+par son critère boursier, qui lit les ressources du RSA. Aucune AAH n'est sur la pile à cet
+endroit, et la base familiale qu'elle met en cache compte l'AAH en entier. Logé, un ménage
+en profitait déjà. Retirer l'épinglage le montre : 3 des 9 ménages logés bougent alors, de
+63 € (le couple à l'ASS, par la cascade de D-178) à 1 800 € (le couple ASPA + AAH).
+
+**La correction.** `engine.situations.has_benefit_cascade` décide de l'épinglage côté
+ménage. Il faut un logement, ou l'une des entrées qui ouvrent l'AAH, l'ASI ou l'ASS
+(`MINIMA_INPUTS`). Aucun champ ne les écrit encore : rien ne change aujourd'hui, ni en
+résultat ni en temps. Côté population, l'épinglage a toujours lieu. Après correction, les
+12 cas sans logement mesurés donnent le même RD dans les trois ordres, au centime.
+
+Écarté : épingler toujours, au palier complet. C'est plus simple, mais un ménage sans
+logement paierait 1,1 à 1,3 s de plus. Avec l'EMTR, il paierait 3,7 à 3,9 s de plus, de
+4,0 à 7,9 s. Ce serait trop pour un effet qu'aucune entrée n'atteint.
+
+**Vus échouer.** Les 2 tests ajoutés portent sur un couple sans logement : une AAH à temps
+partiel (6 000 €), et un conjoint à l'ASPA ou à l'ASI. Ils échouaient sur `24a52aa`, avec
+un EMTR de −16,19 à côté de l'ASPA et de −17,61 à côté de l'ASI, contre 0,23 à la main.
+Après correction, les 2 passent. `make gate` donne 1 433 réussis, 172 ignorés et 12 échecs :
+ce sont les 12 de D-176 à D-178, qui échouent à l'identique sans cette correction, faute de
+données dans ce conteneur. Les budgets de temps du moteur et de l'API passent, machine au
+repos.
+
+**Ce qui reste.**
+* **La protection est un effet de bord** de l'épinglage de l'aide au logement, pas son
+  objet. Elle tomberait si une version d'openfisca-france cessait d'évaluer l'ASPA dans la
+  base de ressources de l'aide. Les 2 tests le verraient.
+* **Le jour où un champ handicap, invalidité ou ASS entrera**, il devra écrire l'une des
+  variables de `MINIMA_INPUTS`, ou la liste devra le suivre.
+* **Des EMTR étranges, identiques dans tous les ordres**, donc hors de ce sujet :
+  * une AAH locataire sans revenu reçoit 11,86 : avec 100 € de salaire, elle perd la
+    majoration pour la vie autonome, réservée à qui n'a aucun revenu d'activité. Son
+    complément tombe de 1 257,24 à 104,77 € sur l'année ;
+  * un retraité locataire à l'ASPA (7 000 € de pension) reçoit −1,04 : avec 100 € de
+    salaire, la base de ressources de son aide au logement tombe de 6 300 à 5 832 €, et
+    l'aide gagne 124,73 € par an. Celui-là est déjà atteignable par l'API.
+
+  Ni l'un ni l'autre n'est examiné plus loin ici. Le second est proposé comme tâche
+  séparée.
