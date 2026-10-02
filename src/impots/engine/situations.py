@@ -61,6 +61,31 @@ def covered_years(year: int, historique: bool) -> list[int]:
     return list(range(year - HISTORY_YEARS, year + 1)) if historique else [year]
 
 
+def pin_rfr_n_2(simulation: Any, year: int) -> None:
+    """Compute the RFR of N-2 before anything else asks for it, and pin it as an input.
+
+    Every CSG on a replacement income — pensions and unemployment benefit alike — takes
+    its rate from the RFR of N-2. openfisca cuts ANY nested evaluation of a variable at
+    another period (`max_spiral_loops = 1`), so when that RFR is first asked for from
+    inside a year-N computation — the income tax, with `rni` of N on the stack — its own
+    `rni` of N-2 is cut to zero, and the rate read through it is the exemption. That is
+    how the income tax came to assess a 30 000 EUR chômeur on the gross amount and how
+    `revenu_disponible` came to miss the CSG and CRDS owed on it, by evaluation order (D-177).
+
+    Asked for first, on its own, the RFR of N-2 runs the year N-2 chain whole. The only
+    cut is then the RFR of N-4 itself, a year where nothing is supplied, so the CSG of
+    N-2 is the exemption and the replacement income of N-2 enters gross: the one
+    assumption this pin makes, measured in D-177. Pinned, no later computation reopens
+    it, in whatever order it runs.
+
+    Called by both builders, once every input is set: the household one and
+    `population.to_openfisca`. Each simulation pins its own, under its own tax-benefit
+    system, so a reform reads the RFR of N-2 its own parameters give.
+    """
+    period = str(year - 2)
+    simulation.set_input("rfr", period, simulation.calculate("rfr", period))
+
+
 def adult_id(i: int) -> str:
     return f"adulte_{i}"
 

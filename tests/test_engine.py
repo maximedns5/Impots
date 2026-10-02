@@ -564,3 +564,40 @@ def test_a_pensioners_emtr_compares_two_computations_of_the_same_kind() -> None:
     ) / EMTR_STEP
     assert result.emtr == pytest.approx(by_hand, abs=1e-3)
     assert 0.0 < result.emtr < 1.0
+
+
+def test_an_unemployed_persons_emtr_compares_two_computations_of_the_same_kind(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Unemployment benefit has no field on the wire yet, so it is written into the
+    situation the way a field would write it. The household builder has to close the
+    regress for whatever a situation carries: the EMTR's base comes from the registry,
+    its bumped leg from a fresh simulation that computes `revenu_disponible` first, and
+    before D-177 those two read the RFR of N-2 differently. A 30 000 EUR chômeur offered
+    100 EUR of salary was reported a marginal rate of -2.68.
+
+    Both legs of the hand computation go through `compute`, so through the same builder
+    as the rate under test: the bumped one by perturbing the situation it builds."""
+    from impots.engine import situations
+
+    original = situations.build_situation
+    bump = {"on": False}
+
+    def with_unemployment_benefit(household, year, historique_revenus=True):
+        situation = original(household, year, historique_revenus)
+        situation["individus"]["adulte_0"]["chomage_brut"] = {
+            month: 2_500.0
+            for covered in situations.covered_years(year, historique_revenus)
+            for month in situations.months(covered)
+        }
+        return perturb_first_adult(situation, year, EMTR_STEP) if bump["on"] else situation
+
+    monkeypatch.setattr(situations, "build_situation", with_unemployment_benefit)
+    unemployed = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1980}]})
+    result = compute(unemployed, 2024, tier="full", emtr=True)
+    bump["on"] = True
+    bumped = compute(unemployed, 2024, tier="full").baseline["revenu_disponible"]
+    by_hand = 1.0 - (bumped - result.baseline["revenu_disponible"]) / EMTR_STEP
+    assert result.emtr == pytest.approx(by_hand, abs=1e-3)
+    assert 0.0 < result.emtr < 1.0

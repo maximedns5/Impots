@@ -43,8 +43,12 @@ class ComputeResult:
     emtr_reform: float | None = None
 
 
-def _build(tax_benefit_system: Any, situation: dict[str, Any]) -> Any:
-    return SimulationBuilder().build_from_entities(tax_benefit_system, situation)
+def _build(tax_benefit_system: Any, situation: dict[str, Any], year: int) -> Any:
+    """A simulation with every input set and the RFR of N-2 pinned before anything
+    else is asked of it — see `situations.pin_rfr_n_2` (D-177)."""
+    simulation = SimulationBuilder().build_from_entities(tax_benefit_system, situation)
+    situations.pin_rfr_n_2(simulation, year)
+    return simulation
 
 
 def _delta(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
@@ -76,7 +80,7 @@ def _emtr(
     the real figure badly.
     """
     perturbed = situations.perturb_first_adult(situation, year, EMTR_STEP)
-    simulation = _build(tax_benefit_system, perturbed)
+    simulation = _build(tax_benefit_system, perturbed, year)
     bumped = float(simulation.calculate("revenu_disponible", str(year))[0])
     return round(1.0 - (bumped - base_disposable) / EMTR_STEP, 4)
 
@@ -109,9 +113,9 @@ def compute(
     build_ms = (time.perf_counter() - started) * 1000.0
 
     compute_started = time.perf_counter()
-    baseline_rows = outputs.extract(_build(baseline_system, situation), year, tier, debug)
+    baseline_rows = outputs.extract(_build(baseline_system, situation, year), year, tier, debug)
     reform_rows = (
-        outputs.extract(_build(reformed_system, situation), year, tier, debug)
+        outputs.extract(_build(reformed_system, situation, year), year, tier, debug)
         if reformed_system is not None
         else None
     )

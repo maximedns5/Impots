@@ -1,7 +1,7 @@
 """Population frame -> a vectorised OpenFisca simulation (PHASE1_SPEC §1, §4.4).
 
 This is the most dangerous module in the project. Both of the failure modes the
-Phase 1 spec calls out live here, and two that the spec does not mention.
+Phase 1 spec calls out live here, and three that the spec does not mention.
 
 **#1 — roles are flattened *subrole* keys.** `join_with_persons` matches each role
 string against `entity.flattened_roles`. The intuitive names from the JSON path
@@ -36,6 +36,15 @@ median niveau de vie by 1.7 %; the population EMTR read one order, the
 reconciliation report the other. `pension_annuelle` is calibrated on DECLARED
 pensions, so it is now written on `retraite_imposable` (box 1AS) as well as on
 `retraite_brute`, and the regress through pensions no longer exists (D-176).
+
+**#5 — the RFR of N-2, read from inside year N.** Unemployment benefit has the same
+regress, and its input is GROSS (Unédic spend), so it cannot be pinned the way a
+declared pension is. And openfisca cuts any nested evaluation of a variable at another
+period: asked for from inside the income tax of N, the RFR of N-2 lost its own `rni`
+to the cut and read as the exemption. The income tax then assessed a 30 000 EUR
+chômeur on the gross amount, and `revenu_disponible` missed the CSG and CRDS owed. The RFR
+of N-2 is now computed first and pinned, by `engine.situations.pin_rfr_n_2`, which the
+household builder calls too (D-177).
 """
 
 from __future__ import annotations
@@ -47,6 +56,8 @@ import numpy as np
 import polars as pl
 from openfisca_core.simulation_builder import SimulationBuilder
 
+from impots.engine.situations import pin_rfr_n_2
+
 #: Years of income history written behind the simulated year. Two, because the
 #: longest reference window is the aide au logement's rolling twelve months
 #: ending in November of N-1 (D-005). Same steady-state assumption as the
@@ -57,8 +68,9 @@ HISTORY_YEARS = 2
 #: built here (the EMTR caches of `behavioural.emtr`) carry it in their key, so that a
 #: file written under one wiring is never served under another. Change it whenever a
 #: change here moves a number: D-176 moved every pensioner's revenu disponible in the
-#: order the population EMTR reads it.
-WIRING = "D-176"
+#: order the population EMTR reads it, D-177 the income tax and the revenu disponible of
+#: every chômeur above the SMIC floor.
+WIRING = "D-177"
 
 #: entity -> the flattened subrole keys it accepts. Asserted, not trusted.
 ROLE_VOCABULARY: dict[str, tuple[str, ...]] = {
@@ -306,6 +318,10 @@ def build_simulation(
     if niche_bases:
         _set_niche_inputs(
             simulation, tax_benefit_system, year, niche_bases, frame, foyer_ids)
+
+    # Failure mode #5, and last on purpose: the RFR of N-2 is computed from the inputs
+    # of N-2, so every one of them must already be set.
+    pin_rfr_n_2(simulation, year)
 
     return PopulationSimulation(
         simulation=simulation,
