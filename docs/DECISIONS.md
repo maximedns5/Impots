@@ -8948,3 +8948,113 @@ différence de D-176, `reports/reconciliation.md` et `data/processed/baseline_20
 doivent bouger un peu : sur la fixture, l'IR de −0,02 % et le RD de −0,01 %, soit de l'ordre
 de −0,02 md€ et −0,12 md€ une fois transposés. Le niveau de vie ne devrait pas bouger.
 Ensuite, la décision de calendrier ci-dessus.
+
+## D-178 — La cascade des prestations : l'aide au logement épinglée mois par mois
+
+**Le point de départ.** D-176 et D-177 avaient laissé une troisième spirale, trouvée sans
+être traitée. Sur la fixture, 12 ménages locataires bougeaient encore de +22 € à +352 €
+entre l'ordre du `runner` et `revenu_disponible` calculé d'abord.
+
+**Ce qui bouge, et pourquoi.** C'est la prime d'activité pour 11 ménages sur 12, et l'aide
+au logement pour le douzième. Pour l'un d'eux (un salaire de 26 892 €, trois enfants, un
+loyer de 792 €), la PPA de janvier à mars vaut 458,22 €, 399,29 € et 340,36 € quand le
+RD est calculé d'abord, contre 281,43 € dans l'autre ordre ; d'avril à décembre, elle est
+identique. Son trimestre de référence, d'octobre à décembre 2023, avait perdu le forfait
+logement (176,79 € par mois), parce que l'aide au logement de ces mois y valait zéro au
+lieu de 282,80 €.
+
+La loi elle-même est circulaire à travers les mois : la neutralisation de l'aide au
+logement lit le RSA du mois précédent, dont le forfait logement lit l'aide de ce mois-là.
+Calculé d'abord, `revenu_disponible` atteint l'aide de 2024 par le plafonnement de l'IFI
+(`isf_ifi > … > crds > crds_logement`). Avec l'aide de janvier 2024 sur la pile, celle de
+décembre 2023 est une évaluation imbriquée de la même variable : coupée à zéro
+(`aide_logement_montant_brut_crds@2023-12`), puis lue par la PPA.
+
+**Qui lisait le mauvais ordre.**
+* **L'EMTR du ménage**, dont la jambe augmentée calcule `revenu_disponible` d'abord. Un
+  célibataire locataire (700 €, zone 2) recevait −1,36 à 9 000 €, −0,68 à 17 000 € et
+  −0,25 à 18 000 €. Avec les deux jambes dans un même ordre : 0,50, 0,35 et 0,36.
+* **L'EMTR de population** (`behavioural.emtr`), et donc l'explorateur. Sur ses 40 points,
+  `reports/emtr_celibataire_locataire.json` en voit bouger quatre au-delà de l'arrondi :
+  8 000 € (de 1,47 à 1,50, la borne), 9 000 € (de 0,82 à 0,88), 17 000 € et 18 000 € (de
+  0,38 à 0,32).
+* **L'ordre du `runner` non plus n'était pas juste.** Sur la courbe, calculer les deux
+  jambes dans cet ordre laisse 5 points faux dans la zone du RSA, dont 9 500 € : 1,10 au
+  lieu de 0,51. Imposer un ordre ne corrigeait donc rien.
+
+**La correction.** `engine.situations.pin_benefit_history` calcule l'aide au logement mois
+par mois, du plus ancien au plus récent, d'octobre N-1 à décembre N, et l'épingle. Chaque
+mois trouve le précédent déjà épinglé, et plus rien n'est coupé. L'hypothèse ajoutée :
+octobre N-1, le premier, lit l'aide de septembre comme nulle dans le forfait du RSA.
+Commencer en janvier N-1 donne les mêmes résultats au centime, sur la fixture comme sur
+les 120 points de la courbe, pour deux fois le coût.
+
+**Son coût, et ce qui l'a ramené.** Un premier essai sur 24 mois coûtait 2,4 fois le
+palier complet : 6,74 s pour un ménage, au-delà du budget de 6 s. L'essentiel partait
+dans des années sans aucune entrée, de 2016 à 2021, rouvertes mois après mois par deux
+chemins. D'abord l'AAH : l'aide au logement lit son abattement, et l'AAH évalue les revenus
+de N-2. Ensuite la CSG du chômage de 2022, qui lit le RFR de 2020. Le RFR des quatre années
+antérieures à l'historique est donc calculé et épinglé d'abord. Il vaut zéro de toute
+façon, mais il ne se recalcule plus.
+
+La correction n'est appelée que là où une prestation sera demandée. Côté ménage, par le
+constructeur, au palier complet, et seulement si le ménage a un logement (sans logement,
+pas d'aide au logement, donc pas de cascade). Côté population, par
+`PopulationSimulation.calculate`, avant la première variable hors du bloc fiscal. Le palier
+léger ne paie rien.
+
+| temps au chaud, minimum de trois | D-177 | D-178 |
+|---|---:|---:|
+| ménage, palier léger (budget 1,5 s) | 0,67 s | 0,61 s |
+| ménage sans logement, palier complet (budget 6 s) | 2,49 s | 2,73 s |
+| célibataire locataire, palier complet | 2,55 s | 3,92 s |
+| célibataire locataire, complet avec EMTR | 4,14 s | 6,94 s |
+| fixture, `runner`, palier léger | 0,82 s | 0,84 s |
+| fixture, `runner`, palier complet | 3,29 s | 5,17 s |
+
+**Mesuré, après.**
+* **Fixture** : plus aucun ménage ne bouge d'un ordre à l'autre (12 avant). Dans l'ordre du
+  `runner`, celui du rapport, seul le chômeur locataire bouge : son aide au logement
+  gagne 40,01 €. La PPA, le RSA et l'IR sont inchangés, les aides au logement totales
+  gagnent 0,06 %, et la médiane, le D1 et le D9 sont identiques au centime.
+* **PLF 2027** : les coûts mécaniques des art. 2 et 3 sont identiques au centime à ceux de
+  D-177.
+* **Ménage** : l'EMTR du locataire de 17 000 € vaut ce que donnent deux calculs dans le
+  même ordre.
+
+**L'artefact régénéré.** `reports/emtr_celibataire_locataire.json` est régénéré par
+`impots emtr celibataire_locataire --step 1000 --max 40000`, avec les paramètres du
+fichier d'origine. Les quatre points nommés plus haut bougent. Le pic reste à 8 000 €,
+où il passe de 1,4729 à 1,5000, la borne haute de `EMTR_BOUNDS`. La falaise reste à
+8 000 € et les croisements sont inchangés (11 000, 12 000, 16 000, 22 000 et 30 000 €).
+Trois autres points, à 10 000, 12 000 et 15 000 €, bougent d'exactement 0,0000098. C'est
+un ulp float32 du RD annuel (2⁻¹⁰ € à ces montants) divisé par le pas de 100 € :
+l'arrondi, pas la loi. Les fiches et le rapport de réconciliation dépendent de la
+population et ne se régénèrent pas ici. Aucune des deux fiches ne lit l'EMTR de
+population : leurs canaux sont l'emploi au voisinage du SMIC et l'incidence des
+cotisations patronales.
+
+**Les caches EMTR.** `to_openfisca.WIRING` passe à « D-178 ».
+
+**Vus échouer.** Les 2 tests ajoutés échouaient sur `d99a95b`, chacun pour sa raison :
+* l'EMTR du locataire de 17 000 €, côté ménage : −0,6801 au lieu de 0,3511 ;
+* l'ordre, côté population, sur deux célibataires locataires (9 500 € et 17 000 €) et la
+  famille de cinq de la fixture : jusqu'à 351,81 €.
+
+Après correction, les 2 passent, ainsi que les 14 tests de D-175 à D-177. `make gate`
+donne 1 431 réussis, 172 ignorés et 12 échecs : ce sont les 12 de D-176 et D-177, qui
+échouent à l'identique sans cette correction, faute de données dans ce conteneur. Les
+quatre budgets de temps du moteur et de l'API passent, machine au repos.
+
+**Ce qui reste.**
+* **L'AAH, l'ASS et l'ASI** gardent leurs propres coupes dans la cascade. Elles valent zéro
+  dans cette population, faute d'entrées d'éligibilité, et la mesure n'y voit aucun effet
+  d'ordre. Le jour où un champ handicap entrera, il faudra mesurer de nouveau.
+* **L'hypothèse du premier mois** : l'aide de septembre N-1 est lue comme nulle dans le
+  forfait du RSA. Elle ne change rien sur ce qui a été mesuré, mais seuls des locataires au
+  RSA en septembre N-1 pourraient la voir.
+
+**Ce que le propriétaire refait.** D'abord `make full`, puis la réconciliation : les lignes
+d'aides au logement bougent un peu (+0,06 % sur la fixture), le reste ne devrait pas
+bouger. Une bande comportementale qui lirait l'EMTR de population (le canal de l'élasticité
+du revenu imposable) bougerait pour les locataires de la zone de la PPA.
