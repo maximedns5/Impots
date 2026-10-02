@@ -1,0 +1,7 @@
+{
+  "cebge_seuils_et_taux": [
+    {"seuil_ca": 1500000000, "taux": 0.157},
+    {"seuil_ca": 3000000000, "taux": 0.314}
+  ],
+  "cebge_prorogation_largeur": 100000000
+}

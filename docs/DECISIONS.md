@@ -8616,3 +8616,55 @@ l'annexe ni dans la presse. Le texte du projet est lu pour le triage avec les mo
 agrégés masqués : tout nombre suivi de « milliards », « millions », « Md€ » ou « M€ »
 est remplacé avant lecture. Les paramètres d'une mesure (taux, plafonds par foyer)
 restent lisibles, puisqu'il faut bien les coder.
+
+## D-175 — PLF 2027 : le jour de parution, ce que le runbook a rencontré
+
+**Le texte.** Assemblée nationale, texte n° 3210, déposé le 2026-10-01, manifesté le
+2026-10-02 (`plf2027_texte_an_b3210.html`, sha256 7fcd191974d8). L'URL a été relevée sur
+la page de publication (dossier `PLF_2027`, puis la page du texte). L'annexe des
+évaluations préalables n'était pas encore liée depuis le dossier : elle n'est ni
+téléchargée ni ouverte.
+
+**Trois trous trouvés avant le premier chiffre, ce qui est le seul moment où les trouver
+vaut quelque chose.**
+
+1. **Le découpeur écartait trois articles sans bruit** (23, 38 et 47) : un titre sans
+   deux-points, une entité `&#xa0;` non résolue. 86 articles passaient le plancher de
+   plausibilité aussi bien que 89. Le deux-points est facultatif, les entités résolues,
+   et un trou dans la numérotation est désormais refusé (`76f9552`).
+2. **La CEBGE, seule catégorie « chiffrable » de septembre, n'avait pas de chemin
+   d'enregistrement.** Le registre ne prenait que des scénarios ménages. Et l'arbre
+   l'éteint après 2026, si bien que le curseur refuse, à raison, d'écrire le troisième
+   exercice. La prorogation crée ses paramètres par `create_parameter`, avec la largeur de
+   lissage que le texte fixe (« au dénominateur, 100 millions d'euros ») et non une
+   largeur reprise d'une année éteinte. `chiffrage register-entreprises` refuse une
+   population de cellules synthétiques (`ca0bdb6`).
+3. **L'abattement sur les pensions était un « petit bouton » sans bouton**, et le format
+   d'entrée n'avait pas de pension, donc aucun ménage exprimable ne pouvait le voir
+   bouger (D-081). Il en a maintenant une (`8a5c500`).
+
+**Un constat en chemin, épinglé et non corrigé.** `retraite_imposable` vaut
+`retraite_brute + csg_deductible_retraite`, mais le taux de cette CSG lit le RFR de N-2.
+Calculée avant la CSG, ce que fait l'ordre du registre de sorties, `retraite_imposable`
+voit la CSG à zéro à cause de la spirale d'openfisca sur cette dépendance. Calculée
+après, elle la voit à −5,9 %. La pension saisie est donc imposée telle quelle. C'est
+cohérent avec la population, dont les pensions sont calées sur les montants déclarés.
+Le champ est défini comme le montant déclaré, et un test épingle l'effet d'ordre. Ce que
+cet ordre fait à la CSG des pensions dans le revenu disponible n'a pas été mesuré.
+
+**Le triage : 33 articles fiscaux, 3 chiffrables** (2, 3 et 15). 17 décisions sont
+neuves et datées du jour ; les 16 autres reprennent une catégorie de septembre, à la
+lettre, et un test le vérifie. L'art. 2 n'est chiffré que pour son volet revalorisation.
+L'art. 15 ne l'est que pour son volet CEBGE.
+
+**Ce qui a été vu en plus de D-174.** L'exposé des motifs de l'art. 2 annonce « environ
+500 000 foyers » qui évitent l'entrée dans l'impôt : ce compte ne servira pas de test. La
+règle de masquage est affinée. Le dispositif d'un article ne porte que des paramètres et
+se lit en clair : le seuil de la CEBGE et le plafond de 3 000 € sont nécessaires au
+codage. L'exposé des motifs est lu montants masqués.
+
+**Pourquoi l'enregistrement tourne chez le propriétaire.** La politique réseau a été
+ouverte, mais l'INSEE ne répond pas à ce conteneur : connexion établie, puis 504 et 502.
+Sans l'enquête Emploi ni les fichiers Ésane, ni les populations, ni `make full`, ni les
+chiffrages ne tournent ici. Les tolérances, leurs justifications et les comparateurs
+sont fixés dans `docs/PLF2027_ENREGISTREMENT.md` et committés avant le premier calcul.

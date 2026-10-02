@@ -29,7 +29,7 @@ from `main`.
 
 **1 729 tests** where the data is present (the CI `fast` job counts 1 388 passed,
 120 skipped, 221 deselected), eleven replayable `verify_*.py` gate scripts, and
-**174 decision entries**, D-000 to D-173, recording every error in both
+**176 decision entries**, D-000 to D-175, recording every error in both
 directions.
 
 ## Verification, as it stands
@@ -181,15 +181,15 @@ download list.
 
 ## Armed and waiting
 
-* **PLF 2027 — early October, S4 interrupts anything.** Rehearsed end to end
-  (D-162): the registry was exercised against the real CLI and the real git
-  history, a tolerance widened after the fact was refused, and the registry was
-  emptied again. Step 2's article split is a script now, checked against the 2026
-  text's known answer (D-164). **On the day:** log a green `make full` on the head
-  first, since step 0 needs a line no older than the commit that registers;
-  create `reforms/`, which the runbook cites but nothing creates; and match the
-  dons article by hand, because its title changed (« personnes en difficulté » →
-  « plus démunis ») and the script refuses to force it.
+* **PLF 2027 — published 2026-10-01 (AN text 3210), and the interrupt is running**
+  (D-174, D-175, branch `claude/plf2027`). Done in the cloud: the text manifested, the
+  splitter fixed (it dropped articles 23, 38 and 47), the 33 fiscal articles triaged —
+  **3 priceable**: art. 2 (barème revaluation), art. 3 (pension abatement cap, knob wired
+  that day), art. 15 (CEBGE third exercice, through a deliberate prorogation and a new
+  firm registry path). **Waiting on the owner's machine**, because INSEE does not answer
+  the cloud container: `make full` on the head, then the three registrations, exactly as
+  `docs/PLF2027_ENREGISTREMENT.md` writes them, tolerances committed before any figure.
+  The annex stays unopened until the registrations are pushed.
 * **ERFS 2022 (FPR, lil-1696) — the interrupt ran, E3 is « nothing ».** E0 rails
   (D-134), E1 inventory (D-135), E2 validation table (D-137), and the two
   re-examination gates (D-141) are done. No recalibration is drawn; the E2 table
@@ -222,8 +222,10 @@ download list.
 
 ## What the next session does if nobody says otherwise
 
-1. **If the PLF 2027 text is out, it outranks everything** (§8, D-162): a green
-   `make full` on the head, then the runbook.
+1. **The PLF 2027 is out and its registrations outrank everything** (§8, D-162,
+   D-175): if `chiffrages_preregistres/plf2027_art_*.yaml` are committed, find the
+   annex link on the AN dossier page, manifest it, and grade (runbook, step 5); if not,
+   the owner's step comes first, `docs/PLF2027_ENREGISTREMENT.md`.
 2. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes.

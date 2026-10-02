@@ -1,0 +1,35 @@
+{
+  "name": "plf2027_art_2",
+  "year": 2026,
+  "created": "2026-10-02",
+  "source": "PLF 2027 (AN, texte n° 3210), art. 2 — Soutenir le travail en revalorisant le barème de l'impôt sur le revenu grâce à un traitement fiscal équivalent des différents types de revenus. Volet chiffré : la revalorisation de 2,1 % des tranches, de la décote et du plafond général de la demi-part (I, H, 1° à 3°), revenus 2026.",
+  "note": "Ne porte PAS les autres volets de l'article : indemnités de rupture, IJ ALD et AT/MP, prime carburant 2026, taux de CSG des IJ ; ni les plafonds de QF autres que le général (4 262, 1 079, 1 801, 2 011 €), ni le 196 B, ni l'indexation des limites de déductions (abattements pensions et frais professionnels).",
+  "tags": [],
+  "reform": {
+    "ir_bareme": [
+      {
+        "threshold": 0.0,
+        "rate": 0.0
+      },
+      {
+        "threshold": 11844.0,
+        "rate": 0.11
+      },
+      {
+        "threshold": 30200.0,
+        "rate": 0.3
+      },
+      {
+        "threshold": 86353.0,
+        "rate": 0.41
+      },
+      {
+        "threshold": 185737.0,
+        "rate": 0.45
+      }
+    ],
+    "decote_seuil_celib": 915.0,
+    "decote_seuil_couple": 1513.0,
+    "plafond_qf_demi_part": 1845.0
+  }
+}

@@ -8,8 +8,12 @@ names must resolve in the tree. A document that drifts from the code is worse th
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
+from impots.api.schemas import ReformSpec
+from impots.entreprises.reforms import FirmReformSpec
 from impots.plf_coverage import (
     ARTICLES,
     BUCKETS,
@@ -205,3 +209,91 @@ def test_the_document_is_in_sync_with_the_table():
     assert OUT.read_text(encoding="utf-8") == build(), (
         "docs/PLF2027_COVERAGE.md diverge de la table — "
         "relancer scripts/write_plf_coverage.py")
+
+
+# --------------------------------------------------------------------------- #
+# Le PLF 2027 réel — triage du jour de parution (2026-10-02)
+# --------------------------------------------------------------------------- #
+def test_every_2027_fiscal_article_is_classified_exactly_once():
+    """Les articles 1 à 33 du texte n° 3210 : un découpage qui en perd un (le 23, avant
+    la correction du découpeur) ne doit pas pouvoir passer pour un triage complet."""
+    from impots.plf_coverage import ARTICLES_2027, BUCKETS
+
+    assert [a.numero for a in ARTICLES_2027] == list(range(1, 34))
+    for article in ARTICLES_2027:
+        assert article.bucket in BUCKETS
+        assert article.decision in ("septembre", "neuve"), article.numero
+
+
+def test_a_september_decision_names_a_september_category():
+    """« Catégorie de septembre » est une affirmation vérifiable : la catégorie doit
+    exister, à la lettre, dans le triage préenregistré. Sinon c'est une décision du jour
+    habillée en décision d'avance, ce que le runbook interdit de laisser passer."""
+    from impots.plf_coverage import ARTICLES, ARTICLES_2027
+
+    septembre = {a.categorie for a in ARTICLES}
+    for article in ARTICLES_2027:
+        if article.decision == "septembre":
+            assert article.categorie in septembre, (article.numero, article.categorie)
+
+
+def test_a_new_2027_decision_is_dated_the_day_it_was_taken():
+    from impots.plf_coverage import ARTICLES_2027, DATE_TRIAGE_2027
+
+    assert DATE_TRIAGE_2027 == "2026-10-02"
+    neuves = [a for a in ARTICLES_2027 if a.decision == "neuve"]
+    assert neuves, "un texte réel porte forcément des catégories que septembre n'a pas vues"
+
+
+@pytest.mark.parametrize("numero", range(1, 34))
+def test_every_2027_knob_exists(numero):
+    from impots.plf_coverage import ARTICLES_2027
+
+    article = ARTICLES_2027[numero - 1]
+    known = set(ReformSpec.model_fields) | set(FirmReformSpec.model_fields)
+    for knob in article.knobs:
+        assert knob in known, f"art. {numero} nomme un bouton inexistant : {knob}"
+
+
+def test_every_priceable_2027_article_carries_a_reform_that_validates():
+    """Un article déclaré chiffrable doit pointer une réforme qui se lit avec le bon modèle
+    et qui touche exactement les boutons que la table annonce."""
+    import json
+
+    from impots.plf_coverage import ARTICLES_2027
+
+    root = Path(__file__).resolve().parents[1]
+    chiffrables = [a for a in ARTICLES_2027 if a.bucket == "priceable_now"]
+    assert [a.numero for a in chiffrables] == [2, 3, 15]
+    for article in chiffrables:
+        model = FirmReformSpec if article.chaine == "entreprises" else ReformSpec
+        payload = json.loads((root / article.reforme).read_text(encoding="utf-8"))
+        spec = model.model_validate(payload)
+        assert sorted(spec.model_dump(exclude_none=True)) == sorted(article.knobs)
+
+
+def test_a_priceable_household_article_has_its_dated_scenario():
+    """Le pas 4 du runbook enregistre un scénario avant de chiffrer : le scénario daté
+    porte la réforme même que la table pointe."""
+    import json
+
+    from impots import scenarios
+    from impots.plf_coverage import ARTICLES_2027
+
+    root = Path(__file__).resolve().parents[1]
+    for article in ARTICLES_2027:
+        if article.bucket != "priceable_now" or article.chaine != "ménages":
+            continue
+        scenario = scenarios.load(f"plf2027_art_{article.numero}")
+        payload = json.loads((root / article.reforme).read_text(encoding="utf-8"))
+        assert scenario.reform == ReformSpec.model_validate(payload)
+        assert scenario.year == 2026, "mesures d'IR sur les revenus 2026 (art. 33, 2°)"
+
+
+def test_a_2027_refusal_states_which_of_data_structure_or_scope():
+    from impots.plf_coverage import ARTICLES_2027
+
+    for article in ARTICLES_2027:
+        if article.bucket == "not_priceable":
+            assert article.raison.split(".")[0].split(" ")[0] in (
+                "data", "structure", "scope"), (article.numero, article.raison[:40])

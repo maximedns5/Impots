@@ -1,0 +1,12 @@
+{
+  "ir_bareme": [
+    {"threshold": 0, "rate": 0.0},
+    {"threshold": 11844, "rate": 0.11},
+    {"threshold": 30200, "rate": 0.30},
+    {"threshold": 86353, "rate": 0.41},
+    {"threshold": 185737, "rate": 0.45}
+  ],
+  "decote_seuil_celib": 915,
+  "decote_seuil_couple": 1513,
+  "plafond_qf_demi_part": 1845
+}
