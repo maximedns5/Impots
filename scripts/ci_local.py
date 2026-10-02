@@ -139,6 +139,8 @@ def verifier_imports(worktree: Path, venv: Path) -> list[str]:
 
 ETAPES_CHAINE = (
     ("contrôle des épinglages", ["python", "scripts/verify_openfisca.py"]),
+    ("hypothèses du moteur de population",
+     ["python", "scripts/verify_population_engine.py", "2000"]),
     ("lint", ["ruff", "check", "src", "tests", "scripts"]),
     ("fetch des sources", ["impots", "data", "fetch", "--profile", "tests"]),
     ("construction cellules", ["impots", "entreprises", "cells"]),

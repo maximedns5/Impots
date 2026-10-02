@@ -8459,3 +8459,38 @@ les deux routes ; changer la commande du propriétaire est un choix sur son flux
 travail, pas une correction. La passe complète n'est pas relancée : sans les fichiers IFI,
 les cinq tests restent sautés dans ce conteneur, et c'est le prochain run du job `fast`,
 qui les télécharge, qui les fait tourner pour de vrai.
+
+## D-172 — La suite complète sort de la CI automatique
+
+**La décision, du propriétaire (2026-10-02).** Le job `pytest` (`pytest -q -m ""`) ne se
+lance plus que sur `workflow_dispatch`. Les PR et les poussées sur `main` gardent `fast`,
+`perf` et `no-data-committed`.
+
+**Ce qui l'a motivée, mesuré.** La suite complète n'a jamais fini sur un runner. Le job de
+`f1e5837` a été tué par SIGTERM avant son résumé (D-160) ; celui de `1e12460` a reçu un
+signal d'arrêt du runner après 73 min de tests, vers 63 % de la suite (run 36882194476).
+Au rythme observé, il lui faudrait environ deux heures, contre une en local, et le dépôt
+étant privé, ces minutes sont facturées. Jusqu'à son arrêt, ce dernier run n'avait imprimé
+que des succès et des sauts : on ne retire pas un job qui trouvait des défauts, on retire
+un job qui ne rendait pas de verdict.
+
+**Ce qui ne bouge pas.** La vérification complète reste `make full`, en local, avant tout
+commit de fond, avec sa ligne au journal (charte §4) — c'est elle qui atteste chaque passe
+verte du journal. Le job complet existe toujours : Actions → test → « Run workflow », sur la
+branche voulue.
+
+**Ce qui est déplacé pour ne rien perdre.** Le job complet portait aussi deux portes
+rapides qui ne tournaient nulle part ailleurs en CI : `verify_openfisca.py` et
+`verify_population_engine.py 2000` (14 s et 9 s sur le dernier run). Elles passent dans
+`fast`, et `ci_local` reçoit la seconde pour continuer de rejouer `fast` étape par étape —
+la première y tournait déjà, comme contrôle des épinglages.
+
+**Les copies de la règle, toutes mises à jour (D-151)** : la condition et le commentaire du
+workflow ; dans `pyproject.toml`, le commentaire du gate et le texte du marqueur `slow`,
+qui affirmaient encore que la CI lance ces tests à chaque poussée et qu'ils y sautent faute
+de population — faux depuis D-161 pour le premier point, depuis D-158 pour le second ; et
+`docs/STATE_AND_NEXT.md`.
+
+**Pas de nouveau test.** La décision porte sur la configuration et se lit dans le
+workflow. L'épingler par un test ajouterait une garde à une suite dont le volume est
+précisément la question qui a mené ici.
