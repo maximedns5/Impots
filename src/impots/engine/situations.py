@@ -174,6 +174,12 @@ def build_situation(
             "salaire_de_base": _spread("salaire_de_base", adult.salaire_brut_annuel, years),
             "date_naissance": {"ETERNITY": f"{adult.annee_naissance}-01-01"},
         }
+        if adult.pension_annuelle:
+            # Monthly, like the salary, and on the same years: the population build
+            # writes `retraite_brute` this way too, so one pensioner prices the same on
+            # both paths.
+            individus[key]["retraite_brute"] = _spread(
+                "retraite_brute", adult.pension_annuelle, years)
 
     child_ids: list[str] = []
     for i, child in enumerate(household.children):
