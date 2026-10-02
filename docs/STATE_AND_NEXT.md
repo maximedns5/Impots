@@ -29,7 +29,7 @@ from `main`.
 
 **1 729 tests** where the data is present (the CI `fast` job counts 1 388 passed,
 120 skipped, 221 deselected), eleven replayable `verify_*.py` gate scripts, and
-**172 decision entries**, D-000 to D-171, recording every error in both
+**173 decision entries**, D-000 to D-172, recording every error in both
 directions.
 
 ## Verification, as it stands
@@ -50,9 +50,12 @@ directions.
   not established. It is not the concurrency group, since `cancel-in-progress` is
   off on `main`, and not a timeout, since none is set. At the observed rate the
   suite needs about two hours there, against one locally.
-* **CI on PRs** runs `fast`, `perf` and `no-data-committed`. The full suite runs
-  only on `main`, on dispatch, or on a PR labelled `full-suite` (D-161). `fast`
-  was green on `aa869dd`: 1 388 passed, 120 skipped, 10 min 57 s.
+* **Automatic CI** — every PR and every push to `main` — runs `fast`, `perf` and
+  `no-data-committed`; `fast` also carries the two engine-assumption scripts.
+  **The full suite is out of automatic CI since 2026-10-02 (D-172)**, by the
+  owner's decision: it runs only when the workflow is dispatched by hand, and
+  `make full` is the full verification. `fast` was green on `aa869dd`: 1 388
+  passed, 120 skipped, 10 min 57 s.
 * **pytest is started two ways.** `make gate` and `make full` run
   `python -m pytest`, which puts the repo root on `sys.path`; CI and
   `make ci-local` run bare `pytest`, which does not. Five tests passed on the
@@ -172,10 +175,6 @@ download list.
   is never measured: a four-household rake with a zero target keeps 2.0 households
   there, converges, and D-150's own guard accepts it (D-157). Whether any published
   target is zero has not been checked.
-* **Whether the full suite runs in CI at all.** It has never completed on a
-  runner: two attempts, both killed before their summary. A larger runner,
-  splitting the slow tests, or keeping the full suite local as `make full` each
-  costs something different, and the minutes are billed.
 * **ERFS documentation location** (D-135): left in the delivery with its digests
   recorded, rather than copied under `data/raw/`. Defensible either way; the
   reviewer's to rule.

@@ -56,16 +56,18 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # The default run is the gate: everything except the tests that need a full
-# population pass. Those are not weakened or deleted — they are marked, and CI runs
-# them on every push with `-m ""`. Local test pain is how green suites rot, so the
-# gate is kept fast enough to run without thinking about it.
+# population pass. Those are not weakened or deleted — they are marked, and run by
+# `make full` (`-m ""`) before any substantive commit; CI runs them only when the
+# workflow is dispatched by hand (D-172). Local test pain is how green suites rot, so
+# the gate is kept fast enough to run without thinking about it.
 addopts = "-m 'not slow'"
 markers = [
   """slow: needs a 20 000-household population run (about a minute each); excluded \
-from the default gate. CI INVOKES these (-m '') but they SKIP there for want of a \
-built population, so `make full` on a machine holding the data is the only place \
-they actually run. The earlier text said 'always run in CI', which was false in \
-the dangerous direction: it would let a reader skip the local hour. See D-114.""",
+from the default gate AND from automatic CI (D-172). `make full` on a machine \
+holding the data is where they run; CI runs them only when the workflow is \
+dispatched by hand, and no full-suite run has yet finished on a runner. An earlier \
+text said 'always run in CI', which was false in the dangerous direction: it would \
+let a reader skip the local hour. See D-114.""",
 ]
 filterwarnings = [
   "ignore::DeprecationWarning",

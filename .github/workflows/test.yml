@@ -70,6 +70,17 @@ jobs:
           print("pins OK")
           PYPIN
 
+      # Les deux portes du moteur, venues du job complet quand celui-ci est sorti de
+      # la CI automatique (D-172) : elles ne tournaient nulle part ailleurs. ~25 s à
+      # elles deux, sans aucune donnée.
+      - name: Engine assumptions
+        run: python scripts/verify_openfisca.py
+
+      # The population-scale gate: subrole vocabulary, the nbptr guard, the NaN
+      # guard. Small N in CI — it is testing wiring, not throughput.
+      - name: Population engine assumptions
+        run: python scripts/verify_population_engine.py 2000
+
       - name: Lint
         run: ruff check src tests scripts
 
@@ -102,16 +113,16 @@ jobs:
         env:
           IMPOTS_SKIP_PERF: "1"
 
-  # LA SUITE COMPLÈTE — 1 702 tests, ~50 min de runner, avec la construction de la
-  # population. Elle ne tourne PLUS sur chaque poussée de branche : sur une PR, le job
-  # `fast` ci-dessus couvre le travail courant, et celle-ci se lance sur `main`, à la
-  # demande (`workflow_dispatch`), ou sur une PR portant le label `full-suite`.
+  # LA SUITE COMPLÈTE — hors de la CI automatique depuis D-172, sur décision du
+  # propriétaire. Elle ne se lance plus qu'à la main : Actions → test → « Run
+  # workflow », sur la branche voulue. Elle n'a JAMAIS fini sur un runner — deux
+  # essais, tués avant leur résumé (`f1e5837` par SIGTERM ; `1e12460` par un signal
+  # d'arrêt du runner, à ~63 % après 73 min) —, il lui faut ~2 h à ce rythme, et ces
+  # minutes sont facturées. La vérification complète est `make full` en local, comme
+  # la charte l'exige déjà (§4) ; `fast` couvre chaque PR et chaque poussée sur `main`.
   pytest:
     runs-on: ubuntu-latest
-    if: >-
-      github.event_name == 'workflow_dispatch'
-      || github.ref == 'refs/heads/main'
-      || contains(github.event.pull_request.labels.*.name, 'full-suite')
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
 
