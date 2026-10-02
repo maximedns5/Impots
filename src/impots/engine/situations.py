@@ -61,6 +61,64 @@ def covered_years(year: int, historique: bool) -> list[int]:
     return list(range(year - HISTORY_YEARS, year + 1)) if historique else [year]
 
 
+def pin_rfr_n_2(simulation: Any, year: int) -> None:
+    """Compute the RFR of N-2 before anything else asks for it, and pin it as an input.
+
+    Every CSG on a replacement income — pensions and unemployment benefit alike — takes
+    its rate from the RFR of N-2. openfisca cuts ANY nested evaluation of a variable at
+    another period (`max_spiral_loops = 1`), so when that RFR is first asked for from
+    inside a year-N computation — the income tax, with `rni` of N on the stack — its own
+    `rni` of N-2 is cut to zero, and the rate read through it is the exemption. That is
+    how the income tax came to assess a 30 000 EUR chômeur on the gross amount and how
+    `revenu_disponible` came to miss the CSG and CRDS owed on it, by evaluation order (D-177).
+
+    Asked for first, on its own, the RFR of N-2 runs the year N-2 chain whole. The only
+    cut is then the RFR of N-4 itself, a year where nothing is supplied, so the CSG of
+    N-2 is the exemption and the replacement income of N-2 enters gross: the one
+    assumption this pin makes, measured in D-177. Pinned, no later computation reopens
+    it, in whatever order it runs.
+
+    Called by both builders, once every input is set: the household one and
+    `population.to_openfisca`. Each simulation pins its own, under its own tax-benefit
+    system, so a reform reads the RFR of N-2 its own parameters give.
+    """
+    period = str(year - 2)
+    simulation.set_input("rfr", period, simulation.calculate("rfr", period))
+
+
+#: The months of housing aid pinned by `pin_benefit_history`, oldest first: the reference
+#: quarter of January's prime d'activité (October to December of N-1), then every month
+#: of N. Starting earlier, in January of N-1, gives the same answer to the cent on the
+#: fixture population and on the 120 points of the renter EMTR curve, at twice the cost.
+HOUSING_MONTHS_BEFORE_N = (10, 11, 12)
+
+
+def pin_benefit_history(simulation: Any, year: int) -> None:
+    """Pin the housing aid month by month, oldest first, before any benefit is asked for.
+
+    Housing aid and the RSA feed each other through the months: the aid's neutralisation
+    reads the RSA of the month before, whose forfait logement reads the aid of that
+    month, and the prime d'activité reads the aid of its reference quarter. With the aid
+    of one month on the stack, openfisca cuts the aid of the month before to zero
+    (`pin_rfr_n_2` says why), so the PPA of January to March could lose the forfait
+    logement of its quarter, by evaluation order (D-178). Computed oldest first, each
+    month finds the one before it already pinned, and nothing is cut. The first one,
+    October of N-1, reads September as zero aid in the RSA's forfait: the assumption,
+    measured as changing nothing in D-178.
+
+    The RFR of the four years before the income history is computed and pinned first.
+    Nothing is supplied there, so it is zero either way; pinned, the housing chain stops
+    reopening the empty years 2016 to 2021 month after month, which is where most of the
+    cost went. Only for a simulation that will compute benefits: the light tier never
+    asks for one and must not pay for this.
+    """
+    for empty in range(year - 3, year - 7, -1):
+        simulation.set_input("rfr", str(empty), simulation.calculate("rfr", str(empty)))
+    pinned = [f"{year - 1}-{m:02d}" for m in HOUSING_MONTHS_BEFORE_N] + months(year)
+    for month in pinned:
+        simulation.set_input("aide_logement", month, simulation.calculate("aide_logement", month))
+
+
 def adult_id(i: int) -> str:
     return f"adulte_{i}"
 
@@ -176,10 +234,24 @@ def build_situation(
         }
         if adult.pension_annuelle:
             # Monthly, like the salary, and on the same years: the population build
-            # writes `retraite_brute` this way too, so one pensioner prices the same on
-            # both paths.
+            # writes these two this way too, so one pensioner prices the same on both
+            # paths.
+            #
+            # The declared amount is ALSO pinned on `retraite_imposable` (box 1AS),
+            # whose formula `retraite_brute + csg_deductible_retraite` would otherwise
+            # run. The rate of that CSG reads the RFR of N-2, which reads
+            # `retraite_imposable` of N-2: a regress openfisca cuts at its second turn,
+            # wherever the evaluation order puts it. Left to run, the same household
+            # priced two ways — 2 065 EUR of disposable income apart on a 50 000 EUR
+            # pensioner — and the EMTR compared one with the other (D-176). Pinned, the
+            # income tax never asks for that CSG, and the levies still due on a
+            # declared pension (CSG imposable, CRDS, CASA) read an RFR of N-2 that no
+            # longer depends on it. Their base stays `retraite_brute`, the declared
+            # amount, about 6 % under the gross one: accepted and measured in D-176.
             individus[key]["retraite_brute"] = _spread(
                 "retraite_brute", adult.pension_annuelle, years)
+            individus[key]["retraite_imposable"] = _spread(
+                "retraite_imposable", adult.pension_annuelle, years)
 
     child_ids: list[str] = []
     for i, child in enumerate(household.children):

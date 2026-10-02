@@ -8,6 +8,7 @@ variable.
 
 from __future__ import annotations
 
+import functools
 import time
 
 import pytest
@@ -451,3 +452,186 @@ def test_the_guard_does_not_block_a_system_of_ones_own() -> None:
                     value=0.30, instant="2026-01-01")
     node = fresh.parameters("2026-01-01").impot_revenu.contributions_exceptionnelles
     assert float(node.contribution_differentielle_hauts_revenus.taux_cdhr) == 0.30
+
+
+# --------------------------------------------------------------------------- #
+# pensions — the CSG spiral (docs/DECISIONS.md D-176)
+# --------------------------------------------------------------------------- #
+# `retraite_imposable` is `retraite_brute + csg_deductible_retraite`, and the rate of
+# every pension levy reads the RFR of N-2, which reads `retraite_imposable` of N-2: a
+# regress through the years that openfisca cuts at its second turn, wherever the
+# evaluation order happens to put that turn. `pension_annuelle` is the DECLARED amount
+# (D-175), already net of the deductible CSG.
+PENSIONER = HouseholdInput.model_validate(
+    {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1955,
+                 "pension_annuelle": 50_000}]}
+)
+LOW_PENSIONER = HouseholdInput.model_validate(
+    {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1955,
+                 "pension_annuelle": 15_000}]}
+)
+EARNER_AND_PENSIONER = HouseholdInput.model_validate(
+    {
+        "adults": [
+            {"salaire_brut_annuel": 35000, "annee_naissance": 1965},
+            {"salaire_brut_annuel": 0, "annee_naissance": 1955, "pension_annuelle": 25_000},
+        ],
+        "couple_marie_ou_pacse": True,
+    }
+)
+PENSION_HOUSEHOLDS = {"pensioner": PENSIONER, "earner_and_pensioner": EARNER_AND_PENSIONER}
+#: CSG imposable 2.4 % + CRDS 0.5 % + CASA 0.3 %, at the full rate: the pension levies
+#: that are NOT deductible, and so the only ones left to take off a declared amount.
+NON_DEDUCTIBLE_FULL_RATE = 0.024 + 0.005 + 0.003
+
+
+@functools.cache
+def _both_orders(name: str) -> tuple[dict, dict]:
+    """The same household on two fresh simulations: through the registry, as the API
+    computes it, and with `revenu_disponible` computed first, as the EMTR's bumped leg
+    and the population EMTR compute it."""
+    situation = build_situation(PENSION_HOUSEHOLDS[name], 2024)
+    registry = extract(SimulationBuilder().build_from_entities(baseline(), situation),
+                       2024, "full")
+    first = SimulationBuilder().build_from_entities(baseline(), situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    return registry, {
+        "revenu_disponible": disposable,
+        "ir": -float(first.calculate("impot_revenu_restant_a_payer", "2024")[0]),
+        "retraite_imposable": float(first.calculate_add("retraite_imposable", "2024").sum()),
+    }
+
+
+@pytest.mark.parametrize("name", sorted(PENSION_HOUSEHOLDS))
+def test_a_pension_prices_the_same_whatever_is_computed_first(name: str) -> None:
+    """Measured on the code before D-176: the 50 000 EUR pensioner's disposable income
+    came out 2 065 EUR lower when `revenu_disponible` was computed first, and the
+    earner-and-pensioner couple's 1 263 EUR lower. Same household, same law, two
+    answers, chosen by which variable a caller happened to ask for first."""
+    registry, first = _both_orders(name)
+    for key in ("revenu_disponible", "ir", "retraite_imposable"):
+        assert first[key] == pytest.approx(registry[key], abs=0.5), key
+
+
+def test_disposable_income_takes_only_the_non_deductible_levies_off_a_declared_pension(
+) -> None:
+    """By hand, in the order that used to go wrong. A declared pension is already net of
+    the deductible CSG (5.9 % at the full rate); what is left to take off it is the
+    CSG imposable, the CRDS and the CASA, 3.2 % between them.
+
+    Computed first, `revenu_disponible` took the deductible CSG off a SECOND time — 2 950
+    EUR on this pensioner — and the income tax it netted was assessed on 47 050 EUR,
+    not on the 50 000 typed."""
+    _, first = _both_orders("pensioner")
+    expected = 50_000 * (1 - NON_DEDUCTIBLE_FULL_RATE) - first["ir"]
+    assert first["revenu_disponible"] == pytest.approx(expected, abs=1.0)
+    assert first["retraite_imposable"] == pytest.approx(50_000, abs=0.5)
+
+
+def test_a_pensioner_below_the_exemption_threshold_pays_no_csg() -> None:
+    """Born in 1955 with 15 000 EUR declared: an RFR for 2022 of 15 000 - 10 % - 2 620
+    (the abattement for the over-65s) = 10 880, under the 12 230 EUR exemption threshold
+    for one part. No CSG, CRDS or CASA in 2024, no income tax, no benefit at this level.
+
+    The registry order charged 75 EUR of CRDS: the levies were first computed inside the
+    prime d'activité's cascade, on an RFR of N-2 read inside a cut spiral that had lost
+    the abattement — 13 500, over the threshold, so the taux réduit."""
+    rows = compute(LOW_PENSIONER, 2024, tier="full").baseline
+    assert rows["ir"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(15_000, abs=0.5)
+
+
+def test_the_reported_taxable_pension_is_the_declared_one_beside_a_salary() -> None:
+    """D-175 pinned this on a lone pensioner. Beside a salary it did not hold: the row
+    read 24 050 — the 25 000 declared less 3.8 %, the deductible CSG at the taux réduit,
+    from an RFR of N-2 that had lost the pension — while the income tax in the same
+    response had been assessed on 25 000. Two bases in one answer."""
+    rows = compute(EARNER_AND_PENSIONER, 2024, tier="light").baseline
+    assert rows["retraite_imposable"] == pytest.approx(25_000, abs=0.5)
+
+
+def test_a_pensioners_emtr_compares_two_computations_of_the_same_kind() -> None:
+    """The EMTR's base comes from the registry and its bumped leg from a fresh
+    simulation that computes `revenu_disponible` first. Before D-176 those were the two
+    regimes above, and a 50 000 EUR pensioner offered 100 EUR of salary was reported a
+    marginal rate of 20.86 — 2 086 %. Recomputed by hand, both legs through the
+    registry."""
+    result = compute(PENSIONER, 2024, tier="full", emtr=True)
+    bumped = perturb_first_adult(build_situation(PENSIONER, 2024), 2024, EMTR_STEP)
+    by_hand = 1.0 - (
+        extract(SimulationBuilder().build_from_entities(baseline(), bumped), 2024, "full")[
+            "revenu_disponible"] - result.baseline["revenu_disponible"]
+    ) / EMTR_STEP
+    assert result.emtr == pytest.approx(by_hand, abs=1e-3)
+    assert 0.0 < result.emtr < 1.0
+
+
+def test_an_unemployed_persons_emtr_compares_two_computations_of_the_same_kind(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Unemployment benefit has no field on the wire yet, so it is written into the
+    situation the way a field would write it. The household builder has to close the
+    regress for whatever a situation carries: the EMTR's base comes from the registry,
+    its bumped leg from a fresh simulation that computes `revenu_disponible` first, and
+    before D-177 those two read the RFR of N-2 differently. A 30 000 EUR chômeur offered
+    100 EUR of salary was reported a marginal rate of -2.68.
+
+    Both legs of the hand computation go through `compute`, so through the same builder
+    as the rate under test: the bumped one by perturbing the situation it builds."""
+    from impots.engine import situations
+
+    original = situations.build_situation
+    bump = {"on": False}
+
+    def with_unemployment_benefit(household, year, historique_revenus=True):
+        situation = original(household, year, historique_revenus)
+        situation["individus"]["adulte_0"]["chomage_brut"] = {
+            month: 2_500.0
+            for covered in situations.covered_years(year, historique_revenus)
+            for month in situations.months(covered)
+        }
+        return perturb_first_adult(situation, year, EMTR_STEP) if bump["on"] else situation
+
+    monkeypatch.setattr(situations, "build_situation", with_unemployment_benefit)
+    unemployed = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1980}]})
+    result = compute(unemployed, 2024, tier="full", emtr=True)
+    bump["on"] = True
+    bumped = compute(unemployed, 2024, tier="full").baseline["revenu_disponible"]
+    by_hand = 1.0 - (bumped - result.baseline["revenu_disponible"]) / EMTR_STEP
+    assert result.emtr == pytest.approx(by_hand, abs=1e-3)
+    assert 0.0 < result.emtr < 1.0
+
+
+def test_a_renters_emtr_compares_two_computations_of_the_same_kind(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Housing aid and the RSA feed each other through the months: the aid's
+    neutralisation reads the RSA of the month before, whose forfait logement reads the
+    aid of that month. With the aid of N on the stack, openfisca cut the aid of N-1 to
+    zero, and the prime d'activité of January to March lost the forfait logement of its
+    reference quarter. The EMTR's bumped leg, `revenu_disponible` first, fell into that;
+    its base, through the registry, did not. Before D-178 a single renter on 17 000 EUR
+    was reported a marginal rate of -0.68, and on 9 000 EUR of -1.36.
+
+    Both legs of the hand computation go through `compute`, the bumped one by perturbing
+    the situation it builds."""
+    from impots.engine import situations
+
+    original = situations.build_situation
+    bump = {"on": False}
+
+    def bumped_on_demand(household, year, historique_revenus=True):
+        situation = original(household, year, historique_revenus)
+        return perturb_first_adult(situation, year, EMTR_STEP) if bump["on"] else situation
+
+    monkeypatch.setattr(situations, "build_situation", bumped_on_demand)
+    renter = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 17_000, "annee_naissance": 1984}],
+         "logement": {"statut": "locataire_vide", "loyer_mensuel": 700, "zone_apl": 2}})
+    result = compute(renter, 2024, tier="full", emtr=True)
+    bump["on"] = True
+    bumped = compute(renter, 2024, tier="full").baseline["revenu_disponible"]
+    by_hand = 1.0 - (bumped - result.baseline["revenu_disponible"]) / EMTR_STEP
+    assert result.emtr == pytest.approx(by_hand, abs=1e-3)
+    assert 0.0 < result.emtr < 1.0

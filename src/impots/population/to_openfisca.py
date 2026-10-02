@@ -1,7 +1,7 @@
 """Population frame -> a vectorised OpenFisca simulation (PHASE1_SPEC §1, §4.4).
 
 This is the most dangerous module in the project. Both of the failure modes the
-Phase 1 spec calls out live here, and a third that the spec does not mention.
+Phase 1 spec calls out live here, and four that the spec does not mention.
 
 **#1 — roles are flattened *subrole* keys.** `join_with_persons` matches each role
 string against `entity.flattened_roles`. The intuitive names from the JSON path
@@ -24,6 +24,37 @@ match the order of the ids handed to `declare_entity`, and getting *that* wrong 
 silent: households swap rents and nothing complains. Every group-level array here
 is built by grouping and sorting on the same key used to declare the entity, and
 its length is asserted.
+
+**#4 — a pension priced two ways, by evaluation order.** `retraite_imposable` is
+`retraite_brute + csg_deductible_retraite`, and the rate of every pension levy reads
+the RFR of N-2, which reads `retraite_imposable` of N-2. openfisca cuts that regress
+at its second turn, wherever the order of evaluation puts the turn, and keeps what
+was computed beside the cut. The runner's order — the income tax first — left the
+deductible CSG at zero; `revenu_disponible` computed first took it off a second
+time. On the 400-dwelling fixture, 164 ménages of 400 moved between the two and the
+median niveau de vie by 1.7 %; the population EMTR read one order, the
+reconciliation report the other. `pension_annuelle` is calibrated on DECLARED
+pensions, so it is now written on `retraite_imposable` (box 1AS) as well as on
+`retraite_brute`, and the regress through pensions no longer exists (D-176).
+
+**#5 — the RFR of N-2, read from inside year N.** Unemployment benefit has the same
+regress, and its input is GROSS (Unédic spend), so it cannot be pinned the way a
+declared pension is. And openfisca cuts any nested evaluation of a variable at another
+period: asked for from inside the income tax of N, the RFR of N-2 lost its own `rni`
+to the cut and read as the exemption. The income tax then assessed a 30 000 EUR
+chômeur on the gross amount, and `revenu_disponible` missed the CSG and CRDS owed. The RFR
+of N-2 is now computed first and pinned, by `engine.situations.pin_rfr_n_2`, which the
+household builder calls too (D-177).
+
+**#6 — housing aid and the RSA, month by month.** The aid's neutralisation reads the
+RSA of the month before, whose forfait logement reads the aid of that month. With the
+aid of one month on the stack, the aid of the month before was cut to zero, and the
+prime d'activité of January to March lost the forfait logement of its reference
+quarter: 12 renter ménages of the fixture moved by up to 352 EUR between the runner's
+order and `revenu_disponible` first, the order of the population EMTR. Before the first
+non-fiscal variable, `PopulationSimulation.calculate` now pins the aid month by month,
+oldest first, by `engine.situations.pin_benefit_history`, which the household builder
+calls for its full tier too (D-178).
 """
 
 from __future__ import annotations
@@ -35,11 +66,29 @@ import numpy as np
 import polars as pl
 from openfisca_core.simulation_builder import SimulationBuilder
 
+from impots.engine.outputs import LIGHT_ROWS
+from impots.engine.situations import pin_benefit_history, pin_rfr_n_2
+
 #: Years of income history written behind the simulated year. Two, because the
 #: longest reference window is the aide au logement's rolling twelve months
 #: ending in November of N-1 (D-005). Same steady-state assumption as the
 #: household engine's `historique_revenus`, which D-011 made the only mode.
 HISTORY_YEARS = 2
+
+#: What `build_simulation` computes, named. Results memoised on disk from a simulation
+#: built here (the EMTR caches of `behavioural.emtr`) carry it in their key, so that a
+#: file written under one wiring is never served under another. Change it whenever a
+#: change here moves a number: D-176 moved every pensioner's revenu disponible in the
+#: order the population EMTR reads it, D-177 the income tax and the revenu disponible of
+#: every chômeur above the SMIC floor, D-178 the prime d'activité of renters in the order
+#: the population EMTR reads it.
+WIRING = "D-178"
+
+#: What the light tier, the rake and the niche imputation ask of a simulation: the
+#: fiscal block, which never reaches a benefit. Anything else first pins the benefit
+#: history (failure mode #6), once, so the light tier never pays for it.
+FISCAL_VARIABLES = frozenset(
+    {row.variable for row in LIGHT_ROWS} | {"nbptr", "rfr", "impot_revenu_restant_a_payer"})
 
 #: entity -> the flattened subrole keys it accepts. Asserted, not trusted.
 ROLE_VOCABULARY: dict[str, tuple[str, ...]] = {
@@ -69,6 +118,7 @@ class PopulationSimulation:
     foyer_ids: np.ndarray
     famille_ids: np.ndarray
     n_persons: int
+    benefits_pinned: bool = False
 
     def calculate(
         self, variable: str, add: bool = False, month: int | None = None
@@ -84,6 +134,10 @@ class PopulationSimulation:
         entitled at any point in the year — a different statistic, larger, and the
         difference is exactly the churn the published figure excludes.
         """
+        if not self.benefits_pinned and variable not in FISCAL_VARIABLES:
+            # Failure mode #6: before the first benefit, whoever asks for it.
+            pin_benefit_history(self.simulation, self.year)
+            self.benefits_pinned = True
         period = str(self.year) if month is None else f"{self.year}-{month:02d}"
         result = (
             self.simulation.calculate_add(variable, period)
@@ -270,6 +324,9 @@ def build_simulation(
             period = f"{year - offset}-{month:02d}"
             simulation.set_input("salaire_de_base", period, monthly_salary)
             simulation.set_input("retraite_brute", period, monthly_pension)
+            # Failure mode #4. `pension_annuelle` is calibrated on DECLARED pensions,
+            # so it is pinned on the declared box as well; see the module docstring.
+            simulation.set_input("retraite_imposable", period, monthly_pension)
             simulation.set_input("chomage_brut", period, monthly_chomage)
             simulation.set_input("statut_occupation_logement", period, statut)
             simulation.set_input("zone_apl", period, zone)
@@ -284,6 +341,10 @@ def build_simulation(
     if niche_bases:
         _set_niche_inputs(
             simulation, tax_benefit_system, year, niche_bases, frame, foyer_ids)
+
+    # Failure mode #5, and last on purpose: the RFR of N-2 is computed from the inputs
+    # of N-2, so every one of them must already be set.
+    pin_rfr_n_2(simulation, year)
 
     return PopulationSimulation(
         simulation=simulation,

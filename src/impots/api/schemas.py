@@ -54,12 +54,12 @@ class Adult(BaseModel):
     pension_annuelle: Annotated[float, Field(ge=0, le=MAX_SALARY)] = Field(
         default=0.0,
         description="Annual retirement pension in EUR, AS DECLARED (the taxable amount, "
-        "box 1AS), written monthly onto `retraite_brute` exactly as the population build "
-        "writes its `pension_annuelle`, which is calibrated on declared pensions. The "
-        "output registry computes `retraite_imposable` before the pension CSG, whose rate "
-        "reads the RFR of N-2, and openfisca's spiral on that dependency leaves the "
-        "deductible CSG at zero there: the amount typed is taxed as typed. "
-        "`test_a_pension_is_taxed_as_declared` pins that. Without this field no pensioner "
+        "box 1AS), written monthly onto `retraite_imposable` and onto `retraite_brute` "
+        "exactly as the population build writes its `pension_annuelle`, which is "
+        "calibrated on declared pensions. The amount typed is taxed as typed whatever is "
+        "computed first; disposable income takes off it the CSG imposable, the CRDS and "
+        "the CASA, at the rate the RFR of N-2 sets, and not the deductible CSG, which a "
+        "declared amount is already net of (D-176). Without this field no pensioner "
         "could be expressed, and a knob that bites only on pensions could not be watched "
         "moving on any household (D-081, PLF 2027 art. 3).",
     )

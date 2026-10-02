@@ -37,6 +37,7 @@ import polars as pl
 
 from impots.engine.system import baseline, reformed_for
 from impots.identifiants import millesime
+from impots.population import to_openfisca
 from impots.population.runner import subsample
 from impots.population.to_openfisca import build_simulation
 
@@ -134,11 +135,14 @@ def compute(
 
     # The baseline rates do not depend on the reform, so they are memoised on disk:
     # the second reform priced against the same population pays half as much. Keyed on
-    # the sample size too, because a subsample is a different population.
+    # the sample size too, because a subsample is a different population — and on the
+    # population wiring, because rates computed under another one are another law's
+    # rates (D-176).
     started = time.perf_counter()
     cache = (
         PROCESSED
-        / f"emtr_baseline_{millesime(vintage)}_{year}_{sample or 'full'}_{int(step)}.parquet"
+        / (f"emtr_baseline_{millesime(vintage)}_{year}_{sample or 'full'}_{int(step)}"
+           f"_{to_openfisca.WIRING}.parquet")
         if vintage else None
     )
     if cache is not None and cache.exists():
@@ -228,11 +232,13 @@ def cache_key(
 
     The sample size is in the key because a subsample is a different population, not
     a cheaper view of the same one — omitting it would serve 3 000 households' rates
-    for a request that asked for 20 000.
+    for a request that asked for 20 000. The population wiring is in it for the same
+    reason: a file written before D-176 holds rates of a wiring that no longer exists.
     """
     payload = json.dumps(
         {"vintage": vintage, "year": year, "sample": sample,
-         "reform": None if reform is None else reform.model_dump(exclude_none=True)},
+         "reform": None if reform is None else reform.model_dump(exclude_none=True),
+         "wiring": to_openfisca.WIRING},
         sort_keys=True, default=str,
     )
     return hashlib.sha256(payload.encode()).hexdigest()[:16]

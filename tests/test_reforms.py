@@ -483,13 +483,13 @@ def test_a_pension_is_taxed_as_declared() -> None:
 
     ET LA PENSION SAISIE EST IMPOSÉE TELLE QUELLE, ce qui n'allait pas de soi.
     `retraite_imposable` vaut `retraite_brute + csg_deductible_retraite`, mais le taux de
-    cette CSG lit le RFR de N-2, et la spirale d'openfisca sur cette dépendance la laisse
-    à zéro quand `retraite_imposable` est calculée en premier — ce que fait l'ordre du
-    registre de sorties. Calculée en premier, la CSG vaut −5,9 % ; c'est donc un effet
-    d'ORDRE, que ce test épingle. Le champ est défini comme le montant DÉCLARÉ, comme la
-    pension de la population, calée sur les pensions déclarées à la DGFiP : sous cet
-    ordre, les deux chemins imposent la même base. Si openfisca change de comportement,
-    ce test tombe, et c'est le moment de revoir la définition du champ."""
+    cette CSG lit le RFR de N-2, et la spirale d'openfisca sur cette dépendance la
+    laissait à zéro ou à −5,9 % selon ce qui était calculé en premier. D-175 avait
+    épinglé cet effet d'ORDRE ; D-176 l'a mesuré puis supprimé : le montant DÉCLARÉ, comme
+    la pension de la population, calée sur les pensions déclarées à la DGFiP, est écrit
+    sur `retraite_imposable` (case 1AS) autant que sur `retraite_brute`. Ce test tient
+    donc désormais par construction, dans tout ordre ; les gardes de l'ordre sont dans
+    `test_engine.py` et `test_population.py`."""
     rows = compute(HouseholdInput.model_validate(RETRAITE_AISE), 2024, tier="light").baseline
     assert rows["retraite_imposable"] == pytest.approx(50_000, abs=0.5)
     assert rows["ir"] > 0
