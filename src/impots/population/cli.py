@@ -878,6 +878,84 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_chiffrage_register_entreprises(args: argparse.Namespace) -> int:
+    """Price a FIRM reform over the firm population and pre-register the result.
+
+    Refuses a population built on synthetic cells, and one that does not declare
+    otherwise: a chiffrage on test cells says nothing about France, and the registry
+    would put it on the scoreboard beside the real ones.
+    """
+    import json
+
+    import polars as pl
+
+    from impots import preregistration as chiffrages_module
+    from impots.entreprises import build as firm_build
+    from impots.entreprises.reforms import FirmReformSpec
+
+    try:
+        tolerance = chiffrages_module.Tolerance(
+            relative=args.tolerance_relative,
+            absolute_eur=args.tolerance_absolute,
+            rationale=args.tolerance_rationale)
+    except chiffrages_module.ChiffrageError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    try:
+        spec = FirmReformSpec.model_validate_json(Path(args.reform).read_text(encoding="utf-8"))
+    except OSError as error:
+        print(f"refusé : {error}", file=sys.stderr)
+        return 1
+    except ValueError as error:
+        print(f"refusé : {args.reform} n'est pas une réforme entreprises — {error}",
+              file=sys.stderr)
+        return 1
+    if spec.is_empty():
+        print("refusé : la réforme est vide, il n'y a rien à chiffrer", file=sys.stderr)
+        return 1
+
+    population = firm_build.PROCESSED / f"firms_{args.vintage}.parquet"
+    if not population.exists():
+        print(f"{population} introuvable — lancer `impots entreprises cells` puis "
+              f"`impots entreprises build`", file=sys.stderr)
+        return 1
+    manifest = firm_build.PROCESSED / f"firms_{args.vintage}.manifest.json"
+    synthetic = True
+    if manifest.exists():
+        try:
+            declared = json.loads(manifest.read_text(encoding="utf-8"))
+            synthetic = declared.get("cells_are_synthetic", True) is not False
+        except (OSError, ValueError, AttributeError):
+            synthetic = True
+    if synthetic:
+        print(f"refusé : la population d'entreprises « {args.vintage} » est bâtie sur des "
+              f"cellules synthétiques de test, ou ne déclare pas le contraire. Un chiffrage "
+              f"sur elle ne dit rien de la France, et le registre le mettrait au tableau à "
+              f"côté des vrais. Construire la population depuis SIRENE × ESANE : "
+              f"`impots entreprises cells` puis `impots entreprises build`.",
+              file=sys.stderr)
+        return 1
+
+    print(f"  chiffrage entreprises de « {args.case} » pour {args.year}…", flush=True)
+    try:
+        path = chiffrages_module.register_firm(
+            args.case, spec=spec, year=args.year, frame=pl.read_parquet(population),
+            tolerance=tolerance, population_vintage=f"entreprises-{args.vintage}",
+            note=args.note or "", directory=Path(args.dir) if args.dir else None)
+    except chiffrages_module.ChiffrageError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    chiffrage = chiffrages_module.load(args.case, path.parent)
+    print(f"préenregistré {path}")
+    print(f"  mécanique {chiffrage.mechanical_eur / 1e9:+.3f} md EUR")
+    print(f"  toléré {tolerance.relative:.0%} ou "
+          f"{tolerance.absolute_eur / 1e6:.0f} M EUR, au choix du plus large")
+    print("\n  CE FICHIER N'EST PAS ENCORE UN PRÉENREGISTREMENT : le commit l'est.")
+    print(f"  `git add {path} && git commit` — tant qu'il n'est pas committé, "
+          f"la notation le refusera.")
+    return 0
+
+
 def cmd_chiffrage_list(args: argparse.Namespace) -> int:
     from impots import preregistration as chiffrages_module
 
@@ -1351,6 +1429,24 @@ def build_parser() -> argparse.ArgumentParser:
     registrar.add_argument("--note", default="")
     registrar.add_argument("--dir")
     registrar.set_defaults(func=cmd_chiffrage_register)
+
+    firm_registrar = chiffrage_actions.add_parser(
+        "register-entreprises",
+        help="price a FIRM reform over the firm population and pre-register the figure")
+    firm_registrar.add_argument("case")
+    firm_registrar.add_argument("--reform", required=True,
+                                help="a FirmReformSpec, as JSON")
+    firm_registrar.add_argument("--year", type=int, required=True,
+                                help="the exercice the reform applies to — no default, "
+                                     "because a wrong one prices a different law")
+    firm_registrar.add_argument("--tolerance-relative", type=float, required=True)
+    firm_registrar.add_argument("--tolerance-absolute", type=float, required=True)
+    firm_registrar.add_argument("--tolerance-rationale", required=True,
+                                help="why THIS tolerance, stated before the answer is known")
+    firm_registrar.add_argument("--vintage", type=millesime, default="2023")
+    firm_registrar.add_argument("--note", default="")
+    firm_registrar.add_argument("--dir")
+    firm_registrar.set_defaults(func=cmd_chiffrage_register_entreprises)
 
     chiffrage_lister = chiffrage_actions.add_parser("list", help="list the cases")
     chiffrage_lister.add_argument("--dir")
