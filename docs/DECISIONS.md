@@ -8668,3 +8668,179 @@ ouverte, mais l'INSEE ne répond pas à ce conteneur : connexion établie, puis 
 Sans l'enquête Emploi ni les fichiers Ésane, ni les populations, ni `make full`, ni les
 chiffrages ne tournent ici. Les tolérances, leurs justifications et les comparateurs
 sont fixés dans `docs/PLF2027_ENREGISTREMENT.md` et committés avant le premier calcul.
+
+## D-176 — La CSG des pensions dans le revenu disponible : mesurée, puis l'effet d'ordre supprimé
+
+**La question que D-175 laissait ouverte.** D-175 avait épinglé un effet d'ordre sur
+`retraite_imposable` sans mesurer ce qu'il fait au revenu disponible. Trois questions :
+les prélèvements sur pensions qui entrent dans `revenu_disponible` (CSG déductible et
+imposable, CRDS, CASA) sortent-ils à leur taux réel ou à zéro, sur le chemin ménage
+(`compute`, palier `full`) et sur le chemin population (`runner.run`) ? Le résultat
+tient-il quand on change l'ordre d'évaluation ? Que devient le rapport de réconciliation ?
+
+**La mécanique, mesurée plutôt que supposée.** Chacun des quatre prélèvements lit le RFR de
+N-2. Ce RFR lit `retraite_imposable` de N-2, qui vaut `retraite_brute + csg_deductible_retraite`
+de N-2, laquelle lit le RFR de N-4, et ainsi de suite. openfisca coupe cette régression au
+deuxième tour (`max_spiral_loops = 1`). La variable coupée prend sa valeur par défaut, sans
+mise en cache. En fin d'appel, seules les entrées de la pile comprises entre les deux
+occurrences sont purgées : ce qui a été calculé à côté de la coupe, avec la valeur coupée,
+survit.
+
+D'où une correction de D-175. Calculer `retraite_imposable` d'abord ne change rien à la
+suite : chaque mois est son propre appel, purgé, et c'est mesuré. Ce qui fixait la base
+déclarée dans l'ordre du registre, c'est l'impôt sur le revenu, calculé en un seul appel.
+Sa coupe passe par la branche chômage (`chomage_imposable@2024-01 > csg_deductible_chomage >
+csg_imposable_chomage > rfr@2022 > rni@2022`). Elle calcule le RFR de 2022 sans aucun
+revenu et le garde pour le reste de l'appel. Les douze mois de CSG sur pension, calculés à
+côté au taux « exonéré », survivent à la purge.
+
+**Réponse 1 : ni zéro, ni les quatre taux, mais les trois prélèvements non déductibles, et
+par accident.** Retraité seul né en 1955, 2024, pension déclarée, sur `fa0588f` :
+
+| ménage | prélèvements dans le RD, ordre du registre | `revenu_disponible` calculé d'abord | écart de RD |
+|---|---:|---:|---:|
+| 30 000 € | 960 € (3,20 %) | 2 730 € (9,10 %) | −1 515 € |
+| 50 000 € | 1 600 € (3,20 %) | 4 550 € (9,10 %) | −2 065 € |
+| 15 000 € | 75 € (CRDS) | 0 € | +75 € |
+| couple, 2 × 25 000 € | 1 600 € | 4 550 € | −2 478 € |
+| salaire 35 000 € et pension 25 000 € | 800 € | 2 275 € | −1 263 € |
+
+Dans l'ordre du registre comme dans celui du `runner`, la CSG déductible vaut zéro. C'est la
+valeur par défaut de la spirale, pas un calcul. La CSG imposable (2,4 %), la CRDS (0,5 %)
+et la CASA (0,3 %) sortent à leur taux, assises sur le montant déclaré. Pour un montant
+déclaré, déjà net de la CSG déductible, c'est le bon ensemble de prélèvements. Il y arrivait
+pourtant faux deux fois.
+
+* **Le taux.** Le RFR de N-2 qu'ils lisaient était calculé dans une spirale coupée, qui avait
+  perdu l'abattement des plus de 65 ans. À 15 000 €, il valait 13 500 € au lieu de
+  10 880 €, au-dessus du seuil d'exonération de 12 230 € : 75 € de CRDS indus.
+* **La base, à côté d'un salaire.** La ligne `retraite_imposable` affichait 24 050 €, soit
+  25 000 € moins 3,8 %. L'impôt de la même réponse était assis sur 25 000 €.
+
+Calculé d'abord, `revenu_disponible` prenait les quatre prélèvements et retirait donc la CSG
+déductible une seconde fois. L'impôt était alors assis sur 94,1 % du montant saisi : à
+30 000 €, 1 110 € au lieu de 1 365 €.
+
+**Réponse 2 : instable, et l'EMTR comparait les deux ordres.** L'EMTR du ménage prend sa
+base dans le registre. Sa jambe augmentée vient d'une simulation neuve qui calcule
+`revenu_disponible` d'abord. Offrir 100 € de salaire à un retraité rendait donc un taux
+marginal de 15,36 à 30 000 € et de 20,86 à 50 000 €, contre 0,2069 dans un seul ordre.
+L'EMTR de population (`behavioural.emtr`) calcule `revenu_disponible` d'abord des deux
+côtés : il est cohérent avec lui-même, mais dans l'autre régime que le rapport.
+
+**La population.** `data/processed/population_2024.parquet` est absent de ce conteneur, et
+l'INSEE ne lui répond pas (D-175). La mesure porte donc sur la population de la fixture :
+400 logements réels de l'EEC, 860 personnes, 229 retraités, une masse de pensions pondérée
+de 0,80 md€, soit environ 1/500.
+
+* Dans l'ordre du `runner`, les prélèvements font 2,934 % de la masse : 22 retraités à 0,
+  15 à 0,5 %, 192 à 3,2 %.
+* `revenu_disponible` calculé d'abord, ils font 7,896 % : 0, 4,3, 7,4 ou 9,1 %.
+* 164 ménages sur 400 bougent. Le total de RD baisse de 1,211 %, l'IR de 3,819 %.
+
+**Réponse 3 : le rapport de réconciliation est dans le bon régime, et il y reste.**
+`impots population reconcile` appelle `run(..., tier="full")`, donc l'ordre du `runner` :
+le régime « déclaré ». Ses lignes de niveau de vie y ont été produites (médiane 24 635 €,
+−5,0 % ; D9/D1 3,63, +3,6 %).
+
+Sur la fixture, l'autre ordre aurait donné une médiane de 23 534 € au lieu de 23 940 €
+(−1,693 %), un D1 inchangé, un D9 en baisse de 3,237 % et un D9/D1 de 3,328 au lieu de
+3,439. Transposé au rapport, à titre d'ordre de grandeur : une médiane vers −6,6 % au lieu
+de −5,0 %, un D9/D1 vers 3,51 (+0,4 %) au lieu de 3,63, une ligne barème de l'IR vers
++4,6 % au lieu de +8,8 %.
+
+La correction ci-dessous laisse le résultat de l'ordre du `runner` **identique au centime**
+sur les 400 ménages de la fixture : RD, IR et `retraite_imposable`. Rien ne laisse attendre
+que les lignes nationales bougent ; la prochaine réconciliation du propriétaire le
+confirmera ou le démentira.
+
+**La décision : corrigé, pas accepté.** Le montant déclaré est écrit sur
+`retraite_imposable`, la case 1AS, ce que D-175 a défini comme le sens du champ. Il l'est en
+plus de `retraite_brute`, dans `situations.build_situation` comme dans
+`to_openfisca.build_simulation`. L'impôt ne demande donc plus jamais la CSG déductible, et
+le RFR de N-2 que lisent les prélèvements ne dépend plus d'elle : la régression par les
+pensions n'existe plus.
+
+Imposer un ordre n'aurait pas suffi. Un ordre est une convention que chaque nouvel appelant
+doit connaître, et les deux EMTR l'enfreignaient déjà. Le résultat de l'ordre du registre
+était en outre faux deux fois, au taux et à la base.
+
+**Mesuré après.**
+* **Chemin ménage** : tous les ordres sont d'accord au centime. À 30 000 €, RD 27 675 € et
+  IR 1 365 € ; à 50 000 €, 41 554 € ; le couple, 46 258 € ; salaire et pension, base
+  25 000 € et RD 49 327,85 €.
+* **Les cas qui changent** : le retraité de 15 000 € ne paie plus rien (RD 15 000 €), un
+  retraité locataire de 14 000 € récupère 70 € de CRDS indus, et l'EMTR des deux retraités
+  vaut 0,2069.
+* **Fixture** : les prélèvements sur pensions sont les mêmes dans les deux ordres pour 228
+  retraités sur 229.
+
+**Ce qui reste, accepté et chiffré.**
+* **La base des prélèvements est le montant déclaré, pas le brut**, qui vaut déclaré / (1 −
+  taux déductible). Sur la fixture, 2,934 % de la masse au lieu de 3,098 %, soit 0,164 %.
+  Cela fait environ 0,66 md€ sur 400,21 md€, ou 0,05 % du RD national (1 281,44 md€), et
+  60 € sur un retraité de 30 000 €. Le RD des retraités est surestimé d'autant. Corriger
+  exige le taux, donc une seconde passe. L'écart est très en dessous des trous connus des
+  lignes de niveau de vie : les revenus du capital nuls pèsent +5,1 points.
+* **`csg_deductible_retraite` devient décorative.** Elle se calcule quand on la demande (le
+  plafonnement de l'IFI la lit), mais ne nourrit plus ni l'IR ni le RD. Aucun levier ne la
+  touche, seule la CSG d'activité en est un. Et avant la correction, la spirale la laissait
+  déjà à zéro dans l'IR.
+* **Les prélèvements de N-1 et de N-2** lisent le RFR d'une année sans revenu. Ils sont
+  exonérés, désormais de façon déterministe. Seuls les regards en arrière des prestations
+  les voient, et aucun chiffre de la fixture n'a bougé.
+
+**Deux spirales sœurs, trouvées en chemin, non corrigées.**
+* **Le chômage** a la même structure. Mais `chomage_brut` est calé sur la dépense Unédic,
+  un montant BRUT : l'épingler sur `chomage_imposable` serait faux. Mesure sur 30 000 € de
+  chômage, personne seule née en 1980, écrit directement sur `chomage_brut` (le format
+  ménage n'a pas de chômage) :
+  * calculés d'abord, la CSG déductible vaut 1 120,05 €, la CSG imposable 707,40 € et la
+    CRDS 147,38 € ;
+  * `chomage_net` calculé d'abord vaut 30 000 €, sans aucun prélèvement ;
+  * l'IR vaut 1 588 € dans les deux ordres, assis sur le brut, contre 1 426 € sur le net de
+    CSG déductible ;
+  * le RD vaut 28 112,34 € dans l'ordre du registre et 28 412,00 € calculé d'abord.
+
+  Sous le plancher du SMIC (18 000 €), la CSG est nulle dans tous les ordres. Sur la
+  fixture, 2 chômeurs sur 31 paient quelque chose. Le RD retient 0,087 % de la masse au
+  lieu de 0,476 % dus, environ 0,14 md€ une fois transposé. Après correction, 5 ménages avec
+  chômage bougent encore entre les ordres, jusqu'à 1 709 €. Le 229e retraité, dont le
+  conjoint touche 6 891 € de chômage, garde un taux qui dépend de l'ordre.
+* **La cascade des prestations** (aah, ass, asi, aide au logement, que le journal des coupes
+  montre) : 10 ménages locataires sans chômage bougent de +22 € à +352 €.
+
+Aucune des deux ne déplace d'un euro la médiane, le D1 ni le D9 de la fixture. Le chômage
+demande une autre correction : fermer la régression en fournissant le RFR des années
+antérieures à l'historique. La cascade sort du sujet. Les deux sont proposées comme tâches
+séparées.
+
+**Les caches EMTR.** Ils étaient indexés sur le millésime, l'année, l'échantillon, le pas et
+la réforme, jamais sur ce que calcule le câblage. Un fichier écrit avant cette correction
+aurait donc été servi après : un taux de base d'un régime à côté d'un taux réformé de
+l'autre. Les deux caches portent maintenant `to_openfisca.WIRING` (« D-176 »), à changer
+chaque fois que le câblage déplace un chiffre. Les fichiers antérieurs restent sur le disque
+sans être lus, et `data/processed/emtr_*.parquet` peut être purgé.
+
+**Vus échouer.** Les 8 tests ajoutés échouaient sur `fa0588f`, chacun pour sa raison :
+* l'ordre : un RD de 39 489 € au lieu de 41 554 € pour le retraité, et de 48 064,85 € au
+  lieu de 49 327,85 € pour le couple salaire-pension ;
+* le calcul à la main : 39 489 € au lieu de 42 439 €, la double CSG déductible ;
+* l'exonération : 14 925 € au lieu de 15 000 € ;
+* la base à côté d'un salaire : 24 050 € au lieu de 25 000 € ;
+* l'EMTR : 20,8568 au lieu de 0,2069 ;
+* la population : [39 489, 15 000, 43 780] au lieu de [41 554, 15 000, 46 258] ;
+* le cache : `baseline_cached` vrai.
+
+Après correction, les 8 passent. `make gate` donne 1 426 réussis, 172 ignorés et 12 échecs.
+Les mêmes 12 échouent à l'identique sur `fa0588f` sans cette correction, faute de données
+dans ce conteneur : les PDF du magasin macro, accuracy, top_tail, trajectoires. Le test de
+D-175 tient désormais par construction, et sa docstring le dit.
+
+**Ce que le propriétaire refait.** D'abord `make full`, qui n'a pas tourné ici faute de
+données. Ensuite la réconciliation : `reports/reconciliation.md` et
+`data/processed/baseline_2024.json` devraient ressortir identiques, et s'ils bougent, c'est
+un constat. Les enregistrements PLF 2027 n'en dépendent pas. Ils enregistrent le coût
+mécanique de `scenarios.mechanical_price`, qui passe par l'ordre du `runner`. Recalculé sur
+la fixture pour 2026, il est identique au centime avant et après, deltas compris : art. 2,
++5 827 182,89 € ; art. 3, −2 699 251,40 €.

@@ -697,3 +697,33 @@ def test_the_reform_cache_keeps_a_bounded_number_of_files(tmp_path, monkeypatch)
     assert len(list(tmp_path.glob("emtr_2024_*.parquet"))) == 3
     derniere = emtr.cache_key("2024", 2024, reformes[-1], None)
     assert (tmp_path / f"emtr_2024_{derniere}.parquet").exists()
+
+
+def test_the_emtr_caches_do_not_outlive_a_change_of_population_wiring(tmp_path, monkeypatch):
+    """Both EMTR caches were keyed on vintage, year, sample, step and reform — never on
+    what the population wiring computes. D-176 changed that for every pensioner: a file
+    written before it would have been served after it, a baseline rate of one regime
+    beside a reform rate of the other, and nothing would have said so."""
+    import polars as pl
+
+    from impots.behavioural import emtr
+    from impots.population import to_openfisca
+
+    monkeypatch.setattr(emtr, "PROCESSED", tmp_path)
+    frame = pl.DataFrame({"person_id": [0], "household_id": ["h0"], "weight": [1.0],
+                          "salaire_brut_annuel": [30_000.0]})
+
+    # The baseline rates, memoised inside `compute`.
+    monkeypatch.setattr(emtr, "_rate", lambda *args, **kwargs: np.zeros(1))
+    monkeypatch.setattr(to_openfisca, "WIRING", "before", raising=False)
+    emtr.compute(frame, vintage="2024")
+    monkeypatch.setattr(to_openfisca, "WIRING", "after", raising=False)
+    assert "baseline_cached" not in emtr.compute(frame, vintage="2024").guards
+
+    # The whole result, memoised by `cached`.
+    monkeypatch.setattr(emtr, "compute", lambda population, **k: emtr.EmtrResult(
+        households=pl.DataFrame({"x": [1]}), year=k.get("year", 2024)))
+    monkeypatch.setattr(to_openfisca, "WIRING", "before", raising=False)
+    emtr.cached(frame, "2024")
+    monkeypatch.setattr(to_openfisca, "WIRING", "after", raising=False)
+    assert emtr.cached(frame, "2024").guards.get("cached") is not True

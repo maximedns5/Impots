@@ -1064,3 +1064,51 @@ def test_a_raking_that_did_reach_its_margins_is_accepted() -> None:
 
     with pytest.raises(RakingRefused, match="did not converge"):
         check_rake_result(replace(good, converged=False))
+
+
+# --------------------------------------------------------------------------- #
+# pensions — the CSG spiral (docs/DECISIONS.md D-176)
+# --------------------------------------------------------------------------- #
+def _pensioners_only() -> pl.DataFrame:
+    """Three pensioner ménages and nothing else: owners, no wage, no unemployment
+    benefit, so that no other spiral of the cascade is in play — the fixture
+    population carries two more (D-176), which this test is not about."""
+    return pl.DataFrame({
+        "person_id": [0, 1, 2, 3],
+        "household_id": ["h0", "h1", "h2", "h2"],
+        "foyer_id": ["h0#0", "h1#0", "h2#0", "h2#0"],
+        "famille_id": ["h0#0", "h1#0", "h2#0", "h2#0"],
+        "weight": [1.0, 1.0, 1.0, 1.0],
+        "age": [69, 69, 69, 67],
+        "role_menage": ["personne_de_reference", "personne_de_reference",
+                        "personne_de_reference", "conjoint"],
+        "role_foyer": ["declarant_principal", "declarant_principal",
+                       "declarant_principal", "conjoint"],
+        "role_famille": ["demandeur", "demandeur", "demandeur", "conjoint"],
+        "salaire_brut_annuel": [0.0, 0.0, 0.0, 0.0],
+        "pension_annuelle": [50_000.0, 15_000.0, 25_000.0, 25_000.0],
+        "chomage_annuel": [0.0, 0.0, 0.0, 0.0],
+        "statut_occupation": ["proprietaire"] * 4,
+        "zone_apl": ["zone_2"] * 4,
+        "loyer_mensuel": [0.0, 0.0, 0.0, 0.0],
+        "parent_isole": [False, False, False, False],
+    })
+
+
+def test_a_pensioners_disposable_income_does_not_depend_on_evaluation_order() -> None:
+    """The population wiring, in the two orders it is read in: the runner's (the
+    reconciliation report, every chiffrage) and `revenu_disponible` first (the
+    population EMTR, `behavioural.emtr._disposable`).
+
+    Measured on the code before D-176: -2 065 EUR on the 50 000 EUR pensioner, +75 on
+    the 15 000 one, -2 478 on the couple. On the 400-dwelling fixture, 164 ménages
+    moved and the median niveau de vie fell 1.7 %."""
+    from impots.engine.system import baseline
+
+    frame = _pensioners_only()
+    runner = run(frame, 2024, tier="full").households
+    built = build_simulation(frame, baseline(), 2024)
+    first = built.calculate("revenu_disponible")
+    np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
+    taxable = built.calculate("retraite_imposable", add=True)
+    np.testing.assert_allclose(taxable, frame["pension_annuelle"].to_numpy(), atol=0.5)

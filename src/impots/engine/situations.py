@@ -176,10 +176,24 @@ def build_situation(
         }
         if adult.pension_annuelle:
             # Monthly, like the salary, and on the same years: the population build
-            # writes `retraite_brute` this way too, so one pensioner prices the same on
-            # both paths.
+            # writes these two this way too, so one pensioner prices the same on both
+            # paths.
+            #
+            # The declared amount is ALSO pinned on `retraite_imposable` (box 1AS),
+            # whose formula `retraite_brute + csg_deductible_retraite` would otherwise
+            # run. The rate of that CSG reads the RFR of N-2, which reads
+            # `retraite_imposable` of N-2: a regress openfisca cuts at its second turn,
+            # wherever the evaluation order puts it. Left to run, the same household
+            # priced two ways — 2 065 EUR of disposable income apart on a 50 000 EUR
+            # pensioner — and the EMTR compared one with the other (D-176). Pinned, the
+            # income tax never asks for that CSG, and the levies still due on a
+            # declared pension (CSG imposable, CRDS, CASA) read an RFR of N-2 that no
+            # longer depends on it. Their base stays `retraite_brute`, the declared
+            # amount, about 6 % under the gross one: accepted and measured in D-176.
             individus[key]["retraite_brute"] = _spread(
                 "retraite_brute", adult.pension_annuelle, years)
+            individus[key]["retraite_imposable"] = _spread(
+                "retraite_imposable", adult.pension_annuelle, years)
 
     child_ids: list[str] = []
     for i, child in enumerate(household.children):
