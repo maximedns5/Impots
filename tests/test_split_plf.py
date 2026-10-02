@@ -91,14 +91,18 @@ def test_a_number_is_never_what_attaches_a_measure_to_its_triage() -> None:
 # --------------------------------------------------------------------------- #
 def test_only_the_fiscal_section_counts_as_triage_territory() -> None:
     """Les ~53 articles de crédits et garanties remontaient comme « inconnus du triage »
-    et noyaient les rares vraies décisions neuves."""
+    et noyaient les rares vraies décisions neuves.
+
+    L'article de crédits portait le numéro 49 au milieu d'une suite 1, 2…30 : une
+    numérotation qu'aucun texte ne porte, et que le contrôle des trous (2026-10-02) refuse
+    à juste titre. Il porte 31, ce qui ne change rien à ce que ce test vérifie."""
     html = (_html([("1", "Une mesure fiscale")])
             + "<h4>I – Autorisation des crédits des missions et performance</h4>"
-            + "<h6>ARTICLE 49 : Crédits du budget général</h6><p>" + "x" * 80 + "</p>")
+            + "<h6>ARTICLE 31 : Crédits du budget général</h6><p>" + "x" * 80 + "</p>")
     arts = decoupe.decouper(html + _html([(str(n), f"Mesure {n}") for n in range(2, 31)]))
     fiscaux = [a for a in arts if a.fiscal]
-    assert any(a.numero == "49" for a in arts), "l'article de crédits doit être extrait"
-    assert not any(a.numero == "49" for a in fiscaux), "mais pas compté comme fiscal"
+    assert any(a.numero == "31" for a in arts), "l'article de crédits doit être extrait"
+    assert not any(a.numero == "31" for a in fiscaux), "mais pas compté comme fiscal"
 
 
 def test_the_fiscal_test_uses_containment_not_a_prefix() -> None:
@@ -137,3 +141,75 @@ def test_the_fiscal_section_of_2026_matches_the_triage_count() -> None:
         f"de 1 (l'article d'autorisation de percevoir). Un autre écart veut dire que le "
         f"bornage ou le triage a bougé.")
     assert any(a.numero == "1" for a in fiscaux)
+
+
+# --------------------------------------------------------------------------- #
+# les titres que le texte 2027 a tordus (2026-10-02)
+# --------------------------------------------------------------------------- #
+def _html_brut(entetes: list[str]) -> str:
+    corps = "<h4>I – Impôts et ressources autorisées</h4>"
+    for entete in entetes:
+        corps += f"<h6>{entete}</h6><p>{'texte de corps ' * 8}</p>"
+    return corps
+
+
+def _autour(numero: int, entete: str) -> list[str]:
+    """Trente articles ordinaires, dont l'article `numero` porte le titre donné."""
+    return [entete if n == numero else f"ARTICLE {n} : Mesure {n}" for n in range(1, 31)]
+
+
+def test_a_heading_without_its_colon_is_still_an_article() -> None:
+    """« ARTICLE 23 Instauration d'un prélèvement… » : le PLF 2027 publie un titre sans
+    deux-points, et le découpage l'écartait sans bruit — une mesure fiscale sortie du
+    triage avant même d'y entrer."""
+    arts = decoupe.decouper(_html_brut(_autour(
+        23, "ARTICLE 23 &#xa0; &#xa0; Instauration d’un prélèvement exceptionnel")))
+    art = next(a for a in arts if a.numero == "23")
+    assert art.intitule == "Instauration d’un prélèvement exceptionnel"
+
+
+def test_a_numeric_entity_does_not_hide_a_heading() -> None:
+    """« ARTICLE 38 &#xa0; : Compensations… » : l'entité numérique n'était pas résolue, et
+    le titre ne se lisait plus comme un titre. Deux articles du PLF 2027 perdus ainsi."""
+    arts = decoupe.decouper(_html_brut(_autour(
+        12, "ARTICLE 12 &#xa0; : Compensations financières")))
+    assert next(a for a in arts if a.numero == "12").intitule == "Compensations financières"
+
+
+def test_a_doubled_colon_does_not_leak_into_the_intitule() -> None:
+    """« ARTICLE 22 : : Renforcement… » : le second deux-points restait en tête de
+    l'intitulé."""
+    arts = decoupe.decouper(_html_brut(_autour(22, "ARTICLE 22 : : Renforcement de la taxe")))
+    assert next(a for a in arts if a.numero == "22").intitule == "Renforcement de la taxe"
+
+
+def test_an_entity_inside_the_intitule_is_resolved() -> None:
+    """« ARTICLE 20 : &#xa0; Création… » mettait « xa0 » en tête de la clé normalisée, et
+    une clé qui commence par du bruit ne se rattache plus par préfixe."""
+    arts = decoupe.decouper(_html_brut(_autour(
+        20, "ARTICLE 20 : &#xa0; Création de tarifs réduits")))
+    assert next(a for a in arts if a.numero == "20").cle.startswith("creation de tarifs")
+
+
+def test_a_gap_in_the_numbering_is_refused() -> None:
+    """LE garde-fou qui manquait. Un titre qui change de forme fait disparaître UN article,
+    et 86 articles passent le plancher de plausibilité aussi bien que 89 : rien ne disait
+    que trois manquaient au PLF 2027. Le trou dans la numérotation en est la seule trace."""
+    entetes = [f"ARTICLE {n} : Mesure {n}" for n in range(1, 31) if n != 23]
+    with pytest.raises(SystemExit, match=r"\[23\]"):
+        decoupe.decouper(_html_brut(entetes))
+
+
+def test_a_bis_article_is_kept_with_its_suffix() -> None:
+    """Le texte voté insère des articles « bis ». Ils ne creusent aucun trou, donc
+    aucune garde ne signalait qu'ils étaient écartés."""
+    entetes = [f"ARTICLE {n} : Mesure {n}" for n in range(1, 31)]
+    entetes.insert(3, "ARTICLE 3 bis : Mesure insérée")
+    arts = decoupe.decouper(_html_brut(entetes))
+    assert any(a.numero == "3 bis" and a.intitule == "Mesure insérée" for a in arts)
+
+
+def test_a_title_word_is_not_read_as_a_suffix() -> None:
+    """Le jumeau : « ARTICLE 3 Territoires… » n'est pas un article « 3 ter »."""
+    arts = decoupe.decouper(_html_brut(_autour(3, "ARTICLE 3 Territoires zonés")))
+    assert next(a for a in arts if a.numero == "3").intitule == "Territoires zonés"

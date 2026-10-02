@@ -35,6 +35,7 @@ Usage :
 from __future__ import annotations
 
 import argparse
+import html as html_module
 import re
 import sys
 import unicodedata
@@ -57,17 +58,27 @@ _SECTION = re.compile(r"<(h4|h5)[^>]*>(.*?)</\1>", re.I | re.S)
 SECTION_FISCALE = "impots et ressources autorisees"
 #: Le deux-points peut être pleine largeur (U+FF1A) selon l'outil de publication ; il est
 #: écrit en échappement pour qu'aucun caractère ambigu ne traîne dans la source.
-_TITRE = re.compile(r"^ARTICLE\s+(\d+|liminaire)\s*[:\uff1a]\s*(.+)$", re.I | re.S)
+#:
+#: LE PLF 2027 A TORDU CE MOTIF TROIS FOIS (2026-10-02) : « ARTICLE 23 Instauration… »
+#: sans deux-points, « ARTICLE 22 : : Renforcement… » avec deux, et une entité `&#xa0;`
+#: que `_texte` ne résolvait pas. Trois articles sur 89 sortaient du découpage sans bruit,
+#: dont une mesure fiscale. Le deux-points est donc facultatif et répétable, et le suffixe
+#: « bis », « ter »… est gardé : le texte voté en insère, et les écarter ne creuserait
+#: aucun trou dans la numérotation.
+_SUFFIXE = r"bis|ter|quater|quinquies|sexies|septies|octies|nonies|decies"
+_TITRE = re.compile(
+    rf"^ARTICLE\s+(\d+(?:\s+(?:{_SUFFIXE}))?|liminaire)(?!\w)\s*(?:[:\uff1a]\s*)*(.+)$",
+    re.I | re.S)
 _BALISE = re.compile(r"<[^>]+>")
 
 
 def _texte(html: str) -> str:
-    """Balises retirées, espaces normalisés, entités les plus courantes résolues."""
-    plat = _BALISE.sub(" ", html)
-    for avant, apres in (("&nbsp;", " "), ("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"),
-                         ("&#8217;", "’"), ("&quot;", '"')):
-        plat = plat.replace(avant, apres)
-    return " ".join(plat.split())
+    """Balises retirées, TOUTES les entités résolues, espaces normalisés.
+
+    `html.unescape` et non une liste d'entités choisies : la liste ne connaissait pas
+    `&#xa0;`, que le PLF 2027 met dans trois titres d'articles.
+    """
+    return " ".join(html_module.unescape(_BALISE.sub(" ", html)).split())
 
 
 def normaliser(intitule: str) -> str:
@@ -127,7 +138,7 @@ def decouper(html: str) -> list[Article]:
         if not trouve:
             continue
         suivant = entetes[i + 1][0] if i + 1 < len(entetes) else len(html)
-        articles.append(Article(numero=trouve.group(1).lower(),
+        articles.append(Article(numero=" ".join(trouve.group(1).lower().split()),
                                 intitule=" ".join(trouve.group(2).split()),
                                 corps=_texte(html[fin:suivant]),
                                 section=section_de(entetes[i][0])))
@@ -142,6 +153,17 @@ def decouper(html: str) -> list[Article]:
             f"{len(articles)} articles seulement, minimum plausible {MINIMUM_PLAUSIBLE} : le "
             f"découpage est partiel. Un PLF en porte des dizaines ; une liste tronquée "
             f"laisserait croire que les articles manquants n'existent pas.")
+    # LE TROU DANS LA NUMÉROTATION, seule trace d'un titre qui a changé de forme : 86
+    # articles passent le plancher aussi bien que 89, et rien ne disait que trois
+    # manquaient au PLF 2027. Un texte déposé ou voté est numéroté sans trou.
+    numeros = {int(re.match(r"\d+", a.numero).group()) for a in articles
+               if a.numero != "liminaire"}
+    manquants = sorted(set(range(min(numeros), max(numeros) + 1)) - numeros) if numeros else []
+    if manquants:
+        raise SystemExit(
+            f"numérotation trouée : article(s) {manquants} absent(s) du découpage, entre "
+            f"{min(numeros)} et {max(numeros)}. Un titre a changé de forme et l'article a "
+            f"été écarté sans bruit ; corriger le motif, pas la liste.")
     return articles
 
 
