@@ -1,7 +1,7 @@
 """Population frame -> a vectorised OpenFisca simulation (PHASE1_SPEC §1, §4.4).
 
 This is the most dangerous module in the project. Both of the failure modes the
-Phase 1 spec calls out live here, and a third that the spec does not mention.
+Phase 1 spec calls out live here, and two that the spec does not mention.
 
 **#1 — roles are flattened *subrole* keys.** `join_with_persons` matches each role
 string against `entity.flattened_roles`. The intuitive names from the JSON path
@@ -24,6 +24,18 @@ match the order of the ids handed to `declare_entity`, and getting *that* wrong 
 silent: households swap rents and nothing complains. Every group-level array here
 is built by grouping and sorting on the same key used to declare the entity, and
 its length is asserted.
+
+**#4 — a pension priced two ways, by evaluation order.** `retraite_imposable` is
+`retraite_brute + csg_deductible_retraite`, and the rate of every pension levy reads
+the RFR of N-2, which reads `retraite_imposable` of N-2. openfisca cuts that regress
+at its second turn, wherever the order of evaluation puts the turn, and keeps what
+was computed beside the cut. The runner's order — the income tax first — left the
+deductible CSG at zero; `revenu_disponible` computed first took it off a second
+time. On the 400-dwelling fixture, 164 ménages of 400 moved between the two and the
+median niveau de vie by 1.7 %; the population EMTR read one order, the
+reconciliation report the other. `pension_annuelle` is calibrated on DECLARED
+pensions, so it is now written on `retraite_imposable` (box 1AS) as well as on
+`retraite_brute`, and the regress through pensions no longer exists (D-176).
 """
 
 from __future__ import annotations
@@ -40,6 +52,13 @@ from openfisca_core.simulation_builder import SimulationBuilder
 #: ending in November of N-1 (D-005). Same steady-state assumption as the
 #: household engine's `historique_revenus`, which D-011 made the only mode.
 HISTORY_YEARS = 2
+
+#: What `build_simulation` computes, named. Results memoised on disk from a simulation
+#: built here (the EMTR caches of `behavioural.emtr`) carry it in their key, so that a
+#: file written under one wiring is never served under another. Change it whenever a
+#: change here moves a number: D-176 moved every pensioner's revenu disponible in the
+#: order the population EMTR reads it.
+WIRING = "D-176"
 
 #: entity -> the flattened subrole keys it accepts. Asserted, not trusted.
 ROLE_VOCABULARY: dict[str, tuple[str, ...]] = {
@@ -270,6 +289,9 @@ def build_simulation(
             period = f"{year - offset}-{month:02d}"
             simulation.set_input("salaire_de_base", period, monthly_salary)
             simulation.set_input("retraite_brute", period, monthly_pension)
+            # Failure mode #4. `pension_annuelle` is calibrated on DECLARED pensions,
+            # so it is pinned on the declared box as well; see the module docstring.
+            simulation.set_input("retraite_imposable", period, monthly_pension)
             simulation.set_input("chomage_brut", period, monthly_chomage)
             simulation.set_input("statut_occupation_logement", period, statut)
             simulation.set_input("zone_apl", period, zone)
