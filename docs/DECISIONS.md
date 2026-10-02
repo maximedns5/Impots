@@ -8584,3 +8584,35 @@ revalider, puis vu échouer de nouveau en remettant l'ancienne comparaison dans 
 reçoit cette passe à sa naissance. Un identifiant qui devient un chemin passe par
 `_check_name` ou `millesime` ; un modèle de requête prend `INPUT_CONFIG`, et le test
 dérivé des routes le vérifie.
+
+## D-174 — PLF 2027 : ce que la session avait vu avant le moindre préenregistrement
+
+**Le fait.** Le PLF et le PLFSS 2027 ont été présentés en Conseil des ministres le
+jeudi 2026-10-01. Le 2026-10-02, le propriétaire a donné la priorité au runbook
+(`PLF2027_RUNBOOK.md`). Pour vérifier la date, la session a fait une recherche web. Elle
+a donc vu, **avant tout préenregistrement**, les titres et résumés suivants :
+
+* « 43 milliards de mesures nouvelles », pour un déficit visé à 5 % du PIB en 2027,
+  après 5,4 % attendus en 2026 ;
+* un titre de presse : « Abattement des retraités : plafond à 3 000 euros, 4,6 millions
+  de foyers mis à contribution » ;
+* le gel du point d'indice, le gel des aides au logement et celui de la prime d'activité ;
+* des recettes de TVA et d'impôt sur le revenu en hausse en 2027, sans montant ;
+* une estimation d'un tiers : « le Medef évalue à près de 20 milliards d'euros les
+  prélèvements et taxes touchant les entreprises ».
+
+**Aucun montant officiel article par article n'a été vu.** L'annexe des évaluations
+préalables n'a pas été ouverte.
+
+**Ce que cela retire au test.** Le compte de 4,6 M de foyers est une statistique que
+l'outil sait produire pour une mesure sur l'abattement des pensions. Ce compte est déjà
+vu : il ne pourra pas servir de test, même si l'article est chiffré et préenregistré.
+Seul le coût peut encore en servir. Les montants agrégés, 43 md€ et environ 20 md€, ne
+sont le chiffrage d'aucun article. Le plafond de 3 000 € est un paramètre de la mesure,
+que le texte donnera de toute façon, et pas un chiffrage.
+
+**La règle jusqu'au dernier commit d'enregistrement.** Aucun montant n'est lu, ni dans
+l'annexe ni dans la presse. Le texte du projet est lu pour le triage avec les montants
+agrégés masqués : tout nombre suivi de « milliards », « millions », « Md€ » ou « M€ »
+est remplacé avant lecture. Les paramètres d'une mesure (taux, plafonds par foyer)
+restent lisibles, puisqu'il faut bien les coder.
