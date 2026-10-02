@@ -86,6 +86,39 @@ def pin_rfr_n_2(simulation: Any, year: int) -> None:
     simulation.set_input("rfr", period, simulation.calculate("rfr", period))
 
 
+#: The months of housing aid pinned by `pin_benefit_history`, oldest first: the reference
+#: quarter of January's prime d'activité (October to December of N-1), then every month
+#: of N. Starting earlier, in January of N-1, gives the same answer to the cent on the
+#: fixture population and on the 120 points of the renter EMTR curve, at twice the cost.
+HOUSING_MONTHS_BEFORE_N = (10, 11, 12)
+
+
+def pin_benefit_history(simulation: Any, year: int) -> None:
+    """Pin the housing aid month by month, oldest first, before any benefit is asked for.
+
+    Housing aid and the RSA feed each other through the months: the aid's neutralisation
+    reads the RSA of the month before, whose forfait logement reads the aid of that
+    month, and the prime d'activité reads the aid of its reference quarter. With the aid
+    of one month on the stack, openfisca cuts the aid of the month before to zero
+    (`pin_rfr_n_2` says why), so the PPA of January to March could lose the forfait
+    logement of its quarter, by evaluation order (D-178). Computed oldest first, each
+    month finds the one before it already pinned, and nothing is cut. The first one,
+    October of N-1, reads September as zero aid in the RSA's forfait: the assumption,
+    measured as changing nothing in D-178.
+
+    The RFR of the four years before the income history is computed and pinned first.
+    Nothing is supplied there, so it is zero either way; pinned, the housing chain stops
+    reopening the empty years 2016 to 2021 month after month, which is where most of the
+    cost went. Only for a simulation that will compute benefits: the light tier never
+    asks for one and must not pay for this.
+    """
+    for empty in range(year - 3, year - 7, -1):
+        simulation.set_input("rfr", str(empty), simulation.calculate("rfr", str(empty)))
+    pinned = [f"{year - 1}-{m:02d}" for m in HOUSING_MONTHS_BEFORE_N] + months(year)
+    for month in pinned:
+        simulation.set_input("aide_logement", month, simulation.calculate("aide_logement", month))
+
+
 def adult_id(i: int) -> str:
     return f"adulte_{i}"
 

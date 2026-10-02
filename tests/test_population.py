@@ -1192,3 +1192,55 @@ def test_unemployment_benefit_is_taxed_and_levied_net_of_its_csg() -> None:
     assert h0["ir"][0] == pytest.approx(ir_on_net, abs=0.5)
     levies = (0.038 + 0.024 + 0.005) * assiette
     assert h0["revenu_disponible"][0] == pytest.approx(30_000 - levies - h0["ir"][0], abs=1.0)
+
+
+# --------------------------------------------------------------------------- #
+# the benefits cascade — housing aid and the RSA, month by month (D-178)
+# --------------------------------------------------------------------------- #
+def _renters() -> pl.DataFrame:
+    """Single renters at 9 500 EUR (RSA and prime d'activité) and 17 000 EUR (prime
+    d'activité), and a fixture household: a couple with three children on one salary
+    of 26 892 EUR, 792 EUR of rent. Nothing else, so the housing cascade is the only
+    spiral in play."""
+    rows = [
+        ("h0", 40, "personne_de_reference", "declarant_principal", "demandeur", 9_500.0, 700.0),
+        ("h1", 40, "personne_de_reference", "declarant_principal", "demandeur", 17_000.0, 700.0),
+        ("h2", 38, "personne_de_reference", "declarant_principal", "demandeur", 26_892.0, 792.0),
+        ("h2", 42, "conjoint", "conjoint", "conjoint", 0.0, 792.0),
+        ("h2", 1, "enfant", "personne_a_charge", "enfant", 0.0, 792.0),
+        ("h2", 6, "enfant", "personne_a_charge", "enfant", 0.0, 792.0),
+        ("h2", 8, "enfant", "personne_a_charge", "enfant", 0.0, 792.0),
+    ]
+    return pl.DataFrame({
+        "person_id": list(range(len(rows))),
+        "household_id": [row[0] for row in rows],
+        "foyer_id": [f"{row[0]}#0" for row in rows],
+        "famille_id": [f"{row[0]}#0" for row in rows],
+        "weight": [1.0] * len(rows),
+        "age": [row[1] for row in rows],
+        "role_menage": [row[2] for row in rows],
+        "role_foyer": [row[3] for row in rows],
+        "role_famille": [row[4] for row in rows],
+        "salaire_brut_annuel": [row[5] for row in rows],
+        "pension_annuelle": [0.0] * len(rows),
+        "chomage_annuel": [0.0] * len(rows),
+        "statut_occupation": ["locataire_vide"] * len(rows),
+        "zone_apl": ["zone_2"] * len(rows),
+        "loyer_mensuel": [row[6] for row in rows],
+        "parent_isole": [False] * len(rows),
+    })
+
+
+def test_a_renters_disposable_income_does_not_depend_on_evaluation_order() -> None:
+    """The runner's order against `revenu_disponible` first — the order the population
+    EMTR, and so the EMTR explorer's curves, are computed in.
+
+    Measured on the code before D-178: on the 400-dwelling fixture, 12 renter ménages
+    moved, by up to 352 EUR, all through the prime d'activité of January to March,
+    whose reference quarter had lost the housing aid of N-1 to a cut."""
+    from impots.engine.system import baseline
+
+    frame = _renters()
+    runner = run(frame, 2024, tier="full").households
+    first = build_simulation(frame, baseline(), 2024).calculate("revenu_disponible")
+    np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
