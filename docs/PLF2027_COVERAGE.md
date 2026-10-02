@@ -365,3 +365,72 @@ case. Là où le texte 2027 porte une catégorie absente d'ici, c'est une décis
 triage **nouvelle** : la prendre, l'écrire, et dire qu'elle a été prise le jour même
 et non d'avance. La différence compte : un refus préenregistré est une limite, un
 refus improvisé est une excuse.
+
+## Le PLF 2027 réel — triage du 2026-10-02
+
+> Assemblée nationale, texte n° 3210 (17e législature), projet de loi de finances pour 2027, déposé le 1er octobre 2026, articles avec exposé des motifs. Manifesté : plf2027_texte_an_b3210.html, sha256 7fcd191974d8. La section fiscale porte les articles 1 à 33.
+
+**33 articles fiscaux, 3 chiffrables** (art. 2, 3, 15). **17 décisions sont neuves**, prises le jour de parution sur des catégories que septembre n'avait pas vues ; les 16 autres reprennent une catégorie du triage préenregistré, à la lettre, et un test le vérifie.
+
+Aucun montant de l'annexe des évaluations préalables ne figure ici. Ils ne seront
+saisis qu'après le commit des enregistrements (runbook, étape 5).
+
+| art. | intitulé | catégorie | case | décision |
+|---|---|---|---|---|
+| 1 | Autorisation de percevoir les impôts existants | formalité annuelle (autorisation de percevoi | non chiffrable | neuve |
+| 2 | Soutenir le travail en revalorisant le barème de l'impôt sur | IR — revalorisation du barème | **chiffrable** | neuve |
+| 3 | Réduction à 3 000 € du plafond de l'abattement d'impôt sur l | abattement IR sur pensions | **chiffrable** | septembre |
+| 4 | Mesure temporaire d'allègement de la fiscalité des donations | DMTG — donations | non chiffrable | neuve |
+| 5 | Recentrage du dispositif de l'apport-cession sur son objecti | plus-values en report d'imposition (apport-c | non chiffrable | neuve |
+| 6 | Protection du modèle de l'assurance-vie | fiscalité de l'assurance-vie | non chiffrable | neuve |
+| 7 | Réorienter les soutiens publics vers le logement familial et | logement — prêt à taux zéro et location meub | non chiffrable | neuve |
+| 8 | Soutien au logement social | fiscalité locale — valeurs locatives (TFPB,  | non chiffrable | septembre |
+| 9 | Soutien à l'industrie | IS — suramortissements et incitations à l'in | non chiffrable | neuve |
+| 10 | Soutien aux reprises d'entreprises (pacte « Papin ») | transmission et reprise d'entreprises | non chiffrable | neuve |
+| 11 | Prorogation d'un an de l'application du crédit d'impôt pour  | crédits d'impôt territoriaux (outre-mer) | non chiffrable | neuve |
+| 12 | Soutien au secteur culturel | taxe sectorielle numérique / audiovisuel (as | non chiffrable | septembre |
+| 13 | Soutien au secteur agricole | fiscalité agricole (BA / IS agricole / DMTG) | non chiffrable | septembre |
+| 14 | Soutien aux entreprises touchées par les incendies de l'été  | soutien conjoncturel après sinistre | non chiffrable | neuve |
+| 15 | Mise à contribution des grandes entreprises | IS contribution exceptionnelle (CEBGE) | **chiffrable** | septembre |
+| 16 | Rationalisation des taux de taxe sur la valeur ajoutée appli | TVA — taux applicables à des services | non chiffrable | neuve |
+| 17 | Ajustements sur les taxes sur les réductions de capital | taxe sur les réductions de capital | non chiffrable | neuve |
+| 18 | Aménagement du régime des provisions assurantielles | IS — provisions des entreprises d'assurance | non chiffrable | neuve |
+| 19 | Mesures diverses de correction, clarification et coordinatio | fiscalité sectorielle et procédure fiscale | non chiffrable | septembre |
+| 20 | Création de tarifs réduits de taxes sur les installations nu | IFER / imposition forfaitaire de production  | non chiffrable | septembre |
+| 21 | Adaptation de la fiscalité aérienne au soutien à la continui | fiscalité du transport aérien | non chiffrable | neuve |
+| 22 | Renforcement de la taxe sur l'exploitation des infrastructur | taxe sur les infrastructures de transport de | non chiffrable | neuve |
+| 23 | Instauration d'un prélèvement exceptionnel sur les avoirs en | prélèvement sur avoirs en déshérence | non chiffrable | neuve |
+| 24 | Soutien à l'électrification et renforcement des incitations  | fiscalité énergie (incorporation de biocarbu | non chiffrable | septembre |
+| 25 | Mesures relatives à la fiscalité des véhicules | fiscalité des véhicules (malus CO2, malus ma | non chiffrable | septembre |
+| 26 | Prorogations d'exonérations et précisions en matière de fisc | dispositif fiscal zoné (QPV / ZFU) — IS-IR,  | non chiffrable | septembre |
+| 27 | Mesures relatives au financement du service public de la jus | droits de timbre et taxes sur titres | non chiffrable | septembre |
+| 28 | Mise à jour de références au droit de l'Union européenne dan | fiscalité sectorielle et procédure fiscale | non chiffrable | septembre |
+| 29 | Nouvelle étape de la relation de confiance | procédure — gestion fiscale (avec option bar | non chiffrable | septembre |
+| 30 | Renforcement de la lutte contre la fraude fiscale et mesures | procédure — gestion fiscale (avec option bar | non chiffrable | septembre |
+| 31 | Modernisation et simplification des procédures fiscales | procédure — gestion fiscale (avec option bar | non chiffrable | septembre |
+| 32 | Sécurisation et amélioration de la lisibilité de dispositifs | fiscalité douanière / importations | non chiffrable | septembre |
+| 33 | Modalités d'entrée en vigueur des mesures fiscales | formalité annuelle (entrée en vigueur) | non chiffrable | neuve |
+
+### Article 2 — IR — revalorisation du barème
+
+*Soutenir le travail en revalorisant le barème de l'impôt sur le revenu grâce à un traitement fiscal équivalent des différents types de revenus*
+
+****chiffrable**** · chaîne ménages · boutons `ir_bareme`, `decote_seuil_celib`, `decote_seuil_couple`, `plafond_qf_demi_part` · réforme `reforms/plf2027_art_2.json`
+
+Le volet revalorisation — 2,1 % sur les tranches, la décote et le plafond général de la demi-part — s'écrit avec quatre boutons existants, contre un arbre qui gèle en 2026 les paramètres des revenus 2025 : il n'y a donc pas de zéro confiant à craindre. Ne sont PAS chiffrés : les quatre autres plafonds de quotient familial, le 196 B et l'indexation des limites de déductions (structure : aucun bouton), ni les volets indemnités de rupture, indemnités journalières ALD et AT/MP, prime carburant et taux de CSG des IJ (data : la population n'a ni indemnité de rupture ni IJ). À comparer au seul volet revalorisation si l'annexe le sépare.
+
+### Article 3 — abattement IR sur pensions
+
+*Réduction à 3 000 € du plafond de l'abattement d'impôt sur le revenu en faveur des bénéficiaires de pensions de retraite*
+
+****chiffrable**** · chaîne ménages · boutons `abattement_pensions_plafond` · réforme `reforms/plf2027_art_3.json`
+
+Petit bouton en septembre, câblé le 2026-10-02 (abattement_pensions_plafond, chemin abatpen.max) et vu bouger sur un retraité. Le sous-plafond de l'article ne vise que les pensions de retraite ; le bouton déplace le plafond commun, ce qui est exact sur cette population, dont la seule pension est une retraite.
+
+### Article 15 — IS contribution exceptionnelle (CEBGE)
+
+*Mise à contribution des grandes entreprises*
+
+****chiffrable**** · chaîne entreprises · boutons `cebge_seuils_et_taux`, `cebge_prorogation_largeur` · réforme `reforms/plf2027_art_15.json`
+
+Chiffrable dès septembre, mais le jour J a montré deux trous, comblés le 2026-10-02 : l'arbre éteint la CEBGE après 2026 et le curseur refuse, à raison, d'écrire une année éteinte (prorogation par création délibérée, largeur de lissage prise dans le texte) ; et le registre n'enregistrait que des scénarios ménages (`chiffrage register-entreprises`). Le volet transport maritime (II) n'est pas chiffré : aucune entreprise de transport maritime n'est identifiable sous la section NAF.

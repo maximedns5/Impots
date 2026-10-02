@@ -514,6 +514,39 @@ def register(
     return save(chiffrage, directory)
 
 
+def register_firm(
+    case: str,
+    *,
+    spec: Any,
+    year: int,
+    frame: Any,
+    tolerance: Tolerance,
+    population_vintage: str,
+    note: str = "",
+    directory: Path | None = None,
+) -> Path:
+    """Price a FIRM reform over a firm population, and pre-register the figure.
+
+    The household path goes through a saved scenario, and a scenario is a household
+    `ReformSpec`: a firm reform had no way into this registry. Found on PLF 2027
+    publication day, for the CEBGE — the article the September triage marked
+    `priceable_now`. There is no scenario file to point at, so the reform is recorded
+    whole — chain, year, spec — and, as on the household side, the figure is computed
+    here from the run and never handed in.
+    """
+    from impots.entreprises import aggregate as firm_aggregate
+    from impots.entreprises import runner as firm_runner
+
+    result = firm_runner.run(frame, year=year, reform=spec)
+    cost = firm_aggregate.aggregate(result.firms).reform_cost
+    return register(
+        case, mechanical_eur=float(cost or 0.0), tolerance=tolerance,
+        population_vintage=population_vintage, sample="population complète",
+        reform={"chaine": "entreprises", "annee": year,
+                "spec": spec.model_dump(exclude_none=True, mode="json")},
+        note=note, directory=directory)
+
+
 def report(directory: Path | None = None) -> str:
     """The scoreboard, every number computed from the cases rather than typed.
 

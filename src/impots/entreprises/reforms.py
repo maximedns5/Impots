@@ -19,7 +19,13 @@ from openfisca_core import periods
 from openfisca_core.reforms import Reform
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from impots.parameters import differs, resolve, update_existing
+from impots.parameters import (
+    create_parameter,
+    differs,
+    exists_at,
+    resolve,
+    update_existing,
+)
 
 #: knob -> path in the parameter tree. Never `is`: a node of that name breaks
 #: attribute access on the parameter tree, since it is a Python keyword.
@@ -80,6 +86,15 @@ class FirmReformSpec(BaseModel):
         "threshold without its rate is not a policy, so they move together or not at "
         "all. At most two tranches, matching the statute's own shape.",
     )
+    cebge_prorogation_largeur: Annotated[float, Field(gt=0, le=1_000_000_000)] | None = Field(
+        default=None,
+        description="Revive the CEBGE in a year where the tree no longer carries it, with "
+        "this smoothing-band width in EUR. The width must come from the text that revives "
+        "the contribution (PLF 2027 art. 15: « 1,5 milliard … 1,6 milliard », « au "
+        "dénominateur, 100 millions d'euros »); nothing is derived from a lapsed year. "
+        "Requires both tranches of `cebge_seuils_et_taux`, and is refused in a year where "
+        "the CEBGE still exists, since creating what exists would bypass D-044.",
+    )
 
     @model_validator(mode="after")
     def _check(self) -> FirmReformSpec:
@@ -98,6 +113,12 @@ class FirmReformSpec(BaseModel):
                 raise ValueError(
                     f"les seuils de CA doivent être strictement croissants ; reçu {seuils}"
                 )
+        if self.cebge_prorogation_largeur is not None and len(
+                self.cebge_seuils_et_taux or ()) != len(CEBGE_TRANCHE_PATHS):
+            raise ValueError(
+                "une prorogation de la CEBGE rétablit tout son barème : "
+                "cebge_seuils_et_taux doit en donner les deux tranches. N'en créer "
+                "qu'une laisserait l'autre nulle, et la formule lit les deux.")
         return self
 
     def is_empty(self) -> bool:
@@ -120,9 +141,35 @@ def _largeur(parameters: Any, instant: str) -> float:
             f"la CEBGE n'existe plus au {instant} : ses paramètres sont nuls, donc la "
             "largeur de la bande de lissage n'est pas définie et le barème réformé "
             "serait une falaise. Rétablir la CEBGE demande un paramétrage daté, pas "
-            "un curseur."
+            "un curseur : `cebge_prorogation_largeur`, avec la largeur que le texte de "
+            "rétablissement fixe."
         )
     return float(width)
+
+
+def _retablir_cebge(parameters: Any, spec: FirmReformSpec, start: Any, instant: str) -> None:
+    """Bring the CEBGE back for a year where it has lapsed — by CREATING its parameters.
+
+    `update_existing` refuses this, and must: writing a parameter that does not exist
+    at the instant is how a reform once reported success and changed nothing (D-044).
+    Creation goes through `create_parameter`, the deliberately named door, and only
+    here, only for a year where the contribution is gone, and only with a band width
+    the caller declares from the reviving text. Where the CEBGE still exists, creating
+    it would be the bypass that door exists to prevent.
+    """
+    if exists_at(parameters, ("cebge", "taux_base"), instant):
+        raise ValueError(
+            f"la CEBGE existe déjà au {instant} : il n'y a rien à rétablir. La déplacer "
+            "relève de cebge_seuils_et_taux seul ; créer ce qui existe contournerait la "
+            "garde de D-044.")
+    largeur = float(spec.cebge_prorogation_largeur or 0.0)
+    create_parameter(parameters, ("cebge", "lissage", "largeur"), start=start, value=largeur)
+    for tranche, (seuil_path, taux_path, borne_path) in zip(
+            spec.cebge_seuils_et_taux or (), CEBGE_TRANCHE_PATHS, strict=True):
+        create_parameter(parameters, seuil_path, start=start, value=tranche.seuil_ca)
+        create_parameter(parameters, taux_path, start=start, value=tranche.taux)
+        create_parameter(parameters, borne_path, start=start,
+                         value=tranche.seuil_ca + largeur)
 
 
 def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
@@ -146,6 +193,9 @@ def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
                     if value is not None:
                         update_existing(parameters, path, start=start, value=value,
                                         instant=instant)
+                if spec.cebge_prorogation_largeur is not None:
+                    _retablir_cebge(parameters, spec, start, instant)
+                    return parameters
                 largeur = _largeur(parameters, instant) if spec.cebge_seuils_et_taux else 0.0
                 for tranche, paths in zip(
                     spec.cebge_seuils_et_taux or (), CEBGE_TRANCHE_PATHS, strict=False
@@ -194,7 +244,17 @@ def verify_scales(system: Any, spec: FirmReformSpec, year: int) -> None:
     # reform that moved it define the answer it is checked against.
     from impots.entreprises.system import baseline as _baseline
 
-    largeur = _largeur(_baseline().parameters, instant)
+    if spec.cebge_prorogation_largeur is not None:
+        # A revived CEBGE has no baseline band to read: the expected width is the one
+        # the SPEC declares — still independent of the system under test — and the
+        # created width is read back like every other value.
+        largeur = float(spec.cebge_prorogation_largeur)
+        got_width = resolve(system.parameters, ("cebge", "lissage", "largeur"))(instant)
+        if got_width is None or differs(float(got_width), largeur):
+            problems.append(f"cebge_prorogation_largeur: demandé {largeur}, appliqué "
+                            f"{got_width}")
+    else:
+        largeur = _largeur(_baseline().parameters, instant)
     for index, (tranche, paths) in enumerate(
         zip(spec.cebge_seuils_et_taux or (), CEBGE_TRANCHE_PATHS, strict=False)
     ):

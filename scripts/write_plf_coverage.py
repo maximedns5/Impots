@@ -13,10 +13,14 @@ from pathlib import Path
 
 from impots.plf_coverage import (
     ARTICLES,
+    ARTICLES_2027,
+    DATE_TRIAGE_2027,
     NO_FICHE,
     SOURCE,
+    SOURCE_2027,
     YIELD_AMBIGUOUS,
     engine_ready_but_blind,
+    priceable_2027,
     priceable_today,
     priceable_yield_meur,
     quantified_yield_meur,
@@ -179,6 +183,38 @@ def build() -> str:
     w("et non d'avance. La différence compte : un refus préenregistré est une limite, un")
     w("refus improvisé est une excuse.")
     w("")
+    w(f"## Le PLF 2027 réel — triage du {DATE_TRIAGE_2027}")
+    w("")
+    w(f"> {SOURCE_2027}")
+    w("")
+    neuves = [a for a in ARTICLES_2027 if a.decision == "neuve"]
+    chiffrables = priceable_2027()
+    w(f"**{len(ARTICLES_2027)} articles fiscaux, {len(chiffrables)} chiffrables** "
+      f"(art. {', '.join(str(a.numero) for a in chiffrables)}). "
+      f"**{len(neuves)} décisions sont neuves**, prises le jour de parution sur des "
+      f"catégories que septembre n'avait pas vues ; les "
+      f"{len(ARTICLES_2027) - len(neuves)} autres reprennent une catégorie du triage "
+      f"préenregistré, à la lettre, et un test le vérifie.")
+    w("")
+    w("Aucun montant de l'annexe des évaluations préalables ne figure ici. Ils ne seront")
+    w("saisis qu'après le commit des enregistrements (runbook, étape 5).")
+    w("")
+    w("| art. | intitulé | catégorie | case | décision |")
+    w("|---|---|---|---|---|")
+    for a in ARTICLES_2027:
+        w(f"| {a.numero} | {a.intitule[:60]} | {a.categorie[:44]} | {CASE[a.bucket]} | "
+          f"{a.decision} |")
+    w("")
+    for a in chiffrables:
+        w(f"### Article {a.numero} — {a.categorie}")
+        w("")
+        w(f"*{a.intitule}*")
+        w("")
+        w(f"**{CASE[a.bucket]}** · chaîne {a.chaine} · boutons `{'`, `'.join(a.knobs)}` · "
+          f"réforme `{a.reforme}`")
+        w("")
+        w(a.raison)
+        w("")
     return "\n".join(lines)
 
 

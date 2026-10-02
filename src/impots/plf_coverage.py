@@ -563,3 +563,230 @@ def share_of_yield() -> float:
     """
     total = quantified_yield_meur()
     return priceable_yield_meur() / total if total else 0.0
+
+
+# --------------------------------------------------------------------------- #
+# Le PLF 2027 réel — triage du jour de parution
+# --------------------------------------------------------------------------- #
+SOURCE_2027 = (
+    "Assemblée nationale, texte n° 3210 (17e législature), projet de loi de finances "
+    "pour 2027, déposé le 1er octobre 2026, articles avec exposé des motifs. Manifesté : "
+    "plf2027_texte_an_b3210.html, sha256 7fcd191974d8. La section fiscale porte les "
+    "articles 1 à 33."
+)
+
+#: Le jour de ce triage. Le runbook exige de dater une décision prise sur le texte publié,
+#: parce que c'est la seule différence visible entre un refus préenregistré — une limite —
+#: et un refus improvisé — une excuse.
+DATE_TRIAGE_2027 = "2026-10-02"
+
+
+@dataclass(frozen=True)
+class Article2027:
+    """Un article fiscal du PLF 2027, rattaché à une catégorie et à une case.
+
+    `decision` vaut « septembre » quand la catégorie existait dans le triage préenregistré
+    (et un test vérifie qu'elle y figure à la lettre), « neuve » quand elle a été prise le
+    jour de parution.
+    """
+
+    numero: int
+    intitule: str
+    categorie: str
+    bucket: str
+    decision: str
+    raison: str
+    knobs: tuple[str, ...] = ()
+    chaine: str = "ménages"
+    reforme: str = ""
+
+
+_CAT = {a.numero: a.categorie for a in ARTICLES}
+
+ARTICLES_2027: tuple[Article2027, ...] = (
+    Article2027(
+        1, "Autorisation de percevoir les impôts existants",
+        "formalité annuelle (autorisation de percevoir)", "not_priceable", "neuve",
+        "scope. Formalité reconduite chaque année, pas une mesure ; le triage de septembre "
+        "l'écartait déjà comme telle sans lui donner de ligne."),
+    Article2027(
+        2, "Soutenir le travail en revalorisant le barème de l'impôt sur le revenu grâce à "
+           "un traitement fiscal équivalent des différents types de revenus",
+        "IR — revalorisation du barème", "priceable_now", "neuve",
+        "Le volet revalorisation — 2,1 % sur les tranches, la décote et le plafond général "
+        "de la demi-part — s'écrit avec quatre boutons existants, contre un arbre qui gèle "
+        "en 2026 les paramètres des revenus 2025 : il n'y a donc pas de zéro confiant à "
+        "craindre. Ne sont PAS chiffrés : les quatre autres plafonds de quotient familial, "
+        "le 196 B et l'indexation des limites de déductions (structure : aucun bouton), ni "
+        "les volets indemnités de rupture, indemnités journalières ALD et AT/MP, prime "
+        "carburant et taux de CSG des IJ (data : la population n'a ni indemnité de rupture "
+        "ni IJ). À comparer au seul volet revalorisation si l'annexe le sépare.",
+        knobs=("ir_bareme", "decote_seuil_celib", "decote_seuil_couple",
+               "plafond_qf_demi_part"),
+        reforme="reforms/plf2027_art_2.json"),
+    Article2027(
+        3, "Réduction à 3 000 € du plafond de l'abattement d'impôt sur le revenu en faveur "
+           "des bénéficiaires de pensions de retraite",
+        _CAT[6], "priceable_now", "septembre",
+        "Petit bouton en septembre, câblé le 2026-10-02 (abattement_pensions_plafond, "
+        "chemin abatpen.max) et vu bouger sur un retraité. Le sous-plafond de l'article ne "
+        "vise que les pensions de retraite ; le bouton déplace le plafond commun, ce qui est "
+        "exact sur cette population, dont la seule pension est une retraite.",
+        knobs=("abattement_pensions_plafond",), reforme="reforms/plf2027_art_3.json"),
+    Article2027(
+        4, "Mesure temporaire d'allègement de la fiscalité des donations pour encourager "
+           "les transmissions intergénérationnelles",
+        "DMTG — donations", "not_priceable", "neuve",
+        "structure. Aucun modèle de transmission : ni donation, ni patrimoine transmis, ni "
+        "barème des droits de mutation ; F7 est une porte qu'on ne franchit pas sans le "
+        "propriétaire."),
+    Article2027(
+        5, "Recentrage du dispositif de l'apport-cession sur son objectif de soutien à "
+           "l'investissement",
+        "plus-values en report d'imposition (apport-cession)", "not_priceable", "neuve",
+        "data. Aucune plus-value ni aucun report d'imposition dans la population."),
+    Article2027(
+        6, "Protection du modèle de l'assurance-vie",
+        "fiscalité de l'assurance-vie", "not_priceable", "neuve",
+        "data. Aucun revenu de l'épargne dans la population."),
+    Article2027(
+        7, "Réorienter les soutiens publics vers le logement familial et de longue durée",
+        "logement — prêt à taux zéro et location meublée", "not_priceable", "neuve",
+        "data. Ni prêt à taux zéro, ni revenu locatif meublé ou nu dans la population."),
+    Article2027(
+        8, "Soutien au logement social",
+        _CAT[27], "not_priceable", "septembre",
+        "structure. Exonérations de taxe foncière et d'IS des organismes HLM : ni bailleur "
+        "social ni taxe foncière par logement dans le modèle."),
+    Article2027(
+        9, "Soutien à l'industrie",
+        "IS — suramortissements et incitations à l'investissement", "not_priceable",
+        "neuve",
+        "structure. Le modèle entreprises n'a ni investissement ni amortissement : un "
+        "suramortissement n'a pas d'assiette."),
+    Article2027(
+        10, "Soutien aux reprises d'entreprises (pacte « Papin »)",
+        "transmission et reprise d'entreprises", "not_priceable", "neuve",
+        "structure. Ni transmission ni reprise d'entreprise dans le modèle."),
+    Article2027(
+        11, "Prorogation d'un an de l'application du crédit d'impôt pour la compétitivité "
+            "et l'emploi à Mayotte",
+        "crédits d'impôt territoriaux (outre-mer)", "not_priceable", "neuve",
+        "data. Ni Mayotte ni masse salariale par territoire dans la population "
+        "d'entreprises."),
+    Article2027(
+        12, "Soutien au secteur culturel",
+        _CAT[24], "not_priceable", "septembre",
+        "structure. Crédits d'impôt sectoriels — l'IS de ce modèle est un IS avant "
+        "créances — et taxe sur la publicité des plateformes vidéo : aucune assiette."),
+    Article2027(
+        13, "Soutien au secteur agricole",
+        _CAT[10], "not_priceable", "septembre",
+        "data. Aucun bénéfice agricole dans la population, comme en septembre."),
+    Article2027(
+        14, "Soutien aux entreprises touchées par les incendies de l'été 2026",
+        "soutien conjoncturel après sinistre", "not_priceable", "neuve",
+        "data. Ni localisation départementale des entreprises ni sinistre."),
+    Article2027(
+        15, "Mise à contribution des grandes entreprises",
+        _CAT[4], "priceable_now", "septembre",
+        "Chiffrable dès septembre, mais le jour J a montré deux trous, comblés le "
+        "2026-10-02 : l'arbre éteint la CEBGE après 2026 et le curseur refuse, à raison, "
+        "d'écrire une année éteinte (prorogation par création délibérée, largeur de lissage "
+        "prise dans le texte) ; et le registre n'enregistrait que des scénarios ménages "
+        "(`chiffrage register-entreprises`). Le volet transport maritime (II) n'est pas "
+        "chiffré : aucune entreprise de transport maritime n'est identifiable sous la "
+        "section NAF.",
+        knobs=("cebge_seuils_et_taux", "cebge_prorogation_largeur"),
+        chaine="entreprises", reforme="reforms/plf2027_art_15.json"),
+    Article2027(
+        16, "Rationalisation des taux de taxe sur la valeur ajoutée applicables aux "
+            "services de télévision",
+        "TVA — taux applicables à des services", "not_priceable", "neuve",
+        "structure. Pas de TVA par taux : F8 attend le budget de famille."),
+    Article2027(
+        17, "Ajustements sur les taxes sur les réductions de capital",
+        "taxe sur les réductions de capital", "not_priceable", "neuve",
+        "structure. Ni rachat ni annulation de titres dans le modèle."),
+    Article2027(
+        18, "Aménagement du régime des provisions assurantielles",
+        "IS — provisions des entreprises d'assurance", "not_priceable", "neuve",
+        "structure. Aucune provision dans le modèle entreprises."),
+    Article2027(
+        19, "Mesures diverses de correction, clarification et coordination en matière de "
+            "fiscalité sur les biens et services",
+        _CAT[17], "not_priceable", "septembre",
+        "structure. Ajustements de fiscalité indirecte, hors du modèle."),
+    Article2027(
+        20, "Création de tarifs réduits de taxes sur les installations nucléaires de base "
+            "applicables pendant la phase de construction",
+        _CAT[19], "not_priceable", "septembre",
+        "structure. Aucune installation de production d'énergie dans le modèle."),
+    Article2027(
+        21, "Adaptation de la fiscalité aérienne au soutien à la continuité territoriale",
+        "fiscalité du transport aérien", "not_priceable", "neuve",
+        "structure. Ni vol ni passager dans le modèle."),
+    Article2027(
+        22, "Renforcement de la taxe sur l'exploitation des infrastructures de transport de "
+            "longue distance pour les exploitants les plus rentables",
+        "taxe sur les infrastructures de transport de longue distance", "not_priceable",
+        "neuve",
+        "structure. Aucun exploitant d'infrastructure identifiable dans la population "
+        "d'entreprises."),
+    Article2027(
+        23, "Instauration d'un prélèvement exceptionnel sur les avoirs en déshérence "
+            "déposés auprès de la Caisse des dépôts et consignations",
+        "prélèvement sur avoirs en déshérence", "not_priceable", "neuve",
+        "structure. Ni avoir bancaire ni Caisse des dépôts dans le modèle. L'article que le "
+        "découpeur écartait sans bruit avant le 2026-10-02."),
+    Article2027(
+        24, "Soutien à l'électrification et renforcement des incitations environnementales "
+            "dans le secteur des transports",
+        _CAT[16], "not_priceable", "septembre",
+        "structure. Fiscalité des carburants, hors du modèle."),
+    Article2027(
+        25, "Mesures relatives à la fiscalité des véhicules",
+        _CAT[13], "not_priceable", "septembre",
+        "structure. Aucun véhicule dans le modèle."),
+    Article2027(
+        26, "Prorogations d'exonérations et précisions en matière de fiscalité locale",
+        _CAT[12], "not_priceable", "septembre",
+        "structure. Régimes zonés, sans localisation fine dans le modèle."),
+    Article2027(
+        27, "Mesures relatives au financement du service public de la justice",
+        _CAT[30], "not_priceable", "septembre",
+        "structure. Droits et taxes affectés à l'aide juridictionnelle, hors du modèle."),
+    Article2027(
+        28, "Mise à jour de références au droit de l'Union européenne dans des dispositifs "
+            "fiscaux",
+        _CAT[17], "not_priceable", "septembre",
+        "scope. Mise en conformité juridique, sans paramètre chiffrable."),
+    Article2027(
+        29, "Nouvelle étape de la relation de confiance",
+        _CAT[29], "not_priceable", "septembre",
+        "scope. Procédure."),
+    Article2027(
+        30, "Renforcement de la lutte contre la fraude fiscale et mesures "
+            "anti-contournement",
+        _CAT[29], "not_priceable", "septembre",
+        "scope. Procédure et contrôle ; un rendement de lutte contre la fraude ne se "
+        "simule pas sur des contribuables qui déclarent tout."),
+    Article2027(
+        31, "Modernisation et simplification des procédures fiscales",
+        _CAT[29], "not_priceable", "septembre",
+        "scope. Procédure."),
+    Article2027(
+        32, "Sécurisation et amélioration de la lisibilité de dispositifs fiscaux mis en "
+            "œuvre par la douane",
+        _CAT[22], "not_priceable", "septembre",
+        "structure. Accises et détaxe, hors du modèle."),
+    Article2027(
+        33, "Modalités d'entrée en vigueur des mesures fiscales",
+        "formalité annuelle (entrée en vigueur)", "not_priceable", "neuve",
+        "scope. Fixe les dates : le 31 décembre 2026 pour l'IR et l'IS, ce qui place les "
+        "mesures d'IR sur les revenus 2026 et le troisième exercice de la CEBGE en 2027."),
+)
+
+
+def priceable_2027() -> tuple[Article2027, ...]:
+    return tuple(a for a in ARTICLES_2027 if a.bucket == "priceable_now")

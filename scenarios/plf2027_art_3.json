@@ -1,0 +1,11 @@
+{
+  "name": "plf2027_art_3",
+  "year": 2026,
+  "created": "2026-10-02",
+  "source": "PLF 2027 (AN, texte n° 3210), art. 3 — Réduction à 3 000 € du plafond de l'abattement d'impôt sur le revenu en faveur des bénéficiaires de pensions de retraite. Revenus 2026.",
+  "note": "Le levier déplace le plafond commun (4 439 € dans l'arbre en 2026, non indexé) : exact sur cette population, dont la seule pension est une pension de retraite. Contrefactuel : l'arbre gelé, pas l'arbre après l'art. 2, qui porterait le plafond à environ 4 532 €.",
+  "tags": [],
+  "reform": {
+    "abattement_pensions_plafond": 3000.0
+  }
+}

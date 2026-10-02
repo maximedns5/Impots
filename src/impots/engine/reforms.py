@@ -46,6 +46,8 @@ PATH_PLAFOND_QF_DEMI_PART = (
     "plafond_avantages_procures_par_demi_part", "general",
 )
 PATH_CSG_ACTIVITE = ("prelevements_sociaux", "contributions_sociales", "csg", "activite")
+PATH_ABATTEMENT_PENSIONS = (
+    "impot_revenu", "calcul_revenus_imposables", "deductions", "abatpen")
 
 # --------------------------------------------------------------------------- #
 # Prestations (B1). The other half of French fiscal debate: until now this tool
@@ -153,6 +155,7 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "decote_seuil_couple": (*PATH_DECOTE, "seuil_couple"),
     "decote_taux": (*PATH_DECOTE, "taux"),
     "plafond_qf_demi_part": PATH_PLAFOND_QF_DEMI_PART,
+    "abattement_pensions_plafond": (*PATH_ABATTEMENT_PENSIONS, "max"),
     "csg_activite_imposable": (*PATH_CSG_ACTIVITE, "imposable"),
     "csg_activite_deductible": (*PATH_CSG_ACTIVITE, "deductible"),
     # Employer social contributions. The channels that price these (C2, C3) were

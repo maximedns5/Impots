@@ -51,6 +51,18 @@ class Adult(BaseModel):
         "`salaire_de_base` input the engine expects."
     )
     annee_naissance: Annotated[int, Field(ge=MIN_BIRTH_YEAR, le=MAX_YEAR)]
+    pension_annuelle: Annotated[float, Field(ge=0, le=MAX_SALARY)] = Field(
+        default=0.0,
+        description="Annual retirement pension in EUR, AS DECLARED (the taxable amount, "
+        "box 1AS), written monthly onto `retraite_brute` exactly as the population build "
+        "writes its `pension_annuelle`, which is calibrated on declared pensions. The "
+        "output registry computes `retraite_imposable` before the pension CSG, whose rate "
+        "reads the RFR of N-2, and openfisca's spiral on that dependency leaves the "
+        "deductible CSG at zero there: the amount typed is taxed as typed. "
+        "`test_a_pension_is_taxed_as_declared` pins that. Without this field no pensioner "
+        "could be expressed, and a knob that bites only on pensions could not be watched "
+        "moving on any household (D-081, PLF 2027 art. 3).",
+    )
 
 
 class Child(BaseModel):
@@ -294,6 +306,11 @@ class ReformSpec(BaseModel):
     decote_seuil_couple: Annotated[float, Field(ge=0, le=100_000)] | None = None
     decote_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     plafond_qf_demi_part: Annotated[float, Field(ge=0, le=100_000)] | None = None
+    # The cap on the 10 % pension abatement, per foyer (CGI 158, 5, a). PLF 2027 art. 3
+    # adds a 3 000 EUR sub-cap for RETIREMENT pensions only and keeps the common cap for
+    # alimony and invalidity pensions. This knob moves the common cap, which is exact for
+    # every foyer this tool can express: the only pension it carries is a retirement one.
+    abattement_pensions_plafond: Annotated[float, Field(ge=0, le=100_000)] | None = None
     csg_activite_imposable: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     csg_activite_deductible: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     # Employer social contributions (D-038). Plafonds are in multiples of the SMIC,

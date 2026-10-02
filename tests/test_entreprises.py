@@ -693,6 +693,81 @@ def test_cebge_knob_refuses_more_tranches_than_the_statute_has(tbs: object) -> N
 
 
 # --------------------------------------------------------------------------- #
+# PLF 2027, art. 15 — la CEBGE rétablie pour un troisième exercice
+# --------------------------------------------------------------------------- #
+#: Le paramétrage de l'article : seuil de 1,5 Md€ au taux de 15,7 %, taux majoré de
+#: 31,4 % au-delà de 3 Md€, et des bandes de lissage de 100 M€ que le texte écrit en
+#: toutes lettres (« 1,5 milliard … 1,6 milliard », « au dénominateur, 100 millions »).
+PROROGATION_2027 = {
+    "cebge_seuils_et_taux": [{"seuil_ca": 1.5e9, "taux": 0.157},
+                             {"seuil_ca": 3e9, "taux": 0.314}],
+    "cebge_prorogation_largeur": 1e8,
+}
+
+
+def test_a_prorogation_revives_the_cebge_where_the_tree_has_none(tbs: object) -> None:
+    """La CEBGE s'éteint après son deuxième exercice ; l'art. 15 du PLF 2027 la rétablit
+    pour un troisième. Le curseur seul refuse, et à raison : la bande de lissage n'avait
+    pas de source pour 2027. Le texte en donne une, que la réforme déclare."""
+    reformed = firm_system.reformed_for(FirmReformSpec.model_validate(PROROGATION_2027), 2027)
+    simulation = simulate(reformed, [2_000_000_000.0, 3_500_000_000.0, 1_400_000_000.0],
+                          [100_000_000.0] * 3, year="2027")
+    assert close(cebge_rate(simulation, 0, "2027"), 0.157)
+    assert close(cebge_rate(simulation, 1, "2027"), 0.314)
+    assert float(simulation.calculate("cebge", "2027")[2]) == 0.0, "sous 1,5 Md€, rien"
+    droit_courant = simulate(tbs, [2_000_000_000.0], [100_000_000.0], year="2027")
+    assert float(droit_courant.calculate("cebge", "2027")[0]) == 0.0, (
+        "le droit courant n'a pas bougé")
+
+
+def test_a_prorogation_smooths_over_the_declared_band(tbs: object) -> None:
+    """À 1,55 Md€, à mi-bande, la moitié de 15,7 % : « le taux … est multiplié par le
+    rapport entre … la différence … et 1,5 milliard d'euros et, au dénominateur, 100
+    millions d'euros »."""
+    reformed = firm_system.reformed_for(FirmReformSpec.model_validate(PROROGATION_2027), 2027)
+    simulation = simulate(reformed, [1_550_000_000.0], [100_000_000.0], year="2027")
+    assert close(cebge_rate(simulation, 0, "2027"), 0.0785)
+
+
+def test_a_prorogation_is_refused_where_the_cebge_still_exists() -> None:
+    """Créer ce qui existe déjà contournerait la garde de D-044. En 2026 la CEBGE est
+    dans l'arbre : la déplacer relève du curseur, pas de la création."""
+    with pytest.raises(ValueError, match="existe déjà"):
+        firm_system.reformed_for(FirmReformSpec.model_validate(PROROGATION_2027), 2026)
+
+
+def test_a_prorogation_needs_both_tranches() -> None:
+    """La formule lit les deux seuils et les deux taux : n'en créer qu'un laisserait
+    l'autre nul, et le barème rétabli serait à moitié défini."""
+    with pytest.raises(ValueError, match="deux tranches"):
+        FirmReformSpec(cebge_seuils_et_taux=[{"seuil_ca": 1.5e9, "taux": 0.157}],
+                       cebge_prorogation_largeur=1e8)
+    with pytest.raises(ValueError, match="deux tranches"):
+        FirmReformSpec(cebge_prorogation_largeur=1e8)
+
+
+def test_without_a_declared_band_a_lapsed_year_is_still_refused() -> None:
+    """Le jumeau, et la garde d'origine : sans largeur déclarée, rien n'est inventé."""
+    spec = FirmReformSpec.model_validate(
+        {"cebge_seuils_et_taux": PROROGATION_2027["cebge_seuils_et_taux"]})
+    with pytest.raises(ValueError, match="n'existe plus"):
+        firm_system.reformed_for(spec, 2027)
+
+
+def test_verify_scales_reads_back_what_a_prorogation_created() -> None:
+    """La relecture vaut pour ce qui est créé autant que pour ce qui est déplacé."""
+    spec = FirmReformSpec.model_validate(PROROGATION_2027)
+    reformed = firm_system.reformed_for(spec, 2027)
+    p = reformed.parameters("2027-01-01")
+    assert p.cebge.lissage.largeur == 1e8
+    assert p.cebge.lissage.borne_haute == 1.6e9
+    assert p.cebge.lissage.borne_haute_taux_majore == 3.1e9
+    autre_largeur = spec.model_copy(update={"cebge_prorogation_largeur": 2e8})
+    with pytest.raises(AssertionError, match="largeur"):
+        verify_scales(reformed, autre_largeur, 2027)
+
+
+# --------------------------------------------------------------------------- #
 # the reconciliation report (§5)
 # --------------------------------------------------------------------------- #
 @pytest.fixture(scope="module")

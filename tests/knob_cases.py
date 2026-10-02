@@ -56,6 +56,10 @@ LOCATAIRE_PPA = {**TEMPS_PARTIEL,
                  "logement": {"statut": "locataire_vide", "loyer_mensuel": 700,
                               "zone_apl": 1}}
 NICHE_FOYER = {**AISE_2_ENFANTS}
+#: Un retraité dont l'abattement de 10 % dépasse le plafond : seul un foyer de ce genre
+#: peut faire bouger `abattement_pensions_plafond` (PLF 2027, art. 3).
+RETRAITE_AISE = {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1955,
+                             "pension_annuelle": 50_000}]}
 #: Les deux plafonds de bandeau sont exprimés en multiples de SMIC, donc le ménage doit
 #: se trouver DANS le bandeau pour qu'en abaisser le plafond le lui retire. Au SMIC 2024
 #: d'environ 21 203 EUR brut, 45 000 EUR font 2,12 SMIC — sous le plafond maladie de 2,5
@@ -104,6 +108,7 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
     "decote_seuil_couple": (COUPLE, None, "ir", 3_000.0, -1),
     "decote_taux": (MODESTE, None, "ir", 0.30, -1),
     "plafond_qf_demi_part": (AISE_2_ENFANTS, None, "ir", 1_000.0, +1),
+    "abattement_pensions_plafond": (RETRAITE_AISE, None, "ir", 3_000.0, +1),
     "csg_activite_imposable": (MODESTE, None, "csg_imposable", 0.05, +1),
     "csg_activite_deductible": (MODESTE, None, "csg_deductible", 0.10, +1),
     # --- employer contributions ----------------------------------------------------

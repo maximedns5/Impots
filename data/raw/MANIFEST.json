@@ -1332,6 +1332,15 @@
       "description": "Eurostat gov_10dd_edpt3 « Transition from the deficit/surplus to the change in debt », France, S13, M€. Porte B9_T3, GD_CH et les cinq composantes de l'ajustement flux-stocks (F_ASS, ORADJ, K61, KX, YA3). Millésime de la notification EDP d'avril 2026 ; champ 'updated' = 2026-04-22. COUVERTURE : 2021→2025 pour la France — 2019 et 2020 n'y figurent pas, la table EDP ne publiant qu'une fenêtre glissante (D-163, D-167).",
       "quarantined": false,
       "provenance": "API de diffusion Eurostat, URL de requête stable et reproductible — PAS un export personnalisé du databrowser, dont l'URL pointe un UUID de session. Vérifié byte-identique sur deux téléchargements successifs ; le champ 'updated' porte la date de publication, pas celle de la requête."
+    },
+    "plf2027_texte_an_b3210.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B3210.html",
+      "sha256": "7fcd191974d807a1b83fe63b4903a57916ed33c454056ed5ee76bf34e00dbc42",
+      "bytes": 4149374,
+      "downloaded": "2026-10-02",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 3210 (17e législature) : projet de loi de finances pour 2027, déposé le 1er octobre 2026, articles avec exposé des motifs. URL relevée sur la page de publication (dossier PLF_2027, puis la page du texte l17b3210_projet-loi), jamais dans un index de recherche.\nLes titres d'articles sont portés par les <h6>, mais PAS toujours sous la forme « ARTICLE n : intitulé » : l'article 23 n'a pas de deux-points, l'article 22 en a deux, et une entité &#xa0; tient lieu d'espace dans trois titres. Le découpage d'avant le 2026-10-02 écartait sans bruit les articles 23, 38 et 47. 90 articles au total (89 numérotés et l'article liminaire) ; la section fiscale porte les articles 1 à 33.\nC'est le PROJET déposé, pas la loi votée. L'annexe des évaluations préalables n'était pas encore liée depuis la page du dossier le 2026-10-02 ; elle n'est pas manifestée ici.",
+      "quarantined": false
     }
   }
 }

@@ -465,3 +465,58 @@ def test_the_2025_refonte_step_is_expressible() -> None:
     famille = resolve(system.parameters, PATH_BANDEAU_FAMILLE)("2024-01-01")
     assert {float(getattr(maladie, n)) for n in plafond_children(maladie)} == {2.25}
     assert {float(getattr(famille, n)) for n in plafond_children(famille)} == {3.3}
+
+
+# --------------------------------------------------------------------------- #
+# PLF 2027, art. 3 — le plafond de l'abattement de 10 % sur les pensions
+# --------------------------------------------------------------------------- #
+#: Un retraité seul dont l'abattement de 10 % dépasse le plafond légal : c'est sur ce
+#: foyer, et sur lui seul, qu'un plafond abaissé mord.
+RETRAITE_AISE = {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1955,
+                             "pension_annuelle": 50_000}]}
+
+
+def test_a_pension_is_taxed_as_declared() -> None:
+    """Le format d'entrée n'avait pas de pension : tout retraité était un foyer sans
+    revenu, et un levier qui ne mord que sur les pensions ne pouvait être vu bouger sur
+    aucun ménage exprimable (D-081).
+
+    ET LA PENSION SAISIE EST IMPOSÉE TELLE QUELLE, ce qui n'allait pas de soi.
+    `retraite_imposable` vaut `retraite_brute + csg_deductible_retraite`, mais le taux de
+    cette CSG lit le RFR de N-2, et la spirale d'openfisca sur cette dépendance la laisse
+    à zéro quand `retraite_imposable` est calculée en premier — ce que fait l'ordre du
+    registre de sorties. Calculée en premier, la CSG vaut −5,9 % ; c'est donc un effet
+    d'ORDRE, que ce test épingle. Le champ est défini comme le montant DÉCLARÉ, comme la
+    pension de la population, calée sur les pensions déclarées à la DGFiP : sous cet
+    ordre, les deux chemins imposent la même base. Si openfisca change de comportement,
+    ce test tombe, et c'est le moment de revoir la définition du champ."""
+    rows = compute(HouseholdInput.model_validate(RETRAITE_AISE), 2024, tier="light").baseline
+    assert rows["retraite_imposable"] == pytest.approx(50_000, abs=0.5)
+    assert rows["ir"] > 0
+
+
+def test_lowering_the_pension_cap_taxes_the_difference_at_the_marginal_rate() -> None:
+    """L'arithmétique de l'article, sur un foyer où elle se lit à la main.
+
+    En 2024, le plafond vaut 4 399 EUR et 10 % de la pension imposable du foyer
+    dépassent 4 700 EUR : l'abattement est plafonné. Le ramener à 3 000 EUR ajoute
+    1 399 EUR au revenu imposable, qui est dans la tranche à 30 % — soit environ 420 EUR
+    d'impôt, à l'arrondi près."""
+    foyer = HouseholdInput.model_validate(RETRAITE_AISE)
+    avant = compute(foyer, 2024, tier="light").baseline["ir"]
+    apres = compute(foyer, 2024, tier="light",
+                    reform=ReformSpec(abattement_pensions_plafond=3_000.0)).reform["ir"]
+    assert apres - avant == pytest.approx(1_399 * 0.30, abs=2.0)
+
+
+def test_the_pension_cap_spares_a_pensioner_below_it() -> None:
+    """Le jumeau : à 20 000 EUR de pension, 10 % font moins de 3 000 EUR, et le
+    plafond abaissé ne change rien. Un levier qui bougerait ici écrirait au mauvais
+    endroit."""
+    foyer = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1955,
+                     "pension_annuelle": 20_000}]})
+    avant = compute(foyer, 2024, tier="light").baseline["ir"]
+    apres = compute(foyer, 2024, tier="light",
+                    reform=ReformSpec(abattement_pensions_plafond=3_000.0)).reform["ir"]
+    assert apres == pytest.approx(avant)
