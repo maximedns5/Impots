@@ -29,7 +29,7 @@ from `main`.
 
 **1 729 tests** where the data is present (the CI `fast` job counts 1 388 passed,
 120 skipped, 221 deselected), eleven replayable `verify_*.py` gate scripts, and
-**177 decision entries**, D-000 to D-176, recording every error in both
+**178 decision entries**, D-000 to D-177, recording every error in both
 directions.
 
 ## Verification, as it stands
