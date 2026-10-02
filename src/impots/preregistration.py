@@ -404,14 +404,17 @@ def save(chiffrage: Chiffrage, directory: Path | None = None) -> Path:
     directory = directory or CHIFFRAGES
     directory.mkdir(parents=True, exist_ok=True)
     path = _case_path(directory, chiffrage.case)
-    if path.exists():
+    # Exclusive creation, as for scenarios: `exists()` is False for a dangling link and
+    # `write_text` follows it out of the directory (D-173).
+    try:
+        with path.open("x", encoding="utf-8") as handle:
+            handle.write(
+                yaml.safe_dump(chiffrage.to_dict(), allow_unicode=True, sort_keys=False))
+    except FileExistsError:
         raise ChiffrageError(
             f"{path.name} existe déjà. Un chiffrage préenregistré ne se réécrit pas — "
             f"c'est précisément ce que « préenregistré » veut dire. Pour une révision, "
-            f"un nouveau cas sous un nouveau nom, daté d'aujourd'hui.")
-    path.write_text(
-        yaml.safe_dump(chiffrage.to_dict(), allow_unicode=True, sort_keys=False),
-        encoding="utf-8")
+            f"un nouveau cas sous un nouveau nom, daté d'aujourd'hui.") from None
     return path
 
 
@@ -421,6 +424,10 @@ def load(case: str, directory: Path | None = None) -> Chiffrage:
 
     directory = directory or CHIFFRAGES
     path = _case_path(directory, case)
+    if path.is_symlink():
+        raise ChiffrageError(
+            f"« {case} » est un lien symbolique : un chiffrage se lit dans son dossier, "
+            f"pas là où un lien le fait pointer (D-173).")
     if not path.exists():
         raise ChiffrageError(f"{path} n'existe pas")
     try:

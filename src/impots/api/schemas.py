@@ -36,8 +36,15 @@ MIN_BAREME_BRACKETS = 2
 # --------------------------------------------------------------------------- #
 # Request: the household
 # --------------------------------------------------------------------------- #
+#: Every model a request body reaches. `allow_inf_nan=False` because `Infinity` is
+#: JSON to Python's parser and `ge=0` is true of it: an infinite threshold reached
+#: the engine (D-173). `test_every_model_the_api_accepts_refuses_non_finite_numbers`
+#: derives the list from the routes, so a new input model cannot forget it.
+INPUT_CONFIG = ConfigDict(extra="forbid", allow_inf_nan=False)
+
+
 class Adult(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     salaire_brut_annuel: Annotated[float, Field(ge=0, le=MAX_SALARY)] = Field(
         description="Gross annual salary in EUR. Divided by 12 onto the monthly "
@@ -47,7 +54,7 @@ class Adult(BaseModel):
 
 
 class Child(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     annee_naissance: Annotated[int, Field(ge=MIN_BIRTH_YEAR, le=MAX_YEAR)]
 
@@ -56,7 +63,7 @@ class Logement(BaseModel):
     """Optional ménage-level housing inputs. Without them `aide_logement` is 0 —
     that is the engine answering the question as asked, not a wiring bug (spec §7.9)."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     statut: str = Field(
         description="`statut_occupation_logement` enum member name, e.g. 'locataire_vide'. "
@@ -88,7 +95,7 @@ class Niches(BaseModel):
     depending on the class, 200 € of union dues 132 €.
     """
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     salarie_domicile: Annotated[float, Field(ge=0, le=100_000)] = 0.0
     """Sommes versées pour l'emploi d'un salarié à domicile (case 7DB). A CRÉDIT at
@@ -166,7 +173,7 @@ class Patrimoine(BaseModel):
     and that absence is the correct model of the tax rather than a gap in the form.
     """
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     residence_principale: Annotated[float, Field(ge=0, le=1e9)] = 0.0
     """Gross value. The 30 % abattement is the engine's to apply, not the caller's."""
@@ -192,7 +199,7 @@ class Patrimoine(BaseModel):
 
 
 class HouseholdInput(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     adults: Annotated[list[Adult], Field(min_length=1, max_length=2)]
     children: Annotated[list[Child], Field(max_length=MAX_CHILDREN)] = Field(default_factory=list)
@@ -243,7 +250,7 @@ class HouseholdInput(BaseModel):
 # Request: the reform
 # --------------------------------------------------------------------------- #
 class IRBracket(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     threshold: Annotated[float, Field(ge=0)]
     rate: Annotated[float, Field(ge=0.0, le=1.0)]
@@ -276,7 +283,7 @@ class ReformSpec(BaseModel):
     the reform-cache key unbounded (spec §3.4).
     """
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     ir_bareme: list[IRBracket] | None = Field(
         default=None,
@@ -552,7 +559,7 @@ Tier = Literal["light", "full"]
 
 
 class SimulateRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     household: HouseholdInput
     year: Annotated[int, Field(ge=MIN_YEAR, le=MAX_YEAR)] = 2024
@@ -919,7 +926,7 @@ class NicheBlindSpot(BaseModel):
 
 
 class PopulationSimulateRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     reform: ReformSpec
     year: Annotated[int, Field(ge=MIN_YEAR, le=MAX_YEAR)] = 2024
@@ -1016,7 +1023,7 @@ class PopulationResponse(BaseModel):
 # no quick tier and no batch machinery on this side.
 # --------------------------------------------------------------------------- #
 class FirmSimulateRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = INPUT_CONFIG
 
     reform: FirmReformSpec
     year: Annotated[int, Field(ge=2022, le=MAX_YEAR + 4)] = 2026

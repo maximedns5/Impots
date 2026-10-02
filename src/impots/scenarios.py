@@ -76,10 +76,13 @@ def _check_name(name: str) -> None:
     a file the listing will never show — a chiffrage that looks registered and is not.
     A name containing a separator is a mistake in every case, so it is refused rather
     than sanitised: silently renaming what someone asked for is its own surprise.
+
+    `fullmatch`, not `match`: with `$`, `re.match` accepts a trailing newline, and
+    `GET /trajectoires/gel_bareme%0A` went past this guard (D-173).
     """
-    if not name.strip():
+    if not isinstance(name, str) or not name.strip():
         raise ScenarioError("un scénario sans nom ne peut pas être retrouvé")
-    if not _NAME_PATTERN.match(name):
+    if not _NAME_PATTERN.fullmatch(name):
         raise ScenarioError(
             f"« {name} » n'est pas un nom de scénario. Un nom est un identifiant — "
             f"lettres, chiffres, «_», «-», «.», au plus 64 caractères — et jamais un "
@@ -146,14 +149,18 @@ class Scenario:
         directory = directory or SCENARIOS
         directory.mkdir(parents=True, exist_ok=True)
         path = _scenario_path(directory, self.name)
-        if path.exists():
+        # Exclusive creation, not `exists()` then `write_text`: a dangling link answers
+        # False to `exists()` and `write_text` follows it out of the directory. Mode "x"
+        # refuses any existing entry, link included, in one system call (D-173).
+        try:
+            with path.open("x", encoding="utf-8") as handle:
+                handle.write(json.dumps(self.to_dict(), ensure_ascii=False, indent=2) + "\n")
+        except FileExistsError:
             raise ScenarioError(
                 f"{path.name} existe déjà. Un scénario ne se réécrit pas : ce serait "
                 f"réviser un chiffrage en gardant sa date, ce que le préenregistrement "
                 f"est fait pour empêcher. Enregistrer sous un autre nom."
-            )
-        path.write_text(json.dumps(self.to_dict(), ensure_ascii=False, indent=2) + "\n",
-                        encoding="utf-8")
+            ) from None
         return path
 
 
@@ -168,6 +175,11 @@ def load(name: str, directory: Path | None = None) -> Scenario:
 
     directory = directory or SCENARIOS
     path = _scenario_path(directory, name)
+    if path.is_symlink():
+        raise ScenarioError(
+            f"« {name} » est un lien symbolique : un scénario se lit dans son dossier, "
+            f"pas là où un lien le fait pointer (D-173)."
+        )
     if not path.exists():
         raise ScenarioError(f"{path} n'existe pas")
 
@@ -190,18 +202,35 @@ def load(name: str, directory: Path | None = None) -> Scenario:
             f"« {name} » ne valide plus : {error}. Un bouton a été renommé ou ses bornes "
             f"ont bougé depuis l'enregistrement — le scénario doit être relu, pas forcé."
         ) from error
+    # AttributeError too: a non-string `source` failed in `.strip()` and escaped,
+    # 500ing GET /scenarios for every row (D-173). Tags given as one string became one
+    # tag per letter.
     try:
-        return Scenario(
+        note = raw.get("note", "")
+        tags = raw.get("tags") or ()
+        if (not isinstance(note, str) or isinstance(tags, str)
+                or not all(isinstance(tag, str) for tag in tags)):
+            raise TypeError("la note et les étiquettes doivent être du texte")
+        scenario = Scenario(
             name=raw["name"], reform=reform, year=int(raw["year"]),
-            created=raw["created"], source=raw["source"], note=raw.get("note", ""),
-            tags=tuple(raw.get("tags") or ()),
+            created=raw["created"], source=raw["source"], note=note, tags=tuple(tags),
         )
     except ScenarioError:
         raise
-    except (KeyError, TypeError, ValueError) as error:
+    except (KeyError, TypeError, ValueError, AttributeError) as error:
         raise ScenarioError(
             f"« {name} » est incomplet ou mal formé : {error!r}"
         ) from error
+    # The name inside the file names every output derived from it — `fiche_{name}.md`,
+    # `trajectoire_{name}.json` — so a file that disagrees with its own filename would
+    # let `a.json` write `fiche_b.md` (D-173).
+    if scenario.name != name:
+        raise ScenarioError(
+            f"« {name}.json » déclare le nom « {scenario.name} ». Un scénario porte le nom "
+            f"de son fichier : sinon ses sorties sont écrites sous un autre nom que celui "
+            f"qu'on a demandé."
+        )
+    return scenario
 
 
 def available(directory: Path | None = None) -> list[str]:

@@ -19,7 +19,7 @@ from openfisca_core import periods
 from openfisca_core.reforms import Reform
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from impots.parameters import resolve, update_existing
+from impots.parameters import differs, resolve, update_existing
 
 #: knob -> path in the parameter tree. Never `is`: a node of that name breaks
 #: attribute access on the parameter tree, since it is a Python keyword.
@@ -52,7 +52,7 @@ CEBGE_TRANCHE_PATHS: tuple[tuple[tuple[str, ...], tuple[str, ...], tuple[str, ..
 
 
 class CebgeTranche(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)  # D-173
 
     seuil_ca: Annotated[float, Field(ge=0)]
     taux: Annotated[float, Field(ge=0.0, le=1.0)]
@@ -61,7 +61,7 @@ class CebgeTranche(BaseModel):
 class FirmReformSpec(BaseModel):
     """The whitelisted firm-tax knobs. All optional; an empty spec is no reform."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)  # D-173
 
     is_taux_normal: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     is_taux_reduit: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
@@ -180,7 +180,7 @@ def verify_scales(system: Any, spec: FirmReformSpec, year: int) -> None:
         if wanted is None:
             continue
         got = float(resolve(system.parameters, path)(instant))
-        if abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0):
+        if differs(got, wanted):
             problems.append(f"{knob}: demandé {wanted}, appliqué {got}")
     if not spec.cebge_seuils_et_taux:
         if problems:
@@ -205,7 +205,7 @@ def verify_scales(system: Any, spec: FirmReformSpec, year: int) -> None:
             ("borne de lissage", borne_path, tranche.seuil_ca + largeur),
         ):
             got = float(resolve(system.parameters, path)(instant))
-            if abs(got - wanted_value) > 1e-9 * max(abs(wanted_value), 1.0):
+            if differs(got, wanted_value):
                 problems.append(
                     f"cebge_seuils_et_taux[{index}].{label}: demandé {wanted_value}, "
                     f"appliqué {got}"

@@ -24,7 +24,13 @@ from impots.entreprises import aggregate as firm_aggregate
 from impots.entreprises import runner as firm_runner
 from impots.entreprises import system as firm_system
 from impots.entreprises.population import Cell, build_firms
-from impots.entreprises.reforms import SCALAR_KNOBS, FirmReformSpec, resolve, verify_scales
+from impots.entreprises.reforms import (
+    SCALAR_KNOBS,
+    CebgeTranche,
+    FirmReformSpec,
+    resolve,
+    verify_scales,
+)
 
 YEAR = "2026"
 
@@ -926,3 +932,29 @@ def test_the_non_bati_hole_is_pinned_as_failing() -> None:
     module = _rei_module()
     assert pytest.approx(-0.597, abs=0.001) == module.FNB_MEASURED_SHORTFALL
     assert module.PUBLISHED_FNB_EUR == 2.7e9
+
+
+def test_a_non_finite_cebge_threshold_is_refused_by_the_schema() -> None:
+    """`ge=0` is true of infinity, so it validated (D-173)."""
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        FirmReformSpec(cebge_seuils_et_taux=[{"seuil_ca": float("inf"), "taux": 0.5}])
+
+
+def test_the_read_back_fails_closed_on_a_non_finite_request() -> None:
+    """Fails if the comparison goes back to `abs(got - wanted) > tol`.
+
+    With an infinite threshold the tolerance, relative to the request, is itself
+    infinite and the difference is inf or NaN: nothing compared greater, and a CEBGE
+    repeal was priced at +3,24 md€ on the fixture without a word (D-173). The request
+    is built with `model_construct` because the schema now refuses the value, and the
+    system from a finite request because the engine's cache key re-validates: this is
+    the guard standing behind both, checked on its own.
+    """
+    reformed = firm_system.reformed_for(
+        FirmReformSpec(cebge_seuils_et_taux=[{"seuil_ca": 500_000_000, "taux": 0.5}]), 2026)
+    tranche = CebgeTranche.model_construct(seuil_ca=float("inf"), taux=0.5)
+    asked = FirmReformSpec.model_construct(cebge_seuils_et_taux=[tranche])
+    with pytest.raises(AssertionError, match="ne correspondent pas"):
+        verify_scales(reformed, asked, 2026)

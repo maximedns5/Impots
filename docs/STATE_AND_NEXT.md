@@ -29,7 +29,7 @@ from `main`.
 
 **1 729 tests** where the data is present (the CI `fast` job counts 1 388 passed,
 120 skipped, 221 deselected), eleven replayable `verify_*.py` gate scripts, and
-**173 decision entries**, D-000 to D-172, recording every error in both
+**174 decision entries**, D-000 to D-173, recording every error in both
 directions.
 
 ## Verification, as it stands
@@ -215,7 +215,10 @@ download list.
 * **The CAF cross-check.** 30 minutes at a browser, owner-only. **No reCAPTCHA
   circumvention under any circumstances.**
 * **The upstream dossier** and **all publication and deployment**: owner's,
-  deferred. The input-hardening precondition (the path-traversal finding) stands.
+  deferred. The input-hardening pass the reviewer made a precondition is done for
+  strings, paths and reform JSON (D-173). What it leaves is the owner's, at deployment
+  time: the open CORS policy (it is what lets `ui/index.html` open from disk),
+  authentication, rate limiting, and a concurrency cap on `POST /population/simulate`.
 
 ## What the next session does if nobody says otherwise
 

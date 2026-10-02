@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 from impots.api.schemas import ReformSpec
+from impots.identifiants import millesime
 from impots.population import aggregate as aggregate_module
 from impots.population import reconcile as reconcile_module
 from impots.population.build import PROCESSED, build
@@ -421,6 +422,25 @@ def _afficher_etats(etats) -> int:
     return 0
 
 
+def _donnees_refusees(commande):
+    """Un nom de fichier ou de profil inconnu est un refus lisible, code 2 — pas une
+    trace de pile (D-173)."""
+    import functools
+
+    @functools.wraps(commande)
+    def enveloppe(args: argparse.Namespace) -> int:
+        from impots.donnees import DonneesError
+
+        try:
+            return commande(args)
+        except DonneesError as erreur:
+            print(f"refusé : {erreur}", file=sys.stderr)
+            return 2
+
+    return enveloppe
+
+
+@_donnees_refusees
 def cmd_data_check(args: argparse.Namespace) -> int:
     from impots import donnees
 
@@ -429,6 +449,7 @@ def cmd_data_check(args: argparse.Namespace) -> int:
                                             profil_nom=args.profile))
 
 
+@_donnees_refusees
 def cmd_data_fetch(args: argparse.Namespace) -> int:
     from impots import donnees
 
@@ -444,6 +465,7 @@ def cmd_data_fetch(args: argparse.Namespace) -> int:
     return 0
 
 
+@_donnees_refusees
 def cmd_data_prepare(args: argparse.Namespace) -> int:
     from impots import donnees
 
@@ -1161,7 +1183,7 @@ def build_parser() -> argparse.ArgumentParser:
     manifest.set_defaults(func=cmd_manifest)
 
     builder = actions.add_parser("build", help="build the population parquet")
-    builder.add_argument("--vintage", default="2024")
+    builder.add_argument("--vintage", type=millesime, default="2024")
     builder.add_argument("--seed", type=int, default=None)
     builder.add_argument("--no-raking", action="store_true",
                          help="skip the calibration step (D-017); used to produce the "
@@ -1169,7 +1191,7 @@ def build_parser() -> argparse.ArgumentParser:
     builder.set_defaults(func=cmd_build)
 
     runner_parser = actions.add_parser("run", help="run a reform over the population")
-    runner_parser.add_argument("--vintage", default="2024")
+    runner_parser.add_argument("--vintage", type=millesime, default="2024")
     runner_parser.add_argument("--year", type=int, default=2024)
     runner_parser.add_argument("--reform", help="path to a ReformSpec JSON file")
     runner_parser.add_argument("--tier", choices=["light", "full"], default="full")
@@ -1183,7 +1205,7 @@ def build_parser() -> argparse.ArgumentParser:
     runner_parser.set_defaults(func=cmd_run)
 
     reconciler = actions.add_parser("reconcile", help="generate reports/reconciliation.md")
-    reconciler.add_argument("--vintage", default="2024")
+    reconciler.add_argument("--vintage", type=millesime, default="2024")
     reconciler.add_argument("--year", type=int, default=2024)
     reconciler.add_argument("--sample", type=int, default=None)
     reconciler.add_argument(
@@ -1199,7 +1221,7 @@ def build_parser() -> argparse.ArgumentParser:
     emtr_parser = actions.add_parser(
         "emtr", help="marginal-rate distribution, folded into the baseline artifact"
     )
-    emtr_parser.add_argument("--vintage", default="2024")
+    emtr_parser.add_argument("--vintage", type=millesime, default="2024")
     emtr_parser.add_argument("--year", type=int, default=2024)
     emtr_parser.add_argument("--sample", type=int, default=None,
                              help="households to sample; omit for the full population")
@@ -1236,11 +1258,11 @@ def build_parser() -> argparse.ArgumentParser:
     firm_cells = firm_actions.add_parser(
         "cells", help="build the REAL sector x size cell table from the three published "
                       "spreadsheets (Ésane, Focus 372, DGFiP n° 39)")
-    firm_cells.add_argument("--vintage", default="2023")
+    firm_cells.add_argument("--vintage", type=millesime, default="2023")
     firm_cells.set_defaults(func=cmd_firms_cells)
 
     firm_runner_parser = firm_actions.add_parser("run", help="price a firm-tax reform")
-    firm_runner_parser.add_argument("--vintage", default="fixture")
+    firm_runner_parser.add_argument("--vintage", type=millesime, default="fixture")
     firm_runner_parser.add_argument("--year", type=int, default=2026)
     firm_runner_parser.add_argument("--reform", help="path to a FirmReformSpec JSON file")
     firm_runner_parser.set_defaults(func=cmd_firms_run)
@@ -1248,7 +1270,7 @@ def build_parser() -> argparse.ArgumentParser:
     firm_reconciler = firm_actions.add_parser(
         "reconcile", help="generate reports/reconciliation_entreprises.md"
     )
-    firm_reconciler.add_argument("--vintage", default="fixture")
+    firm_reconciler.add_argument("--vintage", type=millesime, default="fixture")
     firm_reconciler.add_argument("--year", type=int, default=2026)
     firm_reconciler.set_defaults(func=cmd_firms_reconcile)
 
@@ -1280,7 +1302,7 @@ def build_parser() -> argparse.ArgumentParser:
     comparer = scenario_actions.add_parser("compare", help="price two scenarios side by side")
     comparer.add_argument("a")
     comparer.add_argument("b")
-    comparer.add_argument("--vintage", default="2024")
+    comparer.add_argument("--vintage", type=millesime, default="2024")
     comparer.add_argument("--sample", type=int, default=20_000)
     comparer.add_argument("--dir")
     comparer.set_defaults(func=cmd_scenario_compare)
@@ -1303,7 +1325,7 @@ def build_parser() -> argparse.ArgumentParser:
                              "value with its own generic message, and the whole point is "
                              "that the module's refusal — which says WHY a banded "
                              "quantity is not solvable — is the thing the caller reads")
-    solver.add_argument("--vintage", default="2024")
+    solver.add_argument("--vintage", type=millesime, default="2024")
     solver.add_argument("--year", type=int, default=2024)
     solver.add_argument("--sample", type=int, default=20_000)
     solver.add_argument("--dir")
@@ -1324,7 +1346,7 @@ def build_parser() -> argparse.ArgumentParser:
                                 "gradable at all")
     registrar.add_argument("--tolerance-rationale", required=True,
                            help="why THIS tolerance, stated before the answer is known")
-    registrar.add_argument("--vintage", default="2024")
+    registrar.add_argument("--vintage", type=millesime, default="2024")
     registrar.add_argument("--sample", type=int, default=20_000)
     registrar.add_argument("--note", default="")
     registrar.add_argument("--dir")
@@ -1350,7 +1372,7 @@ def build_parser() -> argparse.ArgumentParser:
         "fiche", help="render the fiche de chiffrage for a scenario (F4)")
     fiche_parser.add_argument("scenario")
     fiche_parser.add_argument("--titre")
-    fiche_parser.add_argument("--vintage", default="2024")
+    fiche_parser.add_argument("--vintage", type=millesime, default="2024")
     fiche_parser.add_argument("--year", type=int, default=2024)
     fiche_parser.add_argument("--sample", type=int, default=20_000)
     fiche_parser.add_argument("--no-behavioural", action="store_true")
@@ -1376,7 +1398,7 @@ def build_parser() -> argparse.ArgumentParser:
     trajectoire.add_argument("--hypothesis-source", required=True,
                              help="where the indices come from — declared, never forecast")
     trajectoire.add_argument("--base-year", type=int, default=2024)
-    trajectoire.add_argument("--vintage", default="2024")
+    trajectoire.add_argument("--vintage", type=millesime, default="2024")
     trajectoire.add_argument("--sample", type=int, default=8_000)
     trajectoire.add_argument("--titre")
     trajectoire.add_argument("--dir")

@@ -646,7 +646,9 @@ def write_cell_table(vintage: str = "2023", raw: Path | None = None) -> Path:
     import os
 
     from impots.donnees import PROCESSED
+    from impots.identifiants import millesime
 
+    vintage = millesime(vintage)  # it names the file written below (D-173)
     cells, provenance = build_cells(raw=raw, vintage=vintage)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     out = PROCESSED / f"firm_cells_{vintage}.json"

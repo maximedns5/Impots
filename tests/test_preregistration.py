@@ -385,3 +385,13 @@ def test_the_mirror_flag_survives_a_round_trip(tmp_path, monkeypatch):
                 mirror=True, bound="lower", directory=tmp_path)
     back = ch.load("miroir", tmp_path)
     assert back.mirror is True and back.bound == "lower"
+
+
+def test_saving_refuses_to_write_through_a_planted_link(tmp_path):
+    """Same defect, same fix as scenarios (D-173): `exists()` is False for a dangling
+    link, and `write_text` follows it out of the directory."""
+    dehors = tmp_path / "dehors.yaml"
+    (tmp_path / "essai.yaml").symlink_to(dehors)
+    with pytest.raises(ch.ChiffrageError):
+        ch.save(case(1e9), tmp_path)
+    assert not dehors.exists()

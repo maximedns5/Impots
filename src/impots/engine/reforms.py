@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING, Any
 from openfisca_core import periods
 from openfisca_core.reforms import Reform
 
-from impots.parameters import resolve, update_bracket, update_existing
+from impots.parameters import differs, resolve, update_bracket, update_existing
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
     from impots.api.schemas import ReformSpec
@@ -464,7 +464,7 @@ def verify_allegements(tax_benefit_system: Any, spec: ReformSpec, year: int) -> 
         if wanted is None:
             continue
         got = float(resolve(tax_benefit_system.parameters, SCALAR_KNOBS[knob])(instant))
-        if abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0):
+        if differs(got, wanted):
             problems.append(f"{knob} : demandé {wanted}, appliqué {got}")
 
     # The set of plafonds to check comes from the BASELINE tree, not the reformed
@@ -493,7 +493,7 @@ def verify_allegements(tax_benefit_system: Any, spec: ReformSpec, year: int) -> 
                 )
                 continue
             got = float(getattr(node, name))
-            if abs(got - wanted) > 1e-9 * max(abs(wanted), 1.0):
+            if differs(got, wanted):
                 problems.append(
                     f"{knob}.{name} : demandé {wanted}, appliqué {got} — le plafond "
                     f"effectif est un max sur ces enfants, donc un seul non appliqué "

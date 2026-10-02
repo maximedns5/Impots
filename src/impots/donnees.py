@@ -355,12 +355,19 @@ def telecharger(fichier: str, *, ouvrir: Callable = urllib.request.urlopen,
     partiel = cible.with_name(cible.name + ".part")
     blocs: list[bytes] = []
     taille = 0
+    depasse = False
     try:
         requete = urllib.request.Request(entree.url, headers={"User-Agent": USER_AGENT})
         with ouvrir(requete, timeout=timeout) as reponse, partiel.open("wb") as sortie:
             for bloc in iter(lambda: reponse.read(1 << 20), b""):
                 blocs.append(bloc)
                 taille += len(bloc)
+                # Le manifeste connaît la taille : au-delà, c'est déjà un échec, et lire
+                # la suite laissait le serveur choisir ce que ce processus garde en
+                # mémoire (D-173).
+                if taille > entree.bytes:
+                    depasse = True
+                    break
                 sortie.write(bloc)
     except (urllib.error.URLError, OSError, TimeoutError) as exc:
         partiel.unlink(missing_ok=True)
@@ -376,7 +383,8 @@ def telecharger(fichier: str, *, ouvrir: Callable = urllib.request.urlopen,
                      else "")
         return Telechargement(
             fichier, "échec",
-            f"le fichier servi ne correspond PAS au manifeste — {taille} octets contre "
+            f"le fichier servi ne correspond PAS au manifeste — "
+            f"{'au moins ' if depasse else ''}{taille} octets contre "
             f"{entree.bytes} attendus, sha256{precision} {obtenu[:16]}… contre "
             f"{exige[:16]}…. "
             f"Rien n'est écrit : si la publication a changé de millésime, c'est une "
