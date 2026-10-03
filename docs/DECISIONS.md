@@ -9148,3 +9148,76 @@ repos.
 
   Ni l'un ni l'autre n'est examiné plus loin ici. Le second est proposé comme tâche
   séparée.
+
+## D-180 — L'aide au logement : la déduction minimale ne mange plus la pension
+
+**Le point de départ.** D-179 avait noté sans l'examiner un EMTR de −1,04. Il touchait un
+retraité locataire au niveau de l'ASPA, avec 7 000 € de pension. Il était identique dans tous
+les ordres : ce n'était pas une spirale.
+
+**Ce qui bouge.** Ce retraité déclare 100 € de salaire. Son aide au logement passe de
+3 115,89 € à 3 265,56 € par an. Son RD passe de 15 260,16 € à 15 489,15 €, soit 228,99 €
+pour 100 € brut. Dans l'EMTR, le même saut donne −1,04. Sans logement, l'EMTR vaut 0,21.
+
+**Pourquoi.** La base de ressources individuelle de l'aide tombe de 6 300 € à 5 887,16 €.
+C'est `aide_logement_base_ressources_individu`, ère 2021. Sur l'année glissante de l'aide,
+100 € de salaire brut font 82,16 € de salaire imposable. La déduction de 10 % a un minimum
+de 495 € sur les revenus 2023 : elle dépasse donc le salaire de 412,84 €. openfisca nette
+d'abord les salaires, avec un plancher à zéro. Puis il reporte le reste de la déduction
+sur la ligne du chômage, cette fois sans plancher :
+`chomage_imposable + min_(0, salaires - abattement)`. Sans chômage, la ligne devient
+négative et se retranche de la pension.
+
+**Ce que dit la loi.** L'aide compte « le total des revenus nets catégoriels retenus pour
+l'établissement de l'impôt sur le revenu » (CCH, art. R. 822-4). Les salaires et le chômage
+forment une seule catégorie. La déduction de 10 % y a un minimum, « sans pouvoir excéder le
+montant brut des traitements et salaires » (CGI, art. 83, 3°). Le revenu net de la
+catégorie ne descend donc pas sous zéro. Il ne mange pas une pension, qui est une autre
+catégorie. L'impôt sur le revenu d'openfisca applique bien cette règle :
+`revenu_assimile_salaire_apres_abattements` plafonne à zéro. Seule l'aide au logement
+s'en écarte. C'est un défaut de codage, pas une lecture.
+
+**La correction.** Un nouveau module, `engine.corrections`, porte les écarts côté
+prestations. Il suit les règles de `patrimoine.corrections` (D-079) : une citation, une
+démonstration mesurée, une entrée, et un test qui tue la correction le jour où openfisca la
+rend inutile. `baseline()` l'applique après les corrections de l'IFI.
+
+La correction enveloppe la formule d'openfisca. Elle lui rajoute exactement ce que la ligne
+du chômage a pris sous zéro, et seulement sous la déduction forfaitaire. Des frais réels
+au-delà des salaires laissent aussi un déficit à l'impôt : le traitement d'openfisca reste
+le leur. Seule l'ère 2021 est corrigée. L'ère 2018 porte la même ligne, mais aucune année
+acceptée par l'API (2022 au plus tôt) ne l'atteint.
+
+**Qui bougeait.** Il faut un salaire sous la déduction minimale (moins de 495 € imposables
+sur l'année glissante, soit environ 600 € brut). Il faut aussi d'autres revenus dans le
+foyer, une pension ou le revenu du conjoint, et une aide au logement non nulle.
+* **Côté ménage** : l'EMTR à salaire nul d'un retraité locataire. Il valait −1,04 à
+  7 000 €, 11 000 € et 15 000 € de pension. Il vaut 0,21 après correction, soit ce que
+  coûtent les cotisations du salaire. À 3 000 € et à 20 000 €, il valait déjà 0,21. Le RD
+  à salaire nul ne bouge pas.
+* **Côté population** : la fixture n'a aucun salaire sous 1 000 €. Rien n'y bouge : ni
+  l'aide au logement (138 762,35 €), ni la PPA, ni le RSA, ni le RD.
+* **L'explorateur** balaie des salaires à partir de 1 000 €, au-dessus du seuil : il n'est
+  pas touché.
+
+**Les caches EMTR.** `to_openfisca.WIRING` passe à « D-180 ». La correction porte sur le
+système de base, pas sur le câblage, mais les caches gardent ses chiffres.
+
+**Vus échouer.** Trois des 4 tests ajoutés échouaient sur `6614f11` :
+* l'aide au logement avec 100 € de salaire : 3 265,56 € au lieu de 3 115,89 € ;
+* l'EMTR à salaire nul : −1,0405 au lieu de 0,2069 à la main ;
+* le test du registre, faute de module.
+
+Le quatrième est celui qui tue la correction. Il passe sur openfisca brut, comme il le doit
+tant qu'openfisca ne plafonne pas la déduction. `make gate` donne 1 438 réussis, 172
+ignorés et 12 échecs. Les 12 échecs sont ceux de D-176 à D-179, faute de données dans ce
+conteneur. Les 5 réussis de plus sont les 4 tests ajoutés et la règle permanente qui
+parcourt chaque module, sur le nouveau. Les budgets de temps passent.
+
+**Ce qui reste.**
+* **openfisca-france.** Le défaut est à signaler en amont, avec ce cas. Le jour où il sera
+  corrigé, le test qui tue échouera, et la correction partira.
+* **Les fichiers de données.** `make full` n'a pas tourné, faute de données. La population
+  complète peut contenir des salaires sous 600 € brut, que la fixture n'a pas. Leur aide au
+  logement, et donc le rapport de réconciliation, peuvent bouger un peu au prochain
+  `make full`.
