@@ -81,8 +81,10 @@ HISTORY_YEARS = 2
 #: change here moves a number: D-176 moved every pensioner's revenu disponible in the
 #: order the population EMTR reads it, D-177 the income tax and the revenu disponible of
 #: every chômeur above the SMIC floor, D-178 the prime d'activité of renters in the order
-#: the population EMTR reads it.
-WIRING = "D-178"
+#: the population EMTR reads it. D-180 is a correction to the baseline system rather than
+#: to this wiring, but the caches hold its numbers too: the housing aid of anyone whose
+#: salary is under the minimum professional-expenses deduction, beside other income.
+WIRING = "D-180"
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
 #: fiscal block, which never reaches a benefit. Anything else first pins the benefit

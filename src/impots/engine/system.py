@@ -38,12 +38,17 @@ def baseline() -> FranceTaxBenefitSystem:
     wire. Both bite only on a foyer declaring real-estate wealth, and nothing else in
     this project declares any, so the blast radius is nil — which the full suite proves
     rather than this docstring asserting.
+
+    `engine.corrections` then carries the benefit-side ones, under the same rules: the
+    housing aid's minimum professional-expenses deduction kept within the gross salaries
+    it is taken from (D-180).
     """
     global _TBS
     if _TBS is None:
+        from impots.engine.corrections import apply_to as apply_benefit_corrections
         from impots.patrimoine.corrections import apply_to
 
-        _TBS = apply_to(FranceTaxBenefitSystem())
+        _TBS = apply_benefit_corrections(apply_to(FranceTaxBenefitSystem()))
     return _TBS
 
 
