@@ -48,12 +48,12 @@ def _build(tax_benefit_system: Any, situation: dict[str, Any], year: int, tier: 
     else is asked of it — see `situations.pin_rfr_n_2` (D-177) — and, for the full
     tier, the housing aid pinned month by month (`situations.pin_benefit_history`,
     D-178). The light tier never asks for a benefit and does not pay for the second.
-    Nor does a household without housing inputs: it cannot receive housing aid, so it
-    has no cascade to pin, and its full-tier request keeps its D-177 cost."""
+    Nor does a household with no benefit cascade (`situations.has_benefit_cascade`):
+    no dwelling and no input opening the AAH, the ASI or the ASS (D-179). Its full-tier
+    request keeps its D-177 cost."""
     simulation = SimulationBuilder().build_from_entities(tax_benefit_system, situation)
     situations.pin_rfr_n_2(simulation, year)
-    housed = "statut_occupation_logement" in situation["menages"][situations.MENAGE_ID]
-    if tier == "full" and housed:
+    if tier == "full" and situations.has_benefit_cascade(situation):
         situations.pin_benefit_history(simulation, year)
     return simulation
 
