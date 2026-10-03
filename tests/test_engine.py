@@ -689,3 +689,67 @@ def test_an_aah_recipients_emtr_beside_a_partners_minimum_compares_like_with_lik
     by_hand = 1.0 - (bumped - result.baseline["revenu_disponible"]) / EMTR_STEP
     assert result.emtr == pytest.approx(by_hand, abs=1e-3)
     assert 0.0 < result.emtr < 1.0
+
+
+#: A pensioner at the ASPA level who rents, the household on which D-180 was found.
+ASPA_PENSIONER = {"annee_naissance": 1950, "pension_annuelle": 7_000}
+RENTING = {"statut": "locataire_vide", "loyer_mensuel": 500, "zone_apl": 2}
+
+
+def _aspa_renter(salary: float) -> HouseholdInput:
+    return HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": salary, **ASPA_PENSIONER}], "logement": RENTING})
+
+
+def test_a_small_salary_beside_a_pension_leaves_the_housing_aid_alone() -> None:
+    """The housing aid counts net categorical income (CCH art. R. 822-4), and the 10 %
+    deduction on salaries may not exceed the gross salaries it is taken from (CGI art. 83,
+    3°). openfisca took the 495 EUR minimum off 82 EUR of taxable salary and carried the
+    difference onto the pension: declaring 100 EUR of salary raised this pensioner's
+    housing aid from 3 115.89 to 3 265.56 EUR a year (D-180)."""
+    without = compute(_aspa_renter(0), 2024, tier="full").baseline
+    with_salary = compute(_aspa_renter(100), 2024, tier="full").baseline
+    assert with_salary["aide_logement"] == pytest.approx(without["aide_logement"], abs=0.01)
+
+
+def test_a_housed_pensioners_emtr_at_zero_salary_is_the_salarys_own_levies() -> None:
+    """The same defect, seen through the EMTR's finite difference: 100 EUR of salary lifted
+    the housing aid more than the salary itself, and a pensioner at the ASPA level who
+    rents was reported a marginal rate of -1.04. Below the minimum deduction, a salary
+    owes its own contributions and nothing else moves, so the rate is what they take."""
+    result = compute(_aspa_renter(0), 2024, tier="full", emtr=True)
+    net = compute(_aspa_renter(EMTR_STEP), 2024, tier="light").baseline["salaire_net"]
+    assert result.emtr == pytest.approx(1.0 - net / EMTR_STEP, abs=1e-3)
+
+
+def test_the_engine_alone_lets_the_deduction_minimum_eat_a_pension() -> None:
+    """The kill test for the correction above: without it, the defect is there.
+
+    7 000 EUR of pension less its 10 % is 6 300. Over the housing aid's rolling year, 100
+    EUR of gross salary is 82.16 of taxable salary; the 495 EUR minimum deduction exceeds
+    it by 412.84, and the raw engine takes that off the pension. The day this fails,
+    openfisca caps the deduction itself, and `engine.corrections` must go."""
+    from impots.engine import situations
+    from impots.engine.system import uncorrected_baseline
+
+    situation = situations.build_situation(_aspa_renter(100), 2024)
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    base = float(raw.calculate("aide_logement_base_ressources_individu", "2024-06")[0])
+    assert base == pytest.approx(6_300 - (495 - 82.16), abs=0.05), (
+        "openfisca no longer lets the minimum deduction eat a pension: remove the "
+        "correction rather than keep one that corrects nothing")
+
+
+def test_each_benefit_correction_names_a_kill_test_that_exists() -> None:
+    """A correction whose kill test does not exist could never be retired when openfisca
+    fixes the thing it corrects (the rule of `patrimoine.corrections`, here for benefits)."""
+    from pathlib import Path
+
+    from impots.engine.corrections import CORRECTIONS
+
+    source = Path(__file__).read_text(encoding="utf-8")
+    assert CORRECTIONS
+    for correction in CORRECTIONS:
+        assert correction.citation.startswith("CGI art."), correction.name
+        assert correction.decision.startswith("D-"), correction.name
+        assert f"def {correction.kill_test}" in source, correction.name
