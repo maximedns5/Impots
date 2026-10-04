@@ -6,12 +6,19 @@ premier calcul : c'est ce qui en fait des engagements. Les changer après avoir 
 résultat est exactement l'élargissement que `verify_tolerance_unchanged` attrape dans
 l'historique git.
 
+**Mis à jour le 2026-10-04, toujours avant tout chiffre.** La branche `claude/plf2027` est
+fusionnée dans `main` (#9), qui porte aussi D-176 à D-182. Les commandes partent donc de
+`main` : c'est sur cette tête, avec ses corrections, que les chiffrages se calculent. Les
+enregistrements sont poussés sur une branche à eux. Seules les références de branche ont
+changé : ni tolérance, ni justification, ni comparateur.
+
 ## Pourquoi ces commandes tournent chez le propriétaire
 
 Ce conteneur cloud n'atteint pas l'INSEE : la connexion s'établit, puis le serveur ne
 répond pas (504, puis 502). Sans l'enquête Emploi et les fichiers Ésane, ni la
 population ménages ni la population d'entreprises ne se construisent ici, et donc ni
-`make full` ni les chiffrages. Tout le reste est fait sur la branche `claude/plf2027` :
+`make full` ni les chiffrages. Tout le reste a été fait sur la branche `claude/plf2027`,
+depuis fusionnée dans `main` :
 
 * le texte n° 3210 manifesté, et le découpeur corrigé (il écartait les articles 23, 38
   et 47) ;
@@ -34,7 +41,7 @@ population ménages ni la population d'entreprises ne se construisent ici, et do
 ## 0. Avant tout calcul
 
 ```bash
-git fetch origin claude/plf2027 && git checkout claude/plf2027
+git fetch origin main && git checkout -b plf2027-enregistrements origin/main
 make data            # si population_2024.parquet manque
 .venv/bin/impots entreprises cells
 .venv/bin/impots entreprises build --cells data/processed/firm_cells_2023.json
@@ -86,9 +93,12 @@ git commit -m "Pré-enregistrement : PLF 2027 art. 15"
 ## 4. Ensuite
 
 ```bash
-git push origin claude/plf2027
+git push -u origin plf2027-enregistrements
 ```
 
 Seulement après ce push : relever l'URL de l'annexe sur la page du dossier `PLF_2027`
 de l'Assemblée, la manifester, puis saisir les comparateurs et noter (runbook, étape 5).
 Un cas rouge est un constat à écrire, jamais un nombre à faire disparaître.
+
+La branche entre ensuite dans `main` par une PR fusionnée, jamais écrasée : un « squash »
+réécrirait les commits d'enregistrement, et c'est leur date qui fait le préenregistrement.

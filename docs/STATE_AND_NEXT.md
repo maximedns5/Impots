@@ -182,12 +182,13 @@ download list.
 ## Armed and waiting
 
 * **PLF 2027 — published 2026-10-01 (AN text 3210), and the interrupt is running**
-  (D-174, D-175, branch `claude/plf2027`). Done in the cloud: the text manifested, the
+  (D-174, D-175; prepared on `claude/plf2027`, merged into `main` by #9). Done in the
+  cloud: the text manifested, the
   splitter fixed (it dropped articles 23, 38 and 47), the 33 fiscal articles triaged —
   **3 priceable**: art. 2 (barème revaluation), art. 3 (pension abatement cap, knob wired
   that day), art. 15 (CEBGE third exercice, through a deliberate prorogation and a new
   firm registry path). **Waiting on the owner's machine**, because INSEE does not answer
-  the cloud container: `make full` on the head, then the three registrations, exactly as
+  the cloud container: `make full` on `main`'s head, then the three registrations, exactly as
   `docs/PLF2027_ENREGISTREMENT.md` writes them, tolerances committed before any figure.
   The annex stays unopened until the registrations are pushed.
 * **ERFS 2022 (FPR, lil-1696) — the interrupt ran, E3 is « nothing ».** E0 rails
