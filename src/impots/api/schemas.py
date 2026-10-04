@@ -118,9 +118,9 @@ class Adult(BaseModel):
     )
     handicap: Handicap | None = Field(
         default=None,
-        description="A disability the CDAPH recognised. Absent means none. A rate that "
-        "opens the AAH is refused from the age at which the engine also opens the ASPA, "
-        "since it would then pay both in full (D-184).",
+        description="A disability the CDAPH recognised. Absent means none. At 80 % the "
+        "AAH goes on past 62, topping a pension up to the AAH amount, and its holder is "
+        "taken not to claim the ASPA (D-185).",
     )
 
 

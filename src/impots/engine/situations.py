@@ -251,7 +251,6 @@ def build_situation(
     are also written to the two preceding years, so that means-tested benefits are
     assessed against a realistic reference period instead of an empty one.
     """
-    assert_disability_expressible(household, year)
     years = covered_years(year, historique_revenus)
     individus: dict[str, dict[str, Any]] = {}
 
@@ -398,52 +397,6 @@ def assert_niche_eligibility(household: Any, year: int) -> None:
             f"les frais de scolarité déclarent {scolarises} enfant(s) scolarisé(s) pour "
             f"{len(household.children)} enfant(s) à charge."
         )
-
-
-def _opens_aah(handicap: Any, year: int) -> bool:
-    """Whether the rate opens the AAH in `year`: 80 %, or 50 % with the restriction on
-    access to employment (CSS art. L. 821-1 and L. 821-2), as the tree has them."""
-    from impots.engine.system import baseline
-
-    rates = baseline().parameters(f"{year}-01-01").prestations_sociales \
-        .prestations_etat_de_sante.invalidite.aah.taux_capacite
-    return bool(handicap.taux_incapacite >= rates.taux_incapacite
-                or (handicap.restriction_substantielle_durable_acces_emploi
-                    and handicap.taux_incapacite >= rates.taux_incapacite_rsdae))
-
-
-def assert_disability_expressible(household: Any, year: int) -> None:
-    """Refuse a rate that opens the AAH from the age at which the engine opens the ASPA too.
-
-    From the legal retirement age, a rate over 50 % opens the ASPA, and openfisca then pays
-    the AAH and the ASPA in full on the same pension. The ASPA leaves the AAH out of its
-    resources, as the CNAV's rule has it, but the AAH does not count the ASPA, where the law
-    has the AAH top the ASPA up to the AAH amount: « celle-ci s'ajoute à la prestation »
-    (CSS art. L. 821-1). Measured at 80 %, aged 66, with 3 000 EUR of pension: 762.02 EUR
-    of ASPA and 766.05 of AAH in June, for 766.05 of minima in all. Refused until a
-    correction exists, rather than overpaid by some 9 000 EUR a year (D-184).
-
-    ValueError, which the API turns into a 422.
-    """
-    from impots.engine.system import baseline
-
-    age_aspa = baseline().parameters(f"{year}-01-01").prestations_sociales \
-        .prestations_etat_de_sante.invalidite.aah.age_legal_retraite
-    for index, adult in enumerate(household.adults):
-        handicap = getattr(adult, "handicap", None)
-        if handicap is None or not _opens_aah(handicap, year):
-            continue
-        age = year - adult.annee_naissance
-        if age >= age_aspa:
-            raise ValueError(
-                f"Adulte {index + 1} : un taux d'incapacité qui ouvre l'AAH n'est pas encore "
-                f"exprimable à {age} ans. À partir de {age_aspa} ans, ce taux ouvre aussi "
-                f"l'ASPA, et le moteur verse alors l'AAH et l'ASPA en entier sur la même "
-                f"pension, quand la loi fait seulement compléter l'ASPA par l'AAH jusqu'au "
-                f"montant de l'AAH (CSS art. L. 821-1). Refusé plutôt que surpayé de "
-                f"plusieurs milliers d'euros par an, jusqu'à ce qu'une correction existe "
-                f"(D-184)."
-            )
 
 
 def _disability_inputs(handicap: Any, years: list[int]) -> dict[str, Any]:
