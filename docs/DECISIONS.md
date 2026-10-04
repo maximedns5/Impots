@@ -9338,3 +9338,95 @@ d'accident du travail (`retraite_brute`, `pensions_invalidite`, `rente_accident_
 
 **Sources.** CSS, art. L. 821-1-2 ; circulaire DGAS/1C n° 2005-411 du 7 septembre 2005 ;
 monparcourshandicap.gouv.fr, fiche « La majoration pour la vie autonome ».
+
+## D-183 — Le chômage entre dans le format d'entrée du ménage
+
+**Le point de départ.** Le format d'entrée du ménage ne savait dire ni le chômage, ni le
+handicap, ni l'ASS. Le chômage de D-177 et l'AAH de D-179 n'atteignaient donc le
+calculateur que par des tests qui écrivaient ces entrées à la main. Le chômage vient en
+premier : la population l'écrit déjà, et D-177 a fermé sa spirale sur les deux chemins.
+
+**Le champ.** `Adult.chomage_brut_annuel`, en euros par an, **brut** : avant la CSG et la
+CRDS, donc pas le montant imposable de la case 1AP. Il est écrit au mois sur `chomage_brut`,
+sur N-2, N-1 et N comme le salaire. C'est ainsi que la population écrit sa colonne
+`chomage_annuel`, la dépense de l'Unédic, brute elle aussi. Le nom dit « brut » comme celui
+du salaire, parce que la pension voisine est saisie telle que déclarée (D-175). Brut, le
+chômage ne peut pas être épinglé sur sa case imposable comme une pension déclarée : la CSG
+qui l'y mène lit le RFR de N-2, et c'est `pin_rfr_n_2` qui ferme cette régression (D-177).
+
+**Ce que le moteur en fait, refait à la main.** Pour 30 000 € de chômage brut :
+* la CSG porte sur 98,25 % de l'allocation (abattement de 1,75 %), soit 29 475 € ;
+* 3,8 % en sont déductibles : 28 879,95 € sont imposables ;
+* la déduction de 10 %, commune aux salaires et au chômage, donne un RFR de 25 991,95 € ;
+* l'IR vaut 1 426 €, celui qu'une simulation calcule quand ce montant imposable est
+  lui-même l'entrée ;
+* au-dessus du plancher du SMIC, et avec un RFR de N-2 au-dessus du seuil du taux plein,
+  6,2 % de CSG et 0,5 % de CRDS sont dus sur les 29 475 €, soit 1 974,83 € ;
+* le revenu disponible vaut 26 599,18 €.
+
+**Un ménage, deux chemins.** Sept ménages sont saisis dans le calculateur et écrits en
+lignes de population. Ils sont comparés sur chaque ligne que les deux chemins produisent, à
+0,5 € près. Le chômage y est au-dessus et au-dessous du plancher du SMIC, à côté d'un
+salaire, du salaire d'un conjoint et de la pension d'un conjoint. Un chômeur n'a pas de
+logement : son palier complet n'épingle que le RFR de N-2 (D-179), alors que la population
+épingle toujours l'aide au logement. Un retraité est seul : la pension promettait la même
+parité depuis D-175, et aucun test ne la tenait.
+
+**Vus échouer, puis mutés.** Avant le champ, huit tests tombaient : les trois du ménage, et
+les cinq cas de chômage du test des deux chemins, refusés par le format d'entrée
+(« Extra inputs are not permitted »). Le cas du retraité passait déjà. Avec le champ, quatre
+mutations sont prises :
+* **le RFR de N-2 non épinglé dans le constructeur ménage.** L'EMTR du chômeur tombe à
+  −2,68, le chiffre de D-177, et son RFR de 2024 passe à 27 000 €, calculé sur le brut.
+  Les cas logés du test des deux chemins passaient pourtant. L'épinglage de l'aide au
+  logement, qui précède l'impôt, calcule le RFR de N-2 dès l'aide de janvier de N, sans
+  rien de l'année N sur la pile : 27 000 €, la valeur de l'épinglage, puis 1 426 € d'IR.
+  Le cas sans logement a été ajouté pour cela, et il tombe : 1 588 € d'IR au lieu de
+  1 426 €.
+* **le chômage écrit sur sa case imposable.** La ligne `chomage_brut` lit zéro, et huit tests
+  tombent.
+* **le chômage écrit sur l'année N seule.** Le RFR de 2024 passe à 27 000 € et l'IR à
+  1 588 €, et huit tests tombent.
+* **la pension non épinglée sur `retraite_imposable`.** Elle lit 47 050 € au lieu de
+  50 000 €, et les deux cas de pension tombent.
+
+**Le test de D-177, réécrit.** Il écrivait le chômage dans la situation « comme un champ
+l'écrirait ». Il passe maintenant par le champ, avec le même montant et la même assertion.
+Sans `pin_rfr_n_2`, il tombe toujours à −2,68.
+
+**Ce que le champ ne pose pas : `activite` et `date_debut_chomage`.** Aucun des deux chemins
+ne les pose. Mesuré sur quatre chômeurs, `activite` seule ne bouge aucune ligne : la date de
+début de chômage par défaut d'openfisca est le 31 décembre 9999. Avec une date passée, seule
+bouge l'aide au logement d'un locataire qui a un salaire à côté de l'allocation : 757,56 €
+deviennent 1 169,37 €. C'est l'abattement de 30 % sur les revenus d'activité de la période de
+référence. Il vise à « tenir compte quasi immédiatement de la baisse des ressources lors du
+passage de l'activité au chômage » (réponse ministérielle de 2002, quand la règle était à
+l'art. R. 351-13 du CCH). Un salaire perçu à côté de l'allocation, chaque année de
+l'historique, n'est pas ce passage. Le chômeur qui a perdu son emploi l'an dernier en
+relève, et un historique qui répète une seule année ne sait pas le dire.
+
+**Ce que la réponse ne détaille pas.** La CSG et la CRDS du chômage n'ont pas de ligne :
+`csg_deductible`, `csg_imposable` et `crds` sont celles du salaire. Elles sont dans le revenu
+disponible, et c'est là que le test les vérifie. Il en va de même des prélèvements sur une
+pension déclarée. Une ligne par revenu de remplacement changerait le registre de sorties,
+donc les colonnes de la population, ses agrégats et le rapport de réconciliation : c'est un
+autre chantier.
+
+**Le coût.** Le test des deux chemins ajoute une quarantaine de secondes au gate : sept
+calculs complets côté ménage et une passe de population. `make gate` donne 1 447 réussis,
+172 ignorés et 12 échecs, en 12 min 43 s. Les 12 échecs sont ceux de D-176 à D-180, faute
+de données dans ce conteneur. Les 9 réussis de plus sont les 2 tests ajoutés au ménage et
+les 7 cas des deux chemins.
+
+**Ce qui reste.**
+* **La page.** Elle n'a de champ ni pour la pension (D-175) ni pour le chômage. Le format
+  d'entrée les porte, la page ne les envoie pas.
+* **Le handicap.** Un champ qui ouvre l'AAH, avec la correction de la MVA que D-182 a
+  écrite d'avance.
+* **L'ASS.** Elle demande `ass_precondition_remplie` et un chômeur en fin de droits : un
+  champ de plus, et `activite` avec lui.
+* **Le README** disait encore « no pensions ». La phrase qui décrit les entrées est à jour ;
+  celle qui dit les périodes de référence vides date d'avant D-011.
+
+**Sources.** Assemblée nationale, 12e législature, question écrite n° 2300, réponse publiée
+le 25 novembre 2002, p. 4468.
