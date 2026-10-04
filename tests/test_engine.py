@@ -917,45 +917,117 @@ def test_the_engine_alone_pays_the_mva_beside_an_aah_cut_by_unemployment_benefit
         "rather than keep one that corrects nothing")
 
 
+#: The ASPA in 2024 for a person alone, 1 012.02 EUR a month.
+ASPA_SEULE_2024 = 12_144.27
+
+
 @pytest.mark.parametrize("naissance", [1960, 1958])
-def test_an_aah_rate_from_the_age_the_aspa_opens_is_refused(naissance: int) -> None:
-    """From the legal retirement age (64 in the tree), a rate over 50 % opens the ASPA,
-    and openfisca then pays the AAH AND the ASPA in full on the same pension, where the
-    AAH should top the ASPA up to the AAH amount (CSS art. L. 821-1). Refused rather than
-    overpaid, until a correction exists (D-184)."""
-    with pytest.raises(ValueError, match="ASPA"):
-        compute(_handicape(naissance=naissance), 2024, tier="light")
+def test_past_62_an_aah_at_eighty_per_cent_is_paid_without_the_aspa(naissance: int) -> None:
+    """At 80 % the AAH goes on past 62, topping the pension up to the AAH amount, and its
+    recipient « n'a pas l'obligation de demander l'Aspa pour continuer à percevoir l'AAH »
+    (Cnav-Cnaf circular 2024-1; CSS art. L. 821-1). So nothing changes from 60 to 64 or 66.
+    openfisca paid the AAH and the ASPA in full on the same pension: 25 992.84 EUR of
+    disposable income at 66 against 16 848.57 at 60. D-184 refused the case; D-185 prices it."""
+    at_60 = compute(_handicape(naissance=1964, logement=RENTING, pension_annuelle=3_000), 2024,
+                    tier="full").baseline
+    later = compute(_handicape(naissance=naissance, logement=RENTING, pension_annuelle=3_000),
+                    2024, tier="full").baseline
+    assert later["aah"] + 3_000 == pytest.approx(AAH_2024, abs=0.05)
+    assert later["mva"] == pytest.approx(MVA_2024, abs=0.05)
+    assert later["revenu_disponible"] == pytest.approx(at_60["revenu_disponible"], abs=0.05)
 
 
-def test_an_aah_rate_just_below_that_age_is_accepted() -> None:
+def test_past_62_an_aah_without_resources_is_the_aah_alone() -> None:
+    """Aged 66, no pension, no dwelling: the AAH, 12 058.56 EUR, and no ASPA beside it.
+    openfisca paid both, 24 202.83 EUR."""
+    rows = compute(_handicape(naissance=1958), 2024, tier="full").baseline
+    assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(AAH_2024, abs=0.05)
+
+
+@pytest.mark.parametrize(("naissance", "aah"), [(1963, AAH_2024), (1962, 0.0), (1961, 0.0)])
+def test_between_fifty_and_seventy_nine_per_cent_the_aah_ends_at_62(
+    naissance: int, aah: float,
+) -> None:
+    """The AAH under CSS art. L. 821-2 « prend fin à l'âge auquel le bénéficiaire est réputé
+    inapte au travail », which the 2023 reform kept at 62 for AAH holders (art. L. 351-1-5;
+    Cnav-Cnaf circular 2024-1). openfisca read the general legal age, 64, and paid it two
+    years longer. A birth on 1 January makes the year of the birthday the first without it."""
+    rows = compute(_handicape(0.6, rsdae=True, naissance=naissance), 2024, tier="full").baseline
+    assert rows["aah"] == pytest.approx(aah, abs=0.05)
+
+
+def test_from_62_a_rate_over_fifty_per_cent_opens_the_aspa() -> None:
+    """60 % without the restriction on employment: no AAH, and from 62 the ASPA, which the
+    law opens at that age to anyone with an incapacity over 50 % (circular 2024-1). openfisca
+    waited for 64 and paid the RSA in between: 7 697.09 EUR of disposable income at 62
+    instead of the ASPA's 12 144.27."""
+    rows = compute(_handicape(0.6, naissance=1962), 2024, tier="full").baseline
+    assert rows["aah"] == 0.0
+    assert rows["rsa"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(ASPA_SEULE_2024, abs=0.05)
+
+
+def test_past_the_aspa_age_the_asi_stays_shut() -> None:
+    """The ASI is for people below the ASPA's age (CSS art. L. 815-24), and openfisca reads
+    that age off the ASPA's eligibility. An AAH recipient no longer claims the ASPA, so the
+    correction keeps the ASI on the age alone: with openfisca's `handicap` flag and a
+    pension, aged 66, the ASI must stay shut."""
+    situation = build_situation(HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1958,
+                     "pension_annuelle": 3_000}]}), 2024)
+    covered = [f"{year}-{month:02d}" for year in (2022, 2023, 2024) for month in range(1, 13)]
+    situation["individus"]["adulte_0"]["taux_incapacite"] = dict.fromkeys(covered, 0.8)
+    situation["individus"]["adulte_0"]["handicap"] = dict.fromkeys(covered, True)
+    simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+    assert float(simulation.calculate_add("asi", "2024").sum()) == 0.0
+    assert float(simulation.calculate_add("aspa", "2024").sum()) == 0.0
+    assert float(simulation.calculate_add("aah", "2024").sum()) + 3_000 == pytest.approx(
+        AAH_2024, abs=0.05)
+
+
+def test_the_engine_alone_pays_the_aah_at_fifty_per_cent_until_64() -> None:
+    """The kill test for the age correction: raw openfisca still reads 64. The day this
+    fails, openfisca has moved to L. 351-1-5's age, and the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(_handicape(0.6, rsdae=True, naissance=1961), 2024)
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    assert float(raw.calculate_add("aah", "2024").sum()) == pytest.approx(AAH_2024, abs=0.05), (
+        "openfisca no longer pays the AAH at 50-79 % past 62: remove the age correction")
+
+
+def test_at_eighty_per_cent_the_aah_has_no_age_limit() -> None:
+    """At 80 % the AAH does not end at 62; at 63, without resources, it is paid in full."""
     rows = compute(_handicape(naissance=1961), 2024, tier="full").baseline
     assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
 
 
-def test_a_rate_that_opens_no_aah_is_accepted_at_any_age() -> None:
-    """60 % without the restriction opens no AAH, only the ASPA from the legal retirement
-    age: nothing is paid twice."""
+def test_a_rate_that_opens_no_aah_pays_none_at_any_age() -> None:
+    """60 % without the restriction opens no AAH at any age, only the ASPA from 62 (D-185)."""
     rows = compute(_handicape(0.6, naissance=1958, pension_annuelle=3_000), 2024,
                    tier="full").baseline
     assert rows["aah"] == 0.0
 
 
-def test_the_engine_pays_the_aah_and_the_aspa_in_full_to_one_person() -> None:
-    """The kill test for the refusal above. 80 %, aged 66, 3 000 EUR of pension: the AAH
-    tops the pension up to the AAH amount, and the ASPA tops it up to the ASPA's, both at
-    once. The day this fails, the refusal must go."""
+def test_the_engine_alone_pays_the_aah_and_the_aspa_in_full_to_one_person() -> None:
+    """The kill test for the ASPA correction. 80 %, aged 66, 3 000 EUR of pension: raw
+    openfisca tops the pension up to the AAH amount with the AAH, and up to the ASPA's with
+    the ASPA, both at once. It was the kill test of D-184's refusal, which D-185 replaced
+    with the correction; the day this fails, the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
     situation = build_situation(HouseholdInput.model_validate(
         {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1958,
                      "pension_annuelle": 3_000}]}), 2024)
     situation["individus"]["adulte_0"]["taux_incapacite"] = dict.fromkeys(
         [f"{year}-{month:02d}" for year in (2022, 2023, 2024) for month in range(1, 13)], 0.8)
-    simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+    simulation = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
     aah = float(simulation.calculate("aah", "2024-06")[0])
     aspa = float(simulation.calculate("aspa", "2024-06")[0])
     assert aah == pytest.approx(1_016.05 - 250, abs=0.01)
     assert aspa > 700, (
-        "openfisca no longer pays the ASPA beside the AAH: lift the refusal in "
-        "`situations.assert_disability_expressible`")
+        "openfisca no longer pays the ASPA beside the AAH: remove the ASPA correction")
 
 
 def test_the_aah_rsdae_rate_matches_the_tree() -> None:

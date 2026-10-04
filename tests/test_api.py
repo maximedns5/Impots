@@ -793,13 +793,17 @@ def test_a_disability_reaches_the_engine_and_its_rows_come_back(client: TestClie
     assert rows["mva"] == pytest.approx(12 * 104.77, abs=0.05)
 
 
-def test_an_aah_rate_from_the_age_the_aspa_opens_is_a_422(client: TestClient) -> None:
-    """Refused with a reason, not overpaid in silence (D-184)."""
+def test_an_aah_recipient_past_62_is_priced_not_refused(client: TestClient) -> None:
+    """D-184 refused this request because the engine paid the AAH and the ASPA in full;
+    D-185 corrects the engine and lifts the refusal. Aged 66, 80 %, nothing else: the AAH."""
     request = {
         "household": {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1958,
                                   "handicap": {"taux_incapacite": 0.8}}]},
         "year": 2024,
+        "tier": "full",
     }
     response = client.post("/simulate", json=request)
-    assert response.status_code == 422
-    assert "ASPA" in _detail(response)
+    assert response.status_code == 200, response.text
+    rows = response.json()["baseline"]
+    assert rows["aah"] == pytest.approx(3 * 971.37 + 9 * 1_016.05, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(rows["aah"], abs=0.05)

@@ -9571,3 +9571,114 @@ réussis de plus sont les tests ajoutés : 14 au moteur et 2 à l'API.
   11 avril 2017, p. 2983.
 * CAF, fiche « Handicap et passage à la retraite ».
 * la-retraite-en-clair.fr, « Peut-on cumuler pension de retraite et AAH ? ».
+
+## D-185 — L'AAH sans l'ASPA, et l'âge de 62 ans : le refus de D-184 remplacé par deux corrections
+
+**Le point de départ.** D-184 refusait un taux qui ouvre l'AAH à partir de l'âge où le
+moteur ouvre aussi l'ASPA, parce qu'openfisca y paie les deux en entier. D-184 notait aussi,
+sans l'examiner, que la CAF parle de 62 ans là où l'arbre dit 64. Les deux questions sont
+liées. La même lecture de la loi les tranche.
+
+**Ce que dit la loi.** L'article L. 821-1 du CSS a été lu en entier, sur un miroir du code.
+* L'AAH est ouverte faute d'un avantage de vieillesse au moins égal, « à l'exclusion de
+  l'allocation de solidarité aux personnes âgées ». Avoir droit à l'ASPA ne ferme donc pas
+  l'AAH.
+* Quand l'ASPA est perçue, l'AAH « s'ajoute à la prestation sans que le total des deux
+  avantages puisse excéder le montant de l'allocation aux adultes handicapés ».
+* L'AAH entre 50 et 79 % « prend fin à l'âge auquel le bénéficiaire est réputé inapte au
+  travail » (art. L. 821-2).
+
+La circulaire Cnav-Cnaf n° 2024-1 du 2 janvier 2024 dit comment cela s'applique depuis la
+réforme de 2023 :
+* la loi n° 2023-270 (art. 11) « a maintenu à 62 ans l'âge de départ en retraite pour les
+  titulaires de l'AAH » ;
+* à 80 % ou plus, « un assuré qui atteint l'âge de 62 ans n'a pas l'obligation de demander
+  l'allocation de solidarité aux personnes âgées (Aspa) pour continuer à percevoir l'AAH » :
+  c'est « l'AAH différentielle » ;
+* entre 50 et 79 %, « le versement de l'AAH prend fin à l'âge auquel le bénéficiaire est
+  réputé inapte au travail » ;
+* dès 62 ans, les titulaires de l'AAH « peuvent également bénéficier de l'Aspa […] sous
+  réserve de déposer une demande ».
+
+**Ce que fait openfisca.** Il lit un seul paramètre, `aah.age_legal_retraite`, à deux
+endroits : la fin de l'AAH entre 50 et 79 %, et l'ouverture de l'ASPA à qui a plus de 50 %
+d'incapacité. Ce paramètre est passé de 62 à 64 ans le 1er septembre 2023, l'âge légal
+général de la réforme. Deux écarts en suivent.
+* L'AAH entre 50 et 79 % dure deux ans de trop.
+* L'ASPA d'une incapacité de plus de 50 % s'ouvre deux ans trop tard. À 62 ans et 60 % sans
+  la restriction d'accès à l'emploi, le moteur versait le RSA : 7 697,09 € de revenu
+  disponible au lieu des 12 144,27 € de l'ASPA.
+
+Puis, à partir de 64 ans, il paie l'AAH et l'ASPA en entier, chacune sur la même pension.
+
+**Deux corrections dans `engine.corrections`.**
+* **L'âge (correction 3).** Le paramètre revient à 62 ans à partir du 1er septembre 2023.
+  La fin de l'AAH entre 50 et 79 % devient stricte : « prend fin à l'âge » n'est pas
+  « jusqu'à cet âge inclus ». Avec une naissance au 1er janvier, l'année du 62e
+  anniversaire est la première sans AAH.
+* **L'ASPA à côté de l'AAH (correction 4).** Un titulaire de l'AAH ne demande pas l'ASPA :
+  c'est le cas par défaut que décrit la circulaire. `aspa_eligibilite` laisse de côté qui est
+  éligible à l'AAH. Cette éligibilité se lit sur le taux et l'âge, jamais sur une prestation :
+  aucun cercle ne s'ouvre, et aucun ménage ne bouge d'un ordre de calcul à l'autre. L'ASI,
+  elle, garde le test d'âge d'openfisca, par la formule d'origine. openfisca lit en effet
+  l'âge de l'ASI sur l'éligibilité à l'ASPA, que la correction 4 rétrécit (art. L. 815-24).
+
+**Ce qui bouge, mesuré en 2024.**
+
+| ménage | avant | après |
+|---|---:|---:|
+| 80 %, 66 ans, 3 000 € de pension, locataire | 25 992,84 € | 16 848,57 €, comme à 60 ans |
+| 80 %, 66 ans, sans ressources ni logement | 24 202,83 € | 12 058,56 €, l'AAH seule |
+| 60 % avec la RSDAE, 62 ou 63 ans | l'AAH | l'ASPA, 12 144,27 € |
+| 60 % sans la RSDAE, 62 ans | le RSA, 7 697,09 € | l'ASPA, 12 144,27 € |
+| 80 %, 60 ans, 3 000 € de pension, locataire | 16 848,57 € | inchangé |
+| le couple de D-179, l'AAH à 49 ans | — | inchangé |
+
+Le refus de D-184 disparaît, et ses tests deviennent des tests de prix. Son test qui tue
+devient celui de la correction 4, sur openfisca brut. La population ne porte aucun
+handicap : rien n'y bouge, et `to_openfisca.WIRING` ne change pas.
+
+**Les approximations à dire.**
+* **Les générations.** Qui est né avant 1955 devait encore demander l'ASPA, avec une AAH
+  différentielle par-dessus. Les totaux ne diffèrent que les mois où le plafond de l'ASPA
+  dépasse le montant de l'AAH : de janvier à mars 2024, 1 012,02 € contre 971,37 € par
+  mois.
+* **Une pension au-dessus de l'AAH** perd, ces mois-là, la petite ASPA qu'elle pourrait
+  demander.
+* **Les couples : à vérifier.** Dans un couple, l'ASPA de l'autre conjoint compte désormais
+  l'AAH comme une ressource, comme elle le fait pour un titulaire plus jeune (D-179).
+  openfisca la laissait de côté quand le titulaire avait l'âge de l'ASPA, en citant une note
+  de la CNAV de 1982 que ce projet n'a pas pu lire. L'écart est grand. Prenons un titulaire
+  à 80 % de 66 ans, avec un conjoint de 70 ans et 5 000 € de pension. Son revenu disponible
+  vaut 18 943,38 € avec l'AAH comptée (mesuré). Il vaudrait 29 202,83 € si elle était
+  écartée : c'est un calcul, l'ASPA d'une personne seule s'ajoutant alors entière. Avant les
+  corrections, il valait 30 912,58 € (mesuré).
+
+**Vus échouer, puis mutés.** Avant les corrections, 8 tests tombaient : 7 du moteur et 1
+de l'API. Les cas d'âge étaient refusés, l'AAH était versée à 62 ans, et l'ASPA manquait à
+62 ans. Quatre mutations sont prises :
+* sans le garde de l'ASI, le test de l'ASI tombe ;
+* avec la fin de l'AAH incluse, le cas de 62 ans tombe ;
+* avec l'âge resté à 64 ans, les cas de 62 et 63 ans tombent, ainsi que l'ASPA à 62 ans ;
+* avec l'ASPA demandée, les trois cas après 62 ans tombent, et le test de l'ASI aussi.
+
+**Le gate.** `make gate` donne 1 470 réussis, 172 ignorés et 12 échecs, en 16 min 12 s.
+Les 12 échecs sont ceux de D-176 à D-184, faute de données dans ce conteneur. Les 7
+réussis de plus sont les tests ajoutés au moteur. Les 2 tests du refus sont devenus des
+tests de prix, et celui de l'API est remplacé, un pour un.
+
+**Ce qui reste.**
+* **Le couple** ci-dessus, à trancher en droit.
+* **L'exemption de dégressivité** de l'aide au logement pour les titulaires de l'AAH (D-184).
+* **La demi-part d'invalidité** et l'abattement de l'art. 157 bis.
+* **L'ASPA et l'ASI** n'ont pas de ligne de sortie.
+* **Le maintien de l'AAH après 62 ans** pour une activité professionnelle, jusqu'à 67 ans, à
+  partir du 1er décembre 2024. À 80 %, l'AAH continue de toute façon ; ce maintien porte
+  sur l'obligation de demander la retraite, que le modèle ne représente pas.
+* **openfisca-france.** Les deux écarts sont à signaler en amont, avec ces cas.
+
+**Sources.**
+* CSS, art. L. 821-1 et L. 821-2, lus sur un miroir du code (maitredata.com).
+* Circulaire Cnav-Cnaf n° 2024-1 du 2 janvier 2024, « Passage à la retraite des assurés
+  titulaires de l'AAH à compter du 1er septembre 2023 ».
+* Loi n° 2023-270 du 14 avril 2023, art. 11.
