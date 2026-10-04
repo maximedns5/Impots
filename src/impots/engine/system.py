@@ -41,7 +41,8 @@ def baseline() -> FranceTaxBenefitSystem:
 
     `engine.corrections` then carries the benefit-side ones, under the same rules: the
     housing aid's minimum professional-expenses deduction kept within the gross salaries
-    it is taken from (D-180).
+    it is taken from (D-180), and the majoration pour la vie autonome kept to an AAH at
+    its full rate or beside a pension (D-184).
     """
     global _TBS
     if _TBS is None:

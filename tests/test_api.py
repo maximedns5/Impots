@@ -772,3 +772,34 @@ def test_every_model_the_api_accepts_refuses_non_finite_numbers() -> None:
     lenient = sorted(m.__name__ for m in seen if m.model_config.get("allow_inf_nan", True))
     assert not lenient, f"accept Infinity/NaN: {lenient}"
 
+
+
+def test_a_disability_reaches_the_engine_and_its_rows_come_back(client: TestClient) -> None:
+    """The AAH and the MVA have rows of their own on the wire (D-184): a benefit inside
+    `revenu_disponible` with no row is one a reader cannot see."""
+    request = {
+        "household": {
+            "adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1980,
+                        "handicap": {"taux_incapacite": 0.8}}],
+            "logement": {"statut": "locataire_vide", "loyer_mensuel": 500, "zone_apl": 2},
+        },
+        "year": 2024,
+        "tier": "full",
+    }
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 200, response.text
+    rows = response.json()["baseline"]
+    assert rows["aah"] == pytest.approx(3 * 971.37 + 9 * 1_016.05, abs=0.05)
+    assert rows["mva"] == pytest.approx(12 * 104.77, abs=0.05)
+
+
+def test_an_aah_rate_from_the_age_the_aspa_opens_is_a_422(client: TestClient) -> None:
+    """Refused with a reason, not overpaid in silence (D-184)."""
+    request = {
+        "household": {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1958,
+                                  "handicap": {"taux_incapacite": 0.8}}]},
+        "year": 2024,
+    }
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 422
+    assert "ASPA" in _detail(response)

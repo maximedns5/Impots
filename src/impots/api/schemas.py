@@ -43,6 +43,48 @@ MIN_BAREME_BRACKETS = 2
 INPUT_CONFIG = ConfigDict(extra="forbid", allow_inf_nan=False)
 
 
+#: The rate from which the restriction on access to employment opens the AAH. Pinned here
+#: because a validator must not need a tax-benefit system;
+#: `test_the_aah_rsdae_rate_matches_the_tree` keeps it honest.
+AAH_TAUX_RSDAE = 0.5
+
+
+class Handicap(BaseModel):
+    """A disability the CDAPH recognised, as the AAH reads it (D-184).
+
+    Only what opens the AAH: the rate, and for a rate between 50 and 79 % the restriction
+    on access to employment. openfisca's generic `handicap` flag is NOT set from it. That
+    flag would exempt an AAH recipient's housing aid from the high-rent taper, as the law
+    does, but it would also open the ASI beside a retirement pension, where openfisca then
+    pays the AAH and the ASI above the AAH amount (D-184).
+    """
+
+    model_config = INPUT_CONFIG
+
+    taux_incapacite: Annotated[float, Field(ge=0, le=1)] = Field(
+        description="Permanent incapacity rate recognised by the CDAPH, as a fraction: 0.8 "
+        "for 80 %. From 80 % it opens the AAH (CSS art. L. 821-1); from 50 %, only with "
+        "the restriction below (art. L. 821-2). Written onto `taux_incapacite` on every "
+        "covered month, like the salary.",
+    )
+    restriction_substantielle_durable_acces_emploi: bool = Field(
+        default=False,
+        description="The substantial and lasting restriction on access to employment "
+        "(RSDAE) the CDAPH recognises for a rate between 50 and 79 %.",
+    )
+
+    @model_validator(mode="after")
+    def _check_restriction(self) -> Handicap:
+        if (self.restriction_substantielle_durable_acces_emploi
+                and self.taux_incapacite < AAH_TAUX_RSDAE):
+            raise ValueError(
+                f"La restriction substantielle et durable d'accès à l'emploi n'ouvre l'AAH "
+                f"qu'à partir de {AAH_TAUX_RSDAE:.0%} d'incapacité ; à "
+                f"{self.taux_incapacite:.0%}, le moteur l'ignorerait sans rien dire."
+            )
+        return self
+
+
 class Adult(BaseModel):
     model_config = INPUT_CONFIG
 
@@ -73,6 +115,12 @@ class Adult(BaseModel):
         "RFR of N-2 sets and only down to the monthly gross SMIC, and the income tax on the "
         "amount net of the deductible CSG. Those levies have no row of their own, since the "
         "CSG and CRDS rows are the salary's: they are inside `revenu_disponible` (D-183).",
+    )
+    handicap: Handicap | None = Field(
+        default=None,
+        description="A disability the CDAPH recognised. Absent means none. A rate that "
+        "opens the AAH is refused from the age at which the engine also opens the ASPA, "
+        "since it would then pay both in full (D-184).",
     )
 
 
@@ -670,6 +718,10 @@ class ResultRows(BaseModel):
     ppa: float | None = None
     rsa: float | None = None
     aide_logement: float | None = None
+    aah: float | None = None
+    mva: float | None = None
+    """The AAH, and the majoration pour la vie autonome that rides on it. Zero for a
+    household that declares no disability (D-184)."""
     aefa: float | None = None
     cf: float | None = None
     asf: float | None = None
