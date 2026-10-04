@@ -7,10 +7,10 @@ résultat est exactement l'élargissement que `verify_tolerance_unchanged` attra
 l'historique git.
 
 **Mis à jour le 2026-10-04, toujours avant tout chiffre.** La branche `claude/plf2027` est
-fusionnée dans `main` (#9), qui porte aussi D-176 à D-182. Les commandes partent donc de
-`main` : c'est sur cette tête, avec ses corrections, que les chiffrages se calculent. Les
-enregistrements sont poussés sur une branche à eux. Seules les références de branche ont
-changé : ni tolérance, ni justification, ni comparateur.
+fusionnée dans `main` (#9), qui porte aussi D-176 et toutes les entrées qui la suivent. Les
+commandes partent donc de `main` : c'est sur cette tête, avec ses corrections, que les
+chiffrages se calculent. Les enregistrements sont poussés sur une branche à eux. Seules les
+références de branche ont changé : ni tolérance, ni justification, ni comparateur.
 
 ## Pourquoi ces commandes tournent chez le propriétaire
 

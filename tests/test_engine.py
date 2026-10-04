@@ -749,7 +749,8 @@ def test_each_benefit_correction_names_a_kill_test_that_exists() -> None:
     fixes the thing it corrects (the rule of `patrimoine.corrections`, here for benefits).
 
     A citation of the social security code is accepted since D-184: the MVA correction
-    rests on the CSS, and benefits law lives there more often than in the CGI."""
+    rests on the CSS, and benefits law lives there more often than in the CGI. One of the
+    construction code since D-187: the housing aid's taper rests on the CCH."""
     from pathlib import Path
 
     from impots.engine.corrections import CORRECTIONS
@@ -757,7 +758,8 @@ def test_each_benefit_correction_names_a_kill_test_that_exists() -> None:
     source = Path(__file__).read_text(encoding="utf-8")
     assert CORRECTIONS
     for correction in CORRECTIONS:
-        assert correction.citation.startswith(("CGI art.", "CSS art.")), correction.name
+        assert correction.citation.startswith(("CGI art.", "CSS art.", "CCH art.")), (
+            correction.name)
         assert correction.decision.startswith("D-"), correction.name
         assert f"def {correction.kill_test}" in source, correction.name
 
@@ -1047,3 +1049,127 @@ def test_the_aspa_has_a_row_of_its_own() -> None:
     disposable income without the 5 144.27 EUR that made it."""
     rows = compute(_aspa_renter(0), 2024, tier="full").baseline
     assert rows["aspa"] == pytest.approx(12_144.27 - 7_000, abs=0.05)
+
+
+# --------------------------------------------------------------------------- #
+# the high-rent taper and the AAH (docs/DECISIONS.md D-187)
+# --------------------------------------------------------------------------- #
+#: A rent in zone 1 above the taper's threshold for one person, and above the threshold of
+#: suppression until the ceiling's revaluation in October 2024; and one under the taper.
+#: Both exceed the rent ceiling, so the aid before the taper is the same.
+HIGH_RENT = {"statut": "locataire_vide", "loyer_mensuel": 1_300, "zone_apl": 1}
+LOW_RENT = {"statut": "locataire_vide", "loyer_mensuel": 900, "zone_apl": 1}
+
+
+def _pinned(situation: dict[str, Any]) -> Any:
+    """A simulation built as `compute` builds the full tier: the RFR of N-2 and the
+    housing aid pinned before anything is asked of it (D-177, D-178)."""
+    from impots.engine import situations
+
+    simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+    situations.pin_rfr_n_2(simulation, 2024)
+    situations.pin_benefit_history(simulation, 2024)
+    return simulation
+
+
+def test_an_aah_beneficiary_keeps_the_whole_housing_aid_above_the_taper() -> None:
+    """CCH art. D. 823-16: the aid falls once the rent passes a threshold, « Toutefois, cette
+    diminution ne s'applique pas lorsque le demandeur ou son conjoint est bénéficiaire de
+    l'allocation aux adultes handicapés ». At 1 300 EUR in zone 1, openfisca paid 84.72 EUR
+    over 2024, three months of a tapered aid, against 4 026.60 untapered; the MVA, which
+    needs a housing aid every month, followed with 314.31 EUR instead of 1 257.24 (D-184,
+    D-187)."""
+    high = compute(_handicape(logement=HIGH_RENT), 2024, tier="full").baseline
+    low = compute(_handicape(logement=LOW_RENT), 2024, tier="full").baseline
+    assert high["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert high["aide_logement"] == pytest.approx(4_026.60, abs=0.05)
+    assert high["aide_logement"] == pytest.approx(low["aide_logement"], abs=0.05)
+    assert high["mva"] == pytest.approx(MVA_2024, abs=0.05)
+    assert high["revenu_disponible"] == pytest.approx(low["revenu_disponible"], abs=0.05)
+
+
+def test_the_spouse_s_aah_lifts_the_taper_too() -> None:
+    """« le demandeur ou son conjoint »: here the AAH is the spouse's. At 1 600 EUR in zone 1
+    the couple's aid was cut to nothing; it is the aid the couple gets under the taper."""
+    def couple(logement: dict[str, Any]) -> HouseholdInput:
+        return HouseholdInput.model_validate({"adults": [
+            {"salaire_brut_annuel": 0, "annee_naissance": 1980},
+            {"salaire_brut_annuel": 0, "annee_naissance": 1980,
+             "handicap": {"taux_incapacite": 0.8}}],
+            "couple_marie_ou_pacse": True, "logement": logement})
+
+    high = compute(couple({**HIGH_RENT, "loyer_mensuel": 1_600}), 2024, tier="full").baseline
+    low = compute(couple(LOW_RENT), 2024, tier="full").baseline
+    assert high["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert low["aide_logement"] > 0
+    assert high["aide_logement"] == pytest.approx(low["aide_logement"], abs=0.05)
+
+
+def test_an_aah_that_is_not_paid_lifts_no_taper() -> None:
+    """A « bénéficiaire » of the AAH is someone it is paid to, not someone eligible for it. At
+    80 % and aged 60, a 13 000 EUR pension leaves no AAH, and the aid is tapered as for anyone
+    with that pension: 24.81 EUR at 1 300 EUR, against 1 510.35 under the taper."""
+    disabled = compute(_handicape(naissance=1964, logement=HIGH_RENT, pension_annuelle=13_000),
+                       2024, tier="full").baseline
+    twin = compute(HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1964,
+                     "pension_annuelle": 13_000}], "logement": HIGH_RENT}),
+        2024, tier="full").baseline
+    assert disabled["aah"] == 0.0
+    assert disabled["aide_logement"] == pytest.approx(24.81, abs=0.05)
+    assert disabled["aide_logement"] == pytest.approx(twin["aide_logement"], abs=0.05)
+
+
+def test_a_dependent_s_aah_lifts_no_taper() -> None:
+    """Only the claimant's or the spouse's AAH lifts it. A child of 22 at 80 % in the
+    famille draws the AAH, written by hand since no field carries a child's disability,
+    and the aid stays the tapered one, 84.72 EUR, as without that disability."""
+    household = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1970}],
+         "children": [{"annee_naissance": 2002}], "logement": HIGH_RENT})
+    covered = [f"{year}-{month:02d}" for year in (2022, 2023, 2024) for month in range(1, 13)]
+
+    def aid(taux: float | None) -> tuple[float, float]:
+        situation = build_situation(household, 2024)
+        if taux is not None:
+            situation["individus"]["enfant_0"]["taux_incapacite"] = dict.fromkeys(covered, taux)
+        simulation = _pinned(situation)
+        return (float(simulation.calculate_add("aah", "2024").sum()),
+                float(simulation.calculate_add("aide_logement", "2024").sum()))
+
+    aah, with_disability = aid(0.8)
+    assert aah == pytest.approx(AAH_2024, abs=0.05)
+    assert with_disability == pytest.approx(aid(None)[1], abs=0.05)
+    assert with_disability == pytest.approx(84.72, abs=0.05)
+
+
+def test_the_untapered_aid_prices_the_same_whatever_is_computed_first() -> None:
+    """The correction reads the AAH of the month inside the housing aid, which the builder
+    pins month by month (D-178). Through the registry, as the API computes it, and with
+    `revenu_disponible` first, as the EMTR's bumped leg does, every figure agrees."""
+    situation = build_situation(_handicape(logement=HIGH_RENT), 2024)
+    registry = extract(_pinned(situation), 2024, "full")
+    first = _pinned(situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    assert disposable == pytest.approx(registry["revenu_disponible"], abs=0.05)
+    for key, variable in (("aide_logement", "aide_logement"), ("aah", "aah"), ("mva", "caah")):
+        assert float(first.calculate_add(variable, "2024").sum()) == pytest.approx(
+            registry[key], abs=0.05), key
+
+
+def test_the_engine_alone_tapers_the_aid_of_an_aah_beneficiary() -> None:
+    """The kill test for the taper correction. openfisca lifts the taper only on its generic
+    `handicap` flag, which this project never sets, since it also opens the ASI beside a
+    pension (D-184). The day this fails, openfisca reads the AAH itself, and the correction
+    must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(_handicape(logement=HIGH_RENT), 2024)
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    month = "2024-11"
+    assert float(raw.calculate("aah", month)[0]) > 0
+    before = float(raw.calculate("aide_logement_montant_brut_avant_degressivite", month)[0])
+    after = float(raw.calculate("aide_logement_montant_brut", month)[0])
+    assert after < before / 2, (
+        "openfisca no longer tapers the aid of an AAH beneficiary: remove the correction "
+        "rather than keep one that corrects nothing")

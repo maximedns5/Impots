@@ -9811,3 +9811,112 @@ plus sont les tests ajoutés : 7 à la page et 1 au moteur.
 * **L'exemption de dégressivité** de l'aide au logement pour les titulaires de l'AAH
   (D-184).
 * **Sans champ** : l'AEEH, l'ASS, la pension d'invalidité, la demi-part d'invalidité.
+
+## D-187 — La dégressivité des loyers élevés épargne le bénéficiaire de l'AAH
+
+**Le point de départ.** D-184 l'avait laissé ouvert. openfisca soustrait l'aide au logement
+à la dégressivité des loyers élevés sur son drapeau générique `handicap`, que ce projet ne
+pose pas, puisqu'il ouvre aussi l'ASI à côté d'une pension. Un titulaire de l'AAH à loyer
+élevé gardait donc, à tort, la dégressivité. D-184 demandait de la corriger « sur l'AAH
+versée et non sur le drapeau `handicap` ».
+
+**Ce que dit le texte.** L'article D. 823-16 du CCH, en vigueur depuis le 1er septembre
+2019 (décret n° 2019-772), a été lu sur Légifrance.
+* « Le montant ainsi calculé est diminué lorsque le loyer principal dépasse un plafond de
+  dégressivité. Il décroît proportionnellement au dépassement de ce plafond, de telle sorte
+  qu'il soit nul lorsqu'il atteint un plafond de suppression. »
+* « Toutefois, cette diminution ne s'applique pas lorsque le demandeur ou son conjoint est
+  bénéficiaire de l'allocation aux adultes handicapés prévue à l'article L. 821-1 du code
+  de la sécurité sociale ou de l'allocation d'éducation de l'enfant handicapé prévue à
+  l'article L. 541-1 du même code. »
+
+L'ANIL dit la même chose : la dégressivité ne concerne pas « les demandeurs (ou leurs
+conjoints) bénéficiaires de l'Allocation aux adultes handicapés (AAH) ou de l'Allocation
+d'éducation de l'enfant handicapé (AEEH) ».
+
+**Ce que fait openfisca.** `aide_logement_montant_brut` lève la dégressivité pour les
+accédants, pour les logements-foyers, et dès qu'un membre de la famille porte le drapeau
+`handicap`. Le drapeau ne dit ni que l'AAH est versée, ni qui la reçoit. Ce projet ne le
+pose jamais (D-184).
+
+**Ce que cela coûtait, mesuré en 2024.** Prenons un locataire seul à 80 %, avec 1 300 € de
+loyer en zone 1.
+* Le loyer plafond est de 319,30 € jusqu'en septembre, puis de 329,71 €.
+* De janvier à septembre, le loyer dépasse le plafond de suppression, 1 277,20 € : aucune
+  aide.
+* D'octobre à décembre, il tombe entre les deux plafonds, 1 121,01 et 1 318,84 €. Le
+  coefficient vaut 0,095, soit 28,24 € d'aide par mois.
+* Cela fait 84,72 € sur l'année, au lieu de 4 026,60 €.
+* La MVA demande une aide au logement chaque mois. Elle ne courait donc que trois mois :
+  314,31 € au lieu de 1 257,24 €.
+
+Son revenu disponible passe de 12 457,59 € à 17 342,40 €, celui du même ménage sous le
+plafond de dégressivité. Un couple dont le conjoint est à 80 %, à 1 600 € de loyer en
+zone 1, n'avait aucune aide ; il reçoit 4 818,51 €.
+
+**La correction 5 de `engine.corrections`.** Elle ajoute aux exceptions d'openfisca la
+condition de l'article : l'AAH versée ce mois-là à un parent de la famille, le demandeur ou
+le conjoint.
+* **Versée, pas seulement ouverte.** Un « bénéficiaire » est quelqu'un à qui l'AAH est
+  payée. Une AAH qu'une pension ramène à zéro ne lève rien. À 80 % et 60 ans, avec
+  13 000 € de pension, l'aide reste celle de n'importe qui avec cette pension : 24,81 € à
+  1 300 € de loyer, contre 1 510,35 € sous le plafond.
+* **Le demandeur ou le conjoint.** Un enfant de 22 ans à 80 % dans la famille touche
+  l'AAH, et l'aide reste dégressive, à 84,72 €. Aucun champ ne porte le handicap d'un
+  enfant : le test l'écrit à la main.
+* **L'AEEH n'a rien à corriger.** openfisca ne la verse que pour un enfant porteur du
+  drapeau `handicap`, et le drapeau lève déjà la dégressivité.
+* **Enroulée autour de la formule d'openfisca**, qui reste celle de tous les autres.
+  L'aide sans dégressivité est la sienne, moins la minoration forfaitaire qui suit la
+  dégressivité.
+* **La période.** La correction commence avec la formule d'openfisca, en juillet 2016.
+  L'article cité est celui en vigueur depuis septembre 2019, et aucune année que le projet
+  accepte ne lit l'aide avant octobre 2021.
+
+**Le registre.** Le test du registre de `engine.corrections` n'acceptait que des citations
+du CGI et du CSS. Il accepte désormais le CCH, et le dit.
+
+**L'ordre de calcul.** La correction lit l'AAH du mois dans l'aide au logement, que le
+constructeur épingle mois par mois (D-178). Le ménage à 80 % et 1 300 € a été calculé par
+le registre, comme l'API, et avec `revenu_disponible` d'abord, comme la jambe relevée de
+l'EMTR. L'aide, l'AAH, la MVA et le revenu disponible concordent à 0,05 € près.
+
+**Vus échouer, puis mutés.** Avant la correction, 2 tests tombaient : le locataire seul,
+avec 84,72 € au lieu de 4 026,60 €, et le couple, avec 0 € au lieu de 4 818,51 €. Les quatre
+autres passaient, comme prévu : trois empêchent la correction de s'étendre trop loin, et le
+test qui tue montre le défaut sur openfisca brut. Avec la correction, le test du registre
+tombait sur la citation du CCH. Cinq mutations sont prises, chacune par le test qui lui est
+destiné :
+* l'exemption lue sur l'éligibilité, et non sur l'AAH versée : le test de la pension ;
+* l'exemption ouverte à tout membre de la famille : le test de l'enfant ;
+* l'exemption réservée au seul demandeur : le test du couple ;
+* la minoration forfaitaire oubliée : le test du locataire seul ;
+* la correction non appliquée : le locataire seul et le couple.
+
+**Ce que la correction change ailleurs.** La population ne porte aucune AAH : rien n'y
+bouge, et `to_openfisca.WIRING` ne change pas. L'AAH y était déjà calculée par le revenu
+disponible ; la correction la lit plus tôt, dans l'épinglage de l'aide. Les tests de budget
+de temps passent : 10 réussis, 1 ignoré. Le coût sur la population ne se mesure qu'avec
+`make full`.
+
+**Le gate.** `make gate` donne 1 484 réussis, 172 ignorés et 12 échecs, en 16 min 53 s.
+Les 12 échecs sont ceux de D-176 à D-186, faute de données dans ce conteneur. Les 6
+réussis de plus sont les tests ajoutés au moteur.
+
+**Le runbook du PLF 2027.** Il disait que `main` porte D-176 à D-182. Il dit maintenant
+« D-176 et toutes les entrées qui la suivent » : ni tolérance, ni justification, ni
+comparateur ne change.
+
+**Ce qui reste.**
+* **Le couple de D-185**, à trancher en droit.
+* **La demi-part d'invalidité** et l'abattement de l'art. 157 bis du CGI.
+* **Sans champ** : l'ASS, l'AEEH, la pension d'invalidité.
+* **openfisca-france.** L'écart est à signaler en amont, avec ce cas, comme ceux de D-184
+  et D-185.
+
+**Sources.**
+* CCH, art. D. 823-16, lu sur Légifrance (version en vigueur depuis le 1er septembre 2019).
+* ANIL, analyse juridique n° 2016-22, « Dégressivité des aides au logement », à jour au
+  10 septembre 2025.
+* Assemblée nationale, 14e législature, question écrite n° 99271, réponse publiée au JO le
+  11 avril 2017, p. 2983.
