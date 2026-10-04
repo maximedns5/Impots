@@ -115,7 +115,10 @@ const ROWS = (ir) => ({ salaire_super_brut: 37919.8, salaire_brut: 30000, salair
   salaire_imposable: 24602.7, cotisations_salariales: 3393, cotisations_employeur: 10069.8,
   csg_deductible: 2004.3, csg_imposable: 707.4, crds: 147.38, ir,
   ir_avant_reductions: 1171.03, parts_fiscales: 1.0, revenu_fiscal_reference: 22142.7,
-  af: 0, ppa: 213.42, rsa: 607.75, aide_logement: 0, revenu_disponible: 23908.48 });
+  af: 0, ppa: 213.42, rsa: 607.75, aide_logement: 0, revenu_disponible: 23908.48,
+  // Every row the API sends at the full tier, zeros included: a stub without them would
+  // let the quiet groups pass for the wrong reason, a row skipped as missing (D-186).
+  retraite_imposable: 0, chomage_brut: 0, aspa: 0, aah: 0, mva: 0 });
 const RESULT = { baseline: ROWS(812), reform: ROWS(1012), delta: { ...ROWS(200), revenu_disponible: -200, salaire_net: 0 },
   emtr: 0.4979, emtr_reform: 0.52, tier: "full", year: 2024, historique_revenus: false,
   timings: { build_ms: 3, compute_ms: 480, emtr_ms: 900, total_ms: 1390, reform_cache_hit: true },
@@ -185,6 +188,41 @@ ok("no logement is sent until a statut is chosen", () => {
   assert.equal(body.household.logement, undefined,
     "ticking the benefits box must not assume a tenancy the user never stated");
 });
+ok("quiet groups stay out of a salaried household's table", () => {
+  const out = $("out").innerHTML;
+  for (const title of ["Revenus de remplacement", "Vieillesse", "Handicap"]) {
+    assert.ok(!out.includes(title), `${title} shown with nothing in it`);
+  }
+  assert.ok(!out.includes("celles du salaire"), "the levies note needs a replacement income");
+});
+ok("a blank adult sends zero replacement income and no disability", () => {
+  const adult = JSON.parse(calls.at(-1).opts.body).household.adults[0];
+  assert.equal(adult.pension_annuelle, 0);
+  assert.equal(adult.chomage_brut_annuel, 0);
+  assert.equal(adult.handicap, undefined, "a blank rate is « none recognised », not 0 %");
+});
+RESULT.baseline.retraite_imposable = 12000;
+RESULT.reform.retraite_imposable = 12000;
+$("go").onclick();
+await new Promise((r) => setTimeout(r, 60));
+ok("a pension shows its row and the note on its levies", () => {
+  const out = $("out").innerHTML;
+  assert.match(out, /Revenus de remplacement/);
+  assert.match(out, /Pension de retraite/);
+  assert.match(out, /celles du salaire/);
+});
+$("hist").checked = false;
+$("full").checked = false; $("full").onchange({ target: { checked: false } });
+$("go").onclick();
+await new Promise((r) => setTimeout(r, 60));
+ok("a history box unticked in the full tier decides nothing in the light tier", () => {
+  const body = JSON.parse(calls.at(-1).opts.body);
+  assert.equal($("histWrap").hidden, true);
+  assert.equal(body.tier, "light");
+  assert.equal(body.historique_revenus, true, "a box nobody can see must not decide the IR");
+});
+$("full").checked = true; $("full").onchange({ target: { checked: true } });
+$("hist").checked = true;
 console.log("population tab");
 $("tabPop").onclick();
 await new Promise((r) => setTimeout(r, 40));

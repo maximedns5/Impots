@@ -155,6 +155,10 @@ select { font-family: var(--sans); }
 .check .sub { display: block; font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
 .check input:disabled + span { color: var(--ink-faint); }
 .inert { opacity: .45; pointer-events: none; }
+/* `hidden` is display:none only in the browser's own stylesheet, so `.check { display:
+   flex }` beat it: case T showed with no children, and the income-history box in the
+   light tier (D-186). */
+[hidden] { display: none !important; }
 
 .person {
   border-left: 2px solid var(--rule); padding: 2px 0 2px 14px; margin-bottom: 14px;
@@ -691,9 +695,13 @@ footer code { font-family: var(--mono); font-size: 11px; }
         </label>
 
         <p class="note">
-          Hypothèses par défaut : <b>salarié·e du privé</b>, non cadre, aucun autre revenu
-          (ni foncier, ni capital, ni indépendant). Seuls le salaire brut et l'année de
-          naissance sont renseignés ; tout le reste prend la valeur par défaut du moteur.
+          Hypothèses par défaut : <b>salarié·e du privé</b>, non cadre, sans revenu foncier,
+          ni revenu du capital, ni revenu d'indépendant. La pension se saisit telle que
+          déclarée (case 1AS), le chômage brut, avant CSG et CRDS. Le taux d'incapacité est
+          celui que reconnaît la CDAPH : l'AAH s'ouvre à 80 %, ou à 50 % avec la RSDAE ; dès
+          62 ans, un taux d'au moins 50 % ouvre l'ASPA, qui remplace l'AAH sous 80 % (D-185).
+          La majoration pour la vie autonome demande un logement avec une aide au logement.
+          Tout le reste prend la valeur par défaut du moteur.
         </p>
       </div>
 
@@ -703,8 +711,8 @@ footer code { font-family: var(--mono); font-size: 11px; }
         <label class="check">
           <input type="checkbox" id="full">
           <span>Calculer aussi les prestations
-            <span class="sub">Ajoute AF, prime d'activité, RSA, aide au logement et le revenu
-              disponible. Passe en calcul complet : comptez ~3 s au lieu de ~0,5 s.</span>
+            <span class="sub">Ajoute AF, prime d'activité, RSA, aide au logement, AAH, ASPA et
+              le revenu disponible. Passe en calcul complet : comptez ~3 s au lieu de ~0,5 s.</span>
           </span>
         </label>
 
@@ -716,8 +724,9 @@ footer code { font-family: var(--mono); font-size: 11px; }
               voit un foyer sans ressources sur ces périodes et verse trop : pour un salaire de
               30 000 € en location, ~2 500 € de revenu disponible en trop (11 %). Coché par
               défaut ; décochez pour reproduire le câblage mono-année de la phase 0
-              (D-005, D-011). Le foyer est supposé en régime stationnaire : même salaire,
-              même logement sur les trois années.</span>
+              (D-005, D-011). Le chômage en dépend aussi : sa CSG lit le RFR de N-2 (D-177).
+              Le foyer est supposé en régime stationnaire : mêmes revenus, même logement sur
+              les trois années.</span>
           </span>
         </label>
 
@@ -1243,6 +1252,27 @@ function adultRow(i) {
           <input type="number" id="born${i}" value="${born}" min="1920" max="2026" step="1">
         </div>
       </div>
+      <div class="field-row tri">
+        <div>
+          <label for="pension${i}">Pension de retraite déclarée (€/an)</label>
+          <input type="number" id="pension${i}" min="0" step="500" placeholder="0">
+        </div>
+        <div>
+          <label for="chomage${i}">Allocations chômage brutes (€/an)</label>
+          <input type="number" id="chomage${i}" min="0" step="500" placeholder="0">
+        </div>
+      </div>
+      <div class="field-row tri">
+        <div>
+          <label for="taux${i}">Taux d'incapacité CDAPH (%)</label>
+          <input type="number" id="taux${i}" min="0" max="100" step="1" placeholder="aucun">
+        </div>
+        <label class="check">
+          <input type="checkbox" id="rsdae${i}">
+          <span>Restriction d'accès à l'emploi (RSDAE)
+            <span class="sub">Ouvre l'AAH entre 50 et 79 %, jusqu'à 62 ans.</span></span>
+        </label>
+      </div>
     </div>`;
 }
 
@@ -1582,11 +1612,28 @@ function nichesPayload() {
 }
 
 /* -------------------------------------------------------------- payload */
-function payload() {
-  const adults = Array.from({ length: state.adults }, (_, i) => ({
+/* One adult as the wire format has it. A blank incapacity rate sends no `handicap` at
+   all: « none recognised » is not « 0 % ». The rate is typed in percent and sent as a
+   fraction. */
+function adultPayload(i) {
+  const adult = {
     salaire_brut_annuel: Number($(`sal${i}`).value),
     annee_naissance: Number($(`born${i}`).value),
-  }));
+    pension_annuelle: Number($(`pension${i}`).value),
+    chomage_brut_annuel: Number($(`chomage${i}`).value),
+  };
+  const taux = $(`taux${i}`).value;
+  if (taux !== "") {
+    adult.handicap = {
+      taux_incapacite: Number(taux) / 100,
+      restriction_substantielle_durable_acces_emploi: $(`rsdae${i}`).checked,
+    };
+  }
+  return adult;
+}
+
+function payload() {
+  const adults = Array.from({ length: state.adults }, (_, i) => adultPayload(i));
   const household = {
     adults,
     children: state.children.map((y) => ({ annee_naissance: Number(y) })),
@@ -1613,7 +1660,10 @@ function payload() {
     reform: reformSpec(),
     tier: full ? "full" : "light",
     emtr: full && $("emtr").checked,
-    historique_revenus: $("hist").checked,
+    /* The box is shown in the full tier only, and a box nobody can see decides nothing.
+       The light tier reads the history too, through the chômage: its CSG reads the RFR of
+       N-2 (D-177). So the light tier always writes it, as by default since D-011 (D-186). */
+    historique_revenus: !full || $("hist").checked,
   };
 }
 
@@ -1630,6 +1680,12 @@ const GROUPS = [
     ["salaire_net",            "Salaire net",                  "up"],
     ["salaire_imposable",      "Salaire imposable",            "flat"],
   ]},
+  /* Quiet groups show a row only when it holds something: a pension row at 0 € on every
+     salaried household would be noise, not information. */
+  { title: "Revenus de remplacement", quiet: true, rows: [
+    ["retraite_imposable", "Pension de retraite (montant déclaré)", "flat"],
+    ["chomage_brut",       "Allocations chômage brutes",            "flat"],
+  ]},
   { title: "Impôt sur le revenu", rows: [
     ["parts_fiscales",          "Parts fiscales",               "flat", false, "count"],
     ["revenu_fiscal_reference", "Revenu fiscal de référence",   "flat"],
@@ -1644,6 +1700,13 @@ const GROUPS = [
     ["ppa",           "Prime d'activité",       "up"],
     ["rsa",           "RSA",                    "up"],
     ["aide_logement", "Aide au logement",       "up"],
+  ]},
+  { title: "Vieillesse", tier: "full", quiet: true, rows: [
+    ["aspa", "Allocation de solidarité aux personnes âgées", "up"],
+  ]},
+  { title: "Handicap", tier: "full", quiet: true, rows: [
+    ["aah", "Allocation aux adultes handicapés", "up"],
+    ["mva", "Majoration pour la vie autonome",   "up"],
   ]},
 ];
 
@@ -1680,10 +1743,15 @@ function render(data) {
     </tr>`;
   };
 
+  const holds = (key) => Math.abs(data.baseline[key] || 0) >= 0.005
+    || (hasReform && Math.abs(data.reform[key] || 0) >= 0.005);
+
   let body = "";
   for (const group of GROUPS) {
     if (group.tier === "full" && !full) continue;
-    const rows = group.rows.map(([k, l, g, sub, kind]) => line(l, k, g, sub, kind)).join("");
+    const rows = group.rows
+      .map(([k, l, g, sub, kind]) => (group.quiet && !holds(k) ? "" : line(l, k, g, sub, kind)))
+      .join("");
     if (!rows.trim()) continue;
     body += `<tr class="grp"><td colspan="${hasReform ? 4 : 2}">${group.title}</td></tr>${rows}`;
   }
@@ -1704,6 +1772,14 @@ function render(data) {
     </tr></thead>
     <tbody>${body}</tbody>
   </table>`;
+
+  if (holds("retraite_imposable") || holds("chomage_brut")) {
+    html += `<p class="note" style="margin-top:12px">
+      Pension et chômage : leur CSG et leur CRDS ne sont pas détaillées. Les lignes CSG et CRDS
+      de la rémunération sont celles du salaire ; les prélèvements sur la pension et le chômage
+      sont retranchés du revenu disponible, que donne le calcul complet (D-183).
+    </p>`;
+  }
 
   if (data.emtr !== null && data.emtr !== undefined) {
     const pct = (x) => (x * 100).toFixed(1).replace(".", ",") + " %";

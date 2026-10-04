@@ -9682,3 +9682,132 @@ tests de prix, et celui de l'API est remplacé, un pour un.
 * Circulaire Cnav-Cnaf n° 2024-1 du 2 janvier 2024, « Passage à la retraite des assurés
   titulaires de l'AAH à compter du 1er septembre 2023 ».
 * Loi n° 2023-270 du 14 avril 2023, art. 11.
+
+## D-186 — La page reçoit la pension, le chômage et le handicap
+
+**Le point de départ.** Le format d'entrée portait la pension (D-175), le chômage (D-183) et
+le handicap (D-184), mais la page ne les envoyait pas. Le calculateur ne savait donc dire
+qu'un salarié. L'API n'avait rien à apprendre : `/simulate` acceptait déjà ces champs.
+
+**Les champs.** Chaque adulte reçoit quatre entrées, sous son salaire et son année de
+naissance :
+* la pension de retraite, telle que déclarée (case 1AS) ;
+* les allocations chômage, brutes, avant la CSG et la CRDS ;
+* le taux d'incapacité reconnu par la CDAPH, en pour cent ;
+* la RSDAE, une case à cocher.
+
+Une seule fonction, `adultPayload`, les envoie. Un taux laissé vide n'envoie pas de
+`handicap` : « aucun taux reconnu » n'est pas « 0 % ». Le taux saisi en pour cent part en
+fraction. La note du foyer dit ce que chaque champ attend. Elle dit aussi, d'après D-185,
+qu'à partir de 62 ans un taux d'au moins 50 % ouvre l'ASPA, qui remplace l'AAH sous 80 %.
+
+**Un test tiré du format d'entrée.** Le test des champs lit ceux de `Adult` dans le modèle,
+jamais dans une liste écrite à la main. Un champ ajouté au format d'entrée le fera tomber
+tant que la page ne l'envoie pas. Chaque élément que lit `adultPayload` doit exister dans la
+ligne de l'adulte, sous le même identifiant. Chaque champ dit aussi quelles lignes de
+résultat montrent ce qu'il produit, et un second test vérifie que la table les affiche.
+L'ASPA y figure trois fois : l'âge seul l'ouvre à 65 ans, une pension la réduit, et un taux
+d'au moins 50 % l'ouvre à 62 ans.
+
+**Des groupes discrets.** Trois groupes n'apparaissent que si l'une de leurs lignes porte un
+montant, en droit courant ou dans la réforme :
+* « Revenus de remplacement », pour la pension déclarée et le chômage brut ;
+* « Vieillesse », pour l'ASPA ;
+* « Handicap », pour l'AAH et la MVA.
+
+Une ligne de pension à 0 € sur chaque ménage salarié serait du bruit. Quand une pension ou
+un chômage apparaît, une note dit que les lignes de CSG et de CRDS sont celles du salaire, et
+que les prélèvements sur ces revenus sont retranchés du revenu disponible (D-183).
+
+**Ce que Chromium a montré.** La vérification logique, `ui/check.mjs`, exécute la page sous
+une imitation du DOM : elle voit les propriétés, pas la mise en page. La page a donc aussi
+été rendue dans Chromium, sur l'API réelle. Deux défauts sont apparus.
+* **Une ASPA sans ligne.** Prenons un retraité né en 1958, avec 3 000 € de pension, 2 000 €
+  de chômage et un loyer de 500 €. Son revenu disponible valait 15 677 €, et la table n'en
+  expliquait que 8 533 € : la pension, le chômage et 3 533 € d'aide au logement. Il
+  manquait 7 144 € d'ASPA, qui porte ses ressources à 12 144,27 €. Le registre de sorties
+  reçoit donc une ligne `aspa`, sur la famille, telle qu'openfisca la verse. La table tombe
+  juste : 3 000 + 2 000 + 3 533 + 7 144 = 15 677 €.
+* **L'attribut `hidden` battu.** `hidden` ne vaut `display: none` que dans la feuille de
+  style du navigateur, et toute règle qui pose un `display` l'emporte. Or `.check` pose
+  `flex`. La case T s'affichait donc pour tous les foyers, sans effet hors du parent seul
+  avec enfants, le seul à qui la page l'envoie. La case de l'historique des revenus
+  s'affichait en palier léger. Une règle `[hidden] { display: none !important; }` rend
+  l'attribut à son sens. Toutes les bascules de la page passent par la propriété `hidden`,
+  aucune par `style.display` : la règle ne cache rien qui doive se voir.
+
+**Une case cachée qui décidait.** Rendre l'attribut à son sens a posé une question. Cachée en
+palier léger, la case de l'historique partait quand même dans chaque requête. Mesuré en
+palier léger, 30 000 € de salaire ou de pension paient le même IR avec ou sans l'historique.
+Le chômage, lui, en dépend : sa CSG lit le RFR de N-2 (D-177), que seul l'historique écrit.
+30 000 € de chômage brut paient 1 426 € d'IR avec l'historique, et 1 588 € sans, le chiffre
+du défaut de D-177.
+
+Une case décochée en palier complet, puis laissée derrière, changeait donc l'IR du palier
+léger sans que rien ne s'affiche. Le palier léger écrit désormais toujours l'historique,
+comme toute requête par défaut depuis D-011. Le palier complet envoie ce que dit la case.
+C'est déjà la règle de l'EMTR (`emtr: full && …`). La note de la case dit maintenant que le
+chômage en dépend aussi.
+
+**Vu dans Chromium, sur l'API réelle.**
+* À 80 %, né en 1980, sans autre revenu, locataire à 500 € : 12 059 € d'AAH et 1 257 € de
+  MVA, les montants de D-184, et 3 533 € d'aide au logement. Le revenu disponible vaut
+  16 849 €.
+* À 60 % sans la RSDAE, né en 1962 : l'ASPA, 12 144 €, sous « Vieillesse », et pas d'AAH,
+  comme D-185.
+* Le retraité de 1958 : 15 677 €, que les lignes affichées additionnent.
+* 30 000 € de chômage, la case décochée en palier complet, puis le palier léger : la
+  requête porte l'historique, et l'IR vaut 1 426 €.
+* Aucun élément caché ne s'affiche, ni en palier léger ni en palier complet.
+
+**Vus échouer, puis mutés.** Contre la page de `main`, 5 tests de la page tombent et 2 sont
+en erreur : leur harnais ne trouve pas `adultPayload`. Trois vérifications de `check.mjs`
+tombent aussi. Contre le registre de `main`, le test de la ligne de l'ASPA tombe sur une
+`KeyError`. Sept mutations de la page sont prises :
+* le taux envoyé en pour cent, 60 au lieu de 0,6, que le format d'entrée refuserait : le
+  test de l'adulte rempli ;
+* la pension jamais envoyée : trois tests et une vérification de `check.mjs` ;
+* un taux vide envoyé comme 0 % : le test de l'adulte vide, et `check.mjs` ;
+* le groupe « Vieillesse » retiré : le test des lignes, sur l'année de naissance qui ouvre
+  l'ASPA ;
+* la note sur les prélèvements jamais affichée : le test de la note, et `check.mjs` ;
+* la même note affichée pour la seule pension : le test de la note ;
+* l'historique repris de la case cachée : le test de l'historique, et `check.mjs`.
+
+Le test de l'attribut `hidden` ne fait que lire le source. Seul un navigateur verrait la
+mise en page.
+
+**Deux vérifications qui passaient pour une mauvaise raison.** Les mutations en ont trouvé
+deux.
+* **Les groupes discrets.** Affichés malgré tout, ils ne faisaient rien tomber. Le résultat
+  factice de `check.mjs` n'avait pas les nouvelles lignes, et la page saute une ligne
+  absente : la vérification passait sans rien vérifier. Le résultat factice porte
+  maintenant chaque ligne que l'API envoie en palier complet, zéros compris, et la
+  vérification tombe sous la mutation. Cette logique d'affichage n'est tenue que par
+  `check.mjs`, hors de la CI par construction (D-003).
+* **La note sur les prélèvements.** Son test ne cherchait que le texte, qui survit à une
+  condition jamais vraie. Il lit maintenant la condition, et vérifie qu'elle porte la
+  pension et le chômage.
+
+**Ce que la ligne de l'ASPA change ailleurs.** Le registre alimente aussi la population :
+`population/runner.py` lit chaque ligne du palier complet. La population a des retraités, donc sa
+colonne `aspa` ne vaut pas zéro, à la différence de celles de l'AAH et de la MVA (D-184).
+L'ASPA était déjà calculée dans le revenu disponible, et la ligne ne fait que la lire. Elle
+n'entre pas dans `STATE_TRANSFERS`. Le garde de la double entrée la compte donc, comme
+avant, dans la fuite qu'il tolère (`BALANCE_RTOL`). L'y faire entrer changerait ce que le
+garde reconstitue sur la population, et seul `make full` peut le vérifier. Aucun test ne
+fige les colonnes de la population, et `to_openfisca.WIRING` ne change pas.
+
+**Le gate.** `make gate` donne 1 478 réussis, 172 ignorés et 12 échecs, en 15 min 24 s. Les
+12 échecs sont ceux de D-176 à D-185, faute de données dans ce conteneur. Les 8 réussis de
+plus sont les tests ajoutés : 7 à la page et 1 au moteur.
+
+**Ce qui reste.**
+* **Les prélèvements sur la pension et le chômage** n'ont pas de ligne (D-183). La note le
+  dit, la table ne les détaille pas.
+* **`aspa` dans `STATE_TRANSFERS`**, à décider sur un `make full`.
+* **L'ASI** n'a ni ligne ni champ : rien ne l'ouvre, faute de pension d'invalidité.
+* **Le couple de D-185**, à trancher en droit.
+* **L'exemption de dégressivité** de l'aide au logement pour les titulaires de l'AAH
+  (D-184).
+* **Sans champ** : l'AEEH, l'ASS, la pension d'invalidité, la demi-part d'invalidité.

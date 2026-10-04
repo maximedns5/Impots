@@ -728,3 +728,168 @@ def test_the_fifty_per_cent_line_is_drawn(source: str):
     body = _function(source, "renderEmtrCurve")
     assert "ehalf" in body
     assert ".emtr .ehalf" in source
+
+
+# --- the household's adults: every field on the wire has an input (D-186) ------------
+
+
+#: Each field of `api.schemas.Adult`, and the result rows that show what it produced.
+#: A new field fails `test_every_adult_field_on_the_wire_is_sent_from_an_input` until it
+#: is given an input here and on the page. The ASPA is three fields' row: the age alone
+#: opens it at 65, a pension tops it down, and a rate of 50 % opens it at 62 (D-185).
+ADULT_INPUT_ROWS: dict[str, tuple[str, ...]] = {
+    "salaire_brut_annuel": ("salaire_brut",),
+    "annee_naissance": ("aspa",),
+    "pension_annuelle": ("retraite_imposable", "aspa"),
+    "chomage_brut_annuel": ("chomage_brut",),
+    "handicap": ("aah", "mva", "aspa"),
+}
+
+
+def _adult_payload(source: str) -> str:
+    assert "function adultPayload(" in source, "no adultPayload: the adult fields are not sent"
+    return _function(source, "adultPayload")
+
+
+def test_every_adult_field_on_the_wire_is_sent_from_an_input(source: str):
+    """Derived from the wire format, never listed by hand: a field the page cannot send is
+    a household the page cannot express. The pension (D-175), the unemployment benefit
+    (D-183) and the disability (D-184) all lived on the wire with no input until D-186.
+    Every element the payload reads must exist in the adult's row, under the same id."""
+    from impots.api.schemas import Adult
+
+    assert set(ADULT_INPUT_ROWS) == set(Adult.model_fields), (
+        "a new Adult field needs an input on the page and its rows here")
+    body = _adult_payload(source)
+    row = _function(source, "adultRow")
+    for field in Adult.model_fields:
+        assert re.search(rf"\b{field}\b", body), f"{field} is never sent"
+    read = re.findall(r"\$\(`(\w+)\$\{i\}`\)", body)
+    assert read, "the payload reads no per-adult input"
+    for element in read:
+        assert f'id="{element}${{i}}"' in row, f"{element}${{i}} is read, and no input has that id"
+
+
+def test_every_row_an_adult_input_produces_is_shown(source: str):
+    """A pension typed with no pension row, or an AAH with no AAH row, would move only the
+    disposable income, with nothing on screen to say why."""
+    start = source.index("const GROUPS = [")
+    groups = source[start:source.index("\n];", start)]
+    for field, rows in ADULT_INPUT_ROWS.items():
+        for key in rows:
+            assert f'["{key}"' in groups, f"{field} produces {key}, which the table never shows"
+
+
+def test_the_levies_on_replacement_incomes_are_said_to_be_elsewhere(source: str):
+    """The CSG and CRDS rows are the salary's. On a pension or unemployment benefit those
+    levies are inside the disposable income (D-183), and the table must say so where the
+    two incomes appear, or the rows read as zero levies. The note's own condition is read:
+    its text alone survives a condition that never holds."""
+    body = _function(source, "render")
+    assert "celles du salaire" in body
+    before = body[:body.index("celles du salaire")]
+    condition = before[before.rindex("if ("):]
+    for key in ("retraite_imposable", "chomage_brut"):
+        assert f'holds("{key}")' in condition, f"the note is never shown for {key}"
+
+
+ADULT_HARNESS = """
+const inputs = {};
+const $ = (id) => (inputs[id] ||= { value: "", checked: false });
+%(adultPayload)s
+const out = {};
+Object.assign($("sal0"), { value: "0" });
+Object.assign($("born0"), { value: "1980" });
+out.blank = adultPayload(0);
+Object.assign($("pension0"), { value: "3000" });
+Object.assign($("chomage0"), { value: "1200" });
+Object.assign($("taux0"), { value: "60" });
+Object.assign($("rsdae0"), { checked: true });
+out.filled = adultPayload(0);
+console.log(JSON.stringify(out));
+"""
+
+
+def _run_node(script: str, directory: Path):
+    """Run a harness built from the page's own functions, and read back its JSON."""
+    import json
+    import shutil
+    import subprocess
+
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("node absent")
+    path = directory / "harness.js"
+    path.write_text(script, encoding="utf-8")
+    done = subprocess.run([node, str(path)], capture_output=True, text=True)
+    assert done.returncode == 0, done.stderr
+    return json.loads(done.stdout)
+
+
+@pytest.fixture(scope="module")
+def adult_payloads(source: str, tmp_path_factory):
+    """Run the page's own `adultPayload` in node, on a blank adult and a filled one."""
+    return _run_node(ADULT_HARNESS % {"adultPayload": _adult_payload(source)},
+                     tmp_path_factory.mktemp("ui_adults"))
+
+
+def test_a_blank_adult_sends_no_disability(adult_payloads):
+    """An empty rate is « no disability recognised », not « 0 % »: the API is sent no
+    `handicap` at all."""
+    assert adult_payloads["blank"] == {"salaire_brut_annuel": 0, "annee_naissance": 1980,
+                                       "pension_annuelle": 0, "chomage_brut_annuel": 0}
+
+
+def test_a_filled_adult_is_what_the_wire_format_accepts(adult_payloads):
+    """The rate is typed in percent and sent as a fraction; a missing /100 would be a 6 000 %
+    incapacity, which the API refuses. And the whole adult validates against the model."""
+    from impots.api.schemas import Adult
+
+    filled = adult_payloads["filled"]
+    assert filled["handicap"] == {
+        "taux_incapacite": 0.6, "restriction_substantielle_durable_acces_emploi": True}
+    adult = Adult.model_validate(filled)
+    assert adult.pension_annuelle == 3_000 and adult.chomage_brut_annuel == 1_200
+
+
+def test_the_hidden_attribute_wins_over_every_display_rule(source: str):
+    """`hidden` is only `display: none` in the browser's own stylesheet, and any rule that
+    sets a display beats it. `.check` sets `flex`, so case T showed with no children, and
+    the income-history box showed in the light tier. Found by rendering the page in
+    Chromium for D-186; the logic check could not see it, since it reads the property and
+    not the layout."""
+    assert "[hidden] { display: none !important; }" in source
+
+
+HISTORY_HARNESS = """
+const inputs = {};
+const $ = (id) => (inputs[id] ||= { value: "", checked: false });
+const state = { adults: 1, children: [] };
+const adultPayload = () => ({});
+const nichesPayload = () => null;
+const patrimoinePayload = () => null;
+const reformSpec = () => null;
+%(payload)s
+const out = {};
+$("hist").checked = false;
+$("full").checked = true;
+out.full_unticked = payload().historique_revenus;
+$("full").checked = false;
+out.light_unticked = payload().historique_revenus;
+$("hist").checked = true;
+$("full").checked = true;
+out.full_ticked = payload().historique_revenus;
+console.log(JSON.stringify(out));
+"""
+
+
+def test_a_hidden_history_box_decides_nothing(source: str, tmp_path: Path):
+    """The income-history box is shown in the full tier only, and a box the user cannot see
+    must not decide a result. It did once the page could send unemployment benefit: the
+    benefit's CSG reads the RFR of N-2 (D-177), which only the history writes. A box
+    unticked in the full tier and left behind made 30 000 EUR of benefit pay 1 588 EUR of
+    income tax in the light tier, the D-177 defect's figure, instead of 1 426 EUR, with
+    nothing on screen to say why (D-186). The light tier writes the history, as every
+    request has by default since D-011; the full tier sends what the box says."""
+    sent = _run_node(HISTORY_HARNESS % {"payload": _function(source, "payload")}, tmp_path)
+    assert sent == {"full_unticked": False, "light_unticked": True, "full_ticked": True}
