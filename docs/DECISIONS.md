@@ -9277,3 +9277,64 @@ endroit.
   exemple un mois de salaire isolé. openfisca retire alors la MVA pendant douze mois. Aucun
   chemin de ce projet n'écrit un salaire irrégulier, et ce n'est pas mesuré ici.
 * **Le jour où un champ handicap entrera**, ces deux points devront être tranchés avec lui.
+
+## D-182 — La MVA et le « taux plein » : un écart d'openfisca, noté et différé
+
+**Le point de départ.** D-181 avait noté une question sans la trancher. openfisca ne vérifie
+pas que l'AAH soit versée « à taux plein » quand il accorde la majoration pour la vie
+autonome (MVA). Il faut maintenant établir ce que la loi exige, et mesurer l'écart.
+
+**Ce que dit la loi.** La MVA est versée aux bénéficiaires qui « perçoivent l'allocation aux
+adultes handicapés à taux plein ou en complément d'un avantage de vieillesse ou
+d'invalidité ou d'une rente d'accident du travail » (CSS, art. L. 821-1-2, 2°).
+
+**Ce que veut dire « taux plein ».** La circulaire DGAS/1C n° 2005-411 du 7 septembre 2005
+l'emploie pour le montant plein de l'AAH, par opposition au « taux différentiel » réduit par
+les ressources. Par exemple : l'AAH « peut être versée à taux différentiel à la condition
+que le montant dudit avantage n'excède pas celui de l'AAH à taux plein, soit 599,49 euros
+mensuels en 2005 ». La même circulaire résume : la MVA ne peut être versée « qu'aux
+personnes titulaires d'une AAH à taux plein ou en complément d'une pension (retraite,
+invalidité, rente accident du travail) ». Le site public monparcourshandicap.gouv.fr dit la
+même chose aujourd'hui.
+
+Une AAH réduite par une retraite ou une pension d'invalidité ouvre donc la MVA. Une AAH
+réduite par autre chose ne l'ouvre pas : allocations chômage, pension alimentaire, ou
+salaire d'il y a deux ans dans l'évaluation annuelle.
+
+**Comment openfisca la code.** `eligibilite_caah` se contente d'une AAH positive
+(`aah > 0`). Mesuré sur le code actuel, avec une personne à l'AAH, locataire, et 3 000 €
+par an d'une autre ressource :
+
+| autre ressource | AAH de janvier | MVA selon openfisca | MVA selon la loi |
+|---|---:|---:|---|
+| aucune | 971,37 € (plein) | 104,77 € | due |
+| retraite | 721,37 € | 104,77 € | due (complément d'un avantage de vieillesse) |
+| pension d'invalidité | 111,36 € | 104,77 € | due (complément d'un avantage d'invalidité) |
+| allocations chômage | 936,37 € | 104,77 € | non due |
+| pension alimentaire | 721,37 € | 104,77 € | non due |
+| salaire de 6 000 € en N-2 seulement | 913,96 € | 104,77 € | non due |
+
+openfisca accorde donc la MVA dans trois cas où la loi la refuse, soit 104,77 € par mois.
+
+**Décision : noté et différé, sans changement de code.** Aucun champ ni aucune colonne
+n'ouvre l'AAH (D-179). L'écart n'atteint donc personne aujourd'hui. Une correction
+remplacerait openfisca sur un chemin que personne n'emprunte. Sa règle devrait aussi
+approcher la loi pour les ressources mêlées, et chaque correction de ce projet est un
+endroit où il pourrait avoir tort (`patrimoine.corrections`). Elle se fera avec le champ qui
+ouvrira l'AAH, contre des cas réels.
+
+**Ce qu'il faudra faire ce jour-là.** Ajouter à `engine.corrections` une condition à
+`eligibilite_caah`. La MVA serait due si l'AAH du mois atteint son montant plein, à un
+centime près, ou si la personne perçoit une retraite, une pension d'invalidité ou une rente
+d'accident du travail (`retraite_brute`, `pensions_invalidite`, `rente_accident_travail`).
+* **Le test qui tue :** openfisca brut verse 104,77 € de MVA à une AAH réduite par 3 000 €
+  de chômage (936,37 €).
+* **Les tests de garde, vus échouer d'abord :** chômage, pension alimentaire et salaire
+  ancien sans MVA ; retraite et pension d'invalidité avec.
+* **L'approximation à dire :** une pension et une autre ressource ensemble garderaient la
+  MVA.
+* **Le test du registre** de `engine.corrections` n'accepte que des citations du CGI. Il
+  faudra l'élargir au CSS en le disant.
+
+**Sources.** CSS, art. L. 821-1-2 ; circulaire DGAS/1C n° 2005-411 du 7 septembre 2005 ;
+monparcourshandicap.gouv.fr, fiche « La majoration pour la vie autonome ».
