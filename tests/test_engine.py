@@ -1038,3 +1038,12 @@ def test_the_aah_rsdae_rate_matches_the_tree() -> None:
     tree = baseline().parameters("2024-01-01").prestations_sociales \
         .prestations_etat_de_sante.invalidite.aah.taux_capacite
     assert float(tree.taux_incapacite_rsdae) == AAH_TAUX_RSDAE
+
+
+def test_the_aspa_has_a_row_of_its_own() -> None:
+    """A pensioner at the ASPA level who rents (D-180's household): the ASPA tops the 7 000
+    EUR of pension up to its ceiling, 12 144.27 EUR for a person alone in 2024. Before D-186
+    it was inside `revenu_disponible` with no row, and the page could show a pensioner's
+    disposable income without the 5 144.27 EUR that made it."""
+    rows = compute(_aspa_renter(0), 2024, tier="full").baseline
+    assert rows["aspa"] == pytest.approx(12_144.27 - 7_000, abs=0.05)

@@ -129,6 +129,11 @@ REGISTRY: tuple[Row, ...] = (
         label="Allocation aux adultes handicapés"),
     Row("mva", "caah", "individu", "month", "full", False,
         label="Majoration pour la vie autonome"),
+    # The ASPA, on the famille, as openfisca pays it. Given a row when the page learned to
+    # take a pension (D-186): a pensioner at its level had a disposable income the table
+    # could not account for, by exactly the ASPA.
+    Row("aspa", "aspa", "famille", "month", "full", False,
+        label="Allocation de solidarité aux personnes âgées"),
     # Complément familial and allocation de soutien familial. Itemised for the third
     # time in this project's history for the same reason, and found the same way: the
     # double-entry guard. Both are means-tested, so a CSG reform that changes net income

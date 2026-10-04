@@ -722,6 +722,8 @@ class ResultRows(BaseModel):
     mva: float | None = None
     """The AAH, and the majoration pour la vie autonome that rides on it. Zero for a
     household that declares no disability (D-184)."""
+    aspa: float | None = None
+    """The allocation de solidarité aux personnes âgées, for the famille (D-186)."""
     aefa: float | None = None
     cf: float | None = None
     asf: float | None = None
