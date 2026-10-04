@@ -664,27 +664,28 @@ def test_an_aah_recipients_emtr_beside_a_partners_minimum_compares_like_with_lik
     the builder skipped that pin, and the EMTR compared one order with the other: -16.19
     beside the ASPA pensioner and -17.61 beside the ASI recipient, against 0.23 by hand.
 
-    No field reaches the AAH yet: the taux d'incapacité, and the partner's invalidity
-    inputs, are written into the situation the way a field would write them, on every
-    covered month. Both legs of the hand computation go through `compute` (D-179)."""
+    The taux d'incapacité was written into the situation by hand then; it is typed on the
+    wire since D-184. The partner's invalidity inputs, which no field writes, still are,
+    on every covered month. Both legs of the hand computation go through `compute`
+    (D-179)."""
     from impots.engine import situations
 
     original = situations.build_situation
     bump = {"on": False}
     person, partner_inputs = AAH_PARTNERS[partner]
 
-    def with_disability(household, year, historique_revenus=True):
+    def with_partner_inputs(household, year, historique_revenus=True):
         situation = original(household, year, historique_revenus)
         covered = [month for y in situations.covered_years(year, historique_revenus)
                    for month in situations.months(y)]
-        situation["individus"]["adulte_0"]["taux_incapacite"] = dict.fromkeys(covered, 0.8)
         for name, value in partner_inputs.items():
             situation["individus"]["adulte_1"][name] = dict.fromkeys(covered, value)
         return perturb_first_adult(situation, year, EMTR_STEP) if bump["on"] else situation
 
-    monkeypatch.setattr(situations, "build_situation", with_disability)
+    monkeypatch.setattr(situations, "build_situation", with_partner_inputs)
     couple = HouseholdInput.model_validate(
-        {"adults": [{"salaire_brut_annuel": 6_000, "annee_naissance": 1975}, person],
+        {"adults": [{"salaire_brut_annuel": 6_000, "annee_naissance": 1975,
+                     "handicap": {"taux_incapacite": 0.8}}, person],
          "couple_marie_ou_pacse": True})
     result = compute(couple, 2024, tier="full", emtr=True)
     bump["on"] = True
@@ -745,7 +746,10 @@ def test_the_engine_alone_lets_the_deduction_minimum_eat_a_pension() -> None:
 
 def test_each_benefit_correction_names_a_kill_test_that_exists() -> None:
     """A correction whose kill test does not exist could never be retired when openfisca
-    fixes the thing it corrects (the rule of `patrimoine.corrections`, here for benefits)."""
+    fixes the thing it corrects (the rule of `patrimoine.corrections`, here for benefits).
+
+    A citation of the social security code is accepted since D-184: the MVA correction
+    rests on the CSS, and benefits law lives there more often than in the CGI."""
     from pathlib import Path
 
     from impots.engine.corrections import CORRECTIONS
@@ -753,7 +757,7 @@ def test_each_benefit_correction_names_a_kill_test_that_exists() -> None:
     source = Path(__file__).read_text(encoding="utf-8")
     assert CORRECTIONS
     for correction in CORRECTIONS:
-        assert correction.citation.startswith("CGI art."), correction.name
+        assert correction.citation.startswith(("CGI art.", "CSS art.")), correction.name
         assert correction.decision.startswith("D-"), correction.name
         assert f"def {correction.kill_test}" in source, correction.name
 
@@ -803,3 +807,162 @@ def test_a_chomeur_is_taxed_and_levied_as_the_law_says() -> None:
 
     levies = (0.062 + 0.005) * assiette
     assert rows["revenu_disponible"] == pytest.approx(30_000 - levies - rows["ir"], abs=1.0)
+
+
+# --------------------------------------------------------------------------- #
+# disability on the wire: the AAH (docs/DECISIONS.md D-184)
+# --------------------------------------------------------------------------- #
+#: The AAH in 2024: 971.37 EUR a month from January, 1 016.05 from April.
+AAH_2024 = 3 * 971.37 + 9 * 1_016.05
+#: The majoration pour la vie autonome, 104.77 EUR a month all year.
+MVA_2024 = 12 * 104.77
+
+
+def _handicape(taux: float = 0.8, *, rsdae: bool = False, naissance: int = 1980,
+               logement: dict[str, Any] | None = None, **revenus: Any) -> HouseholdInput:
+    """One adult the CDAPH recognised, and nothing else unless asked. Built when a test
+    asks, like `_chomeur`."""
+    handicap: dict[str, Any] = {"taux_incapacite": taux}
+    if rsdae:
+        handicap["restriction_substantielle_durable_acces_emploi"] = True
+    household: dict[str, Any] = {"adults": [
+        {"salaire_brut_annuel": 0, "annee_naissance": naissance, "handicap": handicap,
+         **revenus}]}
+    if logement is not None:
+        household["logement"] = logement
+    return HouseholdInput.model_validate(household)
+
+
+def test_a_disability_is_written_on_every_covered_month() -> None:
+    """The rate the CDAPH recognised, on every month from N-2 to N, like the salary: the
+    AAH of N-2 and N-1 is what the RSA, the prime d'activité and a partner's minimum read
+    back. The restriction on employment only when recognised. And not openfisca's generic
+    `handicap` flag, which would also open the ASI beside a retirement pension (D-184)."""
+    adult = build_situation(_handicape(), 2024)["individus"]["adulte_0"]
+    assert list(adult["taux_incapacite"].values()) == [0.8] * 36
+    assert "aah_restriction_substantielle_durable_acces_emploi" not in adult
+    assert "handicap" not in adult
+    restricted = build_situation(_handicape(0.6, rsdae=True), 2024)["individus"]["adulte_0"]
+    assert list(restricted["aah_restriction_substantielle_durable_acces_emploi"].values()) == [
+        True] * 36
+    assert "taux_incapacite" not in build_situation(SINGLE, 2024)["individus"]["adulte_0"]
+
+
+def test_an_aah_without_resources_is_paid_in_full() -> None:
+    """By hand: 971.37 EUR a month to March, 1 016.05 from April, 12 058.56 over 2024, and
+    the disposable income is the AAH. Without a dwelling there is no housing aid, so no
+    majoration pour la vie autonome."""
+    rows = compute(_handicape(), 2024, tier="full").baseline
+    assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["mva"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(AAH_2024, abs=0.05)
+
+
+def test_between_fifty_and_seventy_nine_per_cent_the_aah_needs_the_restriction() -> None:
+    """CSS art. L. 821-2: from 50 % the AAH opens only with a substantial and lasting
+    restriction on access to employment, recognised by the CDAPH."""
+    with_restriction = compute(_handicape(0.6, rsdae=True), 2024, tier="full").baseline
+    without = compute(_handicape(0.6), 2024, tier="full").baseline
+    assert with_restriction["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert without["aah"] == 0.0
+
+
+def test_the_restriction_on_employment_is_refused_below_fifty_per_cent() -> None:
+    """Below 50 % it opens nothing, and the engine would ignore it without a word."""
+    with pytest.raises(ValueError, match="50"):
+        _handicape(0.4, rsdae=True)
+
+
+def test_a_housed_aah_without_resources_carries_the_mva() -> None:
+    """CSS art. L. 821-1-2: an independent dwelling with a housing aid, the AAH at its full
+    rate, no professional income. 104.77 EUR a month."""
+    rows = compute(_handicape(logement=RENTING), 2024, tier="full").baseline
+    assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["mva"] == pytest.approx(MVA_2024, abs=0.05)
+    assert rows["aide_logement"] > 0
+
+
+def test_an_aah_cut_by_unemployment_benefit_carries_no_mva() -> None:
+    """CSS art. L. 821-1-2, 2°: the MVA goes to an AAH « à taux plein ou en complément
+    d'un avantage de vieillesse ou d'invalidité ou d'une rente d'accident du travail ».
+    3 000 EUR of unemployment benefit a year takes January's AAH to 936.37 EUR: neither,
+    so no MVA. openfisca paid it all year, 1 257.24 EUR (D-182, D-184)."""
+    rows = compute(_handicape(logement=RENTING, chomage_brut_annuel=3_000), 2024,
+                   tier="full").baseline
+    assert rows["aah"] < AAH_2024 - 100
+    assert rows["mva"] == 0.0
+
+
+def test_an_aah_topping_up_a_pension_keeps_its_mva() -> None:
+    """The other half of the 2°: an AAH cut by a retirement pension complements an old-age
+    benefit, and keeps the MVA. Aged 60, 3 000 EUR of pension: the AAH tops it up to the
+    AAH amount exactly."""
+    rows = compute(_handicape(naissance=1964, logement=RENTING, pension_annuelle=3_000), 2024,
+                   tier="full").baseline
+    assert rows["aah"] + 3_000 == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["mva"] == pytest.approx(MVA_2024, abs=0.05)
+
+
+def test_the_engine_alone_pays_the_mva_beside_an_aah_cut_by_unemployment_benefit() -> None:
+    """The kill test for the MVA correction: without it, the defect is there. The day this
+    fails, openfisca checks the « taux plein » itself, and `engine.corrections` must
+    drop its own."""
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(_handicape(logement=RENTING, chomage_brut_annuel=3_000), 2024)
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    assert float(raw.calculate("aah", "2024-01")[0]) == pytest.approx(936.37, abs=0.01)
+    assert float(raw.calculate("caah", "2024-01")[0]) == pytest.approx(104.77, abs=0.01), (
+        "openfisca no longer pays the MVA beside a reduced AAH: remove the correction "
+        "rather than keep one that corrects nothing")
+
+
+@pytest.mark.parametrize("naissance", [1960, 1958])
+def test_an_aah_rate_from_the_age_the_aspa_opens_is_refused(naissance: int) -> None:
+    """From the legal retirement age (64 in the tree), a rate over 50 % opens the ASPA,
+    and openfisca then pays the AAH AND the ASPA in full on the same pension, where the
+    AAH should top the ASPA up to the AAH amount (CSS art. L. 821-1). Refused rather than
+    overpaid, until a correction exists (D-184)."""
+    with pytest.raises(ValueError, match="ASPA"):
+        compute(_handicape(naissance=naissance), 2024, tier="light")
+
+
+def test_an_aah_rate_just_below_that_age_is_accepted() -> None:
+    rows = compute(_handicape(naissance=1961), 2024, tier="full").baseline
+    assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
+
+
+def test_a_rate_that_opens_no_aah_is_accepted_at_any_age() -> None:
+    """60 % without the restriction opens no AAH, only the ASPA from the legal retirement
+    age: nothing is paid twice."""
+    rows = compute(_handicape(0.6, naissance=1958, pension_annuelle=3_000), 2024,
+                   tier="full").baseline
+    assert rows["aah"] == 0.0
+
+
+def test_the_engine_pays_the_aah_and_the_aspa_in_full_to_one_person() -> None:
+    """The kill test for the refusal above. 80 %, aged 66, 3 000 EUR of pension: the AAH
+    tops the pension up to the AAH amount, and the ASPA tops it up to the ASPA's, both at
+    once. The day this fails, the refusal must go."""
+    situation = build_situation(HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1958,
+                     "pension_annuelle": 3_000}]}), 2024)
+    situation["individus"]["adulte_0"]["taux_incapacite"] = dict.fromkeys(
+        [f"{year}-{month:02d}" for year in (2022, 2023, 2024) for month in range(1, 13)], 0.8)
+    simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+    aah = float(simulation.calculate("aah", "2024-06")[0])
+    aspa = float(simulation.calculate("aspa", "2024-06")[0])
+    assert aah == pytest.approx(1_016.05 - 250, abs=0.01)
+    assert aspa > 700, (
+        "openfisca no longer pays the ASPA beside the AAH: lift the refusal in "
+        "`situations.assert_disability_expressible`")
+
+
+def test_the_aah_rsdae_rate_matches_the_tree() -> None:
+    """The wire format pins the rate from which the restriction opens the AAH, because a
+    validator must not need a tax-benefit system. Read here from the tree, not trusted."""
+    from impots.api.schemas import AAH_TAUX_RSDAE
+
+    tree = baseline().parameters("2024-01-01").prestations_sociales \
+        .prestations_etat_de_sante.invalidite.aah.taux_capacite
+    assert float(tree.taux_incapacite_rsdae) == AAH_TAUX_RSDAE

@@ -120,6 +120,15 @@ REGISTRY: tuple[Row, ...] = (
         label="RSA"),
     Row("aide_logement", "aide_logement", "famille", "month", "full", False,
         label="Aide au logement"),
+    # The AAH and its complement, on the individual who receives them. Given rows when the
+    # wire format learned to open them (D-184): without one, an AAH was a benefit inside
+    # `revenu_disponible` that no reader could see. `caah` is the complement as paid since
+    # December 2019, the majoration pour la vie autonome times its eligibility; openfisca's
+    # own `mva` is the amount before that test.
+    Row("aah", "aah", "individu", "month", "full", False,
+        label="Allocation aux adultes handicapés"),
+    Row("mva", "caah", "individu", "month", "full", False,
+        label="Majoration pour la vie autonome"),
     # Complément familial and allocation de soutien familial. Itemised for the third
     # time in this project's history for the same reason, and found the same way: the
     # double-entry guard. Both are means-tested, so a CSG reform that changes net income
