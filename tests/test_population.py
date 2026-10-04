@@ -8,15 +8,17 @@ from the shape of the real data.
 
 from __future__ import annotations
 
+import functools
 import re
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import polars as pl
 import pytest
 
-from impots.api.schemas import ReformSpec
+from impots.api.schemas import HouseholdInput, ReformSpec
 from impots.population import margins
 from impots.population.aggregate import (
     INDIFFERENCE_EUR,
@@ -1192,6 +1194,87 @@ def test_unemployment_benefit_is_taxed_and_levied_net_of_its_csg() -> None:
     assert h0["ir"][0] == pytest.approx(ir_on_net, abs=0.5)
     levies = (0.038 + 0.024 + 0.005) * assiette
     assert h0["revenu_disponible"][0] == pytest.approx(30_000 - levies - h0["ir"][0], abs=1.0)
+
+
+# --------------------------------------------------------------------------- #
+# one household, two paths: the calculator and a population frame (D-183)
+# --------------------------------------------------------------------------- #
+#: name -> (people as (age, salary, pension, unemployment benefit), statut, rent, zone).
+#: Unemployment benefit above the SMIC floor and below it, beside a salary of one's own,
+#: a partner's salary and a partner's pension; and a pensioner alone, because the pension
+#: field made the same promise (D-175) and nothing held it to it. A statut of None types
+#: no dwelling into the calculator, whose full tier then pins nothing but the RFR of N-2
+#: (D-179); the population has to carry a statut, and an owner's is the one that pays
+#: no housing aid either.
+TWO_PATHS = {
+    "chomeur": ([(45, 0, 0, 30_000)], "proprietaire", 0.0, 2),
+    "chomeur_sans_logement": ([(45, 0, 0, 30_000)], None, 0.0, 2),
+    "chomeur_locataire": ([(45, 0, 0, 12_000)], "locataire_vide", 500.0, 2),
+    "activite_reduite": ([(45, 6_000, 0, 9_000)], "locataire_vide", 600.0, 2),
+    "salarie_et_chomeur": ([(50, 35_000, 0, 0), (48, 0, 0, 25_000)], "locataire_vide", 900.0, 1),
+    "retraite_et_chomeur": ([(70, 0, 22_000, 0), (62, 0, 0, 7_000)], "proprietaire", 0.0, 2),
+    "retraite": ([(69, 0, 50_000, 0)], "proprietaire", 0.0, 2),
+}
+TWO_PATHS_ROLES = (("personne_de_reference", "declarant_principal", "demandeur"),
+                   ("conjoint", "conjoint", "conjoint"))
+
+
+@functools.cache
+def _population_side() -> dict[str, dict[str, Any]]:
+    """Every household of `TWO_PATHS` as population rows, in one frame, run once."""
+    rows: list[dict[str, Any]] = []
+    for name, (people, statut, loyer, zone) in TWO_PATHS.items():
+        for index, (age, salary, pension, chomage) in enumerate(people):
+            roles = TWO_PATHS_ROLES[index]
+            rows.append({
+                "person_id": len(rows), "household_id": name, "foyer_id": f"{name}#0",
+                "famille_id": f"{name}#0", "weight": 1.0, "age": age,
+                "role_menage": roles[0], "role_foyer": roles[1], "role_famille": roles[2],
+                "salaire_brut_annuel": float(salary), "pension_annuelle": float(pension),
+                "chomage_annuel": float(chomage),
+                "statut_occupation": statut or "proprietaire",
+                "zone_apl": f"zone_{zone}", "loyer_mensuel": loyer, "parent_isole": False,
+            })
+    households = run(pl.DataFrame(rows), 2024, tier="full").households
+    return {row["household_id"]: row for row in households.iter_rows(named=True)}
+
+
+def _calculator_side(name: str) -> dict[str, Any]:
+    """The same household typed into the calculator. A replacement income is sent only
+    when there is one, as a client leaving a field at its default would."""
+    from impots.engine import compute
+
+    people, statut, loyer, zone = TWO_PATHS[name]
+    adults = []
+    for age, salary, pension, chomage in people:
+        adult: dict[str, Any] = {"salaire_brut_annuel": salary, "annee_naissance": 2024 - age}
+        if pension:
+            adult["pension_annuelle"] = pension
+        if chomage:
+            adult["chomage_brut_annuel"] = chomage
+        adults.append(adult)
+    household: dict[str, Any] = {"adults": adults, "couple_marie_ou_pacse": len(adults) == 2}
+    if statut is not None:
+        household["logement"] = {"statut": statut, "loyer_mensuel": loyer, "zone_apl": zone}
+    return compute(HouseholdInput.model_validate(household), 2024, tier="full").baseline
+
+
+@pytest.mark.parametrize("name", sorted(TWO_PATHS))
+def test_a_household_prices_the_same_in_the_calculator_and_in_a_population(name: str) -> None:
+    """The same people, typed into the calculator and written as population rows, compared
+    on every row both report. Each replacement income the calculator takes promises it is
+    written "exactly as the population build writes" its own; this is what keeps the
+    promise. Both builders pin the RFR of N-2. The population pins the housing aid always,
+    the calculator only where there is a cascade to close: the case without a dwelling
+    checks that skipping it changes nothing."""
+    calculator = _calculator_side(name)
+    population = _population_side()[name]
+    shared = [key for key, value in calculator.items()
+              if value is not None and key in population]
+    assert {"ir", "revenu_disponible", "revenu_fiscal_reference", "chomage_brut",
+            "retraite_imposable", "aide_logement", "ppa", "rsa"} <= set(shared)
+    for key in shared:
+        assert calculator[key] == pytest.approx(population[key], abs=0.5), key
 
 
 # --------------------------------------------------------------------------- #

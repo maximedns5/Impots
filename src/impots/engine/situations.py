@@ -281,6 +281,17 @@ def build_situation(
                 "retraite_brute", adult.pension_annuelle, years)
             individus[key]["retraite_imposable"] = _spread(
                 "retraite_imposable", adult.pension_annuelle, years)
+        if adult.chomage_brut_annuel:
+            # Gross, like the population's `chomage_annuel`, so it cannot be pinned on
+            # its taxable box the way a declared pension is: the CSG that takes it there
+            # reads the RFR of N-2, and that regress is closed by `pin_rfr_n_2` instead
+            # (D-177). Neither path sets `activite` or `date_debut_chomage`. Without a
+            # salary beside the benefit they move nothing reported; with one, they would
+            # take 30 % off it in the housing aid, a relief for the fall in income on
+            # passing from work to unemployment, which a salary earned beside the benefit
+            # in every year of the history is not (D-183).
+            individus[key]["chomage_brut"] = _spread(
+                "chomage_brut", adult.chomage_brut_annuel, years)
 
     child_ids: list[str] = []
     for i, child in enumerate(household.children):

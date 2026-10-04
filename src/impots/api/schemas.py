@@ -63,6 +63,17 @@ class Adult(BaseModel):
         "could be expressed, and a knob that bites only on pensions could not be watched "
         "moving on any household (D-081, PLF 2027 art. 3).",
     )
+    chomage_brut_annuel: Annotated[float, Field(ge=0, le=MAX_SALARY)] = Field(
+        default=0.0,
+        description="Annual unemployment benefit in EUR, GROSS: before its CSG and CRDS, "
+        "so not the taxable amount of box 1AP, which is net of the deductible CSG. Written "
+        "monthly onto `chomage_brut`, on the same years as the salary, exactly as the "
+        "population build writes its `chomage_annuel`, which is the Unédic spend and gross "
+        "too. What is due on it is computed: CSG and CRDS on 98.25 % of it, at the rate the "
+        "RFR of N-2 sets and only down to the monthly gross SMIC, and the income tax on the "
+        "amount net of the deductible CSG. Those levies have no row of their own, since the "
+        "CSG and CRDS rows are the salary's: they are inside `revenu_disponible` (D-183).",
+    )
 
 
 class Child(BaseModel):

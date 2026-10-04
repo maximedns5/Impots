@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import functools
 import time
+from typing import Any
 
 import pytest
 from openfisca_core.simulation_builder import SimulationBuilder
@@ -566,15 +567,23 @@ def test_a_pensioners_emtr_compares_two_computations_of_the_same_kind() -> None:
     assert 0.0 < result.emtr < 1.0
 
 
+def _chomeur(amount: float = 30_000, **household: Any) -> HouseholdInput:
+    """A chômeur and nothing else. Built when a test asks, not at import: a model the
+    wire format refuses would otherwise fail every test in this file at once."""
+    return HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1980,
+                     "chomage_brut_annuel": amount}], **household})
+
+
 def test_an_unemployed_persons_emtr_compares_two_computations_of_the_same_kind(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Unemployment benefit has no field on the wire yet, so it is written into the
-    situation the way a field would write it. The household builder has to close the
-    regress for whatever a situation carries: the EMTR's base comes from the registry,
-    its bumped leg from a fresh simulation that computes `revenu_disponible` first, and
-    before D-177 those two read the RFR of N-2 differently. A 30 000 EUR chômeur offered
-    100 EUR of salary was reported a marginal rate of -2.68.
+    """The household builder has to close the regress for whatever a situation carries:
+    the EMTR's base comes from the registry, its bumped leg from a fresh simulation that
+    computes `revenu_disponible` first, and before D-177 those two read the RFR of N-2
+    differently. A 30 000 EUR chômeur offered 100 EUR of salary was reported a marginal
+    rate of -2.68. The benefit was written into the situation by hand then, the way a
+    field would write it; it is typed on the wire since D-183.
 
     Both legs of the hand computation go through `compute`, so through the same builder
     as the rate under test: the bumped one by perturbing the situation it builds."""
@@ -583,18 +592,12 @@ def test_an_unemployed_persons_emtr_compares_two_computations_of_the_same_kind(
     original = situations.build_situation
     bump = {"on": False}
 
-    def with_unemployment_benefit(household, year, historique_revenus=True):
+    def bumped_on_demand(household, year, historique_revenus=True):
         situation = original(household, year, historique_revenus)
-        situation["individus"]["adulte_0"]["chomage_brut"] = {
-            month: 2_500.0
-            for covered in situations.covered_years(year, historique_revenus)
-            for month in situations.months(covered)
-        }
         return perturb_first_adult(situation, year, EMTR_STEP) if bump["on"] else situation
 
-    monkeypatch.setattr(situations, "build_situation", with_unemployment_benefit)
-    unemployed = HouseholdInput.model_validate(
-        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1980}]})
+    monkeypatch.setattr(situations, "build_situation", bumped_on_demand)
+    unemployed = _chomeur()
     result = compute(unemployed, 2024, tier="full", emtr=True)
     bump["on"] = True
     bumped = compute(unemployed, 2024, tier="full").baseline["revenu_disponible"]
@@ -753,3 +756,50 @@ def test_each_benefit_correction_names_a_kill_test_that_exists() -> None:
         assert correction.citation.startswith("CGI art."), correction.name
         assert correction.decision.startswith("D-"), correction.name
         assert f"def {correction.kill_test}" in source, correction.name
+
+
+# --------------------------------------------------------------------------- #
+# unemployment benefit on the wire (docs/DECISIONS.md D-183)
+# --------------------------------------------------------------------------- #
+def test_unemployment_benefit_is_written_gross_and_monthly_on_every_covered_year() -> None:
+    """Onto `chomage_brut`, a twelfth a month, on N-2 to N: as the salary is written, and
+    as the population writes its `chomage_annuel`. The history is what gives the CSG of N
+    its RFR of N-2 and the housing aid its reference year. An adult who declares no
+    benefit carries no such input, so a situation lists what was typed and nothing else."""
+    benefit = build_situation(_chomeur(), 2024)["individus"]["adulte_0"]["chomage_brut"]
+    assert len(benefit) == 36
+    for year in (2022, 2023, 2024):
+        in_year = [value for key, value in benefit.items() if key.startswith(f"{year}-")]
+        assert in_year == [pytest.approx(2_500.0)] * 12
+    single_year = build_situation(_chomeur(), 2024, historique_revenus=False)
+    assert list(single_year["individus"]["adulte_0"]["chomage_brut"]) == [
+        f"2024-{month:02d}" for month in range(1, 13)]
+    assert "chomage_brut" not in build_situation(SINGLE, 2024)["individus"]["adulte_0"]
+
+
+def test_a_chomeur_is_taxed_and_levied_as_the_law_says() -> None:
+    """By hand. The CSG is assessed on 98.25 % of the benefit (the 1.75 % abatement), 3.8 %
+    of it deductible: 30 000 - 0.038 x 29 475 = 28 879.95 EUR taxable, the amount of box
+    1AP. Less the 10 % deduction that salaries and unemployment benefit share, 25 991.95
+    of RFR. The income tax is the one assessed when that taxable amount is itself the
+    input, which no spiral can reach (D-177). Above the SMIC floor, and with an RFR of N-2
+    over the full-rate threshold, 6.2 % of CSG and 0.5 % of CRDS are due on the 29 475.
+
+    Those levies have no row of their own: the CSG and CRDS rows are the salary's. They
+    are in the disposable income, and that is where they are checked."""
+    assiette = 30_000 * (1 - 0.0175)
+    taxable = 30_000 - 0.038 * assiette
+    rows = compute(_chomeur(), 2024, tier="full").baseline
+    assert rows["chomage_brut"] == pytest.approx(30_000, abs=0.5)
+    assert rows["revenu_fiscal_reference"] == pytest.approx(0.9 * taxable, abs=0.5)
+
+    oracle = build_situation(HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1980}]}), 2024)
+    oracle["individus"]["adulte_0"]["chomage_imposable"] = {
+        f"2024-{month:02d}": taxable / 12 for month in range(1, 13)}
+    simulation = SimulationBuilder().build_from_entities(baseline(), oracle)
+    ir_on_taxable = -float(simulation.calculate("impot_revenu_restant_a_payer", "2024")[0])
+    assert rows["ir"] == pytest.approx(ir_on_taxable, abs=0.5)
+
+    levies = (0.062 + 0.005) * assiette
+    assert rows["revenu_disponible"] == pytest.approx(30_000 - levies - rows["ir"], abs=1.0)

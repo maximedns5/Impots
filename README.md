@@ -199,9 +199,11 @@ the smallest complete demonstration that the reform machinery does what it says.
   nobody moves, nobody restructures their income. That is L3, and it is not built.
 * **One household, never a population.** Phase 0 refuses to answer "what does this
   reform cost". It has no population to answer it with.
-* **Salarié du privé.** Only gross salary and date of birth are supplied; every
+* **Salary, pension, unemployment benefit.** An adult carries a gross salary, a
+  year of birth, a declared retirement pension and a gross unemployment benefit;
+  a household adds its dwelling, its niche bases and an IFI declaration. Every
   other input takes the engine's default. No self-employment, no capital income,
-  no property income, no pensions.
+  no property income, and nothing that opens the AAH, the ASI or the ASS.
 * **Benefits are assessed on reference periods Phase 0 leaves empty**, which
   inflates RSA, prime d'activité and aide au logement — by 11 % of disposable
   income in a measured case. Read `docs/DECISIONS.md` D-005 before quoting any
