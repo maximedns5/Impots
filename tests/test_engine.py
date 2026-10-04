@@ -1173,3 +1173,298 @@ def test_the_engine_alone_tapers_the_aid_of_an_aah_beneficiary() -> None:
     assert after < before / 2, (
         "openfisca no longer tapers the aid of an AAH beneficiary: remove the correction "
         "rather than keep one that corrects nothing")
+
+
+# --------------------------------------------------------------------------- #
+# the invalidity pension and the ASI (docs/DECISIONS.md D-190)
+# --------------------------------------------------------------------------- #
+#: The ASI's resource ceilings, a year, for a person alone and for a couple: from April 2023,
+#: then from April 2024 (Cnav circulars 2023-09 and 2024-13). Since April 2020 the ASI is the
+#: ceiling less the resources (CSS art. L. 815-24-1).
+ASI_PLAFOND_SEUL = (10_320.07, 10_794.79)
+ASI_PLAFOND_COUPLE = (18_060.13, 18_890.89)
+#: The minimum invalidity pension of an employee (CSS art. L. 341-5), a month, from January
+#: 2024 (Cnav circular 2024-13): what art. D. 815-19 takes off the single ceiling to cap the
+#: ASI of a beneficiary whose spouse draws neither the ASI nor the ASPA.
+PENSION_INVALIDITE_MINIMUM_2024 = 328.07
+
+
+def _asi_by_hand(ceilings: tuple[float, float], resources: float) -> float:
+    """The ceiling less the resources, a month at a time: three months at the 2023 ceiling,
+    nine at the 2024 one."""
+    before, after = ceilings
+    return (3 * max(0.0, (before - resources) / 12)
+            + 9 * max(0.0, (after - resources) / 12))
+
+
+def _invalide(pension: float, *, naissance: int = 1980, logement: dict[str, Any] | None = None,
+              **adult: Any) -> HouseholdInput:
+    """One adult with an invalidity pension of the social security, as declared, and nothing
+    else unless asked. Built when a test asks, like `_chomeur`."""
+    household: dict[str, Any] = {"adults": [
+        {"salaire_brut_annuel": 0, "annee_naissance": naissance,
+         "pension_invalidite_annuelle": pension, **adult}]}
+    if logement is not None:
+        household["logement"] = logement
+    return HouseholdInput.model_validate(household)
+
+
+def _couple_invalide(conjoint: float) -> HouseholdInput:
+    """A married couple below 62: an invalidity pension of 6 000 EUR, and the spouse's, or
+    nothing at all when `conjoint` is zero."""
+    return HouseholdInput.model_validate({"adults": [
+        {"salaire_brut_annuel": 0, "annee_naissance": 1980, "pension_invalidite_annuelle": 6_000},
+        {"salaire_brut_annuel": 0, "annee_naissance": 1982,
+         "pension_invalidite_annuelle": conjoint}],
+        "couple_marie_ou_pacse": True})
+
+
+@functools.cache
+def _priced(pension: float, naissance: int = 1980, retraite: bool = False) -> dict[str, Any]:
+    """The full tier of one adult with that pension and nothing else, computed once for the
+    tests that read it. `retraite` declares the same amount as a retirement pension (box
+    1AS) instead of an invalidity one (box 1AZ)."""
+    field = "pension_annuelle" if retraite else "pension_invalidite_annuelle"
+    household = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": naissance, field: pension}]})
+    return compute(household, 2024, tier="full").baseline
+
+
+def test_an_invalidity_pension_is_written_on_every_covered_month() -> None:
+    """Onto `pensions_invalidite`, box 1AZ, a twelfth a month on N-2 to N, like the salary: the
+    RFR of N-2 sets the rate of its levies, and the ASI reads the three months before. With it,
+    `inapte_travail`: at 62 the pension gives way to a retirement pension, and « A cet âge, les
+    intéressés sont réputés inaptes au travail » (circular Cnav 2023-25). openfisca reads that
+    flag for the ASPA's anticipated age, from 62, and for the housing aid's dependent adults,
+    which no adult of the wire format is. Never openfisca's generic `handicap` flag (D-184), nor
+    the retirement boxes."""
+    adult = build_situation(_invalide(6_000), 2024)["individus"]["adulte_0"]
+    assert list(adult["pensions_invalidite"].values()) == [pytest.approx(500.0)] * 36
+    assert list(adult["inapte_travail"].values()) == [True] * 36
+    for name in ("handicap", "retraite_brute", "retraite_imposable"):
+        assert name not in adult, name
+    salaried = build_situation(SINGLE, 2024)["individus"]["adulte_0"]
+    assert "pensions_invalidite" not in salaried
+    assert "inapte_travail" not in salaried
+
+
+def test_a_small_invalidity_pension_is_topped_up_by_the_asi() -> None:
+    """CSS art. L. 815-24-1: the ASI is « la différence entre le plafond applicable à la
+    situation du ou des allocataires et le total des ressources ». 6 000 EUR alone: 360.01 EUR a
+    month to March, 399.57 from April, 4 676.11 over 2024. The RFR of N-2, 5 400 EUR, is under
+    the exemption threshold, so no levy, and the disposable income is the pension and the ASI."""
+    rows = _priced(6_000)
+    assert rows["pension_invalidite"] == pytest.approx(6_000, abs=0.5)
+    assert rows["asi"] == pytest.approx(_asi_by_hand(ASI_PLAFOND_SEUL, 6_000), abs=0.05)
+    assert rows["aah"] == 0.0
+    assert rows["rsa"] == 0.0
+    assert rows["ir"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(6_000 + rows["asi"], abs=0.05)
+
+
+#: What is left to take off a DECLARED pension, already net of its deductible CSG, by the band
+#: its RFR of N-2 falls in, as openfisca's tree splits the CSG of pensions: at the reduced rate
+#: (3.8 %) the whole CSG is deductible and only the CRDS (0.5 %) is left; at the intermediate
+#: (6.6 %) and full (8.3 %) rates, the CSG imposable (2.4 %), the CRDS and the CASA (0.3 %).
+#: CSS art. L. 136-8, II: « Sont assujetties à la contribution au taux de 8,3 % les pensions de
+#: retraite, et les pensions d'invalidité »; art. L. 137-41: the CASA is « assise sur les
+#: avantages de retraite et d'invalidité ».
+LEVIES_BY_BAND = [(15_000, 0.005), (20_000, 0.032), (30_000, 0.032)]
+
+
+@pytest.mark.parametrize(("pension", "rate"), LEVIES_BY_BAND,
+                         ids=["reduit", "intermediaire", "plein"])
+def test_an_invalidity_pension_is_levied_as_the_law_says(pension: float, rate: float) -> None:
+    """By hand: RFR of N-2 of 13 500, 18 000 and 27 000 EUR, in the reduced, intermediate and
+    full bands of 2024 (above 12 230, 15 988 and 24 813 EUR for one part). openfisca levied
+    nothing on an invalidity pension, and the disposable income kept the whole declared amount:
+    15 000, 19 850 and 28 412 EUR instead of 14 925, 19 210 and 27 452. Above the ASI's ceiling,
+    no ASI."""
+    rows = _priced(pension)
+    assert rows["asi"] == 0.0
+    assert rows["revenu_fiscal_reference"] == pytest.approx(0.9 * pension, abs=0.5)
+    assert rows["revenu_disponible"] == pytest.approx(
+        pension * (1 - rate) - rows["ir"], abs=0.5)
+
+
+def test_an_invalidity_pension_is_taxed_and_levied_like_a_retirement_pension() -> None:
+    """Box 1AZ joins box 1AS in the pensions' 10 % abatement, and the CSG, the CRDS and the CASA
+    treat the two pensions alike: 30 000 EUR declared either way, at 44, pay the same 1 588 EUR
+    of income tax and leave the same disposable income. The invalidity pension is not a
+    retirement pension for anything else: its row is its own."""
+    invalidite, retraite = _priced(30_000), _priced(30_000, retraite=True)
+    for key in ("ir", "revenu_fiscal_reference", "revenu_disponible"):
+        assert invalidite[key] == pytest.approx(retraite[key], abs=0.5), key
+    assert invalidite["pension_invalidite"] == pytest.approx(30_000, abs=0.5)
+    assert invalidite["retraite_imposable"] == 0.0
+
+
+def test_the_engine_alone_levies_nothing_on_an_invalidity_pension() -> None:
+    """The kill test for the levies correction. openfisca's pension levies read the retirement
+    pension only, and its net pensions add `pensions_invalidite` whole, in the full-rate band
+    as below the exemption threshold. The day this fails, openfisca levies the invalidity
+    pension itself, and the correction must go."""
+    from impots.engine import situations
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(_invalide(30_000), 2024)
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    situations.pin_rfr_n_2(raw, 2024)
+    assert float(raw.calculate("rfr", "2022")[0]) == pytest.approx(27_000, abs=0.5)
+    assert float(raw.calculate("pensions_nettes", "2024")[0]) == pytest.approx(30_000, abs=0.01), (
+        "openfisca now levies the invalidity pension: remove the correction rather than keep "
+        "one that levies it twice")
+
+
+def test_an_aah_tops_up_an_invalidity_pension_and_its_asi() -> None:
+    """CSS art. L. 821-1: below the AAH amount, the AAH « s'ajoute à la prestation sans que le
+    total des deux avantages puisse excéder le montant de l'allocation aux adultes
+    handicapés ». openfisca tops up the pension and the ASI of the month BEFORE: in April it
+    reads March's ASI, under the old ceiling, so the year ends 39.56 EUR above the AAH amount.
+    It cannot read the month's own ASI, whose resources read the ASS, which reads the AAH of
+    the month: the lag is openfisca's, measured and stated in D-190. The MVA stays, the AAH
+    being paid « en complément d'un avantage de vieillesse ou d'invalidité » (art. L. 821-1-2,
+    2°, correction 2)."""
+    rows = compute(_invalide(6_000, handicap={"taux_incapacite": 0.8}, logement=RENTING), 2024,
+                   tier="full").baseline
+    asi = _asi_by_hand(ASI_PLAFOND_SEUL, 6_000)
+    april = (ASI_PLAFOND_SEUL[1] - ASI_PLAFOND_SEUL[0]) / 12
+    assert rows["asi"] == pytest.approx(asi, abs=0.05)
+    assert rows["aah"] + 6_000 + asi == pytest.approx(AAH_2024 + april, abs=0.05)
+    assert rows["mva"] == pytest.approx(MVA_2024, abs=0.05)
+
+
+def test_two_invalidity_pensioners_share_the_couple_ceiling_less_the_couple_s_resources() -> None:
+    """« Le montant de la ou des allocations est égal à la différence entre le plafond
+    applicable à la situation du ou des allocataires et le total des ressources » of the
+    couple (CSS art. L. 815-24-1), « servi par moitié à chacun des deux allocataires
+    concernés » (art. D. 815-19, 2° a). Each on 6 000 EUR: 6 683.20 EUR over 2024, half each,
+    and the couple ends at its ceiling, 18 683.20 EUR."""
+    from impots.engine import situations
+
+    simulation = _pinned(situations.build_situation(_couple_invalide(6_000), 2024))
+    rows = extract(simulation, 2024, "full")
+    asi = _asi_by_hand(ASI_PLAFOND_COUPLE, 12_000)
+    assert rows["asi"] == pytest.approx(asi, abs=0.05)
+    each = simulation.calculate_add("asi", "2024")
+    assert list(each) == [pytest.approx(asi / 2, abs=0.05)] * 2
+    assert rows["revenu_disponible"] == pytest.approx(12_000 + asi, abs=0.05)
+
+
+def test_a_lone_beneficiary_in_a_couple_draws_the_single_ceiling_less_the_minimum_pension(
+) -> None:
+    """When the spouse draws neither the ASI nor the ASPA, « le montant de l'allocation servie
+    ne peut excéder le montant du plafond mentionné au 1° auquel est soustrait le montant
+    minimum de la pension d'invalidité mentionné à l'article L. 341-5 » (CSS art. D. 815-19, 2°
+    b). On 6 000 EUR beside a spouse without income: 531.94 EUR a month to March, 571.50 from
+    April (571.49 in Cnav circular 2024-13, which rounds the ceiling to the cent first), 6 739.27
+    over 2024. openfisca paid the couple ceiling less the resources, 1 074.24 EUR a month from
+    April and 12 683.20 over the year, the ASI of two."""
+    rows = compute(_couple_invalide(0), 2024, tier="full").baseline
+    cap = (3 * (ASI_PLAFOND_SEUL[0] / 12 - PENSION_INVALIDITE_MINIMUM_2024)
+           + 9 * (ASI_PLAFOND_SEUL[1] / 12 - PENSION_INVALIDITE_MINIMUM_2024))
+    assert rows["asi"] == pytest.approx(cap, abs=0.05)
+    assert rows["rsa"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(6_000 + cap, abs=0.05)
+
+
+def test_the_engine_alone_pays_a_lone_beneficiary_in_a_couple_the_couple_ceiling() -> None:
+    """The kill test for the ASI's cap: raw openfisca pays the beneficiary the couple ceiling
+    less the couple's resources, 1 574.24 - 500 EUR in June 2024, above the 571.50 that art.
+    D. 815-19 allows. The day this fails, openfisca caps it itself, and the correction must
+    go."""
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(_couple_invalide(0), 2024)
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    paid = raw.calculate("asi", "2024-06")
+    assert float(paid[0]) == pytest.approx(ASI_PLAFOND_COUPLE[1] / 12 - 500, abs=0.01), (
+        "openfisca now caps the ASI of a lone beneficiary in a couple: remove the correction")
+    assert float(paid[1]) == 0.0
+
+
+@pytest.mark.parametrize(("naissance", "asi", "aspa"), [
+    (1963, _asi_by_hand(ASI_PLAFOND_SEUL, 6_000), 0.0),
+    (1962, 0.0, ASPA_SEULE_2024 - 6_000),
+    (1959, 0.0, ASPA_SEULE_2024 - 6_000),
+], ids=["61 ans", "62 ans", "65 ans"])
+def test_from_62_an_invalidity_pensioner_draws_the_aspa_and_not_the_asi(
+    naissance: int, asi: float, aspa: float,
+) -> None:
+    """The ASI goes to those « sans remplir la condition d'âge pour bénéficier de l'allocation
+    aux personnes âgées » (CSS art. L. 815-24), and for an invalidity pensioner that age is 62:
+    « A cet âge, les intéressés sont réputés inaptes au travail [...] et ils peuvent accéder à
+    l'allocation de solidarité aux personnes âgées (Aspa) » (circular Cnav 2023-25). openfisca
+    opens the ASPA early on a rate over 50 % or on `inapte_travail`, and otherwise paid the ASI
+    until 65: at 62, 10 676.11 EUR of disposable income instead of the ASPA's 12 144.27."""
+    rows = _priced(6_000, naissance)
+    assert rows["asi"] == pytest.approx(asi, abs=0.05)
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(6_000 + asi + aspa, abs=0.05)
+
+
+def test_past_62_an_aah_tops_up_an_invalidity_pension_without_the_asi_or_the_aspa() -> None:
+    """At 80 % and 63, the AAH goes on and tops the pension up to its amount; its holder is
+    taken not to claim the ASPA (D-185), and the ASI has stopped at the ASPA's age."""
+    rows = compute(_invalide(6_000, naissance=1961, handicap={"taux_incapacite": 0.8}), 2024,
+                   tier="full").baseline
+    assert rows["asi"] == 0.0
+    assert rows["aspa"] == 0.0
+    assert rows["aah"] + 6_000 == pytest.approx(AAH_2024, abs=0.05)
+
+
+def test_a_retirement_pension_alone_opens_no_asi() -> None:
+    """The ASI also goes to the holder of an old-age benefit whose invalidity reduces their
+    capacity of work in determined proportions (CSS art. L. 815-24). openfisca opens that branch
+    on its generic `handicap` flag, which this project never sets: at 80 %, aged 60, with 3 000
+    EUR of retirement pension, it paid 7 676.11 EUR of ASI and the AAH above the AAH amount
+    (D-184). The ASI has a row now, and on that household it reads zero."""
+    rows = compute(_handicape(naissance=1964, logement=RENTING, pension_annuelle=3_000), 2024,
+                   tier="full").baseline
+    assert rows["asi"] == 0.0
+    assert rows["aah"] + 3_000 == pytest.approx(AAH_2024, abs=0.05)
+
+
+#: Households whose minima read each other's months: the ASI beside an AAH in a dwelling, a
+#: couple whose two ASI read one family base, a lone beneficiary in a couple under the cap, the
+#: ASPA that the age opens, and the levies, which read the RFR of N-2 from inside the
+#: disposable income.
+ASI_ORDER_CASES: dict[str, dict[str, Any]] = {
+    "aah_asi_locataire": {"adults": [
+        {"salaire_brut_annuel": 0, "annee_naissance": 1980, "pension_invalidite_annuelle": 6_000,
+         "handicap": {"taux_incapacite": 0.8}}], "logement": RENTING},
+    "couple": {"adults": [
+        {"salaire_brut_annuel": 0, "annee_naissance": 1980, "pension_invalidite_annuelle": 6_000},
+        {"salaire_brut_annuel": 0, "annee_naissance": 1982, "pension_invalidite_annuelle": 6_000}],
+        "couple_marie_ou_pacse": True},
+    "couple_un_allocataire": {"adults": [
+        {"salaire_brut_annuel": 0, "annee_naissance": 1980, "pension_invalidite_annuelle": 6_000},
+        {"salaire_brut_annuel": 0, "annee_naissance": 1982}], "couple_marie_ou_pacse": True},
+    "aspa_a_62_ans": {"adults": [
+        {"salaire_brut_annuel": 0, "annee_naissance": 1962,
+         "pension_invalidite_annuelle": 6_000}]},
+    "prelevements": {"adults": [
+        {"salaire_brut_annuel": 0, "annee_naissance": 1980,
+         "pension_invalidite_annuelle": 30_000}]},
+}
+
+
+@pytest.mark.parametrize("name", sorted(ASI_ORDER_CASES))
+def test_the_asi_prices_the_same_whatever_is_computed_first(name: str) -> None:
+    """Built as `compute` builds the full tier: `pensions_invalidite` is one of the inputs that
+    open a benefit cascade, so the housing aid is pinned month by month (D-178, D-179). Through
+    the registry, as the API computes it, and with `revenu_disponible` first, as the EMTR's
+    bumped leg does, every figure agrees."""
+    from impots.engine import situations
+
+    situation = build_situation(HouseholdInput.model_validate(ASI_ORDER_CASES[name]), 2024)
+    assert situations.has_benefit_cascade(situation)
+    registry = extract(_pinned(situation), 2024, "full")
+    first = _pinned(situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    assert disposable == pytest.approx(registry["revenu_disponible"], abs=0.05)
+    for key, variable in (("asi", "asi"), ("aah", "aah"), ("mva", "caah"), ("aspa", "aspa"),
+                          ("aide_logement", "aide_logement"), ("ir", "impot_revenu_restant_a_payer")):
+        value = (float(first.calculate(variable, "2024").sum()) if key == "ir"
+                 else float(first.calculate_add(variable, "2024").sum()))
+        assert abs(value) == pytest.approx(registry[key], abs=0.05), key

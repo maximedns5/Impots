@@ -735,13 +735,15 @@ def test_the_fifty_per_cent_line_is_drawn(source: str):
 
 #: Each field of `api.schemas.Adult`, and the result rows that show what it produced.
 #: A new field fails `test_every_adult_field_on_the_wire_is_sent_from_an_input` until it
-#: is given an input here and on the page. The ASPA is three fields' row: the age alone
-#: opens it at 65, a pension tops it down, and a rate of 50 % opens it at 62 (D-185).
+#: is given an input here and on the page. The ASPA is four fields' row: the age alone
+#: opens it at 65, a pension tops it down, and a rate of 50 % opens it at 62 (D-185), as an
+#: invalidity pension does, whose holder is réputé inapte au travail at 62 (D-190).
 ADULT_INPUT_ROWS: dict[str, tuple[str, ...]] = {
     "salaire_brut_annuel": ("salaire_brut",),
     "annee_naissance": ("aspa",),
     "pension_annuelle": ("retraite_imposable", "aspa"),
     "chomage_brut_annuel": ("chomage_brut",),
+    "pension_invalidite_annuelle": ("pension_invalidite", "asi", "aspa"),
     "handicap": ("aah", "mva", "aspa"),
 }
 
@@ -781,15 +783,15 @@ def test_every_row_an_adult_input_produces_is_shown(source: str):
 
 
 def test_the_levies_on_replacement_incomes_are_said_to_be_elsewhere(source: str):
-    """The CSG and CRDS rows are the salary's. On a pension or unemployment benefit those
-    levies are inside the disposable income (D-183), and the table must say so where the
-    two incomes appear, or the rows read as zero levies. The note's own condition is read:
-    its text alone survives a condition that never holds."""
+    """The CSG and CRDS rows are the salary's. On a pension, an invalidity pension or
+    unemployment benefit those levies are inside the disposable income (D-183, D-190), and
+    the table must say so where the three incomes appear, or the rows read as zero levies.
+    The note's own condition is read: its text alone survives a condition that never holds."""
     body = _function(source, "render")
     assert "celles du salaire" in body
     before = body[:body.index("celles du salaire")]
     condition = before[before.rindex("if ("):]
-    for key in ("retraite_imposable", "chomage_brut"):
+    for key in ("retraite_imposable", "chomage_brut", "pension_invalidite"):
         assert f'holds("{key}")' in condition, f"the note is never shown for {key}"
 
 
@@ -803,6 +805,7 @@ Object.assign($("born0"), { value: "1980" });
 out.blank = adultPayload(0);
 Object.assign($("pension0"), { value: "3000" });
 Object.assign($("chomage0"), { value: "1200" });
+Object.assign($("invalidite0"), { value: "2400" });
 Object.assign($("taux0"), { value: "60" });
 Object.assign($("rsdae0"), { checked: true });
 out.filled = adultPayload(0);
@@ -837,7 +840,8 @@ def test_a_blank_adult_sends_no_disability(adult_payloads):
     """An empty rate is « no disability recognised », not « 0 % »: the API is sent no
     `handicap` at all."""
     assert adult_payloads["blank"] == {"salaire_brut_annuel": 0, "annee_naissance": 1980,
-                                       "pension_annuelle": 0, "chomage_brut_annuel": 0}
+                                       "pension_annuelle": 0, "chomage_brut_annuel": 0,
+                                       "pension_invalidite_annuelle": 0}
 
 
 def test_a_filled_adult_is_what_the_wire_format_accepts(adult_payloads):
@@ -850,6 +854,7 @@ def test_a_filled_adult_is_what_the_wire_format_accepts(adult_payloads):
         "taux_incapacite": 0.6, "restriction_substantielle_durable_acces_emploi": True}
     adult = Adult.model_validate(filled)
     assert adult.pension_annuelle == 3_000 and adult.chomage_brut_annuel == 1_200
+    assert adult.pension_invalidite_annuelle == 2_400
 
 
 def test_the_hidden_attribute_wins_over_every_display_rule(source: str):
