@@ -9430,3 +9430,144 @@ les 7 cas des deux chemins.
 
 **Sources.** Assemblée nationale, 12e législature, question écrite n° 2300, réponse publiée
 le 25 novembre 2002, p. 4468.
+
+## D-184 — Le handicap entre dans le format d'entrée : l'AAH, la MVA corrigée, et un refus
+
+**Le point de départ.** D-179 avait mesuré l'AAH en écrivant `taux_incapacite` à la main
+dans la situation. D-181 et D-182 avaient laissé deux questions sur la MVA « au jour où un
+champ ouvrira l'AAH ». Ce champ est là, et il a trouvé en entrant un défaut de plus.
+
+**Le champ.** `Adult.handicap`, facultatif, porte ce que la CDAPH reconnaît et que l'AAH
+lit :
+* `taux_incapacite`, en fraction : 0,8 pour 80 % ;
+* `restriction_substantielle_durable_acces_emploi`, la RSDAE, reconnue entre 50 et 79 %.
+
+Le constructeur les écrit sur chaque mois de N-2 à N, comme le salaire. L'AAH de N-2 et
+de N-1 est en effet ce que relisent le RSA, la prime d'activité et le minimum d'un
+conjoint (D-179). La RSDAE est refusée sous 50 % : le moteur l'ignorerait sans rien dire.
+Ce seuil est épinglé dans le format d'entrée (`AAH_TAUX_RSDAE`), et un test le relit dans
+l'arbre.
+
+**Ce que le champ n'écrit pas : le drapeau `handicap` d'openfisca.** Ce drapeau générique
+a deux effets, mesurés.
+* **Il soustrait l'aide au logement à la dégressivité des loyers élevés.** La loi le fait
+  pour les titulaires de l'AAH : la mesure « ne s'applique pas aux personnes titulaires de
+  l'allocation adulte handicapé (AAH) » (réponse ministérielle de 2017). Prenons un
+  locataire à 80 %, avec 1 300 € de loyer en zone 1. Son aide au logement vaut 84,72 € sur
+  l'année sans le drapeau, et 4 026,60 € avec. La MVA suit, puisqu'elle demande une aide
+  au logement chaque mois : 314,31 € au lieu de 1 257,24 €.
+* **Il ouvre l'ASI à côté d'une pension de retraite.** Prenons une personne à 80 %, de
+  60 ans, avec 3 000 € de pension. L'ASI vaut 7 676,11 €, et l'AAH ne tombe que de
+  9 058,56 € à 4 422,01 €. Le revenu disponible passe de 16 848,57 € à 19 888,13 €, au-delà
+  du montant de l'AAH. L'AAH plafonne en effet séparément : la pension d'un côté, avec les
+  ressources, et l'ASI du mois précédent de l'autre, jamais les deux ensemble.
+
+Le second effet serait une erreur de plusieurs milliers d'euros, le premier un oubli sur un
+cas étroit. Le drapeau n'est donc pas posé. Un titulaire de l'AAH à loyer élevé garde, à
+tort, la dégressivité : c'est à corriger à part.
+
+**Deux lignes de sortie.** `aah`, et `mva`, qui lit `caah`, la majoration telle que
+versée. Sans elles, l'AAH était dans le revenu disponible sans ligne à lire. La population
+n'a pas d'AAH : ses deux colonnes valent zéro, et `to_openfisca.WIRING` ne change pas.
+
+**Ce que le moteur en fait, refait à la main.**
+* À 80 %, sans ressources ni logement, l'AAH vaut 971,37 € par mois jusqu'en mars, puis
+  1 016,05 € à partir d'avril. Cela fait 12 058,56 € en 2024, et le revenu disponible est
+  l'AAH.
+* À 60 % avec la RSDAE, c'est la même AAH. Sans la RSDAE, rien.
+* Locataire (500 €, zone 2), la MVA s'ajoute : 104,77 € par mois, 1 257,24 € dans l'année.
+* À 60 ans avec 3 000 € de pension, l'AAH complète la pension jusqu'au montant de l'AAH,
+  exactement.
+* Aucun de ces ménages ne bouge entre l'ordre du registre et `revenu_disponible` calculé
+  d'abord. `taux_incapacite` est dans `MINIMA_INPUTS`, donc les épinglages de D-178 et
+  D-179 s'appliquent.
+
+**La MVA corrigée, comme D-182 l'avait prévu.** La MVA va aux bénéficiaires qui
+« perçoivent l'allocation aux adultes handicapés à taux plein ou en complément d'un avantage
+de vieillesse ou d'invalidité ou d'une rente d'accident du travail » (CSS, art. L. 821-1-2,
+2°). `engine.corrections` porte une deuxième correction. Elle garde le test d'openfisca sur
+`eligibilite_caah`, et elle y ajoute le 2° : l'AAH du mois à son montant plein, au centime
+près, ou une retraite, une pension d'invalidité ou une rente d'accident du travail ce
+mois-là. La branche des allocataires de l'ASI reste celle d'openfisca, car l'article leur
+étend la MVA sans le 2°.
+* **Ce qui bouge.** Une AAH réduite par 3 000 € de chômage par an (936,37 € en janvier)
+  perdait 104,77 € par mois de MVA qu'openfisca lui versait. C'est 1 257,24 € sur l'année.
+* **Ce qui ne bouge pas.** Une AAH pleine, ou une AAH qui complète une pension, garde la MVA.
+* **L'approximation à dire.** Une AAH réduite à la fois par une pension et par une autre
+  ressource garde la MVA.
+* **Le registre.** Le test du registre de `engine.corrections` n'acceptait que des
+  citations du CGI. Il accepte désormais le CSS, et le dit.
+* **Une erreur de référence d'openfisca.** Le lien de référence qu'openfisca donne pour
+  `eligibilite_caah` (LEGIARTI000039802699) mène à l'article R. 821-5, sur la durée des
+  attributions. Ce n'est pas l'article de la MVA.
+
+**Un refus : l'AAH et l'ASPA payées deux fois.** Dès l'âge légal de l'arbre (64 ans en
+2024), un taux au-dessus de 50 % ouvre l'ASPA. openfisca verse alors les deux en entier sur
+la même pension. Mesuré à 80 %, 66 ans, 3 000 € de pension, locataire :
+* 9 058,56 € d'AAH ;
+* 9 144,27 € d'ASPA ;
+* 1 257,24 € de MVA ;
+* un revenu disponible de 25 992,84 €.
+
+L'ASPA exclut de ses ressources l'AAH de la personne. openfisca le fait, et cite la règle
+de la CNAV. Mais l'AAH, elle, ne compte pas l'ASPA. Or la loi dit : « Lorsque cet avantage
+ou le montant mensuel perçu au titre de l'allocation de solidarité aux personnes âgées
+[…] est d'un montant inférieur à celui de l'allocation aux adultes handicapés, celle-ci
+s'ajoute à la prestation » (CSS, art. L. 821-1).
+
+La CAF décrit deux régimes. À 80 % ou plus et né après 1955, on garde l'AAH, qui complète
+la pension, sans obligation de demander l'ASPA. Né avant 1955, on doit demander l'ASPA, et
+l'AAH devient un « droit différentiel ». Dans les deux cas, le total est le montant de
+l'AAH, pas l'AAH plus l'ASPA.
+
+Une correction devrait attribuer l'ASPA d'un couple à une personne, ce qu'openfisca laisse
+en TODO, et suivre la génération. C'est un travail à part. D'ici là, le format d'entrée
+refuse un taux qui ouvre l'AAH à partir de l'âge où le moteur ouvre aussi l'ASPA. Le refus
+est une erreur 422 qui dit pourquoi. Son test qui tue montre le double paiement : le jour
+où il échouera, le refus devra partir. Sous cet âge, le taux est accepté. Un taux qui
+n'ouvre pas l'AAH l'est à tout âge.
+
+L'âge du refus est celui de l'arbre, `aah.age_legal_retraite`, parce que c'est à cet âge
+que le moteur paie deux fois. La CAF parle de 62 ans pour le passage à la retraite des
+allocataires de l'AAH. Cet écart n'est pas examiné ici.
+
+**Le test de D-179, réécrit.** Il écrivait le taux d'incapacité à la main. Il passe
+maintenant par le champ. Les entrées d'invalidité du conjoint (ASI) n'ont pas de champ :
+elles restent écrites à la main.
+
+**Vus échouer, puis mutés.** Avant le champ, 16 tests tombaient, refusés par le format
+d'entrée : 14 du moteur et 2 de l'API. Le test qui tue du double paiement passait déjà,
+puisqu'il écrit le taux à la main. Ensuite :
+* avec le champ, mais sans la correction, seul le test de la MVA tombait : 1 257,24 € au
+  lieu de 0 ;
+* avec la correction, le test du registre tombait sur la citation du CSS.
+
+Quatre mutations sont prises :
+* la correction oublie les pensions : le cas de la pension tombe ;
+* la correction n'est pas appliquée : le cas du chômage tombe ;
+* le constructeur pose `handicap` : le test de forme tombe, et le cas de la pension aussi,
+  parce que l'ASI s'ouvre ;
+* le refus disparaît : les deux cas d'âge tombent.
+
+**Le gate.** `make gate` donne 1 463 réussis, 172 ignorés et 12 échecs, en 14 min 20 s.
+Les 12 échecs sont ceux de D-176 à D-183, faute de données dans ce conteneur. Les 16
+réussis de plus sont les tests ajoutés : 14 au moteur et 2 à l'API.
+
+**Ce qui reste.**
+* **L'AAH et l'ASPA** : la correction, couples et générations compris.
+* **La dégressivité** : l'exemption des titulaires de l'AAH, à corriger sur l'AAH versée et
+  non sur le drapeau `handicap`.
+* **La demi-part d'invalidité** (cases P et F) et l'abattement de l'art. 157 bis du CGI. Ils
+  suivent la carte mobilité inclusion « invalidité », une demande à part et une case de la
+  déclaration. Il n'y a pas de champ pour eux.
+* **L'ASPA et l'ASI** n'ont pas de ligne de sortie.
+* **Sans champ** : l'AEEH, l'ASS, la pension d'invalidité.
+* **La page** n'a toujours ni pension, ni chômage, ni handicap.
+
+**Sources.**
+* CSS, art. L. 821-1, L. 821-1-2 et L. 821-2, lus sur un miroir du code
+  (maitredata.com).
+* Assemblée nationale, 14e législature, question écrite n° 99271, réponse publiée au JO le
+  11 avril 2017, p. 2983.
+* CAF, fiche « Handicap et passage à la retraite ».
+* la-retraite-en-clair.fr, « Peut-on cumuler pension de retraite et AAH ? ».
