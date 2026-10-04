@@ -99,6 +99,36 @@ of ASPA age, citing a CNAV note of 1982 that this project has not been able to r
 
 **Blast radius:** a disability over 50 % from 62. On the wire, the disability field. The
 population carries no disability, and nothing in it moves.
+
+---
+
+**Correction 5 — the high-rent taper spares an AAH beneficiary (CCH art. D. 823-16), D-187.**
+
+The housing aid falls once the rent passes a threshold and is nil at a second one;
+« Toutefois, cette diminution ne s'applique pas lorsque le demandeur ou son conjoint est
+bénéficiaire de l'allocation aux adultes handicapés prévue à l'article L. 821-1 du code
+de la sécurité sociale ou de l'allocation d'éducation de l'enfant handicapé prévue à
+l'article L. 541-1 du même code ». openfisca lifts the taper on its generic `handicap`
+flag instead, which this project never sets, since it also opens the ASI beside a
+pension (D-184). Measured with a renter alone at 80 %, 1 300 EUR in zone 1: the rent was
+above the threshold of suppression until the ceiling's revaluation in October 2024, then
+tapered by a coefficient of 0.095, so 84.72 EUR of aid over the year against 4 026.60
+untapered, and three months of MVA, 314.31 EUR, instead of 1 257.24.
+
+The correction adds the article's own condition to openfisca's exceptions: the AAH paid
+that month to a parent of the famille, the claimant or the spouse. Paid, not eligible:
+a « bénéficiaire » is someone the AAH is paid to, and an AAH that a pension takes to zero
+lifts nothing. A dependent's AAH lifts nothing either. The AEEH half of the sentence
+needs nothing: openfisca pays the AEEH only for a child it flags `handicap`, and the flag
+already lifts the taper. Wrapped around openfisca's formula, which stands for everyone
+else; the aid untapered is its own, less the flat minoration that follows the taper. The
+correction starts with openfisca's formula, in July 2016; the article quoted is the one
+in force since September 2019, and no year this project accepts reads the aid before
+October 2021.
+
+**Blast radius:** an AAH beneficiary, or the spouse of one, whose rent passes the
+threshold. On the wire, the disability field with a dwelling. The population carries no
+AAH, and nothing in it moves.
 """
 
 from __future__ import annotations
@@ -144,9 +174,19 @@ CORRECTIONS: tuple[Correction, ...] = (
         decision="D-185",
         kill_test="test_the_engine_alone_pays_the_aah_and_the_aspa_in_full_to_one_person",
     ),
+    Correction(
+        name="aide_logement_sans_degressivite_beneficiaire_aah",
+        citation="CCH art. D. 823-16 — la dégressivité des loyers élevés « ne s'applique pas "
+                 "lorsque le demandeur ou son conjoint est bénéficiaire de l'allocation aux "
+                 "adultes handicapés prévue à l'article L. 821-1 du code de la sécurité "
+                 "sociale »",
+        decision="D-187",
+        kill_test="test_the_engine_alone_tapers_the_aid_of_an_aah_beneficiary",
+    ),
 )
 
 AL_BASE = "aide_logement_base_ressources_individu"
+AL_AMOUNT = "aide_logement_montant_brut"
 MVA_ELIGIBILITY = "eligibilite_caah"
 AAH_ELIGIBILITY = "aah_eligible"
 ASPA_ELIGIBILITY = "aspa_eligibilite"
@@ -181,6 +221,8 @@ def apply_to(system: Any) -> Any:
             asi_formula = self.get_variable(ASI_ELIGIBILITY).get_formula("0001-01-01")
             self.update_variable(_aspa_not_claimed_beside_the_aah(aspa_formula))
             self.update_variable(_asi_below_the_aspa_age(asi_formula, aspa_formula))
+            al_amount_formula = self.get_variable(AL_AMOUNT).get_formula("2016-07-01")
+            self.update_variable(_no_taper_for_an_aah_beneficiary(al_amount_formula))
 
     return BenefitCorrections(system)
 
@@ -327,3 +369,38 @@ def _asi_below_the_aspa_age(openfisca_formula: Any, aspa_formula: Any) -> Any:
                     * not_(aspa_formula(individu, period, parameters)))
 
     return asi_eligibilite
+
+
+def _no_taper_for_an_aah_beneficiary(openfisca_formula: Any) -> Any:
+    """`aide_logement_montant_brut`, untapered when the claimant or the spouse is paid the
+    AAH that month (CCH art. D. 823-16): openfisca's formula for everyone else."""
+    from openfisca_core.model_api import (
+        MONTH,
+        Variable,
+        max_,
+        round_,
+        set_input_divide_by_period,
+        where,
+    )
+    from openfisca_france.entities import Famille
+
+    class aide_logement_montant_brut(Variable):  # openfisca's naming
+        value_type = float
+        entity = Famille
+        label = ("Montant des aides au logement après dégressivité et minoration forfaitaire, "
+                 "avant CRDS ; sans dégressivité pour un bénéficiaire de l'AAH "
+                 "(CCH art. D. 823-16)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878905"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula_2016_07_01(famille, period, parameters):
+            beneficiaire = famille.any(famille.members("aah", period) > 0, role=Famille.PARENT)
+            minoration = parameters(period).prestations_sociales.aides_logement \
+                .allocations_logement.locatif.minoration_forfaitaire
+            sans_degressivite = max_(0, round_(
+                famille("aide_logement_montant_brut_avant_degressivite", period), 2) - minoration)
+            return where(beneficiaire, sans_degressivite,
+                         openfisca_formula(famille, period, parameters))
+
+    return aide_logement_montant_brut
