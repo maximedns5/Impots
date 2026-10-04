@@ -9221,3 +9221,59 @@ parcourt chaque module, sur le nouveau. Les budgets de temps passent.
   complète peut contenir des salaires sous 600 € brut, que la fixture n'a pas. Leur aide au
   logement, et donc le rapport de réconciliation, peuvent bouger un peu au prochain
   `make full`.
+
+## D-181 — La falaise de la MVA : la loi, pas un défaut
+
+**Le point de départ.** D-179 avait noté sans l'examiner un EMTR de 11,86. Il touchait une
+personne à l'AAH, locataire et sans revenu. Il était identique dans tous les ordres : ce
+n'était pas une spirale.
+
+**Ce qui bouge.** On ajoute 100 € de salaire brut, sur l'année N seulement, comme le fait
+l'EMTR. Le RD passe de 16 848,57 € à 15 762,20 €, soit −1 086,37 € :
+* le salaire net apporte +79,31 € ;
+* l'AAH perd 13,22 €, le salaire entrant dans sa base de ressources ;
+* le complément `caah` perd 1 152,47 €.
+
+Ce complément est la majoration pour la vie autonome (MVA), soit 104,77 € par mois. Elle
+est gardée en janvier et perdue de février à décembre.
+
+**Ce que dit la loi.** La MVA est réservée à qui « ne perçoi[t] pas de revenu d'activité à
+caractère professionnel propre » (CSS, art. L. 821-1-2, 3°). Il faut aussi :
+* un logement indépendant avec une aide personnelle au logement (1°) ;
+* l'AAH à taux plein, ou en complément d'un avantage de vieillesse ou d'invalidité ou d'une
+  rente d'accident du travail (2°).
+
+Une réponse ministérielle le confirme : quelques euros de revenu d'activité suffisent à la
+faire perdre. La falaise au premier euro de salaire est donc dans la loi.
+
+**Comment openfisca la code.** `eligibilite_caah` exige qu'aucun salaire imposable (ni
+revenu non salarié) n'ait été perçu dans les douze mois précédant le mois. Le code porte
+lui-même le commentaire « substitution à vérifier ». Le constructeur ménage écrit les
+salaires au mois, sans interruption. Pour eux, ce regard en arrière retire la MVA dès que
+le salaire apparaît, comme la loi. Ici, c'est à partir de février : janvier la garde,
+puisque les douze mois qui le précèdent sont sans salaire. Le mois exact où la loi la
+retire n'est pas vérifié ici.
+
+**La hauteur.** Le pas de 100 € fixe la hauteur de la falaise : elle prend 1 152,47 € et lit
+11,86. L'explorateur le dit déjà de ses propres falaises : leur emplacement est le
+résultat, leur hauteur un artefact du pas.
+
+**Décision : acceptée, sans changement de code.** L'EMTR mesure une falaise réelle, au bon
+endroit.
+* Aucun champ ni aucune colonne n'ouvre l'AAH (D-179, `MINIMA_INPUTS`). L'API et la
+  population ne peuvent donc pas la produire aujourd'hui.
+* L'EMTR de population ne pousse que des personnes qui ont déjà un salaire, et qui n'ont
+  donc déjà plus de MVA.
+* Aucun test n'est ajouté, puisqu'il n'y a rien à garder.
+
+**Ce qui reste.**
+* **Le « taux plein » (2°).** openfisca ne le vérifie pas : `eligibilite_caah` se contente
+  d'une AAH positive. Mesuré : une AAH réduite par 3 000 € d'allocations chômage par an
+  (936,37 € au lieu de 971,37 € par mois) garde ses 104,77 € de MVA. Si « taux plein » veut
+  dire « non réduite par les ressources », hors les avantages que le 2° nomme, openfisca
+  verse une MVA que la loi refuse. À vérifier en droit avant de toucher à quoi que ce soit.
+  Ce n'est pas atteignable aujourd'hui.
+* **Le regard de douze mois** pourrait s'écarter de la loi pour un revenu ponctuel, par
+  exemple un mois de salaire isolé. openfisca retire alors la MVA pendant douze mois. Aucun
+  chemin de ce projet n'écrit un salaire irrégulier, et ce n'est pas mesuré ici.
+* **Le jour où un champ handicap entrera**, ces deux points devront être tranchés avec lui.
