@@ -736,13 +736,16 @@ def test_the_fifty_per_cent_line_is_drawn(source: str):
 #: Each field of `api.schemas.Adult`, and the result rows that show what it produced.
 #: A new field fails `test_every_adult_field_on_the_wire_is_sent_from_an_input` until it
 #: is given an input here and on the page. The ASPA is three fields' row: the age alone
-#: opens it at 65, a pension tops it down, and a rate of 50 % opens it at 62 (D-185).
+#: opens it at 65, a pension tops it down, and a rate of 50 % opens it at 62 (D-185). The
+#: invalidity card moves the parts, the RFR through the abatement of art. 157 bis, the
+#: income tax, and the housing aid, whose resources deduct that abatement (D-188).
 ADULT_INPUT_ROWS: dict[str, tuple[str, ...]] = {
     "salaire_brut_annuel": ("salaire_brut",),
     "annee_naissance": ("aspa",),
     "pension_annuelle": ("retraite_imposable", "aspa"),
     "chomage_brut_annuel": ("chomage_brut",),
     "handicap": ("aah", "mva", "aspa"),
+    "carte_invalidite": ("parts_fiscales", "revenu_fiscal_reference", "ir", "aide_logement"),
 }
 
 
@@ -805,6 +808,7 @@ Object.assign($("pension0"), { value: "3000" });
 Object.assign($("chomage0"), { value: "1200" });
 Object.assign($("taux0"), { value: "60" });
 Object.assign($("rsdae0"), { checked: true });
+Object.assign($("carte0"), { checked: true });
 out.filled = adultPayload(0);
 console.log(JSON.stringify(out));
 """
@@ -835,9 +839,10 @@ def adult_payloads(source: str, tmp_path_factory):
 
 def test_a_blank_adult_sends_no_disability(adult_payloads):
     """An empty rate is « no disability recognised », not « 0 % »: the API is sent no
-    `handicap` at all."""
+    `handicap` at all. An unticked card is sent as such, like a pension of 0 (D-188)."""
     assert adult_payloads["blank"] == {"salaire_brut_annuel": 0, "annee_naissance": 1980,
-                                       "pension_annuelle": 0, "chomage_brut_annuel": 0}
+                                       "pension_annuelle": 0, "chomage_brut_annuel": 0,
+                                       "carte_invalidite": False}
 
 
 def test_a_filled_adult_is_what_the_wire_format_accepts(adult_payloads):
@@ -848,6 +853,7 @@ def test_a_filled_adult_is_what_the_wire_format_accepts(adult_payloads):
     filled = adult_payloads["filled"]
     assert filled["handicap"] == {
         "taux_incapacite": 0.6, "restriction_substantielle_durable_acces_emploi": True}
+    assert filled["carte_invalidite"] is True
     adult = Adult.model_validate(filled)
     assert adult.pension_annuelle == 3_000 and adult.chomage_brut_annuel == 1_200
 

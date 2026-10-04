@@ -1173,3 +1173,285 @@ def test_the_engine_alone_tapers_the_aid_of_an_aah_beneficiary() -> None:
     assert after < before / 2, (
         "openfisca no longer tapers the aid of an AAH beneficiary: remove the correction "
         "rather than keep one that corrects nothing")
+
+
+# --------------------------------------------------------------------------- #
+# the invalidity card: cases P and F, and the abatement of art. 157 bis (D-188)
+# --------------------------------------------------------------------------- #
+def _adulte(salaire: float = 0, naissance: int = 1980, *, carte: bool = False,
+            **fields: Any) -> dict[str, Any]:
+    """One adult of the wire format; `carte` declares the card « mobilité inclusion »
+    marked « invalidité »."""
+    adult = {"salaire_brut_annuel": salaire, "annee_naissance": naissance, **fields}
+    if carte:
+        adult["carte_invalidite"] = True
+    return adult
+
+
+def _foyer(*adults: dict[str, Any], **household: Any) -> HouseholdInput:
+    """One adult, or two married or pacsés."""
+    payload: dict[str, Any] = {"adults": list(adults), **household}
+    if len(adults) == 2:
+        payload["couple_marie_ou_pacse"] = True
+    return HouseholdInput.model_validate(payload)
+
+
+def _rows(household: HouseholdInput, tier: str = "light") -> dict[str, Any]:
+    return compute(household, 2024, tier=tier).baseline
+
+
+def _foyer_variable(household: HouseholdInput, variable: str, year: str,
+                    system: Any = None) -> float:
+    """A variable of the foyer fiscal, read off a simulation of `household` on `system`
+    (the corrected baseline unless told otherwise)."""
+    situation = build_situation(household, 2024)
+    simulation = SimulationBuilder().build_from_entities(system or baseline(), situation)
+    return float(simulation.calculate(variable, year)[0])
+
+
+def test_the_card_is_written_as_case_p_or_f_on_every_covered_year() -> None:
+    """The first adult's card is case P of the 2042, the second's case F: booleans of the
+    foyer fiscal, on N-2 to N like every input the history carries, since the housing aid
+    and the family benefits deduct the abatement it opens from the resources of N-2 (CCH
+    art. R. 822-4; CSS art. R. 532-3), and the CSG of a replacement income reads the RFR
+    and the parts of N-2. Nothing is written on the individual: openfisca's own
+    `invalidite` flag counts dependent children only (cases G and I), and the card is not
+    a CDAPH rate."""
+    seul = build_situation(_foyer(_adulte(40_000, carte=True)), 2024)
+    foyer = seul["foyers_fiscaux"]["ff_0"]
+    assert foyer["caseP"] == {"2022": True, "2023": True, "2024": True}
+    assert "caseF" not in foyer
+    assert set(seul["individus"]["adulte_0"]) == {"salaire_de_base", "date_naissance"}
+    conjoint = build_situation(_foyer(_adulte(40_000), _adulte(20_000, carte=True)), 2024)
+    assert "caseP" not in conjoint["foyers_fiscaux"]["ff_0"]
+    assert conjoint["foyers_fiscaux"]["ff_0"]["caseF"] == {
+        "2022": True, "2023": True, "2024": True}
+    une_annee = build_situation(_foyer(_adulte(40_000, carte=True)), 2024,
+                                historique_revenus=False)
+    assert une_annee["foyers_fiscaux"]["ff_0"]["caseP"] == {"2024": True}
+    sans = build_situation(_foyer(_adulte(40_000), _adulte(20_000)), 2024)
+    assert not {"caseP", "caseF"} & set(sans["foyers_fiscaux"]["ff_0"])
+
+
+def test_a_card_holder_alone_gets_half_a_part_more() -> None:
+    """CGI art. 195, 1, d bis: the income of a person alone without a dependent child who
+    holds the card « mobilité inclusion » marked « invalidité » is divided by 1.5. By hand
+    at 40 000 EUR: 29 523.60 of net income, above the abatement's ceiling; 1.5 x 0.11 x
+    (19 682.40 - 11 497) = 1 350.59 before the décote, the half-part's advantage (671.97)
+    under its cap; a décote of 889 - 45.25 % x 1 350.59 = 278 leaves 1 073 EUR, against
+    2 023 without the card. Both tiers compute the income tax, and agree on every row they
+    share."""
+    sans = _rows(_foyer(_adulte(40_000)))
+    light = _rows(_foyer(_adulte(40_000, carte=True)))
+    full = _rows(_foyer(_adulte(40_000, carte=True)), "full")
+    assert (sans["parts_fiscales"], light["parts_fiscales"]) == (1.0, 1.5)
+    assert sans["ir"] == pytest.approx(2_023, abs=0.5)
+    assert light["ir"] == pytest.approx(1_073, abs=0.5)
+    assert light["revenu_fiscal_reference"] == pytest.approx(
+        sans["revenu_fiscal_reference"], abs=0.01)
+    for row in LIGHT_ROWS:
+        assert full[row.key] == light[row.key], row.key
+
+
+@pytest.mark.parametrize("titulaire", [0, 1])
+def test_a_couple_gets_half_a_part_whichever_spouse_holds_the_card(titulaire: int) -> None:
+    """Art. 195, 3: the quotient « est augmenté d'une demi-part pour les contribuables mariés,
+    lorsque l'un ou l'autre des conjoints remplit l'une des conditions fixées aux c, d et
+    d bis du 1 », case P for the first, case F for the second; and by a whole part « lorsque
+    chacun des conjoints remplit l'une des conditions » (art. 195, 4). By hand at 40 000 and
+    20 000 EUR, 44 285.40 of net income: two parts pay 2 342.05 before a décote of 410, so
+    1 932 EUR; 2.5 parts 1 709.72 before 696, so 1 014; three parts 1 077.38 before 982,
+    so 95."""
+    adultes = [_adulte(40_000), _adulte(20_000)]
+    adultes[titulaire] = {**adultes[titulaire], "carte_invalidite": True}
+    une = _rows(_foyer(*adultes))
+    deux = _rows(_foyer(_adulte(40_000, carte=True), _adulte(20_000, carte=True)))
+    aucune = _rows(_foyer(_adulte(40_000), _adulte(20_000)))
+    assert (aucune["parts_fiscales"], une["parts_fiscales"], deux["parts_fiscales"]) == (
+        2.0, 2.5, 3.0)
+    assert aucune["ir"] == pytest.approx(1_932, abs=0.5)
+    assert une["ir"] == pytest.approx(1_014, abs=0.5)
+    assert deux["ir"] == pytest.approx(95, abs=0.5)
+
+
+def test_the_card_abates_a_low_net_income_at_any_age() -> None:
+    """CGI art. 157 bis: the taxpayer « remplissant l'une des conditions d'invalidité
+    mentionnées à l'article 195 » deducts from the net income 2 796 EUR « si ce revenu
+    n'excède pas 17 510 € », 1 398 « si ce revenu est compris entre 17 510 € et 28 170 € »
+    (2024 incomes), whatever the age. Born in 1980, at 20 000 EUR of salary, 14 761.80 of
+    net income becomes an RFR of 11 965.80, and no tax is due either way. At 38 000 EUR,
+    28 047.43 is abated to 26 649.43; 1.5 parts pay 1 034.43 before a décote of 421, so
+    613 EUR, against 1 756 without the card."""
+    for salaire, abattement in ((20_000, 2_796), (38_000, 1_398)):
+        sans = _rows(_foyer(_adulte(salaire)))
+        avec = _rows(_foyer(_adulte(salaire, carte=True)))
+        assert avec["revenu_fiscal_reference"] == pytest.approx(
+            sans["revenu_fiscal_reference"] - abattement, abs=0.01), salaire
+        assert sans["parts_fiscales"] == 1.0 and avec["parts_fiscales"] == 1.5
+    assert _rows(_foyer(_adulte(38_000, carte=True)))["ir"] == pytest.approx(613, abs=0.5)
+    assert _rows(_foyer(_adulte(38_000)))["ir"] == pytest.approx(1_756, abs=0.5)
+
+
+def test_the_card_holders_half_part_is_capped_then_given_its_complement() -> None:
+    """Art. 197, I, 2: the reduction the quotient brings « ne peut excéder 1 791 € par
+    demi-part », and whoever has a half-part under the d bis of art. 195, 1 « ont droit à
+    une réduction d'impôt égale à 1 785 € pour chacune de ces demi-parts lorsque la
+    réduction de leur cotisation d'impôt est plafonnée en application du premier alinéa »,
+    which « ne peut toutefois excéder l'augmentation de la cotisation d'impôt résultant du
+    plafonnement ». At 200 000 EUR, 151 123.75 of net income, the half-part would be worth
+    45 905.69 - 37 878.16 = 8 027.53 EUR uncapped; it is worth 1 791 + 1 785 = 3 576."""
+    sans = _rows(_foyer(_adulte(200_000)))
+    avec = _rows(_foyer(_adulte(200_000, carte=True)))
+    assert sans["ir_avant_reductions"] == pytest.approx(45_905.69, abs=0.01)
+    assert avec["ir_avant_reductions"] == pytest.approx(45_905.69 - 1_791 - 1_785, abs=0.01)
+    assert avec["ir"] == pytest.approx(42_330, abs=0.5)
+
+
+def test_the_abatement_is_doubled_when_both_spouses_qualify() -> None:
+    """Art. 157 bis: « Dans le cas de personnes mariées soumises à une imposition commune, la
+    déduction prévue aux deuxième et troisième alinéas est doublée si les deux époux
+    remplissent les conditions d'âge ou d'invalidité. » openfisca counted the spouses with
+    numpy booleans, whose sum is a logical or: one abatement however many qualified. Two
+    card holders at 10 000 EUR each, 14 761.79 of net income, deduct 2 x 2 796; one card,
+    once. Two pensioners over 65 at 8 000 EUR, 14 400 of net income, deduct 2 x 2 796; a
+    pensioner over 65 beside a card holder, 10 800 + 8 857.08, deduct 2 x 1 398. Never more
+    than the net income: two pensioners at 2 000 EUR, 3 100 of net income after the minimum
+    deduction of 450 each, deduct 3 100. No couple's income tax moves, since a couple under
+    28 170 EUR of net income owes none: its RFR does."""
+    def rfr(*adultes: dict[str, Any]) -> float:
+        return _rows(_foyer(*adultes))["revenu_fiscal_reference"]
+
+    aucune = rfr(_adulte(10_000), _adulte(10_000, 1982))
+    assert rfr(_adulte(10_000, carte=True), _adulte(10_000, 1982)) == pytest.approx(
+        aucune - 2_796, abs=0.01)
+    assert rfr(_adulte(10_000, carte=True), _adulte(10_000, 1982, carte=True)) == (
+        pytest.approx(aucune - 2 * 2_796, abs=0.01))
+    assert rfr(_adulte(0, 1950, pension_annuelle=8_000),
+               _adulte(0, 1952, pension_annuelle=8_000)) == pytest.approx(
+        14_400 - 2 * 2_796, abs=0.01)
+    assert rfr(_adulte(0, 1955, pension_annuelle=12_000),
+               _adulte(12_000, 1970, carte=True)) == pytest.approx(
+        10_800 + 8_857.08 - 2 * 1_398, abs=0.01)
+    modeste = _foyer(_adulte(0, 1950, pension_annuelle=2_000),
+                     _adulte(0, 1952, pension_annuelle=2_000))
+    assert _foyer_variable(modeste, "rng", "2024") == pytest.approx(3_100, abs=0.01)
+    assert _foyer_variable(modeste, "abat_spe", "2024") == pytest.approx(3_100, abs=0.01)
+
+
+def test_the_engine_alone_abates_a_couple_once() -> None:
+    """The kill test for the art. 157 bis correction of the income tax, on raw openfisca.
+    Age alone shows the defect, so no card is needed: two pensioners over 65, 14 400 EUR of
+    net income, deduct one abatement where the article doubles it. The day this fails,
+    openfisca counts the spouses itself, and the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    couple = _foyer(_adulte(0, 1950, pension_annuelle=8_000),
+                    _adulte(0, 1952, pension_annuelle=8_000))
+    assert _foyer_variable(couple, "abat_spe", "2024", uncorrected_baseline()) == 2_796, (
+        "openfisca now doubles the abatement of a couple: remove the correction rather than "
+        "keep one that corrects nothing")
+
+
+def test_the_benefits_deduct_the_abatement_doubled_for_two_invalid_spouses() -> None:
+    """The housing aid deducts « L'abattement mentionné à l'article 157 bis du code général
+    des impôts pour les personnes nées avant le 1er janvier 1931 et pour les personnes
+    invalides » (CCH art. R. 822-4, II, 2°), the article that doubles it « si les deux époux
+    remplissent les conditions d'âge ou d'invalidité ». openfisca's copy of it for the
+    benefits, read on N-2, summed the same booleans. On 2022 incomes (2 620 EUR up to 16 410
+    of net income, 1 310 up to 26 400):
+    * two card holders at 10 000 EUR each, 14 761.79 of net income: 2 x 2 620;
+    * a card holder beside a pensioner over 65 born after 1930: 1 310 once, since the aid
+      deducts it for invalides and for those born before 1931 only, where the income tax of
+      the same year, which reads age or invalidity, deducts it twice."""
+    abattement = "abattements_speciaux_prestations_familiales"
+    deux_cartes = _foyer(_adulte(10_000, carte=True), _adulte(10_000, 1982, carte=True))
+    assert _foyer_variable(deux_cartes, abattement, "2022") == 2 * 2_620
+    mixte = _foyer(_adulte(0, 1955, pension_annuelle=12_000), _adulte(12_000, 1970, carte=True))
+    assert _foyer_variable(mixte, abattement, "2022") == 1_310
+    assert _foyer_variable(mixte, "abat_spe", "2022") == 2 * 1_310
+
+
+def test_the_engine_alone_takes_one_abatement_off_a_couple_s_benefit_resources() -> None:
+    """The kill test for the art. 157 bis correction of the benefits' resources, on raw
+    openfisca. Two pensioners born before 1931, at 8 000 EUR each, qualify twice and are
+    deducted 2 620 EUR once. The day this fails, openfisca counts the spouses itself, and
+    the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    couple = _foyer(_adulte(0, 1928, pension_annuelle=8_000),
+                    _adulte(0, 1930, pension_annuelle=8_000))
+    assert _foyer_variable(couple, "abattements_speciaux_prestations_familiales", "2022",
+                           uncorrected_baseline()) == 2_620, (
+        "openfisca now doubles the benefits' abatement: remove the correction rather than "
+        "keep one that corrects nothing")
+
+
+def test_the_card_asks_for_no_cdaph_rate() -> None:
+    """The mention « invalidité » goes to an incapacity of at least 80 %, but also to whoever
+    « a été classée dans la catégorie mentionnée au 3° de l'article L. 341-4 du code de la
+    sécurité sociale » (CASF art. L. 241-3, I, 1°), and « à titre définitif » to applicants
+    for and recipients of the APA in groups 1 or 2, « au vu de la seule décision
+    d'attribution de l'allocation » (II). The wire format knows the CDAPH rate only, so it
+    asks for none beside the card: a rate typed to satisfy it would open an AAH. Nor is a
+    rate of 80 % a card, which is applied for apart."""
+    sans_taux = _foyer(_adulte(0, 1940, carte=True, pension_annuelle=15_000))
+    assert sans_taux.adults[0].handicap is None and sans_taux.adults[0].carte_invalidite
+    taux_bas = _foyer(_adulte(20_000, carte=True, handicap={"taux_incapacite": 0.5}))
+    assert taux_bas.adults[0].carte_invalidite is True
+    taux_plein = _foyer(_adulte(20_000, handicap={"taux_incapacite": 0.8}))
+    assert taux_plein.adults[0].carte_invalidite is False
+
+
+def test_the_card_takes_the_abatement_off_the_resources_of_the_housing_aid() -> None:
+    """CCH art. R. 822-4, II: « Sont déduits du décompte des ressources : […] 2° L'abattement
+    mentionné à l'article 157 bis du code général des impôts pour les personnes nées avant le
+    1er janvier 1931 et pour les personnes invalides. » The aid reads the resources of N-2,
+    hence the card on every covered year. A renter at 15 000 EUR: the 2022 abatement, 2 620
+    EUR, comes off resources rounded up to the hundred, 11 100 EUR becoming 8 500, and the
+    aid rises from 1 319.13 to 2 292.33 EUR over 2024."""
+    def simulation(carte: bool) -> Any:
+        return _pinned(build_situation(_foyer(_adulte(15_000, carte=carte), logement=RENTING),
+                                       2024))
+
+    sans, avec = simulation(False), simulation(True)
+    assert float(avec.calculate("abattements_speciaux_prestations_familiales", "2022")[0]) == (
+        2_620)
+    for month in ("2024-01", "2024-07"):
+        ecart = (float(sans.calculate("aide_logement_base_ressources", month)[0])
+                 - float(avec.calculate("aide_logement_base_ressources", month)[0]))
+        assert ecart == pytest.approx(2_620, abs=100), month
+    assert _rows(_foyer(_adulte(15_000), logement=RENTING), "full")["aide_logement"] == (
+        pytest.approx(1_319.13, abs=0.05))
+    assert _rows(_foyer(_adulte(15_000, carte=True), logement=RENTING), "full")[
+        "aide_logement"] == pytest.approx(2_292.33, abs=0.05)
+
+
+def test_the_card_reaches_the_csg_of_a_pension_through_the_rfr_and_parts_of_n_2() -> None:
+    """The CSG of a pension takes its rate from the RFR of N-2, against thresholds raised for
+    each half-part of N-2. Born in 1960, 18 000 EUR of pension: an RFR of 16 200 in 2022,
+    above the tree's exemption threshold for one part (12 230), pays the median rate, 576
+    EUR of CSG imposable, CRDS and CASA out of the disposable income. With the card, the
+    2022 abatement (2 620) and the half-part both count: 13 580 under 12 230 + 3 265 for
+    1.5 parts, so no levy at all. Either alone leaves the reduced rate."""
+    def rows(carte: bool) -> dict[str, Any]:
+        return _rows(_foyer(_adulte(0, 1960, carte=carte, pension_annuelle=18_000)), "full")
+
+    sans, avec = rows(False), rows(True)
+    assert sans["revenu_disponible"] == pytest.approx(18_000 - 576, abs=0.05)
+    assert avec["revenu_disponible"] == pytest.approx(18_000, abs=0.05)
+    carte = _foyer(_adulte(0, 1960, carte=True, pension_annuelle=18_000))
+    assert _foyer_variable(carte, "rfr", "2022") == pytest.approx(16_200 - 2_620, abs=0.01)
+    assert _foyer_variable(carte, "nbptr", "2022") == 1.5
+
+
+def test_a_card_holders_aid_prices_the_same_whatever_is_computed_first() -> None:
+    """The card is read on N-2 inside the housing aid, which the builder pins month by month
+    (D-178). Through the registry, as the API computes it, and with `revenu_disponible` first,
+    as the EMTR's bumped leg does, the figures agree."""
+    situation = build_situation(_foyer(_adulte(15_000, carte=True), logement=RENTING), 2024)
+    registry = extract(_pinned(situation), 2024, "full")
+    first = _pinned(situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    assert disposable == pytest.approx(registry["revenu_disponible"], abs=0.05)
+    assert float(first.calculate_add("aide_logement", "2024").sum()) == pytest.approx(
+        registry["aide_logement"], abs=0.05)
