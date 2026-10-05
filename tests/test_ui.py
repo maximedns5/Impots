@@ -743,6 +743,7 @@ ADULT_INPUT_ROWS: dict[str, tuple[str, ...]] = {
     "pension_annuelle": ("retraite_imposable", "aspa"),
     "chomage_brut_annuel": ("chomage_brut",),
     "handicap": ("aah", "mva", "aspa"),
+    "fin_de_droits_ass": ("ass",),
 }
 
 
@@ -806,6 +807,12 @@ Object.assign($("chomage0"), { value: "1200" });
 Object.assign($("taux0"), { value: "60" });
 Object.assign($("rsdae0"), { checked: true });
 out.filled = adultPayload(0);
+Object.assign($("pension0"), { value: "" });
+Object.assign($("chomage0"), { value: "" });
+Object.assign($("taux0"), { value: "" });
+Object.assign($("rsdae0"), { checked: false });
+Object.assign($("ass0"), { checked: true });
+out.fin_de_droits = adultPayload(0);
 console.log(JSON.stringify(out));
 """
 
@@ -850,6 +857,31 @@ def test_a_filled_adult_is_what_the_wire_format_accepts(adult_payloads):
         "taux_incapacite": 0.6, "restriction_substantielle_durable_acces_emploi": True}
     adult = Adult.model_validate(filled)
     assert adult.pension_annuelle == 3_000 and adult.chomage_brut_annuel == 1_200
+
+
+def test_an_adult_in_fin_de_droits_is_sent_as_the_wire_format_has_it(adult_payloads):
+    """The box sends `fin_de_droits_ass` only when ticked: the blank adult above carries no
+    such key, and the wire format reads its absence as false. Ticked, beside no salary and no
+    unemployment benefit, the adult validates (D-189)."""
+    from impots.api.schemas import Adult
+
+    sent = adult_payloads["fin_de_droits"]
+    assert sent == {"salaire_brut_annuel": 0, "annee_naissance": 1980, "pension_annuelle": 0,
+                    "chomage_brut_annuel": 0, "fin_de_droits_ass": True}
+    assert Adult.model_validate(sent).fin_de_droits_ass is True
+
+
+def test_the_ass_shows_beside_the_rsa_and_only_when_paid(source: str):
+    """The ASS is a minimum like the RSA, and the two are paid side by side (D-189): its row
+    follows the RSA's. It is quiet, shown only when it holds an amount, since a 0 EUR ASS on
+    every salaried household would be noise."""
+    start = source.index("const GROUPS = [")
+    groups = source[start:source.index("\n];", start)]
+    lines = [line.strip() for line in groups.splitlines()]
+    rsa = next(index for index, line in enumerate(lines) if line.startswith('["rsa"'))
+    assert lines[rsa + 1].startswith('["ass"'), "the ASS row does not follow the RSA's"
+    group = groups[:groups.index('["rsa"')]
+    assert 'quiet: ["ass"]' in group[group.rindex("{ title:"):], "the ASS row is not quiet"
 
 
 def test_the_hidden_attribute_wins_over_every_display_rule(source: str):

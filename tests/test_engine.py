@@ -750,7 +750,8 @@ def test_each_benefit_correction_names_a_kill_test_that_exists() -> None:
 
     A citation of the social security code is accepted since D-184: the MVA correction
     rests on the CSS, and benefits law lives there more often than in the CGI. One of the
-    construction code since D-187: the housing aid's taper rests on the CCH."""
+    construction code since D-187: the housing aid's taper rests on the CCH. One of the
+    labour code since D-189: the ASS's resources rest on the C. trav."""
     from pathlib import Path
 
     from impots.engine.corrections import CORRECTIONS
@@ -758,8 +759,8 @@ def test_each_benefit_correction_names_a_kill_test_that_exists() -> None:
     source = Path(__file__).read_text(encoding="utf-8")
     assert CORRECTIONS
     for correction in CORRECTIONS:
-        assert correction.citation.startswith(("CGI art.", "CSS art.", "CCH art.")), (
-            correction.name)
+        assert correction.citation.startswith(
+            ("CGI art.", "CSS art.", "CCH art.", "C. trav. art.")), correction.name
         assert correction.decision.startswith("D-"), correction.name
         assert f"def {correction.kill_test}" in source, correction.name
 
@@ -1173,3 +1174,276 @@ def test_the_engine_alone_tapers_the_aid_of_an_aah_beneficiary() -> None:
     assert after < before / 2, (
         "openfisca no longer tapers the aid of an AAH beneficiary: remove the correction "
         "rather than keep one that corrects nothing")
+
+
+# --------------------------------------------------------------------------- #
+# the ASS on the wire (docs/DECISIONS.md D-189)
+# --------------------------------------------------------------------------- #
+#: The ASS's daily amount, month by month in 2024: 18.17 EUR until March (décret n° 2023-301),
+#: 19.01 from April (décret n° 2024-341). A month is paid as 30 days.
+ASS_JOUR = {**dict.fromkeys(range(1, 4), 18.17), **dict.fromkeys(range(4, 13), 19.01)}
+#: The full ASS over 2024: 3 x 545.10 + 9 x 570.30 EUR.
+ASS_PLEINE_2024 = 6_768.00
+#: The RSA of a person alone: 607.75 EUR a month until March 2024, 635.71 from April.
+RSA_SEUL = {**dict.fromkeys(range(1, 4), 607.75), **dict.fromkeys(range(4, 13), 635.71)}
+#: A spouse's gross unemployment benefit high enough to reduce a couple's ASS.
+ARE_DU_CONJOINT = 24_000
+
+
+def _fin_de_droits(naissance: int = 1975, *, conjoint: dict[str, Any] | None = None,
+                   second: bool = False, logement: dict[str, Any] | None = None,
+                   ass: bool = True, **revenus: Any) -> HouseholdInput:
+    """An adult whose unemployment insurance rights are exhausted and who meets the ASS's
+    work condition, and nothing else unless asked. `conjoint` adds a spouse, `second` puts
+    the claimant second, as the famille's `conjoint`, and `ass=False` builds the same
+    household without the declaration. Built when a test asks, like `_chomeur`."""
+    claimant: dict[str, Any] = {"salaire_brut_annuel": 0, "annee_naissance": naissance,
+                                **revenus}
+    if ass:
+        claimant["fin_de_droits_ass"] = True
+    adults = [claimant]
+    if conjoint is not None:
+        spouse = {"salaire_brut_annuel": 0, "annee_naissance": 1975, **conjoint}
+        adults = [spouse, claimant] if second else [claimant, spouse]
+    household: dict[str, Any] = {"adults": adults, "couple_marie_ou_pacse": len(adults) == 2}
+    if logement is not None:
+        household["logement"] = logement
+    return HouseholdInput.model_validate(household)
+
+
+#: The households the ASS tests price, each computed once.
+ASS_CASES: dict[str, Any] = {
+    "seul": lambda: _fin_de_droits(),
+    "locataire": lambda: _fin_de_droits(logement=RENTING),
+    "locataire_sans_ass": lambda: _fin_de_droits(logement=RENTING, ass=False),
+    "couple": lambda: _fin_de_droits(conjoint={"salaire_brut_annuel": 24_000}),
+    "couple_sans_ass": lambda: _fin_de_droits(conjoint={"salaire_brut_annuel": 24_000},
+                                              ass=False),
+    "conjoint_au_chomage": lambda: _fin_de_droits(
+        conjoint={"chomage_brut_annuel": ARE_DU_CONJOINT}),
+    "allocataire_second": lambda: _fin_de_droits(
+        conjoint={"chomage_brut_annuel": ARE_DU_CONJOINT}, second=True),
+    "deux_allocataires": lambda: _fin_de_droits(conjoint={"fin_de_droits_ass": True}),
+    "aah": lambda: _fin_de_droits(handicap={"taux_incapacite": 0.8}),
+}
+
+
+@functools.cache
+def _ass_rows(name: str) -> dict[str, Any]:
+    """The full tier of one of `ASS_CASES`, through `compute`, as the API prices it."""
+    return compute(ASS_CASES[name](), 2024, tier="full").baseline
+
+
+@functools.cache
+def _ass_both_orders(name: str) -> tuple[Any, dict[str, Any], Any]:
+    """One of `ASS_CASES` on two simulations built as `compute` builds the full tier: read
+    through the registry, as the API reads it, and with `revenu_disponible` computed first,
+    as the EMTR's bumped leg computes it."""
+    situation = build_situation(ASS_CASES[name](), 2024)
+    registry = _pinned(situation)
+    rows = extract(registry, 2024, "full")
+    first = _pinned(situation)
+    first.calculate("revenu_disponible", "2024")
+    return registry, rows, first
+
+
+def _mois(month: int) -> str:
+    """Month `month` of 2024, counting back into 2023 from 0 (December) down."""
+    return f"2024-{month:02d}" if month >= 1 else f"2023-{month + 12:02d}"
+
+
+def test_the_ass_inputs_are_written_on_every_covered_month() -> None:
+    """« En fin de droits, condition d'activité remplie » is written as openfisca reads it, on
+    every month from N-2 to N like the salary: `ass_precondition_remplie`, the five years of
+    salaried work in the ten (C. trav. art. R. 5423-1, 1°), and a job seeker's `activite`
+    (art. L. 5423-1, and R. 5423-1, 2°). An adult who does not declare it carries neither."""
+    adult = build_situation(_fin_de_droits(), 2024)["individus"]["adulte_0"]
+    assert list(adult["ass_precondition_remplie"].values()) == [True] * 36
+    assert list(adult["activite"].values()) == ["chomeur"] * 36
+    other = build_situation(SINGLE, 2024)["individus"]["adulte_0"]
+    assert "ass_precondition_remplie" not in other
+    assert "activite" not in other
+
+
+def test_a_claimant_without_resources_draws_the_full_ass() -> None:
+    """By hand: 30 days at 18.17 EUR until March and at 19.01 from April, 6 768 EUR over 2024
+    (décrets n° 2023-301 and n° 2024-341). Alone and without resources, the claimant is far
+    under the ceiling of 70 daily amounts (C. trav. art. R. 5423-1, 3°)."""
+    assert sum(30 * jour for jour in ASS_JOUR.values()) == pytest.approx(ASS_PLEINE_2024)
+    assert _ass_rows("seul")["ass"] == pytest.approx(ASS_PLEINE_2024, abs=0.05)
+
+
+def test_the_rsa_counts_the_ass_and_tops_it_up() -> None:
+    """The RSA counts the ASS of its three months of reference and makes up the difference:
+    607.75 - 545.10 = 62.65 EUR in January, 635.71 - 570.30 = 65.41 from July, and in
+    between the quarter still holds ASS from before its revaluation. 827.04 EUR of RSA, the
+    prime de Noël of 152.45, and 7 747.49 of disposable income: without a dwelling, no
+    housing aid."""
+    ass = {month: 30 * jour for month, jour in ASS_JOUR.items()}
+    ass.update({month - 12: 30 * 18.17 for month in (10, 11, 12)})  # October to December 2023
+    rsa = sum(RSA_SEUL[month] - sum(ass[month - back] for back in (1, 2, 3)) / 3
+              for month in range(1, 13))
+    rows = _ass_rows("seul")
+    assert rsa == pytest.approx(827.04, abs=0.005)
+    assert rows["rsa"] == pytest.approx(rsa, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(ASS_PLEINE_2024 + rsa + 152.45, abs=0.05)
+
+
+def test_in_a_couple_the_ass_takes_the_spouse_s_declared_salary() -> None:
+    """C. trav. art. R. 5423-1, 3°, R. 5423-2 and R. 5423-6: in a couple the ASS tops the
+    resources up to 110 daily amounts, the spouse's salary counted « telles qu'elles doivent
+    être déclarées à l'administration fiscale pour le calcul de l'impôt sur le revenu avant
+    déduction des divers abattements », a twelfth of the twelve months before. On 24 000 EUR
+    gross, 19 682.16 EUR taxable, 1 640.18 a month: 1 998.70 - 1 640.18 = 358.52 EUR until
+    March, 2 091.10 - 1 640.18 = 450.92 from April, 5 133.84 over 2024. The salary of 2023,
+    which the first months read, is the same."""
+    rows = _ass_both_orders("couple")[1]
+    mensuel = rows["salaire_imposable"] / 12
+    attendu = sum(min(30 * jour, 110 * jour - mensuel) for jour in ASS_JOUR.values())
+    assert attendu == pytest.approx(5_133.84, abs=0.05)
+    assert rows["ass"] == pytest.approx(attendu, abs=0.05)
+
+
+def test_the_prime_d_activite_counts_the_ass() -> None:
+    """The prime d'activité counts « Les revenus de remplacement des revenus professionnels »
+    (CSS art. L. 842-4, 2°), which the allocations de solidarité are (C. trav. art.
+    L. 5421-2). Month by month, the couple on 24 000 EUR loses the mean ASS of the three
+    months before: 4 949.04 EUR of prime d'activité over 2024."""
+    simulation, rows, _ = _ass_both_orders("couple")
+    ass = {month: float(simulation.calculate("ass", _mois(month)).sum())
+           for month in range(-2, 12)}
+    lost = sum(sum(ass[month - back] for back in (1, 2, 3)) / 3 for month in range(1, 13))
+    assert lost == pytest.approx(4_949.04, abs=0.05)
+    assert _ass_rows("couple_sans_ass")["ppa"] - rows["ppa"] == pytest.approx(lost, abs=0.05)
+
+
+def test_the_housing_aid_leaves_the_ass_out() -> None:
+    """CCH art. R. 822-15: neither the professional income nor the unemployment allowances of
+    a claimant who « perçoit l'allocation de solidarité spécifique » count in the housing
+    aid. Renting at 500 EUR in zone 2, the aid is the one without the ASS, 3 532.77 EUR.
+    Beside it the RSA takes a forfait logement of 12 %, 76.29 EUR, and tops the ASS up in
+    April only: 635.71 - 545.10 - 76.29 = 14.32 EUR. In May the quarter leaves 5.92, under
+    the 6 EUR below which the tree pays no RSA."""
+    with_ass = _ass_both_orders("locataire")[1]
+    without = _ass_rows("locataire_sans_ass")
+    assert with_ass["ass"] == pytest.approx(ASS_PLEINE_2024, abs=0.05)
+    assert with_ass["aide_logement"] == pytest.approx(3_532.77, abs=0.05)
+    assert with_ass["aide_logement"] == pytest.approx(without["aide_logement"], abs=0.05)
+    assert with_ass["rsa"] == pytest.approx(635.71 - 545.10 - 76.29, abs=0.05)
+
+
+@pytest.mark.parametrize("name", ["locataire", "couple", "allocataire_second"])
+def test_the_ass_prices_the_same_whatever_is_computed_first(name: str) -> None:
+    """`ass_precondition_remplie` is one of `situations.MINIMA_INPUTS`, so the builder pins the
+    benefit history even without a dwelling (D-178, D-179). Through the registry, as the API
+    reads it, and with `revenu_disponible` first, as the EMTR's bumped leg computes it, the
+    ASS, the minima beside it and the disposable income agree: for a renter, beside a
+    spouse's salary, and beside a spouse's unemployment benefit read by the correction."""
+    _, rows, first = _ass_both_orders(name)
+    assert float(first.calculate("revenu_disponible", "2024")[0]) == pytest.approx(
+        rows["revenu_disponible"], abs=0.05)
+    for key in ("ass", "rsa", "ppa", "aide_logement"):
+        assert float(first.calculate_add(key, "2024").sum()) == pytest.approx(
+            rows[key], abs=0.05), key
+
+
+def test_an_ass_claimant_s_emtr_prices_the_first_euro_as_the_cumul_does(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The bumped leg adds 100 EUR of salary in N to a job seeker. openfisca keeps a job
+    seeker's ASS whatever the salary beside it, which is what the cumul does for the first
+    three months of a resumed activity (C. trav. art. R. 5425-2); the RSA takes the salary
+    back. Without the job seeker's `activite`, openfisca's own count of those three months
+    stopped the ASS from April, and the rate read 12.27. Both legs of the hand computation
+    go through `compute`, the bumped one by perturbing the situation it builds."""
+    from impots.engine import situations
+
+    original = situations.build_situation
+    bump = {"on": False}
+
+    def bumped_on_demand(household, year, historique_revenus=True):
+        situation = original(household, year, historique_revenus)
+        return perturb_first_adult(situation, year, EMTR_STEP) if bump["on"] else situation
+
+    monkeypatch.setattr(situations, "build_situation", bumped_on_demand)
+    claimant = _fin_de_droits()
+    result = compute(claimant, 2024, tier="full", emtr=True)
+    bump["on"] = True
+    bumped = compute(claimant, 2024, tier="full").baseline["revenu_disponible"]
+    by_hand = 1.0 - (bumped - result.baseline["revenu_disponible"]) / EMTR_STEP
+    assert result.emtr == pytest.approx(by_hand, abs=1e-3)
+    assert 0.0 < result.emtr < 1.0
+
+
+@pytest.mark.parametrize(("revenu", "article"), [("salaire_brut_annuel", r"R\. 5425-2"),
+                                                 ("chomage_brut_annuel", r"L\. 5423-1")],
+                         ids=["salaire", "chomage"])
+def test_the_ass_is_refused_beside_an_income_of_its_own(revenu: str, article: str) -> None:
+    """A salary on every month of three years is not the three months of cumul the law
+    allows (C. trav. art. R. 5425-2), and openfisca would pay a job seeker's ASS beside it
+    for good. Unemployment benefit and the ASS are never paid for the same months (art.
+    L. 5423-1 and L. 5423-2), and openfisca would pay no ASS at all, without a word."""
+    with pytest.raises(ValueError, match=article):
+        _fin_de_droits(**{revenu: 6_000})
+
+
+def test_from_the_year_of_62_the_ass_is_refused() -> None:
+    """From the legal retirement age, 62 at the earliest (CSS art. D. 161-2-1-9), the ASS stops
+    for whoever has the full-rate insurance duration, and at 67 for everyone (C. trav. art.
+    L. 5421-4, 1° and 2°). The wire format does not carry the insurance duration. Born in
+    1962, 62 in 2024: refused. Born in 1963: written like any claimant."""
+    with pytest.raises(ValueError, match=r"L\. 5421-4"):
+        build_situation(_fin_de_droits(naissance=1962), 2024)
+    adult = build_situation(_fin_de_droits(naissance=1963), 2024)["individus"]["adulte_0"]
+    assert list(adult["ass_precondition_remplie"].values()) == [True] * 36
+
+
+def test_two_claimants_are_priced_alone_and_refused_beside_a_pension() -> None:
+    """Each claimant's resources count the other's ASS (C. trav. art. R. 5423-2), which
+    openfisca leaves out. Without other resources, two full allocations stay under the
+    couple's 110 daily amounts, and the answer is the law's: 13 536 EUR. Beside a pension the
+    two could cross it, and the household is refused."""
+    assert _ass_rows("deux_allocataires")["ass"] == pytest.approx(2 * ASS_PLEINE_2024, abs=0.05)
+    with pytest.raises(ValueError, match=r"R\. 5423-2"):
+        _fin_de_droits(pension_annuelle=6_000, conjoint={"fin_de_droits_ass": True})
+
+
+def test_the_ass_is_not_paid_beside_the_aah() -> None:
+    """C. trav. art. L. 5423-7: the ASS « ne peut être cumulée avec l'allocation aux adultes
+    handicapés […] dès lors qu'un versement a été effectué au titre de cette dernière
+    allocation ». At 80 % and without resources, the AAH alone, 12 058.56 EUR."""
+    rows = _ass_rows("aah")
+    assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["ass"] == 0.0
+
+
+def test_the_ass_does_not_depend_on_which_adult_claims_it() -> None:
+    """C. trav. art. R. 5423-2 counts « les autres ressources de l'intéressé et, le cas
+    échéant, de son conjoint ». openfisca adds the unemployment benefit to the famille's
+    second parent only: with the claimant second, the first one's 24 000 EUR of benefit
+    vanished from the ASS's resources, and the ASS was paid in full, 6 768 EUR instead of
+    1 263.50."""
+    first = _ass_rows("conjoint_au_chomage")
+    second = _ass_both_orders("allocataire_second")[1]
+    assert first["ass"] == pytest.approx(1_263.50, abs=0.05)
+    assert second["ass"] == pytest.approx(first["ass"], abs=0.05)
+    assert second["revenu_disponible"] == pytest.approx(first["revenu_disponible"], abs=0.05)
+
+
+def test_the_engine_alone_ignores_the_unemployment_benefit_of_a_spouse_heading_the_famille(
+) -> None:
+    """The kill test for the ASS correction: raw openfisca, the claimant second, the ASS's
+    inputs written by hand. The first adult's 24 000 EUR of unemployment benefit is not in
+    the resources, and June's ASS is the full 30 x 19.01 EUR. The day this fails, openfisca
+    counts it itself, and `engine.corrections` must drop its own."""
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(_fin_de_droits(
+        conjoint={"chomage_brut_annuel": ARE_DU_CONJOINT}, second=True, ass=False), 2024)
+    covered = [f"{year}-{month:02d}" for year in (2022, 2023, 2024) for month in range(1, 13)]
+    situation["individus"]["adulte_1"]["ass_precondition_remplie"] = dict.fromkeys(covered, True)
+    situation["individus"]["adulte_1"]["activite"] = dict.fromkeys(covered, "chomeur")
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    assert float(raw.calculate("ass", "2024-06")[1]) == pytest.approx(30 * 19.01, abs=0.01), (
+        "openfisca now counts the unemployment benefit of a claimant's spouse who heads the "
+        "famille: remove the correction rather than keep one that corrects nothing")
