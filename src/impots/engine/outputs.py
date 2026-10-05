@@ -118,6 +118,11 @@ REGISTRY: tuple[Row, ...] = (
         label="Prime d'activité"),
     Row("rsa", "rsa", "famille", "month", "full", False,
         label="RSA"),
+    # The ASS, on the individual who draws it, beside the RSA that tops it up. Given a row
+    # when the wire format learned to open it (D-189). Zero over the population, which
+    # declares nobody « en fin de droits ».
+    Row("ass", "ass", "individu", "month", "full", False,
+        label="Allocation de solidarité spécifique"),
     Row("aide_logement", "aide_logement", "famille", "month", "full", False,
         label="Aide au logement"),
     # The AAH and its complement, on the individual who receives them. Given rows when the

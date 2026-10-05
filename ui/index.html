@@ -703,6 +703,8 @@ footer code { font-family: var(--mono); font-size: 11px; }
           La majoration pour la vie autonome demande un logement avec une aide au logement.
           La carte « invalidité » vaut une demi-part et, sous 28 170 € de revenu net,
           l'abattement de l'art. 157 bis, que l'aide au logement déduit aussi (D-188).
+          La fin de droits ouvre l'ASS, sous condition de ressources du foyer ; elle se coche
+          sans salaire ni allocation chômage, et jusqu'à 61 ans (D-189).
           Tout le reste prend la valeur par défaut du moteur.
         </p>
       </div>
@@ -713,8 +715,8 @@ footer code { font-family: var(--mono); font-size: 11px; }
         <label class="check">
           <input type="checkbox" id="full">
           <span>Calculer aussi les prestations
-            <span class="sub">Ajoute AF, prime d'activité, RSA, aide au logement, AAH, ASPA et
-              le revenu disponible. Passe en calcul complet : comptez ~3 s au lieu de ~0,5 s.</span>
+            <span class="sub">Ajoute AF, prime d'activité, RSA, ASS, aide au logement, AAH, ASPA
+              et le revenu disponible. Passe en calcul complet : comptez ~3 s au lieu de ~0,5 s.</span>
           </span>
         </label>
 
@@ -1281,6 +1283,13 @@ function adultRow(i) {
           <span class="sub">Une demi-part de plus et, sous un revenu modeste, l'abattement de
             l'art. 157 bis. Se demande à part : un taux de 80 % ne la donne pas.</span></span>
       </label>
+      <label class="check">
+        <input type="checkbox" id="ass${i}">
+        <span>En fin de droits au chômage
+          <span class="sub">Droits à l'allocation chômage épuisés, cinq ans de salariat dans les
+            dix ans avant la fin du contrat. Ouvre l'ASS, sans salaire ni allocation chômage,
+            jusqu'à 61 ans.</span></span>
+      </label>
     </div>`;
 }
 
@@ -1622,7 +1631,9 @@ function nichesPayload() {
 /* -------------------------------------------------------------- payload */
 /* One adult as the wire format has it. A blank incapacity rate sends no `handicap` at
    all: « none recognised » is not « 0 % ». The rate is typed in percent and sent as a
-   fraction. The invalidity card is its own box, sent ticked or not (D-188). */
+   fraction. The invalidity card is its own box, sent ticked or not (D-188). The « fin de
+   droits » box sends `fin_de_droits_ass` only when ticked; the wire format reads its
+   absence as false (D-189). */
 function adultPayload(i) {
   const adult = {
     salaire_brut_annuel: Number($(`sal${i}`).value),
@@ -1638,6 +1649,7 @@ function adultPayload(i) {
       restriction_substantielle_durable_acces_emploi: $(`rsdae${i}`).checked,
     };
   }
+  if ($(`ass${i}`).checked) adult.fin_de_droits_ass = true;
   return adult;
 }
 
@@ -1690,7 +1702,8 @@ const GROUPS = [
     ["salaire_imposable",      "Salaire imposable",            "flat"],
   ]},
   /* Quiet groups show a row only when it holds something: a pension row at 0 € on every
-     salaried household would be noise, not information. */
+     salaried household would be noise, not information. A group may instead name its quiet
+     rows: the ASS sits beside the RSA that tops it up, shown only when it is paid (D-189). */
   { title: "Revenus de remplacement", quiet: true, rows: [
     ["retraite_imposable", "Pension de retraite (montant déclaré)", "flat"],
     ["chomage_brut",       "Allocations chômage brutes",            "flat"],
@@ -1704,10 +1717,11 @@ const GROUPS = [
   { title: "Patrimoine", tier: "full", rows: [
     ["ifi", "Impôt sur la fortune immobilière", "down"],
   ]},
-  { title: "Prestations", tier: "full", rows: [
+  { title: "Prestations", tier: "full", quiet: ["ass"], rows: [
     ["af",            "Allocations familiales", "up"],
     ["ppa",           "Prime d'activité",       "up"],
     ["rsa",           "RSA",                    "up"],
+    ["ass",           "Allocation de solidarité spécifique", "up"],
     ["aide_logement", "Aide au logement",       "up"],
   ]},
   { title: "Vieillesse", tier: "full", quiet: true, rows: [
@@ -1758,8 +1772,10 @@ function render(data) {
   let body = "";
   for (const group of GROUPS) {
     if (group.tier === "full" && !full) continue;
+    const quiet = (k) => group.quiet === true
+      || (Array.isArray(group.quiet) && group.quiet.includes(k));
     const rows = group.rows
-      .map(([k, l, g, sub, kind]) => (group.quiet && !holds(k) ? "" : line(l, k, g, sub, kind)))
+      .map(([k, l, g, sub, kind]) => (quiet(k) && !holds(k) ? "" : line(l, k, g, sub, kind)))
       .join("");
     if (!rows.trim()) continue;
     body += `<tr class="grp"><td colspan="${hasReform ? 4 : 2}">${group.title}</td></tr>${rows}`;
