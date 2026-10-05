@@ -2335,7 +2335,7 @@ def test_the_aeeh_correction_adds_nothing_where_openfisca_opens_no_aeeh() -> Non
 
 
 # --------------------------------------------------------------------------- #
-# the lone parent holding the card: case T beside the half-part of art. 195, 5 (D-193)
+# the lone parent holding the card: case T and art. 195, 5 (docs/DECISIONS.md D-193)
 # --------------------------------------------------------------------------- #
 #: The income tax of 2024 on one part of the 111 634.14 EUR of net income that 150 000 EUR of
 #: gross salary leaves: 0.11 x 17 818 + 0.30 x 54 508 + 0.41 x 27 811.14. A capped tax is

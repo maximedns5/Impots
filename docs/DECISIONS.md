@@ -10942,3 +10942,258 @@ ajoutés : 27 au moteur, 4 à l'API et 4 à la page.
 * Mon Parcours Handicap, « Les nouveaux montants au 1er avril 2024 de l'AAH, de l'AEEH et de
   ses compléments », 24 avril 2024.
 * CLEISS, brèves d'avril 2024, la majoration pour tierce personne au 1er avril 2024.
+
+## D-193 — Le parent seul titulaire de la carte : la case T et la carte se cumulent
+
+**Le point de départ.** D-188 le laissait ouvert : « openfisca ajoute la demi-part du 5 de
+l'art. 195 à la case T : 2,5 parts avec un enfant, et un IR qui passe de 154 € à zéro à
+40 000 €. Aucun texte lu n'exclut ce cumul, et la seule source trouvée qui l'affirme est un
+article de presse : à vérifier. » Deux questions, donc. La loi permet-elle le cumul ? Et
+openfisca plafonne-t-il chaque demi-part comme le dit l'art. 197 ?
+
+**Ce que dit la loi, pour les revenus de 2024.** Les articles ont été lus sur Légifrance,
+dans leur version applicable aux revenus de 2024. L'outil de lecture abrégeait certaines
+phrases : chaque citation a été relevée mot pour mot sur une reproduction intégrale du code,
+qui concorde avec Légifrance partout où les deux ont été comparés.
+* **La case T.** « Pour l'imposition des contribuables célibataires ou divorcés qui vivent
+  seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à titre
+  exclusif ou principal la charge d'au moins un enfant » (art. 194, II, en vigueur depuis le
+  1er janvier 2018). Le I donne 1,5 part au « Célibataire ou divorcé ayant un enfant à
+  charge », et 2,5 parts au « Marié ou veuf ayant un enfant à charge ». Le veuf n'a pas de
+  case T.
+* **Sans personne à charge, le 1 de l'art. 195.** « Par dérogation aux dispositions qui
+  précèdent, le revenu imposable des contribuables célibataires, divorcés ou veufs n'ayant
+  pas d'enfant à leur charge [...] est divisé par 1,5 » lorsqu'ils remplissent l'une des
+  conditions a à f, dont le d bis, la carte. Le revenu est divisé par 1,5 quel que soit le
+  nombre de conditions remplies. Le BOFiP le dit : « Les majorations de quotient familial
+  prévues au 1 de l'article 195 du CGI ne sont pas cumulables entre elles »
+  (BOI-IR-LIQ-10-20-20-20, § 35).
+* **Avec des personnes à charge, les 3, 4 et 5.** Pour un couple marié, le quotient « est
+  augmenté d'une demi-part [...] lorsque l'un ou l'autre des conjoints remplit l'une des
+  conditions fixées aux c, d et d bis du 1 » (3), et d'une part « lorsque chacun des
+  conjoints remplit l'une des conditions » (4). Le 5 est celui du parent seul : « Le
+  quotient familial prévu à l'article 194 est augmenté d'une demi-part pour les
+  contribuables célibataires, divorcés ou veufs ayant un ou plusieurs enfants à charge, que
+  celle-ci soit exclusive, principale ou réputée également partagée entre les parents,
+  lorsque ces contribuables remplissent l'une des conditions d'invalidité fixées aux c, d ou
+  d bis du 1 » (art. 195, en vigueur depuis le 1er janvier 2023). Il vaut pour le parent
+  célibataire, divorcé ou veuf qui a un enfant à charge, case T cochée ou non.
+* **Le seul non-cumul écrit.** Le second alinéa du 6 est le seul de l'article à écarter un
+  cumul : « Les contribuables qui bénéficient des dispositions des 3 ou 4 ne peuvent
+  bénéficier des dispositions du premier alinéa », la demi-part du conjoint ancien
+  combattant de plus de 74 ans. Rien de tel entre le II de l'art. 194 et le 5 de l'art. 195.
+  Le 5 augmente « le quotient familial prévu à l'article 194 », celui que le II a déjà
+  augmenté.
+* **Les plafonds.** « La réduction d'impôt résultant de l'application du quotient familial
+  ne peut excéder 1 791 € par demi-part [...] s'ajoutant à une part pour les contribuables
+  célibataires, divorcés, veufs [...]. Toutefois, pour les contribuables célibataires,
+  divorcés, ou soumis à l'imposition distincte prévue au 4 de l'article 6 qui répondent aux
+  conditions fixées au II de l'article 194, la réduction d'impôt correspondant à la part
+  accordée au titre du premier enfant à charge est limitée à 4 224 €. » Et : « Les
+  contribuables qui bénéficient d'une demi-part au titre des a, b, c, d, d bis, e et f du 1
+  ainsi que des 2 à 6 de l'article 195 ont droit à une réduction d'impôt égale à 1 785 €
+  pour chacune de ces demi-parts lorsque la réduction de leur cotisation d'impôt est
+  plafonnée en application du premier alinéa. [...] Cette réduction d'impôt ne peut
+  toutefois excéder l'augmentation de la cotisation d'impôt résultant du plafonnement. »
+  (art. 197, I, 2, version du 16 février 2025 au 21 février 2026). Le parent seul titulaire
+  de la carte a donc trois plafonds : 4 224 € pour la part de son premier enfant, case T
+  comprise ; 1 791 € pour la demi-part de la carte, comme pour chaque autre demi-part ; et
+  la réduction complémentaire de 1 785 €.
+
+**Ce qu'en dit l'administration.** Le BOFiP ne traite pas ce cumul en termes. Trois
+documents de la DGFiP l'appliquent.
+* **Le BOFiP.** La case T va aux « contribuables célibataires, divorcés ou séparés, qui
+  vivent seuls et supportent effectivement la charge d'un ou plusieurs enfants »
+  (BOI-IR-LIQ-10-20-20-10, § 380). La demi-part de la carte va aux célibataires, divorcés ou
+  veufs « ayant un ou plusieurs enfants à charge, que celle-ci soit exclusive, principale ou
+  réputée également partagée entre les parents (CGI, art. 195, 5) »
+  (BOI-IR-LIQ-10-20-20-20, § 30). Pour la carte d'un enfant, le § 1 écrit : « Cet avantage
+  de quotient familial se cumule éventuellement avec celui attribué aux contribuables
+  célibataires, divorcés ou veufs qui vivent et élèvent effectivement seuls leur enfant ou
+  leurs enfants (CGI, art. 194, II). » Rien de tel pour la carte du parent, et aucune règle
+  de non-cumul non plus. Le plafonnement porte sur « Toutes les majorations de quotient
+  familial », « invalide, ancien combattant, parent isolé, etc. ». L'impôt plafonné est
+  celui d'une part, « diminué de la somme des plafonds en impôt résultant des demi-parts ou
+  quarts de part additionnelles » (BOI-IR-LIQ-20-20-20, § 10 et 20). La réduction
+  complémentaire va aux « titulaires ou parents de titulaires, comptés à charge, de la carte
+  « mobilité inclusion » portant la mention « invalidité » », au titre des « 1-d bis, 3, 4
+  et 5 » de l'art. 195 (§ 130).
+* **La notice de la déclaration** (n° 2041 NOT, « la déclaration des revenus 2024 »). Sa
+  fiche de calcul met deux renvois sur la ligne « Célibataire, Divorcé(e) » : « e. + 1/2
+  part pour une personne vivant seule et ayant au moins un enfant à charge » et « f. + 1/2
+  part pour une personne invalide ». Le plafond y est de 4 224 € « pour les 2 premières
+  demi-parts excédant 1 part », plus 1 791 € par demi-part supplémentaire, « si vous êtes
+  célibataire, divorcé/séparé, avec au moins un enfant à charge que vous élevez seul
+  (case T cochée) ». La réduction complémentaire vaut « 1785€ si vous êtes invalide
+  (case P ou F cochée) ». Son seul non-cumul ne vise pas la case T : « Si vous êtes
+  célibataire, divorcé, séparé ou veuf et remplissez plusieurs conditions prévues aux cases
+  P, L, W ou G, vous ne pouvez bénéficier que d'une demi-part supplémentaire. » Au veuf qui
+  a des enfants à charge, elle dit : « ne cochez pas la case T ».
+* **La brochure pratique 2025.** Son tableau 1 renvoie la même ligne aux notes 5 et 6 : « Si
+  vous êtes invalide, ajoutez une demi-part lorsque vous avez des charges de famille », et
+  « Vous vivez seul(e) et vous avez déclaré au moins une personne à charge [...] : ajoutez
+  une demi-part ». Son tableau 4 donne les « Revenus imposables à partir desquels s'applique
+  le plafonnement » du « Parent isolé célibataire ou divorcé ou séparé ayant au moins un
+  enfant à charge ». Ce sont 44 894 € à 2 parts sans invalide, 60 381 € à 2,5 parts et
+  66 481 € à 3 parts avec un invalide. L'avantage du quotient y dépasse 4 224 €, puis
+  4 224 + 1 791 + 1 785 € et 4 224 + 2 × 1 791 + 1 785 €. Le moteur les retrouve à 5 €
+  près : 44 891, 60 384 et 66 482 €.
+* **Le simulateur de la DGFiP** (« Calcul de l'impôt 2025 sur les revenus 2024 »). Un
+  célibataire, un enfant, les cases T et P, 32 804 € en case 1AJ : « Nombre de parts 2.5 »,
+  86 € de droits simples, une décote de 86 €, aucun impôt.
+* **Aucune décision de justice** n'a été trouvée sur ce cumul.
+
+La question est donc tranchée. Rien n'exclut le cumul, et l'administration l'applique,
+chaque demi-part sous son plafond. L'article de presse de D-188 n'est plus la seule source.
+
+**Ce que fait openfisca.**
+* **Les parts.** `nbptr` applique en 2024 sa formule de 2008. Pour un célibataire ou un
+  divorcé, elle vaut `1 + enf + n2 + n3 + n6 + n7`. `n6` est la demi-part du 5 (`not6`, la
+  case P avec une personne à charge), `n7` celle de la case T (`isol`), `n2` celle des
+  enfants titulaires de la carte (D-191). `n3`, le 1 de l'art. 195, ne joue que sans
+  personne à charge. Il prend le maximum de ses conditions : c'est le non-cumul du 1.
+* **Les plafonds.** `ir_plaf_qf` applique sa formule de 2013. Pour un célibataire ou un
+  divorcé qui coche la case T, les deux premières demi-parts au-delà d'une part sont
+  plafonnées ensemble à 4 224 € (`celib_enf`), chacune des autres à 1 791 € (`general`).
+  openfisca ne sait pas quelle demi-part est laquelle. Cela revient au même : avec la case T
+  et un enfant, la part du premier enfant compte pour les deux premières demi-parts. La
+  réduction complémentaire de 1 785 € (`reduc_postplafond`) suit la case P et chaque enfant
+  titulaire de la carte. Elle est limitée à l'impôt que le plafonnement ajoute. C'est
+  l'art. 197, I, 2.
+
+**Pas de correction.** openfisca a raison sur les deux points. `engine.corrections` garde
+ses onze corrections, et aucun test qui tue n'est à écrire. Ce qui tient le résultat, ce
+sont 14 tests du moteur. Ils épinglent les parts et l'impôt d'openfisca sur les chiffres de
+la loi, de la brochure et du simulateur.
+
+**Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`, palier léger, un
+parent né en 1985 et des enfants nés à partir de 2012, l'impôt selon le salaire brut :
+
+| ménage | parts | 20 000 € | 40 000 € | 80 000 € | 150 000 € |
+|---|---:|---:|---:|---:|---:|
+| un enfant, case T | 2 | 0 € | 154 € | 6 734 € | 25 491 € |
+| un enfant, case T et carte | 2,5 | 0 € | 0 € | 3 362 € | 21 915 € |
+| deux enfants, case T | 2,5 | 0 € | 0 € | 4 943 € | 23 700 € |
+| deux enfants, case T et carte | 3 | 0 € | 0 € | 2 730 € | 20 124 € |
+
+Le simulateur de la DGFiP a été interrogé avec les mêmes salaires imposables en case 1AJ :
+16 402, 32 804, 65 897 et 124 038 €. Il rend ces seize nombres de parts et ces seize impôts
+à l'euro, et les mêmes revenus fiscaux de référence. openfisca brut donne les mêmes valeurs
+que la référence corrigée : aucune correction ne touche ces ménages.
+
+Refait à la main :
+* **40 000 €.** 29 523,60 € de revenu net. Deux parts paient 2 × 0,11 ×
+  (14 761,80 − 11 497) = 718,26 € avant une décote de 564 €, soit 154 €. 2,5 parts paient
+  85,92 €, que la décote efface. Une part paierait 2 022,56 € : avec la carte, le quotient
+  vaut 1 936,64 €, sous ses plafonds.
+* **150 000 €.** 111 634,14 € de revenu net. Une part paie 0,11 × 17 818 + 0,30 × 54 508 +
+  0,41 × 27 811,14 = 29 714,95 €, et 2,5 parts 16 403,94 €. L'avantage, 13 311,01 €, dépasse
+  les 4 224 + 1 791 = 6 015 € de plafonds : l'impôt plafonné vaut 23 699,95 €. Le
+  plafonnement ajoute 7 296,01 €, plus que 1 785 € : la réduction complémentaire est
+  entière, et l'impôt vaut 21 914,95 €. Sans la carte, 29 714,95 − 4 224 = 25 490,95 €. La
+  carte vaut 3 576 €, son plafond et sa réduction. Avec deux enfants, la demi-part du second
+  ajoute 1 791 € de plafond : 20 123,95 € avec la carte, 23 699,95 € sans.
+* **80 000 €.** 59 306,86 € de revenu net. Une part paie 10 957,54 €, 2,5 parts 3 362,08 €.
+  L'avantage, 7 595,46 €, dépasse 6 015 € : l'impôt plafonné vaut 4 942,54 €. Le
+  plafonnement n'ajoute que 1 580,46 €, sous 1 785 € : la réduction complémentaire le rend
+  en entier, et l'impôt retombe à 3 362,08 €. Le simulateur affiche 4 943 € de droits
+  simples et 3 362 € à payer. Sans la carte, deux parts paient 4 123,02 €, et le plafond de
+  4 224 € porte l'impôt à 6 733,54 €. Avec deux enfants et la carte, le plafond de 7 806 €
+  porte l'impôt de 2 729,74 € à 3 151,54 €, et la réduction rend les 421,80 €.
+* **20 000 €.** La carte ouvre aussi l'abattement de l'art. 157 bis, 2 796 € : le revenu
+  fiscal de référence passe de 14 761,80 € à 11 965,80 € (D-188). Aucun impôt, avec ou sans
+  la carte.
+* **Le début du plafonnement.** Le revenu net est épinglé sur `rni`. Le plafonnement ne
+  prend rien 20 € sous les seuils de la brochure, et prend quelque chose 20 € au-dessus.
+
+**Les voisins.** À 150 000 €, comme le simulateur les donne sur le même salaire imposable :
+* **sans la case T**, un parent qui ne vit pas seul : 2 parts, la demi-part de l'enfant et
+  celle de la carte. 29 714,95 − 2 × 1 791 − 1 785 = 24 347,95 €, le simulateur dit
+  24 348 € ;
+* **l'enfant titulaire de la carte lui aussi** (art. 195, 2, D-191) : 3 parts, une troisième
+  demi-part à 1 791 € et une réduction complémentaire par carte. 29 714,95 − 4 224 −
+  2 × 1 791 − 2 × 1 785 = 18 338,95 €, simulateur 18 339 € ;
+* **la carte de l'enfant seule** : 2,5 parts et 21 914,95 €, comme la carte du parent,
+  simulateur 21 915 € ;
+* **un couple marié, une carte et un enfant** (art. 195, 3) : 3 parts. Deux parts paient
+  19 821,20 €, moins 2 × 1 791 et 1 785 €, soit 14 454,20 €, simulateur 14 454 €. La case T
+  ne l'atteint pas : le format d'entrée la refuse à deux adultes, et openfisca ne la lit que
+  pour un déclarant célibataire, divorcé ou veuf. Les cases P et F de D-188 ne bougent pas,
+  puisqu'aucun code n'a changé ;
+* **seul, sans enfant** (art. 195, 1, d bis) : 1,5 part. 29 714,95 − 1 791 − 1 785 =
+  26 138,95 €, simulateur 26 139 €.
+
+**Le parent veuf.** Le format d'entrée ne sait pas le dire. Aucun champ ne porte la
+situation de famille, et openfisca tient un adulte seul pour célibataire. Écrit à la main,
+`statut_marital` à « veuf », avec la carte et un enfant : 3 parts, les 2,5 du I de
+l'art. 194 et la demi-part du 5. L'impôt vaut 18 773 € à 150 000 €, ce que donne le
+simulateur. Si la case T est cochée aussi, openfisca ajoute une demi-part : 3,5 parts et
+16 982 €. La loi ne la donne qu'aux célibataires et aux divorcés, et la notice dit au veuf
+« ne cochez pas la case T ». Le simulateur l'ignore : 3 parts et 18 773 €. Aucun chemin du
+projet n'y mène : noté, pas corrigé.
+
+**Ce que la population en fait.** Rien ne bouge, puisqu'aucun code n'a changé. La population
+écrit la case T de son squelette, `parent_isole`, et jamais la case P ni la case F : aucun
+foyer n'y cumule les deux demi-parts. Sur la fixture, 129 foyers sur 439 portent la case T.
+`to_openfisca.WIRING` reste « D-188 ».
+
+Mesuré en passant : 84 de ces 129 foyers sont des couples. Le squelette compte le déclarant
+principal et pas le conjoint, là où la règle de D-006 veut un adulte seul. Le test
+`test_parent_isole_only_where_it_can_apply` ne compte, lui aussi, que le déclarant
+principal. C'est sans effet : openfisca tient pour pacsé un foyer de deux déclarants, et ne
+lit la case T que pour un déclarant célibataire, divorcé ou veuf. Sur un couple avec un
+enfant à 150 000 €, la case T forcée ne change ni les 2,5 parts ni les 18 030 € d'impôt.
+Laissé à une tâche à part.
+
+**Vus échouer, puis mutés.** Écrits avant tout le reste, les 14 tests passent sur le code
+inchangé, comme il le faut : openfisca a raison, et il n'y a rien à corriger. Chacun a donc
+été vu échouer sous une mutation. Une mutation est une réforme appliquée sur la référence
+corrigée, par un greffon de pytest hors du dépôt, sans toucher au code. Chaque mutant a
+d'abord été vérifié sur six ménages : il déplace ce qu'il prétend, et rien d'autre. Sept
+mutations sont prises :
+* la demi-part de la carte refusée à un foyer qui coche la case T : 9 tests, dont les deux
+  tests des parts (2 au lieu de 2,5) et ceux de 150 000 €
+  (23 705,95 € au lieu de 21 914,95 €) ;
+* la case T refusée au titulaire de la carte, dans les parts et les plafonds : les mêmes 9
+  tests, à 24 347,95 € ;
+* les bonnes parts, mais le plafond général pour le parent seul titulaire de la carte : 6
+  tests, ceux de 150 000 € et de 80 000 €, les deux seuils de la brochure avec la carte et
+  l'enfant titulaire, à 22 556,95 €. Les tests des parts passent, comme il le faut ;
+* la demi-part de la carte sous le plafond de 4 224 € du premier enfant : les mêmes 6, à
+  23 705,95 €, et à 4 948,54 € pour 80 000 € ;
+* aucune réduction complémentaire pour un foyer qui coche la case T : les mêmes 6, à
+  23 699,95 € et 4 942,54 € ;
+* la réduction complémentaire sans sa limite : 3 tests, celui de 80 000 €
+  (3 157,54 € au lieu de 3 362,08 €) et les deux seuils de la brochure avec la carte. Ceux
+  de 150 000 € passent : la limite n'y joue pas ;
+* la réduction de l'enfant perdue à côté de la carte du parent : 1 test, ce voisin, à
+  20 123,95 € au lieu de 18 338,95 €.
+
+**Le temps.** Les tests de budget de temps passent : 4 du moteur, 2 de l'API.
+
+**Le gate.** (à compléter après `make gate`.)
+
+**Ce qui reste.**
+* **Le parent veuf**, plus haut. Le jour où une situation de famille entrera dans le format,
+  la case T ne devra pas être écrite pour un veuf.
+* **Les couples marqués « parent isolé »** par le squelette de la population, plus haut.
+* **La résidence alternée** n'a pas de champ : le quart de part de la case T et celui de la
+  carte d'un enfant, et le plafond de 2 112 €.
+* **Les pensions d'au moins 40 %** (c et d du 1), qui ouvrent la même demi-part du 5,
+  restent sans champ (D-188).
+* **openfisca-france.** La case T d'un veuf est à signaler en amont, avec ce cas.
+
+**Sources.**
+* CGI, art. 194 (version en vigueur depuis le 1er janvier 2018), art. 195 (version en
+  vigueur depuis le 1er janvier 2023) et art. 197 (version du 16 février 2025 au 21 février
+  2026), lus sur Légifrance, et relevés mot pour mot sur la reproduction d'advizexperts.fr.
+* BOFiP : BOI-IR-LIQ-10-20-20-10-20140326 (§ 380 à 410) ; BOI-IR-LIQ-10-20-20-20-20230608
+  (§ 1, 30 et 35) ; BOI-IR-LIQ-20-20-20-20250414 (§ 10, 20, 70, 130 et 150).
+* DGFiP, notice n° 2041 NOT (n° 50796#25), « la déclaration des revenus 2024 », rubrique B
+  et fiche de calcul, 4 à 6. Sha256 du fichier :
+  0eb39b825fac0bc1f623a9f3fd2d4dce5227aadd13abb99712115bfecf28021f.
+* DGFiP, Brochure pratique 2025, « Situation du foyer » (p. 73 à 82) et « Calcul de
+  l'impôt » (p. 359 à 372), tableaux 1 et 4. Sha256 du second chapitre :
+  2a1a0a87ed31c355e2897561a2bb69074bc9bd1a7bbf3ace005b5e41ad65f634.
+* DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
+  interrogé le 5 octobre 2026 sur 36 déclarations fictives.
