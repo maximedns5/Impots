@@ -9920,3 +9920,295 @@ comparateur ne change.
   10 septembre 2025.
 * Assemblée nationale, 14e législature, question écrite n° 99271, réponse publiée au JO le
   11 avril 2017, p. 2983.
+
+## D-190 — La pension d'invalidité entre dans le format d'entrée, et l'ASI avec elle
+
+**Le point de départ.** L'ASI n'était atteinte que par des entrées écrites à la main dans
+les tests de D-179 : `pensions_invalidite`, ou le drapeau `handicap` avec une retraite.
+D-184 refuse ce drapeau, parce qu'il ouvre l'ASI à côté d'une simple pension de retraite.
+D-186 le notait : « L'ASI n'a ni ligne ni champ : rien ne l'ouvre, faute de pension
+d'invalidité. » La pension d'invalidité entre ici dans le format d'entrée, et l'ASI avec
+elle. Elle a trouvé en entrant deux défauts d'openfisca et une entrée que rien ne posait.
+
+**Ce que dit la loi : la pension.** Les articles L. 341-1 et suivants du CSS n'ont pas pu
+être ouverts sur Légifrance, faute d'identifiant. Ce qui suit vient de service-public et de
+la Cnav.
+* **Trois catégories**, selon que l'invalide peut exercer une activité rémunérée, ne le peut
+  pas, ou doit en plus recourir à une tierce personne. La troisième reçoit une majoration
+  pour tierce personne, et « la majoration pour tierce personne n'est soumise à aucun
+  prélèvement » (fiche F672).
+* **L'impôt.** « Vous devez déclarer la pension versée par la sécurité sociale suite à un
+  accident ou une maladie. » L'administration applique « un abattement de 10 % sur le
+  montant total déclaré des pensions et rentes ». La majoration pour assistance d'une tierce
+  personne « est exonérée » (fiche F3169).
+* **Les prélèvements.** « La pension d'invalidité peut être soumise aux impôts ou
+  contributions suivantes » : l'impôt sur le revenu, la CSG et la CRDS, la Casa (fiche
+  F672). L'article L. 136-8 du CSS, en vigueur du 16 décembre 2020 au 1er juillet 2025, a
+  été lu sur Légifrance : « Sont assujetties à la contribution au taux de 8,3 % les pensions
+  de retraite, et les pensions d'invalidité. » Les taux de 6,6 % et de 3,8 % y visent « les
+  revenus mentionnés au 1° du II de l'article L. 136-1-2 », que ce projet n'a pas pu ouvrir.
+  La CASA est « assise sur les avantages de retraite et d'invalidité ainsi que sur les
+  allocations de préretraite », au taux de 0,3 % (art. L. 137-41, I). En sont exclues « Les
+  pensions de retraite et d'invalidité » des personnes dont le RFR « n'excède pas les seuils
+  mentionnés au 2° du III de l'article L. 136-8 » (II, 1°). Pour la CRDS : « Le taux des
+  contributions instituées par les articles 14 à 17 est fixé à 0,5 %. » (ordonnance
+  n° 96-50, art. 19).
+* **Sa fin à 62 ans.** La circulaire Cnav n° 2023-25 : « L'article 11 de cette loi a
+  maintenu à 62 ans l'âge de départ en retraite pour les bénéficiaires d'une pension
+  d'invalidité (PI) à compter du 1er septembre 2023. A cet âge, les intéressés sont réputés
+  inaptes au travail. En conséquence, leur retraite peut être calculée au taux maximum de
+  50 % quelle que soit leur durée d'assurance, et ils peuvent accéder à l'allocation de
+  solidarité aux personnes âgées (Aspa). » La pension « cesse d'être versée à l'âge de 62
+  ans pour être remplacée à cet âge par la retraite », sauf pour qui travaille encore, au
+  plus tard jusqu'à 67 ans.
+
+**Ce que dit la loi : l'ASI.**
+* **Ses conditions.** L'article L. 815-24, en vigueur du 1er avril 2020 au 23 juillet 2026,
+  ouvre l'allocation au titulaire « d'un avantage viager servi au titre de l'assurance
+  invalidité ou de vieillesse par un régime de sécurité sociale », qui « peut, quel que soit
+  son âge » en bénéficier, « si elle est atteinte d'une invalidité générale réduisant sa
+  capacité de travail ou de gain dans des proportions déterminées ; – ou si elle a obtenu
+  cet avantage en raison d'une invalidité générale au moins égale, sans remplir la condition
+  d'âge pour bénéficier de l'allocation aux personnes âgées prévue à l'article L. 815-1. »
+  Service-public le dit plus simplement : « il n'est plus possible d'obtenir l'Asi dès que
+  vous atteignez l'âge pour obtenir l'Aspa ».
+* **Son montant**, depuis le 1er avril 2020 : « Le montant de la ou des allocations est égal
+  à la différence entre le plafond applicable à la situation du ou des allocataires et le
+  total des ressources de l'intéressé ou des époux, concubins ou partenaires liés par un
+  pacte civil de solidarité. » (art. L. 815-24-1).
+* **Ses plafonds** (circulaires Cnav n° 2023-09 et 2024-13). Pour une personne seule,
+  10 320,07 € par an depuis le 1er avril 2023, puis 10 794,79 € (899,56 € par mois) depuis
+  le 1er avril 2024. Pour un couple, 18 060,13 €, puis 18 890,89 € (1 574,24 €). Ce sont
+  ceux de l'arbre d'openfisca.
+* **Le couple** (art. D. 815-19, 2°, en vigueur depuis le 1er janvier 2021).
+  * a) Si le conjoint bénéficie aussi de l'ASI, « le montant est servi par moitié à chacun
+    des deux allocataires concernés ».
+  * b) S'il « n'est pas bénéficiaire de l'allocation supplémentaire d'invalidité », « le
+    montant de l'allocation servie ne peut excéder le montant du plafond mentionné au 1°
+    auquel est soustrait le montant minimum de la pension d'invalidité mentionné à l'article
+    L. 341-5 ».
+  * c) S'il bénéficie de l'ASPA, « le montant de l'allocation servie est égal à la
+    différence entre la moitié du plafond mentionné au 2° et la moitié des ressources du
+    couple ».
+
+  La Cnav applique le b) quand le conjoint « ne bénéficie ni de l'Aspa ni de l'ASI ». Elle
+  donne la pension minimale : 311,56 € au 1er janvier 2023, 328,07 € au 1er janvier 2024. Le
+  plafond b) vaut donc 571,49 € par mois à partir du 1er avril 2024 (circulaire 2024-13). La
+  pension minimale est revalorisée chaque 1er janvier, et ce plafond avec elle (circulaires
+  2024-42 et 2025-30).
+* **L'AAH à côté.** L'article L. 821-1, en vigueur du 1er octobre 2023 au 1er décembre 2024
+  : « Lorsque cet avantage ou le montant mensuel perçu au titre de l'allocation de
+  solidarité aux personnes âgées mentionnée à l'article L. 815-1 est d'un montant inférieur
+  à celui de l'allocation aux adultes handicapés, celle-ci s'ajoute à la prestation sans que
+  le total des deux avantages puisse excéder le montant de l'allocation aux adultes
+  handicapés. »
+
+**Ce que fait openfisca.**
+* **La variable.** `pensions_invalidite` est un montant mensuel de l'individu : la case 1AZ
+  (à 1DZ), donc un montant déclaré. Aucune variable brute ni aucune CSG déductible n'y mène.
+  L'impôt l'ajoute aux pensions, avant l'abattement de 10 %. L'ASI, l'ASPA, l'AAH, le RSA,
+  la prime d'activité et l'aide au logement, entre autres, la comptent dans leurs
+  ressources.
+* **Aucun prélèvement.** `pensions_nettes` l'ajoute entière : ni CSG imposable, ni CRDS, ni
+  CASA. Les prélèvements sur les pensions ne lisent que `retraite_brute`.
+* **L'ASI s'ouvre sur la pension seule.** `asi_eligibilite` demande `pensions_invalidite`
+  positive, sans le drapeau `handicap`, qui ne sert qu'à la branche de la retraite. Aucune
+  correction n'est donc nécessaire pour l'ouvrir, et le défaut de D-184 reste fermé.
+* **L'ASI court jusqu'à 65 ans.** openfisca lit l'âge de l'ASI sur l'éligibilité à l'ASPA
+  (D-185). Celle-ci ne s'ouvre avant 65 ans que sur un taux d'incapacité de plus de 50 % ou
+  sur `inapte_travail`, une entrée que rien ne posait.
+* **Ses ressources** (`asi_aspa_base_ressources`) sont celles des parents de la famille sur
+  les trois mois précédents : retraites et pensions d'invalidité, chômage, salaires après un
+  abattement, pensions alimentaires, revenus du patrimoine, et l'ASS du mois. L'AAH de
+  l'allocataire en est exclue, au nom d'une note de la CNAV de 1982.
+* **Pas de plafond b).** Le seul allocataire d'un couple reçoit le plafond du couple moins
+  les ressources du couple.
+* **L'AAH à côté** complète la pension et l'ASI du mois précédent
+  (`aah_base_non_cumulable`).
+
+**Le champ.** `Adult.pension_invalidite_annuelle`, en euros par an, **tel que déclaré** : le
+montant imposable de la case 1AZ, déjà net de la CSG déductible, sans la majoration pour
+tierce personne. Il est écrit au mois sur `pensions_invalidite`, sur N-2, N-1 et N comme le
+salaire. Déclaré et non brut, pour deux raisons. La variable d'openfisca est la case
+elle-même, et aucune de ses formules ne mène d'un brut à elle : un brut y serait imposé avec
+sa CSG déductible. Et la population n'a pas de pension d'invalidité à caler. C'est le choix
+de la pension de retraite (D-175, D-176), pas celui du chômage, dont openfisca calcule
+lui-même la CSG déductible (D-183).
+
+**L'âge de 62 ans : `inapte_travail`.** Le constructeur pose `inapte_travail` sur chaque
+mois de qui a une pension d'invalidité. Pour un parent de la famille, openfisca ne le lit
+que dans l'âge anticipé de l'ASPA, à partir de `aah.age_legal_retraite`, soit 62 ans
+(correction 3) : il n'agit qu'à partir de l'âge que donne la circulaire. L'aide au logement
+le lit aussi, mais pour les adultes à charge de la famille, et le constructeur ne le pose
+que sur ses parents. Ni le drapeau `handicap` ni les cases de la retraite ne sont posés.
+Passé 62 ans, la pension saisie vaut la retraite qui l'a remplacée : même impôt, mêmes
+prélèvements, et l'ASPA compte l'une comme l'autre.
+
+**Deux corrections dans `engine.corrections`.**
+* **Les prélèvements (correction 6).** Elle lit les prélèvements d'openfisca sur une
+  retraite, la CSG imposable, la CRDS et la CASA, au taux que fixe le RFR de N-2, sur la
+  pension d'invalidité. Elle les retranche de `pensions_nettes`. La CSG déductible reste
+  dehors, puisque le montant déclaré en est déjà net. La base est ce montant déclaré, comme
+  pour la retraite (D-176). La correction est enroulée autour des formules d'openfisca,
+  depuis 2019.
+* **Le seul allocataire d'un couple (correction 7).** Elle plafonne le montant d'openfisca
+  pour un parent d'un couple qui ne compte qu'un allocataire, de l'ASI ou de l'ASPA. Le
+  plafond est celui d'une personne seule, ce mois-là, moins la pension minimale en vigueur.
+  L'arbre d'openfisca n'a pas cette pension minimale : `PENSION_INVALIDITE_MINIMUM` la
+  porte, d'avril 2020 à janvier 2026, telle que la donnent les circulaires de la Cnav. Le
+  plafond seul est celui d'openfisca divisé par douze, d'où 571,50 € au lieu des 571,49 € de
+  la circulaire, qui arrondit d'abord au centime. La correction est enroulée autour de la
+  formule d'openfisca, depuis avril 2020.
+
+Chacune a son test qui tue, sur openfisca brut. Le test du registre des corrections ne
+change pas : les deux citent le CSS.
+
+**Ce que le moteur en fait, mesuré en 2024.** « Avant » désigne le champ seul, sans les
+corrections ni `inapte_travail`.
+
+| ménage | avant | après |
+|---|---:|---:|
+| 6 000 €, seul, 44 ans | ASI 4 676,11 €, RD 10 676,11 € | inchangé |
+| 15 000 €, seul | RD 15 000 € | 14 925 € |
+| 20 000 €, seul | RD 19 850 € | 19 210 € |
+| 30 000 €, seul | RD 28 412 € | 27 452 €, comme la même retraite |
+| 6 000 €, 62 ans | ASI 4 676,11 €, RD 10 676,11 € | ASPA 6 144,27 €, RD 12 144,27 € |
+| 6 000 €, 65 ans | ASPA 6 144,27 € | inchangé |
+| couple, un seul pensionné à 6 000 € | ASI 12 683,20 € | ASI 6 739,27 €, RD 12 739,27 € |
+| couple, deux pensionnés à 6 000 € | ASI 6 683,20 €, par moitié | inchangé |
+| 6 000 €, 80 %, locataire | ASI 4 676,11 €, AAH 1 422,01 €, MVA 1 257,24 € | inchangé |
+| 6 000 €, 80 %, 63 ans | AAH 6 058,56 €, ni ASI ni ASPA | inchangé |
+
+Refaits à la main :
+* **L'ASI seule.** Elle vaut 3 × (10 320,07 − 6 000) / 12 + 9 × (10 794,79 − 6 000) / 12 :
+  360,01 € par mois jusqu'en mars, puis 399,57 €, soit 4 676,11 € sur l'année. Le RFR de
+  2022, 5 400 €, est sous le seuil d'exonération : aucun prélèvement.
+* **Les prélèvements.** Les RFR de 2022 valent 13 500, 18 000 et 27 000 €. Ils tombent dans
+  les tranches réduite, intermédiaire et pleine de 2024, au-dessus de 12 230, 15 988 et
+  24 813 € pour une part. Au taux réduit, toute la CSG (3,8 %) est déductible : reste la
+  CRDS, 0,5 %, soit 75 €. Aux deux autres taux restent la CSG imposable (2,4 %), la CRDS et
+  la CASA (0,3 %), soit 3,2 % : 640 € puis 960 €. L'IR vaut 0, 150 et 1 588 €.
+* **Les couples.** Deux pensionnés : 3 × (18 060,13 − 12 000) / 12 + 9 × (18 890,89 −
+  12 000) / 12 = 6 683,20 €, servis par moitié. Un seul : le plafond du couple donnait
+  1 074,24 € par mois à partir d'avril. Le plafond b) vaut 531,94 € jusqu'en mars, 571,50 €
+  ensuite, soit 6 739,27 € sur l'année. Le RSA reste nul.
+* **L'AAH à côté.** Elle complète la pension et l'ASI jusqu'au montant de l'AAH, à 39,56 €
+  près : 1 422,01 + 6 000 + 4 676,11 = 12 098,12 €, contre 12 058,56 €. L'écart est celui
+  d'avril : l'AAH lit l'ASI de mars, sous l'ancien plafond. La MVA reste, l'AAH étant versée
+  en complément d'un avantage d'invalidité (correction 2).
+* **À 62 ans,** l'ASPA porte la pension à son plafond, 12 144,27 €. À 63 ans et 80 %, l'AAH
+  continue et complète la pension jusqu'à son montant, sans ASPA (D-185), et l'ASI s'est
+  arrêtée.
+
+**L'ordre de calcul.** `pensions_invalidite` figure déjà dans `MINIMA_INPUTS` (D-179) : le
+palier complet épingle l'aide au logement mois par mois. Cinq ménages ont été calculés dans
+l'ordre du registre, comme l'API, et avec `revenu_disponible` d'abord, comme la jambe
+relevée de l'EMTR : l'ASI à côté d'une AAH, avec un logement ; les deux couples ; l'ASPA à
+62 ans ; les prélèvements à 30 000 €. Le revenu disponible, l'ASI, l'AAH, la MVA, l'ASPA,
+l'aide au logement et l'IR concordent à 0,05 € près. L'EMTR de l'allocataire à 6 000 € vaut
+0,2069 : les seules cotisations du salaire, car 100 € de salaire ne touchent pas l'ASI, qui
+abat les salaires. Celui du pensionné à 30 000 € vaut aussi 0,2069.
+
+**Deux lignes de sortie, et la page.** `pension_invalidite`, au palier léger, lit l'entrée.
+`asi`, au palier complet, sur l'individu, suit `aspa` dans le registre et dans `ResultRows`.
+La page reçoit une entrée « Pension d'invalidité déclarée », à côté du taux d'incapacité.
+Les deux lignes vont dans les groupes discrets : la pension sous « Revenus de
+remplacement », l'ASI sous « Handicap ». La note sur les prélèvements des revenus de
+remplacement (D-186) couvre la pension d'invalidité et nomme la Casa. Celle du foyer dit que
+la pension se saisit telle que déclarée, case 1AZ, sans la majoration pour tierce personne,
+et qu'elle ouvre l'ASI avant 62 ans, l'ASPA ensuite. Le résultat factice de `check.mjs`
+porte les deux lignes, à zéro.
+
+**Ce que la population en fait.** Son câblage ne change pas, et `to_openfisca.WIRING` reste
+« D-180 » : la population n'écrit aucune pension d'invalidité. Ses pensions,
+`pension_annuelle`, vont aux inactifs de 55 ans ou plus, calées sur la masse DGFiP des
+pensions, retraites et rentes déclarées (400,4 md€). Que cette masse comprenne la case 1AZ
+n'a pas été vérifié. Les deux nouvelles colonnes, `pension_invalidite` et `asi`, valent
+zéro. Le test des deux chemins (D-183) les compare, à zéro de part et d'autre, et passe.
+Elles n'entrent ni dans `aggregate.INSTRUMENTS` ni dans `STATE_TRANSFERS`.
+
+**Vus échouer, puis mutés.** Sans le champ, 27 tests tombaient : 21 du moteur, refusés par
+le format d'entrée (« Extra inputs are not permitted ») ou sans ligne `asi` (`KeyError`), 1
+de l'API (422) et 5 de la page. Deux vérifications de `check.mjs` tombaient aussi. Avec le
+champ et les lignes, mais sans les corrections ni `inapte_travail`, 7 tests du moteur
+tombaient, chacun pour sa raison :
+* le test de forme, faute d'`inapte_travail` (`KeyError`) ;
+* les trois tranches, à 15 000, 19 850 et 28 412 € au lieu de 14 925, 19 210 et 27 452 € ;
+* l'égalité avec une retraite, à 28 412 € contre 27 452 € ;
+* le seul allocataire d'un couple, avec 12 683,20 € d'ASI au lieu de 6 739,27 € ;
+* le cas de 62 ans, avec 4 676,11 € d'ASI au lieu de l'ASPA.
+
+Les deux tests qui tuent passaient sur openfisca brut, comme il le faut. Six mutations du
+moteur sont prises :
+* sans `inapte_travail` : le test de forme et le cas de 62 ans ;
+* la correction 6 non appliquée : les trois tranches et l'égalité avec une retraite ;
+* la CSG déductible prélevée elle aussi : les mêmes quatre, à 14 355, 18 370 et 25 682 € ;
+* le plafond b) lu sur le plafond du couple : le seul allocataire ;
+* en janvier 2024, la pension minimale de 2023, par une borne mal placée : le seul
+  allocataire, à 6 755,78 € ;
+* le plafond b) appliqué à tout couple : **aucun test ne tombait**. Deux pensionnés à
+  6 000 € tirent des moitiés sous ce plafond de toute façon. Un cas de deux pensions de
+  1 200 € a été ajouté : leurs moitiés, 687,12 € par mois à partir d'avril, le dépassent, et
+  le a) les sert entières. Sous la mutation, l'ASI du couple tombe à 13 478,54 € au lieu de
+  16 283,20 €.
+
+Deux mutations de la page sont prises, par pytest et par `check.mjs` : la ligne de l'ASI
+retirée des groupes, et la note sur les prélèvements qui ne regarde plus la pension
+d'invalidité.
+
+**Ce qui reste.**
+* **L'AAH dans les ressources de l'ASI.** Service-public la compte : « Allocation aux
+  adultes handicapés (AAH) », « Oui ». openfisca l'exclut pour un pensionné d'invalidité, au
+  nom de la note de la CNAV de 1982 que ce projet n'a pas pu lire (D-185). Le total ne
+  change pas tant que le montant de l'AAH dépasse le plafond de l'ASI : l'AAH complète
+  jusqu'à son montant. La répartition change. À 6 000 € et 80 %, le moteur verse 4 676,11 €
+  d'ASI et 1 422,01 € d'AAH ; la lecture de service-public donnerait, à l'équilibre, 0 €
+  d'ASI et 6 058,56 € d'AAH (calcul).
+* **Le décalage d'un mois de l'AAH**, 39,56 € en 2024 à côté d'une ASI. Lire l'ASI du mois
+  même fermerait un cercle : ses ressources lisent l'ASS, dont l'éligibilité lit l'AAH du
+  mois. L'écart est accepté et mesuré.
+* **L'ASI à côté d'un conjoint à l'ASPA** (art. D. 815-19, 2° c). openfisca ne verse pas
+  d'ASI, et paie l'ASPA du couple à la moitié de son maximum. Prenons 6 000 € de pension
+  d'invalidité et un conjoint de 66 ans à 3 000 € de retraite : 9 427,01 € d'ASPA, 0 € d'ASI
+  et 18 427,01 € de revenu disponible (mesuré). Le c) donnerait à l'allocataire de l'ASI la
+  moitié du plafond du couple moins la moitié des ressources, 4 841,60 € sur l'année
+  (calcul). Ce que devient alors l'ASPA du conjoint relève de ses propres règles, non lues
+  ici. Le format d'entrée y mène : deux pensionnés d'invalidité dont l'un a passé 62 ans.
+* **Le pensionné qui travaille à 62 ans** garde sa pension et ses accessoires, ASI comprise,
+  jusqu'à ce qu'il cesse, et au plus tard à 67 ans (circulaire 2023-25, point 2.1). Le
+  moteur lui ouvre l'ASPA à 62 ans comme aux autres.
+* **La naissance au 1er janvier.** Né en 1962, le titulaire a 62 ans dès janvier 2024, et le
+  moteur ouvre l'ASPA ce mois-là : 512,02 € au lieu d'une ASI de 360,01 €. La circulaire
+  fixe la retraite « au 1er jour du mois qui suit l'âge anniversaire de 62 ans ». Elle cite
+  une dérogation pour les assurés nés le premier jour d'un mois, que ce projet n'a pas lue.
+* **La majoration pour tierce personne** n'a pas de champ. Elle est exonérée d'impôt et de
+  prélèvements. L'AAH ne la compte pas, l'art. L. 821-1 écartant « la prestation
+  complémentaire pour recours à constante d'une tierce personne visée à l'article
+  L. 355-1 », et l'ASI non plus (service-public). Elle ne ferait qu'ajouter au revenu
+  disponible.
+* **La base des prélèvements** est le montant déclaré, pas le brut, comme pour la retraite
+  (D-176).
+* **L'exonération des titulaires d'un minimum.** La CASA exclut les titulaires d'un avantage
+  de vieillesse ou d'invalidité non contributif (art. L. 137-41, II, 2°). openfisca ne la
+  porte pas, pour la retraite non plus. C'est sans effet en régime stable : les plafonds de
+  l'ASI sont sous le seuil d'exonération, pour une part comme pour deux.
+* **La branche « vieillesse » de l'ASI** reste fermée, comme D-184 l'a voulu : elle demande
+  le drapeau `handicap`.
+* **Les articles L. 136-1-2 et L. 341-1 à L. 341-5** du CSS n'ont pas pu être ouverts sur
+  Légifrance.
+* **openfisca-france.** Les deux écarts corrigés, et celui du c), sont à signaler en amont.
+
+**Sources.**
+* CSS, art. L. 136-8 (version du 16 décembre 2020 au 1er juillet 2025), L. 137-41 (version
+  en vigueur depuis le 1er janvier 2021), L. 815-24 (version du 1er avril 2020 au 23 juillet
+  2026), L. 815-24-1 (version en vigueur depuis le 1er avril 2020), L. 821-1 (version du 1er
+  octobre 2023 au 1er décembre 2024) et D. 815-19 (version en vigueur depuis le 1er janvier
+  2021), lus sur Légifrance.
+* Ordonnance n° 96-50 du 24 janvier 1996, art. 19, lu sur Légifrance.
+* Circulaires Cnav n° 2022-22 du 22 août 2022, 2023-09 du 11 avril 2023, 2024-13 du 4 avril
+  2024, 2024-42 du 24 décembre 2024 et 2025-30 du 22 décembre 2025, sur les plafonds de
+  l'ASI et son montant maximal.
+* Circulaire Cnav n° 2023-25 du 28 novembre 2023, « Passage à la retraite des assurés
+  bénéficiaires d'une pension d'invalidité à compter du 1er septembre 2023 ».
+* Service-public.gouv.fr, fiches F16940 (ASI) et F672 (pension d'invalidité), à jour au 1er
+  avril 2026, et F3169 (impôt sur les pensions), à jour au 15 avril 2026.
