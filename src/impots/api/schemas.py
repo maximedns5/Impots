@@ -128,7 +128,10 @@ class Adult(BaseModel):
         "declared retirement pension (`engine.corrections`, correction 9). Below the ASPA's "
         "age it opens the allocation supplémentaire d'invalidité, the ceiling less the "
         "resources (CSS art. L. 815-24-1), capped for the lone beneficiary of a couple "
-        "(art. D. 815-19, correction 10). At 62 the pension gives way to a retirement pension "
+        "(art. D. 815-19, 2° b, correction 10). Beside a spouse at the ASPA's age it is half "
+        "the couple's ceiling less half the couple's resources, and the spouse's ASPA the "
+        "other half of its own (art. D. 815-19, 2° c, and D. 815-1; corrections 13 and 14, "
+        "D-194). At 62 the pension gives way to a retirement pension "
         "and its holder, réputé inapte au travail, may claim the ASPA, which ends the ASI: "
         "typed past 62, it prices as that retirement pension would (D-190).",
     )

@@ -2748,3 +2748,273 @@ def test_the_neighbours_of_the_lone_parent_holding_the_card(voisin: str) -> None
     rows = _rows(_voisin(voisin))
     assert rows["parts_fiscales"] == parts
     assert rows["ir_avant_reductions"] == pytest.approx(impot, abs=0.01)
+
+
+# --------------------------------------------------------------------------- #
+# the ASI beside a spouse at the ASPA (docs/DECISIONS.md D-194)
+# --------------------------------------------------------------------------- #
+#: The ASPA's maximum for a couple, a year, from January 2024 (CSS art. D. 815-1, b; Cnav
+#: circular 2023-34), and its resource ceiling, which art. D. 815-2 sets at the same amount.
+ASPA_COUPLE_2024 = 18_854.02
+#: Below both couple ceilings, a couple where one spouse draws the ASI and the other the ASPA
+#: ends at half of each, whatever its resources: half the ASI's (D. 815-19, 2° c), month by
+#: month, and half the ASPA's (D. 815-1). 18 768.61 EUR over 2024.
+DEMI_PLAFONDS_2024 = _asi_by_hand(ASI_PLAFOND_COUPLE, 0.0) / 2 + ASPA_COUPLE_2024 / 2
+
+
+def _moities_by_hand(resources: float) -> tuple[float, float]:
+    """The ASI and the ASPA over 2024 of a couple where one spouse draws each, on `resources` a
+    year: half of each couple ceiling less half the resources, a month at a time."""
+    return (_asi_by_hand(ASI_PLAFOND_COUPLE, resources) / 2,
+            max(0.0, ASPA_COUPLE_2024 - resources) / 2)
+
+
+def _asi_aspa(invalidite: float = 6_000, retraite: float = 3_000, *, naissance: int = 1958,
+              second: bool = False, logement: dict[str, Any] | None = None,
+              pensionne: dict[str, Any] | None = None, **conjoint: Any) -> HouseholdInput:
+    """A married couple: an invalidity pensioner born in 1980, below the ASPA's age, and a spouse
+    born in `naissance` with a retirement pension, at the ASPA's age unless told otherwise.
+    `second` puts the pensioner second, as the famille's `conjoint`; `pensionne` and `conjoint`
+    add fields to each adult."""
+    invalide = _adulte(naissance=1980, pension_invalidite_annuelle=invalidite,
+                       **(pensionne or {}))
+    epoux = _adulte(naissance=naissance, pension_annuelle=retraite, **conjoint)
+    household = {"logement": logement} if logement is not None else {}
+    return _foyer(*((epoux, invalide) if second else (invalide, epoux)), **household)
+
+
+#: The households the D-194 tests price, each computed once.
+ASI_ASPA_CASES: dict[str, Any] = {
+    "milieu": lambda: _asi_aspa(),
+    "milieu_pensionne_second": lambda: _asi_aspa(second=True),
+    "pres_du_plafond": lambda: _asi_aspa(9_000, 6_000),
+    "sans_ressources": lambda: _asi_aspa(1_200, 0),
+    "au_dessus_du_plafond": lambda: _asi_aspa(12_000, 8_000),
+    "conjoint_invalide_de_62_ans": lambda: _foyer(
+        _adulte(naissance=1980, pension_invalidite_annuelle=6_000),
+        _adulte(naissance=1962, pension_invalidite_annuelle=3_000)),
+    "conjoint_a_60_pour_cent_de_62_ans": lambda: _asi_aspa(
+        naissance=1962, handicap={"taux_incapacite": 0.6}),
+    "aah_locataire": lambda: _asi_aspa(logement=RENTING,
+                                       pensionne={"handicap": {"taux_incapacite": 0.8}}),
+    "asi_sans_aah_locataire": lambda: _asi_aspa(
+        9_000, 0, logement=RENTING, pensionne={"handicap": {"taux_incapacite": 0.8}}),
+    "deux_pensionnes_d_invalidite": lambda: _couple_invalide(6_000, 6_000),
+    "conjoint_de_64_ans": lambda: _asi_aspa(naissance=1960),
+    "deux_a_l_aspa": lambda: _foyer(_adulte(naissance=1958, pension_annuelle=3_000),
+                                    _adulte(naissance=1957, pension_annuelle=3_000)),
+}
+
+
+@functools.cache
+def _asi_aspa_priced(name: str) -> tuple[dict[str, Any], list[float]]:
+    """One of `ASI_ASPA_CASES` built as `compute` builds the full tier: its rows, read through the
+    registry as the API reads them, and the ASI of each adult over 2024."""
+    simulation = _pinned(build_situation(ASI_ASPA_CASES[name](), 2024))
+    return (extract(simulation, 2024, "full"),
+            [float(value) for value in simulation.calculate_add("asi", "2024")])
+
+
+@pytest.mark.parametrize("name", ["milieu", "milieu_pensionne_second"],
+                         ids=["pensionné premier", "pensionné second"])
+def test_beside_a_spouse_at_the_aspa_the_asi_is_half_the_couple_ceiling_less_half_the_resources(
+    name: str,
+) -> None:
+    """CSS art. D. 815-19, 2° c: when the spouse « bénéficie de l'allocation de solidarité aux
+    personnes âgées », « le montant de l'allocation servie est égal à la différence entre la
+    moitié du plafond mentionné au 2° et la moitié des ressources du couple ». 6 000 EUR of
+    invalidity pension beside a spouse of 66 with 3 000 EUR of retirement pension: 377.51 EUR a
+    month to March, 412.12 from April, 4 841.60 over 2024, to the pensioner alone, whichever
+    adult heads the famille. openfisca priced that case against the ASPA's ceiling, then paid
+    nothing (D-190)."""
+    rows, each = _asi_aspa_priced(name)
+    asi, _ = _moities_by_hand(9_000)
+    paid = [asi, 0.0] if name == "milieu" else [0.0, asi]
+    assert each == [pytest.approx(value, abs=0.05) for value in paid]
+    assert rows["asi"] == pytest.approx(asi, abs=0.05)
+
+
+@pytest.mark.parametrize("name", ["milieu", "milieu_pensionne_second"],
+                         ids=["pensionné premier", "pensionné second"])
+def test_beside_a_spouse_at_the_asi_the_aspa_is_half_the_couple_amount(name: str) -> None:
+    """CSS art. D. 815-1: the couple's amount (b) « est servi par moitié à chacun des deux
+    allocataires concernés », and « Les dispositions du b sont également applicables pour le
+    calcul de l'allocation de solidarité aux personnes âgées servie au demandeur lorsque son
+    conjoint [...] bénéficie de l'allocation supplémentaire d'invalidité ». The couple's ASPA,
+    18 854.02 EUR less the 9 000 of resources (art. L. 815-9 and D. 815-2), halved: 4 927.01
+    EUR. openfisca paid half the couple maximum, 9 427.01 EUR, and would take off only half of
+    what the resources exceed half the ceiling by."""
+    rows, _ = _asi_aspa_priced(name)
+    _, aspa = _moities_by_hand(9_000)
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+
+
+@pytest.mark.parametrize(("name", "resources"), [
+    ("milieu", 9_000), ("pres_du_plafond", 15_000), ("sans_ressources", 1_200),
+], ids=["9 000", "15 000", "1 200"])
+def test_below_both_ceilings_the_couple_ends_at_half_of_each(name: str, resources: float) -> None:
+    """Each allowance is half its own couple ceiling less half the couple's resources, so the
+    couple ends at half the ASI's ceiling plus half the ASPA's, 18 768.61 EUR over 2024,
+    whatever its resources below them. openfisca left it at 18 427.01 EUR on 9 000, at
+    21 640.52 on 15 000, past both ceilings, and at 11 545.63 on 1 200, with the RSA."""
+    rows, _ = _asi_aspa_priced(name)
+    asi, aspa = _moities_by_hand(resources)
+    assert rows["asi"] == pytest.approx(asi, abs=0.05)
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+    assert rows["rsa"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(DEMI_PLAFONDS_2024, abs=0.05)
+
+
+def test_above_the_couple_ceilings_neither_half_is_due() -> None:
+    """12 000 EUR of invalidity pension and 8 000 of retirement pension, 1 666.67 EUR a month,
+    pass both couple ceilings: neither the ASI (art. L. 815-24-1) nor the ASPA (art. L. 815-9)
+    is due. openfisca paid 4 140.52 EUR of ASPA, 345.04 a month: half the couple maximum less
+    half of what the resources exceed half the ceiling by, a reduction the absent ASI was to
+    share."""
+    rows, each = _asi_aspa_priced("au_dessus_du_plafond")
+    assert each == [0.0, 0.0]
+    assert rows["aspa"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(20_000 - rows["ir"], abs=0.05)
+
+
+@pytest.mark.parametrize("name", ["conjoint_invalide_de_62_ans",
+                                  "conjoint_a_60_pour_cent_de_62_ans"],
+                         ids=["pension d'invalidité", "60 %"])
+def test_a_spouse_at_the_aspa_from_62_makes_the_same_halves(name: str) -> None:
+    """From 62 the ASPA opens to an invalidity pensioner, « réputé inapte au travail » (D-190),
+    and to anyone with an incapacity over 50 % (D-185). Such a spouse, born in 1962, beside a
+    pensioner below 62, 9 000 EUR between them: the same halves as at 66, whatever opened the
+    spouse's ASPA."""
+    rows, each = _asi_aspa_priced(name)
+    asi, aspa = _moities_by_hand(9_000)
+    assert each == [pytest.approx(asi, abs=0.05), 0.0]
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(DEMI_PLAFONDS_2024, abs=0.05)
+
+
+def test_the_halves_leave_two_asi_two_aspa_and_a_spouse_below_the_age_alone() -> None:
+    """Only a couple where one spouse draws each allowance changes. Two invalidity pensioners
+    keep the a), half of the couple's ASI each. A pensioner beside a spouse of 64, not yet at
+    the ASPA's age, keeps the cap of the b), 6 739.27 EUR (correction 10). Two pensioners at the
+    ASPA keep its couple amount, 18 854.02 EUR less their 6 000."""
+    rows, each = _asi_aspa_priced("deux_pensionnes_d_invalidite")
+    assert each == [pytest.approx(_asi_by_hand(ASI_PLAFOND_COUPLE, 12_000) / 2, abs=0.05)] * 2
+    assert rows["aspa"] == 0.0
+    rows, each = _asi_aspa_priced("conjoint_de_64_ans")
+    cap = (3 * (ASI_PLAFOND_SEUL[0] / 12 - PENSION_INVALIDITE_MINIMUM_2024)
+           + 9 * (ASI_PLAFOND_SEUL[1] / 12 - PENSION_INVALIDITE_MINIMUM_2024))
+    assert each == [pytest.approx(cap, abs=0.05), 0.0]
+    assert rows["aspa"] == 0.0
+    rows, each = _asi_aspa_priced("deux_a_l_aspa")
+    assert each == [0.0, 0.0]
+    assert rows["aspa"] == pytest.approx(ASPA_COUPLE_2024 - 6_000, abs=0.05)
+
+
+def test_the_month_the_spouse_reaches_65_the_cap_gives_way_to_the_halves() -> None:
+    """A spouse born on 1 July 1959, written by hand: the wire format carries birth years, read
+    as 1 January, so through it the age always turns in January. Until June the spouse is 64
+    and draws nothing, and the pensioner's ASI is capped at the single ceiling less the minimum
+    invalidity pension, 571.50 EUR in June (correction 10). In July the spouse is 65, the ASPA
+    opens, and the c) takes over: 412.12 EUR of ASI and 410.58 of ASPA. Over 2024, 5 783.02 EUR
+    of ASI and 2 463.50 of ASPA."""
+    situation = build_situation(_asi_aspa(naissance=1959), 2024)
+    situation["individus"]["adulte_1"]["date_naissance"] = {"ETERNITY": "1959-07-01"}
+    simulation = _pinned(situation)
+    cap = [ASI_PLAFOND_SEUL[0] / 12 - PENSION_INVALIDITE_MINIMUM_2024] * 3 + [
+        ASI_PLAFOND_SEUL[1] / 12 - PENSION_INVALIDITE_MINIMUM_2024] * 3
+    asi = (ASI_PLAFOND_COUPLE[1] / 12 - 750) / 2
+    aspa = (ASPA_COUPLE_2024 / 12 - 750) / 2
+    for month, (paid, family) in enumerate(zip(cap + [asi] * 6, [0.0] * 6 + [aspa] * 6,
+                                               strict=True), start=1):
+        period = f"2024-{month:02d}"
+        assert list(simulation.calculate("asi", period)) == [
+            pytest.approx(paid, abs=0.01), 0.0], period
+        assert float(simulation.calculate("aspa", period)[0]) == pytest.approx(
+            family, abs=0.01), period
+    assert float(simulation.calculate_add("asi", "2024").sum()) == pytest.approx(
+        sum(cap) + 6 * asi, abs=0.05)
+
+
+def test_an_aah_tops_up_the_half_asi_and_keeps_its_mva() -> None:
+    """At 80 %, renting, the pensioner's AAH tops the pension and the ASI of the month before up
+    to the AAH amount (CSS art. L. 821-1), so the half ASI now takes its place: the three are
+    the AAH amount, plus April's lag, 412.12 - 377.51 EUR. The MVA stays, the AAH being paid
+    « en complément d'un avantage [...] d'invalidité » (art. L. 821-1-2). The spouse's ASPA
+    leaves the pensioner's AAH out of the couple's resources, so it keeps its half. The housing
+    aid counts the incomes the income tax retains (CCH art. R. 822-4), where neither allowance
+    is: 4 048.11 EUR, as measured before the correction."""
+    rows, each = _asi_aspa_priced("aah_locataire")
+    asi, aspa = _moities_by_hand(9_000)
+    april = (ASI_PLAFOND_COUPLE[1] - ASI_PLAFOND_COUPLE[0]) / 12 / 2
+    assert each == [pytest.approx(asi, abs=0.05), 0.0]
+    assert rows["aah"] + 6_000 + asi == pytest.approx(AAH_2024 + april, abs=0.05)
+    assert rows["mva"] == pytest.approx(MVA_2024, abs=0.05)
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+    assert rows["aide_logement"] == pytest.approx(4_048.11, abs=0.05)
+
+
+def test_where_the_half_asi_leaves_no_aah_the_mva_rides_on_the_asi() -> None:
+    """9 000 EUR of invalidity pension at 80 %, renting, beside a spouse of 66 without pension:
+    750 EUR a month and the half ASI pass the AAH amount, so no AAH is paid. The MVA « est
+    également versée aux bénéficiaires de l'allocation supplémentaire d'invalidité » whose
+    incapacity reaches the AAH's rate (CSS art. L. 821-1-2), which openfisca's branch for the
+    ASI pays and correction 2 keeps."""
+    rows, each = _asi_aspa_priced("asi_sans_aah_locataire")
+    asi, aspa = _moities_by_hand(9_000)
+    assert each == [pytest.approx(asi, abs=0.05), 0.0]
+    assert rows["aah"] == 0.0
+    assert rows["mva"] == pytest.approx(MVA_2024, abs=0.05)
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+
+
+@pytest.mark.parametrize("name", ["milieu_pensionne_second", "aah_locataire", "sans_ressources"])
+def test_the_halves_price_the_same_whatever_is_computed_first(name: str) -> None:
+    """Built as `compute` builds the full tier, the housing aid pinned month by month (D-178,
+    D-179). Through the registry, as the API computes it, and with `revenu_disponible` first, as
+    the EMTR's bumped leg does: the ASI, the ASPA, the AAH, the MVA, the RSA, the housing aid
+    and the disposable income agree, with the pensioner second, beside an AAH in a dwelling,
+    and at the bottom, where openfisca paid the RSA."""
+    situation = build_situation(ASI_ASPA_CASES[name](), 2024)
+    registry = extract(_pinned(situation), 2024, "full")
+    first = _pinned(situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    assert disposable == pytest.approx(registry["revenu_disponible"], abs=0.05)
+    for key, variable in (("asi", "asi"), ("aspa", "aspa"), ("aah", "aah"), ("mva", "caah"),
+                          ("rsa", "rsa"), ("aide_logement", "aide_logement")):
+        assert float(first.calculate_add(variable, "2024").sum()) == pytest.approx(
+            registry[key], abs=0.05), key
+
+
+def test_the_engine_alone_pays_no_asi_beside_a_spouse_at_the_aspa() -> None:
+    """The kill test for correction 13: raw openfisca prices the c) against the ASPA's couple
+    ceiling, then pays it only in the cases of one beneficiary or of two at the ASI, which
+    leaves nothing. The pensioner is eligible to the ASI, the spouse to the ASPA, and the ASI
+    is nil. The day this fails, openfisca pays it, and the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(),
+                                                  build_situation(_asi_aspa(), 2024))
+    assert list(raw.calculate("asi_eligibilite", "2024-06")) == [True, False]
+    assert list(raw.calculate("aspa_eligibilite", "2024-06")) == [False, True]
+    assert list(raw.calculate("asi", "2024-06")) == [0.0, 0.0], (
+        "openfisca now pays the ASI beside a spouse at the ASPA: remove correction 13")
+
+
+def test_the_engine_alone_pays_the_aspa_beside_an_asi_spouse_half_the_couple_maximum() -> None:
+    """The kill test for correction 14: raw openfisca pays the spouse at the ASPA half the
+    couple maximum, 785.58 EUR in June 2024, the couple's 750 EUR of resources left aside, and
+    still 345.04 EUR to a couple whose 1 666.67 EUR a month pass the ceiling: half the maximum
+    less half of what the resources exceed half the ceiling by. The day this fails, openfisca
+    prices that ASPA otherwise, and the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    def raw_aspa(household: HouseholdInput) -> float:
+        raw = SimulationBuilder().build_from_entities(uncorrected_baseline(),
+                                                      build_situation(household, 2024))
+        return float(raw.calculate("aspa", "2024-06")[0])
+
+    half = ASPA_COUPLE_2024 / 24
+    assert raw_aspa(_asi_aspa()) == pytest.approx(half, abs=0.01), (
+        "openfisca now prices the ASPA beside an ASI spouse otherwise: remove correction 14")
+    assert raw_aspa(_asi_aspa(12_000, 8_000)) == pytest.approx(
+        half - (20_000 / 12 - half) / 2, abs=0.01)
