@@ -287,6 +287,54 @@ category only with the flag, and refuses a child of 20 (D-191).
 **Blast radius:** a child with a complément of the second to the fifth category. On the
 wire, the child's disability field. The population carries no disability, and nothing in it
 moves.
+
+---
+
+**Correction 12 — the ASI beside a spouse at the ASPA (CSS art. D. 815-19, 2° c), D-194.**
+
+When the spouse « bénéficie de l'allocation de solidarité aux personnes âgées visée à
+l'article L. 815-1 », « le montant de l'allocation servie est égal à la différence entre la
+moitié du plafond mentionné au 2° et la moitié des ressources du couple » (art. D. 815-19,
+2° c, since April 2020); the plafond of the 2° is the ASI's couple ceiling. openfisca prices
+that case against the ASPA's couple ceiling instead, then pays the ASI only to one
+allocataire or to two at the ASI: beside a spouse at the ASPA, nothing. Measured on 6 000 EUR
+of invalidity pension beside a spouse of 66 with 3 000 EUR of retirement pension: no ASI
+over 2024, against 4 841.60 EUR, 412.12 a month from April.
+
+The correction pays a parent eligible to the ASI, whose spouse is eligible to the ASPA, half
+the ASI's couple ceiling less half the couple's resources, on openfisca's own base. Wrapped
+around correction 10's formula, itself around openfisca's, which stand for every other case:
+`apply` wraps the `asi` that correction 10 left, so both hold. The two never meet, since
+correction 10 needs one allocataire in the famille and this one two. From April 2020, like
+the c).
+
+**Correction 13 — the ASPA beside a spouse at the ASI (CSS art. D. 815-1), D-194.**
+
+The couple's maximum « est servi par moitié à chacun des deux allocataires concernés », and
+« Les dispositions du b sont également applicables pour le calcul de l'allocation de
+solidarité aux personnes âgées servie au demandeur lorsque son conjoint [...] bénéficie de
+l'allocation supplémentaire d'invalidité » (art. D. 815-1, in force since April 2018); the
+allowance is reduced « à due concurrence » of what it and the resources pass the couple's
+ceiling by (art. L. 815-9 and D. 815-2). openfisca prices that case as before April 2020,
+when the ASI took its own half of a shared excess: half the couple maximum, less half of
+what the resources and the ASI pass half the ceiling by. With no ASI to take the other half,
+measured on the couple above: 9 427.01 EUR of ASPA over 2024 against 4 927.01, and 4 140.52
+EUR to a couple whose 20 000 EUR pass both ceilings, against nothing. The ASI it reads is the
+demandeur's if `maries`, the conjoint's otherwise, and neither builder sets `statut_marital`:
+fed correction 12's ASI, the same couple would draw 597.31 EUR a month of ASPA with the
+pensioner second and 785.58 with the pensioner first.
+
+The correction pays the famille half of the couple's ASPA as two beneficiaries draw it, the
+couple's maximum less what it and the resources pass the couple's ceiling by, on openfisca's
+own base: 410.58 EUR a month above. Neither allowance counts the other, so the couple ends at
+half of each ceiling, whatever its resources below them. Wrapped around openfisca's formula,
+which stands for every other famille. From April 2020, the date of openfisca's formula and
+of the c).
+
+**Blast radius, of both:** a couple where one spouse is eligible to the ASI and the other to
+the ASPA. On the wire, the invalidity pension field beside a spouse at the ASPA's age, from 65,
+or from 62 for an invalidity pensioner or an incapacity over 50 %. The population carries no
+invalidity pension, and nothing in it moves.
 """
 
 from __future__ import annotations
@@ -397,6 +445,24 @@ CORRECTIONS: tuple[Correction, ...] = (
         decision="D-191",
         kill_test="test_the_engine_alone_pays_each_complement_the_rate_of_the_category_below",
     ),
+    Correction(
+        name="asi_moitie_a_cote_d_un_conjoint_a_l_aspa",
+        citation="CSS art. D. 815-19, 2° c) — quand le conjoint bénéficie de l'ASPA, « le "
+                 "montant de l'allocation servie est égal à la différence entre la moitié du "
+                 "plafond mentionné au 2° et la moitié des ressources du couple »",
+        decision="D-194",
+        kill_test="test_the_engine_alone_pays_no_asi_beside_a_spouse_at_the_aspa",
+    ),
+    Correction(
+        name="aspa_moitie_a_cote_d_un_conjoint_a_l_asi",
+        citation="CSS art. D. 815-1 — le montant du couple « est servi par moitié à chacun des "
+                 "deux allocataires concernés », et « Les dispositions du b sont également "
+                 "applicables pour le calcul de l'allocation de solidarité aux personnes âgées "
+                 "servie au demandeur lorsque son conjoint [...] bénéficie de l'allocation "
+                 "supplémentaire d'invalidité »",
+        decision="D-194",
+        kill_test="test_the_engine_alone_pays_the_aspa_beside_an_asi_spouse_half_the_couple_maximum",
+    ),
 )
 
 AL_BASE = "aide_logement_base_ressources_individu"
@@ -431,8 +497,10 @@ PENSION_LEVIES = ("csg_imposable_retraite", "crds_retraite", "casa")
 #: The date of the levy formulas correction 9 wraps; before it, openfisca's net pensions stand.
 LEVIES_SINCE = "2019-01-01"
 ASI_AMOUNT = "asi"
+ASPA_AMOUNT = "aspa"
 #: Since this date the ASI is the ceiling less the resources (CSS art. L. 815-24-1), and
-#: art. D. 815-19 caps the lone beneficiary of a couple.
+#: art. D. 815-19 caps the lone beneficiary of a couple and halves the ASI beside a spouse at
+#: the ASPA; openfisca's formula for the ASPA starts on the same date.
 ASI_DIFFERENTIELLE_DEPUIS = "2020-04-01"
 #: The minimum invalidity pension of an employee (CSS art. L. 341-5), a month, from each date,
 #: as the Cnav circulars give it: 2022-22 for April 2020 to July 2022, then 2023-09, 2024-13,
@@ -481,6 +549,12 @@ def apply_to(system: Any) -> Any:
             self.update_variable(_asi_capped_for_a_lone_beneficiary_in_a_couple(asi_amount))
             aeeh_formula = self.get_variable(AEEH).get_formula("2006-01-01")
             self.update_variable(_aeeh_complement_at_its_own_category(aeeh_formula))
+            # Read after correction 10's update: correction 12 wraps the capped `asi`, so the
+            # variable keeps both.
+            asi_capped = self.get_variable(ASI_AMOUNT).get_formula(ASI_DIFFERENTIELLE_DEPUIS)
+            self.update_variable(_asi_half_beside_a_spouse_at_the_aspa(asi_capped))
+            aspa_amount = self.get_variable(ASPA_AMOUNT).get_formula(ASI_DIFFERENTIELLE_DEPUIS)
+            self.update_variable(_aspa_half_beside_a_spouse_at_the_asi(aspa_amount))
 
     return BenefitCorrections(system)
 
@@ -853,6 +927,93 @@ def _asi_capped_for_a_lone_beneficiary_in_a_couple(openfisca_formula: Any) -> An
             return where(seul_allocataire_du_couple, min_(montant, plafond), montant)
 
     return asi
+
+
+def _asi_half_beside_a_spouse_at_the_aspa(capped_formula: Any) -> Any:
+    """`asi`, for a parent whose spouse is eligible to the ASPA: half the ASI's couple ceiling
+    less half the couple's resources (CSS art. D. 815-19, 2° c). openfisca prices that case
+    against the ASPA's ceiling and pays it nothing. Correction 10's formula, itself around
+    openfisca's, stands for every other case."""
+    from openfisca_core.model_api import (
+        MONTH,
+        Variable,
+        calculate_output_add,
+        max_,
+        set_input_divide_by_period,
+        where,
+    )
+    from openfisca_france.entities import Famille, Individu
+
+    class asi(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Allocation supplémentaire d'invalidité (ASI), plafonnée pour le seul "
+                 "allocataire d'un couple, et à côté d'un conjoint à l'ASPA la moitié du "
+                 "plafond du couple moins la moitié des ressources (CSS art. D. 815-19, 2°)")
+        definition_period = MONTH
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042956446"
+        set_input = set_input_divide_by_period
+        calculate_output = calculate_output_add
+
+        def formula_2020_04_01(individu, period, parameters):
+            famille = individu.famille
+            a_cote_de_l_aspa = (
+                individu.has_role(Famille.DEMANDEUR)
+                * famille.demandeur("asi_eligibilite", period)
+                * famille.conjoint("aspa_eligibilite", period)
+                + individu.has_role(Famille.CONJOINT)
+                * famille.conjoint("asi_eligibilite", period)
+                * famille.demandeur("aspa_eligibilite", period))
+            plafond = parameters(period).prestations_sociales.prestations_etat_de_sante \
+                .invalidite.asi.plafond_ressource_couple / 12
+            moitie = max_(plafond - famille("asi_aspa_base_ressources", period), 0) / 2
+            return where(a_cote_de_l_aspa, moitie,
+                         capped_formula(individu, period, parameters))
+
+    return asi
+
+
+def _aspa_half_beside_a_spouse_at_the_asi(openfisca_formula: Any) -> Any:
+    """`aspa`, for a couple whose other spouse is eligible to the ASI: half of the couple's ASPA,
+    as two beneficiaries draw it (CSS art. D. 815-1). openfisca's formula otherwise."""
+    from openfisca_core.model_api import (
+        MONTH,
+        Variable,
+        calculate_output_add,
+        max_,
+        set_input_divide_by_period,
+        where,
+    )
+    from openfisca_france.entities import Famille
+
+    class aspa(Variable):  # openfisca's naming
+        calculate_output = calculate_output_add
+        value_type = float
+        entity = Famille
+        label = ("Allocation de solidarité aux personnes âgées ; à côté d'un conjoint à l'ASI, la "
+                 "moitié du montant du couple (CSS art. D. 815-1)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000036760292"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula_2020_04_01(famille, period, parameters):
+            a_cote_de_l_asi = (
+                famille.demandeur("aspa_eligibilite", period)
+                * famille.conjoint("asi_eligibilite", period)
+                + famille.conjoint("aspa_eligibilite", period)
+                * famille.demandeur("asi_eligibilite", period))
+            aspa = parameters(period).prestations_sociales.solidarite_insertion \
+                .minimum_vieillesse.aspa
+            # The b) of art. D. 815-1, as two beneficiaries draw it: the couple's maximum, less
+            # what it and the resources pass the couple's ceiling by (art. L. 815-9, D. 815-2).
+            maximum = aspa.montant_maximum_annuel.couples / 12
+            depassement = max_(famille("asi_aspa_base_ressources", period) + maximum
+                               - aspa.plafond_ressources.couples / 12, 0)
+            moitie = max_(maximum - depassement, 0) / 2
+            return where(a_cote_de_l_asi, moitie,
+                         openfisca_formula(famille, period, parameters))
+
+    return aspa
 
 
 def _aeeh_complement_at_its_own_category(openfisca_formula: Any) -> Any:
