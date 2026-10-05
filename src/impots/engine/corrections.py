@@ -319,10 +319,11 @@ ceiling by (art. L. 815-9 and D. 815-2). openfisca prices that case as before Ap
 when the ASI took its own half of a shared excess: half the couple maximum, less half of
 what the resources and the ASI pass half the ceiling by. With no ASI to take the other half,
 measured on the couple above: 9 427.01 EUR of ASPA over 2024 against 4 927.01, and 4 140.52
-EUR to a couple whose 20 000 EUR pass both ceilings, against nothing. The ASI it reads is the
-demandeur's if `maries`, the conjoint's otherwise, and neither builder sets `statut_marital`:
-fed correction 12's ASI, the same couple would draw 597.31 EUR a month of ASPA with the
-pensioner second and 785.58 with the pensioner first.
+EUR to a couple whose 20 000 EUR pass both ceilings, against nothing. Correction 12 alone
+would not mend it. The ASI the formula adds is the demandeur's if `maries`, the conjoint's
+otherwise (neither builder sets `statut_marital`), and it divides that monthly amount by
+twelve with the annual maximum: fed correction 12's ASI, the couple above still drew 9 427.01
+EUR, whichever spouse heads the famille (measured).
 
 The correction pays the famille half of the couple's ASPA as two beneficiaries draw it, the
 couple's maximum less what it and the resources pass the couple's ceiling by, on openfisca's
