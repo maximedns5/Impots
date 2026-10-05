@@ -11198,6 +11198,10 @@ Une mutation était fausse au premier essai : la variable renommée sans son `re
 chargeait plus, et 18 tests tombaient en erreur avant tout calcul. Corrigée, elle n'est
 prise que par le test de la carte.
 
+**Le gate.** `make gate` donne 1 599 réussis, 172 ignorés et 12 échecs, en 21 min 53 s.
+Les 12 échecs sont ceux de D-176 à D-191, faute de données dans ce conteneur. Les 17
+réussis de plus sont les tests ajoutés : 16 au moteur et 1 à la population.
+
 **Ce qui reste.**
 * **La lecture nette des ressources de l'ASS** (D-189) passe maintenant par le RFR. À côté
   de 24 000 € d'allocation chômage du conjoint, l'ASS monte de 268,23 € quand le RFR de N-2
