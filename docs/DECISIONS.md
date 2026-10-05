@@ -9921,6 +9921,229 @@ comparateur ne change.
 * Assemblée nationale, 14e législature, question écrite n° 99271, réponse publiée au JO le
   11 avril 2017, p. 2983.
 
+## D-188 — La carte d'invalidité entre dans le format d'entrée : la demi-part des cases P et F, et l'abattement de l'art. 157 bis doublé pour un couple
+
+**Le point de départ.** D-184 l'avait laissé : la demi-part d'invalidité (cases P et F) et
+l'abattement de l'art. 157 bis du CGI suivent la carte mobilité inclusion « invalidité »,
+« une demande à part et une case de la déclaration ». Aucun champ ne les portait. Le champ
+est là, et il a trouvé en entrant un défaut d'openfisca qui touche aussi les couples âgés.
+
+**Ce que dit la loi, pour les revenus de 2024.**
+* **La demi-part.** Le revenu des contribuables « célibataires, divorcés ou veufs n'ayant
+  pas d'enfant à leur charge » est divisé par 1,5 lorsqu'ils « Sont titulaires de la carte
+  « mobilité inclusion » portant la mention « invalidité » prévue à l'article L. 241-3 du
+  code de l'action sociale et des familles » (CGI, art. 195, 1, d bis). Les c et d du même 1
+  visent une pension militaire d'invalidité ou d'accident du travail d'au moins 40 %. Pour
+  un couple, le quotient « est augmenté d'une demi-part [...] lorsque l'un ou l'autre des
+  conjoints remplit l'une des conditions fixées aux c, d et d bis du 1 », et d'une part
+  « lorsque chacun des conjoints remplit l'une des conditions » (3 et 4). Le 5 donne la même
+  demi-part à la personne seule qui a des enfants à charge.
+* **Son plafond.** La réduction d'impôt du quotient familial « ne peut excéder 1 791 € par
+  demi-part ». Les titulaires de ces demi-parts « ont droit à une réduction d'impôt égale à
+  1 785 € pour chacune de ces demi-parts lorsque la réduction de leur cotisation d'impôt est
+  plafonnée en application du premier alinéa », qui « ne peut toutefois excéder
+  l'augmentation de la cotisation d'impôt résultant du plafonnement » (art. 197, I, 2). La
+  demi-part vaut donc au plus 3 576 €. Le BOFiP l'applique à la carte (BOI-IR-LIQ-20-20-20,
+  § 130 à 185).
+* **L'abattement.** « Le contribuable âgé de plus de soixante-cinq ans au 31 décembre de
+  l'année d'imposition, ou remplissant l'une des conditions d'invalidité mentionnées à
+  l'article 195, peut déduire de son revenu global net une somme de : - 2 796 € si ce
+  revenu n'excède pas 17 510 € ; - 1 398 € si ce revenu est compris entre 17 510 € et
+  28 170 €. » Et : « Dans le cas de personnes mariées soumises à une imposition commune, la
+  déduction prévue aux deuxième et troisième alinéas est doublée si les deux époux
+  remplissent les conditions d'âge ou d'invalidité » (art. 157 bis). Le BOFiP chiffre le
+  doublement : « 5 592 € pour les foyers dans lesquels chacun des membres du couple soumis à
+  imposition commune satisfait à ces mêmes conditions » (BOI-IR-BASE-40, § 60).
+* **Les prestations.** L'aide au logement déduit de ses ressources « L'abattement mentionné
+  à l'article 157 bis du code général des impôts pour les personnes nées avant le 1er
+  janvier 1931 et pour les personnes invalides » (CCH, art. R. 822-4, II, 2°). Les
+  prestations familiales déduisent « L'abattement mentionné à l'article 157 bis du code
+  général des impôts en faveur des personnes âgées ou invalides » (CSS, art. R. 532-3, b).
+
+**Qui a la carte, et ce que le champ représente.** « La mention « invalidité » est
+attribuée à toute personne dont le taux d'incapacité permanente est au moins de 80 % ou qui
+a été classée dans la catégorie mentionnée au 3° de l'article L. 341-4 du code de la
+sécurité sociale. » Et elle est « délivrée à titre définitif aux demandeurs et aux
+bénéficiaires de l'allocation prévue à l'article L. 232-1 classés dans le groupe 1 ou 2 de
+la grille nationale mentionnée à l'article L. 232-2, au vu de la seule décision
+d'attribution de l'allocation » (CASF, art. L. 241-3, I, 1° et II).
+* **Le champ.** `Adult.carte_invalidite`, un booléen, faux par défaut : la carte, ou la
+  carte d'invalidité qu'elle a remplacée, valable jusqu'à son expiration.
+* **Aucun taux n'est exigé à côté.** Un pensionné d'invalidité de 3e catégorie, ou un
+  bénéficiaire de l'APA en GIR 1 ou 2, a la carte sans qu'un taux de 80 % lui soit reconnu.
+  Lui faire saisir un taux pour passer un contrôle ouvrirait l'AAH.
+* **Aucun taux ne la donne.** Un taux de 80 % sans la carte n'ouvre rien : la carte se
+  demande à part. Le BOFiP admet la demi-part dès l'année de la demande
+  (BOI-IR-LIQ-10-20-20-20, § 70).
+* **Ce que le champ ne dit pas.** La case P couvre aussi les pensions d'au moins 40 % des c
+  et d. Le format d'entrée ne porte ni l'une ni l'autre, et le champ dit la carte.
+
+**Le câblage.** La carte du premier adulte est la case P, celle du second la case F : des
+booléens du foyer fiscal, écrits de N-2 à N comme le salaire. Deux lecteurs regardent en
+effet en arrière : l'aide au logement et les prestations familiales déduisent l'abattement
+des ressources de N-2, et la CSG d'un revenu de remplacement lit le RFR et les parts de N-2.
+Le drapeau individuel `invalidite` d'openfisca n'est pas posé : il ne compte que les enfants
+à charge (cases G et I). Sans historique, la case n'est écrite que sur N. La page reçoit une
+case à cocher sous chaque adulte, envoyée cochée ou non. Les lignes que la carte fait bouger
+(parts, RFR, IR, aide au logement) étaient déjà affichées.
+
+**Ce que fait openfisca.** La demi-part et son plafond sont justes : `nbptr` ajoute 0,5 par
+titulaire (`not31a`, `not41`, `not6`), et `ir_plaf_qf` applique 1 791 € puis 1 785 €.
+L'abattement est calculé deux fois : `abat_spe` pour l'impôt, et
+`abattements_speciaux_prestations_familiales` pour les prestations, sur N-2. Deux défauts.
+* **Le doublement.** Les deux variables additionnent les droits des deux époux comme des
+  booléens numpy, dont la somme est un « ou » logique : un seul abattement, quel que soit le
+  nombre d'époux qui y ont droit. La documentation du paramètre dit pourtant « abattement
+  doublé si le conjoint répond aux mêmes conditions ». Mesuré : deux retraités de plus de 65
+  ans à 8 000 € chacun, 14 400 € de revenu net, déduisaient 2 796 € au lieu de 5 592 € ;
+  deux titulaires de la carte de même ; pour les prestations, 2 620 € au lieu de 5 240 €
+  (revenus de 2022).
+* **Les plafonds.** La loi ferme chaque tranche à droite (« n'excède pas 17 510 € »), le
+  barème d'openfisca à gauche. Mesuré à 69 ans : 19 456 € de pension font 17 510 € de revenu
+  net, abattus de 1 398 € au lieu de 2 796 € (l'IR reste nul). 31 300 € font 28 170 € et
+  rien n'est abattu : 1 775 € d'IR au lieu de 1 551 €, soit 0,11 × (26 772 − 11 497) =
+  1 680,25 € moins une décote de 129 €.
+
+**Deux corrections dans `engine.corrections`, pour le doublement.** La correction 6 porte
+sur `abat_spe`, la 7 sur la copie des prestations. Chacune garde la formule d'openfisca et
+y ajoute l'abattement du second époux quand les deux y ont droit, sous le plafond
+d'openfisca au revenu net. Chacune compte les époux selon les critères de sa variable.
+* **L'impôt** : plus de 65 ans, ou la case P ou F. L'âge est lu au 1er janvier, la loi dit
+  au 31 décembre ; avec des naissances au 1er janvier, comme les écrivent les deux
+  constructeurs, c'est la même chose.
+* **Les prestations** : né avant 1931, ou la case P ou F. Un titulaire de la carte à côté
+  d'un conjoint de plus de 65 ans né après 1930 a donc deux abattements dans l'impôt, et un
+  seul dans l'aide au logement.
+* **Le test du registre** accepte déjà le CGI et le CCH : rien n'y change.
+
+**Ce qui n'est pas corrigé : les plafonds.** Le revenu net d'openfisca porte des millièmes
+d'euro, les mensualités étant en simple précision : 31 300 € de pension font
+28 170,001953125 €. Une tranche fermée à droite corrigerait les 17 510 € exacts, pas ce
+cas. Il faudrait pour cela arrondir le revenu à l'euro, comme le fait la déclaration, et
+ce serait un second écart à openfisca qu'aucun texte lu ici ne fonde. C'est un euro de
+large en deux points : noté, pas corrigé.
+
+**Ce que le moteur en fait, mesuré en 2024.**
+
+| ménage | sans la carte | avec la carte |
+|---|---:|---:|
+| seul, 40 000 € | 1 part, IR 2 023 € | 1,5 part, IR 1 073 € |
+| couple, 40 000 € et 20 000 €, une carte (P ou F) | 2 parts, IR 1 932 € | 2,5 parts, IR 1 014 € |
+| le même couple, deux cartes | 2 parts, IR 1 932 € | 3 parts, IR 95 € |
+| seul, né en 1980, 20 000 € | RFR 14 761,80 €, IR 0 € | RFR 11 965,80 €, IR 0 € |
+| seul, né en 1980, 38 000 € | RFR 28 047,43 €, IR 1 756 € | RFR 26 649,43 €, IR 613 € |
+| seul, 200 000 € | IR 45 906 € | IR 42 330 € |
+| couple, 10 000 € chacun, deux cartes | RFR 14 761,79 € | RFR 9 169,79 € |
+| locataire seul, 15 000 €, 500 € en zone 2 | aide 1 319,13 €, RD 15 914,34 € | aide 2 292,33 €, RD 16 887,54 € |
+| retraité né en 1960, 18 000 € de pension | RD 17 424 € | RD 18 000 € |
+
+Refait à la main :
+* **40 000 €.** 29 523,60 € de revenu net, au-dessus du plafond de l'abattement. Avec la
+  carte, 1,5 × 0,11 × (19 682,40 − 11 497) = 1 350,59 €. L'avantage de la demi-part,
+  671,97 €, reste sous son plafond. La décote, 889 − 45,25 % × 1 350,59 = 278 €, laisse
+  1 073 €.
+* **Le couple.** 44 285,40 € de revenu net. Deux parts paient 2 342,05 € avant une décote de
+  410 € ; 2,5 parts, 1 709,72 € avant 696 € ; trois parts, 1 077,38 € avant 982 €.
+* **L'abattement, sous 65 ans.** 14 761,80 € n'excèdent pas 17 510 € : 2 796 € sont
+  abattus. 28 047,43 € tombent entre les deux plafonds : 1 398 €, d'où 26 649,43 €, qui
+  paient 1 034,43 € sur 1,5 part avant une décote de 421 €.
+* **Le plafond.** À 200 000 €, 151 123,75 € de revenu net paient 45 905,69 € sur une part
+  et 37 878,16 € sur 1,5 part : la demi-part vaudrait 8 027,53 €. Plafonnée à 1 791 €, puis
+  réduite de 1 785 €, elle laisse 42 329,69 €, soit 42 330 €.
+* **Le couple à deux cartes.** 2 × 2 796 € sont abattus. Sans la correction 6, le RFR
+  restait à 11 965,79 €. L'IR est nul dans les deux cas : un couple sous 28 170 € de revenu
+  net ne doit rien.
+* **L'aide au logement.** L'abattement de 2022, 2 620 €, fait passer ses ressources de
+  11 100 € à 8 500 €, une fois arrondies à la centaine supérieure.
+* **La pension.** Sans la carte, un RFR de 2022 de 16 200 € paie le taux médian : 576 € de
+  CSG imposable, de CRDS et de CASA. Avec, 13 580 € passent sous le seuil d'exonération de
+  l'arbre pour 1,5 part, 12 230 + 3 265 €. L'abattement seul, ou la demi-part seule, laisse
+  le taux réduit : 17 910 € de RD, mesuré en épinglant le RFR de 2022.
+* **Les deux paliers.** Le palier léger et le palier complet donnent les mêmes valeurs sur
+  chaque ligne du palier léger, pour chacun de ces ménages.
+* **L'ordre de calcul.** Le locataire concorde entre l'ordre du registre et
+  `revenu_disponible` calculé d'abord (D-178), à 0,05 € près.
+
+**La population.** Elle ne porte aucune carte : aucune case P ou F n'y est écrite. Mais la
+correction 6 touche les couples dont les deux époux ont plus de 65 ans. Mesuré sur la
+fixture :
+* le RFR de 2024 baisse de 1 398 € pour 6 foyers sur 439 ;
+* celui de 2022 baisse de 1 310 € pour 2 foyers ;
+* un ménage sur 400 gagne 113,11 € de revenu disponible. Le RFR de 2022 de son foyer passe
+  de 19 048,42 € à 17 738,42 €, sous le seuil d'exonération de deux parts, 18 760 €. Ses
+  22 620,42 € de pension perdent leur CRDS, et leur CSG déductible, 859,58 €, que le revenu
+  disponible d'une pension déclarée ne retranche pas (D-176) ;
+* aucun IR, aucune aide au logement, aucun abattement des prestations ne bouge.
+
+`to_openfisca.WIRING` passe donc à « D-188 », comme pour D-180. Aucune ligne n'est ajoutée
+au registre, donc aucune colonne à la population.
+
+**Vus échouer, puis mutés.**
+* **Avant tout changement du code**, 16 tests tombaient : 12 du moteur, refusés par le
+  format d'entrée (« Extra inputs are not permitted ») ; celui de l'API, en 422 ; 3 de la
+  page, faute d'entrée qui envoie la carte. Les deux tests qui tuent passaient, comme ils le
+  doivent sur openfisca brut.
+* **Avec le champ, sans les corrections**, deux tombaient : deux titulaires gardaient un
+  RFR de 11 965,79 € au lieu de 9 169,79 €, et un abattement des prestations de 2 620 € au
+  lieu de 5 240 €.
+
+Sept mutations sont prises :
+* la carte écrite sur l'année N seule : quatre tests, la forme, l'aide au logement, la
+  pension et l'abattement des prestations ;
+* la correction 6 non appliquée : le test du doublement, et celui des prestations, par
+  l'IR de 2022 du couple mixte ;
+* le plafond au revenu net retiré : le couple à 3 100 € de revenu net, abattu de 5 592 € ;
+* les prestations comptant l'âge de 65 ans au lieu de 1931 : le couple mixte, 2 620 € au
+  lieu de 1 310 € ;
+* la correction 7 non appliquée : les deux titulaires, 2 620 € au lieu de 5 240 € ;
+* les cases P et F inversées : sept tests ;
+* la carte jamais envoyée par la page : trois tests de la page, et `check.mjs`.
+
+Le contrôle du plafond porte sur `abat_spe` et non sur le RFR, qu'openfisca borne à zéro :
+un contrôle sur le RFR d'un couple sans revenu n'aurait rien vu.
+
+**Le gate.** `make gate` donne 1 499 réussis, 172 ignorés et 12 échecs, en 16 min 52 s.
+Les 12 échecs sont ceux de D-176 à D-187, faute de données dans ce conteneur. Les 15
+réussis de plus sont les tests ajoutés : 14 au moteur et 1 à l'API.
+
+**Ce qui reste.**
+* **Les plafonds de l'abattement**, ci-dessus.
+* **La case 7DG.** Le plafond de 20 000 € du crédit pour l'emploi d'un salarié à domicile
+  va, selon la loi, aux pensionnés d'invalidité de 3e catégorie (CGI, art. 199 sexdecies,
+  3). Le BOFiP l'étend « en pratique » aux titulaires de la carte (BOI-IR-RICI-150-20,
+  § 180). Le champ ne la pose pas : elle suit aussi le complément d'AEEH et la pension
+  d'invalidité, qui sont d'autres chantiers. Mesuré : sur 18 000 € d'aide à domicile, le
+  crédit passerait de 6 000 € à 9 000 €.
+* **Les pensions d'au moins 40 %**, militaires ou d'accident du travail : la case P aussi,
+  sans champ.
+* **La carte d'un enfant à charge** (cases G et I, art. 195, 2) : un autre champ.
+* **Le parent seul titulaire de la carte.** openfisca ajoute la demi-part du 5 de l'art. 195
+  à la case T : 2,5 parts avec un enfant, et un IR qui passe de 154 € à zéro à 40 000 €.
+  Aucun texte lu n'exclut ce cumul, et la seule source trouvée qui l'affirme est un article
+  de presse : à vérifier.
+* **L'âge, pour les prestations familiales.** L'art. R. 532-3 du CSS déduit l'abattement
+  « en faveur des personnes âgées ou invalides », alors que la copie d'openfisca lit l'âge
+  de l'aide au logement : né avant 1931. Cela concerne des parents de plus de 65 ans avec
+  des enfants à charge : rare, et pas corrigé.
+* **La population complète.** Seul `make full` dira combien de couples âgés voient leur RFR
+  et la CSG de leurs pensions bouger, et ce que la réconciliation en garde.
+* **openfisca-france.** La somme de booléens des deux variables et les plafonds sont à
+  signaler en amont. La copie des prestations lit aussi l'âge du déclarant pour le conjoint.
+
+**Sources.**
+* CGI, art. 157 bis (version du 19 juin 2025 au 1er juillet 2026), art. 195 (version en
+  vigueur depuis le 1er janvier 2023), art. 197 et art. 199 sexdecies (versions du 16
+  février 2025 au 21 février 2026), lus sur Légifrance.
+* CASF, art. L. 241-3 (version du 1er janvier 2023 au 14 juin 2026), lu sur Légifrance.
+* CCH, art. R. 822-4 (version en vigueur depuis le 17 juin 2022), et CSS, art. R. 532-3
+  (version en vigueur depuis le 1er janvier 2021), lus sur Légifrance.
+* BOFiP : BOI-IR-BASE-40-20250414 (§ 10, 20 et 60) ; BOI-IR-LIQ-10-20-20-20-20230608
+  (§ 30, 35, 70, 90 et 100) ; BOI-IR-LIQ-20-20-20-20250414 (§ 130 à 185) ;
+  BOI-IR-RICI-150-20-20260812 (§ 170 et 180).
+* DGFiP, dépliant « Personnes handicapées, allègements fiscaux », édition 2019 :
+  « L'abattement est doublé si votre conjoint est également invalide ou âgé de plus de 65
+  ans. »
+
 ## D-189 — L'ASS entre dans le format d'entrée : la fin de droits, quatre refus et une correction
 
 **Le point de départ.** D-179 avait mesuré l'ASS en écrivant ses entrées à la main. D-183 notait
@@ -10049,7 +10272,7 @@ juste sous le RSA.
   en avril : 12,27, 12,83 et 9,64. C'est pourquoi le champ écrit `activite`. Le premier euro de
   salaire est alors pris comme le cumul le prend pendant ses trois premiers mois.
 
-**La correction 6 de `engine.corrections`.** openfisca lit une base par famille. Elle prend les
+**La correction 8 de `engine.corrections`.** openfisca lit une base par famille. Elle prend les
 ressources propres du premier parent, et celles du second avec, en plus, son allocation
 chômage. Un allocataire second parent ne voyait donc pas l'allocation du premier. Prenons
 24 000 € d'allocation brute à côté d'un allocataire sans ressources : l'ASS valait 1 263,50 €

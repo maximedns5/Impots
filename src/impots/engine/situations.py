@@ -126,6 +126,11 @@ def pin_benefit_history(simulation: Any, year: int) -> None:
 MINIMA_INPUTS = ("taux_incapacite", "pensions_invalidite", "handicap", "ass_precondition_remplie")
 
 
+#: The 2042 boxes the invalidity card is declared in, in the order of the adults: case P
+#: for the declarant, case F for the spouse (D-188).
+INVALIDITY_CASES = ("caseP", "caseF")
+
+
 def has_benefit_cascade(situation: dict[str, Any]) -> bool:
     """Whether `pin_benefit_history` has anything to protect in this situation.
 
@@ -339,6 +344,16 @@ def build_situation(
         # single parent with one child gets 1.5 parts instead of 2.0 and is
         # over-taxed. The Phase 0 spec does not mention it; see DECISIONS D-006.
         foyer_fiscal["caseT"] = _constant("caseT", True, years)
+    for adult, case in zip(household.adults, INVALIDITY_CASES, strict=False):
+        if adult.carte_invalidite:
+            # The card « mobilité inclusion » marked « invalidité »: case P for the
+            # declarant, F for the spouse, booleans of the foyer fiscal, and not
+            # openfisca's individual `invalidite`, which counts dependent children only
+            # (cases G and I). On every covered year, like the salary: the housing aid
+            # and the family benefits take the abatement of art. 157 bis it opens off the
+            # resources of N-2, and the CSG of a replacement income reads the RFR and the
+            # parts of N-2 (D-188).
+            foyer_fiscal[case] = _constant(case, True, years)
 
     return {
         "individus": individus,
