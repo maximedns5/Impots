@@ -9921,6 +9921,450 @@ comparateur ne change.
 * Assemblée nationale, 14e législature, question écrite n° 99271, réponse publiée au JO le
   11 avril 2017, p. 2983.
 
+## D-188 — La carte d'invalidité entre dans le format d'entrée : la demi-part des cases P et F, et l'abattement de l'art. 157 bis doublé pour un couple
+
+**Le point de départ.** D-184 l'avait laissé : la demi-part d'invalidité (cases P et F) et
+l'abattement de l'art. 157 bis du CGI suivent la carte mobilité inclusion « invalidité »,
+« une demande à part et une case de la déclaration ». Aucun champ ne les portait. Le champ
+est là, et il a trouvé en entrant un défaut d'openfisca qui touche aussi les couples âgés.
+
+**Ce que dit la loi, pour les revenus de 2024.**
+* **La demi-part.** Le revenu des contribuables « célibataires, divorcés ou veufs n'ayant
+  pas d'enfant à leur charge » est divisé par 1,5 lorsqu'ils « Sont titulaires de la carte
+  « mobilité inclusion » portant la mention « invalidité » prévue à l'article L. 241-3 du
+  code de l'action sociale et des familles » (CGI, art. 195, 1, d bis). Les c et d du même 1
+  visent une pension militaire d'invalidité ou d'accident du travail d'au moins 40 %. Pour
+  un couple, le quotient « est augmenté d'une demi-part [...] lorsque l'un ou l'autre des
+  conjoints remplit l'une des conditions fixées aux c, d et d bis du 1 », et d'une part
+  « lorsque chacun des conjoints remplit l'une des conditions » (3 et 4). Le 5 donne la même
+  demi-part à la personne seule qui a des enfants à charge.
+* **Son plafond.** La réduction d'impôt du quotient familial « ne peut excéder 1 791 € par
+  demi-part ». Les titulaires de ces demi-parts « ont droit à une réduction d'impôt égale à
+  1 785 € pour chacune de ces demi-parts lorsque la réduction de leur cotisation d'impôt est
+  plafonnée en application du premier alinéa », qui « ne peut toutefois excéder
+  l'augmentation de la cotisation d'impôt résultant du plafonnement » (art. 197, I, 2). La
+  demi-part vaut donc au plus 3 576 €. Le BOFiP l'applique à la carte (BOI-IR-LIQ-20-20-20,
+  § 130 à 185).
+* **L'abattement.** « Le contribuable âgé de plus de soixante-cinq ans au 31 décembre de
+  l'année d'imposition, ou remplissant l'une des conditions d'invalidité mentionnées à
+  l'article 195, peut déduire de son revenu global net une somme de : - 2 796 € si ce
+  revenu n'excède pas 17 510 € ; - 1 398 € si ce revenu est compris entre 17 510 € et
+  28 170 €. » Et : « Dans le cas de personnes mariées soumises à une imposition commune, la
+  déduction prévue aux deuxième et troisième alinéas est doublée si les deux époux
+  remplissent les conditions d'âge ou d'invalidité » (art. 157 bis). Le BOFiP chiffre le
+  doublement : « 5 592 € pour les foyers dans lesquels chacun des membres du couple soumis à
+  imposition commune satisfait à ces mêmes conditions » (BOI-IR-BASE-40, § 60).
+* **Les prestations.** L'aide au logement déduit de ses ressources « L'abattement mentionné
+  à l'article 157 bis du code général des impôts pour les personnes nées avant le 1er
+  janvier 1931 et pour les personnes invalides » (CCH, art. R. 822-4, II, 2°). Les
+  prestations familiales déduisent « L'abattement mentionné à l'article 157 bis du code
+  général des impôts en faveur des personnes âgées ou invalides » (CSS, art. R. 532-3, b).
+
+**Qui a la carte, et ce que le champ représente.** « La mention « invalidité » est
+attribuée à toute personne dont le taux d'incapacité permanente est au moins de 80 % ou qui
+a été classée dans la catégorie mentionnée au 3° de l'article L. 341-4 du code de la
+sécurité sociale. » Et elle est « délivrée à titre définitif aux demandeurs et aux
+bénéficiaires de l'allocation prévue à l'article L. 232-1 classés dans le groupe 1 ou 2 de
+la grille nationale mentionnée à l'article L. 232-2, au vu de la seule décision
+d'attribution de l'allocation » (CASF, art. L. 241-3, I, 1° et II).
+* **Le champ.** `Adult.carte_invalidite`, un booléen, faux par défaut : la carte, ou la
+  carte d'invalidité qu'elle a remplacée, valable jusqu'à son expiration.
+* **Aucun taux n'est exigé à côté.** Un pensionné d'invalidité de 3e catégorie, ou un
+  bénéficiaire de l'APA en GIR 1 ou 2, a la carte sans qu'un taux de 80 % lui soit reconnu.
+  Lui faire saisir un taux pour passer un contrôle ouvrirait l'AAH.
+* **Aucun taux ne la donne.** Un taux de 80 % sans la carte n'ouvre rien : la carte se
+  demande à part. Le BOFiP admet la demi-part dès l'année de la demande
+  (BOI-IR-LIQ-10-20-20-20, § 70).
+* **Ce que le champ ne dit pas.** La case P couvre aussi les pensions d'au moins 40 % des c
+  et d. Le format d'entrée ne porte ni l'une ni l'autre, et le champ dit la carte.
+
+**Le câblage.** La carte du premier adulte est la case P, celle du second la case F : des
+booléens du foyer fiscal, écrits de N-2 à N comme le salaire. Deux lecteurs regardent en
+effet en arrière : l'aide au logement et les prestations familiales déduisent l'abattement
+des ressources de N-2, et la CSG d'un revenu de remplacement lit le RFR et les parts de N-2.
+Le drapeau individuel `invalidite` d'openfisca n'est pas posé : il ne compte que les enfants
+à charge (cases G et I). Sans historique, la case n'est écrite que sur N. La page reçoit une
+case à cocher sous chaque adulte, envoyée cochée ou non. Les lignes que la carte fait bouger
+(parts, RFR, IR, aide au logement) étaient déjà affichées.
+
+**Ce que fait openfisca.** La demi-part et son plafond sont justes : `nbptr` ajoute 0,5 par
+titulaire (`not31a`, `not41`, `not6`), et `ir_plaf_qf` applique 1 791 € puis 1 785 €.
+L'abattement est calculé deux fois : `abat_spe` pour l'impôt, et
+`abattements_speciaux_prestations_familiales` pour les prestations, sur N-2. Deux défauts.
+* **Le doublement.** Les deux variables additionnent les droits des deux époux comme des
+  booléens numpy, dont la somme est un « ou » logique : un seul abattement, quel que soit le
+  nombre d'époux qui y ont droit. La documentation du paramètre dit pourtant « abattement
+  doublé si le conjoint répond aux mêmes conditions ». Mesuré : deux retraités de plus de 65
+  ans à 8 000 € chacun, 14 400 € de revenu net, déduisaient 2 796 € au lieu de 5 592 € ;
+  deux titulaires de la carte de même ; pour les prestations, 2 620 € au lieu de 5 240 €
+  (revenus de 2022).
+* **Les plafonds.** La loi ferme chaque tranche à droite (« n'excède pas 17 510 € »), le
+  barème d'openfisca à gauche. Mesuré à 69 ans : 19 456 € de pension font 17 510 € de revenu
+  net, abattus de 1 398 € au lieu de 2 796 € (l'IR reste nul). 31 300 € font 28 170 € et
+  rien n'est abattu : 1 775 € d'IR au lieu de 1 551 €, soit 0,11 × (26 772 − 11 497) =
+  1 680,25 € moins une décote de 129 €.
+
+**Deux corrections dans `engine.corrections`, pour le doublement.** La correction 6 porte
+sur `abat_spe`, la 7 sur la copie des prestations. Chacune garde la formule d'openfisca et
+y ajoute l'abattement du second époux quand les deux y ont droit, sous le plafond
+d'openfisca au revenu net. Chacune compte les époux selon les critères de sa variable.
+* **L'impôt** : plus de 65 ans, ou la case P ou F. L'âge est lu au 1er janvier, la loi dit
+  au 31 décembre ; avec des naissances au 1er janvier, comme les écrivent les deux
+  constructeurs, c'est la même chose.
+* **Les prestations** : né avant 1931, ou la case P ou F. Un titulaire de la carte à côté
+  d'un conjoint de plus de 65 ans né après 1930 a donc deux abattements dans l'impôt, et un
+  seul dans l'aide au logement.
+* **Le test du registre** accepte déjà le CGI et le CCH : rien n'y change.
+
+**Ce qui n'est pas corrigé : les plafonds.** Le revenu net d'openfisca porte des millièmes
+d'euro, les mensualités étant en simple précision : 31 300 € de pension font
+28 170,001953125 €. Une tranche fermée à droite corrigerait les 17 510 € exacts, pas ce
+cas. Il faudrait pour cela arrondir le revenu à l'euro, comme le fait la déclaration, et
+ce serait un second écart à openfisca qu'aucun texte lu ici ne fonde. C'est un euro de
+large en deux points : noté, pas corrigé.
+
+**Ce que le moteur en fait, mesuré en 2024.**
+
+| ménage | sans la carte | avec la carte |
+|---|---:|---:|
+| seul, 40 000 € | 1 part, IR 2 023 € | 1,5 part, IR 1 073 € |
+| couple, 40 000 € et 20 000 €, une carte (P ou F) | 2 parts, IR 1 932 € | 2,5 parts, IR 1 014 € |
+| le même couple, deux cartes | 2 parts, IR 1 932 € | 3 parts, IR 95 € |
+| seul, né en 1980, 20 000 € | RFR 14 761,80 €, IR 0 € | RFR 11 965,80 €, IR 0 € |
+| seul, né en 1980, 38 000 € | RFR 28 047,43 €, IR 1 756 € | RFR 26 649,43 €, IR 613 € |
+| seul, 200 000 € | IR 45 906 € | IR 42 330 € |
+| couple, 10 000 € chacun, deux cartes | RFR 14 761,79 € | RFR 9 169,79 € |
+| locataire seul, 15 000 €, 500 € en zone 2 | aide 1 319,13 €, RD 15 914,34 € | aide 2 292,33 €, RD 16 887,54 € |
+| retraité né en 1960, 18 000 € de pension | RD 17 424 € | RD 18 000 € |
+
+Refait à la main :
+* **40 000 €.** 29 523,60 € de revenu net, au-dessus du plafond de l'abattement. Avec la
+  carte, 1,5 × 0,11 × (19 682,40 − 11 497) = 1 350,59 €. L'avantage de la demi-part,
+  671,97 €, reste sous son plafond. La décote, 889 − 45,25 % × 1 350,59 = 278 €, laisse
+  1 073 €.
+* **Le couple.** 44 285,40 € de revenu net. Deux parts paient 2 342,05 € avant une décote de
+  410 € ; 2,5 parts, 1 709,72 € avant 696 € ; trois parts, 1 077,38 € avant 982 €.
+* **L'abattement, sous 65 ans.** 14 761,80 € n'excèdent pas 17 510 € : 2 796 € sont
+  abattus. 28 047,43 € tombent entre les deux plafonds : 1 398 €, d'où 26 649,43 €, qui
+  paient 1 034,43 € sur 1,5 part avant une décote de 421 €.
+* **Le plafond.** À 200 000 €, 151 123,75 € de revenu net paient 45 905,69 € sur une part
+  et 37 878,16 € sur 1,5 part : la demi-part vaudrait 8 027,53 €. Plafonnée à 1 791 €, puis
+  réduite de 1 785 €, elle laisse 42 329,69 €, soit 42 330 €.
+* **Le couple à deux cartes.** 2 × 2 796 € sont abattus. Sans la correction 6, le RFR
+  restait à 11 965,79 €. L'IR est nul dans les deux cas : un couple sous 28 170 € de revenu
+  net ne doit rien.
+* **L'aide au logement.** L'abattement de 2022, 2 620 €, fait passer ses ressources de
+  11 100 € à 8 500 €, une fois arrondies à la centaine supérieure.
+* **La pension.** Sans la carte, un RFR de 2022 de 16 200 € paie le taux médian : 576 € de
+  CSG imposable, de CRDS et de CASA. Avec, 13 580 € passent sous le seuil d'exonération de
+  l'arbre pour 1,5 part, 12 230 + 3 265 €. L'abattement seul, ou la demi-part seule, laisse
+  le taux réduit : 17 910 € de RD, mesuré en épinglant le RFR de 2022.
+* **Les deux paliers.** Le palier léger et le palier complet donnent les mêmes valeurs sur
+  chaque ligne du palier léger, pour chacun de ces ménages.
+* **L'ordre de calcul.** Le locataire concorde entre l'ordre du registre et
+  `revenu_disponible` calculé d'abord (D-178), à 0,05 € près.
+
+**La population.** Elle ne porte aucune carte : aucune case P ou F n'y est écrite. Mais la
+correction 6 touche les couples dont les deux époux ont plus de 65 ans. Mesuré sur la
+fixture :
+* le RFR de 2024 baisse de 1 398 € pour 6 foyers sur 439 ;
+* celui de 2022 baisse de 1 310 € pour 2 foyers ;
+* un ménage sur 400 gagne 113,11 € de revenu disponible. Le RFR de 2022 de son foyer passe
+  de 19 048,42 € à 17 738,42 €, sous le seuil d'exonération de deux parts, 18 760 €. Ses
+  22 620,42 € de pension perdent leur CRDS, et leur CSG déductible, 859,58 €, que le revenu
+  disponible d'une pension déclarée ne retranche pas (D-176) ;
+* aucun IR, aucune aide au logement, aucun abattement des prestations ne bouge.
+
+`to_openfisca.WIRING` passe donc à « D-188 », comme pour D-180. Aucune ligne n'est ajoutée
+au registre, donc aucune colonne à la population.
+
+**Vus échouer, puis mutés.**
+* **Avant tout changement du code**, 16 tests tombaient : 12 du moteur, refusés par le
+  format d'entrée (« Extra inputs are not permitted ») ; celui de l'API, en 422 ; 3 de la
+  page, faute d'entrée qui envoie la carte. Les deux tests qui tuent passaient, comme ils le
+  doivent sur openfisca brut.
+* **Avec le champ, sans les corrections**, deux tombaient : deux titulaires gardaient un
+  RFR de 11 965,79 € au lieu de 9 169,79 €, et un abattement des prestations de 2 620 € au
+  lieu de 5 240 €.
+
+Sept mutations sont prises :
+* la carte écrite sur l'année N seule : quatre tests, la forme, l'aide au logement, la
+  pension et l'abattement des prestations ;
+* la correction 6 non appliquée : le test du doublement, et celui des prestations, par
+  l'IR de 2022 du couple mixte ;
+* le plafond au revenu net retiré : le couple à 3 100 € de revenu net, abattu de 5 592 € ;
+* les prestations comptant l'âge de 65 ans au lieu de 1931 : le couple mixte, 2 620 € au
+  lieu de 1 310 € ;
+* la correction 7 non appliquée : les deux titulaires, 2 620 € au lieu de 5 240 € ;
+* les cases P et F inversées : sept tests ;
+* la carte jamais envoyée par la page : trois tests de la page, et `check.mjs`.
+
+Le contrôle du plafond porte sur `abat_spe` et non sur le RFR, qu'openfisca borne à zéro :
+un contrôle sur le RFR d'un couple sans revenu n'aurait rien vu.
+
+**Le gate.** `make gate` donne 1 499 réussis, 172 ignorés et 12 échecs, en 16 min 52 s.
+Les 12 échecs sont ceux de D-176 à D-187, faute de données dans ce conteneur. Les 15
+réussis de plus sont les tests ajoutés : 14 au moteur et 1 à l'API.
+
+**Ce qui reste.**
+* **Les plafonds de l'abattement**, ci-dessus.
+* **La case 7DG.** Le plafond de 20 000 € du crédit pour l'emploi d'un salarié à domicile
+  va, selon la loi, aux pensionnés d'invalidité de 3e catégorie (CGI, art. 199 sexdecies,
+  3). Le BOFiP l'étend « en pratique » aux titulaires de la carte (BOI-IR-RICI-150-20,
+  § 180). Le champ ne la pose pas : elle suit aussi le complément d'AEEH et la pension
+  d'invalidité, qui sont d'autres chantiers. Mesuré : sur 18 000 € d'aide à domicile, le
+  crédit passerait de 6 000 € à 9 000 €.
+* **Les pensions d'au moins 40 %**, militaires ou d'accident du travail : la case P aussi,
+  sans champ.
+* **La carte d'un enfant à charge** (cases G et I, art. 195, 2) : un autre champ.
+* **Le parent seul titulaire de la carte.** openfisca ajoute la demi-part du 5 de l'art. 195
+  à la case T : 2,5 parts avec un enfant, et un IR qui passe de 154 € à zéro à 40 000 €.
+  Aucun texte lu n'exclut ce cumul, et la seule source trouvée qui l'affirme est un article
+  de presse : à vérifier.
+* **L'âge, pour les prestations familiales.** L'art. R. 532-3 du CSS déduit l'abattement
+  « en faveur des personnes âgées ou invalides », alors que la copie d'openfisca lit l'âge
+  de l'aide au logement : né avant 1931. Cela concerne des parents de plus de 65 ans avec
+  des enfants à charge : rare, et pas corrigé.
+* **La population complète.** Seul `make full` dira combien de couples âgés voient leur RFR
+  et la CSG de leurs pensions bouger, et ce que la réconciliation en garde.
+* **openfisca-france.** La somme de booléens des deux variables et les plafonds sont à
+  signaler en amont. La copie des prestations lit aussi l'âge du déclarant pour le conjoint.
+
+**Sources.**
+* CGI, art. 157 bis (version du 19 juin 2025 au 1er juillet 2026), art. 195 (version en
+  vigueur depuis le 1er janvier 2023), art. 197 et art. 199 sexdecies (versions du 16
+  février 2025 au 21 février 2026), lus sur Légifrance.
+* CASF, art. L. 241-3 (version du 1er janvier 2023 au 14 juin 2026), lu sur Légifrance.
+* CCH, art. R. 822-4 (version en vigueur depuis le 17 juin 2022), et CSS, art. R. 532-3
+  (version en vigueur depuis le 1er janvier 2021), lus sur Légifrance.
+* BOFiP : BOI-IR-BASE-40-20250414 (§ 10, 20 et 60) ; BOI-IR-LIQ-10-20-20-20-20230608
+  (§ 30, 35, 70, 90 et 100) ; BOI-IR-LIQ-20-20-20-20250414 (§ 130 à 185) ;
+  BOI-IR-RICI-150-20-20260812 (§ 170 et 180).
+* DGFiP, dépliant « Personnes handicapées, allègements fiscaux », édition 2019 :
+  « L'abattement est doublé si votre conjoint est également invalide ou âgé de plus de 65
+  ans. »
+
+## D-189 — L'ASS entre dans le format d'entrée : la fin de droits, quatre refus et une correction
+
+**Le point de départ.** D-179 avait mesuré l'ASS en écrivant ses entrées à la main. D-183 notait
+qu'elle « demande `ass_precondition_remplie` et un chômeur en fin de droits : un champ de plus, et
+`activite` avec lui ». Le README disait encore « nothing that opens the ASI or the ASS ». Le
+calculateur ne savait donc pas dire un chômeur de longue durée.
+
+**Ce que dit la loi.** Le Code du travail a été lu sur le Code du travail numérique (texte en
+vigueur), et la version de 2024 vérifiée sur Légifrance là où le texte a changé depuis.
+* **Qui y a droit.** « Ont droit à une allocation de solidarité spécifique les travailleurs
+  privés d'emploi qui ont épuisé leurs droits à l'allocation d'assurance, qui ne satisfont pas
+  aux conditions pour bénéficier de l'allocation des travailleurs indépendants […] et qui
+  satisfont à des conditions d'activité antérieure et de ressources » (art. L. 5423-1, en
+  vigueur depuis le 23 août 2019). L'allocataire de l'ARE de 50 ans ou plus peut aussi opter
+  pour l'ASS, et « le versement de l'allocation d'assurance est interrompu » (art. L. 5423-2).
+* **L'activité antérieure.** Il faut justifier « de cinq ans d'activité salariée dans les dix
+  ans précédant la fin du contrat de travail à partir de laquelle ont été ouverts leurs droits
+  aux allocations d'assurance », réduits d'un an par enfant élevé, dans la limite de trois
+  (art. R. 5423-1, 1°). Il faut aussi chercher un emploi (2°).
+* **Le plafond.** Les ressources mensuelles doivent être « inférieures à un plafond
+  correspondant à 70 fois le montant journalier de l'allocation pour une personne seule et 110
+  fois le même montant pour un couple » (3°). Elles « comprennent l'allocation de solidarité
+  ainsi que les autres ressources de l'intéressé et, le cas échéant, de son conjoint […],
+  telles qu'elles doivent être déclarées à l'administration fiscale pour le calcul de l'impôt
+  sur le revenu avant déduction des divers abattements ». Le montant retenu est « le douzième
+  du total des ressources perçues pendant les douze mois précédant » la demande (art.
+  R. 5423-2). L'allocation chômage « précédemment perçue par l'intéressé » n'en fait pas partie
+  (art. R. 5423-3, 1°), ni une ressource dont la perception est « interrompue de manière
+  certaine » (art. R. 5423-5).
+* **La réduction près du plafond.** Au-delà, « l'allocation n'est versée qu'à concurrence d'un
+  montant global de ressources égal au plafond » (art. R. 5423-6). Elle « n'est pas versée
+  lorsque le montant mensuel dû est inférieur au taux journalier » (art. R. 5423-13).
+* **Le montant de 2024.** « Le montant journalier de l'allocation de solidarité spécifique est
+  fixé à 18,17 euros, à compter du 1er avril 2023 » (décret n° 2023-301, art. 1er), puis « à
+  19,01 euros à compter du 1er avril 2024 » (décret n° 2024-341, art. 1er). Un mois de 30 jours
+  vaut 545,10 €, puis 570,30 €. Le plafond d'une personne seule vaut 1 271,90 €, puis
+  1 330,70 € ; celui d'un couple, 1 998,70 €, puis 2 091,10 €.
+* **Le cumul avec une activité.** Depuis le 1er septembre 2017, la rémunération « est
+  intégralement cumulée avec le versement de l'allocation de solidarité spécifique pendant une
+  période de trois mois, consécutifs ou non ». Et « Tout mois civil au cours duquel une activité
+  même occasionnelle ou réduite a été exercée est pris en compte » (art. R. 5425-2). Pour la
+  suite, service-public.fr : « Si votre activité professionnelle se poursuit, le versement de
+  l'ASS est interrompu. »
+* **L'âge.** Dans sa version du 1er septembre 2023 au 1er janvier 2026, l'art. L. 5421-4 arrête
+  le revenu de remplacement « 1° Aux allocataires ayant atteint l'âge prévu à l'article
+  L. 161-17-2 du code de la sécurité sociale justifiant de la durée d'assurance […] requise pour
+  l'ouverture du droit à une pension de vieillesse à taux plein », et « 2° Aux allocataires
+  atteignant l'âge prévu au 1° de l'article L. 351-8 du même code ». Cet âge est celui de
+  L. 161-17-2 « augmenté de trois années » (CSS, art. L. 351-8, 1°), soit 64 + 3 = 67 ans.
+  L'âge légal vaut « Soixante-deux ans pour les assurés nés entre le 1er janvier 1955 et le
+  31 août 1961 inclus », puis « Soixante-deux ans et six mois pour les assurés nés en 1962 »
+  (CSS, art. D. 161-2-1-9, dans la rédaction du décret n° 2023-436). Service-public.fr le dit
+  ainsi : « Si vous avez suffisamment de trimestres pour percevoir une retraite à taux plein,
+  vous ne pouvez pas toucher l'ASS après l'âge légal de départ à la retraite. »
+* **L'AAH.** L'ASS « ne peut être cumulée avec l'allocation aux adultes handicapés […] dès lors
+  qu'un versement a été effectué au titre de cette dernière allocation » (art. L. 5423-7).
+* **La réforme annoncée.** Le 30 janvier 2024, le Premier ministre a dit : « nous proposerons la
+  bascule de l'allocation de solidarité spécifique au RSA et la suppression de cette
+  allocation » (cité par Previssima le 31 janvier 2024 ; le compte rendu de l'Assemblée n'a pas
+  pu être lu, le site ne répondait pas). Rien n'en est entré dans la loi. L'art. L. 5423-1 est
+  inchangé depuis 2019, le décret d'avril 2024 a revalorisé l'allocation, et service-public.fr
+  la décrit encore en 2026, à 19,48 € par jour. La loi de 2024 est celle de ce paragraphe.
+
+**Ce que fait openfisca.** L'ASS d'un mois vaut le plus petit de 30 montants journaliers et du
+plafond moins le douzième des ressources des douze mois précédents. Elle est nulle sous un
+montant journalier. Elle est ouverte par `ass_precondition_remplie`, sans allocation chômage
+le mois même, sans AAH, et jusqu'à 789 mois d'âge. Mesuré, la condition seule l'ouvre à qui
+n'a pas de salaire. `activite` décide de ce que fait un salaire : un demandeur d'emploi
+(`chomeur`) garde l'ASS quel que soit son salaire. Sinon, openfisca compte les mois de cumul et
+l'arrête au quatrième. L'ASS compte dans le RSA (moyenne des trois mois précédents), dans la
+prime d'activité et dans la prime de Noël. Elle n'entre ni dans l'impôt sur le revenu, ni dans
+l'aide au logement.
+
+**Le champ.** `Adult.fin_de_droits_ass` dit un demandeur d'emploi en fin de droits qui remplit
+la condition d'activité. Le constructeur écrit `ass_precondition_remplie` et `activite` à
+`chomeur` sur chaque mois de N-2 à N, comme le salaire. Le contrôle des ressources reste celui
+du moteur. `ass_precondition_remplie` est dans `MINIMA_INPUTS` depuis D-179 : l'historique des
+prestations est épinglé, même sans logement. Une ligne de sortie `ass` (individu, mensuelle,
+palier complet) suit celle du RSA. La page reçoit une case par adulte, et une ligne discrète
+juste sous le RSA.
+
+**Quatre refus, chacun une erreur 422 qui dit pourquoi.**
+* **À côté d'un salaire.** Le salaire est écrit sur chaque mois de trois années. Ce n'est pas
+  le cumul de trois mois de l'art. R. 5425-2. Avec `activite` à `chomeur`, openfisca verserait
+  l'ASS à côté, sans fin.
+* **À côté d'une allocation chômage.** L'ARE et l'ASS ne sont jamais versées pour les mêmes mois
+  (art. L. 5423-1 et L. 5423-2). Le format répartit le chômage sur chaque mois, et ne sait pas
+  dire leur succession. openfisca, lui, ne verserait aucune ASS, sans rien dire.
+* **À partir de l'année des 62 ans.** Dès l'âge légal, l'ASS dépend de la durée d'assurance,
+  que le format ne porte pas. Le refus est dans le constructeur, qui connaît l'année.
+* **Deux allocataires à côté d'une pension.** Les ressources de chacun comprennent l'ASS de
+  l'autre (art. R. 5423-2), et openfisca ne la compte pas. Sans autre ressource, deux ASS
+  pleines restent sous le plafond du couple : 60 montants journaliers contre 110. Le cas est
+  alors accepté, et vaut 13 536,00 €.
+
+**Ce que le moteur en fait, mesuré et refait à la main, en 2024.**
+* **Seul, sans ressources.** 3 × 545,10 + 9 × 570,30 = 6 768,00 € d'ASS. Le RSA comble la
+  différence avec son montant forfaitaire, sur la moyenne des trois mois précédents : 607,75 −
+  545,10 = 62,65 € en janvier, 635,71 − 570,30 = 65,41 € à partir de juillet, soit 827,04 €.
+  Avec la prime de Noël de 152,45 €, le revenu disponible vaut 7 747,49 €. Sans l'ASS, il
+  vaudrait 7 697,09 € : le RSA seul. L'ASS n'ajoute que 50,40 €, le décalage du trimestre de
+  référence à la revalorisation d'avril.
+* **En couple, le conjoint à 24 000 € brut.** 19 682,16 € de salaire imposable, soit 1 640,18 €
+  par mois. 1 998,70 − 1 640,18 = 358,52 € jusqu'en mars, 2 091,10 − 1 640,18 = 450,92 € ensuite,
+  5 133,84 € sur l'année. La prime d'activité tombe de 5 727,07 € à 778,03 €. Les 4 949,04 € de
+  moins sont, mois par mois, l'ASS moyenne des trois mois précédents : la prime compte « Les
+  revenus de remplacement des revenus professionnels » (CSS, art. L. 842-4, 2°), et les
+  allocations de solidarité en sont (C. trav., art. L. 5421-2). Le revenu disponible passe de
+  24 696,77 € à 25 058,77 €. Les 362,00 € de plus sont l'ASS, moins la prime perdue, plus la
+  prime de Noël et les 24,75 € de CRDS que la prime perdue ne paie plus.
+* **Locataire, 500 € en zone 2.** L'aide au logement vaut 3 532,77 €, avec ou sans l'ASS. Pour un
+  allocataire de l'ASS en chômage total depuis deux mois, « Il n'est tenu compte ni des revenus
+  d'activité professionnelle, ni des indemnités de chômage de l'intéressé » (CCH, art. R. 822-15,
+  premier alinéa et 3°). openfisca ne compte pas l'ASS non plus. Le RSA prend son forfait
+  logement, 76,29 €, et ne verse que 635,71 − 545,10 − 76,29 = 14,32 € en avril. En mai il
+  resterait 5,92 €, sous les 6 € que l'arbre verse au minimum. Le revenu disponible vaut
+  10 467,54 €, contre 10 324,50 € sans l'ASS.
+* **À 80 % d'incapacité, sans ressources.** L'AAH seule, 12 058,56 €, et pas d'ASS (art.
+  L. 5423-7).
+* **L'ordre de calcul.** Pour le locataire, le couple et le cas de la correction, l'ASS, le RSA,
+  la prime d'activité, l'aide au logement et le revenu disponible concordent à 0,05 € près.
+  C'est le cas par le registre, comme l'API, et avec `revenu_disponible` d'abord, comme la
+  jambe relevée de l'EMTR.
+* **L'EMTR.** 0,8678 pour l'allocataire seul, 0,2729 locataire, 0,5825 en couple. Sans
+  `activite`, openfisca comptait les 100 € de la jambe relevée comme un cumul, et arrêtait l'ASS
+  en avril : 12,27, 12,83 et 9,64. C'est pourquoi le champ écrit `activite`. Le premier euro de
+  salaire est alors pris comme le cumul le prend pendant ses trois premiers mois.
+
+**La correction 8 de `engine.corrections`.** openfisca lit une base par famille. Elle prend les
+ressources propres du premier parent, et celles du second avec, en plus, son allocation
+chômage. Un allocataire second parent ne voyait donc pas l'allocation du premier. Prenons
+24 000 € d'allocation brute à côté d'un allocataire sans ressources : l'ASS valait 1 263,50 €
+sur l'année avec l'allocataire premier, et 6 768,00 € avec l'allocataire second. En juin,
+126,31 € contre 570,30 €. La correction ajoute le terme d'openfisca lui-même, lu sur le premier
+parent : l'allocation des douze mois précédents, sauf si elle s'est arrêtée le mois d'avant.
+Elle ne le fait que si le premier parent n'est pas lui-même en fin de droits : sa propre
+allocation passée n'est pas une ressource (art. R. 5423-3, 1°). Enroulée autour de la formule
+d'openfisca. Le registre des corrections accepte désormais une citation du Code du travail, et
+le dit.
+
+**Ce que la correction ne fait pas.** Comme openfisca, elle compte l'allocation nette de sa CSG
+et de sa CRDS, là où l'article dit les montants « telles qu'elles doivent être déclarées ». Il
+en va de même des pensions, lues nettes (`retraite_nette`). L'écart vaut 3,2 % d'une pension au
+taux plein. Dans l'historique, seuls les mois de N le portent, car la CSG de N-1 lit le RFR
+nul de N-3. Les indemnités journalières du premier parent restent dehors : aucun champ ne les
+porte.
+
+**L'âge : ce que fait openfisca.** Il arrête l'ASS à 789 mois, « soit 65 ans et 9 mois », selon
+la note de son paramètre. La loi de 2024 ne nomme pas cet âge. Prenons un allocataire né en
+1959 : l'ASS s'arrête en novembre 2024, et l'ASPA, ouverte à 65 ans, la complète jusqu'à son
+plafond. Le revenu disponible vaut 12 296,72 €. Aucun adulte accepté n'atteint cet âge.
+
+**La population.** Elle ne déclare personne en fin de droits : `to_openfisca` n'écrit pas
+`ass_precondition_remplie`. Sa colonne `ass`, lue comme toute ligne du palier complet, vaut
+zéro. Un test le vérifie sur la trame des deux chemins de D-183. `to_openfisca.WIRING` ne
+change pas. Comme l'ASPA (D-186), l'ASS n'entre pas dans `STATE_TRANSFERS`.
+
+**Vus échouer, puis mutés.** Contre `95293ca`, 16 tests du moteur tombaient. Le format d'entrée
+en refusait 13 (« Extra inputs are not permitted »), et les 3 tests de refus ne trouvaient pas
+l'article attendu. Tombaient aussi 3 tests de l'API, 4 de la page, celui de la population
+(`KeyError: 'ass'`) et une vérification de `check.mjs`. Le test qui tue passait déjà : il écrit
+les entrées à la main sur openfisca brut. Le test du registre aussi, faute de correction.
+Avec le champ et sans la correction, seul le test de symétrie tombait : 6 768,00 € au lieu de
+1 263,50 €. Deux tests gardent la correction contre une extension trop large, avec un
+historique écrit à la main. Le premier : l'allocation passée de l'allocataire lui-même. Le
+second : une allocation du premier parent arrêtée en décembre.
+Neuf mutations sont prises :
+* sans `activite` : le test des entrées (`KeyError`), et celui de l'EMTR (12,27) ;
+* la correction sans son facteur d'allocataire : l'allocation passée, 0 au lieu de 545,10 € ;
+* sans son facteur d'interruption : l'allocation arrêtée, 341,10 € au lieu de 570,30 € en
+  juin ;
+* la correction non appliquée : la symétrie, et l'allocation arrêtée en janvier ;
+* le refus d'âge à 63 ans : le test d'âge, et le cas 422 de l'API ;
+* chacun des trois refus du format retiré : son test ;
+* la ligne de l'ASS jamais discrète : `check.mjs`, et le test de la page.
+
+**Le gate.** `make gate` donne 1 509 réussis, 172 ignorés et 12 échecs, en 17 min 57 s.
+Les 12 échecs sont ceux de D-176 à D-187, faute de données dans ce conteneur. Les 25
+réussis de plus sont les tests ajoutés : 19 au moteur, 3 à l'API, 2 à la page et 1 à la
+population.
+
+**Ce qui reste.**
+* **L'ASS est imposable, et openfisca ne l'impose pas.** « Les règles fixées au 5 de l'article
+  158 du code général des impôts sont applicables » (C. trav., art. L. 5428-1, version du
+  1er janvier 2024). Le BOFIP en tire que l'ASS « est imposable entre les mains des
+  bénéficiaires dans la catégorie des traitements et salaires » (BOI-RSA-CHAMP-20-20, § 20).
+  L'effet a été mesuré par une réforme jetable qui ajoute l'ASS aux salaires imposables.
+  L'impôt ne bouge dans aucun des six ménages mesurés : sous le plafond de l'ASS, la tranche à
+  0 % et la décote suffisent. Le RFR de l'allocataire seul passe en revanche de 0 à 6 091 €.
+  Un couple dont le conjoint touche 15 000 € de pension déclarée perd 75,00 € de CRDS, son RFR
+  de N-2 passant de 13 500 € à 19 163,80 €. La base de N-2 des prestations familiales lit
+  aussi ces salaires imposables (`revenu_assimile_salaire_apres_abattements`). Corriger ferait
+  entrer une prestation de la famille dans chaque RFR, celui du palier léger et ceux
+  qu'épinglent D-177 et D-178 : c'est une entrée à part.
+* **Les montants nets plutôt que déclarés**, dans la base de l'ASS (plus haut).
+* **L'AAH du conjoint**, qu'openfisca compte dans les ressources de l'ASS alors qu'elle n'est
+  pas déclarée. Elle ne joue qu'au-dessus de 80 montants journaliers de ressources ; non
+  examinée plus loin.
+* **De 62 à 67 ans**, l'allocataire sans la durée du taux plein n'est pas exprimable.
+* **Le mois de 30 jours.** Le moteur paie 30 montants journaliers par mois, comme service-public
+  compte « 584,40 € pour 1 mois de 30 jours ». Le paiement d'un mois de 31 jours n'a pas été
+  vérifié.
+* **`date_debut_chomage`** n'est toujours pas posée (D-183). La neutralisation de
+  l'art. R. 822-15 ne porte que sur les revenus de l'allocataire, qui n'en a pas sur le format.
+* **openfisca-france.** L'asymétrie de la base et l'âge de 789 mois sont à signaler en amont.
+
+**Sources.**
+* Code du travail, art. L. 5421-2, L. 5421-4, L. 5423-1, L. 5423-2, L. 5423-7, L. 5428-1,
+  R. 5423-1 à R. 5423-6, R. 5423-13, R. 5425-2 et R. 5425-8, lus sur le Code du travail
+  numérique ; L. 5421-4, L. 5423-1 et L. 5428-1 dans leur version de 2024 sur Légifrance.
+* CSS, art. L. 161-17-2 et L. 351-8 (version du 1er septembre 2023 au 28 février 2025), et
+  L. 842-4, lus sur Légifrance ; art. D. 161-2-1-9, dans le décret n° 2023-436 du 3 juin 2023
+  (JO du 4 juin 2023).
+* CCH, art. R. 822-15, lu sur Légifrance (version en vigueur depuis le 1er janvier 2021).
+* Décrets n° 2023-301 du 22 avril 2023 et n° 2024-341 du 12 avril 2024, art. 1er.
+* BOFIP, BOI-RSA-CHAMP-20-20, § 1 à 20.
+* Service-public.fr, fiche F12484 « Allocation de solidarité spécifique (ASS) », vérifiée le
+  1er avril 2026.
+* Previssima, « Allocation de solidarité spécifique (ASS), RSA, Smic, assurance chômage… Les
+  mesures proposées par Gabriel Attal pour atteindre le « plein-emploi » », 31 janvier 2024.
+
 ## D-190 — La pension d'invalidité entre dans le format d'entrée, et l'ASI avec elle
 
 **Le point de départ.** L'ASI n'était atteinte que par des entrées écrites à la main dans
@@ -10045,13 +10489,13 @@ Passé 62 ans, la pension saisie vaut la retraite qui l'a remplacée : même imp
 prélèvements, et l'ASPA compte l'une comme l'autre.
 
 **Deux corrections dans `engine.corrections`.**
-* **Les prélèvements (correction 6).** Elle lit les prélèvements d'openfisca sur une
+* **Les prélèvements (correction 9).** Elle lit les prélèvements d'openfisca sur une
   retraite, la CSG imposable, la CRDS et la CASA, au taux que fixe le RFR de N-2, sur la
   pension d'invalidité. Elle les retranche de `pensions_nettes`. La CSG déductible reste
   dehors, puisque le montant déclaré en est déjà net. La base est ce montant déclaré, comme
   pour la retraite (D-176). La correction est enroulée autour des formules d'openfisca,
   depuis 2019.
-* **Le seul allocataire d'un couple (correction 7).** Elle plafonne le montant d'openfisca
+* **Le seul allocataire d'un couple (correction 10).** Elle plafonne le montant d'openfisca
   pour un parent d'un couple qui ne compte qu'un allocataire, de l'ASI ou de l'ASPA. Le
   plafond est celui d'une personne seule, ce mois-là, moins la pension minimale en vigueur.
   L'arbre d'openfisca n'a pas cette pension minimale : `PENSION_INVALIDITE_MINIMUM` la
@@ -10141,7 +10585,7 @@ tombaient, chacun pour sa raison :
 Les deux tests qui tuent passaient sur openfisca brut, comme il le faut. Six mutations du
 moteur sont prises :
 * sans `inapte_travail` : le test de forme et le cas de 62 ans ;
-* la correction 6 non appliquée : les trois tranches et l'égalité avec une retraite ;
+* la correction 9 non appliquée : les trois tranches et l'égalité avec une retraite ;
 * la CSG déductible prélevée elle aussi : les mêmes quatre, à 14 355, 18 370 et 25 682 € ;
 * le plafond b) lu sur le plafond du couple : le seul allocataire ;
 * en janvier 2024, la pension minimale de 2023, par une borne mal placée : le seul
@@ -10202,7 +10646,7 @@ réussis de plus sont les tests ajoutés : 22 au moteur et 1 à l'API.
   Légifrance.
 * **openfisca-france.** Les deux écarts corrigés, et celui du c), sont à signaler en amont.
 * **La pension d'invalidité minimale.** `PENSION_INVALIDITE_MINIMUM` s'arrête à janvier
-  2026. Au-delà, la correction 7 garde ce dernier montant : la table est à compléter à
+  2026. Au-delà, la correction 10 garde ce dernier montant : la table est à compléter à
   chaque revalorisation de janvier.
 
 **Sources.**

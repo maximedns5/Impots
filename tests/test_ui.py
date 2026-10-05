@@ -737,7 +737,9 @@ def test_the_fifty_per_cent_line_is_drawn(source: str):
 #: A new field fails `test_every_adult_field_on_the_wire_is_sent_from_an_input` until it
 #: is given an input here and on the page. The ASPA is four fields' row: the age alone
 #: opens it at 65, a pension tops it down, and a rate of 50 % opens it at 62 (D-185), as an
-#: invalidity pension does, whose holder is réputé inapte au travail at 62 (D-190).
+#: invalidity pension does, whose holder is réputé inapte au travail at 62 (D-190). The
+#: invalidity card moves the parts, the RFR through the abatement of art. 157 bis, the
+#: income tax, and the housing aid, whose resources deduct that abatement (D-188).
 ADULT_INPUT_ROWS: dict[str, tuple[str, ...]] = {
     "salaire_brut_annuel": ("salaire_brut",),
     "annee_naissance": ("aspa",),
@@ -745,6 +747,8 @@ ADULT_INPUT_ROWS: dict[str, tuple[str, ...]] = {
     "chomage_brut_annuel": ("chomage_brut",),
     "pension_invalidite_annuelle": ("pension_invalidite", "asi", "aspa"),
     "handicap": ("aah", "mva", "aspa"),
+    "carte_invalidite": ("parts_fiscales", "revenu_fiscal_reference", "ir", "aide_logement"),
+    "fin_de_droits_ass": ("ass",),
 }
 
 
@@ -808,7 +812,16 @@ Object.assign($("chomage0"), { value: "1200" });
 Object.assign($("invalidite0"), { value: "2400" });
 Object.assign($("taux0"), { value: "60" });
 Object.assign($("rsdae0"), { checked: true });
+Object.assign($("carte0"), { checked: true });
 out.filled = adultPayload(0);
+Object.assign($("pension0"), { value: "" });
+Object.assign($("chomage0"), { value: "" });
+Object.assign($("invalidite0"), { value: "" });
+Object.assign($("taux0"), { value: "" });
+Object.assign($("rsdae0"), { checked: false });
+Object.assign($("carte0"), { checked: false });
+Object.assign($("ass0"), { checked: true });
+out.fin_de_droits = adultPayload(0);
 console.log(JSON.stringify(out));
 """
 
@@ -838,10 +851,11 @@ def adult_payloads(source: str, tmp_path_factory):
 
 def test_a_blank_adult_sends_no_disability(adult_payloads):
     """An empty rate is « no disability recognised », not « 0 % »: the API is sent no
-    `handicap` at all."""
+    `handicap` at all. An unticked card is sent as such, like a pension of 0 (D-188)."""
     assert adult_payloads["blank"] == {"salaire_brut_annuel": 0, "annee_naissance": 1980,
                                        "pension_annuelle": 0, "chomage_brut_annuel": 0,
-                                       "pension_invalidite_annuelle": 0}
+                                       "pension_invalidite_annuelle": 0,
+                                       "carte_invalidite": False}
 
 
 def test_a_filled_adult_is_what_the_wire_format_accepts(adult_payloads):
@@ -852,9 +866,36 @@ def test_a_filled_adult_is_what_the_wire_format_accepts(adult_payloads):
     filled = adult_payloads["filled"]
     assert filled["handicap"] == {
         "taux_incapacite": 0.6, "restriction_substantielle_durable_acces_emploi": True}
+    assert filled["carte_invalidite"] is True
     adult = Adult.model_validate(filled)
     assert adult.pension_annuelle == 3_000 and adult.chomage_brut_annuel == 1_200
     assert adult.pension_invalidite_annuelle == 2_400
+
+
+def test_an_adult_in_fin_de_droits_is_sent_as_the_wire_format_has_it(adult_payloads):
+    """The box sends `fin_de_droits_ass` only when ticked: the blank adult above carries no
+    such key, and the wire format reads its absence as false. Ticked, beside no salary and no
+    unemployment benefit, the adult validates (D-189)."""
+    from impots.api.schemas import Adult
+
+    sent = adult_payloads["fin_de_droits"]
+    assert sent == {"salaire_brut_annuel": 0, "annee_naissance": 1980, "pension_annuelle": 0,
+                    "chomage_brut_annuel": 0, "pension_invalidite_annuelle": 0,
+                    "carte_invalidite": False, "fin_de_droits_ass": True}
+    assert Adult.model_validate(sent).fin_de_droits_ass is True
+
+
+def test_the_ass_shows_beside_the_rsa_and_only_when_paid(source: str):
+    """The ASS is a minimum like the RSA, and the two are paid side by side (D-189): its row
+    follows the RSA's. It is quiet, shown only when it holds an amount, since a 0 EUR ASS on
+    every salaried household would be noise."""
+    start = source.index("const GROUPS = [")
+    groups = source[start:source.index("\n];", start)]
+    lines = [line.strip() for line in groups.splitlines()]
+    rsa = next(index for index, line in enumerate(lines) if line.startswith('["rsa"'))
+    assert lines[rsa + 1].startswith('["ass"'), "the ASS row does not follow the RSA's"
+    group = groups[:groups.index('["rsa"')]
+    assert 'quiet: ["ass"]' in group[group.rindex("{ title:"):], "the ASS row is not quiet"
 
 
 def test_the_hidden_attribute_wins_over_every_display_rule(source: str):

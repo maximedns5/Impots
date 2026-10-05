@@ -1277,6 +1277,14 @@ def test_a_household_prices_the_same_in_the_calculator_and_in_a_population(name:
         assert calculator[key] == pytest.approx(population[key], abs=0.5), key
 
 
+def test_the_population_declares_no_one_in_fin_de_droits_and_its_ass_is_zero() -> None:
+    """`to_openfisca` writes no `ass_precondition_remplie`: nobody in the population is « en
+    fin de droits », so the `ass` column the runner reads off the registry, like every row of
+    the full tier, is zero, the chômeurs of the two-paths frame included (D-189)."""
+    households = _population_side()
+    assert [households[name]["ass"] for name in sorted(TWO_PATHS)] == [0.0] * len(TWO_PATHS)
+
+
 # --------------------------------------------------------------------------- #
 # the benefits cascade — housing aid and the RSA, month by month (D-178)
 # --------------------------------------------------------------------------- #

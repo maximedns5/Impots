@@ -300,6 +300,24 @@ def test_emtr_on_the_light_tier_is_rejected_with_a_reason(client: TestClient) ->
             },
             "greater than or equal to 1",
         ),
+        # The ASS beside a salary on every month of three years: the cumul lasts three
+        # months, and a job seeker's ASS would be paid beside it for good (D-189).
+        (
+            {
+                "household": {"adults": [{"salaire_brut_annuel": 12_000, "annee_naissance": 1975,
+                                          "fin_de_droits_ass": True}]},
+            },
+            "R. 5425-2",
+        ),
+        # From 62 the ASS turns on the insurance duration, which the wire format does not
+        # carry: refused by the builder, which knows the year (D-189).
+        (
+            {
+                "household": {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1962,
+                                          "fin_de_droits_ass": True}]},
+            },
+            "L. 5421-4",
+        ),
     ],
 )
 def test_invalid_requests_are_rejected(client: TestClient, payload: dict, needle: str) -> None:
@@ -807,6 +825,38 @@ def test_an_aah_recipient_past_62_is_priced_not_refused(client: TestClient) -> N
     rows = response.json()["baseline"]
     assert rows["aah"] == pytest.approx(3 * 971.37 + 9 * 1_016.05, abs=0.05)
     assert rows["revenu_disponible"] == pytest.approx(rows["aah"], abs=0.05)
+
+
+def test_the_invalidity_card_reaches_the_income_tax(client: TestClient) -> None:
+    """Case P over HTTP (D-188), in the light tier where the income tax is computed too: at
+    40 000 EUR, half a part more, and 1 073 EUR of income tax instead of 2 023."""
+    adult = {"salaire_brut_annuel": 40_000, "annee_naissance": 1980}
+    rows = {}
+    for carte in (False, True):
+        request = {"household": {"adults": [{**adult, "carte_invalidite": carte}]},
+                   "year": 2024, "tier": "light"}
+        response = client.post("/simulate", json=request)
+        assert response.status_code == 200, response.text
+        rows[carte] = response.json()["baseline"]
+    assert (rows[False]["parts_fiscales"], rows[True]["parts_fiscales"]) == (1.0, 1.5)
+    assert rows[False]["ir"] == pytest.approx(2_023, abs=0.5)
+    assert rows[True]["ir"] == pytest.approx(1_073, abs=0.5)
+
+
+def test_a_claimant_of_the_ass_reaches_the_engine_and_its_row_comes_back(
+    client: TestClient,
+) -> None:
+    """« En fin de droits, condition d'activité remplie » opens the ASS, which has a row of its
+    own on the wire (D-189): alone and without resources, 6 768 EUR over 2024."""
+    request = {
+        "household": {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1975,
+                                  "fin_de_droits_ass": True}]},
+        "year": 2024,
+        "tier": "full",
+    }
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 200, response.text
+    assert response.json()["baseline"]["ass"] == pytest.approx(6_768.00, abs=0.05)
 
 
 def test_an_invalidity_pension_reaches_the_engine_and_the_asi_comes_back(client: TestClient) -> None:

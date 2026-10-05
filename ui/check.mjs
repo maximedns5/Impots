@@ -119,7 +119,7 @@ const ROWS = (ir) => ({ salaire_super_brut: 37919.8, salaire_brut: 30000, salair
   // Every row the API sends at the full tier, zeros included: a stub without them would
   // let the quiet groups pass for the wrong reason, a row skipped as missing (D-186).
   retraite_imposable: 0, chomage_brut: 0, pension_invalidite: 0, aspa: 0, asi: 0, aah: 0,
-  mva: 0 });
+  mva: 0, ass: 0 });
 const RESULT = { baseline: ROWS(812), reform: ROWS(1012), delta: { ...ROWS(200), revenu_disponible: -200, salaire_net: 0 },
   emtr: 0.4979, emtr_reform: 0.52, tier: "full", year: 2024, historique_revenus: false,
   timings: { build_ms: 3, compute_ms: 480, emtr_ms: 900, total_ms: 1390, reform_cache_hit: true },
@@ -195,6 +195,7 @@ ok("quiet groups stay out of a salaried household's table", () => {
     assert.ok(!out.includes(title), `${title} shown with nothing in it`);
   }
   assert.ok(!out.includes("celles du salaire"), "the levies note needs a replacement income");
+  assert.ok(!out.includes("solidarité spécifique"), "the ASS row shown with no ASS");
 });
 ok("a blank adult sends zero replacement income and no disability", () => {
   const adult = JSON.parse(calls.at(-1).opts.body).household.adults[0];
@@ -202,9 +203,13 @@ ok("a blank adult sends zero replacement income and no disability", () => {
   assert.equal(adult.chomage_brut_annuel, 0);
   assert.equal(adult.pension_invalidite_annuelle, 0);
   assert.equal(adult.handicap, undefined, "a blank rate is « none recognised », not 0 %");
+  assert.equal(adult.carte_invalidite, false, "an unticked card is sent unticked (D-188)");
+  assert.equal(adult.fin_de_droits_ass, undefined, "an unticked box sends no fin de droits");
 });
 RESULT.baseline.retraite_imposable = 12000;
 RESULT.reform.retraite_imposable = 12000;
+RESULT.baseline.ass = 6768;
+RESULT.reform.ass = 6768;
 $("go").onclick();
 await new Promise((r) => setTimeout(r, 60));
 ok("a pension shows its row and the note on its levies", () => {
@@ -212,6 +217,13 @@ ok("a pension shows its row and the note on its levies", () => {
   assert.match(out, /Revenus de remplacement/);
   assert.match(out, /Pension de retraite/);
   assert.match(out, /celles du salaire/);
+});
+ok("an ASS shows its row, right after the RSA's", () => {
+  const out = $("out").innerHTML;
+  const rsa = out.indexOf("<td>RSA</td>");
+  const ass = out.indexOf("Allocation de solidarité spécifique");
+  assert.ok(rsa > 0 && ass > rsa, "the ASS row must follow the RSA's");
+  assert.ok(out.indexOf("Aide au logement") > ass, "the housing aid comes after the ASS");
 });
 // The invalidity pension alone, and the ASI it opens (D-190): the note must not need the
 // retirement pension to show.
