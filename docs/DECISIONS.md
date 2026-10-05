@@ -11470,11 +11470,11 @@ mutations sont prises :
 
 **Le temps.** Les tests de budget de temps passent : 4 du moteur, 2 de l'API.
 
-**Le gate.** `make gate`, sur la branche partie de `main` à 3c704dd, donne 1 596 réussis,
-172 ignorés et 12 échecs, en 20 min 4 s. Les 12 échecs sont ceux de D-176 à D-191, faute de
-données dans ce conteneur. Les 14 réussis de plus sont les tests ajoutés, tous au moteur :
-2 pour les parts, 1 à 40 000 €, 2 à 150 000 €, 1 à 80 000 €, 3 pour les seuils de la
-brochure et 5 pour les voisins.
+**Le gate.** `make gate`, sur la branche fusionnée avec D-192, donne 1 613 réussis,
+172 ignorés et 12 échecs, en 22 min 11 s. Les 12 échecs sont ceux de D-176 à D-192, faute de
+données dans ce conteneur. Les 14 réussis de plus que D-192 sont les tests ajoutés, tous au
+moteur : 2 pour les parts, 1 à 40 000 €, 2 à 150 000 €, 1 à 80 000 €, 3 pour les seuils de
+la brochure et 5 pour les voisins.
 
 **Ce qui reste.**
 * **Le parent veuf**, plus haut. Le jour où une situation de famille entrera dans le format,
