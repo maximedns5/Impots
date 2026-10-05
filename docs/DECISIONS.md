@@ -10157,6 +10157,10 @@ Cinq mutations sont prises :
 * le taux de l'enfant envoyé en pour cent par la page : le test du harnais et deux
   vérifications de `check.mjs`.
 
+**Le gate.** `make gate` donne 1 519 réussis, 172 ignorés et 12 échecs, en 17 min 9 s.
+Les 12 échecs sont ceux de D-176 à D-187, faute de données dans ce conteneur. Les 35
+réussis de plus sont les tests ajoutés : 27 au moteur, 4 à l'API et 4 à la page.
+
 **Ce qui reste.**
 * **La majoration pour parent isolé** suit openfisca : tout complément de la deuxième à la
   sixième catégorie l'ouvre. D. 541-3 l'exclut pour un complément de la deuxième à la
