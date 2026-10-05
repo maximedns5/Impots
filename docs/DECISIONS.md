@@ -10102,6 +10102,10 @@ Sept mutations sont prises :
 Le contrôle du plafond porte sur `abat_spe` et non sur le RFR, qu'openfisca borne à zéro :
 un contrôle sur le RFR d'un couple sans revenu n'aurait rien vu.
 
+**Le gate.** `make gate` donne 1 499 réussis, 172 ignorés et 12 échecs, en 16 min 52 s.
+Les 12 échecs sont ceux de D-176 à D-187, faute de données dans ce conteneur. Les 15
+réussis de plus sont les tests ajoutés : 14 au moteur et 1 à l'API.
+
 **Ce qui reste.**
 * **Les plafonds de l'abattement**, ci-dessus.
 * **La case 7DG.** Le plafond de 20 000 € du crédit pour l'emploi d'un salarié à domicile
