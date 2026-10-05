@@ -11360,10 +11360,10 @@ chaque demi-part sous son plafond. L'article de presse de D-188 n'est plus la se
   titulaire de la carte. Elle est limitée à l'impôt que le plafonnement ajoute. C'est
   l'art. 197, I, 2.
 
-**Pas de correction.** openfisca a raison sur les deux points. `engine.corrections` garde
-ses onze corrections, et aucun test qui tue n'est à écrire. Ce qui tient le résultat, ce
-sont 14 tests du moteur. Ils épinglent les parts et l'impôt d'openfisca sur les chiffres de
-la loi, de la brochure et du simulateur.
+**Pas de correction.** openfisca a raison sur les deux points. Aucune correction n'entre
+dans `engine.corrections`, et aucun test qui tue n'est à écrire. Ce qui tient le résultat,
+ce sont 14 tests du moteur. Ils épinglent les parts et l'impôt d'openfisca sur les chiffres
+de la loi, de la brochure et du simulateur.
 
 **Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`, palier léger, un
 parent né en 1985 et des enfants nés à partir de 2012, l'impôt selon le salaire brut :
