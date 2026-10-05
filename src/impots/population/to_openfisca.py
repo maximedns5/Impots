@@ -83,8 +83,10 @@ HISTORY_YEARS = 2
 #: every chômeur above the SMIC floor, D-178 the prime d'activité of renters in the order
 #: the population EMTR reads it. D-180 is a correction to the baseline system rather than
 #: to this wiring, but the caches hold its numbers too: the housing aid of anyone whose
-#: salary is under the minimum professional-expenses deduction, beside other income.
-WIRING = "D-180"
+#: salary is under the minimum professional-expenses deduction, beside other income. D-188
+#: likewise: the abatement of art. 157 bis doubled for a couple both over 65, which lowers
+#: its RFR, and two years on the rate of the CSG on its pensions.
+WIRING = "D-188"
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
 #: fiscal block, which never reaches a benefit. Anything else first pins the benefit

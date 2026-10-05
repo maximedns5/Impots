@@ -200,6 +200,7 @@ ok("a blank adult sends zero replacement income and no disability", () => {
   assert.equal(adult.pension_annuelle, 0);
   assert.equal(adult.chomage_brut_annuel, 0);
   assert.equal(adult.handicap, undefined, "a blank rate is « none recognised », not 0 %");
+  assert.equal(adult.carte_invalidite, false, "an unticked card is sent unticked (D-188)");
 });
 RESULT.baseline.retraite_imposable = 12000;
 RESULT.reform.retraite_imposable = 12000;
