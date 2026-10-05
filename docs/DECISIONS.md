@@ -11608,13 +11608,13 @@ proches sans être égaux, l'un revalorisé en janvier, l'autre en avril : ils d
   nourrie de l'ASI corrigée, la formule sert encore 9 427,01 € au premier couple, quel que
   soit l'époux en tête de la famille (mesuré, par une mutation ci-dessous).
 
-**Les corrections 12 et 13 de `engine.corrections`.**
-* **L'ASI (correction 12).** À un parent éligible à l'ASI dont le conjoint est éligible à
+**Les corrections 13 et 14 de `engine.corrections`.**
+* **L'ASI (correction 13).** À un parent éligible à l'ASI dont le conjoint est éligible à
   l'ASPA, elle verse la moitié du plafond du couple de l'ASI moins la moitié des ressources
   du couple, sur la base d'openfisca, `asi_aspa_base_ressources`. Elle est enroulée autour
   de la formule de la correction 10, elle-même enroulée autour de celle d'openfisca, depuis
   avril 2020.
-* **L'ASPA (correction 13).** À la même famille, elle verse la moitié de l'ASPA du couple,
+* **L'ASPA (correction 14).** À la même famille, elle verse la moitié de l'ASPA du couple,
   comme deux allocataires la reçoivent : le maximum du couple, moins ce que lui et les
   ressources dépassent du plafond. Elle est enroulée autour de la formule d'openfisca, qui
   reste celle de toute autre famille, depuis avril 2020, la date de cette formule et du c).
@@ -11626,10 +11626,10 @@ proches sans être égaux, l'un revalorisé en janvier, l'autre en avril : ils d
   nomme désormais le c) et l'ASPA du conjoint, à côté du b).
 
 **L'ordre des deux corrections de l'ASI.** `apply` enroule la correction 10 autour de la
-formule d'openfisca, puis relit `asi` pour y enrouler la correction 12 : la variable garde
+formule d'openfisca, puis relit `asi` pour y enrouler la correction 13 : la variable garde
 les deux. Leurs cas ne se rencontrent pas. La correction 10 demande un seul allocataire dans
-la famille, la correction 12 en demande deux, l'un éligible à l'ASI et l'autre à l'ASPA.
-Enroulée autour de la formule d'openfisca lue avant la correction 10, la correction 12 la
+la famille, la correction 13 en demande deux, l'un éligible à l'ASI et l'autre à l'ASPA.
+Enroulée autour de la formule d'openfisca lue avant la correction 10, la correction 13 la
 ferait disparaître : c'est une des mutations ci-dessous.
 
 **L'éligibilité, pas le versement.** Les deux corrections apparient les époux sur leur
@@ -11640,9 +11640,9 @@ est alors seul bénéficiaire, et le a) de l'art. D. 815-1 lui donnerait le plaf
 ressources plutôt que sa moitié : au plus 33,08 € de plus par mois. D'avril à décembre, la
 bande est de 3,07 €, et l'écart d'ASI d'au plus 1,54 €.
 
-**Ce que le moteur en fait, mesuré en 2024.** « Avant » désigne `main`, avec les onze
-corrections. Les deux adultes sont un pensionné d'invalidité né en 1980 et un conjoint né en
-1958 à la retraite. La première colonne dit leurs pensions.
+**Ce que le moteur en fait, mesuré en 2024.** « Avant » désigne `main`, sans les corrections
+13 et 14. Les deux adultes sont un pensionné d'invalidité né en 1980 et un conjoint
+né en 1958 à la retraite. La première colonne dit leurs pensions.
 
 | pensions du couple | ASI avant | ASI après | ASPA avant | ASPA après |
 |---|---:|---:|---:|---:|
@@ -11728,17 +11728,17 @@ de deux retraités, les trois tests d'ordre, et les deux tests qui tuent, sur op
 Sept mutations sont prises :
 * l'ASI chiffrée contre le plafond du couple de l'ASPA, comme openfisca : 4 927,01 € au lieu
   de 4 841,60 €, dix tests ;
-* la correction 12 enroulée autour de la formule d'openfisca lue avant la correction 10 : le
+* la correction 13 enroulée autour de la formule d'openfisca lue avant la correction 10 : le
   seul allocataire de D-190, à 12 683,20 € au lieu de 6 739,27 €, le conjoint de 64 ans et
   le mois des 65 ans ;
 * la moitié versée aux deux parents, le rôle oublié : 4 841,60 € chacun, dix tests ;
-* la correction 13 non appliquée : l'ASPA reste à 9 427,01 € dans les deux ordres, à
+* la correction 14 non appliquée : l'ASPA reste à 9 427,01 € dans les deux ordres, à
   6 640,52 € à 15 000 €, et à 4 140,52 € au-dessus des plafonds, onze tests ;
-* la correction 13 étendue à toute famille où un parent est éligible à l'ASPA : deux
+* la correction 14 étendue à toute famille où un parent est éligible à l'ASPA : deux
   retraités à 6 427,01 € au lieu de 12 854,02 €, et trois tests de D-185 et D-190, une
   personne seule ne recevant plus que la moitié de l'ASPA d'un couple ;
 * l'ASPA du couple servie entière : 9 854,02 € au lieu de 4 927,01 €, dix tests ;
-* la correction 12 étendue à tout allocataire en couple : le seul allocataire de D-190, à
+* la correction 13 étendue à tout allocataire en couple : le seul allocataire de D-190, à
   6 341,60 € au lieu de 6 739,27 €, le conjoint de 64 ans, et janvier dans le mois des
   65 ans. Deux pensionnés d'invalidité ne bougent pas : le a) donne à chacun la même moitié
   que le c).
@@ -11751,13 +11751,13 @@ plus sont les tests ajoutés au moteur.
 * **Le versement plutôt que l'éligibilité**, dans la bande entre les deux plafonds du
   couple, ci-dessus.
 * **La CNRACL n'est pas la Cnav.** Aucun texte de la Cnav lu ici ne dit l'ASPA du conjoint
-  d'un allocataire de l'ASI, et service-public non plus. La correction 13 suit
+  d'un allocataire de l'ASI, et service-public non plus. La correction 14 suit
   l'art. D. 815-1 tel que la CNRACL l'applique.
 * **Le plafond d'avril 2026.** La circulaire n° 2026-14 le porte à 19 365,60 € pour un
   couple, que l'arbre n'a pas : il garde celui d'avril 2025, 19 212,03 €. F16940 en affiche
   un troisième, 1 542,84 € par mois.
 * **`statut_marital`** n'est posé par aucun constructeur, et openfisca croit chaque couple
-  non marié. Dans l'ASI et l'ASPA, seuls les cas que remplacent les corrections 12 et 13 en
+  non marié. Dans l'ASI et l'ASPA, seuls les cas que remplacent les corrections 13 et 14 en
   dépendaient.
 * **L'AAH dans les ressources de l'ASI** reste exclue, comme openfisca le fait (D-190).
 * **openfisca-france.** Les deux écarts sont à signaler en amont, avec ces cas, et la

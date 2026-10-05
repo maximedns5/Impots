@@ -2986,7 +2986,7 @@ def test_the_halves_price_the_same_whatever_is_computed_first(name: str) -> None
 
 
 def test_the_engine_alone_pays_no_asi_beside_a_spouse_at_the_aspa() -> None:
-    """The kill test for correction 12: raw openfisca prices the c) against the ASPA's couple
+    """The kill test for correction 13: raw openfisca prices the c) against the ASPA's couple
     ceiling, then pays it only in the cases of one beneficiary or of two at the ASI, which
     leaves nothing. The pensioner is eligible to the ASI, the spouse to the ASPA, and the ASI
     is nil. The day this fails, openfisca pays it, and the correction must go."""
@@ -2997,11 +2997,11 @@ def test_the_engine_alone_pays_no_asi_beside_a_spouse_at_the_aspa() -> None:
     assert list(raw.calculate("asi_eligibilite", "2024-06")) == [True, False]
     assert list(raw.calculate("aspa_eligibilite", "2024-06")) == [False, True]
     assert list(raw.calculate("asi", "2024-06")) == [0.0, 0.0], (
-        "openfisca now pays the ASI beside a spouse at the ASPA: remove correction 12")
+        "openfisca now pays the ASI beside a spouse at the ASPA: remove correction 13")
 
 
 def test_the_engine_alone_pays_the_aspa_beside_an_asi_spouse_half_the_couple_maximum() -> None:
-    """The kill test for correction 13: raw openfisca pays the spouse at the ASPA half the
+    """The kill test for correction 14: raw openfisca pays the spouse at the ASPA half the
     couple maximum, 785.58 EUR in June 2024, the couple's 750 EUR of resources left aside, and
     still 345.04 EUR to a couple whose 1 666.67 EUR a month pass the ceiling: half the maximum
     less half of what the resources exceed half the ceiling by. The day this fails, openfisca
@@ -3015,6 +3015,6 @@ def test_the_engine_alone_pays_the_aspa_beside_an_asi_spouse_half_the_couple_max
 
     half = ASPA_COUPLE_2024 / 24
     assert raw_aspa(_asi_aspa()) == pytest.approx(half, abs=0.01), (
-        "openfisca now prices the ASPA beside an ASI spouse otherwise: remove correction 13")
+        "openfisca now prices the ASPA beside an ASI spouse otherwise: remove correction 14")
     assert raw_aspa(_asi_aspa(12_000, 8_000)) == pytest.approx(
         half - (20_000 / 12 - half) / 2, abs=0.01)

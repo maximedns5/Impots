@@ -334,7 +334,7 @@ nothing in it moves.
 
 ---
 
-**Correction 12 — the ASI beside a spouse at the ASPA (CSS art. D. 815-19, 2° c), D-194.**
+**Correction 13 — the ASI beside a spouse at the ASPA (CSS art. D. 815-19, 2° c), D-194.**
 
 When the spouse « bénéficie de l'allocation de solidarité aux personnes âgées visée à
 l'article L. 815-1 », « le montant de l'allocation servie est égal à la différence entre la
@@ -352,7 +352,7 @@ around correction 10's formula, itself around openfisca's, which stand for every
 correction 10 needs one allocataire in the famille and this one two. From April 2020, like
 the c).
 
-**Correction 13 — the ASPA beside a spouse at the ASI (CSS art. D. 815-1), D-194.**
+**Correction 14 — the ASPA beside a spouse at the ASI (CSS art. D. 815-1), D-194.**
 
 The couple's maximum « est servi par moitié à chacun des deux allocataires concernés », and
 « Les dispositions du b sont également applicables pour le calcul de l'allocation de
@@ -363,10 +363,10 @@ ceiling by (art. L. 815-9 and D. 815-2). openfisca prices that case as before Ap
 when the ASI took its own half of a shared excess: half the couple maximum, less half of
 what the resources and the ASI pass half the ceiling by. With no ASI to take the other half,
 measured on the couple above: 9 427.01 EUR of ASPA over 2024 against 4 927.01, and 4 140.52
-EUR to a couple whose 20 000 EUR pass both ceilings, against nothing. Correction 12 alone
+EUR to a couple whose 20 000 EUR pass both ceilings, against nothing. Correction 13 alone
 would not mend it. The ASI the formula adds is the demandeur's if `maries`, the conjoint's
 otherwise (neither builder sets `statut_marital`), and it divides that monthly amount by
-twelve with the annual maximum: fed correction 12's ASI, the couple above still drew 9 427.01
+twelve with the annual maximum: fed correction 13's ASI, the couple above still drew 9 427.01
 EUR, whichever spouse heads the famille (measured).
 
 The correction pays the famille half of the couple's ASPA as two beneficiaries draw it, the
@@ -613,7 +613,7 @@ def apply_to(system: Any) -> Any:
             category_formula = self.get_variable(SALARY_CATEGORY).get_formula("0001-01-01")
             deduction = self.get_variable(SALARIES_AFTER_DEDUCTION)
             self.update_variable(_ass_taxed_as_a_salary(category_formula, deduction.get_formula))
-            # Read after correction 10's update: correction 12 wraps the capped `asi`, so the
+            # Read after correction 10's update: correction 13 wraps the capped `asi`, so the
             # variable keeps both.
             asi_capped = self.get_variable(ASI_AMOUNT).get_formula(ASI_DIFFERENTIELLE_DEPUIS)
             self.update_variable(_asi_half_beside_a_spouse_at_the_aspa(asi_capped))
