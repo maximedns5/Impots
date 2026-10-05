@@ -122,6 +122,18 @@ class Adult(BaseModel):
         "AAH goes on past 62, topping a pension up to the AAH amount, and its holder is "
         "taken not to claim the ASPA (D-185).",
     )
+    carte_invalidite: bool = Field(
+        default=False,
+        description="Holds the carte « mobilité inclusion » marked « invalidité » (CASF "
+        "art. L. 241-3), or the carte d'invalidité it replaced. Written as case P of the "
+        "2042 for the first adult and case F for the second, on every covered year: half a "
+        "part more (CGI art. 195, 1 d bis, 3, 4 and 5), the abatement of art. 157 bis under "
+        "its income ceilings, and that abatement off the resources of the housing aid and "
+        "the family benefits, which read N-2. A separate application from the CDAPH rate: "
+        "the mention also goes to a third-category invalidity pensioner and, for good, to "
+        "an APA recipient in groups 1 or 2, so no rate is required beside it, and none "
+        "implies it (D-188).",
+    )
 
 
 class Child(BaseModel):

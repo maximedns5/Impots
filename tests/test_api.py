@@ -807,3 +807,19 @@ def test_an_aah_recipient_past_62_is_priced_not_refused(client: TestClient) -> N
     rows = response.json()["baseline"]
     assert rows["aah"] == pytest.approx(3 * 971.37 + 9 * 1_016.05, abs=0.05)
     assert rows["revenu_disponible"] == pytest.approx(rows["aah"], abs=0.05)
+
+
+def test_the_invalidity_card_reaches_the_income_tax(client: TestClient) -> None:
+    """Case P over HTTP (D-188), in the light tier where the income tax is computed too: at
+    40 000 EUR, half a part more, and 1 073 EUR of income tax instead of 2 023."""
+    adult = {"salaire_brut_annuel": 40_000, "annee_naissance": 1980}
+    rows = {}
+    for carte in (False, True):
+        request = {"household": {"adults": [{**adult, "carte_invalidite": carte}]},
+                   "year": 2024, "tier": "light"}
+        response = client.post("/simulate", json=request)
+        assert response.status_code == 200, response.text
+        rows[carte] = response.json()["baseline"]
+    assert (rows[False]["parts_fiscales"], rows[True]["parts_fiscales"]) == (1.0, 1.5)
+    assert rows[False]["ir"] == pytest.approx(2_023, abs=0.5)
+    assert rows[True]["ir"] == pytest.approx(1_073, abs=0.5)
