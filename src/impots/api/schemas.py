@@ -187,10 +187,117 @@ class Adult(BaseModel):
         return self
 
 
+#: The rates of CSS art. R. 541-1: from 80 % a child opens the AEEH; from 50 %, only where
+#: it attends an establishment or needs a « dispositif adapté ou d'accompagnement » or care
+#: the CDAPH recommends (art. L. 541-1, third alinéa). And the rate from which the carte
+#: « mobilité inclusion » carries the mention « invalidité » (CASF art. L. 241-3), which
+#: gives the child's half-part (CGI art. 195, 2). None is in openfisca's tree, whose AEEH
+#: reads only its `handicap` flag: they are the law's, quoted in D-191.
+AEEH_TAUX = 0.8
+AEEH_TAUX_MINIMUM = 0.5
+CARTE_INVALIDITE_TAUX = 0.8
+#: The age from which a child opens no AEEH: the family benefits run « jusqu'à l'âge de
+#: vingt ans » (CSS art. R. 512-2). Pinned because a refusal must not wait for a
+#: simulation; `test_the_aeeh_age_limit_matches_the_tree` keeps it honest.
+AEEH_AGE_MAXIMUM = 20
+#: The AEEH's complément categories (CSS art. R. 541-2 and D. 541-2).
+AEEH_CATEGORIES = 6
+
+
+def _pour_cent(rate: float) -> str:
+    """A rate as French writes it: 0.8 -> « 80 % », 0.795 -> « 79,5 % », never rounded up
+    to the threshold it misses."""
+    return f"{rate * 100:.2f}".rstrip("0").rstrip(".").replace(".", ",") + " %"
+
+
+class HandicapEnfant(BaseModel):
+    """A child's disability as the CDAPH recognised it: what the AEEH and the income tax
+    read (D-191).
+
+    The rate decides what the builder writes, and is not written itself. openfisca's AEEH
+    reads its generic `handicap` flag, which the builder writes where the AEEH is open,
+    with the complément's category; its half-part reads `invalidite`, which the builder
+    writes for the card. On a child the flag is what the law asks: it opens the AEEH, and it lifts
+    the housing aid's high-rent taper, which CCH art. D. 823-16 lifts for « le demandeur
+    ou son conjoint [...] bénéficiaire [...] de l'allocation d'éducation de l'enfant
+    handicapé ». It opens no ASI, which needs a pension. A child of 20 or more is refused,
+    since there is no AEEH from that age and the flag would still lift the taper.
+    """
+
+    model_config = INPUT_CONFIG
+
+    taux_incapacite: Annotated[float, Field(ge=0, le=1)] = Field(
+        description="Permanent incapacity rate recognised by the CDAPH, as a fraction: 0.8 "
+        "for 80 %. From 80 % it opens the AEEH (CSS art. L. 541-1, R. 541-1); from 50 %, "
+        "only with the establishment, support or care below. Not written into the "
+        "situation: it decides what is.",
+    )
+    etablissement_accompagnement_ou_soins: bool = Field(
+        default=False,
+        description="Between 50 and 79 %: the child attends an establishment of CASF art. "
+        "L. 312-1, I, 2° or 12°, or its state requires a « dispositif adapté ou "
+        "d'accompagnement » (code de l'éducation, art. L. 351-1) or care the CDAPH "
+        "recommends (CSS art. L. 541-1, third alinéa).",
+    )
+    complement_categorie: Annotated[int, Field(ge=1, le=AEEH_CATEGORIES)] | None = Field(
+        default=None,
+        description="The category, 1 to 6, of the AEEH complément the CDAPH granted (CSS "
+        "art. R. 541-2), paid at its own rate of the BMAF (art. D. 541-2). From the second, "
+        "a parent alone also receives the majoration of art. L. 541-4, which D. 541-3 "
+        "reserves to a complément granted for the parent's activity or a paid third "
+        "person: always so in the fifth and sixth categories, assumed so in the second to "
+        "the fourth (D-191). Only where the AEEH is open.",
+    )
+    carte_invalidite: bool = Field(
+        default=False,
+        description="The child holds the carte « mobilité inclusion » with the mention "
+        "« invalidité », granted from 80 % (CASF art. L. 241-3): half a part more on the "
+        "quotient familial (CGI art. 195, 2).",
+    )
+
+    @property
+    def ouvre_aeeh(self) -> bool:
+        """Whether the rate, and below 80 % the establishment, support or care, open the
+        AEEH (CSS art. L. 541-1, R. 541-1). The age is the builder's to check."""
+        return self.taux_incapacite >= AEEH_TAUX or (
+            self.taux_incapacite >= AEEH_TAUX_MINIMUM
+            and self.etablissement_accompagnement_ou_soins)
+
+    @model_validator(mode="after")
+    def _check_thresholds(self) -> HandicapEnfant:
+        if (self.etablissement_accompagnement_ou_soins
+                and self.taux_incapacite < AEEH_TAUX_MINIMUM):
+            raise ValueError(
+                f"L'établissement, l'accompagnement ou les soins n'ouvrent l'AEEH qu'à partir "
+                f"de {_pour_cent(AEEH_TAUX_MINIMUM)} d'incapacité ; à "
+                f"{_pour_cent(self.taux_incapacite)}, le moteur l'ignorerait sans rien dire."
+            )
+        if self.complement_categorie is not None and not self.ouvre_aeeh:
+            raise ValueError(
+                f"Un complément de l'AEEH suppose l'AEEH : un taux d'au moins "
+                f"{_pour_cent(AEEH_TAUX)}, ou d'au moins {_pour_cent(AEEH_TAUX_MINIMUM)} avec "
+                f"un établissement, un accompagnement ou des soins ; à "
+                f"{_pour_cent(self.taux_incapacite)}, il n'y a rien à compléter."
+            )
+        if self.carte_invalidite and self.taux_incapacite < CARTE_INVALIDITE_TAUX:
+            raise ValueError(
+                f"La carte mobilité inclusion « invalidité » suppose un taux d'au moins "
+                f"{_pour_cent(CARTE_INVALIDITE_TAUX)} (CASF art. L. 241-3) ; à "
+                f"{_pour_cent(self.taux_incapacite)}, la demi-part ne serait pas due."
+            )
+        return self
+
+
 class Child(BaseModel):
     model_config = INPUT_CONFIG
 
     annee_naissance: Annotated[int, Field(ge=MIN_BIRTH_YEAR, le=MAX_YEAR)]
+    handicap: HandicapEnfant | None = Field(
+        default=None,
+        description="A disability the CDAPH recognised. Absent means none. Opens the AEEH "
+        "up to the age of 20, and with the card half a part more (D-191). Refused for a "
+        "child of 20 or more in the year simulated.",
+    )
 
 
 class Logement(BaseModel):
@@ -790,6 +897,10 @@ class ResultRows(BaseModel):
     against net receipts."""
     # benefits block (famille) — full tier only
     af: float | None = None
+    aeeh: float | None = None
+    """The allocation d'éducation de l'enfant handicapé, with its compléments and the lone
+    parent's majoration, for the famille. Zero for a household that declares no child's
+    disability (D-191)."""
     ppa: float | None = None
     rsa: float | None = None
     ass: float | None = None

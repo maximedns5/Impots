@@ -261,6 +261,32 @@ became the ceiling less the resources.
 **Blast radius:** a couple where one spouse draws the ASI and the other neither the ASI nor
 the ASPA, with resources low enough for the cap to bind. On the wire, the invalidity pension
 field in a couple. The population carries no invalidity pension, and nothing in it moves.
+
+---
+
+**Correction 11 — each AEEH complément at its own category's rate (CSS art. D. 541-2), D-191.**
+
+The AEEH's complément goes by the category the CDAPH grants (art. R. 541-2), each at its
+own share of the BMAF: « Le taux du complément de deuxième catégorie de l'allocation
+d'éducation de l'enfant handicapé est fixé à 65 % de la base mensuelle de calcul des
+allocations familiales », 92 % for the third, 142.57 % for the fourth, 182.21 % for the
+fifth. openfisca pays the second to the fifth category the complément of the category below
+(its parameters are right, its formula reads the wrong one): measured on a couple's child
+at 80 % in 2024, 3 100.02 EUR for the second category, the first's amount, instead of
+5 369.68; 6 864.33 for the fourth instead of 9 663.76. The first and sixth categories, the
+base and the lone parent's majoration are right.
+
+The correction adds what is missing, 41 %, 27 %, 50.57 % and 39.64 % of the BMAF for the
+second to the fifth category, wherever openfisca's own test opens the AEEH: its `handicap`
+flag, under the age of 20. Wrapped around openfisca's formula, which stands for the rest.
+
+Not corrected, and unreachable: openfisca adds the sixth category's complément outside that
+test, so a child of 20, or one without the flag, would draw it alone. The builder writes a
+category only with the flag, and refuses a child of 20 (D-191).
+
+**Blast radius:** a child with a complément of the second to the fifth category. On the
+wire, the child's disability field. The population carries no disability, and nothing in it
+moves.
 """
 
 from __future__ import annotations
@@ -362,6 +388,15 @@ CORRECTIONS: tuple[Correction, ...] = (
         decision="D-190",
         kill_test="test_the_engine_alone_pays_a_lone_beneficiary_in_a_couple_the_couple_ceiling",
     ),
+    Correction(
+        name="aeeh_complement_au_taux_de_sa_categorie",
+        citation="CSS art. D. 541-2 — « Le taux du complément de deuxième catégorie de "
+                 "l'allocation d'éducation de l'enfant handicapé est fixé à 65 % de la base "
+                 "mensuelle de calcul des allocations familiales », et chaque catégorie à "
+                 "son propre taux",
+        decision="D-191",
+        kill_test="test_the_engine_alone_pays_each_complement_the_rate_of_the_category_below",
+    ),
 )
 
 AL_BASE = "aide_logement_base_ressources_individu"
@@ -371,6 +406,7 @@ MVA_ELIGIBILITY = "eligibilite_caah"
 AAH_ELIGIBILITY = "aah_eligible"
 ASPA_ELIGIBILITY = "aspa_eligibilite"
 ASI_ELIGIBILITY = "asi_eligibilite"
+AEEH = "aeeh"
 #: The age openfisca reads both for the end of the AAH at 50-79 % and for the ASPA's
 #: opening to anyone with an incapacity over 50 %.
 AGE_AAH = ("prestations_sociales", "prestations_etat_de_sante", "invalidite", "aah",
@@ -443,6 +479,8 @@ def apply_to(system: Any) -> Any:
             self.update_variable(_invalidity_pension_levied(nettes_formula, levy_formulas))
             asi_amount = self.get_variable(ASI_AMOUNT).get_formula(ASI_DIFFERENTIELLE_DEPUIS)
             self.update_variable(_asi_capped_for_a_lone_beneficiary_in_a_couple(asi_amount))
+            aeeh_formula = self.get_variable(AEEH).get_formula("2006-01-01")
+            self.update_variable(_aeeh_complement_at_its_own_category(aeeh_formula))
 
     return BenefitCorrections(system)
 
@@ -815,3 +853,45 @@ def _asi_capped_for_a_lone_beneficiary_in_a_couple(openfisca_formula: Any) -> An
             return where(seul_allocataire_du_couple, min_(montant, plafond), montant)
 
     return asi
+
+
+def _aeeh_complement_at_its_own_category(openfisca_formula: Any) -> Any:
+    """`aeeh`, with each complément at its own category's rate (CSS art. D. 541-2):
+    openfisca's formula, plus what it leaves out by paying the second to the fifth category
+    the complément of the category below, wherever its own test opens the AEEH."""
+    from openfisca_core.model_api import (
+        MONTH,
+        Variable,
+        calculate_output_add,
+        set_input_divide_by_period,
+    )
+    from openfisca_france.entities import Famille
+
+    class aeeh(Variable):  # openfisca's naming
+        value_type = float
+        entity = Famille
+        label = ("Allocation d'éducation de l'enfant handicapé, chaque complément au taux de sa "
+                 "catégorie (CSS art. D. 541-2)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006737170"
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+        calculate_output = calculate_output_add
+
+        def formula_2006_01_01(famille, period, parameters):
+            prestations_familiales = parameters(period).prestations_sociales \
+                .prestations_familiales
+            regle = prestations_familiales.education_presence_parentale.aeeh
+            complement = regle.complement_allocation
+            # openfisca's own test of who opens the AEEH, read from the same variables.
+            ouverte = (famille.members("handicap", period)
+                       * (famille.members("age", period) < regle.age_maximum_enfant))
+            niveau = famille.members("aeeh_niveau_handicap", period)
+            manque = ouverte * prestations_familiales.bmaf.bmaf * (
+                (niveau == 2) * (complement.categorie_2 - complement.categorie_1)
+                + (niveau == 3) * (complement.categorie_3 - complement.categorie_2)
+                + (niveau == 4) * (complement.categorie_4 - complement.categorie_3)
+                + (niveau == 5) * (complement.categorie_5 - complement.categorie_4))
+            return (openfisca_formula(famille, period, parameters)
+                    + famille.sum(manque, role=Famille.ENFANT))
+
+    return aeeh

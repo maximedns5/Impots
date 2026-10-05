@@ -120,6 +120,12 @@ REGISTRY: tuple[Row, ...] = (
     # --- benefits block: famille, monthly — full tier only ---------------------
     Row("af", "af", "famille", "month", "full", False,
         label="Allocations familiales"),
+    # The AEEH, its compléments and the lone parent's majoration, as one amount for the
+    # famille, the way openfisca computes it. Given a row when the wire format learned a
+    # child's disability (D-191). No CRDS is levied on it, so it enters `revenu_disponible`
+    # through `prestations_familiales` as it stands here.
+    Row("aeeh", "aeeh", "famille", "month", "full", False,
+        label="Allocation d'éducation de l'enfant handicapé"),
     Row("ppa", "ppa", "famille", "month", "full", False,
         label="Prime d'activité"),
     Row("rsa", "rsa", "famille", "month", "full", False,

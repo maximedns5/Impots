@@ -708,6 +708,10 @@ footer code { font-family: var(--mono); font-size: 11px; }
           l'abattement de l'art. 157 bis, que l'aide au logement déduit aussi (D-188).
           La fin de droits ouvre l'ASS, sous condition de ressources du foyer ; elle se coche
           sans salaire ni allocation chômage, et jusqu'à 61 ans (D-189).
+          Pour un enfant de moins de 20 ans, l'AEEH s'ouvre à 80 %, ou à 50 % avec un
+          établissement, un accompagnement ou des soins ; son complément est payé au taux de
+          sa catégorie, majoré pour un parent seul dès la deuxième ; la carte « invalidité »
+          ajoute une demi-part (D-191).
           Tout le reste prend la valeur par défaut du moteur.
         </p>
       </div>
@@ -718,8 +722,8 @@ footer code { font-family: var(--mono); font-size: 11px; }
         <label class="check">
           <input type="checkbox" id="full">
           <span>Calculer aussi les prestations
-            <span class="sub">Ajoute AF, prime d'activité, RSA, ASS, aide au logement, AAH, ASPA
-              et le revenu disponible. Passe en calcul complet : comptez ~3 s au lieu de ~0,5 s.</span>
+            <span class="sub">Ajoute AF, prime d'activité, RSA, ASS, aide au logement, AAH, AEEH,
+              ASPA, ASI et le revenu disponible. Passe en calcul complet : comptez ~3 s au lieu de ~0,5 s.</span>
           </span>
         </label>
 
@@ -1316,14 +1320,58 @@ function syncIsole() {
   if (!eligible) $("isole").checked = true;   // back to the inferred default
 }
 
+/* One child as the page keeps it: the year, and the disability as typed. Kept in `state`
+   rather than read back from the inputs, because adding or removing a child re-renders
+   them all, and what was typed for the others must survive (D-191). */
+function newChild(year) {
+  return { annee_naissance: year, taux: "", soins: false, complement: "", carte: false };
+}
+
+const COMPLEMENTS = ["1re", "2e", "3e", "4e", "5e", "6e"];
+
 function renderChildren() {
-  $("children").innerHTML = state.children.map((year, i) => `
+  $("children").innerHTML = state.children.map((child, i) => `
     <div class="person">
       <button type="button" class="drop" data-child="${i}" title="retirer">×</button>
       <div class="who">Enfant ${i + 1}</div>
-      <label for="ch${i}">Année de naissance</label>
-      <input type="number" id="ch${i}" value="${year}" min="1920" max="2026" step="1"
-             data-childyear="${i}">
+      <div class="field-row tri">
+        <div>
+          <label for="ch${i}">Année de naissance</label>
+          <input type="number" id="ch${i}" value="${escapeHtml(child.annee_naissance)}"
+                 min="1920" max="2026" step="1"
+                 data-child-index="${i}" data-child-field="annee_naissance">
+        </div>
+        <div>
+          <label for="chtaux${i}">Taux d'incapacité CDAPH (%)</label>
+          <input type="number" id="chtaux${i}" value="${escapeHtml(child.taux)}"
+                 min="0" max="100" step="1" placeholder="aucun"
+                 data-child-index="${i}" data-child-field="taux">
+        </div>
+      </div>
+      <div class="field-row tri">
+        <div>
+          <label for="chcomplement${i}">Complément de l'AEEH</label>
+          <select id="chcomplement${i}" data-child-index="${i}" data-child-field="complement">
+            <option value="">aucun</option>
+            ${COMPLEMENTS.map((label, k) => `<option value="${k + 1}"${
+              child.complement === String(k + 1) ? " selected" : ""}>${label} catégorie</option>`
+            ).join("")}
+          </select>
+        </div>
+        <label class="check">
+          <input type="checkbox" id="chsoins${i}"${child.soins ? " checked" : ""}
+                 data-child-index="${i}" data-child-field="soins">
+          <span>Établissement, accompagnement ou soins
+            <span class="sub">Ouvre l'AEEH entre 50 et 79 %.</span></span>
+        </label>
+      </div>
+      <label class="check">
+        <input type="checkbox" id="chcarte${i}"${child.carte ? " checked" : ""}
+               data-child-index="${i}" data-child-field="carte">
+        <span>Carte mobilité inclusion « invalidité »
+          <span class="sub">Délivrée à partir de 80 % : une demi-part de quotient familial
+            en plus.</span></span>
+      </label>
     </div>`).join("");
   $("addChild").disabled = state.children.length >= 8;
   $("addChild").textContent = state.children.length >= 8
@@ -1335,17 +1383,22 @@ $("one").onclick = () => { state.adults = 1; renderAdults(); syncIsole(); };
 $("two").onclick = () => { state.adults = 2; renderAdults(); syncIsole(); };
 $("addChild").onclick = () => {
   if (state.children.length >= 8) return;
-  state.children.push(2015 + state.children.length);
+  state.children.push(newChild(2015 + state.children.length));
   renderChildren();
 };
 $("children").addEventListener("click", (e) => {
   const i = e.target.dataset.child;
   if (i !== undefined) { state.children.splice(Number(i), 1); renderChildren(); }
 });
-$("children").addEventListener("input", (e) => {
-  const i = e.target.dataset.childyear;
-  if (i !== undefined) state.children[Number(i)] = Number(e.target.value);
-});
+/* Every input of a child's row names the key it writes; a box writes its tick. */
+function childInput(e) {
+  const { childIndex, childField } = e.target.dataset;
+  if (childIndex === undefined || !childField) return;
+  state.children[Number(childIndex)][childField] =
+    e.target.type === "checkbox" ? e.target.checked : e.target.value;
+}
+$("children").addEventListener("input", childInput);
+$("children").addEventListener("change", childInput);
 /* Loyer and zone mean nothing until a statut is chosen, and nothing is sent for
    them either — say so visually rather than leaving them looking live. */
 function syncHousing() {
@@ -1661,11 +1714,27 @@ function adultPayload(i) {
   return adult;
 }
 
+/* One child as the wire format has it. As for an adult, a blank rate sends no `handicap`,
+   and the rate typed in percent leaves as a fraction. The complément's category goes only
+   when one is chosen (D-191). */
+function childPayload(child) {
+  const out = { annee_naissance: Number(child.annee_naissance) };
+  if (child.taux !== "") {
+    out.handicap = {
+      taux_incapacite: Number(child.taux) / 100,
+      etablissement_accompagnement_ou_soins: child.soins,
+      carte_invalidite: child.carte,
+    };
+    if (child.complement !== "") out.handicap.complement_categorie = Number(child.complement);
+  }
+  return out;
+}
+
 function payload() {
   const adults = Array.from({ length: state.adults }, (_, i) => adultPayload(i));
   const household = {
     adults,
-    children: state.children.map((y) => ({ annee_naissance: Number(y) })),
+    children: state.children.map(childPayload),
     couple_marie_ou_pacse: state.adults === 2,
   };
   if (state.adults === 1 && state.children.length > 0) {
@@ -1737,9 +1806,10 @@ const GROUPS = [
     ["aspa", "Allocation de solidarité aux personnes âgées", "up"],
   ]},
   { title: "Handicap", tier: "full", quiet: true, rows: [
-    ["aah", "Allocation aux adultes handicapés",       "up"],
-    ["mva", "Majoration pour la vie autonome",         "up"],
-    ["asi", "Allocation supplémentaire d'invalidité",  "up"],
+    ["aah",  "Allocation aux adultes handicapés",            "up"],
+    ["mva",  "Majoration pour la vie autonome",              "up"],
+    ["asi",  "Allocation supplémentaire d'invalidité",       "up"],
+    ["aeeh", "Allocation d'éducation de l'enfant handicapé", "up"],
   ]},
 ];
 

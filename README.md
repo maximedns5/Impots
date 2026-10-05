@@ -205,8 +205,9 @@ the smallest complete demonstration that the reform machinery does what it says.
   benefit, a disability rate recognised by the CDAPH, which opens the AAH (D-184,
   D-185), the invalidity card, which gives half a part (D-188), and whether they are
   a job seeker whose insurance rights are exhausted with the ASS's work condition
-  met, which opens the ASS (D-189); a household adds its dwelling, its niche bases
-  and an IFI declaration.
+  met, which opens the ASS (D-189); a child, a year of birth and a disability, which
+  opens the AEEH under 20 and, with the invalidity card, half a part (D-191); a
+  household adds its dwelling, its niche bases and an IFI declaration.
   Every other input takes the engine's default. No self-employment, no capital
   income, no property income.
 * **Benefits are assessed on reference periods Phase 0 leaves empty**, which

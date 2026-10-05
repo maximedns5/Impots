@@ -119,7 +119,7 @@ const ROWS = (ir) => ({ salaire_super_brut: 37919.8, salaire_brut: 30000, salair
   // Every row the API sends at the full tier, zeros included: a stub without them would
   // let the quiet groups pass for the wrong reason, a row skipped as missing (D-186).
   retraite_imposable: 0, chomage_brut: 0, pension_invalidite: 0, aspa: 0, asi: 0, aah: 0,
-  mva: 0, ass: 0 });
+  mva: 0, ass: 0, aeeh: 0 });
 const RESULT = { baseline: ROWS(812), reform: ROWS(1012), delta: { ...ROWS(200), revenu_disponible: -200, salaire_net: 0 },
   emtr: 0.4979, emtr_reform: 0.52, tier: "full", year: 2024, historique_revenus: false,
   timings: { build_ms: 3, compute_ms: 480, emtr_ms: 900, total_ms: 1390, reform_cache_hit: true },
@@ -206,6 +206,42 @@ ok("a blank adult sends zero replacement income and no disability", () => {
   assert.equal(adult.carte_invalidite, false, "an unticked card is sent unticked (D-188)");
   assert.equal(adult.fin_de_droits_ass, undefined, "an unticked box sends no fin de droits");
 });
+ok("a blank child sends no disability", () => {
+  const children = JSON.parse(calls.at(-1).opts.body).household.children;
+  assert.equal(children.length, 1, "the child added above must be sent");
+  assert.equal(children[0].handicap, undefined, "a blank rate is « none recognised », not 0 %");
+});
+/* A child's inputs, typed as the page's own listener reads them (D-191). */
+const typeChild = (field, value) => $("children").fire("input", { target: {
+  dataset: { childIndex: "0", childField: field }, value: String(value),
+  type: typeof value === "boolean" ? "checkbox" : "text", checked: value === true } });
+typeChild("taux", "80"); typeChild("complement", "2"); typeChild("carte", true);
+RESULT.baseline.aeeh = 6089.33; RESULT.reform.aeeh = 6089.33;
+$("go").onclick();
+await new Promise((r) => setTimeout(r, 60));
+ok("a child's disability is sent as the wire format has it", () => {
+  const child = JSON.parse(calls.at(-1).opts.body).household.children[0];
+  assert.deepEqual(child.handicap, { taux_incapacite: 0.8,
+    etablissement_accompagnement_ou_soins: false, complement_categorie: 2,
+    carte_invalidite: true }, "the rate in percent must leave as a fraction");
+});
+ok("an AEEH shows its row under « Handicap »", () => {
+  const out = $("out").innerHTML;
+  assert.match(out, /Handicap/);
+  assert.match(out, /Allocation d'éducation de l'enfant handicapé/);
+});
+$("addChild").onclick();
+$("go").onclick();
+await new Promise((r) => setTimeout(r, 60));
+ok("a child's inputs survive adding another child", () => {
+  const children = JSON.parse(calls.at(-1).opts.body).household.children;
+  assert.equal(children.length, 2);
+  assert.equal(children[0].handicap?.taux_incapacite, 0.8, "re-rendering wiped what was typed");
+  assert.equal(children[1].handicap, undefined);
+});
+$("children").fire("click", { target: { dataset: { child: "1" } } });
+typeChild("taux", ""); typeChild("complement", ""); typeChild("carte", false);
+RESULT.baseline.aeeh = 0; RESULT.reform.aeeh = 0;
 RESULT.baseline.retraite_imposable = 12000;
 RESULT.reform.retraite_imposable = 12000;
 RESULT.baseline.ass = 6768;

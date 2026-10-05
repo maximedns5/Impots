@@ -874,3 +874,44 @@ def test_an_invalidity_pension_reaches_the_engine_and_the_asi_comes_back(client:
     assert rows["pension_invalidite"] == pytest.approx(6_000, abs=0.5)
     assert rows["asi"] == pytest.approx(4_676.11, abs=0.05)
     assert rows["revenu_disponible"] == pytest.approx(10_676.11, abs=0.05)
+
+
+def test_a_childs_disability_reaches_the_engine_and_its_row_comes_back(client: TestClient) -> None:
+    """The AEEH has a row of its own on the wire (D-191). A parent alone, a child at 80 %
+    with a complément of the second category and the invalidity card: the AEEH, 32 % of the
+    BMAF, the complément at 65 % and the lone parent's majoration at 13 %, over the BMAF of
+    2024; and the card's half-part, 2.5 parts."""
+    bmaf = 3 * 445.93 + 9 * 466.44
+    request = {
+        "household": {
+            "adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1985}],
+            "children": [{"annee_naissance": 2014, "handicap": {
+                "taux_incapacite": 0.8, "complement_categorie": 2, "carte_invalidite": True}}],
+        },
+        "year": 2024,
+        "tier": "full",
+    }
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 200, response.text
+    rows = response.json()["baseline"]
+    assert rows["aeeh"] == pytest.approx((0.32 + 0.65 + 0.13) * bmaf, abs=0.05)
+    assert rows["parts_fiscales"] == 2.5
+
+
+@pytest.mark.parametrize(("child", "needle"), [
+    ({"annee_naissance": 2004, "handicap": {"taux_incapacite": 0.8}}, "20 ans"),
+    ({"annee_naissance": 2014, "handicap": {"taux_incapacite": 0.6, "carte_invalidite": True}},
+     "80 %"),
+    ({"annee_naissance": 2014, "handicap": {"taux_incapacite": 0.6, "complement_categorie": 1}},
+     "complément"),
+])
+def test_a_childs_disability_the_engine_cannot_price_is_refused(
+    client: TestClient, child: dict, needle: str,
+) -> None:
+    """A child of 20 has no AEEH, and the card and the complément have their thresholds:
+    each is refused with a reason the page can show, never priced as something else."""
+    request = {"household": {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1985}],
+                             "children": [child]}, "year": 2024}
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 422, response.text
+    assert needle in response.text

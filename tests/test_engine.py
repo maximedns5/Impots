@@ -1123,8 +1123,9 @@ def test_an_aah_that_is_not_paid_lifts_no_taper() -> None:
 
 def test_a_dependent_s_aah_lifts_no_taper() -> None:
     """Only the claimant's or the spouse's AAH lifts it. A child of 22 at 80 % in the
-    famille draws the AAH, written by hand since no field carries a child's disability,
-    and the aid stays the tapered one, 84.72 EUR, as without that disability."""
+    famille draws the AAH, written by hand since the child's field refuses a child of 20
+    or more (D-191), and the aid stays the tapered one, 84.72 EUR, as without that
+    disability."""
     household = HouseholdInput.model_validate(
         {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1970}],
          "children": [{"annee_naissance": 2002}], "logement": HIGH_RENT})
@@ -2065,3 +2066,269 @@ def test_the_asi_prices_the_same_whatever_is_computed_first(name: str) -> None:
         value = (float(first.calculate(variable, "2024").sum()) if key == "ir"
                  else float(first.calculate_add(variable, "2024").sum()))
         assert abs(value) == pytest.approx(registry[key], abs=0.05), key
+
+
+# --------------------------------------------------------------------------- #
+# a child's disability: the AEEH and the child's half-part (docs/DECISIONS.md D-191)
+# --------------------------------------------------------------------------- #
+#: The BMAF of 2024, summed over the year: 445.93 EUR a month to March, 466.44 from April.
+BMAF_2024 = 3 * 445.93 + 9 * 466.44
+#: The AEEH, 32 % of the BMAF for each child (CSS art. D. 541-1): 1 771.44 EUR in 2024.
+AEEH_BASE_2024 = 0.32 * BMAF_2024
+#: Each complément as a share of the BMAF (art. D. 541-2). The sixth is the majoration
+#: pour tierce personne: 1 210.90 EUR a month to March, 1 266.60 from April.
+AEEH_COMPLEMENTS = {1: 0.24, 2: 0.65, 3: 0.92, 4: 1.4257, 5: 1.8221}
+MTP_2024 = 3 * 1_210.90 + 9 * 1_266.60
+#: The majoration for a lone parent, by the complément's category (art. D. 541-4).
+AEEH_MAJORATIONS = {2: 0.13, 3: 0.18, 4: 0.57, 5: 0.73, 6: 1.07}
+#: Rents in zone 1 for a parent alone with one child: one above the threshold of the taper,
+#: where the aid falls to 1 108.89 EUR over 2024, and one under it.
+AEEH_HIGH_RENT = {"statut": "locataire_vide", "loyer_mensuel": 1_700, "zone_apl": 1}
+AEEH_LOW_RENT = {"statut": "locataire_vide", "loyer_mensuel": 900, "zone_apl": 1}
+
+
+def _aeeh_by_hand(categorie: int | None, isole: bool) -> float:
+    """The AEEH of 2024 for one child, from the articles and the BMAF."""
+    complement = MTP_2024 if categorie == 6 else AEEH_COMPLEMENTS.get(categorie, 0.0) * BMAF_2024
+    majoration = AEEH_MAJORATIONS.get(categorie, 0.0) * BMAF_2024 if isole else 0.0
+    return AEEH_BASE_2024 + complement + majoration
+
+
+def _parent_of(handicap: dict[str, Any] | None, *, couple: bool = False, naissance: int = 2014,
+               salaire: float = 0, logement: dict[str, Any] | None = None) -> HouseholdInput:
+    """A parent, or a couple, and one child whose disability is `handicap`; nothing else
+    unless asked."""
+    child: dict[str, Any] = {"annee_naissance": naissance}
+    if handicap is not None:
+        child["handicap"] = handicap
+    household: dict[str, Any] = {
+        "adults": [{"salaire_brut_annuel": salaire, "annee_naissance": 1985}],
+        "children": [child]}
+    if couple:
+        household["adults"].append({"salaire_brut_annuel": 0, "annee_naissance": 1985})
+        household["couple_marie_ou_pacse"] = True
+    if logement is not None:
+        household["logement"] = logement
+    return HouseholdInput.model_validate(household)
+
+
+def _aeeh(household: HouseholdInput, system: Any = None) -> float:
+    """The AEEH of 2024 alone, on the situation the builder writes. It reads no resource,
+    so nothing needs pinning."""
+    situation = build_situation(household, 2024)
+    simulation = SimulationBuilder().build_from_entities(system or baseline(), situation)
+    return float(simulation.calculate_add("aeeh", "2024")[0])
+
+
+def test_a_childs_disability_is_written_on_every_covered_month() -> None:
+    """Where the AEEH is open, openfisca's `handicap` flag, which its AEEH reads, with the
+    complément's category; the card where it is held. On every month from N-2 to N, like
+    the adult's inputs. The rate itself is not written: openfisca's AEEH never reads it,
+    and a rate that opens nothing writes nothing."""
+    covered = 36
+    child = build_situation(_parent_of(
+        {"taux_incapacite": 0.8, "complement_categorie": 3, "carte_invalidite": True}),
+        2024)["individus"]["enfant_0"]
+    assert list(child["handicap"].values()) == [True] * covered
+    assert list(child["aeeh_niveau_handicap"].values()) == [3] * covered
+    assert list(child["invalidite"].values()) == [True] * covered
+    assert "taux_incapacite" not in child
+
+    with_care = build_situation(_parent_of(
+        {"taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True}),
+        2024)["individus"]["enfant_0"]
+    assert list(with_care["handicap"].values()) == [True] * covered
+    assert "aeeh_niveau_handicap" not in with_care and "invalidite" not in with_care
+
+    for handicap in ({"taux_incapacite": 0.6}, None):
+        bare = build_situation(_parent_of(handicap), 2024)["individus"]["enfant_0"]
+        assert set(bare) == {"date_naissance"}, handicap
+
+
+def test_from_eighty_per_cent_a_child_opens_the_aeeh_and_leaves_the_rsa_alone() -> None:
+    """CSS art. L. 541-1 and R. 541-1: from 80 %, 32 % of the BMAF a month, 1 771.44 EUR in
+    2024. The RSA does not count it (CASF art. R. 262-11, 6°), so a parent without income
+    keeps the same RSA, and the disposable income rises by the AEEH exactly."""
+    without = compute(_parent_of(None), 2024, tier="full").baseline
+    rows = compute(_parent_of({"taux_incapacite": 0.8}), 2024, tier="full").baseline
+    assert rows["aeeh"] == pytest.approx(AEEH_BASE_2024, abs=0.05)
+    assert without["aeeh"] == 0.0
+    assert without["rsa"] > 0
+    assert rows["rsa"] == pytest.approx(without["rsa"], abs=0.01)
+    assert rows["revenu_disponible"] - without["revenu_disponible"] == pytest.approx(
+        AEEH_BASE_2024, abs=0.05)
+
+
+def test_the_aeeh_leaves_the_prime_d_activite_and_the_housing_aid_alone() -> None:
+    """The prime d'activité does not count it either (CSS art. R. 844-5, 6°), nor does the
+    housing aid, which counts taxable income. A parent on 15 000 EUR who rents keeps both."""
+    without = compute(_parent_of(None, salaire=15_000, logement=RENTING), 2024,
+                      tier="full").baseline
+    rows = compute(_parent_of({"taux_incapacite": 0.8}, salaire=15_000, logement=RENTING),
+                   2024, tier="full").baseline
+    assert without["ppa"] > 0 and without["aide_logement"] > 0
+    assert rows["ppa"] == pytest.approx(without["ppa"], abs=0.01)
+    assert rows["aide_logement"] == pytest.approx(without["aide_logement"], abs=0.01)
+    assert rows["revenu_disponible"] - without["revenu_disponible"] == pytest.approx(
+        AEEH_BASE_2024, abs=0.05)
+
+
+def test_between_fifty_and_seventy_nine_per_cent_the_aeeh_needs_establishment_support_or_care(
+) -> None:
+    """CSS art. L. 541-1, third alinéa, and R. 541-1: from 50 %, the AEEH only where the
+    child attends an establishment, or needs a « dispositif adapté ou d'accompagnement » or
+    care the CDAPH recommends. Under 50 %, nothing."""
+    assert _aeeh(_parent_of({"taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True})
+                 ) == pytest.approx(AEEH_BASE_2024, abs=0.05)
+    assert _aeeh(_parent_of({"taux_incapacite": 0.6})) == 0.0
+    assert _aeeh(_parent_of({"taux_incapacite": 0.4})) == 0.0
+
+
+def test_the_establishment_support_or_care_is_refused_below_fifty_per_cent() -> None:
+    """Below 50 % it opens nothing, and the engine would ignore it without a word."""
+    with pytest.raises(ValueError, match="50"):
+        _parent_of({"taux_incapacite": 0.4, "etablissement_accompagnement_ou_soins": True})
+
+
+def test_a_complement_is_refused_without_the_aeeh() -> None:
+    """A complément is a complément of the AEEH (art. L. 541-1, second alinéa): at 60 %
+    without an establishment, support or care, there is no AEEH for it to complete."""
+    with pytest.raises(ValueError, match="complément"):
+        _parent_of({"taux_incapacite": 0.6, "complement_categorie": 2})
+
+
+def test_the_card_is_refused_below_eighty_per_cent() -> None:
+    """The mention « invalidité » of the carte mobilité inclusion goes to a rate of at least
+    80 % (CASF art. L. 241-3), and a child cannot hold an invalidity pension's category."""
+    with pytest.raises(ValueError, match="80"):
+        _parent_of({"taux_incapacite": 0.7, "etablissement_accompagnement_ou_soins": True,
+                    "carte_invalidite": True})
+
+
+@pytest.mark.parametrize("categorie", [1, 2, 3, 4, 5, 6])
+def test_each_complement_is_paid_at_its_own_category(categorie: int) -> None:
+    """CSS art. D. 541-2: « Le taux du complément de deuxième catégorie [...] est fixé à 65 %
+    de la base mensuelle de calcul des allocations familiales », and so for each category;
+    the sixth is the majoration pour tierce personne. openfisca paid the second to the
+    fifth category the complément of the category below: 3 100.02 EUR for a couple's child
+    of the second category in 2024, instead of 5 369.68 (D-191)."""
+    couple = _parent_of({"taux_incapacite": 0.8, "complement_categorie": categorie}, couple=True)
+    assert _aeeh(couple) == pytest.approx(_aeeh_by_hand(categorie, isole=False), abs=0.05)
+
+
+@pytest.mark.parametrize("categorie", [1, 2, 3, 4, 5, 6])
+def test_a_lone_parent_gets_the_majoration_from_the_second_category(categorie: int) -> None:
+    """CSS art. L. 541-4 and D. 541-4: a parent alone, from the second category, 13 % of the
+    BMAF a month up to 107 % at the sixth. None at the first."""
+    alone = _parent_of({"taux_incapacite": 0.8, "complement_categorie": categorie})
+    assert _aeeh(alone) == pytest.approx(_aeeh_by_hand(categorie, isole=True), abs=0.05)
+
+
+def test_the_aeeh_stops_at_twenty() -> None:
+    """The family benefits run « jusqu'à l'âge de vingt ans » (CSS art. R. 512-2), and so
+    does openfisca's AEEH. A child of 19 draws it all year. From 20 the disability is an
+    adult's, the AAH, which the child's field does not open: refused, rather than priced as
+    no AEEH beside a flag that would still lift the housing aid's taper."""
+    assert _aeeh(_parent_of({"taux_incapacite": 0.8}, naissance=2005)) == pytest.approx(
+        AEEH_BASE_2024, abs=0.05)
+    with pytest.raises(ValueError, match="20 ans"):
+        build_situation(_parent_of({"taux_incapacite": 0.8}, naissance=2004), 2024)
+    assert build_situation(_parent_of(None, naissance=2004), 2024)
+
+
+def test_the_aeeh_age_limit_matches_the_tree() -> None:
+    """The builder pins the age from which a child opens no AEEH, because a refusal must
+    not wait for a simulation. Read here from the tree, not trusted."""
+    from impots.api.schemas import AEEH_AGE_MAXIMUM
+
+    tree = baseline().parameters("2024-01-01").prestations_sociales \
+        .prestations_familiales.education_presence_parentale.aeeh
+    assert int(tree.age_maximum_enfant) == AEEH_AGE_MAXIMUM
+
+
+def test_the_engine_alone_pays_each_complement_the_rate_of_the_category_below() -> None:
+    """The kill test for the AEEH correction: raw openfisca pays the second category the
+    first category's complément. The day this fails, openfisca pays each category its own,
+    and `engine.corrections` must drop its own."""
+    from impots.engine.system import uncorrected_baseline
+
+    couple = _parent_of({"taux_incapacite": 0.8, "complement_categorie": 2}, couple=True)
+    assert _aeeh(couple, uncorrected_baseline()) == pytest.approx(
+        _aeeh_by_hand(1, isole=False), abs=0.05), (
+        "openfisca no longer pays the second category the first's complément: remove the "
+        "AEEH correction rather than keep one that corrects nothing")
+
+
+def test_the_card_adds_a_half_part_to_the_quotient() -> None:
+    """CGI art. 195, 2: the quotient « est augmenté d'une demi-part pour chaque enfant à
+    charge [...] titulaire de la carte "mobilité inclusion" portant la mention
+    "invalidité" ». A parent alone on 40 000 EUR: 2 parts, 154 EUR of tax; with the card,
+    2.5 parts, and the décote takes the rest. The AEEH's flag alone moves nothing."""
+    none = compute(_parent_of(None, salaire=40_000), 2024).baseline
+    flag = compute(_parent_of({"taux_incapacite": 0.8}, salaire=40_000), 2024).baseline
+    card = compute(_parent_of({"taux_incapacite": 0.8, "carte_invalidite": True},
+                              salaire=40_000), 2024).baseline
+    assert (none["parts_fiscales"], flag["parts_fiscales"], card["parts_fiscales"]) == (
+        2.0, 2.0, 2.5)
+    assert none["ir"] == pytest.approx(154, abs=0.5)
+    assert flag["ir"] == none["ir"]
+    assert card["ir"] == 0.0
+
+
+def test_past_the_cap_the_card_is_worth_the_cap_and_the_complementary_reduction() -> None:
+    """CGI art. 197, I, 2: the half-part's gain is capped at 1 791 EUR, and a half-part of
+    art. 195, 2 then earns « une réduction d'impôt égale à 1 785 € ». A parent alone on
+    150 000 EUR saves the two, 3 576 EUR."""
+    none = compute(_parent_of(None, salaire=150_000), 2024).baseline
+    card = compute(_parent_of({"taux_incapacite": 0.8, "carte_invalidite": True},
+                              salaire=150_000), 2024).baseline
+    assert none["ir"] - card["ir"] == pytest.approx(1_791 + 1_785, abs=1.0)
+
+
+def test_an_aeeh_household_keeps_the_whole_housing_aid_above_the_taper() -> None:
+    """CCH art. D. 823-16: the taper « ne s'applique pas lorsque le demandeur ou son
+    conjoint est bénéficiaire [...] de l'allocation d'éducation de l'enfant handicapé ».
+    openfisca lifts it on its `handicap` flag, which the builder writes only where the AEEH
+    is open, so nothing needs correcting. At 1 700 EUR in zone 1 the parent keeps the aid
+    of a rent under the taper; without the disability it falls to 1 108.89 EUR."""
+    child = {"taux_incapacite": 0.8}
+    high = compute(_parent_of(child, logement=AEEH_HIGH_RENT), 2024, tier="full").baseline
+    low = compute(_parent_of(child, logement=AEEH_LOW_RENT), 2024, tier="full").baseline
+    tapered = compute(_parent_of(None, logement=AEEH_HIGH_RENT), 2024, tier="full").baseline
+    assert high["aide_logement"] == pytest.approx(low["aide_logement"], abs=0.05)
+    assert tapered["aide_logement"] == pytest.approx(1_108.89, abs=0.05)
+
+
+def test_an_aeeh_household_prices_the_same_whatever_is_computed_first() -> None:
+    """Through the registry, as the API computes it, and with `revenu_disponible` first, as
+    the EMTR's bumped leg does: the AEEH, the RSA, the housing aid above the taper and the
+    disposable income agree."""
+    situation = build_situation(_parent_of(
+        {"taux_incapacite": 0.8, "complement_categorie": 3}, logement=AEEH_HIGH_RENT), 2024)
+    registry = extract(_pinned(situation), 2024, "full")
+    first = _pinned(situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    assert disposable == pytest.approx(registry["revenu_disponible"], abs=0.05)
+    for key in ("aeeh", "rsa", "aide_logement"):
+        assert float(first.calculate_add(key, "2024").sum()) == pytest.approx(
+            registry[key], abs=0.05), key
+
+
+def test_the_aeeh_correction_adds_nothing_where_openfisca_opens_no_aeeh() -> None:
+    """The correction adds the missing part of a complément only where openfisca's own test
+    opens the AEEH: its `handicap` flag, under 20. A second category written by hand, without
+    the flag on a child of 10, or with it on a child of 20, whom the wire refuses, draws
+    nothing, as in raw openfisca."""
+    covered = [f"{year}-{month:02d}" for year in (2022, 2023, 2024) for month in range(1, 13)]
+
+    def aeeh(naissance: int, *, flag: bool) -> float:
+        situation = build_situation(_parent_of(None, naissance=naissance), 2024)
+        child = situation["individus"]["enfant_0"]
+        child["aeeh_niveau_handicap"] = dict.fromkeys(covered, 2)
+        if flag:
+            child["handicap"] = dict.fromkeys(covered, True)
+        simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+        return float(simulation.calculate_add("aeeh", "2024")[0])
+
+    assert aeeh(2014, flag=False) == 0.0
+    assert aeeh(2004, flag=True) == 0.0

@@ -121,8 +121,9 @@ def pin_benefit_history(simulation: Any, year: int) -> None:
 
 #: The inputs that open the AAH, the ASI or the ASS. The disability field writes the first
 #: since D-184, the invalidity pension field the second since D-190, and the « fin de
-#: droits » field the last since D-189; the other no field writes, and a situation carries
-#: it only when someone adds it, as the D-179 tests do for the ASI.
+#: droits » field the last since D-189. The other, `handicap`, the child's field writes since
+#: D-191, on a child where the AEEH is open; on an adult a situation carries it only when
+#: someone adds it, as the D-179 tests do for the ASI.
 MINIMA_INPUTS = ("taux_incapacite", "pensions_invalidite", "handicap", "ass_precondition_remplie")
 
 
@@ -149,6 +150,11 @@ def has_benefit_cascade(situation: dict[str, Any]) -> bool:
     stack there, so the family base it caches counts the AAH in full. The D-179 tests
     guard that. A household with neither a dwelling nor one of `MINIMA_INPUTS` has no
     circle to close, and its full tier keeps its cost.
+
+    A child's disability writes `handicap` on the child since D-191. There the flag opens
+    the AEEH, which reads no resource, and no ASI, which needs a pension: on a household
+    without a dwelling the pin runs for nothing, about 1.5 s, and moves no figure in
+    either evaluation order (measured). Left so, rather than read the flag by role.
     """
     housed = "statut_occupation_logement" in situation["menages"][MENAGE_ID]
     return housed or any(
@@ -326,6 +332,8 @@ def build_situation(
         key = child_id(i)
         child_ids.append(key)
         individus[key] = {"date_naissance": {"ETERNITY": f"{child.annee_naissance}-01-01"}}
+        if child.handicap is not None:
+            individus[key].update(_child_disability_inputs(child, year, years))
 
     menage: dict[str, Any] = {"personne_de_reference": [adult_ids[0]]}
     if len(adult_ids) > 1:
@@ -490,6 +498,41 @@ def _disability_inputs(handicap: Any, years: list[int]) -> dict[str, Any]:
     if handicap.restriction_substantielle_durable_acces_emploi:
         inputs["aah_restriction_substantielle_durable_acces_emploi"] = _constant(
             "aah_restriction_substantielle_durable_acces_emploi", True, years)
+    return inputs
+
+
+def _child_disability_inputs(child: Any, year: int, years: list[int]) -> dict[str, Any]:
+    """A child's disability (`api.schemas.HandicapEnfant`, D-191), on every covered month.
+
+    Where the AEEH is open, openfisca's generic `handicap` flag, which its AEEH reads, and
+    the complément's category with it; for the card, `invalidite`, which gives the
+    half-part. The rate is not written: it decided all this, and openfisca reads it for
+    nobody under 20 who is a dependant (the AAH opens at 20). On a child the flag also
+    lifts the housing aid's taper, as CCH art. D. 823-16 does for an AEEH beneficiary; the
+    household's `has_benefit_cascade` then holds, and the pin of D-178 runs, moving no
+    figure.
+
+    A child of 20 or more in the year simulated is refused: the AEEH has stopped, the
+    disability is then an adult's (the AAH), and the flag would still lift the taper.
+    Under 20 that year, the child is under 20 on every covered month."""
+    from impots.api import schemas
+
+    age = year - child.annee_naissance
+    if age >= schemas.AEEH_AGE_MAXIMUM:
+        raise ValueError(
+            f"Le handicap d'un enfant de {age} ans n'est pas modélisé : l'AEEH s'arrête à "
+            f"{schemas.AEEH_AGE_MAXIMUM} ans (CSS art. R. 512-2), et au-delà c'est l'AAH d'un "
+            f"adulte, que le champ de l'enfant n'ouvre pas."
+        )
+    handicap = child.handicap
+    inputs: dict[str, Any] = {}
+    if handicap.ouvre_aeeh:
+        inputs["handicap"] = _constant("handicap", True, years)
+        if handicap.complement_categorie is not None:
+            inputs["aeeh_niveau_handicap"] = _constant(
+                "aeeh_niveau_handicap", handicap.complement_categorie, years)
+    if handicap.carte_invalidite:
+        inputs["invalidite"] = _constant("invalidite", True, years)
     return inputs
 
 

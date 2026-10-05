@@ -912,6 +912,7 @@ const inputs = {};
 const $ = (id) => (inputs[id] ||= { value: "", checked: false });
 const state = { adults: 1, children: [] };
 const adultPayload = () => ({});
+const childPayload = () => ({});
 const nichesPayload = () => null;
 const patrimoinePayload = () => null;
 const reformSpec = () => null;
@@ -939,3 +940,94 @@ def test_a_hidden_history_box_decides_nothing(source: str, tmp_path: Path):
     request has by default since D-011; the full tier sends what the box says."""
     sent = _run_node(HISTORY_HARNESS % {"payload": _function(source, "payload")}, tmp_path)
     assert sent == {"full_unticked": False, "light_unticked": True, "full_ticked": True}
+
+
+# --- the household's children: every field on the wire has an input (D-191) ----------
+
+
+#: Each field of `api.schemas.Child`, and the result rows that show what it produced. A new
+#: field fails `test_every_child_field_on_the_wire_is_sent_from_an_input` until it is given
+#: an input here and on the page. The disability shows in the AEEH, and in the parts when
+#: the child holds the card.
+CHILD_INPUT_ROWS: dict[str, tuple[str, ...]] = {
+    "annee_naissance": ("parts_fiscales", "af"),
+    "handicap": ("aeeh", "parts_fiscales"),
+}
+
+
+def _child_payload(source: str) -> str:
+    assert "function childPayload(" in source, "no childPayload: the child fields are not sent"
+    return _function(source, "childPayload")
+
+
+def test_every_child_field_on_the_wire_is_sent_from_an_input(source: str):
+    """Derived from the wire format, never listed by hand, as for the adults (D-186). The
+    child had one field, sent from the year's input; D-191 gives it a disability, whose own
+    fields are walked too, since each is an input of its own. Every key the payload reads
+    off a child must be written by an input of the child's row, under the same name."""
+    from impots.api.schemas import Child, HandicapEnfant
+
+    assert set(CHILD_INPUT_ROWS) == set(Child.model_fields), (
+        "a new Child field needs an input on the page and its rows here")
+    body = _child_payload(source)
+    for field in [*Child.model_fields, *HandicapEnfant.model_fields]:
+        assert re.search(rf"\b{field}\b", body), f"{field} is never sent"
+    read = set(re.findall(r"\bchild\.(\w+)", body))
+    assert read, "the payload reads nothing off a child"
+    row = _function(source, "renderChildren")
+    for key in read:
+        assert f'data-child-field="{key}"' in row, f"child.{key} is read, and no input writes it"
+
+
+def test_every_row_a_child_input_produces_is_shown(source: str):
+    """An AEEH typed with no AEEH row would move only the disposable income."""
+    start = source.index("const GROUPS = [")
+    groups = source[start:source.index("\n];", start)]
+    for field, rows in CHILD_INPUT_ROWS.items():
+        for key in rows:
+            assert f'["{key}"' in groups, f"{field} produces {key}, which the table never shows"
+
+
+CHILD_HARNESS = """
+%(newChild)s
+%(childPayload)s
+const out = {};
+out.blank = childPayload(newChild(2014));
+const filled = newChild(2014);
+Object.assign(filled, { taux: "80", complement: "3", carte: true });
+out.filled = childPayload(filled);
+const cared = newChild(2016);
+Object.assign(cared, { taux: "60", soins: true });
+out.cared = childPayload(cared);
+console.log(JSON.stringify(out));
+"""
+
+
+@pytest.fixture(scope="module")
+def child_payloads(source: str, tmp_path_factory):
+    """Run the page's own `newChild` and `childPayload` in node: a blank child, one at 80 %
+    with a complément and the card, and one at 60 % in an establishment."""
+    assert "function newChild(" in source, "no newChild: a child's inputs have no defaults"
+    return _run_node(CHILD_HARNESS % {"newChild": _function(source, "newChild"),
+                                      "childPayload": _child_payload(source)},
+                     tmp_path_factory.mktemp("ui_children"))
+
+
+def test_a_blank_child_sends_no_disability(child_payloads):
+    """An empty rate is « no disability recognised », not « 0 % », as for an adult."""
+    assert child_payloads["blank"] == {"annee_naissance": 2014}
+
+
+def test_a_filled_child_is_what_the_wire_format_accepts(child_payloads):
+    """The rate is typed in percent and sent as a fraction; the complément's category as a
+    number, and only when one is chosen. And each child validates against the model."""
+    from impots.api.schemas import Child
+
+    assert child_payloads["filled"]["handicap"] == {
+        "taux_incapacite": 0.8, "etablissement_accompagnement_ou_soins": False,
+        "complement_categorie": 3, "carte_invalidite": True}
+    assert child_payloads["cared"]["handicap"] == {
+        "taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True,
+        "carte_invalidite": False}
+    for name in ("filled", "cared"):
+        assert Child.model_validate(child_payloads[name]).handicap is not None
