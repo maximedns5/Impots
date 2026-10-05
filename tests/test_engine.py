@@ -1713,10 +1713,13 @@ def test_the_ass_does_not_depend_on_which_adult_claims_it() -> None:
     échéant, de son conjoint ». openfisca adds the unemployment benefit to the famille's
     second parent only: with the claimant second, the first one's 24 000 EUR of benefit
     vanished from the ASS's resources, and the ASS was paid in full, 6 768 EUR instead of
-    1 263.50."""
+    1 263.50 (D-189). Re-anchored by D-192: the ASS of 2022 is taxable, so in the RFR of
+    2022, which puts the spouse's benefit of 2024 at the full rate of CSG; the ASS's
+    resources read that benefit net of its CSG, and the ASS is 1 531.73, whichever adult
+    claims it."""
     first = _ass_rows("conjoint_au_chomage")
     second = _ass_both_orders("allocataire_second")[1]
-    assert first["ass"] == pytest.approx(1_263.50, abs=0.05)
+    assert first["ass"] == pytest.approx(1_531.73, abs=0.05)
     assert second["ass"] == pytest.approx(first["ass"], abs=0.05)
     assert second["revenu_disponible"] == pytest.approx(first["revenu_disponible"], abs=0.05)
 

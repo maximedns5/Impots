@@ -1,5 +1,6 @@
-"""Where this project's reading of the BENEFITS law, and of the abatement of art. 157 bis that
-the income tax and the benefits both read (D-188), differs from openfisca's, and why.
+"""Where this project's reading of the BENEFITS law, of the abatement of art. 157 bis that the
+income tax and the benefits both read (D-188), and of the income tax on a benefit, the ASS
+(D-192), differs from openfisca's, and why.
 
 The same bar as `patrimoine.corrections`, which holds the IFI ones: a legal citation, a
 measured demonstration of the difference, a decision-log entry, and a KILL TEST that fails
@@ -287,6 +288,49 @@ category only with the flag, and refuses a child of 20 (D-191).
 **Blast radius:** a child with a complément of the second to the fifth category. On the
 wire, the child's disability field. The population carries no disability, and nothing in it
 moves.
+
+---
+
+**Correction 12 — the ASS is taxed as a salary (C. trav. art. L. 5428-1; CGI art. 158, 5),
+D-192.**
+
+To the allocations France Travail pays, and to the ASS, « Les règles fixées au 5 de l'article
+158 du code général des impôts sont applicables » (C. trav. art. L. 5428-1): the ASS « est
+imposable entre les mains des bénéficiaires dans la catégorie des traitements et salaires »
+(BOI-RSA-CHAMP-20-20, § 20), declared in box 1AP with the unemployment benefit, after the 10 %
+deduction of CGI art. 83, 3°, which « s'applique séparément aux rémunérations perçues par
+chaque membre du foyer fiscal ». It bears no CSG (CSS art. L. 136-1-2, II, 5°), and so no CRDS.
+openfisca's `ass` enters no income-tax variable. Measured in 2024 on a claimant alone without
+resources: 6 768 EUR of ASS and an RFR of 0, where the law gives 6 768 - 677 = 6 091. Beside a
+spouse's 15 000 EUR of declared pension, the RFR of N-2 was 13 500 instead of 19 163.80, and
+the pension of N went unlevied where the reduced rate takes 75 EUR of CRDS.
+
+The correction puts the ASS of the year among each member's salaries in
+`revenu_categoriel_tspr`, where the income tax sums the categories: openfisca's own deduction
+formula, run on the member's salaries and ASS together, less the same formula on the salaries
+alone. A member's salaries, unemployment benefit and ASS thus share one deduction and one
+minimum. Not earlier in the chain: `revenu_assimile_salaire_apres_abattements` and
+`traitements_salaires_pensions_rentes` are also read by the family benefits on N-2, for their
+resources, where CSS art. R. 532-7 leaves out the « indemnités de chômage » of a person
+admitted to the ASS, and for their test of `biactivite`, where the ASS is no professional
+income. Nor in `chomage_imposable`, which the ASS's own eligibility reads through
+`chomage_net`, and on which openfisca levies the CSG and CRDS the ASS does not bear. The housing
+aid reads none of them since 2021. Wrapped around openfisca's formulas.
+
+What it leaves: the IFI's cap on income and the ceiling of the union-dues credit read the
+salaries before this category, and do not see the ASS (D-192).
+
+Read only when someone in the simulation meets `ass_precondition_remplie` in the year, without
+which the ASS is nil: the RFR of a simulation without a claimant, the population's and every
+light tier's but a claimant's, computes neither the ASS nor the AAH and ASI its eligibility
+reads.
+
+**Blast radius:** a household with a claimant in « fin de droits ». Its income tax does not
+move: under the ASS's ceilings, the 0 % bracket and the décote leave none. Its RFR does, and
+with the RFR of N-2, the rate of the CSG on the household's other replacement incomes. Its
+light tier now computes the ASS, and the AAH and the ASI its eligibility reads, but none of
+the benefits the ASS tops up. The population declares no one in « fin de droits », and
+nothing in it moves.
 """
 
 from __future__ import annotations
@@ -397,6 +441,15 @@ CORRECTIONS: tuple[Correction, ...] = (
         decision="D-191",
         kill_test="test_the_engine_alone_pays_each_complement_the_rate_of_the_category_below",
     ),
+    Correction(
+        name="ass_imposable_comme_un_salaire",
+        citation="C. trav. art. L. 5428-1 — « Les règles fixées au 5 de l'article 158 du code "
+                 "général des impôts sont applicables » : l'allocation de solidarité spécifique "
+                 "« est imposable entre les mains des bénéficiaires dans la catégorie des "
+                 "traitements et salaires » (BOI-RSA-CHAMP-20-20, § 20)",
+        decision="D-192",
+        kill_test="test_the_engine_alone_leaves_the_ass_out_of_the_income_tax",
+    ),
 )
 
 AL_BASE = "aide_logement_base_ressources_individu"
@@ -442,6 +495,13 @@ PENSION_INVALIDITE_MINIMUM: tuple[tuple[str, float], ...] = (
     ("2022-07-01", 309.09), ("2023-01-01", 311.56), ("2024-01-01", 328.07),
     ("2025-01-01", 335.29), ("2026-01-01", 338.31),
 )
+#: The income tax's category of salaries, pensions and rentes, where correction 12 puts the
+#: ASS among each member's salaries, and the two variables of openfisca's deduction it reruns.
+SALARY_CATEGORY = "revenu_categoriel_tspr"
+SALARIES = "revenu_assimile_salaire"
+SALARIES_AFTER_DEDUCTION = "revenu_assimile_salaire_apres_abattements"
+#: The ASS's work condition, without which openfisca's ASS is nil (`ass_eligibilite_individu`).
+ASS_CONDITION = "ass_precondition_remplie"
 
 
 def apply_to(system: Any) -> Any:
@@ -481,6 +541,9 @@ def apply_to(system: Any) -> Any:
             self.update_variable(_asi_capped_for_a_lone_beneficiary_in_a_couple(asi_amount))
             aeeh_formula = self.get_variable(AEEH).get_formula("2006-01-01")
             self.update_variable(_aeeh_complement_at_its_own_category(aeeh_formula))
+            category_formula = self.get_variable(SALARY_CATEGORY).get_formula("0001-01-01")
+            deduction = self.get_variable(SALARIES_AFTER_DEDUCTION)
+            self.update_variable(_ass_taxed_as_a_salary(category_formula, deduction.get_formula))
 
     return BenefitCorrections(system)
 
@@ -895,3 +958,50 @@ def _aeeh_complement_at_its_own_category(openfisca_formula: Any) -> Any:
                     + famille.sum(manque, role=Famille.ENFANT))
 
     return aeeh
+
+
+class _SalariesWithTheAss:
+    """The individuals as openfisca's deduction formula sees them, with the year's ASS among each
+    one's salaries (correction 12). Everything else it reads, the real expenses among them, is
+    the individuals' own."""
+
+    def __init__(self, individu: Any, ass: Any) -> None:
+        self._individu = individu
+        self._ass = ass
+
+    def __call__(self, variable_name: str, period: Any, options: Any = None) -> Any:
+        value = self._individu(variable_name, period, options)
+        return value + self._ass if variable_name == SALARIES else value
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._individu, name)
+
+
+def _ass_taxed_as_a_salary(openfisca_formula: Any, deduction_formula: Any) -> Any:
+    """`revenu_categoriel_tspr`, with the ASS of the year among each member's salaries (C. trav.
+    art. L. 5428-1, CGI art. 158, 5): openfisca's formula, plus what openfisca's own deduction
+    leaves of a member's salaries and ASS together, less what it leaves of the salaries alone.
+    Nothing is read when nobody in the simulation meets the ASS's work condition that year."""
+    from openfisca_core.model_api import ADD, YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class revenu_categoriel_tspr(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Revenu catégoriel - Traitements, salaires, pensions et rentes, l'allocation de "
+                 "solidarité spécifique comprise (C. trav. art. L. 5428-1)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037388531"
+        definition_period = YEAR
+
+        def formula(foyer_fiscal, period, parameters):
+            montant = openfisca_formula(foyer_fiscal, period, parameters)
+            individus = foyer_fiscal.members
+            if not individus(ASS_CONDITION, period, options=[ADD]).any():
+                return montant
+            ass = individus("ass", period, options=[ADD])
+            avec = deduction_formula(period)(_SalariesWithTheAss(individus, ass), period,
+                                             parameters)
+            sans = individus(SALARIES_AFTER_DEDUCTION, period)
+            return montant + foyer_fiscal.sum(avec - sans)
+
+    return revenu_categoriel_tspr
