@@ -10320,10 +10320,10 @@ Neuf mutations sont prises :
 * chacun des trois refus du format retiré : son test ;
 * la ligne de l'ASS jamais discrète : `check.mjs`, et le test de la page.
 
-**Le gate.** `make gate` donne 1 509 réussis, 172 ignorés et 12 échecs, en 17 min 57 s.
-Les 12 échecs sont ceux de D-176 à D-187, faute de données dans ce conteneur. Les 25
-réussis de plus sont les tests ajoutés : 19 au moteur, 3 à l'API, 2 à la page et 1 à la
-population.
+**Le gate.** `make gate`, sur la branche fusionnée avec D-188, donne 1 524 réussis, 172
+ignorés et 12 échecs, en 15 min 32 s. Les 12 échecs sont ceux de D-176 à D-188, faute de
+données dans ce conteneur. Les 25 réussis de plus que D-188 sont les tests ajoutés : 19 au
+moteur, 3 à l'API, 2 à la page et 1 à la population.
 
 **Ce qui reste.**
 * **L'ASS est imposable, et openfisca ne l'impose pas.** « Les règles fixées au 5 de l'article
@@ -10564,7 +10564,7 @@ et qu'elle ouvre l'ASI avant 62 ans, l'ASPA ensuite. Le résultat factice de `ch
 porte les deux lignes, à zéro.
 
 **Ce que la population en fait.** Son câblage ne change pas, et `to_openfisca.WIRING` reste
-« D-180 » : la population n'écrit aucune pension d'invalidité. Ses pensions,
+« D-188 » : la population n'écrit aucune pension d'invalidité. Ses pensions,
 `pension_annuelle`, vont aux inactifs de 55 ans ou plus, calées sur la masse DGFiP des
 pensions, retraites et rentes déclarées (400,4 md€). Que cette masse comprenne la case 1AZ
 n'a pas été vérifié. Les deux nouvelles colonnes, `pension_invalidite` et `asi`, valent
@@ -10600,9 +10600,10 @@ Deux mutations de la page sont prises, par pytest et par `check.mjs` : la ligne 
 retirée des groupes, et la note sur les prélèvements qui ne regarde plus la pension
 d'invalidité.
 
-**Le gate.** `make gate` donne 1 507 réussis, 172 ignorés et 12 échecs, en 18 min 32 s.
-Les 12 échecs sont ceux de D-176 à D-187, faute de données dans ce conteneur. Les 23
-réussis de plus sont les tests ajoutés : 22 au moteur et 1 à l'API.
+**Le gate.** `make gate`, sur la branche fusionnée avec D-188 et D-189, donne 1 547 réussis,
+172 ignorés et 12 échecs, en 18 min 19 s. Les 12 échecs sont ceux de D-176 à D-189, faute de
+données dans ce conteneur. Les 23 réussis de plus que D-189 sont les tests ajoutés : 22 au
+moteur et 1 à l'API.
 
 **Ce qui reste.**
 * **L'AAH dans les ressources de l'ASI.** Service-public la compte : « Allocation aux
