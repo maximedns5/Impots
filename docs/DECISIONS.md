@@ -11064,6 +11064,8 @@ proches sans être égaux, l'un revalorisé en janvier, l'autre en avril : ils d
   nulle, alors qu'il est éligible à l'ASI et son conjoint à l'ASPA. L'ASPA vaut 785,58 €, et
   345,04 € pour le couple à 20 000 €.
 * **Le registre.** Les deux citent le CSS : son test ne change pas.
+* **Le format d'entrée** ne change pas. La description du champ de la pension d'invalidité
+  nomme désormais le c) et l'ASPA du conjoint, à côté du b).
 
 **L'ordre des deux corrections de l'ASI.** `apply` enroule la correction 10 autour de la
 formule d'openfisca, puis relit `asi` pour y enrouler la correction 12 : la variable garde
@@ -11180,8 +11182,12 @@ Sept mutations sont prises :
 * l'ASPA du couple servie entière : 9 854,02 € au lieu de 4 927,01 €, dix tests ;
 * la correction 12 étendue à tout allocataire en couple : le seul allocataire de D-190, à
   6 341,60 € au lieu de 6 739,27 €, le conjoint de 64 ans, et janvier dans le mois des
-  65 ans. Deux pensionnés d'invalidité ne bougent pas : la moitié du c) est aussi celle du
-  a).
+  65 ans. Deux pensionnés d'invalidité ne bougent pas : le a) donne à chacun la même moitié
+  que le c).
+
+**Le gate.** `make gate` donne 1 601 réussis, 172 ignorés et 12 échecs, en 22 min 27 s. Les
+12 échecs sont ceux de D-176 à D-191, faute de données dans ce conteneur. Les 19 réussis de
+plus sont les tests ajoutés au moteur.
 
 **Ce qui reste.**
 * **Le versement plutôt que l'éligibilité**, dans la bande entre les deux plafonds du
