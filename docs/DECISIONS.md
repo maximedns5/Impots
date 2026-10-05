@@ -10097,6 +10097,11 @@ Neuf mutations sont prises :
 * chacun des trois refus du format retiré : son test ;
 * la ligne de l'ASS jamais discrète : `check.mjs`, et le test de la page.
 
+**Le gate.** `make gate` donne 1 509 réussis, 172 ignorés et 12 échecs, en 17 min 57 s.
+Les 12 échecs sont ceux de D-176 à D-187, faute de données dans ce conteneur. Les 25
+réussis de plus sont les tests ajoutés : 19 au moteur, 3 à l'API, 2 à la page et 1 à la
+population.
+
 **Ce qui reste.**
 * **L'ASS est imposable, et openfisca ne l'impose pas.** « Les règles fixées au 5 de l'article
   158 du code général des impôts sont applicables » (C. trav., art. L. 5428-1, version du
