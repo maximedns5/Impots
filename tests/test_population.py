@@ -1285,6 +1285,20 @@ def test_the_population_declares_no_one_in_fin_de_droits_and_its_ass_is_zero() -
     assert [households[name]["ass"] for name in sorted(TWO_PATHS)] == [0.0] * len(TWO_PATHS)
 
 
+def test_the_population_s_income_tax_never_computes_the_ass() -> None:
+    """The income tax reads the ASS since D-192, but only where someone meets the ASS's work
+    condition that year, and nobody in the population does. Its RFR of N-2, which the build
+    pins, and its fiscal block, which the light tier, the rake and the niche imputation read,
+    compute no ASS: they cost what they cost before."""
+    from impots.engine.system import baseline
+
+    built = build_simulation(_unemployed(), baseline(), 2024)
+    built.calculate("impot_revenu_restant_a_payer")
+    built.calculate("rfr")
+    assert not built.benefits_pinned
+    assert not list(built.simulation.get_holder("ass").get_known_periods())
+
+
 # --------------------------------------------------------------------------- #
 # the benefits cascade — housing aid and the RSA, month by month (D-178)
 # --------------------------------------------------------------------------- #

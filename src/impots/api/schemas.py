@@ -160,7 +160,9 @@ class Adult(BaseModel):
         "salary, since the ASS is cumulated with one for three months only (art. "
         "R. 5425-2), beside unemployment benefit, never paid for the same months, and from "
         "the year of the 62nd birthday, from which the ASS turns on the insurance duration "
-        "(art. L. 5421-4) (D-189).",
+        "(art. L. 5421-4) (D-189). The ASS is taxed as a salary, after the 10 % deduction "
+        "it shares with the claimant's other salaries, so it enters the RFR, and bears no CSG "
+        "and no CRDS (art. L. 5428-1; `engine.corrections`, correction 12, D-192).",
     )
 
     @model_validator(mode="after")

@@ -44,7 +44,9 @@ def baseline() -> FranceTaxBenefitSystem:
     it is taken from (D-180), and the majoration pour la vie autonome kept to an AAH at
     its full rate or beside a pension (D-184). Since D-188 it also doubles the abatement
     of art. 157 bis for a couple whose two spouses qualify, in the income tax and in the
-    benefits' resources; the population has such couples, over 65.
+    benefits' resources; the population has such couples, over 65. Since D-192 it taxes
+    the ASS as a salary, which openfisca leaves out of the income tax; the population
+    declares no one in « fin de droits ».
     """
     global _TBS
     if _TBS is None:

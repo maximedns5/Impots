@@ -10942,3 +10942,302 @@ ajoutés : 27 au moteur, 4 à l'API et 4 à la page.
 * Mon Parcours Handicap, « Les nouveaux montants au 1er avril 2024 de l'AAH, de l'AEEH et de
   ses compléments », 24 avril 2024.
 * CLEISS, brèves d'avril 2024, la majoration pour tierce personne au 1er avril 2024.
+
+## D-192 — L'ASS est imposable : la correction 12 la met dans l'impôt, comme un salaire
+
+**Le point de départ.** D-189 l'avait laissé dans « Ce qui reste » : « L'ASS est imposable,
+et openfisca ne l'impose pas. » Une réforme jetable l'avait mesuré. L'impôt ne bougeait dans
+aucun des six ménages, le RFR de l'allocataire seul passait de 0 à 6 091 €, et un couple
+dont le conjoint touche 15 000 € de pension déclarée perdait 75,00 € de CRDS. Corriger
+faisait entrer une prestation de la famille dans chaque RFR, celui du palier léger et ceux
+qu'épinglent D-177 et D-178 : c'était une entrée à part. La voici.
+
+**Ce que dit la loi.** Les textes ont été lus sur Légifrance, sauf mention contraire.
+* **L'imposition.** « Ces prestations ainsi que l'indemnité d'activité partielle et
+  l'allocation de solidarité spécifique sont exonérées de la taxe sur les salaires et des
+  cotisations de sécurité sociale [...] », puis : « Les règles fixées au 5 de l'article 158
+  du code général des impôts sont applicables. » (C. trav., art. L. 5428-1, version du 1er
+  janvier 2024 au 27 juin 2026 ; le dernier alinéa est le même dans la version de 2019 à
+  2024). Ce 5 détermine les revenus « provenant de traitements publics et privés,
+  indemnités, émoluments, salaires et pensions [...] conformément aux dispositions des
+  articles 79 à 90 » (CGI, art. 158, 5, a, version du 16 février au 19 juin 2025).
+* **Le BOFiP** en tire que, « qu'elle soit versée dans le cadre du régime d'assurance ou du
+  régime de solidarité, l'allocation qui constitue ce revenu de remplacement est imposable
+  entre les mains des bénéficiaires dans la catégorie des traitements et salaires ». Il le
+  dit « de l'allocation de solidarité spécifique (ASS) (C. trav. art. L. 5423-1) »
+  (BOI-RSA-CHAMP-20-20-20131029, § 20).
+* **Aucune exonération.** L'article 81 du CGI (version du 1er janvier au 19 juin 2025) ne
+  nomme ni l'ASS ni l'article L. 5423-1. Son 9° exonère « Les allocations, indemnités et
+  prestations servies, sous quelque forme que ce soit, par l'Etat, les collectivités et les
+  établissements publics, en application des lois et décrets d'assistance et d'assurance ».
+  Le texte propre à l'ASS la renvoie au 5 de l'article 158, et le BOFiP la tient pour
+  imposable.
+* **La case.** Le site impots.gouv.fr range l'ASS parmi les allocations de chômage total :
+  « Vous devez donc les déclarer dans votre déclaration de revenus : cases 1AP à 1DP pour
+  les allocations de chômage total » (page « Allocations chômage », modifiée le 8 avril
+  2026). Le montant est prérempli. Ce sont les cases de `chomage_imposable` dans openfisca.
+  La même page demande de ne pas déclarer la prime de Noël : la correction n'y touche pas.
+* **La déduction de 10 %.** « La déduction à effectuer du chef des frais professionnels est
+  calculée forfaitairement en fonction du revenu brut [...] ; elle est fixée à 10 % du
+  montant de ce revenu. Elle est limitée à 14 426 € pour l'imposition des rémunérations
+  perçues en 2024 [...] » Et : « Le montant de la déduction forfaitaire pour frais
+  professionnels ne peut être inférieur à 504 €, sans pouvoir excéder le montant brut des
+  traitements et salaires. Cette disposition s'applique séparément aux rémunérations perçues
+  par chaque membre du foyer fiscal [...] » (CGI, art. 83, 3°, version du 19 juin 2025 au 21
+  février 2026). Sur les revenus de 2022, le minimum est de 472 € (version du 3 juin 2023 au
+  2 juin 2024). L'ASS d'un membre partage donc une seule déduction, et un seul minimum, avec
+  ses salaires et son allocation chômage. La version de 2025 ne porte plus le minimum propre
+  aux demandeurs d'emploi inscrits depuis plus d'un an, qu'openfisca arrête en 2018.
+* **Ni CSG ni CRDS.** « Par dérogation au I, sont exclus de l'assiette de la contribution
+  les revenus suivants : [...] 5° L'allocation de solidarité spécifique prévue à l'article
+  L. 5423-1 du code du travail » (CSS, art. L. 136-1-2, II, versions du 16 décembre 2020 au
+  28 février 2025). La CRDS sur ces revenus « est soumise aux conditions prévues aux
+  articles L. 136-1-1 à L. 136-4 du même code » (ordonnance n° 96-50, art. 14, I, version en
+  vigueur depuis le 1er septembre 2019) : l'exclusion vaut pour elle. Sans CSG déductible,
+  le montant déclaré de l'ASS est son montant versé.
+* **Les prestations familiales** comptent les revenus de N-2 retenus pour l'impôt. Mais
+  « Lorsque la personne ou l'un des conjoints ou concubins, en chômage total depuis au moins
+  deux mois consécutifs, ne bénéficie pas ou ne bénéficie plus d'une indemnisation dans les
+  conditions fixées au premier alinéa ci-dessus [...], il n'est pas tenu compte des revenus
+  d'activité professionnelle ni des indemnités de chômage perçus par l'intéressé durant
+  l'année civile de référence. » La règle court notamment depuis « l'admission à
+  l'allocation de solidarité spécifique prévue aux articles L. 5423-1 à L. 5423-3 du code du
+  travail » (CSS, art. R. 532-7, quatrième alinéa, version en vigueur depuis le 1er janvier
+  2020). L'ASS, allocation de chômage du régime de solidarité, déclarée dans les cases de
+  l'allocation d'assurance, est lue ici parmi ces indemnités. L'aide au logement a sa propre
+  règle, l'art. R. 822-15 du CCH, que D-189 a lu pour l'allocataire de l'ASS.
+
+**Ce que fait openfisca.** L'ASS, `ass`, est un montant mensuel de l'individu qui n'entre
+dans aucune variable de l'impôt.
+* **La chaîne.** `revenu_assimile_salaire` additionne les salaires imposables,
+  `chomage_imposable` (cases 1AP à 1EP) et quelques autres cases.
+  `revenu_assimile_salaire_apres_abattements` en retire la déduction de 10 %, son minimum et
+  son plafond. `traitements_salaires_pensions_rentes` y ajoute les pensions, et
+  `revenu_categoriel_tspr` somme le tout sur le foyer. Viennent ensuite `revenu_categoriel`,
+  `rbg`, `rng`, l'abattement de l'art. 157 bis, `rni` et `rfr`.
+* **Les lecteurs de chaque maillon.** `chomage_imposable` mène à `chomage_net`, que lisent
+  l'éligibilité de l'ASS, nulle le mois où une allocation chômage est versée, et ses
+  ressources. L'AAH, l'aide au logement et le crédit des cotisations syndicales le lisent
+  aussi. `revenu_assimile_salaire_apres_abattements` est lu par les prestations familiales
+  sur N-2, dans leurs ressources et dans leur test de `biactivite`, et par le plafonnement
+  de l'IFI. `revenu_categoriel_tspr` n'est lu que par `revenu_categoriel`, d'où partent
+  l'impôt, le RFR, l'abattement de l'art. 157 bis et sa copie des prestations, la bourse
+  d'enseignement supérieur (`rbg`), et, par le RFR de N-2, le taux de la CSG.
+* **Les prestations qui comptent l'ASS la lisent elle-même, au mois.** Ce sont le RSA, la
+  prime d'activité, l'ASI et l'ASPA, et la prime de Noël. L'AAH et l'aide au logement ne la
+  comptent pas (D-189). Aucune ne lit l'impôt de l'année.
+
+**La correction 12 de `engine.corrections`.**
+* **Où.** Elle met l'ASS de l'année parmi les salaires de chaque membre, dans
+  `revenu_categoriel_tspr`, là où l'impôt somme les catégories. Elle reprend la formule de
+  la déduction d'openfisca sur les salaires et l'ASS du membre ensemble, et en retranche la
+  même formule sur les salaires seuls. Un membre a ainsi une seule déduction, et un seul
+  minimum, sur ses salaires, son allocation chômage et son ASS. Ses frais réels restent les
+  siens.
+* **Pas plus tôt.** Dans `chomage_imposable`, l'ASS passerait dans `chomage_net` : elle
+  deviendrait une allocation chômage, qui l'éteint, et openfisca y prélèverait la CSG et la
+  CRDS. Dans `revenu_assimile_salaire`, elle entrerait dans les ressources de N-2 des
+  prestations familiales, que l'art. R. 532-7 neutralise pour l'allocataire, et dans leur
+  test de biactivité, où elle n'est pas un revenu professionnel.
+* **Seulement s'il y a un allocataire.** Sans `ass_precondition_remplie`, la condition
+  d'activité, l'ASS d'openfisca est nulle. La correction ne lit donc l'ASS que si quelqu'un,
+  dans la simulation, remplit cette condition dans l'année ; sinon elle rend la formule
+  d'openfisca sans rien calculer de plus. Le RFR d'un ménage sans allocataire, celui de
+  toute la population et celui des années que l'historique ne couvre pas ne calculent ni
+  l'ASS, ni l'AAH et l'ASI que lit son éligibilité.
+* **Enroulée** autour des formules d'openfisca : la variable n'a qu'une formule, et la
+  déduction est celle qu'openfisca donne pour l'année. Le test du registre accepte déjà le
+  Code du travail (D-189).
+
+**Ce que le moteur en fait, mesuré en 2024.** L'allocataire est né en 1975, sans autre
+ressource que celles du ménage. « Avant » désigne les onze corrections de `main`.
+
+| ménage | RFR avant | RFR après | ce qui bouge encore |
+|---|---:|---:|---|
+| seul | 0 € | 6 091 € | rien |
+| seul, RFR de 2022 | 0 € | 5 663,80 € | rien |
+| pension du conjoint, né en 1960 | 13 500 € | 19 591 € | RD 21 920,45 → 21 845,45 € |
+| la même, RFR de 2022 | 13 500 € | 19 163,80 € | |
+| pension du conjoint, né en 1955 | 10 704 € | 18 193 € | rien |
+| conjoint salarié à 24 000 € | 17 714,16 € | 22 335,00 € | rien |
+| conjoint salarié à 28 000 € | 20 666,52 € | 22 016,00 € | rien |
+| conjoint au chômage, 24 000 € | 20 793,96 € | 21 821,69 € | ASS +268,23 €, RD −297,69 € |
+| locataire, 500 € en zone 2 | 0 € | 6 091 € | rien, aide 3 532,77 € |
+| titulaire de la carte | 0 € | 3 295 € | rien |
+| deux allocataires | 0 € | 12 182 € | rien |
+| famille, 24 000 €, deux enfants | 17 714,16 € | 22 335,00 € | rien, PF comprises |
+
+L'impôt est nul partout, avant comme après. Refait à la main :
+* **Seul.** Un dixième de 6 768 € fait 676,80 €, arrondi à 677 €, au-dessus du minimum de
+  504 € : 6 091 €. En 2022, 30 × (3 × 16,91 + 3 × 17,21 + 6 × 17,90) = 6 292,80 € d'ASS,
+  moins 629 €, au-dessus de 472 € : 5 663,80 €. Rien d'autre ne bouge, puisque l'ASS ne paie
+  ni CSG ni CRDS.
+* **La pension.** 13 500 + 5 663,80 = 19 163,80 € dépassent le seuil d'exonération de deux
+  parts, 12 230 + 2 × 3 265 = 18 760 €, sans dépasser celui du taux réduit,
+  15 988 + 2 × 4 269 = 24 526 €. Au taux réduit, la CSG de 3,8 %, dont la pension déclarée
+  est déjà nette (D-176), laisse 0,5 % de CRDS, 75,00 €, et pas de CASA. Le revenu
+  disponible vaut 15 000 − 75 + 6 768 + 152,45 = 21 845,45 €, prime de Noël comprise. Né en
+  1955, le conjoint a l'abattement de l'art. 157 bis de 2022, que l'ASS réduit de 2 620 à
+  1 310 € : 17 853,80 € restent sous 18 760 €, et rien ne change.
+* **Le minimum.** 1 853,48 € d'ASS : un dixième ferait 185 €, le minimum de 504 €
+  s'applique, et le RFR monte de 1 349,48 €. Le salaire du conjoint garde sa déduction.
+* **Le plafond du couple.** À côté d'un salaire de 24 000 €, 19 682,16 € imposables, l'ASS
+  porte le couple exactement à son plafond : 19 682,16 + 5 133,84 = 24 816,00 €, soit
+  3 × 1 998,70 + 9 × 2 091,10. Moins 1 968 et 513 € de déductions : 22 335,00 €.
+* **La carte.** 6 091 € de revenu net, sous 17 510 €, ouvrent 2 796 € d'abattement : un RFR
+  de 3 295 €.
+* **Un salaire à côté.** 1 000 € de salaire brut écrits à la main en 2024, comme la jambe
+  relevée de l'EMTR écrit ses 100 €, font 820,15 € imposables. Avec 6 768 € d'ASS,
+  7 588,15 € moins 759 € de déduction : 6 829,15 €. Deux déductions, 677 € et le minimum de
+  504 €, laisseraient 6 407,15 €. Sans la correction, le RFR était de 316,15 €.
+* **L'allocation chômage du conjoint.** Sans l'ASS, le RFR de 2022, 21 600 €, restait sous
+  le seuil du taux plein de deux parts, 24 526 € : le taux réduit, 3,8 %, tout déductible.
+  Avec l'ASS de 2022, 5 588,80 € moins 559 €, il vaut 26 629,80 € : le taux plein, 6,2 %,
+  dont 2,4 % ne sont pas déductibles, soit 565,92 € de CSG imposable de plus sur 98,25 % de
+  24 000 €. Les ressources de l'ASS lisent l'allocation nette de cette CSG (D-189) : l'ASS
+  monte de 268,23 €, et le revenu disponible baisse de 565,92 − 268,23 = 297,69 €. Le RFR de
+  2024 monte de 1 531,73 − 504 = 1 027,73 €. L'allocataire premier ou second, tout est égal
+  (correction 8).
+
+**L'impôt ne bouge pas, et ce n'est pas un hasard.** L'ASS ne se verse que sous un plafond
+de ressources qui la comprend. Seul, l'allocataire a au plus 70 montants journaliers par
+mois : 3 × 1 271,90 + 9 × 1 330,70 = 15 792,00 € en 2024. Après la déduction, l'impôt avant
+décote ne dépasse pas 0,11 × (14 212,80 − 11 497) = 298,74 €, que la décote, 889 € moins
+45,25 % de l'impôt, efface. En couple, 110 montants font 24 816,00 €, et 22 334,40 € après
+la déduction, sous deux fois la limite de la tranche à 0 %, 22 994 € (calcul). Les
+ressources que lit l'ASS sont parfois nettes là où l'impôt lit un montant déclaré, comme
+pour une pension, de 3,2 % au plus : l'écart ne fait pas naître d'impôt. C'est le RFR qui
+bouge, et, par le RFR de N-2, le taux des prélèvements sur les autres revenus de
+remplacement du ménage.
+
+**L'ordre de calcul.** L'impôt de N lit maintenant l'ASS de N, et le RFR de N-2, épinglé le
+premier (D-177), l'ASS de N-2. Les coupes d'openfisca (`max_spiral_loops = 1`) ont été
+relevées pendant chaque épinglage, contre le système de `main`.
+* **Le RFR de N-2.** L'ASS de N-2 lit les revenus de remplacement des douze mois précédents,
+  nets d'une CSG dont le taux lit le RFR de N-4 ou de N-5, et son éligibilité lit l'AAH de
+  treize mois. openfisca coupe donc à zéro les RFR de 2017 à 2020, l'ASS d'octobre 2020 à
+  décembre 2021, l'AAH et des cotisations de 2019 et 2020 : des années où rien n'est saisi,
+  qui valent zéro de toute façon. Aucune coupe ne tombe en 2022 ou après. Le RFR épinglé est
+  celui du calcul à la main : 5 663,80 € seul, 19 163,80 € à côté de la pension.
+* **L'aide au logement** (D-178) lit l'abattement de l'art. 157 bis de N-2, donc le revenu
+  net et l'ASS de N-2. Son épinglage compte 65 coupes au lieu de 64, aucune nouvelle en 2022
+  ou après. Il en perd même vingt et une, sur l'AAH et l'ASS de 2022, que l'épinglage du RFR
+  a déjà calculées.
+* **Le registre** ne fait qu'une coupe nouvelle, sur l'ASS de juin 2023, sous l'impôt :
+  l'éligibilité de l'ASS de 2024 lit l'AAH de treize mois, dont les ressources lisent l'ASI,
+  dont les ressources lisent l'ASS. Les autres mois de 2023, `main` les coupait déjà. Rien
+  n'en dépend sans AAH ni ASI ouvertes. Trois ménages où elles le sont ont été calculés, sur
+  `main` et avec la correction : l'allocataire avec 3 000 € de pension d'invalidité,
+  locataire ; à côté d'un conjoint pensionné d'invalidité à 6 000 € ; à côté d'un conjoint à
+  80 %, locataire. Chaque montant hors RFR est celui de `main`, dans les deux ordres et dans
+  les deux paliers.
+* **Les deux ordres.** Cinq ménages ont été calculés par le registre, comme l'API, et avec
+  `revenu_disponible` d'abord, comme la jambe relevée de l'EMTR : l'allocataire seul, à côté
+  de la pension, à côté de l'allocation chômage du conjoint, premier ou second, et titulaire
+  de la carte. Le RFR, l'impôt, l'ASS et le revenu disponible concordent à 0,05 € près.
+* **L'EMTR** des trois ménages de D-189 ne bouge pas : 0,8678 seul, 0,2729 locataire, 0,5825
+  en couple. Le RFR de N ne touche le revenu disponible que deux ans plus tard.
+* **Les deux paliers** donnent les mêmes valeurs sur chaque ligne du palier léger, pour les
+  onze ménages du tableau.
+
+**Le coût.** Mesuré au meilleur de trois, la machine peu chargée, contre le système de
+`main` dans le même processus :
+* un salarié seul à 30 000 € : 0,46 s puis 0,48 s au palier léger, 2,26 s puis 2,19 s au
+  palier complet. Le court-circuit ne calcule rien de plus ;
+* l'allocataire seul : 0,55 s puis 1,96 s au palier léger, qui calcule maintenant l'ASS de N
+  et de N-2, avec l'AAH et l'ASI qu'elle lit ; 4,51 s puis 5,09 s au palier complet, qui
+  calcule en plus l'ASS de N-2.
+
+Le palier léger d'un allocataire ne touche toujours ni au RSA, ni à la prime d'activité, ni
+à l'aide au logement, ni au revenu disponible : un test le vérifie. Les cinq tests de budget
+de temps passent, aucun ignoré.
+
+**Ce que la population en fait.** Elle ne déclare personne en fin de droits : `to_openfisca`
+n'écrit pas `ass_precondition_remplie` (D-189). La correction n'y lit donc jamais l'ASS. Un
+test le vérifie sur la trame des chômeurs de D-177 : l'impôt et le RFR y sont calculés, et
+aucune ASS. Les 78 tests de la population que le gate fait tourner passent, les deux chemins
+de D-183 compris : rien de ce qu'elle calcule ne bouge, et `to_openfisca.WIRING` reste
+« D-188 ». Les quatre tests lents, qui demandent la population complète, n'ont pas tourné :
+seul `make full` le peut.
+
+**Un test de D-189 ré-ancré.** Avec la correction, le test de symétrie de la correction 8
+tombait : 1 531,73 € d'ASS au lieu de 1 263,50 €. C'est le conjoint au chômage ci-dessus. La
+symétrie tient, l'allocataire premier ou second. L'ancre a été déplacée et la raison écrite
+dans le test, comme la charte le veut d'un golden : par une entrée D qui cite le texte qui
+l'a déplacé, ici l'art. L. 5428-1.
+
+**Vus échouer, puis mutés.** Contre `main`, les tests seuls, 9 des 16 nouveaux tests du
+moteur tombaient :
+* l'allocataire seul, avec un RFR de 0 au lieu de 6 091 € ;
+* le minimum, avec un RFR immobile au lieu de 1 349,48 € de plus ;
+* la déduction commune, avec 316,15 € au lieu de 6 829,15 € ;
+* la pension, avec un RFR de 2022 de 13 500 € au lieu de 19 163,80 € ;
+* l'allocation chômage du conjoint, avec 21 600 € au lieu de 26 629,80 € ;
+* la carte, avec 0 au lieu de 3 295 € ;
+* la famille, dont le RFR de 2022 ne bougeait pas au lieu de 5 599,30 € de plus ;
+* le palier léger, qui ne calculait pas l'ASS, pour deux ménages.
+
+Passaient, comme ils le devaient : les cinq tests d'ordre, puisque l'impôt ne lisait rien,
+celui du ménage sans allocataire et le test qui tue, sur openfisca brut ; le nouveau test de
+la population aussi, et celui du registre. Avec la correction, tout passe, le test de D-189
+ré-ancré.
+
+Six mutations sont prises, chacune par le test qui lui est destiné :
+* la correction non appliquée : les neuf tests, et celui de D-189, à 1 263,50 € ;
+* le court-circuit retiré : les deux tests du coût, au moteur et à la population. Le même
+  lot de tests prend alors 210 s au lieu de 102 s ;
+* l'ASS déduite à part, avec son propre minimum : la déduction commune, à 6 407,15 € ;
+* l'ASS mise plus tôt, parmi les salaires : la famille, dont les ressources passent à
+  23 313,46 €, et que la biactivité gagne ;
+* l'ASS ajoutée après l'abattement de l'art. 157 bis : la carte, à 6 091 € ;
+* le court-circuit lu sur l'année d'avant : les quatre tests qui lisent le RFR de 2022, à
+  0 € seul, 13 500 € à côté de la pension, 21 600 € à côté de l'allocation chômage et sans
+  écart pour la famille, et celui de D-189.
+
+Une mutation était fausse au premier essai : la variable renommée sans son `return` ne se
+chargeait plus, et 18 tests tombaient en erreur avant tout calcul. Corrigée, elle n'est
+prise que par le test de la carte.
+
+**Le gate.** `make gate` donne 1 599 réussis, 172 ignorés et 12 échecs, en 21 min 53 s.
+Les 12 échecs sont ceux de D-176 à D-191, faute de données dans ce conteneur. Les 17
+réussis de plus sont les tests ajoutés : 16 au moteur et 1 à la population.
+
+**Ce qui reste.**
+* **La lecture nette des ressources de l'ASS** (D-189) passe maintenant par le RFR. À côté
+  de 24 000 € d'allocation chômage du conjoint, l'ASS monte de 268,23 € quand le RFR de N-2
+  fait passer cette allocation au taux plein. Le montant déclaré, net de la seule CSG
+  déductible, est le même aux deux taux : lue ainsi, comme le dit l'art. R. 5423-2, l'ASS ne
+  bougerait pas.
+* **La neutralisation de l'art. R. 532-7** n'est respectée que parce qu'openfisca ne compte
+  pas l'ASS dans les ressources des prestations familiales. Elle ne l'est pas pour les
+  salaires et l'allocation chômage de N-2 d'un allocataire, que le format refuse à côté de
+  la fin de droits, ni l'abattement de 30 % de son premier alinéa. Quand l'ASS a cessé,
+  l'ASS de N-2 devrait compter : le format, qui écrit la fin de droits de N-2 à N, ne sait
+  pas le dire. Lire l'ASS parmi les « indemnités de chômage » est une lecture de ce projet,
+  qu'aucun texte de la Cnaf lu ici ne confirme.
+* **Le plafonnement de l'IFI et le plafond du crédit des cotisations syndicales** lisent les
+  salaires avant la catégorie où la correction met l'ASS : ils ne la voient pas. Non mesuré.
+* **Les ressources des prestations familiales d'un titulaire de la carte** deviennent
+  négatives. L'abattement de l'art. 157 bis de N-2, 2 620 €, se calcule sur un revenu net
+  qui comprend l'ASS, et se retranche de ressources qui ne la comprennent pas : − 2 620 €.
+  Sous tous les plafonds, cela vaut zéro, et l'aide au logement borne ses ressources à zéro.
+* **Le palier léger d'un allocataire** coûte 1,4 s de plus, le prix de l'ASS dans l'impôt.
+* **openfisca-france.** L'ASS hors de l'impôt est à signaler en amont, avec ces cas.
+
+**Sources.**
+* Code du travail, art. L. 5428-1 (versions du 1er janvier 2019 au 1er janvier 2024 et du
+  1er janvier 2024 au 27 juin 2026), lu sur Légifrance.
+* CGI, art. 81 (version du 1er janvier au 19 juin 2025), art. 83 (versions du 3 juin 2023 au
+  2 juin 2024 et du 19 juin 2025 au 21 février 2026) et art. 158 (version du 16 février au
+  19 juin 2025), lus sur Légifrance.
+* CSS, art. L. 136-1-2 (versions du 16 décembre 2020 au 11 mars 2023, du 11 mars au 1er
+  juillet 2023 et du 1er juillet 2023 au 28 février 2025) et art. R. 532-7 (version en
+  vigueur depuis le 1er janvier 2020), lus sur Légifrance.
+* Ordonnance n° 96-50 du 24 janvier 1996, art. 14 (version en vigueur depuis le 1er
+  septembre 2019), lue sur Légifrance.
+* BOFiP, BOI-RSA-CHAMP-20-20-20131029, § 1 et 20.
+* impots.gouv.fr, « Allocations chômage », publiée le 13 juillet 2016, modifiée le 8 avril
+  2026.
+* Les montants journaliers de l'ASS de 2022 sont ceux de l'arbre d'openfisca. Celui d'avril
+  2022, 17,21 €, est celui du décret n° 2022-493 selon Previssima ; le décret n'a pas été
+  lu.
