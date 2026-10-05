@@ -1209,11 +1209,11 @@ def _invalide(pension: float, *, naissance: int = 1980, logement: dict[str, Any]
     return HouseholdInput.model_validate(household)
 
 
-def _couple_invalide(conjoint: float) -> HouseholdInput:
-    """A married couple below 62: an invalidity pension of 6 000 EUR, and the spouse's, or
-    nothing at all when `conjoint` is zero."""
+def _couple_invalide(pension: float, conjoint: float) -> HouseholdInput:
+    """A married couple below 62: an invalidity pension, and the spouse's, or nothing at all
+    when `conjoint` is zero."""
     return HouseholdInput.model_validate({"adults": [
-        {"salaire_brut_annuel": 0, "annee_naissance": 1980, "pension_invalidite_annuelle": 6_000},
+        {"salaire_brut_annuel": 0, "annee_naissance": 1980, "pension_invalidite_annuelle": pension},
         {"salaire_brut_annuel": 0, "annee_naissance": 1982,
          "pension_invalidite_annuelle": conjoint}],
         "couple_marie_ou_pacse": True})
@@ -1334,21 +1334,26 @@ def test_an_aah_tops_up_an_invalidity_pension_and_its_asi() -> None:
     assert rows["mva"] == pytest.approx(MVA_2024, abs=0.05)
 
 
-def test_two_invalidity_pensioners_share_the_couple_ceiling_less_the_couple_s_resources() -> None:
+@pytest.mark.parametrize("pension", [6_000, 1_200], ids=["6 000 chacun", "1 200 chacun"])
+def test_two_invalidity_pensioners_share_the_couple_ceiling_less_the_couple_s_resources(
+    pension: float,
+) -> None:
     """« Le montant de la ou des allocations est égal à la différence entre le plafond
     applicable à la situation du ou des allocataires et le total des ressources » of the
     couple (CSS art. L. 815-24-1), « servi par moitié à chacun des deux allocataires
     concernés » (art. D. 815-19, 2° a). Each on 6 000 EUR: 6 683.20 EUR over 2024, half each,
-    and the couple ends at its ceiling, 18 683.20 EUR."""
+    and the couple ends at its ceiling, 18 683.20 EUR. Each on 1 200 EUR, a pension low enough
+    for each half, 687.12 EUR a month from April, to pass what a lone beneficiary may draw
+    (571.50): the 2° a) has no such cap, and two beneficiaries keep their halves."""
     from impots.engine import situations
 
-    simulation = _pinned(situations.build_situation(_couple_invalide(6_000), 2024))
+    simulation = _pinned(situations.build_situation(_couple_invalide(pension, pension), 2024))
     rows = extract(simulation, 2024, "full")
-    asi = _asi_by_hand(ASI_PLAFOND_COUPLE, 12_000)
+    asi = _asi_by_hand(ASI_PLAFOND_COUPLE, 2 * pension)
     assert rows["asi"] == pytest.approx(asi, abs=0.05)
     each = simulation.calculate_add("asi", "2024")
     assert list(each) == [pytest.approx(asi / 2, abs=0.05)] * 2
-    assert rows["revenu_disponible"] == pytest.approx(12_000 + asi, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(2 * pension + asi, abs=0.05)
 
 
 def test_a_lone_beneficiary_in_a_couple_draws_the_single_ceiling_less_the_minimum_pension(
@@ -1360,7 +1365,7 @@ def test_a_lone_beneficiary_in_a_couple_draws_the_single_ceiling_less_the_minimu
     April (571.49 in Cnav circular 2024-13, which rounds the ceiling to the cent first), 6 739.27
     over 2024. openfisca paid the couple ceiling less the resources, 1 074.24 EUR a month from
     April and 12 683.20 over the year, the ASI of two."""
-    rows = compute(_couple_invalide(0), 2024, tier="full").baseline
+    rows = compute(_couple_invalide(6_000, 0), 2024, tier="full").baseline
     cap = (3 * (ASI_PLAFOND_SEUL[0] / 12 - PENSION_INVALIDITE_MINIMUM_2024)
            + 9 * (ASI_PLAFOND_SEUL[1] / 12 - PENSION_INVALIDITE_MINIMUM_2024))
     assert rows["asi"] == pytest.approx(cap, abs=0.05)
@@ -1375,7 +1380,7 @@ def test_the_engine_alone_pays_a_lone_beneficiary_in_a_couple_the_couple_ceiling
     go."""
     from impots.engine.system import uncorrected_baseline
 
-    situation = build_situation(_couple_invalide(0), 2024)
+    situation = build_situation(_couple_invalide(6_000, 0), 2024)
     raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
     paid = raw.calculate("asi", "2024-06")
     assert float(paid[0]) == pytest.approx(ASI_PLAFOND_COUPLE[1] / 12 - 500, abs=0.01), (
