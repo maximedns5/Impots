@@ -9920,3 +9920,275 @@ comparateur ne change.
   10 septembre 2025.
 * Assemblée nationale, 14e législature, question écrite n° 99271, réponse publiée au JO le
   11 avril 2017, p. 2983.
+
+## D-191 — Le handicap d'un enfant : l'AEEH au taux de sa catégorie, et la demi-part de la carte
+
+**Le point de départ.** D-184 à D-187 la rangeaient parmi ce qui est « sans champ » : le
+format d'entrée ne savait dire que le handicap d'un adulte. Un enfant handicapé n'ouvrait
+ni l'allocation d'éducation de l'enfant handicapé (AEEH), ni la demi-part de quotient
+familial de sa carte. D-187 avait écrit à la main le handicap d'un enfant de 22 ans pour
+un test, et noté que l'AEEH n'avait rien à corriger dans la dégressivité de l'aide au
+logement.
+
+**Ce que dit la loi.** Les articles ont été lus sur Légifrance, sauf mention contraire.
+* L'AEEH va à « Toute personne qui assume la charge d'un enfant handicapé [...] si
+  l'incapacité permanente de l'enfant est au moins égale à un taux déterminé » (CSS, art.
+  L. 541-1). Ce taux « doit être au moins égal à 80 % » (art. R. 541-1).
+* Sous ce taux, elle peut être allouée si l'incapacité « reste néanmoins égale ou
+  supérieure à un minimum, dans le cas où l'enfant fréquente un établissement mentionné au
+  2° ou au 12° du I de l'article L. 312-1 du code de l'action sociale et des familles ou
+  dans le cas où l'état de l'enfant exige le recours à un dispositif adapté ou
+  d'accompagnement [...] ou à des soins dans le cadre des mesures préconisées par la
+  commission » (art. L. 541-1, troisième alinéa). Ce minimum « doit être au moins égal à
+  50 % » (art. R. 541-1).
+* « Les enfants ouvrent droit aux prestations familiales jusqu'à l'âge de vingt ans »
+  (art. R. 512-2).
+* L'AEEH vaut 32 % de la base mensuelle des allocations familiales (BMAF) par enfant (art.
+  D. 541-1). Son complément suit six catégories (art. R. 541-2), chacune à son taux :
+  « Le taux du complément de deuxième catégorie de l'allocation d'éducation de l'enfant
+  handicapé est fixé à 65 % de la base mensuelle de calcul des allocations familiales ».
+  La première est à 24 %, les suivantes à 92 %, 142,57 % et 182,21 %. La sixième vaut la
+  majoration pour tierce personne (art. D. 541-2).
+* Le parent isolé reçoit, dès la deuxième catégorie, une majoration de 13 % à 107 % de la
+  BMAF (art. L. 541-4 et D. 541-4). Elle suppose un complément accordé « en raison de
+  l'état de l'enfant la contraignant à renoncer, cesser ou exercer une activité
+  professionnelle à temps partiel ou exigeant le recours à tierce personne rémunérée »
+  (art. D. 541-3). C'est toujours le cas en cinquième et sixième catégories. De la
+  deuxième à la quatrième, le complément peut aussi reposer sur des dépenses seules (art.
+  R. 541-2).
+* Le RSA ne tient pas compte « De l'allocation d'éducation de l'enfant handicapé et de ses
+  compléments mentionnés à l'article L. 541-1 du code de la sécurité sociale, de la
+  majoration spécifique pour personne isolée mentionnée à l'article L. 541-4 du même code
+  [...] » (CASF, art. R. 262-11, 6°, lu dans une reproduction de la préfecture de
+  Normandie). La prime d'activité non plus : en sont exclues « L'allocation d'éducation de
+  l'enfant handicapé et ses compléments mentionnés à l'article L. 541-1, la majoration
+  spécifique pour personne isolée mentionnée à l'article L. 541-4 » (CSS, art. R. 844-5,
+  6°).
+* Pour l'impôt, « Le quotient familial prévu à l'article 194 est augmenté d'une demi-part
+  pour chaque enfant à charge et d'un quart de part pour chaque enfant réputé à charge
+  égale de l'un et l'autre de ses parents, titulaire de la carte "mobilité inclusion"
+  portant la mention "invalidité" » (CGI, art. 195, 2). Le gain de cette demi-part est
+  plafonné à 1 791 €. Quand le plafond joue, elle ouvre « une réduction d'impôt égale à
+  1 785 € » (art. 197, I, 2, sur les revenus de 2024).
+* La mention « invalidité » demande un taux d'au moins 80 % (CASF, art. L. 241-3). Cette
+  condition n'a été lue que sur service-public.gouv.fr : la page de Légifrance n'a pas été
+  atteinte.
+
+**Les montants de 2024.** La BMAF vaut 445,93 € jusqu'en mars, puis 466,44 €. Par mois, à
+partir d'avril 2024 :
+* l'AEEH, 149,26 € ;
+* les compléments, de la première à la sixième catégorie, 111,95 €, 303,19 €, 429,12 €,
+  665,00 €, 849,90 € et 1 266,60 € ;
+* les majorations, de la deuxième à la sixième, 60,64 €, 83,96 €, 265,87 €, 340,50 € et
+  499,09 €.
+
+Le site Mon Parcours Handicap donne les mêmes montants le 24 avril 2024, sauf deux. Il
+écrit 429,09 € pour la troisième catégorie, où 92 % de 466,44 € font 429,12 €. Il écrit
+1 210,90 € pour la sixième, la majoration pour tierce personne de 2023 ; le CLEISS la
+donne à 1 266,60 € par mois à partir du 1er avril 2024. L'arbre d'openfisca porte la BMAF
+et cette majoration. Sur l'année, l'AEEH vaut 32 % de 5 535,75 €, soit 1 771,44 €.
+
+**Ce que fait openfisca.**
+* **L'AEEH lit le drapeau `handicap`** de chaque enfant, sa catégorie
+  `aeeh_niveau_handicap` et son âge, sous 20 ans. Elle ne lit aucun taux : le drapeau
+  tient lieu de « l'AEEH est ouverte ».
+* **Les compléments sont décalés d'une catégorie.** La formule paie à la deuxième
+  catégorie le complément de la première, et ainsi jusqu'à la cinquième. Les paramètres
+  sont justes : la formule lit celui de la catégorie d'en dessous. La base, les première
+  et sixième catégories et les majorations sont justes.
+* **Le complément de sixième catégorie échappe au test d'éligibilité.** Écrit à la main
+  sur un enfant sans le drapeau, ou sur un enfant de 20 ans, il vaut 15 032,10 € en 2024.
+* **La demi-part lit une autre variable, `invalidite`**, par `nbG` : les enfants à charge,
+  hors résidence alternée, titulaires de la carte. Elle vaut 0,5 part, avec la réduction
+  complémentaire quand le plafond joue.
+* **Ni le RSA ni la prime d'activité ne comptent l'AEEH** : leurs listes de ressources ne
+  la portent pas. L'aide au logement compte le revenu imposable, où elle n'est pas. Aucune
+  CRDS n'est prélevée sur elle.
+
+**Le drapeau, sur un enfant.** D-184 refusait le drapeau `handicap` sur un adulte, parce
+qu'il ouvre l'ASI à côté d'une pension. Sur un enfant de moins de 20 ans, ses lecteurs ont
+été relevés un à un dans le code d'openfisca, puis mesurés.
+* Il ouvre l'AEEH : c'est ce qu'il faut.
+* Il lève la dégressivité de l'aide au logement. C'est la loi pour le bénéficiaire de
+  l'AEEH (CCH, art. D. 823-16, D-187), et le drapeau n'est posé que là où l'AEEH est
+  ouverte.
+* Il n'ouvre pas l'ASI, qui demande une retraite ou une pension d'invalidité.
+* Pour l'impôt, un enfant majeur porteur du drapeau compte comme un enfant handicapé à
+  charge, et non comme un majeur rattaché. Mesuré sur un enfant de 19 ans, chez un parent
+  seul à 40 000 € : le foyer garde 2 parts et 154 € d'impôt ; avec la carte, 2,5 parts
+  et aucun impôt.
+* Il relève l'âge limite du contrat d'engagement jeune et de la bourse sur critères
+  sociaux. Un enfant de moins de 20 ans est déjà sous ces limites, et aucun des deux
+  n'entre dans le revenu disponible.
+
+**Le champ.** `Child.handicap`, facultatif, porte ce que la CDAPH reconnaît :
+* `taux_incapacite`, en fraction ;
+* `etablissement_accompagnement_ou_soins`, la condition du troisième alinéa ;
+* `complement_categorie`, de 1 à 6 ;
+* `carte_invalidite`, la carte « mobilité inclusion » portant la mention « invalidité ».
+
+Quatre refus, chacun une erreur 422 qui dit pourquoi :
+* l'établissement, l'accompagnement ou les soins sous 50 % : le moteur les ignorerait ;
+* une catégorie de complément sans l'AEEH ;
+* la carte sous 80 % ;
+* le champ sur un enfant de 20 ans ou plus dans l'année simulée.
+
+Les seuils de 80 et 50 % et celui de la carte ne sont pas dans l'arbre d'openfisca : ils
+sont épinglés dans le format d'entrée, d'après les articles. L'âge de 20 ans l'est aussi,
+et un test le relit dans l'arbre.
+
+**Ce que le constructeur écrit.** Sur chaque mois de N-2 à N :
+* le drapeau `handicap`, là où l'AEEH est ouverte ;
+* la catégorie du complément, avec lui ;
+* `invalidite`, pour la carte.
+
+Le taux n'est pas écrit. Il a décidé du reste, et openfisca ne le lit pour aucun enfant à
+charge de moins de 20 ans : l'AAH s'ouvre à 20 ans.
+
+**Pourquoi l'enfant de 20 ans est refusé.** À 20 ans, l'AEEH s'arrête, et le handicap
+devient celui d'un adulte, l'AAH, que ce champ n'ouvre pas. Le drapeau y lèverait encore
+la dégressivité, que l'AAH d'un enfant ne lève pas (D-187). La demi-part d'un enfant
+majeur infirme demanderait ce même drapeau : la dire sans fausser l'aide au logement
+demanderait une autre correction. Un refus vaut mieux qu'un prix faux. Sous 20 ans dans
+l'année simulée, l'enfant l'est sur chaque mois couvert.
+
+**La correction, dans `engine.corrections`.** Elle ajoute à la formule d'openfisca ce qui
+manque à chaque catégorie, de la deuxième à la cinquième : 41 %, 27 %, 50,57 % et 39,64 %
+de la BMAF. Elle ne l'ajoute que là où le test d'openfisca ouvre l'AEEH, le drapeau sous
+20 ans. Sa formule reste celle de la base, des première et sixième catégories et des
+majorations. Son test qui tue montre, sur openfisca brut, 3 100,02 € pour la deuxième
+catégorie d'un couple : le montant de la première. La fuite de la sixième catégorie n'est
+pas corrigée, parce qu'aucun ménage du format d'entrée n'y arrive : le constructeur
+n'écrit une catégorie qu'avec le drapeau, et jamais pour un enfant de 20 ans.
+
+**Ce que le moteur en fait, mesuré en 2024.** Un enfant né en 2014, à 80 %, avec chaque
+catégorie de complément :
+
+| catégorie | couple, openfisca | couple, corrigé | parent seul, openfisca | parent seul, corrigé |
+|---|---:|---:|---:|---:|
+| aucune | 1 771,44 € | 1 771,44 € | 1 771,44 € | 1 771,44 € |
+| 1re | 3 100,02 € | 3 100,02 € | 3 100,02 € | 3 100,02 € |
+| 2e | 3 100,02 € | 5 369,68 € | 3 819,67 € | 6 089,33 € |
+| 3e | 5 369,68 € | 6 864,33 € | 6 366,11 € | 7 860,76 € |
+| 4e | 6 864,33 € | 9 663,76 € | 10 019,71 € | 12 819,14 € |
+| 5e | 9 663,76 € | 11 858,13 € | 13 704,86 € | 15 899,23 € |
+| 6e | 16 803,54 € | 16 803,54 € | 22 726,79 € | 22 726,79 € |
+
+À la main, chaque montant corrigé est une somme de taux, multipliée par 5 535,75 € : 32 %,
+plus celui du complément, plus celui de la majoration pour le parent seul. La sixième
+catégorie ajoute 15 032,10 € de majoration pour tierce personne, soit 3 × 1 210,90 € plus
+9 × 1 266,60 €. En avril, un couple reçoit pour la deuxième catégorie 452,45 € : 149,26 €
+plus 303,19 €.
+
+**À côté des minima, de l'aide au logement et de l'impôt.**
+* Un parent seul, sans revenu ni logement : le RSA reste à 10 071,42 €, et le revenu
+  disponible passe de 13 040,90 € à 14 812,34 €, l'AEEH exactement. Avec un complément de
+  deuxième catégorie, il atteint 19 130,22 €.
+* Un couple sans revenu : le RSA reste à 13 580,35 €, et le revenu disponible passe de
+  14 271,16 € à 16 042,60 €.
+* Un parent seul à 15 000 € de salaire, locataire à 500 € en zone 2 : la prime
+  d'activité, 4 285,83 €, et l'aide au logement, 4 143,48 €, ne bougent pas. Le revenu
+  disponible passe de 23 022,59 € à 24 794,03 €.
+* À 60 %, l'AEEH vaut 1 771,44 € avec l'établissement, l'accompagnement ou les soins, et
+  rien sans.
+* La dégressivité : un parent seul locataire à 1 700 € en zone 1 reçoit 1 108,89 € d'aide
+  sans le handicap de l'enfant. Avec l'AEEH, il reçoit 5 518,86 €, l'aide d'un loyer de
+  900 €. Le drapeau d'openfisca la lève, comme D-187 l'avait dit : rien à corriger.
+* L'impôt d'un parent seul à 40 000 € de salaire : un RFR de 29 523,60 €, 2 parts, 718,26 €
+  avant décote et 154 € après. Avec la carte, 2,5 parts ramènent l'impôt avant décote à
+  85,92 €, que la décote de l'arbre (889 € moins 45,25 % de l'impôt) efface. Sans la
+  carte, le drapeau de l'AEEH ne change rien : 154 €.
+* À 150 000 € de salaire, 25 491 € deviennent 21 915 € avec la carte : 3 576 €, soit 1 791 €
+  de plafond et 1 785 € de réduction complémentaire.
+* Un couple à 60 000 € passe de 2,5 à 3 parts, et de 1 024 € d'impôt à 106 €.
+
+**L'ordre de calcul.** L'AEEH ne lit aucune ressource : elle ne peut ouvrir aucun cercle.
+Le ménage locataire à 1 700 € en zone 1, troisième catégorie, a été calculé par le
+registre, comme l'API, et avec `revenu_disponible` d'abord, comme la jambe relevée de
+l'EMTR. Les deux donnent au centime l'AEEH (7 860,76 €), le RSA (8 260,70 €), l'aide au
+logement (5 518,86 €) et le revenu disponible (24 609,81 €). L'EMTR du parent à 15 000 €
+ne bouge pas avec l'AEEH : 0,4768 sans, 0,4769 avec, l'arrondi d'un pas de 100 €.
+
+Le drapeau d'un enfant fait passer `has_benefit_cascade` : l'épinglage de D-178 tourne
+donc pour un ménage sans logement, sans rien y protéger. Mesuré sur un parent seul sans
+revenu ni logement, troisième catégorie : 20 901,66 € de revenu disponible dans les deux
+ordres, avec ou sans l'épinglage, qui coûte environ 1,5 s (4,5 s au lieu de 3 s). C'est
+laissé tel quel, et dit dans `situations.has_benefit_cascade`.
+
+**La population.** Elle ne porte aucun handicap. Sur la population de test, 400 ménages,
+la colonne `aeeh` vaut zéro partout, comme `aah` et `mva`. `to_openfisca.WIRING` ne change
+pas. `aeeh` n'entre pas dans `STATE_TRANSFERS`, comme `aspa` (D-186).
+
+**La page.** Chaque enfant reçoit, sous son année de naissance, son taux d'incapacité, le
+complément choisi dans une liste, une case pour l'établissement, l'accompagnement ou les
+soins, et une case pour la carte. Ces saisies sont gardées dans l'état de la page :
+ajouter ou retirer un enfant redessine tous les autres, qui ne gardaient jusqu'ici que
+leur année. `childPayload` envoie le taux en fraction, et aucun handicap sans taux.
+L'AEEH s'affiche dans le groupe discret « Handicap ». Comme pour les adultes (D-186), un
+test tiré du format d'entrée vérifie que chaque champ de `Child`, et de son handicap, part
+d'une entrée de la page.
+
+**Vus échouer, puis mutés.**
+* Avant le champ, 26 tests du moteur tombaient. 22 étaient refusés par le format d'entrée
+  (« Extra inputs are not permitted »). Les 3 tests de refus tombaient sur leur message :
+  pydantic refusait, mais pour une autre raison. Le dernier ne trouvait pas la constante
+  d'âge.
+* Avant le champ toujours, 4 tests de l'API tombaient : la requête refusée au lieu d'être
+  chiffrée, et les trois refus sans leur raison. Côté page, 2 tests tombaient et 2 étaient
+  en erreur, et `check.mjs` sortait en erreur sur 3 vérifications.
+* Avec le champ, sans la correction, 8 tests tombaient : les catégories 2 à 5, pour le
+  couple et pour le parent seul, aux montants d'openfisca. Le test qui tue passait.
+* Avec la correction, tout passe.
+
+Un test était faux. Celui des entrées de la page cherchait chaque attribut
+`data-child-field` écrit en toutes lettres, et la page le fabriquait par une fonction. La
+page l'écrit maintenant en toutes lettres, ce que le test lit.
+
+Un test manquait. Le test d'éligibilité que reprend la correction n'était tenu par rien :
+aucun ménage du format d'entrée n'a de catégorie sans le drapeau. Un test l'écrit à la
+main, sans le drapeau sur un enfant de 10 ans, et avec lui sur un enfant de 20 ans : rien
+n'est dû.
+
+Cinq mutations sont prises :
+* la correction non appliquée : les 8 tests de catégorie et le test de l'API ;
+* la correction sans le test d'éligibilité d'openfisca : le test écrit à la main, seul ;
+* le drapeau posé pour tout taux saisi : le test de forme et celui de 50 à 79 % ;
+* le refus de 20 ans retiré : le test de l'âge et le cas de l'API ;
+* le taux de l'enfant envoyé en pour cent par la page : le test du harnais et deux
+  vérifications de `check.mjs`.
+
+**Ce qui reste.**
+* **La majoration pour parent isolé** suit openfisca : tout complément de la deuxième à la
+  sixième catégorie l'ouvre. D. 541-3 l'exclut pour un complément de la deuxième à la
+  quatrième catégorie accordé sur des dépenses seules. Le champ ne dit pas le motif du
+  complément.
+* **L'isolement** est celui de la famille d'openfisca : un adulte seul qui décoche la case
+  T garde la majoration.
+* **L'enfant de 20 ans ou plus** : son AAH, et la demi-part d'un enfant majeur infirme
+  titulaire de la carte. Il faudrait lever la dégressivité sur l'AEEH versée, et non sur le
+  drapeau.
+* **La résidence alternée**, son quart de part et l'AEEH partagée, n'a pas de champ.
+* **L'internat** pris en charge en entier, où l'AEEH n'est pas due (art. L. 541-1,
+  quatrième alinéa), et le choix entre le complément et la prestation de compensation du
+  handicap ne sont pas modélisés.
+* **La CRDS** : openfisca n'en prélève pas sur l'AEEH. L'article 14 de l'ordonnance
+  n° 96-50, qui le dirait, n'a pas été lu.
+* **L'article L. 241-3 du CASF** n'a été lu que sur service-public.gouv.fr.
+* **openfisca-france.** Le décalage des compléments et la fuite de la sixième catégorie
+  sont à signaler en amont, avec ces cas.
+* **L'épinglage d'un ménage sans logement** porteur d'une AEEH, qui ne protège rien.
+
+**Sources.**
+* CSS, art. L. 541-1, L. 541-4, R. 512-2, R. 541-1, R. 541-2, D. 541-1, D. 541-2,
+  D. 541-3, D. 541-4 et R. 844-5, lus sur Légifrance ; L. 541-1, L. 541-4, R. 512-2,
+  R. 541-1 et R. 541-2 aussi sur un miroir du code (maitredata.com).
+* CASF, art. R. 262-11, lu dans une reproduction de la préfecture de la région Normandie
+  (version modifiée par le décret n° 2010-1783 du 31 décembre 2010).
+* CGI, art. 195 (version en vigueur depuis le 1er janvier 2023) et 197 (version du
+  16 février 2025), lus sur Légifrance.
+* CCH, art. D. 823-16 (D-187).
+* service-public.gouv.fr, fiche F34049, « Carte mobilité inclusion (CMI) », vérifiée le
+  28 avril 2026.
+* Mon Parcours Handicap, « Les nouveaux montants au 1er avril 2024 de l'AAH, de l'AEEH et de
+  ses compléments », 24 avril 2024.
+* CLEISS, brèves d'avril 2024, la majoration pour tierce personne au 1er avril 2024.
