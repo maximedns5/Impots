@@ -1447,3 +1447,39 @@ def test_the_engine_alone_ignores_the_unemployment_benefit_of_a_spouse_heading_t
     assert float(raw.calculate("ass", "2024-06")[1]) == pytest.approx(30 * 19.01, abs=0.01), (
         "openfisca now counts the unemployment benefit of a claimant's spouse who heads the "
         "famille: remove the correction rather than keep one that corrects nothing")
+
+
+def _benefit_until_2023(situation: dict[str, Any], adult: str, monthly: float) -> dict[str, Any]:
+    """Unemployment benefit on every month of 2022 and 2023, and none in 2024: the end of an
+    insurance right, which the wire format, writing the same incomes on every covered year,
+    cannot say. Written by hand, as the D-179 tests write what no field carries."""
+    months = [f"{year}-{month:02d}" for year in (2022, 2023) for month in range(1, 13)]
+    situation["individus"][adult]["chomage_brut"] = dict.fromkeys(months, monthly)
+    return situation
+
+
+def test_a_claimant_s_own_past_benefit_is_no_resource() -> None:
+    """C. trav. art. R. 5423-3, 1°: the ASS's resources leave out « L'allocation d'assurance
+    précédemment perçue par l'intéressé ». Alone, with 2 000 EUR a month of benefit until
+    December 2023, the claimant draws the full ASS from January, 545.10 EUR, though the
+    benefit of the twelve months before had not stopped by the month before. openfisca never
+    counts the first parent's benefit; the correction adds it only for a first parent who
+    does not claim the ASS, and must not add it here."""
+    situation = _benefit_until_2023(build_situation(_fin_de_droits(), 2024), "adulte_0", 2_000.0)
+    simulation = _pinned(situation)
+    assert float(simulation.calculate("ass", "2024-01")[0]) == pytest.approx(
+        30 * 18.17, abs=0.01)
+
+
+def test_a_spouse_s_benefit_that_has_stopped_is_no_resource() -> None:
+    """C. trav. art. R. 5423-5: resources « dont la perception est interrompue de manière
+    certaine » leave the base, as in openfisca's own term for the second parent, which the
+    correction reads on the first. The claimant second, the first adult's 3 000 EUR a month
+    of benefit ended in December 2023: in January the benefit of the twelve months before
+    reduces the ASS, from February it no longer does, and June's is the full 570.30 EUR."""
+    situation = _benefit_until_2023(
+        build_situation(_fin_de_droits(conjoint={}, second=True), 2024), "adulte_0", 3_000.0)
+    simulation = _pinned(situation)
+    assert float(simulation.calculate("ass", "2024-01")[1]) < 30 * 18.17 - 100
+    assert float(simulation.calculate("ass", "2024-06")[1]) == pytest.approx(
+        30 * 19.01, abs=0.01)
