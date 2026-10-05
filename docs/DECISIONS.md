@@ -10321,7 +10321,7 @@ Neuf mutations sont prises :
 * la ligne de l'ASS jamais discrète : `check.mjs`, et le test de la page.
 
 **Le gate.** `make gate`, sur la branche fusionnée avec D-188, donne 1 524 réussis, 172
-ignorés et 12 échecs, en 15 min 32 s. Les 12 échecs sont ceux de D-176 à D-187, faute de
+ignorés et 12 échecs, en 15 min 32 s. Les 12 échecs sont ceux de D-176 à D-188, faute de
 données dans ce conteneur. Les 25 réussis de plus que D-188 sont les tests ajoutés : 19 au
 moteur, 3 à l'API, 2 à la page et 1 à la population.
 
