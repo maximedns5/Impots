@@ -1508,6 +1508,14 @@ ASS_CASES: dict[str, Any] = {
         conjoint={"chomage_brut_annuel": ARE_DU_CONJOINT}, second=True),
     "deux_allocataires": lambda: _fin_de_droits(conjoint={"fin_de_droits_ass": True}),
     "aah": lambda: _fin_de_droits(handicap={"taux_incapacite": 0.8}),
+    # Since D-192, for the income tax: a spouse's declared pension, a spouse's salary high
+    # enough to leave a small ASS, and the claimant holding the invalidity card.
+    "pension_du_conjoint": lambda: _fin_de_droits(
+        conjoint={"annee_naissance": 1960, "pension_annuelle": 15_000}),
+    "conjoint_a_28000": lambda: _fin_de_droits(conjoint={"salaire_brut_annuel": 28_000}),
+    "conjoint_a_28000_sans_ass": lambda: _fin_de_droits(
+        conjoint={"salaire_brut_annuel": 28_000}, ass=False),
+    "carte": lambda: _fin_de_droits(carte_invalidite=True),
 }
 
 
@@ -1705,10 +1713,13 @@ def test_the_ass_does_not_depend_on_which_adult_claims_it() -> None:
     échéant, de son conjoint ». openfisca adds the unemployment benefit to the famille's
     second parent only: with the claimant second, the first one's 24 000 EUR of benefit
     vanished from the ASS's resources, and the ASS was paid in full, 6 768 EUR instead of
-    1 263.50."""
+    1 263.50 (D-189). Re-anchored by D-192: the ASS of 2022 is taxable, so in the RFR of
+    2022, which puts the spouse's benefit of 2024 at the full rate of CSG; the ASS's
+    resources read that benefit net of its CSG, and the ASS is 1 531.73, whichever adult
+    claims it."""
     first = _ass_rows("conjoint_au_chomage")
     second = _ass_both_orders("allocataire_second")[1]
-    assert first["ass"] == pytest.approx(1_263.50, abs=0.05)
+    assert first["ass"] == pytest.approx(1_531.73, abs=0.05)
     assert second["ass"] == pytest.approx(first["ass"], abs=0.05)
     assert second["revenu_disponible"] == pytest.approx(first["revenu_disponible"], abs=0.05)
 
@@ -2332,6 +2343,232 @@ def test_the_aeeh_correction_adds_nothing_where_openfisca_opens_no_aeeh() -> Non
 
     assert aeeh(2014, flag=False) == 0.0
     assert aeeh(2004, flag=True) == 0.0
+
+
+# --------------------------------------------------------------------------- #
+# the ASS in the income tax (docs/DECISIONS.md D-192)
+# --------------------------------------------------------------------------- #
+#: The ASS's daily amount, month by month in 2022, as openfisca's tree has it: 16.91 EUR until
+#: March, 17.21 from April (décret n° 2022-493), 17.90 from July. A month is paid as 30 days.
+ASS_JOUR_2022 = {**dict.fromkeys(range(1, 4), 16.91), **dict.fromkeys(range(4, 7), 17.21),
+                 **dict.fromkeys(range(7, 13), 17.90)}
+#: The minimum of the 10 % deduction of CGI art. 83, 3°, on the incomes of 2022 and of 2024
+#: (versions of 3 June 2023 and of 19 June 2025): « ne peut être inférieur à 472 € », then
+#: « à 504 € ».
+DEDUCTION_MINIMUM_2022 = 472
+DEDUCTION_MINIMUM_2024 = 504
+#: The CSG exemption threshold of two parts on the RFR of 2022, for the levies of 2024:
+#: 12 230 EUR and 3 265 more for each half-part, as openfisca's tree has it (D-188).
+CSG_EXONERATION_DEUX_PARTS_2024 = 12_230 + 2 * 3_265
+
+
+def _deduction(salaires: float, minimum: float = DEDUCTION_MINIMUM_2024) -> float:
+    """CGI art. 83, 3°, by hand: a tenth of a member's salaries, which the ASS is taxed with,
+    rounded to the euro, never under the minimum nor over the salaries themselves."""
+    return min(max(round(0.10 * salaires), minimum), salaires)
+
+
+def test_the_ass_is_taxed_as_a_salary_after_the_ten_per_cent_deduction() -> None:
+    """C. trav. art. L. 5428-1: « Les règles fixées au 5 de l'article 158 du code général des
+    impôts sont applicables », and so the ASS « est imposable entre les mains des bénéficiaires
+    dans la catégorie des traitements et salaires » (BOI-RSA-CHAMP-20-20, § 20), after the 10 %
+    deduction of CGI art. 83, 3°. Alone and without resources: 6 768 EUR of ASS less 677 is an
+    RFR of 6 091 in 2024; 6 292.80 less 629 is 5 663.80 in 2022, the RFR the builder pins for
+    the levies of 2024 (D-177). openfisca's own RFR was nil in both years. The income tax stays
+    nil, and nothing else moves: the ASS bears no CSG and no CRDS (CSS art. L. 136-1-2, II, 5°),
+    and the disposable income is D-189's, 7 747.49 EUR."""
+    simulation, rows, _ = _ass_both_orders("seul")
+    ass_2022 = sum(30 * jour for jour in ASS_JOUR_2022.values())
+    assert ass_2022 == pytest.approx(6_292.80)
+    assert _deduction(ASS_PLEINE_2024) == 677
+    assert rows["revenu_fiscal_reference"] == pytest.approx(
+        ASS_PLEINE_2024 - _deduction(ASS_PLEINE_2024), abs=0.01)
+    assert float(simulation.calculate("rfr", "2022")[0]) == pytest.approx(
+        ass_2022 - _deduction(ass_2022, DEDUCTION_MINIMUM_2022), abs=0.01)
+    assert rows["ir"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(7_747.49, abs=0.05)
+
+
+def test_a_small_ass_takes_the_minimum_deduction_apart_from_the_spouse_s_salary() -> None:
+    """The deduction « ne peut être inférieur à 504 €, sans pouvoir excéder le montant brut des
+    traitements et salaires. Cette disposition s'applique séparément aux rémunérations perçues
+    par chaque membre du foyer fiscal » (CGI art. 83, 3°). Beside a spouse's 28 000 EUR of gross
+    salary the ASS only tops the couple up to its ceiling, 1 853.48 EUR over 2024: a tenth would
+    be 185, so 504 come off, and the RFR rises by 1 349.48 over the same couple without the ASS.
+    The spouse's own deduction does not move."""
+    with_ass = _ass_rows("conjoint_a_28000")
+    without = _ass_rows("conjoint_a_28000_sans_ass")
+    assert with_ass["ass"] == pytest.approx(1_853.48, abs=0.05)
+    assert _deduction(with_ass["ass"]) == DEDUCTION_MINIMUM_2024
+    assert with_ass["revenu_fiscal_reference"] - without["revenu_fiscal_reference"] == (
+        pytest.approx(with_ass["ass"] - DEDUCTION_MINIMUM_2024, abs=0.01))
+
+
+def test_the_deduction_is_taken_once_on_a_claimant_s_salary_and_ass_together() -> None:
+    """The ASS is one of the claimant's « traitements et salaires », so it shares their deduction
+    with a salary rather than opening a second minimum. 1 000 EUR of gross salary in 2024,
+    written by hand as the EMTR's bumped leg writes its 100 EUR (the wire format refuses a
+    salary beside the ASS, D-189), make 820.15 EUR taxable beside the 6 768 EUR of ASS, which a
+    job seeker keeps: 7 588.15 less 759 is an RFR of 6 829.15. Two deductions, 677 and the
+    minimum of 504, would have left 6 407.15; without the correction it was 316.15."""
+    situation = perturb_first_adult(build_situation(ASS_CASES["seul"](), 2024), 2024, 1_000)
+    simulation = _pinned(situation)
+    salaire = float(simulation.calculate_add("salaire_imposable", "2024").sum())
+    ass = float(simulation.calculate_add("ass", "2024").sum())
+    assert salaire == pytest.approx(820.15, abs=0.01)
+    assert ass == pytest.approx(ASS_PLEINE_2024, abs=0.05)
+    assert float(simulation.calculate("rfr", "2024")[0]) == pytest.approx(
+        salaire + ass - _deduction(salaire + ass), abs=0.01)
+
+
+def test_beside_a_declared_pension_the_ass_reaches_the_crds_through_the_rfr_of_n_2() -> None:
+    """D-189's measure. A spouse born in 1960 declares 15 000 EUR of pension, 13 500 after its
+    10 %. Without the ASS, the RFR of 2022 that sets the rate of the levies on the pension of
+    2024 was 13 500, under the exemption threshold of two parts, 12 230 + 2 x 3 265 = 18 760.
+    With the ASS of 2022 it is 19 163.80, above it: the reduced rate, whose CSG of 3.8 % a
+    declared pension is already net of (D-176), leaves 75 EUR of CRDS, 0.5 % of 15 000, and no
+    CASA. The disposable income is the pension less that CRDS, the full ASS, and the prime de
+    Noël of 152.45 EUR."""
+    simulation, rows, _ = _ass_both_orders("pension_du_conjoint")
+    ass_2022 = sum(30 * jour for jour in ASS_JOUR_2022.values())
+    rfr_2022 = 0.9 * 15_000 + ass_2022 - _deduction(ass_2022, DEDUCTION_MINIMUM_2022)
+    assert rfr_2022 > CSG_EXONERATION_DEUX_PARTS_2024 > 0.9 * 15_000
+    assert float(simulation.calculate("rfr", "2022")[0]) == pytest.approx(rfr_2022, abs=0.01)
+    assert rows["revenu_fiscal_reference"] == pytest.approx(
+        0.9 * 15_000 + ASS_PLEINE_2024 - _deduction(ASS_PLEINE_2024), abs=0.01)
+    assert rows["ass"] == pytest.approx(ASS_PLEINE_2024, abs=0.05)
+    assert rows["ir"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(
+        15_000 - 0.005 * 15_000 + ASS_PLEINE_2024 + 152.45, abs=0.05)
+
+
+def test_the_ass_of_n_2_sets_the_rate_of_the_csg_on_a_spouse_s_unemployment_benefit() -> None:
+    """The CSG on unemployment benefit takes its rate from the RFR of N-2. Beside a spouse's
+    24 000 EUR of gross benefit, that RFR was the benefit less its 10 %, 21 600 EUR, under the
+    full-rate threshold of two parts, 15 988 + 2 x 4 269 = 24 526 in openfisca's tree: the
+    reduced rate, 3.8 %, all deductible. With the claimant's ASS of 2022 it passes it, and the
+    rate is the full one, 6.2 %, of which 2.4 % is not deductible: 565.92 EUR more on 98.25 % of
+    the benefit. The ASS's resources read that benefit net of its CSG (D-189), so the ASS rises
+    with it, from 1 263.50 to 1 531.73 EUR."""
+    simulation, rows, _ = _ass_both_orders("conjoint_au_chomage")
+    ass_2022 = float(simulation.calculate_add("ass", "2022").sum())
+    rfr_2022 = 0.9 * ARE_DU_CONJOINT + ass_2022 - _deduction(ass_2022, DEDUCTION_MINIMUM_2022)
+    assert rfr_2022 > 15_988 + 2 * 4_269 > 0.9 * ARE_DU_CONJOINT
+    assert float(simulation.calculate("rfr", "2022")[0]) == pytest.approx(rfr_2022, abs=0.01)
+    csg_imposable = -float(simulation.calculate_add("csg_imposable_chomage", "2024").sum())
+    assert csg_imposable == pytest.approx(0.024 * 0.9825 * ARE_DU_CONJOINT, abs=0.05)
+    assert rows["ass"] == pytest.approx(1_531.73, abs=0.05)
+
+
+def test_a_card_holder_s_ass_meets_the_abatement_of_art_157_bis() -> None:
+    """The ASS is in the revenu net global, so the abatement of CGI art. 157 bis meets it. A
+    claimant alone who holds the card « mobilité inclusion » marked « invalidité » (D-188) has
+    6 091 EUR of net income, under 17 510, and deducts 2 796: an RFR of 6 768 - 677 - 2 796 =
+    3 295. Added to the RFR rather than to the income, the ASS would have escaped the
+    abatement and left 6 091."""
+    rows = _ass_rows("carte")
+    assert rows["revenu_fiscal_reference"] == pytest.approx(
+        ASS_PLEINE_2024 - _deduction(ASS_PLEINE_2024) - 2_796, abs=0.01)
+    assert rows["ir"] == 0.0
+
+
+def test_the_family_benefits_leave_the_claimant_s_ass_out_of_their_resources() -> None:
+    """The family benefits read the incomes of N-2 retained for the income tax, but when a person
+    « en chômage total depuis au moins deux mois consécutifs, ne bénéficie pas ou ne bénéficie
+    plus d'une indemnisation » by the insurance, « il n'est pas tenu compte des revenus
+    d'activité professionnelle ni des indemnités de chômage perçus par l'intéressé », from
+    « l'admission à l'allocation de solidarité spécifique » (CSS art. R. 532-7). A claimant beside
+    a spouse's 24 000 EUR of salary, with two children: the ASS of 2022 enters the RFR of 2022,
+    after its own deduction, and not the resources of the family benefits, which stay the
+    spouse's, 17 714.16 EUR; nor does it make the couple « biactif », the ASS being no
+    professional income."""
+    def simulation(ass: bool) -> Any:
+        claimant = _adulte(0, 1975, fin_de_droits_ass=True) if ass else _adulte(0, 1975)
+        household = _foyer(claimant, _adulte(24_000, 1975),
+                           children=[{"annee_naissance": 2012}, {"annee_naissance": 2015}])
+        return _pinned(build_situation(household, 2024))
+
+    with_ass, without = simulation(True), simulation(False)
+    ass_2022 = float(with_ass.calculate_add("ass", "2022").sum())
+    rfr_2022 = (float(with_ass.calculate("rfr", "2022")[0])
+                - float(without.calculate("rfr", "2022")[0]))
+    assert rfr_2022 == pytest.approx(
+        ass_2022 - _deduction(ass_2022, DEDUCTION_MINIMUM_2022), abs=0.01)
+    for month in ("2024-01", "2024-07"):
+        base = float(with_ass.calculate("prestations_familiales_base_ressources", month)[0])
+        assert base == pytest.approx(17_714.16, abs=0.01), month
+        assert base == pytest.approx(float(without.calculate(
+            "prestations_familiales_base_ressources", month)[0]), abs=0.01), month
+        assert not bool(with_ass.calculate("biactivite", month)[0]), month
+
+
+@pytest.mark.parametrize("name", ["seul", "pension_du_conjoint", "conjoint_au_chomage",
+                                  "allocataire_second", "carte"])
+def test_the_ass_is_taxed_the_same_whatever_is_computed_first(name: str) -> None:
+    """The income tax of N reads the ASS of N, and the RFR of N-2, pinned first (D-177), the ASS
+    of N-2. Through the registry, as the API reads it, the income tax comes first and the ASS is
+    computed inside it; with `revenu_disponible` first, as the EMTR's bumped leg computes it,
+    the ASS comes through the minima. The tax rows, the ASS and the disposable income agree."""
+    _, rows, first = _ass_both_orders(name)
+    computed_first = {
+        "revenu_fiscal_reference": float(first.calculate("rfr", "2024")[0]),
+        "ir": -float(first.calculate("impot_revenu_restant_a_payer", "2024")[0]) + 0.0,
+        "ass": float(first.calculate_add("ass", "2024").sum()),
+        "revenu_disponible": float(first.calculate("revenu_disponible", "2024")[0]),
+    }
+    for key, value in computed_first.items():
+        assert value == pytest.approx(rows[key], abs=0.05), key
+
+
+@pytest.mark.parametrize("name", ["seul", "pension_du_conjoint"])
+def test_the_light_tier_taxes_the_ass_as_the_full_tier_does(name: str) -> None:
+    """The income tax reads the ASS, so the light tier of a claimant computes it, with the AAH
+    and the ASI its eligibility reads, and nothing the ASS tops up: neither the RSA, nor the
+    prime d'activité, nor the housing aid, nor the disposable income. Its rows are the full
+    tier's, the RFR among them."""
+    from impots.engine import situations
+
+    light = compute(ASS_CASES[name](), 2024, tier="light").baseline
+    full = _ass_rows(name)
+    for row in LIGHT_ROWS:
+        assert light[row.key] == full[row.key], row.key
+    simulation = SimulationBuilder().build_from_entities(
+        baseline(), build_situation(ASS_CASES[name](), 2024))
+    situations.pin_rfr_n_2(simulation, 2024)
+    extract(simulation, 2024, "light")
+    for variable in ("revenu_disponible", "af", "ppa", "rsa", "aide_logement"):
+        assert not list(simulation.get_holder(variable).get_known_periods()), variable
+    assert list(simulation.get_holder("ass").get_known_periods())
+
+
+def test_without_a_claimant_the_income_tax_never_computes_the_ass() -> None:
+    """The ASS needs its work condition, `ass_precondition_remplie`: nobody meets it, the ASS is
+    nil, and computing it would cost its whole chain, the AAH and the ASI of thirteen months,
+    for every RFR the light tier, the builders' pins and the population ask for. The correction
+    reads the ASS only when someone in the simulation meets the condition that year."""
+    from impots.engine import situations
+
+    simulation = SimulationBuilder().build_from_entities(baseline(),
+                                                         build_situation(COUPLE, 2024))
+    situations.pin_rfr_n_2(simulation, 2024)
+    extract(simulation, 2024, "light")
+    assert list(simulation.get_holder("rfr").get_known_periods())
+    assert not list(simulation.get_holder("ass").get_known_periods())
+
+
+def test_the_engine_alone_leaves_the_ass_out_of_the_income_tax() -> None:
+    """The kill test for the ASS's taxation, on raw openfisca: the claimant alone draws the full
+    6 768 EUR of 2024, and the RFR is nil. The day this fails, openfisca taxes the ASS itself,
+    and `engine.corrections` must drop its own."""
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(ASS_CASES["seul"](), 2024)
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    assert float(raw.calculate_add("ass", "2024").sum()) == pytest.approx(
+        ASS_PLEINE_2024, abs=0.05)
+    assert float(raw.calculate("rfr", "2024")[0]) == 0.0, (
+        "openfisca now taxes the ASS: remove the correction rather than keep one that "
+        "corrects nothing")
 
 
 # --------------------------------------------------------------------------- #

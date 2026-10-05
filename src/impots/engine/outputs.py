@@ -208,6 +208,11 @@ def rows_for(tier: Tier) -> tuple[Row, ...]:
     `light` deliberately stops at the foyer fiscal: touching `revenu_disponible`
     or any famille variable triggers the whole benefits cascade and turns a 0.5 s
     request into a 3 s one.
+
+    One exception, by law: an adult in « fin de droits ». The income tax reads the ASS
+    (D-192), which reads the famille's resources and, for its eligibility, the AAH and the
+    ASI, so that household's light tier costs about what its full tier does. It still
+    reaches none of the benefits the ASS tops up.
     """
     return LIGHT_ROWS if tier == "light" else FULL_ROWS
 
