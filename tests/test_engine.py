@@ -2332,3 +2332,182 @@ def test_the_aeeh_correction_adds_nothing_where_openfisca_opens_no_aeeh() -> Non
 
     assert aeeh(2014, flag=False) == 0.0
     assert aeeh(2004, flag=True) == 0.0
+
+
+# --------------------------------------------------------------------------- #
+# the lone parent holding the card: case T beside the half-part of art. 195, 5 (D-193)
+# --------------------------------------------------------------------------- #
+#: The income tax of 2024 on one part of the 111 634.14 EUR of net income that 150 000 EUR of
+#: gross salary leaves: 0.11 x 17 818 + 0.30 x 54 508 + 0.41 x 27 811.14. A capped tax is
+#: this, less the ceilings of the half-parts above one part (BOI-IR-LIQ-20-20-20, § 20).
+IR_UNE_PART_150K = 29_714.95
+#: The ceilings of CGI art. 197, I, 2 on 2024 incomes: a half-part, the part of a lone
+#: parent's first child (case T within it), and the complementary reduction of a card's
+#: half-part, read in the article and not in the tree.
+DEMI_PART = 1_791
+PREMIER_ENFANT_PARENT_ISOLE = 4_224
+COMPLEMENT_CARTE = 1_785
+
+
+def _parent_seul(enfants: int = 1, *, carte: bool = True, salaire: float = 150_000,
+                 enfant_carte: bool = False, **household: Any) -> HouseholdInput:
+    """A parent alone, born in 1985, holding the card unless told otherwise, with `enfants`
+    children born from 2012, the first holding the card too if `enfant_carte`. Case T as the
+    wire format infers it, unless `parent_isole` says otherwise."""
+    children: list[dict[str, Any]] = [{"annee_naissance": 2012 + i} for i in range(enfants)]
+    if enfant_carte:
+        children[0]["handicap"] = {"taux_incapacite": 0.8, "carte_invalidite": True}
+    return _foyer(_adulte(salaire, 1985, carte=carte), children=children, **household)
+
+
+@pytest.mark.parametrize(("enfants", "case_t", "les_deux", "carte_seule"),
+                         [(1, 2.0, 2.5, 2.0), (2, 2.5, 3.0, 2.5)])
+def test_a_lone_parent_holding_the_card_gets_both_half_parts(
+        enfants: int, case_t: float, les_deux: float, carte_seule: float) -> None:
+    """CGI art. 194, II: « Pour l'imposition des contribuables célibataires ou divorcés qui
+    vivent seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à
+    titre exclusif ou principal la charge d'au moins un enfant » (case T). Art. 195, 5: « Le
+    quotient familial prévu à l'article 194 est augmenté d'une demi-part pour les contribuables
+    célibataires, divorcés ou veufs ayant un ou plusieurs enfants à charge, [...] lorsque ces
+    contribuables remplissent l'une des conditions d'invalidité fixées aux c, d ou d bis du 1 »
+    (the card, case P). No text excludes the one beside the other: the only non-cumulation art.
+    195 writes is that of its 6. The notice of the 2042 for 2024 incomes (n° 2041 NOT) adds
+    both on the single parent's row, « e. + 1/2 part pour une personne vivant seule et ayant au
+    moins un enfant à charge » and « f. + 1/2 part pour une personne invalide », and the DGFiP's
+    simulator gives 2.5 parts with one child, 3 with two. Without case T, a parent who does not
+    live alone, the card's half-part stands alone. The builder writes both cases, on N-2 to N."""
+    foyer = build_situation(_parent_seul(enfants), 2024)["foyers_fiscaux"]["ff_0"]
+    assert foyer["caseT"] == foyer["caseP"] == {"2022": True, "2023": True, "2024": True}
+    assert _rows(_parent_seul(enfants, carte=False))["parts_fiscales"] == case_t
+    assert _rows(_parent_seul(enfants))["parts_fiscales"] == les_deux
+    assert _rows(_parent_seul(enfants, parent_isole=False))["parts_fiscales"] == carte_seule
+
+
+def test_under_its_ceilings_the_lone_parent_s_card_is_worth_its_whole_half_part() -> None:
+    """At 40 000 EUR, 29 523.60 of net income: two parts pay 2 x 0.11 x (14 761.80 - 11 497) =
+    718.26 before a décote of 889 - 45.25 % x 718.26 = 564, so 154 EUR; 2.5 parts pay 2.5 x
+    0.11 x (11 809.44 - 11 497) = 85.92, which the décote takes whole. One part would pay
+    2 022.56: the quotient is worth 1 936.64 with the card, under its 4 224 + 1 791 EUR of
+    ceilings. The DGFiP's simulator: 718 and 86 of « droits simples », 154 and 0 due."""
+    sans, avec = _parent_seul(carte=False, salaire=40_000), _parent_seul(salaire=40_000)
+    assert _foyer_variable(avec, "ir_ss_qf", "2024") == pytest.approx(2_022.56, abs=0.01)
+    assert _rows(sans)["ir_avant_reductions"] == pytest.approx(718.26, abs=0.01)
+    assert _rows(avec)["ir_avant_reductions"] == pytest.approx(85.92, abs=0.01)
+    assert _rows(sans)["ir"] == pytest.approx(154, abs=0.5)
+    assert _rows(avec)["ir"] == 0.0
+
+
+@pytest.mark.parametrize(("enfants", "plafonds"),
+                         [(1, PREMIER_ENFANT_PARENT_ISOLE + DEMI_PART),
+                          (2, PREMIER_ENFANT_PARENT_ISOLE + 2 * DEMI_PART)])
+def test_each_half_part_of_the_lone_parent_holding_the_card_is_capped_at_its_own_ceiling(
+        enfants: int, plafonds: int) -> None:
+    """CGI art. 197, I, 2, on 2024 incomes: the reduction the quotient brings « ne peut
+    excéder 1 791 € par demi-part », but for whoever meets « les conditions fixées au II de
+    l'article 194 », « la réduction d'impôt correspondant à la part accordée au titre du
+    premier enfant à charge est limitée à 4 224 € »; and whoever holds a half-part under « des
+    2 à 6 de l'article 195 » has « une réduction d'impôt égale à 1 785 € pour chacune de ces
+    demi-parts lorsque la réduction de leur cotisation d'impôt est plafonnée ». The capped tax
+    is the tax on one part « diminué de la somme des plafonds en impôt résultant des demi-parts
+    ou quarts de part additionnelles » (BOI-IR-LIQ-20-20-20, § 20). At 150 000 EUR one part
+    pays 29 714.95. One child: the first child's part, case T within it, at 4 224, and the
+    card's half-part at 1 791 leave 23 699.95, less the complement, 21 914.95; 25 490.95
+    without the card. Two children: a second child's half-part at 1 791 more, 20 123.95 and
+    23 699.95. The card is worth its ceiling and its complement, 3 576 EUR, and the DGFiP's
+    simulator says 21 915 and 20 124 on the same taxable salary."""
+    sans, avec = _parent_seul(enfants, carte=False), _parent_seul(enfants)
+    assert _foyer_variable(avec, "ir_ss_qf", "2024") == pytest.approx(IR_UNE_PART_150K, abs=0.01)
+    assert _rows(avec)["ir_avant_reductions"] == pytest.approx(
+        IR_UNE_PART_150K - plafonds - COMPLEMENT_CARTE, abs=0.01)
+    assert _rows(sans)["ir_avant_reductions"] == pytest.approx(
+        IR_UNE_PART_150K - (plafonds - DEMI_PART), abs=0.01)
+
+
+def test_the_card_s_complement_gives_back_no_more_than_the_cap_took() -> None:
+    """At 80 000 EUR, 59 306.86 of net income pays 10 957.54 on one part and 3 362.08 on 2.5
+    parts: a quotient worth 7 595.46, past the 4 224 + 1 791 = 6 015 EUR of ceilings, so the
+    capped tax is 4 942.54. The complement « ne peut toutefois excéder l'augmentation de la
+    cotisation d'impôt résultant du plafonnement »: 1 580.46 here, under 1 785, and the tax
+    falls back to the uncapped 3 362.08. The DGFiP's simulator: 4 943 of « droits simples »,
+    3 362 due. Without the card, two parts pay 4 123.02 and the 4 224 cap takes 2 610.52 that
+    nothing gives back: 6 733.54."""
+    avec, sans = _parent_seul(salaire=80_000), _parent_seul(carte=False, salaire=80_000)
+    assert _foyer_variable(avec, "ir_ss_qf", "2024") == pytest.approx(10_957.54, abs=0.01)
+    assert _foyer_variable(avec, "ir_brut", "2024") == pytest.approx(3_362.08, abs=0.01)
+    assert _rows(avec)["ir_avant_reductions"] == pytest.approx(3_362.08, abs=0.01)
+    assert _foyer_variable(sans, "ir_brut", "2024") == pytest.approx(4_123.02, abs=0.01)
+    assert _rows(sans)["ir_avant_reductions"] == pytest.approx(
+        10_957.54 - PREMIER_ENFANT_PARENT_ISOLE, abs=0.01)
+
+
+@pytest.mark.parametrize(("enfants", "carte", "seuil"),
+                         [(1, False, 44_894), (1, True, 60_381), (2, True, 66_481)],
+                         ids=["2 parts", "2,5 parts avec la carte", "3 parts avec la carte"])
+def test_the_cap_bites_from_the_income_the_dgfip_brochure_gives(
+        enfants: int, carte: bool, seuil: int) -> None:
+    """The Brochure pratique 2025 (2024 incomes), Tableau 4, « Revenus imposables à partir
+    desquels s'applique le plafonnement », row « Parent isolé célibataire ou divorcé ou séparé
+    ayant au moins un enfant à charge »: 44 894 EUR at 2 parts without an invalid; 60 381 at
+    2.5 parts and 66 481 at 3 parts with one. They are the net incomes where the quotient's
+    advantage passes 4 224, 4 224 + 1 791 + 1 785 and 4 224 + 2 x 1 791 + 1 785 EUR: the DGFiP
+    stacks case T and the card, caps each half-part at its own ceiling, and gives the card its
+    complement. Its formula lands within 5 EUR of the engine's: 20 EUR under, nothing is
+    capped; 20 EUR over, the cap takes something. The net income is pinned on `rni`."""
+    def impots(rni: float) -> tuple[float, float]:
+        situation = build_situation(_parent_seul(enfants, carte=carte, salaire=0), 2024)
+        simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+        simulation.set_input("rni", "2024", [rni])
+        return (float(simulation.calculate("ir_brut", "2024")[0]),
+                float(simulation.calculate("ir_plaf_qf", "2024")[0]))
+
+    brut, plafonne = impots(seuil - 20)
+    assert plafonne == pytest.approx(brut, abs=0.005)
+    brut, plafonne = impots(seuil + 20)
+    assert plafonne > brut + 1
+
+
+#: Around the case, at 150 000 EUR of salary: the parts, and the tax after the cap and the
+#: complements, by hand from the article, as the DGFiP's simulator gives them.
+VOISINS_PARENT_SEUL = {
+    "sans la case T": (2.0, 24_347.95),
+    "la carte de l'enfant aussi": (3.0, 18_338.95),
+    "la carte de l'enfant seule": (2.5, 21_914.95),
+    "un couple, une carte, un enfant": (3.0, 14_454.20),
+    "seul, sans enfant": (1.5, 26_138.95),
+}
+
+
+def _voisin(nom: str) -> HouseholdInput:
+    builders = {
+        "sans la case T": lambda: _parent_seul(parent_isole=False),
+        "la carte de l'enfant aussi": lambda: _parent_seul(enfant_carte=True),
+        "la carte de l'enfant seule": lambda: _parent_seul(carte=False, enfant_carte=True),
+        "un couple, une carte, un enfant": lambda: _foyer(
+            _adulte(150_000, 1985, carte=True), _adulte(0, 1985),
+            children=[{"annee_naissance": 2012}]),
+        "seul, sans enfant": lambda: _foyer(_adulte(150_000, 1985, carte=True)),
+    }
+    return builders[nom]()
+
+
+@pytest.mark.parametrize("voisin", sorted(VOISINS_PARENT_SEUL))
+def test_the_neighbours_of_the_lone_parent_holding_the_card(voisin: str) -> None:
+    """At 150 000 EUR, 111 634.14 of net income, priced as the DGFiP's simulator prices them on
+    the same taxable salary:
+    * without case T, a parent who does not live alone: the child's and the card's half-parts
+      at 1 791 each, and the complement, 29 714.95 - 2 x 1 791 - 1 785 = 24 347.95, where the
+      simulator says 24 348;
+    * the child holding the card too (art. 195, 2, D-191): a third half-part at 1 791, and a
+      complement for each card, 29 714.95 - 4 224 - 2 x 1 791 - 2 x 1 785 = 18 338.95,
+      simulator 18 339;
+    * the child's card without the parent's: 21 914.95, as the parent's alone, simulator
+      21 915;
+    * a married couple with one card and one child, which case T never reaches (the wire
+      format refuses it beside two adults): two parts pay 19 821.20, less 2 x 1 791 and
+      1 785, so 14 454.20 (art. 195, 3), simulator 14 454;
+    * a card holder without a child: 1.5 parts (art. 195, 1, d bis), 29 714.95 - 1 791 -
+      1 785 = 26 138.95, simulator 26 139."""
+    parts, impot = VOISINS_PARENT_SEUL[voisin]
+    rows = _rows(_voisin(voisin))
+    assert rows["parts_fiscales"] == parts
+    assert rows["ir_avant_reductions"] == pytest.approx(impot, abs=0.01)
