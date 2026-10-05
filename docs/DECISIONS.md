@@ -10156,6 +10156,10 @@ Deux mutations de la page sont prises, par pytest et par `check.mjs` : la ligne 
 retirée des groupes, et la note sur les prélèvements qui ne regarde plus la pension
 d'invalidité.
 
+**Le gate.** `make gate` donne 1 507 réussis, 172 ignorés et 12 échecs, en 18 min 32 s.
+Les 12 échecs sont ceux de D-176 à D-187, faute de données dans ce conteneur. Les 23
+réussis de plus sont les tests ajoutés : 22 au moteur et 1 à l'API.
+
 **Ce qui reste.**
 * **L'AAH dans les ressources de l'ASI.** Service-public la compte : « Allocation aux
   adultes handicapés (AAH) », « Oui ». openfisca l'exclut pour un pensionné d'invalidité, au
@@ -10197,6 +10201,9 @@ d'invalidité.
 * **Les articles L. 136-1-2 et L. 341-1 à L. 341-5** du CSS n'ont pas pu être ouverts sur
   Légifrance.
 * **openfisca-france.** Les deux écarts corrigés, et celui du c), sont à signaler en amont.
+* **La pension d'invalidité minimale.** `PENSION_INVALIDITE_MINIMUM` s'arrête à janvier
+  2026. Au-delà, la correction 7 garde ce dernier montant : la table est à compléter à
+  chaque revalorisation de janvier.
 
 **Sources.**
 * CSS, art. L. 136-8 (version du 16 décembre 2020 au 1er juillet 2025), L. 137-41 (version
