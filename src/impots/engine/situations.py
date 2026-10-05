@@ -121,10 +121,7 @@ def pin_benefit_history(simulation: Any, year: int) -> None:
 
 #: The inputs that open the AAH, the ASI or the ASS. The disability field writes the first
 #: since D-184; the others no field writes, and a situation carries them only when someone
-#: adds them, as the D-179 tests do for the ASI. Since D-191 a child's disability writes
-#: `handicap` on the child: there it opens the AEEH, which reads no resource, and no ASI,
-#: which needs a pension. The pin then runs for nothing on a household without a dwelling,
-#: about 1.5 s, and moves no figure: measured, in both evaluation orders.
+#: adds them, as the D-179 tests do for the ASI.
 MINIMA_INPUTS = ("taux_incapacite", "pensions_invalidite", "handicap", "ass_precondition_remplie")
 
 
@@ -146,6 +143,11 @@ def has_benefit_cascade(situation: dict[str, Any]) -> bool:
     stack there, so the family base it caches counts the AAH in full. The D-179 tests
     guard that. A household with neither a dwelling nor one of `MINIMA_INPUTS` has no
     circle to close, and its full tier keeps its cost.
+
+    A child's disability writes `handicap` on the child since D-191. There the flag opens
+    the AEEH, which reads no resource, and no ASI, which needs a pension: on a household
+    without a dwelling the pin runs for nothing, about 1.5 s, and moves no figure in
+    either evaluation order (measured). Left so, rather than read the flag by role.
     """
     housed = "statut_occupation_logement" in situation["menages"][MENAGE_ID]
     return housed or any(
@@ -423,8 +425,8 @@ def _child_disability_inputs(child: Any, year: int, years: list[int]) -> dict[st
     half-part. The rate is not written: it decided all this, and openfisca reads it for
     nobody under 20 who is a dependant (the AAH opens at 20). On a child the flag also
     lifts the housing aid's taper, as CCH art. D. 823-16 does for an AEEH beneficiary; the
-    household's `has_benefit_cascade` then holds, and the pin of D-178 runs, at no cost to
-    any figure.
+    household's `has_benefit_cascade` then holds, and the pin of D-178 runs, moving no
+    figure.
 
     A child of 20 or more in the year simulated is refused: the AEEH has stopped, the
     disability is then an adult's (the AAH), and the flag would still lift the taper.

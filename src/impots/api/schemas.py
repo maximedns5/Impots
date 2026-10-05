@@ -142,18 +142,19 @@ AEEH_CATEGORIES = 6
 
 
 def _pour_cent(rate: float) -> str:
-    """A rate as French writes it: 0.8 -> « 80 % »."""
-    return f"{rate * 100:.0f} %"
+    """A rate as French writes it: 0.8 -> « 80 % », 0.795 -> « 79,5 % », never rounded up
+    to the threshold it misses."""
+    return f"{rate * 100:.2f}".rstrip("0").rstrip(".").replace(".", ",") + " %"
 
 
 class HandicapEnfant(BaseModel):
     """A child's disability as the CDAPH recognised it: what the AEEH and the income tax
     read (D-191).
 
-    The rate decides; openfisca never reads it for a child. Its AEEH reads its generic
-    `handicap` flag, which the builder writes where the AEEH is open, with the
-    complément's category; its half-part reads `invalidite`, which the builder writes for
-    the card. On a child the flag is what the law asks: it opens the AEEH, and it lifts
+    The rate decides what the builder writes, and is not written itself. openfisca's AEEH
+    reads its generic `handicap` flag, which the builder writes where the AEEH is open,
+    with the complément's category; its half-part reads `invalidite`, which the builder
+    writes for the card. On a child the flag is what the law asks: it opens the AEEH, and it lifts
     the housing aid's high-rent taper, which CCH art. D. 823-16 lifts for « le demandeur
     ou son conjoint [...] bénéficiaire [...] de l'allocation d'éducation de l'enfant
     handicapé ». It opens no ASI, which needs a pension. A child of 20 or more is refused,

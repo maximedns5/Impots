@@ -1122,8 +1122,9 @@ def test_an_aah_that_is_not_paid_lifts_no_taper() -> None:
 
 def test_a_dependent_s_aah_lifts_no_taper() -> None:
     """Only the claimant's or the spouse's AAH lifts it. A child of 22 at 80 % in the
-    famille draws the AAH, written by hand since no field carries a child's disability,
-    and the aid stays the tapered one, 84.72 EUR, as without that disability."""
+    famille draws the AAH, written by hand since the child's field refuses a child of 20
+    or more (D-191), and the aid stays the tapered one, 84.72 EUR, as without that
+    disability."""
     household = HouseholdInput.model_validate(
         {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1970}],
          "children": [{"annee_naissance": 2002}], "logement": HIGH_RENT})
