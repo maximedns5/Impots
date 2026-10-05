@@ -10186,7 +10186,8 @@ Cinq mutations sont prises :
   (version modifiée par le décret n° 2010-1783 du 31 décembre 2010).
 * CGI, art. 195 (version en vigueur depuis le 1er janvier 2023) et 197 (version du
   16 février 2025), lus sur Légifrance.
-* CCH, art. D. 823-16 (D-187).
+* CCH, art. D. 823-16, lu sur Légifrance (version en vigueur depuis le 1er septembre
+  2019), comme pour D-187.
 * service-public.gouv.fr, fiche F34049, « Carte mobilité inclusion (CMI) », vérifiée le
   28 avril 2026.
 * Mon Parcours Handicap, « Les nouveaux montants au 1er avril 2024 de l'AAH, de l'AEEH et de
