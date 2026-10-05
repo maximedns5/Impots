@@ -47,7 +47,8 @@ def _build(tax_benefit_system: Any, situation: dict[str, Any], year: int, tier: 
     """A simulation with every input set and the RFR of N-2 pinned before anything
     else is asked of it — see `situations.pin_rfr_n_2` (D-177) — and, for the full
     tier, the housing aid pinned month by month (`situations.pin_benefit_history`,
-    D-178). The light tier never asks for a benefit and does not pay for the second.
+    D-178). The light tier asks for no benefit but a claimant's ASS, which the income tax
+    reads (D-192) and which reads no housing aid, and does not pay for the second.
     Nor does a household with no benefit cascade (`situations.has_benefit_cascade`):
     no dwelling and no input opening the AAH, the ASI or the ASS (D-179). Its full-tier
     request keeps its D-177 cost."""

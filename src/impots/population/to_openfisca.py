@@ -89,8 +89,10 @@ HISTORY_YEARS = 2
 WIRING = "D-188"
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
-#: fiscal block, which never reaches a benefit. Anything else first pins the benefit
-#: history (failure mode #6), once, so the light tier never pays for it.
+#: fiscal block, which never reaches a benefit. The ASS the income tax reads since D-192
+#: is computed only for an adult in « fin de droits », and this wiring declares none.
+#: Anything else first pins the benefit history (failure mode #6), once, so the light
+#: tier never pays for it.
 FISCAL_VARIABLES = frozenset(
     {row.variable for row in LIGHT_ROWS} | {"nbptr", "rfr", "impot_revenu_restant_a_payer"})
 

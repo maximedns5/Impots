@@ -78,6 +78,12 @@ def pin_rfr_n_2(simulation: Any, year: int) -> None:
     assumption this pin makes, measured in D-177. Pinned, no later computation reopens
     it, in whatever order it runs.
 
+    Since D-192 the RFR of N-2 holds a claimant's ASS of N-2, whose resources read the
+    replacement incomes of the twelve months before, net of a CSG whose rate reads the RFR
+    of N-4 and N-5: the same cut, on years where nothing is supplied. The ASS that enters it
+    is the one a hand computation gives, 6 292.80 EUR for a claimant alone in 2022, so an
+    RFR of 5 663.80 (`test_the_ass_is_taxed_as_a_salary_after_the_ten_per_cent_deduction`).
+
     Called by both builders, once every input is set: the household one and
     `population.to_openfisca`. Each simulation pins its own, under its own tax-benefit
     system, so a reform reads the RFR of N-2 its own parameters give.

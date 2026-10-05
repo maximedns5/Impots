@@ -10943,6 +10943,564 @@ ajoutés : 27 au moteur, 4 à l'API et 4 à la page.
   ses compléments », 24 avril 2024.
 * CLEISS, brèves d'avril 2024, la majoration pour tierce personne au 1er avril 2024.
 
+## D-192 — L'ASS est imposable : la correction 12 la met dans l'impôt, comme un salaire
+
+**Le point de départ.** D-189 l'avait laissé dans « Ce qui reste » : « L'ASS est imposable,
+et openfisca ne l'impose pas. » Une réforme jetable l'avait mesuré. L'impôt ne bougeait dans
+aucun des six ménages, le RFR de l'allocataire seul passait de 0 à 6 091 €, et un couple
+dont le conjoint touche 15 000 € de pension déclarée perdait 75,00 € de CRDS. Corriger
+faisait entrer une prestation de la famille dans chaque RFR, celui du palier léger et ceux
+qu'épinglent D-177 et D-178 : c'était une entrée à part. La voici.
+
+**Ce que dit la loi.** Les textes ont été lus sur Légifrance, sauf mention contraire.
+* **L'imposition.** « Ces prestations ainsi que l'indemnité d'activité partielle et
+  l'allocation de solidarité spécifique sont exonérées de la taxe sur les salaires et des
+  cotisations de sécurité sociale [...] », puis : « Les règles fixées au 5 de l'article 158
+  du code général des impôts sont applicables. » (C. trav., art. L. 5428-1, version du 1er
+  janvier 2024 au 27 juin 2026 ; le dernier alinéa est le même dans la version de 2019 à
+  2024). Ce 5 détermine les revenus « provenant de traitements publics et privés,
+  indemnités, émoluments, salaires et pensions [...] conformément aux dispositions des
+  articles 79 à 90 » (CGI, art. 158, 5, a, version du 16 février au 19 juin 2025).
+* **Le BOFiP** en tire que, « qu'elle soit versée dans le cadre du régime d'assurance ou du
+  régime de solidarité, l'allocation qui constitue ce revenu de remplacement est imposable
+  entre les mains des bénéficiaires dans la catégorie des traitements et salaires ». Il le
+  dit « de l'allocation de solidarité spécifique (ASS) (C. trav. art. L. 5423-1) »
+  (BOI-RSA-CHAMP-20-20-20131029, § 20).
+* **Aucune exonération.** L'article 81 du CGI (version du 1er janvier au 19 juin 2025) ne
+  nomme ni l'ASS ni l'article L. 5423-1. Son 9° exonère « Les allocations, indemnités et
+  prestations servies, sous quelque forme que ce soit, par l'Etat, les collectivités et les
+  établissements publics, en application des lois et décrets d'assistance et d'assurance ».
+  Le texte propre à l'ASS la renvoie au 5 de l'article 158, et le BOFiP la tient pour
+  imposable.
+* **La case.** Le site impots.gouv.fr range l'ASS parmi les allocations de chômage total :
+  « Vous devez donc les déclarer dans votre déclaration de revenus : cases 1AP à 1DP pour
+  les allocations de chômage total » (page « Allocations chômage », modifiée le 8 avril
+  2026). Le montant est prérempli. Ce sont les cases de `chomage_imposable` dans openfisca.
+  La même page demande de ne pas déclarer la prime de Noël : la correction n'y touche pas.
+* **La déduction de 10 %.** « La déduction à effectuer du chef des frais professionnels est
+  calculée forfaitairement en fonction du revenu brut [...] ; elle est fixée à 10 % du
+  montant de ce revenu. Elle est limitée à 14 426 € pour l'imposition des rémunérations
+  perçues en 2024 [...] » Et : « Le montant de la déduction forfaitaire pour frais
+  professionnels ne peut être inférieur à 504 €, sans pouvoir excéder le montant brut des
+  traitements et salaires. Cette disposition s'applique séparément aux rémunérations perçues
+  par chaque membre du foyer fiscal [...] » (CGI, art. 83, 3°, version du 19 juin 2025 au 21
+  février 2026). Sur les revenus de 2022, le minimum est de 472 € (version du 3 juin 2023 au
+  2 juin 2024). L'ASS d'un membre partage donc une seule déduction, et un seul minimum, avec
+  ses salaires et son allocation chômage. La version de 2025 ne porte plus le minimum propre
+  aux demandeurs d'emploi inscrits depuis plus d'un an, qu'openfisca arrête en 2018.
+* **Ni CSG ni CRDS.** « Par dérogation au I, sont exclus de l'assiette de la contribution
+  les revenus suivants : [...] 5° L'allocation de solidarité spécifique prévue à l'article
+  L. 5423-1 du code du travail » (CSS, art. L. 136-1-2, II, versions du 16 décembre 2020 au
+  28 février 2025). La CRDS sur ces revenus « est soumise aux conditions prévues aux
+  articles L. 136-1-1 à L. 136-4 du même code » (ordonnance n° 96-50, art. 14, I, version en
+  vigueur depuis le 1er septembre 2019) : l'exclusion vaut pour elle. Sans CSG déductible,
+  le montant déclaré de l'ASS est son montant versé.
+* **Les prestations familiales** comptent les revenus de N-2 retenus pour l'impôt. Mais
+  « Lorsque la personne ou l'un des conjoints ou concubins, en chômage total depuis au moins
+  deux mois consécutifs, ne bénéficie pas ou ne bénéficie plus d'une indemnisation dans les
+  conditions fixées au premier alinéa ci-dessus [...], il n'est pas tenu compte des revenus
+  d'activité professionnelle ni des indemnités de chômage perçus par l'intéressé durant
+  l'année civile de référence. » La règle court notamment depuis « l'admission à
+  l'allocation de solidarité spécifique prévue aux articles L. 5423-1 à L. 5423-3 du code du
+  travail » (CSS, art. R. 532-7, quatrième alinéa, version en vigueur depuis le 1er janvier
+  2020). L'ASS, allocation de chômage du régime de solidarité, déclarée dans les cases de
+  l'allocation d'assurance, est lue ici parmi ces indemnités. L'aide au logement a sa propre
+  règle, l'art. R. 822-15 du CCH, que D-189 a lu pour l'allocataire de l'ASS.
+
+**Ce que fait openfisca.** L'ASS, `ass`, est un montant mensuel de l'individu qui n'entre
+dans aucune variable de l'impôt.
+* **La chaîne.** `revenu_assimile_salaire` additionne les salaires imposables,
+  `chomage_imposable` (cases 1AP à 1EP) et quelques autres cases.
+  `revenu_assimile_salaire_apres_abattements` en retire la déduction de 10 %, son minimum et
+  son plafond. `traitements_salaires_pensions_rentes` y ajoute les pensions, et
+  `revenu_categoriel_tspr` somme le tout sur le foyer. Viennent ensuite `revenu_categoriel`,
+  `rbg`, `rng`, l'abattement de l'art. 157 bis, `rni` et `rfr`.
+* **Les lecteurs de chaque maillon.** `chomage_imposable` mène à `chomage_net`, que lisent
+  l'éligibilité de l'ASS, nulle le mois où une allocation chômage est versée, et ses
+  ressources. L'AAH, l'aide au logement et le crédit des cotisations syndicales le lisent
+  aussi. `revenu_assimile_salaire_apres_abattements` est lu par les prestations familiales
+  sur N-2, dans leurs ressources et dans leur test de `biactivite`, et par le plafonnement
+  de l'IFI. `revenu_categoriel_tspr` n'est lu que par `revenu_categoriel`, d'où partent
+  l'impôt, le RFR, l'abattement de l'art. 157 bis et sa copie des prestations, la bourse
+  d'enseignement supérieur (`rbg`), et, par le RFR de N-2, le taux de la CSG.
+* **Les prestations qui comptent l'ASS la lisent elle-même, au mois.** Ce sont le RSA, la
+  prime d'activité, l'ASI et l'ASPA, et la prime de Noël. L'AAH et l'aide au logement ne la
+  comptent pas (D-189). Aucune ne lit l'impôt de l'année.
+
+**La correction 12 de `engine.corrections`.**
+* **Où.** Elle met l'ASS de l'année parmi les salaires de chaque membre, dans
+  `revenu_categoriel_tspr`, là où l'impôt somme les catégories. Elle reprend la formule de
+  la déduction d'openfisca sur les salaires et l'ASS du membre ensemble, et en retranche la
+  même formule sur les salaires seuls. Un membre a ainsi une seule déduction, et un seul
+  minimum, sur ses salaires, son allocation chômage et son ASS. Ses frais réels restent les
+  siens.
+* **Pas plus tôt.** Dans `chomage_imposable`, l'ASS passerait dans `chomage_net` : elle
+  deviendrait une allocation chômage, qui l'éteint, et openfisca y prélèverait la CSG et la
+  CRDS. Dans `revenu_assimile_salaire`, elle entrerait dans les ressources de N-2 des
+  prestations familiales, que l'art. R. 532-7 neutralise pour l'allocataire, et dans leur
+  test de biactivité, où elle n'est pas un revenu professionnel.
+* **Seulement s'il y a un allocataire.** Sans `ass_precondition_remplie`, la condition
+  d'activité, l'ASS d'openfisca est nulle. La correction ne lit donc l'ASS que si quelqu'un,
+  dans la simulation, remplit cette condition dans l'année ; sinon elle rend la formule
+  d'openfisca sans rien calculer de plus. Le RFR d'un ménage sans allocataire, celui de
+  toute la population et celui des années que l'historique ne couvre pas ne calculent ni
+  l'ASS, ni l'AAH et l'ASI que lit son éligibilité.
+* **Enroulée** autour des formules d'openfisca : la variable n'a qu'une formule, et la
+  déduction est celle qu'openfisca donne pour l'année. Le test du registre accepte déjà le
+  Code du travail (D-189).
+
+**Ce que le moteur en fait, mesuré en 2024.** L'allocataire est né en 1975, sans autre
+ressource que celles du ménage. « Avant » désigne les onze corrections de `main`.
+
+| ménage | RFR avant | RFR après | ce qui bouge encore |
+|---|---:|---:|---|
+| seul | 0 € | 6 091 € | rien |
+| seul, RFR de 2022 | 0 € | 5 663,80 € | rien |
+| pension du conjoint, né en 1960 | 13 500 € | 19 591 € | RD 21 920,45 → 21 845,45 € |
+| la même, RFR de 2022 | 13 500 € | 19 163,80 € | |
+| pension du conjoint, né en 1955 | 10 704 € | 18 193 € | rien |
+| conjoint salarié à 24 000 € | 17 714,16 € | 22 335,00 € | rien |
+| conjoint salarié à 28 000 € | 20 666,52 € | 22 016,00 € | rien |
+| conjoint au chômage, 24 000 € | 20 793,96 € | 21 821,69 € | ASS +268,23 €, RD −297,69 € |
+| locataire, 500 € en zone 2 | 0 € | 6 091 € | rien, aide 3 532,77 € |
+| titulaire de la carte | 0 € | 3 295 € | rien |
+| deux allocataires | 0 € | 12 182 € | rien |
+| famille, 24 000 €, deux enfants | 17 714,16 € | 22 335,00 € | rien, PF comprises |
+
+L'impôt est nul partout, avant comme après. Refait à la main :
+* **Seul.** Un dixième de 6 768 € fait 676,80 €, arrondi à 677 €, au-dessus du minimum de
+  504 € : 6 091 €. En 2022, 30 × (3 × 16,91 + 3 × 17,21 + 6 × 17,90) = 6 292,80 € d'ASS,
+  moins 629 €, au-dessus de 472 € : 5 663,80 €. Rien d'autre ne bouge, puisque l'ASS ne paie
+  ni CSG ni CRDS.
+* **La pension.** 13 500 + 5 663,80 = 19 163,80 € dépassent le seuil d'exonération de deux
+  parts, 12 230 + 2 × 3 265 = 18 760 €, sans dépasser celui du taux réduit,
+  15 988 + 2 × 4 269 = 24 526 €. Au taux réduit, la CSG de 3,8 %, dont la pension déclarée
+  est déjà nette (D-176), laisse 0,5 % de CRDS, 75,00 €, et pas de CASA. Le revenu
+  disponible vaut 15 000 − 75 + 6 768 + 152,45 = 21 845,45 €, prime de Noël comprise. Né en
+  1955, le conjoint a l'abattement de l'art. 157 bis de 2022, que l'ASS réduit de 2 620 à
+  1 310 € : 17 853,80 € restent sous 18 760 €, et rien ne change.
+* **Le minimum.** 1 853,48 € d'ASS : un dixième ferait 185 €, le minimum de 504 €
+  s'applique, et le RFR monte de 1 349,48 €. Le salaire du conjoint garde sa déduction.
+* **Le plafond du couple.** À côté d'un salaire de 24 000 €, 19 682,16 € imposables, l'ASS
+  porte le couple exactement à son plafond : 19 682,16 + 5 133,84 = 24 816,00 €, soit
+  3 × 1 998,70 + 9 × 2 091,10. Moins 1 968 et 513 € de déductions : 22 335,00 €.
+* **La carte.** 6 091 € de revenu net, sous 17 510 €, ouvrent 2 796 € d'abattement : un RFR
+  de 3 295 €.
+* **Un salaire à côté.** 1 000 € de salaire brut écrits à la main en 2024, comme la jambe
+  relevée de l'EMTR écrit ses 100 €, font 820,15 € imposables. Avec 6 768 € d'ASS,
+  7 588,15 € moins 759 € de déduction : 6 829,15 €. Deux déductions, 677 € et le minimum de
+  504 €, laisseraient 6 407,15 €. Sans la correction, le RFR était de 316,15 €.
+* **L'allocation chômage du conjoint.** Sans l'ASS, le RFR de 2022, 21 600 €, restait sous
+  le seuil du taux plein de deux parts, 24 526 € : le taux réduit, 3,8 %, tout déductible.
+  Avec l'ASS de 2022, 5 588,80 € moins 559 €, il vaut 26 629,80 € : le taux plein, 6,2 %,
+  dont 2,4 % ne sont pas déductibles, soit 565,92 € de CSG imposable de plus sur 98,25 % de
+  24 000 €. Les ressources de l'ASS lisent l'allocation nette de cette CSG (D-189) : l'ASS
+  monte de 268,23 €, et le revenu disponible baisse de 565,92 − 268,23 = 297,69 €. Le RFR de
+  2024 monte de 1 531,73 − 504 = 1 027,73 €. L'allocataire premier ou second, tout est égal
+  (correction 8).
+
+**L'impôt ne bouge pas, et ce n'est pas un hasard.** L'ASS ne se verse que sous un plafond
+de ressources qui la comprend. Seul, l'allocataire a au plus 70 montants journaliers par
+mois : 3 × 1 271,90 + 9 × 1 330,70 = 15 792,00 € en 2024. Après la déduction, l'impôt avant
+décote ne dépasse pas 0,11 × (14 212,80 − 11 497) = 298,74 €, que la décote, 889 € moins
+45,25 % de l'impôt, efface. En couple, 110 montants font 24 816,00 €, et 22 334,40 € après
+la déduction, sous deux fois la limite de la tranche à 0 %, 22 994 € (calcul). Les
+ressources que lit l'ASS sont parfois nettes là où l'impôt lit un montant déclaré, comme
+pour une pension, de 3,2 % au plus : l'écart ne fait pas naître d'impôt. C'est le RFR qui
+bouge, et, par le RFR de N-2, le taux des prélèvements sur les autres revenus de
+remplacement du ménage.
+
+**L'ordre de calcul.** L'impôt de N lit maintenant l'ASS de N, et le RFR de N-2, épinglé le
+premier (D-177), l'ASS de N-2. Les coupes d'openfisca (`max_spiral_loops = 1`) ont été
+relevées pendant chaque épinglage, contre le système de `main`.
+* **Le RFR de N-2.** L'ASS de N-2 lit les revenus de remplacement des douze mois précédents,
+  nets d'une CSG dont le taux lit le RFR de N-4 ou de N-5, et son éligibilité lit l'AAH de
+  treize mois. openfisca coupe donc à zéro les RFR de 2017 à 2020, l'ASS d'octobre 2020 à
+  décembre 2021, l'AAH et des cotisations de 2019 et 2020 : des années où rien n'est saisi,
+  qui valent zéro de toute façon. Aucune coupe ne tombe en 2022 ou après. Le RFR épinglé est
+  celui du calcul à la main : 5 663,80 € seul, 19 163,80 € à côté de la pension.
+* **L'aide au logement** (D-178) lit l'abattement de l'art. 157 bis de N-2, donc le revenu
+  net et l'ASS de N-2. Son épinglage compte 65 coupes au lieu de 64, aucune nouvelle en 2022
+  ou après. Il en perd même vingt et une, sur l'AAH et l'ASS de 2022, que l'épinglage du RFR
+  a déjà calculées.
+* **Le registre** ne fait qu'une coupe nouvelle, sur l'ASS de juin 2023, sous l'impôt :
+  l'éligibilité de l'ASS de 2024 lit l'AAH de treize mois, dont les ressources lisent l'ASI,
+  dont les ressources lisent l'ASS. Les autres mois de 2023, `main` les coupait déjà. Rien
+  n'en dépend sans AAH ni ASI ouvertes. Trois ménages où elles le sont ont été calculés, sur
+  `main` et avec la correction : l'allocataire avec 3 000 € de pension d'invalidité,
+  locataire ; à côté d'un conjoint pensionné d'invalidité à 6 000 € ; à côté d'un conjoint à
+  80 %, locataire. Chaque montant hors RFR est celui de `main`, dans les deux ordres et dans
+  les deux paliers.
+* **Les deux ordres.** Cinq ménages ont été calculés par le registre, comme l'API, et avec
+  `revenu_disponible` d'abord, comme la jambe relevée de l'EMTR : l'allocataire seul, à côté
+  de la pension, à côté de l'allocation chômage du conjoint, premier ou second, et titulaire
+  de la carte. Le RFR, l'impôt, l'ASS et le revenu disponible concordent à 0,05 € près.
+* **L'EMTR** des trois ménages de D-189 ne bouge pas : 0,8678 seul, 0,2729 locataire, 0,5825
+  en couple. Le RFR de N ne touche le revenu disponible que deux ans plus tard.
+* **Les deux paliers** donnent les mêmes valeurs sur chaque ligne du palier léger, pour les
+  onze ménages du tableau.
+
+**Le coût.** Mesuré au meilleur de trois, la machine peu chargée, contre le système de
+`main` dans le même processus :
+* un salarié seul à 30 000 € : 0,46 s puis 0,48 s au palier léger, 2,26 s puis 2,19 s au
+  palier complet. Le court-circuit ne calcule rien de plus ;
+* l'allocataire seul : 0,55 s puis 1,96 s au palier léger, qui calcule maintenant l'ASS de N
+  et de N-2, avec l'AAH et l'ASI qu'elle lit ; 4,51 s puis 5,09 s au palier complet, qui
+  calcule en plus l'ASS de N-2.
+
+Le palier léger d'un allocataire ne touche toujours ni au RSA, ni à la prime d'activité, ni
+à l'aide au logement, ni au revenu disponible : un test le vérifie. Les cinq tests de budget
+de temps passent, aucun ignoré.
+
+**Ce que la population en fait.** Elle ne déclare personne en fin de droits : `to_openfisca`
+n'écrit pas `ass_precondition_remplie` (D-189). La correction n'y lit donc jamais l'ASS. Un
+test le vérifie sur la trame des chômeurs de D-177 : l'impôt et le RFR y sont calculés, et
+aucune ASS. Les 78 tests de la population que le gate fait tourner passent, les deux chemins
+de D-183 compris : rien de ce qu'elle calcule ne bouge, et `to_openfisca.WIRING` reste
+« D-188 ». Les quatre tests lents, qui demandent la population complète, n'ont pas tourné :
+seul `make full` le peut.
+
+**Un test de D-189 ré-ancré.** Avec la correction, le test de symétrie de la correction 8
+tombait : 1 531,73 € d'ASS au lieu de 1 263,50 €. C'est le conjoint au chômage ci-dessus. La
+symétrie tient, l'allocataire premier ou second. L'ancre a été déplacée et la raison écrite
+dans le test, comme la charte le veut d'un golden : par une entrée D qui cite le texte qui
+l'a déplacé, ici l'art. L. 5428-1.
+
+**Vus échouer, puis mutés.** Contre `main`, les tests seuls, 9 des 16 nouveaux tests du
+moteur tombaient :
+* l'allocataire seul, avec un RFR de 0 au lieu de 6 091 € ;
+* le minimum, avec un RFR immobile au lieu de 1 349,48 € de plus ;
+* la déduction commune, avec 316,15 € au lieu de 6 829,15 € ;
+* la pension, avec un RFR de 2022 de 13 500 € au lieu de 19 163,80 € ;
+* l'allocation chômage du conjoint, avec 21 600 € au lieu de 26 629,80 € ;
+* la carte, avec 0 au lieu de 3 295 € ;
+* la famille, dont le RFR de 2022 ne bougeait pas au lieu de 5 599,30 € de plus ;
+* le palier léger, qui ne calculait pas l'ASS, pour deux ménages.
+
+Passaient, comme ils le devaient : les cinq tests d'ordre, puisque l'impôt ne lisait rien,
+celui du ménage sans allocataire et le test qui tue, sur openfisca brut ; le nouveau test de
+la population aussi, et celui du registre. Avec la correction, tout passe, le test de D-189
+ré-ancré.
+
+Six mutations sont prises, chacune par le test qui lui est destiné :
+* la correction non appliquée : les neuf tests, et celui de D-189, à 1 263,50 € ;
+* le court-circuit retiré : les deux tests du coût, au moteur et à la population. Le même
+  lot de tests prend alors 210 s au lieu de 102 s ;
+* l'ASS déduite à part, avec son propre minimum : la déduction commune, à 6 407,15 € ;
+* l'ASS mise plus tôt, parmi les salaires : la famille, dont les ressources passent à
+  23 313,46 €, et que la biactivité gagne ;
+* l'ASS ajoutée après l'abattement de l'art. 157 bis : la carte, à 6 091 € ;
+* le court-circuit lu sur l'année d'avant : les quatre tests qui lisent le RFR de 2022, à
+  0 € seul, 13 500 € à côté de la pension, 21 600 € à côté de l'allocation chômage et sans
+  écart pour la famille, et celui de D-189.
+
+Une mutation était fausse au premier essai : la variable renommée sans son `return` ne se
+chargeait plus, et 18 tests tombaient en erreur avant tout calcul. Corrigée, elle n'est
+prise que par le test de la carte.
+
+**Le gate.** `make gate` donne 1 599 réussis, 172 ignorés et 12 échecs, en 21 min 53 s.
+Les 12 échecs sont ceux de D-176 à D-191, faute de données dans ce conteneur. Les 17
+réussis de plus sont les tests ajoutés : 16 au moteur et 1 à la population.
+
+**Ce qui reste.**
+* **La lecture nette des ressources de l'ASS** (D-189) passe maintenant par le RFR. À côté
+  de 24 000 € d'allocation chômage du conjoint, l'ASS monte de 268,23 € quand le RFR de N-2
+  fait passer cette allocation au taux plein. Le montant déclaré, net de la seule CSG
+  déductible, est le même aux deux taux : lue ainsi, comme le dit l'art. R. 5423-2, l'ASS ne
+  bougerait pas.
+* **La neutralisation de l'art. R. 532-7** n'est respectée que parce qu'openfisca ne compte
+  pas l'ASS dans les ressources des prestations familiales. Elle ne l'est pas pour les
+  salaires et l'allocation chômage de N-2 d'un allocataire, que le format refuse à côté de
+  la fin de droits, ni l'abattement de 30 % de son premier alinéa. Quand l'ASS a cessé,
+  l'ASS de N-2 devrait compter : le format, qui écrit la fin de droits de N-2 à N, ne sait
+  pas le dire. Lire l'ASS parmi les « indemnités de chômage » est une lecture de ce projet,
+  qu'aucun texte de la Cnaf lu ici ne confirme.
+* **Le plafonnement de l'IFI et le plafond du crédit des cotisations syndicales** lisent les
+  salaires avant la catégorie où la correction met l'ASS : ils ne la voient pas. Non mesuré.
+* **Les ressources des prestations familiales d'un titulaire de la carte** deviennent
+  négatives. L'abattement de l'art. 157 bis de N-2, 2 620 €, se calcule sur un revenu net
+  qui comprend l'ASS, et se retranche de ressources qui ne la comprennent pas : − 2 620 €.
+  Sous tous les plafonds, cela vaut zéro, et l'aide au logement borne ses ressources à zéro.
+* **Le palier léger d'un allocataire** coûte 1,4 s de plus, le prix de l'ASS dans l'impôt.
+* **openfisca-france.** L'ASS hors de l'impôt est à signaler en amont, avec ces cas.
+
+**Sources.**
+* Code du travail, art. L. 5428-1 (versions du 1er janvier 2019 au 1er janvier 2024 et du
+  1er janvier 2024 au 27 juin 2026), lu sur Légifrance.
+* CGI, art. 81 (version du 1er janvier au 19 juin 2025), art. 83 (versions du 3 juin 2023 au
+  2 juin 2024 et du 19 juin 2025 au 21 février 2026) et art. 158 (version du 16 février au
+  19 juin 2025), lus sur Légifrance.
+* CSS, art. L. 136-1-2 (versions du 16 décembre 2020 au 11 mars 2023, du 11 mars au 1er
+  juillet 2023 et du 1er juillet 2023 au 28 février 2025) et art. R. 532-7 (version en
+  vigueur depuis le 1er janvier 2020), lus sur Légifrance.
+* Ordonnance n° 96-50 du 24 janvier 1996, art. 14 (version en vigueur depuis le 1er
+  septembre 2019), lue sur Légifrance.
+* BOFiP, BOI-RSA-CHAMP-20-20-20131029, § 1 et 20.
+* impots.gouv.fr, « Allocations chômage », publiée le 13 juillet 2016, modifiée le 8 avril
+  2026.
+* Les montants journaliers de l'ASS de 2022 sont ceux de l'arbre d'openfisca. Celui d'avril
+  2022, 17,21 €, est celui du décret n° 2022-493 selon Previssima ; le décret n'a pas été
+  lu.
+
+## D-193 — Le parent seul titulaire de la carte : la case T et la carte se cumulent
+
+**Le point de départ.** D-188 le laissait ouvert : « openfisca ajoute la demi-part du 5 de
+l'art. 195 à la case T : 2,5 parts avec un enfant, et un IR qui passe de 154 € à zéro à
+40 000 €. Aucun texte lu n'exclut ce cumul, et la seule source trouvée qui l'affirme est un
+article de presse : à vérifier. » Deux questions, donc. La loi permet-elle le cumul ? Et
+openfisca plafonne-t-il chaque demi-part comme le dit l'art. 197 ?
+
+**Ce que dit la loi, pour les revenus de 2024.** Les articles ont été lus sur Légifrance,
+dans leur version applicable aux revenus de 2024. L'outil de lecture abrégeait certaines
+phrases : chaque citation a été relevée mot pour mot sur une reproduction intégrale du code,
+qui concorde avec Légifrance partout où les deux ont été comparés.
+* **La case T.** « Pour l'imposition des contribuables célibataires ou divorcés qui vivent
+  seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à titre
+  exclusif ou principal la charge d'au moins un enfant » (art. 194, II, en vigueur depuis le
+  1er janvier 2018). Le I donne 1,5 part au « Célibataire ou divorcé ayant un enfant à
+  charge », et 2,5 parts au « Marié ou veuf ayant un enfant à charge ». Le veuf n'a pas de
+  case T.
+* **Sans personne à charge, le 1 de l'art. 195.** « Par dérogation aux dispositions qui
+  précèdent, le revenu imposable des contribuables célibataires, divorcés ou veufs n'ayant
+  pas d'enfant à leur charge [...] est divisé par 1,5 » lorsqu'ils remplissent l'une des
+  conditions a à f, dont le d bis, la carte. Le revenu est divisé par 1,5 quel que soit le
+  nombre de conditions remplies. Le BOFiP le dit : « Les majorations de quotient familial
+  prévues au 1 de l'article 195 du CGI ne sont pas cumulables entre elles »
+  (BOI-IR-LIQ-10-20-20-20, § 35).
+* **Avec des personnes à charge, les 3, 4 et 5.** Pour un couple marié, le quotient « est
+  augmenté d'une demi-part [...] lorsque l'un ou l'autre des conjoints remplit l'une des
+  conditions fixées aux c, d et d bis du 1 » (3), et d'une part « lorsque chacun des
+  conjoints remplit l'une des conditions » (4). Le 5 est celui du parent seul : « Le
+  quotient familial prévu à l'article 194 est augmenté d'une demi-part pour les
+  contribuables célibataires, divorcés ou veufs ayant un ou plusieurs enfants à charge, que
+  celle-ci soit exclusive, principale ou réputée également partagée entre les parents,
+  lorsque ces contribuables remplissent l'une des conditions d'invalidité fixées aux c, d ou
+  d bis du 1 » (art. 195, en vigueur depuis le 1er janvier 2023). Il vaut pour le parent
+  célibataire, divorcé ou veuf qui a un enfant à charge, case T cochée ou non.
+* **Le seul non-cumul écrit.** Le second alinéa du 6 est le seul de l'article à écarter un
+  cumul : « Les contribuables qui bénéficient des dispositions des 3 ou 4 ne peuvent
+  bénéficier des dispositions du premier alinéa », la demi-part du conjoint ancien
+  combattant de plus de 74 ans. Rien de tel entre le II de l'art. 194 et le 5 de l'art. 195.
+  Le 5 augmente « le quotient familial prévu à l'article 194 », celui que le II a déjà
+  augmenté.
+* **Les plafonds.** « La réduction d'impôt résultant de l'application du quotient familial
+  ne peut excéder 1 791 € par demi-part [...] s'ajoutant à une part pour les contribuables
+  célibataires, divorcés, veufs [...]. Toutefois, pour les contribuables célibataires,
+  divorcés, ou soumis à l'imposition distincte prévue au 4 de l'article 6 qui répondent aux
+  conditions fixées au II de l'article 194, la réduction d'impôt correspondant à la part
+  accordée au titre du premier enfant à charge est limitée à 4 224 €. » Et : « Les
+  contribuables qui bénéficient d'une demi-part au titre des a, b, c, d, d bis, e et f du 1
+  ainsi que des 2 à 6 de l'article 195 ont droit à une réduction d'impôt égale à 1 785 €
+  pour chacune de ces demi-parts lorsque la réduction de leur cotisation d'impôt est
+  plafonnée en application du premier alinéa. [...] Cette réduction d'impôt ne peut
+  toutefois excéder l'augmentation de la cotisation d'impôt résultant du plafonnement. »
+  (art. 197, I, 2, version du 16 février 2025 au 21 février 2026). Le parent seul titulaire
+  de la carte a donc trois plafonds : 4 224 € pour la part de son premier enfant, case T
+  comprise ; 1 791 € pour la demi-part de la carte, comme pour chaque autre demi-part ; et
+  la réduction complémentaire de 1 785 €.
+
+**Ce qu'en dit l'administration.** Le BOFiP ne traite pas ce cumul en termes. Trois
+documents de la DGFiP l'appliquent.
+* **Le BOFiP.** La case T va aux « contribuables célibataires, divorcés ou séparés, qui
+  vivent seuls et supportent effectivement la charge d'un ou plusieurs enfants »
+  (BOI-IR-LIQ-10-20-20-10, § 380). La demi-part de la carte va aux célibataires, divorcés ou
+  veufs « ayant un ou plusieurs enfants à charge, que celle-ci soit exclusive, principale ou
+  réputée également partagée entre les parents (CGI, art. 195, 5) »
+  (BOI-IR-LIQ-10-20-20-20, § 30). Pour la carte d'un enfant, le § 1 écrit : « Cet avantage
+  de quotient familial se cumule éventuellement avec celui attribué aux contribuables
+  célibataires, divorcés ou veufs qui vivent et élèvent effectivement seuls leur enfant ou
+  leurs enfants (CGI, art. 194, II). » Rien de tel pour la carte du parent, et aucune règle
+  de non-cumul non plus. Le plafonnement porte sur « Toutes les majorations de quotient
+  familial », « invalide, ancien combattant, parent isolé, etc. ». L'impôt plafonné est
+  celui d'une part, « diminué de la somme des plafonds en impôt résultant des demi-parts ou
+  quarts de part additionnelles » (BOI-IR-LIQ-20-20-20, § 10 et 20). La réduction
+  complémentaire va aux « titulaires ou parents de titulaires, comptés à charge, de la carte
+  « mobilité inclusion » portant la mention « invalidité » », au titre des « 1-d bis, 3, 4
+  et 5 » de l'art. 195 (§ 130).
+* **La notice de la déclaration** (n° 2041 NOT, « la déclaration des revenus 2024 »). Sa
+  fiche de calcul met deux renvois sur la ligne « Célibataire, Divorcé(e) » : « e. + 1/2
+  part pour une personne vivant seule et ayant au moins un enfant à charge » et « f. + 1/2
+  part pour une personne invalide ». Le plafond y est de 4 224 € « pour les 2 premières
+  demi-parts excédant 1 part », plus 1 791 € par demi-part supplémentaire, « si vous êtes
+  célibataire, divorcé/séparé, avec au moins un enfant à charge que vous élevez seul
+  (case T cochée) ». La réduction complémentaire vaut « 1785€ si vous êtes invalide
+  (case P ou F cochée) ». Son seul non-cumul ne vise pas la case T : « Si vous êtes
+  célibataire, divorcé, séparé ou veuf et remplissez plusieurs conditions prévues aux cases
+  P, L, W ou G, vous ne pouvez bénéficier que d'une demi-part supplémentaire. » Au veuf qui
+  a des enfants à charge, elle dit : « ne cochez pas la case T ».
+* **La brochure pratique 2025.** Son tableau 1 renvoie la même ligne aux notes 5 et 6 : « Si
+  vous êtes invalide, ajoutez une demi-part lorsque vous avez des charges de famille », et
+  « Vous vivez seul(e) et vous avez déclaré au moins une personne à charge [...] : ajoutez
+  une demi-part ». Son tableau 4 donne les « Revenus imposables à partir desquels s'applique
+  le plafonnement » du « Parent isolé célibataire ou divorcé ou séparé ayant au moins un
+  enfant à charge ». Ce sont 44 894 € à 2 parts sans invalide, 60 381 € à 2,5 parts et
+  66 481 € à 3 parts avec un invalide. L'avantage du quotient y dépasse 4 224 €, puis
+  4 224 + 1 791 + 1 785 € et 4 224 + 2 × 1 791 + 1 785 €. Le moteur les retrouve à 5 €
+  près : 44 891, 60 384 et 66 482 €.
+* **Le simulateur de la DGFiP** (« Calcul de l'impôt 2025 sur les revenus 2024 »). Un
+  célibataire, un enfant, les cases T et P, 32 804 € en case 1AJ : « Nombre de parts 2.5 »,
+  86 € de droits simples, une décote de 86 €, aucun impôt.
+* **Aucune décision de justice** n'a été trouvée sur ce cumul.
+
+La question est donc tranchée. Rien n'exclut le cumul, et l'administration l'applique,
+chaque demi-part sous son plafond. L'article de presse de D-188 n'est plus la seule source.
+
+**Ce que fait openfisca.**
+* **Les parts.** `nbptr` applique en 2024 sa formule de 2008. Pour un célibataire ou un
+  divorcé, elle vaut `1 + enf + n2 + n3 + n6 + n7`. `n6` est la demi-part du 5 (`not6`, la
+  case P avec une personne à charge), `n7` celle de la case T (`isol`), `n2` celle des
+  enfants titulaires de la carte (D-191). `n3`, le 1 de l'art. 195, ne joue que sans
+  personne à charge. Il prend le maximum de ses conditions : c'est le non-cumul du 1.
+* **Les plafonds.** `ir_plaf_qf` applique sa formule de 2013. Pour un célibataire ou un
+  divorcé qui coche la case T, les deux premières demi-parts au-delà d'une part sont
+  plafonnées ensemble à 4 224 € (`celib_enf`), chacune des autres à 1 791 € (`general`).
+  openfisca ne sait pas quelle demi-part est laquelle. Cela revient au même : avec la case T
+  et un enfant, la part du premier enfant compte pour les deux premières demi-parts. La
+  réduction complémentaire de 1 785 € (`reduc_postplafond`) suit la case P et chaque enfant
+  titulaire de la carte. Elle est limitée à l'impôt que le plafonnement ajoute. C'est
+  l'art. 197, I, 2.
+
+**Pas de correction.** openfisca a raison sur les deux points. Aucune correction n'entre
+dans `engine.corrections`, et aucun test qui tue n'est à écrire. Ce qui tient le résultat,
+ce sont 14 tests du moteur. Ils épinglent les parts et l'impôt d'openfisca sur les chiffres
+de la loi, de la brochure et du simulateur.
+
+**Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`, palier léger, un
+parent né en 1985 et des enfants nés à partir de 2012, l'impôt selon le salaire brut :
+
+| ménage | parts | 20 000 € | 40 000 € | 80 000 € | 150 000 € |
+|---|---:|---:|---:|---:|---:|
+| un enfant, case T | 2 | 0 € | 154 € | 6 734 € | 25 491 € |
+| un enfant, case T et carte | 2,5 | 0 € | 0 € | 3 362 € | 21 915 € |
+| deux enfants, case T | 2,5 | 0 € | 0 € | 4 943 € | 23 700 € |
+| deux enfants, case T et carte | 3 | 0 € | 0 € | 2 730 € | 20 124 € |
+
+Le simulateur de la DGFiP a été interrogé avec les mêmes salaires imposables en case 1AJ :
+16 402, 32 804, 65 897 et 124 038 €. Il rend ces seize nombres de parts et ces seize impôts
+à l'euro, et les mêmes revenus fiscaux de référence. openfisca brut donne les mêmes valeurs
+que la référence corrigée : aucune correction ne touche ces ménages.
+
+Refait à la main :
+* **40 000 €.** 29 523,60 € de revenu net. Deux parts paient 2 × 0,11 ×
+  (14 761,80 − 11 497) = 718,26 € avant une décote de 564 €, soit 154 €. 2,5 parts paient
+  85,92 €, que la décote efface. Une part paierait 2 022,56 € : avec la carte, le quotient
+  vaut 1 936,64 €, sous ses plafonds.
+* **150 000 €.** 111 634,14 € de revenu net. Une part paie 0,11 × 17 818 + 0,30 × 54 508 +
+  0,41 × 27 811,14 = 29 714,95 €, et 2,5 parts 16 403,94 €. L'avantage, 13 311,01 €, dépasse
+  les 4 224 + 1 791 = 6 015 € de plafonds : l'impôt plafonné vaut 23 699,95 €. Le
+  plafonnement ajoute 7 296,01 €, plus que 1 785 € : la réduction complémentaire est
+  entière, et l'impôt vaut 21 914,95 €. Sans la carte, 29 714,95 − 4 224 = 25 490,95 €. La
+  carte vaut 3 576 €, son plafond et sa réduction. Avec deux enfants, la demi-part du second
+  ajoute 1 791 € de plafond : 20 123,95 € avec la carte, 23 699,95 € sans.
+* **80 000 €.** 59 306,86 € de revenu net. Une part paie 10 957,54 €, 2,5 parts 3 362,08 €.
+  L'avantage, 7 595,46 €, dépasse 6 015 € : l'impôt plafonné vaut 4 942,54 €. Le
+  plafonnement n'ajoute que 1 580,46 €, sous 1 785 € : la réduction complémentaire le rend
+  en entier, et l'impôt retombe à 3 362,08 €. Le simulateur affiche 4 943 € de droits
+  simples et 3 362 € à payer. Sans la carte, deux parts paient 4 123,02 €, et le plafond de
+  4 224 € porte l'impôt à 6 733,54 €. Avec deux enfants et la carte, le plafond de 7 806 €
+  porte l'impôt de 2 729,74 € à 3 151,54 €, et la réduction rend les 421,80 €.
+* **20 000 €.** La carte ouvre aussi l'abattement de l'art. 157 bis, 2 796 € : le revenu
+  fiscal de référence passe de 14 761,80 € à 11 965,80 € (D-188). Aucun impôt, avec ou sans
+  la carte.
+* **Le début du plafonnement.** Le revenu net est épinglé sur `rni`. Le plafonnement ne
+  prend rien 20 € sous les seuils de la brochure, et prend quelque chose 20 € au-dessus.
+
+**Les voisins.** À 150 000 €, comme le simulateur les donne sur le même salaire imposable :
+* **sans la case T**, un parent qui ne vit pas seul : 2 parts, la demi-part de l'enfant et
+  celle de la carte. 29 714,95 − 2 × 1 791 − 1 785 = 24 347,95 €, le simulateur dit
+  24 348 € ;
+* **l'enfant titulaire de la carte lui aussi** (art. 195, 2, D-191) : 3 parts, une troisième
+  demi-part à 1 791 € et une réduction complémentaire par carte. 29 714,95 − 4 224 −
+  2 × 1 791 − 2 × 1 785 = 18 338,95 €, simulateur 18 339 € ;
+* **la carte de l'enfant seule** : 2,5 parts et 21 914,95 €, comme la carte du parent,
+  simulateur 21 915 € ;
+* **un couple marié, une carte et un enfant** (art. 195, 3) : 3 parts. Deux parts paient
+  19 821,20 €, moins 2 × 1 791 et 1 785 €, soit 14 454,20 €, simulateur 14 454 €. La case T
+  ne l'atteint pas : le format d'entrée la refuse à deux adultes, et openfisca ne la lit que
+  pour un déclarant célibataire, divorcé ou veuf. Les cases P et F de D-188 ne bougent pas,
+  puisqu'aucun code n'a changé ;
+* **seul, sans enfant** (art. 195, 1, d bis) : 1,5 part. 29 714,95 − 1 791 − 1 785 =
+  26 138,95 €, simulateur 26 139 €.
+
+**Le parent veuf.** Le format d'entrée ne sait pas le dire. Aucun champ ne porte la
+situation de famille, et openfisca tient un adulte seul pour célibataire. Écrit à la main,
+`statut_marital` à « veuf », avec la carte et un enfant : 3 parts, les 2,5 du I de
+l'art. 194 et la demi-part du 5. L'impôt vaut 18 773 € à 150 000 €, ce que donne le
+simulateur. Si la case T est cochée aussi, openfisca ajoute une demi-part : 3,5 parts et
+16 982 €. La loi ne la donne qu'aux célibataires et aux divorcés, et la notice dit au veuf
+« ne cochez pas la case T ». Le simulateur l'ignore : 3 parts et 18 773 €. Aucun chemin du
+projet n'y mène : noté, pas corrigé.
+
+**Ce que la population en fait.** Rien ne bouge, puisqu'aucun code n'a changé. La population
+écrit la case T de son squelette, `parent_isole`, et jamais la case P ni la case F : aucun
+foyer n'y cumule les deux demi-parts. Sur la fixture, 129 foyers sur 439 portent la case T.
+`to_openfisca.WIRING` reste « D-188 ».
+
+Mesuré en passant : 84 de ces 129 foyers sont des couples. Le squelette compte le déclarant
+principal et pas le conjoint, là où la règle de D-006 veut un adulte seul. Le test
+`test_parent_isole_only_where_it_can_apply` ne compte, lui aussi, que le déclarant
+principal. C'est sans effet : openfisca tient pour pacsé un foyer de deux déclarants, et ne
+lit la case T que pour un déclarant célibataire, divorcé ou veuf. Sur un couple avec un
+enfant à 150 000 €, la case T forcée ne change ni les 2,5 parts ni les 18 030 € d'impôt.
+Laissé à une tâche à part.
+
+**Vus échouer, puis mutés.** Écrits avant tout le reste, les 14 tests passent sur le code
+inchangé, comme il le faut : openfisca a raison, et il n'y a rien à corriger. Chacun a donc
+été vu échouer sous une mutation. Une mutation est une réforme appliquée sur la référence
+corrigée, par un greffon de pytest hors du dépôt, sans toucher au code. Chaque mutant a
+d'abord été vérifié sur six ménages : il déplace ce qu'il prétend, et rien d'autre. Sept
+mutations sont prises :
+* la demi-part de la carte refusée à un foyer qui coche la case T : 9 tests, dont les deux
+  tests des parts (2 au lieu de 2,5) et ceux de 150 000 €
+  (23 705,95 € au lieu de 21 914,95 €) ;
+* la case T refusée au titulaire de la carte, dans les parts et les plafonds : les mêmes 9
+  tests, à 24 347,95 € ;
+* les bonnes parts, mais le plafond général pour le parent seul titulaire de la carte : 6
+  tests, ceux de 150 000 € et de 80 000 €, les deux seuils de la brochure avec la carte et
+  l'enfant titulaire, à 22 556,95 €. Les tests des parts passent, comme il le faut ;
+* la demi-part de la carte sous le plafond de 4 224 € du premier enfant : les mêmes 6, à
+  23 705,95 €, et à 4 948,54 € pour 80 000 € ;
+* aucune réduction complémentaire pour un foyer qui coche la case T : les mêmes 6, à
+  23 699,95 € et 4 942,54 € ;
+* la réduction complémentaire sans sa limite : 3 tests, celui de 80 000 €
+  (3 157,54 € au lieu de 3 362,08 €) et les deux seuils de la brochure avec la carte. Ceux
+  de 150 000 € passent : la limite n'y joue pas ;
+* la réduction de l'enfant perdue à côté de la carte du parent : 1 test, ce voisin, à
+  20 123,95 € au lieu de 18 338,95 €.
+
+**Le temps.** Les tests de budget de temps passent : 4 du moteur, 2 de l'API.
+
+**Le gate.** `make gate`, sur la branche partie de `main` à 3c704dd, donne 1 596 réussis,
+172 ignorés et 12 échecs, en 20 min 4 s. Les 12 échecs sont ceux de D-176 à D-191, faute de
+données dans ce conteneur. Les 14 réussis de plus sont les tests ajoutés, tous au moteur :
+2 pour les parts, 1 à 40 000 €, 2 à 150 000 €, 1 à 80 000 €, 3 pour les seuils de la
+brochure et 5 pour les voisins.
+
+**Ce qui reste.**
+* **Le parent veuf**, plus haut. Le jour où une situation de famille entrera dans le format,
+  la case T ne devra pas être écrite pour un veuf.
+* **Les couples marqués « parent isolé »** par le squelette de la population, plus haut.
+* **La résidence alternée** n'a pas de champ : le quart de part de la case T et celui de la
+  carte d'un enfant, et le plafond de 2 112 €.
+* **Les pensions d'au moins 40 %** (c et d du 1), qui ouvrent la même demi-part du 5,
+  restent sans champ (D-188).
+* **openfisca-france.** La case T d'un veuf est à signaler en amont, avec ce cas.
+
+**Sources.**
+* CGI, art. 194 (version en vigueur depuis le 1er janvier 2018), art. 195 (version en
+  vigueur depuis le 1er janvier 2023) et art. 197 (version du 16 février 2025 au 21 février
+  2026), lus sur Légifrance, et relevés mot pour mot sur la reproduction d'advizexperts.fr.
+* BOFiP : BOI-IR-LIQ-10-20-20-10-20140326 (§ 380 à 410) ; BOI-IR-LIQ-10-20-20-20-20230608
+  (§ 1, 30 et 35) ; BOI-IR-LIQ-20-20-20-20250414 (§ 10, 20, 70, 130 et 150).
+* DGFiP, notice n° 2041 NOT (n° 50796#25), « la déclaration des revenus 2024 », rubrique B
+  et fiche de calcul, 4 à 6. Sha256 du fichier :
+  0eb39b825fac0bc1f623a9f3fd2d4dce5227aadd13abb99712115bfecf28021f.
+* DGFiP, Brochure pratique 2025, « Situation du foyer » (p. 73 à 82) et « Calcul de
+  l'impôt » (p. 359 à 372), tableaux 1 et 4. Sha256 du second chapitre :
+  2a1a0a87ed31c355e2897561a2bb69074bc9bd1a7bbf3ace005b5e41ad65f634.
+* DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
+  interrogé le 5 octobre 2026 sur 36 déclarations fictives.
+
 ## D-194 — L'ASI à côté d'un conjoint à l'ASPA : chacune la moitié de son plafond
 
 **Le point de départ.** D-190 l'avait laissé dans « Ce qui reste » : « openfisca ne verse

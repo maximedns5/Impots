@@ -1508,6 +1508,14 @@ ASS_CASES: dict[str, Any] = {
         conjoint={"chomage_brut_annuel": ARE_DU_CONJOINT}, second=True),
     "deux_allocataires": lambda: _fin_de_droits(conjoint={"fin_de_droits_ass": True}),
     "aah": lambda: _fin_de_droits(handicap={"taux_incapacite": 0.8}),
+    # Since D-192, for the income tax: a spouse's declared pension, a spouse's salary high
+    # enough to leave a small ASS, and the claimant holding the invalidity card.
+    "pension_du_conjoint": lambda: _fin_de_droits(
+        conjoint={"annee_naissance": 1960, "pension_annuelle": 15_000}),
+    "conjoint_a_28000": lambda: _fin_de_droits(conjoint={"salaire_brut_annuel": 28_000}),
+    "conjoint_a_28000_sans_ass": lambda: _fin_de_droits(
+        conjoint={"salaire_brut_annuel": 28_000}, ass=False),
+    "carte": lambda: _fin_de_droits(carte_invalidite=True),
 }
 
 
@@ -1705,10 +1713,13 @@ def test_the_ass_does_not_depend_on_which_adult_claims_it() -> None:
     échéant, de son conjoint ». openfisca adds the unemployment benefit to the famille's
     second parent only: with the claimant second, the first one's 24 000 EUR of benefit
     vanished from the ASS's resources, and the ASS was paid in full, 6 768 EUR instead of
-    1 263.50."""
+    1 263.50 (D-189). Re-anchored by D-192: the ASS of 2022 is taxable, so in the RFR of
+    2022, which puts the spouse's benefit of 2024 at the full rate of CSG; the ASS's
+    resources read that benefit net of its CSG, and the ASS is 1 531.73, whichever adult
+    claims it."""
     first = _ass_rows("conjoint_au_chomage")
     second = _ass_both_orders("allocataire_second")[1]
-    assert first["ass"] == pytest.approx(1_263.50, abs=0.05)
+    assert first["ass"] == pytest.approx(1_531.73, abs=0.05)
     assert second["ass"] == pytest.approx(first["ass"], abs=0.05)
     assert second["revenu_disponible"] == pytest.approx(first["revenu_disponible"], abs=0.05)
 
@@ -2332,6 +2343,411 @@ def test_the_aeeh_correction_adds_nothing_where_openfisca_opens_no_aeeh() -> Non
 
     assert aeeh(2014, flag=False) == 0.0
     assert aeeh(2004, flag=True) == 0.0
+
+
+# --------------------------------------------------------------------------- #
+# the ASS in the income tax (docs/DECISIONS.md D-192)
+# --------------------------------------------------------------------------- #
+#: The ASS's daily amount, month by month in 2022, as openfisca's tree has it: 16.91 EUR until
+#: March, 17.21 from April (décret n° 2022-493), 17.90 from July. A month is paid as 30 days.
+ASS_JOUR_2022 = {**dict.fromkeys(range(1, 4), 16.91), **dict.fromkeys(range(4, 7), 17.21),
+                 **dict.fromkeys(range(7, 13), 17.90)}
+#: The minimum of the 10 % deduction of CGI art. 83, 3°, on the incomes of 2022 and of 2024
+#: (versions of 3 June 2023 and of 19 June 2025): « ne peut être inférieur à 472 € », then
+#: « à 504 € ».
+DEDUCTION_MINIMUM_2022 = 472
+DEDUCTION_MINIMUM_2024 = 504
+#: The CSG exemption threshold of two parts on the RFR of 2022, for the levies of 2024:
+#: 12 230 EUR and 3 265 more for each half-part, as openfisca's tree has it (D-188).
+CSG_EXONERATION_DEUX_PARTS_2024 = 12_230 + 2 * 3_265
+
+
+def _deduction(salaires: float, minimum: float = DEDUCTION_MINIMUM_2024) -> float:
+    """CGI art. 83, 3°, by hand: a tenth of a member's salaries, which the ASS is taxed with,
+    rounded to the euro, never under the minimum nor over the salaries themselves."""
+    return min(max(round(0.10 * salaires), minimum), salaires)
+
+
+def test_the_ass_is_taxed_as_a_salary_after_the_ten_per_cent_deduction() -> None:
+    """C. trav. art. L. 5428-1: « Les règles fixées au 5 de l'article 158 du code général des
+    impôts sont applicables », and so the ASS « est imposable entre les mains des bénéficiaires
+    dans la catégorie des traitements et salaires » (BOI-RSA-CHAMP-20-20, § 20), after the 10 %
+    deduction of CGI art. 83, 3°. Alone and without resources: 6 768 EUR of ASS less 677 is an
+    RFR of 6 091 in 2024; 6 292.80 less 629 is 5 663.80 in 2022, the RFR the builder pins for
+    the levies of 2024 (D-177). openfisca's own RFR was nil in both years. The income tax stays
+    nil, and nothing else moves: the ASS bears no CSG and no CRDS (CSS art. L. 136-1-2, II, 5°),
+    and the disposable income is D-189's, 7 747.49 EUR."""
+    simulation, rows, _ = _ass_both_orders("seul")
+    ass_2022 = sum(30 * jour for jour in ASS_JOUR_2022.values())
+    assert ass_2022 == pytest.approx(6_292.80)
+    assert _deduction(ASS_PLEINE_2024) == 677
+    assert rows["revenu_fiscal_reference"] == pytest.approx(
+        ASS_PLEINE_2024 - _deduction(ASS_PLEINE_2024), abs=0.01)
+    assert float(simulation.calculate("rfr", "2022")[0]) == pytest.approx(
+        ass_2022 - _deduction(ass_2022, DEDUCTION_MINIMUM_2022), abs=0.01)
+    assert rows["ir"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(7_747.49, abs=0.05)
+
+
+def test_a_small_ass_takes_the_minimum_deduction_apart_from_the_spouse_s_salary() -> None:
+    """The deduction « ne peut être inférieur à 504 €, sans pouvoir excéder le montant brut des
+    traitements et salaires. Cette disposition s'applique séparément aux rémunérations perçues
+    par chaque membre du foyer fiscal » (CGI art. 83, 3°). Beside a spouse's 28 000 EUR of gross
+    salary the ASS only tops the couple up to its ceiling, 1 853.48 EUR over 2024: a tenth would
+    be 185, so 504 come off, and the RFR rises by 1 349.48 over the same couple without the ASS.
+    The spouse's own deduction does not move."""
+    with_ass = _ass_rows("conjoint_a_28000")
+    without = _ass_rows("conjoint_a_28000_sans_ass")
+    assert with_ass["ass"] == pytest.approx(1_853.48, abs=0.05)
+    assert _deduction(with_ass["ass"]) == DEDUCTION_MINIMUM_2024
+    assert with_ass["revenu_fiscal_reference"] - without["revenu_fiscal_reference"] == (
+        pytest.approx(with_ass["ass"] - DEDUCTION_MINIMUM_2024, abs=0.01))
+
+
+def test_the_deduction_is_taken_once_on_a_claimant_s_salary_and_ass_together() -> None:
+    """The ASS is one of the claimant's « traitements et salaires », so it shares their deduction
+    with a salary rather than opening a second minimum. 1 000 EUR of gross salary in 2024,
+    written by hand as the EMTR's bumped leg writes its 100 EUR (the wire format refuses a
+    salary beside the ASS, D-189), make 820.15 EUR taxable beside the 6 768 EUR of ASS, which a
+    job seeker keeps: 7 588.15 less 759 is an RFR of 6 829.15. Two deductions, 677 and the
+    minimum of 504, would have left 6 407.15; without the correction it was 316.15."""
+    situation = perturb_first_adult(build_situation(ASS_CASES["seul"](), 2024), 2024, 1_000)
+    simulation = _pinned(situation)
+    salaire = float(simulation.calculate_add("salaire_imposable", "2024").sum())
+    ass = float(simulation.calculate_add("ass", "2024").sum())
+    assert salaire == pytest.approx(820.15, abs=0.01)
+    assert ass == pytest.approx(ASS_PLEINE_2024, abs=0.05)
+    assert float(simulation.calculate("rfr", "2024")[0]) == pytest.approx(
+        salaire + ass - _deduction(salaire + ass), abs=0.01)
+
+
+def test_beside_a_declared_pension_the_ass_reaches_the_crds_through_the_rfr_of_n_2() -> None:
+    """D-189's measure. A spouse born in 1960 declares 15 000 EUR of pension, 13 500 after its
+    10 %. Without the ASS, the RFR of 2022 that sets the rate of the levies on the pension of
+    2024 was 13 500, under the exemption threshold of two parts, 12 230 + 2 x 3 265 = 18 760.
+    With the ASS of 2022 it is 19 163.80, above it: the reduced rate, whose CSG of 3.8 % a
+    declared pension is already net of (D-176), leaves 75 EUR of CRDS, 0.5 % of 15 000, and no
+    CASA. The disposable income is the pension less that CRDS, the full ASS, and the prime de
+    Noël of 152.45 EUR."""
+    simulation, rows, _ = _ass_both_orders("pension_du_conjoint")
+    ass_2022 = sum(30 * jour for jour in ASS_JOUR_2022.values())
+    rfr_2022 = 0.9 * 15_000 + ass_2022 - _deduction(ass_2022, DEDUCTION_MINIMUM_2022)
+    assert rfr_2022 > CSG_EXONERATION_DEUX_PARTS_2024 > 0.9 * 15_000
+    assert float(simulation.calculate("rfr", "2022")[0]) == pytest.approx(rfr_2022, abs=0.01)
+    assert rows["revenu_fiscal_reference"] == pytest.approx(
+        0.9 * 15_000 + ASS_PLEINE_2024 - _deduction(ASS_PLEINE_2024), abs=0.01)
+    assert rows["ass"] == pytest.approx(ASS_PLEINE_2024, abs=0.05)
+    assert rows["ir"] == 0.0
+    assert rows["revenu_disponible"] == pytest.approx(
+        15_000 - 0.005 * 15_000 + ASS_PLEINE_2024 + 152.45, abs=0.05)
+
+
+def test_the_ass_of_n_2_sets_the_rate_of_the_csg_on_a_spouse_s_unemployment_benefit() -> None:
+    """The CSG on unemployment benefit takes its rate from the RFR of N-2. Beside a spouse's
+    24 000 EUR of gross benefit, that RFR was the benefit less its 10 %, 21 600 EUR, under the
+    full-rate threshold of two parts, 15 988 + 2 x 4 269 = 24 526 in openfisca's tree: the
+    reduced rate, 3.8 %, all deductible. With the claimant's ASS of 2022 it passes it, and the
+    rate is the full one, 6.2 %, of which 2.4 % is not deductible: 565.92 EUR more on 98.25 % of
+    the benefit. The ASS's resources read that benefit net of its CSG (D-189), so the ASS rises
+    with it, from 1 263.50 to 1 531.73 EUR."""
+    simulation, rows, _ = _ass_both_orders("conjoint_au_chomage")
+    ass_2022 = float(simulation.calculate_add("ass", "2022").sum())
+    rfr_2022 = 0.9 * ARE_DU_CONJOINT + ass_2022 - _deduction(ass_2022, DEDUCTION_MINIMUM_2022)
+    assert rfr_2022 > 15_988 + 2 * 4_269 > 0.9 * ARE_DU_CONJOINT
+    assert float(simulation.calculate("rfr", "2022")[0]) == pytest.approx(rfr_2022, abs=0.01)
+    csg_imposable = -float(simulation.calculate_add("csg_imposable_chomage", "2024").sum())
+    assert csg_imposable == pytest.approx(0.024 * 0.9825 * ARE_DU_CONJOINT, abs=0.05)
+    assert rows["ass"] == pytest.approx(1_531.73, abs=0.05)
+
+
+def test_a_card_holder_s_ass_meets_the_abatement_of_art_157_bis() -> None:
+    """The ASS is in the revenu net global, so the abatement of CGI art. 157 bis meets it. A
+    claimant alone who holds the card « mobilité inclusion » marked « invalidité » (D-188) has
+    6 091 EUR of net income, under 17 510, and deducts 2 796: an RFR of 6 768 - 677 - 2 796 =
+    3 295. Added to the RFR rather than to the income, the ASS would have escaped the
+    abatement and left 6 091."""
+    rows = _ass_rows("carte")
+    assert rows["revenu_fiscal_reference"] == pytest.approx(
+        ASS_PLEINE_2024 - _deduction(ASS_PLEINE_2024) - 2_796, abs=0.01)
+    assert rows["ir"] == 0.0
+
+
+def test_the_family_benefits_leave_the_claimant_s_ass_out_of_their_resources() -> None:
+    """The family benefits read the incomes of N-2 retained for the income tax, but when a person
+    « en chômage total depuis au moins deux mois consécutifs, ne bénéficie pas ou ne bénéficie
+    plus d'une indemnisation » by the insurance, « il n'est pas tenu compte des revenus
+    d'activité professionnelle ni des indemnités de chômage perçus par l'intéressé », from
+    « l'admission à l'allocation de solidarité spécifique » (CSS art. R. 532-7). A claimant beside
+    a spouse's 24 000 EUR of salary, with two children: the ASS of 2022 enters the RFR of 2022,
+    after its own deduction, and not the resources of the family benefits, which stay the
+    spouse's, 17 714.16 EUR; nor does it make the couple « biactif », the ASS being no
+    professional income."""
+    def simulation(ass: bool) -> Any:
+        claimant = _adulte(0, 1975, fin_de_droits_ass=True) if ass else _adulte(0, 1975)
+        household = _foyer(claimant, _adulte(24_000, 1975),
+                           children=[{"annee_naissance": 2012}, {"annee_naissance": 2015}])
+        return _pinned(build_situation(household, 2024))
+
+    with_ass, without = simulation(True), simulation(False)
+    ass_2022 = float(with_ass.calculate_add("ass", "2022").sum())
+    rfr_2022 = (float(with_ass.calculate("rfr", "2022")[0])
+                - float(without.calculate("rfr", "2022")[0]))
+    assert rfr_2022 == pytest.approx(
+        ass_2022 - _deduction(ass_2022, DEDUCTION_MINIMUM_2022), abs=0.01)
+    for month in ("2024-01", "2024-07"):
+        base = float(with_ass.calculate("prestations_familiales_base_ressources", month)[0])
+        assert base == pytest.approx(17_714.16, abs=0.01), month
+        assert base == pytest.approx(float(without.calculate(
+            "prestations_familiales_base_ressources", month)[0]), abs=0.01), month
+        assert not bool(with_ass.calculate("biactivite", month)[0]), month
+
+
+@pytest.mark.parametrize("name", ["seul", "pension_du_conjoint", "conjoint_au_chomage",
+                                  "allocataire_second", "carte"])
+def test_the_ass_is_taxed_the_same_whatever_is_computed_first(name: str) -> None:
+    """The income tax of N reads the ASS of N, and the RFR of N-2, pinned first (D-177), the ASS
+    of N-2. Through the registry, as the API reads it, the income tax comes first and the ASS is
+    computed inside it; with `revenu_disponible` first, as the EMTR's bumped leg computes it,
+    the ASS comes through the minima. The tax rows, the ASS and the disposable income agree."""
+    _, rows, first = _ass_both_orders(name)
+    computed_first = {
+        "revenu_fiscal_reference": float(first.calculate("rfr", "2024")[0]),
+        "ir": -float(first.calculate("impot_revenu_restant_a_payer", "2024")[0]) + 0.0,
+        "ass": float(first.calculate_add("ass", "2024").sum()),
+        "revenu_disponible": float(first.calculate("revenu_disponible", "2024")[0]),
+    }
+    for key, value in computed_first.items():
+        assert value == pytest.approx(rows[key], abs=0.05), key
+
+
+@pytest.mark.parametrize("name", ["seul", "pension_du_conjoint"])
+def test_the_light_tier_taxes_the_ass_as_the_full_tier_does(name: str) -> None:
+    """The income tax reads the ASS, so the light tier of a claimant computes it, with the AAH
+    and the ASI its eligibility reads, and nothing the ASS tops up: neither the RSA, nor the
+    prime d'activité, nor the housing aid, nor the disposable income. Its rows are the full
+    tier's, the RFR among them."""
+    from impots.engine import situations
+
+    light = compute(ASS_CASES[name](), 2024, tier="light").baseline
+    full = _ass_rows(name)
+    for row in LIGHT_ROWS:
+        assert light[row.key] == full[row.key], row.key
+    simulation = SimulationBuilder().build_from_entities(
+        baseline(), build_situation(ASS_CASES[name](), 2024))
+    situations.pin_rfr_n_2(simulation, 2024)
+    extract(simulation, 2024, "light")
+    for variable in ("revenu_disponible", "af", "ppa", "rsa", "aide_logement"):
+        assert not list(simulation.get_holder(variable).get_known_periods()), variable
+    assert list(simulation.get_holder("ass").get_known_periods())
+
+
+def test_without_a_claimant_the_income_tax_never_computes_the_ass() -> None:
+    """The ASS needs its work condition, `ass_precondition_remplie`: nobody meets it, the ASS is
+    nil, and computing it would cost its whole chain, the AAH and the ASI of thirteen months,
+    for every RFR the light tier, the builders' pins and the population ask for. The correction
+    reads the ASS only when someone in the simulation meets the condition that year."""
+    from impots.engine import situations
+
+    simulation = SimulationBuilder().build_from_entities(baseline(),
+                                                         build_situation(COUPLE, 2024))
+    situations.pin_rfr_n_2(simulation, 2024)
+    extract(simulation, 2024, "light")
+    assert list(simulation.get_holder("rfr").get_known_periods())
+    assert not list(simulation.get_holder("ass").get_known_periods())
+
+
+def test_the_engine_alone_leaves_the_ass_out_of_the_income_tax() -> None:
+    """The kill test for the ASS's taxation, on raw openfisca: the claimant alone draws the full
+    6 768 EUR of 2024, and the RFR is nil. The day this fails, openfisca taxes the ASS itself,
+    and `engine.corrections` must drop its own."""
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(ASS_CASES["seul"](), 2024)
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    assert float(raw.calculate_add("ass", "2024").sum()) == pytest.approx(
+        ASS_PLEINE_2024, abs=0.05)
+    assert float(raw.calculate("rfr", "2024")[0]) == 0.0, (
+        "openfisca now taxes the ASS: remove the correction rather than keep one that "
+        "corrects nothing")
+
+
+# --------------------------------------------------------------------------- #
+# the lone parent holding the card: case T and art. 195, 5 (docs/DECISIONS.md D-193)
+# --------------------------------------------------------------------------- #
+#: The income tax of 2024 on one part of the 111 634.14 EUR of net income that 150 000 EUR of
+#: gross salary leaves: 0.11 x 17 818 + 0.30 x 54 508 + 0.41 x 27 811.14. A capped tax is
+#: this, less the ceilings of the half-parts above one part (BOI-IR-LIQ-20-20-20, § 20).
+IR_UNE_PART_150K = 29_714.95
+#: The ceilings of CGI art. 197, I, 2 on 2024 incomes: a half-part, the part of a lone
+#: parent's first child (case T within it), and the complementary reduction of a card's
+#: half-part, read in the article and not in the tree.
+DEMI_PART = 1_791
+PREMIER_ENFANT_PARENT_ISOLE = 4_224
+COMPLEMENT_CARTE = 1_785
+
+
+def _parent_seul(enfants: int = 1, *, carte: bool = True, salaire: float = 150_000,
+                 enfant_carte: bool = False, **household: Any) -> HouseholdInput:
+    """A parent alone, born in 1985, holding the card unless told otherwise, with `enfants`
+    children born from 2012, the first holding the card too if `enfant_carte`. Case T as the
+    wire format infers it, unless `parent_isole` says otherwise."""
+    children: list[dict[str, Any]] = [{"annee_naissance": 2012 + i} for i in range(enfants)]
+    if enfant_carte:
+        children[0]["handicap"] = {"taux_incapacite": 0.8, "carte_invalidite": True}
+    return _foyer(_adulte(salaire, 1985, carte=carte), children=children, **household)
+
+
+@pytest.mark.parametrize(("enfants", "case_t", "les_deux", "carte_seule"),
+                         [(1, 2.0, 2.5, 2.0), (2, 2.5, 3.0, 2.5)])
+def test_a_lone_parent_holding_the_card_gets_both_half_parts(
+        enfants: int, case_t: float, les_deux: float, carte_seule: float) -> None:
+    """CGI art. 194, II: « Pour l'imposition des contribuables célibataires ou divorcés qui
+    vivent seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à
+    titre exclusif ou principal la charge d'au moins un enfant » (case T). Art. 195, 5: « Le
+    quotient familial prévu à l'article 194 est augmenté d'une demi-part pour les contribuables
+    célibataires, divorcés ou veufs ayant un ou plusieurs enfants à charge, [...] lorsque ces
+    contribuables remplissent l'une des conditions d'invalidité fixées aux c, d ou d bis du 1 »
+    (the card, case P). No text excludes the one beside the other: the only non-cumulation art.
+    195 writes is that of its 6. The notice of the 2042 for 2024 incomes (n° 2041 NOT) adds
+    both on the single parent's row, « e. + 1/2 part pour une personne vivant seule et ayant au
+    moins un enfant à charge » and « f. + 1/2 part pour une personne invalide », and the DGFiP's
+    simulator gives 2.5 parts with one child, 3 with two. Without case T, a parent who does not
+    live alone, the card's half-part stands alone. The builder writes both cases, on N-2 to N."""
+    foyer = build_situation(_parent_seul(enfants), 2024)["foyers_fiscaux"]["ff_0"]
+    assert foyer["caseT"] == foyer["caseP"] == {"2022": True, "2023": True, "2024": True}
+    assert _rows(_parent_seul(enfants, carte=False))["parts_fiscales"] == case_t
+    assert _rows(_parent_seul(enfants))["parts_fiscales"] == les_deux
+    assert _rows(_parent_seul(enfants, parent_isole=False))["parts_fiscales"] == carte_seule
+
+
+def test_under_its_ceilings_the_lone_parent_s_card_is_worth_its_whole_half_part() -> None:
+    """At 40 000 EUR, 29 523.60 of net income: two parts pay 2 x 0.11 x (14 761.80 - 11 497) =
+    718.26 before a décote of 889 - 45.25 % x 718.26 = 564, so 154 EUR; 2.5 parts pay 2.5 x
+    0.11 x (11 809.44 - 11 497) = 85.92, which the décote takes whole. One part would pay
+    2 022.56: the quotient is worth 1 936.64 with the card, under its 4 224 + 1 791 EUR of
+    ceilings. The DGFiP's simulator: 718 and 86 of « droits simples », 154 and 0 due."""
+    sans, avec = _parent_seul(carte=False, salaire=40_000), _parent_seul(salaire=40_000)
+    assert _foyer_variable(avec, "ir_ss_qf", "2024") == pytest.approx(2_022.56, abs=0.01)
+    assert _rows(sans)["ir_avant_reductions"] == pytest.approx(718.26, abs=0.01)
+    assert _rows(avec)["ir_avant_reductions"] == pytest.approx(85.92, abs=0.01)
+    assert _rows(sans)["ir"] == pytest.approx(154, abs=0.5)
+    assert _rows(avec)["ir"] == 0.0
+
+
+@pytest.mark.parametrize(("enfants", "plafonds"),
+                         [(1, PREMIER_ENFANT_PARENT_ISOLE + DEMI_PART),
+                          (2, PREMIER_ENFANT_PARENT_ISOLE + 2 * DEMI_PART)])
+def test_each_half_part_of_the_lone_parent_holding_the_card_is_capped_at_its_own_ceiling(
+        enfants: int, plafonds: int) -> None:
+    """CGI art. 197, I, 2, on 2024 incomes: the reduction the quotient brings « ne peut
+    excéder 1 791 € par demi-part », but for whoever meets « les conditions fixées au II de
+    l'article 194 », « la réduction d'impôt correspondant à la part accordée au titre du
+    premier enfant à charge est limitée à 4 224 € »; and whoever holds a half-part under « des
+    2 à 6 de l'article 195 » has « une réduction d'impôt égale à 1 785 € pour chacune de ces
+    demi-parts lorsque la réduction de leur cotisation d'impôt est plafonnée ». The capped tax
+    is the tax on one part « diminué de la somme des plafonds en impôt résultant des demi-parts
+    ou quarts de part additionnelles » (BOI-IR-LIQ-20-20-20, § 20). At 150 000 EUR one part
+    pays 29 714.95. One child: the first child's part, case T within it, at 4 224, and the
+    card's half-part at 1 791 leave 23 699.95, less the complement, 21 914.95; 25 490.95
+    without the card. Two children: a second child's half-part at 1 791 more, 20 123.95 and
+    23 699.95. The card is worth its ceiling and its complement, 3 576 EUR, and the DGFiP's
+    simulator says 21 915 and 20 124 on the same taxable salary."""
+    sans, avec = _parent_seul(enfants, carte=False), _parent_seul(enfants)
+    assert _foyer_variable(avec, "ir_ss_qf", "2024") == pytest.approx(IR_UNE_PART_150K, abs=0.01)
+    assert _rows(avec)["ir_avant_reductions"] == pytest.approx(
+        IR_UNE_PART_150K - plafonds - COMPLEMENT_CARTE, abs=0.01)
+    assert _rows(sans)["ir_avant_reductions"] == pytest.approx(
+        IR_UNE_PART_150K - (plafonds - DEMI_PART), abs=0.01)
+
+
+def test_the_card_s_complement_gives_back_no_more_than_the_cap_took() -> None:
+    """At 80 000 EUR, 59 306.86 of net income pays 10 957.54 on one part and 3 362.08 on 2.5
+    parts: a quotient worth 7 595.46, past the 4 224 + 1 791 = 6 015 EUR of ceilings, so the
+    capped tax is 4 942.54. The complement « ne peut toutefois excéder l'augmentation de la
+    cotisation d'impôt résultant du plafonnement »: 1 580.46 here, under 1 785, and the tax
+    falls back to the uncapped 3 362.08. The DGFiP's simulator: 4 943 of « droits simples »,
+    3 362 due. Without the card, two parts pay 4 123.02 and the 4 224 cap takes 2 610.52 that
+    nothing gives back: 6 733.54."""
+    avec, sans = _parent_seul(salaire=80_000), _parent_seul(carte=False, salaire=80_000)
+    assert _foyer_variable(avec, "ir_ss_qf", "2024") == pytest.approx(10_957.54, abs=0.01)
+    assert _foyer_variable(avec, "ir_brut", "2024") == pytest.approx(3_362.08, abs=0.01)
+    assert _rows(avec)["ir_avant_reductions"] == pytest.approx(3_362.08, abs=0.01)
+    assert _foyer_variable(sans, "ir_brut", "2024") == pytest.approx(4_123.02, abs=0.01)
+    assert _rows(sans)["ir_avant_reductions"] == pytest.approx(
+        10_957.54 - PREMIER_ENFANT_PARENT_ISOLE, abs=0.01)
+
+
+@pytest.mark.parametrize(("enfants", "carte", "seuil"),
+                         [(1, False, 44_894), (1, True, 60_381), (2, True, 66_481)],
+                         ids=["2 parts", "2,5 parts avec la carte", "3 parts avec la carte"])
+def test_the_cap_bites_from_the_income_the_dgfip_brochure_gives(
+        enfants: int, carte: bool, seuil: int) -> None:
+    """The Brochure pratique 2025 (2024 incomes), Tableau 4, « Revenus imposables à partir
+    desquels s'applique le plafonnement », row « Parent isolé célibataire ou divorcé ou séparé
+    ayant au moins un enfant à charge »: 44 894 EUR at 2 parts without an invalid; 60 381 at
+    2.5 parts and 66 481 at 3 parts with one. They are the net incomes where the quotient's
+    advantage passes 4 224, 4 224 + 1 791 + 1 785 and 4 224 + 2 x 1 791 + 1 785 EUR: the DGFiP
+    stacks case T and the card, caps each half-part at its own ceiling, and gives the card its
+    complement. Its formula lands within 5 EUR of the engine's: 20 EUR under, nothing is
+    capped; 20 EUR over, the cap takes something. The net income is pinned on `rni`."""
+    def impots(rni: float) -> tuple[float, float]:
+        situation = build_situation(_parent_seul(enfants, carte=carte, salaire=0), 2024)
+        simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+        simulation.set_input("rni", "2024", [rni])
+        return (float(simulation.calculate("ir_brut", "2024")[0]),
+                float(simulation.calculate("ir_plaf_qf", "2024")[0]))
+
+    brut, plafonne = impots(seuil - 20)
+    assert plafonne == pytest.approx(brut, abs=0.005)
+    brut, plafonne = impots(seuil + 20)
+    assert plafonne > brut + 1
+
+
+#: Around the case, at 150 000 EUR of salary: the parts, and the tax after the cap and the
+#: complements, by hand from the article, as the DGFiP's simulator gives them.
+VOISINS_PARENT_SEUL = {
+    "sans la case T": (2.0, 24_347.95),
+    "la carte de l'enfant aussi": (3.0, 18_338.95),
+    "la carte de l'enfant seule": (2.5, 21_914.95),
+    "un couple, une carte, un enfant": (3.0, 14_454.20),
+    "seul, sans enfant": (1.5, 26_138.95),
+}
+
+
+def _voisin(nom: str) -> HouseholdInput:
+    builders = {
+        "sans la case T": lambda: _parent_seul(parent_isole=False),
+        "la carte de l'enfant aussi": lambda: _parent_seul(enfant_carte=True),
+        "la carte de l'enfant seule": lambda: _parent_seul(carte=False, enfant_carte=True),
+        "un couple, une carte, un enfant": lambda: _foyer(
+            _adulte(150_000, 1985, carte=True), _adulte(0, 1985),
+            children=[{"annee_naissance": 2012}]),
+        "seul, sans enfant": lambda: _foyer(_adulte(150_000, 1985, carte=True)),
+    }
+    return builders[nom]()
+
+
+@pytest.mark.parametrize("voisin", sorted(VOISINS_PARENT_SEUL))
+def test_the_neighbours_of_the_lone_parent_holding_the_card(voisin: str) -> None:
+    """At 150 000 EUR, 111 634.14 of net income, priced as the DGFiP's simulator prices them on
+    the same taxable salary:
+    * without case T, a parent who does not live alone: the child's and the card's half-parts
+      at 1 791 each, and the complement, 29 714.95 - 2 x 1 791 - 1 785 = 24 347.95, where the
+      simulator says 24 348;
+    * the child holding the card too (art. 195, 2, D-191): a third half-part at 1 791, and a
+      complement for each card, 29 714.95 - 4 224 - 2 x 1 791 - 2 x 1 785 = 18 338.95,
+      simulator 18 339;
+    * the child's card without the parent's: 21 914.95, as the parent's alone, simulator
+      21 915;
+    * a married couple with one card and one child, which case T never reaches (the wire
+      format refuses it beside two adults): two parts pay 19 821.20, less 2 x 1 791 and
+      1 785, so 14 454.20 (art. 195, 3), simulator 14 454;
+    * a card holder without a child: 1.5 parts (art. 195, 1, d bis), 29 714.95 - 1 791 -
+      1 785 = 26 138.95, simulator 26 139."""
+    parts, impot = VOISINS_PARENT_SEUL[voisin]
+    rows = _rows(_voisin(voisin))
+    assert rows["parts_fiscales"] == parts
+    assert rows["ir_avant_reductions"] == pytest.approx(impot, abs=0.01)
 
 
 # --------------------------------------------------------------------------- #
