@@ -129,6 +129,31 @@ October 2021.
 **Blast radius:** an AAH beneficiary, or the spouse of one, whose rent passes the
 threshold. On the wire, the disability field with a dwelling. The population carries no
 AAH, and nothing in it moves.
+
+---
+
+**Correction 6 — the ASS counts the spouse's unemployment benefit, whoever heads the famille
+(C. trav. art. R. 5423-2), D-189.**
+
+The ASS's resources comprise « l'allocation de solidarité ainsi que les autres ressources de
+l'intéressé et, le cas échéant, de son conjoint ». openfisca reads one base per famille: the
+first parent's own resources, plus the second parent's own resources AND unemployment
+benefit (`ass_base_ressources_conjoint`). A claimant who is the famille's second parent saw
+the first one's benefit vanish. Measured with 24 000 EUR of gross benefit beside a claimant
+without resources: the ASS was 1 263.50 EUR over 2024 with the claimant first, and the full
+6 768 with the claimant second; June's, 126.31 against 570.30.
+
+The correction adds openfisca's own term, read on the first parent: the benefit of the
+twelve months before, unless it stopped last month. Only when the first parent does not
+hold the ASS's work condition: a claimant's own past benefit is not a resource (art.
+R. 5423-3, 1°), which openfisca's base already has for the first parent. Wrapped around
+openfisca's formula. Like openfisca, it counts the benefit net of its CSG and CRDS where the
+article reads the amounts « telles qu'elles doivent être déclarées », and leaves the first
+parent's daily sickness allowances out, which no field carries.
+
+**Blast radius:** a couple whose first adult draws unemployment benefit beside a second in
+« fin de droits ». On the wire, the unemployment benefit field beside the « fin de droits »
+one. The population declares nobody in « fin de droits », and nothing in it moves.
 """
 
 from __future__ import annotations
@@ -183,10 +208,21 @@ CORRECTIONS: tuple[Correction, ...] = (
         decision="D-187",
         kill_test="test_the_engine_alone_tapers_the_aid_of_an_aah_beneficiary",
     ),
+    Correction(
+        name="ass_chomage_du_conjoint_premier_parent",
+        citation="C. trav. art. R. 5423-2 — les ressources de l'ASS « comprennent "
+                 "l'allocation de solidarité ainsi que les autres ressources de l'intéressé "
+                 "et, le cas échéant, de son conjoint, partenaire lié par un pacte civil de "
+                 "solidarité ou concubin »",
+        decision="D-189",
+        kill_test="test_the_engine_alone_ignores_the_unemployment_benefit_of_a_spouse_heading_"
+                  "the_famille",
+    ),
 )
 
 AL_BASE = "aide_logement_base_ressources_individu"
 AL_AMOUNT = "aide_logement_montant_brut"
+ASS_BASE = "ass_base_ressources"
 MVA_ELIGIBILITY = "eligibilite_caah"
 AAH_ELIGIBILITY = "aah_eligible"
 ASPA_ELIGIBILITY = "aspa_eligibilite"
@@ -223,6 +259,8 @@ def apply_to(system: Any) -> Any:
             self.update_variable(_asi_below_the_aspa_age(asi_formula, aspa_formula))
             al_amount_formula = self.get_variable(AL_AMOUNT).get_formula("2016-07-01")
             self.update_variable(_no_taper_for_an_aah_beneficiary(al_amount_formula))
+            ass_base_formula = self.get_variable(ASS_BASE).get_formula("0001-01-01")
+            self.update_variable(_spouse_s_benefit_whoever_heads_the_famille(ass_base_formula))
 
     return BenefitCorrections(system)
 
@@ -404,3 +442,33 @@ def _no_taper_for_an_aah_beneficiary(openfisca_formula: Any) -> Any:
                          openfisca_formula(famille, period, parameters))
 
     return aide_logement_montant_brut
+
+
+def _spouse_s_benefit_whoever_heads_the_famille(openfisca_formula: Any) -> Any:
+    """`ass_base_ressources`, with the first parent's unemployment benefit counted when the
+    first parent does not claim the ASS (C. trav. art. R. 5423-2): openfisca adds it to the
+    second parent's resources only. The term is openfisca's own for the second parent."""
+    from openfisca_core.model_api import ADD, MONTH, Variable, not_, set_input_divide_by_period
+    from openfisca_core.periods import Period
+    from openfisca_france.entities import Famille
+
+    class ass_base_ressources(Variable):  # openfisca's naming
+        value_type = float
+        entity = Famille
+        label = ("Base de ressources de l'ASS, l'allocation chômage du conjoint de l'allocataire "
+                 "comprise quel que soit son rôle dans la famille (C. trav. art. R. 5423-2)")
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula(famille, period):
+            # As `ass_base_ressources_conjoint` reads it for the second parent: the benefit
+            # of the twelve months before, unless it stopped last month.
+            annee = Period(("year", period.start, 1)).offset(-1)
+            mois_precedent = Period(("month", period.start, 1)).offset(-1)
+            chomage = famille.demandeur("chomage_net", annee, options=[ADD])
+            interrompu = famille.demandeur("chomage_net", mois_precedent) == 0
+            allocataire = famille.demandeur("ass_precondition_remplie", period)
+            return (openfisca_formula(famille, period)
+                    + chomage * not_(interrompu) * not_(allocataire))
+
+    return ass_base_ressources

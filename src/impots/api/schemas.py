@@ -122,6 +122,41 @@ class Adult(BaseModel):
         "AAH goes on past 62, topping a pension up to the AAH amount, and its holder is "
         "taken not to claim the ASPA (D-185).",
     )
+    fin_de_droits_ass: bool = Field(
+        default=False,
+        description="A job seeker whose unemployment insurance rights are exhausted and who "
+        "meets the ASS's work condition: five years of salaried work in the ten before the "
+        "end of the contract that opened those rights (C. trav. art. L. 5423-1 and "
+        "R. 5423-1). Written onto `ass_precondition_remplie` and a job seeker's `activite` "
+        "on every covered month; the resources test is the engine's. Refused beside a "
+        "salary, since the ASS is cumulated with one for three months only (art. "
+        "R. 5425-2), beside unemployment benefit, never paid for the same months, and from "
+        "the year of the 62nd birthday, from which the ASS turns on the insurance duration "
+        "(art. L. 5421-4) (D-189).",
+    )
+
+    @model_validator(mode="after")
+    def _check_fin_de_droits(self) -> Adult:
+        """Refuse the incomes the ASS is never paid beside, rather than price them wrong."""
+        if not self.fin_de_droits_ass:
+            return self
+        if self.salaire_brut_annuel:
+            raise ValueError(
+                "L'ASS ne se cumule avec un salaire que pendant trois mois, consécutifs ou "
+                "non (C. trav. art. R. 5425-2) ; au-delà, son versement est interrompu tant "
+                "que l'activité se poursuit. Le salaire est écrit sur chaque mois de trois "
+                "années, et le moteur verserait l'ASS d'un demandeur d'emploi à côté, sans "
+                "fin. Saisissez un salaire nul, ou décochez la fin de droits."
+            )
+        if self.chomage_brut_annuel:
+            raise ValueError(
+                "L'ASS suit l'épuisement des droits à l'allocation chômage (C. trav. art. "
+                "L. 5423-1), ou la remplace sur option à partir de 50 ans (art. L. 5423-2) : "
+                "les deux ne sont jamais versées pour les mêmes mois. L'allocation chômage "
+                "est écrite sur chaque mois de trois années, et le moteur ne verserait alors "
+                "aucune ASS, sans rien dire."
+            )
+        return self
 
 
 class Child(BaseModel):
@@ -313,6 +348,14 @@ class HouseholdInput(BaseModel):
         if self.parent_isole and (len(self.adults) != 1 or not self.children):
             raise ValueError(
                 "parent_isole=true suppose un adulte seul avec au moins un enfant à charge."
+            )
+        claimants = [adult for adult in self.adults if adult.fin_de_droits_ass]
+        if len(claimants) == 2 and any(adult.pension_annuelle for adult in self.adults):
+            raise ValueError(
+                "Deux adultes en fin de droits, à côté d'une pension : les ressources de "
+                "chacun comprennent l'ASS de l'autre (C. trav. art. R. 5423-2), ce que le "
+                "moteur ne fait pas. Sans autre ressource, les deux allocations restent "
+                "pleines sous le plafond du couple, et le calcul est exact."
             )
         return self
 
@@ -717,6 +760,9 @@ class ResultRows(BaseModel):
     af: float | None = None
     ppa: float | None = None
     rsa: float | None = None
+    ass: float | None = None
+    """The allocation de solidarité spécifique, summed over the adults who draw it. Zero
+    unless an adult is declared `fin_de_droits_ass` (D-189)."""
     aide_logement: float | None = None
     aah: float | None = None
     mva: float | None = None
