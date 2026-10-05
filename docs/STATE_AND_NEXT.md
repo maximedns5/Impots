@@ -1,8 +1,9 @@
-# State of the project, and the directions open — 2026-10-01 (Phase 8 on `main`)
+# State of the project, and the directions open — 2026-10-05 (Phase 8 and the household calculator on `main`)
 
-Supersedes the 2026-09-22 version, which predated D-158 to D-171 and had gone stale
-on four counts: it called `make full` red, §6.1 open, the data-dependent tests
-unrunnable in CI, and ERFS dormant. For any next session: read this,
+Supersedes the 2026-10-01 version. That one kept its sections on Phase 8, the CI and the
+PLF 2027 up to date, but it never described the household calculator's arc, D-176 to
+D-194, and it counted 192 entries. It had itself superseded the 2026-09-22 version,
+which predated D-158 to D-171. For any next session: read this,
 `docs/CHARTER.md`, `docs/PHASE8_SPEC.md`, and the review file's last addenda
 (`docs/REVIEW_2026-08-29.md`).
 
@@ -27,10 +28,73 @@ carries PR #1's 33 commits and `aa869dd`. Merged rather than squashed, so every
 hash cited in this document, in `DECISIONS.md` and in the pass log is reachable
 from `main`.
 
-**1 729 tests** where the data is present (the CI `fast` job counts 1 388 passed,
-120 skipped, 221 deselected), eleven replayable `verify_*.py` gate scripts, and
-**192 decision entries**, D-000 to D-191, recording every error in both
-directions.
+**Since 2026-10-02 the work has gone to the household calculator** (D-176 to D-194):
+what a household can declare, and fourteen places where this project corrects
+openfisca's reading of the law. It has its own section below.
+
+**1 729 tests at the last logged full pass** (`a9ea26f`, 2026-09-25), before the
+household arc added its own. The CI `fast` job counted 1 646 passed, 120 skipped and
+223 deselected on `3c704dd` (D-191), and D-192 to D-194 add 50 engine and population
+tests. The project also has eleven replayable `verify_*.py` gate scripts and
+**195 decision entries**, D-000 to D-194, recording every error in both directions.
+
+## The household calculator, D-176 to D-194
+
+**What a household can declare** (`api/schemas.py`):
+- **per adult:**
+  - the gross salary and the birth year;
+  - the declared retirement pension (box 1AS, D-175, D-176);
+  - the gross unemployment benefit (D-183);
+  - a CDAPH incapacity rate and the RSDAE (D-184);
+  - the invalidity card (D-188);
+  - « fin de droits » for the ASS (D-189);
+  - the declared invalidity pension (box 1AZ, D-190).
+- **per child:** the birth year, and a disability: rate, establishment or care, AEEH
+  complement category and card (D-191).
+
+The page sends every one of them (D-186, then each entry's own page change). Each entry
+refuses, with a 422 naming the article, the combinations the engine would price wrong.
+
+**Fourteen corrections to openfisca** (`engine.corrections`). Each has a legal citation,
+a measured defect, and a kill test that fails the day openfisca changes its mind.
+
+| # | What | Law | Entry |
+|---|---|---|---|
+| 1 | the minimum deduction may not eat a pension | CGI art. 83, 3° | D-180 |
+| 2 | the MVA goes to a full AAH, or to one beside a pension | CSS art. L. 821-1-2 | D-184 |
+| 3 | the age of 62 for AAH holders | CSS art. L. 821-2 and L. 351-1-5 | D-185 |
+| 4 | the AAH without the ASPA | CSS art. L. 821-1 | D-185 |
+| 5 | the high-rent taper spares an AAH beneficiary | CCH art. D. 823-16 | D-187 |
+| 6 | the art. 157 bis abatement doubled for a couple | CGI art. 157 bis | D-188 |
+| 7 | the same abatement in the benefits' resources | CCH art. R. 822-4 | D-188 |
+| 8 | the ASS counts the spouse's unemployment benefit | C. trav. art. R. 5423-2 | D-189 |
+| 9 | the invalidity pension bears a pension's levies | CSS art. L. 136-8 and L. 137-41 | D-190 |
+| 10 | the ASI of a lone beneficiary in a couple | CSS art. D. 815-19, 2° b | D-190 |
+| 11 | each AEEH complement at its own category's rate | CSS art. D. 541-2 | D-191 |
+| 12 | the ASS taxed as a salary | C. trav. art. L. 5428-1 | D-192 |
+| 13 | the ASI beside a spouse at the ASPA | CSS art. D. 815-19, 2° c | D-194 |
+| 14 | the ASPA beside a spouse at the ASI | CSS art. D. 815-1 | D-194 |
+
+D-193 found openfisca right: case T and the card's half-part stack, each under its own
+ceiling. Fourteen tests pin it to the DGFiP's own figures.
+
+**What the owner has to know.**
+- **`to_openfisca.WIRING` is « D-188 ».** Correction 6 doubles the abatement for every
+  couple whose two spouses are over 65, not only for card holders, so the population
+  moves.
+  - On the fixture, 6 of 439 foyers lose 1 398 € of RFR.
+  - Only `make full` measures it on the full population. The PLF 2027 registrations
+    price what that run builds.
+  - Corrections 2 to 5 and 8 to 14 cannot reach the population: it declares no
+    disability, no ASS and no invalidity pension.
+- **`PENSION_INVALIDITE_MINIMUM`** (correction 10) stops at January 2026. It needs a row
+  every January from the Cnav circular, or correction 10 keeps the last amount.
+- **Correction 14 rests on CSS art. D. 815-1 as the CNRACL applies it.** No Cnav text
+  says how the ASPA is paid beside a spouse at the ASI (D-194).
+- **`aspa`, `ass` and `aeeh` are not in `STATE_TRANSFERS`** (D-186, D-189, D-191). That
+  is to decide on a `make full`.
+- **The upstream dossier** gains the openfisca-france defects these entries correct, and
+  the widowed parent's case T (D-193).
 
 ## Verification, as it stands
 
@@ -190,7 +254,9 @@ download list.
   firm registry path). **Waiting on the owner's machine**, because INSEE does not answer
   the cloud container: `make full` on `main`'s head, then the three registrations, exactly as
   `docs/PLF2027_ENREGISTREMENT.md` writes them, tolerances committed before any figure.
-  The annex stays unopened until the registrations are pushed.
+  The annex stays unopened until the registrations are pushed. That `make full` builds
+  the population at `WIRING` « D-188 », so the registrations price the corrected law
+  (D-188); the runbook accepts every entry from D-176 on.
 * **ERFS 2022 (FPR, lil-1696) — the interrupt ran, E3 is « nothing ».** E0 rails
   (D-134), E1 inventory (D-135), E2 validation table (D-137), and the two
   re-examination gates (D-141) are done. No recalibration is drawn; the E2 table
@@ -215,6 +281,18 @@ download list.
 * **F8 — aggregate VAT.** Still waiting on Budget de Famille 2026 (~2027-28).
 * **The CAF cross-check.** 30 minutes at a browser, owner-only. **No reCAPTCHA
   circumvention under any circumstances.**
+* **The household calculator's open items**, each in its entry's « Ce qui reste »:
+  - the D-185 couple question, to settle in law;
+  - `aspa`, `ass` and `aeeh` in `STATE_TRANSFERS`, on a `make full`;
+  - disabled children of 20 or more (their AAH, and the card's half-part of an adult
+    dependant);
+  - alternating residence, and its quarter parts;
+  - case 7DG, the home-help credit's 20 000 € ceiling (D-188), now expressible for
+    the card and an AEEH complement, but not for an invalidity pension of the third
+    category, whose category the format does not carry;
+  - a marital status field, without which a widowed parent cannot be said (D-193);
+  - the population skeleton's case T, which also marks couples (D-193; no effect in
+    2024, since openfisca reads case T only for a single declarant).
 * **The upstream dossier** and **all publication and deployment**: owner's,
   deferred. The input-hardening pass the reviewer made a precondition is done for
   strings, paths and reform JSON (D-173). What it leaves is the owner's, at deployment
@@ -229,7 +307,8 @@ download list.
    the owner's step comes first, `docs/PLF2027_ENREGISTREMENT.md`.
 2. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
-   bumps, vintage refreshes on the nine-source calendar, full passes.
+   bumps, vintage refreshes on the nine-source calendar, full passes, and each
+   January a row in `engine.corrections.PENSION_INVALIDITE_MINIMUM` (D-190).
 
 `docs/OPUS_HANDOFF_DATA_CHAIN.md` is a completed brief, kept for its record: its
 mission closed with D-159 and D-160.
