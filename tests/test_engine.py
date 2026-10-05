@@ -1419,3 +1419,23 @@ def test_an_aeeh_household_prices_the_same_whatever_is_computed_first() -> None:
     for key in ("aeeh", "rsa", "aide_logement"):
         assert float(first.calculate_add(key, "2024").sum()) == pytest.approx(
             registry[key], abs=0.05), key
+
+
+def test_the_aeeh_correction_adds_nothing_where_openfisca_opens_no_aeeh() -> None:
+    """The correction adds the missing part of a complément only where openfisca's own test
+    opens the AEEH: its `handicap` flag, under 20. A second category written by hand, without
+    the flag on a child of 10, or with it on a child of 20, whom the wire refuses, draws
+    nothing, as in raw openfisca."""
+    covered = [f"{year}-{month:02d}" for year in (2022, 2023, 2024) for month in range(1, 13)]
+
+    def aeeh(naissance: int, *, flag: bool) -> float:
+        situation = build_situation(_parent_of(None, naissance=naissance), 2024)
+        child = situation["individus"]["enfant_0"]
+        child["aeeh_niveau_handicap"] = dict.fromkeys(covered, 2)
+        if flag:
+            child["handicap"] = dict.fromkeys(covered, True)
+        simulation = SimulationBuilder().build_from_entities(baseline(), situation)
+        return float(simulation.calculate_add("aeeh", "2024")[0])
+
+    assert aeeh(2014, flag=False) == 0.0
+    assert aeeh(2004, flag=True) == 0.0

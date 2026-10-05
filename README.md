@@ -202,8 +202,9 @@ the smallest complete demonstration that the reform machinery does what it says.
 * **Salary, pension, unemployment benefit, disability.** An adult carries a gross
   salary, a year of birth, a declared retirement pension, a gross unemployment
   benefit and a disability rate recognised by the CDAPH, which opens the AAH
-  (D-184, D-185); a household adds its dwelling, its niche bases and an IFI
-  declaration.
+  (D-184, D-185); a child, a year of birth and a disability, which opens the AEEH
+  under 20 and, with the invalidity card, half a part (D-191); a household adds
+  its dwelling, its niche bases and an IFI declaration.
   Every other input takes the engine's default. No self-employment, no capital
   income, no property income, and nothing that opens the ASI or the ASS.
 * **Benefits are assessed on reference periods Phase 0 leaves empty**, which
