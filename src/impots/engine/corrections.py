@@ -1,4 +1,5 @@
-"""Where this project's reading of the BENEFITS law differs from openfisca's, and why.
+"""Where this project's reading of the BENEFITS law, and of the abatement of art. 157 bis that
+the income tax and the benefits both read (D-188), differs from openfisca's, and why.
 
 The same bar as `patrimoine.corrections`, which holds the IFI ones: a legal citation, a
 measured demonstration of the difference, a decision-log entry, and a KILL TEST that fails
@@ -132,7 +133,138 @@ AAH, and nothing in it moves.
 
 ---
 
-**Correction 6 — each AEEH complément at its own category's rate (CSS art. D. 541-2), D-191.**
+**Correction 6 — the abatement of art. 157 bis, doubled for a couple (CGI art. 157 bis), D-188.**
+
+Whoever is over 65 at the end of the year, or meets one of the invalidity conditions of
+art. 195, deducts from the net income 2 796 EUR while it does not exceed 17 510 EUR, 1 398
+up to 28 170 (2024 incomes), and « Dans le cas de personnes mariées soumises à une imposition
+commune, la déduction prévue aux deuxième et troisième alinéas est doublée si les deux époux
+remplissent les conditions d'âge ou d'invalidité ». `abat_spe` adds the two spouses'
+eligibilities as numpy booleans, whose sum is a logical or: one abatement however many
+qualified. Measured: two pensioners over 65 at 8 000 EUR each, 14 400 EUR of net income,
+deducted 2 796 EUR instead of 5 592; two holders of the invalidity card the same.
+
+The correction adds what the boolean sum drops, the second spouse's abatement when both
+qualify, under openfisca's own cap at the net income. Wrapped around openfisca's formula,
+whose eligibility it repeats only to count it: age or case P for the declarant, age or
+case F for the spouse. The age is read on 1 January, where the article says 31 December;
+with births on 1 January, as both builders write them, the two agree.
+
+What it leaves: the ceilings. The article closes each bracket on the right (« si ce revenu
+n'excède pas 17 510 € »), openfisca's scale opens the next one at the ceiling itself, so
+exactly 17 510 EUR of net income gets 1 398 and exactly 28 170 nothing. But openfisca's net
+income carries thousandths of a euro from the monthly inputs (31 300 EUR of pension makes
+28 170.002), so a bracket closed on the right would only hold on an income rounded to the
+euro, as the declaration has it: one euro wide, noted in D-188 and not corrected.
+
+**Blast radius:** a couple both over 65 or invalid, under 28 170 EUR of net income. Its
+income tax does not move, since a couple that poor owes none; its RFR does, and with it the
+rate of the CSG on its replacement incomes two years on. On the wire, two adults over 65 or
+two card holders. The population has such couples: on the fixture, the RFR of 2024 falls
+by 1 398 EUR for 6 foyers of 439, that of 2022 by 1 310 for 2, and one ménage of 400 gains
+113.11 EUR of disposable income, its pension's CRDS gone.
+
+**Correction 7 — the same abatement in the benefits' resources (CCH art. R. 822-4, II, 2°),
+D-188.**
+
+The housing aid deducts « L'abattement mentionné à l'article 157 bis du code général des
+impôts pour les personnes nées avant le 1er janvier 1931 et pour les personnes invalides »,
+and the family benefits « L'abattement mentionné à l'article 157 bis du code général des
+impôts en faveur des personnes âgées ou invalides » (CSS art. R. 532-3, b). openfisca reads
+both off one copy, `abattements_speciaux_prestations_familiales`, on the incomes of N-2,
+with the same boolean sum. Measured: two card holders at 10 000 EUR each were deducted
+2 620 EUR (2022 incomes) instead of 5 240.
+
+The correction counts the spouses as correction 6 does, under the copy's own criteria:
+born before 1931, or case P or F. A card holder beside a spouse over 65 born after 1930
+keeps one abatement here, where the income tax of the same year gives two. Two things
+stand as openfisca has them: the age criterion, the housing aid's, which the copy applies
+to the family benefits too, where the article says « personnes âgées »; and the ceilings,
+as in correction 6. The copy's own test that the spouse exists read the declarant's age;
+the correction reads the spouse's, which changes nothing for a couple.
+
+**Blast radius:** two invalid spouses, or two born before 1931, under the ceiling, with a
+housing aid or a family benefit. On the wire, two card holders. The population carries no
+card, and on the fixture no couple born before 1931 sits under the ceiling: nothing moves.
+
+---
+
+**Correction 8 — the ASS counts the spouse's unemployment benefit, whoever heads the famille
+(C. trav. art. R. 5423-2), D-189.**
+
+The ASS's resources comprise « l'allocation de solidarité ainsi que les autres ressources de
+l'intéressé et, le cas échéant, de son conjoint ». openfisca reads one base per famille: the
+first parent's own resources, plus the second parent's own resources AND unemployment
+benefit (`ass_base_ressources_conjoint`). A claimant who is the famille's second parent saw
+the first one's benefit vanish. Measured with 24 000 EUR of gross benefit beside a claimant
+without resources: the ASS was 1 263.50 EUR over 2024 with the claimant first, and the full
+6 768 with the claimant second; June's, 126.31 against 570.30.
+
+The correction adds openfisca's own term, read on the first parent: the benefit of the
+twelve months before, unless it stopped last month. Only when the first parent does not
+hold the ASS's work condition: a claimant's own past benefit is not a resource (art.
+R. 5423-3, 1°), which openfisca's base already has for the first parent. Wrapped around
+openfisca's formula. Like openfisca, it counts the benefit net of its CSG and CRDS where the
+article reads the amounts « telles qu'elles doivent être déclarées », and leaves the first
+parent's daily sickness allowances out, which no field carries.
+
+**Blast radius:** a couple whose first adult draws unemployment benefit beside a second in
+« fin de droits ». On the wire, the unemployment benefit field beside the « fin de droits »
+one. The population declares nobody in « fin de droits », and nothing in it moves.
+
+---
+
+**Correction 9 — the invalidity pension bears the levies of a pension (CSS art. L. 136-8 and
+L. 137-41), D-190.**
+
+« Sont assujetties à la contribution au taux de 8,3 % les pensions de retraite, et les
+pensions d'invalidité » (art. L. 136-8, II), the intermediate and reduced rates following
+the same RFR bands, and the CASA is « assise sur les avantages de retraite et d'invalidité »
+(art. L. 137-41). openfisca levies the retirement pension only: `pensions_nettes` adds
+`pensions_invalidite` whole, so the disposable income kept the whole declared amount.
+Measured on a pensioner alone at 44: 28 412 EUR of disposable income on 30 000 EUR declared,
+against 27 452 for the same retirement pension; 19 850 against 19 210 on 20 000; 15 000
+against 14 925 on 15 000, where the reduced rate leaves only the CRDS to take.
+
+The correction reads openfisca's own levies on a retirement pension, the CSG imposable, the
+CRDS and the CASA at the rate the RFR of N-2 sets, on the invalidity pension instead, and
+takes them off `pensions_nettes`. The deductible CSG stays out: the field is the declared
+amount, already net of it, as the retirement pension's is (D-176), and their base is that
+declared amount, about 6 % under the gross one, as for the retirement pension. Wrapped
+around openfisca's formulas, which stand for the retirement pension, from 2019, the date of
+the levy formulas it wraps.
+
+**Blast radius:** an invalidity pension whose foyer's RFR of N-2 passes the exemption
+threshold. On the wire, the invalidity pension field. The population carries no invalidity
+pension, and nothing in it moves.
+
+**Correction 10 — the ASI of a lone beneficiary in a couple (CSS art. D. 815-19, 2° b),
+D-190.**
+
+The ASI is the ceiling less the resources (art. L. 815-24-1), the couple's ceiling for a
+couple. When the spouse « n'est pas bénéficiaire de l'allocation supplémentaire
+d'invalidité », « le montant de l'allocation servie ne peut excéder le montant du plafond
+mentionné au 1° auquel est soustrait le montant minimum de la pension d'invalidité mentionné
+à l'article L. 341-5 » (art. D. 815-19, 2° b); the Cnav applies it when the spouse draws
+neither the ASI nor the ASPA, the ASPA being the 2° c) (circulars 2022-22 to 2025-30).
+openfisca pays the couple ceiling less the couple's resources. Measured on 6 000 EUR of
+invalidity pension beside a spouse without income: 1 074.24 EUR a month from April 2024
+against a cap of 571.50, and 12 683.20 EUR of ASI over 2024 against 6 739.27.
+
+The correction caps openfisca's amount, for a parent of a couple whose famille counts one
+allocataire of the ASI or the ASPA, at the month's single ceiling less the minimum
+invalidity pension in force. openfisca's tree has no minimum invalidity pension:
+`PENSION_INVALIDITE_MINIMUM` carries it, as the Cnav circulars give it, revalued each
+1 January since 2023. Wrapped around openfisca's formula, from April 2020, when the ASI
+became the ceiling less the resources.
+
+**Blast radius:** a couple where one spouse draws the ASI and the other neither the ASI nor
+the ASPA, with resources low enough for the cap to bind. On the wire, the invalidity pension
+field in a couple. The population carries no invalidity pension, and nothing in it moves.
+
+---
+
+**Correction 11 — each AEEH complément at its own category's rate (CSS art. D. 541-2), D-191.**
 
 The AEEH's complément goes by the category the CDAPH grants (art. R. 541-2), each at its
 own share of the BMAF: « Le taux du complément de deuxième catégorie de l'allocation
@@ -210,6 +342,53 @@ CORRECTIONS: tuple[Correction, ...] = (
         kill_test="test_the_engine_alone_tapers_the_aid_of_an_aah_beneficiary",
     ),
     Correction(
+        name="abattement_157_bis_double_pour_un_couple",
+        citation="CGI art. 157 bis — « Dans le cas de personnes mariées soumises à une "
+                 "imposition commune, la déduction prévue aux deuxième et troisième alinéas "
+                 "est doublée si les deux époux remplissent les conditions d'âge ou "
+                 "d'invalidité »",
+        decision="D-188",
+        kill_test="test_the_engine_alone_abates_a_couple_once",
+    ),
+    Correction(
+        name="abattement_157_bis_des_prestations_double_pour_un_couple",
+        citation="CCH art. R. 822-4, II, 2° — sont déduits des ressources de l'aide au "
+                 "logement « L'abattement mentionné à l'article 157 bis du code général des "
+                 "impôts pour les personnes nées avant le 1er janvier 1931 et pour les "
+                 "personnes invalides », que cet article double quand les deux époux "
+                 "remplissent les conditions ; CSS art. R. 532-3, b), pour les prestations "
+                 "familiales",
+        decision="D-188",
+        kill_test="test_the_engine_alone_takes_one_abatement_off_a_couple_s_benefit_resources",
+    ),
+    Correction(
+        name="ass_chomage_du_conjoint_premier_parent",
+        citation="C. trav. art. R. 5423-2 — les ressources de l'ASS « comprennent "
+                 "l'allocation de solidarité ainsi que les autres ressources de l'intéressé "
+                 "et, le cas échéant, de son conjoint, partenaire lié par un pacte civil de "
+                 "solidarité ou concubin »",
+        decision="D-189",
+        kill_test="test_the_engine_alone_ignores_the_unemployment_benefit_of_a_spouse_heading_"
+                  "the_famille",
+    ),
+    Correction(
+        name="pension_invalidite_prelevements",
+        citation="CSS art. L. 136-8, II — « Sont assujetties à la contribution au taux de 8,3 % "
+                 "les pensions de retraite, et les pensions d'invalidité » ; art. L. 137-41 — la "
+                 "CASA est « assise sur les avantages de retraite et d'invalidité »",
+        decision="D-190",
+        kill_test="test_the_engine_alone_levies_nothing_on_an_invalidity_pension",
+    ),
+    Correction(
+        name="asi_seul_allocataire_du_couple",
+        citation="CSS art. D. 815-19, 2° b) — quand le conjoint n'est pas bénéficiaire de l'ASI, "
+                 "« le montant de l'allocation servie ne peut excéder le montant du plafond "
+                 "mentionné au 1° auquel est soustrait le montant minimum de la pension "
+                 "d'invalidité mentionné à l'article L. 341-5 »",
+        decision="D-190",
+        kill_test="test_the_engine_alone_pays_a_lone_beneficiary_in_a_couple_the_couple_ceiling",
+    ),
+    Correction(
         name="aeeh_complement_au_taux_de_sa_categorie",
         citation="CSS art. D. 541-2 — « Le taux du complément de deuxième catégorie de "
                  "l'allocation d'éducation de l'enfant handicapé est fixé à 65 % de la base "
@@ -222,6 +401,7 @@ CORRECTIONS: tuple[Correction, ...] = (
 
 AL_BASE = "aide_logement_base_ressources_individu"
 AL_AMOUNT = "aide_logement_montant_brut"
+ASS_BASE = "ass_base_ressources"
 MVA_ELIGIBILITY = "eligibilite_caah"
 AAH_ELIGIBILITY = "aah_eligible"
 ASPA_ELIGIBILITY = "aspa_eligibilite"
@@ -235,6 +415,33 @@ AGE_AAH = ("prestations_sociales", "prestations_etat_de_sante", "invalidite", "a
 #: (CSS art. L. 351-1-5), from the reform's entry into force.
 AGE_INAPTITUDE = 62
 AGE_INAPTITUDE_DEPUIS = "2023-09-01"
+ABATEMENT_157_BIS = "abat_spe"
+ABATEMENT_157_BIS_BENEFITS = "abattements_speciaux_prestations_familiales"
+#: The age from which art. 157 bis abates, as openfisca's `abat_spe` reads it: on 1 January,
+#: where the article says « au 31 décembre de l'année d'imposition », which births on
+#: 1 January, as both builders write them, make the same.
+AGE_157_BIS = 65
+#: Born before this date, the housing aid deducts the abatement for age (CCH art. R. 822-4,
+#: II, 2°), as openfisca's copy for the benefits reads it.
+NE_AVANT_157_BIS_PRESTATIONS = "1931-01-01"
+PENSIONS_NETTES = "pensions_nettes"
+#: openfisca's levies on a retirement pension that a declared amount still owes, the
+#: deductible CSG being already off it: read on the invalidity pension by correction 9.
+PENSION_LEVIES = ("csg_imposable_retraite", "crds_retraite", "casa")
+#: The date of the levy formulas correction 9 wraps; before it, openfisca's net pensions stand.
+LEVIES_SINCE = "2019-01-01"
+ASI_AMOUNT = "asi"
+#: Since this date the ASI is the ceiling less the resources (CSS art. L. 815-24-1), and
+#: art. D. 815-19 caps the lone beneficiary of a couple.
+ASI_DIFFERENTIELLE_DEPUIS = "2020-04-01"
+#: The minimum invalidity pension of an employee (CSS art. L. 341-5), a month, from each date,
+#: as the Cnav circulars give it: 2022-22 for April 2020 to July 2022, then 2023-09, 2024-13,
+#: 2024-42 and 2025-30. openfisca's tree does not carry it.
+PENSION_INVALIDITE_MINIMUM: tuple[tuple[str, float], ...] = (
+    ("2020-04-01", 292.80), ("2021-04-01", 293.96), ("2022-04-01", 297.20),
+    ("2022-07-01", 309.09), ("2023-01-01", 311.56), ("2024-01-01", 328.07),
+    ("2025-01-01", 335.29), ("2026-01-01", 338.31),
+)
 
 
 def apply_to(system: Any) -> Any:
@@ -259,6 +466,19 @@ def apply_to(system: Any) -> Any:
             self.update_variable(_asi_below_the_aspa_age(asi_formula, aspa_formula))
             al_amount_formula = self.get_variable(AL_AMOUNT).get_formula("2016-07-01")
             self.update_variable(_no_taper_for_an_aah_beneficiary(al_amount_formula))
+            abatement_formula = self.get_variable(ABATEMENT_157_BIS).get_formula("0001-01-01")
+            self.update_variable(_abatement_157_bis_per_spouse(abatement_formula))
+            benefits_formula = self.get_variable(ABATEMENT_157_BIS_BENEFITS).get_formula(
+                "0001-01-01")
+            self.update_variable(_benefits_abatement_157_bis_per_spouse(benefits_formula))
+            ass_base_formula = self.get_variable(ASS_BASE).get_formula("0001-01-01")
+            self.update_variable(_spouse_s_benefit_whoever_heads_the_famille(ass_base_formula))
+            nettes_formula = self.get_variable(PENSIONS_NETTES).get_formula(LEVIES_SINCE)
+            levy_formulas = tuple(self.get_variable(name).get_formula(LEVIES_SINCE)
+                                  for name in PENSION_LEVIES)
+            self.update_variable(_invalidity_pension_levied(nettes_formula, levy_formulas))
+            asi_amount = self.get_variable(ASI_AMOUNT).get_formula(ASI_DIFFERENTIELLE_DEPUIS)
+            self.update_variable(_asi_capped_for_a_lone_beneficiary_in_a_couple(asi_amount))
             aeeh_formula = self.get_variable(AEEH).get_formula("2006-01-01")
             self.update_variable(_aeeh_complement_at_its_own_category(aeeh_formula))
 
@@ -442,6 +662,197 @@ def _no_taper_for_an_aah_beneficiary(openfisca_formula: Any) -> Any:
                          openfisca_formula(famille, period, parameters))
 
     return aide_logement_montant_brut
+
+
+def _with_the_second_spouse(openfisca_value: Any, foyer_fiscal: Any, period: Any,
+                            parameters: Any, both: Any) -> Any:
+    """openfisca's abatement plus the second spouse's, when both qualify, under openfisca's
+    own cap at the net income. openfisca's is `min_(rng, any × abatement + children)`, so
+    adding one abatement and capping again gives `min_(rng, 2 × abatement + children)`."""
+    from openfisca_core.model_api import min_
+
+    rng = foyer_fiscal("rng", period)
+    scale = parameters(period).impot_revenu.calcul_revenus_imposables.abat_rni \
+        .contribuable_age_invalide
+    return min_(rng, openfisca_value + both * scale.calc(rng))
+
+
+def _abatement_157_bis_per_spouse(openfisca_formula: Any) -> Any:
+    """`abat_spe`, with the abatement of CGI art. 157 bis doubled when both spouses are over
+    65 or invalid: openfisca's formula, plus what its boolean sum drops."""
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class abat_spe(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Abattements spéciaux ; celui des personnes âgées ou invalides doublé quand "
+                 "les deux époux en remplissent les conditions (CGI art. 157 bis)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047622555"
+        definition_period = YEAR
+
+        def formula(foyer_fiscal, period, parameters):
+            age_declarant = foyer_fiscal.declarant_principal("age", period.first_month)
+            age_conjoint = foyer_fiscal.conjoint("age", period.first_month)
+            declarant = (((age_declarant >= AGE_157_BIS) | foyer_fiscal("caseP", period))
+                         & (age_declarant > 0))
+            conjoint = (((age_conjoint >= AGE_157_BIS) | foyer_fiscal("caseF", period))
+                        & (age_conjoint > 0))
+            return _with_the_second_spouse(openfisca_formula(foyer_fiscal, period, parameters),
+                                           foyer_fiscal, period, parameters, declarant * conjoint)
+
+    return abat_spe
+
+
+def _benefits_abatement_157_bis_per_spouse(openfisca_formula: Any) -> Any:
+    """`abattements_speciaux_prestations_familiales`, the copy of the abatement the housing aid
+    and the family benefits take off their resources, doubled when both spouses qualify
+    under its own criteria, born before 1931 or invalid (CCH art. R. 822-4, II, 2°)."""
+    from numpy import datetime64
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class abattements_speciaux_prestations_familiales(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Abattements spéciaux des ressources des prestations ; celui de l'art. 157 bis "
+                 "du CGI doublé quand les deux époux sont nés avant 1931 ou invalides "
+                 "(CCH art. R. 822-4)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045920163"
+        definition_period = YEAR
+
+        def formula(foyer_fiscal, period, parameters):
+            limite = datetime64(NE_AVANT_157_BIS_PRESTATIONS)
+            mois = period.first_month
+            declarant = (
+                ((foyer_fiscal.declarant_principal("date_naissance", mois) < limite)
+                 | foyer_fiscal("caseP", period))
+                & (foyer_fiscal.declarant_principal("age", mois) > 0))
+            conjoint = (
+                ((foyer_fiscal.conjoint("date_naissance", mois) < limite)
+                 | foyer_fiscal("caseF", period))
+                & (foyer_fiscal.conjoint("age", mois) > 0))
+            return _with_the_second_spouse(openfisca_formula(foyer_fiscal, period, parameters),
+                                           foyer_fiscal, period, parameters, declarant * conjoint)
+
+    return abattements_speciaux_prestations_familiales
+
+
+def _spouse_s_benefit_whoever_heads_the_famille(openfisca_formula: Any) -> Any:
+    """`ass_base_ressources`, with the first parent's unemployment benefit counted when the
+    first parent does not claim the ASS (C. trav. art. R. 5423-2): openfisca adds it to the
+    second parent's resources only. The term is openfisca's own for the second parent."""
+    from openfisca_core.model_api import ADD, MONTH, Variable, not_, set_input_divide_by_period
+    from openfisca_core.periods import Period
+    from openfisca_france.entities import Famille
+
+    class ass_base_ressources(Variable):  # openfisca's naming
+        value_type = float
+        entity = Famille
+        label = ("Base de ressources de l'ASS, l'allocation chômage du conjoint de l'allocataire "
+                 "comprise quel que soit son rôle dans la famille (C. trav. art. R. 5423-2)")
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+        def formula(famille, period):
+            # As `ass_base_ressources_conjoint` reads it for the second parent: the benefit
+            # of the twelve months before, unless it stopped last month.
+            annee = Period(("year", period.start, 1)).offset(-1)
+            mois_precedent = Period(("month", period.start, 1)).offset(-1)
+            chomage = famille.demandeur("chomage_net", annee, options=[ADD])
+            interrompu = famille.demandeur("chomage_net", mois_precedent) == 0
+            allocataire = famille.demandeur("ass_precondition_remplie", period)
+            return (openfisca_formula(famille, period)
+                    + chomage * not_(interrompu) * not_(allocataire))
+
+    return ass_base_ressources
+
+
+class _InvalidityPensionAsRetirement:
+    """The individuals as openfisca's levies on a pension see them, with the invalidity
+    pension where they read the retirement pension (correction 9). Everything else they read,
+    the RFR and the parts of N-2 among them, is the population's own."""
+
+    def __init__(self, individu: Any) -> None:
+        self._individu = individu
+
+    def __call__(self, variable_name: str, period: Any, options: Any = None) -> Any:
+        if variable_name == "retraite_brute":
+            variable_name = "pensions_invalidite"
+        return self._individu(variable_name, period, options)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._individu, name)
+
+
+def _invalidity_pension_levied(openfisca_formula: Any, levy_formulas: tuple[Any, ...]) -> Any:
+    """`pensions_nettes`, less the CSG imposable, the CRDS and the CASA due on the invalidity
+    pension: openfisca's own levies on a retirement pension, read on the invalidity one,
+    month by month, and openfisca's formula for the rest."""
+    from openfisca_core.model_api import MONTH, YEAR, Variable
+    from openfisca_france.entities import Individu
+
+    class pensions_nettes(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Pensions et revenus de remplacement, la pension d'invalidité nette de sa CSG "
+                 "imposable, de sa CRDS et de sa CASA (CSS art. L. 136-8 et L. 137-41)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042683546"
+        definition_period = YEAR
+
+        def formula_2019_01_01(individu, period, parameters):
+            invalidite = _InvalidityPensionAsRetirement(individu)
+            levies = sum(levy(invalidite, month, parameters)  # negative, as openfisca's are
+                         for month in period.get_subperiods(MONTH)
+                         for levy in levy_formulas)
+            return openfisca_formula(individu, period) + levies
+
+    return pensions_nettes
+
+
+def minimum_invalidity_pension(instant: str) -> float:
+    """The minimum invalidity pension of an employee in force at `instant` ('YYYY-MM-DD'), a
+    month (`PENSION_INVALIDITE_MINIMUM`)."""
+    in_force = [amount for start, amount in PENSION_INVALIDITE_MINIMUM if start <= instant]
+    if not in_force:
+        raise ValueError(f"aucune pension d'invalidité minimale connue au {instant}")
+    return in_force[-1]
+
+
+def _asi_capped_for_a_lone_beneficiary_in_a_couple(openfisca_formula: Any) -> Any:
+    """`asi`, capped for the lone allocataire of a couple at the single ceiling less the
+    minimum invalidity pension (CSS art. D. 815-19, 2° b): openfisca's amount otherwise."""
+    from openfisca_core.model_api import (
+        MONTH,
+        Variable,
+        calculate_output_add,
+        min_,
+        set_input_divide_by_period,
+        where,
+    )
+    from openfisca_france.entities import Individu
+
+    class asi(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Allocation supplémentaire d'invalidité (ASI), plafonnée pour le seul "
+                 "allocataire d'un couple (CSS art. D. 815-19, 2° b)")
+        definition_period = MONTH
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042956446"
+        set_input = set_input_divide_by_period
+        calculate_output = calculate_output_add
+
+        def formula_2020_04_01(individu, period, parameters):
+            montant = openfisca_formula(individu, period, parameters)
+            seul_allocataire_du_couple = (
+                individu.famille("en_couple", period)
+                * (individu.famille("asi_aspa_nb_alloc", period) == 1))
+            plafond_seul = parameters(period).prestations_sociales.prestations_etat_de_sante \
+                .invalidite.asi.plafond_ressource_seul / 12
+            plafond = plafond_seul - minimum_invalidity_pension(str(period.start))
+            return where(seul_allocataire_du_couple, min_(montant, plafond), montant)
+
+    return asi
 
 
 def _aeeh_complement_at_its_own_category(openfisca_formula: Any) -> Any:

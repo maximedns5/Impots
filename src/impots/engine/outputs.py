@@ -78,6 +78,12 @@ REGISTRY: tuple[Row, ...] = (
         label="Pensions et retraites imposables"),
     Row("chomage_brut", "chomage_brut", "individu", "month", "light", False,
         label="Allocations chômage brutes"),
+    # The invalidity pension, box 1AZ, as the wire format writes it (D-190). An input, so
+    # reading it costs the light tier nothing; without a row, the pension behind an ASI
+    # would be inside `revenu_disponible` with nothing on screen to show it. The population
+    # writes no invalidity pension: its column is zero there.
+    Row("pension_invalidite", "pensions_invalidite", "individu", "month", "light", False,
+        label="Pension d'invalidité (montant déclaré)"),
     Row("csg_deductible", "csg_deductible_salaire", "individu", "month", "light", True,
         label="CSG déductible"),
     Row("csg_imposable", "csg_imposable_salaire", "individu", "month", "light", True,
@@ -124,6 +130,11 @@ REGISTRY: tuple[Row, ...] = (
         label="Prime d'activité"),
     Row("rsa", "rsa", "famille", "month", "full", False,
         label="RSA"),
+    # The ASS, on the individual who draws it, beside the RSA that tops it up. Given a row
+    # when the wire format learned to open it (D-189). Zero over the population, which
+    # declares nobody « en fin de droits ».
+    Row("ass", "ass", "individu", "month", "full", False,
+        label="Allocation de solidarité spécifique"),
     Row("aide_logement", "aide_logement", "famille", "month", "full", False,
         label="Aide au logement"),
     # The AAH and its complement, on the individual who receives them. Given rows when the
@@ -140,6 +151,11 @@ REGISTRY: tuple[Row, ...] = (
     # could not account for, by exactly the ASPA.
     Row("aspa", "aspa", "famille", "month", "full", False,
         label="Allocation de solidarité aux personnes âgées"),
+    # The ASI, on the individual who receives it, as openfisca pays it once capped for the
+    # lone beneficiary of a couple (correction 10). Given a row when the wire format learned to
+    # open it with an invalidity pension (D-190). Zero in the population, which has none.
+    Row("asi", "asi", "individu", "month", "full", False,
+        label="Allocation supplémentaire d'invalidité"),
     # Complément familial and allocation de soutien familial. Itemised for the third
     # time in this project's history for the same reason, and found the same way: the
     # double-entry guard. Both are means-tested, so a CSG reform that changes net income

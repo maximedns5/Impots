@@ -120,9 +120,16 @@ def pin_benefit_history(simulation: Any, year: int) -> None:
 
 
 #: The inputs that open the AAH, the ASI or the ASS. The disability field writes the first
-#: since D-184; the others no field writes, and a situation carries them only when someone
-#: adds them, as the D-179 tests do for the ASI.
+#: since D-184, the invalidity pension field the second since D-190, and the « fin de
+#: droits » field the last since D-189. The other, `handicap`, the child's field writes since
+#: D-191, on a child where the AEEH is open; on an adult a situation carries it only when
+#: someone adds it, as the D-179 tests do for the ASI.
 MINIMA_INPUTS = ("taux_incapacite", "pensions_invalidite", "handicap", "ass_precondition_remplie")
+
+
+#: The 2042 boxes the invalidity card is declared in, in the order of the adults: case P
+#: for the declarant, case F for the spouse (D-188).
+INVALIDITY_CASES = ("caseP", "caseF")
 
 
 def has_benefit_cascade(situation: dict[str, Any]) -> bool:
@@ -256,6 +263,7 @@ def build_situation(
     are also written to the two preceding years, so that means-tested benefits are
     assessed against a realistic reference period instead of an empty one.
     """
+    assert_ass_expressible(household, year)
     years = covered_years(year, historique_revenus)
     individus: dict[str, dict[str, Any]] = {}
 
@@ -291,15 +299,33 @@ def build_situation(
             # Gross, like the population's `chomage_annuel`, so it cannot be pinned on
             # its taxable box the way a declared pension is: the CSG that takes it there
             # reads the RFR of N-2, and that regress is closed by `pin_rfr_n_2` instead
-            # (D-177). Neither path sets `activite` or `date_debut_chomage`. Without a
-            # salary beside the benefit they move nothing reported; with one, they would
-            # take 30 % off it in the housing aid, a relief for the fall in income on
-            # passing from work to unemployment, which a salary earned beside the benefit
-            # in every year of the history is not (D-183).
+            # (D-177). Neither path sets `activite` or `date_debut_chomage` for it (the
+            # « fin de droits » field writes `activite`, and is refused beside this
+            # benefit, D-189). Without a salary beside the benefit they move nothing
+            # reported; with one, they would take 30 % off it in the housing aid, a relief
+            # for the fall in income on passing from work to unemployment, which a salary
+            # earned beside the benefit in every year of the history is not (D-183).
             individus[key]["chomage_brut"] = _spread(
                 "chomage_brut", adult.chomage_brut_annuel, years)
+        if adult.pension_invalidite_annuelle:
+            # Declared, like the retirement pension: openfisca's `pensions_invalidite` IS box
+            # 1AZ, taxed with the pensions, and no formula of openfisca takes a gross
+            # invalidity pension to it. Monthly, on the same years as the salary: the RFR of
+            # N-2 sets the rate of its levies, and the ASI and the AAH read the months before.
+            # The levies themselves are correction 9 of `engine.corrections` (D-190).
+            individus[key]["pensions_invalidite"] = _spread(
+                "pensions_invalidite", adult.pension_invalidite_annuelle, years)
+            # At 62 the invalidity pension gives way to a retirement pension, and « A cet âge,
+            # les intéressés sont réputés inaptes au travail » and may claim the ASPA, which
+            # ends the ASI (circular Cnav 2023-25). openfisca opens the ASPA early on this
+            # flag, from `aah.age_legal_retraite` (62, correction 3), and reads it nowhere
+            # else for a parent of the famille: written on every month, it acts from 62 only.
+            # Without it the ASI ran on to 65, below the ASPA's ceiling (D-190).
+            individus[key]["inapte_travail"] = _constant("inapte_travail", True, years)
         if adult.handicap is not None:
             individus[key].update(_disability_inputs(adult.handicap, years))
+        if adult.fin_de_droits_ass:
+            individus[key].update(_ass_inputs(years))
 
     child_ids: list[str] = []
     for i, child in enumerate(household.children):
@@ -341,6 +367,16 @@ def build_situation(
         # single parent with one child gets 1.5 parts instead of 2.0 and is
         # over-taxed. The Phase 0 spec does not mention it; see DECISIONS D-006.
         foyer_fiscal["caseT"] = _constant("caseT", True, years)
+    for adult, case in zip(household.adults, INVALIDITY_CASES, strict=False):
+        if adult.carte_invalidite:
+            # The card « mobilité inclusion » marked « invalidité »: case P for the
+            # declarant, F for the spouse, booleans of the foyer fiscal, and not
+            # openfisca's individual `invalidite`, which counts dependent children only
+            # (cases G and I). On every covered year, like the salary: the housing aid
+            # and the family benefits take the abatement of art. 157 bis it opens off the
+            # resources of N-2, and the CSG of a replacement income reads the RFR and the
+            # parts of N-2 (D-188).
+            foyer_fiscal[case] = _constant(case, True, years)
 
     return {
         "individus": individus,
@@ -404,6 +440,54 @@ def assert_niche_eligibility(household: Any, year: int) -> None:
             f"les frais de scolarité déclarent {scolarises} enfant(s) scolarisé(s) pour "
             f"{len(household.children)} enfant(s) à charge."
         )
+
+
+#: The lowest legal retirement age of the years this project prices: 62, for those born
+#: from 1955 to August 1961 (CSS art. D. 161-2-1-9, 6°). From that age the ASS stops for
+#: whoever has the insurance duration of the full rate, and at 67 for everyone (C. trav.
+#: art. L. 5421-4, 1° and 2°).
+ASS_AGE_LEGAL = 62
+
+
+def assert_ass_expressible(household: Any, year: int) -> None:
+    """Refuse « fin de droits » from the year of the 62nd birthday.
+
+    From the legal retirement age the ASS « cesse d'être versé » to whoever justifies the
+    insurance duration required for a full-rate pension (C. trav. art. L. 5421-4, 1°),
+    and the wire format does not carry that duration. openfisca stops it at 789 months,
+    65 years and 9 months, an age the law of 2024 does not name. Refused rather than paid
+    or withheld on a guess (D-189). The year is the builder's, so the refusal is here and
+    not in the wire format. ValueError, which the API turns into a 422.
+    """
+    for index, adult in enumerate(household.adults):
+        age = year - adult.annee_naissance
+        if getattr(adult, "fin_de_droits_ass", False) and age >= ASS_AGE_LEGAL:
+            raise ValueError(
+                f"Adulte {index + 1} : la fin de droits n'est pas exprimable à {age} ans en "
+                f"{year}. Dès l'âge légal de départ en retraite, {ASS_AGE_LEGAL} ans au plus "
+                f"tôt, l'ASS cesse pour qui a la durée d'assurance du taux plein, et à 67 ans "
+                f"pour tous (C. trav. art. L. 5421-4) ; le format d'entrée ne dit pas la durée "
+                f"d'assurance. Refusé à partir de l'année des {ASS_AGE_LEGAL} ans plutôt que "
+                f"versé ou retenu au hasard."
+            )
+
+
+def _ass_inputs(years: list[int]) -> dict[str, Any]:
+    """« En fin de droits, condition d'activité remplie », on every covered month: the
+    work condition openfisca reads as `ass_precondition_remplie`, and a job seeker's
+    `activite`, which the ASS is for (C. trav. art. L. 5423-1).
+
+    Without a salary, which the wire format refuses beside the ASS, the precondition alone
+    opens it. `activite` decides what a salary does to it: openfisca keeps a job seeker's
+    ASS whatever is earned beside it, as the cumul does for the first three months of a
+    resumed activity (art. R. 5425-2), and otherwise counts those three months and stops
+    it. The EMTR's bumped leg is such a salary: a job seeker's 100 EUR is priced beside the
+    ASS, and without `activite` the ASS stopped in April (D-189).
+    """
+    return {
+        "ass_precondition_remplie": _constant("ass_precondition_remplie", True, years),
+        "activite": _constant("activite", _coerce_enum("activite", "chomeur"), years),
+    }
 
 
 def _disability_inputs(handicap: Any, years: list[int]) -> dict[str, Any]:

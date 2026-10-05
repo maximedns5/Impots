@@ -116,12 +116,75 @@ class Adult(BaseModel):
         "amount net of the deductible CSG. Those levies have no row of their own, since the "
         "CSG and CRDS rows are the salary's: they are inside `revenu_disponible` (D-183).",
     )
+    pension_invalidite_annuelle: Annotated[float, Field(ge=0, le=MAX_SALARY)] = Field(
+        default=0.0,
+        description="Annual invalidity pension of the social security in EUR, AS DECLARED: "
+        "the taxable amount of box 1AZ, already net of the deductible CSG, like "
+        "`pension_annuelle`, and without the majoration pour tierce personne, which bears "
+        "neither tax nor levy. Written monthly onto openfisca's `pensions_invalidite`, which "
+        "is that box and has no gross counterpart, on the same years as the salary. Taxed "
+        "with the pensions, after their 10 % abatement; disposable income takes off it the "
+        "CSG imposable, the CRDS and the CASA, at the rate the RFR of N-2 sets, as off a "
+        "declared retirement pension (`engine.corrections`, correction 9). Below the ASPA's "
+        "age it opens the allocation supplémentaire d'invalidité, the ceiling less the "
+        "resources (CSS art. L. 815-24-1), capped for the lone beneficiary of a couple "
+        "(art. D. 815-19, correction 10). At 62 the pension gives way to a retirement pension "
+        "and its holder, réputé inapte au travail, may claim the ASPA, which ends the ASI: "
+        "typed past 62, it prices as that retirement pension would (D-190).",
+    )
     handicap: Handicap | None = Field(
         default=None,
         description="A disability the CDAPH recognised. Absent means none. At 80 % the "
         "AAH goes on past 62, topping a pension up to the AAH amount, and its holder is "
         "taken not to claim the ASPA (D-185).",
     )
+    carte_invalidite: bool = Field(
+        default=False,
+        description="Holds the carte « mobilité inclusion » marked « invalidité » (CASF "
+        "art. L. 241-3), or the carte d'invalidité it replaced. Written as case P of the "
+        "2042 for the first adult and case F for the second, on every covered year: half a "
+        "part more (CGI art. 195, 1 d bis, 3, 4 and 5), the abatement of art. 157 bis under "
+        "its income ceilings, and that abatement off the resources of the housing aid and "
+        "the family benefits, which read N-2. A separate application from the CDAPH rate: "
+        "the mention also goes to a third-category invalidity pensioner and, for good, to "
+        "an APA recipient in groups 1 or 2, so no rate is required beside it, and none "
+        "implies it (D-188).",
+    )
+    fin_de_droits_ass: bool = Field(
+        default=False,
+        description="A job seeker whose unemployment insurance rights are exhausted and who "
+        "meets the ASS's work condition: five years of salaried work in the ten before the "
+        "end of the contract that opened those rights (C. trav. art. L. 5423-1 and "
+        "R. 5423-1). Written onto `ass_precondition_remplie` and a job seeker's `activite` "
+        "on every covered month; the resources test is the engine's. Refused beside a "
+        "salary, since the ASS is cumulated with one for three months only (art. "
+        "R. 5425-2), beside unemployment benefit, never paid for the same months, and from "
+        "the year of the 62nd birthday, from which the ASS turns on the insurance duration "
+        "(art. L. 5421-4) (D-189).",
+    )
+
+    @model_validator(mode="after")
+    def _check_fin_de_droits(self) -> Adult:
+        """Refuse the incomes the ASS is never paid beside, rather than price them wrong."""
+        if not self.fin_de_droits_ass:
+            return self
+        if self.salaire_brut_annuel:
+            raise ValueError(
+                "L'ASS ne se cumule avec un salaire que pendant trois mois, consécutifs ou "
+                "non (C. trav. art. R. 5425-2) ; au-delà, son versement est interrompu tant "
+                "que l'activité se poursuit. Le salaire est écrit sur chaque mois de trois "
+                "années, et le moteur verserait l'ASS d'un demandeur d'emploi à côté, sans "
+                "fin. Saisissez un salaire nul, ou décochez la fin de droits."
+            )
+        if self.chomage_brut_annuel:
+            raise ValueError(
+                "L'ASS suit l'épuisement des droits à l'allocation chômage (C. trav. art. "
+                "L. 5423-1), ou la remplace sur option à partir de 50 ans (art. L. 5423-2) : "
+                "les deux ne sont jamais versées pour les mêmes mois. L'allocation chômage "
+                "est écrite sur chaque mois de trois années, et le moteur ne verserait alors "
+                "aucune ASS, sans rien dire."
+            )
+        return self
 
 
 #: The rates of CSS art. R. 541-1: from 80 % a child opens the AEEH; from 50 %, only where
@@ -420,6 +483,14 @@ class HouseholdInput(BaseModel):
         if self.parent_isole and (len(self.adults) != 1 or not self.children):
             raise ValueError(
                 "parent_isole=true suppose un adulte seul avec au moins un enfant à charge."
+            )
+        claimants = [adult for adult in self.adults if adult.fin_de_droits_ass]
+        if len(claimants) == 2 and any(adult.pension_annuelle for adult in self.adults):
+            raise ValueError(
+                "Deux adultes en fin de droits, à côté d'une pension : les ressources de "
+                "chacun comprennent l'ASS de l'autre (C. trav. art. R. 5423-2), ce que le "
+                "moteur ne fait pas. Sans autre ressource, les deux allocations restent "
+                "pleines sous le plafond du couple, et le calcul est exact."
             )
         return self
 
@@ -797,6 +868,10 @@ class ResultRows(BaseModel):
     cotisations_employeur: float
     retraite_imposable: float
     chomage_brut: float
+    pension_invalidite: float
+    """The invalidity pension as declared, box 1AZ. Zero for a household that declares none.
+    Its CSG imposable, CRDS and CASA have no row, like a retirement pension's: they are inside
+    `revenu_disponible` (D-190)."""
     allegement_general: float
     allegement_bandeau_maladie: float
     allegement_bandeau_famille: float
@@ -828,6 +903,9 @@ class ResultRows(BaseModel):
     disability (D-191)."""
     ppa: float | None = None
     rsa: float | None = None
+    ass: float | None = None
+    """The allocation de solidarité spécifique, summed over the adults who draw it. Zero
+    unless an adult is declared `fin_de_droits_ass` (D-189)."""
     aide_logement: float | None = None
     aah: float | None = None
     mva: float | None = None
@@ -835,6 +913,9 @@ class ResultRows(BaseModel):
     household that declares no disability (D-184)."""
     aspa: float | None = None
     """The allocation de solidarité aux personnes âgées, for the famille (D-186)."""
+    asi: float | None = None
+    """The allocation supplémentaire d'invalidité, on the individual who receives it. Zero
+    for a household that declares no invalidity pension (D-190)."""
     aefa: float | None = None
     cf: float | None = None
     asf: float | None = None
