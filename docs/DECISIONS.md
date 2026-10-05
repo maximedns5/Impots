@@ -10942,3 +10942,276 @@ ajoutés : 27 au moteur, 4 à l'API et 4 à la page.
 * Mon Parcours Handicap, « Les nouveaux montants au 1er avril 2024 de l'AAH, de l'AEEH et de
   ses compléments », 24 avril 2024.
 * CLEISS, brèves d'avril 2024, la majoration pour tierce personne au 1er avril 2024.
+
+## D-194 — L'ASI à côté d'un conjoint à l'ASPA : chacune la moitié de son plafond
+
+**Le point de départ.** D-190 l'avait laissé dans « Ce qui reste » : « openfisca ne verse
+pas d'ASI, et paie l'ASPA du couple à la moitié de son maximum. » Prenons 6 000 € de pension
+d'invalidité et un conjoint de 66 ans à 3 000 € de retraite : 9 427,01 € d'ASPA, aucune ASI
+et 18 427,01 € de revenu disponible. D-190 chiffrait le c) de l'art. D. 815-19 à 4 841,60 €,
+et ajoutait : « Ce que devient alors l'ASPA du conjoint relève de ses propres règles, non
+lues ici. » Elles sont lues ici, et l'ASPA est corrigée avec l'ASI.
+
+**Ce que dit la loi : l'ASI.** Les articles ont été lus sur Légifrance.
+* **Son montant.** « Le montant de la ou des allocations est égal à la différence entre le
+  plafond applicable à la situation du ou des allocataires et le total des ressources de
+  l'intéressé ou des époux, concubins ou partenaires liés par un pacte civil de solidarité »
+  (art. L. 815-24-1, en vigueur depuis le 1er avril 2020).
+* **Ses plafonds.** L'art. D. 815-19, en vigueur depuis le 1er janvier 2021, les fixe « 1°
+  [...] pour une personne seule ; 2° [...] pour une personne en couple lorsque : ».
+  * a) Le conjoint « bénéficie de l'allocation supplémentaire d'invalidité. Dans ce cas, le
+    montant est servi par moitié à chacun des deux allocataires concernés ».
+  * b) Il « n'est pas bénéficiaire de l'allocation supplémentaire d'invalidité. Dans ce cas,
+    le montant de l'allocation servie ne peut excéder le montant du plafond mentionné au 1°
+    auquel est soustrait le montant minimum de la pension d'invalidité » : la correction 10.
+  * c) Il « bénéficie de l'allocation de solidarité aux personnes âgées visée à l'article
+    L. 815-1. Dans ce cas, le montant de l'allocation servie est égal à la différence entre
+    la moitié du plafond mentionné au 2° et la moitié des ressources du couple. »
+* **Depuis quand.** Le c) figure déjà dans la version du 1er avril 2020 au 1er janvier 2021,
+  celle du décret n° 2020-1251. Le plafond du 2° est celui du couple à l'ASI : 18 060,13 €
+  par an depuis le 1er avril 2023, puis 18 890,89 € depuis le 1er avril 2024 (circulaires
+  Cnav n° 2023-09 et 2024-13).
+
+**Ce que dit la loi : l'ASPA.**
+* **Son montant.** « Le montant de l'allocation de solidarité aux personnes âgées, qui varie
+  selon que le foyer est constitué d'une personne seule ou de conjoints, de concubins ou de
+  partenaires liés par un pacte civil de solidarité, est fixé par décret » (art. L. 815-4).
+* **Le décret.** L'art. D. 815-1, en vigueur depuis le 1er avril 2018, fixe le maximum : a)
+  « Pour les personnes seules, ou lorsque seul un des conjoints [...] en bénéficie » ; b)
+  « Lorsque les deux conjoints [...] en bénéficient [...]. Dans ce cas, le montant est servi
+  par moitié à chacun des deux allocataires concernés. » Puis : « Les dispositions du b sont
+  également applicables pour le calcul de l'allocation de solidarité aux personnes âgées
+  servie au demandeur lorsque son conjoint, concubin ou partenaire lié par un pacte civil de
+  solidarité bénéficie de l'allocation supplémentaire d'invalidité visée à l'article
+  L. 815-24. »
+* **La réduction.** « Lorsque le total de la ou des allocations de solidarité et des
+  ressources personnelles de l'intéressé ou des époux [...] dépasse ces plafonds, la ou les
+  allocations sont réduites à due concurrence » (art. L. 815-9). Et « Le plafond applicable
+  lorsque le ou les allocataires sont mariés, concubins ou partenaires liés par un pacte
+  civil de solidarité est égal au montant maximum prévu au b de l'article D. 815-1 »
+  (art. D. 815-2).
+* **Le montant de 2024.** Le b vaut 18 854,02 € par an depuis le 1er janvier 2024, maximum
+  et plafond (circulaire Cnav n° 2023-34).
+* **Les ressources.** Celles de l'ASI sont appréciées comme celles de l'ASPA :
+  l'art. R. 815-61 lui applique les art. R. 815-17 à R. 815-30. L'art. R. 815-22 y compte
+  « tous les avantages d'invalidité et de vieillesse dont bénéficie l'intéressé ».
+
+**Ce qu'en disent les caisses.**
+* **La Cnav.** Les circulaires n° 2023-09 et 2024-13 ne traitent que du b), quand le
+  conjoint « ne bénéficie ni de l'Aspa ni de l'ASI ». Ni le c) ni l'ASPA du conjoint n'y
+  figurent.
+* **Service-public, pour l'ASI** (fiche F16940, vérifiée le 1er avril 2026). Sous « 1
+  personne du couple reçoit l'Asi, l'autre reçoit l'Aspa » : « Le montant de l'Asi versé
+  chaque mois est égal à la différence entre 771,42 € et la moitié du montant des revenus
+  pris en compte de votre couple. » Ces 771,42 € sont la moitié de 1 542,84 €, un plafond du
+  couple qui n'est pas celui de la Cnav au 1er avril 2026, 1 613,80 € (circulaire
+  n° 2026-14). La règle, elle, est celle du c).
+* **Service-public, pour l'ASPA** (fiche F16871, vérifiée le 23 juin 2026). Elle ne connaît
+  que « 1 personne reçoit l'Aspa » et « 2 personnes reçoivent l'Aspa », et ne dit rien d'un
+  conjoint à l'ASI.
+* **La CNRACL**, qui sert l'une et l'autre à ses pensionnés, écrit les deux moitiés
+  (« Calcul, paiement et suivi de l'allocation », publié le 11 juillet 2023). « Lorsque l'un
+  des conjoints bénéficie de l'ASPA et l'autre de l'ASI, le montant d'ASPA servi correspond
+  à la moitié du montant "couple" ASPA », et de même pour l'ASI. Son exemple, aux montants
+  de 2020, sur 4 800 € de ressources : « 1/2 ASI-1/2 ressources : 7 875 € - 2 400 € =
+  5 475 € ». Puis « Dépassement : 21088,32 € - 16 288,32 € = 4800 € », et « ASPA à servir :
+  1/2 ASPA - 1/2 dépassement = 8 413,32 € - 2400 € = 6013,32 € ».
+
+**Le total, et son partage.** Chaque allocation vaut la moitié de son plafond du couple
+moins la moitié des ressources du couple. Aucune n'entre dans les ressources de l'autre,
+malgré « tous les avantages » de l'art. R. 815-22. C'est le calcul de la CNRACL, dont le
+dépassement de l'ASPA vaut exactement les ressources. C'est aussi la seule lecture où les
+deux moitiés mènent le couple à ses plafonds. Le couple reçoit donc la demi-somme des deux
+plafonds moins ses ressources, partagée presque à parts égales. En 2024, sous les deux
+plafonds, il finit à 18 768,61 € quelles que soient ses ressources. Les deux plafonds sont
+proches sans être égaux, l'un revalorisé en janvier, l'autre en avril : ils diffèrent de
+66,16 € par mois de janvier à mars 2024, et de 3,07 € ensuite.
+
+**Ce que fait openfisca.**
+* **L'ASI.** Sa formule reconnaît le cas (`elig4` et `elig5`) et le chiffre contre le
+  plafond du couple de l'ASPA, et non de l'ASI, sans moitié. Puis elle ne verse l'ASI qu'au
+  seul allocataire ou à deux allocataires de l'ASI : multiplié par `elig1 + elig2 / 2 +
+  elig3 / 2`, le cas vaut zéro.
+* **L'ASPA.** Sa formule (`elig3` et `elig4`) suit la règle d'avant avril 2020, quand
+  chacune des deux allocations retranchait la moitié d'un dépassement commun. Un guide de
+  2014 la décrit ainsi. Pour deux allocataires de l'ASI, « le montant à servir au titre de
+  l'ASI est égal à la différence entre la moitié du montant maximum d'ASI « couple » [...]
+  et la moitié du dépassement ». Et « Si le deuxième allocataire perçoit l'ASPA, un calcul
+  analogue est effectué pour déterminer le montant d'ASPA à servir » (Gereso, « Les
+  retraites », fiche H10.2). La formule part de la moitié du maximum du couple, y ajoute
+  l'ASI et les ressources, et retranche la moitié de ce qui passe le plafond. Sans ASI pour
+  prendre l'autre moitié, elle sert la moitié du maximum tant que les ressources restent
+  sous la moitié du plafond : 785,58 € par mois, 9 427,01 € sur l'année. Au-delà, elle ne
+  retire que la moitié de l'excès : 6 640,52 € à 15 000 € de ressources, et 4 140,52 € à
+  20 000 €, au-dessus des deux plafonds.
+* **L'ASI qu'elle ajoute** est celle du demandeur si `maries`, celle du conjoint sinon, et
+  aucun constructeur ne pose `statut_marital`. Surtout, elle la divise par douze avec le
+  maximum annuel, alors que `asi` est mensuelle. Corriger l'ASI seule ne suffit donc pas :
+  nourrie de l'ASI corrigée, la formule sert encore 9 427,01 € au premier couple, quel que
+  soit l'époux en tête de la famille (mesuré, par une mutation ci-dessous).
+
+**Les corrections 12 et 13 de `engine.corrections`.**
+* **L'ASI (correction 12).** À un parent éligible à l'ASI dont le conjoint est éligible à
+  l'ASPA, elle verse la moitié du plafond du couple de l'ASI moins la moitié des ressources
+  du couple, sur la base d'openfisca, `asi_aspa_base_ressources`. Elle est enroulée autour
+  de la formule de la correction 10, elle-même enroulée autour de celle d'openfisca, depuis
+  avril 2020.
+* **L'ASPA (correction 13).** À la même famille, elle verse la moitié de l'ASPA du couple,
+  comme deux allocataires la reçoivent : le maximum du couple, moins ce que lui et les
+  ressources dépassent du plafond. Elle est enroulée autour de la formule d'openfisca, qui
+  reste celle de toute autre famille, depuis avril 2020, la date de cette formule et du c).
+* **Les deux tests qui tuent.** Sur openfisca brut, en juin 2024, l'ASI du pensionné est
+  nulle, alors qu'il est éligible à l'ASI et son conjoint à l'ASPA. L'ASPA vaut 785,58 €, et
+  345,04 € pour le couple à 20 000 €.
+* **Le registre.** Les deux citent le CSS : son test ne change pas.
+
+**L'ordre des deux corrections de l'ASI.** `apply` enroule la correction 10 autour de la
+formule d'openfisca, puis relit `asi` pour y enrouler la correction 12 : la variable garde
+les deux. Leurs cas ne se rencontrent pas. La correction 10 demande un seul allocataire dans
+la famille, la correction 12 en demande deux, l'un éligible à l'ASI et l'autre à l'ASPA.
+Enroulée autour de la formule d'openfisca lue avant la correction 10, la correction 12 la
+ferait disparaître : c'est une des mutations ci-dessous.
+
+**L'éligibilité, pas le versement.** Les deux corrections apparient les époux sur leur
+éligibilité, comme openfisca et la correction 10. La loi parle de bénéficiaires, et l'écart
+tient entre les deux plafonds du couple. De janvier à mars 2024, un couple qui a entre
+1 505,01 € et 1 571,17 € de ressources par mois ne tire aucune ASI. Son conjoint à l'ASPA
+est alors seul bénéficiaire, et le a) de l'art. D. 815-1 lui donnerait le plafond moins les
+ressources plutôt que sa moitié : au plus 33,08 € de plus par mois. D'avril à décembre, la
+bande est de 3,07 €, et l'écart d'ASI d'au plus 1,54 €.
+
+**Ce que le moteur en fait, mesuré en 2024.** « Avant » désigne `main`, avec les onze
+corrections. Les deux adultes sont un pensionné d'invalidité né en 1980 et un conjoint né en
+1958 à la retraite. La première colonne dit leurs pensions.
+
+| pensions du couple | ASI avant | ASI après | ASPA avant | ASPA après |
+|---|---:|---:|---:|---:|
+| 6 000 € et 3 000 € | 0 € | 4 841,60 € | 9 427,01 € | 4 927,01 € |
+| 9 000 € et 6 000 € | 0 € | 1 841,60 € | 6 640,52 € | 1 927,01 € |
+| 1 200 € et rien | 0 € | 8 741,60 € | 9 427,01 € | 8 827,01 € |
+| 12 000 € et 8 000 € | 0 € | 0 € | 4 140,52 € | 0 € |
+
+Le revenu disponible des trois premiers passe de 18 427,01 €, 21 640,52 € et 11 545,63 € à
+18 768,61 €. Le troisième touchait aussi 689,95 € de RSA et la prime de Noël, qui tombent.
+Le quatrième passe de 24 140,52 € à 20 000 €.
+* **Le pensionné second** reçoit la même ASI, et le couple la même ASPA.
+* **Un conjoint de 62 ans** à l'ASPA, par sa pension d'invalidité de 3 000 € (D-190) ou par
+  60 % d'incapacité et 3 000 € de retraite (D-185) : comme à 66 ans, de 0 € à 4 841,60 €
+  d'ASI et de 9 427,01 € à 4 927,01 € d'ASPA.
+* **Locataire** à 500 € en zone 2 : l'aide au logement reste à 4 048,11 €, et le revenu
+  disponible passe de 22 475,12 € à 22 816,72 €.
+* **Le même, pensionné à 80 %** : l'AAH tombe de 6 058,56 € à 1 251,57 €, la MVA reste à
+  1 257,24 €, et le revenu disponible passe de 29 790,92 € à 25 325,53 €.
+* **9 000 € à 80 %, conjoint sans pension, locataire** : l'AAH tombe de 3 058,56 € à rien,
+  l'ASI monte à 4 841,60 €, l'ASPA tombe à 4 927,01 €, la MVA reste à 1 257,24 €. Le revenu
+  disponible passe de 26 749,64 € à 24 032,68 €.
+* **Inchangés** : deux pensionnés d'invalidité à 6 000 €, 6 683,20 € d'ASI par moitié ; le
+  conjoint de 64 ans, 6 739,27 € d'ASI (correction 10) ; deux retraités à l'ASPA à 3 000 €
+  chacun, 12 854,02 €.
+
+Refaits à la main :
+* **L'ASI.** (18 060,13 / 12 − 750) / 2 = 377,51 € par mois jusqu'en mars, (18 890,89 / 12 −
+  750) / 2 = 412,12 € ensuite, soit 4 841,60 € sur l'année.
+* **L'ASPA.** (18 854,02 / 12 − 750) / 2 = 410,58 € par mois, 4 927,01 € sur l'année.
+* **Le couple.** 9 000 + 4 841,60 + 4 927,01 = 18 768,61 €, soit la moitié de chaque plafond
+  sur l'année : 9 341,60 + 9 427,01 €.
+* **openfisca.** 18 854,02 / 24 = 785,58 € : 750 € de ressources restent sous ce montant, et
+  rien n'est retiré. À 1 250 € par mois, 785,58 − (1 250 − 785,58) / 2 = 553,38 €. À
+  1 666,67 €, 345,04 €.
+* **L'AAH à 80 %.** Elle complète les 500 € de pension et l'ASI du mois d'avant jusqu'au
+  montant de l'AAH : 971,37 − 500 − 377,51 = 93,86 € de janvier à mars, l'ASI de décembre
+  2023 étant déjà celle du c). Puis 138,54 € en avril, sur l'ASI de mars, et 103,93 € de mai
+  à décembre : 1 251,58 € à la main, 1 251,57 € mesurés. La MVA reste, l'AAH étant versée
+  « en complément d'un avantage de vieillesse ou d'invalidité » (art. L. 821-1-2).
+* **À 9 000 €,** 750 + 377,51 € passent déjà le montant de l'AAH : aucune AAH. La MVA « est
+  également versée aux bénéficiaires de l'allocation supplémentaire d'invalidité mentionnée
+  à l'article L. 815-24 dont l'incapacité permanente est au moins égale au pourcentage fixé
+  par le décret » de l'AAH (art. L. 821-1-2, en vigueur depuis le 1er janvier 2021). C'est
+  la branche de l'ASI qu'openfisca paie et que la correction 2 garde.
+* **L'aide au logement** compte les revenus que retient l'impôt sur le revenu (CCH,
+  art. R. 822-4), où ni l'une ni l'autre allocation n'est : elle ne bouge pas.
+
+**Le mois des 65 ans.** Le format d'entrée ne porte que l'année de naissance, lue au
+1er janvier : l'âge y change toujours en janvier, et un conjoint né en 1959 donne en 2024
+les mêmes moitiés qu'à 66 ans. Un test écrit la naissance au 1er juillet 1959 à la main.
+Jusqu'en juin, le conjoint a 64 ans et n'est éligible à rien : la correction 10 plafonne
+l'ASI, à 571,50 € en juin. En juillet, il a 65 ans : 412,12 € d'ASI et 410,58 € d'ASPA. Sur
+l'année, 5 783,02 € d'ASI et 2 463,50 € d'ASPA, contre 3 310,30 € et 4 713,50 € avant.
+
+**L'ordre de calcul.** `pensions_invalidite` figure dans `MINIMA_INPUTS` : le palier complet
+épingle l'aide au logement mois par mois (D-178, D-179). Trois ménages ont été calculés dans
+l'ordre du registre, comme l'API, et avec `revenu_disponible` d'abord, comme la jambe
+relevée de l'EMTR : le pensionné second, le pensionné à 80 % locataire, et le couple à
+1 200 €, où openfisca payait le RSA. L'ASI, l'ASPA, l'AAH, la MVA, le RSA, l'aide au
+logement et le revenu disponible concordent à 0,05 € près. L'EMTR du premier couple vaut
+0,2069, avant comme après, le pensionné premier ou second, et locataire : les seules
+cotisations du salaire, que la base des deux allocations abat.
+
+**Ce que la population en fait.** Rien, et `to_openfisca.WIRING` reste « D-188 ». La
+population n'écrit aucune pension d'invalidité, et personne n'y est donc éligible à l'ASI.
+Sur la population de test, 400 ménages, le palier complet a été calculé avant et après les
+deux corrections : les 51 colonnes numériques sont identiques. L'ASPA y vaut 76 089,37 € sur
+12 ménages, l'ASI rien.
+
+**Vus échouer, puis mutés.** Avant les corrections, 13 des 19 tests ajoutés tombaient :
+* l'ASI du pensionné, nulle au lieu de 4 841,60 €, qu'il soit premier ou second ;
+* l'ASPA, à 9 427,01 € au lieu de 4 927,01 €, dans les deux ordres ;
+* les trois couples sous les plafonds, sans ASI au lieu de 4 841,60 €, 1 841,60 € et
+  8 741,60 € ;
+* le couple au-dessus des plafonds, avec 4 140,52 € d'ASPA au lieu de rien ;
+* les deux conjoints de 62 ans, sans ASI ;
+* le mois des 65 ans, en juillet : les six mois de la correction 10 passaient ;
+* l'AAH et la MVA à côté, sans ASI.
+
+Les six autres passaient, comme il le faut : le test qui garde les cas a) et b) et le couple
+de deux retraités, les trois tests d'ordre, et les deux tests qui tuent, sur openfisca brut.
+Sept mutations sont prises :
+* l'ASI chiffrée contre le plafond du couple de l'ASPA, comme openfisca : 4 927,01 € au lieu
+  de 4 841,60 €, dix tests ;
+* la correction 12 enroulée autour de la formule d'openfisca lue avant la correction 10 : le
+  seul allocataire de D-190, à 12 683,20 € au lieu de 6 739,27 €, le conjoint de 64 ans et
+  le mois des 65 ans ;
+* la moitié versée aux deux parents, le rôle oublié : 4 841,60 € chacun, dix tests ;
+* la correction 13 non appliquée : l'ASPA reste à 9 427,01 € dans les deux ordres, à
+  6 640,52 € à 15 000 €, et à 4 140,52 € au-dessus des plafonds, onze tests ;
+* la correction 13 étendue à toute famille où un parent est éligible à l'ASPA : deux
+  retraités à 6 427,01 € au lieu de 12 854,02 €, et trois tests de D-185 et D-190, une
+  personne seule ne recevant plus que la moitié de l'ASPA d'un couple ;
+* l'ASPA du couple servie entière : 9 854,02 € au lieu de 4 927,01 €, dix tests ;
+* la correction 12 étendue à tout allocataire en couple : le seul allocataire de D-190, à
+  6 341,60 € au lieu de 6 739,27 €, le conjoint de 64 ans, et janvier dans le mois des
+  65 ans. Deux pensionnés d'invalidité ne bougent pas : la moitié du c) est aussi celle du
+  a).
+
+**Ce qui reste.**
+* **Le versement plutôt que l'éligibilité**, dans la bande entre les deux plafonds du
+  couple, ci-dessus.
+* **La CNRACL n'est pas la Cnav.** Aucun texte de la Cnav lu ici ne dit l'ASPA du conjoint
+  d'un allocataire de l'ASI, et service-public non plus. La correction 13 suit
+  l'art. D. 815-1 tel que la CNRACL l'applique.
+* **Le plafond d'avril 2026.** La circulaire n° 2026-14 le porte à 19 365,60 € pour un
+  couple, que l'arbre n'a pas : il garde celui d'avril 2025, 19 212,03 €. F16940 en affiche
+  un troisième, 1 542,84 € par mois.
+* **`statut_marital`** n'est posé par aucun constructeur, et openfisca croit chaque couple
+  non marié. Dans l'ASI et l'ASPA, seuls les cas que remplacent les corrections 12 et 13 en
+  dépendaient.
+* **L'AAH dans les ressources de l'ASI** reste exclue, comme openfisca le fait (D-190).
+* **openfisca-france.** Les deux écarts sont à signaler en amont, avec ces cas, et la
+  division par douze de l'ASI dans la formule de l'ASPA.
+
+**Sources.**
+* CSS, art. L. 815-4 et L. 815-9 (versions en vigueur depuis le 1er janvier 2006),
+  L. 815-24-1 (version en vigueur depuis le 1er avril 2020), L. 821-1-2 (version en vigueur
+  depuis le 1er janvier 2021), D. 815-1 (version en vigueur depuis le 1er avril 2018),
+  D. 815-2 (version en vigueur depuis le 23 octobre 2014), D. 815-19 (version du 1er avril
+  2020 au 1er janvier 2021, et version en vigueur depuis le 1er janvier 2021), R. 815-22
+  (version en vigueur depuis le 1er juillet 2023) et R. 815-61 (version en vigueur depuis le
+  1er janvier 2021), lus sur Légifrance.
+* Circulaires Cnav n° 2023-09 du 11 avril 2023, 2023-34 du 29 décembre 2023, 2024-13 du
+  4 avril 2024 et 2026-14 du 17 avril 2026.
+* Service-public.gouv.fr, fiches F16940 (ASI), vérifiée le 1er avril 2026, et F16871 (ASPA),
+  vérifiée le 23 juin 2026.
+* CNRACL, documentation juridique, « Calcul, paiement et suivi de l'allocation », publiée le
+  11 juillet 2023.
+* Gereso, « Les retraites », fiche H10.2, mise à jour de mai 2014, pour la règle d'avant
+  avril 2020.
