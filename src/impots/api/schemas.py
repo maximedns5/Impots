@@ -116,6 +116,22 @@ class Adult(BaseModel):
         "amount net of the deductible CSG. Those levies have no row of their own, since the "
         "CSG and CRDS rows are the salary's: they are inside `revenu_disponible` (D-183).",
     )
+    pension_invalidite_annuelle: Annotated[float, Field(ge=0, le=MAX_SALARY)] = Field(
+        default=0.0,
+        description="Annual invalidity pension of the social security in EUR, AS DECLARED: "
+        "the taxable amount of box 1AZ, already net of the deductible CSG, like "
+        "`pension_annuelle`, and without the majoration pour tierce personne, which bears "
+        "neither tax nor levy. Written monthly onto openfisca's `pensions_invalidite`, which "
+        "is that box and has no gross counterpart, on the same years as the salary. Taxed "
+        "with the pensions, after their 10 % abatement; disposable income takes off it the "
+        "CSG imposable, the CRDS and the CASA, at the rate the RFR of N-2 sets, as off a "
+        "declared retirement pension (`engine.corrections`, correction 9). Below the ASPA's "
+        "age it opens the allocation supplémentaire d'invalidité, the ceiling less the "
+        "resources (CSS art. L. 815-24-1), capped for the lone beneficiary of a couple "
+        "(art. D. 815-19, correction 10). At 62 the pension gives way to a retirement pension "
+        "and its holder, réputé inapte au travail, may claim the ASPA, which ends the ASI: "
+        "typed past 62, it prices as that retirement pension would (D-190).",
+    )
     handicap: Handicap | None = Field(
         default=None,
         description="A disability the CDAPH recognised. Absent means none. At 80 % the "
@@ -745,6 +761,10 @@ class ResultRows(BaseModel):
     cotisations_employeur: float
     retraite_imposable: float
     chomage_brut: float
+    pension_invalidite: float
+    """The invalidity pension as declared, box 1AZ. Zero for a household that declares none.
+    Its CSG imposable, CRDS and CASA have no row, like a retirement pension's: they are inside
+    `revenu_disponible` (D-190)."""
     allegement_general: float
     allegement_bandeau_maladie: float
     allegement_bandeau_famille: float
@@ -782,6 +802,9 @@ class ResultRows(BaseModel):
     household that declares no disability (D-184)."""
     aspa: float | None = None
     """The allocation de solidarité aux personnes âgées, for the famille (D-186)."""
+    asi: float | None = None
+    """The allocation supplémentaire d'invalidité, on the individual who receives it. Zero
+    for a household that declares no invalidity pension (D-190)."""
     aefa: float | None = None
     cf: float | None = None
     asf: float | None = None

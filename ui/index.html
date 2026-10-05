@@ -697,9 +697,12 @@ footer code { font-family: var(--mono); font-size: 11px; }
         <p class="note">
           Hypothèses par défaut : <b>salarié·e du privé</b>, non cadre, sans revenu foncier,
           ni revenu du capital, ni revenu d'indépendant. La pension se saisit telle que
-          déclarée (case 1AS), le chômage brut, avant CSG et CRDS. Le taux d'incapacité est
-          celui que reconnaît la CDAPH : l'AAH s'ouvre à 80 %, ou à 50 % avec la RSDAE ; dès
-          62 ans, un taux d'au moins 50 % ouvre l'ASPA, qui remplace l'AAH sous 80 % (D-185).
+          déclarée (case 1AS), le chômage brut, avant CSG et CRDS. La pension d'invalidité se
+          saisit elle aussi telle que déclarée (case 1AZ), sans la majoration pour tierce
+          personne ; avant 62 ans elle ouvre l'ASI, et dès 62 ans l'ASPA (D-190). Le taux
+          d'incapacité est celui que reconnaît la CDAPH : l'AAH s'ouvre à 80 %, ou à 50 % avec
+          la RSDAE ; dès 62 ans, un taux d'au moins 50 % ouvre l'ASPA, qui remplace l'AAH sous
+          80 % (D-185).
           La majoration pour la vie autonome demande un logement avec une aide au logement.
           La carte « invalidité » vaut une demi-part et, sous 28 170 € de revenu net,
           l'abattement de l'art. 157 bis, que l'aide au logement déduit aussi (D-188).
@@ -1268,15 +1271,19 @@ function adultRow(i) {
       </div>
       <div class="field-row tri">
         <div>
+          <label for="invalidite${i}">Pension d'invalidité déclarée (€/an)</label>
+          <input type="number" id="invalidite${i}" min="0" step="500" placeholder="0">
+        </div>
+        <div>
           <label for="taux${i}">Taux d'incapacité CDAPH (%)</label>
           <input type="number" id="taux${i}" min="0" max="100" step="1" placeholder="aucun">
         </div>
-        <label class="check">
-          <input type="checkbox" id="rsdae${i}">
-          <span>Restriction d'accès à l'emploi (RSDAE)
-            <span class="sub">Ouvre l'AAH entre 50 et 79 %, jusqu'à 62 ans.</span></span>
-        </label>
       </div>
+      <label class="check">
+        <input type="checkbox" id="rsdae${i}">
+        <span>Restriction d'accès à l'emploi (RSDAE)
+          <span class="sub">Ouvre l'AAH entre 50 et 79 %, jusqu'à 62 ans.</span></span>
+      </label>
       <label class="check">
         <input type="checkbox" id="carte${i}">
         <span>Carte mobilité inclusion « invalidité » (case ${i === 0 ? "P" : "F"})
@@ -1640,6 +1647,7 @@ function adultPayload(i) {
     annee_naissance: Number($(`born${i}`).value),
     pension_annuelle: Number($(`pension${i}`).value),
     chomage_brut_annuel: Number($(`chomage${i}`).value),
+    pension_invalidite_annuelle: Number($(`invalidite${i}`).value),
     carte_invalidite: $(`carte${i}`).checked,
   };
   const taux = $(`taux${i}`).value;
@@ -1705,8 +1713,9 @@ const GROUPS = [
      salaried household would be noise, not information. A group may instead name its quiet
      rows: the ASS sits beside the RSA that tops it up, shown only when it is paid (D-189). */
   { title: "Revenus de remplacement", quiet: true, rows: [
-    ["retraite_imposable", "Pension de retraite (montant déclaré)", "flat"],
-    ["chomage_brut",       "Allocations chômage brutes",            "flat"],
+    ["retraite_imposable", "Pension de retraite (montant déclaré)",   "flat"],
+    ["pension_invalidite", "Pension d'invalidité (montant déclaré)",  "flat"],
+    ["chomage_brut",       "Allocations chômage brutes",              "flat"],
   ]},
   { title: "Impôt sur le revenu", rows: [
     ["parts_fiscales",          "Parts fiscales",               "flat", false, "count"],
@@ -1728,8 +1737,9 @@ const GROUPS = [
     ["aspa", "Allocation de solidarité aux personnes âgées", "up"],
   ]},
   { title: "Handicap", tier: "full", quiet: true, rows: [
-    ["aah", "Allocation aux adultes handicapés", "up"],
-    ["mva", "Majoration pour la vie autonome",   "up"],
+    ["aah", "Allocation aux adultes handicapés",       "up"],
+    ["mva", "Majoration pour la vie autonome",         "up"],
+    ["asi", "Allocation supplémentaire d'invalidité",  "up"],
   ]},
 ];
 
@@ -1798,11 +1808,12 @@ function render(data) {
     <tbody>${body}</tbody>
   </table>`;
 
-  if (holds("retraite_imposable") || holds("chomage_brut")) {
+  if (holds("retraite_imposable") || holds("pension_invalidite") || holds("chomage_brut")) {
     html += `<p class="note" style="margin-top:12px">
-      Pension et chômage : leur CSG et leur CRDS ne sont pas détaillées. Les lignes CSG et CRDS
-      de la rémunération sont celles du salaire ; les prélèvements sur la pension et le chômage
-      sont retranchés du revenu disponible, que donne le calcul complet (D-183).
+      Pensions et chômage : leur CSG, leur CRDS et la Casa des pensions ne sont pas détaillées.
+      Les lignes CSG et CRDS de la rémunération sont celles du salaire ; les prélèvements sur
+      les pensions et le chômage sont retranchés du revenu disponible, que donne le calcul
+      complet (D-183, D-190).
     </p>`;
   }
 

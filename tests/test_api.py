@@ -857,3 +857,20 @@ def test_a_claimant_of_the_ass_reaches_the_engine_and_its_row_comes_back(
     response = client.post("/simulate", json=request)
     assert response.status_code == 200, response.text
     assert response.json()["baseline"]["ass"] == pytest.approx(6_768.00, abs=0.05)
+
+
+def test_an_invalidity_pension_reaches_the_engine_and_the_asi_comes_back(client: TestClient) -> None:
+    """The invalidity pension and the ASI it opens have rows of their own on the wire (D-190):
+    6 000 EUR alone, topped up to the ASI's ceiling by 4 676.11 EUR over 2024."""
+    request = {
+        "household": {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1980,
+                                  "pension_invalidite_annuelle": 6_000}]},
+        "year": 2024,
+        "tier": "full",
+    }
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 200, response.text
+    rows = response.json()["baseline"]
+    assert rows["pension_invalidite"] == pytest.approx(6_000, abs=0.5)
+    assert rows["asi"] == pytest.approx(4_676.11, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(10_676.11, abs=0.05)

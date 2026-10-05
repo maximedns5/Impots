@@ -120,9 +120,9 @@ def pin_benefit_history(simulation: Any, year: int) -> None:
 
 
 #: The inputs that open the AAH, the ASI or the ASS. The disability field writes the first
-#: since D-184, and the « fin de droits » field the last since D-189; the others no field
-#: writes, and a situation carries them only when someone adds them, as the D-179 tests do
-#: for the ASI.
+#: since D-184, the invalidity pension field the second since D-190, and the « fin de
+#: droits » field the last since D-189; the other no field writes, and a situation carries
+#: it only when someone adds it, as the D-179 tests do for the ASI.
 MINIMA_INPUTS = ("taux_incapacite", "pensions_invalidite", "handicap", "ass_precondition_remplie")
 
 
@@ -301,6 +301,21 @@ def build_situation(
             # earned beside the benefit in every year of the history is not (D-183).
             individus[key]["chomage_brut"] = _spread(
                 "chomage_brut", adult.chomage_brut_annuel, years)
+        if adult.pension_invalidite_annuelle:
+            # Declared, like the retirement pension: openfisca's `pensions_invalidite` IS box
+            # 1AZ, taxed with the pensions, and no formula of openfisca takes a gross
+            # invalidity pension to it. Monthly, on the same years as the salary: the RFR of
+            # N-2 sets the rate of its levies, and the ASI and the AAH read the months before.
+            # The levies themselves are correction 9 of `engine.corrections` (D-190).
+            individus[key]["pensions_invalidite"] = _spread(
+                "pensions_invalidite", adult.pension_invalidite_annuelle, years)
+            # At 62 the invalidity pension gives way to a retirement pension, and « A cet âge,
+            # les intéressés sont réputés inaptes au travail » and may claim the ASPA, which
+            # ends the ASI (circular Cnav 2023-25). openfisca opens the ASPA early on this
+            # flag, from `aah.age_legal_retraite` (62, correction 3), and reads it nowhere
+            # else for a parent of the famille: written on every month, it acts from 62 only.
+            # Without it the ASI ran on to 65, below the ASPA's ceiling (D-190).
+            individus[key]["inapte_travail"] = _constant("inapte_travail", True, years)
         if adult.handicap is not None:
             individus[key].update(_disability_inputs(adult.handicap, years))
         if adult.fin_de_droits_ass:

@@ -211,6 +211,56 @@ parent's daily sickness allowances out, which no field carries.
 **Blast radius:** a couple whose first adult draws unemployment benefit beside a second in
 « fin de droits ». On the wire, the unemployment benefit field beside the « fin de droits »
 one. The population declares nobody in « fin de droits », and nothing in it moves.
+
+---
+
+**Correction 9 — the invalidity pension bears the levies of a pension (CSS art. L. 136-8 and
+L. 137-41), D-190.**
+
+« Sont assujetties à la contribution au taux de 8,3 % les pensions de retraite, et les
+pensions d'invalidité » (art. L. 136-8, II), the intermediate and reduced rates following
+the same RFR bands, and the CASA is « assise sur les avantages de retraite et d'invalidité »
+(art. L. 137-41). openfisca levies the retirement pension only: `pensions_nettes` adds
+`pensions_invalidite` whole, so the disposable income kept the whole declared amount.
+Measured on a pensioner alone at 44: 28 412 EUR of disposable income on 30 000 EUR declared,
+against 27 452 for the same retirement pension; 19 850 against 19 210 on 20 000; 15 000
+against 14 925 on 15 000, where the reduced rate leaves only the CRDS to take.
+
+The correction reads openfisca's own levies on a retirement pension, the CSG imposable, the
+CRDS and the CASA at the rate the RFR of N-2 sets, on the invalidity pension instead, and
+takes them off `pensions_nettes`. The deductible CSG stays out: the field is the declared
+amount, already net of it, as the retirement pension's is (D-176), and their base is that
+declared amount, about 6 % under the gross one, as for the retirement pension. Wrapped
+around openfisca's formulas, which stand for the retirement pension, from 2019, the date of
+the levy formulas it wraps.
+
+**Blast radius:** an invalidity pension whose foyer's RFR of N-2 passes the exemption
+threshold. On the wire, the invalidity pension field. The population carries no invalidity
+pension, and nothing in it moves.
+
+**Correction 10 — the ASI of a lone beneficiary in a couple (CSS art. D. 815-19, 2° b),
+D-190.**
+
+The ASI is the ceiling less the resources (art. L. 815-24-1), the couple's ceiling for a
+couple. When the spouse « n'est pas bénéficiaire de l'allocation supplémentaire
+d'invalidité », « le montant de l'allocation servie ne peut excéder le montant du plafond
+mentionné au 1° auquel est soustrait le montant minimum de la pension d'invalidité mentionné
+à l'article L. 341-5 » (art. D. 815-19, 2° b); the Cnav applies it when the spouse draws
+neither the ASI nor the ASPA, the ASPA being the 2° c) (circulars 2022-22 to 2025-30).
+openfisca pays the couple ceiling less the couple's resources. Measured on 6 000 EUR of
+invalidity pension beside a spouse without income: 1 074.24 EUR a month from April 2024
+against a cap of 571.50, and 12 683.20 EUR of ASI over 2024 against 6 739.27.
+
+The correction caps openfisca's amount, for a parent of a couple whose famille counts one
+allocataire of the ASI or the ASPA, at the month's single ceiling less the minimum
+invalidity pension in force. openfisca's tree has no minimum invalidity pension:
+`PENSION_INVALIDITE_MINIMUM` carries it, as the Cnav circulars give it, revalued each
+1 January since 2023. Wrapped around openfisca's formula, from April 2020, when the ASI
+became the ceiling less the resources.
+
+**Blast radius:** a couple where one spouse draws the ASI and the other neither the ASI nor
+the ASPA, with resources low enough for the cap to bind. On the wire, the invalidity pension
+field in a couple. The population carries no invalidity pension, and nothing in it moves.
 """
 
 from __future__ import annotations
@@ -295,6 +345,23 @@ CORRECTIONS: tuple[Correction, ...] = (
         kill_test="test_the_engine_alone_ignores_the_unemployment_benefit_of_a_spouse_heading_"
                   "the_famille",
     ),
+    Correction(
+        name="pension_invalidite_prelevements",
+        citation="CSS art. L. 136-8, II — « Sont assujetties à la contribution au taux de 8,3 % "
+                 "les pensions de retraite, et les pensions d'invalidité » ; art. L. 137-41 — la "
+                 "CASA est « assise sur les avantages de retraite et d'invalidité »",
+        decision="D-190",
+        kill_test="test_the_engine_alone_levies_nothing_on_an_invalidity_pension",
+    ),
+    Correction(
+        name="asi_seul_allocataire_du_couple",
+        citation="CSS art. D. 815-19, 2° b) — quand le conjoint n'est pas bénéficiaire de l'ASI, "
+                 "« le montant de l'allocation servie ne peut excéder le montant du plafond "
+                 "mentionné au 1° auquel est soustrait le montant minimum de la pension "
+                 "d'invalidité mentionné à l'article L. 341-5 »",
+        decision="D-190",
+        kill_test="test_the_engine_alone_pays_a_lone_beneficiary_in_a_couple_the_couple_ceiling",
+    ),
 )
 
 AL_BASE = "aide_logement_base_ressources_individu"
@@ -321,6 +388,24 @@ AGE_157_BIS = 65
 #: Born before this date, the housing aid deducts the abatement for age (CCH art. R. 822-4,
 #: II, 2°), as openfisca's copy for the benefits reads it.
 NE_AVANT_157_BIS_PRESTATIONS = "1931-01-01"
+PENSIONS_NETTES = "pensions_nettes"
+#: openfisca's levies on a retirement pension that a declared amount still owes, the
+#: deductible CSG being already off it: read on the invalidity pension by correction 9.
+PENSION_LEVIES = ("csg_imposable_retraite", "crds_retraite", "casa")
+#: The date of the levy formulas correction 9 wraps; before it, openfisca's net pensions stand.
+LEVIES_SINCE = "2019-01-01"
+ASI_AMOUNT = "asi"
+#: Since this date the ASI is the ceiling less the resources (CSS art. L. 815-24-1), and
+#: art. D. 815-19 caps the lone beneficiary of a couple.
+ASI_DIFFERENTIELLE_DEPUIS = "2020-04-01"
+#: The minimum invalidity pension of an employee (CSS art. L. 341-5), a month, from each date,
+#: as the Cnav circulars give it: 2022-22 for April 2020 to July 2022, then 2023-09, 2024-13,
+#: 2024-42 and 2025-30. openfisca's tree does not carry it.
+PENSION_INVALIDITE_MINIMUM: tuple[tuple[str, float], ...] = (
+    ("2020-04-01", 292.80), ("2021-04-01", 293.96), ("2022-04-01", 297.20),
+    ("2022-07-01", 309.09), ("2023-01-01", 311.56), ("2024-01-01", 328.07),
+    ("2025-01-01", 335.29), ("2026-01-01", 338.31),
+)
 
 
 def apply_to(system: Any) -> Any:
@@ -352,6 +437,12 @@ def apply_to(system: Any) -> Any:
             self.update_variable(_benefits_abatement_157_bis_per_spouse(benefits_formula))
             ass_base_formula = self.get_variable(ASS_BASE).get_formula("0001-01-01")
             self.update_variable(_spouse_s_benefit_whoever_heads_the_famille(ass_base_formula))
+            nettes_formula = self.get_variable(PENSIONS_NETTES).get_formula(LEVIES_SINCE)
+            levy_formulas = tuple(self.get_variable(name).get_formula(LEVIES_SINCE)
+                                  for name in PENSION_LEVIES)
+            self.update_variable(_invalidity_pension_levied(nettes_formula, levy_formulas))
+            asi_amount = self.get_variable(ASI_AMOUNT).get_formula(ASI_DIFFERENTIELLE_DEPUIS)
+            self.update_variable(_asi_capped_for_a_lone_beneficiary_in_a_couple(asi_amount))
 
     return BenefitCorrections(system)
 
@@ -637,3 +728,90 @@ def _spouse_s_benefit_whoever_heads_the_famille(openfisca_formula: Any) -> Any:
                     + chomage * not_(interrompu) * not_(allocataire))
 
     return ass_base_ressources
+
+
+class _InvalidityPensionAsRetirement:
+    """The individuals as openfisca's levies on a pension see them, with the invalidity
+    pension where they read the retirement pension (correction 9). Everything else they read,
+    the RFR and the parts of N-2 among them, is the population's own."""
+
+    def __init__(self, individu: Any) -> None:
+        self._individu = individu
+
+    def __call__(self, variable_name: str, period: Any, options: Any = None) -> Any:
+        if variable_name == "retraite_brute":
+            variable_name = "pensions_invalidite"
+        return self._individu(variable_name, period, options)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._individu, name)
+
+
+def _invalidity_pension_levied(openfisca_formula: Any, levy_formulas: tuple[Any, ...]) -> Any:
+    """`pensions_nettes`, less the CSG imposable, the CRDS and the CASA due on the invalidity
+    pension: openfisca's own levies on a retirement pension, read on the invalidity one,
+    month by month, and openfisca's formula for the rest."""
+    from openfisca_core.model_api import MONTH, YEAR, Variable
+    from openfisca_france.entities import Individu
+
+    class pensions_nettes(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Pensions et revenus de remplacement, la pension d'invalidité nette de sa CSG "
+                 "imposable, de sa CRDS et de sa CASA (CSS art. L. 136-8 et L. 137-41)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042683546"
+        definition_period = YEAR
+
+        def formula_2019_01_01(individu, period, parameters):
+            invalidite = _InvalidityPensionAsRetirement(individu)
+            levies = sum(levy(invalidite, month, parameters)  # negative, as openfisca's are
+                         for month in period.get_subperiods(MONTH)
+                         for levy in levy_formulas)
+            return openfisca_formula(individu, period) + levies
+
+    return pensions_nettes
+
+
+def minimum_invalidity_pension(instant: str) -> float:
+    """The minimum invalidity pension of an employee in force at `instant` ('YYYY-MM-DD'), a
+    month (`PENSION_INVALIDITE_MINIMUM`)."""
+    in_force = [amount for start, amount in PENSION_INVALIDITE_MINIMUM if start <= instant]
+    if not in_force:
+        raise ValueError(f"aucune pension d'invalidité minimale connue au {instant}")
+    return in_force[-1]
+
+
+def _asi_capped_for_a_lone_beneficiary_in_a_couple(openfisca_formula: Any) -> Any:
+    """`asi`, capped for the lone allocataire of a couple at the single ceiling less the
+    minimum invalidity pension (CSS art. D. 815-19, 2° b): openfisca's amount otherwise."""
+    from openfisca_core.model_api import (
+        MONTH,
+        Variable,
+        calculate_output_add,
+        min_,
+        set_input_divide_by_period,
+        where,
+    )
+    from openfisca_france.entities import Individu
+
+    class asi(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Allocation supplémentaire d'invalidité (ASI), plafonnée pour le seul "
+                 "allocataire d'un couple (CSS art. D. 815-19, 2° b)")
+        definition_period = MONTH
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042956446"
+        set_input = set_input_divide_by_period
+        calculate_output = calculate_output_add
+
+        def formula_2020_04_01(individu, period, parameters):
+            montant = openfisca_formula(individu, period, parameters)
+            seul_allocataire_du_couple = (
+                individu.famille("en_couple", period)
+                * (individu.famille("asi_aspa_nb_alloc", period) == 1))
+            plafond_seul = parameters(period).prestations_sociales.prestations_etat_de_sante \
+                .invalidite.asi.plafond_ressource_seul / 12
+            plafond = plafond_seul - minimum_invalidity_pension(str(period.start))
+            return where(seul_allocataire_du_couple, min_(montant, plafond), montant)
+
+    return asi

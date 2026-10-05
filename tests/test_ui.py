@@ -735,8 +735,9 @@ def test_the_fifty_per_cent_line_is_drawn(source: str):
 
 #: Each field of `api.schemas.Adult`, and the result rows that show what it produced.
 #: A new field fails `test_every_adult_field_on_the_wire_is_sent_from_an_input` until it
-#: is given an input here and on the page. The ASPA is three fields' row: the age alone
-#: opens it at 65, a pension tops it down, and a rate of 50 % opens it at 62 (D-185). The
+#: is given an input here and on the page. The ASPA is four fields' row: the age alone
+#: opens it at 65, a pension tops it down, and a rate of 50 % opens it at 62 (D-185), as an
+#: invalidity pension does, whose holder is réputé inapte au travail at 62 (D-190). The
 #: invalidity card moves the parts, the RFR through the abatement of art. 157 bis, the
 #: income tax, and the housing aid, whose resources deduct that abatement (D-188).
 ADULT_INPUT_ROWS: dict[str, tuple[str, ...]] = {
@@ -744,6 +745,7 @@ ADULT_INPUT_ROWS: dict[str, tuple[str, ...]] = {
     "annee_naissance": ("aspa",),
     "pension_annuelle": ("retraite_imposable", "aspa"),
     "chomage_brut_annuel": ("chomage_brut",),
+    "pension_invalidite_annuelle": ("pension_invalidite", "asi", "aspa"),
     "handicap": ("aah", "mva", "aspa"),
     "carte_invalidite": ("parts_fiscales", "revenu_fiscal_reference", "ir", "aide_logement"),
     "fin_de_droits_ass": ("ass",),
@@ -785,15 +787,15 @@ def test_every_row_an_adult_input_produces_is_shown(source: str):
 
 
 def test_the_levies_on_replacement_incomes_are_said_to_be_elsewhere(source: str):
-    """The CSG and CRDS rows are the salary's. On a pension or unemployment benefit those
-    levies are inside the disposable income (D-183), and the table must say so where the
-    two incomes appear, or the rows read as zero levies. The note's own condition is read:
-    its text alone survives a condition that never holds."""
+    """The CSG and CRDS rows are the salary's. On a pension, an invalidity pension or
+    unemployment benefit those levies are inside the disposable income (D-183, D-190), and
+    the table must say so where the three incomes appear, or the rows read as zero levies.
+    The note's own condition is read: its text alone survives a condition that never holds."""
     body = _function(source, "render")
     assert "celles du salaire" in body
     before = body[:body.index("celles du salaire")]
     condition = before[before.rindex("if ("):]
-    for key in ("retraite_imposable", "chomage_brut"):
+    for key in ("retraite_imposable", "chomage_brut", "pension_invalidite"):
         assert f'holds("{key}")' in condition, f"the note is never shown for {key}"
 
 
@@ -807,12 +809,14 @@ Object.assign($("born0"), { value: "1980" });
 out.blank = adultPayload(0);
 Object.assign($("pension0"), { value: "3000" });
 Object.assign($("chomage0"), { value: "1200" });
+Object.assign($("invalidite0"), { value: "2400" });
 Object.assign($("taux0"), { value: "60" });
 Object.assign($("rsdae0"), { checked: true });
 Object.assign($("carte0"), { checked: true });
 out.filled = adultPayload(0);
 Object.assign($("pension0"), { value: "" });
 Object.assign($("chomage0"), { value: "" });
+Object.assign($("invalidite0"), { value: "" });
 Object.assign($("taux0"), { value: "" });
 Object.assign($("rsdae0"), { checked: false });
 Object.assign($("carte0"), { checked: false });
@@ -850,6 +854,7 @@ def test_a_blank_adult_sends_no_disability(adult_payloads):
     `handicap` at all. An unticked card is sent as such, like a pension of 0 (D-188)."""
     assert adult_payloads["blank"] == {"salaire_brut_annuel": 0, "annee_naissance": 1980,
                                        "pension_annuelle": 0, "chomage_brut_annuel": 0,
+                                       "pension_invalidite_annuelle": 0,
                                        "carte_invalidite": False}
 
 
@@ -864,6 +869,7 @@ def test_a_filled_adult_is_what_the_wire_format_accepts(adult_payloads):
     assert filled["carte_invalidite"] is True
     adult = Adult.model_validate(filled)
     assert adult.pension_annuelle == 3_000 and adult.chomage_brut_annuel == 1_200
+    assert adult.pension_invalidite_annuelle == 2_400
 
 
 def test_an_adult_in_fin_de_droits_is_sent_as_the_wire_format_has_it(adult_payloads):
@@ -874,8 +880,8 @@ def test_an_adult_in_fin_de_droits_is_sent_as_the_wire_format_has_it(adult_paylo
 
     sent = adult_payloads["fin_de_droits"]
     assert sent == {"salaire_brut_annuel": 0, "annee_naissance": 1980, "pension_annuelle": 0,
-                    "chomage_brut_annuel": 0, "carte_invalidite": False,
-                    "fin_de_droits_ass": True}
+                    "chomage_brut_annuel": 0, "pension_invalidite_annuelle": 0,
+                    "carte_invalidite": False, "fin_de_droits_ass": True}
     assert Adult.model_validate(sent).fin_de_droits_ass is True
 
 

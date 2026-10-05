@@ -118,7 +118,8 @@ const ROWS = (ir) => ({ salaire_super_brut: 37919.8, salaire_brut: 30000, salair
   af: 0, ppa: 213.42, rsa: 607.75, aide_logement: 0, revenu_disponible: 23908.48,
   // Every row the API sends at the full tier, zeros included: a stub without them would
   // let the quiet groups pass for the wrong reason, a row skipped as missing (D-186).
-  retraite_imposable: 0, chomage_brut: 0, aspa: 0, aah: 0, mva: 0, ass: 0 });
+  retraite_imposable: 0, chomage_brut: 0, pension_invalidite: 0, aspa: 0, asi: 0, aah: 0,
+  mva: 0, ass: 0 });
 const RESULT = { baseline: ROWS(812), reform: ROWS(1012), delta: { ...ROWS(200), revenu_disponible: -200, salaire_net: 0 },
   emtr: 0.4979, emtr_reform: 0.52, tier: "full", year: 2024, historique_revenus: false,
   timings: { build_ms: 3, compute_ms: 480, emtr_ms: 900, total_ms: 1390, reform_cache_hit: true },
@@ -200,6 +201,7 @@ ok("a blank adult sends zero replacement income and no disability", () => {
   const adult = JSON.parse(calls.at(-1).opts.body).household.adults[0];
   assert.equal(adult.pension_annuelle, 0);
   assert.equal(adult.chomage_brut_annuel, 0);
+  assert.equal(adult.pension_invalidite_annuelle, 0);
   assert.equal(adult.handicap, undefined, "a blank rate is « none recognised », not 0 %");
   assert.equal(adult.carte_invalidite, false, "an unticked card is sent unticked (D-188)");
   assert.equal(adult.fin_de_droits_ass, undefined, "an unticked box sends no fin de droits");
@@ -222,6 +224,19 @@ ok("an ASS shows its row, right after the RSA's", () => {
   const ass = out.indexOf("Allocation de solidarité spécifique");
   assert.ok(rsa > 0 && ass > rsa, "the ASS row must follow the RSA's");
   assert.ok(out.indexOf("Aide au logement") > ass, "the housing aid comes after the ASS");
+});
+// The invalidity pension alone, and the ASI it opens (D-190): the note must not need the
+// retirement pension to show.
+for (const side of [RESULT.baseline, RESULT.reform]) {
+  Object.assign(side, { retraite_imposable: 0, pension_invalidite: 6000, asi: 4676.11 });
+}
+$("go").onclick();
+await new Promise((r) => setTimeout(r, 60));
+ok("an invalidity pension shows its row, its ASI and the note on its levies", () => {
+  const out = $("out").innerHTML;
+  assert.match(out, /Pension d'invalidité/);
+  assert.match(out, /Allocation supplémentaire d'invalidité/);
+  assert.match(out, /celles du salaire/);
 });
 $("hist").checked = false;
 $("full").checked = false; $("full").onchange({ target: { checked: false } });
