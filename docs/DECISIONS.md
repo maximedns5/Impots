@@ -11743,9 +11743,10 @@ Sept mutations sont prises :
   65 ans. Deux pensionnés d'invalidité ne bougent pas : le a) donne à chacun la même moitié
   que le c).
 
-**Le gate.** `make gate` donne 1 601 réussis, 172 ignorés et 12 échecs, en 22 min 27 s. Les
-12 échecs sont ceux de D-176 à D-191, faute de données dans ce conteneur. Les 19 réussis de
-plus sont les tests ajoutés au moteur.
+**Le gate.** `make gate`, sur la branche fusionnée avec D-192 et D-193, donne 1 632 réussis,
+172 ignorés et 12 échecs, en 24 min 14 s. Les 12 échecs sont ceux de D-176 à D-193, faute de
+données dans ce conteneur. Les 19 réussis de plus que D-193 sont les tests ajoutés au
+moteur.
 
 **Ce qui reste.**
 * **Le versement plutôt que l'éligibilité**, dans la bande entre les deux plafonds du
