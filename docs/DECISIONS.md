@@ -9920,3 +9920,219 @@ comparateur ne change.
   10 septembre 2025.
 * Assemblée nationale, 14e législature, question écrite n° 99271, réponse publiée au JO le
   11 avril 2017, p. 2983.
+
+## D-189 — L'ASS entre dans le format d'entrée : la fin de droits, quatre refus et une correction
+
+**Le point de départ.** D-179 avait mesuré l'ASS en écrivant ses entrées à la main. D-183 notait
+qu'elle « demande `ass_precondition_remplie` et un chômeur en fin de droits : un champ de plus, et
+`activite` avec lui ». Le README disait encore « nothing that opens the ASI or the ASS ». Le
+calculateur ne savait donc pas dire un chômeur de longue durée.
+
+**Ce que dit la loi.** Le Code du travail a été lu sur le Code du travail numérique (texte en
+vigueur), et la version de 2024 vérifiée sur Légifrance là où le texte a changé depuis.
+* **Qui y a droit.** « Ont droit à une allocation de solidarité spécifique les travailleurs
+  privés d'emploi qui ont épuisé leurs droits à l'allocation d'assurance, qui ne satisfont pas
+  aux conditions pour bénéficier de l'allocation des travailleurs indépendants […] et qui
+  satisfont à des conditions d'activité antérieure et de ressources » (art. L. 5423-1, en
+  vigueur depuis le 23 août 2019). L'allocataire de l'ARE de 50 ans ou plus peut aussi opter
+  pour l'ASS, et « le versement de l'allocation d'assurance est interrompu » (art. L. 5423-2).
+* **L'activité antérieure.** Il faut justifier « de cinq ans d'activité salariée dans les dix
+  ans précédant la fin du contrat de travail à partir de laquelle ont été ouverts leurs droits
+  aux allocations d'assurance », réduits d'un an par enfant élevé, dans la limite de trois
+  (art. R. 5423-1, 1°). Il faut aussi chercher un emploi (2°).
+* **Le plafond.** Les ressources mensuelles doivent être « inférieures à un plafond
+  correspondant à 70 fois le montant journalier de l'allocation pour une personne seule et 110
+  fois le même montant pour un couple » (3°). Elles « comprennent l'allocation de solidarité
+  ainsi que les autres ressources de l'intéressé et, le cas échéant, de son conjoint […],
+  telles qu'elles doivent être déclarées à l'administration fiscale pour le calcul de l'impôt
+  sur le revenu avant déduction des divers abattements ». Le montant retenu est « le douzième
+  du total des ressources perçues pendant les douze mois précédant » la demande (art.
+  R. 5423-2). L'allocation chômage « précédemment perçue par l'intéressé » n'en fait pas partie
+  (art. R. 5423-3, 1°), ni une ressource dont la perception est « interrompue de manière
+  certaine » (art. R. 5423-5).
+* **La réduction près du plafond.** Au-delà, « l'allocation n'est versée qu'à concurrence d'un
+  montant global de ressources égal au plafond » (art. R. 5423-6). Elle « n'est pas versée
+  lorsque le montant mensuel dû est inférieur au taux journalier » (art. R. 5423-13).
+* **Le montant de 2024.** « Le montant journalier de l'allocation de solidarité spécifique est
+  fixé à 18,17 euros, à compter du 1er avril 2023 » (décret n° 2023-301, art. 1er), puis « à
+  19,01 euros à compter du 1er avril 2024 » (décret n° 2024-341, art. 1er). Un mois de 30 jours
+  vaut 545,10 €, puis 570,30 €. Le plafond d'une personne seule vaut 1 271,90 €, puis
+  1 330,70 € ; celui d'un couple, 1 998,70 €, puis 2 091,10 €.
+* **Le cumul avec une activité.** Depuis le 1er septembre 2017, la rémunération « est
+  intégralement cumulée avec le versement de l'allocation de solidarité spécifique pendant une
+  période de trois mois, consécutifs ou non ». Et « Tout mois civil au cours duquel une activité
+  même occasionnelle ou réduite a été exercée est pris en compte » (art. R. 5425-2). Pour la
+  suite, service-public.fr : « Si votre activité professionnelle se poursuit, le versement de
+  l'ASS est interrompu. »
+* **L'âge.** Dans sa version du 1er septembre 2023 au 1er janvier 2026, l'art. L. 5421-4 arrête
+  le revenu de remplacement « 1° Aux allocataires ayant atteint l'âge prévu à l'article
+  L. 161-17-2 du code de la sécurité sociale justifiant de la durée d'assurance […] requise pour
+  l'ouverture du droit à une pension de vieillesse à taux plein », et « 2° Aux allocataires
+  atteignant l'âge prévu au 1° de l'article L. 351-8 du même code ». Cet âge est celui de
+  L. 161-17-2 « augmenté de trois années » (CSS, art. L. 351-8, 1°), soit 64 + 3 = 67 ans.
+  L'âge légal vaut « Soixante-deux ans pour les assurés nés entre le 1er janvier 1955 et le
+  31 août 1961 inclus », puis « Soixante-deux ans et six mois pour les assurés nés en 1962 »
+  (CSS, art. D. 161-2-1-9, dans la rédaction du décret n° 2023-436). Service-public.fr le dit
+  ainsi : « Si vous avez suffisamment de trimestres pour percevoir une retraite à taux plein,
+  vous ne pouvez pas toucher l'ASS après l'âge légal de départ à la retraite. »
+* **L'AAH.** L'ASS « ne peut être cumulée avec l'allocation aux adultes handicapés […] dès lors
+  qu'un versement a été effectué au titre de cette dernière allocation » (art. L. 5423-7).
+* **La réforme annoncée.** Le 30 janvier 2024, le Premier ministre a dit : « nous proposerons la
+  bascule de l'allocation de solidarité spécifique au RSA et la suppression de cette
+  allocation » (cité par Previssima le 31 janvier 2024 ; le compte rendu de l'Assemblée n'a pas
+  pu être lu, le site ne répondait pas). Rien n'en est entré dans la loi. L'art. L. 5423-1 est
+  inchangé depuis 2019, le décret d'avril 2024 a revalorisé l'allocation, et service-public.fr
+  la décrit encore en 2026, à 19,48 € par jour. La loi de 2024 est celle de ce paragraphe.
+
+**Ce que fait openfisca.** L'ASS d'un mois vaut le plus petit de 30 montants journaliers et du
+plafond moins le douzième des ressources des douze mois précédents. Elle est nulle sous un
+montant journalier. Elle est ouverte par `ass_precondition_remplie`, sans allocation chômage
+le mois même, sans AAH, et jusqu'à 789 mois d'âge. Mesuré, la condition seule l'ouvre à qui
+n'a pas de salaire. `activite` décide de ce que fait un salaire : un demandeur d'emploi
+(`chomeur`) garde l'ASS quel que soit son salaire. Sinon, openfisca compte les mois de cumul et
+l'arrête au quatrième. L'ASS compte dans le RSA (moyenne des trois mois précédents), dans la
+prime d'activité et dans la prime de Noël. Elle n'entre ni dans l'impôt sur le revenu, ni dans
+l'aide au logement.
+
+**Le champ.** `Adult.fin_de_droits_ass` dit un demandeur d'emploi en fin de droits qui remplit
+la condition d'activité. Le constructeur écrit `ass_precondition_remplie` et `activite` à
+`chomeur` sur chaque mois de N-2 à N, comme le salaire. Le contrôle des ressources reste celui
+du moteur. `ass_precondition_remplie` est dans `MINIMA_INPUTS` depuis D-179 : l'historique des
+prestations est épinglé, même sans logement. Une ligne de sortie `ass` (individu, mensuelle,
+palier complet) suit celle du RSA. La page reçoit une case par adulte, et une ligne discrète
+juste sous le RSA.
+
+**Quatre refus, chacun une erreur 422 qui dit pourquoi.**
+* **À côté d'un salaire.** Le salaire est écrit sur chaque mois de trois années. Ce n'est pas
+  le cumul de trois mois de l'art. R. 5425-2. Avec `activite` à `chomeur`, openfisca verserait
+  l'ASS à côté, sans fin.
+* **À côté d'une allocation chômage.** L'ARE et l'ASS ne sont jamais versées pour les mêmes mois
+  (art. L. 5423-1 et L. 5423-2). Le format répartit le chômage sur chaque mois, et ne sait pas
+  dire leur succession. openfisca, lui, ne verserait aucune ASS, sans rien dire.
+* **À partir de l'année des 62 ans.** Dès l'âge légal, l'ASS dépend de la durée d'assurance,
+  que le format ne porte pas. Le refus est dans le constructeur, qui connaît l'année.
+* **Deux allocataires à côté d'une pension.** Les ressources de chacun comprennent l'ASS de
+  l'autre (art. R. 5423-2), et openfisca ne la compte pas. Sans autre ressource, deux ASS
+  pleines restent sous le plafond du couple : 60 montants journaliers contre 110. Le cas est
+  alors accepté, et vaut 13 536,00 €.
+
+**Ce que le moteur en fait, mesuré et refait à la main, en 2024.**
+* **Seul, sans ressources.** 3 × 545,10 + 9 × 570,30 = 6 768,00 € d'ASS. Le RSA comble la
+  différence avec son montant forfaitaire, sur la moyenne des trois mois précédents : 607,75 −
+  545,10 = 62,65 € en janvier, 635,71 − 570,30 = 65,41 € à partir de juillet, soit 827,04 €.
+  Avec la prime de Noël de 152,45 €, le revenu disponible vaut 7 747,49 €. Sans l'ASS, il
+  vaudrait 7 697,09 € : le RSA seul. L'ASS n'ajoute que 50,40 €, le décalage du trimestre de
+  référence à la revalorisation d'avril.
+* **En couple, le conjoint à 24 000 € brut.** 19 682,16 € de salaire imposable, soit 1 640,18 €
+  par mois. 1 998,70 − 1 640,18 = 358,52 € jusqu'en mars, 2 091,10 − 1 640,18 = 450,92 € ensuite,
+  5 133,84 € sur l'année. La prime d'activité tombe de 5 727,07 € à 778,03 €. Les 4 949,04 € de
+  moins sont, mois par mois, l'ASS moyenne des trois mois précédents : la prime compte « Les
+  revenus de remplacement des revenus professionnels » (CSS, art. L. 842-4, 2°), et les
+  allocations de solidarité en sont (C. trav., art. L. 5421-2). Le revenu disponible passe de
+  24 696,77 € à 25 058,77 €. Les 362,00 € de plus sont l'ASS, moins la prime perdue, plus la
+  prime de Noël et les 24,75 € de CRDS que la prime perdue ne paie plus.
+* **Locataire, 500 € en zone 2.** L'aide au logement vaut 3 532,77 €, avec ou sans l'ASS. Pour un
+  allocataire de l'ASS en chômage total depuis deux mois, « Il n'est tenu compte ni des revenus
+  d'activité professionnelle, ni des indemnités de chômage de l'intéressé » (CCH, art. R. 822-15,
+  premier alinéa et 3°). openfisca ne compte pas l'ASS non plus. Le RSA prend son forfait
+  logement, 76,29 €, et ne verse que 635,71 − 545,10 − 76,29 = 14,32 € en avril. En mai il
+  resterait 5,92 €, sous les 6 € que l'arbre verse au minimum. Le revenu disponible vaut
+  10 467,54 €, contre 10 324,50 € sans l'ASS.
+* **À 80 % d'incapacité, sans ressources.** L'AAH seule, 12 058,56 €, et pas d'ASS (art.
+  L. 5423-7).
+* **L'ordre de calcul.** Pour le locataire, le couple et le cas de la correction, l'ASS, le RSA,
+  la prime d'activité, l'aide au logement et le revenu disponible concordent à 0,05 € près.
+  C'est le cas par le registre, comme l'API, et avec `revenu_disponible` d'abord, comme la
+  jambe relevée de l'EMTR.
+* **L'EMTR.** 0,8678 pour l'allocataire seul, 0,2729 locataire, 0,5825 en couple. Sans
+  `activite`, openfisca comptait les 100 € de la jambe relevée comme un cumul, et arrêtait l'ASS
+  en avril : 12,27, 12,83 et 9,64. C'est pourquoi le champ écrit `activite`. Le premier euro de
+  salaire est alors pris comme le cumul le prend pendant ses trois premiers mois.
+
+**La correction 6 de `engine.corrections`.** openfisca lit une base par famille. Elle prend les
+ressources propres du premier parent, et celles du second avec, en plus, son allocation
+chômage. Un allocataire second parent ne voyait donc pas l'allocation du premier. Prenons
+24 000 € d'allocation brute à côté d'un allocataire sans ressources : l'ASS valait 1 263,50 €
+sur l'année avec l'allocataire premier, et 6 768,00 € avec l'allocataire second. En juin,
+126,31 € contre 570,30 €. La correction ajoute le terme d'openfisca lui-même, lu sur le premier
+parent : l'allocation des douze mois précédents, sauf si elle s'est arrêtée le mois d'avant.
+Elle ne le fait que si le premier parent n'est pas lui-même en fin de droits : sa propre
+allocation passée n'est pas une ressource (art. R. 5423-3, 1°). Enroulée autour de la formule
+d'openfisca. Le registre des corrections accepte désormais une citation du Code du travail, et
+le dit.
+
+**Ce que la correction ne fait pas.** Comme openfisca, elle compte l'allocation nette de sa CSG
+et de sa CRDS, là où l'article dit les montants « telles qu'elles doivent être déclarées ». Il
+en va de même des pensions, lues nettes (`retraite_nette`). L'écart vaut 3,2 % d'une pension au
+taux plein. Dans l'historique, seuls les mois de N le portent, car la CSG de N-1 lit le RFR
+nul de N-3. Les indemnités journalières du premier parent restent dehors : aucun champ ne les
+porte.
+
+**L'âge : ce que fait openfisca.** Il arrête l'ASS à 789 mois, « soit 65 ans et 9 mois », selon
+la note de son paramètre. La loi de 2024 ne nomme pas cet âge. Prenons un allocataire né en
+1959 : l'ASS s'arrête en novembre 2024, et l'ASPA, ouverte à 65 ans, la complète jusqu'à son
+plafond. Le revenu disponible vaut 12 296,72 €. Aucun adulte accepté n'atteint cet âge.
+
+**La population.** Elle ne déclare personne en fin de droits : `to_openfisca` n'écrit pas
+`ass_precondition_remplie`. Sa colonne `ass`, lue comme toute ligne du palier complet, vaut
+zéro. Un test le vérifie sur la trame des deux chemins de D-183. `to_openfisca.WIRING` ne
+change pas. Comme l'ASPA (D-186), l'ASS n'entre pas dans `STATE_TRANSFERS`.
+
+**Vus échouer, puis mutés.** Contre `95293ca`, 16 tests du moteur tombaient. Le format d'entrée
+en refusait 13 (« Extra inputs are not permitted »), et les 3 tests de refus ne trouvaient pas
+l'article attendu. Tombaient aussi 3 tests de l'API, 4 de la page, celui de la population
+(`KeyError: 'ass'`) et une vérification de `check.mjs`. Le test qui tue passait déjà : il écrit
+les entrées à la main sur openfisca brut. Le test du registre aussi, faute de correction.
+Avec le champ et sans la correction, seul le test de symétrie tombait : 6 768,00 € au lieu de
+1 263,50 €. Deux tests gardent la correction contre une extension trop large, avec un
+historique écrit à la main. Le premier : l'allocation passée de l'allocataire lui-même. Le
+second : une allocation du premier parent arrêtée en décembre.
+Neuf mutations sont prises :
+* sans `activite` : le test des entrées (`KeyError`), et celui de l'EMTR (12,27) ;
+* la correction sans son facteur d'allocataire : l'allocation passée, 0 au lieu de 545,10 € ;
+* sans son facteur d'interruption : l'allocation arrêtée, 341,10 € au lieu de 570,30 € en
+  juin ;
+* la correction non appliquée : la symétrie, et l'allocation arrêtée en janvier ;
+* le refus d'âge à 63 ans : le test d'âge, et le cas 422 de l'API ;
+* chacun des trois refus du format retiré : son test ;
+* la ligne de l'ASS jamais discrète : `check.mjs`, et le test de la page.
+
+**Ce qui reste.**
+* **L'ASS est imposable, et openfisca ne l'impose pas.** « Les règles fixées au 5 de l'article
+  158 du code général des impôts sont applicables » (C. trav., art. L. 5428-1, version du
+  1er janvier 2024). Le BOFIP en tire que l'ASS « est imposable entre les mains des
+  bénéficiaires dans la catégorie des traitements et salaires » (BOI-RSA-CHAMP-20-20, § 20).
+  L'effet a été mesuré par une réforme jetable qui ajoute l'ASS aux salaires imposables.
+  L'impôt ne bouge dans aucun des six ménages mesurés : sous le plafond de l'ASS, la tranche à
+  0 % et la décote suffisent. Le RFR de l'allocataire seul passe en revanche de 0 à 6 091 €.
+  Un couple dont le conjoint touche 15 000 € de pension déclarée perd 75,00 € de CRDS, son RFR
+  de N-2 passant de 13 500 € à 19 163,80 €. La base de N-2 des prestations familiales lit
+  aussi ces salaires imposables (`revenu_assimile_salaire_apres_abattements`). Corriger ferait
+  entrer une prestation de la famille dans chaque RFR, celui du palier léger et ceux
+  qu'épinglent D-177 et D-178 : c'est une entrée à part.
+* **Les montants nets plutôt que déclarés**, dans la base de l'ASS (plus haut).
+* **L'AAH du conjoint**, qu'openfisca compte dans les ressources de l'ASS alors qu'elle n'est
+  pas déclarée. Elle ne joue qu'au-dessus de 80 montants journaliers de ressources ; non
+  examinée plus loin.
+* **De 62 à 67 ans**, l'allocataire sans la durée du taux plein n'est pas exprimable.
+* **Le mois de 30 jours.** Le moteur paie 30 montants journaliers par mois, comme service-public
+  compte « 584,40 € pour 1 mois de 30 jours ». Le paiement d'un mois de 31 jours n'a pas été
+  vérifié.
+* **`date_debut_chomage`** n'est toujours pas posée (D-183). La neutralisation de
+  l'art. R. 822-15 ne porte que sur les revenus de l'allocataire, qui n'en a pas sur le format.
+* **openfisca-france.** L'asymétrie de la base et l'âge de 789 mois sont à signaler en amont.
+
+**Sources.**
+* Code du travail, art. L. 5421-2, L. 5421-4, L. 5423-1, L. 5423-2, L. 5423-7, L. 5428-1,
+  R. 5423-1 à R. 5423-6, R. 5423-13, R. 5425-2 et R. 5425-8, lus sur le Code du travail
+  numérique ; L. 5421-4, L. 5423-1 et L. 5428-1 dans leur version de 2024 sur Légifrance.
+* CSS, art. L. 161-17-2 et L. 351-8 (version du 1er septembre 2023 au 28 février 2025), et
+  L. 842-4, lus sur Légifrance ; art. D. 161-2-1-9, dans le décret n° 2023-436 du 3 juin 2023
+  (JO du 4 juin 2023).
+* CCH, art. R. 822-15, lu sur Légifrance (version en vigueur depuis le 1er janvier 2021).
+* Décrets n° 2023-301 du 22 avril 2023 et n° 2024-341 du 12 avril 2024, art. 1er.
+* BOFIP, BOI-RSA-CHAMP-20-20, § 1 à 20.
+* Service-public.fr, fiche F12484 « Allocation de solidarité spécifique (ASS) », vérifiée le
+  1er avril 2026.
+* Previssima, « Allocation de solidarité spécifique (ASS), RSA, Smic, assurance chômage… Les
+  mesures proposées par Gabriel Attal pour atteindre le « plein-emploi » », 31 janvier 2024.
