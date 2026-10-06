@@ -12035,6 +12035,14 @@ mutations sont prises, chacune par le test qui lui est destiné :
 * la case cochée sans aide à domicile : le test de forme seul, comme voulu, puisqu'aucun
   montant ne bouge.
 
+**Le gate.** `make gate` donne 1 648 réussis, 174 ignorés et 12 échecs, en 25 min 58 s. Les
+12 échecs sont ceux de D-176 à D-194, faute de données dans ce conteneur. Les 18 tests
+ajoutés passent : 14 au moteur, 3 à l'API et 1 à la page. Les réussis ne sont pourtant que
+16 de plus que sur `main`, et les ignorés 2 de plus : les deux tests de budget de temps de
+l'API ont sauté, la machine portant les gates de trois branches à la fois. Ce n'est pas vert
+au même sens. Relancés juste après, à une charge de 3 sur 4 cœurs, les cinq tests de budget
+de temps passent.
+
 **Ce qui reste.**
 * **La pension de 3e catégorie sans la carte**, et la personne à charge de cette catégorie
   qui vit sous le toit : le format ne porte ni la catégorie, ni un adulte à charge.
