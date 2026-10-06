@@ -3040,27 +3040,30 @@ ASI_MAXIMA = ([ASI_PLAFOND_SEUL[0] / 12 - PENSION_INVALIDITE_MINIMUM_2024] * 3
 
 
 def _a_cote_d_une_aah_by_hand(pensions: float, plafonds: list[float], maxima: list[float],
-                              aah_comptee: bool = True) -> float:
+                              aah_comptee: bool = True, mva: float = 0.0) -> float:
     """The minimum over 2024 of a spouse who alone draws it, beside an AAH at its full amount: a
     month at a time, the ceiling less the couple's pensions and, when it counts, the mean AAH of
-    the three months before, within the month's maximum (CSS art. L. 815-9, L. 815-24-1)."""
+    the three months before, within the month's maximum (CSS art. L. 815-9, L. 815-24-1). `mva`
+    is the AAH's complément a month, counted with it when it counts (D-203)."""
     total = 0.0
     for month in range(12):
-        aah = sum(AAH_MOIS[month:month + 3]) / 3 if aah_comptee else 0.0
+        aah = sum(AAH_MOIS[month:month + 3]) / 3 + mva if aah_comptee else 0.0
         total += max(0.0, min(maxima[month], plafonds[month] - pensions / 12 - aah))
     return total
 
 
 def _aah_et_conjoint(naissance: int = 1958, retraite: float = 0.0, *, second: bool = False,
-                     conjoint: dict[str, Any] | None = None) -> HouseholdInput:
-    """A married couple without a dwelling: an AAH at 80 % born in `naissance`, with a
-    retirement pension of `retraite` a year when told, beside a spouse born in 1954 with 5 000
-    EUR of retirement pension, at the ASPA, unless `conjoint` says otherwise. The couple of
-    D-185 and D-179. `second` puts the AAH second, as the famille's `conjoint`."""
+                     conjoint: dict[str, Any] | None = None,
+                     logement: dict[str, Any] | None = None) -> HouseholdInput:
+    """A married couple without a dwelling, unless `logement` gives one: an AAH at 80 % born in
+    `naissance`, with a retirement pension of `retraite` a year when told, beside a spouse born
+    in 1954 with 5 000 EUR of retirement pension, at the ASPA, unless `conjoint` says otherwise.
+    The couple of D-185 and D-179. `second` puts the AAH second, as the famille's `conjoint`."""
     fields: dict[str, Any] = {"pension_annuelle": retraite} if retraite else {}
     aah = _adulte(naissance=naissance, handicap={"taux_incapacite": 0.8}, **fields)
     epoux = conjoint or _adulte(naissance=1954, pension_annuelle=5_000)
-    return _foyer(*((epoux, aah) if second else (aah, epoux)))
+    household: dict[str, Any] = {"logement": logement} if logement else {}
+    return _foyer(*((epoux, aah) if second else (aah, epoux)), **household)
 
 
 #: The households the D-200 tests price, each computed once.
@@ -3182,6 +3185,125 @@ def test_the_engine_alone_counts_the_aah_of_a_pensioner_beside_a_spouse_at_the_a
     assert float(base[0]) == pytest.approx(3_000 / 12 + aah, abs=0.01), (
         "openfisca now leaves out the AAH of a spouse who holds a retirement pension: remove "
         "correction 16")
+
+
+# --------------------------------------------------------------------------- #
+# the MVA among the resources of a spouse's ASPA or ASI (docs/DECISIONS.md D-203)
+# --------------------------------------------------------------------------- #
+#: The majoration pour la vie autonome a month, from October 2023 to December 2024, which a
+#: spouse's minimum reads over the three months before each month of 2024 (CSS art. R. 815-29).
+MVA_MOIS = 104.77
+#: The housing aid of these couples renting at 500 EUR in zone 2 over 2024, as measured before
+#: D-203 and in D-200: the aid counts the incomes the income tax retains (CCH art. R. 822-4),
+#: where neither minimum is, so the MVA counted in them moves none of it.
+AIDE_LOGEMENT_AAH_CONJOINT = 4_283.19
+
+#: The housed couples the D-203 tests price, each computed once.
+AAH_MVA_CASES: dict[str, Any] = {
+    "sans_pension_66_ans": lambda: _aah_et_conjoint(1958, logement=RENTING),
+    "sans_pension_49_ans_second": lambda: _aah_et_conjoint(1975, second=True, logement=RENTING),
+    "retraite_66_ans": lambda: _aah_et_conjoint(1958, 3_000, logement=RENTING),
+    "sans_pension_a_cote_de_l_asi": lambda: _aah_et_conjoint(
+        1975, conjoint=_adulte(naissance=1980, pension_invalidite_annuelle=6_000),
+        logement=RENTING),
+}
+
+
+@functools.cache
+def _aah_mva_rows(name: str) -> dict[str, Any]:
+    """One of `AAH_MVA_CASES` priced as the API prices it, by `compute` on the full tier."""
+    return compute(AAH_MVA_CASES[name](), 2024, tier="full").baseline
+
+
+@pytest.mark.parametrize("name", ["sans_pension_66_ans", "sans_pension_49_ans_second"],
+                         ids=["66 ans", "49 ans, second"])
+def test_beside_a_spouse_at_the_aspa_the_mva_of_a_spouse_without_a_pension_counts(
+    name: str,
+) -> None:
+    """The Cnav's list of the resources the ASPA excludes names the « Compléments d'allocation
+    aux adultes handicapés (AAH) du demandeur : complément de ressources (CRH) et majoration
+    pour la vie autonome (MVA) », and the « Compléments d'AAH du conjoint, concubin ou partenaire
+    pacsé s'il est titulaire d'un avantage de vieillesse ou d'invalidité »; every other resource
+    counts (CSS art. R. 815-22). D-185's couple renting at 500 EUR in zone 2: the AAH holder
+    without a pension draws the MVA, 104.77 EUR a month, which counts beside the AAH. The
+    spouse's ASPA loses it each month, 627.58 EUR over 2024 instead of 1 884.82, and the
+    disposable income is 23 226.57 EUR instead of 24 483.81, whoever heads the famille."""
+    rows = _aah_mva_rows(name)
+    aspa = _a_cote_d_une_aah_by_hand(5_000, ASPA_PLAFONDS, ASPA_MAXIMA, mva=MVA_MOIS)
+    assert aspa == pytest.approx(627.58, abs=0.01)
+    assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["mva"] == pytest.approx(MVA_2024, abs=0.05)
+    assert rows["aide_logement"] == pytest.approx(AIDE_LOGEMENT_AAH_CONJOINT, abs=0.05)
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(
+        5_000 + AAH_2024 + MVA_2024 + aspa + AIDE_LOGEMENT_AAH_CONJOINT, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(23_226.57, abs=0.01)
+
+
+def test_beside_a_spouse_at_the_aspa_the_mva_of_a_pensioner_is_left_out() -> None:
+    """The compléments of a spouse who « est titulaire d'un avantage de vieillesse » are left out,
+    as the AAH is (D-200): with 3 000 EUR of retirement pension, the housed couple keeps the
+    ASPA of the couple's ceiling less the two pensions, 10 854.02 EUR, and 33 453.01 EUR of
+    disposable income, as before D-203."""
+    rows = _aah_mva_rows("retraite_66_ans")
+    aspa = _a_cote_d_une_aah_by_hand(8_000, ASPA_PLAFONDS, ASPA_MAXIMA, aah_comptee=False)
+    assert rows["mva"] == pytest.approx(MVA_2024, abs=0.05)
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+    assert rows["aspa"] == pytest.approx(10_854.02, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(33_453.01, abs=0.05)
+
+
+def test_beside_a_spouse_at_the_asi_the_mva_of_a_spouse_without_a_pension_counts_too() -> None:
+    """The ASI's resources are those of the ASPA (art. R. 815-61), and the Cnav's list for the
+    ASI excludes the compléments of a spouse in the same words. Beside the AAH holder of 49
+    without a pension, renting, the invalidity pensioner with 6 000 EUR drew 714.00 EUR of ASI
+    over 2024 (D-200); with the MVA among the couple's resources, the ceiling less the pension,
+    the AAH and the MVA is below zero every month, and the ASI is nil."""
+    rows = _aah_mva_rows("sans_pension_a_cote_de_l_asi")
+    asi = _a_cote_d_une_aah_by_hand(6_000, ASI_PLAFONDS, ASI_MAXIMA, mva=MVA_MOIS)
+    assert asi == 0.0
+    assert rows["mva"] == pytest.approx(MVA_2024, abs=0.05)
+    assert rows["asi"] == pytest.approx(asi, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(
+        6_000 + AAH_2024 + MVA_2024 + AIDE_LOGEMENT_AAH_CONJOINT, abs=0.05)
+
+
+@pytest.mark.parametrize("name", ["sans_pension_66_ans", "sans_pension_a_cote_de_l_asi"])
+def test_the_mva_counted_prices_the_same_whatever_is_computed_first(name: str) -> None:
+    """The MVA reads the housing aid of its month, which the builder pins month by month (D-178),
+    and the housing aid reaches the ASPA and the ASI of its month through its student-grant test
+    and the RSA's resources (D-179). Through the registry, as the API computes it, and with
+    `revenu_disponible` first, as the EMTR's bumped leg does: the ASPA, the ASI, the AAH, the
+    MVA, the RSA, the housing aid and the disposable income agree."""
+    situation = build_situation(AAH_MVA_CASES[name](), 2024)
+    registry = extract(_pinned(situation), 2024, "full")
+    first = _pinned(situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    assert disposable == pytest.approx(registry["revenu_disponible"], abs=0.05)
+    for key, variable in (("aspa", "aspa"), ("asi", "asi"), ("aah", "aah"), ("mva", "caah"),
+                          ("rsa", "rsa"), ("aide_logement", "aide_logement")):
+        assert float(first.calculate_add(variable, "2024").sum()) == pytest.approx(
+            registry[key], abs=0.05), key
+
+
+def test_the_engine_alone_leaves_the_mva_of_a_spouse_out_of_the_aspa() -> None:
+    """The kill test for correction 19. Raw openfisca, D-185's couple renting with the AAH holder
+    at 49, below its ASPA age: in June 2024 the AAH holder draws the MVA, 104.77 EUR in each of
+    March, April and May, and the couple's base counts the mean AAH of those months, 1 001.16
+    EUR, and nothing of the MVA. The day this fails, openfisca counts the compléments itself,
+    and the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    raw = SimulationBuilder().build_from_entities(
+        uncorrected_baseline(), build_situation(_aah_et_conjoint(1975, logement=RENTING), 2024))
+    assert list(raw.calculate("aspa_eligibilite", "2024-06")) == [False, True]
+    for month in ("2024-03", "2024-04", "2024-05"):
+        assert float(raw.calculate("caah", month)[0]) == pytest.approx(MVA_MOIS, abs=0.01), month
+    aah = (971.37 + 2 * 1_016.05) / 3
+    base = raw.calculate("asi_aspa_base_ressources_individu", "2024-06")
+    assert float(base[0]) == pytest.approx(aah, abs=0.01), (
+        "openfisca now counts the MVA of a spouse among the resources of the ASPA: remove "
+        "correction 19")
 
 
 # --------------------------------------------------------------------------- #
