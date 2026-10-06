@@ -207,7 +207,9 @@ the smallest complete demonstration that the reform machinery does what it says.
   a job seeker whose insurance rights are exhausted with the ASS's work condition
   met, which opens the ASS (D-189); a child, a year of birth and a disability, which
   opens the AEEH under 20 and, with the invalidity card, half a part (D-191); a
-  household adds its dwelling, its niche bases and an IFI declaration.
+  household adds its dwelling, its niche bases, an IFI declaration and, for a lone
+  adult, a situation de famille, divorced or widowed, a widowed parent having a
+  married couple's parts and no case T (D-197).
   Every other input takes the engine's default. No self-employment, no capital
   income, no property income.
 * **Benefits are assessed on reference periods Phase 0 leaves empty**, which

@@ -1042,12 +1042,16 @@ def test_every_household_field_on_the_wire_is_sent_by_the_payload(source: str):
     household's own fields were left out, and a lone adult's situation de famille is one of
     them (D-197). Each field of `HouseholdInput` must be named in `payload`, derived from the
     model and never listed by hand: a field the page cannot send is a household the page
-    cannot express."""
+    cannot express. And every element `payload` reads must exist on the page, under that id."""
     from impots.api.schemas import HouseholdInput
 
     body = _function(source, "payload")
     for field in HouseholdInput.model_fields:
         assert re.search(rf"\b{field}\b", body), f"{field} is never sent"
+    read = re.findall(r'\$\("(\w+)"\)', body)
+    assert "situation" in read, "the payload reads no situation de famille"
+    for element in read:
+        assert f'id="{element}"' in source, f"{element} is read, and no element has that id"
 
 
 SITUATION_HARNESS = """

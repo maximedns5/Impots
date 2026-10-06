@@ -3131,7 +3131,7 @@ def test_the_widow_s_reduction_gives_back_no_more_than_the_cap_took(
     income pays 10 957.54 on one part. One child: 2.5 parts pay 3 362.08, the capped tax is
     10 957.54 - 3 x 1 791 = 5 584.54, and the cap added 2 222.46, which takes the 1 993 whole:
     3 591.54. Two children: 3 parts pay 2 729.74, capped at 10 957.54 - 4 x 1 791 = 3 793.54;
-    the cap added 1 063.80, under 1 993, and the reduction gives back exactly that, so the tax
+    the cap added 1 063.79, under 1 993, and the reduction gives back exactly that, so the tax
     is the uncapped one. The DGFiP's simulator: « droits simples » of 5 585 and 3 794, marked
     capped, then 3 592 and 2 730 due."""
     veuf = _seul(enfants, salaire=80_000)

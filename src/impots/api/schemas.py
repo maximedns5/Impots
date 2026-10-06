@@ -470,9 +470,10 @@ class HouseholdInput(BaseModel):
         "divorcés qui vivent seuls » (art. 194, II). Divorced or separated is taxed as single. "
         "Without a dependant a widow has one part, as a single person has: the half-part of "
         "art. 195, 1, a asks five years of raising a child alone, which the format does not "
-        "carry. Refused beside a spouse, whose situation is `couple_marie_ou_pacse`. The year "
-        "of the death, which takes two declarations (art. 6, 8), is not expressible, and "
-        "openfisca's `jeune_veuf` is refused (D-197).",
+        "carry. Divorced or widowed is refused beside a spouse, the couple's situation being "
+        "`couple_marie_ou_pacse` (art. 6, 1). The year of the death, which takes two "
+        "declarations (art. 6, 8), is not expressible, and openfisca's `jeune_veuf` is "
+        "refused (D-197).",
     )
     parent_isole: bool | None = Field(
         default=None,
