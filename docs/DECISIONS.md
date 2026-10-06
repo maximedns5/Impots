@@ -14692,9 +14692,10 @@ passent. Deux mutations sont prises, chacune dans une copie de `src` hors du dé
 * Les deux mutants, sur les 7 tests : 108 s et 139 s.
 * `tests/test_charter.py`, l'entrée écrite : 8 réussis.
 * `ruff check src tests scripts` : rien à signaler.
-* Sur la branche fusionnée avec D-201 et D-202, où la correction devient la 21 : les tests du
-  moteur de D-200 à D-203, les deux du registre et les trois tests d'ordre de la population,
-  160 réussis ; `tests/test_ui.py` et `tests/test_charter.py`, 126 réussis. 286 en 12 min.
+* Sur la branche fusionnée avec D-201 et D-202, où la correction devient la 21 : les tests
+  du moteur de D-200 à D-203, les deux du registre et les trois tests d'ordre de la
+  population, 160 réussis ; `tests/test_ui.py` et `tests/test_charter.py`, 126 réussis. 286
+  en 12 min.
 
 Le gate complet n'a pas tourné, à la demande du propriétaire : le job `fast` de la CI fait
 tourner la suite sur la PR.
