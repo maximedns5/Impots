@@ -16,7 +16,7 @@ from __future__ import annotations
 from itertools import pairwise
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from impots.entreprises.reforms import FirmReformSpec
 
@@ -444,18 +444,44 @@ class Patrimoine(BaseModel):
     droits_sociaux_conserves_six_ans: Annotated[float, Field(ge=0, le=1e10)] = 0.0
 
 
+#: The situations de famille a lone adult declares in the cadre A of the 2042, « Célibataire »,
+#: « Divorcé(e)/séparé(e) » and « Veuf(ve) », under the names openfisca's `statut_marital` gives
+#: them. A couple's, married or pacsé, is `couple_marie_ou_pacse` (D-197).
+SituationFamille = Literal["celibataire", "divorce", "veuf"]
+
+
 class HouseholdInput(BaseModel):
     model_config = INPUT_CONFIG
 
     adults: Annotated[list[Adult], Field(min_length=1, max_length=2)]
     children: Annotated[list[Child], Field(max_length=MAX_CHILDREN)] = Field(default_factory=list)
     couple_marie_ou_pacse: bool = False
+    situation_famille: SituationFamille = Field(
+        default="celibataire",
+        description="The situation de famille of a lone adult, as the 2042 declares it: "
+        "célibataire (C), divorcé or separated (D), or veuf (V), the spouse or PACS partner "
+        "having died before the year simulated. Written onto openfisca's monthly "
+        "`statut_marital` on every covered month, like the salary, since the CSG of a "
+        "replacement income reads the parts of N-2; célibataire, the default, is what "
+        "openfisca's formula answers for a lone declarant, and writes nothing. A widow with a "
+        "dependent child has the parts of a married couple (CGI art. 194, I), each half-part "
+        "above one capped at the general ceiling, with the widow's own complementary "
+        "reduction (art. 197, I, 2), and never case T, which is for « célibataires ou "
+        "divorcés qui vivent seuls » (art. 194, II). Divorced or separated is taxed as single. "
+        "Without a dependant a widow has one part, as a single person has: the half-part of "
+        "art. 195, 1, a asks five years of raising a child alone, which the format does not "
+        "carry. Refused beside a spouse, whose situation is `couple_marie_ou_pacse`. The year "
+        "of the death, which takes two declarations (art. 6, 8), is not expressible, and "
+        "openfisca's `jeune_veuf` is refused (D-197).",
+    )
     parent_isole: bool | None = Field(
         default=None,
         description="Case T — parent isolé. Worth half a fiscal part. Left unset it is "
         "inferred: true for a lone adult with at least one dependent child, which is "
         "what a one-adult household with children describes, false otherwise. Set it "
-        "explicitly to false for a lone filer who does not in fact live alone.",
+        "explicitly to false for a lone filer who does not in fact live alone. Never for a "
+        "widow, who has a married couple's parts instead: not inferred, and refused when "
+        "claimed (CGI art. 194, II; D-197).",
     )
     logement: Logement | None = None
     niches: Niches | None = None
@@ -469,9 +495,30 @@ class HouseholdInput(BaseModel):
     That is the law working, not the model failing."""
 
     def resolved_parent_isole(self) -> bool:
-        """Whether to claim case T for this household."""
-        lone_parent = len(self.adults) == 1 and bool(self.children)
+        """Whether to claim case T for this household. Never inferred for a widow: case T is
+        for « contribuables célibataires ou divorcés qui vivent seuls » (CGI art. 194, II), and
+        a widow with a dependent child has a married couple's parts (I). openfisca would add
+        the half-part to them (D-197)."""
+        lone_parent = (len(self.adults) == 1 and bool(self.children)
+                       and self.situation_famille != "veuf")
         return lone_parent if self.parent_isole is None else self.parent_isole
+
+    @field_validator("situation_famille", mode="before")
+    @classmethod
+    def _refuse_the_year_of_the_death(cls, value: Any) -> Any:
+        """openfisca's `jeune_veuf` is the survivor's own declaration for the months after a
+        death in the year; on a lone declarant it counts no adult, and prices the income tax
+        as NaN (D-197). Refused with the reason, rather than with the list of values."""
+        if value == "jeune_veuf":
+            raise ValueError(
+                "L'année du décès n'est pas exprimable : « l'impôt afférent aux bénéfices et "
+                "revenus non encore taxés est établi au nom des époux ou partenaires », et « Le "
+                "conjoint ou le partenaire survivant est personnellement imposable pour la "
+                "période postérieure au décès » (CGI art. 6, 8), avec les parts d'un couple "
+                "marié. Ce sont deux déclarations, que le format ne porte pas. Choisissez veuf "
+                "pour les années qui suivent."
+            )
+        return value
 
     @model_validator(mode="after")
     def _check_couple(self) -> HouseholdInput:
@@ -488,6 +535,19 @@ class HouseholdInput(BaseModel):
         if self.parent_isole and (len(self.adults) != 1 or not self.children):
             raise ValueError(
                 "parent_isole=true suppose un adulte seul avec au moins un enfant à charge."
+            )
+        if len(self.adults) == 2 and self.situation_famille != "celibataire":
+            raise ValueError(
+                "situation_famille est celle d'un adulte seul. Un couple marié ou pacsé fait "
+                "l'objet d'une imposition commune (CGI art. 6, 1) : sa situation est "
+                "couple_marie_ou_pacse. Divorcé ou veuf, chacun déclare seul."
+            )
+        if self.situation_famille == "veuf" and self.parent_isole:
+            raise ValueError(
+                "La case T est réservée aux « contribuables célibataires ou divorcés qui vivent "
+                "seuls » (CGI art. 194, II). Un veuf qui a un enfant à charge a déjà les parts "
+                "d'un couple marié (art. 194, I), et la notice lui dit « ne cochez pas la case "
+                "T ». Le moteur ajouterait une demi-part."
             )
         claimants = [adult for adult in self.adults if adult.fin_de_droits_ass]
         if len(claimants) == 2 and any(adult.pension_annuelle for adult in self.adults):

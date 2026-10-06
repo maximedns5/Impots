@@ -3032,11 +3032,14 @@ REDUCTION_VEUF = 1_993
 
 
 def _seul(enfants: int = 1, situation: str = "veuf", *, salaire: float = 150_000,
-          carte: bool = False, **household: Any) -> HouseholdInput:
+          carte: bool = False, enfant_carte: bool = False, **household: Any) -> HouseholdInput:
     """An adult alone, born in 1985, holding the card if `carte`, with `enfants` children born
-    from 2012, in the situation de famille `situation`: widowed unless told otherwise. Case T as
-    the wire format infers it, unless `parent_isole` says otherwise."""
-    children = [{"annee_naissance": 2012 + i} for i in range(enfants)]
+    from 2012, the first holding the card too if `enfant_carte`, in the situation de famille
+    `situation`: widowed unless told otherwise. Case T as the wire format infers it, unless
+    `parent_isole` says otherwise."""
+    children: list[dict[str, Any]] = [{"annee_naissance": 2012 + i} for i in range(enfants)]
+    if enfant_carte:
+        children[0]["handicap"] = {"taux_incapacite": 0.8, "carte_invalidite": True}
     return _foyer(_adulte(salaire, 1985, carte=carte), children=children,
                   situation_famille=situation, **household)
 
@@ -3097,7 +3100,7 @@ def test_under_its_ceilings_a_widowed_parent_pays_on_the_married_quotient() -> N
     assert _rows(deux)["ir"] == 0.0
 
 
-@pytest.mark.parametrize(("enfants", "demi_parts"), [(1, 3), (2, 4)])
+@pytest.mark.parametrize(("enfants", "demi_parts"), [(1, 3), (2, 4), (3, 6)])
 def test_a_widowed_parent_s_half_parts_are_capped_then_given_the_widow_s_reduction(
         enfants: int, demi_parts: int) -> None:
     """CGI art. 197, I, 2, on 2024 incomes: the reduction the quotient brings « ne peut excéder
@@ -3109,9 +3112,10 @@ def test_a_widowed_parent_s_half_parts_are_capped_then_given_the_widow_s_reducti
     1 993 € pour cette part supplémentaire lorsque la réduction de leur cotisation d'impôt est
     plafonnée ». At 150 000 EUR one part pays 29 714.95. One child: three half-parts above one
     part, 29 714.95 - 5 373 = 24 341.95, less 1 993, so 22 348.95. Two children: four, 22 550.95
-    and 20 557.95. The DGFiP's simulator: « droits simples » of 24 342 and 22 551, marked
-    capped, then 22 349 and 20 558 due. A single parent with case T pays 25 490.95 and
-    23 699.95 (D-193)."""
+    and 20 557.95. Three, 4 parts: six, 18 968.95 and 16 975.95, one reduction for the one part.
+    The DGFiP's simulator: « droits simples » of 24 342, 22 551 and 18 969, marked capped, then
+    22 349, 20 558 and 16 976 due. A single parent with case T pays 25 490.95 and 23 699.95 with
+    one and two children (D-193)."""
     veuf = _seul(enfants)
     assert _foyer_variable(veuf, "ir_ss_qf", "2024") == pytest.approx(IR_UNE_PART_150K, abs=0.01)
     assert _rows(veuf)["ir_avant_reductions"] == pytest.approx(
@@ -3139,19 +3143,29 @@ def test_the_widow_s_reduction_gives_back_no_more_than_the_cap_took(
     assert _rows(veuf)["ir_avant_reductions"] == pytest.approx(impot, abs=0.02)
 
 
-@pytest.mark.parametrize(("enfants", "parts", "demi_parts"), [(1, 3.0, 4), (2, 3.5, 5)])
-def test_a_widowed_parent_holding_the_card(enfants: int, parts: float, demi_parts: int) -> None:
+@pytest.mark.parametrize(("enfants", "carte", "enfant_carte", "parts", "demi_parts"), [
+    (1, True, False, 3.0, 4), (2, True, False, 3.5, 5), (1, False, True, 3.0, 4),
+    (1, True, True, 3.5, 5),
+], ids=["carte du parent, un enfant", "carte du parent, deux enfants", "carte de l'enfant",
+        "les deux cartes"])
+def test_a_widowed_parent_holding_the_card(enfants: int, carte: bool, enfant_carte: bool,
+                                           parts: float, demi_parts: int) -> None:
     """Art. 195, 5: half a part more « pour les contribuables célibataires, divorcés ou veufs
-    ayant un ou plusieurs enfants à charge » who hold the card. The widow's 2.5 parts with one
-    child become 3, the 3 with two 3.5. At 150 000 EUR, each half-part above one part capped at
-    1 791 EUR, then the widow's reduction of 1 993 and the card's of 1 785 (art. 197, I, 2):
-    29 714.95 - 4 x 1 791 - 3 778 = 18 772.95 with one child, 29 714.95 - 5 x 1 791 - 3 778 =
-    16 981.95 with two. D-193 had written the first by hand, as the DGFiP's simulator gives it,
-    18 773 EUR; the simulator gives the second, 3.5 parts and 16 982."""
-    rows = _rows(_seul(enfants, carte=True))
+    ayant un ou plusieurs enfants à charge » who hold the card; art. 195, 2, half a part more for
+    each dependent child who holds it (D-191). The widow's 2.5 parts with one child become 3,
+    the 3 with two 3.5. At 150 000 EUR, each half-part above one part capped at 1 791 EUR, then
+    the widow's reduction of 1 993 and the card's of 1 785, one per card (art. 197, I, 2), which
+    « peut se cumuler » with the widow's (BOI-IR-LIQ-20-20-20, § 240): 29 714.95 - 4 x 1 791 -
+    3 778 = 18 772.95 with one child and either card, 29 714.95 - 5 x 1 791 - 3 778 = 16 981.95
+    with two children, and 29 714.95 - 5 x 1 791 - 1 993 - 2 x 1 785 = 15 196.95 with both
+    cards. D-193 had written the first by hand, as the DGFiP's simulator gives it, 18 773 EUR;
+    the simulator gives the others too: 18 773, 16 982 and 15 197, on 3, 3.5 and 3.5 parts."""
+    rows = _rows(_seul(enfants, carte=carte, enfant_carte=enfant_carte))
     assert rows["parts_fiscales"] == parts
+    cartes = carte + enfant_carte
     assert rows["ir_avant_reductions"] == pytest.approx(
-        IR_UNE_PART_150K - demi_parts * DEMI_PART - REDUCTION_VEUF - COMPLEMENT_CARTE, abs=0.01)
+        IR_UNE_PART_150K - demi_parts * DEMI_PART - REDUCTION_VEUF - cartes * COMPLEMENT_CARTE,
+        abs=0.01)
 
 
 def test_the_engine_alone_adds_case_t_to_a_widow() -> None:

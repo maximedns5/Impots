@@ -6,9 +6,9 @@
  *
  * It loads the page's <script> under a minimal DOM shim and a stubbed fetch, then
  * drives the interactions that carry real logic: prefilling the reform panel from
- * current law, showing case T only when it can apply, sending only the knobs the
- * user actually moved, and colouring the Δ column by "better off" rather than by
- * "bigger".
+ * current law, showing case T only when it can apply, and never to a widow (D-197),
+ * sending only the knobs the user actually moved, and colouring the Δ column by
+ * "better off" rather than by "bigger".
  */
 import fs from "node:fs";
 import assert from "node:assert/strict";
@@ -154,6 +154,19 @@ ok("case T hidden again for a couple", () => {
   assert.equal($("marie").checked, true, "two adults must be married/pacsed");
   $("one").onclick();
 });
+ok("the situation de famille is a lone adult's", () => {
+  assert.equal($("situationWrap").hidden, false);
+  assert.equal($("situation").value, "celibataire", "célibataire is the default (D-197)");
+  $("two").onclick(); assert.equal($("situationWrap").hidden, true);
+  $("one").onclick(); assert.equal($("situationWrap").hidden, false);
+});
+ok("a widowed parent is offered no case T", () => {
+  $("situation").value = "veuf"; $("situation").fire("change", {});
+  assert.equal($("isoleWrap").hidden, true, "case T is for célibataires ou divorcés (D-197)");
+  $("situation").value = "divorce"; $("situation").fire("change", {});
+  assert.equal($("isoleWrap").hidden, false, "a divorced parent may claim case T");
+  $("situation").value = "celibataire"; $("situation").fire("change", {});
+});
 
 console.log("reform diffing");
 ok("moving the top rate sends only ir_bareme", () => {
@@ -286,6 +299,15 @@ ok("a history box unticked in the full tier decides nothing in the light tier", 
 });
 $("full").checked = true; $("full").onchange({ target: { checked: true } });
 $("hist").checked = true;
+$("situation").value = "veuf"; $("situation").fire("change", {});
+$("go").onclick();
+await new Promise((r) => setTimeout(r, 60));
+ok("a widowed parent sends her situation and no case T", () => {
+  const household = JSON.parse(calls.at(-1).opts.body).household;
+  assert.equal(household.situation_famille, "veuf");
+  assert.equal(household.parent_isole, undefined, "the API refuses case T beside a widow");
+});
+$("situation").value = "celibataire"; $("situation").fire("change", {});
 console.log("population tab");
 $("tabPop").onclick();
 await new Promise((r) => setTimeout(r, 40));
@@ -311,6 +333,7 @@ ok("payload carries the new flags", () => {
   assert.equal(body.tier, "full");
   assert.equal(body.historique_revenus, true, "D-011: history is the default");
   assert.equal(body.household.couple_marie_ou_pacse, false);
+  assert.equal(body.household.situation_famille, "celibataire", "a lone adult's default");
   assert.equal(body.household.parent_isole, true, "lone parent claims case T by default");
   assert.equal(body.reform, null, "an untouched panel must send no reform");
 });

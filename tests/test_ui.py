@@ -916,6 +916,7 @@ const childPayload = () => ({});
 const nichesPayload = () => null;
 const patrimoinePayload = () => null;
 const reformSpec = () => null;
+const caseTApplies = () => false;
 %(payload)s
 const out = {};
 $("hist").checked = false;

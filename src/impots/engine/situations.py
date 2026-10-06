@@ -332,6 +332,15 @@ def build_situation(
             individus[key].update(_disability_inputs(adult.handicap, years))
         if adult.fin_de_droits_ass:
             individus[key].update(_ass_inputs(years))
+    if household.situation_famille != "celibataire":
+        # A lone adult's situation de famille, divorced or widowed, under openfisca's own name
+        # (D-197). `statut_marital` is monthly, and the income tax reads it in January, on the
+        # declarant: written on every covered month like the salary, since the CSG of a
+        # replacement income reads the parts of N-2. Célibataire, the default, is what
+        # openfisca's formula answers for a lone declarant, and writes nothing. The wire
+        # format refuses a situation beside a spouse, so the adult is the only one.
+        individus[adult_ids[0]]["statut_marital"] = _constant(
+            "statut_marital", _coerce_enum("statut_marital", household.situation_famille), years)
 
     child_ids: list[str] = []
     for i, child in enumerate(household.children):
