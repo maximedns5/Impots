@@ -492,13 +492,26 @@ def _assign_units(people: pl.DataFrame) -> pl.DataFrame:
         pl.concat_str([over, pl.lit("#"), pl.col("unit").cast(pl.String)]).alias("foyer_id"),
         pl.concat_str([over, pl.lit("#"), pl.col("unit").cast(pl.String)]).alias("famille_id"),
     )
-    # Case T, by the engine's own D-006 rule: one declarant, at least one
-    # dependant. Derived per foyer here rather than per person, because that is
-    # the entity OpenFisca reads it on.
+    # Case T, art. 194, II CGI: « contribuables célibataires ou divorcés qui vivent
+    # seuls », with at least one dependant. The engine's D-006 rule, derived per foyer
+    # because that is the entity OpenFisca reads it on, and with one thing the survey
+    # tells the skeleton that the household form does not ask (D-195):
+    #
+    #   one declarant    over BOTH declarant roles. A foyer with a `conjoint` is a
+    #                    married or PACSed couple, which the article does not reach.
+    #   not in a couple  `COUPL_LOG`, « en couple avec quelqu'un vivant dans le
+    #                    logement ». Living in a couple, married or not, is not living
+    #                    alone (CE, 15 avril 2016, n° 375682). This is the declarant
+    #                    whose partner could not be paired — absent from the file, or
+    #                    one of more than two coupled persons. Sharing the dwelling is
+    #                    not a couple, so another adult there changes nothing.
+    declarant = pl.col("role_foyer").is_in(["declarant_principal", "conjoint"])
+    in_a_couple = declarant & (pl.col("couple_flag") == "1").fill_null(False)
     return people.with_columns(
         (
-            (pl.col("role_foyer") == "declarant_principal").sum().over("foyer_id").eq(1)
+            declarant.sum().over("foyer_id").eq(1)
             & (pl.col("role_foyer") == "personne_a_charge").sum().over("foyer_id").gt(0)
+            & ~in_a_couple.any().over("foyer_id")
         ).alias("parent_isole")
     )
 
