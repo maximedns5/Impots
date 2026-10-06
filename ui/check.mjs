@@ -154,19 +154,26 @@ ok("case T hidden again for a couple", () => {
   assert.equal($("marie").checked, true, "two adults must be married/pacsed");
   $("one").onclick();
 });
+/* Each state is set outside the check that reads it, so a failing check leaves nothing
+   behind for the next ones to trip on. */
 ok("the situation de famille is a lone adult's", () => {
   assert.equal($("situationWrap").hidden, false);
   assert.equal($("situation").value, "celibataire", "célibataire is the default (D-197)");
-  $("two").onclick(); assert.equal($("situationWrap").hidden, true);
-  $("one").onclick(); assert.equal($("situationWrap").hidden, false);
 });
+$("two").onclick();
+ok("a couple has no situation de famille to choose", () => {
+  assert.equal($("situationWrap").hidden, true, "a couple is married or pacsed");
+});
+$("one").onclick();
+$("situation").value = "veuf"; $("situation").fire("change", {});
 ok("a widowed parent is offered no case T", () => {
-  $("situation").value = "veuf"; $("situation").fire("change", {});
   assert.equal($("isoleWrap").hidden, true, "case T is for célibataires ou divorcés (D-197)");
-  $("situation").value = "divorce"; $("situation").fire("change", {});
-  assert.equal($("isoleWrap").hidden, false, "a divorced parent may claim case T");
-  $("situation").value = "celibataire"; $("situation").fire("change", {});
 });
+$("situation").value = "divorce"; $("situation").fire("change", {});
+ok("a divorced parent is offered case T", () => {
+  assert.equal($("isoleWrap").hidden, false, "a divorced parent may claim case T");
+});
+$("situation").value = "celibataire"; $("situation").fire("change", {});
 
 console.log("reform diffing");
 ok("moving the top rate sends only ir_bareme", () => {
