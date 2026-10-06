@@ -11780,3 +11780,294 @@ moteur.
   11 juillet 2023.
 * Gereso, « Les retraites », fiche H10.2, mise à jour de mai 2014, pour la règle d'avant
   avril 2020.
+
+## D-196 — La case 7DG : la carte et le complément de l'AEEH ouvrent le plafond de 20 000 €
+
+**Le point de départ.** D-188 l'avait laissé dans « Ce qui reste » : le plafond de 20 000 €
+du crédit pour l'emploi d'un salarié à domicile va, selon la loi, aux pensionnés
+d'invalidité de 3e catégorie, et le BOFiP l'étend « en pratique » aux titulaires de la
+carte. Le champ de la carte ne posait pas la case, parce qu'elle suit aussi le complément
+d'AEEH et la pension d'invalidité, qui étaient d'autres chantiers. D-188 mesurait que, sur
+18 000 € d'aide à domicile, le crédit passerait de 6 000 € à 9 000 €. La carte (D-188), la
+carte et le complément d'un enfant (D-191) et la pension d'invalidité, sans sa catégorie
+(D-190), sont maintenant dans le format d'entrée. openfisca a la case, `f7dg`, et rien ne
+l'écrivait.
+
+**Ce que dit la loi.** Les articles ont été lus sur Légifrance. Le 3 de l'article 199
+sexdecies du CGI est le même dans les deux versions qui couvrent l'imposition des revenus de
+2024, celle du 1er janvier 2023 au 16 février 2025 et celle du 16 février 2025 au 21 février
+2026, et dans celle en vigueur depuis le 14 juin 2026.
+* **Le plafond ordinaire.** Les dépenses « sont retenues, pour leur montant effectivement
+  supporté, dans la limite de 12 000 € ». « La limite de 12 000 € est majorée de 1 500 € par
+  enfant à charge au sens des articles 196 et 196 B et au titre de chacun des membres du
+  foyer fiscal âgé de plus de soixante-cinq ans. » La majoration vaut aussi pour les
+  ascendants du même âge, et la moitié pour un enfant en résidence alternée. « La limite de
+  12 000 € augmentée de ces majorations ne peut excéder 15 000 €. »
+* **La première année.** « La limite de 12 000 € est portée à 15 000 € pour la première
+  année d'imposition pour laquelle le contribuable bénéficie des dispositions du présent
+  article au titre du a du 1 », l'emploi direct. Elle reçoit les mêmes majorations, et « le
+  montant total des dépenses ne peut excéder 18 000 € ».
+* **Les 20 000 €.** « Cette limite est portée à 20 000 € pour les contribuables mentionnés
+  au 3° de l'article L. 341-4 du code de la sécurité sociale, ainsi que pour les
+  contribuables ayant à leur charge une personne, vivant sous leur toit, mentionnée au même
+  3°, ou un enfant donnant droit au complément d'allocation d'éducation de l'enfant
+  handicapé prévu par le deuxième alinéa de l'article L. 541-1 du même code. »
+* **Le 3° de l'art. L. 341-4 du CSS** (version en vigueur depuis le 21 décembre 1985) classe
+  les « invalides qui, étant absolument incapables d'exercer une profession, sont, en outre,
+  dans l'obligation d'avoir recours à l'assistance d'une tierce personne pour effectuer les
+  actes ordinaires de la vie ».
+* **Le deuxième alinéa de l'art. L. 541-1 du CSS** (version en vigueur depuis le 12 février
+  2005) : « Un complément d'allocation est accordé pour l'enfant atteint d'un handicap dont
+  la nature ou la gravité exige des dépenses particulièrement coûteuses ou nécessite le
+  recours fréquent à l'aide d'une tierce personne. » Le troisième étend « La même allocation
+  et, le cas échéant, son complément » à l'enfant de 50 à 79 % qui fréquente un
+  établissement, ou dont l'état exige un accompagnement ou des soins. Tout complément ouvre
+  donc les 20 000 €, quelle que soit sa catégorie, et l'AEEH seule ne les ouvre pas.
+* **Le crédit.** « Le crédit d'impôt est égal à 50 % des dépenses mentionnées au 3 », et
+  « S'il excède l'impôt dû, l'excédent est restitué » (4). C'est un crédit pour tous : la
+  réduction d'impôt de qui n'exerçait pas d'activité et ne cherchait pas d'emploi a pris fin
+  avec l'imposition des revenus de 2016 (BOI-IR-RICI-150-20, § 1). La notice de la 2042 le
+  dit ouvert « quelle que soit votre situation (en activité professionnelle, demandeur
+  d'emploi, à la retraite…) ».
+* **Les aides perçues.** Le montant « effectivement supporté » exclut l'APA, les aides à la
+  garde et l'aide financière de l'employeur, « et plus généralement toutes les aides versées
+  par des organismes publics ou privés pour aider à l'emploi de salariés à domicile »
+  (§ 40). Elles se déclarent en case 7DR, et « Le montant des aides déclaré case 7DR sera
+  automatiquement déduit du montant des dépenses déclaré case 7DB » (notice de la 2042) : la
+  déduction précède le plafond.
+* **Le plafonnement global.** « Le total des avantages fiscaux mentionnés au 2 [...] ne peut
+  pas procurer une réduction de l'impôt dû supérieure à un montant de 10 000 € », et le b de
+  son 2 retient « Les réductions [...] et crédits d'impôt sur le revenu, à l'exception de
+  ceux mentionnés aux articles » qu'il énumère, où l'art. 199 sexdecies ne figure pas (CGI,
+  art. 200-0 A, versions du 1er janvier 2024 au 16 février 2025 et du 16 février 2025 au 21
+  février 2026). Le BOFiP range le crédit sous ce plafond (BOI-IR-LIQ-20-20-10-10, § 75).
+  `docs/B3_IR_NICHES.md` laissait la question ouverte : elle est close.
+
+**Ce qu'en dit l'administration.** La carte n'est pas dans la loi. Les documents de la DGFiP
+l'ajoutent à la pension et au complément.
+* **Le BOFiP**, dans la version en vigueur du 20 septembre 2017 au 12 août 2026, reprend les
+  trois cas de la loi (§ 170), puis : « En pratique, sont concernés par le plafond majoré
+  les foyers fiscaux dont au moins l'un des membres » « est titulaire de la carte
+  d'invalidité prévue à l'article L. 241-3 du CASF », « ou qui, sans être titulaire de la
+  carte d'invalidité, perçoit une pension d'invalidité de troisième catégorie ou le
+  complément d'allocation d'éducation spéciale » (§ 180). Il admet le plafond dès
+  l'imposition des revenus « de l'année au cours de laquelle les contribuables ont demandé
+  une carte ». Et : « Aucune majoration ne peut être appliquée à la limite de 20 000 euros »
+  (§ 190). La version du 12 août 2026 dit la même chose de la carte « mobilité inclusion »
+  portant la mention « invalidité ».
+* **La déclaration n° 2042 des revenus de 2024**, rubrique « Services à la personne, emploi
+  à domicile » : « Vous (ou votre conjoint ou une personne à charge) avez la carte
+  d'invalidité ou la carte mobilité inclusion, mention “invalidité” », case 7DG, « cochez ».
+* **Sa notice** (n° 2041 NOT) : « Le plafond de déduction est de 20 000 € si un membre de
+  votre foyer fiscal est titulaire de la carte d'invalidité ou de la carte mobilité
+  inclusion mention “invalidité” (CMI-invalidité) ou d'une pension d'invalidité de 3e
+  catégorie ou si vous percevez un complément d'allocation d'éducation spéciale pour l'un de
+  vos enfants à charge. » Sa fiche de calcul lit les « cases 7DB, 7DL, 7DQ et 7DG, 7DR »,
+  soit « 50 % du montant 7DB – 7DR avec un plafond de 12 000 € », et la suite.
+* **Le dépliant de la DGFiP** pour les personnes handicapées (édition d'avril 2026, revenus
+  de 2025) le dit en toutes lettres : 20 000 € « si vous ou l'un des membres de votre foyer
+  fiscal êtes titulaire d'une carte d'invalidité d'au moins 80 % ou de la carte mobilité
+  inclusion, mention invalidité ou d'une pension d'invalidité de 3ème catégorie ou du
+  complément d'allocation spéciale [...] : n'oubliez pas de cocher la case 7DG ».
+
+Qui coche donc la case 7DG ? Le foyer dont un membre, déclarant, conjoint ou personne à
+charge, est titulaire de la carte portant la mention « invalidité ». Et aussi celui dont un
+membre perçoit une pension de 3e catégorie, ou qui a à sa charge, sous son toit, une
+personne de cette catégorie, ou un enfant qui ouvre un complément de l'AEEH. La 2042 ne
+nomme que la carte, mais la case est le seul chemin du plafond.
+
+**Ce que fait openfisca.**
+* **La case.** `f7dg` est un booléen du foyer fiscal, annuel, sans formule : « Vous, votre
+  conjoint ou une personne à votre charge à une carte d'invalidité d'au moins 80 % l'année
+  de perception des revenus déclarés ». Seuls la lisent le crédit, `ci_saldom`, et la
+  réduction `ri_saldom`, close en 2016.
+* **Le plafond.** Depuis 2020, la formule de `ci_saldom` prend `plafond_invalides`,
+  20 000 €, dès que `f7dg` est vrai, sans majoration, la première année comme les suivantes.
+  Sinon, 12 000 € plus 1 500 € par personne à charge (`nb_pac2`) et par ascendant de la case
+  7DL, 15 000 € au plus ; la première année (`f7dq`), 15 000 € plus les mêmes, 18 000 € au
+  plus. Le crédit vaut 50 % du plus petit du plafond et de 7DB moins 7DR, borné à zéro.
+* **Rien d'autre n'ouvre les 20 000 €** : ni les cases P et F, ni `invalidite` (cases G et
+  I), ni `handicap` ou la catégorie du complément, ni `pensions_invalidite`. La
+  documentation du paramètre nomme pourtant les trois cas de la loi, et « un titulaire de la
+  carte d'invalide à plus de 80% ».
+* **Le plafonnement global.** `credits_impot` tient `ci_saldom`, le crédit pour frais de
+  garde et quelques autres sous 10 000 €, moins les réductions plafonnées : c'est
+  l'art. 200-0 A.
+* **Écrite à la main** sur la situation, la case donne ce que dit la loi : 9 000 € de crédit
+  sur 18 000 €, 10 000 € sur 25 000 €, 10 000 € sur 25 000 € moins 3 000 € d'aides et
+  9 500 € sur 22 000 € moins 3 000 €. À côté de la case 7DQ de la première année, elle donne
+  encore 10 000 € sur 25 000 €, là où la case 7DQ seule en donne 7 500. Écrite sur 2023
+  seulement, elle ne change rien au crédit de 2024.
+* **Un écart, hors de la case 7DG.** Les majorations ne comptent pas les membres du foyer de
+  plus de 65 ans. La docstring de la formule de 2011 le dit, « On ne prend pas en compte le
+  nombre de ces individus ici », et la formule de 2020 ne les compte pas davantage. Mesuré
+  plus bas.
+
+**Pas de correction.** Dès que la case est cochée, openfisca applique la loi : aucune
+correction n'entre dans `engine.corrections`, et aucun test qui tue n'est à écrire. Il
+fallait écrire la case.
+
+**Ce que le constructeur écrit.**
+* **La case 7DG**, `f7dg` à vrai, sur l'année N seule, quand le foyer déclare des sommes
+  versées pour l'emploi à domicile (case 7DB) et que l'un de ses membres ouvre le plafond :
+  un adulte titulaire de la carte (case P ou F), un enfant à charge titulaire de la carte,
+  ou un enfant qui ouvre un complément de l'AEEH, de l'une des six catégories. Pas l'AEEH
+  seule, ni le handicap d'un enfant sans la carte : la loi nomme le complément.
+* **Sur N seule**, comme les sommes de la case 7DB : le crédit de N lit les deux sur N, et
+  rien ne lit le crédit d'une autre année.
+* **À côté de l'aide à domicile seulement.** La case est dans la rubrique de l'emploi à
+  domicile de la 2042, et `_niche_inputs` n'écrit que ce que le foyer déclare. Sans aide à
+  domicile, rien n'est à plafonner : la situation de tout autre ménage est celle de `main`.
+* **Aucun champ, aucun refus.** La case dérive des champs de D-188 et D-191. Aucun refus n'a
+  été trouvé nécessaire : l'enfant de 20 ans, la carte d'un enfant sous 80 % et le
+  complément sans l'AEEH sont déjà refusés (D-191).
+* **La pension de 3e catégorie reste dehors.** Le format porte la pension d'invalidité sans
+  sa catégorie (D-190). Trois raisons de ne pas l'y ajouter. Le pensionné de 3e catégorie a
+  droit à la carte : la mention « invalidité » va à qui « a été classée dans la catégorie
+  mentionnée au 3° de l'article L. 341-4 du code de la sécurité sociale » (CASF,
+  art. L. 241-3, lu pour D-188), et avec la carte le format ouvre déjà les 20 000 €. La 3e
+  catégorie apporte aussi la majoration pour tierce personne, que le format ne porte pas
+  (D-190) : la catégorie sans elle serait une moitié de champ. Enfin, il ne manque que le
+  pensionné qui n'a pas demandé la carte (§ 180).
+* **Le format et la page.** Les descriptions de `Adult.carte_invalidite`, de
+  `HandicapEnfant.carte_invalidite` et de `complement_categorie` nomment la case 7DG, celle
+  de `Niches.salarie_domicile` ses plafonds. La page reçoit une note sous l'aide à
+  domicile : les plafonds, la case cochée d'elle-même, et l'écart des membres de plus de 65
+  ans. `docs/B3_IR_NICHES.md`, qui disait le format incapable de la case 7DG, dit maintenant
+  d'où elle vient et ce qui manque encore.
+
+**Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`, palier léger.
+« Avant » désigne `main`. Le crédit est la ligne `credits_impot`. L'impôt net est la ligne
+`ir`, négative quand le crédit est restitué.
+
+| ménage | aide à domicile | crédit avant | crédit après | impôt net |
+|---|---:|---:|---:|---:|
+| seul, 40 000 €, carte | 8 000 € | 4 000 € | 4 000 € | −2 927 € |
+| le même | 12 000 € | 6 000 € | 6 000 € | −4 927 € |
+| le même | 18 000 € | 6 000 € | 9 000 € | −7 927 € |
+| le même | 25 000 € | 6 000 € | 10 000 € | −8 927 € |
+| seul, 40 000 €, sans carte | 18 000 € | 6 000 € | 6 000 € | −3 977 € |
+| couple, 40 000 et 20 000 €, carte P ou F | 18 000 € | 6 000 € | 9 000 € | −7 986 € |
+| le même, sans carte | 18 000 € | 6 000 € | 6 000 € | −4 068 € |
+| le même, quatre enfants, carte P | 25 000 € | 7 500 € | 10 000 € | −10 000 € |
+| parent seul, 40 000 €, carte de l'enfant | 18 000 € | 6 750 € | 9 000 € | −9 000 € |
+| le même, complément de l'enfant | 18 000 € | 6 750 € | 9 000 € | −8 846 € |
+| le même, AEEH seule | 18 000 € | 6 750 € | 6 750 € | −6 596 € |
+| seul, carte, 3 000 € d'aides | 25 000 € | 6 000 € | 10 000 € | −8 927 € |
+| le même | 22 000 € | 6 000 € | 9 500 € | −8 427 € |
+| parent seul, carte, 2 000 € de garde | 20 000 € | 7 750 € | 10 000 € | −10 000 € |
+
+Le complément vaut pour la 1re et la 6e catégorie à 80 %, et pour la 2e à 60 % avec un
+établissement ; l'AEEH seule, à 80 % ou à 60 % avec un établissement. L'enfant est né en
+2014, celui de la garde en 2020. Refait à la main :
+* **Seul.** À 40 000 €, l'impôt avant les niches vaut 2 023 € sans la carte et 1 073 € avec
+  (D-188). Sur 18 000 €, le plafond ordinaire retient 12 000 €, soit 6 000 € de crédit. Les
+  20 000 € retiennent tout : 9 000 €. L'impôt net vaut 1 073 − 9 000 = −7 927 €, que l'État
+  restitue. Sur 25 000 €, 20 000 € sont retenus, 10 000 € de crédit. Sous 12 000 €, la carte
+  ne change rien.
+* **Le couple.** 1 014 − 9 000 = −7 986 €, et sans la carte 1 932 − 6 000 = −4 068 €, case P
+  ou case F.
+* **Quatre enfants.** 12 000 + 4 × 1 500 = 18 000 €, ramenés à 15 000 € : 7 500 €. Avec la
+  carte, 20 000 € et pas davantage, et non 26 000 € : 10 000 €. Le foyer ne paie aucun impôt
+  avant les niches.
+* **L'enfant.** 12 000 + 1 500 = 13 500 € : 6 750 €. La carte ou le complément de l'enfant
+  portent le crédit à 9 000 €. Le parent paie 154 € avant les niches, et rien avec la carte
+  de l'enfant, à 2,5 parts (D-191).
+* **Les aides.** 25 000 − 3 000 = 22 000 € supportés, 20 000 € retenus : 10 000 €.
+  22 000 − 3 000 = 19 000 € supportés : 9 500 €. Sans la carte, 12 000 € retenus : 6 000 €.
+* **Le plafonnement global.** 10 000 € d'aide à domicile et la moitié de 2 000 € de garde
+  font 11 000 €, ramenés à 10 000 €. Sans la carte, 6 750 + 1 000 = 7 750 €, sous le
+  plafond.
+* **Le revenu disponible** reçoit le crédit entier, à travers l'impôt. Au palier complet, le
+  titulaire seul passe de 30 590,90 € sans aide à domicile à 39 590,90 € avec 18 000 € :
+  9 000 € de plus, au lieu de 6 000 € avant. La dépense elle-même n'y entre pas.
+
+**Les deux paliers, l'ordre de calcul, l'EMTR et le temps.**
+* Le palier léger et le palier complet donnent les mêmes valeurs sur chaque ligne du palier
+  léger, pour chacun des 46 ménages mesurés.
+* Deux ménages logés ont été calculés par le registre, comme l'API, et avec
+  `revenu_disponible` d'abord, comme la jambe relevée de l'EMTR : un titulaire seul à
+  15 000 €, locataire à 600 € en zone 2, et un parent seul au même salaire dont l'enfant
+  ouvre un complément de 3e catégorie. Le crédit, 9 000 €, et le revenu disponible,
+  25 887,54 € et 39 883,36 €, concordent au centime. L'aide au logement (2 292,33 € et
+  4 143,48 €), la prime d'activité (2 734,97 € et 4 285,83 €) et l'AEEH (7 860,76 €) sont
+  celles des mêmes ménages sans aide à domicile : aucune ne lit l'impôt.
+* L'EMTR du titulaire seul à 40 000 € vaut 0,3293 sans aide à domicile et 0,3292 avec,
+  l'arrondi d'un pas de 100 € : le crédit ne dépend pas du salaire.
+* Les cinq tests de budget de temps passent, aucun ignoré, à une charge d'environ 3 sur 4
+  cœurs.
+
+**Ce que la population en fait.** Rien. Elle ne porte ni carte, ni handicap d'enfant, ni
+pension d'invalidité, et son chemin, `to_openfisca`, n'appelle pas le constructeur du
+ménage. Elle impute des bases à la case 7DB (D-066), jamais à la case 7DG. Mesuré sur la
+fixture, 400 ménages et 439 foyers : `f7dg` n'est vrai pour aucun foyer. Avec une base de
+18 000 € écrite à chacun, le crédit vaut 6 000 € pour 310 foyers, 6 750 € pour 52 et 7 500 €
+pour 77, jamais 9 000 €. `to_openfisca.WIRING` reste « D-188 ». Les tests lents, qui
+demandent la population complète, n'ont pas tourné : seul `make full` le peut.
+
+**Vus échouer, puis mutés.** Contre `4f19e36`, les tests seuls, 12 des 14 nouveaux tests du
+moteur tombaient :
+* le test de forme, faute de case (`KeyError: 'f7dg'`) ;
+* le titulaire seul, à 6 000 € au lieu de 9 000 € sur 18 000 €, et le test des deux
+  paliers ;
+* le couple, case P et case F, à 6 000 € au lieu de 9 000 € ;
+* les quatre enfants, à 7 500 € au lieu de 10 000 € ;
+* la carte de l'enfant et les trois compléments, à 6 750 € au lieu de 9 000 € ;
+* les aides, à 6 000 € au lieu de 10 000 € ;
+* le plafonnement global, à 7 750 € au lieu de 10 000 €.
+
+Les deux tests de l'AEEH sans complément passaient, comme il le faut. Deux des trois cas de
+l'API tombaient, à 6 000 € et 6 750 € au lieu de 9 000 €, et le troisième, l'AEEH seule,
+passait. Le test de la page tombait, faute de « 7DG ». Avec le changement, tout passe. Sept
+mutations sont prises, chacune par le test qui lui est destiné :
+* la case écrite pour les adultes seulement : la carte de l'enfant et les trois compléments,
+  à 6 750 €, le test de forme et le complément de l'API, six tests ;
+* la case écrite pour tout handicap d'enfant : les deux tests de l'AEEH sans complément, à
+  9 000 € au lieu de 6 750 €, le test de forme et l'AEEH seule de l'API ;
+* la case écrite sur N-1 : quatorze tests, douze du moteur et deux de l'API, la forme
+  (`{'2023': True}`) et chaque montant, à 6 000, 6 750 ou 7 500 € ;
+* la branche du complément retirée : les trois compléments, le test de forme et le
+  complément de l'API, cinq tests ;
+* la seule carte du premier adulte : le couple en case F, à 6 000 €, et le test de forme ;
+* la case cochée pour toute aide à domicile : onze tests, par leurs ménages sans carte, à
+  9 000 € au lieu de 6 000 €, à 10 000 € au lieu de 7 500 € avec quatre enfants, à 9 500 €
+  au lieu de 6 000 € avec des aides ;
+* la case cochée sans aide à domicile : le test de forme seul, comme voulu, puisqu'aucun
+  montant ne bouge.
+
+**Ce qui reste.**
+* **La pension de 3e catégorie sans la carte**, et la personne à charge de cette catégorie
+  qui vit sous le toit : le format ne porte ni la catégorie, ni un adulte à charge.
+* **Les membres de plus de 65 ans.** La loi majore le plafond ordinaire de 1 500 € « au
+  titre de chacun des membres du foyer fiscal âgé de plus de soixante-cinq ans », et
+  openfisca ne le fait pas. Mesuré : deux retraités nés en 1954 et 1955, à 30 000 et
+  15 000 € de pension, reçoivent 6 000 € de crédit sur 18 000 € d'aide à domicile, au lieu
+  de 7 500 € (12 000 + 2 × 1 500 = 15 000 €). La carte leur en donne 9 000. C'est un écart
+  d'openfisca hors de la case 7DG, qui demande une correction et son test qui tue : une
+  entrée à part. Sur la fixture, 149 foyers sur 439 ont au moins un déclarant de plus de 65
+  ans. L'écart ne les touche qu'au-delà de 12 000 € de base, ce que l'imputation des niches,
+  sans ses données dans ce conteneur, n'a pas permis de mesurer.
+* **La première année (case 7DQ) et les ascendants (case 7DL)** n'ont pas de champ.
+* **Le levier `saldom_plafond`** ne déplace que les 12 000 €. À 8 000 €, il fait passer le
+  crédit sans la carte de 6 000 € à 4 000 € sur 18 000 €, et laisse le titulaire à 9 000 €,
+  comme la loi distingue les deux limites. Avant D-196, le titulaire le suivait. Les
+  20 000 € n'ont pas de levier.
+* **openfisca-france.** L'oubli des membres de plus de 65 ans est à signaler en amont.
+
+**Sources.**
+* CGI, art. 199 sexdecies (versions du 1er janvier 2023 au 16 février 2025, du 16 février
+  2025 au 21 février 2026 et en vigueur depuis le 14 juin 2026) et art. 200-0 A (versions du
+  1er janvier 2024 au 16 février 2025 et du 16 février 2025 au 21 février 2026), lus sur
+  Légifrance.
+* CSS, art. L. 341-4 (version en vigueur depuis le 21 décembre 1985) et L. 541-1 (version en
+  vigueur depuis le 12 février 2005), lus sur Légifrance ; CASF, art. L. 241-3, lu pour
+  D-188.
+* BOFiP : BOI-IR-RICI-150-20-20170920 (§ 1, 40, 120 à 190 et 340), en vigueur du 20
+  septembre 2017 au 12 août 2026, et BOI-IR-RICI-150-20-20260812 (§ 45 et 170 à 190) ;
+  BOI-IR-LIQ-20-20-10-10-20230614 (§ 70 et 75).
+* DGFiP, déclaration n° 2042 (n° 10330*29), « Revenus 2024 », rubrique 7, sha256
+  b33282a3f7caab9680e9d4494591fa287bda6f0e989b44155b411be1bdfa1a51 ; notice n° 2041 NOT
+  (n° 50796#25), « Services à la personne : dépenses d'emploi à domicile 7DB à 7DR » et
+  fiche de calcul, sha256 0eb39b825fac0bc1f623a9f3fd2d4dce5227aadd13abb99712115bfecf28021f.
+* DGFiP, dépliant « Personnes en situation de handicap, allègements fiscaux », édition
+  d'avril 2026, sha256 1515d63fee1f5f972f9e6d00c78d1ef48c206d58a91adbea15081f005e05bd9a.
