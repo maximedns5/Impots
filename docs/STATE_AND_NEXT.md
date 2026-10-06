@@ -1,10 +1,12 @@
-# State of the project, and the directions open — 2026-10-05 (Phase 8 and the household calculator on `main`)
+# State of the project, and the directions open — 2026-10-06 (Phase 8 and the household calculator on `main`)
 
-Supersedes the 2026-10-01 version. That one kept its sections on Phase 8, the CI and the
-PLF 2027 up to date, but it never described the household calculator's arc, D-176 to
-D-194, and it counted 192 entries. It had itself superseded the 2026-09-22 version,
-which predated D-158 to D-171. For any next session: read this,
-`docs/CHARTER.md`, `docs/PHASE8_SPEC.md`, and the review file's last addenda
+Supersedes the 2026-10-05 version, which stopped at D-194. D-195 to D-197 added the
+population skeleton's case T, case 7DG and a lone adult's situation de famille. The
+2026-10-05 version had superseded the 2026-10-01 one. That one kept its sections on
+Phase 8, the CI and the PLF 2027 up to date, but it never described the household
+calculator's arc, D-176 to D-194, and it counted 192 entries. It had itself superseded
+the 2026-09-22 version, which predated D-158 to D-171. For any next session: read
+this, `docs/CHARTER.md`, `docs/PHASE8_SPEC.md`, and the review file's last addenda
 (`docs/REVIEW_2026-08-29.md`).
 
 ## Where the project stands, whole-arc
@@ -28,17 +30,17 @@ carries PR #1's 33 commits and `aa869dd`. Merged rather than squashed, so every
 hash cited in this document, in `DECISIONS.md` and in the pass log is reachable
 from `main`.
 
-**Since 2026-10-02 the work has gone to the household calculator** (D-176 to D-194):
+**Since 2026-10-02 the work has gone to the household calculator** (D-176 to D-197):
 what a household can declare, and fourteen places where this project corrects
 openfisca's reading of the law. It has its own section below.
 
 **1 729 tests at the last logged full pass** (`a9ea26f`, 2026-09-25), before the
-household arc added its own. The CI `fast` job counted 1 646 passed, 120 skipped and
-223 deselected on `3c704dd` (D-191), and D-192 to D-194 add 50 engine and population
-tests. The project also has eleven replayable `verify_*.py` gate scripts and
-**195 decision entries**, D-000 to D-194, recording every error in both directions.
+household arc added its own. The CI `fast` job counted 1 696 passed, 120 skipped and
+223 deselected on `4f19e36` (D-194), and D-195 to D-197 add 53 tests. The project also
+has eleven replayable `verify_*.py` gate scripts and **198 decision entries**, D-000 to
+D-197, recording every error in both directions.
 
-## The household calculator, D-176 to D-194
+## The household calculator, D-176 to D-197
 
 **What a household can declare** (`api/schemas.py`):
 - **per adult:**
@@ -51,9 +53,14 @@ tests. The project also has eleven replayable `verify_*.py` gate scripts and
   - the declared invalidity pension (box 1AZ, D-190).
 - **per child:** the birth year, and a disability: rate, establishment or care, AEEH
   complement category and card (D-191).
+- **per household:** besides the couple's status and case T, a lone adult's situation de
+  famille, célibataire, divorcé ou veuf (D-197). A widowed parent gets the married parts
+  and never case T.
 
 The page sends every one of them (D-186, then each entry's own page change). Each entry
 refuses, with a 422 naming the article, the combinations the engine would price wrong.
+The builder also writes what the law derives from them: case 7DG, the home-help credit's
+20 000 € ceiling, for a card or an AEEH complement in the household (D-196).
 
 **Fourteen corrections to openfisca** (`engine.corrections`). Each has a legal citation,
 a measured defect, and a kill test that fails the day openfisca changes its mind.
@@ -79,12 +86,17 @@ D-193 found openfisca right: case T and the card's half-part stack, each under i
 ceiling. Fourteen tests pin it to the DGFiP's own figures.
 
 **What the owner has to know.**
-- **`to_openfisca.WIRING` is « D-188 ».** Correction 6 doubles the abatement for every
-  couple whose two spouses are over 65, not only for card holders, so the population
-  moves.
-  - On the fixture, 6 of 439 foyers lose 1 398 € of RFR.
-  - Only `make full` measures it on the full population. The PLF 2027 registrations
-    price what that run builds.
+- **`to_openfisca.WIRING` is « D-195 ».** Two changes move the population.
+  - **D-188.** Correction 6 doubles the abatement for every couple whose two spouses
+    are over 65, not only for card holders: on the fixture, 6 of 439 foyers lose
+    1 398 € of RFR.
+  - **D-195.** The skeleton no longer gives case T to a declarant who lives in a couple.
+    On the full EEC, 444 such declarants lose a half-part: +47,1 M€ of income tax,
+    weighted, and 10 773 more taxable foyers.
+  - **The population must be rebuilt first.** Nothing keys `population_2024.parquet` on
+    the skeleton: `impots population build`, then `make full`. Step 0 of
+    `docs/PLF2027_ENREGISTREMENT.md` does it, and the PLF 2027 registrations price what
+    that run builds.
   - Corrections 2 to 5 and 8 to 14 cannot reach the population: it declares no
     disability, no ASS and no invalidity pension.
 - **`PENSION_INVALIDITE_MINIMUM`** (correction 10) stops at January 2026. It needs a row
@@ -93,8 +105,11 @@ ceiling. Fourteen tests pin it to the DGFiP's own figures.
   says how the ASPA is paid beside a spouse at the ASI (D-194).
 - **`aspa`, `ass` and `aeeh` are not in `STATE_TRANSFERS`** (D-186, D-189, D-191). That
   is to decide on a `make full`.
-- **The upstream dossier** gains the openfisca-france defects these entries correct, and
-  the widowed parent's case T (D-193).
+- **D-195's contradictory dwellings**, an owner's call: 89 foyers in a dwelling typed
+  « famille monoparentale » whose reference answers « en couple ». Case T stays as it
+  was, and a test pins the choice.
+- **The upstream dossier** gains the openfisca-france defects these entries correct, the
+  widowed parent's case T (D-193, D-197), and the NaN tax of a `jeune_veuf` (D-197).
 
 ## Verification, as it stands
 
@@ -255,8 +270,8 @@ download list.
   the cloud container: `make full` on `main`'s head, then the three registrations, exactly as
   `docs/PLF2027_ENREGISTREMENT.md` writes them, tolerances committed before any figure.
   The annex stays unopened until the registrations are pushed. That `make full` builds
-  the population at `WIRING` « D-188 », so the registrations price the corrected law
-  (D-188); the runbook accepts every entry from D-176 on.
+  the population at `WIRING` « D-195 », after step 0 rebuilds it, so the registrations
+  price the corrected law (D-188, D-195); the runbook accepts every entry from D-176 on.
 * **ERFS 2022 (FPR, lil-1696) — the interrupt ran, E3 is « nothing ».** E0 rails
   (D-134), E1 inventory (D-135), E2 validation table (D-137), and the two
   re-examination gates (D-141) are done. No recalibration is drawn; the E2 table
@@ -287,12 +302,16 @@ download list.
   - disabled children of 20 or more (their AAH, and the card's half-part of an adult
     dependant);
   - alternating residence, and its quarter parts;
-  - case 7DG, the home-help credit's 20 000 € ceiling (D-188), now expressible for
-    the card and an AEEH complement, but not for an invalidity pension of the third
-    category, whose category the format does not carry;
-  - a marital status field, without which a widowed parent cannot be said (D-193);
-  - the population skeleton's case T, which also marks couples (D-193; no effect in
-    2024, since openfisca reads case T only for a single declarant).
+  - case 7DG for a third-category invalidity pensioner without the card, whose category
+    the format does not carry (D-196);
+  - the home-help credit's 1 500 € increment per member over 65, which openfisca never
+    applies: a correction to write (D-196);
+  - case L, for a parent who raised a now-adult child alone for five years, and the year
+    of the death (D-197);
+  - the population's case T on N-2 and N-1, which the household builder writes and the
+    population wiring does not (D-195);
+  - the population's widowed parent, who keeps case T because the population carries no
+    situation de famille (D-195).
 * **The upstream dossier** and **all publication and deployment**: owner's,
   deferred. The input-hardening pass the reviewer made a precondition is done for
   strings, paths and reform JSON (D-173). What it leaves is the owner's, at deployment
