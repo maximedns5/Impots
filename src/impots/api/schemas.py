@@ -151,7 +151,9 @@ class Adult(BaseModel):
         "the family benefits, which read N-2. A separate application from the CDAPH rate: "
         "the mention also goes to a third-category invalidity pensioner and, for good, to "
         "an APA recipient in groups 1 or 2, so no rate is required beside it, and none "
-        "implies it (D-188).",
+        "implies it (D-188). Beside declared home help it also ticks case 7DG: the home-help "
+        "credit's ceiling of 20 000 EUR, without increments (CGI art. 199 sexdecies, 3; "
+        "BOI-IR-RICI-150-20, § 180; D-196).",
     )
     fin_de_droits_ass: bool = Field(
         default=False,
@@ -251,13 +253,16 @@ class HandicapEnfant(BaseModel):
         "a parent alone also receives the majoration of art. L. 541-4, which D. 541-3 "
         "reserves to a complément granted for the parent's activity or a paid third "
         "person: always so in the fifth and sixth categories, assumed so in the second to "
-        "the fourth (D-191). Only where the AEEH is open.",
+        "the fourth (D-191). Only where the AEEH is open. Whatever its category, beside "
+        "declared home help it ticks case 7DG, the home-help credit's ceiling of 20 000 EUR "
+        "(CGI art. 199 sexdecies, 3; D-196).",
     )
     carte_invalidite: bool = Field(
         default=False,
         description="The child holds the carte « mobilité inclusion » with the mention "
         "« invalidité », granted from 80 % (CASF art. L. 241-3): half a part more on the "
-        "quotient familial (CGI art. 195, 2).",
+        "quotient familial (CGI art. 195, 2), and beside declared home help case 7DG, the "
+        "home-help credit's ceiling of 20 000 EUR (D-196).",
     )
 
     @property
@@ -346,7 +351,13 @@ class Niches(BaseModel):
     salarie_domicile: Annotated[float, Field(ge=0, le=100_000)] = 0.0
     """Sommes versées pour l'emploi d'un salarié à domicile (case 7DB). A CRÉDIT at
     50 %, so it reaches households with no tax to reduce — which is why it is the
-    largest niche and why it cannot be imputed to taxpayers alone."""
+    largest niche and why it cannot be imputed to taxpayers alone.
+
+    Retained net of the aid received up to 12 000 EUR, plus 1 500 per dependent child, 15 000
+    at most; up to 20 000, without increments, when a member of the foyer holds the invalidity
+    card or a child opens a complément of the AEEH: the builder then ticks case 7DG, which no
+    field types (CGI art. 199 sexdecies, 3; D-196). The law also raises the ordinary ceiling by
+    1 500 for each member over 65, which openfisca does not: measured and left in D-196."""
     salarie_domicile_aides_percues: Annotated[float, Field(ge=0, le=100_000)] = 0.0
     """Aides perçues for that employment — APA, PCH, CESU préfinancé (case 7DR). They
     reduce the eligible base, so omitting them overstates the credit."""
@@ -392,7 +403,8 @@ class Niches(BaseModel):
 #: format, the situation builder and the tests cannot disagree about which box a field
 #: lands in. Every case was enumerated out of the live variable registry, not from a
 #: form: `f7d*` alone also contains five PME-subscription boxes and an invalidity flag,
-#: and picking a plausible-looking name would have been picking the wrong one.
+#: and picking a plausible-looking name would have been picking the wrong one. That flag,
+#: `f7dg`, has no field: the builder ticks it from the card and the AEEH's complément (D-196).
 NICHE_CASES: dict[str, str] = {
     "salarie_domicile": "f7db",
     "salarie_domicile_aides_percues": "f7dr",

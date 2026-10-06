@@ -3021,6 +3021,228 @@ def test_the_engine_alone_pays_the_aspa_beside_an_asi_spouse_half_the_couple_max
 
 
 # --------------------------------------------------------------------------- #
+# the home-help credit's ceiling of 20 000 EUR, case 7DG (docs/DECISIONS.md D-196)
+# --------------------------------------------------------------------------- #
+#: CGI art. 199 sexdecies, 3 and 4, on 2024 incomes, read in the article and not in the tree.
+#: The expenses are retained « pour leur montant effectivement supporté, dans la limite de
+#: 12 000 € », « majorée de 1 500 € par enfant à charge », and « La limite de 12 000 € augmentée
+#: de ces majorations ne peut excéder 15 000 € ». « Cette limite est portée à 20 000 € » for the
+#: invalidity the article names, and « Aucune majoration ne peut être appliquée à la limite de
+#: 20 000 euros » (BOI-IR-RICI-150-20, § 190). « Le crédit d'impôt est égal à 50 % ».
+PLAFOND_SALDOM = 12_000
+MAJORATION_SALDOM = 1_500
+PLAFOND_SALDOM_MAJORE = 15_000
+PLAFOND_SALDOM_INVALIDITE = 20_000
+TAUX_SALDOM = 0.5
+#: CGI art. 200-0 A, 1: the advantages of its 2, the home-help and childcare credits among them,
+#: « ne peut pas procurer une réduction de l'impôt dû supérieure à un montant de 10 000 € ».
+PLAFOND_GLOBAL_NICHES = 10_000
+
+
+def _saldom_by_hand(depenses: float, aides: float = 0.0, *, enfants: int = 0,
+                    invalidite: bool = False) -> float:
+    """The home-help credit of 2024 from the article: the expenses less the aid received, under
+    the ordinary ceiling and its increments, or under 20 000 EUR, at 50 %."""
+    plafond = (PLAFOND_SALDOM_INVALIDITE if invalidite
+               else min(PLAFOND_SALDOM + MAJORATION_SALDOM * enfants, PLAFOND_SALDOM_MAJORE))
+    return TAUX_SALDOM * min(plafond, max(0.0, depenses - aides))
+
+
+def _domicile(depenses: float, aides: float = 0.0, **niches: Any) -> dict[str, Any]:
+    """The niche bases of a foyer declaring `depenses` of home help in 2024 (case 7DB), `aides`
+    of it covered by the APA, the PCH or pre-funded CESU (case 7DR)."""
+    return {"salarie_domicile": depenses, "salarie_domicile_aides_percues": aides, **niches}
+
+
+def _parent_a_domicile(handicap: dict[str, Any] | None, depenses: float = 18_000, *,
+                       naissance: int = 2014, **niches: Any) -> HouseholdInput:
+    """A parent alone at 40 000 EUR, born in 1985, with one child born in `naissance` whose
+    disability is `handicap`, declaring `depenses` of home help."""
+    child: dict[str, Any] = {"annee_naissance": naissance}
+    if handicap is not None:
+        child["handicap"] = handicap
+    return _foyer(_adulte(40_000, 1985), children=[child], niches=_domicile(depenses, **niches))
+
+
+def test_case_7dg_is_ticked_on_year_n_beside_declared_home_help() -> None:
+    """The 2042 for 2024 incomes asks, in its home-help section: « Vous (ou votre conjoint ou
+    une personne à charge) avez la carte d'invalidité ou la carte mobilité inclusion, mention
+    “invalidité” », case 7DG; its notice and the BOFiP give the same ceiling to a child's
+    complément of the AEEH (BOI-IR-RICI-150-20, § 170 and 180). openfisca's `f7dg` is that
+    box, a boolean of the foyer fiscal that only the credit reads. The builder ticks it beside
+    declared home help, on N alone like the expenses of case 7DB: the credit of N reads both of
+    N, and nothing reads the credit of another year. An adult's card, a dependent child's, or a
+    child's complément tick it; a child's AEEH without its complément, or a disability without
+    the card, does not; nor does anything without home help to cap."""
+    def foyer(household: HouseholdInput, historique: bool = True) -> dict[str, Any]:
+        return build_situation(household, 2024, historique_revenus=historique)[
+            "foyers_fiscaux"]["ff_0"]
+
+    carte = _foyer(_adulte(40_000, carte=True), niches=_domicile(18_000))
+    assert foyer(carte)["f7dg"] == {"2024": True}
+    assert foyer(carte, historique=False)["f7dg"] == {"2024": True}
+    assert foyer(carte)["f7db"] == {"2024": 18_000.0}
+    conjoint = _foyer(_adulte(40_000), _adulte(20_000, carte=True), niches=_domicile(18_000))
+    assert foyer(conjoint)["f7dg"] == {"2024": True}
+    for handicap in ({"taux_incapacite": 0.8, "carte_invalidite": True},
+                     {"taux_incapacite": 0.8, "complement_categorie": 1},
+                     {"taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True,
+                      "complement_categorie": 2}):
+        assert foyer(_parent_a_domicile(handicap))["f7dg"] == {"2024": True}, handicap
+    for handicap in (None, {"taux_incapacite": 0.8},
+                     {"taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True}):
+        assert "f7dg" not in foyer(_parent_a_domicile(handicap)), handicap
+    assert "f7dg" not in foyer(_foyer(_adulte(40_000), niches=_domicile(18_000)))
+    assert "f7dg" not in foyer(_foyer(_adulte(40_000, carte=True)))
+    assert "f7dg" not in foyer(_foyer(_adulte(40_000, carte=True),
+                                      niches={"dons_oeuvres": 1_000}))
+
+
+def test_a_card_holder_s_home_help_is_retained_up_to_20_000_euros() -> None:
+    """CGI art. 199 sexdecies, 3: the limit of 12 000 EUR « est portée à 20 000 € », and the
+    BOFiP gives that ceiling, « en pratique », to the foyer of a member who « est titulaire de
+    la carte « mobilité inclusion » portant la mention « invalidité » » (BOI-IR-RICI-150-20,
+    § 180). A person alone at 40 000 EUR, born in 1980: 4 000 and 6 000 EUR of credit on 8 000
+    and 12 000 of home help, card or not; on 18 000, 6 000 without the card and 9 000 with it;
+    on 25 000, 6 000 and 10 000. The credit « excède l'impôt dû » and « l'excédent est restitué »
+    (art. 199 sexdecies, 4): the net tax is 2 023 or 1 073 EUR (D-188) less the credit, so
+    -3 977 and -7 927 EUR on 18 000."""
+    for depenses in (8_000, 12_000, 18_000, 25_000):
+        sans = _rows(_foyer(_adulte(40_000), niches=_domicile(depenses)))
+        avec = _rows(_foyer(_adulte(40_000, carte=True), niches=_domicile(depenses)))
+        assert sans["credits_impot"] == pytest.approx(_saldom_by_hand(depenses), abs=0.5)
+        assert avec["credits_impot"] == pytest.approx(
+            _saldom_by_hand(depenses, invalidite=True), abs=0.5), depenses
+        assert sans["ir"] == pytest.approx(2_023 - sans["credits_impot"], abs=0.5)
+        assert avec["ir"] == pytest.approx(1_073 - avec["credits_impot"], abs=0.5)
+    assert avec["credits_impot"] == pytest.approx(10_000, abs=0.5)
+
+
+def test_both_tiers_price_the_card_holder_s_home_help_alike() -> None:
+    """The credit is in the fiscal block, which both tiers compute: on 18 000 EUR of home help
+    the card holder's 9 000 EUR of credit is the same in each, as is every row they share. In
+    the full tier the disposable income takes the net tax off, so the credit lands in it whole:
+    9 000 EUR more than without the home help, whose expense the disposable income does not
+    count."""
+    household = _foyer(_adulte(40_000, carte=True), niches=_domicile(18_000))
+    light, full = _rows(household), _rows(household, "full")
+    assert light["credits_impot"] == pytest.approx(9_000, abs=0.5)
+    for row in LIGHT_ROWS:
+        assert full[row.key] == light[row.key], row.key
+    sans_aide = _rows(_foyer(_adulte(40_000, carte=True)), "full")
+    assert full["revenu_disponible"] - sans_aide["revenu_disponible"] == pytest.approx(
+        9_000, abs=0.5)
+
+
+@pytest.mark.parametrize("titulaire", [0, 1], ids=["case P", "case F"])
+def test_either_spouse_s_card_opens_the_20_000_euro_ceiling(titulaire: int) -> None:
+    """« au moins l'un des membres » of the foyer (§ 180), so either spouse: case P for the
+    first, case F for the second. A couple at 40 000 and 20 000 EUR declaring 18 000 EUR of home
+    help: 6 000 EUR of credit without a card, 9 000 with one, whoever holds it. The net tax is
+    1 932 EUR less 6 000 without the card, 1 014 less 9 000 with it (D-188): -4 068 and -7 986."""
+    adultes = [_adulte(40_000), _adulte(20_000)]
+    sans = _rows(_foyer(*adultes, niches=_domicile(18_000)))
+    adultes[titulaire] = {**adultes[titulaire], "carte_invalidite": True}
+    avec = _rows(_foyer(*adultes, niches=_domicile(18_000)))
+    assert sans["credits_impot"] == pytest.approx(6_000, abs=0.5)
+    assert avec["credits_impot"] == pytest.approx(9_000, abs=0.5)
+    assert sans["ir"] == pytest.approx(1_932 - 6_000, abs=0.5)
+    assert avec["ir"] == pytest.approx(1_014 - 9_000, abs=0.5)
+
+
+def test_no_increment_raises_the_20_000_euro_ceiling() -> None:
+    """« Aucune majoration ne peut être appliquée à la limite de 20 000 euros » (§ 190). A
+    couple at 40 000 and 20 000 EUR with four children declares 25 000 EUR of home help.
+    Without the card, 12 000 EUR plus four increments of 1 500 make 18 000, held to 15 000:
+    7 500 EUR of credit. With it, 20 000 EUR and no more, not 26 000: 10 000 EUR."""
+    enfants = [{"annee_naissance": naissance} for naissance in (2012, 2014, 2016, 2018)]
+    sans = _rows(_foyer(_adulte(40_000), _adulte(20_000), children=enfants,
+                        niches=_domicile(25_000)))
+    avec = _rows(_foyer(_adulte(40_000, carte=True), _adulte(20_000), children=enfants,
+                        niches=_domicile(25_000)))
+    assert sans["credits_impot"] == pytest.approx(_saldom_by_hand(25_000, enfants=4), abs=0.5)
+    assert sans["credits_impot"] == pytest.approx(7_500, abs=0.5)
+    assert avec["credits_impot"] == pytest.approx(10_000, abs=0.5)
+
+
+def test_a_dependent_child_s_card_opens_the_20_000_euro_ceiling() -> None:
+    """The member who holds the card may be « une personne à charge » (the 2042 for 2024
+    incomes, case 7DG; BOI-IR-RICI-150-20, § 180). A parent alone at 40 000 EUR with one child
+    declares 18 000 EUR of home help: 12 000 plus the child's 1 500 make 13 500, so 6 750 EUR of
+    credit; with the child's card, 9 000."""
+    sans = _rows(_parent_a_domicile(None))
+    avec = _rows(_parent_a_domicile({"taux_incapacite": 0.8, "carte_invalidite": True}))
+    assert sans["credits_impot"] == pytest.approx(_saldom_by_hand(18_000, enfants=1), abs=0.5)
+    assert sans["credits_impot"] == pytest.approx(6_750, abs=0.5)
+    assert avec["credits_impot"] == pytest.approx(9_000, abs=0.5)
+
+
+@pytest.mark.parametrize("handicap", [
+    {"taux_incapacite": 0.8, "complement_categorie": 1},
+    {"taux_incapacite": 0.8, "complement_categorie": 6},
+    {"taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True,
+     "complement_categorie": 2},
+], ids=["80 %, 1re", "80 %, 6e", "60 %, 2e"])
+def test_an_aeeh_complement_opens_the_20_000_euro_ceiling(handicap: dict[str, Any]) -> None:
+    """The limit « est portée à 20 000 € » for whoever has in their charge « un enfant donnant
+    droit au complément d'allocation d'éducation de l'enfant handicapé prévu par le deuxième
+    alinéa de l'article L. 541-1 » (CGI art. 199 sexdecies, 3). That alinéa grants « Un
+    complément d'allocation » whatever its category, and the third grants « La même allocation
+    et, le cas échéant, son complément » from 50 % with an establishment, support or care (CSS
+    art. L. 541-1). The card is not needed: the BOFiP gives the ceiling to a foyer whose member,
+    « sans être titulaire de la carte », « perçoit [...] le complément » (§ 180). On 18 000 EUR,
+    9 000 EUR of credit instead of 6 750."""
+    assert _rows(_parent_a_domicile(handicap))["credits_impot"] == pytest.approx(9_000, abs=0.5)
+
+
+@pytest.mark.parametrize("handicap", [
+    {"taux_incapacite": 0.8},
+    {"taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True},
+], ids=["80 %", "60 %, établissement"])
+def test_an_aeeh_without_its_complement_keeps_the_ordinary_ceiling(
+        handicap: dict[str, Any]) -> None:
+    """The article names the complément, not the AEEH: a child who opens the AEEH alone, at 80 %
+    or at 60 % with an establishment, without the card, leaves the foyer the ordinary ceiling.
+    On 18 000 EUR, 12 000 plus the child's 1 500: 6 750 EUR of credit, as without any
+    disability."""
+    assert _rows(_parent_a_domicile(handicap))["credits_impot"] == pytest.approx(
+        _saldom_by_hand(18_000, enfants=1), abs=0.5)
+
+
+def test_the_aid_received_comes_off_before_the_20_000_euro_ceiling() -> None:
+    """The expenses are retained « pour leur montant effectivement supporté » (CGI art. 199
+    sexdecies, 3): the APA, the PCH or pre-funded CESU come off them (BOI-IR-RICI-150-20,
+    § 40), and the notice of the 2042 computes « 50 % du montant 7DB – 7DR avec un plafond ».
+    The card holder alone spends 25 000 EUR, 3 000 of them covered: 22 000 borne, 20 000
+    retained, 10 000 EUR of credit. On 22 000 spent, 19 000 borne and 9 500 EUR of credit.
+    Without the card, 12 000 retained either way: 6 000."""
+    for depenses, credit in ((25_000, 10_000), (22_000, 9_500)):
+        avec = _rows(_foyer(_adulte(40_000, carte=True), niches=_domicile(depenses, 3_000)))
+        assert avec["credits_impot"] == pytest.approx(
+            _saldom_by_hand(depenses, 3_000, invalidite=True), abs=0.5)
+        assert avec["credits_impot"] == pytest.approx(credit, abs=0.5)
+    sans = _rows(_foyer(_adulte(40_000), niches=_domicile(22_000, 3_000)))
+    assert sans["credits_impot"] == pytest.approx(6_000, abs=0.5)
+
+
+def test_beside_the_childcare_credit_the_card_holder_s_home_help_meets_the_global_cap() -> None:
+    """The home-help credit is one of the advantages of CGI art. 200-0 A, 2, b, which takes in
+    the « crédits d'impôt sur le revenu, à l'exception de ceux mentionnés aux articles » it
+    lists, and 199 sexdecies is not among them (BOI-IR-LIQ-20-20-10-10, § 75, lists it under
+    the cap). With the 20 000 EUR ceiling it reaches the cap alone. A parent alone at 40 000 EUR
+    holding the card, a child born in 2020, 20 000 EUR of home help and 2 000 of childcare: 10 000
+    and 1 000 EUR of credit, held together to 10 000. Without the card, 6 750 and 1 000: 7 750,
+    under the cap."""
+    def parent(carte: bool) -> HouseholdInput:
+        return _foyer(_adulte(40_000, 1985, carte=carte), children=[{"annee_naissance": 2020}],
+                      niches=_domicile(20_000, frais_garde_par_enfant=[2_000.0]))
+
+    assert _rows(parent(False))["credits_impot"] == pytest.approx(
+        _saldom_by_hand(20_000, enfants=1) + 1_000, abs=0.5)
+    assert _rows(parent(True))["credits_impot"] == pytest.approx(PLAFOND_GLOBAL_NICHES, abs=0.5)
+
+
+# --------------------------------------------------------------------------- #
 # the lone adult's situation de famille, and the widowed parent (docs/DECISIONS.md D-197)
 # --------------------------------------------------------------------------- #
 #: Every month the history covers in 2024: N-2 to N.

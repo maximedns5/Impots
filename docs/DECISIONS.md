@@ -11781,6 +11781,542 @@ moteur.
 * Gereso, « Les retraites », fiche H10.2, mise à jour de mai 2014, pour la règle d'avant
   avril 2020.
 
+## D-195 — La case T du squelette : un seul déclarant, et qui ne vit pas en couple
+
+**Le point de départ.** D-193 l'avait mesuré en passant : « 84 de ces 129 foyers sont des
+couples. Le squelette compte le déclarant principal et pas le conjoint, là où la règle de
+D-006 veut un adulte seul. » C'était sans effet, puisqu'openfisca tient pour pacsé un foyer
+de deux déclarants et ne lit la case T que pour un déclarant célibataire, divorcé ou veuf.
+Restait une question que D-193 ne posait pas : le squelette donne-t-il aussi la case T à un
+déclarant seul qui vit en couple ? Oui, quand il n'a pas trouvé son partenaire, et là
+l'impôt bouge.
+
+**Ce que dit la loi.**
+* **L'article.** « Pour l'imposition des contribuables célibataires ou divorcés qui vivent
+  seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à titre
+  exclusif ou principal la charge d'au moins un enfant » (CGI, art. 194, II, version en
+  vigueur depuis le 1er janvier 2018). Deux conditions, donc : être célibataire ou divorcé,
+  et vivre seul. Un couple marié ou pacsé, imposé en commun, ne remplit pas la première.
+* **Vivre seul, c'est ne pas vivre en couple.** Le Conseil d'État le juge de la demi-part du
+  a du 1 de l'art. 195, qui pose la même condition. Son bénéfice « ne constitue un droit
+  pour le contribuable que sous la condition, notamment, qu'il vive seul au 1er janvier de
+  l'année d'imposition, c'est-à-dire qu'il ne vive pas en couple ». L'arrêt remonte à
+  « l'article 3 de la loi de finances pour 1996 qui a modifié le II de l'article 194 », par
+  lequel le législateur « a entendu éviter que les couples non mariés soient placés dans
+  une situation plus avantageuse que les couples mariés » (CE, 15 avril 2016, n° 375682,
+  point 2).
+* **Cohabiter n'est pas vivre en couple.** « la seule circonstance que le contribuable
+  réside à la même adresse qu'une personne majeure n'ayant aucun lien de parenté avec lui
+  ne suffit pas à établir que ce contribuable ne vit pas seul » (même arrêt, point 3).
+* **Le BOFiP.** Pour la case T, il renvoie l'appréciation de « vivre seul » à ses § 150 à
+  260 (BOI-IR-LIQ-10-20-20-10, § 380). Le § 150 vise à « placer les couples mariés et les
+  couples de fait dans la même situation au regard des majorations de quotient familial ».
+  Le § 160 conclut : « Le contribuable ne doit donc pas vivre en concubinage. » C'est le
+  concubinage de l'art. 515-8 du code civil, « une union de fait, caractérisée par une vie
+  commune présentant un caractère de stabilité et de continuité, entre deux personnes, de
+  sexe différent ou de même sexe, qui vivent en couple ». Le § 170 met la cohabitation à
+  part : « la simple cohabitation de deux personnes de même sexe ou de sexes différents ne
+  suffit pas à caractériser le concubinage ».
+* **L'administration** le dit au déclarant : « une personne n'est pas considérée comme
+  vivant seule si elle vit en concubinage » (impots.gouv.fr, page sur la case T l'année de
+  la séparation, modifiée le 9 juillet 2026).
+
+La loi tranche donc les deux points. Un foyer de deux déclarants n'est pas un célibataire.
+Un déclarant seul qui vit en couple, marié ou non, ne vit pas seul. Un parent qui partage le
+logement avec un enfant majeur, son propre parent ou un colocataire garde la case T.
+
+**La règle du projet.** D-006 infère la case T pour un adulte seul avec au moins un enfant à
+charge. Elle ne nomme pas le concubin, mais elle a prévu son cas : la case se décoche pour
+« a lone filer who does not in fact live alone ». Le format d'entrée du ménage, lui, refuse
+deux adultes non mariés. La population n'a pas de case à décocher, mais l'enquête pose la
+question.
+
+**Comment le squelette forme les couples.**
+* **Le partenaire** est apparié dans un logement que l'enquête type en couple (`TYPLOG5` à 3
+  ou 4), quand exactement deux personnes y répondent oui à `COUPL_LOG`, « En couple avec
+  quelqu'un vivant dans le logement », dont la personne de référence (D-013). Les deux
+  forment un foyer de deux déclarants.
+* **Mariés, pacsés ou concubins**, le squelette ne les distingue pas. Aucune des 83
+  variables du fichier détail ne dit l'état matrimonial ou le pacs : tout couple apparié
+  est imposé en commun. Le squelette ne scinde donc jamais des concubins en deux foyers.
+* **Le déclarant seul qui vit en couple** est celui dont le partenaire n'a pas été apparié :
+  absent du fichier, ou l'un de plus de deux adultes qui se disent en couple. Il déclare
+  seul avec les enfants, et recevait la case T. openfisca la lit : c'est un célibataire.
+
+**Ce que faisait le squelette, mesuré sur la fixture.** 129 foyers sur 439 portaient la
+case T :
+* 84 couples, de deux déclarants ;
+* 42 parents seuls, dans un logement typé « famille monoparentale » ;
+* 2 déclarants qui vivent en couple, dans un logement typé « couple avec enfant » où eux
+  seuls se disent en couple : le partenaire n'est pas dans le fichier ;
+* 1 jeune homme de 24 ans, personne de référence d'un logement typé « couple avec enfant »,
+  qui n'est pas en couple. Le couple est celui de deux adultes de 67 et 64 ans, et le
+  squelette lui donne les deux enfants qu'il synthétise.
+
+**La correction.** Dans `skeleton._assign_units`, la case T demande désormais :
+* **un seul déclarant**, compté sur les deux rôles, `declarant_principal` et `conjoint` ;
+* **au moins une personne à charge**, comme avant ;
+* **un déclarant qui ne vit pas en couple** : pas de `COUPL_LOG` à oui dans un logement que
+  `TYPLOG5` type en couple. Ce sont les deux signaux qui apparient un partenaire, et ils
+  disent alors la même chose.
+
+Les autres adultes du logement ne changent rien. Le premier et le troisième critère se
+recouvrent aujourd'hui : chaque conjoint apparié se dit en couple, et le troisième
+écarterait seul la paire. Le premier est gardé parce que c'est la condition de la loi, et un
+test l'éprouve à part.
+
+**Le cas laissé au propriétaire.** Sur l'EEC entière, 89 foyers avec une personne à charge
+vivent dans un logement typé « famille monoparentale » dont la personne de référence se dit
+pourtant « en couple avec quelqu'un vivant dans le logement », sans que personne d'autre ne
+le dise. 88 d'entre elles ont un enfant dans le logement, selon `ENFRED`. Les deux variables
+de l'INSEE se contredisent, et rien dans le fichier ne dit laquelle croire. Ce n'est plus
+une question de droit. La case T y reste ce qu'elle était, et un test épingle ce choix. La
+fixture ne compte aucun de ces logements.
+
+**Ce que la population en fait.**
+* **Le squelette.** Sur la fixture, toutes ses colonnes sont identiques à celles de `main`,
+  sauf `parent_isole` : 86 foyers perdent la case T, aucun ne la gagne, 43 la gardent. Le
+  calage ne lit pas `parent_isole`, seulement les rôles du ménage, l'âge et le sexe : il ne
+  bouge pas, et `calibrate.py` n'a pas été touché.
+* **Les 51 colonnes du palier complet**, sur la fixture, avant et après chaque moitié de la
+  correction. Les 84 couples ne bougent sur aucune. Les 2 déclarants en couple bougent sur
+  six : les parts, l'IR avant réductions, l'IR avant niches, l'IR, les foyers imposés et le
+  revenu disponible. Aucune prestation ne bouge.
+
+| ménage | parts | IR avant | IR après |
+|---|---:|---:|---:|
+| une mère de 51 ans, 56 799,84 € de salaire, deux enfants | 2,5 → 2 | 4 471 € | 6 904 € |
+| un père de 41 ans, 35 658,71 € de salaire, un enfant | 2 → 1,5 | 0 € | 561 € |
+
+Refait à la main :
+* **La mère.** Son fils de 16 ans, rattaché, gagne 21 368,63 € : le RFR vaut 57 736,34 €.
+  Une part paie 0,11 × 17 818 + 0,30 × 28 421,34 = 10 486,38 €. Deux parts paient
+  3 821,66 €, et l'avantage, 6 664,72 €, dépasse 2 × 1 791 = 3 582 € : 6 904,38 €. Avec la
+  case T, 2,5 parts paient 3 189,32 €, et l'avantage, 7 297,06 €, dépasse 4 224 + 1 791 =
+  6 015 € : 4 471,38 €. L'écart, 2 433 €, est ce que la case T ajoute au plafond,
+  4 224 − 1 791 €.
+* **Le père.** Le RFR vaut 26 319,27 €. Deux parts paient 365,78 €, que la décote efface :
+  889 − 45,25 % × 365,78 = 723,48 €. Une part et demie paie 1,5 × 0,11 × (17 546,18 −
+  11 497) = 998,11 €, moins une décote de 437,35 € : 560,76 €, soit 561 €.
+* **L'EMTR** d'un seul ménage bouge, celui du père : de 0,2080 à 0,3180. Avec une part et
+  demie, il paie l'impôt, dans la zone de la décote.
+* **L'ASF.** Les deux ménages la gardent, 2 336,09 € chacun : openfisca la verse à toute
+  famille d'un seul parent, et la famille du squelette est son foyer.
+
+**Sur l'EEC entière.** Le fichier détail du manifeste a été téléchargé hors du dépôt, sha256
+conforme. La population a été construite par `build.build_frame`, le chemin de
+`impots population build`, sans être écrite. Le calage converge en 25 itérations. Ce n'est
+pas `make full`.
+* **Le squelette.** 59 203 foyers portaient la case T, 18 263 la gardent. 40 496 couples la
+  perdent, et 444 déclarants qui vivent en couple, tous dans un logement typé « couple avec
+  enfant » où eux seuls se disent en couple, avec 827 personnes à charge.
+* **Le palier léger**, sur les ménages de ces foyers, avant et après. Les 40 496 couples ne
+  bougent en rien : parts, IR et RFR. Les 444 perdent chacun une demi-part. L'IR bouge dans
+  163 ménages, de 2 433 € au plus : 47 126 503 € de plus, pondérés, et 10 773 foyers
+  imposés de plus.
+* **L'EMTR** bouge dans 96 de ces 444 ménages, sur 308 qui ont un salaire : +0,12 en
+  médiane, de −0,02 à +0,15.
+
+**Les caches.**
+* **La population construite**, `data/processed/population_2024.parquet`, n'est indexée par
+  rien : `make data` ne la construit que si elle manque, et le préflight de `make full` ne
+  vérifie que ses colonnes. Elle doit être reconstruite par `impots population build`
+  avant `make full`.
+* **Les caches EMTR** portent `to_openfisca.WIRING` et ne vérifient que le nombre de
+  ménages, que la correction ne change pas. Ils serviraient à la population reconstruite les
+  taux de l'ancienne. `WIRING` passe à « D-195 », comme pour D-180 et D-188. Un EMTR calculé
+  entre la mise à jour du code et la reconstruction écrirait un fichier « D-195 » sur
+  l'ancienne population : il faudrait alors purger `data/processed/emtr_*.parquet`.
+* **Le résumé de la population**, `data/processed/baseline_2024.json`, le rapport de
+  réconciliation et les fiches dépendent de la population et ne se régénèrent pas ici.
+
+**Vus échouer, puis mutés.** Écrits avant la correction, trois tests tombaient sur
+`4f19e36` :
+* `test_parent_isole_only_where_it_can_apply`, qui compte maintenant les deux rôles de
+  déclarant : 84 des 129 foyers qui réclament la case T en ont deux ;
+* `test_no_case_t_for_a_declarant_living_in_a_couple` : 86 personnes de référence qui vivent
+  en couple la réclament, les 84 couples et les 2 partenaires absents ;
+* `test_case_t_follows_the_couple_not_the_dwelling`, des logements écrits à la main avec la
+  réponse à côté : le couple, le partenaire absent et les deux couples la réclament.
+
+Le quatrième, la réciproque, passait, comme il le doit : un déclarant seul qui ne vit pas en
+couple, avec une personne à charge, garde la case T, même à côté d'un adulte qui n'est pas
+son partenaire.
+
+Une mutation, pensée avant d'être lancée, n'aurait été prise par aucun d'eux : compter le
+seul déclarant principal. Le critère du couple écarte déjà la paire. Un cinquième test
+appelle donc `_assign_units` sur un couple que l'enquête ne dit pas en couple. Il tombait
+sur `4f19e36` : la case T sur les trois membres du foyer.
+
+La mesure sur l'EEC entière a ensuite trouvé les 89 logements contradictoires. La règle,
+d'abord écrite sur `COUPL_LOG` seul, a été restreinte aux logements typés en couple. Trois
+logements écrits à la main ont été ajoutés : la mère à côté du couple de son fils, la même à
+côté du couple de son frère dans un logement typé en couple, et le logement contradictoire,
+épinglé.
+
+Sept mutations sont prises, chacune écrite dans une copie de `src` hors du dépôt, par un
+seul remplacement vérifié :
+* le déclarant principal compté seul : le test sur `_assign_units`, seul ;
+* le critère du couple retiré : 2 foyers de la fixture, et deux logements écrits à la main,
+  le partenaire absent et les deux couples ;
+* la case T retirée dès qu'un autre adulte vit dans le logement : 10 foyers de la fixture,
+  dans la réciproque, et les trois logements où un parent seul vit avec d'autres adultes ;
+* l'indicateur de couple lu sur quiconque dans le logement : 1 foyer de la fixture, et la
+  mère à côté du couple de son frère ;
+* la personne à charge oubliée : `test_parent_isole_only_where_it_can_apply` ;
+* l'indicateur sans le type du logement, la règle d'abord écrite : le logement
+  contradictoire ;
+* le type du logement sans l'indicateur : 1 foyer de la fixture, et la mère à côté du
+  couple de son frère.
+
+**Le temps.** Les tests de budget de temps passent : 4 du moteur, 2 de l'API, aucun ignoré.
+
+**Le gate.** `make gate` donne 1 636 réussis, 172 ignorés et 12 échecs, en 26 min 9 s. Les
+12 échecs sont ceux de D-176 à D-194, faute de données dans ce conteneur. Les 4 réussis de
+plus sont les tests ajoutés à la population : celui du couple, la réciproque, les logements
+écrits à la main et le test sur `_assign_units`.
+
+**Ce qui reste.**
+* **Le logement contradictoire**, plus haut, est le choix du propriétaire. S'il croit la
+  réponse de la personne, la règle perd sa clause sur le logement, le test épinglé change,
+  et 89 foyers de plus perdent la case T.
+* **Les enfants d'un autre.** Sur l'EEC entière, 1 584 des 18 263 foyers qui gardent la
+  case T ont une personne de référence qui, selon `ENFRED`, n'a aucun enfant dans le
+  logement : 1 115 dans un logement typé « famille monoparentale », 469 dans un logement
+  typé « couple avec enfant » dont le couple est un autre. Le jeune homme de la fixture en
+  est un. À qui sont les enfants est la question de D-013, pas celle de la case T.
+* **Le partenaire absent du fichier.** Les 444 foyers gardent une famille d'un seul parent,
+  et l'ASF qui va avec, comme les deux de la fixture. Ni le partenaire ni ses revenus ne
+  sont dans le fichier.
+* **Les niches et la queue haute.** Ni l'une ni l'autre ne lit `parent_isole`, mais
+  l'imputation des niches et le calage de la queue haute classent les foyers par RFR par
+  part. Les 444 foyers perdent une demi-part et peuvent changer de tranche, ce qui déplace
+  aussi les probabilités de leurs voisins de tranche. Les fichiers que lisent ces deux
+  étapes manquent ici : seul `make full` le mesurera.
+* **La case T de N-2.** Le câblage n'écrit la case T que sur l'année N, le constructeur du
+  ménage de N-2 à N. Les taux de la CSG d'un revenu de remplacement lisent les parts de
+  N-2. Écrite aussi sur N-2 et N-1, la case T ferait monter le revenu disponible de deux
+  ménages de la fixture, de 839,58 € et 104,64 € : deux retraités de 82 et 67 ans à qui le
+  squelette donne des enfants de moins de 15 ans. C'est un changement du câblage, à faire
+  à part.
+* **Le veuf.** L'EEC ne dit pas la situation de famille : un parent veuf qui vit seul y
+  reçoit la case T, que la loi ne lui donne pas (D-193).
+* **Les concubins imposés en commun.** Le squelette impose tout couple apparié comme un
+  couple marié, là où des concubins déposent deux déclarations. C'est le choix de D-013,
+  faute d'état matrimonial dans le fichier.
+* **`make full`** n'a pas tourné. La population doit d'abord être reconstruite.
+
+**Sources.**
+* CGI, art. 194 (version en vigueur depuis le 1er janvier 2018), lu sur la reproduction
+  d'advizexperts.fr, que D-193 avait confrontée à Légifrance.
+* CE, 15 avril 2016, n° 375682, points 2 et 3, lu sur ArianeWeb (conseil-etat.fr) et sur la
+  reproduction de legifiscal.fr.
+* BOFiP, BOI-IR-LIQ-10-20-20-10-20140326, § 150 à 170 et 380, lu sur bofip.impots.gouv.fr.
+* impots.gouv.fr, « Suis-je considéré parent isolé (case « T ») l'année de la
+  séparation ? », publiée le 30 mars 2016, modifiée le 9 juillet 2026.
+* INSEE, enquête Emploi en continu 2024, fichier détail : `Varmod_EEC_2024.csv` et le
+  dictionnaire des codes, pour `COUPL_LOG`, `TYPLOG5` et `ENFRED`, et `FD_EEC_2024.parquet`,
+  téléchargés hors du dépôt, sha256 conformes au manifeste.
+
+## D-196 — La case 7DG : la carte et le complément de l'AEEH ouvrent le plafond de 20 000 €
+
+**Le point de départ.** D-188 l'avait laissé dans « Ce qui reste » : le plafond de 20 000 €
+du crédit pour l'emploi d'un salarié à domicile va, selon la loi, aux pensionnés
+d'invalidité de 3e catégorie, et le BOFiP l'étend « en pratique » aux titulaires de la
+carte. Le champ de la carte ne posait pas la case, parce qu'elle suit aussi le complément
+d'AEEH et la pension d'invalidité, qui étaient d'autres chantiers. D-188 mesurait que, sur
+18 000 € d'aide à domicile, le crédit passerait de 6 000 € à 9 000 €. La carte (D-188), la
+carte et le complément d'un enfant (D-191) et la pension d'invalidité, sans sa catégorie
+(D-190), sont maintenant dans le format d'entrée. openfisca a la case, `f7dg`, et rien ne
+l'écrivait.
+
+**Ce que dit la loi.** Les articles ont été lus sur Légifrance. Le 3 de l'article 199
+sexdecies du CGI est le même dans les deux versions qui couvrent l'imposition des revenus de
+2024, celle du 1er janvier 2023 au 16 février 2025 et celle du 16 février 2025 au 21 février
+2026, et dans celle en vigueur depuis le 14 juin 2026.
+* **Le plafond ordinaire.** Les dépenses « sont retenues, pour leur montant effectivement
+  supporté, dans la limite de 12 000 € ». « La limite de 12 000 € est majorée de 1 500 € par
+  enfant à charge au sens des articles 196 et 196 B et au titre de chacun des membres du
+  foyer fiscal âgé de plus de soixante-cinq ans. » La majoration vaut aussi pour les
+  ascendants du même âge, et la moitié pour un enfant en résidence alternée. « La limite de
+  12 000 € augmentée de ces majorations ne peut excéder 15 000 €. »
+* **La première année.** « La limite de 12 000 € est portée à 15 000 € pour la première
+  année d'imposition pour laquelle le contribuable bénéficie des dispositions du présent
+  article au titre du a du 1 », l'emploi direct. Elle reçoit les mêmes majorations, et « le
+  montant total des dépenses ne peut excéder 18 000 € ».
+* **Les 20 000 €.** « Cette limite est portée à 20 000 € pour les contribuables mentionnés
+  au 3° de l'article L. 341-4 du code de la sécurité sociale, ainsi que pour les
+  contribuables ayant à leur charge une personne, vivant sous leur toit, mentionnée au même
+  3°, ou un enfant donnant droit au complément d'allocation d'éducation de l'enfant
+  handicapé prévu par le deuxième alinéa de l'article L. 541-1 du même code. »
+* **Le 3° de l'art. L. 341-4 du CSS** (version en vigueur depuis le 21 décembre 1985) classe
+  les « invalides qui, étant absolument incapables d'exercer une profession, sont, en outre,
+  dans l'obligation d'avoir recours à l'assistance d'une tierce personne pour effectuer les
+  actes ordinaires de la vie ».
+* **Le deuxième alinéa de l'art. L. 541-1 du CSS** (version en vigueur depuis le 12 février
+  2005) : « Un complément d'allocation est accordé pour l'enfant atteint d'un handicap dont
+  la nature ou la gravité exige des dépenses particulièrement coûteuses ou nécessite le
+  recours fréquent à l'aide d'une tierce personne. » Le troisième étend « La même allocation
+  et, le cas échéant, son complément » à l'enfant de 50 à 79 % qui fréquente un
+  établissement, ou dont l'état exige un accompagnement ou des soins. Tout complément ouvre
+  donc les 20 000 €, quelle que soit sa catégorie, et l'AEEH seule ne les ouvre pas.
+* **Le crédit.** « Le crédit d'impôt est égal à 50 % des dépenses mentionnées au 3 », et
+  « S'il excède l'impôt dû, l'excédent est restitué » (4). C'est un crédit pour tous : la
+  réduction d'impôt de qui n'exerçait pas d'activité et ne cherchait pas d'emploi a pris fin
+  avec l'imposition des revenus de 2016 (BOI-IR-RICI-150-20, § 1). La notice de la 2042 le
+  dit ouvert « quelle que soit votre situation (en activité professionnelle, demandeur
+  d'emploi, à la retraite…) ».
+* **Les aides perçues.** Le montant « effectivement supporté » exclut l'APA, les aides à la
+  garde et l'aide financière de l'employeur, « et plus généralement toutes les aides versées
+  par des organismes publics ou privés pour aider à l'emploi de salariés à domicile »
+  (§ 40). Elles se déclarent en case 7DR, et « Le montant des aides déclaré case 7DR sera
+  automatiquement déduit du montant des dépenses déclaré case 7DB » (notice de la 2042) : la
+  déduction précède le plafond.
+* **Le plafonnement global.** « Le total des avantages fiscaux mentionnés au 2 [...] ne peut
+  pas procurer une réduction de l'impôt dû supérieure à un montant de 10 000 € », et le b de
+  son 2 retient « Les réductions [...] et crédits d'impôt sur le revenu, à l'exception de
+  ceux mentionnés aux articles » qu'il énumère, où l'art. 199 sexdecies ne figure pas (CGI,
+  art. 200-0 A, versions du 1er janvier 2024 au 16 février 2025 et du 16 février 2025 au 21
+  février 2026). Le BOFiP range le crédit sous ce plafond (BOI-IR-LIQ-20-20-10-10, § 75).
+  `docs/B3_IR_NICHES.md` laissait la question ouverte : elle est close.
+
+**Ce qu'en dit l'administration.** La carte n'est pas dans la loi. Les documents de la DGFiP
+l'ajoutent à la pension et au complément.
+* **Le BOFiP**, dans la version en vigueur du 20 septembre 2017 au 12 août 2026, reprend les
+  trois cas de la loi (§ 170), puis : « En pratique, sont concernés par le plafond majoré
+  les foyers fiscaux dont au moins l'un des membres » « est titulaire de la carte
+  d'invalidité prévue à l'article L. 241-3 du CASF », « ou qui, sans être titulaire de la
+  carte d'invalidité, perçoit une pension d'invalidité de troisième catégorie ou le
+  complément d'allocation d'éducation spéciale » (§ 180). Il admet le plafond dès
+  l'imposition des revenus « de l'année au cours de laquelle les contribuables ont demandé
+  une carte ». Et : « Aucune majoration ne peut être appliquée à la limite de 20 000 euros »
+  (§ 190). La version du 12 août 2026 dit la même chose de la carte « mobilité inclusion »
+  portant la mention « invalidité ».
+* **La déclaration n° 2042 des revenus de 2024**, rubrique « Services à la personne, emploi
+  à domicile » : « Vous (ou votre conjoint ou une personne à charge) avez la carte
+  d'invalidité ou la carte mobilité inclusion, mention “invalidité” », case 7DG, « cochez ».
+* **Sa notice** (n° 2041 NOT) : « Le plafond de déduction est de 20 000 € si un membre de
+  votre foyer fiscal est titulaire de la carte d'invalidité ou de la carte mobilité
+  inclusion mention “invalidité” (CMI-invalidité) ou d'une pension d'invalidité de 3e
+  catégorie ou si vous percevez un complément d'allocation d'éducation spéciale pour l'un de
+  vos enfants à charge. » Sa fiche de calcul lit les « cases 7DB, 7DL, 7DQ et 7DG, 7DR »,
+  soit « 50 % du montant 7DB – 7DR avec un plafond de 12 000 € », et la suite.
+* **Le dépliant de la DGFiP** pour les personnes handicapées (édition d'avril 2026, revenus
+  de 2025) le dit en toutes lettres : 20 000 € « si vous ou l'un des membres de votre foyer
+  fiscal êtes titulaire d'une carte d'invalidité d'au moins 80 % ou de la carte mobilité
+  inclusion, mention invalidité ou d'une pension d'invalidité de 3ème catégorie ou du
+  complément d'allocation spéciale [...] : n'oubliez pas de cocher la case 7DG ».
+
+Qui coche donc la case 7DG ? Le foyer dont un membre, déclarant, conjoint ou personne à
+charge, est titulaire de la carte portant la mention « invalidité ». Et aussi celui dont un
+membre perçoit une pension de 3e catégorie, ou qui a à sa charge, sous son toit, une
+personne de cette catégorie, ou un enfant qui ouvre un complément de l'AEEH. La 2042 ne
+nomme que la carte, mais la case est le seul chemin du plafond.
+
+**Ce que fait openfisca.**
+* **La case.** `f7dg` est un booléen du foyer fiscal, annuel, sans formule : « Vous, votre
+  conjoint ou une personne à votre charge à une carte d'invalidité d'au moins 80 % l'année
+  de perception des revenus déclarés ». Seuls la lisent le crédit, `ci_saldom`, et la
+  réduction `ri_saldom`, close en 2016.
+* **Le plafond.** Depuis 2020, la formule de `ci_saldom` prend `plafond_invalides`,
+  20 000 €, dès que `f7dg` est vrai, sans majoration, la première année comme les suivantes.
+  Sinon, 12 000 € plus 1 500 € par personne à charge (`nb_pac2`) et par ascendant de la case
+  7DL, 15 000 € au plus ; la première année (`f7dq`), 15 000 € plus les mêmes, 18 000 € au
+  plus. Le crédit vaut 50 % du plus petit du plafond et de 7DB moins 7DR, borné à zéro.
+* **Rien d'autre n'ouvre les 20 000 €** : ni les cases P et F, ni `invalidite` (cases G et
+  I), ni `handicap` ou la catégorie du complément, ni `pensions_invalidite`. La
+  documentation du paramètre nomme pourtant les trois cas de la loi, et « un titulaire de la
+  carte d'invalide à plus de 80% ».
+* **Le plafonnement global.** `credits_impot` tient `ci_saldom`, le crédit pour frais de
+  garde et quelques autres sous 10 000 €, moins les réductions plafonnées : c'est
+  l'art. 200-0 A.
+* **Écrite à la main** sur la situation, la case donne ce que dit la loi : 9 000 € de crédit
+  sur 18 000 €, 10 000 € sur 25 000 €, 10 000 € sur 25 000 € moins 3 000 € d'aides et
+  9 500 € sur 22 000 € moins 3 000 €. À côté de la case 7DQ de la première année, elle donne
+  encore 10 000 € sur 25 000 €, là où la case 7DQ seule en donne 7 500. Écrite sur 2023
+  seulement, elle ne change rien au crédit de 2024.
+* **Un écart, hors de la case 7DG.** Les majorations ne comptent pas les membres du foyer de
+  plus de 65 ans. La docstring de la formule de 2011 le dit, « On ne prend pas en compte le
+  nombre de ces individus ici », et la formule de 2020 ne les compte pas davantage. Mesuré
+  plus bas.
+
+**Pas de correction.** Dès que la case est cochée, openfisca applique la loi : aucune
+correction n'entre dans `engine.corrections`, et aucun test qui tue n'est à écrire. Il
+fallait écrire la case.
+
+**Ce que le constructeur écrit.**
+* **La case 7DG**, `f7dg` à vrai, sur l'année N seule, quand le foyer déclare des sommes
+  versées pour l'emploi à domicile (case 7DB) et que l'un de ses membres ouvre le plafond :
+  un adulte titulaire de la carte (case P ou F), un enfant à charge titulaire de la carte,
+  ou un enfant qui ouvre un complément de l'AEEH, de l'une des six catégories. Pas l'AEEH
+  seule, ni le handicap d'un enfant sans la carte : la loi nomme le complément.
+* **Sur N seule**, comme les sommes de la case 7DB : le crédit de N lit les deux sur N, et
+  rien ne lit le crédit d'une autre année.
+* **À côté de l'aide à domicile seulement.** La case est dans la rubrique de l'emploi à
+  domicile de la 2042, et `_niche_inputs` n'écrit que ce que le foyer déclare. Sans aide à
+  domicile, rien n'est à plafonner : la situation de tout autre ménage est celle de `main`.
+* **Aucun champ, aucun refus.** La case dérive des champs de D-188 et D-191. Aucun refus n'a
+  été trouvé nécessaire : l'enfant de 20 ans, la carte d'un enfant sous 80 % et le
+  complément sans l'AEEH sont déjà refusés (D-191).
+* **La pension de 3e catégorie reste dehors.** Le format porte la pension d'invalidité sans
+  sa catégorie (D-190). Trois raisons de ne pas l'y ajouter. Le pensionné de 3e catégorie a
+  droit à la carte : la mention « invalidité » va à qui « a été classée dans la catégorie
+  mentionnée au 3° de l'article L. 341-4 du code de la sécurité sociale » (CASF,
+  art. L. 241-3, lu pour D-188), et avec la carte le format ouvre déjà les 20 000 €. La 3e
+  catégorie apporte aussi la majoration pour tierce personne, que le format ne porte pas
+  (D-190) : la catégorie sans elle serait une moitié de champ. Enfin, il ne manque que le
+  pensionné qui n'a pas demandé la carte (§ 180).
+* **Le format et la page.** Les descriptions de `Adult.carte_invalidite`, de
+  `HandicapEnfant.carte_invalidite` et de `complement_categorie` nomment la case 7DG, celle
+  de `Niches.salarie_domicile` ses plafonds. La page reçoit une note sous l'aide à
+  domicile : les plafonds, la case cochée d'elle-même, et l'écart des membres de plus de 65
+  ans. `docs/B3_IR_NICHES.md`, qui disait le format incapable de la case 7DG, dit maintenant
+  d'où elle vient et ce qui manque encore.
+
+**Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`, palier léger.
+« Avant » désigne `main`. Le crédit est la ligne `credits_impot`. L'impôt net est la ligne
+`ir`, négative quand le crédit est restitué.
+
+| ménage | aide à domicile | crédit avant | crédit après | impôt net |
+|---|---:|---:|---:|---:|
+| seul, 40 000 €, carte | 8 000 € | 4 000 € | 4 000 € | −2 927 € |
+| le même | 12 000 € | 6 000 € | 6 000 € | −4 927 € |
+| le même | 18 000 € | 6 000 € | 9 000 € | −7 927 € |
+| le même | 25 000 € | 6 000 € | 10 000 € | −8 927 € |
+| seul, 40 000 €, sans carte | 18 000 € | 6 000 € | 6 000 € | −3 977 € |
+| couple, 40 000 et 20 000 €, carte P ou F | 18 000 € | 6 000 € | 9 000 € | −7 986 € |
+| le même, sans carte | 18 000 € | 6 000 € | 6 000 € | −4 068 € |
+| le même, quatre enfants, carte P | 25 000 € | 7 500 € | 10 000 € | −10 000 € |
+| parent seul, 40 000 €, carte de l'enfant | 18 000 € | 6 750 € | 9 000 € | −9 000 € |
+| le même, complément de l'enfant | 18 000 € | 6 750 € | 9 000 € | −8 846 € |
+| le même, AEEH seule | 18 000 € | 6 750 € | 6 750 € | −6 596 € |
+| seul, carte, 3 000 € d'aides | 25 000 € | 6 000 € | 10 000 € | −8 927 € |
+| le même | 22 000 € | 6 000 € | 9 500 € | −8 427 € |
+| parent seul, carte, 2 000 € de garde | 20 000 € | 7 750 € | 10 000 € | −10 000 € |
+
+Le complément vaut pour la 1re et la 6e catégorie à 80 %, et pour la 2e à 60 % avec un
+établissement ; l'AEEH seule, à 80 % ou à 60 % avec un établissement. L'enfant est né en
+2014, celui de la garde en 2020. Refait à la main :
+* **Seul.** À 40 000 €, l'impôt avant les niches vaut 2 023 € sans la carte et 1 073 € avec
+  (D-188). Sur 18 000 €, le plafond ordinaire retient 12 000 €, soit 6 000 € de crédit. Les
+  20 000 € retiennent tout : 9 000 €. L'impôt net vaut 1 073 − 9 000 = −7 927 €, que l'État
+  restitue. Sur 25 000 €, 20 000 € sont retenus, 10 000 € de crédit. Sous 12 000 €, la carte
+  ne change rien.
+* **Le couple.** 1 014 − 9 000 = −7 986 €, et sans la carte 1 932 − 6 000 = −4 068 €, case P
+  ou case F.
+* **Quatre enfants.** 12 000 + 4 × 1 500 = 18 000 €, ramenés à 15 000 € : 7 500 €. Avec la
+  carte, 20 000 € et pas davantage, et non 26 000 € : 10 000 €. Le foyer ne paie aucun impôt
+  avant les niches.
+* **L'enfant.** 12 000 + 1 500 = 13 500 € : 6 750 €. La carte ou le complément de l'enfant
+  portent le crédit à 9 000 €. Le parent paie 154 € avant les niches, et rien avec la carte
+  de l'enfant, à 2,5 parts (D-191).
+* **Les aides.** 25 000 − 3 000 = 22 000 € supportés, 20 000 € retenus : 10 000 €.
+  22 000 − 3 000 = 19 000 € supportés : 9 500 €. Sans la carte, 12 000 € retenus : 6 000 €.
+* **Le plafonnement global.** 10 000 € d'aide à domicile et la moitié de 2 000 € de garde
+  font 11 000 €, ramenés à 10 000 €. Sans la carte, 6 750 + 1 000 = 7 750 €, sous le
+  plafond.
+* **Le revenu disponible** reçoit le crédit entier, à travers l'impôt. Au palier complet, le
+  titulaire seul passe de 30 590,90 € sans aide à domicile à 39 590,90 € avec 18 000 € :
+  9 000 € de plus, au lieu de 6 000 € avant. La dépense elle-même n'y entre pas.
+
+**Les deux paliers, l'ordre de calcul, l'EMTR et le temps.**
+* Le palier léger et le palier complet donnent les mêmes valeurs sur chaque ligne du palier
+  léger, pour chacun des 46 ménages mesurés.
+* Deux ménages logés ont été calculés par le registre, comme l'API, et avec
+  `revenu_disponible` d'abord, comme la jambe relevée de l'EMTR : un titulaire seul à
+  15 000 €, locataire à 600 € en zone 2, et un parent seul au même salaire dont l'enfant
+  ouvre un complément de 3e catégorie. Le crédit, 9 000 €, et le revenu disponible,
+  25 887,54 € et 39 883,36 €, concordent au centime. L'aide au logement (2 292,33 € et
+  4 143,48 €), la prime d'activité (2 734,97 € et 4 285,83 €) et l'AEEH (7 860,76 €) sont
+  celles des mêmes ménages sans aide à domicile : aucune ne lit l'impôt.
+* L'EMTR du titulaire seul à 40 000 € vaut 0,3293 sans aide à domicile et 0,3292 avec,
+  l'arrondi d'un pas de 100 € : le crédit ne dépend pas du salaire.
+* Les cinq tests de budget de temps passent, aucun ignoré, à une charge d'environ 3 sur 4
+  cœurs.
+
+**Ce que la population en fait.** Rien. Elle ne porte ni carte, ni handicap d'enfant, ni
+pension d'invalidité, et son chemin, `to_openfisca`, n'appelle pas le constructeur du
+ménage. Elle impute des bases à la case 7DB (D-066), jamais à la case 7DG. Mesuré sur la
+fixture, 400 ménages et 439 foyers : `f7dg` n'est vrai pour aucun foyer. Avec une base de
+18 000 € écrite à chacun, le crédit vaut 6 000 € pour 310 foyers, 6 750 € pour 52 et 7 500 €
+pour 77, jamais 9 000 €. `to_openfisca.WIRING` reste « D-195 ». Les tests lents, qui
+demandent la population complète, n'ont pas tourné : seul `make full` le peut.
+
+**Vus échouer, puis mutés.** Contre `4f19e36`, les tests seuls, 12 des 14 nouveaux tests du
+moteur tombaient :
+* le test de forme, faute de case (`KeyError: 'f7dg'`) ;
+* le titulaire seul, à 6 000 € au lieu de 9 000 € sur 18 000 €, et le test des deux
+  paliers ;
+* le couple, case P et case F, à 6 000 € au lieu de 9 000 € ;
+* les quatre enfants, à 7 500 € au lieu de 10 000 € ;
+* la carte de l'enfant et les trois compléments, à 6 750 € au lieu de 9 000 € ;
+* les aides, à 6 000 € au lieu de 10 000 € ;
+* le plafonnement global, à 7 750 € au lieu de 10 000 €.
+
+Les deux tests de l'AEEH sans complément passaient, comme il le faut. Deux des trois cas de
+l'API tombaient, à 6 000 € et 6 750 € au lieu de 9 000 €, et le troisième, l'AEEH seule,
+passait. Le test de la page tombait, faute de « 7DG ». Avec le changement, tout passe. Sept
+mutations sont prises, chacune par le test qui lui est destiné :
+* la case écrite pour les adultes seulement : la carte de l'enfant et les trois compléments,
+  à 6 750 €, le test de forme et le complément de l'API, six tests ;
+* la case écrite pour tout handicap d'enfant : les deux tests de l'AEEH sans complément, à
+  9 000 € au lieu de 6 750 €, le test de forme et l'AEEH seule de l'API ;
+* la case écrite sur N-1 : quatorze tests, douze du moteur et deux de l'API, la forme
+  (`{'2023': True}`) et chaque montant, à 6 000, 6 750 ou 7 500 € ;
+* la branche du complément retirée : les trois compléments, le test de forme et le
+  complément de l'API, cinq tests ;
+* la seule carte du premier adulte : le couple en case F, à 6 000 €, et le test de forme ;
+* la case cochée pour toute aide à domicile : onze tests, par leurs ménages sans carte, à
+  9 000 € au lieu de 6 000 €, à 10 000 € au lieu de 7 500 € avec quatre enfants, à 9 500 €
+  au lieu de 6 000 € avec des aides ;
+* la case cochée sans aide à domicile : le test de forme seul, comme voulu, puisqu'aucun
+  montant ne bouge.
+
+**Le gate.** `make gate` donne 1 648 réussis, 174 ignorés et 12 échecs, en 25 min 58 s. Les
+12 échecs sont ceux de D-176 à D-194, faute de données dans ce conteneur. Les 18 tests
+ajoutés passent : 14 au moteur, 3 à l'API et 1 à la page. Les réussis ne sont pourtant que
+16 de plus que sur `main`, et les ignorés 2 de plus : les deux tests de budget de temps de
+l'API ont sauté, la machine portant les gates de trois branches à la fois. Ce n'est pas vert
+au même sens. Relancés juste après, à une charge de 3 sur 4 cœurs, les cinq tests de budget
+de temps passent.
+
+**Ce qui reste.**
+* **La pension de 3e catégorie sans la carte**, et la personne à charge de cette catégorie
+  qui vit sous le toit : le format ne porte ni la catégorie, ni un adulte à charge.
+* **Les membres de plus de 65 ans.** La loi majore le plafond ordinaire de 1 500 € « au
+  titre de chacun des membres du foyer fiscal âgé de plus de soixante-cinq ans », et
+  openfisca ne le fait pas. Mesuré : deux retraités nés en 1954 et 1955, à 30 000 et
+  15 000 € de pension, reçoivent 6 000 € de crédit sur 18 000 € d'aide à domicile, au lieu
+  de 7 500 € (12 000 + 2 × 1 500 = 15 000 €). La carte leur en donne 9 000. C'est un écart
+  d'openfisca hors de la case 7DG, qui demande une correction et son test qui tue : une
+  entrée à part. Sur la fixture, 149 foyers sur 439 ont au moins un déclarant de plus de 65
+  ans. L'écart ne les touche qu'au-delà de 12 000 € de base, ce que l'imputation des niches,
+  sans ses données dans ce conteneur, n'a pas permis de mesurer.
+* **La première année (case 7DQ) et les ascendants (case 7DL)** n'ont pas de champ.
+* **Le levier `saldom_plafond`** ne déplace que les 12 000 €. À 8 000 €, il fait passer le
+  crédit sans la carte de 6 000 € à 4 000 € sur 18 000 €, et laisse le titulaire à 9 000 €,
+  comme la loi distingue les deux limites. Avant D-196, le titulaire le suivait. Les
+  20 000 € n'ont pas de levier.
+* **openfisca-france.** L'oubli des membres de plus de 65 ans est à signaler en amont.
+
+**Sources.**
+* CGI, art. 199 sexdecies (versions du 1er janvier 2023 au 16 février 2025, du 16 février
+  2025 au 21 février 2026 et en vigueur depuis le 14 juin 2026) et art. 200-0 A (versions du
+  1er janvier 2024 au 16 février 2025 et du 16 février 2025 au 21 février 2026), lus sur
+  Légifrance.
+* CSS, art. L. 341-4 (version en vigueur depuis le 21 décembre 1985) et L. 541-1 (version en
+  vigueur depuis le 12 février 2005), lus sur Légifrance ; CASF, art. L. 241-3, lu pour
+  D-188.
+* BOFiP : BOI-IR-RICI-150-20-20170920 (§ 1, 40, 120 à 190 et 340), en vigueur du 20
+  septembre 2017 au 12 août 2026, et BOI-IR-RICI-150-20-20260812 (§ 45 et 170 à 190) ;
+  BOI-IR-LIQ-20-20-10-10-20230614 (§ 70 et 75).
+* DGFiP, déclaration n° 2042 (n° 10330*29), « Revenus 2024 », rubrique 7, sha256
+  b33282a3f7caab9680e9d4494591fa287bda6f0e989b44155b411be1bdfa1a51 ; notice n° 2041 NOT
+  (n° 50796#25), « Services à la personne : dépenses d'emploi à domicile 7DB à 7DR » et
+  fiche de calcul, sha256 0eb39b825fac0bc1f623a9f3fd2d4dce5227aadd13abb99712115bfecf28021f.
+* DGFiP, dépliant « Personnes en situation de handicap, allègements fiscaux », édition
+  d'avril 2026, sha256 1515d63fee1f5f972f9e6d00c78d1ef48c206d58a91adbea15081f005e05bd9a.
+
 ## D-197 — La situation de famille d'un adulte seul : le parent veuf, sans la case T
 
 **Le point de départ.** D-193 l'avait laissé : « Le parent veuf. Le format d'entrée ne sait
