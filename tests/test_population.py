@@ -158,19 +158,210 @@ def test_every_foyer_has_exactly_one_principal_declarant(population: pl.DataFram
     assert set(counts["n"].unique()) == {1}
 
 
+DECLARANT_ROLES = ("declarant_principal", "conjoint")
+
+
 def test_parent_isole_only_where_it_can_apply(population: pl.DataFrame) -> None:
-    """Case T needs one declarant and at least one dependant (D-006)."""
+    """Case T needs one declarant and at least one dependant (D-006).
+
+    One declarant over BOTH declarant roles. A foyer with a `conjoint` is a married or
+    PACSed couple, which art. 194, II CGI does not reach, and counting the principal
+    declarant alone let 84 of the fixture's couples claim it (D-193, D-195)."""
     claiming = (
         population.filter(pl.col("parent_isole"))
         .group_by("foyer_id")
         .agg(
-            (pl.col("role_foyer") == "declarant_principal").sum().alias("declarants"),
+            pl.col("role_foyer").is_in(DECLARANT_ROLES).sum().alias("declarants"),
             (pl.col("role_foyer") == "personne_a_charge").sum().alias("dependants"),
         )
     )
-    if claiming.height:
-        assert claiming["declarants"].max() == 1
-        assert claiming["dependants"].min() >= 1
+    assert claiming.height, "no foyer claims case T: the check below would pass on nothing"
+    assert (claiming["declarants"] == 1).all(), claiming.filter(pl.col("declarants") != 1)
+    assert claiming["dependants"].min() >= 1
+
+
+def _reference_foyers(population: pl.DataFrame) -> pl.DataFrame:
+    """Each reference person's foyer, beside what the survey row says of that person.
+
+    The couple flags come from the EEC, not from the skeleton: `COUPL_LOG` is « En
+    couple avec quelqu'un vivant dans le logement », asked of everyone aged 15 or over,
+    and `TYPLOG5` types the dwelling (3 and 4 hold a couple). The reference person is
+    the lowest `NOI` of the dwelling-quarter (D-013), and the drawn age is checked
+    against that row's band, so a broken pairing fails here instead of comparing
+    someone else's flag.
+    """
+    from impots.population.skeleton import AGE_BANDS
+
+    rows = (
+        pl.read_parquet(FIXTURE).sort(["IDENT", "TRIM", "NOI"])
+        .group_by(["IDENT", "TRIM"], maintain_order=True).first()
+        .select(
+            pl.concat_str([pl.col("IDENT"), pl.lit("-"), pl.col("TRIM")]).alias("household_id"),
+            (pl.col("COUPL_LOG") == "1").alias("in_a_couple"),
+            pl.col("TYPLOG5").is_in(["3", "4"]).alias("couple_dwelling"),
+            pl.col("AGE6"),
+        )
+    )
+    foyers = population.group_by("foyer_id").agg(
+        pl.col("role_foyer").is_in(DECLARANT_ROLES).sum().alias("declarants"),
+        (pl.col("role_foyer") == "personne_a_charge").sum().alias("dependants"),
+        pl.col("parent_isole").first(),
+    )
+    references = population.filter(pl.col("role_menage") == "personne_de_reference")
+    frame = (
+        references.select(["household_id", "foyer_id", "age"])
+        .join(rows, on="household_id", how="inner")
+        .join(foyers, on="foyer_id", how="inner")
+    )
+    assert frame.height == references.height == rows.height
+    for code, age in frame.select(["AGE6", "age"]).iter_rows():
+        low, high = AGE_BANDS[code]
+        assert low <= age <= high, (code, age)
+    return frame
+
+
+def test_no_case_t_for_a_declarant_living_in_a_couple(population: pl.DataFrame) -> None:
+    """Living in a couple is not living alone, married or not (D-195).
+
+    Art. 194, II CGI gives the half-part to « contribuables célibataires ou divorcés qui
+    vivent seuls ». Living alone means « qu'il ne vive pas en couple » (CE, 15 avril
+    2016, n° 375682), and « Le contribuable ne doit donc pas vivre en concubinage »
+    (BOI-IR-LIQ-10-20-20-10, § 160). Where the skeleton cannot pair a partner — absent
+    from the file, or one of more than two coupled persons — the reference person
+    declares alone, and claimed case T beside that partner. Read where both signals say
+    couple, the person's flag and the dwelling's type, as the skeleton pairs partners.
+    """
+    frame = _reference_foyers(population).filter(
+        pl.col("in_a_couple") & pl.col("couple_dwelling"))
+    unpaired = frame.filter((pl.col("declarants") == 1) & (pl.col("dependants") > 0))
+    assert unpaired.height, "no unpaired partner with a dependant: the test would be vacuous"
+    assert not frame["parent_isole"].any(), frame.filter(pl.col("parent_isole"))
+
+
+def test_case_t_wherever_a_lone_declarant_lives_alone_with_a_dependant(
+    population: pl.DataFrame,
+) -> None:
+    """The other half: sharing the dwelling is not living in a couple (D-195).
+
+    « la simple cohabitation de deux personnes [...] ne suffit pas à caractériser le
+    concubinage » (BOI-IR-LIQ-10-20-20-10, § 170), and an unrelated adult at the same
+    address does not establish it either (CE, 15 avril 2016, n° 375682). A parent who
+    shares the dwelling with an adult child, a grandparent or a flatmate keeps case T.
+    """
+    frame = _reference_foyers(population).filter(
+        ~pl.col("in_a_couple") & (pl.col("declarants") == 1) & (pl.col("dependants") > 0)
+    )
+    assert frame.height, "no lone declarant with a dependant: the test would be vacuous"
+    assert frame["parent_isole"].all(), frame.filter(~pl.col("parent_isole"))
+    parents = frame.select("household_id", pl.col("foyer_id").alias("parent_foyer"))
+    sharing = population.join(parents, on="household_id").filter(
+        pl.col("foyer_id") != pl.col("parent_foyer"))
+    assert sharing.height, "no parent shares the dwelling: an over-broad rule would go unseen"
+
+
+#: One hand-made dwelling per shape: TYPLOG5, then (NOI, AGE6, ACTEU, COUPL_LOG) per
+#: person, then whether art. 194, II reaches its reference person. The children are
+#: 15 to 24 and inactive, hence dependants; no under-15 is synthesised.
+CASE_T_SHAPES: dict[str, tuple[str, list[tuple[str, str, str, str]], bool]] = {
+    "SEUL0001": ("2", [("01", "25", "1", "2"), ("02", "15", "3", "2")], True),
+    # an adult child at home, aged 25 to 49 and in work: a foyer of their own
+    "FAMILLE1": ("2", [("01", "50", "1", "2"), ("02", "15", "3", "2"),
+                       ("03", "25", "1", "2")], True),
+    # the same parent beside a couple, her son and his partner: a couple in the
+    # dwelling that is not hers
+    "FAMILLE2": ("2", [("01", "50", "1", "2"), ("02", "15", "3", "2"),
+                       ("03", "25", "1", "1"), ("04", "25", "1", "1")], True),
+    # a mother and her child beside her brother's couple, in a dwelling typed as a
+    # couple: the couple is not hers either
+    "FAMILLE3": ("4", [("01", "25", "1", "2"), ("02", "15", "3", "2"),
+                       ("03", "25", "1", "1"), ("04", "25", "1", "1")], True),
+    "COUPLE01": ("4", [("01", "25", "1", "1"), ("02", "25", "1", "1"),
+                       ("03", "15", "3", "2")], False),
+    # the partner is not in the file: the reference alone says « en couple »
+    "ABSENT01": ("4", [("01", "25", "1", "1"), ("03", "15", "3", "2")], False),
+    # two couples: four coupled persons, so no pair is resolved
+    "DEUXCPL1": ("4", [("01", "50", "1", "1"), ("02", "50", "1", "1"),
+                       ("03", "15", "3", "2"), ("04", "25", "1", "1"),
+                       ("05", "25", "1", "1")], False),
+    # the survey's two signals disagree: a « famille monoparentale » whose reference
+    # says « en couple ». Case T is left as main had it, the owner's call (D-195)
+    "CONFLIT1": ("2", [("01", "25", "1", "1"), ("02", "15", "3", "2")], True),
+}
+
+
+def _eec_rows(shapes: dict[str, tuple[str, list[tuple[str, str, str, str]], bool]]
+              ) -> pl.DataFrame:
+    """EEC rows for `CASE_T_SHAPES`, typed as the fixture's columns are."""
+    source = pl.read_parquet(FIXTURE)
+    rows = []
+    for ident, (typlog, persons, _) in shapes.items():
+        for noi, age6, acteu, couple in persons:
+            working = acteu == "1"
+            rows.append({
+                "IDENT": ident, "TRIM": "1", "NOI": noi, "EXTRIAN": 1_000.0,
+                "AGE6": age6, "SEXE": "2", "ACTEU": acteu, "TYPLOG5": typlog,
+                "COUPL_LOG": couple, "SO": "4", "METRODOM": "1", "STCOMM2020": "C",
+                "STATUT": "2" if working else None, "PCS1Q": "51" if working else None,
+                "PUB3FP": "4" if working else None, "TPPRED": "1" if working else None,
+                "TXTPPRED": None,
+            })
+    columns = list(rows[0])
+    return pl.DataFrame(rows, schema={column: source.schema[column] for column in columns})
+
+
+def test_case_t_follows_the_couple_not_the_dwelling() -> None:
+    """Eight dwellings, the answer written beside each (D-195).
+
+    The fixture holds unpaired partners of one shape only, absent from the file. Two
+    couples in one dwelling — the residue the module docstring names — is the other.
+    A parent beside an adult child, that child's couple or a brother's couple is the
+    shape an over-broad rule would hit. The last is not the law's answer but the
+    owner's pending one, pinned so that changing it is a decision.
+    """
+    frame, _ = build_skeleton(children_per_household=None, source=_eec_rows(CASE_T_SHAPES))
+    unit = frame.filter(pl.col("foyer_id").str.ends_with("#0")).group_by("household_id").agg(
+        pl.col("role_foyer").is_in(DECLARANT_ROLES).sum().alias("declarants"),
+        (pl.col("role_foyer") == "personne_a_charge").sum().alias("dependants"),
+        pl.col("parent_isole").first(),
+    )
+    shapes = {household.split("-")[0]: row for household, *row in unit.iter_rows()}
+    # the shapes are what the table says they are, or the answers below prove nothing
+    assert set(shapes) == set(CASE_T_SHAPES)
+    assert all(dependants >= 1 for _, dependants, _ in shapes.values())
+    assert {ident for ident, (declarants, _, _) in shapes.items() if declarants == 2} == {
+        "COUPLE01"}
+    assert {ident: claimed for ident, (_, _, claimed) in shapes.items()} == {
+        ident: expected for ident, (_, _, expected) in CASE_T_SHAPES.items()}
+
+
+def test_two_declarants_never_claim_case_t_whatever_the_couple_flag_says() -> None:
+    """A conjoint is a second declarant, and art. 194, II reaches only « célibataires ou
+    divorcés »: no case T for the foyer, with or without a couple flag (D-195).
+
+    Every partner the skeleton pairs today is flagged « en couple », so the couple test
+    alone would exclude the pair, and `build_skeleton` cannot tell the two rules apart.
+    The role assignment is called directly here, on a pair the survey does not flag.
+    """
+    from impots.population.skeleton import _assign_units
+
+    people = pl.DataFrame(
+        {
+            "household_id": ["H-1", "H-1", "H-1"],
+            "noi": ["01", "02", "03"],
+            "is_reference": [True, False, False],
+            "is_conjoint": [False, True, False],
+            "is_child": [False, False, True],
+            "is_extra": [False, False, False],
+            "couple_flag": [None, None, "2"],
+            "hh_type": ["4", "4", "4"],
+        },
+        schema_overrides={"couple_flag": pl.String},
+    )
+    frame = _assign_units(people)
+    assert frame["foyer_id"].n_unique() == 1
+    assert frame["role_foyer"].to_list() == [
+        "declarant_principal", "conjoint", "personne_a_charge"]
+    assert not frame["parent_isole"].any()
 
 
 def test_synthesised_children_are_all_under_15(population: pl.DataFrame) -> None:

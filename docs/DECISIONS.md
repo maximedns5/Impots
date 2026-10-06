@@ -11781,6 +11781,243 @@ moteur.
 * Gereso, « Les retraites », fiche H10.2, mise à jour de mai 2014, pour la règle d'avant
   avril 2020.
 
+## D-195 — La case T du squelette : un seul déclarant, et qui ne vit pas en couple
+
+**Le point de départ.** D-193 l'avait mesuré en passant : « 84 de ces 129 foyers sont des
+couples. Le squelette compte le déclarant principal et pas le conjoint, là où la règle de
+D-006 veut un adulte seul. » C'était sans effet, puisqu'openfisca tient pour pacsé un foyer
+de deux déclarants et ne lit la case T que pour un déclarant célibataire, divorcé ou veuf.
+Restait une question que D-193 ne posait pas : le squelette donne-t-il aussi la case T à un
+déclarant seul qui vit en couple ? Oui, quand il n'a pas trouvé son partenaire, et là
+l'impôt bouge.
+
+**Ce que dit la loi.**
+* **L'article.** « Pour l'imposition des contribuables célibataires ou divorcés qui vivent
+  seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à titre
+  exclusif ou principal la charge d'au moins un enfant » (CGI, art. 194, II, version en
+  vigueur depuis le 1er janvier 2018). Deux conditions, donc : être célibataire ou divorcé,
+  et vivre seul. Un couple marié ou pacsé, imposé en commun, ne remplit pas la première.
+* **Vivre seul, c'est ne pas vivre en couple.** Le Conseil d'État le juge de la demi-part du
+  a du 1 de l'art. 195, qui pose la même condition. Son bénéfice « ne constitue un droit
+  pour le contribuable que sous la condition, notamment, qu'il vive seul au 1er janvier de
+  l'année d'imposition, c'est-à-dire qu'il ne vive pas en couple ». L'arrêt remonte à
+  « l'article 3 de la loi de finances pour 1996 qui a modifié le II de l'article 194 », par
+  lequel le législateur « a entendu éviter que les couples non mariés soient placés dans
+  une situation plus avantageuse que les couples mariés » (CE, 15 avril 2016, n° 375682,
+  point 2).
+* **Cohabiter n'est pas vivre en couple.** « la seule circonstance que le contribuable
+  réside à la même adresse qu'une personne majeure n'ayant aucun lien de parenté avec lui
+  ne suffit pas à établir que ce contribuable ne vit pas seul » (même arrêt, point 3).
+* **Le BOFiP.** Pour la case T, il renvoie l'appréciation de « vivre seul » à ses § 150 à
+  260 (BOI-IR-LIQ-10-20-20-10, § 380). Le § 150 vise à « placer les couples mariés et les
+  couples de fait dans la même situation au regard des majorations de quotient familial ».
+  Le § 160 conclut : « Le contribuable ne doit donc pas vivre en concubinage. » C'est le
+  concubinage de l'art. 515-8 du code civil, « une union de fait, caractérisée par une vie
+  commune présentant un caractère de stabilité et de continuité, entre deux personnes, de
+  sexe différent ou de même sexe, qui vivent en couple ». Le § 170 met la cohabitation à
+  part : « la simple cohabitation de deux personnes de même sexe ou de sexes différents ne
+  suffit pas à caractériser le concubinage ».
+* **L'administration** le dit au déclarant : « une personne n'est pas considérée comme
+  vivant seule si elle vit en concubinage » (impots.gouv.fr, page sur la case T l'année de
+  la séparation, modifiée le 9 juillet 2026).
+
+La loi tranche donc les deux points. Un foyer de deux déclarants n'est pas un célibataire.
+Un déclarant seul qui vit en couple, marié ou non, ne vit pas seul. Un parent qui partage le
+logement avec un enfant majeur, son propre parent ou un colocataire garde la case T.
+
+**La règle du projet.** D-006 infère la case T pour un adulte seul avec au moins un enfant à
+charge. Elle ne nomme pas le concubin, mais elle a prévu son cas : la case se décoche pour
+« a lone filer who does not in fact live alone ». Le format d'entrée du ménage, lui, refuse
+deux adultes non mariés. La population n'a pas de case à décocher, mais l'enquête pose la
+question.
+
+**Comment le squelette forme les couples.**
+* **Le partenaire** est apparié dans un logement que l'enquête type en couple (`TYPLOG5` à 3
+  ou 4), quand exactement deux personnes y répondent oui à `COUPL_LOG`, « En couple avec
+  quelqu'un vivant dans le logement », dont la personne de référence (D-013). Les deux
+  forment un foyer de deux déclarants.
+* **Mariés, pacsés ou concubins**, le squelette ne les distingue pas. Aucune des 83
+  variables du fichier détail ne dit l'état matrimonial ou le pacs : tout couple apparié
+  est imposé en commun. Le squelette ne scinde donc jamais des concubins en deux foyers.
+* **Le déclarant seul qui vit en couple** est celui dont le partenaire n'a pas été apparié :
+  absent du fichier, ou l'un de plus de deux adultes qui se disent en couple. Il déclare
+  seul avec les enfants, et recevait la case T. openfisca la lit : c'est un célibataire.
+
+**Ce que faisait le squelette, mesuré sur la fixture.** 129 foyers sur 439 portaient la
+case T :
+* 84 couples, de deux déclarants ;
+* 42 parents seuls, dans un logement typé « famille monoparentale » ;
+* 2 déclarants qui vivent en couple, dans un logement typé « couple avec enfant » où eux
+  seuls se disent en couple : le partenaire n'est pas dans le fichier ;
+* 1 jeune homme de 24 ans, personne de référence d'un logement typé « couple avec enfant »,
+  qui n'est pas en couple. Le couple est celui de deux adultes de 67 et 64 ans, et le
+  squelette lui donne les deux enfants qu'il synthétise.
+
+**La correction.** Dans `skeleton._assign_units`, la case T demande désormais :
+* **un seul déclarant**, compté sur les deux rôles, `declarant_principal` et `conjoint` ;
+* **au moins une personne à charge**, comme avant ;
+* **un déclarant qui ne vit pas en couple** : pas de `COUPL_LOG` à oui dans un logement que
+  `TYPLOG5` type en couple. Ce sont les deux signaux qui apparient un partenaire, et ils
+  disent alors la même chose.
+
+Les autres adultes du logement ne changent rien. Le premier et le troisième critère se
+recouvrent aujourd'hui : chaque conjoint apparié se dit en couple, et le troisième
+écarterait seul la paire. Le premier est gardé parce que c'est la condition de la loi, et un
+test l'éprouve à part.
+
+**Le cas laissé au propriétaire.** Sur l'EEC entière, 89 foyers avec une personne à charge
+vivent dans un logement typé « famille monoparentale » dont la personne de référence se dit
+pourtant « en couple avec quelqu'un vivant dans le logement », sans que personne d'autre ne
+le dise. 88 d'entre elles ont un enfant dans le logement, selon `ENFRED`. Les deux variables
+de l'INSEE se contredisent, et rien dans le fichier ne dit laquelle croire. Ce n'est plus
+une question de droit. La case T y reste ce qu'elle était, et un test épingle ce choix. La
+fixture ne compte aucun de ces logements.
+
+**Ce que la population en fait.**
+* **Le squelette.** Sur la fixture, toutes ses colonnes sont identiques à celles de `main`,
+  sauf `parent_isole` : 86 foyers perdent la case T, aucun ne la gagne, 43 la gardent. Le
+  calage ne lit pas `parent_isole`, seulement les rôles du ménage, l'âge et le sexe : il ne
+  bouge pas, et `calibrate.py` n'a pas été touché.
+* **Les 51 colonnes du palier complet**, sur la fixture, avant et après chaque moitié de la
+  correction. Les 84 couples ne bougent sur aucune. Les 2 déclarants en couple bougent sur
+  six : les parts, l'IR avant réductions, l'IR avant niches, l'IR, les foyers imposés et le
+  revenu disponible. Aucune prestation ne bouge.
+
+| ménage | parts | IR avant | IR après |
+|---|---:|---:|---:|
+| une mère de 51 ans, 56 799,84 € de salaire, deux enfants | 2,5 → 2 | 4 471 € | 6 904 € |
+| un père de 41 ans, 35 658,71 € de salaire, un enfant | 2 → 1,5 | 0 € | 561 € |
+
+Refait à la main :
+* **La mère.** Son fils de 16 ans, rattaché, gagne 21 368,63 € : le RFR vaut 57 736,34 €.
+  Une part paie 0,11 × 17 818 + 0,30 × 28 421,34 = 10 486,38 €. Deux parts paient
+  3 821,66 €, et l'avantage, 6 664,72 €, dépasse 2 × 1 791 = 3 582 € : 6 904,38 €. Avec la
+  case T, 2,5 parts paient 3 189,32 €, et l'avantage, 7 297,06 €, dépasse 4 224 + 1 791 =
+  6 015 € : 4 471,38 €. L'écart, 2 433 €, est ce que la case T ajoute au plafond,
+  4 224 − 1 791 €.
+* **Le père.** Le RFR vaut 26 319,27 €. Deux parts paient 365,78 €, que la décote efface :
+  889 − 45,25 % × 365,78 = 723,48 €. Une part et demie paie 1,5 × 0,11 × (17 546,18 −
+  11 497) = 998,11 €, moins une décote de 437,35 € : 560,76 €, soit 561 €.
+* **L'EMTR** d'un seul ménage bouge, celui du père : de 0,2080 à 0,3180. Avec une part et
+  demie, il paie l'impôt, dans la zone de la décote.
+* **L'ASF.** Les deux ménages la gardent, 2 336,09 € chacun : openfisca la verse à toute
+  famille d'un seul parent, et la famille du squelette est son foyer.
+
+**Sur l'EEC entière.** Le fichier détail du manifeste a été téléchargé hors du dépôt, sha256
+conforme. La population a été construite par `build.build_frame`, le chemin de
+`impots population build`, sans être écrite. Le calage converge en 25 itérations. Ce n'est
+pas `make full`.
+* **Le squelette.** 59 203 foyers portaient la case T, 18 263 la gardent. 40 496 couples la
+  perdent, et 444 déclarants qui vivent en couple, tous dans un logement typé « couple avec
+  enfant » où eux seuls se disent en couple, avec 827 personnes à charge.
+* **Le palier léger**, sur les ménages de ces foyers, avant et après. Les 40 496 couples ne
+  bougent en rien : parts, IR et RFR. Les 444 perdent chacun une demi-part. L'IR bouge dans
+  163 ménages, de 2 433 € au plus : 47 126 503 € de plus, pondérés, et 10 773 foyers
+  imposés de plus.
+* **L'EMTR** bouge dans 96 de ces 444 ménages, sur 308 qui ont un salaire : +0,12 en
+  médiane, de −0,02 à +0,15.
+
+**Les caches.**
+* **La population construite**, `data/processed/population_2024.parquet`, n'est indexée par
+  rien : `make data` ne la construit que si elle manque, et le préflight de `make full` ne
+  vérifie que ses colonnes. Elle doit être reconstruite par `impots population build`
+  avant `make full`.
+* **Les caches EMTR** portent `to_openfisca.WIRING` et ne vérifient que le nombre de
+  ménages, que la correction ne change pas. Ils serviraient à la population reconstruite les
+  taux de l'ancienne. `WIRING` passe à « D-195 », comme pour D-180 et D-188. Un EMTR calculé
+  entre la mise à jour du code et la reconstruction écrirait un fichier « D-195 » sur
+  l'ancienne population : il faudrait alors purger `data/processed/emtr_*.parquet`.
+* **Le résumé de la population**, `data/processed/baseline_2024.json`, le rapport de
+  réconciliation et les fiches dépendent de la population et ne se régénèrent pas ici.
+
+**Vus échouer, puis mutés.** Écrits avant la correction, trois tests tombaient sur
+`4f19e36` :
+* `test_parent_isole_only_where_it_can_apply`, qui compte maintenant les deux rôles de
+  déclarant : 84 des 129 foyers qui réclament la case T en ont deux ;
+* `test_no_case_t_for_a_declarant_living_in_a_couple` : 86 personnes de référence qui vivent
+  en couple la réclament, les 84 couples et les 2 partenaires absents ;
+* `test_case_t_follows_the_couple_not_the_dwelling`, des logements écrits à la main avec la
+  réponse à côté : le couple, le partenaire absent et les deux couples la réclament.
+
+Le quatrième, la réciproque, passait, comme il le doit : un déclarant seul qui ne vit pas en
+couple, avec une personne à charge, garde la case T, même à côté d'un adulte qui n'est pas
+son partenaire.
+
+Une mutation, pensée avant d'être lancée, n'aurait été prise par aucun d'eux : compter le
+seul déclarant principal. Le critère du couple écarte déjà la paire. Un cinquième test
+appelle donc `_assign_units` sur un couple que l'enquête ne dit pas en couple. Il tombait
+sur `4f19e36` : la case T sur les trois membres du foyer.
+
+La mesure sur l'EEC entière a ensuite trouvé les 89 logements contradictoires. La règle,
+d'abord écrite sur `COUPL_LOG` seul, a été restreinte aux logements typés en couple. Trois
+logements écrits à la main ont été ajoutés : la mère à côté du couple de son fils, la même à
+côté du couple de son frère dans un logement typé en couple, et le logement contradictoire,
+épinglé.
+
+Sept mutations sont prises, chacune écrite dans une copie de `src` hors du dépôt, par un
+seul remplacement vérifié :
+* le déclarant principal compté seul : le test sur `_assign_units`, seul ;
+* le critère du couple retiré : 2 foyers de la fixture, et deux logements écrits à la main,
+  le partenaire absent et les deux couples ;
+* la case T retirée dès qu'un autre adulte vit dans le logement : 10 foyers de la fixture,
+  dans la réciproque, et les trois logements où un parent seul vit avec d'autres adultes ;
+* l'indicateur de couple lu sur quiconque dans le logement : 1 foyer de la fixture, et la
+  mère à côté du couple de son frère ;
+* la personne à charge oubliée : `test_parent_isole_only_where_it_can_apply` ;
+* l'indicateur sans le type du logement, la règle d'abord écrite : le logement
+  contradictoire ;
+* le type du logement sans l'indicateur : 1 foyer de la fixture, et la mère à côté du
+  couple de son frère.
+
+**Le temps.** Les tests de budget de temps passent : 4 du moteur, 2 de l'API, aucun ignoré.
+
+**Le gate.** `make gate` donne 1 636 réussis, 172 ignorés et 12 échecs, en 26 min 9 s. Les
+12 échecs sont ceux de D-176 à D-194, faute de données dans ce conteneur. Les 4 réussis de
+plus sont les tests ajoutés à la population : celui du couple, la réciproque, les logements
+écrits à la main et le test sur `_assign_units`.
+
+**Ce qui reste.**
+* **Le logement contradictoire**, plus haut, est le choix du propriétaire. S'il croit la
+  réponse de la personne, la règle perd sa clause sur le logement, le test épinglé change,
+  et 89 foyers de plus perdent la case T.
+* **Les enfants d'un autre.** Sur l'EEC entière, 1 584 des 18 263 foyers qui gardent la
+  case T ont une personne de référence qui, selon `ENFRED`, n'a aucun enfant dans le
+  logement : 1 115 dans un logement typé « famille monoparentale », 469 dans un logement
+  typé « couple avec enfant » dont le couple est un autre. Le jeune homme de la fixture en
+  est un. À qui sont les enfants est la question de D-013, pas celle de la case T.
+* **Le partenaire absent du fichier.** Les 444 foyers gardent une famille d'un seul parent,
+  et l'ASF qui va avec, comme les deux de la fixture. Ni le partenaire ni ses revenus ne
+  sont dans le fichier.
+* **Les niches et la queue haute.** Ni l'une ni l'autre ne lit `parent_isole`, mais
+  l'imputation des niches et le calage de la queue haute classent les foyers par RFR par
+  part. Les 444 foyers perdent une demi-part et peuvent changer de tranche, ce qui déplace
+  aussi les probabilités de leurs voisins de tranche. Les fichiers que lisent ces deux
+  étapes manquent ici : seul `make full` le mesurera.
+* **La case T de N-2.** Le câblage n'écrit la case T que sur l'année N, le constructeur du
+  ménage de N-2 à N. Les taux de la CSG d'un revenu de remplacement lisent les parts de
+  N-2. Écrite aussi sur N-2 et N-1, la case T ferait monter le revenu disponible de deux
+  ménages de la fixture, de 839,58 € et 104,64 € : deux retraités de 82 et 67 ans à qui le
+  squelette donne des enfants de moins de 15 ans. C'est un changement du câblage, à faire
+  à part.
+* **Le veuf.** L'EEC ne dit pas la situation de famille : un parent veuf qui vit seul y
+  reçoit la case T, que la loi ne lui donne pas (D-193).
+* **Les concubins imposés en commun.** Le squelette impose tout couple apparié comme un
+  couple marié, là où des concubins déposent deux déclarations. C'est le choix de D-013,
+  faute d'état matrimonial dans le fichier.
+* **`make full`** n'a pas tourné. La population doit d'abord être reconstruite.
+
+**Sources.**
+* CGI, art. 194 (version en vigueur depuis le 1er janvier 2018), lu sur la reproduction
+  d'advizexperts.fr, que D-193 avait confrontée à Légifrance.
+* CE, 15 avril 2016, n° 375682, points 2 et 3, lu sur ArianeWeb (conseil-etat.fr) et sur la
+  reproduction de legifiscal.fr.
+* BOFiP, BOI-IR-LIQ-10-20-20-10-20140326, § 150 à 170 et 380, lu sur bofip.impots.gouv.fr.
+* impots.gouv.fr, « Suis-je considéré parent isolé (case « T ») l'année de la
+  séparation ? », publiée le 30 mars 2016, modifiée le 9 juillet 2026.
+* INSEE, enquête Emploi en continu 2024, fichier détail : `Varmod_EEC_2024.csv` et le
+  dictionnaire des codes, pour `COUPL_LOG`, `TYPLOG5` et `ENFRED`, et `FD_EEC_2024.parquet`,
+  téléchargés hors du dépôt, sha256 conformes au manifeste.
+
 ## D-196 — La case 7DG : la carte et le complément de l'AEEH ouvrent le plafond de 20 000 €
 
 **Le point de départ.** D-188 l'avait laissé dans « Ce qui reste » : le plafond de 20 000 €
