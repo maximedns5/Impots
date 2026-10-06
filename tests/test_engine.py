@@ -3931,6 +3931,524 @@ def test_the_year_of_the_death_is_refused() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# the child in alternating residence: case H (docs/DECISIONS.md D-201)
+# --------------------------------------------------------------------------- #
+#: The two-part tax of 2024 on the 170 941.00 EUR of net income that 150 000 and 80 000 EUR of
+#: gross salary leave a couple: 2 x (0.11 x 17 818 + 0.30 x 54 508 + 0.41 x 1 647.50). A
+#: couple's capped tax is this, less the ceilings of what lies above two parts.
+IR_DEUX_PARTS_230K = 37_975.71
+#: The income tax of 2024 on one part of the 59 306.86 EUR of net income that 80 000 EUR of gross
+#: salary leaves (D-197).
+IR_UNE_PART_80K = 10_957.54
+#: CGI art. 197, I, 2: « 1 791 € par demi-part ou la moitié de cette somme par quart de part »;
+#: under case T, « Lorsque les contribuables entretiennent uniquement des enfants dont la charge
+#: est réputée également partagée entre l'un et l'autre des parents, la réduction d'impôt
+#: correspondant à la demi-part accordée au titre de chacun des deux premiers enfants est limitée
+#: à la moitié de cette somme », of 4 224 EUR; and the card's complement « est égale à la moitié
+#: de cette somme lorsque la majoration visée au 2 de l'article 195 est de un quart de part ».
+QUART_DE_PART = DEMI_PART / 2
+DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE = PREMIER_ENFANT_PARENT_ISOLE / 2
+COMPLEMENT_CARTE_QUART = COMPLEMENT_CARTE / 2
+#: CGI art. 199 sexdecies, 3: « Le montant de 1 500 € est divisé par deux pour les enfants réputés
+#: à charge égale de l'un et l'autre de leurs parents ».
+MAJORATION_SALDOM_ALTERNE = MAJORATION_SALDOM / 2
+#: CGI art. 200 quater B: the childcare expenses « sont retenues dans la limite d'un plafond fixé à
+#: 3 500 € par enfant à charge et à la moitié de ce montant lorsque l'enfant est réputé à charge
+#: égale de l'un et l'autre de ses parents », at 50 %.
+PLAFOND_GARDE_ALTERNE = 3_500 / 2
+#: CGI art. 199 quater F: 61, 153 and 183 EUR, « divisés par deux lorsque l'enfant est réputé à
+#: charge égale de l'un et l'autre de ses parents ».
+SCOLARITE_COLLEGE, SCOLARITE_LYCEE = 61, 153
+#: The allocations familiales of 2024 for two children, 32 % of the BMAF over the year (D-191).
+AF_DEUX_ENFANTS_2024 = 1_771.44
+#: The ASF of 2024 for one child, as openfisca pays it to any lone parent (D-197).
+ASF_UN_ENFANT_2024 = 2_336.09
+
+
+def _enfants(*naissances: int, alternes: tuple[int, ...] = (),
+             carte: tuple[int, ...] = ()) -> list[dict[str, Any]]:
+    """Children born in `naissances`; those whose index is in `alternes` live in alternating
+    residence, those in `carte` hold the card « mobilité inclusion » marked « invalidité »."""
+    children: list[dict[str, Any]] = []
+    for index, naissance in enumerate(naissances):
+        child: dict[str, Any] = {"annee_naissance": naissance}
+        if index in alternes:
+            child["residence_alternee"] = True
+        if index in carte:
+            child["handicap"] = {"taux_incapacite": 0.8, "carte_invalidite": True}
+        children.append(child)
+    return children
+
+
+def _alterne(salaire: float, *naissances: int, alternes: tuple[int, ...],
+             conjoint: float | None = None, carte: bool = False,
+             enfant_carte: tuple[int, ...] = (), **household: Any) -> HouseholdInput:
+    """A parent born in 1985 earning `salaire`, beside a spouse born in 1987 earning `conjoint`
+    if one is given, holding the card if `carte`, with children born in `naissances`, those in
+    `alternes` in alternating residence. A lone parent claims case T as the wire format infers
+    it, unless `parent_isole` or `situation_famille` says otherwise."""
+    adults = [_adulte(salaire, 1985, carte=carte)]
+    if conjoint is not None:
+        adults.append(_adulte(conjoint, 1987))
+    return _foyer(*adults, children=_enfants(*naissances, alternes=alternes, carte=enfant_carte),
+                  **household)
+
+
+def test_alternating_residence_is_written_on_every_covered_month_of_the_child() -> None:
+    """openfisca's `garde_alternee` is a monthly variable of the child. The income tax reads it in
+    January (`nbF`, `nbH`), the family allowances every month: written on every month of N-2 to
+    N, like the card of D-191, since the CSG of a replacement income reads the parts of N-2.
+    Nothing is written for a child who does not live in alternating residence."""
+    household = _alterne(40_000, 2014, 2016, alternes=(1,))
+    situation = build_situation(household, 2024)
+    assert situation["individus"]["enfant_1"]["garde_alternee"] == dict.fromkeys(TROIS_ANS, True)
+    assert "garde_alternee" not in situation["individus"]["enfant_0"]
+    une_annee = build_situation(household, 2024, historique_revenus=False)
+    assert list(une_annee["individus"]["enfant_1"]["garde_alternee"]) == months(2024)
+
+
+@pytest.mark.parametrize(("conjoint", "naissances", "alternes", "parts"), [
+    (None, (2014,), (0,), 1.5),
+    (None, (2014, 2016), (0, 1), 2.0),
+    (None, (2014, 2016, 2018), (0, 1, 2), 2.5),
+    (None, (2014, 2016), (1,), 2.25),
+    (None, (2014, 2016, 2018), (1, 2), 2.75),
+    (None, (2014, 2016, 2018), (2,), 3.0),
+    (20_000, (2014,), (0,), 2.25),
+    (20_000, (2014, 2016), (0, 1), 2.5),
+    (20_000, (2014, 2016, 2018), (0, 1, 2), 3.0),
+    (20_000, (2014, 2016), (1,), 2.75),
+], ids=["seul, un alterné", "seul, deux alternés", "seul, trois alternés",
+        "seul, un à charge et un alterné", "seul, un à charge et deux alternés",
+        "seul, deux à charge et un alterné", "couple, un alterné", "couple, deux alternés",
+        "couple, trois alternés", "couple, un à charge et un alterné"])
+def test_a_child_in_alternating_residence_brings_half_the_parts(
+        conjoint: float | None, naissances: tuple[int, ...], alternes: tuple[int, ...],
+        parts: float) -> None:
+    """CGI art. 194, I: « Lorsque les enfants sont réputés être à la charge égale de chacun des
+    parents, ils ouvrent droit à une majoration de : a) 0,25 part pour chacun des deux premiers
+    et 0,5 part à compter du troisième, lorsque par ailleurs le contribuable n'assume la charge
+    exclusive ou principale d'aucun enfant ; b) 0,25 part pour le premier et 0,5 part à compter
+    du deuxième, lorsque par ailleurs le contribuable assume la charge exclusive ou principale
+    d'un enfant ; c) 0,5 part pour chacun des enfants, lorsque par ailleurs le contribuable
+    assume la charge exclusive ou principale d'au moins deux enfants. » And case T (II): « la
+    majoration est de 0,25 pour un seul enfant et de 0,5 si les enfants sont au moins deux »
+    when they are all shared, 0.5 otherwise. The DGFiP's simulator gives every one of these
+    counts of parts."""
+    household = _alterne(40_000, *naissances, alternes=alternes, conjoint=conjoint)
+    assert _rows(household)["parts_fiscales"] == parts
+
+
+def test_case_t_takes_a_quarter_for_a_single_shared_child_and_is_still_inferred() -> None:
+    """Case T is inferred for a lone parent whose children all live in alternating residence:
+    « Lorsqu'ils entretiennent uniquement des enfants dont la charge est réputée également
+    partagée avec l'autre parent, la majoration est de 0,25 pour un seul enfant et de 0,5 si les
+    enfants sont au moins deux » (art. 194, II), and the notice of the 2042 says « Vous pouvez
+    également bénéficier de la case T si votre enfant est en résidence alternée ». Without case
+    T, a parent who does not live alone has the child's quarter alone: 1.25 parts, 1.5 with two
+    children; the DGFiP's simulator gives 1.25 parts and 28 819 EUR at 150 000 EUR."""
+    seul = _alterne(150_000, 2014, alternes=(0,))
+    assert seul.resolved_parent_isole() is True
+    assert build_situation(seul, 2024)["foyers_fiscaux"]["ff_0"]["caseT"] == {
+        "2022": True, "2023": True, "2024": True}
+    sans_t = _alterne(150_000, 2014, alternes=(0,), parent_isole=False)
+    rows = _rows(sans_t)
+    assert rows["parts_fiscales"] == 1.25
+    assert rows["ir_avant_reductions"] == pytest.approx(IR_UNE_PART_150K - QUART_DE_PART,
+                                                        abs=0.01)
+    assert _rows(_alterne(150_000, 2014, 2016, alternes=(0, 1),
+                          parent_isole=False))["parts_fiscales"] == 1.5
+
+
+@pytest.mark.parametrize(("naissances", "alternes", "plafonds", "simulateur"), [
+    ((2014,), (0,), DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE, 27_603),
+    ((2014, 2016), (0, 1), 2 * DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE, 25_491),
+    ((2014, 2016, 2018), (0, 1, 2), 2 * DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE + DEMI_PART,
+     23_700),
+    ((2014, 2016), (1,), PREMIER_ENFANT_PARENT_ISOLE + QUART_DE_PART, 24_595),
+    ((2014, 2016, 2018), (1, 2), PREMIER_ENFANT_PARENT_ISOLE + QUART_DE_PART + DEMI_PART,
+     22_804),
+    ((2014, 2016, 2018), (2,), PREMIER_ENFANT_PARENT_ISOLE + 2 * DEMI_PART, 21_909),
+], ids=["un alterné", "deux alternés", "trois alternés", "un à charge et un alterné",
+        "un à charge et deux alternés", "deux à charge et un alterné"])
+def test_a_lone_parent_s_shared_children_are_capped_at_half_ceilings(
+        naissances: tuple[int, ...], alternes: tuple[int, ...], plafonds: float,
+        simulateur: int) -> None:
+    """CGI art. 197, I, 2, on 2024 incomes: « 1 791 € par demi-part ou la moitié de cette somme
+    par quart de part »; for the lone parent of case T, the first child's part is capped at
+    4 224 EUR, and « Lorsque les contribuables entretiennent uniquement des enfants dont la
+    charge est réputée également partagée entre l'un et l'autre des parents, la réduction
+    d'impôt correspondant à la demi-part accordée au titre de chacun des deux premiers enfants
+    est limitée à la moitié de cette somme », 2 112 EUR (BOI-IR-LIQ-20-20-20, § 80). The
+    children at exclusive charge rank first (art. 194, I; BOI-IR-LIQ-10-20-20-10, § 70). At
+    150 000 EUR one part pays 29 714.95: one shared child, 27 602.95; two, 25 490.95; three,
+    23 699.95; one at charge and one shared, 24 595.45; one and two, 22 804.45; two and one,
+    21 908.95. The DGFiP's simulator: the same, to the euro, marked capped."""
+    household = _alterne(150_000, *naissances, alternes=alternes)
+    rows = _rows(household)
+    assert rows["ir_avant_reductions"] == pytest.approx(IR_UNE_PART_150K - plafonds, abs=0.01)
+    assert rows["ir"] == pytest.approx(simulateur, abs=0.5)
+
+
+@pytest.mark.parametrize(("naissances", "alternes", "plafonds", "simulateur"), [
+    ((2014,), (0,), QUART_DE_PART, 37_080),
+    ((2014, 2016), (0, 1), DEMI_PART, 36_185),
+    ((2014, 2016, 2018), (0, 1, 2), 2 * DEMI_PART, 34_394),
+    ((2014, 2016), (1,), DEMI_PART + QUART_DE_PART, 35_289),
+], ids=["un alterné", "deux alternés", "trois alternés", "un à charge et un alterné"])
+def test_a_couple_s_shared_children_are_capped_by_the_quarter_part(
+        naissances: tuple[int, ...], alternes: tuple[int, ...], plafonds: float,
+        simulateur: int) -> None:
+    """A married couple, 150 000 and 80 000 EUR, with a child of a former union in alternating
+    residence: what lies above two parts is capped at 1 791 EUR a half-part « ou la moitié de
+    cette somme par quart de part » (art. 197, I, 2). Two parts pay 37 975.71: one shared child,
+    37 080.21; two, 36 184.71; three, 34 393.71; one at charge and one shared, 35 289.21. The
+    DGFiP's simulator: the same, to the euro."""
+    household = _alterne(150_000, *naissances, alternes=alternes, conjoint=80_000)
+    assert _foyer_variable(household, "ir_ss_qf", "2024") == pytest.approx(IR_DEUX_PARTS_230K,
+                                                                            abs=0.01)
+    rows = _rows(household)
+    assert rows["ir_avant_reductions"] == pytest.approx(IR_DEUX_PARTS_230K - plafonds, abs=0.01)
+    assert rows["ir"] == pytest.approx(simulateur, abs=0.5)
+
+
+@pytest.mark.parametrize(("salaire", "naissances", "alternes", "carte", "plafonds",
+                          "reductions", "simulateur"), [
+    (150_000, (2014,), (0,), False, 2 * DEMI_PART + QUART_DE_PART, REDUCTION_VEUF, 23_244),
+    (150_000, (2014, 2016), (0, 1), False, 3 * DEMI_PART, REDUCTION_VEUF, 22_349),
+    (80_000, (2014,), (0,), False, 2 * DEMI_PART + QUART_DE_PART, REDUCTION_VEUF, 4_487),
+    (150_000, (2014,), (0,), True, 3 * DEMI_PART + QUART_DE_PART,
+     REDUCTION_VEUF + COMPLEMENT_CARTE, 19_668),
+    (150_000, (2014, 2016), (1,), False, 3 * DEMI_PART + QUART_DE_PART, REDUCTION_VEUF,
+     21_453),
+], ids=["un alterné", "deux alternés", "un alterné, 80 000 €", "un alterné et la carte",
+        "un à charge et un alterné"])
+def test_a_widow_whose_children_are_all_shared_keeps_the_widow_s_reduction(
+        salaire: float, naissances: tuple[int, ...], alternes: tuple[int, ...], carte: bool,
+        plafonds: float, reductions: float, simulateur: int) -> None:
+    """Art. 197, I, 2: « Les contribuables veufs ayant des enfants à charge qui bénéficient d'une
+    part supplémentaire de quotient familial en application du I de l'article 194 ont droit à une
+    réduction d'impôt égale à 1 993 € pour cette part supplémentaire lorsque la réduction de leur
+    cotisation d'impôt est plafonnée ». A child in alternating residence is « à la charge du
+    contribuable, que celle-ci soit exclusive, principale ou réputée également partagée entre
+    les parents » (art. 196), and gives the widow the married couple's part: 2.25 parts with one,
+    2.5 with two. At 150 000 EUR, 29 714.95 less two half-parts and a quarter, 25 237.45, less
+    1 993: 23 244.45; two shared children, 22 348.95; at 80 000 EUR, 10 957.54 - 4 477.50 -
+    1 993 = 4 487.04; with the card, 23 446.45 - 1 993 - 1 785 = 19 668.45; one at charge and
+    one shared, 21 453.45. The DGFiP's simulator gives each, with its « Réduction d'impôt
+    complémentaire » of 1 993 EUR, 3 778 with the card. openfisca gave the reduction only
+    beside a child at exclusive charge (correction 18)."""
+    household = _alterne(salaire, *naissances, alternes=alternes, carte=carte,
+                         situation_famille="veuf")
+    une_part = IR_UNE_PART_150K if salaire == 150_000 else IR_UNE_PART_80K
+    rows = _rows(household)
+    assert rows["ir_avant_reductions"] == pytest.approx(une_part - plafonds - reductions,
+                                                        abs=0.01)
+    assert rows["ir"] == pytest.approx(simulateur, abs=0.5)
+
+
+@pytest.mark.parametrize(("salaire", "carte", "enfant_carte", "plafonds", "reductions",
+                          "simulateur"), [
+    (150_000, True, (), DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE + DEMI_PART, COMPLEMENT_CARTE,
+     24_027),
+    (80_000, True, (), DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE + DEMI_PART, COMPLEMENT_CARTE,
+     5_270),
+    (150_000, False, (0,), DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE + QUART_DE_PART,
+     COMPLEMENT_CARTE_QUART, 25_814),
+    (80_000, False, (0,), DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE + QUART_DE_PART,
+     COMPLEMENT_CARTE_QUART, 7_057),
+    (150_000, True, (0,), DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE + DEMI_PART + QUART_DE_PART,
+     COMPLEMENT_CARTE + COMPLEMENT_CARTE_QUART, 22_238),
+], ids=["carte du parent", "carte du parent, 80 000 €", "carte de l'enfant",
+        "carte de l'enfant, 80 000 €", "les deux cartes"])
+def test_beside_case_t_a_single_shared_child_s_half_part_alone_takes_the_half_ceiling(
+        salaire: float, carte: bool, enfant_carte: tuple[int, ...], plafonds: float,
+        reductions: float, simulateur: int) -> None:
+    """Art. 197, I, 2: under case T, the half of 4 224 EUR is « la réduction d'impôt
+    correspondant à la demi-part accordée au titre de chacun des deux premiers enfants », the
+    shared child's quarter and the quarter of case T; a card's half-part is capped at 1 791 EUR,
+    the quarter the child's card brings at half that (art. 195, 2), each with its complement,
+    1 785 EUR or half of it. One shared child: 2 112 + 1 791 with the parent's card, 2 112 +
+    895.50 with the child's, all three with both. At 150 000 EUR: 29 714.95 - 3 903 - 1 785 =
+    24 026.95; 29 714.95 - 3 007.50 - 892.50 = 25 814.95; 29 714.95 - 4 798.50 - 2 677.50 =
+    22 238.95. At 80 000 EUR: 10 957.54 - 3 903 - 1 785 = 5 269.54 and 10 957.54 - 3 007.50 -
+    892.50 = 7 057.54. The DGFiP's simulator gives 24 027, 25 814, 22 238, 5 270 and 7 057: it
+    rounds the complement of 892.50 to 893 before taking it off. openfisca capped the card's
+    half-part as the first child's, at 2 112 (correction 18)."""
+    household = _alterne(salaire, 2014, alternes=(0,), carte=carte, enfant_carte=enfant_carte)
+    une_part = IR_UNE_PART_150K if salaire == 150_000 else IR_UNE_PART_80K
+    rows = _rows(household)
+    assert rows["ir_avant_reductions"] == pytest.approx(une_part - plafonds - reductions,
+                                                        abs=0.01)
+    assert rows["ir"] == pytest.approx(simulateur, abs=1.0)
+
+
+def test_beside_case_t_two_shared_children_and_a_card_take_the_ceilings_openfisca_gives() -> None:
+    """Two shared children fill the two half-parts at 2 112 EUR, and the card's half-part is
+    general: 29 714.95 - 4 224 - 1 791 - 1 785 = 21 914.95 at 150 000 EUR, as the DGFiP's
+    simulator gives it, 21 915. openfisca had it right before correction 18, and keeps it."""
+    rows = _rows(_alterne(150_000, 2014, 2016, alternes=(0, 1), carte=True))
+    assert rows["parts_fiscales"] == 2.5
+    assert rows["ir_avant_reductions"] == pytest.approx(
+        IR_UNE_PART_150K - 2 * DEMI_PART_ENFANT_ALTERNE_PARENT_ISOLE - DEMI_PART
+        - COMPLEMENT_CARTE, abs=0.01)
+
+
+def test_the_engine_alone_caps_a_shared_child_s_quotient_as_a_child_at_charge() -> None:
+    """The kill test for correction 18, on raw openfisca at 150 000 EUR. A widow whose one child
+    lives in alternating residence has no widow's reduction: `ir_plaf_qf` gives it only where
+    `nb_pac`, which leaves the shared children out, is positive: 25 237.45 instead of 23 244.45.
+    A lone parent of case T with the card and one shared child has the card's half-part capped
+    at 2 112 EUR as if it were the child's: 23 705.95 instead of 24 026.95. The day this fails,
+    openfisca reads art. 197, I, 2 as the law does, and the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    raw = uncorrected_baseline()
+    veuf = _alterne(150_000, 2014, alternes=(0,), situation_famille="veuf")
+    carte = _alterne(150_000, 2014, alternes=(0,), carte=True)
+    assert _foyer_variable(veuf, "ir_plaf_qf", "2024", raw) == pytest.approx(
+        IR_UNE_PART_150K - 2 * DEMI_PART - QUART_DE_PART, abs=0.01), (
+        "openfisca now gives a widow their reduction beside shared children: remove correction 18")
+    assert _foyer_variable(carte, "ir_plaf_qf", "2024", raw) == pytest.approx(
+        IR_UNE_PART_150K - PREMIER_ENFANT_PARENT_ISOLE - COMPLEMENT_CARTE, abs=0.01), (
+        "openfisca now caps a card beside one shared child at 1 791: remove correction 18")
+
+
+def _saldom_alterne(depenses: float, *, enfants: int = 0, alternes: int = 0,
+                    plus_de_65_ans: int = 0, premiere_annee: bool = False) -> float:
+    """The home-help credit of 2024 from art. 199 sexdecies, 3: 1 500 EUR per child at charge or
+    member over 65, half of it per shared child, under the ordinary ceiling or the first year's."""
+    majorations = (MAJORATION_SALDOM * (enfants + plus_de_65_ans)
+                   + MAJORATION_SALDOM_ALTERNE * alternes)
+    if premiere_annee:
+        plafond = min(PLAFOND_SALDOM_PREMIERE_ANNEE + majorations,
+                      PLAFOND_SALDOM_PREMIERE_ANNEE_MAJORE)
+    else:
+        plafond = min(PLAFOND_SALDOM + majorations, PLAFOND_SALDOM_MAJORE)
+    return TAUX_SALDOM * min(plafond, depenses)
+
+
+@pytest.mark.parametrize(("conjoint", "naissances", "alternes", "a_charge", "simulateur"), [
+    (None, (2014,), (0,), 0, 6_375),
+    (None, (2014, 2016), (0, 1), 0, 6_750),
+    (None, (2014, 2016), (1,), 1, 7_125),
+    (None, (2014, 2016, 2018), (0, 1, 2), 0, 7_125),
+    (20_000, (2014, 2016, 2018, 2012), (2, 3), 2, 7_500),
+], ids=["un alterné", "deux alternés", "un à charge et un alterné", "trois alternés",
+        "couple, deux à charge et deux alternés"])
+def test_a_shared_child_raises_the_home_help_ceiling_by_750_euros(
+        conjoint: float | None, naissances: tuple[int, ...], alternes: tuple[int, ...],
+        a_charge: int, simulateur: int) -> None:
+    """CGI art. 199 sexdecies, 3: « Le montant de 1 500 € est divisé par deux pour les enfants
+    réputés à charge égale de l'un et l'autre de leurs parents »; the notice of the 2042, « 750 €
+    si l'enfant est en résidence alternée ou à charge partagée ». On 18 000 EUR of home help:
+    12 750 retained with one shared child, 6 375 EUR of credit; 13 500 with two, 6 750; 14 250
+    with one at charge and one shared, or three shared, 7 125; a couple with two of each, 16 500
+    capped at 15 000, 7 500. The DGFiP's simulator gives each. openfisca took 750 EUR off the
+    ceiling for each shared child instead of adding them (correction 17)."""
+    household = _alterne(40_000, *naissances, alternes=alternes, conjoint=conjoint,
+                         niches=_domicile(18_000))
+    credit = _rows(household)["credits_impot"]
+    assert credit == pytest.approx(
+        _saldom_alterne(18_000, enfants=a_charge, alternes=len(alternes)), abs=0.5)
+    assert credit == pytest.approx(simulateur, abs=0.5)
+
+
+def test_the_shared_child_s_increment_and_the_member_over_65_s_add_up() -> None:
+    """Corrections 15 and 17 compose. A pensioner born in 1954, 20 000 EUR of pension, with a
+    child born in 2014 in alternating residence, declaring 18 000 EUR: 12 000 + 1 500 + 750 =
+    14 250 retained, 7 125 EUR of credit, as the DGFiP's simulator gives it. The first year,
+    case 7DQ written by hand, a parent at 40 000 EUR with one shared child, on 20 000 EUR:
+    15 000 + 750 = 15 750, 7 875 EUR, the simulator's figure."""
+    retraite = _foyer(_adulte(0, 1954, pension_annuelle=20_000),
+                      children=_enfants(2014, alternes=(0,)), niches=_domicile(18_000))
+    assert _rows(retraite)["credits_impot"] == pytest.approx(
+        _saldom_alterne(18_000, alternes=1, plus_de_65_ans=1), abs=0.5)
+    assert _rows(retraite)["credits_impot"] == pytest.approx(7_125, abs=0.5)
+    premiere = _alterne(40_000, 2014, alternes=(0,), niches=_domicile(20_000))
+    assert _saldom_written_by_hand(premiere, {"f7dq": {"2024": True}}) == pytest.approx(
+        _saldom_alterne(20_000, alternes=1, premiere_annee=True), abs=0.01)
+    assert _saldom_written_by_hand(premiere, {"f7dq": {"2024": True}}) == pytest.approx(
+        7_875, abs=0.01)
+
+
+def test_a_shared_child_s_card_opens_the_20_000_euro_ceiling_without_increment() -> None:
+    """A child in alternating residence who holds the card ticks case 7DG as any child at charge
+    does (D-196): 20 000 EUR retained on 25 000, without increment, 10 000 EUR of credit, as the
+    DGFiP's simulator gives it with case 7DG ticked."""
+    household = _alterne(40_000, 2014, alternes=(0,), enfant_carte=(0,),
+                         niches=_domicile(25_000))
+    assert build_situation(household, 2024)["foyers_fiscaux"]["ff_0"]["f7dg"] == {"2024": True}
+    assert _rows(household)["credits_impot"] == pytest.approx(
+        TAUX_SALDOM * PLAFOND_SALDOM_INVALIDITE, abs=0.5)
+
+
+def test_the_engine_alone_takes_a_shared_child_off_the_home_help_ceiling() -> None:
+    """The kill test for correction 17: raw openfisca's `nb_pac2` is `nbF + nbJ + nbR - nbH / 2`,
+    and `nbF` already leaves out the children in alternating residence. A parent with one such
+    child on 18 000 EUR is retained 12 000 - 750 = 11 250, 5 625 EUR of credit (D-198). The day
+    this fails, openfisca counts the shared child for half, and the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    household = _alterne(40_000, 2014, alternes=(0,), niches=_domicile(18_000))
+    raw = _saldom_written_by_hand(household, system=uncorrected_baseline())
+    assert raw == pytest.approx(TAUX_SALDOM * (PLAFOND_SALDOM - MAJORATION_SALDOM_ALTERNE),
+                                abs=0.01), (
+        "openfisca now adds half an increment for a shared child: remove correction 17")
+
+
+def test_a_shared_child_s_childcare_goes_to_cases_7ge_to_7gg() -> None:
+    """CGI art. 200 quater B: « 3 500 € par enfant à charge et [...] la moitié de ce montant
+    lorsque l'enfant est réputé à charge égale de l'un et l'autre de ses parents »; the 2042 has
+    cases 7GE to 7GG for them. The i-th childcare amount is the i-th child under six's, in the
+    order of the children: it goes to the next of 7GA to 7GC, or of 7GE to 7GG if that child is
+    shared. One shared child born in 2020, 3 000 EUR: 1 750 retained, 875 EUR, the DGFiP's
+    simulator's figure. A child at charge born in 2020 and a shared one born in 2021, 3 000 EUR
+    each: 1 500 + 875 = 2 375 EUR, the simulator's. The other way round, 3 000 and 1 000 EUR:
+    875 + 500 = 1 375 EUR."""
+    def credit_and_cases(children: list[dict[str, Any]],
+                         garde: list[float]) -> tuple[float, dict[str, Any]]:
+        household = _foyer(_adulte(40_000, 1985), children=children,
+                           niches={"frais_garde_par_enfant": garde})
+        foyer = build_situation(household, 2024)["foyers_fiscaux"]["ff_0"]
+        cases = {case: foyer[case] for case in ("f7ga", "f7gb", "f7gc", "f7ge", "f7gf", "f7gg")
+                 if case in foyer}
+        return _rows(household)["credits_impot"], cases
+
+    credit, cases = credit_and_cases(_enfants(2020, alternes=(0,)), [3_000])
+    assert cases == {"f7ge": {"2024": 3_000.0}}
+    assert credit == pytest.approx(0.5 * PLAFOND_GARDE_ALTERNE, abs=0.5)
+    credit, cases = credit_and_cases(_enfants(2020, 2021, alternes=(1,)), [3_000, 3_000])
+    assert cases == {"f7ga": {"2024": 3_000.0}, "f7ge": {"2024": 3_000.0}}
+    assert credit == pytest.approx(2_375, abs=0.5)
+    credit, cases = credit_and_cases(_enfants(2020, 2021, alternes=(0,)), [3_000, 1_000])
+    assert cases == {"f7ge": {"2024": 3_000.0}, "f7ga": {"2024": 1_000.0}}
+    assert credit == pytest.approx(0.5 * PLAFOND_GARDE_ALTERNE + 500, abs=0.5)
+
+
+def test_shared_children_s_school_fees_go_to_cases_7eb_7ed_and_7eg() -> None:
+    """CGI art. 199 quater F: 61 EUR a child at the collège, 153 at the lycée, « divisés par deux
+    lorsque l'enfant est réputé à charge égale de l'un et l'autre de ses parents »; the 2042 has
+    cases 7EB, 7ED and 7EG for them. When every child lives in alternating residence, the counts
+    go there. Two shared children, born in 2012 and 2008, one at each: (61 + 153) / 2 = 107 EUR
+    of reduction, as the DGFiP's simulator gives it at 80 000 EUR."""
+    household = _alterne(80_000, 2012, 2008, alternes=(0, 1),
+                         niches={"enfants_college": 1, "enfants_lycee": 1})
+    foyer = build_situation(household, 2024)["foyers_fiscaux"]["ff_0"]
+    assert foyer["f7eb"] == foyer["f7ed"] == {"2024": 1}
+    assert "f7ea" not in foyer and "f7ec" not in foyer
+    assert _rows(household)["reductions"] == pytest.approx(
+        (SCOLARITE_COLLEGE + SCOLARITE_LYCEE) / 2, abs=0.5)
+
+
+def test_school_fees_beside_shared_and_unshared_children_are_refused() -> None:
+    """With children at charge and children shared, the counts of the wire format do not say
+    which child is at school, and art. 199 quater F halves the shared child's amount: refused
+    rather than guessed. Without school fees, the same household is priced."""
+    with pytest.raises(ValueError, match=r"199 quater F"):
+        build_situation(_alterne(80_000, 2012, 2008, alternes=(1,),
+                                 niches={"enfants_college": 1}), 2024)
+    assert build_situation(_alterne(80_000, 2012, 2008, alternes=(1,)), 2024)
+
+
+def test_an_adult_child_cannot_live_in_alternating_residence() -> None:
+    """Art. 194, I: « les enfants mineurs sont réputés être à la charge égale de l'un et de
+    l'autre parent », the residence being fixed « en alternance au domicile de chacun des
+    parents » under parental authority (C. civ. art. 373-2-9). A child of 18 or more on 1
+    January is not a minor in openfisca (`majeur`), which would count them at full charge: the
+    field is refused there, accepted at 17."""
+    with pytest.raises(ValueError, match=r"194, I"):
+        build_situation(_alterne(40_000, 2006, alternes=(0,)), 2024)
+    assert _rows(_alterne(40_000, 2007, alternes=(0,)))["parts_fiscales"] == 1.5
+
+
+@functools.cache
+def _alterne_priced(alternes: tuple[int, ...], salaire: float = 0,
+                    naissances: tuple[int, ...] = (2014, 2016), conjoint: float | None = None,
+                    system: str = "corrected") -> dict[str, Any]:
+    """A parent renting at 500 EUR in zone 2, earning `salaire`, beside a spouse earning
+    `conjoint` if one is given, children born in `naissances`, those in `alternes` shared: the
+    rows of the full tier."""
+    household = _alterne(salaire, *naissances, alternes=alternes, conjoint=conjoint,
+                         logement=RENTING)
+    if system == "corrected":
+        return _rows(household, "full")
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(household, 2024)
+    simulation = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    from impots.engine import situations
+
+    situations.pin_rfr_n_2(simulation, 2024)
+    situations.pin_benefit_history(simulation, 2024)
+    return extract(simulation, 2024, "full")
+
+
+def test_the_family_allowances_of_a_shared_child_are_halved() -> None:
+    """CSS art. L. 521-2: in alternating residence « les parents désignent l'allocataire.
+    Cependant, la charge de l'enfant pour le calcul des allocations familiales est partagée par
+    moitié entre les deux parents soit sur demande conjointe des parents, soit si les parents
+    sont en désaccord sur la désignation de l'allocataire »; and R. 521-2, 2°, shares them too
+    « Lorsque les deux parents n'ont ni désigné un allocataire unique, ni fait une demande
+    conjointe de partage ». The amount is that of all the children « multiplié par un coefficient
+    résultant du rapport entre le nombre moyen d'enfants et le nombre total d'enfants », each
+    shared child counting 0.5 (R. 521-3). openfisca shares them, and is kept: a couple without
+    income, two children, 1 771.44 EUR; one shared, x 1.5 / 2, 1 328.58; both, x 1 / 2, 885.72.
+    The RSA counts the allowances among the resources: it rises by what they lose."""
+    aucun, un, deux = (_alterne_priced(alternes, conjoint=0) for alternes in ((), (1,), (0, 1)))
+    assert aucun["af"] == pytest.approx(AF_DEUX_ENFANTS_2024, abs=0.01)
+    assert un["af"] == pytest.approx(AF_DEUX_ENFANTS_2024 * 0.75, abs=0.01)
+    assert deux["af"] == pytest.approx(AF_DEUX_ENFANTS_2024 * 0.5, abs=0.01)
+    assert un["rsa"] - aucun["rsa"] == pytest.approx(aucun["af"] - un["af"], abs=0.05)
+    assert deux["rsa"] - aucun["rsa"] == pytest.approx(aucun["af"] - deux["af"], abs=0.05)
+
+
+def test_a_shared_child_opens_no_asf() -> None:
+    """CSS art. L. 523-1, I, 3°: the ASF is for « tout enfant dont le père ou la mère, ou les père
+    et mère, se soustraient ou se trouvent [...] hors d'état de faire face à leurs obligations
+    d'entretien »; with « un droit de résidence alternée sur leur enfant qui est mis en oeuvre
+    de manière effective et équivalente, l'un et l'autre des parents doivent être considérés
+    comme assumant la charge effective et permanente de leur enfant » (Cour de cassation, avis
+    n° 006 0005 du 26 juin 2006, quoted in the answer to written question n° 14550). openfisca paid it to a lone parent
+    for a shared child as for any other (correction 19). One shared child, 15 000 EUR: no ASF;
+    two children, one shared: the other's, 2 336.09 EUR."""
+    un = _alterne_priced((0,), 15_000, (2014,))
+    assert un["asf"] == 0.0
+    deux = _alterne_priced((1,), 15_000)
+    assert deux["asf"] == pytest.approx(ASF_UN_ENFANT_2024, abs=0.01)
+
+
+def test_the_engine_alone_pays_the_asf_for_a_shared_child() -> None:
+    """The kill test for correction 19: raw openfisca's `asf_elig_enfant` never reads
+    `garde_alternee`, and pays a lone parent at 15 000 EUR 2 336.09 EUR of ASF for one shared
+    child. The day this fails, openfisca leaves the shared child out, and the correction must
+    go."""
+    raw = _alterne_priced((0,), 15_000, (2014,), system="raw")
+    assert raw["asf"] == pytest.approx(ASF_UN_ENFANT_2024, abs=0.01), (
+        "openfisca now pays no ASF for a shared child: remove correction 19")
+
+
+def test_a_shared_child_prices_the_same_whatever_is_computed_first() -> None:
+    """Built as `compute` builds the full tier: through the registry, as the API computes it, and
+    with `revenu_disponible` first, as the EMTR's bumped leg does. A lone parent at 15 000 EUR
+    renting at 500 EUR in zone 2, two children, one shared: the disposable income, the family
+    allowances, the ASF and the prime d'activité agree; and the light tier agrees with the full
+    one on every row they share."""
+    household = _alterne(15_000, 2014, 2016, alternes=(1,), logement=RENTING)
+    situation = build_situation(household, 2024)
+    registry = extract(_pinned(situation), 2024, "full")
+    first = _pinned(situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    assert disposable == pytest.approx(registry["revenu_disponible"], abs=0.05)
+    for name in ("af", "asf", "ppa"):
+        assert float(first.calculate_add(name, "2024")[0]) == pytest.approx(registry[name],
+                                                                            abs=0.05)
+    light = _rows(household)
+    for row in LIGHT_ROWS:
+        assert light[row.key] == registry[row.key], row.key
+
+
+# --------------------------------------------------------------------------- #
 # adult dependants: a disabled child of 20 or more, and case R (docs/DECISIONS.md D-202)
 # --------------------------------------------------------------------------- #
 #: The prime de Noël of a person alone at the RSA in 2024, 152.45 EUR.
@@ -4215,7 +4733,7 @@ def test_a_widow_with_a_case_r_person_has_the_widow_s_reduction() -> None:
 
 def test_the_engine_alone_caps_a_lone_adult_s_case_r_half_part_at_the_first_child_s_ceiling(
 ) -> None:
-    """The kill test for correction 18: raw openfisca applies the ceiling of a lone parent's
+    """The kill test for correction 20: raw openfisca applies the ceiling of a lone parent's
     first child, 4 224 EUR, to a lone adult with case T whose only dependant is a person in case R:
     21 914.95 EUR at 150 000 EUR, where the DGFiP's simulator gives 22 557. Written by hand on the
     situation. The day this fails, openfisca reads the first child's part as the law does, and
@@ -4230,7 +4748,7 @@ def test_the_engine_alone_caps_a_lone_adult_s_case_r_half_part_at_the_first_chil
     assert float(raw.calculate("nbptr", "2024")[0]) == 2.5
     assert float(raw.calculate("ir_plaf_qf", "2024")[0]) == pytest.approx(21_914.95, abs=0.01), (
         "openfisca no longer gives the first child's ceiling to a foyer without a child: "
-        "remove correction 18")
+        "remove correction 20")
 
 
 @pytest.mark.parametrize(("depenses", "credit"), [(18_000, 9_000), (25_000, 10_000)])

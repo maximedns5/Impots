@@ -1044,3 +1044,40 @@ def test_a_widowed_parent_reaches_the_income_tax(client: TestClient) -> None:
     rows = response.json()["baseline"]
     assert rows["parts_fiscales"] == 3.0
     assert rows["ir"] == pytest.approx(18_773, abs=0.5)
+
+
+def test_a_child_in_alternating_residence_reaches_the_income_tax(client: TestClient) -> None:
+    """The child's alternating residence over HTTP (D-201), in the light tier. A parent alone at
+    150 000 EUR whose one child lives in alternating residence: the child's quarter part and the
+    quarter of case T, 1.5 parts, capped at half the first child's 4 224 EUR: 29 714.95 - 2 112
+    = 27 602.95, 27 603 EUR of income tax, as the DGFiP's simulator gives it."""
+    request = {"household": {"adults": [{"salaire_brut_annuel": 150_000, "annee_naissance": 1985}],
+                             "children": [{"annee_naissance": 2014, "residence_alternee": True}]},
+               "year": 2024, "tier": "light"}
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 200, response.text
+    rows = response.json()["baseline"]
+    assert rows["parts_fiscales"] == 1.5
+    assert rows["ir"] == pytest.approx(27_603, abs=0.5)
+
+
+@pytest.mark.parametrize(("children", "niches", "needle"), [
+    ([{"annee_naissance": 2006, "residence_alternee": True}], None, "194, I"),
+    ([{"annee_naissance": 2012}, {"annee_naissance": 2008, "residence_alternee": True}],
+     {"enfants_college": 1}, "199 quater F"),
+], ids=["enfant majeur", "frais de scolarité"])
+def test_an_alternating_residence_the_engine_cannot_price_is_refused(
+    client: TestClient, children: list[dict[str, Any]], niches: dict[str, Any] | None,
+    needle: str,
+) -> None:
+    """A child of 18 is no minor, whom art. 194, I alone presumes at equal charge; and school
+    fees beside children at charge and shared children do not say which child is at school,
+    where art. 199 quater F halves the shared one's. Each is refused with its article."""
+    household: dict[str, Any] = {
+        "adults": [{"salaire_brut_annuel": 40_000, "annee_naissance": 1975}],
+        "children": children}
+    if niches is not None:
+        household["niches"] = niches
+    response = client.post("/simulate", json={"household": household, "year": 2024})
+    assert response.status_code == 422, response.text
+    assert needle in response.text

@@ -374,6 +374,8 @@ def build_situation(
             individus[key].update(_child_disability_inputs(child, year, years))
         if draws_the_aah(child, year):
             own_familles.append(key)
+        if child.residence_alternee:
+            individus[key].update(_alternating_residence_inputs(child, year, years))
 
     menage: dict[str, Any] = {"personne_de_reference": [adult_ids[0]]}
     if len(adult_ids) > 1:
@@ -397,7 +399,7 @@ def build_situation(
     if child_ids:
         foyer_fiscal["personnes_a_charge"] = list(child_ids)
     if household.niches is not None:
-        foyer_fiscal.update(_niche_inputs(household.niches, year))
+        foyer_fiscal.update(_niche_inputs(household.niches, year, household.children))
     if household.patrimoine is not None:
         foyer_fiscal.update(_patrimoine_inputs(household.patrimoine, year))
     if household.resolved_parent_isole():
@@ -502,6 +504,26 @@ def assert_niche_eligibility(household: Any, year: int) -> None:
             f"les frais de scolarité déclarent {scolarises} enfant(s) scolarisé(s) pour "
             f"{len(household.children)} enfant(s) à charge."
         )
+    partages = [getattr(child, "residence_alternee", False) for child in household.children]
+    if scolarises and any(partages) and not all(partages):
+        raise ValueError(
+            "Les frais de scolarité ne disent pas quel enfant est au collège, au lycée ou dans "
+            "le supérieur, et leurs montants « sont divisés par deux lorsque l'enfant est réputé "
+            "à charge égale de l'un et l'autre de ses parents » (CGI art. 199 quater F) : à côté "
+            "d'enfants à charge et d'enfants en résidence alternée, le format ne peut pas les "
+            "répartir. Ils ne sont acceptés que si tous les enfants, ou aucun, sont en résidence "
+            "alternée."
+        )
+    garde = _childcare_cases(household.children, year)
+    for index, amount in enumerate(niches.frais_garde_par_enfant):
+        if amount and index >= len(garde):
+            raise ValueError(
+                f"frais_garde_par_enfant suit l'ordre des enfants de moins de "
+                f"{CHILDCARE_MAX_AGE} ans quand l'un d'eux est en résidence alternée, dont le "
+                f"plafond est la moitié (CGI art. 200 quater B, cases 7GE à 7GG) : le montant n° "
+                f"{index + 1} n'a pas d'enfant de moins de {CHILDCARE_MAX_AGE} ans au 1er janvier "
+                f"{year} à qui revenir."
+            )
 
 
 #: The lowest legal retirement age of the years this project prices: 62, for those born
@@ -666,6 +688,49 @@ def assert_adult_children_expressible(household: Any, year: int) -> None:
             )
 
 
+def _alternating_residence_inputs(child: Any, year: int, years: list[int]) -> dict[str, Any]:
+    """A child in alternating residence (`api.schemas.Child.residence_alternee`, D-201): openfisca's
+    `garde_alternee`, on every covered month. The income tax reads it in January, of N for the
+    parts and of N-2 for the rate of the CSG on a replacement income; the family allowances every
+    month. The same household on N-2 and N-1, as for case T (D-199).
+
+    A child of 18 or more on 1 January is refused: « les enfants mineurs sont réputés être à la
+    charge égale de l'un et de l'autre parent » (CGI art. 194, I), and openfisca, which reads a
+    child born on 1 January 18 years before as `majeur`, would count them at full charge."""
+    from impots.api import schemas
+
+    age = year - child.annee_naissance
+    if age >= schemas.ALTERNANCE_AGE_MAXIMUM:
+        raise ValueError(
+            f"Un enfant de {age} ans au 1er janvier {year} n'est pas en résidence alternée au "
+            f"sens de l'impôt : « les enfants mineurs sont réputés être à la charge égale de l'un "
+            f"et de l'autre parent » (CGI art. 194, I), la résidence en alternance étant celle "
+            f"que fixe l'autorité parentale (C. civ. art. 373-2-9). Le moteur le compterait à "
+            f"charge entière. Un enfant majeur se rattache au foyer de l'un des parents."
+        )
+    return {"garde_alternee": _constant("garde_alternee", True, years)}
+
+
+def _childcare_cases(children: Any, year: int) -> tuple[str, ...]:
+    """The case each childcare amount of `Niches.frais_garde_par_enfant` goes to, in its order.
+
+    Cases 7GA to 7GC in order, as since B3, unless a child under six lives in alternating
+    residence. Then the i-th amount is the i-th child under six's, in the order of the children,
+    and goes to the next of 7GE to 7GG when that child is shared, whose ceiling is « la moitié
+    de ce montant » (CGI art. 200 quater B), to the next of 7GA to 7GC otherwise. An amount
+    beyond the children under six then has no case: `assert_niche_eligibility` refuses it."""
+    from impots.api import schemas
+
+    under_six = [child for child in children
+                 if child.annee_naissance >= year - CHILDCARE_MAX_AGE]
+    if not any(getattr(child, "residence_alternee", False) for child in under_six):
+        return schemas.NICHE_GARDE_CASES
+    ordinary = iter(schemas.NICHE_GARDE_CASES)
+    shared = iter(schemas.NICHE_GARDE_ALTERNEE_CASES)
+    return tuple(next(shared) if child.residence_alternee else next(ordinary)
+                 for child in under_six[:len(schemas.NICHE_GARDE_CASES)])
+
+
 def _opens_the_home_help_invalidity_ceiling(household: Any) -> bool:
     """Whether a member of the foyer opens the 20 000 EUR ceiling of the home-help credit, case
     7DG, as far as the wire format can say it (D-196).
@@ -717,24 +782,32 @@ def _patrimoine_inputs(patrimoine: Any, year: int) -> dict[str, Any]:
     }
 
 
-def _niche_inputs(niches: Any, year: int) -> dict[str, Any]:
+def _niche_inputs(niches: Any, year: int, children: Any = ()) -> dict[str, Any]:
     """Foyer-fiscal-level réduction and crédit bases, on the target year only.
 
     Zero-valued fields are omitted rather than written as zero. Both produce the same
     answer, but an input dict that lists only what the household actually declared is
     what a reader can check against a paper 2042.
+
+    Children in alternating residence have their own cases (D-201): their school-fee counts go
+    to 7EB, 7ED and 7EG when every child is shared, a mix being refused beforehand; their
+    childcare to 7GE to 7GG, child by child (`_childcare_cases`).
     """
     from impots.api import schemas
 
+    tous_partages = bool(children) and all(
+        getattr(child, "residence_alternee", False) for child in children)
     inputs: dict[str, Any] = {}
     for field, case in schemas.NICHE_CASES.items():
         value = getattr(niches, field, 0)
         if value:
+            if tous_partages:
+                case = schemas.NICHE_SCOLARITE_ALTERNEE_CASES.get(field, case)
             inputs[case] = _this_year(case, value, year)
+    garde = _childcare_cases(children, year)
     for index, amount in enumerate(niches.frais_garde_par_enfant):
-        if index < len(schemas.NICHE_GARDE_CASES) and amount:
-            case = schemas.NICHE_GARDE_CASES[index]
-            inputs[case] = _this_year(case, float(amount), year)
+        if index < len(garde) and amount:
+            inputs[garde[index]] = _this_year(garde[index], float(amount), year)
     return inputs
 
 

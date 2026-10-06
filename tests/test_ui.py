@@ -960,10 +960,12 @@ def test_a_hidden_history_box_decides_nothing(source: str, tmp_path: Path):
 #: Each field of `api.schemas.Child`, and the result rows that show what it produced. A new
 #: field fails `test_every_child_field_on_the_wire_is_sent_from_an_input` until it is given
 #: an input here and on the page. The disability shows in the AEEH, and in the parts when
-#: the child holds the card.
+#: the child holds the card. The alternating residence shows in the parts, its quarter, and in
+#: the family allowances, shared (D-201).
 CHILD_INPUT_ROWS: dict[str, tuple[str, ...]] = {
     "annee_naissance": ("parts_fiscales", "af"),
     "handicap": ("aeeh", "parts_fiscales"),
+    "residence_alternee": ("parts_fiscales", "af"),
 }
 
 
@@ -1011,6 +1013,9 @@ out.filled = childPayload(filled);
 const cared = newChild(2016);
 Object.assign(cared, { taux: "60", soins: true });
 out.cared = childPayload(cared);
+const shared = newChild(2015);
+shared.residence_alternee = true;
+out.shared = childPayload(shared);
 console.log(JSON.stringify(out));
 """
 
@@ -1043,6 +1048,16 @@ def test_a_filled_child_is_what_the_wire_format_accepts(child_payloads):
         "carte_invalidite": False}
     for name in ("filled", "cared"):
         assert Child.model_validate(child_payloads[name]).handicap is not None
+
+
+def test_a_child_in_alternating_residence_is_sent_as_the_wire_format_has_it(child_payloads):
+    """The box goes as `residence_alternee`, only when ticked: a blank child sends the year
+    alone (D-201). And the child validates against the model."""
+    from impots.api.schemas import Child
+
+    assert child_payloads["shared"] == {"annee_naissance": 2015, "residence_alternee": True}
+    assert "residence_alternee" not in child_payloads["blank"]
+    assert Child.model_validate(child_payloads["shared"]).residence_alternee is True
 
 
 # --- the household's own fields, and a lone adult's situation de famille (D-197) -------
