@@ -1114,3 +1114,56 @@ def test_a_lone_adult_s_situation_is_sent_and_a_widow_claims_no_case_t(situation
     assert "situation_famille" not in situation_payloads["couple"]
     for name, sent in situation_payloads.items():
         assert HouseholdInput.model_validate(sent), name
+
+
+# --- adult dependants: case R (D-202) -------------------------------------------------
+
+CASE_R_HARNESS = """
+const inputs = {};
+const $ = (id) => (inputs[id] ||= { value: "", checked: false });
+const state = { adults: 1, children: [] };
+const adultPayload = () => ({ salaire_brut_annuel: 40000, annee_naissance: 1970 });
+const childPayload = (child) => ({ annee_naissance: child.annee_naissance });
+const nichesPayload = () => null;
+const patrimoinePayload = () => null;
+const reformSpec = () => null;
+%(caseTApplies)s
+%(payload)s
+const out = {};
+$("situation").value = "celibataire";
+$("isole").checked = true;
+out.blank = payload().household;
+$("invalides").value = "2";
+out.alone = payload().household;
+state.adults = 2;
+out.couple = payload().household;
+console.log(JSON.stringify(out));
+"""
+
+
+@pytest.fixture(scope="module")
+def case_r_payloads(source: str, tmp_path_factory):
+    """Run the page's own `caseTApplies` and `payload` in node: a lone adult with no dependant,
+    then with two persons in case R and no child, then a couple with them."""
+    return _run_node(CASE_R_HARNESS % {"caseTApplies": _function(source, "caseTApplies"),
+                                       "payload": _function(source, "payload")},
+                     tmp_path_factory.mktemp("ui_case_r"))
+
+
+def test_case_r_is_sent_and_opens_case_t_without_a_child(source: str, case_r_payloads):
+    """The page has an input for case R, the persons « (autres que vos enfants) vivant sous votre
+    toit et titulaires de la carte d'invalidité » (CGI art. 196 A bis), sent as a count, zero when
+    blank. A lone adult with such a person and no child is offered case T, which the 2042 gives to
+    whoever lives alone « avec votre (ou vos) enfant(s) ou des personnes invalides recueillies sous
+    votre toit »; a couple is not (D-202). Each household validates against the model."""
+    from impots.api.schemas import HouseholdInput
+
+    assert 'id="invalides"' in source, "no input for case R"
+    assert case_r_payloads["blank"]["personnes_invalides_recueillies"] == 0
+    assert "parent_isole" not in case_r_payloads["blank"]
+    assert case_r_payloads["alone"]["personnes_invalides_recueillies"] == 2
+    assert case_r_payloads["alone"]["parent_isole"] is True
+    assert case_r_payloads["couple"]["personnes_invalides_recueillies"] == 2
+    assert "parent_isole" not in case_r_payloads["couple"]
+    for name, sent in case_r_payloads.items():
+        assert HouseholdInput.model_validate(sent), name
