@@ -155,8 +155,10 @@ has bases, which is the half that stops it becoming furniture.
   child's invalidity card and from a child's complément of the AEEH (D-196). It cannot
   express the invalidity pension of the third category, which opens it too, the
   first-year bonus (7DQ) or dependent ascendants (7DL), which change the home-help
-  ceiling as well. And openfisca leaves out the 1 500 € increment the law gives each
-  member of the foyer over 65.
+  ceiling as well. The 1 500 € increment the law gives each member of the foyer over 65,
+  which openfisca leaves out, the engine applies since D-198 (correction 15 of
+  `engine.corrections`): to each declarant of 65 or more on 31 December, on the ordinary
+  ceiling and on the first year's.
 * `f7df`, the old réduction base for retirees, is **dead** (`end = 2016-12-31`) and its
   cerfa box has been recycled for Scellier carry-forwards under `f7df_2024`. A knob or
   input aimed at "7DF" today would land on property investment relief.

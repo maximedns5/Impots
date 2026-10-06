@@ -304,8 +304,6 @@ download list.
   - alternating residence, and its quarter parts;
   - case 7DG for a third-category invalidity pensioner without the card, whose category
     the format does not carry (D-196);
-  - the home-help credit's 1 500 € increment per member over 65, which openfisca never
-    applies: a correction to write (D-196);
   - case L, for a parent who raised a now-adult child alone for five years, and the year
     of the death (D-197);
   - the population's case T on N-2 and N-1, which the household builder writes and the

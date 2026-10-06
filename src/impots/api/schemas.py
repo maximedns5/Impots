@@ -353,11 +353,11 @@ class Niches(BaseModel):
     50 %, so it reaches households with no tax to reduce — which is why it is the
     largest niche and why it cannot be imputed to taxpayers alone.
 
-    Retained net of the aid received up to 12 000 EUR, plus 1 500 per dependent child, 15 000
-    at most; up to 20 000, without increments, when a member of the foyer holds the invalidity
-    card or a child opens a complément of the AEEH: the builder then ticks case 7DG, which no
-    field types (CGI art. 199 sexdecies, 3; D-196). The law also raises the ordinary ceiling by
-    1 500 for each member over 65, which openfisca does not: measured and left in D-196."""
+    Retained net of the aid received up to 12 000 EUR, plus 1 500 per dependent child and per
+    adult of 65 or more on 31 December, 15 000 at most: openfisca counts the children, and
+    correction 15 adds the adults (D-198). Up to 20 000, without increments, when a member of the
+    foyer holds the invalidity card or a child opens a complément of the AEEH: the builder then
+    ticks case 7DG, which no field types (CGI art. 199 sexdecies, 3; D-196)."""
     salarie_domicile_aides_percues: Annotated[float, Field(ge=0, le=100_000)] = 0.0
     """Aides perçues for that employment — APA, PCH, CESU préfinancé (case 7DR). They
     reduce the eligible base, so omitting them overstates the credit."""
