@@ -10,7 +10,10 @@ The wiring rules, verified against openfisca-france 176.0.8:
 Every adult appears in `declarants`, `parents` and exactly one of
 `personne_de_reference` / `conjoint`. Every child appears in `personnes_a_charge`,
 `familles.enfants` and `menages.enfants`. One foyer fiscal, one famille, one ménage:
-Phase 0 models a single person or a married/pacsé couple only.
+Phase 0 models a single person or a married/pacsé couple only. The one exception is a
+child of 20 or more who draws the AAH: a dependant of the foyer fiscal and a child of the
+ménage, in a famille of their own, where the AAH is the child's and the parents' RSA and
+prime d'activité do not count them (D-202).
 
 `salaire_de_base` is a **monthly** input, so the annual figure the user types is
 divided by 12 and written to each of the twelve months. `date_naissance` is set at
@@ -129,7 +132,8 @@ def pin_benefit_history(simulation: Any, year: int) -> None:
 #: since D-184, the invalidity pension field the second since D-190, and the « fin de
 #: droits » field the last since D-189. The other, `handicap`, the child's field writes since
 #: D-191, on a child where the AEEH is open; on an adult a situation carries it only when
-#: someone adds it, as the D-179 tests do for the ASI.
+#: someone adds it, as the D-179 tests do for the ASI. Since D-202 the child's field writes the
+#: first and the flag on a child of 20 or more at 80 %, who draws the AAH.
 MINIMA_INPUTS = ("taux_incapacite", "pensions_invalidite", "handicap", "ass_precondition_remplie")
 
 
@@ -141,6 +145,10 @@ INVALIDITY_CASES = ("caseP", "caseF")
 #: employing someone at home (CGI art. 199 sexdecies, 3), a boolean of the foyer fiscal that only
 #: that credit reads. Ticked by the builder, never typed (D-196).
 HOME_HELP_INVALIDITY_CASE = "f7dg"
+
+#: Case R of the 2042, the persons holding the card who live under the foyer's roof (CGI art.
+#: 196 A bis): openfisca's count of the foyer fiscal, an input without an individual (D-202).
+CASE_R = "nbR"
 
 
 def has_benefit_cascade(situation: dict[str, Any]) -> bool:
@@ -165,7 +173,9 @@ def has_benefit_cascade(situation: dict[str, Any]) -> bool:
     A child's disability writes `handicap` on the child since D-191. There the flag opens
     the AEEH, which reads no resource, and no ASI, which needs a pension: on a household
     without a dwelling the pin runs for nothing, about 1.5 s, and moves no figure in
-    either evaluation order (measured). Left so, rather than read the flag by role.
+    either evaluation order (measured). Left so, rather than read the flag by role. A child
+    of 20 or more at 80 % carries the rate since D-202, and draws the AAH in a famille of
+    their own: the pin runs, as for an adult's AAH.
     """
     housed = "statut_occupation_logement" in situation["menages"][MENAGE_ID]
     return housed or any(
@@ -178,6 +188,11 @@ def adult_id(i: int) -> str:
 
 def child_id(i: int) -> str:
     return f"enfant_{i}"
+
+
+def own_famille_id(key: str) -> str:
+    """The famille of a child of 20 or more who draws the AAH (D-202)."""
+    return f"fam_{key}"
 
 
 def _period_keys(variable_name: str, years: list[int]) -> list[str]:
@@ -275,6 +290,7 @@ def build_situation(
     assessed against a realistic reference period instead of an empty one.
     """
     assert_ass_expressible(household, year)
+    assert_adult_children_expressible(household, year)
     years = covered_years(year, historique_revenus)
     individus: dict[str, dict[str, Any]] = {}
 
@@ -348,12 +364,16 @@ def build_situation(
             "statut_marital", _coerce_enum("statut_marital", household.situation_famille), years)
 
     child_ids: list[str] = []
+    #: The children of 20 or more who draw the AAH, each in a famille of their own (D-202).
+    own_familles: list[str] = []
     for i, child in enumerate(household.children):
         key = child_id(i)
         child_ids.append(key)
         individus[key] = {"date_naissance": {"ETERNITY": f"{child.annee_naissance}-01-01"}}
         if child.handicap is not None:
             individus[key].update(_child_disability_inputs(child, year, years))
+        if draws_the_aah(child, year):
+            own_familles.append(key)
         if child.residence_alternee:
             individus[key].update(_alternating_residence_inputs(child, year, years))
 
@@ -399,6 +419,12 @@ def build_situation(
             # resources of N-2, and the CSG of a replacement income reads the RFR and the
             # parts of N-2 (D-188).
             foyer_fiscal[case] = _constant(case, True, years)
+    if household.personnes_invalides_recueillies:
+        # Case R: openfisca's count of the persons holding the card under the foyer's roof (CGI
+        # art. 196 A bis), on every covered year like cases P and F, since the CSG of a
+        # replacement income reads the parts of N-2. No individual: the person's incomes and
+        # benefits are not the foyer's to declare here (D-202).
+        foyer_fiscal[CASE_R] = _constant(CASE_R, household.personnes_invalides_recueillies, years)
     if (household.niches is not None and household.niches.salarie_domicile
             and _opens_the_home_help_invalidity_ceiling(household)):
         # Case 7DG, beside the home help of case 7DB and like it on N alone: the credit of N
@@ -406,15 +432,25 @@ def build_situation(
         foyer_fiscal[HOME_HELP_INVALIDITY_CASE] = _this_year(
             HOME_HELP_INVALIDITY_CASE, True, year)
 
+    # The parents' famille keeps every child but those who draw the AAH: the RSA leaves out « les
+    # personnes qui perçoivent des ressources égales ou supérieures à la majoration du revenu
+    # garanti à laquelle elles ouvrent droit » (CASF art. R. 262-3), and the AAH is the child's,
+    # against the child's own resources (CSS art. L. 821-3). Each of those is the only parent of
+    # a famille of their own; the dwelling's aid is refused beside them (D-202).
+    famille_children = [key for key in child_ids if key not in own_familles]
+    familles: dict[str, Any] = {
+        FAMILLE_ID: {
+            "parents": list(adult_ids),
+            **({"enfants": famille_children} if famille_children else {}),
+        }
+    }
+    for key in own_familles:
+        familles[own_famille_id(key)] = {"parents": [key]}
+
     return {
         "individus": individus,
         "foyers_fiscaux": {FOYER_FISCAL_ID: foyer_fiscal},
-        "familles": {
-            FAMILLE_ID: {
-                "parents": list(adult_ids),
-                **({"enfants": list(child_ids)} if child_ids else {}),
-            }
-        },
+        "familles": familles,
         "menages": {MENAGE_ID: menage},
     }
 
@@ -550,30 +586,39 @@ def _disability_inputs(handicap: Any, years: list[int]) -> dict[str, Any]:
 
 
 def _child_disability_inputs(child: Any, year: int, years: list[int]) -> dict[str, Any]:
-    """A child's disability (`api.schemas.HandicapEnfant`, D-191), on every covered month.
+    """A child's disability (`api.schemas.HandicapEnfant`), on every covered month.
 
-    Where the AEEH is open, openfisca's generic `handicap` flag, which its AEEH reads, and
-    the complément's category with it; for the card, `invalidite`, which gives the
-    half-part. The rate is not written: it decided all this, and openfisca reads it for
-    nobody under 20 who is a dependant (the AAH opens at 20). On a child the flag also
-    lifts the housing aid's taper, as CCH art. D. 823-16 does for an AEEH beneficiary; the
-    household's `has_benefit_cascade` then holds, and the pin of D-178 runs, moving no
-    figure.
+    Under 20 (D-191): where the AEEH is open, openfisca's generic `handicap` flag, which its
+    AEEH reads, and the complément's category with it; for the card, `invalidite`, which gives
+    the half-part. The rate is not written: it decided all this, and openfisca reads it for
+    nobody under 20 who is a dependant (the AAH opens at 20). On a child the flag also lifts the
+    housing aid's taper, as CCH art. D. 823-16 does for an AEEH beneficiary; the household's
+    `has_benefit_cascade` then holds, and the pin of D-178 runs, moving no figure.
 
-    A child of 20 or more in the year simulated is refused: the AEEH has stopped, the
-    disability is then an adult's (the AAH), and the flag would still lift the taper.
-    Under 20 that year, the child is under 20 on every covered month."""
+    From 20 in the year simulated (D-202) there is no AEEH, and `assert_adult_children_expressible`
+    has refused its complément and establishment. From 80 % the child draws the AAH: the rate,
+    which the AAH reads, and the flag, which makes the child an infirm dependant of the income
+    tax, « quel que soit leur âge » (CGI art. 196; case F of the 2042), in a famille of the
+    child's own, where it lifts no parent's taper. The card adds `invalidite`, the half-part of
+    art. 195, 2, which openfisca counts only on a dependant it holds infirm. Under 80 % nothing is
+    written: no AAH without the restriction of CSS art. L. 821-2, which the field does not carry,
+    no card, and the parts of any dependant of that age, case J's being case F's. The history
+    writes the inputs of N on N-2 and N-1, where the child may still be of the AEEH's age, as it
+    writes the household's composition of N on them (D-199): no AEEH is paid there, the child
+    being no child of their own famille, and the AAH of those years reaches no figure of N, since
+    the AAH reads taxable resources and no famille of the parents reads the child's."""
     from impots.api import schemas
 
-    age = year - child.annee_naissance
-    if age >= schemas.AEEH_AGE_MAXIMUM:
-        raise ValueError(
-            f"Le handicap d'un enfant de {age} ans n'est pas modélisé : l'AEEH s'arrête à "
-            f"{schemas.AEEH_AGE_MAXIMUM} ans (CSS art. R. 512-2), et au-delà c'est l'AAH d'un "
-            f"adulte, que le champ de l'enfant n'ouvre pas."
-        )
     handicap = child.handicap
     inputs: dict[str, Any] = {}
+    if year - child.annee_naissance >= schemas.AEEH_AGE_MAXIMUM:
+        if handicap.taux_incapacite >= schemas.AAH_TAUX:
+            inputs["taux_incapacite"] = _constant("taux_incapacite", handicap.taux_incapacite,
+                                                  years)
+            inputs["handicap"] = _constant("handicap", True, years)
+            if handicap.carte_invalidite:
+                inputs["invalidite"] = _constant("invalidite", True, years)
+        return inputs
     if handicap.ouvre_aeeh:
         inputs["handicap"] = _constant("handicap", True, years)
         if handicap.complement_categorie is not None:
@@ -582,6 +627,65 @@ def _child_disability_inputs(child: Any, year: int, years: list[int]) -> dict[st
     if handicap.carte_invalidite:
         inputs["invalidite"] = _constant("invalidite", True, years)
     return inputs
+
+
+def draws_the_aah(child: Any, year: int) -> bool:
+    """Whether a child of the wire format draws the AAH in the year simulated: 20 or more, past
+    the AEEH's age (CSS art. L. 821-1, R. 512-2), and at 80 % or more (art. D. 821-1). With no
+    resources of their own on the wire, such a child draws it in full; the builder gives them a
+    famille of their own (D-202)."""
+    from impots.api import schemas
+
+    return (child.handicap is not None
+            and year - child.annee_naissance >= schemas.AEEH_AGE_MAXIMUM
+            and child.handicap.taux_incapacite >= schemas.AAH_TAUX)
+
+
+def assert_adult_children_expressible(household: Any, year: int) -> None:
+    """Refuse what a child of 20 or more cannot carry, or the engine cannot price (D-202).
+
+    From 20 there is no AEEH: « Les enfants ouvrent droit aux prestations familiales jusqu'à l'âge
+    de vingt ans » (CSS art. R. 512-2), so its complément and its establishment, support or care
+    open nothing. And a child who draws the AAH is, beside a rented dwelling, a dependant of the
+    parents' housing aid: « Les ascendants, descendants ou collatéraux [...] dont l'incapacité
+    permanente est au moins égale à 80 % » (CCH art. R. 823-4, 3°). The engine computes that
+    child's AAH in a famille of their own, and would pay that famille a second aid on the same
+    rent while the parents' counted no dependant. The year is the builder's, so these refusals
+    are here and not in the wire format. ValueError, which the API turns into a 422."""
+    from impots.api import schemas
+
+    for index, child in enumerate(household.children):
+        handicap = child.handicap
+        age = year - child.annee_naissance
+        if handicap is None or age < schemas.AEEH_AGE_MAXIMUM:
+            continue
+        if handicap.complement_categorie is not None:
+            raise ValueError(
+                f"Enfant {index + 1} : le complément de l'AEEH n'est plus dû à {age} ans en "
+                f"{year}. « Les enfants ouvrent droit aux prestations familiales jusqu'à l'âge de "
+                f"vingt ans » (CSS art. R. 512-2), et l'AEEH avec elles. À partir de 20 ans, "
+                f"c'est l'AAH de l'enfant, dès {schemas._pour_cent(schemas.AAH_TAUX)}."
+            )
+        if handicap.etablissement_accompagnement_ou_soins:
+            raise ValueError(
+                f"Enfant {index + 1} : l'établissement, l'accompagnement ou les soins n'ouvrent "
+                f"plus l'AEEH à {age} ans en {year} : « Les enfants ouvrent droit aux prestations "
+                f"familiales jusqu'à l'âge de vingt ans » (CSS art. R. 512-2). À partir de 20 ans, "
+                f"c'est l'AAH de l'enfant, dès {schemas._pour_cent(schemas.AAH_TAUX)}."
+            )
+        logement = getattr(household, "logement", None)
+        if (draws_the_aah(child, year) and logement is not None
+                and logement.statut.startswith("locataire")):
+            raise ValueError(
+                f"Enfant {index + 1} : à {age} ans et à "
+                f"{schemas._pour_cent(handicap.taux_incapacite)} d'incapacité, l'enfant touche "
+                f"l'AAH dans une famille à lui, et n'est pas exprimable à côté d'un logement loué. "
+                f"Il est une personne à charge de l'aide au logement de ses parents : « Les "
+                f"ascendants, descendants ou collatéraux [...] dont l'incapacité permanente est "
+                f"au moins égale à 80 % » (CCH art. R. 823-4, 3°). Le moteur verserait à sa "
+                f"famille une seconde aide sur le même loyer, et aucune personne à charge à la "
+                f"leur."
+            )
 
 
 def _alternating_residence_inputs(child: Any, year: int, years: list[int]) -> dict[str, Any]:
@@ -641,13 +745,17 @@ def _opens_the_home_help_invalidity_ceiling(household: Any) -> bool:
     conjoint ou une personne à charge) avez la carte d'invalidité ou la carte mobilité inclusion,
     mention “invalidité” ».
 
-    So an adult's card (cases P and F), a dependent child's card, and a child's complément of
-    the AEEH, whatever its category: the format grants one only where the AEEH is open, and the
-    builder refuses a child of 20 or more before this is asked. Not a child's AEEH alone, nor a
+    So an adult's card (cases P and F), a dependent child's card, at any age, and a child's
+    complément of the AEEH, whatever its category: the format grants one only where the AEEH is
+    open, and the builder refuses it from 20 before this is asked. Not a child's AEEH alone, nor a
     disability without the card. The third category is not in the format, which carries the
     invalidity pension without it; its pensioner has the card for the asking (CASF art.
-    L. 241-3), and through the card, this ceiling."""
+    L. 241-3), and through the card, this ceiling. And a person in case R, at charge (CGI art.
+    196 A bis) and holding the card by definition, « une personne à votre charge » of the 2042's
+    case 7DG (D-202)."""
     if any(adult.carte_invalidite for adult in household.adults):
+        return True
+    if getattr(household, "personnes_invalides_recueillies", 0):
         return True
     return any(
         child.handicap is not None

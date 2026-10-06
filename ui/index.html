@@ -696,6 +696,13 @@ footer code { font-family: var(--mono); font-size: 11px; }
         <div id="children"></div>
         <button type="button" class="mini" id="addChild">+ ajouter un enfant</button>
 
+        <div class="field-row tri" style="margin-top:14px">
+          <div>
+            <label for="invalides">Personnes invalides recueillies (case R)</label>
+            <input type="number" id="invalides" value="0" min="0" max="8" step="1">
+          </div>
+        </div>
+
         <label class="check" id="isoleWrap" hidden>
           <input type="checkbox" id="isole" checked>
           <span>Parent isolé (case T)
@@ -723,6 +730,13 @@ footer code { font-family: var(--mono); font-size: 11px; }
           établissement, un accompagnement ou des soins ; son complément est payé au taux de
           sa catégorie, majoré pour un parent seul dès la deuxième ; la carte « invalidité »
           ajoute une demi-part (D-191).
+          Un enfant de 20 ans ou plus reste à charge s'il est infirme, avec la demi-part de sa
+          carte ; dès 80 %, il touche l'AAH dans une famille à lui, et ne compte ni dans le RSA ni
+          dans la prime d'activité de ses parents. La case R compte les personnes titulaires de la
+          carte « invalidité », autres que vos enfants, qui vivent sous votre toit : chacune vaut
+          une part, ouvre la case T à un adulte seul et la case 7DG ; ses propres revenus ne sont
+          pas calculés. À côté d'un logement loué, l'une et l'autre sont refusées : l'aide au
+          logement les compterait autrement que le moteur (D-202).
           Un adulte seul déclare sa situation de famille : veuf ou veuve avec des enfants à
           charge, il a les parts d'un couple marié, sans la case T ; divorcé·e ou séparé·e, il
           est imposé comme un célibataire. L'année du décès, qui demande deux déclarations,
@@ -1343,11 +1357,14 @@ function renderAdults() {
   $("situationWrap").hidden = state.adults === 2;
 }
 
-/* Case T only exists for a lone adult with dependent children, and never for a widow:
-   art. 194, II gives it to « célibataires ou divorcés qui vivent seuls », and a widowed
-   parent has the parts of a married couple instead (D-197). */
+/* Case T only exists for a lone adult with dependants, and never for a widow: art. 194, II
+   gives it to « célibataires ou divorcés qui vivent seuls », and a widowed parent has the
+   parts of a married couple instead (D-197). A person in case R opens it as a child does: the
+   2042 names « des personnes invalides recueillies sous votre toit » beside the children
+   (D-202). */
 function caseTApplies() {
-  return state.adults === 1 && state.children.length > 0 && $("situation").value !== "veuf";
+  const dependants = state.children.length > 0 || Number($("invalides").value) > 0;
+  return state.adults === 1 && dependants && $("situation").value !== "veuf";
 }
 
 function syncIsole() {
@@ -1428,6 +1445,7 @@ function renderChildren() {
 $("one").onclick = () => { state.adults = 1; renderAdults(); syncIsole(); };
 $("two").onclick = () => { state.adults = 2; renderAdults(); syncIsole(); };
 $("situation").addEventListener("change", syncIsole);
+$("invalides").addEventListener("input", syncIsole);
 $("addChild").onclick = () => {
   if (state.children.length >= 8) return;
   state.children.push(newChild(2015 + state.children.length));
@@ -1783,6 +1801,8 @@ function payload() {
   const household = {
     adults,
     children: state.children.map(childPayload),
+    /* Case R, a count, as the 2042 has it; blank is none (D-202). */
+    personnes_invalides_recueillies: Number($("invalides").value) || 0,
     couple_marie_ou_pacse: state.adults === 2,
   };
   /* A lone adult's situation de famille; a couple has none to send (D-197). Case T goes

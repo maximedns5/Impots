@@ -47,6 +47,10 @@ INPUT_CONFIG = ConfigDict(extra="forbid", allow_inf_nan=False)
 #: because a validator must not need a tax-benefit system;
 #: `test_the_aah_rsdae_rate_matches_the_tree` keeps it honest.
 AAH_TAUX_RSDAE = 0.5
+#: The rate from which the AAH is open without that restriction: « au moins 80 % » (CSS art.
+#: D. 821-1). The builder reads it on a child of 20 or more, who draws the AAH in a famille of
+#: their own (D-202); `test_the_aah_rate_matches_the_tree` keeps it honest.
+AAH_TAUX = 0.8
 
 
 class Handicap(BaseModel):
@@ -218,33 +222,46 @@ def _pour_cent(rate: float) -> str:
 
 
 class HandicapEnfant(BaseModel):
-    """A child's disability as the CDAPH recognised it: what the AEEH and the income tax
-    read (D-191).
+    """A child's disability as the CDAPH recognised it: what the AEEH, the AAH and the income
+    tax read (D-191, D-202).
 
-    The rate decides what the builder writes, and is not written itself. openfisca's AEEH
-    reads its generic `handicap` flag, which the builder writes where the AEEH is open,
+    Under 20, the rate decides what the builder writes, and is not written itself. openfisca's
+    AEEH reads its generic `handicap` flag, which the builder writes where the AEEH is open,
     with the complément's category; its half-part reads `invalidite`, which the builder
     writes for the card. On a child the flag is what the law asks: it opens the AEEH, and it lifts
     the housing aid's high-rent taper, which CCH art. D. 823-16 lifts for « le demandeur
     ou son conjoint [...] bénéficiaire [...] de l'allocation d'éducation de l'enfant
-    handicapé ». It opens no ASI, which needs a pension. A child of 20 or more is refused,
-    since there is no AEEH from that age and the flag would still lift the taper.
+    handicapé ». It opens no ASI, which needs a pension.
+
+    From 20 there is no AEEH (CSS art. R. 512-2): its complément and its establishment are
+    refused. The child stays a dependant, « infirmes » at any age (CGI art. 196), and from 80 %
+    draws the AAH (CSS art. L. 821-1, D. 821-1) in a famille of their own, where the flag lifts
+    no parent's taper. The builder checks the age, which is the year's (D-202).
     """
 
     model_config = INPUT_CONFIG
 
     taux_incapacite: Annotated[float, Field(ge=0, le=1)] = Field(
         description="Permanent incapacity rate recognised by the CDAPH, as a fraction: 0.8 "
-        "for 80 %. From 80 % it opens the AEEH (CSS art. L. 541-1, R. 541-1); from 50 %, "
-        "only with the establishment, support or care below. Not written into the "
-        "situation: it decides what is.",
+        "for 80 %. Under 20, from 80 % it opens the AEEH (CSS art. L. 541-1, R. 541-1); from "
+        "50 %, only with the establishment, support or care below; not written into the "
+        "situation, it decides what is. From 20, the family benefits having stopped (art. "
+        "R. 512-2), from 80 % it opens the child's own AAH (art. L. 821-1, D. 821-1), against "
+        "the child's own resources (art. L. 821-3): written onto `taux_incapacite` on every "
+        "covered month, and the child draws it in a famille of their own, at no one's charge "
+        "for the parents' RSA (CASF art. R. 262-3) or prime d'activité; without a MVA, which "
+        "asks an independent dwelling (CSS art. L. 821-1-2). Under 80 % nothing, since the "
+        "restriction of art. L. 821-2 is not carried for a child. Beside a rented dwelling, "
+        "the AAH-drawing child is refused: a descendant at 80 % is a dependant of the parents' "
+        "housing aid (CCH art. R. 823-4, 3°), which the engine cannot price beside a famille "
+        "of the child's own (D-202).",
     )
     etablissement_accompagnement_ou_soins: bool = Field(
         default=False,
         description="Between 50 and 79 %: the child attends an establishment of CASF art. "
         "L. 312-1, I, 2° or 12°, or its state requires a « dispositif adapté ou "
         "d'accompagnement » (code de l'éducation, art. L. 351-1) or care the CDAPH "
-        "recommends (CSS art. L. 541-1, third alinéa).",
+        "recommends (CSS art. L. 541-1, third alinéa). The AEEH's: refused from 20 (D-202).",
     )
     complement_categorie: Annotated[int, Field(ge=1, le=AEEH_CATEGORIES)] | None = Field(
         default=None,
@@ -253,16 +270,17 @@ class HandicapEnfant(BaseModel):
         "a parent alone also receives the majoration of art. L. 541-4, which D. 541-3 "
         "reserves to a complément granted for the parent's activity or a paid third "
         "person: always so in the fifth and sixth categories, assumed so in the second to "
-        "the fourth (D-191). Only where the AEEH is open. Whatever its category, beside "
-        "declared home help it ticks case 7DG, the home-help credit's ceiling of 20 000 EUR "
-        "(CGI art. 199 sexdecies, 3; D-196).",
+        "the fourth (D-191). Only where the AEEH is open, so refused from 20 (D-202). Whatever "
+        "its category, beside declared home help it ticks case 7DG, the home-help credit's "
+        "ceiling of 20 000 EUR (CGI art. 199 sexdecies, 3; D-196).",
     )
     carte_invalidite: bool = Field(
         default=False,
         description="The child holds the carte « mobilité inclusion » with the mention "
         "« invalidité », granted from 80 % (CASF art. L. 241-3): half a part more on the "
-        "quotient familial (CGI art. 195, 2), and beside declared home help case 7DG, the "
-        "home-help credit's ceiling of 20 000 EUR (D-196).",
+        "quotient familial (CGI art. 195, 2), at any age, the infirm child being a dependant "
+        "« quel que soit leur âge » (BOI-IR-LIQ-10-10-10-20, § 500; D-202), and beside "
+        "declared home help case 7DG, the home-help credit's ceiling of 20 000 EUR (D-196).",
     )
 
     @property
@@ -311,8 +329,11 @@ class Child(BaseModel):
     handicap: HandicapEnfant | None = Field(
         default=None,
         description="A disability the CDAPH recognised. Absent means none. Opens the AEEH "
-        "up to the age of 20, and with the card half a part more (D-191). Refused for a "
-        "child of 20 or more in the year simulated.",
+        "up to the age of 20, and with the card half a part more (D-191). From 20 in the year "
+        "simulated, the child is an infirm dependant at any age (CGI art. 196), with the "
+        "card's half-part, and from 80 % draws the AAH in a famille of their own; the AEEH's "
+        "complément and establishment are refused, and so is a rented dwelling beside a child "
+        "who draws the AAH (D-202).",
     )
     residence_alternee: bool = Field(
         default=False,
@@ -527,10 +548,37 @@ class HouseholdInput(BaseModel):
         default=None,
         description="Case T — parent isolé. Worth half a fiscal part. Left unset it is "
         "inferred: true for a lone adult with at least one dependent child, which is "
-        "what a one-adult household with children describes, false otherwise. Set it "
+        "what a one-adult household with children describes, or with a person in case R, "
+        "whom the 2042 names beside the children (D-202), false otherwise. Set it "
         "explicitly to false for a lone filer who does not in fact live alone. Never for a "
         "widow, who has a married couple's parts instead: not inferred, and refused when "
         "claimed (CGI art. 194, II; D-197).",
+    )
+    personnes_invalides_recueillies: Annotated[int, Field(ge=0, le=MAX_CHILDREN)] = Field(
+        default=0,
+        description="Case R of the 2042: the persons « (autres que vos enfants) vivant sous "
+        "votre toit et titulaires de la carte d'invalidité ou de la CMI-invalidité ». « Tout "
+        "contribuable peut considérer comme étant à sa charge, au sens de l'article 196, à la "
+        "condition qu'elles vivent sous son toit, les personnes titulaires de la carte "
+        "“ mobilité inclusion ” portant la mention “ invalidité ” » (CGI art. 196 A bis), with "
+        "no condition of resources or kinship (BOI-IR-LIQ-10-10-10-30, § 30). Each is "
+        "assimilated to a dependent child for the parts (art. 194, I), « soit une demi-part en "
+        "tant que personne à charge et une demi-part en tant que personne invalide », and "
+        "counts towards the third dependant's full part (§ 50); the card's half-part takes "
+        "the general ceiling and the complementary reduction (art. 197, I, 2; § 55). Written "
+        "onto openfisca's `nbR` on every covered year, like cases P and F, since the CSG of a "
+        "replacement income reads the parts of N-2. A lone adult with such a person claims "
+        "case T, the 2042's « avec votre (ou vos) enfant(s) ou des personnes invalides "
+        "recueillies sous votre toit », and without a child the half-parts take the general "
+        "ceiling, not the first child's (§ 55; `engine.corrections`, correction 20). Beside "
+        "declared home help it ticks case 7DG, « Vous, votre conjoint ou une personne à votre "
+        "charge avez la carte »: 20 000 EUR without increments (D-196). The person's own "
+        "incomes and benefits are not computed: the AAH is exempt (CGI art. 81, 2°) and the "
+        "person's, and the format carries no income of theirs, which would enter the foyer's "
+        "(art. 6, 1). Refused beside a rented dwelling, whose aid reads the resources of "
+        "« des personnes vivant habituellement à son foyer » (CCH art. L. 823-1, 2°) and counts "
+        "a relative at 80 % among its dependants (art. R. 823-4, 3°), neither of which the "
+        "format says (D-202).",
     )
     logement: Logement | None = None
     niches: Niches | None = None
@@ -543,12 +591,18 @@ class HouseholdInput(BaseModel):
     when the foyer has no income, so a wealth declaration with zero salary prices zero.
     That is the law working, not the model failing."""
 
+    def has_dependants(self) -> bool:
+        """Whether the foyer has a dependant: a child, or a person in case R."""
+        return bool(self.children) or self.personnes_invalides_recueillies > 0
+
     def resolved_parent_isole(self) -> bool:
         """Whether to claim case T for this household. Never inferred for a widow: case T is
         for « contribuables célibataires ou divorcés qui vivent seuls » (CGI art. 194, II), and
         a widow with a dependent child has a married couple's parts (I). openfisca would add
-        the half-part to them (D-197)."""
-        lone_parent = (len(self.adults) == 1 and bool(self.children)
+        the half-part to them (D-197). A person in case R opens it as a child does: the 2042
+        asks case T of whoever lives alone « avec votre (ou vos) enfant(s) ou des personnes
+        invalides recueillies sous votre toit » (D-202)."""
+        lone_parent = (len(self.adults) == 1 and self.has_dependants()
                        and self.situation_famille != "veuf")
         return lone_parent if self.parent_isole is None else self.parent_isole
 
@@ -581,9 +635,20 @@ class HouseholdInput(BaseModel):
             raise ValueError(
                 "couple_marie_ou_pacse=true demande deux adultes ; un seul a été fourni."
             )
-        if self.parent_isole and (len(self.adults) != 1 or not self.children):
+        if self.parent_isole and (len(self.adults) != 1 or not self.has_dependants()):
             raise ValueError(
-                "parent_isole=true suppose un adulte seul avec au moins un enfant à charge."
+                "parent_isole=true suppose un adulte seul avec au moins un enfant à charge, "
+                "ou une personne invalide recueillie sous son toit (case R)."
+            )
+        if (self.personnes_invalides_recueillies and self.logement is not None
+                and self.logement.statut.startswith("locataire")):
+            raise ValueError(
+                "Une personne invalide recueillie (case R) n'est pas exprimable à côté d'un "
+                "logement loué : l'aide au logement compte les ressources « des personnes vivant "
+                "habituellement à son foyer » (CCH art. L. 823-1, 2°), et compte parmi ses "
+                "personnes à charge l'ascendant, le descendant ou le collatéral dont "
+                "l'incapacité est d'au moins 80 % (art. R. 823-4, 3°). Le format ne dit ni les "
+                "ressources de la personne ni sa parenté : le moteur n'en compterait aucune."
             )
         if len(self.adults) == 2 and self.situation_famille != "celibataire":
             raise ValueError(

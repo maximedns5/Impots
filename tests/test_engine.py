@@ -1043,6 +1043,17 @@ def test_the_aah_rsdae_rate_matches_the_tree() -> None:
     assert float(tree.taux_incapacite_rsdae) == AAH_TAUX_RSDAE
 
 
+def test_the_aah_rate_matches_the_tree() -> None:
+    """The builder pins the rate from which a child of 20 or more draws the AAH and is given a
+    famille of their own (D-202), because a refusal must not wait for a simulation. Read here
+    from the tree, not trusted."""
+    from impots.api.schemas import AAH_TAUX
+
+    tree = baseline().parameters("2024-01-01").prestations_sociales \
+        .prestations_etat_de_sante.invalidite.aah.taux_capacite
+    assert float(tree.taux_incapacite) == AAH_TAUX
+
+
 def test_the_aspa_has_a_row_of_its_own() -> None:
     """A pensioner at the ASPA level who rents (D-180's household): the ASPA tops the 7 000
     EUR of pension up to its ceiling, 12 144.27 EUR for a person alone in 2024. Before D-186
@@ -1123,9 +1134,9 @@ def test_an_aah_that_is_not_paid_lifts_no_taper() -> None:
 
 def test_a_dependent_s_aah_lifts_no_taper() -> None:
     """Only the claimant's or the spouse's AAH lifts it. A child of 22 at 80 % in the
-    famille draws the AAH, written by hand since the child's field refuses a child of 20
-    or more (D-191), and the aid stays the tapered one, 84.72 EUR, as without that
-    disability."""
+    famille draws the AAH, written by hand since the child's field refuses such a child
+    beside a rented dwelling (D-202), and the aid stays the tapered one, 84.72 EUR, as
+    without that disability."""
     household = HouseholdInput.model_validate(
         {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1970}],
          "children": [{"annee_naissance": 2002}], "logement": HIGH_RENT})
@@ -2238,12 +2249,11 @@ def test_a_lone_parent_gets_the_majoration_from_the_second_category(categorie: i
 def test_the_aeeh_stops_at_twenty() -> None:
     """The family benefits run « jusqu'à l'âge de vingt ans » (CSS art. R. 512-2), and so
     does openfisca's AEEH. A child of 19 draws it all year. From 20 the disability is an
-    adult's, the AAH, which the child's field does not open: refused, rather than priced as
-    no AEEH beside a flag that would still lift the housing aid's taper."""
+    adult's: no AEEH, and from 80 % the child's own AAH, in a famille of the child's own.
+    D-191 refused the child of 20; D-202 lifts the refusal."""
     assert _aeeh(_parent_of({"taux_incapacite": 0.8}, naissance=2005)) == pytest.approx(
         AEEH_BASE_2024, abs=0.05)
-    with pytest.raises(ValueError, match="20 ans"):
-        build_situation(_parent_of({"taux_incapacite": 0.8}, naissance=2004), 2024)
+    assert _aeeh(_parent_of({"taux_incapacite": 0.8}, naissance=2004)) == 0.0
     assert build_situation(_parent_of(None, naissance=2004), 2024)
 
 
@@ -2328,8 +2338,8 @@ def test_an_aeeh_household_prices_the_same_whatever_is_computed_first() -> None:
 def test_the_aeeh_correction_adds_nothing_where_openfisca_opens_no_aeeh() -> None:
     """The correction adds the missing part of a complément only where openfisca's own test
     opens the AEEH: its `handicap` flag, under 20. A second category written by hand, without
-    the flag on a child of 10, or with it on a child of 20, whom the wire refuses, draws
-    nothing, as in raw openfisca."""
+    the flag on a child of 10, or with it on a child of 20, whose complément the wire refuses,
+    draws nothing, as in raw openfisca."""
     covered = [f"{year}-{month:02d}" for year in (2022, 2023, 2024) for month in range(1, 13)]
 
     def aeeh(naissance: int, *, flag: bool) -> float:
@@ -4436,3 +4446,336 @@ def test_a_shared_child_prices_the_same_whatever_is_computed_first() -> None:
     light = _rows(household)
     for row in LIGHT_ROWS:
         assert light[row.key] == registry[row.key], row.key
+
+
+# --------------------------------------------------------------------------- #
+# adult dependants: a disabled child of 20 or more, and case R (docs/DECISIONS.md D-202)
+# --------------------------------------------------------------------------- #
+#: The prime de Noël of a person alone at the RSA in 2024, 152.45 EUR.
+NOEL_SEUL = 152.45
+
+
+def _avec_enfant_majeur(handicap: dict[str, Any] | None, salaire: float = 40_000, *,
+                        couple: bool = False, naissance: int = 2002,
+                        **household: Any) -> HouseholdInput:
+    """A parent born in 1970, alone, or married to a spouse born in 1972 at 40 000 EUR, and one
+    child born in `naissance`, 22 in 2024 unless told otherwise, whose disability is
+    `handicap`. Case T as the wire format infers it."""
+    child: dict[str, Any] = {"annee_naissance": naissance}
+    if handicap is not None:
+        child["handicap"] = handicap
+    adults = [_adulte(salaire, 1970)]
+    if couple:
+        adults.append(_adulte(40_000, 1972))
+    return _foyer(*adults, children=[child], **household)
+
+
+def _avec_case_r(*adults: dict[str, Any], personnes: int = 1, **household: Any) -> HouseholdInput:
+    """`adults`, and `personnes` holders of the card living under their roof (case R)."""
+    return _foyer(*adults, personnes_invalides_recueillies=personnes, **household)
+
+
+def test_a_disabled_child_of_twenty_or_more_is_an_infirm_dependant_with_a_famille_of_their_own(
+) -> None:
+    """CGI art. 196: « Ses enfants âgés de moins de 18 ans ou infirmes » are dependants, and
+    « Les enfants infirmes ont la qualité d'enfant à charge, quel que soit leur âge »
+    (BOI-IR-LIQ-10-10-10-20, § 500). From 80 %, past the AEEH's age, the child « perçoit [...]
+    une allocation aux adultes handicapés » (CSS art. L. 821-1, D. 821-1). The builder writes, on
+    every month of N-2 to N, the rate, which the AAH reads, openfisca's `handicap` flag, which
+    makes the child an infirm dependant (case F), and `invalidite` for the card. The child stays a
+    dependant of the foyer fiscal and a child of the ménage, and draws the AAH in a famille of
+    their own: the RSA leaves out « les personnes qui perçoivent des ressources égales ou
+    supérieures à la majoration du revenu garanti à laquelle elles ouvrent droit » (CASF art.
+    R. 262-3). Below 80 % nothing is written: the AAH would need the restriction of art. L. 821-2,
+    which the child's field does not carry, and the card needs 80 %."""
+    covered = 36
+    situation = build_situation(_avec_enfant_majeur(
+        {"taux_incapacite": 0.8, "carte_invalidite": True}), 2024)
+    child = situation["individus"]["enfant_0"]
+    assert list(child["taux_incapacite"].values()) == [0.8] * covered
+    assert list(child["handicap"].values()) == [True] * covered
+    assert list(child["invalidite"].values()) == [True] * covered
+    assert "aeeh_niveau_handicap" not in child
+    assert situation["familles"] == {"fam_0": {"parents": ["adulte_0"]},
+                                     "fam_enfant_0": {"parents": ["enfant_0"]}}
+    assert situation["foyers_fiscaux"]["ff_0"]["personnes_a_charge"] == ["enfant_0"]
+    assert situation["menages"]["men_0"]["enfants"] == ["enfant_0"]
+    sans_carte = build_situation(_avec_enfant_majeur({"taux_incapacite": 0.8}), 2024)
+    assert "invalidite" not in sans_carte["individus"]["enfant_0"]
+    assert list(sans_carte["individus"]["enfant_0"]["handicap"].values()) == [True] * covered
+    assert "fam_enfant_0" in sans_carte["familles"]
+    below = build_situation(_avec_enfant_majeur({"taux_incapacite": 0.6}), 2024)
+    assert below == build_situation(_avec_enfant_majeur(None), 2024)
+    assert below["familles"] == {"fam_0": {"parents": ["adulte_0"], "enfants": ["enfant_0"]}}
+
+
+@pytest.mark.parametrize(("salaire", "carte", "parts", "impot"), [
+    (40_000, False, 2.0, 154.0), (40_000, True, 2.5, 0.0),
+    (80_000, False, 2.0, 6_734.0), (80_000, True, 2.5, 3_362.0),
+    (150_000, False, 2.0, 25_491.0), (150_000, True, 2.5, 21_915.0),
+])
+def test_a_parent_alone_with_a_disabled_child_of_22(salaire: float, carte: bool, parts: float,
+                                                    impot: float) -> None:
+    """The infirm child « ouvre[nt] droit aux mêmes avantages que ceux prévus en faveur des
+    enfants âgés de moins de 18 ans » (BOI-IR-LIQ-10-10-10-20, § 500): half a part, and case T
+    for a parent living alone (CGI art. 194, I and II); with the card, half a part more (art.
+    195, 2). A parent born in 1970, alone, and a child born in 2002 at 80 %: the parts and the
+    tax of a minor child (D-191, D-193). The DGFiP's simulator, the child in case F, « handicapés
+    quel que soit leur âge », and in case G with the card, gives these parts and taxes at 40 000,
+    80 000 and 150 000 EUR, the salaries entered as their taxable 32 804, 65 897 and 124 038."""
+    rows = _rows(_avec_enfant_majeur({"taux_incapacite": 0.8, "carte_invalidite": carte},
+                                     salaire))
+    assert rows["parts_fiscales"] == parts
+    assert rows["ir"] == impot
+
+
+@pytest.mark.parametrize(("carte", "parts", "impot"), [(False, 2.5, 11_189.0), (True, 3.0, 7_613.0)])
+def test_a_couple_with_a_disabled_child_of_22(carte: bool, parts: float, impot: float) -> None:
+    """A couple at 80 000 and 40 000 EUR, born in 1970 and 1972, and the child born in 2002 at
+    80 %: 2.5 parts and 11 189 EUR, 3 parts and 7 613 EUR with the child's card. The DGFiP's
+    simulator gives these, and 2 parts and 12 980 EUR without the child."""
+    rows = _rows(_avec_enfant_majeur({"taux_incapacite": 0.8, "carte_invalidite": carte},
+                                     80_000, couple=True))
+    assert rows["parts_fiscales"] == parts
+    assert rows["ir"] == impot
+
+
+def test_a_disabled_child_of_22_draws_the_aah_and_the_parent_keeps_the_rsa_of_one() -> None:
+    """The AAH is the child's: past the AEEH's age, from 80 % (CSS art. L. 821-1, D. 821-1),
+    against « les ressources personnelles de l'intéressé » (art. L. 821-3), and the child has
+    none: 3 x 971.37 + 9 x 1 016.05 = 12 058.56 EUR in 2024. No MVA, which asks « un logement
+    indépendant » (art. L. 821-1-2). Nor is the child at the parent's charge for the RSA: « ne sont
+    considérées comme à charge [...] ni les personnes qui perçoivent des ressources égales ou
+    supérieures à la majoration du revenu garanti à laquelle elles ouvrent droit » (CASF art.
+    R. 262-3), and the AAH passes the half of the RSA a second person adds (art. R. 262-1). A
+    parent alone without income, without a dwelling, keeps the RSA of a person alone, 7 544.64
+    EUR, and the prime de Noël of one, 152.45: 19 755.65 EUR of disposable income with the AAH.
+    Left in the parent's famille, openfisca counted the child at charge and the AAH among the
+    parent's resources: no RSA, 12 058.56 EUR in all."""
+    rows = _rows(_avec_enfant_majeur({"taux_incapacite": 0.8}, 0), "full")
+    assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["mva"] == 0.0
+    assert rows["rsa"] == pytest.approx(sum(RSA_SEUL.values()), abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(
+        AAH_2024 + sum(RSA_SEUL.values()) + NOEL_SEUL, abs=0.05)
+
+
+def test_a_couple_s_rsa_leaves_out_a_child_of_22_who_draws_the_aah() -> None:
+    """The same for a couple without income: the RSA of two, 11 316.96 EUR, the child's AAH
+    beside it, 23 604.20 EUR of disposable income with the prime de Noël of two, 228.68. With a
+    child of 22 without the AAH, at charge (CASF art. R. 262-3, 2°), the RSA of three, 13 580.35.
+    Left in the parents' famille with the AAH, openfisca paid 1 611.15 EUR of RSA."""
+    couple = _rows(_foyer(_adulte(0, 1970), _adulte(0, 1972), children=[
+        {"annee_naissance": 2002, "handicap": {"taux_incapacite": 0.8}}]), "full")
+    assert couple["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert couple["rsa"] == pytest.approx(1.5 * sum(RSA_SEUL.values()), abs=0.05)
+    assert couple["revenu_disponible"] == pytest.approx(23_604.20, abs=0.05)
+    sans = _rows(_foyer(_adulte(0, 1970), _adulte(0, 1972),
+                        children=[{"annee_naissance": 2002}]), "full")
+    assert sans["rsa"] == pytest.approx(13_580.35, abs=0.05)
+
+
+def test_a_working_parent_s_ppa_leaves_out_a_child_who_draws_the_aah() -> None:
+    """The prime d'activité's foyer takes the children « à la charge effective et permanente »
+    (CSS art. R. 842-3), and the government answered that « dès lors qu'il perçoit lui-même des
+    prestations, le jeune en situation de handicap ne sera plus considéré comme un enfant à
+    charge », for the RSA and the prime d'activité as for the family benefits (question écrite
+    n° 515, JO AN du 18 février 2025, p. 996). A parent alone at 15 000 EUR who owns the dwelling
+    draws 2 734.97 EUR, as alone; left in the parent's famille, openfisca counted the AAH among
+    the resources and paid nothing. With a child of 22 without the AAH, at charge, 5 522.15."""
+    owner = {"statut": "proprietaire", "loyer_mensuel": 0, "zone_apl": 2}
+    rows = _rows(_avec_enfant_majeur({"taux_incapacite": 0.8}, 15_000, logement=owner), "full")
+    seul = _rows(_foyer(_adulte(15_000, 1970), logement=owner), "full")
+    assert rows["ppa"] == pytest.approx(seul["ppa"], abs=0.01)
+    assert rows["ppa"] == pytest.approx(2_734.97, abs=0.05)
+    assert rows["revenu_disponible"] - seul["revenu_disponible"] == pytest.approx(
+        AAH_2024, abs=0.05)
+
+
+def test_a_rented_dwelling_is_refused_beside_a_child_who_draws_the_aah() -> None:
+    """« Sont considérés comme personnes à charge [...] Les ascendants, descendants ou collatéraux
+    [...] dont l'incapacité permanente est au moins égale à 80 % » and whose resources do not pass
+    the ASPA's individual ceiling « multiplié par 1,25 » (CCH art. R. 823-4, 3°): the child is a
+    dependant of the parent's housing aid. The engine, which pays the AAH in the child's own
+    famille, would pay that famille a second aid on the same rent, 3 532.77 EUR at 500 EUR in
+    zone 2, and count no dependant in the parent's. Refused; an owner is priced, and a child
+    under 80 %, who draws no AAH, stays in the parent's famille."""
+    with pytest.raises(ValueError, match=r"R\. 823-4"):
+        build_situation(_avec_enfant_majeur({"taux_incapacite": 0.8}, logement=RENTING), 2024)
+    owner = {"statut": "proprietaire", "loyer_mensuel": 0, "zone_apl": 2}
+    assert build_situation(_avec_enfant_majeur({"taux_incapacite": 0.8}, logement=owner), 2024)
+    assert build_situation(_avec_enfant_majeur({"taux_incapacite": 0.6}, logement=RENTING), 2024)
+
+
+@pytest.mark.parametrize(("handicap", "needle"), [
+    ({"taux_incapacite": 0.8, "complement_categorie": 2}, "complément"),
+    ({"taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True}, "établissement"),
+], ids=["complément", "établissement"])
+def test_the_aeeh_s_own_fields_are_refused_from_twenty(handicap: dict[str, Any],
+                                                        needle: str) -> None:
+    """« Les enfants ouvrent droit aux prestations familiales jusqu'à l'âge de vingt ans » (CSS art.
+    R. 512-2): from 20 there is no AEEH, so no complément of it and no establishment, support or
+    care to open it below 80 %. Each is refused rather than ignored, and the refusal names it:
+    D-191's refusal of any disability from 20 named neither."""
+    with pytest.raises(ValueError, match=f"20 ans.*{needle}|{needle}.*20 ans"):
+        build_situation(_avec_enfant_majeur(handicap, naissance=2004), 2024)
+
+
+def test_case_r_is_written_on_the_foyer_on_every_covered_year() -> None:
+    """« Tout contribuable peut considérer comme étant à sa charge, au sens de l'article 196, à la
+    condition qu'elles vivent sous son toit, les personnes titulaires de la carte “ mobilité
+    inclusion ” portant la mention “ invalidité ” » (CGI art. 196 A bis): case R of the 2042,
+    « Nombre de personnes (autres que vos enfants) vivant sous votre toit et titulaires de la
+    carte d'invalidité ou de la CMI-invalidité ». openfisca's `nbR` is that count, an input of the
+    foyer fiscal: written on N-2 to N, like cases P and F, since the CSG of a replacement income
+    reads the parts of N-2 (D-188, D-199). No individual is added. A lone adult claims case T,
+    the 2042's « avec votre (ou vos) enfant(s) ou des personnes invalides recueillies sous votre
+    toit »."""
+    couple = build_situation(_avec_case_r(_adulte(40_000), _adulte(20_000)), 2024)
+    foyer = couple["foyers_fiscaux"]["ff_0"]
+    assert foyer["nbR"] == {"2022": 1, "2023": 1, "2024": 1}
+    assert "caseT" not in foyer and "personnes_a_charge" not in foyer
+    assert set(couple["individus"]) == {"adulte_0", "adulte_1"}
+    seul = build_situation(_avec_case_r(_adulte(40_000), personnes=2), 2024)
+    assert seul["foyers_fiscaux"]["ff_0"]["nbR"] == {"2022": 2, "2023": 2, "2024": 2}
+    assert seul["foyers_fiscaux"]["ff_0"]["caseT"] == {"2022": True, "2023": True, "2024": True}
+    assert "nbR" not in build_situation(_foyer(_adulte(40_000)), 2024)["foyers_fiscaux"]["ff_0"]
+
+
+@pytest.mark.parametrize(("salaires", "personnes", "enfants", "parts", "impot"), [
+    ((80_000, 40_000), 1, 0, 3.0, 7_613.0),
+    ((150_000, 20_000), 1, 0, 3.0, 18_883.0),
+    ((40_000, 20_000), 2, 0, 4.0, 0.0),
+    ((40_000, 20_000), 1, 2, 4.5, 0.0),
+], ids=["un, 80 000", "un, 150 000", "deux", "un, deux enfants"])
+def test_a_case_r_person_beside_a_couple(salaires: tuple[float, float], personnes: int,
+                                         enfants: int, parts: float, impot: float) -> None:
+    """The persons of art. 196 A bis « sont alors assimilées à des enfants à charge pour le calcul
+    du nombre de parts » (BOI-IR-LIQ-10-10-10-30, § 10; CGI art. 194, I, last alinéa), and « ouvrent
+    droit à une part supplémentaire de quotient familial, soit une demi-part en tant que personne
+    à charge et une demi-part en tant que personne invalide »; they count « pour l'attribution de la
+    demi-part supplémentaire de quotient familial prévue en faveur des contribuables ayant au moins
+    trois enfants à charge » (§ 50). A couple born in 1970 and 1972 with one person in case R: 3
+    parts and 7 613 EUR at 80 000 and 40 000 EUR, 3 parts and 18 883 EUR at 150 000 and 20 000; two
+    persons, 4 parts; one beside two children born in 2012 and 2014, the person a third
+    dependant, 4.5 parts. The DGFiP's simulator gives these parts and taxes."""
+    children = [{"annee_naissance": 2012 + 2 * i} for i in range(enfants)]
+    rows = _rows(_avec_case_r(_adulte(salaires[0], 1970), _adulte(salaires[1], 1972),
+                              personnes=personnes, children=children))
+    assert rows["parts_fiscales"] == parts
+    assert rows["ir"] == impot
+
+
+@pytest.mark.parametrize(("parent_isole", "parts", "impot"), [(None, 2.5, 0.0), (False, 2.0, 154.0)],
+                         ids=["case T", "sans case T"])
+def test_a_lone_adult_with_a_case_r_person_claims_case_t(parent_isole: bool | None, parts: float,
+                                                         impot: float) -> None:
+    """The 2042 asks case T of whoever is « célibataire, divorcé(e), séparé(e), et vous vivez
+    seul(e) au 1er janvier 2024 avec votre (ou vos) enfant(s) ou des personnes invalides
+    recueillies sous votre toit » (the DGFiP's simulator, revenus 2024). Inferred, as for a lone
+    parent, and claimable without a child. At 40 000 EUR, 2.5 parts and no tax; waived, 2 parts
+    and 154 EUR. The DGFiP's simulator gives both."""
+    household: dict[str, Any] = {} if parent_isole is None else {"parent_isole": parent_isole}
+    rows = _rows(_avec_case_r(_adulte(40_000, 1970), **household))
+    assert rows["parts_fiscales"] == parts
+    assert rows["ir"] == impot
+    assert _avec_case_r(_adulte(40_000, 1970), parent_isole=True).resolved_parent_isole()
+
+
+@pytest.mark.parametrize(("salaire", "personnes", "impot"), [
+    (150_000, 1, 22_556.95), (80_000, 1, 3_799.54), (150_000, 2, 17_189.95),
+], ids=["150 000, un", "80 000, un", "150 000, deux"])
+def test_a_lone_adult_s_case_r_half_parts_take_the_general_ceiling(salaire: float, personnes: int,
+                                                                   impot: float) -> None:
+    """CGI art. 197, I, 2 caps each half-part at 1 791 EUR on 2024 incomes, and « pour les
+    contribuables célibataires, divorcés [...] qui répondent aux conditions fixées au II de
+    l'article 194, la réduction d'impôt correspondant à la part accordée au titre du premier
+    enfant à charge est limitée » to 4 224 EUR. Without a child there is no such part: « les
+    contribuables célibataires ou divorcés qui vivent seuls et supportent effectivement la charge
+    d'une personne mentionnée à l'article 196 A bis du CGI, à l'exclusion de tout enfant, ne sont
+    pas concernés par le plafonnement spécifique correspondant à la part accordée au titre du
+    premier enfant à charge » (BOI-IR-LIQ-10-10-10-30, § 55). A lone adult with case T and one
+    person in case R at 150 000 EUR, 2.5 parts: three half-parts at 1 791 EUR and the card's
+    complementary reduction of 1 785, 29 714.95 - 5 373 - 1 785 = 22 556.95, where openfisca gave
+    21 914.95, its first two half-parts capped at 4 224. At 80 000 EUR, 10 957.54 - 5 373 =
+    5 584.54 capped, less 1 785: 3 799.54, where openfisca gave 3 362.08. Two persons at 150 000
+    EUR, 3.5 parts: 29 714.95 - 8 955 - 2 x 1 785 = 17 189.95, where openfisca gave 16 547.95.
+    The DGFiP's simulator: 22 557, 3 800 and 17 190."""
+    rows = _rows(_avec_case_r(_adulte(salaire, 1970), personnes=personnes))
+    assert rows["ir_avant_reductions"] == pytest.approx(impot, abs=0.01)
+
+
+def test_beside_a_child_the_first_child_s_ceiling_stands() -> None:
+    """With a child, the part of the first child keeps its own ceiling, and the person in case R
+    takes the general one. A parent alone at 150 000 EUR with case T, a child born in 2002 at 80 %
+    without the card and one person in case R, 3 parts: 29 714.95 - 4 224 - 2 x 1 791 - 1 785 =
+    20 123.95. The DGFiP's simulator: 3 parts and 20 124 EUR."""
+    rows = _rows(_avec_enfant_majeur({"taux_incapacite": 0.8}, 150_000,
+                                     personnes_invalides_recueillies=1))
+    assert rows["parts_fiscales"] == 3.0
+    assert rows["ir_avant_reductions"] == pytest.approx(
+        IR_UNE_PART_150K - PREMIER_ENFANT_PARENT_ISOLE - 2 * DEMI_PART - COMPLEMENT_CARTE, abs=0.01)
+
+
+def test_a_widow_with_a_case_r_person_has_the_widow_s_reduction() -> None:
+    """« les contribuables veufs qui supportent la charge d'une personne mentionnée à l'article 196
+    A bis du CGI, à l'exclusion de tout enfant, peuvent bénéficier de la réduction d'impôt
+    complémentaire accordée aux contribuables veufs ayant des enfants à charge »
+    (BOI-IR-LIQ-10-10-10-30, § 55). A widow at 150 000 EUR with one person in case R: 3 parts, four
+    half-parts at 1 791 EUR, then the widow's reduction of 1 993 and the card's of 1 785,
+    29 714.95 - 7 164 - 1 993 - 1 785 = 18 772.95, the figure of the widowed parent with the card
+    (D-197). The DGFiP's simulator: 3 parts and 18 773 EUR."""
+    rows = _rows(_avec_case_r(_adulte(150_000, 1970), situation_famille="veuf"))
+    assert rows["parts_fiscales"] == 3.0
+    assert rows["ir_avant_reductions"] == pytest.approx(
+        IR_UNE_PART_150K - 4 * DEMI_PART - REDUCTION_VEUF - COMPLEMENT_CARTE, abs=0.01)
+
+
+def test_the_engine_alone_caps_a_lone_adult_s_case_r_half_part_at_the_first_child_s_ceiling(
+) -> None:
+    """The kill test for correction 20: raw openfisca applies the ceiling of a lone parent's
+    first child, 4 224 EUR, to a lone adult with case T whose only dependant is a person in case R:
+    21 914.95 EUR at 150 000 EUR, where the DGFiP's simulator gives 22 557. Written by hand on the
+    situation. The day this fails, openfisca reads the first child's part as the law does, and
+    the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(_foyer(_adulte(150_000, 1970)), 2024)
+    foyer = situation["foyers_fiscaux"]["ff_0"]
+    foyer["nbR"] = {"2022": 1, "2023": 1, "2024": 1}
+    foyer["caseT"] = {"2022": True, "2023": True, "2024": True}
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    assert float(raw.calculate("nbptr", "2024")[0]) == 2.5
+    assert float(raw.calculate("ir_plaf_qf", "2024")[0]) == pytest.approx(21_914.95, abs=0.01), (
+        "openfisca no longer gives the first child's ceiling to a foyer without a child: "
+        "remove correction 20")
+
+
+@pytest.mark.parametrize(("depenses", "credit"), [(18_000, 9_000), (25_000, 10_000)])
+def test_a_case_r_person_s_card_ticks_case_7dg(depenses: float, credit: float) -> None:
+    """The 2042 for 2024 incomes ticks case 7DG when « Vous, votre conjoint ou une personne à votre
+    charge avez la carte d'invalidité ou de la CMI-invalidité », and a person in case R is at
+    charge (CGI art. 196 A bis) and holds the card by definition. The limit is then 20 000 EUR,
+    and « Aucune majoration ne peut être appliquée à la limite de 20 000 euros »
+    (BOI-IR-RICI-150-20, § 190). A couple at 40 000 and 20 000 EUR, born in 1980 and 1982, with a
+    person in case R: 9 000 EUR of credit on 18 000, 10 000 on 25 000, as the DGFiP's simulator
+    gives them with case 7DG. Without it the simulator gives 6 000 on 18 000, no increment for the
+    person, born in 1950 or in 1990, where openfisca's `nb_pac2`, which counts `nbR`, gives 6 750:
+    the case is always ticked, and the increment never asked for."""
+    household = _avec_case_r(_adulte(40_000, 1980), _adulte(20_000, 1982),
+                             niches=_domicile(depenses))
+    assert build_situation(household, 2024)["foyers_fiscaux"]["ff_0"]["f7dg"] == {"2024": True}
+    assert _rows(household)["credits_impot"] == pytest.approx(credit, abs=0.5)
+    assert "f7dg" not in build_situation(_avec_case_r(_adulte(40_000, 1980)), 2024)[
+        "foyers_fiscaux"]["ff_0"]
+
+
+def test_a_case_r_person_is_refused_beside_a_rented_dwelling() -> None:
+    """The housing aid takes the resources of the claimant « et, s'il y a lieu, de son conjoint et
+    des personnes vivant habituellement à son foyer » (CCH art. L. 823-1, 2°), and counts as a
+    dependant an ascendant, descendant or collateral at 80 % or more (art. R. 823-4, 3°): the
+    format says neither the person's resources nor the kinship. Refused; an owner is priced."""
+    with pytest.raises(ValueError, match=r"L\. 823-1"):
+        _avec_case_r(_adulte(40_000), logement=RENTING)
+    owner = {"statut": "proprietaire", "loyer_mensuel": 0, "zone_apl": 2}
+    assert _avec_case_r(_adulte(40_000), logement=owner).personnes_invalides_recueillies == 1

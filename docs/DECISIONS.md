@@ -14007,3 +14007,436 @@ tourner la suite sur la PR.
   `nbptr`, `ir_plaf_qf`, `ci_saldom`, `ci_gardenf`, `reduction_enfants_scolarises`,
   `af_coeff_garde_alternee`, `asf_elig_enfant`, `rsa_forfait_asf`, `cmu_c_plafond` et
   `cheque_energie_unites_consommation`.
+
+## D-202 — Les personnes à charge adultes : l'enfant infirme de 20 ans et plus, la case R
+
+**Le point de départ.** Deux entrées l'avaient laissé. D-191 refusait le handicap d'un
+enfant de 20 ans ou plus dans l'année simulée, et notait dans « Ce qui reste » : « son AAH,
+et la demi-part d'un enfant majeur infirme titulaire de la carte ». D-198 notait la case R :
+openfisca majore le plafond de l'emploi à domicile pour toute personne invalide de la case
+R, quel que soit son âge, et le simulateur de la DGFiP ne la comptait pas, née en 1950 comme
+en 1990 ; « La question reste à trancher en droit. » Ni le format d'entrée ni la population
+ne portaient de case R. Deux sortes de personnes à charge adultes, donc : l'enfant handicapé
+de 20 ans ou plus, et la personne titulaire de la carte qui vit sous le toit du foyer.
+
+**Ce que dit la loi, pour les revenus de 2024.** Légifrance refuse le téléchargement direct
+(403), et l'outil de lecture a rendu 404 sur les adresses d'articles essayées. Les articles
+ont été lus dans l'export de la base de Légifrance que publie codes.droit.org, un fichier
+par code, dans leur version en vigueur ; quand elle est postérieure aux revenus de 2024,
+c'est dit. Les sources donnent la date et l'empreinte de chaque fichier.
+* **L'enfant infirme est à charge à tout âge.** « Sont considérés comme étant à la charge du
+  contribuable, que celle-ci soit exclusive, principale ou réputée également partagée entre
+  les parents, à la condition de n'avoir pas de revenus distincts de ceux qui servent de
+  base à l'imposition de ce dernier : 1° Ses enfants âgés de moins de 18 ans ou infirmes »
+  (CGI, art. 196). Le BOFiP : « Par enfants infirmes, il convient d'entendre les enfants
+  qui, en raison de leur invalidité, sont hors d'état de subvenir à leurs besoins, qu'ils
+  soient ou non titulaires de la carte » (BOI-IR-LIQ-10-10-10-20, § 480), et « Les enfants
+  infirmes ont la qualité d'enfant à charge, quel que soit leur âge, et ouvrent droit aux
+  mêmes avantages que ceux prévus en faveur des enfants âgés de moins de 18 ans » (§ 500).
+  Ils peuvent opter pour le rattachement (art. 6, 3, et 196 B), et « A défaut de déclaration
+  personnelle de leurs revenus, ils sont considérés comme à la charge de leurs parents au
+  sens de l'article 196 du CGI, au même titre que les mineurs » (§ 550).
+* **La case R.** « Tout contribuable peut considérer comme étant à sa charge, au sens de
+  l'article 196, à la condition qu'elles vivent sous son toit, les personnes titulaires de
+  la carte “ mobilité inclusion ” portant la mention “ invalidité ” prévue à l'article
+  L. 241-3 du code de l'action sociale et des familles » (art. 196 A bis). Pour les parts,
+  « sont assimilées à des enfants à charge les personnes considérées comme étant à la charge
+  du contribuable en vertu de l'article 196 A bis » (art. 194, I, dernier alinéa). Le
+  BOFiP : « Aucune condition de ressources n'est exigée en ce qui les concerne ; peu importe
+  également qu'il existe ou non un lien de parenté entre le contribuable et l'invalide
+  recueilli » (BOI-IR-LIQ-10-10-10-30, § 30) ; « ces personnes ouvrent droit à une part
+  supplémentaire de quotient familial, soit une demi-part en tant que personne à charge et
+  une demi-part en tant que personne invalide », et comptent « pour l'attribution de la
+  demi-part supplémentaire de quotient familial prévue en faveur des contribuables ayant au
+  moins trois enfants à charge » (§ 50). Leurs revenus sont ceux du foyer : « Chaque
+  contribuable est imposable à l'impôt sur le revenu, tant en raison de ses bénéfices et
+  revenus personnels que de ceux de ses enfants et des personnes considérés comme étant à sa
+  charge au sens des articles 196 et 196 A bis » (art. 6, 1).
+* **La carte de l'enfant.** « Le quotient familial prévu à l'article 194 est augmenté d'une
+  demi-part pour chaque enfant à charge [...] titulaire de la carte “ mobilité inclusion ”
+  portant la mention “ invalidité ” » (art. 195, 2) : à tout âge, pour l'enfant infirme.
+* **Les plafonds.** « La réduction d'impôt résultant de l'application du quotient familial
+  ne peut excéder 1 791 € par demi-part », et « Toutefois, pour les contribuables
+  célibataires, divorcés, ou soumis à l'imposition distincte prévue au 4 de l'article 6 qui
+  répondent aux conditions fixées au II de l'article 194, la réduction d'impôt correspondant
+  à la part accordée au titre du premier enfant à charge est limitée à 4 224 € » ; « Les
+  contribuables qui bénéficient d'une demi-part au titre des a, b, c, d, d bis, e et f du 1
+  ainsi que des 2 à 6 de l'article 195 ont droit à une réduction d'impôt égale à 1 785 €
+  pour chacune de ces demi-parts lorsque la réduction de leur cotisation d'impôt est
+  plafonnée » (art. 197, I, 2, version du 16 février 2025 au 21 février 2026, citée par
+  D-193 ; l'export porte les mêmes phrases, aux montants des revenus de 2025). Pour la case
+  R, le plafonnement général « s'applique à la réduction d'impôt procurée par chacune des
+  demi-parts résultant de la prise en compte des personnes invalides », la demi-part de
+  l'invalidité reçoit la réduction complémentaire, et « les contribuables célibataires ou
+  divorcés qui vivent seuls et supportent effectivement la charge d'une personne mentionnée
+  à l'article 196 A bis du CGI, à l'exclusion de tout enfant, ne sont pas concernés par le
+  plafonnement spécifique correspondant à la part accordée au titre du premier enfant à
+  charge ». Le veuf qui n'a à sa charge qu'une telle personne reçoit la réduction du veuf
+  (BOI-IR-LIQ-10-10-10-30, § 55).
+* **La case T.** La déclaration la demande à qui est « célibataire, divorcé(e), séparé(e),
+  et vous vivez seul(e) au 1er janvier 2024 avec votre (ou vos) enfant(s) ou des personnes
+  invalides recueillies sous votre toit » (simulateur de la DGFiP, revenus de 2024). Le § 55
+  le suppose, qui refuse à ces contribuables le plafonnement spécifique de la part du
+  premier enfant, et non la demi-part.
+* **L'emploi à domicile.** Le plafond est majoré « par enfant à charge au sens des articles
+  196 et 196 B et au titre de chacun des membres du foyer fiscal âgé de plus de
+  soixante-cinq ans », et porté à 20 000 € « pour les contribuables ayant à leur charge une
+  personne, vivant sous leur toit, mentionnée au même 3° » (CGI, art. 199 sexdecies, 3, lu
+  pour D-198). Le BOFiP majore « par enfant à charge au sens de l'article 196 du CGI et de
+  l'article 196 B du CGI » et « par membre du foyer fiscal âgé de plus de 65 ans »
+  (BOI-IR-RICI-150-20, § 140), donne les 20 000 € aux foyers « dont au moins l'un des
+  membres » est titulaire de la carte (§ 180), sans majoration (§ 190), et la 2042 coche la
+  case 7DG si « Vous, votre conjoint ou une personne à votre charge avez la carte
+  d'invalidité ou de la CMI-invalidité ».
+* **L'AAH de l'enfant.** Elle va à « Toute personne [...] ayant dépassé l'âge d'ouverture du
+  droit à l'allocation prévue à l'article L. 541-1 et dont l'incapacité permanente est au
+  moins égale à un pourcentage fixé par décret » (CSS, art. L. 821-1, lu dans sa version
+  issue de l'ordonnance n° 2026-648 ; la réponse ministérielle de février 2025, plus bas,
+  lui donne le même contenu), pourcentage « d'au moins 80 % », ou de 50 % avec la
+  restriction substantielle et durable d'accès à l'emploi de l'art. L. 821-2 (art.
+  D. 821-1). « Les enfants ouvrent droit aux prestations familiales jusqu'à l'âge de vingt
+  ans » (art. R. 512-2). L'AAH « peut se cumuler avec les ressources personnelles de
+  l'intéressé dans la limite d'un plafond » (art. L. 821-3, en vigueur depuis le 1er octobre
+  2023) : celles de l'enfant, non celles de ses parents. La majoration pour la vie autonome
+  demande de disposer « d'un logement indépendant » (art. L. 821-1-2). L'AAH est affranchie
+  de l'impôt (CGI, art. 81, 2°) : elle n'entre pas dans le revenu du foyer qui compte
+  l'enfant à charge.
+* **Les prestations des parents.** Pour le RSA, « Toutefois, ne sont considérées comme à
+  charge ni les personnes bénéficiaires de l'allocation de revenu de solidarité active au
+  titre de l'article L. 262-7-1, ni les personnes qui perçoivent des ressources égales ou
+  supérieures à la majoration du revenu garanti à laquelle elles ouvrent droit » (CASF, art.
+  R. 262-3). La majoration d'une deuxième personne est de 50 %, de 30 % ensuite (art.
+  R. 262-1) : l'AAH les passe. La prime d'activité prend dans son foyer les enfants de moins
+  de vingt-cinq ans « à la charge effective et permanente » (CSS, art. R. 842-3), sans
+  clause de ressources. Le gouvernement a répondu que « dès lors qu'il perçoit lui-même des
+  prestations, le jeune en situation de handicap ne sera plus considéré comme un enfant à
+  charge », et que le compter autrement toucherait « notamment du Revenu de solidarité
+  active (RSA) ou de la prime d'activité, majorées selon la composition du foyer » (question
+  écrite n° 515, réponse publiée au JO le 18 février 2025, p. 996). L'aide au logement
+  compte parmi ses personnes à charge « Les ascendants, descendants ou collatéraux au
+  deuxième ou au troisième degré du bénéficiaire ou de son conjoint dont l'incapacité
+  permanente est au moins égale à 80 % », sous un plafond de ressources (CCH, art. R. 823-4,
+  3°), et lit les ressources « des personnes vivant habituellement à son foyer » (art.
+  L. 823-1, 2°). Les prestations familiales s'arrêtent à 20 ans.
+
+**Ce qu'en fait le simulateur de la DGFiP.** Interrogé le 6 octobre 2026 sur 40 déclarations
+fictives, modèle simplifié, revenus de 2024, les salaires saisis en case 1AJ à leur montant
+imposable. Il range l'enfant handicapé en case F, « Nombre d'enfants non mariés de moins de
+18 ans [...] ou handicapés quel que soit leur âge », sa carte en case G, et la case R compte
+les « personnes (autres que vos enfants) vivant sous votre toit et titulaires de la carte »,
+avec leurs années de naissance.
+* L'enfant né en 2002 donne les parts et l'impôt d'un enfant mineur, déclaré en case F comme
+  en case J ; avec la carte, une demi-part de plus.
+* Une personne de la case R vaut une part : 3 parts pour un couple, 4 avec deux personnes,
+  4,5 à côté de deux enfants. Seul, 2 parts, et 2,5 avec la case T.
+* Seul avec la case T et une personne de la case R, à 150 000 € : 22 557 €, quand le parent
+  seul d'un enfant titulaire de la carte paie 21 915 €. L'écart, 642 €, est 4 224
+  − 2 × 1 791 : le plafond de la part du premier enfant, refusé.
+* L'emploi à domicile : sans la case 7DG, 6 000 € de crédit sur 18 000 € pour un couple avec
+  une personne de la case R, née en 1950 comme en 1990, comme sans elle ; avec la case,
+  9 000 € sur 18 000 € et 10 000 € sur 25 000 €.
+
+**Ce que fait openfisca.**
+* **L'enfant à charge.** `enfant_a_charge` vaut pour une personne à charge mineure, ou qui
+  porte le drapeau `handicap` ; `nbF` les compte, `nbJ` les majeurs sans le drapeau. Les
+  deux entrent dans `nb_pac` et donnent la même demi-part. Mais `nbG`, la demi-part de la
+  carte, ne compte que les `enfant_a_charge` qui portent `invalidite` : sans le drapeau, la
+  carte d'un majeur ne vaut rien.
+* **La case R.** `nbR` est une entrée entière du foyer fiscal, sans formule et sans
+  individu. `nbptr` la compte dans `nb_pac`, et lui ajoute `inv2`, une demi-part, par
+  personne.
+* **Le plafond.** `ir_plaf_qf` donne le plafond de la part du premier enfant à tout
+  célibataire ou divorcé qui coche la case T, enfant ou non.
+* **L'emploi à domicile.** `nb_pac2` compte `nbR` : 1 500 € de majoration par personne, à
+  tout âge, sauf sous la case 7DG, qui n'en prend aucune (D-196).
+* **L'AAH** est une variable de l'individu. Depuis octobre 2023 elle ne lit que les
+  ressources de son titulaire ; son plafond lit `af_nbenf` de sa famille. La majoration pour
+  la vie autonome demande d'être la personne de référence du ménage ou son conjoint.
+* **Le RSA** décide si un enfant est à charge sur ses ressources individuelles, où l'AAH
+  n'est pas : elle est dans les minima de la famille, que `calcul_minima_sociaux` somme sur
+  tous ses membres. L'enfant reste à charge, et son AAH entre dans les ressources des
+  parents. **La prime d'activité** somme de même l'AAH de chaque membre de la famille.
+* **L'aide au logement** se calcule par famille. Elle compte parmi ses personnes à charge
+  l'adulte handicapé qui a le rôle d'enfant si `taux_incapacite > 0.8`, strictement, ou
+  `inapte_travail` ; et le drapeau `handicap` de tout membre lève sa dégressivité.
+
+Mesuré en 2024, l'enfant né en 2002 à 80 % écrit à la main, un parent né en 1970 :
+
+| ménage | dans la famille des parents | dans une famille à lui |
+|---|---:|---:|
+| seul, sans revenu ni logement : RSA | 0 € | 7 544,64 € |
+| le même : revenu disponible | 12 058,56 € | 19 755,65 € |
+| couple sans revenu ni logement : RSA | 1 611,15 € | 11 316,96 € |
+| le même : revenu disponible | 13 898,39 € | 23 604,20 € |
+| seul à 15 000 €, propriétaire : prime d'activité | 0 € | 2 734,97 € |
+| le même : revenu disponible | 23 932,46 € | 26 653,77 € |
+| seul à 15 000 €, locataire à 500 € en zone 2 : aide | 1 319,13 € | 1 319,13 + 3 532,77 € |
+
+Dans la famille des parents, openfisca reprend aux parents l'AAH de l'enfant. Dans une
+famille à lui, il paie à l'enfant une seconde aide sur le même loyer. Dans l'une comme dans
+l'autre, l'aide des parents ne compte pas l'enfant à 80 % parmi ses personnes à charge
+(`al_nb_personnes_a_charge` vaut 0). Le drapeau seul, sur l'enfant de 22 ans d'un parent
+sans revenu locataire à 1 700 € en zone 1, porte l'aide de 0 à 4 026,60 €, la dégressivité
+levée.
+
+**Le format d'entrée.** Rien de nouveau pour l'enfant : ses champs suffisent, le taux et la
+carte. Un champ pour la case R. C'est le plus petit format qui dise les deux.
+* **Le refus de D-191 est levé.** `Child.handicap` est accepté sur un enfant de 20 ans ou
+  plus dans l'année simulée. L'enfant est à charge comme infirme, avec la demi-part de sa
+  carte. Dès 80 %, il touche l'AAH, dans une famille à lui. Sous 80 %, rien : l'AAH de 50 à
+  79 % demande la restriction de l'art. L. 821-2, que le champ de l'enfant ne porte pas, et
+  la carte demande 80 %. L'enfant est alors une personne à charge comme une autre de son
+  âge, ce que la case J donne comme la case F.
+* **`HouseholdInput.personnes_invalides_recueillies`**, la case R : un nombre, de 0 à 8,
+  comme la 2042 et `nbR` le portent. Aucun individu : les revenus et les prestations de la
+  personne ne sont pas calculés. Son AAH est la sienne, et affranchie ; un revenu imposable
+  à elle entrerait dans celui du foyer (art. 6, 1), et le format n'en porte aucun.
+* **Quatre refus**, chacun une erreur 422 qui nomme l'article : le complément de l'AEEH à
+  20 ans ou plus, et l'établissement, l'accompagnement ou les soins, qui n'ouvrent plus rien
+  (CSS art. R. 512-2) ; l'enfant qui touche l'AAH à côté d'un logement loué (CCH art.
+  R. 823-4, 3°) ; la case R à côté d'un logement loué (art. L. 823-1, 2°, et R. 823-4, 3°).
+  Dans ces deux derniers cas, l'aide au logement compterait la personne autrement que le
+  moteur.
+* **La case T** est déduite pour un adulte seul qui a une personne de la case R, et acceptée
+  sans enfant.
+
+**Ce que le constructeur écrit.**
+* **L'enfant de 20 ans ou plus à 80 % ou plus**, sur chaque mois de N-2 à N : le taux, que
+  lit l'AAH ; le drapeau `handicap`, qui en fait un enfant infirme à charge pour l'impôt
+  (case F) ; `invalidite` pour la carte. Il reste personne à charge du foyer fiscal et
+  enfant du ménage, et devient le seul parent d'une famille à lui, `fam_enfant_0` pour le
+  premier enfant : l'AAH y est la sienne, le RSA et la prime d'activité des parents ne le
+  comptent pas, et le drapeau n'y lève la dégressivité d'aucun parent. Pas de majoration
+  pour la vie autonome : il n'est pas la personne de référence du ménage.
+* **Sous 80 %**, rien n'est écrit, et l'enfant reste dans la famille des parents.
+* **L'historique** écrit la composition de N sur N-2 et N-1 (D-199) : l'enfant de 20 ans en
+  2024 y est dans sa famille à lui à 18 et 19 ans. Aucune AEEH n'y est payée, l'enfant
+  n'étant enfant d'aucune famille, et l'AAH de ces années n'atteint aucun chiffre de N :
+  l'AAH lit des ressources imposables, et aucune famille des parents ne lit la sienne.
+* **La case R**, `nbR` sur N-2, N-1 et N, comme les cases P et F, puisque la CSG d'un revenu
+  de remplacement lit les parts de N-2 ; la case T pour un adulte seul ; la case 7DG à côté
+  de l'aide à domicile, la personne étant à charge et titulaire de la carte par définition.
+
+**La correction 20 de `engine.corrections`.** Elle exécute la formule de `ir_plaf_qf` en lui
+faisant lire la case T seulement là où un enfant est à charge, à titre exclusif, principal
+ou en résidence alternée : `nb_pac` moins `nbR`, ou `nbH`. Les parts, que `nbptr` calcule
+avec la case T, restent celles d'openfisca, et chaque plafond d'un foyer qui a un enfant
+aussi ; seul le plafond du premier enfant d'un foyer qui n'en a pas cède la place au plafond
+général. Depuis 2013, la date de la formule qu'elle enroule : celle que laisse la correction
+18 de D-201, qui compte les enfants en résidence alternée, autour de celle d'openfisca. Les
+deux tiennent. Le test qui tue, sur openfisca brut : un adulte seul à 150 000 €, la case T
+et une personne de la case R, 21 914,95 €.
+
+**Pas de correction pour l'emploi à domicile.** La question de D-198 ne se pose pas. La
+personne de la case R est à charge (art. 196 A bis) et titulaire de la carte : la 2042 coche
+la case 7DG, et « Aucune majoration ne peut être appliquée à la limite de 20 000 euros »
+(BOI-IR-RICI-150-20, § 190). openfisca applique alors les 20 000 € sans lire `nb_pac2`. Le
+proxy de la correction 15, autour duquel D-201 compose sa correction 17, n'est pas touché ;
+le texte de la correction 15, en tête du module, dit seulement que la case R vient avec la
+case 7DG.
+
+**Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`. Sur `main`,
+l'enfant de 22 ans était refusé (« Le handicap d'un enfant de 22 ans n'est pas modélisé »),
+et la case R aussi (« Extra inputs are not permitted ») : il n'y a pas de colonne « avant ».
+L'impôt est la ligne `ir`. L'enfant est né en 2002, à 80 % ; le parent seul, né en 1970,
+coche la case T ; le couple est né en 1970 et 1972.
+
+| ménage | salaire | parts | impôt | simulateur |
+|---|---:|---:|---:|---:|
+| parent seul, enfant sans la carte | 40 000 € | 2 | 154 € | 2 ; 154 € |
+| parent seul, enfant titulaire de la carte | 40 000 € | 2,5 | 0 € | 2,5 ; 0 € |
+| parent seul, sans la carte | 80 000 € | 2 | 6 734 € | 6 734 € |
+| parent seul, carte | 80 000 € | 2,5 | 3 362 € | 3 362 € |
+| parent seul, sans la carte | 150 000 € | 2 | 25 491 € | 25 491 € |
+| parent seul, carte | 150 000 € | 2,5 | 21 915 € | 21 915 € |
+| couple, enfant sans la carte | 80 000 et 40 000 € | 2,5 | 11 189 € | 11 189 € |
+| couple, enfant titulaire de la carte | 80 000 et 40 000 € | 3 | 7 613 € | 7 613 € |
+
+Sans l'enfant, le couple a 2 parts et paie 12 980 €, au simulateur comme au moteur.
+
+| ménage | salaire | parts | openfisca | après | simulateur |
+|---|---:|---:|---:|---:|---:|
+| couple, une personne de la case R | 80 000 et 40 000 € | 3 | 7 613 € | 7 613 € | 7 613 € |
+| le même | 150 000 et 20 000 € | 3 | 18 883 € | 18 883 € | 18 883 € |
+| couple, deux personnes | 40 000 et 20 000 € | 4 | 0 € | 0 € | 0 € |
+| couple, une personne, deux enfants | 40 000 et 20 000 € | 4,5 | 0 € | 0 € | 0 € |
+| seul, une personne, case T | 40 000 € | 2,5 | 0 € | 0 € | 0 € |
+| le même, sans la case T | 40 000 € | 2 | 154 € | 154 € | 154 € |
+| seul, une personne, case T | 80 000 € | 2,5 | 3 362 € | 3 800 € | 3 800 € |
+| le même | 150 000 € | 2,5 | 21 915 € | 22 557 € | 22 557 € |
+| seul, deux personnes, case T | 150 000 € | 3,5 | 16 548 € | 17 190 € | 17 190 € |
+| veuf, une personne | 150 000 € | 3 | 18 773 € | 18 773 € | 18 773 € |
+| parent seul, un enfant, une personne | 150 000 € | 3 | 20 124 € | 20 124 € | 20 124 € |
+
+La colonne « openfisca » est le moteur sans la correction 20, la situation écrite à la main.
+Les deux enfants sont nés en 2012 et 2014. Le simulateur donne aussi ces parts.
+
+| ménage, palier complet | AAH | RSA | prime d'activité | revenu disponible |
+|---|---:|---:|---:|---:|
+| parent seul sans revenu ni logement | 12 058,56 € | 7 544,64 € | 0 € | 19 755,65 € |
+| couple sans revenu ni logement | 12 058,56 € | 11 316,96 € | 0 € | 23 604,20 € |
+| parent seul à 15 000 €, propriétaire | 12 058,56 € | 0 € | 2 734,97 € | 26 653,77 € |
+
+Avec un enfant de 22 ans sans handicap, à charge, le couple sans revenu touche 13 580,35 €
+de RSA, et le parent seul à 15 000 € 5 522,15 € de prime d'activité : l'enfant qui touche
+l'AAH sort de leur foyer. Locataires, les trois ménages sont refusés.
+
+L'emploi à domicile, un couple à 40 000 et 20 000 €, nés en 1980 et 1982, avec une personne
+de la case R : 9 000 € de crédit sur 18 000 €, 10 000 € sur 25 000 €, la case 7DG cochée,
+comme au simulateur. Sans la case, le simulateur donne 6 000 € et openfisca 6 750 € : le
+constructeur la coche toujours.
+
+Refait à la main :
+* **40 000 €.** 29 523,60 € de revenu net (D-191). 2 parts paient 718,26 €, que la décote,
+  889 − 45,25 % × 718,26 = 564 €, ramène à 154 € ; 2,5 parts, 85,92 €, que la décote efface.
+* **80 000 €.** 59 306,86 € de revenu net, 10 957,54 € sur une part (D-197). L'enfant sans
+  la carte : 2 parts, 4 123,02 €, plafonnés à 10 957,54 − 4 224 = 6 733,54 €. Avec la carte,
+  2,5 parts paient 3 362,08 €, plafonnés à 10 957,54 − 4 224 − 1 791 = 4 942,54 € ; la
+  réduction complémentaire rend le plafonnement entier, 1 580,46 €, sous 1 785 : 3 362,08 €.
+  La personne de la case R, sans enfant : trois demi-parts au plafond général, 10 957,54
+  − 5 373 = 5 584,54 €, moins 1 785 : 3 799,54 €.
+* **150 000 €.** 29 714,95 € sur une part. L'enfant sans la carte : 29 714,95 − 4 224
+  = 25 490,95 € ; avec, − 1 791 − 1 785 : 21 914,95 €. Une personne de la case R sans
+  enfant : 29 714,95 − 3 × 1 791 − 1 785 = 22 556,95 € ; deux, 29 714,95 − 5 × 1 791
+  − 2 × 1 785 = 17 189,95 €. Le veuf : quatre demi-parts, la réduction du veuf et celle de
+  la carte, 29 714,95 − 7 164 − 1 993 − 1 785 = 18 772,95 €. L'enfant et une personne de la
+  case R : 29 714,95 − 4 224 − 2 × 1 791 − 1 785 = 20 123,95 €.
+* **Le couple à 80 000 et 40 000 €.** 88 830,45 € de revenu net, 12 980,10 € sur 2 parts.
+  Avec l'enfant, 2,5 parts paient 9 562,83 €, plafonnés à 12 980,10 − 1 791 = 11 189,10 €.
+  Avec la carte ou une personne de la case R, 3 parts paient 6 145,58 €, plafonnés à
+  12 980,10 − 3 582 = 9 398,10 €, moins 1 785 : 7 613,10 €.
+* **Le RSA.** 3 × 607,75 + 9 × 635,71 = 7 544,64 € pour une personne seule en 2024, une fois
+  et demie pour deux, 11 316,96 €. L'AAH, 3 × 971,37 + 9 × 1 016,05 = 12 058,56 €. La prime
+  de Noël, 152,45 € seul et 228,68 € à deux. 7 544,64 + 152,45 + 12 058,56 = 19 755,65 € ;
+  11 316,96 + 228,68 + 12 058,56 = 23 604,20 €. Le parent propriétaire seul a 14 595,21 € de
+  revenu disponible, et 26 653,77 € avec l'AAH de l'enfant.
+* **L'emploi à domicile.** 20 000 € retenus : 9 000 € sur 18 000 €, 10 000 € sur 25 000 €.
+  Sans la case 7DG, 12 000 € au simulateur, 6 000 € ; 12 000 + 1 500 € dans openfisca,
+  6 750 €.
+
+**Un euro, hors du sujet.** Le couple à 40 000 et 20 000 € à 3 parts, avec une personne de
+la case R ou avec l'enfant titulaire de la carte, paie 95 € au moteur et 94 € au simulateur.
+Le simulateur arrondit les droits simples à 1 077 € avant la décote, 1 470 − 45,25 % × 1 077
+= 982,66 €, arrondis à 983 ; openfisca la calcule sur 1 077,38 €, 982,49 €, arrondis à 982,
+et rend 1 077,38 − 982 = 95,38 €, arrondis à 95. Les tests évitent ces deux ménages.
+
+**La page.** Une saisie « Personnes invalides recueillies (case R) », sous les enfants ;
+`payload` l'envoie, zéro quand elle est vide, et `caseTApplies` offre la case T à un adulte
+seul qui a une telle personne, sans enfant. La note du foyer dit ce que valent l'enfant de
+20 ans ou plus et la case R, et qu'à côté d'un logement loué l'un et l'autre sont refusés.
+Le test tiré de `HouseholdInput` voit le nouveau champ ; un harnais exécute `payload` sous
+node pour un adulte seul sans personne à charge, puis avec deux personnes de la case R, puis
+pour un couple, et valide chaque ménage. `check.mjs` reçoit deux vérifications : la case T
+paraît avec une personne de la case R, et disparaît sans elle ; celle de la requête lit la
+case R.
+
+**Ce que la population en fait.** Rien. `population.to_openfisca` n'appelle pas le
+constructeur du ménage, n'écrit ni handicap ni `nbR`, et n'est pas modifié :
+`to_openfisca.WIRING` reste « D-199 ». La correction 20 ne l'atteint pas, lu sur le code :
+le squelette ne coche la case T que pour un foyer qui a une personne à charge (`skeleton`,
+D-195), toujours un enfant, si bien que la formule d'openfisca lit la case T telle quelle
+pour chacun de ses foyers.
+
+**Vus échouer, puis mutés.** Les tests ont été écrits avant le code, commis seuls
+(`1bd3a4f`), et lancés sur le code de `main`.
+* **Au moteur**, 30 des 35 tests choisis tombaient. 13 étaient refusés par le constructeur
+  (« Le handicap d'un enfant de 22 ans n'est pas modélisé », ou de 20 ans pour le test
+  changé de l'AEEH), 14 par le format d'entrée (« Extra inputs are not permitted », le champ
+  de la case R), 2 refusés pour une autre raison que la leur (le refus de D-191 au lieu de
+  l'art. R. 823-4, celui du format au lieu de l'art. L. 823-1), et 1 ne trouvait pas la
+  constante `AAH_TAUX`. 5 passaient : le test qui tue, à 21 914,95 € sur openfisca brut,
+  deux tests dont seule la docstring change, et les deux refus des champs de l'AEEH à
+  20 ans.
+* **Ces deux-là étaient faux.** Ils cherchaient « 20 ans », que le refus général de D-191
+  dit aussi. Ils cherchent maintenant le champ refusé (`aa01601`), et tombent. Le cas de
+  l'API avait le même défaut (`c0f893e`).
+* **À l'API**, 5 des 7 cas choisis tombaient : l'enfant de 22 ans refusé, la case R refusée
+  par le format, les deux refus du logement loué et le complément à 20 ans pour une autre
+  raison. Les 2 autres, la carte sous 80 % et le complément sans l'AEEH, sont ceux de D-191.
+* **À la page**, le harnais de la case R tombait (« no input for case R ») ; le test tiré de
+  `HouseholdInput` passait, le champ n'existant pas encore. `check.mjs`, contre la page de
+  `c0f893e`, s'arrêtait à la case R (« Cannot set properties of undefined »).
+* **Avec le changement** (`3e4c772`), tout passe. Une docstring de test a été corrigée entre
+  les deux (`e6e027e`) : la majoration d'une deuxième personne est de 50 %.
+
+Trois mutations sont prises, chacune dans une copie de `src` hors du dépôt, où une seule
+ligne change :
+* la correction 20 retirée : les trois tests du plafond, à 21 914,95, 3 362,08 et
+  16 547,95 € ; les treize autres tests de la case R passent, l'enfant et la case R
+  compris ;
+* l'enfant à l'AAH laissé dans la famille des parents : quatre tests, la forme, le RSA à 0 €
+  au lieu de 7 544,64, celui du couple à 1 611,15 € au lieu de 11 316,96, la prime
+  d'activité à 0 € au lieu de 2 734,97 ; les huit tests de l'impôt et le refus du logement
+  passent ;
+* la case R sans la case 7DG : les deux tests de l'emploi à domicile (`KeyError: 'f7dg'`),
+  le crédit tombant à 6 750 € sur 18 000 comme sur 25 000 €.
+
+**Les tests.** Ont tourné, sur `3e4c772` :
+* au moteur, les 32 tests ajoutés, le test changé de l'âge de l'AEEH, les deux tests dont la
+  docstring change et celui du registre des corrections : 36 réussis ; puis les tests des
+  sections de D-191, D-193, D-196, D-197 et D-198 : 96 réussis, dont deux déjà comptés ;
+* à l'API, les cas de l'enfant, de la case R, du veuf et de la case T, puis ceux qui passent
+  chaque modèle d'entrée et les requêtes refusées : 10 et 23 réussis, un cas commun aux
+  deux ;
+* `tests/test_ui.py` entier : 117 réussis ; `tests/test_charter.py` : 8 réussis ;
+* `ruff check src tests scripts` : rien à signaler ; `ui/check.mjs` : 34 vérifications ;
+* sur la branche fusionnée avec D-201 : les tests ajoutés par D-201 et par D-202 et les deux
+  du registre, 83 réussis ; `tests/test_api.py` entier, 66 réussis ; `tests/test_ui.py` et
+  `tests/test_charter.py`, 126 réussis ; ruff, rien à signaler ; `ui/check.mjs`, 36
+  vérifications.
+
+Le gate complet n'a pas tourné, à la demande du propriétaire : le job `fast` de la CI fait
+tourner la suite sur la PR.
+
+**Ce qui reste.**
+* **Le logement loué**, à côté de l'enfant à l'AAH ou de la case R, est refusé. Pour le
+  chiffrer, il faudrait que l'aide des parents compte l'enfant à 80 % ou avec la restriction
+  (art. R. 823-4, 3°), où openfisca lit `taux_incapacite > 0.8` et `inapte_travail`, sans
+  que la famille de l'enfant reçoive une aide : une correction de l'aide par famille, à
+  mesurer.
+* **La personne de la case R** n'a ni revenus ni prestations : son AAH ou sa pension, et le
+  revenu imposable qu'elle apporterait au foyer (art. 6, 1), n'ont pas de champ.
+* **La restriction de l'art. L. 821-2** n'a pas de champ pour un enfant de 20 ans ou plus :
+  de 50 à 79 %, son AAH n'est pas calculée.
+* **La case R sans la case 7DG**, la majoration de l'emploi à domicile : openfisca la donne,
+  le simulateur non. Aucun ménage du format n'y arrive.
+* **Le rattachement** d'un enfant majeur valide : le format l'accepte à tout âge, sans les
+  conditions de l'art. 6, 3, comme avant. Ce n'est pas le sujet de cette entrée.
+* **L'enfant de 20 ans**, sous 80 %, reste dans la famille des parents, où openfisca le
+  compte jusqu'à 21 ans pour le complément familial et l'aide au logement (art. R. 823-4,
+  1°) : non examiné.
+* **L'arrondi des droits simples**, un euro, plus haut.
+* **openfisca-france.** Sont à signaler en amont, avec ces cas : le RSA, qui ne voit pas
+  l'AAH d'un enfant pour décider s'il est à charge ; l'aide au logement, qui demande plus de
+  80 % là où l'article dit « au moins » ; le plafond du premier enfant donné sans enfant ;
+  `nb_pac2`, qui compte `nbR`.
+
+**Sources.**
+* CGI, art. 6 (version issue de la loi n° 2022-1157), 81, 194, 195, 196, 196 A bis, 196 B et
+  197 (versions issues de la loi n° 2026-103), lus dans l'export de la base de Légifrance
+  que publie codes.droit.org, édition du 28 septembre 2026, dernière modification le 1er
+  septembre 2026 (sha256 du fichier :
+  e382736b1049bcb87d7f9f4be9297743b68c4c32da2707b947f659977c22f2f6) ; art. 199 sexdecies, lu
+  pour D-198.
+* CSS, art. L. 512-3, R. 512-2, L. 821-1, L. 821-1-2, L. 821-2, L. 821-3, D. 821-1 et
+  R. 842-3, même export, édition du 6 octobre 2026 (sha256 :
+  52bcaf6a664b8aed68b8dcd1cd709c226cb6db2786c2f5b082456b28c0f03ead).
+* CASF, art. R. 262-1 et R. 262-3, même export, édition du 3 octobre 2026 (sha256 :
+  7133d8b472604b8586aebe373c7604ad85e1573783631e34a1b8b67994d30a91).
+* CCH, art. L. 823-1, R. 823-4 (version issue du décret n° 2023-799) et D. 823-16, même
+  export, édition du 1er octobre 2026 (sha256 :
+  4e4d4549956e9fd584e4d5ea3ec42785f02bbcaa6959231f2530fe8d3f26d36a).
+* BOFiP, lus sur bofip.impots.gouv.fr : BOI-IR-LIQ-10-10-10-20-20140502 (§ 480, 500 et
+  550) ; BOI-IR-LIQ-10-10-10-30-20240618 (§ 1, 10, 30, 50 et 55), en vigueur depuis le 18
+  juin 2024 ; BOI-IR-RICI-150-20-20170920 (§ 140, 170, 180 et 190).
+* Assemblée nationale, question écrite n° 515 de M. Christophe Marion, réponse publiée au JO
+  le 18 février 2025, p. 996 (sha256 du fichier :
+  693b02d7624e6a350ed55197930849f4ef937c08df9a7015fd0b5d72df35d7e4).
+* DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
+  interrogé le 6 octobre 2026 sur 40 déclarations fictives ; libellés des cases F, G, J, R,
+  T et 7DG relevés sur sa page (sha256 :
+  43820dbcdfb1a187eca3ea10c2dd1adcb65f0c95fb5ab0c4c44a60daf90e798f).
+* openfisca-france 176.0.8 : `enfant_a_charge`, `nbF`, `nbG`, `nbJ`, `nbR`, `nb_pac`,
+  `nb_pac2`, `nbptr`, `ir_plaf_qf`, `aah`, `aah_eligible`, `rsa_enfant_a_charge`,
+  `calcul_minima_sociaux`, `ppa_ressources_hors_activite`, `al_nb_personnes_a_charge` et
+  `aide_logement_montant_brut`.

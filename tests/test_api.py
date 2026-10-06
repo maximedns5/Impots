@@ -956,7 +956,8 @@ def test_a_childs_disability_reaches_the_engine_and_its_row_comes_back(client: T
 
 
 @pytest.mark.parametrize(("child", "needle"), [
-    ({"annee_naissance": 2004, "handicap": {"taux_incapacite": 0.8}}, "20 ans"),
+    ({"annee_naissance": 2004, "handicap": {"taux_incapacite": 0.8, "complement_categorie": 1}},
+     "complément de l'AEEH n'est"),
     ({"annee_naissance": 2014, "handicap": {"taux_incapacite": 0.6, "carte_invalidite": True}},
      "80 %"),
     ({"annee_naissance": 2014, "handicap": {"taux_incapacite": 0.6, "complement_categorie": 1}},
@@ -965,10 +966,64 @@ def test_a_childs_disability_reaches_the_engine_and_its_row_comes_back(client: T
 def test_a_childs_disability_the_engine_cannot_price_is_refused(
     client: TestClient, child: dict, needle: str,
 ) -> None:
-    """A child of 20 has no AEEH, and the card and the complément have their thresholds:
-    each is refused with a reason the page can show, never priced as something else."""
+    """A child of 20 has no AEEH, so no complément of it (D-202 lifts D-191's refusal of the
+    child itself), and the card and the complément have their thresholds: each is refused
+    with a reason the page can show, never priced as something else."""
     request = {"household": {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1985}],
                              "children": [child]}, "year": 2024}
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 422, response.text
+    assert needle in response.text
+
+
+def test_a_disabled_child_of_22_reaches_the_engine_and_draws_the_aah(client: TestClient) -> None:
+    """A child of 20 or more is an infirm dependant at any age (CGI art. 196), and from 80 % draws
+    the AAH in a famille of their own (D-202). A parent alone without income, a child born in
+    2002 at 80 % holding the card: 2.5 parts, the child's AAH, 12 058.56 EUR over 2024, and the
+    RSA of a person alone, 7 544.64, the child being at no one's charge for it (CASF art.
+    R. 262-3)."""
+    request = {"household": {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1970}],
+                             "children": [{"annee_naissance": 2002, "handicap": {
+                                 "taux_incapacite": 0.8, "carte_invalidite": True}}]},
+               "year": 2024, "tier": "full"}
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 200, response.text
+    rows = response.json()["baseline"]
+    assert rows["parts_fiscales"] == 2.5
+    assert rows["aah"] == pytest.approx(3 * 971.37 + 9 * 1_016.05, abs=0.05)
+    assert rows["rsa"] == pytest.approx(3 * 607.75 + 9 * 635.71, abs=0.05)
+
+
+def test_a_case_r_person_reaches_the_income_tax(client: TestClient) -> None:
+    """Case R over HTTP (D-202), in the light tier: a couple at 80 000 and 40 000 EUR with a person
+    holding the card under their roof, 3 parts and 7 613 EUR, as the DGFiP's simulator gives them."""
+    request = {"household": {"adults": [{"salaire_brut_annuel": 80_000, "annee_naissance": 1970},
+                                        {"salaire_brut_annuel": 40_000, "annee_naissance": 1972}],
+                             "couple_marie_ou_pacse": True, "personnes_invalides_recueillies": 1},
+               "year": 2024, "tier": "light"}
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 200, response.text
+    rows = response.json()["baseline"]
+    assert rows["parts_fiscales"] == 3.0
+    assert rows["ir"] == pytest.approx(7_613, abs=0.5)
+
+
+@pytest.mark.parametrize(("household", "needle"), [
+    ({"children": [{"annee_naissance": 2002, "handicap": {"taux_incapacite": 0.8}}]},
+     "R. 823-4"),
+    ({"personnes_invalides_recueillies": 1}, "L. 823-1"),
+], ids=["enfant à l'AAH", "case R"])
+def test_an_adult_dependant_beside_a_rented_dwelling_is_refused(
+    client: TestClient, household: dict, needle: str,
+) -> None:
+    """The housing aid counts a descendant at 80 % or more among the dependants (CCH art. R. 823-4,
+    3°) and the resources of whoever lives in the household (art. L. 823-1, 2°), which the engine
+    cannot say of a child who draws the AAH in a famille of their own, or of a person in case R
+    (D-202): refused with the article, never priced as something else."""
+    request = {"household": {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1970}],
+                             "logement": {"statut": "locataire_vide", "loyer_mensuel": 500,
+                                          "zone_apl": 2}, **household},
+               "year": 2024, "tier": "full"}
     response = client.post("/simulate", json=request)
     assert response.status_code == 422, response.text
     assert needle in response.text
