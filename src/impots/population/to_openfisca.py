@@ -1,7 +1,7 @@
 """Population frame -> a vectorised OpenFisca simulation (PHASE1_SPEC §1, §4.4).
 
 This is the most dangerous module in the project. Both of the failure modes the
-Phase 1 spec calls out live here, and four that the spec does not mention.
+Phase 1 spec calls out live here, and five that the spec does not mention.
 
 **#1 — roles are flattened *subrole* keys.** `join_with_persons` matches each role
 string against `entity.flattened_roles`. The intuitive names from the JSON path
@@ -55,6 +55,13 @@ order and `revenu_disponible` first, the order of the population EMTR. Before th
 non-fiscal variable, `PopulationSimulation.calculate` now pins the aid month by month,
 oldest first, by `engine.situations.pin_benefit_history`, which the household builder
 calls for its full tier too (D-178).
+
+**#7 — case T on year N alone.** The rate of the CSG on a pension or an unemployment
+benefit reads the RFR and the parts of N-2. Case T was written on N only, so a lone
+parent's half-part reached the income tax of N and not that rate: on the fixture, a
+pensioner of 82 was levied at 6.6 % instead of 3.8 %, and one of 67 at 3.8 % instead of
+nothing, 839.58 and 104.64 EUR of revenu disponible. It is now written on N-2 and N-1
+too, as the household builder writes it (D-199).
 """
 
 from __future__ import annotations
@@ -89,8 +96,11 @@ HISTORY_YEARS = 2
 #: and changes the case T this wiring writes: a lone declarant the survey records as living
 #: in a couple, whose partner the skeleton could not pair, loses the half-part. The caches
 #: check only a population's height, which that keeps, and would serve the rebuilt
-#: population its old rates.
-WIRING = "D-195"
+#: population its old rates. D-199 writes that case T on N-2 and N-1 as well, where the
+#: rate of the CSG on a lone parent's pension or unemployment benefit reads it: on the
+#: fixture, two pensioners' revenu disponible rises, by 839.58 and 104.64 EUR. The
+#: population itself does not change, and a cache written before would be served after.
+WIRING = "D-199"
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
 #: fiscal block, which never reaches a benefit. The ASS the income tax reads since D-192
@@ -346,7 +356,13 @@ def build_simulation(
     foyer = _group_frame(frame, "foyer_id", ["parent_isole"])
     if foyer.height != foyer_ids.size:
         raise WiringError("foyer-level frame does not line up with the declared foyers")
-    simulation.set_input("caseT", str(year), foyer["parent_isole"].to_numpy().astype(bool))
+    # Failure mode #7. Case T on every year of the history, as the household builder
+    # writes it: the rate of the CSG on a pension or an unemployment benefit reads the
+    # parts of N-2. The survey sees the foyer in N only, so N-2 and N-1 take its case T,
+    # the steady state the income history already assumes.
+    parent_isole = foyer["parent_isole"].to_numpy().astype(bool)
+    for offset in range(HISTORY_YEARS, -1, -1):
+        simulation.set_input("caseT", str(year - offset), parent_isole)
 
     if niche_bases:
         _set_niche_inputs(

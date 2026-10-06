@@ -1540,3 +1540,134 @@ def test_a_renters_disposable_income_does_not_depend_on_evaluation_order() -> No
     runner = run(frame, 2024, tier="full").households
     first = build_simulation(frame, baseline(), 2024).calculate("revenu_disponible")
     np.testing.assert_allclose(first, runner["revenu_disponible"].to_numpy(), atol=0.5)
+
+
+# --------------------------------------------------------------------------- #
+# case T on the years behind N — the parts the CSG reads (D-199)
+# --------------------------------------------------------------------------- #
+def test_case_t_and_its_parts_are_on_every_year_the_household_builder_writes(
+    population: pl.DataFrame,
+) -> None:
+    """Case T on N-2, N-1 and N, the years the household builder writes it (D-199).
+
+    The CSG on a replacement income takes its rate from the RFR of « l'avant-dernière
+    année », against thresholds « pour la première part de quotient familial, majorés [...]
+    pour chaque demi-part supplémentaire » (CSS art. L. 136-8, III), and « il est tenu
+    compte du nombre de parts fiscales de chaque année » (DSS, letter of 23 November 2023).
+    Written on N alone, case T gave a lone parent's foyer its half-part in the income tax of
+    N and not in the rate of the CSG on its pension or its unemployment benefit. On `main`,
+    the 43 foyers of the fixture that claim it had half a part less on N-2 and N-1 than on N,
+    and no other foyer differed. The population sees one year: like the builder, it assumes
+    the foyer was the same at 1 January of N-2 and N-1 (CGI art. 196 bis)."""
+    from impots.engine.situations import build_situation
+    from impots.engine.system import baseline
+
+    lone_parent = HouseholdInput.model_validate({
+        "adults": [{"annee_naissance": 1984, "salaire_brut_annuel": 30_000}],
+        "children": [{"annee_naissance": 2014}]})
+    years = sorted(build_situation(lone_parent, 2024)["foyers_fiscaux"]["ff_0"]["caseT"])
+    assert years == ["2022", "2023", "2024"]
+
+    built = build_simulation(population, baseline(), 2024)
+    claimed = dict(
+        population.group_by("foyer_id").agg(pl.col("parent_isole").first()).iter_rows())
+    expected = np.array([claimed[foyer] for foyer in built.foyer_ids])
+    assert 0 < expected.sum() < expected.size, "no contrast: the check would prove nothing"
+    parts = built.simulation.calculate("nbptr", "2024")
+    for year in years:
+        np.testing.assert_array_equal(
+            built.simulation.calculate("caseT", year), expected, err_msg=f"case T of {year}")
+        np.testing.assert_array_equal(
+            built.simulation.calculate("nbptr", year), parts, err_msg=f"parts of {year}")
+
+
+#: Two lone parents, each with a child of ten, owners: a declared pension and gross
+#: unemployment benefit, 25 000 EUR each. Under 65, so that art. 157 bis leaves their RFR of
+#: N-2 alone: 22 500 EUR either way, after the 10 % deduction, between the thresholds of the
+#: reduced rate at 1.5 and at 2 parts.
+LONE_PARENTS = {"retraite": (63, 25_000.0, 0.0), "chomeur": (40, 0.0, 25_000.0)}
+CHILD_ROLES = ("enfant", "personne_a_charge", "enfant")
+
+
+def _lone_parents() -> pl.DataFrame:
+    """`LONE_PARENTS` as population rows: the parent, then the child, case T on both."""
+    rows: list[dict[str, Any]] = []
+    for name, (age, pension, chomage) in LONE_PARENTS.items():
+        for person_age, roles, own in ((age, TWO_PATHS_ROLES[0], True), (10, CHILD_ROLES, False)):
+            rows.append({
+                "person_id": len(rows), "household_id": name, "foyer_id": f"{name}#0",
+                "famille_id": f"{name}#0", "weight": 1.0, "age": person_age,
+                "role_menage": roles[0], "role_foyer": roles[1], "role_famille": roles[2],
+                "salaire_brut_annuel": 0.0, "pension_annuelle": pension if own else 0.0,
+                "chomage_annuel": chomage if own else 0.0, "statut_occupation": "proprietaire",
+                "zone_apl": "zone_2", "loyer_mensuel": 0.0, "parent_isole": True,
+            })
+    return pl.DataFrame(rows)
+
+
+def test_a_lone_parent_s_replacement_income_is_levied_at_the_rate_of_two_parts() -> None:
+    """By hand, with the thresholds of 2024 in the tree, those of the DSS's letter of 23
+    November 2023: the reduced rate up to 15 988 EUR plus 4 269 EUR per extra half-part. An
+    RFR of N-2 of 22 500 EUR is under it at 2 parts (24 526) and over it at 1.5 (20 257). At
+    2 parts: 3.8 % of CSG, all deductible, the CRDS, no CASA. At 1.5: 6.6 % on the pension,
+    under 24 813 + 6 623 = 31 436 EUR, of which 4.2 points deductible, and 0.3 % of CASA; 6.2 %
+    on the benefit, of which 3.8 points deductible. The benefit's levies are assessed on
+    98.25 % of it, the pension's on all of it.
+
+    On `main` the parts of N-2 were 1.5, and the pension paid 1 050 EUR of deductible CSG,
+    600 EUR not deductible and 75 EUR of CASA, the benefit 589.50 EUR not deductible."""
+    from impots.engine.system import baseline
+
+    built = build_simulation(_lone_parents(), baseline(), 2024)
+    simulation = built.simulation
+    assert list(built.foyer_ids) == ["chomeur#0", "retraite#0"]
+    np.testing.assert_allclose(simulation.calculate("rfr", "2022"), [22_500.0] * 2, atol=0.01)
+    np.testing.assert_array_equal(simulation.calculate("nbptr", "2022"), [2.0, 2.0])
+
+    def levy(variable: str, person: int) -> float:
+        return -float(simulation.calculate_add(variable, "2024")[person])
+
+    pensioner, chomeur = 0, 2
+    assert levy("csg_deductible_retraite", pensioner) == pytest.approx(0.038 * 25_000, abs=0.01)
+    assert levy("csg_imposable_retraite", pensioner) == pytest.approx(0.0, abs=0.01)
+    assert levy("casa", pensioner) == pytest.approx(0.0, abs=0.01)
+    assert levy("crds_retraite", pensioner) == pytest.approx(0.005 * 25_000, abs=0.01)
+    assiette = 0.9825 * 25_000
+    assert levy("csg_deductible_chomage", chomeur) == pytest.approx(0.038 * assiette, abs=0.01)
+    assert levy("csg_imposable_chomage", chomeur) == pytest.approx(0.0, abs=0.01)
+    assert levy("crds_chomage", chomeur) == pytest.approx(0.005 * assiette, abs=0.01)
+
+
+@functools.cache
+def _lone_parents_population_side() -> dict[str, dict[str, Any]]:
+    """`LONE_PARENTS` through the runner's full tier, once."""
+    households = run(_lone_parents(), 2024, tier="full").households
+    return {row["household_id"]: row for row in households.iter_rows(named=True)}
+
+
+@pytest.mark.parametrize("name", sorted(LONE_PARENTS))
+def test_a_lone_parent_prices_the_same_in_the_calculator_and_in_a_population(name: str) -> None:
+    """The same lone parent typed into the calculator, which writes case T on N-2 to N, and
+    written as population rows, compared on every row both report (D-199).
+
+    On `main` the population's revenu disponible was 675.00 EUR lower on the pension, its CSG
+    not deductible and its CASA, and 589.50 EUR lower on the benefit, its CSG not
+    deductible."""
+    from impots.engine import compute
+
+    age, pension, chomage = LONE_PARENTS[name]
+    adult: dict[str, Any] = {"salaire_brut_annuel": 0, "annee_naissance": 2024 - age}
+    if pension:
+        adult["pension_annuelle"] = pension
+    if chomage:
+        adult["chomage_brut_annuel"] = chomage
+    calculator = compute(HouseholdInput.model_validate({
+        "adults": [adult], "children": [{"annee_naissance": 2014}],
+        "logement": {"statut": "proprietaire", "loyer_mensuel": 0.0, "zone_apl": 2},
+    }), 2024, tier="full").baseline
+    population = _lone_parents_population_side()[name]
+    shared = [key for key, value in calculator.items()
+              if value is not None and key in population]
+    assert {"ir", "parts_fiscales", "revenu_disponible", "asf"} <= set(shared)
+    for key in shared:
+        assert calculator[key] == pytest.approx(population[key], abs=0.5), key
