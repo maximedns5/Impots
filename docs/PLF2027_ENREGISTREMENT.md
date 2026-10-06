@@ -12,6 +12,12 @@ commandes partent donc de `main` : c'est sur cette tête, avec ses corrections, 
 chiffrages se calculent. Les enregistrements sont poussés sur une branche à eux. Seules les
 références de branche ont changé : ni tolérance, ni justification, ni comparateur.
 
+**Mis à jour le 2026-10-06, toujours avant tout chiffre.** D-195 change le squelette de la
+population : la case T n'y va plus à un déclarant qui vit en couple. Rien n'indexe
+`population_2024.parquet` sur le squelette, et `make data` ne la construit que si elle
+manque. L'étape 0 la reconstruit donc toujours, avant `make full`, pour que les chiffrages
+lisent la population de `main`. Ni tolérance, ni justification, ni comparateur ne change.
+
 ## Pourquoi ces commandes tournent chez le propriétaire
 
 Ce conteneur cloud n'atteint pas l'INSEE : la connexion s'établit, puis le serveur ne
@@ -43,6 +49,7 @@ depuis fusionnée dans `main` :
 ```bash
 git fetch origin main && git checkout -b plf2027-enregistrements origin/main
 make data            # si population_2024.parquet manque
+.venv/bin/impots population build   # toujours : le squelette a changé (D-195)
 .venv/bin/impots entreprises cells
 .venv/bin/impots entreprises build --cells data/processed/firm_cells_2023.json
 make full            # une ligne PASS dans reports/full_pass_log.md, sur cette tête

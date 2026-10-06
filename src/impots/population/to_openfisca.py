@@ -85,8 +85,12 @@ HISTORY_YEARS = 2
 #: to this wiring, but the caches hold its numbers too: the housing aid of anyone whose
 #: salary is under the minimum professional-expenses deduction, beside other income. D-188
 #: likewise: the abatement of art. 157 bis doubled for a couple both over 65, which lowers
-#: its RFR, and two years on the rate of the CSG on its pensions.
-WIRING = "D-188"
+#: its RFR, and two years on the rate of the CSG on its pensions. D-195 is the skeleton's,
+#: and changes the case T this wiring writes: a lone declarant the survey records as living
+#: in a couple, whose partner the skeleton could not pair, loses the half-part. The caches
+#: check only a population's height, which that keeps, and would serve the rebuilt
+#: population its old rates.
+WIRING = "D-195"
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
 #: fiscal block, which never reaches a benefit. The ASS the income tax reads since D-192
