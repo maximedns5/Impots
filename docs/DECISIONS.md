@@ -13376,7 +13376,7 @@ entière de son conjoint. La règle est appliquée telle que la Cnav la publie.
 **Ce que la population en fait.** Rien. `population.to_openfisca` écrit les salaires, les
 pensions de retraite, le chômage, le logement, la case T et les niches, jamais
 `taux_incapacite` : l'AAH y est nulle, et la correction ne retire rien.
-`to_openfisca.WIRING` reste « D-195 ».
+`to_openfisca.WIRING` reste « D-199 ».
 
 **Vus échouer, puis mutés.** Écrits avant la correction, dans un commit à eux seuls
 (`1f5e41e`), 6 des 12 tests ajoutés tombaient sur le code de `main` :
@@ -13404,6 +13404,9 @@ seule ligne change :
 * Les deux mutants, sur les 12 tests : 96 s chacun.
 * `tests/test_charter.py` : 8 réussis.
 * `ruff check src tests scripts` : rien à signaler.
+* Sur la branche fusionnée avec D-198 et D-199 : les 12 tests ajoutés, les deux tests du
+  registre et six tests de D-198, son test qui tue compris, 20 réussis ; les quatre tests de
+  D-199, 4 réussis ; `tests/test_charter.py`, 8 réussis ; ruff, rien à signaler.
 
 Le gate complet n'a pas tourné, à la demande du propriétaire : le job `fast` de la CI fait
 tourner la suite sur la PR.
