@@ -1292,7 +1292,7 @@ def _aah_complements_counted_as_the_aah(pensioner_formula: Any) -> Any:
     tests the AAH counts under, read only where a parent's compléments can count beside a parent
     eligible to the ASPA or the ASI. Elsewhere the term is nil, and `caah` is never asked for."""
     from openfisca_core.model_api import ADD, MONTH, Variable, not_, set_input_divide_by_period
-    from openfisca_france.entities import Individu
+    from openfisca_france.entities import Famille, Individu
 
     class asi_aspa_base_ressources_individu(Variable):  # openfisca's naming
         value_type = float
@@ -1308,9 +1308,11 @@ def _aah_complements_counted_as_the_aah(pensioner_formula: Any) -> Any:
             base = pensioner_formula(individu, period, parameters)
             aah = parameters(period).prestations_sociales.prestations_etat_de_sante \
                 .invalidite.aah
-            # The tests the AAH counts under, openfisca's and correction 16's, on whoever can
-            # draw the MVA: an incapacity of 80 % or more (CSS art. L. 821-1-2).
-            comptes = ((individu("taux_incapacite", period) >= aah.taux_capacite.taux_incapacite)
+            # The tests the AAH counts under, openfisca's and correction 16's, on a parent, the
+            # only members whose resources the couple's base sums, who can draw the MVA: an
+            # incapacity of 80 % or more (CSS art. L. 821-1-2).
+            comptes = (individu.has_role(Famille.PARENT)
+                       * (individu("taux_incapacite", period) >= aah.taux_capacite.taux_incapacite)
                        * not_(individu(ASPA_ELIGIBILITY, period))
                        * not_(individu(ASI_ELIGIBILITY, period))
                        * not_(individu("pensions_invalidite", period) > 0)
