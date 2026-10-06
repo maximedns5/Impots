@@ -1559,7 +1559,7 @@ class _SharedChildrenInTheQuotientCaps:
 def _quotient_caps_beside_shared_children(openfisca_formula: Any) -> Any:
     """`ir_plaf_qf`, a child in alternating residence at its own caps (CGI art. 197, I, 2):
     openfisca's formula of 2013, run with the shared children among the dependants, which gives a
-    widow whose children are all shared her reduction of « cette part supplémentaire »; and, for a
+    widow whose children are all shared their reduction of « cette part supplémentaire »; and, for a
     parent of case T whose only child is shared, with the tax on one part raised by what its caps
     give too much. openfisca caps the first two half-parts above one part at half of the first
     child's ceiling each, where only the shared child's, its quarter and case T's, is the first

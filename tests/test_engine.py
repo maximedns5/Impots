@@ -4198,7 +4198,7 @@ def test_the_engine_alone_caps_a_shared_child_s_quotient_as_a_child_at_charge() 
     carte = _alterne(150_000, 2014, alternes=(0,), carte=True)
     assert _foyer_variable(veuf, "ir_plaf_qf", "2024", raw) == pytest.approx(
         IR_UNE_PART_150K - 2 * DEMI_PART - QUART_DE_PART, abs=0.01), (
-        "openfisca now gives a widow her reduction beside shared children: remove correction 18")
+        "openfisca now gives a widow their reduction beside shared children: remove correction 18")
     assert _foyer_variable(carte, "ir_plaf_qf", "2024", raw) == pytest.approx(
         IR_UNE_PART_150K - PREMIER_ENFANT_PARENT_ISOLE - COMPLEMENT_CARTE, abs=0.01), (
         "openfisca now caps a card beside one shared child at 1 791: remove correction 18")
@@ -4345,7 +4345,7 @@ def test_an_adult_child_cannot_live_in_alternating_residence() -> None:
     """Art. 194, I: « les enfants mineurs sont réputés être à la charge égale de l'un et de
     l'autre parent », the residence being fixed « en alternance au domicile de chacun des
     parents » under parental authority (C. civ. art. 373-2-9). A child of 18 or more on 1
-    January is not a minor in openfisca (`majeur`), which would count him at full charge: the
+    January is not a minor in openfisca (`majeur`), which would count them at full charge: the
     field is refused there, accepted at 17."""
     with pytest.raises(ValueError, match=r"194, I"):
         build_situation(_alterne(40_000, 2006, alternes=(0,)), 2024)
