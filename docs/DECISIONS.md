@@ -12239,7 +12239,7 @@ pension d'invalidité, et son chemin, `to_openfisca`, n'appelle pas le construct
 ménage. Elle impute des bases à la case 7DB (D-066), jamais à la case 7DG. Mesuré sur la
 fixture, 400 ménages et 439 foyers : `f7dg` n'est vrai pour aucun foyer. Avec une base de
 18 000 € écrite à chacun, le crédit vaut 6 000 € pour 310 foyers, 6 750 € pour 52 et 7 500 €
-pour 77, jamais 9 000 €. `to_openfisca.WIRING` reste « D-188 ». Les tests lents, qui
+pour 77, jamais 9 000 €. `to_openfisca.WIRING` reste « D-195 ». Les tests lents, qui
 demandent la population complète, n'ont pas tourné : seul `make full` le peut.
 
 **Vus échouer, puis mutés.** Contre `4f19e36`, les tests seuls, 12 des 14 nouveaux tests du
