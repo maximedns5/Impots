@@ -12563,7 +12563,7 @@ que change la situation, et que l'année du décès n'est pas exprimable.
 `population.to_openfisca`, sans `HouseholdInput`, et n'écrit aucune situation de famille :
 la formule d'openfisca fait de chaque déclarant seul un célibataire, et de chaque couple un
 couple pacsé. Aucun fichier de `population` ne change, et `to_openfisca.WIRING` reste
-« D-188 ». Sur la population de test, 400 ménages, le palier complet a été calculé sur
+« D-195 ». Sur la population de test, 400 ménages, le palier complet a été calculé sur
 `main` puis sur la branche : les deux tables, 52 colonnes, sont identiques.
 
 **Vus échouer, puis mutés.** Les tests ont été écrits avant le code, et vus tomber à trois
