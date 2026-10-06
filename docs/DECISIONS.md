@@ -14224,8 +14224,8 @@ avec la case T, restent celles d'openfisca, et chaque plafond d'un foyer qui a u
 aussi ; seul le plafond du premier enfant d'un foyer qui n'en a pas cède la place au plafond
 général. Depuis 2013, la date de la formule qu'elle enroule : celle que laisse la correction
 18 de D-201, qui compte les enfants en résidence alternée, autour de celle d'openfisca. Les
-deux tiennent. Le test qui tue, sur openfisca brut : un adulte seul à 150 000 €, la case T et
-une personne de la case R, 21 914,95 €.
+deux tiennent. Le test qui tue, sur openfisca brut : un adulte seul à 150 000 €, la case T
+et une personne de la case R, 21 914,95 €.
 
 **Pas de correction pour l'emploi à domicile.** La question de D-198 ne se pose pas. La
 personne de la case R est à charge (art. 196 A bis) et titulaire de la carte : la 2042 coche
