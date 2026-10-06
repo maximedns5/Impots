@@ -298,6 +298,12 @@ class HandicapEnfant(BaseModel):
         return self
 
 
+#: The age from which a child is no minor on 1 January of the year simulated, as openfisca's
+#: `majeur` reads it on births of 1 January: CGI art. 194, I presumes « les enfants mineurs » at
+#: equal charge in alternating residence (D-201).
+ALTERNANCE_AGE_MAXIMUM = 18
+
+
 class Child(BaseModel):
     model_config = INPUT_CONFIG
 
@@ -307,6 +313,25 @@ class Child(BaseModel):
         description="A disability the CDAPH recognised. Absent means none. Opens the AEEH "
         "up to the age of 20, and with the card half a part more (D-191). Refused for a "
         "child of 20 or more in the year simulated.",
+    )
+    residence_alternee: bool = Field(
+        default=False,
+        description="The child lives in alternating residence at each parent's home (C. civ. "
+        "art. 373-2-9), « réputés être à la charge égale de l'un et de l'autre parent » (CGI art. "
+        "194, I): case H of the 2042, written on openfisca's `garde_alternee` on every covered "
+        "month. A quarter part for each of the first two such children, half a part from the "
+        "third, and less beside children at charge (art. 194, I, a to c); case T a quarter for one "
+        "and half a part from two when every child is shared (II); half the ceilings for these "
+        "quarters (art. 197, I, 2), the widow's reduction whole (correction 18). Half the "
+        "home-help increment (art. 199 sexdecies, 3; correction 17), half the childcare ceiling "
+        "(art. 200 quater B; cases 7GE to 7GG) and half the school-fee reduction (art. 199 quater "
+        "F; cases 7EB, 7ED, 7EG). The family allowances are shared by half (CSS art. L. 521-2, "
+        "R. 521-2 and R. 521-3), as when the parents ask for it or designate no one; the other "
+        "family benefits and the housing aid count the child in full, as for the parent the "
+        "parents designate (art. R. 513-1; CCH art. L. 823-2); no ASF is paid for the child, whose "
+        "other parent maintains them too (correction 19). Refused for a child of 18 or more on 1 "
+        "January, who is no minor, and beside school fees when some children are shared and "
+        "others not (D-201).",
     )
 
 
@@ -416,6 +441,17 @@ NICHE_CASES: dict[str, str] = {
 }
 #: The per-child childcare cases, in the order the list fills them.
 NICHE_GARDE_CASES: tuple[str, ...] = ("f7ga", "f7gb", "f7gc")
+#: The same for children in alternating residence, whose ceiling is half (CGI art. 200 quater B):
+#: the i-th amount of the list is the i-th child under six's, and goes to the next of these when
+#: that child is shared (D-201).
+NICHE_GARDE_ALTERNEE_CASES: tuple[str, ...] = ("f7ge", "f7gf", "f7gg")
+#: The school-fee counts of shared children, whose amounts are halved (art. 199 quater F): written
+#: there when every child is shared (D-201).
+NICHE_SCOLARITE_ALTERNEE_CASES: dict[str, str] = {
+    "enfants_college": "f7eb",
+    "enfants_lycee": "f7ed",
+    "enfants_superieur": "f7eg",
+}
 #: Individual-level, so it is written onto the adults rather than the foyer fiscal.
 NICHE_SYNDICALES_CASE = "f7ac"
 

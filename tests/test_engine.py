@@ -4396,10 +4396,10 @@ def test_the_family_allowances_of_a_shared_child_are_halved() -> None:
 def test_a_shared_child_opens_no_asf() -> None:
     """CSS art. L. 523-1, I, 3°: the ASF is for « tout enfant dont le père ou la mère, ou les père
     et mère, se soustraient ou se trouvent [...] hors d'état de faire face à leurs obligations
-    d'entretien »; in alternating residence « mise en oeuvre de manière effective et
-    équivalente, l'un et l'autre des parents doivent être considérés comme assumant la charge
-    effective et permanente de leur enfant » (Cour de cassation, avis n° 006 0005 du 26 juin
-    2006, quoted in the answer to written question n° 14550). openfisca paid it to a lone parent
+    d'entretien »; with « un droit de résidence alternée sur leur enfant qui est mis en oeuvre
+    de manière effective et équivalente, l'un et l'autre des parents doivent être considérés
+    comme assumant la charge effective et permanente de leur enfant » (Cour de cassation, avis
+    n° 006 0005 du 26 juin 2006, quoted in the answer to written question n° 14550). openfisca paid it to a lone parent
     for a shared child as for any other (correction 19). One shared child, 15 000 EUR: no ASF;
     two children, one shared: the other's, 2 336.09 EUR."""
     un = _alterne_priced((0,), 15_000, (2014,))

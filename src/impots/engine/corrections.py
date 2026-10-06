@@ -1,6 +1,7 @@
 """Where this project's reading of the BENEFITS law, of the abatement of art. 157 bis that the
 income tax and the benefits both read (D-188), of the income tax on a benefit, the ASS
-(D-192), and of the home-help credit's ceiling (D-198), differs from openfisca's, and why.
+(D-192), of the home-help credit's ceiling (D-198, D-201), and of the caps of the quotient
+familial beside a child in alternating residence (D-201), differs from openfisca's, and why.
 
 The same bar as `patrimoine.corrections`, which holds the IFI ones: a legal citation, a
 measured demonstration of the difference, a decision-log entry, and a KILL TEST that fails
@@ -452,6 +453,91 @@ spouse's resources, 29 202.83 EUR of disposable income with 100 EUR of pension a
 other is eligible to the ASPA or the ASI. On the wire, the disability field with a pension,
 beside a spouse at the ASPA's age or with an invalidity pension. The population carries no
 disability, and nothing in it moves.
+
+---
+
+**Correction 17 — the home-help increment halved, not taken off, for a child in alternating
+residence (CGI art. 199 sexdecies, 3), D-201.**
+
+« Le montant de 1 500 € est divisé par deux pour les enfants réputés à charge égale de l'un et
+l'autre de leurs parents »: 750 EUR more for each such child, under the same caps. openfisca's
+`nb_pac2` is `nbF + nbJ + nbR - nbH / 2`, labelled as counting « les enfants en résidence
+alternée comme une demi personne à charge »; but `nbF` already leaves them out, so each one takes
+half an increment off the ceiling instead of adding it. Measured on a parent alone at 40 000 EUR
+with one such child, declaring 18 000 EUR of home help: 5 625 EUR of credit over 2024, against
+the 6 375 the DGFiP's simulator gives.
+
+The correction runs the formula correction 15 left, itself around openfisca's, with each child in
+alternating residence counted once more among the persons the ceilings are raised for: `nbH` in
+full, which turns the half taken off into the half the article adds. Composed with correction 15
+rather than merged into it, so that each can be retired on its own kill test. The increment, both
+caps, the first year and the 20 000 EUR of case 7DG without increment stay openfisca's.
+
+**Blast radius:** a foyer with a child in alternating residence whose home help, less the aid
+received, passes 12 000 EUR (15 000 the first year), without case 7DG. On the wire, the child's
+alternating residence beside the home-help field. The population carries no alternating
+residence, and nothing in it moves.
+
+---
+
+**Correction 18 — the caps of the quotient familial beside a child in alternating residence
+(CGI art. 197, I, 2), D-201.**
+
+Two of openfisca's readings in `ir_plaf_qf` that a child in alternating residence exposes.
+
+The widow's reduction: « Les contribuables veufs ayant des enfants à charge qui bénéficient d'une
+part supplémentaire de quotient familial en application du I de l'article 194 ont droit à une
+réduction d'impôt égale à 1 993 € pour cette part supplémentaire », and a shared child is at
+charge, « que celle-ci soit exclusive, principale ou réputée également partagée entre les
+parents » (art. 196). openfisca gives the reduction where `nb_pac` is positive, which leaves the
+shared children out: a widow whose only child is shared paid 25 237.45 EUR at 150 000 EUR,
+against 23 244.45 and the DGFiP simulator's 23 244.
+
+Case T's half ceilings: « Lorsque les contribuables entretiennent uniquement des enfants dont la
+charge est réputée également partagée entre l'un et l'autre des parents, la réduction d'impôt
+correspondant à la demi-part accordée au titre de chacun des deux premiers enfants est limitée à
+la moitié de cette somme », of 4 224 EUR. openfisca caps the first two half-parts above one part
+at 2 112 EUR each, whatever they are. With one child, shared, the second is a card's, the
+parent's, capped at 1 791 EUR, or the child's quarter, at 895.50: a parent alone with the card
+paid 23 705.95 EUR at 150 000 EUR, against 24 026.95 and the simulator's 24 027.
+
+The correction runs openfisca's formula of 2013 with `nb_pac` counting the shared children too,
+which only the widow's reduction and case L's ceiling read there, and which a shared child closes
+as the law does (art. 195, 1: « n'ayant pas d'enfant à leur charge, exclusive, principale ou
+réputée également partagée »). And, for a lone parent of case T whose only child is shared, with
+the tax on one part raised by what openfisca's caps give too much: (min((parts - 1) x 2, 2) - 1)
+x (half of 4 224 - 1 791), read from the tree a reform moves. Raising that tax by the sum is
+lowering the caps by it: the capped tax, the complements the cap limits and the DOM's abatement
+follow from openfisca's own formula. Two shared children fill the two half-parts with theirs, and
+nothing changes there.
+
+**Blast radius:** a widow whose children are all shared, or a parent of case T with one child,
+shared, beside the card, the parent's or the child's, whose quotient is capped. On the wire, the
+child's alternating residence beside a widow's situation or a card. The population carries no
+alternating residence, and nothing in it moves.
+
+---
+
+**Correction 19 — no ASF for a child in alternating residence (CSS art. L. 523-1, I, 3°),
+D-201.**
+
+The ASF goes to « tout enfant dont le père ou la mère, ou les père et mère, se soustraient ou se
+trouvent [...] hors d'état de faire face à leurs obligations d'entretien », the parent having
+done so « depuis au moins un mois » (art. R. 523-1). Where parents have « un droit de résidence
+alternée sur leur enfant qui est mis en oeuvre de manière effective et équivalente, l'un et
+l'autre des parents doivent être considérés comme assumant la charge effective et permanente de
+leur enfant » (Cour de cassation, avis n° 006 0005 of 26 June 2006, as the minister quotes it in
+answer to written question n° 14550): the other parent maintains the child. openfisca's `asf_elig_enfant` never reads `garde_alternee`, and paid a
+parent alone at 15 000 EUR 2 336.09 EUR of ASF over 2024 for one shared child.
+
+The correction keeps openfisca's eligibility and leaves the shared child out; the RSA's ASF
+forfait reads the same eligibility, and follows. What it leaves: a contribution ordered beside
+the alternating residence and left unpaid (3°), or paid below the ASF (4°), would open it, and
+the wire format carries neither.
+
+**Blast radius:** a parent alone with a shared child under 20. On the wire, the child's
+alternating residence beside a single adult. The population carries none, and nothing in it
+moves.
 """
 
 from __future__ import annotations
@@ -609,6 +695,32 @@ CORRECTIONS: tuple[Correction, ...] = (
         kill_test="test_the_engine_alone_counts_the_aah_of_a_pensioner_beside_a_spouse_at_the_"
                   "aspa",
     ),
+    Correction(
+        name="emploi_domicile_majoration_moitie_enfant_en_residence_alternee",
+        citation="CGI art. 199 sexdecies, 3 — la limite est majorée de 1 500 € par enfant à "
+                 "charge, et « Le montant de 1 500 € est divisé par deux pour les enfants réputés "
+                 "à charge égale de l'un et l'autre de leurs parents »",
+        decision="D-201",
+        kill_test="test_the_engine_alone_takes_a_shared_child_off_the_home_help_ceiling",
+    ),
+    Correction(
+        name="plafonnement_quotient_familial_enfants_en_residence_alternee",
+        citation="CGI art. 197, I, 2 — « la réduction d'impôt correspondant à la demi-part "
+                 "accordée au titre de chacun des deux premiers enfants est limitée à la moitié de "
+                 "cette somme », et la réduction de 1 993 € des « contribuables veufs ayant des "
+                 "enfants à charge », que la charge soit « réputée également partagée entre les "
+                 "parents » (art. 196)",
+        decision="D-201",
+        kill_test="test_the_engine_alone_caps_a_shared_child_s_quotient_as_a_child_at_charge",
+    ),
+    Correction(
+        name="asf_pas_pour_un_enfant_en_residence_alternee",
+        citation="CSS art. L. 523-1, I, 3° — l'ASF va à « tout enfant dont le père ou la mère [...] "
+                 "se soustraient ou se trouvent [...] hors d'état de faire face à leurs obligations "
+                 "d'entretien », ce que ne fait pas le parent qui l'héberge en alternance",
+        decision="D-201",
+        kill_test="test_the_engine_alone_pays_the_asf_for_a_shared_child",
+    ),
 )
 
 AL_BASE = "aide_logement_base_ressources_individu"
@@ -676,6 +788,18 @@ AGE_SALDOM = 65
 #: Each person's resources for the ASPA and the ASI, which correction 16 rids of the AAH of
 #: whoever draws a retirement pension.
 ASI_ASPA_BASE = "asi_aspa_base_ressources_individu"
+#: The children in alternating residence of a foyer fiscal, case H, which correction 17 counts
+#: once more among the home-help increments and correction 18 among the dependants of the caps.
+CHILDREN_SHARED = "nbH"
+#: The income tax after the caps of the quotient familial, the date of the formula correction 18
+#: wraps, and the two variables of it the correction makes read otherwise: the dependants, and the
+#: tax on one part (two for a couple) from which the caps are taken.
+QUOTIENT_CAPS = "ir_plaf_qf"
+QUOTIENT_CAPS_SINCE = "2013-01-01"
+DEPENDANTS = "nb_pac"
+TAX_WITHOUT_QUOTIENT = "ir_ss_qf"
+#: A child's eligibility to the ASF, which correction 19 withholds from a shared child.
+ASF_ELIGIBILITY = "asf_elig_enfant"
 
 
 def apply_to(system: Any) -> Any:
@@ -729,6 +853,14 @@ def apply_to(system: Any) -> Any:
                 saldom_formula))
             base_formula = self.get_variable(ASI_ASPA_BASE).get_formula("0001-01-01")
             self.update_variable(_aah_of_a_pensioner_left_out(base_formula))
+            # Read after correction 15's update: correction 17 wraps the credit it left, so the
+            # variable keeps both, the declarants over 65 and the shared children.
+            saldom_corrected = self.get_variable(HOME_HELP_CREDIT).get_formula(HOME_HELP_SINCE)
+            self.update_variable(_home_help_increment_halved_for_a_shared_child(saldom_corrected))
+            caps_formula = self.get_variable(QUOTIENT_CAPS).get_formula(QUOTIENT_CAPS_SINCE)
+            self.update_variable(_quotient_caps_beside_shared_children(caps_formula))
+            asf_formula = self.get_variable(ASF_ELIGIBILITY).get_formula("0001-01-01")
+            self.update_variable(_asf_not_for_a_shared_child(asf_formula))
 
     return BenefitCorrections(system)
 
@@ -1355,3 +1487,132 @@ def _home_help_ceiling_raised_for_the_declarants_over_65(openfisca_formula: Any)
                                      period, parameters)
 
     return ci_saldom
+
+
+class _SharedChildrenAmongTheIncrements:
+    """The foyers fiscaux as the home-help credit sees them, with each child in alternating
+    residence counted once more among the persons its ceilings are raised for (correction 17):
+    `nb_pac2` takes half of each off, and the article adds half. Everything else it reads is the
+    foyers' own, through correction 15's view of them."""
+
+    def __init__(self, foyer_fiscal: Any, shared: Any) -> None:
+        self._foyer_fiscal = foyer_fiscal
+        self._shared = shared
+
+    def __call__(self, variable_name: str, period: Any, options: Any = None) -> Any:
+        value = self._foyer_fiscal(variable_name, period, options)
+        return value + self._shared if variable_name == HOME_HELP_INCREMENTS else value
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._foyer_fiscal, name)
+
+
+def _home_help_increment_halved_for_a_shared_child(home_help_formula: Any) -> Any:
+    """`ci_saldom`, each child in alternating residence raising the ceilings by half the increment
+    (CGI art. 199 sexdecies, 3): the formula correction 15 left, openfisca's within it, run with
+    those children counted once more in `nb_pac2`, which counts them for minus a half."""
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class ci_saldom(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Crédit d'impôt emploi d'un salarié à domicile, le plafond majoré pour chaque "
+                 "membre du foyer de plus de 65 ans et de moitié pour chaque enfant en résidence "
+                 "alternée (CGI art. 199 sexdecies, 3)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046861251"
+        definition_period = YEAR
+
+        def formula_2020_01_01(foyer_fiscal, period, parameters):
+            # `nb_pac2` is `nbF + nbJ + nbR - nbH / 2`, and `nbF` leaves the shared children out:
+            # `nbH` once more turns the half taken off into the half the article adds.
+            shared = foyer_fiscal(CHILDREN_SHARED, period)
+            return home_help_formula(_SharedChildrenAmongTheIncrements(foyer_fiscal, shared),
+                                     period, parameters)
+
+    return ci_saldom
+
+
+class _SharedChildrenInTheQuotientCaps:
+    """The foyers fiscaux as openfisca's caps of the quotient familial see them (correction 18):
+    the children in alternating residence among the dependants of `nb_pac`, and the tax on one
+    part raised by `excess`, what the caps give too much to a lone parent of case T whose only
+    child is shared. Everything else it reads is the foyers' own."""
+
+    def __init__(self, foyer_fiscal: Any, shared: Any, excess: Any) -> None:
+        self._foyer_fiscal = foyer_fiscal
+        self._shared = shared
+        self._excess = excess
+
+    def __call__(self, variable_name: str, period: Any, options: Any = None) -> Any:
+        value = self._foyer_fiscal(variable_name, period, options)
+        if variable_name == DEPENDANTS:
+            return value + self._shared
+        if variable_name == TAX_WITHOUT_QUOTIENT:
+            return value + self._excess
+        return value
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._foyer_fiscal, name)
+
+
+def _quotient_caps_beside_shared_children(openfisca_formula: Any) -> Any:
+    """`ir_plaf_qf`, a child in alternating residence at its own caps (CGI art. 197, I, 2):
+    openfisca's formula of 2013, run with the shared children among the dependants, which gives a
+    widow whose children are all shared her reduction of « cette part supplémentaire »; and, for a
+    parent of case T whose only child is shared, with the tax on one part raised by what its caps
+    give too much. openfisca caps the first two half-parts above one part at half of the first
+    child's ceiling each, where only the shared child's, its quarter and case T's, is the first
+    child's: the rest is a card's, at 1 791 EUR or half of it."""
+    from numpy import maximum, minimum
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class ir_plaf_qf(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Impôt après plafonnement du quotient familial et réduction complémentaire, les "
+                 "enfants en résidence alternée à leurs plafonds (CGI art. 197, I, 2)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053542636/2025-06-01"
+        definition_period = YEAR
+
+        def formula_2013_01_01(foyer_fiscal, period, parameters):
+            shared = foyer_fiscal(CHILDREN_SHARED, period)
+            plafonds = parameters(period).impot_revenu.calcul_impot_revenu.plaf_qf
+            demi_part = plafonds.plafond_avantages_procures_par_demi_part
+            # openfisca's B1, under case T: the first min((parts - 1) x 2, 2) half-parts above one
+            # part at half of `celib_enf` each, the rest at `general`. With one child, shared, the
+            # first is the child's and case T's quarters; any other is a card's, at `general` (a
+            # quarter counting half), so the caps were too high by (that count - 1) times the gap.
+            premieres = minimum((foyer_fiscal("nbptr", period) - 1) * 2, 2)
+            seul_enfant_partage = (foyer_fiscal("celibataire_ou_divorce", period)
+                                   * foyer_fiscal("caseT", period)
+                                   * (foyer_fiscal(DEPENDANTS, period) == 0) * (shared == 1))
+            excess = (seul_enfant_partage * maximum(premieres - 1, 0)
+                      * (demi_part.celib_enf / 2 - demi_part.general))
+            return openfisca_formula(_SharedChildrenInTheQuotientCaps(foyer_fiscal, shared, excess),
+                                     period, parameters)
+
+    return ir_plaf_qf
+
+
+def _asf_not_for_a_shared_child(openfisca_formula: Any) -> Any:
+    """`asf_elig_enfant`, leaving out a child in alternating residence, whose other parent
+    maintains them and evades no « obligations d'entretien » (CSS art. L. 523-1, I, 3°)."""
+    from openfisca_core.model_api import MONTH, Variable, not_, set_input_dispatch_by_period
+    from openfisca_france.entities import Individu
+
+    class asf_elig_enfant(Variable):  # openfisca's naming
+        value_type = bool
+        entity = Individu
+        label = ("Enfant pouvant ouvrir droit à l'ASF, hors résidence alternée, où l'autre parent "
+                 "assume la charge de l'enfant (CSS art. L. 523-1, I, 3°)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044629511"
+        definition_period = MONTH
+        set_input = set_input_dispatch_by_period
+
+        def formula(individu, period, parameters):
+            return (openfisca_formula(individu, period, parameters)
+                    * not_(individu("garde_alternee", period)))
+
+    return asf_elig_enfant
