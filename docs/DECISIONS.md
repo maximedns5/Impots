@@ -11971,6 +11971,11 @@ seul remplacement vérifié :
 
 **Le temps.** Les tests de budget de temps passent : 4 du moteur, 2 de l'API, aucun ignoré.
 
+**Le gate.** `make gate` donne 1 636 réussis, 172 ignorés et 12 échecs, en 26 min 9 s. Les
+12 échecs sont ceux de D-176 à D-194, faute de données dans ce conteneur. Les 4 réussis de
+plus sont les tests ajoutés à la population : celui du couple, la réciproque, les logements
+écrits à la main et le test sur `_assign_units`.
+
 **Ce qui reste.**
 * **Le logement contradictoire**, plus haut, est le choix du propriétaire. S'il croit la
   réponse de la personne, la règle perd sa clause sur le logement, le test épinglé change,
