@@ -12655,3 +12655,315 @@ ajoutés : 25 au moteur, 4 à l'API et 2 à la page.
   a2e965a9596aa9aad7d54144d8c6a7b8de755f8d90e3b8fea2abdd0f6c244759.
 * DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
   interrogé le 6 octobre 2026 sur 22 déclarations fictives.
+
+## D-198 — L'emploi à domicile : le plafond majoré pour chaque membre de plus de 65 ans
+
+**Le point de départ.** D-196 l'avait laissé dans « Ce qui reste » : « La loi majore le
+plafond ordinaire de 1 500 € « au titre de chacun des membres du foyer fiscal âgé de plus de
+soixante-cinq ans », et openfisca ne le fait pas. » Deux retraités nés en 1954 et 1955, à
+30 000 et 15 000 € de pension, recevaient 6 000 € de crédit sur 18 000 € d'aide à domicile,
+au lieu de 7 500 €. « C'est un écart d'openfisca hors de la case 7DG, qui demande une
+correction et son test qui tue : une entrée à part. » La voici : la correction 15 de
+`engine.corrections`.
+
+**Ce que dit la loi.** Le 3 de l'article 199 sexdecies du CGI est le même dans les deux
+versions qui couvrent l'imposition des revenus de 2024, celle du 1er janvier 2023 au 16
+février 2025 et celle du 16 février 2025 au 21 février 2026, et dans celle en vigueur depuis
+le 14 juin 2026. L'outil de lecture de Légifrance abrège : le texte est relevé mot pour mot
+sur l'export de la base de Légifrance que publie codes.droit.org, qui porte la version en
+vigueur, et l'outil a retrouvé chacune de ses phrases, mot pour mot, dans les versions de
+2023 et de 2025. Sa première réponse lisait « âgés » dans la seconde ; relue, elle lit
+« âgé » dans les deux, comme l'export.
+* **Le plafond.** Les dépenses « sont retenues, pour leur montant effectivement supporté,
+  dans la limite de 12 000 € ». « La limite de 12 000 € est portée à 15 000 € pour la
+  première année d'imposition pour laquelle le contribuable bénéficie des dispositions du
+  présent article au titre du a du 1 », l'emploi direct. Les 20 000 € de la case 7DG sont
+  ceux de D-196.
+* **Les majorations.** « La limite de 12 000 € est majorée de 1 500 € par enfant à charge au
+  sens des articles 196 et 196 B et au titre de chacun des membres du foyer fiscal âgé de
+  plus de soixante-cinq ans. La majoration s'applique également aux ascendants visés au
+  premier alinéa du 2 remplissant la même condition d'âge. Le montant de 1 500 € est divisé
+  par deux pour les enfants réputés à charge égale de l'un et l'autre de leurs parents. »
+* **Les deux limites.** « La limite de 12 000 € augmentée de ces majorations ne peut excéder
+  15 000 €. Toutefois, lorsque les dispositions du deuxième alinéa sont applicables, la
+  limite de 15 000 € fait l'objet des majorations prévues au présent alinéa et le montant
+  total des dépenses ne peut excéder 18 000 €. » Les majorations de l'âge et celles des
+  enfants s'additionnent sous la même limite, 15 000 €, ou 18 000 € la première année.
+* **Le crédit.** « Le crédit d'impôt est égal à 50 % des dépenses mentionnées au 3 », et
+  « S'il excède l'impôt dû, l'excédent est restitué » (4).
+
+L'article ne dit pas à quelle date l'âge s'apprécie.
+
+**Ce qu'en dit l'administration.**
+* **Le BOFiP**, dans la version en vigueur du 20 septembre 2017 au 12 août 2026 : « La
+  limite de 12 000 euros est majorée de 1 500 euros » par enfant à charge, de moitié en
+  résidence alternée, « par membre du foyer fiscal âgé de plus de 65 ans » et par ascendant
+  (§ 140). « Les majorations ne peuvent pas avoir pour conséquence de porter le plafond de
+  dépenses au-delà de 15 000 euros » (§ 145). La première année, « La limite de 15 000 euros
+  peut être majorée de 1 500 euros par enfant à charge, pour tout membre du foyer fiscal âgé
+  de plus de 65 ans ou encore par ascendant », sans dépasser 18 000 euros (§ 160). « Aucune
+  majoration ne peut être appliquée à la limite de 20 000 euros » (§ 190). La version du 12
+  août 2026 dit la même chose. Ni l'une ni l'autre ne dit quand l'âge s'apprécie.
+* **La brochure pratique 2025**, pour les revenus de 2024, le dit. Sous « Emploi à
+  domicile », le crédit est égal à 50 % des dépenses retenues dans la limite de 12 000 €
+  « majorée de 1 500 € », « par enfant à charge ou rattaché », « par membre du foyer âgé de
+  plus de 65 ans au 31 décembre ou à la date du décès » et « par ascendant âgé de plus de 65
+  ans ». « La limite ainsi majorée ne peut pas excéder 15 000 € ». La première année, « La
+  limite de 15 000 € est majorée de 1 500 € selon la composition du foyer, dans les mêmes
+  conditions que la limite de 12 000 €. Dans ce cas, le plafond de dépenses ne peut pas
+  excéder 18 000 €. »
+* **La notice de la 2042** (n° 2041 NOT) : le montant des dépenses « est limité à 12 000 €
+  majoré de 1 500 € par enfant à charge ou rattaché (750 € si l'enfant est en résidence
+  alternée ou à charge partagée), par membre du foyer fiscal âgé de plus de 65 ans ou par
+  ascendant âgé de plus de 65 ans susceptible de bénéficier de l'APA lorsque les dépenses
+  sont engagées à son domicile. Ce plafond ne peut dépasser 15 000 €. » Pour l'abattement de
+  l'art. 157 bis, sa fiche de calcul traduit les mêmes mots en date : « Si vous êtes âgé(e)
+  de plus de 65 ans (né avant le 1.1.1960) ».
+* **La 2042** n'a de case que pour les ascendants (7DL). Le simulateur tire les membres de
+  plus de 65 ans des années de naissance qu'on lui donne.
+* **Les règles de calcul de la DGFiP**, publiées sur la forge gitlab.adullact.net
+  (`dgfip/ir-calcul`), n'ont pas été lues : la forge oppose à curl une épreuve anti-robot,
+  que ce travail n'a pas tenté de passer.
+
+**Ce qu'en fait le simulateur de la DGFiP.** Interrogé sur 20 déclarations fictives, pour
+les revenus de 2024, modèle simplifié :
+* les deux retraités, 30 000 et 15 000 € de pension en cases 1AS et 1BS, 18 000 € en case
+  7DB : 7 500 € de crédit, 1 343 € d'impôt avant crédits, et 6 157 € remboursés ;
+* un retraité seul à 20 000 € : 6 750 € né en 1954 ou en 1959, 6 000 € né en 1960. Un membre
+  compte dès l'année de ses 65 ans ;
+* un enfant né en 2014 : 7 500 € pour le retraité seul, sur 18 000 € comme sur 20 000 €, et
+  7 500 € pour les deux retraités, dont l'impôt vaut alors 424 − 7 500 = −7 076 € ;
+* la première année, case 7DQ cochée : 9 000 € pour les deux retraités sur 20 000 €, 8 250 €
+  pour le retraité seul sur 18 000 €, 9 000 € pour les deux avec deux enfants sur 25 000 €,
+  7 500 € pour un adulte né en 1980 sur 18 000 € ;
+* la case 7DG : 9 000 € sur 18 000 € et 10 000 € sur 25 000 €, sans majoration ;
+* une personne à charge de plus de 65 ans compte une fois : un enfant à charge né en 1950
+  (case F), à côté d'un déclarant né en 1980, donne 6 750 € sur 18 000 €. Une personne
+  invalide de la case R ne compte pas : 6 000 €, née en 1950 comme en 1990.
+
+**Qui compte, donc.** Chaque déclarant de 65 ans ou plus au 31 décembre de l'année des
+revenus : pour 2024, né en 1959 ou avant. Les personnes à charge comptent une fois, comme
+enfants, ce que fait déjà openfisca. La lettre de l'article pourrait compter deux fois un
+enfant à charge de plus de 65 ans, au titre de l'enfant et au titre de l'âge ; le simulateur
+ne le compte qu'une fois, et à côté d'un parent de plus de 65 ans la limite de 15 000 € rend
+la question sans effet.
+
+**Ce que fait openfisca.**
+* **La formule.** `ci_saldom` applique en 2024 sa formule de 2020. Hors de la case 7DG, le
+  plafond vaut `plafond` plus `increment_plafond` fois `nb_pac2 + f7dl`, borné par
+  `plafond_maximum` ; la première année (`f7dq`), `plafond_1ere_annee` plus les mêmes
+  majorations, borné par `plafond_maximum_1ere_annee`. Avec la case 7DG,
+  `plafond_invalides`, sans majoration. Le crédit vaut `taux` fois le plus petit du plafond
+  et de 7DB moins 7DR. Aucun âge n'y est lu.
+* **Elle le sait.** La docstring de la formule de 2011 : « Normalement, le plafond est aussi
+  augmenté pour chaque personne agée de plus de 65 ans dans le foyer (en plus des PACs et
+  des ascendants de 65 ans remplissant les conditions de l'APA). On ne prend pas en compte
+  le nombre de ces individus ici. » Le paramètre `increment_plafond` se décrit « par enfant
+  à charge, par membre du foyer fiscal de plus de 65 ans et par ascendant âgé de plus de 65
+  ans ». L'arbre ne porte aucun âge pour ce crédit.
+* **`nb_pac2`** vaut `nbF + nbJ + nbR - nbH / 2` : les enfants hors résidence alternée, les
+  personnes à charge majeures sans `handicap`, la case R, moins la moitié des enfants en
+  résidence alternée. Chaque personne à charge du format d'entrée y compte une fois, mineure
+  dans `nbF`, majeure dans `nbJ`.
+* **La première année**, écrite à la main sur la situation : 7 500 € pour les deux retraités
+  sur 20 000 €, 15 000 € sans majoration, là où le simulateur donne 9 000 €.
+
+**La correction 15 de `engine.corrections`.** Elle exécute la formule d'openfisca en lui
+faisant lire, dans `nb_pac2`, les déclarants de 65 ans ou plus au 31 décembre en plus des
+personnes à charge, comme les corrections 9 et 12 font lire à une formule d'openfisca ce
+qu'elle oublie.
+* **Le reste est d'openfisca** : la majoration, les deux limites, la première année, les
+  20 000 € sans majoration de la case 7DG, les aides de la case 7DR. Tout est lu dans
+  l'arbre, celui d'une réforme compris : le levier `saldom_plafond`, qui déplace les
+  12 000 € (D-196), déplace la limite que majorent les déclarants. Seul l'âge, 65 ans, est
+  une constante de la correction, faute de paramètre.
+* **L'âge** est lu sur `date_naissance` : né avant le 1er janvier de l'année N − 64, soit 65
+  ans au 31 décembre de N, une naissance le 31 décembre comprise. Les deux constructeurs
+  écrivent la naissance au 1er janvier, de l'année de naissance du format d'entrée ou de
+  l'âge de la population : c'est alors l'année de naissance, 1959 ou avant pour 2024. `age`,
+  lu au premier jour d'un mois, aurait laissé de côté en janvier qui fête ses 65 ans plus
+  tard dans l'année.
+* **« à la date du décès »** est sans objet : le format décrit un foyer sur toute l'année et
+  refuse l'année du décès (D-197).
+* **Depuis 2020**, la date de la formule qu'elle enroule. Celles de 2007, 2009 et 2011
+  restent, et aucune année que le projet accepte, de 2022 à 2026, ne les lit.
+* **Le test qui tue.** Sur openfisca brut, les deux retraités reçoivent 6 000 € sur
+  18 000 €. Le registre cite le CGI : son test ne change pas.
+
+**Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`, palier léger.
+« Avant » désigne `main`. Le crédit est la ligne `credits_impot`, l'impôt net la ligne `ir`.
+La colonne du simulateur reprend le crédit qu'il donne, là où il a été interrogé.
+
+| ménage | aide | crédit avant | crédit après | simulateur | impôt net |
+|---|---:|---:|---:|---:|---:|
+| deux retraités nés en 1954 et 1955 | 18 000 € | 6 000 € | 7 500 € | 7 500 € | −6 157 € |
+| les mêmes, 3 000 € d'aides | 18 000 € | 6 000 € | 7 500 € | | −6 157 € |
+| les mêmes | 12 000 € | 6 000 € | 6 000 € | | −4 657 € |
+| un retraité seul né en 1954 | 18 000 € | 6 000 € | 6 750 € | 6 750 € | −6 750 € |
+| le même, né en 1959 | 18 000 € | 6 000 € | 6 750 € | 6 750 € | −6 750 € |
+| le même, né en 1960 | 18 000 € | 6 000 € | 6 000 € | 6 000 € | −5 850 € |
+| le retraité né en 1954, un enfant | 18 000 € | 6 750 € | 7 500 € | 7 500 € | −7 500 € |
+| le même | 20 000 € | 6 750 € | 7 500 € | 7 500 € | −7 500 € |
+| les deux retraités, un enfant | 18 000 € | 6 750 € | 7 500 € | 7 500 € | −7 076 € |
+| un couple salarié, nés en 1954 et 1980 | 18 000 € | 6 000 € | 6 750 € | | −6 587 € |
+| le même, nés en 1980 et 1955 | 18 000 € | 6 000 € | 6 750 € | | −6 587 € |
+| le même, nés en 1980 et 1982 | 18 000 € | 6 000 € | 6 000 € | | −5 837 € |
+| les deux retraités, carte P | 18 000 € | 9 000 € | 9 000 € | 9 000 € | −8 576 € |
+| les mêmes | 25 000 € | 10 000 € | 10 000 € | 10 000 € | −9 576 € |
+
+Les retraités déclarent leur pension, 20 000 € pour le retraité seul, et le couple salarié
+30 000 et 15 000 € de salaire brut. L'enfant est né en 2014. Le simulateur a reçu la case
+7DG cochée là où le moteur a la carte. Écrits à la main sur la situation, la case 7DQ et des
+dates de naissance hors du 1er janvier :
+
+| ménage | aide | crédit avant | crédit après | simulateur |
+|---|---:|---:|---:|---:|
+| les deux retraités, première année | 20 000 € | 7 500 € | 9 000 € | 9 000 € |
+| les mêmes, deux enfants, première année | 25 000 € | 9 000 € | 9 000 € | 9 000 € |
+| le retraité seul, première année | 18 000 € | 7 500 € | 8 250 € | 8 250 € |
+| un adulte né en 1980, première année | 18 000 € | 7 500 € | 7 500 € | 7 500 € |
+| un retraité né le 31 décembre 1959 | 18 000 € | 6 000 € | 6 750 € | |
+| né le 1er juillet 1959 | 18 000 € | 6 000 € | 6 750 € | |
+| né le 1er janvier 1960 | 18 000 € | 6 000 € | 6 000 € | |
+
+Le levier `saldom_plafond` à 8 000 € fait passer les deux retraités de 4 000 € à 5 500 € sur
+18 000 €, et laisse un couple de moins de 65 ans à 4 000 €.
+
+Refait à la main :
+* **Les deux retraités.** 12 000 + 2 × 1 500 = 15 000 € retenus sur 18 000 : 7 500 €.
+  L'impôt avant crédits, 1 343 €, celui du simulateur, moins 7 500 : −6 157 €, restitués.
+  Avec 3 000 € d'aides, 15 000 € supportés, tous retenus. Sous 12 000 €, rien ne change.
+* **Seul.** 12 000 + 1 500 = 13 500 € : 6 750 €. Né en 1960, il a 64 ans au 31 décembre
+  2024 : 12 000 €, 6 000 €, et 150 − 6 000 = −5 850 €.
+* **L'enfant.** 12 000 + 1 500 + 1 500 = 15 000 € : 7 500 €, sur 18 000 comme sur 20 000 €.
+  Les deux retraités et l'enfant, 16 500 €, ramenés à 15 000 : 7 500 € et non 8 250, et
+  424 − 7 500 = −7 076 €.
+* **Le couple salarié.** 163 € d'impôt avant les niches : 163 − 6 750 = −6 587 €, et
+  163 − 6 000 = −5 837 € sans membre de plus de 65 ans.
+* **La première année.** 15 000 + 2 × 1 500 = 18 000 € : 9 000 €. Seul, 16 500 € : 8 250 €.
+  Avec deux enfants, 15 000 + 4 × 1 500 = 21 000 €, ramenés à 18 000 : 9 000 €.
+* **La carte.** 20 000 € sans majoration : 9 000 € sur 18 000 et 10 000 € sur 25 000, et non
+  11 500 € pour 20 000 + 2 × 1 500 = 23 000 €.
+* **Le levier.** 8 000 + 2 × 1 500 = 11 000 € : 5 500 €.
+
+**Les deux paliers et l'ordre de calcul.**
+* Le palier léger et le palier complet donnent les mêmes valeurs sur chaque ligne du palier
+  léger, pour chacun des 12 ménages mesurés.
+* Trois ménages locataires à 500 € en zone 2 ont été calculés par le registre, comme l'API,
+  et avec `revenu_disponible` d'abord, comme la jambe relevée de l'EMTR : les deux
+  retraités, un retraité né en 1959 à 12 000 € de pension, et un salarié né en 1980 à
+  15 000 € avec une retraitée née en 1955 à 6 000 €. Le crédit (7 500, 6 750 et 6 750 €),
+  l'aide au logement (0, 1 431,33 et 541,59 €), l'ASPA (0, 144,27 et 8 455,75 €) et le
+  revenu disponible (49 717,00, 20 325,60 et 33 621,25 €) concordent au centime.
+* L'aide au logement et l'ASPA des deux derniers sont celles des mêmes ménages sans aide à
+  domicile : aucune ne lit l'impôt. Leur revenu disponible monte du crédit, 6 750 €, et la
+  dépense n'y entre pas.
+
+**Ce que la population en fait.** Rien, sous la loi en vigueur. Mesuré sur la fixture, 400
+ménages et 439 foyers :
+* 206 déclarants ont 65 ans ou plus au 31 décembre 2024, dont 5 tout juste 65, dans 154
+  foyers : 102 en ont un, 52 deux. D-196 en comptait 149 en lisant plus de 65 ans au sens
+  strict : les 5 déclarants de 65 ans sont chacun dans un foyer à part. Aucune personne à
+  charge n'a plus de 24 ans.
+* Sans bases de niches, `f7db` vaut zéro pour chaque foyer.
+* L'imputation (D-066) donne à chaque bénéficiaire le crédit moyen de son décile, divisé par
+  le taux. Sur le tableau de la DGFiP pour les revenus de 2024, téléchargé hors du dépôt
+  avec le sha256 du manifeste, les bases de la case 7DB vont de 1 776,65 € (3e décile) à
+  3 759,31 € (10e) : toutes sous 12 000 €. Écrite sur chaque foyer, la plus haute donne
+  1 879,50 € de crédit aux 439, avant comme après.
+* Avec 18 000 € écrits sur chaque foyer, comme pour D-196 : avant, 6 000 € pour 310 foyers,
+  6 750 € pour 52 et 7 500 € pour 77 ; après, 167, 142 et 130. 148 foyers bougent : 95 de
+  6 000 à 6 750 €, un déclarant de 65 ans ou plus et aucune personne à charge ; 48 de 6 000
+  à 7 500 €, deux déclarants ; 5 de 6 750 à 7 500 €, une personne à charge et un déclarant.
+  Les 6 autres foyers d'un déclarant de 65 ans ou plus ont deux ou trois personnes à charge,
+  déjà à 15 000 €.
+* Une réforme peut faire bouger la population imputée. Le levier `saldom_plafond` à 2 000 €,
+  avec 3 759,31 € écrits sur chaque foyer, donnait 1 000 € à 310 foyers, 1 750 € à 52 et
+  1 879,50 € à 77 ; il donne 1 000 € à 167, 1 750 € à 142 et 1 879,50 € à 130.
+
+`to_openfisca.WIRING` reste « D-195 ». Ses seuls lecteurs sont les caches de l'EMTR, et
+l'EMTR de la population calcule `revenu_disponible` par `build_simulation` sans bases de
+niches : sans aide à domicile, aucun crédit, et aucun taux ne bouge, sous la loi en vigueur
+comme sous une réforme.
+
+**Vus échouer, puis mutés.** Contre `aeca976`, les tests seuls, 12 des 16 tests ajoutés ou
+changés tombaient :
+* les deux retraités, à 6 000 € au lieu de 7 500 € ;
+* le retraité seul né en 1954 et celui né en 1959, à 6 000 € au lieu de 6 750 € ;
+* la naissance du 31 décembre 1959, à 6 000 € au lieu de 6 750 € ;
+* la limite partagée, à 6 750 € au lieu de 7 500 € pour le retraité seul avec l'enfant ;
+* le déclarant de plus de 65 ans, puis le conjoint, à 6 000 € au lieu de 6 750 € ;
+* la première année, à 7 500 € au lieu de 9 000 € pour les deux retraités sur 20 000 € ;
+* le levier, à 4 000 € au lieu de 5 500 € ;
+* les deux paliers et les deux ordres, à 6 000 € au lieu de 7 500 €. Les deux ordres
+  concordaient déjà sur le revenu disponible ;
+* la page, faute de la nouvelle phrase.
+
+Les quatre autres passaient, comme il le faut : le retraité né en 1960 et le couple sans
+membre de plus de 65 ans, à 6 000 €, les 20 000 € de la carte, à 9 000 et 10 000 €, et le
+test qui tue, à 6 000 € sur openfisca brut. Avec la correction, `211194a`, tout passe. Trois
+mutations ont été écrites, chacune dans une copie de `src` hors du dépôt, par un seul
+remplacement vérifié :
+* l'âge lu en janvier sur `age`, et non au 31 décembre : la seule naissance du 31 décembre,
+  à 6 000 € au lieu de 6 750 € ;
+* « plus de 65 ans » au sens strict, né avant le 1er janvier 1959 : le retraité né en 1959
+  et la naissance du 31 décembre, à 6 000 € au lieu de 6 750 € ;
+* tous les membres comptés, personnes à charge comprises : aucun des quinze tests du moteur
+  ne la prenait, la limite de 15 000 € cachant le double compte à côté d'un parent de plus
+  de 65 ans. Un seizième test, `e6bcde0`, prend le seul ménage où il se voit, que le format
+  d'entrée accepte : un déclarant né en 1980 et un enfant à charge né en 1950, 6 750 € sur
+  18 000 €, comme au simulateur. Il passe avant la correction et après, et tombe sous la
+  mutation, à 7 500 €.
+
+**Les tests.** Ont tourné : les 16 tests ajoutés au moteur et le test changé de la page ; au
+moteur, les 14 tests de D-196 sur l'aide à domicile et celui du registre des corrections ; à
+l'API, les 3 cas de l'aide à domicile ; `tests/test_ui.py` entier ; les 7 cas de l'aide à
+domicile de `tests/test_niches.py` et `tests/test_knobs.py`, marqués lents ;
+`tests/test_charter.py` ; `ruff check src tests scripts`. Tout passe : 31 tests au moteur, 3
+à l'API, 116 à la page, les 7 cas lents et 8 à la charte, 165 en tout, et ruff ne relève
+rien. Le gate complet n'a pas tourné, à la demande du propriétaire : le job `fast` de la CI
+fait tourner la suite sur la PR.
+
+**Ce qui reste.**
+* **Les cases 7DQ et 7DL** n'ont toujours pas de champ. La correction sert la première année
+  dès que la case est écrite, comme les tests l'écrivent à la main, et les ascendants
+  restent ceux d'openfisca.
+* **La case R.** openfisca majore le plafond pour toute personne invalide de la case R
+  (`nbR` dans `nb_pac2`), quel que soit son âge ; le simulateur ne la compte pas, née en
+  1950 comme en 1990. Rien ne l'écrit : ni le format d'entrée ni la population ne portent de
+  case R. La question reste à trancher en droit.
+* **La résidence alternée.** `nb_pac2` retire la moitié d'un enfant en résidence alternée au
+  lieu de l'ajouter. Écrit à la main sur openfisca brut, un parent seul avec un tel enfant
+  reçoit 5 625 € sur 18 000 €, `nb_pac2` valant −0,5, là où « Le montant de 1 500 € est
+  divisé par deux » et où le simulateur donne 6 375 €, pour 12 000 + 750 €. Rien ne
+  l'écrit : la résidence alternée n'a pas de champ (D-197).
+* **La population.** Ses bases imputées n'atteignent pas 12 000 €. Une base plus dispersée,
+  tirée d'une enquête sur les revenus, ferait mordre la correction sur les foyers de plus de
+  65 ans ; seul `make full` le mesurerait.
+* **openfisca-france.** L'oubli des membres de plus de 65 ans, le signe de la résidence
+  alternée et la case R sont à signaler en amont, avec ces cas.
+
+**Sources.**
+* CGI, art. 199 sexdecies, 3 et 4 (versions du 1er janvier 2023 au 16 février 2025,
+  LEGIARTI000046861251, et du 16 février 2025 au 21 février 2026, LEGIARTI000051212983, lues
+  sur Légifrance ; version en vigueur depuis le 14 juin 2026, relevée mot pour mot sur
+  l'export de la base de Légifrance que publie codes.droit.org, mis à jour le 1er septembre
+  2026, sha256 du fichier :
+  45ce7972e23a062ae9d22ba2f82ba5b7e469aea6c20e0606ed5688d520b2c508).
+* BOFiP : BOI-IR-RICI-150-20-20170920 (§ 120 à 190), en vigueur du 20 septembre 2017 au 12
+  août 2026, et BOI-IR-RICI-150-20-20260812 (§ 140 à 190), lus sur bofip.impots.gouv.fr.
+* DGFiP, Brochure pratique 2025, « Réductions et crédits d'impôt », « Emploi à domicile »,
+  p. 227 et 228. Sha256 du chapitre :
+  0b91c528f174bdd32a73350f95f609883ea3bf57692dfdb61ba371e5df3a7abd.
+* DGFiP, notice n° 2041 NOT (n° 50796#25), « Services à la personne : dépenses d'emploi à
+  domicile 7DB à 7DR », et fiche de calcul, 3, « Abattements spéciaux ». Sha256 du fichier :
+  0eb39b825fac0bc1f623a9f3fd2d4dce5227aadd13abb99712115bfecf28021f.
+* DGFiP, déclaration n° 2042 (n° 10330*29), « Revenus 2024 », rubrique 7, case 7DL. Sha256
+  du fichier : b33282a3f7caab9680e9d4494591fa287bda6f0e989b44155b411be1bdfa1a51.
+* DGFiP, crédits d'impôt sur le revenu par décile de RFR par part, revenus de 2024
+  (`dgfip_ir_credits_impot_par_decile_rfr_2024.xlsx` du manifeste), sha256
+  c7578465e0a5101bcca0f21a0f37f21291c092f2c9dcfcc40c8e9bff5a44797c.
+* DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
+  interrogé le 6 octobre 2026 sur 20 déclarations fictives.
+* openfisca-france 176.0.8 : `ci_saldom`, `nb_pac2`, `nbF`, `nbJ`, `nbH`, `age`, et les
+  paramètres de `impot_revenu.credits_impots.emploi_salarie_domicile`.
