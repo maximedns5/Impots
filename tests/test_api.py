@@ -957,7 +957,7 @@ def test_a_childs_disability_reaches_the_engine_and_its_row_comes_back(client: T
 
 @pytest.mark.parametrize(("child", "needle"), [
     ({"annee_naissance": 2004, "handicap": {"taux_incapacite": 0.8, "complement_categorie": 1}},
-     "20 ans"),
+     "complément de l'AEEH n'est"),
     ({"annee_naissance": 2014, "handicap": {"taux_incapacite": 0.6, "carte_invalidite": True}},
      "80 %"),
     ({"annee_naissance": 2014, "handicap": {"taux_incapacite": 0.6, "complement_categorie": 1}},
