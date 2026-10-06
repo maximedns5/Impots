@@ -14222,15 +14222,18 @@ faisant lire la case T seulement là où un enfant est à charge, à titre exclu
 ou en résidence alternée : `nb_pac` moins `nbR`, ou `nbH`. Les parts, que `nbptr` calcule
 avec la case T, restent celles d'openfisca, et chaque plafond d'un foyer qui a un enfant
 aussi ; seul le plafond du premier enfant d'un foyer qui n'en a pas cède la place au plafond
-général. Depuis 2013, la date de la formule qu'elle enroule. Le test qui tue, sur openfisca
-brut : un adulte seul à 150 000 €, la case T et une personne de la case R, 21 914,95 €.
+général. Depuis 2013, la date de la formule qu'elle enroule : celle que laisse la correction
+18 de D-201, qui compte les enfants en résidence alternée, autour de celle d'openfisca. Les
+deux tiennent. Le test qui tue, sur openfisca brut : un adulte seul à 150 000 €, la case T et
+une personne de la case R, 21 914,95 €.
 
 **Pas de correction pour l'emploi à domicile.** La question de D-198 ne se pose pas. La
 personne de la case R est à charge (art. 196 A bis) et titulaire de la carte : la 2042 coche
 la case 7DG, et « Aucune majoration ne peut être appliquée à la limite de 20 000 euros »
 (BOI-IR-RICI-150-20, § 190). openfisca applique alors les 20 000 € sans lire `nb_pac2`. Le
-proxy de la correction 15, que D-201 modifie aussi, n'est pas touché ; le texte de la
-correction 15, en tête du module, dit seulement que la case R vient avec la case 7DG.
+proxy de la correction 15, autour duquel D-201 compose sa correction 17, n'est pas touché ;
+le texte de la correction 15, en tête du module, dit seulement que la case R vient avec la
+case 7DG.
 
 **Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`. Sur `main`,
 l'enfant de 22 ans était refusé (« Le handicap d'un enfant de 22 ans n'est pas modélisé »),
@@ -14376,7 +14379,11 @@ ligne change :
   chaque modèle d'entrée et les requêtes refusées : 10 et 23 réussis, un cas commun aux
   deux ;
 * `tests/test_ui.py` entier : 117 réussis ; `tests/test_charter.py` : 8 réussis ;
-* `ruff check src tests scripts` : rien à signaler ; `ui/check.mjs` : 34 vérifications.
+* `ruff check src tests scripts` : rien à signaler ; `ui/check.mjs` : 34 vérifications ;
+* sur la branche fusionnée avec D-201 : les tests ajoutés par D-201 et par D-202 et les deux
+  du registre, 83 réussis ; `tests/test_api.py` entier, 66 réussis ; `tests/test_ui.py` et
+  `tests/test_charter.py`, 126 réussis ; ruff, rien à signaler ; `ui/check.mjs`, 36
+  vérifications.
 
 Le gate complet n'a pas tourné, à la demande du propriétaire : le job `fast` de la CI fait
 tourner la suite sur la PR.
