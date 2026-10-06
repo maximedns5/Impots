@@ -3370,6 +3370,18 @@ def test_each_declarant_over_65_raises_the_ceiling(naissances: tuple[int, int],
         _saldom_by_hand(18_000, plus_de_65_ans=plus_de_65_ans), abs=0.5)
 
 
+def test_a_dependant_over_65_counts_once() -> None:
+    """The members the correction adds are the declarants: a dependant already counts once in
+    openfisca's `nb_pac2`, and the DGFiP's simulator counts a dependent child born in 1950 once,
+    beside a declarant born in 1980, 6 750 EUR of credit on 18 000 EUR and not 7 500. Absurd as
+    a family, but the wire format accepts it, and it is the only kind of household where the
+    15 000 EUR cap does not hide the count: beside a parent over 65, the parent's increment and
+    the child's already reach it."""
+    rows = _rows(_foyer(_adulte(20_000), children=[{"annee_naissance": 1950}],
+                        niches=_domicile(18_000)))
+    assert rows["credits_impot"] == pytest.approx(_saldom_by_hand(18_000, enfants=1), abs=0.5)
+
+
 def test_the_first_year_limit_takes_the_same_increments_up_to_18_000_euros() -> None:
     """« La limite de 12 000 € est portée à 15 000 € pour la première année d'imposition pour
     laquelle le contribuable bénéficie des dispositions du présent article au titre du a du 1 »,
