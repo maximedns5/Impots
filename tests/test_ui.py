@@ -960,10 +960,12 @@ def test_a_hidden_history_box_decides_nothing(source: str, tmp_path: Path):
 #: Each field of `api.schemas.Child`, and the result rows that show what it produced. A new
 #: field fails `test_every_child_field_on_the_wire_is_sent_from_an_input` until it is given
 #: an input here and on the page. The disability shows in the AEEH, and in the parts when
-#: the child holds the card.
+#: the child holds the card. The alternating residence shows in the parts, its quarter, and in
+#: the family allowances, shared (D-201).
 CHILD_INPUT_ROWS: dict[str, tuple[str, ...]] = {
     "annee_naissance": ("parts_fiscales", "af"),
     "handicap": ("aeeh", "parts_fiscales"),
+    "residence_alternee": ("parts_fiscales", "af"),
 }
 
 
@@ -1011,6 +1013,9 @@ out.filled = childPayload(filled);
 const cared = newChild(2016);
 Object.assign(cared, { taux: "60", soins: true });
 out.cared = childPayload(cared);
+const shared = newChild(2015);
+shared.residence_alternee = true;
+out.shared = childPayload(shared);
 console.log(JSON.stringify(out));
 """
 
@@ -1043,6 +1048,16 @@ def test_a_filled_child_is_what_the_wire_format_accepts(child_payloads):
         "carte_invalidite": False}
     for name in ("filled", "cared"):
         assert Child.model_validate(child_payloads[name]).handicap is not None
+
+
+def test_a_child_in_alternating_residence_is_sent_as_the_wire_format_has_it(child_payloads):
+    """The box goes as `residence_alternee`, only when ticked: a blank child sends the year
+    alone (D-201). And the child validates against the model."""
+    from impots.api.schemas import Child
+
+    assert child_payloads["shared"] == {"annee_naissance": 2015, "residence_alternee": True}
+    assert "residence_alternee" not in child_payloads["blank"]
+    assert Child.model_validate(child_payloads["shared"]).residence_alternee is True
 
 
 # --- the household's own fields, and a lone adult's situation de famille (D-197) -------
@@ -1113,4 +1128,57 @@ def test_a_lone_adult_s_situation_is_sent_and_a_widow_claims_no_case_t(situation
     assert "parent_isole" not in situation_payloads["veuf"]
     assert "situation_famille" not in situation_payloads["couple"]
     for name, sent in situation_payloads.items():
+        assert HouseholdInput.model_validate(sent), name
+
+
+# --- adult dependants: case R (D-202) -------------------------------------------------
+
+CASE_R_HARNESS = """
+const inputs = {};
+const $ = (id) => (inputs[id] ||= { value: "", checked: false });
+const state = { adults: 1, children: [] };
+const adultPayload = () => ({ salaire_brut_annuel: 40000, annee_naissance: 1970 });
+const childPayload = (child) => ({ annee_naissance: child.annee_naissance });
+const nichesPayload = () => null;
+const patrimoinePayload = () => null;
+const reformSpec = () => null;
+%(caseTApplies)s
+%(payload)s
+const out = {};
+$("situation").value = "celibataire";
+$("isole").checked = true;
+out.blank = payload().household;
+$("invalides").value = "2";
+out.alone = payload().household;
+state.adults = 2;
+out.couple = payload().household;
+console.log(JSON.stringify(out));
+"""
+
+
+@pytest.fixture(scope="module")
+def case_r_payloads(source: str, tmp_path_factory):
+    """Run the page's own `caseTApplies` and `payload` in node: a lone adult with no dependant,
+    then with two persons in case R and no child, then a couple with them."""
+    return _run_node(CASE_R_HARNESS % {"caseTApplies": _function(source, "caseTApplies"),
+                                       "payload": _function(source, "payload")},
+                     tmp_path_factory.mktemp("ui_case_r"))
+
+
+def test_case_r_is_sent_and_opens_case_t_without_a_child(source: str, case_r_payloads):
+    """The page has an input for case R, the persons « (autres que vos enfants) vivant sous votre
+    toit et titulaires de la carte d'invalidité » (CGI art. 196 A bis), sent as a count, zero when
+    blank. A lone adult with such a person and no child is offered case T, which the 2042 gives to
+    whoever lives alone « avec votre (ou vos) enfant(s) ou des personnes invalides recueillies sous
+    votre toit »; a couple is not (D-202). Each household validates against the model."""
+    from impots.api.schemas import HouseholdInput
+
+    assert 'id="invalides"' in source, "no input for case R"
+    assert case_r_payloads["blank"]["personnes_invalides_recueillies"] == 0
+    assert "parent_isole" not in case_r_payloads["blank"]
+    assert case_r_payloads["alone"]["personnes_invalides_recueillies"] == 2
+    assert case_r_payloads["alone"]["parent_isole"] is True
+    assert case_r_payloads["couple"]["personnes_invalides_recueillies"] == 2
+    assert "parent_isole" not in case_r_payloads["couple"]
+    for name, sent in case_r_payloads.items():
         assert HouseholdInput.model_validate(sent), name

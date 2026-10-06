@@ -146,6 +146,13 @@ ok("no reform is sent when nothing was touched", () => assert.equal($("reformSta
 
 console.log("household");
 ok("case T hidden with no children", () => assert.equal($("isoleWrap").hidden, true));
+$("invalides").value = "1"; $("invalides").fire("input", {});
+ok("case T appears for a lone adult with a person in case R", () => {
+  assert.equal($("isoleWrap").hidden, false,
+    "the 2042 names « des personnes invalides recueillies » beside the children (D-202)");
+});
+$("invalides").value = "0"; $("invalides").fire("input", {});
+ok("case T hidden again without one", () => assert.equal($("isoleWrap").hidden, true));
 ok("case T appears for a lone parent", () => {
   $("addChild").onclick(); assert.equal($("isoleWrap").hidden, false);
 });
@@ -230,6 +237,11 @@ ok("a blank child sends no disability", () => {
   const children = JSON.parse(calls.at(-1).opts.body).household.children;
   assert.equal(children.length, 1, "the child added above must be sent");
   assert.equal(children[0].handicap, undefined, "a blank rate is « none recognised », not 0 %");
+  assert.equal(children[0].residence_alternee, undefined, "an unticked box sends no case H");
+});
+ok("each child's row has its alternating-residence box", () => {
+  assert.match($("children").innerHTML, /data-child-field="residence_alternee"/);
+  assert.match($("children").innerHTML, /Résidence alternée/);
 });
 /* A child's inputs, typed as the page's own listener reads them (D-191). */
 const typeChild = (field, value) => $("children").fire("input", { target: {
@@ -261,6 +273,16 @@ ok("a child's inputs survive adding another child", () => {
 });
 $("children").fire("click", { target: { dataset: { child: "1" } } });
 typeChild("taux", ""); typeChild("complement", ""); typeChild("carte", false);
+/* A child in alternating residence, case H (D-201): the box goes as the wire format has it. */
+typeChild("residence_alternee", true);
+$("go").onclick();
+await new Promise((r) => setTimeout(r, 60));
+ok("a child in alternating residence is sent as the wire format has it", () => {
+  const child = JSON.parse(calls.at(-1).opts.body).household.children[0];
+  assert.equal(child.residence_alternee, true);
+  assert.equal(child.handicap, undefined, "the box sends no disability");
+});
+typeChild("residence_alternee", false);
 RESULT.baseline.aeeh = 0; RESULT.reform.aeeh = 0;
 RESULT.baseline.retraite_imposable = 12000;
 RESULT.reform.retraite_imposable = 12000;
@@ -342,5 +364,6 @@ ok("payload carries the new flags", () => {
   assert.equal(body.household.couple_marie_ou_pacse, false);
   assert.equal(body.household.situation_famille, "celibataire", "a lone adult's default");
   assert.equal(body.household.parent_isole, true, "lone parent claims case T by default");
+  assert.equal(body.household.personnes_invalides_recueillies, 0, "case R is a count, none by default (D-202)");
   assert.equal(body.reform, null, "an untouched panel must send no reform");
 });

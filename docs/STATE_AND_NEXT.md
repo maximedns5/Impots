@@ -1,9 +1,10 @@
 # State of the project, and the directions open — 2026-10-06 (Phase 8 and the household calculator on `main`)
 
-Supersedes the 2026-10-05 version, which stopped at D-194. D-195 to D-200 added the
+Supersedes the 2026-10-05 version, which stopped at D-194. D-195 to D-203 added the
 population skeleton's case T, case 7DG, a lone adult's situation de famille, the
 home-help ceiling's increment for members over 65, the population's case T on N-2 and
-N-1, and the AAH of a pensioner left out of a spouse's ASPA. The 2026-10-05 version had
+N-1, the AAH of a pensioner left out of a spouse's ASPA, alternating residence, adult
+dependants, and the MVA among a spouse's ASPA resources. The 2026-10-05 version had
 superseded the 2026-10-01 one. That one kept its sections on Phase 8, the CI and the
 PLF 2027 up to date, but it never described the household calculator's arc, D-176 to
 D-194, and it counted 192 entries. It had itself superseded the 2026-09-22 version,
@@ -31,18 +32,18 @@ carries PR #1's 33 commits and `aa869dd`. Merged rather than squashed, so every
 hash cited in this document, in `DECISIONS.md` and in the pass log is reachable
 from `main`.
 
-**Since 2026-10-02 the work has gone to the household calculator** (D-176 to D-200):
-what a household can declare, and sixteen places where this project corrects
+**Since 2026-10-02 the work has gone to the household calculator** (D-176 to D-203):
+what a household can declare, and twenty-one places where this project corrects
 openfisca's reading of the law. It has its own section below.
 
 **1 729 tests at the last logged full pass** (`a9ea26f`, 2026-09-25), before the
-household arc added its own. The CI `fast` job counted 1 749 passed, 120 skipped and
-223 deselected on `40a6367` (D-197), and D-198 to D-200 add 32 tests. Those three ran
+household arc added its own. The CI `fast` job counted 1 781 passed, 120 skipped and
+223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has eleven replayable `verify_*.py` gate scripts and **201 decision
-entries**, D-000 to D-200, recording every error in both directions.
+PR. The project also has eleven replayable `verify_*.py` gate scripts and **204 decision
+entries**, D-000 to D-203, recording every error in both directions.
 
-## The household calculator, D-176 to D-200
+## The household calculator, D-176 to D-203
 
 **What a household can declare** (`api/schemas.py`):
 - **per adult:**
@@ -54,17 +55,18 @@ entries**, D-000 to D-200, recording every error in both directions.
   - « fin de droits » for the ASS (D-189);
   - the declared invalidity pension (box 1AZ, D-190).
 - **per child:** the birth year, and a disability: rate, establishment or care, AEEH
-  complement category and card (D-191).
+  complement category and card (D-191); alternating residence (D-201). From 20, a child
+  at 80 % or more draws their own AAH, in a famille of their own (D-202).
 - **per household:** besides the couple's status and case T, a lone adult's situation de
   famille, célibataire, divorcé ou veuf (D-197). A widowed parent gets the married parts
-  and never case T.
+  and never case T. The persons in case R, card holders living under the roof (D-202).
 
 The page sends every one of them (D-186, then each entry's own page change). Each entry
 refuses, with a 422 naming the article, the combinations the engine would price wrong.
 The builder also writes what the law derives from them: case 7DG, the home-help credit's
 20 000 € ceiling, for a card or an AEEH complement in the household (D-196).
 
-**Sixteen corrections to openfisca** (`engine.corrections`). Each has a legal citation,
+**Twenty-one corrections to openfisca** (`engine.corrections`). Each has a legal citation,
 a measured defect, and a kill test that fails the day openfisca changes its mind.
 
 | # | What | Law | Entry |
@@ -85,6 +87,11 @@ a measured defect, and a kill test that fails the day openfisca changes its mind
 | 14 | the ASPA beside a spouse at the ASI | CSS art. D. 815-1 | D-194 |
 | 15 | the home-help ceiling raised for each member over 65 | CGI art. 199 sexdecies, 3 | D-198 |
 | 16 | the AAH of a pensioner left out of a spouse's ASPA or ASI | CSS art. R. 815-22 | D-200 |
+| 17 | the home-help increment halved for a shared child, not taken off | CGI art. 199 sexdecies, 3 | D-201 |
+| 18 | the quotient caps beside a child in alternating residence | CGI art. 197, I, 2 | D-201 |
+| 19 | no ASF for a child in alternating residence | CSS art. L. 523-1, I, 3° | D-201 |
+| 20 | the first child's ceiling only beside a child | CGI art. 197, I, 2 | D-202 |
+| 21 | the AAH's compléments counted as the AAH in a spouse's minimum | CSS art. R. 815-22 | D-203 |
 
 D-193 found openfisca right: case T and the card's half-part stack, each under its own
 ceiling. Fourteen tests pin it to the DGFiP's own figures. D-200 settled D-185's couple
@@ -106,10 +113,13 @@ couple keeps its 18 943,38 €.
     the skeleton: `impots population build`, then `make full`. Step 0 of
     `docs/PLF2027_ENREGISTREMENT.md` does it, and the PLF 2027 registrations price what
     that run builds.
-  - Corrections 2 to 5, 8 to 14 and 16 cannot reach the population: it declares no
-    disability, no ASS and no invalidity pension. Correction 15 reaches it only under a
-    reform: its imputed home-help bases, 3 759,31 € at most, stay under the 12 000 €
-    ceiling (D-198).
+  - Corrections 2 to 5, 8 to 14 and 16 to 21 cannot reach the population: it declares
+    no disability, no ASS, no invalidity pension, no alternating residence and no case R.
+    Correction 15 reaches it only under a reform: its imputed home-help bases, 3 759,31 €
+    at most, stay under the 12 000 € ceiling (D-198).
+  - D-203 also pins the housing-aid amount the MVA reads, in the history both paths
+    build. The fixture prices the same; a renting couple beside an AAH holder costs about
+    5 s more at the full tier.
 - **`PENSION_INVALIDITE_MINIMUM`** (correction 10) stops at January 2026. It needs a row
   every January from the Cnav circular, or correction 10 keeps the last amount.
 - **Correction 14 rests on CSS art. D. 815-1 as the CNRACL applies it.** No Cnav text
@@ -119,15 +129,20 @@ couple keeps its 18 943,38 €.
   resources: 29 202,83 € of disposable income with 100 € of pension, 18 943,38 € without.
   Read narrowly, the ministerial letter of 1982 tied the exclusion to the AAH holder
   claiming the allocation supplémentaire.
+- **Claiming the ASPA beside an AAH holder** (D-203), an owner's call. The engine never
+  claims it (correction 4). From the generation born in 1955 the claim is the household's;
+  for D-185's couple it would give about 5 000 € more, and less with a pension. Whether to
+  show both figures is a product choice. A holder born before 1955 had to claim, which the
+  engine does not model.
 - **`aspa`, `ass` and `aeeh` are not in `STATE_TRANSFERS`** (D-186, D-189, D-191). That
   is to decide on a `make full`.
 - **D-195's contradictory dwellings**, an owner's call: 89 foyers in a dwelling typed
   « famille monoparentale » whose reference answers « en couple ». Case T stays as it
   was, and a test pins the choice.
 - **The upstream dossier** gains the openfisca-france defects these entries correct, the
-  widowed parent's case T (D-193, D-197), the NaN tax of a `jeune_veuf` (D-197), and the
-  home-help increments of a case R dependant and of a child in alternating residence
-  (D-198).
+  widowed parent's case T (D-193, D-197), the NaN tax of a `jeune_veuf` (D-197), the
+  home-help increment of a case R dependant (D-198), and the RSA's at-charge test beside a
+  child's AAH and the housing aid's strict 80 % (D-202).
 
 ## Verification, as it stands
 
@@ -316,12 +331,13 @@ download list.
 * **The CAF cross-check.** 30 minutes at a browser, owner-only. **No reCAPTCHA
   circumvention under any circumstances.**
 * **The household calculator's open items**, each in its entry's « Ce qui reste »:
-  - claiming the ASPA as a couple beside an AAH holder, which correction 4 never does,
-    and the MVA among the ASPA's resources (D-200);
+  - claiming the ASPA beside an AAH holder: both figures, and the claim owed by a holder
+    born before 1955 (D-203);
   - `aspa`, `ass` and `aeeh` in `STATE_TRANSFERS`, on a `make full`;
-  - disabled children of 20 or more (their AAH, and the card's half-part of an adult
-    dependant);
-  - alternating residence, and its quarter parts;
+  - a rented dwelling beside a child at the AAH or a person in case R, refused for now;
+    a case R person's own incomes; a child of 20 or more at 50 to 79 % (D-202);
+  - alternating residence's benefit side: the allocataire, the housing aid and the RSA
+    (D-201);
   - case 7DG for a third-category invalidity pensioner without the card, whose category
     the format does not carry (D-196);
   - case L, for a parent who raised a now-adult child alone for five years, and the year
