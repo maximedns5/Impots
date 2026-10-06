@@ -13456,3 +13456,303 @@ tourner la suite sur la PR.
 * Circulaire Cnav-Cnaf n° 2024-1 du 2 janvier 2024, « Passage à la retraite des assurés
   titulaires de l'AAH à compter du 1er septembre 2023 ».
 * Service-public.gouv.fr, fiche F16871 (ASPA), vérifiée le 23 juin 2026.
+
+## D-203 — L'ASPA à côté de l'AAH : la demande reste au ménage, la MVA du conjoint compte
+
+**Le point de départ.** D-200 laissait deux points dans « Ce qui reste ». La correction 4
+fait que le titulaire de l'AAH ne demande jamais l'ASPA. Le couple de D-185, un titulaire à
+80 % de 66 ans sans pension et un conjoint de 70 ans à 5 000 € de retraite, dispose de
+18 943,38 € ; s'il la demandait, de 23 985,57 €, par le calcul. Et la liste de la Cnav
+compte la MVA d'un conjoint sans pension, que la base d'openfisca ne lit jamais : au plus
+1 257,24 € par an de l'ASPA d'un couple logé, par le calcul. Deux questions, donc. Le ménage
+peut-il ne pas demander l'ASPA ? La MVA compte-t-elle parmi ses ressources ?
+
+**Ce que dit la loi : la demande.** L'art. L. 821-1 du CSS a été lu sur Légifrance, par
+l'outil de lecture, dans ses versions du 16 octobre 2015 au 1er janvier 2017, du 1er janvier
+2017 au 19 juin 2020 et du 1er octobre 2023 au 1er décembre 2024, et en entier sur l'export
+de la base de Légifrance que publie codes.droit.org. Ses 8e et 9e alinéas sont ceux de 2017,
+le 8e augmenté le 1er décembre 2024 du maintien de l'AAH pour qui travaille à 62 ans.
+* **La subsidiarité.** « Le droit à l'allocation aux adultes handicapés est ouvert lorsque
+  la personne ne peut prétendre, au titre d'un régime de sécurité sociale, d'un régime de
+  pension de retraite ou d'une législation particulière, à un avantage de vieillesse, à
+  l'exclusion de l'allocation de solidarité aux personnes âgées mentionnée à l'article
+  L. 815-1, ou d'invalidité, [...] d'un montant au moins égal à cette allocation. » La
+  retraite passe avant l'AAH ; l'ASPA, non.
+* **Le différentiel.** « Lorsque cet avantage ou le montant mensuel perçu au titre de
+  l'allocation de solidarité aux personnes âgées mentionnée à l'article L. 815-1 est d'un
+  montant inférieur à celui de l'allocation aux adultes handicapés, celle-ci s'ajoute à la
+  prestation sans que le total des deux avantages puisse excéder le montant de l'allocation
+  aux adultes handicapés. » L'ASPA perçue ne ferme pas l'AAH : elle la rend différentielle.
+* **Depuis 2017.** Avant, l'article disait « à un avantage de vieillesse ou d'invalidité »,
+  et « Lorsque cet avantage est d'un montant inférieur » : l'ASPA passait avant l'AAH. Les
+  deux ajouts viennent de la loi n° 2016-1917 du 29 décembre 2016 de finances pour 2017,
+  art. 87, VI, A. Et « Le présent VI est applicable aux personnes atteignant l'âge mentionné
+  au dixième alinéa de l'article L. 821-1 du code de la sécurité sociale à compter du
+  1er janvier 2017 » (VI, C). Cet âge était alors « l'âge minimum auquel s'ouvre le droit à
+  pension de vieillesse » : 61 ans et 7 mois pour qui est né en 1954, 62 ans à partir de
+  1955 (art. D. 161-2-1-9). La ligne passe entre 1954 et 1955.
+* **Le Gouvernement**, dans cinq réponses de même texte à des questions écrites (JO de
+  l'Assemblée nationale des 17 juillet, 2 octobre et 9 octobre 2018). L'article « permet aux
+  bénéficiaires de l'allocation aux adultes handicapés (AAH) atteignant l'âge légal de la
+  retraite et présentant un taux d'incapacité permanente égal ou supérieur à 80 % de
+  bénéficier ou de continuer à bénéficier de l'AAH sans avoir à liquider leurs droits à
+  l'allocation de solidarité aux personnes âgées (ASPA) ». Et « les bénéficiaires de l'AAH
+  présentant un taux d'incapacité permanent supérieur à 80 % ayant atteint l'âge légal de la
+  retraite avant le 1er janvier 2017 ont toujours l'obligation de faire liquider leurs
+  droits à l'ASPA avant de percevoir l'AAH ».
+* **La circulaire Cnav-Cnaf n° 2024-1.** « Les demandeurs ou bénéficiaires de l'AAH doivent
+  prioritairement faire valoir leurs droits aux avantages vieillesse (retraite de base et
+  complémentaire), y compris les retraites de réversion » (§ 1.2). À 80 % ou plus, « un
+  assuré qui atteint l'âge de 62 ans n'a pas l'obligation de demander l'allocation de
+  solidarité aux personnes âgées (Aspa) pour continuer à percevoir l'AAH » (§ 1.2.1). Les
+  titulaires « peuvent également bénéficier de l'Aspa dès cet âge, sous réserve de déposer
+  une demande » (§ 2). La retraite, « éventuellement assortie de l'Aspa, [...] ne fait pas
+  obstacle à celle de l'allocation différentielle » (§ 2.2.4). Entre 50 et 79 %, « le
+  versement de l'AAH prend fin à l'âge auquel le bénéficiaire est réputé inapte au travail »
+  (§ 1.2.2).
+* **L'ASPA se demande.** Elle est servie « après une information spécifique par ces
+  organismes auprès des intéressés et demande expresse de ces derniers » (art. L. 815-7),
+  jamais avant « le premier jour du mois suivant la date de réception de la demande »
+  (art. R. 815-33). Elle est récupérée sur la succession, « sur la fraction de l'actif net
+  qui excède un seuil dont le montant est fixé à 100 000 euros au 1er septembre 2023 »
+  (art. L. 815-13).
+* **L'« AAH à vie »** est une autre règle, de 2019 : l'AAH « est attribuée sans limitation
+  de durée à toute personne qui présente un taux d'incapacité permanente d'au moins 80 % et
+  dont les limitations d'activité ne sont pas susceptibles d'évolution favorable »
+  (art. R. 821-5, depuis le 1er janvier 2019 selon la circulaire, § 1.1). Elle règle la
+  durée de la décision de la CDAPH, pas la demande d'ASPA.
+
+**La réponse.** La retraite se demande. L'ASPA, à 80 % ou plus, est un droit que le ménage
+peut ne pas exercer, pour qui a atteint l'âge depuis 2017, donc né à partir de 1955 : l'AAH
+continue, entière ou en complément de la retraite. Demandée, l'ASPA laisse de côté l'AAH
+« du demandeur » (liste de la Cnav, D-200), le couple reçoit le montant de deux
+allocataires, servi par moitié (art. D. 815-1, b), et l'AAH complète la moitié du titulaire
+jusqu'à son montant. Entre 50 et 79 %, l'AAH s'arrête à 62 ans (correction 3) et l'ASPA
+prend la suite : le moteur la verse. Pour qui est né avant 1955, la demande est due, selon
+le Gouvernement.
+
+**Ce que fait le calculateur, et pourquoi.** La correction 4 reste : le titulaire de l'AAH
+ne demande pas l'ASPA. C'est le cas par défaut de la circulaire, et la loi laisse le choix
+au ménage. Le choix pèse, dans un sens ou dans l'autre. Le couple de D-185, en 2024 :
+
+| le titulaire de l'AAH | sans demande, mesuré | ASPA demandée, par le calcul |
+|---|---:|---:|
+| sans pension, sans logement | 18 943,38 € | 23 985,57 € |
+| sans pension, locataire à 500 € en zone 2 | 23 226,57 € | 28 268,76 € ou 29 526,00 € |
+| 3 000 € de retraite, sans logement | 27 912,58 € | 22 485,57 € |
+
+* **Sans pension**, l'AAH du titulaire compte dans les ressources de l'ASPA du conjoint
+  (D-200) ; la demande l'en sort. L'ASPA du couple vaut 18 854,02 − 5 000 = 13 854,02 €,
+  577,25 € par mois pour chacun. L'AAH complète la moitié du titulaire : 394,12 € par mois
+  jusqu'en mars, 438,80 € ensuite, 5 131,55 € sur l'année. Avec la pension, 23 985,57 €.
+* **Avec une retraite**, l'AAH est déjà écartée (correction 16), et le conjoint seul reçoit
+  le plafond moins les deux pensions, 10 854,02 €. Demandée, l'ASPA du couple est la même,
+  servie par moitié, et l'AAH perd la moitié du titulaire, 5 427,01 € : 22 485,57 €.
+* **Logé**, et après la correction 19 ci-dessous, l'aide au logement, 4 283,19 €, ne lit ni
+  l'une ni l'autre allocation. La MVA d'une AAH qui complète une ASPA dépend de ce que veut
+  dire « en complément d'un avantage de vieillesse » (art. L. 821-1-2) : 28 268,76 € sans
+  elle, 29 526,00 € avec.
+
+Le calculateur ne fait pas ce choix pour le ménage. La loi le lui laisse. La demande a un
+coût que le calculateur ne chiffre pas, la récupération sur la succession. Et montrer les
+deux chiffres demanderait un champ du format d'entrée ou une seconde ligne de sortie : c'est
+au propriétaire d'en décider.
+
+**Ce que dit la loi : la MVA.** Les articles ont été lus sur l'export de codes.droit.org.
+* **Les ressources.** « Il est tenu compte, pour l'appréciation des ressources, de tous les
+  avantages d'invalidité et de vieillesse dont bénéficie l'intéressé, des revenus
+  professionnels et autres » (art. R. 815-22). Ses exclusions, du 1° au 13°, ne nomment pas
+  la MVA. La plus proche, le 6°, vise « les majorations accordées aux personnes dont l'état
+  de santé nécessite l'aide constante d'une tierce personne » ; le 10°, l'allocation de
+  logement. Les ressources retenues sont « celles afférentes à la période de trois mois
+  précédant la date d'entrée en jouissance » (art. R. 815-29).
+* **La MVA** « est versée aux bénéficiaires de l'allocation aux adultes handicapés au titre
+  de l'article L. 821-1 » qui ont un logement indépendant avec une aide au logement, qui
+  « perçoivent l'allocation aux adultes handicapés à taux plein ou en complément d'un
+  avantage de vieillesse ou d'invalidité ou d'une rente d'accident du travail », et sans
+  revenu d'activité (art. L. 821-1-2). 104,77 € par mois.
+* **La liste de la Cnav** des ressources exclues pour l'ASPA, lue le 6 octobre 2026, a une
+  ligne pour les compléments, après celle de l'AAH : « Compléments d'allocation aux adultes
+  handicapés (AAH) du demandeur : complément de ressources (CRH) et majoration pour la vie
+  autonome (MVA) », et « Compléments d'AAH du conjoint, concubin ou partenaire pacsé s'il
+  est titulaire d'un avantage de vieillesse ou d'invalidité ». Elle cite les lettres
+  ministérielles du 23 mai 1962 et du 19 mars 1982, et la circulaire Cnav n° 2007/15. La
+  liste de l'ASI dit de même, mot pour mot. L'allocation de logement et l'APL y sont
+  exclues ; la MVA, qui en dépend, ne l'est que pour le demandeur et le conjoint pensionné.
+* **L'exposé de la Cnav.** « A l'exception des ressources expressément exclues, toutes les
+  ressources sont retenues. Les ressources du ménage (conjoints, concubins, pacsés) sont
+  totalisées » (« Condition de ressources - Aspa »).
+
+**La réponse.** La MVA d'un conjoint sans pension compte dans les ressources de l'ASPA et de
+l'ASI, comme son AAH ; celle du demandeur ou d'un conjoint pensionné, non. C'est la ligne de
+D-200, pour les compléments.
+
+**Ce que fait openfisca.** `asi_aspa_base_ressources_individu` compte l'AAH des trois mois
+précédents et ne lit jamais `caah`, la MVA telle qu'elle est versée depuis décembre 2019.
+Sur openfisca brut, en juin 2024, le titulaire de 49 ans du couple logé touche 104,77 € de
+MVA en mars, en avril et en mai. Sa base vaut la moyenne de l'AAH de ces mois, 1 001,16 €,
+sans rien de la MVA. C'est le test qui tue.
+
+**La correction 19.** `engine.corrections` ajoute à la base les compléments des trois mois
+précédents, sous les tests où l'AAH compte : ceux d'openfisca (ni l'ASPA ni l'ASI, pas de
+pension d'invalidité) et celui de la correction 16 (pas de retraite). Elle est enroulée
+autour de la formule de la correction 16. Elle ne lit `caah` que là où il peut compter : un
+parent à 80 % ou plus, sans quoi il n'y a pas de MVA, qui passe ces tests, à côté d'un
+parent éligible à l'ASPA ou à l'ASI. Ailleurs le terme est nul et rien n'est lu. La base est
+celle de l'ASPA et de l'ASI : la correction vaut pour les deux, comme les listes de la Cnav.
+Le registre cite l'art. R. 815-22 et la ligne de la Cnav ; son test ne change pas.
+
+**Le cercle, mesuré.** La MVA lit l'aide au logement de son mois, et l'aide atteint l'ASPA
+et l'ASI de son mois par son critère boursier, qui lit les ressources du RSA (D-179). La
+correction seule a été mesurée d'abord, dans une copie de `src`. Le couple de D-185 logé
+tombait juste, à 627,58 €, dans les deux ordres. À côté de l'ASI, l'ASI restait à 714,00 €,
+dans les deux ordres aussi, contre rien à la main.
+* **Pourquoi.** L'épinglage de D-178 garde `aide_logement`, pas le montant que lit la MVA,
+  `aide_logement_montant`. Celui de chaque mois était purgé à la fin de son propre
+  épinglage, invalidé par une spirale plus bas ; relu sous l'épinglage du mois suivant, il
+  était coupé à zéro. Pendant l'épinglage de janvier, la base de l'ASI de janvier lisait
+  ainsi une MVA de décembre nulle. La formule de l'ASPA lit cette base avant l'ASI : l'ASI
+  de janvier, calculée ensuite, hors de la pile de la coupe, restait en cache. Sans
+  épinglage, la même ASI vaut bien zéro.
+* **Les tests d'ordre ne pouvaient pas le voir** : les deux ordres lisaient la même ASI en
+  cache. Le test de prix l'a vu.
+* **L'épinglage complété.** `situations.pin_benefit_history` épingle aussi
+  `aide_logement_montant`, mois par mois. La valeur épinglée est celle dont l'aide vient
+  d'être calculée, encore en cache, ou, si une spirale l'a purgée, recalculée l'aide du mois
+  épinglée. Tout tombe juste alors, à la main et dans les deux ordres.
+
+**Ce que le moteur en fait, mesuré en 2024.** « Avant » désigne `main`. Les ménages sont
+locataires à 500 € en zone 2. Le titulaire de l'AAH est à 80 %, à côté d'un conjoint né en
+1954 à 5 000 € de retraite, à l'ASPA, ou d'un pensionné d'invalidité à 6 000 €, à l'ASI.
+
+| le titulaire de l'AAH, et le conjoint | minimum avant | après | RD avant | RD après |
+|---|---:|---:|---:|---:|
+| sans pension, à l'ASPA | 1 884,82 € | 627,58 € | 24 483,81 € | 23 226,57 € |
+| 3 000 € de retraite, à l'ASPA | 10 854,02 € | inchangée | 33 453,01 € | inchangé |
+| sans pension, à l'ASI | 714,00 € | 0 € | 24 312,99 € | 23 598,99 € |
+| sans pension, à l'ASI et à 80 % | 714,00 € | 0 € | 30 939,34 € | 30 914,79 € |
+
+* **Les rangs et les âges.** Le titulaire second, comme le conjoint de la famille, ou âgé de
+  49 ans, et un conjoint de 63 ans ouvert à l'ASPA par 60 % d'incapacité (correction 3) :
+  les mêmes chiffres que le couple de D-185.
+* **Inchangés**, aucun minimum n'y lisant la MVA : le couple sans logement, 18 943,38 € ; le
+  titulaire seul, 16 848,57 € ; à côté d'un conjoint de 44 ans, 17 598,99 €.
+* **La MVA, 1 257,24 € par titulaire, et l'aide au logement, 4 283,19 €,** ne bougent pas.
+  L'AAH non plus, sauf celle du pensionné à 80 %, qui complète sa pension et l'ASI du mois
+  d'avant : 5 369,11 € avant, 6 058,56 € après.
+
+Refait à la main :
+* **Le couple de D-185.** Le plafond du couple fait 1 571,17 € par mois, la pension du
+  conjoint 416,67 €. L'AAH des trois mois précédents compte, et la MVA avec elle, 104,77 €
+  chaque mois d'octobre 2023 à novembre 2024. L'ASPA vaut
+  1 571,17 − 416,67 − 971,37 − 104,77 = 78,36 € de janvier à avril, 63,47 € en mai, 48,58 €
+  en juin, 33,68 € ensuite : 627,58 € sur l'année, la MVA entière de moins. Avec la pension,
+  l'AAH, la MVA et l'aide au logement, 23 226,57 €.
+* **À côté de l'ASI.** 1 505,01 − 500 − 971,37 − 104,77 = −71,13 € de janvier à mars, et
+  1 574,24 − 500 − 971,37 − 104,77 = −1,90 € en avril ; l'AAH monte ensuite. L'ASI est nulle
+  toute l'année. 6 000 + 12 058,56 + 1 257,24 + 4 283,19 = 23 598,99 €.
+* **Le pensionné à 80 %.** L'ASI est nulle de même, dès décembre 2023 : son AAH complète la
+  pension seule, 12 058,56 − 6 000 = 6 058,56 €. Avant, l'ASI de décembre 2023 à novembre
+  2024, 689,45 €, lui en prenait autant le mois suivant.
+  6 000 + 18 117,12 + 2 × 1 257,24 + 4 283,19 = 30 914,79 €.
+
+**L'ordre de calcul.** Dix ménages ont été calculés sur le code final dans l'ordre du
+registre, comme l'API, et avec `revenu_disponible` d'abord, comme la jambe relevée de
+l'EMTR : les quatre du tableau, le couple de D-185 avec le titulaire second, à 49 ans, et à
+côté du conjoint de 63 ans à 60 %, le couple sans logement, le titulaire seul et le couple
+de 44 ans. L'ASPA, l'ASI, l'AAH, la MVA, le RSA, l'aide au logement et le revenu disponible
+concordent au centime. Deux de ces mesures sont devenues des tests.
+
+**Ce que la population en fait.** Rien. `population.to_openfisca` n'écrit jamais
+`taux_incapacite` : la correction n'y lit jamais `caah`. L'épinglage complété y tourne, lui.
+Sur la population de test, 400 ménages, le palier complet a été calculé sur `main` et sur la
+branche : les 51 colonnes numériques sont identiques, et l'ASPA y vaut 76 089,37 € sur 12
+ménages. `to_openfisca.WIRING` reste « D-199 ».
+
+**Le coût.** Mesuré au chaud, le plus court de trois calculs, sur une machine partagée : le
+couple de D-185 logé passe de 7,0 à 12,0 s au palier complet. L'AAH d'un mois lit l'ASI du
+mois d'avant, dont la base lit désormais la MVA, donc l'aide au logement de mois que rien
+n'épingle. L'aide au logement est calculée 160 fois au lieu de 99 : deux fois par mois
+épinglé, au lieu de trois à huit, mais 130 fois pour les mois de juin 2022 à septembre 2023.
+`caah` l'est 524 fois au lieu de 146. Le titulaire seul et logé passe, lui, de 7,2 à 6,0 s :
+le montant épinglé n'est plus recalculé. Le budget de 6 s porte sur un célibataire sans
+logement, que rien ne touche, et il passe.
+
+**Vus échouer, puis mutés.** Écrits avant la correction, dans un commit à eux seuls
+(`239ec3f`), 3 des 7 tests ajoutés tombaient sur le code de `main` :
+* le couple de D-185 logé, à 66 ans et à 49 ans en second : 1 884,82 € d'ASPA au lieu de
+  627,58 € ;
+* à côté de l'ASI : 714,00 € au lieu de rien.
+
+Les 4 autres passaient, comme il le faut : le couple pensionné, à 10 854,02 € d'ASPA, les
+deux tests d'ordre, et le test qui tue, sur openfisca brut. Après la correction, les 7
+passent. Deux mutations sont prises, chacune dans une copie de `src` hors du dépôt :
+* sans l'épinglage du montant de l'aide : 1 test, l'ASI à côté du titulaire, 714,00 € au
+  lieu de rien. Le couple de D-185 et les tests d'ordre passent : c'est la fuite décrite
+  plus haut ;
+* la MVA comptée malgré la retraite du titulaire : 1 test, le couple pensionné, 9 596,78 €
+  d'ASPA au lieu de 10 854,02 €.
+
+**Les tests.**
+* Les 7 tests ajoutés, sur `239ec3f` : 3 échecs, 4 réussis, en 81 s.
+* Après la correction, les 7 et le test du registre : 8 réussis, en 114 s. Sur le code
+  final, avec le garde du rôle de parent, les mêmes et le test de l'AAH d'une personne à
+  charge (D-187) : 9 réussis, en 126 s.
+* 126 tests de `tests/test_engine.py` choisis par leur nom, sur `0493fde` : ceux de l'AAH,
+  de la MVA, de l'ASI et de l'ASPA de D-184 à D-200, de la dégressivité, les EMTR de D-178
+  et D-179, les tests d'ordre et les deux budgets de temps. 126 réussis, en 20 min 18 s, sur
+  une machine partagée. Le garde du rôle de parent, venu après, ne touche aucun de ces
+  ménages.
+* Le test d'ordre de la population de D-178 et trois tests de l'API sur le handicap : 4
+  réussis, en 43 s.
+* Les deux mutants, sur les 7 tests : 108 s et 139 s.
+* `tests/test_charter.py`, l'entrée écrite : 8 réussis.
+* `ruff check src tests scripts` : rien à signaler.
+
+Le gate complet n'a pas tourné, à la demande du propriétaire : le job `fast` de la CI fait
+tourner la suite sur la PR.
+
+**Ce qui reste.**
+* **Demander l'ASPA, en couple.** Le moteur garde le cas par défaut. Montrer au ménage le
+  chiffre de la demande, comme une seconde ligne ou par un champ du format d'entrée, est une
+  décision de produit : au propriétaire. La récupération sur la succession n'y serait pas
+  chiffrée.
+* **Avant 1955, la demande est due**, et le moteur ne la fait pas. Pour un couple, il se
+  trompe dans les deux sens, par le calcul : 18 943,38 € au lieu de 23 985,57 € pour le
+  couple de D-185, 27 912,58 € au lieu de 22 485,57 € avec 3 000 € de retraite. Seul et sans
+  ressources, 12 058,56 € au lieu de 12 180,52 €, l'écart tenant à janvier, février et mars.
+  Des tribunaux ont lu l'article autrement, selon les questions écrites n° 7542 et 12428. Le
+  corriger rouvrirait l'ASPA à ces titulaires et rendrait l'AAH différentielle sur l'ASPA
+  perçue, que le non-cumul d'openfisca ne lit pas : il ne lit que la pension d'invalidité et
+  l'ASI du mois d'avant. C'est un cercle de plus, l'AAH d'un mois lisant l'ASPA, qui lit
+  l'AAH des trois mois précédents. Non fait ici.
+* **La MVA d'une AAH qui complète une ASPA.** « En complément d'un avantage de vieillesse »
+  (art. L. 821-1-2) couvre-t-il l'ASPA ? La correction 2 ne lit que la retraite, la pension
+  d'invalidité et la rente d'accident du travail. La question ne se pose que si la demande
+  est un jour chiffrée.
+* **Les mois avant octobre N-1** ne sont pas épinglés. L'ASPA et l'ASI d'octobre à décembre
+  N-1 lisent la MVA de juillet à septembre, calculée à la demande. Rien de mesuré n'en
+  bouge ; c'est l'hypothèse du premier mois de D-178, étendue à la MVA.
+* **Le coût**, cinq secondes de plus pour les couples visés. Épingler plus tôt, ou la MVA
+  elle-même, le réduirait peut-être : non mesuré.
+* **openfisca-france.** L'écart est à signaler en amont, avec ces cas et ceux de D-200 : la
+  base ne lit jamais les compléments de l'AAH.
+
+**Sources.**
+* CSS, art. L. 815-7, L. 815-13, L. 821-1, L. 821-1-2, R. 815-22, R. 815-29, R. 815-33,
+  R. 821-5, D. 161-2-1-9 et D. 815-1, lus sur l'export de la base de Légifrance que publie
+  codes.droit.org, mis à jour le 5 octobre 2026, celui de D-200 (sha256 du fichier :
+  b905066f9ccb0616ee27b1b6b077906d334191322051840686d9b56763718bab). L'art. L. 821-1 aussi
+  sur Légifrance, dans ses versions du 16 octobre 2015 au 1er janvier 2017, du 1er janvier
+  2017 au 19 juin 2020 et du 1er octobre 2023 au 1er décembre 2024.
+* Loi n° 2016-1917 du 29 décembre 2016 de finances pour 2017, art. 87, VI, lue sur
+  Légifrance.
+* Réponses du Gouvernement aux questions écrites n° 6621, 6893 et 7542 (JO de l'Assemblée
+  nationale du 17 juillet 2018, p. 6440), n° 7291 (2 octobre 2018, p. 8861) et n° 12428
+  (9 octobre 2018, p. 9126), 15e législature, lues sur questions.assemblee-nationale.fr.
+* Circulaire Cnav-Cnaf n° 2024-1 du 2 janvier 2024, « Passage à la retraite des assurés
+  titulaires de l'allocation aux adultes handicapés (AAH) à compter du 1er septembre 2023 »,
+  § 1.1, 1.2, 1.2.1, 1.2.2, 2 et 2.2.4, lue sur legislation.lassuranceretraite.fr.
+* Cnav, « Ressources exclues pour l'allocation de solidarité aux personnes âgées » et
+  « Ressources exclues pour l'allocation supplémentaire d'invalidité », listes lues le
+  6 octobre 2026 sur la même base ; exposé « Condition de ressources - Aspa ».
