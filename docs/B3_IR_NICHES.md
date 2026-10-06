@@ -143,16 +143,20 @@ has bases, which is the half that stops it becoming furniture.
   is true for the 2018–2021 vintages and **false from 2022**, and the DLF distribution
   sheet labels a column *«en M€»* whose cells are in euros. Either misread is a factor of
   a thousand or a million.
-* **A point of law this project could not settle.** openfisca places `ci_saldom` in the
+* **A point of law, settled in D-196.** openfisca places `ci_saldom` in the
   globally-capped list, and the cap measurably destroys entitlement: a household with
   7 500 € of home-help credit and 3 500 € of childcare credit receives 10 000 €, not
-  11 000 €. Whether art. 199 sexdecies genuinely belongs to the enumeration in art.
-  200-0 A could not be confirmed — Légifrance returned 403 to the research pass and 404
-  to a second attempt. **Not propagated as a finding**; recorded as a question, with the
-  measured consequence attached so whoever settles it knows what turns on it.
-* The wire format cannot express the invalidity ceiling (7DG, 20 000 €), the first-year
-  bonus (7DQ) or dependent ascendants (7DL), all of which change the home-help ceiling.
-  Deliberate: they are declared alongside 7DB and would each need their own field.
+  11 000 €. That is the law. Art. 200-0 A, 2, b takes in « Les réductions [...] et crédits
+  d'impôt sur le revenu, à l'exception de ceux mentionnés aux articles » it lists, and 199
+  sexdecies is not among them (versions of 1 January 2024 to 16 February 2025 and of 16
+  February 2025 to 21 February 2026, read on Légifrance); BOI-IR-LIQ-20-20-10-10, § 75,
+  lists the home-help credit under the 10 000 € cap.
+* The wire format ticks the invalidity ceiling (7DG, 20 000 €) from an adult's or a
+  child's invalidity card and from a child's complément of the AEEH (D-196). It cannot
+  express the invalidity pension of the third category, which opens it too, the
+  first-year bonus (7DQ) or dependent ascendants (7DL), which change the home-help
+  ceiling as well. And openfisca leaves out the 1 500 € increment the law gives each
+  member of the foyer over 65.
 * `f7df`, the old réduction base for retirees, is **dead** (`end = 2016-12-31`) and its
   cerfa box has been recycled for Scellier carry-forwards under `f7df_2024`. A knob or
   input aimed at "7DF" today would land on property investment relief.

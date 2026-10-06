@@ -248,6 +248,14 @@ def test_the_panel_says_the_credits_are_refundable(source: str):
     assert "impôt négatif" in source
 
 
+def test_the_niche_panel_says_what_ticks_case_7dg(source: str):
+    """Case 7DG is ticked by the builder, never typed (D-196): the panel says what opens the
+    20 000 EUR ceiling, and that the increment the law gives a member over 65 is not in the
+    engine, which counts the children only."""
+    assert "7DG" in source and "20 000 €" in source
+    assert "plus de 65 ans" in source
+
+
 def test_the_blind_spot_renderer_exists_and_runs_before_the_headline(source: str):
     """A warning under a number is a warning the reader reaches too late."""
     assert "function renderNicheBlindSpot(" in source

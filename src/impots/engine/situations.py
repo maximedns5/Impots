@@ -137,6 +137,11 @@ MINIMA_INPUTS = ("taux_incapacite", "pensions_invalidite", "handicap", "ass_prec
 #: for the declarant, case F for the spouse (D-188).
 INVALIDITY_CASES = ("caseP", "caseF")
 
+#: Case 7DG of the 2042, in its home-help section: the ceiling of 20 000 EUR of the credit for
+#: employing someone at home (CGI art. 199 sexdecies, 3), a boolean of the foyer fiscal that only
+#: that credit reads. Ticked by the builder, never typed (D-196).
+HOME_HELP_INVALIDITY_CASE = "f7dg"
+
 
 def has_benefit_cascade(situation: dict[str, Any]) -> bool:
     """Whether `pin_benefit_history` has anything to protect in this situation.
@@ -383,6 +388,12 @@ def build_situation(
             # resources of N-2, and the CSG of a replacement income reads the RFR and the
             # parts of N-2 (D-188).
             foyer_fiscal[case] = _constant(case, True, years)
+    if (household.niches is not None and household.niches.salarie_domicile
+            and _opens_the_home_help_invalidity_ceiling(household)):
+        # Case 7DG, beside the home help of case 7DB and like it on N alone: the credit of N
+        # reads both of N, and nothing reads the credit of another year (D-196).
+        foyer_fiscal[HOME_HELP_INVALIDITY_CASE] = _this_year(
+            HOME_HELP_INVALIDITY_CASE, True, year)
 
     return {
         "individus": individus,
@@ -540,6 +551,34 @@ def _child_disability_inputs(child: Any, year: int, years: list[int]) -> dict[st
     if handicap.carte_invalidite:
         inputs["invalidite"] = _constant("invalidite", True, years)
     return inputs
+
+
+def _opens_the_home_help_invalidity_ceiling(household: Any) -> bool:
+    """Whether a member of the foyer opens the 20 000 EUR ceiling of the home-help credit, case
+    7DG, as far as the wire format can say it (D-196).
+
+    CGI art. 199 sexdecies, 3 gives it to an invalidity pensioner of the third category (CSS
+    art. L. 341-4, 3°), to whoever has such a person in their charge under their roof, and to
+    whoever has in their charge « un enfant donnant droit au complément d'allocation d'éducation
+    de l'enfant handicapé prévu par le deuxième alinéa de l'article L. 541-1 ». The BOFiP gives
+    it, « en pratique », to a foyer one of whose members holds the card « mobilité inclusion »
+    marked « invalidité », or « sans être titulaire de la carte », draws the pension of the third
+    category or the complément (BOI-IR-RICI-150-20, § 180), and the 2042 asks: « Vous (ou votre
+    conjoint ou une personne à charge) avez la carte d'invalidité ou la carte mobilité inclusion,
+    mention “invalidité” ».
+
+    So an adult's card (cases P and F), a dependent child's card, and a child's complément of
+    the AEEH, whatever its category: the format grants one only where the AEEH is open, and the
+    builder refuses a child of 20 or more before this is asked. Not a child's AEEH alone, nor a
+    disability without the card. The third category is not in the format, which carries the
+    invalidity pension without it; its pensioner has the card for the asking (CASF art.
+    L. 241-3), and through the card, this ceiling."""
+    if any(adult.carte_invalidite for adult in household.adults):
+        return True
+    return any(
+        child.handicap is not None
+        and (child.handicap.carte_invalidite or child.handicap.complement_categorie is not None)
+        for child in household.children)
 
 
 def _patrimoine_inputs(patrimoine: Any, year: int) -> dict[str, Any]:
