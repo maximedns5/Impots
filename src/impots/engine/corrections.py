@@ -390,7 +390,7 @@ invalidity pension, and nothing in it moves.
 196 B et au titre de chacun des membres du foyer fiscal âgé de plus de soixante-cinq ans », up to
 15 000 EUR, and the first year's limit of 15 000 EUR « fait l'objet des majorations prévues au
 présent alinéa », up to 18 000. The DGFiP reads the age « au 31 décembre ou à la date du décès »
-(Brochure pratique 2025): a member counts from the year he turns 65. openfisca's `ci_saldom`
+(Brochure pratique 2025): a member counts from the year they turn 65. openfisca's `ci_saldom`
 raises its ceilings for the dependants (`nb_pac2`) and the ascendants of case 7DL only, as the
 docstring of its 2011 formula says. Measured on two pensioners born in 1954 and 1955 declaring
 18 000 EUR of home help: 6 000 EUR of credit over 2024, against the 7 500 the DGFiP's simulator
