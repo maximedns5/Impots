@@ -1031,3 +1031,70 @@ def test_a_filled_child_is_what_the_wire_format_accepts(child_payloads):
         "carte_invalidite": False}
     for name in ("filled", "cared"):
         assert Child.model_validate(child_payloads[name]).handicap is not None
+
+
+# --- the household's own fields, and a lone adult's situation de famille (D-197) -------
+
+
+def test_every_household_field_on_the_wire_is_sent_by_the_payload(source: str):
+    """D-186 derived the adult's inputs from the wire format, and D-191 the child's; the
+    household's own fields were left out, and a lone adult's situation de famille is one of
+    them (D-197). Each field of `HouseholdInput` must be named in `payload`, derived from the
+    model and never listed by hand: a field the page cannot send is a household the page
+    cannot express."""
+    from impots.api.schemas import HouseholdInput
+
+    body = _function(source, "payload")
+    for field in HouseholdInput.model_fields:
+        assert re.search(rf"\b{field}\b", body), f"{field} is never sent"
+
+
+SITUATION_HARNESS = """
+const inputs = {};
+const $ = (id) => (inputs[id] ||= { value: "", checked: false });
+const state = { adults: 1, children: [{ annee_naissance: 2015 }] };
+const adultPayload = () => ({ salaire_brut_annuel: 40000, annee_naissance: 1985 });
+const childPayload = (child) => ({ annee_naissance: child.annee_naissance });
+const nichesPayload = () => null;
+const patrimoinePayload = () => null;
+const reformSpec = () => null;
+%(caseTApplies)s
+%(payload)s
+const out = {};
+$("isole").checked = true;
+for (const situation of ["celibataire", "divorce", "veuf"]) {
+  $("situation").value = situation;
+  out[situation] = payload().household;
+}
+state.adults = 2;
+out.couple = payload().household;
+console.log(JSON.stringify(out));
+"""
+
+
+@pytest.fixture(scope="module")
+def situation_payloads(source: str, tmp_path_factory):
+    """Run the page's own `payload` in node, for a lone parent in each situation de famille,
+    then for a couple."""
+    assert "function caseTApplies(" in source, (
+        "no caseTApplies: case T is shown and sent without looking at the situation")
+    return _run_node(SITUATION_HARNESS % {"caseTApplies": _function(source, "caseTApplies"),
+                                         "payload": _function(source, "payload")},
+                     tmp_path_factory.mktemp("ui_situation"))
+
+
+def test_a_lone_adult_s_situation_is_sent_and_a_widow_claims_no_case_t(situation_payloads):
+    """The select's value goes as `situation_famille` for a lone adult. Case T goes for a single
+    or a divorced parent, as ticked, and never for a widow: art. 194, II reserves it to
+    « célibataires ou divorcés qui vivent seuls », and the wire format refuses it beside « veuf »
+    (D-197). A couple, married or pacsé, sends no situation. Each household validates."""
+    from impots.api.schemas import HouseholdInput
+
+    for situation in ("celibataire", "divorce"):
+        assert situation_payloads[situation]["situation_famille"] == situation
+        assert situation_payloads[situation]["parent_isole"] is True
+    assert situation_payloads["veuf"]["situation_famille"] == "veuf"
+    assert "parent_isole" not in situation_payloads["veuf"]
+    assert "situation_famille" not in situation_payloads["couple"]
+    for name, sent in situation_payloads.items():
+        assert HouseholdInput.model_validate(sent), name
