@@ -500,13 +500,20 @@ def _assign_units(people: pl.DataFrame) -> pl.DataFrame:
     #   one declarant    over BOTH declarant roles. A foyer with a `conjoint` is a
     #                    married or PACSed couple, which the article does not reach.
     #   not in a couple  `COUPL_LOG`, « en couple avec quelqu'un vivant dans le
-    #                    logement ». Living in a couple, married or not, is not living
-    #                    alone (CE, 15 avril 2016, n° 375682). This is the declarant
-    #                    whose partner could not be paired — absent from the file, or
-    #                    one of more than two coupled persons. Sharing the dwelling is
-    #                    not a couple, so another adult there changes nothing.
+    #                    logement », in a dwelling `TYPLOG5` says holds a couple: the
+    #                    two signals that pair a partner (D-013), both saying so.
+    #                    Living in a couple, married or not, is not living alone (CE,
+    #                    15 avril 2016, n° 375682). This is the declarant whose partner
+    #                    could not be paired — absent from the file, or one of more than
+    #                    two coupled persons. Where the dwelling is typed « famille
+    #                    monoparentale », the signals disagree, and case T is left as it
+    #                    was: the owner's call. Sharing the dwelling is not a couple.
     declarant = pl.col("role_foyer").is_in(["declarant_principal", "conjoint"])
-    in_a_couple = declarant & (pl.col("couple_flag") == "1").fill_null(False)
+    in_a_couple = (
+        declarant
+        & (pl.col("couple_flag") == "1")
+        & pl.col("hh_type").is_in(COUPLE_HOUSEHOLD_TYPES)
+    ).fill_null(False)
     return people.with_columns(
         (
             declarant.sum().over("foyer_id").eq(1)

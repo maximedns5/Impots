@@ -183,11 +183,12 @@ def test_parent_isole_only_where_it_can_apply(population: pl.DataFrame) -> None:
 def _reference_foyers(population: pl.DataFrame) -> pl.DataFrame:
     """Each reference person's foyer, beside what the survey row says of that person.
 
-    The couple flag comes from the EEC, not from the skeleton: `COUPL_LOG` is « En
-    couple avec quelqu'un vivant dans le logement », asked of everyone aged 15 or over.
-    The reference person is the lowest `NOI` of the dwelling-quarter (D-013), and the
-    drawn age is checked against that row's band, so a broken pairing fails here
-    instead of comparing someone else's flag.
+    The couple flags come from the EEC, not from the skeleton: `COUPL_LOG` is « En
+    couple avec quelqu'un vivant dans le logement », asked of everyone aged 15 or over,
+    and `TYPLOG5` types the dwelling (3 and 4 hold a couple). The reference person is
+    the lowest `NOI` of the dwelling-quarter (D-013), and the drawn age is checked
+    against that row's band, so a broken pairing fails here instead of comparing
+    someone else's flag.
     """
     from impots.population.skeleton import AGE_BANDS
 
@@ -197,6 +198,7 @@ def _reference_foyers(population: pl.DataFrame) -> pl.DataFrame:
         .select(
             pl.concat_str([pl.col("IDENT"), pl.lit("-"), pl.col("TRIM")]).alias("household_id"),
             (pl.col("COUPL_LOG") == "1").alias("in_a_couple"),
+            pl.col("TYPLOG5").is_in(["3", "4"]).alias("couple_dwelling"),
             pl.col("AGE6"),
         )
     )
@@ -226,9 +228,11 @@ def test_no_case_t_for_a_declarant_living_in_a_couple(population: pl.DataFrame) 
     2016, n° 375682), and « Le contribuable ne doit donc pas vivre en concubinage »
     (BOI-IR-LIQ-10-20-20-10, § 160). Where the skeleton cannot pair a partner — absent
     from the file, or one of more than two coupled persons — the reference person
-    declares alone, and claimed case T beside that partner.
+    declares alone, and claimed case T beside that partner. Read where both signals say
+    couple, the person's flag and the dwelling's type, as the skeleton pairs partners.
     """
-    frame = _reference_foyers(population).filter(pl.col("in_a_couple"))
+    frame = _reference_foyers(population).filter(
+        pl.col("in_a_couple") & pl.col("couple_dwelling"))
     unpaired = frame.filter((pl.col("declarants") == 1) & (pl.col("dependants") > 0))
     assert unpaired.height, "no unpaired partner with a dependant: the test would be vacuous"
     assert not frame["parent_isole"].any(), frame.filter(pl.col("parent_isole"))
@@ -267,6 +271,10 @@ CASE_T_SHAPES: dict[str, tuple[str, list[tuple[str, str, str, str]], bool]] = {
     # dwelling that is not hers
     "FAMILLE2": ("2", [("01", "50", "1", "2"), ("02", "15", "3", "2"),
                        ("03", "25", "1", "1"), ("04", "25", "1", "1")], True),
+    # a mother and her child beside her brother's couple, in a dwelling typed as a
+    # couple: the couple is not hers either
+    "FAMILLE3": ("4", [("01", "25", "1", "2"), ("02", "15", "3", "2"),
+                       ("03", "25", "1", "1"), ("04", "25", "1", "1")], True),
     "COUPLE01": ("4", [("01", "25", "1", "1"), ("02", "25", "1", "1"),
                        ("03", "15", "3", "2")], False),
     # the partner is not in the file: the reference alone says « en couple »
@@ -275,6 +283,9 @@ CASE_T_SHAPES: dict[str, tuple[str, list[tuple[str, str, str, str]], bool]] = {
     "DEUXCPL1": ("4", [("01", "50", "1", "1"), ("02", "50", "1", "1"),
                        ("03", "15", "3", "2"), ("04", "25", "1", "1"),
                        ("05", "25", "1", "1")], False),
+    # the survey's two signals disagree: a « famille monoparentale » whose reference
+    # says « en couple ». Case T is left as main had it, the owner's call (D-195)
+    "CONFLIT1": ("2", [("01", "25", "1", "1"), ("02", "15", "3", "2")], True),
 }
 
 
@@ -299,12 +310,13 @@ def _eec_rows(shapes: dict[str, tuple[str, list[tuple[str, str, str, str]], bool
 
 
 def test_case_t_follows_the_couple_not_the_dwelling() -> None:
-    """Six dwellings, the law's answer written beside each (D-195).
+    """Eight dwellings, the answer written beside each (D-195).
 
     The fixture holds unpaired partners of one shape only, absent from the file. Two
     couples in one dwelling — the residue the module docstring names — is the other.
-    A parent with an adult child at home, or beside that child's couple, is the shape
-    an over-broad rule would hit.
+    A parent beside an adult child, that child's couple or a brother's couple is the
+    shape an over-broad rule would hit. The last is not the law's answer but the
+    owner's pending one, pinned so that changing it is a decision.
     """
     frame, _ = build_skeleton(children_per_household=None, source=_eec_rows(CASE_T_SHAPES))
     unit = frame.filter(pl.col("foyer_id").str.ends_with("#0")).group_by("household_id").agg(
@@ -341,6 +353,7 @@ def test_two_declarants_never_claim_case_t_whatever_the_couple_flag_says() -> No
             "is_child": [False, False, True],
             "is_extra": [False, False, False],
             "couple_flag": [None, None, "2"],
+            "hh_type": ["4", "4", "4"],
         },
         schema_overrides={"couple_flag": pl.String},
     )
