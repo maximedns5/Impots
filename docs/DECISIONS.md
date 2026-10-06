@@ -13456,3 +13456,554 @@ tourner la suite sur la PR.
 * Circulaire Cnav-Cnaf n° 2024-1 du 2 janvier 2024, « Passage à la retraite des assurés
   titulaires de l'AAH à compter du 1er septembre 2023 ».
 * Service-public.gouv.fr, fiche F16871 (ASPA), vérifiée le 23 juin 2026.
+
+## D-201 — La résidence alternée : les quarts de part, leurs plafonds, et trois corrections
+
+**Le point de départ.** D-190, D-191, D-193, D-197 et D-198 l'avaient laissée dans « Ce qui
+reste » : le format d'entrée ne savait pas dire qu'un enfant vit en résidence alternée.
+D-198 avait mesuré, en l'écrivant à la main sur openfisca brut, que le crédit pour l'emploi
+à domicile d'un parent seul avec un tel enfant valait 5 625 € sur 18 000 €, là où le
+simulateur de la DGFiP donne 6 375 €. openfisca a la variable, `garde_alternee`, et rien ne
+l'écrivait. Cette entrée lui donne un champ, règle le côté de l'impôt, et dit ce que le
+champ déplace des prestations.
+
+**Ce que dit la loi, côté impôt, pour les revenus de 2024.** Chaque citation a été relevée
+mot pour mot sur l'export de la base de Légifrance que publie codes.droit.org, celui du CGI
+mis à jour le 1er septembre 2026, le fichier de D-197 et de D-198. Les art. 194, 197, 199
+quater F, 199 sexdecies et 200 quater B ont été relus sur Légifrance par l'outil de lecture,
+dans la version applicable aux revenus de 2024, où il a retrouvé chacune ; Légifrance refuse
+le téléchargement direct (403). Les autres articles cités n'ont été lus que sur l'export.
+* **La présomption.** « En cas de résidence alternée au domicile de chacun des parents et
+  sauf disposition contraire dans la convention de divorce mentionnée à l'article 229-1 du
+  code civil, la convention homologuée par le juge, la décision judiciaire ou, le cas
+  échéant, l'accord entre les parents, les enfants mineurs sont réputés être à la charge
+  égale de l'un et de l'autre parent. Cette présomption peut être écartée s'il est justifié
+  que l'un d'entre eux assume la charge principale des enfants. » (CGI, art. 194, I, version
+  en vigueur depuis le 1er janvier 2018). L'art. 196, dans sa version issue de la loi de
+  finances pour 2003, compte à charge les enfants de moins de 18 ans, « que celle-ci soit
+  exclusive, principale ou réputée également partagée entre les parents ».
+* **Les parts.** « Lorsque les enfants sont réputés être à la charge égale de chacun des
+  parents, ils ouvrent droit à une majoration de : a) 0,25 part pour chacun des deux
+  premiers et 0,5 part à compter du troisième, lorsque par ailleurs le contribuable n'assume
+  la charge exclusive ou principale d'aucun enfant ; b) 0,25 part pour le premier et 0,5
+  part à compter du deuxième, lorsque par ailleurs le contribuable assume la charge
+  exclusive ou principale d'un enfant ; c) 0,5 part pour chacun des enfants, lorsque par
+  ailleurs le contribuable assume la charge exclusive ou principale d'au moins deux
+  enfants. » (art. 194, I).
+* **La case T.** « Lorsqu'ils entretiennent uniquement des enfants dont la charge est
+  réputée également partagée avec l'autre parent, la majoration est de 0,25 pour un seul
+  enfant et de 0,5 si les enfants sont au moins deux. » (art. 194, II).
+* **La carte d'un enfant partagé.** Le quotient « est augmenté d'une demi-part pour chaque
+  enfant à charge et d'un quart de part pour chaque enfant réputé à charge égale de l'un et
+  l'autre de ses parents, titulaire de la carte » (art. 195, 2, version en vigueur depuis le
+  1er janvier 2023). La demi-part de la carte du parent, elle, vaut pour les contribuables
+  « ayant un ou plusieurs enfants à charge, que celle-ci soit exclusive, principale ou
+  réputée également partagée entre les parents » (art. 195, 5).
+* **Les plafonds.** « La réduction d'impôt résultant de l'application du quotient familial
+  ne peut excéder 1 791 € par demi-part ou la moitié de cette somme par quart de part ».
+  Pour le parent de la case T, la part du premier enfant est limitée à 4 224 €, et « Lorsque
+  les contribuables entretiennent uniquement des enfants dont la charge est réputée
+  également partagée entre l'un et l'autre des parents, la réduction d'impôt correspondant à
+  la demi-part accordée au titre de chacun des deux premiers enfants est limitée à la moitié
+  de cette somme ». La réduction complémentaire de 1 785 € d'une carte « est égale à la
+  moitié de cette somme lorsque la majoration visée au 2 de l'article 195 est de un quart de
+  part ». Et « Les contribuables veufs ayant des enfants à charge qui bénéficient d'une part
+  supplémentaire de quotient familial en application du I de l'article 194 ont droit à une
+  réduction d'impôt égale à 1 993 € pour cette part supplémentaire » (art. 197, I, 2,
+  version du 16 février 2025 au 21 février 2026, lue sur Légifrance ; l'export porte la
+  suivante, mot pour mot la même hors les montants).
+* **L'emploi à domicile.** « Le montant de 1 500 € est divisé par deux pour les enfants
+  réputés à charge égale de l'un et l'autre de leurs parents » (art. 199 sexdecies, 3, le
+  même dans la version du 1er janvier 2023 au 16 février 2025 et dans les suivantes, D-198).
+* **Les frais de garde.** « Ces dépenses sont retenues dans la limite d'un plafond fixé à
+  3 500 € par enfant à charge et à la moitié de ce montant lorsque l'enfant est réputé à
+  charge égale de l'un et l'autre de ses parents. » (art. 200 quater B, version du 1er
+  janvier 2023 au 16 février 2025, et la même phrase dans la suivante).
+* **Les frais de scolarité.** 61 € au collège, 153 € au lycée, 183 € dans le supérieur, et
+  « Les montants mentionnés aux alinéas précédents sont divisés par deux lorsque l'enfant
+  est réputé à charge égale de l'un et l'autre de ses parents » (art. 199 quater F, version
+  en vigueur depuis le 1er janvier 2003).
+* **Le reste du code, hors du format.** Chercher « charge égale », « également partagée » et
+  « résidence alternée » dans l'export trouve encore : les revenus de l'enfant, « réputés
+  également partagés entre les parents » (art. 6, 1) ; l'abattement pour un enfant rattaché
+  marié, « égal à la moitié de cette somme » pour ses enfants partagés (art. 196 B) ; les
+  400 € par personne à charge du crédit pour l'aide aux personnes, « divisée par deux »
+  (art. 200 quater A, 4) ; et le 1 de l'art. 195, réservé aux contribuables « n'ayant pas
+  d'enfant à leur charge, exclusive, principale ou réputée également partagée ». La notice y
+  ajoute la case 7GZ, 300 € par personne à charge « (ou 150 € par enfant en résidence
+  alternée ou à charge partagée) ». Le format ne porte aucun de ces revenus, abattements ou
+  cases. La contribution différentielle sur les hauts revenus, dès les revenus de 2025,
+  compare 20 % du revenu à l'impôt « majoré de 1 500 € par personne à charge au sens des
+  articles 196 à 196 B » (art. 224, III, 2°), sans moitié : voir « Ce qui reste ».
+
+**Ce qu'en dit l'administration.**
+* **Le BOFiP.** « la majoration de quotient familial est partagée de manière égale entre les
+  parents » (BOI-IR-LIQ-10-10-10-10-20140507, § 170). Le décompte se fait « en considérant
+  les enfants à charge exclusive ou principale avant ceux dont la charge est partagée »
+  (BOI-IR-LIQ-10-20-20-10-20140326, § 70), et un divorcé qui vit seul avec deux enfants
+  partagés a « une part : (0,25 x 2) + (0,25 x 2) » (§ 400). Le plafond général est « divisé
+  par deux pour les enfants dont la charge est également partagée entre les parents
+  divorcés » ; celui de la case T vaut, pour chacune des demi-parts des deux premiers
+  enfants partagés, « 2 112 € (4 224 € / 2) » ; et pour la réduction complémentaire, « Ce
+  montant est divisé par deux lorsque la réduction complémentaire concerne un enfant dont la
+  charge est également partagée » (BOI-IR-LIQ-20-20-20-20250414, § 40, 80 et 160). Celle du
+  veuf va aux « contribuables veufs ayant des enfants à charge définis par les dispositions
+  de l'article 196 du CGI » (même document, § 190).
+* **La notice de la 2042** (n° 2041 NOT) : « Il s'agit des enfants mineurs résidant en
+  alternance au domicile de leurs parents séparés ou divorcés. Dans ce cas, la charge de
+  l'enfant est présumée partagée de manière égale entre les deux parents et chacun bénéficie
+  d'une augmentation (qui est partagée) de son nombre de parts. » Ils vont en case H. « Vous
+  pouvez également bénéficier de la case T si votre enfant est en résidence alternée. » Pour
+  l'emploi à domicile, « 750 € si l'enfant est en résidence alternée ou à charge
+  partagée » ; pour la garde, « 1 750 € par enfant en résidence alternée ou à charge
+  partagée », cases 7GE à 7GG ; pour la scolarité, « La réduction est divisée par deux
+  lorsque l'enfant est en résidence alternée ou à charge partagée » ; et sous la réduction
+  complémentaire de la fiche de calcul, « En présence d'enfants en résidence alternée ou à
+  charge partagée, ces montants sont divisés par deux ».
+
+**Ce qu'en fait le simulateur de la DGFiP.** Interrogé sur 45 déclarations fictives, pour
+les revenus de 2024, modèle simplifié, par son formulaire posté comme la page le poste au
+script `calc-2025.cgi`, avec les salaires imposables de D-197 : 32 804, 65 897 et 124 038 €
+pour 40 000, 80 000 et 150 000 € bruts. Les enfants partagés vont en case H, leurs
+titulaires de la carte en case I. Une déclaration témoin, un enfant à charge et la case T à
+32 804 €, rend les 2 parts et les 154 € de D-193. Ses chiffres sont dans les tables plus
+bas.
+
+**Ce que fait openfisca.**
+* **La variable.** `garde_alternee` est un booléen mensuel de l'individu, sans formule.
+  L'impôt la lit en janvier : `nbF` compte les enfants à charge hors résidence alternée,
+  `nbH` ceux qui y sont, `nbG` et `nbI` leurs titulaires de la carte. `nb_pac` vaut
+  `nbF + nbJ + nbR`, sans les enfants partagés.
+* **Les parts.** `nbptr`, formule de 2008 : un quart pour chacun des deux premiers enfants
+  partagés et une demi-part au-delà quand aucun n'est à charge exclusive, un quart puis des
+  demi-parts à côté d'un seul, une demi-part chacun à côté de deux ; la case T vaut un quart
+  pour un seul enfant partagé, une demi-part au-delà ; la carte d'un enfant partagé, un
+  quart. C'est l'art. 194, I et II, et l'art. 195, 2.
+* **Les plafonds.** `ir_plaf_qf`, formule de 2013, compte en demi-parts ce qui dépasse une
+  part ou deux, un quart en valant la moitié, au plafond général ou à celui de la case T.
+  C'est la loi, sauf dans les deux cas de la correction 18.
+* **L'emploi à domicile.** `nb_pac2` vaut `nbF + nbJ + nbR - nbH / 2`, sous le libellé « en
+  comptant les enfants en résidence alternée comme une demi personne à charge ». Mais `nbF`
+  les a déjà écartés : chaque enfant partagé retire une demi-majoration au plafond.
+* **La garde et la scolarité.** `ci_gardenf` plafonne les cases 7GE à 7GG à la moitié de
+  3 500 €, et `reduction_enfants_scolarises` divise par deux les cases 7EB, 7ED et 7EG.
+  C'est la loi, dès que les montants sont dans ces cases.
+* **Les prestations.** Les allocations familiales partagent l'enfant, par
+  `af_coeff_garde_alternee` et une majoration pour âge divisée par deux. La CMU-C et le
+  chèque énergie le comptent pour moitié, et aucun des deux n'est dans le revenu disponible
+  ni dans le registre. Le RSA, la prime d'activité, l'aide au logement, l'ASF, le complément
+  familial, l'allocation de rentrée scolaire, la PAJE et l'AEEH ne lisent pas la variable :
+  ils comptent l'enfant entier.
+
+**Le champ.** `Child.residence_alternee`, faux par défaut, sur chaque enfant. Sa description
+nomme les articles : la présomption et les parts (art. 194), les plafonds (art. 197, I, 2),
+l'emploi à domicile, la garde et la scolarité, et ce que les prestations en font. Trois
+refus, chacun une erreur 422 qui nomme l'article :
+* un enfant de 18 ans ou plus au 1er janvier de l'année simulée : la présomption est pour
+  « les enfants mineurs » (art. 194, I), la résidence en alternance étant celle que fixe
+  l'autorité parentale (C. civ., art. 373-2-9), et openfisca, qui lit `majeur` sur une
+  naissance au 1er janvier, le compterait à charge entière ;
+* des frais de scolarité à côté d'enfants à charge et d'enfants partagés : les nombres du
+  format ne disent pas quel enfant est au collège, et l'art. 199 quater F divise par deux le
+  montant du seul enfant partagé. Acceptés quand tous les enfants, ou aucun, sont partagés ;
+* un montant de frais de garde sans enfant de moins de six ans à qui revenir, quand l'un est
+  partagé (art. 200 quater B).
+
+**Ce que le constructeur écrit.**
+* **`garde_alternee`**, sur chaque mois de N-2 à N, ou les 12 de N sans historique, comme la
+  carte de l'enfant (D-191) : l'impôt la lit en janvier de N, et en janvier de N-2 pour les
+  parts dont la CSG d'un revenu de remplacement tire son taux. Le même foyer sur trois ans,
+  l'hypothèse de la case T (D-199).
+* **La case T** reste déduite pour un adulte seul avec un enfant, partagé ou non :
+  `resolved_parent_isole` n'avait rien à changer, et openfisca en tire le quart ou la
+  demi-part de l'art. 194, II. Jamais pour un veuf (D-197).
+* **La garde.** Le i-ème montant de `frais_garde_par_enfant` est celui du i-ème enfant de
+  moins de six ans, dans l'ordre des enfants, et va à la case suivante de 7GE à 7GG si cet
+  enfant est partagé, de 7GA à 7GC sinon. Sans enfant partagé de moins de six ans, la règle
+  de B3 ne change pas : les cases 7GA à 7GC dans l'ordre.
+* **La scolarité.** Quand tous les enfants sont partagés, les nombres vont en cases 7EB, 7ED
+  et 7EG.
+
+**Ce que le moteur en fait, mesuré en 2024 : les parts et l'impôt.** Par
+`impots.engine.compute`, palier léger, un parent né en 1985 et des enfants nés en 2014, 2016
+et 2018, l'impôt net selon le salaire brut. « Partagé » se dit d'un enfant en résidence
+alternée, « à charge » d'un enfant qui ne l'est pas. Le parent seul a la case T.
+
+| ménage | parts | 40 000 € | 80 000 € | 150 000 € |
+|---|---:|---:|---:|---:|
+| seul, un partagé | 1,5 | 1 073 € | 8 846 € | 27 603 € |
+| seul, deux partagés | 2 | 154 € | 6 734 € | 25 491 € |
+| seul, trois partagés | 2,5 | 0 € | 4 943 € | 23 700 € |
+| seul, un à charge et un partagé | 2,25 | 0 € | 5 838 € | 24 595 € |
+| seul, un à charge et deux partagés | 2,75 | | | 22 804 € |
+| seul, deux à charge et un partagé | 3 | | | 21 909 € |
+| seul sans la case T, un partagé | 1,25 | | | 28 819 € |
+
+Un couple marié, 150 000 et 80 000 € : 2,25 parts et 37 080 € avec un enfant partagé, 2,5
+parts et 36 185 € avec deux, 3 parts et 34 394 € avec trois, 2,75 parts et 35 289 € avec un
+à charge et un partagé ; à 40 000 et 20 000 €, un partagé, 2,25 parts et 1 473 €. Le
+simulateur rend chacun de ces nombres de parts et chacun de ces impôts, à l'euro, marqués
+plafonnés au-delà de 80 000 €, et la même chose en « Divorcé(e) » qu'en « Célibataire ».
+openfisca les donnait déjà, une fois la variable écrite : aucune correction n'y touche.
+
+Refait à la main, à 150 000 €, 111 634,14 € de revenu net, une part payant 29 714,95 € :
+* **Un partagé.** Son quart et celui de la case T font la demi-part du premier enfant,
+  plafonnée à 4 224 / 2 = 2 112 € : 27 602,95 €. Deux partagés, deux demi-parts à 2 112 € :
+  25 490,95 €. Trois, une demi-part de plus à 1 791 € : 23 699,95 €.
+* **Un à charge et un partagé.** La part du premier enfant, 4 224 €, et le quart du second,
+  1 791 / 2 = 895,50 € : 24 595,45 €. Avec deux partagés, le second compte une demi-part
+  (art. 194, I, b) : 22 804,45 €. Deux à charge et un partagé, une demi-part à son tour
+  (c) : 29 714,95 - 4 224 - 2 x 1 791 = 21 908,95 €.
+* **Sans la case T**, 1,25 part et un quart à 895,50 € : 28 819,45 €.
+* **Le couple.** Deux parts paient 2 x 18 987,86 = 37 975,71 €. Un quart, 895,50 € :
+  37 080,21 € ; deux quarts, 1 791 € : 36 184,71 € ; une part, 3 582 € : 34 393,71 € ; une
+  demi-part et un quart : 35 289,21 €.
+* **À 40 000 €**, 29 523,60 € de revenu net. 1,5 part paient 1 350,59 €, et la décote, 889 -
+  45,25 % x 1 350,59 = 278 €, laisse 1 073 €, ce que le simulateur affiche : 1 351 € de
+  droits simples, 278 € de décote.
+
+**Les deux écarts du plafonnement.** Écrits sur la situation par le champ, mesurés sans la
+correction 18 puis avec elle, contre le simulateur :
+
+| ménage | salaire | openfisca | corrigé | simulateur |
+|---|---:|---:|---:|---:|
+| veuf, un partagé | 150 000 € | 25 237 € | 23 244 € | 23 244 € |
+| veuf, deux partagés | 150 000 € | 24 342 € | 22 349 € | 22 349 € |
+| veuf, un partagé | 80 000 € | 6 480 € | 4 487 € | 4 487 € |
+| veuf, un partagé, carte du parent | 150 000 € | 21 661 € | 19 668 € | 19 668 € |
+| veuf, un à charge et un partagé | 150 000 € | 21 453 € | 21 453 € | 21 453 € |
+| case T, un partagé, carte du parent | 150 000 € | 23 706 € | 24 027 € | 24 027 € |
+| le même | 80 000 € | 4 949 € | 5 270 € | 5 270 € |
+| case T, un partagé titulaire de la carte | 150 000 € | 25 654 € | 25 815 € | 25 814 € |
+| le même | 80 000 € | 6 897 € | 7 058 € | 7 057 € |
+| case T, un partagé, les deux cartes | 150 000 € | 21 918 € | 22 239 € | 22 238 € |
+| case T, deux partagés, carte du parent | 150 000 € | 21 915 € | 21 915 € | 21 915 € |
+
+Refait à la main :
+* **Le veuf.** L'enfant partagé est à charge au sens de l'art. 196, et le simulateur donne
+  au veuf les parts d'un couple : 2,25 avec un enfant partagé. Au-delà d'une part, deux
+  demi-parts et un quart : 29 714,95 - 2 x 1 791 - 895,50 = 25 237,45 €. Le plafonnement
+  ajoute 25 237,45 - 18 112,57 = 7 124,88 €, plus que 1 993 € : la réduction du veuf est
+  entière, et l'impôt vaut 23 244,45 €. Deux partagés, trois demi-parts : 24 341,95 - 1 993
+  = 22 348,95 €. À 80 000 €, 10 957,54 - 4 477,50 - 1 993 = 4 487,04 €. Avec la carte, un
+  plafond et une réduction de plus : 29 714,95 - 3 x 1 791 - 895,50 - 1 993 - 1 785 =
+  19 668,45 €. openfisca ne donnait la réduction qu'à côté d'un enfant à charge exclusive.
+* **La case T et une carte.** La demi-part du premier enfant est celle de l'enfant partagé
+  et de la case T, 2 112 € ; la carte du parent ajoute une demi-part à 1 791 €, celle de
+  l'enfant un quart à 895,50 € (art. 195, 2). 29 714,95 - 2 112 - 1 791 - 1 785 =
+  24 026,95 € ; 29 714,95 - 2 112 - 895,50 - 892,50 = 25 814,95 € ; avec les deux, 29 714,95
+  - 4 798,50 - 2 677,50 = 22 238,95 €. openfisca plafonnait les deux premières demi-parts
+  au-delà d'une part à 2 112 € chacune, la carte comprise : 4 224 € au lieu de 3 903 €,
+  3 168 € au lieu de 3 007,50 €. Le simulateur arrondit à 893 € la réduction de 892,50 €
+  avant de la retrancher, d'où l'euro d'écart sur les trois lignes de la carte de l'enfant.
+  Avec deux enfants partagés, les deux demi-parts sont les leurs, et openfisca avait
+  raison : 21 914,95 €.
+
+**L'emploi à domicile.** Sur 18 000 € d'aide à domicile, sauf mention, le parent à 40 000 €,
+mesuré sans la correction 17 puis avec elle :
+
+| ménage | openfisca | corrigé | simulateur |
+|---|---:|---:|---:|
+| seul, un partagé | 5 625 € | 6 375 € | 6 375 € |
+| seul, deux partagés | 5 250 € | 6 750 € | 6 750 € |
+| seul, un à charge et un partagé | 6 375 € | 7 125 € | 7 125 € |
+| seul, trois partagés | 4 875 € | 7 125 € | 7 125 € |
+| couple, deux à charge et deux partagés | 6 750 € | 7 500 € | 7 500 € |
+| retraité né en 1954, un partagé | 6 375 € | 7 125 € | 7 125 € |
+| un partagé, première année, 20 000 € | 7 125 € | 7 875 € | 7 875 € |
+| un partagé titulaire de la carte, 25 000 € | 10 000 € | 10 000 € | 10 000 € |
+
+Refait à la main : 12 000 + 750 = 12 750 € retenus, 6 375 € ; 13 500 €, 6 750 € ; 12 000 +
+1 500 + 750 = 14 250 €, 7 125 €, comme 12 000 + 3 x 750 ; 12 000 + 2 x 1 500 + 2 x 750 =
+16 500 €, ramenés à 15 000 € : 7 500 €. Le retraité seul compte 1 500 € pour son âge
+(correction 15) et 750 € pour l'enfant : 14 250 €. La première année, case 7DQ écrite à la
+main, 15 000 + 750 = 15 750 € : 7 875 €. La carte de l'enfant coche la case 7DG, 20 000 €
+sans majoration (D-196). openfisca retirait 750 € par enfant partagé : 11 250, 10 500,
+12 750, 9 750 et 13 500 €.
+
+**La garde et la scolarité.** Un parent à 40 000 €, un enfant partagé né en 2020, 3 000 € de
+garde : 1 750 € retenus en case 7GE, 875 € de crédit, le chiffre du simulateur. Un enfant à
+charge né en 2020 et un partagé né en 2021, 3 000 € chacun : 1 500 + 875 = 2 375 €, celui du
+simulateur. Écrite en case 7GA, la garde de l'enfant partagé serait retenue jusqu'à
+3 500 € : 1 500 € au lieu de 875 €. Deux enfants partagés, au collège et au lycée, à
+80 000 € : 61 / 2 + 153 / 2 = 107 € de réduction, celle du simulateur.
+
+**Les trois corrections de `engine.corrections`.**
+* **La correction 17, l'emploi à domicile.** Elle exécute la formule que la correction 15 a
+  laissée, celle d'openfisca en son sein, en lui faisant compter chaque enfant partagé une
+  fois de plus dans `nb_pac2` : `nbH` entier, qui change la demi-majoration retirée en la
+  demi-majoration que l'article ajoute. Le reste est d'openfisca : la majoration, les deux
+  plafonds, la première année, les 20 000 € de la case 7DG. Une correction à part plutôt
+  qu'un compte de plus dans celle de la correction 15, pour deux raisons : chacune a son
+  article, sa phrase et son test qui tue, et tombera seule le jour où openfisca la rendra
+  inutile ; et le mandataire de la correction 15, que l'entrée suivante peut reprendre pour
+  la case R, reste tel quel. Les deux se composent : celle de 17 enveloppe celle de 15, qui
+  enveloppe celle d'openfisca, et `nb_pac2` reçoit les deux comptes.
+* **La correction 18, les plafonds.** Elle exécute la formule de 2013 de `ir_plaf_qf` avec
+  `nb_pac` comptant les enfants partagés, ce qui donne au veuf sa réduction ; seuls cette
+  réduction et le plafond de la case L lisent `nb_pac` dans la formule, et un enfant partagé
+  ferme la case L comme la loi (art. 195, 1). Et, pour le parent de la case T dont le seul
+  enfant est partagé, avec l'impôt sur une part relevé de ce que les plafonds d'openfisca
+  donnent de trop : (min((parts - 1) x 2, 2) - 1) x (4 224 / 2 - 1 791), lu dans l'arbre
+  qu'une réforme déplace. Relever cet impôt de la somme revient à baisser les plafonds
+  d'autant : l'impôt plafonné, les réductions complémentaires que le plafonnement borne et
+  l'abattement des DOM suivent la formule d'openfisca elle-même.
+* **La correction 19, l'ASF**, dans la partie des prestations, plus bas.
+
+Les trois tests qui tuent, sur openfisca brut : 5 625 € de crédit sur 18 000 € avec un
+enfant partagé ; 25 237,45 € d'impôt pour le veuf et 23 705,95 € pour le parent de la case T
+avec la carte, à 150 000 € ; 2 336,09 € d'ASF pour un enfant partagé. Le registre cite
+l'art. 199 sexdecies, l'art. 197 et l'art. L. 523-1 du CSS, et son test ne change pas.
+
+**Les prestations : ce que dit la loi.** Les articles ont été lus sur l'export de
+codes.droit.org, le CSS mis à jour le 5 octobre 2026 (le fichier de D-200), le CCH le 1er
+octobre, le CASF le 3 octobre et le code civil le 29 juillet 2026. Les art. L. 521-2,
+R. 521-2, R. 513-1 et L. 523-1 du CSS et L. 823-2 du CCH ont été relus sur Légifrance, dans
+leur version de 2024.
+* **Les allocations familiales.** « En cas de résidence alternée de l'enfant au domicile de
+  chacun des parents telle que prévue à l'article 373-2-9 du code civil, mise en oeuvre de
+  manière effective, les parents désignent l'allocataire. Cependant, la charge de l'enfant
+  pour le calcul des allocations familiales est partagée par moitié entre les deux parents
+  soit sur demande conjointe des parents, soit si les parents sont en désaccord sur la
+  désignation de l'allocataire. » (CSS, art. L. 521-2, version en vigueur depuis le 30
+  septembre 2021). « A défaut d'accord sur la désignation d'un allocataire unique, chacun
+  des deux parents peut se voir reconnaître la qualité d'allocataire : 1° Lorsque les deux
+  parents en ont fait la demande conjointe ; 2° Lorsque les deux parents n'ont ni désigné un
+  allocataire unique, ni fait une demande conjointe de partage. » (art. R. 521-2). Chacun
+  reçoit alors le montant dû pour tous les enfants « multiplié par un coefficient résultant
+  du rapport entre le nombre moyen d'enfants et le nombre total d'enfants », où « Chaque
+  enfant en résidence alternée compte pour 0,5 » (art. R. 521-3), et pour la majoration pour
+  âge, « le montant servi au titre de cette majoration est réduit de moitié »
+  (art. R. 521-4).
+* **Les autres prestations familiales.** « Sous réserve des dispositions de l'article
+  R. 521-2, ce droit n'est reconnu qu'à une personne au titre d'un même enfant. »
+  (art. R. 513-1, version du 1er mai 2007 au 1er décembre 2025). Le ministre l'a dit en
+  réponse à deux questions écrites : « les parents peuvent désigner un allocataire unique
+  pour toutes les prestations familiales ou choisir le partage des allocations familiales
+  entre les deux parents », et « le partage des autres prestations familiales n'est pas
+  possible » (question n° 14550, réponse publiée au JO du 9 avril 2013) ; « L'enfant doit en
+  effet être rattaché administrativement à l'un ou à l'autre de ses parents, désigné comme
+  allocataire unique, indépendamment du temps qu'il passe réellement auprès de l'un ou de
+  l'autre » (questions n° 26566 et 26969, JO du 22 décembre 2020). La Caf l'écrit à ses
+  allocataires : « Seules les Af et les majorations peuvent être éventuellement partagées
+  entre les 2 parents. Le bénéfice des prestations familiales autres que les Af ne peut être
+  reconnu qu'à une seule personne au titre d'un même enfant. »
+* **L'aide au logement.** « En cas de résidence alternée [...], les parents désignent le
+  bénéficiaire de l'aide. Cependant, la charge de l'enfant pour le calcul des aides
+  personnelles au logement est partagée entre les deux parents allocataires, soit sur
+  demande conjointe des parents, soit si les parents sont en désaccord sur la désignation du
+  bénéficiaire, selon des modalités définies par voie réglementaire. » (CCH, art. L. 823-2,
+  version en vigueur depuis le 1er septembre 2019). Ces modalités n'ont pas été trouvées
+  dans le code : l'art. R. 823-5 ne dit que le délai d'un an.
+* **Le RSA et la prime d'activité.** Sont à charge « Les enfants ouvrant droit aux
+  prestations familiales » (CASF, art. R. 262-3, 1°), et le foyer de la prime d'activité
+  compte les enfants qui ouvrent ce droit (CSS, art. R. 842-3, 3°, a).
+* **L'ASF.** Elle va à « tout enfant dont le père ou la mère, ou les père et mère, se
+  soustraient ou se trouvent, s'ils sont considérés comme tels, au regard de conditions
+  fixées par décret, comme étant hors d'état de faire face à leurs obligations d'entretien »
+  (CSS, art. L. 523-1, I, 3°, version en vigueur depuis le 25 décembre 2021), depuis au
+  moins un mois (art. R. 523-1). Quand les parents ont « un droit de résidence alternée sur
+  leur enfant qui est mis en oeuvre de manière effective et équivalente, l'un et l'autre des
+  parents doivent être considérés comme assumant la charge effective et permanente de leur
+  enfant au sens de l'article L. 513-1 du code de la sécurité sociale » : c'est l'avis
+  n° 006 0005 de la Cour de cassation du 26 juin 2006, tel que le ministre le cite dans la
+  réponse à la question n° 14550. Service-public le dit ainsi : « Avoir au moins 1 enfant à
+  charge pour lequel l'autre parent ne participe plus à l'entretien depuis au moins 1 mois »
+  (fiche F815, vérifiée le 1er avril 2026).
+
+**Les prestations : ce qui bouge, mesuré.** Par `impots.engine.compute`, palier complet,
+locataires à 500 € en zone 2, enfants nés en 2014 et 2016. L'ASF et le RSA ou la prime
+d'activité (PA) sont ceux d'après la correction 19 ; le revenu disponible (RD), avant et
+après.
+
+| ménage | partagés | AF | ASF | RSA ou PA | RD avant | RD après |
+|---|---|---:|---:|---:|---:|---:|
+| seul, sans revenu | aucun | 1 771,44 | 4 672,17 | 7 077,06 | 20 301,70 | 20 301,70 |
+| le même | un sur deux | 1 328,58 | 2 336,09 | 8 765,47 | 20 303,91 | 19 225,05 |
+| le même | deux | 885,72 | 0 | 10 453,87 | 20 306,12 | 18 148,40 |
+| seul, 15 000 € | aucun | 1 771,44 | 4 672,17 | 3 073,52 | 27 228,67 | 27 228,67 |
+| le même | un sur deux | 1 328,58 | 2 336,09 | 4 749,41 | 27 225,40 | 26 131,13 |
+| le même | deux | 885,72 | 0 | 6 425,31 | 27 222,14 | 25 033,59 |
+| seul, 15 000 €, un enfant | aucun | 0 | 2 336,09 | 4 285,83 | 23 022,59 | 23 022,59 |
+| le même | un | 0 | 0 | 5 522,15 | 23 022,59 | 21 928,32 |
+| couple sans revenu | aucun | 1 771,44 | 0 | 11 831,54 | 20 453,10 | 20 453,10 |
+| le même | un sur deux | 1 328,58 | 0 | 12 274,41 | 20 455,31 | 20 455,31 |
+| le même | deux | 885,72 | 0 | 12 717,26 | 20 457,53 | 20 457,53 |
+
+* **Les allocations familiales** passent de 1 771,44 € à 1 328,58 € avec un enfant partagé
+  sur deux, x 1,5 / 2, et à 885,72 € avec les deux, x 1 / 2 : le coefficient de
+  l'art. R. 521-3.
+* **Le RSA et la prime d'activité** comptent les allocations familiales : sans revenu, le
+  RSA du couple monte de ce qu'elles perdent, 442,87 € pour un enfant partagé, et son revenu
+  disponible ne bouge presque pas, de 20 453,10 € à 20 455,31 €. Un couple à 30 000 €, trois
+  enfants, locataire à 700 € : 4 041,09 € d'allocations familiales, 3 367,57 € avec un
+  enfant partagé, 2 020,54 € avec les trois, et la prime d'activité monte de 2 731,29 € à
+  3 399,81 € puis 4 736,86 €.
+* **L'ASF** perd 2 336,09 € par enfant partagé ; avant la correction 19, elle restait à
+  4 672,17 € avec deux enfants et 2 336,09 € avec un. Le RSA et la prime d'activité, qui en
+  comptaient le forfait, en rendent une part : avant, ils ne montaient que de ce que
+  perdaient les allocations familiales, à 7 519,92 et 7 962,79 € sans revenu, 3 513,10 et
+  3 952,68 € à 15 000 €, et 4 285,83 € avec un enfant. Le parent seul sans revenu perd
+  1 078,86 € de revenu disponible avec un enfant partagé sur deux, celui à 15 000 €
+  1 094,27 € avec son seul enfant partagé.
+* **L'aide au logement, le complément familial et la prime de Noël** ne bougent pas : ils
+  comptent l'enfant entier. Le complément familial du couple à trois enfants reste à
+  2 305,62 €.
+
+**Les prestations : ce qui est gardé, corrigé ou laissé.** Le ménage du format est celui
+d'un parent ; l'autre foyer n'est pas décrit.
+* **Gardé : le partage des allocations familiales.** openfisca applique les art. R. 521-3 et
+  R. 521-4, le partage que la loi fait à la demande des deux parents comme à défaut de
+  désignation (R. 521-2, 1° et 2°). Le parent désigné allocataire unique les toucherait
+  entières, l'autre rien : le format ne porte pas ce choix, et la description du champ le
+  dit.
+* **Gardé : l'enfant entier pour les autres prestations.** Le RSA, la prime d'activité,
+  l'aide au logement, le complément familial, l'allocation de rentrée scolaire, la PAJE et
+  l'AEEH comptent l'enfant comme chez le parent que les parents désignent : une seule
+  personne au titre d'un même enfant (R. 513-1), et le bénéficiaire de l'aide désigné (CCH,
+  art. L. 823-2). C'est une configuration que la loi permet, les allocations familiales
+  partagées et ce ménage allocataire du reste ; pas la seule. Elle est dite dans la
+  description du champ et sur la page, et laissée plus bas.
+* **Corrigé : l'ASF, la correction 19.** Le parent qui héberge l'enfant en alternance assume
+  sa charge et ne se soustrait pas à son entretien : l'ASF n'est pas due au titre de
+  l'enfant partagé. openfisca la payait comme à tout parent seul. La correction garde son
+  éligibilité et en retire l'enfant partagé ; le forfait d'ASF que le RSA et la prime
+  d'activité comptent lit la même éligibilité, et suit. Le test qui tue : 2 336,09 € d'ASF
+  sur openfisca brut pour un enfant partagé.
+
+**Les deux paliers et l'ordre de calcul.** Le parent seul à 15 000 €, locataire à 500 € en
+zone 2, deux enfants dont un partagé, a été calculé par le registre, comme l'API, et avec
+`revenu_disponible` d'abord, comme la jambe relevée de l'EMTR : le revenu disponible, les
+allocations familiales, l'ASF et la prime d'activité concordent au centime, et le palier
+léger donne les mêmes valeurs que le palier complet sur chaque ligne qu'ils partagent.
+
+**Ce que la population en fait.** Rien. `population.to_openfisca` écrit les salaires, les
+pensions, le chômage, le logement, la case T et les niches, jamais `garde_alternee`.
+L'enquête ne la porterait pas : le squelette et le câblage ne lisent de l'enquête que
+dix-sept colonnes, aucune sur la résidence d'un enfant, et les enfants de moins de 15 ans,
+absents du fichier, sont synthétisés ; aucune des 83 colonnes de l'échantillon de test n'en
+parle. Les trois corrections lisent `nbH` ou `garde_alternee`, nuls pour chaque foyer de la
+population : rien ne bouge. `to_openfisca.WIRING` reste « D-199 ».
+
+**Vus échouer, puis mutés.** Les tests ont été écrits avant le code et commis seuls
+(`96701cb`), puis vus tomber à trois étapes.
+* **Avant tout changement du code**, 50 des 51 tests choisis du moteur tombaient : 48
+  refusés par le format d'entrée (« Extra inputs are not permitted »), et les deux tests de
+  refus sur leur message, pydantic refusant pour une autre raison. Le test du registre
+  passait. À l'API, les trois : le ménage refusé au lieu d'être chiffré, et les deux refus
+  sans leur article. À la page, deux tests sur 117 : le test tiré du format d'entrée (« a
+  new Child field needs an input on the page ») et le harnais, qui n'envoyait que l'année.
+  Contre la page de `main`, `check.mjs` sortait en erreur : deux vérifications sur 34
+  tombaient.
+* **Avec le champ et le constructeur, sans les corrections**, 16 tombaient, aux valeurs
+  d'openfisca : les quatre veufs (25 237,45, 24 341,95, 6 480,04 et 21 661,45 € au lieu de
+  23 244,45, 22 348,95, 4 487,04 et 19 668,45 €) ; les cinq cas de la case T et d'une carte
+  (23 705,95, 4 948,54, 25 654,45, 6 897,04 et 21 917,95 € au lieu de 24 026,95, 5 269,54,
+  25 814,95, 7 057,54 et 22 238,95 €) ; les six de l'emploi à domicile (5 625, 5 250, 6 375,
+  4 875, 6 750 et 6 375 € au lieu de 6 375, 6 750, 7 125, 7 125, 7 500 et 7 125 €) ; et
+  l'ASF, 2 336,09 € au lieu de rien. Les 35 autres passaient, comme il le faut : les parts,
+  les plafonds des parents seuls et des couples, la case T, le veuf avec un enfant à charge,
+  la garde, la scolarité, les refus, les allocations familiales, les trois tests qui tuent
+  et l'ordre de calcul.
+* **Avec les corrections**, tout passe.
+
+Trois mutations sont prises, chacune écrite dans une copie de `src` hors du dépôt, par un
+seul remplacement vérifié, et les 51 tests choisis tournent dessus :
+* la correction 17 qui compte chaque enfant partagé pour moitié et non entier : cinq tests,
+  quatre de l'emploi à domicile, à 6 000, 6 000, 6 750 et 6 000 € au lieu de 6 375, 6 750,
+  7 125 et 7 125 €, et la composition avec la correction 15, à 6 750 € au lieu de 7 125. Le
+  couple passe, ramené à 15 000 € de toute façon ;
+* la correction 18 qui baisse les plafonds à côté d'un nombre quelconque d'enfants partagés,
+  et non d'un seul : trois tests, deux et trois enfants partagés, à 25 811,95 et 24 020,95 €
+  au lieu de 25 490,95 et 23 699,95 €, et deux enfants partagés avec la carte, à 22 235,95 €
+  au lieu de 21 914,95 € ;
+* la garde d'un enfant partagé écrite dans les cases ordinaires : le test de la garde seul,
+  en case 7GA au lieu de 7GE.
+
+**Les tests.** Ont tourné, sur le code final : les 51 tests choisis du moteur, les 50
+ajoutés et celui du registre des corrections, 51 réussis ; 101 voisins du moteur, ceux de
+l'emploi à domicile de D-196 et D-198, des plafonds de D-193 et D-197, du handicap de
+l'enfant de D-191 et de la case T, 101 réussis ; à l'API, les 3 ajoutés et 9 voisins, 12
+réussis ; `tests/test_ui.py` entier, 117 réussis ; 28 tests de `tests/test_niches.py`,
+marqués lents et choisis par leur nom, ceux de la garde, de la scolarité, de l'éligibilité
+et des cases écrites, 28 réussis ; `tests/test_charter.py`, 8 réussis ;
+`ruff check src tests scripts`, rien à signaler ; `check.mjs`, 34 vérifications sur 34. Le
+gate complet n'a pas tourné, à la demande du propriétaire : le job `fast` de la CI fait
+tourner la suite sur la PR.
+
+**Ce qui reste.**
+* **Les autres configurations des prestations.** Un parent désigné allocataire unique de
+  toutes les prestations familiales toucherait les allocations familiales entières ; le
+  parent qui ne l'est pas ne toucherait, au titre de l'enfant, que leur moitié en cas de
+  partage, et ni l'aide au logement, ni le RSA, ni la prime d'activité ne compteraient
+  l'enfant chez lui. Le format ne dit pas qui est l'allocataire : un champ à venir, dans une
+  entrée sur les prestations.
+* **L'aide au logement partagée** (CCH, art. L. 823-2) suit des « modalités définies par
+  voie réglementaire » que ce travail n'a pas trouvées.
+* **Le RSA.** La décision du Conseil d'État du 21 juillet 2017, n° 398911, sur la majoration
+  du RSA en résidence alternée, n'a pas été lue : ArianeWeb a refusé la connexion puis
+  répondu 503, et son identifiant sur Légifrance n'a pas été trouvé. Sa portée sur le compte
+  de l'enfant au RSA reste à établir.
+* **L'ASF différentielle.** Une contribution fixée à côté de la résidence alternée et
+  impayée (3°), ou payée sous le montant de l'ASF (4°), l'ouvrirait. Le format ne porte ni
+  l'une ni l'autre.
+* **L'enfant né en N-18.** La notice compte à charge comme mineurs au 1er janvier 2024 les
+  enfants « nés à compter du 1er janvier 2006 » ; le format écrit la naissance au 1er
+  janvier, openfisca lit alors `majeur`, et le champ est refusé dès 18 ans ce jour-là.
+  L'enfant infirme majeur à charge partagée (art. 196, 1°) l'est aussi.
+* **La scolarité à côté d'enfants à charge et d'enfants partagés** est refusée : il faudrait
+  des nombres par enfant.
+* **La contribution différentielle sur les hauts revenus**, dès 2025, majore son seuil de
+  1 500 € par personne à charge au sens de l'art. 196, enfant partagé compris ; openfisca
+  lit `nb_pac`, qui l'écarte. Un foyer de salaires et de pensions n'atteint pas le taux
+  moyen de 20 % qu'elle compare : le format ne l'atteint pas.
+* **L'AEEH partagée** de D-191 n'existe pas en droit : l'AEEH suit l'art. R. 513-1, un seul
+  allocataire, et le format la verse à ce ménage, comme le reste.
+* **openfisca-france.** Le signe de `nb_pac2`, la réduction du veuf et le plafond de la case
+  T à côté d'un enfant partagé, et l'ASF d'un enfant partagé sont à signaler en amont, avec
+  ces cas.
+
+**Sources.**
+* CGI, art. 194 (version en vigueur depuis le 1er janvier 2018), 197 (version du 16 février
+  2025 au 21 février 2026), 199 quater F (depuis le 1er janvier 2003), 199 sexdecies
+  (versions de D-198) et 200 quater B (versions du 1er janvier 2023 au 16 février 2025 et
+  suivante), lus sur Légifrance ; ceux-là et les art. 6, 195 (depuis le 1er janvier 2023),
+  196, 196 B, 200 quater A et 224, relevés sur l'export de codes.droit.org mis à jour le 1er
+  septembre 2026 (sha256 du fichier :
+  45ce7972e23a062ae9d22ba2f82ba5b7e469aea6c20e0606ed5688d520b2c508).
+* CSS, art. L. 513-1, R. 513-1 (version du 1er mai 2007 au 1er décembre 2025), L. 521-2
+  (version en vigueur depuis le 30 septembre 2021), R. 521-2, R. 521-3, R. 521-4, L. 523-1
+  (depuis le 25 décembre 2021), L. 523-2, R. 523-1 et R. 842-3, sur l'export mis à jour le 5
+  octobre 2026 (sha256 : b905066f9ccb0616ee27b1b6b077906d334191322051840686d9b56763718bab),
+  L. 521-2, R. 513-1, R. 521-2 et L. 523-1 aussi sur Légifrance ; CCH, art. L. 823-2 et
+  R. 823-5, export mis à jour le 1er octobre 2026 (sha256 :
+  e141a949f5a17c51432b18691e8aa3a8c444d9b5cad04baa2853d594e7e75a7f), L. 823-2 aussi sur
+  Légifrance ; CASF, art. R. 262-3, export mis à jour le 3 octobre 2026 (sha256 :
+  37bb2edaf04d04a62aa0492eb2de60351c3704159d597931677ad4bfbd28931f) ; code civil, art. 371-2
+  et 373-2-9, export mis à jour le 29 juillet 2026 (sha256 :
+  afa0189a9e0fbf82521ffc6e341845a070167de801fe27d46b508988e3d3e7c9).
+* BOFiP : BOI-IR-LIQ-10-10-10-10-20140507 (§ 170 à 190 ; sha256 de la page :
+  5d2a6bf8f146092c14d2153eac818d1edc05bea81f29e7c02f4726e8307cddca) ;
+  BOI-IR-LIQ-10-20-20-10-20140326 (§ 50 à 90 et 390 à 410 ; sha256 :
+  9834d2d93d22be207905a04c718840ea9a35605827c65f94b6251b953245cca7) ;
+  BOI-IR-LIQ-20-20-20-20250414 (§ 10, 20, 40, 80, 160 et 190 ; sha256 :
+  f8ec540a22eb7f40cbe2769d95f5d9800306a4f2b1f16eeeb8aea9bb2f97a494).
+* DGFiP, notice n° 2041 NOT (n° 50796#25), rubriques « Parent isolé (case T) », « Enfants en
+  résidence alternée », 7DB, 7EA à 7EG, 7GA à 7GG et 7GZ, et fiche de calcul. Sha256 du
+  fichier : 0eb39b825fac0bc1f623a9f3fd2d4dce5227aadd13abb99712115bfecf28021f.
+* DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
+  interrogé le 6 octobre 2026 sur 45 déclarations fictives. Sha256 de son formulaire :
+  43820dbcdfb1a187eca3ea10c2dd1adcb65f0c95fb5ab0c4c44a60daf90e798f.
+* Assemblée nationale, questions écrites n° 14550 (14e législature, réponse publiée au JO du
+  9 avril 2013, p. 3889), n° 26566 et 26969 (15e législature, réponses publiées au JO du 22
+  décembre 2020, p. 9596). Sha256 des fichiers :
+  e68c2068f635e1096a0e9b175d7c19453e2bdd764c476b03c9923582e8797543,
+  9464a057cd179488b0efea9e2d6f3580388e82b0287caefe519a52e89d1bcb06 et
+  8c378e371e81f73f3a7ebd833f4141493c5469b671d0ba95d57c426e3866642a.
+* Caf, fiche « Les indus liés à la charge d'enfant », lue sur caf.fr. Sha256 :
+  9093275226c4bf90b69371d955e47befacede9688762044a0666afab5cee708a.
+* Service-public.gouv.fr, fiche F815 (ASF), vérifiée le 1er avril 2026.
+* openfisca-france 176.0.8 : `garde_alternee`, `nbF`, `nbH`, `nbI`, `nb_pac`, `nb_pac2`,
+  `nbptr`, `ir_plaf_qf`, `ci_saldom`, `ci_gardenf`, `reduction_enfants_scolarises`,
+  `af_coeff_garde_alternee`, `asf_elig_enfant`, `rsa_forfait_asf`, `cmu_c_plafond` et
+  `cheque_energie_unites_consommation`.

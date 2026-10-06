@@ -831,7 +831,8 @@ footer code { font-family: var(--mono); font-size: 11px; }
           <p class="note" style="margin:2px 0 8px">
             Salarié à domicile : 50 % des sommes versées, aides déduites, retenues jusqu'à
             12 000 €, plus 1 500 € par enfant à charge et par membre du foyer qui a 65 ans ou
-            plus au 31 décembre, 15 000 € au plus (D-198).
+            plus au 31 décembre, 750 € par enfant en résidence alternée, 15 000 € au plus
+            (D-198, D-201).
             Il passe à <b>20 000 €</b>, sans majoration, quand un adulte ou un enfant du foyer a
             la carte « invalidité », ou qu'un enfant ouvre un complément de l'AEEH : la case 7DG
             se coche alors d'elle-même (D-196).
@@ -845,7 +846,9 @@ footer code { font-family: var(--mono); font-size: 11px; }
           <p class="note" style="margin:2px 0 8px">
             Frais de garde : <b>par enfant</b> de moins de 6 ans, parce que le plafond de
             3 500 € s'applique enfant par enfant. 6 000 € sur un seul enfant donnent
-            1 750 € de crédit ; 3 000 € sur chacun de deux en donnent 3 000.
+            1 750 € de crédit ; 3 000 € sur chacun de deux en donnent 3 000. Pour un enfant en
+            résidence alternée, le plafond est de 1 750 €, et les montants suivent l'ordre des
+            enfants de moins de 6 ans (D-201).
           </p>
           <div class="field-row tri">
             <div><label for="nGarde1">Garde — enfant 1 (€/an)</label>
@@ -873,7 +876,9 @@ footer code { font-family: var(--mono); font-size: 11px; }
             Montants annuels, pour l'année simulée seulement : ils ne sont pas recopiés sur
             l'historique de revenus, qui n'existe que pour donner aux prestations une période
             de référence réaliste. Les frais de scolarité sont des montants forfaitaires par
-            enfant (61 €, 153 €, 183 €), pas un taux sur une dépense.
+            enfant (61 €, 153 €, 183 €), pas un taux sur une dépense, divisés par deux en
+            résidence alternée : ils ne sont acceptés que si tous les enfants, ou aucun, sont en
+            résidence alternée (D-201).
           </p>
         </div>
       </details>
@@ -1351,11 +1356,12 @@ function syncIsole() {
   if (!eligible) $("isole").checked = true;   // back to the inferred default
 }
 
-/* One child as the page keeps it: the year, and the disability as typed. Kept in `state`
-   rather than read back from the inputs, because adding or removing a child re-renders
-   them all, and what was typed for the others must survive (D-191). */
+/* One child as the page keeps it: the year, the disability as typed, and the alternating
+   residence. Kept in `state` rather than read back from the inputs, because adding or removing
+   a child re-renders them all, and what was typed for the others must survive (D-191). */
 function newChild(year) {
-  return { annee_naissance: year, taux: "", soins: false, complement: "", carte: false };
+  return { annee_naissance: year, taux: "", soins: false, complement: "", carte: false,
+           residence_alternee: false };
 }
 
 const COMPLEMENTS = ["1re", "2e", "3e", "4e", "5e", "6e"];
@@ -1402,6 +1408,15 @@ function renderChildren() {
         <span>Carte mobilité inclusion « invalidité »
           <span class="sub">Délivrée à partir de 80 % : une demi-part de quotient familial
             en plus.</span></span>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="chalterne${i}"${child.residence_alternee ? " checked" : ""}
+               data-child-index="${i}" data-child-field="residence_alternee">
+        <span>Résidence alternée (case H)
+          <span class="sub">Mineur réputé à charge égale des deux parents : un quart de part
+            pour chacun des deux premiers, la moitié des plafonds, des frais de garde et de
+            scolarité. Allocations familiales partagées ; les autres prestations comptent
+            l'enfant comme chez le parent allocataire, sans ASF (D-201).</span></span>
       </label>
     </div>`).join("");
   $("addChild").disabled = state.children.length >= 8;
@@ -1748,9 +1763,10 @@ function adultPayload(i) {
 
 /* One child as the wire format has it. As for an adult, a blank rate sends no `handicap`,
    and the rate typed in percent leaves as a fraction. The complément's category goes only
-   when one is chosen (D-191). */
+   when one is chosen (D-191), the alternating residence only when ticked (D-201). */
 function childPayload(child) {
   const out = { annee_naissance: Number(child.annee_naissance) };
+  if (child.residence_alternee) out.residence_alternee = true;
   if (child.taux !== "") {
     out.handicap = {
       taux_incapacite: Number(child.taux) / 100,
