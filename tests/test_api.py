@@ -318,6 +318,41 @@ def test_emtr_on_the_light_tier_is_rejected_with_a_reason(client: TestClient) ->
             },
             "L. 5421-4",
         ),
+        # Case T is for « célibataires ou divorcés qui vivent seuls » (CGI art. 194, II): a
+        # widowed parent already has a married couple's parts, and openfisca would add the
+        # half-part (D-197).
+        (
+            {
+                "household": {"adults": [{"salaire_brut_annuel": 1, "annee_naissance": 1985}],
+                              "children": [{"annee_naissance": 2015}],
+                              "situation_famille": "veuf", "parent_isole": True},
+            },
+            "194, II",
+        ),
+        # A couple is married or pacsé, taxed jointly (CGI art. 6, 1): divorced or widowed is
+        # a lone declarant's situation (D-197).
+        (
+            {
+                "household": {
+                    "adults": [
+                        {"salaire_brut_annuel": 1, "annee_naissance": 1990},
+                        {"salaire_brut_annuel": 1, "annee_naissance": 1990},
+                    ],
+                    "couple_marie_ou_pacse": True,
+                    "situation_famille": "veuf",
+                }
+            },
+            "art. 6, 1",
+        ),
+        # The year of the death takes two declarations (CGI art. 6, 8), and openfisca's
+        # `jeune_veuf` prices a lone declarant's income tax as NaN (D-197).
+        (
+            {
+                "household": {"adults": [{"salaire_brut_annuel": 1, "annee_naissance": 1985}],
+                              "situation_famille": "jeune_veuf"},
+            },
+            "art. 6, 8",
+        ),
     ],
 )
 def test_invalid_requests_are_rejected(client: TestClient, payload: dict, needle: str) -> None:
@@ -937,3 +972,20 @@ def test_a_childs_disability_the_engine_cannot_price_is_refused(
     response = client.post("/simulate", json=request)
     assert response.status_code == 422, response.text
     assert needle in response.text
+
+
+def test_a_widowed_parent_reaches_the_income_tax(client: TestClient) -> None:
+    """The situation de famille over HTTP (D-197), in the light tier. A widowed parent with one
+    child and the invalidity card, at 150 000 EUR: 3 parts, the married couple's 2.5 and the
+    card's half-part, and no case T, inferred for a single parent only; 18 773 EUR of income
+    tax, as the DGFiP's simulator gives it (D-193)."""
+    request = {"household": {"adults": [{"salaire_brut_annuel": 150_000, "annee_naissance": 1985,
+                                         "carte_invalidite": True}],
+                             "children": [{"annee_naissance": 2012}],
+                             "situation_famille": "veuf"},
+               "year": 2024, "tier": "light"}
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 200, response.text
+    rows = response.json()["baseline"]
+    assert rows["parts_fiscales"] == 3.0
+    assert rows["ir"] == pytest.approx(18_773, abs=0.5)

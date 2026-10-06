@@ -679,6 +679,17 @@ footer code { font-family: var(--mono); font-size: 11px; }
           </span>
         </label>
 
+        <div class="field-row tri" id="situationWrap" style="margin-top:14px">
+          <div>
+            <label for="situation">Situation de famille</label>
+            <select id="situation">
+              <option value="celibataire" selected>Célibataire</option>
+              <option value="divorce">Divorcé·e ou séparé·e</option>
+              <option value="veuf">Veuf ou veuve</option>
+            </select>
+          </div>
+        </div>
+
         <div id="adults" style="margin-top:16px"></div>
 
         <div class="lbl" style="margin-top:20px">Enfants à charge</div>
@@ -712,6 +723,10 @@ footer code { font-family: var(--mono); font-size: 11px; }
           établissement, un accompagnement ou des soins ; son complément est payé au taux de
           sa catégorie, majoré pour un parent seul dès la deuxième ; la carte « invalidité »
           ajoute une demi-part (D-191).
+          Un adulte seul déclare sa situation de famille : veuf ou veuve avec des enfants à
+          charge, il a les parts d'un couple marié, sans la case T ; divorcé·e ou séparé·e, il
+          est imposé comme un célibataire. L'année du décès, qui demande deux déclarations,
+          n'est pas exprimable (D-197).
           Tout le reste prend la valeur par défaut du moteur.
         </p>
       </div>
@@ -1319,11 +1334,19 @@ function renderAdults() {
   // Two adults must be a couple in v1; one adult cannot be.
   $("marie").disabled = state.adults === 1;
   $("marie").checked  = state.adults === 2;
+  // A couple's situation is « mariés ou pacsés »; a lone adult chooses theirs (D-197).
+  $("situationWrap").hidden = state.adults === 2;
 }
 
-/* Case T only exists for a lone adult with dependent children. */
+/* Case T only exists for a lone adult with dependent children, and never for a widow:
+   art. 194, II gives it to « célibataires ou divorcés qui vivent seuls », and a widowed
+   parent has the parts of a married couple instead (D-197). */
+function caseTApplies() {
+  return state.adults === 1 && state.children.length > 0 && $("situation").value !== "veuf";
+}
+
 function syncIsole() {
-  const eligible = state.adults === 1 && state.children.length > 0;
+  const eligible = caseTApplies();
   $("isoleWrap").hidden = !eligible;
   if (!eligible) $("isole").checked = true;   // back to the inferred default
 }
@@ -1389,6 +1412,7 @@ function renderChildren() {
 
 $("one").onclick = () => { state.adults = 1; renderAdults(); syncIsole(); };
 $("two").onclick = () => { state.adults = 2; renderAdults(); syncIsole(); };
+$("situation").addEventListener("change", syncIsole);
 $("addChild").onclick = () => {
   if (state.children.length >= 8) return;
   state.children.push(newChild(2015 + state.children.length));
@@ -1745,9 +1769,10 @@ function payload() {
     children: state.children.map(childPayload),
     couple_marie_ou_pacse: state.adults === 2,
   };
-  if (state.adults === 1 && state.children.length > 0) {
-    household.parent_isole = $("isole").checked;
-  }
+  /* A lone adult's situation de famille; a couple has none to send (D-197). Case T goes
+     only where it can apply, so never beside a widow, which the API would refuse. */
+  if (state.adults === 1) household.situation_famille = $("situation").value;
+  if (caseTApplies()) household.parent_isole = $("isole").checked;
   const niches = nichesPayload();
   if (niches) household.niches = niches;
   const patrimoine = patrimoinePayload();

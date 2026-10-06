@@ -12315,3 +12315,343 @@ sous la charge : celle-ci les passe.
   fiche de calcul, sha256 0eb39b825fac0bc1f623a9f3fd2d4dce5227aadd13abb99712115bfecf28021f.
 * DGFiP, dépliant « Personnes en situation de handicap, allègements fiscaux », édition
   d'avril 2026, sha256 1515d63fee1f5f972f9e6d00c78d1ef48c206d58a91adbea15081f005e05bd9a.
+
+## D-197 — La situation de famille d'un adulte seul : le parent veuf, sans la case T
+
+**Le point de départ.** D-193 l'avait laissé : « Le parent veuf. Le format d'entrée ne sait
+pas le dire. Aucun champ ne porte la situation de famille, et openfisca tient un adulte seul
+pour célibataire. » Écrit à la main, le veuf titulaire de la carte avec un enfant payait
+18 773 € à 150 000 €, ce que donne le simulateur ; avec la case T en plus, openfisca lui
+ajoutait une demi-part, 16 982 €. Et dans « Ce qui reste » : « Le jour où une situation de
+famille entrera dans le format, la case T ne devra pas être écrite pour un veuf. » La voici.
+
+**Ce que dit la loi, pour les revenus de 2024.** Les articles ont été lus sur Légifrance,
+dans leur version applicable aux revenus de 2024. L'outil de lecture abrège : chaque
+citation a été relevée mot pour mot sur l'export de la base de Légifrance que publie
+codes.droit.org, qui concorde avec Légifrance partout où les deux ont été comparés, et, pour
+l'art. 197, dont les montants ont changé depuis, sur la reproduction de D-193.
+* **Les parts.** Le I de l'art. 194 (en vigueur depuis le 1er janvier 2018) range le veuf
+  avec le marié : « Célibataire, divorcé ou veuf sans enfant à charge » 1 part, mais
+  « Célibataire ou divorcé ayant un enfant à charge » 1,5 et « Marié ou veuf ayant un enfant
+  à charge » 2,5, puis 3 et 4 parts avec deux et trois enfants, « et ainsi de suite, en
+  augmentant d'une part par enfant à charge du contribuable ». L'article ne pose aucune
+  condition, et le BOFiP le dit : ces parts vont aux « veufs ayant eu un ou plusieurs
+  enfants à charge issus ou non du mariage avec leur conjoint décédé »
+  (BOI-IR-LIQ-10-20-20-10, § 10).
+* **La case T.** « Pour l'imposition des contribuables célibataires ou divorcés qui vivent
+  seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à titre
+  exclusif ou principal la charge d'au moins un enfant » (art. 194, II). Pas le veuf. La
+  notice de la déclaration le lui dit : « Si vous êtes veuf et si vous avez des enfants à
+  charge [...], vous bénéficiez du même nombre de parts qu'un couple marié dans la même
+  situation, ne cochez pas la case T. » La brochure pratique aussi : « Ces dispositions ne
+  concernent pas les veuves ou veufs qui ont au moins un enfant à charge ou rattaché (qu'il
+  soit ou non issu du mariage avec le conjoint décédé) ».
+* **Les plafonds.** « La réduction d'impôt résultant de l'application du quotient familial
+  ne peut excéder 1 791 € par demi-part [...] s'ajoutant à une part pour les contribuables
+  célibataires, divorcés, veufs ». Le plafond de 4 224 € de la part du premier enfant ne
+  vaut que pour qui répond « aux conditions fixées au II de l'article 194 ». Puis : « Les
+  contribuables veufs ayant des enfants à charge qui bénéficient d'une part supplémentaire
+  de quotient familial en application du I de l'article 194 ont droit à une réduction
+  d'impôt égale à 1 993 € pour cette part supplémentaire lorsque la réduction de leur
+  cotisation d'impôt est plafonnée en application du premier alinéa du présent 2. Cette
+  réduction d'impôt ne peut toutefois excéder l'augmentation de la cotisation d'impôt
+  résultant du plafonnement. » (art. 197, I, 2, version du 16 février 2025 au 21 février
+  2026). Le BOFiP précise que cette réduction « peut se cumuler » avec celle de la carte
+  (BOI-IR-LIQ-20-20-20, § 240).
+* **Qui est veuf.** Le BOFiP calcule l'impôt plafonné « sur une part si le contribuable est
+  célibataire, divorcé, séparé ou veuf (conjoint ou partenaire décédé avant le 1er janvier
+  de l'année d'imposition) » (même document, § 20). Le partenaire de PACS survivant est donc
+  veuf, et la brochure le dit : « Cochez la case V si votre conjoint ou partenaire de Pacs
+  est décédé en 2024 [...] ou précédemment. » L'ex-époux divorcé avant le décès, lui, « n'a
+  pas droit à la qualité de veuf pour la détermination de son quotient familial »
+  (BOI-IR-LIQ-10-10-20, § 190). La situation retenue est « celle existant au 1er janvier de
+  l'année de l'imposition » (art. 196 bis, en vigueur depuis le 1er janvier 2011).
+* **La décote, la CEHR et l'abattement.** La décote vaut « 889 € et 45,25 % de son montant
+  pour les contribuables célibataires, divorcés ou veufs » (art. 197, I, 4, a). La CEHR
+  prend 3 % au-dessus de 250 000 € de revenu fiscal de référence « pour les contribuables
+  célibataires, veufs, séparés ou divorcés » (art. 223 sexies, en vigueur depuis le 1er
+  janvier 2018). L'abattement de l'art. 157 bis suit l'âge et l'invalidité. Il n'est doublé
+  que « Dans le cas de personnes mariées soumises à une imposition commune ». Le veuf a donc
+  les seuils du célibataire.
+* **Sans personne à charge, le 1 de l'art. 195.** Le veuf n'a rien de plus. Le revenu des
+  « contribuables célibataires, divorcés ou veufs n'ayant pas d'enfant à leur charge » n'est
+  divisé par 1,5 que s'ils remplissent l'une des conditions du 1. Le a vise ceux qui
+  « Vivent seuls et ont un ou plusieurs enfants majeurs ou faisant l'objet d'une imposition
+  distincte dont ces contribuables ont supporté à titre exclusif ou principal la charge
+  pendant au moins cinq années au cours desquelles ils vivaient seuls » (art. 195, en
+  vigueur depuis le 1er janvier 2023). C'est la case L, plafonnée à 1 069 €. Le format ne
+  porte ni l'enfant majeur ni ces cinq années : le veuf sans enfant à charge a une part, et
+  une part et demie avec la carte (d bis). La pension de veuve de guerre (c, case G) et le
+  conjoint survivant d'un ancien combattant de plus de 74 ans (f, case W) n'ont pas de champ
+  non plus.
+* **Divorcé ou séparé.** Rien ne change. Le I de l'art. 194 met « Célibataire ou divorcé »
+  sur chaque ligne, et les époux imposés séparément sont chacun « considéré comme un
+  célibataire ». Le II, les art. 195 et 197 et l'art. 223 sexies nomment l'un avec l'autre.
+* **L'année du décès.** « En cas de décès de l'un des conjoints ou partenaires liés par un
+  pacte civil de solidarité, l'impôt afférent aux bénéfices et revenus non encore taxés est
+  établi au nom des époux ou partenaires. Le conjoint ou le partenaire survivant est
+  personnellement imposable pour la période postérieure au décès. » (art. 6, 8, en vigueur
+  depuis le 18 août 2022). Pour cette seconde période, le survivant « est considéré comme
+  marié ou pacsé » (BOI-IR-LIQ-10-10-20, § 170), et la réduction du veuf « ne s'applique pas
+  l'année du veuvage » (BOI-IR-LIQ-20-20-20, § 190). La notice demande « DEUX
+  déclarations ». Le format, qui décrit un foyer sur toute l'année, ne sait pas le dire.
+
+**Ce que fait openfisca.**
+* **La variable.** `statut_marital` est une variable mensuelle de l'individu. Sa formule
+  donne « pacsé » à un foyer de deux déclarants, « célibataire » sinon. Aucun constructeur
+  ne la posait (D-194). L'impôt la lit en janvier, sur le déclarant principal, par quatre
+  booléens : `maries_ou_pacses`, `celibataire_ou_divorce`, `veuf` et `jeune_veuf`.
+* **Les parts.** `nbptr` applique en 2024 sa formule de 2008. Pour un veuf, elle vaut
+  `1 + veuf + enf + n2 + n3 + n5 + n6`, la part `veuf` n'étant comptée qu'avec une personne
+  à charge. `n5` est la case T, `isol × caseT` : c'est la fuite de D-193. Pour un
+  célibataire ou un divorcé, la formule ne change pas : `1 + enf + n2 + n3 + n6 + n7`.
+* **Les plafonds.** `ir_plaf_qf` n'applique le plafond de 4 224 € qu'à
+  `celibataire_ou_divorce & caseT`. Pour un veuf, chaque demi-part au-delà d'une part est
+  plafonnée à 1 791 €, et la réduction de 1 993 € (`reduc_postplafond_veuf`) suit la
+  personne à charge, limitée à ce que le plafonnement ajoute. Celle de la carte s'y ajoute.
+  C'est l'art. 197, I, 2.
+* **La décote et la CEHR.** `nb_adult` vaut 1 pour un veuf : la décote est celle du
+  célibataire. La CEHR lit `maries_ou_pacses` : ses seuils aussi.
+* **Les prestations.** Aucune ne lit la situation d'un adulte seul. Hors de l'impôt,
+  `statut_marital` n'a que quatre lecteurs. `maries`, que lisent l'ASPA et l'ASI, ne vaut
+  que pour « marié ». L'exonération de la taxe d'habitation s'arrête en 2022, le RSA
+  activité en 2015, et la bourse d'études ne regarde que marié et pacsé. L'isolement du RSA,
+  de la prime d'activité, de l'aide au logement, des prestations familiales, de l'ASF et de
+  l'AEEH se lit sur la famille, deux parents ou non.
+* **`jeune_veuf`.** Sur un déclarant seul, `nbptr` donne les parts d'un couple marié, mais
+  `nb_adult` ne compte aucun adulte : l'impôt sans quotient divise par zéro, et l'impôt vaut
+  NaN (mesuré).
+
+**Le champ.** `HouseholdInput.situation_famille` vaut `celibataire`, `divorce` ou `veuf`,
+les noms d'openfisca, et « célibataire » par défaut, ce que fait déjà le moteur. Il est sur
+le ménage et non sur l'adulte : la déclaration porte la situation du foyer dans son cadre A,
+à côté de M et O, que dit `couple_marie_ou_pacse`, et de la case T, que dit `parent_isole`.
+Trois refus, chacun une erreur 422 qui nomme l'article :
+* une situation autre que célibataire à côté d'un conjoint : le couple du format est marié
+  ou pacsé, et « les personnes mariées sont soumises à une imposition commune », comme les
+  partenaires d'un PACS (CGI, art. 6, 1) ;
+* « veuf » avec `parent_isole` à vrai : la case T est pour les « célibataires ou divorcés »
+  (art. 194, II), et le moteur ajouterait une demi-part ;
+* `jeune_veuf`, l'année du décès : deux déclarations (art. 6, 8), et un impôt NaN.
+
+« Marié » et « pacsé » sont refusés par la liste des valeurs.
+
+**Ce que le constructeur écrit.** Pour un divorcé ou un veuf, `statut_marital` sur chaque
+mois de N-2 à N, 36 mois, ou les 12 de N sans historique. Comme le salaire : la CSG d'un
+revenu de remplacement lit les parts de N-2. Célibataire n'écrit rien, puisque la formule
+d'openfisca le donne. La case T n'est jamais déduite pour un veuf : `resolved_parent_isole`
+la refuse, et le constructeur ne l'écrit donc jamais pour lui.
+
+**Pas de correction.** La demi-part qu'openfisca ajoute à un veuf qui coche la case T ne
+peut plus venir du format : la case n'est ni déduite ni acceptée pour un veuf, et la
+population n'écrit aucune situation. C'est le précédent de D-191, qui a laissé la fuite de
+la sixième catégorie « parce qu'aucun ménage du format d'entrée n'y arrive ». Aucune
+correction n'entre dans `engine.corrections`. Un test écrit la case T à la main sur
+openfisca brut : 3,5 parts et 16 981,95 € pour le veuf titulaire de la carte avec un enfant.
+Il tombera le jour où openfisca lira la case T comme la loi.
+
+**Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`, palier léger, un
+parent né en 1985 et des enfants nés à partir de 2012, l'impôt selon le salaire brut :
+
+| ménage | parts | 20 000 € | 40 000 € | 80 000 € | 150 000 € |
+|---|---:|---:|---:|---:|---:|
+| un enfant, célibataire et case T | 2 | 0 € | 154 € | 6 734 € | 25 491 € |
+| un enfant, veuf | 2,5 | 0 € | 0 € | 3 592 € | 22 349 € |
+| deux enfants, célibataire et case T | 2,5 | 0 € | 0 € | 4 943 € | 23 700 € |
+| deux enfants, veuf | 3 | 0 € | 0 € | 2 730 € | 20 558 € |
+
+Le simulateur de la DGFiP a été interrogé en « Veuf ou veuve » avec les mêmes salaires
+imposables en case 1AJ : 16 402, 32 804, 65 897 et 124 038 €. Il rend ces nombres de parts
+et ces impôts à l'euro, et 4 parts et 16 976 € avec trois enfants à 150 000 €. Coché en
+plus, la case T n'y change rien. Les lignes du célibataire avec la case T sont celles de
+D-193, inchangées.
+
+Refait à la main :
+* **40 000 €.** 29 523,60 € de revenu net. Avec un enfant, 2,5 parts paient 2,5 × 0,11 ×
+  (11 809,44 − 11 497) = 85,92 €, que la décote, 889 − 45,25 % × 85,92 = 850 €, efface. Le
+  simulateur affiche 86 € de droits simples et 86 € de décote. Avec deux enfants, 3 parts
+  laissent 9 841,20 € par part, sous la première tranche.
+* **150 000 €.** 111 634,14 € de revenu net. Une part paie 29 714,95 €, 2,5 parts
+  16 403,94 €. L'avantage, 13 311,01 €, dépasse les 3 × 1 791 = 5 373 € de plafonds :
+  l'impôt plafonné vaut 24 341,95 €. Le plafonnement ajoute 7 938,01 €, plus que 1 993 € :
+  la réduction du veuf est entière, et l'impôt vaut 22 348,95 €. Avec deux enfants, 4
+  demi-parts : 22 550,95 €, puis 20 557,95 €. Avec trois, 4 parts et 6 demi-parts :
+  18 968,95 €, puis 16 975,95 €, une seule réduction pour la seule part. Le veuf avec un
+  enfant gagne 3 142 € sur le parent célibataire avec la case T : 3 × 1 791 + 1 993 =
+  7 366 € d'avantage, contre les 4 224 € de la part du premier enfant.
+* **80 000 €.** 59 306,86 € de revenu net. Une part paie 10 957,54 €. Avec un enfant, 2,5
+  parts paient 3 362,08 €, et l'impôt plafonné vaut 10 957,54 − 5 373 = 5 584,54 €. Le
+  plafonnement ajoute 2 222,46 € : la réduction de 1 993 € est entière, et l'impôt vaut
+  3 591,54 €. Avec deux enfants, 3 parts paient 2 729,74 €, plafonnés à 10 957,54 − 7 164 =
+  3 793,54 €. Le plafonnement n'ajoute que 1 063,79 €, sous 1 993 € : la réduction le rend
+  en entier, et l'impôt retombe à 2 729,74 €. Le simulateur affiche 5 585 et 3 794 € de
+  droits simples, marqués plafonnés, puis 3 592 et 2 730 €.
+* **La carte, à 150 000 €.** Un enfant et la carte du parent : 3 parts, 4 demi-parts
+  plafonnées, la réduction du veuf et celle de la carte, 29 714,95 − 7 164 − 1 993 − 1 785 =
+  18 772,95 €. La carte de l'enfant au lieu de la sienne donne le même impôt. Les deux
+  cartes : 3,5 parts, 29 714,95 − 8 955 − 1 993 − 2 × 1 785 = 15 196,95 €. Deux enfants et
+  la carte du parent : 3,5 parts, 16 981,95 €. Le simulateur : 18 773, 18 773, 15 197 et
+  16 982 €.
+* **Sans enfant.** Une part, 2 023 € à 40 000 €, comme le célibataire, et 1,5 part et
+  1 073 € avec la carte (D-188). Le simulateur, en « Veuf ou veuve » : les mêmes parts et le
+  même impôt.
+* **Divorcé ou séparé.** Chaque ligne du palier léger est celle du célibataire, aux quatre
+  salaires, avec un, deux ou trois enfants, ou sans. Le simulateur, en « Divorcé(e) ou
+  séparé(e) » : 2 parts et 6 734 € à 80 000 € avec un enfant et la case T, 2 023 € seul à
+  40 000 €.
+
+**Au-delà de l'impôt sur le revenu.** Mesuré par le format d'entrée, sur le palier complet,
+veuf contre célibataire, et divorcé contre célibataire :
+* **Les prestations.** Un parent seul à 15 000 €, locataire à 500 € en zone 2 : la prime
+  d'activité, 4 285,83 €, l'aide au logement, 4 143,48 €, l'ASF, 2 336,09 €, et le revenu
+  disponible, 23 022,59 €, ne bougent pas. Sans revenu, avec deux enfants : le RSA,
+  7 077,06 €, l'aide au logement, 5 706,03 €, les allocations familiales, 1 771,44 €, l'ASF,
+  4 672,17 €, et la prime de Noël, 274,41 €, non plus. Seul et sans revenu : le RSA,
+  6 639,28 €, et la prime de Noël, 152,45 €. Un retraité né en 1955, à 9 000 € de pension :
+  l'ASPA d'une personne seule, 3 144,27 €. Seules les parts bougent.
+* **La décote, la CEHR et l'abattement.** Seul à 25 000 € : 543 € de décote. À 600 000 € :
+  7 723 € de CEHR, seul ou avec deux enfants. Né en 1955, à 15 000 € de pension : 2 796 €
+  d'abattement de l'art. 157 bis. Les mêmes, veuf ou célibataire. À 600 000 € avec deux
+  enfants, seul l'impôt bouge : 202 806 € au lieu de 205 948 €.
+* **La taxe d'habitation.** En 2022, dernière année de son exonération dans l'arbre, elle
+  vaut zéro, veuf ou célibataire : le format ne porte aucune de ses entrées.
+* **Un effet hors de l'impôt : la CSG d'un revenu de remplacement.** Son taux suit le revenu
+  fiscal de référence de N-2, contre des seuils de « 11 128 € pour la première part de
+  quotient familial, majorés de 2 971 € pour chaque demi-part supplémentaire »
+  (CSS, art. L. 136-8, III), revalorisés chaque année (III ter) : 12 230 et 3 265 € dans
+  l'arbre pour 2024. Un pensionné né en 1960, à 22 000 € de pension déclarée, avec un enfant
+  né en 2010 : un revenu fiscal de référence de 19 800 € en 2022. Célibataire avec la case
+  T, 2 parts : au-dessus de 12 230 + 2 × 3 265 = 18 760 €, le taux réduit. Sa CSG est toute
+  déductible, et le montant déclaré en est déjà net : reste la CRDS, 0,5 %, 110 €. Veuf, 2,5
+  parts : sous 22 025 €, exonéré. Son revenu disponible monte de 110,00 €. C'est pourquoi la
+  situation est écrite sur N-2 aussi.
+
+**Les deux paliers.** Le palier léger et le palier complet donnent les mêmes valeurs sur
+chaque ligne du palier léger, pour chacun des 34 ménages mesurés.
+
+**La page.** Un adulte seul choisit sa situation de famille dans une liste, sous le nombre
+d'adultes : célibataire, divorcé·e ou séparé·e, veuf ou veuve. Deux adultes n'en ont pas :
+ils sont mariés ou pacsés. `payload` envoie la situation d'un adulte seul, et la case T là
+où elle peut s'appliquer, donc jamais à côté de « veuf ». Une seule fonction,
+`caseTApplies`, en décide, pour la case affichée et pour la requête. La note du foyer dit ce
+que change la situation, et que l'année du décès n'est pas exprimable.
+* **Un test tiré du format d'entrée.** D-186 a tiré du modèle les champs de l'adulte, D-191
+  ceux de l'enfant. Ceux du ménage lui-même n'étaient tenus par rien. Un test les lit dans
+  `HouseholdInput` et vérifie que `payload` nomme chacun, et que chaque élément qu'il lit
+  existe sous cet identifiant. Il passe sur la page de `main`, qui envoie les sept champs
+  existants. Il tombe dès que le champ entre dans le format, tant que la page ne l'envoie
+  pas, et si la liste est renommée.
+* **Un harnais.** Un second test exécute `payload` sous node, pour un parent seul dans
+  chaque situation, puis pour un couple. Chaque ménage envoyé est validé par le modèle.
+* **`check.mjs`.** Cinq vérifications de plus : la liste s'affiche pour un adulte seul,
+  célibataire par défaut, et disparaît pour un couple ; la case T disparaît pour un veuf et
+  revient pour un divorcé ; la requête d'un veuf porte sa situation et pas de case T. Celle
+  des drapeaux envoyés lit aussi la situation par défaut. Une première version posait l'état
+  dans la vérification qui le lisait : quand elle tombait, « veuf » restait choisi, et la
+  vérification des drapeaux tombait avec elle. Chaque état est maintenant posé entre deux
+  vérifications.
+* **Le harnais de l'historique** (D-186) reçoit un bouchon de `caseTApplies`, comme il en a
+  un pour chaque fonction qu'appelle `payload`. Ses assertions ne changent pas.
+* **Vu dans Chromium, sur l'API réelle.** La liste s'affiche pour un adulte, disparaît pour
+  deux. Avec un enfant, la case T s'affiche pour un célibataire, disparaît pour un veuf,
+  revient. Le veuf titulaire de la carte, à 150 000 € avec un enfant : la requête porte
+  « veuf » et pas de `parent_isole`, et la table affiche 3,0 parts et 18 773 €. Revenu à
+  « célibataire » : la case T cochée, 2,5 parts et 21 915 €, le chiffre de D-193.
+
+**Ce que la population en fait.** Rien. Elle construit ses situations elle-même, dans
+`population.to_openfisca`, sans `HouseholdInput`, et n'écrit aucune situation de famille :
+la formule d'openfisca fait de chaque déclarant seul un célibataire, et de chaque couple un
+couple pacsé. Aucun fichier de `population` ne change, et `to_openfisca.WIRING` reste
+« D-195 ». Sur la population de test, 400 ménages, le palier complet a été calculé sur
+`main` puis sur la branche : les deux tables, 52 colonnes, sont identiques.
+
+**Vus échouer, puis mutés.** Les tests ont été écrits avant le code, et vus tomber à trois
+étapes.
+* **Avant tout changement du code**, les tests écrits d'abord tombaient. Au moteur, les 22 :
+  19 refusés par le format d'entrée (« Extra inputs are not permitted »), et les 3 tests de
+  refus sur leur message, pydantic refusant pour une autre raison. À l'API, 4 : les trois
+  refus rendaient bien 422, mais sans l'article, et le veuf était refusé au lieu d'être
+  chiffré. À la page, le harnais tombait en erreur, faute de `caseTApplies`. Le test tiré de
+  `HouseholdInput` passait, comme il le doit. Contre la page de `main`, `check.mjs` sortait
+  en erreur : deux vérifications tombaient, et le reste s'arrêtait sur la liste absente.
+  Trois cas ajoutés ensuite, trois enfants, la carte de l'enfant et les deux cartes, sont
+  tombés aussi contre `main`, refusés par le format.
+* **Avec le champ, sans la règle de la case T ni les refus**, 15 des 22 tombaient. La case T
+  était écrite pour le veuf, et openfisca lui donnait sa demi-part : 3, 3,5 et 4,5 parts au
+  lieu de 2,5, 3 et 4 ; aucun impôt avant décote à 40 000 € au lieu de 85,92 € ; 20 557,95
+  et 18 766,95 € au lieu de 22 348,95 et 20 557,95 € à 150 000 € ; avant plafonnement,
+  2 729,74 et 2 097,41 € au lieu de 3 362,08 et 2 729,74 € à 80 000 € ; 3,5 et 4 parts avec
+  la carte ; 3 parts en 2022 au lieu de 2,5. Les trois refus ne refusaient pas, ou pas pour
+  leur raison. Les 7 autres passaient, comme il le faut : le test d'openfisca brut, qui
+  écrit la case T à la main, le veuf sans enfant, le divorcé et les prestations.
+* **Avec le format complet et la page de `main`**, le test tiré de `HouseholdInput` tombait
+  (« situation_famille is never sent »), et le harnais restait en erreur. La page changée,
+  le harnais de l'historique tombait sur `caseTApplies`, d'où son bouchon.
+
+Huit mutations sont prises, chacune par le test qui lui est destiné. Une mutation est une
+copie du dépôt, hors du dépôt, où une ligne change ; les tests de D-197 tournent dessus.
+* la case T déduite pour un veuf : 16 tests du moteur, la forme, les parts, l'impôt aux
+  trois salaires, la carte, la CSG de N-2 et le refus, et celui de l'API ;
+* la situation jamais écrite : 16 tests du moteur, les mêmes, sauf le refus et avec celui
+  d'openfisca brut, qui lit la situation du constructeur, et celui de l'API. Le veuf y a 1,5
+  part, un célibataire sans case T ;
+* la situation écrite sur N seul : la forme, et la CSG de N-2, seule à lire les parts d'une
+  autre année ;
+* chacun des trois refus retiré : son test au moteur, et son cas à l'API ;
+* la page qui n'envoie pas la situation : le test tiré de `HouseholdInput`, le harnais, et
+  deux vérifications de `check.mjs` ;
+* la page qui offre la case T à un veuf : le harnais, et les deux vérifications de
+  `check.mjs` qui lisent la case affichée et la requête.
+
+**Le temps.** Les six tests de budget de temps passent, aucun ignoré : 4 du moteur, 2 de
+l'API. Ils mesurent un ménage seul, pour qui rien de nouveau n'est écrit. Au meilleur de
+cinq, un parent seul à 40 000 € coûte 0,67 s au palier léger célibataire et 0,64 s veuf, et
+2,58 s au palier complet dans les deux cas : les 36 mois de `statut_marital` ne se voient
+pas.
+
+**Le gate.** `make gate`, sur la branche fusionnée avec D-195 et D-196, donne 1 685
+réussis, 172 ignorés et 12 échecs, en 27 min 34 s. Les 12 échecs sont ceux de D-176 à D-196,
+faute de données dans ce conteneur. Les 31 réussis de plus que D-196 sont les tests
+ajoutés : 25 au moteur, 4 à l'API et 2 à la page.
+
+**Ce qui reste.**
+* **L'année du décès** : deux déclarations, refusée. Le format ne porte pas de date de
+  décès.
+* **Les cases L, G et W** : l'enfant élevé seul cinq ans (art. 195, 1, a, b et e), la
+  pension de veuve de guerre (c), le conjoint survivant d'un ancien combattant de plus de 74
+  ans (f). Sans champ.
+* **Les revenus du veuvage** : ni la pension de réversion ni l'allocation veuvage n'ont de
+  champ. L'ASF ne lit pas la situation : openfisca la verse à tout parent seul, 2 336,09 €
+  par enfant en 2024. Pour un veuf, c'est celle de l'orphelin ; pour un célibataire ou un
+  divorcé, elle suppose que l'autre parent ne verse rien.
+* **La résidence alternée** n'a toujours pas de champ, pour le veuf comme pour le
+  célibataire.
+* **Les couples** : openfisca les croit tous pacsés, aucun marié (D-194). Seul `maries` lit
+  la différence, dans les cas de l'ASPA et de l'ASI que remplacent les corrections 13 et 14.
+* **openfisca-france.** La case T d'un veuf (`n5` de `nbptr`, D-193) et `nb_adult`, qui ne
+  compte aucun adulte pour `jeune_veuf` et rend un impôt NaN, sont à signaler en amont, avec
+  ces cas.
+
+**Sources.**
+* CGI, art. 6 (version en vigueur depuis le 18 août 2022), art. 157 bis (version du 19 juin
+  2025 au 1er juillet 2026), art. 194 (version en vigueur depuis le 1er janvier 2018),
+  art. 195 (version en vigueur depuis le 1er janvier 2023), art. 196 bis (version en vigueur
+  depuis le 1er janvier 2011), art. 197 (version du 16 février 2025 au 21 février 2026) et
+  art. 223 sexies (version en vigueur depuis le 1er janvier 2018), lus sur Légifrance.
+  Relevés mot pour mot sur l'export de la base de Légifrance que publie codes.droit.org, mis
+  à jour le 1er septembre 2026 (sha256 du fichier :
+  45ce7972e23a062ae9d22ba2f82ba5b7e469aea6c20e0606ed5688d520b2c508), et l'art. 197 sur la
+  reproduction d'advizexperts.fr (D-193).
+* CSS, art. L. 136-8, III et III ter (version du 16 décembre 2020 au 1er juillet 2025), lu
+  sur Légifrance.
+* BOFiP : BOI-IR-LIQ-10-10-20-20160229 (§ 170 et 190) ; BOI-IR-LIQ-10-20-20-10-20140326
+  (§ 10) ; BOI-IR-LIQ-20-20-20-20250414 (§ 20, 190 et 240).
+* DGFiP, notice n° 2041 NOT (n° 50796#25), « la déclaration des revenus 2024 », rubriques
+  « Décès en 2024 du conjoint ou partenaire de Pacs », B et fiche de calcul, 4 à 7. Sha256
+  du fichier : 0eb39b825fac0bc1f623a9f3fd2d4dce5227aadd13abb99712115bfecf28021f.
+* DGFiP, déclaration n° 2042 (n° 10330*29), cadre A. Sha256 du fichier :
+  b33282a3f7caab9680e9d4494591fa287bda6f0e989b44155b411be1bdfa1a51.
+* DGFiP, Brochure pratique 2025, « Situation du foyer ». Sha256 du chapitre :
+  a2e965a9596aa9aad7d54144d8c6a7b8de755f8d90e3b8fea2abdd0f6c244759.
+* DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
+  interrogé le 6 octobre 2026 sur 22 déclarations fictives.

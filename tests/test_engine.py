@@ -19,7 +19,7 @@ from impots.api.schemas import HouseholdInput, ReformSpec
 from impots.engine import baseline, compute
 from impots.engine.compute import EMTR_STEP
 from impots.engine.outputs import FULL_ROWS, LIGHT_ROWS, check_registry, extract
-from impots.engine.situations import build_situation, perturb_first_adult
+from impots.engine.situations import build_situation, months, perturb_first_adult
 
 SINGLE = HouseholdInput.model_validate(
     {"adults": [{"salaire_brut_annuel": 30000, "annee_naissance": 1990}]}
@@ -3240,3 +3240,287 @@ def test_beside_the_childcare_credit_the_card_holder_s_home_help_meets_the_globa
     assert _rows(parent(False))["credits_impot"] == pytest.approx(
         _saldom_by_hand(20_000, enfants=1) + 1_000, abs=0.5)
     assert _rows(parent(True))["credits_impot"] == pytest.approx(PLAFOND_GLOBAL_NICHES, abs=0.5)
+
+
+# --------------------------------------------------------------------------- #
+# the lone adult's situation de famille, and the widowed parent (docs/DECISIONS.md D-197)
+# --------------------------------------------------------------------------- #
+#: Every month the history covers in 2024: N-2 to N.
+TROIS_ANS = [month for year in (2022, 2023, 2024) for month in months(year)]
+#: The widow's complementary reduction of CGI art. 197, I, 2 on 2024 incomes, for « cette part
+#: supplémentaire » that art. 194, I gives a widow with a dependent child, read in the article
+#: and not in the tree.
+REDUCTION_VEUF = 1_993
+
+
+def _seul(enfants: int = 1, situation: str = "veuf", *, salaire: float = 150_000,
+          carte: bool = False, enfant_carte: bool = False, **household: Any) -> HouseholdInput:
+    """An adult alone, born in 1985, holding the card if `carte`, with `enfants` children born
+    from 2012, the first holding the card too if `enfant_carte`, in the situation de famille
+    `situation`: widowed unless told otherwise. Case T as the wire format infers it, unless
+    `parent_isole` says otherwise."""
+    children: list[dict[str, Any]] = [{"annee_naissance": 2012 + i} for i in range(enfants)]
+    if enfant_carte:
+        children[0]["handicap"] = {"taux_incapacite": 0.8, "carte_invalidite": True}
+    return _foyer(_adulte(salaire, 1985, carte=carte), children=children,
+                  situation_famille=situation, **household)
+
+
+def test_the_situation_is_written_on_every_covered_month_and_a_widow_never_claims_case_t(
+) -> None:
+    """The 2042 declares the foyer's situation in its cadre A: « Célibataire » (C),
+    « Divorcé(e)/séparé(e) » (D), « Veuf(ve) » (V). openfisca reads it off `statut_marital`, a
+    monthly variable of the individual, whose formula answers célibataire for a lone declarant:
+    the builder writes the other two, under openfisca's own names, on every month of N-2 to N
+    like the salary, since the CSG of a replacement income reads the parts of N-2. Célibataire
+    writes nothing. Case T is for « contribuables célibataires ou divorcés qui vivent seuls »
+    (CGI art. 194, II): inferred for a divorced parent as for a single one, never for a widow."""
+    names = {member.name for member in baseline().variables["statut_marital"].possible_values}
+    assert {"celibataire", "divorce", "veuf"} <= names
+    veuf = build_situation(_seul(), 2024)
+    assert veuf["individus"]["adulte_0"]["statut_marital"] == dict.fromkeys(TROIS_ANS, "veuf")
+    assert "caseT" not in veuf["foyers_fiscaux"]["ff_0"]
+    une_annee = build_situation(_seul(), 2024, historique_revenus=False)
+    assert list(une_annee["individus"]["adulte_0"]["statut_marital"]) == months(2024)
+    divorce = build_situation(_seul(situation="divorce"), 2024)
+    assert divorce["individus"]["adulte_0"]["statut_marital"] == dict.fromkeys(
+        TROIS_ANS, "divorce")
+    assert divorce["foyers_fiscaux"]["ff_0"]["caseT"] == {"2022": True, "2023": True,
+                                                          "2024": True}
+    celibataire = build_situation(_seul(situation="celibataire"), 2024)
+    assert "statut_marital" not in celibataire["individus"]["adulte_0"]
+    assert celibataire["foyers_fiscaux"]["ff_0"]["caseT"] == {"2022": True, "2023": True,
+                                                              "2024": True}
+
+
+@pytest.mark.parametrize(("enfants", "parts"), [(1, 2.5), (2, 3.0), (3, 4.0)])
+def test_a_widowed_parent_has_the_parts_of_a_married_couple(enfants: int, parts: float) -> None:
+    """CGI art. 194, I: « Marié ou veuf ayant un enfant à charge » 2.5 parts, « Marié ou veuf
+    ayant deux enfants à charge » 3, « Marié ou veuf ayant trois enfants à charge » 4, where
+    « Célibataire ou divorcé ayant un enfant à charge » has 1.5, and half a part more with case
+    T (II): 2, 2.5 and 3.5. No condition on the children: the BOFiP gives these parts to « les
+    veufs ayant eu un ou plusieurs enfants à charge issus ou non du mariage avec leur conjoint
+    décédé » (BOI-IR-LIQ-10-20-20-10, § 10), and the notice of the 2042 tells the widow « vous
+    bénéficiez du même nombre de parts qu'un couple marié dans la même situation, ne cochez pas
+    la case T ». The DGFiP's simulator: 2.5 parts with one child, 3 with two."""
+    assert _rows(_seul(enfants, salaire=40_000))["parts_fiscales"] == parts
+
+
+def test_under_its_ceilings_a_widowed_parent_pays_on_the_married_quotient() -> None:
+    """At 40 000 EUR, 29 523.60 of net income. With one child, 2.5 parts pay 2.5 x 0.11 x
+    (11 809.44 - 11 497) = 85.92 EUR, which the décote takes whole: « 889 € et 45,25 % de son
+    montant pour les contribuables célibataires, divorcés ou veufs » (art. 197, I, 4, a), 850
+    EUR. The quotient is worth 1 936.64 EUR against one part, under its 3 x 1 791. With two
+    children, 3 parts leave 9 841.20 a part, below the first bracket. A single or divorced
+    parent with case T pays 154 EUR (D-193). The DGFiP's simulator: 86 of « droits simples »
+    and as much décote, then nothing."""
+    un, deux = _seul(salaire=40_000), _seul(2, salaire=40_000)
+    assert _foyer_variable(un, "ir_ss_qf", "2024") == pytest.approx(2_022.56, abs=0.01)
+    assert _rows(un)["ir_avant_reductions"] == pytest.approx(85.92, abs=0.01)
+    assert _rows(un)["ir"] == 0.0
+    assert _rows(deux)["ir_avant_reductions"] == 0.0
+    assert _rows(deux)["ir"] == 0.0
+
+
+@pytest.mark.parametrize(("enfants", "demi_parts"), [(1, 3), (2, 4), (3, 6)])
+def test_a_widowed_parent_s_half_parts_are_capped_then_given_the_widow_s_reduction(
+        enfants: int, demi_parts: int) -> None:
+    """CGI art. 197, I, 2, on 2024 incomes: the reduction the quotient brings « ne peut excéder
+    1 791 € par demi-part [...] s'ajoutant à une part pour les contribuables célibataires,
+    divorcés, veufs », and the first child's ceiling of 4 224 EUR is for whoever meets « les
+    conditions fixées au II de l'article 194 », which a widow does not. And « Les contribuables
+    veufs ayant des enfants à charge qui bénéficient d'une part supplémentaire de quotient
+    familial en application du I de l'article 194 ont droit à une réduction d'impôt égale à
+    1 993 € pour cette part supplémentaire lorsque la réduction de leur cotisation d'impôt est
+    plafonnée ». At 150 000 EUR one part pays 29 714.95. One child: three half-parts above one
+    part, 29 714.95 - 5 373 = 24 341.95, less 1 993, so 22 348.95. Two children: four, 22 550.95
+    and 20 557.95. Three, 4 parts: six, 18 968.95 and 16 975.95, one reduction for the one part.
+    The DGFiP's simulator: « droits simples » of 24 342, 22 551 and 18 969, marked capped, then
+    22 349, 20 558 and 16 976 due. A single parent with case T pays 25 490.95 and 23 699.95 with
+    one and two children (D-193)."""
+    veuf = _seul(enfants)
+    assert _foyer_variable(veuf, "ir_ss_qf", "2024") == pytest.approx(IR_UNE_PART_150K, abs=0.01)
+    assert _rows(veuf)["ir_avant_reductions"] == pytest.approx(
+        IR_UNE_PART_150K - demi_parts * DEMI_PART - REDUCTION_VEUF, abs=0.01)
+
+
+@pytest.mark.parametrize(("enfants", "ir_brut", "plafonne", "impot"),
+                         [(1, 3_362.08, 5_584.54, 3_591.54), (2, 2_729.74, 3_793.54, 2_729.74)])
+def test_the_widow_s_reduction_gives_back_no_more_than_the_cap_took(
+        enfants: int, ir_brut: float, plafonne: float, impot: float) -> None:
+    """« Cette réduction d'impôt ne peut toutefois excéder l'augmentation de la cotisation
+    d'impôt résultant du plafonnement » (art. 197, I, 2). At 80 000 EUR, 59 306.86 of net
+    income pays 10 957.54 on one part. One child: 2.5 parts pay 3 362.08, the capped tax is
+    10 957.54 - 3 x 1 791 = 5 584.54, and the cap added 2 222.46, which takes the 1 993 whole:
+    3 591.54. Two children: 3 parts pay 2 729.74, capped at 10 957.54 - 4 x 1 791 = 3 793.54;
+    the cap added 1 063.79, under 1 993, and the reduction gives back exactly that, so the tax
+    is the uncapped one. The DGFiP's simulator: « droits simples » of 5 585 and 3 794, marked
+    capped, then 3 592 and 2 730 due."""
+    veuf = _seul(enfants, salaire=80_000)
+    assert _foyer_variable(veuf, "ir_ss_qf", "2024") == pytest.approx(10_957.54, abs=0.01)
+    assert _foyer_variable(veuf, "ir_brut", "2024") == pytest.approx(ir_brut, abs=0.01)
+    assert plafonne == pytest.approx(10_957.54 - (enfants + 2) * DEMI_PART, abs=0.01)
+    assert _rows(veuf)["ir_avant_reductions"] == pytest.approx(
+        plafonne - min(REDUCTION_VEUF, plafonne - ir_brut), abs=0.02)
+    assert _rows(veuf)["ir_avant_reductions"] == pytest.approx(impot, abs=0.02)
+
+
+@pytest.mark.parametrize(("enfants", "carte", "enfant_carte", "parts", "demi_parts"), [
+    (1, True, False, 3.0, 4), (2, True, False, 3.5, 5), (1, False, True, 3.0, 4),
+    (1, True, True, 3.5, 5),
+], ids=["carte du parent, un enfant", "carte du parent, deux enfants", "carte de l'enfant",
+        "les deux cartes"])
+def test_a_widowed_parent_holding_the_card(enfants: int, carte: bool, enfant_carte: bool,
+                                           parts: float, demi_parts: int) -> None:
+    """Art. 195, 5: half a part more « pour les contribuables célibataires, divorcés ou veufs
+    ayant un ou plusieurs enfants à charge » who hold the card; art. 195, 2, half a part more for
+    each dependent child who holds it (D-191). The widow's 2.5 parts with one child become 3,
+    the 3 with two 3.5. At 150 000 EUR, each half-part above one part capped at 1 791 EUR, then
+    the widow's reduction of 1 993 and the card's of 1 785, one per card (art. 197, I, 2), which
+    « peut se cumuler » with the widow's (BOI-IR-LIQ-20-20-20, § 240): 29 714.95 - 4 x 1 791 -
+    3 778 = 18 772.95 with one child and either card, 29 714.95 - 5 x 1 791 - 3 778 = 16 981.95
+    with two children, and 29 714.95 - 5 x 1 791 - 1 993 - 2 x 1 785 = 15 196.95 with both
+    cards. D-193 had written the first by hand, as the DGFiP's simulator gives it, 18 773 EUR;
+    the simulator gives the others too: 18 773, 16 982 and 15 197, on 3, 3.5 and 3.5 parts."""
+    rows = _rows(_seul(enfants, carte=carte, enfant_carte=enfant_carte))
+    assert rows["parts_fiscales"] == parts
+    cartes = carte + enfant_carte
+    assert rows["ir_avant_reductions"] == pytest.approx(
+        IR_UNE_PART_150K - demi_parts * DEMI_PART - REDUCTION_VEUF - cartes * COMPLEMENT_CARTE,
+        abs=0.01)
+
+
+def test_the_engine_alone_adds_case_t_to_a_widow() -> None:
+    """Why the builder never writes case T for a widow: openfisca's `nbptr` adds it to a widow's
+    parts (`n5`), where art. 194, II gives it to « célibataires ou divorcés » only. Written by
+    hand on raw openfisca, a widowed parent with one child and the card: 3.5 parts and
+    16 981.95 EUR at 150 000 EUR, where the DGFiP's simulator, case T ticked or not, gives 3
+    parts and 18 773. No household of the wire format reaches it any more: noted and not
+    corrected, as the sixth category's leak of D-191 was. The day this fails, openfisca reads
+    case T as the law does."""
+    from impots.engine.system import uncorrected_baseline
+
+    situation = build_situation(_seul(carte=True), 2024)
+    situation["foyers_fiscaux"]["ff_0"]["caseT"] = {"2022": True, "2023": True, "2024": True}
+    raw = SimulationBuilder().build_from_entities(uncorrected_baseline(), situation)
+    assert float(raw.calculate("nbptr", "2024")[0]) == 3.5
+    assert float(raw.calculate("ir_plaf_qf", "2024")[0]) == pytest.approx(16_981.95, abs=0.01)
+
+
+@pytest.mark.parametrize(("carte", "parts", "impot"), [(False, 1.0, 2_023.0), (True, 1.5, 1_073.0)])
+def test_a_widow_without_a_dependant_has_the_parts_of_a_single_person(
+        carte: bool, parts: float, impot: float) -> None:
+    """Art. 194, I: « Célibataire, divorcé ou veuf sans enfant à charge » 1 part. Widowhood alone
+    adds nothing: the half-part of art. 195, 1, a goes to whoever « Vivent seuls et ont un ou
+    plusieurs enfants majeurs ou faisant l'objet d'une imposition distincte dont ces
+    contribuables ont supporté à titre exclusif ou principal la charge pendant au moins cinq
+    années au cours desquelles ils vivaient seuls » (case L), which the wire format does not
+    carry; the card's (d bis) it does. At 40 000 EUR, one part pays 2 023 EUR, and 1.5 parts with
+    the card 1 073 (D-188). The DGFiP's simulator, « Veuf ou veuve »: the same parts and the
+    same tax. Every row of the light tier is a single person's."""
+    veuf = _rows(_seul(0, salaire=40_000, carte=carte))
+    assert veuf["parts_fiscales"] == parts
+    assert veuf["ir"] == impot
+    assert veuf == _rows(_seul(0, "celibataire", salaire=40_000, carte=carte))
+
+
+@pytest.mark.parametrize("enfants", [0, 1])
+def test_divorced_or_separated_is_taxed_as_single(enfants: int) -> None:
+    """The CGI never tells them apart: « Célibataire ou divorcé » share every row of the table
+    of art. 194, I, case T is for « célibataires ou divorcés qui vivent seuls » (II), and
+    spouses taxed separately are each « considéré comme un célibataire » (I). openfisca reads
+    both through `celibataire_ou_divorce`. At 80 000 EUR, one child and case T: 2 parts and
+    6 734 EUR, as the DGFiP's simulator gives them for « Divorcé(e) ou séparé(e) ». Every row
+    of the light tier is a single person's."""
+    divorce = _rows(_seul(enfants, "divorce", salaire=80_000))
+    assert divorce == _rows(_seul(enfants, "celibataire", salaire=80_000))
+    assert divorce["parts_fiscales"] == 1.0 + enfants
+    assert divorce["ir"] == (6_734.0 if enfants else 10_958.0)
+
+
+def test_a_widow_s_parts_reach_the_csg_of_a_pension_through_n_2() -> None:
+    """The CSG of a replacement income takes its rate from the RFR of N-2, against thresholds
+    set « pour la première part de quotient familial, majorés de [...] pour chaque demi-part
+    supplémentaire » (CSS art. L. 136-8, III): 12 230 and 3 265 EUR in the tree for 2024. Which
+    is why the situation is written on N-2 too. A pensioner born in 1960, 22 000 EUR declared,
+    and a child born in 2010: an RFR of 19 800 EUR in 2022. Single with case T, 2 parts, past
+    12 230 + 2 x 3 265 = 18 760: the reduced rate, whose CSG is all deductible and the declared
+    amount already net of it, leaves 0.5 % of CRDS, 110 EUR. Widowed, 2.5 parts, under 12 230 +
+    3 x 3 265 = 22 025: exempt. The disposable income is 110.00 EUR higher."""
+    def pensionne(situation: str) -> HouseholdInput:
+        return _foyer(_adulte(0, 1960, pension_annuelle=22_000),
+                      children=[{"annee_naissance": 2010}], situation_famille=situation)
+
+    veuf, celibataire = pensionne("veuf"), pensionne("celibataire")
+    assert _foyer_variable(veuf, "rfr", "2022") == pytest.approx(19_800, abs=0.01)
+    assert _foyer_variable(veuf, "nbptr", "2022") == 2.5
+    assert _foyer_variable(celibataire, "nbptr", "2022") == 2.0
+    assert (_rows(veuf, "full")["revenu_disponible"]
+            - _rows(celibataire, "full")["revenu_disponible"]) == pytest.approx(110.0, abs=0.01)
+
+
+@functools.cache
+def _situation_priced(name: str, situation: str, tier: str = "full") -> dict[str, Any]:
+    """The rows of one of the households below, widowed or single."""
+    households = {
+        "parent locataire": lambda: _seul(salaire=15_000, situation=situation,
+                                          logement=RENTING),
+        "retraité à l'ASPA": lambda: _foyer(_adulte(0, 1955, pension_annuelle=9_000),
+                                            situation_famille=situation),
+    }
+    return _rows(households[name](), tier)
+
+
+@pytest.mark.parametrize("name", ["parent locataire", "retraité à l'ASPA"])
+def test_the_situation_moves_no_benefit_of_a_lone_adult(name: str) -> None:
+    """openfisca's benefits read a lone adult's isolation off the famille (`en_couple`, two
+    parents or not), never off `statut_marital`, which only `maries` reads, for the ASPA and the
+    ASI of a married couple. A parent alone at 15 000 EUR, renting at 500 EUR in zone 2, and a
+    pensioner born in 1955 at the ASPA, 9 000 EUR: widowed or single, every row of the full tier
+    but the parts is the same, the RSA, the prime d'activité, the housing aid, the ASF, the
+    prime de Noël, the ASPA and the disposable income among them. And the widow's light tier
+    agrees with her full one on every row they share."""
+    veuf, celibataire = _situation_priced(name, "veuf"), _situation_priced(name, "celibataire")
+    assert {key for key in veuf if veuf[key] != celibataire[key]} <= {"parts_fiscales"}
+    light = _situation_priced(name, "veuf", "light")
+    for row in LIGHT_ROWS:
+        assert light[row.key] == veuf[row.key], row.key
+
+
+def test_a_situation_de_famille_is_refused_beside_a_spouse() -> None:
+    """A couple of the wire format is married or pacsé, taxed jointly: « les personnes mariées
+    sont soumises à une imposition commune », and so are partners of a PACS (CGI art. 6, 1). Its
+    situation is `couple_marie_ou_pacse`, M or O on the 2042; divorced or widowed is a lone
+    declarant's. Célibataire, the default, writes nothing and is left alone."""
+    for situation in ("divorce", "veuf"):
+        with pytest.raises(ValueError, match=r"art\. 6, 1"):
+            _foyer(_adulte(40_000), _adulte(20_000), situation_famille=situation)
+    assert _foyer(_adulte(40_000), _adulte(20_000)).situation_famille == "celibataire"
+
+
+def test_case_t_is_refused_to_a_widow() -> None:
+    """Art. 194, II gives case T to « contribuables célibataires ou divorcés qui vivent seuls »;
+    a widow with a dependent child already has the parts of a married couple (I), and the notice
+    tells her « ne cochez pas la case T ». openfisca would add the half-part all the same
+    (`test_the_engine_alone_adds_case_t_to_a_widow`). Not inferred for a widow, and refused
+    when claimed; waived, it is accepted."""
+    with pytest.raises(ValueError, match=r"194, II"):
+        _seul(parent_isole=True)
+    assert _seul().resolved_parent_isole() is False
+    assert _seul(parent_isole=False).resolved_parent_isole() is False
+    assert _seul(situation="divorce").resolved_parent_isole() is True
+
+
+def test_the_year_of_the_death_is_refused() -> None:
+    """The year a spouse or PACS partner dies, « l'impôt afférent aux bénéfices et revenus non
+    encore taxés est établi au nom des époux ou partenaires », and « Le conjoint ou le
+    partenaire survivant est personnellement imposable pour la période postérieure au décès »
+    (CGI art. 6, 8), with the parts of a married couple (BOI-IR-LIQ-10-10-20, § 170): two
+    declarations, which the wire format cannot carry. openfisca calls the second `jeune_veuf`,
+    and on a lone declarant counts no adult in it: its income tax is NaN. Refused, as are the
+    couple's own names."""
+    with pytest.raises(ValueError, match=r"art\. 6, 8"):
+        _seul(situation="jeune_veuf")
+    for name in ("marie", "pacse"):
+        with pytest.raises(ValueError, match="celibataire"):
+            _seul(situation=name)
