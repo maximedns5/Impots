@@ -263,6 +263,10 @@ CASE_T_SHAPES: dict[str, tuple[str, list[tuple[str, str, str, str]], bool]] = {
     # an adult child at home, aged 25 to 49 and in work: a foyer of their own
     "FAMILLE1": ("2", [("01", "50", "1", "2"), ("02", "15", "3", "2"),
                        ("03", "25", "1", "2")], True),
+    # the same parent beside a couple, her son and his partner: a couple in the
+    # dwelling that is not hers
+    "FAMILLE2": ("2", [("01", "50", "1", "2"), ("02", "15", "3", "2"),
+                       ("03", "25", "1", "1"), ("04", "25", "1", "1")], True),
     "COUPLE01": ("4", [("01", "25", "1", "1"), ("02", "25", "1", "1"),
                        ("03", "15", "3", "2")], False),
     # the partner is not in the file: the reference alone says « en couple »
@@ -295,11 +299,12 @@ def _eec_rows(shapes: dict[str, tuple[str, list[tuple[str, str, str, str]], bool
 
 
 def test_case_t_follows_the_couple_not_the_dwelling() -> None:
-    """Five dwellings, the law's answer written beside each (D-195).
+    """Six dwellings, the law's answer written beside each (D-195).
 
     The fixture holds unpaired partners of one shape only, absent from the file. Two
-    couples in one dwelling — the residue the module docstring names — is the other,
-    and a parent with an adult child at home the shape an over-broad rule would hit.
+    couples in one dwelling — the residue the module docstring names — is the other.
+    A parent with an adult child at home, or beside that child's couple, is the shape
+    an over-broad rule would hit.
     """
     frame, _ = build_skeleton(children_per_household=None, source=_eec_rows(CASE_T_SHAPES))
     unit = frame.filter(pl.col("foyer_id").str.ends_with("#0")).group_by("household_id").agg(
@@ -315,6 +320,35 @@ def test_case_t_follows_the_couple_not_the_dwelling() -> None:
         "COUPLE01"}
     assert {ident: claimed for ident, (_, _, claimed) in shapes.items()} == {
         ident: expected for ident, (_, _, expected) in CASE_T_SHAPES.items()}
+
+
+def test_two_declarants_never_claim_case_t_whatever_the_couple_flag_says() -> None:
+    """A conjoint is a second declarant, and art. 194, II reaches only « célibataires ou
+    divorcés »: no case T for the foyer, with or without a couple flag (D-195).
+
+    Every partner the skeleton pairs today is flagged « en couple », so the couple test
+    alone would exclude the pair, and `build_skeleton` cannot tell the two rules apart.
+    The role assignment is called directly here, on a pair the survey does not flag.
+    """
+    from impots.population.skeleton import _assign_units
+
+    people = pl.DataFrame(
+        {
+            "household_id": ["H-1", "H-1", "H-1"],
+            "noi": ["01", "02", "03"],
+            "is_reference": [True, False, False],
+            "is_conjoint": [False, True, False],
+            "is_child": [False, False, True],
+            "is_extra": [False, False, False],
+            "couple_flag": [None, None, "2"],
+        },
+        schema_overrides={"couple_flag": pl.String},
+    )
+    frame = _assign_units(people)
+    assert frame["foyer_id"].n_unique() == 1
+    assert frame["role_foyer"].to_list() == [
+        "declarant_principal", "conjoint", "personne_a_charge"]
+    assert not frame["parent_isole"].any()
 
 
 def test_synthesised_children_are_all_under_15(population: pl.DataFrame) -> None:
