@@ -13155,7 +13155,10 @@ seul remplacement vérifié :
 squelette, les rôles et les NaN, les deux chemins de D-183, l'ordre de calcul de D-176 à
 D-178, l'ASS de D-189 et D-192. 28 réussis. Les tests d'agrégats et de réforme sur la
 fixture, et celui des caches EMTR : 5 réussis. `tests/test_charter.py` : 8 réussis.
-`ruff check src tests scripts` : rien à signaler. Le gate complet n'a pas tourné, à la
+`ruff check src tests scripts` : rien à signaler. Sur la branche fusionnée avec D-198, les
+quatre tests ajoutés et les sept cas de D-183 qui comparent la calculette et la population
+donnent 11 réussis, les 13 tests de l'emploi à domicile du moteur, ceux de D-198 compris,
+13 réussis, et `tests/test_charter.py` 8 réussis. Le gate complet n'a pas tourné, à la
 demande du propriétaire : le job `fast` de la CI fait tourner la suite sur la PR.
 
 **Ce qui reste.**
