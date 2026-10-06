@@ -1,6 +1,7 @@
 """Where this project's reading of the BENEFITS law, of the abatement of art. 157 bis that the
 income tax and the benefits both read (D-188), of the income tax on a benefit, the ASS
-(D-192), and of the home-help credit's ceiling (D-198), differs from openfisca's, and why.
+(D-192), of the home-help credit's ceiling (D-198), and of the ceiling of the quotient familial
+beside a person in case R (D-202), differs from openfisca's, and why.
 
 The same bar as `patrimoine.corrections`, which holds the IFI ones: a legal citation, a
 measured demonstration of the difference, a decision-log entry, and a KILL TEST that fails
@@ -284,7 +285,7 @@ flag, under the age of 20. Wrapped around openfisca's formula, which stands for 
 
 Not corrected, and unreachable: openfisca adds the sixth category's complément outside that
 test, so a child of 20, or one without the flag, would draw it alone. The builder writes a
-category only with the flag, and refuses a child of 20 (D-191).
+category only with the flag, and refuses a complément from 20 (D-191, D-202).
 
 **Blast radius:** a child with a complément of the second to the fifth category. On the
 wire, the child's disability field. The population carries no disability, and nothing in it
@@ -401,8 +402,9 @@ The correction runs openfisca's formula with the declarants of 65 or more on 31 
 the persons it counts, so the increment, both caps, the first year and the 20 000 EUR of case
 7DG, which takes no increment, stay openfisca's, read from the tree a reform moves. The
 declarants only: a dependant already counts once in `nb_pac2`, as the DGFiP's simulator counts
-a dependent child born in 1950 once, and neither the wire format nor the population carries
-another kind of dependant. The age is read off `date_naissance`, so a birth on 31 December
+a dependent child born in 1950 once. A person in case R, which `nb_pac2` also counts (`nbR`)
+and the simulator does not, comes with the card, so with case 7DG, which takes no increment
+(D-202). The age is read off `date_naissance`, so a birth on 31 December
 counts; with births on 1 January, as both builders write them, it is the year of birth. Wrapped
 from 2020, the date of openfisca's formula; no year this project accepts reads an earlier one.
 
@@ -452,6 +454,33 @@ spouse's resources, 29 202.83 EUR of disposable income with 100 EUR of pension a
 other is eligible to the ASPA or the ASI. On the wire, the disability field with a pension,
 beside a spouse at the ASPA's age or with an invalidity pension. The population carries no
 disability, and nothing in it moves.
+
+---
+
+**Correction 18 — the first child's ceiling only beside a child (CGI art. 197, I, 2), D-202.**
+
+The reduction the quotient familial brings is capped at 1 791 EUR a half-part on 2024 incomes,
+and for single or divorced taxpayers who meet the conditions of art. 194, II, case T, « la
+réduction d'impôt correspondant à la part accordée au titre du premier enfant à charge est
+limitée » to 4 224 EUR. A lone adult claims case T for a person in case R, whom the 2042 names
+beside the children, but then has no first child's part: « les contribuables célibataires ou
+divorcés qui vivent seuls et supportent effectivement la charge d'une personne mentionnée à
+l'article 196 A bis du CGI, à l'exclusion de tout enfant, ne sont pas concernés par le
+plafonnement spécifique correspondant à la part accordée au titre du premier enfant à charge »
+(BOI-IR-LIQ-10-10-10-30, § 55). openfisca's `ir_plaf_qf` gives the 4 224 EUR to every single or
+divorced taxpayer with case T. Measured on a lone adult with case T and one person in case R:
+21 914.95 EUR before reductions at 150 000 EUR, where the DGFiP's simulator gives 22 557, and
+3 362.08 at 80 000 EUR, where it gives 3 800.
+
+The correction runs openfisca's formula with case T read only where a child is at charge,
+exclusively, mainly or alternately. The parts, which `nbptr` computes with case T, stay
+openfisca's, and so does every ceiling of a foyer with a child: only the first child's ceiling
+of a foyer without one gives way to the general one. Wrapped from 2013, the date of the formula
+in force since; before it, openfisca's stands.
+
+**Blast radius:** a lone adult with case T whose only dependants are persons in case R, with an
+income for which the ceiling binds. On the wire, the case R field beside one adult. The
+population writes no case R, and nothing in it moves.
 """
 
 from __future__ import annotations
@@ -609,6 +638,19 @@ CORRECTIONS: tuple[Correction, ...] = (
         kill_test="test_the_engine_alone_counts_the_aah_of_a_pensioner_beside_a_spouse_at_the_"
                   "aspa",
     ),
+    Correction(
+        name="plafond_qf_part_du_premier_enfant_reservee_aux_foyers_qui_en_ont_un",
+        citation="CGI art. 197, I, 2 — pour les célibataires ou divorcés qui répondent aux "
+                 "conditions du II de l'article 194, « la réduction d'impôt correspondant à la "
+                 "part accordée au titre du premier enfant à charge est limitée » (4 224 € sur "
+                 "les revenus de 2024) ; ceux qui « supportent effectivement la charge d'une "
+                 "personne mentionnée à l'article 196 A bis du CGI, à l'exclusion de tout enfant, "
+                 "ne sont pas concernés par le plafonnement spécifique » (BOI-IR-LIQ-10-10-10-30, "
+                 "§ 55)",
+        decision="D-202",
+        kill_test="test_the_engine_alone_caps_a_lone_adult_s_case_r_half_part_at_the_first_"
+                  "child_s_ceiling",
+    ),
 )
 
 AL_BASE = "aide_logement_base_ressources_individu"
@@ -676,6 +718,11 @@ AGE_SALDOM = 65
 #: Each person's resources for the ASPA and the ASI, which correction 16 rids of the AAH of
 #: whoever draws a retirement pension.
 ASI_ASPA_BASE = "asi_aspa_base_ressources_individu"
+#: The income tax after the ceiling of the quotient familial, the date of the formula correction
+#: 18 wraps, and case T, which that formula reads to choose the first child's ceiling.
+QF_CAP = "ir_plaf_qf"
+QF_CAP_SINCE = "2013-01-01"
+CASE_T = "caseT"
 
 
 def apply_to(system: Any) -> Any:
@@ -729,6 +776,8 @@ def apply_to(system: Any) -> Any:
                 saldom_formula))
             base_formula = self.get_variable(ASI_ASPA_BASE).get_formula("0001-01-01")
             self.update_variable(_aah_of_a_pensioner_left_out(base_formula))
+            cap_formula = self.get_variable(QF_CAP).get_formula(QF_CAP_SINCE)
+            self.update_variable(_first_child_ceiling_only_beside_a_child(cap_formula))
 
     return BenefitCorrections(system)
 
@@ -1355,3 +1404,49 @@ def _home_help_ceiling_raised_for_the_declarants_over_65(openfisca_formula: Any)
                                      period, parameters)
 
     return ci_saldom
+
+
+class _CaseTOnlyBesideAChild:
+    """The foyers fiscaux as openfisca's ceiling of the quotient familial sees them, with case T
+    read only where a child is at charge (correction 18). Everything else it reads, the parts
+    case T gave through `nbptr` among them, is the foyers' own."""
+
+    def __init__(self, foyer_fiscal: Any, beside_a_child: Any) -> None:
+        self._foyer_fiscal = foyer_fiscal
+        self._beside_a_child = beside_a_child
+
+    def __call__(self, variable_name: str, period: Any, options: Any = None) -> Any:
+        value = self._foyer_fiscal(variable_name, period, options)
+        return value & self._beside_a_child if variable_name == CASE_T else value
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._foyer_fiscal, name)
+
+
+def _first_child_ceiling_only_beside_a_child(openfisca_formula: Any) -> Any:
+    """`ir_plaf_qf`, with the ceiling of a lone parent's first child (CGI art. 197, I, 2) only
+    for a foyer that has a child at charge, exclusively, mainly or alternately: a lone adult with
+    case T whose only dependants are persons in case R takes the general ceiling
+    (BOI-IR-LIQ-10-10-10-30, § 55). openfisca's formula, run with case T so read."""
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class ir_plaf_qf(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Impôt après plafonnement du quotient familial et réduction complémentaire, le "
+                 "plafond de la part du premier enfant réservé aux foyers qui en ont un "
+                 "(CGI art. 197, I, 2)")
+        reference = ("https://bofip.impots.gouv.fr/bofip/1032-PGP.html/"
+                     "identifiant=BOI-IR-LIQ-10-10-10-30-20240618")
+        definition_period = YEAR
+
+        def formula_2013_01_01(foyer_fiscal, period, parameters):
+            # Children at charge: openfisca's dependants but the persons of case R, and those
+            # in alternating residence, whom `nb_pac` leaves out.
+            enfants = foyer_fiscal("nb_pac", period) - foyer_fiscal("nbR", period)
+            beside_a_child = (enfants > 0) | (foyer_fiscal("nbH", period) > 0)
+            return openfisca_formula(_CaseTOnlyBesideAChild(foyer_fiscal, beside_a_child),
+                                     period, parameters)
+
+    return ir_plaf_qf

@@ -146,6 +146,13 @@ ok("no reform is sent when nothing was touched", () => assert.equal($("reformSta
 
 console.log("household");
 ok("case T hidden with no children", () => assert.equal($("isoleWrap").hidden, true));
+$("invalides").value = "1"; $("invalides").fire("input", {});
+ok("case T appears for a lone adult with a person in case R", () => {
+  assert.equal($("isoleWrap").hidden, false,
+    "the 2042 names « des personnes invalides recueillies » beside the children (D-202)");
+});
+$("invalides").value = "0"; $("invalides").fire("input", {});
+ok("case T hidden again without one", () => assert.equal($("isoleWrap").hidden, true));
 ok("case T appears for a lone parent", () => {
   $("addChild").onclick(); assert.equal($("isoleWrap").hidden, false);
 });
@@ -342,5 +349,6 @@ ok("payload carries the new flags", () => {
   assert.equal(body.household.couple_marie_ou_pacse, false);
   assert.equal(body.household.situation_famille, "celibataire", "a lone adult's default");
   assert.equal(body.household.parent_isole, true, "lone parent claims case T by default");
+  assert.equal(body.household.personnes_invalides_recueillies, 0, "case R is a count, none by default (D-202)");
   assert.equal(body.reform, null, "an untouched panel must send no reform");
 });
