@@ -4089,15 +4089,17 @@ def test_a_rented_dwelling_is_refused_beside_a_child_who_draws_the_aah() -> None
     assert build_situation(_avec_enfant_majeur({"taux_incapacite": 0.6}, logement=RENTING), 2024)
 
 
-@pytest.mark.parametrize("handicap", [
-    {"taux_incapacite": 0.8, "complement_categorie": 2},
-    {"taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True},
+@pytest.mark.parametrize(("handicap", "needle"), [
+    ({"taux_incapacite": 0.8, "complement_categorie": 2}, "complément"),
+    ({"taux_incapacite": 0.6, "etablissement_accompagnement_ou_soins": True}, "établissement"),
 ], ids=["complément", "établissement"])
-def test_the_aeeh_s_own_fields_are_refused_from_twenty(handicap: dict[str, Any]) -> None:
+def test_the_aeeh_s_own_fields_are_refused_from_twenty(handicap: dict[str, Any],
+                                                        needle: str) -> None:
     """« Les enfants ouvrent droit aux prestations familiales jusqu'à l'âge de vingt ans » (CSS art.
     R. 512-2): from 20 there is no AEEH, so no complément of it and no establishment, support or
-    care to open it below 80 %. Refused rather than ignored."""
-    with pytest.raises(ValueError, match="20 ans"):
+    care to open it below 80 %. Each is refused rather than ignored, and the refusal names it:
+    D-191's refusal of any disability from 20 named neither."""
+    with pytest.raises(ValueError, match=f"20 ans.*{needle}|{needle}.*20 ans"):
         build_situation(_avec_enfant_majeur(handicap, naissance=2004), 2024)
 
 
