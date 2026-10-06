@@ -112,6 +112,15 @@ def pin_benefit_history(simulation: Any, year: int) -> None:
     October of N-1, reads September as zero aid in the RSA's forfait: the assumption,
     measured as changing nothing in D-178.
 
+    The amount the MVA reads, `aide_logement_montant`, is pinned beside the aid. Since
+    D-203 the ASPA and the ASI of a month count a spouse's MVA of the three months before,
+    and the housing aid reaches them through its student-grant test and the RSA's
+    resources (D-179). Left to the cache, each month's amount was purged at the end of its
+    own pin, invalidated by a spiral beneath it, then cut to zero under the next month's
+    pin, and an ASI computed there stayed cached without the MVA (correction 19). The
+    value pinned is the one the aid was just computed from, still cached, or, where a
+    spiral purged it, recomputed with the aid of the month and of the months before pinned.
+
     The RFR of the four years before the income history is computed and pinned first.
     Nothing is supplied there, so it is zero either way; pinned, the housing chain stops
     reopening the empty years 2016 to 2021 month after month, which is where most of the
@@ -123,6 +132,8 @@ def pin_benefit_history(simulation: Any, year: int) -> None:
     pinned = [f"{year - 1}-{m:02d}" for m in HOUSING_MONTHS_BEFORE_N] + months(year)
     for month in pinned:
         simulation.set_input("aide_logement", month, simulation.calculate("aide_logement", month))
+        simulation.set_input("aide_logement_montant", month,
+                             simulation.calculate("aide_logement_montant", month))
 
 
 #: The inputs that open the AAH, the ASI or the ASS. The disability field writes the first
