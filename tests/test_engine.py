@@ -4029,11 +4029,11 @@ def test_a_disabled_child_of_22_draws_the_aah_and_the_parent_keeps_the_rsa_of_on
     indépendant » (art. L. 821-1-2). Nor is the child at the parent's charge for the RSA: « ne sont
     considérées comme à charge [...] ni les personnes qui perçoivent des ressources égales ou
     supérieures à la majoration du revenu garanti à laquelle elles ouvrent droit » (CASF art.
-    R. 262-3), and the AAH passes the 30 % of the RSA a second person adds. A parent alone
-    without income, without a dwelling, keeps the RSA of a person alone, 7 544.64 EUR, and the
-    prime de Noël of one, 152.45: 19 755.65 EUR of disposable income with the AAH. Left in the
-    parent's famille, openfisca counted the child at charge and the AAH among the parent's
-    resources: no RSA, 12 058.56 EUR in all."""
+    R. 262-3), and the AAH passes the half of the RSA a second person adds (art. R. 262-1). A
+    parent alone without income, without a dwelling, keeps the RSA of a person alone, 7 544.64
+    EUR, and the prime de Noël of one, 152.45: 19 755.65 EUR of disposable income with the AAH.
+    Left in the parent's famille, openfisca counted the child at charge and the AAH among the
+    parent's resources: no RSA, 12 058.56 EUR in all."""
     rows = _rows(_avec_enfant_majeur({"taux_incapacite": 0.8}, 0), "full")
     assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
     assert rows["mva"] == 0.0
