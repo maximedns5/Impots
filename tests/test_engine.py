@@ -3021,6 +3021,170 @@ def test_the_engine_alone_pays_the_aspa_beside_an_asi_spouse_half_the_couple_max
 
 
 # --------------------------------------------------------------------------- #
+# the AAH among the resources of a spouse's ASPA or ASI (docs/DECISIONS.md D-200)
+# --------------------------------------------------------------------------- #
+#: The AAH a month, from October 2023 to December 2024: 971.37 EUR to March, 1 016.05 from
+#: April. The minimum of a spouse reads it over the three months before each month of 2024
+#: (CSS art. R. 815-29).
+AAH_MOIS = [971.37] * 6 + [1_016.05] * 9
+#: The ASPA's ceiling for a couple and its maximum when one spouse alone draws it, a month in
+#: 2024 (CSS art. D. 815-1, a, and D. 815-2).
+ASPA_PLAFONDS = [ASPA_COUPLE_2024 / 12] * 12
+ASPA_MAXIMA = [ASPA_SEULE_2024 / 12] * 12
+#: The ASI's ceiling for a couple, and the cap of a lone beneficiary whose spouse draws neither
+#: the ASI nor the ASPA: the single ceiling less the minimum invalidity pension (art. D. 815-19,
+#: 2° b, correction 10). Three months at the 2023 values, nine at the 2024 ones.
+ASI_PLAFONDS = [ASI_PLAFOND_COUPLE[0] / 12] * 3 + [ASI_PLAFOND_COUPLE[1] / 12] * 9
+ASI_MAXIMA = ([ASI_PLAFOND_SEUL[0] / 12 - PENSION_INVALIDITE_MINIMUM_2024] * 3
+              + [ASI_PLAFOND_SEUL[1] / 12 - PENSION_INVALIDITE_MINIMUM_2024] * 9)
+
+
+def _a_cote_d_une_aah_by_hand(pensions: float, plafonds: list[float], maxima: list[float],
+                              aah_comptee: bool = True) -> float:
+    """The minimum over 2024 of a spouse who alone draws it, beside an AAH at its full amount: a
+    month at a time, the ceiling less the couple's pensions and, when it counts, the mean AAH of
+    the three months before, within the month's maximum (CSS art. L. 815-9, L. 815-24-1)."""
+    total = 0.0
+    for month in range(12):
+        aah = sum(AAH_MOIS[month:month + 3]) / 3 if aah_comptee else 0.0
+        total += max(0.0, min(maxima[month], plafonds[month] - pensions / 12 - aah))
+    return total
+
+
+def _aah_et_conjoint(naissance: int = 1958, retraite: float = 0.0, *, second: bool = False,
+                     conjoint: dict[str, Any] | None = None) -> HouseholdInput:
+    """A married couple without a dwelling: an AAH at 80 % born in `naissance`, with a
+    retirement pension of `retraite` a year when told, beside a spouse born in 1954 with 5 000
+    EUR of retirement pension, at the ASPA, unless `conjoint` says otherwise. The couple of
+    D-185 and D-179. `second` puts the AAH second, as the famille's `conjoint`."""
+    fields: dict[str, Any] = {"pension_annuelle": retraite} if retraite else {}
+    aah = _adulte(naissance=naissance, handicap={"taux_incapacite": 0.8}, **fields)
+    epoux = conjoint or _adulte(naissance=1954, pension_annuelle=5_000)
+    return _foyer(*((epoux, aah) if second else (aah, epoux)))
+
+
+#: The households the D-200 tests price, each computed once.
+AAH_CONJOINT_CASES: dict[str, Any] = {
+    "sans_pension_49_ans": lambda: _aah_et_conjoint(1975),
+    "sans_pension_63_ans": lambda: _aah_et_conjoint(1961),
+    "sans_pension_66_ans": lambda: _aah_et_conjoint(1958),
+    "retraite_60_ans": lambda: _aah_et_conjoint(1964, 3_000),
+    "retraite_62_ans": lambda: _aah_et_conjoint(1962, 3_000),
+    "retraite_66_ans": lambda: _aah_et_conjoint(1958, 3_000),
+    "retraite_66_ans_second": lambda: _aah_et_conjoint(1958, 3_000, second=True),
+    "retraite_de_100_euros": lambda: _aah_et_conjoint(1958, 100),
+    "retraite_a_cote_de_l_asi": lambda: _aah_et_conjoint(
+        1958, 3_000, conjoint=_adulte(naissance=1980, pension_invalidite_annuelle=6_000)),
+    "sans_pension_a_cote_de_l_asi": lambda: _aah_et_conjoint(
+        1975, conjoint=_adulte(naissance=1980, pension_invalidite_annuelle=6_000)),
+}
+
+
+@functools.cache
+def _aah_conjoint_rows(name: str) -> dict[str, Any]:
+    """One of `AAH_CONJOINT_CASES` priced as the API prices it, by `compute` on the full tier."""
+    return compute(AAH_CONJOINT_CASES[name](), 2024, tier="full").baseline
+
+
+@pytest.mark.parametrize("name", ["sans_pension_49_ans", "sans_pension_63_ans",
+                                  "sans_pension_66_ans"], ids=["49 ans", "63 ans", "66 ans"])
+def test_beside_a_spouse_at_the_aspa_the_aah_of_a_spouse_without_a_pension_counts(
+    name: str,
+) -> None:
+    """The ASPA is due only if it and « des ressources personnelles de l'intéressé et du
+    conjoint » stay under the ceiling (CSS art. L. 815-9), and every resource counts but those
+    excluded (art. R. 815-22). The AAH is excluded « du demandeur », and « du conjoint [...] s'il
+    est titulaire d'un avantage de vieillesse ou d'invalidité » (the Cnav's list of the resources
+    the ASPA excludes, after the ministerial letter of 19 March 1982). A spouse without any
+    pension is neither: the AAH counts, whatever the age. D-185's couple, an AAH at 80 % beside
+    a spouse of 70 with 5 000 EUR of pension, ends at 18 943.38 EUR, as at 49 (D-179) or 63: the
+    ASPA tops the couple up to its ceiling, 183.13 EUR a month to April, 138.45 from July."""
+    rows = _aah_conjoint_rows(name)
+    aspa = _a_cote_d_une_aah_by_hand(5_000, ASPA_PLAFONDS, ASPA_MAXIMA)
+    assert rows["aah"] == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(5_000 + AAH_2024 + aspa, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(18_943.38, abs=0.01)
+
+
+@pytest.mark.parametrize(("name", "retraite"), [
+    ("retraite_60_ans", 3_000), ("retraite_62_ans", 3_000), ("retraite_66_ans", 3_000),
+    ("retraite_66_ans_second", 3_000), ("retraite_de_100_euros", 100),
+], ids=["60 ans", "62 ans", "66 ans", "66 ans, second", "100 euros"])
+def test_beside_a_spouse_at_the_aspa_the_aah_of_a_pensioner_is_left_out(
+    name: str, retraite: float,
+) -> None:
+    """An AAH holder who draws a retirement pension « est titulaire d'un avantage de vieillesse »:
+    the Cnav leaves the AAH, which only tops that pension up, out of the spouse's ASPA. The ASPA
+    is then the couple's ceiling less the two pensions, within the maximum of one beneficiary
+    (CSS art. D. 815-1, a): 904.50 EUR a month beside 3 000 and 5 000 EUR of pension, at 60, 62
+    or 66, whichever spouse heads the famille. openfisca counted the AAH below 64 and, with the
+    AAH holder out of the ASPA since D-185, at every age: 1 451.69 EUR of ASPA and 18 510.25 of
+    disposable income instead of 10 854.02 and 27 912.58. The first euro of pension is enough:
+    with 100 EUR, the whole single maximum, and 29 202.83 EUR against D-185's 18 943.38."""
+    rows = _aah_conjoint_rows(name)
+    aspa = _a_cote_d_une_aah_by_hand(5_000 + retraite, ASPA_PLAFONDS, ASPA_MAXIMA,
+                                     aah_comptee=False)
+    assert aspa == pytest.approx(min(ASPA_SEULE_2024, ASPA_COUPLE_2024 - 5_000 - retraite),
+                                 abs=0.01)
+    assert rows["aah"] + retraite == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["aspa"] == pytest.approx(aspa, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(5_000 + AAH_2024 + aspa, abs=0.05)
+
+
+def test_beside_a_spouse_at_the_asi_the_aah_of_a_pensioner_is_left_out_too() -> None:
+    """The ASI's resources are those of the ASPA (art. R. 815-61), and the Cnav's list for the
+    ASI excludes the AAH of a spouse who holds an old-age or invalidity benefit in the same
+    words. Beside the AAH holder of 66 with 3 000 EUR of pension, an invalidity pensioner with
+    6 000 EUR draws the cap of a lone beneficiary (art. D. 815-19, 2° b): 6 739.27 EUR over
+    2024, where the AAH counted left 613.08. Beside an AAH holder without a pension, the AAH
+    counts, and the ASI is 714.00 EUR."""
+    rows = _aah_conjoint_rows("retraite_a_cote_de_l_asi")
+    asi = _a_cote_d_une_aah_by_hand(9_000, ASI_PLAFONDS, ASI_MAXIMA, aah_comptee=False)
+    assert asi == pytest.approx(6_739.27, abs=0.01)
+    assert rows["asi"] == pytest.approx(asi, abs=0.05)
+    assert rows["aah"] + 3_000 == pytest.approx(AAH_2024, abs=0.05)
+    assert rows["revenu_disponible"] == pytest.approx(6_000 + AAH_2024 + asi, abs=0.05)
+    rows = _aah_conjoint_rows("sans_pension_a_cote_de_l_asi")
+    asi = _a_cote_d_une_aah_by_hand(6_000, ASI_PLAFONDS, ASI_MAXIMA)
+    assert asi == pytest.approx(714.00, abs=0.01)
+    assert rows["asi"] == pytest.approx(asi, abs=0.05)
+
+
+@pytest.mark.parametrize("name", ["retraite_66_ans", "retraite_a_cote_de_l_asi"])
+def test_the_aah_left_out_prices_the_same_whatever_is_computed_first(name: str) -> None:
+    """Built as `compute` builds the full tier, the housing aid pinned month by month (D-178,
+    D-179). Through the registry, as the API computes it, and with `revenu_disponible` first, as
+    the EMTR's bumped leg does: the ASPA, the ASI, the AAH and the disposable income agree."""
+    situation = build_situation(AAH_CONJOINT_CASES[name](), 2024)
+    registry = extract(_pinned(situation), 2024, "full")
+    first = _pinned(situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    assert disposable == pytest.approx(registry["revenu_disponible"], abs=0.05)
+    for key in ("aspa", "asi", "aah"):
+        assert float(first.calculate_add(key, "2024").sum()) == pytest.approx(
+            registry[key], abs=0.05), key
+
+
+def test_the_engine_alone_counts_the_aah_of_a_pensioner_beside_a_spouse_at_the_aspa() -> None:
+    """The kill test for correction 16. At 62, 80 % and 3 000 EUR of pension, raw openfisca
+    finds its AAH holder below the ASPA's age (64 in its tree) and counts the AAH among the
+    couple's resources: in June 2024, 250 EUR of pension and the mean AAH of March to May, the
+    AAH amount less that pension, 1 001.16 EUR in all. The day this fails, openfisca leaves the
+    AAH of a pensioner out itself, and the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    raw = SimulationBuilder().build_from_entities(
+        uncorrected_baseline(), build_situation(_aah_et_conjoint(1962, 3_000), 2024))
+    assert list(raw.calculate("aspa_eligibilite", "2024-06")) == [False, True]
+    aah = (971.37 + 2 * 1_016.05) / 3 - 3_000 / 12
+    base = raw.calculate("asi_aspa_base_ressources_individu", "2024-06")
+    assert float(base[0]) == pytest.approx(3_000 / 12 + aah, abs=0.01), (
+        "openfisca now leaves out the AAH of a spouse who holds a retirement pension: remove "
+        "correction 16")
+
+
+# --------------------------------------------------------------------------- #
 # the home-help credit's ceiling of 20 000 EUR, case 7DG (docs/DECISIONS.md D-196)
 # --------------------------------------------------------------------------- #
 #: CGI art. 199 sexdecies, 3 and 4, on 2024 incomes, read in the article and not in the tree.
