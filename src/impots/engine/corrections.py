@@ -96,8 +96,9 @@ with a differential AAH on top. The totals differ only where the ASPA's ceiling 
 the AAH amount, as from January to March 2024 (1 012.02 against 971.37 EUR a month). An
 AAH holder with a pension above the AAH amount in such a month loses the small ASPA they
 might claim. In a couple, the ASPA of the other spouse now counts the AAH as a resource,
-as it does for a younger AAH holder (D-179). openfisca leaves it out when the AAH holder is
-of ASPA age, citing a CNAV note of 1982 that this project has not been able to read.
+as it does for a younger AAH holder (D-179). openfisca left it out when the AAH holder was
+of ASPA age, citing a ministerial letter of 1982; D-200 read it, and the Cnav's rule turns
+on the AAH holder's pension, not on the age (correction 16).
 
 **Blast radius:** a disability over 50 % from 62. On the wire, the disability field. The
 population carries no disability, and nothing in it moves.
@@ -380,6 +381,47 @@ of the c).
 the ASPA. On the wire, the invalidity pension field beside a spouse at the ASPA's age, from 65,
 or from 62 for an invalidity pensioner or an incapacity over 50 %. The population carries no
 invalidity pension, and nothing in it moves.
+
+---
+
+**Correction 16 — the AAH of a pensioner left out of a spouse's minimum (CSS art. R. 815-22;
+ministerial letter of 19 March 1982), D-200.**
+
+The ASPA counts « tous les avantages d'invalidité et de vieillesse dont bénéficie l'intéressé,
+des revenus professionnels et autres », « indépendamment des ressources exclues par des
+dispositions particulières » (art. R. 815-22), the spouses' totalled (art. R. 815-27); the ASI's
+resources are the same (art. R. 815-61). The article's list has no AAH. The ministerial letter
+of 19 March 1982 holds that the AAH « ne doit donc pas être exclue des ressources », then
+tempers it by the AAH's subsidiarity: « il peut être fait abstraction de l'allocation aux
+adultes handicapés à taux différentiel dont bénéficient les titulaires d'un avantage de
+vieillesse ou d'invalidité ». Circular Cnav 2007/15 kept it for the ASPA, and the Cnav's list
+of the resources the ASPA excludes names the « Allocation aux adultes handicapés (AAH et ses
+compléments) du demandeur » and the « AAH (et ses compléments) du conjoint, concubin ou pacsé
+s'il est titulaire d'un avantage de vieillesse ou d'invalidité »; its list for the ASI says the
+same. The line is the pension, not the age.
+
+openfisca leaves out the AAH of whoever is eligible to the ASPA or the ASI, or draws an
+invalidity pension: the age, then, and not the retirement pension. Since correction 4 an AAH
+holder is never eligible to the ASPA, so the AAH of a retirement pensioner counted at every
+age; raw openfisca counted it below 64. Measured beside a spouse of 70 with 5 000 EUR of
+pension, an AAH holder at 80 % with 3 000 EUR of pension: 1 451.69 EUR of ASPA over 2024
+instead of 10 854.02, and 18 510.25 EUR of disposable income instead of 27 912.58.
+
+The correction takes off openfisca's base the AAH its formula counted, for whoever draws a
+retirement pension that month: openfisca's own tests, from the same periods, and the base
+otherwise its own. Without a pension the AAH counts, at any age: D-185's couple keeps its
+18 943.38 EUR.
+
+What it leaves: the compléments, which the lists treat as the AAH. A spouse's MVA counts when
+the spouse holds no pension; openfisca's base never reads it, at most 1 257.24 EUR a year of a
+housed couple's ASPA. And the line itself: the first euro of pension takes the AAH out of the
+spouse's resources, 29 202.83 EUR of disposable income with 100 EUR of pension against
+18 943.38 without (D-200).
+
+**Blast radius:** a couple where one spouse draws the AAH and a retirement pension, and the
+other is eligible to the ASPA or the ASI. On the wire, the disability field with a pension,
+beside a spouse at the ASPA's age or with an invalidity pension. The population carries no
+disability, and nothing in it moves.
 """
 
 from __future__ import annotations
@@ -517,6 +559,17 @@ CORRECTIONS: tuple[Correction, ...] = (
         decision="D-194",
         kill_test="test_the_engine_alone_pays_the_aspa_beside_an_asi_spouse_half_the_couple_maximum",
     ),
+    Correction(
+        name="aah_d_un_conjoint_retraite_hors_des_ressources_du_minimum",
+        citation="CSS art. R. 815-22 — toutes les ressources comptent, « indépendamment des "
+                 "ressources exclues par des dispositions particulières » ; la lettre "
+                 "ministérielle du 19 mars 1982, que reprend la liste de la Cnav, exclut l'« AAH "
+                 "(et ses compléments) du conjoint, concubin ou pacsé s'il est titulaire d'un "
+                 "avantage de vieillesse ou d'invalidité »",
+        decision="D-200",
+        kill_test="test_the_engine_alone_counts_the_aah_of_a_pensioner_beside_a_spouse_at_the_"
+                  "aspa",
+    ),
 )
 
 AL_BASE = "aide_logement_base_ressources_individu"
@@ -571,6 +624,9 @@ SALARIES = "revenu_assimile_salaire"
 SALARIES_AFTER_DEDUCTION = "revenu_assimile_salaire_apres_abattements"
 #: The ASS's work condition, without which openfisca's ASS is nil (`ass_eligibilite_individu`).
 ASS_CONDITION = "ass_precondition_remplie"
+#: Each person's resources for the ASPA and the ASI, which correction 16 rids of the AAH of
+#: whoever draws a retirement pension.
+ASI_ASPA_BASE = "asi_aspa_base_ressources_individu"
 
 
 def apply_to(system: Any) -> Any:
@@ -619,6 +675,8 @@ def apply_to(system: Any) -> Any:
             self.update_variable(_asi_half_beside_a_spouse_at_the_aspa(asi_capped))
             aspa_amount = self.get_variable(ASPA_AMOUNT).get_formula(ASI_DIFFERENTIELLE_DEPUIS)
             self.update_variable(_aspa_half_beside_a_spouse_at_the_asi(aspa_amount))
+            base_formula = self.get_variable(ASI_ASPA_BASE).get_formula("0001-01-01")
+            self.update_variable(_aah_of_a_pensioner_left_out(base_formula))
 
     return BenefitCorrections(system)
 
@@ -1078,6 +1136,37 @@ def _aspa_half_beside_a_spouse_at_the_asi(openfisca_formula: Any) -> Any:
                          openfisca_formula(famille, period, parameters))
 
     return aspa
+
+
+def _aah_of_a_pensioner_left_out(openfisca_formula: Any) -> Any:
+    """`asi_aspa_base_ressources_individu`, without the AAH of whoever draws a retirement
+    pension that month: the ASPA and the ASI leave out the AAH « du conjoint [...] s'il est
+    titulaire d'un avantage de vieillesse ou d'invalidité » (the Cnav's lists, after the
+    ministerial letter of 19 March 1982). openfisca's formula, less the AAH it counted."""
+    from openfisca_core.model_api import ADD, MONTH, Variable, not_, set_input_divide_by_period
+    from openfisca_france.entities import Individu
+
+    class asi_aspa_base_ressources_individu(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Base ressources individuelle du minimum vieillesse/ASPA, hors l'AAH de qui est "
+                 "titulaire d'une pension de retraite (lettre ministérielle du 19 mars 1982)")
+        definition_period = MONTH
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047770487"
+        set_input = set_input_divide_by_period
+
+        def formula(individu, period, parameters):
+            # The AAH openfisca's formula counts, from the same periods and on its own tests: it
+            # leaves out only that of whoever is eligible to the ASPA or the ASI, or draws an
+            # invalidity pension.
+            aah = individu("aah", period.last_3_months, options=[ADD])
+            comptee = (aah * not_(individu("aspa_eligibilite", period))
+                       * not_(individu("asi_eligibilite", period))
+                       * not_(individu("pensions_invalidite", period) > 0))
+            retraite = individu("retraite_brute", period) > 0
+            return openfisca_formula(individu, period, parameters) - comptee * retraite / 3
+
+    return asi_aspa_base_ressources_individu
 
 
 def _aeeh_complement_at_its_own_category(openfisca_formula: Any) -> Any:
