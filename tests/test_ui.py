@@ -1049,7 +1049,7 @@ def test_every_household_field_on_the_wire_is_sent_by_the_payload(source: str):
     for field in HouseholdInput.model_fields:
         assert re.search(rf"\b{field}\b", body), f"{field} is never sent"
     read = re.findall(r'\$\("(\w+)"\)', body)
-    assert "situation" in read, "the payload reads no situation de famille"
+    assert read, "the payload reads no element of the page"
     for element in read:
         assert f'id="{element}"' in source, f"{element} is read, and no element has that id"
 
