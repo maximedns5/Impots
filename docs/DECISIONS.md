@@ -12655,3 +12655,220 @@ ajoutés : 25 au moteur, 4 à l'API et 2 à la page.
   a2e965a9596aa9aad7d54144d8c6a7b8de755f8d90e3b8fea2abdd0f6c244759.
 * DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
   interrogé le 6 octobre 2026 sur 22 déclarations fictives.
+
+## D-199 — La case T de N-2 et de N-1 dans la population : les parts que lit la CSG
+
+**Le point de départ.** D-195 l'avait laissé dans « Ce qui reste » : « Le câblage n'écrit la
+case T que sur l'année N, le constructeur du ménage de N-2 à N. Les taux de la CSG d'un
+revenu de remplacement lisent les parts de N-2. Écrite aussi sur N-2 et N-1, la case T
+ferait monter le revenu disponible de deux ménages de la fixture, de 839,58 € et 104,64 €
+[...]. C'est un changement du câblage, à faire à part. » Le voici. L'écart n'est pas celui
+d'openfisca mais du câblage de la population : aucune correction n'entre dans
+`engine.corrections`.
+
+**Ce que dit la loi.** Les articles ont été lus sur Légifrance. Légifrance refuse le
+téléchargement direct (403), et l'outil de lecture peut abréger : chaque passage cité a été
+relevé mot pour mot sur une seconde reproduction, nommée dans les sources.
+* **Le taux suit le revenu et les parts de l'avant-dernière année.** Le taux de 3,8 %
+  frappe le revenu de remplacement des personnes « dont les revenus définis au IV de
+  l'article 1417 du code général des impôts perçus l'avant-dernière année excèdent 11 128 €
+  pour la première part de quotient familial, majorés de 2 971 € pour chaque demi-part
+  supplémentaire » (CSS, art. L. 136-8, III, 1°, version du 16 décembre 2020 au 1er juillet
+  2025). Celui de 6,6 % frappe la pension des personnes « dont les revenus de
+  l'avant-dernière année, définis au IV de l'article 1417 du code général des impôts : 1°
+  D'une part, excèdent 14 548 € pour la première part de quotient familial, majorés de
+  3 884 € pour chaque demi-part supplémentaire » (III bis). Les seuils « sont revalorisés
+  au 1er janvier de chaque année » (III ter).
+* **Les taux, et ce qui les suit.** La direction de la sécurité sociale l'a rappelé aux
+  caisses pour 2024 : « Selon le RFR de leurs titulaires, les pensions de retraite ou
+  d'invalidité peuvent être assujetties au taux de 8,3 %, 6,6 %, 3,8 % ou exonérées. Les
+  allocations chômage peuvent être assujetties au taux de 6,2 %, 3,8 % ou exonérées. » Les
+  mêmes seuils valent pour la CSG « et par renvoi à la CRDS, à la CASA et à la cotisation
+  maladie ». En 2024, 12 230 €, 15 988 € et 24 813 € pour la première part, majorés de
+  3 265 €, 4 269 € et 6 623 € par demi-part supplémentaire (lettre du 23 novembre 2023,
+  annexe 2) : les valeurs de l'arbre.
+* **Les parts de l'année du revenu.** La même lettre applique les seuils de 2024 « sur la
+  base des montants de revenu fiscal de référence figurant sur les avis d'imposition sur les
+  revenus de 2022 et 2021 ». Et : « En cas de modification de la composition du foyer et/ou
+  du lieu de résidence entre N-3 et N-2, il est tenu compte du nombre de parts fiscales de
+  chaque année pour la détermination des seuils applicables. » Son premier exemple lit les
+  parts sur l'avis : « selon l'avis d'impôt 2023, en 2022 le foyer fiscal est de 2 parts ».
+  L'Unédic le disait des allocations chômage, dont les seuils varient « selon le nombre de
+  parts de quotient familial retenu pour le calcul de l'impôt » (circulaire n° 2020-02).
+* **La case T de N-2.** « Pour l'imposition des contribuables célibataires ou divorcés qui
+  vivent seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à
+  titre exclusif ou principal la charge d'au moins un enfant » (CGI, art. 194, II, lu pour
+  D-193). « La situation dont il doit être tenu compte est celle existant au 1er janvier de
+  l'année de l'imposition », et de même les charges de famille, sauf « en cas d'augmentation
+  des charges de famille en cours d'année » (art. 196 bis, en vigueur depuis le 1er janvier
+  2011). L'année d'imposition est « l'année de réalisation des revenus »
+  (BOI-IR-LIQ-10-10-20, § 1). La CSG de 2024 lit donc les parts de 2022, et la case T du
+  1er janvier 2022.
+
+**Ce que fait openfisca.**
+* **La case.** `caseT` est un booléen du foyer fiscal, annuel et sans formule : « Vous êtes
+  parent isolé au 1er janvier de l'année de perception des revenus ». Non écrite, elle vaut
+  faux. `nbptr` la lit pour la demi-part, et `ir_plaf_qf` pour le plafond de 4 224 € de la
+  part du premier enfant (D-193), chacun sur sa propre année. La prime pour l'emploi, qui la
+  lit aussi, s'arrête en 2015.
+* **Les parts de N-2.** La CSG et la CRDS d'une allocation chômage
+  (`csg_deductible_chomage`, `csg_imposable_chomage`, `crds_chomage`) et d'une pension
+  (`csg_deductible_retraite`, `csg_imposable_retraite`, `crds_retraite`), et la CASA,
+  lisent `nbptr` de N-2. Chaque seuil y vaut celui de la première part, plus
+  `(nbptr - 1) * 2` fois celui de la demi-part. La correction 9 applique les formules de la
+  pension de retraite à la pension d'invalidité (D-190), que la population n'écrit pas.
+  Hors du revenu disponible, le livret d'épargne populaire, le pass colo et « Départ
+  18:25 » lisent aussi les parts de N-2, et le contrat d'engagement jeune la tranche
+  d'impôt de N-2 : aucun n'est une ligne du registre.
+* **Les parts de N-1.** Seule la taxe d'habitation les lit, et elle s'arrête en 2022 dans
+  l'arbre. En 2024, aucune ligne du registre ne lit la case T de N-1 : elle est écrite pour
+  suivre le constructeur, et ne déplace aucun nombre.
+* **Le revenu fiscal de référence** ne lit pas les parts. Celui de N-2, que les deux chemins
+  calculent d'abord et épinglent (D-177), ne change pas.
+* **L'antépénultième année.** Le 2° du III garde le taux de 3,8 % dès que les revenus de
+  l'une des deux années, « perçus l'avant-dernière ou l'antépénultième année », restent sous
+  le second seuil, chacune avec ses parts (lettre du 23 novembre 2023, annexe 3). openfisca
+  ne lit que N-2.
+
+**Ce que faisait le câblage.** `population.to_openfisca` écrit sur chaque mois de N-2 à N
+le salaire, la pension, en `retraite_brute` et en `retraite_imposable`, l'allocation
+chômage, le statut d'occupation, la zone et le loyer, comme le constructeur du ménage. La
+case T n'allait que sur N. Le constructeur l'écrit sur les trois années, comme les cases P
+et F (D-188) et la situation de famille (D-197), parce que la CSG d'un revenu de
+remplacement lit les parts de N-2. Un même parent seul, retraité ou au chômage, ne valait
+donc pas la même chose dans la calculette et dans la population.
+
+**Aucun autre drapeau.** La case T était le seul drapeau du foyer écrit sur trois ans par
+l'un et sur N seule par l'autre. La population n'écrit ni les cases P et F (D-193), ni la
+case 7DG (D-196), ni la situation de famille (D-197). Ses bases de niches vont sur N seule,
+comme celles du constructeur.
+
+**La correction.** `build_simulation` écrit la case T de chaque foyer sur N-2, N-1 et N,
+avant d'épingler le revenu fiscal de référence de N-2. La docstring du module en fait son
+septième mode d'échec.
+
+**L'hypothèse.** L'enquête Emploi voit le logement une année, et la case T de N en est déjà
+déduite (D-006, D-195). Écrite sur N-2 et N-1, elle suppose le même foyer au 1er janvier de
+ces deux années : le même parent seul, avec les mêmes personnes à charge. C'est l'hypothèse
+que l'historique des revenus fait depuis D-011, et celle que le constructeur fait pour la
+case T. Elle va jusqu'au bout : openfisca compte une personne à charge à son rôle, pas à sa
+naissance. Mesuré, un parent seul et un enfant né en 2024 ont 2 parts en 2022, en 2023 et en
+2024, dans la population comme dans la calculette.
+
+**Ce que la population en fait, mesuré sur la fixture.** 400 ménages et 439 foyers. Le
+palier complet a été calculé avec le code de `main` puis avec celui de la branche, sur la
+même table. Des 43 foyers qui portent la case T, 11 ont une pension ou une allocation
+chômage. Deux franchissent un seuil, ceux que D-195 avait trouvés : deux retraitées à qui
+le squelette donne des enfants de moins de 15 ans.
+
+| ménage | RFR de 2022 | parts de 2022 | taux de 2024 | revenu disponible |
+|---|---:|---:|---|---:|
+| 82 ans, 31 095,82 € de pension | 27 985,82 € | 2 → 2,5 | 6,6 % → 3,8 % | +839,58 € |
+| 67 ans, 20 927,62 € de pension | 17 524,62 € | 1,5 → 2 | 3,8 % → 0 | +104,64 € |
+
+Refait à la main :
+* **La retraitée de 82 ans.** Ses deux enfants, de 14 et 12 ans, lui donnent 2 parts, et la
+  case T 2,5. Le taux réduit va jusqu'à 15 988 + 2 × 4 269 = 24 526 € à 2 parts, et jusqu'à
+  15 988 + 3 × 4 269 = 28 795 € à 2,5 parts ; le taux de 6,6 %, jusqu'à 24 813 + 2 × 6 623 =
+  38 059 € à 2 parts. Avec 27 985,82 €, elle passe de 6,6 % à 3,8 %. Sur 31 095,82 €, la CSG
+  non déductible, 2,4 %, vaut 746,30 €, et la CASA, 0,3 %, 93,29 € : 839,59 € à la main,
+  839,58 € mesurés. La CSG déductible passe de 4,2 %, 1 306,02 €, à 3,8 %, 1 181,64 €, mais
+  la pension déclarée en est déjà nette (D-176) : le revenu disponible ne la voit pas. La
+  CRDS reste à 155,48 €.
+* **La retraitée de 67 ans.** 1,5 part, et 2 avec la case T. Son revenu fiscal de référence
+  de 2022, mesuré, retire de sa pension 2 093 € d'abattement de 10 % et 1 310 € de
+  l'art. 157 bis, à 65 ans. L'exonération va jusqu'à 12 230 + 3 265 = 15 495 € à 1,5 part,
+  et jusqu'à 12 230 + 2 × 3 265 = 18 760 € à 2 parts. Avec 17 524,62 €, elle passe du taux
+  réduit à l'exonération. La CRDS, 0,5 % de 20 927,62 €, soit 104,64 €, tombe, et avec elle
+  la CSG de 3,8 %, 795,25 €, toute déductible.
+* **Rien d'autre pour elles.** Ni leur impôt, ni leurs parts de 2024, ni aucune prestation :
+  la pension imposable est épinglée sur le montant déclaré (D-176), et la CSG de 2024 ne lit
+  les parts de 2022 que pour son taux.
+
+**Rien d'autre ne bouge.** Des 51 colonnes numériques du palier complet, 50 sont identiques
+au bit près sur les 400 ménages, et la dernière, le revenu disponible, ne bouge que pour ces
+deux-là. Les 29 colonnes du palier léger sont identiques : une allocation chômage qui
+passerait de l'exonération au taux réduit y toucherait l'impôt, par sa CSG déductible, et
+aucune ne le fait sur la fixture. L'EMTR de la population, calculé avec les deux codes, est
+identique pour les 400 ménages : les deux retraitées n'ont pas de salaire.
+
+**Sur l'EEC entière.** Le fichier détail n'est pas dans ce conteneur : seul `make full`
+mesurera ce que la correction déplace, sur la population reconstruite que demande D-195.
+
+**Les caches.**
+* **La population construite** ne change pas : la colonne `parent_isole` est la même, et le
+  câblage la lit seulement sur plus d'années. La reconstruction qu'attend `make full` est
+  celle de D-195.
+* **Les caches EMTR** portent `to_openfisca.WIRING` et ne vérifient que le nombre de
+  ménages, que rien ne change ici. `WIRING` passe à « D-199 ». Sur la fixture, aucun taux ne
+  bouge. Sur l'EEC entière, celui d'un parent seul qui a un salaire et un revenu de
+  remplacement près d'un seuil le pourrait : la jambe relevée de l'EMTR relève le salaire de
+  N-2 à N, et avec lui le revenu fiscal de référence de N-2.
+* **Le résumé de la population**, `data/processed/baseline_2024.json`, le rapport de
+  réconciliation et les fiches dépendent du revenu disponible de la population, et ne se
+  régénèrent pas ici.
+
+**Vus échouer, puis mutés.** Écrits avant la correction et commis seuls, les quatre tests
+tombaient sur le code de `main` :
+* le test de forme,
+  `test_case_t_and_its_parts_are_on_every_year_the_household_builder_writes`, sur la case T
+  de 2022, fausse pour les 43 foyers qui la portent en 2024, 43 éléments sur 439 ;
+* `test_a_lone_parent_s_replacement_income_is_levied_at_the_rate_of_two_parts`, sur les
+  parts de 2022, 1,5 au lieu de 2 pour les deux parents seuls. Mesurés sur `main`, la
+  pension payait 1 050 € de CSG déductible, 600 € de CSG non déductible et 75 € de CASA, et
+  l'allocation 589,50 € de CSG non déductible ;
+* `test_a_lone_parent_prices_the_same_in_the_calculator_and_in_a_population`, dans ses deux
+  cas : le revenu disponible de la population valait 26 940,80 € au lieu de 27 615,80 € pour
+  la pension, 675,00 € de moins, et 26 095,12 € au lieu de 26 684,62 € pour l'allocation,
+  589,50 € de moins. Les 39 autres lignes communes concordaient.
+
+À la main, pour les deux parents seuls de ces tests : 25 000 € de pension ou d'allocation,
+et un revenu fiscal de référence de 2022 de 22 500 €, après 10 %. Le taux réduit va jusqu'à
+24 526 € à 2 parts, et jusqu'à 15 988 + 4 269 = 20 257 € à 1,5 part, où la pension paie
+6,6 %, sous 24 813 + 6 623 = 31 436 €, et l'allocation 6,2 %. Sur la pension, 3,8 % font
+950 €, 4,2 % 1 050 €, 2,4 % 600 €, et la CASA 75 €. L'allocation est taxée sur 98,25 %
+d'elle-même, 24 562,50 € : 2,4 % font 589,50 €, 3,8 % 933,38 €, et la CRDS 122,81 €.
+Mesuré, ni l'un ni l'autre ne paie d'impôt.
+
+Trois mutations sont prises, chacune écrite dans une copie de `src` hors du dépôt, par un
+seul remplacement vérifié :
+* la case T écrite sur N-1 et N seulement : les quatre tests, aux valeurs de `main` ;
+* sur N-2 et N, sans N-1 : le test de forme seul, sur la case T de 2023, fausse pour les 43
+  foyers. Les trois autres passent, comme il le faut : en 2024, rien ne lit les parts de
+  N-1 ;
+* la case T écrite sur N-2 et N-1 pour tous les foyers : le test de forme seul, 396 éléments
+  sur 439. Les trois autres passent : leurs deux parents seuls portent déjà la case T.
+
+**Les tests.** Les quatre tests ajoutés et 24 tests voisins de la population : la case T du
+squelette, les rôles et les NaN, les deux chemins de D-183, l'ordre de calcul de D-176 à
+D-178, l'ASS de D-189 et D-192. 28 réussis. Les tests d'agrégats et de réforme sur la
+fixture, et celui des caches EMTR : 5 réussis. `tests/test_charter.py` : 8 réussis.
+`ruff check src tests scripts` : rien à signaler. Le gate complet n'a pas tourné, à la
+demande du propriétaire : le job `fast` de la CI fait tourner la suite sur la PR.
+
+**Ce qui reste.**
+* **L'EEC entière**, par `make full`, sur la population reconstruite de D-195.
+* **Le foyer stable.** L'enquête ne dit pas qui vivait seul au 1er janvier de N-2. Un parent
+  séparé en N-1 y reçoit à tort la demi-part de N-2, et peut-être un taux de CSG trop bas,
+  comme dans la calculette, qui fait la même hypothèse.
+* **L'antépénultième année.** openfisca ne lit que les revenus de N-2, et non ceux de N-3
+  que le 2° du III fait jouer avec eux. Ce n'est pas le sujet de cette entrée.
+* **Les enfants des deux retraitées**, que le squelette leur donne : la question de D-013.
+
+**Sources.**
+* CSS, art. L. 136-8, III, III bis et III ter (version du 16 décembre 2020 au 1er juillet
+  2025), lu sur Légifrance. Les passages cités ont été relevés mot pour mot sur la
+  reproduction de l'article, dans sa version issue de la loi n° 2019-486 du 22 mai 2019, que
+  joint la circulaire de l'Unédic n° 2020-02 : elle concorde sur chacun d'eux.
+* CGI, art. 196 bis (version en vigueur depuis le 1er janvier 2011), lu sur Légifrance et
+  relevé mot pour mot sur la reproduction d'advizexperts.fr ; art. 194, lu pour D-193.
+* BOFiP, BOI-IR-LIQ-10-10-20-20160229, § 1, lu sur bofip.impots.gouv.fr.
+* Direction de la sécurité sociale, lettre du 23 novembre 2023 (réf. D23-022880),
+  « RECTIFICATIF ANNEXE 2 - Modalités d'assujettissement des prélèvements sociaux sur les
+  revenus de remplacement applicables au 1er janvier 2024 », annexes 1 à 3, publiée sur
+  legislation.lassuranceretraite.fr. Sha256 du fichier :
+  8a0b01f2b440827ff68950cfd6297fd3c2e2b0953760c3ba4bd70a1c77276a74.
+* Unédic, circulaire n° 2020-02 du 30 janvier 2020, « Limites de revenus pour l'exonération
+  de la contribution sociale généralisée (CSG) et de la contribution pour le remboursement
+  de la dette sociale (CRDS) ». Sha256 du fichier :
+  91e78b62d2f4341f191e0dc53188904c84891d1d77cb2de9fc54665f380a9975.
