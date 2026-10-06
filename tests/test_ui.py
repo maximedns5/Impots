@@ -250,10 +250,13 @@ def test_the_panel_says_the_credits_are_refundable(source: str):
 
 def test_the_niche_panel_says_what_ticks_case_7dg(source: str):
     """Case 7DG is ticked by the builder, never typed (D-196): the panel says what opens the
-    20 000 EUR ceiling, and that the increment the law gives a member over 65 is not in the
-    engine, which counts the children only."""
+    20 000 EUR ceiling. And the increment the law gives each member over 65, which correction 15
+    applies since D-198, is on the ordinary ceiling beside the children's, read on 31 December
+    as the DGFiP reads it, and no longer said to be missing from the engine."""
     assert "7DG" in source and "20 000 €" in source
-    assert "plus de 65 ans" in source
+    assert ("plus 1 500 € par enfant à charge et par membre du foyer qui a 65 ans ou plus au "
+            "31 décembre") in " ".join(source.split())
+    assert "le moteur ne le fait pas" not in source
 
 
 def test_the_blind_spot_renderer_exists_and_runs_before_the_headline(source: str):

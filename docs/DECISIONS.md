@@ -12656,6 +12656,538 @@ ajoutés : 25 au moteur, 4 à l'API et 2 à la page.
 * DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
   interrogé le 6 octobre 2026 sur 22 déclarations fictives.
 
+## D-198 — L'emploi à domicile : le plafond majoré pour chaque membre de plus de 65 ans
+
+**Le point de départ.** D-196 l'avait laissé dans « Ce qui reste » : « La loi majore le
+plafond ordinaire de 1 500 € « au titre de chacun des membres du foyer fiscal âgé de plus de
+soixante-cinq ans », et openfisca ne le fait pas. » Deux retraités nés en 1954 et 1955, à
+30 000 et 15 000 € de pension, recevaient 6 000 € de crédit sur 18 000 € d'aide à domicile,
+au lieu de 7 500 €. « C'est un écart d'openfisca hors de la case 7DG, qui demande une
+correction et son test qui tue : une entrée à part. » La voici : la correction 15 de
+`engine.corrections`.
+
+**Ce que dit la loi.** Le 3 de l'article 199 sexdecies du CGI est le même dans les deux
+versions qui couvrent l'imposition des revenus de 2024, celle du 1er janvier 2023 au 16
+février 2025 et celle du 16 février 2025 au 21 février 2026, et dans celle en vigueur depuis
+le 14 juin 2026. L'outil de lecture de Légifrance abrège : le texte est relevé mot pour mot
+sur l'export de la base de Légifrance que publie codes.droit.org, qui porte la version en
+vigueur, et l'outil a retrouvé chacune de ses phrases, mot pour mot, dans les versions de
+2023 et de 2025. Sa première réponse lisait « âgés » dans la seconde ; relue, elle lit
+« âgé » dans les deux, comme l'export.
+* **Le plafond.** Les dépenses « sont retenues, pour leur montant effectivement supporté,
+  dans la limite de 12 000 € ». « La limite de 12 000 € est portée à 15 000 € pour la
+  première année d'imposition pour laquelle le contribuable bénéficie des dispositions du
+  présent article au titre du a du 1 », l'emploi direct. Les 20 000 € de la case 7DG sont
+  ceux de D-196.
+* **Les majorations.** « La limite de 12 000 € est majorée de 1 500 € par enfant à charge au
+  sens des articles 196 et 196 B et au titre de chacun des membres du foyer fiscal âgé de
+  plus de soixante-cinq ans. La majoration s'applique également aux ascendants visés au
+  premier alinéa du 2 remplissant la même condition d'âge. Le montant de 1 500 € est divisé
+  par deux pour les enfants réputés à charge égale de l'un et l'autre de leurs parents. »
+* **Les deux limites.** « La limite de 12 000 € augmentée de ces majorations ne peut excéder
+  15 000 €. Toutefois, lorsque les dispositions du deuxième alinéa sont applicables, la
+  limite de 15 000 € fait l'objet des majorations prévues au présent alinéa et le montant
+  total des dépenses ne peut excéder 18 000 €. » Les majorations de l'âge et celles des
+  enfants s'additionnent sous la même limite, 15 000 €, ou 18 000 € la première année.
+* **Le crédit.** « Le crédit d'impôt est égal à 50 % des dépenses mentionnées au 3 », et
+  « S'il excède l'impôt dû, l'excédent est restitué » (4).
+
+L'article ne dit pas à quelle date l'âge s'apprécie.
+
+**Ce qu'en dit l'administration.**
+* **Le BOFiP**, dans la version en vigueur du 20 septembre 2017 au 12 août 2026 : « La
+  limite de 12 000 euros est majorée de 1 500 euros » par enfant à charge, de moitié en
+  résidence alternée, « par membre du foyer fiscal âgé de plus de 65 ans » et par ascendant
+  (§ 140). « Les majorations ne peuvent pas avoir pour conséquence de porter le plafond de
+  dépenses au-delà de 15 000 euros » (§ 145). La première année, « La limite de 15 000 euros
+  peut être majorée de 1 500 euros par enfant à charge, pour tout membre du foyer fiscal âgé
+  de plus de 65 ans ou encore par ascendant », sans dépasser 18 000 euros (§ 160). « Aucune
+  majoration ne peut être appliquée à la limite de 20 000 euros » (§ 190). La version du 12
+  août 2026 dit la même chose. Ni l'une ni l'autre ne dit quand l'âge s'apprécie.
+* **La brochure pratique 2025**, pour les revenus de 2024, le dit. Sous « Emploi à
+  domicile », le crédit est égal à 50 % des dépenses retenues dans la limite de 12 000 €
+  « majorée de 1 500 € », « par enfant à charge ou rattaché », « par membre du foyer âgé de
+  plus de 65 ans au 31 décembre ou à la date du décès » et « par ascendant âgé de plus de 65
+  ans ». « La limite ainsi majorée ne peut pas excéder 15 000 € ». La première année, « La
+  limite de 15 000 € est majorée de 1 500 € selon la composition du foyer, dans les mêmes
+  conditions que la limite de 12 000 €. Dans ce cas, le plafond de dépenses ne peut pas
+  excéder 18 000 €. »
+* **La notice de la 2042** (n° 2041 NOT) : le montant des dépenses « est limité à 12 000 €
+  majoré de 1 500 € par enfant à charge ou rattaché (750 € si l'enfant est en résidence
+  alternée ou à charge partagée), par membre du foyer fiscal âgé de plus de 65 ans ou par
+  ascendant âgé de plus de 65 ans susceptible de bénéficier de l'APA lorsque les dépenses
+  sont engagées à son domicile. Ce plafond ne peut dépasser 15 000 €. » Pour l'abattement de
+  l'art. 157 bis, sa fiche de calcul traduit les mêmes mots en date : « Si vous êtes âgé(e)
+  de plus de 65 ans (né avant le 1.1.1960) ».
+* **La 2042** n'a de case que pour les ascendants (7DL). Le simulateur tire les membres de
+  plus de 65 ans des années de naissance qu'on lui donne.
+* **Les règles de calcul de la DGFiP**, publiées sur la forge gitlab.adullact.net
+  (`dgfip/ir-calcul`), n'ont pas été lues : la forge oppose à curl une épreuve anti-robot,
+  que ce travail n'a pas tenté de passer.
+
+**Ce qu'en fait le simulateur de la DGFiP.** Interrogé sur 20 déclarations fictives, pour
+les revenus de 2024, modèle simplifié :
+* les deux retraités, 30 000 et 15 000 € de pension en cases 1AS et 1BS, 18 000 € en case
+  7DB : 7 500 € de crédit, 1 343 € d'impôt avant crédits, et 6 157 € remboursés ;
+* un retraité seul à 20 000 € : 6 750 € né en 1954 ou en 1959, 6 000 € né en 1960. Un membre
+  compte dès l'année de ses 65 ans ;
+* un enfant né en 2014 : 7 500 € pour le retraité seul, sur 18 000 € comme sur 20 000 €, et
+  7 500 € pour les deux retraités, dont l'impôt vaut alors 424 − 7 500 = −7 076 € ;
+* la première année, case 7DQ cochée : 9 000 € pour les deux retraités sur 20 000 €, 8 250 €
+  pour le retraité seul sur 18 000 €, 9 000 € pour les deux avec deux enfants sur 25 000 €,
+  7 500 € pour un adulte né en 1980 sur 18 000 € ;
+* la case 7DG : 9 000 € sur 18 000 € et 10 000 € sur 25 000 €, sans majoration ;
+* une personne à charge de plus de 65 ans compte une fois : un enfant à charge né en 1950
+  (case F), à côté d'un déclarant né en 1980, donne 6 750 € sur 18 000 €. Une personne
+  invalide de la case R ne compte pas : 6 000 €, née en 1950 comme en 1990.
+
+**Qui compte, donc.** Chaque déclarant de 65 ans ou plus au 31 décembre de l'année des
+revenus : pour 2024, né en 1959 ou avant. Les personnes à charge comptent une fois, comme
+enfants, ce que fait déjà openfisca. La lettre de l'article pourrait compter deux fois un
+enfant à charge de plus de 65 ans, au titre de l'enfant et au titre de l'âge ; le simulateur
+ne le compte qu'une fois, et à côté d'un parent de plus de 65 ans la limite de 15 000 € rend
+la question sans effet.
+
+**Ce que fait openfisca.**
+* **La formule.** `ci_saldom` applique en 2024 sa formule de 2020. Hors de la case 7DG, le
+  plafond vaut `plafond` plus `increment_plafond` fois `nb_pac2 + f7dl`, borné par
+  `plafond_maximum` ; la première année (`f7dq`), `plafond_1ere_annee` plus les mêmes
+  majorations, borné par `plafond_maximum_1ere_annee`. Avec la case 7DG,
+  `plafond_invalides`, sans majoration. Le crédit vaut `taux` fois le plus petit du plafond
+  et de 7DB moins 7DR. Aucun âge n'y est lu.
+* **Elle le sait.** La docstring de la formule de 2011 : « Normalement, le plafond est aussi
+  augmenté pour chaque personne agée de plus de 65 ans dans le foyer (en plus des PACs et
+  des ascendants de 65 ans remplissant les conditions de l'APA). On ne prend pas en compte
+  le nombre de ces individus ici. » Le paramètre `increment_plafond` se décrit « par enfant
+  à charge, par membre du foyer fiscal de plus de 65 ans et par ascendant âgé de plus de 65
+  ans ». L'arbre ne porte aucun âge pour ce crédit.
+* **`nb_pac2`** vaut `nbF + nbJ + nbR - nbH / 2` : les enfants hors résidence alternée, les
+  personnes à charge majeures sans `handicap`, la case R, moins la moitié des enfants en
+  résidence alternée. Chaque personne à charge du format d'entrée y compte une fois, mineure
+  dans `nbF`, majeure dans `nbJ`.
+* **La première année**, écrite à la main sur la situation : 7 500 € pour les deux retraités
+  sur 20 000 €, 15 000 € sans majoration, là où le simulateur donne 9 000 €.
+
+**La correction 15 de `engine.corrections`.** Elle exécute la formule d'openfisca en lui
+faisant lire, dans `nb_pac2`, les déclarants de 65 ans ou plus au 31 décembre en plus des
+personnes à charge, comme les corrections 9 et 12 font lire à une formule d'openfisca ce
+qu'elle oublie.
+* **Le reste est d'openfisca** : la majoration, les deux limites, la première année, les
+  20 000 € sans majoration de la case 7DG, les aides de la case 7DR. Tout est lu dans
+  l'arbre, celui d'une réforme compris : le levier `saldom_plafond`, qui déplace les
+  12 000 € (D-196), déplace la limite que majorent les déclarants. Seul l'âge, 65 ans, est
+  une constante de la correction, faute de paramètre.
+* **L'âge** est lu sur `date_naissance` : né avant le 1er janvier de l'année N − 64, soit 65
+  ans au 31 décembre de N, une naissance le 31 décembre comprise. Les deux constructeurs
+  écrivent la naissance au 1er janvier, de l'année de naissance du format d'entrée ou de
+  l'âge de la population : c'est alors l'année de naissance, 1959 ou avant pour 2024. `age`,
+  lu au premier jour d'un mois, aurait laissé de côté en janvier qui fête ses 65 ans plus
+  tard dans l'année.
+* **« à la date du décès »** est sans objet : le format décrit un foyer sur toute l'année et
+  refuse l'année du décès (D-197).
+* **Depuis 2020**, la date de la formule qu'elle enroule. Celles de 2007, 2009 et 2011
+  restent, et aucune année que le projet accepte, de 2022 à 2026, ne les lit.
+* **Le test qui tue.** Sur openfisca brut, les deux retraités reçoivent 6 000 € sur
+  18 000 €. Le registre cite le CGI : son test ne change pas.
+
+**Ce que le moteur en fait, mesuré en 2024.** Par `impots.engine.compute`, palier léger.
+« Avant » désigne `main`. Le crédit est la ligne `credits_impot`, l'impôt net la ligne `ir`.
+La colonne du simulateur reprend le crédit qu'il donne, là où il a été interrogé.
+
+| ménage | aide | crédit avant | crédit après | simulateur | impôt net |
+|---|---:|---:|---:|---:|---:|
+| deux retraités nés en 1954 et 1955 | 18 000 € | 6 000 € | 7 500 € | 7 500 € | −6 157 € |
+| les mêmes, 3 000 € d'aides | 18 000 € | 6 000 € | 7 500 € | | −6 157 € |
+| les mêmes | 12 000 € | 6 000 € | 6 000 € | | −4 657 € |
+| un retraité seul né en 1954 | 18 000 € | 6 000 € | 6 750 € | 6 750 € | −6 750 € |
+| le même, né en 1959 | 18 000 € | 6 000 € | 6 750 € | 6 750 € | −6 750 € |
+| le même, né en 1960 | 18 000 € | 6 000 € | 6 000 € | 6 000 € | −5 850 € |
+| le retraité né en 1954, un enfant | 18 000 € | 6 750 € | 7 500 € | 7 500 € | −7 500 € |
+| le même | 20 000 € | 6 750 € | 7 500 € | 7 500 € | −7 500 € |
+| les deux retraités, un enfant | 18 000 € | 6 750 € | 7 500 € | 7 500 € | −7 076 € |
+| un couple salarié, nés en 1954 et 1980 | 18 000 € | 6 000 € | 6 750 € | | −6 587 € |
+| le même, nés en 1980 et 1955 | 18 000 € | 6 000 € | 6 750 € | | −6 587 € |
+| le même, nés en 1980 et 1982 | 18 000 € | 6 000 € | 6 000 € | | −5 837 € |
+| les deux retraités, carte P | 18 000 € | 9 000 € | 9 000 € | 9 000 € | −8 576 € |
+| les mêmes | 25 000 € | 10 000 € | 10 000 € | 10 000 € | −9 576 € |
+
+Les retraités déclarent leur pension, 20 000 € pour le retraité seul, et le couple salarié
+30 000 et 15 000 € de salaire brut. L'enfant est né en 2014. Le simulateur a reçu la case
+7DG cochée là où le moteur a la carte. Écrits à la main sur la situation, la case 7DQ et des
+dates de naissance hors du 1er janvier :
+
+| ménage | aide | crédit avant | crédit après | simulateur |
+|---|---:|---:|---:|---:|
+| les deux retraités, première année | 20 000 € | 7 500 € | 9 000 € | 9 000 € |
+| les mêmes, deux enfants, première année | 25 000 € | 9 000 € | 9 000 € | 9 000 € |
+| le retraité seul, première année | 18 000 € | 7 500 € | 8 250 € | 8 250 € |
+| un adulte né en 1980, première année | 18 000 € | 7 500 € | 7 500 € | 7 500 € |
+| un retraité né le 31 décembre 1959 | 18 000 € | 6 000 € | 6 750 € | |
+| né le 1er juillet 1959 | 18 000 € | 6 000 € | 6 750 € | |
+| né le 1er janvier 1960 | 18 000 € | 6 000 € | 6 000 € | |
+
+Le levier `saldom_plafond` à 8 000 € fait passer les deux retraités de 4 000 € à 5 500 € sur
+18 000 €, et laisse un couple de moins de 65 ans à 4 000 €.
+
+Refait à la main :
+* **Les deux retraités.** 12 000 + 2 × 1 500 = 15 000 € retenus sur 18 000 : 7 500 €.
+  L'impôt avant crédits, 1 343 €, celui du simulateur, moins 7 500 : −6 157 €, restitués.
+  Avec 3 000 € d'aides, 15 000 € supportés, tous retenus. Sous 12 000 €, rien ne change.
+* **Seul.** 12 000 + 1 500 = 13 500 € : 6 750 €. Né en 1960, il a 64 ans au 31 décembre
+  2024 : 12 000 €, 6 000 €, et 150 − 6 000 = −5 850 €.
+* **L'enfant.** 12 000 + 1 500 + 1 500 = 15 000 € : 7 500 €, sur 18 000 comme sur 20 000 €.
+  Les deux retraités et l'enfant, 16 500 €, ramenés à 15 000 : 7 500 € et non 8 250, et
+  424 − 7 500 = −7 076 €.
+* **Le couple salarié.** 163 € d'impôt avant les niches : 163 − 6 750 = −6 587 €, et
+  163 − 6 000 = −5 837 € sans membre de plus de 65 ans.
+* **La première année.** 15 000 + 2 × 1 500 = 18 000 € : 9 000 €. Seul, 16 500 € : 8 250 €.
+  Avec deux enfants, 15 000 + 4 × 1 500 = 21 000 €, ramenés à 18 000 : 9 000 €.
+* **La carte.** 20 000 € sans majoration : 9 000 € sur 18 000 et 10 000 € sur 25 000, et non
+  11 500 € pour 20 000 + 2 × 1 500 = 23 000 €.
+* **Le levier.** 8 000 + 2 × 1 500 = 11 000 € : 5 500 €.
+
+**Les deux paliers et l'ordre de calcul.**
+* Le palier léger et le palier complet donnent les mêmes valeurs sur chaque ligne du palier
+  léger, pour chacun des 12 ménages mesurés.
+* Trois ménages locataires à 500 € en zone 2 ont été calculés par le registre, comme l'API,
+  et avec `revenu_disponible` d'abord, comme la jambe relevée de l'EMTR : les deux
+  retraités, un retraité né en 1959 à 12 000 € de pension, et un salarié né en 1980 à
+  15 000 € avec une retraitée née en 1955 à 6 000 €. Le crédit (7 500, 6 750 et 6 750 €),
+  l'aide au logement (0, 1 431,33 et 541,59 €), l'ASPA (0, 144,27 et 8 455,75 €) et le
+  revenu disponible (49 717,00, 20 325,60 et 33 621,25 €) concordent au centime.
+* L'aide au logement et l'ASPA des deux derniers sont celles des mêmes ménages sans aide à
+  domicile : aucune ne lit l'impôt. Leur revenu disponible monte du crédit, 6 750 €, et la
+  dépense n'y entre pas.
+
+**Ce que la population en fait.** Rien, sous la loi en vigueur. Mesuré sur la fixture, 400
+ménages et 439 foyers :
+* 206 déclarants ont 65 ans ou plus au 31 décembre 2024, dont 5 tout juste 65, dans 154
+  foyers : 102 en ont un, 52 deux. D-196 en comptait 149 en lisant plus de 65 ans au sens
+  strict : les 5 déclarants de 65 ans sont chacun dans un foyer à part. Aucune personne à
+  charge n'a plus de 24 ans.
+* Sans bases de niches, `f7db` vaut zéro pour chaque foyer.
+* L'imputation (D-066) donne à chaque bénéficiaire le crédit moyen de son décile, divisé par
+  le taux. Sur le tableau de la DGFiP pour les revenus de 2024, téléchargé hors du dépôt
+  avec le sha256 du manifeste, les bases de la case 7DB vont de 1 776,65 € (3e décile) à
+  3 759,31 € (10e) : toutes sous 12 000 €. Écrite sur chaque foyer, la plus haute donne
+  1 879,50 € de crédit aux 439, avant comme après.
+* Avec 18 000 € écrits sur chaque foyer, comme pour D-196 : avant, 6 000 € pour 310 foyers,
+  6 750 € pour 52 et 7 500 € pour 77 ; après, 167, 142 et 130. 148 foyers bougent : 95 de
+  6 000 à 6 750 €, un déclarant de 65 ans ou plus et aucune personne à charge ; 48 de 6 000
+  à 7 500 €, deux déclarants ; 5 de 6 750 à 7 500 €, une personne à charge et un déclarant.
+  Les 6 autres foyers d'un déclarant de 65 ans ou plus ont deux ou trois personnes à charge,
+  déjà à 15 000 €.
+* Une réforme peut faire bouger la population imputée. Le levier `saldom_plafond` à 2 000 €,
+  avec 3 759,31 € écrits sur chaque foyer, donnait 1 000 € à 310 foyers, 1 750 € à 52 et
+  1 879,50 € à 77 ; il donne 1 000 € à 167, 1 750 € à 142 et 1 879,50 € à 130.
+
+`to_openfisca.WIRING` reste « D-195 ». Ses seuls lecteurs sont les caches de l'EMTR, et
+l'EMTR de la population calcule `revenu_disponible` par `build_simulation` sans bases de
+niches : sans aide à domicile, aucun crédit, et aucun taux ne bouge, sous la loi en vigueur
+comme sous une réforme.
+
+**Vus échouer, puis mutés.** Contre `aeca976`, les tests seuls, 12 des 16 tests ajoutés ou
+changés tombaient :
+* les deux retraités, à 6 000 € au lieu de 7 500 € ;
+* le retraité seul né en 1954 et celui né en 1959, à 6 000 € au lieu de 6 750 € ;
+* la naissance du 31 décembre 1959, à 6 000 € au lieu de 6 750 € ;
+* la limite partagée, à 6 750 € au lieu de 7 500 € pour le retraité seul avec l'enfant ;
+* le déclarant de plus de 65 ans, puis le conjoint, à 6 000 € au lieu de 6 750 € ;
+* la première année, à 7 500 € au lieu de 9 000 € pour les deux retraités sur 20 000 € ;
+* le levier, à 4 000 € au lieu de 5 500 € ;
+* les deux paliers et les deux ordres, à 6 000 € au lieu de 7 500 €. Les deux ordres
+  concordaient déjà sur le revenu disponible ;
+* la page, faute de la nouvelle phrase.
+
+Les quatre autres passaient, comme il le faut : le retraité né en 1960 et le couple sans
+membre de plus de 65 ans, à 6 000 €, les 20 000 € de la carte, à 9 000 et 10 000 €, et le
+test qui tue, à 6 000 € sur openfisca brut. Avec la correction, `211194a`, tout passe. Trois
+mutations ont été écrites, chacune dans une copie de `src` hors du dépôt, par un seul
+remplacement vérifié :
+* l'âge lu en janvier sur `age`, et non au 31 décembre : la seule naissance du 31 décembre,
+  à 6 000 € au lieu de 6 750 € ;
+* « plus de 65 ans » au sens strict, né avant le 1er janvier 1959 : le retraité né en 1959
+  et la naissance du 31 décembre, à 6 000 € au lieu de 6 750 € ;
+* tous les membres comptés, personnes à charge comprises : aucun des quinze tests du moteur
+  ne la prenait, la limite de 15 000 € cachant le double compte à côté d'un parent de plus
+  de 65 ans. Un seizième test, `e6bcde0`, prend le seul ménage où il se voit, que le format
+  d'entrée accepte : un déclarant né en 1980 et un enfant à charge né en 1950, 6 750 € sur
+  18 000 €, comme au simulateur. Il passe avant la correction et après, et tombe sous la
+  mutation, à 7 500 €.
+
+**Les tests.** Ont tourné : les 16 tests ajoutés au moteur et le test changé de la page ; au
+moteur, les 14 tests de D-196 sur l'aide à domicile et celui du registre des corrections ; à
+l'API, les 3 cas de l'aide à domicile ; `tests/test_ui.py` entier ; les 7 cas de l'aide à
+domicile de `tests/test_niches.py` et `tests/test_knobs.py`, marqués lents ;
+`tests/test_charter.py` ; `ruff check src tests scripts`. Tout passe : 31 tests au moteur, 3
+à l'API, 116 à la page, les 7 cas lents et 8 à la charte, 165 en tout, et ruff ne relève
+rien. Le gate complet n'a pas tourné, à la demande du propriétaire : le job `fast` de la CI
+fait tourner la suite sur la PR.
+
+**Ce qui reste.**
+* **Les cases 7DQ et 7DL** n'ont toujours pas de champ. La correction sert la première année
+  dès que la case est écrite, comme les tests l'écrivent à la main, et les ascendants
+  restent ceux d'openfisca.
+* **La case R.** openfisca majore le plafond pour toute personne invalide de la case R
+  (`nbR` dans `nb_pac2`), quel que soit son âge ; le simulateur ne la compte pas, née en
+  1950 comme en 1990. Rien ne l'écrit : ni le format d'entrée ni la population ne portent de
+  case R. La question reste à trancher en droit.
+* **La résidence alternée.** `nb_pac2` retire la moitié d'un enfant en résidence alternée au
+  lieu de l'ajouter. Écrit à la main sur openfisca brut, un parent seul avec un tel enfant
+  reçoit 5 625 € sur 18 000 €, `nb_pac2` valant −0,5, là où « Le montant de 1 500 € est
+  divisé par deux » et où le simulateur donne 6 375 €, pour 12 000 + 750 €. Rien ne
+  l'écrit : la résidence alternée n'a pas de champ (D-197).
+* **La population.** Ses bases imputées n'atteignent pas 12 000 €. Une base plus dispersée,
+  tirée d'une enquête sur les revenus, ferait mordre la correction sur les foyers de plus de
+  65 ans ; seul `make full` le mesurerait.
+* **openfisca-france.** L'oubli des membres de plus de 65 ans, le signe de la résidence
+  alternée et la case R sont à signaler en amont, avec ces cas.
+
+**Sources.**
+* CGI, art. 199 sexdecies, 3 et 4 (versions du 1er janvier 2023 au 16 février 2025,
+  LEGIARTI000046861251, et du 16 février 2025 au 21 février 2026, LEGIARTI000051212983, lues
+  sur Légifrance ; version en vigueur depuis le 14 juin 2026, relevée mot pour mot sur
+  l'export de la base de Légifrance que publie codes.droit.org, mis à jour le 1er septembre
+  2026, sha256 du fichier :
+  45ce7972e23a062ae9d22ba2f82ba5b7e469aea6c20e0606ed5688d520b2c508).
+* BOFiP : BOI-IR-RICI-150-20-20170920 (§ 120 à 190), en vigueur du 20 septembre 2017 au 12
+  août 2026, et BOI-IR-RICI-150-20-20260812 (§ 140 à 190), lus sur bofip.impots.gouv.fr.
+* DGFiP, Brochure pratique 2025, « Réductions et crédits d'impôt », « Emploi à domicile »,
+  p. 227 et 228. Sha256 du chapitre :
+  0b91c528f174bdd32a73350f95f609883ea3bf57692dfdb61ba371e5df3a7abd.
+* DGFiP, notice n° 2041 NOT (n° 50796#25), « Services à la personne : dépenses d'emploi à
+  domicile 7DB à 7DR », et fiche de calcul, 3, « Abattements spéciaux ». Sha256 du fichier :
+  0eb39b825fac0bc1f623a9f3fd2d4dce5227aadd13abb99712115bfecf28021f.
+* DGFiP, déclaration n° 2042 (n° 10330*29), « Revenus 2024 », rubrique 7, case 7DL. Sha256
+  du fichier : b33282a3f7caab9680e9d4494591fa287bda6f0e989b44155b411be1bdfa1a51.
+* DGFiP, crédits d'impôt sur le revenu par décile de RFR par part, revenus de 2024
+  (`dgfip_ir_credits_impot_par_decile_rfr_2024.xlsx` du manifeste), sha256
+  c7578465e0a5101bcca0f21a0f37f21291c092f2c9dcfcc40c8e9bff5a44797c.
+* DGFiP, simulateur « Calcul de l'impôt 2025 sur les revenus 2024 », modèle simplifié,
+  interrogé le 6 octobre 2026 sur 20 déclarations fictives.
+* openfisca-france 176.0.8 : `ci_saldom`, `nb_pac2`, `nbF`, `nbJ`, `nbH`, `age`, et les
+  paramètres de `impot_revenu.credits_impots.emploi_salarie_domicile`.
+
+## D-199 — La case T de N-2 et de N-1 dans la population : les parts que lit la CSG
+
+**Le point de départ.** D-195 l'avait laissé dans « Ce qui reste » : « Le câblage n'écrit la
+case T que sur l'année N, le constructeur du ménage de N-2 à N. Les taux de la CSG d'un
+revenu de remplacement lisent les parts de N-2. Écrite aussi sur N-2 et N-1, la case T
+ferait monter le revenu disponible de deux ménages de la fixture, de 839,58 € et 104,64 €
+[...]. C'est un changement du câblage, à faire à part. » Le voici. L'écart n'est pas celui
+d'openfisca mais du câblage de la population : aucune correction n'entre dans
+`engine.corrections`.
+
+**Ce que dit la loi.** Les articles ont été lus sur Légifrance. Légifrance refuse le
+téléchargement direct (403), et l'outil de lecture peut abréger : chaque passage cité a été
+relevé mot pour mot sur une seconde reproduction, nommée dans les sources.
+* **Le taux suit le revenu et les parts de l'avant-dernière année.** Le taux de 3,8 %
+  frappe le revenu de remplacement des personnes « dont les revenus définis au IV de
+  l'article 1417 du code général des impôts perçus l'avant-dernière année excèdent 11 128 €
+  pour la première part de quotient familial, majorés de 2 971 € pour chaque demi-part
+  supplémentaire » (CSS, art. L. 136-8, III, 1°, version du 16 décembre 2020 au 1er juillet
+  2025). Celui de 6,6 % frappe la pension des personnes « dont les revenus de
+  l'avant-dernière année, définis au IV de l'article 1417 du code général des impôts : 1°
+  D'une part, excèdent 14 548 € pour la première part de quotient familial, majorés de
+  3 884 € pour chaque demi-part supplémentaire » (III bis). Les seuils « sont revalorisés
+  au 1er janvier de chaque année » (III ter).
+* **Les taux, et ce qui les suit.** La direction de la sécurité sociale l'a rappelé aux
+  caisses pour 2024 : « Selon le RFR de leurs titulaires, les pensions de retraite ou
+  d'invalidité peuvent être assujetties au taux de 8,3 %, 6,6 %, 3,8 % ou exonérées. Les
+  allocations chômage peuvent être assujetties au taux de 6,2 %, 3,8 % ou exonérées. » Les
+  mêmes seuils valent pour la CSG « et par renvoi à la CRDS, à la CASA et à la cotisation
+  maladie ». En 2024, 12 230 €, 15 988 € et 24 813 € pour la première part, majorés de
+  3 265 €, 4 269 € et 6 623 € par demi-part supplémentaire (lettre du 23 novembre 2023,
+  annexe 2) : les valeurs de l'arbre.
+* **Les parts de l'année du revenu.** La même lettre applique les seuils de 2024 « sur la
+  base des montants de revenu fiscal de référence figurant sur les avis d'imposition sur les
+  revenus de 2022 et 2021 ». Et : « En cas de modification de la composition du foyer et/ou
+  du lieu de résidence entre N-3 et N-2, il est tenu compte du nombre de parts fiscales de
+  chaque année pour la détermination des seuils applicables. » Son premier exemple lit les
+  parts sur l'avis : « selon l'avis d'impôt 2023, en 2022 le foyer fiscal est de 2 parts ».
+  L'Unédic le disait des allocations chômage, dont les seuils varient « selon le nombre de
+  parts de quotient familial retenu pour le calcul de l'impôt » (circulaire n° 2020-02).
+* **La case T de N-2.** « Pour l'imposition des contribuables célibataires ou divorcés qui
+  vivent seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à
+  titre exclusif ou principal la charge d'au moins un enfant » (CGI, art. 194, II, lu pour
+  D-193). « La situation dont il doit être tenu compte est celle existant au 1er janvier de
+  l'année de l'imposition », et de même les charges de famille, sauf « en cas d'augmentation
+  des charges de famille en cours d'année » (art. 196 bis, en vigueur depuis le 1er janvier
+  2011). L'année d'imposition est « l'année de réalisation des revenus »
+  (BOI-IR-LIQ-10-10-20, § 1). La CSG de 2024 lit donc les parts de 2022, et la case T du
+  1er janvier 2022.
+
+**Ce que fait openfisca.**
+* **La case.** `caseT` est un booléen du foyer fiscal, annuel et sans formule : « Vous êtes
+  parent isolé au 1er janvier de l'année de perception des revenus ». Non écrite, elle vaut
+  faux. `nbptr` la lit pour la demi-part, et `ir_plaf_qf` pour le plafond de 4 224 € de la
+  part du premier enfant (D-193), chacun sur sa propre année. La prime pour l'emploi, qui la
+  lit aussi, s'arrête en 2015.
+* **Les parts de N-2.** La CSG et la CRDS d'une allocation chômage
+  (`csg_deductible_chomage`, `csg_imposable_chomage`, `crds_chomage`) et d'une pension
+  (`csg_deductible_retraite`, `csg_imposable_retraite`, `crds_retraite`), et la CASA,
+  lisent `nbptr` de N-2. Chaque seuil y vaut celui de la première part, plus
+  `(nbptr - 1) * 2` fois celui de la demi-part. La correction 9 applique les formules de la
+  pension de retraite à la pension d'invalidité (D-190), que la population n'écrit pas.
+  Hors du revenu disponible, le livret d'épargne populaire, le pass colo et « Départ
+  18:25 » lisent aussi les parts de N-2, et le contrat d'engagement jeune la tranche
+  d'impôt de N-2 : aucun n'est une ligne du registre.
+* **Les parts de N-1.** Seule la taxe d'habitation les lit, et elle s'arrête en 2022 dans
+  l'arbre. En 2024, aucune ligne du registre ne lit la case T de N-1 : elle est écrite pour
+  suivre le constructeur, et ne déplace aucun nombre.
+* **Le revenu fiscal de référence** ne lit pas les parts. Celui de N-2, que les deux chemins
+  calculent d'abord et épinglent (D-177), ne change pas.
+* **L'antépénultième année.** Le 2° du III garde le taux de 3,8 % dès que les revenus de
+  l'une des deux années, « perçus l'avant-dernière ou l'antépénultième année », restent sous
+  le second seuil, chacune avec ses parts (lettre du 23 novembre 2023, annexe 3). openfisca
+  ne lit que N-2.
+
+**Ce que faisait le câblage.** `population.to_openfisca` écrit sur chaque mois de N-2 à N
+le salaire, la pension, en `retraite_brute` et en `retraite_imposable`, l'allocation
+chômage, le statut d'occupation, la zone et le loyer, comme le constructeur du ménage. La
+case T n'allait que sur N. Le constructeur l'écrit sur les trois années, comme les cases P
+et F (D-188) et la situation de famille (D-197), parce que la CSG d'un revenu de
+remplacement lit les parts de N-2. Un même parent seul, retraité ou au chômage, ne valait
+donc pas la même chose dans la calculette et dans la population.
+
+**Aucun autre drapeau.** La case T était le seul drapeau du foyer écrit sur trois ans par
+l'un et sur N seule par l'autre. La population n'écrit ni les cases P et F (D-193), ni la
+case 7DG (D-196), ni la situation de famille (D-197). Ses bases de niches vont sur N seule,
+comme celles du constructeur.
+
+**La correction.** `build_simulation` écrit la case T de chaque foyer sur N-2, N-1 et N,
+avant d'épingler le revenu fiscal de référence de N-2. La docstring du module en fait son
+septième mode d'échec.
+
+**L'hypothèse.** L'enquête Emploi voit le logement une année, et la case T de N en est déjà
+déduite (D-006, D-195). Écrite sur N-2 et N-1, elle suppose le même foyer au 1er janvier de
+ces deux années : le même parent seul, avec les mêmes personnes à charge. C'est l'hypothèse
+que l'historique des revenus fait depuis D-011, et celle que le constructeur fait pour la
+case T. Elle va jusqu'au bout : openfisca compte une personne à charge à son rôle, pas à sa
+naissance. Mesuré, un parent seul et un enfant né en 2024 ont 2 parts en 2022, en 2023 et en
+2024, dans la population comme dans la calculette.
+
+**Ce que la population en fait, mesuré sur la fixture.** 400 ménages et 439 foyers. Le
+palier complet a été calculé avec le code de `main` puis avec celui de la branche, sur la
+même table. Des 43 foyers qui portent la case T, 11 ont une pension ou une allocation
+chômage. Deux franchissent un seuil, ceux que D-195 avait trouvés : deux retraitées à qui
+le squelette donne des enfants de moins de 15 ans.
+
+| ménage | RFR de 2022 | parts de 2022 | taux de 2024 | revenu disponible |
+|---|---:|---:|---|---:|
+| 82 ans, 31 095,82 € de pension | 27 985,82 € | 2 → 2,5 | 6,6 % → 3,8 % | +839,58 € |
+| 67 ans, 20 927,62 € de pension | 17 524,62 € | 1,5 → 2 | 3,8 % → 0 | +104,64 € |
+
+Refait à la main :
+* **La retraitée de 82 ans.** Ses deux enfants, de 14 et 12 ans, lui donnent 2 parts, et la
+  case T 2,5. Le taux réduit va jusqu'à 15 988 + 2 × 4 269 = 24 526 € à 2 parts, et jusqu'à
+  15 988 + 3 × 4 269 = 28 795 € à 2,5 parts ; le taux de 6,6 %, jusqu'à 24 813 + 2 × 6 623 =
+  38 059 € à 2 parts. Avec 27 985,82 €, elle passe de 6,6 % à 3,8 %. Sur 31 095,82 €, la CSG
+  non déductible, 2,4 %, vaut 746,30 €, et la CASA, 0,3 %, 93,29 € : 839,59 € à la main,
+  839,58 € mesurés. La CSG déductible passe de 4,2 %, 1 306,02 €, à 3,8 %, 1 181,64 €, mais
+  la pension déclarée en est déjà nette (D-176) : le revenu disponible ne la voit pas. La
+  CRDS reste à 155,48 €.
+* **La retraitée de 67 ans.** 1,5 part, et 2 avec la case T. Son revenu fiscal de référence
+  de 2022, mesuré, retire de sa pension 2 093 € d'abattement de 10 % et 1 310 € de
+  l'art. 157 bis, à 65 ans. L'exonération va jusqu'à 12 230 + 3 265 = 15 495 € à 1,5 part,
+  et jusqu'à 12 230 + 2 × 3 265 = 18 760 € à 2 parts. Avec 17 524,62 €, elle passe du taux
+  réduit à l'exonération. La CRDS, 0,5 % de 20 927,62 €, soit 104,64 €, tombe, et avec elle
+  la CSG de 3,8 %, 795,25 €, toute déductible.
+* **Rien d'autre pour elles.** Ni leur impôt, ni leurs parts de 2024, ni aucune prestation :
+  la pension imposable est épinglée sur le montant déclaré (D-176), et la CSG de 2024 ne lit
+  les parts de 2022 que pour son taux.
+
+**Rien d'autre ne bouge.** Des 51 colonnes numériques du palier complet, 50 sont identiques
+au bit près sur les 400 ménages, et la dernière, le revenu disponible, ne bouge que pour ces
+deux-là. Les 29 colonnes du palier léger sont identiques : une allocation chômage qui
+passerait de l'exonération au taux réduit y toucherait l'impôt, par sa CSG déductible, et
+aucune ne le fait sur la fixture. L'EMTR de la population, calculé avec les deux codes, est
+identique pour les 400 ménages : les deux retraitées n'ont pas de salaire.
+
+**Sur l'EEC entière.** Le fichier détail n'est pas dans ce conteneur : seul `make full`
+mesurera ce que la correction déplace, sur la population reconstruite que demande D-195.
+
+**Les caches.**
+* **La population construite** ne change pas : la colonne `parent_isole` est la même, et le
+  câblage la lit seulement sur plus d'années. La reconstruction qu'attend `make full` est
+  celle de D-195.
+* **Les caches EMTR** portent `to_openfisca.WIRING` et ne vérifient que le nombre de
+  ménages, que rien ne change ici. `WIRING` passe à « D-199 ». Sur la fixture, aucun taux ne
+  bouge. Sur l'EEC entière, celui d'un parent seul qui a un salaire et un revenu de
+  remplacement près d'un seuil le pourrait : la jambe relevée de l'EMTR relève le salaire de
+  N-2 à N, et avec lui le revenu fiscal de référence de N-2.
+* **Le résumé de la population**, `data/processed/baseline_2024.json`, le rapport de
+  réconciliation et les fiches dépendent du revenu disponible de la population, et ne se
+  régénèrent pas ici.
+
+**Vus échouer, puis mutés.** Écrits avant la correction et commis seuls, les quatre tests
+tombaient sur le code de `main` :
+* le test de forme,
+  `test_case_t_and_its_parts_are_on_every_year_the_household_builder_writes`, sur la case T
+  de 2022, fausse pour les 43 foyers qui la portent en 2024, 43 éléments sur 439 ;
+* `test_a_lone_parent_s_replacement_income_is_levied_at_the_rate_of_two_parts`, sur les
+  parts de 2022, 1,5 au lieu de 2 pour les deux parents seuls. Mesurés sur `main`, la
+  pension payait 1 050 € de CSG déductible, 600 € de CSG non déductible et 75 € de CASA, et
+  l'allocation 589,50 € de CSG non déductible ;
+* `test_a_lone_parent_prices_the_same_in_the_calculator_and_in_a_population`, dans ses deux
+  cas : le revenu disponible de la population valait 26 940,80 € au lieu de 27 615,80 € pour
+  la pension, 675,00 € de moins, et 26 095,12 € au lieu de 26 684,62 € pour l'allocation,
+  589,50 € de moins. Les 39 autres lignes communes concordaient.
+
+À la main, pour les deux parents seuls de ces tests : 25 000 € de pension ou d'allocation,
+et un revenu fiscal de référence de 2022 de 22 500 €, après 10 %. Le taux réduit va jusqu'à
+24 526 € à 2 parts, et jusqu'à 15 988 + 4 269 = 20 257 € à 1,5 part, où la pension paie
+6,6 %, sous 24 813 + 6 623 = 31 436 €, et l'allocation 6,2 %. Sur la pension, 3,8 % font
+950 €, 4,2 % 1 050 €, 2,4 % 600 €, et la CASA 75 €. L'allocation est taxée sur 98,25 %
+d'elle-même, 24 562,50 € : 2,4 % font 589,50 €, 3,8 % 933,38 €, et la CRDS 122,81 €.
+Mesuré, ni l'un ni l'autre ne paie d'impôt.
+
+Trois mutations sont prises, chacune écrite dans une copie de `src` hors du dépôt, par un
+seul remplacement vérifié :
+* la case T écrite sur N-1 et N seulement : les quatre tests, aux valeurs de `main` ;
+* sur N-2 et N, sans N-1 : le test de forme seul, sur la case T de 2023, fausse pour les 43
+  foyers. Les trois autres passent, comme il le faut : en 2024, rien ne lit les parts de
+  N-1 ;
+* la case T écrite sur N-2 et N-1 pour tous les foyers : le test de forme seul, 396 éléments
+  sur 439. Les trois autres passent : leurs deux parents seuls portent déjà la case T.
+
+**Les tests.** Les quatre tests ajoutés et 24 tests voisins de la population : la case T du
+squelette, les rôles et les NaN, les deux chemins de D-183, l'ordre de calcul de D-176 à
+D-178, l'ASS de D-189 et D-192. 28 réussis. Les tests d'agrégats et de réforme sur la
+fixture, et celui des caches EMTR : 5 réussis. `tests/test_charter.py` : 8 réussis.
+`ruff check src tests scripts` : rien à signaler. Sur la branche fusionnée avec D-198, les
+quatre tests ajoutés et les sept cas de D-183 qui comparent la calculette et la population
+donnent 11 réussis, les 13 tests de l'emploi à domicile du moteur, ceux de D-198 compris,
+13 réussis, et `tests/test_charter.py` 8 réussis. Le gate complet n'a pas tourné, à la
+demande du propriétaire : le job `fast` de la CI fait tourner la suite sur la PR.
+
+**Ce qui reste.**
+* **L'EEC entière**, par `make full`, sur la population reconstruite de D-195.
+* **Le foyer stable.** L'enquête ne dit pas qui vivait seul au 1er janvier de N-2. Un parent
+  séparé en N-1 y reçoit à tort la demi-part de N-2, et peut-être un taux de CSG trop bas,
+  comme dans la calculette, qui fait la même hypothèse.
+* **L'antépénultième année.** openfisca ne lit que les revenus de N-2, et non ceux de N-3
+  que le 2° du III fait jouer avec eux. Ce n'est pas le sujet de cette entrée.
+* **Les enfants des deux retraitées**, que le squelette leur donne : la question de D-013.
+
+**Sources.**
+* CSS, art. L. 136-8, III, III bis et III ter (version du 16 décembre 2020 au 1er juillet
+  2025), lu sur Légifrance. Les passages cités ont été relevés mot pour mot sur la
+  reproduction de l'article, dans sa version issue de la loi n° 2019-486 du 22 mai 2019, que
+  joint la circulaire de l'Unédic n° 2020-02 : elle concorde sur chacun d'eux.
+* CGI, art. 196 bis (version en vigueur depuis le 1er janvier 2011), lu sur Légifrance et
+  relevé mot pour mot sur la reproduction d'advizexperts.fr ; art. 194, lu pour D-193.
+* BOFiP, BOI-IR-LIQ-10-10-20-20160229, § 1, lu sur bofip.impots.gouv.fr.
+* Direction de la sécurité sociale, lettre du 23 novembre 2023 (réf. D23-022880),
+  « RECTIFICATIF ANNEXE 2 - Modalités d'assujettissement des prélèvements sociaux sur les
+  revenus de remplacement applicables au 1er janvier 2024 », annexes 1 à 3, publiée sur
+  legislation.lassuranceretraite.fr. Sha256 du fichier :
+  8a0b01f2b440827ff68950cfd6297fd3c2e2b0953760c3ba4bd70a1c77276a74.
+* Unédic, circulaire n° 2020-02 du 30 janvier 2020, « Limites de revenus pour l'exonération
+  de la contribution sociale généralisée (CSG) et de la contribution pour le remboursement
+  de la dette sociale (CRDS) ». Sha256 du fichier :
+  91e78b62d2f4341f191e0dc53188904c84891d1d77cb2de9fc54665f380a9975.
+
 ## D-200 — L'AAH dans les ressources de l'ASPA du conjoint : la pension, pas l'âge
 
 **Le point de départ.** D-185 l'avait laissé « à trancher en droit ». Depuis la

@@ -3198,17 +3198,30 @@ MAJORATION_SALDOM = 1_500
 PLAFOND_SALDOM_MAJORE = 15_000
 PLAFOND_SALDOM_INVALIDITE = 20_000
 TAUX_SALDOM = 0.5
+#: The first year of direct employment: « La limite de 12 000 € est portée à 15 000 € », which
+#: « fait l'objet des majorations prévues au présent alinéa et le montant total des dépenses ne
+#: peut excéder 18 000 € » (CGI art. 199 sexdecies, 3; D-198).
+PLAFOND_SALDOM_PREMIERE_ANNEE = 15_000
+PLAFOND_SALDOM_PREMIERE_ANNEE_MAJORE = 18_000
 #: CGI art. 200-0 A, 1: the advantages of its 2, the home-help and childcare credits among them,
 #: « ne peut pas procurer une réduction de l'impôt dû supérieure à un montant de 10 000 € ».
 PLAFOND_GLOBAL_NICHES = 10_000
 
 
 def _saldom_by_hand(depenses: float, aides: float = 0.0, *, enfants: int = 0,
+                    plus_de_65_ans: int = 0, premiere_annee: bool = False,
                     invalidite: bool = False) -> float:
     """The home-help credit of 2024 from the article: the expenses less the aid received, under
-    the ordinary ceiling and its increments, or under 20 000 EUR, at 50 %."""
-    plafond = (PLAFOND_SALDOM_INVALIDITE if invalidite
-               else min(PLAFOND_SALDOM + MAJORATION_SALDOM * enfants, PLAFOND_SALDOM_MAJORE))
+    the ordinary ceiling or the first year's, each raised by 1 500 EUR per dependent child and
+    per member over 65 up to its own cap, or under 20 000 EUR without increment, at 50 %."""
+    majorations = MAJORATION_SALDOM * (enfants + plus_de_65_ans)
+    if invalidite:
+        plafond = PLAFOND_SALDOM_INVALIDITE
+    elif premiere_annee:
+        plafond = min(PLAFOND_SALDOM_PREMIERE_ANNEE + majorations,
+                      PLAFOND_SALDOM_PREMIERE_ANNEE_MAJORE)
+    else:
+        plafond = min(PLAFOND_SALDOM + majorations, PLAFOND_SALDOM_MAJORE)
     return TAUX_SALDOM * min(plafond, max(0.0, depenses - aides))
 
 
@@ -3404,6 +3417,223 @@ def test_beside_the_childcare_credit_the_card_holder_s_home_help_meets_the_globa
     assert _rows(parent(False))["credits_impot"] == pytest.approx(
         _saldom_by_hand(20_000, enfants=1) + 1_000, abs=0.5)
     assert _rows(parent(True))["credits_impot"] == pytest.approx(PLAFOND_GLOBAL_NICHES, abs=0.5)
+
+
+# --------------------------------------------------------------------------- #
+# the home-help credit's increment for each member over 65 (docs/DECISIONS.md D-198)
+# --------------------------------------------------------------------------- #
+def _retraites(niches: dict[str, Any] | None = None, *, carte: bool = False,
+               **household: Any) -> HouseholdInput:
+    """D-196's two pensioners, married or pacsés: born in 1954 and 1955, declaring 30 000 and
+    15 000 EUR of pension, the first holding the card if `carte`, and `niches`."""
+    if niches is not None:
+        household["niches"] = niches
+    return _foyer(_adulte(0, 1954, carte=carte, pension_annuelle=30_000),
+                  _adulte(0, 1955, pension_annuelle=15_000), **household)
+
+
+def _retraite(naissance: int, niches: dict[str, Any] | None = None,
+              **household: Any) -> HouseholdInput:
+    """A pensioner alone, born in `naissance`, declaring 20 000 EUR of pension and `niches`."""
+    if niches is not None:
+        household["niches"] = niches
+    return _foyer(_adulte(0, naissance, pension_annuelle=20_000), **household)
+
+
+def _saldom_written_by_hand(household: HouseholdInput, foyer: dict[str, Any] | None = None,
+                            naissances: dict[str, str] | None = None,
+                            system: Any = None) -> float:
+    """The home-help credit of 2024 off a simulation of `household`, with the boxes `foyer` names,
+    which have no field on the wire, written by hand on its foyer fiscal, and the birth dates
+    `naissances` names in place of the 1 January the builder writes. On the corrected baseline
+    unless told otherwise."""
+    situation = build_situation(household, 2024)
+    situation["foyers_fiscaux"]["ff_0"].update(foyer or {})
+    for individu, date in (naissances or {}).items():
+        situation["individus"][individu]["date_naissance"] = {"ETERNITY": date}
+    simulation = SimulationBuilder().build_from_entities(system or baseline(), situation)
+    return float(simulation.calculate("ci_saldom", "2024")[0])
+
+
+def test_two_pensioners_over_65_have_their_home_help_retained_up_to_15_000_euros() -> None:
+    """CGI art. 199 sexdecies, 3: « La limite de 12 000 € est majorée de 1 500 € par enfant à
+    charge au sens des articles 196 et 196 B et au titre de chacun des membres du foyer fiscal âgé
+    de plus de soixante-cinq ans ». D-196's two pensioners, born in 1954 and 1955, declare 30 000
+    and 15 000 EUR of pension and 18 000 EUR of home help: 12 000 + 2 x 1 500 = 15 000 retained,
+    7 500 EUR of credit, where openfisca gave 6 000. Their tax before credits is 1 343 EUR, so the
+    net tax is 1 343 - 7 500 = -6 157 EUR, restituted (art. 199 sexdecies, 4): the DGFiP's
+    simulator for 2024 incomes gives these three figures. Under 12 000 EUR nothing changes. The
+    aid received comes off first: 18 000 less 3 000 leaves 15 000 borne, all of it retained."""
+    rows = _rows(_retraites(_domicile(18_000)))
+    assert rows["credits_impot"] == pytest.approx(
+        _saldom_by_hand(18_000, plus_de_65_ans=2), abs=0.5)
+    assert rows["credits_impot"] == pytest.approx(7_500, abs=0.5)
+    assert rows["ir_avant_niches"] == pytest.approx(1_343, abs=0.5)
+    assert rows["ir"] == pytest.approx(1_343 - 7_500, abs=0.5)
+    assert _rows(_retraites(_domicile(12_000)))["credits_impot"] == pytest.approx(6_000, abs=0.5)
+    assert _rows(_retraites(_domicile(18_000, 3_000)))["credits_impot"] == pytest.approx(
+        _saldom_by_hand(18_000, 3_000, plus_de_65_ans=2), abs=0.5)
+
+
+@pytest.mark.parametrize(("naissance", "plus_de_65_ans"), [(1954, 1), (1959, 1), (1960, 0)])
+def test_a_member_counts_from_the_year_he_turns_65(naissance: int, plus_de_65_ans: int) -> None:
+    """The DGFiP counts each member « âgé de plus de 65 ans au 31 décembre ou à la date du décès »
+    (Brochure pratique 2025, « Emploi à domicile »), as it reads the same words in art. 157 bis:
+    « âgé(e) de plus de 65 ans (né avant le 1.1.1960) » on 2024 incomes (notice of the 2042). A
+    pensioner alone, 20 000 EUR of declared pension and 18 000 EUR of home help: born in 1954 or
+    in 1959, 13 500 EUR retained and 6 750 EUR of credit; born in 1960, 64 on 31 December 2024,
+    12 000 and 6 000. The DGFiP's simulator gives these three credits."""
+    rows = _rows(_retraite(naissance, _domicile(18_000)))
+    assert rows["credits_impot"] == pytest.approx(
+        _saldom_by_hand(18_000, plus_de_65_ans=plus_de_65_ans), abs=0.5)
+
+
+def test_the_age_is_read_on_31_december() -> None:
+    """« au 31 décembre » (Brochure pratique 2025): born on 31 December 1959, a member turns 65 on
+    the last day of 2024 and counts; born on 1 January 1960, he does not. Both builders write a
+    birth on 1 January, where the age on 1 January and on 31 December agree; written by hand, the
+    dates part them. On 18 000 EUR, 6 750 EUR of credit for the first and for a member born on
+    1 July 1959, who is 64 in January, and 6 000 for the second."""
+    household = _retraite(1959, _domicile(18_000))
+    for date, plus_de_65_ans in (("1959-12-31", 1), ("1959-07-01", 1), ("1960-01-01", 0)):
+        assert _saldom_written_by_hand(household, naissances={"adulte_0": date}) == (
+            pytest.approx(_saldom_by_hand(18_000, plus_de_65_ans=plus_de_65_ans), abs=0.5)), date
+
+
+def test_the_increments_for_age_and_for_children_share_the_15_000_euro_cap() -> None:
+    """« La limite de 12 000 € augmentée de ces majorations ne peut excéder 15 000 € », whatever
+    the ground of each increment. A pensioner born in 1954 with a child born in 2014: 12 000 +
+    1 500 + 1 500 = 15 000, 7 500 EUR of credit on 18 000 and on 20 000. The two pensioners with
+    the child: 12 000 + 3 x 1 500 = 16 500, held to 15 000, so 7 500 and not 8 250; their tax
+    before credits, 424 EUR, leaves -7 076. The DGFiP's simulator gives these credits and -7 076."""
+    enfant = [{"annee_naissance": 2014}]
+    for depenses in (18_000, 20_000):
+        seul = _rows(_retraite(1954, _domicile(depenses), children=enfant))
+        assert seul["credits_impot"] == pytest.approx(
+            _saldom_by_hand(depenses, enfants=1, plus_de_65_ans=1), abs=0.5)
+        assert seul["credits_impot"] == pytest.approx(7_500, abs=0.5)
+    couple = _rows(_retraites(_domicile(18_000), children=enfant))
+    assert couple["credits_impot"] == pytest.approx(
+        _saldom_by_hand(18_000, enfants=1, plus_de_65_ans=2), abs=0.5)
+    assert couple["credits_impot"] == pytest.approx(7_500, abs=0.5)
+    assert couple["ir"] == pytest.approx(424 - 7_500, abs=0.5)
+
+
+@pytest.mark.parametrize(("naissances", "plus_de_65_ans"), [
+    ((1954, 1980), 1), ((1980, 1955), 1), ((1980, 1982), 0),
+], ids=["le déclarant", "le conjoint", "aucun"])
+def test_each_declarant_over_65_raises_the_ceiling(naissances: tuple[int, int],
+                                                   plus_de_65_ans: int) -> None:
+    """« au titre de chacun des membres du foyer fiscal »: the first declarant or the second. A
+    couple at 30 000 and 15 000 EUR of salary declaring 18 000 EUR of home help: 6 750 EUR of
+    credit when either of them is over 65, 6 000 when neither is."""
+    premier, second = naissances
+    rows = _rows(_foyer(_adulte(30_000, premier), _adulte(15_000, second),
+                        niches=_domicile(18_000)))
+    assert rows["credits_impot"] == pytest.approx(
+        _saldom_by_hand(18_000, plus_de_65_ans=plus_de_65_ans), abs=0.5)
+
+
+def test_a_dependant_over_65_counts_once() -> None:
+    """The members the correction adds are the declarants: a dependant already counts once in
+    openfisca's `nb_pac2`, and the DGFiP's simulator counts a dependent child born in 1950 once,
+    beside a declarant born in 1980, 6 750 EUR of credit on 18 000 EUR and not 7 500. Absurd as
+    a family, but the wire format accepts it, and it is the only kind of household where the
+    15 000 EUR cap does not hide the count: beside a parent over 65, the parent's increment and
+    the child's already reach it."""
+    rows = _rows(_foyer(_adulte(20_000), children=[{"annee_naissance": 1950}],
+                        niches=_domicile(18_000)))
+    assert rows["credits_impot"] == pytest.approx(_saldom_by_hand(18_000, enfants=1), abs=0.5)
+
+
+def test_the_first_year_limit_takes_the_same_increments_up_to_18_000_euros() -> None:
+    """« La limite de 12 000 € est portée à 15 000 € pour la première année d'imposition pour
+    laquelle le contribuable bénéficie des dispositions du présent article au titre du a du 1 »,
+    and then « la limite de 15 000 € fait l'objet des majorations prévues au présent alinéa et le
+    montant total des dépenses ne peut excéder 18 000 € » (CGI art. 199 sexdecies, 3). Case 7DQ
+    has no field on the wire (D-196): it is written by hand on the situation. The two pensioners
+    on 20 000 EUR: 15 000 + 2 x 1 500 = 18 000, 9 000 EUR of credit, where openfisca gave 7 500.
+    A pensioner alone on 18 000: 16 500, 8 250. The two with two children on 25 000: 15 000 +
+    4 x 1 500 = 21 000, held to 18 000, 9 000. An adult under 65 on 18 000: 15 000, 7 500. The
+    DGFiP's simulator gives these four credits."""
+    premiere_annee = {"f7dq": {"2024": True}}
+    enfants = [{"annee_naissance": 2012}, {"annee_naissance": 2014}]
+    cases = (
+        (_retraites(_domicile(20_000)), 20_000, 0, 2),
+        (_retraite(1954, _domicile(18_000)), 18_000, 0, 1),
+        (_retraites(_domicile(25_000), children=enfants), 25_000, 2, 2),
+        (_foyer(_adulte(20_000), niches=_domicile(18_000)), 18_000, 0, 0),
+    )
+    for household, depenses, nombre_d_enfants, plus_de_65_ans in cases:
+        assert _saldom_written_by_hand(household, premiere_annee) == pytest.approx(
+            _saldom_by_hand(depenses, enfants=nombre_d_enfants, plus_de_65_ans=plus_de_65_ans,
+                            premiere_annee=True), abs=0.5), (depenses, plus_de_65_ans)
+
+
+def test_no_increment_for_age_raises_the_20_000_euro_ceiling() -> None:
+    """« Aucune majoration ne peut être appliquée à la limite de 20 000 euros »
+    (BOI-IR-RICI-150-20, § 190), for age as for children. The two pensioners, the first holding
+    the card: 9 000 EUR of credit on 18 000, and 10 000 on 25 000, not the 11 500 of 20 000 +
+    2 x 1 500. The DGFiP's simulator, case 7DG ticked, gives 9 000 and 10 000."""
+    for depenses in (18_000, 25_000):
+        rows = _rows(_retraites(_domicile(depenses), carte=True))
+        assert rows["credits_impot"] == pytest.approx(
+            _saldom_by_hand(depenses, plus_de_65_ans=2, invalidite=True), abs=0.5), depenses
+    assert rows["credits_impot"] == pytest.approx(10_000, abs=0.5)
+
+
+def test_the_home_help_lever_moves_the_limit_the_age_increments_raise() -> None:
+    """`saldom_plafond` moves the 12 000 EUR of the article, the limit the increments raise
+    (D-196), and the correction reads it, the increment and the caps from the reformed tree. At
+    8 000 EUR, the two pensioners have 8 000 + 2 x 1 500 = 11 000 retained of their 18 000, 5 500
+    EUR of credit, and a couple under 65 has 8 000, 4 000."""
+    lever = ReformSpec.model_validate({"saldom_plafond": 8_000})
+    vieux = compute(_retraites(_domicile(18_000)), 2024, tier="light", reform=lever).reform
+    jeunes = compute(_foyer(_adulte(30_000), _adulte(15_000), niches=_domicile(18_000)), 2024,
+                     tier="light", reform=lever).reform
+    assert vieux["credits_impot"] == pytest.approx(
+        TAUX_SALDOM * (8_000 + 2 * MAJORATION_SALDOM), abs=0.5)
+    assert jeunes["credits_impot"] == pytest.approx(TAUX_SALDOM * 8_000, abs=0.5)
+
+
+def test_both_tiers_price_the_pensioners_home_help_alike() -> None:
+    """The credit is in the fiscal block, which both tiers compute: the two pensioners' 7 500 EUR
+    on 18 000 EUR is the same in each, as is every row they share. The disposable income of the
+    full tier takes the net tax off, so the credit lands in it whole: 7 500 EUR more than without
+    the home help."""
+    household = _retraites(_domicile(18_000))
+    light, full = _rows(household), _rows(household, "full")
+    assert light["credits_impot"] == pytest.approx(7_500, abs=0.5)
+    for row in LIGHT_ROWS:
+        assert full[row.key] == light[row.key], row.key
+    sans_aide = _rows(_retraites(), "full")
+    assert full["revenu_disponible"] - sans_aide["revenu_disponible"] == pytest.approx(
+        7_500, abs=0.5)
+
+
+def test_the_pensioners_home_help_prices_the_same_whatever_is_computed_first() -> None:
+    """Built as `compute` builds the full tier: through the registry, as the API computes it, and
+    with `revenu_disponible` first, as the EMTR's bumped leg does. The two pensioners renting at
+    500 EUR in zone 2: the credit, 7 500 EUR, and the disposable income agree."""
+    situation = build_situation(_retraites(_domicile(18_000), logement=RENTING), 2024)
+    registry = extract(_pinned(situation), 2024, "full")
+    first = _pinned(situation)
+    disposable = float(first.calculate("revenu_disponible", "2024")[0])
+    assert disposable == pytest.approx(registry["revenu_disponible"], abs=0.05)
+    assert float(first.calculate("ci_saldom", "2024")[0]) == pytest.approx(7_500, abs=0.01)
+    assert registry["credits_impot"] == pytest.approx(7_500, abs=0.5)
+
+
+def test_the_engine_alone_leaves_the_members_over_65_out_of_the_home_help_ceiling() -> None:
+    """The kill test for correction 15: raw openfisca raises the ceiling for the dependants
+    (`nb_pac2`) and the ascendants of case 7DL, never for the members over 65. D-196's two
+    pensioners, born in 1954 and 1955, are retained 12 000 of their 18 000 EUR, 6 000 EUR of
+    credit. The day this fails, openfisca counts them, and the correction must go."""
+    from impots.engine.system import uncorrected_baseline
+
+    raw = _saldom_written_by_hand(_retraites(_domicile(18_000)), system=uncorrected_baseline())
+    assert raw == pytest.approx(TAUX_SALDOM * PLAFOND_SALDOM, abs=0.01), (
+        "openfisca now raises the home-help ceiling for members over 65: remove correction 15")
 
 
 # --------------------------------------------------------------------------- #

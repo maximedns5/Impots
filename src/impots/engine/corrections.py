@@ -1,6 +1,6 @@
 """Where this project's reading of the BENEFITS law, of the abatement of art. 157 bis that the
-income tax and the benefits both read (D-188), and of the income tax on a benefit, the ASS
-(D-192), differs from openfisca's, and why.
+income tax and the benefits both read (D-188), of the income tax on a benefit, the ASS
+(D-192), and of the home-help credit's ceiling (D-198), differs from openfisca's, and why.
 
 The same bar as `patrimoine.corrections`, which holds the IFI ones: a legal citation, a
 measured demonstration of the difference, a decision-log entry, and a KILL TEST that fails
@@ -384,6 +384,36 @@ invalidity pension, and nothing in it moves.
 
 ---
 
+**Correction 15 — the home-help ceiling raised for each member over 65 (CGI art. 199 sexdecies,
+3), D-198.**
+
+« La limite de 12 000 € est majorée de 1 500 € par enfant à charge au sens des articles 196 et
+196 B et au titre de chacun des membres du foyer fiscal âgé de plus de soixante-cinq ans », up to
+15 000 EUR, and the first year's limit of 15 000 EUR « fait l'objet des majorations prévues au
+présent alinéa », up to 18 000. The DGFiP reads the age « au 31 décembre ou à la date du décès »
+(Brochure pratique 2025): a member counts from the year they turn 65. openfisca's `ci_saldom`
+raises its ceilings for the dependants (`nb_pac2`) and the ascendants of case 7DL only, as the
+docstring of its 2011 formula says. Measured on two pensioners born in 1954 and 1955 declaring
+18 000 EUR of home help: 6 000 EUR of credit over 2024, against the 7 500 the DGFiP's simulator
+gives.
+
+The correction runs openfisca's formula with the declarants of 65 or more on 31 December among
+the persons it counts, so the increment, both caps, the first year and the 20 000 EUR of case
+7DG, which takes no increment, stay openfisca's, read from the tree a reform moves. The
+declarants only: a dependant already counts once in `nb_pac2`, as the DGFiP's simulator counts
+a dependent child born in 1950 once, and neither the wire format nor the population carries
+another kind of dependant. The age is read off `date_naissance`, so a birth on 31 December
+counts; with births on 1 January, as both builders write them, it is the year of birth. Wrapped
+from 2020, the date of openfisca's formula; no year this project accepts reads an earlier one.
+
+**Blast radius:** a foyer with a declarant of 65 or more on 31 December whose home help, less the
+aid received, passes 12 000 EUR (15 000 the first year), without case 7DG. On the wire, the
+home-help field beside an adult born 65 years or more before the year simulated. The population
+declares no home help unless it imputes it, and its imputed bases are decile means, 3 759.31 EUR
+at most on 2024 incomes: nothing in it moves.
+
+---
+
 **Correction 16 — the AAH of a pensioner left out of a spouse's minimum (CSS art. R. 815-22;
 ministerial letter of 19 March 1982), D-200.**
 
@@ -560,6 +590,15 @@ CORRECTIONS: tuple[Correction, ...] = (
         kill_test="test_the_engine_alone_pays_the_aspa_beside_an_asi_spouse_half_the_couple_maximum",
     ),
     Correction(
+        name="emploi_domicile_plafond_majore_par_membre_de_plus_de_65_ans",
+        citation="CGI art. 199 sexdecies, 3 — « La limite de 12 000 € est majorée de 1 500 € par "
+                 "enfant à charge au sens des articles 196 et 196 B et au titre de chacun des "
+                 "membres du foyer fiscal âgé de plus de soixante-cinq ans », et la limite de la "
+                 "première année « fait l'objet des majorations prévues au présent alinéa »",
+        decision="D-198",
+        kill_test="test_the_engine_alone_leaves_the_members_over_65_out_of_the_home_help_ceiling",
+    ),
+    Correction(
         name="aah_d_un_conjoint_retraite_hors_des_ressources_du_minimum",
         citation="CSS art. R. 815-22 — toutes les ressources comptent, « indépendamment des "
                  "ressources exclues par des dispositions particulières » ; la lettre "
@@ -624,6 +663,16 @@ SALARIES = "revenu_assimile_salaire"
 SALARIES_AFTER_DEDUCTION = "revenu_assimile_salaire_apres_abattements"
 #: The ASS's work condition, without which openfisca's ASS is nil (`ass_eligibilite_individu`).
 ASS_CONDITION = "ass_precondition_remplie"
+#: The home-help credit, the date of the formula correction 15 wraps, and the count of persons
+#: that formula raises its ceilings for: the dependants, among whom the correction adds the
+#: declarants over 65.
+HOME_HELP_CREDIT = "ci_saldom"
+HOME_HELP_SINCE = "2020-01-01"
+HOME_HELP_INCREMENTS = "nb_pac2"
+#: The age from which a member of the foyer raises the home-help ceiling (CGI art. 199 sexdecies,
+#: 3), reached « au 31 décembre ou à la date du décès » (Brochure pratique 2025). openfisca's
+#: tree has no such parameter, since its formula never reads an age.
+AGE_SALDOM = 65
 #: Each person's resources for the ASPA and the ASI, which correction 16 rids of the AAH of
 #: whoever draws a retirement pension.
 ASI_ASPA_BASE = "asi_aspa_base_ressources_individu"
@@ -675,6 +724,9 @@ def apply_to(system: Any) -> Any:
             self.update_variable(_asi_half_beside_a_spouse_at_the_aspa(asi_capped))
             aspa_amount = self.get_variable(ASPA_AMOUNT).get_formula(ASI_DIFFERENTIELLE_DEPUIS)
             self.update_variable(_aspa_half_beside_a_spouse_at_the_asi(aspa_amount))
+            saldom_formula = self.get_variable(HOME_HELP_CREDIT).get_formula(HOME_HELP_SINCE)
+            self.update_variable(_home_help_ceiling_raised_for_the_declarants_over_65(
+                saldom_formula))
             base_formula = self.get_variable(ASI_ASPA_BASE).get_formula("0001-01-01")
             self.update_variable(_aah_of_a_pensioner_left_out(base_formula))
 
@@ -1256,3 +1308,50 @@ def _ass_taxed_as_a_salary(openfisca_formula: Any, deduction_formula: Any) -> An
             return montant + foyer_fiscal.sum(avec - sans)
 
     return revenu_categoriel_tspr
+
+
+class _DeclarantsOver65AmongTheIncrements:
+    """The foyers fiscaux as openfisca's home-help credit sees them, with the declarants of 65 or
+    more on 31 December among the persons its ceilings are raised for (correction 15). Everything
+    else it reads, the expenses, the aid received and the boxes 7DG, 7DL and 7DQ, is the foyers'
+    own."""
+
+    def __init__(self, foyer_fiscal: Any, declarants: Any) -> None:
+        self._foyer_fiscal = foyer_fiscal
+        self._declarants = declarants
+
+    def __call__(self, variable_name: str, period: Any, options: Any = None) -> Any:
+        value = self._foyer_fiscal(variable_name, period, options)
+        return value + self._declarants if variable_name == HOME_HELP_INCREMENTS else value
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._foyer_fiscal, name)
+
+
+def _home_help_ceiling_raised_for_the_declarants_over_65(openfisca_formula: Any) -> Any:
+    """`ci_saldom`, with the ordinary ceiling and the first year's raised by the increment for
+    each declarant of 65 or more on 31 December (CGI art. 199 sexdecies, 3): openfisca's formula,
+    which raises them for the dependants and the ascendants of case 7DL only, run with those
+    declarants among the dependants it counts. Its increment, its caps and its 20 000 EUR without
+    increment stand, read from the tree."""
+    from numpy import datetime64
+    from openfisca_core.model_api import YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class ci_saldom(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Crédit d'impôt emploi d'un salarié à domicile, le plafond majoré pour chaque "
+                 "membre du foyer de plus de 65 ans (CGI art. 199 sexdecies, 3)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000046861251"
+        definition_period = YEAR
+
+        def formula_2020_01_01(foyer_fiscal, period, parameters):
+            # 65 or more on 31 December: born before 1 January of the year 64 years back.
+            ne_avant = datetime64(f"{period.start.year - AGE_SALDOM + 1:04d}-01-01")
+            plus_de_65_ans = foyer_fiscal.members("date_naissance", period) < ne_avant
+            declarants = foyer_fiscal.sum(plus_de_65_ans, role=FoyerFiscal.DECLARANT)
+            return openfisca_formula(_DeclarantsOver65AmongTheIncrements(foyer_fiscal, declarants),
+                                     period, parameters)
+
+    return ci_saldom
