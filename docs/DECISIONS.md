@@ -12074,7 +12074,9 @@ cinq, un parent seul à 40 000 € coûte 0,67 s au palier léger célibataire e
 2,58 s au palier complet dans les deux cas : les 36 mois de `statut_marital` ne se voient
 pas.
 
-**Le gate.** (à compléter après `make gate`.)
+**Le gate.** `make gate` donne 1 663 réussis, 172 ignorés et 12 échecs, en 26 min 42 s. Les
+12 échecs sont ceux de D-176 à D-194, faute de données dans ce conteneur. Les 31 réussis de
+plus sont les tests ajoutés : 25 au moteur, 4 à l'API et 2 à la page.
 
 **Ce qui reste.**
 * **L'année du décès** : deux déclarations, refusée. Le format ne porte pas de date de
