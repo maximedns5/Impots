@@ -843,6 +843,28 @@ def test_the_invalidity_card_reaches_the_income_tax(client: TestClient) -> None:
     assert rows[True]["ir"] == pytest.approx(1_073, abs=0.5)
 
 
+@pytest.mark.parametrize(("household", "credit"), [
+    ({"adults": [{"salaire_brut_annuel": 40_000, "annee_naissance": 1980,
+                  "carte_invalidite": True}]}, 9_000),
+    ({"adults": [{"salaire_brut_annuel": 40_000, "annee_naissance": 1985}],
+      "children": [{"annee_naissance": 2014, "handicap": {
+          "taux_incapacite": 0.8, "complement_categorie": 1}}]}, 9_000),
+    ({"adults": [{"salaire_brut_annuel": 40_000, "annee_naissance": 1985}],
+      "children": [{"annee_naissance": 2014, "handicap": {"taux_incapacite": 0.8}}]}, 6_750),
+], ids=["carte", "complément de l'AEEH", "AEEH seule"])
+def test_the_card_and_an_aeeh_complement_reach_the_home_help_ceiling(
+    client: TestClient, household: dict, credit: float,
+) -> None:
+    """Case 7DG over HTTP (D-196), in the light tier: 18 000 EUR of home help are retained up to
+    20 000 EUR for a card holder and for a child's complément of the AEEH, 9 000 EUR of credit;
+    up to 12 000 plus the child's 1 500 for an AEEH alone, 6 750."""
+    request = {"household": {**household, "niches": {"salarie_domicile": 18_000}},
+               "year": 2024, "tier": "light"}
+    response = client.post("/simulate", json=request)
+    assert response.status_code == 200, response.text
+    assert response.json()["baseline"]["credits_impot"] == pytest.approx(credit, abs=0.5)
+
+
 def test_a_claimant_of_the_ass_reaches_the_engine_and_its_row_comes_back(
     client: TestClient,
 ) -> None:
