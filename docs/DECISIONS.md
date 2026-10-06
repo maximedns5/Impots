@@ -11795,8 +11795,8 @@ l'impôt bouge.
 * **L'article.** « Pour l'imposition des contribuables célibataires ou divorcés qui vivent
   seuls, le nombre de parts prévu au I est augmenté de 0,5 lorsqu'ils supportent à titre
   exclusif ou principal la charge d'au moins un enfant » (CGI, art. 194, II, version en
-  vigueur depuis le 1er janvier 2018). Deux conditions, donc : n'être ni marié ni pacsé, et
-  vivre seul.
+  vigueur depuis le 1er janvier 2018). Deux conditions, donc : être célibataire ou divorcé,
+  et vivre seul. Un couple marié ou pacsé, imposé en commun, ne remplit pas la première.
 * **Vivre seul, c'est ne pas vivre en couple.** Le Conseil d'État le juge de la demi-part du
   a du 1 de l'art. 195, qui pose la même condition. Son bénéfice « ne constitue un droit
   pour le contribuable que sous la condition, notamment, qu'il vive seul au 1er janvier de
@@ -11983,6 +11983,11 @@ seul remplacement vérifié :
 * **Le partenaire absent du fichier.** Les 444 foyers gardent une famille d'un seul parent,
   et l'ASF qui va avec, comme les deux de la fixture. Ni le partenaire ni ses revenus ne
   sont dans le fichier.
+* **Les niches et la queue haute.** Ni l'une ni l'autre ne lit `parent_isole`, mais
+  l'imputation des niches et le calage de la queue haute classent les foyers par RFR par
+  part. Les 444 foyers perdent une demi-part et peuvent changer de tranche, ce qui déplace
+  aussi les probabilités de leurs voisins de tranche. Les fichiers que lisent ces deux
+  étapes manquent ici : seul `make full` le mesurera.
 * **La case T de N-2.** Le câblage n'écrit la case T que sur l'année N, le constructeur du
   ménage de N-2 à N. Les taux de la CSG d'un revenu de remplacement lisent les parts de
   N-2. Écrite aussi sur N-2 et N-1, la case T ferait monter le revenu disponible de deux
