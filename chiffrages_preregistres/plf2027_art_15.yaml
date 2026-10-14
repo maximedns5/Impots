@@ -1,0 +1,42 @@
+case: plf2027_art_15
+pre_registered: '2026-10-14T15:48:46+00:00'
+commit: e449490d08b285bebbf5f0ae5b234fde066cf1a1
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2027
+  spec:
+    cebge_seuils_et_taux:
+    - seuil_ca: 1500000000.0
+      taux: 0.157
+    - seuil_ca: 3000000000.0
+      taux: 0.314
+    cebge_prorogation_largeur: 100000000.0
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -7054329155.676697
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 200000000.0
+  rationale: 'Troisième exercice de la CEBGE (2027) à 15,7 % et 31,4 %, seuil de 1,5
+    Md EUR, contre un droit courant où elle s''est éteinte. La CEBGE de cette population
+    est réconciliée à +23,1 % du rendement publié de son premier exercice (9,3 contre
+    7,5 Md EUR) : le niveau est biaisé vers le haut, et ce biais se reporte. S''y
+    ajoutent l''absence de report déficitaire et d''intégration fiscale (IS simulé
+    vers le haut), un seul exercice au lieu de deux pour l''assiette et les tests
+    de seuil, et un ratio fiscal/comptable national unique. Direction attendue : au-dessus.
+    Plus ou moins 30 % : assez pour contenir le biais déjà mesuré, pas assez pour
+    qu''un défaut de structure passe inaperçu. Plancher de 200 M EUR.'
+note: 'Comparateur : le seul volet CEBGE (I de l''article). La contribution sur le
+  résultat d''exploitation des transporteurs maritimes (II) n''est pas chiffrée. Population
+  : SIRENE x ESANE 2023, pas les cellules de test.'
+bound: two-sided
+mirror: false
+comparator: null
