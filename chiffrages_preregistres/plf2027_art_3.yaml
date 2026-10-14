@@ -31,4 +31,17 @@ note: 'Comparateur : l''article seul. Le compte de 4,6 M de foyers touchés est 
   vu (D-174) et ne sert pas de test.'
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: -1100000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 3, § 4.2, p. 36 : «
+    un gain budgétaire estimé à 1,4 Md€ en 2027, 1,8 Md€ en 2028 et 1,1 Md€ à compter
+    de 2029 »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; échantillon de 500 000
+    déclarations (§ 4.3)
+  perimeter: L'article entier ; État.
+  net_of: Le régime de croisière, à compter de 2029, soit l'année pleine d'une année
+    de revenus. 2027 (1,4 Md€) et 2028 (1,8 Md€) mêlent l'avis sur les revenus de
+    N-1 et le PAS de l'année N. Aucun effet comportemental.
+  sign: yield
+  basis: annee-pleine
+  retrieved: '2026-10-14'

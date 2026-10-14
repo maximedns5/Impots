@@ -35,4 +35,20 @@ note: 'Comparateur : le seul volet revalorisation du barème si l''annexe le sé
   vu (exposé des motifs) et ne sert pas de test.'
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: 4200000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 2, § 4.2.1.1, p. 29
+    : « le rendement de l''IR aurait été majoré d''environ 4,2 Md€ en 2027 »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; mesure estimée au titre
+    des revenus 2025 (§ 4.3.1)
+  perimeter: 'Le volet 4.2.1.1 seul : indexation de 2,1 % des tranches et des seuils
+    associés, des plafonds du quotient familial, de la décote, du plafond de déduction
+    des pensions alimentaires et de l''abattement pour enfant marié, et grilles de
+    taux par défaut du PAS ; État. Le scénario ne porte que les tranches, la décote
+    et le plafond général de la demi-part.'
+  net_of: 'Effet budgétaire de 2027 : somme de l''avis sur les revenus 2026 et de
+    l''effet sur le PAS de 2027. Hors volets carburant, indemnités de rupture et indemnités
+    journalières ; aucun effet comportemental.'
+  sign: cost
+  basis: premiere-annee
+  retrieved: '2026-10-14'
