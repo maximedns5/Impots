@@ -14744,3 +14744,143 @@ tourner la suite sur la PR.
 * Cnav, « Ressources exclues pour l'allocation de solidarité aux personnes âgées » et
   « Ressources exclues pour l'allocation supplémentaire d'invalidité », listes lues le
   6 octobre 2026 sur la même base ; exposé « Condition de ressources - Aspa ».
+
+## D-204 — PLF 2027 : les trois préenregistrements notés, deux dedans, l'art. 2 dehors
+
+**La passe complète.** Le 2026-10-14, sur la machine du propriétaire, dans un clone neuf :
+`make data`, la population reconstruite (D-195), les cellules et la population
+d'entreprises bâties depuis Ésane, Focus 372 et DGFiP n° 39 (`cells_are_synthetic` vaut
+`false`), puis `make full` sur `5b1ec10`. PASS, 2 106 réussis, 116 sautés, 107 min 39 s,
+journalisé dans `b24de21`.
+
+Les 116 sautés viennent du clone neuf. `make data` ne télécharge que le profil `tests`, et
+les tests qui lisent un fichier hors de ce profil sautent : le TES, le REI, les bulletins
+de l'AFT, le texte du PLF, la table des niches de la DGFiP, le rapport sur le CICE. Le job
+`fast` de la CI, dans les mêmes conditions, en saute 120. La passe du 2026-09-25 n'en
+sautait que 3, sur une machine qui avait tout téléchargé au fil des semaines. La liste
+exacte n'est pas au journal, car `make full` ne garde pas le rapport `-rs`. Ce que le code
+permet d'affirmer : les modules lents sur les niches, les prestations, les comparaisons
+masquées, les boutons, la population et l'API n'ont pas d'autre condition de saut qu'une
+population construite, et elle l'était. Ceux de l'imputation des niches sautent sans la
+table de la DGFiP. *Une première lecture, donnée au propriétaire en séance, tirait du
+compte 1 999 − 116 + 223 = 2 106 que tous les tests de population avaient tourné. Le
+calcul ne prouvait rien : 2 222 − 116 donne 2 106 quelle que soit la répartition.*
+
+**Les trois enregistrements.** Un commit chacun, après celui de la passe, sur la branche
+`plf2027-enregistrements`, en recopiant tels quels les blocs de
+`docs/PLF2027_ENREGISTREMENT.md` :
+
+| cas | commit | mécanique | tolérance |
+|---|---|---|---|
+| `plf2027_art_2` | `be5b5f6` | +2,927 md€ (coût) | 20 %, plancher 200 M€ |
+| `plf2027_art_3` | `e449490` | −1,295 md€ (gain) | 30 %, plancher 200 M€ |
+| `plf2027_art_15` | `25b2a61` | −7,054 md€ (gain) | 30 %, plancher 200 M€ |
+
+Chaque fichier porte le commit sur lequel il a été chiffré. Les tolérances sont celles
+committées le 2026-10-02, et `verify_tolerance_unchanged` passe pour les trois.
+
+**L'annexe.** Elle est liée depuis la page du dossier `PLF_2027` de l'Assemblée (« PLF
+2027 - Evaluations préalables »). L'URL a été relevée et le fichier téléchargé le
+2026-10-14, après le push des trois enregistrements. 743 pages, sha256 b1142977a5e3,
+manifesté sous `plf2027_evaluations_prealables.pdf` (`4106e06`) ; le PDF reste hors du
+dépôt. Aucun montant article par article n'avait été vu avant (D-174).
+
+**Les comparateurs, et la règle qui les choisit.** La note de chaque cas fixait le volet,
+pas l'année. La règle appliquée est celle que le code du comparateur énonce depuis F1 :
+comparer un chiffre en année pleine à une simulation de première année est une discordance
+de base. Nos simulations chiffrent une année de revenus, ou un exercice entier. Le
+comparateur est donc le chiffre de l'annexe sur cette base quand elle le donne ; sinon,
+le chiffre qu'elle donne, avec sa base notée, et la discordance est la première
+explication d'un écart (D-029).
+
+* **Art. 2.** Le § 4.2.1.1 (p. 29) ne donne que 2027 : « le rendement de l'IR aurait été
+  majoré d'environ 4,2 Md€ en 2027 (somme de l'effet sur les avis d'imposition au titre
+  des revenus 2026 et de l'effet sur le PAS) ». Comparateur : 4,2 Md€, un coût, en
+  première année.
+* **Art. 3.** Le § 4.2 (p. 36) donne la chronique : « 1,4 Md€ en 2027, 1,8 Md€ en 2028 et
+  1,1 Md€ à compter de 2029 ». Comparateur : 1,1 Md€, l'année pleine.
+* **Art. 15.** Le § 4.2.1 (p. 160) donne la CEBGE en deux phrases : « 5 Md€ au titre des
+  acomptes attendus en 2027. Un rendement de 500 M€ est attendu en 2028 au titre du
+  paiement de la contribution par les entreprises dont la clôture de l'exercice comptable
+  est décalée ». Comparateur : 5,5 Md€, la contribution de l'exercice entier, puisque la
+  population chiffre aussi les clôtures décalées. La contribution des transporteurs
+  maritimes (II, 0,3 Md€) reste hors du comparateur, comme la note le disait.
+
+Les montants sont saisis dans la convention de signe du moteur, où un coût est positif et
+un gain négatif, comme le font les tests du registre
+(`test_a_measure_that_raises_revenue_grades_on_the_magnitude`). `grade` compare les deux
+nombres tels quels et ne lit pas `sign`.
+
+**Les notes** (`60faa42`, `reports/chiffrages_preregistres.md`) :
+
+| cas | simulé | publié | écart | toléré | note |
+|---|---:|---:|---:|---:|---|
+| art. 2 | +2,927 md€ | +4,200 md€ | −1,273 md€ (−30,3 %) | 0,840 md€ | **dehors** |
+| art. 3 | −1,295 md€ | −1,100 md€ | −0,195 md€ (−17,7 %) | 0,330 md€ | dedans |
+| art. 15 | −7,054 md€ | −5,500 md€ | −1,554 md€ (−28,3 %) | 1,650 md€ | dedans |
+
+**Deux sur trois.** Les trois écarts tombent du même côté pour les finances publiques : un
+coût plus bas, deux gains plus hauts. Le rapport l'écrit « 0 au-dessus, 3 en-dessous »,
+parce qu'il compte les signes.
+
+**Ce que la note doit au choix de l'année.** L'art. 3 tient aussi contre 1,4 Md€, à +7,5 %.
+L'art. 15 ne tiendrait pas contre les seuls acomptes de 2027 : contre 5,0 Md€, l'écart
+serait de −2,054 md€, soit 41,1 %, au-delà des 30 %. Sa note dépend donc des 0,5 Md€ de
+clôtures décalées. La règle qui les compte est écrite ci-dessus pour qu'on puisse la
+contester.
+
+**L'art. 2 dehors : les explications mécaniques d'abord (D-029).**
+
+1. **La base.** Les 4,2 Md€ sont l'effet budgétaire de 2027 : l'avis sur les revenus 2026,
+   plus le PAS de 2027. Notre chiffre porte sur une seule année de revenus. La même annexe
+   montre l'écart entre les deux bases pour une autre mesure d'impôt sur le revenu : l'art.
+   3 rend 1,4 Md€ en 2027 pour 1,1 Md€ en année pleine, un rapport de 1,27. Transposé, il
+   ramènerait les 4,2 Md€ vers 3,3 Md€ en année pleine, et l'écart vers −11 %. C'est une
+   hypothèse empruntée à un autre article, pas un chiffre de l'annexe : le cas reste rouge.
+2. **Le périmètre.** Le volet publié porte aussi les quatre autres plafonds du quotient
+   familial, le plafond de déduction des pensions alimentaires, l'abattement pour enfant
+   marié et les grilles de taux par défaut du PAS. Le scénario n'en porte aucun. C'était
+   écrit à l'enregistrement, comme un biais vers le bas.
+3. **Le millésime.** Les revenus de la population sont ceux de 2024, non vieillis.
+   L'annexe a estimé la mesure sur les revenus 2025 (§ 4.3.1). Biais vers le bas, écrit
+   lui aussi.
+4. **Le niveau de l'impôt**, à +8,8 % de la DGFiP dans cette population, tire vers le haut.
+
+Le signe de l'écart est celui de la base et des deux biais vers le bas déclarés. Aucun
+argument sur le réalisme de la population n'est nécessaire avant ceux-là.
+
+**L'art. 3 dedans, mais pas dans le sens annoncé.** La justification de sa tolérance ne
+listait que des biais vers le bas : pas de revenus du capital, donc des taux marginaux
+plus bas, et un contrefactuel gelé à 4 439 € au lieu des 4 532 € revalorisés. Le gain
+simulé dépasse pourtant le publié de 17,7 %. Ce n'est pas expliqué ici.
+
+**L'art. 15 dedans, dans le sens annoncé.** « Direction attendue : au-dessus » : le
+rendement simulé dépasse le publié de 28,3 %, près des +23,1 % mesurés sur le premier
+exercice. Le rapport écrit « en-dessous » parce qu'un gain est négatif.
+
+**Les tests.** Aucun code n'a changé. Sur la branche, dans le conteneur cloud :
+`tests/test_preregistration.py`, `tests/test_provenance.py`, `tests/test_charter.py`,
+`tests/test_donnees.py`, `tests/test_plf_coverage.py` et `tests/test_agregats.py`, 219
+réussis ; puis `chiffrage grade` sur les trois cas et `chiffrage report`. Le job `fast` de
+la CI fait tourner la suite sur la PR.
+
+**Ce qui reste.**
+
+* **`grade` ne vérifie pas que `sign` s'accorde avec le signe de `published_eur`.** Saisir
+  le montant imprimé, positif, avec `sign: yield` noterait un gain en rouge à deux fois
+  l'écart. C'est le piège que la docstring du comparateur décrit, et rien ne l'empêche.
+  Un garde qui refuse le désaccord demande un kill test, et le nettoyage du gabarit des
+  tests, qui met `sign="yield"` sur des montants positifs.
+* **La ligne de direction du rapport compte des signes.** « 0 au-dessus, 3 en-dessous »
+  veut dire « plus favorable aux finances publiques trois fois » ; elle pourrait le dire.
+* **Les autres volets de l'art. 2** (indemnités de rupture, indemnités journalières, prime
+  carburant, CSG des indemnités journalières) et la contribution des transporteurs
+  maritimes ne sont pas chiffrés.
+* **Le sens de l'écart de l'art. 3**, contraire aux biais déclarés.
+* **L'horodatage reste interne** : un commit dans un dépôt privé (D-095).
+* **La liste des 116 tests sautés** demande une passe avec `-rs`, si on veut l'avoir.
+
+**Sources.** Assemblée nationale, dossier `PLF_2027`, « PLF 2027 - Evaluations
+préalables », 743 p., relevé le 2026-10-14 (sha256 b1142977a5e3) : art. 2, § 4.2.1.1, p.
+29 ; art. 3, § 4.2, p. 36 ; art. 15, § 4.2.1, p. 160. Les enregistrements : `be5b5f6`,
+`e449490`, `25b2a61`, après la passe `b24de21`.
