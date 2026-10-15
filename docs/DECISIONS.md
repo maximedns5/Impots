@@ -14933,3 +14933,154 @@ par la PR de D-204, une fois `main` fusionné dedans.
 **Ce qui reste.** Rien d'autre. Si une source du profil tombe pendant qu'une PR la
 change, la PR rougit toujours, et c'est voulu : un fichier qui a changé doit être
 retéléchargé et vérifié.
+
+## D-206 — `grade` refuse un comparateur dont le signe contredit le montant
+
+**Le piège.** D-204 l'avait nommé sans le fermer. `grade` soustrait `published_eur` de
+`mechanical_eur` tels quels, dans la convention du moteur où un coût est positif et un
+gain négatif, et ne lit jamais `sign`. La docstring du comparateur affirmait pourtant que
+porter `sign` « empêche un cas de passer du vert au rouge à deux fois l'écart ». Rien ne
+l'empêchait. Le « gain budgétaire de 1,1 Md€ » de l'art. 3, saisi tel qu'imprimé, +1,1e9
+sous `sign: yield`, aurait noté le gain simulé de 1,295 Md€ contre un coût de 1,1 Md€ :
+2,4 Md€ d'écart au lieu de 0,2, et un cas dans sa tolérance passé au rouge.
+
+**La garde.** `Comparator.__post_init__` refuse un montant positif sous `yield` et un
+montant négatif sous `cost`. Zéro ne contredit ni l'un ni l'autre. Le refus a lieu à la
+naissance du comparateur, donc aussi à la lecture d'un fichier : `report` range alors le
+cas sous « Non notables, et pourquoi », avec la raison. Un montant absent reste le refus
+de `grade`, avec les autres champs manquants.
+
+**Refuser plutôt que corriger.** L'autre voie était de faire lire `sign` à `grade`, en
+notant contre ±|`published_eur`|, comme le fait la suite rétrospective
+(`Published.signed`). La saisie naturelle, le montant imprimé, serait devenue juste. Mais
+l'oubli inverse serait devenu silencieux : `sign` vaut `cost` par défaut, et un gain
+saisi négatif sans `sign` aurait été noté comme un coût. Le refus attrape les deux.
+
+**Les trois cas réels s'accordent déjà** : art. 2 (+4,2 Md€, `cost`), art. 3 (−1,1,
+`yield`), art. 15 (−5,5, `yield`). Leurs notes ne bougent pas.
+
+**Le gabarit des tests.** `comparator()` mettait `sign="yield"` sur tous les montants,
+positifs compris ; il accorde maintenant le signe au montant. Sans cela,
+`test_an_unknown_sign_or_basis_is_refused` serait passé pour une mauvaise raison sur
+`basis="pleine"` : le refus serait venu du signe, pas de la base.
+
+**Le runbook** disait « porté et jamais déduit du signe du nombre ». Il dit maintenant
+que le montant est signé dans la convention du moteur, qu'un gain imprimé en positif se
+saisit négatif, et que `sign` doit s'accorder avec lui.
+
+**Vu échouer.** `test_a_comparator_whose_sign_contradicts_its_amount_is_refused`, dans un
+commit à lui seul (`2c37284`), échoue sur `bb5ee7d` dans les deux sens : « DID NOT RAISE »
+pour +1,1e9 sous `yield`, et pour −4,2e9 sous `cost`. Son pendant,
+`test_a_comparator_whose_sign_agrees_with_its_amount_is_accepted` (deux paires accordées,
+et zéro sous chaque signe), passe avant comme après : c'est lui qui échouerait sur une
+garde qui refuse tout.
+
+**Les tests.** Le propriétaire a demandé qu'on ne lance pas les tests. Seuls ces deux-là
+ont tourné, avant la garde (2 échecs, 4 réussis) et après (6 réussis) ; ruff propre. Le
+reste de `tests/test_preregistration.py`, dont le gabarit modifié, est laissé au job
+`fast` de la CI.
+
+## D-207 — L'art. 3 au-dessus du publié : la masse des pensions tient sur trop peu de foyers
+
+**La question.** D-204 laissait ouvert le sens d'un écart. Le gain simulé de l'art. 3
+dépasse le publié de 17,7 %, alors que la justification de sa tolérance ne listait que
+des biais vers le bas : pas de revenus du capital, donc des taux marginaux plus bas, et un
+contrefactuel gelé à 4 439 € au lieu des 4 532 € revalorisés.
+
+**Le chiffrage rejoué.** La population, reconstruite dans le conteneur cloud depuis le
+profil `tests` (`impots data prepare`, 43 s), redonne le chiffrage enregistré à l'euro :
+−1 294 878 105 €. Tout vient de l'impôt sur le revenu. Aucune prestation ne bouge, et le
+périmètre « État » du comparateur n'est pas en cause.
+
+**La mesure.** `scripts/verify_pensions_art3.py` rejoue tout ce qui suit et en épingle
+les nombres. Les écarts portent sur les montants, un gain compté en positif :
+
+| | population | publié | écart |
+|---|---:|---:|---:|
+| foyers avec une pension | 12,24 M | 15,09 M (VM, 120401) | −18,9 % |
+| l'abattement entier, revenus 2024 | 5,909 Md€ | 5,322 Md€ (VM, 120401) | +11,0 % |
+| l'art. 3 | 1,295 Md€ | 1,1 Md€ (annexe) | +17,7 % |
+| foyers qui paient davantage | 4,904 M | 4,6 M (annexe) | +6,6 % |
+| gain par foyer touché | 264 € | 239 € (annexe) | +10,4 % |
+
+Les Voies et moyens (tome II du PLF 2026, p. 78, dépense fiscale 120401) donnent une ligne
+indépendante : ni cible de calage, ni comparateur, et jamais lue jusqu'ici dans le dépôt.
+La colonne « prévision 2025 » est celle des revenus 2024, et la simulation qui la compare
+supprime l'abattement sous la loi des revenus 2024. L'annexe compte de son côté 13,4 M de
+foyers où un membre au moins perçoit une pension de retraite. Le gain par foyer de
+l'annexe, 1,1 Md€ sur 4,6 M, mêle le régime de croisière de 2029 et un compte de foyers
+qui ne dit pas son année : c'est un ordre de grandeur, pas une mesure.
+
+**Le mécanisme.** La masse des pensions est calée sur les « pensions et rentes »
+déclarées, 400,4 Md€ (DGFiP, Stat 41, tableau 1). Elle couvre tout ce que l'abattement
+couvre : retraites, invalidité, pensions alimentaires. `incomes.py` la tire sur les seuls
+inactifs de 55 ans ou plus, près de 16 M de personnes, que le squelette range en 12,24 M
+foyers. Les Voies et moyens comptent 15,09 M foyers bénéficiaires de l'abattement. La
+même masse tient donc sur 19 % de foyers en moins : 32 700 € par foyer pensionné, au lieu
+de 26 500 € si elle se répartissait sur les foyers des Voies et moyens. Le plafond de
+3 000 € ne mord qu'au-dessus de 30 000 € de pensions, dans la queue que cette
+concentration épaissit. L'abattement entier coûte 11 % de trop, et une mesure qui ne
+frappe que la queue coûte 17,7 % de trop.
+
+**Ce que ce n'est pas.** Ni la base : le comparateur est l'année pleine, et contre les
+1,4 Md€ de 2027 le gain simulé serait 7,5 % plus petit (D-204). Ni le périmètre : tout
+est de l'impôt sur le revenu. Ni le millésime : des revenus de 2024, non vieillis, tirent
+vers le bas. Les biais déclarés à l'enregistrement existent ; celui-ci, qui ne l'était
+pas, les dépasse.
+
+**D'où viennent les foyers manquants.** Trois pistes lues dans le code, aucune mesurée
+ici :
+
+1. **L'EEC ne couvre que les ménages ordinaires.** Les retraités qui vivent en
+   établissement n'y sont pas, et la plupart déclarent seuls.
+2. **Seuls les inactifs de 55 ans ou plus touchent une pension.** Un retraité qui
+   travaille, un pensionné d'invalidité plus jeune ou une personne qui reçoit une pension
+   alimentaire n'en ont pas, et leur part de la masse va aux autres.
+3. **Le squelette met tout couple cohabitant dans un seul foyer**, marié ou non. Deux
+   concubins retraités déclarent séparément, chacun sous son propre plafond.
+
+**Ce qui ne change pas.** La note reste « dedans ». Rien n'est recalé : ni la
+population, ni `calibrate.py`, clôturé jusqu'à la Phase 7. Les 4,6 M foyers de l'annexe,
+vus avant l'enregistrement (D-174), servent ici à décomposer un écart, pas de cible.
+
+**Les tests.** Aucun test lancé, à la demande du propriétaire. Le script a tourné deux
+fois sur la population reconstruite et sort à 0 ; ruff propre.
+
+**Ce qui reste.**
+
+* **Mesurer les trois pistes.** Une correction, si elle vient, change la population et
+  tous les chiffrages qui la lisent. Elle ne touche pas le chiffrage enregistré, qui
+  garde sa note.
+* **La ligne 120401 au rapport de réconciliation**, comme ligne de validation des
+  pensions : c'est la seule qui mesure la queue où mordent les mesures sur les retraites.
+* **L'art. 2.** Le niveau de l'impôt dans cette population, +8,8 % de la DGFiP (D-204),
+  peut tenir en partie à cette concentration. Ce n'est pas mesuré.
+
+## D-208 — Correction à D-205 : le repli du cache n'a pas encore servi
+
+**Ce que D-205 disait.** Deux phrases sur le workflow, qui ne se teste que sur un
+runner : le job `fast` de sa PR, « dont le manifeste ne change pas, prend la clé
+exacte » ; et « le repli sera exercé pour la première fois par la PR de D-204, une fois
+`main` fusionné dedans ». Les deux sont fausses.
+
+**Ce qui s'est passé.** Le job `fast` de la PR de D-205 (run 38714953590, tête `fed5f09`)
+n'a trouvé aucun cache, ni par la clé exacte ni par le repli : « Cache not found for
+input keys: raw-sources-3159c134…, raw-sources- », à 9 h 43 UTC. Il a tout retéléchargé,
+et il l'a pu parce qu'impots.gouv.fr répondait de nouveau. Deux raisons :
+
+* le cache de `main` pour ce manifeste n'a été enregistré que vers 10 h 20, à la fin du
+  run de la fusion de D-204 (38714855942), qui tournait en même temps ;
+* le précédent, du 6 octobre, n'existait plus : GitHub efface un cache resté sept jours
+  sans accès.
+
+La PR de D-204, elle, a été fusionnée avant celle de D-205 et n'a jamais eu besoin du
+repli.
+
+**Ce qui est vérifié.** Le run de `main` qui a suivi la fusion de D-205 (38719728525, sur
+`bb5ee7d`) a pris la clé exacte (« Cache hit for: raw-sources-3159c134… »). L'élagueur
+n'a rien retiré (`[]`), les onze fichiers étaient « déjà présent », 1 882 réussis et 120
+sautés. Le mécanisme de D-205 n'est pas en cause : c'est le récit de sa première
+exécution qui l'était.
+
+**Ce qui reste.** Le repli n'a encore servi sur aucun runner. Il servira à la première PR
+qui change le manifeste moins de sept jours après un run de `main`.

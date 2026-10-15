@@ -1,8 +1,12 @@
-# State of the project, and the directions open — 2026-10-14 (the PLF 2027 registrations graded)
+# State of the project, and the directions open — 2026-10-15 (the grade's sign guard, art. 3 explained)
 
-The 2026-10-14 update adds D-204: the owner's full pass, the three PLF 2027
-registrations, and their grades against the annex, two of three inside their tolerance.
-The 2026-10-06 version it updates superseded the 2026-10-05 one, which stopped at D-194.
+The 2026-10-15 update adds D-206 to D-208: `grade` refuses a comparator whose sign
+contradicts its amount; art. 3's yield lands above the annex because the population's
+pension mass sits on too few foyers; and a correction to D-205, whose cache fallback has
+not yet run. The 2026-10-14 version it updates added D-204, the owner's full pass and the
+three PLF 2027 registrations graded against the annex, and D-205, the CI cache fallback.
+The 2026-10-06 version that one updated superseded the 2026-10-05 one, which stopped at
+D-194.
 D-195 to D-203 added the population skeleton's case T, case 7DG, a lone adult's
 situation de famille, the home-help ceiling's increment for members over 65, the
 population's case T on N-2 and N-1, the AAH of a pensioner left out of a spouse's ASPA,
@@ -44,8 +48,8 @@ openfisca's reading of the law. It has its own section below.
 clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has eleven replayable `verify_*.py` gate scripts and **206 decision
-entries**, D-000 to D-205, recording every error in both directions.
+PR. The project also has twelve replayable `verify_*.py` gate scripts and **209 decision
+entries**, D-000 to D-208, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -175,7 +179,9 @@ couple keeps its 18 943,38 €.
 * **The raw-sources cache falls back on the previous one** when the manifest changes
   (D-205), so a PR that adds an entry outside the `tests` profile no longer contacts
   any source server. A restored file is kept only if it matches the manifest, and
-  `donnees.elaguer_cache` drops what the manifest no longer sources.
+  `donnees.elaguer_cache` drops what the manifest no longer sources. **The fallback has
+  not yet run on a runner** (D-208): the first PR after it found no cache at all, `main`'s
+  being saved by a concurrent run and the previous one evicted after seven days.
 * **pytest is started two ways.** `make gate` and `make full` run
   `python -m pytest`, which puts the repo root on `sys.path`; CI and
   `make ci-local` run bare `pytest`, which does not. Five tests passed on the
@@ -308,7 +314,13 @@ download list.
   within (−17,7 %), art. 15 within (−28,3 %), art. 2 outside (−30,3 % against 20 %)**.
   Art. 2's published figure is a first-year budget effect (2027 notices plus PAS),
   against our one income year; art. 15's grade rests on counting the 0,5 Md€ of shifted
-  closings in 2028. Both are written up in D-204, with what remains.
+  closings in 2028. Both are written up in D-204, with what remains. Since 2026-10-15
+  `grade` refuses a comparator whose sign contradicts its amount (D-206). Art. 3 lands
+  17,7 % above the annex although its tolerance declared only downward biases: the
+  population puts the 400,4 Md€ of declared pensions on 12,24 M foyers, against 15,09 M
+  beneficiaries of the 10 % abatement in the Voies et moyens, and the whole abatement
+  costs 11 % too much against that independent line (D-207,
+  `scripts/verify_pensions_art3.py`).
 * **ERFS 2022 (FPR, lil-1696) — the interrupt ran, E3 is « nothing ».** E0 rails
   (D-134), E1 inventory (D-135), E2 validation table (D-137), and the two
   re-examination gates (D-141) are done. No recalibration is drawn; the E2 table
@@ -357,9 +369,12 @@ download list.
 
 ## What the next session does if nobody says otherwise
 
-1. **The PLF 2027 is graded** (D-204). What it leaves: a guard so that `grade` refuses a
-   comparator whose `sign` disagrees with the sign of its amount, and the direction of
-   art. 3's gap, which runs against the biases its tolerance declared.
+1. **The PLF 2027 is graded** (D-204), the sign guard is in (D-206), and art. 3's
+   direction is explained (D-207). What it leaves: measuring the three candidate sources
+   of the missing pension foyers — retirees in institutions, whom the EEC does not
+   survey; pensions drawn only for the inactive aged 55 or more; every cohabiting couple
+   in one foyer — with VM 120401 as the validation line; the report's direction line,
+   which counts signs; and art. 2's outside grade.
 2. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
