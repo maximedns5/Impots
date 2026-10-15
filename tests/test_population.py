@@ -1700,3 +1700,17 @@ def test_the_2042_boxes_are_the_parts_of_the_published_pensions_et_rentes() -> N
     total = boxes.filter(pl.col("Nom").is_in(names))["Montant"].sum()
     assert total == pytest.approx(400.4e9, rel=0.002)
     assert ingest.declared_retirement_pensions(2024) == pytest.approx(374.366e9, rel=1e-5)
+
+
+@needs_declarations
+def test_the_pension_calibration_target_is_the_retirement_boxes() -> None:
+    """D-210: the target was the DGFiP's « pensions et rentes », 400,4 Md€, of which 26
+    Md€ are invalidity, alimony, foreign pensions, capital and annuities. `incomes.py`
+    draws the whole mass onto retirees, so every chiffrage that reads the pension tail
+    ran high: art. 3 by 17,7 % (D-207), and 1,8 % once scaled to the retirement boxes.
+    Fails if the target is anything but the sum of boxes 1AS-1DS.
+    """
+    from impots.population import ingest
+
+    assert margins.DECLARED_PENSIONS.value == pytest.approx(
+        ingest.declared_retirement_pensions(2024), rel=1e-9)
