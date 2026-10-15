@@ -196,6 +196,7 @@ def profil_tests() -> tuple[Brut | Derive, ...]:
         Brut(cells.DGFIP_FILE, "cellules entreprises — entrée"),
         Brut(ingest.EEC_PARQUET, "population — entrée"),
         Brut(ingest.EEC_VARMOD, "population — entrée"),
+        Brut(ingest.DECLARATIONS_2042, "cible de calage des pensions (test_population)"),
         Derive(
             chemin=PROCESSED / "firm_cells_2023.json",
             commande="impots entreprises cells",
