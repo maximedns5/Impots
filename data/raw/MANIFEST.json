@@ -1368,6 +1368,15 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "Recensement de la population 2021, base des tableaux détaillés, POP3 : population de 15 ans ou plus par sexe, âge quinquennal (AGEQ80_14, 015 à 080, la dernière tranche ouverte) et statut conjugal (STAT_CONJ_19), par commune. Une archive zip, un CSV « ; » : NIVGEO;CODGEO;LIBGEO;SEXE;AGEQ80_14;STAT_CONJ_19;NB. Même piège que POP2 : ne garder que NIVGEO = COM. STAT_CONJ_19 : 1 marié(e), 2 pacsé(e), 3 concubinage ou union libre, 4 veuf (veuve), 5 divorcé(e), 6 célibataire. Lu pour D-209 : la part des concubins, qui déclarent chacun leur revenu, parmi les personnes en couple, par âge.",
       "quarantined": false
+    },
+    "dgfip_ir_2042_nat_export_2026-10-15.csv": {
+      "url": "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/ir-declarations-2042-nat/exports/csv?use_labels=true",
+      "sha256": "e984973355e0a27ede6d9f9a2b6880ebb3ca552bfb72ed589d761a47cf697e82",
+      "bytes": 1281850,
+      "downloaded": "2026-10-15",
+      "licence": "unknown",
+      "description": "DGFiP, « L'impôt sur le revenu : les déclarations nationales » : pour chaque case des déclarations 2042, 2042-C et 2042-IOM, le nombre de cases remplies et le montant déclaré, revenus 2006 à 2024. Export CSV de data.economie.gouv.fr (jeu ir-declarations-2042-nat, mis à jour par l'éditeur le 2026-04-07), « ; », UTF-8 avec BOM, fins de ligne CRLF : Année;Libellé;Nom;Nombre;Montant. JUMEAU SOURCÉ de dgfip_ir_declarations_2042_nat.csv, en quarantaine depuis la recherche B3 (2026-09-03, 1 281 848 octets) : même jeu, deux octets d'écart, donc pas le même fichier, et la quarantaine reste. L'export est généré à la demande mais ses octets sont stables : deux téléchargements le 2026-10-15 donnent le même sha256. Il changera à la mise à jour annuelle du jeu ; le refus de data fetch sera alors le signal d'un nouveau millésime, pas une panne. Licence non précisée par l'éditeur (data.gouv.fr : notspecified). Lu pour D-210 : la section 1 décompose les « pensions et rentes » de Stat 41 (400,4 Md€). En 2024 : 1AS-1DS « Pensions, retraites, rentes » 374,37 Md€ sur 17,52 M cases ; invalidité 1AZ-1DZ 9,46 ; pensions alimentaires 1AO-1DO 5,55 ; source étrangère 1AM-1DM 4,93 et 1AL-1DL 2,71 ; capital 1AT-1DT 1,51 et 1AI-1DI 1,13 ; rentes viagères 1AW-1DW 0,89 (brut) ; exonérées 1AH-1DH 0,38 ; somme 400,94 Md€. « Nombre » compte des cases remplies, donc des personnes (1AS pour le déclarant 1, 1BS pour le déclarant 2), pas des foyers.",
+      "quarantined": false
     }
   }
 }
