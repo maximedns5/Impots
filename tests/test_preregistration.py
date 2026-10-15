@@ -24,9 +24,12 @@ TOLERANCE = ch.Tolerance(relative=0.20, absolute_eur=200e6,
 
 
 def comparator(published_eur: float, **overrides) -> ch.Comparator:
+    # The sign agrees with the amount, as the comparator now requires (D-206). The
+    # template used to put `sign="yield"` on every amount, positive ones included.
     base = dict(published_eur=published_eur, source="évaluation préalable, art. X",
                 vintage="PLF 2027", perimeter="État, toutes APU",
-                net_of="brut de tout effet induit", sign="yield",
+                net_of="brut de tout effet induit",
+                sign="yield" if published_eur < 0 else "cost",
                 basis="annee-pleine")
     return ch.Comparator(**{**base, **overrides})
 

@@ -150,9 +150,11 @@ rien.
 ## 5. Puis, et seulement puis, lire l'annexe (2 h)
 
 Saisir le comparateur dans chaque cas : `published_eur`, `source`, `vintage`,
-`perimeter`, `net_of`, `sign` (« cost » ou « yield », **porté et jamais déduit du signe
-du nombre** — les documents publiés sont incohérents là-dessus) et `basis`
-(« annee-pleine » ou « premiere-annee »).
+`perimeter`, `net_of`, `sign` (« cost » ou « yield ») et `basis` (« annee-pleine » ou
+« premiere-annee »). **`published_eur` est signé dans la convention du moteur**, comme le
+chiffre mécanique : un coût positif, un gain négatif. Les documents publiés impriment un
+gain en positif ; c'est à la saisie qu'on le rend négatif. `sign` doit s'accorder avec
+lui, et un comparateur où ils se contredisent est refusé (D-206).
 
 ```bash
 .venv/bin/python -m impots.population.cli chiffrage grade plf2027_art_N
