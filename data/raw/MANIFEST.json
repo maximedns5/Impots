@@ -1350,6 +1350,24 @@
       "licence": "Assemblée nationale — open data, Licence Ouverte",
       "description": "PLF 2027, évaluations préalables des articles (743 p.), annexe au projet de loi n° 3210. URL relevée sur la page du dossier PLF_2027 de l'Assemblée (lien « PLF 2027 - Evaluations préalables »), jamais dans un index de recherche, le 2026-10-14 et APRÈS le push des trois préenregistrements (be5b5f6, e449490, 25b2a61). Comparateur des cas plf2027_art_2, plf2027_art_3 et plf2027_art_15 (D-204).\nSTRUCTURE : un sommaire (p. 5), puis une fiche par article qui s'ouvre sur « ARTICLE n : » ; la page imprimée est celle du PDF. Le rendement est en 4.2.1, ou en 4.2 sans sous-section (art. 3). Comme en 2026, il n'a PAS de forme unique : art. 2, de la prose par volet (4.2.1.1 à 4.2.1.4, p. 29-30) ; art. 3, une phrase à trois années (p. 36) ; art. 15, deux phrases, les acomptes de 2027 puis les clôtures décalées payées en 2028 (p. 160).\nPIÈGE D'UNITÉ : l'unité est déclarée dans chaque phrase ou tableau, et Md€ et M€ voisinent dans la même fiche (art. 2 : « 4,2 Md€ », « 20 M€ », « 820 M€ »).\nPIÈGE DE BASE : les montants sont des effets BUDGÉTAIRES par année. Sous le prélèvement à la source, la première année d'une mesure d'impôt sur le revenu n'est pas son année pleine : l'art. 3 publie la chronique, 1,4 Md€ en 2027, 1,8 Md€ en 2028, 1,1 Md€ à compter de 2029. L'art. 2 ne donne que 2027, « somme de l'effet sur les avis d'imposition au titre des revenus 2026 et de l'effet sur le PAS ».",
       "quarantined": false
+    },
+    "TD_POP2_2021_csv.zip": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8202264/TD_POP2_2021_csv.zip",
+      "sha256": "da45addb4ae864c111d8b81560963646fb45f10f75f676e1bcee8a028e2b0eb1",
+      "bytes": 13865556,
+      "downloaded": "2026-10-15",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Recensement de la population 2021, base des tableaux détaillés, POP2 : population par sexe, âge (AGEQ100, année par année) et catégorie de population (CATPR), par commune. Une archive zip, un CSV « ; » : NIVGEO;CODGEO;LIBGEO;SEXE;CATPR;AGEQ100;NB. PIÈGE : NIVGEO vaut COM pour les communes et ARM pour les arrondissements de Paris, Lyon et Marseille, qui ont AUSSI leur ligne COM ; sommer les deux compte ces trois villes deux fois (70,94 M au lieu de 67,41 M). CATPR 01 : logement ordinaire ; 11 : service ou établissement de moyen ou long séjour, maison de retraite, foyer ou résidence sociale ; 12 : communauté religieuse ; 13 : caserne ; 14 : internat ou cité universitaire ; 16 : établissement social de court séjour ; 21 : habitation mobile, mariniers, sans-abri ; 30 : autre communauté (libellés de la page de l'INSEE). France hors Mayotte. Lu pour D-209 : les personnes âgées qui vivent hors des ménages ordinaires, que l'EEC n'enquête pas.",
+      "quarantined": false
+    },
+    "TD_POP3_2021_csv.zip": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8202264/TD_POP3_2021_csv.zip",
+      "sha256": "71b96db19844f438587994aeb9b866486ab15019bf85d287be45a84157fde319",
+      "bytes": 26421897,
+      "downloaded": "2026-10-15",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Recensement de la population 2021, base des tableaux détaillés, POP3 : population de 15 ans ou plus par sexe, âge quinquennal (AGEQ80_14, 015 à 080, la dernière tranche ouverte) et statut conjugal (STAT_CONJ_19), par commune. Une archive zip, un CSV « ; » : NIVGEO;CODGEO;LIBGEO;SEXE;AGEQ80_14;STAT_CONJ_19;NB. Même piège que POP2 : ne garder que NIVGEO = COM. STAT_CONJ_19 : 1 marié(e), 2 pacsé(e), 3 concubinage ou union libre, 4 veuf (veuve), 5 divorcé(e), 6 célibataire. Lu pour D-209 : la part des concubins, qui déclarent chacun leur revenu, parmi les personnes en couple, par âge.",
+      "quarantined": false
     }
   }
 }
