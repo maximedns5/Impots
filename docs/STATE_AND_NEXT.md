@@ -175,8 +175,14 @@ couple keeps its 18 943,38 €.
   not established. It is not the concurrency group, since `cancel-in-progress` is
   off on `main`, and not a timeout, since none is set. At the observed rate the
   suite needs about two hours there, against one locally.
-* **Automatic CI** — every PR and every push to `main` — runs `fast`, `perf` and
-  `no-data-committed`; `fast` also carries the two engine-assumption scripts.
+* **GitHub Actions has been unavailable since 2026-10-15, 13:56 UTC** — no job gets a
+  runner, the shape of an exhausted minutes quota (D-161) — and the owner decided to
+  carry on without it (D-211). Until that changes, nothing below runs on its own: a PR
+  is verified by its own targeted tests and by the owner's `make full`, which is now the
+  only whole-suite check. The workflow still triggers and fails in seconds on every
+  push.
+* **Automatic CI**, when Actions runs — every PR and every push to `main` — runs `fast`,
+  `perf` and `no-data-committed`; `fast` also carries the two engine-assumption scripts.
   **The full suite is out of automatic CI since 2026-10-02 (D-172)**, by the
   owner's decision: it runs only when the workflow is dispatched by hand, and
   `make full` is the full verification. `fast` was green on `aa869dd`: 1 388
@@ -388,7 +394,8 @@ download list.
    is explained (D-207), its candidate causes measured (D-209), the pension target
    decomposed (D-210) and the population recalibrated on the retirement boxes (D-211).
    What it leaves: a full pass and the reports regenerated on the owner's machine, the
-   first since the pension target moved; the report's direction line, which counts
+   first since the pension target moved and, with Actions down, the only whole-suite
+   check D-210 and D-211 will get; the report's direction line, which counts
    signs; and art. 2's outside grade.
 2. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin

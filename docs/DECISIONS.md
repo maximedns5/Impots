@@ -15292,6 +15292,15 @@ réussis), `tests/test_donnees.py` et `tests/test_provenance.py` (42),
 `tests/test_uprating.py` et `tests/test_scenarios.py` (104) ; ruff propre. Les tests lents
 sont laissés à la passe complète.
 
+**Fusionné sans CI, sur décision du propriétaire.** Depuis 13 h 56 UTC le 2026-10-15,
+aucun job n'obtient de runner : ni sur la PR, ni sur `main` après la fusion de D-210. Les
+jobs échouent en quelques secondes, sans étape ni journal, et le relancement unique a
+échoué de même. C'est la forme d'un quota de minutes Actions épuisé (D-161). Le
+propriétaire ne peut pas le lever et a décidé de continuer sans les Actions. Le job
+`fast` n'a donc pas tourné sur ce commit : ses 1 888 tests ne sont couverts que par les
+fichiers ci-dessus, et par la passe complète sur la machine du propriétaire, qui devient
+la seule vérification d'ensemble.
+
 **Ce qui reste.**
 
 * **Une passe complète et les rapports régénérés**, sur la machine du propriétaire.
