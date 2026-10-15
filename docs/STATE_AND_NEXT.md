@@ -1,15 +1,18 @@
-# State of the project, and the directions open — 2026-10-06 (Phase 8 and the household calculator on `main`)
+# State of the project, and the directions open — 2026-10-14 (the PLF 2027 registrations graded)
 
-Supersedes the 2026-10-05 version, which stopped at D-194. D-195 to D-203 added the
-population skeleton's case T, case 7DG, a lone adult's situation de famille, the
-home-help ceiling's increment for members over 65, the population's case T on N-2 and
-N-1, the AAH of a pensioner left out of a spouse's ASPA, alternating residence, adult
-dependants, and the MVA among a spouse's ASPA resources. The 2026-10-05 version had
-superseded the 2026-10-01 one. That one kept its sections on Phase 8, the CI and the
-PLF 2027 up to date, but it never described the household calculator's arc, D-176 to
-D-194, and it counted 192 entries. It had itself superseded the 2026-09-22 version,
-which predated D-158 to D-171. For any next session: read this, `docs/CHARTER.md`,
-`docs/PHASE8_SPEC.md`, and the review file's last addenda (`docs/REVIEW_2026-08-29.md`).
+The 2026-10-14 update adds D-204: the owner's full pass, the three PLF 2027
+registrations, and their grades against the annex, two of three inside their tolerance.
+The 2026-10-06 version it updates superseded the 2026-10-05 one, which stopped at D-194.
+D-195 to D-203 added the population skeleton's case T, case 7DG, a lone adult's
+situation de famille, the home-help ceiling's increment for members over 65, the
+population's case T on N-2 and N-1, the AAH of a pensioner left out of a spouse's ASPA,
+alternating residence, adult dependants, and the MVA among a spouse's ASPA resources.
+The 2026-10-05 version had superseded the 2026-10-01 one. That one kept its sections on
+Phase 8, the CI and the PLF 2027 up to date, but it never described the household
+calculator's arc, D-176 to D-194, and it counted 192 entries. It had itself superseded
+the 2026-09-22 version, which predated D-158 to D-171. For any next session: read this,
+`docs/CHARTER.md`, `docs/PHASE8_SPEC.md`, and the review file's last addenda
+(`docs/REVIEW_2026-08-29.md`).
 
 ## Where the project stands, whole-arc
 
@@ -36,12 +39,13 @@ from `main`.
 what a household can declare, and twenty-one places where this project corrects
 openfisca's reading of the law. It has its own section below.
 
-**1 729 tests at the last logged full pass** (`a9ea26f`, 2026-09-25), before the
-household arc added its own. The CI `fast` job counted 1 781 passed, 120 skipped and
-223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
+**2 222 tests at the last logged full pass** (`5b1ec10`, 2026-10-14, logged in
+`b24de21`): 2 106 passed and 116 skipped, the skips being tests whose source files a fresh
+clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
+120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has eleven replayable `verify_*.py` gate scripts and **204 decision
-entries**, D-000 to D-203, recording every error in both directions.
+PR. The project also has eleven replayable `verify_*.py` gate scripts and **205 decision
+entries**, D-000 to D-204, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -109,10 +113,10 @@ couple keeps its 18 943,38 €.
   - **D-199.** The population writes case T on N-2 and N-1 too, where the CSG rate on a
     pension or an unemployment benefit reads the parts: on the fixture, two pensioners'
     disposable income rises, by 839,58 € and 104,64 €. This one needs no rebuild.
-  - **The population must be rebuilt first.** Nothing keys `population_2024.parquet` on
-    the skeleton: `impots population build`, then `make full`. Step 0 of
-    `docs/PLF2027_ENREGISTREMENT.md` does it, and the PLF 2027 registrations price what
-    that run builds.
+  - **The population was rebuilt on 2026-10-14**, on the owner's machine, before the
+    full pass and the PLF 2027 registrations (D-204). Nothing keys
+    `population_2024.parquet` on the skeleton, so any older checkout still needs
+    `impots population build`.
   - Corrections 2 to 5, 8 to 14 and 16 to 21 cannot reach the population: it declares
     no disability, no ASS, no invalidity pension, no alternating residence and no case R.
     Correction 15 reaches it only under a reform: its imputed home-help bases, 3 759,31 €
@@ -146,11 +150,11 @@ couple keeps its 18 943,38 €.
 
 ## Verification, as it stands
 
-* **Last logged full pass: `a9ea26f`, 2026-09-25 — PASS, 1 724 passed, 3 skipped,
-  60 min 31 s.** Every line since the red `3101fff` one is green (`f1e5837`,
-  `9442046`, `a9ea26f`). `main`'s head is newer: `d8f8076` touched only the two
-  pass reports, and `aa869dd` the import guard, `ci_local` and two test files
-  (D-171), so no full pass has been logged on `1e12460` itself.
+* **Last logged full pass: `5b1ec10`, 2026-10-14 — PASS, 2 106 passed, 116 skipped,
+  107 min 39 s**, on the owner's machine in a fresh clone (D-204). The 116 skips are
+  data-absent skips: `make data` fetches the `tests` profile only. The previous line,
+  `a9ea26f` on 2026-09-25, had 3 skips on a machine holding every manifested file.
+  Every line since the red `3101fff` one is green.
 * **CI on `main`, run 36882194476 on `1e12460` — the full suite has still never
   finished on a runner.** `fast` passed (1 388 passed, 120 skipped, 221 deselected,
   11 min 23 s), and so did `perf` and `no-data-committed`. The full `pytest` job
@@ -293,19 +297,14 @@ download list.
 
 ## Armed and waiting
 
-* **PLF 2027 — published 2026-10-01 (AN text 3210), and the interrupt is running**
-  (D-174, D-175; prepared on `claude/plf2027`, merged into `main` by #9). Done in the
-  cloud: the text manifested, the
-  splitter fixed (it dropped articles 23, 38 and 47), the 33 fiscal articles triaged —
-  **3 priceable**: art. 2 (barème revaluation), art. 3 (pension abatement cap, knob wired
-  that day), art. 15 (CEBGE third exercice, through a deliberate prorogation and a new
-  firm registry path). **Waiting on the owner's machine**, because INSEE does not answer
-  the cloud container: `make full` on `main`'s head, then the three registrations, exactly as
-  `docs/PLF2027_ENREGISTREMENT.md` writes them, tolerances committed before any figure.
-  The annex stays unopened until the registrations are pushed. That `make full` builds
-  the population at `WIRING` « D-199 », after step 0 rebuilds it, so the registrations
-  price the corrected law (D-188, D-195, D-199); the runbook accepts every entry from
-  D-176 on.
+* **PLF 2027 — registered and graded (D-204).** Published 2026-10-01 (AN text 3210);
+  the 33 fiscal articles triaged, 3 priceable (D-174, D-175). On 2026-10-14 the owner
+  ran the full pass and the three registrations, one commit each (`be5b5f6`,
+  `e449490`, `25b2a61`). The annex was then manifested and the cases graded: **art. 3
+  within (−17,7 %), art. 15 within (−28,3 %), art. 2 outside (−30,3 % against 20 %)**.
+  Art. 2's published figure is a first-year budget effect (2027 notices plus PAS),
+  against our one income year; art. 15's grade rests on counting the 0,5 Md€ of shifted
+  closings in 2028. Both are written up in D-204, with what remains.
 * **ERFS 2022 (FPR, lil-1696) — the interrupt ran, E3 is « nothing ».** E0 rails
   (D-134), E1 inventory (D-135), E2 validation table (D-137), and the two
   re-examination gates (D-141) are done. No recalibration is drawn; the E2 table
@@ -354,10 +353,9 @@ download list.
 
 ## What the next session does if nobody says otherwise
 
-1. **The PLF 2027 is out and its registrations outrank everything** (§8, D-162,
-   D-175): if `chiffrages_preregistres/plf2027_art_*.yaml` are committed, find the
-   annex link on the AN dossier page, manifest it, and grade (runbook, step 5); if not,
-   the owner's step comes first, `docs/PLF2027_ENREGISTREMENT.md`.
+1. **The PLF 2027 is graded** (D-204). What it leaves: a guard so that `grade` refuses a
+   comparator whose `sign` disagrees with the sign of its amount, and the direction of
+   art. 3's gap, which runs against the biases its tolerance declared.
 2. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
