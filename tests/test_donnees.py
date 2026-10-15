@@ -103,6 +103,52 @@ def test_a_file_already_present_and_conforming_is_not_downloaded_again(depot) ->
     assert donnees.telecharger("source.xlsx", ouvrir=interdit).etat == "déjà présent"
 
 
+def test_a_stale_file_restored_from_an_older_cache_is_downloaded_again(depot) -> None:
+    """D-205 : le cache de la CI se replie sur celui d'un manifeste plus ancien, si bien
+    qu'un fichier restauré peut porter l'ancien millésime sous le même nom et la même
+    taille. Il n'est gardé que s'il est conforme. Fails if `_conforme` is reduced to a
+    test of presence and size."""
+    (depot / "source.xlsx").write_bytes(CONTENU[:-1] + b"X")
+    servir = _servir(CONTENU)
+
+    resultat = donnees.telecharger("source.xlsx", ouvrir=servir)
+
+    assert resultat.etat == "téléchargé"
+    assert servir.appels == ["https://www.example.invalid/source.xlsx"]
+    assert (depot / "source.xlsx").read_bytes() == CONTENU
+
+
+def test_the_cache_pruner_removes_only_what_the_manifest_no_longer_sources(depot) -> None:
+    """D-205 : ce que le repli du cache peut ramener sans que le manifeste le source plus.
+    Fails if the pruner keeps an unlisted file, or touches a listed one, the manifest or
+    a subdirectory."""
+    (depot / "source.xlsx").write_bytes(CONTENU[:-1] + b"X")    # sourcé, même périmé
+    (depot / "retire.xlsx").write_bytes(b"une entree disparue")
+    (depot / "MANIFEST.json").write_text("{}", encoding="utf-8")
+    (depot / "_unsourced").mkdir()
+    (depot / "_unsourced" / "quarantaine.pdf").write_bytes(b"q")
+
+    assert donnees.elaguer_cache(depot) == ["retire.xlsx"]
+    assert sorted(p.name for p in depot.iterdir()) == ["MANIFEST.json", "_unsourced",
+                                                       "source.xlsx"]
+    assert (depot / "_unsourced" / "quarantaine.pdf").exists()
+
+
+def test_the_cache_pruner_removes_a_file_whose_entry_lost_its_url(depot, monkeypatch) -> None:
+    """Une entrée mise en quarantaine garde sa somme de contrôle mais perd son URL : son
+    fichier n'a plus sa place directement sous `data/raw/` (D-028), et
+    `test_the_raw_tree_separates_sourced_from_unsourced` le refuserait."""
+    entree = ManifestEntry(
+        filename="source.xlsx", url=None, sha256=EMPREINTE, bytes=len(CONTENU),
+        downloaded="2026-09-01", licence="unknown", description="source de test",
+        quarantined=True)
+    monkeypatch.setattr("impots.population.ingest.load_manifest",
+                        lambda: {"source.xlsx": entree})
+    (depot / "source.xlsx").write_bytes(CONTENU)
+
+    assert donnees.elaguer_cache(depot) == ["source.xlsx"]
+
+
 def test_a_network_failure_names_the_host_and_leaves_nothing_behind(depot) -> None:
     """C'est ce que rend ce conteneur : le proxy refuse les hôtes (403 au CONNECT)."""
     def refuse(requete, timeout):
