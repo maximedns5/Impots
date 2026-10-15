@@ -15084,3 +15084,82 @@ exécution qui l'était.
 
 **Ce qui reste.** Le repli n'a encore servi sur aucun runner. Il servira à la première PR
 qui change le manifeste moins de sept jours après un run de `main`.
+
+## D-209 — Les trois pistes de D-207 mesurées : un quart de l'écart de l'art. 3, pas plus
+
+**La question.** D-207 a trouvé les 400,4 Md€ de pensions déclarées répartis sur 12,24 M
+foyers, contre 15,09 M bénéficiaires de l'abattement (VM, 120401) et 13,4 M foyers de
+retraités (annexe), et nommé trois pistes. Chacune est mesurée ici, avec ce qu'elle
+ferait à la queue où mord l'art. 3. `scripts/verify_pensions_foyers.py` rejoue tout et
+épingle les nombres.
+
+**Deux sources nouvelles**, manifestées le 2026-10-15 et retéléchargées par
+`impots data fetch` au même sha256 : les tableaux POP2 et POP3 du recensement de 2021
+(INSEE, base des tableaux détaillés). Un piège dans les deux : Paris, Lyon et Marseille
+ont une ligne COM et des lignes ARM, et les sommer toutes compte ces villes deux fois,
+70,94 M d'habitants au lieu de 67,41 M. Seules les lignes COM sont lues. Pour les
+établissements, la publication de la DREES sur l'enquête EHPA a été écartée : son site
+sert une page de vérification aux clients scriptés, et rien n'y a été contourné.
+
+**Piste 1, les établissements.** 0,700 M de personnes de 60 ans ou plus vivent dans un
+établissement de moyen ou long séjour, une maison de retraite ou un foyer (CATPR 11).
+L'EEC ne les enquête pas, et la plupart déclarent seules.
+
+**Piste 2, la règle.** La population, rebâtie avec la clé de chaque personne dans l'EEC
+(`noi`) et vérifiée identique à celle du chiffrage, porte le statut que l'EEC déclare
+(ESEG_1 = 8, « Retraités »). Sur 15,98 M pensionnés de la règle, 13,68 M se déclarent
+retraités et 1,03 M sont des inactifs de 65 ans ou plus que l'EEC ne code pas retraités,
+les 90 ans et plus notamment. 1,27 M ne sont ni l'un ni l'autre : des inactifs de 55 à
+64 ans, « handicapés inaptes » ou au foyer. À l'inverse, 0,61 M retraités déclarés n'ont
+pas de pension, parce que leur âge, tiré dans la tranche 50-64, est tombé sous 55 ans, et
+0,60 M personnes de 65 ans ou plus en emploi n'en ont pas non plus. Le compte de
+personnes est à peu près juste ; l'appariement ne l'est pas.
+
+**Piste 3, les concubins.** Parmi les personnes en couple, la part en concubinage ou
+union libre est de 12,2 % à 55-59 ans, 8,5 % à 60-64, 6,1 % à 65-69, 4,5 % à 70-74,
+3,5 % à 75-79 et 2,7 % au-delà. Pacsés et mariés déclarent ensemble.
+
+**Ce que chacune fait à la queue.** Mêmes tirages de pension pour chaque ligne, masse
+tenue à sa cible, abattement recalculé foyer par foyer :
+
+| | foyers pensionnés | abattement > 3 000 € | ce que l'art. 3 retire |
+|---|---:|---:|---:|
+| la règle actuelle | 12,24 M | 5,52 M | 5,82 Md€ |
+| 1 : + les établissements | 12,94 M | 5,37 M | −4,6 % |
+| 2 : la retraite déclarée, cumul compris | 11,95 M | 5,61 M | +2,5 % |
+| 3 : les concubins séparés | 12,41 M | 5,47 M | −1,5 % |
+| les trois | 12,83 M | 5,41 M | −3,7 % |
+
+**La lecture.** Les trois ensemble rapprochent le compte de foyers de celui de l'annexe,
+12,83 M contre 13,4 M, mais ne retirent que 3,7 % de l'abattement que l'art. 3 prend. À
+taux marginal inchangé, le gain simulé passerait de 17,7 % à environ 13 % au-dessus du
+publié : un quart de l'écart. La piste 2 va même dans le mauvais sens : la retraite
+déclarée retire leur pension à des inactifs qui n'en ont pas, et la masse tient alors
+sur moins de foyers encore. La ligne des établissements est une borne haute : leurs
+résidents sont tirés de la même loi que les autres, alors que leurs pensions sont plus
+basses, si bien que leur part de la masse est surestimée.
+
+**Ce qui reste : le niveau.** Si les foyers manquants et l'appariement n'en rendent
+compte qu'au quart, reste la masse elle-même : 400,4 Md€ sur 15,98 M pensionnés font
+25 050 € par personne. La cible est « pensions et rentes » (DGFiP, Stat 41, tableau 1).
+Elle porte aussi les pensions d'invalidité, les pensions alimentaires et les rentes, que
+la population donne toutes aux retraités, et aucun fichier du manifeste ne la décompose.
+La DREES publie le nombre de pensionnés résidant en France et leur pension moyenne : 16,8
+M fin 2023, et 1 666 € bruts par mois de droit direct (panorama « Les retraités et les
+retraites », édition 2025). Ces deux chiffres viennent d'un résumé de recherche, pas d'un
+fichier manifesté, et ne prouvent rien ici. Ils disent où regarder : 16,8 M, c'est à peu
+près 15,98 M plus les 0,70 M des établissements, et une pension de cet ordre est loin des
+25 050 €.
+
+**Les tests.** Aucun test lancé. Le script a tourné trois fois et sort à 0 ; épinglé à
+0,85 au lieu de 0,963 sur le ratio des trois pistes, il sort à 1, vu échouer. ruff
+propre.
+
+**Ce qui reste.**
+
+* **Décomposer la cible de 400,4 Md€** entre retraites, invalidité, pensions alimentaires
+  et rentes, d'une source manifestée. C'est le prochain levier. Il touche la cible de
+  `incomes.py`, pas `calibrate.py`.
+* **Les trois pistes elles-mêmes.** Les corriger change la population et tous les
+  chiffrages qui la lisent. Elles n'expliquent pas l'art. 3 ; c'est leur mérite propre
+  qui en décidera.

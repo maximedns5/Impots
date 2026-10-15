@@ -1,6 +1,8 @@
-# State of the project, and the directions open — 2026-10-15 (the grade's sign guard, art. 3 explained)
+# State of the project, and the directions open — 2026-10-15 (D-207's three leads measured)
 
-The 2026-10-15 update adds D-206 to D-208: `grade` refuses a comparator whose sign
+The second 2026-10-15 update adds D-209: the three candidate sources of the missing
+pension foyers, measured; together they account for a quarter of art. 3's gap. The first
+added D-206 to D-208: `grade` refuses a comparator whose sign
 contradicts its amount; art. 3's yield lands above the annex because the population's
 pension mass sits on too few foyers; and a correction to D-205, whose cache fallback has
 not yet run. The 2026-10-14 version it updates added D-204, the owner's full pass and the
@@ -48,8 +50,8 @@ openfisca's reading of the law. It has its own section below.
 clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has twelve replayable `verify_*.py` gate scripts and **209 decision
-entries**, D-000 to D-208, recording every error in both directions.
+PR. The project also has thirteen replayable `verify_*.py` gate scripts and **210 decision
+entries**, D-000 to D-209, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -320,7 +322,12 @@ download list.
   population puts the 400,4 Md€ of declared pensions on 12,24 M foyers, against 15,09 M
   beneficiaries of the 10 % abatement in the Voies et moyens, and the whole abatement
   costs 11 % too much against that independent line (D-207,
-  `scripts/verify_pensions_art3.py`).
+  `scripts/verify_pensions_art3.py`). The three leads D-207 named — retirees in
+  institutions, the age rule for pensions, cohabiting couples in one foyer — are
+  measured in D-209 (`scripts/verify_pensions_foyers.py`): together they bring the
+  pension foyers to 12,83 M and take 3,7 % off what art. 3 removes, a quarter of the gap.
+  The rest points at the level: 400,4 Md€ of « pensions et rentes » on 15,98 M
+  pensioners, 25 050 € each.
 * **ERFS 2022 (FPR, lil-1696) — the interrupt ran, E3 is « nothing ».** E0 rails
   (D-134), E1 inventory (D-135), E2 validation table (D-137), and the two
   re-examination gates (D-141) are done. No recalibration is drawn; the E2 table
@@ -369,12 +376,11 @@ download list.
 
 ## What the next session does if nobody says otherwise
 
-1. **The PLF 2027 is graded** (D-204), the sign guard is in (D-206), and art. 3's
-   direction is explained (D-207). What it leaves: measuring the three candidate sources
-   of the missing pension foyers — retirees in institutions, whom the EEC does not
-   survey; pensions drawn only for the inactive aged 55 or more; every cohabiting couple
-   in one foyer — with VM 120401 as the validation line; the report's direction line,
-   which counts signs; and art. 2's outside grade.
+1. **The PLF 2027 is graded** (D-204), the sign guard is in (D-206), art. 3's direction
+   is explained (D-207) and its three candidate causes are measured (D-209). What it
+   leaves: splitting the 400,4 Md€ pension target between retirement, invalidity,
+   alimony and annuities from a manifested source, the lever D-209 points at; the
+   report's direction line, which counts signs; and art. 2's outside grade.
 2. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
