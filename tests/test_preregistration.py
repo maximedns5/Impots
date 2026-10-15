@@ -24,9 +24,12 @@ TOLERANCE = ch.Tolerance(relative=0.20, absolute_eur=200e6,
 
 
 def comparator(published_eur: float, **overrides) -> ch.Comparator:
+    # The sign agrees with the amount, as the comparator now requires (D-206). The
+    # template used to put `sign="yield"` on every amount, positive ones included.
     base = dict(published_eur=published_eur, source="évaluation préalable, art. X",
                 vintage="PLF 2027", perimeter="État, toutes APU",
-                net_of="brut de tout effet induit", sign="yield",
+                net_of="brut de tout effet induit",
+                sign="yield" if published_eur < 0 else "cost",
                 basis="annee-pleine")
     return ch.Comparator(**{**base, **overrides})
 
@@ -357,6 +360,31 @@ def test_an_unknown_sign_or_basis_is_refused(bad):
     number's own sign — getting it wrong flips a case at twice the magnitude."""
     with pytest.raises(ch.ChiffrageError):
         comparator(1.0e9, **bad)
+
+
+@pytest.mark.parametrize("published_eur, sign", [(1.1e9, "yield"), (-4.2e9, "cost")])
+def test_a_comparator_whose_sign_contradicts_its_amount_is_refused(published_eur, sign):
+    """D-204's trap: `grade` reads `published_eur` as it stands, in the engine's
+    convention where a cost is positive and a yield negative, and never reads `sign`.
+
+    Art. 3's annex prints «un gain budgétaire estimé à 1,1 Md€». Typed as +1.1e9 under
+    `sign: yield`, the simulated −1.295 bn yield is graded against a 1.1 bn COST: a gap of
+    2.4 bn instead of 0.2, and a case inside its tolerance turns red. Fails if a
+    comparator whose sign and amount disagree is accepted, in either direction.
+    """
+    with pytest.raises(ch.ChiffrageError, match="contredisent"):
+        ch.Comparator(published_eur=published_eur, source="s", vintage="v",
+                      perimeter="p", net_of="n", sign=sign)
+
+
+@pytest.mark.parametrize("published_eur, sign", [
+    (4.2e9, "cost"), (-1.1e9, "yield"), (0.0, "cost"), (0.0, "yield")])
+def test_a_comparator_whose_sign_agrees_with_its_amount_is_accepted(published_eur, sign):
+    """The other half: a figure published as zero carries no sign to contradict, and an
+    agreeing pair must still be read. Fails if the guard refuses everything."""
+    found = ch.Comparator(published_eur=published_eur, source="s", vintage="v",
+                          perimeter="p", net_of="n", sign=sign)
+    assert found.published_eur == published_eur
 
 
 def test_a_lower_bound_case_is_judged_as_an_inequality():

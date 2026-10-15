@@ -149,6 +149,13 @@ class Comparator:
     stops a case flipping green to red at twice the magnitude. And an année-pleine figure
     compared against a première-année simulation is a basis mismatch, which D-029 requires
     be tried as a MECHANICAL explanation before anyone reaches for population realism.
+
+    `published_eur` is SIGNED, in the engine's convention: a cost positive, a yield
+    negative, like `mechanical_eur`, because `grade` subtracts one from the other as they
+    stand. Carrying `sign` alone stopped nothing: `grade` never read it, and the printed
+    «gain de 1,1 Md€» typed as +1.1e9 under `sign: yield` graded a yield against a cost
+    (D-204). So the two must agree, and a comparator where they contradict each other is
+    refused at birth (D-206). Zero contradicts neither.
     """
 
     published_eur: float
@@ -167,6 +174,15 @@ class Comparator:
                 f"du nombre — les documents publiés sont incohérents là-dessus")
         if self.basis not in ("annee-pleine", "premiere-annee", "unstated"):
             raise ChiffrageError(f"basis « {self.basis} » inconnu")
+        # A missing amount is `grade`'s refusal to make, with the other missing fields.
+        amount = self.published_eur
+        if isinstance(amount, (int, float)) and (
+                (amount > 0 and self.sign == "yield") or (amount < 0 and self.sign == "cost")):
+            raise ChiffrageError(
+                f"published_eur {amount:+.0f} et sign « {self.sign} » se contredisent. "
+                f"`grade` lit le montant tel quel, dans la convention du moteur : un coût "
+                f"positif, un gain négatif. Un gain saisi positif serait noté contre un "
+                f"coût, à deux fois l'écart (D-204). Saisir le montant signé.")
 
     @property
     def signed(self) -> float:
