@@ -15163,3 +15163,75 @@ propre.
 * **Les trois pistes elles-mêmes.** Les corriger change la population et tous les
   chiffrages qui la lisent. Elles n'expliquent pas l'art. 3 ; c'est leur mérite propre
   qui en décidera.
+
+## D-210 — Les 400,4 Md€ décomposés : 26 Md€ ne sont pas des retraites, l'art. 3 à +1,8 %
+
+**La source.** Les agrégats nationaux de la déclaration 2042 (DGFiP, « L'impôt sur le
+revenu : les déclarations nationales », sur data.economie.gouv.fr) donnent, pour chaque
+case, le nombre de cases remplies et le montant déclaré, revenus 2006 à 2024. L'export
+CSV est généré à la demande mais stable à l'octet : deux téléchargements donnent le même
+sha256, et `impots data fetch` le retélécharge à l'identique. Il est manifesté sous
+`dgfip_ir_2042_nat_export_2026-10-15.csv`. Le manifeste portait déjà, sous
+`dgfip_ir_declarations_2042_nat.csv`, une copie du même jeu en quarantaine depuis la
+recherche B3 : deux octets d'écart, donc pas le même fichier. La quarantaine reste, et la
+nouvelle entrée se déclare son jumeau sourcé (D-152).
+
+**La décomposition**, revenus 2024 :
+
+| cases | Md€ | cases remplies |
+|---|---:|---:|
+| retraites, 1AS-1DS | 374,37 | 17,52 M |
+| invalidité, 1AZ-1DZ | 9,46 | 0,92 M |
+| pensions alimentaires, 1AO-1DO | 5,55 | 1,30 M |
+| source étrangère, 1AM-1DM et 1AL-1DL | 7,64 | 0,40 M |
+| capital, 1AT-1DT et 1AI-1DI | 2,64 | 0,14 M |
+| rentes viagères (1AW-1DW) et le reste | 1,29 | 0,43 M |
+| somme | 400,94 | |
+
+La somme retombe sur la cible de calage, 400,40 Md€, à 0,14 % près. Les rentes viagères
+n'y entrent sans doute que pour leur fraction imposable, et les pensions étrangères
+exonérées pas du tout. Ces cases sont donc bien les parties de la cible. Les retraites
+en font 93,5 % ; les 26 Md€ restants, la population les donne aux retraités.
+
+**Les comptes.** 17,47 M déclarants ont une retraite (1AS et 1BS), dont 13,15 M premiers
+déclarants, moins que les 13,4 M foyers de retraités de l'annexe, comme il se doit. Par
+personne, cela fait 21 434 € dans les cases et 25 051 € dans la population. La
+population a 1,49 M pensionnés de moins et 26 Md€ de plus. Les établissements et les
+retraités en emploi de D-209 (0,70 M et 0,60 M) font l'essentiel de la différence de
+compte.
+
+**L'art. 3 par le moteur**, toutes les pensions ramenées à la part des retraites
+(×0,935) : 1,119 Md€ contre 1,1 publié, soit +1,8 % au lieu de +17,7 %. L'abattement
+entier coûte alors 5,273 Md€ sur les revenus 2024, contre 5,322 dans les Voies et moyens.
+Ce dernier chiffre couvre aussi l'invalidité et les pensions alimentaires, que la
+population mise à l'échelle n'a plus : être juste en dessous est le sens attendu.
+
+**La lecture.** Le niveau explique l'essentiel de l'écart de l'art. 3. Enlever de la
+cible ce qui n'est pas une retraite, sans toucher à qui est pensionné ni à la forme du
+tirage, fait passer l'écart de 17,7 % à 1,8 %. Les pistes de D-209 portent sur les
+foyers, celle-ci sur la masse ; elles ne s'additionnent pas simplement, et leur
+combinaison n'est pas mesurée ici.
+
+**D-208, fermé.** La PR de D-209 changeait le manifeste. Son job `fast` (run
+38736485741) a restauré le cache précédent par le repli : « Cache hit for restore-key:
+raw-sources-3159c134… ». L'élagueur n'a rien retiré (`[]`), aucun fichier n'a été
+retéléchargé, 1 888 réussis et 120 sautés. Le repli de D-205 a servi, pour la première
+fois, comme prévu.
+
+**Ce qui ne change pas.** Rien n'est recalé. La cible de `incomes.py`
+(`margins.DECLARED_PENSIONS`, 400,4 Md€) reste telle quelle, et l'art. 3 garde sa note :
+son chiffrage est enregistré et ne se refait pas. Changer la cible change la population
+et tous les chiffrages qui la lisent ; c'est une décision du propriétaire.
+
+**Les tests.** Aucun test lancé. `scripts/verify_pensions_masse.py` sort à 0 ; épinglé à
+1,295 Md€ sur l'art. 3, le chiffrage enregistré, il sort à 1, vu échouer. ruff propre.
+
+**Ce qui reste.**
+
+* **Caler la masse des retraites** sur les cases 1AS-1DS (374,4 Md€) plutôt que sur les
+  « pensions et rentes » : une ligne de `margins.py`, et toute la population qui bouge.
+  À décider.
+* **Les 26 Md€ restants.** L'invalidité a un champ dans le format des ménages (D-190),
+  pas dans la population ; les pensions alimentaires et étrangères n'y sont pas.
+* **Le niveau de l'impôt**, +8,8 % de la DGFiP dans cette population (D-204), en porte
+  peut-être une part. Non mesuré.
