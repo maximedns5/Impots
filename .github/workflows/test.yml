@@ -84,6 +84,11 @@ jobs:
       - name: Lint
         run: ruff check src tests scripts
 
+      # Le repli de clé (D-205) : un manifeste qui change restaure le cache du
+      # précédent au lieu de tout retélécharger. Un fichier restauré n'est gardé que
+      # s'il est conforme, octet pour octet ; l'élagage retire ceux que le manifeste ne
+      # source plus. Sans lui, une PR qui touche au manifeste dépend de chaque serveur
+      # source, et la panne d'un seul la rougit (impots.gouv.fr, 2026-10-14).
       - name: Restore the raw sources (keyed on their manifest checksums)
         uses: actions/cache@v4
         with:
@@ -91,6 +96,10 @@ jobs:
             data/raw/*
             !data/raw/MANIFEST.json
           key: raw-sources-${{ hashFiles('data/raw/MANIFEST.json') }}
+          restore-keys: raw-sources-
+
+      - name: Drop restored files the manifest no longer sources
+        run: python -c "from impots.donnees import elaguer_cache; print(elaguer_cache())"
 
       # LE MÊME profil que la suite complète, délibérément. Un second profil, réduit,
       # a été écrit puis retiré : mesuré, il faisait gagner ~35 s (fetch 36 s + build
@@ -169,8 +178,10 @@ jobs:
       # asks for everything the suite reads rather than what the last failure printed.
       #
       # Raw sources are cached keyed on the manifest: they are immutable by sha256, so a
-      # cache hit is correct by construction, and any manifest change re-fetches. The
-      # derived artefacts are NOT cached — they are rebuilt from verified sources every
+      # cache hit is correct by construction. A manifest change falls back on the last
+      # cache (D-205): `data fetch` keeps a restored file only if it matches the new
+      # manifest byte for byte, re-fetches the rest, and the pruning step drops what the
+      # manifest no longer sources. The derived artefacts are NOT cached — they are rebuilt from verified sources every
       # run, because a stale population silently reused is the failure this whole chain
       # exists to prevent. Every source is Licence Ouverte or open access (see the
       # manifest); none is committed (D-016) — they live in the runner, not the tree.
@@ -181,6 +192,10 @@ jobs:
             data/raw/*
             !data/raw/MANIFEST.json
           key: raw-sources-${{ hashFiles('data/raw/MANIFEST.json') }}
+          restore-keys: raw-sources-
+
+      - name: Drop restored files the manifest no longer sources
+        run: python -c "from impots.donnees import elaguer_cache; print(elaguer_cache())"
 
       # By manifest entry only: URL, byte count and sha256 are checked BEFORE the file
       # is renamed into place, so a publication that changed under the same URL fails

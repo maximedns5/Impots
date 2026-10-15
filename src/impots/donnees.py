@@ -396,6 +396,28 @@ def telecharger(fichier: str, *, ouvrir: Callable = urllib.request.urlopen,
     return Telechargement(fichier, "téléchargé", detail)
 
 
+def elaguer_cache(raw: Path | None = None) -> list[str]:
+    """Retire de `data/raw/` les fichiers que le manifeste ne source plus (D-205).
+
+    Pour la CI : quand le manifeste change, son cache se replie sur celui d'un manifeste
+    plus ancien, et peut ramener un fichier dont l'entrée a disparu ou perdu son URL.
+    Un fichier encore sourcé reste, conforme ou non : `telecharger` remplace celui qui
+    ne l'est plus, et `verifier` le juge. Ni le manifeste ni un sous-dossier ne sont
+    touchés. Renvoie les noms retirés.
+    """
+    from impots.population.ingest import load_manifest
+
+    raw = raw or RAW
+    sources = {nom for nom, entree in load_manifest().items()
+               if entree.url and not entree.quarantined}
+    retires = []
+    for chemin in sorted(raw.iterdir()):
+        if chemin.is_file() and chemin.name != "MANIFEST.json" and chemin.name not in sources:
+            chemin.unlink()
+            retires.append(chemin.name)
+    return retires
+
+
 # --------------------------------------------------------------------------- #
 # le préflight — rapide, lisible, et qui dit quoi faire
 # --------------------------------------------------------------------------- #
