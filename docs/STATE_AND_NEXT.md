@@ -1,6 +1,8 @@
-# State of the project, and the directions open — 2026-10-15 (the pension target decomposed)
+# State of the project, and the directions open — 2026-10-15 (pensions calibrated on retirement)
 
-The third 2026-10-15 update adds D-210: the 400,4 Md€ pension target decomposed box by
+The fourth 2026-10-15 update adds D-211: at the owner's request, the pension mass is
+calibrated on the retirement boxes 1AS-1DS, 374,4 Md€, instead of the 400,4 Md€ of
+« pensions et rentes ». The third added D-210: the 400,4 Md€ pension target decomposed box by
 box; 26 Md€ of it are not retirement pensions, and without them art. 3 lands 1,8 % above
 the annex. The second added D-209, the three candidate sources of the missing pension
 foyers, which account for a quarter of art. 3's gap. The first added D-206 to D-208: `grade` refuses a comparator whose sign
@@ -51,8 +53,8 @@ openfisca's reading of the law. It has its own section below.
 clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **211 decision
-entries**, D-000 to D-210, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **212 decision
+entries**, D-000 to D-211, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -330,7 +332,10 @@ download list.
   The rest is the level (D-210, `scripts/verify_pensions_masse.py`): the target mixes
   374,4 Md€ of retirement pensions (boxes 1AS-1DS) with 26 Md€ of invalidity, alimony,
   foreign pensions, capital and annuities, all drawn onto retirees. Scaled to the
-  retirement boxes, art. 3 lands at 1,119 Md€, +1,8 %.
+  retirement boxes, art. 3 lands at 1,119 Md€, +1,8 %. Since D-211 the population is
+  calibrated on those boxes: on a 20 000-household sample the IR barème line moves from
+  +11,0 % to +6,7 % of the DGFiP, and foyers imposés from −1,6 % to −4,5 %. The
+  registered chiffrages keep their commit and their grades.
 * **ERFS 2022 (FPR, lil-1696) — the interrupt ran, E3 is « nothing ».** E0 rails
   (D-134), E1 inventory (D-135), E2 validation table (D-137), and the two
   re-examination gates (D-141) are done. No recalibration is drawn; the E2 table
@@ -380,11 +385,11 @@ download list.
 ## What the next session does if nobody says otherwise
 
 1. **The PLF 2027 is graded** (D-204), the sign guard is in (D-206), art. 3's direction
-   is explained (D-207), its candidate causes measured (D-209) and the pension target
-   decomposed (D-210). What it leaves: the owner's call on calibrating the pension mass
-   to the retirement boxes (374,4 Md€) instead of « pensions et rentes », which moves the
-   whole population; the report's direction line, which counts signs; and art. 2's
-   outside grade.
+   is explained (D-207), its candidate causes measured (D-209), the pension target
+   decomposed (D-210) and the population recalibrated on the retirement boxes (D-211).
+   What it leaves: a full pass and the reports regenerated on the owner's machine, the
+   first since the pension target moved; the report's direction line, which counts
+   signs; and art. 2's outside grade.
 2. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each

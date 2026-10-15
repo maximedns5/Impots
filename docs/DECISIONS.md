@@ -15235,3 +15235,70 @@ et tous les chiffrages qui la lisent ; c'est une décision du propriétaire.
   pas dans la population ; les pensions alimentaires et étrangères n'y sont pas.
 * **Le niveau de l'impôt**, +8,8 % de la DGFiP dans cette population (D-204), en porte
   peut-être une part. Non mesuré.
+
+## D-211 — La masse des pensions calée sur les cases de retraite, 374,4 Md€
+
+**La décision.** Le propriétaire a demandé, le 2026-10-15, de caler la masse des pensions
+sur les cases de retraite de la déclaration 2042 plutôt que sur les « pensions et
+rentes » de Stat 41 (D-210). `margins.DECLARED_PENSIONS` passe de 400,4 Md€ à
+374 366 431 543 €, la somme des cases 1AS à 1DS sur les revenus 2024. La règle qui dit qui
+reçoit une pension, la forme du tirage et le reste du calage ne bougent pas.
+
+**La source, dans le profil `tests`.** `ingest.declared_retirement_pensions` lit les cases
+dans l'export manifesté en D-210. L'export entre au profil `tests`, comme l'exige la
+garde qui dérive le profil des constantes des lecteurs : la CI le télécharge désormais,
+1,3 Mo depuis data.economie.gouv.fr. Un test vérifie que les cases de la section 1
+retombent sur les 400,4 Md€ publiés à 0,2 % près, un autre que la cible égale la somme
+des cases de retraite.
+
+**Vu échouer.** `test_the_pension_calibration_target_is_the_retirement_boxes`, dans un
+commit à lui seul (`4d143df`), échoue sur `723e22a` : 400,4e9 contre 374 366 431 543. Il
+passe après le recalage.
+
+**Ce que ça change**, sur le même échantillon de 20 000 ménages, loi des revenus 2024, en
+Md€ sauf les foyers :
+
+| ligne | avant | après | publié | écart avant | écart après |
+|---|---:|---:|---:|---:|---:|
+| IR, barème (`ir_avant_niches`) | 109,71 | 105,47 | 98,84 | +11,0 % | +6,7 % |
+| IR net | 109,88 | 105,64 | 87,99 | +24,9 % | +20,1 % |
+| foyers imposés | 19,37 M | 18,80 M | 19,68 M | −1,6 % | −4,5 % |
+| revenu disponible | 1 289,0 | 1 269,4 | | | |
+
+Le rapport committé (`reports/reconciliation.md`, 2026-09-04) écrit +8,8 % sur le barème,
+sur la population entière et avec le code de l'époque. Les colonnes ci-dessus sont un
+échantillon, avec le code d'aujourd'hui, et ne se comparent qu'entre elles. Les lignes de
+CSG et de CRDS du rapport ne portent que sur les salaires (`csg_deductible_salaire`) et ne
+bougent pas ; la CSG des pensions baisse avec elles, dans le revenu disponible. Les
+foyers imposés s'éloignent de leur cible : moins de pension met plus de retraités sous le
+seuil. C'est une ligne de validation que rien ne cale, et une masse trop haute la
+flattait.
+
+**Les chiffrages enregistrés ne bougent pas.** Les trois cas du PLF 2027 portent le
+commit sur lequel ils ont été chiffrés ; ils ne se refont pas, et leurs notes restent.
+Refait aujourd'hui, l'art. 3 donnerait 1,119 Md€ (D-210).
+
+**Les scripts de D-207, D-209 et D-210** décrivent la population de l'enregistrement.
+`verify_pensions_art3.py` y ramène les pensions : elles sont un tirage fois la cible sur
+sa masse, donc le rapport 400,4 / 374,37 la restaure, et le rejeu retombe sur le
+chiffrage enregistré à l'euro. `verify_pensions_foyers.py` tient sa masse à 400,4 Md€.
+`verify_pensions_masse.py` compare ses cases aux « pensions et rentes » de Stat 41 et non
+plus à la cible, et son facteur vaut désormais 1. Les trois sortent à 0, épingles
+inchangées.
+
+**Les tests.** Seulement ceux du module touché, des gardes de données et des modules qui
+lisent la population construite, hors tests lents : `tests/test_population.py` (88
+réussis), `tests/test_donnees.py` et `tests/test_provenance.py` (42),
+`tests/test_uprating.py` et `tests/test_scenarios.py` (104) ; ruff propre. Les tests lents
+sont laissés à la passe complète.
+
+**Ce qui reste.**
+
+* **Une passe complète et les rapports régénérés**, sur la machine du propriétaire.
+  `reports/reconciliation.md` date d'avant toute la série D-176 à D-203, et la cible des
+  pensions vient de bouger.
+* **Les 26 Md€ hors retraites ne sont plus nulle part dans la population** : invalidité
+  (9,5 Md€), pensions alimentaires (5,5 Md€), pensions étrangères, capitaux, rentes. Une
+  mesure qui les toucherait ne les voit plus ; avant, elle les voyait sur des retraités,
+  ce qui ne valait pas mieux.
+* **Les foyers manquants de D-209** : établissements, règle d'âge, concubins.

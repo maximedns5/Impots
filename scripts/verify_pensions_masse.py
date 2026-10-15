@@ -9,14 +9,16 @@ WHAT IT MEASURES:
 
 1. **The decomposition.** Section 1's pension and annuity boxes for 2024 incomes, grouped:
    retirement (1AS-1DS), invalidity (1AZ-1DZ), alimony received (1AO-1DO), foreign-source
-   pensions, capital, life annuities. Their sum must land on the calibration target
-   (`margins.DECLARED_PENSIONS`) within 0,2 %, or the boxes are not the target's parts.
+   pensions, capital, life annuities. Their sum must land on Stat 41's « pensions et
+   rentes », 400,4 Md€, within 0,2 %, or the boxes are not that total's parts. It was
+   the calibration target until D-211, which moved the target to the retirement boxes.
 2. **The counts.** « Nombre » counts filled boxes, so persons: 1AS is the first
    declarant, 1BS the second. The annex's 13,4 M foyers with a retirement pension cannot
    be fewer than the 1AS count, which is the coherence check.
-3. **Art. 3 through the engine**, every pension scaled to the retirement boxes' share of
-   the target, and the whole 10 % abatement on 2024 incomes under the same scaling,
-   against the Voies et moyens line D-207 used.
+3. **Art. 3 through the engine**, every pension scaled so that the population's mass is
+   the retirement boxes, and the whole 10 % abatement on 2024 incomes under the same
+   scaling, against the Voies et moyens line D-207 used. Since D-211 the population is
+   built on that mass, and the factor is 1.
 
 Scaling every pension is the crudest correction: it keeps who is a pensioner and the
 shape of the draw, and moves only the level. That is the point — it isolates the level.
@@ -50,6 +52,7 @@ GROUPS = {
     "rentes viagères à titre onéreux (1AW-1DW)": "W",
     "rentes étrangères (1AR-1DR)": "R",
 }
+STAT_41_PENSIONS_ET_RENTES = 400.4e9   # Stat 41, tableau 1, the pre-D-211 target
 ANNEX_FOYERS_RETRAITE = 13.4e6
 ANNEX_GAIN = 1.1e9
 VM_120401_REVENUS_2024 = 5.322e9
@@ -66,7 +69,7 @@ PINS = {
 def main() -> int:
     from impots import scenarios
     from impots.api.schemas import ReformSpec
-    from impots.population import aggregate, margins, runner
+    from impots.population import aggregate, runner
 
     for path in (POPULATION, EXPORT):
         if not path.exists():
@@ -88,7 +91,7 @@ def main() -> int:
         return year.filter(pl.col("Nom").is_in([f"1{d}{letter}" for d in "ABCD"]))
 
     # 1. The decomposition.
-    target = margins.DECLARED_PENSIONS.value
+    target = STAT_41_PENSIONS_ET_RENTES
     total = 0.0
     print("1. « pensions et rentes », revenus 2024, case par case :")
     for label, letter in GROUPS.items():
@@ -99,10 +102,10 @@ def main() -> int:
         print(f"   {label:44s} {part['Montant'].sum() / 1e9:8.3f} Md€ "
               f"{part['Nombre'].sum() / 1e6:6.3f} M cases")
     retraites = group("S")["Montant"].sum()
-    print(f"   somme {total / 1e9:.3f} Md€ contre la cible {target / 1e9:.3f} "
+    print(f"   somme {total / 1e9:.3f} Md€ contre Stat 41 {target / 1e9:.3f} "
           f"({total / target - 1:+.2%}) ; les retraites en font {retraites / target:.1%}")
     if abs(total / target - 1) > 0.002:
-        failures.append("les cases ne retombent pas sur la cible de calage")
+        failures.append("les cases ne retombent pas sur les « pensions et rentes »")
     pin("retraites", retraites)
     pin("somme", total)
 
@@ -113,13 +116,15 @@ def main() -> int:
     pensioners = frame.filter(pl.col("pension_annuelle") > 0)["weight"].sum()
     print(f"2. déclarants titulaires d'une retraite : {holders / 1e6:.2f} M (1AS "
           f"{first / 1e6:.2f} M) ; pensionnés de la population {pensioners / 1e6:.2f} M")
-    print(f"   par personne : {retraites / holders:,.0f} EUR dans les cases, "
-          f"{target / pensioners:,.0f} EUR dans la population")
+    built = float((frame["pension_annuelle"] * frame["weight"]).sum())
+    print(f"   par personne : {retraites / holders:,.0f} EUR dans les cases ; dans la "
+          f"population, {target / pensioners:,.0f} EUR avant D-211 et "
+          f"{built / pensioners:,.0f} EUR telle que construite")
     if first > ANNEX_FOYERS_RETRAITE:
         failures.append("plus de premiers déclarants retraités que de foyers retraités")
 
-    # 3. The engine, every pension scaled to the retirement boxes.
-    factor = retraites / target
+    # 3. The engine, every pension scaled so the mass is the retirement boxes.
+    factor = retraites / built
     scaled = frame.with_columns(pl.col("pension_annuelle") * factor)
     scenario = scenarios.load("plf2027_art_3")
     result = runner.run(scaled, year=scenario.year, reform=scenario.reform, tier="full",

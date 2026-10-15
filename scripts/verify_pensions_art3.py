@@ -30,6 +30,12 @@ WHAT IT MEASURES, three ways:
 The pins hold the numbers D-207 quotes. A change in the population or the engine fails
 here first, and the diagnosis is then to be re-read, not the pins widened.
 
+THE POPULATION AS REGISTERED. D-211 moved the pension target from 400,4 Md€ to the
+retirement boxes. This script describes the population the registration ran on, so it
+scales the pensions back to 400,4 Md€: they are a draw times the target over its mass,
+so the ratio restores that population exactly, and the replay still lands on the
+registered euro.
+
 Usage: `.venv/bin/python scripts/verify_pensions_art3.py` (about five minutes; needs
 `data/processed/population_2024.parquet`).
 """
@@ -53,6 +59,7 @@ ANNEX_GAIN = 1.1e9                 # art. 3, § 4.2, p. 36, à compter de 2029
 VM_120401_FOYERS = 15_085_237      # VM tome II PLF 2026, p. 78
 VM_120401_REVENUS_2024 = 5.322e9   # idem, colonne « prévision 2025 »
 REGISTERED = -1_294_878_105.204834  # chiffrages_preregistres/plf2027_art_3.yaml
+REGISTRATION_TARGET = 400.4e9      # the pension target before D-211
 
 #: Pinned at D-207. Relative tolerance: the sample is seeded, so a drift means a change.
 PINS = {
@@ -71,6 +78,12 @@ def _foyers(frame: pl.DataFrame) -> pl.DataFrame:
             .sort("foyer_id"))
 
 
+def _as_registered(frame: pl.DataFrame) -> pl.DataFrame:
+    """The population with its pensions scaled back to the pre-D-211 target."""
+    mass = float((frame["pension_annuelle"] * frame["weight"]).sum())
+    return frame.with_columns(pl.col("pension_annuelle") * (REGISTRATION_TARGET / mass))
+
+
 def main() -> int:
     from impots import scenarios
     from impots.api.schemas import ReformSpec
@@ -79,7 +92,7 @@ def main() -> int:
     if not POPULATION.exists():
         print(f"{POPULATION} absent — `impots population build` d'abord", file=sys.stderr)
         return 1
-    frame = pl.read_parquet(POPULATION)
+    frame = _as_registered(pl.read_parquet(POPULATION))
     failures: list[str] = []
 
     def pin(name: str, value: float) -> None:
