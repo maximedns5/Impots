@@ -173,10 +173,18 @@ DECLARED_WAGES = Figure(
            "compare against `salaire_imposable`, not `salaire_brut`.",
 )
 DECLARED_PENSIONS = Figure(
-    value=400.4e9, unit="EUR", year=2024,
-    scope="Pensions, retraites et rentes déclarées", source="DGFiP", url=DGFIP_URL,
+    value=374_366_431_543.0, unit="EUR", year=2024,
+    scope="Pensions, retraites et rentes déclarées en cases 1AS-1DS (retraites)",
+    source="DGFiP, L'impôt sur le revenu : les déclarations nationales (2042)",
+    url="https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/",
     use="calibration",
-    caveat="Used as the pension calibration target, and therefore spent.",
+    caveat="Used as the pension calibration target, and therefore spent. Until D-211 the "
+           "target was Stat 41's « pensions et rentes », 400,4 Md€, which adds 26 Md€ of "
+           "invalidity, alimony, foreign pensions, capital and life annuities to these "
+           "boxes (D-210). `incomes.py` drew all of it onto retirees, and art. 3 of the "
+           "PLF 2027 ran 17,7 % high on that population. "
+           "`ingest.declared_retirement_pensions` reads the boxes; a test holds the two "
+           "equal.",
 )
 
 UNEMPLOYMENT_BENEFIT_SPEND = Figure(

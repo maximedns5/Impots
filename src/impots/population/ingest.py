@@ -25,6 +25,13 @@ MANIFEST_PATH = RAW / "MANIFEST.json"
 
 EEC_PARQUET = "FD_EEC_2024.parquet"
 EEC_VARMOD = "Varmod_EEC_2024.csv"
+#: The DGFiP's national 2042 aggregates, box by box (D-210): what the pension
+#: calibration target is read from.
+DECLARATIONS_2042 = "dgfip_ir_2042_nat_export_2026-10-15.csv"
+#: « Pensions, retraites, rentes », one box per declarant and dependant. Not 1AZ
+#: (invalidity), 1AO (alimony), 1AM/1AL (foreign), 1AT/1AI (capital) nor 1AW (life
+#: annuities), which the DGFiP's « pensions et rentes » adds to them (D-210).
+RETIREMENT_PENSION_BOXES = ("1AS", "1BS", "1CS", "1DS")
 
 
 class UnmanifestedInput(RuntimeError):
@@ -168,6 +175,31 @@ def load_eec() -> pl.DataFrame:
     per quarter (M0_RECON §1).
     """
     return pl.read_parquet(verified_path(EEC_PARQUET))
+
+
+def load_declarations_2042() -> pl.DataFrame:
+    """One row per box of the 2042 forms and income year: count of filled boxes, amount.
+
+    The export carries a BOM, so the first column's name is stripped of it; « Nombre »
+    counts filled boxes, hence persons (1AS is the first declarant, 1BS the second),
+    never foyers.
+    """
+    frame = pl.read_csv(verified_path(DECLARATIONS_2042), separator=";",
+                        infer_schema=False, encoding="utf8")
+    frame = frame.rename({column: column.lstrip("\ufeff") for column in frame.columns})
+    return frame.with_columns(pl.col("Nombre").cast(pl.Float64),
+                              pl.col("Montant").cast(pl.Float64))
+
+
+def declared_retirement_pensions(year: int = 2024) -> float:
+    """Declared retirement pensions, boxes 1AS-1DS, in euros (D-210, D-211)."""
+    rows = load_declarations_2042().filter(
+        (pl.col("Année") == str(year)) & pl.col("Nom").is_in(RETIREMENT_PENSION_BOXES))
+    if rows.height != len(RETIREMENT_PENSION_BOXES):
+        raise ValueError(
+            f"{rows.height} cases de retraite pour {year} au lieu de "
+            f"{len(RETIREMENT_PENSION_BOXES)} : le millésime ou le format a changé")
+    return float(rows["Montant"].sum())
 
 
 def load_varmod() -> pl.DataFrame:

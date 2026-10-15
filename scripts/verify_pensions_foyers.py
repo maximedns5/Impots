@@ -25,6 +25,10 @@ in proportion only at unchanged marginal rates, which is the approximation this 
 makes and says. Residents of institutions are drawn from the same law as everyone else,
 which overstates their pensions and so the dilution: their row is an upper bound.
 
+THE POPULATION AS REGISTERED. D-211 moved the pension target from 400,4 Md€ to the
+retirement boxes; this script measures the population D-207 diagnosed, so its pension
+mass is held at 400,4 Md€ rather than read from the built population.
+
 TWO READING TRAPS in the census files, both silent: Paris, Lyon and Marseille have a COM
 row AND ARM rows, so only NIVGEO = COM is summed; and AGEQ80_14 is a five-year band whose
 last value, 080, is open.
@@ -53,6 +57,7 @@ POP3 = RAW / "TD_POP3_2021_csv.zip"
 SIGMA = 0.55            # incomes.PENSION_SIGMA, read below and checked
 MIN_ABATTEMENT = 454.0  # 2025 incomes, the frozen tree the art. 3 scenario runs on
 PLAFOND, SOUS_PLAFOND = 4439.0, 3000.0
+REGISTRATION_TARGET = 400.4e9   # the pension target before D-211
 VM_120401_FOYERS = 15_085_237
 ANNEX_FOYERS_RETRAITE = 13.4e6
 
@@ -179,7 +184,7 @@ def main() -> int:
     rng = np.random.default_rng(20261015)
     z = rng.standard_normal(p.height)
     outside = np.exp(SIGMA * rng.standard_normal(200_000))
-    mass = float((p["pension_annuelle"].to_numpy() * w).sum())
+    mass = REGISTRATION_TARGET
 
     def abattement(pension):
         return np.where(pension > 0, np.minimum(np.maximum(0.1 * pension, MIN_ABATTEMENT),

@@ -213,9 +213,10 @@ def build_lines(agg: Aggregates, population_year: int | None = None,
             "Calibrated: the pension mass was scaled to hit this — and now actually "
             "compared against it. This line passed a hardcoded `None` until the "
             "zero-masked sweep, so it printed «calibrated (spent)» beside an empty "
-            "cell: a target declared hit by a comparison that never ran. CONDITIONALLY "
-            "VALID: the published scope includes RENTES VIAGÈRES, which the model does "
-            "not carry, so the simulated side is short by that much.",
+            "cell: a target declared hit by a comparison that never ran. The target is "
+            "the retirement boxes 1AS-1DS since D-211. Until then it was the whole "
+            "« pensions et rentes », whose invalidity, alimony, foreign pensions, capital "
+            "and annuities — 26 Md€ the model does not carry — were drawn onto retirees.",
             source="DGFiP",
         ),
         Line.from_figure(
