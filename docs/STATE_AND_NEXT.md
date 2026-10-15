@@ -44,8 +44,8 @@ openfisca's reading of the law. It has its own section below.
 clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has eleven replayable `verify_*.py` gate scripts and **205 decision
-entries**, D-000 to D-204, recording every error in both directions.
+PR. The project also has eleven replayable `verify_*.py` gate scripts and **206 decision
+entries**, D-000 to D-205, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -172,6 +172,10 @@ couple keeps its 18 943,38 €.
   owner's decision: it runs only when the workflow is dispatched by hand, and
   `make full` is the full verification. `fast` was green on `aa869dd`: 1 388
   passed, 120 skipped, 10 min 57 s.
+* **The raw-sources cache falls back on the previous one** when the manifest changes
+  (D-205), so a PR that adds an entry outside the `tests` profile no longer contacts
+  any source server. A restored file is kept only if it matches the manifest, and
+  `donnees.elaguer_cache` drops what the manifest no longer sources.
 * **pytest is started two ways.** `make gate` and `make full` run
   `python -m pytest`, which puts the repo root on `sys.path`; CI and
   `make ci-local` run bare `pytest`, which does not. Five tests passed on the

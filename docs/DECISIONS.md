@@ -14884,3 +14884,52 @@ la CI fait tourner la suite sur la PR.
 préalables », 743 p., relevé le 2026-10-14 (sha256 b1142977a5e3) : art. 2, § 4.2.1.1, p.
 29 ; art. 3, § 4.2, p. 36 ; art. 15, § 4.2.1, p. 160. Les enregistrements : `be5b5f6`,
 `e449490`, `25b2a61`, après la passe `b24de21`.
+
+## D-205 — Le cache des sources brutes de la CI se replie sur le précédent
+
+**Le fait.** Le 2026-10-14, le job `fast` de la PR des préenregistrements PLF 2027 (D-204)
+est tombé rouge avant le premier test. impots.gouv.fr était en maintenance : quatre
+sources de la DGFiP (n° 33, 39, 41 et 45) servaient toutes la même page HTML de plus de
+1 Mo, et `data fetch` les a refusées, comme il le doit. La PR ne touchait à aucune
+d'elles. Elle ajoutait une entrée au manifeste, l'annexe des évaluations préalables, et
+la clé du cache, `hashFiles('data/raw/MANIFEST.json')`, avait changé avec lui : le runner
+a dû tout retélécharger, pendant la panne. Une PR qui laisse le manifeste intact aurait
+restauré le cache sans joindre un seul serveur.
+
+**La règle.** Les deux jobs gardent leur clé exacte et gagnent un repli,
+`restore-keys: raw-sources-`. Quand le manifeste change, le cache du précédent est
+restauré. Ce repli ne relâche aucune garde :
+
+* `data fetch` ne garde un fichier présent que s'il est conforme, taille et sha256, et
+  retélécharge les autres (`_conforme`). Un fichier restauré sous le même nom mais d'un
+  autre millésime est donc remplacé, ou refusé si la source ne sert plus le bon ;
+* un pas nouveau, `elaguer_cache`, retire de `data/raw/` les fichiers que le manifeste ne
+  source plus : une entrée retirée, ou mise en quarantaine sans URL. Sans lui,
+  `test_the_raw_tree_separates_sourced_from_unsourced` rougirait sur un fichier venu du
+  cache et non du dépôt ;
+* le préflight `data check` juge ensuite chaque fichier du profil, comme avant.
+
+Une PR qui ajoute une entrée hors du profil `tests`, comme celle de D-204, ne contacte
+donc plus aucun serveur. Une PR qui change une source du profil la retélécharge, elle
+seule.
+
+**Vus échouer, puis mutés.** Trois tests, dans un commit à eux seuls (`4a33159`) :
+`test_the_cache_pruner_removes_only_what_the_manifest_no_longer_sources` et
+`test_the_cache_pruner_removes_a_file_whose_entry_lost_its_url` échouent sur `main`, faute
+de fonction. `test_a_stale_file_restored_from_an_older_cache_is_downloaded_again` épingle
+une propriété existante de `telecharger`, celle dont le repli dépend. Trois mutations,
+chacune prise par son test : `_conforme` réduit à la présence et à la taille ;
+l'élagueur qui ne supprime plus ; l'élagueur qui garde une entrée sans URL.
+
+**Ce que le repli ne peut pas faire.** Un cache GitHub s'efface après sept jours sans
+accès. Si aucun cache `raw-sources-` ne survit, le runner retélécharge tout, comme avant.
+
+**Les tests.** `tests/test_donnees.py` et `tests/test_provenance.py`, 42 réussis ; ruff
+propre ; la commande du pas d'élagage lancée sur ce dépôt, qui ne retire rien. Le
+workflow lui-même ne se teste que sur un runner : le job `fast` de cette PR, dont le
+manifeste ne change pas, prend la clé exacte. Le repli sera exercé pour la première fois
+par la PR de D-204, une fois `main` fusionné dedans.
+
+**Ce qui reste.** Rien d'autre. Si une source du profil tombe pendant qu'une PR la
+change, la PR rougit toujours, et c'est voulu : un fichier qui a changé doit être
+retéléchargé et vérifié.
