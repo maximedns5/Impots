@@ -1,0 +1,47 @@
+case: plf2027_art_3
+pre_registered: '2026-10-14T15:48:43+00:00'
+commit: be5b5f60245e30d35496fc3f56738f34b3ce1a69
+scenario: plf2027_art_3
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -1294878105.204834
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 200000000.0
+  rationale: 'Le plafond abaissé à 3 000 EUR mord sur les foyers dont 10 % des pensions
+    dépassent ce montant, soit plus de 30 000 EUR de pensions déclarées par foyer
+    : la moitié haute de la distribution. Aucune pension n''est observée dans cette
+    population : la masse est calée sur les pensions déclarées (DGFiP) et sa distribution
+    tirée de lois publiées ; les pensions d''un couple sont tirées sans corrélation
+    ; le taux marginal des foyers retraités dépend de revenus du capital et fonciers
+    que la population n''a pas, ce qui tire vers le bas. Le contrefactuel est l''arbre
+    gelé (plafond de 4 439 EUR), pas l''arbre revalorisé par l''art. 2 (environ 4
+    532 EUR) : léger biais vers le bas. Plus ou moins 30 % parce que l''incertitude
+    porte sur une queue de distribution que la population construit plus qu''elle
+    n''observe. Plancher de 200 M EUR.'
+note: 'Comparateur : l''article seul. Le compte de 4,6 M de foyers touchés est déjà
+  vu (D-174) et ne sert pas de test.'
+bound: two-sided
+mirror: false
+comparator:
+  published_eur: -1100000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 3, § 4.2, p. 36 : «
+    un gain budgétaire estimé à 1,4 Md€ en 2027, 1,8 Md€ en 2028 et 1,1 Md€ à compter
+    de 2029 »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; échantillon de 500 000
+    déclarations (§ 4.3)
+  perimeter: L'article entier ; État.
+  net_of: Le régime de croisière, à compter de 2029, soit l'année pleine d'une année
+    de revenus. 2027 (1,4 Md€) et 2028 (1,8 Md€) mêlent l'avis sur les revenus de
+    N-1 et le PAS de l'année N. Aucun effet comportemental.
+  sign: yield
+  basis: annee-pleine
+  retrieved: '2026-10-14'

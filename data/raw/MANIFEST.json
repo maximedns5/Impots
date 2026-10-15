@@ -1341,6 +1341,15 @@
       "licence": "Assemblée nationale — open data, Licence Ouverte",
       "description": "Assemblée nationale, texte n° 3210 (17e législature) : projet de loi de finances pour 2027, déposé le 1er octobre 2026, articles avec exposé des motifs. URL relevée sur la page de publication (dossier PLF_2027, puis la page du texte l17b3210_projet-loi), jamais dans un index de recherche.\nLes titres d'articles sont portés par les <h6>, mais PAS toujours sous la forme « ARTICLE n : intitulé » : l'article 23 n'a pas de deux-points, l'article 22 en a deux, et une entité &#xa0; tient lieu d'espace dans trois titres. Le découpage d'avant le 2026-10-02 écartait sans bruit les articles 23, 38 et 47. 90 articles au total (89 numérotés et l'article liminaire) ; la section fiscale porte les articles 1 à 33.\nC'est le PROJET déposé, pas la loi votée. L'annexe des évaluations préalables n'était pas encore liée depuis la page du dossier le 2026-10-02 ; elle n'est pas manifestée ici.",
       "quarantined": false
+    },
+    "plf2027_evaluations_prealables.pdf": {
+      "url": "https://www.assemblee-nationale.fr/dyn/contenu/visualisation/1128179/file/PLF%202027%20-%20Evaluations%20pr%C3%A9alables.pdf",
+      "sha256": "b1142977a5e33fc93b36aec3cf97a60adc4e5df8b7504e523bc46a006c0a0801",
+      "bytes": 6794484,
+      "downloaded": "2026-10-14",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "PLF 2027, évaluations préalables des articles (743 p.), annexe au projet de loi n° 3210. URL relevée sur la page du dossier PLF_2027 de l'Assemblée (lien « PLF 2027 - Evaluations préalables »), jamais dans un index de recherche, le 2026-10-14 et APRÈS le push des trois préenregistrements (be5b5f6, e449490, 25b2a61). Comparateur des cas plf2027_art_2, plf2027_art_3 et plf2027_art_15 (D-204).\nSTRUCTURE : un sommaire (p. 5), puis une fiche par article qui s'ouvre sur « ARTICLE n : » ; la page imprimée est celle du PDF. Le rendement est en 4.2.1, ou en 4.2 sans sous-section (art. 3). Comme en 2026, il n'a PAS de forme unique : art. 2, de la prose par volet (4.2.1.1 à 4.2.1.4, p. 29-30) ; art. 3, une phrase à trois années (p. 36) ; art. 15, deux phrases, les acomptes de 2027 puis les clôtures décalées payées en 2028 (p. 160).\nPIÈGE D'UNITÉ : l'unité est déclarée dans chaque phrase ou tableau, et Md€ et M€ voisinent dans la même fiche (art. 2 : « 4,2 Md€ », « 20 M€ », « 820 M€ »).\nPIÈGE DE BASE : les montants sont des effets BUDGÉTAIRES par année. Sous le prélèvement à la source, la première année d'une mesure d'impôt sur le revenu n'est pas son année pleine : l'art. 3 publie la chronique, 1,4 Md€ en 2027, 1,8 Md€ en 2028, 1,1 Md€ à compter de 2029. L'art. 2 ne donne que 2027, « somme de l'effet sur les avis d'imposition au titre des revenus 2026 et de l'effet sur le PAS ».",
+      "quarantined": false
     }
   }
 }
