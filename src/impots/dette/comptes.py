@@ -383,3 +383,131 @@ def realized_years(years: list[int], *, sfa: dict[int, float]) -> list[RealizedY
 def opening_ratio(first_year: int) -> float:
     """The b0 the backtest starts from: the published ratio at the end of the prior year."""
     return debt([first_year - 1])[first_year - 1][1]
+
+
+# ------------------------------------------------- phase 9 — the reference path
+
+TOTALS_FILE = "insee_cn2025_t3201_depenses_recettes_APU_S13.xlsx"
+TOTALS_SHEET = "t_3201"
+
+#: The rows of table 3.201 that carry its consolidated totals. They have NO ESA code: a
+#: total of total spending is not an operation of the system, so this is the one reader
+#: here that matches LABELS. The house rule against labels stands, and the cost of
+#: breaking it is paid in checks: the label must match WHOLE (never a substring), each
+#: must be found exactly once in its section, and the totals must then close the
+#: accounting identity and agree with table 7.301 — so a wrong row cannot pass quietly.
+TOTALS_LABELS = {
+    "spending": "Total des dépenses",
+    "receipts": "Total des recettes",
+    "interest": "Intérêts (D41)",
+    "net_lending": "Capacité (+) ou besoin (-) de financement (B9NF)",
+}
+SECTIONS = ("DEPENSES", "RECETTES", "SOLDES")
+
+#: Closing tolerance, in euros. The workbook prints four decimals of a milliard and
+#: closes `recettes − dépenses = B9` to the last of them; ten million is a hundred times
+#: that, and fifteen thousand times smaller than a missing interest leg.
+TOTALS_TOLERANCE_EUR = 1e7
+
+
+@dataclass(frozen=True)
+class ApuTotals:
+    """One year of consolidated APU spending and receipts, in euros.
+
+    Consolidated means flows BETWEEN public administrations are netted out — the State's
+    grant to a région is not public spending twice. Table 7.301 is not consolidated on
+    every line, which is why it cannot give these totals.
+    """
+
+    year: int
+    spending_eur: float
+    receipts_eur: float
+    interest_paid_eur: float
+    interest_received_eur: float
+    net_lending_eur: float
+    """B9NF, DEFICIT NEGATIVE as published."""
+
+    @property
+    def interest_net_eur(self) -> float:
+        return self.interest_paid_eur - self.interest_received_eur
+
+    @property
+    def primary_spending_eur(self) -> float:
+        return self.spending_eur - self.interest_paid_eur
+
+    @property
+    def primary_receipts_eur(self) -> float:
+        return self.receipts_eur - self.interest_received_eur
+
+    @property
+    def primary_balance_eur(self) -> float:
+        """SURPLUS POSITIVE, `path`'s convention — and equal to `ApuYear`'s, checked."""
+        return self.primary_receipts_eur - self.primary_spending_eur
+
+
+def _label(row: tuple[Any, ...]) -> str:
+    first = next((c for c in row if c is not None and str(c).strip()), None)
+    return "" if first is None else " ".join(str(first).split())
+
+
+def apu_totals(year: int) -> ApuTotals:
+    """Table 3.201 for one year, closed on itself and checked against table 7.301."""
+    rows = _rows(TOTALS_FILE, TOTALS_SHEET)
+    columns = _year_columns(rows)
+    if year not in columns:
+        raise DebtError(
+            f"{TOTALS_FILE} : année {year} absente (couverture {min(columns)}–"
+            f"{max(columns)}). La trajectoire part d'un compte publié, pas d'un compte "
+            f"extrapolé.")
+    bounds = {}
+    for marker in SECTIONS:
+        found = [i for i, row in enumerate(rows) if _label(row) == marker]
+        if len(found) != 1:
+            raise DebtError(f"{TOTALS_FILE} : {len(found)} section(s) « {marker} », "
+                            f"attendu 1 — le tableau a changé de forme")
+        bounds[marker] = found[0]
+    sections = {
+        "DEPENSES": range(bounds["DEPENSES"], bounds["RECETTES"]),
+        "RECETTES": range(bounds["RECETTES"], bounds["SOLDES"]),
+        "SOLDES": range(bounds["SOLDES"], len(rows)),
+    }
+
+    def value(key: str, section: str) -> float:
+        label = TOTALS_LABELS[key]
+        found = [i for i in sections[section] if _label(rows[i]) == label]
+        if len(found) != 1:
+            raise DebtError(
+                f"{TOTALS_FILE} : {len(found)} ligne(s) « {label} » dans la section "
+                f"{section}, attendu 1. Le libellé est comparé en entier, jamais en "
+                f"sous-chaîne : une ligne voisine qui le contient n'est pas la sienne.")
+        cell = rows[found[0]][columns[year]]
+        if cell is None or isinstance(cell, str):
+            raise DebtError(
+                f"{TOTALS_FILE} : « {label} » {year} vaut « {cell} ». Lue comme zéro, une "
+                f"cellule vide passerait sans erreur.")
+        return float(cell) * 1e9                  # le fichier est en MILLIARDS d'euros
+
+    totals = ApuTotals(
+        year=year,
+        spending_eur=value("spending", "DEPENSES"),
+        receipts_eur=value("receipts", "RECETTES"),
+        interest_paid_eur=value("interest", "DEPENSES"),
+        interest_received_eur=value("interest", "RECETTES"),
+        net_lending_eur=value("net_lending", "SOLDES"),
+    )
+    gap = totals.receipts_eur - totals.spending_eur - totals.net_lending_eur
+    if abs(gap) > TOTALS_TOLERANCE_EUR:
+        raise DebtError(
+            f"{TOTALS_FILE} {year} : recettes − dépenses − B9 = {gap / 1e9:+.3f} Md€. "
+            f"L'identité ne se referme pas : une des lignes lues n'est pas celle qu'on "
+            f"croit, et les totaux qui en sortiraient ne seraient ceux de personne.")
+    account = apu_account([year])[year]
+    for name, ours, theirs in (
+            ("B9", totals.net_lending_eur, account.net_lending_eur),
+            ("l'intérêt net", totals.interest_net_eur, account.interest_net_eur)):
+        if abs(ours - theirs) > TOTALS_TOLERANCE_EUR:
+            raise DebtError(
+                f"{year} : {name} vaut {ours / 1e9:.3f} Md€ dans {TOTALS_FILE} et "
+                f"{theirs / 1e9:.3f} dans {APU_FILE}. Deux tables d'un même millésime "
+                f"qui divergent ne peuvent pas porter la même trajectoire.")
+    return totals

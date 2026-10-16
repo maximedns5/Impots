@@ -1,6 +1,10 @@
-# State of the project, and the directions open — 2026-10-16 (Phase 9, M0 done)
+# State of the project, and the directions open — 2026-10-16 (Phase 9, M1 done)
 
-The third 2026-10-16 update adds D-214, Phase 9's reconnaissance (`docs/M0_PHASE9.md`):
+The fourth 2026-10-16 update adds D-215, Phase 9's M1: the chain reform → primary
+balance → debt is linked (`predictif/chaine.py`, `dette/reference.py`), the spending rule
+finally computes, growth and rate scenarios are named, and `POST /predictif/simulate`
+serves the fast version (first projected year priced, later years carried as a share of
+GDP, labelled). The third added D-214, Phase 9's reconnaissance (`docs/M0_PHASE9.md`):
 Mésange's « Solde primaire des APU » row can carry the GDP → receipts loop, under
 `gele_en_volume` only, for the fiscal variants, at one to three years, with the reform's
 prices held. The second added D-213: the owner lifts the « no predictive model » rule
@@ -61,8 +65,8 @@ openfisca's reading of the law. It has its own section below.
 clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **215 decision
-entries**, D-000 to D-214, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **216 decision
+entries**, D-000 to D-215, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -406,12 +410,12 @@ download list.
    first since the pension target moved and, with Actions down, the only whole-suite
    check D-210 and D-211 will get; the report's direction line, which counts
    signs; and art. 2's outside grade.
-2. **Phase 9, M1** (`docs/PHASE9_SPEC.md` §3), now that M0 is done (D-214,
-   `docs/M0_PHASE9.md`): the chain reform → primary balance → debt, the spending rule's
-   arithmetic, named growth and rate scenarios, the endpoint and the panel. No new data.
-   M0 left three things for the owner's network or a later session: the HCFP note (its
-   host refuses this container), the IZA DP 6735 to manifest, and France Stratégie's 2023
-   capital-taxation report to read.
+2. **Phase 9, M1b then M2** (`docs/PHASE9_SPEC.md` §3-§2). M1 is done (D-215); M1b is
+   the `impots predictif` command, which prices the ten years one by one (aged and frozen
+   views), and the page's panel. Then M2, θ. Still open from M0: the HCFP note (its host
+   refuses this container), the IZA DP 6735 to manifest, France Stratégie's 2023
+   capital-taxation report to read, and the AFT outstanding, which www.aft.gouv.fr
+   refuses here too (403): the `marche` rate scenario needs it.
 3. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
