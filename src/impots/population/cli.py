@@ -1188,6 +1188,115 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_predictif(args: argparse.Namespace) -> int:
+    """The debt path of a scenario, every year priced, both views (Phase 9 M1b).
+
+    `POST /predictif/simulate` prices one year and carries it; this prices them all, on the
+    frozen population and on the population aged with the growth scenario's prices, then
+    builds the debt path from each. Two population runs per year (four against `indexe`):
+    at the default sample that is about an hour for ten years, which is why it is a
+    command and writes a report rather than answering a request.
+    """
+    import json as _json
+    from datetime import date as _date
+    from typing import Any
+
+    import polars as pl
+
+    from impots import scenarios as scenarios_module
+    from impots import trajectoires as tj
+    from impots import uprating as up
+    from impots.dette import maturite
+    from impots.dette import reference as reference_module
+    from impots.dette.path import SHIPPED, DebtError, SpendingScenario
+    from impots.dette.scenarios import GrowthScenario, RateScenario
+    from impots.engine.reforms import read_ir_parameters
+    from impots.engine.system import baseline as engine_baseline
+    from impots.population import aggregate as agg_mod
+    from impots.population.runner import run as population_run
+    from impots.predictif import annuel, chaine
+
+    directory = Path(args.dir) if args.dir else None
+    try:
+        scenario = scenarios_module.load(args.scenario, directory)
+        tj.require_reference(args.reference)
+        if args.spending == "personnalise":
+            spending = SpendingScenario(args.spending_name or "", "personnalise",
+                                        growth=args.spending_growth)
+        elif args.spending_name is not None or args.spending_growth is not None:
+            raise DebtError(
+                f"la règle « {args.spending} » porte son propre nom et ne lit aucun taux : "
+                f"un nom ou un taux fourni avec elle serait ignoré.")
+        else:
+            spending = SHIPPED[args.spending]
+        growth = GrowthScenario(args.growth_name, args.real, args.prices)
+        rate = RateScenario(args.rate_name, args.rate_kind, market_rate=args.market_rate)
+        uprating = annuel.uprating_for(growth, wage=args.wage,
+                                       source=args.hypothesis_source,
+                                       base_year=args.base_year)
+        start = reference_module.start_from_accounts(chaine.START_YEAR)
+        securities = maturite.load_block1() if rate.kind == "marche" else None
+    except (scenarios_module.ScenarioError, tj.TrajectoryError, up.UpratingError,
+            DebtError, maturite.MaturityError, OSError) as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    population = PROCESSED / f"population_{args.vintage}.parquet"
+    if not population.exists():
+        print(f"{population} not found — run `impots population build` first",
+              file=sys.stderr)
+        return 1
+    frame = pl.read_parquet(population)
+    reform = scenario.reform.model_dump(exclude_none=True, mode="json")
+    tbs = engine_baseline()
+    # Against `indexe` the barème is indexed on the SAME prices the GDP grows with: a
+    # third price index would be the incoherence `annuel.check_coherence` refuses.
+    indexation = (tj.Indexation(rate=growth.prices, source=args.hypothesis_source)
+                  if args.reference == "indexe" else None)
+
+    def price(year: int, view: str) -> float:
+        pop = frame if view == "figee" else up.uprate(frame, year, uprating)
+
+        def run(spec: dict[str, Any] | None) -> float:
+            if not spec:
+                return 0.0
+            result = population_run(pop, year=year,
+                                    reform=ReformSpec.model_validate(spec),
+                                    tier="full", sample=args.sample)
+            return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
+
+        print(f"  {year} · {view}…", flush=True)
+        return tj.price(year, args.reference, reform=reform,
+                        law=read_ir_parameters(tbs, year), run=run,
+                        indexation=indexation).mechanical_eur
+
+    years = list(range(start.year + 1, start.year + 1 + args.horizon))
+    try:
+        prices = annuel.price_years(years, price,
+                                    basis_for=lambda y: tj.basis_for("menages", y))
+        rapport = annuel.build(
+            start, prices, scenario=scenario.name, titre=args.titre or scenario.name,
+            source=scenario.source, reference=args.reference,
+            computed=_date.today().isoformat(), spending=spending, growth=growth,
+            rate=rate, uprating=uprating, uprating_note=up.caveat(years[-1], uprating),
+            securities=securities)
+    except (DebtError, tj.TrajectoryError, up.UpratingError,
+            maturite.MaturityError) as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    out_dir = Path(args.out_dir) if args.out_dir else (
+        Path(__file__).resolve().parents[3] / "reports")
+    out = out_dir / f"predictif_{scenario.name}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(_json.dumps(rapport.payload(), indent=2, ensure_ascii=False) + "\n",
+                   encoding="utf-8")
+    print(f"  -> {out}")
+    for line in rapport.aged.lines():
+        print(f"     {line}")
+    return 0
+
+
 def cmd_emtr_explorer(args: argparse.Namespace) -> int:
     """Sweep a household type across the income range and write the artefact (F6 / S5).
 
@@ -1499,6 +1608,40 @@ def build_parser() -> argparse.ArgumentParser:
     trajectoire.add_argument("--titre")
     trajectoire.add_argument("--dir")
     trajectoire.set_defaults(func=cmd_trajectoire)
+
+    predictif = subcommands.add_parser(
+        "predictif",
+        help="the debt path of a scenario, every year priced, both views (Phase 9 M1b)")
+    predictif.add_argument("scenario")
+    predictif.add_argument("--reference", required=True, choices=["reconduit", "indexe"],
+                           help="no default: the two answer different questions")
+    # No hypothesis has a default (D-213): each is named on the report it produces.
+    predictif.add_argument("--spending", required=True,
+                           choices=["part_pib_constante", "gele_en_volume",
+                                    "personnalise"])
+    predictif.add_argument("--spending-name")
+    predictif.add_argument("--spending-growth", type=float)
+    predictif.add_argument("--growth-name", required=True)
+    predictif.add_argument("--real", type=float, required=True,
+                           help="annual GDP growth in volume")
+    predictif.add_argument("--prices", type=float, required=True,
+                           help="annual price growth; the population ages with it too")
+    predictif.add_argument("--rate-name", required=True)
+    predictif.add_argument("--rate-kind", required=True,
+                           choices=["implicite_tenu", "marche"])
+    predictif.add_argument("--market-rate", type=float)
+    predictif.add_argument("--horizon", type=int, required=True)
+    predictif.add_argument("--wage", type=float, required=True,
+                           help="annual wage growth used to age the population")
+    predictif.add_argument("--hypothesis-source", required=True,
+                           help="where the indices come from — declared, never forecast")
+    predictif.add_argument("--base-year", type=int, default=2024)
+    predictif.add_argument("--vintage", type=millesime, default="2024")
+    predictif.add_argument("--sample", type=int, default=20_000)
+    predictif.add_argument("--titre")
+    predictif.add_argument("--dir")
+    predictif.add_argument("--out-dir")
+    predictif.set_defaults(func=cmd_predictif)
 
     emtr_parser = subcommands.add_parser(
         "emtr", help="sweep a household type across the income range (F6)")

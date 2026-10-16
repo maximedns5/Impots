@@ -69,8 +69,32 @@ globalThis.fetch = async (url, opts) => {
   if (url.includes("/parameters/ir")) return { json: async () => LAW };
   if (url.includes("/population/baseline")) return { ok: true, json: async () => POPULATION };
   if (url.includes("/population/simulate")) return { ok: true, json: async () => POPULATION_RUN };
+  if (url.includes("/predictif/simulate")) return { ok: true, json: async () => PRED_RESULT };
+  if (url.endsWith("/predictif")) return { ok: true, json: async () => ({ rapports: ["plf2027_art_3"] }) };
+  if (url.includes("/predictif/")) return { ok: true, json: async () => PRED_REPORT };
   return { ok: true, json: async () => RESULT };
 };
+/* Phase 9 · the debt path, fast and precomputed. Three years, the last two carried. */
+const PRED_NAMES = { spending_name: "Dépenses gelées en volume",
+  growth_name: "Croissance réelle 1 %, prix 2 %",
+  rate_name: "Taux implicite tenu à son niveau de 2025" };
+const PRED_RESULT = { ...PRED_NAMES, years: [2026, 2027, 2028],
+  reference: [1.1686, 1.1747, 1.1754], reform: [1.1669, 1.1713, 1.1703],
+  delta: [-0.0017, -0.0034, -0.0050], priced_years: [2026], carried_years: [2027, 2028],
+  conventions: ["Prélèvements constants en % du PIB",
+                "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"],
+  absent: { "rétroaction": "Retour du PIB sur les recettes : non branché avant M3 (D-214)." },
+  banner: "Prédictif conditionnel : ce n'est pas une prévision.",
+  debt_banner: "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici." };
+const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027, art. 3",
+  reference: "reconduit", source: "PLF 2027", computed: "2026-10-16",
+  years: [{ year: 2026, basis: "legislated", mechanical_frozen_eur: -1.2e9,
+            mechanical_aged_eur: -1.3e9, reference: 1.1686, reform_aged: 1.1682,
+            delta_aged: -0.0004, reform_frozen: 1.1683, delta_frozen: -0.0003 }],
+  conventions: ["Prélèvements constants en % du PIB"],
+  absent: { "rétroaction": "non branché avant M3" }, uprating_note: "Population vieillie.",
+  banner: "Prédictif conditionnel : ce n'est pas une prévision.",
+  debt_banner: "Les dépenses publiques ne sont PAS microsimulées ici." };
 const RECON = [
   { label: "Masse salariale brute", simulated: 1.1e12, published: 1.11e12, residual: -0.004,
     use: "calibration", status: "calibrated (spent)", source: "INSEE comptes nationaux (D11)" },
@@ -367,3 +391,55 @@ ok("payload carries the new flags", () => {
   assert.equal(body.household.personnes_invalides_recueillies, 0, "case R is a count, none by default (D-202)");
   assert.equal(body.reform, null, "an untouched panel must send no reform");
 });
+
+/* Phase 9 · the conditional debt path (D-216). Nothing is chosen for the reader: an empty
+   list refuses, it does not pick. The three names reach the title, and a carried year
+   says « report » on its own row. */
+console.log("debt path");
+ok("the precomputed report renders with its three scenario names", () => {
+  assert.equal($("predHost").hidden, false, "a listed report must be shown");
+  assert.match($("predHost").innerHTML, /Dépenses gelées en volume/);
+  assert.match($("predHost").innerHTML, /Taux implicite tenu/);
+  assert.match($("predHost").innerHTML, /population vieillie/);
+});
+await (async () => {
+  $("reset").onclick();
+  const before = calls.length;
+  await $("goPred").onclick();
+  ok("with no reform and no scenario, nothing is sent and the gaps are listed", () => {
+    assert.equal(calls.length, before, "must not call the API");
+    assert.match($("predOut").innerHTML, /scénario de dépense/);
+    assert.match($("predOut").innerHTML, /scénario de taux/);
+    assert.match($("predOut").innerHTML, /une réforme/);
+  });
+  $("dCelib").value = "2000"; $("dCelib").fire("input", {});
+  $("predSpending").value = "gele_en_volume";
+  $("predGrowthName").value = "Croissance réelle 1 %, prix 2 %";
+  $("predReal").value = "1"; $("predPrices").value = "2";
+  $("predRateKind").value = "marche"; $("predMarket").value = "";
+  $("predHorizon").value = "3";
+  await $("goPred").onclick();
+  ok("a market rate scenario without its rate is refused, not defaulted", () => {
+    assert.equal(calls.length, before, "must not call the API");
+    assert.match($("predOut").innerHTML, /taux de marché/);
+  });
+  $("predRateKind").value = "implicite_tenu";
+  await $("goPred").onclick();
+  await new Promise((r) => setTimeout(r, 10));
+  ok("the fast path sends the three named scenarios and the horizon", () => {
+    const call = calls.find((c) => c.url.endsWith("/predictif/simulate"));
+    assert.ok(call, "the request must be sent once every hypothesis is named");
+    const body = JSON.parse(call.opts.body);
+    assert.deepEqual(body.spending, { rule: "gele_en_volume" });
+    assert.equal(body.growth.real, 0.01); assert.equal(body.growth.prices, 0.02);
+    assert.equal(body.rate.name, "Taux implicite tenu à son niveau de 2025");
+    assert.equal(body.horizon, 3);
+    assert.ok(body.reform, "the reform panel's change must travel");
+  });
+  ok("the carried years say « report » and the names sit above the table", () => {
+    const html = $("predOut").innerHTML;
+    assert.match(html, /Croissance réelle 1 %, prix 2 %/);
+    assert.equal((html.match(/>report</g) || []).length, 2, "two carried years");
+    assert.match(html, /non branché avant M3/);
+  });
+})();

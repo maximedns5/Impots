@@ -51,6 +51,8 @@ from impots.api.schemas import (
     PopulationMeta,
     PopulationResponse,
     PopulationSimulateRequest,
+    PredictifReportList,
+    PredictifReportResponse,
     PredictifRequest,
     PredictifResponse,
     PredictifSlice,
@@ -945,6 +947,29 @@ def trajectoires_show(name: str) -> TrajectoryResponse:
     return TrajectoryResponse.model_validate_json(path.read_text(encoding="utf-8"))
 
 
+@app.get("/predictif", response_model=PredictifReportList)
+def predictif_list() -> PredictifReportList:
+    """Precomputed debt paths, every year priced (`impots predictif`). Reads files; never
+    runs the engine: ten years in two views is about an hour of population passes."""
+    return PredictifReportList(rapports=sorted(
+        path.stem.removeprefix("predictif_")
+        for path in TRAJECTORIES.glob("predictif_*.json")))
+
+
+@app.get("/predictif/{name}", response_model=PredictifReportResponse)
+def predictif_show(name: str) -> PredictifReportResponse:
+    from impots.scenarios import ScenarioError, _check_name
+
+    try:
+        _check_name(name)
+    except ScenarioError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    path = TRAJECTORIES / f"predictif_{name}.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail=f"trajectoire de dette « {name} » inconnue")
+    return PredictifReportResponse.model_validate_json(path.read_text(encoding="utf-8"))
+
+
 @app.get("/emtr", response_model=EmtrCurveListResponse)
 def emtr_list() -> EmtrCurveListResponse:
     """Precomputed EMTR sweeps. Reads files; never runs the engine (four full-tier runs)."""
@@ -964,11 +989,6 @@ def emtr_show(name: str) -> EmtrCurveResponse:
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"courbe « {name} » inconnue")
     return EmtrCurveResponse.model_validate_json(path.read_text(encoding="utf-8"))
-
-
-#: The last APU account the manifested tables publish (millésime 2025). The chain starts
-#: there and its first projected year is the one the population layer prices.
-PREDICTIF_START_YEAR = 2025
 
 
 @app.post("/predictif/simulate", response_model=PredictifResponse)
@@ -1006,7 +1026,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
     try:
-        start = reference_module.start_from_accounts(PREDICTIF_START_YEAR)
+        start = reference_module.start_from_accounts(chaine.START_YEAR)
         securities = maturite.load_block1() if rate.kind == "marche" else None
     except (DebtError, maturite.MaturityError, OSError) as error:
         raise HTTPException(
