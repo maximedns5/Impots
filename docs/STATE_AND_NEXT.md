@@ -1,7 +1,10 @@
-# State of the project, and the directions open — 2026-10-16 (CI on manual dispatch only)
+# State of the project, and the directions open — 2026-10-16 (Phase 9 specified)
 
-The 2026-10-16 update adds D-212: with GitHub Actions out of runners and the owner
-carrying on without it, the workflow runs on manual dispatch only. The fourth 2026-10-15
+The second 2026-10-16 update adds D-213: the owner lifts the « no predictive model » rule
+in favour of a conditional predictive layer, where every effect is set by a θ in [0, 1]
+inside its published range, and `docs/PHASE9_SPEC.md` specifies it. The first added
+D-212: with GitHub Actions out of runners and the owner carrying on without it, the
+workflow runs on manual dispatch only. The fourth 2026-10-15
 update added D-211: at the owner's request, the pension mass is
 calibrated on the retirement boxes 1AS-1DS, 374,4 Md€, instead of the 400,4 Md€ of
 « pensions et rentes ». The third added D-210: the 400,4 Md€ pension target decomposed box by
@@ -22,7 +25,7 @@ The 2026-10-05 version had superseded the 2026-10-01 one. That one kept its sect
 Phase 8, the CI and the PLF 2027 up to date, but it never described the household
 calculator's arc, D-176 to D-194, and it counted 192 entries. It had itself superseded
 the 2026-09-22 version, which predated D-158 to D-171. For any next session: read this,
-`docs/CHARTER.md`, `docs/PHASE8_SPEC.md`, and the review file's last addenda
+`docs/CHARTER.md`, `docs/PHASE8_SPEC.md`, `docs/PHASE9_SPEC.md`, and the review file's last addenda
 (`docs/REVIEW_2026-08-29.md`).
 
 ## Where the project stands, whole-arc
@@ -55,8 +58,8 @@ openfisca's reading of the law. It has its own section below.
 clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **213 decision
-entries**, D-000 to D-212, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **214 decision
+entries**, D-000 to D-213, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -400,7 +403,13 @@ download list.
    first since the pension target moved and, with Actions down, the only whole-suite
    check D-210 and D-211 will get; the report's direction line, which counts
    signs; and art. 2's outside grade.
-2. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
+2. **Phase 9, M0** (`docs/PHASE9_SPEC.md` §1, §10): read in the Mésange PDF the sign and
+   scale of the « Solde primaire des APU » row and what spending does during the
+   simulation; re-read equation (4) of HCFP note 2023-1 as the cross-check; measure what
+   ten years of population passes cost; locate the sources for the corporate tax, firm
+   creations and the CIR. Deliverable `docs/M0_PHASE9.md`, reviewed before the design
+   freeze. Then M1, the chain, which needs no new data.
+3. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
    January a row in `engine.corrections.PENSION_INVALIDITE_MINIMUM` (D-190).
