@@ -171,8 +171,10 @@ headroom and the offer stands.
 
 Indirect taxes before BDF 2026 microdata. Capital-income behaviour before
 ERFS. Pensions/dynamics (EIC/EIR is CASD-gated). CGE/DSGE/HANK/ABM — the
-kill list from the first audit stands. Forecasting — never; the fan's
-banner is the permanent answer.
+kill list from the first audit stands. Unconditional forecasting — never.
+Since D-213 (2026-10-16) a CONDITIONAL predictive layer is specified in
+`docs/PHASE9_SPEC.md`: every effect set by a θ in [0, 1] inside its published
+range, every result read « if θ = … », a channel with no published range closed.
 
 ---
 

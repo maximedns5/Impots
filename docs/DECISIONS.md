@@ -15335,3 +15335,70 @@ workflow ; le fichier se charge en YAML avec `workflow_dispatch` pour seul décl
 
 **Ce qui reste.** Rétablir les deux déclencheurs le jour où les Actions ont de nouveau
 des minutes.
+
+## D-213 — La règle « pas de modèle prédictif » est levée : un prédictif conditionnel
+
+**Le fait.** Le 2026-10-16, le propriétaire a demandé un modèle prédictif : « il faut
+absolument qu'on arrive à faire un modèle prédictif ». Il doit dire si baisser certains
+impôts ferait monter des indices sur les startups, les entreprises et les gens, et baisser
+la dette, « avec des coefficients qui varient entre 0 et 1 ». Le rapport « Vers un modèle
+prédictif conditionnel » lui a proposé une forme. Il a répondu : « on peut proposer un
+prédictif conditionnel, écrit la spec phase 9 ».
+
+**La règle levée.** Depuis le premier audit, le projet s'interdisait toute prévision :
+« we do not build a predictive model » (`docs/PHASE8_SPEC.md`), « Forecasting — never »
+(`docs/WHAT_NOW.md`). D-050 rangeait l'absence de prévision et de dynamique de la dette
+« au-delà de l'arithmétique » parmi les refus, pas parmi les reports. La règle était au
+dossier ; elle est levée au dossier, comme D-128 a levé la porte de relecture de la phase
+7. Une règle inscrite ne s'enjambe pas en silence.
+
+**Ce qui la remplace.** Pas de prévision inconditionnelle. Chaque effet sur les
+comportements et sur l'économie est réglé par un θ entre 0 et 1, qui le place dans sa
+fourchette publiée : θ = 0 au bas, θ = 1/2 sur le centre publié, θ = 1 au haut, θ = 1
+désignant partout la réponse la plus forte. Chaque résultat se lit « si θ = … », sous des
+scénarios nommés de dépense, de taux et de croissance, et le balayage de θ donne
+l'éventail. Un canal sans fourchette publiée reste fermé, avec sa raison, au lieu de
+recevoir un coefficient arbitraire. θ n'est pas une probabilité, l'outil ne le choisit
+pas, et l'explorateur ne le cherche jamais. La spec est `docs/PHASE9_SPEC.md`.
+
+**Ce qui tombe, et ce qui tient.** Tombe, à θ fixé et seulement là, un refus de
+l'explorateur (D-092, D-155) : viser la dette rétroaction macro comprise. Viser l'emploi
+pourra suivre par le même chemin, par une autre D-entrée. Tiennent : pas de DSGE, CGE,
+HANK ni ABM ; pas de réaction monétaire ; pas d'effet macro au-delà de trois ans sans
+scénario de persistance nommé ; pas de dette au-delà de dix ans ; une bande ou rien ;
+aucune tolérance élargie après coup.
+
+**Trois corrections au rapport, trouvées en lisant le code pour la spec.** Le rapport
+annonçait quatre ruptures dans la chaîne réforme → dette. Lu ligne à ligne sur `0a4c0ed` :
+
+* **La première n'en est pas une.** Le rapport reprochait à l'éventail de partir des
+  chiffres mécaniques. Mais les variantes fiscales de Mésange sont des chocs ex ante
+  (D-055), dont le modèle calcule lui-même les réponses : un choc déjà corrigé des
+  comportements compterait une partie de ces réponses deux fois. Le trou est ailleurs. La
+  bande de recettes de C1 et C5 n'atteint jamais le solde.
+* **La boucle PIB → recettes a peut-être déjà sa source.** `mesange.ROWS` lit la ligne
+  « Solde primaire des APU (en pts de PIB) » de chaque variante ordinaire, et aucun module
+  ne s'en sert. C'est la réponse du solde dans le même modèle que le multiplicateur, et la
+  candidate que la spec recommande, sous réserve de ce que M0 lira dans le PDF.
+* **Le scénario de dépense ne calcule rien.** `project` refuse sans `SpendingScenario`
+  nommé, puis ne lit jamais sa règle : le solde de chaque année arrive tout fait. Le nom
+  s'affiche, la règle n'agit pas. La spec écrit cette arithmétique au premier jalon.
+
+Il reste donc trois ruptures (l'IS et les transferts sans multiplicateur, le retour du PIB
+sur les recettes, la dette reliée à rien), et deux trous que le rapport ne voyait pas.
+L'estimation tient : environ quatre sessions pour qu'une réforme d'impôt des ménages
+produise une trajectoire de dette à dix ans avec ses bornes θ. Les indices des startups
+attendent une source qui n'est pas trouvée.
+
+**Une divergence avec la phase 8, signalée et non tranchée.** `dette/decomposition.py`
+refuse toute enveloppe combinée. La spec propose les bornes de la boîte θ : le minimum et
+le maximum de Δb quand chaque θ parcourt [0, 1], lus aux coins. Elles ne somment aucune
+tranche et ne supposent aucune indépendance. Le choix revient à une D-entrée de M1.
+
+**Les tests.** Aucun : ce changement n'écrit que de la documentation. Chaque garde de la
+spec livrera son kill test, vu échouer, au jalon qui la construit.
+
+**Ce qui reste.** M0 : lire dans Mésange le signe et l'échelle de la ligne de solde, et ce
+que deviennent les dépenses pendant la simulation ; relire l'équation (4) de la note HCFP
+2023-1 en recoupement ; mesurer le coût de dix années de passes de population ; localiser
+les sources de l'IS, des créations d'entreprises et du CIR.
