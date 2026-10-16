@@ -15,17 +15,28 @@ import pytest
 from impots.dette import maturite, path, reference, scenarios
 from impots.dette.path import SHIPPED, DebtError
 from impots.predictif import chaine
+from impots.predictif.comportement import AtTheta
+from impots.predictif.theta import Theta, ThetaError
 
 START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
                         spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
 GROWTH = scenarios.GrowthScenario("Croissance réelle 1 %, prix 2 %", 0.01, 0.02)
 HELD = scenarios.RateScenario("Taux implicite tenu à son niveau de 2025", "implicite_tenu")
 FROZEN = SHIPPED["gele_en_volume"]
+#: Named by every test that runs a path: the chain has no default θ, so neither does this.
+HALF = Theta(common=0.5)
 
 
 def _run(costs: chaine.ReformCosts, horizon: int = 10, **kwargs) -> chaine.Trajectoire:
-    options = {"spending": FROZEN, "growth": GROWTH, "rate": HELD, **kwargs}
+    options = {"spending": FROZEN, "growth": GROWTH, "rate": HELD, "theta": HALF,
+               **kwargs}
     return chaine.run(START, horizon=horizon, costs=costs, **options)
+
+
+def _at(receipts: float, low: float, high: float) -> AtTheta:
+    """What `comportement.evaluate` returns, RECEIPTS POSITIVE."""
+    return AtTheta(receipts=receipts, grade="in-support", box=(low, high),
+                   claimed=("eti_all", "eti_top_decile"))
 
 
 def _carried(cost: float, **kwargs) -> chaine.ReformCosts:
@@ -135,27 +146,90 @@ def test_the_feedback_is_absent_with_its_reason_and_no_winner_is_named() -> None
         result.decomposition.dominant_source(0)
 
 
-def test_without_a_band_the_behavioural_slice_is_absent_not_zero() -> None:
+def test_without_behaviour_the_box_is_absent_not_zero() -> None:
     result = _run(_carried(5e9))
     band = next(s for s in result.decomposition.slices if s.source == "bande")
     assert not band.computed and band.low == () and band.reason
 
 
-def test_the_behavioural_band_brackets_the_mechanical_path() -> None:
-    """The band is RECEIPTS POSITIVE (`band.compute`), the cost is COST POSITIVE. With
-    the mechanical receipts at −5 Md€ inside a band of −6 to −3, the band's paths must
-    bracket the mechanical one every year. Read with the cost's sign, they would sit on
-    the far side of the reference, nowhere near it — which is what this catches."""
-    result = _run(_carried(5e9, behavioural={2026: (-6e9, -3e9)}))
+def test_the_theta_box_brackets_the_path_at_theta() -> None:
+    """The box is RECEIPTS POSITIVE (`comportement.evaluate`), the cost is COST POSITIVE.
+    With the receipts at θ at −5,5 Md€ inside a box of −6 to −3, the box's paths must
+    bracket the path at θ every year. Read with the cost's sign, they would sit on the
+    far side of the reference, nowhere near it — which is what this catches."""
+    result = _run(_carried(5e9, behavioural={2026: _at(-5.5e9, -6e9, -3e9)}))
     band = next(s for s in result.decomposition.slices if s.source == "bande")
-    assert band.computed
+    assert band.computed and band.label == chaine.BOX_LABEL
     for low, central, high in zip(band.low, result.reform, band.high, strict=True):
         assert low <= central <= high
+    assert chaine.BOX_CONVENTION in result.conventions
 
 
-def test_a_band_on_part_of_the_priced_years_is_refused() -> None:
+def test_with_behaviour_the_headline_is_at_theta_and_the_mechanical_stands_beside() -> None:
+    """−5,5 Md€ of receipts at θ against a mechanical cost of 5 Md€: the headline moves
+    by the behavioural half-milliard, the mechanical difference does not."""
+    plain = _run(_carried(5e9))
+    at = _run(_carried(5e9, behavioural={2026: _at(-5.5e9, -6e9, -3e9)}))
+    assert at.delta_mechanical == pytest.approx(plain.delta)
+    assert at.delta[0] == pytest.approx(5.5e9 / (3_000e9 * 1.01 * 1.02))
+    assert at.theta_applied and not plain.theta_applied
+
+
+def test_a_null_reform_leaves_the_debt_alone_at_any_theta() -> None:
+    for common in (0.0, 0.5, 1.0):
+        result = _run(_carried(0.0, behavioural={2026: _at(0.0, 0.0, 0.0)}),
+                      theta=Theta(common=common))
+        assert result.delta == pytest.approx((0.0,) * 10, abs=1e-15)
+
+
+def test_a_box_on_part_of_the_priced_years_is_refused() -> None:
     with pytest.raises(DebtError, match="mêmes années"):
-        chaine.ReformCosts(by_year={2026: 5e9, 2027: 5e9}, behavioural={2026: (-6e9, -3e9)})
+        chaine.ReformCosts(by_year={2026: 5e9, 2027: 5e9},
+                           behavioural={2026: _at(-5e9, -6e9, -3e9)})
+
+
+def test_receipts_at_theta_outside_their_box_are_refused() -> None:
+    with pytest.raises(DebtError, match="hors de leur boîte"):
+        _carried(5e9, behavioural={2026: _at(-7e9, -6e9, -3e9)})
+
+
+# --------------------------------------------------------------------------- #
+# θ — guards 1 and 2 (§2.4)
+# --------------------------------------------------------------------------- #
+def test_a_path_without_a_theta_is_refused() -> None:
+    """GUARD 1, in the chain: no default θ, not even 1/2."""
+    with pytest.raises(ThetaError, match="aucun θ"):
+        _run(_carried(5e9), theta=None)
+
+
+def test_a_theta_for_a_row_the_store_does_not_hold_is_refused() -> None:
+    with pytest.raises(ThetaError, match="inconnues"):
+        _run(_carried(5e9), theta=Theta(rows={"eti_al": 0.2}, common=0.5))
+
+
+def test_the_result_lists_every_open_row_even_in_the_mechanical_view() -> None:
+    result = _run(_carried(5e9), theta=Theta(rows={"eti_all": 0.2}, common=0.7))
+    assert sorted(result.theta) == sorted(result.open_rows)
+    assert len(result.open_rows) == 8
+    assert result.theta["eti_all"] == 0.2 and result.theta["eti_top_decile"] == 0.7
+    assert "θ" in result.absent and not result.theta_applied
+    assert any("non lus" in line for line in result.lines())
+
+
+def test_a_result_with_a_theta_missing_refuses_to_exist() -> None:
+    """GUARD 2. The precedent is the banner: a checked field, not a decoration."""
+    result = _run(_carried(5e9), horizon=2)
+    short = dict(result.theta)
+    short.pop("employment_elasticity_smic")
+    with pytest.raises(ThetaError, match="manquant"):
+        dataclasses.replace(result, theta=short)
+
+
+def test_a_closed_channel_without_its_reason_refuses_to_exist() -> None:
+    result = _run(_carried(5e9), horizon=2)
+    assert set(result.closed) == set(chaine.CLOSED)
+    with pytest.raises(ThetaError, match="sans leur raison"):
+        dataclasses.replace(result, closed={**result.closed, "R&D et CIR": " "})
 
 
 def test_the_banner_is_a_checked_field_not_a_decoration() -> None:

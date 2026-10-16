@@ -1215,6 +1215,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     from impots.population import aggregate as agg_mod
     from impots.population.runner import run as population_run
     from impots.predictif import annuel, chaine
+    from impots.predictif.theta import Theta, ThetaError
 
     directory = Path(args.dir) if args.dir else None
     try:
@@ -1231,13 +1232,14 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             spending = SHIPPED[args.spending]
         growth = GrowthScenario(args.growth_name, args.real, args.prices)
         rate = RateScenario(args.rate_name, args.rate_kind, market_rate=args.market_rate)
+        theta = Theta(common=args.theta)
         uprating = annuel.uprating_for(growth, wage=args.wage,
                                        source=args.hypothesis_source,
                                        base_year=args.base_year)
         start = reference_module.start_from_accounts(chaine.START_YEAR)
         securities = maturite.load_block1() if rate.kind == "marche" else None
     except (scenarios_module.ScenarioError, tj.TrajectoryError, up.UpratingError,
-            DebtError, maturite.MaturityError, OSError) as error:
+            DebtError, ThetaError, maturite.MaturityError, OSError) as error:
         print(str(error), file=sys.stderr)
         return 1
 
@@ -1278,9 +1280,9 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             start, prices, scenario=scenario.name, titre=args.titre or scenario.name,
             source=scenario.source, reference=args.reference,
             computed=_date.today().isoformat(), spending=spending, growth=growth,
-            rate=rate, uprating=uprating, uprating_note=up.caveat(years[-1], uprating),
-            securities=securities)
-    except (DebtError, tj.TrajectoryError, up.UpratingError,
+            rate=rate, theta=theta, uprating=uprating,
+            uprating_note=up.caveat(years[-1], uprating), securities=securities)
+    except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
             maturite.MaturityError) as error:
         print(str(error), file=sys.stderr)
         return 1
@@ -1631,6 +1633,9 @@ def build_parser() -> argparse.ArgumentParser:
                            choices=["implicite_tenu", "marche"])
     predictif.add_argument("--market-rate", type=float)
     predictif.add_argument("--horizon", type=int, required=True)
+    predictif.add_argument("--theta", type=float, required=True,
+                           help="θ commun, de 0 à 1, sans défaut (D-217). La commande ne "
+                                "chiffre aucun comportement : il est listé, pas lu.")
     predictif.add_argument("--wage", type=float, required=True,
                            help="annual wage growth used to age the population")
     predictif.add_argument("--hypothesis-source", required=True,

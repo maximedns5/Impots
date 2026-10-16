@@ -11,6 +11,7 @@ import pytest
 from impots.dette import reference, scenarios
 from impots.dette.path import SHIPPED, DebtError
 from impots.predictif import annuel, chaine
+from impots.predictif.theta import Theta, ThetaError
 
 START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
                         spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
@@ -24,13 +25,16 @@ def _stub(year: int, view: str) -> float:
     return 5e9 * (1.03 if view == "vieillie" else 1.0) ** (year - 2025)
 
 
-def _build(prices, uprating=None) -> annuel.Rapport:
+HALF = Theta(common=0.5)
+
+
+def _build(prices, uprating=None, theta=HALF) -> annuel.Rapport:
     uprating = uprating or annuel.uprating_for(GROWTH, wage=0.03, source="test",
                                                base_year=2024)
     return annuel.build(START, prices, scenario="test", titre="Test", source="test",
                         reference="reconduit", computed="2026-10-16",
                         spending=SHIPPED["gele_en_volume"], growth=GROWTH, rate=HELD,
-                        uprating=uprating, uprating_note="note")
+                        theta=theta, uprating=uprating, uprating_note="note")
 
 
 def test_every_year_is_priced_in_both_views() -> None:
@@ -92,3 +96,19 @@ def test_the_report_names_its_scenarios_and_carries_both_banners() -> None:
     assert payload["banner"] == chaine.BANNER and "PAS microsimulées" in payload["debt_banner"]
     assert "rétroaction" in payload["absent"]
     assert {row["basis"] for row in payload["years"]} == {"reconducted"}
+
+
+def test_the_report_names_its_theta_and_says_nothing_reads_it() -> None:
+    """The command prices no behaviour: the θ is listed, every open row with it, beside
+    the statement that the mechanical view does not read it."""
+    payload = _build(annuel.price_years(YEARS, _stub, basis_for=lambda y: "legislated"),
+                     theta=Theta(common=0.3)).payload()
+    assert len(payload["theta"]) == 8 and set(payload["theta"].values()) == {0.3}
+    assert payload["theta_applied"] is False and "θ" in payload["absent"]
+    assert set(payload["closed"]) == set(chaine.CLOSED)
+
+
+def test_a_report_without_a_theta_is_refused() -> None:
+    with pytest.raises(ThetaError, match="aucun θ"):
+        _build(annuel.price_years(YEARS, _stub, basis_for=lambda y: "legislated"),
+               theta=None)

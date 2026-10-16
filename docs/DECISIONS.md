@@ -15601,3 +15601,102 @@ par le marqueur par défaut. `ruff` passe sur `src`, `tests` et `scripts`.
 
 **Ce qui reste.** M2, les θ. Puis M3, la rétroaction sous `gele_en_volume`. Le scénario
 `marche` attend toujours l'encours AFT, que www.aft.gouv.fr refuse à ce conteneur.
+
+## D-217 — M2 de la phase 9 : les θ, la vue épinglée, les sens déclarés et leurs gardes
+
+**Le fait.** M2 met en place les coefficients θ de la spec (§2). Chaque canal de
+comportement ouvert se place dans sa fourchette publiée par un θ entre 0 et 1, que
+l'utilisateur choisit et que rien ne choisit à sa place. La chaîne de M1 les porte,
+l'endpoint et la commande les exigent, la page les demande.
+
+**La correspondance passe par le centre.** `predictif/theta.py` : p(θ) va du bas au centre
+pour θ ≤ ½, du centre au haut au-delà. Les deux moitiés s'écrivent depuis le centre, pour
+que θ = ½ rende le chiffre publié au dernier chiffre près, et pas `bas + (centre − bas)` à
+un arrondi près. C'est la divergence que la spec annonçait avec le rapport : sa forme
+linéaire mettrait `eti_all` à 0,015, que l'article ne publie pas. Pour le multiplicateur,
+θ lit le centre Mésange ∓ un écart-type IMK, jamais la largeur du tirage triangulaire
+(± sd·√6), qui est une convention de forme. `predictif/macro.py` porte cette arithmétique,
+la même que l'éventail ; la dette ne la lit pas avant M3.
+
+**θ = 1 est partout la réponse la plus forte, et chaque ligne le déclare.** Le signe ne le
+dit pas : l'élasticité de l'emploi au SMIC va de −0,52 à −0,31, et sa réponse la plus
+forte est le bas. Les huit lignes ouvertes du magasin portent `theta: {un, raison}`. Une
+ligne ouverte sans sens, ou sans raison, refuse de charger (`UndeclaredTheta`, sous-classe
+de `UnverifiedParameter`). Les deux incidences de C3 n'ont pas de réponse « plus forte »
+naturelle : leur sens est une convention, et leur raison le dit (θ = 1 répercute davantage
+la cotisation sur les salaires). Les deux lignes fixes ne portent pas de θ.
+
+**La vue épinglée.** `pinned(store, θ)` rend un nouveau magasin, où chaque ligne ouverte
+vaut sa valeur à θ, bas = haut = centre. `Parameter.draw` rend déjà une constante pour une
+telle ligne : les canaux de la phase 3 tournent à θ sans le savoir, et la bande
+Monte-Carlo garde son chemin de code. La spec appelait cette vue `store.at(theta)` ; c'est
+une fonction de `theta.py`, pour que le magasin ne change pas.
+
+**La boîte θ.** `predictif/comportement.py` évalue les recettes de la première année à θ,
+puis aux 2^K coins où chaque ligne que la réforme revendique vaut 0 ou 1, les autres
+restant à leur θ. Les bornes se lisent aux coins parce que chaque canal est monotone en θ,
+et un contrôle le vérifie à chaque requête : des recettes à θ hors des bornes des coins
+sont refusées plutôt que tracées. Dans la tranche `bande` de la décomposition, la boîte
+remplace la bande p10-p90 que M1 y mettait. Ce n'est ni une somme de tranches ni un
+intervalle de probabilité, et la convention affichée le dit.
+
+**La chaîne.** Avec comportement, la trajectoire de tête est celle des recettes à θ, et
+l'écart mécanique se tient à côté. `Trajectoire` porte le θ de chaque ligne ouverte, même
+réglées ensemble, et la raison de chaque canal fermé : rétroaction et multiplicateur
+avant M3, offre de travail, IS et investissement, créations d'entreprises, R&D,
+dividendes. Elle refuse d'exister sans eux, comme sans sa bannière. Sans comportement, les
+θ sont listés, avec la mention qu'aucun canal ne les lit.
+
+**Aucun θ par défaut, nulle part.** `POST /predictif/simulate` exige `theta` (`common`,
+`rows`). Sans lui, 422 ; vide, 422 « Aucun défaut » ; hors de [0 ; 1], refusé plutôt
+qu'écrêté ; nommé pour une ligne inconnue ou fixe, refusé par son nom. Tous ces refus
+tombent avant toute passe. `impots predictif` exige `--theta`, et son rapport liste les θ
+sans les lire, puisque la commande ne chiffre aucun comportement. La page a un champ θ
+vide, et n'envoie rien tant qu'il l'est.
+
+**L'API.** `_behavioural` se scinde. `_behavioural_inputs` lit la population comme avant,
+et `_behavioural` calcule la bande avec. `/predictif/simulate` ne passe plus par
+`population_simulate` mais par `_price_first_year`, qui partage avec lui la passe et ces
+entrées : les recettes à θ tournent sur la population même dont vient le coût.
+
+**Un essai sur la vraie population.** Le barème à 50 % au-delà de 180 294 €, en version
+rapide, sous « dépenses gelées en volume », 1 % de volume, 2 % de prix et le taux de 2025
+tenu. Le rendement mécanique de 2026 est de 1,62 Md€. Les deux lignes ETI sont
+revendiquées : à θ = 0 il en reste 1,39 Md€, à θ = ½ 1,14, à θ = 1 0,87. En 2035, la
+dette baisse de 0,500 point de PIB en mécanique, de 0,428 à θ = 0, de 0,351 à θ = ½ et de
+0,268 à θ = 1 ; la boîte va de −0,428 à −0,268. Grade « in-support ». Chaque requête
+prend une minute et demie, 159 s pour la première, qui remplit les caches.
+
+**Une erreur de M1b, corrigée ici.** `test_ui.py::test_the_picker_is_read_only` lit le
+sélecteur de scénarios comme le passage de `loadScenarioList` à `boot`. M1b y avait
+inséré le code du panneau prédictif, qui envoie un POST, et le test échouait sur `main`
+depuis D-216 : je ne l'avais pas mis dans la liste ciblée. Vu échouer sur la page de
+`main`, il passe une fois le bloc déplacé avant le sélecteur. Le test n'a pas changé, et
+un commentaire dit pourquoi le bloc est là.
+
+**Les tests.** Nouveau : `tests/test_theta.py` (44). `test_behavioural.py` gagne 5 tests,
+`test_predictif.py` 8, `test_api_predictif.py` 4, `test_predictif_annuel.py` et
+`test_cli_predictif.py` 2 chacun ; `ui/check.mjs` passe de 41 à 43 vérifications. Chaque
+garde a été vue échouer sur une mutation, dix-huit en tout. Pour θ : l'écrêtage au lieu
+du refus, la forme linéaire du rapport, le sens ignoré, le sens non vérifié au
+chargement, un `Theta` vide accepté, ½ rendu en silence, une ligne inconnue acceptée, une
+vue épinglée qui modifie le magasin (la bande dorée tombe), une seconde moitié qui
+redescend (la monotonie tombe), le contrôle de la boîte retiré, le multiplicateur à
+sd·√6. Pour la chaîne et l'API : θ par défaut à ½ dans le schéma, θ absent accepté par
+`run`, un θ manquant et une raison vide tolérés par `Trajectoire`, des recettes hors de
+leur boîte, la tête restée mécanique. Pour la page : le champ θ vide envoyé. Avec les
+tests de la dette, de l'éventail, de la page, des données, de la provenance, de la charte
+et des dépendances : 428 réussis, 29 sautés faute de sources que ce conteneur n'a pas (le
+TES, le bulletin AFT, les taux marginaux effectifs de l'artefact de base). Pour le
+découpage de `_behavioural`, deux tests lents de `/population/simulate` avec la bande ont
+été relancés sur la vraie population : réussis, en 370 s. `ruff` passe sur `src`, `tests`
+et `scripts`.
+
+**Une fragilité, écrite.** La bande dorée de la garde 6 est mesurée sur `main` avant la
+vue épinglée, à la graine de la bande, avec le numpy du verrou. Une montée de numpy qui
+changerait le flux de son générateur la ferait tomber sans que la vue y soit pour rien :
+il faudrait alors la re-mesurer sur le code d'avant, pas la recopier.
+
+**Ce qui reste.** M3 : la rétroaction par le solde primaire de Mésange, sous
+`gele_en_volume`, qui branchera aussi le θ du multiplicateur. Le scénario `marche` attend
+toujours l'encours AFT, que www.aft.gouv.fr refuse à ce conteneur.

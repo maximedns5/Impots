@@ -1240,7 +1240,13 @@ footer code { font-family: var(--mono); font-size: 11px; }
             <label class="lbl">taux de marché, % <input id="predMarket" type="number" step="0.1"></label>
             <label class="lbl">Horizon, années (1 à 10)
               <input id="predHorizon" type="number" min="1" max="10"></label>
+            <label class="lbl">θ commun, de 0 à 1
+              <input id="predTheta" type="number" min="0" max="1" step="0.05"
+                     placeholder="ex. 0,5"></label>
           </div>
+          <p class="tnote">θ place chaque effet de comportement dans sa fourchette publiée :
+            0 la réponse la plus faible que la littérature soutient, ½ son centre publié, 1
+            la plus forte. Ce n'est pas une probabilité, et il n'a pas de défaut (D-217).</p>
           <button class="go" id="goPred">Tracer la dette (version rapide)</button>
           <div id="predOut"></div>
         </div>
@@ -2730,6 +2736,181 @@ async function runFirms() {
 }
 $("goFirms").onclick = runFirms;
 
+/* Phase 9 · the conditional debt path. Nothing is chosen for the reader (D-213): the
+   payload builder lists what is missing and sends nothing, rather than filling a gap
+   with a scenario nobody picked. The three names travel to the chart's title.
+   Kept AHEAD of the scenario picker (D-217): `test_the_picker_is_read_only` reads the
+   picker as the stretch from `loadScenarioList` to `boot`, and this panel POSTs. */
+const RATE_HELD_NAME = "Taux implicite tenu à son niveau de 2025";
+const pctFr = (v, d = 1) => `${(v * 100).toFixed(d).replace(".", ",")} %`;
+const ptFr = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(v * 100).toFixed(2).replace(".", ",")} pt`;
+
+function predictifPayload() {
+  const missing = [];
+  const spec = reformSpec();
+  if (!spec) missing.push("une réforme, dans le panneau « Votre réforme »");
+  const rule = $("predSpending").value;
+  if (!rule) missing.push("un scénario de dépense");
+  const growthName = $("predGrowthName").value.trim();
+  const real = $("predReal").value, prices = $("predPrices").value;
+  if (!growthName || real === "" || prices === "") {
+    missing.push("un scénario de croissance nommé, en volume et en prix");
+  }
+  const kind = $("predRateKind").value;
+  const market = $("predMarket").value;
+  if (!kind) missing.push("un scénario de taux");
+  else if (kind === "marche" && market === "") missing.push("le taux de marché");
+  const horizon = $("predHorizon").value;
+  if (horizon === "") missing.push("un horizon");
+  const theta = $("predTheta").value;
+  if (theta === "") missing.push("un θ, de 0 à 1");
+  if (missing.length) return { missing };
+  const rate = kind === "marche"
+    ? { name: `Refinancement à ${String(market).replace(".", ",")} %`, kind,
+        market_rate: Number(market) / 100 }
+    : { name: RATE_HELD_NAME, kind };
+  return { payload: {
+    reform: spec, spending: { rule },
+    growth: { name: growthName, real: Number(real) / 100, prices: Number(prices) / 100 },
+    rate, horizon: Number(horizon), theta: { common: Number(theta) },
+    behavioural: $("wantBand").checked } };
+}
+
+async function runPredictif() {
+  const built = predictifPayload();
+  if (built.missing) {
+    $("predOut").innerHTML = `<div class="err"><h3>Il manque une hypothèse</h3>
+      <p>Rien n'est choisi à votre place. Il faut encore :
+         ${built.missing.map(escapeHtml).join(" ; ")}.</p></div>`;
+    return;
+  }
+  $("goPred").disabled = true;
+  $("goPred").textContent = "Calcul en cours…";
+  $("predOut").innerHTML = `<div class="state"><p class="loading-copy">une passe de
+    population pour la première année, puis l'arithmétique de la dette · comptez deux
+    minutes</p>${'<div class="skel"></div>'.repeat(5)}</div>`;
+  try {
+    const response = await fetch(`${API}/predictif/simulate`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(built.payload),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      $("predOut").innerHTML = `<div class="err"><h3>Requête refusée (${response.status})</h3>
+        ${detailMessages(data.detail).map((m) => `<p>${escapeHtml(m)}</p>`).join("")}</div>`;
+      return;
+    }
+    renderPredictif($("predOut"), data);
+  } catch (error) {
+    $("predOut").innerHTML = `<div class="err"><h3>Moteur injoignable</h3>
+      <p>Aucune réponse de ${escapeHtml(API)}.</p></div>`;
+  } finally {
+    $("goPred").disabled = false;
+    $("goPred").textContent = "Tracer la dette (version rapide)";
+  }
+}
+$("goPred").onclick = runPredictif;
+
+function predictifNames(d) {
+  return `Dépense : <b>${escapeHtml(d.spending_name)}</b> · Croissance :
+    <b>${escapeHtml(d.growth_name)}</b> · Taux : <b>${escapeHtml(d.rate_name)}</b>`;
+}
+
+/* Every θ the result ran at, row by row even when set together (D-217), and every
+   channel that has none, with its reason: a closed channel shown bare reads as one that
+   does not matter. */
+const THETA_ROWS = {
+  eti_all: "revenu imposable (C1)", eti_top_decile: "revenu imposable, dernier décile (C1)",
+  employment_elasticity_smic: "emploi au SMIC (C2)",
+  passthrough_benefit_linked: "incidence, cotisations liées (C3)",
+  passthrough_unlinked: "incidence, autres cotisations (C3)",
+  production_tax_investment: "investissement et impôts de production (C4)",
+  wealth_tax_rate_elasticity: "patrimoine déclaré et taux (C5)",
+  wealth_disclosure_growth_effect_pp: "obligations déclaratives (C6)" };
+function predictifTheta(d) {
+  const rows = Object.entries(d.theta || {}).map(([k, v]) =>
+    `<li>${escapeHtml(THETA_ROWS[k] || k)} : θ = ${String(v).replace(".", ",")}</li>`).join("");
+  const closed = Object.entries(d.closed || {}).map(([k, v]) =>
+    `<li><b>${escapeHtml(k)}</b> — ${escapeHtml(v)}</li>`).join("");
+  const unread = d.theta_applied ? "" : " <b>non lus : vue mécanique</b>";
+  return `<p class="tnote">θ de ce résultat${unread} :</p><ul class="tnote">${rows}</ul>
+    <p class="tnote">Canaux fermés, sans θ :</p><ul class="tnote">${closed}</ul>`;
+}
+
+function predictifNotes(d) {
+  const conventions = (d.conventions || []).map(
+    (c) => `<p class="tnote">Convention : ${escapeHtml(c)}</p>`).join("");
+  const absent = Object.entries(d.absent || {}).map(
+    ([k, v]) => `<p class="tnote"><b>Absent — ${escapeHtml(k)}.</b> ${escapeHtml(v)}</p>`).join("");
+  return `${predictifTheta(d)}${conventions}${absent}
+    <p class="tnote">${escapeHtml(d.debt_banner || "")}</p>`;
+}
+
+/* The fast version: the first year priced, the rest carried — and every carried row
+   says « report » in its own column, so a convention never reads as a costing. With
+   behaviour, the gap is at θ, the mechanical gap stands beside it, and the θ box gives
+   the gap at its two corners. */
+function renderPredictif(host, d) {
+  const carried = new Set(d.carried_years || []);
+  const box = (d.slices || []).find((s) => s.source === "bande" && s.computed);
+  const extra = d.theta_applied ? "<th>Écart mécanique</th>" : "";
+  const boxHead = box ? "<th>Boîte θ (écart)</th>" : "";
+  const rows = (d.years || []).map((year, i) => `<tr>
+      <td>${year}</td><td>${pctFr(d.reference[i])}</td><td>${pctFr(d.reform[i])}</td>
+      <td>${ptFr(d.delta[i])}</td>
+      ${d.theta_applied ? `<td>${ptFr(d.delta_mechanical[i])}</td>` : ""}
+      ${box ? `<td>${ptFr(box.low[i] - d.reference[i])} à ${ptFr(box.high[i] - d.reference[i])}</td>` : ""}
+      <td class="${carried.has(year) ? "carried" : ""}">${carried.has(year) ? "report" : "chiffré"}</td>
+    </tr>`).join("");
+  host.innerHTML = `<div class="pred">
+    <p class="tbanner"><b>${escapeHtml(d.banner)}</b></p>
+    <p class="pnames">${predictifNames(d)}</p>
+    <table><thead><tr><th>Année</th><th>Dette, référence</th><th>Dette, réforme</th>
+      <th>Écart${d.theta_applied ? " à θ" : ""}</th>${extra}${boxHead}<th></th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    ${box ? `<p class="tnote">${escapeHtml(box.label)}.</p>` : ""}
+    ${predictifNotes(d)}
+  </div>`;
+}
+
+/* The full path, precomputed by `impots predictif`: every year priced, aged and frozen
+   side by side. Silent when no report exists — the panel works without it. */
+async function loadPredictifs() {
+  const host = document.getElementById("predHost");
+  if (!host) return;
+  let names;
+  try {
+    const response = await fetch(`${API}/predictif`);
+    if (!response.ok) return;
+    names = (await response.json()).rapports || [];
+  } catch { return; }
+  if (!names.length) return;
+  let report;
+  try {
+    const one = await fetch(`${API}/predictif/${encodeURIComponent(names[0])}`);
+    if (!one.ok) return;
+    report = await one.json();
+  } catch { return; }
+  renderPredictifReport(host, report);
+}
+
+function renderPredictifReport(host, r) {
+  const rows = (r.years || []).map((y) => `<tr>
+      <td>${y.year}</td><td>${escapeHtml(y.basis)}</td><td>${pctFr(y.reference)}</td>
+      <td>${ptFr(y.delta_aged)}</td><td>${ptFr(y.delta_frozen)}</td></tr>`).join("");
+  host.innerHTML = `<div class="pred">
+    <p class="tbanner"><b>${escapeHtml(r.banner)}</b></p>
+    <h2 class="ptitle">${escapeHtml(r.titre)} : la dette, chaque année chiffrée</h2>
+    <p class="pnames">${predictifNames(r)} · Référence « ${escapeHtml(r.reference)} »</p>
+    <table><thead><tr><th>Année</th><th>Base</th><th>Dette, référence</th>
+      <th>Écart, population vieillie</th><th>Écart, population figée</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    <p class="tnote">${escapeHtml(r.uprating_note || "")}</p>
+    ${predictifNotes(r)}
+  </div>`;
+  host.hidden = false;
+}
+
 /* ----------------------------------------------------------------- boot */
 /* F2 · the scenario picker. Populated from GET /scenarios; silent when the API is not
    running, because a picker is a convenience and the panel works without it.
@@ -2878,145 +3059,6 @@ function renderTrajectoire(host, t) {
       <i>legislated</i> porte des paramètres qu'un législateur a fixés ; une année
       <i>reconducted</i> reporte la dernière valeur votée, et la référence choisie décide
       alors du chiffre.</p>
-  </div>`;
-  host.hidden = false;
-}
-
-/* Phase 9 · the conditional debt path. Nothing is chosen for the reader (D-213): the
-   payload builder lists what is missing and sends nothing, rather than filling a gap
-   with a scenario nobody picked. The three names travel to the chart's title. */
-const RATE_HELD_NAME = "Taux implicite tenu à son niveau de 2025";
-const pctFr = (v, d = 1) => `${(v * 100).toFixed(d).replace(".", ",")} %`;
-const ptFr = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(v * 100).toFixed(2).replace(".", ",")} pt`;
-
-function predictifPayload() {
-  const missing = [];
-  const spec = reformSpec();
-  if (!spec) missing.push("une réforme, dans le panneau « Votre réforme »");
-  const rule = $("predSpending").value;
-  if (!rule) missing.push("un scénario de dépense");
-  const growthName = $("predGrowthName").value.trim();
-  const real = $("predReal").value, prices = $("predPrices").value;
-  if (!growthName || real === "" || prices === "") {
-    missing.push("un scénario de croissance nommé, en volume et en prix");
-  }
-  const kind = $("predRateKind").value;
-  const market = $("predMarket").value;
-  if (!kind) missing.push("un scénario de taux");
-  else if (kind === "marche" && market === "") missing.push("le taux de marché");
-  const horizon = $("predHorizon").value;
-  if (horizon === "") missing.push("un horizon");
-  if (missing.length) return { missing };
-  const rate = kind === "marche"
-    ? { name: `Refinancement à ${String(market).replace(".", ",")} %`, kind,
-        market_rate: Number(market) / 100 }
-    : { name: RATE_HELD_NAME, kind };
-  return { payload: {
-    reform: spec, spending: { rule },
-    growth: { name: growthName, real: Number(real) / 100, prices: Number(prices) / 100 },
-    rate, horizon: Number(horizon), behavioural: $("wantBand").checked } };
-}
-
-async function runPredictif() {
-  const built = predictifPayload();
-  if (built.missing) {
-    $("predOut").innerHTML = `<div class="err"><h3>Il manque une hypothèse</h3>
-      <p>Rien n'est choisi à votre place. Il faut encore :
-         ${built.missing.map(escapeHtml).join(" ; ")}.</p></div>`;
-    return;
-  }
-  $("goPred").disabled = true;
-  $("goPred").textContent = "Calcul en cours…";
-  $("predOut").innerHTML = `<div class="state"><p class="loading-copy">une passe de
-    population pour la première année, puis l'arithmétique de la dette · comptez deux
-    minutes</p>${'<div class="skel"></div>'.repeat(5)}</div>`;
-  try {
-    const response = await fetch(`${API}/predictif/simulate`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(built.payload),
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      $("predOut").innerHTML = `<div class="err"><h3>Requête refusée (${response.status})</h3>
-        ${detailMessages(data.detail).map((m) => `<p>${escapeHtml(m)}</p>`).join("")}</div>`;
-      return;
-    }
-    renderPredictif($("predOut"), data);
-  } catch (error) {
-    $("predOut").innerHTML = `<div class="err"><h3>Moteur injoignable</h3>
-      <p>Aucune réponse de ${escapeHtml(API)}.</p></div>`;
-  } finally {
-    $("goPred").disabled = false;
-    $("goPred").textContent = "Tracer la dette (version rapide)";
-  }
-}
-$("goPred").onclick = runPredictif;
-
-function predictifNames(d) {
-  return `Dépense : <b>${escapeHtml(d.spending_name)}</b> · Croissance :
-    <b>${escapeHtml(d.growth_name)}</b> · Taux : <b>${escapeHtml(d.rate_name)}</b>`;
-}
-
-function predictifNotes(d) {
-  const conventions = (d.conventions || []).map(
-    (c) => `<p class="tnote">Convention : ${escapeHtml(c)}</p>`).join("");
-  const absent = Object.entries(d.absent || {}).map(
-    ([k, v]) => `<p class="tnote"><b>Absent — ${escapeHtml(k)}.</b> ${escapeHtml(v)}</p>`).join("");
-  return `${conventions}${absent}<p class="tnote">${escapeHtml(d.debt_banner || "")}</p>`;
-}
-
-/* The fast version: the first year priced, the rest carried — and every carried row
-   says « report » in its own column, so a convention never reads as a costing. */
-function renderPredictif(host, d) {
-  const carried = new Set(d.carried_years || []);
-  const rows = (d.years || []).map((year, i) => `<tr>
-      <td>${year}</td><td>${pctFr(d.reference[i])}</td><td>${pctFr(d.reform[i])}</td>
-      <td>${ptFr(d.delta[i])}</td>
-      <td class="${carried.has(year) ? "carried" : ""}">${carried.has(year) ? "report" : "chiffré"}</td>
-    </tr>`).join("");
-  host.innerHTML = `<div class="pred">
-    <p class="tbanner"><b>${escapeHtml(d.banner)}</b></p>
-    <p class="pnames">${predictifNames(d)}</p>
-    <table><thead><tr><th>Année</th><th>Dette, référence</th><th>Dette, réforme</th>
-      <th>Écart</th><th></th></tr></thead><tbody>${rows}</tbody></table>
-    ${predictifNotes(d)}
-  </div>`;
-}
-
-/* The full path, precomputed by `impots predictif`: every year priced, aged and frozen
-   side by side. Silent when no report exists — the panel works without it. */
-async function loadPredictifs() {
-  const host = document.getElementById("predHost");
-  if (!host) return;
-  let names;
-  try {
-    const response = await fetch(`${API}/predictif`);
-    if (!response.ok) return;
-    names = (await response.json()).rapports || [];
-  } catch { return; }
-  if (!names.length) return;
-  let report;
-  try {
-    const one = await fetch(`${API}/predictif/${encodeURIComponent(names[0])}`);
-    if (!one.ok) return;
-    report = await one.json();
-  } catch { return; }
-  renderPredictifReport(host, report);
-}
-
-function renderPredictifReport(host, r) {
-  const rows = (r.years || []).map((y) => `<tr>
-      <td>${y.year}</td><td>${escapeHtml(y.basis)}</td><td>${pctFr(y.reference)}</td>
-      <td>${ptFr(y.delta_aged)}</td><td>${ptFr(y.delta_frozen)}</td></tr>`).join("");
-  host.innerHTML = `<div class="pred">
-    <p class="tbanner"><b>${escapeHtml(r.banner)}</b></p>
-    <h2 class="ptitle">${escapeHtml(r.titre)} : la dette, chaque année chiffrée</h2>
-    <p class="pnames">${predictifNames(r)} · Référence « ${escapeHtml(r.reference)} »</p>
-    <table><thead><tr><th>Année</th><th>Base</th><th>Dette, référence</th>
-      <th>Écart, population vieillie</th><th>Écart, population figée</th></tr></thead>
-      <tbody>${rows}</tbody></table>
-    <p class="tnote">${escapeHtml(r.uprating_note || "")}</p>
-    ${predictifNotes(r)}
   </div>`;
   host.hidden = false;
 }

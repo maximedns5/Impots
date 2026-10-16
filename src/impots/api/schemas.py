@@ -1693,6 +1693,20 @@ class PredictifRate(BaseModel):
     market_rate: Annotated[float, Field(gt=-0.1, lt=0.5)] | None = None
 
 
+class PredictifTheta(BaseModel):
+    """The user's θ (PHASE9_SPEC §2, D-217). REQUIRED: there is no default, not even 1/2.
+
+    `common` sets every open row; `rows` names some and wins over it. A value outside
+    [0, 1] is refused by the chain's own message rather than by a bound here, so that the
+    refusal says why — and is never a clip.
+    """
+
+    model_config = INPUT_CONFIG
+
+    common: float | None = None
+    rows: dict[str, float] = Field(default_factory=dict)
+
+
 class PredictifRequest(BaseModel):
     model_config = INPUT_CONFIG
 
@@ -1701,6 +1715,7 @@ class PredictifRequest(BaseModel):
     growth: PredictifGrowth
     rate: PredictifRate
     horizon: Annotated[int, Field(ge=1, le=10)]
+    theta: PredictifTheta
     behavioural: bool = False
 
     @model_validator(mode="after")
@@ -1732,6 +1747,19 @@ class PredictifStart(BaseModel):
     gdp_eur: float
 
 
+class PredictifBehaviour(BaseModel):
+    """The first year's receipts at θ and its θ box, RECEIPTS POSITIVE, mechanical
+    included (`comportement.evaluate`)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    receipts_first_year_eur: float
+    box_first_year_eur: list[float]
+    claimed: list[str]
+    """The open rows the reform's knobs claim — the only ones the box moves."""
+    grade: str
+
+
 class PredictifResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -1753,6 +1781,14 @@ class PredictifResponse(BaseModel):
     start: PredictifStart
     mechanical_first_year_eur: float
     """The engine's cost for the first projected year, COST POSITIVE."""
+    delta_mechanical: list[float]
+    """The difference with every behavioural channel off; θ has no effect on it."""
+    theta: dict[str, float]
+    """Every open row with the θ it ran at (§2.3)."""
+    theta_applied: bool
+    closed: dict[str, str]
+    """Every channel with no θ in this result, and why (§2.5)."""
+    behaviour: PredictifBehaviour | None = None
     population_note: str
     banner: str
     debt_banner: str
@@ -1789,6 +1825,9 @@ class PredictifReportResponse(BaseModel):
     years: list[PredictifReportYear]
     conventions: list[str]
     absent: dict[str, str]
+    theta: dict[str, float]
+    theta_applied: bool
+    closed: dict[str, str]
     uprating_note: str
     banner: str
     debt_banner: str

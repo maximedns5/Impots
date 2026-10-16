@@ -15,6 +15,12 @@
 parameters:
   production_tax_investment:
     value: {central: 0.0, low: -0.071, high: 0.069, distribution: uniform}
+    theta:
+      un: high
+      raison: >
+        Le canal applique le paramètre avec le signe de la baisse d'impôt : une valeur
+        haute est la plus forte hausse de l'investissement après une baisse. La
+        fourchette traverse zéro (la bande zéro de l'IPP).
     applies_to: >
       Variation de l'investissement corporel des entreprises en réponse à une baisse
       proportionnelle des impôts de production (CET : CVAE + CFE), par unité de

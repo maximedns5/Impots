@@ -15,6 +15,11 @@ thresholds:
 parameters:
   eti_all:
     value: {central: 0.02, low: 0.01, high: 0.02, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une élasticité plus grande est une réponse plus forte du revenu imposable au taux
+        de rétention.
     applies_to: >
       Réponse du revenu imposable au taux de rétention marginal, ensemble des foyers
       fiscaux au-dessus du 10e centile, années de revenus 1998-2004, composition
@@ -61,6 +66,11 @@ parameters:
 
   eti_top_decile:
     value: {central: 0.31, low: 0.15, high: 0.50, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une élasticité plus grande est une réponse plus forte du revenu imposable au taux
+        de rétention.
     applies_to: >
       Réponse du revenu imposable au taux de rétention marginal, décile supérieur
       (P90-100) des foyers fiscaux, 1998-2004. Pas la tranche supérieure et pas le

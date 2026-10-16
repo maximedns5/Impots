@@ -27,6 +27,11 @@ parameters:
   # ------------------------------------------------------------------------- #
   wealth_tax_rate_elasticity:
     value: {central: 0.0, low: 0.0, high: 0.36, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une élasticité plus grande est une réponse plus forte du patrimoine déclaré au
+        taux. Le centre est au bas de la fourchette : θ de 0 à 1/2 reste à zéro.
     applies_to: >
       Élasticité du patrimoine taxable déclaré au taux marginal, estimée par bunching aux
       COUDES PURS du barème de l'ISF (2e et 3e seuils, 2006-2010) — c'est-à-dire aux
@@ -83,6 +88,11 @@ parameters:
   # ------------------------------------------------------------------------- #
   wealth_disclosure_growth_effect_pp:
     value: {central: 0.28, low: 0.13, high: 0.50, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Un effet plus grand est une réponse plus forte du patrimoine déclaré aux
+        obligations déclaratives.
     applies_to: >
       Effet d'un ALLÈGEMENT des obligations déclaratives sur la croissance annuelle du
       patrimoine DÉCLARÉ, en POINTS DE POURCENTAGE de taux de croissance. Ce n'est pas une
