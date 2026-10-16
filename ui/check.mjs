@@ -84,6 +84,12 @@ const PRED_RESULT = { ...PRED_NAMES, years: [2026, 2027, 2028],
   conventions: ["Prélèvements constants en % du PIB",
                 "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"],
   absent: { "rétroaction": "Retour du PIB sur les recettes : non branché avant M3 (D-214)." },
+  delta_mechanical: [-0.0018, -0.0036, -0.0053],
+  theta: { eti_all: 0.5, employment_elasticity_smic: 0.5 }, theta_applied: true,
+  closed: { dividendes: "la population ne porte aucun revenu du capital (§6.5)." },
+  slices: [{ source: "bande", computed: true, reason: "",
+             label: "Boîte θ du comportement : chaque effet revendiqué n'importe où",
+             low: [1.1665, 1.1705, 1.1690], high: [1.1672, 1.1719, 1.1712] }],
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
   debt_banner: "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici." };
 const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027, art. 3",
@@ -93,6 +99,8 @@ const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027
             delta_aged: -0.0004, reform_frozen: 1.1683, delta_frozen: -0.0003 }],
   conventions: ["Prélèvements constants en % du PIB"],
   absent: { "rétroaction": "non branché avant M3" }, uprating_note: "Population vieillie.",
+  theta: { eti_all: 0.3 }, theta_applied: false,
+  closed: { dividendes: "la population ne porte aucun revenu du capital (§6.5)." },
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
   debt_banner: "Les dépenses publiques ne sont PAS microsimulées ici." };
 const RECON = [
@@ -418,6 +426,15 @@ await (async () => {
   $("predReal").value = "1"; $("predPrices").value = "2";
   $("predRateKind").value = "marche"; $("predMarket").value = "";
   $("predHorizon").value = "3";
+  $("predTheta").value = "";
+  $("predRateKind").value = "implicite_tenu";
+  await $("goPred").onclick();
+  ok("without a θ nothing is sent: the page has no default θ either (D-217)", () => {
+    assert.equal(calls.length, before, "must not call the API");
+    assert.match($("predOut").innerHTML, /un θ, de 0 à 1/);
+  });
+  $("predTheta").value = "0.5";
+  $("predRateKind").value = "marche";
   await $("goPred").onclick();
   ok("a market rate scenario without its rate is refused, not defaulted", () => {
     assert.equal(calls.length, before, "must not call the API");
@@ -434,6 +451,7 @@ await (async () => {
     assert.equal(body.growth.real, 0.01); assert.equal(body.growth.prices, 0.02);
     assert.equal(body.rate.name, "Taux implicite tenu à son niveau de 2025");
     assert.equal(body.horizon, 3);
+    assert.deepEqual(body.theta, { common: 0.5 });
     assert.ok(body.reform, "the reform panel's change must travel");
   });
   ok("the carried years say « report » and the names sit above the table", () => {
@@ -441,5 +459,15 @@ await (async () => {
     assert.match(html, /Croissance réelle 1 %, prix 2 %/);
     assert.equal((html.match(/>report</g) || []).length, 2, "two carried years");
     assert.match(html, /non branché avant M3/);
+  });
+  ok("the θ of the result, the θ box and the closed channels are shown", () => {
+    const html = $("predOut").innerHTML;
+    assert.match(html, /emploi au SMIC \(C2\) : θ = 0,5/);
+    assert.match(html, /Boîte θ \(écart\)/);
+    assert.match(html, /Écart mécanique/);
+    assert.match(html, /dividendes/);
+    assert.doesNotMatch(html, /non lus : vue mécanique/);
+    assert.match($("predHost").innerHTML, /non lus : vue mécanique/,
+                 "the report prices no behaviour and says its θ are not read");
   });
 })();

@@ -10,6 +10,11 @@ parameters:
   # ------------------------------------------------------------------------- #
   employment_elasticity_smic:
     value: {central: -0.43, low: -0.52, high: -0.31, distribution: triangular}
+    theta:
+      un: low
+      raison: >
+        L'élasticité est négative : la réponse la plus forte de l'emploi au coût du
+        travail est la plus négative, donc le BAS de la fourchette.
     applies_to: >
       Élasticité de l'emploi au coût du travail au voisinage du SMIC, en nombre de
       postes. Estimée sur les allègements Fillon de 2003, panel équilibré
@@ -116,6 +121,12 @@ parameters:
   # ------------------------------------------------------------------------- #
   passthrough_benefit_linked:
     value: {central: 1.0, low: 0.85, high: 1.1, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Convention : l'incidence n'a pas de réponse « plus forte » naturelle. θ = 1
+        répercute davantage la cotisation sur les salaires, c'est-à-dire la plus grande
+        adaptation des salaires.
     applies_to: >
       Part d'une variation de cotisation patronale LIÉE à une prestation que le
       salarié perçoit, répercutée sur le salaire. Une cotisation liée se comporte
@@ -148,6 +159,11 @@ parameters:
 
   passthrough_unlinked:
     value: {central: 0.0, low: -0.06, high: 0.25, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Même convention que la part liée : θ = 1 répercute davantage sur les salaires. La
+        fourchette traverse zéro : θ bas répercute dans l'autre sens.
     applies_to: >
       Part d'une variation de cotisation patronale NON liée à une prestation,
       répercutée sur le salaire. L'estimation est proche de zéro : la cotisation

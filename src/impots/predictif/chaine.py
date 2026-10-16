@@ -13,11 +13,20 @@ Divided by the same GDP as the reference (no GDP feedback before M3), this is th
 identity itself applied to the difference, so `path.project` computes it: b0 = 0, r = m,
 p = −Δcost_t / Y_t.
 
-WHAT M1 DOES NOT YET CARRY, AND SAYS SO. The GDP → receipts feedback arrives in M3
+WHAT IS NOT YET CARRIED, AND SAYS SO. The GDP → receipts feedback arrives in M3
 (D-214: Mésange's balance row, under `gele_en_volume` only); until then the macro slice is
-ABSENT, with its reason, and `dominant_source` refuses to name a winner. θ arrives in M2.
-A year the engine did not price is refused unless the caller names the carry convention,
-which then labels every year it filled.
+ABSENT, with its reason, and `dominant_source` refuses to name a winner. A year the engine
+did not price is refused unless the caller names the carry convention, which then labels
+every year it filled.
+
+θ (M2, D-217). Every path is computed under a `Theta` the caller chose — there is no
+default, and `run` refuses without one (guard 1). With behaviour, the reform's central
+path is the receipts AT θ, and the `bande` slice is the θ box: the receipts at the corners
+where every claimed row is at 0 or 1 (`comportement.evaluate`). The mechanical difference
+stands beside it, θ having no effect on it. Without behaviour, the θ are still listed —
+a result names every hypothesis it was asked under — with the statement that nothing
+reads them. `Trajectoire` refuses to exist without a θ for each open row and a reason for
+each closed channel (guard 2), the way it refuses to exist without its banner.
 """
 
 from __future__ import annotations
@@ -25,11 +34,15 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from impots.behavioural.store import Store
+from impots.behavioural.store import load as load_store
 from impots.dette import path as path_module
 from impots.dette.decomposition import Decomposition, Slice
 from impots.dette.path import DebtError, SpendingScenario, YearInputs, check_scenario_name
 from impots.dette.reference import RECEIPTS_CONVENTION, Start, reference_years
 from impots.dette.scenarios import GrowthScenario, RateScenario
+from impots.predictif.comportement import AtTheta
+from impots.predictif.theta import Theta, ThetaError
 
 BANNER = (
     "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de "
@@ -52,7 +65,36 @@ CARRY_LABEL = ("Δ tenu en part de PIB constante au-delà de la dernière année
 ABSENT_FEEDBACK = (
     "Retour du PIB sur les recettes : non branché avant M3 (D-214). Absent, pas nul : le "
     "solde de la réforme ne compte ni l'activité qu'elle crée ni celle qu'elle détruit.")
-ABSENT_BAND = "Bande comportementale non demandée : seul le chiffre mécanique est porté."
+ABSENT_BAND = "Comportement non demandé : seul le chiffre mécanique est porté."
+THETA_UNREAD = ("Vue mécanique : les θ sont listés parce que la requête les nomme, mais "
+                "aucun canal de comportement ne les lit.")
+BOX_LABEL = ("Boîte θ du comportement : chaque effet revendiqué n'importe où dans sa "
+             "fourchette publiée, bornes lues aux coins")
+BOX_CONVENTION = ("Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt "
+                  "[0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de "
+                  "tranches, ni un intervalle de probabilité.")
+
+#: The channels a result carries NO θ for, each with the reason it is closed (§2.5).
+#: Guard 2: a trajectory whose closed channel lost its reason refuses to exist — a closed
+#: channel shown without one reads as a channel that does not matter.
+CLOSED: dict[str, str] = {
+    "rétroaction PIB → recettes": (
+        "branchée en M3 (§4) : le solde primaire de Mésange, sous « gele_en_volume » "
+        "seulement (D-214)."),
+    "multiplicateur macro": (
+        "son θ existe (centre ∓ un écart-type IMK, `predictif.macro`), mais la dette ne "
+        "le lit pas avant M3."),
+    "offre de travail": (
+        "aucune ligne vérifiée au magasin (D-031) ; les élasticités de Bargain, Orsini et "
+        "Peichl restent à manifester (§6.1)."),
+    "IS et investissement des entreprises": (
+        "ni variante Mésange de l'IS, ni évaluation française de la réponse de "
+        "l'investissement au coût du capital au manifeste (§5, §6.2)."),
+    "créations d'entreprises": (
+        "aucune évaluation publiée de leur réponse aux impôts au manifeste (§6.3)."),
+    "R&D et CIR": "aucun fichier GECIR ni MESR au manifeste (D-154, §6.4).",
+    "dividendes": "la population ne porte aucun revenu du capital (§6.5).",
+}
 ABSENT_GRID = ("Une seule combinaison de scénarios : chaque autre combinaison est un autre "
                "calcul, sous ses propres noms.")
 RATE_PROXY = ("Taux implicite de la dette négociable de l'État (encours AFT) appliqué à "
@@ -65,10 +107,11 @@ class ReformCosts:
 
     by_year: dict[int, float]
     carry: str | None = None
-    behavioural: dict[int, tuple[float, float]] | None = None
-    """Receipts band (p10, p90) per priced year, RECEIPTS POSITIVE as `band.compute`
-    returns it — the opposite sign of `by_year`, stated because a sign error here would
-    put the band on the wrong side of the mechanical path and still look like a band."""
+    behavioural: dict[int, AtTheta] | None = None
+    """The receipts at θ and the θ box per priced year (`comportement.evaluate`), RECEIPTS
+    POSITIVE and mechanical included — the opposite sign of `by_year`, stated because a
+    sign error here would put the box on the wrong side of the mechanical path and still
+    look like a box."""
 
     def __post_init__(self) -> None:
         if not self.by_year:
@@ -83,9 +126,14 @@ class ReformCosts:
                     "la bande comportementale ne couvre pas les mêmes années que le "
                     "chiffrage : une bande sur une partie des années se tracerait comme "
                     "une bande sur toutes.")
-            for year, (low, high) in self.behavioural.items():
+            for year, at in self.behavioural.items():
+                low, high = at.box
                 if high < low:
-                    raise DebtError(f"{year} : bande retournée ({low:,.0f} > {high:,.0f})")
+                    raise DebtError(f"{year} : boîte retournée ({low:,.0f} > {high:,.0f})")
+                if not low <= at.receipts <= high:
+                    raise DebtError(
+                        f"{year} : recettes à θ ({at.receipts:,.0f}) hors de leur boîte "
+                        f"[{low:,.0f} ; {high:,.0f}]")
 
 
 @dataclass(frozen=True)
@@ -105,6 +153,15 @@ class Trajectoire:
     growth_name: str
     rate_name: str
     conventions: tuple[str, ...]
+    delta_mechanical: tuple[float, ...]
+    """The difference with every behavioural channel off — θ has no effect on it."""
+    theta: dict[str, float]
+    """Every open row with the θ it ran at, even when they were set together (§2.3)."""
+    open_rows: tuple[str, ...]
+    """The rows the store loaded with a range: what `theta` must cover, exactly."""
+    theta_applied: bool
+    """False in the mechanical view, where the θ are listed but nothing reads them."""
+    closed: dict[str, str] = field(default_factory=lambda: dict(CLOSED))
     absent: dict[str, str] = field(default_factory=dict)
     banner: str = BANNER
 
@@ -113,13 +170,29 @@ class Trajectoire:
             raise DebtError(
                 "la bannière du prédictif conditionnel est un champ vérifié, pas une "
                 "décoration : une trajectoire sans elle se lit comme une prévision.")
+        # GUARD 2 (§2.4): no result without its θ, no closed channel without its reason.
+        missing = sorted(set(self.open_rows) - set(self.theta))
+        stray = sorted(set(self.theta) - set(self.open_rows))
+        if missing or stray:
+            raise ThetaError(
+                f"θ manquant pour {missing}, ou donné à une ligne non ouverte {stray} : "
+                f"un résultat se lit avec chacun de ses θ, ou ne se lit pas.")
+        outside = sorted(k for k, v in self.theta.items() if not 0.0 <= v <= 1.0)
+        if outside:
+            raise ThetaError(f"θ hors de [0 ; 1] pour {outside}")
+        unreasoned = sorted(k for k in CLOSED if not str(self.closed.get(k, "")).strip())
+        if unreasoned:
+            raise ThetaError(
+                f"canaux fermés sans leur raison : {unreasoned}. Un canal fermé affiché "
+                f"sans raison se lit comme un canal qui ne compte pas.")
         for name, what in ((self.spending_name, "de dépense"),
                            (self.growth_name, "de croissance"),
                            (self.rate_name, "de taux")):
             check_scenario_name(name, what)
         n = len(self.years)
         if any(len(s) != n for s in (self.reference, self.reform, self.delta,
-                                     self.reference_primary, self.delta_primary)):
+                                     self.reference_primary, self.delta_primary,
+                                     self.delta_mechanical)):
             raise DebtError("séries de longueurs différentes : une trajectoire décalée "
                             "d'un an se tracerait sans erreur visible")
 
@@ -130,8 +203,11 @@ class Trajectoire:
             tag = " (report)" if year in self.carried_years else ""
             out.append(f"  {year} : référence {self.reference[i]:.2%}, réforme "
                        f"{self.reform[i]:.2%}, écart {self.delta[i] * 100:+.3f} pt{tag}")
+        out.append("  θ : " + ", ".join(f"{k} = {v:g}" for k, v in self.theta.items())
+                   + ("" if self.theta_applied else " (non lus : vue mécanique)"))
         out.extend(f"  convention : {c}" for c in self.conventions)
         out.extend(f"  absent — {k} : {v}" for k, v in self.absent.items())
+        out.extend(f"  fermé — {k} : {v}" for k, v in self.closed.items())
         out.append(self.banner)
         return out
 
@@ -196,12 +272,23 @@ def _rate_path(start: Start, rate: RateScenario, reference: list[Any],
 
 def run(start: Start, *, horizon: int, costs: ReformCosts,
         spending: SpendingScenario | None, growth: GrowthScenario | None,
-        rate: RateScenario | None, securities: list[Any] | None = None) -> Trajectoire:
-    """The reference path, the reform path, and the difference, under named scenarios."""
+        rate: RateScenario | None, theta: Theta | None,
+        securities: list[Any] | None = None, store: Store | None = None) -> Trajectoire:
+    """The reference path, the reform path, and the difference, under named scenarios
+    and the θ the caller chose. `store` is the behavioural store the θ are read against
+    (the shipped one by default) — the same one `comportement.evaluate` ran on."""
     if rate is None:
         raise DebtError(
             "aucun scénario de taux nommé : la charge d'intérêts fait la boule de neige, "
             "et un taux que personne n'a choisi se lirait comme une prévision.")
+    if theta is None:
+        raise ThetaError(
+            "aucun θ nommé : chaque effet de comportement se place dans sa fourchette par "
+            "le θ de l'utilisateur, et un θ que personne n'a choisi serait celui de "
+            "l'outil. Aucun défaut, pas même 1/2.")
+    store = store if store is not None else load_store()
+    theta.check_known(store)
+    table = theta.table(store)
     reference = reference_years(start, horizon, spending=spending, growth=growth)
     assert spending is not None and growth is not None   # reference_years refuses
     years = [y.year for y in reference]
@@ -221,30 +308,34 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
             for y in years], spending=spending)
         return [p.ratio for p in points]
 
-    delta_primary = {y: -cost[y] / gdp[y] for y in years}
-    delta = delta_path(delta_primary)
     ref = [p.ratio for p in reference_points]
-    reform = [b + d for b, d in zip(ref, delta, strict=True)]
+    mechanical = delta_path({y: -cost[y] / gdp[y] for y in years})
+
+    def receipts(pick) -> dict[int, float]:
+        """One receipts series per year — priced years as evaluated, later ones by the
+        same carry convention as the cost — as a primary balance, p = +receipts / Y."""
+        assert costs.behavioural is not None
+        filled, _ = _costs_by_year(
+            ReformCosts(by_year={y: pick(at) for y, at in costs.behavioural.items()},
+                        carry=costs.carry), years, gdp)
+        return {y: filled[y] / gdp[y] for y in years}
 
     if costs.behavioural is not None:
-        band, _ = _costs_by_year(
-            ReformCosts(by_year={y: lo for y, (lo, _) in costs.behavioural.items()},
-                        carry=costs.carry), years, gdp)
-        band_high, _ = _costs_by_year(
-            ReformCosts(by_year={y: hi for y, (_, hi) in costs.behavioural.items()},
-                        carry=costs.carry), years, gdp)
-        # Receipts positive: more receipts improve the balance, so p = +receipts / Y.
-        low_path = delta_path({y: band[y] / gdp[y] for y in years})
-        high_path = delta_path({y: band_high[y] / gdp[y] for y in years})
+        delta_primary = receipts(lambda at: at.receipts)
+        low_path = delta_path(receipts(lambda at: at.box[0]))
+        high_path = delta_path(receipts(lambda at: at.box[1]))
         behaviour = Slice(
-            source="bande", label="Bande comportementale (p10-p90)",
+            source="bande", label=BOX_LABEL,
             low=tuple(b + min(a, c) for b, a, c in zip(ref, low_path, high_path,
                                                          strict=True)),
             high=tuple(b + max(a, c) for b, a, c in zip(ref, low_path, high_path,
                                                           strict=True)))
     else:
-        behaviour = Slice(source="bande", label="Bande comportementale", computed=False,
+        delta_primary = {y: -cost[y] / gdp[y] for y in years}
+        behaviour = Slice(source="bande", label="Boîte θ du comportement", computed=False,
                           reason=ABSENT_BAND)
+    delta = delta_path(delta_primary)
+    reform = [b + d for b, d in zip(ref, delta, strict=True)]
 
     decomposition = Decomposition(
         years=tuple(years), central=tuple(reform), spending_name=spending.name,
@@ -256,6 +347,8 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
                   reason=ABSENT_GRID),
         ))
     conventions = [RECEIPTS_CONVENTION, *rate_conventions]
+    if costs.behavioural is not None:
+        conventions.append(BOX_CONVENTION)
     if carried:
         conventions.append(CARRY_LABEL)
     return Trajectoire(
@@ -266,6 +359,10 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
         priced_years=tuple(sorted(costs.by_year)), carried_years=carried,
         decomposition=decomposition, spending_name=spending.name,
         growth_name=growth.name, rate_name=rate.name, conventions=tuple(conventions),
+        delta_mechanical=tuple(mechanical), theta=table,
+        open_rows=tuple(sorted(k for k, p in store.parameters.items() if p.is_open)),
+        theta_applied=costs.behavioural is not None,
         absent={"rétroaction": ABSENT_FEEDBACK,
-                **({} if costs.behavioural is not None else {"bande": ABSENT_BAND})},
+                **({} if costs.behavioural is not None
+                   else {"bande": ABSENT_BAND, "θ": THETA_UNREAD})},
     )

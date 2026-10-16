@@ -51,6 +51,7 @@ from impots.api.schemas import (
     PopulationMeta,
     PopulationResponse,
     PopulationSimulateRequest,
+    PredictifBehaviour,
     PredictifReportList,
     PredictifReportResponse,
     PredictifRequest,
@@ -597,15 +598,19 @@ def _macro(request: Any, agg: Any) -> Any:
     )
 
 
-def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None) -> Any:
-    """The band for a household reform, or a mechanical-only answer with its reason."""
+def _behavioural_inputs(request: Any, frame: Any, agg: Any,
+                        run_households: Any = None) -> tuple[dict[str, Any], int | None]:
+    """What `band.compute` reads besides the mechanical figure and the reform.
+
+    `(inputs, households)`: the employer inputs, plus the households' marginal rates when
+    the EMTR pass has them — `households` counts those, and is None when it has none.
+    Shared by the band (`_behavioural`) and by the receipts at θ (`/predictif/simulate`),
+    so the two read the same population the same way.
+    """
     import numpy as np
 
-    from impots.api.schemas import Behavioural
-    from impots.behavioural import band as band_module
     from impots.behavioural import emtr as emtr_module
 
-    mechanical = -(agg.reform_cost or 0.0)
     employer = _employer_inputs(request, frame, run_households, agg) if run_households is not None else {}
     emtr_result = emtr_module.cached(
         frame, POPULATION_VINTAGE, year=request.year, reform=request.reform,
@@ -613,9 +618,7 @@ def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None)
     )
     households = emtr_result.with_earnings
     if households.is_empty() or "emtr_reform" not in households.columns:
-        computed = band_module.compute(
-            mechanical=mechanical, reform=request.reform, **employer)
-        return Behavioural(**computed.as_dict())
+        return employer, None
 
     weights = households["weight"].to_numpy()
     # Taxable base per household: what C1's response applies to. Deciles of it give
@@ -635,32 +638,35 @@ def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None)
     if cumulative[-1] > 0:
         top[order[cumulative >= 0.9 * cumulative[-1]]] = True
 
-    computed = band_module.compute(
-        mechanical=mechanical, reform=request.reform,
+    return {
         **employer,
-        emtr_baseline=households["emtr"].to_numpy(),
-        emtr_reform=households["emtr_reform"].to_numpy(),
-        taxable_base=base, weights=weights, top_decile=top,
-    )
+        "emtr_baseline": households["emtr"].to_numpy(),
+        "emtr_reform": households["emtr_reform"].to_numpy(),
+        "taxable_base": base, "weights": weights, "top_decile": top,
+    }, int(households.height)
+
+
+def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None) -> Any:
+    """The band for a household reform, or a mechanical-only answer with its reason."""
+    from impots.api.schemas import Behavioural
+    from impots.behavioural import band as band_module
+
+    inputs, households = _behavioural_inputs(request, frame, agg, run_households)
+    computed = band_module.compute(
+        mechanical=-(agg.reform_cost or 0.0), reform=request.reform, **inputs)
     payload = computed.as_dict()
-    payload["emtr_households"] = int(households.height)
+    if households is not None:
+        payload["emtr_households"] = households
     return Behavioural(**payload)
 
 
-@app.post("/population/simulate", response_model=PopulationResponse)
-def population_simulate(request: PopulationSimulateRequest) -> PopulationResponse:
-    """Price a reform over the synthetic population — quick tier only.
-
-    A deterministic, self-weighting subsample of 20 000 households. The full
-    199 451-household run is a batch job and lives in the CLI: putting it behind a
-    synchronous HTTP request would be a request that takes minutes (spec §1.1).
-    """
+def _run_population(request: Any, frame: Any) -> tuple[Any, Any]:
+    """The quick-tier pass and its aggregate: `(run, aggregate)`. Shared by
+    `/population/simulate` and `/predictif/simulate`."""
     from impots.population import aggregate as aggregate_module
     from impots.population.runner import run as population_run
     from impots.population.to_openfisca import WiringError
 
-    frame = _population_frame()
-    started = time.perf_counter()
     try:
         result = population_run(
             frame, year=request.year, reform=request.reform, tier="full",
@@ -671,8 +677,29 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
         raise HTTPException(status_code=500, detail=str(error)) from error
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
+    return result, aggregate_module.aggregate(result.households)
 
-    agg = aggregate_module.aggregate(result.households)
+
+def _quick_tier_note() -> str:
+    return (POPULATION_NOTE
+            + f" Ce résultat porte sur un sous-échantillon déterministe de "
+              f"{QUICK_TIER_HOUSEHOLDS:,} ménages repondérés"
+              .replace(",", " ")
+            + ", pas sur la population complète : attendez-vous à un bruit "
+              "d'échantillonnage de l'ordre du pour cent sur les agrégats.")
+
+
+@app.post("/population/simulate", response_model=PopulationResponse)
+def population_simulate(request: PopulationSimulateRequest) -> PopulationResponse:
+    """Price a reform over the synthetic population — quick tier only.
+
+    A deterministic, self-weighting subsample of 20 000 households. The full
+    199 451-household run is a batch job and lives in the CLI: putting it behind a
+    synchronous HTTP request would be a request that takes minutes (spec §1.1).
+    """
+    frame = _population_frame()
+    started = time.perf_counter()
+    result, agg = _run_population(request, frame)
     summary = _baseline_summary()
     behavioural = (
         _behavioural(request, frame, agg, result.households)
@@ -686,13 +713,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
             vintage=POPULATION_VINTAGE, branch=summary["branch"],
             households=agg.households, persons=agg.persons,
             tier="quick", sampled_households=QUICK_TIER_HOUSEHOLDS,
-            note=POPULATION_NOTE
-            + f" Ce résultat porte sur un sous-échantillon déterministe de "
-              f"{QUICK_TIER_HOUSEHOLDS:,} ménages repondérés"
-              .replace(",", " ")
-            + ", pas sur la population complète : attendez-vous à un bruit "
-              "d'échantillonnage de l'ordre du pour cent sur les agrégats.",
-            limitations=summary["limitations"],
+            note=_quick_tier_note(), limitations=summary["limitations"],
         ),
         totals=agg.totals, totals_reform=agg.totals_reform, deltas=agg.deltas,
         reform_cost=agg.reform_cost, behavioural=behavioural,
@@ -991,6 +1012,25 @@ def emtr_show(name: str) -> EmtrCurveResponse:
     return EmtrCurveResponse.model_validate_json(path.read_text(encoding="utf-8"))
 
 
+def _price_first_year(request: PopulationSimulateRequest) -> Any:
+    """One quick-tier pass for the predictive path's first year — the seam its tests stub.
+
+    `cost` is the engine's, COST POSITIVE; `inputs` is what `band.compute` reads, when
+    behaviour was asked for, so the receipts at θ run on the very population the cost
+    came from; `note` is the quick tier's.
+    """
+    from types import SimpleNamespace
+
+    frame = _population_frame()
+    result, agg = _run_population(request, frame)
+    if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
+        raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
+    inputs = (_behavioural_inputs(request, frame, agg, result.households)[0]
+              if request.behavioural else None)
+    return SimpleNamespace(cost=float(agg.reform_cost), inputs=inputs,
+                           note=_quick_tier_note())
+
+
 @app.post("/predictif/simulate", response_model=PredictifResponse)
 def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     """The reform's debt path against the reference, under named scenarios (PHASE9_SPEC §3).
@@ -1000,13 +1040,20 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     `/population/simulate` makes — and carries that cost as a constant share of GDP, a
     convention every carried year is labelled with. The full year-by-year path belongs to
     a batch command.
+
+    θ IS REQUIRED (D-217, guard 1): the schema has no default for it, and a θ outside
+    [0, 1] or named for a row the store does not hold is refused here, before the pass.
+    With behaviour, the first year's receipts are evaluated at θ and at the corners of
+    the θ box, on the same population the cost came from.
     """
+    from impots.behavioural.store import load as load_store
     from impots.dette import maturite
     from impots.dette import reference as reference_module
     from impots.dette.path import BANNER as DEBT_BANNER
     from impots.dette.path import SHIPPED, DebtError, SpendingScenario
     from impots.dette.scenarios import GrowthScenario, RateScenario
-    from impots.predictif import chaine
+    from impots.predictif import chaine, comportement
+    from impots.predictif.theta import Theta, ThetaError
 
     try:
         if request.spending.rule == "personnalise":
@@ -1022,7 +1069,10 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                                 request.growth.prices)
         rate = RateScenario(request.rate.name, request.rate.kind,
                             market_rate=request.rate.market_rate)
-    except DebtError as error:
+        theta = Theta(rows=dict(request.theta.rows), common=request.theta.common)
+        store = load_store()
+        theta.check_known(store)
+    except (DebtError, ThetaError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
     try:
@@ -1039,19 +1089,18 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             status_code=422,
             detail=f"la première année projetée, {year}, sort de la fenêtre que la couche "
                    f"population sert ({MIN_YEAR}–{MAX_YEAR}).")
-    population = population_simulate(PopulationSimulateRequest(
+    first = _price_first_year(PopulationSimulateRequest(
         reform=request.reform, year=year, behavioural=request.behavioural))
-    if population.reform_cost is None:  # pragma: no cover - a reform always has a cost
-        raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
-    band = population.behavioural.band if population.behavioural else None
-    costs = chaine.ReformCosts(
-        by_year={year: float(population.reform_cost)}, carry=chaine.CARRY,
-        behavioural=({year: (band.p10, band.p90)} if band is not None else None))
     try:
+        at = (comportement.evaluate(theta, mechanical=-first.cost, reform=request.reform,
+                                    store=store, **first.inputs)
+              if first.inputs is not None else None)
+        costs = chaine.ReformCosts(by_year={year: first.cost}, carry=chaine.CARRY,
+                                   behavioural=({year: at} if at is not None else None))
         result = chaine.run(start, horizon=request.horizon, costs=costs,
-                            spending=spending, growth=growth, rate=rate,
-                            securities=securities)
-    except (DebtError, maturite.MaturityError) as error:
+                            spending=spending, growth=growth, rate=rate, theta=theta,
+                            securities=securities, store=store)
+    except (DebtError, ThetaError, maturite.MaturityError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
     return PredictifResponse(
@@ -1069,8 +1118,14 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
         start=PredictifStart(year=start.year, debt_ratio=start.debt_ratio,
                              primary_balance=start.primary_balance,
                              implicit_rate=start.implicit_rate, gdp_eur=start.gdp_eur),
-        mechanical_first_year_eur=float(population.reform_cost),
-        population_note=population.meta.note,
+        mechanical_first_year_eur=first.cost,
+        delta_mechanical=list(result.delta_mechanical),
+        theta=dict(result.theta), theta_applied=result.theta_applied,
+        closed=dict(result.closed),
+        behaviour=(PredictifBehaviour(
+            receipts_first_year_eur=at.receipts, box_first_year_eur=list(at.box),
+            claimed=list(at.claimed), grade=at.grade) if at is not None else None),
+        population_note=first.note,
         banner=result.banner, debt_banner=DEBT_BANNER,
     )
 

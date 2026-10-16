@@ -32,6 +32,11 @@ PARAMETERS = Path(__file__).resolve().parent / "parameters"
 
 Distribution = Literal["triangular", "uniform", "normal"]
 Confidence = Literal["high", "medium", "low"]
+#: Which end of the published range θ = 1 designates (Phase 9, D-217): always the
+#: STRONGEST response of the economy. Declared per row, never inferred from the sign —
+#: the SMIC employment elasticity runs −0.52 to −0.31 and its strongest response is the
+#: low end.
+ThetaEnd = Literal["low", "high"]
 
 #: Verdicts a verifier may return. Only these two let a row load: `CONFIRMED` and
 #: `SCOPE_PROBLEM` — the latter because Phase 2 measured that a scope problem means
@@ -42,6 +47,13 @@ LOADABLE_VERDICTS = frozenset({"CONFIRMED", "SCOPE_PROBLEM"})
 
 class UnverifiedParameter(RuntimeError):
     """A parameter tried to load without a verifier verdict."""
+
+
+class UndeclaredTheta(UnverifiedParameter):
+    """An open row tried to load without saying which end θ = 1 designates.
+
+    A subclass of `UnverifiedParameter` on purpose: both are a row that cannot be read
+    without a statement its author did not make, and both refuse in the same place."""
 
 
 @dataclass(frozen=True)
@@ -97,6 +109,16 @@ class Parameter:
     distribution: Distribution = "triangular"
     responds_to_knobs: tuple[str, ...] = ()
     note: str = ""
+    theta_one: ThetaEnd | None = None
+    """The end θ = 1 designates. None only for a FIXED row (low = high), which carries
+    no θ; the loader refuses an open row without it (D-217)."""
+    theta_reason: str = ""
+
+    @property
+    def is_open(self) -> bool:
+        """A row with a range: θ can move it. A fixed row is shown as fixed, not as
+        θ-insensitive by accident."""
+        return self.low != self.high
 
     def __post_init__(self) -> None:
         if not self.low <= self.central <= self.high:
@@ -179,7 +201,22 @@ def _parse(key: str, raw: dict[str, Any]) -> Parameter:
         ),
         confidence=raw.get("confidence", "medium"),
         note=raw.get("note", ""),
+        theta_one=(raw.get("theta") or {}).get("un"),
+        theta_reason=str((raw.get("theta") or {}).get("raison") or "").strip(),
     )
+
+
+def _theta_problem(parameter: Parameter) -> str:
+    """Why an open row cannot be read under θ, or '' when it can (D-217)."""
+    if not parameter.is_open:
+        return ""
+    if parameter.theta_one not in ("low", "high"):
+        return (f"θ undeclared (theta.un = {parameter.theta_one!r}): an open row must say "
+                f"which end of its range θ = 1 designates — the strongest response — "
+                f"because the sign does not tell, and a default would be a guess")
+    if not parameter.theta_reason:
+        return "θ declared without its reason (theta.raison): the direction is a claim"
+    return ""
 
 
 def load(directory: Path | None = None, *, strict: bool = True) -> Store:
@@ -212,6 +249,12 @@ def load(directory: Path | None = None, *, strict: bool = True) -> Store:
                 if strict:
                     raise UnverifiedParameter(f"{key} ({path.name}): {reason}")
                 store.rejected[key] = reason
+                continue
+            problem = _theta_problem(parameter)
+            if problem:
+                if strict:
+                    raise UndeclaredTheta(f"{key} ({path.name}): {problem}")
+                store.rejected[key] = problem
                 continue
             store.parameters[key] = parameter
     return store

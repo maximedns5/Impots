@@ -1,6 +1,10 @@
-# State of the project, and the directions open — 2026-10-16 (Phase 9, M1b done)
+# State of the project, and the directions open — 2026-10-16 (Phase 9, M2 done)
 
-The fifth 2026-10-16 update adds D-216, Phase 9's M1b: `impots predictif` prices every
+The sixth 2026-10-16 update adds D-217, Phase 9's M2: every open behavioural row declares
+which end of its range θ = 1 designates, θ places each row through its published centre,
+a pinned store runs the Phase 3 channels at θ unchanged, and the debt path's behaviour
+slice becomes the θ box, read at its corners. No θ has a default — not the endpoint's,
+the command's or the page's. The fifth added D-216, Phase 9's M1b: `impots predictif` prices every
 year of the horizon on the frozen and the aged population and writes
 `reports/predictif_<scenario>.json`, which `GET /predictif` serves; the page gains a
 « Et la dette ? » panel whose scenario lists start empty. The fourth added D-215, Phase 9's M1: the chain reform → primary
@@ -63,13 +67,14 @@ from `main`.
 what a household can declare, and twenty-one places where this project corrects
 openfisca's reading of the law. It has its own section below.
 
-**2 222 tests at the last logged full pass** (`5b1ec10`, 2026-10-14, logged in
-`b24de21`): 2 106 passed and 116 skipped, the skips being tests whose source files a fresh
-clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
+**2 222 tests at the last logged full pass** (`05cc944`, D-204's commit, run on
+2026-10-16): 2 106 passed and 116 skipped, the skips being tests whose source files a
+fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits behind
+`main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **217 decision
-entries**, D-000 to D-216, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **218 decision
+entries**, D-000 to D-217, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -411,12 +416,13 @@ download list.
    decomposed (D-210) and the population recalibrated on the retirement boxes (D-211).
    What it leaves: a full pass and the reports regenerated on the owner's machine, the
    first since the pension target moved and, with Actions down, the only whole-suite
-   check D-210 and D-211 will get; the report's direction line, which counts
+   check D-210 and D-211 will get — the 2026-10-16 pass ran on `05cc944`, before them; the report's direction line, which counts
    signs; and art. 2's outside grade.
-2. **Phase 9, M2** (`docs/PHASE9_SPEC.md` §2): the θ coefficients, a pinned view of the
-   behavioural store, each row's direction declared, and the guards of §2.4. M1 and M1b
-   are done (D-215, D-216). A full ten-year `impots predictif` run is about an hour on the
-   owner's machine. Still open from M0: the HCFP note (its host
+2. **Phase 9, M3** (`docs/PHASE9_SPEC.md` §4): the GDP → receipts loop from Mésange's
+   primary-balance row, under `gele_en_volume` only, which also wires the multiplier's
+   θ (`predictif/macro.py`, defined in M2 and not yet read by the debt path). M1, M1b and
+   M2 are done (D-215 to D-217). A full ten-year `impots predictif` run is about an hour
+   on the owner's machine, and now takes `--theta`. Still open from M0: the HCFP note (its host
    refuses this container), the IZA DP 6735 to manifest, France Stratégie's 2023
    capital-taxation report to read, and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.

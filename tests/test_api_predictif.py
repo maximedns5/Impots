@@ -1,8 +1,9 @@
 """Phase 9 M1 — `POST /predictif/simulate`, the fast version (PHASE9_SPEC §3.4, M0 R3).
 
 The population pass is replaced by a stub that records what it was asked: the endpoint's
-own logic — the refusals, the first projected year, the carry convention, what is absent —
-is what these tests hold, in seconds and without data. The pass itself has its own tests.
+own logic — the refusals, the first projected year, the carry convention, what is absent,
+and since M2 the θ it must be given (D-217) — is what these tests hold, in seconds and
+without data. The pass itself has its own tests.
 """
 
 from __future__ import annotations
@@ -10,6 +11,7 @@ from __future__ import annotations
 from collections.abc import Iterator
 from types import SimpleNamespace
 
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
@@ -21,14 +23,28 @@ START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
                         spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
 GROWTH = {"name": "Croissance réelle 1 %, prix 2 %", "real": 0.01, "prices": 0.02}
 HELD = {"name": "Taux implicite tenu à son niveau de 2025", "kind": "implicite_tenu"}
+#: A barème with a higher top rate: the ETI rows claim `ir_bareme`, so the θ box moves.
+TOP_RATE_50 = {"ir_bareme": [
+    {"threshold": 0, "rate": 0.00}, {"threshold": 11497, "rate": 0.11},
+    {"threshold": 29315, "rate": 0.30}, {"threshold": 83823, "rate": 0.41},
+    {"threshold": 180294, "rate": 0.50}]}
 
 
 def _payload(**overrides) -> dict:
     payload = {"reform": {"abattement_pensions_plafond": 0.0},
                "spending": {"rule": "gele_en_volume"}, "growth": GROWTH, "rate": HELD,
-               "horizon": 10}
+               "horizon": 10, "theta": {"common": 0.5}}
     payload.update(overrides)
     return payload
+
+
+def _households() -> dict:
+    """What `band.compute` reads for C1: forty households whose marginal rate rises."""
+    rng = np.random.default_rng(3)
+    base = rng.uniform(10_000, 200_000, 40)
+    emtr = rng.uniform(0.1, 0.45, 40)
+    return {"taxable_base": base, "weights": np.full(40, 1_000.0), "emtr_baseline": emtr,
+            "emtr_reform": emtr + 0.03, "top_decile": base > np.quantile(base, 0.9)}
 
 
 @pytest.fixture(scope="module")
@@ -39,17 +55,16 @@ def client() -> Iterator[TestClient]:
 
 @pytest.fixture
 def priced(monkeypatch) -> list:
-    """The population pass, stubbed: 5 Md€ of cost, and the requests it received."""
+    """The population pass, stubbed: 5 Md€ of cost, synthetic households when behaviour
+    is asked for, and the requests it received."""
     seen: list = []
 
     def stub(request):
         seen.append(request)
-        band = (SimpleNamespace(band=SimpleNamespace(p10=-6e9, p50=-5e9, p90=-3e9))
-                if request.behavioural else None)
-        return SimpleNamespace(reform_cost=5e9, behavioural=band,
-                               meta=SimpleNamespace(note="sous-échantillon de 20 000"))
+        return SimpleNamespace(cost=5e9, note="sous-échantillon de 20 000",
+                               inputs=_households() if request.behavioural else None)
 
-    monkeypatch.setattr(main, "population_simulate", stub)
+    monkeypatch.setattr(main, "_price_first_year", stub)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     return seen
 
@@ -77,12 +92,52 @@ def test_what_is_absent_is_said_and_the_banners_ride_along(client, priced) -> No
     assert "PAS microsimulées" in body["debt_banner"]
 
 
-def test_a_requested_band_reaches_the_behavioural_slice(client, priced) -> None:
-    body = client.post("/predictif/simulate", json=_payload(behavioural=True)).json()
+def test_requested_behaviour_puts_the_path_at_theta_inside_its_box(client, priced) -> None:
+    body = client.post("/predictif/simulate",
+                       json=_payload(reform=TOP_RATE_50, behavioural=True)).json()
     band = next(s for s in body["slices"] if s["source"] == "bande")
     assert band["computed"] is True and len(band["low"]) == 10
     assert all(lo <= c <= hi for lo, c, hi in zip(band["low"], body["reform"],
                                                   band["high"], strict=True))
+    behaviour = body["behaviour"]
+    assert behaviour["claimed"] == ["eti_all", "eti_top_decile"]
+    low, high = behaviour["box_first_year_eur"]
+    assert low < behaviour["receipts_first_year_eur"] < high < 0
+    # The rates rise, so the base shrinks: the path at θ sits above the mechanical one.
+    assert body["delta"][0] > body["delta_mechanical"][0] > 0
+    assert body["theta_applied"] is True
+
+
+def test_the_theta_is_listed_for_every_open_row_and_the_closed_say_why(
+        client, priced) -> None:
+    body = client.post("/predictif/simulate", json=_payload(
+        theta={"common": 0.5, "rows": {"eti_all": 0.1}})).json()
+    assert len(body["theta"]) == 8 and body["theta"]["eti_all"] == 0.1
+    assert body["theta_applied"] is False and "θ" in body["absent"]
+    assert "dividendes" in body["closed"] and all(body["closed"].values())
+    assert body["behaviour"] is None
+
+
+def test_a_request_without_theta_is_refused_before_any_pass(client, priced) -> None:
+    """GUARD 1. No default θ — not even 1/2, which the page may prefill only if it shows
+    it."""
+    payload = _payload()
+    del payload["theta"]
+    assert client.post("/predictif/simulate", json=payload).status_code == 422
+    response = client.post("/predictif/simulate", json=_payload(theta={}))
+    assert response.status_code == 422 and "Aucun défaut" in response.json()["detail"]
+    assert priced == []
+
+
+@pytest.mark.parametrize("theta, needle", [
+    ({"common": 1.2}, "écrêté"),
+    ({"common": 0.5, "rows": {"eti_al": 0.2}}, "inconnues"),
+])
+def test_a_theta_out_of_range_or_for_an_unknown_row_is_refused_by_name(
+        client, priced, theta: dict, needle: str) -> None:
+    response = client.post("/predictif/simulate", json=_payload(theta=theta))
+    assert response.status_code == 422 and needle in response.json()["detail"]
+    assert priced == []
 
 
 @pytest.mark.parametrize("missing", ["spending", "growth", "rate", "horizon"])

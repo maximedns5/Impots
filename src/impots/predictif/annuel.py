@@ -18,6 +18,10 @@ builds the uprating from the growth scenario so the CLI cannot get it wrong.
 
 NO CARRY CONVENTION. Every year of the horizon is priced, so the chain is called without
 one; a missing year is refused there, by the chain's own guard.
+
+THE MECHANICAL VIEW, θ NAMED (D-217). The command prices no behaviour: the report lists
+the θ it was given, with the chain's statement that nothing reads them, rather than
+leaving the reader to wonder at which θ the path was drawn.
 """
 
 from __future__ import annotations
@@ -31,6 +35,7 @@ from impots.dette.path import DebtError, SpendingScenario
 from impots.dette.reference import Start
 from impots.dette.scenarios import GrowthScenario, RateScenario
 from impots.predictif import chaine
+from impots.predictif.theta import Theta
 from impots.uprating import Uprating
 
 VIEWS = ("figee", "vieillie")
@@ -108,6 +113,8 @@ class Rapport:
             "years": rows,
             "conventions": list(self.aged.conventions),
             "absent": dict(self.aged.absent),
+            "theta": dict(self.aged.theta), "theta_applied": self.aged.theta_applied,
+            "closed": dict(self.aged.closed),
             "uprating_note": self.uprating_note,
             "banner": self.aged.banner, "debt_banner": DEBT_BANNER,
         }
@@ -115,8 +122,9 @@ class Rapport:
 
 def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
           source: str, reference: str, computed: str, spending: SpendingScenario,
-          growth: GrowthScenario, rate: RateScenario, uprating: Uprating,
-          uprating_note: str, securities: list[Any] | None = None) -> Rapport:
+          growth: GrowthScenario, rate: RateScenario, theta: Theta | None,
+          uprating: Uprating, uprating_note: str,
+          securities: list[Any] | None = None) -> Rapport:
     """Both debt paths from the priced years. No carry: every year must be priced."""
     check_coherence(uprating, growth)
     if not prices:
@@ -125,7 +133,7 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
     def path(attribute: str) -> chaine.Trajectoire:
         costs = chaine.ReformCosts(by_year={p.year: getattr(p, attribute) for p in prices})
         return chaine.run(start, horizon=len(prices), costs=costs, spending=spending,
-                          growth=growth, rate=rate, securities=securities)
+                          growth=growth, rate=rate, theta=theta, securities=securities)
 
     return Rapport(scenario=scenario, titre=titre, source=source, reference=reference,
                    computed=computed, start=start, prices=tuple(prices),

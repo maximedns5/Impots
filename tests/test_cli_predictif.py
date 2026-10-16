@@ -25,8 +25,8 @@ ARGS = ["predictif", "gel_bareme", "--reference", "reconduit",
         "--growth-name", "Croissance réelle 1 %, prix 2 %", "--real", "0.01",
         "--prices", "0.02",
         "--rate-name", "Taux implicite tenu à son niveau de 2025",
-        "--rate-kind", "implicite_tenu", "--horizon", "3", "--wage", "0.03",
-        "--hypothesis-source", "test : 2 % de prix, 3 % de salaires"]
+        "--rate-kind", "implicite_tenu", "--horizon", "3", "--theta", "0.5",
+        "--wage", "0.03", "--hypothesis-source", "test : 2 % de prix, 3 % de salaires"]
 
 
 @pytest.fixture
@@ -67,7 +67,8 @@ def test_every_year_is_priced_in_both_views_and_the_report_written(stubbed) -> N
 
 
 @pytest.mark.parametrize("flag", ["--spending", "--growth-name", "--rate-kind",
-                                  "--horizon", "--wage", "--hypothesis-source"])
+                                  "--horizon", "--theta", "--wage",
+                                  "--hypothesis-source"])
 def test_no_hypothesis_of_the_command_has_a_default(stubbed, flag: str) -> None:
     args = list(ARGS)
     index = args.index(flag)
@@ -80,6 +81,15 @@ def test_no_hypothesis_of_the_command_has_a_default(stubbed, flag: str) -> None:
 def test_a_shipped_rule_refuses_a_name_before_any_pass(stubbed, capsys) -> None:
     code = cli.main([*ARGS, "--spending-name", "Autre", "--out-dir", str(stubbed["out"])])
     assert code == 1 and "ignoré" in capsys.readouterr().err
+    assert stubbed["seen"] == []
+
+
+def test_a_theta_outside_the_unit_interval_is_refused_before_any_pass(
+        stubbed, capsys) -> None:
+    args = list(ARGS)
+    args[args.index("--theta") + 1] = "1.2"
+    assert cli.main([*args, "--out-dir", str(stubbed["out"])]) == 1
+    assert "écrêté" in capsys.readouterr().err
     assert stubbed["seen"] == []
 
 
@@ -107,6 +117,7 @@ def test_the_report_is_listed_and_served(served) -> None:
     body = served.get("/predictif/gel_bareme").json()
     assert body["rate_name"] == "Taux implicite tenu à son niveau de 2025"
     assert len(body["years"]) == 3 and "rétroaction" in body["absent"]
+    assert body["theta_applied"] is False and len(body["theta"]) == 8
 
 
 def test_an_unknown_report_is_a_404_and_a_path_is_refused(served) -> None:

@@ -29,7 +29,7 @@ thresholds:
 parameters:
   {key}:
     value: {{central: {central}, low: {low}, high: {high}, distribution: triangular}}
-    applies_to: a test parameter
+{theta}    applies_to: a test parameter
     responds_to_knobs: [ir_bareme, decote_*]
     support:
       estimated_on: nothing at all
@@ -40,12 +40,17 @@ parameters:
 """
 
 
+#: Every open row declares which end θ = 1 designates (D-217); the fixture does too, as
+#: a real row must. `theta=""` writes a row without it, for the guard's own tests.
+THETA_HIGH = "    theta: {un: high, raison: une élasticité plus grande est plus forte}\n"
+
+
 def write_store(tmp_path: Path, *, key: str = "eti_all", central: float = 0.3,
                 low: float = 0.1, high: float = 0.5, support: str = "0.05",
-                verdict: str = "CONFIRMED") -> Path:
+                verdict: str = "CONFIRMED", theta: str = THETA_HIGH) -> Path:
     (tmp_path / f"{key}.yaml").write_text(
         YAML_TEMPLATE.format(key=key, central=central, low=low, high=high,
-                             support=support, verdict=verdict),
+                             support=support, verdict=verdict, theta=theta),
         encoding="utf-8",
     )
     return tmp_path
@@ -108,6 +113,46 @@ def test_non_strict_loading_records_why_rather_than_raising(tmp_path: Path) -> N
     store = load_store(write_store(tmp_path, verdict="null"), strict=False)
     assert "eti_all" not in store
     assert "no verifier verdict" in store.rejected["eti_all"]
+
+
+def test_an_open_row_without_its_theta_direction_is_refused(tmp_path: Path) -> None:
+    """D-217, the kill test of guard 4 (PHASE9_SPEC §2.4): which end θ = 1 designates
+    cannot be read from the sign, so a row that does not say is refused, not defaulted."""
+    from impots.behavioural.store import UndeclaredTheta
+
+    with pytest.raises(UndeclaredTheta, match="undeclared"):
+        load_store(write_store(tmp_path, theta=""))
+    store = load_store(write_store(tmp_path, theta=""), strict=False)
+    assert "eti_all" not in store and "θ undeclared" in store.rejected["eti_all"]
+
+
+@pytest.mark.parametrize("theta, needle", [
+    ("    theta: {un: middle, raison: x}\n", "undeclared"),
+    ("    theta: {un: high}\n", "reason"),
+])
+def test_a_theta_direction_must_name_an_end_and_give_its_reason(
+        tmp_path: Path, theta: str, needle: str) -> None:
+    from impots.behavioural.store import UndeclaredTheta
+
+    with pytest.raises(UndeclaredTheta, match=needle):
+        load_store(write_store(tmp_path, theta=theta))
+
+
+def test_a_fixed_row_carries_no_theta_and_still_loads(tmp_path: Path) -> None:
+    """low = high: there is nothing for θ to move, and the row says so by being fixed."""
+    store = load_store(write_store(tmp_path, central=0.2, low=0.2, high=0.2, theta=""))
+    assert "eti_all" in store and not store["eti_all"].is_open
+
+
+def test_every_open_row_of_the_shipped_store_declares_its_direction() -> None:
+    """The shipped YAML, read whole: every open row says which end is the strongest."""
+    from impots.behavioural.store import load
+
+    store = load()
+    open_rows = [p for p in store.parameters.values() if p.is_open]
+    assert len(open_rows) == 8
+    assert all(p.theta_one in ("low", "high") and p.theta_reason for p in open_rows)
+    assert store["employment_elasticity_smic"].theta_one == "low"
 
 
 def test_a_central_value_outside_its_range_is_refused() -> None:
