@@ -67,9 +67,10 @@ from `main`.
 what a household can declare, and twenty-one places where this project corrects
 openfisca's reading of the law. It has its own section below.
 
-**2 222 tests at the last logged full pass** (`5b1ec10`, 2026-10-14, logged in
-`b24de21`): 2 106 passed and 116 skipped, the skips being tests whose source files a fresh
-clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
+**2 222 tests at the last logged full pass** (`05cc944`, D-204's commit, run on
+2026-10-16): 2 106 passed and 116 skipped, the skips being tests whose source files a
+fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits behind
+`main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
 PR. The project also has fourteen replayable `verify_*.py` gate scripts and **218 decision
@@ -415,7 +416,7 @@ download list.
    decomposed (D-210) and the population recalibrated on the retirement boxes (D-211).
    What it leaves: a full pass and the reports regenerated on the owner's machine, the
    first since the pension target moved and, with Actions down, the only whole-suite
-   check D-210 and D-211 will get; the report's direction line, which counts
+   check D-210 and D-211 will get — the 2026-10-16 pass ran on `05cc944`, before them; the report's direction line, which counts
    signs; and art. 2's outside grade.
 2. **Phase 9, M3** (`docs/PHASE9_SPEC.md` §4): the GDP → receipts loop from Mésange's
    primary-balance row, under `gele_en_volume` only, which also wires the multiplier's
