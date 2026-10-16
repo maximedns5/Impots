@@ -73,6 +73,27 @@ class DebtError(RuntimeError):
     """A debt path was asked for in a way that would mislead."""
 
 
+def check_scenario_name(name: str, what: str) -> None:
+    """The guard every named scenario shares: a name, and no word of likelihood.
+
+    Written once so the spending, growth and rate scenarios cannot drift apart: a rule
+    enforced on one scenario and forgotten on its neighbour is a rule a reader cannot
+    rely on, since the chart shows all three names side by side.
+    """
+    if not name.strip():
+        raise DebtError(
+            f"un scénario {what} sans nom est un scénario invisible : le nom est ce "
+            f"qui s'affiche sur le graphique, et c'est la seule chose qui empêche un "
+            f"lecteur de prendre une hypothèse pour une donnée.")
+    lowered = name.lower()
+    hit = [w for w in PROBABILITY_WORDS if w in lowered]
+    if hit:
+        raise DebtError(
+            f"le nom du scénario porte un vocabulaire de probabilité {hit} : rien ici "
+            f"n'a de modèle de probabilité, et un scénario nommé « probable » est une "
+            f"affirmation de vraisemblance que ce module ne peut pas soutenir.")
+
+
 @dataclass(frozen=True)
 class SpendingScenario:
     """A named spending path. The name is displayed on the chart, not in a tooltip.
@@ -86,18 +107,7 @@ class SpendingScenario:
     growth: float | None = None
 
     def __post_init__(self) -> None:
-        if not self.name.strip():
-            raise DebtError(
-                "un scénario de dépense sans nom est un scénario invisible : le nom est ce "
-                "qui s'affiche sur le graphique, et c'est la seule chose qui empêche un "
-                "lecteur de prendre une hypothèse pour une donnée.")
-        lowered = self.name.lower()
-        hit = [w for w in PROBABILITY_WORDS if w in lowered]
-        if hit:
-            raise DebtError(
-                f"le nom du scénario porte un vocabulaire de probabilité {hit} : rien ici "
-                f"n'a de modèle de probabilité, et un scénario nommé « probable » est une "
-                f"affirmation de vraisemblance que ce module ne peut pas soutenir.")
+        check_scenario_name(self.name, "de dépense")
         if self.rule == "personnalise" and self.growth is None:
             raise DebtError(
                 "« personnalisé » sans taux de croissance : la personnalisation EST le "

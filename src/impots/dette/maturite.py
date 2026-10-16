@@ -41,6 +41,7 @@ inside it is a perimeter error with a certificate.
 from __future__ import annotations
 
 import datetime as dt
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 #: The reference date of the manifested bulletin's per-line tables. Every maturity is
@@ -146,14 +147,26 @@ def redemption_schedule(securities: list[Security], *, as_of: dt.date = AS_OF,
 
 
 def implicit_rate_path(securities: list[Security], *, market_rate: float,
-                       scenario: str, deficit_eur: float = 0.0,
+                       scenario: str, deficit_eur: float | Sequence[float] = 0.0,
                        years: int = 5, as_of: dt.date = AS_OF) -> list[RatePoint]:
     """The implicit rate year by year, under a NAMED market-rate scenario.
 
     `scenario` is mandatory and unused by the arithmetic — it exists to be displayed. A
     rate path whose scenario has no name is a forecast wearing a projection's clothes, and
     this module will not produce one.
+
+    `deficit_eur` is one figure for every year, or one per year (phase 9: each trajectory
+    issues its own deficits, so a reform that widens them borrows more at the market rate).
+    A sequence of the wrong length is refused rather than cycled or truncated.
     """
+    if isinstance(deficit_eur, (int, float)):
+        deficits = [float(deficit_eur)] * years
+    else:
+        deficits = [float(d) for d in deficit_eur]
+        if len(deficits) != years:
+            raise MaturityError(
+                f"{len(deficits)} déficits pour {years} années : un déficit manquant "
+                f"serait pris pour un déficit nul, et la dette émise serait sous-estimée.")
     if not scenario.strip():
         raise MaturityError(
             "un scénario de taux sans nom : ce module ne produit pas de trajectoire de "
@@ -177,7 +190,7 @@ def implicit_rate_path(securities: list[Security], *, market_rate: float,
             share = min(maturing / old_stock, 1.0)
             old_interest *= (1.0 - share)
             old_stock -= min(maturing, old_stock)
-        new_stock += maturing + deficit_eur
+        new_stock += maturing + deficits[offset]
         stock = old_stock + new_stock
         interest = old_interest + market_rate * new_stock
         out.append(RatePoint(

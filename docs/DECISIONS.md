@@ -15463,3 +15463,81 @@ donnée, elle a fait tomber le contrôle. `ruff` passe sur le script.
 **Ce qui reste.** M1, la chaîne, qui n'a besoin d'aucune donnée nouvelle. Manifester l'IZA
 DP 6735. Lire le rapport 2023 du comité d'évaluation de la fiscalité du capital, piste de
 l'investissement sous l'IS. Télécharger la note du HCFP sur le réseau du propriétaire.
+
+## D-215 — M1 de la phase 9 : la chaîne réforme → solde → dette est reliée
+
+**Le fait.** M1 (`docs/PHASE9_SPEC.md` §3, resserré par D-214) relie trois étages qui ne
+se parlaient pas : le chiffrage d'une réforme, le solde primaire et la trajectoire de
+dette. Le chiffre de tête est l'écart Δb entre deux trajectoires calculées sous les mêmes
+scénarios nommés. Les deux niveaux s'affichent à côté, mais c'est l'écart qui répond à la
+question « cette réforme fait-elle baisser la dette ? ».
+
+**La règle de dépense calcule enfin** (correction 3 de D-213). `dette/reference.py` part
+du dernier compte publié. Les recettes restent une part constante du PIB, convention
+nommée « prélèvements constants en % du PIB ». La dépense suit la règle choisie :
+`part_pib_constante` garde sa part, `gele_en_volume` la fait croître comme les prix,
+`personnalise` à son taux. Sur les comptes de 2025, avec 1 % de croissance en volume et
+2 % de prix, la référence finit 2035 à 132 % du PIB sous la première règle et à 104 % sous
+la deuxième. Vingt-huit points séparent les deux : c'est pour cela que le nom de la règle
+doit figurer sur le graphique.
+
+**Le point de départ est publié, pas reconstruit.** La table INSEE 3.201 (« Dépenses et
+recettes des administrations publiques », millésime 2025) entre au manifeste. Ses totaux
+sont consolidés, ce que la table 7.301 n'est pas sur toutes ses lignes. Les recettes
+moins les dépenses y redonnent B9 à la dernière décimale, et B9 comme l'intérêt net
+concordent avec la 7.301. C'est le seul lecteur du dépôt qui compare des libellés,
+puisqu'un total n'a pas de code SEC. Le libellé doit donc correspondre en entier, et les
+contrôles de bouclage font échouer une ligne mal lue. Pour 2025 : dépense primaire 55,1 %
+du PIB, recettes primaires 52,1 %, solde primaire −2,99 % (le chiffre de D-168, retrouvé
+par une autre table), taux implicite 1,88 %.
+
+**Deux scénarios de plus, nommés comme le premier.** `GrowthScenario` sépare le volume et
+les prix, faute de quoi `gele_en_volume` ne se calcule pas. `RateScenario` vaut
+`implicite_tenu` (le taux de 2025 pour toute la dette) ou `marche` (refinancement des
+titres de l'État au taux de marché, et la dette supplémentaire au même taux). Les trois
+partagent une seule garde de nom, `path.check_scenario_name`, extraite de
+`SpendingScenario` sans changer ses messages. Le scénario `marche` a besoin de l'encours
+AFT ; www.aft.gouv.fr refuse ce conteneur (403), et le scénario refuse nommément sans lui.
+
+**L'écart est l'identité appliquée à la différence.** Le coût de la réforme s'ajoute au
+déficit de chaque année. La dette supplémentaire suit ΔD_t = ΔD_{t-1} (1 + m) + Δcoût_t, où
+m est le taux du dernier euro emprunté. Divisée par le même PIB, c'est l'identité de dette
+elle-même, que `path.project` calcule avec b0 = 0 et r = m.
+
+**La version rapide, conformément à M0.** `POST /predictif/simulate` chiffre la première
+année projetée (2026) sur la population de 20 000 ménages, comme `/population/simulate`.
+Les années suivantes reprennent ce coût en part de PIB constante, et chacune porte
+l'étiquette « report ». Aucune hypothèse n'a de défaut : sans scénario de dépense, de
+croissance, de taux ou sans horizon, la requête est refusée. La bande comportementale est
+optionnelle. La rétroaction du PIB reste absente jusqu'à M3, avec sa raison, et
+`dominant_source` refuse de désigner une source dominante tant qu'elle manque.
+
+**Un essai sur la vraie population et les vrais comptes.** Supprimer le plafond de
+l'abattement de 10 % sur les pensions rapporte 5,24 Md€ en 2026. Sous « dépenses gelées en
+volume », 1 % de volume, 2 % de prix et le taux de 2025 tenu, la dette baisse de 0,17 point
+de PIB en 2026 et de 1,62 point en 2035, report compris. Réponse en 122 s. Ce chiffre
+compte la réforme sans aucun comportement ni retour de l'activité. Il n'est pas un
+chiffrage de la mesure : il montre ce que la chaîne sait faire.
+
+**Un piège de l'environnement, consigné pour la suite.** Le paquet est installé en mode
+éditable depuis le dépôt principal (`/home/user/Impots/src`). Dans un autre arbre de
+travail, `pytest` importait donc le code de cet arbre-là et non celui de la branche. Un
+premier passage de `tests/test_dette.py`, après l'extraction de la garde de nom, a ainsi
+testé l'ancien code. Tout a été relancé avec `PYTHONPATH` pointé sur la branche.
+
+**Les tests.** Nouveaux : `tests/test_dette_reference.py` (23), `tests/test_predictif.py`
+(17), `tests/test_api_predictif.py` (10). Relancés : `tests/test_dette.py`,
+`test_dette_maturite.py`, `test_dette_comptes.py`, `test_dette_decomposition.py`. Chaque
+garde nouvelle a été vue échouer sur une mutation, quinze en tout. Pour la table 3.201 :
+le bouclage, la comparaison du libellé en entier, l'accord avec la 7.301. Pour la règle de
+dépense : `gele_en_volume` réduit à « part constante ». Pour l'encours : la longueur des
+déficits. Pour la chaîne : le signe de la bande, le taux marginal, le report non nommé, la
+bannière, les années trouées, le taux de l'écart, le scénario de taux absent, le signe du
+coût. Pour l'API : le nom ignoré d'une règle livrée, l'encours AFT absent. Voisins :
+`tests/test_provenance.py`, `test_donnees.py`, `test_api.py`, `test_charter.py` et
+`test_dependances.py`, 127 réussis et 13 désélectionnés par le marqueur par défaut.
+`ruff` passe.
+
+**Ce qui reste.** M1b : la commande `impots predictif`, qui chiffre les dix années une à
+une (vue vieillie et vue figée), et le panneau de la page. Ensuite M2, les θ, et M3, la
+rétroaction sous `gele_en_volume`.

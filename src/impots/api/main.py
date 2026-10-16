@@ -51,6 +51,10 @@ from impots.api.schemas import (
     PopulationMeta,
     PopulationResponse,
     PopulationSimulateRequest,
+    PredictifRequest,
+    PredictifResponse,
+    PredictifSlice,
+    PredictifStart,
     ReconciliationLine,
     ResultRows,
     ScenarioDetail,
@@ -960,6 +964,95 @@ def emtr_show(name: str) -> EmtrCurveResponse:
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"courbe « {name} » inconnue")
     return EmtrCurveResponse.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+#: The last APU account the manifested tables publish (millésime 2025). The chain starts
+#: there and its first projected year is the one the population layer prices.
+PREDICTIF_START_YEAR = 2025
+
+
+@app.post("/predictif/simulate", response_model=PredictifResponse)
+def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
+    """The reform's debt path against the reference, under named scenarios (PHASE9_SPEC §3).
+
+    THE FAST VERSION (M0, R3). Pricing ten years one by one takes about an hour, so this
+    endpoint prices the FIRST projected year on the quick-tier population — the same run
+    `/population/simulate` makes — and carries that cost as a constant share of GDP, a
+    convention every carried year is labelled with. The full year-by-year path belongs to
+    a batch command.
+    """
+    from impots.dette import maturite
+    from impots.dette import reference as reference_module
+    from impots.dette.path import BANNER as DEBT_BANNER
+    from impots.dette.path import SHIPPED, DebtError, SpendingScenario
+    from impots.dette.scenarios import GrowthScenario, RateScenario
+    from impots.predictif import chaine
+
+    try:
+        if request.spending.rule == "personnalise":
+            spending = SpendingScenario(request.spending.name or "", "personnalise",
+                                        growth=request.spending.growth)
+        else:
+            if request.spending.name is not None or request.spending.growth is not None:
+                raise DebtError(
+                    f"la règle « {request.spending.rule} » porte son propre nom et ne lit "
+                    f"aucun taux : un nom ou un taux fourni avec elle serait ignoré.")
+            spending = SHIPPED[request.spending.rule]
+        growth = GrowthScenario(request.growth.name, request.growth.real,
+                                request.growth.prices)
+        rate = RateScenario(request.rate.name, request.rate.kind,
+                            market_rate=request.rate.market_rate)
+    except DebtError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+
+    try:
+        start = reference_module.start_from_accounts(PREDICTIF_START_YEAR)
+        securities = maturite.load_block1() if rate.kind == "marche" else None
+    except (DebtError, maturite.MaturityError, OSError) as error:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Données de départ indisponibles dans ce checkout : {error}") from error
+
+    year = start.year + 1
+    if year > MAX_YEAR:
+        raise HTTPException(
+            status_code=422,
+            detail=f"la première année projetée, {year}, sort de la fenêtre que la couche "
+                   f"population sert ({MIN_YEAR}–{MAX_YEAR}).")
+    population = population_simulate(PopulationSimulateRequest(
+        reform=request.reform, year=year, behavioural=request.behavioural))
+    if population.reform_cost is None:  # pragma: no cover - a reform always has a cost
+        raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
+    band = population.behavioural.band if population.behavioural else None
+    costs = chaine.ReformCosts(
+        by_year={year: float(population.reform_cost)}, carry=chaine.CARRY,
+        behavioural=({year: (band.p10, band.p90)} if band is not None else None))
+    try:
+        result = chaine.run(start, horizon=request.horizon, costs=costs,
+                            spending=spending, growth=growth, rate=rate,
+                            securities=securities)
+    except (DebtError, maturite.MaturityError) as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+
+    return PredictifResponse(
+        years=list(result.years), reference=list(result.reference),
+        reform=list(result.reform), delta=list(result.delta),
+        reference_primary=list(result.reference_primary),
+        delta_primary=list(result.delta_primary),
+        priced_years=list(result.priced_years), carried_years=list(result.carried_years),
+        spending_name=result.spending_name, growth_name=result.growth_name,
+        rate_name=result.rate_name, conventions=list(result.conventions),
+        absent=dict(result.absent),
+        slices=[PredictifSlice(source=s.source, label=s.label, computed=s.computed,
+                               reason=s.reason, low=list(s.low), high=list(s.high))
+                for s in result.decomposition.slices],
+        start=PredictifStart(year=start.year, debt_ratio=start.debt_ratio,
+                             primary_balance=start.primary_balance,
+                             implicit_rate=start.implicit_rate, gdp_eur=start.gdp_eur),
+        mechanical_first_year_eur=float(population.reform_cost),
+        population_note=population.meta.note,
+        banner=result.banner, debt_banner=DEBT_BANNER,
+    )
 
 
 @app.get("/", include_in_schema=False)

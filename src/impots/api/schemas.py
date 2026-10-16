@@ -1659,3 +1659,100 @@ class EmtrCurveListResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     courbes: list[str] = Field(default_factory=list)
+
+
+# --------------------------------------------------------------------------- #
+# Phase 9 M1 — the conditional predictive chain (PHASE9_SPEC §3.4)
+#
+# Every hypothesis is a REQUIRED field: no spending, growth or rate scenario has a
+# default, because a default here would be the scenario nobody chose (D-213).
+# --------------------------------------------------------------------------- #
+class PredictifSpending(BaseModel):
+    model_config = INPUT_CONFIG
+
+    rule: Literal["part_pib_constante", "gele_en_volume", "personnalise"]
+    name: str | None = None
+    """Required with « personnalise », whose name is the caller's; the two shipped rules
+    carry their own names and refuse another."""
+    growth: float | None = None
+
+
+class PredictifGrowth(BaseModel):
+    model_config = INPUT_CONFIG
+
+    name: str
+    real: Annotated[float, Field(gt=-1.0, lt=1.0)]
+    prices: Annotated[float, Field(gt=-1.0, lt=1.0)]
+
+
+class PredictifRate(BaseModel):
+    model_config = INPUT_CONFIG
+
+    name: str
+    kind: Literal["implicite_tenu", "marche"]
+    market_rate: Annotated[float, Field(gt=-0.1, lt=0.5)] | None = None
+
+
+class PredictifRequest(BaseModel):
+    model_config = INPUT_CONFIG
+
+    reform: ReformSpec
+    spending: PredictifSpending
+    growth: PredictifGrowth
+    rate: PredictifRate
+    horizon: Annotated[int, Field(ge=1, le=10)]
+    behavioural: bool = False
+
+    @model_validator(mode="after")
+    def _check_reform(self) -> PredictifRequest:
+        if self.reform.is_empty():
+            raise ValueError("Une réforme est requise : sans réforme, la trajectoire de "
+                             "la réforme est celle de la référence.")
+        return self
+
+
+class PredictifSlice(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    source: str
+    label: str
+    computed: bool
+    reason: str = ""
+    low: list[float] = Field(default_factory=list)
+    high: list[float] = Field(default_factory=list)
+
+
+class PredictifStart(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    year: int
+    debt_ratio: float
+    primary_balance: float
+    implicit_rate: float
+    gdp_eur: float
+
+
+class PredictifResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    years: list[int]
+    reference: list[float]
+    reform: list[float]
+    delta: list[float]
+    """Reform minus reference, in points of GDP (0.01 = one point)."""
+    reference_primary: list[float]
+    delta_primary: list[float]
+    priced_years: list[int]
+    carried_years: list[int]
+    spending_name: str
+    growth_name: str
+    rate_name: str
+    conventions: list[str]
+    absent: dict[str, str]
+    slices: list[PredictifSlice]
+    start: PredictifStart
+    mechanical_first_year_eur: float
+    """The engine's cost for the first projected year, COST POSITIVE."""
+    population_note: str
+    banner: str
+    debt_banner: str
