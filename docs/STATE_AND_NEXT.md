@@ -1,6 +1,9 @@
-# State of the project, and the directions open — 2026-10-16 (Phase 9, M1 done)
+# State of the project, and the directions open — 2026-10-16 (Phase 9, M1b done)
 
-The fourth 2026-10-16 update adds D-215, Phase 9's M1: the chain reform → primary
+The fifth 2026-10-16 update adds D-216, Phase 9's M1b: `impots predictif` prices every
+year of the horizon on the frozen and the aged population and writes
+`reports/predictif_<scenario>.json`, which `GET /predictif` serves; the page gains a
+« Et la dette ? » panel whose scenario lists start empty. The fourth added D-215, Phase 9's M1: the chain reform → primary
 balance → debt is linked (`predictif/chaine.py`, `dette/reference.py`), the spending rule
 finally computes, growth and rate scenarios are named, and `POST /predictif/simulate`
 serves the fast version (first projected year priced, later years carried as a share of
@@ -65,8 +68,8 @@ openfisca's reading of the law. It has its own section below.
 clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **216 decision
-entries**, D-000 to D-215, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **217 decision
+entries**, D-000 to D-216, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -410,9 +413,10 @@ download list.
    first since the pension target moved and, with Actions down, the only whole-suite
    check D-210 and D-211 will get; the report's direction line, which counts
    signs; and art. 2's outside grade.
-2. **Phase 9, M1b then M2** (`docs/PHASE9_SPEC.md` §3-§2). M1 is done (D-215); M1b is
-   the `impots predictif` command, which prices the ten years one by one (aged and frozen
-   views), and the page's panel. Then M2, θ. Still open from M0: the HCFP note (its host
+2. **Phase 9, M2** (`docs/PHASE9_SPEC.md` §2): the θ coefficients, a pinned view of the
+   behavioural store, each row's direction declared, and the guards of §2.4. M1 and M1b
+   are done (D-215, D-216). A full ten-year `impots predictif` run is about an hour on the
+   owner's machine. Still open from M0: the HCFP note (its host
    refuses this container), the IZA DP 6735 to manifest, France Stratégie's 2023
    capital-taxation report to read, and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.

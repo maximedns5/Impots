@@ -483,6 +483,20 @@ tr.total td:first-child { font-family: var(--sans) !important; font-weight: 600;
 .traj .tnote { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; margin: 10px 0 0; }
 .traj .tlegend { font-size: 11px; color: var(--ink-faint); margin: 8px 0 0 152px; line-height: 1.5; }
 
+/* Phase 9 · the conditional debt path. A table, not a curve: each year is a computed
+   point, and the carried ones say so in their own column. The three scenario names sit
+   in the TITLE, never in a tooltip (§3.5 of Phase 8, kept by D-213). */
+.pred { margin: 26px 0 0; }
+.pred .ptitle { font-family: var(--serif); font-weight: 600; font-size: 17px; margin: 0 0 4px; }
+.pred .pnames { font-size: 12px; color: var(--ink-soft); line-height: 1.5; margin: 0 0 10px; }
+.pred .pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px 14px; margin: 10px 0 12px; }
+.pred table { border-collapse: collapse; width: 100%; font-size: 12px; margin: 8px 0; }
+.pred th, .pred td { padding: 4px 8px; border-bottom: 1px solid var(--rule); text-align: right; font-variant-numeric: tabular-nums; }
+.pred th:first-child, .pred td:first-child { text-align: left; }
+.pred td.carried { color: var(--rouge); font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; }
+.pred .tbanner { font-size: 12.5px; line-height: 1.55; margin: 0 0 12px; padding: 8px 12px; border-left: 2px solid var(--ink); background: var(--paper-deep); }
+.pred .tnote { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; margin: 6px 0 0; }
+
 /* the EMTR explorer: one row per income point, the rate as a bar, 50 % and 100 % marked.
    Same idiom as the decile chart — a signed magnitude per row — because it is the same
    kind of quantity. A CLIFF (rate > 100 %) is marked, never plotted as a taper: its
@@ -1163,6 +1177,10 @@ footer code { font-family: var(--mono); font-size: 11px; }
              précalculé par `impots trajectoire`. Masquée s'il n'y en a pas. -->
         <div id="trajHost" hidden></div>
 
+        <!-- Phase 9 · trajectoire de dette, chaque année chiffrée, lue depuis un rapport
+             précalculé par `impots predictif`. Masquée s'il n'y en a pas. -->
+        <div id="predHost" hidden></div>
+
         <!-- F6 · explorateur EMTR, lu depuis un balayage précalculé. -->
         <div id="emtrHost" hidden></div>
 
@@ -1194,6 +1212,38 @@ footer code { font-family: var(--mono); font-size: 11px; }
         </div>
 
         <div id="popOut"></div>
+
+        <!-- Phase 9 · la version rapide : la première année chiffrée, les suivantes
+             reportées en part de PIB. Aucun scénario n'a de défaut (D-213) : une liste
+             vide refuse, elle ne choisit pas. -->
+        <div class="pred" id="predPanel">
+          <h2 class="ptitle">Et la dette ? Le prédictif conditionnel</h2>
+          <p class="tnote">Chaque chiffre dépend des trois scénarios que vous nommez ici. Ce
+            n'est pas une prévision : changer un scénario change la réponse.</p>
+          <div class="pgrid">
+            <label class="lbl">Dépense publique
+              <select id="predSpending">
+                <option value="" selected>— à choisir —</option>
+                <option value="part_pib_constante">Dépenses constantes en % du PIB</option>
+                <option value="gele_en_volume">Dépenses gelées en volume</option>
+              </select></label>
+            <label class="lbl">Croissance, son nom
+              <input id="predGrowthName" placeholder="ex. Croissance réelle 1 %, prix 2 %"></label>
+            <label class="lbl">en volume, % par an <input id="predReal" type="number" step="0.1"></label>
+            <label class="lbl">des prix, % par an <input id="predPrices" type="number" step="0.1"></label>
+            <label class="lbl">Taux
+              <select id="predRateKind">
+                <option value="" selected>— à choisir —</option>
+                <option value="implicite_tenu">Taux implicite tenu à son niveau de 2025</option>
+                <option value="marche">Refinancement au taux de marché</option>
+              </select></label>
+            <label class="lbl">taux de marché, % <input id="predMarket" type="number" step="0.1"></label>
+            <label class="lbl">Horizon, années (1 à 10)
+              <input id="predHorizon" type="number" min="1" max="10"></label>
+          </div>
+          <button class="go" id="goPred">Tracer la dette (version rapide)</button>
+          <div id="predOut"></div>
+        </div>
       </section>
 
       <section id="paneFirms" hidden>
@@ -2832,6 +2882,145 @@ function renderTrajectoire(host, t) {
   host.hidden = false;
 }
 
+/* Phase 9 · the conditional debt path. Nothing is chosen for the reader (D-213): the
+   payload builder lists what is missing and sends nothing, rather than filling a gap
+   with a scenario nobody picked. The three names travel to the chart's title. */
+const RATE_HELD_NAME = "Taux implicite tenu à son niveau de 2025";
+const pctFr = (v, d = 1) => `${(v * 100).toFixed(d).replace(".", ",")} %`;
+const ptFr = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(v * 100).toFixed(2).replace(".", ",")} pt`;
+
+function predictifPayload() {
+  const missing = [];
+  const spec = reformSpec();
+  if (!spec) missing.push("une réforme, dans le panneau « Votre réforme »");
+  const rule = $("predSpending").value;
+  if (!rule) missing.push("un scénario de dépense");
+  const growthName = $("predGrowthName").value.trim();
+  const real = $("predReal").value, prices = $("predPrices").value;
+  if (!growthName || real === "" || prices === "") {
+    missing.push("un scénario de croissance nommé, en volume et en prix");
+  }
+  const kind = $("predRateKind").value;
+  const market = $("predMarket").value;
+  if (!kind) missing.push("un scénario de taux");
+  else if (kind === "marche" && market === "") missing.push("le taux de marché");
+  const horizon = $("predHorizon").value;
+  if (horizon === "") missing.push("un horizon");
+  if (missing.length) return { missing };
+  const rate = kind === "marche"
+    ? { name: `Refinancement à ${String(market).replace(".", ",")} %`, kind,
+        market_rate: Number(market) / 100 }
+    : { name: RATE_HELD_NAME, kind };
+  return { payload: {
+    reform: spec, spending: { rule },
+    growth: { name: growthName, real: Number(real) / 100, prices: Number(prices) / 100 },
+    rate, horizon: Number(horizon), behavioural: $("wantBand").checked } };
+}
+
+async function runPredictif() {
+  const built = predictifPayload();
+  if (built.missing) {
+    $("predOut").innerHTML = `<div class="err"><h3>Il manque une hypothèse</h3>
+      <p>Rien n'est choisi à votre place. Il faut encore :
+         ${built.missing.map(escapeHtml).join(" ; ")}.</p></div>`;
+    return;
+  }
+  $("goPred").disabled = true;
+  $("goPred").textContent = "Calcul en cours…";
+  $("predOut").innerHTML = `<div class="state"><p class="loading-copy">une passe de
+    population pour la première année, puis l'arithmétique de la dette · comptez deux
+    minutes</p>${'<div class="skel"></div>'.repeat(5)}</div>`;
+  try {
+    const response = await fetch(`${API}/predictif/simulate`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(built.payload),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      $("predOut").innerHTML = `<div class="err"><h3>Requête refusée (${response.status})</h3>
+        ${detailMessages(data.detail).map((m) => `<p>${escapeHtml(m)}</p>`).join("")}</div>`;
+      return;
+    }
+    renderPredictif($("predOut"), data);
+  } catch (error) {
+    $("predOut").innerHTML = `<div class="err"><h3>Moteur injoignable</h3>
+      <p>Aucune réponse de ${escapeHtml(API)}.</p></div>`;
+  } finally {
+    $("goPred").disabled = false;
+    $("goPred").textContent = "Tracer la dette (version rapide)";
+  }
+}
+$("goPred").onclick = runPredictif;
+
+function predictifNames(d) {
+  return `Dépense : <b>${escapeHtml(d.spending_name)}</b> · Croissance :
+    <b>${escapeHtml(d.growth_name)}</b> · Taux : <b>${escapeHtml(d.rate_name)}</b>`;
+}
+
+function predictifNotes(d) {
+  const conventions = (d.conventions || []).map(
+    (c) => `<p class="tnote">Convention : ${escapeHtml(c)}</p>`).join("");
+  const absent = Object.entries(d.absent || {}).map(
+    ([k, v]) => `<p class="tnote"><b>Absent — ${escapeHtml(k)}.</b> ${escapeHtml(v)}</p>`).join("");
+  return `${conventions}${absent}<p class="tnote">${escapeHtml(d.debt_banner || "")}</p>`;
+}
+
+/* The fast version: the first year priced, the rest carried — and every carried row
+   says « report » in its own column, so a convention never reads as a costing. */
+function renderPredictif(host, d) {
+  const carried = new Set(d.carried_years || []);
+  const rows = (d.years || []).map((year, i) => `<tr>
+      <td>${year}</td><td>${pctFr(d.reference[i])}</td><td>${pctFr(d.reform[i])}</td>
+      <td>${ptFr(d.delta[i])}</td>
+      <td class="${carried.has(year) ? "carried" : ""}">${carried.has(year) ? "report" : "chiffré"}</td>
+    </tr>`).join("");
+  host.innerHTML = `<div class="pred">
+    <p class="tbanner"><b>${escapeHtml(d.banner)}</b></p>
+    <p class="pnames">${predictifNames(d)}</p>
+    <table><thead><tr><th>Année</th><th>Dette, référence</th><th>Dette, réforme</th>
+      <th>Écart</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+    ${predictifNotes(d)}
+  </div>`;
+}
+
+/* The full path, precomputed by `impots predictif`: every year priced, aged and frozen
+   side by side. Silent when no report exists — the panel works without it. */
+async function loadPredictifs() {
+  const host = document.getElementById("predHost");
+  if (!host) return;
+  let names;
+  try {
+    const response = await fetch(`${API}/predictif`);
+    if (!response.ok) return;
+    names = (await response.json()).rapports || [];
+  } catch { return; }
+  if (!names.length) return;
+  let report;
+  try {
+    const one = await fetch(`${API}/predictif/${encodeURIComponent(names[0])}`);
+    if (!one.ok) return;
+    report = await one.json();
+  } catch { return; }
+  renderPredictifReport(host, report);
+}
+
+function renderPredictifReport(host, r) {
+  const rows = (r.years || []).map((y) => `<tr>
+      <td>${y.year}</td><td>${escapeHtml(y.basis)}</td><td>${pctFr(y.reference)}</td>
+      <td>${ptFr(y.delta_aged)}</td><td>${ptFr(y.delta_frozen)}</td></tr>`).join("");
+  host.innerHTML = `<div class="pred">
+    <p class="tbanner"><b>${escapeHtml(r.banner)}</b></p>
+    <h2 class="ptitle">${escapeHtml(r.titre)} : la dette, chaque année chiffrée</h2>
+    <p class="pnames">${predictifNames(r)} · Référence « ${escapeHtml(r.reference)} »</p>
+    <table><thead><tr><th>Année</th><th>Base</th><th>Dette, référence</th>
+      <th>Écart, population vieillie</th><th>Écart, population figée</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    <p class="tnote">${escapeHtml(r.uprating_note || "")}</p>
+    ${predictifNotes(r)}
+  </div>`;
+  host.hidden = false;
+}
+
 /* F6 · the EMTR explorer. Reads a PRECOMPUTED sweep: four full-tier runs per curve,
    so it is a batch job (`impots emtr <type>`) like every other full-tier run. */
 async function loadEmtrCurves() {
@@ -2918,6 +3107,7 @@ async function boot() {
     fillLaw();
     await loadScenarioList();
     await loadTrajectoires();
+    await loadPredictifs();
     await loadEmtrCurves();
   } catch (error) {
     $("engine").innerHTML = `<span class="dot down"></span>moteur injoignable`;

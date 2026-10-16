@@ -38,6 +38,10 @@ BANNER = (
     "réponse."
 )
 
+#: The last APU account the manifested tables publish (millésime 2025). Every path starts
+#: there; its first projected year is the one the population layer prices first.
+START_YEAR = 2025
+
 #: The one convention that may fill a year the engine did not price (M0, R3: ten years
 #: priced one by one take about an hour). Named, because a filled year that looked priced
 #: would be the quiet version of an invented number.

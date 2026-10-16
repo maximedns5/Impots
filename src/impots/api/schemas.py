@@ -1756,3 +1756,45 @@ class PredictifResponse(BaseModel):
     population_note: str
     banner: str
     debt_banner: str
+
+
+class PredictifReportYear(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    year: int
+    basis: str
+    mechanical_frozen_eur: float
+    mechanical_aged_eur: float
+    reference: float
+    reform_aged: float
+    delta_aged: float
+    reform_frozen: float
+    delta_frozen: float
+
+
+class PredictifReportResponse(BaseModel):
+    """A full path, every year priced (`impots predictif`). Read from a file; never runs."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    scenario: str
+    titre: str
+    source: str
+    reference: str
+    computed: str
+    spending_name: str
+    growth_name: str
+    rate_name: str
+    start: PredictifStart
+    years: list[PredictifReportYear]
+    conventions: list[str]
+    absent: dict[str, str]
+    uprating_note: str
+    banner: str
+    debt_banner: str
+
+
+class PredictifReportList(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    rapports: list[str] = Field(default_factory=list)

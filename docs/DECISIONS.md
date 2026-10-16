@@ -15541,3 +15541,63 @@ coût. Pour l'API : le nom ignoré d'une règle livrée, l'encours AFT absent. V
 **Ce qui reste.** M1b : la commande `impots predictif`, qui chiffre les dix années une à
 une (vue vieillie et vue figée), et le panneau de la page. Ensuite M2, les θ, et M3, la
 rétroaction sous `gele_en_volume`.
+
+## D-216 — M1b de la phase 9 : la commande, ses rapports et le panneau de la page
+
+**Le fait.** M1 servait la version rapide : une année chiffrée, les suivantes reportées en
+part de PIB (D-215). M1b ajoute l'autre moitié, celle que M0 renvoyait à une commande parce
+que dix années chiffrées une à une prennent environ une heure : `impots predictif`, le
+rapport qu'elle écrit, et le panneau de la page.
+
+**La commande chiffre chaque année deux fois.** `predictif/annuel.py` porte la logique, la
+commande la branche sur le moteur. Chaque année est chiffrée sur la population de 2024
+telle quelle (« figée ») et sur la population vieillie jusqu'à cette année (« vieillie »),
+par le même `trajectoires.price` que `impots trajectoire`, contre la référence choisie.
+La vue vieillie est le chiffre de tête et la vue figée se tient à côté, comme dans les
+trajectoires : leur écart est la classe d'incertitude du vieillissement. Aucune année
+n'est reportée ; une année manquante au milieu est refusée par la garde de la chaîne.
+
+**Une garde de cohérence.** La population vieillit avec un indice de prix, et la dette
+fait croître le PIB avec les prix du scénario de croissance. S'ils différaient, les euros
+de la réforme et le PIB qui les divise gonfleraient à des rythmes différents, et chaque
+ratio dériverait de l'écart sans le dire. `uprating_for` tire donc l'indice de prix du
+scénario de croissance, et `check_coherence` refuse tout vieillissement qui s'en écarte.
+Contre la référence `indexe`, le barème s'indexe sur les mêmes prix. Les salaires restent
+une hypothèse déclarée, avec sa source, comme dans `impots trajectoire`.
+
+**Aucune hypothèse n'a de défaut, en ligne de commande non plus.** Dépense, croissance,
+taux, horizon, salaires et source des indices sont obligatoires ; les deux règles de
+dépense livrées refusent un nom ou un taux qu'elles ignoreraient. Le rapport s'écrit dans
+`reports/predictif_<scénario>.json`. `GET /predictif` le liste et `GET /predictif/{nom}`
+le sert, sans jamais lancer le moteur, avec la même garde de nom que les trajectoires.
+
+**Le panneau de la page.** Sous le chiffrage de population, un bloc « Et la dette ? » :
+les trois scénarios, l'horizon, un bouton pour la version rapide. Les listes commencent
+vides ; tant qu'il manque une hypothèse, rien n'est envoyé et la page dit laquelle. Les
+trois noms s'affichent au-dessus du tableau, et chaque année reportée porte « report »
+dans sa propre colonne. Un rapport précalculé s'affiche au-dessus, s'il en existe un.
+
+**Un essai sur la vraie population.** `impots predictif plf2027_art_3`, sur deux années,
+contre la référence `reconduit`, sous « dépenses gelées en volume », 1 % de volume, 2 % de
+prix, 3 % de salaires et le taux de 2025 tenu. L'article 3 (plafond de l'abattement de
+10 % ramené à 3 000 €) rapporte 1,12 Md€ chaque année sur la population figée, et 1,22 puis
+1,27 Md€ sur la population vieillie. La dette baisse de 0,040 point de PIB en 2026 et de
+0,079 en 2027 dans la vue vieillie, de 0,036 et 0,071 dans la vue figée. Quatre passes en
+456 s ; la machine a été partagée une partie du temps avec les tests voisins, et la durée
+n'est donc qu'un ordre de grandeur. Le rapport n'entre pas au dépôt : deux années ne sont
+pas ce que la page doit montrer, et la passe de dix ans revient au propriétaire.
+
+**Les tests.** Nouveaux : `tests/test_predictif_annuel.py` (7) et
+`tests/test_cli_predictif.py` (11). Le second fait tourner la commande de bout en bout
+sur une population de cinq personnes, la passe du moteur remplacée par un bouchon qui
+note ce qu'on lui demande, puis sert le rapport par l'API. `ui/check.mjs` gagne 5
+vérifications et passe à 41. Chaque garde a été vue échouer sur une mutation, huit en
+tout. Pour `annuel` : la cohérence des prix, la vue de tête inversée, l'indice de prix
+pris aux salaires. Pour la commande : la vue vieillie remplacée par la figée, le nom
+ignoré d'une règle livrée. Pour la page : le scénario de dépense, le taux de marché
+manquant, l'étiquette « report ». Avec les tests de la chaîne, de la dette, de l'API, du
+manifeste, des données, de la charte et des dépendances : 221 réussis, 13 désélectionnés
+par le marqueur par défaut. `ruff` passe sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.** M2, les θ. Puis M3, la rétroaction sous `gele_en_volume`. Le scénario
+`marche` attend toujours l'encours AFT, que www.aft.gouv.fr refuse à ce conteneur.
