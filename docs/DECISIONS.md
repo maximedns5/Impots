@@ -15402,3 +15402,64 @@ spec livrera son kill test, vu échouer, au jalon qui la construit.
 que deviennent les dépenses pendant la simulation ; relire l'équation (4) de la note HCFP
 2023-1 en recoupement ; mesurer le coût de dix années de passes de population ; localiser
 les sources de l'IS, des créations d'entreprises et du CIR.
+
+## D-214 — M0 de la phase 9 : le solde de Mésange passe, à quatre conditions
+
+**Le fait.** M0 a lu avant de coder (`docs/M0_PHASE9.md`). La question qui décidait de la
+suite : la ligne « Solde primaire des APU » des variantes Mésange, que le dépôt lit et
+n'utilise pas (D-213), peut-elle porter le retour du PIB sur les recettes ? Elle le peut.
+
+**Ce que la ligne contient.** Le choc et la réponse du solde ensemble. Pour une baisse
+d'IR d'un point de PIB ex ante, elle vaut −0,81 la première année, et le document conclut
+que l'activité « ne parvient pas à compenser la baisse des recettes » (folio 118). La
+rétroaction est donc le solde plus un point : 0,19 la première année, 0,50 la deuxième,
+0,58 la troisième. Une baisse d'IR rapporte ainsi un peu plus de la moitié de son coût à
+trois ans, et ne se finance jamais entièrement. La TVA suit la même règle, à un point net
+pour 1,18 brut (folio 112).
+
+**La condition qui compte.** Pendant une variante, la dépense de Mésange ne réagit qu'en
+prix ; en volume, « seules les recettes et les prestations chômage réagissent » (note 70,
+folio 93). C'est le scénario `gele_en_volume`. Sous `part_pib_constante`, la dépense
+suivrait le PIB réel et une partie de l'amélioration affichée disparaîtrait. En v1, la
+rétroaction ne s'applique donc que sous `gele_en_volume` ; ailleurs elle est absente, avec
+sa raison. La corriger par une formule serait dériver un chiffre, pas le lire.
+
+**Trois autres conditions.** Variantes fiscales seulement : la variante ciblée bas
+salaires n'a pas de ligne de solde. Horizons 1 à 3 ans, pour la raison de D-055. Prix de
+la réforme constants dans g : aucun tableau n'imprime de déflateur du PIB.
+
+**Une approximation, mesurée plutôt que supposée.** §4.1 fait suivre la rétroaction au
+multiplicateur quand θ macro bouge. Le rapport de la rétroaction à l'effet sur le PIB va
+de 0,46 (IR, première année) à 1,40 (cotisations employeurs, première année) : une baisse
+de cotisations employeurs relève les marges avant l'activité. L'hypothèse est bonne pour
+l'IR et la CSG, médiocre pour les cotisations employeurs la première année, et
+l'étiquette le dira.
+
+**Le reste de M0.**
+
+* La note du HCFP n'a pas été relue : www.hcfp.fr coupe la connexion depuis ce conteneur.
+  La candidate B n'est plus nécessaire et reste le recoupement.
+* Le coût : une année se chiffre en 2 min 30 pour 20 000 ménages et 6,3 Go, quelle que
+  soit l'année ; doubler les ménages double à peu près le temps et la mémoire. Une
+  trajectoire de dix ans demande vingt passes, environ une heure. Elle se calculera donc
+  par une commande, et l'API servira une version rapide : la première année chiffrée,
+  puis Δ tenu en part de PIB, étiqueté comme convention. θ ne coûte rien : il réutilise
+  les passes. La loi des ménages s'arrête en 2027, celle des entreprises en 2030.
+* Sources : l'article de Bargain, Orsini et Peichl est en accès libre (IZA DP 6735), avec
+  la France par sexe et situation conjugale, sur 1998 et 2001. Les transferts restent
+  fermés : les deux méta-analyses IMK s'écartent d'un facteur 2,5 sur la largeur et n'ont
+  ni profil par horizon ni centre français. Mésange n'a aucune variante d'IS. Aucune
+  évaluation ne mesure la réponse des créations d'entreprises à un taux d'impôt. Le CIR a
+  ses évaluations (CNEPI 2021, DG Trésor 2021), mais toujours pas de fichier GECIR
+  (D-154).
+
+**Les tests.** `scripts/verify_mesange_solde.py` rejoue la lecture et épingle les six
+rétroactions. Chacun de ses quatre contrôles a été vu échouer sur une mutation : une
+épingle déplacée, la citation de la note 70 altérée, une ligne de solde au signe inversé,
+une ligne de prix déclarée interdite. Une première mutation du contrôle de signe ne
+faisait pas ce qu'elle prétendait (la condition réécrite restait vraie) ; refaite sur la
+donnée, elle a fait tomber le contrôle. `ruff` passe sur le script.
+
+**Ce qui reste.** M1, la chaîne, qui n'a besoin d'aucune donnée nouvelle. Manifester l'IZA
+DP 6735. Lire le rapport 2023 du comité d'évaluation de la fiscalité du capital, piste de
+l'investissement sous l'IS. Télécharger la note du HCFP sur le réseau du propriétaire.

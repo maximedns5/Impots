@@ -1,6 +1,9 @@
-# State of the project, and the directions open — 2026-10-16 (Phase 9 specified)
+# State of the project, and the directions open — 2026-10-16 (Phase 9, M0 done)
 
-The second 2026-10-16 update adds D-213: the owner lifts the « no predictive model » rule
+The third 2026-10-16 update adds D-214, Phase 9's reconnaissance (`docs/M0_PHASE9.md`):
+Mésange's « Solde primaire des APU » row can carry the GDP → receipts loop, under
+`gele_en_volume` only, for the fiscal variants, at one to three years, with the reform's
+prices held. The second added D-213: the owner lifts the « no predictive model » rule
 in favour of a conditional predictive layer, where every effect is set by a θ in [0, 1]
 inside its published range, and `docs/PHASE9_SPEC.md` specifies it. The first added
 D-212: with GitHub Actions out of runners and the owner carrying on without it, the
@@ -58,8 +61,8 @@ openfisca's reading of the law. It has its own section below.
 clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **214 decision
-entries**, D-000 to D-213, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **215 decision
+entries**, D-000 to D-214, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -403,12 +406,12 @@ download list.
    first since the pension target moved and, with Actions down, the only whole-suite
    check D-210 and D-211 will get; the report's direction line, which counts
    signs; and art. 2's outside grade.
-2. **Phase 9, M0** (`docs/PHASE9_SPEC.md` §1, §10): read in the Mésange PDF the sign and
-   scale of the « Solde primaire des APU » row and what spending does during the
-   simulation; re-read equation (4) of HCFP note 2023-1 as the cross-check; measure what
-   ten years of population passes cost; locate the sources for the corporate tax, firm
-   creations and the CIR. Deliverable `docs/M0_PHASE9.md`, reviewed before the design
-   freeze. Then M1, the chain, which needs no new data.
+2. **Phase 9, M1** (`docs/PHASE9_SPEC.md` §3), now that M0 is done (D-214,
+   `docs/M0_PHASE9.md`): the chain reform → primary balance → debt, the spending rule's
+   arithmetic, named growth and rate scenarios, the endpoint and the panel. No new data.
+   M0 left three things for the owner's network or a later session: the HCFP note (its
+   host refuses this container), the IZA DP 6735 to manifest, and France Stratégie's 2023
+   capital-taxation report to read.
 3. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each

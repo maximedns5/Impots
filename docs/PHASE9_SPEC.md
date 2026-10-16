@@ -6,6 +6,8 @@ modèle prédictif conditionnel », il a écrit : « on peut proposer un prédic
 écrit la spec phase 9 ». Plus tôt le même jour : « il faut absolument qu'on arrive à faire
 un modèle prédictif […] avec des coefficients qui varient entre 0 et 1 ». La levée de la
 règle est consignée en D-213.
+**Révisée par M0 :** `docs/M0_PHASE9.md` et D-214 resserrent §3.1, §3.2, §4 et §5 ; ils
+priment sur le texte ci-dessous là où ils s'en écartent.
 **Prérequis :** la phase 8 sur `main` (`1e12460`), le backtest de dette noté (D-168), la
 population calée sur les cases de retraite (D-211). Code mesuré sur `0a4c0ed`.
 **Verdict gouvernant, modifié par D-213.** Avant : « we do not build a predictive model »
