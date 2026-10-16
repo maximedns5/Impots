@@ -1,6 +1,8 @@
-# State of the project, and the directions open — 2026-10-15 (pensions calibrated on retirement)
+# State of the project, and the directions open — 2026-10-16 (CI on manual dispatch only)
 
-The fourth 2026-10-15 update adds D-211: at the owner's request, the pension mass is
+The 2026-10-16 update adds D-212: with GitHub Actions out of runners and the owner
+carrying on without it, the workflow runs on manual dispatch only. The fourth 2026-10-15
+update added D-211: at the owner's request, the pension mass is
 calibrated on the retirement boxes 1AS-1DS, 374,4 Md€, instead of the 400,4 Md€ of
 « pensions et rentes ». The third added D-210: the 400,4 Md€ pension target decomposed box by
 box; 26 Md€ of it are not retirement pensions, and without them art. 3 lands 1,8 % above
@@ -53,8 +55,8 @@ openfisca's reading of the law. It has its own section below.
 clone's `tests` profile does not fetch (D-204). The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **212 decision
-entries**, D-000 to D-211, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **213 decision
+entries**, D-000 to D-212, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -179,9 +181,10 @@ couple keeps its 18 943,38 €.
   runner, the shape of an exhausted minutes quota (D-161) — and the owner decided to
   carry on without it (D-211). Until that changes, nothing below runs on its own: a PR
   is verified by its own targeted tests and by the owner's `make full`, which is now the
-  only whole-suite check. The workflow still triggers and fails in seconds on every
-  push.
-* **Automatic CI**, when Actions runs — every PR and every push to `main` — runs `fast`,
+  only whole-suite check. Since 2026-10-16 the workflow runs on manual dispatch only
+  (D-212), so a push no longer leaves a red cross that checked nothing; the comment
+  under `on:` in `.github/workflows/test.yml` says how to restore the two triggers.
+* **Automatic CI**, when restored — every PR and every push to `main` — runs `fast`,
   `perf` and `no-data-committed`; `fast` also carries the two engine-assumption scripts.
   **The full suite is out of automatic CI since 2026-10-02 (D-172)**, by the
   owner's decision: it runs only when the workflow is dispatched by hand, and

@@ -1,14 +1,20 @@
 name: test
 
 on:
-  # `push:` sans filtre déclenchait un run SUR CHAQUE BRANCHE, en plus du run
-  # `pull_request:` du même commit : le job le plus cher tournait DEUX FOIS par
-  # poussée. Sur une branche de PR, le run `pull_request` couvre déjà le travail ;
-  # le run `push` n'ajoutait qu'une facture. Restreint à `main`, qui n'a pas de
-  # run `pull_request` et a donc besoin du sien.
-  push:
-    branches: [main]
-  pull_request:
+  # LANCEMENT MANUEL SEULEMENT, depuis le 2026-10-16 (D-212). Depuis le 2026-10-15 à
+  # 13 h 56 UTC, aucun job n'obtient de runner, la forme d'un quota de minutes épuisé
+  # (D-161), et le propriétaire a décidé de continuer sans les Actions. Chaque poussée
+  # déclenchait un run qui échouait en quelques secondes : une croix rouge qui ne
+  # vérifiait rien et qu'on finit par ne plus lire. Pour rétablir les runs
+  # automatiques, remettre les deux déclencheurs d'avant :
+  #
+  #   push:
+  #     branches: [main]
+  #   pull_request:
+  #
+  # `push` était restreint à `main` : sans filtre, il déclenchait un run sur chaque
+  # branche en plus du run `pull_request` du même commit, et le job le plus cher
+  # tournait deux fois par poussée.
   workflow_dispatch:
 
 # Sans ce groupe, une poussée qui en remplace une autre laisse la précédente aller

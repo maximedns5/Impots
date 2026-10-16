@@ -15311,3 +15311,27 @@ la seule vérification d'ensemble.
   mesure qui les toucherait ne les voit plus ; avant, elle les voyait sur des retraités,
   ce qui ne valait pas mieux.
 * **Les foyers manquants de D-209** : établissements, règle d'âge, concubins.
+
+## D-212 — Le workflow ne se lance plus qu'à la main
+
+**Le fait.** Depuis le 2026-10-15 à 13 h 56 UTC, aucun job GitHub Actions n'obtient de
+runner (D-211). Le propriétaire a décidé de continuer sans les Actions. Chaque poussée sur
+une PR ou sur `main` déclenchait pourtant un run, qui échouait en quelques secondes sans
+une étape : une croix rouge qui ne vérifiait rien. À force d'en voir, on cesse de les
+lire, y compris le jour où l'une d'elles dirait quelque chose.
+
+**Le changement.** `.github/workflows/test.yml` ne garde que `workflow_dispatch`. Le
+commentaire sous `on:` dit pourquoi et rend les deux déclencheurs d'avant à recopier
+(`push` sur `main`, `pull_request`), avec la raison du filtre sur `main`. Un lancement
+manuel fait tourner les quatre jobs, la suite complète comprise, comme avant (D-172).
+
+**Ce que ça veut dire.** Plus rien ne tourne de lui-même. Une PR est vérifiée par ses
+tests ciblés et par la passe `make full` du propriétaire, qui devient la seule
+vérification d'ensemble. Le cache des sources brutes (D-205) ne sert plus qu'aux
+lancements manuels.
+
+**Les tests.** `tests/test_dependances.py` (11 réussis), qui lit le job `fast` du
+workflow ; le fichier se charge en YAML avec `workflow_dispatch` pour seul déclencheur.
+
+**Ce qui reste.** Rétablir les deux déclencheurs le jour où les Actions ont de nouveau
+des minutes.
