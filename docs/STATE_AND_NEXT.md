@@ -1,6 +1,15 @@
-# State of the project, and the directions open — 2026-10-16 (Phase 9, M2 done)
+# State of the project, and the directions open — 2026-10-19 (Phase 9, M3 done)
 
-The sixth 2026-10-16 update adds D-217, Phase 9's M2: every open behavioural row declares
+The 2026-10-19 update adds D-218, Phase 9's M3: the GDP → primary-balance loop read from
+Mésange's « Solde primaire des APU » row, which an adversarial pass cleared with its
+values exact and its scope repaired. The loop applies only under « Dépenses gelées en
+volume », to the uniform fiscal variants, at one to three years, with a named persistence
+scenario beyond and none by default. The reform's GDP divides its debt, and the macro
+fan slice is computed from the multiplier's θ. The first real run found the shock builder
+fed every population total, which had left the population endpoint's macro fan
+unavailable for any costed reform; it now reads only the instruments. The sixth
+2026-10-16 update added D-217,
+Phase 9's M2: every open behavioural row declares
 which end of its range θ = 1 designates, θ places each row through its published centre,
 a pinned store runs the Phase 3 channels at θ unchanged, and the debt path's behaviour
 slice becomes the θ box, read at its corners. No θ has a default — not the endpoint's,
@@ -73,8 +82,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **218 decision
-entries**, D-000 to D-217, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **219 decision
+entries**, D-000 to D-218, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -418,11 +427,13 @@ download list.
    first since the pension target moved and, with Actions down, the only whole-suite
    check D-210 and D-211 will get — the 2026-10-16 pass ran on `05cc944`, before them; the report's direction line, which counts
    signs; and art. 2's outside grade.
-2. **Phase 9, M3** (`docs/PHASE9_SPEC.md` §4): the GDP → receipts loop from Mésange's
-   primary-balance row, under `gele_en_volume` only, which also wires the multiplier's
-   θ (`predictif/macro.py`, defined in M2 and not yet read by the debt path). M1, M1b and
-   M2 are done (D-215 to D-217). A full ten-year `impots predictif` run is about an hour
-   on the owner's machine, and now takes `--theta`. Still open from M0: the HCFP note (its host
+2. **Phase 9, M4** (`docs/PHASE9_SPEC.md` §5): the missing multipliers, transfers
+   first, then the IS if a source exists. M1 to M3 are done (D-215 to D-218). Two
+   decisions from M3 are the owner's: whether the page should show both persistence
+   scenarios side by side rather than ask for one (§4.5), and whether to reopen the
+   `multiplier_by_instrument` row, whose linearity bound the M3 pass found
+   unsupported (D-218). `impots predictif` does not carry the loop yet. A full ten-year
+   run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
    refuses this container), the IZA DP 6735 to manifest, France Stratégie's 2023
    capital-taxation report to read, and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.

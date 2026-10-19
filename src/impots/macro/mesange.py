@@ -328,14 +328,30 @@ def _pages(path: str) -> tuple[tuple[int, tuple[str, ...]], ...]:
     )
 
 
-def table(row: str, raw: Path | None = None) -> tuple[dict[str, tuple[float, ...]], tuple[str, ...]]:
+def table(row: str, raw: Path | None = None, absent_for: tuple[str, ...] | list[str] = (),
+          ) -> tuple[dict[str, tuple[float, ...]], tuple[str, ...]]:
     """One row of every variant, as (values by instrument, horizons).
 
     The adapter the parameter store addresses every reader through, so that adding a
     source does not mean adding a branch to the store.
+
+    `absent_for` names the variants the YAML DECLARES do not print this row — the
+    targeted variant has no balance row (D-214). Declared, not tolerated: a variant
+    missing the row without being named is still refused, and a variant named that does
+    print it is refused too, because the declaration would then be stale and the row
+    silently narrower than the document.
     """
     variants = load(raw=raw)
-    missing = [key for key, variant in variants.items() if row not in variant.rows]
+    declared = set(absent_for)
+    unknown = sorted(declared - set(variants))
+    if unknown:
+        raise MesangeError(f"absent_for names variants that do not exist: {unknown}")
+    stale = sorted(k for k in declared if row in variants[k].rows)
+    if stale:
+        raise MesangeError(f"row {row!r} is declared absent for {stale}, which print it")
+    missing = [key for key, variant in variants.items()
+               if row not in variant.rows and key not in declared]
     if missing:
         raise MesangeError(f"row {row!r} absent from variants {missing}")
-    return {key: variant.rows[row] for key, variant in variants.items()}, HORIZONS
+    return {key: variant.rows[row] for key, variant in variants.items()
+            if key not in declared}, HORIZONS

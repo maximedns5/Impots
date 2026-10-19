@@ -17,6 +17,7 @@ from impots.dette.path import SHIPPED, DebtError
 from impots.predictif import chaine
 from impots.predictif.comportement import AtTheta
 from impots.predictif.theta import Theta, ThetaError
+from macro_cases import synthetic_macro_store
 
 START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
                         spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
@@ -140,7 +141,7 @@ def test_the_market_scenario_without_the_aft_outstanding_is_refused() -> None:
 def test_the_feedback_is_absent_with_its_reason_and_no_winner_is_named() -> None:
     result = _run(_carried(5e9))
     feedback = next(s for s in result.decomposition.slices if s.source == "eventail")
-    assert not feedback.computed and "M3" in feedback.reason
+    assert not feedback.computed and "non demandé" in feedback.reason
     assert "rétroaction" in result.absent
     with pytest.raises(DebtError, match="non calculée"):
         result.decomposition.dominant_source(0)
@@ -227,7 +228,7 @@ def test_a_result_with_a_theta_missing_refuses_to_exist() -> None:
 
 def test_a_closed_channel_without_its_reason_refuses_to_exist() -> None:
     result = _run(_carried(5e9), horizon=2)
-    assert set(result.closed) == set(chaine.CLOSED)
+    assert set(result.closed) == {*chaine.CLOSED, *chaine.MACRO_CHANNELS}
     with pytest.raises(ThetaError, match="sans leur raison"):
         dataclasses.replace(result, closed={**result.closed, "R&D et CIR": " "})
 
@@ -237,3 +238,99 @@ def test_the_banner_is_a_checked_field_not_a_decoration() -> None:
     with pytest.raises(DebtError, match="bannière"):
         dataclasses.replace(result, banner="")
     assert chaine.BANNER in result.lines()
+
+
+# --------------------------------------------------------------------------- #
+# M3 — the GDP → receipts loop in the chain (D-218)
+# --------------------------------------------------------------------------- #
+def _looped(cost: float = 5e9, impulse: dict | None = None, **kwargs) -> chaine.Trajectoire:
+    """An income-tax cut of `cost`, its impulse expansionary-positive, with the loop."""
+    costs = chaine.ReformCosts(
+        by_year={2026: cost}, carry=chaine.CARRY,
+        impulses={2026: impulse if impulse is not None else {"impot_sur_le_revenu": cost}})
+    options = {"persistence": "tenu", "macro_store": synthetic_macro_store(), **kwargs}
+    return _run(costs, **options)
+
+
+def test_the_loop_gives_back_part_of_the_cost_and_divides_by_the_reform_gdp() -> None:
+    """Year one by hand: the balance loses 0,81 of the cost (0,19 comes back), and the
+    reform's debt ratio is divided by its GDP, 0,41 of the cost above the reference's."""
+    result = _looped()
+    y = 3_000e9 * 1.01 * 1.02
+    raw = 0.81 * 5e9 / y
+    expected = (result.reference[0] + raw) / (1.0 + 0.41 * 5e9 / y)
+    assert result.reform[0] == pytest.approx(expected, rel=1e-12)
+    assert result.feedback_primary[0] == pytest.approx(0.19 * 5e9 / y, rel=1e-12)
+    assert result.gdp_gap[0] == pytest.approx(0.41 * 5e9 / y, rel=1e-12)
+    assert result.delta_mechanical[0] == pytest.approx(5e9 / y, rel=1e-12)
+    assert 0 < result.delta[0] < result.delta_mechanical[0]
+
+
+def test_with_the_loop_the_macro_theta_is_listed_and_the_eventail_computed() -> None:
+    result = _looped()
+    assert result.theta[chaine.MACRO_ROW] == 0.5 and chaine.MACRO_ROW in result.open_rows
+    eventail = next(s for s in result.decomposition.slices if s.source == "eventail")
+    assert eventail.computed and eventail.label == chaine.EVENTAIL_LABEL
+    for low, central, high in zip(eventail.low, result.reform, eventail.high, strict=True):
+        assert low <= central <= high
+    assert not any(k in result.closed for k in chaine.MACRO_CHANNELS)
+    assert "rétroaction" not in result.absent
+    assert any("1,18" in c for c in result.conventions)
+
+
+def test_under_another_spending_rule_the_loop_is_absent_with_its_reason() -> None:
+    """D-214: Mésange's spending reacts in prices only; under a GDP-share rule the row
+    cannot be read as printed, and the loop says so instead of correcting it."""
+    result = _looped(spending=SHIPPED["part_pib_constante"], persistence=None)
+    assert "note 70" in result.absent["rétroaction"]
+    assert result.gdp_gap is None and chaine.MACRO_ROW not in result.theta
+    assert all("note 70" in result.closed[k] for k in chaine.MACRO_CHANNELS)
+    assert result.delta == pytest.approx(result.delta_mechanical)
+
+
+def test_past_three_years_the_loop_needs_a_named_persistence() -> None:
+    with pytest.raises(retroaction_error(), match="persistance"):
+        _looped(persistence=None)
+    assert len(_looped(persistence=None, horizon=3).years) == 3
+
+
+def test_a_persistence_the_chain_would_ignore_is_refused() -> None:
+    with pytest.raises(DebtError, match="ignorée"):
+        _run(_carried(5e9), persistence="tenu")
+    with pytest.raises(DebtError, match="ignorée"):
+        _looped(spending=SHIPPED["part_pib_constante"])
+
+
+def test_an_impulse_with_no_balance_row_leaves_the_loop_absent_not_zero() -> None:
+    result = _looped(impulse={"cotisations_employeurs_ciblees": 5e9})
+    assert "aucun instrument" in result.absent["rétroaction"]
+    assert result.gdp_gap is None
+
+
+def test_a_loop_without_the_macro_theta_is_refused() -> None:
+    with pytest.raises(ThetaError, match="refusé"):
+        _looped(theta=Theta(rows={k: 0.5 for k in _looped().open_rows
+                                  if k != chaine.MACRO_ROW}))
+
+
+def test_a_result_listing_the_macro_theta_without_its_effect_refuses_to_exist() -> None:
+    """Guard 2, extended: the macro θ is listed only with the GDP effect it produced, and
+    the loop's channels are never listed closed while it runs."""
+    result = _looped()
+    with pytest.raises(ThetaError, match="sans effet"):
+        dataclasses.replace(result, gdp_gap=None)
+    with pytest.raises(ThetaError, match="contredirait"):
+        dataclasses.replace(result, closed={**result.closed,
+                                            chaine.MACRO_CHANNELS[0]: "fermée"})
+
+
+def test_an_impulse_on_other_years_than_the_costing_is_refused() -> None:
+    with pytest.raises(DebtError, match="mêmes années"):
+        chaine.ReformCosts(by_year={2026: 5e9, 2027: 5e9},
+                           impulses={2026: {"impot_sur_le_revenu": 5e9}})
+
+
+def retroaction_error():
+    from impots.predictif.retroaction import FeedbackError
+
+    return FeedbackError

@@ -180,6 +180,99 @@ parameters:
       plus net encore : sous courbe de Phillips, l'emploi de long terme tombe à ZÉRO
       pour TOUTES les variantes testées.
 
+  primary_balance_by_instrument:
+    value:
+      from_source_table: solde_primaire_pts_pib
+      absent_for: [cotisations_employeurs_ciblees]
+      distribution: triangular
+      usable_horizons: ["1", "2", "3"]
+    applies_to: >
+      Réponse du solde PRIMAIRE des APU, en points de PIB, à un choc permanent d'un
+      point de PIB sur l'instrument, dans la même variante que `multiplier_by_instrument`
+      et sous les mêmes conditions de simulation. Les folios cités sont les folios
+      imprimés, soit la page PDF moins un.
+
+      LA LIGNE CONTIENT LE CHOC LUI-MÊME. Le choc a « un impact ex-post sur le solde
+      public différent de son effet ex ante », et « il ne sera pas imposé de contrainte
+      d'équilibre budgétaire et on laissera le déficit se creuser » (folio 92) ; les
+      mesures sont « étudiées sans financement associé » (note 78, folio 107). Pour
+      l'impôt sur le revenu, le solde reste « durablement dégradé » (folio 118). Ce qui
+      revient de l'activité est l'écart entre la ligne et le coût ex ante BRUT que la
+      chaîne compte : un point pour les cotisations et la CSG (encadré 16, folio 119),
+      1,18 pour la TVA, dont les APU versent environ 15 % (folio 112). Calculé par
+      `predictif.retroaction`, jamais écrit ici. Recoupement : l'encadré 15 (TVA
+      sociale, folio 114) imprime un solde de 0,08, −0,07, 0,01 aux trois premiers
+      horizons, la somme des deux lignes à un centime près.
+
+      CE QUE LA LIGNE MESURE : l'effet induit sur le solde primaire, pas la seule
+      réponse des recettes. « La quasi intégralité des dépenses et des recettes
+      publiques réagit en prix, pour un effet quasi symétrique et donc neutre sur le
+      solde public. En volume, seules les recettes et les prestations chômage
+      réagissent » (note 70, folio 93), et le tableau 10 fait suivre le PIB aux
+      transferts D7-D92-D99. La ligne ne se lit donc que sous un scénario de dépense
+      gelée en volume (D-214). Pour la TVA et la taxe carbone, qui relèvent les prix à
+      la consommation, la neutralité des prestations indexées sur les prix (folio 99)
+      est moins sûre. Les intérêts sont exogènes (tableau 10) : la ligne exclut la
+      charge de la dette supplémentaire, que la chaîne porte elle-même.
+
+      PAS D'AUTOFINANCEMENT À LIRE ICI. Le document avertit : « en conclure qu'il serait
+      économiquement efficace de supprimer toutes les cotisations patronales puisque la
+      mesure serait autofinancée à terme est erroné » (folio 108). Les horizons longs,
+      où l'écart dépasse un point pour les cotisations, sont exclus pour le motif de
+      `multiplier_by_instrument`.
+
+      VARIANTES LUES : les cotisations salariés et employeurs uniformes, la CSG, l'impôt
+      sur le revenu et la TVA. La variante ciblée bas salaires (encadré 14, folio 109)
+      n'imprime ni cette ligne ni aucune ligne de prix : elle est déclarée absente
+      plutôt qu'empruntée. La taxe carbone imprime la ligne mais en est exclue par le
+      calcul : son choc porte sur les volumes d'énergie (folio 120), et son écart
+      contient la baisse de l'assiette énergie, qui n'est pas un effet de l'activité.
+      Les deux variantes de dépense l'impriment aussi, mais leur choc est en volume
+      (folios 102 et 105) et leur coût nominal suit les prix publics.
+
+      MÊME CONVENTION DE SIGNE que la ligne mère : la TVA et la taxe carbone, publiées
+      en hausse, sont retournées avec tout leur tableau, ce que la linéarité permet
+      (« la linéarité du modèle permet de simuler un scénario réaliste comme une
+      combinaison linéaire de chocs analytiques », folio 100). Une hausse de TVA
+      améliore bien le solde (folio 113). La symétrie elle-même n'est pas testée par le
+      document.
+    responds_to_knobs: [ir_bareme, csg_*, cotisations_*, tva_*]
+    support:
+      estimated_on: >
+        Les mêmes variantes que `multiplier_by_instrument`, chocs d'un point de PIB ex
+        ante pour les variantes fiscales, effectifs au premier trimestre 2015. La colonne
+        « 1 an » est lue comme une moyenne de la première année : le document le dit
+        pour le tableau 12 (folio 119), pas pour cette ligne, et la lecture est une
+        inférence. Le cadre linéaire est « valable pour des chocs de quelques points de
+        PIB » (folio 108).
+      max_variation_graded_in_support: 1.0
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-19
+      ref: D-218
+      note: >
+        Passe adverse du 2026-10-19 sur le PDF, pages rendues en image pour la TVA, la
+        taxe carbone et l'encadré 14. TOUTES LES VALEURS sont exactes aux trois
+        horizons, retournement compris, et les deux affirmations structurelles tiennent :
+        la ligne contient le choc, et son coût net est d'un point pour les six variantes
+        fiscales. Le verdict porte sur la portée, et les corrections sont intégrées
+        ci-dessus. Les trois qui changent un calcul : (1) contre un coût brut, l'écart
+        de la TVA est solde + 1,18 et non solde + 1 ; (2) l'écart de la taxe carbone
+        contient la baisse de son assiette, d'où son exclusion ; (3) la note 70 dit que
+        les prestations chômage réagissent en volume, et le tableau 10 que des transferts
+        suivent le PIB : la ligne est l'effet induit sur le solde, pas la réponse des
+        seules recettes. Corrigés aussi : le garde-fou de linéarité « à un point de PIB »
+        que le premier jet attribuait à la page 101, qui ne fixe aucun seuil ; la
+        citation des variantes de dépense ; l'avertissement du folio 108 ; les styles
+        de citation mêlés.
+    confidence: medium
+    note: >
+      Ligne ouverte par D-218 sur la recommandation de D-214, après le refus de D-059.
+      Lue par `predictif.retroaction`, qui refuse : une dépense autre que gelée en
+      volume, un horizon au-delà de trois ans sans scénario de persistance nommé, et un
+      solde de première année hors de ]−1 ; 0[ pour une variante fiscale, ce qui
+      trahirait une ligne lue avec le mauvais signe ou sans son choc.
+
 # Lignes retirées : elles apparaissent ici avec leur motif plutôt que d'être
 # supprimées — un canal qui rétrécit doit montrer pourquoi.
 removed:

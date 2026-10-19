@@ -1243,7 +1243,19 @@ footer code { font-family: var(--mono); font-size: 11px; }
             <label class="lbl">θ commun, de 0 à 1
               <input id="predTheta" type="number" min="0" max="1" step="0.05"
                      placeholder="ex. 0,5"></label>
+            <label class="lbl"><input id="predMacro" type="checkbox"> Rétroaction de
+              l'activité (Mésange)</label>
+            <label class="lbl">au-delà de trois ans
+              <select id="predPersistence">
+                <option value="" selected>— à choisir —</option>
+                <option value="eteint">Effet macro éteint après trois ans</option>
+                <option value="tenu">Effet macro tenu au niveau de la troisième année</option>
+              </select></label>
           </div>
+          <p class="tnote">La rétroaction lit le solde primaire des variantes de Mésange : ce
+            que l'activité créée ou détruite rend au budget, à un, deux et trois ans. Elle ne
+            s'applique que sous « Dépenses gelées en volume », l'hypothèse de Mésange
+            (D-214, D-218).</p>
           <p class="tnote">θ place chaque effet de comportement dans sa fourchette publiée :
             0 la réponse la plus faible que la littérature soutient, ½ son centre publié, 1
             la plus forte. Ce n'est pas une probabilité, et il n'a pas de défaut (D-217).</p>
@@ -2764,6 +2776,11 @@ function predictifPayload() {
   if (horizon === "") missing.push("un horizon");
   const theta = $("predTheta").value;
   if (theta === "") missing.push("un θ, de 0 à 1");
+  const macro = $("predMacro").checked;
+  const persistence = $("predPersistence").value;
+  if (macro && rule === "gele_en_volume" && Number(horizon) > 3 && !persistence) {
+    missing.push("un scénario de persistance au-delà de trois ans");
+  }
   if (missing.length) return { missing };
   const rate = kind === "marche"
     ? { name: `Refinancement à ${String(market).replace(".", ",")} %`, kind,
@@ -2773,7 +2790,8 @@ function predictifPayload() {
     reform: spec, spending: { rule },
     growth: { name: growthName, real: Number(real) / 100, prices: Number(prices) / 100 },
     rate, horizon: Number(horizon), theta: { common: Number(theta) },
-    behavioural: $("wantBand").checked } };
+    behavioural: $("wantBand").checked, macro,
+    ...(macro && rule === "gele_en_volume" && persistence ? { persistence } : {}) } };
 }
 
 async function runPredictif() {
@@ -2826,7 +2844,8 @@ const THETA_ROWS = {
   passthrough_unlinked: "incidence, autres cotisations (C3)",
   production_tax_investment: "investissement et impôts de production (C4)",
   wealth_tax_rate_elasticity: "patrimoine déclaré et taux (C5)",
-  wealth_disclosure_growth_effect_pp: "obligations déclaratives (C6)" };
+  wealth_disclosure_growth_effect_pp: "obligations déclaratives (C6)",
+  multiplicateur_macro: "multiplicateur macro (Mésange ∓ un écart-type IMK)" };
 function predictifTheta(d) {
   const rows = Object.entries(d.theta || {}).map(([k, v]) =>
     `<li>${escapeHtml(THETA_ROWS[k] || k)} : θ = ${String(v).replace(".", ",")}</li>`).join("");
@@ -2855,20 +2874,27 @@ function renderPredictif(host, d) {
   const box = (d.slices || []).find((s) => s.source === "bande" && s.computed);
   const extra = d.theta_applied ? "<th>Écart mécanique</th>" : "";
   const boxHead = box ? "<th>Boîte θ (écart)</th>" : "";
+  const gap = d.gdp_gap || null;
+  const gapHead = gap ? "<th>PIB, écart à la référence</th>" : "";
+  const fan = (d.slices || []).find((s) => s.source === "eventail" && s.computed);
+  const fanHead = fan ? "<th>Éventail macro (écart)</th>" : "";
   const rows = (d.years || []).map((year, i) => `<tr>
       <td>${year}</td><td>${pctFr(d.reference[i])}</td><td>${pctFr(d.reform[i])}</td>
       <td>${ptFr(d.delta[i])}</td>
       ${d.theta_applied ? `<td>${ptFr(d.delta_mechanical[i])}</td>` : ""}
       ${box ? `<td>${ptFr(box.low[i] - d.reference[i])} à ${ptFr(box.high[i] - d.reference[i])}</td>` : ""}
+      ${gap ? `<td>${pctFr(gap[i], 2).replace(/^(?!-)/, "+")}</td>` : ""}
+      ${fan ? `<td>${ptFr(fan.low[i] - d.reference[i])} à ${ptFr(fan.high[i] - d.reference[i])}</td>` : ""}
       <td class="${carried.has(year) ? "carried" : ""}">${carried.has(year) ? "report" : "chiffré"}</td>
     </tr>`).join("");
   host.innerHTML = `<div class="pred">
     <p class="tbanner"><b>${escapeHtml(d.banner)}</b></p>
     <p class="pnames">${predictifNames(d)}</p>
     <table><thead><tr><th>Année</th><th>Dette, référence</th><th>Dette, réforme</th>
-      <th>Écart${d.theta_applied ? " à θ" : ""}</th>${extra}${boxHead}<th></th></tr></thead>
+      <th>Écart${d.theta_applied ? " à θ" : ""}</th>${extra}${boxHead}${gapHead}${fanHead}<th></th></tr></thead>
       <tbody>${rows}</tbody></table>
     ${box ? `<p class="tnote">${escapeHtml(box.label)}.</p>` : ""}
+    ${fan ? `<p class="tnote">${escapeHtml(fan.label)}.</p>` : ""}
     ${predictifNotes(d)}
   </div>`;
 }

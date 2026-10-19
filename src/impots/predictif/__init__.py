@@ -5,7 +5,8 @@ places it inside its published range, and every result reads « si θ = … » u
 scenarios. Nothing here is a forecast: change θ or a scenario and the answer changes, and
 the sweep of θ from 0 to 1 is the honest answer.
 
-M1 (this package's first module, `chaine`) links the chain reform → primary balance →
-debt. θ arrives in M2 and the GDP → receipts feedback in M3; until then each is reported
-ABSENT with its reason, never drawn as zero.
+`chaine` links reform → primary balance → debt (M1, D-215); `annuel` prices every year
+(M1b, D-216); `theta`, `comportement` and `macro` place each effect in its range (M2,
+D-217); `retroaction` reads Mésange's balance row for the GDP → receipts loop (M3, D-218).
+What a result does not carry is reported ABSENT with its reason, never drawn as zero.
 """

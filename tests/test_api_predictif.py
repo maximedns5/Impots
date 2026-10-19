@@ -18,6 +18,7 @@ from fastapi.testclient import TestClient
 from impots.api import main
 from impots.dette import maturite, reference
 from impots.predictif import chaine
+from macro_cases import synthetic_macro_store
 
 START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
                         spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
@@ -59,12 +60,16 @@ def priced(monkeypatch) -> list:
     is asked for, and the requests it received."""
     seen: list = []
 
-    def stub(request):
+    def stub(request, *, macro=False):
         seen.append(request)
+        # A 5 Md€ income-tax cut, and a transfer the loop cannot read, when asked for.
         return SimpleNamespace(cost=5e9, note="sous-échantillon de 20 000",
-                               inputs=_households() if request.behavioural else None)
+                               inputs=_households() if request.behavioural else None,
+                               impulse={"impot_sur_le_revenu": 5e9} if macro else None,
+                               uncovered={"rsa": "transfert"} if macro else {})
 
     monkeypatch.setattr(main, "_price_first_year", stub)
+    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     return seen
 
@@ -171,4 +176,52 @@ def test_the_market_scenario_without_the_aft_file_is_refused_by_name(
     response = client.post("/predictif/simulate", json=_payload(rate=rate))
     assert response.status_code == 503
     assert "indisponibles" in response.json()["detail"]
+    assert priced == []
+
+
+# --------------------------------------------------------------------------- #
+# M3 — the loop, asked for by `macro` (D-218)
+# --------------------------------------------------------------------------- #
+def test_the_loop_runs_under_frozen_spending_and_lists_the_macro_theta(client, priced) -> None:
+    body = client.post("/predictif/simulate",
+                       json=_payload(macro=True, persistence="tenu")).json()
+    assert len(body["gdp_gap"]) == 10 and body["gdp_gap"][0] > 0
+    assert body["theta"]["multiplicateur_macro"] == 0.5
+    assert 0 < body["delta"][0] < body["delta_mechanical"][0]
+    eventail = next(s for s in body["slices"] if s["source"] == "eventail")
+    assert eventail["computed"] is True
+    assert "rsa" in body["absent"]["rétroaction, instruments non couverts"]
+    assert body["persistence"] == "tenu"
+
+
+def test_the_loop_past_three_years_without_persistence_is_refused_before_the_pass(
+        client, priced) -> None:
+    response = client.post("/predictif/simulate", json=_payload(macro=True))
+    assert response.status_code == 422 and "persistance" in response.json()["detail"]
+    assert priced == []
+    short = client.post("/predictif/simulate", json=_payload(macro=True, horizon=3))
+    assert short.status_code == 200 and len(short.json()["gdp_gap"]) == 3
+
+
+def test_a_persistence_without_the_loop_is_refused_before_the_pass(client, priced) -> None:
+    response = client.post("/predictif/simulate", json=_payload(persistence="eteint"))
+    assert response.status_code == 422 and "ignorée" in response.json()["detail"]
+    assert priced == []
+
+
+def test_under_a_gdp_share_rule_the_loop_is_absent_and_says_why(client, priced) -> None:
+    body = client.post("/predictif/simulate", json=_payload(
+        macro=True, spending={"rule": "part_pib_constante"})).json()
+    assert "note 70" in body["absent"]["rétroaction"]
+    assert body["gdp_gap"] is None and "multiplicateur_macro" not in body["theta"]
+
+
+def test_the_loop_without_a_macro_theta_is_refused_before_the_pass(client, priced) -> None:
+    rows = {"eti_all": 0.5, "eti_top_decile": 0.5, "employment_elasticity_smic": 0.5,
+            "passthrough_benefit_linked": 0.5, "passthrough_unlinked": 0.5,
+            "production_tax_investment": 0.5, "wealth_disclosure_growth_effect_pp": 0.5,
+            "wealth_tax_rate_elasticity": 0.5}
+    response = client.post("/predictif/simulate", json=_payload(
+        macro=True, horizon=3, theta={"rows": rows}))
+    assert response.status_code == 422 and "multiplicateur_macro" in response.json()["detail"]
     assert priced == []
