@@ -105,7 +105,7 @@ def test_the_report_names_its_theta_and_says_nothing_reads_it() -> None:
                      theta=Theta(common=0.3)).payload()
     assert len(payload["theta"]) == 8 and set(payload["theta"].values()) == {0.3}
     assert payload["theta_applied"] is False and "θ" in payload["absent"]
-    assert set(payload["closed"]) == set(chaine.CLOSED)
+    assert set(payload["closed"]) == {*chaine.CLOSED, *chaine.MACRO_CHANNELS}
 
 
 def test_a_report_without_a_theta_is_refused() -> None:

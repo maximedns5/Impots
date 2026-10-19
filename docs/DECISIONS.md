@@ -15700,3 +15700,142 @@ il faudrait alors la re-mesurer sur le code d'avant, pas la recopier.
 **Ce qui reste.** M3 : la rétroaction par le solde primaire de Mésange, sous
 `gele_en_volume`, qui branchera aussi le θ du multiplicateur. Le scénario `marche` attend
 toujours l'encours AFT, que www.aft.gouv.fr refuse à ce conteneur.
+
+## D-218 — M3 de la phase 9 : la boucle PIB → solde, lue dans Mésange
+
+**Le fait.** M3 branche la boucle que D-059 avait refusée faute de source : ce que
+l'activité créée ou détruite par une réforme rend au budget. Elle se lit dans la ligne
+« Solde primaire des APU » des variantes de Mésange, le modèle d'où viennent déjà les
+multiplicateurs (D-214). Le PIB et le solde sortent ainsi de la même variante, sous les
+mêmes conditions de simulation, sans élasticité importée d'ailleurs.
+
+**La ligne, et sa vérification adverse.** `primary_balance_by_instrument` rejoint
+`multipliers.yaml`, ses valeurs lues dans le PDF et jamais écrites. La variante ciblée bas
+salaires n'imprime pas cette ligne. Le lecteur exige donc que l'absence soit déclarée :
+non déclarée, la ligne est refusée ; déclarée pour une variante qui l'imprime, elle est
+refusée comme périmée. Une passe adverse a relu la ligne contre le PDF, pages rendues en
+image pour la TVA, la taxe carbone et l'encadré 14. Verdict SCOPE_PROBLEM : toutes les
+valeurs sont exactes, et la ligne contient bien le choc. Le recoupement par l'encadré 15
+(TVA sociale) retombe sur la somme des deux variantes à un centime près. Trois
+corrections changent un calcul, et non un texte.
+
+* Contre le coût brut que la chaîne compte, l'écart de la TVA est solde + 1,18 et non
+  solde + 1 : la TVA que les APU se versent à elles-mêmes revient avec le reste. Mon
+  premier jet ajoutait un point.
+* La taxe carbone est exclue. Son choc porte sur les volumes d'énergie, et son écart
+  contient la baisse de l'assiette, qui n'est pas un effet de l'activité.
+* La ligne n'est pas « la réponse des recettes ». La note 70 fait réagir en volume les
+  prestations chômage, et le tableau 10 fait suivre le PIB à des transferts. C'est
+  l'effet induit sur le solde PRIMAIRE ; les intérêts de la dette supplémentaire restent
+  ceux de la chaîne.
+
+Le reste du verdict est corrigé dans le texte de la ligne : une citation de page fausse,
+l'avertissement du folio 108 contre toute lecture d'autofinancement, les styles de
+citation mêlés.
+
+**Le calcul.** `predictif/retroaction.py` lit, par variante et par horizon, solde +
+coût ex ante brut. Mésange est linéaire et ses chocs sont permanents : une impulsion qui
+change d'une année à l'autre est la somme de chocs permanents décalés, chacun lu à son
+horizon. Le θ du multiplicateur le place au centre Mésange ∓ un écart-type IMK, et la
+rétroaction suit proportionnellement. M0 a mesuré l'écart à cette hypothèse, que les
+conventions affichées rappellent (de 0,46 pour l'IR à 1,40 pour les cotisations
+employeurs, la première année). La rétroaction améliore le solde de la réforme, et le PIB
+qu'elle ajoute divise sa dette : le ratio de la réforme vaut la dette de référence plus la
+dette supplémentaire, rapportées au PIB de référence, le tout divisé par 1 + y_t. C'est
+l'identité de §4.4 avec le PIB de la réforme, écrite directement.
+
+**Quatre conditions, quatre refus.**
+
+* La boucle ne s'applique que sous « Dépenses gelées en volume », la dépense de Mésange.
+  Sous une autre règle, elle est absente, avec sa raison.
+* Variantes fiscales uniformes seulement. Un instrument sans ligne de solde (la variante
+  ciblée), ou dont l'écart n'est pas de l'activité (la taxe carbone), ne reçoit aucun
+  effet macro, pas même sur le PIB : la moitié d'une variante serait pire que rien. Il
+  est listé avec sa raison, comme les transferts que le constructeur de chocs ne mappe
+  pas.
+* Au-delà de trois ans, un scénario de persistance nommé : « effet éteint après trois
+  ans » ou « effet tenu au niveau de la troisième année ». Aucun n'est le défaut, et une
+  trajectoire de quatre ans ou plus sans lui est refusée. Une persistance fournie sans
+  boucle appliquée est refusée aussi, parce qu'elle serait ignorée.
+* Les prix de la réforme sont tenus constants dans g : Mésange n'imprime aucun déflateur
+  du PIB.
+
+Un contrôle de cohérence garde la ligne. Pour chaque variante fiscale, le solde de la
+première année doit tomber dans ]−1 ; 0[. Une ligne lue avec le mauvais signe, ou sans
+son choc, en sort, et la boucle ajouterait un point de PIB que personne n'a mesuré.
+
+**La chaîne, l'API, la page.** Avec la boucle, la tranche `eventail` de la décomposition
+est calculée : θ du multiplicateur de 0 à 1, le comportement à sa valeur. Le tableau des
+θ gagne la ligne `multiplicateur_macro`. La garde 2 s'étend : un résultat qui liste ce θ
+sans l'effet sur le PIB qu'il a produit, ou qui dit fermés les canaux de la boucle qu'il
+applique, refuse d'exister. `POST /predictif/simulate` prend `macro` et `persistence`.
+L'impulsion par instrument vient de la même passe de population que le coût. Une
+persistance manquante ou ignorée, et un θ du multiplicateur absent, sont refusés avant
+la passe. La page a une case pour la boucle et une liste de persistance vide. Elle
+n'envoie rien quand la persistance manque, et affiche l'écart de PIB et l'éventail.
+`impots predictif` ne porte pas encore la boucle : `trajectoires.price` ne rend que le
+coût total, et les écarts par instrument demanderaient le détail des passes. Son rapport
+la dit absente, non demandée.
+
+**Un essai sur la vraie population.** Le barème à 50 % au-delà de 180 294 €, un
+relèvement d'impôt, en version rapide : 1 % de volume, 2 % de prix, taux de 2025 tenu,
+θ = ½. Le rendement mécanique de 2026 est de 1,62 Md€. La boucle en reprend 0,0100 point
+de PIB la première année et 0,0305 la troisième, et le PIB recule de 0,022 % puis de
+0,046 %. En 2035, la dette baisse de 0,500 point en mécanique, de 0,439 sous « effet
+éteint » et de 0,185 sous « effet tenu ». Sous « tenu », l'éventail du multiplicateur va
+de −0,430 à +0,061 point : au θ le plus fort, la réforme finit par relever la dette. Avec
+le comportement à θ = ½ en plus, la baisse tombe à 0,036 point. L'élasticité du revenu
+imposable et la réponse de Mésange s'additionnent alors, et leur recoupement n'est pas
+mesuré, ce que la convention affichée dit. Sous « Dépenses constantes en % du PIB », la
+boucle est absente avec sa raison, et la trajectoire est la mécanique. Environ deux
+minutes par requête.
+
+**Le premier essai a trouvé un défaut, corrigé ici.** Les quatre requêtes avec boucle
+ont été refusées, par leur nom : « delta 'ir_avant_niches' is neither mapped […] ». La
+passe de population rapporte tous ses totaux, salaires, revenu disponible et
+composantes de l'IR compris, et le constructeur de chocs refuse ce qu'il ne connaît pas.
+Les tests ne le voyaient pas : ils passaient une impulsion déjà propre. Le fan macro de
+`/population/simulate` donnait au constructeur le même dict. À la lecture du code, il
+était donc indisponible pour toute réforme qui coûte, `revenu_disponible` bougeant
+toujours. Il le disait comme une indisponibilité, sans erreur. `shocks.instrument_deltas`
+ne garde plus que les instruments que `guards.sector_balance` compte : les recettes,
+les transferts ramenés à la même convention, et les cotisations employeurs effectivement
+payées. `UNMAPPED` gagne les six transferts de `STATE_TRANSFERS` qui lui manquaient. Le
+fan de population demande aussi le TES, absent de ce conteneur : il n'a pas été relancé
+ici.
+
+**Ce que la passe a trouvé ailleurs, et qui n'est pas corrigé ici.** La ligne
+`multiplier_by_instrument` attribue à la page 101 un garde-fou de linéarité « à un point
+de PIB ». La page ne fixe aucun seuil, et le folio 108 dit le cadre linéaire « valable
+pour des chocs de quelques points de PIB ». Le docstring du lecteur dit l'encadré 15
+reproduit « au centime », alors qu'il s'en écarte d'un centime à deux ans. Ce sont des
+lignes vérifiées par une autre passe ; les corriger demande de les rouvrir, pas de les
+retoucher en passant.
+
+**Le choix qui revient au propriétaire.** §4.5 laisse au propriétaire le scénario de
+persistance. L'outil offre les deux, n'en choisit aucun, et refuse sans lui. Faut-il
+afficher les deux côte à côte plutôt que de demander d'en choisir un ? La question
+reste ouverte.
+
+**Les tests.** Nouveau : `tests/test_retroaction.py` (20). `test_predictif.py` gagne 9
+tests, `test_api_predictif.py` 5 ; `ui/check.mjs` passe de 43 à 46 vérifications. Le
+magasin macro construit, partagé, vit dans `tests/macro_cases.py`, que
+`dependances.MODULES_LOCAUX` nomme : la garde des imports l'a signalé comme dépendance
+non déclarée. Chaque garde a été vue échouer sur une mutation, vingt en tout. Pour le
+calcul : la cohérence du signe retirée, la TVA à solde + 1, la taxe carbone lue, la
+règle de dépense non vérifiée, la persistance absente tolérée, la superposition retirée,
+« tenu » éteint, θ macro sans effet, une absence non déclarée lue, une déclaration
+périmée tolérée, et l'impulsion prise à tous les totaux. Pour la chaîne : le PIB de la
+réforme ignoré au dénominateur, la boucle appliquée hors du gel en volume, une
+persistance ignorée tolérée, et les deux extensions de la garde 2. Pour l'API : les trois
+refus avant la passe déplacés après. Pour la page : la persistance manquante envoyée.
+Une garde en double sur la persistance a été retirée pour que sa mutation compte. Avec
+les tests de θ, de la dette, du magasin macro, de l'éventail, des chocs, de la couche
+agrégée, de la page, des données, de la provenance, de la charte et des dépendances :
+556 réussis, 42 sautés faute de sources que ce conteneur n'a pas (le TES, le bulletin
+AFT, les taux marginaux effectifs de l'artefact de base). `ruff` passe sur `src`,
+`tests` et `scripts`.
+
+**Ce qui reste.** M4 : les multiplicateurs manquants, les transferts d'abord. La boucle
+dans `impots predictif`, qui demande le détail des passes par instrument. Les deux choix
+du propriétaire ci-dessus. Le scénario `marche` attend toujours l'encours AFT.

@@ -5,8 +5,9 @@ multiplier at θ: the Mésange centre ∓ one IMK cross-study standard deviation
 instrument's family. Employment follows the multiplier proportionally, the assumption
 D-059 already makes and names. Horizons 1 to 3 only, the store's `usable_horizons`.
 
-Not wired into the debt path before M3: until then the chain reports the macro feedback
-absent, and this module only says what GDP and jobs would be at θ.
+It says what GDP and jobs would be at θ. The debt path does not read it: the loop of M3
+(`retroaction`, D-218) applies the same multiplier at θ through its own arithmetic, so
+that GDP and the balance come from one variant together.
 """
 
 from __future__ import annotations

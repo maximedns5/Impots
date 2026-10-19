@@ -1717,6 +1717,11 @@ class PredictifRequest(BaseModel):
     horizon: Annotated[int, Field(ge=1, le=10)]
     theta: PredictifTheta
     behavioural: bool = False
+    macro: bool = False
+    """The GDP → receipts loop from Mésange's balance row (D-218). Off, the path is
+    without it and says so; on, it reads only under « gele_en_volume »."""
+    persistence: Literal["eteint", "tenu"] | None = None
+    """Past three years, the loop needs one, and none is the default."""
 
     @model_validator(mode="after")
     def _check_reform(self) -> PredictifRequest:
@@ -1789,6 +1794,11 @@ class PredictifResponse(BaseModel):
     closed: dict[str, str]
     """Every channel with no θ in this result, and why (§2.5)."""
     behaviour: PredictifBehaviour | None = None
+    gdp_gap: list[float] | None = None
+    """y_t, the reform's GDP over the reference's minus one, when the loop runs."""
+    feedback_primary: list[float] | None = None
+    """φ_t, the loop's share of the reform's primary balance, when it runs."""
+    persistence: str | None = None
     population_note: str
     banner: str
     debt_banner: str

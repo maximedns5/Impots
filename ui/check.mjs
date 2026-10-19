@@ -83,13 +83,17 @@ const PRED_RESULT = { ...PRED_NAMES, years: [2026, 2027, 2028],
   delta: [-0.0017, -0.0034, -0.0050], priced_years: [2026], carried_years: [2027, 2028],
   conventions: ["Prélèvements constants en % du PIB",
                 "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"],
-  absent: { "rétroaction": "Retour du PIB sur les recettes : non branché avant M3 (D-214)." },
+  absent: { "rétroaction": "Retour du PIB sur les recettes non demandé. Absent, pas nul." },
   delta_mechanical: [-0.0018, -0.0036, -0.0053],
   theta: { eti_all: 0.5, employment_elasticity_smic: 0.5 }, theta_applied: true,
   closed: { dividendes: "la population ne porte aucun revenu du capital (§6.5)." },
   slices: [{ source: "bande", computed: true, reason: "",
              label: "Boîte θ du comportement : chaque effet revendiqué n'importe où",
-             low: [1.1665, 1.1705, 1.1690], high: [1.1672, 1.1719, 1.1712] }],
+             low: [1.1665, 1.1705, 1.1690], high: [1.1672, 1.1719, 1.1712] },
+           { source: "eventail", computed: true, reason: "",
+             label: "Éventail macro : θ du multiplicateur de 0 à 1",
+             low: [1.1664, 1.1700, 1.1680], high: [1.1675, 1.1725, 1.1720] }],
+  gdp_gap: [0.0007, 0.0014, 0.0015], persistence: null,
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
   debt_banner: "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici." };
 const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027, art. 3",
@@ -98,7 +102,7 @@ const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027
             mechanical_aged_eur: -1.3e9, reference: 1.1686, reform_aged: 1.1682,
             delta_aged: -0.0004, reform_frozen: 1.1683, delta_frozen: -0.0003 }],
   conventions: ["Prélèvements constants en % du PIB"],
-  absent: { "rétroaction": "non branché avant M3" }, uprating_note: "Population vieillie.",
+  absent: { "rétroaction": "non demandé" }, uprating_note: "Population vieillie.",
   theta: { eti_all: 0.3 }, theta_applied: false,
   closed: { dividendes: "la population ne porte aucun revenu du capital (§6.5)." },
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
@@ -458,7 +462,7 @@ await (async () => {
     const html = $("predOut").innerHTML;
     assert.match(html, /Croissance réelle 1 %, prix 2 %/);
     assert.equal((html.match(/>report</g) || []).length, 2, "two carried years");
-    assert.match(html, /non branché avant M3/);
+    assert.match(html, /non demandé\. Absent, pas nul/);
   });
   ok("the θ of the result, the θ box and the closed channels are shown", () => {
     const html = $("predOut").innerHTML;
@@ -469,5 +473,30 @@ await (async () => {
     assert.doesNotMatch(html, /non lus : vue mécanique/);
     assert.match($("predHost").innerHTML, /non lus : vue mécanique/,
                  "the report prices no behaviour and says its θ are not read");
+  });
+  ok("with the loop, the reform's GDP and the macro fan get their own columns", () => {
+    const html = $("predOut").innerHTML;
+    assert.match(html, /PIB, écart à la référence/);
+    assert.match(html, /\+0,07 %/);
+    assert.match(html, /Éventail macro \(écart\)/);
+  });
+  const sent = calls.length;
+  $("predMacro").checked = true;
+  $("predHorizon").value = "10";
+  $("predPersistence").value = "";
+  await $("goPred").onclick();
+  ok("the loop past three years without a persistence scenario sends nothing", () => {
+    assert.equal(calls.length, sent, "must not call the API");
+    assert.match($("predOut").innerHTML, /scénario de persistance/);
+  });
+  $("predPersistence").value = "tenu";
+  await $("goPred").onclick();
+  await new Promise((r) => setTimeout(r, 10));
+  ok("the loop and its persistence travel when both are named", () => {
+    const call = calls.filter((c) => c.url.endsWith("/predictif/simulate")).at(-1);
+    const body = JSON.parse(call.opts.body);
+    assert.equal(body.macro, true);
+    assert.equal(body.persistence, "tenu");
+    assert.equal(body.horizon, 10);
   });
 })();

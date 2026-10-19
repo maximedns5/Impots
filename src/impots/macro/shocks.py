@@ -66,6 +66,14 @@ UNMAPPED = {
     "ppa": "transfert",
     "rsa": "transfert",
     "aide_logement": "transfert",
+    # The rest of `guards.STATE_TRANSFERS` (D-218): the prime de Noël, the complément
+    # familial, the ASF, and the CRDS netted off the benefits, which belongs with them.
+    "aefa": "transfert",
+    "cf": "transfert",
+    "asf": "transfert",
+    "crds_pfam": "transfert",
+    "crds_logement": "transfert",
+    "crds_mini": "transfert",
     "impot_societes": "fiscalité des entreprises",
     "contribution_sociale_is": "fiscalité des entreprises",
     "cebge": "fiscalité des entreprises",
@@ -176,6 +184,33 @@ def targets_low_wages(knobs: tuple[str, ...] | None) -> bool:
         for knob in (knobs or ())
         for pattern in TARGETED_EMPLOYER_KNOBS
     )
+
+
+def instrument_deltas(deltas: dict[str, float], *,
+                      employer_contribution_delta: float = 0.0) -> dict[str, float]:
+    """The deltas `build` reads, out of everything the population layer reports.
+
+    `aggregate.deltas` carries every total the runner reports: salaries, disposable
+    income, and the components of the income tax (`ir_avant_niches`, `reductions`,
+    `credits_impot`) beside `ir` itself. Handed to `build` whole, the first of those
+    raised — which is how every reform's macro path came back unavailable on the real
+    population (D-218). Counted, the components would double the shock. So this keeps
+    exactly the instruments `guards.sector_balance` counts, in its convention:
+
+    * the state's receipts (`guards.STATE_RECEIPTS`), receipts-positive as reported;
+    * the transfers it pays (`guards.STATE_TRANSFERS`), whose positive delta means the
+      state pays MORE — negated here into the receipts-positive convention `build` reads;
+    * the employer contributions actually paid, net of allègements, under the name
+      `INSTRUMENT_MAP` gives them. `cotisations_employeur` is gross of the allègements
+      and does not move when one changes (`aggregate._employer_contribution_delta`).
+    """
+    from impots.guards import STATE_RECEIPTS, STATE_TRANSFERS
+
+    out = {name: deltas[name] for name in STATE_RECEIPTS if deltas.get(name)}
+    out.update({name: -deltas[name] for name in STATE_TRANSFERS if deltas.get(name)})
+    if employer_contribution_delta:
+        out["employer_contributions"] = employer_contribution_delta
+    return out
 
 
 def build(deltas: dict[str, float], *, year: int,

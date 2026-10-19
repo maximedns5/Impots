@@ -534,7 +534,9 @@ def _macro(request: Any, agg: Any) -> Any:
     knobs = tuple(request.reform.model_dump(exclude_none=True))
     try:
         impulse = shocks.build(
-            agg.deltas, year=request.year, reform_cost=agg.reform_cost, knobs=knobs)
+            shocks.instrument_deltas(
+                agg.deltas, employer_contribution_delta=agg.employer_contribution_delta),
+            year=request.year, reform_cost=agg.reform_cost, knobs=knobs)
     except shocks.ShockError as error:
         return Macro(available=False, unavailable_because=str(error))
 
@@ -1012,14 +1014,35 @@ def emtr_show(name: str) -> EmtrCurveResponse:
     return EmtrCurveResponse.model_validate_json(path.read_text(encoding="utf-8"))
 
 
-def _price_first_year(request: PopulationSimulateRequest) -> Any:
+class MacroSourceError(RuntimeError):
+    """The macro store's primary files are not in this checkout."""
+
+
+def _predictif_macro_store() -> Any:
+    """The macro store the loop reads, or a named refusal when its PDFs are absent —
+    the loop is then unavailable, never silently zero. A seam the tests stub."""
+    from impots.macro import imk, mesange
+    from impots.macro import store as macro_store_module
+
+    try:
+        return macro_store_module.load()
+    except (mesange.MesangeError, imk.ImkError,
+            macro_store_module.MissingSourceTable) as error:
+        raise MacroSourceError(f"magasin macro illisible : {error}") from error
+
+
+def _price_first_year(request: PopulationSimulateRequest, *, macro: bool = False) -> Any:
     """One quick-tier pass for the predictive path's first year — the seam its tests stub.
 
     `cost` is the engine's, COST POSITIVE; `inputs` is what `band.compute` reads, when
     behaviour was asked for, so the receipts at θ run on the very population the cost
-    came from; `note` is the quick tier's.
+    came from; `impulse` is the reform's macro impulse by Mésange variant,
+    EXPANSIONARY-POSITIVE, and `uncovered` the deltas without one, when the loop was
+    asked for (`macro`); `note` is the quick tier's.
     """
     from types import SimpleNamespace
+
+    from impots.macro import shocks
 
     frame = _population_frame()
     result, agg = _run_population(request, frame)
@@ -1027,8 +1050,20 @@ def _price_first_year(request: PopulationSimulateRequest) -> Any:
         raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
     inputs = (_behavioural_inputs(request, frame, agg, result.households)[0]
               if request.behavioural else None)
-    return SimpleNamespace(cost=float(agg.reform_cost), inputs=inputs,
-                           note=_quick_tier_note())
+    impulse, uncovered = None, {}
+    if macro:
+        try:
+            built = shocks.build(
+                shocks.instrument_deltas(
+                    agg.deltas,
+                    employer_contribution_delta=agg.employer_contribution_delta),
+                year=request.year, reform_cost=agg.reform_cost,
+                knobs=tuple(request.reform.model_dump(exclude_none=True)))
+        except shocks.ShockError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        impulse, uncovered = dict(built.by_instrument), built.reasons()
+    return SimpleNamespace(cost=float(agg.reform_cost), inputs=inputs, impulse=impulse,
+                           uncovered=uncovered, note=_quick_tier_note())
 
 
 @app.post("/predictif/simulate", response_model=PredictifResponse)
@@ -1052,8 +1087,8 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     from impots.dette.path import BANNER as DEBT_BANNER
     from impots.dette.path import SHIPPED, DebtError, SpendingScenario
     from impots.dette.scenarios import GrowthScenario, RateScenario
-    from impots.predictif import chaine, comportement
-    from impots.predictif.theta import Theta, ThetaError
+    from impots.predictif import chaine, comportement, retroaction
+    from impots.predictif.theta import MACRO_ROW, Theta, ThetaError
 
     try:
         if request.spending.rule == "personnalise":
@@ -1072,13 +1107,26 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
         theta = Theta(rows=dict(request.theta.rows), common=request.theta.common)
         store = load_store()
         theta.check_known(store)
+        looped = request.macro and spending.rule == retroaction.SPENDING_RULE
+        if request.persistence is not None and not looped:
+            raise DebtError(
+                f"persistance « {request.persistence} » sans rétroaction appliquée (non "
+                f"demandée, ou absente sous « {spending.name} ») : elle serait ignorée.")
+        if looped and request.horizon > retroaction.MAX_HORIZON and not request.persistence:
+            raise DebtError(
+                f"horizon de {request.horizon} ans avec la rétroaction, sans scénario de "
+                f"persistance : Mésange n'est lu qu'à trois ans, et au-delà il faut nommer "
+                f"« eteint » ou « tenu ». Aucun n'est le défaut.")
+        if looped:
+            theta.for_row(MACRO_ROW)
     except (DebtError, ThetaError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
     try:
         start = reference_module.start_from_accounts(chaine.START_YEAR)
         securities = maturite.load_block1() if rate.kind == "marche" else None
-    except (DebtError, maturite.MaturityError, OSError) as error:
+        macro_store = _predictif_macro_store() if looped else None
+    except (DebtError, maturite.MaturityError, OSError, MacroSourceError) as error:
         raise HTTPException(
             status_code=503,
             detail=f"Données de départ indisponibles dans ce checkout : {error}") from error
@@ -1090,17 +1138,23 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             detail=f"la première année projetée, {year}, sort de la fenêtre que la couche "
                    f"population sert ({MIN_YEAR}–{MAX_YEAR}).")
     first = _price_first_year(PopulationSimulateRequest(
-        reform=request.reform, year=year, behavioural=request.behavioural))
+        reform=request.reform, year=year, behavioural=request.behavioural),
+        macro=request.macro)
     try:
         at = (comportement.evaluate(theta, mechanical=-first.cost, reform=request.reform,
                                     store=store, **first.inputs)
               if first.inputs is not None else None)
-        costs = chaine.ReformCosts(by_year={year: first.cost}, carry=chaine.CARRY,
-                                   behavioural=({year: at} if at is not None else None))
+        costs = chaine.ReformCosts(
+            by_year={year: first.cost}, carry=chaine.CARRY,
+            behavioural=({year: at} if at is not None else None),
+            impulses=({year: first.impulse} if first.impulse is not None else None),
+            uncovered=dict(first.uncovered))
         result = chaine.run(start, horizon=request.horizon, costs=costs,
                             spending=spending, growth=growth, rate=rate, theta=theta,
-                            securities=securities, store=store)
-    except (DebtError, ThetaError, maturite.MaturityError) as error:
+                            securities=securities, store=store,
+                            persistence=request.persistence, macro_store=macro_store)
+    except (DebtError, ThetaError, retroaction.FeedbackError,
+            maturite.MaturityError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
     return PredictifResponse(
@@ -1125,6 +1179,10 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
         behaviour=(PredictifBehaviour(
             receipts_first_year_eur=at.receipts, box_first_year_eur=list(at.box),
             claimed=list(at.claimed), grade=at.grade) if at is not None else None),
+        gdp_gap=list(result.gdp_gap) if result.gdp_gap is not None else None,
+        feedback_primary=(list(result.feedback_primary)
+                          if result.feedback_primary is not None else None),
+        persistence=result.persistence,
         population_note=first.note,
         banner=result.banner, debt_banner=DEBT_BANNER,
     )

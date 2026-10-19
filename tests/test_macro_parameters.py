@@ -39,11 +39,13 @@ VERIFIED = {
 
 @needs_source
 def test_the_store_loads_what_the_pass_cleared_and_nothing_else():
-    """Four rows survived the adversarial pass; the fifth returned WRONG and is gone."""
+    """Four rows survived the first adversarial pass and the fifth returned WRONG and is
+    gone; the balance row joined after its own pass (D-218)."""
     loaded = store.load()
     assert set(loaded.tables) == {
         "multiplier_by_instrument", "employment_by_instrument",
         "multiplier_dispersion", "multiplier_regime_shift",
+        "primary_balance_by_instrument",
     }
     assert loaded.parameters == {}, "no scalar row survived"
     assert "revenue_gdp_elasticity" in loaded.removed
