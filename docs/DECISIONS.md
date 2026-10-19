@@ -16599,7 +16599,144 @@ paquet. Pour M6 : la cohérence interne, le confinement préenregistré, l'exemp
 dossier et le balayage des gardes (§9), dont la porte est le `make full` du propriétaire.
 Les deux choix du propriétaire de D-218 restent ouverts.
 
-## D-225 — M6 de la phase 9, troisième pas : la cohérence, et le confinement préenregistré
+## D-225 — La page nomme la vue de population de la version rapide
+
+**Le fait.** `POST /predictif/simulate` nomme la population sur laquelle il chiffre sa
+première année, dans `population_view` et dans une phrase de `population_note`. Depuis
+D-226, c'est la vue « vieillie », la population de 2024 portée à 2026, et la note porte
+la mise en garde de `uprating.caveat` : une population vieillie n'est plus calibrée. La
+page ne lisait ni l'un ni l'autre. Au-dessus de la version rapide, `loadPredictifs`
+affiche le rapport précalculé d'`impots predictif`, qui chiffre les deux vues côte à côte
+(D-216). Le lecteur ne pouvait dire ni à quelle colonne du rapport se compare le chiffre
+de 2026 de la version rapide, ni qu'il porte sur une population non calibrée.
+
+**Le changement.** `renderPredictif` nomme la vue au-dessus du tableau, à la suite des
+trois scénarios : « Population : vieillie », tirée de `population_view` par la table
+`POPULATION_VIEWS`. Sous le tableau vient `population_note` en entier, échappée, à la
+place où le rapport met sa note de vieillissement ; elle reprend la source des salaires
+que le lecteur a tapée. Les deux vont dans `renderPredictif`, pas dans `predictifNotes`,
+que le rapport partage : il chiffre les deux vues et n'en nomme aucune. Une réponse sans
+ces champs n'affiche rien de plus : la page ne nomme pas une vue qu'on ne lui a pas dite.
+Aucun chiffre ne bouge.
+
+**La numérotation.** Cette entrée et celle de la PR #54 ont pris D-225 en même temps. À la
+demande du propriétaire, celle de la PR #54, déjà fusionnée, devient D-226, et toutes ses
+références avec elle : le code, les tests, la page, `ui/check.mjs` et
+`docs/STATE_AND_NEXT.md`. La note de l'API dit donc « (D-216, D-226) ». Le titre de la
+PR #54 et ses messages de commit gardent « D-225 ».
+
+**Les tests.** Dans `ui/check.mjs`, le résultat de la version rapide porte
+`population_view` et une `population_note` reprise de l'API, mise en garde comprise, avec
+une source qui contient « & ». Une vérification de plus : le nom de la vue au-dessus du
+tableau ; la note dans un `<p class="tnote">`, qui nomme « vieillie », l'année et
+« figée » ; la source échappée, suivie de la mise en garde. Elle a été vue échouer sur la
+page de `main` d'avant ce changement, sur le nom absent, puis sur quatre mutations : la
+note retirée, le nom retiré, la note hors de `tnote`, la note non échappée.
+`ui/check.mjs` passe de 48 à 49 vérifications. Après la renumérotation,
+`test_api_predictif.py`, `test_behavioural.py`, `test_uprating.py`, `test_charter.py` et
+`test_api.py` : 164 réussis, 5 sautés (l'artefact de base sans distribution des taux
+marginaux, la population absente de ce conteneur), 13 désélectionnés par le marqueur par
+défaut. `ruff` passe sur `src`, `tests` et `scripts`. `make full` n'a pas été lancé :
+rien ne touche une passe de population.
+
+**Ce qui reste.** Voir la page sur une vraie réponse : la passe réelle de la version
+rapide reste celle du propriétaire (D-226).
+
+## D-226 — La version rapide chiffre sa première année sur la population vieillie
+
+**Le fait.** `POST /predictif/simulate` chiffrait la première année projetée, 2026, sur la
+population de 2024 telle quelle. `_price_first_year` passait à `_run_population` le cadre
+que `_population_frame` lit dans le parquet, et `population.runner.run` le câblait sans y
+toucher : la législation de 2026 appliquée à des revenus de 2024. Seules les dates de
+naissance suivent l'année, écrites « année − âge » par `build_simulation`, si bien que
+chacun garde son âge. Rien ne vieillissait la population sur ce chemin : `uprating.uprate`
+n'était appelé que dans `population/cli.py`. C'était la vue « figée » de
+`predictif/annuel.py`, celle que la commande `impots predictif` place à côté de la vue
+« vieillie », son chiffre de tête (D-216). La réponse ne disait pas laquelle elle avait
+chiffrée, et D-215 écrivait seulement « comme `/population/simulate` ». D-224 l'a relevé
+au passage et l'a renvoyé à une tâche à part : c'est cette entrée.
+
+**De combien la vue figée s'écarte.** Le coût de la réforme y est calculé sur des revenus
+de 2024, et le PIB qui le divise est celui de 2026. L'essai de D-216 donne l'ordre de
+grandeur : l'article 3 du PLF 2027 rapporte 1,12 Md€ en 2026 sur la population figée et
+1,22 Md€ sur la population vieillie, 9 % de plus. Le calcul réel de D-224, quatre taux de
+CSG avec des salaires déclarés à 3 % par an, en donne un second : de 4,17 à 16,72 Md€ en
+vue figée, de 4,40 à 17,64 Md€ en vue vieillie, 5,5 % de plus. Le report en part de PIB
+constante reprend ensuite ce niveau tel quel, et la page, qui affiche un rapport
+précalculé au-dessus de la version rapide, montrait pour 2026 deux chiffres différents
+sans dire pourquoi.
+
+**Le choix du propriétaire.** Un premier état de cette branche nommait la vue figée sans
+changer de chiffre, et proposait trois voies : la garder, nommée ; chiffrer la vue
+vieillie à la place, toujours en une passe, contre un champ obligatoire de plus ; chiffrer
+les deux, en deux passes. Le propriétaire a retenu la deuxième. La version rapide se lit
+désormais dans la même vue que le chiffre de tête de la commande, et que l'explorateur
+conditionnel, dont l'évaluateur lit une passe de la première année par vue, la vieillie en
+tête (D-224).
+
+**Ce qui change, et les chiffres avec.** La requête porte un bloc `uprating`, obligatoire
+et sans défaut comme toute hypothèse (D-213) : le taux de croissance annuel des salaires,
+et sa source. L'indice de prix ne se demande pas : `annuel.uprating_for` le tire du
+scénario de croissance, si bien que les euros de la réforme et le PIB qui les divise
+gonflent au même rythme (D-216). Une source vide, ou un taux qui n'est pas annuel, est
+refusé avant la passe par le message de `Uprating` lui-même. `_price_first_year` vieillit
+le cadre de 2024 à 2026 avec `uprating.uprate` avant la passe : salaires et chômage à
+l'indice des salaires, pensions et loyers aux prix ; lignes, poids, âges et ménages ne
+bougent pas. Tout ce qui suit lit le cadre vieilli : le coût, les entrées du comportement,
+l'impulsion macro et les déciles. La réponse vaut « vieillie » dans `population_view` ;
+`population_note` nomme la vue, dit que la vue figée n'est pas chiffrée ici, et porte
+`uprating.caveat` : une population vieillie n'est plus calibrée. Le coût de la première
+année monte d'à peu près l'écart mesuré plus haut. Il n'est pas chiffré ici : la
+population n'est pas dans ce conteneur.
+
+**Un piège évité : les caches des taux marginaux.** Le comportement lit les taux marginaux
+par `emtr.cached`, mémoïsés sur disque sous une clé de millésime, d'année, d'échantillon,
+de réforme et de câblage ; les taux de référence le sont dans `emtr.compute`, sous un nom
+de fichier de même nature. Aucun des deux ne voyait le vieillissement, ni le contrôle de
+hauteur du second, puisqu'une population vieillie a les lignes du millésime. Or
+`/population/simulate` met en cache la même réforme, la même année et le même échantillon
+sur la population telle quelle : chaque vue aurait servi les taux de l'autre, sans le
+dire. Les deux clés portent désormais `Uprating.key()`, les deux indices et l'année de
+base, la source n'étant qu'une étiquette. Elles ne le portent que pour une population
+vieillie : les clés du millésime ne bougent pas, et les fichiers déjà sur disque restent
+valables. C'est le défaut que D-176 avait corrigé pour le câblage.
+
+**La page.** Deux champs, le rythme des salaires et sa source ; tant qu'il en manque un,
+rien n'est envoyé et la page le dit, comme pour les autres hypothèses. Une note sous le
+formulaire dit ce que le vieillissement fait et ce qu'il coûte.
+
+**Un écart à la spec.** §3.4 de `docs/PHASE9_SPEC.md` énumère les refus de l'API : sans
+scénario de dépense, de croissance ou de taux, sans θ. S'y ajoute le refus sans hypothèse
+de salaires.
+
+**Les tests.** Dans `tests/test_api_predictif.py`, trois nouveaux, quatre cas. Le cadre
+vieilli avant la passe, colonne par colonne, sur deux personnes : l'indice des prix est
+celui du scénario de croissance, le reste est intact, et la réponse nomme la vue avec sa
+mise en garde. Une source vide et un taux de 3,0 (300 % par an, le lapsus de « 3 % »)
+refusés avant la passe, par le message de `Uprating`. Le comportement qui passe la clé du
+vieillissement aux caches. Le bloc absent s'ajoute au test des hypothèses sans défaut.
+Dans `tests/test_behavioural.py`, un : chaque vue lit son propre fichier dans les deux
+caches, la source reste hors de la clé, et la clé du millésime est celle d'avant. Le
+premier état de la branche avait son test, vu échouer avant le changement ; le test du
+cadre vieilli le remplace. Onze mutations, chacune vue échouer : le cadre non vieilli,
+l'indice des prix pris aux salaires, la vue nommée « figee », la mise en garde retirée, le
+bloc pourvu d'un défaut, l'erreur de `Uprating` laissée hors des refus, la clé non passée
+au comportement, le cache de référence puis celui de la réforme aveugles au
+vieillissement, la clé du millésime déplacée, la source entrée dans la clé. `ui/check.mjs`
+passe à 48 vérifications ; la nouvelle a été vue échouer avant le changement de la page.
+`test_api_predictif.py`, `test_api.py`, `test_charter.py`, `test_behavioural.py` et
+`test_uprating.py` : 164 réussis, 5 sautés (l'artefact de base sans distribution des taux
+marginaux, la population absente de ce conteneur), 13 désélectionnés par le marqueur par
+défaut. `ruff` passe sur `src`, `tests` et `scripts`. `make full` n'a pas été lancé.
+
+**Ce qui reste.** Une passe réelle de la version rapide, sur la machine du propriétaire,
+pour le chiffre de 2026 en vue vieillie, et `test_every_money_column_is_uprated_or_named`,
+que ce conteneur saute faute de population. La page n'affiche pas encore `population_note`
+ni `population_view` de la version rapide ; D-225 s'en charge.
+`/population/simulate` chiffre toujours sur la population telle quelle, quelle que soit
+l'année, sans le dire dans sa note ; elle n'est pas touchée ici.
+
+## D-227 — M6 de la phase 9, troisième pas : la cohérence, et le confinement préenregistré
 
 **Le fait.** Une prévision conditionnelle ne se teste pas contre l'avenir, et
 l'historique est trop court pour éprouver toute la chaîne (§5 de la phase 4) ; §9 dit ce
@@ -16610,10 +16747,11 @@ gardes suivront.
 
 **Le préenregistrement.** La règle a été committée avant tout calcul, dans
 `tests/episodes/preregistered/cice_2013_boite_theta.yaml`, et poussée avant le premier
-chiffre (commit b8b4848). L'emploi salarié marchand à trois ans du CICE, 18 Md€ de baisse
-de cotisations employeurs en 2016 contre le PIB de normalisation des variantes,
-2 200 Md€, lu dans les deux variantes de Mésange, uniforme et ciblée, au θ du
-multiplicateur 0, ½ et 1. La boîte θ doit contenir la fourchette publiée, 100 000 à
+chiffre (commit b8b4848, titré « D-225 » : l'entrée a pris le numéro D-227 quand D-225 et
+D-226 sont arrivées sur `main` avant elle). L'emploi salarié marchand à trois ans du
+CICE, 18 Md€ de baisse de cotisations employeurs en 2016 contre le PIB de normalisation
+des variantes, 2 200 Md€, lu dans les deux variantes de Mésange, uniforme et ciblée, au θ
+du multiplicateur 0, ½ et 1. La boîte θ doit contenir la fourchette publiée, 100 000 à
 400 000 emplois, pour chaque variante, et l'emploi à θ = ½ doit tomber dedans. L'attente,
 écrite avec la règle : un écart-type de part et d'autre du centre est plus étroit que le
 p10-p90 du tirage triangulaire de la phase 4, à peu près 1,35 écart-type, et la boîte

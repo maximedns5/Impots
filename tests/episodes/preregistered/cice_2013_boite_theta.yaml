@@ -1,4 +1,4 @@
-# Préenregistrement de PHASE9_SPEC §9.2 (D-225). Ce fichier est committé AVANT tout
+# Préenregistrement de PHASE9_SPEC §9.2 (D-227). Ce fichier est committé AVANT tout
 # calcul de la boîte θ : son premier commit EST l'enregistrement. Le bloc `rule` ne
 # change plus ensuite — un test le vérifie dans l'historique git. Le résultat entre dans
 # `outcome`, dans un commit distinct, après le calcul.

@@ -1,4 +1,4 @@
-"""Phase 9 M6 §9 — what can be tested of a conditional prediction (D-225).
+"""Phase 9 M6 §9 — what can be tested of a conditional prediction (D-227).
 
 A conditional prediction cannot be tested against the future, and the history is too short
 to backtest the whole chain (Phase 4 §5). What can be tested is held here and in

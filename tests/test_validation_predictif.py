@@ -1,4 +1,4 @@
-"""Phase 9 M6 §9 — the validation of a conditional prediction (`predictif.validation`, D-225).
+"""Phase 9 M6 §9 — the validation of a conditional prediction (`predictif.validation`, D-227).
 
 §9.1, the chain's internal coherence: a null reform leaves the debt where the reference puts
 it at every θ and under every scenario, behaviour and loop asked for; the GDP and the

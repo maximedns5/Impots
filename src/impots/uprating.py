@@ -108,6 +108,12 @@ class Uprating:
         rate = self.wage if kind == "wage" else self.price
         return (1.0 + rate) ** (year - self.base_year)
 
+    def key(self) -> str:
+        """What an aged population's numbers depend on, for a cache key: the two indices
+        and the base year, the target year being keyed already. The source is a label and
+        stays out — two names for the same rates are the same population (D-226)."""
+        return f"w{self.wage:+.6f}_p{self.price:+.6f}_b{self.base_year}"
+
 
 def uprate(frame: Any, year: int, uprating: Uprating) -> Any:
     """Return the frame with its money columns moved to `year`. Nothing else changes.

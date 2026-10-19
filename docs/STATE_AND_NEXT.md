@@ -1,6 +1,6 @@
 # State of the project, and the directions open — 2026-10-19 (Phase 9, M6 under way)
 
-The eighth 2026-10-19 update adds D-225, M6's third step: §9's coherence and the
+The tenth 2026-10-19 update adds D-227, M6's third step: §9's coherence and the
 preregistered containment. The rule — both Mésange variants of the CICE, jobs at three
 years, the θ box must contain 100 000 to 400 000 and θ = ½ fall inside — was committed and
 pushed before any number, with the expectation that it might fail. It passes: 31 200 to
@@ -9,8 +9,22 @@ reason is recorded with it: the IMK standard deviation is almost the size of Mé
 centre, so containment is weak evidence and the centre carries the test.
 `predictif/validation.py` refuses a case never committed, one whose first commit already
 held its outcome, or one whose rule moved. A null reform is null at every θ with
-behaviour and loop, and the loop's GDP and balance come from one Mésange table. The
-seventh 2026-10-19 update added D-224, M6's second step: the explorer searches the debt
+behaviour and loop, and the loop's GDP and balance come from one Mésange table. The entry
+was written as D-225 and took D-227 when D-225 and D-226 reached `main` first.
+The ninth 2026-10-19 update added D-225: the page names the fast version's population
+view above its table, « vieillie », and shows its `population_note` under it, the
+uprating caveat included. The fast version's entry took D-225 at the same time and
+becomes D-226, every reference with it.
+The eighth 2026-10-19 update added D-226: the fast version of `/predictif/simulate` now
+prices its first year on the population aged to that year, « vieillie », the headline
+of `impots predictif` and of the conditional explorer, by the owner's choice. It priced
+the 2024 population as it is, and did not say so. The request gains a required
+`uprating` block, the wage index and its source; prices are the growth scenario's. The
+response names the view in `population_view` and carries the uprating caveat in
+`population_note`. The EMTR caches now key on the uprating, so that the aged and the
+as-built population never serve each other's marginal rates. The first-year cost rises
+by roughly the measured gap, 5 to 9 %; the real run is the owner's.
+The seventh 2026-10-19 update added D-224, M6's second step: the explorer searches the debt
 at a fixed θ (§8). Its allowlist gains `dette_conditionnelle`, the reform's debt gap at
 year T under named θ and scenarios, met from below; θ is required for it and refused for
 the mechanical target, and no bound may name θ. Each candidate is re-read at the 2^K
@@ -149,8 +163,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **226 decision
-entries**, D-000 to D-225, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **228 decision
+entries**, D-000 to D-227, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -500,7 +514,7 @@ download list.
    IS (D-221). R&D opened as an illustrative index (D-222, C9, CIR rates only), and the
    CIR is priced on the créance flow with its banner. Dividends (§6.5) stay closed. Every
    §6 channel has its verdict. M6 is under way: §7's indices (D-223), the explorer at a
-   fixed θ (§8, D-224), §9.1's coherence and §9.2's preregistered containment (D-225) are
+   fixed θ (§8, D-224), §9.1's coherence and §9.2's preregistered containment (D-227) are
    in; next the worked example (§9.4) and the guard sweep, whose gate is the owner's
    `make full`. Left for C9: the take-up margin, new entrants, the carried-forward stock,
    and the CNEPI's 2021 evaluation (IPP report n° 33), not manifested. M1 to M4 are done (D-215 to D-219); M4 left
