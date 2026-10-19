@@ -645,7 +645,28 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any,
         "emtr_baseline": households["emtr"].to_numpy(),
         "emtr_reform": households["emtr_reform"].to_numpy(),
         "taxable_base": base, "weights": weights, "top_decile": top,
+        **_labour_inputs(request, frame, agg, households),
     }, int(households.height)
+
+
+def _labour_inputs(request: Any, frame: Any, agg: Any, households: Any) -> dict[str, Any]:
+    """C7's persons, only when the reform moves a levy C7 prices (D-220): none otherwise,
+    and the channel then says why it did not open rather than pricing nothing."""
+    import math
+
+    from impots.behavioural import channels
+    from impots.behavioural import labour as labour_module
+    from impots.behavioural.store import load as load_store
+
+    if not channels._claimed(load_store(), request.reform, channels.C7_KEYS):
+        return {}
+    before = agg.totals.get("salaire_net")
+    after = agg.totals_reform.get("salaire_net")
+    if not before or not after:
+        raise channels.ChannelInputMissing(
+            "C7 needs the net wage bill before and after the reform; the run has "
+            f"{before!r} and {after!r}")
+    return labour_module.inputs(frame, households, math.log(after / before))
 
 
 def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None) -> Any:

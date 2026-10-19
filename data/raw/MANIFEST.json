@@ -1386,6 +1386,15 @@
       "licence": "Licence Ouverte / Etalab",
       "description": "INSEE, Comptes nationaux annuels base 2020, tableau 3.201 « Dépenses et recettes des administrations publiques (S13) », MILLÉSIME 2025 (publication « Dépenses et recettes des administrations publiques en 2025 », 29 mai 2026). Totaux CONSOLIDÉS des dépenses et des recettes, intérêts D41 consolidés en dépenses et en recettes, B9NF. Le total des recettes moins le total des dépenses redonne B9 ; l'intérêt net redonne celui de la table 7.301. Entrée de la trajectoire de référence de la phase 9 (D-215).",
       "quarantined": false
+    },
+    "iza_dp6735_2012_bargain_orsini_peichl_labor_supply.pdf": {
+      "url": "https://docs.iza.org/dp6735.pdf",
+      "sha256": "bafcea339a581c5b242e0ac82b30815995db3a09b72af3fd125fb0a6feb3d882",
+      "bytes": 1065161,
+      "downloaded": "2026-10-19",
+      "licence": "IZA Discussion Paper — accès ouvert",
+      "description": "Bargain, Orsini et Peichl, « Comparing Labor Supply Elasticities in Europe and the United States: New Results », IZA DP n° 6735, juillet 2012. Tableaux F.1, F.3, F.5 et F.7 : élasticités des heures au salaire brut, propre et, pour les couples, croisée, France 1998 et 2001, femmes et hommes en couple, femmes et hommes seuls, avec écarts-types ; annexe G pour l'estimation commune des deux années. Source du canal d'offre de travail C7 (D-220).",
+      "quarantined": false
     }
   }
 }

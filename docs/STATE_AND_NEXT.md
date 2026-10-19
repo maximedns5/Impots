@@ -1,6 +1,15 @@
-# State of the project, and the directions open — 2026-10-19 (Phase 9, M4 done)
+# State of the project, and the directions open — 2026-10-19 (Phase 9, M5 begun)
 
-The second 2026-10-19 update adds D-219, Phase 9's M4: neither missing multiplier opens.
+The third 2026-10-19 update adds D-220, the first channel of Phase 9's M5: labour supply
+reopens as C7, on the cells of Bargain, Orsini and Peichl (IZA DP 6735, now manifested)
+that `behavioural/bop.py` reads out of the PDF. Four rows, one per group — women and men
+in a couple, women and men alone — each a convention applied to the 1998 and 2001 cells:
+own-wage plus cross-wage for a couple, the mean of the two years at the centre, the
+envelope of the 95 % intervals widened for rounding. An adversarial pass returned
+SCOPE_PROBLEM and its six repairs are in. C7 opens for the CSG on earnings only, on a
+household sample the paper's own selection defines. A one-point rise of the deductible CSG
+loses 384 M€ of its 8,37 Md€ to hours. The second 2026-10-19 update added D-219, Phase 9's
+M4: neither missing multiplier opens.
 The transfers rest on two IMK meta-analyses that disagree by a factor 2,5 on the width,
 with no horizon profile and no balance row; Mésange 2017 has no corporate-tax variant and
 no re-estimation has been published since. Both are shown closed on every trajectory, and
@@ -88,8 +97,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **220 decision
-entries**, D-000 to D-219, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **221 decision
+entries**, D-000 to D-220, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -433,15 +442,16 @@ download list.
    first since the pension target moved and, with Actions down, the only whole-suite
    check D-210 and D-211 will get — the 2026-10-16 pass ran on `05cc944`, before them; the report's direction line, which counts
    signs; and art. 2's outside grade.
-2. **Phase 9, M5** (`docs/PHASE9_SPEC.md` §6): the new channels one by one, labour
-   supply first (the IZA DP 6735 is open access and must be manifested). M1 to M4 are
-   done (D-215 to D-219); M4 left the transfers and the IS closed. Two
+2. **Phase 9, M5** (`docs/PHASE9_SPEC.md` §6): the new channels one by one. Labour
+   supply is done (D-220, C7, CSG on earnings only); next come investment (§6.2), firm
+   creations (§6.3), R&D (§6.4) and dividends (§6.5). M1 to M4 are done (D-215 to
+   D-219); M4 left the transfers and the IS closed. Two
    decisions from M3 are the owner's: whether the page should show both persistence
    scenarios side by side rather than ask for one (§4.5), and whether to reopen the
    `multiplier_by_instrument` row, whose linearity bound the M3 pass found
    unsupported (D-218). `impots predictif` does not carry the loop yet. A full ten-year
    run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
-   refuses this container), the IZA DP 6735 to manifest, France Stratégie's 2023
+   refuses this container), France Stratégie's 2023
    capital-taxation report to read, and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
 3. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
