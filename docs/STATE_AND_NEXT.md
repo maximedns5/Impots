@@ -1,6 +1,12 @@
-# State of the project, and the directions open — 2026-10-19 (Phase 9, M3 done)
+# State of the project, and the directions open — 2026-10-19 (Phase 9, M4 done)
 
-The 2026-10-19 update adds D-218, Phase 9's M3: the GDP → primary-balance loop read from
+The second 2026-10-19 update adds D-219, Phase 9's M4: neither missing multiplier opens.
+The transfers rest on two IMK meta-analyses that disagree by a factor 2,5 on the width,
+with no horizon profile and no balance row; Mésange 2017 has no corporate-tax variant and
+no re-estimation has been published since. Both are shown closed on every trajectory, and
+§5's two guards hold any future row: a transfers row loads only at `confidence: low`,
+graded illustrative, and an IS delta receives no multiplier. The first 2026-10-19 update
+added D-218, Phase 9's M3: the GDP → primary-balance loop read from
 Mésange's « Solde primaire des APU » row, which an adversarial pass cleared with its
 values exact and its scope repaired. The loop applies only under « Dépenses gelées en
 volume », to the uniform fiscal variants, at one to three years, with a named persistence
@@ -82,8 +88,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **219 decision
-entries**, D-000 to D-218, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **220 decision
+entries**, D-000 to D-219, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -427,8 +433,9 @@ download list.
    first since the pension target moved and, with Actions down, the only whole-suite
    check D-210 and D-211 will get — the 2026-10-16 pass ran on `05cc944`, before them; the report's direction line, which counts
    signs; and art. 2's outside grade.
-2. **Phase 9, M4** (`docs/PHASE9_SPEC.md` §5): the missing multipliers, transfers
-   first, then the IS if a source exists. M1 to M3 are done (D-215 to D-218). Two
+2. **Phase 9, M5** (`docs/PHASE9_SPEC.md` §6): the new channels one by one, labour
+   supply first (the IZA DP 6735 is open access and must be manifested). M1 to M4 are
+   done (D-215 to D-219); M4 left the transfers and the IS closed. Two
    decisions from M3 are the owner's: whether the page should show both persistence
    scenarios side by side rather than ask for one (§4.5), and whether to reopen the
    `multiplier_by_instrument` row, whose linearity bound the M3 pass found

@@ -94,8 +94,15 @@ CLOSED: dict[str, str] = {
         "aucune ligne vérifiée au magasin (D-031) ; les élasticités de Bargain, Orsini et "
         "Peichl restent à manifester (§6.1)."),
     "IS et investissement des entreprises": (
-        "ni variante Mésange de l'IS, ni évaluation française de la réponse de "
-        "l'investissement au coût du capital au manifeste (§5, §6.2)."),
+        "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; "
+        "le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de "
+        "2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par "
+        "horizon ni ligne de solde (§5, §6.2, D-219)."),
+    "transferts": (
+        "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent "
+        "0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le "
+        "centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans "
+        "et n'ont ni ligne de solde ni centre français (§5, D-214, D-219)."),
     "créations d'entreprises": (
         "aucune évaluation publiée de leur réponse aux impôts au manifeste (§6.3)."),
     "R&D et CIR": "aucun fichier GECIR ni MESR au manifeste (D-154, §6.4).",

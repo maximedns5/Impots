@@ -74,6 +74,49 @@ def test_only_the_two_loadable_verdicts_pass(tmp_path: Path, verdict):
         store.load(tmp_path)
 
 
+# --- §5: a transfers multiplier loads only low, and illustrative (D-219) -------------
+
+
+def _transfer_row(**overrides) -> dict:
+    """A scalar multiplier claiming the RSA knob — what a transfers row would look like."""
+    return {**VERIFIED, "responds_to_knobs": ["rsa_*"], "confidence": "low",
+            "support": {"estimated_on": "méta-analyses IMK",
+                        "max_variation_graded_in_support": 0}, **overrides}
+
+
+@pytest.mark.parametrize("overrides", [
+    {"confidence": "medium"},
+    {"support": {"estimated_on": "IMK", "max_variation_graded_in_support": 1.0}},
+    {"responds_to_knobs": ["*"], "confidence": "medium"},
+    {"responds_to_knobs": ["rsa_montant_de_base"], "confidence": "high"},
+])
+def test_a_transfers_row_above_low_confidence_or_graded_in_support_is_refused(
+        tmp_path: Path, overrides: dict):
+    """§5's kill test. The only sources for a transfers multiplier are two international
+    meta-analyses that disagree by a factor 2,5 on the width (M0, R4): a row resting on
+    them that claims more than `confidence: low`, or any support, does not load."""
+    from impots.macro.store import UngradedTransferRow
+
+    (tmp_path / "x.yaml").write_text(yaml.safe_dump(
+        {"parameters": {"transferts": _transfer_row(**overrides)}}), encoding="utf-8")
+    with pytest.raises(UngradedTransferRow, match="transferts"):
+        store.load(tmp_path)
+    assert "transferts" in store.load(tmp_path, strict=False).rejected
+
+
+def test_a_transfers_row_at_low_confidence_and_no_support_loads(tmp_path: Path):
+    (tmp_path / "x.yaml").write_text(yaml.safe_dump(
+        {"parameters": {"transferts": _transfer_row()}}), encoding="utf-8")
+    assert store.load(tmp_path)["transferts"].confidence == "low"
+
+
+def test_a_row_that_claims_no_transfer_knob_is_untouched(tmp_path: Path):
+    body = {**VERIFIED, "responds_to_knobs": ["ir_bareme", "csg_*", "cotisations_*"]}
+    (tmp_path / "x.yaml").write_text(yaml.safe_dump({"parameters": {"ok": body}}),
+                                     encoding="utf-8")
+    assert store.load(tmp_path)["ok"].confidence == "medium"
+
+
 # --- the values are not in the file that declares them -----------------------------
 
 

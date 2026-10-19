@@ -334,3 +334,11 @@ def retroaction_error():
     from impots.predictif.retroaction import FeedbackError
 
     return FeedbackError
+
+
+def test_the_transfers_and_the_corporate_tax_are_shown_closed_with_what_was_found() -> None:
+    """M4 (D-219): neither opened. A reader sees why on the result itself — the two
+    meta-analyses that disagree, the IS variant that does not exist."""
+    result = _run(_carried(5e9), horizon=2)
+    assert "2,5" in result.closed["transferts"]
+    assert "Mésange 2017" in result.closed["IS et investissement des entreprises"]
