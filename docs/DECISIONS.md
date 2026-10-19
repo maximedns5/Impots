@@ -16483,7 +16483,123 @@ fixé (§8), puis la cohérence, le confinement préenregistré, l'exemple au do
 balayage des gardes (§9), dont la porte est le `make full` du propriétaire. Les deux
 choix du propriétaire de D-218 restent ouverts.
 
-## D-224 — La version rapide chiffre sa première année en vue figée, et le dit
+## D-224 — M6 de la phase 9, deuxième pas : l'explorateur cherche la dette, à θ fixé
+
+**Le fait.** L'explorateur de la phase 8 n'accepte qu'une cible, le mécanique (D-155), et
+refuse de « viser un ratio dette/PIB rétroaction macro comprise » : optimiser sur un
+intervalle n'est pas une question bien posée (D-092). §8 lève ce refus à θ fixé, et
+seulement là. La liste blanche gagne une grandeur, `dette_conditionnelle` : l'écart de
+dette de la réforme à l'année T, sous des θ et des scénarios nommés. À θ fixé c'est une
+fonction déterministe des boutons, et la raison de D-092 — plusieurs valeurs de bouton
+amènent l'intervalle à contenir la cible — ne s'applique plus. Le solveur d'un bouton ne
+la prend pas : pour lui l'éventail macro reste un intervalle. L'emploi de §7 pourra
+devenir une cible par le même chemin, par une autre entrée ; celle-ci n'admet que la
+dette.
+
+**Les gardes.** θ est exigé pour la dette conditionnelle, et refusé pour la cible
+mécanique, sur laquelle il n'agit pas : il s'afficherait à côté de candidats qu'il n'a
+pas déplacés. θ n'est jamais un bouton : une borne qui le nomme est refusée, quelle que
+soit la cible, qu'elle s'appelle « theta » ou « θ », `multiplicateur_macro`, une ligne
+ouverte du magasin ou une ligne que nomme le θ de la requête. Chaque candidat est relu
+aux 2^K coins de la boîte θ que l'évaluation fournit : « robuste » si la cible y tient
+partout, sinon « dépend de θ », avec le premier coin qui la fait tomber, dans l'ordre de
+la boîte. Une évaluation sans ses coins est refusée, parce que « pas relu » se lirait
+« robuste ». Le drapeau « fragile » garde son sens, une bande qui enjambe la cible, et
+parle l'unité de la cible : des points de PIB.
+
+Deux détails qui changent un calcul. Une baisse de dette est un écart négatif : la cible
+est atteinte par le bas, « au plus −0,3 point », là où les recettes l'étaient par le
+haut ; le sens est porté par la cible, pas par l'appelant. Et θ entre dans le journal de
+la recherche, donc dans son empreinte : rejouable à l'identique veut dire même θ, et un
+autre θ est une autre recherche. Le journal mécanique, lui, ne change pas d'un caractère,
+et la garde anti-dérive de `EXPLORER_EXAMPLE.md` le confirme.
+
+**L'évaluateur.** `predictif/exploration.py` construit ce que l'explorateur lit. Pour un
+paquet, l'appelant fournit une passe de la première année par vue, la population vieillie
+jusqu'à l'année (le chiffre de tête) et la population telle quelle, avec les entrées des
+canaux et l'impulsion macro quand elles sont demandées. L'écart de dette à l'année T sort
+de la chaîne, dans la version rapide : la première année chiffrée, les suivantes
+reportées en part de PIB. La boîte θ a pour clés les lignes ouvertes que revendiquent les
+boutons du paquet, quand le comportement est chiffré, et le θ du multiplicateur quand la
+boucle s'applique, c'est-à-dire avec une impulsion sous « dépenses gelées en volume ». À
+chaque coin, les recettes sont lues directement : les coins sont la boîte, et recalculer
+la boîte des recettes à chacun ferait 2^K × 2^K passes des canaux. La lecture aux coins
+suppose chaque effet monotone en son θ ; un écart à θ hors des bornes des coins dirait le
+contraire, et le paquet est refusé plutôt que classé. L'évaluation ne porte pas de
+bande : à θ fixé la trajectoire est un nombre, et sa dispersion est la boîte θ.
+
+**Le calcul réel.** Une grille de quatre taux de CSG déductible sur les revenus
+d'activité, de 7,3 à 8,8 % par pas d'un demi-point, sous une cible fixée avant la passe :
+l'écart de dette en 2030 au plus −0,30 point de PIB, à θ = ½. « Dépenses gelées en
+volume », croissance réelle de 1 % et prix de 2 %, taux implicite tenu, comportement et
+boucle chiffrés, persistance « tenu », horizon de cinq ans. Huit passes rapides, une par
+vue et par paquet, de 122 à 209 s chacune, 1 122 s en tout ; empreinte du journal
+e6034393. La vue vieillie suppose des salaires nominaux en hausse de 3 % par an, le
+rythme du PIB nominal du scénario : une hypothèse de la passe, déclarée comme telle. Les
+rendements mécaniques de 2026 vont de 4,40 à 17,64 Md€ en vue vieillie, de 4,17 à
+16,72 Md€ en vue figée.
+
+À θ = ½, l'écart de dette en 2030 vaut −0,16, −0,32, −0,48 et −0,64 point ; en vue
+figée, −0,30, −0,44 et −0,59 pour les trois derniers. Trois paquets atteignent la cible,
+à partir de 7,8 %. Aucun n'est robuste. Chacun est relu aux 32 coins de sa boîte, les
+quatre lignes de C7 et le θ du multiplicateur. Les seize coins où le multiplicateur est
+au plus faible tiennent la cible, les seize où il est au plus fort la manquent tous. Le
+premier qui tombe, dans l'ordre de la boîte, est celui où l'offre de travail est au plus
+faible et le multiplicateur au plus fort : la dette y MONTE de 0,43, 0,64 et 0,86 point.
+Au coin opposé du multiplicateur, elle baisse de 1,17 à 2,35 point.
+
+C'est le multiplicateur qui fait la boîte, l'offre de travail y pèse moins d'un dixième.
+Un écart-type IMK au-dessus du centre de Mésange donne une contraction telle que la perte
+d'activité, par la boucle et par le PIB au dénominateur, l'emporte sur le rendement ; un
+écart-type en dessous donne un multiplicateur négatif, où la hausse d'impôt relève
+l'activité. À la question « cette hausse de CSG baisse-t-elle la dette de 0,3 point en
+2030 ? », la réponse honnête est « oui à θ = ½, et cela dépend de θ », de la largeur de
+la dispersion IMK d'abord, dont D-218 a dit la portée. Aucun paquet n'est fragile, faute
+de bande ; aucun ne tient seulement en vue figée.
+
+**Un constat au passage, hors de ce pas.** La passe rapide de `/predictif/simulate`,
+comme celle de `/population/simulate`, chiffre la première année sur la population de
+2024 telle quelle : le droit de 2026 appliqué aux revenus de 2024, la vue figée. La
+trajectoire annuelle tient pourtant la vue vieillie pour chiffre de tête (D-216), et la
+réponse de la version rapide ne dit pas laquelle elle porte. Ce n'est pas corrigé ici ;
+c'est proposé comme une tâche à part, la réponse devant au moins nommer sa vue.
+
+**Les tests.** Dix nouveaux dans `test_explorer.py`, quinze cas : la grandeur admise par
+sa propre entrée et refusée au solveur d'un bouton, la cible sans θ, θ donné au
+mécanique, six noms de θ en bornes, le candidat qui tient à θ = 1 et tombe à θ = 0 marqué
+« dépend de θ » avec son coin, le candidat robuste, la cible atteinte par le bas,
+l'évaluation sans coins, θ dans l'empreinte et hors du journal mécanique, la fragilité en
+points. Le test qui épinglait la liste blanche v1 a échoué, à dessein : il existe pour
+qu'aucune grandeur n'entre sans entrée au journal ; il épingle désormais la liste de
+D-224. Six dans `test_exploration.py` : l'écart lu sur la chaîne contre une construction
+indépendante, à la dernière année et à une autre, la vue figée sur sa propre passe, les
+lignes revendiquées dans la boîte, le θ du multiplicateur seulement là où la boucle
+s'applique, le refus d'un effet non monotone, l'année hors de l'horizon, et la recherche
+de bout en bout.
+
+Les quinze cas de l'explorateur ont été vus échouer sur le code d'avant. Puis chaque
+garde sur une mutation, seize en tout : θ exigé, θ refusé au mécanique, la borne nommant
+θ, les lignes du magasin oubliées, les coins ignorés, les coins absents acceptés, le sens
+de la dette retourné, θ hors du journal, l'unité de la fragilité, le coin non nommé ;
+pour l'évaluateur, les lignes revendiquées retirées de la boîte, le θ du multiplicateur
+sans la boucle, la vue figée lue sur la passe vieillie, la monotonie non vérifiée,
+l'année cible ignorée, les coins réduits à θ. La mutation de l'année cible ne tombait
+d'abord sur aucun test : la seule année lue était la dernière. Le test a reçu une autre
+année, et elle tombe.
+
+Avec les tests de la chaîne, du chemin annuel, de l'API prédictive, de θ, des indices, de
+la boucle, du comportement, des scénarios, de l'exemple de l'explorateur, de la
+provenance, de la charte, des règles et des dépendances : 527 réussis, 2 sautés
+(l'artefact de base sans distribution des taux marginaux). `ruff` passe sur `src`,
+`tests` et `scripts`. La page ne change pas.
+
+**Ce qui reste.** L'explorateur conditionnel n'a ni commande ni point d'API : celui de la
+phase 8 n'en avait pas non plus, et une recherche coûte deux passes de population par
+paquet. Pour M6 : la cohérence interne, le confinement préenregistré, l'exemple au
+dossier et le balayage des gardes (§9), dont la porte est le `make full` du propriétaire.
+Les deux choix du propriétaire de D-218 restent ouverts.
+
+## D-225 — La version rapide chiffre sa première année en vue figée, et le dit
 
 **Le fait.** `POST /predictif/simulate` chiffre la première année projetée, 2026, sur la
 population de 2024 telle quelle. `_price_first_year` passe à `_run_population` le cadre
@@ -16495,7 +16611,8 @@ n'est appelé que dans `population/cli.py`. C'est la vue « figée » de
 `predictif/annuel.py`, celle que la commande `impots predictif` place à côté de la vue
 « vieillie », son chiffre de tête (D-216). La réponse ne disait pas laquelle elle avait
 chiffrée : `population_note` reprenait la note de l'échantillon rapide, et D-215 écrivait
-seulement « comme `/population/simulate` ».
+seulement « comme `/population/simulate` ». D-224 l'a relevé au passage et l'a renvoyé à
+une tâche à part, la réponse devant au moins nommer sa vue : c'est cette entrée.
 
 **Ce qui change, sans qu'un chiffre bouge.** La réponse porte un champ `population_view`,
 obligatoire et sans défaut, dans le vocabulaire de `annuel.VIEWS` : il vaut « figee ».
@@ -16512,9 +16629,12 @@ sur des revenus de 2024, et le PIB qui le divise est celui de 2026. La vue vieil
 les salaires et le chômage au taux de salaire déclaré, les pensions et les loyers aux
 prix du scénario de croissance. L'essai de D-216 donne l'ordre de grandeur : l'article 3
 du PLF 2027 rapporte 1,12 Md€ en 2026 sur la population figée et 1,22 Md€ sur la
-population vieillie, 9 % de plus. Le report en part de PIB constante reprend ensuite ce
-niveau tel quel. Quand la page affiche un rapport précalculé au-dessus de la version
-rapide, les deux chiffres de 2026 diffèrent donc, et rien ne disait pourquoi.
+population vieillie, 9 % de plus. Le calcul réel de D-224, quatre taux de CSG avec des
+salaires déclarés à 3 % par an, en donne un second : de 4,17 à 16,72 Md€ en 2026 en vue
+figée, de 4,40 à 17,64 Md€ en vue vieillie, 5,5 % de plus. Le report en part de PIB
+constante reprend ensuite ce niveau tel quel. Quand la page affiche un rapport précalculé
+au-dessus de la version rapide, les deux chiffres de 2026 diffèrent donc, et rien ne
+disait pourquoi.
 
 **La vue vieillie ici : une proposition au propriétaire, pas un changement.** Elle change
 les chiffres, et le choix lui revient. Trois voies.
@@ -16527,13 +16647,15 @@ les chiffres, et le choix lui revient. Trois voies.
    L'indice de prix se tire du scénario de croissance par `annuel.uprating_for`, sous la
    garde `check_coherence`. La note porte alors `uprating.caveat` : une population
    vieillie n'est plus calibrée. Le chiffre de 2026 se lit dans la même vue que le
-   chiffre de tête de la commande.
+   chiffre de tête de la commande, et que celui de l'explorateur conditionnel, dont
+   l'évaluateur lit déjà une passe de la première année par vue, la vieillie en tête
+   (D-224).
 3. Chiffrer les deux. Deux passes, soit à peu près le double des 122 s de D-215, et
    l'écart affiché comme dans le rapport.
 
-La recommandation est la deuxième : la même attente, la vue de tête de la commande, pour
-le prix d'un champ obligatoire de plus. La troisième double l'attente pour une vue que le
-rapport précalculé donne déjà.
+La recommandation est la deuxième : la même attente, la vue de tête de la commande et de
+l'explorateur, pour le prix d'un champ obligatoire de plus. La troisième double l'attente
+pour une vue que le rapport précalculé donne déjà.
 
 **Les tests.** Un nouveau dans `tests/test_api_predictif.py`. Il fait tourner le vrai
 `_price_first_year`, la passe remplacée un étage plus bas (`_population_frame` et

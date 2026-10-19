@@ -1851,7 +1851,7 @@ class PredictifResponse(BaseModel):
     indices: list[PredictifIndex] = Field(default_factory=list)
     population_view: Literal["figee", "vieillie"]
     """The population the first year was priced on, in `predictif.annuel`'s words:
-    « figee », the 2024 population as it is (D-224). The command prices both views and
+    « figee », the 2024 population as it is (D-225). The command prices both views and
     puts « vieillie » first (D-216); no default, so a response cannot leave it out."""
     population_note: str
     banner: str

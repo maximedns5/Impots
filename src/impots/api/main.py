@@ -1111,7 +1111,7 @@ def _predictif_macro_store() -> Any:
 
 
 #: The population view the predictive path's first year is priced in, in
-#: `predictif.annuel`'s words (D-224). `_price_first_year` hands the pass the frame as
+#: `predictif.annuel`'s words (D-225). `_price_first_year` hands the pass the frame as
 #: loaded: the year's law on 2024 incomes, nothing aged. The command prices « vieillie »
 #: too and makes it the headline (D-216); ageing the frame here would change the numbers,
 #: and this name and `_first_year_note` with them.
@@ -1171,7 +1171,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     THE FAST VERSION (M0, R3). Pricing ten years one by one takes about an hour, so this
     endpoint prices the FIRST projected year on the quick-tier population — the same run
     `/population/simulate` makes, on the 2024 population as it is, the « figée » view of
-    the command (D-224) — and carries that cost as a constant share of GDP, a convention
+    the command (D-225) — and carries that cost as a constant share of GDP, a convention
     every carried year is labelled with. The full year-by-year path belongs to a batch
     command.
 

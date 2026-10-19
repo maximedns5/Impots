@@ -94,14 +94,17 @@ def test_an_unknown_target_is_refused_too_because_the_list_is_white() -> None:
         refuse_banded_objective("mechanicall")
 
 
-def test_the_only_accepted_target_is_the_mechanical_one() -> None:
-    """Épingle la liste blanche v1, celle que §9 attend au journal des décisions.
+def test_the_only_accepted_targets_are_the_mechanical_one_and_the_conditional_debt() -> None:
+    """Épingle la liste blanche, v1 de D-155 plus la dette conditionnelle de D-224.
 
     Fait tomber l'élargissement silencieux : quiconque ajoute une grandeur ici doit
-    passer par ce test, donc par une entrée D.
+    passer par ce test, donc par une entrée D. La dette conditionnelle est la seule que
+    le solveur d'un bouton ne prend pas : elle n'est une fonction des boutons qu'à θ fixé.
     """
-    assert sorted(OBJECTIVE_QUANTITIES) == ["mechanical"]
-    assert OBJECTIVE_QUANTITIES <= SOLVABLE_QUANTITIES
+    from impots.explorer import CONDITIONAL
+
+    assert sorted(OBJECTIVE_QUANTITIES) == ["dette_conditionnelle", "mechanical"]
+    assert OBJECTIVE_QUANTITIES - {CONDITIONAL} <= SOLVABLE_QUANTITIES
     refuse_banded_objective("mechanical")  # ne lève pas
 
 
@@ -523,3 +526,143 @@ def test_the_search_log_counts_every_evaluation_including_the_excluded_ones() ->
     log.record({"a": 1.0}, 1.0)
     log.exclude({"a": 1.0}, "raison")
     assert log.evaluations == 1 and len(log.excluded) == 1
+
+
+# --------------------------------------------------------------------------- #
+# Phase 9 §8 — la dette conditionnelle, à θ fixé (D-224)
+# --------------------------------------------------------------------------- #
+def _debt(per_knob: dict[str, float], *, spread: float = 0.2,
+          band_halfwidth: float | None = None):
+    """Une dette conditionnelle jouet : Δb_T = −Σ (f − 1) × poids, en part de PIB, à θ ;
+    aux deux coins d'une ligne, l'effet perd ou gagne `spread`. θ = 0 est la réponse la
+    plus faible, donc la baisse de dette la plus petite."""
+    def evaluate(knobs: dict[str, float]) -> Evaluation:
+        base = -sum((value - 1.0) * per_knob[knob] for knob, value in knobs.items())
+        band = None if band_halfwidth is None else (base - band_halfwidth,
+                                                    base + band_halfwidth)
+        return Evaluation(
+            aged_eur=base, frozen_eur=base, band=band,
+            band_reason="" if band is not None else "à θ fixé, pas de bande",
+            corners=(("eti_all = 0", base * (1 - spread)),
+                     ("eti_all = 1", base * (1 + spread))))
+    return evaluate
+
+
+def _half():
+    from impots.predictif.theta import Theta
+
+    return Theta(common=0.5)
+
+
+def test_the_conditional_debt_enters_the_allowlist_by_its_own_entry() -> None:
+    """La liste blanche v1 gagne une grandeur, et une seule (§8) : l'emploi de §7 attend
+    une autre entrée. Le solveur d'un bouton ne la prend pas : l'éventail macro y reste
+    un intervalle, et c'est à θ FIXÉ que la dette devient une fonction des boutons."""
+    from impots.explorer import CONDITIONAL
+    from impots.scenarios import ScenarioError, refuse_banded
+
+    assert CONDITIONAL == "dette_conditionnelle"
+    refuse_banded_objective(CONDITIONAL)  # ne lève pas
+    for other in ("emploi_smic", "emploi", "dette", "macro"):
+        with pytest.raises(BandedObjectiveRefused):
+            refuse_banded_objective(other)
+    with pytest.raises(ScenarioError):
+        refuse_banded(CONDITIONAL)
+
+
+def test_the_conditional_target_without_theta_is_refused() -> None:
+    """GARDE (§8). Sans θ, la cible n'est pas une fonction des boutons : elle en serait
+    une famille, et la recherche choisirait un θ par l'ordre de ses appels."""
+    with pytest.raises(ExplorerError, match="sans θ"):
+        search(target_eur=-0.005, bounds=[Bound("csg", 1.0, 1.02, 0.01)],
+               evaluate=_debt({"csg": 0.5}), quantity="dette_conditionnelle")
+
+
+def test_a_theta_given_to_the_mechanical_target_is_refused() -> None:
+    """θ n'agit pas sur le mécanique : accepté, il s'afficherait à côté de candidats
+    qu'il n'a pas déplacés."""
+    with pytest.raises(ExplorerError, match="mécanique"):
+        search(target_eur=1 * BN, bounds=[Bound("a", 1.0, 1.02, 0.01)],
+               evaluate=_linear({"a": 50 * BN}), theta=_half())
+
+
+@pytest.mark.parametrize("knob", ["theta", "θ", "Theta_commun", "multiplicateur_macro",
+                                  "eti_all", "labour_supply_single_men"])
+def test_a_bound_naming_theta_is_refused(knob: str) -> None:
+    """GARDE (§8). θ n'est jamais un bouton : chercher sur lui, c'est choisir l'hypothèse
+    qui fait passer le plan — la définition de se tromper soi-même."""
+    for quantity, theta in (("mechanical", None), ("dette_conditionnelle", _half())):
+        with pytest.raises(ExplorerError, match="θ n'est pas un bouton"):
+            search(target_eur=0.0, bounds=[Bound(knob, 0.0, 1.0, 0.5)],
+                   evaluate=_debt({knob: 0.5}), quantity=quantity, theta=theta)
+
+
+def test_a_candidate_that_holds_at_one_and_falls_at_zero_depends_on_theta() -> None:
+    """TUEUR (§8). La cible tient à θ et au coin le plus fort, et tombe au coin le plus
+    faible : le candidat est marqué « dépend de θ », avec le coin qui la fait tomber."""
+    candidates, _ = search(target_eur=-0.010, bounds=[Bound("csg", 1.02, 1.02, 0.01)],
+                           evaluate=_debt({"csg": 0.55}), quantity="dette_conditionnelle",
+                           theta=_half())
+    (candidate,) = candidates
+    assert candidate.meets_target and candidate.robust is False
+    assert "dépend de θ" in candidate.theta_reason
+    assert "eti_all = 0" in candidate.theta_reason
+    assert "pt de PIB" in candidate.theta_reason
+
+
+def test_a_candidate_holding_at_every_corner_is_robust() -> None:
+    candidates, _ = search(target_eur=-0.010, bounds=[Bound("csg", 1.04, 1.04, 0.01)],
+                           evaluate=_debt({"csg": 0.55}), quantity="dette_conditionnelle",
+                           theta=_half())
+    (candidate,) = candidates
+    assert candidate.robust is True and "robuste" in candidate.theta_reason
+
+
+def test_the_debt_target_is_met_from_below() -> None:
+    """Une baisse de dette est un écart NÉGATIF : la cible « au plus −0,5 point » est
+    atteinte par −0,6 et manquée par −0,4. Le sens des recettes, « au moins », le
+    renverserait sans erreur visible."""
+    candidates, _ = search(target_eur=-0.005, bounds=[Bound("csg", 1.00, 1.02, 0.01)],
+                           evaluate=_debt({"csg": 0.5}, spread=0.0),
+                           quantity="dette_conditionnelle", theta=_half())
+    assert [c.knobs["csg"] for c in candidates] == [1.01, 1.02]
+
+
+def test_a_conditional_evaluation_without_its_corners_is_refused() -> None:
+    """Un candidat non relu sur la boîte θ ne peut être dit ni robuste ni fragile : le
+    laisser passer traiterait « pas relu » comme « robuste »."""
+    def bare(knobs):
+        return Evaluation(aged_eur=-0.02, frozen_eur=-0.02, band=None,
+                          band_reason="à θ fixé, pas de bande")
+
+    with pytest.raises(ExplorerError, match="boîte θ"):
+        search(target_eur=-0.01, bounds=[Bound("csg", 1.0, 1.0, 0.01)], evaluate=bare,
+               quantity="dette_conditionnelle", theta=_half())
+
+
+def test_theta_is_part_of_the_replay_and_not_of_the_mechanical_one() -> None:
+    """Rejouable à l'identique veut dire : même θ, même journal. Un autre θ est une
+    autre recherche, et son empreinte le dit ; le journal mécanique ne change pas."""
+    from impots.predictif.theta import Theta
+
+    def run(theta):
+        return search(target_eur=-0.005, bounds=[Bound("csg", 1.00, 1.02, 0.01)],
+                      evaluate=_debt({"csg": 0.5}), quantity="dette_conditionnelle",
+                      theta=theta)[1]
+
+    assert run(_half()).digest() == run(_half()).digest()
+    assert run(_half()).digest() != run(Theta(common=0.3)).digest()
+    _, mechanical = search(target_eur=1 * BN, bounds=[Bound("a", 1.0, 1.02, 0.01)],
+                           evaluate=_linear({"a": 50 * BN}))
+    assert "theta" not in mechanical.payload()
+
+
+def test_a_fragile_conditional_candidate_speaks_in_points() -> None:
+    """Le drapeau « fragile » garde son sens (§8) — une bande qui enjambe la cible — et
+    parle l'unité de la cible : des points de PIB, pas des milliards."""
+    candidates, _ = search(target_eur=-0.010, bounds=[Bound("csg", 1.04, 1.04, 0.01)],
+                           evaluate=_debt({"csg": 0.55}, band_halfwidth=0.02),
+                           quantity="dette_conditionnelle", theta=_half())
+    (candidate,) = candidates
+    assert candidate.fragile and "pt de PIB" in candidate.fragility_reason
+    assert "md€" not in candidate.fragility_reason

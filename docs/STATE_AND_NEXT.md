@@ -1,6 +1,20 @@
 # State of the project, and the directions open — 2026-10-19 (Phase 9, M6 under way)
 
-The sixth 2026-10-19 update adds D-223, M6's first step: §7's indices.
+The eighth 2026-10-19 update adds D-225: the fast version of `/predictif/simulate` names
+the population view it prices its first year in. That is « figée », the 2024 population
+as it is, while `impots predictif` and the conditional explorer put « vieillie » first;
+the response gains a required `population_view` and a sentence in `population_note`,
+and no number moves. Pricing the aged view there is proposed to the owner, not done.
+The seventh 2026-10-19 update added D-224, M6's second step: the explorer searches the debt
+at a fixed θ (§8). Its allowlist gains `dette_conditionnelle`, the reform's debt gap at
+year T under named θ and scenarios, met from below; θ is required for it and refused for
+the mechanical target, and no bound may name θ. Each candidate is re-read at the 2^K
+corners of its θ box and marked « robuste » or « dépend de θ » with the first corner that
+breaks it. `predictif/exploration.py` builds the evaluator from one population pass per
+view and bundle. On a grid of CSG rates against −0,30 point of GDP in 2030, three bundles
+meet the target at θ = ½ and none is robust: with the multiplier one IMK standard
+deviation above Mésange's centre, the debt rises. The sixth 2026-10-19 update added D-223,
+M6's first step: §7's indices.
 `predictif/indices.py` holds a closed list of thirteen, each with its unit, its stage and
 its source, grouped by whom they are for; an unknown index is refused by name and no index
 may be added to another, the two employments (C2's persons, Mésange's full-time
@@ -130,8 +144,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **224 decision
-entries**, D-000 to D-223, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **226 decision
+entries**, D-000 to D-225, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -480,15 +494,17 @@ download list.
    illustrative index (D-221, C8, IS normal rate only); investment stays closed for the
    IS (D-221). R&D opened as an illustrative index (D-222, C9, CIR rates only), and the
    CIR is priced on the créance flow with its banner. Dividends (§6.5) stay closed. Every
-   §6 channel has its verdict. M6 is under way: §7's indices are in (D-223); next the
-   explorer at a fixed θ (§8), then containment, the worked example and the guard sweep
+   §6 channel has its verdict. M6 is under way: §7's indices (D-223) and the explorer at a
+   fixed θ (§8, D-224) are in; next containment, the worked example and the guard sweep
    (§9), whose gate is the owner's `make full`. Left for C9: the take-up margin, new entrants, the carried-forward stock,
    and the CNEPI's 2021 evaluation (IPP report n° 33), not manifested. M1 to M4 are done (D-215 to D-219); M4 left
    the transfers and the IS closed. Two
    decisions from M3 are the owner's: whether the page should show both persistence
    scenarios side by side rather than ask for one (§4.5), and whether to reopen the
    `multiplier_by_instrument` row, whose linearity bound the M3 pass found
-   unsupported (D-218). `impots predictif` does not carry the loop yet. A full ten-year
+   unsupported (D-218). A third is D-225's: which population view the fast version
+   prices its first year in, « figée » today and named as such, « vieillie » proposed.
+   `impots predictif` does not carry the loop yet. A full ten-year
    run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
    refuses this container), and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
