@@ -1,0 +1,49 @@
+# Préenregistrement de PHASE9_SPEC §9.2 (D-227). Ce fichier est committé AVANT tout
+# calcul de la boîte θ : son premier commit EST l'enregistrement. Le bloc `rule` ne
+# change plus ensuite — un test le vérifie dans l'historique git. Le résultat entre dans
+# `outcome`, dans un commit distinct, après le calcul.
+#
+# L'épisode est celui de la phase 4 (`tests/episodes/cice_2013.yaml`), avec ses réserves :
+# la note 79 et la conclusion de Mésange désavouent cet usage, et l'épisode est un contrôle
+# d'ordre de grandeur de la machinerie, pas une validation des paramètres.
+
+name: cice_2013_boite_theta
+episode: cice_2013
+registered: "2026-10-19"
+
+rule:
+  what: >
+    L'emploi salarié marchand à trois ans du CICE — 18 Md€ de baisse de cotisations
+    employeurs en 2016, contre le PIB de normalisation des variantes, 2 200 Md€ —, lu dans
+    les deux variantes de Mésange, uniforme et ciblée, au θ du multiplicateur 0, 1/2 et
+    1 : `predictif.macro.at_theta`, centre de Mésange ∓ un écart-type IMK de la famille
+    de l'instrument, l'emploi suivant le multiplicateur proportionnellement (D-059).
+  contains: >
+    La boîte θ, de l'emploi à θ = 0 à l'emploi à θ = 1, contient la fourchette publiée,
+    100 000 à 400 000 emplois, pour CHACUNE des deux variantes.
+  centre: >
+    L'emploi à θ = 1/2 tombe dans la fourchette publiée, pour chacune des deux variantes.
+  expectation: >
+    Écrite avant de tourner. Un écart-type de part et d'autre du centre est plus étroit
+    que le p10-p90 du tirage triangulaire de la phase 4, environ 1,35 écart-type de part
+    et d'autre : la boîte θ peut donc ne plus contenir la fourchette que l'éventail
+    contenait. Si elle ne la contient pas, c'est un constat à écrire, pas une tolérance à
+    élargir, et cette règle ne bouge plus après ce commit.
+
+outcome:
+  computed: "2026-10-19"
+  unit: milliers d'emplois salariés marchands en équivalent temps plein, à trois ans
+  uniform: {at_zero: 31.2, at_half: 237.3, at_one: 443.3}
+  targeted: {at_zero: 57.7, at_half: 329.7, at_one: 601.8}
+  contains: true
+  centre: true
+  constat: >
+    La boîte contient la fourchette pour les deux variantes, et le centre tombe dedans :
+    la règle passe, contre l'attente écrite à l'enregistrement. La raison est dans la
+    largeur, et elle se dit avec le résultat. L'écart-type IMK de la famille des impôts,
+    0,66, vaut presque le centre de Mésange à trois ans pour les cotisations employeurs,
+    0,76 : à θ = 0 le multiplicateur tombe à 0,10, et l'emploi à 13 % de son centre ; à
+    θ = 1 il monte à 1,42, et l'emploi à 187 %. Une boîte qui va de 31 000 à 443 000
+    emplois contient presque toute fourchette d'ordre de grandeur plausible : la
+    contenance est une preuve faible, et c'est le centre dans la fourchette qui porte le
+    test, comme à la phase 4.

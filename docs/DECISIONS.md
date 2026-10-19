@@ -16735,3 +16735,89 @@ que ce conteneur saute faute de population. La page n'affiche pas encore `popula
 ni `population_view` de la version rapide ; D-225 s'en charge.
 `/population/simulate` chiffre toujours sur la population telle quelle, quelle que soit
 l'année, sans le dire dans sa note ; elle n'est pas touchée ici.
+
+## D-227 — M6 de la phase 9, troisième pas : la cohérence, et le confinement préenregistré
+
+**Le fait.** Une prévision conditionnelle ne se teste pas contre l'avenir, et
+l'historique est trop court pour éprouver toute la chaîne (§5 de la phase 4) ; §9 dit ce
+qui se teste. Ce pas couvre la cohérence interne de la chaîne (§9.1) et le confinement du
+CICE rejoué avec la boîte θ (§9.2), préenregistré. L'identité (§9.3) reste au backtest de
+D-168, que la phase 9 ne touche pas. L'exemple au dossier (§9.4) et le balayage des
+gardes suivront.
+
+**Le préenregistrement.** La règle a été committée avant tout calcul, dans
+`tests/episodes/preregistered/cice_2013_boite_theta.yaml`, et poussée avant le premier
+chiffre (commit b8b4848, titré « D-225 » : l'entrée a pris le numéro D-227 quand D-225 et
+D-226 sont arrivées sur `main` avant elle). L'emploi salarié marchand à trois ans du
+CICE, 18 Md€ de baisse de cotisations employeurs en 2016 contre le PIB de normalisation
+des variantes, 2 200 Md€, lu dans les deux variantes de Mésange, uniforme et ciblée, au θ
+du multiplicateur 0, ½ et 1. La boîte θ doit contenir la fourchette publiée, 100 000 à
+400 000 emplois, pour chaque variante, et l'emploi à θ = ½ doit tomber dedans. L'attente,
+écrite avec la règle : un écart-type de part et d'autre du centre est plus étroit que le
+p10-p90 du tirage triangulaire de la phase 4, à peu près 1,35 écart-type, et la boîte
+pouvait donc manquer la fourchette que l'éventail contenait. Le résultat est entré dans
+un second commit.
+
+**Le résultat.** Variante uniforme : 31 200, 237 300 et 443 300 ETP à θ = 0, ½ et 1.
+Variante ciblée : 57 700, 329 700 et 601 800. La boîte contient la fourchette et le
+centre tombe dedans, pour les deux : la règle passe, contre l'attente. La raison est la
+largeur, et elle se dit avec le résultat. L'écart-type IMK de la famille des impôts,
+0,66, vaut presque le centre de Mésange à trois ans pour les cotisations employeurs,
+0,76 : le multiplicateur va de 0,10 à 1,42, et l'emploi de 13 % à 187 % de son centre.
+Une boîte de 31 000 à 443 000 emplois contient presque toute fourchette plausible ; la
+contenance est une preuve faible, et c'est le centre dans la fourchette qui porte le
+test, comme à la phase 4 — un centre qui est celui de Mésange, que la phase 4 vérifiait
+déjà. Ce que le pas apprend n'est pas que les θ sont justes : c'est que la boîte du
+multiplicateur est aussi large que l'écart entre les méthodes d'évaluation du CICE, ce
+que la recherche de D-224 avait montré sur la dette.
+
+Le test de la phase 4 est sauté dans ce conteneur, faute du tableau entrées-sorties de
+l'INSEE, qui n'est pas redistribuable ; la version à θ n'en a pas besoin et tourne ici,
+sur le PDF de Mésange et les méta-analyses de l'IMK.
+
+**La garde du préenregistrement.** `predictif/validation.py` lit chaque version committée
+du fichier. Il refuse un cas qui n'a jamais été committé, un cas dont le premier commit
+porte déjà son résultat, et un cas dont la règle a changé depuis. Le test de la garde
+travaille sur un dépôt git jetable, avec une règle élargie dans un second commit et une
+règle committée avec son résultat. Il a trouvé un défaut de la première version : `git
+log --follow` suit les renommages par similarité de contenu, et il a prêté à un fichier
+neuf l'historique d'un voisin, propre. L'historique lu est désormais celui du chemin
+exact ; un cas renommé est un cas nouveau, dont le premier commit porte un résultat, et
+il est refusé.
+
+Le cas réel se vérifie dans l'historique du dépôt. Un clone superficiel peut couper cet
+historique, celui de la CI par défaut notamment. La première version sautait le test dès
+que le clone l'était, et elle l'a sauté ici, où le clone est superficiel mais où
+l'historique du fichier est entier. Le test ne se saute plus que si le plus ancien commit
+du fichier est une frontière du clone ; ici il tourne.
+
+**La cohérence (§9.1).** Une réforme nulle, comportement et boucle demandés, sous quatre
+θ dont des coins et sous deux règles de dépense : l'écart de dette et la charge
+d'intérêts sont nuls au flottant, la trajectoire de réforme est celle de référence, et la
+boucle est dite absente plutôt que mesurée nulle. Le PIB et le solde que lit la boucle
+viennent d'une même table : les deux lignes du magasin sont tenues contre les variantes
+du lecteur, sur un même `Variant`, donc une même page, pour chaque instrument de la ligne
+de solde. θ = ½ rendant le centre publié de chaque ligne est la garde 5, dans
+`test_theta.py`.
+
+**Les tests.** Six nouveaux dans `test_validation_predictif.py`, treize cas : la réforme
+nulle sous huit combinaisons de θ et de règle, les deux lignes de la boucle sur une même
+table, le cas réel enregistré avant son résultat et inchangé, la garde sur un dépôt
+jetable, le résultat consigné égal au résultat calculé, la fourchette lue dans l'épisode
+et non dans le cas. Chaque garde a été vue échouer sur une mutation, huit en tout : le
+contrôle du résultat au premier commit retiré, celui de la règle déplacée retiré, la
+variante ciblée ignorée, la contenance retournée, le centre lu à θ = 1, un comportement
+qui ne s'annule pas à réforme nulle, le PIB lu sur une autre ligne de Mésange, et la
+règle du cas réel tenue pour déplacée. Deux fois, c'est le code qui avait tort :
+`--follow`, et le saut trop large des clones superficiels.
+
+Avec les tests de la chaîne, du chemin annuel, de l'API prédictive, de θ, des indices, de
+l'explorateur et de son évaluateur, de la boucle, du magasin macro, de l'épisode de la
+phase 4, du préenregistrement, de la provenance, de la charte, des règles et des
+dépendances : 478 réussis, 9 sautés (l'épisode de la phase 4, faute du tableau
+entrées-sorties de l'INSEE dans ce conteneur). `ruff` passe sur `src`, `tests` et
+`scripts`.
+
+**Ce qui reste.** L'exemple au dossier, `docs/PREDICTIF_EXEMPLE.md` (§9.4), et le
+balayage des gardes de la phase 9, puis la porte de M6 : le `make full` du propriétaire.
+Les deux choix du propriétaire de D-218 restent ouverts.
