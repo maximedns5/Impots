@@ -303,3 +303,19 @@ def test_the_shock_reads_the_instruments_the_sector_balance_counts() -> None:
                                      "cotisations_employeurs": 2e9}
     assert set(impulse.unmapped) == {"rsa", "crds_mini"}
     assert set(impulse.reasons()) == {"rsa", "crds_mini"}
+
+
+# --------------------------------------------------------------------------- #
+# M4 — the corporate tax receives no multiplier (PHASE9_SPEC §5, D-219)
+# --------------------------------------------------------------------------- #
+def test_a_corporate_tax_delta_receives_no_multiplier_and_no_loop() -> None:
+    """§5's kill test. Mésange has no IS variant, and the IS must not borrow the employer
+    contributions' multiplier, which runs through the cost of labour: the delta stays
+    unmapped with its reason, and a loop made of it alone is absent, not zero."""
+    from impots.macro import shocks
+
+    impulse = shocks.build({"impot_societes": 1e9}, year=2026)
+    assert impulse.by_instrument == {}
+    assert "coût du capital" in impulse.reasons()["impot_societes"]
+    with pytest.raises(retroaction.NothingToRead, match="impot_societes"):
+        _run({y: {} for y in YEARS[:3]}, years=YEARS[:3], uncovered=impulse.reasons())

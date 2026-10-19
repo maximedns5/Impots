@@ -15839,3 +15839,68 @@ AFT, les taux marginaux effectifs de l'artefact de base). `ruff` passe sur `src`
 **Ce qui reste.** M4 : les multiplicateurs manquants, les transferts d'abord. La boucle
 dans `impots predictif`, qui demande le détail des passes par instrument. Les deux choix
 du propriétaire ci-dessus. Le scénario `marche` attend toujours l'encours AFT.
+
+## D-219 — M4 de la phase 9 : les transferts et l'IS restent fermés, gardés
+
+**Le fait.** M4 devait ouvrir les multiplicateurs manquants : les transferts d'abord,
+puis l'IS si une source existait (§5). Aucun des deux n'ouvre. Ce que M4 livre, c'est la
+recherche refaite, la raison affichée sur chaque trajectoire et les deux gardes de §5.
+Elles sont posées avant qu'une ligne existe, pour qu'une ouverture future passe par
+elles.
+
+**Les transferts.** Les deux méta-analyses IMK au manifeste, relues par le parseur du
+dépôt, donnent pour la colonne TRANS une moyenne de 0,39 (écart-type 0,47, 59
+estimations) dans le WP117 et de 0,54 (écart-type 1,16, 36 estimations) dans le WP139.
+Les deux papiers sont du même auteur. Ils divergent sur le centre, et d'un facteur 2,5 sur
+la largeur. Ils mêlent les horizons d'un à douze ans et n'ont ni centre français ni
+ligne de solde. Ce dernier point suffit, depuis D-218 : un instrument sans ligne de solde
+ne reçoit aucun effet macro dans la dette, plutôt que la moitié d'une variante. Une ligne
+de transferts ne servirait donc qu'à l'éventail macro de la population, avec une largeur
+qu'on choisirait entre deux papiers. La recommandation de M0 (D-214) tient : fermé.
+
+**L'IS.** Mésange 2017 n'a aucune variante d'impôt sur les sociétés, dans sa version Insee
+comme dans celle du Trésor (Cahiers de la DG Trésor n° 2017-04, relus). Aucune
+réestimation publiée depuis n'a été trouvée. Le document de travail Insee n° 2024-07
+(Bourgeois et Favetto, avril 2024) construit des intervalles de confiance par bootstrap,
+mais sur trois variantes seulement : investissement public, demande mondiale et
+efficience du travail. Aucune n'est fiscale. Pour l'investissement public, ses bandes à
+95 % sont étroites et asymétriques : 1,28 [1,26 ; 1,67] la première année. Dans deux
+lignes au moins, le chiffre central tombe hors de la bande. La maquette Opale du Trésor
+n'a pas livré de variante d'IS à la recherche. Le seul chiffre localisé est un
+multiplicateur moyen de 0,7 pour la hausse d'IS de 2013, dans un billet de blog de
+l'OFCE. Le billet n'est plus en ligne depuis la migration du site (404), et l'archive du
+web a refusé la requête (429). Lu, il resterait un nombre seul, sans profil par horizon,
+sans dispersion et sans ligne de solde. Fermé.
+
+**Les deux gardes de §5.**
+
+* *Une ligne de transferts ne charge qu'en `confidence: low`, notée illustrative.* Le
+  magasin macro nomme les leviers de transferts (`af_*`, `al_*`, `ppa_*`, `rsa_*`). Une
+  ligne qui en revendique un, quel que soit le motif déclaré, ne charge qu'avec une
+  confiance basse et un support nul, qui la note illustrative dès le premier euro.
+  Sinon : `UngradedTransferRow`. La revendication se lit dans les deux sens, pour qu'un
+  `*` ou un levier nommé soient pris comme un `rsa_*`.
+* *Un Δ d'IS ne reçoit aucun multiplicateur.* C'était déjà le cas : le constructeur de
+  chocs le laisse non mappé, avec sa raison, et une boucle faite de lui seul est absente,
+  pas nulle. Le test qui le tient n'existait pas ; il existe.
+
+**Ce que la trajectoire affiche.** Les canaux fermés de la chaîne gagnent « transferts »,
+avec les chiffres ci-dessus. La raison de « IS et investissement des entreprises » dit
+maintenant ce qui a été cherché.
+
+**Les tests.** Huit nouveaux : six pour la garde des transferts dans
+`test_macro_parameters.py` (quatre refus paramétrés, un chargement, une ligne sans
+levier de transfert, laissée intacte), un pour l'IS dans `test_retroaction.py`, un pour
+les canaux fermés dans `test_predictif.py`. Chaque garde a été vue échouer sur une
+mutation, quatre en tout : la garde des transferts retirée, la revendication lue dans un
+seul sens, l'IS mappé sur les cotisations employeurs, les transferts retirés des canaux
+fermés. Avec les tests de θ, de la boucle, de la dette, du magasin macro, de l'éventail,
+des chocs, de la page, de la provenance, de la charte et des dépendances : 458 réussis,
+39 sautés faute de sources que ce conteneur n'a pas. `ruff` passe sur `src`, `tests` et
+`scripts` ; `ui/check.mjs`, inchangé, passe ses 46 vérifications.
+
+**Ce qui reste.** M5, les canaux de §6 un par un, l'offre de travail d'abord : l'IZA DP
+6735 est en accès libre et doit être manifesté. Pour l'IS, le rapport 2023 du comité
+d'évaluation de la fiscalité du capital (France Stratégie) reste la meilleure piste, sur
+l'investissement et non sur le multiplicateur. Les deux choix du propriétaire de D-218
+restent ouverts.

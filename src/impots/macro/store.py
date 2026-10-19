@@ -18,6 +18,7 @@ loudly, which is the direction this project wants to fail in.
 
 from __future__ import annotations
 
+import fnmatch
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -45,8 +46,41 @@ PARAMETERS = Path(__file__).resolve().parent / "parameters"
 READERS = {"impots.macro.mesange": mesange, "impots.macro.imk": imk}
 
 
+#: Reform knobs that move transfers (PHASE9_SPEC §5, D-219). A macro row claiming one of
+#: them is a transfers multiplier, and the only sources for one are two international
+#: meta-analyses that disagree on the centre and by a factor 2,5 on the width, with no
+#: horizon profile and no balance row (M0, R4). Such a row may load only as
+#: `confidence: low` and graded illustrative from the first euro.
+TRANSFER_KNOBS = ("af_*", "al_*", "ppa_*", "rsa_*")
+
+
 class MissingSourceTable(RuntimeError):
     """A table-valued parameter's primary file is absent."""
+
+
+class UngradedTransferRow(UnverifiedParameter):
+    """A row claiming transfer knobs tried to load above `confidence: low`, or graded in
+    support: the evidence for a transfers multiplier does not carry either."""
+
+
+def _claims_transfers(body: dict[str, Any]) -> bool:
+    """Whether any knob pattern the row declares overlaps a transfer knob, read both
+    ways so that `*` and `rsa_montant_de_base` are caught as surely as `rsa_*`."""
+    return any(fnmatch.fnmatch(declared, pattern) or fnmatch.fnmatch(pattern, declared)
+               for declared in (body.get("responds_to_knobs") or ())
+               for pattern in TRANSFER_KNOBS)
+
+
+def _transfer_problem(body: dict[str, Any]) -> str:
+    if not _claims_transfers(body):
+        return ""
+    support = (body.get("support") or {}).get("max_variation_graded_in_support")
+    if body.get("confidence") != "low" or support != 0:
+        return (f"la ligne revendique des leviers de transferts (confiance "
+                f"{body.get('confidence', 'medium')!r}, support {support!r}) : elle ne "
+                f"charge qu'en `confidence: low`, avec un support nul qui la note "
+                f"illustrative dès le premier euro (§5, D-219)")
+    return ""
 
 
 @dataclass(frozen=True)
@@ -223,6 +257,12 @@ def load(directory: Path | None = None, *, strict: bool = True,
                 if strict:
                     raise UnverifiedParameter(f"{path.name}:{key}: {reason}")
                 store.rejected[key] = reason
+                continue
+            problem = _transfer_problem(body)
+            if problem:
+                if strict:
+                    raise UngradedTransferRow(f"{path.name}:{key}: {problem}")
+                store.rejected[key] = problem
                 continue
             if "from_source_table" in (body.get("value") or {}):
                 store.tables[key] = _table(key, body, declared, raw)
