@@ -10,9 +10,9 @@ horizon dropped without a word, a macro response of zero for an impulse with no
 instrument, six API translations never exercised, and the chain's absences held to no
 reason. Each survivor got a kill test seen failing on its mutation, or, once, a named
 equivalence; `Trajectoire` now refuses an absence without its reason. The second pass,
-on the commit with the tests, kills every mutation but that one. `tests/test_gardes_phase9.py`
-refuses a report that does not name every guard of today's catalogue, so a guard added
-later fails until the sweep (`--missing`) has run on it.
+on the commit with the tests, kills every mutation but that one, 98 of 99.
+`tests/test_gardes_phase9.py` refuses a report that does not name every guard of today's
+catalogue, so a guard added later fails until the sweep (`--missing`) has run on it.
 The eleventh 2026-10-19 update added D-228, M6's fourth step: §9.4's worked example,
 `docs/PREDICTIF_EXEMPLE.md`, which says it illustrates the machinery and recommends
 nothing. The first income-tax bracket goes from 11 % to 10 % in 2026, 4.84 bn on the aged

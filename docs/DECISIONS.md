@@ -16932,3 +16932,122 @@ et `scripts`.
 
 **La suite.** Le balayage des gardes de la phase 9, puis la porte de M6 : le `make full`
 du propriétaire. Les deux choix du propriétaire de D-218 restent ouverts.
+
+## D-229 — M6 de la phase 9, cinquième pas : le balayage des gardes
+
+**Le fait.** §10 met au jalon M6 un balayage des gardes. Chaque garde de la phase 9 est
+entrée avec son kill test vu échouer, mais vu échouer le jour où elle est entrée : six
+jalons plus tard, un test réécrit, une condition déplacée ou un refus doublé plus haut
+peuvent l'avoir laissée dans le code, son test vert, et plus rien pour la tenir. Le
+balayage le vérifie par mutation, garde par garde, et chaque survivante reçoit un kill
+test vu échouer sur sa mutation, ou une équivalence écrite avec sa raison.
+
+**La méthode.** `scripts/sweep_gardes_phase9.py`. Le catalogue se lit dans le code, il
+n'est pas tenu à la main : chaque `raise` des périmètres de la phase 9 — tout
+`predictif/`, `dette/scenarios.py` et `dette/reference.py`, les ajouts de D-224 à
+l'explorateur, le chemin prédictif de l'API et de la commande — devient une mutation. Sa
+condition est forcée à faux ; un ré-emballage d'erreur est réduit à un `raise` nu ; un
+refus placé dans un `else`, ou inconditionnel, est remplacé par `pass` ou `return None`.
+Une garde ajoutée demain entre au catalogue d'elle-même. Quatorze gardes qui ne sont pas
+des `raise` sont écrites à la main, chacune avec le texte exact qu'elle mute : la garde 1
+dans la requête, la commande et la page ; la garde 4 dans le sens, la raison et le
+chargement ; les gardes 5, 6 et 7 ; l'indice des salaires requis (D-226) ; le chargement
+des lignes de transferts (D-219) ; les deux raisons d'absence de la chaîne ; la vue de
+population sur la page (D-225).
+
+Chaque mutation tourne d'abord contre les tests de son périmètre, puis, si elle survit,
+contre toute la suite de la phase 9, dix-sept fichiers. Le script mute `src/` et `ui/` en
+place et restaure depuis la mémoire ; il refuse de tourner sur des fichiers modifiés de
+ces répertoires, et le rapport nomme le commit balayé. Les deux passages ont tourné dans
+un worktree à part, les données liées, pour que le travail continue à côté sur un code
+que rien ne mutait.
+
+**Le premier passage.** 98 mutations, 71 tuées, 27 survivantes : plus d'un refus sur
+quatre n'était tenu par aucun test. Aucune garde n'était fausse ; aucune de celles-là
+n'était éprouvée. Elles se rangent en quatre familles.
+
+- Les refus qui empêchaient une erreur silencieuse, la famille qui compte. Des années
+  chiffrées au-delà de l'horizon auraient été ignorées sans un mot.
+  `predictif.macro.at_theta`, sans instrument, aurait rendu un PIB et des emplois nuls :
+  un rien mesuré là où rien ne l'était. Un encours AFT daté pour un autre départ aurait
+  refinancé une dette pas encore émise. Un scénario de taux d'un type inconnu aurait été
+  traité comme « marché » : `RateKind` est un `Literal`, et rien ne vérifie un `Literal`
+  à l'exécution.
+
+- Les refus défensifs dont l'absence laisse une erreur brute, ou le refus d'à côté avec
+  la mauvaise raison : un PIB nul, trois fois ; un multiplicateur nul, deux fois ; une
+  variante sans famille de dispersion, deux fois ; un chiffrage sans année ; une
+  convention de report inconnue ; une boîte retournée, qui se serait dite « recettes hors
+  de leur boîte » ; une boîte d'indice sur d'autres clés ; un rapport sans année
+  chiffrée ; un θ hors de [0 ; 1] ou des séries de longueurs différentes dans une
+  trajectoire construite directement ; un indice reconstruit hors du catalogue ; un
+  historique git illisible.
+
+- Six traductions de l'API, jamais exercées : un refus du constructeur de chocs, un refus
+  de la chaîne après la passe, une année hors de la fenêtre de la population, un magasin
+  macro illisible, une passe sans coût, un nom de rapport invalide. Sans elles l'appelant
+  aurait reçu une trace de serveur. La dernière répète la leçon de D-173 : le test
+  existant acceptait un 404 sur `..%2F`, que le routeur rend lui-même avant le
+  gestionnaire ; la forme `%0A` atteint le gestionnaire, et le test exige désormais
+  exactement 422.
+
+- Les raisons d'absence de la chaîne. La garde 2 tenait chaque canal FERMÉ à sa raison ;
+  un canal ABSENT — la bande non demandée, la boucle non appliquée — n'était tenu par
+  rien, et une absence sans raison se lit comme une quantité mesurée à zéro.
+  `Trajectoire` refuse désormais d'exister avec une absence muette ; le test a été vu
+  échouer avant la garde.
+
+**Ce qui a été fait.** Vingt-six survivantes ont reçu un kill test, chacun vu échouer sur
+sa mutation puis passer sur le code : vingt et un tests neufs dans huit fichiers,
+certains tenant plusieurs gardes, dont celui de la règle de dépense inconnue. Une seule
+est déclarée équivalente : le refus d'un θ hors de [0 ; 1] dans `retroaction.compute`.
+Sans lui, le même θ est refusé quelques lignes plus loin par `theta.multiplier_at` (garde
+3), avec la même erreur et le même refus d'écrêter ; il refuse plus tôt, avant de lire la
+ligne de solde, et c'est un ordre, pas un comportement. Une garde est ajoutée, celle des
+absences.
+
+**Le second passage**, sur le commit qui porte les tests (b9de75c) : 99 mutations — la
+garde des absences en plus —, 98 tuées, 1 équivalente, aucune survivante. Une seule n'est
+tuée que par l'étage large : le 404 d'un rapport inconnu, tenu par un test de la commande
+et non de l'API. Le rapport est `reports/gardes_phase9.md`, une ligne par mutation avec
+le test qui l'a tuée ; il nomme 497ae77, qui ne diffère de b9de75c que par l'accord de
+ses comptes, réécrits par `--only` sans rien rebalayer.
+
+**La garde du balayage.** Sept tests dans `test_gardes_phase9.py`, qui ne rejouent aucune
+mutation. Aucun module de `predictif/` n'échappe au balayage. Les périmètres nomment des
+fichiers, des fonctions et des tests qui existent. Chaque mutation s'applique une fois et
+change quelque chose. Chaque équivalence nomme une mutation et dit pourquoi. Le
+générateur mute une condition après du texte non ASCII sur la même ligne — l'AST compte
+les colonnes en octets UTF-8, et un compte en caractères couperait la ligne au mauvais
+endroit —, une condition sur deux lignes, un ré-emballage, un `else`, un refus
+inconditionnel, et laisse les fonctions qu'on ne lui demande pas. `apply` refuse un texte
+absent ou répété. Enfin, le rapport commité nomme chaque garde du catalogue du jour, sans
+survivante : une garde ajoutée ou réécrite après le balayage fait tomber ce test tant que
+`--missing` ne l'a pas balayée. Ce test a été vu échouer avant que le premier rapport
+n'existe.
+
+**Les erreurs du balayeur.** Trois, arrêtées par ses propres tests ou par son premier
+essai. Une mutation générée portait la seule ligne de son `if`, et
+`if not path.exists():` apparaît six fois dans `api/main.py` : elle aurait muté la
+première, une autre garde. Le test d'unicité l'a refusée ; le texte s'élargit désormais
+ligne à ligne jusqu'à être unique. Un refus placé dans un `else` était muté en forçant
+son test à faux, ce qui le déclenche à chaque fois au lieu de le retirer ; la mutation
+retire désormais le refus, et elle a montré une garde de plus que rien ne tenait. Une
+règle de dépense inconnue n'est arrêtée que par le refus de `reference_years`, qu'un
+commentaire disait inatteignable parce que `SpendingRule` est un `Literal` — le même
+`Literal` que rien ne vérifie ; le commentaire est corrigé, et le refus a son test. Et
+les deux refus de chargement des magasins échappaient au générateur, leur `raise` étant
+sous `if strict:` ; ils sont écrits à la main. Côté tests, une fois, c'est le test qui
+avait tort : il nommait `path.SpendingScenario` sans importer `path`, et échouait sur le
+code juste.
+
+Avec les tests de la chaîne, du chemin annuel, de l'API et de la commande prédictives, de
+θ, des indices, de l'explorateur et de son évaluateur, de la boucle, du magasin macro, de
+la validation, de l'exemple, des scénarios de dette, du comportement, des trois canaux de
+M5, du balayage, de la charte, des règles et des dépendances : 661 réussis, 2 sautés
+(deux tests du comportement : l'artefact de référence ne porte pas encore de distribution
+de taux marginaux). Les quarante-neuf contrôles de la page passent. `ruff` passe sur
+`src`, `tests` et `scripts`.
+
+**La suite.** La porte de M6 : le `make full` du propriétaire, qui clôt la phase 9. Les
+deux choix du propriétaire de D-218 restent ouverts.
