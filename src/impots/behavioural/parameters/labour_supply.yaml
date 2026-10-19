@@ -1,0 +1,156 @@
+# Labour supply — the channel D-031 killed, reopened on the paper's own cells (D-220).
+#
+# D-031 removed two scalars (0,10 intensive, 0,30 extensive) that Bargain, Orsini and
+# Peichl never state. What they do state, for France, is one table per group with an
+# own-wage elasticity of total hours for 1998 and for 2001, a cross-wage one for the two
+# couples' tables, and a standard error under each. Four rows, one per group, applied
+# person by person to the population — no average across groups.
+#
+# THE VALUES ARE COMPUTED BY `behavioural.bop.convention` FROM THE CELLS IT READS OUT OF
+# THE PDF, and a test holds every number below against that computation (D-026). The
+# convention is this project's, stated in that function's docstring and in D-220:
+#
+#   per year, own-wage + cross-wage for a couple (the CSG on earnings moves both partners'
+#   net wages), standard error of the sum bounded by the sum of the two (covariance not
+#   printed), every printed figure widened by half a unit of its last digit;
+#   centre = the mean of the two years, which the paper's pooled estimation (appendix G)
+#   « broadly » reproduces for France;
+#   low, high = the envelope of the two years' 95 % intervals, estimate ∓ 1,96 × s.e.
+#
+# WHAT THE ELASTICITY IS. « Precisely, baseline elasticities are calculated by
+# incrementing gross wages by 1% » (§5.2): the response of the group's AVERAGE hours,
+# participation included, to the GROSS wage, uncompensated. The channel applies it to the
+# change in the NET wage before income tax that a CSG reform causes.
+
+parameters:
+  labour_supply_married_women:
+    value: {central: 0.09, low: -0.0284, high: 0.2084, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une élasticité plus grande est une réponse plus forte des heures au salaire.
+    applies_to: >
+      Élasticité des heures moyennes des femmes en couple — participation comprise — à
+      une variation commune des salaires horaires BRUTS des deux conjoints : élasticité
+      au salaire propre plus élasticité au salaire du conjoint. France, années de
+      politique 1998 et 2001 (EUROMOD). Échantillon de ménages, pas d'individus : les
+      deux adultes ont 18 à 59 ans, sont disponibles sur le marché du travail (ni
+      invalides, ni retraités, ni en études), ne sont ni indépendants ni agriculteurs,
+      hors situations « extrêmes » dont l'article ne donne pas la liste complète.
+      L'article dit « couples » sans préciser s'ils sont mariés ; ses tableaux disent
+      « married ».
+    responds_to_knobs: &knobs [csg_activite_deductible, csg_activite_imposable]
+    support: &support
+      estimated_on: >
+        Hausses simulées de 1 % du salaire brut ; l'article indique des résultats
+        « semblables » pour une hausse de 10 % (§3.1, p. 13), sans les chiffrer et
+        pour des hausses seulement. La ligne est tenue dans son domaine jusqu'à 0,10 de
+        variation du logarithme du salaire net avant impôt sur le revenu, dans un sens
+        comme dans l'autre ; au-delà, elle extrapole.
+      max_variation_graded_in_support: 0.10
+    source: &source
+      citation: >
+        Bargain, Orsini et Peichl, « Comparing Labor Supply Elasticities in Europe and
+        the United States: New Results », IZA DP n° 6735, juillet 2012, annexe F —
+        tableaux F.1 (femmes en couple, p. 67 du PDF), F.3 (hommes en couple, p. 69),
+        F.5 (femmes seules, p. 71) et F.7 (hommes seuls, p. 73), colonnes FR 98 et FR 01,
+        ligne « Total hours » du bloc de l'élasticité au salaire propre et, pour les
+        couples, de celui de l'élasticité croisée ; annexe G (p. 75) pour la moyenne des
+        deux années.
+      url: https://docs.iza.org/dp6735.pdf
+      vintage: "2012"
+      quote: >-
+        Precisely, baseline elasticities are calculated by incrementing gross wages by
+        1%, as it is common in the literature.
+    verifier: &verifier
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-19
+      ref: D-220
+      note: >
+        Les seize cellules de la première lecture étaient justes, et la convention
+        appliquée sans erreur. Six corrections de portée appliquées ici. (1)
+        L'élasticité croisée était omise : une réforme de la CSG déplace les deux
+        salaires du couple, et l'article fixe celui du conjoint (−0,11 et −0,07 pour
+        les femmes en couple, −0,01 pour les hommes) ; la sous-estimation annoncée ne
+        tenait donc pas pour les femmes en couple. (2) Le centre à 2001 lisait comme
+        une évolution un écart que l'article attribue à l'identification ; la moyenne
+        des deux années est ce que l'estimation commune (annexe G : 0,17 et 0,07 au
+        salaire propre) retrouve à peu près. (3) Les bornes à ∓ 1,96 écart-type
+        imprimé laissaient hors de la fourchette une partie des intervalles du
+        Graphique 1 (femmes en couple : 0,099 contre 0,110) : chaque chiffre imprimé est
+        élargi d'un demi-centième. (4) L'échantillon est un échantillon de ménages, et
+        « couple » n'y est pas défini. (5) Le Graphique 9, où l'élasticité au salaire
+        net dépasse celle au salaire brut, ne porte que sur les femmes en couple. (6)
+        Le soutien de 10 % n'a été vérifié qu'à la hausse.
+    confidence: low
+    note: >
+      Confiance basse. Les années de politique ont vingt-cinq ans. La somme des deux
+      élasticités peut être négative au bas de la fourchette : sans la covariance, la
+      borne retenue est la plus large que les chiffres imprimés permettent. Au
+      salaire net, l'élasticité au salaire propre des femmes en couple est plus grande
+      (Graphique 9, non tabulé, non lu) : sur ce point la ligne sous-estime. Les 0,11 de la marge de participation (sur 0,13 en 2001) sont
+      valorisés au taux marginal du ménage et non au taux de participation, ce qui
+      biaise dans un sens que rien ne permet de dire.
+
+  labour_supply_married_men:
+    value: {central: 0.065, low: 0.0008, high: 0.1292, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une élasticité plus grande est une réponse plus forte des heures au salaire.
+    applies_to: >
+      Élasticité des heures moyennes des hommes en couple — participation comprise — à
+      une variation commune des salaires horaires BRUTS des deux conjoints : élasticité
+      au salaire propre plus élasticité au salaire de la conjointe. Même échantillon de
+      ménages que la ligne des femmes en couple.
+    responds_to_knobs: *knobs
+    support: *support
+    source: *source
+    verifier: *verifier
+    confidence: low
+    note: >
+      Confiance basse. L'élasticité croisée est faible (−0,01 les deux années, écart-type
+      imprimé 0,00) : la somme est presque le seul salaire propre, 0,09 en 1998 et 0,06
+      en 2001. L'article ne montre pas l'élasticité au salaire net des hommes : le sens
+      de l'écart entre brut et net n'est pas sourcé pour cette ligne.
+
+  labour_supply_single_women:
+    value: {central: 0.15, low: 0.066, high: 0.2732, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une élasticité plus grande est une réponse plus forte des heures au salaire.
+    applies_to: >
+      Élasticité des heures moyennes des femmes seules — participation comprise — à leur
+      salaire horaire BRUT (tableau « Wage elasticity » : il n'y a pas de conjoint).
+      Femmes de 18 à 59 ans, disponibles sur le marché du travail, ni indépendantes ni
+      agricultrices, avec ou sans enfant.
+    responds_to_knobs: *knobs
+    support: *support
+    source: *source
+    verifier: *verifier
+    confidence: low
+    note: >
+      Confiance basse. De 0,18 en 1998 à 0,12 en 2001, avec des écarts-types imprimés de
+      0,04 et 0,02 ; l'article n'estime en commun les deux années que pour les couples.
+      Le sens de l'écart entre brut et net n'est pas sourcé pour cette ligne.
+
+  labour_supply_single_men:
+    value: {central: 0.14, low: 0.0468, high: 0.2332, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une élasticité plus grande est une réponse plus forte des heures au salaire.
+    applies_to: >
+      Élasticité des heures moyennes des hommes seuls — participation comprise — à leur
+      salaire horaire BRUT (tableau « Wage elasticity »). Hommes de 18 à 59 ans,
+      disponibles sur le marché du travail, ni indépendants ni agriculteurs.
+    responds_to_knobs: *knobs
+    support: *support
+    source: *source
+    verifier: *verifier
+    confidence: low
+    note: >
+      Confiance basse. La même valeur, 0,14, les deux années ; la fourchette vient des
+      seuls écarts-types (0,04 et 0,03). Le sens de l'écart entre brut et net n'est
+      pas sourcé pour cette ligne.

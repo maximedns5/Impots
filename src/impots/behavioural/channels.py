@@ -598,6 +598,119 @@ def _disclosure_direction(reform: Any) -> int:
     return {"renforcees": 1, "allegees": -1}.get(value or "", 0)
 
 
+# --------------------------------------------------------------------------- #
+# C7 — labour supply: the channel D-031 killed, reopened cell by cell (D-220)
+# --------------------------------------------------------------------------- #
+#: Group (as the population layer assigns it) → the store row that prices it. One row
+#: per table of Bargain, Orsini and Peichl's annex F; no average across them.
+LABOUR_GROUPS = {
+    "femmes_en_couple": "labour_supply_married_women",
+    "hommes_en_couple": "labour_supply_married_men",
+    "femmes_seules": "labour_supply_single_women",
+    "hommes_seuls": "labour_supply_single_men",
+}
+C7_KEYS = tuple(LABOUR_GROUPS.values())
+
+NO_LABOUR_KNOB = (
+    "Aucun levier de cette réforme ne déplace le salaire net horaire par un prélèvement "
+    "proportionnel : le canal ne s'ouvre que pour la CSG sur les revenus d'activité. "
+    "L'IR relève de C1, dont l'élasticité contient déjà les heures."
+)
+
+
+def labour_supply(
+    store: Store,
+    reform: Any,
+    *,
+    labour_group: np.ndarray | None = None,
+    labour_earnings: np.ndarray | None = None,
+    labour_delta_log_net: np.ndarray | None = None,
+    labour_weights: np.ndarray | None = None,
+    labour_emtr: np.ndarray | None = None,
+    draws: int = 1,
+    rng: Any = None,
+    **_: Any,
+) -> ChannelResult:
+    """Receipts from the hours people work when a levy moves their net hourly wage.
+
+    For each person of the estimation sample, the group's elasticity of average hours,
+    times the change in log net hourly wage, times their gross earnings, is the change in
+    gross earnings; the household's marginal rate on an extra gross euro turns it into
+    receipts. Applied at the group's level of earnings, the total-hours elasticity
+    carries the participation margin with it, without simulating anyone into work.
+
+    A COUPLE'S ROW IS OWN-WAGE PLUS CROSS-WAGE (D-220): the CSG on earnings moves both
+    partners' net wages by the same share, and the paper prices each with the other's held
+    fixed. One Δln per person is therefore enough; a reform that moved one partner's wage
+    alone would need the two terms apart, and this channel does not open for one.
+
+    Worked example, pinned in the tests: a woman in a couple earning 30 000 EUR whose net
+    wage rises 1 % (Δln = 0,01) at the row's centre of 0,09 works enough more to earn
+    30 000 × 0,09 × 0,01 = 27 EUR; at a marginal rate of 40 %, 10,80 EUR come back.
+
+    THE LIMITS, stated where the number is made. The elasticity is to the GROSS wage and
+    is applied to a NET-wage change: the paper shows the net-wage elasticity larger for
+    married women, the only group it shows, so that row understates. Employer
+    contributions on the extra earnings are not counted, which understates the receipts.
+    The participation share of the response is valued at the household's marginal rate,
+    not at a participation tax rate, in a direction nothing here can sign. Earners outside
+    the paper's sample are priced at nothing and counted. And the hours never join the
+    macro fan's jobs, nor C2's: three counts of work, three different objects (§6, rule 4).
+    """
+    applicable = _claimed(store, reform, C7_KEYS)
+    if not applicable:
+        return ChannelResult(key="c7_labour_supply", label="Offre de travail",
+                             applies=False, unit="EUR", message=NO_LABOUR_KNOB)
+    missing = [key for key in C7_KEYS if key not in store]
+    if missing:
+        return ChannelResult(
+            key="c7_labour_supply", label="Offre de travail", applies=False, unit="EUR",
+            message=f"Aucune élasticité utilisable : {', '.join(missing)} n'a pas "
+                    f"survécu à la vérification des sources.",
+            diagnostics={"missing_parameters": missing})
+    supplied = {"labour_group": labour_group, "labour_earnings": labour_earnings,
+                "labour_delta_log_net": labour_delta_log_net,
+                "labour_weights": labour_weights, "labour_emtr": labour_emtr}
+    if all(array is None for array in supplied.values()):
+        return _unsupplied("c7_labour_supply", "Offre de travail", "EUR",
+                           "les groupes, salaires et taux marginaux des actifs")
+    for name, array in supplied.items():
+        if array is None or not len(array):
+            raise ChannelInputMissing(f"C7 needs {name}; it is empty")
+
+    revenue = np.zeros(draws)
+    gross = np.zeros(draws)
+    persons: dict[str, int] = {}
+    for group, key in LABOUR_GROUPS.items():
+        mask = labour_group == group
+        persons[group] = int(mask.sum())
+        exposure = labour_weights[mask] * labour_earnings[mask] * labour_delta_log_net[mask]
+        elasticity = store[key].draw(rng, draws)
+        gross = gross + elasticity * float(exposure.sum())
+        revenue = revenue + elasticity * float((exposure * labour_emtr[mask]).sum())
+    outside = ~np.isin(labour_group, list(LABOUR_GROUPS))
+    earnings = labour_weights * labour_earnings
+    return ChannelResult(
+        key="c7_labour_supply", label="Offre de travail", applies=True, draws=revenue,
+        unit="EUR", in_revenue_band=True,
+        message="Les heures réagissent au salaire net horaire, par groupe de l'article "
+                "(couples et personnes seules, femmes et hommes ; pour un couple, "
+                "élasticité au salaire propre plus élasticité croisée). Élasticité au "
+                "salaire BRUT appliquée au salaire net ; actifs hors de l'échantillon de "
+                "l'article comptés à zéro.",
+        diagnostics={
+            "knobs": applicable,
+            "persons_by_group": persons,
+            "persons_outside_the_sample": int(outside.sum()),
+            "earnings_outside_the_sample_share": (
+                round(float(earnings[outside].sum() / earnings.sum()), 4)
+                if earnings.sum() > 0 else 0.0),
+            "gross_earnings_change_eur": round(float(np.median(gross)), 2),
+            "not_added_to": "les emplois de l'éventail macro et de C2",
+        },
+    )
+
+
 CHANNELS = (
     ("c1_eti", C1_KEYS),
     ("c2_employment", C2_KEYS),
@@ -605,4 +718,5 @@ CHANNELS = (
     ("c4_investment", C4_KEYS),
     ("c5_wealth_rate", C5_KEYS),
     ("c6_disclosure", C6_KEYS),
+    ("c7_labour_supply", C7_KEYS),
 )

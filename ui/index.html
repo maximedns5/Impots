@@ -2845,6 +2845,10 @@ const THETA_ROWS = {
   production_tax_investment: "investissement et impôts de production (C4)",
   wealth_tax_rate_elasticity: "patrimoine déclaré et taux (C5)",
   wealth_disclosure_growth_effect_pp: "obligations déclaratives (C6)",
+  labour_supply_married_women: "offre de travail, femmes en couple (C7)",
+  labour_supply_married_men: "offre de travail, hommes en couple (C7)",
+  labour_supply_single_women: "offre de travail, femmes seules (C7)",
+  labour_supply_single_men: "offre de travail, hommes seuls (C7)",
   multiplicateur_macro: "multiplicateur macro (Mésange ∓ un écart-type IMK)" };
 function predictifTheta(d) {
   const rows = Object.entries(d.theta || {}).map(([k, v]) =>

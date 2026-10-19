@@ -187,6 +187,14 @@ EARNERS = {"smic_multiple": np.array([1.0, 1.3, 1.8, 2.5]),
            "relative_cost_change": np.array([-0.02, -0.015, -0.01, -0.005]),
            "weights": np.array([100.0, 80.0, 60.0, 40.0])}
 
+#: One earner per labour-supply group, a 2 % fall in the net wage (a CSG rise).
+LABOUR = {"labour_group": np.array(sorted(channels.LABOUR_GROUPS)),
+          "labour_earnings": np.array([30_000.0, 25_000.0, 35_000.0, 20_000.0]),
+          "labour_delta_log_net": np.full(4, -0.02),
+          "labour_weights": np.full(4, 100.0),
+          "labour_emtr": np.array([0.40, 0.35, 0.45, 0.30])}
+CSG = Reform(csg_activite_deductible=0.088)
+
 #: Row → (channel, reform, inputs, index of the row's draw in the channel's output).
 CASES = {
     "eti_all": (channels.elasticity_of_taxable_income, IR, _households(), 0),
@@ -207,6 +215,7 @@ CASES = {
     "wealth_disclosure_growth_effect_pp": (channels.disclosure_response,
                                            Reform(ifi_obligations_declaratives="renforcees"),
                                            {"wealth_base_eur": 400e9}, 0),
+    **{key: (channels.labour_supply, CSG, LABOUR, 0) for key in channels.C7_KEYS},
 }
 
 

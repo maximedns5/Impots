@@ -117,7 +117,7 @@ def test_the_report_is_listed_and_served(served) -> None:
     body = served.get("/predictif/gel_bareme").json()
     assert body["rate_name"] == "Taux implicite tenu à son niveau de 2025"
     assert len(body["years"]) == 3 and "rétroaction" in body["absent"]
-    assert body["theta_applied"] is False and len(body["theta"]) == 8
+    assert body["theta_applied"] is False and len(body["theta"]) == 12  # D-220
 
 
 def test_an_unknown_report_is_a_404_and_a_path_is_refused(served) -> None:

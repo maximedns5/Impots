@@ -84,6 +84,11 @@ def compute(
     contribution_delta: float | None = None,
     production_tax_baseline: float = 0.0,
     production_tax_reform: float = 0.0,
+    labour_group: np.ndarray | None = None,
+    labour_earnings: np.ndarray | None = None,
+    labour_delta_log_net: np.ndarray | None = None,
+    labour_weights: np.ndarray | None = None,
+    labour_emtr: np.ndarray | None = None,
     draws: int = DRAWS,
     seed: int = SEED,
 ) -> BehaviouralResult:
@@ -118,6 +123,12 @@ def compute(
         ))
     else:
         results.append(channel_module.production_tax_investment(store, reform))
+    # C7 last, so that the draws of C1-C4 — and the golden band of D-217 — are untouched.
+    results.append(channel_module.labour_supply(
+        store, reform, labour_group=labour_group, labour_earnings=labour_earnings,
+        labour_delta_log_net=labour_delta_log_net, labour_weights=labour_weights,
+        labour_emtr=labour_emtr, draws=draws, rng=rng,
+    ))
 
     metrics: dict[str, tuple[tuple[str, ...], float]] = {}
     if relative_cost_change is not None and len(relative_cost_change):
@@ -133,6 +144,10 @@ def compute(
         )
     if any(r.key == "c4_investment" and r.applies for r in results):
         metrics["c4_investment"] = (channel_module.C4_KEYS, 0.0)
+    if (any(r.key == "c7_labour_supply" and r.applies for r in results)
+            and labour_delta_log_net is not None and len(labour_delta_log_net)):
+        metrics["c7_labour_supply"] = (
+            channel_module.C7_KEYS, float(np.max(np.abs(labour_delta_log_net))))
 
     verdict = grading_module.grade(store, metrics)
 

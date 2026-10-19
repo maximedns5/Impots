@@ -88,11 +88,10 @@ MACRO_CHANNELS = ("rétroaction PIB → recettes", "multiplicateur macro")
 
 #: The channels a result carries NO θ for, each with the reason it is closed (§2.5).
 #: Guard 2: a trajectory whose closed channel lost its reason refuses to exist — a closed
-#: channel shown without one reads as a channel that does not matter.
+#: channel shown without one reads as a channel that does not matter. Labour supply left
+#: this list in D-220: it is C7 now, with four rows and their θ, open for the CSG on
+#: earnings and saying why it does not open for anything else.
 CLOSED: dict[str, str] = {
-    "offre de travail": (
-        "aucune ligne vérifiée au magasin (D-031) ; les élasticités de Bargain, Orsini et "
-        "Peichl restent à manifester (§6.1)."),
     "IS et investissement des entreprises": (
         "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; "
         "le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de "

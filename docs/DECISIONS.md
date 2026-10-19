@@ -15904,3 +15904,153 @@ des chocs, de la page, de la provenance, de la charte et des dépendances : 458 
 d'évaluation de la fiscalité du capital (France Stratégie) reste la meilleure piste, sur
 l'investissement et non sur le multiplicateur. Les deux choix du propriétaire de D-218
 restent ouverts.
+
+## D-220 — M5 de la phase 9 : l'offre de travail rouvre, sur les cellules de l'article
+
+**Le fait.** D-031 avait retiré les deux scalaires de l'offre de travail (0,10 et 0,30) :
+c'étaient des moyennes que Bargain, Orsini et Peichl ne publient pas. Ce qu'ils publient
+pour la France, c'est un tableau par groupe — femmes et hommes en couple, femmes et
+hommes seuls — avec une élasticité des heures pour les années de politique 1998 et 2001
+et un écart-type sous chacune. M5 manifeste l'article (IZA DP n° 6735, juillet 2012,
+`iza_dp6735_2012_bargain_orsini_peichl_labor_supply.pdf`), lit ces cellules dans le PDF
+et rouvre le canal : C7, quatre lignes, une par groupe, pour la CSG sur les revenus
+d'activité seulement.
+
+**La lecture.** `behavioural/bop.py` trouve la France par l'en-tête de chaque tableau,
+ligne des pays et ligne des années, jamais par position : en F.1, la colonne voisine de
+FR 98 (FI 98) imprime 0,13 là où la France imprime 0,23. Chaque ligne est cherchée dans
+son bloc, entre son titre et le titre suivant. La première version partait de la
+première ligne commençant par « Own-wage elasticity ». Or les tableaux des personnes
+seules titrent ce bloc « Wage elasticity » : la lecture serait partie des sous-groupes,
+et la ligne « Total hours » aurait été prise dans l'élasticité au revenu. Vingt cellules
+sont lues : le « Total hours » propre des quatre groupes, et le croisé des deux couples,
+pour les deux années.
+
+**La vérification adverse.** Verdict SCOPE_PROBLEM. Les seize cellules propres sont
+justes, la convention de la première version était appliquée sans erreur, et la
+définition est confirmée : heures moyennes, participation comprise, au salaire brut,
+non compensée. Six corrections de portée, toutes appliquées.
+
+1. *L'élasticité croisée manquait.* Une réforme de la CSG déplace les deux salaires du
+   couple ; l'article fixe celui du conjoint. Pour les femmes en couple, le croisé vaut
+   −0,11 en 1998 et −0,07 en 2001 : la somme de 2001 tombe à 0,06, contre 0,13 au seul
+   salaire propre. La première version surestimait donc la réponse des femmes en couple,
+   quand elle annonçait une sous-estimation.
+2. *Le centre à 2001 lisait une évolution là où l'article voit de l'identification.*
+   Estimées en commun, les deux années donnent pour la France « very similar
+   elasticities for the two years, which broadly correspond to the average of the two »
+   (annexe G) : 0,17 au salaire propre des femmes en couple, 0,07 des hommes (tableau
+   G.1, lu sur l'image de la page).
+3. *Les bornes à ∓ 1,96 écart-type imprimé* laissaient dehors une partie des intervalles
+   que l'article trace lui-même (Graphique 1, femmes en couple : 0,099 contre 0,110).
+4. *L'échantillon est un échantillon de ménages*, et « couple » n'y est pas défini.
+5. *Le Graphique 9*, où l'élasticité au salaire net dépasse celle au brut, ne porte que
+   sur les femmes en couple.
+6. *Le soutien de 10 %* n'a été vérifié qu'à la hausse, et « semblable » n'est pas
+   chiffré.
+
+Le vérificateur a aussi signalé un lecteur en échec. Il avait lu `bop.py` pendant une
+mutation de test, restaurée depuis : le lecteur sur disque passe.
+
+**La convention.** Écrite dans `bop.convention`, et tenue par un test contre le PDF. Par
+année : élasticité propre, plus la croisée pour un couple ; écart-type de la somme borné
+par la somme des écarts-types, la covariance n'étant pas imprimée ; chaque chiffre
+imprimé élargi d'un demi-centième. Centre : la moyenne des deux années. Fourchette :
+l'enveloppe des deux intervalles à 95 %.
+
+| Ligne | Bas | Centre | Haut |
+|---|---|---|---|
+| `labour_supply_married_women` | −0,0284 | 0,09 | 0,2084 |
+| `labour_supply_married_men` | 0,0008 | 0,065 | 0,1292 |
+| `labour_supply_single_women` | 0,066 | 0,15 | 0,2732 |
+| `labour_supply_single_men` | 0,0468 | 0,14 | 0,2332 |
+
+La borne basse des femmes en couple est négative : sans la covariance, c'est la borne la
+plus large que les chiffres imprimés permettent, et elle couvre les intervalles du
+Graphique 1. Les quatre lignes déclarent θ = 1 au haut de la fourchette, confiance basse,
+soutien de 0,10 de variation du logarithme du salaire net avant impôt sur le revenu.
+
+**Le canal C7.** Pour chaque actif de l'échantillon : élasticité du groupe × Δln du
+salaire net × salaire brut donne la variation du salaire brut ; le taux marginal du
+ménage sur un euro brut de plus la convertit en recettes. Appliquée aux salaires du
+groupe, l'élasticité des heures totales porte la marge de participation sans simuler
+personne vers l'emploi.
+
+* *Ce qu'il revendique.* `csg_activite_deductible` et `csg_activite_imposable`, rien
+  d'autre. L'IR reste à C1, dont l'élasticité contient déjà les heures : C7 le
+  revendiquant compterait deux fois. Un test tient les deux sens : C7 ne revendique ni
+  l'IR ni la décote ni le quotient familial, et aucune autre ligne ne revendique la CSG
+  sur les revenus d'activité.
+* *Qui il chiffre* (`behavioural/labour.py`). Un ménage est dans l'échantillon quand sa
+  personne de référence et son conjoint éventuel ont 18 à 59 ans, ne perçoivent pas de
+  pension, ne sont pas étudiants et ne sont pas indépendants. Le salarié de 58 ans dont
+  l'épouse de 63 ans est retraitée est hors échantillon, chiffré à zéro et compté ; un
+  enfant adulte aussi. Sur la population 2024, 78,6 % de la masse salariale des 18-59
+  ans est dans l'échantillon, 13,3 % dans des ménages que l'article n'aurait pas gardés,
+  8,1 % chez des enfants adultes ou d'autres membres.
+* *Le Δln.* Un seul nombre, lu sur la masse des salaires nets avant et après la
+  réforme : presque exact pour la CSG, dont l'assiette est de 98,25 % du brut jusqu'à
+  quatre plafonds et de tout le brut au-delà.
+* *Le classement.* La métrique est |Δln| ; au-delà de 0,10, la bande est illustrative.
+* *Ce qu'il n'ajoute pas.* Les heures ne rejoignent ni les emplois de l'éventail macro
+  ni ceux de C2.
+* *Ce qu'il ne fait pas.* L'élasticité est au salaire brut, appliquée au net : pour les
+  femmes en couple, le seul groupe que l'article montre, la ligne sous-estime. Les
+  cotisations employeurs sur le surcroît de salaire ne sont pas comptées, ce qui
+  sous-estime les recettes. La part de participation est valorisée au taux marginal du
+  ménage, non à un taux de participation, dans un sens que rien ne permet de dire.
+
+**Ce que la trajectoire affiche.** « offre de travail » quitte les canaux fermés de la
+chaîne : sa raison, « aucune ligne vérifiée au magasin », serait fausse à côté de quatre
+lignes vérifiées. Les quatre lignes entrent dans la table des θ et dans la boîte θ de
+toute réforme de la CSG sur les revenus d'activité ; la page les nomme.
+
+**Le calcul réel.** Une hausse d'un point de la CSG déductible sur les revenus d'activité
+(6,8 → 7,8 %), population 2024, échantillon rapide, bande demandée : 193 s. Recettes
+mécaniques : 8,37 Md€. C7 : −384 M€ au centre (p10 −481, p90 −290), soit 4,6 % des
+recettes mécaniques ; le salaire brut recule de 912 M€. Classée dans son domaine. Sur les
+3 000 ménages de la passe des taux marginaux, 1 661 ont un actif ; 1 537 actifs sont dans
+les groupes de l'article (461 femmes et 517 hommes en couple, 297 femmes et 262 hommes
+seuls), 534 en dehors, soit 23,9 % de la masse salariale de ce sous-échantillon. La bande
+totale va de 7,89 à 8,08 Md€, centre 7,99. C1 ne s'ouvre pas, comme attendu.
+
+Le chemin prédictif, sur la même réforme (« Dépenses gelées en volume », croissance
+réelle de 1 % et prix de 2 %, taux implicite tenu, θ = ½, horizon de trois ans) : 186 s.
+L'écart de dette vaut −0,259 point de PIB en 2026 à θ, contre −0,271 en mécanique, et
+−0,768 contre −0,804 en 2028. La boîte θ, lue aux seize coins des quatre lignes de C7,
+fait 0,022 point de large en 2026 et 0,066 en 2028.
+
+**Les tests.** Dix-sept nouveaux dans `test_offre_travail.py` : les cellules épinglées à
+l'œil, les colonnes trouvées par l'en-tête, les lignes lues dans leur bloc, l'article
+absent, la convention dérivée à la main pour les femmes en couple, les quatre lignes
+contre le PDF, la CSG seule revendiquée, la sortie des canaux fermés, l'exemple chiffré
+de C7, l'IR non revendiqué, les entrées absentes ou vides, le classement au-delà de 10 %,
+les groupes et les entrées de la population. Les cas de monotonie en θ gagnent les quatre
+lignes. Cinq tests comptaient huit lignes ouvertes ; ils en comptent douze, parce que le
+magasin en a quatre de plus.
+
+Chaque garde a été vue échouer sur une mutation, douze en tout : les colonnes de la
+France figées par position ; la fin de bloc retirée ; le début de bloc lu par préfixe ;
+la sélection par ménage retirée ; le terme croisé retiré ; l'arrondi retiré ; la
+métrique lue signée ; un chiffre du YAML retapé ; l'IR revendiqué ; le taux marginal
+oublié ; le poids du sous-échantillon remplacé par un ; la raison fermée remise. Deux
+mutations ont d'abord survécu. Renommer la métrique de C7 ne changeait rien, le
+classement lisant les lignes et non le nom : mutation sans effet, remplacée par le
+retrait de la métrique. La métrique lue signée passait, parce que le test montait le
+salaire de 15 % ; il le baisse désormais, comme une hausse de la CSG, et la mutation
+échoue.
+
+Avec les tests de θ, du magasin, de la chaîne, de la boucle, de la dette, de la commande,
+de l'API prédictive, de la page, de la provenance, de la charte, des règles et des
+dépendances : 551 réussis, 2 sautés (l'artefact de base n'a pas encore de distribution
+des taux marginaux). Les cinq tests lents de la bande de l'API passent sur la population
+(13 min).
+`ruff` passe sur `src`, `tests` et `scripts` ; `ui/check.mjs` passe ses 46 vérifications.
+
+**Ce qui reste.** Pour C7 : un taux de participation pour la part extensive ; les
+cotisations employeurs sur le surcroît de salaire ; l'élasticité au salaire net du
+Graphique 9, non tabulée ; et la cinquième de la masse salariale des 18-59 ans hors de
+l'échantillon de l'article, chiffrée à zéro. Pour M5 : les canaux suivants de §6,
+l'investissement (§6.2), les créations d'entreprises (§6.3), la R&D (§6.4) et les
+dividendes (§6.5). `impots predictif` ne porte pas encore la boucle (D-218). Les deux
+choix du propriétaire de D-218 restent ouverts.
