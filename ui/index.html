@@ -2907,9 +2907,14 @@ function predictifIndices(d) {
 /* The fast version: the first year priced, the rest carried — and every carried row
    says « report » in its own column, so a convention never reads as a costing. With
    behaviour, the gap is at θ, the mechanical gap stands beside it, and the θ box gives
-   the gap at its two corners. */
+   the gap at its two corners. The population view is named above the table and its
+   note sits under it (D-225): this prices « figée », the report above heads with
+   « vieillie » (D-216), and two 2026 figures with no word between them read as one. */
+const POPULATION_VIEWS = { figee: "figée", vieillie: "vieillie" };
 function renderPredictif(host, d) {
   const carried = new Set(d.carried_years || []);
+  const view = d.population_view ? ` · Population : <b>${escapeHtml(
+    POPULATION_VIEWS[d.population_view] || d.population_view)}</b>` : "";
   const box = (d.slices || []).find((s) => s.source === "bande" && s.computed);
   const extra = d.theta_applied ? "<th>Écart mécanique</th>" : "";
   const boxHead = box ? "<th>Boîte θ (écart)</th>" : "";
@@ -2928,10 +2933,11 @@ function renderPredictif(host, d) {
     </tr>`).join("");
   host.innerHTML = `<div class="pred">
     <p class="tbanner"><b>${escapeHtml(d.banner)}</b></p>
-    <p class="pnames">${predictifNames(d)}</p>
+    <p class="pnames">${predictifNames(d)}${view}</p>
     <table><thead><tr><th>Année</th><th>Dette, référence</th><th>Dette, réforme</th>
       <th>Écart${d.theta_applied ? " à θ" : ""}</th>${extra}${boxHead}${gapHead}${fanHead}<th></th></tr></thead>
       <tbody>${rows}</tbody></table>
+    ${d.population_note ? `<p class="tnote">${escapeHtml(d.population_note)}</p>` : ""}
     ${box ? `<p class="tnote">${escapeHtml(box.label)}.</p>` : ""}
     ${fan ? `<p class="tnote">${escapeHtml(fan.label)}.</p>` : ""}
     ${predictifIndices(d)}

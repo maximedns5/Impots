@@ -117,6 +117,11 @@ const PRED_RESULT = { ...PRED_NAMES, years: [2026, 2027, 2028],
       stage: "chaîne", source: "chaîne de §3", theta: [], available: true,
       values: { 2026: -0.0017 }, box: null, reason: "", conventions: [], uncovered: {},
       note: "" }],
+  population_view: "figee",
+  population_note: "Sous-échantillon de 20 000 ménages repondérés. Vue « figée » : l'année "
+    + "2026 est chiffrée avec sa législation sur la population 2024 telle quelle, revenus "
+    + "non vieillis. La commande `impots predictif` chiffre aussi la vue « vieillie », "
+    + "revenus portés à l'année, et en fait son chiffre de tête (D-216).",
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
   debt_banner: "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici." };
 const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027, art. 3",
@@ -486,6 +491,12 @@ await (async () => {
     assert.match(html, /Croissance réelle 1 %, prix 2 %/);
     assert.equal((html.match(/>report</g) || []).length, 2, "two carried years");
     assert.match(html, /non demandé\. Absent, pas nul/);
+  });
+  ok("the fast path names its population view, the report above it heads with the other", () => {
+    const html = $("predOut").innerHTML;
+    assert.match(html, /Population : <b>figée<\/b>/, "the view must sit above the table");
+    assert.match(html, /<p class="tnote">[^<]*Vue « figée » : l'année 2026[^<]*« vieillie »/,
+                 "the population note must be shown, and say which view the report heads with");
   });
   ok("the θ of the result, the θ box and the closed channels are shown", () => {
     const html = $("predOut").innerHTML;

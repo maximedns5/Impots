@@ -16598,3 +16598,36 @@ phase 8 n'en avait pas non plus, et une recherche coûte deux passes de populati
 paquet. Pour M6 : la cohérence interne, le confinement préenregistré, l'exemple au
 dossier et le balayage des gardes (§9), dont la porte est le `make full` du propriétaire.
 Les deux choix du propriétaire de D-218 restent ouverts.
+
+## D-225 — La page nomme la vue de population de la version rapide
+
+**Le fait.** `POST /predictif/simulate` chiffre 2026 sur la population de 2024 telle
+quelle, la vue « figée », et le dit deux fois : dans `population_view` et dans la
+dernière phrase de `population_note`. C'est l'entrée « La version rapide chiffre sa
+première année en vue figée, et le dit » de la PR #54, numérotée D-224 sur sa branche ;
+`main` a déjà donné ce numéro à l'explorateur. La page ne lisait ni l'un ni l'autre.
+Au-dessus de la version rapide, `loadPredictifs` affiche le rapport précalculé
+d'`impots predictif`, dont le chiffre de tête est la vue « vieillie » (D-216). Le lecteur
+voyait deux chiffres de 2026 différents, et rien sur la page ne disait pourquoi.
+
+**Le changement.** `renderPredictif` nomme la vue au-dessus du tableau, à la suite des
+trois scénarios : « Population : figée », tirée de `population_view` par la table
+`POPULATION_VIEWS`. Sous le tableau vient `population_note` en entier, échappée, à la
+place où le rapport met sa note de vieillissement. Les deux vont dans `renderPredictif`,
+pas dans `predictifNotes`, que le rapport partage : il chiffre les deux vues côte à côte
+et n'en nomme aucune. Une réponse sans ces champs, celle de `main` tant que la PR #54
+n'y est pas, n'affiche rien de plus : la page ne nomme pas une vue qu'on ne lui a pas
+dite. Aucun chiffre ne bouge.
+
+**Les tests.** Dans `ui/check.mjs`, le résultat de la version rapide porte
+`population_view` et une `population_note` reprise de l'API. Une vérification de plus :
+le nom de la vue au-dessus du tableau, et la note dans un `<p class="tnote">`, qui nomme
+« figée », l'année et « vieillie ». Elle a été vue échouer avant le changement, sur le
+nom absent ; puis sur quatre mutations : la note retirée, le nom retiré, la clé brute
+« figee » à la place du nom, la note hors de `tnote`. `ui/check.mjs` passe de 47 à 48
+vérifications. `ruff` passe sur `src`, `tests` et `scripts`. `make full` n'a pas été
+lancé : rien ne touche une passe de population.
+
+**Ce qui reste.** Le choix de la vue chiffrée, posé au propriétaire par la PR #54, reste
+ouvert : en vue vieillie, la page dirait « vieillie » sans changer ; avec les deux vues,
+il lui faudrait une colonne. La PR #54 doit prendre un autre numéro avant sa fusion.
