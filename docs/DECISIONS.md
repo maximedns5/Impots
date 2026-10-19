@@ -16335,3 +16335,150 @@ pour l'IS (D-221) et les dividendes (§6.5) fermés, raison affichée. Vient M6 
 indices et l'explorateur à θ fixé (§7, §8), le confinement et l'exemple (§9), le balayage
 des gardes ; sa porte est le `make full` du propriétaire. Les deux choix du propriétaire
 de D-218 restent ouverts.
+
+## D-223 — M6 de la phase 9, premier pas : les indices de §7, chacun dans son unité
+
+**Le fait.** §7 demande une liste fermée d'indices, chacun avec son unité, son étage et
+sa source, et aucun additionné à un autre : ce que la réforme fait aux gens, aux
+entreprises, aux startups et à l'État, à côté de la trajectoire de dette. Trois de ces
+indices, la consommation, l'investissement et le revenu disponible réel, viennent de
+lignes que `macro/mesange.py` lisait déjà dans le PDF sans qu'aucune ligne du magasin ne
+les porte. Elles y entrent, vérifiées. M6 est découpé comme M5 : ce pas couvre §7 ;
+l'explorateur à θ fixé (§8) et la validation (§9) suivront.
+
+**Les trois lignes.** `macro/parameters/indices.yaml`, sans un chiffre (D-026) :
+`consumption_by_instrument`, `investment_by_instrument` et `real_income_by_instrument`,
+horizons un à trois, la variante ciblée déclarée absente. Verdict SCOPE_PROBLEM sur les
+trois. Les 72 valeurs sont exactes, pages rendues en image, retournement de la TVA et de
+la taxe carbone compris ; le tableau 12 (folio 119) et l'encadré 15 (folio 114)
+recoupent. La portée est corrigée : la consommation est en volume chaîné ; le revenu est
+le revenu disponible BRUT réel, déflaté des prix à la consommation, le « pouvoir
+d'achat » du folio 113 ; l'investissement est celui des entreprises non financières, hors
+investissement public et des ménages ; la colonne « 1 an » est une moyenne de la première
+année. Le « un point de PIB relève le revenu de 1,6 % » du brouillon est une dérivation
+(22 Md€ sur un RDB de 1 352 Md€, folios 100 et 94), juste pour l'IR et la CSG seulement :
+pour la TVA et les cotisations employeurs, le choc passe par les prix, sans transfert.
+Une limite reste : le lecteur ne cherche pas ces libellés sur la page de la variante
+ciblée, et son absence repose sur la lecture à l'œil du vérificateur.
+
+**θ, et un écart à la spec.** Le brouillon tenait les trois lignes au centre de Mésange,
+fixes, au motif qu'elles contiennent le choc. Le vérificateur l'a contredit pour deux
+d'entre elles. L'investissement est un accélérateur où aucune variante ne porte son
+choc : élasticités de 1,79 et 2,00 à la valeur ajoutée, contre −0,04 et −0,15 au coût du
+capital (folio 44). La consommation suit le revenu avec une élasticité de 0,46 la
+première année et 0,85 à deux ans (folio 33), et elle vaut 1,96 à 2,16 fois l'effet sur
+le PIB pour les impôts payés par les ménages. Les deux suivent donc le multiplicateur à
+θ, proportionnellement, comme l'emploi (D-059) et la rétroaction (§4.1) ; un
+multiplicateur négatif à θ = 0 les rend négatives. Seul le revenu reste fixe : il
+contient le choc, en revenu ou en prix, et la dispersion IMK ne décrit ni l'un ni
+l'autre. §7 écrivait « Mésange, θ macro » pour les trois lignes ; l'écart est consigné
+ici.
+
+**Le catalogue.** `predictif/indices.py`, treize indices. Pour les gens : le revenu
+disponible par décile (mécanique, sans θ), le revenu disponible réel de Mésange (fixe),
+la consommation (θ du multiplicateur), l'emploi au voisinage du SMIC (C2, à son θ),
+l'emploi salarié marchand (Mésange, en milliers d'ETP), les revenus d'activité bruts que
+déplacent les heures (C7). Pour les entreprises : l'investissement, la charge fiscale de
+production, la dépense de R&D (C9). Pour les startups : les créations de sociétés (C8).
+Pour l'État : le solde primaire, la dette et la charge d'intérêts de la dette
+supplémentaire, en points de PIB. Trois écarts au tableau de §7. L'offre de travail est
+en euros de revenus bruts, parce que l'article ne sépare pas heures et participants. Les
+créations sont en points de taux, le nombre attendant le stock de sociétés au manifeste
+(D-221). La R&D s'ajoute à la liste, ouverte depuis D-222.
+
+La charge d'intérêts est un champ nouveau de la trajectoire, `delta_interest` : la
+tranche d'intérêts du chemin de la dette supplémentaire, ΔD_{t−1} × m / (1 + g), en
+points du PIB de référence, nulle la première année.
+
+**Les gardes.** La liste est fermée : un indice inconnu est refusé par son nom, avec la
+liste, et une liste vide aussi, puisque ne rien demander s'écrit en omettant le
+champ. Aucun indice ne s'additionne : `+` est refusé entre deux indices, et dans `sum`.
+Deux paires ont leur raison propre : les deux emplois, l'un en personnes et l'autre en
+équivalents temps plein, qui se recoupent sur les bas salaires ; les déciles et le revenu
+de Mésange, qui contient le même choc. Python refusait déjà `+` entre deux objets de
+cette sorte, par une `TypeError` : la garde apporte la raison nommée, et c'est elle que
+le test vérifie. Un indice absent sans raison ne se construit pas ; une valeur hors de sa
+boîte θ non plus.
+
+**Le branchement.** `/predictif/simulate` porte un bloc `indices`, tous par défaut, ou
+ceux que nomme le champ `indices`, vérifié avant la passe. Les indices de Mésange se
+lisent dès que l'impulsion est calculée, boucle appliquée ou non, sous les conditions de
+simulation de Mésange, que l'indice affiche : la dépense publique n'y réagit qu'en prix,
+quel que soit le scénario de la trajectoire. Le choc est permanent, égal à l'impulsion de
+la première année, comme la trajectoire le tient. Un magasin macro que la boucle n'exige
+pas et que ce conteneur ne lit pas laisse les indices absents, raison dite, au lieu d'un
+503. Les indices de comportement tournent à θ sur le magasin épinglé, et leur boîte se
+lit aux coins de leurs propres lignes : deux pour C2, seize pour C7. La couche
+entreprises est listée et dit qu'elle ne se calcule pas ici. La page groupe les indices
+par destinataire, chacun avec son unité, son θ ou la mention « fixe, aucun θ », sa boîte,
+et la raison de ceux qui manquent.
+
+**Le calcul réel.** La réforme de D-220 : la CSG déductible sur les revenus d'activité de
+6,8 à 7,8 %, population 2024, échantillon rapide, comportement et boucle demandés,
+« Dépenses gelées en volume », croissance réelle de 1 % et prix de 2 %, taux implicite
+tenu, θ = ½, horizon de trois ans : 184 s. Rendement mécanique de 2026 : 8,35 Md€, soit
+0,29 point de PIB de la variante CSG. Les indices de Mésange en sont la ligne fois ces
+points : consommation −0,23 %, −0,48 % et −0,56 % à un, deux et trois ans ;
+investissement −0,23 %, −0,58 % et −0,58 % ; emploi salarié marchand −6 500, −29 700
+et −46 800 ETP ; revenu disponible réel −0,49 %, −0,53 % et −0,58 %, fixe. La boîte θ du
+multiplicateur est large, et la première année elle change de signe : la consommation va
+de −0,60 % à +0,14 %, parce qu'un écart-type IMK sous le centre (0,41 − 0,66) donne un
+multiplicateur négatif. C'est la dispersion que §2.1 annonçait, pas un défaut de
+l'indice.
+
+Les revenus d'activité bruts reculent de 894 M€ à θ = ½, de 104 à 1 740 M€ sur les seize
+coins de C7 ; le chiffre de D-220, 912 M€, était la médiane de mille tirages. L'emploi au
+voisinage du SMIC ne s'ouvre pas, la CSG ne touchant pas le coût du travail, et l'indice
+le dit. Par décile, la perte moyenne va de 6 € par ménage et par an dans le premier à
+819 € dans le dernier. Pour l'État : solde primaire +0,20, +0,12 et +0,10 point, dette
+−0,07, −0,04 et −0,11 point, charge d'intérêts 0, −0,004 et −0,006 point, la dette
+supplémentaire étant ici une dette en moins. Les trois indices de la couche entreprises
+disent qu'ils ne se calculent pas ici.
+
+**Les tests.** Onze nouveaux dans `test_indices.py` : la liste fermée, les deux paires
+qui ne s'additionnent pas, l'absence sans raison et la valeur hors de sa boîte, la ligne
+fixe dérivée à la main (TVA brute comprise), θ qui déplace l'emploi, la consommation et
+l'investissement et pas le revenu, l'emploi de l'indice contre celui de
+`predictif.macro`, les trois lignes contre les chiffres des pages rendues, C2 à θ et sa
+boîte, la charge d'intérêts dérivée à la main, la couche entreprises, l'unité, l'étage et
+la source de chaque indice. Quatre dans `test_api_predictif.py` : l'indice inconnu refusé
+avant la passe, le bloc complet sur une réforme dérivée à la main, les indices de Mésange
+sans la boucle et sans l'impulsion, le magasin illisible qui laisse les indices absents
+au lieu d'un 503. Une vérification de plus pour la page. Deux tests existants tiennent
+des listes fermées et ont échoué à bon droit : celle des tables du magasin macro, qui
+gagne les trois lignes vérifiées, et celle des imports déclarés, qui a refusé un import
+d'un fichier de test par un autre ; l'aide commune va dans `macro_cases.py`, où vivent
+les autres.
+
+Chaque garde a été vue échouer, sur vingt mutations : la liste fermée, `+` retiré, la
+raison des deux emplois, l'absence sans raison, la valeur hors de sa boîte, la TVA prise
+nette (avant et après la correction du vérificateur), la boîte θ des lignes de Mésange,
+les coins du canal, la charge d'intérêts prise sur la dette, la couche entreprises, θ
+sans effet, une ligne lue à la place d'une autre, les horizons longs, le revenu mis sous
+θ, les lignes fixes déplacées par θ et la boîte des emplois sur le premier partage, la
+liste non vérifiée avant la passe, le magasin illisible rendu en 503, et le rendu des
+indices retiré de la page. Trois fois le test avait tort, ou le code. La vérification de
+la page cherchait « 8 000 » avec une espace ordinaire, quand `toLocaleString` sépare les
+milliers par une espace fine insécable : la page était juste, le motif ne l'était pas. Un
+test du catalogue décrivait encore le partage du brouillon, trois lignes fixes, après que
+la correction en avait déplacé deux. Et les tests de l'API, dont le magasin macro
+synthétique ne porte pas les lignes nouvelles, ont fait tomber le chemin fixe sur une
+`KeyError`, une erreur 500 : le chemin proportionnel disait déjà pourquoi l'indice
+manquait, le chemin fixe le dit maintenant aussi.
+
+Avec les tests de la chaîne, du chemin annuel, de la boucle, de θ, du magasin macro et du
+comportement, de la page, de la provenance, de la charte, des règles, des dépendances, de
+la commande, de l'offre de travail, des créations, du CIR et de la dette : 607 réussis,
+28 sautés (les tableaux entrées-sorties de l'INSEE, non redistribuables, et des sources
+primaires absentes de ce conteneur pour la validation macro ; l'artefact de base sans
+distribution des taux marginaux). Les 66 tests de `test_api.py` passent. `ruff` passe sur
+`src`, `tests` et `scripts` ; `ui/check.mjs` passe ses 47 vérifications, une de plus
+qu'avant.
+
+**Ce qui reste.** Pour §7 : le nombre de créations, qui attend le stock de sociétés ; les
+indices de la couche entreprises, qui se lisent pour l'instant dans la réponse de
+`/entreprises/simulate` et le panneau de la phase 8 ; la vérification, par le lecteur,
+que la page de la variante ciblée n'imprime pas ces lignes. Pour M6 : l'explorateur à θ
+fixé (§8), puis la cohérence, le confinement préenregistré, l'exemple au dossier et le
+balayage des gardes (§9), dont la porte est le `make full` du propriétaire. Les deux
+choix du propriétaire de D-218 restent ouverts.

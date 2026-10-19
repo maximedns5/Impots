@@ -94,6 +94,29 @@ const PRED_RESULT = { ...PRED_NAMES, years: [2026, 2027, 2028],
              label: "Éventail macro : θ du multiplicateur de 0 à 1",
              low: [1.1664, 1.1700, 1.1680], high: [1.1675, 1.1725, 1.1720] }],
   gdp_gap: [0.0007, 0.0014, 0.0015], persistence: null,
+  indices: [
+    { key: "emploi_smic", pour: "Les gens", label: "Emploi au voisinage du SMIC",
+      unit: "emplois", stage: "comportement", source: "C2",
+      theta: ["employment_elasticity_smic"], available: true, values: { 2026: 12000 },
+      box: { 2026: [8000, 15000] }, reason: "", conventions: [], uncovered: {},
+      note: "Des personnes. Ne s'additionne pas à l'emploi de Mésange." },
+    { key: "emploi_marchand", pour: "Les gens", label: "Emploi salarié marchand",
+      unit: "milliers d'ETP", stage: "macro", source: "Mésange",
+      theta: ["multiplicateur_macro"], available: true, values: { 1: 3.9, 2: 17.6 },
+      box: { 1: [2.1, 5.6], 2: [9.5, 25.7] }, reason: "", conventions: [], uncovered: {},
+      note: "Des équivalents temps plein. Ne s'additionne pas à l'emploi de C2." },
+    { key: "revenu_disponible_reel", pour: "Les gens", label: "Revenu disponible brut réel",
+      unit: "% d'écart", stage: "macro", source: "Mésange, au centre", theta: [],
+      available: true, values: { 1: 0.275 }, box: null, reason: "", conventions: [],
+      uncovered: {}, note: "" },
+    { key: "depense_rd", pour: "Les entreprises", label: "Dépense de R&D",
+      unit: "EUR de R&D", stage: "couche entreprises", source: "C9", theta: [],
+      available: false, values: {}, box: null, conventions: [], uncovered: {}, note: "",
+      reason: "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population." },
+    { key: "dette", pour: "L'État", label: "Dette, écart de la réforme", unit: "pts de PIB",
+      stage: "chaîne", source: "chaîne de §3", theta: [], available: true,
+      values: { 2026: -0.0017 }, box: null, reason: "", conventions: [], uncovered: {},
+      note: "" }],
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
   debt_banner: "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici." };
 const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027, art. 3",
@@ -473,6 +496,19 @@ await (async () => {
     assert.doesNotMatch(html, /non lus : vue mécanique/);
     assert.match($("predHost").innerHTML, /non lus : vue mécanique/,
                  "the report prices no behaviour and says its θ are not read");
+  });
+  ok("the indices are grouped, each in its unit, fixed or with its θ box, none summed", () => {
+    const html = $("predOut").innerHTML;
+    assert.match(html, /aucun additionné/);
+    assert.match(html, /<b>Les gens<\/b>[\s\S]*<b>Les entreprises<\/b>[\s\S]*<b>L'État<\/b>/);
+    assert.match(html, /boîte θ 8\s000 à 15\s000/);
+    assert.match(html, /Des personnes\. Ne s'additionne pas/);
+    assert.match(html, /Des équivalents temps plein\. Ne s'additionne pas/);
+    assert.match(html, /1 an : 0,275/);
+    assert.match(html, /fixe, aucun θ/);
+    assert.match(html, /Dépense de R&amp;D<\/b> — non calculé : Couche entreprises/);
+    assert.match(html, /2026 : −0,17 pt/);
+    assert.doesNotMatch(html, /Emploi total/);
   });
   ok("with the loop, the reform's GDP and the macro fan get their own columns", () => {
     const html = $("predOut").innerHTML;

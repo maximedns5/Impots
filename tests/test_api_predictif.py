@@ -18,7 +18,8 @@ from fastapi.testclient import TestClient
 from impots.api import main
 from impots.dette import maturite, reference
 from impots.predictif import chaine
-from macro_cases import synthetic_macro_store
+from impots.predictif import indices as indices_module
+from macro_cases import index_rows_store, synthetic_macro_store
 
 START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
                         spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
@@ -225,3 +226,73 @@ def test_the_loop_without_a_macro_theta_is_refused_before_the_pass(client, price
         macro=True, horizon=3, theta={"rows": rows}))
     assert response.status_code == 422 and "multiplicateur_macro" in response.json()["detail"]
     assert priced == []
+
+
+# --------------------------------------------------------------------------- #
+# M6 — the indices of §7 (D-223)
+# --------------------------------------------------------------------------- #
+def _with_index_rows():
+    return index_rows_store()
+
+
+def _indices(body: dict) -> dict:
+    return {i["key"]: i for i in body["indices"]}
+
+
+def test_an_unknown_index_is_refused_before_the_pass(client, priced) -> None:
+    response = client.post("/predictif/simulate",
+                           json=_payload(indices=["dette", "emploi_total"]))
+    assert response.status_code == 422 and "emploi_total" in response.json()["detail"]
+    assert priced == []
+
+
+def test_the_indices_ride_along_each_computed_or_saying_why(client, priced,
+                                                           monkeypatch) -> None:
+    """Derived by hand: 5 Md€ of income tax over the first year's GDP, 3 000 × 1,01 ×
+    1,02 Md€, is 0,1618 point of the variant; consumption at θ = 1/2 is 0,81 × that in
+    year one. The State's three indices are the path's own; the firm layer is listed and
+    not computed; the deciles the stub does not carry are said to be missing."""
+    monkeypatch.setattr(main, "_predictif_macro_store", _with_index_rows)
+    body = client.post("/predictif/simulate",
+                       json=_payload(macro=True, persistence="tenu")).json()
+    got = _indices(body)
+    assert list(got) == [s.key for s in indices_module.CATALOGUE]
+    points = 5e9 / (3_000e9 * 1.01 * 1.02) * 100
+    assert got["consommation"]["values"]["1"] == pytest.approx(0.81 * points)
+    assert got["consommation"]["box"]["1"][0] < got["consommation"]["values"]["1"]
+    assert got["revenu_disponible_reel"]["box"] is None
+    assert got["dette"]["values"]["2026"] == pytest.approx(body["delta"][0])
+    assert got["charge_interets"]["values"]["2026"] == 0.0
+    assert got["depense_rd"]["reason"] == indices_module.FIRM_LAYER
+    assert not got["revenu_disponible_deciles"]["available"]
+    assert not got["emploi_smic"]["available"]
+    assert got["emploi_smic"]["reason"] == indices_module.NO_BEHAVIOUR
+
+
+def test_the_mesange_indices_read_without_the_loop_and_say_so_without_the_impulse(
+        client, priced, monkeypatch) -> None:
+    """The indices are read under Mésange's own conditions, whatever the path's spending
+    rule; without the impulse there is no shock to read."""
+    monkeypatch.setattr(main, "_predictif_macro_store", _with_index_rows)
+    looped_off = _indices(client.post("/predictif/simulate", json=_payload(
+        macro=True, spending={"rule": "part_pib_constante"})).json())
+    assert looped_off["investissement_entreprises"]["available"]
+    unasked = _indices(client.post("/predictif/simulate", json=_payload()).json())
+    assert unasked["consommation"]["reason"] == indices_module.NO_IMPULSE
+    assert unasked["solde_primaire"]["available"]
+
+
+def test_an_unreadable_macro_store_the_loop_does_not_need_leaves_the_indices_absent(
+        client, priced, monkeypatch) -> None:
+    """Without the loop, the macro store serves the indices only: a checkout without the
+    Mésange PDF says why they are missing, rather than refusing the whole path."""
+    def unreadable():
+        raise main.MacroSourceError("insee_G2017-04_mesange.pdf introuvable")
+
+    monkeypatch.setattr(main, "_predictif_macro_store", unreadable)
+    response = client.post("/predictif/simulate", json=_payload(
+        macro=True, spending={"rule": "part_pib_constante"}))
+    assert response.status_code == 200, response.text
+    got = _indices(response.json())
+    assert "illisible" in got["consommation"]["reason"]
+    assert "introuvable" in got["emploi_marchand"]["reason"]
