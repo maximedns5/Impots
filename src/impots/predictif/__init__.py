@@ -7,6 +7,8 @@ the sweep of θ from 0 to 1 is the honest answer.
 
 `chaine` links reform → primary balance → debt (M1, D-215); `annuel` prices every year
 (M1b, D-216); `theta`, `comportement` and `macro` place each effect in its range (M2,
-D-217); `retroaction` reads Mésange's balance row for the GDP → receipts loop (M3, D-218).
-What a result does not carry is reported ABSENT with its reason, never drawn as zero.
+D-217); `retroaction` reads Mésange's balance row for the GDP → receipts loop (M3, D-218);
+`indices` lists what else moves, each index in its own unit, none added to another (M6,
+D-223). What a result does not carry is reported ABSENT with its reason, never drawn as
+zero.
 """

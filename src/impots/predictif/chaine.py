@@ -197,6 +197,9 @@ class Trajectoire:
     feedback_primary: tuple[float, ...] | None = None
     """φ_t, the loop's share of the reform's primary balance, when applied."""
     persistence: str | None = None
+    delta_interest: tuple[float, ...] | None = None
+    """The interest on the reform's extra debt, in points of the REFERENCE's GDP, year by
+    year: m × ΔD_{t−1} over Y_t, the extra-debt path's own interest slice (§7)."""
     closed: dict[str, str] = field(default_factory=lambda: dict(CLOSED))
     absent: dict[str, str] = field(default_factory=dict)
     banner: str = BANNER
@@ -236,7 +239,8 @@ class Trajectoire:
         if any(len(s) != n for s in (self.reference, self.reform, self.delta,
                                      self.reference_primary, self.delta_primary,
                                      self.delta_mechanical,
-                                     *(s for s in (self.gdp_gap, self.feedback_primary)
+                                     *(s for s in (self.gdp_gap, self.feedback_primary,
+                                                   self.delta_interest)
                                        if s is not None))):
             raise DebtError("séries de longueurs différentes : une trajectoire décalée "
                             "d'un an se tracerait sans erreur visible")
@@ -350,11 +354,13 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
 
     cost, carried = _costs_by_year(costs, years, gdp)
 
-    def delta_path(balance: dict[int, float]) -> list[float]:
-        points = path_module.project(0.0, [
+    def extra_debt(balance: dict[int, float]) -> list[Any]:
+        return path_module.project(0.0, [
             YearInputs(year=y, r=marginal, g=growth.nominal, primary_balance=balance[y])
             for y in years], spending=spending)
-        return [p.ratio for p in points]
+
+    def delta_path(balance: dict[int, float]) -> list[float]:
+        return [p.ratio for p in extra_debt(balance)]
 
     ref = [p.ratio for p in reference_points]
     mechanical = delta_path({y: -cost[y] / gdp[y] for y in years})
@@ -434,6 +440,9 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
                           reason=ABSENT_BAND)
     reform = reform_path(base_primary, applied)
     delta = [r - b for r, b in zip(reform, ref, strict=True)]
+    loop = dict(zip(years, applied.balance, strict=True)) if applied else zero
+    interest = [p.interest_ratio
+                for p in extra_debt({y: base_primary[y] + loop[y] for y in years})]
     delta_primary = {y: base_primary[y] + (dict(zip(years, applied.balance, strict=True))[y]
                                            if applied else 0.0) for y in years}
     eventail = (envelope(EVENTAIL_LABEL, "eventail", reform_path(base_primary, feedback[0.0]),
@@ -486,5 +495,6 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
         gdp_gap=applied.gdp_gap if applied else None,
         feedback_primary=applied.balance if applied else None,
         persistence=persistence if applied else None,
+        delta_interest=tuple(interest),
         closed=closed, absent=absent,
     )

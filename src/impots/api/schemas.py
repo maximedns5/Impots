@@ -1745,6 +1745,9 @@ class PredictifRequest(BaseModel):
     without it and says so; on, it reads only under « gele_en_volume »."""
     persistence: Literal["eteint", "tenu"] | None = None
     """Past three years, the loop needs one, and none is the default."""
+    indices: list[str] | None = None
+    """The §7 indices asked for, by key; all of them when omitted. The list is closed,
+    and a key outside it is refused by name (D-223)."""
 
     @model_validator(mode="after")
     def _check_reform(self) -> PredictifRequest:
@@ -1788,6 +1791,29 @@ class PredictifBehaviour(BaseModel):
     grade: str
 
 
+class PredictifIndex(BaseModel):
+    """One index of §7 (`predictif.indices`), in its own unit, never added to another."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    key: str
+    pour: str
+    label: str
+    unit: str
+    stage: str
+    source: str
+    theta: list[str]
+    """The θ that move it; empty for an index no θ reads, shown as fixed."""
+    note: str
+    available: bool
+    values: dict[str, float]
+    """By year, by Mésange horizon (« 1 », « 2 », « 3 ») or by decile (« D1 »…)."""
+    box: dict[str, list[float]] | None = None
+    reason: str = ""
+    conventions: list[str] = Field(default_factory=list)
+    uncovered: dict[str, str] = Field(default_factory=dict)
+
+
 class PredictifResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -1822,6 +1848,7 @@ class PredictifResponse(BaseModel):
     feedback_primary: list[float] | None = None
     """φ_t, the loop's share of the reform's primary balance, when it runs."""
     persistence: str | None = None
+    indices: list[PredictifIndex] = Field(default_factory=list)
     population_note: str
     banner: str
     debt_banner: str

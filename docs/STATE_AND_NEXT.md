@@ -1,6 +1,18 @@
-# State of the project, and the directions open — 2026-10-19 (Phase 9, M5 done)
+# State of the project, and the directions open — 2026-10-19 (Phase 9, M6 under way)
 
-The fifth 2026-10-19 update adds D-222, M5's last step. Two MESR GECIR publications are
+The sixth 2026-10-19 update adds D-223, M6's first step: §7's indices.
+`predictif/indices.py` holds a closed list of thirteen, each with its unit, its stage and
+its source, grouped by whom they are for; an unknown index is refused by name and no index
+may be added to another, the two employments (C2's persons, Mésange's full-time
+equivalents) by their own reason. Three Mésange rows the reader already parsed —
+consumption, business investment, real disposable income — enter the macro store after an
+adversarial pass (SCOPE_PROBLEM, all 72 values exact); on its advice consumption and
+investment follow the multiplier's θ like jobs, and only income, which holds the shock
+itself, stays fixed at the centre, a departure from §7 recorded there. `/predictif/simulate`
+carries the block and the page shows it; the trajectory gains the interest on the extra
+debt. On D-220's CSG rise the indices give −0,23 % of consumption and −6 500 FTE in year
+one, and 894 M€ of gross earnings lost to hours. The fifth 2026-10-19 update added D-222,
+M5's last step. Two MESR GECIR publications are
 now in the manifest, and D-154's gate on the CIR passes: the CIR is priced, with a banner,
 on the créance of the 2019 millésime, 30 % below the 100 M€ threshold and 5 % above,
 rebuilt from tableau 04 to within 0,09 % of the published 6 785 M€. A créance is not a
@@ -118,8 +130,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **223 decision
-entries**, D-000 to D-222, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **224 decision
+entries**, D-000 to D-223, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -468,9 +480,9 @@ download list.
    illustrative index (D-221, C8, IS normal rate only); investment stays closed for the
    IS (D-221). R&D opened as an illustrative index (D-222, C9, CIR rates only), and the
    CIR is priced on the créance flow with its banner. Dividends (§6.5) stay closed. Every
-   §6 channel has its verdict; next is M6 (§7 to §9: indices, the explorer at a fixed θ,
-   containment and the worked example, the guard sweep), whose gate is the owner's
-   `make full`. Left for C9: the take-up margin, new entrants, the carried-forward stock,
+   §6 channel has its verdict. M6 is under way: §7's indices are in (D-223); next the
+   explorer at a fixed θ (§8), then containment, the worked example and the guard sweep
+   (§9), whose gate is the owner's `make full`. Left for C9: the take-up margin, new entrants, the carried-forward stock,
    and the CNEPI's 2021 evaluation (IPP report n° 33), not manifested. M1 to M4 are done (D-215 to D-219); M4 left
    the transfers and the IS closed. Two
    decisions from M3 are the owner's: whether the page should show both persistence

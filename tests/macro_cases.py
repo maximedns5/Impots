@@ -29,3 +29,21 @@ def synthetic_macro_store() -> Store:
         "multiplier_dispersion": _table("multiplier_dispersion", {"TAX": (0.66,)},
                                         horizons=("all",), usable=("all",)),
     })
+
+
+def index_rows_store() -> Store:
+    """The synthetic store plus the jobs row and the three rows of the §7 indices (D-223),
+    as Mésange prints them for the income tax and the targeted variant."""
+    built = synthetic_macro_store()
+    built.tables.update({
+        "employment_by_instrument": _table("employment_by_instrument", {
+            "impot_sur_le_revenu": (24.0, 109.0, 174.0, 184.0, 181.0, 200.0),
+            "cotisations_employeurs_ciblees": (101.0, 282.0, 403.0, 437.0, 429.0, 468.0)}),
+        "consumption_by_instrument": _table("consumption_by_instrument", {
+            "impot_sur_le_revenu": (0.81, 1.66, 1.9, 2.01, 2.06, 2.27)}),
+        "investment_by_instrument": _table("investment_by_instrument", {
+            "impot_sur_le_revenu": (0.81, 2.01, 1.98, 1.32, 1.13, 1.25)}),
+        "real_income_by_instrument": _table("real_income_by_instrument", {
+            "impot_sur_le_revenu": (1.7, 1.82, 1.92, 2.04, 2.06, 2.27)}),
+    })
+    return built

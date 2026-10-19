@@ -52,6 +52,7 @@ from impots.api.schemas import (
     PopulationResponse,
     PopulationSimulateRequest,
     PredictifBehaviour,
+    PredictifIndex,
     PredictifReportList,
     PredictifReportResponse,
     PredictifRequest,
@@ -1141,7 +1142,8 @@ def _price_first_year(request: PopulationSimulateRequest, *, macro: bool = False
             raise HTTPException(status_code=422, detail=str(error)) from error
         impulse, uncovered = dict(built.by_instrument), built.reasons()
     return SimpleNamespace(cost=float(agg.reform_cost), inputs=inputs, impulse=impulse,
-                           uncovered=uncovered, note=_quick_tier_note())
+                           uncovered=uncovered, note=_quick_tier_note(),
+                           deciles=list(agg.deciles))
 
 
 @app.post("/predictif/simulate", response_model=PredictifResponse)
@@ -1166,6 +1168,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     from impots.dette.path import SHIPPED, DebtError, SpendingScenario
     from impots.dette.scenarios import GrowthScenario, RateScenario
     from impots.predictif import chaine, comportement, retroaction
+    from impots.predictif import indices as indices_module
     from impots.predictif.theta import MACRO_ROW, Theta, ThetaError
 
     try:
@@ -1197,7 +1200,8 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                 f"« eteint » ou « tenu ». Aucun n'est le défaut.")
         if looped:
             theta.for_row(MACRO_ROW)
-    except (DebtError, ThetaError) as error:
+        specs = indices_module.select(request.indices)
+    except (DebtError, ThetaError, indices_module.IndicesError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
     try:
@@ -1208,6 +1212,15 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
         raise HTTPException(
             status_code=503,
             detail=f"Données de départ indisponibles dans ce checkout : {error}") from error
+
+    # The indices read Mésange whenever the impulse is computed, loop or not (§7); a store
+    # the loop does not need and cannot read leaves them absent, with why, not a 503.
+    indices_store, indices_reason = macro_store, indices_module.NO_IMPULSE
+    if indices_store is None and request.macro:
+        try:
+            indices_store = _predictif_macro_store()
+        except MacroSourceError as error:
+            indices_reason = f"Magasin macro illisible dans ce checkout : {error}"
 
     year = start.year + 1
     if year > MAX_YEAR:
@@ -1231,6 +1244,14 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                             spending=spending, growth=growth, rate=rate, theta=theta,
                             securities=securities, store=store,
                             persistence=request.persistence, macro_store=macro_store)
+        computed = indices_module.compute(
+            specs, trajectory=result, deciles_rows=getattr(first, "deciles", None),
+            impulse=first.impulse,
+            gdp_eur=reference_module.reference_years(
+                start, 1, spending=spending, growth=growth)[0].gdp_eur,
+            macro_store=indices_store, macro_reason=indices_reason, theta=theta,
+            store=store, reform=request.reform, mechanical=-first.cost,
+            inputs=first.inputs, year=year)
     except (DebtError, ThetaError, retroaction.FeedbackError,
             maturite.MaturityError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
@@ -1261,6 +1282,13 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
         feedback_primary=(list(result.feedback_primary)
                           if result.feedback_primary is not None else None),
         persistence=result.persistence,
+        indices=[PredictifIndex(
+            key=i.spec.key, pour=i.spec.pour, label=i.spec.label, unit=i.spec.unit,
+            stage=i.spec.stage, source=i.spec.source, theta=list(i.spec.theta),
+            note=i.spec.note, available=i.available, values=dict(i.values),
+            box=({k: list(v) for k, v in i.box.items()} if i.box is not None else None),
+            reason=i.reason, conventions=list(i.conventions), uncovered=dict(i.uncovered))
+            for i in computed],
         population_note=first.note,
         banner=result.banner, debt_banner=DEBT_BANNER,
     )

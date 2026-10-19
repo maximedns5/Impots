@@ -1,0 +1,137 @@
+# Three more rows of the same Mésange variants, for PHASE9_SPEC §7's indices (D-223).
+#
+# NO VALUES LIVE IN THIS FILE, as in `multipliers.yaml`: the figures are parsed out of the
+# published PDF by `impots.macro.mesange` (D-026). What lives here is the scope.
+#
+# WHAT THESE ROWS ARE FOR, AND WHAT THEY ARE NOT. They are indices: shown beside the debt
+# path, each in its own unit, never added to anything and never fed back into a balance.
+# The balance already has its row (`primary_balance_by_instrument`), and the GDP its own.
+#
+# θ DU MULTIPLICATEUR. L'investissement et la consommation le suivent proportionnellement,
+# comme l'emploi (D-059) et la rétroaction (§4.1). Le revenu réel reste au centre, fixe : il
+# contient le choc, en revenu ou en prix, que la dispersion IMK ne décrit pas. Écart à
+# PHASE9_SPEC §7, qui écrivait « Mésange, θ macro » pour les trois lignes, consigné en
+# D-223. Un multiplicateur négatif à θ = 0 rend la consommation et l'investissement négatifs.
+#
+# Tables lues : folios 102 (investissement public), 105 (dépense publique), 107
+# (cotisations employeurs), 110 (cotisations salariés), 112 (TVA), 115 (CSG), 117 (impôt
+# sur le revenu), 120 (taxe carbone) ; page PDF = folio + 1. La TVA et la taxe carbone,
+# publiées en hausse, sont retournées avec tout leur tableau, comme la ligne mère.
+
+source_table:
+  reader: impots.macro.mesange
+  file: insee_G2017-04_mesange.pdf
+  citation: >
+    Bardaji, Campagne, Khder, Lafféter, Simon et al., « Le modèle macroéconométrique
+    Mésange : réestimation et nouveautés », INSEE Document de travail G2017/04 /
+    DG Trésor, mai 2017, section 4 « Principales variantes ». Les numéros de page
+    portés par le lecteur sont des pages PDF, soit le FOLIO IMPRIMÉ PLUS UN.
+  url: https://www.insee.fr/fr/statistiques/fichier/2848300/G2017-04.pdf
+  vintage: "2017"
+  quote: >-
+    Sauf mention contraire, le choc est effectué de façon permanente, à taux d'intérêt
+    réels constants et à taux de change nominaux constants. Il n'y a pas non plus de
+    réaction endogène de la politique budgétaire.
+
+parameters:
+  consumption_by_instrument:
+    value:
+      from_source_table: consommation
+      absent_for: [cotisations_employeurs_ciblees]
+      usable_horizons: ["1", "2", "3"]
+    applies_to: >
+      Consommation des ménages en volume (prix de l'année précédente chaînés, note 20,
+      folio 31), en % d'écart au compte central, sous les conditions de
+      `multiplier_by_instrument` : un point de PIB ex ante pour les variantes fiscales
+      (22 Md€ en 2015, folio 100), 1,18 point brut pour la TVA, un point en volume pour
+      les deux dépenses. Le choc n'y entre pas mécaniquement : il passe par le revenu, que
+      la consommation suit avec une élasticité de 0,46 la première année et 0,85 à deux
+      ans (folio 33). « 1 an » est une moyenne de la première année (tableau 12, folio
+      119). Recoupement : l'encadré 15 (folio 114) reproduit au centime TVA plus
+      cotisations employeurs.
+    responds_to_knobs: [ir_bareme, csg_*, cotisations_*, tva_*]
+    support:
+      estimated_on: >
+        Les variantes de la section 4, chocs effectifs au premier trimestre 2015. Les
+        analyses de sensibilité (§4.4) n'impriment que le PIB, l'emploi et l'IPC : cette
+        ligne n'en a aucune. La linéarité vaut « dès lors que les chocs sont d'ampleur
+        limitée » (folio 100), « pour des chocs de quelques points de PIB » (folio 108).
+      max_variation_graded_in_support: 1.0
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-19
+      ref: D-223
+      note: >
+        Valeurs exactes aux trois horizons pour les huit variantes, retournement compris,
+        pages rendues en image ; le tableau 12 et l'encadré 15 recoupent. Portée corrigée :
+        la définition en volume et la moyenne de première année, le choc qui passe par le
+        revenu et non mécaniquement, et le θ — la consommation suit le multiplicateur,
+        1,96 à 2,16 fois le PIB pour les impôts payés par les ménages.
+    confidence: medium
+
+  investment_by_instrument:
+    value:
+      from_source_table: investissement_entreprises
+      absent_for: [cotisations_employeurs_ciblees]
+      usable_horizons: ["1", "2", "3"]
+    applies_to: >
+      Investissement des entreprises non financières en volume (folio 43), en % d'écart au
+      compte central, pour le même choc et dans la même variante. Sous-ligne de
+      « Investissement » : exclut l'investissement public, dont le choc est dans le total
+      (6,58 contre 3,06 à un an pour sa propre variante), et celui des ménages. Aucune
+      variante n'y porte son choc. Accélérateur : élasticités de 1,79 et 2,00 à la valeur
+      ajoutée contre −0,04 et −0,15 au coût du capital (folio 44). La TVA porte aussi sur
+      l'investissement par ses taux rémanents (folio 112). « 1 an » est une moyenne de la
+      première année (tableau 12, folio 119).
+    responds_to_knobs: [ir_bareme, csg_*, cotisations_*, tva_*]
+    support:
+      estimated_on: >
+        Les variantes de la section 4, chocs effectifs au premier trimestre 2015, sans
+        analyse de sensibilité pour cette ligne (§4.4). Linéarité « pour des chocs de
+        quelques points de PIB » (folio 108).
+      max_variation_graded_in_support: 1.0
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-19
+      ref: D-223
+      note: >
+        Valeurs exactes, pages rendues en image. Portée corrigée : la ligne exclut
+        l'investissement public et celui des ménages, et le θ — c'est un accélérateur,
+        dont le rapport au PIB va de 1,6 à 2,7 dans les huit variantes, et qui suit donc
+        le multiplicateur plutôt que de rester au centre.
+    confidence: medium
+
+  real_income_by_instrument:
+    value:
+      from_source_table: revenu_disponible
+      absent_for: [cotisations_employeurs_ciblees]
+      usable_horizons: ["1", "2", "3"]
+    applies_to: >
+      Revenu disponible brut réel des ménages, déflaté des prix à la consommation (folio
+      32), le « pouvoir d'achat » du folio 113, en % d'écart au compte central. La ligne
+      contient le choc, sous deux formes. En revenu pour l'IR et la CSG : 22 Md€ sur un
+      RDB de 1 352 Md€ (folios 100 et 94) font 1,6 %, dérivation et non lecture, soit 85 à
+      96 % de la ligne à un, deux et trois ans ; pour les cotisations salariés, la baisse
+      du salaire brut (−1,30 % à trois ans, folio 110) en reprend une part croissante. En
+      prix pour la TVA et les cotisations employeurs : aucun transfert nominal, la ligne
+      est pour l'essentiel le mouvement du prix de la consommation. La dépense publique
+      contient aussi un transfert direct (46 % de prestations en espèces, folio 105).
+      « 1 an » est une moyenne de la première année (tableau 12, folio 119).
+    responds_to_knobs: [ir_bareme, csg_*, cotisations_*, tva_*]
+    support:
+      estimated_on: >
+        Les variantes de la section 4, chocs effectifs au premier trimestre 2015, sans
+        analyse de sensibilité pour cette ligne (§4.4).
+      max_variation_graded_in_support: 1.0
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-19
+      ref: D-223
+      note: >
+        Valeurs exactes, pages rendues en image ; le tableau 12 recoupe la première
+        année. Portée corrigée : le revenu est brut et déflaté des prix à la
+        consommation ; les 1,6 % sont une dérivation, juste pour l'IR et la CSG seulement ;
+        pour la TVA et les cotisations employeurs le choc passe par les prix, sans
+        transfert. Ligne tenue au centre : la dispersion IMK ne décrit ni le transfert ni
+        le mouvement des prix.
+    confidence: medium

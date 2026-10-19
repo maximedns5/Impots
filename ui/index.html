@@ -2871,6 +2871,39 @@ function predictifNotes(d) {
     <p class="tnote">${escapeHtml(d.debt_banner || "")}</p>`;
 }
 
+/* Phase 9 §7 · the indices (D-223): a closed list, each in its own unit, NONE added to
+   another. Grouped by whom they are for; one not computed here says why; one a θ moves
+   shows its θ box, one no θ moves says it is fixed — not θ-insensitive by accident. */
+const idxKey = (k) => (/^\d$/.test(k) ? `${k} an${k === "1" ? "" : "s"}` : k);
+const idxNum = (v) => (Math.abs(v) >= 100 ? Math.round(v).toLocaleString("fr-FR")
+  : v.toLocaleString("fr-FR", { maximumFractionDigits: 3 }));
+function predictifIndices(d) {
+  const list = d.indices || [];
+  if (!list.length) return "";
+  const show = (i, v) => (i.stage === "chaîne" ? ptFr(v) : idxNum(v));
+  const groups = [...new Set(list.map((i) => i.pour))].map((pour) => {
+    const rows = list.filter((i) => i.pour === pour).map((i) => {
+      if (!i.available) {
+        return `<li><b>${escapeHtml(i.label)}</b> — non calculé : ${escapeHtml(i.reason)}</li>`;
+      }
+      const values = Object.entries(i.values).map(([k, v]) => {
+        const box = i.box && i.box[k];
+        return `${escapeHtml(idxKey(k))} : ${show(i, v)}${box
+          ? ` (boîte θ ${show(i, box[0])} à ${show(i, box[1])})` : ""}`;
+      }).join(" · ");
+      const theta = i.theta.length
+        ? `θ : ${i.theta.map((t) => escapeHtml(THETA_ROWS[t] || t)).join(", ")}`
+        : "fixe, aucun θ";
+      const note = i.note ? `<br>${escapeHtml(i.note)}` : "";
+      return `<li><b>${escapeHtml(i.label)}</b> (${escapeHtml(i.unit)} ; ${theta} ;
+        ${escapeHtml(i.source)}) — ${values}${note}</li>`;
+    }).join("");
+    return `<p class="tnote"><b>${escapeHtml(pour)}</b></p><ul class="tnote">${rows}</ul>`;
+  }).join("");
+  return `<p class="tnote"><b>Indices</b>, chacun dans son unité, aucun additionné à un
+    autre :</p>${groups}`;
+}
+
 /* The fast version: the first year priced, the rest carried — and every carried row
    says « report » in its own column, so a convention never reads as a costing. With
    behaviour, the gap is at θ, the mechanical gap stands beside it, and the θ box gives
@@ -2901,6 +2934,7 @@ function renderPredictif(host, d) {
       <tbody>${rows}</tbody></table>
     ${box ? `<p class="tnote">${escapeHtml(box.label)}.</p>` : ""}
     ${fan ? `<p class="tnote">${escapeHtml(fan.label)}.</p>` : ""}
+    ${predictifIndices(d)}
     ${predictifNotes(d)}
   </div>`;
 }
