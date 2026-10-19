@@ -30,4 +30,20 @@ rule:
     contenait. Si elle ne la contient pas, c'est un constat à écrire, pas une tolérance à
     élargir, et cette règle ne bouge plus après ce commit.
 
-outcome: null
+outcome:
+  computed: "2026-10-19"
+  unit: milliers d'emplois salariés marchands en équivalent temps plein, à trois ans
+  uniform: {at_zero: 31.2, at_half: 237.3, at_one: 443.3}
+  targeted: {at_zero: 57.7, at_half: 329.7, at_one: 601.8}
+  contains: true
+  centre: true
+  constat: >
+    La boîte contient la fourchette pour les deux variantes, et le centre tombe dedans :
+    la règle passe, contre l'attente écrite à l'enregistrement. La raison est dans la
+    largeur, et elle se dit avec le résultat. L'écart-type IMK de la famille des impôts,
+    0,66, vaut presque le centre de Mésange à trois ans pour les cotisations employeurs,
+    0,76 : à θ = 0 le multiplicateur tombe à 0,10, et l'emploi à 13 % de son centre ; à
+    θ = 1 il monte à 1,42, et l'emploi à 187 %. Une boîte qui va de 31 000 à 443 000
+    emplois contient presque toute fourchette d'ordre de grandeur plausible : la
+    contenance est une preuve faible, et c'est le centre dans la fourchette qui porte le
+    test, comme à la phase 4.
