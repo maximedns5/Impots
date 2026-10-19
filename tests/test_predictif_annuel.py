@@ -66,6 +66,13 @@ def test_a_gap_in_the_priced_years_is_refused_rather_than_carried() -> None:
         _build(prices)
 
 
+def test_a_report_with_no_priced_year_is_refused_by_name() -> None:
+    """`build` refuses before the chain is asked (D-229): a report without pricing has
+    nothing to say, and the chain's own refusal would speak of a trajectory instead."""
+    with pytest.raises(DebtError, match="un rapport sans chiffrage"):
+        _build([])
+
+
 def test_the_aged_view_is_the_headline_and_the_frozen_one_stands_beside_it() -> None:
     rapport = _build(annuel.price_years(YEARS, _stub, basis_for=lambda y: "legislated"))
     row = rapport.payload()["years"][-1]

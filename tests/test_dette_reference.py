@@ -130,6 +130,14 @@ def test_a_growth_at_or_below_minus_one_hundred_percent_is_refused() -> None:
         scenarios.GrowthScenario("Effondrement", -1.0, 0.0)
 
 
+def test_a_rate_scenario_of_an_unknown_kind_is_refused() -> None:
+    """D-229. `RateKind` is a `Literal`, unchecked at run time: an unknown kind would
+    otherwise be charged as a market scenario by `chaine._rate_path`, whose test is
+    `kind == "implicite_tenu"`."""
+    with pytest.raises(DebtError, match="scénario de taux « au_fil_de_l_eau » inconnu"):
+        scenarios.RateScenario("Taux au fil de l'eau", "au_fil_de_l_eau")
+
+
 def test_a_market_scenario_must_carry_its_rate_and_the_held_one_must_not() -> None:
     with pytest.raises(DebtError, match=r"EST le scénario"):
         scenarios.RateScenario("Refinancement", "marche")
@@ -194,6 +202,15 @@ def test_receipts_stay_a_constant_share_and_the_balance_follows_spending() -> No
 def test_the_reference_refuses_an_unnamed_hypothesis(kwargs, needle) -> None:
     with pytest.raises(DebtError, match=f"aucun scénario de {needle}"):
         reference.reference_years(START, 5, **kwargs)
+
+
+def test_the_reference_refuses_a_spending_rule_it_does_not_know() -> None:
+    """D-229. `SpendingRule` is a `Literal`, which nothing checks at run time: a scenario
+    built with another rule passes its own dataclass, and only this refusal stands
+    between it and a spending ratio computed from nothing."""
+    unknown = SpendingScenario("Dépenses au fil de l'eau", "au_fil_de_l_eau")
+    with pytest.raises(DebtError, match="règle de dépense inconnue : au_fil_de_l_eau"):
+        reference.reference_years(START, 3, spending=unknown, growth=GROWTH)
 
 
 @pytest.mark.parametrize("horizon", [0, 11])

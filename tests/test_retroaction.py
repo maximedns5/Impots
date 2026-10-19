@@ -319,3 +319,19 @@ def test_a_corporate_tax_delta_receives_no_multiplier_and_no_loop() -> None:
     assert "coût du capital" in impulse.reasons()["impot_societes"]
     with pytest.raises(retroaction.NothingToRead, match="impot_societes"):
         _run({y: {} for y in YEARS[:3]}, years=YEARS[:3], uncovered=impulse.reasons())
+
+
+def test_a_null_multiplier_or_a_variant_without_family_is_refused(monkeypatch) -> None:
+    """D-229. The feedback is the balance row times the multiplier at θ over its centre:
+    a centre of zero leaves the ratio undefined, and a variant with no dispersion family
+    has no range for θ to place it in. Both refused by name, before any division."""
+    store = _store()
+    table = store.tables["multiplier_by_instrument"]
+    row = table.values["impot_sur_le_revenu"]
+    store.tables["multiplier_by_instrument"] = dataclasses.replace(
+        table, values={**table.values, "impot_sur_le_revenu": (row[0], 0.0, *row[2:])})
+    with pytest.raises(FeedbackError, match="multiplicateur nul"):
+        _run(_cut(5e9), store=store)
+    monkeypatch.delitem(retroaction.MULTIPLIER_FAMILY, "impot_sur_le_revenu")
+    with pytest.raises(FeedbackError, match="aucune famille"):
+        _run(_cut(5e9))

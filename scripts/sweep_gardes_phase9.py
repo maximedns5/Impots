@@ -9,8 +9,8 @@ vérifie garde par garde, par mutation.
 
 **Le catalogue se lit dans le code, il n'est pas tenu à la main.** Chaque `raise` des
 périmètres de `SCOPES` devient une mutation : sa condition forcée à faux, son
-ré-emballage d'erreur réduit à un `raise` nu, ou, s'il est inconditionnel, remplacé par
-un `return None`. Une garde ajoutée demain entre au catalogue d'elle-même ;
+ré-emballage d'erreur réduit à un `raise` nu, ou, s'il est dans la branche `else` d'un
+test ou inconditionnel, remplacé par un `pass` ou un `return None`. Une garde ajoutée demain entre au catalogue d'elle-même ;
 `tests/test_gardes_phase9.py` refuse alors un rapport qui ne la nomme pas. Les gardes qui
 ne sont pas des `raise` — les gardes 1 et 4 à 7 de §2.4, la page — sont dans `MANUAL`,
 chacune avec le texte exact qu'elle mute.
@@ -189,9 +189,15 @@ MANUAL: tuple[Mutation, ...] = (
              (UI_CHECK,), "la page nomme la vue de population au-dessus du tableau (D-225)"),
 )
 
-#: Mutations no test can kill, each with why. Empty until the sweep says otherwise; an
-#: entry here is a finding of D-229, not a tolerance.
-EQUIVALENT: dict[str, str] = {}
+#: Mutations no test can kill, each with why. An entry here is a finding of D-229, not
+#: a tolerance: the behaviour the guard protects is tested, and holds without it.
+EQUIVALENT: dict[str, str] = {
+    "predictif/retroaction:compute:si:not 0.0 <= theta <= 1.0": (
+        "sans elle, le même θ est refusé quelques lignes plus loin par "
+        "`theta.multiplier_at` (garde 3, `_check`), avec la même erreur et le même refus "
+        "d'écrêter ; le test passe par l'une ou l'autre. Celle-ci refuse avant de lire "
+        "la ligne de solde : un ordre, pas un comportement."),
+}
 
 
 # --------------------------------------------------------------------------- #
@@ -238,12 +244,17 @@ def generated(scope: Scope) -> list[Mutation]:
         function, qualified = function_of(node)
         if scope.functions is not None and function not in scope.functions:
             continue
-        holder = parents.get(node)
+        child, holder = node, parents.get(node)
         while holder is not None and not isinstance(
                 holder, ast.If | ast.While | ast.ExceptHandler | ast.FunctionDef
                 | ast.AsyncFunctionDef):
-            holder = parents.get(holder)
-        if isinstance(holder, ast.If | ast.While):
+            child, holder = holder, parents.get(holder)
+        if isinstance(holder, ast.If) and child in holder.orelse:
+            # A refusal in the `else` of a test: forcing the test false would fire it
+            # every time; the guard removed is the raise itself.
+            target, replacement, kind = node, b"pass", "sinon"
+            text = "non " + ast.unparse(holder.test)
+        elif isinstance(holder, ast.If | ast.While):
             target, replacement, kind = holder.test, b"False", "si"
             text = ast.unparse(holder.test)
         elif isinstance(holder, ast.ExceptHandler):

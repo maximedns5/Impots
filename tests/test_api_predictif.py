@@ -385,3 +385,96 @@ def test_the_behavioural_pass_on_the_aged_population_keys_its_caches_on_the_upra
     response = client.post("/predictif/simulate", json=_payload(behavioural=True))
     assert response.status_code == 200, response.text
     assert keys == ["w+0.030000_p+0.020000_b2024"]
+
+
+# --------------------------------------------------------------------------- #
+# The refusals the endpoint translates (D-229)
+# --------------------------------------------------------------------------- #
+def test_a_first_year_outside_the_population_window_is_refused(client, priced,
+                                                               monkeypatch) -> None:
+    monkeypatch.setattr(main, "MAX_YEAR", 2025)
+    response = client.post("/predictif/simulate", json=_payload())
+    assert response.status_code == 422 and "sort de la fenêtre" in response.json()["detail"]
+    assert priced == []
+
+
+def test_a_shock_the_builder_refuses_is_a_422_with_its_reason(client,
+                                                              monkeypatch) -> None:
+    """The real `_price_first_year`, its pass stubbed: a reform whose deltas build no
+    shock answers with the builder's reason, not with a server error."""
+    import polars as pl
+
+    from impots.macro import shocks
+
+    def refuse(*args, **kwargs):
+        raise shocks.ShockError("aucun choc lisible pour ces deltas (test)")
+
+    population = pl.DataFrame({
+        "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
+        "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
+        "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
+    monkeypatch.setattr(main, "_population_frame", lambda: population)
+    monkeypatch.setattr(main, "_run_population", lambda request, frame: (
+        SimpleNamespace(households=None),
+        SimpleNamespace(reform_cost=5e9, deciles=[], deltas={},
+                        employer_contribution_delta=0.0)))
+    monkeypatch.setattr(shocks, "build", refuse)
+    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+    response = client.post("/predictif/simulate", json=_payload(macro=True,
+                                                                persistence="tenu"))
+    assert response.status_code == 422
+    assert "aucun choc lisible" in response.json()["detail"]
+
+
+def test_a_refusal_inside_the_chain_is_a_422_with_its_reason(client, priced,
+                                                             monkeypatch) -> None:
+    """Every refusal the chain makes after the pass — a box, a feedback row, a maturity
+    — reaches the caller as what it is, a refused request, with the chain's words."""
+    from impots.dette.path import DebtError
+
+    def refuse(*args, **kwargs):
+        raise DebtError("trajectoire refusée par la chaîne (test)")
+
+    monkeypatch.setattr(chaine, "run", refuse)
+    response = client.post("/predictif/simulate", json=_payload())
+    assert response.status_code == 422
+    assert "refusée par la chaîne" in response.json()["detail"]
+
+
+def test_a_report_name_the_router_lets_through_is_refused_by_the_handler(client) -> None:
+    """Exactly 422, on a form that reaches the handler: `..%2F` is answered by the
+    router itself, and a test that accepted its 404 stayed green without the guard
+    (D-173). The trailing newline is the form `re.match` with `$` once let pass."""
+    assert client.get("/predictif/gel_bareme%0A").status_code == 422
+
+
+def test_an_unreadable_macro_store_is_a_named_refusal(monkeypatch) -> None:
+    """Without its PDFs the store does not load; the loop is then unavailable, said so,
+    never a bare reader error and never a silent zero."""
+    from impots.macro import store as macro_store_module
+
+    def missing(*args, **kwargs):
+        raise macro_store_module.MissingSourceTable("multiplier_by_instrument (test)")
+
+    monkeypatch.setattr(macro_store_module, "load", missing)
+    with pytest.raises(main.MacroSourceError, match="magasin macro illisible"):
+        main._predictif_macro_store()
+
+
+def test_a_pass_without_a_cost_is_a_server_error_with_its_reason(client,
+                                                                monkeypatch) -> None:
+    """A reform always has a cost; a pass that returned none would otherwise meet
+    `float(None)` three lines later, and the caller a trace."""
+    import polars as pl
+
+    population = pl.DataFrame({
+        "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
+        "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
+        "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
+    monkeypatch.setattr(main, "_population_frame", lambda: population)
+    monkeypatch.setattr(main, "_run_population", lambda request, frame: (
+        SimpleNamespace(households=None), SimpleNamespace(reform_cost=None, deciles=[])))
+    monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+    response = client.post("/predictif/simulate", json=_payload())
+    assert response.status_code == 500 and "pas de coût" in response.json()["detail"]

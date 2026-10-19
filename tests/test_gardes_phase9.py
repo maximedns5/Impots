@@ -83,8 +83,9 @@ def test_the_generator_mutates_conditions_handlers_and_bare_refusals(sweep,
                                                                      tmp_path) -> None:
     """On a module of its own: a condition after non-ASCII text on the same line (the AST
     counts columns in UTF-8 bytes, and a character count would cut the line in the wrong
-    place), a condition over two lines, a re-raising handler, an unconditional refusal,
-    and a raise outside the functions asked for."""
+    place), a condition over two lines, a re-raising handler, a refusal in an `else` (the
+    raise removed, not the test forced: forced false it would fire every time), an
+    unconditional refusal, and a raise outside the functions asked for."""
     source = tmp_path / "module.py"
     source.write_text(
         'def f(x, y):\n'
@@ -97,6 +98,10 @@ def test_the_generator_mutates_conditions_handlers_and_bare_refusals(sweep,
         '        int(x)\n'
         '    except TypeError as error:\n'
         '        raise ValueError("θ") from error\n'
+        '    if x == 1:\n'
+        '        pass\n'
+        '    else:\n'
+        '        raise LookupError(x)\n'
         '\n'
         'class C:\n'
         '    def g(self):\n'
@@ -108,11 +113,12 @@ def test_the_generator_mutates_conditions_handlers_and_bare_refusals(sweep,
     found = {m.id.split(":", 1)[1]: m for m in sweep.generated(scope)}
     assert sorted(found) == sorted([
         "f:si:label == 'θé' and (not ok)", "f:si:x and y", "f:sauf:TypeError",
-        "C.g:toujours:RuntimeError('toujours')"])
+        "f:sinon:non x == 1", "C.g:toujours:RuntimeError('toujours')"])
     first = found["f:si:label == 'θé' and (not ok)"]
     assert first.new == '    if False: raise ValueError("é")'
     assert found["f:si:x and y"].new == "    if (False):"
     assert found["f:sauf:TypeError"].new == "        raise"
+    assert found["f:sinon:non x == 1"].new == "        pass"
     assert found["C.g:toujours:RuntimeError('toujours')"].new == "        return None"
     for m in found.values():
         text = source.read_text(encoding="utf-8")

@@ -10,6 +10,8 @@ the extra debt's; and the firm layer says it is not computed here.
 
 from __future__ import annotations
 
+import dataclasses
+
 import numpy as np
 import pytest
 
@@ -86,9 +88,38 @@ def test_an_index_says_why_it_is_absent_and_stays_inside_its_box() -> None:
                       box={"2026": (6.0, 9.0)})
 
 
+def test_an_index_off_the_catalogue_or_boxed_on_other_keys_is_refused() -> None:
+    """D-229. A spec rebuilt by hand under a catalogue key would carry another unit under
+    the catalogue's name; a box on other keys than the values bounds nothing it shows."""
+    spec = indices.KEYS["emploi_smic"]
+    for stray in (dataclasses.replace(spec, unit="euros"),
+                  dataclasses.replace(spec, key="emploi_total")):
+        with pytest.raises(IndicesError, match="hors du catalogue"):
+            indices.Index(spec=stray, available=False, reason="test")
+    with pytest.raises(IndicesError, match="d'autres clés"):
+        indices.Index(spec=spec, available=True, values={"2026": 5.0},
+                      box={"2027": (4.0, 6.0)})
+
+
 # --------------------------------------------------------------------------- #
 # Mésange, for a permanent shock
 # --------------------------------------------------------------------------- #
+def test_a_shock_against_no_gdp_or_a_null_multiplier_is_refused_by_name() -> None:
+    """D-229. Points of a GDP of zero, and a ratio to a multiplier of zero, would each
+    end in a bare division error, or in an index scaled by nothing."""
+    with pytest.raises(IndicesError, match="PIB doit être positif"):
+        indices.mesange_fixed(indices.KEYS["revenu_disponible_reel"], ONE_POINT_IR,
+                              gdp_eur=0.0, store=_store())
+    store = _store()
+    table = store.tables["multiplier_by_instrument"]
+    row = table.values["impot_sur_le_revenu"]
+    store.tables["multiplier_by_instrument"] = dataclasses.replace(
+        table, values={**table.values, "impot_sur_le_revenu": (0.0, *row[1:])})
+    with pytest.raises(IndicesError, match="aucun multiplicateur lisible"):
+        indices.mesange_scaled(indices.KEYS["consommation"], ONE_POINT_IR, gdp_eur=GDP,
+                               store=store, theta=0.5)
+
+
 def test_the_fixed_income_row_is_the_row_times_the_points() -> None:
     """Derived by hand: a one-point income-tax cut is one point of the variant, so the
     index is the row itself — 1,7 · 1,82 · 1,92 %. Half a point of income tax beside the

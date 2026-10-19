@@ -109,7 +109,8 @@ def reference_years(start: Start, horizon: int, *,
     elif spending.rule == "personnalise":
         assert spending.growth is not None     # SpendingScenario refuses otherwise
         factor = (1.0 + spending.growth) / (1.0 + nominal)
-    else:  # pragma: no cover - SpendingRule is a closed Literal
+    else:
+        # `SpendingRule` is a Literal, and nothing checks it at run time (D-229).
         raise DebtError(f"règle de dépense inconnue : {spending.rule}")
 
     out: list[ReferenceYear] = []
