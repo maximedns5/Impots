@@ -609,7 +609,7 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run_households: Any 
     the EMTR pass has them — `households` counts those, and is None when it has none.
     Shared by the band (`_behavioural`) and by the receipts at θ (`/predictif/simulate`),
     so the two read the same population the same way. `uprating_key` says `frame` was
-    aged, for the EMTR caches, which the frame alone does not tell (D-225).
+    aged, for the EMTR caches, which the frame alone does not tell (D-226).
     """
     import numpy as np
 
@@ -1113,7 +1113,7 @@ def _predictif_macro_store() -> Any:
 
 #: The population view the predictive path's first year is priced in, in
 #: `predictif.annuel`'s words: the population aged to that year, the command's headline
-#: (D-216), by the owner's choice (D-225). `_price_first_year` ages the frame before the
+#: (D-216), by the owner's choice (D-226). `_price_first_year` ages the frame before the
 #: pass; pricing another view would change the numbers, and this name and
 #: `_first_year_note` with them.
 FIRST_YEAR_VIEW = "vieillie"
@@ -1127,7 +1127,7 @@ def _first_year_note(year: int, uprating: Any) -> str:
     return (_quick_tier_note()
             + f" Vue « vieillie » : l'année {year} est chiffrée avec sa législation sur la "
               f"population {POPULATION_VINTAGE} vieillie jusqu'à elle, la vue de tête de la "
-              "commande `impots predictif` (D-216, D-225) ; la vue « figée », que la "
+              "commande `impots predictif` (D-216, D-226) ; la vue « figée », que la "
               "commande donne à côté, n'est pas chiffrée ici. "
             + uprating_module.caveat(year, uprating))
 
@@ -1136,7 +1136,7 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
                       macro: bool = False) -> Any:
     """One quick-tier pass for the predictive path's first year — the seam its tests stub.
 
-    The population is aged to the year with `uprating` first (D-225), and everything
+    The population is aged to the year with `uprating` first (D-226), and everything
     below reads the aged frame. `cost` is the engine's, COST POSITIVE; `inputs` is what
     `band.compute` reads, when behaviour was asked for, so the receipts at θ run on the
     very population the cost came from; `impulse` is the reform's macro impulse by
@@ -1180,7 +1180,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
 
     THE FAST VERSION (M0, R3). Pricing ten years one by one takes about an hour, so this
     endpoint prices the FIRST projected year on the quick-tier population, aged to that
-    year — the command's headline view, « vieillie » (D-225) — and carries that cost as
+    year — the command's headline view, « vieillie » (D-226) — and carries that cost as
     a constant share of GDP, a convention every carried year is labelled with. The full
     year-by-year path belongs to a batch command.
 

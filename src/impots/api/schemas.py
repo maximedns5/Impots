@@ -1717,7 +1717,7 @@ class PredictifRate(BaseModel):
 
 
 class PredictifUprating(BaseModel):
-    """How the first year's population is aged (D-225). REQUIRED, like every hypothesis.
+    """How the first year's population is aged (D-226). REQUIRED, like every hypothesis.
 
     The wage index is the caller's, with where it comes from: this project forecasts
     neither wages nor prices. The price index is NOT asked: it is the growth scenario's
@@ -1869,7 +1869,7 @@ class PredictifResponse(BaseModel):
     population_view: Literal["figee", "vieillie"]
     """The population the first year was priced on, in `predictif.annuel`'s words:
     « vieillie », the 2024 population aged to that year, the command's headline (D-216,
-    D-225). No default, so a response cannot leave it out."""
+    D-226). No default, so a response cannot leave it out."""
     population_note: str
     banner: str
     debt_banner: str

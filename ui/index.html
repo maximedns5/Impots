@@ -1259,7 +1259,7 @@ footer code { font-family: var(--mono); font-size: 11px; }
             chiffrée : salaires et chômage au rythme que vous déclarez, avec sa source,
             pensions et loyers aux prix du scénario de croissance. C'est la vue de tête de la
             commande <code>impots predictif</code> ; une population vieillie n'est plus
-            calibrée (D-216, D-225).</p>
+            calibrée (D-216, D-226).</p>
           <p class="tnote">La rétroaction lit le solde primaire des variantes de Mésange : ce
             que l'activité créée ou détruite rend au budget, à un, deux et trois ans. Elle ne
             s'applique que sous « Dépenses gelées en volume », l'hypothèse de Mésange
@@ -2920,9 +2920,15 @@ function predictifIndices(d) {
 /* The fast version: the first year priced, the rest carried — and every carried row
    says « report » in its own column, so a convention never reads as a costing. With
    behaviour, the gap is at θ, the mechanical gap stands beside it, and the θ box gives
-   the gap at its two corners. */
+   the gap at its two corners. The population view is named above the table and its
+   note sits under it (D-225): the report above prices « vieillie » and « figée » side
+   by side (D-216), this prices one, and a 2026 figure whose view goes unnamed cannot be
+   matched to its column, nor carry the caveat of an aged population. */
+const POPULATION_VIEWS = { figee: "figée", vieillie: "vieillie" };
 function renderPredictif(host, d) {
   const carried = new Set(d.carried_years || []);
+  const view = d.population_view ? ` · Population : <b>${escapeHtml(
+    POPULATION_VIEWS[d.population_view] || d.population_view)}</b>` : "";
   const box = (d.slices || []).find((s) => s.source === "bande" && s.computed);
   const extra = d.theta_applied ? "<th>Écart mécanique</th>" : "";
   const boxHead = box ? "<th>Boîte θ (écart)</th>" : "";
@@ -2941,10 +2947,11 @@ function renderPredictif(host, d) {
     </tr>`).join("");
   host.innerHTML = `<div class="pred">
     <p class="tbanner"><b>${escapeHtml(d.banner)}</b></p>
-    <p class="pnames">${predictifNames(d)}</p>
+    <p class="pnames">${predictifNames(d)}${view}</p>
     <table><thead><tr><th>Année</th><th>Dette, référence</th><th>Dette, réforme</th>
       <th>Écart${d.theta_applied ? " à θ" : ""}</th>${extra}${boxHead}${gapHead}${fanHead}<th></th></tr></thead>
       <tbody>${rows}</tbody></table>
+    ${d.population_note ? `<p class="tnote">${escapeHtml(d.population_note)}</p>` : ""}
     ${box ? `<p class="tnote">${escapeHtml(box.label)}.</p>` : ""}
     ${fan ? `<p class="tnote">${escapeHtml(fan.label)}.</p>` : ""}
     ${predictifIndices(d)}

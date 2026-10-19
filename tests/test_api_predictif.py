@@ -25,7 +25,7 @@ START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
                         spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
 GROWTH = {"name": "Croissance réelle 1 %, prix 2 %", "real": 0.01, "prices": 0.02}
 HELD = {"name": "Taux implicite tenu à son niveau de 2025", "kind": "implicite_tenu"}
-#: The wage index the first year's population is aged with (D-225); prices are GROWTH's.
+#: The wage index the first year's population is aged with (D-226); prices are GROWTH's.
 WAGES = {"wage": 0.03, "source": "3 % ronds, le rythme du PIB nominal du scénario"}
 #: A barème with a higher top rate: the ETI rows claim `ir_bareme`, so the θ box moves.
 TOP_RATE_50 = {"ir_bareme": [
@@ -301,7 +301,7 @@ def test_an_unreadable_macro_store_the_loop_does_not_need_leaves_the_indices_abs
 
 
 # --------------------------------------------------------------------------- #
-# The view the first year is priced in: the aged population (D-225)
+# The view the first year is priced in: the aged population (D-226)
 # --------------------------------------------------------------------------- #
 def test_the_first_year_is_priced_on_the_aged_population_and_says_so(
         client, monkeypatch) -> None:
@@ -362,7 +362,7 @@ def test_the_behavioural_pass_on_the_aged_population_keys_its_caches_on_the_upra
         client, monkeypatch) -> None:
     """The EMTR caches are keyed on vintage, year, sample and reform: the aged frame
     alone does not tell them it is aged, and `/population/simulate` caches the same
-    reform, year and sample on the population as built. The key must say it (D-225)."""
+    reform, year and sample on the population as built. The key must say it (D-226)."""
     import polars as pl
 
     from impots.behavioural import emtr as emtr_module

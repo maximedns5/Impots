@@ -117,6 +117,14 @@ const PRED_RESULT = { ...PRED_NAMES, years: [2026, 2027, 2028],
       stage: "chaîne", source: "chaîne de §3", theta: [], available: true,
       values: { 2026: -0.0017 }, box: null, reason: "", conventions: [], uncovered: {},
       note: "" }],
+  population_view: "vieillie",
+  population_note: "Sous-échantillon de 20 000 ménages repondérés. Vue « vieillie » : l'année "
+    + "2026 est chiffrée avec sa législation sur la population 2024 vieillie jusqu'à elle, "
+    + "la vue de tête de la commande `impots predictif` (D-216, D-226) ; la vue « figée », "
+    + "que la commande donne à côté, n'est pas chiffrée ici. Population vieillie "
+    + "mécaniquement de 2024 à 2026 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses "
+    + "DÉCLARÉES et non prévues (INSEE & DARES, 3 % ronds). **Cette population n'est plus "
+    + "calibrée** : les totaux dépensés au registre le sont sur l'année de base.",
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
   debt_banner: "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici." };
 const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027, art. 3",
@@ -472,7 +480,7 @@ await (async () => {
   $("predRateKind").value = "implicite_tenu";
   $("predWageSource").value = "  ";
   await $("goPred").onclick();
-  ok("a wage index without its source is refused, not sent (D-225)", () => {
+  ok("a wage index without its source is refused, not sent (D-226)", () => {
     assert.equal(calls.length, before, "must not call the API");
     assert.match($("predOut").innerHTML, /salaires, avec sa source/);
   });
@@ -497,6 +505,14 @@ await (async () => {
     assert.match(html, /Croissance réelle 1 %, prix 2 %/);
     assert.equal((html.match(/>report</g) || []).length, 2, "two carried years");
     assert.match(html, /non demandé\. Absent, pas nul/);
+  });
+  ok("the fast path names its population view and carries its note, escaped (D-225)", () => {
+    const html = $("predOut").innerHTML;
+    assert.match(html, /Population : <b>vieillie<\/b>/, "the view must sit above the table");
+    assert.match(html, /<p class="tnote">[^<]*Vue « vieillie » : l'année 2026[^<]*« figée »/,
+                 "the population note must be shown, and name the view it does not price");
+    assert.match(html, /INSEE &amp; DARES[^<]*n'est plus calibrée/,
+                 "the note echoes the reader's source: escaped, and the caveat kept");
   });
   ok("the θ of the result, the θ box and the closed channels are shown", () => {
     const html = $("predOut").innerHTML;

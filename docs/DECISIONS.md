@@ -16599,7 +16599,50 @@ paquet. Pour M6 : la cohérence interne, le confinement préenregistré, l'exemp
 dossier et le balayage des gardes (§9), dont la porte est le `make full` du propriétaire.
 Les deux choix du propriétaire de D-218 restent ouverts.
 
-## D-225 — La version rapide chiffre sa première année sur la population vieillie
+## D-225 — La page nomme la vue de population de la version rapide
+
+**Le fait.** `POST /predictif/simulate` nomme la population sur laquelle il chiffre sa
+première année, dans `population_view` et dans une phrase de `population_note`. Depuis
+D-226, c'est la vue « vieillie », la population de 2024 portée à 2026, et la note porte
+la mise en garde de `uprating.caveat` : une population vieillie n'est plus calibrée. La
+page ne lisait ni l'un ni l'autre. Au-dessus de la version rapide, `loadPredictifs`
+affiche le rapport précalculé d'`impots predictif`, qui chiffre les deux vues côte à côte
+(D-216). Le lecteur ne pouvait dire ni à quelle colonne du rapport se compare le chiffre
+de 2026 de la version rapide, ni qu'il porte sur une population non calibrée.
+
+**Le changement.** `renderPredictif` nomme la vue au-dessus du tableau, à la suite des
+trois scénarios : « Population : vieillie », tirée de `population_view` par la table
+`POPULATION_VIEWS`. Sous le tableau vient `population_note` en entier, échappée, à la
+place où le rapport met sa note de vieillissement ; elle reprend la source des salaires
+que le lecteur a tapée. Les deux vont dans `renderPredictif`, pas dans `predictifNotes`,
+que le rapport partage : il chiffre les deux vues et n'en nomme aucune. Une réponse sans
+ces champs n'affiche rien de plus : la page ne nomme pas une vue qu'on ne lui a pas dite.
+Aucun chiffre ne bouge.
+
+**La numérotation.** Cette entrée et celle de la PR #54 ont pris D-225 en même temps. À la
+demande du propriétaire, celle de la PR #54, déjà fusionnée, devient D-226, et toutes ses
+références avec elle : le code, les tests, la page, `ui/check.mjs` et
+`docs/STATE_AND_NEXT.md`. La note de l'API dit donc « (D-216, D-226) ». Le titre de la
+PR #54 et ses messages de commit gardent « D-225 ».
+
+**Les tests.** Dans `ui/check.mjs`, le résultat de la version rapide porte
+`population_view` et une `population_note` reprise de l'API, mise en garde comprise, avec
+une source qui contient « & ». Une vérification de plus : le nom de la vue au-dessus du
+tableau ; la note dans un `<p class="tnote">`, qui nomme « vieillie », l'année et
+« figée » ; la source échappée, suivie de la mise en garde. Elle a été vue échouer sur la
+page de `main` d'avant ce changement, sur le nom absent, puis sur quatre mutations : la
+note retirée, le nom retiré, la note hors de `tnote`, la note non échappée.
+`ui/check.mjs` passe de 48 à 49 vérifications. Après la renumérotation,
+`test_api_predictif.py`, `test_behavioural.py`, `test_uprating.py`, `test_charter.py` et
+`test_api.py` : 164 réussis, 5 sautés (l'artefact de base sans distribution des taux
+marginaux, la population absente de ce conteneur), 13 désélectionnés par le marqueur par
+défaut. `ruff` passe sur `src`, `tests` et `scripts`. `make full` n'a pas été lancé :
+rien ne touche une passe de population.
+
+**Ce qui reste.** Voir la page sur une vraie réponse : la passe réelle de la version
+rapide reste celle du propriétaire (D-226).
+
+## D-226 — La version rapide chiffre sa première année sur la population vieillie
 
 **Le fait.** `POST /predictif/simulate` chiffrait la première année projetée, 2026, sur la
 population de 2024 telle quelle. `_price_first_year` passait à `_run_population` le cadre
@@ -16689,6 +16732,6 @@ défaut. `ruff` passe sur `src`, `tests` et `scripts`. `make full` n'a pas été
 **Ce qui reste.** Une passe réelle de la version rapide, sur la machine du propriétaire,
 pour le chiffre de 2026 en vue vieillie, et `test_every_money_column_is_uprated_or_named`,
 que ce conteneur saute faute de population. La page n'affiche pas encore `population_note`
-ni `population_view` de la version rapide ; une tâche à part s'en charge.
+ni `population_view` de la version rapide ; D-225 s'en charge.
 `/population/simulate` chiffre toujours sur la population telle quelle, quelle que soit
 l'année, sans le dire dans sa note ; elle n'est pas touchée ici.

@@ -111,7 +111,7 @@ class Uprating:
     def key(self) -> str:
         """What an aged population's numbers depend on, for a cache key: the two indices
         and the base year, the target year being keyed already. The source is a label and
-        stays out — two names for the same rates are the same population (D-225)."""
+        stays out — two names for the same rates are the same population (D-226)."""
         return f"w{self.wage:+.6f}_p{self.price:+.6f}_b{self.base_year}"
 
 
