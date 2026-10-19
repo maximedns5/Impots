@@ -711,6 +711,84 @@ def labour_supply(
     )
 
 
+# --------------------------------------------------------------------------- #
+# C8 — company creations: §6.3, opened on the IPP's own table (D-221)
+# --------------------------------------------------------------------------- #
+C8_KEYS = ("firm_creation_profit_tax",)
+#: Fixed row: points of the paper's joint virtual rate per point of IS normal rate.
+C8_CONVERSION = "firm_creation_exposure_per_is_point"
+
+NO_CREATION_KNOB = (
+    "Aucun levier de cette réforme ne déplace le taux normal de l'IS : la seule réponse "
+    "des créations de sociétés mesurée l'a été sur la baisse de ce taux et sur le PFU."
+)
+
+
+def firm_creations(
+    store: Store,
+    reform: Any,
+    *,
+    is_rate_change_points: float | None = None,
+    draws: int = 1,
+    rng: Any = None,
+    **_: Any,
+) -> ChannelResult:
+    """The change in the annual creation rate of companies, in points, an IS normal-rate
+    change would bring if the IPP's estimate held nationwide.
+
+    AN INDEX, NEVER REVENUE, like C4: points of a rate are not euros, and the receipts
+    of firms not yet created are nobody's mechanical figure.
+
+    The IPP estimates the joint effect of the IS cut and the flat tax per point of fall in
+    the virtual tax rate on profits, across sectors more and less exposed (D-221). A change
+    of the IS normal rate reaches that virtual rate through the conversion row — this
+    project's derivation: the share of a nominal point the sectors' shareholders saw in
+    2018, net of the flat tax the released dividends then pay.
+
+    ILLUSTRATIVE AT ANY SIZE: the estimate is relative between sectors, so the national
+    effect is not identified, and the IS is not told apart from the flat tax — hence a
+    support of zero and a range down to zero. The figure is the mean of the first six
+    years after the cut, of an effect still growing at the end; a rise of the rate
+    rests on a symmetry nobody observed.
+
+    Worked example, pinned in the tests: +1 point of normal rate is 1 × 0,4538 = 0,4538
+    point of virtual rate, and 0,38 × 0,4538 = 0,1724 point of creation rate lost.
+    """
+    applicable = _claimed(store, reform, C8_KEYS)
+    if not applicable:
+        return ChannelResult(key="c8_creations", label="Créations de sociétés",
+                             applies=False, unit="points de taux de création",
+                             message=NO_CREATION_KNOB)
+    missing = [key for key in (*C8_KEYS, C8_CONVERSION) if key not in store]
+    if missing:
+        return ChannelResult(
+            key="c8_creations", label="Créations de sociétés", applies=False,
+            unit="points de taux de création",
+            message=f"Aucune réponse utilisable : {', '.join(missing)} n'a pas survécu "
+                    f"à la vérification des sources.",
+            diagnostics={"missing_parameters": missing})
+    if is_rate_change_points is None:
+        return _unsupplied("c8_creations", "Créations de sociétés",
+                           "points de taux de création", "la variation du taux normal de l'IS")
+    exposure = -is_rate_change_points * store[C8_CONVERSION].central
+    response = store[C8_KEYS[0]].draw(rng, draws) * exposure
+    return ChannelResult(
+        key="c8_creations", label="Créations de sociétés", applies=True, draws=response,
+        unit="points de taux de création",
+        message="Indice illustratif : effet relatif entre secteurs, étendu à toute "
+                "l'économie, que l'étude n'identifie pas au niveau national et ne sépare "
+                "pas du PFU. Moyenne des six premières années ; sociétés seules, hors "
+                "entreprises individuelles et auto-entrepreneurs.",
+        diagnostics={
+            "knobs": applicable,
+            "is_rate_change_points": round(is_rate_change_points, 4),
+            "virtual_rate_fall_points": round(exposure, 4),
+            "rests_on_symmetry": is_rate_change_points > 0,
+            "not_added_to": "les emplois de l'éventail macro, de C2 et de C7",
+        },
+    )
+
+
 CHANNELS = (
     ("c1_eti", C1_KEYS),
     ("c2_employment", C2_KEYS),
@@ -719,4 +797,5 @@ CHANNELS = (
     ("c5_wealth_rate", C5_KEYS),
     ("c6_disclosure", C6_KEYS),
     ("c7_labour_supply", C7_KEYS),
+    ("c8_creations", C8_KEYS),
 )

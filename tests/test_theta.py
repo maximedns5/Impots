@@ -216,6 +216,8 @@ CASES = {
                                            Reform(ifi_obligations_declaratives="renforcees"),
                                            {"wealth_base_eur": 400e9}, 0),
     **{key: (channels.labour_supply, CSG, LABOUR, 0) for key in channels.C7_KEYS},
+    "firm_creation_profit_tax": (channels.firm_creations, Reform(is_taux_normal=0.27),
+                                 {"is_rate_change_points": 2.0}, 0),
 }
 
 

@@ -1,0 +1,118 @@
+# Company creations — §6.3, opened on the IPP's own table as an ILLUSTRATIVE INDEX (D-221).
+#
+# Bach, Bozio, Fize, Guillouzouic and Malgouyres (rapport IPP n° 47, octobre 2023)
+# compare, across 643 fine sectors, the creation rate of companies before and after the
+# 2018 capital-tax reforms, against how much each sector's shareholders gained from them.
+# Tableau 2.2 (b), row IS-PFU: the joint effect of the IS cut and the flat tax per point
+# of fall in the virtual tax rate on profits. `behavioural.ipp` reads the cells and the
+# figures of the text out of the PDF, and a test holds every number below against that
+# reading through `ipp.convention` and `ipp.exposure_per_is_point` (D-026).
+#
+# WHY ILLUSTRATIVE, WHATEVER THE SIZE OF THE REFORM. The estimate is a difference
+# between sectors more and less exposed: year and sector-by-year effects absorb anything
+# common to all of them, so the national effect of a national rate change is not
+# identified — extending the slope to the whole economy assumes no effect at zero
+# exposure and no founders moving between sectors. And the IS is not told apart from the
+# flat tax. Hence a support of zero and a bottom of zero.
+
+parameters:
+  firm_creation_profit_tax:
+    value: {central: 0.38, low: 0.0, high: 0.684, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Un coefficient plus grand est une réponse plus forte des créations à la
+        taxation du profit.
+    applies_to: >
+      Points de pourcentage du taux annuel de création de sociétés (SARL, SAS et SA
+      créées dans l'année rapportées au stock du 1er janvier de l'année n − 1 ; hors
+      entreprises individuelles et auto-entrepreneurs ; hors activités financières et
+      immobilières, NAF 64, 65, 66 et 68) par point de baisse du taux d'imposition
+      virtuel du profit. Ce taux compte l'IS et les impôts personnels (IR, prélèvements
+      sociaux, cotisations non contributives) sous le droit d'avant la réforme puis le
+      barème de 2022 (IS à 25 %, PFU à 12,8 % plus les prélèvements sociaux), les profits
+      nets d'IS et de réinvestissement étant supposés entièrement distribués, et il est
+      rapporté à la part entrepreneuriale du revenu économique (le profit, au premier
+      ordre) des actionnaires personnes physiques de référence de 2016 (au moins 10 %),
+      agrégé par le profit. Effet RELATIF entre secteurs plus et moins exposés, moyenne
+      des années 2017 à 2022 ; le niveau national n'est pas identifié.
+    responds_to_knobs: &knobs [is_taux_normal]
+    support:
+      estimated_on: >
+        Une seule baisse, échelonnée : le taux normal passe de 33,33 % à 25 % entre 2019
+        et 2022, 25 % atteints en 2022 seulement, et plus tard pour les entreprises de
+        plus de 250 M€ de chiffre d'affaires (France Stratégie, tableau 9).
+        L'identification vient de l'écart d'exposition entre secteurs (moyennes de groupe
+        de 4,0 et 6,4 points pour l'IS), pas d'une variation nationale. Aucune hausse
+        n'a été observée : une hausse supposerait la réponse symétrique. Toute application à une variation
+        nationale du taux extrapole, d'où un support nul.
+      max_variation_graded_in_support: 0.0
+    source:
+      citation: >
+        Bach, Bozio, Fize, Guillouzouic et Malgouyres, « Évaluation des réformes de la
+        fiscalité du capital — Effets sur la création d'entreprises, l'expatriation et la
+        circulation de l'épargne », rapport IPP n° 47, octobre 2023, tableau 2.2 (b),
+        ligne IS-PFU, colonnes 4, 6, 10 et 12, p. 62 ; la phrase citée commence p. 58 et
+        s'achève p. 61. La colonne 6, citée, n'a pas les effets année × secteur A20 ; le
+        « 0,4 » de France Stratégie est la colonne 10.
+      url: https://shs.hal.science/halshs-04439415v1/file/Rapport_IPP_47_ISFcrea_compressed.pdf
+      vintage: "2023"
+      quote: >-
+        une baisse de un point de taxation du profit engendre une hausse de 0,38 point
+        du taux de création non pondéré
+    verifier: &verifier
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-19
+      ref: D-221
+      note: >
+        Les quatre cellules et l'enveloppe sont exactes. Réparations appliquées : le
+        dénominateur du taux de création (stock au 1er janvier de n − 1) ; la définition
+        du taux virtuel ; l'effet dit relatif, le niveau national non identifié, d'où un
+        support nul ; la moyenne 2017-2022 d'un effet encore croissant ; l'IS non séparé
+        du PFU, d'où une borne basse à zéro au lieu de 0,1218 ; les chiffres de la
+        conversion sourcés chacun à son document, la conversion déclarée comme une
+        dérivation du projet ; les pages citées ; l'effet pondéré par l'emploi montré à
+        côté.
+    confidence: low
+    note: >
+      L'effet croît encore en fin de période (« une hausse d'un point du taux de
+      création d'entreprise en fin de période et de 0,4 point sur l'ensemble de la
+      période après 2017 », p. 12), mesuré contre l'année 2016 ; la ligne est la moyenne
+      des six premières années, pas un effet de long terme. Pondéré par
+      l'emploi créé à deux ans (tableau 2.2 (c)), l'effet joint est de 0,053 (0,015)
+      point d'emploi, et l'effet propre de l'IS y est nul (0,008 et 0,014) : aucune
+      création d'emploi n'est tirée de cette ligne, et aucune ne s'ajouterait à celles
+      de l'éventail macro, de C2 ou de C7. L'effet n'est significatif que dans les
+      secteurs où plus de la moitié des profits va à des personnes physiques. France
+      Stratégie conclut : « on ne peut démontrer strictement que c'est dû au PFU et/ou à
+      la baisse de l'IS ».
+
+  firm_creation_exposure_per_is_point:
+    value: {central: 0.4538, low: 0.4538, high: 0.4538, distribution: triangular}
+    applies_to: >
+      Points de taux d'imposition virtuel du profit (au sens de la ligne précédente) par
+      point de taux normal de l'IS. DÉRIVATION DU PROJET, que l'étude ne donne pas : la
+      baisse sectorielle moyenne du taux virtuel d'IS (5,4 points, tous secteurs) sur la
+      baisse légale (33,33 − 25 = 8,33 points), fois la part que le PFU laisse sur les
+      dividendes libérés (1 − 30 %) : 5,4 / 8,33 × 0,7 = 0,4538. Sur l'échantillon
+      d'estimation, la baisse médiane est de 5,2 points, soit 0,437 (−4 %), bien en deçà
+      de l'incertitude du coefficient. La contribution exceptionnelle sur les hauts
+      revenus et les cotisations des indépendants sont ignorées.
+    responds_to_knobs: *knobs
+    support:
+      estimated_on: >
+        La baisse de 2018, seule observée ; même domaine que la ligne précédente.
+      max_variation_graded_in_support: 0.0
+    source:
+      citation: >
+        Rapport IPP n° 47, p. 38 (« la baisse moyenne à travers les secteurs est de
+        5,4 % pour l'IS »), p. 19 (PFU à 30 %) et p. 56 (la mesure jointe) ; France
+        Stratégie, Comité d'évaluation des réformes de la fiscalité du capital, rapport
+        final, octobre 2023, p. 237 imprimée (239 du PDF), pour la baisse légale.
+      url: https://www.strategie-plan.gouv.fr/files/files/Publications/Rapport/fs-2023-rapport-isf-quatrieme_rapport_complet_17octobre_2.pdf
+      vintage: "2023"
+      quote: >-
+        la baisse de l'IS augmente les dividendes versés et donc augmente à la marge le
+        rendement du PFU
+    verifier: *verifier
+    confidence: low

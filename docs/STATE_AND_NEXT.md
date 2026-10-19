@@ -1,6 +1,15 @@
-# State of the project, and the directions open — 2026-10-19 (Phase 9, M5 begun)
+# State of the project, and the directions open — 2026-10-19 (Phase 9, M5 under way)
 
-The third 2026-10-19 update adds D-220, the first channel of Phase 9's M5: labour supply
+The fourth 2026-10-19 update adds D-221, M5's second step. France Stratégie's 2023
+final report on the capital-tax reforms, which M0 could not reach (its address moved), is
+manifested and read: it quantifies nothing for the IS and investment, which stay closed
+with that reason. Its commissioned IPP study (report n° 47) does measure how company
+creations respond to the taxation of profits, and §6.3 opens as C8: an illustrative
+index, never revenue, for the IS normal rate only. The estimate is relative between
+sectors and does not separate the IS from the flat tax, so its support is zero and its
+range runs down to zero; one point of IS normal rate moves the creation rate by about
+0,17 point. A channel's own band now carries the channel's unit rather than euros. The
+third 2026-10-19 update added D-220, the first channel of Phase 9's M5: labour supply
 reopens as C7, on the cells of Bargain, Orsini and Peichl (IZA DP 6735, now manifested)
 that `behavioural/bop.py` reads out of the PDF. Four rows, one per group — women and men
 in a couple, women and men alone — each a convention applied to the 1998 and 2001 cells:
@@ -97,8 +106,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **221 decision
-entries**, D-000 to D-220, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **222 decision
+entries**, D-000 to D-221, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -443,16 +452,17 @@ download list.
    check D-210 and D-211 will get — the 2026-10-16 pass ran on `05cc944`, before them; the report's direction line, which counts
    signs; and art. 2's outside grade.
 2. **Phase 9, M5** (`docs/PHASE9_SPEC.md` §6): the new channels one by one. Labour
-   supply is done (D-220, C7, CSG on earnings only); next come investment (§6.2), firm
-   creations (§6.3), R&D (§6.4) and dividends (§6.5). M1 to M4 are done (D-215 to
-   D-219); M4 left the transfers and the IS closed. Two
+   supply is done (D-220, C7, CSG on earnings only) and company creations opened as an
+   illustrative index (D-221, C8, IS normal rate only); investment stays closed for the
+   IS (D-221). Left: R&D (§6.4: the 2021 CIR evaluations to read, GECIR still missing,
+   D-154); dividends (§6.5) stay closed. M1 to M4 are done (D-215 to D-219); M4 left
+   the transfers and the IS closed. Two
    decisions from M3 are the owner's: whether the page should show both persistence
    scenarios side by side rather than ask for one (§4.5), and whether to reopen the
    `multiplier_by_instrument` row, whose linearity bound the M3 pass found
    unsupported (D-218). `impots predictif` does not carry the loop yet. A full ten-year
    run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
-   refuses this container), France Stratégie's 2023
-   capital-taxation report to read, and the AFT outstanding, which www.aft.gouv.fr
+   refuses this container), and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
 3. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin

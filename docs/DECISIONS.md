@@ -16054,3 +16054,117 @@ l'échantillon de l'article, chiffrée à zéro. Pour M5 : les canaux suivants d
 l'investissement (§6.2), les créations d'entreprises (§6.3), la R&D (§6.4) et les
 dividendes (§6.5). `impots predictif` ne porte pas encore la boucle (D-218). Les deux
 choix du propriétaire de D-218 restent ouverts.
+
+## D-221 — M5 de la phase 9, suite : les créations de sociétés ouvrent en indice
+
+**Le fait.** M0 n'avait pu lire ni le rapport final du comité d'évaluation des réformes de
+la fiscalité du capital (France Stratégie, octobre 2023), dont l'adresse renvoyait une
+404, ni de source mesurant la réponse des créations d'entreprises à un taux. Le rapport
+a changé d'adresse avec la migration vers strategie-plan.gouv.fr ; il est retrouvé,
+manifesté et lu. Il ne chiffre rien pour l'investissement (§6.2), qui reste fermé. Il
+renvoie en revanche à l'étude qu'il a commandée à l'IPP (rapport n° 47, Bach, Bozio,
+Fize, Guillouzouic et Malgouyres, octobre 2023), qui mesure la réponse des créations de
+sociétés à la taxation du profit. Elle est manifestée et lue, et §6.3 ouvre : C8, un
+indice illustratif, jamais une recette.
+
+**§6.2, l'IS et l'investissement.** Le rapport final résume une littérature : « la
+plupart des travaux empiriques convergent pour conclure à l'existence d'un effet négatif
+significatif sur l'investissement du niveau de l'impôt sur les sociétés » (p. 76). Mais
+il n'estime rien pour la baisse de 33,33 % à 25 %, et ses évaluations ex post portent
+sur le PFU et l'IFI. La raison affichée du canal fermé le dit maintenant.
+
+**La lecture.** `behavioural/ipp.py` lit dans le PDF le tableau 2.2, panneau (b),
+« Exposition linéaire aux réformes », ligne IS-PFU : 0,391 (0,120), 0,380 (0,131), 0,418
+(0,120) et 0,414 (0,137). Chacun des quatre panneaux a sa ligne IS-PFU, aussi la ligne
+est-elle cherchée entre le titre du panneau (b) et celui du panneau (c). La ligne du
+panneau (a), l'exposition binaire, imprime 0,021 : un facteur vingt, et l'air d'un
+coefficient. L'extraction ne garde pas la position des cellules : la ligne remplit quatre
+colonnes sur douze. Aucun numéro de colonne n'est donc affirmé par le code ; la valeur
+que les auteurs citent dans leur texte, 0,38, doit se trouver parmi les cellules lues, ou
+la lecture est refusée. Le lecteur prend aussi dans le texte la baisse sectorielle
+moyenne du taux virtuel d'IS (5,4 points) et le taux du PFU (30 %, soit 12,8 % plus
+17,2 %). Il prend dans le rapport de France Stratégie la baisse légale, de 33,33 % à 25 %.
+
+**La vérification adverse.** Verdict SCOPE_PROBLEM : les quatre cellules et l'enveloppe
+sont exactes ; la portée ne l'était pas. Les réparations appliquées :
+
+1. *L'effet est relatif.* Les effets fixes année et secteur × année absorbent tout ce qui
+   est commun aux secteurs : l'étude compare des secteurs plus et moins exposés, et
+   n'identifie pas l'effet national d'un taux national. Étendre la pente à toute
+   l'économie suppose un effet nul à exposition nulle et aucun créateur qui change de
+   secteur. D'où un support nul : la ligne est notée illustrative dès le premier point.
+2. *L'IS n'est pas séparé du PFU.* Le PFU contrôlé, l'IS seul vaut 0,123 (0,188) et
+   0,315 (0,207), indiscernables de zéro ; les auteurs refusent de privilégier l'une des
+   deux réformes (p. 55, note 5). D'où une borne basse à zéro, au lieu des 0,1218 de
+   l'enveloppe.
+3. *C'est une moyenne de six ans d'un effet qui croît encore* (« un point en fin de
+   période », p. 12) : la ligne ne dit rien du long terme.
+4. *Le dénominateur, la définition du taux virtuel et les pages* sont corrigés ; la
+   colonne citée (6) n'a pas les effets année × secteur A20, et le « 0,4 » de France
+   Stratégie est la colonne 10.
+5. *La conversion est une dérivation du projet*, déclarée comme telle, chaque chiffre
+   sourcé à son document.
+6. *L'effet pondéré par l'emploi* est montré à côté : 0,053 (0,015), et nul pour l'IS
+   seul. Aucun emploi n'est tiré de C8.
+
+**La convention.** Écrite dans `ipp.convention` et tenue par un test contre le PDF.
+Centre : la valeur citée, 0,38. Haut : le plus haut bout des quatre intervalles à 95 %,
+chaque chiffre imprimé élargi d'un demi-millième, soit 0,684. Bas : zéro.
+
+**La conversion.** `firm_creation_exposure_per_is_point`, ligne fixe : 5,4 / (33,33 − 25)
+× (1 − 0,30) = 0,4538 point de taux virtuel par point de taux normal. Le premier facteur
+est la part d'un point nominal que les actionnaires ont vue en 2018. Le second compte le
+PFU que paient les dividendes libérés, parce que la mesure jointe « prend en compte le
+fait que la baisse de l'IS augmente les dividendes versés et donc augmente à la marge le
+rendement du PFU » (p. 56). Sur l'échantillon d'estimation, la baisse médiane est de
+5,2 points, soit 0,437 : 4 % de moins, bien en deçà de l'incertitude du coefficient.
+
+**Le canal C8.** Il ne revendique que `is_taux_normal`, la seule baisse observée ; le
+taux réduit, son plafond et les impôts de production sont d'autres instruments. Une
+hausse repose sur une symétrie que personne n'a observée, et le diagnostic le dit.
+L'indice n'entre jamais dans la bande de recettes : des points de taux de création ne
+sont pas des euros. Il ne s'ajoute à aucun emploi, ni de l'éventail macro, ni de C2, ni
+de C7.
+
+**Un défaut d'affichage, au passage.** La bande propre de chaque canal prenait l'unité
+par défaut du schéma, l'euro : les pourcentages de C4 et les points de C8 étaient
+étiquetés EUR. Elle porte maintenant l'unité du canal. La page n'affiche pas la bande de
+la couche entreprises ; C8 se lit dans la réponse de `/entreprises/simulate`.
+
+**Le calcul réel.** `/entreprises/simulate`, année 2026 ; la population d'entreprises de
+ce conteneur est faite de cellules synthétiques de test, mais C8 n'en lit que la
+variation du taux. Taux normal à 26 % (+1 point) : −0,16 point de taux de création au
+centre (p10 −0,24, p90 −0,07), illustratif, symétrie supposée. Taux à 22 % (−3 points) :
++0,49 point (p10 +0,20, p90 +0,73). Le taux de création de l'échantillon étant de 8 à
+10 % par an, le centre ferait 5 à 6 % de créations de sociétés en plus, sous toutes les
+réserves ci-dessus. Le nombre attend le stock de sociétés au manifeste (§7, M6).
+
+**Les tests.** Treize nouveaux dans `test_creations.py` : les cellules épinglées à
+l'œil, la ligne lue dans son panneau, la valeur citée parmi les cellules, le rapport
+absent, la raison de l'IS fermé, la conversion et la convention dérivées à la main, les
+deux lignes contre les PDF, l'exemple chiffré de C8, le taux normal seul revendiqué,
+l'indice hors de la bande de recettes et toujours illustratif, l'entrée absente, l'unité
+de la bande. Les cas de monotonie en θ gagnent la ligne ouverte ; cinq tests comptaient
+douze lignes ouvertes, ils en comptent treize.
+
+Chaque garde a été vue échouer sur une mutation, douze en tout : le panneau ignoré, la
+fin de panneau retirée, la vérification de la valeur citée retirée, le taux réduit
+revendiqué, l'indice versé dans la bande de recettes, un support non nul, la métrique
+retirée, le signe perdu, la conversion retapée, la borne basse remise à l'enveloppe dans
+le YAML puis dans la convention, l'unité de la bande retirée. Un test échouait d'abord
+pour une mauvaise raison : sous la mutation du taux réduit, il tombait sur une erreur
+faute de générateur aléatoire, pas sur son assertion. Il reçoit désormais le générateur,
+et la mutation échoue sur le message attendu.
+
+Avec les tests de θ, du magasin, de l'offre de travail, de la chaîne, de la boucle, de
+la dette, de la commande, de l'API prédictive, de la page, de la provenance, de la
+charte, des règles, des dépendances et de la couche entreprises : 651 réussis, 4 sautés
+(l'artefact de base sans distribution des taux marginaux, le REI non téléchargé). Les
+24 tests de l'API entreprises passent. `ruff` passe sur `src` et `tests` ;
+`ui/check.mjs` passe ses 46 vérifications.
+
+**Ce qui reste.** Pour C8 : le nombre de créations, qui attend le stock de sociétés
+(§7) ; l'effet de long terme, que la moyenne de six ans ne donne pas. Pour M5 : la R&D
+(§6.4), dont l'évaluation du CIR de 2021 reste à lire et dont les fichiers GECIR
+manquent toujours (D-154) ; les dividendes (§6.5) restent fermés. Les deux choix du
+propriétaire de D-218 restent ouverts.
