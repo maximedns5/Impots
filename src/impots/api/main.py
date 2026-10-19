@@ -601,14 +601,15 @@ def _macro(request: Any, agg: Any) -> Any:
     )
 
 
-def _behavioural_inputs(request: Any, frame: Any, agg: Any,
-                        run_households: Any = None) -> tuple[dict[str, Any], int | None]:
+def _behavioural_inputs(request: Any, frame: Any, agg: Any, run_households: Any = None,
+                        uprating_key: str | None = None) -> tuple[dict[str, Any], int | None]:
     """What `band.compute` reads besides the mechanical figure and the reform.
 
     `(inputs, households)`: the employer inputs, plus the households' marginal rates when
     the EMTR pass has them — `households` counts those, and is None when it has none.
     Shared by the band (`_behavioural`) and by the receipts at θ (`/predictif/simulate`),
-    so the two read the same population the same way.
+    so the two read the same population the same way. `uprating_key` says `frame` was
+    aged, for the EMTR caches, which the frame alone does not tell (D-225).
     """
     import numpy as np
 
@@ -617,7 +618,7 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any,
     employer = _employer_inputs(request, frame, run_households, agg) if run_households is not None else {}
     emtr_result = emtr_module.cached(
         frame, POPULATION_VINTAGE, year=request.year, reform=request.reform,
-        sample=BEHAVIOURAL_EMTR_HOUSEHOLDS,
+        sample=BEHAVIOURAL_EMTR_HOUSEHOLDS, uprating_key=uprating_key,
     )
     households = emtr_result.with_earnings
     if households.is_empty() or "emtr_reform" not in households.columns:
@@ -1110,24 +1111,50 @@ def _predictif_macro_store() -> Any:
         raise MacroSourceError(f"magasin macro illisible : {error}") from error
 
 
-def _price_first_year(request: PopulationSimulateRequest, *, macro: bool = False) -> Any:
+#: The population view the predictive path's first year is priced in, in
+#: `predictif.annuel`'s words: the population aged to that year, the command's headline
+#: (D-216), by the owner's choice (D-225). `_price_first_year` ages the frame before the
+#: pass; pricing another view would change the numbers, and this name and
+#: `_first_year_note` with them.
+FIRST_YEAR_VIEW = "vieillie"
+
+
+def _first_year_note(year: int, uprating: Any) -> str:
+    """The quick tier's note, the view the predictive path's first year is priced in,
+    and the caveat that must travel with any figure computed on an aged population."""
+    from impots import uprating as uprating_module
+
+    return (_quick_tier_note()
+            + f" Vue « vieillie » : l'année {year} est chiffrée avec sa législation sur la "
+              f"population {POPULATION_VINTAGE} vieillie jusqu'à elle, la vue de tête de la "
+              "commande `impots predictif` (D-216, D-225) ; la vue « figée », que la "
+              "commande donne à côté, n'est pas chiffrée ici. "
+            + uprating_module.caveat(year, uprating))
+
+
+def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
+                      macro: bool = False) -> Any:
     """One quick-tier pass for the predictive path's first year — the seam its tests stub.
 
-    `cost` is the engine's, COST POSITIVE; `inputs` is what `band.compute` reads, when
-    behaviour was asked for, so the receipts at θ run on the very population the cost
-    came from; `impulse` is the reform's macro impulse by Mésange variant,
-    EXPANSIONARY-POSITIVE, and `uncovered` the deltas without one, when the loop was
-    asked for (`macro`); `note` is the quick tier's.
+    The population is aged to the year with `uprating` first (D-225), and everything
+    below reads the aged frame. `cost` is the engine's, COST POSITIVE; `inputs` is what
+    `band.compute` reads, when behaviour was asked for, so the receipts at θ run on the
+    very population the cost came from; `impulse` is the reform's macro impulse by
+    Mésange variant, EXPANSIONARY-POSITIVE, and `uncovered` the deltas without one, when
+    the loop was asked for (`macro`); `view` is the population view priced,
+    `FIRST_YEAR_VIEW`, and `note` the quick tier's, which names it with its caveat.
     """
     from types import SimpleNamespace
 
+    from impots import uprating as uprating_module
     from impots.macro import shocks
 
-    frame = _population_frame()
+    frame = uprating_module.uprate(_population_frame(), request.year, uprating)
     result, agg = _run_population(request, frame)
     if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
         raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
-    inputs = (_behavioural_inputs(request, frame, agg, result.households)[0]
+    inputs = (_behavioural_inputs(request, frame, agg, result.households,
+                                  uprating_key=uprating.key())[0]
               if request.behavioural else None)
     impulse, uncovered = None, {}
     if macro:
@@ -1142,7 +1169,8 @@ def _price_first_year(request: PopulationSimulateRequest, *, macro: bool = False
             raise HTTPException(status_code=422, detail=str(error)) from error
         impulse, uncovered = dict(built.by_instrument), built.reasons()
     return SimpleNamespace(cost=float(agg.reform_cost), inputs=inputs, impulse=impulse,
-                           uncovered=uncovered, note=_quick_tier_note(),
+                           uncovered=uncovered, view=FIRST_YEAR_VIEW,
+                           note=_first_year_note(request.year, uprating),
                            deciles=list(agg.deciles))
 
 
@@ -1151,10 +1179,15 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     """The reform's debt path against the reference, under named scenarios (PHASE9_SPEC §3).
 
     THE FAST VERSION (M0, R3). Pricing ten years one by one takes about an hour, so this
-    endpoint prices the FIRST projected year on the quick-tier population — the same run
-    `/population/simulate` makes — and carries that cost as a constant share of GDP, a
-    convention every carried year is labelled with. The full year-by-year path belongs to
-    a batch command.
+    endpoint prices the FIRST projected year on the quick-tier population, aged to that
+    year — the command's headline view, « vieillie » (D-225) — and carries that cost as
+    a constant share of GDP, a convention every carried year is labelled with. The full
+    year-by-year path belongs to a batch command.
+
+    THE WAGE INDEX IS REQUIRED, with its source, like every hypothesis (D-213): the price
+    index is the growth scenario's (`annuel.uprating_for`), so the reform's euros and the
+    GDP that divides them inflate together. A source left blank or a rate that is not an
+    annual one is refused by `Uprating`'s own message, before the pass.
 
     θ IS REQUIRED (D-217, guard 1): the schema has no default for it, and a θ outside
     [0, 1] or named for a row the store does not hold is refused here, before the pass.
@@ -1167,9 +1200,10 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     from impots.dette.path import BANNER as DEBT_BANNER
     from impots.dette.path import SHIPPED, DebtError, SpendingScenario
     from impots.dette.scenarios import GrowthScenario, RateScenario
-    from impots.predictif import chaine, comportement, retroaction
+    from impots.predictif import annuel, chaine, comportement, retroaction
     from impots.predictif import indices as indices_module
     from impots.predictif.theta import MACRO_ROW, Theta, ThetaError
+    from impots.uprating import UpratingError
 
     try:
         if request.spending.rule == "personnalise":
@@ -1185,6 +1219,9 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                                 request.growth.prices)
         rate = RateScenario(request.rate.name, request.rate.kind,
                             market_rate=request.rate.market_rate)
+        uprating = annuel.uprating_for(growth, wage=request.uprating.wage,
+                                       source=request.uprating.source,
+                                       base_year=int(POPULATION_VINTAGE))
         theta = Theta(rows=dict(request.theta.rows), common=request.theta.common)
         store = load_store()
         theta.check_known(store)
@@ -1201,7 +1238,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
         if looped:
             theta.for_row(MACRO_ROW)
         specs = indices_module.select(request.indices)
-    except (DebtError, ThetaError, indices_module.IndicesError) as error:
+    except (DebtError, ThetaError, UpratingError, indices_module.IndicesError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
     try:
@@ -1230,7 +1267,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                    f"population sert ({MIN_YEAR}–{MAX_YEAR}).")
     first = _price_first_year(PopulationSimulateRequest(
         reform=request.reform, year=year, behavioural=request.behavioural),
-        macro=request.macro)
+        uprating=uprating, macro=request.macro)
     try:
         at = (comportement.evaluate(theta, mechanical=-first.cost, reform=request.reform,
                                     store=store, **first.inputs)
@@ -1289,7 +1326,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             box=({k: list(v) for k, v in i.box.items()} if i.box is not None else None),
             reason=i.reason, conventions=list(i.conventions), uncovered=dict(i.uncovered))
             for i in computed],
-        population_note=first.note,
+        population_view=first.view, population_note=first.note,
         banner=result.banner, debt_banner=DEBT_BANNER,
     )
 

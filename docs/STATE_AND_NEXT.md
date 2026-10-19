@@ -1,6 +1,15 @@
 # State of the project, and the directions open — 2026-10-19 (Phase 9, M6 under way)
 
-The seventh 2026-10-19 update adds D-224, M6's second step: the explorer searches the debt
+The eighth 2026-10-19 update adds D-225: the fast version of `/predictif/simulate` now
+prices its first year on the population aged to that year, « vieillie », the headline
+of `impots predictif` and of the conditional explorer, by the owner's choice. It priced
+the 2024 population as it is, and did not say so. The request gains a required
+`uprating` block, the wage index and its source; prices are the growth scenario's. The
+response names the view in `population_view` and carries the uprating caveat in
+`population_note`. The EMTR caches now key on the uprating, so that the aged and the
+as-built population never serve each other's marginal rates. The first-year cost rises
+by roughly the measured gap, 5 to 9 %; the real run is the owner's.
+The seventh 2026-10-19 update added D-224, M6's second step: the explorer searches the debt
 at a fixed θ (§8). Its allowlist gains `dette_conditionnelle`, the reform's debt gap at
 year T under named θ and scenarios, met from below; θ is required for it and refused for
 the mechanical target, and no bound may name θ. Each candidate is re-read at the 2^K
@@ -139,8 +148,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **225 decision
-entries**, D-000 to D-224, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **226 decision
+entries**, D-000 to D-225, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 

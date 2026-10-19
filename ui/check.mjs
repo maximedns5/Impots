@@ -446,11 +446,13 @@ await (async () => {
     assert.match($("predOut").innerHTML, /scénario de dépense/);
     assert.match($("predOut").innerHTML, /scénario de taux/);
     assert.match($("predOut").innerHTML, /une réforme/);
+    assert.match($("predOut").innerHTML, /salaires, avec sa source/);
   });
   $("dCelib").value = "2000"; $("dCelib").fire("input", {});
   $("predSpending").value = "gele_en_volume";
   $("predGrowthName").value = "Croissance réelle 1 %, prix 2 %";
   $("predReal").value = "1"; $("predPrices").value = "2";
+  $("predWage").value = "3"; $("predWageSource").value = "3 % ronds, le rythme du PIB nominal";
   $("predRateKind").value = "marche"; $("predMarket").value = "";
   $("predHorizon").value = "3";
   $("predTheta").value = "";
@@ -468,6 +470,13 @@ await (async () => {
     assert.match($("predOut").innerHTML, /taux de marché/);
   });
   $("predRateKind").value = "implicite_tenu";
+  $("predWageSource").value = "  ";
+  await $("goPred").onclick();
+  ok("a wage index without its source is refused, not sent (D-225)", () => {
+    assert.equal(calls.length, before, "must not call the API");
+    assert.match($("predOut").innerHTML, /salaires, avec sa source/);
+  });
+  $("predWageSource").value = "3 % ronds, le rythme du PIB nominal";
   await $("goPred").onclick();
   await new Promise((r) => setTimeout(r, 10));
   ok("the fast path sends the three named scenarios and the horizon", () => {
@@ -479,6 +488,8 @@ await (async () => {
     assert.equal(body.rate.name, "Taux implicite tenu à son niveau de 2025");
     assert.equal(body.horizon, 3);
     assert.deepEqual(body.theta, { common: 0.5 });
+    assert.deepEqual(body.uprating,
+                     { wage: 0.03, source: "3 % ronds, le rythme du PIB nominal" });
     assert.ok(body.reform, "the reform panel's change must travel");
   });
   ok("the carried years say « report » and the names sit above the table", () => {

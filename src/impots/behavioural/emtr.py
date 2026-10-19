@@ -108,12 +108,14 @@ def compute(
     sample: int | None = None,
     step: float = EMTR_STEP,
     vintage: str | None = None,
+    uprating_key: str | None = None,
 ) -> EmtrResult:
     """Marginal rates for every household, under current law and optionally a reform.
 
     Two full-tier runs per law priced (base and bumped), so four when a reform is
     given. This is the expensive input to the behavioural layer and the reason the
-    caller caches it.
+    caller caches it. `uprating_key` is `Uprating.key()` when the population was aged,
+    None when it is the vintage as built.
     """
     frame = pl.read_parquet(population) if isinstance(population, Path) else population
     if sample is not None:
@@ -137,12 +139,14 @@ def compute(
     # the second reform priced against the same population pays half as much. Keyed on
     # the sample size too, because a subsample is a different population — and on the
     # population wiring, because rates computed under another one are another law's
-    # rates (D-176).
+    # rates (D-176). And on the uprating, when there is one: an aged population has the
+    # same rows as the vintage, so the height check below would not see it (D-225).
     started = time.perf_counter()
+    aged = f"_{uprating_key}" if uprating_key is not None else ""
     cache = (
         PROCESSED
         / (f"emtr_baseline_{millesime(vintage)}_{year}_{sample or 'full'}_{int(step)}"
-           f"_{to_openfisca.WIRING}.parquet")
+           f"_{to_openfisca.WIRING}{aged}.parquet")
         if vintage else None
     )
     if cache is not None and cache.exists():
@@ -226,7 +230,8 @@ def distribution(result: EmtrResult, deciles: int = 10) -> list[dict[str, float]
 
 
 def cache_key(
-    vintage: str, year: int, reform: Any = None, sample: int | None = None
+    vintage: str, year: int, reform: Any = None, sample: int | None = None,
+    uprating_key: str | None = None,
 ) -> str:
     """A fingerprint of everything the rates depend on.
 
@@ -234,13 +239,15 @@ def cache_key(
     a cheaper view of the same one — omitting it would serve 3 000 households' rates
     for a request that asked for 20 000. The population wiring is in it for the same
     reason: a file written before D-176 holds rates of a wiring that no longer exists.
+    So is the uprating of an aged population (D-225), and only then, so that the
+    vintage's own keys do not move.
     """
-    payload = json.dumps(
-        {"vintage": vintage, "year": year, "sample": sample,
-         "reform": None if reform is None else reform.model_dump(exclude_none=True),
-         "wiring": to_openfisca.WIRING},
-        sort_keys=True, default=str,
-    )
+    fields = {"vintage": vintage, "year": year, "sample": sample,
+              "reform": None if reform is None else reform.model_dump(exclude_none=True),
+              "wiring": to_openfisca.WIRING}
+    if uprating_key is not None:
+        fields["uprating"] = uprating_key
+    payload = json.dumps(fields, sort_keys=True, default=str)
     return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
 
@@ -265,18 +272,22 @@ def _make_room(vintage: str) -> None:
 
 def cached(
     population: pl.DataFrame | Path, vintage: str, year: int = 2024, reform: Any = None,
-    sample: int | None = None,
+    sample: int | None = None, uprating_key: str | None = None,
 ) -> EmtrResult:
     """`compute`, memoised on disk. A minute and a half the first time, milliseconds
     after — which matters most for the same reform priced twice, since a user
-    adjusting one knob and re-running is the normal way this tool is used."""
+    adjusting one knob and re-running is the normal way this tool is used.
+    `uprating_key` is `Uprating.key()` when `population` was aged: the frame alone
+    does not say so, and the key must."""
     vintage = millesime(vintage)
-    path = PROCESSED / f"emtr_{vintage}_{cache_key(vintage, year, reform, sample)}.parquet"
+    key = cache_key(vintage, year, reform, sample, uprating_key)
+    path = PROCESSED / f"emtr_{vintage}_{key}.parquet"
     if path.exists():
         path.touch()  # most recently USED, not most recently written, survives eviction
         return EmtrResult(households=pl.read_parquet(path), year=year,
                           guards={"cached": True})
-    result = compute(population, year=year, reform=reform, sample=sample, vintage=vintage)
+    result = compute(population, year=year, reform=reform, sample=sample, vintage=vintage,
+                     uprating_key=uprating_key)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     _make_room(vintage)
     result.households.write_parquet(path)

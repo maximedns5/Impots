@@ -25,6 +25,8 @@ START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
                         spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
 GROWTH = {"name": "Croissance réelle 1 %, prix 2 %", "real": 0.01, "prices": 0.02}
 HELD = {"name": "Taux implicite tenu à son niveau de 2025", "kind": "implicite_tenu"}
+#: The wage index the first year's population is aged with (D-225); prices are GROWTH's.
+WAGES = {"wage": 0.03, "source": "3 % ronds, le rythme du PIB nominal du scénario"}
 #: A barème with a higher top rate: the ETI rows claim `ir_bareme`, so the θ box moves.
 TOP_RATE_50 = {"ir_bareme": [
     {"threshold": 0, "rate": 0.00}, {"threshold": 11497, "rate": 0.11},
@@ -35,7 +37,7 @@ TOP_RATE_50 = {"ir_bareme": [
 def _payload(**overrides) -> dict:
     payload = {"reform": {"abattement_pensions_plafond": 0.0},
                "spending": {"rule": "gele_en_volume"}, "growth": GROWTH, "rate": HELD,
-               "horizon": 10, "theta": {"common": 0.5}}
+               "horizon": 10, "theta": {"common": 0.5}, "uprating": WAGES}
     payload.update(overrides)
     return payload
 
@@ -61,10 +63,10 @@ def priced(monkeypatch) -> list:
     is asked for, and the requests it received."""
     seen: list = []
 
-    def stub(request, *, macro=False):
+    def stub(request, *, uprating, macro=False):
         seen.append(request)
         # A 5 Md€ income-tax cut, and a transfer the loop cannot read, when asked for.
-        return SimpleNamespace(cost=5e9, note="sous-échantillon de 20 000",
+        return SimpleNamespace(cost=5e9, view="vieillie", note="sous-échantillon de 20 000",
                                inputs=_households() if request.behavioural else None,
                                impulse={"impot_sur_le_revenu": 5e9} if macro else None,
                                uncovered={"rsa": "transfert"} if macro else {})
@@ -146,7 +148,7 @@ def test_a_theta_out_of_range_or_for_an_unknown_row_is_refused_by_name(
     assert priced == []
 
 
-@pytest.mark.parametrize("missing", ["spending", "growth", "rate", "horizon"])
+@pytest.mark.parametrize("missing", ["spending", "growth", "rate", "horizon", "uprating"])
 def test_no_hypothesis_has_a_default(client, priced, missing: str) -> None:
     payload = _payload()
     del payload[missing]
@@ -296,3 +298,90 @@ def test_an_unreadable_macro_store_the_loop_does_not_need_leaves_the_indices_abs
     got = _indices(response.json())
     assert "illisible" in got["consommation"]["reason"]
     assert "introuvable" in got["emploi_marchand"]["reason"]
+
+
+# --------------------------------------------------------------------------- #
+# The view the first year is priced in: the aged population (D-225)
+# --------------------------------------------------------------------------- #
+def test_the_first_year_is_priced_on_the_aged_population_and_says_so(
+        client, monkeypatch) -> None:
+    """The real `_price_first_year`, its pass stubbed one layer down: the population is
+    aged from 2024 to 2026 before the pass — wages and unemployment on the declared wage
+    index, pensions and rents on the growth scenario's prices, nothing else — and the
+    response names that view, in its own field and in its note, with the caveat of an
+    aged population. The command's headline is the same view (D-216)."""
+    import polars as pl
+
+    population = pl.DataFrame({
+        "person_id": [0, 1], "household_id": ["h0", "h1"], "weight": [500.0, 700.0],
+        "age": [40, 70], "salaire_brut_annuel": [30_000.0, 0.0],
+        "chomage_annuel": [1_000.0, 0.0], "pension_annuelle": [0.0, 20_000.0],
+        "loyer_mensuel": [600.0, 0.0]})
+    passed: list = []
+
+    def run(request, frame):
+        passed.append(frame)
+        return (SimpleNamespace(households=None),
+                SimpleNamespace(reform_cost=5e9, deciles=[]))
+
+    monkeypatch.setattr(main, "_population_frame", lambda: population)
+    monkeypatch.setattr(main, "_run_population", run)
+    monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+    response = client.post("/predictif/simulate", json=_payload())
+    assert response.status_code == 200, response.text
+    (aged,) = passed
+    wages, prices = 1.03 ** 2, 1.02 ** 2
+    for column, factor in (("salaire_brut_annuel", wages), ("chomage_annuel", wages),
+                           ("pension_annuelle", prices), ("loyer_mensuel", prices)):
+        assert aged[column].to_list() == pytest.approx(
+            [v * factor for v in population[column].to_list()]), column
+    for column in ("person_id", "household_id", "weight", "age"):
+        assert aged[column].to_list() == population[column].to_list(), column
+    body = response.json()
+    assert body["mechanical_first_year_eur"] == 5e9
+    assert body["population_view"] == "vieillie"
+    note = body["population_note"]
+    assert "Vue « vieillie »" in note and "2026" in note and "D-216" in note
+    assert "n'est plus calibrée" in note and WAGES["source"] in note
+
+
+@pytest.mark.parametrize("uprating, needle", [
+    ({"wage": 0.03, "source": "  "}, "sans source"),
+    ({"wage": 3.0, "source": "salaires à 3 % par an"}, "taux annuel"),
+])
+def test_a_wage_index_without_a_source_or_not_annual_is_refused_before_the_pass(
+        client, priced, uprating: dict, needle: str) -> None:
+    """The refusal is `Uprating`'s own, which says why; 3.0 is 300 % a year, the classic
+    slip for « 3 % »."""
+    response = client.post("/predictif/simulate", json=_payload(uprating=uprating))
+    assert response.status_code == 422 and needle in response.json()["detail"]
+    assert priced == []
+
+
+def test_the_behavioural_pass_on_the_aged_population_keys_its_caches_on_the_uprating(
+        client, monkeypatch) -> None:
+    """The EMTR caches are keyed on vintage, year, sample and reform: the aged frame
+    alone does not tell them it is aged, and `/population/simulate` caches the same
+    reform, year and sample on the population as built. The key must say it (D-225)."""
+    import polars as pl
+
+    from impots.behavioural import emtr as emtr_module
+
+    population = pl.DataFrame({
+        "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
+        "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
+        "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
+    keys: list = []
+
+    def cached(frame, vintage, **kwargs):
+        keys.append(kwargs.get("uprating_key"))
+        return SimpleNamespace(with_earnings=pl.DataFrame())
+
+    monkeypatch.setattr(main, "_population_frame", lambda: population)
+    monkeypatch.setattr(main, "_run_population", lambda request, frame: (
+        SimpleNamespace(households=None), SimpleNamespace(reform_cost=5e9, deciles=[])))
+    monkeypatch.setattr(emtr_module, "cached", cached)
+    monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+    response = client.post("/predictif/simulate", json=_payload(behavioural=True))
+    assert response.status_code == 200, response.text
+    assert keys == ["w+0.030000_p+0.020000_b2024"]
