@@ -1,0 +1,82 @@
+# R&D and the CIR — §6.4, opened as an ILLUSTRATIVE channel (D-222).
+#
+# Bozio, Cottet and Py (rapport IPP n° 22, mars 2019) compare, in the enquête R&D, firms
+# that used the CIR both before and after the 2008 reform with firms that never used it,
+# and turn the rise of their R&D into a multiplier: euros of R&D per euro of CIR. Their
+# preferred specifications print 1,31 to 1,52 (tableau 5.1); their conclusion keeps « entre
+# 0.8 et 1.4 dans les intervalles de confiance les plus crédibles » (p. 77). The row is
+# that range, centred on its middle; `behavioural.ipp22` reads it out of the PDF and a
+# test holds the row against the reading (D-026).
+#
+# HOW THE CHANNEL USES IT. The multiplier's denominator is the OBSERVED change in the CIR
+# of the treated firms — the mean of 2008-2011 minus that of 2004-2007 (tableau 4.2) — so
+# it already contains the créance the extra R&D earned. The créance this repository
+# re-prices is static, at fixed R&D. For a group of declarants with a static change Δc
+# and a marginal rate τ, the extra R&D R solves R = m × (Δc + τ R):
+#     R = m Δc / (1 − m τ),  and the induced créance is τ R.
+# Two groups, from the GECIR's tableau 04: the declarants below the threshold (marginal
+# rate the full one) and those above it (marginal rate the reduced one). One euro of
+# eligible expenses is taken for one euro of R&D of the enquête. Refused when m τ ≥ 1.
+
+parameters:
+  rd_cir_multiplier:
+    value: {central: 1.1, low: 0.8, high: 1.4, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Un multiplicateur plus grand est une réponse plus forte de la R&D au crédit.
+    applies_to: >
+      Euros de dépense de R&D privée par euro de CIR observé : entreprises de l'enquête
+      R&D ayant eu recours au CIR au moins une fois en 2004-2007 et au moins une fois en
+      2008-2011, contre des entreprises faisant de la R&D sans jamais y recourir. Le
+      dénominateur est la variation observée du CIR (moyenne 2008-2011 moins moyenne
+      2004-2007, GECIR), créance de la R&D induite comprise. Marge intensive seulement :
+      le taux de recours est tenu fixe, et les nouveaux entrants, dont la créance est
+      largement un effet d'aubaine, ne sont pas couverts.
+    responds_to_knobs: [cir_taux, cir_taux_au_dela]
+    support:
+      estimated_on: >
+        La seule réforme de 2008, un paquet : fin de la part en accroissement et du
+        plafond, crédit en volume à 30 % jusqu'à 100 M€ et 5 % au-delà, taux majorés des
+        premières années pour les nouveaux entrants, simplification ; quatre années
+        après réforme au plus, une hausse seulement, la crise de 2008 et le
+        remboursement en 2009-2010 des stocks de créances des millésimes antérieurs dans
+        la même fenêtre. Le taux de 30 % lui-même n'a jamais varié dans l'échantillon :
+        toute application à une variation de taux extrapole, d'où un support nul.
+      max_variation_graded_in_support: 0.0
+    source:
+      citation: >
+        Bozio, Cottet et Py, « Évaluation d'impact de la réforme 2008 du crédit impôt
+        recherche », rapport IPP n° 22, mars 2019 : conclusion, p. 77 ; tableau 5.1, p. 63
+        (stratégie préférée, p. 6) ; tableau 5.2, p. 65 ; note du tableau 4.2, p. 48.
+      url: https://www.ipp.eu/wp-content/uploads/2019/03/evaluation-impact-reforme-credit-impot-recherche-ipp-mars-2019.pdf
+      vintage: "2019"
+      quote: >-
+        cela implique des estimations du multiplicateur du crédit d'impôt recherche
+        légèrement supérieures à 1, entre 0.8 et 1.4 dans les intervalles de confiance
+        les plus crédibles
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-19
+      ref: D-222
+      note: >
+        Les valeurs du tableau 5.1 sont exactes, mais le brouillon appliquait le
+        multiplicateur à la créance statique alors que son dénominateur est la variation
+        observée, créance induite comprise : il sous-estimait la R&D et le coût induit
+        d'un facteur 1,5 à 1,85. Réparations : la formule du point fixe par groupe de
+        déclarants, la garde m τ < 1, la fourchette ramenée à celle de la conclusion
+        (0,8 à 1,4 au lieu de l'enveloppe 0,69 à 2,30, dont le haut faisait exploser la
+        formule), le groupe traité défini par son recours et non par un numéro
+        d'approche, la citation complétée, le paquet de 2008 décrit.
+    confidence: low
+    note: >
+      Ce que la ligne ne porte pas. Les multiplicateurs des tableaux sont une constante
+      fois l'effet estimé, constante non documentée et dont l'incertitude est ignorée ;
+      les intervalles de la colonne 3 des tableaux 5.1 et 5.2 sont mal imprimés. Les
+      tendances antérieures, signalées par les auteurs (p. 57-58), ne sont pas traitées
+      dans les régressions. L'effet sur l'emploi de R&D est faible (5 à 10 %, parfois non
+      significatif). Aucune hétérogénéité par taille n'est estimée pour la dépense de R&D
+      (le résultat sur les plus de 250 salariés de la CNEPI 2021 porte sur la performance,
+      IPP n° 33). La déduction d'IS sur la R&D induite n'est pas comptée. Le « un euro de
+      CIR, un euro de R&D » de la DG Trésor (Trésor-Éco n° 290) cite plusieurs études,
+      dont celle-ci.

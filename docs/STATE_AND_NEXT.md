@@ -1,7 +1,19 @@
-# State of the project, and the directions open — 2026-10-19 (Phase 9, M5 under way)
+# State of the project, and the directions open — 2026-10-19 (Phase 9, M5 done)
 
-The fourth 2026-10-19 update adds D-221, M5's second step. France Stratégie's 2023
-final report on the capital-tax reforms, which M0 could not reach (its address moved), is
+The fifth 2026-10-19 update adds D-222, M5's last step. Two MESR GECIR publications are
+now in the manifest, and D-154's gate on the CIR passes: the CIR is priced, with a banner,
+on the créance of the 2019 millésime, 30 % below the 100 M€ threshold and 5 % above,
+rebuilt from tableau 04 to within 0,09 % of the published 6 785 M€. A créance is not a
+year's receipts, so the CIR has its own block in `/entreprises/simulate`, with the Voies
+et Moyens dépense fiscale beside it, and stays out of `reform_cost`. §6.4 opens as C9, an
+illustrative R&D index on the IPP's report n° 22 (« entre 0.8 et 1.4 »): an adversarial
+pass returned SCOPE_PROBLEM, and the multiplier is now applied as a fixed point, since its
+denominator already holds the induced créance, with m τ < 1 guarded. A cut of the full
+rate to 25 % lowers the créance by 1 114,9 M€ and R&D by about 1,66 Md€. The
+trajectory's closed-channel reasons for R&D and for company creations (the latter false
+since D-221) now say why both stay out of it. The fourth 2026-10-19 update added D-221, M5's second
+step. France Stratégie's 2023 final report on the capital-tax reforms, which M0 could
+not reach (its address moved), is
 manifested and read: it quantifies nothing for the IS and investment, which stay closed
 with that reason. Its commissioned IPP study (report n° 47) does measure how company
 creations respond to the taxation of profits, and §6.3 opens as C8: an illustrative
@@ -106,8 +118,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **222 decision
-entries**, D-000 to D-221, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **223 decision
+entries**, D-000 to D-222, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -454,8 +466,12 @@ download list.
 2. **Phase 9, M5** (`docs/PHASE9_SPEC.md` §6): the new channels one by one. Labour
    supply is done (D-220, C7, CSG on earnings only) and company creations opened as an
    illustrative index (D-221, C8, IS normal rate only); investment stays closed for the
-   IS (D-221). Left: R&D (§6.4: the 2021 CIR evaluations to read, GECIR still missing,
-   D-154); dividends (§6.5) stay closed. M1 to M4 are done (D-215 to D-219); M4 left
+   IS (D-221). R&D opened as an illustrative index (D-222, C9, CIR rates only), and the
+   CIR is priced on the créance flow with its banner. Dividends (§6.5) stay closed. Every
+   §6 channel has its verdict; next is M6 (§7 to §9: indices, the explorer at a fixed θ,
+   containment and the worked example, the guard sweep), whose gate is the owner's
+   `make full`. Left for C9: the take-up margin, new entrants, the carried-forward stock,
+   and the CNEPI's 2021 evaluation (IPP report n° 33), not manifested. M1 to M4 are done (D-215 to D-219); M4 left
    the transfers and the IS closed. Two
    decisions from M3 are the owner's: whether the page should show both persistence
    scenarios side by side rather than ask for one (§4.5), and whether to reopen the

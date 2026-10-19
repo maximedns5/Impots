@@ -1534,6 +1534,28 @@ class FirmMeta(BaseModel):
     limitations: list[str]
 
 
+class FirmCir(BaseModel):
+    """The CIR, priced on the créance flow of a GECIR millésime (D-222). Its own block,
+    never summed into `reform_cost`: a créance is paid over five or six years, and the
+    budget's dépense fiscale for a year is printed beside it, not mixed in."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    millesime: int
+    rates: dict[str, float]
+    rates_reform: dict[str, float]
+    creance_publiee_eur: float
+    """The GECIR total; `creance_eur` is the same rebuilt from the base split."""
+    creance_eur: float
+    creance_reform_eur: float
+    delta_creance_eur: float
+    """Positive: the State grants more credit. A cost, in créance."""
+    depense_fiscale_eur: dict[int, float]
+    """Voies et Moyens' dépense fiscale n° 200302 by budget year — another object."""
+    banner: str
+    sources: list[str]
+
+
 class FirmResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -1545,6 +1567,7 @@ class FirmResponse(BaseModel):
     cells: list[FirmCell] = Field(default_factory=list)
     by_size: list[FirmSizeRow] = Field(default_factory=list)
     behavioural: Behavioural | None = None
+    cir: FirmCir | None = None
     timings: dict[str, float] = Field(default_factory=dict)
 
 

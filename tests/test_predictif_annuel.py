@@ -103,7 +103,7 @@ def test_the_report_names_its_theta_and_says_nothing_reads_it() -> None:
     the statement that the mechanical view does not read it."""
     payload = _build(annuel.price_years(YEARS, _stub, basis_for=lambda y: "legislated"),
                      theta=Theta(common=0.3)).payload()
-    assert len(payload["theta"]) == 13 and set(payload["theta"].values()) == {0.3}  # D-221
+    assert len(payload["theta"]) == 14 and set(payload["theta"].values()) == {0.3}  # D-222
     assert payload["theta_applied"] is False and "θ" in payload["absent"]
     assert set(payload["closed"]) == {*chaine.CLOSED, *chaine.MACRO_CHANNELS}
 

@@ -79,6 +79,15 @@ class FirmReformSpec(BaseModel):
     c3s_abattement: Annotated[float, Field(ge=0, le=1_000_000_000)] | None = None
     cvae_taux_max: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     cvae_degrevement: Annotated[float, Field(ge=0, le=1_000_000)] | None = None
+    cir_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = Field(
+        default=None,
+        description="The CIR research rate on each declarant's expenses up to 100 M€. "
+        "Not a parameter of the firm system: priced on the créance of a GECIR millésime "
+        "by `impots.agregats.cir`, with its banner, and never inside `reform_cost` "
+        "(D-222).")
+    cir_taux_au_dela: Annotated[float, Field(ge=0.0, le=1.0)] | None = Field(
+        default=None,
+        description="The CIR research rate on the expenses above 100 M€; same route.")
     cebge_seuils_et_taux: list[CebgeTranche] | None = Field(
         default=None,
         max_length=len(CEBGE_TRANCHE_PATHS),

@@ -211,7 +211,7 @@ def test_a_theta_for_a_row_the_store_does_not_hold_is_refused() -> None:
 def test_the_result_lists_every_open_row_even_in_the_mechanical_view() -> None:
     result = _run(_carried(5e9), theta=Theta(rows={"eti_all": 0.2}, common=0.7))
     assert sorted(result.theta) == sorted(result.open_rows)
-    assert len(result.open_rows) == 13  # + four labour rows (D-220), one creation row (D-221)
+    assert len(result.open_rows) == 14  # + D-220's four rows, D-221's and D-222's
     assert result.theta["eti_all"] == 0.2 and result.theta["eti_top_decile"] == 0.7
     assert "θ" in result.absent and not result.theta_applied
     assert any("non lus" in line for line in result.lines())

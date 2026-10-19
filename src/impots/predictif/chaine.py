@@ -90,7 +90,9 @@ MACRO_CHANNELS = ("rétroaction PIB → recettes", "multiplicateur macro")
 #: Guard 2: a trajectory whose closed channel lost its reason refuses to exist — a closed
 #: channel shown without one reads as a channel that does not matter. Labour supply left
 #: this list in D-220: it is C7 now, with four rows and their θ, open for the CSG on
-#: earnings and saying why it does not open for anything else.
+#: earnings and saying why it does not open for anything else. Firm creations and R&D
+#: stay on it although C8 and C9 are open: they are indices of the firm layer, and the
+#: chain prices the population's reforms (D-221, D-222).
 CLOSED: dict[str, str] = {
     "IS et investissement des entreprises": (
         "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; "
@@ -106,8 +108,13 @@ CLOSED: dict[str, str] = {
         "centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans "
         "et n'ont ni ligne de solde ni centre français (§5, D-214, D-219)."),
     "créations d'entreprises": (
-        "aucune évaluation publiée de leur réponse aux impôts au manifeste (§6.3)."),
-    "R&D et CIR": "aucun fichier GECIR ni MESR au manifeste (D-154, §6.4).",
+        "C8 est un indice illustratif de la couche entreprises, en points de taux de "
+        "création de sociétés, jamais une recette ; la trajectoire chiffre les réformes "
+        "de la population, et le taux d'IS n'en est pas une (§6.3, D-221)."),
+    "R&D et CIR": (
+        "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais "
+        "une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une "
+        "année, et la trajectoire chiffre les réformes de la population (§6.4, D-222)."),
     "dividendes": "la population ne porte aucun revenu du capital (§6.5).",
 }
 ABSENT_GRID = ("Une seule combinaison de scénarios : chaque autre combinaison est un autre "

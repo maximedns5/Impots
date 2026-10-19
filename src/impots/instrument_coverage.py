@@ -52,6 +52,9 @@ class Instrument:
     reason: str = ""
     note: str = ""
     already_live: bool = False   # « déjà en place » before Phase 8
+    added_by: str = ""
+    """The D-entry that priced it AFTER Phase 8, if one did: a row priced later must not
+    be counted as what Phase 8 added (D-222, the CIR)."""
 
     def __post_init__(self) -> None:
         if self.bucket not in BUCKETS:
@@ -146,12 +149,15 @@ ENTREPRISES: tuple[Instrument, ...] = (
                prices_with=("knob:allegement_general_plafond", "knob:bandeau_maladie_taux",
                             "plafond:bandeau_famille_plafond"),
                already_live=True),
-    Instrument("cir", "CIR", "entreprises", "C",
-               gate="MESR GECIR — reprise sur créance, distinction créance/décaissement",
-               note="AUCUNE publication GECIR n'est au manifeste : le gate ne peut pas "
-                    "être tranché ici, ni vers « chiffré avec bannière » ni vers D. Le "
-                    "stock de reports est la même classe NON MESURÉE que la L4 de la "
-                    "phase 7."),
+    Instrument("cir", "CIR", "entreprises", "B",
+               prices_with=("firm:cir_taux", "firm:cir_taux_au_dela"),
+               added_by="D-222",
+               note="Chiffré AVEC BANNIÈRE sur le flux de créance du millésime GECIR 2019 "
+                    "(semi-définitif), au taux plein sous le seuil de dépenses par "
+                    "déclarant et au taux réduit au-delà : la ventilation reconstruit la "
+                    "créance publiée à 0,09 % près. La dépense fiscale de Voies et Moyens "
+                    "est montrée à côté, jamais à la place ; le stock de reports reste NON "
+                    "MESURÉ."),
     Instrument("taxe_sur_les_salaires", "Taxe sur les salaires", "entreprises", "B",
                prices_with=("agregats:taxe_sur_les_salaires",),
                note="L'incidence sectorielle (banques, santé, associations) se STATUE en "
@@ -204,4 +210,9 @@ def share_priced() -> float:
 
 def new_in_phase_8() -> tuple[Instrument, ...]:
     """What this phase added, as opposed to what it inherited and re-declared."""
-    return tuple(i for i in priced() if not i.already_live)
+    return tuple(i for i in priced() if not i.already_live and not i.added_by)
+
+
+def added_after_phase_8() -> tuple[Instrument, ...]:
+    """Priced by a later D-entry, each naming it."""
+    return tuple(i for i in priced() if i.added_by)

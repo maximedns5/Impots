@@ -6,9 +6,9 @@ Inventaire transcrit de docs/PHASE8_SPEC.md §2.3.1–§2.3.3.
 
 ## Le chiffre
 
-Sur **30 instruments** de l'inventaire, **16** sont chiffrés aujourd'hui — soit **53%**. **9** l'ont été par cette phase ; le reste était déjà en place.
+Sur **30 instruments** de l'inventaire, **17** sont chiffrés aujourd'hui — soit **57%**. **9** l'ont été par la phase 8, **1** depuis (D-222) ; le reste était déjà en place.
 
-**6 lignes sont classées sans être chiffrées**, et c'est la distinction qui décide si ce document dit la vérité. Classer la TVA et les quatre accises en seau B dit où elles iront, pas qu'elles y sont : leurs assiettes ne sont pas au manifeste (`docs/M2_ANCHORS.md`). Les compter comme chiffrées gonflerait la revendication de 53% à 73%, ce qui est exactement la surestimation que §2.4 existe pour empêcher.
+**6 lignes sont classées sans être chiffrées**, et c'est la distinction qui décide si ce document dit la vérité. Classer la TVA et les quatre accises en seau B dit où elles iront, pas qu'elles y sont : leurs assiettes ne sont pas au manifeste (`docs/M2_ANCHORS.md`). Les compter comme chiffrées gonflerait la revendication de 57% à 77%, ce qui est exactement la surestimation que §2.4 existe pour empêcher.
 
 ## Ce que ce chiffre ne dit pas, et pourquoi
 
@@ -24,8 +24,8 @@ Compter des lignes met un droit de timbre au même poids qu'une contribution à 
 | bucket | sens | lignes |
 |---|---|---|
 | **A** | chiffré sur la couche microsimulation | 8 |
-| **B** | chiffré sur la couche agrégée (§2.2) | 14 |
-| **C** | sous gate — le gate est nommé | 6 |
+| **B** | chiffré sur la couche agrégée (§2.2) | 15 |
+| **C** | sous gate — le gate est nommé | 5 |
 | **D** | refusé — la raison est affichée | 2 |
 
 ## §2.3.1 — Produits
@@ -63,7 +63,7 @@ Compter des lignes met un droit de timbre au même poids qu'une contribution à 
 | IS (taux normal/réduit, CS, CEBGE) *(déjà en place)* | **A** | `firm:is_taux_normal`, `firm:is_taux_reduit`, `firm:cs_taux`, `firm:cebge_seuils_et_taux` |  |
 | CVAE (jusqu'en 2030), C3S *(déjà en place)* | **A** | `firm:cvae_taux_max`, `firm:c3s_taux`, `firm:c3s_abattement` |  |
 | Cotisations et allègements *(déjà en place)* | **A** | `knob:allegement_general_plafond`, `knob:bandeau_maladie_taux`, `plafond:bandeau_famille_plafond` |  |
-| CIR | **C** | gate : MESR GECIR — reprise sur créance, distinction créance/décaissement | AUCUNE publication GECIR n'est au manifeste : le gate ne peut pas être tranché ici, ni vers « chiffré avec bannière » ni vers D. Le stock de reports est la même classe NON MESURÉE que la L4 de la phase 7. |
+| CIR *(depuis, D-222)* | **B** | `firm:cir_taux`, `firm:cir_taux_au_dela` | Chiffré AVEC BANNIÈRE sur le flux de créance du millésime GECIR 2019 (semi-définitif), au taux plein sous le seuil de dépenses par déclarant et au taux réduit au-delà : la ventilation reconstruit la créance publiée à 0,09 % près. La dépense fiscale de Voies et Moyens est montrée à côté, jamais à la place ; le stock de reports reste NON MESURÉ. |
 | Taxe sur les salaires | **B** | `agregats:taxe_sur_les_salaires` | L'incidence sectorielle (banques, santé, associations) se STATUE en composition depuis des sources publiées ; elle ne se modélise pas en distribution. |
 | Versement mobilité | **B** | `agregats:versement_mobilite` | Multiplicateur uniforme ; les taux par AOM sont D — pas de simulateur local. |
 | DMTO | **B** | `agregats:dmto` |  |

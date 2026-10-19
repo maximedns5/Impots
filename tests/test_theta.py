@@ -218,6 +218,8 @@ CASES = {
     **{key: (channels.labour_supply, CSG, LABOUR, 0) for key in channels.C7_KEYS},
     "firm_creation_profit_tax": (channels.firm_creations, Reform(is_taux_normal=0.27),
                                  {"is_rate_change_points": 2.0}, 0),
+    "rd_cir_multiplier": (channels.rd_response, Reform(cir_taux=0.25),
+                          {"cir_margins": ((-1_009.9e6, 0.25), (-105e6, 0.05))}, 0),
 }
 
 
