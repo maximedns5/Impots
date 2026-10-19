@@ -33,14 +33,15 @@ def _row(i: ic.Instrument) -> str:
         what = f"gate : {i.gate}"
     else:
         what = "refus"
-    live = " *(déjà en place)*" if i.already_live else ""
+    live = (" *(déjà en place)*" if i.already_live
+            else f" *(depuis, {i.added_by})*" if i.added_by else "")
     detail = i.reason or i.note
     return f"| {i.label}{live} | **{i.bucket}** | {what} | {detail} |"
 
 
 def render() -> str:
     priced, unbuilt = ic.priced(), ic.classified_but_unbuilt()
-    added = ic.new_in_phase_8()
+    added, later = ic.new_in_phase_8(), ic.added_after_phase_8()
     lines = [
         "# Couverture des instruments — ce que ce laboratoire sait chiffrer",
         "",
@@ -58,7 +59,10 @@ def render() -> str:
         "",
         f"Sur **{len(ic.INVENTORY)} instruments** de l'inventaire, **{len(priced)}** "
         f"sont chiffrés aujourd'hui — soit **{ic.share_priced():.0%}**. "
-        f"**{len(added)}** l'ont été par cette phase ; le reste était déjà en place.",
+        f"**{len(added)}** l'ont été par la phase 8"
+        + (f", **{len(later)}** depuis ({', '.join(i.added_by for i in later)})"
+           if later else "")
+        + " ; le reste était déjà en place.",
         "",
         f"**{len(unbuilt)} lignes sont classées sans être chiffrées**, et c'est la "
         f"distinction qui décide si ce document dit la vérité. Classer la TVA et les "

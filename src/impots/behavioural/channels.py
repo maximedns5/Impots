@@ -789,6 +789,86 @@ def firm_creations(
     )
 
 
+# --------------------------------------------------------------------------- #
+# C9 — R&D and the CIR: §6.4, opened on the IPP's credible range (D-222)
+# --------------------------------------------------------------------------- #
+C9_KEYS = ("rd_cir_multiplier",)
+
+NO_CIR_KNOB = (
+    "Aucun levier de cette réforme ne déplace un taux du CIR-recherche : la seule réponse "
+    "de la R&D mesurée l'a été sur la réforme de 2008 du crédit."
+)
+
+
+def rd_response(
+    store: Store,
+    reform: Any,
+    *,
+    cir_margins: tuple[tuple[float, float], ...] | None = None,
+    draws: int = 1,
+    rng: Any = None,
+    **_: Any,
+) -> ChannelResult:
+    """The extra private R&D a CIR rate change would bring, and the créance it earns.
+
+    AN INDEX OF R&D, NEVER REVENUE — and the induced créance is reported beside it, never
+    in the revenue band: a créance is the CIR's own unit, kept out of `reform_cost` for
+    the same reason the mechanical créance is (D-222).
+
+    `cir_margins` is ((Δc, τ), ...) per group of declarants: the créance change at fixed
+    R&D, and the rate the group's next euro of research is credited at. The multiplier m
+    is per euro of OBSERVED CIR, induced créance included, so the group's extra R&D solves
+    R = m (Δc + τ R): R = m Δc / (1 − m τ), with τ R of induced créance.
+
+    Worked example, pinned in the tests: 25 % instead of 30 % for the declarants below the
+    threshold is Δc = −1 009,9 M€ at τ = 0,25; at m = 1,1, R = 1,1 × −1 009,9 / (1 −
+    0,275) = −1 532,3 M€ of R&D, and −383,1 M€ of induced créance.
+    """
+    applicable = _claimed(store, reform, C9_KEYS)
+    if not applicable:
+        return ChannelResult(key="c9_rd", label="R&D et CIR", applies=False,
+                             unit="EUR de R&D", message=NO_CIR_KNOB)
+    if C9_KEYS[0] not in store:
+        return ChannelResult(
+            key="c9_rd", label="R&D et CIR", applies=False, unit="EUR de R&D",
+            message=f"Aucune réponse utilisable : {C9_KEYS[0]} n'a pas survécu à la "
+                    f"vérification des sources.",
+            diagnostics={"missing_parameters": list(C9_KEYS)})
+    if cir_margins is None:
+        return _unsupplied("c9_rd", "R&D et CIR", "EUR de R&D",
+                           "la variation de créance du CIR par groupe de déclarants")
+    multiplier = store[C9_KEYS[0]].draw(rng, draws)
+    worst = max(tau for _, tau in cir_margins) * float(np.max(multiplier))
+    if worst >= 1.0:
+        return ChannelResult(
+            key="c9_rd", label="R&D et CIR", applies=False, unit="EUR de R&D",
+            message=f"Taux marginal trop haut pour la formule : m × τ atteint {worst:.2f}. "
+                    f"À partir de 1, chaque euro de R&D induite s'autofinancerait par sa "
+                    f"propre créance et la réponse serait infinie — refusé, pas tronqué.",
+            diagnostics={"m_times_tau": round(worst, 4)})
+    rd = np.zeros(draws)
+    induced = np.zeros(draws)
+    for delta, tau in cir_margins:
+        extra = multiplier * delta / (1.0 - multiplier * tau)
+        rd = rd + extra
+        induced = induced + tau * extra
+    return ChannelResult(
+        key="c9_rd", label="R&D et CIR", applies=True, draws=rd, unit="EUR de R&D",
+        message="Indice illustratif : la R&D des entreprises qui recouraient déjà au CIR, "
+                "par euro de créance, sur la seule réforme de 2008 ; taux de recours tenu "
+                "fixe. La créance induite est une créance, comptée à part du coût.",
+        diagnostics={
+            "knobs": applicable,
+            "static_creance_change_eur": round(sum(d for d, _ in cir_margins), 2),
+            "induced_creance_eur": {
+                "p10": round(float(np.percentile(induced, 10)), 2),
+                "p50": round(float(np.percentile(induced, 50)), 2),
+                "p90": round(float(np.percentile(induced, 90)), 2)},
+            "not_counted": "la déduction d'IS sur la R&D induite ; les nouveaux entrants",
+        },
+    )
+
+
 CHANNELS = (
     ("c1_eti", C1_KEYS),
     ("c2_employment", C2_KEYS),
@@ -798,4 +878,5 @@ CHANNELS = (
     ("c6_disclosure", C6_KEYS),
     ("c7_labour_supply", C7_KEYS),
     ("c8_creations", C8_KEYS),
+    ("c9_rd", C9_KEYS),
 )

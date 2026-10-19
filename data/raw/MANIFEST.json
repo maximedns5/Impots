@@ -1413,6 +1413,42 @@
       "licence": "HAL (halshs-04439415), accès ouvert",
       "description": "Bach, Bozio, Fize, Guillouzouic et Malgouyres, « Évaluation des réformes de la fiscalité du capital — Effets sur la création d'entreprises, l'expatriation et la circulation de l'épargne », rapport IPP n° 47, octobre 2023 (136 p.). Tableau 2.2 : estimations statiques en différences de différences du taux de création de sociétés selon l'exposition sectorielle aux réformes PFU, IS et IFI. Source du canal des créations de sociétés (D-221).",
       "quarantined": false
+    },
+    "mesr_gecir_cir_2019_semi_definitif_publication_longue.pdf": {
+      "url": "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2022-12/le-cr-dit-d-imp-t-recherche-en-2019-semi-d-finitif---publication-longue-25903.pdf",
+      "sha256": "b36bf74a9d3f64eb2393e53cdb9ea8dd0a3be70bd8d611bc697c5e301551470d",
+      "bytes": 1773249,
+      "downloaded": "2026-10-19",
+      "licence": "MESR — publication statistique publique",
+      "description": "MESR-DGRI, « Le crédit d'impôt recherche en 2019 — données statistiques » (semi-définitives, base GECIR de juin 2022), publication longue de 26 pages. Tableau 01 : dépenses et créance par type de dépenses ; tableau 04 : le seuil des 100 M€, dépenses et créance de part et d'autre ; encadré « Créance et dépense fiscale » : la créance d'un millésime n'est pas la dépense fiscale d'une année. Base du CIR chiffré sur le flux de créance, porte de D-154 (D-222).",
+      "quarantined": false
+    },
+    "mesr_gecir_cir_2021_provisoire.pdf": {
+      "url": "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2023-11/le-cr-dit-d-imp-t-recherche-en-2021---provisoire-30075.pdf",
+      "sha256": "b58729e7b5c76ae701822903ec4bc14771d03ff9d8fcad2d66fd1c8c43027076",
+      "bytes": 842789,
+      "downloaded": "2026-10-19",
+      "licence": "MESR — publication statistique publique",
+      "description": "MESR-DGRI, « Le crédit d'impôt recherche (CIR) en 2021 (données provisoires) », août 2023, 4 pages : 23 652 M€ de dépenses de recherche, 6 859 M€ de créance recherche. Ne publie pas la ventilation autour du seuil de 100 M€ ; sert de contre-vérification du millésime 2019 (D-222).",
+      "quarantined": false
+    },
+    "ipp_rapport_22_2019_bozio_cottet_py_cir.pdf": {
+      "url": "https://www.ipp.eu/wp-content/uploads/2019/03/evaluation-impact-reforme-credit-impot-recherche-ipp-mars-2019.pdf",
+      "sha256": "328725b0bc90cb477140b88f5d6f28e1545718be2ae017245bf9346e6e232e9c",
+      "bytes": 671009,
+      "downloaded": "2026-10-19",
+      "licence": "IPP — rapport public, accès ouvert",
+      "description": "Bozio, Cottet et Py, « Évaluation d'impact de la réforme 2008 du crédit impôt recherche », rapport IPP n° 22, mars 2019 (94 p.), étude sous l'avis CNEPI de 2019. Tableaux 5.1 et 5.2 : effet de la réforme de 2008 sur la dépense de R&D et multiplicateur du crédit d'impôt avec ses intervalles de confiance (D-222).",
+      "quarantined": false
+    },
+    "tresor_eco_290_2021_reforme_cir_2008.pdf": {
+      "url": "https://www.tresor.economie.gouv.fr/Articles/7e114a21-4f00-4d51-8e58-523b99ae76aa/files/0ab81d2a-0f49-42d5-8101-85c5a37c019d",
+      "sha256": "342669cf356f62b3af6f47535ae428c631e949a6983a2cdbcaaae54845b86a54",
+      "bytes": 281755,
+      "downloaded": "2026-10-19",
+      "licence": "DG Trésor — publication publique",
+      "description": "Le Gall, Meignan et Roulleau, « Évaluation de la réforme du Crédit Impôt Recherche de 2008 », Trésor-Éco n° 290, septembre 2021 : « un euro de CIR génère un euro de dépense de R&D additionnelle » (renvoi à la CNEPI 2019) et l'encadré sur la CNEPI 2021. Contre-vérification de la ligne R&D (D-222).",
+      "quarantined": false
     }
   }
 }

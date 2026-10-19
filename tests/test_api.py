@@ -621,11 +621,12 @@ def test_c3s_is_a_turnover_tax_and_its_abattement_shows(client: TestClient) -> N
 def test_firm_response_carries_no_firm_level_output(client: TestClient) -> None:
     """§4: sector x size only. Every financial is a draw inside a published cell, so
     a named firm or a top-tail row would be the least reliable number in the model
-    dressed up as the most interesting one."""
+    dressed up as the most interesting one. The CIR block (D-222) is national, read out
+    of the GECIR publication, and its own test pins its fields."""
     body = client.post("/entreprises/simulate", json=IS_30_REFORM).json()
     assert set(body) == {
         "meta", "totals", "totals_reform", "deltas", "reform_cost",
-        "cells", "by_size", "behavioural", "timings",
+        "cells", "by_size", "behavioural", "timings", "cir",
     }
     assert all(set(cell) >= {"naf_section", "taille", "n_firms"} for cell in body["cells"])
     raw = client.post("/entreprises/simulate", json=IS_30_REFORM).text

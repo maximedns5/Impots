@@ -892,8 +892,24 @@ def _firm_behavioural(request: Any, agg: Any) -> Any:
         mechanical=-(agg.reform_cost or 0.0), reform=request.reform,
         production_tax_baseline=baseline_tax, production_tax_reform=reformed_tax,
         is_rate_change_points=_is_rate_change_points(request),
+        cir_margins=_cir_margins(request),
     )
     return Behavioural(**computed.as_dict())
+
+
+def _cir_margins(request: Any) -> tuple[tuple[float, float], ...] | None:
+    """C9's inputs (D-222): the créance change at fixed R&D and the marginal rate, for
+    the two groups of declarants. None when the reform leaves the CIR alone; a missing
+    GECIR is left to the CIR block's 503, which names it."""
+    from impots.agregats import cir as cir_module
+
+    knobs = {knob: getattr(request.reform, knob) for knob in cir_module.KNOBS}
+    if all(value is None for value in knobs.values()):
+        return None
+    try:
+        return cir_module.margins(cir_module.read_gecir(), **knobs)
+    except cir_module.CirError:
+        return None
 
 
 def _is_rate_change_points(request: Any) -> float | None:
@@ -924,11 +940,39 @@ def firms_simulate(request: FirmSimulateRequest) -> FirmResponse:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
     aggregates = firm_aggregate.aggregate(result.firms)
-    return _firm_response(
+    response = _firm_response(
         aggregates, request.year,
         {**result.timings, "total_s": round(time.perf_counter() - started, 3)},
         request=request,
     )
+    response.cir = _firm_cir(request)
+    return response
+
+
+def _firm_cir(request: Any) -> Any:
+    """The CIR block when the reform moves a CIR rate (D-222), else None. Its sources
+    absent from this checkout is a 503 that names them, not a zero."""
+    from impots.agregats import cir as cir_module
+    from impots.api.schemas import FirmCir
+
+    knobs = {knob: getattr(request.reform, knob) for knob in cir_module.KNOBS}
+    if all(value is None for value in knobs.values()):
+        return None
+    try:
+        reading = cir_module.read_gecir()
+        depense = cir_module.read_depense_fiscale()
+        priced = cir_module.price(reading, **knobs)
+    except cir_module.CirError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    rates = {"cir_taux": reading.rate_low, "cir_taux_au_dela": reading.rate_high}
+    return FirmCir(
+        millesime=reading.millesime, rates=rates,
+        rates_reform={k: (v if v is not None else rates[k]) for k, v in knobs.items()},
+        creance_publiee_eur=reading.creance_eur,
+        creance_eur=priced.baseline_eur, creance_reform_eur=priced.reformed_eur,
+        delta_creance_eur=priced.delta_eur, depense_fiscale_eur=depense,
+        banner=cir_module.BANNER.format(millesime=reading.millesime),
+        sources=[cir_module.GECIR_FILE, cir_module.VM_FILE])
 
 
 @app.get("/scenarios", response_model=ScenarioListResponse)

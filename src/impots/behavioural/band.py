@@ -90,6 +90,7 @@ def compute(
     labour_weights: np.ndarray | None = None,
     labour_emtr: np.ndarray | None = None,
     is_rate_change_points: float | None = None,
+    cir_margins: tuple[tuple[float, float], ...] | None = None,
     draws: int = DRAWS,
     seed: int = SEED,
 ) -> BehaviouralResult:
@@ -134,6 +135,9 @@ def compute(
     results.append(channel_module.firm_creations(
         store, reform, is_rate_change_points=is_rate_change_points, draws=draws, rng=rng,
     ))
+    results.append(channel_module.rd_response(
+        store, reform, cir_margins=cir_margins, draws=draws, rng=rng,
+    ))
 
     metrics: dict[str, tuple[tuple[str, ...], float]] = {}
     if relative_cost_change is not None and len(relative_cost_change):
@@ -153,6 +157,10 @@ def compute(
             and labour_delta_log_net is not None and len(labour_delta_log_net)):
         metrics["c7_labour_supply"] = (
             channel_module.C7_KEYS, float(np.max(np.abs(labour_delta_log_net))))
+    if (any(r.key == "c9_rd" and r.applies for r in results)
+            and cir_margins is not None):
+        metrics["c9_rd"] = (channel_module.C9_KEYS,
+                            abs(sum(delta for delta, _ in cir_margins)))
     creations = next((r for r in results if r.key == "c8_creations" and r.applies), None)
     if creations is not None:
         # In the driver's units, as the support is: points of the virtual rate.

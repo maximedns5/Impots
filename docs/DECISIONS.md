@@ -16168,3 +16168,170 @@ charte, des règles, des dépendances et de la couche entreprises : 651 réussis
 (§6.4), dont l'évaluation du CIR de 2021 reste à lire et dont les fichiers GECIR
 manquent toujours (D-154) ; les dividendes (§6.5) restent fermés. Les deux choix du
 propriétaire de D-218 restent ouverts.
+
+## D-222 — M5 de la phase 9, fin : le CIR chiffré sur sa créance, la R&D ouvre en indice
+
+**Le fait.** D-154 avait laissé le CIR au panier C : la spécification de la phase 8
+(§2.3.3) demandait des publications GECIR qui permettent de le chiffrer sur la créance,
+la distinction entre créance et décaissement explicite, et le manifeste n'en avait
+aucune. Deux publications du MESR y sont maintenant : la publication longue du millésime
+2019 (semi-définitif, base GECIR de juin 2022) et la note du millésime 2021 (provisoire).
+S'y ajoutent l'évaluation de la réforme de 2008 par l'IPP (rapport n° 22, Bozio, Cottet
+et Py, mars 2019), sur laquelle repose l'avis de la CNEPI de 2019, et le Trésor-Éco
+n° 290 (septembre 2021). La porte de D-154 passe : le CIR va au panier B, chiffré avec
+bannière. Et §6.4 ouvre : C9, un indice illustratif, jamais une recette.
+
+**La lecture.** `agregats/cir.py` lit dans le PDF de 2019 le tableau 04, « selon le seuil
+des 100 M€ » : 20 198 M€ de dépenses de recherche pour les déclarants qui restent sous le
+seuil, 2 100 M€ pour la part sous le seuil des 21 qui le franchissent, 1 790 M€ pour leur
+part au-delà, 6 785 M€ de créance en tout. Il lit dans le texte les taux, « 30 % jusqu'à
+un seuil de 100 M€, et de 5 % au-delà ». Les trois dépenses doivent refaire le total
+imprimé à l'arrondi près, 3 M€, ou la lecture est refusée. La note de 2021 ne publie pas
+la ventilation autour du seuil ; le code ne la lit pas, elle reste un repère (6 859 M€ de
+créance pour 23 652 M€ de dépenses).
+
+**L'instrument.** Deux composantes sur une base fixe : 30 % sur 22 298 M€ (20 198 plus
+2 100), 5 % sur 1 790 M€. Reconstruit, il donne 6 778,9 M€ contre 6 785 publiés,
+soit −0,09 %, dans la tolérance du moteur ; hors tolérance, l'instrument refuse
+d'exister. Un changement de taux rechiffre la créance du millésime à dépenses
+inchangées : le taux plein à 25 %, −0,05 × 22 298 = −1 114,9 M€ ; le taux réduit à
+zéro, −0,05 × 1 790 = −89,5 M€.
+
+**La bannière, et pourquoi ce n'est pas une note de bas de page.** Une créance s'impute
+sur l'IS pendant trois ans, puis se restitue ; la dépense fiscale d'une année consomme
+les créances de cinq ou six millésimes. L'encadré « Créance et dépense fiscale » de la
+publication le dit en toutes lettres. Le chiffre n'entre donc pas dans `reform_cost`, qui
+reste nul pour une réforme du seul CIR. `/entreprises/simulate` porte un bloc `cir` à
+part : la créance publiée, la créance reconstruite et la créance réformée, la bannière,
+et la dépense fiscale de Voies et Moyens (fiche 200302 du tome II : 7 800 M€ en 2024,
+8 068 en 2025, 8 041 en 2026), à côté de la créance, jamais à sa place. Le stock de
+créances reportées n'est pas mesuré, et la bannière le dit. Des sources absentes du
+conteneur donnent un 503 qui les nomme, pas un zéro.
+
+**Un piège de lecture.** La fiche 200302 imprime « Modification 2025 » juste avant ses
+trois années. Lue comme la première année, elle décalait chaque montant d'une colonne :
+8 041 M€ pour 2025, et pas de 2026. Les années sont désormais celles qui précèdent « Fin
+du fait générateur », et trois années qui ne se suivent pas sont refusées.
+
+**La couverture.** `docs/COVERAGE_INSTRUMENTS.md` est régénéré : 30 instruments, 17
+chiffrés, 57 %. Le CIR y est marqué « depuis, D-222 » : un champ `added_by` le sépare des
+neuf instruments que la phase 8 a ajoutés, dont le décompte ne bouge pas.
+
+**La ligne R&D.** Le rapport n° 22 compare, dans l'enquête R&D, les entreprises qui
+recouraient au CIR avant et après la réforme de 2008 à celles qui n'y ont jamais recouru,
+et convertit la hausse de leur R&D en multiplicateur : des euros de R&D par euro de CIR.
+Le tableau 5.1, dans la stratégie que les auteurs préfèrent, imprime 1,31 à 1,52 ; leur
+conclusion retient « entre 0.8 et 1.4 dans les intervalles de confiance les plus
+crédibles » (p. 77). `behavioural/ipp22.py` lit cette phrase dans le PDF, après une
+normalisation NFKC : le PDF compose « confiance » avec la ligature fi, qu'aucun motif ne
+reconnaît. Un test tient la ligne contre la lecture. Convention : la fourchette des
+auteurs, centrée sur son milieu, 1,1, le « légèrement supérieures à 1 » de la même
+phrase. Support nul : le taux de 30 % n'a jamais varié dans l'échantillon, et toute
+variation de taux extrapole.
+
+**La vérification adverse.** Verdict SCOPE_PROBLEM sur le brouillon : les valeurs du
+tableau 5.1 sont exactes, la portée ne l'était pas. Les réparations appliquées :
+
+1. *Le dénominateur.* Le multiplicateur rapporte la R&D à la variation observée du CIR
+   des entreprises traitées (moyenne 2008-2011 moins moyenne 2004-2007, note du tableau
+   4.2), qui contient déjà la créance de la R&D induite. Le brouillon l'appliquait à la
+   créance statique : il sous-estimait la R&D et la créance induite d'un facteur 1,5 à
+   1,85. Pour un groupe de déclarants dont la créance varie de Δc à R&D fixe et dont
+   l'euro suivant est crédité au taux τ, la R&D induite R résout R = m (Δc + τ R), soit
+   R = m Δc / (1 − m τ), et la créance induite vaut τ R.
+2. *La garde m τ < 1.* Au-delà, chaque euro de R&D induite se paierait par sa propre
+   créance : la réponse serait infinie, ou de mauvais signe. Refusée, pas tronquée.
+3. *La fourchette.* Le brouillon prenait l'enveloppe des intervalles du tableau 5.1, 0,69
+   à 2,30 : au haut de l'enveloppe, la formule explose dès un taux de 43,5 % ; à 1,4, il
+   faut plus de 71 %. La ligne prend la fourchette de la conclusion, celle que les
+   auteurs jugent la plus crédible.
+4. *Le groupe traité* est défini par son recours (au moins une fois en 2004-2007, au
+   moins une fois en 2008-2011), non par un numéro d'approche ; la citation est
+   complétée ; le paquet de 2008 est décrit : fin de la part en accroissement et du
+   plafond, crédit en volume à 30 % jusqu'à 100 M€ et 5 % au-delà, taux majorés des
+   premières années pour les nouveaux entrants, simplification. Quatre années après la
+   réforme au plus, une hausse seulement, et dans la même fenêtre la crise de 2008 et le
+   remboursement en 2009-2010 des stocks de créances antérieurs.
+5. *Aucune hétérogénéité par taille* n'est estimée pour la dépense de R&D. Le résultat de
+   la CNEPI de 2021 sur les plus de 250 salariés, que cite le Trésor-Éco n° 290, vient du
+   rapport IPP n° 33 et porte sur la performance économique, pas sur la R&D. Le même
+   multiplicateur vaut pour les deux groupes de déclarants.
+
+**Le canal C9.** Il ne revendique que `cir_taux` et `cir_taux_au_dela`, deux boutons
+nouveaux de la couche entreprises. Ses entrées, `cir.margins`, sont la variation statique
+de la créance et le taux marginal des deux groupes du tableau 04 : les déclarants sous le
+seuil (Δc = Δτ × 20 198 M€, l'euro suivant crédité au nouveau taux plein) et les 21 qui
+le franchissent (Δc = Δτ × 2 100 M€ plus la variation du taux réduit × 1 790 M€, l'euro
+suivant crédité au nouveau taux réduit). Un euro de dépense éligible est pris pour un
+euro de R&D de l'enquête. Ni la R&D ni la créance induite n'entrent dans la bande de
+recettes : des euros de R&D ne sont pas des recettes, et une créance n'est pas la recette
+d'une année. La créance induite est montrée dans les diagnostics, à côté de la variation
+statique. La déduction d'IS sur la R&D induite et les nouveaux entrants ne sont pas
+comptés, le diagnostic le dit ; le taux de recours est tenu fixe, le message le dit.
+
+**Les canaux fermés de la trajectoire.** `/predictif/simulate` affichait, pour la R&D,
+« aucun fichier GECIR ni MESR au manifeste », faux maintenant ; et pour les créations,
+« aucune évaluation publiée de leur réponse aux impôts au manifeste », faux depuis D-221,
+qui a ouvert C8 sans corriger cette ligne. Les deux canaux restent fermés dans la
+trajectoire, pour la raison désormais écrite : ce sont des indices de la couche
+entreprises, jamais des recettes, et la chaîne chiffre les réformes de la population.
+
+**Le calcul réel.** `/entreprises/simulate`, année 2026, millésime 2019. Taux plein à
+25 % : la créance baisse de 1 114,9 M€ (de 6 778,9 à 5 664,0) ; la R&D de 1 657 M€ au
+centre (p10 −2 005, p90 −1 314), et la créance induite de 390 M€ (−473 à −308). La
+créance totale, statique et induite, baisse donc d'environ 1,5 Md€ au centre : un chiffre
+de créance, pas de solde. Taux plein à 35 % : +1 114,9 M€ de créance, +1 932 M€ de R&D
+(+1 479 à +2 427), +639 M€ de créance induite (+487 à +807) ; l'écart avec la baisse
+vient de la formule, m τ étant plus grand à 35 %. Taux réduit à zéro : −89,5 M€,
+R&D −99 M€ (−113 à −83), sans créance induite, l'euro suivant étant crédité à zéro. Taux
+réduit à 10 % : +89,5 M€, R&D +111 M€ (+91 à +129). Dans les quatre cas, `reform_cost`
+reste nul et la note est illustrative.
+
+**Les tests.** Dix-huit nouveaux dans `test_cir.py` : le tableau 04 et les taux épinglés
+à l'œil, la ventilation qui reconstruit la créance, celle qui la manque refusée, la
+dépense fiscale lue par ses propres années, trois années qui ne se suivent pas refusées,
+la publication absente, le rechiffrage dérivé à la main, le bloc du CIR hors de
+`reform_cost`, pas de bloc sans bouton du CIR, le 503 qui nomme ses sources, la
+couverture « depuis D-222 », la ligne contre le PDF, les marges dérivées à la main,
+l'exemple chiffré de C9, la garde m τ, les seuls boutons du CIR et jamais une recette,
+l'entrée absente, les raisons des canaux fermés de la trajectoire. Les cas de monotonie
+en θ gagnent la ligne ouverte ; cinq tests comptaient treize lignes ouvertes, ils en
+comptent quatorze. Le test de l'API entreprises qui tient fermée la liste des champs de
+la réponse, pour qu'aucune donnée d'entreprise n'y passe, a échoué sur le champ `cir`, à
+bon droit. Le bloc est national, lu dans la publication : il entre dans la liste, et le
+test du bloc fixe ses dix champs.
+
+Chaque garde a été vue échouer, vingt fois en tout. Dix-neuf mutations : la ventilation
+non vérifiée, l'année de modification reprise, le CIR versé dans `reform_cost`, le champ
+`added_by` retiré, des sources absentes rendues comme une absence de bloc, puis comme une
+erreur 500, les années consécutives non vérifiées, les lignes du tableau 04 interverties,
+un champ d'entreprise ajouté au bloc ; pour C9, la formule du point fixe remplacée par
+m Δc, la créance induite à 30 % quel que soit le taux, la garde m τ relâchée, l'indice
+versé dans la bande de recettes, l'IS revendiqué dans le YAML, la métrique de support
+mise à zéro, la normalisation NFKC retirée, le centre retapé, la base et le taux marginal
+des marges faussés. La vingtième est la raison des canaux fermés, vue échouer sur le
+texte d'avant. Deux fois, c'est le test qui avait tort. L'exemple chiffré de C9 échouait
+sur une constante mal dérivée à la main : 1,1 × 1 009,9 / 0,725 fait 1 532,26 et non
+1 532,28, et le total −1 654,48 M€ ; l'assertion à 10⁻¹² contre la formule passait déjà.
+Et la mutation des années consécutives survivait : le test ne vérifiait que le motif sur
+une fiche bien formée, jamais la lecture d'une fiche dont les années ne se suivent pas.
+Il a reçu ce cas, et la mutation échoue.
+
+Avec les tests de θ, du magasin, de l'offre de travail, des créations, de la chaîne, de
+la boucle, de la dette, de la commande, de l'API prédictive, de la page, de la
+provenance, de la charte, des règles, des dépendances, de la couverture et de la couche
+entreprises : 878 réussis, 4 sautés (l'artefact de base sans distribution des taux
+marginaux, le REI non téléchargé). Les 66 tests de `test_api.py` passent, dont les huit
+de l'API entreprises. `ruff` passe sur `src`, `tests` et `scripts` ; `ui/check.mjs` passe
+ses 46 vérifications.
+
+**Ce qui reste.** Pour C9 : le taux de recours et les nouveaux entrants, que l'étude ne
+couvre pas ; le stock de créances reportées ; un millésime plus récent qui publie la
+ventilation autour du seuil ; l'évaluation de la CNEPI de 2021 (rapport IPP n° 33), qui
+porte sur la performance et non sur la dépense, n'est pas manifestée. Pour M5, les cinq
+canaux de §6 ont reçu leur verdict : l'offre de travail (C7, D-220), les créations de
+sociétés (C8, D-221) et la R&D (C9) ouverts en indices ou en canal ; l'investissement
+pour l'IS (D-221) et les dividendes (§6.5) fermés, raison affichée. Vient M6 : les
+indices et l'explorateur à θ fixé (§7, §8), le confinement et l'exemple (§9), le balayage
+des gardes ; sa porte est le `make full` du propriétaire. Les deux choix du propriétaire
+de D-218 restent ouverts.
