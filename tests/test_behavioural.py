@@ -772,3 +772,46 @@ def test_the_emtr_caches_do_not_outlive_a_change_of_population_wiring(tmp_path, 
     emtr.cached(frame, "2024")
     monkeypatch.setattr(to_openfisca, "WIRING", "after", raising=False)
     assert emtr.cached(frame, "2024").guards.get("cached") is not True
+
+
+def test_the_emtr_caches_do_not_serve_the_vintage_s_rates_to_an_aged_population(
+        tmp_path, monkeypatch):
+    """An aged population has the vintage's rows, weights and households, so the baseline
+    cache's height check cannot see it, and neither key named it. `/population/simulate`
+    caches the vintage as built; `/predictif/simulate` prices the same reform, year and
+    sample on the population aged to the year (D-225). Each must read its own file. And
+    the vintage's own keys must not move, or every file already on disk is recomputed."""
+    import hashlib
+    import json
+
+    import polars as pl
+
+    from impots.behavioural import emtr
+    from impots.population import to_openfisca
+    from impots.uprating import Uprating
+
+    monkeypatch.setattr(emtr, "PROCESSED", tmp_path)
+    frame = pl.DataFrame({"person_id": [0], "household_id": ["h0"], "weight": [1.0],
+                          "salaire_brut_annuel": [30_000.0]})
+    aged = Uprating(wage=0.03, price=0.02, source="une source", base_year=2024).key()
+    assert aged == Uprating(wage=0.03, price=0.02, source="une autre",
+                            base_year=2024).key(), "the source is a label, not a rate"
+
+    # The baseline rates, memoised inside `compute`.
+    monkeypatch.setattr(emtr, "_rate", lambda *args, **kwargs: np.zeros(1))
+    emtr.compute(frame, year=2026, vintage="2024")
+    assert "baseline_cached" not in emtr.compute(
+        frame, year=2026, vintage="2024", uprating_key=aged).guards
+    assert emtr.compute(frame, year=2026, vintage="2024").guards["baseline_cached"]
+
+    # The whole result, memoised by `cached`.
+    monkeypatch.setattr(emtr, "compute", lambda population, **k: emtr.EmtrResult(
+        households=pl.DataFrame({"x": [1]}), year=k.get("year", 2024)))
+    emtr.cached(frame, "2024", year=2026)
+    assert emtr.cached(frame, "2024", year=2026,
+                       uprating_key=aged).guards.get("cached") is not True
+    assert emtr.cached(frame, "2024", year=2026).guards.get("cached") is True
+
+    before = json.dumps({"vintage": "2024", "year": 2026, "sample": None, "reform": None,
+                         "wiring": to_openfisca.WIRING}, sort_keys=True, default=str)
+    assert emtr.cache_key("2024", 2026) == hashlib.sha256(before.encode()).hexdigest()[:16]

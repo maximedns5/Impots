@@ -1,10 +1,14 @@
 # State of the project, and the directions open — 2026-10-19 (Phase 9, M6 under way)
 
-The eighth 2026-10-19 update adds D-225: the fast version of `/predictif/simulate` names
-the population view it prices its first year in. That is « figée », the 2024 population
-as it is, while `impots predictif` and the conditional explorer put « vieillie » first;
-the response gains a required `population_view` and a sentence in `population_note`,
-and no number moves. Pricing the aged view there is proposed to the owner, not done.
+The eighth 2026-10-19 update adds D-225: the fast version of `/predictif/simulate` now
+prices its first year on the population aged to that year, « vieillie », the headline
+of `impots predictif` and of the conditional explorer, by the owner's choice. It priced
+the 2024 population as it is, and did not say so. The request gains a required
+`uprating` block, the wage index and its source; prices are the growth scenario's. The
+response names the view in `population_view` and carries the uprating caveat in
+`population_note`. The EMTR caches now key on the uprating, so that the aged and the
+as-built population never serve each other's marginal rates. The first-year cost rises
+by roughly the measured gap, 5 to 9 %; the real run is the owner's.
 The seventh 2026-10-19 update added D-224, M6's second step: the explorer searches the debt
 at a fixed θ (§8). Its allowlist gains `dette_conditionnelle`, the reform's debt gap at
 year T under named θ and scenarios, met from below; θ is required for it and refused for
@@ -502,9 +506,7 @@ download list.
    decisions from M3 are the owner's: whether the page should show both persistence
    scenarios side by side rather than ask for one (§4.5), and whether to reopen the
    `multiplier_by_instrument` row, whose linearity bound the M3 pass found
-   unsupported (D-218). A third is D-225's: which population view the fast version
-   prices its first year in, « figée » today and named as such, « vieillie » proposed.
-   `impots predictif` does not carry the loop yet. A full ten-year
+   unsupported (D-218). `impots predictif` does not carry the loop yet. A full ten-year
    run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
    refuses this container), and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
