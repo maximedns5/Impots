@@ -1,0 +1,762 @@
+{
+ "premiere_annee": {
+  "commit": "104e29f4117fc83274b7453b9151a2b4833838da",
+  "calcule": "2026-10-19",
+  "annee": 2026,
+  "bareme_en_vigueur": [
+   {
+    "threshold": 0.0,
+    "rate": 0.0
+   },
+   {
+    "threshold": 11600.0,
+    "rate": 0.11
+   },
+   {
+    "threshold": 29579.0,
+    "rate": 0.3
+   },
+   {
+    "threshold": 84577.0,
+    "rate": 0.41
+   },
+   {
+    "threshold": 181917.0,
+    "rate": 0.45
+   }
+  ],
+  "reforme": {
+   "ir_bareme": [
+    {
+     "threshold": 0.0,
+     "rate": 0.0
+    },
+    {
+     "threshold": 11600.0,
+     "rate": 0.1
+    },
+    {
+     "threshold": 29579.0,
+     "rate": 0.3
+    },
+    {
+     "threshold": 84577.0,
+     "rate": 0.41
+    },
+    {
+     "threshold": 181917.0,
+     "rate": 0.45
+    }
+   ]
+  },
+  "salaires": {
+   "taux": 0.030200000000000005,
+   "source": "hypothèse déclarée de cet exemple : salaire nominal au rythme du PIB nominal du scénario de croissance"
+  },
+  "cout_eur": 4841142525.406006,
+  "vue": "vieillie",
+  "note": "Population synthétique construite à partir de données ouvertes : structure des ménages observée dans l'enquête Emploi, revenus entièrement simulés à partir de distributions publiées. Les écarts aux totaux publiés sont dans reports/reconciliation.md. Les niveaux de RSA, de prime d'activité et de la distribution des niveaux de vie ne sont pas publiables en l'état (D-015) ; les écarts entre droit courant et réforme le sont. Ce résultat porte sur un sous-échantillon déterministe de 20 000 ménages repondérés, pas sur la population complète : attendez-vous à un bruit d'échantillonnage de l'ordre du pour cent sur les agrégats. Vue « vieillie » : l'année 2026 est chiffrée avec sa législation sur la population 2024 vieillie jusqu'à elle, la vue de tête de la commande `impots predictif` (D-216, D-226) ; la vue « figée », que la commande donne à côté, n'est pas chiffrée ici. Population vieillie mécaniquement de 2024 à 2026 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (hypothèse déclarée de cet exemple : salaire nominal au rythme du PIB nominal du scénario de croissance). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "impulsion": {
+   "impot_sur_le_revenu": 4841142513.292862
+  },
+  "non_couverts": {},
+  "comportement": {
+   "recettes": -4802981802.152323,
+   "boite": [
+    -4822195910.226911,
+    -4797899437.137969
+   ],
+   "grade": "in-support",
+   "lignes": [
+    "eti_all",
+    "eti_top_decile"
+   ],
+   "coins": [
+    {
+     "rows": {
+      "eti_all": 0.0,
+      "eti_top_decile": 0.0
+     },
+     "receipts": -4822195910.226911
+    },
+    {
+     "rows": {
+      "eti_all": 0.0,
+      "eti_top_decile": 1.0
+     },
+     "receipts": -4812833658.88468
+    },
+    {
+     "rows": {
+      "eti_all": 1.0,
+      "eti_top_decile": 0.0
+     },
+     "receipts": -4807261688.4802
+    },
+    {
+     "rows": {
+      "eti_all": 1.0,
+      "eti_top_decile": 1.0
+     },
+     "receipts": -4797899437.137969
+    }
+   ]
+  }
+ },
+ "hypotheses": {
+  "croissance": "Croissance réelle 1 %, prix 2 %",
+  "taux": "Taux implicite tenu à son niveau de 2025",
+  "horizon": 10
+ },
+ "depart": {
+  "annee": 2025,
+  "dette": 1.15693757321829,
+  "solde_primaire": -0.029870353480509815,
+  "taux_implicite": 0.01882827582292081,
+  "pib_eur": 2991056000000.0
+ },
+ "trajectoires": [
+  {
+   "regle": "gele_en_volume",
+   "depense": "Dépenses gelées en volume",
+   "persistance": "eteint",
+   "persistance_libelle": "Effet macro éteint après trois ans",
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "reference": [
+    1.168580725548546,
+    1.1746928799602263,
+    1.1753885794969483,
+    1.1707805732317031,
+    1.1609798413129486,
+    1.146095619682319,
+    1.1262354244680892,
+    1.1015050760584795,
+    1.0720087228588424,
+    1.0378488647367168
+   ],
+   "reforme": [
+    1.1690878607119608,
+    1.1751798895307721,
+    1.1764067601869486,
+    1.1749547244436573,
+    1.1666666250303588,
+    1.1532783389146657,
+    1.1348975665323373,
+    1.1116303105446255,
+    1.083580899617918,
+    1.050852011891001
+   ],
+   "delta": [
+    0.0005071351634147181,
+    0.0004870095705458155,
+    0.0010181806900002588,
+    0.004174151211954191,
+    0.00568678371741016,
+    0.0071827192323465905,
+    0.00866214206424809,
+    0.010125234486145995,
+    0.011572176759075514,
+    0.01300314715428419
+   ],
+   "delta_mecanique": [
+    0.0015710925850707699,
+    0.003124842875893744,
+    0.004661442303052094,
+    0.0061810801840482404,
+    0.007683943746628809,
+    0.009170218151852117,
+    0.01064008651690104,
+    0.012093729937644048,
+    0.013531327510947225,
+    0.014953056356739975
+   ],
+   "delta_sans_retroaction": [
+    0.0015587083123438372,
+    0.003100211032569078,
+    0.0046246980822908235,
+    0.006132357286700252,
+    0.007623374397704774,
+    0.00909793311681506,
+    0.01055621511777649,
+    0.011998400068954362,
+    0.013424665655467738,
+    0.014835187601083266
+   ],
+   "ecart_pib": [
+    0.0006441479582672768,
+    0.001304006842345951,
+    0.0013825614714029358,
+    1.387778780781447e-20,
+    -2.4424906541753445e-19,
+    0.0,
+    0.0,
+    1.1379786002407853e-19,
+    1.1657341758564145e-19,
+    1.387778780781447e-20
+   ],
+   "tranches": [
+    {
+     "source": "bande",
+     "label": "Boîte θ du comportement : chaque effet revendiqué n'importe où dans sa fourchette publiée, bornes lues aux coins",
+     "computed": true,
+     "reason": "",
+     "low": [
+      1.169086212397369,
+      1.175176613256775,
+      1.176401873232701,
+      1.1749482353751133,
+      1.1666585582141755,
+      1.153268711766598,
+      1.134886396275899,
+      1.1116176142132108,
+      1.0835666940569002,
+      1.0508363137598085
+     ],
+     "high": [
+      1.1690940922389397,
+      1.1751922756310405,
+      1.1764252355358857,
+      1.174979256657293,
+      1.1666971219894573,
+      1.153314734778186,
+      1.1349397961860164,
+      1.111678309592955,
+      1.0836346043762106,
+      1.0509113593775448
+     ]
+    },
+    {
+     "source": "eventail",
+     "label": "Éventail macro : θ du multiplicateur de 0 à 1, comportement à sa valeur, bornes lues aux deux bouts",
+     "computed": true,
+     "reason": "",
+     "low": [
+      1.1673979253215419,
+      1.1728668638523863,
+      1.1734229824229565,
+      1.1732031191443373,
+      1.1649343545906108,
+      1.151565189909242,
+      1.1332033278918563,
+      1.1099547735295663,
+      1.0819238577929031,
+      1.049213261099362
+     ],
+     "high": [
+      1.1707813021387965,
+      1.177497710778608,
+      1.1793967236971608,
+      1.1767063297429774,
+      1.168398895470107,
+      1.1549914879200895,
+      1.1365918051728183,
+      1.1133058475596846,
+      1.0852379414429327,
+      1.0524907626826396
+     ]
+    },
+    {
+     "source": "scenario",
+     "label": "Grille de scénarios",
+     "computed": false,
+     "reason": "Une seule combinaison de scénarios : chaque autre combinaison est un autre calcul, sous ses propres noms.",
+     "low": [],
+     "high": []
+    }
+   ],
+   "coins": [
+    {
+     "label": "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+     "delta": 0.01470124543246687
+    },
+    {
+     "label": "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+     "delta": 0.011423743849189316
+    },
+    {
+     "label": "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+     "delta": 0.014672327822375486
+    },
+    {
+     "label": "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+     "delta": 0.011394826239097933
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+     "delta": 0.014655117424821729
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+     "delta": 0.011377615841544175
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+     "delta": 0.014626199814730345
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+     "delta": 0.011348698231453014
+    }
+   ],
+   "theta": {
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5,
+    "multiplicateur_macro": 0.5
+   },
+   "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+    "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+    "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+    "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+    "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+    "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+    "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+    "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+    "Au-delà de trois ans : Effet macro éteint après trois ans.",
+    "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+   ],
+   "absent": {},
+   "fermes": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette ; la trajectoire chiffre les réformes de la population, et le taux d'IS n'en est pas une (§6.3, D-221).",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et la trajectoire chiffre les réformes de la population (§6.4, D-222).",
+    "dividendes": "la population ne porte aucun revenu du capital (§6.5)."
+   }
+  },
+  {
+   "regle": "gele_en_volume",
+   "depense": "Dépenses gelées en volume",
+   "persistance": "tenu",
+   "persistance_libelle": "Effet macro tenu au niveau de la troisième année",
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "reference": [
+    1.168580725548546,
+    1.1746928799602263,
+    1.1753885794969483,
+    1.1707805732317031,
+    1.1609798413129486,
+    1.146095619682319,
+    1.1262354244680892,
+    1.1015050760584795,
+    1.0720087228588424,
+    1.0378488647367168
+   ],
+   "reforme": [
+    1.1690878607119608,
+    1.1751798895307721,
+    1.1764067601869486,
+    1.1724225445083547,
+    1.1632459571247893,
+    1.1489861583918923,
+    1.1297505903959835,
+    1.1056450010032957,
+    1.0767734675934282,
+    1.0432384204809952
+   ],
+   "delta": [
+    0.0005071351634147181,
+    0.0004870095705458155,
+    0.0010181806900002588,
+    0.0016419712766515548,
+    0.0022661158118406632,
+    0.0028905387095732316,
+    0.003515165927894248,
+    0.004139924944816187,
+    0.0047647447345857685,
+    0.0053895557442784625
+   ],
+   "delta_mecanique": [
+    0.0015710925850707699,
+    0.003124842875893744,
+    0.004661442303052094,
+    0.0061810801840482404,
+    0.007683943746628809,
+    0.009170218151852117,
+    0.01064008651690104,
+    0.012093729937644048,
+    0.013531327510947225,
+    0.014953056356739975
+   ],
+   "delta_sans_retroaction": [
+    0.0015587083123438372,
+    0.003100211032569078,
+    0.0046246980822908235,
+    0.006132357286700252,
+    0.007623374397704774,
+    0.00909793311681506,
+    0.01055621511777649,
+    0.011998400068954362,
+    0.013424665655467738,
+    0.014835187601083266
+   ],
+   "ecart_pib": [
+    0.0006441479582672768,
+    0.001304006842345951,
+    0.0013825614714029358,
+    0.0013825614714029358,
+    0.0013825614714029358,
+    0.0013825614714029358,
+    0.0013825614714029358,
+    0.001382561471402936,
+    0.0013825614714029358,
+    0.0013825614714029358
+   ],
+   "tranches": [
+    {
+     "source": "bande",
+     "label": "Boîte θ du comportement : chaque effet revendiqué n'importe où dans sa fourchette publiée, bornes lues aux coins",
+     "computed": true,
+     "reason": "",
+     "low": [
+      1.169086212397369,
+      1.175176613256775,
+      1.176401873232701,
+      1.1724160643989605,
+      1.163237901446077,
+      1.1489765445355722,
+      1.129739435561789,
+      1.1056323222011044,
+      1.0767592816453557,
+      1.043222744023469
+     ],
+     "high": [
+      1.1690940922389397,
+      1.1751922756310405,
+      1.1764252355358857,
+      1.1724470428515252,
+      1.1632764119781809,
+      1.1490225040053679,
+      1.12979276174518,
+      1.1056929337816126,
+      1.076827098204105,
+      1.0432976860292755
+     ]
+    },
+    {
+     "source": "eventail",
+     "label": "Éventail macro : θ du multiplicateur de 0 à 1, comportement à sa valeur, bornes lues aux deux bouts",
+     "computed": true,
+     "reason": "",
+     "low": [
+      1.1673979253215419,
+      1.1728668638523863,
+      1.1734229824229565,
+      1.1687806158405092,
+      1.1589585590408202,
+      1.1440657787671529,
+      1.1242095261615985,
+      1.0994953607796025,
+      1.0700271742891414,
+      1.0359072138585288
+     ],
+     "high": [
+      1.1707813021387965,
+      1.177497710778608,
+      1.1793967236971608,
+      1.1760720233519417,
+      1.1675422435237033,
+      1.1539167385818454,
+      1.1353031419527673,
+      1.111807390203882,
+      1.0835337468114146,
+      1.050584825615965
+     ]
+    },
+    {
+     "source": "scenario",
+     "label": "Grille de scénarios",
+     "computed": false,
+     "reason": "Une seule combinaison de scénarios : chaque autre combinaison est un autre calcul, sous ses propres noms.",
+     "low": [],
+     "high": []
+    }
+   ],
+   "coins": [
+    {
+     "label": "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+     "delta": 0.012795287859992621
+    },
+    {
+     "label": "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+     "delta": -0.0018824466352780345
+    },
+    {
+     "label": "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+     "delta": 0.012766380241541198
+    },
+    {
+     "label": "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+     "delta": -0.0019112944485879524
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+     "delta": 0.012749175790540246
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+     "delta": -0.0019284633063891832
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+     "delta": 0.012720268172088822
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+     "delta": -0.001957311119698879
+    }
+   ],
+   "theta": {
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5,
+    "multiplicateur_macro": 0.5
+   },
+   "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+    "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+    "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+    "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+    "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+    "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+    "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+    "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+    "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.",
+    "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+   ],
+   "absent": {},
+   "fermes": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette ; la trajectoire chiffre les réformes de la population, et le taux d'IS n'en est pas une (§6.3, D-221).",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et la trajectoire chiffre les réformes de la population (§6.4, D-222).",
+    "dividendes": "la population ne porte aucun revenu du capital (§6.5)."
+   }
+  },
+  {
+   "regle": "part_pib_constante",
+   "depense": "Dépenses constantes en % du PIB",
+   "persistance": null,
+   "persistance_libelle": null,
+   "annees": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033,
+    2034,
+    2035
+   ],
+   "reference": [
+    1.174037226861159,
+    1.1909481282765473,
+    1.2076723609805384,
+    1.2242119854906028,
+    1.2405690395794666,
+    1.2567455385261757,
+    1.2727434753643883,
+    1.2885648211279295,
+    1.3042115250936324,
+    1.3196855150214994
+   ],
+   "reforme": [
+    1.1755959351735028,
+    1.1940483393091164,
+    1.2122970590628293,
+    1.230344342777303,
+    1.2481924139771714,
+    1.2658434716429907,
+    1.2832996904821647,
+    1.3005632211968838,
+    1.3176361907491,
+    1.3345207026225827
+   ],
+   "delta": [
+    0.0015587083123438372,
+    0.003100211032569078,
+    0.0046246980822908235,
+    0.006132357286700252,
+    0.007623374397704774,
+    0.00909793311681506,
+    0.01055621511777649,
+    0.011998400068954362,
+    0.013424665655467738,
+    0.014835187601083266
+   ],
+   "delta_mecanique": [
+    0.0015710925850707699,
+    0.003124842875893744,
+    0.004661442303052094,
+    0.0061810801840482404,
+    0.007683943746628809,
+    0.009170218151852117,
+    0.01064008651690104,
+    0.012093729937644048,
+    0.013531327510947225,
+    0.014953056356739975
+   ],
+   "delta_sans_retroaction": [
+    0.0015587083123438372,
+    0.003100211032569078,
+    0.0046246980822908235,
+    0.006132357286700252,
+    0.007623374397704774,
+    0.00909793311681506,
+    0.01055621511777649,
+    0.011998400068954362,
+    0.013424665655467738,
+    0.014835187601083266
+   ],
+   "ecart_pib": null,
+   "tranches": [
+    {
+     "source": "bande",
+     "label": "Boîte θ du comportement : chaque effet revendiqué n'importe où dans sa fourchette publiée, bornes lues aux coins",
+     "computed": true,
+     "reason": "",
+     "low": [
+      1.1755942857971526,
+      1.1940450587628353,
+      1.2122921653520673,
+      1.2303378537087593,
+      1.2481843471609881,
+      1.2658338444949229,
+      1.2832885202257265,
+      1.3005505248654692,
+      1.3176219851880826,
+      1.3345050044913902
+     ],
+     "high": [
+      1.175602170714507,
+      1.1940607415609439,
+      1.2123155599550721,
+      1.2303688749909387,
+      1.24822291093627,
+      1.265879867506511,
+      1.2833419201358438,
+      1.3006112202452134,
+      1.317689895507393,
+      1.3345800501091267
+     ]
+    },
+    {
+     "source": "eventail",
+     "label": "Rétroaction macro",
+     "computed": false,
+     "reason": "Rétroaction non appliquée sous « Dépenses constantes en % du PIB » : pendant une variante, la dépense de Mésange ne réagit qu'en prix (note 70, folio 93). Sous une autre règle, une partie de l'amélioration du solde disparaîtrait, et la corriger par une formule serait dériver un chiffre, pas le lire (D-214).",
+     "low": [],
+     "high": []
+    },
+    {
+     "source": "scenario",
+     "label": "Grille de scénarios",
+     "computed": false,
+     "reason": "Une seule combinaison de scénarios : chaque autre combinaison est un autre calcul, sous ses propres noms.",
+     "low": [],
+     "high": []
+    }
+   ],
+   "coins": [
+    {
+     "label": "eti_all = 0, eti_top_decile = 0",
+     "delta": 0.01489453508762728
+    },
+    {
+     "label": "eti_all = 0, eti_top_decile = 1",
+     "delta": 0.014865617477535897
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 0",
+     "delta": 0.01484840707998214
+    },
+    {
+     "label": "eti_all = 1, eti_top_decile = 1",
+     "delta": 0.014819489469890756
+    }
+   ],
+   "theta": {
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5
+   },
+   "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+    "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+   ],
+   "absent": {
+    "rétroaction": "Rétroaction non appliquée sous « Dépenses constantes en % du PIB » : pendant une variante, la dépense de Mésange ne réagit qu'en prix (note 70, folio 93). Sous une autre règle, une partie de l'amélioration du solde disparaîtrait, et la corriger par une formule serait dériver un chiffre, pas le lire (D-214)."
+   },
+   "fermes": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette ; la trajectoire chiffre les réformes de la population, et le taux d'IS n'en est pas une (§6.3, D-221).",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et la trajectoire chiffre les réformes de la population (§6.4, D-222).",
+    "dividendes": "la population ne porte aucun revenu du capital (§6.5).",
+    "rétroaction PIB → recettes": "Rétroaction non appliquée sous « Dépenses constantes en % du PIB » : pendant une variante, la dépense de Mésange ne réagit qu'en prix (note 70, folio 93). Sous une autre règle, une partie de l'amélioration du solde disparaîtrait, et la corriger par une formule serait dériver un chiffre, pas le lire (D-214).",
+    "multiplicateur macro": "Rétroaction non appliquée sous « Dépenses constantes en % du PIB » : pendant une variante, la dépense de Mésange ne réagit qu'en prix (note 70, folio 93). Sous une autre règle, une partie de l'amélioration du solde disparaîtrait, et la corriger par une formule serait dériver un chiffre, pas le lire (D-214)."
+   }
+  }
+ ]
+}

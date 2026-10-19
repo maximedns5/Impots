@@ -1,6 +1,20 @@
 # State of the project, and the directions open — 2026-10-19 (Phase 9, M6 under way)
 
-The tenth 2026-10-19 update adds D-227, M6's third step: §9's coherence and the
+The eleventh 2026-10-19 update adds D-228, M6's fourth step: §9.4's worked example,
+`docs/PREDICTIF_EXEMPLE.md`, which says it illustrates the machinery and recommends
+nothing. The first income-tax bracket goes from 11 % to 10 % in 2026, 4.84 bn on the aged
+population, 4.80 bn with behaviour at θ = ½. In 2035 the debt gap is +1.30 point of GDP
+under frozen spending with the macro effect switched off after three years (box +1.13 to
++1.47), +0.54 with it held (box −0.20 to +1.28: the sign depends on θ) and +1.48 under a
+constant spending share, where the loop does not apply; mechanical +1.50 everywhere,
+behaviour −0.01. Persistence weighs more than everything else, and at the corner where
+the multiplier is one IMK standard deviation above Mésange's centre the held feedback
+repays the cut. `scripts/write_predictif_exemple.py` prices the first year once
+(`--price`, three minutes, refused on an uncommitted `src/`), runs the chain under each
+scenario and at every corner, and renders the page from `reports/predictif_exemple.json`
+alone; the tests hold the page to the file everywhere and the file to the chain where the
+accounts and Mésange are readable.
+The tenth 2026-10-19 update added D-227, M6's third step: §9's coherence and the
 preregistered containment. The rule — both Mésange variants of the CICE, jobs at three
 years, the θ box must contain 100 000 to 400 000 and θ = ½ fall inside — was committed and
 pushed before any number, with the expectation that it might fail. It passes: 31 200 to
@@ -163,8 +177,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **228 decision
-entries**, D-000 to D-227, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **229 decision
+entries**, D-000 to D-228, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -514,8 +528,8 @@ download list.
    IS (D-221). R&D opened as an illustrative index (D-222, C9, CIR rates only), and the
    CIR is priced on the créance flow with its banner. Dividends (§6.5) stay closed. Every
    §6 channel has its verdict. M6 is under way: §7's indices (D-223), the explorer at a
-   fixed θ (§8, D-224), §9.1's coherence and §9.2's preregistered containment (D-227) are
-   in; next the worked example (§9.4) and the guard sweep, whose gate is the owner's
+   fixed θ (§8, D-224), §9.1's coherence and §9.2's preregistered containment (D-227) and
+   §9.4's worked example (D-228) are in; next the guard sweep, whose gate is the owner's
    `make full`. Left for C9: the take-up margin, new entrants, the carried-forward stock,
    and the CNEPI's 2021 evaluation (IPP report n° 33), not manifested. M1 to M4 are done (D-215 to D-219); M4 left
    the transfers and the IS closed. Two

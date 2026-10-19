@@ -16821,3 +16821,114 @@ entrées-sorties de l'INSEE dans ce conteneur). `ruff` passe sur `src`, `tests` 
 **Ce qui reste.** L'exemple au dossier, `docs/PREDICTIF_EXEMPLE.md` (§9.4), et le
 balayage des gardes de la phase 9, puis la porte de M6 : le `make full` du propriétaire.
 Les deux choix du propriétaire de D-218 restent ouverts.
+
+## D-228 — M6 de la phase 9, quatrième pas : l'exemple au dossier
+
+**Le fait.** §9.4 met au dossier un exemple complet : une baisse de l'IR de 5 Md€,
+l'écart de dette à dix ans à θ = ½, les bornes de la boîte θ, la décomposition par
+source, sous deux scénarios de dépense et deux de persistance, avec les canaux fermés et
+leur raison. C'est `docs/PREDICTIF_EXEMPLE.md`. La page dit en tête qu'elle illustre la
+machinerie et ne recommande rien, et que la réforme est choisie pour la pédagogie.
+
+**La réforme.** Le taux de la première tranche du barème passe de 11 % à 10 % en 2026,
+seuils et autres taux inchangés ; le barème en vigueur est lu dans l'arbre d'openfisca,
+pas saisi, et le script refuse de tourner si la première tranche n'est plus à 11 %. Le
+pas vient d'une passe de calibrage, mécanique, sur la population vieillie : 11 % → 9 % y
+coûte 9,71 Md€, un point vaut donc près de 4,9 Md€. Une baisse de barème parce qu'elle
+sert tous les étages de la chaîne : elle revendique les deux lignes d'élasticité du
+revenu imposable, `eti_all` et `eti_top_decile`, et elle a sa variante dans Mésange,
+celle de l'IR, que lit la boucle.
+
+**Trois étages.** `scripts/write_predictif_exemple.py`. Avec `--price`, une passe de
+l'échantillon rapide pour 2026, par la voie rapide de `/predictif/simulate`
+(`_price_first_year`, population vieillie, D-226), comportement et impulsion macro
+compris ; les recettes à θ = ½ et aux quatre coins des lignes revendiquées se lisent sur
+cette même population. La passe prend environ trois minutes et refuse de tourner si
+`src/` a des modifications non commitées, parce que le fichier nomme le commit dont le
+code l'a produite. Par défaut, la chaîne sous chaque scénario, à θ, sans boucle, et à
+chaque coin de la boîte : huit sous « Dépenses gelées en volume », quatre sous l'autre
+règle, où le multiplicateur n'est lu par rien. Un écart à θ hors des coins est refusé,
+comme dans l'évaluateur de D-224. Enfin le rendu, depuis le seul fichier
+`reports/predictif_exemple.json` : des agrégats calculés, comme
+`trajectoire_gel_bareme.json` à côté, et `check_no_data_committed.py --tree` passe.
+
+**Le résultat.** Coût mécanique de 2026 : 4,84 Md€, sur la population 2024 vieillie avec
+des salaires à 3,02 % par an, hypothèse déclarée de l'exemple (le PIB nominal du
+scénario). Avec les réponses à θ = ½, 4,803 Md€, et la boîte de la première année va de
+4,798 à 4,822 Md€ : le revenu imposable des premières tranches répond peu. En 2035,
+croissance réelle de 1 % et prix de 2 %, taux implicite tenu, θ = ½ :
+
+- « Dépenses gelées en volume », effet macro éteint après trois ans : +1,30 point de PIB,
+  boîte de +1,13 à +1,47 ;
+
+- la même règle, effet tenu au niveau de la troisième année : +0,54 point, boîte de −0,20
+  à +1,28, le signe dépend de θ ;
+
+- « Dépenses constantes en % du PIB », sans boucle : +1,48 point, boîte de +1,48 à +1,49.
+
+La décomposition, dans l'ordre où la chaîne assemble le chiffre : le mécanique fait +1,50
+point sous les trois scénarios, le comportement −0,01. La boucle en a deux termes, le
+solde que Mésange rend et le PIB de la réforme qui divise sa dette : −0,18 et 0,00 sous
+« éteint », −0,80 et −0,14 sous « tenu ». Chaque terme est la différence entre deux
+étapes de la chaîne et la somme tombe juste ; les tranches de la chaîne sont affichées à
+côté, chacune sur son axe, sans être additionnées.
+
+**Ce que l'exemple montre.** La persistance pèse plus que tout le reste : entre
+« éteint » et « tenu », 0,76 point d'écart sur 1,50 de mécanique, contre 0,01 pour le
+comportement. C'est la question que D-218 a laissée au propriétaire, montrer les deux
+persistances côte à côte ; l'exemple les montre, la page de l'outil en demande toujours
+une.
+
+Sous « tenu », la boîte franchit zéro. Au coin où le multiplicateur est un écart-type IMK
+au-dessus du centre de Mésange, la rétroaction, proportionnelle au multiplicateur
+(l'hypothèse de §4.1, que la page liste parmi ses conventions), rembourse plus que le
+coût, et la baisse d'impôt allège la dette. Ce n'est pas un constat sur l'IR : c'est la
+largeur de l'écart-type IMK, déjà vue sur les indices, la dette et le CICE (D-223, D-224,
+D-227), portée sept ans de plus par la convention « tenu ». La page le dit, sans
+trancher.
+
+Sous « éteint », l'écart saute de 0,10 à 0,42 point entre 2028 et 2029 : le PIB de la
+réforme rejoint celui de la référence d'un coup, et la division qui allégeait le ratio
+disparaît avec lui. Le terme du PIB pèse à proportion du ratio de dette lui-même, autour
+de 1 ici ; c'est une propriété de la convention, pas une dynamique. Enfin, la dette de
+référence diffère de 28 points en 2035 entre les deux règles, 103,8 % et 132,0 %, quand
+l'écart mécanique est le même sous les deux : la raison pour laquelle le chiffre de tête
+est l'écart et non le niveau.
+
+**Ce que l'exemple ne fait pas.** La vue « figée » n'est pas chiffrée, la voie rapide ne
+chiffrant que la vue vieillie (D-226). Les années après 2026 sont un report en part de
+PIB constante, une convention que chaque ligne nomme ; le chemin année par année est
+celui de `impots predictif`, qui ne porte pas encore la boucle. La passe de population
+n'est pas rejouée par les tests, trois minutes : la page nomme sa date et son commit, et
+un taux changé dans le script sans refaire la passe est refusé.
+
+**Les gardes.** Huit tests dans `test_predictif_exemple.py`. La page commitée est le
+rendu du fichier commité, sur toute machine. Le fichier chiffre la réforme, l'horizon et
+les scénarios que le script nomme. La page dit qu'elle illustre et ne recommande rien,
+sous la bannière du prédictif. Chaque canal fermé de la chaîne paraît avec sa raison
+telle que le code la porte, et les deux canaux de la boucle sous la règle où elle ne
+s'applique pas. Chaque chiffre porte le nom de son scénario. L'étage de la chaîne, sur
+des entrées construites : huit coins et quatre, le multiplicateur absent des coins sans
+boucle, l'écart à θ entre ses coins, les deux persistances confondues sans boucle. Un
+écart à θ hors des coins est refusé. Là où les comptes APU et Mésange sont lisibles, les
+trajectoires du fichier sont celles que la chaîne calcule aujourd'hui ; ici, ce test
+tourne.
+
+Dix mutations, chacune vue échouer : la page éditée à la main, le taux changé sans
+refaire la passe, la raison d'un canal fermé réécrite dans la chaîne (deux tests la
+voient, dont un sans données), le report en part de PIB remplacé par un report en euros,
+la persistance forcée aux coins, un canal fermé omis de la page, la bannière retirée, le
+contrôle de monotonie retiré, le multiplicateur retiré des coins, la boucle laissée dans
+la passe « sans rétroaction ». Une fois, c'est le test qui avait tort : son premier cas
+de non-monotonie mettait les recettes hors de leur propre boîte, et la garde de la chaîne
+l'arrêtait avant celle du script. Le cas construit est désormais un fichier dont la boîte
+tient les recettes et dont les coins ne les tiennent pas.
+
+Avec les tests de la chaîne, du chemin annuel, de l'API et de la commande prédictives, de
+θ, des indices, de l'explorateur, de son évaluateur et de son exemple, de la boucle, du
+magasin macro, de la validation, du préenregistrement, de la provenance, de la charte,
+des règles et des dépendances : 512 réussis, aucun sauté. `ruff` passe sur `src`, `tests`
+et `scripts`.
+
+**La suite.** Le balayage des gardes de la phase 9, puis la porte de M6 : le `make full`
+du propriétaire. Les deux choix du propriétaire de D-218 restent ouverts.
