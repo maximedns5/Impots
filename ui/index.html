@@ -1231,6 +1231,9 @@ footer code { font-family: var(--mono); font-size: 11px; }
               <input id="predGrowthName" placeholder="ex. Croissance réelle 1 %, prix 2 %"></label>
             <label class="lbl">en volume, % par an <input id="predReal" type="number" step="0.1"></label>
             <label class="lbl">des prix, % par an <input id="predPrices" type="number" step="0.1"></label>
+            <label class="lbl">Salaires, % par an <input id="predWage" type="number" step="0.1"></label>
+            <label class="lbl">source des indices
+              <input id="predWageSource" placeholder="ex. 3 % ronds, le rythme du PIB nominal"></label>
             <label class="lbl">Taux
               <select id="predRateKind">
                 <option value="" selected>— à choisir —</option>
@@ -1252,6 +1255,11 @@ footer code { font-family: var(--mono); font-size: 11px; }
                 <option value="tenu">Effet macro tenu au niveau de la troisième année</option>
               </select></label>
           </div>
+          <p class="tnote">La population de 2024 est vieillie jusqu'à la première année
+            chiffrée : salaires et chômage au rythme que vous déclarez, avec sa source,
+            pensions et loyers aux prix du scénario de croissance. C'est la vue de tête de la
+            commande <code>impots predictif</code> ; une population vieillie n'est plus
+            calibrée (D-216, D-226).</p>
           <p class="tnote">La rétroaction lit le solde primaire des variantes de Mésange : ce
             que l'activité créée ou détruite rend au budget, à un, deux et trois ans. Elle ne
             s'applique que sous « Dépenses gelées en volume », l'hypothèse de Mésange
@@ -2768,6 +2776,10 @@ function predictifPayload() {
   if (!growthName || real === "" || prices === "") {
     missing.push("un scénario de croissance nommé, en volume et en prix");
   }
+  const wage = $("predWage").value, wageSource = $("predWageSource").value.trim();
+  if (wage === "" || !wageSource) {
+    missing.push("une hypothèse de salaires, avec sa source, pour vieillir la population");
+  }
   const kind = $("predRateKind").value;
   const market = $("predMarket").value;
   if (!kind) missing.push("un scénario de taux");
@@ -2790,6 +2802,7 @@ function predictifPayload() {
     reform: spec, spending: { rule },
     growth: { name: growthName, real: Number(real) / 100, prices: Number(prices) / 100 },
     rate, horizon: Number(horizon), theta: { common: Number(theta) },
+    uprating: { wage: Number(wage) / 100, source: wageSource },
     behavioural: $("wantBand").checked, macro,
     ...(macro && rule === "gele_en_volume" && persistence ? { persistence } : {}) } };
 }
@@ -2908,8 +2921,9 @@ function predictifIndices(d) {
    says « report » in its own column, so a convention never reads as a costing. With
    behaviour, the gap is at θ, the mechanical gap stands beside it, and the θ box gives
    the gap at its two corners. The population view is named above the table and its
-   note sits under it (D-225): this prices « figée », the report above heads with
-   « vieillie » (D-216), and two 2026 figures with no word between them read as one. */
+   note sits under it (D-225): the report above prices « vieillie » and « figée » side
+   by side (D-216), this prices one, and a 2026 figure whose view goes unnamed cannot be
+   matched to its column, nor carry the caveat of an aged population. */
 const POPULATION_VIEWS = { figee: "figée", vieillie: "vieillie" };
 function renderPredictif(host, d) {
   const carried = new Set(d.carried_years || []);

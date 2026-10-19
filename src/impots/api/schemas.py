@@ -1716,6 +1716,22 @@ class PredictifRate(BaseModel):
     market_rate: Annotated[float, Field(gt=-0.1, lt=0.5)] | None = None
 
 
+class PredictifUprating(BaseModel):
+    """How the first year's population is aged (D-226). REQUIRED, like every hypothesis.
+
+    The wage index is the caller's, with where it comes from: this project forecasts
+    neither wages nor prices. The price index is NOT asked: it is the growth scenario's
+    (`annuel.uprating_for`), so the reform's euros and the GDP that divides them inflate
+    together (D-216). A blank source or a rate that is not an annual one is refused by
+    `Uprating`'s own message rather than by a bound here, so that the refusal says why.
+    """
+
+    model_config = INPUT_CONFIG
+
+    wage: float
+    source: str
+
+
 class PredictifTheta(BaseModel):
     """The user's θ (PHASE9_SPEC §2, D-217). REQUIRED: there is no default, not even 1/2.
 
@@ -1739,6 +1755,7 @@ class PredictifRequest(BaseModel):
     rate: PredictifRate
     horizon: Annotated[int, Field(ge=1, le=10)]
     theta: PredictifTheta
+    uprating: PredictifUprating
     behavioural: bool = False
     macro: bool = False
     """The GDP → receipts loop from Mésange's balance row (D-218). Off, the path is
@@ -1849,6 +1866,10 @@ class PredictifResponse(BaseModel):
     """φ_t, the loop's share of the reform's primary balance, when it runs."""
     persistence: str | None = None
     indices: list[PredictifIndex] = Field(default_factory=list)
+    population_view: Literal["figee", "vieillie"]
+    """The population the first year was priced on, in `predictif.annuel`'s words:
+    « vieillie », the 2024 population aged to that year, the command's headline (D-216,
+    D-226). No default, so a response cannot leave it out."""
     population_note: str
     banner: str
     debt_banner: str
