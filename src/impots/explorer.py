@@ -32,6 +32,16 @@ CE QUI FAIT QUE CE MODULE EST HONNÊTE, ET POURQUOI CHAQUE MORCEAU EST UNE GARDE
   enjambe la cible est FRAGILE : mécaniquement il l'atteint, et l'intervalle des preuves
   contient l'échec. Le dire est tout l'objet ; le cacher derrière un point central serait
   la faute que toute la phase 3 refuse.
+
+PHASE 9 §8 — LA DETTE CONDITIONNELLE, À θ FIXÉ, ET SEULEMENT LÀ (D-224). La liste blanche
+gagne une grandeur : l'écart de dette d'une réforme à l'année T, sous des θ et des scénarios
+nommés. À θ fixé c'est une fonction déterministe des boutons, et la raison de D-092 —
+plusieurs valeurs de bouton amènent un intervalle à contenir la cible — ne s'applique plus.
+Trois gardes la tiennent. θ est exigé, et refusé pour la cible mécanique, sur laquelle il
+n'agit pas. θ n'est jamais un bouton : une borne qui le nomme est refusée, quelle que soit
+la cible. Et chaque candidat est relu aux 2^K coins de la boîte θ que l'évaluation fournit :
+« robuste » si la cible y tient partout, sinon « dépend de θ », avec le premier coin qui la
+fait tomber. Une baisse de dette est un écart négatif : cette cible est atteinte PAR LE BAS.
 """
 
 from __future__ import annotations
@@ -45,10 +55,38 @@ from pathlib import Path
 
 from impots.scenarios import ScenarioError, refuse_banded
 
+#: The conditional debt of Phase 9 §8 (D-224): admitted here, and not by the one-knob
+#: solver, whose `macro` stays an interval.
+CONDITIONAL = "dette_conditionnelle"
+
+
+@dataclass(frozen=True)
+class Objective:
+    """How a target reads: its unit, and from which side a candidate meets it."""
+
+    unit: str
+    divisor: float
+    at_least: bool
+    """True for receipts, met from above; False for a debt difference, met from below."""
+
+    def meets(self, value: float, target: float) -> bool:
+        return value >= target if self.at_least else value <= target
+
+    def show(self, value: float) -> str:
+        return f"{value / self.divisor:+.3f}"
+
+
 #: Les cibles que l'explorateur accepte. Liste blanche, pour la raison que
 #: `SOLVABLE_QUANTITIES` porte déjà : une liste noire refuse ce qu'elle reconnaît, et
 #: l'appelant qui a le plus besoin d'être refusé est celui qui a mal tapé le nom.
-OBJECTIVE_QUANTITIES: frozenset[str] = frozenset({"mechanical"})
+OBJECTIVES: dict[str, Objective] = {
+    "mechanical": Objective(unit="md€", divisor=1e9, at_least=True),
+    CONDITIONAL: Objective(unit="pt de PIB", divisor=0.01, at_least=False),
+}
+OBJECTIVE_QUANTITIES: frozenset[str] = frozenset(OBJECTIVES)
+
+#: Names that are θ, never knobs, beside the store's open rows and the multiplier's θ.
+THETA_NAMES = ("theta", "θ")
 
 #: Les contraintes acceptées, par CODE. « decile_1_3_net_loss » est admissible parce
 #: qu'elle est mécanique — un delta de revenu disponible par décile, sans bande — et non
@@ -206,6 +244,10 @@ class Evaluation:
     band: tuple[float, float] | None = None
     band_reason: str = ""
     constraints: dict[str, float] = field(default_factory=dict)
+    corners: tuple[tuple[str, float], ...] = ()
+    """For `dette_conditionnelle`: the aged value at each corner of the θ box, labelled,
+    in the box's own order. The value fields keep their first names, in euros, for the
+    mechanical target; for the conditional one they carry Δb_T as a share of GDP."""
 
     def __post_init__(self) -> None:
         if self.band is None and not self.band_reason.strip():
@@ -226,6 +268,10 @@ class Candidate:
     frozen_only: bool
     fragile: bool
     fragility_reason: str = ""
+    robust: bool | None = None
+    """For `dette_conditionnelle`: True when the target holds at every corner of the θ
+    box, False when one breaks it; None for a target θ does not move."""
+    theta_reason: str = ""
 
     @property
     def aged_eur(self) -> float:
@@ -255,6 +301,8 @@ class SearchLog:
     order: list[dict[str, float]] = field(default_factory=list)
     values_aged: list[float] = field(default_factory=list)
     excluded: list[tuple[dict[str, float], str]] = field(default_factory=list)
+    theta: dict[str, object] | None = None
+    """The θ a conditional search ran at: part of what is replayed, so of the digest."""
 
     def record(self, knobs: dict[str, float], aged: float) -> None:
         self.order.append(dict(knobs))
@@ -269,12 +317,15 @@ class SearchLog:
 
     def payload(self) -> dict[str, object]:
         """La forme sérialisable du journal, qui est aussi ce sur quoi porte l'empreinte."""
-        return {
+        payload: dict[str, object] = {
             "seed": self.seed,
             "order": [sorted(knobs.items()) for knobs in self.order],
             "values_aged": [round(v, 6) for v in self.values_aged],
             "excluded": [[sorted(knobs.items()), reason] for knobs, reason in self.excluded],
         }
+        if self.theta is not None:
+            payload["theta"] = self.theta
+        return payload
 
     def digest(self) -> str:
         """sha256 du journal. Deux exécutions identiques la partagent ; sinon elles ne
@@ -294,30 +345,70 @@ class SearchLog:
         return path
 
 
-def _fragile(evaluation: Evaluation, target_eur: float) -> tuple[bool, str]:
+def _fragile(evaluation: Evaluation, target_eur: float,
+             objective: Objective = OBJECTIVES["mechanical"]) -> tuple[bool, str]:
     """La bande enjambe-t-elle la cible ?
 
     Pas « la bande contient zéro » : la question est posée à la CIBLE, parce qu'un
     candidat visant +20 md€ dont l'intervalle va de +5 à +35 md€ atteint mécaniquement la
-    cible et contient son échec, quand bien même il ne s'approche jamais de zéro.
+    cible et contient son échec, quand bien même il ne s'approche jamais de zéro. Dans
+    l'unité de la cible : des milliards pour les recettes, des points de PIB pour la dette.
     """
     if evaluation.band is None:
         return False, (f"aucune bande — {evaluation.band_reason}. L'absence de drapeau "
                        f"n'est donc pas une absence de fragilité, seulement une absence "
                        f"de mesure.")
     low, high = evaluation.band
+    show, unit = objective.show, objective.unit
     if low <= target_eur <= high:
-        return True, (f"FRAGILE : la bande [{low / 1e9:+.3f} ; {high / 1e9:+.3f}] md€ "
-                      f"enjambe la cible de {target_eur / 1e9:+.3f} md€ — mécaniquement "
+        return True, (f"FRAGILE : la bande [{show(low)} ; {show(high)}] {unit} "
+                      f"enjambe la cible de {show(target_eur)} {unit} — mécaniquement "
                       f"atteinte, et l'intervalle des preuves contient l'échec.")
     # La MARGE est dite, pas seulement le côté. Sans elle, une bande qui s'arrête à
     # 0,6199 md€ sous une cible de 0,62 md€ s'affiche « [… ; +0,62] md€, entièrement en
     # dessous de la cible » : la phrase se contredit à l'œil, et un lecteur qui prend un
     # message de garde en défaut cesse de lire les suivants.
     marge = (low - target_eur) if low > target_eur else (target_eur - high)
-    return False, (f"bande [{low / 1e9:+.3f} ; {high / 1e9:+.3f}] md€, entièrement "
+    return False, (f"bande [{show(low)} ; {show(high)}] {unit}, entièrement "
                    f"{'au-dessus' if low > target_eur else 'en dessous'} de la cible, "
-                   f"avec {marge / 1e9:.3f} md€ de marge.")
+                   f"avec {marge / objective.divisor:.3f} {unit} de marge.")
+
+
+def _theta_names(theta: object | None) -> set[str]:
+    """Every name a bound may not carry: θ itself, the multiplier's θ, every open row of
+    the behavioural store, and every row the request's θ names."""
+    from impots.behavioural.store import load
+    from impots.predictif.theta import MACRO_ROW
+
+    rows = getattr(theta, "rows", None) or {}
+    return ({MACRO_ROW, *rows} | {k for k, p in load().parameters.items() if p.is_open})
+
+
+def refuse_theta_as_knob(bounds: Sequence[Bound], theta: object | None) -> None:
+    """θ n'est jamais un bouton (§8) : il se fixe dans la requête, et chercher sur lui
+    reviendrait à choisir l'hypothèse qui fait passer le plan."""
+    names = _theta_names(theta)
+    named = sorted(b.knob for b in bounds
+                   if b.knob in names or b.knob.strip().lower().startswith(THETA_NAMES))
+    if named:
+        raise ExplorerError(
+            f"θ n'est pas un bouton : bornes {named}. θ se fixe dans la requête et ne "
+            f"figure jamais dans l'espace de recherche — chercher le θ qui fait passer un "
+            f"plan, c'est la définition de se tromper soi-même.")
+
+
+def _robust(evaluation: Evaluation, target: float,
+            objective: Objective) -> tuple[bool, str]:
+    """The candidate re-read at every corner of the θ box: the first that breaks the
+    target is named. Reading at the corners rests on each channel's monotonicity, which
+    guard 7 of §2.4 checks."""
+    for label, value in evaluation.corners:
+        if not objective.meets(value, target):
+            return False, (f"dépend de θ : au coin {label}, l'écart vaut {objective.show(value)} "
+                           f"{objective.unit} et la cible de {objective.show(target)} "
+                           f"{objective.unit} tombe.")
+    return True, (f"robuste : la cible tient aux {len(evaluation.corners)} coins de la "
+                  f"boîte θ.")
 
 
 def search(
@@ -329,6 +420,7 @@ def search(
     constraints: Sequence[Constraint] = (),
     seed: int = 0,
     max_evaluations: int = MAX_EVALUATIONS,
+    theta: object | None = None,
 ) -> tuple[tuple[Candidate, ...], SearchLog]:
     """Des candidats atteignant la cible, et le journal de la recherche qui les a trouvés.
 
@@ -341,8 +433,20 @@ def search(
     dans un ordre différent et « rejouable à l'identique » serait faux.
     """
     refuse_banded_objective(quantity)
+    objective = OBJECTIVES[quantity]
+    conditional = quantity == CONDITIONAL
+    if conditional and theta is None:
+        raise ExplorerError(
+            "cible « dette_conditionnelle » sans θ : sans lui, la dette n'est pas une "
+            "fonction des boutons mais une famille de fonctions, et la recherche "
+            "choisirait un θ par l'ordre de ses appels. θ se fixe dans la requête.")
+    if not conditional and theta is not None:
+        raise ExplorerError(
+            f"θ donné pour la cible « {quantity} », mécanique : il n'y agit pas, et "
+            f"s'afficherait à côté de candidats qu'il n'a pas déplacés.")
     for constraint in constraints:
         refuse_banded_constraint(constraint.code)
+    refuse_theta_as_knob(bounds, theta)
     if not bounds:
         raise ExplorerError(
             "aucune borne : sans plage par instrument il n'y a pas d'espace de recherche, "
@@ -363,7 +467,9 @@ def search(
             f"Élargir le pas ou resserrer les bornes : une recherche tronquée en silence "
             f"rendrait « pas de candidat » pour une raison qui n'est pas la bonne.")
 
-    log = SearchLog(seed=seed)
+    log = SearchLog(seed=seed, theta=(
+        {"rows": sorted((k, float(v)) for k, v in theta.rows.items()),
+         "common": theta.common} if conditional else None))
     candidates: list[Candidate] = []
     for point in itertools.product(*grids):
         knobs = {bound.knob: value for bound, value in zip(bounds, point, strict=True)}
@@ -383,13 +489,22 @@ def search(
             log.exclude(knobs, " ; ".join(broken))
             continue
 
-        meets = evaluation.aged_eur >= target_eur
-        frozen_only = (not meets) and evaluation.frozen_eur >= target_eur
-        fragile, reason = _fragile(evaluation, target_eur)
+        meets = objective.meets(evaluation.aged_eur, target_eur)
+        frozen_only = (not meets) and objective.meets(evaluation.frozen_eur, target_eur)
+        fragile, reason = _fragile(evaluation, target_eur, objective)
+        robust, theta_reason = None, ""
+        if conditional:
+            if not evaluation.corners:
+                raise ExplorerError(
+                    f"paquet {knobs} non relu sur la boîte θ : sans ses coins il ne peut "
+                    f"être dit ni robuste ni dépendant de θ, et « pas relu » se lirait "
+                    f"« robuste ».")
+            robust, theta_reason = _robust(evaluation, target_eur, objective)
         if meets or frozen_only:
             candidates.append(Candidate(knobs=knobs, evaluation=evaluation,
                                         meets_target=meets, frozen_only=frozen_only,
-                                        fragile=fragile, fragility_reason=reason))
+                                        fragile=fragile, fragility_reason=reason,
+                                        robust=robust, theta_reason=theta_reason))
 
     candidates.sort(key=lambda c: (abs(c.aged_eur - target_eur),
                                    tuple(sorted(c.knobs.items()))))
