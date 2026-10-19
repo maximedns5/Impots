@@ -1,6 +1,19 @@
 # State of the project, and the directions open — 2026-10-19 (Phase 9, M6 under way)
 
-The eleventh 2026-10-19 update adds D-228, M6's fourth step: §9.4's worked example,
+The twelfth 2026-10-19 update adds D-229, M6's fifth step: the guard sweep.
+`scripts/sweep_gardes_phase9.py` reads its catalogue from the code — every `raise` of
+`predictif/`, of the two debt scenario modules, of D-224's explorer additions and of the
+predictive API and command, plus fourteen guards written by hand (§2.4's guards 1 and 4
+to 7, the page) — mutates each guard in turn and runs the tests that must kill it. The
+first pass: 98 mutations, 27 survivors, among them a reform's priced years past the
+horizon dropped without a word, a macro response of zero for an impulse with no
+instrument, six API translations never exercised, and the chain's absences held to no
+reason. Each survivor got a kill test seen failing on its mutation, or, once, a named
+equivalence; `Trajectoire` now refuses an absence without its reason. The second pass,
+on the commit with the tests, kills every mutation but that one. `tests/test_gardes_phase9.py`
+refuses a report that does not name every guard of today's catalogue, so a guard added
+later fails until the sweep (`--missing`) has run on it.
+The eleventh 2026-10-19 update added D-228, M6's fourth step: §9.4's worked example,
 `docs/PREDICTIF_EXEMPLE.md`, which says it illustrates the machinery and recommends
 nothing. The first income-tax bracket goes from 11 % to 10 % in 2026, 4.84 bn on the aged
 population, 4.80 bn with behaviour at θ = ½. In 2035 the debt gap is +1.30 point of GDP
@@ -177,8 +190,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **229 decision
-entries**, D-000 to D-228, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **230 decision
+entries**, D-000 to D-229, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -528,9 +541,9 @@ download list.
    IS (D-221). R&D opened as an illustrative index (D-222, C9, CIR rates only), and the
    CIR is priced on the créance flow with its banner. Dividends (§6.5) stay closed. Every
    §6 channel has its verdict. M6 is under way: §7's indices (D-223), the explorer at a
-   fixed θ (§8, D-224), §9.1's coherence and §9.2's preregistered containment (D-227) and
-   §9.4's worked example (D-228) are in; next the guard sweep, whose gate is the owner's
-   `make full`. Left for C9: the take-up margin, new entrants, the carried-forward stock,
+   fixed θ (§8, D-224), §9.1's coherence and §9.2's preregistered containment (D-227),
+   §9.4's worked example (D-228) and the guard sweep (D-229) are in; what remains of M6
+   is its gate, the owner's `make full`, which closes Phase 9. Left for C9: the take-up margin, new entrants, the carried-forward stock,
    and the CNEPI's 2021 evaluation (IPP report n° 33), not manifested. M1 to M4 are done (D-215 to D-219); M4 left
    the transfers and the IS closed. Two
    decisions from M3 are the owner's: whether the page should show both persistence

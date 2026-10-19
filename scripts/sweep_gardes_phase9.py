@@ -373,6 +373,11 @@ def read_report(path: Path = REPORT) -> dict[str, dict[str, str]]:
     return rows
 
 
+def _n(count: int, word: str) -> str:
+    """« 1 tuée », « 0 survivante », « 98 tuées » : the plural from two on."""
+    return f"{count} {word}{'s' if count > 1 else ''}"
+
+
 def _cell(text: str) -> str:
     return text.replace("|", "\\|")
 
@@ -394,10 +399,11 @@ def write_report(rows: dict[str, dict[str, str]], mutations: list[Mutation],
         f"doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis "
         f"toute la suite de la phase 9 (« large »).",
         "",
-        f"**{len(rows)} mutations** : {counts['tuée']} tuées, {counts['équivalente']} "
-        f"équivalentes, chacune avec sa raison, {counts['SURVIVANTE']} survivantes"
-        + (f", {counts['équivalence à retirer']} équivalences qu'un test tue désormais"
-           if counts["équivalence à retirer"] else "") + ".",
+        f"**{len(rows)} mutations** : {_n(counts['tuée'], 'tuée')}, "
+        f"{_n(counts['équivalente'], 'équivalente')} avec sa raison, "
+        f"{_n(counts['SURVIVANTE'], 'survivante')}"
+        + (f", {_n(counts['équivalence à retirer'], 'équivalence')} qu'un test tue "
+           f"désormais" if counts["équivalence à retirer"] else "") + ".",
         "",
         "| Mutation | Garde | Verdict | Étage | Tuée par |",
         "|---|---|---|---|---|",
