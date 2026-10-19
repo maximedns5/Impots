@@ -1110,6 +1110,23 @@ def _predictif_macro_store() -> Any:
         raise MacroSourceError(f"magasin macro illisible : {error}") from error
 
 
+#: The population view the predictive path's first year is priced in, in
+#: `predictif.annuel`'s words (D-224). `_price_first_year` hands the pass the frame as
+#: loaded: the year's law on 2024 incomes, nothing aged. The command prices « vieillie »
+#: too and makes it the headline (D-216); ageing the frame here would change the numbers,
+#: and this name and `_first_year_note` with them.
+FIRST_YEAR_VIEW = "figee"
+
+
+def _first_year_note(year: int) -> str:
+    """The quick tier's note, and the view the predictive path's first year is priced in."""
+    return (_quick_tier_note()
+            + f" Vue « figée » : l'année {year} est chiffrée avec sa législation sur la "
+              f"population {POPULATION_VINTAGE} telle quelle, revenus non vieillis. La "
+              "commande `impots predictif` chiffre aussi la vue « vieillie », revenus "
+              "portés à l'année, et en fait son chiffre de tête (D-216).")
+
+
 def _price_first_year(request: PopulationSimulateRequest, *, macro: bool = False) -> Any:
     """One quick-tier pass for the predictive path's first year — the seam its tests stub.
 
@@ -1117,7 +1134,8 @@ def _price_first_year(request: PopulationSimulateRequest, *, macro: bool = False
     behaviour was asked for, so the receipts at θ run on the very population the cost
     came from; `impulse` is the reform's macro impulse by Mésange variant,
     EXPANSIONARY-POSITIVE, and `uncovered` the deltas without one, when the loop was
-    asked for (`macro`); `note` is the quick tier's.
+    asked for (`macro`); `view` is the population view priced, `FIRST_YEAR_VIEW`, and
+    `note` the quick tier's, which names it.
     """
     from types import SimpleNamespace
 
@@ -1142,8 +1160,8 @@ def _price_first_year(request: PopulationSimulateRequest, *, macro: bool = False
             raise HTTPException(status_code=422, detail=str(error)) from error
         impulse, uncovered = dict(built.by_instrument), built.reasons()
     return SimpleNamespace(cost=float(agg.reform_cost), inputs=inputs, impulse=impulse,
-                           uncovered=uncovered, note=_quick_tier_note(),
-                           deciles=list(agg.deciles))
+                           uncovered=uncovered, view=FIRST_YEAR_VIEW,
+                           note=_first_year_note(request.year), deciles=list(agg.deciles))
 
 
 @app.post("/predictif/simulate", response_model=PredictifResponse)
@@ -1152,9 +1170,10 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
 
     THE FAST VERSION (M0, R3). Pricing ten years one by one takes about an hour, so this
     endpoint prices the FIRST projected year on the quick-tier population — the same run
-    `/population/simulate` makes — and carries that cost as a constant share of GDP, a
-    convention every carried year is labelled with. The full year-by-year path belongs to
-    a batch command.
+    `/population/simulate` makes, on the 2024 population as it is, the « figée » view of
+    the command (D-224) — and carries that cost as a constant share of GDP, a convention
+    every carried year is labelled with. The full year-by-year path belongs to a batch
+    command.
 
     θ IS REQUIRED (D-217, guard 1): the schema has no default for it, and a θ outside
     [0, 1] or named for a row the store does not hold is refused here, before the pass.
@@ -1289,7 +1308,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             box=({k: list(v) for k, v in i.box.items()} if i.box is not None else None),
             reason=i.reason, conventions=list(i.conventions), uncovered=dict(i.uncovered))
             for i in computed],
-        population_note=first.note,
+        population_view=first.view, population_note=first.note,
         banner=result.banner, debt_banner=DEBT_BANNER,
     )
 

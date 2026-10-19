@@ -64,7 +64,7 @@ def priced(monkeypatch) -> list:
     def stub(request, *, macro=False):
         seen.append(request)
         # A 5 Md€ income-tax cut, and a transfer the loop cannot read, when asked for.
-        return SimpleNamespace(cost=5e9, note="sous-échantillon de 20 000",
+        return SimpleNamespace(cost=5e9, view="figee", note="sous-échantillon de 20 000",
                                inputs=_households() if request.behavioural else None,
                                impulse={"impot_sur_le_revenu": 5e9} if macro else None,
                                uncovered={"rsa": "transfert"} if macro else {})
@@ -296,3 +296,36 @@ def test_an_unreadable_macro_store_the_loop_does_not_need_leaves_the_indices_abs
     got = _indices(response.json())
     assert "illisible" in got["consommation"]["reason"]
     assert "introuvable" in got["emploi_marchand"]["reason"]
+
+
+# --------------------------------------------------------------------------- #
+# The view the first year is priced in (D-224)
+# --------------------------------------------------------------------------- #
+def test_the_first_year_is_priced_on_the_frozen_population_and_says_so(
+        client, monkeypatch) -> None:
+    """The real `_price_first_year`, its pass stubbed one layer down: it hands the pass
+    the population as loaded — 2026 law on 2024 incomes, nothing aged, « figée » — and
+    the response names that view, in its own field and in its note. The command prices
+    « vieillie » too and puts it first (D-216): without the name, the two 2026 figures
+    read as one. Ageing the frame here fails the first assertion, and the name must then
+    change with the numbers."""
+    population = object()
+    passed: list = []
+
+    def run(request, frame):
+        passed.append(frame)
+        return (SimpleNamespace(households=None),
+                SimpleNamespace(reform_cost=5e9, deciles=[]))
+
+    monkeypatch.setattr(main, "_population_frame", lambda: population)
+    monkeypatch.setattr(main, "_run_population", run)
+    monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+    response = client.post("/predictif/simulate", json=_payload())
+    assert response.status_code == 200, response.text
+    assert len(passed) == 1 and passed[0] is population
+    body = response.json()
+    assert body["mechanical_first_year_eur"] == 5e9
+    assert body["population_view"] == "figee"
+    note = body["population_note"]
+    assert "« figée »" in note and "2026" in note and "non vieillis" in note
+    assert "« vieillie »" in note and "D-216" in note

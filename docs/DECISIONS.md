@@ -16482,3 +16482,73 @@ que la page de la variante ciblée n'imprime pas ces lignes. Pour M6 : l'explora
 fixé (§8), puis la cohérence, le confinement préenregistré, l'exemple au dossier et le
 balayage des gardes (§9), dont la porte est le `make full` du propriétaire. Les deux
 choix du propriétaire de D-218 restent ouverts.
+
+## D-224 — La version rapide chiffre sa première année en vue figée, et le dit
+
+**Le fait.** `POST /predictif/simulate` chiffre la première année projetée, 2026, sur la
+population de 2024 telle quelle. `_price_first_year` passe à `_run_population` le cadre
+que `_population_frame` lit dans le parquet, et `population.runner.run` le câble sans y
+toucher : la législation de 2026 s'applique à des revenus de 2024. Seules les dates de
+naissance suivent l'année, écrites « année − âge » par `build_simulation`, si bien que
+chacun garde son âge. Rien ne vieillit la population sur ce chemin : `uprating.uprate`
+n'est appelé que dans `population/cli.py`. C'est la vue « figée » de
+`predictif/annuel.py`, celle que la commande `impots predictif` place à côté de la vue
+« vieillie », son chiffre de tête (D-216). La réponse ne disait pas laquelle elle avait
+chiffrée : `population_note` reprenait la note de l'échantillon rapide, et D-215 écrivait
+seulement « comme `/population/simulate` ».
+
+**Ce qui change, sans qu'un chiffre bouge.** La réponse porte un champ `population_view`,
+obligatoire et sans défaut, dans le vocabulaire de `annuel.VIEWS` : il vaut « figee ».
+`population_note` gagne une phrase : « Vue « figée » : l'année 2026 est chiffrée avec sa
+législation sur la population 2024 telle quelle, revenus non vieillis. La commande
+`impots predictif` chiffre aussi la vue « vieillie », revenus portés à l'année, et en
+fait son chiffre de tête (D-216). » Les deux viennent de `_price_first_year`, la
+fonction qui choisit le cadre, par la constante `FIRST_YEAR_VIEW` posée à côté d'elle :
+vieillir le cadre là changerait les chiffres, et le nom avec eux. La docstring de
+l'endpoint le dit aussi. `/population/simulate` n'est pas touché.
+
+**Ce que la vue figée laisse de côté, et de combien.** Le coût de la réforme est calculé
+sur des revenus de 2024, et le PIB qui le divise est celui de 2026. La vue vieillie porte
+les salaires et le chômage au taux de salaire déclaré, les pensions et les loyers aux
+prix du scénario de croissance. L'essai de D-216 donne l'ordre de grandeur : l'article 3
+du PLF 2027 rapporte 1,12 Md€ en 2026 sur la population figée et 1,22 Md€ sur la
+population vieillie, 9 % de plus. Le report en part de PIB constante reprend ensuite ce
+niveau tel quel. Quand la page affiche un rapport précalculé au-dessus de la version
+rapide, les deux chiffres de 2026 diffèrent donc, et rien ne disait pourquoi.
+
+**La vue vieillie ici : une proposition au propriétaire, pas un changement.** Elle change
+les chiffres, et le choix lui revient. Trois voies.
+
+1. Garder la vue figée, nommée : c'est l'état que laisse cette entrée. Une passe, aucune
+   hypothèse de plus.
+2. Chiffrer la vue vieillie à la place. Toujours une seule passe : vieillir le cadre
+   n'est qu'une multiplication sur quatre colonnes. La requête gagne le taux de salaire
+   et sa source, obligatoires puisqu'aucune hypothèse n'a de défaut (D-215, D-216).
+   L'indice de prix se tire du scénario de croissance par `annuel.uprating_for`, sous la
+   garde `check_coherence`. La note porte alors `uprating.caveat` : une population
+   vieillie n'est plus calibrée. Le chiffre de 2026 se lit dans la même vue que le
+   chiffre de tête de la commande.
+3. Chiffrer les deux. Deux passes, soit à peu près le double des 122 s de D-215, et
+   l'écart affiché comme dans le rapport.
+
+La recommandation est la deuxième : la même attente, la vue de tête de la commande, pour
+le prix d'un champ obligatoire de plus. La troisième double l'attente pour une vue que le
+rapport précalculé donne déjà.
+
+**Les tests.** Un nouveau dans `tests/test_api_predictif.py`. Il fait tourner le vrai
+`_price_first_year`, la passe remplacée un étage plus bas (`_population_frame` et
+`_run_population`) : la passe reçoit le cadre chargé lui-même, sans rien entre les deux ;
+la réponse vaut « figee » dans `population_view`, et sa note nomme les deux vues, l'année
+et D-216. Il a été vu échouer avant le changement, sur l'absence du champ
+(`KeyError: 'population_view'`), alors que l'assertion sur le cadre passait déjà : la
+lecture ci-dessus, vérifiée. Puis sur quatre mutations : la phrase retirée de la note, le
+cadre enveloppé avant la passe, la vue renommée « vieillie », le champ retiré de la
+réponse, que le schéma refuse faute de défaut. Le bouchon `priced` des autres tests porte
+désormais `view`. `test_api_predictif.py` et `test_api.py` : 90 réussis, 13 désélectionnés
+par le marqueur par défaut. `ruff` passe sur `src`, `tests` et `scripts`. `make full`
+n'a pas été lancé : rien de ce qui change ne touche une passe de population.
+
+**Ce qui reste.** Le choix de la vue, ci-dessus. La page n'affiche ni `population_note`
+ni `population_view` de la version rapide : `renderPredictif` ne les lit pas, et le
+lecteur de la page ne voit pas encore la vue. Il y faut une ligne, et une vérification
+dans `ui/check.mjs`.
