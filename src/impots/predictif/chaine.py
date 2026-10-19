@@ -96,7 +96,10 @@ CLOSED: dict[str, str] = {
         "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; "
         "le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de "
         "2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par "
-        "horizon ni ligne de solde (§5, §6.2, D-219)."),
+        "horizon ni ligne de solde (§5, D-219). Le rapport final du comité "
+        "d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne "
+        "chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il "
+        "résume une littérature, sans estimation française (§6.2, D-221)."),
     "transferts": (
         "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent "
         "0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le "

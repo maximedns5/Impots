@@ -89,6 +89,7 @@ def compute(
     labour_delta_log_net: np.ndarray | None = None,
     labour_weights: np.ndarray | None = None,
     labour_emtr: np.ndarray | None = None,
+    is_rate_change_points: float | None = None,
     draws: int = DRAWS,
     seed: int = SEED,
 ) -> BehaviouralResult:
@@ -129,6 +130,10 @@ def compute(
         labour_delta_log_net=labour_delta_log_net, labour_weights=labour_weights,
         labour_emtr=labour_emtr, draws=draws, rng=rng,
     ))
+    # C8 after C7, for the same reason.
+    results.append(channel_module.firm_creations(
+        store, reform, is_rate_change_points=is_rate_change_points, draws=draws, rng=rng,
+    ))
 
     metrics: dict[str, tuple[tuple[str, ...], float]] = {}
     if relative_cost_change is not None and len(relative_cost_change):
@@ -148,6 +153,11 @@ def compute(
             and labour_delta_log_net is not None and len(labour_delta_log_net)):
         metrics["c7_labour_supply"] = (
             channel_module.C7_KEYS, float(np.max(np.abs(labour_delta_log_net))))
+    creations = next((r for r in results if r.key == "c8_creations" and r.applies), None)
+    if creations is not None:
+        # In the driver's units, as the support is: points of the virtual rate.
+        metrics["c8_creations"] = (
+            channel_module.C8_KEYS, abs(creations.diagnostics["virtual_rate_fall_points"]))
 
     verdict = grading_module.grade(store, metrics)
 
@@ -171,10 +181,13 @@ def compute(
         channels=[
             {"key": r.key, "label": r.label, "applies": r.applies,
              "central": r.central, "unit": r.unit, "message": r.message,
+             # The channel's own band in the channel's own unit: left to the schema's
+             # default, C4's percentages and C8's points were labelled euros.
              "band": (None if r.draws is None else
                       {"p10": float(np.percentile(r.draws, 10)),
                        "p50": float(np.percentile(r.draws, 50)),
-                       "p90": float(np.percentile(r.draws, 90))}),
+                       "p90": float(np.percentile(r.draws, 90)),
+                       "unit": r.unit}),
              "grade": verdict.per_channel.get(r.key),
              "diagnostics": r.diagnostics}
             for r in results

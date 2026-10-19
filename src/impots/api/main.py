@@ -891,8 +891,21 @@ def _firm_behavioural(request: Any, agg: Any) -> Any:
     computed = band_module.compute(
         mechanical=-(agg.reform_cost or 0.0), reform=request.reform,
         production_tax_baseline=baseline_tax, production_tax_reform=reformed_tax,
+        is_rate_change_points=_is_rate_change_points(request),
     )
     return Behavioural(**computed.as_dict())
+
+
+def _is_rate_change_points(request: Any) -> float | None:
+    """The reform's IS normal rate minus current law's for the year, in points — what
+    C8 reads (D-221). None when the reform leaves the normal rate alone."""
+    from impots.entreprises import system as firm_system
+
+    rate = getattr(request.reform, "is_taux_normal", None)
+    if rate is None:
+        return None
+    current = firm_system.baseline().parameters(f"{request.year}-01-01").impot_societes
+    return 100.0 * (rate - float(current.taux_normal))
 
 
 @app.post("/entreprises/simulate", response_model=FirmResponse)

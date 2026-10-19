@@ -1395,6 +1395,24 @@
       "licence": "IZA Discussion Paper — accès ouvert",
       "description": "Bargain, Orsini et Peichl, « Comparing Labor Supply Elasticities in Europe and the United States: New Results », IZA DP n° 6735, juillet 2012. Tableaux F.1, F.3, F.5 et F.7 : élasticités des heures au salaire brut, propre et, pour les couples, croisée, France 1998 et 2001, femmes et hommes en couple, femmes et hommes seuls, avec écarts-types ; annexe G pour l'estimation commune des deux années. Source du canal d'offre de travail C7 (D-220).",
       "quarantined": false
+    },
+    "france_strategie_2023_fiscalite_capital_rapport_final.pdf": {
+      "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/Rapport/fs-2023-rapport-isf-quatrieme_rapport_complet_17octobre_2.pdf",
+      "sha256": "054482853fde6777a88a6da92427b66da13e9ab447b5e81b225a8de1b698a8df",
+      "bytes": 7761754,
+      "downloaded": "2026-10-19",
+      "licence": "France Stratégie — rapport public",
+      "description": "France Stratégie, Comité d'évaluation des réformes de la fiscalité du capital, « Rapport final », octobre 2023 (316 p.). L'ancienne adresse strategie.gouv.fr renvoie une 404 depuis la migration vers strategie-plan.gouv.fr, ce qui avait arrêté M0. Lu en M5 : aucune évaluation chiffrée de l'effet de la baisse de l'IS sur l'investissement (revue de littérature qualitative, p. 75-76) ; synthèse de l'étude IPP n° 47 sur les créations d'entreprises (chapitre 4, p. 237-249). D-221.",
+      "quarantined": false
+    },
+    "ipp_rapport_47_2023_bach_et_al_creations_entreprises.pdf": {
+      "url": "https://shs.hal.science/halshs-04439415v1/file/Rapport_IPP_47_ISFcrea_compressed.pdf",
+      "sha256": "721aa776a1f6111b04ce4c4d470be7df46b3f64121c7f7d0ca8ca4fd2d059544",
+      "bytes": 3051670,
+      "downloaded": "2026-10-19",
+      "licence": "HAL (halshs-04439415), accès ouvert",
+      "description": "Bach, Bozio, Fize, Guillouzouic et Malgouyres, « Évaluation des réformes de la fiscalité du capital — Effets sur la création d'entreprises, l'expatriation et la circulation de l'épargne », rapport IPP n° 47, octobre 2023 (136 p.). Tableau 2.2 : estimations statiques en différences de différences du taux de création de sociétés selon l'exposition sectorielle aux réformes PFU, IS et IFI. Source du canal des créations de sociétés (D-221).",
+      "quarantined": false
     }
   }
 }
