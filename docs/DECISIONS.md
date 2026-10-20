@@ -17199,3 +17199,53 @@ prenne lui-même le magasin de `certifi`, ce qui évite le piège TLS sur un Mac
 `impots data fetch plf2026_voies_et_moyens_tome2.pdf` avant la prochaine passe, pour que
 les deux tests du CIR tournent. Rien n'est publié : la porte de publication reste celle
 du propriétaire (§11).
+
+## D-232 — Le téléchargeur complète le magasin d'OpenSSL par celui de `certifi`
+
+**Le fait.** D-231 consignait deux sources sur douze refusées par la vérification TLS sur
+le Mac du propriétaire : Eurostat (« unable to get local issuer certificate ») et France
+Stratégie (« self-signed certificate in certificate chain »). Le Python qu'installe uv lit
+le magasin de certificats d'OpenSSL, pas le trousseau de macOS. Des deux suites proposées,
+le propriétaire a choisi celle-ci : que le téléchargeur prenne lui-même `certifi`.
+
+**La cause, mesurée.** Les deux chaînes servies s'arrêtent sur deux racines de 2021 :
+GlobalSign Root R46 pour `ec.europa.eu`, qui n'envoie pas sa racine, et Sectigo Public
+Server Authentication Root R46 pour `www.strategie-plan.gouv.fr`, qui l'envoie. D'où les
+deux messages. `certifi` 2026.07.22 porte les deux. La panne a été reproduite ici contre
+les deux vrais serveurs, avec un magasin d'OpenSSL réduit à la liste de `certifi` moins
+ces deux racines : `SSL_CERT_FILE` pointé dessus, et `SSL_CERT_DIR` sur un répertoire
+vide, sans quoi OpenSSL lit aussi celui du système, qui les a. Les deux messages
+reviennent mot pour mot. Les deux racines remises, les deux fichiers passent : elles sont
+toute la cause.
+
+**Ce qui change.** `donnees.telecharger` ouvre désormais par `contexte_tls()` : le
+contexte par défaut d'OpenSSL, auquel s'ajoute le magasin de `certifi`. Le magasin du
+système est complété, pas remplacé. Un `SSL_CERT_FILE` posé par un proxy qui inspecte le
+TLS, comme celui du conteneur où ce code est écrit, reste lu ; un contexte bâti sur
+`certifi` seul aurait réparé le Mac et cassé ces environnements-là. La vérification reste
+entière, chaîne et nom d'hôte. `certifi` est déclaré dans `pyproject.toml` : il n'arrivait
+que par `httpx`, une dépendance de développement, et `test_dependances` refuse un import
+non déclaré. Rien d'autre ne télécharge dans `src/` ni dans `scripts/`, et
+`impots data fetch` passe par l'ouverture par défaut de `telecharger`, celle que les
+tests exercent.
+
+**Les tests.** Quatre tests ouvrent une vraie connexion TLS, sur 127.0.0.1, vers un
+serveur qu'ils lancent eux-mêmes. Deux autorités et trois certificats y sont fabriqués par
+`openssl` à chaque session : rien de cryptographique n'est commité. Le premier sert un
+certificat signé par une racine que seul `certifi` porte, et le téléchargement doit
+passer. Il a été vu échouer sur le code d'avant, sur le message même d'Eurostat. Le
+deuxième met la racine dans `SSL_CERT_FILE` seulement. Il passait sur le code d'avant, et
+il a été vu échouer sur un contexte bâti sur `certifi` seul. Les deux derniers servent un
+certificat d'une autorité que personne ne porte, puis un certificat valide pour un autre
+hôte, et exigent le refus, sans rien écrire. Ils ont été vus échouer sur un `CERT_NONE`
+(les deux) et sur un `check_hostname = False` (le second). Puis, contre les vrais serveurs
+et le magasin réduit, les deux fichiers passent, taille et sha256 vérifiés contre le
+manifeste. Avec le reste de `test_donnees` et `test_dependances` : 51 réussis. `ruff`
+passe sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.** Les tests n'ont tourné ici qu'avec OpenSSL 3.0.13. Le `openssl` de macOS
+est LibreSSL, et les commandes s'en tiennent à des options que les deux partagent, sans
+que ce soit vérifié sur le Mac : `pytest tests/test_donnees.py` l'y dira. Le propriétaire
+peut aussi confirmer la correction elle-même, en retirant les deux fichiers de `data/raw/`
+puis en les relançant par `impots data fetch`, sans `SSL_CERT_FILE`. `make ci-deps` n'a
+pas été rejoué : la déclaration de `certifi` est tenue par `test_dependances`.

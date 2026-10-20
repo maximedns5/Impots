@@ -34,11 +34,14 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import ssl
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
+
+import certifi
 
 #: La racine du dépôt, une fois. Quatre modules lisaient `Path("data/...")` — relatif au
 #: répertoire COURANT — pendant que les autres ancraient leurs chemins ici : un fichier
@@ -339,7 +342,26 @@ def _conforme(chemin: Path, entree) -> bool:
     return empreinte(chemin.read_bytes(), entree) == attendu(entree)
 
 
-def telecharger(fichier: str, *, ouvrir: Callable = urllib.request.urlopen,
+def contexte_tls() -> ssl.SSLContext:
+    """Le magasin de confiance du téléchargeur : celui d'OpenSSL, COMPLÉTÉ par `certifi`.
+
+    Le Python qu'installe uv ne lit pas le trousseau de macOS mais le magasin d'OpenSSL,
+    et deux sources sur douze y échouaient sur le Mac du propriétaire (D-231) : leurs
+    racines, GlobalSign Root R46 et Sectigo Public Server Authentication Root R46, n'y
+    sont pas. `certifi` porte la liste de Mozilla, qui les a. Le magasin d'OpenSSL n'est
+    pas remplacé : un `SSL_CERT_FILE` posé par un proxy qui inspecte le TLS reste lu. Et
+    la vérification reste entière, chaîne et nom d'hôte (D-232).
+    """
+    contexte = ssl.create_default_context()
+    contexte.load_verify_locations(cafile=certifi.where())
+    return contexte
+
+
+def _ouvrir(requete: urllib.request.Request, timeout: int):
+    return urllib.request.urlopen(requete, timeout=timeout, context=contexte_tls())
+
+
+def telecharger(fichier: str, *, ouvrir: Callable = _ouvrir,
                 timeout: int = TIMEOUT_S) -> Telechargement:
     """Télécharge UN fichier du manifeste, ou refuse. N'écrit jamais un fichier non conforme.
 
