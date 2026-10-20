@@ -2,9 +2,9 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-19 sur le commit `497ae7724be9` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-20 sur le commit `f8c0e26a5d05` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
-**99 mutations** : 98 tuées, 1 équivalente avec sa raison, 0 survivante.
+**103 mutations** : 102 tuées, 1 équivalente avec sa raison, 0 survivante.
 
 | Mutation | Garde | Verdict | Étage | Tuée par |
 |---|---|---|---|---|
@@ -86,7 +86,6 @@ Balayé le 2026-10-19 sur le commit `497ae7724be9` (D-229). Chaque garde est mut
 | `api/main:predictif_show:sauf:ScenarioError` | predictif_show — sauf ScenarioError | tuée | ciblé | tests/test_api_predictif.py::test_a_report_name_the_router_lets_through_is_refused_by_the_handler |
 | `api/main:_predictif_macro_store:sauf:(mesange.MesangeError, imk.ImkError, macro_store_module.MissingSour...` | _predictif_macro_store — sauf (mesange.MesangeError, imk.ImkError, macro_store_module.MissingSour... | tuée | ciblé | tests/test_api_predictif.py::test_an_unreadable_macro_store_is_a_named_refusal |
 | `api/main:predictif_simulate:si:request.persistence is not None and (not looped)` | predictif_simulate — si request.persistence is not None and (not looped) | tuée | ciblé | tests/test_api_predictif.py::test_a_persistence_without_the_loop_is_refused_before_the_pass |
-| `api/main:predictif_simulate:si:looped and request.horizon > retroaction.MAX_HORIZON and (not reque...` | predictif_simulate — si looped and request.horizon > retroaction.MAX_HORIZON and (not reque... | tuée | ciblé | tests/test_api_predictif.py::test_the_loop_past_three_years_without_persistence_is_refused_before_the_pass |
 | `api/main:predictif_simulate:sauf:(DebtError, ThetaError, UpratingError, indices_module.IndicesError)` | predictif_simulate — sauf (DebtError, ThetaError, UpratingError, indices_module.IndicesError) | tuée | ciblé | tests/test_api_predictif.py::test_a_request_without_theta_is_refused_before_any_pass |
 | `api/main:predictif_simulate:sauf:(DebtError, maturite.MaturityError, OSError, MacroSourceError)` | predictif_simulate — sauf (DebtError, maturite.MaturityError, OSError, MacroSourceError) | tuée | ciblé | tests/test_api_predictif.py::test_the_market_scenario_without_the_aft_file_is_refused_by_name |
 | `api/main:predictif_simulate:sauf:(DebtError, ThetaError, retroaction.FeedbackError, maturite.Maturit...` | predictif_simulate — sauf (DebtError, ThetaError, retroaction.FeedbackError, maturite.Maturit... | tuée | ciblé | tests/test_api_predictif.py::test_a_refusal_inside_the_chain_is_a_422_with_its_reason |
@@ -106,4 +105,9 @@ Balayé le 2026-10-19 sur le commit `497ae7724be9` (D-229). Chaque garde est mut
 | `G7-monotonie` | garde 7 : chaque canal est monotone en son θ | tuée | ciblé | tests/test_theta.py::test_the_ends_are_the_published_bounds_in_the_declared_direction[employment_elasticity_smic] |
 | `chaine-absent-retroaction` | une boucle non demandée est dite absente, avec sa raison | tuée | ciblé | tests/test_predictif.py::test_a_null_reform_leaves_the_debt_where_the_reference_puts_it |
 | `chaine-bande-absente` | un comportement non demandé est dit absent, avec sa raison | tuée | ciblé | tests/test_predictif.py::test_a_null_reform_leaves_the_debt_where_the_reference_puts_it |
+| `D230-api-les-deux` | sans persistance nommée, les deux scénarios sont calculés (D-230) | tuée | ciblé | tests/test_api_predictif.py::test_past_three_years_without_a_persistence_both_stand_side_by_side |
+| `D230-schema-en-tete` | côte à côte, la réponse ne porte aucune trajectoire en tête (D-230) | tuée | ciblé | tests/test_api_predictif.py::test_a_response_with_one_scenario_in_the_lead_refuses_to_exist |
+| `D230-schema-les-deux` | côte à côte, ce sont les deux scénarios, chacun une fois (D-230) | tuée | ciblé | tests/test_api_predictif.py::test_a_response_with_one_scenario_in_the_lead_refuses_to_exist |
+| `D230-schema-une-trajectoire` | une réponse porte une trajectoire, ou les deux côte à côte (D-230) | tuée | ciblé | tests/test_api_predictif.py::test_a_response_with_one_scenario_in_the_lead_refuses_to_exist |
+| `D230-page-cote-a-cote` | la page dessine les deux scénarios, aucun en tête (D-230) | tuée | ciblé | ui/check.mjs : FAIL both persistence scenarios stand side by side, neither in the lead (D-230) — each scenario its  |
 | `page-vue-population` | la page nomme la vue de population au-dessus du tableau (D-225) | tuée | ciblé | ui/check.mjs : FAIL the fast path names its population view and carries its note, escaped (D-225) — the view must s |
