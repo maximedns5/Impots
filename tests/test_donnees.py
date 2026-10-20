@@ -2,7 +2,9 @@
 
 Aucun test ici ne touche le réseau : le téléchargement est testé par injection de la
 fonction d'ouverture, et le manifeste par une entrée synthétique. Ce qui compte n'est pas
-qu'un serveur réponde, c'est que la réponse ne soit ÉCRITE que si elle est la bonne.
+qu'un serveur réponde, c'est que la réponse ne soit ÉCRITE que si elle est la bonne. Seuls
+les tests du magasin de confiance (D-232) ouvrent une vraie connexion TLS, sur 127.0.0.1,
+vers un serveur qu'ils lancent eux-mêmes avec des certificats fabriqués pour l'occasion.
 
 Les deux gardes les plus importantes sont celles qui empêchent de tricher sans le vouloir :
 
@@ -12,13 +14,20 @@ Les deux gardes les plus importantes sont celles qui empêchent de tricher sans 
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
+import http.server
 import io
 import json
+import os
+import ssl
+import subprocess
+import threading
 import urllib.error
 from dataclasses import asdict, fields
 from pathlib import Path
 
+import certifi
 import pytest
 
 from impots import donnees
@@ -603,3 +612,136 @@ def test_an_unknown_file_is_a_refusal_not_a_traceback(depot, capsys):
 
     assert cli.main(["data", "fetch", "inconnu.xlsx"]) == 2
     assert "inconnu.xlsx" in capsys.readouterr().err
+
+
+# --------------------------------------------------------------------------- #
+# le magasin de confiance (D-232) : une vraie poignée de main TLS, sur 127.0.0.1
+# --------------------------------------------------------------------------- #
+def _openssl(dossier: Path, *args: str) -> None:
+    subprocess.run(["openssl", *args], cwd=dossier, check=True, capture_output=True)
+
+
+def _autorite(dossier: Path, nom: str) -> None:
+    (dossier / "autorite.ext").write_text(
+        "basicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\n"
+        "subjectKeyIdentifier=hash\n", encoding="utf-8")
+    _openssl(dossier, "genrsa", "-out", f"{nom}.key", "2048")
+    _openssl(dossier, "req", "-new", "-key", f"{nom}.key", "-subj", f"/CN={nom}",
+             "-out", f"{nom}.csr")
+    _openssl(dossier, "x509", "-req", "-in", f"{nom}.csr", "-signkey", f"{nom}.key",
+             "-days", "2", "-sha256", "-extfile", "autorite.ext", "-out", f"{nom}.pem")
+
+
+def _certificat(dossier: Path, nom: str, autorite: str, nom_alternatif: str,
+                serie: int) -> None:
+    (dossier / f"{nom}.ext").write_text(
+        "basicConstraints=CA:FALSE\nkeyUsage=critical,digitalSignature,keyEncipherment\n"
+        f"extendedKeyUsage=serverAuth\nsubjectAltName={nom_alternatif}\n"
+        "subjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid\n", encoding="utf-8")
+    _openssl(dossier, "req", "-new", "-key", "serveur.key", "-subj", "/CN=serveur",
+             "-out", f"{nom}.csr")
+    _openssl(dossier, "x509", "-req", "-in", f"{nom}.csr", "-CA", f"{autorite}.pem",
+             "-CAkey", f"{autorite}.key", "-set_serial", str(serie), "-days", "2",
+             "-sha256", "-extfile", f"{nom}.ext", "-out", f"{nom}.pem")
+
+
+@pytest.fixture(scope="module")
+def pki(tmp_path_factory) -> Path:
+    """Deux autorités et trois certificats de serveur, fabriqués par `openssl` à chaque
+    session : rien de cryptographique n'est commité. « racine » joue la racine que
+    `certifi` porte et que le magasin d'OpenSSL n'a pas — GlobalSign Root R46 ou Sectigo
+    Public Server Authentication Root R46 sur le Mac du propriétaire (D-231). « inconnue »
+    n'est dans aucun magasin."""
+    dossier = tmp_path_factory.mktemp("pki")
+    _autorite(dossier, "racine")
+    _autorite(dossier, "inconnue")
+    _openssl(dossier, "genrsa", "-out", "serveur.key", "2048")
+    _certificat(dossier, "valide", "racine", "IP:127.0.0.1", 1)
+    _certificat(dossier, "orphelin", "inconnue", "IP:127.0.0.1", 2)
+    _certificat(dossier, "autre_hote", "racine", "DNS:autre.invalid", 3)
+    return dossier
+
+
+@pytest.fixture
+def sans_proxy(monkeypatch) -> None:
+    """127.0.0.1 en direct. Sans aucune variable de proxy, urllib lirait sur macOS les
+    réglages du système ; `no_proxy=*` l'en empêche."""
+    for nom in list(os.environ):
+        if nom.lower().endswith("_proxy"):
+            monkeypatch.delenv(nom)
+    monkeypatch.setenv("no_proxy", "*")
+
+
+@contextlib.contextmanager
+def _servi_en_tls(pki: Path, certificat: str, monkeypatch):
+    """Sert CONTENU en HTTPS sur 127.0.0.1, et pointe l'entrée du manifeste dessus."""
+    class Page(http.server.BaseHTTPRequestHandler):
+        def do_GET(self) -> None:
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(CONTENU)))
+            self.end_headers()
+            self.wfile.write(CONTENU)
+
+        def log_message(self, *args) -> None:
+            pass
+
+    serveur = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Page)
+    contexte = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    contexte.load_cert_chain(pki / f"{certificat}.pem", pki / "serveur.key")
+    serveur.socket = contexte.wrap_socket(serveur.socket, server_side=True)
+    fil = threading.Thread(target=serveur.serve_forever, daemon=True)
+    fil.start()
+    entree = ManifestEntry(
+        filename="source.xlsx",
+        url=f"https://127.0.0.1:{serveur.server_address[1]}/source.xlsx",
+        sha256=EMPREINTE, bytes=len(CONTENU), downloaded="2026-10-20",
+        licence="Licence Ouverte / Etalab 2.0", description="source servie en TLS")
+    monkeypatch.setattr("impots.population.ingest.load_manifest",
+                        lambda: {"source.xlsx": entree})
+    try:
+        yield
+    finally:
+        serveur.shutdown()
+        serveur.server_close()
+
+
+def test_a_root_that_only_certifi_carries_is_trusted(depot, pki, sans_proxy,
+                                                     monkeypatch) -> None:
+    """LA GARDE DE D-232. Le Python qu'installe uv lit le magasin d'OpenSSL, pas le
+    trousseau de macOS, et deux sources sur douze y échouaient sur le Mac du propriétaire :
+    Eurostat (« unable to get local issuer certificate ») et France Stratégie
+    (« self-signed certificate in certificate chain »). Leurs racines sont dans `certifi`.
+    Ici « racine » n'est que là, et le téléchargement doit passer, par l'ouverture par
+    défaut — celle que `impots data fetch` appelle."""
+    monkeypatch.setattr(certifi, "where", lambda: str(pki / "racine.pem"))
+    with _servi_en_tls(pki, "valide", monkeypatch):
+        resultat = donnees.telecharger("source.xlsx")
+    assert resultat.etat == "téléchargé", resultat.detail
+    assert (depot / "source.xlsx").read_bytes() == CONTENU
+
+
+def test_the_system_store_is_completed_not_replaced(depot, pki, sans_proxy,
+                                                    monkeypatch) -> None:
+    """Le jumeau. `SSL_CERT_FILE` est ce que pose un proxy qui inspecte le TLS, comme celui
+    du conteneur où ce code est écrit. Remplacer le magasin par celui de `certifi` aurait
+    réparé le Mac et cassé ces environnements-là : ici « racine » n'est que dans
+    `SSL_CERT_FILE`, et `certifi` est le vrai."""
+    monkeypatch.setenv("SSL_CERT_FILE", str(pki / "racine.pem"))
+    with _servi_en_tls(pki, "valide", monkeypatch):
+        resultat = donnees.telecharger("source.xlsx")
+    assert resultat.etat == "téléchargé", resultat.detail
+
+
+@pytest.mark.parametrize("certificat", ["orphelin", "autre_hote"])
+def test_completing_the_store_does_not_loosen_the_check(depot, pki, sans_proxy, monkeypatch,
+                                                        certificat) -> None:
+    """Compléter le magasin n'est pas assouplir la vérification. Un certificat signé par
+    une autorité que personne ne porte, ou valide pour un autre hôte, reste refusé, et rien
+    n'est écrit — même avec « racine » dans `certifi`. La forme fautive est connue : un
+    `CERT_NONE` ou un `check_hostname = False` « pour que ça passe »."""
+    monkeypatch.setattr(certifi, "where", lambda: str(pki / "racine.pem"))
+    with _servi_en_tls(pki, certificat, monkeypatch):
+        resultat = donnees.telecharger("source.xlsx")
+    assert resultat.etat == "échec"
+    assert "CERTIFICATE_VERIFY_FAILED" in resultat.detail
+    assert not list(depot.iterdir())

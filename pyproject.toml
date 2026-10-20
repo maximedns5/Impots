@@ -33,6 +33,10 @@ dependencies = [
   # « pypdf is required », message qui se lit comme un défaut de DONNÉES et qui a été
   # classé comme tel (D-161).
   "pypdf>=4.0",
+  # certifi complète le magasin de certificats du téléchargeur. Il n'arrivait que par
+  # httpx, une dépendance de développement : sur une installation sans `[dev]`,
+  # `impots data fetch` n'aurait plus démarré (D-232).
+  "certifi",
 ]
 
 [project.scripts]

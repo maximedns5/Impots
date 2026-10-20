@@ -1,6 +1,12 @@
 # State of the project, and the directions open — 2026-10-20 (Phase 9 closed)
 
-The second 2026-10-20 update adds D-231: **Phase 9 is closed.** The owner ran `make full`
+The third 2026-10-20 update adds D-232: `impots data fetch` now trusts OpenSSL's default
+store completed by `certifi`'s, so the two downloads D-231 had to rerun by hand on the
+owner's Mac pass on their own. Their roots, GlobalSign Root R46 and Sectigo R46, are in
+`certifi` and missing from that store; the failure was reproduced against the real
+hosts, word for word, with a store stripped of those two roots. `SSL_CERT_FILE` is still
+read, and the check stays whole; four loopback TLS tests hold all three.
+The second 2026-10-20 update added D-231: **Phase 9 is closed.** The owner ran `make full`
 on `7cce463`, D-230's merge, in a fresh clone: PASS, 2 475 passed, 109 skipped, 102 min
 41 s. It is the first whole-suite pass since D-204's commit, so it also covers D-205 to
 D-212, the pension recalibration among them. Of the Phase 9 tests, only the two CIR
@@ -211,8 +217,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **232 decision
-entries**, D-000 to D-231, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **233 decision
+entries**, D-000 to D-232, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -371,7 +377,8 @@ couple keeps its 18 943,38 €.
 `make full` in a second rather than an hour. The `tests` profile is declared
 explicitly and checked against the readers' own constants by introspection
 (D-160). Fetches go through the production manifest loader, refuse quarantined
-entries, and keep a file only if its size **and** digest match.
+entries, and keep a file only if its size **and** digest match. They trust OpenSSL's
+default store completed by `certifi`'s, never replaced by it (D-232).
 
 Two EconStor PDFs are re-stamped by the publisher on every request, so their
 entries carry `normalization: pdf-stamp-v1` and are judged on a normalised digest
