@@ -17135,3 +17135,67 @@ redistribuables, et deux parce que l'artefact de référence ne porte pas encore
 distribution de taux marginaux. `ruff` passe sur `src`, `tests` et `scripts`.
 
 **Ce qui reste.** La porte de M6 : le `make full` du propriétaire, qui clôt la phase 9.
+
+## D-231 — Le `make full` du propriétaire sur `7cce463` : la phase 9 est close
+
+**Le fait.** Le 2026-10-20, sur la machine du propriétaire, dans un clone neuf de `main` à
+`7cce463`, la fusion de D-230 : `make data`, les douze sources de la phase 9 par
+`impots data fetch`, puis `make full`. PASS : 2 475 réussis, 109 sautés, 9 avertissements,
+102 min 41 s de travail. C'était le dernier point de la définition de fini de
+`docs/PHASE9_SPEC.md`, « `make full` vert, lancé par le propriétaire et journalisé », et
+la porte de M6. La phase 9 est close.
+
+**Ce que la passe couvre.** Tout `main` : la phase 9, de D-213 à D-230, et D-205 à D-212,
+que la passe du 2026-10-16 sur `05cc944` précédait. Le recalage des pensions sur les cases
+1AS à 1DS (D-211) a donc sa première passe d'ensemble. Les rapports à régénérer sur la
+machine du propriétaire restent à faire : `make full` ne les écrit pas.
+
+**Les 109 sautés.** Sept de moins que les 116 de D-204, pour 362 tests de plus. La liste
+exacte n'est pas au journal, car `make full` ne garde pas le rapport `-rs`, et le compte
+ne prouve rien à lui seul (D-204). Ce que le code permet d'affirmer : les tests écrits pour
+la phase 9 ne sautent que faute de `pypdf`, d'un document du store macro, d'une des douze
+sources, d'un historique git complet, d'une population construite ou du tome II des Voies
+et moyens 2026. `pypdf` est une dépendance du projet, Mésange et les deux documents de
+l'IMK sont au profil `tests`, la population a été construite par `make data`, les douze
+sources ont été vérifiées par `fetch`, et un `git clone` ordinaire porte tout son
+historique. Reste le tome II, qui n'est ni au profil ni parmi les douze : sauf copie à la
+main, les deux tests du CIR qui le lisent ont sauté. Ici, où il est, ils passent. Les
+autres sautés tombent dans des tests d'avant la phase 9, dont les trois de la maturité de
+la dette, faute du bulletin AFT, et les deux de la distribution des taux marginaux, que
+l'artefact de référence commité ne porte pas.
+
+**Le Mac du propriétaire.** Trois obstacles avant la passe, tous hors du code, consignés
+parce qu'ils reviendront. Le Python 3.11 de Homebrew (3.11.17) est cassé sous macOS 26.2 :
+son module `pyexpat` est lié à une expat plus récente que `/usr/lib/libexpat.1.dylib`, où
+le symbole `_XML_SetAllocTrackerActivationThreshold` manque. `platform.mac_ver()` rend
+alors une chaîne vide, `ensurepip` tombe dans `truststore`, et uv refuse l'interpréteur.
+Le venv tourne donc sur un Python 3.11.16 géré par uv (`uv python install 3.11`, puis
+`uv venv --python 3.11 --python-preference only-managed .venv`), sans `pip` : tout passe
+par `uv pip`.
+
+Ce Python ne lit pas le trousseau de macOS mais le magasin de certificats d'OpenSSL, et
+deux des douze sources ont échoué à la vérification TLS : Eurostat (« unable to get local
+issuer certificate ») et France Stratégie (« self-signed certificate in certificate
+chain »). Elles ont été relancées hors de ce magasin, par l'une des deux voies données en
+séance : `SSL_CERT_FILE` pointé sur le magasin de `certifi`, ou `curl` puis le même
+`fetch`. Dans les deux cas c'est `fetch` qui juge la taille et le sha256 contre le
+manifeste. Rien n'a été accepté sans lui.
+
+Un premier essai, dans l'ancien clone du propriétaire, refusait
+`insee_cn2025_t3201_depenses_recettes_APU_S13.xlsx` « absent du manifeste ». Le
+`MANIFEST.json` de ce clone n'était donc pas celui de `main`, qui porte l'entrée avec son
+URL. Le clone neuf a levé le refus sans rien changer au dépôt.
+
+**Les tests.** La passe elle-même, `ruff` compris. Ici, sur `7cce463`, les dix-sept
+fichiers de test de la phase 9 hors comportement et API, avec ceux des comptes et de la
+maturité de la dette, sous `-rs` : 428 réussis, 3 sautés, tous faute du bulletin AFT, en
+1 min 48 s.
+
+**Ce qui reste.** La phase 9 laisse ce que `STATE_AND_NEXT.md` liste déjà : la boucle dans
+`impots predictif`, la note du HCFP, l'encours de l'AFT pour le scénario de taux `marche`,
+et pour C9 la marge de recours, les entrants, le stock reporté et l'évaluation de la
+CNEPI. Deux suites tirées de cette passe, au choix du propriétaire : que le téléchargeur
+prenne lui-même le magasin de `certifi`, ce qui évite le piège TLS sur un Mac ; et
+`impots data fetch plf2026_voies_et_moyens_tome2.pdf` avant la prochaine passe, pour que
+les deux tests du CIR tournent. Rien n'est publié : la porte de publication reste celle
+du propriétaire (§11).
