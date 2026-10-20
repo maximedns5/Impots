@@ -129,6 +129,35 @@ def test_priced_years_with_a_gap_or_a_late_start_are_refused() -> None:
         _run(chaine.ReformCosts(by_year={2027: 5e9}, carry=chaine.CARRY))
 
 
+def test_priced_years_past_the_horizon_are_refused_rather_than_dropped() -> None:
+    """A year priced beyond the horizon would be ignored without a word (D-229): three
+    priced years on a two-year path would print as the first two."""
+    with pytest.raises(DebtError, match="au-delà de l'horizon"):
+        _run(chaine.ReformCosts(by_year={2026: 5e9, 2027: 5e9, 2028: 5e9}), horizon=2)
+
+
+def test_a_cost_without_a_priced_year_or_with_an_unknown_carry_is_refused() -> None:
+    """The two refusals `ReformCosts` makes on its own (D-229): no year priced, and a carry
+    convention that is not the one the chain names and labels."""
+    with pytest.raises(DebtError, match="aucune année chiffrée"):
+        chaine.ReformCosts(by_year={})
+    with pytest.raises(DebtError, match="convention de report « reconduit » inconnue"):
+        chaine.ReformCosts(by_year={2026: 5e9}, carry="reconduit")
+
+
+def test_an_aft_outstanding_dated_for_another_start_is_refused() -> None:
+    """The maturities of July 2026 are not those of a path that starts in 2024 (D-229):
+    the market scenario would refinance debt that had not yet been issued."""
+    market = scenarios.RateScenario("Refinancement à 4 %", "marche", market_rate=0.04)
+    earlier = dataclasses.replace(START, year=maturite.AS_OF.year - 2)
+    with pytest.raises(DebtError, match="l'encours AFT est daté"):
+        chaine.run(earlier, horizon=3,
+                   costs=chaine.ReformCosts(by_year={earlier.year + 1: 5e9},
+                                            carry=chaine.CARRY),
+                   spending=FROZEN, growth=GROWTH, rate=market, theta=HALF,
+                   securities=[object()])
+
+
 def test_the_market_scenario_without_the_aft_outstanding_is_refused() -> None:
     market = scenarios.RateScenario("Refinancement à 4 %", "marche", market_rate=0.04)
     with pytest.raises(DebtError, match="sans encours AFT"):
@@ -194,6 +223,13 @@ def test_receipts_at_theta_outside_their_box_are_refused() -> None:
         _carried(5e9, behavioural={2026: _at(-7e9, -6e9, -3e9)})
 
 
+def test_a_reversed_box_is_refused_by_its_own_name() -> None:
+    """A box with its bounds swapped holds no receipts at all, and would be refused as
+    receipts outside their box — true, and the wrong reason (D-229)."""
+    with pytest.raises(DebtError, match="boîte retournée"):
+        _carried(5e9, behavioural={2026: _at(-4.9e9, -4.8e9, -5.0e9)})
+
+
 # --------------------------------------------------------------------------- #
 # θ — guards 1 and 2 (§2.4)
 # --------------------------------------------------------------------------- #
@@ -224,6 +260,32 @@ def test_a_result_with_a_theta_missing_refuses_to_exist() -> None:
     short.pop("employment_elasticity_smic")
     with pytest.raises(ThetaError, match="manquant"):
         dataclasses.replace(result, theta=short)
+
+
+def test_a_result_with_a_theta_outside_the_unit_interval_refuses_to_exist() -> None:
+    """`Theta` refuses such a value when it is built; the result checks again, because a
+    table can reach it without passing through `Theta` (D-229)."""
+    result = _run(_carried(5e9), horizon=2)
+    with pytest.raises(ThetaError, match="hors de"):
+        dataclasses.replace(result, theta={**result.theta, "eti_all": 1.2})
+
+
+def test_a_result_whose_series_differ_in_length_refuses_to_exist() -> None:
+    """A path shifted by one year would draw without any visible error (D-229)."""
+    result = _run(_carried(5e9), horizon=3)
+    for series in ("reference", "reform", "delta", "delta_primary", "delta_mechanical"):
+        with pytest.raises(DebtError, match="longueurs différentes"):
+            dataclasses.replace(result, **{series: getattr(result, series)[:-1]})
+
+
+def test_a_result_with_an_absence_without_its_reason_refuses_to_exist() -> None:
+    """D-229. Guard 2 holds every CLOSED channel to its reason; an ABSENT one — the band
+    not asked for, the loop not applied — was held by nothing, and an absence with an
+    empty reason reads as a quantity measured at zero."""
+    result = _run(_carried(5e9), horizon=2)
+    assert result.absent["bande"] == chaine.ABSENT_BAND
+    with pytest.raises(DebtError, match="absent sans sa raison"):
+        dataclasses.replace(result, absent={**result.absent, "bande": "  "})
 
 
 def test_a_closed_channel_without_its_reason_refuses_to_exist() -> None:

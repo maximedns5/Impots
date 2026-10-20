@@ -231,6 +231,11 @@ class Trajectoire:
             raise ThetaError(
                 f"canaux fermés sans leur raison : {unreasoned}. Un canal fermé affiché "
                 f"sans raison se lit comme un canal qui ne compte pas.")
+        silent = sorted(k for k, v in self.absent.items() if not str(v).strip())
+        if silent:
+            raise DebtError(
+                f"absent sans sa raison : {silent}. Une absence muette se lit comme une "
+                f"quantité mesurée à zéro (D-229).")
         for name, what in ((self.spending_name, "de dépense"),
                            (self.growth_name, "de croissance"),
                            (self.rate_name, "de taux")):

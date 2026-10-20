@@ -177,3 +177,13 @@ def test_the_box_reads_the_published_range_from_the_episode_not_from_the_case() 
     with pytest.raises(validation.ValidationError, match="variante"):
         validation.episode_box(validation.load(validation.EPISODES / "cice_2013.yaml"),
                                "ciblee", synthetic_macro_store())
+
+
+def test_an_unreadable_history_is_refused_as_a_validation_error(tmp_path: Path) -> None:
+    """D-229. Outside a repository there is no history to date the rule by: the case is
+    refused as unregistered-for-want-of-git, in the validation's own words, rather than
+    with git's."""
+    case = tmp_path / "case.yaml"
+    case.write_text(yaml.safe_dump({"rule": {"contains": "100 à 400"}, "outcome": None}))
+    with pytest.raises(validation.ValidationError, match="historique git illisible"):
+        validation.check_registered(case, root=tmp_path)

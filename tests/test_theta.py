@@ -313,3 +313,25 @@ def test_the_macro_response_at_theta_sits_inside_the_fan() -> None:
     for horizon, quantiles in drawn.gdp_eur.items():
         assert quantiles.p10 < low[horizon][0] < mid[horizon][0] < high[horizon][0]
         assert high[horizon][0] < quantiles.p90
+
+
+def test_the_macro_response_refuses_no_instrument_no_gdp_and_no_family(
+        monkeypatch) -> None:
+    """D-229. An impulse with no instrument would answer zero GDP and zero jobs — a
+    measured nothing where nothing was measured; a GDP of zero would end in a bare
+    division; and a variant without a dispersion family would have no range for θ."""
+    from impots.macro.fan import MULTIPLIER_FAMILY, FanError
+    from impots.macro.shocks import Impulse
+    from impots.predictif import macro
+    from macro_cases import index_rows_store
+
+    store = index_rows_store()
+    with pytest.raises(FanError, match="aucun instrument"):
+        macro.at_theta(Impulse(year=2026, by_instrument={}), store, gdp_eur=3e12,
+                       theta=0.5)
+    income_tax = Impulse(year=2026, by_instrument={"impot_sur_le_revenu": 5e9})
+    with pytest.raises(FanError, match="PIB doit être positif"):
+        macro.at_theta(income_tax, store, gdp_eur=0.0, theta=0.5)
+    monkeypatch.delitem(MULTIPLIER_FAMILY, "impot_sur_le_revenu")
+    with pytest.raises(FanError, match="aucune famille"):
+        macro.at_theta(income_tax, store, gdp_eur=3e12, theta=0.5)
