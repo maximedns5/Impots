@@ -1,6 +1,16 @@
-# State of the project, and the directions open — 2026-10-20 (Phase 9, M6 under way)
+# State of the project, and the directions open — 2026-10-20 (Phase 9 closed)
 
-The 2026-10-20 update adds D-230: the owner's two choices left open by D-218. Past three
+The second 2026-10-20 update adds D-231: **Phase 9 is closed.** The owner ran `make full`
+on `7cce463`, D-230's merge, in a fresh clone: PASS, 2 475 passed, 109 skipped, 102 min
+41 s. It is the first whole-suite pass since D-204's commit, so it also covers D-205 to
+D-212, the pension recalibration among them. Of the Phase 9 tests, only the two CIR
+tests that read the Voies et moyens tome II can have skipped: that file is neither in the
+`tests` profile nor among the twelve Phase 9 sources. On macOS 26.2, Homebrew's Python
+3.11 is broken (its `pyexpat` needs a newer expat than the system's), so the venv runs on
+a uv-managed 3.11.16; that Python reads OpenSSL's certificate store rather than the
+keychain, and two downloads were rerun outside it, `fetch` checking both against the
+manifest.
+The first 2026-10-20 update added D-230: the owner's two choices left open by D-218. Past three
 years with the loop and no persistence named, `/predictif/simulate` no longer refuses: it
 computes « éteint » and « tenu » from the one population pass and returns them in
 `side_by_side`, the response carrying no path of its own so that neither reads as the
@@ -195,14 +205,14 @@ from `main`.
 what a household can declare, and twenty-one places where this project corrects
 openfisca's reading of the law. It has its own section below.
 
-**2 222 tests at the last logged full pass** (`05cc944`, D-204's commit, run on
-2026-10-16): 2 106 passed and 116 skipped, the skips being tests whose source files a
-fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits behind
-`main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
+**2 584 tests at the last logged full pass** (`7cce463`, D-230's merge, run on
+2026-10-20): 2 475 passed and 109 skipped, the skips being tests whose source files a
+fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase 9 and
+D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **231 decision
-entries**, D-000 to D-230, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **232 decision
+entries**, D-000 to D-231, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -307,10 +317,12 @@ couple keeps its 18 943,38 €.
 
 ## Verification, as it stands
 
-* **Last logged full pass: `5b1ec10`, 2026-10-14 — PASS, 2 106 passed, 116 skipped,
-  107 min 39 s**, on the owner's machine in a fresh clone (D-204). The 116 skips are
-  data-absent skips: `make data` fetches the `tests` profile only. The previous line,
-  `a9ea26f` on 2026-09-25, had 3 skips on a machine holding every manifested file.
+* **Last logged full pass: `7cce463`, 2026-10-20 — PASS, 2 475 passed, 109 skipped,
+  102 min 41 s**, on the owner's machine in a fresh clone, with the twelve Phase 9
+  sources fetched on top of `make data` (D-231). The skips are data-absent skips; the
+  Phase 9 tests that can skip there are the two CIR ones reading the Voies et moyens
+  tome II. The two lines before it, `5b1ec10` and `05cc944` (D-204), had 116 skips; the
+  `a9ea26f` one on 2026-09-25 had 3, on a machine holding every manifested file.
   Every line since the red `3101fff` one is green.
 * **CI on `main`, run 36882194476 on `1e12460` — the full suite has still never
   finished on a runner.** `fast` passed (1 388 passed, 120 skipped, 221 deselected,
@@ -542,10 +554,10 @@ download list.
 1. **The PLF 2027 is graded** (D-204), the sign guard is in (D-206), art. 3's direction
    is explained (D-207), its candidate causes measured (D-209), the pension target
    decomposed (D-210) and the population recalibrated on the retirement boxes (D-211).
-   What it leaves: a full pass and the reports regenerated on the owner's machine, the
-   first since the pension target moved and, with Actions down, the only whole-suite
-   check D-210 and D-211 will get — the 2026-10-16 pass ran on `05cc944`, before them; the report's direction line, which counts
-   signs; and art. 2's outside grade.
+   The full pass is done: the owner's `make full` on `7cce463` covers D-210 and D-211
+   (D-231). What it leaves: the reports regenerated on the owner's machine, the first
+   since the pension target moved; the report's direction line, which counts signs; and
+   art. 2's outside grade.
 2. **Phase 9, M5** (`docs/PHASE9_SPEC.md` §6): the new channels one by one. Labour
    supply is done (D-220, C7, CSG on earnings only) and company creations opened as an
    illustrative index (D-221, C8, IS normal rate only); investment stays closed for the
@@ -553,8 +565,9 @@ download list.
    CIR is priced on the créance flow with its banner. Dividends (§6.5) stay closed. Every
    §6 channel has its verdict. M6 is under way: §7's indices (D-223), the explorer at a
    fixed θ (§8, D-224), §9.1's coherence and §9.2's preregistered containment (D-227),
-   §9.4's worked example (D-228) and the guard sweep (D-229) are in; what remains of M6
-   is its gate, the owner's `make full`, which closes Phase 9. Left for C9: the take-up margin, new entrants, the carried-forward stock,
+   §9.4's worked example (D-228) and the guard sweep (D-229) are in, and M6's gate is
+   met: the owner's `make full` on `7cce463` is green, and **Phase 9 is closed**
+   (D-231). Left for C9: the take-up margin, new entrants, the carried-forward stock,
    and the CNEPI's 2021 evaluation (IPP report n° 33), not manifested. M1 to M4 are done (D-215 to D-219); M4 left
    the transfers and the IS closed. The two
    choices M3 left to the owner are made (D-230): both persistence scenarios side by
