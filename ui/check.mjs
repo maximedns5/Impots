@@ -69,7 +69,11 @@ globalThis.fetch = async (url, opts) => {
   if (url.includes("/parameters/ir")) return { json: async () => LAW };
   if (url.includes("/population/baseline")) return { ok: true, json: async () => POPULATION };
   if (url.includes("/population/simulate")) return { ok: true, json: async () => POPULATION_RUN };
-  if (url.includes("/predictif/simulate")) return { ok: true, json: async () => PRED_RESULT };
+  if (url.includes("/predictif/simulate")) {
+    const body = JSON.parse(opts.body);
+    const both = body.macro && body.horizon > 3 && !body.persistence;
+    return { ok: true, json: async () => (both ? PRED_SIDE : PRED_RESULT) };
+  }
   if (url.endsWith("/predictif")) return { ok: true, json: async () => ({ rapports: ["plf2027_art_3"] }) };
   if (url.includes("/predictif/")) return { ok: true, json: async () => PRED_REPORT };
   return { ok: true, json: async () => RESULT };
@@ -127,6 +131,39 @@ const PRED_RESULT = { ...PRED_NAMES, years: [2026, 2027, 2028],
     + "calibrée** : les totaux dépensés au registre le sont sur l'année de base.",
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
   debt_banner: "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici." };
+/* D-230 · past three years with the loop and no persistence named, both scenarios side
+   by side and no path of the response's own. */
+const PRED_PATH = (persistence, label, delta, gap, convention) => ({
+  persistence, label, reform: delta.map((v, i) => 1.17 + v), delta,
+  delta_primary: delta.map(() => -0.0015),
+  slices: [{ source: "eventail", computed: true, reason: "",
+             label: "Éventail macro : θ du multiplicateur de 0 à 1",
+             low: delta.map((v) => 1.169 + v), high: delta.map((v) => 1.171 + v) }],
+  conventions: ["Prélèvements constants en % du PIB", convention], gdp_gap: gap,
+  feedback_primary: gap.map((g) => g / 2),
+  indices: [{ key: "dette", pour: "L'État", label: "Dette, écart de la réforme",
+              unit: "pts de PIB", stage: "chaîne", source: "chaîne de §3", theta: [],
+              available: true, values: { 2030: delta[4] }, box: null, reason: "",
+              conventions: [], uncovered: {}, note: "" }] });
+const PRED_SIDE = { ...PRED_RESULT, years: [2026, 2027, 2028, 2029, 2030],
+  reference: [1.1686, 1.1747, 1.1754, 1.1708, 1.1610], reform: null, delta: null,
+  delta_primary: null, delta_mechanical: [0.0016, 0.0031, 0.0047, 0.0062, 0.0077],
+  priced_years: [2026], carried_years: [2027, 2028, 2029, 2030], slices: [],
+  gdp_gap: null, feedback_primary: null, persistence: null,
+  conventions: ["Prélèvements constants en % du PIB"],
+  theta: { eti_all: 0.5, multiplicateur_macro: 0.5 },
+  indices: [{ key: "dette", pour: "L'État", label: "Dette, écart de la réforme",
+              unit: "pts de PIB", stage: "chaîne", source: "chaîne de §3", theta: [],
+              available: false, values: {}, box: null, conventions: [], uncovered: {},
+              note: "", reason: "une valeur par scénario de persistance, donnée avec chacun des deux, côte à côte" }],
+  side_by_side: [
+    PRED_PATH("eteint", "Effet macro éteint après trois ans",
+              [0.0005, 0.0005, 0.0010, 0.0042, 0.0057], [0.0006, 0.0013, 0.0014, 0, 0],
+              "Au-delà de trois ans : Effet macro éteint après trois ans."),
+    PRED_PATH("tenu", "Effet macro tenu au niveau de la troisième année",
+              [0.0005, 0.0005, 0.0010, 0.0016, 0.0023],
+              [0.0006, 0.0013, 0.0014, 0.0014, 0.0014],
+              "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.")] };
 const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027, art. 3",
   reference: "reconduit", source: "PLF 2027", computed: "2026-10-16",
   years: [{ year: 2026, basis: "legislated", mechanical_frozen_eur: -1.2e9,
@@ -548,9 +585,27 @@ await (async () => {
   $("predHorizon").value = "10";
   $("predPersistence").value = "";
   await $("goPred").onclick();
-  ok("the loop past three years without a persistence scenario sends nothing", () => {
-    assert.equal(calls.length, sent, "must not call the API");
-    assert.match($("predOut").innerHTML, /scénario de persistance/);
+  await new Promise((r) => setTimeout(r, 10));
+  ok("past three years without a persistence, the request goes without one (D-230)", () => {
+    assert.equal(calls.length, sent + 1, "the API computes both: nothing is asked first");
+    const body = JSON.parse(calls.at(-1).opts.body);
+    assert.equal(body.macro, true);
+    assert.equal(body.horizon, 10);
+    assert.equal("persistence" in body, false);
+  });
+  ok("both persistence scenarios stand side by side, neither in the lead (D-230)", () => {
+    const html = $("predOut").innerHTML;
+    assert.match(html, /Deux scénarios de persistance, côte à côte/);
+    assert.match(html, /aucun n'est le défaut/);
+    assert.match(html, /\+0,57 pt sous « effet macro éteint après trois ans » et \+0,23 pt sous « effet macro tenu au niveau de la troisième année »/);
+    const first = html.indexOf("<h4>Effet macro éteint après trois ans</h4>");
+    const second = html.indexOf("<h4>Effet macro tenu au niveau de la troisième année</h4>");
+    assert.ok(first > 0 && second > first, "each scenario its own table, in the API's order");
+    assert.equal((html.match(/<table>/g) || []).length, 2, "one table per scenario");
+    assert.match(html, /Convention : Au-delà de trois ans : Effet macro éteint/);
+    assert.match(html, /Convention : Au-delà de trois ans : Effet macro tenu/);
+    assert.match(html, /2030 : \+0,57 pt/, "each scenario carries its own debt index");
+    assert.match(html, /une valeur par scénario de persistance/);
   });
   $("predPersistence").value = "tenu";
   await $("goPred").onclick();

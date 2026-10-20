@@ -74,10 +74,14 @@ class VariantSpec:
 
     expansionary_sign: int
     """+1 if published as an expansionary shock, -1 if published contractionary and
-    flipped. The flip assumes symmetry. The document proves ADDITIVITY between
-    instruments (encadré 15, the "TVA sociale" composite reproduces the sum of the VAT
-    and employer-contribution variants to the centime) but never tests running one
-    variant in both directions, so symmetry remains an unmeasured assumption."""
+    flipped. The flip assumes symmetry. The document is CONSISTENT with additivity
+    between instruments without proving it (D-230): encadré 15, the "TVA sociale"
+    composite, matches the sum of the VAT and employer-contribution variants to within
+    one unit of the last printed digit — not "to the centime": six cells differ by one
+    unit, in GDP, consumption, employment, the primary balance and the CPI — which is
+    what adding the two tables would give too, and the document does not say the box
+    was run on its own. No table runs a variant in both directions, so symmetry
+    remains an unmeasured assumption."""
 
     basis: str
     """"ex_ante_fiscal" or "volume". p101 reserves the ex ante convention: "les

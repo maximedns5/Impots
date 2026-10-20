@@ -1831,16 +1831,38 @@ class PredictifIndex(BaseModel):
     uncovered: dict[str, str] = Field(default_factory=dict)
 
 
+class PredictifPersistence(BaseModel):
+    """One persistence scenario's path, when the loop runs past three years and the
+    request named none: the two are computed from the same pass and shown side by side,
+    neither of them in the lead (D-230)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    persistence: Literal["eteint", "tenu"]
+    label: str
+    reform: list[float]
+    delta: list[float]
+    delta_primary: list[float]
+    slices: list[PredictifSlice]
+    conventions: list[str]
+    """Every convention of this path, the common ones included."""
+    gdp_gap: list[float]
+    feedback_primary: list[float]
+    indices: list[PredictifIndex] = Field(default_factory=list)
+    """The chain-stage indices, which depend on the path; the others are the response's."""
+
+
 class PredictifResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     years: list[int]
     reference: list[float]
-    reform: list[float]
-    delta: list[float]
-    """Reform minus reference, in points of GDP (0.01 = one point)."""
+    reform: list[float] | None
+    """None when the two persistence scenarios stand side by side (`side_by_side`)."""
+    delta: list[float] | None
+    """Reform minus reference, in points of GDP (0.01 = one point); None side by side."""
     reference_primary: list[float]
-    delta_primary: list[float]
+    delta_primary: list[float] | None
     priced_years: list[int]
     carried_years: list[int]
     spending_name: str
@@ -1865,6 +1887,10 @@ class PredictifResponse(BaseModel):
     feedback_primary: list[float] | None = None
     """φ_t, the loop's share of the reform's primary balance, when it runs."""
     persistence: str | None = None
+    side_by_side: list[PredictifPersistence] = Field(default_factory=list)
+    """Both persistence scenarios, when the loop runs past three years and none was named
+    (D-230). The response then carries NO path of its own: a path in the lead would be a
+    default by placement."""
     indices: list[PredictifIndex] = Field(default_factory=list)
     population_view: Literal["figee", "vieillie"]
     """The population the first year was priced on, in `predictif.annuel`'s words:
@@ -1873,6 +1899,23 @@ class PredictifResponse(BaseModel):
     population_note: str
     banner: str
     debt_banner: str
+
+    @model_validator(mode="after")
+    def _one_path_or_both_scenarios(self) -> PredictifResponse:
+        own = (self.reform, self.delta, self.delta_primary, self.gdp_gap,
+               self.feedback_primary, self.persistence)
+        if not self.side_by_side:
+            if self.reform is None or self.delta is None or self.delta_primary is None:
+                raise ValueError("réponse sans trajectoire ni scénarios côte à côte")
+            return self
+        if any(v is not None for v in own) or self.slices:
+            raise ValueError(
+                "côte à côte, la réponse ne porte aucune trajectoire en propre : l'une des "
+                "deux en tête se lirait comme le défaut (D-230)")
+        if sorted(p.persistence for p in self.side_by_side) != ["eteint", "tenu"]:
+            raise ValueError("côte à côte, ce sont les deux scénarios de persistance, "
+                             "chacun une fois")
+        return self
 
 
 class PredictifReportYear(BaseModel):

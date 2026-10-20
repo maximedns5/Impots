@@ -53,6 +53,7 @@ from impots.api.schemas import (
     PopulationSimulateRequest,
     PredictifBehaviour,
     PredictifIndex,
+    PredictifPersistence,
     PredictifReportList,
     PredictifReportResponse,
     PredictifRequest,
@@ -1111,6 +1112,11 @@ def _predictif_macro_store() -> Any:
         raise MacroSourceError(f"magasin macro illisible : {error}") from error
 
 
+#: Side by side, a chain-stage index has one value per persistence scenario: the
+#: response lists it as carried by each path rather than pick one (D-230).
+SIDE_BY_SIDE_INDEX = ("une valeur par scénario de persistance, donnée avec chacun des deux, "
+                      "côte à côte")
+
 #: The population view the predictive path's first year is priced in, in
 #: `predictif.annuel`'s words: the population aged to that year, the command's headline
 #: (D-216), by the owner's choice (D-226). `_price_first_year` ages the frame before the
@@ -1230,11 +1236,13 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             raise DebtError(
                 f"persistance « {request.persistence} » sans rétroaction appliquée (non "
                 f"demandée, ou absente sous « {spending.name} ») : elle serait ignorée.")
-        if looped and request.horizon > retroaction.MAX_HORIZON and not request.persistence:
-            raise DebtError(
-                f"horizon de {request.horizon} ans avec la rétroaction, sans scénario de "
-                f"persistance : Mésange n'est lu qu'à trois ans, et au-delà il faut nommer "
-                f"« eteint » ou « tenu ». Aucun n'est le défaut.")
+        # Past three years the loop needs a persistence scenario. Named, it is that one;
+        # unnamed, both are computed from the one pass and shown side by side, neither
+        # in the lead: none is the default (§4.5, D-230).
+        persistences: list[str | None] = (
+            [request.persistence] if request.persistence is not None
+            else list(retroaction.PERSISTENCE_LABELS)
+            if looped and request.horizon > retroaction.MAX_HORIZON else [None])
         if looped:
             theta.for_row(MACRO_ROW)
         specs = indices_module.select(request.indices)
@@ -1277,34 +1285,68 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             behavioural=({year: at} if at is not None else None),
             impulses=({year: first.impulse} if first.impulse is not None else None),
             uncovered=dict(first.uncovered))
-        result = chaine.run(start, horizon=request.horizon, costs=costs,
-                            spending=spending, growth=growth, rate=rate, theta=theta,
-                            securities=securities, store=store,
-                            persistence=request.persistence, macro_store=macro_store)
-        computed = indices_module.compute(
-            specs, trajectory=result, deciles_rows=getattr(first, "deciles", None),
-            impulse=first.impulse,
+        results = [chaine.run(start, horizon=request.horizon, costs=costs,
+                              spending=spending, growth=growth, rate=rate, theta=theta,
+                              securities=securities, store=store, persistence=persistence,
+                              macro_store=macro_store)
+                   for persistence in persistences]
+        index_inputs = dict(
+            deciles_rows=getattr(first, "deciles", None), impulse=first.impulse,
             gdp_eur=reference_module.reference_years(
                 start, 1, spending=spending, growth=growth)[0].gdp_eur,
             macro_store=indices_store, macro_reason=indices_reason, theta=theta,
             store=store, reform=request.reform, mechanical=-first.cost,
             inputs=first.inputs, year=year)
+        side = len(results) > 1
+        # Side by side, the chain-stage indices (balance, debt, interest) belong to each
+        # path; the response lists them as such rather than pick one path's.
+        shared = [s for s in specs if not (side and s.stage == indices_module.CHAINE)]
+        computed = {i.spec.key: i for i in indices_module.compute(
+            shared, trajectory=results[0], **index_inputs)}
+        computed = [computed.get(s.key) or indices_module.absent(s, SIDE_BY_SIDE_INDEX)
+                    for s in specs]
+        per_path = [indices_module.compute(
+            [s for s in specs if s.stage == indices_module.CHAINE], trajectory=r,
+            **index_inputs) for r in results] if side else []
     except (DebtError, ThetaError, retroaction.FeedbackError,
             maturite.MaturityError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
+    result = results[0]
+
+    def slices(r: Any) -> list[PredictifSlice]:
+        return [PredictifSlice(source=s.source, label=s.label, computed=s.computed,
+                               reason=s.reason, low=list(s.low), high=list(s.high))
+                for s in r.decomposition.slices]
+
+    def index_rows(found: Any) -> list[PredictifIndex]:
+        return [PredictifIndex(
+            key=i.spec.key, pour=i.spec.pour, label=i.spec.label, unit=i.spec.unit,
+            stage=i.spec.stage, source=i.spec.source, theta=list(i.spec.theta),
+            note=i.spec.note, available=i.available, values=dict(i.values),
+            box=({k: list(v) for k, v in i.box.items()} if i.box is not None else None),
+            reason=i.reason, conventions=list(i.conventions), uncovered=dict(i.uncovered))
+            for i in found]
+
+    side_by_side = [PredictifPersistence(
+        persistence=r.persistence, label=retroaction.PERSISTENCE_LABELS[r.persistence],
+        reform=list(r.reform), delta=list(r.delta), delta_primary=list(r.delta_primary),
+        slices=slices(r), conventions=list(r.conventions), gdp_gap=list(r.gdp_gap),
+        feedback_primary=list(r.feedback_primary), indices=index_rows(found))
+        for r, found in zip(results, per_path, strict=True)] if side else []
+    own = None if side else result
+
     return PredictifResponse(
         years=list(result.years), reference=list(result.reference),
-        reform=list(result.reform), delta=list(result.delta),
+        reform=list(own.reform) if own else None, delta=list(own.delta) if own else None,
         reference_primary=list(result.reference_primary),
-        delta_primary=list(result.delta_primary),
+        delta_primary=list(own.delta_primary) if own else None,
         priced_years=list(result.priced_years), carried_years=list(result.carried_years),
         spending_name=result.spending_name, growth_name=result.growth_name,
-        rate_name=result.rate_name, conventions=list(result.conventions),
-        absent=dict(result.absent),
-        slices=[PredictifSlice(source=s.source, label=s.label, computed=s.computed,
-                               reason=s.reason, low=list(s.low), high=list(s.high))
-                for s in result.decomposition.slices],
+        rate_name=result.rate_name,
+        conventions=[c for c in result.conventions if all(c in r.conventions
+                                                            for r in results)],
+        absent=dict(result.absent), slices=slices(own) if own else [],
         start=PredictifStart(year=start.year, debt_ratio=start.debt_ratio,
                              primary_balance=start.primary_balance,
                              implicit_rate=start.implicit_rate, gdp_eur=start.gdp_eur),
@@ -1315,17 +1357,11 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
         behaviour=(PredictifBehaviour(
             receipts_first_year_eur=at.receipts, box_first_year_eur=list(at.box),
             claimed=list(at.claimed), grade=at.grade) if at is not None else None),
-        gdp_gap=list(result.gdp_gap) if result.gdp_gap is not None else None,
-        feedback_primary=(list(result.feedback_primary)
-                          if result.feedback_primary is not None else None),
-        persistence=result.persistence,
-        indices=[PredictifIndex(
-            key=i.spec.key, pour=i.spec.pour, label=i.spec.label, unit=i.spec.unit,
-            stage=i.spec.stage, source=i.spec.source, theta=list(i.spec.theta),
-            note=i.spec.note, available=i.available, values=dict(i.values),
-            box=({k: list(v) for k, v in i.box.items()} if i.box is not None else None),
-            reason=i.reason, conventions=list(i.conventions), uncovered=dict(i.uncovered))
-            for i in computed],
+        gdp_gap=list(own.gdp_gap) if own and own.gdp_gap is not None else None,
+        feedback_primary=(list(own.feedback_primary)
+                          if own and own.feedback_primary is not None else None),
+        persistence=own.persistence if own else None, side_by_side=side_by_side,
+        indices=index_rows(computed),
         population_view=first.view, population_note=first.note,
         banner=result.banner, debt_banner=DEBT_BANNER,
     )
