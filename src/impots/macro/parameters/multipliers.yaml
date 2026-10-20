@@ -80,34 +80,56 @@ parameters:
         sinon un multiplicateur surestimé de 18 %. `mesange.VariantSpec.ex_ante_points`
         porte ce facteur.
 
-        La borne de 1,0 reste, mais son motif est celui du document et non le nôtre :
-        p101 ne concède la linéarité que « dès lors que les chocs sont d'ampleur
-        limitée », et prévient que « pour l'étude de chocs de plus forte ampleur [...]
-        l'utilisation de Mésange devient moins directe ». Or un point de PIB est DÉJÀ
-        à ce garde-fou : c'est +28 % d'investissement public, environ un tiers de
-        l'impôt sur le revenu, plus du quart des cotisations salariales.
+        LA BORNE DE 1,0 EST UN CHOIX DU PROJET, PAS UNE CITATION (D-230). Le document
+        ne fixe aucun seuil. p101 (folio 100) concède la linéarité « dès lors que les
+        chocs sont d'ampleur limitée » et prévient que « pour l'étude de chocs de plus
+        forte ampleur [...] l'utilisation de Mésange devient moins directe » ; p109
+        (folio 108) dit le cadre linéaire « valable pour des chocs de quelques points de
+        PIB ». « Quelques » n'est pas un nombre. Les variantes sont simulées à un point :
+        jusque-là, un chiffrage lit ce que le modèle a fait tourner ; au-delà, il
+        l'extrapole par une linéarité que le folio 108 accorde sans la chiffrer, et le
+        grade « illustrative » le dit. Un point de PIB, c'est déjà +28 %
+        d'investissement public (folio 102), environ un tiers de l'impôt sur le revenu
+        (2,5 points sur 7,6 %, folio 117), plus du quart des cotisations salariales
+        (3,7 points sur un peu plus de 13 %, folio 110) : des ordres de grandeur que le
+        projet tire du document, non une phrase qu'il cite.
       max_variation_graded_in_support: 1.0
     verifier:
       verdict: SCOPE_PROBLEM
-      date: 2026-09-03
-      ref: wf_8caa3e5e-1e6
+      date: 2026-10-20
+      ref: D-230
       note: >
-        Les 48 valeurs et les huit références de page ont été relues une à une dans le
-        PDF : AUCUNE erreur de chiffre, aucune transposition, aucune colonne empruntée
-        à une voisine, et le piège CSG/IR — 0,41 la première année dans les deux cas —
-        est correctement franchi. Le verdict porte entièrement sur la portée, et les
-        corrections sont intégrées ci-dessus. Les trois plus lourdes : (1) le support
-        « ex ante » était faux pour trois lignes sur huit et manquait le facteur 1,18
-        de la TVA ; (2) les variantes sont NON CIBLÉES, alors que le document publie
-        une contrepartie ciblée bas salaires à l'encadré 14 — d'où la neuvième variante
-        et le routage de `shocks.targets_low_wages` ; (3) les conditions de simulation
-        n'étaient nulle part.
-        RESTE OUVERT, non corrigé : la conclusion p141 avertit que ces résultats « n'ont
-        cependant pas vocation à être directement transposés à l'évaluation des
-        politiques économiques passées », ce qui vise le backtest de M4 et non le
-        chiffrage prospectif ; et la phrase d'ancrage de `investissement_public` n'est
-        pas unique dans le document — le lecteur n'est sauvé que parce qu'il exige
-        toutes ses lignes sur la même page.
+        LIGNE ROUVERTE PAR D-230, sur la décision du propriétaire, pour deux textes que
+        la passe de D-218 avait trouvés faux sans les corriger, faute de rouvrir la
+        ligne. Passe adverse du 2026-10-20 contre le PDF, aucune valeur touchée. (1) La
+        borne de 1,0 : CONFIRMÉ qu'elle est un choix du projet. Les deux citations sont
+        mot pour mot, aux folios 100 et 108, et aucune page ne donne de seuil chiffré
+        (recherche de linéa-, ampleur, seuil, symétri-, proportionn-, additiv- sur tout le
+        document) ; les ordres de grandeur d'un point se tirent des folios 102, 110 et
+        117 et ne sont pas cités. (2) L'encadré 15 : SCOPE_PROBLEM. « Au centime » était
+        faux, six cases s'écartent d'une unité du dernier chiffre imprimé, et aucune
+        mise à l'échelle ne les fait tomber juste, le PIB de long terme fixant les poids
+        à un pour un ; l'emploi est imprimé en milliers entiers, d'où « dernier chiffre
+        imprimé » et non « deux décimales » ; et l'accord à l'arrondi près est ce que
+        l'addition des deux tables donnerait aussi, d'où « compatible avec
+        l'additivité » et non « la démontre ». Corrections intégrées ci-dessus.
+
+        Passe du 2026-09-03 (wf_8caa3e5e-1e6). Les 48 valeurs et les huit références
+        de page ont été relues une à une dans le PDF : AUCUNE erreur de chiffre,
+        aucune transposition, aucune colonne empruntée à une voisine, et le piège
+        CSG/IR — 0,41 la première année dans les deux cas — est correctement franchi.
+        Le verdict porte entièrement sur la portée, et les corrections sont intégrées
+        ci-dessus. Les trois plus lourdes : (1) le support « ex ante » était faux pour
+        trois lignes sur huit et manquait le facteur 1,18 de la TVA ; (2) les
+        variantes sont NON CIBLÉES, alors que le document publie une contrepartie
+        ciblée bas salaires à l'encadré 14 — d'où la neuvième variante et le routage
+        de `shocks.targets_low_wages` ; (3) les conditions de simulation n'étaient
+        nulle part. RESTE OUVERT, non corrigé : la conclusion p141 avertit que ces
+        résultats « n'ont cependant pas vocation à être directement transposés à
+        l'évaluation des politiques économiques passées », ce qui vise le backtest de
+        M4 et non le chiffrage prospectif ; et la phrase d'ancrage de
+        `investissement_public` n'est pas unique dans le document — le lecteur n'est
+        sauvé que parce qu'il exige toutes ses lignes sur la même page.
     confidence: medium
     note: >
       CONFIANCE ABAISSÉE DE HIGH À MEDIUM, et les horizons longs sont retirés de
@@ -121,12 +143,18 @@ parameters:
 
       CONVENTION DE SIGNE, hypothèse et non lecture : les variantes publiées en hausse
       sont retournées pour ramener toutes les lignes à « réponse par point d'impulsion
-      expansionniste ». Le document démontre l'ADDITIVITÉ entre instruments — l'encadré
-      15 (« TVA sociale ») reproduit au centime la somme des variantes TVA et
-      cotisations employeurs — mais aucune table ne fait tourner une variante dans les
-      deux sens. La symétrie reste non mesurée. Elle est en outre explicitement
-      déconseillée pour la taxe carbone, dont le choc porte sur des VOLUMES d'énergie
-      et dont « le calibrage doit donc être réalisé hors modèle ».
+      expansionniste ». L'ADDITIVITÉ entre instruments est compatible avec le
+      document, sans y être démontrée : l'encadré 15 (« TVA sociale », folio 114)
+      reproduit la somme des variantes TVA et cotisations employeurs à une unité du
+      dernier chiffre imprimé près, non au centime — le PIB s'en écarte de 0,01 à un
+      an et à dix ans, la consommation de 0,01 à dix ans, l'emploi d'un millier à deux
+      ans, le solde primaire de 0,01 à deux ans, l'IPC de 0,01 à dix ans ; le solde
+      commercial tombe juste (D-230) —, ce que l'addition des deux tables donnerait
+      aussi, et le document ne dit pas l'avoir simulé à part. Aucune table ne fait
+      tourner une variante dans les deux sens. La symétrie reste non mesurée. Elle est
+      en outre explicitement déconseillée pour la taxe carbone, dont le choc porte sur
+      des VOLUMES d'énergie et dont « le calibrage doit donc être réalisé hors
+      modèle ».
 
   employment_by_instrument:
     value:

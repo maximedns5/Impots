@@ -17051,3 +17051,87 @@ de taux marginaux). Les quarante-neuf contrôles de la page passent. `ruff` pass
 
 **La suite.** La porte de M6 : le `make full` du propriétaire, qui clôt la phase 9. Les
 deux choix du propriétaire de D-218 restent ouverts.
+
+## D-230 — Les choix de D-218 : persistances côte à côte, multiplicateurs rouverts
+
+**Le fait.** D-218 laissait deux choix au propriétaire. Faut-il afficher les deux
+scénarios de persistance côte à côte plutôt que d'en faire choisir un (§4.5) ? Et faut-il
+rouvrir la ligne `multiplier_by_instrument`, dont la passe de M3 avait trouvé la borne de
+linéarité mal justifiée ? Le propriétaire a tranché le 2026-10-20 : les deux côte à côte,
+et la ligne rouverte pour corriger son texte en gardant sa borne.
+
+**Pourquoi les deux côte à côte.** L'exemple de D-228 a montré que la persistance pèse
+plus que tout le reste : en 2035, +1,30 point sous « éteint », +0,54 sous « tenu »,
+contre 0,01 pour le comportement. Faire choisir l'une cachait l'incertitude principale
+derrière une liste. §4.5 disait déjà « les deux s'affichent ; aucun n'est le défaut ».
+
+**Ce qui change.** Au-delà de trois ans, avec la boucle et sans persistance nommée,
+`/predictif/simulate` ne refuse plus. Il calcule les deux scénarios depuis la même passe
+de population — la chaîne tourne deux fois, en millisecondes — et les rend dans
+`side_by_side`. Chacun y porte sa trajectoire, ses tranches, son écart de PIB, sa
+rétroaction, ses conventions et les trois indices de la chaîne : solde, dette, intérêts.
+La réponse ne porte alors aucune trajectoire en propre : `reform`, `delta`,
+`delta_primary`, `gdp_gap`, `feedback_primary` et `persistence` sont nuls, les tranches
+vides, et les indices de la chaîne y sont dits portés par chaque scénario. Une
+trajectoire en tête serait un défaut par la place qu'elle occupe. Le schéma refuse donc
+trois réponses : une trajectoire à côté des deux scénarios, un seul des deux, ni l'un ni
+l'autre.
+
+Nommée, la persistance donne sa seule trajectoire, comme avant. L'explorateur, dont la
+cible est un nombre, la demande toujours. La page propose « les deux, côte à côte » par
+défaut dans sa liste et envoie la requête sans persistance. Elle dessine une phrase qui
+met les deux écarts de la dernière année face à face, puis un tableau par scénario, dans
+l'ordre que donne l'API.
+
+**La ligne rouverte.** Elle portait deux textes que la passe de D-218 avait trouvés faux
+sans les corriger, faute de rouvrir la ligne. Le premier justifiait la borne de 1,0 par
+le document (« son motif est celui du document et non le nôtre ») et disait qu'un point
+de PIB est « DÉJÀ à ce garde-fou ». Or le document ne fixe aucun seuil : p101 concède la
+linéarité « dès lors que les chocs sont d'ampleur limitée », et le folio 108 la dit
+« valable pour des chocs de quelques points de PIB ». La borne reste à 1,0, écrite
+désormais comme un choix du projet. Les variantes sont simulées à un point : jusque-là,
+un chiffrage lit ce que le modèle a fait tourner ; au-delà, il l'extrapole, et le grade
+« illustrative » le dit. Aucune valeur ne bouge, et la chaîne prédictive ne lit pas cette
+borne. Seul le grade de l'éventail macro en dépend, pour un choc de plus d'un point de
+PIB, une trentaine de milliards.
+
+Le second texte disait que l'encadré 15 reproduit « au centime » la somme des variantes
+TVA et cotisations employeurs. La ligne le disait, le docstring du lecteur aussi, et la
+ligne de consommation des indices — mon erreur de D-223. L'encadré la reproduit à une
+unité du dernier chiffre imprimé près. Six cases s'en écartent : le PIB à un an et à dix
+ans, la consommation à dix ans, l'emploi à deux ans, le solde primaire à deux ans, l'IPC
+à dix ans. Le solde commercial tombe juste.
+
+**La passe adverse.** Une passe indépendante a relu les textes corrigés contre le PDF.
+Sur la borne : CONFIRMÉ. Les deux citations sont mot pour mot à leurs pages, et aucune
+page ne donne de seuil chiffré. Sur l'encadré 15 : SCOPE_PROBLEM, et trois corrections
+intégrées. Mon premier jet ne nommait que les écarts de sa propre ligne, alors que
+l'encadré en a dans trois autres. Il expliquait l'écart par « l'arrondi de valeurs
+publiées à deux décimales », ce qui est faux pour l'emploi, imprimé en milliers entiers.
+Et la ligne disait que le document « démontre » l'additivité. Un accord à l'arrondi près
+est pourtant ce que l'addition des deux tables donnerait aussi, et le document ne dit pas
+avoir simulé l'encadré à part : il est compatible avec l'additivité, sans la démontrer.
+La passe a aussi demandé de sourcer les ordres de grandeur d'un point de PIB, aux folios
+102, 110 et 117 : c'est fait. Le bloc `verifier` de la ligne porte la nouvelle passe,
+datée, et garde l'ancienne.
+
+**Les tests.** Quatre tests de l'API, vus échouer sur le code d'avant : les deux
+scénarios tirés d'une seule passe, égaux trois ans puis séparés, sans trajectoire en
+tête ; la persistance nommée, qui donne sa trajectoire seule ; les indices de la dette
+portés par chaque scénario ; la garde du schéma, sous ses trois refus. Deux contrôles de
+la page remplacent celui qui refusait d'envoyer sans persistance. Ils ont été vus échouer
+sur la page d'avant, et sur une page qui ne dessine que le premier scénario ; la page en
+compte 50. Le balayage de D-229 gagne cinq gardes écrites à la main et en perd une, le
+refus retiré. `--missing` a tué les cinq : 103 mutations, 102 tuées, une équivalente,
+aucune survivante.
+
+Avec les tests de la chaîne, du chemin annuel, de l'API et de la commande prédictives, de
+θ, des indices, de l'explorateur, de son évaluateur et de son exemple, de la boucle, du
+magasin macro et de la couche macro, de la validation, de l'exemple, des scénarios de
+dette, du comportement, des trois canaux de M5, du balayage, du préenregistrement, de la
+provenance, de la charte, des règles et des dépendances : 664 réussis, 19 sautés.
+Dix-sept le sont faute des tableaux entrées-sorties de l'INSEE, qui ne sont pas
+redistribuables, et deux parce que l'artefact de référence ne porte pas encore de
+distribution de taux marginaux. `ruff` passe sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.** La porte de M6 : le `make full` du propriétaire, qui clôt la phase 9.

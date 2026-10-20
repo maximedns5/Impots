@@ -197,13 +197,74 @@ def test_the_loop_runs_under_frozen_spending_and_lists_the_macro_theta(client, p
     assert body["persistence"] == "tenu"
 
 
-def test_the_loop_past_three_years_without_persistence_is_refused_before_the_pass(
+def test_past_three_years_without_a_persistence_both_stand_side_by_side(
         client, priced) -> None:
+    """D-230, the owner's choice on §4.5: unnamed, the persistence is not asked for nor
+    defaulted — both scenarios are computed from the ONE pass and returned side by side,
+    and the response carries no path of its own, so that neither reads as the lead."""
     response = client.post("/predictif/simulate", json=_payload(macro=True))
-    assert response.status_code == 422 and "persistance" in response.json()["detail"]
-    assert priced == []
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert len(priced) == 1, "both scenarios must come from the same population pass"
+    both = {p["persistence"]: p for p in body["side_by_side"]}
+    assert sorted(both) == ["eteint", "tenu"]
+    assert both["eteint"]["label"] == "Effet macro éteint après trois ans"
+    for field in ("reform", "delta", "delta_primary", "gdp_gap", "feedback_primary",
+                  "persistence"):
+        assert body[field] is None, field
+    assert body["slices"] == []
+    # Mésange is read to three years: there the two are one path, and past it they part.
+    off, held = both["eteint"], both["tenu"]
+    assert off["delta"][:3] == pytest.approx(held["delta"][:3])
+    assert off["gdp_gap"][3:] == pytest.approx([0.0] * 7, abs=1e-15)
+    assert held["gdp_gap"][3:] == pytest.approx([held["gdp_gap"][2]] * 7)
+    assert off["delta"][-1] != pytest.approx(held["delta"][-1])
+    # each path's own convention past three years, and none of them in the shared list
+    assert any("éteint" in c for c in off["conventions"])
+    assert not any("Au-delà de trois ans" in c for c in body["conventions"])
     short = client.post("/predictif/simulate", json=_payload(macro=True, horizon=3))
     assert short.status_code == 200 and len(short.json()["gdp_gap"]) == 3
+    assert short.json()["side_by_side"] == []
+
+
+def test_a_named_persistence_gives_its_one_path_and_nothing_side_by_side(
+        client, priced) -> None:
+    body = client.post("/predictif/simulate",
+                       json=_payload(macro=True, persistence="eteint")).json()
+    assert body["persistence"] == "eteint" and body["side_by_side"] == []
+    assert len(body["delta"]) == 10
+
+
+def test_side_by_side_the_debt_indices_are_each_paths_own(client, priced) -> None:
+    """The balance, debt and interest indices depend on the path: listed with each
+    scenario, and in the response as carried by them, never as one scenario's."""
+    body = client.post("/predictif/simulate", json=_payload(macro=True)).json()
+    shared = {i["key"]: i for i in body["indices"]}
+    assert not shared["dette"]["available"]
+    assert "côte à côte" in shared["dette"]["reason"]
+    for path in body["side_by_side"]:
+        own = {i["key"]: i for i in path["indices"]}
+        assert set(own) == {"solde_primaire", "dette", "charge_interets"}
+        assert own["dette"]["values"]["2035"] == pytest.approx(path["delta"][-1])
+
+
+def test_a_response_with_one_scenario_in_the_lead_refuses_to_exist(client,
+                                                                   priced) -> None:
+    """The schema's own guard: side by side, a path of the response's own would be one
+    of the two promoted to the headline — a default by placement."""
+    from pydantic import ValidationError
+
+    from impots.api.schemas import PredictifResponse
+
+    body = client.post("/predictif/simulate", json=_payload(macro=True)).json()
+    led = {**body, "delta": body["side_by_side"][0]["delta"]}
+    with pytest.raises(ValidationError, match="aucune trajectoire en propre"):
+        PredictifResponse.model_validate(led)
+    one = {**body, "side_by_side": body["side_by_side"][:1]}
+    with pytest.raises(ValidationError, match="chacun une fois"):
+        PredictifResponse.model_validate(one)
+    with pytest.raises(ValidationError, match="ni scénarios côte à côte"):
+        PredictifResponse.model_validate({**body, "side_by_side": []})
 
 
 def test_a_persistence_without_the_loop_is_refused_before_the_pass(client, priced) -> None:

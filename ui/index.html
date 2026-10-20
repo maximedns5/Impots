@@ -1250,7 +1250,7 @@ footer code { font-family: var(--mono); font-size: 11px; }
               l'activité (Mésange)</label>
             <label class="lbl">au-delà de trois ans
               <select id="predPersistence">
-                <option value="" selected>— à choisir —</option>
+                <option value="" selected>les deux, côte à côte</option>
                 <option value="eteint">Effet macro éteint après trois ans</option>
                 <option value="tenu">Effet macro tenu au niveau de la troisième année</option>
               </select></label>
@@ -2789,10 +2789,9 @@ function predictifPayload() {
   const theta = $("predTheta").value;
   if (theta === "") missing.push("un θ, de 0 à 1");
   const macro = $("predMacro").checked;
+  // Past three years the loop needs a persistence scenario; left unchosen, the API
+  // computes both and the page shows them side by side, neither in the lead (D-230).
   const persistence = $("predPersistence").value;
-  if (macro && rule === "gele_en_volume" && Number(horizon) > 3 && !persistence) {
-    missing.push("un scénario de persistance au-delà de trois ans");
-  }
   if (missing.length) return { missing };
   const rate = kind === "marche"
     ? { name: `Refinancement à ${String(market).replace(".", ",")} %`, kind,
@@ -2925,35 +2924,64 @@ function predictifIndices(d) {
    by side (D-216), this prices one, and a 2026 figure whose view goes unnamed cannot be
    matched to its column, nor carry the caveat of an aged population. */
 const POPULATION_VIEWS = { figee: "figée", vieillie: "vieillie" };
-function renderPredictif(host, d) {
+/* One path's table: the response's own, or one persistence scenario's when the two
+   stand side by side (D-230) — `path` carries reform, delta, slices and gdp_gap, `d` the
+   rest, common to both. */
+function predictifTable(d, path) {
   const carried = new Set(d.carried_years || []);
-  const view = d.population_view ? ` · Population : <b>${escapeHtml(
-    POPULATION_VIEWS[d.population_view] || d.population_view)}</b>` : "";
-  const box = (d.slices || []).find((s) => s.source === "bande" && s.computed);
+  const box = (path.slices || []).find((s) => s.source === "bande" && s.computed);
   const extra = d.theta_applied ? "<th>Écart mécanique</th>" : "";
   const boxHead = box ? "<th>Boîte θ (écart)</th>" : "";
-  const gap = d.gdp_gap || null;
+  const gap = path.gdp_gap || null;
   const gapHead = gap ? "<th>PIB, écart à la référence</th>" : "";
-  const fan = (d.slices || []).find((s) => s.source === "eventail" && s.computed);
+  const fan = (path.slices || []).find((s) => s.source === "eventail" && s.computed);
   const fanHead = fan ? "<th>Éventail macro (écart)</th>" : "";
   const rows = (d.years || []).map((year, i) => `<tr>
-      <td>${year}</td><td>${pctFr(d.reference[i])}</td><td>${pctFr(d.reform[i])}</td>
-      <td>${ptFr(d.delta[i])}</td>
+      <td>${year}</td><td>${pctFr(d.reference[i])}</td><td>${pctFr(path.reform[i])}</td>
+      <td>${ptFr(path.delta[i])}</td>
       ${d.theta_applied ? `<td>${ptFr(d.delta_mechanical[i])}</td>` : ""}
       ${box ? `<td>${ptFr(box.low[i] - d.reference[i])} à ${ptFr(box.high[i] - d.reference[i])}</td>` : ""}
       ${gap ? `<td>${pctFr(gap[i], 2).replace(/^(?!-)/, "+")}</td>` : ""}
       ${fan ? `<td>${ptFr(fan.low[i] - d.reference[i])} à ${ptFr(fan.high[i] - d.reference[i])}</td>` : ""}
       <td class="${carried.has(year) ? "carried" : ""}">${carried.has(year) ? "report" : "chiffré"}</td>
     </tr>`).join("");
+  return `<table><thead><tr><th>Année</th><th>Dette, référence</th><th>Dette, réforme</th>
+      <th>Écart${d.theta_applied ? " à θ" : ""}</th>${extra}${boxHead}${gapHead}${fanHead}<th></th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    ${box ? `<p class="tnote">${escapeHtml(box.label)}.</p>` : ""}
+    ${fan ? `<p class="tnote">${escapeHtml(fan.label)}.</p>` : ""}`;
+}
+
+/* Past three years without a named persistence, the two scenarios side by side: a
+   sentence that sets their last-year gaps against each other, then each scenario's own
+   table, conventions and debt indices, in the order the API returns them — neither one
+   is the headline, so neither is put first by the page's choice (D-230). */
+function predictifSideBySide(d) {
+  const years = d.years || [];
+  const last = years[years.length - 1];
+  const gaps = d.side_by_side.map((p) =>
+    `${ptFr(p.delta[p.delta.length - 1])} sous « ${escapeHtml(p.label.toLowerCase())} »`);
+  const shared = new Set(d.conventions || []);
+  const each = d.side_by_side.map((p) => {
+    const own = (p.conventions || []).filter((c) => !shared.has(c)).map(
+      (c) => `<p class="tnote">Convention : ${escapeHtml(c)}</p>`).join("");
+    return `<h4>${escapeHtml(p.label)}</h4>${predictifTable(d, p)}${own}
+      ${predictifIndices({ indices: p.indices })}`;
+  }).join("");
+  return `<p class="tnote"><b>Deux scénarios de persistance, côte à côte.</b> Au-delà de
+    trois ans Mésange ne se lit plus ; aucune fourchette publiée ne départage les deux, et
+    aucun n'est le défaut. En ${last}, l'écart vaut ${gaps.join(" et ")}.</p>${each}`;
+}
+
+function renderPredictif(host, d) {
+  const view = d.population_view ? ` · Population : <b>${escapeHtml(
+    POPULATION_VIEWS[d.population_view] || d.population_view)}</b>` : "";
+  const side = (d.side_by_side || []).length > 0;
   host.innerHTML = `<div class="pred">
     <p class="tbanner"><b>${escapeHtml(d.banner)}</b></p>
     <p class="pnames">${predictifNames(d)}${view}</p>
-    <table><thead><tr><th>Année</th><th>Dette, référence</th><th>Dette, réforme</th>
-      <th>Écart${d.theta_applied ? " à θ" : ""}</th>${extra}${boxHead}${gapHead}${fanHead}<th></th></tr></thead>
-      <tbody>${rows}</tbody></table>
+    ${side ? predictifSideBySide(d) : predictifTable(d, d)}
     ${d.population_note ? `<p class="tnote">${escapeHtml(d.population_note)}</p>` : ""}
-    ${box ? `<p class="tnote">${escapeHtml(box.label)}.</p>` : ""}
-    ${fan ? `<p class="tnote">${escapeHtml(fan.label)}.</p>` : ""}
     ${predictifIndices(d)}
     ${predictifNotes(d)}
   </div>`;

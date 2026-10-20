@@ -47,8 +47,9 @@ parameters:
       les deux dépenses. Le choc n'y entre pas mécaniquement : il passe par le revenu, que
       la consommation suit avec une élasticité de 0,46 la première année et 0,85 à deux
       ans (folio 33). « 1 an » est une moyenne de la première année (tableau 12, folio
-      119). Recoupement : l'encadré 15 (folio 114) reproduit au centime TVA plus
-      cotisations employeurs.
+      119). Recoupement : l'encadré 15 (folio 114) reproduit TVA plus cotisations
+      employeurs à une unité du dernier chiffre imprimé près, et non au centime ; pour
+      cette ligne, la consommation s'en écarte de 0,01 à dix ans (D-230).
     responds_to_knobs: [ir_bareme, csg_*, cotisations_*, tva_*]
     support:
       estimated_on: >
@@ -67,6 +68,9 @@ parameters:
         la définition en volume et la moyenne de première année, le choc qui passe par le
         revenu et non mécaniquement, et le θ — la consommation suit le multiplicateur,
         1,96 à 2,16 fois le PIB pour les impôts payés par les ménages.
+        Repris le 2026-10-20 (D-230) : le recoupement de l'encadré 15 se fait à une
+        unité du dernier chiffre imprimé près et non au centime ; pour cette ligne, la
+        consommation s'en écarte de 0,01 à dix ans. Valeurs inchangées.
     confidence: medium
 
   investment_by_instrument:

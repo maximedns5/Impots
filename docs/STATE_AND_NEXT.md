@@ -1,6 +1,17 @@
-# State of the project, and the directions open — 2026-10-19 (Phase 9, M6 under way)
+# State of the project, and the directions open — 2026-10-20 (Phase 9, M6 under way)
 
-The twelfth 2026-10-19 update adds D-229, M6's fifth step: the guard sweep.
+The 2026-10-20 update adds D-230: the owner's two choices left open by D-218. Past three
+years with the loop and no persistence named, `/predictif/simulate` no longer refuses: it
+computes « éteint » and « tenu » from the one population pass and returns them in
+`side_by_side`, the response carrying no path of its own so that neither reads as the
+lead; the page draws one table per scenario. The `multiplier_by_instrument` row is
+reopened: its 1.0 linearity bound is kept, written now as the project's choice (the
+document sets no threshold, and folio 108 says « quelques points de PIB »), and box 15
+matches the sum of the VAT and employer-contribution variants to one unit of the last
+printed digit, not « au centime ». An independent adversarial pass confirmed the first
+and found three scope errors in the second, all corrected. The guard sweep has 103
+mutations, 102 killed, one equivalent.
+The twelfth 2026-10-19 update added D-229, M6's fifth step: the guard sweep.
 `scripts/sweep_gardes_phase9.py` reads its catalogue from the code — every `raise` of
 `predictif/`, of the two debt scenario modules, of D-224's explorer additions and of the
 predictive API and command, plus fourteen guards written by hand (§2.4's guards 1 and 4
@@ -190,8 +201,8 @@ fresh clone's `tests` profile does not fetch (D-204). That pass sits 28 commits 
 `main` at D-216: it covers nothing from D-205 on, Phase 9 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **230 decision
-entries**, D-000 to D-229, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **231 decision
+entries**, D-000 to D-230, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -545,11 +556,10 @@ download list.
    §9.4's worked example (D-228) and the guard sweep (D-229) are in; what remains of M6
    is its gate, the owner's `make full`, which closes Phase 9. Left for C9: the take-up margin, new entrants, the carried-forward stock,
    and the CNEPI's 2021 evaluation (IPP report n° 33), not manifested. M1 to M4 are done (D-215 to D-219); M4 left
-   the transfers and the IS closed. Two
-   decisions from M3 are the owner's: whether the page should show both persistence
-   scenarios side by side rather than ask for one (§4.5), and whether to reopen the
-   `multiplier_by_instrument` row, whose linearity bound the M3 pass found
-   unsupported (D-218). `impots predictif` does not carry the loop yet. A full ten-year
+   the transfers and the IS closed. The two
+   choices M3 left to the owner are made (D-230): both persistence scenarios side by
+   side when none is named, and the `multiplier_by_instrument` row reopened, its bound
+   kept as the project's choice. `impots predictif` does not carry the loop yet. A full ten-year
    run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
    refuses this container), and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
