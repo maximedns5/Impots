@@ -2047,3 +2047,137 @@ class PredictifReportList(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     rapports: list[str] = Field(default_factory=list)
+
+
+class ExplorationEvaluation(BaseModel):
+    """One bundle as the search evaluated it. Costs in euros, COST POSITIVE; Δb as a share
+    of GDP, negative when the reform lowers the debt; the corners in the θ box's order."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    knobs: dict[str, float]
+    cost_aged_eur: float
+    cost_frozen_eur: float
+    delta_aged: float
+    delta_frozen: float
+    corners: Annotated[list[tuple[str, float]], Field(min_length=1)]
+    corner_low: float
+    corner_high: float
+    meets_target: bool
+
+
+class ExplorationCandidate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    knobs: dict[str, float]
+    delta_aged: float
+    delta_frozen: float
+    meets_target: bool
+    frozen_only: bool
+    robust: bool | None
+    verdict: str
+
+
+class ExplorationSearch(BaseModel):
+    """One search, under one persistence scenario or none (D-230)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    persistence: Literal["eteint", "tenu"] | None
+    persistence_label: str | None
+    digest: str
+    log: dict[str, Any]
+    evaluations: Annotated[list[ExplorationEvaluation], Field(min_length=1)]
+    candidates: list[ExplorationCandidate]
+    excluded: list[Any]
+    closest: ExplorationEvaluation | None
+
+    @model_validator(mode="after")
+    def _check_exploration_search(self) -> ExplorationSearch:
+        evaluated = [sorted(e.knobs.items()) for e in self.evaluations]
+        for candidate in self.candidates:
+            if candidate.robust is None or not candidate.verdict.strip():
+                raise ValueError(
+                    f"candidat {candidate.knobs} sans verdict θ : « robuste » ou « dépend "
+                    f"de θ » est ce qui le rend lisible, et sans lui il se lirait robuste.")
+            if sorted(candidate.knobs.items()) not in evaluated:
+                raise ValueError(
+                    f"candidat {candidate.knobs} absent des paquets évalués : un candidat "
+                    f"dont on ne voit ni le coût ni les coins ne se vérifie pas.")
+        for evaluation in self.evaluations:
+            values = [value for _, value in evaluation.corners]
+            if (evaluation.corner_low, evaluation.corner_high) != (min(values), max(values)):
+                raise ValueError(
+                    f"paquet {evaluation.knobs} : l'étendue affichée n'est pas celle de ses "
+                    f"coins.")
+        if not any(c.meets_target for c in self.candidates) and self.closest is None:
+            raise ValueError(
+                "aucun candidat et aucun paquet le plus proche : « aucun » se lirait sans "
+                "dire à quelle distance de la cible la grille est restée.")
+        return self
+
+
+class ExplorationHypotheses(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    spending_name: str
+    growth_name: str
+    rate_name: str
+    horizon: int
+    target_year: int
+    target_points: float
+    target_share: float
+    theta: dict[str, Any]
+    uprating: dict[str, Any]
+    behavioural: bool
+    macro: bool
+    looped: bool
+
+
+class ExplorationReport(BaseModel):
+    """A search, precomputed by `impots exploration` (PHASE10_SPEC §2). Read from a file;
+    never runs: a search is two population passes per bundle."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    titre: str
+    question: str
+    computed: str
+    commit: str
+    request: dict[str, Any]
+    hypotheses: ExplorationHypotheses
+    start: PredictifStart
+    unit: str
+    views: dict[str, str]
+    conventions: list[str]
+    banner: str
+    debt_banner: str
+    bundles: int
+    passes: int
+    searches: Annotated[list[ExplorationSearch], Field(min_length=1)]
+
+    @model_validator(mode="after")
+    def _check_exploration_report(self) -> ExplorationReport:
+        if not self.commit.strip():
+            raise ValueError(
+                "rapport sans commit : il ne dirait pas quel code l'a produit, et ne se "
+                "rejouerait pas.")
+        persistences = [s.persistence for s in self.searches]
+        if len(set(persistences)) != len(persistences) or (
+                len(persistences) > 1 and None in persistences):
+            raise ValueError(
+                f"recherches sous {persistences} : deux recherches côte à côte sont les "
+                f"deux scénarios de persistance, chacun une fois (D-230).")
+        for search in self.searches:
+            if len(search.evaluations) != self.bundles:
+                raise ValueError(
+                    f"{len(search.evaluations)} paquets évalués pour {self.bundles} dans la "
+                    f"grille : chaque paquet figure au rapport, pas seulement les candidats.")
+        return self
+
+
+class ExplorationReportList(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    explorations: list[str] = Field(default_factory=list)

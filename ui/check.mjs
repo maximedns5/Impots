@@ -74,6 +74,10 @@ globalThis.fetch = async (url, opts) => {
     const both = body.macro && body.horizon > 3 && !body.persistence;
     return { ok: true, json: async () => (both ? PRED_SIDE : PRED_RESULT) };
   }
+  if (url.endsWith("/explorations")) return { ok: true, json: async () => ({ explorations: ["csg", "illisible"] }) };
+  if (url.includes("/explorations/illisible")) return { ok: false, status: 500, json: async () => ({
+    detail: "exploration « illisible » illisible, refusée plutôt que montrée en partie : candidat sans verdict θ" }) };
+  if (url.includes("/explorations/")) return { ok: true, json: async () => EXPL_REPORT };
   if (url.endsWith("/predictif")) return { ok: true, json: async () => ({ rapports: ["plf2027_art_3"] }) };
   if (url.includes("/predictif/")) return { ok: true, json: async () => PRED_REPORT };
   return { ok: true, json: async () => RESULT };
@@ -175,6 +179,49 @@ const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027
   closed: { dividendes: "la population ne porte aucun revenu du capital (§6.5)." },
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
   debt_banner: "Les dépenses publiques ne sont PAS microsimulées ici." };
+/* Phase 10 · a search, as `impots exploration` writes it (D-235): under « éteint » no bundle
+   meets the target, under « tenu » one is robust, one depends on θ, one holds only on the
+   frozen population. */
+const EXPL_EVAL = (rate, cost, aged, frozen, low, high) => ({
+  knobs: { csg_activite_deductible: rate }, cost_aged_eur: cost, cost_frozen_eur: cost * 0.95,
+  delta_aged: aged, delta_frozen: frozen, corner_low: low, corner_high: high,
+  corners: [["multiplicateur_macro = 0", high], ["multiplicateur_macro = 1", low]],
+  meets_target: aged <= 0 });
+const EXPL_EXTINCT = [EXPL_EVAL(0.058, 9.9e9, 0.0226, 0.0214, 0.0184, 0.0266),
+                      EXPL_EVAL(0.063, 4.95e9, 0.0113, 0.0107, 0.0092, 0.0133)];
+const EXPL_HELD = [EXPL_EVAL(0.050, 1.8e10, -0.003, -0.0025, -0.006, -0.001),
+                   EXPL_EVAL(0.055, 1.3e10, -0.001, -0.0005, -0.004, 0.002),
+                   EXPL_EVAL(0.060, 0.8e10, 0.0005, -0.0002, -0.002, 0.003)];
+const EXPL_REPORT = { name: "csg", titre: "Baisse de la CSG déductible",
+  question: "Une baisse de la CSG déductible fait-elle baisser la dette en 2035 ?",
+  computed: "2026-10-21", commit: "b8093f4f11ac2222", request: {},
+  hypotheses: { ...PRED_NAMES, horizon: 10, target_year: 2035, target_points: 0,
+                target_share: 0, theta: { common: 0.5, rows: {} }, uprating: {},
+                behavioural: true, macro: true, looped: true },
+  start: { year: 2025, debt_ratio: 1.157, primary_balance: -0.03, implicit_rate: 0.0188,
+           gdp_eur: 2.99e12 },
+  unit: "part du PIB", views: { vieillie: "la population de 2024 vieillie",
+                                figee: "la population de 2024 telle quelle" },
+  conventions: ["Δ tenu en part de PIB constante au-delà de la dernière année chiffrée"],
+  banner: "Prédictif conditionnel : ce n'est pas une prévision.",
+  debt_banner: "Les dépenses publiques ne sont PAS microsimulées ici.",
+  bundles: 3, passes: 6,
+  searches: [
+    { persistence: "eteint", persistence_label: "Effet macro éteint après trois ans",
+      digest: "fbedd821aaaabbbb", log: {}, evaluations: EXPL_EXTINCT, candidates: [],
+      excluded: [], closest: EXPL_EXTINCT[1] },
+    { persistence: "tenu", persistence_label: "Effet macro tenu au niveau de la troisième année",
+      digest: "30369c5caaaabbbb", log: {}, evaluations: EXPL_HELD, excluded: [], closest: null,
+      candidates: [
+        { knobs: { csg_activite_deductible: 0.050 }, delta_aged: -0.003, delta_frozen: -0.0025,
+          meets_target: true, frozen_only: false, robust: true,
+          verdict: "robuste : la cible tient aux 2 coins de la boîte θ." },
+        { knobs: { csg_activite_deductible: 0.055 }, delta_aged: -0.001, delta_frozen: -0.0005,
+          meets_target: true, frozen_only: false, robust: false,
+          verdict: "dépend de θ : au coin multiplicateur_macro = 0, l'écart vaut +0.200 pt de PIB et la cible de +0.000 pt de PIB tombe." },
+        { knobs: { csg_activite_deductible: 0.060 }, delta_aged: 0.0005, delta_frozen: -0.0002,
+          meets_target: false, frozen_only: true, robust: false,
+          verdict: "dépend de θ : au coin multiplicateur_macro = 0, l'écart vaut +0.300 pt de PIB et la cible de +0.000 pt de PIB tombe." }] }] };
 const RECON = [
   { label: "Masse salariale brute", simulated: 1.1e12, published: 1.11e12, residual: -0.004,
     use: "calibration", status: "calibrated (spent)", source: "INSEE comptes nationaux (D11)" },
@@ -616,5 +663,54 @@ await (async () => {
     assert.equal(body.macro, true);
     assert.equal(body.persistence, "tenu");
     assert.equal(body.horizon, 10);
+  });
+})();
+
+/* Phase 10 · the searches precomputed by `impots exploration` (D-235). */
+console.log("explorations");
+ok("a precomputed exploration is shown, its question first", () => {
+  assert.equal($("explHost").hidden, false, "a listed exploration must be shown");
+  const html = $("explOut").innerHTML;
+  assert.match(html, /Question :<\/b> Une baisse de la CSG déductible/);
+  assert.ok(html.indexOf("Question :") < html.indexOf("<table>"), "the question leads");
+  assert.match($("explPick").innerHTML, /value="illisible"/, "every exploration is listed");
+});
+ok("both persistence searches are drawn, neither in the lead (D-230)", () => {
+  const html = $("explOut").innerHTML;
+  assert.match(html, /Deux scénarios de persistance, côte à côte : aucun n'est le/);
+  const first = html.indexOf("<h4>Effet macro éteint après trois ans</h4>");
+  const second = html.indexOf("<h4>Effet macro tenu au niveau de la troisième année</h4>");
+  assert.ok(first > 0 && second > first, "each search its own table, in the report's order");
+  assert.equal((html.match(/<table>/g) || []).length, 2, "one table per search");
+});
+ok("every bundle shows its cost, its gap in both views, its θ box and its verdict", () => {
+  const html = $("explOut").innerHTML;
+  assert.match(html, /<td>csg_activite_deductible = 0,058<\/td><td>9,90 Md €<\/td>\s*<td>\+2,26 pt<\/td><td>\+2,14 pt<\/td>\s*<td>\+1,84 pt ; \+2,66 pt<\/td>/);
+  assert.match(html, /tient la cible — robuste : la cible tient aux 2 coins/);
+  assert.match(html, /tient la cible — dépend de θ : au coin multiplicateur_macro = 0/);
+  assert.match(html, /ne tient qu'en vue figée : pas un plan/);
+  assert.equal((html.match(/ne tient pas la cible/g) || []).length, 2,
+               "under « éteint » both bundles miss the target");
+});
+ok("with no candidate, the closest bundle is named, with its gap", () => {
+  assert.match($("explOut").innerHTML,
+               /Aucun paquet ne tient la cible\.<\/b>\s+Le plus proche : csg_activite_deductible = 0,063, \+1,13 pt à θ/);
+});
+ok("the hypotheses, the target and the commit it ran on ride along", () => {
+  const html = $("explOut").innerHTML;
+  assert.match(html, /Dépenses gelées en volume/);
+  assert.match(html, /écart de dette 2035\s+au plus \+0,00 pt/);
+  assert.match(html, /θ = 0,5\s+pour chaque ligne/);
+  assert.match(html, /sur le commit\s+<code>b8093f4f<\/code>/);
+  assert.match(html, /Prédictif conditionnel/);
+});
+await (async () => {
+  $("explPick").value = "illisible";
+  $("explPick").fire("change", {});
+  await new Promise((r) => setTimeout(r, 10));
+  ok("a report the API refuses is said refused, never left blank", () => {
+    const html = $("explOut").innerHTML;
+    assert.match(html, /Exploration « illisible » refusée\s+par l'API/);
+    assert.match(html, /sans verdict θ/);
   });
 })();

@@ -494,6 +494,7 @@ tr.total td:first-child { font-family: var(--sans) !important; font-weight: 600;
 .pred th, .pred td { padding: 4px 8px; border-bottom: 1px solid var(--rule); text-align: right; font-variant-numeric: tabular-nums; }
 .pred th:first-child, .pred td:first-child { text-align: left; }
 .pred td.carried { color: var(--rouge); font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; }
+.pred .pquestion { font-size: 13.5px; line-height: 1.5; margin: 0 0 8px; }
 .pred .tbanner { font-size: 12.5px; line-height: 1.55; margin: 0 0 12px; padding: 8px 12px; border-left: 2px solid var(--ink); background: var(--paper-deep); }
 .pred .tnote { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; margin: 6px 0 0; }
 
@@ -1180,6 +1181,14 @@ footer code { font-family: var(--mono); font-size: 11px; }
         <!-- Phase 9 · trajectoire de dette, chaque année chiffrée, lue depuis un rapport
              précalculé par `impots predictif`. Masquée s'il n'y en a pas. -->
         <div id="predHost" hidden></div>
+
+        <!-- Phase 10 · les recherches de dette à θ fixé, lues depuis les rapports
+             précalculés par `impots exploration`. Masquées s'il n'y en a pas. -->
+        <div id="explHost" class="pred" hidden>
+          <label class="lbl" for="explPick">Exploration</label>
+          <select id="explPick"></select>
+          <div id="explOut"></div>
+        </div>
 
         <!-- F6 · explorateur EMTR, lu depuis un balayage précalculé. -->
         <div id="emtrHost" hidden></div>
@@ -3025,6 +3034,99 @@ function renderPredictifReport(host, r) {
   host.hidden = false;
 }
 
+/* Phase 10 · the searches precomputed by `impots exploration` (D-235). The question
+   leads; then every bundle the grid evaluated — its first-year cost, its debt gap at θ in
+   both views, the extent of its θ box — and its verdict. Two persistence scenarios stand
+   side by side, neither in the lead (D-230). A report the API refuses is said refused,
+   never left blank. Silent when no search has been run. */
+const mdFr = (v) => `${(v / 1e9).toFixed(2).replace(".", ",")} Md €`;
+const knobsFr = (k) => Object.entries(k || {}).map(
+  ([n, v]) => `${escapeHtml(n)} = ${String(v).replace(".", ",")}`).join(", ");
+
+function explorationVerdict(e, search) {
+  const c = (search.candidates || []).find((x) => knobsFr(x.knobs) === knobsFr(e.knobs));
+  if (!c) return "ne tient pas la cible";
+  if (c.frozen_only) return "ne tient qu'en vue figée : pas un plan (D-155)";
+  return `tient la cible — ${escapeHtml(c.verdict)}`;
+}
+
+function explorationSearch(r, s) {
+  const rows = s.evaluations.map((e) => `<tr>
+      <td>${knobsFr(e.knobs)}</td><td>${mdFr(e.cost_aged_eur)}</td>
+      <td>${ptFr(e.delta_aged)}</td><td>${ptFr(e.delta_frozen)}</td>
+      <td>${ptFr(e.corner_low)} ; ${ptFr(e.corner_high)}</td>
+      <td>${explorationVerdict(e, s)}</td></tr>`).join("");
+  const plans = (s.candidates || []).filter((c) => c.meets_target);
+  const none = plans.length ? "" : `<p class="tnote"><b>Aucun paquet ne tient la cible.</b>
+    Le plus proche : ${knobsFr(s.closest.knobs)}, ${ptFr(s.closest.delta_aged)} à θ.</p>`;
+  return `<h4>${escapeHtml(s.persistence_label || "Sans scénario de persistance")}</h4>
+    <table><thead><tr><th>Paquet</th><th>Coût la 1re année, vue vieillie</th>
+      <th>Écart de dette ${r.hypotheses.target_year} à θ, vue vieillie</th>
+      <th>Écart, vue figée</th><th>Boîte θ, aux coins</th><th>Verdict</th></tr></thead>
+      <tbody>${rows}</tbody></table>${none}
+    <p class="tnote">Empreinte du journal de recherche : ${escapeHtml(s.digest.slice(0, 8))}</p>`;
+}
+
+function renderExploration(out, r) {
+  const h = r.hypotheses;
+  const theta = [h.theta.common == null ? "" : `θ = ${String(h.theta.common).replace(".", ",")}
+    pour chaque ligne`, ...Object.entries(h.theta.rows || {}).map(([k, v]) =>
+    `${escapeHtml(THETA_ROWS[k] || k)} : θ = ${String(v).replace(".", ",")}`)]
+    .filter(Boolean).join(" · ");
+  const side = r.searches.length > 1
+    ? `<p class="tnote">Deux scénarios de persistance, côte à côte : aucun n'est le
+       défaut (D-230).</p>` : "";
+  out.innerHTML = `<p class="tbanner"><b>${escapeHtml(r.banner)}</b></p>
+    <h2 class="ptitle">${escapeHtml(r.titre)}</h2>
+    <p class="pquestion"><b>Question :</b> ${escapeHtml(r.question)}</p>
+    <p class="pnames">${predictifNames(h)} · Cible : écart de dette ${h.target_year}
+      au plus ${ptFr(h.target_share)} · ${theta}</p>
+    ${side}${r.searches.map((s) => explorationSearch(r, s)).join("")}
+    <p class="tnote">Vue vieillie : ${escapeHtml(r.views.vieillie)}. Vue figée :
+      ${escapeHtml(r.views.figee)}.</p>
+    <p class="tnote">Calculé le ${escapeHtml(r.computed)} sur le commit
+      <code>${escapeHtml(r.commit.slice(0, 8))}</code> : ${r.bundles} paquets,
+      ${r.passes} passes.</p>
+    ${(r.conventions || []).map((c) => `<p class="tnote">Convention : ${escapeHtml(c)}</p>`)
+      .join("")}
+    <p class="tnote">${escapeHtml(r.debt_banner)}</p>`;
+}
+
+async function showExploration(name) {
+  const out = document.getElementById("explOut");
+  let response;
+  try {
+    response = await fetch(`${API}/explorations/${encodeURIComponent(name)}`);
+  } catch { return; }
+  if (!response.ok) {
+    let detail = "";
+    try { detail = (await response.json()).detail || ""; } catch { /* no body */ }
+    out.innerHTML = `<p class="tbanner"><b>Exploration « ${escapeHtml(name)} » refusée
+      par l'API</b> plutôt que montrée en partie : ${escapeHtml(String(detail))}</p>`;
+    return;
+  }
+  renderExploration(out, await response.json());
+}
+
+async function loadExplorations() {
+  const host = document.getElementById("explHost");
+  const pick = document.getElementById("explPick");
+  if (!host || !pick) return;
+  let names;
+  try {
+    const response = await fetch(`${API}/explorations`);
+    if (!response.ok) return;
+    names = (await response.json()).explorations || [];
+  } catch { return; }
+  if (!names.length) return;
+  pick.innerHTML = names.map((n) => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`)
+    .join("");
+  pick.value = names[0];
+  pick.addEventListener("change", () => showExploration(pick.value));
+  await showExploration(names[0]);
+  host.hidden = false;
+}
+
 /* ----------------------------------------------------------------- boot */
 /* F2 · the scenario picker. Populated from GET /scenarios; silent when the API is not
    running, because a picker is a convenience and the panel works without it.
@@ -3264,6 +3366,7 @@ async function boot() {
     await loadScenarioList();
     await loadTrajectoires();
     await loadPredictifs();
+    await loadExplorations();
     await loadEmtrCurves();
   } catch (error) {
     $("engine").innerHTML = `<span class="dot down"></span>moteur injoignable`;

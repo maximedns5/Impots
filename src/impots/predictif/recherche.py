@@ -15,8 +15,10 @@ ONE PASS PER BUNDLE AND PER VIEW. Past three years with the loop and no persiste
 the two persistence scenarios are two searches side by side (D-230), and both read the
 same passes: the pricing is cached by bundle and view.
 
-EVERY BUNDLE EVALUATED IS IN THE REPORT, not only the candidates. « No candidate » then
-reads with the bundle closest to the target, and a reader sees how far the grid was.
+EVERY BUNDLE EVALUATED IS IN THE REPORT, not only the candidates, with its first-year
+mechanical cost in both views: a debt difference read without what the reform costs is a
+number without its scale (D-235). « No candidate » then reads with the bundle closest to
+the target, and a reader sees how far the grid was.
 """
 
 from __future__ import annotations
@@ -99,9 +101,11 @@ def code_state(root: Path = ROOT) -> tuple[str, bool]:
 
 
 def _evaluation(knobs: dict[str, float], evaluation: explorer.Evaluation,
-                objective: explorer.Objective, target: float) -> dict[str, Any]:
+                objective: explorer.Objective, target: float,
+                cost: Callable[[dict[str, float], str], float]) -> dict[str, Any]:
     values = [value for _, value in evaluation.corners]
-    return {"knobs": dict(knobs), "delta_aged": evaluation.aged_eur,
+    return {"knobs": dict(knobs), "cost_aged_eur": cost(knobs, "vieillie"),
+            "cost_frozen_eur": cost(knobs, "figee"), "delta_aged": evaluation.aged_eur,
             "delta_frozen": evaluation.frozen_eur,
             "corners": [[label, value] for label, value in evaluation.corners],
             "corner_low": min(values), "corner_high": max(values),
@@ -110,9 +114,9 @@ def _evaluation(knobs: dict[str, float], evaluation: explorer.Evaluation,
 
 def _search(persistence: str | None, seen: list[tuple[dict[str, float], Any]],
             candidates: tuple[explorer.Candidate, ...], log: explorer.SearchLog,
-            target: float) -> dict[str, Any]:
+            target: float, cost: Callable[[dict[str, float], str], float]) -> dict[str, Any]:
     objective = explorer.OBJECTIVES[explorer.CONDITIONAL]
-    evaluations = [_evaluation(knobs, evaluation, objective, target)
+    evaluations = [_evaluation(knobs, evaluation, objective, target, cost)
                    for knobs, evaluation in seen]
     found = [{"knobs": dict(c.knobs), "delta_aged": c.aged_eur,
               "delta_frozen": c.frozen_eur, "meets_target": c.meets_target,
@@ -169,7 +173,8 @@ def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Price
             target_eur=target, bounds=bounds, evaluate=recorded,
             quantity=explorer.CONDITIONAL, theta=hypotheses.theta,
             max_evaluations=len(grid))
-        searches.append(_search(persistence, seen, candidates, log, target))
+        searches.append(_search(persistence, seen, candidates, log, target,
+                                lambda knobs, view: priced(knobs, view).cost))
 
     theta = hypotheses.theta
     return {

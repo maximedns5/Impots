@@ -12,82 +12,19 @@ from __future__ import annotations
 import json
 from types import SimpleNamespace
 
-import numpy as np
 import polars as pl
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
+from exploration_cases import COMMIT, START, pass_stub, run_search
+from exploration_cases import exploration_request as _request
 from impots.api import main
 from impots.api.schemas import ExplorationRequest
 from impots.dette import reference
 from impots.population import cli
 from impots.predictif import recherche, retroaction
-from impots.predictif.exploration import Priced
 from macro_cases import synthetic_macro_store
-
-START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
-                        spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
-GROWTH = {"name": "Croissance réelle 1 %, prix 2 %", "real": 0.01, "prices": 0.02}
-HELD = {"name": "Taux implicite tenu à son niveau de 2025", "kind": "implicite_tenu"}
-WAGES = {"wage": 0.03, "source": "3 % ronds, le rythme du PIB nominal du scénario"}
-#: Three bundles: the décote's rate at 40, 45 and 50 %. It claims the two ETI rows.
-DECOTE = [{"knob": "decote_taux", "low": 0.40, "high": 0.50, "step": 0.05}]
-COMMIT = "0123456789abcdef0123456789abcdef01234567"
-
-
-def _request(**overrides) -> dict:
-    payload = {"name": "decote", "titre": "La décote",
-               "question": "Une décote plus généreuse baisse-t-elle la dette en 2030 ?",
-               "bounds": DECOTE, "target": {"at_most_points": 0.0},
-               "spending": {"rule": "gele_en_volume"}, "growth": GROWTH, "rate": HELD,
-               "horizon": 5, "theta": {"common": 0.5}, "uprating": WAGES, "macro": True}
-    payload.update(overrides)
-    return payload
-
-
-def _households() -> dict:
-    """What `band.compute` reads for C1: forty households whose marginal rate rises."""
-    rng = np.random.default_rng(3)
-    base = rng.uniform(10_000, 200_000, 40)
-    emtr = rng.uniform(0.1, 0.45, 40)
-    return {"taxable_base": base, "weights": np.full(40, 1_000.0), "emtr_baseline": emtr,
-            "emtr_reform": emtr + 0.03, "top_decile": base > np.quantile(base, 0.9)}
-
-
-def _cost(reform, view: str) -> float:
-    """A cut that costs 2 Md€ at 40 % and 1 Md€ more per point, 90 % of it when frozen."""
-    rate = reform.model_dump(exclude_none=True)["decote_taux"]
-    return (2e9 + 1e11 * (rate - 0.40)) * (1.0 if view == "vieillie" else 0.9)
-
-
-def _pass(seen: list):
-    """`_price_first_year`, stubbed: the cost above, the households when behaviour is
-    asked for, the cost as an income-tax impulse when the loop is."""
-    def stub(request, *, uprating, macro=False, view="vieillie"):
-        seen.append((request.reform.model_dump(exclude_none=True), view))
-        cost = _cost(request.reform, view)
-        return SimpleNamespace(cost=cost, view=view, note="", deciles=[],
-                               inputs=_households() if request.behavioural else None,
-                               impulse={"impot_sur_le_revenu": cost} if macro else None,
-                               uncovered={})
-    return stub
-
-
-def _run(payload: dict, *, seen: list | None = None, max_bundles: int = 12) -> dict:
-    """`recherche.run` with the request's own hypotheses and a pass that records."""
-    seen = [] if seen is None else seen
-    request = ExplorationRequest.model_validate(payload)
-    stub = _pass(seen)
-
-    def price(reform, view):
-        first = stub(SimpleNamespace(reform=reform, behavioural=request.behavioural),
-                     uprating=None, macro=request.macro, view=view)
-        return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse)
-
-    return recherche.run(request, price=price,
-                         hypotheses=main._predictif_hypotheses(request), start=START,
-                         macro_store=synthetic_macro_store(), max_bundles=max_bundles)
 
 
 # --------------------------------------------------------------------------- #
@@ -126,7 +63,7 @@ def test_a_grid_point_the_reform_refuses_stops_before_the_first_pass() -> None:
     the passes of the points before it."""
     seen: list = []
     with pytest.raises(recherche.RechercheError, match="avant toute passe"):
-        _run(_request(bounds=[{"knob": "decote_taux", "low": 0.9, "high": 1.1,
+        run_search(_request(bounds=[{"knob": "decote_taux", "low": 0.9, "high": 1.1,
                                "step": 0.1}]), seen=seen)
     assert seen == []
 
@@ -135,7 +72,7 @@ def test_a_grid_larger_than_the_cap_is_refused_not_truncated() -> None:
     """GUARD 5. Three bundles for two allowed: refused, with the passes it would cost."""
     seen: list = []
     with pytest.raises(recherche.RechercheError, match="3 paquets pour 2 autorisés"):
-        _run(_request(), seen=seen, max_bundles=2)
+        run_search(_request(), seen=seen, max_bundles=2)
     assert seen == []
 
 
@@ -147,7 +84,7 @@ def test_both_persistences_are_two_searches_from_the_same_passes() -> None:
     searched side by side (D-230), from six passes — three bundles, two views — not
     twelve. The two differ past the third year, which is the point of showing both."""
     seen: list = []
-    report = _run(_request(), seen=seen)
+    report = run_search(_request(), seen=seen)
     assert len(seen) == 6 and report["passes"] == 6
     assert sorted(map(str, seen)) == sorted(
         str(({"decote_taux": r}, v)) for r in (0.40, 0.45, 0.50) for v in ("vieillie", "figee"))
@@ -169,7 +106,7 @@ def test_one_search_where_the_simulator_draws_one_path(overrides: dict,
                                                        expected: list) -> None:
     """A named persistence, an horizon within the loop's three years, or a spending rule
     without the loop: one path in the simulator, so one search here."""
-    report = _run(_request(**overrides))
+    report = run_search(_request(**overrides))
     assert [s["persistence"] for s in report["searches"]] == expected
 
 
@@ -177,7 +114,7 @@ def test_every_bundle_is_in_the_report_and_no_candidate_names_the_closest() -> N
     """GUARD 7. A target out of reach — the debt down five points — leaves no candidate.
     The report still holds the three bundles, each inside its own corners, and names the
     one closest to the target, so that « none » says how far the grid was."""
-    report = _run(_request(target={"at_most_points": -5.0}, persistence="tenu"))
+    report = run_search(_request(target={"at_most_points": -5.0}, persistence="tenu"))
     (search,) = report["searches"]
     assert search["candidates"] == []
     evaluations = search["evaluations"]
@@ -194,16 +131,16 @@ def test_a_candidate_reads_robust_or_dependent_on_theta() -> None:
     """The verdict travels into the report. A target the first bundle meets at θ but not
     at its highest corner makes it « dépend de θ », named by that corner; a target above
     every corner makes it « robuste »."""
-    first = _run(_request(persistence="tenu"))["searches"][0]["evaluations"][0]
+    first = run_search(_request(persistence="tenu"))["searches"][0]["evaluations"][0]
     assert first["corner_low"] < first["delta_aged"] < first["corner_high"]
     between = (first["delta_aged"] + first["corner_high"]) / 2 * 100
-    found = _run(_request(persistence="tenu", target={"at_most_points": between}))
+    found = run_search(_request(persistence="tenu", target={"at_most_points": between}))
     candidate = next(c for c in found["searches"][0]["candidates"]
                      if c["knobs"] == first["knobs"])
     assert candidate["meets_target"] and candidate["robust"] is False
     assert candidate["verdict"].startswith("dépend de θ : au coin multiplicateur_macro")
     above = first["corner_high"] * 100 + 1.0
-    found = _run(_request(persistence="tenu", target={"at_most_points": above}))
+    found = run_search(_request(persistence="tenu", target={"at_most_points": above}))
     candidate = next(c for c in found["searches"][0]["candidates"]
                      if c["knobs"] == first["knobs"])
     assert candidate["robust"] is True and candidate["verdict"].startswith("robuste")
@@ -216,7 +153,7 @@ def test_a_candidate_reads_robust_or_dependent_on_theta() -> None:
 def command(monkeypatch, tmp_path) -> dict:
     """The command with its pass stubbed, the start constructed and the tree clean."""
     seen: list = []
-    monkeypatch.setattr(main, "_price_first_year", _pass(seen))
+    monkeypatch.setattr(main, "_price_first_year", pass_stub(seen))
     monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     monkeypatch.setattr(recherche, "code_state", lambda: (COMMIT, False))
