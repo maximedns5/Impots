@@ -2,9 +2,9 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-21 sur le commit `31db401776cd` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-21 sur le commit `77d1e236d5fb` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
-**164 mutations** : 163 tuées, 1 équivalente avec sa raison, 0 survivante.
+**166 mutations** : 165 tuées, 1 équivalente avec sa raison, 0 survivante.
 
 | Mutation | Garde | Verdict | Étage | Tuée par |
 |---|---|---|---|---|
@@ -112,6 +112,7 @@ Balayé le 2026-10-21 sur le commit `31db401776cd` (D-229). Chaque garde est mut
 | `predictif/transformations:_ir_scale:si:not bareme` | _ir_scale — si not bareme | tuée | ciblé | tests/test_transformations.py::test_a_scale_without_the_law_in_force_is_refused |
 | `predictif/transformations:expand:si:law is None` | expand — si law is None | tuée | ciblé | tests/test_transformations.py::test_a_scale_without_the_law_in_force_is_refused |
 | `api/schemas:ExplorationRequest._check_exploration_bounds:si:not self.question.strip()` | ExplorationRequest._check_exploration_bounds — si not self.question.strip() | tuée | ciblé | tests/test_recherche.py::test_a_bound_that_is_not_a_number_unknown_or_fixed_in_the_base_is_refused[overrides4-sans |
+| `api/schemas:ExplorationIndices._check_exploration_indices:si:silent` | ExplorationIndices._check_exploration_indices — si silent | tuée | ciblé | tests/test_recherche_indices.py::test_the_report_says_what_the_chain_lacks |
 | `api/schemas:ExplorationSearch._check_exploration_search:si:not any((c.meets_target for c in self.candidates)) and self.closest...` | ExplorationSearch._check_exploration_search — si not any((c.meets_target for c in self.candidates)) and self.closest... | tuée | ciblé | tests/test_explorations_api.py::test_a_report_a_reader_would_misread_is_refused[closest-aucun |
 | `api/schemas:ExplorationReport._check_exploration_report:si:not self.commit.strip()` | ExplorationReport._check_exploration_report — si not self.commit.strip() | tuée | ciblé | tests/test_explorations_api.py::test_a_report_a_reader_would_misread_is_refused[commit-rapport |
 | `api/schemas:ExplorationReport._check_exploration_report:si:len(set(persistences)) != len(persistences) or (len(persistences) >...` | ExplorationReport._check_exploration_report — si len(set(persistences)) != len(persistences) or (len(persistences) >... | tuée | ciblé | tests/test_explorations_api.py::test_a_report_a_reader_would_misread_is_refused[persistence-chacun |
@@ -172,3 +173,4 @@ Balayé le 2026-10-21 sur le commit `31db401776cd` (D-229). Chaque garde est mut
 | `P10-indices-deciles` | les indices lisent les déciles de la passe, comme le simulateur | tuée | ciblé | tests/test_recherche_indices.py::test_the_indices_are_the_simulators |
 | `P10-indices-chemin-propre` | côte à côte, chaque recherche lit la chaîne sur son propre chemin | tuée | ciblé | tests/test_recherche_indices.py::test_side_by_side_each_search_reads_the_chain_off_its_own_path |
 | `P10-indices-le-plus-proche` | les indices sont ceux du paquet le plus proche de la cible | tuée | ciblé | tests/test_recherche_indices.py::test_the_nearest_bundle_carries_its_indices_from_the_passes_already_run[5.0] |
+| `P10-absences-portees` | ce qui manque à la chaîne est porté au rapport, avec sa raison (D-238) | tuée | ciblé | tests/test_recherche_indices.py::test_the_report_says_what_the_chain_lacks |

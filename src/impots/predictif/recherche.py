@@ -26,7 +26,9 @@ once by the command, and the report records that law, so that the factor replays
 
 THE §7 INDICES OF THE NEAREST BUNDLE, per search: the bundle whose Δb_T at θ is closest to
 the target, aged view, its indices read off the pass that priced it — no pass more — and
-the chain-stage ones off that search's own path (D-237).
+the chain-stage ones off that search's own path (D-237). With them, what that path says is
+absent or closed, each with its reason: a loop Mésange has no balance row for is absent,
+and must not read as a loop worth nothing (D-238).
 """
 
 from __future__ import annotations
@@ -218,6 +220,7 @@ def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Price
                 theta=hypotheses.theta, store=hypotheses.store, reform=reform,
                 mechanical=-aged.cost, inputs=aged.inputs, year=first)
             return {"knobs": dict(knobs), "delta_aged": nearest["delta_aged"],
+                    "absent": dict(path.absent), "closed": dict(path.closed),
                     "rows": [row.payload() for row in rows]}
         return indices
 
