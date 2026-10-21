@@ -2997,7 +2997,10 @@ function renderPredictif(host, d) {
 }
 
 /* The full path, precomputed by `impots predictif`: every year priced, aged and frozen
-   side by side. Silent when no report exists — the panel works without it. */
+   side by side. EVERY report listed is drawn, each in its own block, and one the API
+   refuses is said refused in its place: the page once opened the first name only, the
+   first was D-228's snapshot, unreadable, and no annual report was shown at all, without
+   a word (D-236). Silent when no report exists — the panel works without it. */
 async function loadPredictifs() {
   const host = document.getElementById("predHost");
   if (!host) return;
@@ -3008,30 +3011,62 @@ async function loadPredictifs() {
     names = (await response.json()).rapports || [];
   } catch { return; }
   if (!names.length) return;
-  let report;
-  try {
-    const one = await fetch(`${API}/predictif/${encodeURIComponent(names[0])}`);
-    if (!one.ok) return;
-    report = await one.json();
-  } catch { return; }
-  renderPredictifReport(host, report);
+  const blocks = [];
+  for (const name of names) {
+    let one;
+    try {
+      one = await fetch(`${API}/predictif/${encodeURIComponent(name)}`);
+    } catch { continue; }
+    if (!one.ok) {
+      let detail = "";
+      try { detail = (await one.json()).detail || ""; } catch { /* no body */ }
+      blocks.push(`<div class="pred"><p class="tbanner"><b>Trajectoire « ${escapeHtml(name)} »
+        refusée par l'API</b> plutôt que montrée en partie${detail ? " : "
+        + escapeHtml(String(detail)) : ""}.</p></div>`);
+      continue;
+    }
+    blocks.push(predictifReportBlock(await one.json()));
+  }
+  host.innerHTML = blocks.join("");
+  host.hidden = false;
 }
 
-function renderPredictifReport(host, r) {
-  const rows = (r.years || []).map((y) => `<tr>
-      <td>${y.year}</td><td>${escapeHtml(y.basis)}</td><td>${pctFr(y.reference)}</td>
-      <td>${ptFr(y.delta_aged)}</td><td>${ptFr(y.delta_frozen)}</td></tr>`).join("");
-  host.innerHTML = `<div class="pred">
-    <p class="tbanner"><b>${escapeHtml(r.banner)}</b></p>
+/* One annual report. With the loop past three years and no persistence named, both
+   scenarios stand side by side, one table each, and the report has no path of its own:
+   neither is the lead (D-230, D-236). */
+function predictifReportBlock(r) {
+  const paths = r.side_by_side || [];
+  const head = `<p class="tbanner"><b>${escapeHtml(r.banner)}</b></p>
     <h2 class="ptitle">${escapeHtml(r.titre)} : la dette, chaque année chiffrée</h2>
-    <p class="pnames">${predictifNames(r)} · Référence « ${escapeHtml(r.reference)} »</p>
-    <table><thead><tr><th>Année</th><th>Base</th><th>Dette, référence</th>
+    <p class="pnames">${predictifNames(r)} · Référence « ${escapeHtml(r.reference)} »${
+      r.behavioural ? " · comportement chiffré chaque année" : ""}${
+      r.macro ? " · boucle PIB → recettes, une impulsion par année" : ""}</p>`;
+  let body;
+  if (paths.length) {
+    const tables = paths.map((p) => {
+      const rows = p.years.map((y, i) => `<tr><td>${y.year}</td>
+        <td>${escapeHtml(r.years[i].basis)}</td><td>${pctFr(r.years[i].reference)}</td>
+        <td>${ptFr(y.delta_aged)}</td><td>${ptFr(y.delta_frozen)}</td></tr>`).join("");
+      const own = (p.conventions || []).map(
+        (c) => `<p class="tnote">Convention : ${escapeHtml(c)}</p>`).join("");
+      return `<h4>${escapeHtml(p.label)}</h4><table><thead><tr><th>Année</th><th>Base</th>
+        <th>Dette, référence</th><th>Écart, population vieillie</th>
+        <th>Écart, population figée</th></tr></thead><tbody>${rows}</tbody></table>${own}`;
+    }).join("");
+    body = `<p class="tnote">Deux scénarios de persistance, côte à côte : aucun n'est le
+      défaut (D-230).</p>${tables}`;
+  } else {
+    const rows = (r.years || []).map((y) => `<tr>
+        <td>${y.year}</td><td>${escapeHtml(y.basis)}</td><td>${pctFr(y.reference)}</td>
+        <td>${ptFr(y.delta_aged)}</td><td>${ptFr(y.delta_frozen)}</td></tr>`).join("");
+    body = `<table><thead><tr><th>Année</th><th>Base</th><th>Dette, référence</th>
       <th>Écart, population vieillie</th><th>Écart, population figée</th></tr></thead>
-      <tbody>${rows}</tbody></table>
+      <tbody>${rows}</tbody></table>`;
+  }
+  return `<div class="pred">${head}${body}
     <p class="tnote">${escapeHtml(r.uprating_note || "")}</p>
     ${predictifNotes(r)}
   </div>`;
-  host.hidden = false;
 }
 
 /* Phase 10 · the searches precomputed by `impots exploration` (D-235). The question

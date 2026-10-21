@@ -70,7 +70,7 @@ behaviour −0.01. Persistence weighs more than everything else, and at the corn
 the multiplier is one IMK standard deviation above Mésange's centre the held feedback
 repays the cut. `scripts/write_predictif_exemple.py` prices the first year once
 (`--price`, three minutes, refused on an uncommitted `src/`), runs the chain under each
-scenario and at every corner, and renders the page from `reports/predictif_exemple.json`
+scenario and at every corner, and renders the page from `reports/exemple_predictif.json`
 alone; the tests hold the page to the file everywhere and the file to the chain where the
 accounts and Mésange are readable.
 The tenth 2026-10-19 update added D-227, M6's third step: §9's coherence and the

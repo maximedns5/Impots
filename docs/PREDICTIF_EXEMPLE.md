@@ -1,6 +1,6 @@
 # Exemple prédictif : une baisse de l'IR d'environ 5 Md€, sa dette à 10 ans
 
-<!-- Généré par scripts/write_predictif_exemple.py depuis reports/predictif_exemple.json. Ne pas éditer à la main : tests/test_predictif_exemple.py refuse une page qui dérive. -->
+<!-- Généré par scripts/write_predictif_exemple.py depuis reports/exemple_predictif.json. Ne pas éditer à la main : tests/test_predictif_exemple.py refuse une page qui dérive. -->
 
 > **Cette page illustre la machinerie ; elle ne recommande rien. La réforme est choisie pour la pédagogie — une baisse de barème touche le plus de canaux ouverts — et non parce qu'elle serait souhaitable.**
 >

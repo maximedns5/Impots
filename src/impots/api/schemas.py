@@ -2005,6 +2005,9 @@ class PredictifResponse(BaseModel):
 
 
 class PredictifReportYear(BaseModel):
+    """One year of an annual report. The reform's paths are None when two persistence
+    scenarios stand side by side: neither is the lead (D-230, D-236)."""
+
     model_config = ConfigDict(extra="forbid")
 
     year: int
@@ -2012,10 +2015,32 @@ class PredictifReportYear(BaseModel):
     mechanical_frozen_eur: float
     mechanical_aged_eur: float
     reference: float
+    reform_aged: float | None
+    delta_aged: float | None
+    reform_frozen: float | None
+    delta_frozen: float | None
+
+
+class PredictifReportPathYear(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    year: int
     reform_aged: float
     delta_aged: float
     reform_frozen: float
     delta_frozen: float
+
+
+class PredictifReportPath(BaseModel):
+    """One persistence scenario of an annual report with the loop, in both views."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    persistence: Literal["eteint", "tenu"]
+    label: str
+    years: list[PredictifReportPathYear]
+    conventions: list[str]
+    gdp_gap_aged: list[float]
 
 
 class PredictifReportResponse(BaseModel):
@@ -2041,6 +2066,33 @@ class PredictifReportResponse(BaseModel):
     uprating_note: str
     banner: str
     debt_banner: str
+    behavioural: bool = False
+    macro: bool = False
+    persistence: Literal["eteint", "tenu"] | None = None
+    side_by_side: list[PredictifReportPath] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _check_report_paths(self) -> PredictifReportResponse:
+        own = [y for y in self.years
+               if None not in (y.reform_aged, y.delta_aged, y.reform_frozen, y.delta_frozen)]
+        if self.side_by_side:
+            if own:
+                raise ValueError(
+                    "rapport annuel avec une trajectoire en propre ET des scénarios côte à "
+                    "côte : celle en tête serait le défaut par la place qu'elle occupe "
+                    "(D-230).")
+            persistences = [p.persistence for p in self.side_by_side]
+            if sorted(persistences) != ["eteint", "tenu"]:
+                raise ValueError(
+                    f"scénarios côte à côte {persistences} : les deux persistances, chacune "
+                    f"une fois (D-230).")
+            if any(len(p.years) != len(self.years) for p in self.side_by_side):
+                raise ValueError("un scénario côte à côte ne couvre pas toutes les années")
+        elif len(own) != len(self.years):
+            raise ValueError(
+                "rapport annuel sans trajectoire pour certaines années, et sans scénarios "
+                "côte à côte : une année sans chemin se lirait comme un écart nul.")
+        return self
 
 
 class PredictifReportList(BaseModel):

@@ -1196,12 +1196,19 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     builds the debt path from each. Two population runs per year (four against `indexe`):
     at the default sample that is about an hour for ten years, which is why it is a
     command and writes a report rather than answering a request.
+
+    With `--behavioural` or `--macro` (Phase 10 M3, D-236), every year and view goes
+    through the simulator's own pass, `_price_first_year`: the cost, what the channels
+    read, the reform's macro impulse. The receipts at θ are then evaluated year by year
+    and the GDP → receipts loop reads one impulse per year. Past three years with the
+    loop and no `--persistence`, both persistence scenarios are drawn side by side.
     """
     import json as _json
     from datetime import date as _date
     from typing import Any
 
     import polars as pl
+    from fastapi import HTTPException
 
     from impots import scenarios as scenarios_module
     from impots import trajectoires as tj
@@ -1214,9 +1221,10 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     from impots.engine.system import baseline as engine_baseline
     from impots.population import aggregate as agg_mod
     from impots.population.runner import run as population_run
-    from impots.predictif import annuel, chaine
+    from impots.predictif import annuel, chaine, retroaction
     from impots.predictif.theta import Theta, ThetaError
 
+    whole = args.behavioural or args.macro
     directory = Path(args.dir) if args.dir else None
     try:
         scenario = scenarios_module.load(args.scenario, directory)
@@ -1238,6 +1246,13 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                                        base_year=args.base_year)
         start = reference_module.start_from_accounts(chaine.START_YEAR)
         securities = maturite.load_block1() if rate.kind == "marche" else None
+        looped = args.macro and spending.rule == retroaction.SPENDING_RULE
+        if args.persistence is not None and not looped:
+            raise DebtError(
+                f"persistance « {args.persistence} » sans boucle appliquée (--macro non "
+                f"demandé, ou absente sous « {spending.name} ») : elle serait ignorée.")
+        if whole:
+            _whole_pass_refusals(args)
     except (scenarios_module.ScenarioError, tj.TrajectoryError, up.UpratingError,
             DebtError, ThetaError, maturite.MaturityError, OSError) as error:
         print(str(error), file=sys.stderr)
@@ -1273,6 +1288,28 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                         indexation=indexation).mechanical_eur
 
     years = list(range(start.year + 1, start.year + 1 + args.horizon))
+    store = macro_store = None
+    if whole:
+        from impots.api import main as api
+        from impots.behavioural.store import load as load_store
+        from impots.predictif.exploration import Priced
+
+        try:
+            store = load_store()
+            theta.check_known(store)
+            macro_store = api._predictif_macro_store() if looped else None
+        except (ThetaError, api.MacroSourceError) as error:
+            print(str(error), file=sys.stderr)
+            return 1
+
+        def price(year: int, view: str) -> Priced:
+            print(f"  {year} · {view} · passe du simulateur…", flush=True)
+            first = api._price_first_year(
+                api.YearPass(reform=scenario.reform, year=year,
+                             behavioural=args.behavioural),
+                uprating=uprating, macro=args.macro, view=view)
+            return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
+                          uncovered=dict(first.uncovered))
     try:
         prices = annuel.price_years(years, price,
                                     basis_for=lambda y: tj.basis_for("menages", y))
@@ -1281,10 +1318,15 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             source=scenario.source, reference=args.reference,
             computed=_date.today().isoformat(), spending=spending, growth=growth,
             rate=rate, theta=theta, uprating=uprating,
-            uprating_note=up.caveat(years[-1], uprating), securities=securities)
+            uprating_note=up.caveat(years[-1], uprating), securities=securities,
+            reform=scenario.reform, behavioural=args.behavioural, macro=args.macro,
+            persistence=args.persistence, store=store, macro_store=macro_store)
     except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
-            maturite.MaturityError) as error:
+            maturite.MaturityError, retroaction.FeedbackError) as error:
         print(str(error), file=sys.stderr)
+        return 1
+    except HTTPException as error:
+        print(str(error.detail), file=sys.stderr)
         return 1
 
     out_dir = Path(args.out_dir) if args.out_dir else (
@@ -1294,9 +1336,37 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     out.write_text(_json.dumps(rapport.payload(), indent=2, ensure_ascii=False) + "\n",
                    encoding="utf-8")
     print(f"  -> {out}")
-    for line in rapport.aged.lines():
-        print(f"     {line}")
+    for path in rapport.paths:
+        if path.label is not None:
+            print(f"     {path.label}")
+        for line in path.aged.lines():
+            print(f"     {line}")
     return 0
+
+
+def _whole_pass_refusals(args: argparse.Namespace) -> None:
+    """What `--behavioural` and `--macro` cannot honour, refused before the first pass.
+
+    They go through the simulator's pass, which prices against current law on its own
+    sample of the 2024 population. Against « indexe » the cost is the difference of two
+    passes (`trajectoires.price`), and neither the channels' inputs nor the impulse are
+    built to be subtracted; another sample or vintage would price the years on one
+    population and the simulator's first year on another."""
+    from impots.api.main import POPULATION_VINTAGE
+    from impots.api.schemas import QUICK_TIER_HOUSEHOLDS
+    from impots.dette.path import DebtError
+
+    if args.reference != "reconduit":
+        raise DebtError(
+            f"--behavioural ou --macro contre la référence « {args.reference} » : le coût y "
+            f"est la différence de deux passes, et ni les entrées des canaux ni "
+            f"l'impulsion ne se soustraient. Refusé plutôt que chiffré à moitié.")
+    if args.sample != QUICK_TIER_HOUSEHOLDS or args.vintage != POPULATION_VINTAGE:
+        raise DebtError(
+            f"--behavioural ou --macro passent par la passe du simulateur, "
+            f"{QUICK_TIER_HOUSEHOLDS} ménages du millésime {POPULATION_VINTAGE} : "
+            f"--sample {args.sample} ou --vintage {args.vintage} chiffreraient les années "
+            f"sur une autre population que la sienne.")
 
 
 def cmd_exploration(args: argparse.Namespace) -> int:
@@ -1747,6 +1817,12 @@ def build_parser() -> argparse.ArgumentParser:
     predictif.add_argument("--titre")
     predictif.add_argument("--dir")
     predictif.add_argument("--out-dir")
+    predictif.add_argument("--behavioural", action="store_true",
+                           help="the receipts at θ each year, through the simulator's pass")
+    predictif.add_argument("--macro", action="store_true",
+                           help="the GDP → receipts loop, one impulse per year (D-236)")
+    predictif.add_argument("--persistence", choices=["eteint", "tenu"],
+                           help="past three years with the loop; both side by side if absent")
     predictif.set_defaults(func=cmd_predictif)
 
     exploration = subcommands.add_parser(

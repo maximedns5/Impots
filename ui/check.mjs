@@ -78,7 +78,9 @@ globalThis.fetch = async (url, opts) => {
   if (url.includes("/explorations/illisible")) return { ok: false, status: 500, json: async () => ({
     detail: "exploration « illisible » illisible, refusée plutôt que montrée en partie : candidat sans verdict θ" }) };
   if (url.includes("/explorations/")) return { ok: true, json: async () => EXPL_REPORT };
-  if (url.endsWith("/predictif")) return { ok: true, json: async () => ({ rapports: ["plf2027_art_3"] }) };
+  if (url.endsWith("/predictif")) return { ok: true, json: async () => ({ rapports: ["a_cote", "illisible", "plf2027_art_3"] }) };
+  if (url.endsWith("/predictif/a_cote")) return { ok: true, json: async () => PRED_REPORT_SIDE };
+  if (url.endsWith("/predictif/illisible")) return { ok: false, status: 500, json: async () => ({ detail: "Internal Server Error" }) };
   if (url.includes("/predictif/")) return { ok: true, json: async () => PRED_REPORT };
   return { ok: true, json: async () => RESULT };
 };
@@ -222,6 +224,23 @@ const EXPL_REPORT = { name: "csg", titre: "Baisse de la CSG déductible",
         { knobs: { csg_activite_deductible: 0.060 }, delta_aged: 0.0005, delta_frozen: -0.0002,
           meets_target: false, frozen_only: true, robust: false,
           verdict: "dépend de θ : au coin multiplicateur_macro = 0, l'écart vaut +0.300 pt de PIB et la cible de +0.000 pt de PIB tombe." }] }] };
+/* Phase 10 M3 · an annual report with behaviour and the loop past three years: the two
+   persistence scenarios side by side, no path of its own (D-236). */
+const PRED_SIDE_ROW = (year, delta) => ({ year, reform_aged: 1.16 + delta, delta_aged: delta,
+  reform_frozen: 1.16 + delta * 0.9, delta_frozen: delta * 0.9 });
+const PRED_REPORT_SIDE = { ...PRED_REPORT, scenario: "a_cote", titre: "Hausse du taux marginal",
+  years: [2026, 2027, 2028, 2029].map((year) => ({ year, basis: "legislated",
+    mechanical_frozen_eur: -4.5e9, mechanical_aged_eur: -5e9, reference: 1.16,
+    reform_aged: null, delta_aged: null, reform_frozen: null, delta_frozen: null })),
+  behavioural: true, macro: true, persistence: null, theta_applied: true,
+  side_by_side: [
+    { persistence: "eteint", label: "Effet macro éteint après trois ans",
+      years: [2026, 2027, 2028, 2029].map((y, i) => PRED_SIDE_ROW(y, [-0.0012, -0.0021, -0.0030, -0.0041][i])),
+      conventions: ["Au-delà de trois ans : Effet macro éteint après trois ans."], gdp_gap_aged: [] },
+    { persistence: "tenu", label: "Effet macro tenu au niveau de la troisième année",
+      years: [2026, 2027, 2028, 2029].map((y, i) => PRED_SIDE_ROW(y, [-0.0012, -0.0021, -0.0030, -0.0033][i])),
+      conventions: ["Au-delà de trois ans : Effet macro tenu au niveau de la troisième année."],
+      gdp_gap_aged: [] }] };
 const RECON = [
   { label: "Masse salariale brute", simulated: 1.1e12, published: 1.11e12, residual: -0.004,
     use: "calibration", status: "calibrated (spent)", source: "INSEE comptes nationaux (D11)" },
@@ -665,6 +684,32 @@ await (async () => {
     assert.equal(body.horizon, 10);
   });
 })();
+
+/* Phase 10 M3 · every annual report drawn, side by side when two paths (D-236). */
+console.log("annual reports");
+ok("every annual report listed is drawn, not only the first", () => {
+  const html = $("predHost").innerHTML;
+  assert.match(html, /Hausse du taux marginal : la dette, chaque année chiffrée/);
+  assert.match(html, /PLF 2027, art\. 3 : la dette, chaque année chiffrée/);
+});
+ok("a report the API refuses is said refused, and hides none of the others", () => {
+  const html = $("predHost").innerHTML;
+  assert.match(html, /Trajectoire « illisible »\s+refusée par l'API/);
+  assert.ok(html.indexOf("illisible") < html.indexOf("PLF 2027, art. 3"),
+            "the report after the refused one is still drawn");
+});
+ok("with the loop past three years, both persistences stand side by side (D-230)", () => {
+  const html = $("predHost").innerHTML;
+  const block = html.slice(html.indexOf("Hausse du taux marginal"), html.indexOf("illisible"));
+  assert.match(block, /Deux scénarios de persistance, côte à côte : aucun n'est le/);
+  const first = block.indexOf("<h4>Effet macro éteint après trois ans</h4>");
+  const second = block.indexOf("<h4>Effet macro tenu au niveau de la troisième année</h4>");
+  assert.ok(first > 0 && second > first, "one table per scenario, in the report's order");
+  assert.equal((block.match(/<table>/g) || []).length, 2);
+  assert.match(block, /<td>−0,41 pt<\/td>/, "« éteint » carries its own last year");
+  assert.match(block, /<td>−0,33 pt<\/td>/, "« tenu » carries its own last year");
+  assert.match(block, /comportement chiffré chaque année · boucle PIB → recettes/);
+});
 
 /* Phase 10 · the searches precomputed by `impots exploration` (D-235). */
 console.log("explorations");

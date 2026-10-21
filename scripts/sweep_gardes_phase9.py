@@ -65,7 +65,8 @@ class Scope:
 
 SCOPES: tuple[Scope, ...] = (
     Scope("src/impots/predictif/annuel.py",
-          ("tests/test_predictif_annuel.py", "tests/test_cli_predictif.py")),
+          ("tests/test_predictif_annuel.py", "tests/test_cli_predictif.py",
+           "tests/test_predictif_annuel_boucle.py")),
     Scope("src/impots/predictif/chaine.py", ("tests/test_predictif.py",)),
     Scope("src/impots/predictif/comportement.py",
           ("tests/test_theta.py", "tests/test_predictif.py")),
@@ -88,14 +89,16 @@ SCOPES: tuple[Scope, ...] = (
                      "predictif_show", "predictif_list", "_predictif_hypotheses",
                      "explorations_show", "explorations_list")),
     Scope("src/impots/population/cli.py",
-          ("tests/test_cli_predictif.py", "tests/test_recherche.py"),
-          functions=("cmd_predictif", "cmd_exploration")),
+          ("tests/test_cli_predictif.py", "tests/test_recherche.py",
+           "tests/test_predictif_annuel_boucle.py"),
+          functions=("cmd_predictif", "cmd_exploration", "_whole_pass_refusals")),
     # Phase 10 M1 (D-234): the explorer made askable, its request and its command.
     Scope("src/impots/predictif/recherche.py", ("tests/test_recherche.py",)),
     Scope("src/impots/api/schemas.py",
-          ("tests/test_recherche.py", "tests/test_explorations_api.py"),
+          ("tests/test_recherche.py", "tests/test_explorations_api.py",
+           "tests/test_predictif_annuel_boucle.py"),
           functions=("_check_exploration_bounds", "_check_exploration_search",
-                     "_check_exploration_report")),
+                     "_check_exploration_report", "_check_report_paths")),
 )
 
 #: The whole Phase 9 suite, the second tier for a survivor.
@@ -108,6 +111,7 @@ WIDE: tuple[str, ...] = (
     "tests/test_dette_reference.py", "tests/test_behavioural.py",
     "tests/test_offre_travail.py", "tests/test_creations.py", "tests/test_cir.py",
     "tests/test_recherche.py", "tests/test_explorations_api.py",
+    "tests/test_predictif_annuel_boucle.py",
 )
 
 UI_CHECK = "ui/check.mjs"
@@ -283,6 +287,19 @@ MANUAL: tuple[Mutation, ...] = (
              '  if (!response.ok) {\n    let detail = "";',
              '  if (false) {\n    let detail = "";',
              (UI_CHECK,), "un rapport refusé par l'API est dit refusé, jamais laissé vide"),
+    # Phase 10 M3 (D-236): every annual report drawn, side by side when two paths.
+    Mutation("P10-page-tous-les-rapports", "ui/index.html",
+             "  for (const name of names) {",
+             "  for (const name of names.slice(0, 1)) {",
+             (UI_CHECK,), "chaque rapport annuel listé est dessiné, pas seulement le premier"),
+    Mutation("P10-page-refus-annuel", "ui/index.html",
+             '    if (!one.ok) {\n      let detail = "";',
+             '    if (false) {\n      let detail = "";',
+             (UI_CHECK,), "un rapport annuel refusé est dit refusé, sans cacher les autres"),
+    Mutation("P10-page-annuel-cote-a-cote", "ui/index.html",
+             "  if (paths.length) {",
+             "  if (false) {",
+             (UI_CHECK,), "les deux persistances du chemin annuel, côte à côte (D-230)"),
     Mutation("P10-le-plus-proche", "src/impots/predictif/recherche.py",
              "    closest = (None if any(c[\"meets_target\"] for c in found)",
              "    closest = (None if True",

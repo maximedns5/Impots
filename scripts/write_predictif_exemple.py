@@ -10,7 +10,7 @@ machinerie qu'elle illustre, en trois étages.
    la première année projetée, sur la population vieillie (la voie rapide de
    `/predictif/simulate`, D-226), comportement et impulsion macro compris. Les recettes à
    θ = ½ et aux coins de la boîte θ des lignes revendiquées se lisent sur cette même
-   population. Le résultat va dans `reports/predictif_exemple.json`, bloc
+   population. Le résultat va dans `reports/exemple_predictif.json`, bloc
    `premiere_annee`, avec le commit dont le code l'a produit.
 2. Par défaut (rapide, comptes APU et document Mésange requis) : la chaîne
    (`chaine.run`) sous chaque scénario, depuis ce bloc, au θ demandé et à chaque coin de
@@ -36,7 +36,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "PREDICTIF_EXEMPLE.md"
-SNAPSHOT = ROOT / "reports" / "predictif_exemple.json"
+SNAPSHOT = ROOT / "reports" / "exemple_predictif.json"
 
 #: §9.4 : « une baisse de l'IR de 5 Md€ ». Un taux de la première tranche plutôt qu'un
 #: rabais uniforme, parce qu'une baisse de barème est le cas d'école de C1 : elle
@@ -305,7 +305,7 @@ def render(snapshot: dict[str, Any]) -> str:
     add(f"# Exemple prédictif : une baisse de l'IR d'environ 5 Md€, sa dette à {HORIZON} ans")
     add("")
     add("<!-- Généré par scripts/write_predictif_exemple.py depuis "
-        "reports/predictif_exemple.json. Ne pas éditer à la main : "
+        "reports/exemple_predictif.json. Ne pas éditer à la main : "
         "tests/test_predictif_exemple.py refuse une page qui dérive. -->")
     add("")
     add(f"> **{MACHINERY}**")
