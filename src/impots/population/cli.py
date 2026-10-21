@@ -1415,8 +1415,11 @@ def cmd_exploration(args: argparse.Namespace) -> int:
         return 1
     try:
         hypotheses = api._predictif_hypotheses(request)
-        grid = recherche.check_grid(request, max_bundles=args.max_paquets)
         start = reference_module.start_from_accounts(chaine.START_YEAR)
+        year = start.year + 1
+        # A transformation scales the law of the year it prices: read once, here.
+        law = recherche.law_in_force(year) if recherche.needs_law(request) else None
+        grid = recherche.check_grid(request, max_bundles=args.max_paquets, law=law)
         securities = maturite.load_block1() if hypotheses.rate.kind == "marche" else None
         macro_store = api._predictif_macro_store() if hypotheses.looped else None
     except (DebtError, ThetaError, UpratingError, recherche.RechercheError,
@@ -1424,7 +1427,6 @@ def cmd_exploration(args: argparse.Namespace) -> int:
             OSError) as error:
         print(str(error), file=sys.stderr)
         return 1
-    year = start.year + 1
     if year > api.MAX_YEAR:
         print(f"la première année projetée, {year}, sort de la fenêtre que la couche "
               f"population sert ({api.MIN_YEAR}–{api.MAX_YEAR}).", file=sys.stderr)
@@ -1439,12 +1441,12 @@ def cmd_exploration(args: argparse.Namespace) -> int:
                                       behavioural=request.behavioural),
             uprating=hypotheses.uprating, macro=request.macro, view=view)
         return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
-                      uncovered=dict(first.uncovered))
+                      uncovered=dict(first.uncovered), deciles=list(first.deciles))
 
     try:
         payload = recherche.run(request, price=price, hypotheses=hypotheses, start=start,
                                 macro_store=macro_store, securities=securities,
-                                max_bundles=args.max_paquets, commit=commit,
+                                max_bundles=args.max_paquets, law=law, commit=commit,
                                 computed=_date.today().isoformat())
     except HTTPException as error:
         print(str(error.detail), file=sys.stderr)

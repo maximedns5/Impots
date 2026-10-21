@@ -27,7 +27,7 @@ explorer's « fragile » flag is not raised, nor its absence mistaken for a meas
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -62,6 +62,31 @@ class Priced:
     impulse: Mapping[str, float] | None = None
     """The macro impulse by Mésange variant, EXPANSIONARY-POSITIVE, when the loop is asked."""
     uncovered: Mapping[str, str] = field(default_factory=dict)
+    deciles: Sequence[Any] | None = None
+    """The pass's decile rows, which the §7 indices read; None when not kept."""
+
+
+def trajectory(at: Theta, priced: Priced, reform: Any, *, start: Start, horizon: int,
+               spending: SpendingScenario, growth: GrowthScenario, rate: RateScenario,
+               store: Store, macro_store: Any = None, persistence: str | None = None,
+               securities: list[Any] | None = None) -> Any:
+    """The chain's path for one view of one bundle at `at`: the first year priced, the
+    rest carried. The evaluator reads Δb_T off it; the search, the §7 indices."""
+    first = start.year + 1
+    behaviour = None
+    if priced.inputs is not None:
+        receipts, grade = comportement.receipts_at(
+            at, store=store, mechanical=-priced.cost, reform=reform, **priced.inputs)
+        behaviour = {first: comportement.AtTheta(
+            receipts=receipts, grade=grade, box=(receipts, receipts),
+            claimed=comportement.claimed_open_rows(store, reform))}
+    costs = chaine.ReformCosts(
+        by_year={first: priced.cost}, carry=chaine.CARRY, behavioural=behaviour,
+        impulses=({first: dict(priced.impulse)} if priced.impulse is not None else None),
+        uncovered=dict(priced.uncovered))
+    return chaine.run(start, horizon=horizon, costs=costs, spending=spending,
+                      growth=growth, rate=rate, theta=at, securities=securities,
+                      store=store, persistence=persistence, macro_store=macro_store)
 
 
 def corner_label(corner: Theta, keys: list[str]) -> str:
@@ -89,21 +114,10 @@ def conditional_debt(*, price: Callable[[dict[str, float], str], Priced],
     looped = spending.rule == retroaction.SPENDING_RULE
 
     def delta(at: Theta, priced: Priced, reform: Any) -> float:
-        behaviour = None
-        if priced.inputs is not None:
-            receipts, grade = comportement.receipts_at(
-                at, store=store, mechanical=-priced.cost, reform=reform, **priced.inputs)
-            behaviour = {first: comportement.AtTheta(
-                receipts=receipts, grade=grade, box=(receipts, receipts),
-                claimed=comportement.claimed_open_rows(store, reform))}
-        costs = chaine.ReformCosts(
-            by_year={first: priced.cost}, carry=chaine.CARRY, behavioural=behaviour,
-            impulses=({first: dict(priced.impulse)} if priced.impulse is not None
-                      else None),
-            uncovered=dict(priced.uncovered))
-        result = chaine.run(start, horizon=horizon, costs=costs, spending=spending,
-                            growth=growth, rate=rate, theta=at, securities=securities,
-                            store=store, persistence=persistence, macro_store=macro_store)
+        result = trajectory(at, priced, reform, start=start, horizon=horizon,
+                            spending=spending, growth=growth, rate=rate, store=store,
+                            macro_store=macro_store, persistence=persistence,
+                            securities=securities)
         return result.delta[result.years.index(target)]
 
     def evaluate(knobs: dict[str, float]) -> Evaluation:
