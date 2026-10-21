@@ -17538,3 +17538,106 @@ scénarios et de la page, pour le scénario ajouté : 207 réussis. `ruff` passe
 
 **Ce qui reste.** M4 : l'étude préenregistrée. Le chemin annuel ne porte pas les indices
 de §7, et contre la référence « indexe », le comportement et la boucle restent refusés.
+
+## D-237 — Phase 10, M4, premier temps : l'étude préenregistrée, avant ses passes
+
+**Le fait.** §5 pose la question : « quelles baisses d'impôt font baisser la dette en
+2035, et pour quels θ ? ». Ce commit pose les quatre requêtes de l'étude sous `etude/`,
+une par instrument, et le pronostic ci-dessous, avant toute passe de l'étude. Les
+rapports nommeront ce commit. Le résultat sera une autre entrée, D-238.
+
+**Ce que le code a reçu d'abord.** Deux pièces que §5 demandait, sans lesquelles l'étude
+ne se posait pas.
+
+La transformation nommée `ir_bareme_echelle` (`predictif/transformations.py`). Elle
+multiplie chaque taux du barème en vigueur par un facteur, et laisse les seuils. Le
+barème n'est pas un scalaire et la grille ne parcourt que des nombres (D-234) : c'est
+ainsi qu'il entre. Le droit lu est celui de la première année projetée, lu une fois par
+la commande. La transformation n'écrit que par le bouton `ir_bareme`, que le moteur
+applique et relit comme toute réforme (`verify_bareme`). Le rapport la nomme avec le
+barème qu'elle a lu : sans lui, « 0,95 » ne se rejouerait pas. La liste est fermée. Sont
+refusés : une transformation qui écrirait ce que la base fixe, un facteur sans le droit
+en vigueur, un droit lu pour une autre année que celle chiffrée, et un rapport qui
+parcourt une transformation sans nommer le droit lu.
+
+Les indices de §7 du paquet le plus proche de la cible, dans chaque recherche. Ils sont
+lus sur la passe qui a chiffré ce paquet, sans passe de plus, et ceux de la chaîne sur le
+chemin de la persistance de la recherche. Pour cela, la passe garde ses déciles, et
+l'évaluateur expose la trajectoire qu'il lisait déjà. Une garde tient que ces indices
+sont, ligne pour ligne, ceux de `/predictif/simulate` pour la même réforme ; le schéma
+refuse des indices d'un paquet que la recherche n'a pas évalué. Enfin, le rapport dit où
+ses passes ont tourné (`--ou`), comme §5 le demande.
+
+**Le cadre**, celui de §5 : dépenses gelées en volume, croissance réelle de 1 % et prix
+de 2 %, taux implicite tenu, salaires à 3 %. Comportement et boucle chiffrés, θ = ½
+partout, les deux persistances côte à côte, dix ans. Cible : Δb 2035 ≤ 0.
+
+**Le menu.** Quatre instruments, quatre paquets chacun : seize paquets, trente-deux passes.
+- La CSG déductible sur les revenus d'activité, de 6,8 % à 6,7, 6,4, 6,1 et 5,8 %. Un
+  point coûte 8,81 Md€ en 2026 (D-235) : de 0,9 à 8,8 Md€.
+- Le plafond de la réduction générale, de 3 SMIC à 3,5, 4,5, 5,5 et 6,5 SMIC. La refonte
+  de 2026 a remplacé les taux de la réduction par une courbe (D-042), et les deux boutons
+  de taux sont refusés par leur nom. Dans la formule d'openfisca, le « 3 » de la courbe
+  est écrit en dur, et le plafond n'est plus que le seuil de sortie. Le relever étend le
+  taux plancher de 2 % aux salaires entre 3 SMIC et le nouveau seuil, sans toucher la
+  réduction au SMIC. C'est le seul bouton d'allègement que 2026 laisse, et sa portée est
+  bornée : 2 % de la masse salariale au-dessus de 3 SMIC, quelques milliards au plus.
+  L'étude le dira.
+- Le taux de la décote, de 45,25 % à 40, 30, 20 et 10 % : d'environ 1 à 9 Md€.
+- Le barème de l'IR, chaque taux multiplié par 0,99, 0,97, 0,95 et 0,93 : de 1,4 à
+  9,6 Md€.
+
+L'IS n'y entre pas : la chaîne chiffre les réformes de la population (D-228).
+
+**Le dimensionnement.** Les pas viennent d'un coût déjà au dossier, celui de la CSG, et
+de quatre passes mécaniques faites pour cela avant ce commit. Chacune donne le seul coût
+de 2026, vue vieillie, sans comportement, sans boucle, sans dette. Le plafond à 3,5 SMIC
+coûte 1,78 Md€, la décote à 30 % 3,14 Md€ et à 15 % 7,82 Md€, le barème × 0,95
+6,88 Md€. Ces passes ne disent rien de l'écart de dette. Ce que le préenregistrement
+protège, des grilles choisies après avoir vu la réponse, reste donc entier, et la règle
+de §5, « avant toute passe », est prise au sens des passes de l'étude.
+
+**Ce qu'on savait déjà.** Le pronostic n'est pas aveugle, et il le dit. Pour une baisse
+de l'IR de 4,84 Md€, D-228 trouve +1,30 point en 2035 sous « éteint », boîte de +1,13 à
++1,47, et +0,54 sous « tenu », boîte de −0,20 à +1,28. Pour la CSG à 5,8 %, D-234 trouve
++2,26 points sous « éteint », boîte de +1,84 à +2,66, et +0,83 sous « tenu », boîte de
+−0,62 à +2,28. Ce paquet est dans la grille : sa réponse est connue d'avance, et elle
+sert de contrôle.
+
+**Le pronostic**, écrit avant les passes.
+1. À θ = ½, aucune baisse du menu ne fait baisser la dette en 2035, sous aucune
+   persistance et dans aucune vue. Une baisse ne se rembourse pas : la boucle de Mésange
+   en rend une part, le comportement presque rien.
+2. L'écart croît avec la baisse, à peu près en proportion de son coût : environ 0,26
+   point de PIB par milliard de la première année sous « éteint », 0,10 sous « tenu ».
+   Le paquet le plus proche de la cible est donc la plus petite baisse de chaque grille.
+3. Sous « éteint », aucun coin de la boîte θ ne fait baisser la dette, pour aucun
+   instrument.
+4. Sous « tenu », la boîte franchit zéro pour la CSG, la décote et l'IR. Les coins qui
+   font baisser la dette sont ceux où le multiplicateur macro vaut 1 ; aucune baisse
+   n'est robuste.
+5. Le plafond des allègements est le pronostic le moins sûr. La ligne de solde de Mésange
+   rend, la première année, 1,40 fois l'effet sur le PIB pour les cotisations employeurs,
+   contre 0,46 pour l'IR (D-214). Si une baisse devait alléger la dette à θ = ½ sous
+   « tenu », ce serait celle-là. Le pronostic reste « non ». Le comportement n'y jouera
+   presque pas : la réponse d'emploi s'éteint à 2 SMIC, et le plafond agit au-dessus de 3.
+6. La vue figée donne les mêmes signes, sur des coûts plus bas.
+7. Contrôle : la CSG à 5,8 % redonne les chiffres de D-234, au dix-millième de point.
+
+**Les tests.** Huit cas dans `tests/test_transformations.py`, sans données sauf un, qui
+lit l'arbre d'openfisca : l'arithmétique, le barème que le moteur applique, les refus
+avant toute passe, le rapport qui nomme le droit lu, la commande qui le lit pour la
+première année projetée et seulement si une transformation le demande. Sept cas dans
+`tests/test_recherche_indices.py` : le paquet le plus proche, à deux cibles qui le
+séparent du premier, ses indices sans passe de plus, la chaîne propre à chaque
+persistance, l'égalité avec le simulateur, déciles compris, et deux refus. Le balayage
+reçoit `transformations` et les tests nouveaux. `--missing` a muté les quatorze gardes
+nouvelles, dont sept écrites à la main là où rien ne lève : toutes tuées. Le balayage
+tient 164 mutations, 163 tuées, une équivalente, aucune survivante. Avec les tests du
+chemin annuel, des commandes et de l'API prédictives, de la recherche, des explorations,
+de l'évaluateur, de l'explorateur, de la rétroaction, des indices, de l'exemple, des
+dépendances, de la charte et du balayage : 302 réussis. `ruff` passe sur `src`, `tests`
+et `scripts`.
+
+**Ce qui suit.** Les passes, en tâche de fond, sur ce commit. Puis D-238 : le résultat,
+la page `docs/PREDICTIF_ETUDE.md` et sa garde.

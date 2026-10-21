@@ -19,6 +19,14 @@ EVERY BUNDLE EVALUATED IS IN THE REPORT, not only the candidates, with its first
 mechanical cost in both views: a debt difference read without what the reform costs is a
 number without its scale (D-235). « No candidate » then reads with the bundle closest to
 the target, and a reader sees how far the grid was.
+
+A BARÈME ENTERS BY A NAMED TRANSFORMATION (§5, D-237). The grid walks its factor; the
+point becomes the reform's knobs from the law in force at the first projected year, read
+once by the command, and the report records that law, so that the factor replays.
+
+THE §7 INDICES OF THE NEAREST BUNDLE, per search: the bundle whose Δb_T at θ is closest to
+the target, aged view, its indices read off the pass that priced it — no pass more — and
+the chain-stage ones off that search's own path (D-237).
 """
 
 from __future__ import annotations
@@ -35,7 +43,8 @@ from impots import explorer
 from impots.api.schemas import ExplorationRequest, ReformSpec
 from impots.dette.path import BANNER as DEBT_BANNER
 from impots.dette.reference import Start
-from impots.predictif import chaine, exploration, retroaction
+from impots.predictif import chaine, exploration, retroaction, transformations
+from impots.predictif import indices as indices_module
 from impots.predictif.exploration import Priced
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -66,13 +75,31 @@ def points(bounds: list[explorer.Bound]) -> list[dict[str, float]]:
             for point in itertools.product(*(bound.grid() for bound in bounds))]
 
 
-def reform_of(base: ReformSpec, knobs: dict[str, float]) -> ReformSpec:
+#: Why the Mésange indices are absent when the search did not load the macro store.
+MACRO_UNREAD = ("Magasin macro non lu : la recherche ne le charge qu'avec la boucle, sous "
+                "« gele_en_volume » et l'impulsion demandée.")
+
+
+def reform_of(base: ReformSpec, knobs: dict[str, float],
+              law: dict[str, Any] | None = None) -> ReformSpec:
     return ReformSpec.model_validate({**base.model_dump(exclude_none=True, mode="json"),
-                                      **knobs})
+                                      **transformations.expand(knobs, law)})
 
 
-def check_grid(request: ExplorationRequest, *,
-               max_bundles: int = MAX_BUNDLES) -> list[dict[str, float]]:
+def needs_law(request: ExplorationRequest) -> bool:
+    return bool(transformations.used([b.knob for b in request.bounds]))
+
+
+def law_in_force(year: int) -> dict[str, Any]:
+    """The law a transformation reads, as the engine applies it at `year`."""
+    from impots.engine.reforms import read_ir_parameters
+    from impots.engine.system import baseline
+
+    return read_ir_parameters(baseline(), year)
+
+
+def check_grid(request: ExplorationRequest, *, max_bundles: int = MAX_BUNDLES,
+               law: dict[str, Any] | None = None) -> list[dict[str, float]]:
     """Every point of the grid, each a valid reform, and no more of them than the cap."""
     grid = points(bounds_of(request))
     if len(grid) > max_bundles:
@@ -83,7 +110,9 @@ def check_grid(request: ExplorationRequest, *,
             f"raison qui n'est pas la bonne.")
     for knobs in grid:
         try:
-            reform_of(request.base, knobs)
+            reform_of(request.base, knobs, law)
+        except transformations.TransformationError as error:
+            raise RechercheError(f"paquet {knobs}, avant toute passe : {error}") from error
         except ValidationError as error:
             raise RechercheError(
                 f"paquet {knobs} refusé par le schéma de la réforme, avant toute passe : "
@@ -112,9 +141,15 @@ def _evaluation(knobs: dict[str, float], evaluation: explorer.Evaluation,
             "meets_target": objective.meets(evaluation.aged_eur, target)}
 
 
+def _nearest(evaluations: list[dict[str, Any]], target: float) -> dict[str, Any]:
+    return min(evaluations, key=lambda e: (abs(e["delta_aged"] - target),
+                                           sorted(e["knobs"].items())))
+
+
 def _search(persistence: str | None, seen: list[tuple[dict[str, float], Any]],
             candidates: tuple[explorer.Candidate, ...], log: explorer.SearchLog,
-            target: float, cost: Callable[[dict[str, float], str], float]) -> dict[str, Any]:
+            target: float, cost: Callable[[dict[str, float], str], float],
+            indices: Callable[[dict[str, Any]], dict[str, Any]]) -> dict[str, Any]:
     objective = explorer.OBJECTIVES[explorer.CONDITIONAL]
     evaluations = [_evaluation(knobs, evaluation, objective, target, cost)
                    for knobs, evaluation in seen]
@@ -122,28 +157,37 @@ def _search(persistence: str | None, seen: list[tuple[dict[str, float], Any]],
               "delta_frozen": c.frozen_eur, "meets_target": c.meets_target,
               "frozen_only": c.frozen_only, "robust": c.robust, "verdict": c.theta_reason}
              for c in candidates]
-    closest = (None if any(c["meets_target"] for c in found)
-               else min(evaluations, key=lambda e: (abs(e["delta_aged"] - target),
-                                                    sorted(e["knobs"].items()))))
+    nearest = _nearest(evaluations, target)
+    closest = None if any(c["meets_target"] for c in found) else nearest
     return {"persistence": persistence,
             "persistence_label": (retroaction.PERSISTENCE_LABELS[persistence]
                                   if persistence is not None else None),
             "digest": log.digest(), "log": log.payload(), "evaluations": evaluations,
             "candidates": found,
             "excluded": [[dict(knobs), reason] for knobs, reason in log.excluded],
-            "closest": closest}
+            "closest": closest, "indices": indices(nearest)}
 
 
 def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Priced],
         hypotheses: Any, start: Start, macro_store: Any = None,
         securities: list[Any] | None = None, max_bundles: int = MAX_BUNDLES,
-        commit: str = "", computed: str = "") -> dict[str, Any]:
+        law: dict[str, Any] | None = None, commit: str = "", computed: str = "",
+        where: str | None = None) -> dict[str, Any]:
     """The search, once per persistence, from one pass per bundle and view; the report.
 
     `hypotheses` is what `api.main._predictif_hypotheses` builds for the request, and
-    `price(reform, view)` is one pass of the first projected year in that view.
+    `price(reform, view)` is one pass of the first projected year in that view. `law` is
+    the law in force at that year (`law_in_force`), read when a transformation asks.
     """
-    grid = check_grid(request, max_bundles=max_bundles)
+    from impots.dette import reference as reference_module
+
+    first = start.year + 1
+    if law is not None and law.get("year", first) != first:
+        raise RechercheError(
+            f"droit en vigueur lu pour {law['year']}, première année projetée {first} : "
+            f"le facteur mettrait à l'échelle le barème d'une autre année que celle "
+            f"qu'il chiffre.")
+    grid = check_grid(request, max_bundles=max_bundles, law=law)
     bounds = bounds_of(request)
     target = request.target.at_most_points / 100
     passes: dict[tuple[tuple[tuple[str, float], ...], str], Priced] = {}
@@ -151,13 +195,36 @@ def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Price
     def priced(knobs: dict[str, float], view: str) -> Priced:
         key = (tuple(sorted(knobs.items())), view)
         if key not in passes:
-            passes[key] = price(reform_of(request.base, knobs), view)
+            passes[key] = price(reform_of(request.base, knobs, law), view)
         return passes[key]
+
+    gdp_eur = reference_module.reference_years(
+        start, 1, spending=hypotheses.spending, growth=hypotheses.growth)[0].gdp_eur
+
+    def indices_of(persistence: str | None) -> Callable[[dict[str, Any]], dict[str, Any]]:
+        def indices(nearest: dict[str, Any]) -> dict[str, Any]:
+            knobs = nearest["knobs"]
+            reform = reform_of(request.base, knobs, law)
+            aged = priced(knobs, exploration.VIEWS[0])
+            path = exploration.trajectory(
+                hypotheses.theta, aged, reform, start=start, horizon=request.horizon,
+                spending=hypotheses.spending, growth=hypotheses.growth,
+                rate=hypotheses.rate, store=hypotheses.store, macro_store=macro_store,
+                persistence=persistence, securities=securities)
+            rows = indices_module.compute(
+                indices_module.select(None), trajectory=path,
+                deciles_rows=aged.deciles, impulse=aged.impulse, gdp_eur=gdp_eur,
+                macro_store=macro_store, macro_reason=MACRO_UNREAD,
+                theta=hypotheses.theta, store=hypotheses.store, reform=reform,
+                mechanical=-aged.cost, inputs=aged.inputs, year=first)
+            return {"knobs": dict(knobs), "delta_aged": nearest["delta_aged"],
+                    "rows": [row.payload() for row in rows]}
+        return indices
 
     searches = []
     for persistence in hypotheses.persistences:
         evaluate = exploration.conditional_debt(
-            price=priced, reform_of=lambda knobs: reform_of(request.base, knobs),
+            price=priced, reform_of=lambda knobs: reform_of(request.base, knobs, law),
             start=start, horizon=request.horizon, spending=hypotheses.spending,
             growth=hypotheses.growth, rate=hypotheses.rate, theta=hypotheses.theta,
             year=request.target.year, store=hypotheses.store, macro_store=macro_store,
@@ -174,12 +241,13 @@ def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Price
             quantity=explorer.CONDITIONAL, theta=hypotheses.theta,
             max_evaluations=len(grid))
         searches.append(_search(persistence, seen, candidates, log, target,
-                                lambda knobs, view: priced(knobs, view).cost))
+                                lambda knobs, view: priced(knobs, view).cost,
+                                indices_of(persistence)))
 
     theta = hypotheses.theta
     return {
         "name": request.name, "titre": request.titre, "question": request.question,
-        "computed": computed, "commit": commit,
+        "computed": computed, "commit": commit, "where": where,
         "request": request.model_dump(mode="json", exclude_none=True),
         "hypotheses": {
             "spending_name": hypotheses.spending.name,
@@ -193,6 +261,10 @@ def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Price
                          "source": hypotheses.uprating.source},
             "behavioural": request.behavioural, "macro": request.macro,
             "looped": hypotheses.looped,
+            "transformations": [
+                {"name": t.name, "label": t.label, "writes": list(t.writes),
+                 "year": first, "law": {key: law[key] for key in t.reads}}
+                for t in transformations.used([b.knob for b in request.bounds])],
         },
         "start": {"year": start.year, "debt_ratio": start.debt_ratio,
                   "primary_balance": start.primary_balance,

@@ -185,6 +185,18 @@ class Index:
                     raise IndicesError(f"{self.spec.key} [{k}] : valeur hors de sa "
                                        f"boîte θ")
 
+    def payload(self) -> dict[str, Any]:
+        """The index as the API's `PredictifIndex` and the search report carry it."""
+        return {"key": self.spec.key, "pour": self.spec.pour, "label": self.spec.label,
+                "unit": self.spec.unit, "stage": self.spec.stage,
+                "source": self.spec.source, "theta": list(self.spec.theta),
+                "note": self.spec.note, "available": self.available,
+                "values": dict(self.values),
+                "box": ({k: list(v) for k, v in self.box.items()}
+                        if self.box is not None else None),
+                "reason": self.reason, "conventions": list(self.conventions),
+                "uncovered": dict(self.uncovered)}
+
     def __add__(self, other: object) -> Index:
         raise IndicesError(_sum_refusal(self, other))
 

@@ -1,0 +1,39 @@
+{
+  "name": "etude_decote",
+  "titre": "Baisse du taux de la décote de l'IR",
+  "question": "Une décote plus généreuse, son taux ramené de 45,25 % à 40, 30, 20 ou 10 %, fait-elle baisser la dette en 2035, et pour quels θ ?",
+  "bounds": [
+    {
+      "knob": "decote_taux",
+      "low": 0.1,
+      "high": 0.4,
+      "step": 0.1
+    }
+  ],
+  "target": {
+    "year": 2035,
+    "at_most_points": 0.0
+  },
+  "spending": {
+    "rule": "gele_en_volume"
+  },
+  "growth": {
+    "name": "Croissance réelle 1 %, prix 2 %",
+    "real": 0.01,
+    "prices": 0.02
+  },
+  "rate": {
+    "name": "Taux implicite tenu à son niveau de 2025",
+    "kind": "implicite_tenu"
+  },
+  "horizon": 10,
+  "uprating": {
+    "wage": 0.03,
+    "source": "3 % ronds, le rythme du PIB nominal du scénario"
+  },
+  "theta": {
+    "common": 0.5
+  },
+  "behavioural": true,
+  "macro": true
+}

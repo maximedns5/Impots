@@ -19,6 +19,7 @@ from typing import Annotated, Any, Literal, get_args, get_origin
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from impots.entreprises.reforms import FirmReformSpec
+from impots.predictif.transformations import TRANSFORMATIONS
 
 # Year window Phase 0 will answer for. The golden values are 2024; the engine
 # holds law well outside this range, but nothing here has been checked against it.
@@ -1787,7 +1788,8 @@ def _walkable(annotation: Any) -> bool:
 
 
 class ExplorationBound(BaseModel):
-    """One knob of the grid: a scalar field of `ReformSpec`, its range and its step."""
+    """One knob of the grid: a scalar field of `ReformSpec` or a named transformation
+    (`predictif.transformations`), its range and its step."""
 
     model_config = INPUT_CONFIG
 
@@ -1842,11 +1844,21 @@ class ExplorationRequest(BaseModel):
                 "paquets sans la question qu'il tranche se lit comme une recommandation.")
         fixed = set(self.base.model_dump(exclude_none=True))
         for bound in self.bounds:
+            transformation = TRANSFORMATIONS.get(bound.knob)
+            if transformation is not None:
+                clash = sorted(fixed & set(transformation.writes))
+                if clash:
+                    raise ValueError(
+                        f"bouton « {bound.knob} » : il écrit {clash}, fixé aussi dans la "
+                        f"base ; la transformation l'écraserait, et le rapport afficherait "
+                        f"une base que rien n'a chiffrée.")
+                continue
             field = ReformSpec.model_fields.get(bound.knob)
             if field is None:
                 raise ValueError(
                     f"bouton « {bound.knob} » inconnu : un bouton est un champ de la "
-                    f"réforme, jamais un chemin du barème ni un θ.")
+                    f"réforme ou une transformation nommée ({sorted(TRANSFORMATIONS)}), "
+                    f"jamais un chemin du barème ni un θ.")
             if not _walkable(field.annotation):
                 raise ValueError(
                     f"bouton « {bound.knob} » : ce n'est pas un nombre, et la grille ne "
@@ -2130,6 +2142,17 @@ class ExplorationCandidate(BaseModel):
     verdict: str
 
 
+class ExplorationIndices(BaseModel):
+    """The indices of §7 for the bundle nearest the target, aged view, from the pass that
+    priced it (PHASE10_SPEC §5): each in its own unit, none added to another."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    knobs: dict[str, float]
+    delta_aged: float
+    rows: Annotated[list[PredictifIndex], Field(min_length=1)]
+
+
 class ExplorationSearch(BaseModel):
     """One search, under one persistence scenario or none (D-230)."""
 
@@ -2143,10 +2166,19 @@ class ExplorationSearch(BaseModel):
     candidates: list[ExplorationCandidate]
     excluded: list[Any]
     closest: ExplorationEvaluation | None
+    indices: ExplorationIndices | None = None
+    """Absent from the reports written before M4 (D-237)."""
 
     @model_validator(mode="after")
     def _check_exploration_search(self) -> ExplorationSearch:
         evaluated = [sorted(e.knobs.items()) for e in self.evaluations]
+        if self.indices is not None:
+            nearest = next((e for e in self.evaluations
+                            if e.knobs == self.indices.knobs), None)
+            if nearest is None or nearest.delta_aged != self.indices.delta_aged:
+                raise ValueError(
+                    f"indices du paquet {self.indices.knobs}, qui n'est pas un paquet "
+                    f"évalué à cet écart : ils se liraient comme ceux d'un paquet chiffré.")
         for candidate in self.candidates:
             if candidate.robust is None or not candidate.verdict.strip():
                 raise ValueError(
@@ -2169,6 +2201,18 @@ class ExplorationSearch(BaseModel):
         return self
 
 
+class ExplorationTransformation(BaseModel):
+    """A named transformation the grid walked, with the law in force it read."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    label: str
+    writes: list[str]
+    year: int
+    law: dict[str, Any]
+
+
 class ExplorationHypotheses(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -2184,6 +2228,7 @@ class ExplorationHypotheses(BaseModel):
     behavioural: bool
     macro: bool
     looped: bool
+    transformations: list[ExplorationTransformation] = Field(default_factory=list)
 
 
 class ExplorationReport(BaseModel):
@@ -2197,6 +2242,8 @@ class ExplorationReport(BaseModel):
     question: str
     computed: str
     commit: str
+    where: str | None = None
+    """Where the passes ran (PHASE10_SPEC §5); absent from the reports before M4."""
     request: dict[str, Any]
     hypotheses: ExplorationHypotheses
     start: PredictifStart
@@ -2221,6 +2268,14 @@ class ExplorationReport(BaseModel):
             raise ValueError(
                 f"recherches sous {persistences} : deux recherches côte à côte sont les "
                 f"deux scénarios de persistance, chacun une fois (D-230).")
+        walked = sorted(b.get("knob") for b in self.request.get("bounds", [])
+                        if b.get("knob") in TRANSFORMATIONS)
+        named = sorted(t.name for t in self.hypotheses.transformations)
+        if walked != named:
+            raise ValueError(
+                f"transformations {walked} parcourues, {named} nommées : une "
+                f"transformation sans le droit qu'elle a lu ne se rejouerait pas, son "
+                f"facteur ne disant pas de quoi.")
         for search in self.searches:
             if len(search.evaluations) != self.bundles:
                 raise ValueError(

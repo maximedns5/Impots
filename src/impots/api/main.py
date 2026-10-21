@@ -1410,13 +1410,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                 for s in r.decomposition.slices]
 
     def index_rows(found: Any) -> list[PredictifIndex]:
-        return [PredictifIndex(
-            key=i.spec.key, pour=i.spec.pour, label=i.spec.label, unit=i.spec.unit,
-            stage=i.spec.stage, source=i.spec.source, theta=list(i.spec.theta),
-            note=i.spec.note, available=i.available, values=dict(i.values),
-            box=({k: list(v) for k, v in i.box.items()} if i.box is not None else None),
-            reason=i.reason, conventions=list(i.conventions), uncovered=dict(i.uncovered))
-            for i in found]
+        return [PredictifIndex(**i.payload()) for i in found]
 
     side_by_side = [PredictifPersistence(
         persistence=r.persistence, label=retroaction.PERSISTENCE_LABELS[r.persistence],
