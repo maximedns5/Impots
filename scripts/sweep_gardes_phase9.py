@@ -82,11 +82,16 @@ SCOPES: tuple[Scope, ...] = (
     Scope("src/impots/explorer.py", ("tests/test_explorer.py", "tests/test_exploration.py"),
           functions=("refuse_theta_as_knob", "search"),
           only=("theta", "conditional", "corners", "named")),
-    Scope("src/impots/api/main.py", ("tests/test_api_predictif.py",),
+    Scope("src/impots/api/main.py", ("tests/test_api_predictif.py", "tests/test_recherche.py"),
           functions=("predictif_simulate", "_predictif_macro_store", "_price_first_year",
-                     "predictif_show", "predictif_list")),
-    Scope("src/impots/population/cli.py", ("tests/test_cli_predictif.py",),
-          functions=("cmd_predictif",)),
+                     "predictif_show", "predictif_list", "_predictif_hypotheses")),
+    Scope("src/impots/population/cli.py",
+          ("tests/test_cli_predictif.py", "tests/test_recherche.py"),
+          functions=("cmd_predictif", "cmd_exploration")),
+    # Phase 10 M1 (D-234): the explorer made askable, its request and its command.
+    Scope("src/impots/predictif/recherche.py", ("tests/test_recherche.py",)),
+    Scope("src/impots/api/schemas.py", ("tests/test_recherche.py",),
+          functions=("_check_exploration_bounds",)),
 )
 
 #: The whole Phase 9 suite, the second tier for a survivor.
@@ -98,6 +103,7 @@ WIDE: tuple[str, ...] = (
     "tests/test_validation_predictif.py", "tests/test_predictif_exemple.py",
     "tests/test_dette_reference.py", "tests/test_behavioural.py",
     "tests/test_offre_travail.py", "tests/test_creations.py", "tests/test_cir.py",
+    "tests/test_recherche.py",
 )
 
 UI_CHECK = "ui/check.mjs"
@@ -184,9 +190,9 @@ MANUAL: tuple[Mutation, ...] = (
              ("tests/test_predictif.py",),
              "un comportement non demandé est dit absent, avec sa raison"),
     Mutation("D230-api-les-deux", "src/impots/api/main.py",
-             "            else list(retroaction.PERSISTENCE_LABELS)",
-             '            else ["tenu"]',
-             ("tests/test_api_predictif.py",),
+             "        else list(retroaction.PERSISTENCE_LABELS)",
+             '        else ["tenu"]',
+             ("tests/test_api_predictif.py", "tests/test_recherche.py"),
              "sans persistance nommée, les deux scénarios sont calculés (D-230)"),
     Mutation("D230-schema-en-tete", "src/impots/api/schemas.py",
              "        if any(v is not None for v in own) or self.slices:",
@@ -211,6 +217,44 @@ MANUAL: tuple[Mutation, ...] = (
              "Population : <b>",
              "Population&nbsp;: <b>",
              (UI_CHECK,), "la page nomme la vue de population au-dessus du tableau (D-225)"),
+    # Phase 10 M1 (D-234): the guards of `impots exploration` that return rather than raise.
+    Mutation("P10-schema-theta", "src/impots/api/schemas.py",
+             "    uprating: PredictifUprating\n    theta: PredictifTheta\n",
+             "    uprating: PredictifUprating\n    theta: PredictifTheta = Field("
+             "default_factory=lambda: PredictifTheta(common=0.5))\n",
+             ("tests/test_recherche.py",),
+             "garde 1 : pas de θ par défaut dans une exploration non plus"),
+    Mutation("P10-schema-uprating", "src/impots/api/schemas.py",
+             "    uprating: PredictifUprating\n    theta: PredictifTheta\n",
+             "    uprating: PredictifUprating = Field(default_factory=lambda: "
+             "PredictifUprating(wage=0.03, source='défaut'))\n    theta: PredictifTheta\n",
+             ("tests/test_recherche.py",),
+             "l'indice des salaires est requis dans une exploration, avec sa source"),
+    Mutation("P10-arbre-modifie", "src/impots/population/cli.py",
+             '    if dirty:\n        print("src/ a des modifications non commitées',
+             '    if False:\n        print("src/ a des modifications non commitées',
+             ("tests/test_recherche.py",),
+             "un src/ modifié est refusé : le rapport nomme son code (garde 4)"),
+    Mutation("P10-deux-vues", "src/impots/population/cli.py",
+             "            uprating=hypotheses.uprating, macro=request.macro, view=view)",
+             '            uprating=hypotheses.uprating, macro=request.macro, view="vieillie")',
+             ("tests/test_recherche.py",),
+             "chaque paquet est chiffré dans ses deux vues, par la passe du simulateur"),
+    Mutation("P10-un-seul-chiffrage", "src/impots/population/cli.py",
+             "                                      behavioural=request.behavioural),",
+             "                                      behavioural=False),",
+             ("tests/test_recherche.py",),
+             "l'explorateur chiffre ce que chiffre le simulateur (garde 6)"),
+    Mutation("P10-une-passe-par-paquet", "src/impots/predictif/recherche.py",
+             "        if key not in passes:",
+             "        if True:",
+             ("tests/test_recherche.py",),
+             "une passe par paquet et par vue, les deux persistances comprises (garde 3)"),
+    Mutation("P10-le-plus-proche", "src/impots/predictif/recherche.py",
+             "    closest = (None if any(c[\"meets_target\"] for c in found)",
+             "    closest = (None if True",
+             ("tests/test_recherche.py",),
+             "sans candidat, le rapport nomme le paquet le plus proche (garde 7)"),
 )
 
 #: Mutations no test can kill, each with why. An entry here is a finding of D-229, not
