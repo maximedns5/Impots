@@ -41,6 +41,8 @@ MODULES_LOCAUX: frozenset[str] = frozenset({
     # aides de test vivant dans tests/ : `tests/knob_cases.py`, importé par test_knobs,
     # et `tests/macro_cases.py`, le magasin macro construit des tests de la boucle (D-218)
     "knob_cases", "macro_cases",
+    # et `tests/exploration_cases.py`, la passe simulée des tests de l'exploration (D-235)
+    "exploration_cases",
 })
 
 #: Les racines que l'on scanne par défaut. `src/` est le minimum ; `tests/` et `scripts/`

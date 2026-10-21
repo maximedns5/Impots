@@ -17374,3 +17374,67 @@ le simulateur porte sur l'écart de dette, pas sur les indices de §7, que l'exp
 calcule pas encore. Et le rapport ne porte pas le coût mécanique de la première année de
 chaque paquet, que la passe connaît : un lecteur en a besoin pour lire l'écart de dette,
 et M2 l'ajoute avant que le schéma du rapport ne soit fixé.
+
+## D-235 — Phase 10, M2 : les explorations lues par l'API et la page
+
+**Le fait.** M1 écrivait un rapport que rien ne lisait. M2 le fait lire, par deux points
+d'API en lecture seule, un schéma qui refuse un rapport mal formé, et un panneau de la
+page. Pas de `POST` : une recherche reste une commande (D-233).
+
+**Le coût de la première année.** D-234 le notait : le rapport ne disait pas ce que coûte
+chaque paquet. Or un écart de dette lu sans le coût de la réforme est un nombre sans son
+échelle. Chaque paquet évalué porte désormais son coût mécanique de la première année dans
+les deux vues, tiré des passes déjà faites, sans passe de plus. Le rapport réel de D-234 a
+été recalculé au commit `b55d50a`, en 6 min 49 s. Un point de CSG déductible coûte
+8,81 Md€ en 2026 en vue vieillie et 8,34 Md€ en vue figée ; un demi-point, 4,41 et
+4,17 Md€. Les écarts de dette sont ceux de D-234, au chiffre près, et les empreintes des
+deux journaux aussi, `fbedd821` et `30369c5c` : la recherche se rejoue à l'identique.
+
+**Le schéma du rapport.** `ExplorationReport` relit le rapport champ par champ, et un test
+tient que le rapport écrit par la commande est celui que l'API lit. Le schéma refuse huit
+rapports qu'un lecteur lirait mal. Un candidat sans verdict θ se lirait robuste. Un
+candidat absent des paquets évalués ne montrerait ni son coût ni ses coins. Il refuse
+aussi une étendue qui n'est pas celle des coins, et « aucun candidat » sans le paquet le
+plus proche. Puis un paquet manquant, deux recherches sous la même persistance, et un
+rapport sans commit. Enfin, tout rapport commité sous `reports/` doit se relire : cette
+garde est tombée sur le rapport de D-234, qui n'avait pas les coûts, et c'est elle qui l'a
+fait recalculer.
+
+**L'API.** `GET /explorations` liste les rapports et `GET /explorations/{nom}` en rend un.
+Le nom passe par la garde des autres rapports : un nom refusé est un 422, un rapport
+inconnu un 404. Un rapport que le schéma refuse est un 500 qui dit pourquoi, plutôt qu'un
+rapport montré en partie.
+
+**La page.** Un panneau sous la trajectoire de dette, masqué s'il n'y a pas d'exploration.
+Un sélecteur liste les rapports. Pour l'un d'eux, la question vient en tête, sous le
+bandeau, puis les scénarios, la cible et θ. Suit une table par recherche, les deux
+persistances côte à côte, dans l'ordre du rapport. Chaque paquet y a son coût de première
+année, son écart de dette à θ en vue vieillie et en vue figée, l'étendue de sa boîte θ et
+son verdict. Le verdict est « tient la cible », avec « robuste » ou le coin qui la fait
+tomber, ou « ne tient qu'en vue figée : pas un plan », ou « ne tient pas la cible ». Sans
+candidat, la page nomme le paquet le plus proche et son écart. Le commit, le nombre de
+paquets et de passes, les conventions et le bandeau de la dette suivent. Un rapport que
+l'API refuse est dit refusé, avec la raison qu'elle donne, et jamais laissé vide.
+
+**Une trouvaille de la garde des dépendances.** Le premier jet faisait importer à
+`test_explorations_api` les aides de `test_recherche`, et `test_dependances` l'a refusé :
+un module de test n'est pas une dépendance déclarée. Les aides vivent désormais dans
+`tests/exploration_cases.py`, inscrit parmi les modules locaux comme `macro_cases`.
+
+**Les tests.** Onze cas dans `tests/test_explorations_api.py` : le rapport écrit est le
+rapport lu, coûts compris ; le nom refusé et le rapport inconnu ; les huit rapports
+refusés, par le schéma puis par l'API ; et les rapports commités, qui se relisent. Six
+contrôles de la page dans `ui/check.mjs`, vus échouer sur la page d'avant : la question
+en tête, les deux recherches, le coût, les écarts, la boîte et le verdict de chaque
+paquet, le plus proche, les hypothèses et le commit, et le refus de l'API. La page en
+compte 56. Le balayage de D-229 couvre les deux points d'API et les deux validateurs, et
+sept mutations écrites à la main couvrent la page. `--missing` a muté les dix-sept gardes
+nouvelles, toutes tuées : 134 mutations, 133 tuées, une équivalente, aucune survivante.
+
+Avec les tests de l'exploration, de l'API et de la commande prédictives, de l'évaluateur,
+de l'explorateur, de la chaîne, de l'exemple, des dépendances, de la charte et du
+balayage : 221 réussis. `ruff` passe sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.** M3 : le comportement et la boucle dans `impots predictif`. M4 : l'étude
+préenregistrée. Le sélecteur nomme les rapports par leur nom de fichier, pas par leur
+titre, et la page n'en montre qu'un à la fois.

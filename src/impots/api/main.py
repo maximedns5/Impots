@@ -41,6 +41,8 @@ from impots.api.schemas import (
     EmtrCurveListResponse,
     EmtrCurveResponse,
     EmtrDecile,
+    ExplorationReport,
+    ExplorationReportList,
     FirmCell,
     FirmMeta,
     FirmResponse,
@@ -1072,6 +1074,37 @@ def predictif_show(name: str) -> PredictifReportResponse:
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"trajectoire de dette « {name} » inconnue")
     return PredictifReportResponse.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+@app.get("/explorations", response_model=ExplorationReportList)
+def explorations_list() -> ExplorationReportList:
+    """Precomputed searches (`impots exploration`). Reads files; never runs the engine: a
+    search is two population passes per bundle (PHASE10_SPEC §3)."""
+    return ExplorationReportList(explorations=sorted(
+        path.stem.removeprefix("exploration_")
+        for path in TRAJECTORIES.glob("exploration_*.json")))
+
+
+@app.get("/explorations/{name}", response_model=ExplorationReport)
+def explorations_show(name: str) -> ExplorationReport:
+    from pydantic import ValidationError
+
+    from impots.scenarios import ScenarioError, _check_name
+
+    try:
+        _check_name(name)
+    except ScenarioError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    path = TRAJECTORIES / f"exploration_{name}.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail=f"exploration « {name} » inconnue")
+    try:
+        return ExplorationReport.model_validate_json(path.read_text(encoding="utf-8"))
+    except ValidationError as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"exploration « {name} » illisible, refusée plutôt que montrée en "
+                   f"partie : {error}") from error
 
 
 @app.get("/emtr", response_model=EmtrCurveListResponse)
