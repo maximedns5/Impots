@@ -14,7 +14,7 @@ reads as "pays 200 EUR more tax".
 from __future__ import annotations
 
 from itertools import pairwise
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -1771,6 +1771,92 @@ class PredictifRequest(BaseModel):
         if self.reform.is_empty():
             raise ValueError("Une réforme est requise : sans réforme, la trajectoire de "
                              "la réforme est celle de la référence.")
+        return self
+
+
+def _walkable(annotation: Any) -> bool:
+    """A knob a grid can walk: a number, with or without its bounds, or None."""
+    for arg in get_args(annotation) or (annotation,):
+        if arg is type(None):
+            continue
+        if get_origin(arg) is Annotated:
+            arg = get_args(arg)[0]
+        if arg not in (float, int):
+            return False
+    return True
+
+
+class ExplorationBound(BaseModel):
+    """One knob of the grid: a scalar field of `ReformSpec`, its range and its step."""
+
+    model_config = INPUT_CONFIG
+
+    knob: str
+    low: float
+    high: float
+    step: Annotated[float, Field(gt=0)]
+
+
+class ExplorationTarget(BaseModel):
+    """Δb at `year`, the horizon's last when omitted, at most `at_most_points` points of
+    GDP. A lower debt is a negative difference: the target is met from below (D-224)."""
+
+    model_config = INPUT_CONFIG
+
+    year: int | None = None
+    at_most_points: float
+
+
+class ExplorationRequest(BaseModel):
+    """A search for the bundles whose debt difference meets a target, at a fixed θ and
+    under named scenarios (PHASE10_SPEC §2): every hypothesis `/predictif/simulate` asks
+    for, and what to search over. A file read by `impots exploration`, never a request:
+    a search is two population passes per bundle."""
+
+    model_config = INPUT_CONFIG
+
+    name: str
+    titre: str
+    question: str
+    """The question the search answers, in a sentence: the report leads with it."""
+    base: ReformSpec = Field(default_factory=ReformSpec)
+    """The fixed part of every bundle; empty is allowed."""
+    bounds: Annotated[list[ExplorationBound], Field(min_length=1)]
+    target: ExplorationTarget
+    spending: PredictifSpending
+    growth: PredictifGrowth
+    rate: PredictifRate
+    horizon: Annotated[int, Field(ge=1, le=10)]
+    uprating: PredictifUprating
+    theta: PredictifTheta
+    """Required, like the simulator's: no default, not even 1/2 (D-217)."""
+    behavioural: bool = False
+    macro: bool = False
+    persistence: Literal["eteint", "tenu"] | None = None
+
+    @model_validator(mode="after")
+    def _check_exploration_bounds(self) -> ExplorationRequest:
+        if not self.question.strip():
+            raise ValueError(
+                "exploration sans question : le rapport s'ouvre sur elle, et un tableau de "
+                "paquets sans la question qu'il tranche se lit comme une recommandation.")
+        fixed = set(self.base.model_dump(exclude_none=True))
+        for bound in self.bounds:
+            field = ReformSpec.model_fields.get(bound.knob)
+            if field is None:
+                raise ValueError(
+                    f"bouton « {bound.knob} » inconnu : un bouton est un champ de la "
+                    f"réforme, jamais un chemin du barème ni un θ.")
+            if not _walkable(field.annotation):
+                raise ValueError(
+                    f"bouton « {bound.knob} » : ce n'est pas un nombre, et la grille ne "
+                    f"sait parcourir que des nombres. Un barème entre par une "
+                    f"transformation nommée, testée à part (PHASE10_SPEC §5).")
+            if bound.knob in fixed:
+                raise ValueError(
+                    f"bouton « {bound.knob} » fixé aussi dans la base : la grille "
+                    f"l'écraserait, et le rapport afficherait une base que rien n'a "
+                    f"chiffrée.")
         return self
 
 

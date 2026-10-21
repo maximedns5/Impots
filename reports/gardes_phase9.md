@@ -2,9 +2,9 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-20 sur le commit `f8c0e26a5d05` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-21 sur le commit `b8093f4f11ac` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
-**103 mutations** : 102 tuées, 1 équivalente avec sa raison, 0 survivante.
+**117 mutations** : 116 tuées, 1 équivalente avec sa raison, 0 survivante.
 
 | Mutation | Garde | Verdict | Étage | Tuée par |
 |---|---|---|---|---|
@@ -81,17 +81,24 @@ Balayé le 2026-10-20 sur le commit `f8c0e26a5d05` (D-229). Chaque garde est mut
 | `explorer:search:si:not conditional and theta is not None` | search — si not conditional and theta is not None | tuée | ciblé | tests/test_explorer.py::test_a_theta_given_to_the_mechanical_target_is_refused |
 | `explorer:search:si:not evaluation.corners` | search — si not evaluation.corners | tuée | ciblé | tests/test_explorer.py::test_a_conditional_evaluation_without_its_corners_is_refused |
 | `api/main:predictif_show:si:not path.exists()` | predictif_show — si not path.exists() | tuée | large | tests/test_cli_predictif.py::test_an_unknown_report_is_a_404_and_a_path_is_refused |
+| `api/main:_price_first_year:si:view not in (FIRST_YEAR_VIEW, FROZEN_VIEW)` | _price_first_year — si view not in (FIRST_YEAR_VIEW, FROZEN_VIEW) | tuée | ciblé | tests/test_recherche.py::test_the_frozen_view_is_priced_on_the_population_as_it_is |
 | `api/main:_price_first_year:si:agg.reform_cost is None` | _price_first_year — si agg.reform_cost is None | tuée | ciblé | tests/test_api_predictif.py::test_a_pass_without_a_cost_is_a_server_error_with_its_reason |
+| `api/main:_predictif_hypotheses:si:request.persistence is not None and (not looped)` | _predictif_hypotheses — si request.persistence is not None and (not looped) | tuée | ciblé | tests/test_api_predictif.py::test_a_persistence_without_the_loop_is_refused_before_the_pass |
 | `api/main:predictif_simulate:si:year > MAX_YEAR` | predictif_simulate — si year > MAX_YEAR | tuée | ciblé | tests/test_api_predictif.py::test_a_first_year_outside_the_population_window_is_refused |
 | `api/main:predictif_show:sauf:ScenarioError` | predictif_show — sauf ScenarioError | tuée | ciblé | tests/test_api_predictif.py::test_a_report_name_the_router_lets_through_is_refused_by_the_handler |
 | `api/main:_predictif_macro_store:sauf:(mesange.MesangeError, imk.ImkError, macro_store_module.MissingSour...` | _predictif_macro_store — sauf (mesange.MesangeError, imk.ImkError, macro_store_module.MissingSour... | tuée | ciblé | tests/test_api_predictif.py::test_an_unreadable_macro_store_is_a_named_refusal |
-| `api/main:predictif_simulate:si:request.persistence is not None and (not looped)` | predictif_simulate — si request.persistence is not None and (not looped) | tuée | ciblé | tests/test_api_predictif.py::test_a_persistence_without_the_loop_is_refused_before_the_pass |
+| `api/main:_predictif_hypotheses:si:request.spending.name is not None or request.spending.growth is not...` | _predictif_hypotheses — si request.spending.name is not None or request.spending.growth is not... | tuée | ciblé | tests/test_api_predictif.py::test_a_shipped_rule_refuses_a_name_it_would_ignore |
 | `api/main:predictif_simulate:sauf:(DebtError, ThetaError, UpratingError, indices_module.IndicesError)` | predictif_simulate — sauf (DebtError, ThetaError, UpratingError, indices_module.IndicesError) | tuée | ciblé | tests/test_api_predictif.py::test_a_request_without_theta_is_refused_before_any_pass |
 | `api/main:predictif_simulate:sauf:(DebtError, maturite.MaturityError, OSError, MacroSourceError)` | predictif_simulate — sauf (DebtError, maturite.MaturityError, OSError, MacroSourceError) | tuée | ciblé | tests/test_api_predictif.py::test_the_market_scenario_without_the_aft_file_is_refused_by_name |
 | `api/main:predictif_simulate:sauf:(DebtError, ThetaError, retroaction.FeedbackError, maturite.Maturit...` | predictif_simulate — sauf (DebtError, ThetaError, retroaction.FeedbackError, maturite.Maturit... | tuée | ciblé | tests/test_api_predictif.py::test_a_refusal_inside_the_chain_is_a_422_with_its_reason |
 | `api/main:_price_first_year:sauf:shocks.ShockError` | _price_first_year — sauf shocks.ShockError | tuée | ciblé | tests/test_api_predictif.py::test_a_shock_the_builder_refuses_is_a_422_with_its_reason |
-| `api/main:predictif_simulate:si:request.spending.name is not None or request.spending.growth is not...` | predictif_simulate — si request.spending.name is not None or request.spending.growth is not... | tuée | ciblé | tests/test_api_predictif.py::test_a_shipped_rule_refuses_a_name_it_would_ignore |
 | `population/cli:cmd_predictif:si:args.spending_name is not None or args.spending_growth is not None` | cmd_predictif — si args.spending_name is not None or args.spending_growth is not None | tuée | ciblé | tests/test_cli_predictif.py::test_a_shipped_rule_refuses_a_name_before_any_pass |
+| `predictif/recherche:check_grid:si:len(grid) > max_bundles` | check_grid — si len(grid) > max_bundles | tuée | ciblé | tests/test_recherche.py::test_a_grid_larger_than_the_cap_is_refused_not_truncated |
+| `predictif/recherche:check_grid:sauf:ValidationError` | check_grid — sauf ValidationError | tuée | ciblé | tests/test_recherche.py::test_a_grid_point_the_reform_refuses_stops_before_the_first_pass |
+| `api/schemas:ExplorationRequest._check_exploration_bounds:si:not self.question.strip()` | ExplorationRequest._check_exploration_bounds — si not self.question.strip() | tuée | ciblé | tests/test_recherche.py::test_a_bound_that_is_not_a_number_unknown_or_fixed_in_the_base_is_refused[overrides4-sans |
+| `api/schemas:ExplorationRequest._check_exploration_bounds:si:field is None` | ExplorationRequest._check_exploration_bounds — si field is None | tuée | ciblé | tests/test_recherche.py::test_a_bound_that_is_not_a_number_unknown_or_fixed_in_the_base_is_refused[overrides2-inconnu] |
+| `api/schemas:ExplorationRequest._check_exploration_bounds:si:not _walkable(field.annotation)` | ExplorationRequest._check_exploration_bounds — si not _walkable(field.annotation) | tuée | ciblé | tests/test_recherche.py::test_a_bound_that_is_not_a_number_unknown_or_fixed_in_the_base_is_refused[overrides0-pas |
+| `api/schemas:ExplorationRequest._check_exploration_bounds:si:bound.knob in fixed` | ExplorationRequest._check_exploration_bounds — si bound.knob in fixed | tuée | ciblé | tests/test_recherche.py::test_a_bound_that_is_not_a_number_unknown_or_fixed_in_the_base_is_refused[overrides3-fix\xe9 |
 | `G1-schema-theta` | garde 1 : pas de θ par défaut dans la requête | tuée | ciblé | tests/test_api_predictif.py::test_a_request_without_theta_is_refused_before_any_pass |
 | `G1-schema-uprating` | l'indice des salaires est requis, avec sa source (D-226) | tuée | ciblé | tests/test_api_predictif.py::test_no_hypothesis_has_a_default[uprating] |
 | `G1-commande-theta` | garde 1 : `impots predictif` refuse de tourner sans θ | tuée | ciblé | tests/test_cli_predictif.py::test_no_hypothesis_of_the_command_has_a_default[--theta] |
@@ -109,5 +116,12 @@ Balayé le 2026-10-20 sur le commit `f8c0e26a5d05` (D-229). Chaque garde est mut
 | `D230-schema-en-tete` | côte à côte, la réponse ne porte aucune trajectoire en tête (D-230) | tuée | ciblé | tests/test_api_predictif.py::test_a_response_with_one_scenario_in_the_lead_refuses_to_exist |
 | `D230-schema-les-deux` | côte à côte, ce sont les deux scénarios, chacun une fois (D-230) | tuée | ciblé | tests/test_api_predictif.py::test_a_response_with_one_scenario_in_the_lead_refuses_to_exist |
 | `D230-schema-une-trajectoire` | une réponse porte une trajectoire, ou les deux côte à côte (D-230) | tuée | ciblé | tests/test_api_predictif.py::test_a_response_with_one_scenario_in_the_lead_refuses_to_exist |
-| `D230-page-cote-a-cote` | la page dessine les deux scénarios, aucun en tête (D-230) | tuée | ciblé | ui/check.mjs : FAIL both persistence scenarios stand side by side, neither in the lead (D-230) — each scenario its  |
+| `D230-page-cote-a-cote` | la page dessine les deux scénarios, aucun en tête (D-230) | tuée | ciblé | ui/check.mjs : FAIL both persistence scenarios stand side by side, neither in the lead (D-230) — each scenario its |
 | `page-vue-population` | la page nomme la vue de population au-dessus du tableau (D-225) | tuée | ciblé | ui/check.mjs : FAIL the fast path names its population view and carries its note, escaped (D-225) — the view must s |
+| `P10-schema-theta` | garde 1 : pas de θ par défaut dans une exploration non plus | tuée | ciblé | tests/test_recherche.py::test_an_exploration_without_theta_or_wage_index_is_refused[theta] |
+| `P10-schema-uprating` | l'indice des salaires est requis dans une exploration, avec sa source | tuée | ciblé | tests/test_recherche.py::test_an_exploration_without_theta_or_wage_index_is_refused[uprating] |
+| `P10-arbre-modifie` | un src/ modifié est refusé : le rapport nomme son code (garde 4) | tuée | ciblé | tests/test_recherche.py::test_a_tree_whose_source_differs_from_its_commit_is_refused |
+| `P10-deux-vues` | chaque paquet est chiffré dans ses deux vues, par la passe du simulateur | tuée | ciblé | tests/test_recherche.py::test_the_command_prices_both_views_and_names_its_commit |
+| `P10-un-seul-chiffrage` | l'explorateur chiffre ce que chiffre le simulateur (garde 6) | tuée | ciblé | tests/test_recherche.py::test_the_explorer_prices_what_the_simulator_prices |
+| `P10-une-passe-par-paquet` | une passe par paquet et par vue, les deux persistances comprises (garde 3) | tuée | ciblé | tests/test_recherche.py::test_both_persistences_are_two_searches_from_the_same_passes |
+| `P10-le-plus-proche` | sans candidat, le rapport nomme le paquet le plus proche (garde 7) | tuée | ciblé | tests/test_recherche.py::test_every_bundle_is_in_the_report_and_no_candidate_names_the_closest |

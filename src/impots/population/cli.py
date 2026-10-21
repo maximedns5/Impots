@@ -1299,6 +1299,107 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_exploration(args: argparse.Namespace) -> int:
+    """The bundles whose debt difference meets a target, at a fixed θ (Phase 10 M1).
+
+    Reads an `ExplorationRequest`, prices each bundle of its grid in both views through
+    `/predictif/simulate`'s own seams — its hypotheses, its first-year pass — and writes
+    `reports/exploration_<name>.json`. Two quick passes per bundle, of two to four
+    minutes each: a search is a command, never a request (PHASE10_SPEC §2).
+    """
+    import json as _json
+    import subprocess as _subprocess
+    from datetime import date as _date
+
+    from fastapi import HTTPException
+    from pydantic import ValidationError
+
+    from impots import explorer
+    from impots import scenarios as scenarios_module
+    from impots.api import main as api
+    from impots.api.schemas import ExplorationRequest, PopulationSimulateRequest
+    from impots.dette import maturite
+    from impots.dette import reference as reference_module
+    from impots.dette.path import DebtError
+    from impots.predictif import chaine, recherche, retroaction
+    from impots.predictif.exploration import VIEWS, Priced
+    from impots.predictif.theta import ThetaError
+    from impots.uprating import UpratingError
+
+    try:
+        request = ExplorationRequest.model_validate_json(
+            Path(args.request).read_text(encoding="utf-8"))
+        scenarios_module._check_name(request.name)
+    except (OSError, ValidationError, scenarios_module.ScenarioError) as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    try:
+        commit, dirty = recherche.code_state()
+    except (OSError, _subprocess.CalledProcessError) as error:
+        print(f"aucun dépôt git lisible ({error}) : le rapport ne pourrait pas nommer le "
+              f"code qui l'a produit.", file=sys.stderr)
+        return 1
+    if dirty:
+        print("src/ a des modifications non commitées : le rapport nommerait un commit dont "
+              "il n'a pas chiffré le code. Commiter d'abord.", file=sys.stderr)
+        return 1
+    try:
+        hypotheses = api._predictif_hypotheses(request)
+        grid = recherche.check_grid(request, max_bundles=args.max_paquets)
+        start = reference_module.start_from_accounts(chaine.START_YEAR)
+        securities = maturite.load_block1() if hypotheses.rate.kind == "marche" else None
+        macro_store = api._predictif_macro_store() if hypotheses.looped else None
+    except (DebtError, ThetaError, UpratingError, recherche.RechercheError,
+            explorer.ExplorerError, maturite.MaturityError, api.MacroSourceError,
+            OSError) as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    year = start.year + 1
+    if year > api.MAX_YEAR:
+        print(f"la première année projetée, {year}, sort de la fenêtre que la couche "
+              f"population sert ({api.MIN_YEAR}–{api.MAX_YEAR}).", file=sys.stderr)
+        return 1
+    print(f"  {len(grid)} paquets × {len(VIEWS)} vues = {len(grid) * len(VIEWS)} passes "
+          f"rapides, {len(hypotheses.persistences)} recherche(s)", flush=True)
+
+    def price(reform: ReformSpec, view: str) -> Priced:
+        print(f"  {reform.model_dump(exclude_none=True)} · {view}…", flush=True)
+        first = api._price_first_year(
+            PopulationSimulateRequest(reform=reform, year=year,
+                                      behavioural=request.behavioural),
+            uprating=hypotheses.uprating, macro=request.macro, view=view)
+        return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
+                      uncovered=dict(first.uncovered))
+
+    try:
+        payload = recherche.run(request, price=price, hypotheses=hypotheses, start=start,
+                                macro_store=macro_store, securities=securities,
+                                max_bundles=args.max_paquets, commit=commit,
+                                computed=_date.today().isoformat())
+    except HTTPException as error:
+        print(str(error.detail), file=sys.stderr)
+        return 1
+    except (DebtError, ThetaError, explorer.ExplorerError, recherche.RechercheError,
+            retroaction.FeedbackError, maturite.MaturityError) as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+    out_dir = Path(args.out_dir) if args.out_dir else (
+        Path(__file__).resolve().parents[3] / "reports")
+    out = out_dir / f"exploration_{request.name}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(_json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+                   encoding="utf-8")
+    print(f"  -> {out}")
+    for search in payload["searches"]:
+        label = search["persistence_label"] or "sans persistance"
+        plans = [c for c in search["candidates"] if c["meets_target"]]
+        robust = [c for c in plans if c["robust"]]
+        print(f"     {label} : {len(plans)} paquet(s) tiennent la cible à θ, "
+              f"{len(robust)} robuste(s) ; empreinte {search['digest'][:8]}")
+    return 0
+
+
 def cmd_emtr_explorer(args: argparse.Namespace) -> int:
     """Sweep a household type across the income range and write the artefact (F6 / S5).
 
@@ -1647,6 +1748,17 @@ def build_parser() -> argparse.ArgumentParser:
     predictif.add_argument("--dir")
     predictif.add_argument("--out-dir")
     predictif.set_defaults(func=cmd_predictif)
+
+    exploration = subcommands.add_parser(
+        "exploration",
+        help="search the bundles whose debt difference meets a target, at a fixed θ "
+             "(Phase 10 M1)")
+    exploration.add_argument("request", help="an ExplorationRequest, as a JSON file")
+    exploration.add_argument("--max-paquets", type=int, default=12,
+                             help="refuse a larger grid rather than truncate it; each "
+                                  "bundle is two quick passes")
+    exploration.add_argument("--out-dir")
+    exploration.set_defaults(func=cmd_exploration)
 
     emtr_parser = subcommands.add_parser(
         "emtr", help="sweep a household type across the income range (F6)")

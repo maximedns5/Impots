@@ -1123,6 +1123,9 @@ SIDE_BY_SIDE_INDEX = ("une valeur par scénario de persistance, donnée avec cha
 #: pass; pricing another view would change the numbers, and this name and
 #: `_first_year_note` with them.
 FIRST_YEAR_VIEW = "vieillie"
+#: The other view, the 2024 population as it is: the explorer prices it beside the headline,
+#: because a bundle that meets its target only there is not a plan (D-155, PHASE10_SPEC §2).
+FROZEN_VIEW = "figee"
 
 
 def _first_year_note(year: int, uprating: Any) -> str:
@@ -1138,12 +1141,21 @@ def _first_year_note(year: int, uprating: Any) -> str:
             + uprating_module.caveat(year, uprating))
 
 
+def _frozen_year_note(year: int) -> str:
+    """The note of the frozen view, which no uprating caveat concerns."""
+    return (_quick_tier_note()
+            + f" Vue « figée » : l'année {year} est chiffrée avec sa législation sur la "
+              f"population {POPULATION_VINTAGE} telle quelle, sans vieillissement.")
+
+
 def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
-                      macro: bool = False) -> Any:
+                      macro: bool = False, view: str = FIRST_YEAR_VIEW) -> Any:
     """One quick-tier pass for the predictive path's first year — the seam its tests stub.
 
     The population is aged to the year with `uprating` first (D-226), and everything
-    below reads the aged frame. `cost` is the engine's, COST POSITIVE; `inputs` is what
+    below reads the aged frame. With `view` « figee » it is read as it is: the explorer
+    prices both views of each bundle through this one seam (PHASE10_SPEC §2), and the
+    endpoint the aged one only. `cost` is the engine's, COST POSITIVE; `inputs` is what
     `band.compute` reads, when behaviour was asked for, so the receipts at θ run on the
     very population the cost came from; `impulse` is the reform's macro impulse by
     Mésange variant, EXPANSIONARY-POSITIVE, and `uncovered` the deltas without one, when
@@ -1155,7 +1167,10 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
     from impots import uprating as uprating_module
     from impots.macro import shocks
 
-    frame = uprating_module.uprate(_population_frame(), request.year, uprating)
+    if view not in (FIRST_YEAR_VIEW, FROZEN_VIEW):
+        raise ValueError(f"vue « {view} » inconnue : {FIRST_YEAR_VIEW} ou {FROZEN_VIEW}")
+    frame = (uprating_module.uprate(_population_frame(), request.year, uprating)
+             if view == FIRST_YEAR_VIEW else _population_frame())
     result, agg = _run_population(request, frame)
     if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
         raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
@@ -1175,9 +1190,65 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
             raise HTTPException(status_code=422, detail=str(error)) from error
         impulse, uncovered = dict(built.by_instrument), built.reasons()
     return SimpleNamespace(cost=float(agg.reform_cost), inputs=inputs, impulse=impulse,
-                           uncovered=uncovered, view=FIRST_YEAR_VIEW,
-                           note=_first_year_note(request.year, uprating),
+                           uncovered=uncovered, view=view,
+                           note=(_first_year_note(request.year, uprating)
+                                 if view == FIRST_YEAR_VIEW
+                                 else _frozen_year_note(request.year)),
                            deciles=list(agg.deciles))
+
+
+def _predictif_hypotheses(request: Any) -> Any:
+    """The named scenarios, the uprating, θ and the persistences of a predictive request.
+
+    `/predictif/simulate` and `impots exploration` build them here, in one place, so that
+    the explorer cannot price under other hypotheses than the simulator (PHASE10_SPEC §2).
+    The chain's own errors are raised as they are; each caller turns them into its own
+    refusal, a 422 or an exit status.
+    """
+    from types import SimpleNamespace
+
+    from impots.behavioural.store import load as load_store
+    from impots.dette.path import SHIPPED, DebtError, SpendingScenario
+    from impots.dette.scenarios import GrowthScenario, RateScenario
+    from impots.predictif import annuel, retroaction
+    from impots.predictif.theta import MACRO_ROW, Theta
+
+    if request.spending.rule == "personnalise":
+        spending = SpendingScenario(request.spending.name or "", "personnalise",
+                                    growth=request.spending.growth)
+    else:
+        if request.spending.name is not None or request.spending.growth is not None:
+            raise DebtError(
+                f"la règle « {request.spending.rule} » porte son propre nom et ne lit "
+                f"aucun taux : un nom ou un taux fourni avec elle serait ignoré.")
+        spending = SHIPPED[request.spending.rule]
+    growth = GrowthScenario(request.growth.name, request.growth.real,
+                            request.growth.prices)
+    rate = RateScenario(request.rate.name, request.rate.kind,
+                        market_rate=request.rate.market_rate)
+    uprating = annuel.uprating_for(growth, wage=request.uprating.wage,
+                                   source=request.uprating.source,
+                                   base_year=int(POPULATION_VINTAGE))
+    theta = Theta(rows=dict(request.theta.rows), common=request.theta.common)
+    store = load_store()
+    theta.check_known(store)
+    looped = request.macro and spending.rule == retroaction.SPENDING_RULE
+    if request.persistence is not None and not looped:
+        raise DebtError(
+            f"persistance « {request.persistence} » sans rétroaction appliquée (non "
+            f"demandée, ou absente sous « {spending.name} ») : elle serait ignorée.")
+    # Past three years the loop needs a persistence scenario. Named, it is that one;
+    # unnamed, both are computed from the one pass and shown side by side, neither
+    # in the lead: none is the default (§4.5, D-230).
+    persistences: list[str | None] = (
+        [request.persistence] if request.persistence is not None
+        else list(retroaction.PERSISTENCE_LABELS)
+        if looped and request.horizon > retroaction.MAX_HORIZON else [None])
+    if looped:
+        theta.for_row(MACRO_ROW)
+    return SimpleNamespace(spending=spending, growth=growth, rate=rate, uprating=uprating,
+                           theta=theta, store=store, looped=looped,
+                           persistences=persistences)
 
 
 @app.post("/predictif/simulate", response_model=PredictifResponse)
@@ -1200,54 +1271,23 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     With behaviour, the first year's receipts are evaluated at θ and at the corners of
     the θ box, on the same population the cost came from.
     """
-    from impots.behavioural.store import load as load_store
     from impots.dette import maturite
     from impots.dette import reference as reference_module
     from impots.dette.path import BANNER as DEBT_BANNER
-    from impots.dette.path import SHIPPED, DebtError, SpendingScenario
-    from impots.dette.scenarios import GrowthScenario, RateScenario
-    from impots.predictif import annuel, chaine, comportement, retroaction
+    from impots.dette.path import DebtError
+    from impots.predictif import chaine, comportement, retroaction
     from impots.predictif import indices as indices_module
-    from impots.predictif.theta import MACRO_ROW, Theta, ThetaError
+    from impots.predictif.theta import ThetaError
     from impots.uprating import UpratingError
 
     try:
-        if request.spending.rule == "personnalise":
-            spending = SpendingScenario(request.spending.name or "", "personnalise",
-                                        growth=request.spending.growth)
-        else:
-            if request.spending.name is not None or request.spending.growth is not None:
-                raise DebtError(
-                    f"la règle « {request.spending.rule} » porte son propre nom et ne lit "
-                    f"aucun taux : un nom ou un taux fourni avec elle serait ignoré.")
-            spending = SHIPPED[request.spending.rule]
-        growth = GrowthScenario(request.growth.name, request.growth.real,
-                                request.growth.prices)
-        rate = RateScenario(request.rate.name, request.rate.kind,
-                            market_rate=request.rate.market_rate)
-        uprating = annuel.uprating_for(growth, wage=request.uprating.wage,
-                                       source=request.uprating.source,
-                                       base_year=int(POPULATION_VINTAGE))
-        theta = Theta(rows=dict(request.theta.rows), common=request.theta.common)
-        store = load_store()
-        theta.check_known(store)
-        looped = request.macro and spending.rule == retroaction.SPENDING_RULE
-        if request.persistence is not None and not looped:
-            raise DebtError(
-                f"persistance « {request.persistence} » sans rétroaction appliquée (non "
-                f"demandée, ou absente sous « {spending.name} ») : elle serait ignorée.")
-        # Past three years the loop needs a persistence scenario. Named, it is that one;
-        # unnamed, both are computed from the one pass and shown side by side, neither
-        # in the lead: none is the default (§4.5, D-230).
-        persistences: list[str | None] = (
-            [request.persistence] if request.persistence is not None
-            else list(retroaction.PERSISTENCE_LABELS)
-            if looped and request.horizon > retroaction.MAX_HORIZON else [None])
-        if looped:
-            theta.for_row(MACRO_ROW)
+        hypotheses = _predictif_hypotheses(request)
         specs = indices_module.select(request.indices)
     except (DebtError, ThetaError, UpratingError, indices_module.IndicesError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
+    spending, growth, rate = hypotheses.spending, hypotheses.growth, hypotheses.rate
+    uprating, theta, store = hypotheses.uprating, hypotheses.theta, hypotheses.store
+    looped, persistences = hypotheses.looped, hypotheses.persistences
 
     try:
         start = reference_module.start_from_accounts(chaine.START_YEAR)

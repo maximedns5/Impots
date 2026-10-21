@@ -1,6 +1,16 @@
-# State of the project, and the directions open — 2026-10-20 (Phase 9 closed)
+# State of the project, and the directions open — 2026-10-21 (Phase 10, M1 done)
 
-The third 2026-10-20 update adds D-232: `impots data fetch` now trusts OpenSSL's default
+The 2026-10-21 update adds D-233 and D-234: **Phase 10 is open**, to make the owner's
+question askable (`docs/PHASE10_SPEC.md`), and its M1 is in. `impots exploration
+<request.json>` runs D-224's conditional explorer from a validated request file, pricing
+each bundle in both views through `/predictif/simulate`'s own hypotheses and first-year
+pass (a test holds the two equal), both persistence scenarios from one pass per bundle and
+view, into `reports/exploration_<name>.json`, which names its commit and holds every
+bundle evaluated. A first real run, two cuts of the deductible CSG on earnings: neither
+lowers the debt in 2035 at θ = ½ (+2.26 and +1.13 points under « éteint », +0.83 and
++0.42 under « tenu »); under « tenu » the sixteen corners with the strongest multiplier
+lower it. The guard sweep holds 117 mutations, 116 killed, one equivalent.
+The third 2026-10-20 update added D-232: `impots data fetch` now trusts OpenSSL's default
 store completed by `certifi`'s, so the two downloads D-231 had to rerun by hand on the
 owner's Mac pass on their own. Their roots, GlobalSign Root R46 and Sectigo R46, are in
 `certifi` and missing from that store; the failure was reproduced against the real
@@ -217,8 +227,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **233 decision
-entries**, D-000 to D-232, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **235 decision
+entries**, D-000 to D-234, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -583,7 +593,11 @@ download list.
    run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
    refuses this container), and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
-3. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
+3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 is done (D-234). Next, M2: `GET
+   /explorations` and the page's panel, with the first-year cost added to the report; then
+   M3, behaviour and the loop in `impots predictif`; then M4, the preregistered study
+   « quelles baisses d'impôt font baisser la dette en 2035, et pour quels θ ? ».
+4. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
    January a row in `engine.corrections.PENSION_INVALIDITE_MINIMUM` (D-190).
