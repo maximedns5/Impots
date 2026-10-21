@@ -126,6 +126,9 @@ recherche. « Aucun candidat » se lit alors avec le paquet le plus proche de la
 - La page ajoute un panneau : la liste des explorations, puis pour l'une d'elles, ses
   hypothèses en tête, un tableau par recherche (paquet, Δb_T à θ, étendue des coins,
   verdict), les deux persistances côte à côte quand il y en a deux, et le bandeau.
+- *Fait en M2 (D-235).* Le rapport porte aussi le coût mécanique de la première année de
+  chaque paquet, dans les deux vues ; un rapport refusé par l'API est dit refusé sur la
+  page ; un sélecteur choisit l'exploration montrée.
 - `ui/check.mjs` gagne ses contrôles, vus échouer sur la page d'avant.
 
 ## §4 Le chemin annuel avec comportement et boucle (M3)

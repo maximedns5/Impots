@@ -3,7 +3,7 @@
   "titre": "Baisse de la CSG déductible sur les revenus d'activité — essai de la commande (M1)",
   "question": "Une baisse de la CSG déductible sur les revenus d'activité, d'un demi-point ou d'un point, fait-elle baisser la dette en 2035, à θ = ½ ?",
   "computed": "2026-10-21",
-  "commit": "b8093f4f11ac4eb97aa881a278034359049f8447",
+  "commit": "b55d50a00f23cfdbd429ca9cac1fa11dab94fccf",
   "request": {
     "name": "csg_deductible_m1",
     "titre": "Baisse de la CSG déductible sur les revenus d'activité — essai de la commande (M1)",
@@ -121,6 +121,8 @@
           "knobs": {
             "csg_activite_deductible": 0.058
           },
+          "cost_aged_eur": 8805567500.374023,
+          "cost_frozen_eur": 8340970702.364746,
           "delta_aged": 0.022574357777200627,
           "delta_frozen": 0.021361718644806738,
           "corners": [
@@ -261,6 +263,8 @@
           "knobs": {
             "csg_activite_deductible": 0.063
           },
+          "cost_aged_eur": 4406424788.035156,
+          "cost_frozen_eur": 4170357472.1279297,
           "delta_aged": 0.011290789502856668,
           "delta_frozen": 0.010673462176434834,
           "corners": [
@@ -404,6 +408,8 @@
         "knobs": {
           "csg_activite_deductible": 0.063
         },
+        "cost_aged_eur": 4406424788.035156,
+        "cost_frozen_eur": 4170357472.1279297,
         "delta_aged": 0.011290789502856668,
         "delta_frozen": 0.010673462176434834,
         "corners": [
@@ -576,6 +582,8 @@
           "knobs": {
             "csg_activite_deductible": 0.058
           },
+          "cost_aged_eur": 8805567500.374023,
+          "cost_frozen_eur": 8340970702.364746,
           "delta_aged": 0.008299376234723876,
           "delta_frozen": 0.007729968097656581,
           "corners": [
@@ -716,6 +724,8 @@
           "knobs": {
             "csg_activite_deductible": 0.063
           },
+          "cost_aged_eur": 4406424788.035156,
+          "cost_frozen_eur": 4170357472.1279297,
           "delta_aged": 0.004153064515346028,
           "delta_frozen": 0.0038578996406011257,
           "corners": [
@@ -859,6 +869,8 @@
         "knobs": {
           "csg_activite_deductible": 0.063
         },
+        "cost_aged_eur": 4406424788.035156,
+        "cost_frozen_eur": 4170357472.1279297,
         "delta_aged": 0.004153064515346028,
         "delta_frozen": 0.0038578996406011257,
         "corners": [

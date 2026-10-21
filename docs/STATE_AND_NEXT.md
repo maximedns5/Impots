@@ -1,6 +1,15 @@
-# State of the project, and the directions open — 2026-10-21 (Phase 10, M1 done)
+# State of the project, and the directions open — 2026-10-21 (Phase 10, M2 done)
 
-The 2026-10-21 update adds D-233 and D-234: **Phase 10 is open**, to make the owner's
+The second 2026-10-21 update adds D-235, Phase 10's M2: the explorations are read back.
+`GET /explorations` and `GET /explorations/{name}` serve the reports, read only, through
+`ExplorationReport`, which refuses eight reports a reader would misread (a candidate
+without its θ verdict, « none » without the closest bundle, a bundle missing, no commit…)
+and answers 500 with the reason rather than show one in part. Each bundle now carries its
+first-year mechanical cost in both views: a point of deductible CSG costs 8.81 Md€ in
+2026 on the aged population. The page has a panel: the question first, one table per
+persistence search, cost, debt gaps, θ box and verdict per bundle, the closest when none
+holds, the commit. The sweep holds 134 mutations, 133 killed, one equivalent.
+The first 2026-10-21 update added D-233 and D-234: **Phase 10 is open**, to make the owner's
 question askable (`docs/PHASE10_SPEC.md`), and its M1 is in. `impots exploration
 <request.json>` runs D-224's conditional explorer from a validated request file, pricing
 each bundle in both views through `/predictif/simulate`'s own hypotheses and first-year
@@ -227,8 +236,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **235 decision
-entries**, D-000 to D-234, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **236 decision
+entries**, D-000 to D-235, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -593,9 +602,8 @@ download list.
    run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
    refuses this container), and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
-3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 is done (D-234). Next, M2: `GET
-   /explorations` and the page's panel, with the first-year cost added to the report; then
-   M3, behaviour and the loop in `impots predictif`; then M4, the preregistered study
+3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 and M2 are done (D-234, D-235). Next, M3,
+   behaviour and the loop in `impots predictif`; then M4, the preregistered study
    « quelles baisses d'impôt font baisser la dette en 2035, et pour quels θ ? ».
 4. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
