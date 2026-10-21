@@ -17281,3 +17281,96 @@ de la chaîne. Rien n'est publié.
 **Les tests.** Aucun : cette entrée n'ajoute que la spec.
 
 **Ce qui reste.** M1 à M4, au §7 de la spec.
+
+## D-234 — Phase 10, M1 : l'explorateur conditionnel devient une commande
+
+**Le fait.** L'explorateur de dette à θ fixé (D-224) n'existait qu'en fonction Python, et
+son seul calcul réel était passé par un script jamais commité. `impots exploration
+<requête.json>` le rend posable : une requête dans un fichier, une recherche, et un
+rapport rejouable dans `reports/exploration_<nom>.json`. Ce n'est pas une sous-commande de
+`impots predictif`, dont le premier argument est déjà un nom de scénario ; la spec le dit
+désormais.
+
+**La requête.** `ExplorationRequest` porte tout ce que demande `/predictif/simulate` :
+dépense, croissance, taux, horizon, salaires et leur source, θ, comportement, boucle et
+persistance. Elle porte en plus la question en une phrase, une base fixe, les bornes de
+la grille et la cible, Δb à l'année T au plus tant de points de PIB. θ et l'indice des
+salaires y sont exigés, sans défaut. Un bouton est un champ numérique de la réforme : un
+barème, un champ à valeurs nommées, un nom inconnu ou un bouton fixé aussi dans la base
+sont refusés par leur nom. Chaque point de la grille est ensuite validé comme réforme
+avant la première passe. Une grille plus grande que `--max-paquets`, douze par défaut, est
+refusée plutôt que tronquée.
+
+**Un seul chiffrage.** Les hypothèses sont construites par `_predictif_hypotheses`, sortie
+telle quelle du point d'API : ses 37 tests passent sans changement. Chaque vue d'un paquet
+passe par `_price_first_year`, qui apprend la vue « figée », la population de 2024 telle
+quelle, avec sa propre note ; un nom de vue inconnu est refusé. Un test tient l'égalité :
+pour un paquet, comportement, boucle et persistance compris, l'écart de dette que lit la
+recherche est celui que rend `/predictif/simulate` sur la même réforme.
+
+**Une passe par paquet et par vue.** Sans persistance nommée, au-delà de trois ans et avec
+la boucle, deux recherches tournent côte à côte (D-230), tirées des mêmes passes : le
+chiffrage est mis en cache par paquet et par vue. Trois paquets coûtent six passes, pas
+douze.
+
+**Le rapport.** Il nomme son commit, et la commande refuse un `src/` modifié. Il porte la
+question, la requête entière, les hypothèses par leur nom, le départ, les deux vues
+décrites, les conventions et le bandeau. Pour chaque recherche, il donne chaque paquet
+évalué, avec Δb à θ dans les deux vues et à ses coins, puis les candidats, « robuste » ou
+« dépend de θ », les exclus et l'empreinte du journal. Sans candidat, il nomme le paquet
+le plus proche de la cible.
+
+**Le calcul réel.** Sur la population construite de ce conteneur, au commit `b8093f4`, une
+question fixée avant la passe : une baisse de la CSG déductible sur les revenus
+d'activité, de 6,8 % à 6,3 % puis à 5,8 %, fait-elle baisser la dette en 2035, à θ = ½ ?
+Dépenses gelées en volume, croissance réelle de 1 % et prix de 2 %, taux implicite tenu,
+salaires nominaux à 3 % par an, comportement et boucle chiffrés, les deux persistances
+côte à côte. Quatre passes rapides, 8 min 7 s ; empreintes des journaux `fbedd821`
+(« éteint ») et `30369c5c` (« tenu »). C'est un essai de la commande, pas l'étude de M4 :
+la grille n'a que deux points.
+
+Aucun paquet ne tient la cible. À θ = ½, en 2035, la baisse d'un point alourdit la dette
+de 2,26 points de PIB si l'effet macro s'éteint après trois ans, de 0,83 point s'il tient.
+Celle d'un demi-point l'alourdit de 1,13 et de 0,42 point. En vue figée, les écarts sont
+un peu plus faibles : 2,14 et 0,77 point, puis 1,07 et 0,39 point. Chaque paquet est relu
+aux 32 coins de sa boîte, les quatre lignes de l'offre de travail et le θ du
+multiplicateur. Sous « éteint », aucun coin ne fait baisser la dette : de +1,84 à +2,66
+points pour un point de CSG. Sous « tenu », les seize coins où le multiplicateur est au
+plus fort la font baisser, de 0,41 à 0,62 point pour un point de CSG, et les seize autres
+la font monter, de 2,06 à 2,28 points. Comme en D-224, c'est le multiplicateur qui fait la
+boîte, et sa persistance décide si la baisse peut se financer. Le paquet le plus proche
+de la cible est le demi-point.
+
+**Une trouvaille du balayage.** Le test du balayage a refusé le premier jet. Le nouveau
+schéma répétait mot pour mot deux lignes de `PredictifRequest`, et deux mutations de la
+phase 9, celles du θ et de l'indice des salaires sans défaut, ne savaient plus laquelle
+muter. Les champs ont été réordonnés, et la même garde a reçu ses deux mutations du côté
+de l'exploration, avec leur test : une exploration sans θ ou sans indice des salaires
+n'était refusée par aucun test. Une troisième mutation, celle des deux persistances de
+D-230, visait le code que l'extraction avait déplacé : elle a été réécrite et rebalayée.
+
+**Les tests.** Dix-neuf cas dans `tests/test_recherche.py`, sans données. Les cinq refus
+de la requête, et θ et salaires exigés. La grille refusée avant la première passe, et le
+plafond. Les deux persistances tirées de six passes, et une seule recherche là où le
+simulateur trace un seul chemin (trois cas). Chaque paquet au rapport, avec le plus proche
+quand aucun ne tient. Le verdict « robuste » ou « dépend de θ » nommé par son coin. La
+commande qui chiffre les deux vues et nomme son commit, l'arbre modifié refusé, l'égalité
+avec le simulateur, et la vue figée lue sur la population telle quelle. Le module est neuf :
+chaque garde a été vue échouer sur une mutation. Le balayage de D-229 couvre désormais le
+module, le validateur du schéma, la fonction d'hypothèses et la commande. Sept gardes ne
+lèvent rien, et le générateur ne les voit pas : elles ont reçu une mutation écrite à la
+main. Ce sont le θ et les salaires sans défaut, l'arbre modifié, les deux vues, le
+chiffrage du simulateur, la passe unique et le paquet le plus proche. `--missing` a muté
+les seize gardes nouvelles ou déplacées, toutes tuées. Le rapport compte 117 mutations : 116
+tuées, une équivalente, aucune survivante.
+
+Avec les tests de l'API et de la commande prédictives, de l'évaluateur, de l'explorateur,
+de la chaîne, de l'exemple, des dépendances, de la charte et du balayage : 210 réussis.
+`ruff` passe sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.** M2 : `GET /explorations` et le panneau de la page. M3 : le comportement
+et la boucle dans `impots predictif`. M4 : l'étude préenregistrée. Le test d'égalité avec
+le simulateur porte sur l'écart de dette, pas sur les indices de §7, que l'explorateur ne
+calcule pas encore. Et le rapport ne porte pas le coût mécanique de la première année de
+chaque paquet, que la passe connaît : un lecteur en a besoin pour lire l'écart de dette,
+et M2 l'ajoute avant que le schéma du rapport ne soit fixé.
