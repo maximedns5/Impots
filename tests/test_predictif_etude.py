@@ -193,9 +193,10 @@ def test_a_loop_the_chain_lacks_is_said_absent_on_the_page(script, tmp_path) -> 
     requests, reports = _study(tmp_path, script)
     path = reports / "exploration_etude_allegements.json"
     report = json.loads(path.read_text(encoding="utf-8"))
-    reason = "cotisations_employeurs_ciblees : la variante n'imprime pas cette ligne"
+    reason = ("aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il "
+              "n'y a pas de rétroaction à lire")
     for search in report["searches"]:
-        search["indices"]["absent"] = {"rétroaction, instruments non couverts": reason}
+        search["indices"]["absent"] = {"rétroaction": reason}
     path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
     etudes = script.load(requests, reports)
     page = script.render(etudes)
@@ -206,3 +207,74 @@ def test_a_loop_the_chain_lacks_is_said_absent_on_the_page(script, tmp_path) -> 
     assert reason in page
     for name, why in etudes[0]["report"]["searches"][0]["indices"]["closed"].items():
         assert f"{name} : {why}" in page
+
+
+def _first_round(reports: Path, *, move: str | None = None) -> None:
+    """The first round as it ran: on the preregistration's commit, without what the
+    chain lacks; `move` shifts one figure of that instrument's report."""
+    first = reports / "etude_premier_tour"
+    first.mkdir()
+    for path in reports.glob("exploration_etude_*.json"):
+        report = json.loads(path.read_text(encoding="utf-8"))
+        report["commit"] = "a" * 40
+        for search in report["searches"]:
+            search["indices"].pop("absent")
+            search["indices"].pop("closed")
+        if move and path.name == f"exploration_etude_{move}.json":
+            report["searches"][1]["evaluations"][-1]["delta_aged"] += 1e-9
+        (first / path.name).write_text(json.dumps(report, ensure_ascii=False),
+                                       encoding="utf-8")
+
+
+def test_the_first_round_is_named_and_given_back_figure_for_figure(script,
+                                                                    tmp_path) -> None:
+    requests, reports = _study(tmp_path, script)
+    _first_round(reports)
+    page = script.render(script.load(requests, reports))
+    assert "a" * 40 in page and "chiffre pour chiffre" in page
+
+
+@pytest.mark.parametrize("how, needle", [("moved", "ne redonne pas le premier"),
+                                         ("missing", "premier tour sans")])
+def test_a_second_round_that_is_not_the_first_is_refused(script, tmp_path, how: str,
+                                                         needle: str) -> None:
+    """D-238: the second round only adds what the chain lacks. One figure moved by a
+    billionth of a point, or an instrument missing from the first round, and the rerun is
+    no longer a field added: refused."""
+    requests, reports = _study(tmp_path, script)
+    _first_round(reports, move="decote" if how == "moved" else None)
+    if how == "missing":
+        (reports / "etude_premier_tour" / "exploration_etude_ir.json").unlink()
+    with pytest.raises(script.EtudeError, match=needle):
+        script.load(requests, reports)
+
+
+def test_a_loop_that_misses_only_some_instruments_is_not_said_absent(script,
+                                                                     tmp_path) -> None:
+    """The CSG's loop runs; only the benefits it moves have no Mésange variant. The page
+    lists those, grouped by their one reason, and does not call the loop absent."""
+    requests, reports = _study(tmp_path, script)
+    path = reports / "exploration_etude_csg.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    why = "Mésange ne publie pas de variante de transfert : un canal qui meurt."
+    for search in report["searches"]:
+        search["indices"]["absent"] = {
+            "rétroaction, instruments non couverts": f"af : {why} ; ppa : {why} ; rsa : {why}"}
+    path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    etudes = script.load(requests, reports)
+    page = script.render(etudes)
+    entry = next(e for e in etudes if e["instrument"].key == "csg")
+    for search in entry["report"]["searches"]:
+        assert "est absente" not in script.verdict(search, entry["instrument"], 0.0)
+    assert f"af, ppa, rsa : {why}" in page and page.count(why) == 1
+
+
+def test_the_answer_says_for_which_theta_the_debt_falls(script, tmp_path) -> None:
+    """The question's second half, in the answer itself: under « tenu », the corners where
+    the debt falls, with the θ they all share; under « éteint », none."""
+    etudes = script.load(*_study(tmp_path, script))
+    eteint, tenu = etudes[0]["report"]["searches"]
+    instrument = etudes[0]["instrument"]
+    assert "ne baisse à aucun coin" in script.verdict(eteint, instrument, 0.0)
+    said = script.verdict(tenu, instrument, 0.0)
+    assert "à chaque paquet" in said and "multiplicateur_macro = 1" in said

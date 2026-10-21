@@ -1,6 +1,20 @@
-# State of the project, and the directions open — 2026-10-21 (Phase 10, M3 done)
+# State of the project, and the directions open — 2026-10-21 (Phase 10, M4 done)
 
-The third 2026-10-21 update adds D-236, Phase 10's M3: `impots predictif` carries
+The fourth 2026-10-21 update adds D-237 and D-238, Phase 10's M4: **the study is done**,
+its gate (`make full`) the owner's. The question, « quelles baisses d'impôt font baisser la
+dette en 2035, et pour quels θ ? », was preregistered before any pass (D-237): four
+requests under `etude/`, sixteen bundles of the CSG on earnings, the réduction générale's
+ceiling, the décote's rate and the IR scale (`ir_bareme_echelle`, a named transformation),
+and a seven-point forecast. The answer (D-238, `docs/PREDICTIF_ETUDE.md`): at θ = ½, no cut
+lowers the debt in 2035, under either persistence or view; +0.23 to +2.82 points under
+« éteint » with no corner below zero, +0.08 to +1.20 under « tenu », where exactly the
+corners with the macro multiplier at 1 go below zero, whatever the other θ. The forecast
+held. A finding: the ceiling falls under Mésange's targeted employer variant, which prints
+no balance row, so its loop is ABSENT, not zero, and the classing of a 2026 ceiling raise
+as a low-wage cut is to be revisited in its own entry. The reports now carry what the
+chain lacks; a second round, on `e0c3d7f`, gives the first back figure for figure, the
+first kept under `reports/etude_premier_tour/`. The sweep holds 166 mutations, 165 killed.
+The third 2026-10-21 update added D-236, Phase 10's M3: `impots predictif` carries
 behaviour and the loop (`--behavioural`, `--macro`, `--persistence`). Each year is priced
 whole through the simulator's own pass, `_price_first_year`, in both views: its cost, the
 channels' inputs and its impulse, so receipts at θ are read year by year and the loop
@@ -251,8 +265,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **237 decision
-entries**, D-000 to D-236, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **239 decision
+entries**, D-000 to D-238, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -617,9 +631,10 @@ download list.
    run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
    refuses this container), and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
-3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 to M3 are done (D-234 to D-236). Next, M4,
-   the preregistered study « quelles baisses d'impôt font baisser la dette en 2035, et
-   pour quels θ ? ».
+3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 to M4 are done (D-234 to D-238); its gate is
+   the owner's `make full`. Left from the study: the 2026 ceiling's classing as a
+   targeted employer cut, and the ceiling rerun outside the preregistration; knobs for
+   the 2026 curve's `t_min` and `t_delta`; the study on the annual path; other θ.
 4. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each

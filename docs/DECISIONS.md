@@ -17641,3 +17641,108 @@ et `scripts`.
 
 **Ce qui suit.** Les passes, en tâche de fond, sur ce commit. Puis D-238 : le résultat,
 la page `docs/PREDICTIF_ETUDE.md` et sa garde.
+
+## D-238 — Phase 10, M4, second temps : la réponse de l'étude, et la boucle qui manquait
+
+**Le fait.** Les quatre recherches de D-237 ont tourné, deux fois : seize paquets et
+trente-deux passes par tour, un quart d'heure par instrument. La réponse à la question de
+§5, sous ses hypothèses : à θ = ½, aucune baisse du menu ne fait baisser la dette en 2035,
+sous aucune persistance et dans aucune vue. Pour quels θ le ferait-elle ? Sous « tenu »,
+au seul multiplicateur macro à 1, quels que soient les autres θ, et pour les trois
+instruments où la boucle existe. Sous « éteint », pour aucun θ. La page est
+`docs/PREDICTIF_ETUDE.md`, rendue depuis les rapports et gardée contre la dérive.
+
+**Le résultat.** Δb 2035 à θ = ½, vue vieillie, en points de PIB, de la plus petite à la
+plus grande baisse de chaque grille.
+- La CSG déductible : de 0,88 à 8,81 Md€ en 2026. Sous « éteint », de +0,23 à +2,26
+  point, la boîte toujours au-dessus de zéro. Sous « tenu », de +0,08 à +0,83 point, et
+  la boîte descend jusqu'à −0,06 et −0,62 : les 16 coins sur 32 où le multiplicateur
+  vaut 1 font baisser la dette.
+- La décote : de 0,94 à 10,28 Md€. Sous « éteint », de +0,26 à +2,82 point, aucun coin
+  sous zéro. Sous « tenu », de +0,11 à +1,20 point, et 4 coins sur 8, ceux du
+  multiplicateur à 1.
+- Le barème de l'IR : de 1,38 à 9,63 Md€. Sous « éteint », de +0,30 à +2,16 point, aucun
+  coin sous zéro. Sous « tenu », de +0,08 à +0,64 point, et 4 coins sur 8, les mêmes.
+- Le plafond de la réduction générale : de 1,78 à 5,65 Md€. De +0,55 à +1,74 point, le
+  même sous les deux persistances, et la boîte réduite à un point : ni la boucle ni le
+  comportement ne déplacent ce paquet. La boucle y est absente, et non nulle.
+
+En vue figée, les mêmes signes, sur des coûts plus bas de 1 à 20 % et des écarts plus
+petits d'autant. Aucun paquet n'est candidat, robuste ou non. Les indices de §7 du paquet
+le plus proche sont dans la page. Un exemple : le barème × 0,99 fait 1 100 emplois
+marchands la première année et 7 800 à trois ans, et le revenu disponible réel gagne
+0,08 %.
+
+**Contre le pronostic.** Les points 1 à 4, 6 et 7 tiennent. L'écart par milliard de la
+première année vaut de 0,22 à 0,29 point sous « éteint », pour 0,26 annoncé, et de 0,06
+à 0,13 sous « tenu », pour 0,10. Le contrôle tient au dix-millième : la CSG à 5,8 %
+redonne D-234, +2,2574 et +0,8299. Le point 5 tient sur la réponse, « non », mais pas pour
+sa raison. Le pronostic attendait la boucle la plus forte du menu, 1,40 fois l'effet sur
+le PIB pour les cotisations employeurs (D-214). Il n'y a pas de boucle du tout.
+
+**La trouvaille : la boucle qui manquait.** Le plafond tombe sous la variante
+« cotisations employeurs ciblées », pour laquelle Mésange n'imprime pas de ligne de solde
+(`absent_for`). `shocks.targets_low_wages` y range tout bouton `allegement_general_*`,
+un choix de la phase 3, juste pour des allègements entre 1 et 1,6 SMIC. Depuis la refonte
+de 2026 (D-042), le plafond est le seul bouton d'allègement qui reste, et le relever
+étend le taux plancher au-delà de 3 SMIC : l'inverse d'une baisse ciblée. La variante
+uniforme a sa ligne de solde. Le même classement prête aussi au plafond l'emploi d'une
+baisse ciblée : 5 800 emplois marchands la première année pour 1,78 Md€, contre 700 pour
+0,88 Md€ de CSG. Le classement n'est pas corrigé ici : le corriger changerait un chiffre
+de l'étude après l'avoir vu. Il est à reprendre dans sa propre entrée, et le plafond à
+rejouer hors préenregistrement, en le disant.
+
+Ailleurs, rien de tel. Pour la CSG, la boucle tourne, mais les prestations que la baisse
+déplace n'ont pas de variante dans Mésange : allocations familiales, aides au logement,
+CRDS sur ces prestations, PPA et RSA. La page les liste, groupées sous leur raison, et ne
+dit pas la boucle absente. Pour la décote et l'IR, la chaîne ne dit rien manquer.
+
+**Le second tour, et pourquoi.** Le premier tour a tourné sur le commit du
+préenregistrement, `6dab3a4`. Ses rapports ne portaient pas ce qui manque à la chaîne, et
+la boucle absente du plafond s'y serait lue comme nulle, sans un mot : ce que le projet
+refuse partout, une absence muette lue comme un zéro mesuré. Le bloc des indices porte
+désormais `absent` et `closed`, ceux du
+chemin du paquet le plus proche. Une garde tient qu'ils sont ceux de `/predictif/simulate`
+pour la même réforme, et le schéma refuse une absence sans raison. La page dit la boucle
+absente là où elle répond. Le second tour, sur `e0c3d7f`, redonne le premier chiffre pour
+chiffre : chaque paquet, chaque coin, chaque candidat, sous chaque persistance. Le premier
+est gardé sous `reports/etude_premier_tour/`, et le rendu refuse de tourner si un seul
+chiffre diffère. C'est l'écart au préenregistrement : les rapports nomment `e0c3d7f` et
+non `6dab3a4`, pour un champ ajouté. Les requêtes et le pronostic n'ont pas bougé.
+
+**Ce que la réponse veut dire.** Sous ces hypothèses, aucune de ces baisses ne se finance.
+La boucle de Mésange en rend une part, plus grande sous « tenu » que sous « éteint », et
+le comportement presque rien. Ce qui décide du signe n'est ni l'instrument ni l'élasticité
+du revenu ou des heures : c'est le multiplicateur, à un écart-type IMK au-dessus du centre
+de Mésange, porté sept ans par la convention « tenu ». C'est la largeur déjà vue en D-223,
+D-224, D-227 et D-228. L'étude le montre sans le trancher, et ne recommande rien.
+
+**Les tests.** La page a sa garde : elle est le rendu des requêtes et des rapports commités,
+et chaque rapport a joué sa requête, sur un même commit, en disant où. Sur une étude
+construite, sans données, `tests/test_predictif_etude.py` tient en quinze cas :
+- la réponse par instrument et par persistance, et pour quels θ la dette baisse ;
+- les refus, à savoir une requête retouchée, un instrument sans rapport ou sans requête,
+  un autre bouton, un rapport muet sur le lieu, deux commits, un second tour qui ne redonne
+  pas le premier ou qui en manque un ;
+- les coins qui font baisser la dette ;
+- la boucle absente dite telle, et la boucle absente en partie, qui ne l'est pas.
+Chaque refus a été vu échouer sur une mutation du script. La boucle absente, l'absence
+partielle et le « pour quels θ » l'ont été sur le script d'avant, qui ne les disait pas.
+La garde de la page a été vue échouer sur un chiffre retouché à la main. Le test de
+l'absence portée est dans `tests/test_recherche_indices.py`. Le balayage reçoit le
+nouveau validateur et une mutation écrite à la main : 166 mutations, 165 tuées, une
+équivalente, aucune survivante.
+
+Avec les tests de l'étude, de la transformation, des indices, du chemin annuel, des
+commandes et de l'API prédictives, de la recherche, des explorations, de l'évaluateur, de
+l'explorateur, de la rétroaction, de l'exemple, des scénarios, des dépendances, de la
+charte et du balayage : 409 réussis. La page en compte 59, aucun en échec. `ruff` passe
+sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.** La porte de M4 : `make full`, lancé par le propriétaire. Puis, hors de
+l'étude :
+- le classement du plafond, et le plafond rejoué ;
+- des boutons pour `t_min` et `t_delta`, qui chiffreraient une baisse d'allègement sur
+  toute la courbe de 2026 ;
+- le chemin annuel pour l'étude, la première année n'étant ici que reportée ;
+- d'autres valeurs de θ que ½.

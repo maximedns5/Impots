@@ -30,6 +30,12 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "PREDICTIF_ETUDE.md"
 REQUESTS = ROOT / "etude"
 REPORTS = ROOT / "reports"
+#: The first round, on the preregistration's own commit, before the reports carried what
+#: the chain lacks (D-238). The second round must give it back figure for figure.
+FIRST_ROUND = "etude_premier_tour"
+#: What a round computes, as against what it reports about it.
+FIGURES = ("knobs", "cost_aged_eur", "cost_frozen_eur", "delta_aged", "delta_frozen",
+           "corners", "corner_low", "corner_high", "meets_target")
 
 
 class EtudeError(ValueError):
@@ -86,8 +92,18 @@ def _md(eur: float) -> str:
 # --------------------------------------------------------------------------- #
 # the files
 # --------------------------------------------------------------------------- #
+def same_figures(first: dict[str, Any], second: dict[str, Any]) -> bool:
+    """Whether two rounds of one request computed the same: every bundle, every corner,
+    every candidate, under each persistence."""
+    def figures(report: dict[str, Any]) -> list[Any]:
+        return [(s["persistence"], [{k: e[k] for k in FIGURES} for e in s["evaluations"]],
+                 s["candidates"]) for s in report["searches"]]
+    return first["request"] == second["request"] and figures(first) == figures(second)
+
+
 def load(requests: Path = REQUESTS, reports: Path = REPORTS) -> list[dict[str, Any]]:
-    """Each instrument's committed request and the report that played it, checked."""
+    """Each instrument's committed request and the report that played it, checked; and,
+    when a first round is kept, the same figures in it."""
     sys.path.insert(0, str(ROOT / "src"))
     from impots.api.schemas import ExplorationReport, ExplorationRequest
 
@@ -120,6 +136,23 @@ def load(requests: Path = REQUESTS, reports: Path = REPORTS) -> list[dict[str, A
     if len(commits) != 1:
         raise EtudeError(f"rapports de {len(commits)} commits {commits} : l'étude se "
                          f"chiffre sur un code, celui du préenregistrement.")
+    first_round = reports / FIRST_ROUND
+    if first_round.exists():
+        for entry in out:
+            path = first_round / f"exploration_etude_{entry['instrument'].key}.json"
+            if not path.exists():
+                raise EtudeError(f"premier tour sans {path.name} : la comparaison des "
+                                 f"deux tours ne porterait pas sur tout le menu.")
+            first = json.loads(path.read_text(encoding="utf-8"))
+            ExplorationReport.model_validate(first)
+            if not same_figures(first, entry["report"]):
+                raise EtudeError(
+                    f"le second tour de « {entry['instrument'].key} » ne redonne pas le "
+                    f"premier : un chiffre a bougé entre les deux commits, et l'écart au "
+                    f"préenregistrement n'est plus un champ ajouté.")
+            entry["first_commit"] = first["commit"]
+        if len({e["first_commit"] for e in out}) != 1:
+            raise EtudeError("premier tour de plusieurs commits.")
     return out
 
 
@@ -145,10 +178,26 @@ def theta_text(common: float) -> str:
     return "½" if common == 0.5 else _fr(common, sign=False)
 
 
+#: The chain's key when the whole loop is absent; « rétroaction, instruments non
+#: couverts » only names the instruments it could not read, the loop running for the rest.
+NO_LOOP = "rétroaction"
+
+
 def loop_absent(search: dict[str, Any]) -> bool:
     """Whether the chain says the GDP → receipts loop is absent for the nearest bundle."""
-    absent = (search.get("indices") or {}).get("absent") or {}
-    return any(key.startswith("rétroaction") for key in absent)
+    return NO_LOOP in ((search.get("indices") or {}).get("absent") or {})
+
+
+def compact(text: str) -> str:
+    """« af : r ; ppa : r » as « af, ppa : r »: the chain repeats one reason per instrument.
+    Left as it is when its items are not « name : reason »."""
+    items = [item.partition(" : ") for item in text.split(" ; ")]
+    if not all(sep and name and " " not in name for name, sep, _ in items):
+        return text
+    grouped: dict[str, list[str]] = {}
+    for name, _, why in items:
+        grouped.setdefault(why, []).append(name)
+    return " ; ".join(f"{', '.join(names)} : {why}" for why, names in grouped.items())
 
 
 LOOP_ABSENT = (" Attention : la boucle PIB → recettes est absente pour ce paquet, non "
@@ -159,8 +208,26 @@ def verdict(search: dict[str, Any], instrument: Instrument, target: float,
             theta: str = "½") -> str:
     """One sentence: does a cut lower the debt at θ, robustly, or not, and how close; and
     whether the loop was there to say so."""
-    return _verdict(search, instrument, target, theta) + (
-        LOOP_ABSENT if loop_absent(search) else "")
+    return (_verdict(search, instrument, target, theta) + which_theta(search, target)
+            + (LOOP_ABSENT if loop_absent(search) else ""))
+
+
+def which_theta(search: dict[str, Any], target: float) -> str:
+    """For which θ the debt falls: the corners that meet the target, bundle by bundle,
+    and the θ settings every one of them shares."""
+    found = [falling(e, target) for e in search["evaluations"]]
+    if not any(n for n, _ in found):
+        return " Elle ne baisse à aucun coin de la boîte θ."
+    shared = set.intersection(*(s for n, s in found if n))
+    common = (" : ceux où " + ", ".join(f"{k} = {v}" for k, v in sorted(shared))
+              if shared else "")
+    counts = sorted({n for n, _ in found if n})
+    total = len(search["evaluations"][0]["corners"])
+    where = ("à chaque paquet" if all(n for n, _ in found)
+             else f"à {sum(1 for n, _ in found if n)} paquets sur {len(found)}")
+    many = (f"{counts[0]} coins sur {total}" if len(counts) == 1
+            else f"de {counts[0]} à {counts[-1]} coins sur {total}")
+    return f" Elle baisse à {many}, {where}{common}."
 
 
 def _verdict(search: dict[str, Any], instrument: Instrument, target: float,
@@ -208,15 +275,25 @@ def _search_table(search: dict[str, Any], instrument: Instrument, target: float,
     return lines
 
 
+def _number(x: float) -> str:
+    """Two decimals below a hundred; above, whole and in thousands, as French writes it."""
+    if abs(x) < 100:
+        return _fr(x)
+    return f"{x:+,.0f}".replace(",", " ").replace("-", "−")
+
+
+def _key(key: str) -> str:
+    """A Mésange horizon (« 1 », « 2 », « 3 ») as the years it is; any other key as it is."""
+    return {"1": "à 1 an", "2": "à 2 ans", "3": "à 3 ans"}.get(key, key)
+
+
 def _value(row: dict[str, Any], key: str) -> str:
     value = row["values"][key]
     share = row["unit"].startswith("pts d")
-    text = (_fr(value * 100, 3) + " pt" if share
-            else _fr(value, 0 if abs(value) >= 100 else 2))
+    text = _fr(value * 100, 3) + " pt" if share else _number(value)
     box = (row.get("box") or {}).get(key)
     if box is not None and box[0] != box[1]:
-        text += f" [{_fr(box[0], 0 if abs(box[0]) >= 100 else 2)} ; " \
-                f"{_fr(box[1], 0 if abs(box[1]) >= 100 else 2)}]"
+        text += f" [{_number(box[0])} ; {_number(box[1])}]"
     return text
 
 
@@ -238,7 +315,7 @@ def _indices(entry: dict[str, Any], target_year: int) -> list[str]:
             lines.append(f"| {row['pour']} | {row['label']} | {row['unit']} "
                          f"| absent : {row['reason']} |")
             continue
-        shown = "; ".join(f"{k} : {_value(row, k)}" for k in row["values"])
+        shown = " ; ".join(f"{_key(k)} : {_value(row, k)}" for k in row["values"])
         lines.append(f"| {row['pour']} | {row['label']} | {row['unit']} | {shown} |")
     for search in searches:
         for row in search["indices"]["rows"]:
@@ -255,6 +332,9 @@ def render(etudes: list[dict[str, Any]]) -> str:
     h = report["hypotheses"]
     target, target_year = h["target_share"], h["target_year"]
     first_year = report["start"]["year"] + 1
+    lacking = ", ".join(e["instrument"].label[0].lower() + e["instrument"].label[1:]
+                        for e in etudes if any(loop_absent(s)
+                                               for s in e["report"]["searches"]))
     theta = theta_text(h["theta"]["common"])
     unit = report["unit"][0].upper() + report["unit"][1:]
     out = [
@@ -277,6 +357,14 @@ def render(etudes: list[dict[str, Any]]) -> str:
         "a joué la requête commitée, à l'identique, sur le même commit : "
         f"`{report['commit']}`, le {report['computed']}. Les passes ont tourné ici : "
         f"{report['where']}.",
+        *(["", f"Un premier tour a tourné sur le commit du préenregistrement, "
+               f"`{etudes[0]['first_commit']}`. Ses rapports ne portaient pas ce qui manque "
+               f"à la chaîne" + (f" : la boucle absente pour {lacking} s'y serait lue "
+                                 f"comme nulle (D-238)" if lacking else "")
+           + ". Le second tour le porte, et redonne le premier chiffre pour chiffre : "
+             f"`reports/{FIRST_ROUND}/` le garde, et le rendu refuse de tourner si un "
+             f"seul chiffre diffère."]
+           if etudes[0].get("first_commit") else []),
         "",
         "## Le cadre",
         "",
@@ -334,7 +422,8 @@ def render(etudes: list[dict[str, Any]]) -> str:
         lacks = {}
         for search in r["searches"]:
             for name, why in search["indices"]["absent"].items():
-                lacks.setdefault(f"{name} : {why}", []).append(search["persistence_label"])
+                lacks.setdefault(f"{name} : {compact(why)}", []).append(
+                    search["persistence_label"])
         if lacks:
             out += ["", "**Ce qui manque à la chaîne**, pour le paquet le plus proche : "
                         "absent, et non nul.", ""]
