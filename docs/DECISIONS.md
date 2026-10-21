@@ -17249,3 +17249,35 @@ que ce soit vérifié sur le Mac : `pytest tests/test_donnees.py` l'y dira. Le p
 peut aussi confirmer la correction elle-même, en retirant les deux fichiers de `data/raw/`
 puis en les relançant par `impots data fetch`, sans `SSL_CERT_FILE`. `make ci-deps` n'a
 pas été rejoué : la déclaration de `certifi` est tenue par `test_dependances`.
+
+## D-233 — La phase 10 ouverte : rendre posable la question de la dette
+
+**Le fait.** Le 2026-10-20, le propriétaire a demandé comment continuer le développement
+pour se rapprocher de l'objectif. Quatre directions lui ont été proposées : rendre la
+question posable ; mettre les entrepreneurs et le capital dans la population ; fiabiliser
+la dette, par l'encours de l'AFT et la durée de l'effet macro ; tester chaque canal sur le
+passé. Il a choisi la première : « ok, commence par le point 1 ». `docs/PHASE10_SPEC.md`
+l'écrit.
+
+**Pourquoi celle-ci d'abord.** La phase 9 a construit une machine qui répond, et qu'on ne
+peut pas interroger. L'explorateur de D-224 n'a ni commande ni page, et son seul calcul
+réel est passé par un script jamais commité. La commande annuelle ne porte ni le
+comportement ni la boucle. Les trois autres directions changent ce que la machine sait.
+Celle-ci permet de lui poser la question du propriétaire, et donc de voir où elle casse.
+
+**Quatre choix de la spec, faits ici.** Pas de `POST` pour l'explorateur : une recherche
+coûte deux passes de population par paquet, de deux à quatre minutes chacune. La commande
+`impots exploration` écrit un rapport, l'API le lit et la page l'affiche, comme le chemin
+annuel (D-216). Un seul chiffrage : l'explorateur passe par les hypothèses et par la passe
+de `/predictif/simulate`, et un test tient l'égalité de leurs écarts. La persistance suit
+D-230 : non nommée au-delà de trois ans, deux recherches côte à côte, tirées des mêmes
+passes. L'étude de M4 est préenregistrée : ses requêtes et son pronostic sont commités
+avant toute passe.
+
+**Ce qui ne change pas.** Aucun canal, aucune source, aucune règle de la phase 9. Les
+entrepreneurs et le capital restent le point 2 de la feuille de route, et l'IS reste hors
+de la chaîne. Rien n'est publié.
+
+**Les tests.** Aucun : cette entrée n'ajoute que la spec.
+
+**Ce qui reste.** M1 à M4, au §7 de la spec.
