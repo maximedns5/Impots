@@ -51,7 +51,8 @@ def test_every_mapped_instrument_has_a_published_variant():
 
 
 def test_an_allegement_routes_to_the_targeted_variant():
-    """Phase 3's whole allègements work moves these knobs.
+    """Phase 3's whole allègements work moves these knobs, on the law before the 2026
+    refonte, when the réduction générale fell from 1 to 1,6 SMIC.
 
     Routed to the uniform variant it would have understated employment by 39 % at three
     years. The deltas cannot tell the two apart — the population layer reports one
@@ -59,9 +60,37 @@ def test_an_allegement_routes_to_the_targeted_variant():
     """
     for knob in ("allegement_general_plafond", "bandeau_maladie_taux",
                  "bandeau_famille_plafond"):
-        impulse = shocks.build({"employer_contributions": -5.0e9}, year=2026,
+        impulse = shocks.build({"employer_contributions": -5.0e9}, year=2025,
                                knobs=(knob,))
         assert set(impulse.by_instrument) == {"cotisations_employeurs_ciblees"}, knob
+
+
+def test_from_the_2026_refonte_the_ceiling_is_no_low_wage_cut():
+    """D-239. From 2026 the curve is fixed at 3 SMIC and the ceiling is only where its
+    2 % floor stops: raising it relieves wages ABOVE 3 SMIC, the opposite of a low-wage
+    cut. It routes to the uniform variant, the nearest Mésange prints, and the one with a
+    balance row; before 2026, and for any other allègement knob, nothing changes."""
+    for year in (2026, 2027, 2035):
+        impulse = shocks.build({"employer_contributions": -5.0e9}, year=year,
+                               knobs=("allegement_general_plafond",))
+        assert set(impulse.by_instrument) == {"cotisations_employeurs"}, year
+    impulse = shocks.build({"employer_contributions": -5.0e9}, year=2026,
+                           knobs=("allegement_general_plafond", "bandeau_maladie_taux"))
+    assert set(impulse.by_instrument) == {"cotisations_employeurs_ciblees"}
+
+
+def test_the_refonte_year_is_the_trees():
+    """The year the ceiling stops being a low-wage knob is read off openfisca's tree,
+    not trusted: the curve's `t_min` exists from it, the two rates of the old réduction
+    up to the year before. A tree that moved the refonte fails here."""
+    from impots.engine.reforms import PATH_ALLEGEMENT_GENERAL, resolve
+    from impots.engine.system import baseline
+
+    node = resolve(baseline().parameters, PATH_ALLEGEMENT_GENERAL)
+    at = set(node(f"{shocks.REFONTE_YEAR}-01-01")._children)
+    before = set(node(f"{shocks.REFONTE_YEAR - 1}-01-01")._children)
+    assert "t_min" in at and "plafond" in at
+    assert "t_min" not in before and "entreprises_de_50_salaries_et_plus" in before
 
 
 def test_a_uniform_contribution_reform_keeps_the_uniform_variant():
