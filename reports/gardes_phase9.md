@@ -2,9 +2,9 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-21 sur le commit `77d1e236d5fb` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-21 sur le commit `cacd43af7a5a` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
-**166 mutations** : 165 tuées, 1 équivalente avec sa raison, 0 survivante.
+**167 mutations** : 166 tuées, 1 équivalente avec sa raison, 0 survivante.
 
 | Mutation | Garde | Verdict | Étage | Tuée par |
 |---|---|---|---|---|
@@ -174,3 +174,4 @@ Balayé le 2026-10-21 sur le commit `77d1e236d5fb` (D-229). Chaque garde est mut
 | `P10-indices-chemin-propre` | côte à côte, chaque recherche lit la chaîne sur son propre chemin | tuée | ciblé | tests/test_recherche_indices.py::test_side_by_side_each_search_reads_the_chain_off_its_own_path |
 | `P10-indices-le-plus-proche` | les indices sont ceux du paquet le plus proche de la cible | tuée | ciblé | tests/test_recherche_indices.py::test_the_nearest_bundle_carries_its_indices_from_the_passes_already_run[5.0] |
 | `P10-absences-portees` | ce qui manque à la chaîne est porté au rapport, avec sa raison (D-238) | tuée | ciblé | tests/test_recherche_indices.py::test_the_report_says_what_the_chain_lacks |
+| `D239-plafond-uniforme` | depuis la refonte de 2026, le plafond est classé sous la variante uniforme | tuée | ciblé | tests/test_shocks.py::test_from_the_2026_refonte_the_ceiling_is_no_low_wage_cut |

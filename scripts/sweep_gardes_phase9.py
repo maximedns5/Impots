@@ -353,6 +353,12 @@ MANUAL: tuple[Mutation, ...] = (
              "\"absent\": {}, \"closed\": dict(path.closed),",
              ("tests/test_recherche_indices.py",),
              "ce qui manque à la chaîne est porté au rapport, avec sa raison (D-238)"),
+    # D-239: from the 2026 refonte, the ceiling is no low-wage knob.
+    Mutation("D239-plafond-uniforme", "src/impots/macro/shocks.py",
+             "        if not (year is not None and year >= REFONTE_YEAR\n",
+             "        if not (False\n",
+             ("tests/test_shocks.py",),
+             "depuis la refonte de 2026, le plafond est classé sous la variante uniforme"),
 )
 
 #: Mutations no test can kill, each with why. An entry here is a finding of D-229, not

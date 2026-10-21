@@ -1,0 +1,39 @@
+{
+  "name": "complement_allegements",
+  "titre": "Relèvement du plafond de la réduction générale, sous la variante uniforme — complément hors préenregistrement",
+  "question": "Le plafond de la réduction générale reclassé sous la variante uniforme de Mésange, qui a sa ligne de solde (D-239) : un relèvement de 3 SMIC à 3,5, 4,5, 5,5 ou 6,5 SMIC fait-il baisser la dette en 2035, et pour quels θ ? Joué après le résultat de l'étude, hors préenregistrement.",
+  "bounds": [
+    {
+      "knob": "allegement_general_plafond",
+      "low": 3.5,
+      "high": 6.5,
+      "step": 1.0
+    }
+  ],
+  "target": {
+    "year": 2035,
+    "at_most_points": 0.0
+  },
+  "spending": {
+    "rule": "gele_en_volume"
+  },
+  "growth": {
+    "name": "Croissance réelle 1 %, prix 2 %",
+    "real": 0.01,
+    "prices": 0.02
+  },
+  "rate": {
+    "name": "Taux implicite tenu à son niveau de 2025",
+    "kind": "implicite_tenu"
+  },
+  "horizon": 10,
+  "uprating": {
+    "wage": 0.03,
+    "source": "3 % ronds, le rythme du PIB nominal du scénario"
+  },
+  "theta": {
+    "common": 0.5
+  },
+  "behavioural": true,
+  "macro": true
+}

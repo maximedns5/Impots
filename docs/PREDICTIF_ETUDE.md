@@ -233,6 +233,34 @@ Paquet le plus proche de la cible : **× 0,99**.
 | L'État | Dette, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : +0,083 pt |
 | L'État | Charge d'intérêts de la dette supplémentaire, effet macro tenu au niveau de la troisième année | pts du PIB de référence | 2035 : +0,002 pt |
 
+## Complément, hors préenregistrement
+
+Joué après le résultat de l'étude, et hors de son préenregistrement. Chaque complément rejoue à l'identique la requête préenregistrée de son instrument, nom, titre et question exceptés, et ses coûts sont ceux de l'étude, paquet pour paquet : seul le classement du choc macro a changé (D-239).
+
+### Relèvement du plafond de la réduction générale, sous la variante uniforme — complément hors préenregistrement
+
+Le plafond de la réduction générale reclassé sous la variante uniforme de Mésange, qui a sa ligne de solde (D-239) : un relèvement de 3 SMIC à 3,5, 4,5, 5,5 ou 6,5 SMIC fait-il baisser la dette en 2035, et pour quels θ ? Joué après le résultat de l'étude, hors préenregistrement.
+
+Commit `cacd43af7a5a506d476cfcbc454a58439d1e614b`, le 2026-10-21, ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 3,5 SMIC, laisse Δb = +0,47 pt. Elle ne baisse à aucun coin de la boîte θ. Dans l'étude, le même paquet laissait Δb = +0,55 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 3,5 SMIC | 1,78 Md€ | 1,46 Md€ | +0,47 pt | +0,38 pt | [+0,35 pt ; +0,58 pt] | aucun des 16 |
+| 4,5 SMIC | 3,38 Md€ | 2,70 Md€ | +0,89 pt | +0,71 pt | [+0,66 pt ; +1,11 pt] | aucun des 16 |
+| 5,5 SMIC | 4,69 Md€ | 4,06 Md€ | +1,23 pt | +1,06 pt | [+0,91 pt ; +1,54 pt] | aucun des 16 |
+| 6,5 SMIC | 5,65 Md€ | 4,82 Md€ | +1,48 pt | +1,26 pt | [+1,10 pt ; +1,85 pt] | aucun des 16 |
+
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 3,5 SMIC, laisse Δb = +0,13 pt. Elle baisse à 8 coins sur 16, à chaque paquet : ceux où multiplicateur_macro = 1. Dans l'étude, le même paquet laissait Δb = +0,55 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 3,5 SMIC | 1,78 Md€ | 1,46 Md€ | +0,13 pt | +0,11 pt | [−0,27 pt ; +0,54 pt] | 8 sur 16 (multiplicateur_macro = 1) |
+| 4,5 SMIC | 3,38 Md€ | 2,70 Md€ | +0,26 pt | +0,20 pt | [−0,52 pt ; +1,03 pt] | 8 sur 16 (multiplicateur_macro = 1) |
+| 5,5 SMIC | 4,69 Md€ | 4,06 Md€ | +0,35 pt | +0,31 pt | [−0,72 pt ; +1,42 pt] | 8 sur 16 (multiplicateur_macro = 1) |
+| 6,5 SMIC | 5,65 Md€ | 4,82 Md€ | +0,43 pt | +0,36 pt | [−0,86 pt ; +1,72 pt] | 8 sur 16 (multiplicateur_macro = 1) |
+
 ## Ce que l'étude ne dit pas
 
 - Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de θ ; un autre scénario donne une autre réponse.

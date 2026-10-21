@@ -49,6 +49,17 @@ TARGETED_EMPLOYER_KNOBS = (
     "allegement_general_*", "bandeau_maladie_*", "bandeau_famille_*",
 )
 
+#: The 2026 refonte (D-042). From this year the réduction générale is a curve whose « 3 »
+#: is written into openfisca's formula (`t_min`, `t_delta`, `puissance`), and its
+#: `plafond` is only the exit threshold of the 2 % floor. Raising it relieves the wages
+#: between 3 SMIC and the new threshold: the opposite of a cut concentrated on low wages.
+#: It routes to the uniform variant, the nearest Mésange prints — a cut landing 80 % on
+#: qualified workers, where this one lands wholly above 3 SMIC — and the one with a
+#: balance row, where the targeted variant has none (D-238, D-239).
+#: `test_the_refonte_year_is_the_trees` holds the year against the parameter tree.
+REFONTE_YEAR = 2026
+EXIT_THRESHOLD_KNOBS = ("allegement_general_plafond",)
+
 INSTRUMENT_MAP = {
     "ir": "impot_sur_le_revenu",
     "csg_imposable": "csg",
@@ -172,16 +183,19 @@ class Impulse:
         }
 
 
-def targets_low_wages(knobs: tuple[str, ...] | None) -> bool:
-    """Whether this reform's knobs concentrate on low wages.
+def targets_low_wages(knobs: tuple[str, ...] | None, year: int | None = None) -> bool:
+    """Whether this reform's knobs concentrate on low wages, in `year`.
 
     Decided from the KNOBS the reform moved, not from its deltas: the population layer
     reports one employer-contribution total either way, so the delta cannot tell a
-    uniform rate cut from an allègement.
+    uniform rate cut from an allègement. From `REFONTE_YEAR`, the ceiling is no longer
+    one of them (D-239).
     """
     return any(
         fnmatch.fnmatch(knob, pattern)
         for knob in (knobs or ())
+        if not (year is not None and year >= REFONTE_YEAR
+                and knob in EXIT_THRESHOLD_KNOBS)
         for pattern in TARGETED_EMPLOYER_KNOBS
     )
 
@@ -223,7 +237,7 @@ def build(deltas: dict[str, float], *, year: int,
     the reform's own knob names, needed only to tell a targeted employer-contribution
     reform from a uniform one, which the deltas cannot.
     """
-    targeted = targets_low_wages(knobs)
+    targeted = targets_low_wages(knobs, year)
     by_instrument: dict[str, float] = {}
     unmapped: dict[str, float] = {}
     for name, value in deltas.items():
