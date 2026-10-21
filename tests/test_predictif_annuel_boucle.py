@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 from types import SimpleNamespace
 
+import polars as pl
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
@@ -24,7 +25,7 @@ from impots.api.schemas import PredictifReportResponse, ReformSpec
 from impots.dette import reference
 from impots.dette.path import SHIPPED, DebtError
 from impots.dette.scenarios import GrowthScenario, RateScenario
-from impots.population import cli
+from impots.population import aggregate, cli, runner
 from impots.predictif import annuel, chaine, comportement, retroaction
 from impots.predictif.exploration import Priced
 from impots.predictif.theta import Theta
@@ -113,8 +114,9 @@ def test_past_three_years_both_persistences_stand_side_by_side() -> None:
     scenarios are drawn from the same passes, and the report has no path of its own."""
     rapport = _build(horizon=5)
     assert [p.persistence for p in rapport.paths] == list(retroaction.PERSISTENCE_LABELS)
-    with pytest.raises(DebtError, match="aucun n'est le chemin de tête"):
-        rapport.aged  # noqa: B018 - the property refuses
+    for view in ("aged", "frozen"):
+        with pytest.raises(DebtError, match="aucun n'est le chemin de tête"):
+            getattr(rapport, view)
     payload = rapport.payload()
     assert all(row["delta_aged"] is None for row in payload["years"])
     off, held = payload["side_by_side"]
@@ -174,6 +176,18 @@ def test_a_year_without_what_was_asked_of_it_is_refused(missing: str, needle: st
             _build(price=price)
 
 
+def test_behaviour_or_the_loop_without_a_theta_is_refused() -> None:
+    """θ is required, with no default (D-217): the annual path refuses to build without
+    it, before any receipts are read at a θ nobody chose."""
+    prices = annuel.price_years([2026], _whole, basis_for=lambda y: "legislated")
+    with pytest.raises(DebtError, match="sans θ"):
+        annuel.build(START, prices, scenario="hausse", titre="t", source="test",
+                     reference="reconduit", computed="2026-10-21", spending=FROZEN,
+                     growth=GROWTH, rate=HELD, theta=None, uprating=UPRATING,
+                     uprating_note="", reform=REFORM, behavioural=True, macro=True,
+                     macro_store=synthetic_macro_store())
+
+
 def test_one_view_priced_whole_and_the_other_by_its_cost_alone_is_refused() -> None:
     with pytest.raises(DebtError, match="une vue chiffrée en entier"):
         annuel.price_years([2026], lambda y, v: _whole(y, v) if v == "figee" else 5e9,
@@ -221,6 +235,20 @@ def command(monkeypatch, tmp_path) -> dict:
     """The command with the simulator's pass stubbed one seam below, as the explorer's
     tests stub it (`_price_first_year`), and a start that needs no INSEE file."""
     seen: list = []
+    # The mechanical path's pass is stubbed too, on a five-person population: a refusal
+    # the guard sweep removes must fail this test in seconds, not run the real
+    # population (D-236 — it once did, at 7 Go, and the real run beside it was killed).
+    processed = tmp_path / "processed"
+    processed.mkdir()
+    pl.DataFrame({"person_id": [1, 2, 3, 4, 5], "salaire_brut_annuel": [30_000.0] * 5,
+                  "pension_annuelle": [0.0] * 5, "chomage_annuel": [0.0] * 5,
+                  "loyer_mensuel": [500.0] * 5}).write_parquet(
+        processed / "population_2024.parquet")
+    monkeypatch.setattr(cli, "PROCESSED", processed)
+    monkeypatch.setattr(runner, "run", lambda pop, **kw: SimpleNamespace(
+        households=SimpleNamespace(cost=5e9)))
+    monkeypatch.setattr(aggregate, "aggregate",
+                        lambda households: SimpleNamespace(reform_cost=households.cost))
 
     def stub(request, *, uprating, macro=False, view="vieillie"):
         seen.append((request.year, view, request.behavioural, macro))
