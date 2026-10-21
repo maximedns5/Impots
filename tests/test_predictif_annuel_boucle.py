@@ -1,0 +1,324 @@
+"""Phase 10 M3 — behaviour and the loop in the annual path, year by year (PHASE10_SPEC §4).
+
+`impots predictif` priced every year mechanically only (D-216). With `--behavioural` and
+`--macro` each year's pass carries what the channels read and the reform's impulse, and
+the chain reads one impulse per year, superposed, with no carry convention. What is held
+here, without data: the receipts at θ per year and the impulses per year against an
+independent construction, both persistence scenarios side by side past three years, the
+refusals of a year without what was asked of it, the report the API reads, the command's
+own refusals, and its first year equal to the simulator's.
+"""
+
+from __future__ import annotations
+
+import json
+from types import SimpleNamespace
+
+import polars as pl
+import pytest
+from fastapi.testclient import TestClient
+from pydantic import ValidationError
+
+from exploration_cases import households
+from impots.api import main
+from impots.api.schemas import PredictifReportResponse, ReformSpec
+from impots.dette import reference
+from impots.dette.path import SHIPPED, DebtError
+from impots.dette.scenarios import GrowthScenario, RateScenario
+from impots.population import aggregate, cli, runner
+from impots.predictif import annuel, chaine, comportement, retroaction
+from impots.predictif.exploration import Priced
+from impots.predictif.theta import Theta
+from macro_cases import synthetic_macro_store
+
+START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
+                        spending_ratio=0.55, debt_ratio=1.15, implicit_rate=0.019)
+GROWTH = GrowthScenario("Croissance réelle 1 %, prix 2 %", 0.01, 0.02)
+HELD = RateScenario("Taux implicite tenu à son niveau de 2025", "implicite_tenu")
+FROZEN = SHIPPED["gele_en_volume"]
+HALF = Theta(common=0.5)
+UPRATING = annuel.uprating_for(GROWTH, wage=0.03, source="3 % ronds", base_year=2024)
+#: A top-rate rise: the ETI rows claim `ir_bareme`, so the θ box moves.
+REFORM = ReformSpec.model_validate({"ir_bareme": [
+    {"threshold": 0, "rate": 0.00}, {"threshold": 11497, "rate": 0.11},
+    {"threshold": 29315, "rate": 0.30}, {"threshold": 83823, "rate": 0.41},
+    {"threshold": 180294, "rate": 0.50}]})
+
+
+def _cost(year: int, view: str) -> float:
+    """A cost that grows a billion a year — a constant cost would hide a carried year."""
+    return (5e9 + 1e9 * (year - 2026)) * (1.0 if view == "vieillie" else 0.9)
+
+
+def _whole(year: int, view: str, *, behaviour: bool = True, impulse: bool = True) -> Priced:
+    cost = _cost(year, view)
+    return Priced(cost=cost, inputs=households() if behaviour else None,
+                  impulse={"impot_sur_le_revenu": cost} if impulse else None)
+
+
+def _build(horizon: int = 3, *, price=_whole, behavioural: bool = True, macro: bool = True,
+           persistence: str | None = None, spending=FROZEN) -> annuel.Rapport:
+    years = list(range(2026, 2026 + horizon))
+    prices = annuel.price_years(years, price, basis_for=lambda y: "legislated")
+    return annuel.build(START, prices, scenario="hausse", titre="Hausse du taux marginal",
+                        source="test", reference="reconduit", computed="2026-10-21",
+                        spending=spending, growth=GROWTH, rate=HELD, theta=HALF,
+                        uprating=UPRATING, uprating_note="", reform=REFORM,
+                        behavioural=behavioural, macro=macro, persistence=persistence,
+                        macro_store=synthetic_macro_store())
+
+
+# --------------------------------------------------------------------------- #
+# the path: every year its own receipts at θ and its own impulse
+# --------------------------------------------------------------------------- #
+def test_every_year_reads_its_own_receipts_at_theta_and_its_own_impulse() -> None:
+    """D-042: against an independent construction. Each year's receipts at θ are what
+    `comportement.evaluate` gives on that year's pass, each year's impulse is that year's,
+    and the chain reads them all with no carry — the path is the chain's on exactly
+    those inputs, in both views."""
+    rapport = _build()
+    for view, path in (("vieillie", rapport.aged), ("figee", rapport.frozen)):
+        costs = chaine.ReformCosts(
+            by_year={y: _cost(y, view) for y in (2026, 2027, 2028)},
+            behavioural={y: comportement.evaluate(HALF, mechanical=-_cost(y, view),
+                                                  reform=REFORM, **households())
+                         for y in (2026, 2027, 2028)},
+            impulses={y: {"impot_sur_le_revenu": _cost(y, view)}
+                      for y in (2026, 2027, 2028)})
+        direct = chaine.run(START, horizon=3, costs=costs, spending=FROZEN, growth=GROWTH,
+                            rate=HELD, theta=HALF, macro_store=synthetic_macro_store())
+        assert path.delta == pytest.approx(direct.delta, rel=1e-12), view
+        assert path.priced_years == (2026, 2027, 2028) and path.carried_years == ()
+        assert path.theta_applied and path.gdp_gap is not None
+        assert chaine.CARRY_LABEL not in path.conventions
+        assert retroaction.LINEAR in path.conventions
+
+
+def test_a_cost_that_changes_is_superposed_not_carried() -> None:
+    """The fast version carries its first year as a share of GDP. The annual path prices
+    every year: with a cost that grows, its third year is not the fast version's."""
+    rapport = _build()
+    fast = chaine.run(START, horizon=3, costs=chaine.ReformCosts(
+        by_year={2026: _cost(2026, "vieillie")}, carry=chaine.CARRY,
+        behavioural={2026: comportement.evaluate(
+            HALF, mechanical=-_cost(2026, "vieillie"), reform=REFORM, **households())},
+        impulses={2026: {"impot_sur_le_revenu": _cost(2026, "vieillie")}}),
+        spending=FROZEN, growth=GROWTH, rate=HELD, theta=HALF,
+        macro_store=synthetic_macro_store())
+    assert rapport.aged.delta[0] == pytest.approx(fast.delta[0], rel=1e-12)
+    assert abs(rapport.aged.delta[2] - fast.delta[2]) > 1e-5
+
+
+def test_past_three_years_both_persistences_stand_side_by_side() -> None:
+    """D-230 for the annual path: with the loop past three years and none named, both
+    scenarios are drawn from the same passes, and the report has no path of its own."""
+    rapport = _build(horizon=5)
+    assert [p.persistence for p in rapport.paths] == list(retroaction.PERSISTENCE_LABELS)
+    for view in ("aged", "frozen"):
+        with pytest.raises(DebtError, match="aucun n'est le chemin de tête"):
+            getattr(rapport, view)
+    payload = rapport.payload()
+    assert all(row["delta_aged"] is None for row in payload["years"])
+    off, held = payload["side_by_side"]
+    assert off["label"] == retroaction.PERSISTENCE_LABELS["eteint"]
+    assert off["years"][:3] == held["years"][:3]
+    assert off["years"][4]["delta_aged"] != held["years"][4]["delta_aged"]
+    assert payload["persistence"] is None and payload["macro"] is True
+    PredictifReportResponse.model_validate(payload)
+
+
+@pytest.mark.parametrize("persistence, horizon, spending, count", [
+    ("tenu", 5, FROZEN, 1), (None, 3, FROZEN, 1), (None, 5, SHIPPED["part_pib_constante"], 1),
+])
+def test_one_path_where_the_simulator_draws_one(persistence, horizon, spending,
+                                               count) -> None:
+    rapport = _build(horizon=horizon, persistence=persistence, spending=spending)
+    assert len(rapport.paths) == count
+    payload = rapport.payload()
+    assert payload["side_by_side"] == [] and payload["years"][0]["delta_aged"] is not None
+    PredictifReportResponse.model_validate(payload)
+
+
+# --------------------------------------------------------------------------- #
+# guard 9: a year without what was asked of it is refused, never read as zero
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("missing, needle", [
+    ("impulse", "entrées des canaux ou impulsion"),
+    ("inputs", "entrées des canaux ou impulsion"),
+    ("cost only", "n'ont que leur coût"),
+])
+def test_a_year_without_what_was_asked_of_it_is_refused(missing: str, needle: str) -> None:
+    """GUARD 9. The second year's pass without its impulse, or its channel inputs, or with
+    its cost alone: read as zero it would be a year without a shock, or without
+    behaviour, drawn like the others."""
+    def price(year: int, view: str):
+        if year != 2027:
+            return _whole(year, view)
+        if missing == "cost only":
+            return _cost(year, view)
+        return _whole(year, view, behaviour=missing != "inputs",
+                      impulse=missing != "impulse")
+
+    with pytest.raises(DebtError, match=needle):
+        if missing == "cost only":
+            prices = [annuel.YearPrice(year=y, basis="legislated",
+                                       frozen_eur=_cost(y, "figee"),
+                                       aged_eur=_cost(y, "vieillie"),
+                                       passes=(None if y == 2027 else
+                                               {v: _whole(y, v) for v in annuel.VIEWS}))
+                      for y in (2026, 2027, 2028)]
+            annuel.build(START, prices, scenario="hausse", titre="t", source="test",
+                         reference="reconduit", computed="2026-10-21", spending=FROZEN,
+                         growth=GROWTH, rate=HELD, theta=HALF, uprating=UPRATING,
+                         uprating_note="", reform=REFORM, behavioural=True, macro=True,
+                         macro_store=synthetic_macro_store())
+        else:
+            _build(price=price)
+
+
+def test_behaviour_or_the_loop_without_a_theta_is_refused() -> None:
+    """θ is required, with no default (D-217): the annual path refuses to build without
+    it, before any receipts are read at a θ nobody chose."""
+    prices = annuel.price_years([2026], _whole, basis_for=lambda y: "legislated")
+    with pytest.raises(DebtError, match="sans θ"):
+        annuel.build(START, prices, scenario="hausse", titre="t", source="test",
+                     reference="reconduit", computed="2026-10-21", spending=FROZEN,
+                     growth=GROWTH, rate=HELD, theta=None, uprating=UPRATING,
+                     uprating_note="", reform=REFORM, behavioural=True, macro=True,
+                     macro_store=synthetic_macro_store())
+
+
+def test_one_view_priced_whole_and_the_other_by_its_cost_alone_is_refused() -> None:
+    with pytest.raises(DebtError, match="une vue chiffrée en entier"):
+        annuel.price_years([2026], lambda y, v: _whole(y, v) if v == "figee" else 5e9,
+                           basis_for=lambda y: "legislated")
+
+
+# --------------------------------------------------------------------------- #
+# the report the API reads
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("how, needle", [
+    ("own path too", "trajectoire en propre ET des scénarios"),
+    ("one scenario", "les deux persistances, chacune une fois"),
+    ("short", "ne couvre pas toutes les années"),
+    ("no path", "sans trajectoire pour certaines années"),
+])
+def test_a_report_a_reader_would_misread_is_refused(how: str, needle: str) -> None:
+    payload = _build(horizon=5).payload()
+    if how == "own path too":
+        payload["years"][0].update(reform_aged=1.0, delta_aged=0.0, reform_frozen=1.0,
+                                   delta_frozen=0.0)
+    elif how == "one scenario":
+        payload["side_by_side"].pop()
+    elif how == "short":
+        payload["side_by_side"][1]["years"].pop()
+    else:
+        payload["side_by_side"] = []
+    with pytest.raises(ValidationError, match=needle):
+        PredictifReportResponse.model_validate(payload)
+
+
+# --------------------------------------------------------------------------- #
+# the command, through the simulator's own pass
+# --------------------------------------------------------------------------- #
+ARGS = ["predictif", "gel_bareme", "--reference", "reconduit",
+        "--spending", "gele_en_volume",
+        "--growth-name", "Croissance réelle 1 %, prix 2 %", "--real", "0.01",
+        "--prices", "0.02",
+        "--rate-name", "Taux implicite tenu à son niveau de 2025",
+        "--rate-kind", "implicite_tenu", "--theta", "0.5",
+        "--wage", "0.03", "--hypothesis-source", "3 % ronds"]
+
+
+@pytest.fixture
+def command(monkeypatch, tmp_path) -> dict:
+    """The command with the simulator's pass stubbed one seam below, as the explorer's
+    tests stub it (`_price_first_year`), and a start that needs no INSEE file."""
+    seen: list = []
+    # The mechanical path's pass is stubbed too, on a five-person population: a refusal
+    # the guard sweep removes must fail this test in seconds, not run the real
+    # population (D-236 — it once did, at 7 Go, and the real run beside it was killed).
+    processed = tmp_path / "processed"
+    processed.mkdir()
+    pl.DataFrame({"person_id": [1, 2, 3, 4, 5], "salaire_brut_annuel": [30_000.0] * 5,
+                  "pension_annuelle": [0.0] * 5, "chomage_annuel": [0.0] * 5,
+                  "loyer_mensuel": [500.0] * 5}).write_parquet(
+        processed / "population_2024.parquet")
+    monkeypatch.setattr(cli, "PROCESSED", processed)
+    monkeypatch.setattr(runner, "run", lambda pop, **kw: SimpleNamespace(
+        households=SimpleNamespace(cost=5e9)))
+    monkeypatch.setattr(aggregate, "aggregate",
+                        lambda households: SimpleNamespace(reform_cost=households.cost))
+
+    def stub(request, *, uprating, macro=False, view="vieillie"):
+        seen.append((request.year, view, request.behavioural, macro))
+        cost = _cost(request.year, view)
+        return SimpleNamespace(cost=cost, view=view, note="", deciles=[],
+                               inputs=households() if request.behavioural else None,
+                               impulse={"impot_sur_le_revenu": cost} if macro else None,
+                               uncovered={})
+
+    monkeypatch.setattr(main, "_price_first_year", stub)
+    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+
+    def launch(*extra: str, base: list[str] = ARGS) -> tuple[int, dict | None]:
+        code = cli.main([*base, *extra, "--out-dir", str(tmp_path)])
+        out = tmp_path / "predictif_gel_bareme.json"
+        return code, json.loads(out.read_text(encoding="utf-8")) if out.exists() else None
+
+    return {"seen": seen, "launch": launch, "out": tmp_path, "monkeypatch": monkeypatch}
+
+
+def test_the_command_prices_every_year_through_the_simulators_pass(command) -> None:
+    """Every year and both views through `_price_first_year`, past the API's window: the
+    years 2027 to 2029 are not ones a request may ask for (MAX_YEAR), and the command
+    prices them anyway, each with its basis, as it always has (D-216)."""
+    code, report = command["launch"]("--horizon", "4", "--behavioural", "--macro")
+    assert code == 0
+    assert sorted(command["seen"]) == sorted(
+        (y, v, True, True) for y in (2026, 2027, 2028, 2029) for v in ("vieillie", "figee"))
+    assert [p["persistence"] for p in report["side_by_side"]] == ["eteint", "tenu"]
+    assert report["behavioural"] and report["macro"] and report["theta_applied"]
+    PredictifReportResponse.model_validate(report)
+
+
+@pytest.mark.parametrize("base, extra, needle", [
+    ([a if a != "reconduit" else "indexe" for a in ARGS], ("--macro",),
+     "contre la référence « indexe »"),
+    (ARGS, ("--behavioural", "--sample", "8000"), "chiffreraient les années"),
+    (ARGS, ("--persistence", "tenu"), "sans boucle appliquée"),
+])
+def test_what_the_whole_pass_cannot_honour_is_refused_before_any_pass(
+        command, capsys, base, extra, needle) -> None:
+    """Against « indexe » the cost is a difference of two passes, which neither the
+    channels' inputs nor the impulse are built for; another sample would price the years
+    on another population than the simulator's; and a persistence without the loop would
+    be ignored. Each refused before the first pass, nothing written."""
+    code, report = command["launch"]("--horizon", "3", *extra, base=base)
+    assert code == 1 and report is None and command["seen"] == []
+    assert needle in capsys.readouterr().err
+
+
+def test_the_first_year_is_the_simulators(command) -> None:
+    """ONE PRICING PATH, again. The same reform, the same hypotheses, the same stubbed
+    pass: the annual path's first year is the debt gap `/predictif/simulate` returns for
+    its first year, behaviour and loop included. The years after differ — one priced,
+    the other carried — and that is the point of the annual path."""
+    code, report = command["launch"]("--horizon", "3", "--behavioural", "--macro")
+    assert code == 0
+    scenario = json.loads((cli.Path(cli.__file__).resolve().parents[3] / "scenarios"
+                           / "gel_bareme.json").read_text(encoding="utf-8"))
+    with TestClient(main.app) as client:
+        response = client.post("/predictif/simulate", json={
+            "reform": scenario["reform"], "spending": {"rule": "gele_en_volume"},
+            "growth": {"name": "Croissance réelle 1 %, prix 2 %", "real": 0.01,
+                       "prices": 0.02},
+            "rate": {"name": "Taux implicite tenu à son niveau de 2025",
+                     "kind": "implicite_tenu"},
+            "horizon": 3, "theta": {"common": 0.5},
+            "uprating": {"wage": 0.03, "source": "3 % ronds"},
+            "behavioural": True, "macro": True})
+    assert response.status_code == 200, response.text
+    assert report["years"][0]["delta_aged"] == pytest.approx(response.json()["delta"][0],
+                                                             rel=1e-12)

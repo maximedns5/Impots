@@ -17438,3 +17438,103 @@ balayage : 221 réussis. `ruff` passe sur `src`, `tests` et `scripts`.
 **Ce qui reste.** M3 : le comportement et la boucle dans `impots predictif`. M4 : l'étude
 préenregistrée. Le sélecteur nomme les rapports par leur nom de fichier, pas par leur
 titre, et la page n'en montre qu'un à la fois.
+
+## D-236 — Phase 10, M3 : le comportement et la boucle dans `impots predictif`
+
+**Le fait.** Le chemin annuel chiffrait chaque année, en deux vues, mais seulement le
+mécanique (D-216) : ni comportement ni boucle PIB → recettes, et θ listé sans être lu.
+`impots predictif` prend désormais `--behavioural`, `--macro` et `--persistence`.
+
+**Ce que la spec demandait de lire d'abord.** §4 prévoyait de vérifier si les entrées des
+canaux et l'impulsion tournent sur le niveau « full » de la commande, ou seulement sur le
+niveau rapide. La question ne se pose pas : la passe « rapide » de l'API et celle de la
+commande sont la même, le niveau `full` sur 20 000 ménages de la population de 2024. La
+commande passe donc par la passe du simulateur, `_price_first_year`, pour chaque année et
+chaque vue. La requête de l'API borne l'année à 2026 (`MAX_YEAR`), la fenêtre qu'elle
+sert, quand la commande chiffre jusqu'en 2035 avec le droit de chaque année tel
+qu'openfisca le porte, chaque année nommée par sa base (D-216). Un `YearPass` mène la même
+passe sans cette borne.
+
+**Ce qui change.** Chaque année porte sa passe entière : le coût, les entrées des canaux
+et l'impulsion. Les recettes à θ et leur boîte sont évaluées année par année, et la boucle
+lit une impulsion par année : les chocs de Mésange superposés, sans convention de report.
+Au-delà de trois ans, avec la boucle et sans persistance nommée, les deux scénarios sont
+tracés côte à côte depuis les mêmes passes, et le rapport n'a pas de chemin en propre
+(D-230). Une année qui n'a pas ce qui lui était demandé est refusée : sans son impulsion,
+sans les entrées des canaux, ou avec son coût seul, elle se lirait comme une année sans
+choc ou sans comportement. Trois refus tombent avant toute passe. La référence « indexe »,
+d'abord : son coût est la différence de deux passes, et ni les entrées des canaux ni
+l'impulsion ne se soustraient. Puis un autre échantillon ou millésime que ceux du
+simulateur, et une persistance sans boucle. Sans ces options, le chemin mécanique ne
+change pas.
+
+**Le rapport.** Il dit s'il porte le comportement et la boucle. Côte à côte, chaque année
+garde son coût et la référence, et chaque scénario ses écarts dans les deux vues et ses
+conventions propres. Le schéma de l'API refuse quatre rapports : un chemin en propre à
+côté des scénarios, un seul des deux scénarios, un scénario qui ne couvre pas toutes les
+années, et des années sans chemin.
+
+**Un bug de D-228, trouvé en chemin.** L'instantané de l'exemple au dossier était commité
+sous `reports/predictif_exemple.json`. Or `GET /predictif` liste tout `predictif_*.json` :
+il listait « exemple », que le schéma des rapports annuels refuse, d'où un 500. Et la page
+n'ouvrait que le premier nom de la liste, « exemple » dans l'ordre alphabétique : depuis
+D-228, elle n'aurait montré aucun rapport annuel, sans un mot. L'instantané est renommé
+`reports/exemple_predictif.json`, et sa page se rend à l'identique. Une garde exige que
+chaque nom que liste `GET /predictif` se relise ; elle a été vue échouer avec l'ancien
+nom. La page dessine désormais chaque rapport listé, et un rapport refusé y est dit refusé
+à sa place, sans cacher les autres.
+
+**Le calcul réel.** La CSG déductible sur les revenus d'activité passe de 6,8 % à 6,3 %
+de 2026 à 2029, le scénario `scenarios/csg_deductible_demi_point.json`, avec le
+comportement et la boucle à θ = ½ partout, contre la référence reconduite : dépenses
+gelées en volume, croissance réelle de 1 % et prix de 2 %, taux implicite tenu, salaires à
+3 %. Huit passes, quatorze minutes, 6,1 Go. Le rapport est commité sous
+`reports/predictif_csg_deductible_demi_point.json`, et sa garde le relit. Le coût
+mécanique de 2026 est, dans les deux vues et à l'euro près, celui que l'exploration donne
+pour le même paquet (D-235) : 4,41 Md€ vieilli, 4,17 Md€ figé. Vieilli, il vaut ensuite
+4,50, 4,64 et 4,75 Md€ : il suit les salaires. Figé, il reste à 4,16 Md€. L'écart de
+dette, vieilli, vaut +0,037, +0,021 et +0,061 point de PIB de 2026 à 2028 dans les deux
+scénarios. En 2029, il vaut +0,354 point si l'effet macro s'éteint et +0,111 point s'il
+est tenu ; figé, +0,330 et +0,098. Le PIB de la réforme dépasse celui de la référence de
+0,06 %, puis de 0,13 % les deux années suivantes. En 2029, éteint, il y revient : la dette
+n'est plus rapportée à un PIB plus haut, soit environ 0,16 point à lui seul, et la
+rétroaction sur les recettes s'éteint avec lui. À θ = ½, ce demi-point n'allège la dette
+dans aucune année et dans aucune vue. Ce n'est pas le verdict de la question : une seule
+valeur de θ, quatre ans, une seule baisse. L'étude est M4.
+
+**Les tests.** Vingt cas dans `tests/test_predictif_annuel_boucle.py`, sans données.
+Les recettes à θ et l'impulsion de chaque année, contre une construction indépendante,
+dans les deux vues. Un coût qui croît, superposé et non reporté. Les deux persistances
+côte à côte au-delà de trois ans, et un seul chemin là où le simulateur en trace un (trois
+cas). L'année sans impulsion, sans entrées ou avec son coût seul, refusée, et la vue
+chiffrée à moitié. Le comportement ou la boucle sans θ, refusés : aucun défaut (D-217).
+Les quatre rapports refusés par le schéma. La commande qui chiffre
+chaque année par la passe du simulateur, au-delà de la fenêtre de l'API. Ses trois refus
+avant toute passe. Et sa première année égale à celle de `/predictif/simulate`, au
+chiffre près. La garde de la liste dans `tests/test_cli_predictif.py`. Trois contrôles de
+la page, vus échouer sur la page d'avant : chaque rapport dessiné, le rapport refusé qui
+n'en cache aucun, les deux persistances côte à côte ; la page en compte 59. Le module
+`annuel` était déjà balayé tout entier. Le balayage reçoit en plus le validateur du
+rapport, les refus de la commande et trois mutations écrites à la main pour la page.
+`--missing` a muté les seize gardes nouvelles. Deux ont survécu, et chacune a reçu son
+test : `Rapport.frozen` refusait côte à côte comme `Rapport.aged`, et `build` refusait le
+comportement sans θ, sans qu'aucun test le vérifie. Rebalayées, toutes deux tombent : 150
+mutations, 149 tuées, une équivalente, aucune survivante.
+
+**Une trouvaille du balayage, sur la mémoire.** Le premier calcul réel a été tué par le
+système au cinquième passage, faute de mémoire. Le balayage tournait à côté, et une de
+ses mutations retirait un refus de la commande : le test, faute d'une passe mécanique
+simulée, faisait alors tourner la vraie population, à 7 Go. Le test est désormais
+hermétique. Une mesure seule a écarté une fuite : le chemin annuel monte à 6,1 Go dès la
+première passe, puis reste à 6,2 Go au sixième passage, de 90 à 130 s par passe. Un
+système réformé ne pèse que 18 Mo dans le cache des réformes. Dix ans tiennent donc dans
+16 Go, à condition de ne rien lancer de lourd à côté.
+
+Avec les tests du chemin annuel, de sa boucle, de la commande et de l'API prédictives,
+de la recherche, des explorations, de l'évaluateur, de l'explorateur, de la rétroaction,
+de l'exemple, des dépendances, de la charte et du balayage : 274 réussis. Ceux des
+scénarios et de la page, pour le scénario ajouté : 207 réussis. `ruff` passe sur `src`,
+`tests` et `scripts`.
+
+**Ce qui reste.** M4 : l'étude préenregistrée. Le chemin annuel ne porte pas les indices
+de §7, et contre la référence « indexe », le comportement et la boucle restent refusés.

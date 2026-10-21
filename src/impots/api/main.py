@@ -23,6 +23,7 @@ import os
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -63,6 +64,7 @@ from impots.api.schemas import (
     PredictifSlice,
     PredictifStart,
     ReconciliationLine,
+    ReformSpec,
     ResultRows,
     ScenarioDetail,
     ScenarioListResponse,
@@ -1172,6 +1174,21 @@ def _first_year_note(year: int, uprating: Any) -> str:
               "commande `impots predictif` (D-216, D-226) ; la vue « figée », que la "
               "commande donne à côté, n'est pas chiffrée ici. "
             + uprating_module.caveat(year, uprating))
+
+
+@dataclass(frozen=True)
+class YearPass:
+    """One year for `_price_first_year`, past the window the API serves (`MAX_YEAR`).
+
+    `impots predictif` prices 2026 to 2035 with each year's law as openfisca carries it,
+    each year labelled by its basis (D-216). With behaviour or the loop it does so through
+    this seam, the simulator's own: the same pass, the same channel inputs, the same
+    impulse, year after year (PHASE10_SPEC §4, D-236). The request schema's year bound
+    is the API's, not the engine's."""
+
+    reform: ReformSpec
+    year: int
+    behavioural: bool = False
 
 
 def _frozen_year_note(year: int) -> str:

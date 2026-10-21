@@ -1,6 +1,21 @@
-# State of the project, and the directions open — 2026-10-21 (Phase 10, M2 done)
+# State of the project, and the directions open — 2026-10-21 (Phase 10, M3 done)
 
-The second 2026-10-21 update adds D-235, Phase 10's M2: the explorations are read back.
+The third 2026-10-21 update adds D-236, Phase 10's M3: `impots predictif` carries
+behaviour and the loop (`--behavioural`, `--macro`, `--persistence`). Each year is priced
+whole through the simulator's own pass, `_price_first_year`, in both views: its cost, the
+channels' inputs and its impulse, so receipts at θ are read year by year and the loop
+superposes one Mésange impulse per year. Past three years with no persistence named, both
+scenarios stand side by side and the report has no path of its own (D-230). The command
+refuses before any pass the « indexe » reference, another sample or vintage than the
+simulator's, and a persistence without the loop. A D-228 bug found on the way: the
+example snapshot sat under `predictif_*.json`, so `GET /predictif` listed a report its
+schema refused and the page, which opened only the first name, showed no annual report;
+it is renamed, and the page now draws every report listed. A real run, half a point of
+deductible CSG from 2026 to 2029 at θ = ½: 4.41 Md€ in 2026 (the exploration's figure,
+to the euro), and the debt gap reaches +0.354 point in 2029 if the macro effect dies,
++0.111 if it holds. Eight passes, fourteen minutes, 6.1 GB. The sweep holds 150
+mutations, 149 killed, one equivalent.
+The second 2026-10-21 update added D-235, Phase 10's M2: the explorations are read back.
 `GET /explorations` and `GET /explorations/{name}` serve the reports, read only, through
 `ExplorationReport`, which refuses eight reports a reader would misread (a candidate
 without its θ verdict, « none » without the closest bundle, a bundle missing, no commit…)
@@ -70,7 +85,7 @@ behaviour −0.01. Persistence weighs more than everything else, and at the corn
 the multiplier is one IMK standard deviation above Mésange's centre the held feedback
 repays the cut. `scripts/write_predictif_exemple.py` prices the first year once
 (`--price`, three minutes, refused on an uncommitted `src/`), runs the chain under each
-scenario and at every corner, and renders the page from `reports/predictif_exemple.json`
+scenario and at every corner, and renders the page from `reports/exemple_predictif.json`
 alone; the tests hold the page to the file everywhere and the file to the chain where the
 accounts and Mésange are readable.
 The tenth 2026-10-19 update added D-227, M6's third step: §9's coherence and the
@@ -236,8 +251,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **236 decision
-entries**, D-000 to D-235, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **237 decision
+entries**, D-000 to D-236, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -598,13 +613,13 @@ download list.
    the transfers and the IS closed. The two
    choices M3 left to the owner are made (D-230): both persistence scenarios side by
    side when none is named, and the `multiplier_by_instrument` row reopened, its bound
-   kept as the project's choice. `impots predictif` does not carry the loop yet. A full ten-year
+   kept as the project's choice. `impots predictif` carries behaviour and the loop (D-236). A full ten-year
    run is about an hour on the owner's machine, and takes `--theta`. Still open from M0: the HCFP note (its host
    refuses this container), and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
-3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 and M2 are done (D-234, D-235). Next, M3,
-   behaviour and the loop in `impots predictif`; then M4, the preregistered study
-   « quelles baisses d'impôt font baisser la dette en 2035, et pour quels θ ? ».
+3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 to M3 are done (D-234 to D-236). Next, M4,
+   the preregistered study « quelles baisses d'impôt font baisser la dette en 2035, et
+   pour quels θ ? ».
 4. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each

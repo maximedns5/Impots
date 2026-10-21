@@ -123,3 +123,16 @@ def test_the_report_is_listed_and_served(served) -> None:
 def test_an_unknown_report_is_a_404_and_a_path_is_refused(served) -> None:
     assert served.get("/predictif/inconnu").status_code == 404
     assert served.get("/predictif/..%2Fsecret").status_code in (404, 422)
+
+
+def test_every_name_the_list_gives_reads_back_from_the_committed_reports() -> None:
+    """GUARD (D-236). `GET /predictif` lists every `predictif_*.json` under `reports/`, and
+    the page opens the first. The snapshot of D-228's worked example was committed as
+    `reports/predictif_exemple.json`: listed as « exemple », first in the order, a 500 on
+    reading — and the page, finding it unreadable, drew no annual report at all, without a
+    word. Every name the list gives must read."""
+    with TestClient(api_main.app, raise_server_exceptions=False) as client:
+        names = client.get("/predictif").json()["rapports"]
+        for name in names:
+            response = client.get(f"/predictif/{name}")
+            assert response.status_code == 200, (name, response.text[:200])

@@ -1,0 +1,9 @@
+{
+  "name": "csg_deductible_demi_point",
+  "year": 2026,
+  "created": "2026-10-21",
+  "source": "essai de la phase 10 M3 : la CSG déductible sur les revenus d'activité de 6,8 % à 6,3 %",
+  "note": "",
+  "tags": [],
+  "reform": {"csg_activite_deductible": 0.063}
+}
