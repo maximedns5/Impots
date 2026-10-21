@@ -88,7 +88,7 @@ def test_the_committed_page_is_what_the_script_renders(script) -> None:
     """GUARD (D-228). A page regenerated from the committed reports and requests is the
     committed page, byte for byte: a figure edited by hand, or a report re-run without
     the page, fails here."""
-    assert script.OUT.read_text(encoding="utf-8") == script.render(script.load())
+    assert script.OUT.read_text(encoding="utf-8") == script.render(*script.study())
 
 
 def test_the_committed_study_is_preregistered(script) -> None:
@@ -278,3 +278,71 @@ def test_the_answer_says_for_which_theta_the_debt_falls(script, tmp_path) -> Non
     assert "ne baisse à aucun coin" in script.verdict(eteint, instrument, 0.0)
     said = script.verdict(tenu, instrument, 0.0)
     assert "à chaque paquet" in said and "multiplicateur_macro = 1" in said
+
+
+def _complement(requests: Path, reports: Path, script, **request_overrides) -> Path:
+    """The ceiling replayed after the result, its shock under the uniform variant: the
+    preregistered request, renamed, and its report."""
+    payload = json.loads((requests / "allegements.json").read_text(encoding="utf-8"))
+    payload.update(name="complement_allegements", titre="Le plafond, variante uniforme",
+                   question="Le plafond reclassé (D-239) fait-il baisser la dette ?",
+                   **request_overrides)
+    request = ExplorationRequest.model_validate(payload)
+    report = recherche.run(request, price=_price(),
+                           hypotheses=main._predictif_hypotheses(request), start=START,
+                           macro_store=synthetic_macro_store(), law=LAW,
+                           commit="b" * 40, computed="2026-10-21", where=WHERE)
+    (requests / "complements").mkdir(exist_ok=True)
+    (requests / "complements" / "allegements.json").write_text(json.dumps(payload),
+                                                               encoding="utf-8")
+    path = reports / "exploration_complement_allegements.json"
+    path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+def test_a_complement_is_rendered_apart_and_said_unregistered(script, tmp_path) -> None:
+    """D-239: the ceiling replayed after the result is on the page, apart from the study,
+    said to be outside the preregistration, with its own commit."""
+    requests, reports = _study(tmp_path, script)
+    _complement(requests, reports, script)
+    etudes, complements = script.study(requests, reports)
+    page = script.render(etudes, complements)
+    assert [c["instrument"].key for c in complements] == ["allegements"]
+    head, _, tail = page.partition("## Complément, hors préenregistrement")
+    assert tail and "b" * 40 in tail and "b" * 40 not in head
+    assert "Le plafond reclassé (D-239)" in tail
+
+
+@pytest.mark.parametrize("how, needle", [
+    ("grid", "ne rejoue pas la requête préenregistrée"),
+    ("cost", "les coûts diffèrent"),
+    ("report", "complément sans rapport"),
+    ("request", "n'a pas joué sa requête"),
+])
+def test_a_complement_that_is_not_a_like_for_like_replay_is_refused(script, tmp_path,
+                                                                    how: str,
+                                                                    needle: str) -> None:
+    """Only the shock's classing may change: another grid, a bundle costed otherwise, a
+    complement without its report or whose report played another request would no longer
+    say what moved, and are refused."""
+    requests, reports = _study(tmp_path, script)
+    if how == "grid":
+        _complement(requests, reports, script,
+                    bounds=[{"knob": "allegement_general_plafond", "low": 3.2,
+                             "high": 3.4, "step": 0.2}])
+    else:
+        path = _complement(requests, reports, script)
+        report = json.loads(path.read_text(encoding="utf-8"))
+        if how == "cost":
+            report["searches"][0]["evaluations"][-1]["cost_aged_eur"] += 1.0
+            path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+        elif how == "report":
+            path.unlink()
+        else:
+            payload = json.loads((requests / "complements" / "allegements.json")
+                                 .read_text(encoding="utf-8"))
+            payload["question"] = "Une autre question ?"
+            (requests / "complements" / "allegements.json").write_text(
+                json.dumps(payload), encoding="utf-8")
+    with pytest.raises(script.EtudeError, match=needle):
+        script.study(requests, reports)

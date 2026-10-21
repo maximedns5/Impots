@@ -36,6 +36,10 @@ FIRST_ROUND = "etude_premier_tour"
 #: What a round computes, as against what it reports about it.
 FIGURES = ("knobs", "cost_aged_eur", "cost_frozen_eur", "delta_aged", "delta_frozen",
            "corners", "corner_low", "corner_high", "meets_target")
+#: Requests replayed after the result, outside the preregistration (D-239): each must be
+#: an instrument's preregistered request, with only these fields changed.
+COMPLEMENTS = "complements"
+COMPLEMENT_FREE = ("name", "titre", "question")
 
 
 class EtudeError(ValueError):
@@ -154,6 +158,64 @@ def load(requests: Path = REQUESTS, reports: Path = REPORTS) -> list[dict[str, A
         if len({e["first_commit"] for e in out}) != 1:
             raise EtudeError("premier tour de plusieurs commits.")
     return out
+
+
+def load_complements(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
+                     reports: Path = REPORTS) -> list[dict[str, Any]]:
+    """Each complement under `etude/complements/`, checked to be a like-for-like replay
+    of its instrument's preregistered request: same grid and hypotheses, same costs."""
+    from impots.api.schemas import ExplorationReport, ExplorationRequest
+
+    directory = requests / COMPLEMENTS
+    if not directory.exists():
+        return []
+    by_knob = {e["instrument"].knob: e for e in etudes}
+    out = []
+    for path in sorted(directory.glob("*.json")):
+        request = ExplorationRequest.model_validate_json(path.read_text(encoding="utf-8"))
+        dump = request.model_dump(mode="json", exclude_none=True)
+        knobs = [b.knob for b in request.bounds]
+        entry = by_knob.get(knobs[0]) if len(knobs) == 1 else None
+        if entry is None:
+            raise EtudeError(f"complément {path.name} sur {knobs} : aucun instrument de "
+                             f"l'étude ne parcourt ce bouton.")
+
+        def held(payload: dict[str, Any]) -> dict[str, Any]:
+            return {k: v for k, v in payload.items() if k not in COMPLEMENT_FREE}
+
+        if held(dump) != held(entry["report"]["request"]):
+            raise EtudeError(
+                f"complément {path.name} : il ne rejoue pas la requête préenregistrée de "
+                f"« {entry['instrument'].key} ». Seuls {list(COMPLEMENT_FREE)} peuvent "
+                f"différer, sans quoi l'écart ne dirait plus ce qui a changé.")
+        report_path = reports / f"exploration_{request.name}.json"
+        if not report_path.exists():
+            raise EtudeError(f"complément sans rapport : {report_path.name}.")
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        ExplorationReport.model_validate(report)
+        if report["request"] != dump:
+            raise EtudeError(f"{report_path.name} n'a pas joué sa requête, {path.name}.")
+        if not (report.get("where") or "").strip():
+            raise EtudeError(f"{report_path.name} ne dit pas où ses passes ont tourné.")
+
+        def costs(r: dict[str, Any]) -> list[Any]:
+            return [[(e["knobs"], e["cost_aged_eur"], e["cost_frozen_eur"])
+                     for e in s["evaluations"]] for s in r["searches"]]
+
+        if costs(report) != costs(entry["report"]):
+            raise EtudeError(
+                f"{report_path.name} : les coûts diffèrent de ceux de l'étude. Le "
+                f"complément ne change que le classement du choc macro ; un coût qui "
+                f"bouge dit qu'autre chose a bougé.")
+        out.append({"instrument": entry["instrument"], "report": report,
+                    "study": entry["report"]})
+    return out
+
+
+def study(requests: Path = REQUESTS, reports: Path = REPORTS) -> tuple[list, list]:
+    """The study and its complements, both checked: what the page renders."""
+    etudes = load(requests, reports)
+    return etudes, load_complements(etudes, requests, reports)
 
 
 # --------------------------------------------------------------------------- #
@@ -327,7 +389,35 @@ def _indices(entry: dict[str, Any], target_year: int) -> list[str]:
     return lines
 
 
-def render(etudes: list[dict[str, Any]]) -> str:
+def _complement_section(complements: list[dict[str, Any]], target: float,
+                        first_year: int, target_year: int, theta: str) -> list[str]:
+    out = ["", "## Complément, hors préenregistrement", "",
+           "Joué après le résultat de l'étude, et hors de son préenregistrement. Chaque "
+           "complément rejoue à l'identique la requête préenregistrée de son instrument, "
+           "nom, titre et question exceptés, et ses coûts sont ceux de l'étude, paquet "
+           "pour paquet : seul le classement du choc macro a changé (D-239)."]
+    for c in complements:
+        instrument, r = c["instrument"], c["report"]
+        out += ["", f"### {r['titre']}", "", r["question"], "",
+                f"Commit `{r['commit']}`, le {r['computed']}, ici : {r['where']}."]
+        for search, before in zip(r["searches"], c["study"]["searches"], strict=True):
+            near = min(search["evaluations"], key=lambda e: abs(e["delta_aged"] - target))
+            was = next(e for e in before["evaluations"] if e["knobs"] == near["knobs"])
+            out += ["", f"**{search['persistence_label']}.** "
+                        f"{verdict(search, instrument, target, theta)} Dans l'étude, le "
+                        f"même paquet laissait Δb = {_pt(was['delta_aged'])}.", ""]
+            out += _search_table(search, instrument, target, first_year=first_year,
+                                 target_year=target_year, theta=theta)
+        lacks = {f"{name} : {compact(why)}"
+                 for s in r["searches"] for name, why in s["indices"]["absent"].items()}
+        if lacks:
+            out += ["", "**Ce qui manque à la chaîne**, pour le paquet le plus proche :", ""]
+            out += [f"- {line}" for line in sorted(lacks)]
+    return out
+
+
+def render(etudes: list[dict[str, Any]],
+           complements: list[dict[str, Any]] | tuple = ()) -> str:
     report = etudes[0]["report"]
     h = report["hypotheses"]
     target, target_year = h["target_share"], h["target_year"]
@@ -433,6 +523,9 @@ def render(etudes: list[dict[str, Any]]) -> str:
         out += ["", "**Les indices de §7, pour le paquet le plus proche de la cible**, "
                     "vue vieillie, tirés de la passe qui l'a chiffré.", ""]
         out += _indices(entry, target_year)
+    if complements:
+        out += _complement_section(list(complements), target, first_year, target_year,
+                                   theta)
     out += ["", "## Ce que l'étude ne dit pas", "",
             "- Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de "
             "θ ; un autre scénario donne une autre réponse.",
@@ -451,11 +544,11 @@ def render(etudes: list[dict[str, Any]]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     try:
-        etudes = load()
+        etudes, complements = study()
     except EtudeError as error:
         print(str(error), file=sys.stderr)
         return 1
-    OUT.write_text(render(etudes), encoding="utf-8")
+    OUT.write_text(render(etudes, complements), encoding="utf-8")
     print(f"-> {OUT}")
     return 0
 

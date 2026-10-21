@@ -17746,3 +17746,67 @@ l'étude :
   toute la courbe de 2026 ;
 - le chemin annuel pour l'étude, la première année n'étant ici que reportée ;
 - d'autres valeurs de θ que ½.
+
+## D-239 — Le plafond de la réduction générale reclassé : depuis 2026, pas une baisse ciblée
+
+**Le fait.** D-238 l'a trouvé, et l'a laissé en l'état pour ne pas changer un chiffre de
+l'étude après l'avoir vu. `shocks.targets_low_wages` rangeait tout bouton
+`allegement_general_*` dans les baisses ciblées sur les bas salaires, un choix de la
+phase 3, juste pour des allègements entre 1 et 1,6 SMIC. Depuis la refonte de 2026
+(D-042), la courbe est écrite à 3 SMIC dans la formule d'openfisca, et le plafond n'est
+plus que le seuil de sortie du taux plancher de 2 %. Le relever soulage les salaires
+au-delà de 3 SMIC : l'inverse d'une baisse ciblée. Sous la variante ciblée de Mésange,
+qui n'a pas de ligne de solde, sa boucle était absente.
+
+**La règle.** À partir de 2026, `allegement_general_plafond` n'est plus un bouton de baisse
+ciblée : le choc va à la variante uniforme. C'est la plus proche que Mésange imprime, et
+la seule des deux qui ait sa ligne de solde. Elle reste une approximation, et le code le
+dit : la variante uniforme décrit une baisse sur tous les salaires, qui tombe à 80 % sur
+les qualifiés, quand celle-ci tombe tout entière au-delà de 3 SMIC. L'emploi qu'elle prête
+est celui d'une baisse sur tous les salaires. L'année est une constante, `REFONTE_YEAR`,
+et un test la tient contre l'arbre : le `t_min` de la courbe existe à partir d'elle, les
+deux taux de l'ancienne réduction jusqu'à l'année d'avant. Avant 2026, et pour les
+bandeaux, rien ne change. La validation préenregistrée du CICE (D-227), dont l'épisode est
+de 2016, garde donc son classement.
+
+**Ce que cela change.** Toute réforme du plafond chiffrée pour 2026 ou après :
+`/predictif/simulate`, l'éventail d'emploi, les explorations, le chemin annuel. Les
+rapports commités ne bougent pas : l'étude reste ce qu'elle a chiffré, sur `e0c3d7f`.
+
+**Le complément, hors préenregistrement.** Le plafond est rejoué sous la nouvelle règle,
+sur `cacd43a`. La requête, sous `etude/complements/`, est celle de l'étude à l'identique,
+nom, titre et question exceptés, et les coûts de chaque paquet sont ceux de l'étude à
+l'euro près. Seul le classement du choc a changé. À θ = ½, aucun paquet ne fait baisser
+la dette en 2035. Sous « éteint », de +0,47 à +1,48 point, contre +0,55 à +1,74 dans
+l'étude, et aucun coin sous zéro. Sous « tenu », de +0,13 à +0,43 point, contre +0,55
+à +1,74 : la boîte descend jusqu'à −0,27 et −0,86, et les 8 coins sur 16 où le
+multiplicateur vaut 1 font baisser la dette. La boucle ne manque plus. Le plafond répond
+désormais comme les trois autres instruments, et la réponse de l'étude s'étend à lui :
+pour quels θ ? Sous « tenu », au seul multiplicateur macro à 1. L'emploi marchand qu'il
+prête passe de 5 800 à 4 800 la première année pour 1,78 Md€, et de 23 300 à 16 700 à
+trois ans.
+
+**La page.** `docs/PREDICTIF_ETUDE.md` porte le complément dans sa propre section, « hors
+préenregistrement », avec son commit et l'écart de chaque paquet à l'étude. Le rendu
+refuse quatre compléments : celui qui change la grille ou une hypothèse, celui dont un
+coût diffère, celui sans rapport, celui dont le rapport a joué une autre requête.
+
+**Les tests.** Dans `tests/test_shocks.py`, deux cas nouveaux : le plafond va à la variante
+uniforme de 2026 à 2035, et l'année de la refonte est celle de l'arbre. Les deux ont été
+vus échouer sur le code d'avant, et le second sur une année fausse. Le cas des
+allègements ciblés est daté de 2025, la loi qu'il décrit. Dans
+`tests/test_predictif_etude.py`, cinq cas nouveaux : le complément à part, et ses quatre
+refus. Chacun a été vu échouer sur une mutation du script, et la section à part aussi. Le
+balayage reçoit une mutation écrite à la main : 167 mutations, 166 tuées, une
+équivalente, aucune survivante.
+Avec les tests du choc, de la couche macro, de l'éventail, des deux validations, de
+l'étude et de tout le chemin prédictif, des scénarios, des dépendances, de la charte et du
+balayage : 490 réussis, 54 sautés. Tous les sautés le sont faute des tables entrées-sorties
+de l'Insee, absentes de ce conteneur : `test_fan`, `test_macro`, `test_macro_validation` et
+quatre cas de `test_shocks` tournent au `make full` du propriétaire. Leurs épisodes, de
+2016, gardent leur classement. La validation préenregistrée du CICE, elle, a tourné. La
+page en compte 59, aucun en échec. `ruff` passe sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.** Des boutons pour `t_min` et `t_delta`, qui chiffreraient une baisse
+d'allègement sur toute la courbe de 2026, ciblée cette fois. La porte de M4 reste le
+`make full` du propriétaire.
