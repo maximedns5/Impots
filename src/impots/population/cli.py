@@ -1447,7 +1447,7 @@ def cmd_exploration(args: argparse.Namespace) -> int:
         payload = recherche.run(request, price=price, hypotheses=hypotheses, start=start,
                                 macro_store=macro_store, securities=securities,
                                 max_bundles=args.max_paquets, law=law, commit=commit,
-                                computed=_date.today().isoformat())
+                                computed=_date.today().isoformat(), where=args.ou)
     except HTTPException as error:
         print(str(error.detail), file=sys.stderr)
         return 1
@@ -1836,6 +1836,8 @@ def build_parser() -> argparse.ArgumentParser:
                              help="refuse a larger grid rather than truncate it; each "
                                   "bundle is two quick passes")
     exploration.add_argument("--out-dir")
+    exploration.add_argument("--ou", help="where the passes run, which the report says "
+                                          "(PHASE10_SPEC §5)")
     exploration.set_defaults(func=cmd_exploration)
 
     emtr_parser = subcommands.add_parser(

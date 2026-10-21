@@ -2242,6 +2242,8 @@ class ExplorationReport(BaseModel):
     question: str
     computed: str
     commit: str
+    where: str | None = None
+    """Where the passes ran (PHASE10_SPEC §5); absent from the reports before M4."""
     request: dict[str, Any]
     hypotheses: ExplorationHypotheses
     start: PredictifStart

@@ -171,8 +171,8 @@ def _search(persistence: str | None, seen: list[tuple[dict[str, float], Any]],
 def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Priced],
         hypotheses: Any, start: Start, macro_store: Any = None,
         securities: list[Any] | None = None, max_bundles: int = MAX_BUNDLES,
-        law: dict[str, Any] | None = None, commit: str = "",
-        computed: str = "") -> dict[str, Any]:
+        law: dict[str, Any] | None = None, commit: str = "", computed: str = "",
+        where: str | None = None) -> dict[str, Any]:
     """The search, once per persistence, from one pass per bundle and view; the report.
 
     `hypotheses` is what `api.main._predictif_hypotheses` builds for the request, and
@@ -247,7 +247,7 @@ def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Price
     theta = hypotheses.theta
     return {
         "name": request.name, "titre": request.titre, "question": request.question,
-        "computed": computed, "commit": commit,
+        "computed": computed, "commit": commit, "where": where,
         "request": request.model_dump(mode="json", exclude_none=True),
         "hypotheses": {
             "spending_name": hypotheses.spending.name,
