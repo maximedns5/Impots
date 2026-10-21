@@ -2150,7 +2150,20 @@ class ExplorationIndices(BaseModel):
 
     knobs: dict[str, float]
     delta_aged: float
+    absent: dict[str, str] = Field(default_factory=dict)
+    """What the bundle's path lacks, with why (`Trajectoire.absent`), D-238."""
+    closed: dict[str, str] = Field(default_factory=dict)
     rows: Annotated[list[PredictifIndex], Field(min_length=1)]
+
+    @model_validator(mode="after")
+    def _check_exploration_indices(self) -> ExplorationIndices:
+        silent = sorted(k for k, v in {**self.absent, **self.closed}.items()
+                        if not v.strip())
+        if silent:
+            raise ValueError(
+                f"absent sans sa raison : {silent}. Une absence muette se lit comme un "
+                f"zéro mesuré.")
+        return self
 
 
 class ExplorationSearch(BaseModel):

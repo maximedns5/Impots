@@ -99,6 +99,8 @@ def test_the_indices_are_the_simulators(monkeypatch, tmp_path) -> None:
     assert response.status_code == 200, response.text
     rows = report["searches"][0]["indices"]["rows"]
     assert rows == response.json()["indices"]
+    assert report["searches"][0]["indices"]["absent"] == response.json()["absent"]
+    assert report["searches"][0]["indices"]["closed"] == response.json()["closed"]
     assert next(r for r in rows if r["key"] == "revenu_disponible_deciles")["values"] == {
         "D1": 10.0, "D2": 20.0}
 
@@ -126,3 +128,17 @@ def test_a_law_read_for_another_year_is_refused() -> None:
     with pytest.raises(recherche.RechercheError, match="première année projetée"):
         recherche.run(request, price=lambda reform, view: None,
                       hypotheses=main._predictif_hypotheses(request), start=START, law=law)
+
+
+def test_the_report_says_what_the_chain_lacks() -> None:
+    """Without the loop, the chain says the feedback is absent, with why; the report
+    carries it with the indices, so that an unmeasured loop never reads as a loop worth
+    nothing (D-238). An absence without its reason is refused."""
+    report = json.loads(json.dumps(run_search(_request(macro=False))))
+    report.update(commit=COMMIT, computed="2026-10-21")
+    (search,) = report["searches"]
+    assert search["indices"]["absent"]["rétroaction"].strip()
+    assert search["indices"]["closed"]
+    search["indices"]["absent"]["rétroaction"] = " "
+    with pytest.raises(ValidationError, match="absent sans sa raison"):
+        ExplorationReport.model_validate(report)

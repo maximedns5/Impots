@@ -101,7 +101,8 @@ SCOPES: tuple[Scope, ...] = (
           ("tests/test_recherche.py", "tests/test_explorations_api.py",
            "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py"),
           functions=("_check_exploration_bounds", "_check_exploration_search",
-                     "_check_exploration_report", "_check_report_paths")),
+                     "_check_exploration_report", "_check_report_paths",
+                     "_check_exploration_indices")),
 )
 
 #: The whole Phase 9 suite, the second tier for a survivor.
@@ -346,6 +347,12 @@ MANUAL: tuple[Mutation, ...] = (
              "\"closest\": closest, \"indices\": indices(evaluations[0])}",
              ("tests/test_recherche_indices.py",),
              "les indices sont ceux du paquet le plus proche de la cible"),
+    # D-238: what the chain lacks rides with the indices, never read as zero.
+    Mutation("P10-absences-portees", "src/impots/predictif/recherche.py",
+             "\"absent\": dict(path.absent), \"closed\": dict(path.closed),",
+             "\"absent\": {}, \"closed\": dict(path.closed),",
+             ("tests/test_recherche_indices.py",),
+             "ce qui manque à la chaîne est porté au rapport, avec sa raison (D-238)"),
 )
 
 #: Mutations no test can kill, each with why. An entry here is a finding of D-229, not
