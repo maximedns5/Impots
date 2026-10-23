@@ -108,20 +108,28 @@ def update_existing(
     value: float,
     instant: str,
     superseded_by: dict[str, str] | None = None,
+    knob_for: dict[str, str] | None = None,
+    not_before: dict[str, str] | None = None,
 ) -> None:
     """Write a parameter that exists at `instant`. Refuse to create one that does not.
 
     `instant` is the reform's own start date, so "exists" means "exists for the year
-    being reformed" — not "exists somewhere in the tree's history".
+    being reformed" — not "exists somewhere in the tree's history". The refusal names
+    what replaced the parameter, and the knob that moves it (`knob_for`); or, for one
+    the tree only has from a later year, what governs until then (`not_before`).
     """
     _refuse_shared_baseline(parameters)
     if not exists_at(parameters, path, instant):
         name = path[-1]
         replacement = (superseded_by or {}).get(name)
-        hint = (
-            f" Ce paramètre a été remplacé par « {replacement} »."
-            if replacement else ""
-        )
+        knob = (knob_for or {}).get(replacement or "")
+        if replacement:
+            hint = (f" Ce paramètre a été remplacé par « {replacement} »"
+                    + (f", que règle le bouton « {knob} »" if knob else "") + ".")
+        elif name in (not_before or {}):
+            hint = f" Il n'existe pas encore à cette date : {not_before[name]}."
+        else:
+            hint = ""
         raise ParameterWriteError(
             f"le paramètre « {'.'.join(path)} » n'existe pas au {instant} : l'écrire "
             f"ne changerait rien, car `update()` créerait un enfant que la formule de "

@@ -301,6 +301,7 @@ def test_bareme_over_five_brackets_is_rejected() -> None:
 # --------------------------------------------------------------------------- #
 from impots.engine.reforms import (  # noqa: E402
     BANDEAU_PLAFOND_CHILDREN,
+    PATH_ALLEGEMENT_GENERAL,
     PATH_BANDEAU_FAMILLE,
     PATH_BANDEAU_MALADIE,
     plafond_children,
@@ -430,11 +431,71 @@ def test_a_knob_is_refused_where_its_parameter_no_longer_exists() -> None:
 
 def test_the_refusal_names_what_replaced_the_parameter() -> None:
     """A refusal that only says 'no' sends the reader hunting. This one says where
-    the instrument went."""
-    with pytest.raises(ValueError, match="t_delta_petites_entreprises"):
+    the instrument went, and since D-240 which knob now moves it."""
+    with pytest.raises(ValueError, match=r"t_delta_petites_entreprises.*"
+                                         r"allegement_general_t_delta_moins_de_50"):
         reformed_for(
             ReformSpec.model_validate({"allegement_general_taux_moins_de_50": 0.45}), 2026
         )
+
+
+#: The 2026 curve's knobs (D-240), and the tree's child each one writes.
+CURVE_KNOBS = {"allegement_general_t_min": ("t_min", 0.03),
+               "allegement_general_t_delta_moins_de_50": ("t_delta_petites_entreprises",
+                                                           0.40),
+               "allegement_general_t_delta_50_et_plus": ("t_delta_grandes_entreprises",
+                                                          0.41)}
+
+
+@pytest.mark.parametrize("knob", sorted(CURVE_KNOBS))
+def test_the_2026_curve_knobs_write_the_curve(knob: str) -> None:
+    """Each knob writes its child of the 2026 réduction générale, read back by the
+    engine's own guard and here once more; the baseline tree is left alone."""
+    child, value = CURVE_KNOBS[knob]
+    system = reformed_for(ReformSpec.model_validate({knob: value}), 2026)
+    node = resolve(system.parameters, PATH_ALLEGEMENT_GENERAL)("2026-01-01")
+    assert float(getattr(node, child)) == pytest.approx(value)
+    base = resolve(baseline().parameters, PATH_ALLEGEMENT_GENERAL)("2026-01-01")
+    assert float(getattr(base, child)) != pytest.approx(value)
+
+
+@pytest.mark.parametrize("knob", sorted(CURVE_KNOBS))
+def test_the_curve_knobs_are_refused_before_the_refonte(knob: str) -> None:
+    """Before 2026 the curve does not exist: writing it would create a child no
+    formula reads (D-042). Refused, and the refusal names the rates that then govern."""
+    _, value = CURVE_KNOBS[knob]
+    with pytest.raises(ValueError, match=r"n'existe pas.*allegement_general_taux_"):
+        reformed_for(ReformSpec.model_validate({knob: value}), 2025)
+
+
+def test_a_curve_knob_the_system_did_not_take_is_caught_by_the_read_back() -> None:
+    system = reformed_for(ReformSpec.model_validate({"allegement_general_t_min": 0.03}),
+                          2026)
+    verify_allegements(system, ReformSpec(allegement_general_t_min=0.03), 2026)
+    with pytest.raises(AssertionError, match=r"allegement_general_t_min : demandé 0\.04"):
+        verify_allegements(system, ReformSpec(allegement_general_t_min=0.04), 2026)
+
+
+def test_the_curve_knobs_move_labour_cost_where_the_curve_says() -> None:
+    """In 2026: the floor `t_min` lowers labour cost at every wage below the 3 SMIC
+    ceiling, near the SMIC and at 2,5 SMIC alike; `t_delta` lowers it most at the SMIC,
+    and almost nothing at 2,9 SMIC, where its term has all but faded; neither moves a
+    wage above the ceiling."""
+    from impots.api.main import _smic_annual
+
+    smic = _smic_annual(2026)
+
+    def saving(salary: float, reform: dict) -> float:
+        before, after = labour_cost(salary, reform, year=2026)
+        return before - after
+
+    floor = {"allegement_general_t_min": 0.03}
+    delta = {"allegement_general_t_delta_moins_de_50": 0.40}
+    assert saving(1.05 * smic, floor) > 0 and saving(2.5 * smic, floor) > 0
+    assert saving(1.05 * smic, delta) > 10 * saving(2.5 * smic, delta) >= 0
+    assert 0 <= saving(2.9 * smic, delta) < 0.01 * saving(1.05 * smic, delta)
+    for reform in (floor, delta):
+        assert saving(3.5 * smic, reform) == pytest.approx(0.0, abs=0.5)
 
 
 def test_knobs_that_survive_the_refonte_still_work() -> None:

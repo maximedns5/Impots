@@ -1,6 +1,14 @@
-# State of the project, and the directions open — 2026-10-21 (Phase 10, M4 done)
+# State of the project, and the directions open — 2026-10-23 (Phase 10, M4 done)
 
-The fifth 2026-10-21 update adds D-239: the réduction générale's ceiling is reclassed. From
+The 2026-10-23 update adds D-240: knobs for the 2026 réduction générale's curve, the
+floor `allegement_general_t_min` and the two `t_delta` (under and over 50 employees). Each
+writes its child of the tree, read back by the engine; before 2026 each is refused by name,
+the refusal naming the rates that then govern, and an old rate refused in 2026 now names the
+knob that replaced it. One point on the floor costs 7.62 Md€ in 2026, one point on both
+`t_delta` 2.00 Md€ (aged view, mechanical). Their shock goes to Mésange's targeted variant,
+rightly this time, which prints no balance row: the loop is absent for them, and said so.
+The page's employer panel has the two fields.
+The fifth 2026-10-21 update added D-239: the réduction générale's ceiling is reclassed. From
 the 2026 refonte the ceiling is only the exit threshold of the 2 % floor, so raising it
 relieves wages above 3 SMIC, not low wages; from `REFONTE_YEAR`, held against openfisca's
 tree, its shock goes to Mésange's uniform variant, which has a balance row, instead of the
@@ -275,8 +283,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **240 decision
-entries**, D-000 to D-239, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **241 decision
+entries**, D-000 to D-240, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -642,9 +650,9 @@ download list.
    refuses this container), and the AFT outstanding, which www.aft.gouv.fr
    refuses here too (403): the `marche` rate scenario needs it.
 3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 to M4 are done (D-234 to D-238); its gate is
-   the owner's `make full`. The ceiling is reclassed and replayed (D-239). Left from
-   the study: knobs for the 2026 curve's `t_min` and `t_delta`; the study on the annual
-   path; other θ.
+   the owner's `make full`. The ceiling is reclassed and replayed (D-239), and the 2026
+   curve has its knobs (D-240). Left from the study: the study replayed with the curve;
+   the study on the annual path; other θ.
 4. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each

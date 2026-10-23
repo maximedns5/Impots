@@ -964,13 +964,22 @@ footer code { font-family: var(--mono); font-size: 11px; }
           <p class="note" style="margin:0 0 10px">
             Les plafonds sont en multiples du SMIC. Ces leviers ne changent rien au
             revenu disponible des ménages : ils déplacent le coût du travail, donc ce
-            que l'État encaisse et ce que l'entreprise paie.
+            que l'État encaisse et ce que l'entreprise paie. Depuis 2026, la réduction
+            générale est une courbe : le taux et les bandeaux ne valent que jusqu'en 2025,
+            le plancher et le t_delta qu'à partir de 2026, et le moteur refuse chacun
+            hors de ses années, en nommant celui qui s'applique.
           </p>
           <div class="field-row tri">
             <div><label for="agPlaf">Réduction générale — plafond (SMIC)</label>
                  <input type="number" id="agPlaf" step="0.05" placeholder="1,6"></div>
-            <div><label for="agTaux">Réduction générale — taux &lt;50 sal. (%)</label>
+            <div><label for="agTaux">Réduction générale — taux &lt;50 sal., jusqu'en 2025 (%)</label>
                  <input type="number" id="agTaux" step="0.1" placeholder="31,94"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="agTmin">Réduction générale 2026 — plancher t_min (%)</label>
+                 <input type="number" id="agTmin" step="0.1" placeholder="2"></div>
+            <div><label for="agTdelta">Réduction générale 2026 — t_delta (%)</label>
+                 <input type="number" id="agTdelta" step="0.1" placeholder="37,81"></div>
           </div>
           <div class="field-row tri">
             <div><label for="bmPlaf">Bandeau maladie — plafond (SMIC)</label>
@@ -1629,6 +1638,10 @@ const KNOBS = [
   { knob: "allegement_general_plafond",          id: "agPlaf" },
   { knob: "allegement_general_taux_moins_de_50", id: "agTaux", scale: 100 },
   { knob: "allegement_general_taux_50_et_plus",  id: "agTaux", scale: 100 },
+  /* The 2026 curve (D-240): the floor, and one input for both t_delta, as above. */
+  { knob: "allegement_general_t_min",               id: "agTmin",   scale: 100 },
+  { knob: "allegement_general_t_delta_moins_de_50", id: "agTdelta", scale: 100 },
+  { knob: "allegement_general_t_delta_50_et_plus",  id: "agTdelta", scale: 100 },
   { knob: "bandeau_maladie_plafond", id: "bmPlaf" },
   { knob: "bandeau_maladie_taux",    id: "bmTaux", scale: 100 },
   { knob: "bandeau_famille_plafond", id: "bfPlaf" },

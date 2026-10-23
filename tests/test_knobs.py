@@ -18,16 +18,17 @@ import pytest
 from impots.api.schemas import HouseholdInput, ReformSpec
 from impots.engine import compute
 from impots.engine.reforms import SCALAR_KNOBS
-from knob_cases import CASES, EXEMPT
+from knob_cases import CASES, EXEMPT, YEARS
 
 pytestmark = pytest.mark.slow
 
 
-def _rows(household: dict, niches: dict | None, reform: ReformSpec | None):
+def _rows(household: dict, niches: dict | None, reform: ReformSpec | None,
+          year: int = 2024):
     payload = dict(household)
     if niches is not None:
         payload["niches"] = niches
-    result = compute(HouseholdInput.model_validate(payload), 2024,
+    result = compute(HouseholdInput.model_validate(payload), year,
                      reform=reform, tier="full")
     return result.reform if reform is not None else result.baseline
 
@@ -35,8 +36,9 @@ def _rows(household: dict, niches: dict | None, reform: ReformSpec | None):
 @pytest.mark.parametrize("knob", sorted(CASES))
 def test_each_knob_moves_its_output(knob: str):
     household, niches, output, value, sign = CASES[knob]
-    before = _rows(household, niches, None)[output]
-    after = _rows(household, niches, ReformSpec(**{knob: value}))[output]
+    year = YEARS.get(knob, 2024)
+    before = _rows(household, niches, None, year)[output]
+    after = _rows(household, niches, ReformSpec(**{knob: value}), year)[output]
     moved = after - before
     assert abs(moved) > 0.5, (
         f"{knob} moved nothing: {output} stayed at {before}. Either the household does "
@@ -52,9 +54,10 @@ def test_each_knob_moves_its_output(knob: str):
 def test_each_knob_leaves_the_baseline_alone(knob: str):
     """`Reform(tbs)` clones the tree; this is the standing proof per knob."""
     household, niches, output, value, _ = CASES[knob]
-    before = _rows(household, niches, None)[output]
-    _rows(household, niches, ReformSpec(**{knob: value}))
-    assert _rows(household, niches, None)[output] == pytest.approx(before)
+    year = YEARS.get(knob, 2024)
+    before = _rows(household, niches, None, year)[output]
+    _rows(household, niches, ReformSpec(**{knob: value}), year)
+    assert _rows(household, niches, None, year)[output] == pytest.approx(before)
 
 
 @pytest.mark.parametrize("knob", sorted(EXEMPT))
@@ -66,11 +69,13 @@ def test_each_exempt_knob_really_cannot_be_moved(knob: str):
     employer. If that ever changes this test fails, which is the correct moment to
     turn the exemption into a case.
     """
-    if knob != "allegement_general_taux_50_et_plus":
+    if knob not in ("allegement_general_taux_50_et_plus",
+                    "allegement_general_t_delta_50_et_plus"):
         pytest.skip(f"no negative check written for {knob}")
     smic = {"adults": [{"salaire_brut_annuel": 22_000, "annee_naissance": 1990}]}
-    before = _rows(smic, None, None)["allegement_general"]
-    after = _rows(smic, None, ReformSpec(**{knob: 0.40}))["allegement_general"]
+    year = YEARS.get(knob, 2024)
+    before = _rows(smic, None, None, year)["allegement_general"]
+    after = _rows(smic, None, ReformSpec(**{knob: 0.42}), year)["allegement_general"]
     assert after == pytest.approx(before), (
         "the ≥50-employee rate now moves a household — the wire format must have "
         "gained an effectif, so replace the exemption with a real case"

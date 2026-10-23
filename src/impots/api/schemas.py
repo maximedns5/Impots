@@ -735,6 +735,12 @@ class ReformSpec(BaseModel):
     allegement_general_plafond: Annotated[float, Field(ge=0.0, le=10.0)] | None = None
     allegement_general_taux_50_et_plus: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     allegement_general_taux_moins_de_50: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    # The 2026 curve (D-240). From the refonte the réduction générale is
+    # t_min + t_delta × (½ (3 SMIC / rémunération − 1))^puissance below its `plafond`, and
+    # the two rates above no longer exist: these three move it, from 2026 only.
+    allegement_general_t_min: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    allegement_general_t_delta_moins_de_50: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    allegement_general_t_delta_50_et_plus: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     bandeau_maladie_plafond: Annotated[float, Field(ge=0.0, le=10.0)] | None = None
     bandeau_maladie_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     bandeau_famille_plafond: Annotated[float, Field(ge=0.0, le=10.0)] | None = None

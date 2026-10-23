@@ -17810,3 +17810,64 @@ page en compte 59, aucun en échec. `ruff` passe sur `src`, `tests` et `scripts`
 **Ce qui reste.** Des boutons pour `t_min` et `t_delta`, qui chiffreraient une baisse
 d'allègement sur toute la courbe de 2026, ciblée cette fois. La porte de M4 reste le
 `make full` du propriétaire.
+
+## D-240 — Les boutons de la courbe de 2026 : le plancher `t_min` et les deux `t_delta`
+
+**Le fait.** Depuis la refonte de 2026 (D-042), la réduction générale est une courbe :
+t_min + t_delta × (½ (3 SMIC / rémunération − 1))^puissance, sous son plafond. Les deux
+boutons de taux d'avant sont refusés par leur nom, et le plafond n'est plus que le seuil
+de sortie du plancher (D-239). Aucun bouton ne déplaçait donc la courbe elle-même : une
+baisse d'allègement de 2026, ciblée sur les bas salaires, ne se chiffrait pas. Trois
+boutons la chiffrent désormais.
+- `allegement_general_t_min`, le plancher, 2 % en 2026.
+- `allegement_general_t_delta_moins_de_50`, le `t_delta` des employeurs de moins de 50
+  salariés, 37,81 %.
+- `allegement_general_t_delta_50_et_plus`, celui des employeurs de 50 salariés et plus,
+  38,21 %.
+
+**Ce qu'ils font.** Chacun écrit son enfant de l'arbre, que le moteur relit
+(`verify_allegements`). Ils n'existent qu'à partir de 2026. Avant, les écrire créerait
+un enfant que nulle formule ne lit, le défaut de D-042 : ils sont refusés, et le refus
+nomme les deux taux qui s'appliquent alors. Dans l'autre sens, le refus d'un ancien taux
+en 2026 nomme maintenant le bouton qui le remplace, et plus seulement le paramètre. Sur un
+salaire, le plancher baisse le coût du travail partout sous 3 SMIC, au SMIC comme à
+2,5 SMIC. Le `t_delta` le baisse surtout au SMIC, et presque plus à 2,9 SMIC, où le terme
+de la courbe s'éteint. Ni l'un ni l'autre ne touche un salaire au-dessus du plafond.
+
+**Ce qu'ils coûtent.** Sur la population de 2026, vue vieillie, coût mécanique seul : un
+point de plancher en plus, de 2 à 3 %, coûte 7,62 Md€. Un point de `t_delta` en plus, pour
+les deux tailles d'entreprise, coûte 2,00 Md€. Le plancher porte sur toute la masse
+salariale sous 3 SMIC ; le `t_delta`, sur une courbe qui décroît dès le SMIC.
+
+**Où tombe le choc.** Sous la variante « cotisations employeurs ciblées » de Mésange, et
+c'est juste cette fois : la courbe concentre l'allègement sous 3 SMIC, et son `t_delta` au
+SMIC. Mais cette variante n'a pas de ligne de solde (`absent_for`). Dans la chaîne
+prédictive, la boucle PIB → recettes est donc absente pour ces boutons. Elle n'est pas
+nulle, et le rapport le dit (D-238). Le comportement les lit : la réponse d'emploi au
+voisinage du SMIC revendique tout bouton `allegement_general_*`.
+
+**La page.** Le panneau des cotisations patronales a deux champs nouveaux, le plancher
+et le `t_delta`. Comme pour l'ancien taux, un seul champ porte les deux tailles
+d'entreprise. La note dit quels leviers valent avant 2026, lesquels après.
+
+**Les tests.** Dans `tests/test_reforms.py`, neuf cas : chaque bouton écrit sa courbe en
+2026 et laisse l'arbre de référence intact ; chacun est refusé en 2025, le refus nommant
+les anciens taux ; la relecture attrape un bouton que le système n'a pas pris ; le coût du
+travail bouge là où la courbe le dit. Le refus de l'ancien taux nomme le nouveau bouton.
+Ces neuf cas ont été vus échouer sur le code d'avant. Le registre des boutons
+(`tests/knob_cases.py`) prend une année par cas, parce que ceux de la courbe n'existent
+qu'en 2026. Le `t_delta` des 50 salariés et plus y est exempté comme l'était l'ancien
+taux, et c'est mesuré : sur un foyer au SMIC, le porter de 0,3821 à 0,42 laisse
+`allegement_general` à 8 707,78 EUR au centime, quand le même saut chez les moins de 50
+le porte à 9 623,17 EUR. Dans `tests/test_shocks.py`, un cas fixe le classement ciblé.
+Chaque garde a aussi été retirée à son tour, et son test a alors échoué : l'indice qui
+nomme les anciens taux avant 2026, le bouton cité dans le refus de l'ancien taux, la
+relecture du plancher, et le `t_delta` des moins de 50 écrit chez les grandes entreprises.
+Les tests ciblés passent : 182 dans `tests/test_reforms.py`, `tests/test_standing_rules.py`
+et les deux gardes d'écriture de `tests/test_engine.py` ; 143 dans `tests/test_shocks.py`
+et `tests/test_ui.py`, dont 4 sautés faute du TES de l'Insee ; 6 dans `tests/test_api.py` ;
+les 7 cas du registre qui touchent la courbe ; les 59 contrôles de la page ; ruff.
+
+**Ce qui reste.** Rejouer l'étude de D-238 avec la courbe, une baisse ciblée de 2026,
+quand le propriétaire le demandera. Sous la variante ciblée, la boucle y serait absente :
+la réponse ne dirait que le mécanique et le comportement.
