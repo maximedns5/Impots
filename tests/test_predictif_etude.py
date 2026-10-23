@@ -5,7 +5,7 @@ commités. Et celles du préenregistrement : chaque rapport a joué la requête 
 `etude/`, à l'identique ; chaque instrument du menu a sa requête et son rapport ; tous
 viennent d'un même commit, et disent où leurs passes ont tourné. Sur une étude construite,
 sans données : ces refus, la réponse par instrument et par persistance, et les coins qui
-font baisser la dette.
+font baisser la dette. La courbe de 2026, rejouée à part (D-241, D-242), a les siens.
 """
 
 from __future__ import annotations
@@ -98,6 +98,9 @@ def test_the_committed_study_is_preregistered(script) -> None:
     etudes = script.load()
     assert [e["instrument"].key for e in etudes] == ["csg", "allegements", "decote", "ir"]
     assert etudes[0]["report"]["commit"] in script.OUT.read_text(encoding="utf-8")
+    courbe = script.load_courbe(etudes)
+    assert [e["instrument"].key for e in courbe] == ["t_min", "t_delta"]
+    assert courbe[0]["report"]["commit"] in script.OUT.read_text(encoding="utf-8")
 
 
 # --------------------------------------------------------------------------- #
@@ -305,7 +308,8 @@ def test_a_complement_is_rendered_apart_and_said_unregistered(script, tmp_path) 
     said to be outside the preregistration, with its own commit."""
     requests, reports = _study(tmp_path, script)
     _complement(requests, reports, script)
-    etudes, complements = script.study(requests, reports)
+    etudes, complements, courbe = script.study(requests, reports)
+    assert courbe == []
     page = script.render(etudes, complements)
     assert [c["instrument"].key for c in complements] == ["allegements"]
     head, _, tail = page.partition("## Complément, hors préenregistrement")
@@ -344,5 +348,109 @@ def test_a_complement_that_is_not_a_like_for_like_replay_is_refused(script, tmp_
             payload["question"] = "Une autre question ?"
             (requests / "complements" / "allegements.json").write_text(
                 json.dumps(payload), encoding="utf-8")
+    with pytest.raises(script.EtudeError, match=needle):
+        script.study(requests, reports)
+
+
+#: Two bundles per knob of the curve, enough to read an answer (D-241).
+CURVE_GRIDS = {"allegement_general_t_min": (0.021, 0.024, 0.003),
+               "allegement_general_t_delta_moins_de_50": (0.3831, 0.3931, 0.01)}
+CURVE_COMMIT = "c" * 40
+
+
+def _courbe(requests: Path, reports: Path, script, *, key: str | None = None,
+            **request_overrides) -> None:
+    """The 2026 curve replayed on the study's frame (D-241): for each knob, the allègement
+    request with its name, title, question and grid changed, and the report that played
+    it; `key`'s request also takes `request_overrides`."""
+    frame = json.loads((requests / "allegements.json").read_text(encoding="utf-8"))
+    (requests / "courbe").mkdir()
+    for instrument in script.COURBE_MENU:
+        low, high, step = CURVE_GRIDS[instrument.knob]
+        payload = {**frame, "name": f"courbe_{instrument.key}", "titre": instrument.label,
+                   "question": f"Le {instrument.key} fait-il baisser la dette ?",
+                   "bounds": [{"knob": instrument.knob, "low": low, "high": high,
+                               "step": step}]}
+        if instrument.key == key:
+            payload.update(request_overrides)
+        request = ExplorationRequest.model_validate(payload)
+        report = recherche.run(request, price=_price(),
+                               hypotheses=main._predictif_hypotheses(request), start=START,
+                               macro_store=synthetic_macro_store(), law=LAW,
+                               commit=CURVE_COMMIT, computed="2026-10-23", where=WHERE)
+        (requests / "courbe" / f"{instrument.key}.json").write_text(json.dumps(payload),
+                                                                    encoding="utf-8")
+        (reports / f"exploration_courbe_{instrument.key}.json").write_text(
+            json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+
+def test_the_curve_is_rendered_apart_and_said_preregistered(script, tmp_path) -> None:
+    """D-241: the curve's knobs replayed after the study are on the page in their own
+    section, said preregistered apart, with their own commit, each answered under each
+    persistence, and the firm size the population lacks said."""
+    requests, reports = _study(tmp_path, script)
+    _courbe(requests, reports, script)
+    etudes, complements, courbe = script.study(requests, reports)
+    page = script.render(etudes, complements, courbe)
+    assert [e["instrument"].key for e in courbe] == ["t_min", "t_delta"]
+    head, _, tail = page.partition("## La courbe de 2026, préenregistrée à part")
+    assert tail and CURVE_COMMIT in tail and CURVE_COMMIT not in head
+    assert "D-241" in tail and "moins de 50" in tail
+    assert "## Ce que l'étude ne dit pas" in tail
+    for entry in courbe:
+        assert f"### {entry['instrument'].label}" in tail
+        assert f"`{entry['instrument'].knob}`" in tail
+        for search in entry["report"]["searches"]:
+            assert script.verdict(search, entry["instrument"], 0.0) in tail
+
+
+#: Each way a curve could read as replayed in the study's frame without being so.
+CURVE_REFUSALS = [
+    ("cadre", "ne tient pas le cadre de l'étude"),
+    ("bouton", "parcourt"),
+    ("sans_rapport", "de la courbe sans rapport"),
+    ("sans_requete", "de la courbe sans requête"),
+    ("retouchee", "n'a pas joué sa requête"),
+    ("ou", "ne dit pas où"),
+    ("commits", "de 2 commits"),
+    ("hors_menu", "hors du menu de la courbe"),
+]
+
+
+@pytest.mark.parametrize("how, needle", CURVE_REFUSALS,
+                         ids=[how for how, _ in CURVE_REFUSALS])
+def test_a_curve_that_is_not_what_was_preregistered_is_refused(script, tmp_path, how: str,
+                                                               needle: str) -> None:
+    """Another θ than the study's, a request over another knob than its own, a knob
+    without its report or its request, a request touched after its passes, a report
+    silent on where it ran, reports of two commits, a request the page would not render:
+    each would read as the curve replayed in the study's frame, and is refused."""
+    requests, reports = _study(tmp_path, script)
+    if how == "cadre":
+        _courbe(requests, reports, script, key="t_min", theta={"common": 0.25})
+    elif how == "bouton":
+        _courbe(requests, reports, script, key="t_min", bounds=[
+            {"knob": "allegement_general_t_delta_moins_de_50", "low": 0.3831,
+             "high": 0.3931, "step": 0.01}])
+    else:
+        _courbe(requests, reports, script)
+    curve_report = reports / "exploration_courbe_t_delta.json"
+    if how == "sans_rapport":
+        curve_report.unlink()
+    elif how == "sans_requete":
+        (requests / "courbe" / "t_delta.json").unlink()
+    elif how == "retouchee":
+        path = requests / "courbe" / "t_delta.json"
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload["bounds"][0]["step"] = 0.005
+        path.write_text(json.dumps(payload), encoding="utf-8")
+    elif how in ("ou", "commits"):
+        report = json.loads(curve_report.read_text(encoding="utf-8"))
+        report.update({"where": " "} if how == "ou" else {"commit": "d" * 40})
+        curve_report.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    elif how == "hors_menu":
+        (requests / "courbe" / "puissance.json").write_text(
+            (requests / "courbe" / "t_min.json").read_text(encoding="utf-8"),
+            encoding="utf-8")
     with pytest.raises(script.EtudeError, match=needle):
         script.study(requests, reports)

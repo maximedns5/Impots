@@ -261,6 +261,122 @@ Commit `cacd43af7a5a506d476cfcbc454a58439d1e614b`, le 2026-10-21, ici : un conte
 | 5,5 SMIC | 4,69 Md€ | 4,06 Md€ | +0,35 pt | +0,31 pt | [−0,72 pt ; +1,42 pt] | 8 sur 16 (multiplicateur_macro = 1) |
 | 6,5 SMIC | 5,65 Md€ | 4,82 Md€ | +0,43 pt | +0,36 pt | [−0,86 pt ; +1,72 pt] | 8 sur 16 (multiplicateur_macro = 1) |
 
+## La courbe de 2026, préenregistrée à part
+
+Depuis la refonte de 2026, la réduction générale est une courbe, et l'étude n'en chiffrait que le plafond, qui n'est plus que son seuil de sortie (D-239). Les boutons de la courbe (D-240) sont rejoués ici, après l'étude, et préenregistrés à part : les requêtes sous `etude/courbe/` ont été commitées avant toute passe, avec le pronostic écrit dans D-241. Chacune tient le cadre de l'étude champ pour champ ; seuls son nom, son titre, sa question et sa grille diffèrent. Chaque rapport a joué sa requête, à l'identique, sur le même commit : `893e4de1f8908f6b2d15af6192250494e386a065`, le 2026-10-23. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+| Instrument | Bouton | Grille | Coût 2026, vieillie |
+|---|---|---|---|
+| Le plancher t_min de la réduction générale de 2026 | `allegement_general_t_min` | 2,1 %, 2,4 %, 2,7 %, 3 % | de 0,76 Md€ à 7,62 Md€ |
+| Le t_delta de la réduction générale de 2026 | `allegement_general_t_delta_moins_de_50` | 38,31 %, 39,31 %, 40,31 %, 41,31 % | de 1,00 Md€ à 7,01 Md€ |
+
+La population ne porte pas d'effectif d'entreprise : chaque salarié y est rangé dans une entreprise de moins de 50, dont le `t_delta` est donc celui de tous. Chaque paquet chiffre ainsi une hausse des deux `t_delta` du même nombre de points (D-241).
+
+### La réponse de la courbe
+
+| Instrument | Effet macro éteint après trois ans | Effet macro tenu au niveau de la troisième année |
+|---|---|---|
+| Le plancher t_min de la réduction générale de 2026 | non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,24 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. | non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,24 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. |
+| Le t_delta de la réduction générale de 2026 | non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,31 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. | non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,31 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. |
+
+### Le plancher t_min de la réduction générale de 2026
+
+Un relèvement du plancher t_min de la courbe de 2026, de 2 % à 2,1, 2,4, 2,7 ou 3 %, fait-il baisser la dette en 2035, et pour quels θ ?
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,24 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 2,1 % | 0,76 Md€ | 0,76 Md€ | +0,24 pt | +0,23 pt | [+0,24 pt ; +0,24 pt] | aucun des 16 |
+| 2,4 % | 3,05 Md€ | 3,02 Md€ | +0,94 pt | +0,93 pt | [+0,94 pt ; +0,94 pt] | aucun des 16 |
+| 2,7 % | 5,34 Md€ | 5,29 Md€ | +1,65 pt | +1,63 pt | [+1,65 pt ; +1,65 pt] | aucun des 16 |
+| 3 % | 7,62 Md€ | 7,56 Md€ | +2,35 pt | +2,34 pt | [+2,35 pt ; +2,35 pt] | aucun des 16 |
+
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,24 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 2,1 % | 0,76 Md€ | 0,76 Md€ | +0,24 pt | +0,23 pt | [+0,24 pt ; +0,24 pt] | aucun des 16 |
+| 2,4 % | 3,05 Md€ | 3,02 Md€ | +0,94 pt | +0,93 pt | [+0,94 pt ; +0,94 pt] | aucun des 16 |
+| 2,7 % | 5,34 Md€ | 5,29 Md€ | +1,65 pt | +1,63 pt | [+1,65 pt ; +1,65 pt] | aucun des 16 |
+| 3 % | 7,62 Md€ | 7,56 Md€ | +2,35 pt | +2,34 pt | [+2,35 pt ; +2,35 pt] | aucun des 16 |
+
+**Ce qui manque à la chaîne**, pour le paquet le plus proche : absent, et non nul.
+
+- rétroaction : aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cotisations_employeurs_ciblees': "pas de ligne de solde dans Mésange (variante ciblée, encadré 14) : ni rétroaction ni effet sur le PIB, plutôt que la moitié d'une variante"}
+
+**Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
+
+Paquet le plus proche de la cible : **2,1 %**.
+
+| Pour | Indice | Unité | Valeur à θ [boîte θ] |
+|---|---|---|---|
+| Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
+| Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +570 [+430 ; +676] |
+| Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +2,50 [−5,35 ; +10,35] ; à 2 ans : +6,98 [−0,96 ; +14,91] ; à 3 ans : +9,97 [+1,74 ; +18,19] |
+| Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
+| Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les entreprises | Charge fiscale de production | % de la valeur ajoutée | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
+| Les startups | Créations de sociétés | points de taux de création | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
+| Les entreprises | Dépense de R&D | EUR de R&D | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
+| L'État | Solde primaire, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : −0,025 pt |
+| L'État | Dette, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : +0,235 pt |
+| L'État | Charge d'intérêts de la dette supplémentaire, effet macro éteint après trois ans | pts du PIB de référence | 2035 : +0,004 pt |
+| L'État | Solde primaire, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : −0,025 pt |
+| L'État | Dette, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : +0,235 pt |
+| L'État | Charge d'intérêts de la dette supplémentaire, effet macro tenu au niveau de la troisième année | pts du PIB de référence | 2035 : +0,004 pt |
+
+### Le t_delta de la réduction générale de 2026
+
+Un relèvement du t_delta de la courbe de 2026, de 37,81 % à 38,31, 39,31, 40,31 ou 41,31 %, fait-il baisser la dette en 2035, et pour quels θ ?
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,31 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,31 pt | +0,34 pt | [+0,31 pt ; +0,31 pt] | aucun des 16 |
+| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,93 pt | +1,01 pt | [+0,93 pt ; +0,93 pt] | aucun des 16 |
+| 40,31 % | 5,01 Md€ | 5,48 Md€ | +1,55 pt | +1,69 pt | [+1,55 pt ; +1,55 pt] | aucun des 16 |
+| 41,31 % | 7,01 Md€ | 7,67 Md€ | +2,17 pt | +2,37 pt | [+2,17 pt ; +2,17 pt] | aucun des 16 |
+
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,31 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,31 pt | +0,34 pt | [+0,31 pt ; +0,31 pt] | aucun des 16 |
+| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,93 pt | +1,01 pt | [+0,93 pt ; +0,93 pt] | aucun des 16 |
+| 40,31 % | 5,01 Md€ | 5,48 Md€ | +1,55 pt | +1,69 pt | [+1,55 pt ; +1,55 pt] | aucun des 16 |
+| 41,31 % | 7,01 Md€ | 7,67 Md€ | +2,17 pt | +2,37 pt | [+2,17 pt ; +2,17 pt] | aucun des 16 |
+
+**Ce qui manque à la chaîne**, pour le paquet le plus proche : absent, et non nul.
+
+- rétroaction : aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cotisations_employeurs_ciblees': "pas de ligne de solde dans Mésange (variante ciblée, encadré 14) : ni rétroaction ni effet sur le PIB, plutôt que la moitié d'une variante"}
+
+**Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
+
+Paquet le plus proche de la cible : **38,31 %**.
+
+| Pour | Indice | Unité | Valeur à θ [boîte θ] |
+|---|---|---|---|
+| Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
+| Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +1 558 [+1 150 ; +1 864] |
+| Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +3,28 [−7,04 ; +13,61] ; à 2 ans : +9,17 [−1,26 ; +19,61] ; à 3 ans : +13,11 [+2,29 ; +23,92] |
+| Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
+| Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les entreprises | Charge fiscale de production | % de la valeur ajoutée | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
+| Les startups | Créations de sociétés | points de taux de création | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
+| Les entreprises | Dépense de R&D | EUR de R&D | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
+| L'État | Solde primaire, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : −0,033 pt |
+| L'État | Dette, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : +0,310 pt |
+| L'État | Charge d'intérêts de la dette supplémentaire, effet macro éteint après trois ans | pts du PIB de référence | 2035 : +0,005 pt |
+| L'État | Solde primaire, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : −0,033 pt |
+| L'État | Dette, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : +0,310 pt |
+| L'État | Charge d'intérêts de la dette supplémentaire, effet macro tenu au niveau de la troisième année | pts du PIB de référence | 2035 : +0,005 pt |
+
 ## Ce que l'étude ne dit pas
 
 - Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de θ ; un autre scénario donne une autre réponse.
