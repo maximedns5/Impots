@@ -166,6 +166,12 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
         *PATH_ALLEGEMENT_GENERAL, "entreprises_de_50_salaries_et_plus"),
     "allegement_general_taux_moins_de_50": (
         *PATH_ALLEGEMENT_GENERAL, "entreprises_de_moins_de_50_salaries"),
+    # The 2026 curve that replaced them (D-042, D-240).
+    "allegement_general_t_min": (*PATH_ALLEGEMENT_GENERAL, "t_min"),
+    "allegement_general_t_delta_moins_de_50": (
+        *PATH_ALLEGEMENT_GENERAL, "t_delta_petites_entreprises"),
+    "allegement_general_t_delta_50_et_plus": (
+        *PATH_ALLEGEMENT_GENERAL, "t_delta_grandes_entreprises"),
     "bandeau_maladie_taux": (*PATH_BANDEAU_MALADIE, "taux"),
     "bandeau_famille_taux": (*PATH_BANDEAU_FAMILLE, "reduction"),
     # Prestations (B1) — the spending side.
@@ -329,7 +335,8 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                     value = getattr(spec, knob)
                     if value is not None:
                         update_existing(parameters, path, start=start, value=value,
-                                        instant=instant, superseded_by=SUPERSEDED_BY)
+                                        instant=instant, superseded_by=SUPERSEDED_BY,
+                                        knob_for=REPLACEMENT_KNOBS, not_before=NOT_BEFORE)
                 for knob, path in PLAFOND_KNOBS.items():
                     value = getattr(spec, knob, None)
                     if value is not None:
@@ -350,6 +357,20 @@ SUPERSEDED_BY = {
     "entreprises_de_moins_de_50_salaries": "t_delta_petites_entreprises",
     "entreprises_de_50_salaries_et_plus": "t_delta_grandes_entreprises",
 }
+
+#: The knob that moves each replacement, so that the refusal names what to use (D-240).
+REPLACEMENT_KNOBS = {
+    "t_delta_petites_entreprises": "allegement_general_t_delta_moins_de_50",
+    "t_delta_grandes_entreprises": "allegement_general_t_delta_50_et_plus",
+}
+
+#: And the other way: the curve does not exist before 2026, where the rates govern.
+_BEFORE_THE_CURVE = ("avant la refonte de 2026, la réduction générale se règle par "
+                     "« allegement_general_taux_moins_de_50 » et "
+                     "« allegement_general_taux_50_et_plus »")
+NOT_BEFORE = dict.fromkeys(
+    ("t_min", "t_delta_petites_entreprises", "t_delta_grandes_entreprises"),
+    _BEFORE_THE_CURVE)
 
 
 def plafond_children(node: Any) -> tuple[str, ...]:
@@ -460,8 +481,9 @@ def verify_allegements(tax_benefit_system: Any, spec: ReformSpec, year: int) -> 
 
     for knob in (
         "allegement_general_plafond", "allegement_general_taux_50_et_plus",
-        "allegement_general_taux_moins_de_50", "bandeau_maladie_taux",
-        "bandeau_famille_taux",
+        "allegement_general_taux_moins_de_50", "allegement_general_t_min",
+        "allegement_general_t_delta_moins_de_50", "allegement_general_t_delta_50_et_plus",
+        "bandeau_maladie_taux", "bandeau_famille_taux",
     ):
         wanted = getattr(spec, knob, None)
         if wanted is None:

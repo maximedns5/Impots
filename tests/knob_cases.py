@@ -118,6 +118,10 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
     "allegement_general_plafond": (SMIC, None, "allegement_general", 1.8, +1),
     "allegement_general_taux_moins_de_50": (
         SMIC, None, "allegement_general", 0.40, +1),
+    # The 2026 curve (D-240): run in 2026, where it exists (`YEARS`).
+    "allegement_general_t_min": (SMIC, None, "allegement_general", 0.03, +1),
+    "allegement_general_t_delta_moins_de_50": (
+        SMIC, None, "allegement_general", 0.40, +1),
     "bandeau_maladie_taux": (SMIC, None, "allegement_bandeau_maladie", 0.02, -1),
     "bandeau_famille_taux": (SMIC, None, "allegement_bandeau_famille", 0.01, -1),
     # Les deux PLAFOND_KNOBS. Ils étaient hors de TOUTE règle de couverture jusqu'à
@@ -213,6 +217,14 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
         "ir", 4_000.0, +1),
 }
 
+#: The year a case runs in, when not 2024: a knob of the 2026 curve does not exist
+#: before it, and is refused there by name (D-042, D-240).
+YEARS: dict[str, int] = {
+    "allegement_general_t_min": 2026,
+    "allegement_general_t_delta_moins_de_50": 2026,
+    "allegement_general_t_delta_50_et_plus": 2026,
+}
+
 #: Knobs with no household case, and why. An exemption needs a reason a reader can
 #: check, not a shrug — an unexplained exemption is how a dead knob would hide here.
 EXEMPT: dict[str, str] = {
@@ -225,5 +237,13 @@ EXEMPT: dict[str, str] = {
         "par la formule (branche effectif >= 50), donc le levier est réel et c'est le "
         "format d'entrée qui ne peut pas l'atteindre, pas le paramètre qui est mort. "
         "À lever le jour où un effectif devient déclarable."
+    ),
+    "allegement_general_t_delta_50_et_plus": (
+        "Le même cas pour la courbe de 2026 (D-240) : le `t_delta` des employeurs d'au "
+        "moins 50 salariés, que `HouseholdInput` ne peut pas exprimer. Vérifié en 2026 : "
+        "sur un foyer au SMIC, le porter de 0,3821 à 0,42 laisse `allegement_general` à "
+        "8 707,78 EUR, inchangé au centime, quand le même saut du `t_delta` des moins de "
+        "50 le porte à 9 623,17 EUR. La formule le lit (branche effectif >= 50) ; c'est "
+        "le format d'entrée qui ne l'atteint pas."
     ),
 }

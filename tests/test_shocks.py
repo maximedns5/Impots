@@ -79,6 +79,18 @@ def test_from_the_2026_refonte_the_ceiling_is_no_low_wage_cut():
     assert set(impulse.by_instrument) == {"cotisations_employeurs_ciblees"}
 
 
+def test_the_2026_curve_knobs_are_low_wage_cuts():
+    """D-240. The curve's floor and its t_delta concentrate the relief below 3 SMIC, and
+    t_delta most at the SMIC: low-wage cuts, the targeted variant, unlike the ceiling
+    above them. Mésange prints no balance row for it, so the loop is absent for these
+    knobs, and the chain says so rather than read it as zero."""
+    for knob in ("allegement_general_t_min", "allegement_general_t_delta_moins_de_50",
+                 "allegement_general_t_delta_50_et_plus"):
+        impulse = shocks.build({"employer_contributions": -5.0e9}, year=2026,
+                               knobs=(knob,))
+        assert set(impulse.by_instrument) == {"cotisations_employeurs_ciblees"}, knob
+
+
 def test_the_refonte_year_is_the_trees():
     """The year the ceiling stops being a low-wage knob is read off openfisca's tree,
     not trusted: the curve's `t_min` exists from it, the two rates of the old réduction
