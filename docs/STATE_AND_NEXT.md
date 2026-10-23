@@ -1,6 +1,16 @@
 # State of the project, and the directions open — 2026-10-23 (Phase 10, M4 done)
 
-The 2026-10-23 update adds D-240: knobs for the 2026 réduction générale's curve, the
+The second 2026-10-23 update adds D-241: the study is replayed with the 2026 curve, and
+preregistered first. Two requests under `etude/courbe/`, on the study's frame field for
+field: the floor `t_min` from 2 % to 2.1, 2.4, 2.7 and 3 % (0.76 to 7.62 Md€), and the
+`t_delta` from 37.81 % to 38.31, 39.31, 40.31 and 41.31 % (about 1 to 7 Md€), committed with
+the forecast before any pass. The population carries no firm size, so every employee is in a
+firm under 50: the grid walks that `t_delta`, and the one over 50 reaches no one (0 €,
+measured). The forecast: no cut lowers the debt in 2035, for no θ, because the shock falls
+under Mésange's targeted variant, which has no balance row, and the jobs C2 counts do not
+enter receipts; Δb is the cost carried, 0.3089 point per billion as for the ceiling. The
+result will be D-242.
+The first 2026-10-23 update added D-240: knobs for the 2026 réduction générale's curve, the
 floor `allegement_general_t_min` and the two `t_delta` (under and over 50 employees). Each
 writes its child of the tree, read back by the engine; before 2026 each is refused by name,
 the refusal naming the rates that then govern, and an old rate refused in 2026 now names the
@@ -283,8 +293,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **241 decision
-entries**, D-000 to D-240, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **242 decision
+entries**, D-000 to D-241, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -651,8 +661,9 @@ download list.
    refuses here too (403): the `marche` rate scenario needs it.
 3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 to M4 are done (D-234 to D-238); its gate is
    the owner's `make full`. The ceiling is reclassed and replayed (D-239), and the 2026
-   curve has its knobs (D-240). Left from the study: the study replayed with the curve;
-   the study on the annual path; other θ.
+   curve has its knobs (D-240). The study replayed with the curve is preregistered
+   (D-241); its passes and result (D-242) are next. Left from the study: the annual path;
+   other θ.
 4. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
