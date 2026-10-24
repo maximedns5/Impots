@@ -85,8 +85,10 @@ SCOPES: tuple[Scope, ...] = (
           functions=("refuse_theta_as_knob", "search"),
           only=("theta", "conditional", "corners", "named")),
     Scope("src/impots/api/main.py", ("tests/test_api_predictif.py", "tests/test_recherche.py",
-                                     "tests/test_explorations_api.py"),
+                                     "tests/test_explorations_api.py",
+                                     "tests/test_predictif_entreprises.py"),
           functions=("predictif_simulate", "_predictif_macro_store", "_price_first_year",
+                     "_price_households", "_firm_first_year",
                      "predictif_show", "predictif_list", "_predictif_hypotheses",
                      "explorations_show", "explorations_list")),
     Scope("src/impots/population/cli.py",
@@ -94,15 +96,17 @@ SCOPES: tuple[Scope, ...] = (
            "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py"),
           functions=("cmd_predictif", "cmd_exploration", "_whole_pass_refusals")),
     # Phase 10 M1 (D-234): the explorer made askable, its request and its command.
-    Scope("src/impots/predictif/recherche.py", ("tests/test_recherche.py", "tests/test_transformations.py", "tests/test_recherche_indices.py")),
+    Scope("src/impots/predictif/recherche.py", ("tests/test_recherche.py", "tests/test_transformations.py", "tests/test_recherche_indices.py",
+                                                "tests/test_predictif_entreprises.py")),
     # Phase 10 M4 (D-237): the named transformation, and the indices of the nearest bundle.
     Scope("src/impots/predictif/transformations.py", ("tests/test_transformations.py",)),
     Scope("src/impots/api/schemas.py",
           ("tests/test_recherche.py", "tests/test_explorations_api.py",
-           "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py"),
+           "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py",
+           "tests/test_predictif_entreprises.py", "tests/test_api_predictif.py"),
           functions=("_check_exploration_bounds", "_check_exploration_search",
                      "_check_exploration_report", "_check_report_paths",
-                     "_check_exploration_indices")),
+                     "_check_exploration_indices", "_refuse_firm_knobs_out_of_chain")),
 )
 
 #: The whole Phase 9 suite, the second tier for a survivor.
@@ -116,6 +120,7 @@ WIDE: tuple[str, ...] = (
     "tests/test_offre_travail.py", "tests/test_creations.py", "tests/test_cir.py",
     "tests/test_recherche.py", "tests/test_explorations_api.py",
     "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py",
+    "tests/test_predictif_entreprises.py",
 )
 
 UI_CHECK = "ui/check.mjs"
@@ -248,13 +253,13 @@ MANUAL: tuple[Mutation, ...] = (
              ("tests/test_recherche.py",),
              "un src/ modifié est refusé : le rapport nomme son code (garde 4)"),
     Mutation("P10-deux-vues", "src/impots/population/cli.py",
-             "            uprating=hypotheses.uprating, macro=request.macro, view=view)",
-             '            uprating=hypotheses.uprating, macro=request.macro, view="vieillie")',
+             "            uprating=hypotheses.uprating, macro=request.macro, view=view,",
+             '            uprating=hypotheses.uprating, macro=request.macro, view="vieillie",',
              ("tests/test_recherche.py",),
              "chaque paquet est chiffré dans ses deux vues, par la passe du simulateur"),
     Mutation("P10-un-seul-chiffrage", "src/impots/population/cli.py",
-             "                                      behavioural=request.behavioural),",
-             "                                      behavioural=False),",
+             "            api._first_year_request(reform, year, request.behavioural),",
+             "            api._first_year_request(reform, year, False),",
              ("tests/test_recherche.py",),
              "l'explorateur chiffre ce que chiffre le simulateur (garde 6)"),
     Mutation("P10-une-passe-par-paquet", "src/impots/predictif/recherche.py",
@@ -359,6 +364,36 @@ MANUAL: tuple[Mutation, ...] = (
              "        if not (False\n",
              ("tests/test_shocks.py",),
              "depuis la refonte de 2026, le plafond est classé sous la variante uniforme"),
+    # Phase 11 M1 (D-244): a firm reform in the chain.
+    Mutation("P11-une-reforme-requise", "src/impots/api/schemas.py",
+             "        if self.reform.is_empty() and (self.firm_reform is None\n"
+             "                                       or self.firm_reform.is_empty()):",
+             "        if self.reform.is_empty() and self.firm_reform is None:",
+             ("tests/test_predictif_entreprises.py",),
+             "une réforme des entreprises vide n'est pas une réforme"),
+    Mutation("P11-cout-entreprises-ajoute", "src/impots/api/main.py",
+             "        cost=households.cost + firm.cost, inputs=households.inputs,",
+             "        cost=households.cost, inputs=households.inputs,",
+             ("tests/test_predictif_entreprises.py",),
+             "le coût de la couche entreprises s'ajoute à celui des ménages"),
+    Mutation("P11-impots-entreprises-non-couverts", "src/impots/api/main.py",
+             "        uncovered=({**households.uncovered, **dict.fromkeys(firm.deltas, "
+             "FIRM_NO_VARIANT)}",
+             "        uncovered=({**households.uncovered}",
+             ("tests/test_predictif_entreprises.py",),
+             "les impôts des entreprises sont dits sans variante, jamais lus comme nuls"),
+    Mutation("P11-part-entreprises-transmise", "src/impots/predictif/recherche.py",
+             "            passes[key] = (price(reform, view) if firm is None\n"
+             "                           else price(reform, view, firm))",
+             "            passes[key] = price(reform, view)",
+             ("tests/test_predictif_entreprises.py",),
+             "un paquet avec une part entreprises la transmet au chiffrage"),
+    Mutation("P11-boutons-entreprises-hors-menages", "src/impots/predictif/recherche.py",
+             "    own = {k: v for k, v in knobs.items() if k not in "
+             "FirmReformSpec.model_fields}\n",
+             "    own = dict(knobs)\n",
+             ("tests/test_predictif_entreprises.py",),
+             "les boutons des entreprises n'entrent pas dans la réforme des ménages"),
 )
 
 #: Mutations no test can kill, each with why. An entry here is a finding of D-229, not

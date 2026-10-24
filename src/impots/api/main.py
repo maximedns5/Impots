@@ -1198,8 +1198,70 @@ def _frozen_year_note(year: int) -> str:
               f"population {POPULATION_VINTAGE} telle quelle, sans vieillissement.")
 
 
+#: Why the firm layer's taxes have no macro effect in the chain yet (PHASE11_SPEC §4).
+FIRM_NO_VARIANT = (
+    "impôt des entreprises, sans variante dans Mésange (D-214) : ni effet sur le PIB ni "
+    "rétroaction lue ici, plutôt qu'un multiplicateur emprunté ; la phase 11 les ouvre "
+    "sur des sources internationales (D-243, PHASE11_SPEC §4)")
+#: The firm totals that are the sum of the others, not an instrument.
+FIRM_TOTAL = "prelevements_entreprise"
+
+
+def _firm_first_year(firm_reform: Any, year: int) -> Any:
+    """The firm layer's part of a predictive first year (PHASE11_SPEC §3, M1).
+
+    The firm population is the one the layer is built from, of its own vintage, under
+    the law of `year`: it is not aged, and the same figure stands in both views. The IS
+    is counted by exercise, not by cash: the note says both, and M0 settles them.
+    """
+    from types import SimpleNamespace
+
+    from impots.entreprises import aggregate as firm_aggregate
+    from impots.entreprises import build as firm_build
+    from impots.entreprises import runner as firm_runner
+
+    try:
+        result = firm_runner.run(_firm_population(), year=year, reform=firm_reform)
+    except firm_runner.FirmRunError as error:
+        raise HTTPException(status_code=500, detail=str(error)) from error
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    aggregates = firm_aggregate.aggregate(result.firms)
+    manifest = firm_build.PROCESSED / f"firms_{FIRM_VINTAGE}.manifest.json"
+    synthetic = (not manifest.exists() or bool(
+        json.loads(manifest.read_text(encoding="utf-8"))["cells_are_synthetic"]))
+    note = (f"Couche entreprises : population d'entreprises du millésime {FIRM_VINTAGE}, "
+            f"non vieillie, sous le droit de {year}, la même dans les deux vues ; l'IS est "
+            f"compté à l'exercice, non à la caisse (PHASE11_SPEC §3).")
+    if synthetic:
+        note = ("ATTENTION : population d'entreprises construite à partir de cellules "
+                "synthétiques de test, pas de SIRENE × ESANE ; son chiffrage n'est pas une "
+                "affirmation sur la France. " + note)
+    deltas = {name: value for name, value in aggregates.deltas.items()
+              if name != FIRM_TOTAL and value}
+    return SimpleNamespace(cost=float(aggregates.reform_cost or 0.0), deltas=deltas,
+                           note=note)
+
+
+def _first_year_request(reform: ReformSpec, year: int, behavioural: bool) -> Any:
+    """The request a predictive first year is priced on. A firm reform alone leaves the
+    households' empty, which `PopulationSimulateRequest` rightly refuses for its own
+    endpoint; the internal `YearPass` carries the same three fields without that refusal."""
+    if reform.is_empty():
+        return YearPass(reform=reform, year=year, behavioural=behavioural)
+    return PopulationSimulateRequest(reform=reform, year=year, behavioural=behavioural)
+
+
+def _firm_part(firm_reform: Any) -> dict[str, Any]:
+    """The keyword a predictive pass takes for a firm reform: none when there is none, so
+    a household reform goes through the very call it always did."""
+    return ({"firm_reform": firm_reform}
+            if firm_reform is not None and not firm_reform.is_empty() else {})
+
+
 def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
-                      macro: bool = False, view: str = FIRST_YEAR_VIEW) -> Any:
+                      macro: bool = False, view: str = FIRST_YEAR_VIEW,
+                      firm_reform: Any = None) -> Any:
     """One quick-tier pass for the predictive path's first year — the seam its tests stub.
 
     The population is aged to the year with `uprating` first (D-226), and everything
@@ -1211,14 +1273,43 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
     Mésange variant, EXPANSIONARY-POSITIVE, and `uncovered` the deltas without one, when
     the loop was asked for (`macro`); `view` is the population view priced,
     `FIRST_YEAR_VIEW`, and `note` the quick tier's, which names it with its caveat.
+
+    A FIRM REFORM (`firm_reform`, PHASE11_SPEC §3) adds the firm layer's cost for the
+    year, and its deltas join `uncovered`: no Mésange variant reads them. `layers` then
+    names each layer's cost. A firm reform alone runs no population pass at all: the
+    households are untouched, their cost is zero, and nothing of theirs is read.
     """
+    from types import SimpleNamespace
+
+    if view not in (FIRST_YEAR_VIEW, FROZEN_VIEW):
+        raise ValueError(f"vue « {view} » inconnue : {FIRST_YEAR_VIEW} ou {FROZEN_VIEW}")
+    firm = (_firm_first_year(firm_reform, request.year)
+            if firm_reform is not None and not firm_reform.is_empty() else None)
+    if firm is None:
+        return _price_households(request, uprating=uprating, macro=macro, view=view)
+    households = (SimpleNamespace(cost=0.0, inputs=None, impulse={} if macro else None,
+                                  uncovered={}, view=view, note="", deciles=[])
+                  if request.reform.is_empty()
+                  else _price_households(request, uprating=uprating, macro=macro,
+                                         view=view))
+    return SimpleNamespace(
+        cost=households.cost + firm.cost, inputs=households.inputs,
+        impulse=households.impulse,
+        uncovered=({**households.uncovered, **dict.fromkeys(firm.deltas, FIRM_NO_VARIANT)}
+                   if macro else {}),
+        view=view, note=" ".join(n for n in (households.note, firm.note) if n),
+        deciles=households.deciles,
+        layers={"menages": households.cost, "entreprises": firm.cost})
+
+
+def _price_households(request: PopulationSimulateRequest, *, uprating: Any,
+                      macro: bool, view: str) -> Any:
+    """The households' pass of `_price_first_year`, the one it always was."""
     from types import SimpleNamespace
 
     from impots import uprating as uprating_module
     from impots.macro import shocks
 
-    if view not in (FIRST_YEAR_VIEW, FROZEN_VIEW):
-        raise ValueError(f"vue « {view} » inconnue : {FIRST_YEAR_VIEW} ou {FROZEN_VIEW}")
     frame = (uprating_module.uprate(_population_frame(), request.year, uprating)
              if view == FIRST_YEAR_VIEW else _population_frame())
     result, agg = _run_population(request, frame)
@@ -1363,9 +1454,9 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             status_code=422,
             detail=f"la première année projetée, {year}, sort de la fenêtre que la couche "
                    f"population sert ({MIN_YEAR}–{MAX_YEAR}).")
-    first = _price_first_year(PopulationSimulateRequest(
-        reform=request.reform, year=year, behavioural=request.behavioural),
-        uprating=uprating, macro=request.macro)
+    first = _price_first_year(
+        _first_year_request(request.reform, year, request.behavioural),
+        uprating=uprating, macro=request.macro, **_firm_part(request.firm_reform))
     try:
         at = (comportement.evaluate(theta, mechanical=-first.cost, reform=request.reform,
                                     store=store, **first.inputs)
@@ -1386,7 +1477,9 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                 start, 1, spending=spending, growth=growth)[0].gdp_eur,
             macro_store=indices_store, macro_reason=indices_reason, theta=theta,
             store=store, reform=request.reform, mechanical=-first.cost,
-            inputs=first.inputs, year=year)
+            inputs=first.inputs, year=year,
+            firm_reason=(indices_module.FIRM_PENDING if _firm_part(request.firm_reform)
+                         else indices_module.FIRM_LAYER))
         side = len(results) > 1
         # Side by side, the chain-stage indices (balance, debt, interest) belong to each
         # path; the response lists them as such rather than pick one path's.
@@ -1435,6 +1528,8 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                              primary_balance=start.primary_balance,
                              implicit_rate=start.implicit_rate, gdp_eur=start.gdp_eur),
         mechanical_first_year_eur=first.cost,
+        mechanical_first_year_by_layer=getattr(first, "layers", None)
+        or {"menages": first.cost},
         delta_mechanical=list(result.delta_mechanical),
         theta=dict(result.theta), theta_applied=result.theta_applied,
         closed=dict(result.closed),

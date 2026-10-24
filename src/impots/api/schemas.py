@@ -1753,10 +1753,30 @@ class PredictifTheta(BaseModel):
     rows: dict[str, float] = Field(default_factory=dict)
 
 
+#: The firm-layer knobs the predictive chain refuses: the CIR is priced on the créance
+#: flow, which is not a year's receipts (D-222), so it stays out of the path.
+FIRM_KNOBS_OUT_OF_CHAIN = ("cir_taux", "cir_taux_au_dela")
+
+
+def _refuse_firm_knobs_out_of_chain(spec: FirmReformSpec | None) -> None:
+    named = sorted(set(spec.model_dump(exclude_none=True) if spec else {})
+                   & set(FIRM_KNOBS_OUT_OF_CHAIN))
+    if named:
+        raise ValueError(
+            f"{named} hors de la chaîne prédictive : le CIR se chiffre sur le flux de "
+            f"créances, qui n'est pas la recette d'une année (D-222). Le chiffrer est le "
+            f"rôle de `/entreprises/simulate`.")
+
+
 class PredictifRequest(BaseModel):
     model_config = INPUT_CONFIG
 
-    reform: ReformSpec
+    reform: ReformSpec = Field(default_factory=ReformSpec)
+    """The households' reform; empty is allowed when `firm_reform` carries one."""
+    firm_reform: FirmReformSpec | None = None
+    """The firm layer's reform, priced for the first year by `/entreprises/simulate`'s
+    own pass and added to the households' (PHASE11_SPEC §3). Its taxes have no Mésange
+    variant: the loop is absent for them, and said so."""
     spending: PredictifSpending
     growth: PredictifGrowth
     rate: PredictifRate
@@ -1775,9 +1795,11 @@ class PredictifRequest(BaseModel):
 
     @model_validator(mode="after")
     def _check_reform(self) -> PredictifRequest:
-        if self.reform.is_empty():
+        if self.reform.is_empty() and (self.firm_reform is None
+                                       or self.firm_reform.is_empty()):
             raise ValueError("Une réforme est requise : sans réforme, la trajectoire de "
                              "la réforme est celle de la référence.")
+        _refuse_firm_knobs_out_of_chain(self.firm_reform)
         return self
 
 
@@ -1829,6 +1851,9 @@ class ExplorationRequest(BaseModel):
     """The question the search answers, in a sentence: the report leads with it."""
     base: ReformSpec = Field(default_factory=ReformSpec)
     """The fixed part of every bundle; empty is allowed."""
+    firm_base: FirmReformSpec | None = None
+    """The fixed firm part of every bundle (PHASE11_SPEC §3). Absent rather than empty
+    by default, so a household search's request reads as it always did."""
     bounds: Annotated[list[ExplorationBound], Field(min_length=1)]
     target: ExplorationTarget
     spending: PredictifSpending
@@ -1848,8 +1873,26 @@ class ExplorationRequest(BaseModel):
             raise ValueError(
                 "exploration sans question : le rapport s'ouvre sur elle, et un tableau de "
                 "paquets sans la question qu'il tranche se lit comme une recommandation.")
+        _refuse_firm_knobs_out_of_chain(self.firm_base)
         fixed = set(self.base.model_dump(exclude_none=True))
+        firm_fixed = set(self.firm_base.model_dump(exclude_none=True)
+                         if self.firm_base else {})
         for bound in self.bounds:
+            firm_field = FirmReformSpec.model_fields.get(bound.knob)
+            if firm_field is not None:
+                if bound.knob in FIRM_KNOBS_OUT_OF_CHAIN:
+                    _refuse_firm_knobs_out_of_chain(FirmReformSpec.model_validate(
+                        {bound.knob: bound.low}))
+                if not _walkable(firm_field.annotation):
+                    raise ValueError(
+                        f"bouton « {bound.knob} » : ce n'est pas un nombre, et la grille "
+                        f"ne sait parcourir que des nombres.")
+                if bound.knob in firm_fixed:
+                    raise ValueError(
+                        f"bouton « {bound.knob} » fixé aussi dans `firm_base` : la grille "
+                        f"l'écraserait, et le rapport afficherait une base que rien n'a "
+                        f"chiffrée.")
+                continue
             transformation = TRANSFORMATIONS.get(bound.knob)
             if transformation is not None:
                 clash = sorted(fixed & set(transformation.writes))
@@ -1863,8 +1906,9 @@ class ExplorationRequest(BaseModel):
             if field is None:
                 raise ValueError(
                     f"bouton « {bound.knob} » inconnu : un bouton est un champ de la "
-                    f"réforme ou une transformation nommée ({sorted(TRANSFORMATIONS)}), "
-                    f"jamais un chemin du barème ni un θ.")
+                    f"réforme des ménages, de celle des entreprises, ou une "
+                    f"transformation nommée ({sorted(TRANSFORMATIONS)}), jamais un "
+                    f"chemin du barème ni un θ.")
             if not _walkable(field.annotation):
                 raise ValueError(
                     f"bouton « {bound.knob} » : ce n'est pas un nombre, et la grille ne "
@@ -1978,6 +2022,8 @@ class PredictifResponse(BaseModel):
     start: PredictifStart
     mechanical_first_year_eur: float
     """The engine's cost for the first projected year, COST POSITIVE."""
+    mechanical_first_year_by_layer: dict[str, float] = Field(default_factory=dict)
+    """That cost by layer, « menages » and « entreprises », which sum to it."""
     delta_mechanical: list[float]
     """The difference with every behavioural channel off; θ has no effect on it."""
     theta: dict[str, float]
