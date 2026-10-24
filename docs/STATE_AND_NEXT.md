@@ -1,6 +1,6 @@
-# State of the project, and the directions open — 2026-10-24 (Phase 10, M4 done; Phase 11, M0 done)
+# State of the project, and the directions open — 2026-10-24 (Phase 10, M4 done; Phase 11, M0 and M1 done)
 
-The second 2026-10-24 update adds D-245, Phase 11's M0: eleven documents manifested and
+The third 2026-10-24 update adds D-245, Phase 11's M0: eleven documents manifested and
 read on file, `docs/M0_PHASE11.md`, two adversarial passes. Fixed: the IS on growth
 (Gechert and Heimberger: θ = 0 at the bias-corrected centre, no effect; θ = 1 at the raw
 centre, 0.019 point of growth a year per IS point; a ten-year ramp) and firm entry (Da
@@ -12,6 +12,17 @@ reproduced for France. Left to the owner: the self-financing of targeted cuts, w
 French sources put anywhere from 1 % (C2's jobs) to 60 % (Trésor-Éco n° 97); D-242 holds
 until then. C2's job count, fifteen times below the CAE's at a similar elasticity, is to
 be checked on a population pass.
+The second 2026-10-24 update adds D-244, Phase 11's M1: a firm reform enters the
+predictive chain. `/predictif/simulate` takes a `firm_reform`, and `impots exploration` a
+`firm_base` and firm knobs in its grid, alone or beside the households' reform. The first
+year's cost is the sum of the two layers, each named, and a response whose cost is not
+that sum is refused. A firm reform alone runs no population pass; its taxes have no
+Mésange variant, so the loop is said absent, not zero; the CIR stays out (D-222). One IS
+point, 25 to 24 %, costs 3.10 Md€ in 2026 on the 2023 firm population and 2.73 Md€ from
+2027, once the CEBGE has lapsed. Two conventions are named in the note: the firm
+population is not aged, so the same figure stands in both views, and the IS is counted by
+exercise. The aged firm view and the annual path, `impots predictif`, go to M2. The sweep
+holds 179 mutations, 178 killed, 1 equivalent.
 The first 2026-10-24 update added D-243 with its spec. The owner asked where the
 project stands against the finished product. The answer, in orders of magnitude: about
 half way; the biggest hole is half the owner's question, firms and startups, on which
@@ -708,8 +719,11 @@ download list.
    n° 97, the Bozio and Wasmer report (2024) and the IPP's PFU evaluation; fix each θ
    mapping before any pass. M0 is done (D-245): the IS's growth ramp and firm entry
    fixed, the IS loop and the investment index closed with their reasons, the
-   self-financing of targeted cuts left to the owner. Then Phase 12, the past, and
-   Phase 13, the online product.
+   self-financing of targeted cuts left to the owner. M1 is done (D-244): a firm reform
+   in `/predictif/simulate` and the explorer, priced on the unaged firm population. Next,
+   M2: the IS's GDP effect as an index outside the debt path, the cross-check that
+   refuses the elasticity loop, the aged firm view and the annual path. Then Phase 12,
+   the past, and Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each

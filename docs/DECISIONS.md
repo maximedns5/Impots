@@ -18127,6 +18127,92 @@ chaque appariement θ, la conversion du taux légal en taux effectifs et la tol�
 boucle par élasticités, avant toute passe. M1, les réformes des entreprises dans la chaîne,
 peut commencer pendant M0. La porte de la phase 10 reste le `make full` du propriétaire.
 
+## D-244 — Phase 11, M1 : les réformes des entreprises entrent dans la chaîne prédictive
+
+**Le fait.** La couche entreprises chiffrait déjà une réforme de l'IS
+(`/entreprises/simulate`), mais la chaîne vers la dette ne connaissait que les réformes
+des ménages. Une requête prédictive porte désormais, à côté de `reform`, un champ
+`firm_reform`, un `FirmReformSpec`, seul ou à côté de celle des ménages. Cela vaut pour
+`/predictif/simulate`, et pour `impots exploration` par `firm_base` et les boutons des
+entreprises dans `bounds`. Sur la population de 2023, construite des cellules SIRENE ×
+ESANE, un point d'IS en moins, de 25 à 24 %, coûte 3,10 Md€ en 2026 : 2,67 d'IS, 0,06 de
+contribution sociale et 0,37 de CEBGE, assise sur l'IS. À partir de 2027, une fois la
+CEBGE éteinte dans le droit que la couche porte, il coûte 2,73 Md€.
+
+**Ce que fait la chaîne.**
+- Le coût de la première année est la somme de deux couches, chacune nommée dans
+  `mechanical_first_year_by_layer` : les ménages et les entreprises. Une réponse dont le
+  coût n'est pas cette somme, qui omet ses couches ou en nomme une inconnue, est refusée
+  par le schéma : c'est la garde 8 du §10 de la spec.
+- Une réforme des seules entreprises ne lance aucune passe de population. Le coût des
+  ménages vaut zéro, et rien des leurs n'est lu. `PopulationSimulateRequest` refuse une
+  réforme vide pour son propre point d'accès, à raison ; le chemin interne passe donc
+  par `YearPass`, qui porte les trois mêmes champs sans ce refus.
+- Les impôts des entreprises n'ont pas de variante dans Mésange (D-214). Chacun est
+  rangé parmi les instruments non couverts, avec sa raison. La boucle est donc dite
+  absente, jamais lue comme nulle (D-238). Chaque indice des entreprises dit que la
+  réforme est chiffrée dans la trajectoire mais que l'indice ne s'y lit pas encore. Il
+  ne dit plus que la trajectoire ne chiffre que la population.
+- Le CIR reste hors de la chaîne. Il se chiffre sur le flux de créances, qui n'est pas
+  la recette d'une année (D-222). Ses deux boutons sont refusés par leur nom, dans la
+  requête comme dans la grille.
+- L'explorateur parcourt les boutons des entreprises sous le schéma de refus de D-234.
+  Un bouton qui n'est pas un nombre est refusé, de même qu'un bouton fixé aussi dans
+  `firm_base`. Chaque paquet est validé par `FirmReformSpec` avant toute passe. Seuls
+  les paquets qui ont une part d'entreprises la reçoivent. Une recherche des ménages
+  appelle donc `price` exactement comme avant, et ses rapports restent identiques à
+  l'octet : `firm_base` en est absent, et non vide.
+
+**Trois conventions, nommées dans la note du chiffrage.**
+- La population d'entreprises n'est pas vieillie. C'est le millésime de la couche, 2023
+  sur des cellules réelles, la fixture sinon, sous le droit de l'année, et le même
+  chiffre vaut dans les deux vues. Cela s'écarte du §3 de la spec, qui demandait en vue
+  vieillie la population d'entreprises de l'année. M0 tranche : la vue figée est le
+  millésime 2023, et la vue vieillie suivra le coût des entreprises au PIB nominal du
+  scénario. M2 la construit. D'ici là, la vue vieillie d'une réforme des entreprises
+  n'est pas vieillie, et la note le dit.
+- L'IS est compté à l'exercice, non à la caisse : les acomptes et le solde ne sont pas
+  décalés. La note le dit, comme D-204 l'a dit pour la CEBGE de l'art. 15 du PLF. La
+  spec écrivait « l'art. 2 », à tort.
+- Une population construite sur les cellules synthétiques de la fixture porte en tête de
+  sa note un avertissement : son chiffrage n'est pas une affirmation sur la France.
+
+**Ce qui n'est pas fait.**
+- Le chemin annuel, `impots predictif`, ne prend pas encore de réforme des entreprises.
+  Son format de scénario ne porte que celle des ménages. Surtout, le coût de chaque année
+  dépend du vieillissement que M0 a renvoyé à M2. Ce chemin passe donc à M2.
+- Le panneau prédictif de la page n'envoie pas de réforme des entreprises. Il la
+  recevra avec le chemin annuel.
+
+**Les tests.** Dans `tests/test_predictif_entreprises.py`, 19 cas, sur la population
+d'entreprises de la fixture et sans données des ménages :
+- une réforme des seules entreprises : son coût, ses couches, une impulsion vide, ses
+  impôts non couverts et sa note ;
+- les deux couches qui s'additionnent, dans les deux vues ;
+- l'appel des ménages inchangé ;
+- la requête de bout en bout, avec sa boucle absente et ses indices en attente ;
+- quatre refus de la requête ;
+- l'explorateur qui ne transmet que la part des entreprises ;
+- une recherche des ménages appelée à deux arguments ;
+- quatre refus de la grille, et un paquet refusé avant la première passe ;
+- deux refus de la couche entreprises, qui gardent leur statut et leur raison ;
+- la réponse dont le coût n'est pas la somme de ses couches.
+
+Treize gardes ont été retirées à la main, une à une, et chaque fois son test a échoué. La
+garde 8 a vu son test échouer sur le code d'avant. Le balayage de D-229 reçoit les
+fonctions nouvelles dans ses périmètres, et cinq mutations écrites à la main pour les
+gardes qui ne sont pas un `raise`. Il a trouvé deux survivantes : les deux conversions des
+refus de la couche entreprises, `FirmRunError` en 500 et `ValueError` en 422. Chacune a
+reçu son test, qui l'a tuée. Le rapport compte 179 mutations : 178 tuées, 1 équivalente,
+0 survivante. Les tests ciblés passent : 160 dans dix fichiers, ceux de la chaîne
+prédictive, de l'explorateur, de l'étude, du rapport des gardes et de la charte. Ruff
+aussi.
+
+**Ce qui reste.** M2 : l'IS sur le PIB, sur la méta-analyse de Gechert et Heimberger ; la
+boucle par élasticités de la Commission, avec sa tolérance au recoupement ; la vue
+vieillie des entreprises ; et le chemin annuel avec la réforme des entreprises. Les
+lectures de M0, qui fixent ces appariements, ont leur propre entrée.
+
 ## D-245 — Phase 11, M0 : deux canaux fixés, deux fermés, un laissé au propriétaire
 
 **Le fait.** M0 de la phase 11 (§9 de la spec) est fait. Onze documents ont été

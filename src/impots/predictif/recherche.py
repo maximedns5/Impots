@@ -45,6 +45,7 @@ from impots import explorer
 from impots.api.schemas import ExplorationRequest, ReformSpec
 from impots.dette.path import BANNER as DEBT_BANNER
 from impots.dette.reference import Start
+from impots.entreprises.reforms import FirmReformSpec
 from impots.predictif import chaine, exploration, retroaction, transformations
 from impots.predictif import indices as indices_module
 from impots.predictif.exploration import Priced
@@ -84,8 +85,20 @@ MACRO_UNREAD = ("Magasin macro non lu : la recherche ne le charge qu'avec la bou
 
 def reform_of(base: ReformSpec, knobs: dict[str, float],
               law: dict[str, Any] | None = None) -> ReformSpec:
+    """The households' part of a bundle: the firm knobs go to `firm_of`."""
+    own = {k: v for k, v in knobs.items() if k not in FirmReformSpec.model_fields}
     return ReformSpec.model_validate({**base.model_dump(exclude_none=True, mode="json"),
-                                      **transformations.expand(knobs, law)})
+                                      **transformations.expand(own, law)})
+
+
+def firm_of(base: FirmReformSpec | None,
+            knobs: dict[str, float]) -> FirmReformSpec | None:
+    """The firm part of a bundle (PHASE11_SPEC §3), or None when the search has none."""
+    own = {k: v for k, v in knobs.items() if k in FirmReformSpec.model_fields}
+    fixed = base.model_dump(exclude_none=True, mode="json") if base else {}
+    if not own and not fixed:
+        return None
+    return FirmReformSpec.model_validate({**fixed, **own})
 
 
 def needs_law(request: ExplorationRequest) -> bool:
@@ -113,6 +126,7 @@ def check_grid(request: ExplorationRequest, *, max_bundles: int = MAX_BUNDLES,
     for knobs in grid:
         try:
             reform_of(request.base, knobs, law)
+            firm_of(request.firm_base, knobs)
         except transformations.TransformationError as error:
             raise RechercheError(f"paquet {knobs}, avant toute passe : {error}") from error
         except ValidationError as error:
@@ -170,7 +184,7 @@ def _search(persistence: str | None, seen: list[tuple[dict[str, float], Any]],
             "closest": closest, "indices": indices(nearest)}
 
 
-def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Priced],
+def run(request: ExplorationRequest, *, price: Callable[..., Priced],
         hypotheses: Any, start: Start, macro_store: Any = None,
         securities: list[Any] | None = None, max_bundles: int = MAX_BUNDLES,
         law: dict[str, Any] | None = None, commit: str = "", computed: str = "",
@@ -178,7 +192,8 @@ def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Price
     """The search, once per persistence, from one pass per bundle and view; the report.
 
     `hypotheses` is what `api.main._predictif_hypotheses` builds for the request, and
-    `price(reform, view)` is one pass of the first projected year in that view. `law` is
+    `price(reform, view)` is one pass of the first projected year in that view, called
+    `price(reform, view, firm)` when the bundle has a firm part. `law` is
     the law in force at that year (`law_in_force`), read when a transformation asks.
     """
     from impots.dette import reference as reference_module
@@ -197,7 +212,12 @@ def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Price
     def priced(knobs: dict[str, float], view: str) -> Priced:
         key = (tuple(sorted(knobs.items())), view)
         if key not in passes:
-            passes[key] = price(reform_of(request.base, knobs, law), view)
+            # The firm part travels only when there is one: a household search calls
+            # `price` exactly as it always did.
+            firm = firm_of(request.firm_base, knobs)
+            reform = reform_of(request.base, knobs, law)
+            passes[key] = (price(reform, view) if firm is None
+                           else price(reform, view, firm))
         return passes[key]
 
     gdp_eur = reference_module.reference_years(
@@ -218,7 +238,10 @@ def run(request: ExplorationRequest, *, price: Callable[[ReformSpec, str], Price
                 deciles_rows=aged.deciles, impulse=aged.impulse, gdp_eur=gdp_eur,
                 macro_store=macro_store, macro_reason=MACRO_UNREAD,
                 theta=hypotheses.theta, store=hypotheses.store, reform=reform,
-                mechanical=-aged.cost, inputs=aged.inputs, year=first)
+                mechanical=-aged.cost, inputs=aged.inputs, year=first,
+                firm_reason=(indices_module.FIRM_PENDING
+                             if firm_of(request.firm_base, knobs) is not None
+                             else indices_module.FIRM_LAYER))
             return {"knobs": dict(knobs), "delta_aged": nearest["delta_aged"],
                     "absent": dict(path.absent), "closed": dict(path.closed),
                     "rows": [row.payload() for row in rows]}
