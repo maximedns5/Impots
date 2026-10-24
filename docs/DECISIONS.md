@@ -18172,7 +18172,8 @@ CEBGE éteinte dans le droit que la couche porte, il coûte 2,73 Md€.
   scénario. M2 la construit. D'ici là, la vue vieillie d'une réforme des entreprises
   n'est pas vieillie, et la note le dit.
 - L'IS est compté à l'exercice, non à la caisse : les acomptes et le solde ne sont pas
-  décalés. La note le dit, comme D-204 l'a fait pour l'art. 2 du PLF.
+  décalés. La note le dit, comme D-204 l'a dit pour la CEBGE de l'art. 15 du PLF. La
+  spec écrivait « l'art. 2 », à tort.
 - Une population construite sur les cellules synthétiques de la fixture porte en tête de
   sa note un avertissement : son chiffrage n'est pas une affirmation sur la France.
 
