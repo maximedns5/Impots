@@ -18037,3 +18037,92 @@ ciblée de Mésange, qu'il faudrait trouver ailleurs, ou les recettes des emploi
 remontées dans la chaîne, un second tour que le projet n'a pas construit. Puis, comme
 avant : l'étude sur le chemin annuel, d'autres θ que ½. La porte de M4 reste le
 `make full` du propriétaire.
+
+## D-243 — L'objectif confirmé, le produit nommé, les fourchettes internationales admises
+
+**Le fait.** Le 2026-10-24, le propriétaire a demandé où en était le développement par
+rapport au produit fini, et quel objectif le projet croit poursuivre. L'état des lieux lui
+a été donné en ordres de grandeur, des estimations et non des mesures :
+- le socle, à 85 % environ : calcul exact, population, comportements, macro, dette ;
+- la chaîne vers la dette pour les impôts des ménages, à 70 % ;
+- les entreprises et les startups dans la chaîne, à 15 % ;
+- le capital et les entrepreneurs, à 10 % ;
+- la validation sur le passé, à 15 % ;
+- le produit utilisable par d'autres, à 30 %.
+
+À peu près la moitié du chemin. Le plus gros trou est la moitié de sa question : sur les
+entreprises et les startups, la machine ne dit presque rien. Les derniers travaux, le
+calculateur des ménages (D-176 à D-203) et les allègements (D-239 à D-242), étaient
+justes, mais mineurs au regard de l'objectif.
+
+Trois questions lui ont été posées. Il a répondu : « oui c'est l'objectif, les deux, et ok
+pour l'international ».
+
+**L'objectif, confirmé.** Répondre à « en baissant certains impôts, est-ce que les gens,
+les entreprises et les startups s'en portent mieux, et est-ce que la dette baisse à dix
+ans ? ». Chaque effet est réglé par un θ entre 0 et 1, qui le place dans sa fourchette
+publiée (D-213). La lecture est conditionnelle, jamais une prévision. Le socle est le
+calcul exact de l'impôt, et chaque chiffre dit sa source et ce qu'il ne sait pas.
+
+**Le produit fini, nommé : les deux.** Une réponse argumentée à cette question, au
+dossier. Et un outil en ligne que d'autres utilisent. La porte de publication reste celle
+du propriétaire, avec ce que la revue a laissé pour le déploiement (D-173) : la politique
+CORS ouverte, l'authentification, la limite de débit et la concurrence des passes.
+
+**La règle des sources, élargie.** Avant : un canal n'ouvrait que sur une estimation
+française, ou sur un modèle centré sur la France. Ainsi l'IS est resté fermé faute de
+variante dans Mésange (D-214), l'investissement faute d'estimation française (D-221),
+les transferts faute de centre français (D-214). Après : un canal sans estimation
+française peut ouvrir sur une fourchette internationale publiée. Sept conditions, chacune
+un refus, sont écrites au §2 de `docs/PHASE11_SPEC.md` :
+- le rang de la source, la France d'abord ;
+- la fourchette publiée, jamais resserrée ;
+- une simulation de modèle en recoupement seulement ;
+- la lecture sur fichier manifesté et la passe adversariale (D-026) ;
+- l'étiquette « international », avec les pays et les années ;
+- le support borné par l'échantillon ;
+- le choix fixé avant les passes.
+
+Tiennent : aucun θ sans fourchette publiée, une bande ou rien, θ jamais un bouton ni une
+probabilité, aucun défaut, pas de DSGE, de CGE, de HANK ni d'ABM construit ici, aucune
+tolérance élargie après coup.
+
+**La feuille de route, réordonnée.**
+- **Phase 11** : les entreprises, les startups et le capital dans la chaîne,
+  `docs/PHASE11_SPEC.md`. L'IS sur le PIB et sa boucle, l'investissement et les créations
+  en indices nationaux, les revenus du capital et le PFU, l'autofinancement des baisses
+  ciblées de cotisations. Puis l'étude reposée sur le menu élargi. Huit à onze sessions.
+- **Phase 12** : la chaîne testée sur le passé. Rejouer les réformes qu'elle sait chiffrer
+  et comparer à ce qui a été observé : la baisse de l'IS de 33,3 à 25 % (2018-2022), le
+  PFU de 2018, le CICE, la baisse de moitié de la CVAE en 2021. La phase 11 rend ces
+  rejeux possibles.
+- **Phase 13** : le produit en ligne. Une page pour d'autres que le propriétaire, des
+  études précalculées, puisqu'une recherche coûte des minutes, et le déploiement, à sa
+  porte.
+
+Le reste du menu, les cas du calculateur des ménages, les ancres de M2 et la TVA, passe
+après, sauf s'il bloque l'une de ces phases.
+
+**La recherche des sources, faite pour la spec.** Une première lecture, pas une relecture.
+Elle a trouvé, par canal, des pistes que la spec range par rang :
+- pour l'IS sur la croissance, la méta-analyse de Gechert et Heimberger (2022), dont le
+  centre corrigé du biais de publication est nul ;
+- pour l'investissement, l'OCDE (Hanappi, Millot et Turban, 2023), France comprise ;
+- pour les créations, Da Rin, Di Giacomo et Sembenelli (2011), 17 pays européens ;
+- pour une boucle hors de Mésange, les élasticités au cycle de la Commission européenne
+  (DP 098, 2019), par recette ;
+- pour l'autofinancement des allègements, deux sources françaises : le Trésor-Éco n° 97
+  (2012), et le rapport Bozio et Wasmer (2024), qui publie une ligne de solde de Mésange
+  pour la suppression des exonérations générales.
+
+Celle-ci comble ce qui manquait en D-240 et D-242, à l'échelle près. Un piège aussi :
+Boissel et Matray (*AER* 2022), sur les dividendes, est rétracté. Aucun de ces chiffres
+n'entre dans un magasin avant la relecture de M0 (D-026).
+
+**Les tests.** Aucun : cette entrée n'ajoute que la spec et la feuille de route. Chaque
+garde de la spec livrera son kill test, vu échouer, au jalon qui la construit.
+
+**Ce qui reste.** M0 de la phase 11 : manifester et relire les sept documents, fixer
+chaque appariement θ, la conversion du taux légal en taux effectifs et la tolérance de la
+boucle par élasticités, avant toute passe. M1, les réformes des entreprises dans la chaîne,
+peut commencer pendant M0. La porte de la phase 10 reste le `make full` du propriétaire.

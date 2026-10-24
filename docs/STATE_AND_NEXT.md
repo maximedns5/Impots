@@ -1,6 +1,19 @@
-# State of the project, and the directions open — 2026-10-23 (Phase 10, M4 done)
+# State of the project, and the directions open — 2026-10-24 (Phase 10, M4 done; Phase 11 specified)
 
-The third 2026-10-23 update adds D-242: the answer of the study replayed with the 2026
+The 2026-10-24 update adds D-243 and `docs/PHASE11_SPEC.md`. The owner asked where the
+project stands against the finished product. The answer, in orders of magnitude: about
+half way; the biggest hole is half the owner's question, firms and startups, on which
+the machine says almost nothing. The owner confirmed the objective (D-213), named the
+finished product as both an argued answer and an online tool others use, and allowed
+published international ranges where no French estimate exists, under the seven
+conditions of the spec's §2. The roadmap is reordered:
+- Phase 11 puts firms, startups and capital into the chain: the IS on GDP with a loop,
+  investment and creations as national indices, capital income and the PFU, and the
+  self-financing of targeted contribution cuts; then the study is asked again.
+- Phase 12 tests the chain on past reforms.
+- Phase 13 is the online product.
+Nothing is built yet; M0 reads seven documents first.
+The third 2026-10-23 update added D-242: the answer of the study replayed with the 2026
 curve. Both searches ran on the preregistration's commit, `893e4de`: eight bundles,
 sixteen passes. No cut of the curve lowers the debt in 2035, for no θ: the floor costs
 0.76 to 7.62 Md€ in 2026 and leaves +0.24 to +2.35 points, the `t_delta` 1.00 to
@@ -304,8 +317,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **243 decision
-entries**, D-000 to D-242, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **244 decision
+entries**, D-000 to D-243, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -676,7 +689,14 @@ download list.
    cut of the curve lowers the debt, and what a targeted cut would give back is
    missing, said so. Left: a balance row for the targeted variant, or the jobs'
    receipts in the chain; the study on the annual path; other θ.
-4. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
+4. **Phase 11** (`docs/PHASE11_SPEC.md`, D-243): firms, startups and capital in the
+   chain, on published ranges, international where France has none. M0 first: manifest
+   and re-read Gechert and Heimberger (2022), the OECD's Hanappi, Millot and Turban
+   (2023), Da Rin, Di Giacomo and Sembenelli (2011), the EC's DP 098 (2019), Trésor-Éco
+   n° 97, the Bozio and Wasmer report (2024) and the IPP's PFU evaluation; fix each θ
+   mapping before any pass. M1, firm reforms in the chain, needs no new source and can
+   start alongside. Then Phase 12, the past, and Phase 13, the online product.
+5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
    January a row in `engine.corrections.PENSION_INVALIDITE_MINIMUM` (D-190).
