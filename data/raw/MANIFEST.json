@@ -1449,6 +1449,105 @@
       "licence": "DG Trésor — publication publique",
       "description": "Le Gall, Meignan et Roulleau, « Évaluation de la réforme du Crédit Impôt Recherche de 2008 », Trésor-Éco n° 290, septembre 2021 : « un euro de CIR génère un euro de dépense de R&D additionnelle » (renvoi à la CNEPI 2019) et l'encadré sur la CNEPI 2021. Contre-vérification de la ligne R&D (D-222).",
       "quarantined": false
+    },
+    "gechert_heimberger_2021_imk_wp210_corporate_tax_growth.pdf": {
+      "url": "https://www.boeckler.de/pdf/p_imk_wp_210_2021.pdf",
+      "sha256": "de3a5add486a2f3183e6f50445b4040c1f0abe43173e47a0fece4f7ac3c64a37",
+      "bytes": 603773,
+      "downloaded": "2026-10-24",
+      "licence": "IMK Working Paper — CC BY 4.0 (page d'impressum)",
+      "description": "Gechert et Heimberger, « Do Corporate Tax Cuts Boost Economic Growth? », IMK Working Paper n° 210, mai 2021 ; version de travail de European Economic Review 147 (2022) 104157, dont le texte publié n'a pas été lu (ScienceDirect, 403). Méta-analyse de 441 estimations tirées de 42 études : effet d'un point d'IS sur la croissance annuelle du PIB, en points. Tableau 2 p. 16 : moyenne −0,019 (0,010), β0 corrigé du biais de publication 0,0001 (0,0004) ; tableau 3 p. 17 ; tableau 4 p. 20 (modérateurs). Phase 11, §4 (D-245).",
+      "quarantined": false
+    },
+    "hanappi_millot_turban_2023_oecd_eco_wp1765_investment.pdf": {
+      "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2023/07/how-does-corporate-taxation-affect-business-investment_bf34611b/04e682d7-en.pdf",
+      "sha256": "eef40d87de074b4d31fdaf99882c359edb04d67e684fd7bf0c9282f18e0f7f05",
+      "bytes": 3918322,
+      "downloaded": "2026-10-24",
+      "licence": "© OCDE 2023 — copie pour usage propre avec mention",
+      "description": "Hanappi, Millot et Turban, « How does corporate taxation affect business investment? Evidence from aggregate and firm-level data », OCDE, Economics Department Working Paper n° 1765, ECO/WKP(2023)18, juillet 2023. Tableau 1 p. 23 : taux d'investissement selon le taux marginal effectif (TMEI) retardé, branches et firmes, interaction après 2009 ; note 22 p. 21 : effets court et long ; France dans les deux échantillons (notes 57-58 p. 60). Phase 11, §5 (D-245).",
+      "quarantined": false
+    },
+    "oecd_cts_2026_explanatory_annex.pdf": {
+      "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/corporate-taxation/explanatory-annex-corporate-tax-statistics.pdf",
+      "sha256": "d170971e1ab2ab8269d8d036141973d84c6e8e6cf91e25334999f35e64be6441",
+      "bytes": 3541238,
+      "downloaded": "2026-10-24",
+      "licence": "OCDE — Corporate Tax Statistics, annexe explicative",
+      "description": "OCDE, annexe explicative des Corporate Tax Statistics (édition 2026). La méthode des taux effectifs : projet à la Klemm, TMEI hors taxe (éq. A.9 p. 105), coût du capital (éq. A.8), scénario fixe (tableau A.2), dépréciations économiques (tableau A.5), pondérations (p. 103). Ce qui convertit un taux légal en TMEI et TMEE (D-245).",
+      "quarantined": false
+    },
+    "da_rin_di_giacomo_sembenelli_2011_aam_firm_entry.pdf": {
+      "url": "https://iris.unito.it/bitstream/2318/87892/2/JPubEc-open.pdf",
+      "sha256": "d2249333d300c80f6a30a4ac4355ce036da53a12c3449f845c32b1481a4327c7",
+      "bytes": 635096,
+      "downloaded": "2026-10-24",
+      "licence": "Manuscrit accepté, CC BY-NC-ND, usage non commercial",
+      "description": "Da Rin, Di Giacomo et Sembenelli, « Entrepreneurship, firm entry, and the taxation of corporate income: Evidence from Europe », manuscrit accepté (juillet 2009) de Journal of Public Economics 95 (2011) 1048-1066 ; texte publié non lu (403). Tableau 4 p. 40 (PDF) : taux d'entrée selon le TMEE et son carré, GMM-IV et intra ; tableaux 2 et 3 : statistiques, France ; UE-15, Norvège et Suisse, 1997-2004. Phase 11, §5 (D-245).",
+      "quarantined": false
+    },
+    "ec_dp098_2019_semi_elasticities_budget_balance.pdf": {
+      "url": "https://op.europa.eu/o/opportal-service/download-handler?identifier=21a8100d-a9ce-11e9-9d01-01aa75ed71a1&format=pdf&language=en&productionSystem=cellar&part=",
+      "sha256": "d3c5889991fdb7709d2f8d9d41ee1c8d512f6041f281b24095c0793fe66ba03c",
+      "bytes": 1179906,
+      "downloaded": "2026-10-24",
+      "licence": "© Union européenne 2019 — reproduction non commerciale avec mention",
+      "description": "Mourre, Poissonnier et Lausegger, « The Semi-Elasticities Underlying the Cyclically-Adjusted Budget Balance: An Update & Further Analysis », Commission européenne, European Economy Discussion Paper 098, mai 2019 (doi 10.2765/72585) ; copie de l'Office des publications. France : élasticités au cycle par recette (tableau I.1 p. 39), parts (tableau I.2 p. 40), semi-élasticités, solde 0,630 (tableau I.3 p. 41). Phase 11, §4 (D-245).",
+      "quarantined": false
+    },
+    "tresor_eco_97_2012_allegements_bas_salaires.pdf": {
+      "url": "https://www.tresor.economie.gouv.fr/Articles/41e04a15-fd18-4b4a-b425-dc774d68eb4e/files/acbed36f-ec77-4921-a9b9-ed2d3d533151",
+      "sha256": "c38c7c0bf05e73ba9e1cb04ad1c02158c2e2e2f0173aba1ecfd671fefe752344",
+      "bytes": 450806,
+      "downloaded": "2026-10-24",
+      "licence": "DG Trésor — réutilisation non commerciale avec source et date",
+      "description": "Nouveau et Ourliac, « Les allègements de cotisations sociales patronales sur les bas salaires en France de 1993 à 2009 », Trésor-Éco n° 97, janvier 2012. p. 4 : 200 000 à 400 000 emplois ; coût brut 20 000 à 40 000 € par emploi, net 8 000 à 28 000 € (euros 2009) ; note 5 p. 4 : 12 000 € de retours par emploi (6 500 € de cotisations, 5 500 € de RSA). Phase 11, §7 (D-245).",
+      "quarantined": false
+    },
+    "bozio_wasmer_2024_exonerations_rapport_final.pdf": {
+      "url": "https://www.strategie-plan.gouv.fr/files/files/Publications/Rapport/rapport_vffff_241003.pdf",
+      "sha256": "8a5d215f62f1342b5e780952f585e2833c409f32acadf03fe308de5ceaff7990",
+      "bytes": 5108921,
+      "downloaded": "2026-10-24",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "description": "Bozio et Wasmer, « Les politiques d'exonérations de cotisations sociales : une inflexion nécessaire », rapport final, octobre 2024. Encadré 1.1 pp. 68-70 : la suppression complète des exonérations dans Mésange (DG Trésor), solde primaire +1,7 point de PIB à un an et −0,1 à long terme, environ 1,0 M d'ETP à long terme, mise en garde sur la linéarité ; pp. 214-221 : deux bascules financées par la TVA ou la CSG. Phase 11, §7 (D-245).",
+      "quarantined": false
+    },
+    "ipp_notes_46_2019_fiscalite_revenus_capital.pdf": {
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/05/46-notesIPP-octobre2019.pdf",
+      "sha256": "5640d5fd9414de87d89a1ff8e9c3828b6c6d6155f4188e269b91a1baa3cab732",
+      "bytes": 2865971,
+      "downloaded": "2026-10-24",
+      "licence": "IPP — accès libre",
+      "description": "Bach, Bozio, Fabre, Guillouzouic, Leroy et Malgouyres, « Quelles leçons tirer des réformes de la fiscalité des revenus du capital ? », Notes IPP n° 46, octobre 2019. p. 1 : +15,3 % de dividendes versés en 2018 attribuables au PFU ; tableau 1 p. 8 : coût statique et dynamique (M€). Phase 11, §6 (D-245).",
+      "quarantined": false
+    },
+    "pse_wp_2019_70_v2_bach_et_al_dividends_flat_tax.pdf": {
+      "url": "https://shs.hal.science/halshs-02415470v2/file/wp1970_2.pdf",
+      "sha256": "8705129da4897331ee484a845c2c4e29fd5bdc98c68b262797faf8a688d3973a",
+      "bytes": 1189042,
+      "downloaded": "2026-10-24",
+      "licence": "HAL — dépôt autorisé",
+      "description": "Bach, Bozio, Guillouzouic, Leroy et Malgouyres, « Follow the money! Why dividends overreact to flat-tax reforms », PSE Working Paper n° 2019-70, version 2, déposée sur HAL le 2 septembre 2024 (halshs-02415470v2). p. 3 : élasticité au taux net de 2,5 pour les propriétaires de firmes en 2018, proche de 0 pour les autres ; 3,2 et 2,4 en 2013 ; p. 22 : 4,2 pour la hausse, 2,8 pour la baisse, au niveau firme. Phase 11, §6 (D-245).",
+      "quarantined": false
+    },
+    "cae_note_49_2019_baisses_de_charges.pdf": {
+      "url": "https://cae-eco.fr/static/pdf/cae-note049v4.pdf",
+      "sha256": "58220e97634d6ad64cbc642043b8dae30afacbae1137114d6df22d99f27761da",
+      "bytes": 393974,
+      "downloaded": "2026-10-24",
+      "licence": "CAE — accès libre",
+      "description": "L'Horty, Martin et Mayer, « Baisses de charges : stop ou encore ? », Les notes du CAE n° 49, janvier 2019. p. 7 : 80 000 à 200 000 emplois pour les 4 points de 2019 entre 1 et 1,6 SMIC, selon l'élasticité ; encadré p. 3 : 3,5 Md€ en année pleine. Recoupement, Phase 11, §7 (D-245).",
+      "quarantined": false
+    },
+    "ipp_rapport_25_2019_evaluation_fiscalite_dividendes.pdf": {
+      "url": "https://www.ipp.eu/wp-content/uploads/2025/06/25_evaluation-impact-fiscalite-dividendes-ipp-oct-2019.pdf",
+      "sha256": "e83eece9a4097f9dd6719dff91c83fc62814a7745d6fea7a5dd0ede95960e5a4",
+      "bytes": 8590603,
+      "downloaded": "2026-10-24",
+      "licence": "IPP — accès libre",
+      "description": "Rapport IPP n° 25, « Évaluation d'impact de la fiscalité des dividendes », octobre 2019. Tableau 6.3 p. 182 : effet du PFU 0,604 (0,150) centime par euro de bilan, la synthèse p. 9 imprimant « +6 centimes » ; p. 38 : s'appuie sur la version de travail de Boissel et Matray, rétractée. Phase 11, §6 (D-245) : relu, non utilisé.",
+      "quarantined": false
     }
   }
 }

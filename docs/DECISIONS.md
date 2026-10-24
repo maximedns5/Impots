@@ -18126,3 +18126,112 @@ garde de la spec livrera son kill test, vu échouer, au jalon qui la construit.
 chaque appariement θ, la conversion du taux légal en taux effectifs et la tolérance de la
 boucle par élasticités, avant toute passe. M1, les réformes des entreprises dans la chaîne,
 peut commencer pendant M0. La porte de la phase 10 reste le `make full` du propriétaire.
+
+## D-245 — Phase 11, M0 : deux canaux fixés, deux fermés, un laissé au propriétaire
+
+**Le fait.** M0 de la phase 11 (§9 de la spec) est fait. Onze documents ont été
+téléchargés, manifestés et lus sur le fichier ; un douzième, le rapport final de France
+Stratégie (2023), était déjà au manifeste. `docs/M0_PHASE11.md` fixe chaque source et chaque
+appariement θ qu'on peut fixer avant toute passe de la chaîne (condition 7). Deux passes
+adversariales l'ont relu chiffre à chiffre sur les fichiers. La première a trouvé quatre
+décisions qui ne tenaient pas, la seconde trois défauts dans leurs remplaçantes. La note
+est à sa troisième version. Elle n'ajoute aucun chiffre que ces relectures n'aient vu ou
+que M0 n'ait recalculé.
+
+**Ce qui est fixé.**
+- **L'IS sur la croissance (R1).** Gechert et Heimberger, méta-analyse de 441 estimations.
+  θ = 0 au centre corrigé du biais de publication, aucun effet ; θ = 1 au centre brut,
+  0,019 point de croissance par an pour un point d'IS en moins ; θ = ½ à leur milieu. C'est
+  une rampe de dix ans sur la croissance, convention nommée. Elle ignore l'inversion de
+  court terme que suggère un modérateur de la méta-analyse, et le dit.
+- **Les créations (R4).** Da Rin, Di Giacomo et Sembenelli : de 0,043 à 0,356 point de taux
+  d'entrée par pays et branche par point de taux moyen effectif, θ = ½ à 0,20. Le support
+  va du premier quartile à la médiane de l'échantillon, et l'indice est illustratif
+  au-delà, des deux côtés.
+- **Les dividendes (R6).** La source est fixée, l'évaluation du PFU par l'IPP. L'élasticité
+  agrégée attend l'imputation de M4.
+- **Le temps (R7).** L'IS est compté à l'exercice. Vue figée : le millésime 2023. Vue
+  vieillie : ce coût suivi au PIB nominal du scénario.
+
+**Ce qui est fermé, avec sa raison.**
+- **La boucle de l'IS (R2).** La boucle par élasticités de la Commission (DP 098) donne le
+  même φ/y pour tous les instruments : 0,585, ou 0,630 comparée en ratio. Mésange imprime
+  pour les cotisations employeurs 1,40, 1,05 et 0,96 aux horizons 1, 2 et 3. Le
+  recoupement variante par variante que la spec exige, à un quart près, échoue donc aux
+  trois horizons, quel que soit le comparateur. Une enveloppe large échoue aussi aux
+  horizons 2 et 3 avec 0,585, et n'est pas stable avec 0,630. La boucle est refusée.
+  D-218 dit alors qu'un instrument sans boucle ne reçoit aucun effet macro, pas même sur le
+  PIB. L'effet de R1 s'affiche donc en indice, hors de la trajectoire de dette.
+- **L'investissement (R3).** L'OCDE mesure la baisse du taux légal en propre, et dix fois
+  moins forte qu'une baisse équivalente du taux marginal effectif. Le chiffre de son
+  équation (5) est la petite différence de deux grands termes : aux amortissements de la
+  France, son signe n'est pas connu, et il n'a pas d'intervalle. L'indice reste fermé.
+  M3 l'ouvre sur l'équation (6), qui a ses écarts-types, s'il en reproduit la
+  décomposition pour la France. L'appariement est fixé ici : −0,440 ∓ 0,142.
+
+**Ce qui revient au propriétaire.** L'autofinancement d'une baisse ciblée de cotisations
+(R5). Les lectures françaises de premier rang vont de 1 % à 60 % selon l'emploi retenu.
+- C2, la marge intensive des établissements survivants : 748 à 1 555 emplois par
+  milliard, soit 0,9 à 1,9 %.
+- Le Trésor-Éco n° 97, sur les allègements de 1993 à 1997 : 25 000 à 50 000 emplois par
+  milliard, soit 30 à 60 %.
+- La Note du CAE n° 49, sur l'allègement de 2019 : 23 000 à 57 000 emplois par milliard.
+- Une simulation de Mésange publiée par Bozio et Wasmer : environ 35 % à un an, en
+  recoupement seulement.
+
+C'est un choix de modèle, pas de source, et il peut changer la réponse de D-242. D'ici là,
+D-242 tient, et M5 ne commence pas. Trois voies sont écrites dans la note.
+
+Un écart est aussi à vérifier : l'élasticité de C2 (−0,43) est proche de celle du CAE
+(−0,5), et donne pourtant quinze fois moins d'emplois par milliard. Cela peut tenir à la
+façon dont la chaîne applique l'élasticité. Cela se vérifie sur une passe de population.
+
+**Les décisions changées par la relecture.**
+- **R3.** La première version convertissait le taux légal en taux marginal effectif, puis
+  appliquait un coefficient estimé sur toutes ses variations : environ trois fois le
+  chiffre que l'article donne pour le taux. La deuxième en faisait une ligne fixe à
+  0,074 % par point, sans voir que ce chiffre peut changer de signe.
+- **R5.** La première version bornait la plage en haut par le long terme de Mésange,
+  contre la condition 3 et au-delà des horizons où D-214 et D-218 lisent Mésange. La
+  deuxième faisait venir l'autofinancement des seuls emplois de C2, dix fois sous toutes
+  les autres lectures.
+- **R2.** La première version remplaçait le recoupement variante par variante par une
+  enveloppe. La deuxième disait à tort que cette enveloppe aurait laissé passer la boucle.
+- **R1.** La première version prenait la méta-analyse sans dire pourquoi le rang 2 manquait.
+  Il ne manque sans doute pas : la méta-analyse contient des panels de l'OCDE et de l'Union
+  européenne. M0 l'écarte, et c'est une exception déclarée à la condition 1. La garde 2 du
+  §10 ne l'admet qu'à ce titre.
+
+**Le reste de la relecture, corrigé.**
+- Le taux d'entrée de la France était lu dans la mauvaise colonne : 9,57 % est le taux par
+  pays, quand le tableau 4 explique le taux par pays et branche, 7,61 %.
+- La boucle valait 0,585, non 0,586.
+- Le retournement intra-groupe de Da Rin et al. est vers 30,3 % sur les effets publiés, et
+  non à 29,5 %, chiffre qui venait du coefficient arrondi.
+- Des pages fausses ont été corrigées, et le court terme de Gechert et Heimberger est
+  décrit tel que les auteurs l'écrivent.
+- Le rapport IPP n° 25, cité, est au manifeste. Le titre et un auteur du PSE WP sont
+  rétablis, dans la note et au manifeste.
+- La construction du taux de Da Rin et al. exclut les surtaxes, donc aujourd'hui la
+  contribution sociale et la CEBGE.
+- La spec renvoyait à D-204 « pour l'art. 2 » : c'est l'art. 15, la CEBGE (D-244).
+
+**Trois exceptions déclarées, que le propriétaire peut reprendre.**
+- Le rang 2 écarté pour R1.
+- Le milieu de deux estimations à θ = ½ pour R4, qui s'écarte du §2.1 de la phase 9.
+- L'effet de l'IS sur le PIB tenu hors de la dette, par la règle de D-218. Le faire entrer
+  par le seul dénominateur, environ 0,1 point de dette à dix ans à θ = 1, serait une
+  exception à D-218.
+
+**Les tests.** Aucun code. Les onze fichiers nouveaux sont conformes à leur entrée, taille
+et sha256. `tests/test_donnees.py` passe ses 40 cas.
+
+**Ce qui reste.**
+- M2 peut se figer : la rampe de l'IS en indice, le recoupement qui refuse la boucle, la
+  vue vieillie des entreprises et le chemin annuel.
+- M3 aussi : l'entrée, et l'investissement s'il passe sa conversion.
+- M4 attend l'imputation des revenus du capital.
+- M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2.
+- Restent à lire les versions publiées de Gechert et Heimberger (*EER*) et de Da Rin et
+  al. (*JPubE*), que ScienceDirect refuse ici (403), et à trouver une source stable des
+  paramètres de l'OCDE pour le taux moyen effectif.
