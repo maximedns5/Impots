@@ -19,7 +19,12 @@ from pydantic import ValidationError
 from exploration_cases import exploration_request as _request
 from exploration_cases import run_search
 from impots.api import main
-from impots.api.schemas import ExplorationRequest, PopulationSimulateRequest, ReformSpec
+from impots.api.schemas import (
+    ExplorationRequest,
+    PopulationSimulateRequest,
+    PredictifResponse,
+    ReformSpec,
+)
 from impots.dette import reference
 from impots.entreprises import aggregate as firm_aggregate
 from impots.entreprises import runner as firm_runner
@@ -243,3 +248,22 @@ def test_a_firm_pass_the_layer_refuses_keeps_its_status_and_reason(year: int,
         main._firm_first_year(spec, year)
     assert caught.value.status_code == status
     assert needle in str(caught.value.detail)
+
+
+def test_a_response_whose_cost_is_not_its_layers_sum_refuses_to_exist(chain) -> None:
+    """PHASE11_SPEC §10, guard 8: the first year's cost is the households' plus the firms',
+    each named. A response whose total is not that sum, which leaves its layers out, or
+    names a layer the chain has not, refuses to exist."""
+    body = chain.post("/predictif/simulate", json={
+        **PAYLOAD, "firm_reform": {"is_taux_normal": 0.24}}).json()
+    PredictifResponse.model_validate(body)
+    layers = body["mechanical_first_year_by_layer"]
+    with pytest.raises(ValidationError, match="somme de ses couches"):
+        PredictifResponse.model_validate(
+            {**body, "mechanical_first_year_by_layer": {**layers, "menages": 1e9}})
+    with pytest.raises(ValidationError, match="couche inconnue"):
+        PredictifResponse.model_validate(
+            {**body, "mechanical_first_year_by_layer": {**layers, "etat": 0.0}})
+    with pytest.raises(ValidationError, match="mechanical_first_year_by_layer"):
+        PredictifResponse.model_validate(
+            {k: v for k, v in body.items() if k != "mechanical_first_year_by_layer"})

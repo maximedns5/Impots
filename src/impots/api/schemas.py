@@ -13,6 +13,7 @@ reads as "pays 200 EUR more tax".
 
 from __future__ import annotations
 
+import math
 from itertools import pairwise
 from typing import Annotated, Any, Literal, get_args, get_origin
 
@@ -2000,6 +2001,10 @@ class PredictifPersistence(BaseModel):
     """The chain-stage indices, which depend on the path; the others are the response's."""
 
 
+#: The layers a predictive first year's cost is ranged under, and sums over.
+FIRST_YEAR_LAYERS = ("menages", "entreprises")
+
+
 class PredictifResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -2022,8 +2027,9 @@ class PredictifResponse(BaseModel):
     start: PredictifStart
     mechanical_first_year_eur: float
     """The engine's cost for the first projected year, COST POSITIVE."""
-    mechanical_first_year_by_layer: dict[str, float] = Field(default_factory=dict)
-    """That cost by layer, « menages » and « entreprises », which sum to it."""
+    mechanical_first_year_by_layer: dict[str, float]
+    """That cost by layer, « menages » and « entreprises », which sum to it (PHASE11_SPEC
+    §10, guard 8). No default, so a response cannot leave its layers out."""
     delta_mechanical: list[float]
     """The difference with every behavioural channel off; θ has no effect on it."""
     theta: dict[str, float]
@@ -2065,6 +2071,20 @@ class PredictifResponse(BaseModel):
         if sorted(p.persistence for p in self.side_by_side) != ["eteint", "tenu"]:
             raise ValueError("côte à côte, ce sont les deux scénarios de persistance, "
                              "chacun une fois")
+        return self
+
+    @model_validator(mode="after")
+    def _cost_is_the_sum_of_its_layers(self) -> PredictifResponse:
+        layers = self.mechanical_first_year_by_layer
+        unknown = sorted(set(layers) - set(FIRST_YEAR_LAYERS))
+        if not layers or unknown:
+            raise ValueError(f"couche inconnue {unknown} ou aucune : le coût de la première "
+                             f"année se range sous {list(FIRST_YEAR_LAYERS)}")
+        total = sum(layers.values())
+        if not math.isclose(total, self.mechanical_first_year_eur, rel_tol=1e-9, abs_tol=1.0):
+            raise ValueError(
+                f"coût de la première année, {self.mechanical_first_year_eur:.0f} €, qui "
+                f"n'est pas la somme de ses couches, {total:.0f} € (PHASE11_SPEC §10)")
         return self
 
 

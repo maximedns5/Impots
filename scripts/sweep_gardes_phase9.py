@@ -106,7 +106,8 @@ SCOPES: tuple[Scope, ...] = (
            "tests/test_predictif_entreprises.py", "tests/test_api_predictif.py"),
           functions=("_check_exploration_bounds", "_check_exploration_search",
                      "_check_exploration_report", "_check_report_paths",
-                     "_check_exploration_indices", "_refuse_firm_knobs_out_of_chain")),
+                     "_check_exploration_indices", "_refuse_firm_knobs_out_of_chain",
+                     "_cost_is_the_sum_of_its_layers")),
 )
 
 #: The whole Phase 9 suite, the second tier for a survivor.
