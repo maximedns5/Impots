@@ -12,6 +12,7 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
@@ -218,3 +219,27 @@ def test_a_firm_bundle_the_firm_reform_refuses_stops_before_the_first_pass() -> 
         firm_base={"is_taux_reduit": 0.15}))
     with pytest.raises(recherche.RechercheError, match="avant toute passe"):
         recherche.check_grid(request)
+
+
+#: Two firm reforms the layer itself refuses: a year before the scalar IS rate (2022), and
+#: a CEBGE revived in a year where it still exists (D-044).
+REVIVED_CEBGE = FirmReformSpec(
+    cebge_seuils_et_taux=[{"seuil_ca": 1e9, "taux": 0.2}, {"seuil_ca": 3e9, "taux": 0.4}],
+    cebge_prorogation_largeur=1e8)
+
+
+@pytest.mark.parametrize("year, spec, status, needle", [
+    (2021, IS_24, 500, "ne sait pas chiffrer 2021"),
+    (2026, REVIVED_CEBGE, 422, "existe déjà"),
+], ids=["annee", "cebge"])
+def test_a_firm_pass_the_layer_refuses_keeps_its_status_and_reason(year: int,
+                                                                   spec: FirmReformSpec,
+                                                                   status: int,
+                                                                   needle: str) -> None:
+    """The firm layer's own refusals reach the predictive caller as `/entreprises/simulate`
+    gives them: a year it cannot price is the server's limit, a reform the law refuses
+    is the request's fault, and each keeps its reason."""
+    with pytest.raises(HTTPException) as caught:
+        main._firm_first_year(spec, year)
+    assert caught.value.status_code == status
+    assert needle in str(caught.value.detail)
