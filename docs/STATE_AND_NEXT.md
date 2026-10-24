@@ -1,6 +1,17 @@
-# State of the project, and the directions open — 2026-10-24 (Phase 10, M4 done; Phase 11 specified)
+# State of the project, and the directions open — 2026-10-24 (Phase 10, M4 done; Phase 11, M1 done)
 
-The 2026-10-24 update adds D-243 and `docs/PHASE11_SPEC.md`. The owner asked where the
+The second 2026-10-24 update adds D-244, Phase 11's M1: a firm reform enters the
+predictive chain. `/predictif/simulate` takes a `firm_reform`, and `impots exploration` a
+`firm_base` and firm knobs in its grid, alone or beside the households' reform. The first
+year's cost is the sum of the two layers, each named, and a response whose cost is not
+that sum is refused. A firm reform alone runs no population pass; its taxes have no
+Mésange variant, so the loop is said absent, not zero; the CIR stays out (D-222). One IS
+point, 25 to 24 %, costs 3.10 Md€ in 2026 on the 2023 firm population and 2.73 Md€ from
+2027, once the CEBGE has lapsed. Two conventions are named in the note: the firm
+population is not aged, so the same figure stands in both views, and the IS is counted by
+exercise. The aged firm view and the annual path, `impots predictif`, go to M2. The sweep
+holds 179 mutations, 178 killed, 1 equivalent.
+The first 2026-10-24 update added D-243 with its spec. The owner asked where the
 project stands against the finished product. The answer, in orders of magnitude: about
 half way; the biggest hole is half the owner's question, firms and startups, on which
 the machine says almost nothing. The owner confirmed the objective (D-213), named the
@@ -694,8 +705,10 @@ download list.
    and re-read Gechert and Heimberger (2022), the OECD's Hanappi, Millot and Turban
    (2023), Da Rin, Di Giacomo and Sembenelli (2011), the EC's DP 098 (2019), Trésor-Éco
    n° 97, the Bozio and Wasmer report (2024) and the IPP's PFU evaluation; fix each θ
-   mapping before any pass. M1, firm reforms in the chain, needs no new source and can
-   start alongside. Then Phase 12, the past, and Phase 13, the online product.
+   mapping before any pass. M1, firm reforms in the chain, is done (D-244): the first
+   year in `/predictif/simulate` and the explorer, on the unaged firm population. Next,
+   M2: the IS on GDP, the elasticity loop and its cross-check, the aged firm view and the
+   annual path. Then Phase 12, the past, and Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each

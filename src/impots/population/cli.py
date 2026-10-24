@@ -1387,10 +1387,11 @@ def cmd_exploration(args: argparse.Namespace) -> int:
     from impots import explorer
     from impots import scenarios as scenarios_module
     from impots.api import main as api
-    from impots.api.schemas import ExplorationRequest, PopulationSimulateRequest
+    from impots.api.schemas import ExplorationRequest
     from impots.dette import maturite
     from impots.dette import reference as reference_module
     from impots.dette.path import DebtError
+    from impots.entreprises.reforms import FirmReformSpec
     from impots.predictif import chaine, recherche, retroaction
     from impots.predictif.exploration import VIEWS, Priced
     from impots.predictif.theta import ThetaError
@@ -1434,12 +1435,15 @@ def cmd_exploration(args: argparse.Namespace) -> int:
     print(f"  {len(grid)} paquets × {len(VIEWS)} vues = {len(grid) * len(VIEWS)} passes "
           f"rapides, {len(hypotheses.persistences)} recherche(s)", flush=True)
 
-    def price(reform: ReformSpec, view: str) -> Priced:
-        print(f"  {reform.model_dump(exclude_none=True)} · {view}…", flush=True)
+    def price(reform: ReformSpec, view: str,
+              firm: FirmReformSpec | None = None) -> Priced:
+        shown = {**reform.model_dump(exclude_none=True),
+                 **(firm.model_dump(exclude_none=True) if firm is not None else {})}
+        print(f"  {shown} · {view}…", flush=True)
         first = api._price_first_year(
-            PopulationSimulateRequest(reform=reform, year=year,
-                                      behavioural=request.behavioural),
-            uprating=hypotheses.uprating, macro=request.macro, view=view)
+            api._first_year_request(reform, year, request.behavioural),
+            uprating=hypotheses.uprating, macro=request.macro, view=view,
+            **api._firm_part(firm))
         return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
                       uncovered=dict(first.uncovered), deciles=list(first.deciles))
 

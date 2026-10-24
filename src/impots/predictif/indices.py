@@ -138,6 +138,10 @@ NOT_ADDABLE = {
 
 FIRM_LAYER = ("Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les "
               "réformes de la population, et cet indice ne s'y calcule pas.")
+#: Why a firm-layer index is absent when a firm reform IS in the path (PHASE11_SPEC §3).
+FIRM_PENDING = ("Couche entreprises : la réforme des entreprises est chiffrée dans la "
+                "trajectoire, mais cet indice ne s'y lit pas encore ; la phase 11 l'y fait "
+                "entrer (PHASE11_SPEC §5).")
 NO_BEHAVIOUR = "Comportement non demandé : le canal ne tourne pas."
 NO_IMPULSE = ("Impulsion macro non demandée : sans elle, aucune variante de Mésange n'a "
               "de choc à lire.")
@@ -379,12 +383,13 @@ def compute(specs: Iterable[Spec], *, trajectory: Any, deciles_rows: Iterable[An
             impulse: Mapping[str, float] | None, gdp_eur: float,
             macro_store: MacroStore | None, theta: Any, store: Any, reform: Any,
             mechanical: float, inputs: Mapping[str, Any] | None, year: int,
-            macro_reason: str = NO_IMPULSE) -> tuple[Index, ...]:
+            macro_reason: str = NO_IMPULSE,
+            firm_reason: str = FIRM_LAYER) -> tuple[Index, ...]:
     """Every index asked for, computed or said not to be, in catalogue order."""
     out = []
     for spec in specs:
         if spec.stage == FIRMES:
-            out.append(absent(spec, FIRM_LAYER))
+            out.append(absent(spec, firm_reason))
         elif spec.stage == CHAINE:
             out.append(chain(spec, trajectory))
         elif spec.stage == MECANIQUE:
