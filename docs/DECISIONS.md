@@ -17871,3 +17871,169 @@ les 7 cas du registre qui touchent la courbe ; les 59 contrôles de la page ; ru
 **Ce qui reste.** Rejouer l'étude de D-238 avec la courbe, une baisse ciblée de 2026,
 quand le propriétaire le demandera. Sous la variante ciblée, la boucle y serait absente :
 la réponse ne dirait que le mécanique et le comportement.
+
+## D-241 — La courbe de 2026 rejouée dans l'étude, premier temps : avant ses passes
+
+**Le fait.** De la réduction générale de 2026, l'étude de D-237 et D-238 ne pouvait chiffrer
+que le plafond, le seul bouton que la refonte laissait. Or le plafond n'est plus que le
+seuil de sortie du plancher (D-239) : le relever soulage les salaires au-delà de 3 SMIC.
+La courbe elle-même a désormais ses boutons (D-240). Ce commit pose deux requêtes sous
+`etude/courbe/`, une par bouton de la courbe, et le pronostic ci-dessous, avant toute
+passe. Les rapports nommeront ce commit. Le résultat sera une autre entrée, D-242.
+
+**Le cadre**, celui de l'étude à l'identique. Chaque requête ne diffère de
+`etude/allegements.json` que par son nom, son titre, sa question et sa grille : dépenses
+gelées en volume, croissance réelle de 1 % et prix de 2 %, taux implicite tenu, salaires
+à 3 %, comportement et boucle chiffrés, θ = ½ partout, les deux persistances côte à côte,
+dix ans. Cible : Δb 2035 ≤ 0.
+
+**Le menu.** Deux boutons, quatre paquets chacun : huit paquets, seize passes.
+- Le plancher `t_min`, de 2 % à 2,1, 2,4, 2,7 et 3 %. Un point coûte 7,62 Md€ en 2026
+  (D-240) : de 0,76 à 7,62 Md€. Il baisse le coût du travail presque d'autant à chaque
+  salaire sous 3 SMIC. Au dernier paquet, de 0,98 % au SMIC et de 0,74 % à 2 SMIC.
+- Le `t_delta`, de 37,81 % à 38,31, 39,31, 40,31 et 41,31 %. Un point coûte 2,00 Md€ :
+  d'environ 1 à 7 Md€. Il concentre la baisse au SMIC. Au dernier paquet, de 3,44 % au
+  SMIC, de 0,86 % à 1,5 SMIC et de 0,25 % à 2 SMIC. La grille s'arrête là : l'élasticité
+  d'emploi au voisinage du SMIC a été estimée sur des variations du coût du travail de
+  4 % au plus (Bunel et L'Horty, 2012), et au-delà sa ligne serait illustrative.
+
+Ces baisses du coût du travail sont celles d'un salarié seul, mesurées par le calculateur
+du foyer en 2026.
+
+**La taille d'entreprise.** La population ne porte pas d'effectif d'entreprise. openfisca
+prend alors son défaut, zéro, et range chaque salarié dans une entreprise de moins de 50.
+La grille parcourt donc `allegement_general_t_delta_moins_de_50`, qui est, dans la
+population, le `t_delta` de tous les salariés. Le bouton des 50 et plus n'y atteint
+personne, et c'est mesuré. Un point de plus sur lui seul coûte 0 € en 2026. Le même point
+sur celui des moins de 50 coûte 2 003 685 801 €, à l'euro le coût des deux ensemble
+(D-240). Relever les deux `t_delta` du même nombre de points coûte donc la même chose, et
+chaque paquet chiffre une hausse des deux. Ce que la population fausse, c'est la
+référence : elle donne aux salariés des grandes entreprises le `t_delta` des petites,
+37,81 % et non 38,21 %. L'écart de chaque paquet n'en dépend pas.
+
+**Où tombe le choc.** Sous la variante « cotisations employeurs ciblées » de Mésange, qui
+n'a pas de ligne de solde (D-240). La boucle PIB → recettes est absente pour ces
+boutons, et le rapport le dit (D-238). Le comportement ne rend pas de recettes non plus.
+Les deux canaux qui lisent un bouton d'allègement sont l'emploi au voisinage du SMIC (C2),
+compté en emplois, et l'incidence (C3), qui répartit la baisse entre employeurs et
+salaires. Ni l'un ni l'autre n'entre dans les recettes (`in_revenue_band`). L'emploi de C2
+et celui de Mésange sont dans les indices, à part, et ne remontent pas dans la dette : un
+tour seulement, dit tel.
+
+**Ce qu'on savait déjà.** Le pronostic n'est pas aveugle, et il le dit. Dans l'étude, le
+plafond tombait sous la même variante. Il laissait Δb 2035 = 0,3089 point par milliard de
+coût de la première année, à chacun de ses quatre paquets, dans les deux vues et sous les
+deux persistances, et sa boîte θ était réduite à un point. Rien d'autre que le coût
+n'entrait. Il devrait en aller de même ici. Cette étude-ci sert moins à trancher le signe
+qu'à dire ce que la machine ne sait pas chiffrer d'une baisse ciblée.
+
+**Le pronostic**, écrit avant les passes.
+1. À θ = ½, aucun paquet ne fait baisser la dette en 2035, sous aucune persistance et dans
+   aucune vue.
+2. Pour aucun θ : la boîte θ de chaque paquet est réduite à un point. Les lignes qu'elle
+   bouge, l'élasticité d'emploi au SMIC, les deux incidences et le multiplicateur macro,
+   ne touchent pas la dette ici.
+3. Les deux persistances donnent les mêmes chiffres, et la page dit la boucle absente, non
+   nulle.
+4. Δb 2035 vaut 0,3089 point par milliard de coût de la première année, au dix-millième,
+   dans les deux vues. Pour le plancher, d'environ +0,24 à +2,35 points ; pour le
+   `t_delta`, d'environ +0,31 à +2,17.
+5. Par milliard, le `t_delta` fait plus d'emplois au voisinage du SMIC (C2) que le
+   plancher, de l'ordre du double. Il porte la baisse là où l'élasticité est la plus forte,
+   quand le plancher la répand jusqu'à 3 SMIC, au-delà des 2 SMIC où la réponse s'éteint.
+6. Contrôle : l'emploi marchand de Mésange, par milliard de la première année, redonne
+   celui du plafond dans l'étude, sous la même variante. Soit 3 278 emplois à un an et
+   13 079 à trois ans, à 1 % près.
+
+**Les tests.** Ce commit ne touche pas au code. Chaque requête a été lue par
+`ExplorationRequest`. Sa grille passe `recherche.check_grid`, qui refuse avant toute passe
+un point que la réforme refuse. Son cadre est celui de l'étude, champ pour champ. La
+garde qui tiendra ce cadre viendra avec le rendu, dans D-242. Les deux passes de
+dimensionnement, le `t_delta` de chaque taille d'entreprise seul, ne donnent que des coûts
+de 2026, vue vieillie, sans comportement, sans boucle, sans dette.
+
+**Ce qui suit.** Les deux recherches, en tâche de fond, sur ce commit. Puis D-242 : le
+résultat, sa section de `docs/PREDICTIF_ETUDE.md`, et ses gardes.
+
+## D-242 — La courbe de 2026 rejouée dans l'étude, second temps : la réponse
+
+**Le fait.** Les deux recherches de D-241 ont tourné sur le commit du préenregistrement,
+`893e4de` : huit paquets, seize passes. La réponse, sous les hypothèses de l'étude : à
+θ = ½, aucune baisse de la courbe ne fait baisser la dette en 2035, sous aucune persistance
+et dans aucune vue. Pour quels θ le ferait-elle ? Pour aucun. La page
+`docs/PREDICTIF_ETUDE.md` la rend dans sa propre section, « La courbe de 2026,
+préenregistrée à part », gardée contre la dérive comme le reste.
+
+**Le résultat.** Δb 2035 à θ = ½, en points de PIB, de la plus petite à la plus grande
+baisse de chaque grille.
+- Le plancher `t_min`, de 2,1 à 3 % : de 0,76 à 7,62 Md€ en 2026, vue vieillie, et de
+  +0,24 à +2,35 points. En vue figée, de 0,76 à 7,56 Md€, et de +0,23 à +2,34 points.
+- Le `t_delta`, de 38,31 à 41,31 % : de 1,00 à 7,01 Md€, et de +0,31 à +2,17 points. En
+  vue figée, de 1,10 à 7,67 Md€, et de +0,34 à +2,37 points.
+
+Les deux persistances donnent les mêmes chiffres, paquet pour paquet. La boîte θ de chaque
+paquet est réduite à un point, et aucun de ses 16 coins ne fait baisser la dette. La page
+dit la boucle absente, et non nulle.
+
+**Contre le pronostic.** Les six points tiennent.
+1. Aucun paquet ne fait baisser la dette, ni sous « éteint » ni sous « tenu », ni en vue
+   vieillie ni en vue figée.
+2. La boîte θ est un point : l'élasticité d'emploi au SMIC, les deux incidences et le
+   multiplicateur macro ne touchent pas la dette.
+3. Les deux persistances donnent les mêmes chiffres, et la boucle est dite absente.
+4. Δb vaut 0,30887 point par milliard de coût de la première année, à chacun des huit
+   paquets et dans les deux vues : le chiffre du plafond dans l'étude, au cent-millième.
+   Rien d'autre que le coût n'entre.
+5. Par milliard de la première année, le `t_delta` fait 1 555 emplois au voisinage du SMIC
+   (C2), et le plancher 748 : 2,08 fois plus, pour « de l'ordre du double ». Au premier
+   paquet, de +1 150 à +1 864 emplois dans la boîte θ pour le `t_delta` et 1,00 Md€ ; de
+   +430 à +676 pour le plancher et 0,76 Md€.
+6. Le contrôle tient : l'emploi marchand de Mésange vaut 3 278 emplois par milliard à un
+   an et 13 079 à trois ans, pour l'un et l'autre bouton, ceux du plafond dans l'étude.
+
+**Ce que le pronostic n'avait pas dit.** La vue figée chiffre le `t_delta` 9 % plus cher
+que la vue vieillie, à chaque paquet : 1,10 Md€ contre 1,00 pour le premier. C'est l'inverse
+du plancher, 1 % moins cher en vue figée, et de l'étude, où la vue figée coûtait de 1 à
+20 % de moins (D-238). La lecture qu'on en fait, sans l'avoir mesurée : la vue figée
+applique le droit de 2026 aux salaires de 2024, non revalorisés. Face au SMIC de 2026, ils
+y sont plus bas, et plus nombreux près du SMIC, là où le `t_delta` porte.
+
+**Ce que la réponse veut dire.** Sous ces hypothèses, une baisse de la courbe ne se finance
+pas, et la machine ne dit pas de combien elle se rembourserait. Δb est le coût porté dix
+ans. Ce qui pourrait en rendre une part manque, et c'est dit. La boucle d'abord : Mésange
+n'imprime pas de ligne de solde pour sa variante ciblée. Ensuite, les cotisations et
+l'impôt des emplois que la baisse crée : C2 les compte en emplois, Mésange aussi, mais la
+chaîne ne les remonte pas dans les recettes, un tour seulement. Ce qui manque irait dans
+le sens d'une dette plus basse. L'écart chiffré ici est donc ce que coûte la baisse avant
+tout retour, pas ce qu'il en resterait. Ce n'est pas un détail : pour le plafond, la
+boucle de la variante uniforme a ramené l'écart de +0,55 à +0,13 point sous « tenu »
+(D-239). L'étude ne recommande rien.
+
+**Les tests.** `scripts/write_predictif_etude.py` lit `etude/courbe/` et rend la section.
+La partie de l'étude est inchangée, à l'octet : la page gagne 116 lignes et n'en change
+aucune. Le chargement refuse, pour la courbe :
+- une requête qui ne tient pas le cadre de l'étude ;
+- une requête sur un autre bouton que le sien ;
+- un bouton sans requête, ou sans rapport ;
+- une requête retouchée après ses passes ;
+- un rapport muet sur le lieu de ses passes ;
+- des rapports de deux commits ;
+- une requête hors du menu, que la page ne rendrait pas.
+Dans `tests/test_predictif_etude.py`, neuf cas nouveaux : la courbe rendue à part, et ces
+huit refus. Chacun a été vu échouer sur une mutation du script, et la section à part
+aussi : neuf mutations, neuf tuées. Les cas de la page commitée et du préenregistrement
+lisent désormais la courbe. Le balayage ne change pas : il ne porte pas sur ce script. Les
+tests de l'étude et de la charte : 39 réussis ; ceux des explorations, que lit
+`GET /explorations` : 11. L'interface passe ses 59 contrôles. `ruff` passe sur `src`,
+`tests` et `scripts`.
+
+**Un incident.** La première recherche du `t_delta` a été tuée par le système (code 137)
+à sa cinquième passe. Elle tournait à côté de l'autre recherche et des mutations, et la
+mémoire a manqué. Relancée seule, sur le même commit et sans rien changer, elle a fini.
+Son rapport est celui de la seconde fois.
+
+**Ce qui reste.** Ce que rendrait une baisse ciblée : une ligne de solde pour la variante
+ciblée de Mésange, qu'il faudrait trouver ailleurs, ou les recettes des emplois de C2
+remontées dans la chaîne, un second tour que le projet n'a pas construit. Puis, comme
+avant : l'étude sur le chemin annuel, d'autres θ que ½. La porte de M4 reste le
+`make full` du propriétaire.

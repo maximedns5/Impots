@@ -1,6 +1,27 @@
 # State of the project, and the directions open — 2026-10-23 (Phase 10, M4 done)
 
-The 2026-10-23 update adds D-240: knobs for the 2026 réduction générale's curve, the
+The third 2026-10-23 update adds D-242: the answer of the study replayed with the 2026
+curve. Both searches ran on the preregistration's commit, `893e4de`: eight bundles,
+sixteen passes. No cut of the curve lowers the debt in 2035, for no θ: the floor costs
+0.76 to 7.62 Md€ in 2026 and leaves +0.24 to +2.35 points, the `t_delta` 1.00 to
+7.01 Md€ and +0.31 to +2.17 points, the same under both persistences, each θ box a
+single point. Δb is 0.30887 point per billion of first-year cost, the ceiling's in the
+study: nothing but the cost enters, since the loop is absent (no balance row for the
+targeted variant) and the jobs do not reach receipts. All six forecast points hold;
+per billion, the `t_delta` makes 2.08 times the floor's jobs near the SMIC (C2). The
+frozen view prices the `t_delta` 9 % above the aged one. `docs/PREDICTIF_ETUDE.md` has
+the section, its loader eight refusals, each seen failing on a mutation.
+The second 2026-10-23 update added D-241: the study is replayed with the 2026 curve, and
+preregistered first. Two requests under `etude/courbe/`, on the study's frame field for
+field: the floor `t_min` from 2 % to 2.1, 2.4, 2.7 and 3 % (0.76 to 7.62 Md€), and the
+`t_delta` from 37.81 % to 38.31, 39.31, 40.31 and 41.31 % (about 1 to 7 Md€), committed with
+the forecast before any pass. The population carries no firm size, so every employee is in a
+firm under 50: the grid walks that `t_delta`, and the one over 50 reaches no one (0 €,
+measured). The forecast: no cut lowers the debt in 2035, for no θ, because the shock falls
+under Mésange's targeted variant, which has no balance row, and the jobs C2 counts do not
+enter receipts; Δb is the cost carried, 0.3089 point per billion as for the ceiling. The
+result will be D-242.
+The first 2026-10-23 update added D-240: knobs for the 2026 réduction générale's curve, the
 floor `allegement_general_t_min` and the two `t_delta` (under and over 50 employees). Each
 writes its child of the tree, read back by the engine; before 2026 each is refused by name,
 the refusal naming the rates that then govern, and an old rate refused in 2026 now names the
@@ -283,8 +304,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **241 decision
-entries**, D-000 to D-240, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **243 decision
+entries**, D-000 to D-242, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -651,8 +672,10 @@ download list.
    refuses here too (403): the `marche` rate scenario needs it.
 3. **Phase 10** (`docs/PHASE10_SPEC.md`): M1 to M4 are done (D-234 to D-238); its gate is
    the owner's `make full`. The ceiling is reclassed and replayed (D-239), and the 2026
-   curve has its knobs (D-240). Left from the study: the study replayed with the curve;
-   the study on the annual path; other θ.
+   curve has its knobs (D-240), and the study is replayed with it (D-241, D-242): no
+   cut of the curve lowers the debt, and what a targeted cut would give back is
+   missing, said so. Left: a balance row for the targeted variant, or the jobs'
+   receipts in the chain; the study on the annual path; other θ.
 4. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each

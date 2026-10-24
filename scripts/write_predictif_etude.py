@@ -10,6 +10,11 @@ chiffrée et où ses passes ont tourné. Ce script refuse un rapport qui n'a pas
 requête commitée, un instrument sans rapport, des rapports de deux commits, et un rapport
 qui ne dit pas où il a tourné.
 
+LA COURBE DE 2026 est rejouée à part, préenregistrée elle aussi (D-241, D-242) : une
+requête par bouton de la courbe sous `etude/courbe/`, qui tient le cadre de l'étude champ
+pour champ, jouée en `reports/exploration_courbe_<bouton>.json`. Les mêmes refus valent
+pour elle, et un de plus : une requête hors de son menu.
+
 AUCUN CHIFFRE N'EST SAISI DANS LA PAGE : tout vient des rapports. `render(études)` est ce
 que rejoue `tests/test_predictif_etude.py`, sans `data/` : la page commitée est le rendu
 des fichiers commités (la garde de D-228).
@@ -40,6 +45,10 @@ FIGURES = ("knobs", "cost_aged_eur", "cost_frozen_eur", "delta_aged", "delta_fro
 #: an instrument's preregistered request, with only these fields changed.
 COMPLEMENTS = "complements"
 COMPLEMENT_FREE = ("name", "titre", "question")
+#: The 2026 curve, replayed in the study and preregistered apart (D-241): each request
+#: holds the frame of the study's allègement request, only these fields changed.
+COURBE = "courbe"
+COURBE_FREE = ("name", "titre", "question", "bounds")
 
 
 class EtudeError(ValueError):
@@ -76,6 +85,15 @@ MENU: tuple[Instrument, ...] = (
     Instrument("decote", "Le taux de la décote de l'IR", "decote_taux", _pct),
     Instrument("ir", "Les taux du barème de l'IR, mis à l'échelle", "ir_bareme_echelle",
                _factor),
+)
+
+#: The knobs of the 2026 curve (D-240). The population carries no firm size, so every
+#: employee is in a firm under 50, whose `t_delta` is everyone's there (D-241).
+COURBE_MENU: tuple[Instrument, ...] = (
+    Instrument("t_min", "Le plancher t_min de la réduction générale de 2026",
+               "allegement_general_t_min", _pct),
+    Instrument("t_delta", "Le t_delta de la réduction générale de 2026",
+               "allegement_general_t_delta_moins_de_50", _pct),
 )
 
 
@@ -212,10 +230,68 @@ def load_complements(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
     return out
 
 
-def study(requests: Path = REQUESTS, reports: Path = REPORTS) -> tuple[list, list]:
-    """The study and its complements, both checked: what the page renders."""
+def load_courbe(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
+                reports: Path = REPORTS) -> list[dict[str, Any]]:
+    """Each knob of the curve's committed request under `etude/courbe/` and the report that
+    played it, checked: the study's frame held, the knob of its instrument, one commit."""
+    from impots.api.schemas import ExplorationReport, ExplorationRequest
+
+    directory = requests / COURBE
+    if not directory.exists():
+        return []
+    known = {f"{instrument.key}.json" for instrument in COURBE_MENU}
+    strays = sorted(p.name for p in directory.glob("*.json") if p.name not in known)
+    if strays:
+        raise EtudeError(f"etude/{COURBE}/ porte {strays}, hors du menu de la courbe : une "
+                         f"requête que la page ne rendrait pas se lirait comme non jouée.")
+    frame = next(e for e in etudes if e["instrument"].key == "allegements")["report"]
+
+    def held(payload: dict[str, Any]) -> dict[str, Any]:
+        return {k: v for k, v in payload.items() if k not in COURBE_FREE}
+
+    out = []
+    for instrument in COURBE_MENU:
+        request_path = directory / f"{instrument.key}.json"
+        report_path = reports / f"exploration_{COURBE}_{instrument.key}.json"
+        if not request_path.exists():
+            raise EtudeError(f"bouton « {instrument.key} » de la courbe sans requête sous "
+                             f"etude/{COURBE}/ : le menu préenregistré n'est pas entier.")
+        if not report_path.exists():
+            raise EtudeError(f"bouton « {instrument.key} » de la courbe sans rapport : "
+                             f"{report_path.name}.")
+        request = ExplorationRequest.model_validate_json(
+            request_path.read_text(encoding="utf-8"))
+        dump = request.model_dump(mode="json", exclude_none=True)
+        if held(dump) != held(frame["request"]):
+            raise EtudeError(
+                f"etude/{COURBE}/{request_path.name} ne tient pas le cadre de l'étude : seuls "
+                f"{list(COURBE_FREE)} peuvent différer de la requête des allègements, sans "
+                f"quoi la courbe ne se lirait plus à côté de l'étude.")
+        if [b.knob for b in request.bounds] != [instrument.knob]:
+            raise EtudeError(f"etude/{COURBE}/{request_path.name} parcourt "
+                             f"{[b.knob for b in request.bounds]}, pas {instrument.knob}.")
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        ExplorationReport.model_validate(report)
+        if report["request"] != dump:
+            raise EtudeError(f"{report_path.name} n'a pas joué sa requête, "
+                             f"etude/{COURBE}/{request_path.name}.")
+        if not (report.get("where") or "").strip():
+            raise EtudeError(f"{report_path.name} ne dit pas où ses passes ont tourné.")
+        out.append({"instrument": instrument, "report": report})
+    commits = sorted({e["report"]["commit"] for e in out})
+    if len(commits) != 1:
+        raise EtudeError(f"rapports de la courbe de {len(commits)} commits {commits} : elle "
+                         f"se chiffre sur un code, celui de son préenregistrement.")
+    return out
+
+
+def study(requests: Path = REQUESTS,
+          reports: Path = REPORTS) -> tuple[list, list, list]:
+    """The study, its complements and the curve replayed, all checked: what the page
+    renders."""
     etudes = load(requests, reports)
-    return etudes, load_complements(etudes, requests, reports)
+    return (etudes, load_complements(etudes, requests, reports),
+            load_courbe(etudes, requests, reports))
 
 
 # --------------------------------------------------------------------------- #
@@ -416,8 +492,85 @@ def _complement_section(complements: list[dict[str, Any]], target: float,
     return out
 
 
+def _menu_row(entry: dict[str, Any]) -> str:
+    instrument, r = entry["instrument"], entry["report"]
+    evaluations = r["searches"][0]["evaluations"]
+    costs = [e["cost_aged_eur"] for e in evaluations]
+    grid = ", ".join(instrument.show(e["knobs"][instrument.knob]) for e in evaluations)
+    return (f"| {instrument.label} | `{instrument.knob}` | {grid} "
+            f"| de {_md(min(costs))} à {_md(max(costs))} |")
+
+
+def _answer_table(entries: list[dict[str, Any]], target: float, theta: str) -> list[str]:
+    searches = entries[0]["report"]["searches"]
+    lines = ["| Instrument | " + " | ".join(s["persistence_label"] for s in searches) + " |",
+             "|---|" + "---|" * len(searches)]
+    for entry in entries:
+        instrument, r = entry["instrument"], entry["report"]
+        lines.append(f"| {instrument.label} | " + " | ".join(
+            verdict(s, instrument, target, theta) for s in r["searches"]) + " |")
+    return lines
+
+
+def _entry_section(entry: dict[str, Any], target: float, *, first_year: int,
+                   target_year: int, theta: str) -> list[str]:
+    """One instrument: its question, each persistence's verdict and table, what the
+    chain lacks, and the indices of the nearest bundle."""
+    instrument, r = entry["instrument"], entry["report"]
+    out = ["", f"### {instrument.label}", "", r["question"]]
+    for search in r["searches"]:
+        out += ["", f"**{search['persistence_label']}.** "
+                    f"{verdict(search, instrument, target, theta)}", ""]
+        out += _search_table(search, instrument, target, first_year=first_year,
+                             target_year=target_year, theta=theta)
+    lacks: dict[str, list[str]] = {}
+    for search in r["searches"]:
+        for name, why in search["indices"]["absent"].items():
+            lacks.setdefault(f"{name} : {compact(why)}", []).append(
+                search["persistence_label"])
+    if lacks:
+        out += ["", "**Ce qui manque à la chaîne**, pour le paquet le plus proche : "
+                    "absent, et non nul.", ""]
+        out += [f"- {line}" + ("" if len(labels) == len(r["searches"])
+                               else f" ({', '.join(labels).lower()})")
+                for line, labels in lacks.items()]
+    out += ["", "**Les indices de §7, pour le paquet le plus proche de la cible**, "
+                "vue vieillie, tirés de la passe qui l'a chiffré.", ""]
+    return out + _indices(entry, target_year)
+
+
+def _courbe_section(courbe: list[dict[str, Any]], target: float, first_year: int,
+                    target_year: int, theta: str) -> list[str]:
+    report = courbe[0]["report"]
+    out = ["", "## La courbe de 2026, préenregistrée à part", "",
+           "Depuis la refonte de 2026, la réduction générale est une courbe, et l'étude "
+           "n'en chiffrait que le plafond, qui n'est plus que son seuil de sortie (D-239). "
+           "Les boutons de la courbe (D-240) sont rejoués ici, après l'étude, et "
+           f"préenregistrés à part : les requêtes sous `etude/{COURBE}/` ont été commitées "
+           "avant toute passe, avec le pronostic écrit dans D-241. Chacune tient le cadre "
+           "de l'étude champ pour champ ; seuls son nom, son titre, sa question et sa "
+           "grille diffèrent. Chaque rapport a joué sa requête, à l'identique, sur le même "
+           f"commit : `{report['commit']}`, le {report['computed']}. Les passes ont tourné "
+           f"ici : {report['where']}.",
+           "",
+           f"| Instrument | Bouton | Grille | Coût {first_year}, vieillie |",
+           "|---|---|---|---|"]
+    out += [_menu_row(entry) for entry in courbe]
+    out += ["", "La population ne porte pas d'effectif d'entreprise : chaque salarié y est "
+                "rangé dans une entreprise de moins de 50, dont le `t_delta` est donc celui "
+                "de tous. Chaque paquet chiffre ainsi une hausse des deux `t_delta` du même "
+                "nombre de points (D-241).",
+            "", "### La réponse de la courbe", ""]
+    out += _answer_table(courbe, target, theta)
+    for entry in courbe:
+        out += _entry_section(entry, target, first_year=first_year,
+                              target_year=target_year, theta=theta)
+    return out
+
+
 def render(etudes: list[dict[str, Any]],
-           complements: list[dict[str, Any]] | tuple = ()) -> str:
+           complements: list[dict[str, Any]] | tuple = (),
+           courbe: list[dict[str, Any]] | tuple = ()) -> str:
     report = etudes[0]["report"]
     h = report["hypotheses"]
     target, target_year = h["target_share"], h["target_year"]
@@ -481,51 +634,22 @@ def render(etudes: list[dict[str, Any]],
         f"| Instrument | Bouton | Grille | Coût {first_year}, vieillie |",
         "|---|---|---|---|",
     ]
-    for entry in etudes:
-        instrument, r = entry["instrument"], entry["report"]
-        evaluations = r["searches"][0]["evaluations"]
-        costs = [e["cost_aged_eur"] for e in evaluations]
-        grid = ", ".join(instrument.show(e["knobs"][instrument.knob]) for e in evaluations)
-        out.append(f"| {instrument.label} | `{instrument.knob}` | {grid} "
-                   f"| de {_md(min(costs))} à {_md(max(costs))} |")
+    out += [_menu_row(entry) for entry in etudes]
     for entry in etudes:
         for t in entry["report"]["hypotheses"]["transformations"]:
             rates = ", ".join(_pct(b["rate"]) for b in t["law"]["bareme"])
             out += ["", f"`{t['name']}` : {t['label']}. Le barème en vigueur qu'elle met "
                         f"à l'échelle est celui de {t['year']}, ses taux {rates}."]
-    out += ["", "## La réponse", "",
-            "| Instrument | " + " | ".join(
-                s["persistence_label"] for s in report["searches"]) + " |",
-            "|---|" + "---|" * len(report["searches"])]
+    out += ["", "## La réponse", ""]
+    out += _answer_table(etudes, target, theta)
     for entry in etudes:
-        instrument, r = entry["instrument"], entry["report"]
-        out.append(f"| {instrument.label} | " + " | ".join(
-            verdict(s, instrument, target, theta) for s in r["searches"]) + " |")
-    for entry in etudes:
-        instrument, r = entry["instrument"], entry["report"]
-        out += ["", f"### {instrument.label}", "", r["question"]]
-        for search in r["searches"]:
-            out += ["", f"**{search['persistence_label']}.** "
-                        f"{verdict(search, instrument, target, theta)}", ""]
-            out += _search_table(search, instrument, target, first_year=first_year,
-                                 target_year=target_year, theta=theta)
-        lacks = {}
-        for search in r["searches"]:
-            for name, why in search["indices"]["absent"].items():
-                lacks.setdefault(f"{name} : {compact(why)}", []).append(
-                    search["persistence_label"])
-        if lacks:
-            out += ["", "**Ce qui manque à la chaîne**, pour le paquet le plus proche : "
-                        "absent, et non nul.", ""]
-            out += [f"- {line}" + ("" if len(labels) == len(r["searches"])
-                                   else f" ({', '.join(labels).lower()})")
-                    for line, labels in lacks.items()]
-        out += ["", "**Les indices de §7, pour le paquet le plus proche de la cible**, "
-                    "vue vieillie, tirés de la passe qui l'a chiffré.", ""]
-        out += _indices(entry, target_year)
+        out += _entry_section(entry, target, first_year=first_year,
+                              target_year=target_year, theta=theta)
     if complements:
         out += _complement_section(list(complements), target, first_year, target_year,
                                    theta)
+    if courbe:
+        out += _courbe_section(list(courbe), target, first_year, target_year, theta)
     out += ["", "## Ce que l'étude ne dit pas", "",
             "- Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de "
             "θ ; un autre scénario donne une autre réponse.",
@@ -544,11 +668,11 @@ def render(etudes: list[dict[str, Any]],
 
 def main(argv: list[str] | None = None) -> int:
     try:
-        etudes, complements = study()
+        etudes, complements, courbe = study()
     except EtudeError as error:
         print(str(error), file=sys.stderr)
         return 1
-    OUT.write_text(render(etudes, complements), encoding="utf-8")
+    OUT.write_text(render(etudes, complements, courbe), encoding="utf-8")
     print(f"-> {OUT}")
     return 0
 
