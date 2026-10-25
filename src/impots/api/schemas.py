@@ -2103,6 +2103,26 @@ class PredictifReportYear(BaseModel):
     delta_aged: float | None
     reform_frozen: float | None
     delta_frozen: float | None
+    mechanical_by_layer: dict[str, dict[str, float]] | None = None
+    """By view, the cost by layer, when a firm reform is priced (D-246); absent from the
+    reports of household reforms."""
+
+    @model_validator(mode="after")
+    def _layers_sum_to_the_cost(self) -> PredictifReportYear:
+        if self.mechanical_by_layer is None:
+            return self
+        totals = {"figee": self.mechanical_frozen_eur, "vieillie": self.mechanical_aged_eur}
+        if set(self.mechanical_by_layer) != set(totals):
+            raise ValueError(f"{self.year} : couches pour {sorted(self.mechanical_by_layer)},"
+                             f" les vues sont {sorted(totals)}")
+        for view, layers in self.mechanical_by_layer.items():
+            unknown = sorted(set(layers) - set(FIRST_YEAR_LAYERS))
+            total = sum(layers.values())
+            if unknown or not math.isclose(total, totals[view], rel_tol=1e-9, abs_tol=1.0):
+                raise ValueError(
+                    f"{self.year}, vue « {view} » : coût {totals[view]:.0f} € qui n'est pas "
+                    f"la somme de ses couches {layers} (PHASE11_SPEC §10)")
+        return self
 
 
 class PredictifReportPathYear(BaseModel):

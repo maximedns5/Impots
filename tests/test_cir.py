@@ -294,11 +294,14 @@ def test_the_trajectory_says_why_c8_and_c9_stay_out_of_it() -> None:
     MESR au manifeste » beside two GECIR publications would be false on its face — and
     « aucune évaluation publiée » has been, beside C8, since D-221. Both channels are open
     on the firm layer; what keeps them out of a trajectory is that they are indices, never
-    receipts, and that the chain prices the population's reforms."""
+    receipts: the chain prices the cost of an IS cut (D-244), not the firms or the R&D it
+    would bring, and the CIR stays out of it."""
     from impots.predictif import chaine
 
     for label, code, entry in (("créations d'entreprises", "C8", "D-221"),
                                ("R&D et CIR", "C9", "D-222")):
         reason = chaine.CLOSED[label]
         assert code in reason and entry in reason and "jamais une recette" in reason, label
+        # D-244 put the IS in the trajectory: the reason says so rather than deny it.
+        assert "D-244" in reason, label
         assert "au manifeste" not in reason, label

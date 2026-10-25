@@ -49,6 +49,12 @@ class UnverifiedParameter(RuntimeError):
     """A parameter tried to load without a verifier verdict."""
 
 
+class MisrankedRow(UnverifiedParameter):
+    """A row broke PHASE11_SPEC §2's order of sources: an international row without its
+    rank, countries or years, or a lower rank where a higher one is loaded for the same
+    channel, with no exception declared (D-243, guards 1 and 2 of §10)."""
+
+
 class UndeclaredTheta(UnverifiedParameter):
     """An open row tried to load without saying which end θ = 1 designates.
 
@@ -95,6 +101,29 @@ class Verifier:
     note: str = ""
 
 
+#: PHASE11_SPEC §2, condition 1: French first, then several countries France among
+#: them, then an international meta-analysis, last another country.
+RANKS = {1: "estimation française", 2: "plusieurs pays dont la France",
+         3: "méta-analyse internationale", 4: "un autre pays"}
+
+
+@dataclass(frozen=True)
+class Rank:
+    """Where a row stands in the order of sources (D-243). A row without this block is
+    one the phase 9 rule loaded — French, or a model centred on France."""
+
+    level: int
+    channel: str
+    """What the row measures, so that two rows of one channel can be ranked together."""
+    countries: str = ""
+    years: str = ""
+    why: str = ""
+    """Why the rank above is missing — condition 1 makes the row write it."""
+    exception: str = ""
+    """A declared exception to condition 1, with its D-entry: the rank above exists and
+    is set aside, and the row says why."""
+
+
 @dataclass(frozen=True)
 class Parameter:
     key: str
@@ -113,6 +142,7 @@ class Parameter:
     """The end θ = 1 designates. None only for a FIXED row (low = high), which carries
     no θ; the loader refuses an open row without it (D-217)."""
     theta_reason: str = ""
+    rank: Rank | None = None
 
     @property
     def is_open(self) -> bool:
@@ -203,7 +233,54 @@ def _parse(key: str, raw: dict[str, Any]) -> Parameter:
         note=raw.get("note", ""),
         theta_one=(raw.get("theta") or {}).get("un"),
         theta_reason=str((raw.get("theta") or {}).get("raison") or "").strip(),
+        rank=_rank(raw.get("rang")),
     )
+
+
+def _rank(raw: dict[str, Any] | None) -> Rank | None:
+    if raw is None:
+        return None
+    return Rank(level=int(raw.get("niveau", 0)), channel=str(raw.get("canal") or ""),
+                countries=str(raw.get("pays") or "").strip(),
+                years=str(raw.get("annees") or "").strip(),
+                why=str(raw.get("pourquoi") or "").strip(),
+                exception=str(raw.get("exception") or "").strip())
+
+
+def _rank_problem(parameter: Parameter) -> str:
+    """Why a row cannot stand at its declared rank, or '' when it can (§10, guard 1)."""
+    rank = parameter.rank
+    if rank is None:
+        return ""
+    if rank.level not in RANKS:
+        return f"rang {rank.level} inconnu ; les rangs sont {RANKS}"
+    if not rank.channel:
+        return "rang sans canal : deux lignes d'un même canal ne pourraient se classer"
+    if rank.level >= 2 and not (rank.countries and rank.years):
+        return (f"ligne de rang {rank.level} ({RANKS[rank.level]}) sans les pays ou les "
+                f"années de son échantillon : l'étiquette « international » les porte "
+                f"(PHASE11_SPEC §2, condition 5)")
+    if rank.level >= 2 and not (rank.why or rank.exception):
+        return (f"ligne de rang {rank.level} sans dire pourquoi le rang au-dessus manque, "
+                f"ni l'exception qui l'écarte (PHASE11_SPEC §2, condition 1)")
+    return ""
+
+
+def _outranked(parameters: dict[str, Parameter]) -> dict[str, str]:
+    """Rows of a channel with a better-ranked row loaded, and no exception (guard 2)."""
+    best: dict[str, int] = {}
+    for parameter in parameters.values():
+        if parameter.rank is not None:
+            channel = parameter.rank.channel
+            best[channel] = min(best.get(channel, parameter.rank.level),
+                                parameter.rank.level)
+    return {key: (f"rang {p.rank.level} alors qu'une ligne de rang "
+                  f"{best[p.rank.channel]} est chargée pour le canal "
+                  f"« {p.rank.channel} » : on ne descend d'un rang que si le précédent "
+                  f"manque, ou par une exception déclarée (PHASE11_SPEC §2, condition 1)")
+            for key, p in parameters.items()
+            if p.rank is not None and p.rank.level > best[p.rank.channel]
+            and not p.rank.exception}
 
 
 def _theta_problem(parameter: Parameter) -> str:
@@ -256,5 +333,16 @@ def load(directory: Path | None = None, *, strict: bool = True) -> Store:
                     raise UndeclaredTheta(f"{key} ({path.name}): {problem}")
                 store.rejected[key] = problem
                 continue
+            problem = _rank_problem(parameter)
+            if problem:
+                if strict:
+                    raise MisrankedRow(f"{key} ({path.name}): {problem}")
+                store.rejected[key] = problem
+                continue
             store.parameters[key] = parameter
+    for key, problem in _outranked(store.parameters).items():
+        if strict:
+            raise MisrankedRow(f"{key}: {problem}")
+        store.rejected[key] = problem
+        del store.parameters[key]
     return store

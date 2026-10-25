@@ -49,6 +49,16 @@ def baseline() -> TaxBenefitSystem:
     return _SYSTEM
 
 
+def normal_rate_change_points(spec: Any, year: int) -> float | None:
+    """The reform's IS normal rate minus the law's for `year`, in points: what C8 reads
+    (D-221) and the IS's GDP index (D-246). None when the reform leaves the rate alone."""
+    rate = getattr(spec, "is_taux_normal", None) if spec is not None else None
+    if rate is None:
+        return None
+    current = baseline().parameters(f"{year}-01-01").impot_societes
+    return 100.0 * (rate - float(current.taux_normal))
+
+
 def reform_key(spec: FirmReformSpec, year: int) -> str:
     """Canonical cache key. The year is part of it: the same knobs applied from a
     different date are a different system."""

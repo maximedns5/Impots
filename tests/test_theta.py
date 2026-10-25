@@ -17,7 +17,7 @@ import pytest
 
 from impots.behavioural import band, channels
 from impots.behavioural.store import load
-from impots.predictif import comportement, theta
+from impots.predictif import comportement, indices, theta
 from impots.predictif.theta import Theta, ThetaError
 
 STORE = load()
@@ -195,6 +195,15 @@ LABOUR = {"labour_group": np.array(sorted(channels.LABOUR_GROUPS)),
           "labour_emtr": np.array([0.40, 0.35, 0.45, 0.30])}
 CSG = Reform(csg_activite_deductible=0.088)
 
+def _is_growth(store, reform, *, draws, rng, rate_change_points):
+    """The IS's GDP index read as a channel (D-246): its row has no channel, the index
+    is what reads it, and the guard holds it there."""
+    index = indices.is_growth(indices.KEYS["pib_is"], theta=Theta(common=0.5), store=store,
+                              rate_change_points=rate_change_points, years=[2026])
+    return SimpleNamespace(applies=index.available, message=index.reason,
+                           draws=[index.values.get("2026", 0.0)] * draws)
+
+
 #: Row → (channel, reform, inputs, index of the row's draw in the channel's output).
 CASES = {
     "eti_all": (channels.elasticity_of_taxable_income, IR, _households(), 0),
@@ -220,6 +229,7 @@ CASES = {
                                  {"is_rate_change_points": 2.0}, 0),
     "rd_cir_multiplier": (channels.rd_response, Reform(cir_taux=0.25),
                           {"cir_margins": ((-1_009.9e6, 0.25), (-105e6, 0.05))}, 0),
+    "is_croissance_pib": (_is_growth, None, {"rate_change_points": -1.0}, 0),
 }
 
 

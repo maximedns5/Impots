@@ -30,6 +30,10 @@ WHERE EACH COMES FROM, AND WHICH θ MOVES IT.
   of GDP, year by year.
 * The firm layer — production taxes, company creations (C8), R&D (C9) — is listed, and
   says it is not computed here: the trajectory prices the population's reforms.
+* The IS on GDP (Phase 11, D-246): Gechert and Heimberger's growth effect of a point of
+  the normal rate, read as a ten-year ramp, at the θ of its own row. SHOWN, NEVER ADDED
+  TO THE DEBT: the IS has no loop to the receipts (M0, R2), and D-218 gives an instrument
+  without one no macro effect, not even on GDP.
 """
 
 from __future__ import annotations
@@ -43,8 +47,13 @@ from impots.macro.store import Store as MacroStore
 from impots.predictif.theta import MACRO_ROW
 
 GENS, ENTREPRISES, STARTUPS, ETAT = "Les gens", "Les entreprises", "Les startups", "L'État"
-MECANIQUE, COMPORTEMENT, MACRO, CHAINE, FIRMES = (
-    "mécanique", "comportement", "macro", "chaîne", "couche entreprises")
+MECANIQUE, COMPORTEMENT, MACRO, CHAINE, FIRMES, META = (
+    "mécanique", "comportement", "macro", "chaîne", "couche entreprises", "méta-analyse")
+#: The behavioural store's row the IS's GDP index reads (D-246).
+IS_ROW = "is_croissance_pib"
+#: The ramp's length: the meta-analysis converts level effects « by assuming a
+#: conservative 10-year transition period » (p. 31).
+IS_RAMP_YEARS = 10
 
 
 class IndicesError(ValueError):
@@ -109,6 +118,12 @@ CATALOGUE: tuple[Spec, ...] = (
          theta=(MACRO_ROW,),
          note="Un accélérateur, proportionnel au multiplicateur à θ ; hors investissement "
               "public et des ménages."),
+    Spec("pib_is", ENTREPRISES, "PIB, effet du taux normal d'IS", "% d'écart de PIB", META,
+         "Gechert et Heimberger, méta-analyse de 441 estimations (D-246)",
+         theta=(IS_ROW,),
+         note="Rampe de dix ans sur la croissance. Hors de la trajectoire de dette : l'IS "
+              "n'a pas de boucle vers les recettes, et un PIB sans elle serait la moitié "
+              "d'une variante (D-218)."),
     Spec("charge_fiscale_production", ENTREPRISES, "Charge fiscale de production",
          "% de la valeur ajoutée", FIRMES, "panneau de la phase 8"),
     Spec("creations_societes", STARTUPS, "Créations de sociétés",
@@ -155,6 +170,18 @@ FIXED = ("Au centre de Mésange, fixe : la ligne contient le choc, en revenu ou 
 SCALED = ("Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), "
           "comme l'emploi (D-059) et la rétroaction (§4.1).")
 FIRST_YEAR = "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+NO_IS_RATE = ("La réforme ne touche pas au taux normal d'IS : la méta-analyse chiffre ce "
+              "taux, et aucun autre bouton des entreprises ne s'y lit.")
+IS_RAMP = ("Rampe de dix ans : après t années, l'écart de PIB vaut l'effet sur la "
+           "croissance de la ligne à θ, fois les points de baisse, fois t, tenu après dix "
+           "ans. Convention de ce projet sur la conversion des auteurs (p. 31), pas un "
+           "scénario de persistance de Mésange.")
+IS_OUTSIDE_DEBT = ("Hors de la trajectoire de dette : ni dans les recettes ni au "
+                   "dénominateur. La boucle de l'IS est refusée (M0, R2), et D-218 ne donne "
+                   "aucun effet macro à un instrument sans boucle, pas même sur le PIB.")
+IS_SHORT_RUN = ("À court terme, la méta-analyse dit une baisse « even less growth "
+                "enhancing » (p. 21) ; la rampe ne le suit pas, et sa première année est "
+                "plus favorable que ce modérateur.")
 
 
 @dataclass(frozen=True)
@@ -360,6 +387,35 @@ def behaviour(spec: Spec, *, theta: Any, store: Any, reform: Any, mechanical: fl
 # --------------------------------------------------------------------------- #
 # Mechanical, and the chain
 # --------------------------------------------------------------------------- #
+def is_growth(spec: Spec, *, theta: Any, store: Any, rate_change_points: float | None,
+              years: Iterable[int]) -> Index:
+    """The GDP gap of a change in the IS normal rate, year by year, at the θ of its row,
+    with its box at θ = 0 and 1. A cut is a negative change and a positive gap."""
+    from impots.predictif.theta import value_at
+
+    if rate_change_points is None or not rate_change_points:
+        return absent(spec, NO_IS_RATE)
+    if IS_ROW not in store:
+        reason = store.rejected.get(IS_ROW, "absente du magasin")
+        return absent(spec, f"Ligne « {IS_ROW} » non chargée : {reason}")
+    row = store[IS_ROW]
+    rank = row.rank
+    label = (f"International : {rank.countries} ; {rank.years}." if rank is not None
+             else "")
+    cut = -float(rate_change_points)
+
+    def path(growth: float) -> dict[str, float]:
+        return {str(y): growth * cut * min(k + 1, IS_RAMP_YEARS)
+                for k, y in enumerate(years)}
+
+    values = path(value_at(row, theta.for_row(IS_ROW)))
+    low, high = path(value_at(row, 0.0)), path(value_at(row, 1.0))
+    box = {y: (min(low[y], high[y]), max(low[y], high[y])) for y in values}
+    return Index(spec=spec, available=True, values=values, box=box,
+                 conventions=tuple(c for c in (IS_RAMP, IS_OUTSIDE_DEBT, IS_SHORT_RUN,
+                                               label) if c))
+
+
 def deciles(spec: Spec, rows: Iterable[Any] | None) -> Index:
     rows = [r for r in (rows or []) if r.mean_delta is not None]
     if not rows:
@@ -384,11 +440,17 @@ def compute(specs: Iterable[Spec], *, trajectory: Any, deciles_rows: Iterable[An
             macro_store: MacroStore | None, theta: Any, store: Any, reform: Any,
             mechanical: float, inputs: Mapping[str, Any] | None, year: int,
             macro_reason: str = NO_IMPULSE,
-            firm_reason: str = FIRM_LAYER) -> tuple[Index, ...]:
-    """Every index asked for, computed or said not to be, in catalogue order."""
+            firm_reason: str = FIRM_LAYER,
+            is_rate_change: float | None = None) -> tuple[Index, ...]:
+    """Every index asked for, computed or said not to be, in catalogue order.
+    `is_rate_change` is the firm reform's IS normal rate minus the law's, in points."""
     out = []
     for spec in specs:
-        if spec.stage == FIRMES:
+        if spec.stage == META:
+            out.append(is_growth(spec, theta=theta, store=store,
+                                 rate_change_points=is_rate_change,
+                                 years=trajectory.years))
+        elif spec.stage == FIRMES:
             out.append(absent(spec, firm_reason))
         elif spec.stage == CHAINE:
             out.append(chain(spec, trajectory))

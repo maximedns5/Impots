@@ -52,6 +52,20 @@ VIEWS = ("figee", "vieillie")
 
 
 @dataclass(frozen=True)
+class Layered:
+    """A year's mechanical cost with its layers, when a firm reform is priced beside the
+    households' (D-246). The layers sum to the cost, or the year is refused."""
+
+    cost: float
+    layers: dict[str, float]
+
+    def __post_init__(self) -> None:
+        if abs(sum(self.layers.values()) - self.cost) > max(1.0, 1e-9 * abs(self.cost)):
+            raise DebtError(f"coût {self.cost:.0f} € qui n'est pas la somme de ses couches "
+                            f"{self.layers} (PHASE11_SPEC §10)")
+
+
+@dataclass(frozen=True)
 class YearPrice:
     """One year as the engine priced it, in both views. Engine convention: COST POSITIVE."""
 
@@ -62,6 +76,8 @@ class YearPrice:
     passes: dict[str, Priced] | None = None
     """Each view's whole pass — what the channels read, the impulse — when the command
     asked for behaviour or the loop; None for the mechanical path."""
+    layers: dict[str, dict[str, float]] | None = None
+    """By view, the cost by layer, when a firm reform is priced (D-246); None otherwise."""
 
 
 def uprating_for(growth: GrowthScenario, *, wage: float, source: str,
@@ -79,22 +95,35 @@ def check_coherence(uprating: Uprating, growth: GrowthScenario) -> None:
             f"dériverait de l'écart sans le dire.")
 
 
-def price_years(years: list[int], price: Callable[[int, str], float | Priced],
+def _cost(one: float | Layered | Priced) -> float:
+    return float(one.cost if isinstance(one, (Layered, Priced)) else one)
+
+
+def _layers(one: float | Layered | Priced) -> dict[str, float] | None:
+    layers = getattr(one, "layers", None)
+    return dict(layers) if layers else None
+
+
+def price_years(years: list[int],
+                price: Callable[[int, str], float | Layered | Priced],
                 basis_for: Callable[[int], str]) -> list[YearPrice]:
     """Each year in both views. `price(year, view)` is injected: the engine in the CLI, a
     stub in the tests, so the logic here is tested without an hour of passes. It returns
-    a cost, or the whole pass when behaviour or the loop was asked for."""
+    a cost — with its layers when a firm reform is priced — or the whole pass when
+    behaviour or the loop was asked for."""
     out = []
     for y in years:
         frozen, aged = price(y, "figee"), price(y, "vieillie")
         whole = isinstance(frozen, Priced) and isinstance(aged, Priced)
         if whole != (isinstance(frozen, Priced) or isinstance(aged, Priced)):
             raise DebtError(f"{y} : une vue chiffrée en entier et l'autre en coût seul")
+        layers = {"figee": _layers(frozen), "vieillie": _layers(aged)}
+        if (layers["figee"] is None) != (layers["vieillie"] is None):
+            raise DebtError(f"{y} : une vue chiffrée par couche et l'autre non")
         out.append(YearPrice(
-            year=y, basis=basis_for(y),
-            frozen_eur=float(frozen.cost if whole else frozen),
-            aged_eur=float(aged.cost if whole else aged),
-            passes={"figee": frozen, "vieillie": aged} if whole else None))
+            year=y, basis=basis_for(y), frozen_eur=_cost(frozen), aged_eur=_cost(aged),
+            passes={"figee": frozen, "vieillie": aged} if whole else None,
+            layers=layers if layers["figee"] is not None else None))
     return out
 
 
@@ -128,6 +157,8 @@ class Rapport:
     uprating_note: str
     behavioural: bool = False
     macro: bool = False
+    firm_note: str | None = None
+    """The firm layer's conventions, when the reform has one (D-246)."""
 
     @property
     def aged(self) -> chaine.Trajectoire:
@@ -149,7 +180,7 @@ class Rapport:
         lead = self.paths[0]
         rows = []
         for i, price in enumerate(self.prices):
-            rows.append({
+            row = {
                 "year": price.year, "basis": price.basis,
                 "mechanical_frozen_eur": price.frozen_eur,
                 "mechanical_aged_eur": price.aged_eur,
@@ -158,7 +189,11 @@ class Rapport:
                 "delta_aged": None if side else lead.aged.delta[i],
                 "reform_frozen": None if side else lead.frozen.reform[i],
                 "delta_frozen": None if side else lead.frozen.delta[i],
-            })
+            }
+            # Only with a firm reform: a household report reads as it always did.
+            if price.layers is not None:
+                row["mechanical_by_layer"] = {v: dict(c) for v, c in price.layers.items()}
+            rows.append(row)
         common = [c for c in lead.aged.conventions
                   if all(c in p.aged.conventions for p in self.paths)]
         return {
@@ -171,7 +206,7 @@ class Rapport:
                       "implicit_rate": self.start.implicit_rate,
                       "gdp_eur": self.start.gdp_eur},
             "years": rows,
-            "conventions": common,
+            "conventions": common + ([self.firm_note] if self.firm_note else []),
             "absent": dict(lead.aged.absent),
             "theta": dict(lead.aged.theta), "theta_applied": lead.aged.theta_applied,
             "closed": dict(lead.aged.closed),
@@ -198,14 +233,23 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
           uprating: Uprating, uprating_note: str,
           securities: list[Any] | None = None, reform: Any = None,
           behavioural: bool = False, macro: bool = False, persistence: str | None = None,
-          store: Any = None, macro_store: Any = None) -> Rapport:
+          store: Any = None, macro_store: Any = None,
+          firm_note: str | None = None) -> Rapport:
     """The debt paths from the priced years. No carry: every year must be priced.
 
     With `behavioural` or `macro`, every year must carry its whole pass (`YearPrice.passes`)
-    and `reform` the reform the channels claim knobs from."""
+    and `reform` the reform the channels claim knobs from. With a firm layer, `firm_note`
+    names how it was priced, and is refused without one."""
     check_coherence(uprating, growth)
     if not prices:
         raise DebtError("aucune année chiffrée : un rapport sans chiffrage n'a rien à dire")
+    layered = any(p.layers is not None for p in prices)
+    if layered and not firm_note:
+        raise DebtError("couche entreprises sans sa note : la vue vieillie et la vue figée "
+                        "se liraient sans dire ce qu'elles chiffrent (D-246)")
+    if firm_note and not layered:
+        raise DebtError("note des entreprises sans couche entreprises : un rapport des "
+                        "ménages dirait chiffrer ce qu'il ne chiffre pas")
     whole = behavioural or macro
     if whole:
         bare = [p.year for p in prices if p.passes is None]
@@ -256,4 +300,5 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
                    computed=computed, start=start, prices=tuple(prices),
                    paths=tuple(Path(persistence=p, aged=path("vieillie", p),
                                     frozen=path("figee", p)) for p in persistences),
-                   uprating_note=uprating_note, behavioural=behavioural, macro=macro)
+                   uprating_note=uprating_note, behavioural=behavioural, macro=macro,
+                   firm_note=firm_note)

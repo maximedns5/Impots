@@ -1,0 +1,82 @@
+# L'IS et la croissance — PHASE11_SPEC §4, M0 de la phase 11 (R1), ouverte en D-246.
+#
+# Gechert et Heimberger, méta-analyse de 441 estimations tirées de 42 études : de combien
+# un point de taux légal d'IS déplace la croissance annuelle du PIB. `behavioural.gechert`
+# lit la ligne β0 du tableau 2 dans le PDF, et un test tient les trois valeurs ci-dessous
+# contre cette lecture par `gechert.convention` (D-026).
+#
+# UN INDICE, PAS UNE RECETTE. Cette ligne ne sert qu'à l'indice `pib_is` : l'écart de PIB
+# d'une baisse du taux normal, lu en rampe de dix ans. La boucle de l'IS vers les recettes
+# est refusée (M0, R2 : la boucle par élasticités manque le recoupement avec Mésange), et
+# D-218 ne donne alors aucun effet macro à un instrument sans boucle, pas même sur le PIB.
+# L'indice reste donc hors de la trajectoire de dette, et le dit.
+
+parameters:
+  is_croissance_pib:
+    value: {central: 0.00945, low: -0.0001, high: 0.019, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Un plus grand écart de croissance pour un point d'IS en moins est une réponse plus
+        forte de l'économie. Le haut est le centre brut des 441 estimations, le bas le
+        centre corrigé du biais de publication, qui ne distingue pas l'effet de zéro.
+    applies_to: >
+      Points de croissance annuelle du PIB réel par point de taux légal d'IS en MOINS, le
+      cas de référence de la méta-analyse (p. 19 : le taux légal, une moyenne de pays de
+      l'OCDE, sans horizon déclaré par l'étude primaire). Le signe est retourné par
+      rapport au document, qui chiffre une hausse : −0,019 brut y devient 0,019, et le
+      0,0001 corrigé du biais devient −0,0001. Les effets de niveau des études primaires
+      ont été convertis « by assuming a conservative 10-year transition period » (p. 31) ;
+      la chaîne le lit comme une rampe : après t années, l'écart de PIB vaut le taux de
+      cette ligne fois les points de baisse fois t, dix ans au plus. Convention nommée,
+      pas un scénario de persistance de Mésange.
+    responds_to_knobs: [is_taux_normal]
+    support:
+      estimated_on: >
+        441 estimations de 42 études primaires publiées de 1997 à 2019 (annexe A, p. 28),
+        dont les deux tiers portent sur des pays de l'OCDE seulement (0,667, tableau 1,
+        p. 11). La méta-analyse ne publie pas l'étendue des variations
+        de taux de ses études (tableau 1, p. 11) : la ligne ne peut être dite ni dans son
+        support ni hors de lui, et le rapport l'écrit. Une ligne sans borne n'est jamais
+        notée dans son support.
+      max_variation_graded_in_support: null
+    source:
+      citation: >
+        Sebastian Gechert et Philipp Heimberger, « Do corporate tax cuts boost economic
+        growth? », IMK Working Paper n° 210, mai 2021, sous CC BY 4.0 ; publié dans
+        European Economic Review 147 (2022), 104157, version non lue ici (ScienceDirect
+        refuse ce conteneur).
+      url: https://www.boeckler.de/pdf/p_imk_wp_210_2021.pdf
+      vintage: "2021"
+      quote: >-
+        a one percentage point increase in the (statutory) corporate tax rate is
+        associated with an x percentage point change in the rate of economic growth
+    verifier:
+      verdict: CONFIRMED
+      date: 2026-10-24
+      ref: D-245
+      note: >
+        Deux passes adversariales sur le M0 de la phase 11 ont relu le tableau 2 sur le
+        fichier : −0,019 (0,010) en colonne 1, 0,0001 (0,0004) en colonne 2, N = 441,
+        page 16 du PDF. La citation est en page 9. M0 arrondissait le milieu à 0,0095 en
+        tenant le bas pour nul ; la ligne prend le centre corrigé tel qu'imprimé, d'où
+        0,00945 (D-246).
+    confidence: low
+    note: >
+      Le modérateur « court terme explicite » (+0,055, tableau 4, p. 20) dit qu'à court
+      terme une baisse est « even less growth enhancing » (p. 21), au point d'inverser le
+      signe avec la constante de la colonne. Il n'est pas robuste (colonnes 4 et 5) et la
+      rampe ne le suit pas : pour tout θ au-dessus de 0, l'effet de la première année est
+      plus favorable que ce que ce modérateur suggère.
+    rang:
+      niveau: 3
+      canal: is_croissance
+      pays: >-
+        42 études ; deux estimations sur trois portent sur des pays de l'OCDE seulement
+        (tableau 1, p. 11), aucune étude n'est propre à la France
+      annees: études publiées de 1997 à 2019 (annexe A, p. 28)
+      exception: >-
+        D-245 : des panels de l'OCDE et de l'Union européenne, de rang 2, existent parmi
+        les études primaires (p. 28). La méta-analyse est prise à leur place, parce
+        qu'en prendre un serait choisir dans une littérature qu'elle montre biaisée par
+        la publication ; leur moyenne brute est déjà la borne haute.
