@@ -458,7 +458,7 @@ def test_a_curve_that_is_not_what_was_preregistered_is_refused(script, tmp_path,
 
 def _courbe_first_round(reports: Path, *, move: str | None = None) -> None:
     """The curve's first round as it ran: on the preregistration's commit, with the C2 that
-    read 15 % of the earners (D-246), here its indices changed; `move` shifts one figure of
+    read 15 % of the earners (D-249), here its indices changed; `move` shifts one figure of
     that knob's report."""
     first = reports / "courbe_premier_tour"
     first.mkdir()
@@ -476,7 +476,7 @@ def _courbe_first_round(reports: Path, *, move: str | None = None) -> None:
 
 def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
         script, tmp_path) -> None:
-    """D-248: the curve replayed after C2's fix. Its indices may differ from the first
+    """D-251: the curve replayed after C2's fix. Its indices may differ from the first
     round's, which is the point; its costs, its Δb and its corners may not, and the page
     names the first commit and why it was replayed."""
     requests, reports = _study(tmp_path, script)
@@ -486,7 +486,7 @@ def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
     page = script.render(etudes, complements, courbe)
     _, _, tail = page.partition("## La courbe de 2026, préenregistrée à part")
     assert "e" * 40 in tail and CURVE_COMMIT in tail
-    assert "chiffre pour chiffre" in tail and "D-246" in tail
+    assert "chiffre pour chiffre" in tail and "D-249" in tail
     assert "courbe_premier_tour" in tail
 
 
@@ -494,7 +494,7 @@ def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
                                          ("missing", "premier tour de la courbe sans")])
 def test_a_curve_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str,
                                                       needle: str) -> None:
-    """D-248: the rerun only corrects C2, which enters no revenue and no debt. One figure
+    """D-251: the rerun only corrects C2, which enters no revenue and no debt. One figure
     moved by a billionth of a point, or a knob missing from the first round, and the
     rerun is no longer that: refused."""
     requests, reports = _study(tmp_path, script)
@@ -508,7 +508,7 @@ def test_a_curve_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str
 
 def _second_round(reports: Path, *, move: str | None = None) -> None:
     """The study's second round as it ran: with the C2 that read 15 % of the earners
-    (D-246), here its indices changed; `move` shifts one figure of that instrument's
+    (D-249), here its indices changed; `move` shifts one figure of that instrument's
     report."""
     second = reports / "etude_second_tour"
     second.mkdir()
@@ -525,7 +525,7 @@ def _second_round(reports: Path, *, move: str | None = None) -> None:
 
 def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
                                                                      tmp_path) -> None:
-    """D-248: the study replayed on its second round's code with C2's fix alone. Its
+    """D-251: the study replayed on its second round's code with C2's fix alone. Its
     indices may differ from the second round's, which is the point; its costs, its Δb and
     its corners may not, and the page names the second commit and why it was replayed."""
     requests, reports = _study(tmp_path, script)
@@ -534,7 +534,7 @@ def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
     page = script.render(script.load(requests, reports))
     head, _, _ = page.partition("## Le cadre")
     assert "f" * 40 in head and "a" * 40 in head and COMMIT in head
-    assert "D-246" in head and "etude_second_tour" in head
+    assert "D-249" in head and "etude_second_tour" in head
     assert head.count("chiffre pour chiffre") == 2
 
 
@@ -542,7 +542,7 @@ def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
                                          ("missing", "second tour sans")])
 def test_a_third_round_that_is_not_the_second_is_refused(script, tmp_path, how: str,
                                                          needle: str) -> None:
-    """D-248: the third round only corrects C2, which enters no revenue and no debt. One
+    """D-251: the third round only corrects C2, which enters no revenue and no debt. One
     figure moved by a billionth of a point, or an instrument missing from the second
     round, and the replay is no longer that: refused."""
     requests, reports = _study(tmp_path, script)

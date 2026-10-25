@@ -51,7 +51,7 @@ class RunResult:
     """One row per person of the run: `person_id`, `household_id`,
     `salaire_brut_annuel`, then `salaire_super_brut` and, with a reform,
     `salaire_super_brut_reform`. Each person's own labour cost, which C2 reads: a
-    household's would lend an earner at the SMIC the cut of a partner at 3 SMIC (D-248).
+    household's would lend an earner at the SMIC the cut of a partner at 3 SMIC (D-251).
     """
 
 

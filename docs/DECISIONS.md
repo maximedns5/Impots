@@ -18322,7 +18322,7 @@ et sha256. `tests/test_donnees.py` passe ses 40 cas.
   al. (*JPubE*), que ScienceDirect refuse ici (403), et à trouver une source stable des
   paramètres de l'OCDE pour le taux moyen effectif.
 
-## D-246 — L'écart de C2 : la chaîne ne lisait que 15 % des salariés
+## D-249 — L'écart de C2 : la chaîne ne lisait que 15 % des salariés
 
 **Le fait.** C2 comptait 748 emplois par milliard pour le plancher `t_min` et 1 555 pour le
 `t_delta` (D-242). Son élasticité, −0,43 au centre, est proche du −0,5 de la Note du CAE
@@ -18428,9 +18428,9 @@ n'atteignent pas `_employer_inputs`. `ruff` passe sur `src`, `tests` et `scripts
   et la page portent le C2 corrigé.
 - Mesurer le poids des salariés dans `_narrow_band`, et le corriger s'il le faut.
 
-## D-247 — La bande étroite lit la passe rapide à ses propres poids
+## D-250 — La bande étroite lit la passe rapide à ses propres poids
 
-**Le fait.** `_narrow_band`, dans `src/impots/api/main.py`, avait le défaut de C2 (D-246).
+**Le fait.** `_narrow_band`, dans `src/impots/api/main.py`, avait le défaut de C2 (D-249).
 Sa famille des salaires lisait chaque salarié de la population entière, au poids de la
 population, avec un mouvement nul hors des 20 000 ménages de la passe rapide. C'est une
 part : les zéros sortent du numérateur comme du dénominateur, et rien n'était divisé par
@@ -18474,12 +18474,12 @@ Les deux cas lents de l'API qui lisent la bande sur une passe ont tourné, l'un 
 l'autre, et passent : la réforme à seuil signalée et le barème non, et le drapeau qui ne
 touche pas au chiffre mécanique. `ruff` passe sur `src`, `tests` et `scripts`.
 
-**Ce qui reste.** Rien de ce défaut. Ce qui restait de D-246 reste : le choix du
+**Ce qui reste.** Rien de ce défaut. Ce qui restait de D-249 reste : le choix du
 propriétaire sur R5, et les recherches de la courbe à rejouer pour le C2 corrigé.
 
-## D-248 — C2 au coût de chaque salarié, et la courbe et l'étude rejouées
+## D-251 — C2 au coût de chaque salarié, et la courbe et l'étude rejouées
 
-**Le fait.** Après D-246, les recherches de la courbe et l'étude du plafond ont été
+**Le fait.** Après D-249, les recherches de la courbe et l'étude du plafond ont été
 rejouées pour porter le C2 corrigé. Le plafond y a montré un second défaut. Le relever ne
 soulage que les salaires au-delà de 3 SMIC, où C2 ne répond pas. C2 lui comptait pourtant
 1 317 emplois au premier paquet de l'étude, 740 par milliard. C2 prêtait à chaque salarié
@@ -18508,23 +18508,23 @@ défaut, mineur : sans aucun emploi à compter, C2 rendait −0,0, que la page a
 **La mesure de C2.** Sur la passe de l'étude, premier paquet de chaque grille, C2 à θ = ½,
 par milliard de la première année :
 
-| Bouton | Coût | Avant D-246 | Après D-246 | Après D-248 | Boîte θ |
+| Bouton | Coût | Avant D-249 | Après D-249 | Après D-251 | Boîte θ |
 |---|---|---|---|---|---|
 | Plafond, 3,5 SMIC | 1,78 Md€ | 128 | 740 | 0 | 0 à 0 |
 | `t_delta`, 38,31 % | 1,00 Md€ | 1 555 | 9 939 | 13 380 | 9 820 à 16 051 |
 | `t_min`, 2,1 % | 0,76 Md€ | 748 | 4 832 | 5 348 | 4 025 à 6 341 |
 
-Les chiffres de D-246 sont remplacés. Le `t_delta` fait 2,50 fois les emplois du plancher
+Les chiffres de D-249 sont remplacés. Le `t_delta` fait 2,50 fois les emplois du plancher
 par milliard, contre 2,08 : plus loin du double, le sens du point 5 de D-241 tient.
 
-**Ce qui reste de l'écart, revu.** Pour le `t_delta`, les pas de D-246 deviennent : 22 480
+**Ce qui reste de l'écart, revu.** Pour le `t_delta`, les pas de D-249 deviennent : 22 480
 emplois pour un milliard posé au SMIC à −0,5 ; 19 335 à −0,43 ; 15 774 là où le bouton porte
 ses euros, qui atteignent des emplois à 27 259 €, dont 5 % au-dessus de 2 SMIC ; 13 380 avec
-le profil de C2, à une élasticité pondérée de −0,32. Les 19 % au-dessus de 2 SMIC de D-246
+le profil de C2, à une élasticité pondérée de −0,32. Les 19 % au-dessus de 2 SMIC de D-249
 étaient en partie le défaut : la baisse d'un salarié au SMIC prêtée à un conjoint mieux
 payé. Pour le plancher : 19 335, 9 751 et 5 348, des emplois à 44 097 €, dont 41 % au-dessus
 de 2 SMIC. L'écart au bas du CAE tombe d'un facteur 2,3 à 1,7. Le reste, jusqu'au haut du
-CAE et au Trésor-Éco n° 97, reste l'élasticité, donc la source (D-246).
+CAE et au Trésor-Éco n° 97, reste l'élasticité, donc la source (D-249).
 
 **Pour R5.** À 12 000 € par emploi, C2 porte un autofinancement de 6,4 % pour le plancher
 et de 16,1 % pour le `t_delta`, et non plus de 5,8 à 11,9 %. Mésange compte 13 079 ETP par
@@ -18532,7 +18532,7 @@ milliard à trois ans (D-242) : C2 en compte 13 380 personnes pour le `t_delta`,
 Le choix reste au propriétaire.
 
 **La bande étroite.** Population de 2024, passe rapide, les deux réformes à seuil des
-tests de l'API : la part passe de 77,43 et 74,13 % (D-247) à 100 %. C'est la part attendue.
+tests de l'API : la part passe de 77,43 et 74,13 % (D-250) à 100 %. C'est la part attendue.
 Ces plafonds ne bougent que les salariés entre l'ancien seuil et le nouveau, tous à moins de
 15 % du nouveau ; le partage égal en faisait fuir le mouvement vers des conjoints hors de la
 fenêtre. Les deux réformes restent signalées, plus nettement.
@@ -18544,7 +18544,7 @@ l'exige. Huit passes par bouton. Contre le premier tour, sur `893e4de`, désorma
 chiffre pour chiffre, sous les deux persistances. Seul l'indice de l'emploi au voisinage du
 SMIC bouge, au premier paquet : +1 558 → +13 408 [+9 840 ; +16 083] pour le `t_delta`,
 +570 → +4 077 [+3 068 ; +4 833] pour le plancher. Un tour intermédiaire, sur `881f41f`,
-avec la seule correction de D-246, a été commité (`88bb9af`) puis remplacé : il portait
+avec la seule correction de D-249, a été commité (`88bb9af`) puis remplacé : il portait
 encore le taux du ménage.
 
 **L'étude rejouée.** Ses quatre rapports doivent venir d'un même commit, et redonner le
@@ -18552,8 +18552,8 @@ premier tour chiffre pour chiffre. Sur le code d'aujourd'hui, le plafond prendra
 reclassement de D-239 et la boucle de la variante uniforme : Δb passerait de +0,55 à
 +0,47 point, et la réponse préenregistrée changerait. Elle est donc rejouée sur
 `d77feb9` : `e0c3d7f`, le commit de son second tour, et les seuls changements de `src/` de
-D-246 et de cette entrée, rien d'autre. Ce commit, et `0fd5c00`, qui ne portait que
-D-246, sont fusionnés dans la branche sans en changer l'arbre, pour que les rapports
+D-249 et de cette entrée, rien d'autre. Ce commit, et `0fd5c00`, qui ne portait que
+D-249, sont fusionnés dans la branche sans en changer l'arbre, pour que les rapports
 nomment un commit joignable. Les quatre instruments ont tourné sur lui, huit passes
 chacun. Contre le second tour, sur `e0c3d7f`, désormais sous `reports/etude_second_tour/`,
 et contre le premier, sur `6dab3a4` : chiffre pour chiffre. Seul l'emploi au voisinage du
@@ -18570,7 +18570,7 @@ ne change qu'en les lignes de l'emploi au voisinage du SMIC.
 **Les tests.**
 - Dans `tests/test_behavioural.py`, deux cas nouveaux, vus échouer. Le salarié au SMIC dont
   le conjoint à 3,2 SMIC voit son coût baisser : 20 681 emplois, contre 4 300 à la main. Le
-  zéro signé : quatre tirages à −0,0. Le cas de D-246 passe sur la nouvelle signature de
+  zéro signé : quatre tirages à −0,0. Le cas de D-249 passe sur la nouvelle signature de
   `_employer_inputs`, son assertion inchangée.
 - Dans `tests/test_narrow_band.py`, un cas nouveau, vu échouer : un conjoint assis sur le
   plafond, qui ne bouge pas, lisait 64 %, signalé, contre 29 % à la main.
@@ -18578,7 +18578,7 @@ ne change qu'en les lignes de l'emploi au voisinage du SMIC.
   de l'étude nommés et redonnés chiffre pour chiffre ; un chiffre bougé d'un milliardième,
   ou un rapport manquant au tour gardé, refusés. Chacun a été vu échouer avant sa garde, et
   six mutations du script ont été tuées.
-- Les trois cas tueurs de C2 passent aussi sur le code de `d77feb9` et le cas de D-246 sur
+- Les trois cas tueurs de C2 passent aussi sur le code de `d77feb9` et le cas de D-249 sur
   celui de `0fd5c00`.
 - Les tests ciblés : 500 réussis et 4 sautés dans douze fichiers, de `test_predictif_etude`
   à `test_population`. Deux échouent faute de données, ici comme sur le code d'avant : le
@@ -18588,6 +18588,11 @@ ne change qu'en les lignes de l'emploi au voisinage du SMIC.
   et passent. Les autres cas lents n'ont pas tourné. Le runner modifié a servi aux 48
   passes des six recherches et aux cinq passes de mesure. `ruff` passe sur `src`, `tests`
   et `scripts`. Le `make full` reste au propriétaire.
+
+**La numérotation.** Ces trois entrées ont été écrites D-246, D-247 et D-248 ; ces numéros
+ont été pris sur `main` pendant le travail, par les fusions #74 à #76. Elles sont devenues
+D-249, D-250 et D-251, partout dans l'arbre sauf les rapports, qui n'en citaient aucune.
+Les messages des commits de la branche, déjà poussés, gardent les anciens numéros.
 
 **Ce qui reste.**
 - Le `make full` du propriétaire, avant toute fusion.

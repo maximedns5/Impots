@@ -663,7 +663,7 @@ def test_no_employment_response_is_applied_above_the_fade_out() -> None:
 
 
 def test_c2_counts_no_jobs_as_zero_not_minus_zero() -> None:
-    """D-248. The plafond's shape: an earner at the SMIC whose labour cost does not move,
+    """D-251. The plafond's shape: an earner at the SMIC whose labour cost does not move,
     and one at 3.2 SMIC, above the fade-out, whose cost falls. No job either way, but
     the products summed to +0.0 and the negative elasticity made it −0.0, which the
     study's page printed « −0,00 » emplois."""
@@ -768,7 +768,7 @@ def _run(frame, cost_cut: float = 0.0):
 
 
 def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
-    """D-246. The quick tier prices 20 000 of the 199 451 households, reweighted to the
+    """D-249. The quick tier prices 20 000 of the 199 451 households, reweighted to the
     population; `_employer_inputs` read every earner of the WHOLE frame at the frame's
     weight, and gave a cost change only to those whose household the run had priced.
     The others counted at zero, and the survivors at their own weight, not the
@@ -824,7 +824,7 @@ def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
 
 
 def test_c2_gives_each_earner_their_own_cost_change() -> None:
-    """D-248. Every earner carried their household's change in labour cost, so an earner
+    """D-251. Every earner carried their household's change in labour cost, so an earner
     at the SMIC took a share of a partner's cut at 3 SMIC. Raising the plafond relieves
     only wages above 3 SMIC, where C2 does not respond, and C2 still counted 1 317 jobs
     for its first bundle of the study: every one of them from a household with an earner

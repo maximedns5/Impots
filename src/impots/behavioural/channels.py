@@ -285,7 +285,7 @@ def employment_at_the_smic(
     tail = float(np.sum(exposure * profile_at_fade)) * at_fadeout
     # `+ 0.0` turns a signed zero into zero. With every moved euro above the fade-out,
     # the products sum to +0.0 and the negative elasticity makes it −0.0, which a page
-    # prints « −0,00 » emplois (D-248). Exact for any other value.
+    # prints « −0,00 » emplois (D-251). Exact for any other value.
     jobs = smic_draws * anchor + tail + 0.0
 
     below = float(weights[smic_multiple <= fadeout].sum() / weights.sum()) if weights.sum() else 0.0
