@@ -440,6 +440,11 @@ compte 4 832 emplois par milliard pour le plancher et 9 939 pour le `t_delta`, s
 facteur 2,3, tient à l'élasticité, aux euros que chaque bouton porte au-dessus du SMIC et au
 profil de C2. Le tableau ci-dessus garde les chiffres de M0.
 
+**Revu en D-248.** C2 prêtait aussi à chaque salarié le changement du coût du travail de son
+ménage. Chacun répond désormais au sien : 5 348 emplois par milliard pour le plancher et
+13 380 pour le `t_delta`, soit de 6,4 à 16,1 % d'autofinancement à 12 000 € par emploi. Le
+reste de l'écart au bas du CAE tombe à un facteur 1,7.
+
 **La décision : aucune, et c'est au propriétaire.** Les lectures françaises de premier rang
 disent de 1 % à 60 % selon l'emploi qu'on retient : la marge intensive des survivants, ou
 l'emploi total des évaluations des années 1990. Choisir entre elles n'est pas une question
