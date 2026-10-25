@@ -361,6 +361,13 @@ def _employer_inputs(request: Any, frame: Any, households: Any, agg: Any) -> dic
     in labour cost is only available per household, so every earner in a household
     carries their household's rate. Exact for the single-earner households that are
     most of them, an approximation otherwise, and stated.
+
+    THE EARNERS ARE THOSE OF THE HOUSEHOLDS THE RUN PRICED, AT THE RUN'S WEIGHT, as C7's
+    are (`labour.inputs`). `frame` is the whole population; `households` is the quick
+    tier's subsample, reweighted to it (`runner.subsample`). Every earner of the frame
+    at the frame's weight, with no cost change outside the subsample, counted 15 % of
+    the earners: C2 gave 1 558 jobs for 1 Md€ of `t_delta` where the run holds 9 960
+    (D-246).
     """
     import numpy as np
     import polars as pl
@@ -374,15 +381,18 @@ def _employer_inputs(request: Any, frame: Any, households: Any, agg: Any) -> dic
     if not np.any(np.abs(rate) > 1e-12):
         return {}
 
-    by_household = dict(zip(households["household_id"].to_list(), rate, strict=False))
-    earners = frame.filter(pl.col("salaire_brut_annuel") > 0)
+    priced = pl.DataFrame({
+        "household_id": households["household_id"],
+        "_run_weight": households["weight"],
+        "_rate": rate,
+    })
+    earners = (frame.filter(pl.col("salaire_brut_annuel") > 0)
+               .join(priced, on="household_id", how="inner"))
     smic = _smic_annual(request.year)
     return {
         "smic_multiple": earners["salaire_brut_annuel"].to_numpy() / max(smic, 1.0),
-        "relative_cost_change": np.array(
-            [by_household.get(h, 0.0) for h in earners["household_id"].to_list()]
-        ),
-        "earner_weights": earners["weight"].to_numpy(),
+        "relative_cost_change": earners["_rate"].to_numpy(),
+        "earner_weights": earners["_run_weight"].to_numpy(),
         # NOT deltas["cotisations_employeur"] — that figure is gross of the
         # allègements and reported exactly zero for a reform costing 17.7 bn (D-039).
         "contribution_delta": agg.employer_contribution_delta,

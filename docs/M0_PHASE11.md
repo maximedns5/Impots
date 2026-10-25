@@ -432,6 +432,14 @@ ne tient donc pas seulement à la source. Il peut tenir à la façon dont la cha
 l'élasticité : les poids, la variation du coût, le profil qui s'éteint à 2 SMIC. Cela se
 vérifie sur une passe de population, hors de M0.
 
+**L'écart vérifié, depuis (D-246).** Il tenait d'abord aux poids. La passe rapide chiffre
+20 000 ménages repondérés, et C2 lisait les salariés de toute la population au poids de la
+population, avec une variation nulle hors de l'échantillon : 15 % des salariés. Corrigé, C2
+compte 4 832 emplois par milliard pour le plancher et 9 939 pour le `t_delta`, soit de 5,8
+à 11,9 % d'autofinancement à 12 000 € par emploi. Le reste de l'écart au bas du CAE, un
+facteur 2,3, tient à l'élasticité, aux euros que chaque bouton porte au-dessus du SMIC et au
+profil de C2. Le tableau ci-dessus garde les chiffres de M0.
+
 **La décision : aucune, et c'est au propriétaire.** Les lectures françaises de premier rang
 disent de 1 % à 60 % selon l'emploi qu'on retient : la marge intensive des survivants, ou
 l'emploi total des évaluations des années 1990. Choisir entre elles n'est pas une question
@@ -532,5 +540,5 @@ M1 a livré le même chiffre dans les deux vues (D-244). M2 y met le vieillissem
 M2 peut se figer sur ce qui précède : la rampe de l'IS en indice, le recoupement qui refuse
 la boucle, la vue vieillie des entreprises et le chemin annuel. M3 aussi : l'entrée, et
 l'investissement s'il passe sa conversion. M4 attend l'imputation des revenus du capital.
-M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2. Les deux
-passes adversariales sont consignées en D-245.
+M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2, faite depuis
+(D-246). Les deux passes adversariales sont consignées en D-245.

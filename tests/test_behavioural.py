@@ -723,6 +723,78 @@ def test_c2_fails_loudly_without_a_wage_profile() -> None:
         )
 
 
+def _run_households(frame, cost_cut: float):
+    """What `runner.run` hands back for `frame`, without the engine: one row per
+    household at the MEAN of its members' weights, as the runner aggregates, and a
+    labour cost that falls by `cost_cut`."""
+    import polars as pl
+
+    return (
+        frame.group_by("household_id")
+        .agg(pl.col("weight").mean(),
+             pl.col("salaire_brut_annuel").sum().alias("salaire_super_brut"))
+        .with_columns((pl.col("salaire_super_brut") * (1.0 - cost_cut))
+                      .alias("salaire_super_brut_reform"))
+        .sort("household_id")
+    )
+
+
+def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
+    """D-246. The quick tier prices 20 000 of the 199 451 households, reweighted to the
+    population; `_employer_inputs` read every earner of the WHOLE frame at the frame's
+    weight, and gave a cost change only to those whose household the run had priced.
+    The others counted at zero, and the survivors at their own weight, not the
+    subsample's: C2 counted 15 % of the earners, and 1 558 jobs for 1 Md€ of
+    `t_delta` where the same pass holds 9 960.
+
+    Worked example: 1 000 households of two, one earner at 1.2 SMIC and one adult
+    without a wage, each person weighing 25 000. Their labour cost falls 1 %. At
+    1.2 SMIC the profile gives −0.43 + 0.2 × (−0.1 + 0.43) = −0.364, so
+    25 M earners × 0.364 × 0.01 = 91 000 jobs. A tenth of the households, drawn by
+    the runner's own `subsample`, must give the same 91 000; the bug gave 9 100.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.population.runner import subsample
+
+    smic = api_main._smic_annual(2026)
+    n = 1_000
+    frame = pl.DataFrame({
+        "household_id": np.repeat(np.arange(n), 2),
+        "person_id": np.arange(2 * n),
+        "salaire_brut_annuel": np.tile([1.2 * smic, 0.0], n),
+        "weight": np.full(2 * n, 25_000.0),
+    })
+    reform = FakeReform(allegement_general_t_min=0.03)
+    request = SimpleNamespace(year=2026, reform=reform)
+    agg = SimpleNamespace(employer_contribution_delta=-1.0e9)
+    store = Store(parameters={
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=("allegement_general_*",)),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=("allegement_general_*",)),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
+    })
+
+    def jobs(households) -> float:
+        inputs = api_main._employer_inputs(request, frame, households, agg)
+        return channels.employment_at_the_smic(
+            store, reform, smic_multiple=inputs["smic_multiple"],
+            relative_cost_change=inputs["relative_cost_change"],
+            weights=inputs["earner_weights"], draws=1, rng=np.random.default_rng(0),
+        ).central
+
+    full = jobs(_run_households(frame, 0.01))
+    quick = jobs(_run_households(subsample(frame, n // 10), 0.01))
+    assert full == pytest.approx(91_000.0, rel=1e-9)
+    assert quick == pytest.approx(91_000.0, rel=1e-9), (
+        "the quick tier must count the jobs of the population it was reweighted to")
+
+
 def test_the_reform_cache_keeps_a_bounded_number_of_files(tmp_path, monkeypatch):
     """Every distinct reform priced with the behavioural band wrote one parquet into
     data/processed, and nothing ever removed one: whoever chose reforms over HTTP chose

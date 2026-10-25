@@ -18321,3 +18321,109 @@ et sha256. `tests/test_donnees.py` passe ses 40 cas.
 - Restent à lire les versions publiées de Gechert et Heimberger (*EER*) et de Da Rin et
   al. (*JPubE*), que ScienceDirect refuse ici (403), et à trouver une source stable des
   paramètres de l'OCDE pour le taux moyen effectif.
+
+## D-246 — L'écart de C2 : la chaîne ne lisait que 15 % des salariés
+
+**Le fait.** C2 comptait 748 emplois par milliard pour le plancher `t_min` et 1 555 pour le
+`t_delta` (D-242). Son élasticité, −0,43 au centre, est proche du −0,5 de la Note du CAE
+n° 49, qui en compte 23 000. R5 de `docs/M0_PHASE11.md` demandait d'expliquer l'écart avant
+M5. Il venait d'abord de la chaîne, pour un facteur 6,4, et c'est corrigé. Ce qui reste, un
+facteur 2,3 jusqu'au bas du CAE, se décompose sur la passe, et ne tient plus à la chaîne.
+
+**La cause.** La passe rapide chiffre 20 000 des 199 451 ménages, repondérés à la
+population (`runner.subsample`). `_employer_inputs`, dans `src/impots/api/main.py`,
+prenait pourtant chaque salarié de la population entière, au poids de la population. Seuls
+les salariés des ménages tirés recevaient une variation du coût du travail. Les autres
+comptaient pour zéro, et les tirés gardaient leur propre poids, non celui de l'échantillon.
+C2 lisait ainsi 3,84 M de salariés sur 25,05 M, soit 15 %. Le tirage est proportionnel au
+poids : il prend surtout des ménages lourds, d'où plus que le dixième. Le coût de la
+réforme, lui, était celui de la passe, à l'échelle de la population. C7 n'a pas ce défaut :
+`labour.inputs` joint ses personnes aux ménages de la passe, à leur poids.
+
+**La correction.** Les salariés de C2 sont ceux des ménages que la passe a chiffrés, au
+poids que la passe leur donne, comme ceux de C7. Le poids d'un salarié est celui de son
+ménage, la moyenne de ses membres, celle avec laquelle le runner agrège. Sur une passe
+complète, rien ne change, sauf dans les 1,5 % de ménages dont les membres n'ont pas le même
+poids. Contrôle : sommée sur les salariés de C2, la baisse du coût du travail redonne le
+coût de la réforme, à un rapport de 1,000 pour les deux boutons.
+
+**La mesure.** Sur la passe de l'étude (D-241) : population vieillie à 2026, 20 000
+ménages, premier paquet de chaque grille, C2 à θ = ½. Avant la correction, la passe redonne
+le rapport à l'identique : 1 002 040 766 € et 1 557,95 emplois pour le `t_delta`, comme
+`reports/exploration_courbe_t_delta.json`. Par milliard de la première année :
+
+| Bouton | Coût | Avant | Après | Boîte θ, après |
+|---|---|---|---|---|
+| `t_delta`, 38,31 % | 1,00 Md€ | 1 555 | 9 939 | 7 338 à 11 890 |
+| `t_min`, 2,1 % | 0,76 Md€ | 748 | 4 832 | 3 644 à 5 724 |
+
+Soit 9 960 emplois pour le `t_delta` et 3 683 pour le plancher, des facteurs de 6,39 et
+6,46. Le `t_delta` fait 2,06 fois les emplois du plancher par milliard, contre 2,08 avant :
+le point 5 de D-241 tient.
+
+**Ce qui reste de l'écart.** Un emploi au SMIC à temps plein coûte 22 239 € par an en 2026,
+au calculateur du foyer. Un milliard posé tout entier au SMIC, à −0,5 et à −1,25, fait
+22 480 et 56 210 emplois. Ce sont, à 2 % près, les deux bouts du CAE avant arrondi, 22 857
+et 57 143 : sa lecture est celle d'une baisse au voisinage du SMIC (lecture de cette
+entrée). Pour le `t_delta`, trois pas mènent de 22 480 à 9 939, chacun mesuré sur la passe.
+- L'élasticité de C2, −0,43 et non −0,5 : 19 335 emplois.
+- Où le bouton porte ses euros. Pondéré par la baisse, l'emploi qu'ils atteignent coûte
+  33 010 €, et non 22 239 € ; 19 % d'entre eux vont au-dessus de 2 SMIC. À −0,43 partout :
+  13 026 emplois.
+- Le profil de C2, qui s'éteint de −0,43 au SMIC à −0,1 à 2 SMIC, puis à zéro. Pondérée par
+  la baisse, l'élasticité vaut −0,26 : 9 939 emplois.
+
+Pour le plancher, les mêmes pas donnent 19 335, 9 199 et 4 832 emplois. Ses euros
+atteignent des emplois à 46 743 €, et 44 % d'entre eux vont au-dessus de 2 SMIC. Le
+deuxième pas tient au bouton, non à la chaîne. Le troisième est une construction de ce
+projet, dite telle (`employment_elasticity_profile`).
+
+Le reste, jusqu'au haut du CAE (−1,25) et au Trésor-Éco n° 97, est l'élasticité. Celle de
+C2 vient d'un panel équilibré d'établissements : la marge intensive des survivants, dit sa
+note de vérification. Les évaluations des années 1990 comptent l'emploi total. Cette part
+de l'écart tient à la source, et le choix reste au propriétaire (R5).
+
+**Ce que cela change pour R5.** À 12 000 € de dépenses évitées par emploi (Trésor-Éco
+n° 97, note 5), C2 porte un autofinancement de 5,8 % pour le plancher et de 11,9 % pour le
+`t_delta`, et non de 0,9 à 1,9 % (calcul de cette entrée). Mésange compte 13 079 ETP par
+milliard à trois ans (D-242) ; C2 compte désormais de 4 832 à 9 939 personnes, en un tour.
+C'est le même ordre de grandeur, quand l'écart allait d'un facteur 8 à 17.
+
+**Ce que cela ne change pas.** Le coût mécanique ; la bande de recettes, où C2 n'entre pas ;
+la note de C2, dont la métrique est la plus grande variation du coût, lue parmi les mêmes
+salariés avant et après. La dette non plus : à D-242, la boîte θ était un point, et C2 ne
+remonte pas dans les recettes. Les six points de D-242 tiennent, le cinquième à 2,06.
+
+**Ce qui reste faux jusqu'à de nouvelles passes.** Les rapports commités gardent le C2 de
+leurs passes : l'indice `emploi_smic` de `reports/exploration_*.json`, et la page
+`docs/PREDICTIF_ETUDE.md`, qui les rend et ne se retouche pas à la main. Elle dit par
+exemple +1 558 [+1 150 ; +1 864] pour le premier paquet du `t_delta`, et +227 pour le
+plafond de l'étude. Pour les deux boutons de la courbe, le chiffre corrigé est ci-dessus ;
+pour le plafond, il n'est pas mesuré. Le tableau de R5 et le point 5 de D-242 portent les
+chiffres d'avant. Rejouer les recherches est au propriétaire : huit passes par bouton.
+
+**Le même joint, ailleurs.** `_narrow_band` lit aussi les salariés de toute la population
+au poids de la population, avec un mouvement nul hors de l'échantillon. C'est une part :
+les zéros sortent du numérateur comme du dénominateur, et elle n'est pas divisée par 6,4.
+Mais les ménages tirés y pèsent leur propre poids, non celui de la passe. Ce n'est ni
+mesuré ni changé ici. A0 (`accuracy_behavioural.inputs_for`) passe par `_employer_inputs`
+et prend la correction ; C2 n'entre pas dans la largeur qu'il attribue.
+
+**Les tests.** Dans `tests/test_behavioural.py`, un cas nouveau. 1 000 ménages de deux
+personnes, un salarié à 1,2 SMIC et un adulte sans salaire, chacun au poids 25 000 ; leur
+coût du travail baisse de 1 %. À la main : 25 M × 0,364 × 0,01 = 91 000 emplois. Un dixième
+des ménages, tiré par le `subsample` du runner, doit redonner 91 000. Sur le code d'avant,
+le cas a échoué à 9 100 ; celui de la passe complète passait avant et passe après.
+`scripts/verify_c2_emploi.py` rejoue la mesure : une passe par bouton, sur la requête de
+l'étude, et les trois lectures. Les tests ciblés passent : 193 dans
+`tests/test_behavioural.py`, `tests/test_api.py`, `tests/test_indices.py` et
+`tests/test_theta.py`, dont 2 sautés. Leurs 13 cas lents n'ont pas tourné : ceux qui
+demandent le comportement chiffrent une hausse du taux marginal supérieur de l'IR, et
+n'atteignent pas `_employer_inputs`. `ruff` passe sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.**
+- Le choix du propriétaire sur R5, sur des chiffres de C2 justes : de 5,8 à 11,9 %, la
+  lecture la plus basse des sources françaises. M5 l'attend toujours.
+- Rejouer les deux recherches de la courbe, et l'étude du plafond, pour que les rapports
+  et la page portent le C2 corrigé.
+- Mesurer le poids des salariés dans `_narrow_band`, et le corriger s'il le faut.
