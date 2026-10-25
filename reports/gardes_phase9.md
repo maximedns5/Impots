@@ -2,9 +2,9 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-25 sur le commit `185ba76ad7c3` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-25 sur le commit `2ab12df19ddd` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
-**207 mutations** : 206 tuées, 1 équivalente avec sa raison, 0 survivante.
+**219 mutations** : 218 tuées, 1 équivalente avec sa raison, 0 survivante.
 
 | Mutation | Garde | Verdict | Étage | Tuée par |
 |---|---|---|---|---|
@@ -165,6 +165,14 @@ Balayé le 2026-10-25 sur le commit `185ba76ad7c3` (D-229). Chaque garde est mut
 | `behavioural/gechert:load:si:len(tokens) != len(COLUMNS) or len(errors) != len(COLUMNS)` | load — si len(tokens) != len(COLUMNS) or len(errors) != len(COLUMNS) | tuée | ciblé | tests/test_is_croissance.py::test_a_paper_missing_or_misread_is_refused |
 | `behavioural/gechert:load:si:len(counts) != len(COLUMNS)` | load — si len(counts) != len(COLUMNS) | tuée | ciblé | tests/test_is_croissance.py::test_a_paper_missing_or_misread_is_refused |
 | `behavioural/gechert:convention:si:not bottom < top` | convention — si not bottom < top | tuée | ciblé | tests/test_is_croissance.py::test_a_range_upside_down_is_refused |
+| `entreprises/taux_effectifs:_page_with:si:page is None` | _page_with — si page is None | tuée | ciblé | tests/test_taux_effectifs.py::test_an_annex_misread_is_refused[sans-tableau-a2] |
+| `entreprises/taux_effectifs:read_parameters:si:not path.exists()` | read_parameters — si not path.exists() | tuée | ciblé | tests/test_taux_effectifs.py::test_files_missing_are_refused_by_name |
+| `entreprises/taux_effectifs:read_parameters:si:importlib.util.find_spec('pypdf') is None` | read_parameters — si importlib.util.find_spec('pypdf') is None | tuée | ciblé | tests/test_taux_effectifs.py::test_without_pypdf_the_annex_is_refused_by_name |
+| `entreprises/taux_effectifs:read_parameters:si:fixed is None or profit is None or split is None` | read_parameters — si fixed is None or profit is None or split is None | tuée | ciblé | tests/test_taux_effectifs.py::test_an_annex_misread_is_refused[sans-rendement] |
+| `entreprises/taux_effectifs:read_parameters:si:abs((1.0 + real) * (1.0 + inflation) - 1.0 - nominal) > 5e-05` | read_parameters — si abs((1.0 + real) * (1.0 + inflation) - 1.0 - nominal) > 5e-05 | tuée | ciblé | tests/test_taux_effectifs.py::test_an_annex_misread_is_refused[fisher] |
+| `entreprises/taux_effectifs:read_published:si:not path.exists()` | read_published — si not path.exists() | tuée | ciblé | tests/test_taux_effectifs.py::test_files_missing_are_refused_by_name |
+| `entreprises/taux_effectifs:read_published:si:missing` | read_published — si missing | tuée | ciblé | tests/test_taux_effectifs.py::test_a_rate_missing_from_the_oecd_file_is_refused |
+| `entreprises/taux_effectifs:read_parameters:si:found is None` | read_parameters — si found is None | tuée | ciblé | tests/test_taux_effectifs.py::test_an_annex_misread_is_refused[sans-logiciels] |
 | `G1-schema-theta` | garde 1 : pas de θ par défaut dans la requête | tuée | ciblé | tests/test_api_predictif.py::test_a_request_without_theta_is_refused_before_any_pass |
 | `G1-schema-uprating` | l'indice des salaires est requis, avec sa source (D-226) | tuée | ciblé | tests/test_api_predictif.py::test_no_hypothesis_has_a_default[uprating] |
 | `G1-commande-theta` | garde 1 : `impots predictif` refuse de tourner sans θ | tuée | ciblé | tests/test_cli_predictif.py::test_no_hypothesis_of_the_command_has_a_default[--theta] |
@@ -215,3 +223,7 @@ Balayé le 2026-10-25 sur le commit `185ba76ad7c3` (D-229). Chaque garde est mut
 | `P11-impots-entreprises-non-couverts` | les impôts des entreprises sont dits sans variante, jamais lus comme nuls | tuée | ciblé | tests/test_predictif_entreprises.py::test_a_firm_reform_alone_is_the_firm_layers_cost_and_no_population_pass |
 | `P11-part-entreprises-transmise` | un paquet avec une part entreprises la transmet au chiffrage | tuée | ciblé | tests/test_predictif_entreprises.py::test_the_explorer_walks_firm_knobs_and_passes_only_the_firm_part |
 | `P11-boutons-entreprises-hors-menages` | les boutons des entreprises n'entrent pas dans la réforme des ménages | tuée | ciblé | tests/test_predictif_entreprises.py::test_the_explorer_walks_firm_knobs_and_passes_only_the_firm_part |
+| `P11-G7-investissement-au-pib` | garde 7 : l'investissement ajouté à l'effet de l'IS sur le PIB est refusé par son nom | tuée | ciblé | tests/test_taux_effectifs.py::test_investment_or_entry_added_to_the_gdp_effect_is_refused[investissement_entreprises] |
+| `P11-G7-creations-au-pib` | garde 7 : les créations ajoutées à l'effet de l'IS sur le PIB sont refusées par leur nom | tuée | ciblé | tests/test_taux_effectifs.py::test_investment_or_entry_added_to_the_gdp_effect_is_refused[creations_societes] |
+| `P11-R4-tolerance` | la condition de M0 sur l'indice des créations : un dixième de point | tuée | ciblé | tests/test_taux_effectifs.py::test_the_composite_emtr_misses_the_condition_so_the_index_is_refused |
+| `P11-R4-composite-quatre` | le composite est la moyenne des quatre catégories, stocks compris (§ 18) | tuée | ciblé | tests/test_taux_effectifs.py::test_the_composite_emtr_misses_the_condition_so_the_index_is_refused |

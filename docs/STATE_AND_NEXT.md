@@ -1,7 +1,19 @@
-# State of the project, and the directions open — 2026-10-25 (Phase 10, M4 done; Phase 11, M0 to M2 done)
+# State of the project, and the directions open — 2026-10-25 (Phase 10, M4 done; Phase 11, M0 to M3 done)
 
-The 2026-10-25 update adds D-246, Phase 11's M2. The IS on growth is a store row read off
-Gechert and Heimberger's PDF (θ = 0 at −0.0001, θ = 1 at 0.019, θ = ½ at 0.00945 point a
+The second 2026-10-25 update adds D-247, Phase 11's M3: it opens no index. Both conditions
+M0 fixed were computed or read on the files, and neither holds. The OECD's effective-rate
+method (`entreprises/taux_effectifs.py`, parameters read off the annex, France's 2025
+rates manifested from the OECD's API) gives back buildings, inventories and software
+within a tenth of a point, but not the tangibles, whose five subgroups share one
+published allowance: the composite EMTR comes out 15.62 against 14.97, so the national
+entry index (Da Rin et al.) is refused. The two gaps stand in the ratio a varying
+allowance gives (8.88 against 8.99): the parameters are missing, not the method. The
+authors' own EATR needs the EY guide and STAN margins, which the project lacks. The
+investment index stays closed: equation (6) sits around reference values the paper does
+not print, and figure A E.1 is a picture. Guard 7 is in: the IS's GDP effect plus
+investment or entry is refused by name. The sweep holds 219 mutations, 218 killed.
+The first 2026-10-25 update added D-246, Phase 11's M2. The IS on growth is a store row
+read off Gechert and Heimberger's PDF (θ = 0 at −0.0001, θ = 1 at 0.019, θ = ½ at 0.00945 point a
 year per IS point cut), with its rank, countries and years, and the store now refuses an
 international row without them or a lower rank beside a higher one. Its index, `pib_is`,
 is a ten-year ramp (0.0945 % of GDP at ten years at θ = ½), held outside the debt by
@@ -354,8 +366,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **247 decision
-entries**, D-000 to D-246, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **248 decision
+entries**, D-000 to D-247, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -736,10 +748,13 @@ download list.
    self-financing of targeted cuts left to the owner. M1 is done (D-244): a firm reform
    in `/predictif/simulate` and the explorer. M2 is done (D-246): the IS's GDP effect as
    an index outside the debt path, the computed cross-check that refuses the elasticity
-   loop, the aged firm view and the annual path by layer. Next, M3: firm entry on Da Rin
-   et al., and investment if it passes its conversion. The page's predictive panel does
-   not send a firm reform yet. Then Phase 12, the past, and Phase 13, the online
-   product.
+   loop, the aged firm view and the annual path by layer. M3 is done (D-247) and opens
+   nothing: national entry is refused, the OECD's method missing France's composite EMTR
+   for want of the tangible subgroups' allowances, and investment stays closed on
+   reference values the paper does not print; C8 remains the entry index. Next, M4 waits
+   on the capital-income imputation and M5 on the owner's R5 choice. The page's
+   predictive panel does not send a firm reform yet. Then Phase 12, the past, and
+   Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
