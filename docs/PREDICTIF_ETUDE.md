@@ -377,12 +377,143 @@ Paquet le plus proche de la cible : **38,31 %**.
 | L'État | Dette, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : +0,310 pt |
 | L'État | Charge d'intérêts de la dette supplémentaire, effet macro tenu au niveau de la troisième année | pts du PIB de référence | 2035 : +0,005 pt |
 
+## Le menu élargi de la phase 11, préenregistré à part
+
+La phase 11 fait entrer les entreprises et le capital dans la chaîne, et repose la question de l'étude sur le menu élargi (PHASE11_SPEC §8). Les requêtes sous `etude/phase11/` ont été commitées avant toute passe, avec le pronostic écrit dans D-250. Chacune tient le cadre de l'étude champ pour champ ; seuls son nom, son titre, sa question et sa grille diffèrent. Chaque rapport a joué sa requête, à l'identique, sur le même commit : `ca6288d1834bcb816de84f3ff8e9e8a3d6bf6c37`, le 2026-10-25. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+| Instrument | Bouton | Grille | Coût 2026, vieillie |
+|---|---|---|---|
+| Le taux normal de l'IS | `is_taux_normal` | 21,75 %, 22,75 %, 23,75 %, 24,75 % | de 0,84 Md€ à 10,97 Md€ |
+| Le taux du PFU, part impôt sur le revenu | `pfu_taux` | 8,8 %, 9,8 %, 10,8 %, 11,8 % | de 0,69 Md€ à 2,46 Md€ |
+
+Deux instruments du §8 n'y entrent pas (D-250). La CVAE : le droit l'abroge en 2030, et le report du coût de la première année chiffrerait six années d'un impôt qui n'existe plus ; son seul bouton de taux ne règle de plus que la tranche au-dessus de 50 M€. Le `t_delta` avec son autofinancement : M5 attend le choix du propriétaire, et sans lui la courbe rejouée ci-dessus redonnerait D-242.
+
+### La réponse du menu élargi
+
+| Instrument | Effet macro éteint après trois ans | Effet macro tenu au niveau de la troisième année |
+|---|---|---|
+| Le taux normal de l'IS | non à θ = ½ : le paquet le plus proche, 24,75 %, laisse Δb = +0,26 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. | non à θ = ½ : le paquet le plus proche, 24,75 %, laisse Δb = +0,26 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. |
+| Le taux du PFU, part impôt sur le revenu | non à θ = ½ : le paquet le plus proche, 11,8 %, laisse Δb = +0,08 pt. Elle baisse à 2 coins sur 16, à 1 paquets sur 4 : ceux où dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, multiplicateur_macro = 1. | oui à θ = ½ : 11,8 %, 8,8 %, 10,8 %, 9,8 % ; aucune n'est robuste, chacune dépend de θ. Elle baisse à 8 coins sur 16, à chaque paquet : ceux où multiplicateur_macro = 1. |
+
+### Le taux normal de l'IS
+
+Une baisse du taux normal de l'IS, de 25 % à 24,75, 23,75, 22,75 ou 21,75 %, fait-elle baisser la dette en 2035, et pour quels θ ?
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 24,75 %, laisse Δb = +0,26 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 21,75 % | 10,97 Md€ | 10,09 Md€ | +3,39 pt | +3,12 pt | [+3,39 pt ; +3,39 pt] | aucun des 2 |
+| 22,75 % | 7,59 Md€ | 6,98 Md€ | +2,35 pt | +2,16 pt | [+2,35 pt ; +2,35 pt] | aucun des 2 |
+| 23,75 % | 4,22 Md€ | 3,88 Md€ | +1,30 pt | +1,20 pt | [+1,30 pt ; +1,30 pt] | aucun des 2 |
+| 24,75 % | 0,84 Md€ | 0,78 Md€ | +0,26 pt | +0,24 pt | [+0,26 pt ; +0,26 pt] | aucun des 2 |
+
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 24,75 %, laisse Δb = +0,26 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 21,75 % | 10,97 Md€ | 10,09 Md€ | +3,39 pt | +3,12 pt | [+3,39 pt ; +3,39 pt] | aucun des 2 |
+| 22,75 % | 7,59 Md€ | 6,98 Md€ | +2,35 pt | +2,16 pt | [+2,35 pt ; +2,35 pt] | aucun des 2 |
+| 23,75 % | 4,22 Md€ | 3,88 Md€ | +1,30 pt | +1,20 pt | [+1,30 pt ; +1,30 pt] | aucun des 2 |
+| 24,75 % | 0,84 Md€ | 0,78 Md€ | +0,26 pt | +0,24 pt | [+0,26 pt ; +0,26 pt] | aucun des 2 |
+
+**Ce qui manque à la chaîne**, pour le paquet le plus proche : absent, et non nul.
+
+- rétroaction : aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice", 'contribution_sociale_is': "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice", 'cebge': "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"}
+- bande : Comportement non demandé : seul le chiffre mécanique est porté.
+- θ : Vue mécanique : les θ sont listés parce que la requête les nomme, mais aucun canal de comportement ne les lit.
+
+**Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
+
+Paquet le plus proche de la cible : **24,75 %**.
+
+| Pour | Indice | Unité | Valeur à θ [boîte θ] |
+|---|---|---|---|
+| Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | absent : aucun décile chiffré par la passe |
+| Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les gens | Emploi au voisinage du SMIC | emplois | absent : Comportement non demandé : le canal ne tourne pas. |
+| Les gens | Emploi salarié marchand | milliers d'ETP | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : Comportement non demandé : le canal ne tourne pas. |
+| Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
+| Les entreprises | PIB, effet du taux normal d'IS | % d'écart de PIB | 2026 : +0,002 [−0,000 ; +0,005] ; 2027 : +0,005 [−0,000 ; +0,010] ; 2028 : +0,007 [−0,000 ; +0,014] ; 2029 : +0,009 [−0,000 ; +0,019] ; 2030 : +0,012 [−0,000 ; +0,024] ; 2031 : +0,014 [−0,000 ; +0,029] ; 2032 : +0,017 [−0,000 ; +0,033] ; 2033 : +0,019 [−0,000 ; +0,038] ; 2034 : +0,021 [−0,000 ; +0,043] ; 2035 : +0,024 [−0,000 ; +0,048] |
+| Les entreprises | Charge fiscale de production | % de la valeur ajoutée | absent : Panneau de la phase 8 (`impots.reindustrialisation`) : il rapporte la charge à la valeur ajoutée sur un périmètre lu dans une table générée à part, que la trajectoire ne lit pas. L'indice ne s'y calcule pas. |
+| Les startups | Créations de sociétés | points de taux de création | 1-6 : +0,043 [+0,000 ; +0,078] |
+| Les entreprises | Dépense de R&D | EUR de R&D | absent : Le CIR reste hors de la chaîne : sa créance, induite comprise, n'est pas la recette d'une année, et ses boutons y sont refusés (D-222, D-244). La R&D de C9 se lit sur `/entreprises/simulate`. |
+| L'État | Solde primaire, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : −0,027 pt |
+| L'État | Dette, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : +0,261 pt |
+| L'État | Charge d'intérêts de la dette supplémentaire, effet macro éteint après trois ans | pts du PIB de référence | 2035 : +0,004 pt |
+| L'État | Solde primaire, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : −0,027 pt |
+| L'État | Dette, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : +0,261 pt |
+| L'État | Charge d'intérêts de la dette supplémentaire, effet macro tenu au niveau de la troisième année | pts du PIB de référence | 2035 : +0,004 pt |
+
+**Ce que ce chiffre ne compte pas.** Le report tient le coût de la première année dix ans, et celui de 2026 compte la CEBGE, assise sur l'IS, que le droit éteint en 2027 : l'écart est surestimé d'environ un dixième. L'effet de l'IS sur le PIB reste hors de la dette, faute de boucle (D-218, D-246). L'un et l'autre vont vers une dette plus haute.
+
+### Le taux du PFU, part impôt sur le revenu
+
+Une baisse du taux du PFU, part impôt sur le revenu, de 12,8 % à 11,8, 10,8, 9,8 ou 8,8 %, fait-elle baisser la dette en 2035, et pour quels θ ?
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 11,8 %, laisse Δb = +0,08 pt. Elle baisse à 2 coins sur 16, à 1 paquets sur 4 : ceux où dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, multiplicateur_macro = 1.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 8,8 % | 2,46 Md€ | 2,28 Md€ | +0,35 pt | +0,32 pt | [+0,09 pt ; +0,45 pt] | aucun des 16 |
+| 9,8 % | 1,92 Md€ | 1,77 Md€ | +0,25 pt | +0,25 pt | [+0,04 pt ; +0,33 pt] | aucun des 16 |
+| 10,8 % | 1,33 Md€ | 1,23 Md€ | +0,17 pt | +0,15 pt | [+0,01 pt ; +0,22 pt] | aucun des 16 |
+| 11,8 % | 0,69 Md€ | 0,65 Md€ | +0,08 pt | +0,07 pt | [−0,01 pt ; +0,10 pt] | 2 sur 16 (dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, multiplicateur_macro = 1) |
+
+**Effet macro tenu au niveau de la troisième année.** oui à θ = ½ : 11,8 %, 8,8 %, 10,8 %, 9,8 % ; aucune n'est robuste, chacune dépend de θ. Elle baisse à 8 coins sur 16, à chaque paquet : ceux où multiplicateur_macro = 1.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 8,8 % | 2,46 Md€ | 2,28 Md€ | −0,04 pt | −0,04 pt | [−0,59 pt ; +0,35 pt] | 8 sur 16 (multiplicateur_macro = 1) |
+| 9,8 % | 1,92 Md€ | 1,77 Md€ | −0,05 pt | −0,03 pt | [−0,49 pt ; +0,26 pt] | 8 sur 16 (multiplicateur_macro = 1) |
+| 10,8 % | 1,33 Md€ | 1,23 Md€ | −0,04 pt | −0,04 pt | [−0,35 pt ; +0,17 pt] | 8 sur 16 (multiplicateur_macro = 1) |
+| 11,8 % | 0,69 Md€ | 0,65 Md€ | −0,03 pt | −0,03 pt | [−0,20 pt ; +0,08 pt] | 8 sur 16 (multiplicateur_macro = 1) |
+
+**Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
+
+Paquet le plus proche de la cible : **11,8 %**.
+
+| Pour | Indice | Unité | Valeur à θ [boîte θ] |
+|---|---|---|---|
+| Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,01 ; D3 : +0,05 ; D4 : +0,61 ; D5 : +1,47 ; D6 : +2,35 ; D7 : +3,34 ; D8 : +5,13 ; D9 : +13,19 ; D10 : +197 |
+| Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | à 1 an : +0,04 ; à 2 ans : +0,04 ; à 3 ans : +0,04 |
+| Les gens | Consommation des ménages, en volume | % d'écart au compte central | à 1 an : +0,02 [−0,01 ; +0,05] ; à 2 ans : +0,04 [+0,01 ; +0,07] ; à 3 ans : +0,04 [+0,01 ; +0,07] |
+| Les gens | Emploi au voisinage du SMIC | emplois | absent : le canal ne s'ouvre pas pour cette réforme |
+| Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +0,54 [−0,33 ; +1,41] ; à 2 ans : +2,45 [+0,50 ; +4,40] ; à 3 ans : +3,91 [+0,98 ; +6,85] |
+| Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
+| Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | à 1 an : +0,02 [−0,01 ; +0,05] ; à 2 ans : +0,05 [+0,01 ; +0,08] ; à 3 ans : +0,04 [+0,01 ; +0,08] |
+| Les entreprises | PIB, effet du taux normal d'IS | % d'écart de PIB | absent : La réforme ne touche pas au taux normal d'IS : la méta-analyse chiffre ce taux, et aucun autre bouton des entreprises ne s'y lit. |
+| Les entreprises | Charge fiscale de production | % de la valeur ajoutée | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
+| Les startups | Créations de sociétés | points de taux de création | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
+| Les entreprises | Dépense de R&D | EUR de R&D | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
+| L'État | Solde primaire, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : −0,011 pt |
+| L'État | Dette, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : +0,075 pt |
+| L'État | Charge d'intérêts de la dette supplémentaire, effet macro éteint après trois ans | pts du PIB de référence | 2035 : +0,001 pt |
+| L'État | Solde primaire, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : +0,002 pt |
+| L'État | Dette, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : −0,034 pt |
+| L'État | Charge d'intérêts de la dette supplémentaire, effet macro tenu au niveau de la troisième année | pts du PIB de référence | 2035 : −0,000 pt |
+
+**Ce que ce chiffre ne compte pas.** La part de 12,8 % du PFU est l'impôt sur le revenu, et la baisse tombe dans la variante de l'IR de Mésange, qui la répartit sur tous les ménages quand elle va aux plus hauts déciles : la boucle rend sans doute trop. C10 ne compte pas le salaire que les propriétaires de firme se versent en moins, 0,31 € par euro de dividende en plus (tableau 2 B de Bach et al.), ni l'IS que l'entreprise paie sur le profit qu'il devient, ni les plus-values futures. Ces trois termes vont vers une dette plus haute : un écart qui ne passe sous zéro que de quelques centièmes de point peut s'y retourner (D-250). La CDHR reprend une part de la baisse aux foyers qu'elle tient, et leurs dividendes sortent de l'assiette de C10 : leur taux net ne bouge pas (D-250).
+
+### Les contrôles
+
+Les quatre requêtes de l'étude, rejouées telles quelles sur le même commit. Chacune doit redonner sa référence au dix-millième de point sur chaque écart et chaque coin, et à l'euro sur chaque coût, sous chaque persistance et dans chaque vue : l'étude de D-238, ou le complément de D-239 pour l'instrument reclassé depuis. L'écart est le plus grand, paquet par paquet.
+
+| Instrument | Référence | Écart sur Δb et les coins | Écart sur les coûts | Le contrôle |
+|---|---|---|---|---|
+| La CSG déductible sur les revenus d'activité | D-238 | 0,000000 pt | 0 € | la redonne |
+| Le plafond de la réduction générale des cotisations employeurs | D-239 | 0,000000 pt | 0 € | la redonne |
+| Le taux de la décote de l'IR | D-238 | 0,000000 pt | 0 € | la redonne |
+| Les taux du barème de l'IR, mis à l'échelle | D-238 | 0,000000 pt | 0 € | la redonne |
+
 ## Ce que l'étude ne dit pas
 
 - Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de θ ; un autre scénario donne une autre réponse.
 - Une seule valeur de θ, ½, et ses coins. La boîte θ est l'étendue aux coins, ni une somme de tranches ni un intervalle de probabilité.
 - La première année est chiffrée, les suivantes reportées en part de PIB : une convention, que `impots predictif` lève année par année (D-236).
-- Ni l'IS, ni les dividendes, ni la couche entreprises : la chaîne ne les porte pas. Ce qu'elle ferme, et pourquoi :
+- Dans l'étude de D-237, ni l'IS, ni les dividendes, ni la couche entreprises : la chaîne ne les portait pas, et le menu élargi de la phase 11 les y fait entrer. Ce qu'elle fermait alors, et pourquoi :
   - IS et investissement des entreprises : aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221).
   - transferts : Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).
   - créations d'entreprises : C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette ; la trajectoire chiffre les réformes de la population, et le taux d'IS n'en est pas une (§6.3, D-221).

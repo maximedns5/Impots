@@ -19027,3 +19027,136 @@ passent.
 **Ce qui suit.** Les recherches, une à la fois, sur ce commit : l'IS, le PFU, puis les
 quatre contrôles. Puis D-251 : le résultat, sa section de `docs/PREDICTIF_ETUDE.md`, et
 ses gardes. La porte de M6 reste le `make full` du propriétaire.
+
+## D-251 — Phase 11, M6, second temps : la réponse du menu élargi
+
+**Le fait.** Les six recherches de D-250 ont tourné sur le commit du préenregistrement,
+`ca6288d` : l'IS et le PFU, huit paquets et seize passes, puis les quatre contrôles,
+seize paquets et trente-deux passes. La réponse à la question du §8, sous les hypothèses
+de l'étude.
+- Une baisse de l'IS ne fait baisser la dette en 2035 pour aucun θ.
+- Une baisse du PFU la fait baisser à θ = ½ sous « tenu », à chacun des quatre paquets,
+  de 0,03 à 0,05 point. C'est le premier paquet de toute l'étude à tenir la cible à
+  θ = ½. Aucun n'est robuste : seuls les coins où le multiplicateur vaut 1 font baisser la
+  dette.
+- Sous « éteint », aucun paquet du PFU, et 2 coins sur 16 au premier.
+
+La page `docs/PREDICTIF_ETUDE.md` la rend dans sa propre section, « Le menu élargi de la
+phase 11, préenregistré à part », gardée contre la dérive comme le reste.
+
+**Le résultat.** Δb 2035 à θ = ½, en points de PIB, de la plus petite à la plus grande
+baisse de chaque grille.
+
+| Paquet | coût 2026, vieillie | Δb, « éteint » | Δb, « tenu » | coins sous zéro, « tenu » |
+|---|---|---|---|---|
+| IS à 24,75 % | 0,84 Md€ | +0,26 | +0,26 | 0 sur 2 |
+| IS à 21,75 % | 10,97 Md€ | +3,39 | +3,39 | 0 sur 2 |
+| PFU à 11,8 % | 0,69 Md€ | +0,075 | −0,034 | 8 sur 16 |
+| PFU à 10,8 % | 1,33 Md€ | +0,169 | −0,040 | 8 sur 16 |
+| PFU à 9,8 % | 1,92 Md€ | +0,254 | −0,047 | 8 sur 16 |
+| PFU à 8,8 % | 2,46 Md€ | +0,351 | −0,036 | 8 sur 16 |
+
+- L'IS : 0,30887 point par milliard de la première année, à chaque paquet, dans les deux
+  vues et sous les deux persistances. En vue figée, de +0,24 à +3,12 points. La boîte θ
+  est réduite à un point, et la page dit la boucle absente, non nulle.
+- Le PFU, en vue figée : de +0,072 à +0,320 sous « éteint », de −0,030 à −0,040 sous
+  « tenu ». Les mêmes signes.
+- Sous « éteint », les 2 coins du premier paquet sous zéro sont ceux où les deux
+  élasticités de C10 et le multiplicateur valent 1 : −0,010 et −0,013 point.
+
+**Les indices du paquet le plus proche.** Pour l'IS à 24,75 %, l'effet sur le PIB vaut
++0,024 % en 2035 à θ = ½, boîte de −0,000 à +0,048, hors de la dette. Les créations de
+sociétés gagnent 0,043 point de taux de création, boîte de 0 à 0,078 : un indice
+illustratif. L'investissement reste fermé (D-247). Pour le PFU à 11,8 % :
+- le revenu disponible gagne 197 € par ménage au dixième décile, 13 € au neuvième, moins
+  de 1,50 € aux cinq premiers ;
+- le revenu disponible réel de Mésange, +0,04 % ; la consommation, +0,02 % à un an et
+  +0,04 % à trois ;
+- l'emploi marchand, 540 ETP à un an et 3 900 à trois ans, boîte de −330 à +1 400 puis
+  de +980 à +6 900 ;
+- l'investissement des entreprises, +0,02 à +0,05 %.
+
+**Contre le pronostic.** Les sept points tiennent.
+1. L'IS : 0,30887 point par milliard, de +0,26 à +3,39 points en vue vieillie, de +0,24 à
+   +3,12 en vue figée, la boîte réduite à un point, la boucle dite absente.
+2. Le PFU sous « éteint » : de +0,075 à +0,351, pour « de +0,08 à +0,36 ». 2 coins sur 16
+   au premier paquet, aucun au dernier.
+3. Le PFU sous « tenu » : de −0,034 à −0,047, pour « environ 0,03 ». Les 8 coins du
+   multiplicateur à 1 sous zéro, les 8 autres au-dessus.
+4. Le seuil du déplacement des salaires, sur les chiffres de la passe : à un point de
+   baisse, l'écart vaut 0,109 Md€ de recettes portées, et la réponse fait 1,20 Md€ de
+   dividendes, donc 0,37 Md€ de salaires en moins. Le signe se retourne si ces salaires
+   coûtaient plus de 29 % de leur montant. À quatre points, 0,115 Md€ contre 1,16 Md€ de
+   salaires : 10 %, pour 9 annoncés.
+5. La vue figée donne les mêmes signes.
+6. Les contrôles : la CSG, la décote et le barème de l'IR redonnent D-238, et le plafond
+   le complément de D-239, à l'écart nul, sur chaque écart, chaque coin et chaque coût.
+7. Les indices de l'IS sont ceux annoncés, au millième.
+
+**Ce que la réponse veut dire.** Sous ces hypothèses, une baisse du PFU est la seule du
+menu dont l'écart passe sous zéro à θ = ½. Il y passe de quelques centièmes de point, et
+pour trois raisons qui vont toutes dans son sens.
+- Le multiplicateur. Comme en D-238, c'est lui qui décide : à θ = ½ sous « tenu », la
+  boucle de la variante de l'IR rend 0,19 point par milliard ; aux coins où il vaut 0,
+  aucun paquet ne fait baisser la dette.
+- C10. Les dividendes rendent, à un point, 0,37 Md€ sur 0,69 Md€ de coût. Ce que le canal
+  ne compte pas va dans l'autre sens : les salaires que les propriétaires se versent en
+  moins, l'IS que l'entreprise paie sur le profit qu'ils deviennent, les plus-values
+  futures. Le seuil de 29 % à 10 % est bas : le chiffre suivant à construire est celui-là.
+- La variante de l'IR. Mésange répartit la baisse sur tous les ménages ; les déciles
+  disent qu'elle va au dixième. La boucle rend sans doute trop.
+L'étude le montre sans le trancher, et ne recommande rien. Une baisse de l'IS, elle, n'a
+ni boucle ni recette de comportement dans la chaîne : Δb est son coût porté dix ans, et
+l'effet sur le PIB que la méta-analyse lui prête reste à part (D-218).
+
+**Les contrôles.** Les quatre requêtes de l'étude, rejouées telles quelles sur `ca6288d`,
+redonnent leur référence chiffre pour chiffre : l'écart le plus grand vaut zéro, sur les
+écarts et les coins comme sur les coûts, sous chaque persistance et dans chaque vue. Le
+plafond redonne le complément de D-239, la CSG, la décote et le barème redonnent D-238.
+Rien de ce qui a changé depuis, la CDHR au grand livre, C10, les indices des
+entreprises, la population vieillie du capital, ne touche une réforme sans capital
+imputé. La page le dit dans sa propre table.
+
+**Deux libellés à reprendre.** Les rapports d'une réforme des seules entreprises disent la
+bande « Comportement non demandé », alors qu'il l'était : aucun canal des ménages ne lit
+un bouton des entreprises, et ceux de la couche entreprises n'entrent pas dans les
+recettes. Et la raison des indices des entreprises pour une réforme des ménages dit
+encore que la trajectoire « chiffre les réformes de la population », vrai de cette
+réforme-là, plus de la chaîne depuis D-244. Les deux viennent de M1 et sont dans les
+rapports. Les corriger changerait le texte de rapports déjà tirés : ils le seront avec le
+code, dans leur propre entrée.
+
+**Les tests.** `scripts/write_predictif_etude.py` lit `etude/phase11/` et
+`reports/etude_phase11/controles/`, et rend la section. Les parties d'avant sont
+inchangées, à l'octet, sauf une puce de « Ce que l'étude ne dit pas » : l'IS et les
+dividendes y étaient dits hors de la chaîne, ce qui n'est vrai que de l'étude de D-237.
+Le chargement refuse, pour le menu élargi :
+- une requête qui ne tient pas le cadre de l'étude, ou qui parcourt un autre bouton ;
+- un instrument sans requête, ou sans rapport ;
+- une requête retouchée après ses passes ;
+- un rapport muet sur le lieu de ses passes ;
+- des rapports, contrôles compris, de deux commits ;
+- une requête hors du menu ;
+- un contrôle sans rapport, ou qui n'a pas rejoué la requête de l'étude.
+
+Un contrôle qui ne redonne pas sa référence n'est pas refusé : la page le dit, avec son
+écart, parce que c'est un résultat. Le plafond est lu contre le complément de D-239.
+
+Dans `tests/test_predictif_etude.py`, quatorze cas nouveaux : la section rendue à part,
+le contrôle qui ne redonne pas sa référence, le plafond lu contre son complément, et onze
+refus. Quatorze mutations écrites à la main du script, une par refus et par lecture,
+ont toutes été tuées. Deux avaient d'abord survécu : un contrôle d'un autre commit que le
+menu, et un complément dont les chiffres diffèrent de l'étude. Chacune a reçu son test,
+qui l'a tuée.
+
+Les tests de l'étude, des explorations et de leur API, de la recherche et de ses
+indices, de la chaîne, du simulateur, des entreprises, des indices, de la CDHR, des
+dividendes, du balayage, de la charte, des dépendances et de l'exemple : 264 réussis.
+`ui/check.mjs` et `ruff` passent.
+
+**Ce qui reste.**
+- Le déplacement des salaires dans C10 : le chiffre qui peut retourner la réponse du PFU.
+- La CVAE, sur le chemin annuel, avec un bouton du barème entier.
+- L'autofinancement des baisses ciblées, qui attend le choix du propriétaire sur R5.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- La porte de M6 : le `make full` du propriétaire.

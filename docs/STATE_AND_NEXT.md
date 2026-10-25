@@ -1,6 +1,17 @@
-# State of the project, and the directions open — 2026-10-25 (Phase 11, M0 to M4, M6 begun)
+# State of the project, and the directions open — 2026-10-25 (Phase 11, M0 to M4 and M6)
 
-The fifth 2026-10-25 update adds D-250, the first step of Phase 11's M6: the study on
+The sixth 2026-10-25 update adds D-251, the second step of M6: the study on the wider
+menu has run on its preregistration commit, `ca6288d`, and `docs/PREDICTIF_ETUDE.md`
+renders it in its own section. An IS cut lowers the 2035 debt for no θ: 0.30887 point per
+billion of first-year cost, +0.26 to +3.39 points, no loop, the GDP effect beside it. A
+PFU cut lowers it at θ = ½ under « tenu », at each of its four bundles, by 0.03 to 0.05
+point: the first bundle of the whole study to meet the target at θ = ½. None is robust,
+only the corners where the multiplier is 1 fall, and the sign rests on what C10 leaves
+out: the wage shift would turn it at a cost above 29 % to 10 % of the wages it moves.
+Under « éteint », +0.08 to +0.35. The cut goes to the top decile (197 € a household). The
+four controls give the study back to the last figure. Every point of D-250's prognosis
+held. Fourteen hand mutants of the page script killed.
+The fifth 2026-10-25 update added D-250, the first step of Phase 11's M6: the study on
 the wider menu is preregistered before any of its passes. Two new instruments, four
 bundles each: the IS normal rate, from 25 % down to 21.75 %, and the PFU, from 12.8 %
 down to 8.8 %, inside C10's support. The study's four instruments are replayed as they
@@ -403,8 +414,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **251 decision
-entries**, D-000 to D-250, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **252 decision
+entries**, D-000 to D-251, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -794,9 +805,10 @@ download list.
    income is imputed (D-248). M4 is done (D-249): the PFU knob, read back, and the
    dividends' response C10 in the receipts; the wage shift it leaves out is the next
    number that could turn a PFU cut's answer. M5 waits on the owner's R5 choice. M6 is
-   begun (D-250): the study on the wider menu, IS and PFU, preregistered with its
-   controls; its passes and its page come next (D-251). The page's predictive panel does
-   not send a firm reform yet. Then Phase 12, the past, and
+   done (D-250, D-251): the study on the wider menu. No IS cut lowers the debt; a PFU cut
+   does under « tenu » at θ = ½, by a few hundredths of a point, on a sign the wage shift
+   could turn. Its gate is the owner's `make full`. Next: the wage shift in C10, then the
+   CVAE on the annual path. The page's predictive panel does not send a firm reform yet. Then Phase 12, the past, and
    Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
