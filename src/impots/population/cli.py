@@ -1123,14 +1123,18 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
     frame = pl.read_parquet(population)
     reform = scenario.reform.model_dump(exclude_none=True, mode="json")
 
-    from impots.engine.reforms import read_ir_parameters
+    from impots.engine.reforms import moves_capital, read_ir_parameters
     from impots.engine.system import baseline as engine_baseline
 
     tbs = engine_baseline()
     indexation = (tj.Indexation(rate=args.price, source=args.hypothesis_source)
                   if args.reference == "indexe" else None)
+    # Decided once, on the scenario's reform, for every pass of a year: against `indexe`
+    # the cost is a difference of two passes, and a capital imputed in one of them only
+    # would put the whole tax on capital into the cost (D-249).
+    capital = moves_capital(scenario.reform)
 
-    def runner(pop: object, year: int):
+    def runner(pop: object, year: int, index: float):
         """A `run` callable for `tj.price`: reform dict -> mechanical cost.
 
         Routed through `tj.price` rather than run directly so the REFERENCE is actually
@@ -1144,20 +1148,24 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
                 return 0.0
             result = population_run(pop, year=year,
                                     reform=ReformSpec.model_validate(spec),
-                                    tier="full", sample=args.sample)
+                                    tier="full", sample=args.sample,
+                                    **({"impute_capital": True, "capital_index": index}
+                                       if capital else {}))
             return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
         return run
 
-    def price(pop: object, year: int) -> float:
+    def price(pop: object, year: int, index: float) -> float:
         return tj.price(year, args.reference, reform=reform,
-                        law=read_ir_parameters(tbs, year), run=runner(pop, year),
+                        law=read_ir_parameters(tbs, year), run=runner(pop, year, index),
                         indexation=indexation).mechanical_eur
 
     rows = []
     for year in range(args.start, args.end + 1):
         print(f"  {year}…", flush=True)
-        frozen = price(frame, year)
-        aged = price(up.uprate(frame, year, hypothesis), year)
+        # The imputed capital ages with the frame, on the wage index (D-249).
+        frozen = price(frame, year, 1.0)
+        aged = price(up.uprate(frame, year, hypothesis), year,
+                     hypothesis.factor("wage", year))
         rows.append(tj.year_uncertainty(
             year, basis=tj.basis_for(args.side, year), frozen_eur=frozen,
             aged_eur=aged, base_year=args.start))
@@ -1275,16 +1283,25 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     from impots.api import main as api
 
     firm_part = api._firm_part(scenario.firm_reform, growth=growth)
+    from impots.engine.reforms import moves_capital
+
+    # Decided once on the scenario's reform, for both passes of a difference (D-249).
+    capital = moves_capital(scenario.reform)
 
     def price(year: int, view: str) -> float | annuel.Layered:
         pop = frame if view == "figee" else up.uprate(frame, year, uprating)
+        # The imputed capital ages with the frame, on the wage index, or not at all in
+        # the frozen view (D-249).
+        index = 1.0 if view == "figee" else uprating.factor("wage", year)
 
         def run(spec: dict[str, Any] | None) -> float:
             if not spec:
                 return 0.0
             result = population_run(pop, year=year,
                                     reform=ReformSpec.model_validate(spec),
-                                    tier="full", sample=args.sample)
+                                    tier="full", sample=args.sample,
+                                    **({"impute_capital": True, "capital_index": index}
+                                       if capital else {}))
             return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
 
         print(f"  {year} · {view}…", flush=True)

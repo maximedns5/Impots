@@ -479,6 +479,44 @@ NICHE_SCOLARITE_ALTERNEE_CASES: dict[str, str] = {
 NICHE_SYNDICALES_CASE = "f7ac"
 
 
+class RevenusCapital(BaseModel):
+    """Capital income taxed at the prélèvement forfaitaire unique, in euros a year (D-249).
+
+    The four boxes the population's imputation fills (D-248), and nothing else: the PFU is
+    the default, and the option for the barème (case 2OP) is not expressible. Without this
+    block the PFU knob moves nothing for a household, which is the engine answering as
+    asked and not a wiring gap.
+
+    **Written on every covered year, like the salary**, and unlike a niche: the revenu
+    fiscal de référence of N-2 contains it, and that RFR sets the CSG rate of a pension
+    and the means tests of N-2. A dividend declared once would be a different household.
+    Measured: 10 000 EUR of dividends owe 1 280 EUR of PFU and 1 720 EUR of social levies.
+    """
+
+    model_config = INPUT_CONFIG
+
+    dividendes: Annotated[float, Field(ge=0, le=100_000_000)] = 0.0
+    """Revenus distribués, case 2DC: dividends, the one base whose response to the PFU
+    is measured (Bach et al.; D-249)."""
+    interets: Annotated[float, Field(ge=0, le=100_000_000)] = 0.0
+    """Produits de placement à revenu fixe, case 2TR."""
+    autres_revenus_distribues: Annotated[float, Field(ge=0, le=100_000_000)] = 0.0
+    """Autres revenus distribués et revenus des structures soumises hors de France à un
+    régime fiscal privilégié, case 2TS."""
+    plus_values: Annotated[float, Field(ge=0, le=100_000_000)] = 0.0
+    """Plus-values de cession de valeurs mobilières, case 3VG."""
+
+
+#: Capital field -> the déclaration case it writes. The same four cases
+#: `population.capital.CASES` imputes, and a test holds the two together.
+CAPITAL_CASES: dict[str, str] = {
+    "dividendes": "f2dc",
+    "interets": "f2tr",
+    "autres_revenus_distribues": "f2ts",
+    "plus_values": "f3vg",
+}
+
+
 class Patrimoine(BaseModel):
     """A 2042-IFI-shaped wealth declaration, in euros.
 
@@ -592,6 +630,9 @@ class HouseholdInput(BaseModel):
     A warning that costs nothing to give: IFI is abated entirely by the plafonnement
     when the foyer has no income, so a wealth declaration with zero salary prices zero.
     That is the law working, not the model failing."""
+    capital: RevenusCapital | None = None
+    """Capital income at the PFU. Absent means none, hence no PFU and no social levies
+    on capital (D-249)."""
 
     def has_dependants(self) -> bool:
         """Whether the foyer has a dependant: a child, or a person in case R."""
@@ -844,6 +885,13 @@ class ReformSpec(BaseModel):
     """The global cap on réductions and crédits, 10 000 EUR. It bites only on a
     household claiming more than that, so a chiffrage of it says nothing about anyone
     else."""
+    # Capital income (D-249).
+    pfu_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    """The income-tax part of the prélèvement forfaitaire unique, 12,8 % today: one
+    parameter for dividends, interest, plus-values and the life insurance above its
+    threshold. The social levies, 17,2 %, are not this knob. It bites only on capital
+    income, which a household declares in `capital` and the population carries only
+    with `impute_capital` (D-248)."""
 
     @model_validator(mode="after")
     def _check_bareme(self) -> ReformSpec:
@@ -1084,10 +1132,13 @@ class ResultRows(BaseModel):
     against net receipts."""
     pfu: float
     """The prélèvement forfaitaire unique owed on capital income, income-tax part: a
-    « dont » of `ir`, never added to it (D-248). Zero for a household, which declares no
-    capital income here; non-zero in a population run with `impute_capital`."""
+    « dont » of `ir`, never added to it (D-248). Zero for a household that declares no
+    `capital` (D-249), and for a population run without `impute_capital`."""
     prelevements_sociaux_capital: float
     """The social levies on that income, which `ir` does not hold (D-248)."""
+    dividendes: float
+    """The dividends declared at the PFU, case 2DC: the base of the dividend channel C10,
+    read back from the engine, never a receipt (D-249)."""
     # benefits block (famille) — full tier only
     af: float | None = None
     aeeh: float | None = None

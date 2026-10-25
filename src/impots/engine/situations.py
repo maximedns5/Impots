@@ -413,6 +413,16 @@ def build_situation(
         foyer_fiscal.update(_niche_inputs(household.niches, year, household.children))
     if household.patrimoine is not None:
         foyer_fiscal.update(_patrimoine_inputs(household.patrimoine, year))
+    if household.capital is not None:
+        from impots.api import schemas
+
+        # On every covered year, like the salary and like the population's imputation:
+        # the RFR of N-2, which sets a pension's CSG rate and the means tests, holds it
+        # (D-248, D-249). A case left at zero is not written.
+        for field, case in schemas.CAPITAL_CASES.items():
+            amount = float(getattr(household.capital, field))
+            if amount:
+                foyer_fiscal[case] = _constant(case, amount, years)
     if household.resolved_parent_isole():
         # `caseT` — "parent isolé au 1er janvier". Worth half a part, and the only
         # lever for it: `nbptr` multiplies the `isol` parameter by caseT directly,

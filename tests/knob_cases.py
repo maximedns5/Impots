@@ -60,6 +60,10 @@ NICHE_FOYER = {**AISE_2_ENFANTS}
 #: peut faire bouger `abattement_pensions_plafond` (PLF 2027, art. 3).
 RETRAITE_AISE = {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1955,
                              "pension_annuelle": 50_000}]}
+#: Un foyer qui déclare des dividendes : sans revenus du capital, le PFU ne mord sur rien
+#: (D-249). 10 000 EUR doivent 1 280 EUR de PFU, que le bouton porte à 2 000.
+RENTIER = {"adults": [{"salaire_brut_annuel": 30_000, "annee_naissance": 1975}],
+           "capital": {"dividendes": 10_000.0}}
 #: Les deux plafonds de bandeau sont exprimés en multiples de SMIC, donc le ménage doit
 #: se trouver DANS le bandeau pour qu'en abaisser le plafond le lui retire. Au SMIC 2024
 #: d'environ 21 203 EUR brut, 45 000 EUR font 2,12 SMIC — sous le plafond maladie de 2,5
@@ -208,6 +212,8 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
     # Both non-bâti knobs shrink an exemption, so both raise the tax.
     "ifi_non_bati_seuil": (IFI_NON_BATI, None, "ifi", 50_000.0, +1),
     "ifi_non_bati_taux_bois_forets": (IFI_NON_BATI, None, "ifi", 0.5, +1),
+    # --- capital income (D-249) -------------------------------------------------------
+    "pfu_taux": (RENTIER, None, "ir", 0.20, +1),
     "plafond_global_niches": (
         {**NICHE_FOYER, "children": [{"annee_naissance": 2019},
                                      {"annee_naissance": 2021},

@@ -1,0 +1,205 @@
+# Dividends and the PFU — PHASE11_SPEC §6, the rank-1 French source (D-245, R6; D-249).
+#
+# Bach, Bozio, Guillouzouic, Leroy and Malgouyres, « Follow the money! Why dividends
+# overreact to flat-tax reforms », PSE WP n° 2019-70, version 2 (HAL, 2 septembre 2024).
+# `behavioural.dividendes` reads every number below out of the PDF — the elasticities and
+# the variations from the text, the firm-control share from the vector drawing of
+# Figure 2d — and a test holds the rows against that reading through
+# `dividendes.convention` (D-026).
+#
+# HOW THE CHANNEL USES THEM. The aggregate elasticity of declared dividends to the
+# net-of-tax rate (1 − τ), τ the PFU plus the social levies, is the firm-control share
+# times the firm owners' elasticity plus the rest times the others': ε = s ε_p + (1 − s)
+# ε_a. The dividends at the PFU respond by ε × Δln(1 − τ), and what they add is taxed at
+# the new τ. Interest and plus-values are held fixed: the authors find small responses
+# of the other capital incomes, of the same sign (tableau 2 A).
+#
+# WHAT THE CHANNEL DOES NOT COUNT. The two largest items lower the receipts it brings back
+# from a cut. The wages the firm owners pay themselves fall as their dividends rise:
+# 0,00100 of pre-reform wealth against 0,00324 (tableau 2 B, col. 4, firm owners against
+# the others, from 2019), 0,31 euro of wage per euro of dividend, taxed more heavily than a
+# dividend. The dividends paid are drawn from corporate saving, at the expense of future
+# plus-values (section 6.2). The CEHR on the induced dividends, which would add a little,
+# and the return to the barème of a foyer a higher PFU would overtake, are not counted
+# either.
+
+parameters:
+  dividend_elasticity_firm_owners:
+    value: {central: 2.5, low: 2.5, high: 3.2, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une élasticité plus grande est une réponse plus forte des dividendes au taux net.
+    rang:
+      niveau: 1
+      canal: dividendes_pfu
+    applies_to: >
+      Élasticité des dividendes reçus par un foyer fiscal à son taux net marginal sur les
+      dividendes (1 − τ, τ l'impôt sur le revenu et les prélèvements sociaux, hors IS),
+      pour les foyers qui contrôlent une société : un membre du foyer figure au fichier
+      des actionnaires appariés (détenteurs d'au moins 10 % du capital, Orbis, dirigeants
+      du registre de l'INPI), qui ne couvre que 2014 à 2021. Échantillon : panel cylindré
+      des foyers assujettis à l'ISF chaque année avant la réforme (le 1 % le plus riche
+      en patrimoine, qui reçoit environ la moitié des dividendes déclarés), ayant reçu au
+      moins une fois plus de 1 500 € de dividendes avant la réforme. Traités : les foyers
+      dont le revenu stable (salaires, pensions, revenus fonciers) les place au moins une
+      fois dans les tranches à 41 et 45 % ; témoins : les autres, dont les dividendes ont
+      aussi bougé. L'élasticité est l'effet sur les dividendes rapportés au patrimoine
+      imposable d'avant la réforme, relatif à la moyenne des traités, divisé par l'écart
+      entre traités et témoins du taux net simulé à revenu et à taille de foyer d'avant
+      la réforme, chacun à son option optimale entre le barème et le prélèvement
+      forfaitaire.
+    responds_to_knobs: &knobs [pfu_taux]
+    support:
+      estimated_on: >
+        Deux réformes de sens contraire : 2013, la fin du prélèvement forfaitaire
+        libératoire (taux marginal supérieur sur les dividendes de 36,5 à 40,2 %), taux net
+        des traités en baisse de 6 % ; 2018, le PFU (de 40,2 à 30 %), taux net des
+        propriétaires de firme traités en hausse de 7,5 %. Variation relative du taux net,
+        en fraction. Le support retient la plus petite des deux, 6 % : une hausse n'a été
+        observée qu'à cette ampleur, une baisse qu'à la sienne.
+      max_variation_graded_in_support: 0.06
+    source:
+      citation: >
+        Bach, Bozio, Guillouzouic, Leroy et Malgouyres, « Follow the money! Why dividends
+        overreact to flat-tax reforms », PSE Working Paper n° 2019-70, version 2, août
+        2024 (HAL halshs-02415470v2) : introduction, p. 3 ; section 4.1, p. 13-14
+        (traitement et échantillon) ; section 4.2, p. 15-16 (taux net et élasticités) et
+        p. 18 ; tableau 1, p. 36.
+      url: https://shs.hal.science/halshs-02415470v2/file/wp1970_2.pdf
+      vintage: "2024"
+      quote: >-
+        we obtain an implied elasticity to the net-of-tax rate of 2.5 for firm-owners,
+        while it is close to 0 for non-firm owners
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-25
+      ref: D-249
+      note: >
+        Les chiffres sont exacts, pages et citation comprises. Réparations appliquées : la
+        raison du centre, qui était à l'envers (l'erreur de mesure de 2013 SOUS-estime la
+        réponse des propriétaires, p. 15) ; le centre fondé sur les mots des auteurs
+        (« the most informative », p. 16 ; « around 2.5 », p. 18 ; une stratégie qui
+        « under-estimate the true magnitude », p. 15, d'où 2,5 en plancher) ; la définition
+        du propriétaire, de l'élasticité et de l'échantillon ; le support réduit à la plus
+        petite variation observée ; les objets écartés, dits. Les élasticités au niveau des
+        firmes, 4,2 et 2,8 (p. 21-22), mesurent les dividendes versés par des sociétés
+        détenues à plus de 50 % par de grands actionnaires personnes physiques, rapportés
+        à la variation du taux supérieur : un autre objet, qui ne borne pas la ligne bien
+        que 4,2 dépasse 3,2. Le tableau 2 B et les +33 % de la p. 18 comparent des
+        propriétaires à des non-propriétaires, tous traités, sans dénominateur : pas une
+        élasticité. Aucun intervalle de confiance n'est imprimé.
+    confidence: medium
+    note: >
+      Le centre et le bas sont la réforme de 2018, une baisse ; le haut, celle de 2013, une
+      hausse, mal mesurée. Les hausses donnent des élasticités plus fortes que les baisses
+      (3,2 contre 2,5 ; 4,2 contre 2,8 au niveau des firmes), et θ ne lit pas le sens de la
+      réforme : θ = 1 est la lecture d'une hausse. La réponse passe par l'épargne des
+      sociétés, pas par l'investissement (section 5). Elle ne s'éteint pas en quatre ans
+      (tableau 2 A, 0,00507 à court terme contre 0,00534 sur toute la période) ; au-delà
+      de 2021, un effet de niveau est une extrapolation. Une baisse en 2017 suggère qu'une
+      part a été reportée sur 2018. L'élasticité est celle des assujettis à l'ISF des
+      tranches à 41 et 45 % ; le canal l'étend aux propriétaires qui ne l'étaient pas (de
+      45 à 53 % des dividendes des propriétaires) et aux tranches plus basses. La baisse
+      de 2018 coïncide avec la fin de l'ISF.
+
+  dividend_elasticity_other_holders:
+    value: {central: 0.0, low: 0.0, high: 2.4, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une élasticité plus grande est une réponse plus forte des dividendes au taux net.
+    rang:
+      niveau: 1
+      canal: dividendes_pfu
+    applies_to: >
+      La même élasticité, construite de la même façon, pour les foyers du même échantillon
+      (assujettis à l'ISF, plus de 1 500 € de dividendes au moins une fois avant la
+      réforme) qui ne contrôlent aucune société.
+    responds_to_knobs: *knobs
+    support:
+      estimated_on: >
+        Les mêmes réformes : taux net des traités en baisse de 6 % en 2013, en hausse de
+        8,5 % en 2018. Variation relative du taux net, en fraction ; le support retient la
+        plus petite des deux.
+      max_variation_graded_in_support: 0.06
+    source:
+      citation: >
+        Bach et al., PSE WP n° 2019-70 v2 : introduction, p. 3 ; section 4.2, p. 15-16.
+      url: https://shs.hal.science/halshs-02415470v2/file/wp1970_2.pdf
+      vintage: "2024"
+      quote: >-
+        that of non firm-owners is insignificantly different from 0
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-25
+      ref: D-249
+      note: >
+        Les chiffres sont exacts. Réparations appliquées : la citation porte désormais la
+        valeur du centre ; « close to 0 » est dit légèrement négatif, et gardé à 0 parce
+        que c'est ce qui est imprimé : les coefficients de la figure 3d, lus sur son tracé,
+        valent de −0,00026 à −0,00004 du patrimoine d'avant la réforme de 2018 à 2021
+        (intervalle de 2018 : −0,00041 à +0,00002), soit une élasticité d'environ −0,4 ;
+        l'extension aux foyers hors ISF sans contrôle, dite.
+    confidence: medium
+    note: >
+      Les 2,4 de 2013 sont gonflés, selon les auteurs, par des propriétaires de firme mal
+      classés parmi les autres. Les foyers hors ISF qui ne contrôlent aucune société
+      reçoivent de 11 à 18 % des dividendes déclarés de 2018 à 2021, et aucun n'est dans
+      l'échantillon : le canal leur applique cette élasticité. En 2018, les dividendes
+      bruts des deux groupes sans contrôle montent de 22 à 24 %, quand la différence de
+      différences met leur réponse à zéro.
+
+  dividend_share_firm_owners:
+    value: {central: 0.774, low: 0.738, high: 0.8, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Une part plus grande des dividendes chez les foyers qui contrôlent une firme, dont
+        l'élasticité est la plus forte à tout θ (2,5 au moins contre 2,4 au plus), est une
+        réponse agrégée plus forte.
+    rang:
+      niveau: 1
+      canal: dividendes_pfu
+    applies_to: >
+      Part des dividendes déclarés à l'impôt sur le revenu (case 2DC, brut, annexe B.1.3)
+      reçus par les foyers qui contrôlent une société, assujettis à l'ISF au moins une
+      fois sur la période ou non, les quatre années du PFU (2018 à 2021). Une composition,
+      pas une réponse : elle pondère les deux élasticités.
+    responds_to_knobs: *knobs
+    support:
+      estimated_on: >
+        Sans objet : une part observée, pas une élasticité. Le canal ne la note pas.
+      max_variation_graded_in_support: null
+    source:
+      citation: >
+        Bach et al., PSE WP n° 2019-70 v2, section 3.2, p. 11 ; figure 2, panneau (d),
+        p. 32, lu sur le tracé vectoriel de la figure (`behavioural.dividendes`) ; les
+        quatre séries redonnent, année par année, la série des déclarations du panneau
+        (b), et leur hausse de 2017 à 2018 est la « year-to-year variation of 9 billion
+        euros » de la p. 10.
+      url: https://shs.hal.science/halshs-02415470v2/file/wp1970_2.pdf
+      vintage: "2024"
+      quote: >-
+        owner-managers, whether they are wealth tax payers or not, account for a large
+        share of total dividends, even though they are a small minority of households
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-25
+      ref: D-249
+      note: >
+        Les points sont confirmés par une lecture indépendante du tracé, au millième de
+        milliard, la légende bien appariée ; les quatre séries redonnent le panneau (b)
+        chaque année, les 9 Md€ de 2017-2018 et de 2012-2013, et les « around 20 billion »
+        de 2017 à 2021. Réparations appliquées : la page de la citation, la case 2DC
+        brute, l'ISF de la figure (« au moins une fois »), et la fourchette dite
+        construction du projet sur quatre valeurs annuelles, pas une fourchette publiée.
+    confidence: medium
+    note: >
+      80,0 % en 2018, 78,0 % en 2019, 77,7 % en 2020, 73,8 % en 2021 ; 73,5 % en 2017,
+      avant le PFU. Bas et haut sont les extrêmes des quatre années, le centre leur
+      moyenne : une construction du projet, dite. La part de 2018 est gonflée par la
+      réponse des propriétaires à la réforme ; 2020 est une année de Covid, 2021 un
+      rebond (les dividendes des foyers hors ISF sans contrôle passent de 3,38 à
+      6,20 Md€), et la part baisse sur la période. Celle de 2024 est hors de l'échantillon
+      et pourrait passer sous 0,738.

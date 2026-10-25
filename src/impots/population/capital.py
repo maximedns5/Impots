@@ -55,6 +55,7 @@ from __future__ import annotations
 import csv
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -199,6 +200,31 @@ def pfu_rate(year: int = YEAR) -> float:
     for part in PFU_RATE.split("."):
         node = getattr(node, part)
     return float(node)
+
+
+#: The dividends the social-levy rate is measured on. Any amount: the levies are flat.
+LEVY_PROBE_EUR = 10_000.0
+
+
+@lru_cache(maxsize=16)
+def social_levy_rate(year: int) -> float:
+    """The social levies on a euro of dividends at the PFU in `year`, MEASURED (D-249).
+
+    Measured on one foyer by the engine rather than summed from the tree: the CSG on
+    capital income has a formula of its own from 2026 and the other levies change shape
+    across the years, so a sum of parameters would be a second copy of openfisca's logic.
+    17,2 % in 2024 and 2025 (CSG 9,2, CRDS 0,5, prélèvement de solidarité 7,5), 18,6 % from
+    2026. The probe has a salary only because a zero one makes the engine divide by it;
+    the levies on capital do not read it.
+    """
+    from impots.api.schemas import HouseholdInput
+    from impots.engine import compute
+
+    household = HouseholdInput.model_validate({
+        "adults": [{"salaire_brut_annuel": 30_000, "annee_naissance": 1975}],
+        "capital": {"dividendes": LEVY_PROBE_EUR}})
+    rows = compute(household, year, tier="light").baseline
+    return float(rows["prelevements_sociaux_capital"]) / LEVY_PROBE_EUR
 
 
 def bases(table: Published, rate: float) -> dict[str, float]:
