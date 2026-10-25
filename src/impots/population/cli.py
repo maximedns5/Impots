@@ -1271,7 +1271,11 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     indexation = (tj.Indexation(rate=growth.prices, source=args.hypothesis_source)
                   if args.reference == "indexe" else None)
 
-    def price(year: int, view: str) -> float:
+    from impots.api import main as api
+
+    firm_part = api._firm_part(scenario.firm_reform, growth=growth)
+
+    def price(year: int, view: str) -> float | annuel.Layered:
         pop = frame if view == "figee" else up.uprate(frame, year, uprating)
 
         def run(spec: dict[str, Any] | None) -> float:
@@ -1283,14 +1287,20 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
 
         print(f"  {year} · {view}…", flush=True)
-        return tj.price(year, args.reference, reform=reform,
-                        law=read_ir_parameters(tbs, year), run=run,
-                        indexation=indexation).mechanical_eur
+        households = tj.price(year, args.reference, reform=reform,
+                              law=read_ir_parameters(tbs, year), run=run,
+                              indexation=indexation).mechanical_eur
+        if not firm_part:
+            return households
+        # The firm layer beside the households' (D-246): its own pass, its own view.
+        firms = api._firm_first_year(scenario.firm_reform, year, view=view,
+                                     growth=growth).cost
+        return annuel.Layered(cost=households + firms,
+                              layers={"menages": households, "entreprises": firms})
 
     years = list(range(start.year + 1, start.year + 1 + args.horizon))
     store = macro_store = None
     if whole:
-        from impots.api import main as api
         from impots.behavioural.store import load as load_store
         from impots.predictif.exploration import Priced
 
@@ -1307,9 +1317,10 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             first = api._price_first_year(
                 api.YearPass(reform=scenario.reform, year=year,
                              behavioural=args.behavioural),
-                uprating=uprating, macro=args.macro, view=view)
+                uprating=uprating, macro=args.macro, view=view, **firm_part)
             return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
-                          uncovered=dict(first.uncovered))
+                          uncovered=dict(first.uncovered),
+                          layers=getattr(first, "layers", None))
     try:
         prices = annuel.price_years(years, price,
                                     basis_for=lambda y: tj.basis_for("menages", y))
@@ -1443,7 +1454,7 @@ def cmd_exploration(args: argparse.Namespace) -> int:
         first = api._price_first_year(
             api._first_year_request(reform, year, request.behavioural),
             uprating=hypotheses.uprating, macro=request.macro, view=view,
-            **api._firm_part(firm))
+            **api._firm_part(firm, growth=hypotheses.growth))
         return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
                       uncovered=dict(first.uncovered), deciles=list(first.deciles))
 

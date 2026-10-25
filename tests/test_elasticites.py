@@ -131,3 +131,33 @@ def test_the_chains_reason_for_the_firm_taxes_is_the_computed_refusal() -> None:
         el.elasticity_loop("impot_societes", reading=_paper(), store=_mesange())
     for needle in ("sans variante dans Mésange", "DP 098", "refusée", "D-246", "D-218"):
         assert needle in main.FIRM_NO_VARIANT
+
+
+# --------------------------------------------------------------------------- #
+# The reader's own refusals
+# --------------------------------------------------------------------------- #
+def test_a_france_row_of_the_wrong_width_or_none_is_refused() -> None:
+    with pytest.raises(el.ElasticityError, match="cellules"):
+        el._country_row("BE 1.0 2.0\nFR 1.86 2.76\n", 7)
+    with pytest.raises(el.ElasticityError, match="introuvable"):
+        el._country_row("BE 1.0 2.0\nDE 1.87 1.91\n", 2)
+
+
+def test_a_paper_missing_or_without_its_tables_is_refused(tmp_path, monkeypatch) -> None:
+    with pytest.raises(el.ElasticityError, match="introuvable"):
+        el.load(tmp_path)
+    (tmp_path / el.SOURCE_FILE).write_bytes(b"%PDF-1.4")
+    monkeypatch.setattr(el, "_pages", lambda path: ("Table I.1. Elasticities\nBE 1 2\n",))
+    with pytest.raises(el.ElasticityError, match="le document a changé"):
+        el.load(tmp_path)
+
+
+def test_revenue_shares_that_do_not_make_a_hundred_are_refused() -> None:
+    reading = _paper()
+    shares = {**reading.shares, "recettes_non_fiscales": 20.0}
+    with pytest.raises(el.ElasticityError, match="100 %"):
+        el.check(dataclasses.replace(
+            reading, shares=shares,
+            decomposition={**reading.decomposition,
+                           "a": el.aggregates(dataclasses.replace(reading,
+                                                                  shares=shares))[0]}))

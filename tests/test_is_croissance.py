@@ -173,3 +173,20 @@ def test_the_index_says_why_when_its_row_did_not_load() -> None:
     index = indices.is_growth(SPEC, theta=Theta(common=0.5), store=bare,
                               rate_change_points=-1.0, years=YEARS)
     assert not index.available and "un refus de test" in index.reason
+
+
+def test_a_paper_missing_or_misread_is_refused(tmp_path, monkeypatch) -> None:
+    with pytest.raises(gechert.GechertError, match="introuvable"):
+        gechert.load(tmp_path)
+    (tmp_path / gechert.SOURCE_FILE).write_bytes(b"%PDF-1.4")
+    title = gechert.TABLE_TITLE
+    for pages, needle in (
+            (("rien ici",), "le document a changé"),
+            ((f"{title}\nN 441 441 42 441 446\n",), "introuvable dans le tableau 2"),
+            ((f"{title}\nβ0 [mean beyond bias] −0.019 0.0001\n(0.010) (0.0004)\n"
+              f"N 441 441\n",), "5 colonnes attendues"),
+            ((f"{title}\nβ0 [mean beyond bias] −0.019 0.0001 0.0002 −0.002 0.033\n"
+              f"(0.010) (0.0004) (0.001) (0.012) (0.029)\nN 441 441\n",), "effectifs")):
+        monkeypatch.setattr(gechert, "_pages", lambda path, pages=pages: pages)
+        with pytest.raises(gechert.GechertError, match=needle):
+            gechert.load(tmp_path)

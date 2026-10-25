@@ -55,6 +55,25 @@ def firm_population() -> None:
         build(FIXTURE_CELLS)
 
 
+#: The aged view's multiplier in these tests: the fixture names no year, and the real
+#: factor reads the national accounts (`test_firmes_vues.py` holds it).
+AGED = 1.08
+REAL_AGING = main._firm_aging_factor
+
+
+@pytest.fixture(autouse=True)
+def aged_by(monkeypatch) -> list:
+    """The aged view's factor, stubbed; each call recorded with the growth it was given."""
+    calls: list = []
+
+    def factor(year, growth):
+        calls.append((year, growth))
+        return AGED
+
+    monkeypatch.setattr(main, "_firm_aging_factor", factor)
+    return calls
+
+
 def _firm_cost(spec: FirmReformSpec, year: int = 2026) -> float:
     result = firm_runner.run(main._firm_population(), year=year, reform=spec)
     return float(firm_aggregate.aggregate(result.firms).reform_cost)
@@ -79,14 +98,15 @@ def test_a_firm_reform_alone_is_the_firm_layers_cost_and_no_population_pass(
     monkeypatch.setattr(main, "_price_households", _no_household_pass)
     first = main._price_first_year(main._first_year_request(ReformSpec(), 2026, False),
                                    uprating=None, macro=True, firm_reform=IS_24)
-    cost = _firm_cost(IS_24)
+    cost = _firm_cost(IS_24) * AGED
     assert cost > 0
     assert first.cost == pytest.approx(cost)
     assert first.layers == {"menages": 0.0, "entreprises": pytest.approx(cost)}
     assert first.impulse == {}
     assert first.uncovered["impot_societes"] == main.FIRM_NO_VARIANT
     assert main.FIRM_TOTAL not in first.uncovered
-    assert "non vieillie" in first.note and "exercice" in first.note
+    assert "vue vieillie" in first.note and "×1,0800" in first.note
+    assert "exercice" in first.note
     assert "synthétiques" in first.note
 
 
@@ -99,7 +119,7 @@ def test_the_two_layers_add_up_and_the_households_keep_their_loop(monkeypatch,
     first = main._price_first_year(
         PopulationSimulateRequest(reform=ReformSpec(decote_taux=0.4), year=2026),
         uprating=None, macro=True, view=view, firm_reform=IS_24)
-    cost = _firm_cost(IS_24)
+    cost = _firm_cost(IS_24) * (AGED if view == "vieillie" else 1.0)
     assert first.cost == pytest.approx(5e9 + cost)
     assert first.layers == {"menages": 5e9, "entreprises": pytest.approx(cost)}
     assert first.impulse == {"impot_sur_le_revenu": 5e9}
@@ -138,14 +158,14 @@ def test_a_firm_reform_has_its_debt_path_and_says_the_loop_absent(chain) -> None
         **PAYLOAD, "firm_reform": {"is_taux_normal": 0.24}, "macro": True})
     assert response.status_code == 200, response.text
     body = response.json()
-    cost = _firm_cost(IS_24)
+    cost = _firm_cost(IS_24) * AGED
     assert body["mechanical_first_year_eur"] == pytest.approx(cost)
     assert body["mechanical_first_year_by_layer"] == {
         "menages": 0.0, "entreprises": pytest.approx(cost)}
     assert body["delta"][0] > 0
     assert "impot_societes" in body["absent"]["rétroaction"]
     assert "sans variante dans Mésange" in body["absent"]["rétroaction"]
-    assert "non vieillie" in body["population_note"]
+    assert "vue vieillie" in body["population_note"]
     firm_rows = [i for i in body["indices"] if i["stage"] == indices_module.FIRMES]
     assert firm_rows and all(i["reason"] == indices_module.FIRM_PENDING
                              for i in firm_rows)
@@ -286,3 +306,65 @@ def test_the_is_gdp_index_stands_beside_the_debt_and_never_in_it(chain) -> None:
         **PAYLOAD, "firm_reform": {"cs_taux": 0.02}}).json()
     index = next(i for i in household["indices"] if i["key"] == "pib_is")
     assert not index["available"] and index["reason"] == indices_module.NO_IS_RATE
+
+
+def test_the_aged_view_follows_gdp_and_a_vintage_without_a_year_has_none(
+        monkeypatch) -> None:
+    """D-246: the frozen view is the vintage as it is; the aged view multiplies it by the
+    scenario's nominal GDP over the vintage's — and the fixture, which names no year, is
+    refused by name in that view rather than given one."""
+    cost = _firm_cost(IS_24)
+    frozen = main._firm_first_year(IS_24, 2026, view="figee")
+    assert frozen.cost == pytest.approx(cost) and frozen.factor is None
+    assert "vue figée" in frozen.note
+    aged = main._firm_first_year(IS_24, 2026)
+    assert aged.cost == pytest.approx(cost * AGED)
+    assert aged.deltas["impot_societes"] == pytest.approx(
+        frozen.deltas["impot_societes"] * AGED)
+    monkeypatch.setattr(main, "_firm_aging_factor", REAL_AGING)
+    with pytest.raises(HTTPException) as caught:
+        main._firm_first_year(IS_24, 2026)
+    assert caught.value.status_code == 422
+    assert "n'a pas d'année" in str(caught.value.detail)
+    assert main._firm_first_year(IS_24, 2026, view="figee").cost == pytest.approx(cost)
+
+
+def test_the_aged_view_is_given_the_requests_growth(chain, aged_by) -> None:
+    """The aged firm view follows the scenario's nominal GDP: the request's growth, not
+    one the tool would choose (D-246)."""
+    chain.post("/predictif/simulate", json={**PAYLOAD,
+                                            "firm_reform": {"is_taux_normal": 0.24}})
+    year, growth = aged_by[-1]
+    assert year == 2026 and (growth.real, growth.prices) == (0.01, 0.02)
+
+
+def test_the_explorer_command_gives_the_firm_pass_its_growth(monkeypatch,
+                                                             tmp_path) -> None:
+    import json
+
+    from impots.population import cli
+
+    seen: list = []
+
+    def stub(request, *, uprating, macro=False, view="vieillie", firm_reform=None,
+             growth=None):
+        seen.append((view, firm_reform, growth))
+        return SimpleNamespace(cost=1e9, inputs=None, impulse=None, uncovered={},
+                               deciles=[], view=view, note="")
+
+    monkeypatch.setattr(main, "_price_first_year", stub)
+    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+    monkeypatch.setattr(recherche, "code_state", lambda: ("c" * 40, False))
+    payload = _request(bounds=SEARCH_IS, macro=False)
+    path = tmp_path / "requete.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    assert cli.main(["exploration", str(path), "--out-dir", str(tmp_path)]) == 0
+    assert seen and all(f is not None for _, f, _ in seen)
+    assert {(g.real, g.prices) for _, _, g in seen} == {
+        (payload["growth"]["real"], payload["growth"]["prices"])}
+
+
+def test_a_firm_pass_in_a_view_that_does_not_exist_is_refused() -> None:
+    with pytest.raises(ValueError, match="inconnue"):
+        main._firm_first_year(IS_24, 2026, view="gelee")

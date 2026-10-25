@@ -1204,19 +1204,37 @@ FIRM_NO_VARIANT = (
 FIRM_TOTAL = "prelevements_entreprise"
 
 
-def _firm_first_year(firm_reform: Any, year: int) -> Any:
-    """The firm layer's part of a predictive first year (PHASE11_SPEC §3, M1).
+def _firm_aging_factor(year: int, growth: Any) -> float:
+    """The aged view's multiplier: GDP of `year` over GDP of the vintage's — the seam the
+    tests stub, so that no test needs the national accounts (D-246)."""
+    from impots.predictif import firmes
+
+    return firmes.aging_factor(year, growth, FIRM_VINTAGE)
+
+
+def _firm_first_year(firm_reform: Any, year: int, *, view: str = FIRST_YEAR_VIEW,
+                     growth: Any = None) -> Any:
+    """The firm layer's part of a predictive first year (PHASE11_SPEC §3, D-244, D-246).
 
     The firm population is the one the layer is built from, of its own vintage, under
-    the law of `year`: it is not aged, and the same figure stands in both views. The IS
-    is counted by exercise, not by cash: the note says both, and M0 settles them.
+    the law of `year`. In the frozen view that is the cost; in the aged view it is
+    followed at the pace of the scenario's nominal GDP from the vintage (M0, R7), which
+    needs the scenario's growth and a vintage that names its year. The IS is counted by
+    exercise, not by cash, and the note says so.
     """
     from types import SimpleNamespace
 
     from impots.entreprises import aggregate as firm_aggregate
     from impots.entreprises import build as firm_build
     from impots.entreprises import runner as firm_runner
+    from impots.predictif import firmes
 
+    if view not in (FIRST_YEAR_VIEW, FROZEN_VIEW):
+        raise ValueError(f"vue « {view} » inconnue : {FIRST_YEAR_VIEW} ou {FROZEN_VIEW}")
+    try:
+        factor = _firm_aging_factor(year, growth) if view == FIRST_YEAR_VIEW else None
+    except firmes.FirmViewError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
     try:
         result = firm_runner.run(_firm_population(), year=year, reform=firm_reform)
     except firm_runner.FirmRunError as error:
@@ -1227,17 +1245,19 @@ def _firm_first_year(firm_reform: Any, year: int) -> Any:
     manifest = firm_build.PROCESSED / f"firms_{FIRM_VINTAGE}.manifest.json"
     synthetic = (not manifest.exists() or bool(
         json.loads(manifest.read_text(encoding="utf-8"))["cells_are_synthetic"]))
+    scale = 1.0 if factor is None else factor
     note = (f"Couche entreprises : population d'entreprises du millésime {FIRM_VINTAGE}, "
-            f"non vieillie, sous le droit de {year}, la même dans les deux vues ; l'IS est "
-            f"compté à l'exercice, non à la caisse (PHASE11_SPEC §3).")
+            f"sous le droit de {year} ; "
+            f"{firmes.note(view, FIRM_VINTAGE, year, factor)} ; l'IS est compté à "
+            f"l'exercice, non à la caisse (PHASE11_SPEC §3).")
     if synthetic:
         note = ("ATTENTION : population d'entreprises construite à partir de cellules "
                 "synthétiques de test, pas de SIRENE × ESANE ; son chiffrage n'est pas une "
                 "affirmation sur la France. " + note)
-    deltas = {name: value for name, value in aggregates.deltas.items()
+    deltas = {name: value * scale for name, value in aggregates.deltas.items()
               if name != FIRM_TOTAL and value}
-    return SimpleNamespace(cost=float(aggregates.reform_cost or 0.0), deltas=deltas,
-                           note=note)
+    return SimpleNamespace(cost=float(aggregates.reform_cost or 0.0) * scale,
+                           deltas=deltas, note=note, factor=factor)
 
 
 def _first_year_request(reform: ReformSpec, year: int, behavioural: bool) -> Any:
@@ -1249,16 +1269,17 @@ def _first_year_request(reform: ReformSpec, year: int, behavioural: bool) -> Any
     return PopulationSimulateRequest(reform=reform, year=year, behavioural=behavioural)
 
 
-def _firm_part(firm_reform: Any) -> dict[str, Any]:
-    """The keyword a predictive pass takes for a firm reform: none when there is none, so
-    a household reform goes through the very call it always did."""
-    return ({"firm_reform": firm_reform}
+def _firm_part(firm_reform: Any, growth: Any = None) -> dict[str, Any]:
+    """The keywords a predictive pass takes for a firm reform — the reform, and the growth
+    scenario its aged view follows (D-246): none when there is none, so a household
+    reform goes through the very call it always did."""
+    return ({"firm_reform": firm_reform, "growth": growth}
             if firm_reform is not None and not firm_reform.is_empty() else {})
 
 
 def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
                       macro: bool = False, view: str = FIRST_YEAR_VIEW,
-                      firm_reform: Any = None) -> Any:
+                      firm_reform: Any = None, growth: Any = None) -> Any:
     """One quick-tier pass for the predictive path's first year — the seam its tests stub.
 
     The population is aged to the year with `uprating` first (D-226), and everything
@@ -1280,7 +1301,7 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
 
     if view not in (FIRST_YEAR_VIEW, FROZEN_VIEW):
         raise ValueError(f"vue « {view} » inconnue : {FIRST_YEAR_VIEW} ou {FROZEN_VIEW}")
-    firm = (_firm_first_year(firm_reform, request.year)
+    firm = (_firm_first_year(firm_reform, request.year, view=view, growth=growth)
             if firm_reform is not None and not firm_reform.is_empty() else None)
     if firm is None:
         return _price_households(request, uprating=uprating, macro=macro, view=view)
@@ -1454,7 +1475,8 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                    f"population sert ({MIN_YEAR}–{MAX_YEAR}).")
     first = _price_first_year(
         _first_year_request(request.reform, year, request.behavioural),
-        uprating=uprating, macro=request.macro, **_firm_part(request.firm_reform))
+        uprating=uprating, macro=request.macro,
+        **_firm_part(request.firm_reform, growth=growth))
     try:
         at = (comportement.evaluate(theta, mechanical=-first.cost, reform=request.reform,
                                     store=store, **first.inputs)

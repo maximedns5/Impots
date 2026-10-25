@@ -64,6 +64,9 @@ class Priced:
     uncovered: Mapping[str, str] = field(default_factory=dict)
     deciles: Sequence[Any] | None = None
     """The pass's decile rows, which the §7 indices read; None when not kept."""
+    layers: Mapping[str, float] | None = None
+    """The cost by layer, « menages » and « entreprises », when a firm reform is priced
+    beside the households' (D-244, D-246); None otherwise."""
 
 
 def trajectory(at: Theta, priced: Priced, reform: Any, *, start: Start, horizon: int,
