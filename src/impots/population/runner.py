@@ -47,6 +47,12 @@ class RunResult:
     sampled: int | None
     timings: dict[str, float] = field(default_factory=dict)
     guards: dict[str, Any] = field(default_factory=dict)
+    persons: pl.DataFrame | None = None
+    """One row per person of the run: `person_id`, `household_id`,
+    `salaire_brut_annuel`, then `salaire_super_brut` and, with a reform,
+    `salaire_super_brut_reform`. Each person's own labour cost, which C2 reads: a
+    household's would lend an earner at the SMIC the cut of a partner at 3 SMIC (D-248).
+    """
 
 
 def subsample(frame: pl.DataFrame, households: int, seed: int = SAMPLE_SEED) -> pl.DataFrame:
@@ -387,6 +393,11 @@ def run(
     baseline_rows = _extract(built, frame, tier, guards)
     timings["baseline_s"] = round(time.perf_counter() - started, 2)
 
+    # Per person, in the frame's order, as the simulation was built. Already computed
+    # for the registry's household row, so this reads openfisca's cache.
+    persons = frame.select("person_id", "household_id", "salaire_brut_annuel").with_columns(
+        pl.Series("salaire_super_brut",
+                  built.calculate("salaire_super_brut", add=True).astype(np.float64)))
     columns: dict[str, np.ndarray] = dict(baseline_rows)
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
@@ -398,6 +409,9 @@ def run(
         timings["reform_s"] = round(time.perf_counter() - started, 2)
         for key, values in reform_rows.items():
             columns[f"{key}_reform"] = values
+        persons = persons.with_columns(pl.Series(
+            "salaire_super_brut_reform",
+            reformed_built.calculate("salaire_super_brut", add=True).astype(np.float64)))
 
     # The MEAN of member weights, not the sum. EXTRIAN is an individual weight, but
     # the survey weights a whole dwelling together: it is identical across members
@@ -446,4 +460,5 @@ def run(
         sampled=sample,
         timings=timings,
         guards=guards,
+        persons=persons,
     )

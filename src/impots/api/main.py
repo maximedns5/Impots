@@ -354,45 +354,47 @@ def _smic_annual(year: int) -> float:
     return float(smic.smic_b_horaire) * float(smic.nb_heures_travail_mensuel) * 12.0
 
 
-def _employer_inputs(request: Any, frame: Any, households: Any, agg: Any) -> dict[str, Any]:
+def _employer_inputs(request: Any, run: Any, agg: Any) -> dict[str, Any]:
     """What C2 and C3 need, or nothing when the reform moves no employer contribution.
 
-    C2 grades by wage, so the SMIC multiple comes from individual salaries; the change
-    in labour cost is only available per household, so every earner in a household
-    carries their household's rate. Exact for the single-earner households that are
-    most of them, an approximation otherwise, and stated.
+    EACH EARNER RESPONDS TO THEIR OWN LABOUR COST, read off the run's `persons`, at the
+    SMIC multiple of their own salary. Every earner used to carry their household's
+    rate: an earner at the SMIC took a share of a partner's cut at 3 SMIC, and the
+    study's plafond, which relieves only wages above 3 SMIC, where C2 does not respond,
+    counted 1 317 jobs, every one of them from such a household (D-248).
 
     THE EARNERS ARE THOSE OF THE HOUSEHOLDS THE RUN PRICED, AT THE RUN'S WEIGHT, as C7's
-    are (`labour.inputs`). `frame` is the whole population; `households` is the quick
-    tier's subsample, reweighted to it (`runner.subsample`). Every earner of the frame
-    at the frame's weight, with no cost change outside the subsample, counted 15 % of
-    the earners: C2 gave 1 558 jobs for 1 Md€ of `t_delta` where the run holds 9 960
-    (D-246).
+    are (`labour.inputs`). `run` is the quick tier's pass, on a subsample reweighted to
+    the population (`runner.subsample`): its `persons` are that subsample's. Every earner
+    of the whole frame at the frame's weight, with no cost change outside the
+    subsample, counted 15 % of the earners: C2 gave 1 558 jobs for 1 Md€ of `t_delta`
+    where the run holds 9 960 (D-246).
     """
     import numpy as np
     import polars as pl
 
-    if "salaire_super_brut_reform" not in households.columns:
+    persons = run.persons
+    if persons is None:
+        from impots.behavioural.channels import ChannelInputMissing
+
+        raise ChannelInputMissing("C2 needs the run's persons; this run has none")
+    if "salaire_super_brut_reform" not in persons.columns:
         return {}
-    cost = households["salaire_super_brut"].to_numpy()
-    cost_reform = households["salaire_super_brut_reform"].to_numpy()
+    earners = (persons.filter(pl.col("salaire_brut_annuel") > 0)
+               .join(run.households.select("household_id", "weight"),
+                     on="household_id", how="inner"))
+    cost = earners["salaire_super_brut"].to_numpy()
+    cost_reform = earners["salaire_super_brut_reform"].to_numpy()
     with np.errstate(divide="ignore", invalid="ignore"):
         rate = np.where(cost > 0, (cost_reform - cost) / np.maximum(cost, 1e-9), 0.0)
     if not np.any(np.abs(rate) > 1e-12):
         return {}
 
-    priced = pl.DataFrame({
-        "household_id": households["household_id"],
-        "_run_weight": households["weight"],
-        "_rate": rate,
-    })
-    earners = (frame.filter(pl.col("salaire_brut_annuel") > 0)
-               .join(priced, on="household_id", how="inner"))
     smic = _smic_annual(request.year)
     return {
         "smic_multiple": earners["salaire_brut_annuel"].to_numpy() / max(smic, 1.0),
-        "relative_cost_change": earners["_rate"].to_numpy(),
-        "earner_weights": earners["_run_weight"].to_numpy(),
+        "relative_cost_change": rate,
+        "earner_weights": earners["weight"].to_numpy(),
         # NOT deltas["cotisations_employeur"] — that figure is gross of the
         # allègements and reported exactly zero for a reform costing 17.7 bn (D-039).
         "contribution_delta": agg.employer_contribution_delta,
@@ -618,7 +620,7 @@ def _macro(request: Any, agg: Any) -> Any:
     )
 
 
-def _behavioural_inputs(request: Any, frame: Any, agg: Any, run_households: Any = None,
+def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
                         uprating_key: str | None = None) -> tuple[dict[str, Any], int | None]:
     """What `band.compute` reads besides the mechanical figure and the reform.
 
@@ -632,7 +634,8 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run_households: Any 
 
     from impots.behavioural import emtr as emtr_module
 
-    employer = _employer_inputs(request, frame, run_households, agg) if run_households is not None else {}
+    employer = (_employer_inputs(request, run, agg)
+                if run is not None and run.households is not None else {})
     emtr_result = emtr_module.cached(
         frame, POPULATION_VINTAGE, year=request.year, reform=request.reform,
         sample=BEHAVIOURAL_EMTR_HOUSEHOLDS, uprating_key=uprating_key,
@@ -688,12 +691,12 @@ def _labour_inputs(request: Any, frame: Any, agg: Any, households: Any) -> dict[
     return labour_module.inputs(frame, households, math.log(after / before))
 
 
-def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None) -> Any:
+def _behavioural(request: Any, frame: Any, agg: Any, run: Any = None) -> Any:
     """The band for a household reform, or a mechanical-only answer with its reason."""
     from impots.api.schemas import Behavioural
     from impots.behavioural import band as band_module
 
-    inputs, households = _behavioural_inputs(request, frame, agg, run_households)
+    inputs, households = _behavioural_inputs(request, frame, agg, run)
     computed = band_module.compute(
         mechanical=-(agg.reform_cost or 0.0), reform=request.reform, **inputs)
     payload = computed.as_dict()
@@ -744,7 +747,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
     result, agg = _run_population(request, frame)
     summary = _baseline_summary()
     behavioural = (
-        _behavioural(request, frame, agg, result.households)
+        _behavioural(request, frame, agg, result)
         if request.behavioural else None
     )
     narrow_band = _narrow_band(request, result.households, frame)
@@ -1327,7 +1330,7 @@ def _price_households(request: PopulationSimulateRequest, *, uprating: Any,
     result, agg = _run_population(request, frame)
     if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
         raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
-    inputs = (_behavioural_inputs(request, frame, agg, result.households,
+    inputs = (_behavioural_inputs(request, frame, agg, result,
                                   uprating_key=uprating.key())[0]
               if request.behavioural else None)
     impulse, uncovered = None, {}

@@ -662,6 +662,27 @@ def test_no_employment_response_is_applied_above_the_fade_out() -> None:
     assert result.central == pytest.approx(0.0, abs=1e-9)
 
 
+def test_c2_counts_no_jobs_as_zero_not_minus_zero() -> None:
+    """D-248. The plafond's shape: an earner at the SMIC whose labour cost does not move,
+    and one at 3.2 SMIC, above the fade-out, whose cost falls. No job either way, but
+    the products summed to +0.0 and the negative elasticity made it −0.0, which the
+    study's page printed « −0,00 » emplois."""
+    store = Store(parameters={
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=("allegement_general_*",)),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=("allegement_general_*",)),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
+    })
+    result = channels.employment_at_the_smic(
+        store, FakeReform(allegement_general_plafond=3.5),
+        smic_multiple=np.array([1.0, 3.2]), relative_cost_change=np.array([0.0, -0.05]),
+        weights=np.array([1_000_000.0, 1_000_000.0]), draws=4, rng=np.random.default_rng(0),
+    )
+    assert [math.copysign(1.0, d) for d in result.draws] == [1.0] * 4
+
+
 def test_a_contribution_cut_passed_through_raises_wages() -> None:
     """The other sign. `contribution_delta` is the employer's bill, so a cut is
     negative — and a cut that passes through fully makes wages RISE by its amount."""
@@ -723,20 +744,27 @@ def test_c2_fails_loudly_without_a_wage_profile() -> None:
         )
 
 
-def _run_households(frame, cost_cut: float):
-    """What `runner.run` hands back for `frame`, without the engine: one row per
-    household at the MEAN of its members' weights, as the runner aggregates, and a
-    labour cost that falls by `cost_cut`."""
+def _run(frame, cost_cut: float = 0.0):
+    """What `runner.run` hands back for `frame`, without the engine. Its persons, each
+    with a labour cost equal to their gross that falls by `cost_cut`, or by their own
+    `cut` when the frame carries one; and one row per household at the MEAN of its
+    members' weights, as the runner aggregates, with its persons' costs summed."""
+    from types import SimpleNamespace
+
     import polars as pl
 
-    return (
-        frame.group_by("household_id")
-        .agg(pl.col("weight").mean(),
-             pl.col("salaire_brut_annuel").sum().alias("salaire_super_brut"))
-        .with_columns((pl.col("salaire_super_brut") * (1.0 - cost_cut))
-                      .alias("salaire_super_brut_reform"))
-        .sort("household_id")
-    )
+    cut = pl.col("cut") if "cut" in frame.columns else pl.lit(cost_cut)
+    persons = frame.select(
+        "person_id", "household_id", "salaire_brut_annuel",
+        pl.col("salaire_brut_annuel").alias("salaire_super_brut"),
+        (pl.col("salaire_brut_annuel") * (1.0 - cut)).alias("salaire_super_brut_reform"))
+    households = (
+        frame.group_by("household_id").agg(pl.col("weight").mean())
+        .join(persons.group_by("household_id").agg(
+            pl.col("salaire_super_brut").sum(), pl.col("salaire_super_brut_reform").sum()),
+            on="household_id")
+        .sort("household_id"))
+    return SimpleNamespace(households=households, persons=persons)
 
 
 def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
@@ -780,19 +808,69 @@ def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
             "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
     })
 
-    def jobs(households) -> float:
-        inputs = api_main._employer_inputs(request, frame, households, agg)
+    def jobs(run) -> float:
+        inputs = api_main._employer_inputs(request, run, agg)
         return channels.employment_at_the_smic(
             store, reform, smic_multiple=inputs["smic_multiple"],
             relative_cost_change=inputs["relative_cost_change"],
             weights=inputs["earner_weights"], draws=1, rng=np.random.default_rng(0),
         ).central
 
-    full = jobs(_run_households(frame, 0.01))
-    quick = jobs(_run_households(subsample(frame, n // 10), 0.01))
+    full = jobs(_run(frame, 0.01))
+    quick = jobs(_run(subsample(frame, n // 10), 0.01))
     assert full == pytest.approx(91_000.0, rel=1e-9)
     assert quick == pytest.approx(91_000.0, rel=1e-9), (
         "the quick tier must count the jobs of the population it was reweighted to")
+
+
+def test_c2_gives_each_earner_their_own_cost_change() -> None:
+    """D-248. Every earner carried their household's change in labour cost, so an earner
+    at the SMIC took a share of a partner's cut at 3 SMIC. Raising the plafond relieves
+    only wages above 3 SMIC, where C2 does not respond, and C2 still counted 1 317 jobs
+    for its first bundle of the study: every one of them from a household with an earner
+    above 3 SMIC.
+
+    Worked example, two households weighing 1 000 000 each. In the first, an earner at the
+    SMIC whose labour cost does not move, and a partner at 3.2 SMIC whose cost falls 5 %,
+    the plafond's shape. In the second, one earner at the SMIC whose cost falls 1 %. Each
+    on their own change: the partner is above the fade-out and the first earner has
+    nothing to respond to, so the jobs are the second household's,
+    1 000 000 × 0.43 × 0.01 = 4 300. The household's rate lent the first earner
+    0.05 × 3.2 / 4.2 = 3.81 % of a cut that was not theirs: 16 381 jobs more.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+
+    smic = api_main._smic_annual(2026)
+    frame = pl.DataFrame({
+        "household_id": [0, 0, 1],
+        "person_id": [0, 1, 2],
+        "salaire_brut_annuel": [smic, 3.2 * smic, smic],
+        "weight": [1_000_000.0] * 3,
+        "cut": [0.0, 0.05, 0.01],
+    })
+    reform = FakeReform(allegement_general_plafond=3.5)
+    request = SimpleNamespace(year=2026, reform=reform)
+    agg = SimpleNamespace(employer_contribution_delta=-1.0e9)
+    store = Store(parameters={
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=("allegement_general_*",)),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=("allegement_general_*",)),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
+    })
+    inputs = api_main._employer_inputs(request, _run(frame), agg)
+    jobs = channels.employment_at_the_smic(
+        store, reform, smic_multiple=inputs["smic_multiple"],
+        relative_cost_change=inputs["relative_cost_change"],
+        weights=inputs["earner_weights"], draws=1, rng=np.random.default_rng(0),
+    ).central
+    assert jobs == pytest.approx(4_300.0, rel=1e-9), (
+        "an earner must respond to their own labour cost, not to their household's")
 
 
 def test_the_reform_cache_keeps_a_bounded_number_of_files(tmp_path, monkeypatch):
