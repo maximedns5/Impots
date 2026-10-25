@@ -1194,11 +1194,12 @@ def _frozen_year_note(year: int) -> str:
               f"population {POPULATION_VINTAGE} telle quelle, sans vieillissement.")
 
 
-#: Why the firm layer's taxes have no macro effect in the chain yet (PHASE11_SPEC §4).
+#: Why the firm layer's taxes have no macro effect in the chain (PHASE11_SPEC §4, D-246).
 FIRM_NO_VARIANT = (
-    "impôt des entreprises, sans variante dans Mésange (D-214) : ni effet sur le PIB ni "
-    "rétroaction lue ici, plutôt qu'un multiplicateur emprunté ; la phase 11 les ouvre "
-    "sur des sources internationales (D-243, PHASE11_SPEC §4)")
+    "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par "
+    "élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son "
+    "solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB "
+    "dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice")
 #: The firm totals that are the sum of the others, not an instrument.
 FIRM_TOTAL = "prelevements_entreprise"
 
