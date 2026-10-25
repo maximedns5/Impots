@@ -95,25 +95,30 @@ def test_the_window_is_wide_enough_for_the_step_that_motivated_it() -> None:
     assert result.flagged
 
 
-def _run_households(frame):
-    """What `runner.run` hands back for `frame`, without the engine: one row per
-    household at the MEAN of its members' weights, as the runner aggregates, and a
-    labour cost moved by the frame's `move`."""
+def _run(frame):
+    """What `runner.run` hands back for `frame`, without the engine. Its persons, each
+    with a labour cost equal to their gross, moved by their own `move`; and one row per
+    household at the MEAN of its members' weights, as the runner aggregates, with its
+    persons' wages and costs summed."""
+    from types import SimpleNamespace
+
     import polars as pl
 
-    return (
-        frame.group_by("household_id")
-        .agg(pl.col("weight").mean(),
-             pl.col("salaire_brut_annuel").sum().alias("salaire_brut"),
-             pl.col("move").sum())
-        .with_columns(
-            pl.col("salaire_brut").alias("salaire_super_brut"),
-            pl.col("salaire_brut").alias("salaire_imposable"),
-            (pl.col("salaire_brut") + pl.col("move")).alias("salaire_super_brut_reform"),
-            pl.lit(0.0).alias("revenu_disponible"),
-            pl.lit(0.0).alias("revenu_disponible_reform"))
-        .sort("household_id")
-    )
+    persons = frame.select(
+        "person_id", "household_id", "salaire_brut_annuel",
+        pl.col("salaire_brut_annuel").alias("salaire_super_brut"),
+        (pl.col("salaire_brut_annuel") + pl.col("move")).alias("salaire_super_brut_reform"))
+    households = (
+        frame.group_by("household_id").agg(pl.col("weight").mean())
+        .join(persons.group_by("household_id").agg(
+            pl.col("salaire_brut_annuel").sum().alias("salaire_brut"),
+            pl.col("salaire_super_brut").sum(), pl.col("salaire_super_brut_reform").sum()),
+            on="household_id")
+        .with_columns(pl.col("salaire_brut").alias("salaire_imposable"),
+                      pl.lit(0.0).alias("revenu_disponible"),
+                      pl.lit(0.0).alias("revenu_disponible_reform"))
+        .sort("household_id"))
+    return SimpleNamespace(households=households, persons=persons)
 
 
 def test_the_wage_family_reads_the_quick_tier_at_its_own_weights() -> None:
@@ -153,11 +158,45 @@ def test_the_wage_family_reads_the_quick_tier_at_its_own_weights() -> None:
     request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
     expected = 1.98 / 2.98
 
-    full = api_main._narrow_band(request, _run_households(frame), frame)
+    full = api_main._narrow_band(request, _run(frame))
     assert full.share == pytest.approx(expected, rel=1e-9)
     drawn = subsample(frame, 100)
     assert drawn.height == 100
-    quick = api_main._narrow_band(request, _run_households(drawn), frame)
+    quick = api_main._narrow_band(request, _run(drawn))
     assert quick.share == pytest.approx(expected, rel=1e-9), (
         "the quick tier must measure the share of the population it was reweighted to")
     assert quick.flagged
+
+
+def test_the_wage_family_reads_each_earner_s_own_movement() -> None:
+    """D-248. Each earner carried their household's movement split evenly among its
+    earners, so a partner sitting at a plafond who did not move took half of a cut that
+    reached a wage far below it, and counted it inside the window.
+
+    Worked example, two households of weight 1 000. In the first, an earner at a
+    2.25-SMIC plafond whose labour cost does not move, and a partner at 1.2 SMIC, far
+    below it, whose cost falls 1 000 EUR. In the second, one earner at the plafond whose
+    cost falls 400 EUR. On their own movements, 400 of 1 400 EUR come from inside the
+    window: 29 %, under the bar. Split evenly, the first earner took 500 of the
+    partner's 1 000, and the share read 900 / 1 400 = 64 %: flagged.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.api.schemas import ReformSpec
+
+    smic = api_main._smic_annual(2024)
+    frame = pl.DataFrame({
+        "household_id": [0, 0, 1],
+        "person_id": [0, 1, 2],
+        "salaire_brut_annuel": [2.25 * smic, 1.2 * smic, 2.25 * smic],
+        "weight": [1_000.0] * 3,
+        "move": [0.0, -1_000.0, -400.0],
+    })
+    request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
+    flag = api_main._narrow_band(request, _run(frame))
+    assert flag.share == pytest.approx(400 / 1_400, rel=1e-9), (
+        "an earner's movement is their own, not a share of their household's")
+    assert not flag.flagged

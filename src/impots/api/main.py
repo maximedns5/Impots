@@ -401,7 +401,7 @@ def _employer_inputs(request: Any, run: Any, agg: Any) -> dict[str, Any]:
     }
 
 
-def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
+def _narrow_band(request: Any, run: Any) -> Any:
     """How much of this reform's movement comes from near its own thresholds.
 
     Measured per threshold FAMILY against the income each family is defined on — the
@@ -414,6 +414,7 @@ def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
     from impots import narrow_band as narrow_band_module
     from impots.api.schemas import NarrowBandFlag
 
+    households = run.households
     if "revenu_disponible_reform" not in households.columns:
         return None
     smic = _smic_annual(request.year)
@@ -446,24 +447,24 @@ def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
     )
     # The earners are those of the households the run priced, at the run's weight, as
     # C2's are (D-247): the frame's weight on the quick tier's households tilted the
-    # share towards the heavy ones, which the draw keeps at their own weight.
-    if frame is not None:
+    # share towards the heavy ones, which the draw keeps at their own weight. Each moves
+    # by their OWN labour cost, from the run's persons (D-248): split evenly, a partner
+    # sitting at a plafond who did not move took half of a cut far below it.
+    if run.persons is not None:
         import polars as pl
 
-        priced = pl.DataFrame({
-            "household_id": households["household_id"],
-            "_run_weight": households["weight"],
-            "_move": cost_move,
-        })
         earners = (
-            frame.filter(pl.col("salaire_brut_annuel") > 0)
-            .with_columns(pl.len().over("household_id").alias("_earners"))
-            .join(priced, on="household_id", how="inner")
+            run.persons.filter(pl.col("salaire_brut_annuel") > 0)
+            .join(households.select("household_id", "weight"),
+                  on="household_id", how="inner")
         )
         wage_income = earners["salaire_brut_annuel"].to_numpy()
-        # Each earner carries their household's movement, split evenly among them.
-        wage_move = (earners["_move"] / earners["_earners"]).to_numpy()
-        wage_weights = earners["_run_weight"].to_numpy()
+        wage_move = (
+            (earners["salaire_super_brut_reform"] - earners["salaire_super_brut"]).to_numpy()
+            if "salaire_super_brut_reform" in earners.columns
+            else np.zeros(earners.height)
+        )
+        wage_weights = earners["weight"].to_numpy()
 
     families = [
         ({k: v for k, v in spec.items() if k in taxable_knobs},
@@ -750,7 +751,7 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
         _behavioural(request, frame, agg, result)
         if request.behavioural else None
     )
-    narrow_band = _narrow_band(request, result.households, frame)
+    narrow_band = _narrow_band(request, result)
     blind_spot = _niche_blind_spot(request, agg)
     macro = _macro(request, agg) if getattr(request, "macro", False) else None
     return PopulationResponse(
