@@ -301,6 +301,34 @@ def _impute_niches(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any]
     return niches_module.impute(rfr_per_part, weights, year=year)
 
 
+def _impute_capital(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any]:
+    """Hand out the PFU's base from DGFiP n° 41's fractiles, keyed on RFR per part (D-248).
+
+    Needs a simulation that has already been built, for the same reason `_impute_niches`
+    does. **It runs FIRST, before the niches, and the order is load-bearing:** the
+    capital income enters the RFR, and the niche deciles are deciles of that RFR. The
+    top-tail rake is refused beside it (`run`): it fits n° 41's RFR, which holds the
+    capital, by scaling earnings alone.
+    """
+    from impots.population import capital as capital_module
+
+    simulation = built.simulation
+    rfr = np.asarray(simulation.calculate("rfr", str(year)), dtype=np.float64)
+    parts = np.asarray(simulation.calculate("nbptr", str(year)), dtype=np.float64)
+    if (parts <= 0).any():
+        raise WiringError("a foyer fiscal reports zero parts; RFR per part is undefined")
+    weights = (
+        frame.group_by("foyer_id").agg(pl.col("weight").mean().alias("weight"))
+        .sort("foyer_id")["weight"].to_numpy().astype(np.float64)
+    )
+    if weights.shape != rfr.shape:
+        raise WiringError(
+            f"foyer weights {weights.shape} do not line up with RFR {rfr.shape}")
+    menages = float(frame.group_by("household_id").agg(pl.col("weight").mean())
+                    ["weight"].sum())
+    return capital_module.impute(rfr / parts, weights, menages=menages, year=year)
+
+
 def _rake_top_tail(built: Any, frame: pl.DataFrame, year: int) -> tuple[pl.DataFrame, Any]:
     """Rake the income distribution's upper tail onto DGFiP n° 41's fractiles (L1, D-121).
 
@@ -340,6 +368,7 @@ def run(
     sample: int | None = None,
     impute_niches: bool = False,
     rake_top_tail: bool = False,
+    impute_capital: bool = False,
 ) -> RunResult:
     """Run the population through current law and, optionally, one reform.
 
@@ -352,7 +381,30 @@ def run(
     construction and cannot afterwards be cited as evidence of anything —
     `population.niches` says so at length, and `margins.NICHE_CREDITS_BY_DECILE`
     carries `use="calibration"`.
+
+    `impute_capital` hands out the base the PFU taxes, from n° 41's fractiles (D-248).
+    It is a calibration too — `margins.CAPITAL_PFU_BY_FRACTILE` — and runs before the
+    rake and the niches, which read the RFR it moves. The tables describe the 2024
+    income: another year is refused by name, before any pass. So is the top-tail rake
+    beside it: the rake fits n° 41's RFR, which holds the capital, by scaling earnings
+    alone, so with the capital imputed it takes 5,4 % off the wage bill (measured on
+    2 000 ménages) and the spent wage margin no longer holds.
     """
+    if impute_capital:
+        from impots.population import capital as capital_module
+
+        if year != capital_module.YEAR:
+            raise ValueError(
+                f"imputation des revenus du capital pour {year} : la DGFiP n° 41 décrit "
+                f"les revenus {capital_module.YEAR}, et une autre année demanderait de "
+                f"vieillir l'assiette, ce que l'imputation ne fait pas (D-248)")
+        if rake_top_tail:
+            raise ValueError(
+                "imputation du capital et recalage de la queue (L1) ensemble : le "
+                "recalage vise le RFR de la DGFiP n° 41, qui contient le capital, en ne "
+                "touchant qu'aux salaires, pensions et chômage ; avec le capital imputé "
+                "il retire 5,4 % à la masse salariale, et la marge des salaires, "
+                "dépensée, ne tient plus (D-248)")
     frame = pl.read_parquet(population) if isinstance(population, Path) else population
     if sample is not None:
         frame = subsample(frame, sample)
@@ -365,13 +417,21 @@ def run(
     built = build_simulation(frame, baseline(), year)
     timings["build_s"] = round(time.perf_counter() - started, 2)
 
+    # The capital income first: it enters the RFR the rake and the niches read (D-248).
+    capital_bases: dict[str, Any] | None = None
+    if impute_capital:
+        started = time.perf_counter()
+        capital_bases = _impute_capital(built, frame, year)
+        built = build_simulation(frame, baseline(), year, capital_bases=capital_bases)
+        timings["capital_s"] = round(time.perf_counter() - started, 2)
+
     # L1's rake, BEFORE the niche imputation: the niche deciles are deciles of RFR per
     # part, and the rake moves RFR per part.
     rake: Any = None
     if rake_top_tail:
         started = time.perf_counter()
         frame, rake = _rake_top_tail(built, frame, year)
-        built = build_simulation(frame, baseline(), year)
+        built = build_simulation(frame, baseline(), year, capital_bases=capital_bases)
         timings["rake_s"] = round(time.perf_counter() - started, 2)
         guards["top_tail_total_shift"] = rake.total_shift
         guards["top_tail_foyers_moved"] = rake.foyers_moved
@@ -380,7 +440,8 @@ def run(
     if impute_niches:
         started = time.perf_counter()
         niche_bases = _impute_niches(built, frame, year)
-        built = build_simulation(frame, baseline(), year, niche_bases)
+        built = build_simulation(frame, baseline(), year, niche_bases,
+                                 capital_bases=capital_bases)
         timings["impute_s"] = round(time.perf_counter() - started, 2)
 
     started = time.perf_counter()
@@ -391,7 +452,8 @@ def run(
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
         reformed_built = build_simulation(
-            frame, reformed_for(reform, year), year, niche_bases)
+            frame, reformed_for(reform, year), year, niche_bases,
+            capital_bases=capital_bases)
         reform_guards: dict[str, Any] = {}
         reform_rows = _extract(reformed_built, frame, tier, reform_guards)
         guards["nbptr_min_reform"] = reform_guards["nbptr_min"]

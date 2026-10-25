@@ -1082,6 +1082,12 @@ class ResultRows(BaseModel):
     which is every household in the synthetic population — the 19.53 bn of niches
     nationally is why the population's IR is validated against the barème line and not
     against net receipts."""
+    pfu: float
+    """The prélèvement forfaitaire unique owed on capital income, income-tax part: a
+    « dont » of `ir`, never added to it (D-248). Zero for a household, which declares no
+    capital income here; non-zero in a population run with `impute_capital`."""
+    prelevements_sociaux_capital: float
+    """The social levies on that income, which `ir` does not hold (D-248)."""
     # benefits block (famille) — full tier only
     af: float | None = None
     aeeh: float | None = None
@@ -1407,6 +1413,12 @@ class PopulationSimulateRequest(BaseModel):
     reconciliation line stops being independent evidence for that component. It also
     costs an extra baseline pass, since the deciles are of a quantity the first pass
     has to compute."""
+    impute_capital: bool = False
+    """Hand out the base the PFU taxes from DGFiP n° 41's fractiles of RFR per part, so
+    the population carries capital income at all (D-248). Opt-in and OFF BY DEFAULT for
+    the same reason as the niches: it is a CALIBRATION, and the PFU part of the net-yield
+    line stops being evidence. It costs an extra pass, and holds for the 2024 income
+    only: another year is refused by name."""
 
     @model_validator(mode="after")
     def _check_reform(self) -> PopulationSimulateRequest:

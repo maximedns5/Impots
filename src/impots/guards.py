@@ -131,6 +131,9 @@ def not_greater(
 #: way round here.
 STATE_RECEIPTS = (
     "ir", "csg_imposable", "csg_deductible", "crds", "cotisations_salariales",
+    # Not in `ir`, and zero unless capital income is imputed (D-248). `pfu` is NOT here:
+    # it is a part of `ir`, and counting it twice is the failure this ledger catches.
+    "prelevements_sociaux_capital",
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.

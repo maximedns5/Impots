@@ -702,6 +702,7 @@ def _run_population(request: Any, frame: Any) -> tuple[Any, Any]:
             frame, year=request.year, reform=request.reform, tier="full",
             sample=QUICK_TIER_HOUSEHOLDS,
             impute_niches=getattr(request, "impute_niches", False),
+            impute_capital=getattr(request, "impute_capital", False),
         )
     except WiringError as error:  # pragma: no cover - guarded upstream
         raise HTTPException(status_code=500, detail=str(error)) from error

@@ -218,8 +218,10 @@ def _group_frame(frame: pl.DataFrame, key: str, columns: list[str]) -> pl.DataFr
 def _set_niche_inputs(
     simulation: Any, tax_benefit_system: Any, year: int,
     bases: dict[str, Any], frame: pl.DataFrame, foyer_ids: Any,
+    years: tuple[int, ...] | None = None,
 ) -> None:
-    """Write imputed niche bases onto the simulation, on the right entity.
+    """Write imputed niche bases onto the simulation, on the right entity, for `year` or
+    for each of `years`.
 
     Raises on a case the system does not carry or an array of the wrong length: a
     mis-shaped input is not an error in openfisca, it is a silent zero.
@@ -248,24 +250,26 @@ def _set_niche_inputs(
                 f"niche case {case!r} has {values.shape}, expected ({foyer_ids.size},) "
                 f"— one value per foyer fiscal, in `foyer_ids` order"
             )
-        if variable.entity.key == "foyer_fiscal":
-            simulation.set_input(case, str(year), values)
-        elif variable.entity.key == "individu":
-            # Scattered onto the principal declarant. A foyer-shaped array written to
-            # an individual variable is silently dropped, not rejected.
-            individual = np.zeros(frame.height, dtype=np.float64)
-            individual[principal_rows] = values
-            simulation.set_input(case, str(year), individual)
-        else:
-            raise WiringError(
-                f"niche case {case!r} lives on {variable.entity.key}, which this "
-                f"wiring does not handle"
-            )
+        for period in (years or (year,)):
+            if variable.entity.key == "foyer_fiscal":
+                simulation.set_input(case, str(period), values)
+            elif variable.entity.key == "individu":
+                # Scattered onto the principal declarant. A foyer-shaped array written to
+                # an individual variable is silently dropped, not rejected.
+                individual = np.zeros(frame.height, dtype=np.float64)
+                individual[principal_rows] = values
+                simulation.set_input(case, str(period), individual)
+            else:
+                raise WiringError(
+                    f"niche case {case!r} lives on {variable.entity.key}, which this "
+                    f"wiring does not handle"
+                )
 
 
 def build_simulation(
     frame: pl.DataFrame, tax_benefit_system: Any, year: int,
     niche_bases: dict[str, Any] | None = None,
+    capital_bases: dict[str, Any] | None = None,
 ) -> PopulationSimulation:
     """Wire a population frame into a vectorised simulation for `year`.
 
@@ -274,6 +278,9 @@ def build_simulation(
     are scattered onto each foyer's principal declarant, since the entitlement follows
     the member and openfisca will silently ignore a foyer-shaped array written to an
     individual variable.
+
+    `capital_bases` has the same shape and is written on every year of the history, as
+    the earnings are (D-248).
     """
     check_role_vocabulary(tax_benefit_system)
 
@@ -367,6 +374,12 @@ def build_simulation(
     if niche_bases:
         _set_niche_inputs(
             simulation, tax_benefit_system, year, niche_bases, frame, foyer_ids)
+    # The capital income on every year of the history, as the earnings are: the RFR of
+    # N-2, which sets the CSG rate on a pension, holds it (D-248).
+    if capital_bases:
+        _set_niche_inputs(
+            simulation, tax_benefit_system, year, capital_bases, frame, foyer_ids,
+            years=tuple(year - offset for offset in range(HISTORY_YEARS, -1, -1)))
 
     # Failure mode #5, and last on purpose: the RFR of N-2 is computed from the inputs
     # of N-2, so every one of them must already be set.
