@@ -18476,3 +18476,120 @@ touche pas au chiffre mécanique. `ruff` passe sur `src`, `tests` et `scripts`.
 
 **Ce qui reste.** Rien de ce défaut. Ce qui restait de D-246 reste : le choix du
 propriétaire sur R5, et les recherches de la courbe à rejouer pour le C2 corrigé.
+
+## D-248 — C2 au coût de chaque salarié, et la courbe et l'étude rejouées
+
+**Le fait.** Après D-246, les recherches de la courbe et l'étude du plafond ont été
+rejouées pour porter le C2 corrigé. Le plafond y a montré un second défaut. Le relever ne
+soulage que les salaires au-delà de 3 SMIC, où C2 ne répond pas. C2 lui comptait pourtant
+1 317 emplois au premier paquet de l'étude, 740 par milliard. C2 prêtait à chaque salarié
+le changement du coût du travail de son ménage : un salarié au SMIC prenait sa part de la
+baisse d'un conjoint à 3 SMIC. Chaque salarié répond désormais au coût de son propre
+travail. La bande étroite partageait de même le mouvement d'un ménage entre ses salariés :
+elle lit aussi le mouvement de chacun. La courbe et l'étude ont été rejouées avec les deux
+corrections de C2. Leur dette ne bouge pas d'un chiffre ; leur emploi au voisinage du SMIC,
+si.
+
+**La cause, mesurée.** Sur la passe de l'étude, plafond à 3,5 SMIC, vue vieillie de 2026,
+C2 à θ = ½ : les 1 317 emplois viennent tous de ménages à plusieurs salariés dont l'un
+dépasse 3 SMIC, aucun d'un ménage à un seul salarié. Aucun salarié seul sous 3 SMIC n'y
+voit son coût bouger. La lecture du multiple du SMIC sur le salaire annuel n'est donc pas
+en cause ici. Le taux du ménage l'est.
+
+**La correction.** Le runner rend ses personnes (`RunResult.persons`), avec leur propre coût
+du travail avant et après la réforme. Il le calculait déjà pour la ligne du ménage : c'est
+une lecture du cache d'openfisca. `_employer_inputs` lit la passe et donne à chaque
+salarié son propre taux, au poids de son ménage dans la passe. Sommée sur les salariés, la
+baisse redonne le coût de la réforme, à un rapport de 1,000 pour les trois boutons
+mesurés. `_narrow_band` lit de même le mouvement propre de chaque salarié. Un dernier
+défaut, mineur : sans aucun emploi à compter, C2 rendait −0,0, que la page aurait imprimé
+« −0,00 » emplois. Le zéro signé est ramené à zéro.
+
+**La mesure de C2.** Sur la passe de l'étude, premier paquet de chaque grille, C2 à θ = ½,
+par milliard de la première année :
+
+| Bouton | Coût | Avant D-246 | Après D-246 | Après D-248 | Boîte θ |
+|---|---|---|---|---|---|
+| Plafond, 3,5 SMIC | 1,78 Md€ | 128 | 740 | 0 | 0 à 0 |
+| `t_delta`, 38,31 % | 1,00 Md€ | 1 555 | 9 939 | 13 380 | 9 820 à 16 051 |
+| `t_min`, 2,1 % | 0,76 Md€ | 748 | 4 832 | 5 348 | 4 025 à 6 341 |
+
+Les chiffres de D-246 sont remplacés. Le `t_delta` fait 2,50 fois les emplois du plancher
+par milliard, contre 2,08 : plus loin du double, le sens du point 5 de D-241 tient.
+
+**Ce qui reste de l'écart, revu.** Pour le `t_delta`, les pas de D-246 deviennent : 22 480
+emplois pour un milliard posé au SMIC à −0,5 ; 19 335 à −0,43 ; 15 774 là où le bouton porte
+ses euros, qui atteignent des emplois à 27 259 €, dont 5 % au-dessus de 2 SMIC ; 13 380 avec
+le profil de C2, à une élasticité pondérée de −0,32. Les 19 % au-dessus de 2 SMIC de D-246
+étaient en partie le défaut : la baisse d'un salarié au SMIC prêtée à un conjoint mieux
+payé. Pour le plancher : 19 335, 9 751 et 5 348, des emplois à 44 097 €, dont 41 % au-dessus
+de 2 SMIC. L'écart au bas du CAE tombe d'un facteur 2,3 à 1,7. Le reste, jusqu'au haut du
+CAE et au Trésor-Éco n° 97, reste l'élasticité, donc la source (D-246).
+
+**Pour R5.** À 12 000 € par emploi, C2 porte un autofinancement de 6,4 % pour le plancher
+et de 16,1 % pour le `t_delta`, et non plus de 5,8 à 11,9 %. Mésange compte 13 079 ETP par
+milliard à trois ans (D-242) : C2 en compte 13 380 personnes pour le `t_delta`, en un tour.
+Le choix reste au propriétaire.
+
+**La bande étroite.** Population de 2024, passe rapide, les deux réformes à seuil des
+tests de l'API : la part passe de 77,43 et 74,13 % (D-247) à 100 %. C'est la part attendue.
+Ces plafonds ne bougent que les salariés entre l'ancien seuil et le nouveau, tous à moins de
+15 % du nouveau ; le partage égal en faisait fuir le mouvement vers des conjoints hors de la
+fenêtre. Les deux réformes restent signalées, plus nettement.
+
+**La courbe rejouée.** Sur `3ba628c`, le commit des deux corrections de C2, depuis une
+copie de travail figée sur lui : les rapports nomment un seul commit, comme le rendu
+l'exige. Huit passes par bouton. Contre le premier tour, sur `893e4de`, désormais sous
+`reports/courbe_premier_tour/` : requêtes, coûts, Δb, coins de la boîte θ et candidats,
+chiffre pour chiffre, sous les deux persistances. Seul l'indice de l'emploi au voisinage du
+SMIC bouge, au premier paquet : +1 558 → +13 408 [+9 840 ; +16 083] pour le `t_delta`,
++570 → +4 077 [+3 068 ; +4 833] pour le plancher. Un tour intermédiaire, sur `881f41f`,
+avec la seule correction de D-246, a été commité (`88bb9af`) puis remplacé : il portait
+encore le taux du ménage.
+
+**L'étude rejouée.** Ses quatre rapports doivent venir d'un même commit, et redonner le
+premier tour chiffre pour chiffre. Sur le code d'aujourd'hui, le plafond prendrait le
+reclassement de D-239 et la boucle de la variante uniforme : Δb passerait de +0,55 à
++0,47 point, et la réponse préenregistrée changerait. Elle est donc rejouée sur
+`d77feb9` : `e0c3d7f`, le commit de son second tour, et les seuls changements de `src/` de
+D-246 et de cette entrée, rien d'autre. Ce commit, et `0fd5c00`, qui ne portait que
+D-246, sont fusionnés dans la branche sans en changer l'arbre, pour que les rapports
+nomment un commit joignable. Les quatre instruments ont tourné sur lui, huit passes
+chacun. Contre le second tour, sur `e0c3d7f`, désormais sous `reports/etude_second_tour/`,
+et contre le premier, sur `6dab3a4` : chiffre pour chiffre. Seul l'emploi au voisinage du
+SMIC du plafond bouge, +227 [+170 ; +270] → 0. Les trois autres instruments n'ouvrent pas
+C2, et leurs rapports ne diffèrent que par leur commit et leur date. Le complément du
+plafond (D-239), sur `cacd43a`, n'est pas rejoué : la page n'en rend pas les indices.
+
+**La page.** `docs/PREDICTIF_ETUDE.md` est rendue par son script. Elle nomme le commit de
+chaque tour et dit pourquoi l'étude et la courbe ont été rejouées. Le rendu refuse de
+tourner si un tour ne redonne pas le précédent, chiffre pour chiffre, sur les coûts, les
+Δb et les coins de la boîte θ. Hors de ces paragraphes, des commits et des dates, la page
+ne change qu'en les lignes de l'emploi au voisinage du SMIC.
+
+**Les tests.**
+- Dans `tests/test_behavioural.py`, deux cas nouveaux, vus échouer. Le salarié au SMIC dont
+  le conjoint à 3,2 SMIC voit son coût baisser : 20 681 emplois, contre 4 300 à la main. Le
+  zéro signé : quatre tirages à −0,0. Le cas de D-246 passe sur la nouvelle signature de
+  `_employer_inputs`, son assertion inchangée.
+- Dans `tests/test_narrow_band.py`, un cas nouveau, vu échouer : un conjoint assis sur le
+  plafond, qui ne bouge pas, lisait 64 %, signalé, contre 29 % à la main.
+- Dans `tests/test_predictif_etude.py`, six cas : le premier tour de la courbe et le second
+  de l'étude nommés et redonnés chiffre pour chiffre ; un chiffre bougé d'un milliardième,
+  ou un rapport manquant au tour gardé, refusés. Chacun a été vu échouer avant sa garde, et
+  six mutations du script ont été tuées.
+- Les trois cas tueurs de C2 passent aussi sur le code de `d77feb9` et le cas de D-246 sur
+  celui de `0fd5c00`.
+- Les tests ciblés : 500 réussis et 4 sautés dans douze fichiers, de `test_predictif_etude`
+  à `test_population`. Deux échouent faute de données, ici comme sur le code d'avant : le
+  serveur de la DGFiP ne rend plus tels que le manifeste les décrit ni
+  `dgfip_stats_33_ifi_2024.xlsx` ni le fichier n° 39 dont se construit
+  `firm_cells_2023.json`. Les deux cas lents de l'API qui lisent la bande étroite ont tourné
+  et passent. Les autres cas lents n'ont pas tourné. Le runner modifié a servi aux 48
+  passes des six recherches et aux cinq passes de mesure. `ruff` passe sur `src`, `tests`
+  et `scripts`. Le `make full` reste au propriétaire.
+
+**Ce qui reste.**
+- Le `make full` du propriétaire, avant toute fusion.
+- Le choix du propriétaire sur R5, sur des chiffres de C2 où la chaîne n'est plus en cause.
+- Le rapport du complément du plafond porte encore l'ancien C2, que la page ne rend pas.

@@ -3,7 +3,7 @@
   "titre": "Relèvement du t_delta de la réduction générale de 2026",
   "question": "Un relèvement du t_delta de la courbe de 2026, de 37,81 % à 38,31, 39,31, 40,31 ou 41,31 %, fait-il baisser la dette en 2035, et pour quels θ ?",
   "computed": "2026-10-25",
-  "commit": "881f41f5509410d6770c28975e706250619c6842",
+  "commit": "3ba628c260bbd2b1c3f6cd51d5d13af5ea3c5db5",
   "where": "un conteneur cloud de Claude Code, en tâche de fond",
   "request": {
     "name": "courbe_t_delta",
@@ -623,12 +623,12 @@
             "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
             "available": true,
             "values": {
-              "2026": 9959.518835194292
+              "2026": 13407.792223316199
             },
             "box": {
               "2026": [
-                7353.317784764719,
-                11914.169623016473
+                9840.485695826943,
+                16083.272118933142
               ]
             },
             "reason": "",
@@ -1393,12 +1393,12 @@
             "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
             "available": true,
             "values": {
-              "2026": 9959.518835194292
+              "2026": 13407.792223316199
             },
             "box": {
               "2026": [
-                7353.317784764719,
-                11914.169623016473
+                9840.485695826943,
+                16083.272118933142
               ]
             },
             "reason": "",
