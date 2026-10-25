@@ -267,3 +267,22 @@ def test_a_response_whose_cost_is_not_its_layers_sum_refuses_to_exist(chain) -> 
     with pytest.raises(ValidationError, match="mechanical_first_year_by_layer"):
         PredictifResponse.model_validate(
             {k: v for k, v in body.items() if k != "mechanical_first_year_by_layer"})
+
+
+def test_the_is_gdp_index_stands_beside_the_debt_and_never_in_it(chain) -> None:
+    """D-246: a point of IS cut has its GDP gap at θ, a ten-year ramp, while the debt path
+    reads no GDP effect at all — no loop, and D-218 gives none without one."""
+    body = chain.post("/predictif/simulate", json={
+        **PAYLOAD, "firm_reform": {"is_taux_normal": 0.24}, "macro": True}).json()
+    index = next(i for i in body["indices"] if i["key"] == "pib_is")
+    assert index["available"], index["reason"]
+    assert index["values"] == {"2026": pytest.approx(0.00945),
+                               "2027": pytest.approx(0.0189),
+                               "2028": pytest.approx(0.02835)}
+    assert index["box"]["2028"] == [pytest.approx(-0.0003), pytest.approx(0.057)]
+    assert body["gdp_gap"] is None and body["feedback_primary"] is None
+    assert body["delta"] == pytest.approx(body["delta_mechanical"])
+    household = chain.post("/predictif/simulate", json={
+        **PAYLOAD, "firm_reform": {"cs_taux": 0.02}}).json()
+    index = next(i for i in household["indices"] if i["key"] == "pib_is")
+    assert not index["available"] and index["reason"] == indices_module.NO_IS_RATE

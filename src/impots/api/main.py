@@ -924,11 +924,7 @@ def _is_rate_change_points(request: Any) -> float | None:
     C8 reads (D-221). None when the reform leaves the normal rate alone."""
     from impots.entreprises import system as firm_system
 
-    rate = getattr(request.reform, "is_taux_normal", None)
-    if rate is None:
-        return None
-    current = firm_system.baseline().parameters(f"{request.year}-01-01").impot_societes
-    return 100.0 * (rate - float(current.taux_normal))
+    return firm_system.normal_rate_change_points(request.reform, request.year)
 
 
 @app.post("/entreprises/simulate", response_model=FirmResponse)
@@ -1416,6 +1412,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     from impots.dette import reference as reference_module
     from impots.dette.path import BANNER as DEBT_BANNER
     from impots.dette.path import DebtError
+    from impots.entreprises import system as firm_system
     from impots.predictif import chaine, comportement, retroaction
     from impots.predictif import indices as indices_module
     from impots.predictif.theta import ThetaError
@@ -1479,7 +1476,9 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             store=store, reform=request.reform, mechanical=-first.cost,
             inputs=first.inputs, year=year,
             firm_reason=(indices_module.FIRM_PENDING if _firm_part(request.firm_reform)
-                         else indices_module.FIRM_LAYER))
+                         else indices_module.FIRM_LAYER),
+            is_rate_change=firm_system.normal_rate_change_points(request.firm_reform,
+                                                                 year))
         side = len(results) > 1
         # Side by side, the chain-stage indices (balance, debt, interest) belong to each
         # path; the response lists them as such rather than pick one path's.
