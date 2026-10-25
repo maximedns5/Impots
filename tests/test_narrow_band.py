@@ -122,7 +122,7 @@ def _run(frame):
 
 
 def test_the_wage_family_reads_the_quick_tier_at_its_own_weights() -> None:
-    """D-250. The quick tier prices 20 000 households, reweighted to the population; the
+    """D-251. The quick tier prices 20 000 households, reweighted to the population; the
     wage family read every earner of the WHOLE frame at the frame's weight, with no
     movement outside the subsample. A share, so the zeros cancel and nothing is divided
     by the sampling fraction; but the households drawn weighed their own weight, not the
@@ -169,7 +169,7 @@ def test_the_wage_family_reads_the_quick_tier_at_its_own_weights() -> None:
 
 
 def test_the_wage_family_reads_each_earner_s_own_movement() -> None:
-    """D-251. Each earner carried their household's movement split evenly among its
+    """D-252. Each earner carried their household's movement split evenly among its
     earners, so a partner sitting at a plafond who did not move took half of a cut that
     reached a wage far below it, and counted it inside the window.
 
