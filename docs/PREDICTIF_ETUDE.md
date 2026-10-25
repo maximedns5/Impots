@@ -263,7 +263,9 @@ Commit `cacd43af7a5a506d476cfcbc454a58439d1e614b`, le 2026-10-21, ici : un conte
 
 ## La courbe de 2026, préenregistrée à part
 
-Depuis la refonte de 2026, la réduction générale est une courbe, et l'étude n'en chiffrait que le plafond, qui n'est plus que son seuil de sortie (D-239). Les boutons de la courbe (D-240) sont rejoués ici, après l'étude, et préenregistrés à part : les requêtes sous `etude/courbe/` ont été commitées avant toute passe, avec le pronostic écrit dans D-241. Chacune tient le cadre de l'étude champ pour champ ; seuls son nom, son titre, sa question et sa grille diffèrent. Chaque rapport a joué sa requête, à l'identique, sur le même commit : `893e4de1f8908f6b2d15af6192250494e386a065`, le 2026-10-23. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+Depuis la refonte de 2026, la réduction générale est une courbe, et l'étude n'en chiffrait que le plafond, qui n'est plus que son seuil de sortie (D-239). Les boutons de la courbe (D-240) sont rejoués ici, après l'étude, et préenregistrés à part : les requêtes sous `etude/courbe/` ont été commitées avant toute passe, avec le pronostic écrit dans D-241. Chacune tient le cadre de l'étude champ pour champ ; seuls son nom, son titre, sa question et sa grille diffèrent. Chaque rapport a joué sa requête, à l'identique, sur le même commit : `881f41f5509410d6770c28975e706250619c6842`, le 2026-10-25. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+Un premier tour a tourné sur le commit du préenregistrement, `893e4de1f8908f6b2d15af6192250494e386a065`. Son emploi au voisinage du SMIC (C2) ne lisait que 15 % des salariés (D-246). Le second tour le corrige. C2 n'entre ni dans les recettes ni dans la dette, et le second tour redonne le premier chiffre pour chiffre sur les coûts, les Δb et les coins de la boîte θ : `reports/courbe_premier_tour/` le garde, et le rendu refuse de tourner si un seul chiffre diffère.
 
 | Instrument | Bouton | Grille | Coût 2026, vieillie |
 |---|---|---|---|
@@ -314,7 +316,7 @@ Paquet le plus proche de la cible : **2,1 %**.
 | Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
 | Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
 | Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +570 [+430 ; +676] |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +3 683 [+2 777 ; +4 363] |
 | Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +2,50 [−5,35 ; +10,35] ; à 2 ans : +6,98 [−0,96 ; +14,91] ; à 3 ans : +9,97 [+1,74 ; +18,19] |
 | Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
 | Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
@@ -363,7 +365,7 @@ Paquet le plus proche de la cible : **38,31 %**.
 | Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
 | Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
 | Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +1 558 [+1 150 ; +1 864] |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +9 960 [+7 353 ; +11 914] |
 | Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +3,28 [−7,04 ; +13,61] ; à 2 ans : +9,17 [−1,26 ; +19,61] ; à 3 ans : +13,11 [+2,29 ; +23,92] |
 | Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
 | Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
