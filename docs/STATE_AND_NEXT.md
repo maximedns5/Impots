@@ -1,6 +1,21 @@
-# State of the project, and the directions open — 2026-10-25 (Phase 11, M0 to M4)
+# State of the project, and the directions open — 2026-10-25 (Phase 11, M0 to M4, M6 begun)
 
-The fourth 2026-10-25 update adds D-249, Phase 11's M4: the PFU has its knob, read back
+The fifth 2026-10-25 update adds D-250, the first step of Phase 11's M6: the study on
+the wider menu is preregistered before any of its passes. Two new instruments, four
+bundles each: the IS normal rate, from 25 % down to 21.75 %, and the PFU, from 12.8 %
+down to 8.8 %, inside C10's support. The study's four instruments are replayed as they
+are, as controls. Left out, with reasons: the CVAE, which the law abolishes in 2030
+while the explorer carries the first year's cost ten years, and whose one rate knob
+moves the top band only; the t_delta's self-financing, which waits on M5. What the code
+got first: the CDHR is now a receipt of the ledger. openfisca takes it out of disposable
+income but not out of `ir`, and with imputed capital it takes back 18 % of a one-point
+PFU cut in 2026 (0.693 bn against 0.842), so the ledger refused the pass. Its holders'
+dividends, 10.2 of 53.1 bn, leave C10's base. This corrects D-249's 2026 row. C8 is read
+in the chain for an IS cut. The prognosis: no IS bundle lowers the debt; under « tenu »,
+every PFU bundle lowers it by about 0.03 point at θ = ½, only at the corners where the
+multiplier is 1, and on a sign the uncounted wage shift could turn. 226 mutations, 225
+killed, one equivalent.
+The fourth 2026-10-25 update added D-249, Phase 11's M4: the PFU has its knob, read back
 (guard 9), a household can declare capital income, and the dividends' response is channel
 C10, in the receipts. Its source is Bach et al. (PSE WP 2019-70 v2): elasticities to the
 net-of-tax rate of 2.5 (firm owners, 2018) to 3.2 (2013), 0 to 2.4 for the others, and the
@@ -388,8 +403,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **250 decision
-entries**, D-000 to D-249, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **251 decision
+entries**, D-000 to D-250, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -700,8 +715,9 @@ download list.
 * **TVA per-rate and the accises' bases**, blocked on COICOP and the volume series.
 * **§6.1 beyond 2021**, if a current-vintage source for 2019–2020 appears.
 * **F1b's build: the RCM imputation.** Built (D-248), opt-in, and imputed by itself for
-  a PFU reform, aged on the wage index after 2024 (D-249). Left: the top-tail rake
-  beside it, which needs capital and earnings raked apart.
+  a PFU reform, aged on the wage index after 2024 (D-249); the CDHR it reaches is a
+  receipt since D-250. Left: the top-tail rake beside it, which needs capital and
+  earnings raked apart.
 * **F7 — succession/DMTG.** Gate only, never past it without the owner.
 * **F8 — aggregate VAT.** Still waiting on Budget de Famille 2026 (~2027-28).
 * **The CAF cross-check.** 30 minutes at a browser, owner-only. **No reCAPTCHA
@@ -777,8 +793,10 @@ download list.
    reference values the paper does not print; C8 remains the entry index. The capital
    income is imputed (D-248). M4 is done (D-249): the PFU knob, read back, and the
    dividends' response C10 in the receipts; the wage shift it leaves out is the next
-   number that could turn a PFU cut's answer. M5 waits on the owner's R5 choice. The page's
-   predictive panel does not send a firm reform yet. Then Phase 12, the past, and
+   number that could turn a PFU cut's answer. M5 waits on the owner's R5 choice. M6 is
+   begun (D-250): the study on the wider menu, IS and PFU, preregistered with its
+   controls; its passes and its page come next (D-251). The page's predictive panel does
+   not send a firm reform yet. Then Phase 12, the past, and
    Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin

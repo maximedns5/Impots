@@ -18852,3 +18852,178 @@ n° 2019-70, version 2 (2024). `behavioural/dividendes.py` lit dans le PDF :
 - Le sens de la réforme : les hausses ont des élasticités plus fortes, et θ ne le lit pas.
 - L'option pour le barème (2OP), absente du ménage comme de la population.
 - M5 attend le choix du propriétaire sur R5 ; M6 peut mettre le PFU au menu de l'étude.
+
+## D-250 — Phase 11, M6, premier temps : l'étude du menu élargi, avant ses passes
+
+**Le fait.** Le §8 de la spec repose la question de l'étude sur le menu de la phase 11.
+Ce commit pose ses deux requêtes sous `etude/phase11/`, une par instrument nouveau, ses
+contrôles, et le pronostic ci-dessous, avant toute passe de l'étude. Les rapports
+nommeront ce commit. Le résultat sera une autre entrée, D-251.
+
+**Ce que le code a reçu d'abord.** Trois pièces, sans lesquelles l'étude ne se posait pas.
+Elles sont dans le commit précédent, `71f9e65`.
+
+- **La CDHR au grand livre.** La passe de dimensionnement du PFU en 2026 a été refusée
+  par la garde de partie double : 0,693 Md€ de revenu disponible contre 0,842 Md€ d'IR.
+  Depuis 2025, openfisca ôte la contribution différentielle sur les hauts revenus du
+  revenu disponible, à côté de l'IR, mais pas de `impot_revenu_restant_a_payer`, l'`ir`
+  du projet. Elle porte à 20 % de son RFR l'impôt d'un haut revenu, PFU compris. Sans
+  revenus du capital, elle ne mordait sur personne. Avec l'imputation de D-248, elle
+  reprend une part de toute baisse du PFU. La garde refusait à raison : un poste bougeait
+  sans être compté.
+- Elle devient une ligne de sortie, `cdhr`, un instrument de l'agrégat et une recette de
+  l'État. L'impulsion la lit avec l'IR, dans la variante de l'IR de Mésange : elle se
+  lève avec l'impôt sur le revenu, sur la même déclaration. La variante lit donc l'IR net
+  de ce que la CDHR reprend, 0,693 Md€ et non 0,842.
+- **C10 sans les foyers que la CDHR tient.** Pour eux, la baisse du PFU est reprise en
+  entier : le taux net de leurs dividendes ne bouge pas. Un ménage qui paie la CDHR, avant
+  ou après la réforme, sort de l'assiette de C10, et ses dividendes sont nommés à part.
+  Un ménage qui n'y entre qu'avec la baisse en sort aussi, alors qu'il répondrait en
+  partie : c'est un biais vers une réponse plus faible, petit, et dit.
+- **Les indices des entreprises dans la chaîne.** Pour une baisse du taux normal de l'IS,
+  les créations de sociétés sont C8, à θ, avec leur boîte aux deux bouts de leur ligne :
+  un indice illustratif, jamais une recette. La R&D et la charge fiscale de production
+  disent chacune leur raison : le CIR reste hors de la chaîne, et la charge se lit sur le
+  panneau de la phase 8. La raison d'avant promettait que la phase 11 les ferait entrer ;
+  M3 n'en a ouvert aucun (D-247), et la promesse est retirée.
+- **Une raison périmée.** La chaîne disait les dividendes fermés parce que « la population
+  ne porte aucun revenu du capital ». C'est faux depuis D-248, et C10 est ouvert depuis
+  D-249. La raison est retirée, comme celle de l'offre de travail en D-220, et l'exemple
+  prédictif rendu de nouveau : cette ligne seule change.
+
+**Une correction de D-249.** La ligne de 2026 de sa passe réelle prenait pour coût la
+baisse de l'IR, au palier léger, qui ne calcule pas le revenu disponible. La CDHR en
+reprend 18 %. Les chiffres justes, au palier complet sur 20 000 ménages, vue vieillie :
+
+| PFU à 11,8 %, 2026 | coût statique | C10, θ = 0 | θ = ½ | θ = 1 | repris à θ = ½ |
+|---|---|---|---|---|---|
+| D-249 | 0,842 Md€ | 0,431 | 0,452 | 0,710 | 54 % |
+| corrigé | 0,693 Md€ | 0,348 | 0,365 | 0,574 | 53 % |
+
+- L'assiette de C10 passe de 53,1 à 42,9 Md€ : la CDHR tient 10,2 Md€ de dividendes.
+- Les lignes de 2024 tiennent : la CDHR n'existe qu'à partir de 2025.
+
+**Le cadre**, celui de l'étude à l'identique. Chaque requête ne diffère de
+`etude/ir.json` que par son nom, son titre, sa question et sa grille : dépenses gelées en
+volume, croissance réelle de 1 % et prix de 2 %, taux implicite tenu, salaires à 3 %,
+comportement et boucle chiffrés, θ = ½ partout, les deux persistances côte à côte, dix
+ans. Cible : Δb 2035 ≤ 0. La couche entreprises est servie sur son millésime réel, 2023
+(`IMPOTS_FIRM_VINTAGE`) : la fixture n'a pas d'année, et sa vue vieillie est refusée.
+
+**Le menu.** Deux instruments nouveaux, quatre paquets chacun : huit paquets, seize passes.
+- Le taux normal de l'IS, de 25 % à 24,75, 23,75, 22,75 et 21,75 %. Un point coûte
+  3,375 Md€ en 2026, vue vieillie : de 0,84 à 10,97 Md€. Aucune passe de population : une
+  réforme des seules entreprises n'en lance pas (D-244).
+- Le taux du PFU, part impôt sur le revenu, de 12,8 % à 11,8, 10,8, 9,8 et 8,8 %. De 0,69
+  à 2,46 Md€. Le taux net des dividendes bouge de 1,5 à 5,8 %, sous le support de C10,
+  6 % (D-249). La grille s'arrête là : au-delà, C10 serait illustratif.
+- Les quatre instruments de l'étude, pour contrôle : ses quatre requêtes telles quelles,
+  rejouées sur ce commit, leurs rapports sous `reports/etude_phase11/controles/`.
+
+**Ce qui n'y entre pas, et pourquoi.**
+- **La CVAE.** Son calendrier la laisse au droit de 2026, à 0,28 %. Mais l'explorateur
+  reporte le coût de la première année, tenu en part de PIB sur dix ans. Or la loi de
+  finances pour 2025 la ramène à 0,19 % en 2028 et 0,09 % en 2029, et l'abroge en 2030.
+  Le report chiffrerait six années d'un impôt que le droit n'a plus. De plus, son seul
+  bouton de taux, `cvae_taux_max`, ne règle que la tranche au-dessus de 50 M€ : le
+  baisser ouvrirait une marche à ce seuil, une baisse que personne n'écrit. Elle attend
+  le chemin annuel, et un bouton du barème entier.
+- **Le `t_delta` avec son autofinancement.** M5 attend le choix du propriétaire sur R5.
+  Sans lui, le rejouer redonnerait D-242, déjà au dossier.
+
+**Le dimensionnement.** Quatre passes avant ce commit, chacune le seul coût de 2026, vue
+vieillie, sans comportement, sans boucle, sans dette. L'IS à 24,75 % coûte 0,844 Md€, à
+21,75 % 10,969 Md€. Le PFU à 11,8 % coûte 0,693 Md€ : l'IR baisse de 0,842, la CDHR
+reprend 0,149. À 8,8 %, il coûte 2,459 Md€ : l'IR baisse de 3,367, la CDHR reprend
+0,908, soit 27 %. Ces passes ont aussi partagé l'assiette des dividendes entre les
+ménages que la CDHR tient et les autres : 10,2 et 42,9 Md€ à un point, 19,0 et 34,0 Md€ à
+quatre. C'est une propriété de la population, pas une réponse. Aucune ne dit rien de
+l'écart de dette.
+
+**Ce qu'on savait déjà.** Le pronostic n'est pas aveugle, et il le dit.
+- Sans boucle ni recette de comportement, Δb 2035 vaut 0,30887 point par milliard de
+  coût de la première année : D-242, pour le plafond et la courbe. L'IS est dans ce cas.
+  Mésange n'a pas de variante de l'IS, et sa boucle par élasticités est refusée (D-246).
+- La boucle de la variante de l'IR se lit sur les rapports de la décote, dont le
+  comportement est presque nul. Au paquet de 3,14 Md€, par milliard : 0,2728 point sous
+  « éteint » et 0,1156 sous « tenu » à θ = ½. Aux coins où le multiplicateur vaut 0 :
+  0,3055 et 0,2662. Aux coins où il vaut 1 : 0,2378 et −0,0371.
+- C10, sur les assiettes dimensionnées, rend à un point 0,348, 0,365 et 0,574 Md€ à
+  θ = 0, ½ et 1 ; à quatre points, 0,975, 1,022 et 1,606 Md€.
+- L'écart du PFU se lit donc d'avance. Le coût porté, moins C10 porté, moins ce que la
+  boucle de l'IR rend par milliard.
+
+**Le pronostic**, écrit avant les passes.
+1. L'IS. Aucun paquet ne fait baisser la dette en 2035, sous aucune persistance et dans
+   aucune vue. Δb vaut 0,30887 point par milliard : de +0,26 à +3,39 points en vue
+   vieillie, de +0,24 à +3,12 en vue figée. Les deux persistances donnent les mêmes
+   chiffres, la boîte θ est réduite à un point, et la page dit la boucle absente.
+2. Le PFU sous « éteint ». À θ = ½, aucun paquet ne fait baisser la dette : de +0,08 à un
+   point de baisse, à +0,36 à quatre. Au premier paquet, 2 coins sur 16 passent sous zéro,
+   ceux où le multiplicateur et les deux élasticités valent 1. Au dernier, aucun.
+3. Le PFU sous « tenu ». À θ = ½, chaque paquet fait baisser la dette, d'environ 0,03
+   point en 2035. Ce serait le premier paquet de toute l'étude à tenir la cible à θ = ½.
+   Il ne serait pas robuste : les 8 coins où le multiplicateur vaut 1 sont sous zéro, les
+   8 où il vaut 0 au-dessus. La réponse dépend de θ, et d'abord du multiplicateur, comme en
+   D-238.
+4. Ce signe tient à ce que C10 ne compte pas. Les propriétaires de firme se versent 0,31 €
+   de salaire en moins par euro de dividende en plus (tableau 2 B de Bach et al.), et à
+   θ = ½ toute la réponse est la leur. À un point, le signe se retourne si ce salaire
+   déplacé coûte plus de 29 % de son montant en recettes ; à quatre points, plus de 9 %.
+   Le projet ne chiffre ni ce salaire, ni l'IS que l'entreprise paierait sur le profit
+   qu'il devient. La page le dira à côté du chiffre.
+5. La vue figée donne les mêmes signes, sur des coûts plus bas.
+6. Contrôle : la CSG, la décote et le barème de l'IR redonnent D-238 au dix-millième,
+   coûts, écarts, coins et candidats, sous chaque persistance et dans chaque vue. Rien de
+   ce qui a changé depuis ne les touche : sans capital imputé, la CDHR vaut zéro, et C10
+   ne s'ouvre pas. Le plafond ne redonne pas D-238 : reclassé sous la variante uniforme
+   (D-239), il redonne le complément de D-239, au dix-millième.
+7. Les indices du paquet le plus proche. Pour l'IS, celui à 24,75 % : l'effet sur le PIB,
+   +0,024 % à dix ans à θ = ½, hors de la dette ; les créations, +0,043 point de taux de
+   création, boîte de 0 à +0,078, illustratives. L'investissement reste fermé (D-247).
+
+**Les biais déclarés.**
+- Le PFU tombe dans la variante de l'IR de Mésange. Sa part de 12,8 % est l'impôt sur le
+  revenu (art. 200 A du CGI), mais la variante répartit une baisse sur tous les ménages,
+  quand celle-ci va aux plus hauts déciles, qui en consomment moins. La boucle rend
+  sans doute trop : un biais vers une dette plus basse.
+- C10 ne compte ni le déplacement des salaires ni les plus-values futures : le même sens.
+- L'IS : le report tient neuf ans la part de la CEBGE dans le coût de 2026, 0,37 Md€ par
+  point sur 3,10 en vue figée (D-244), que le droit éteint en 2027. Δb est surestimé
+  d'environ un dixième. Et l'effet sur le PIB reste hors de la dette (D-218). Les deux
+  vont vers une dette plus haute.
+
+**Les tests.** Dans `tests/test_cdhr.py`, sept cas :
+- la baisse du PFU que la CDHR reprend en entier, sur un foyer de 1 M€ de dividendes ;
+- la ligne, l'instrument et la recette ;
+- la garde de partie double qui compte la CDHR ;
+- l'impulsion qui lit l'IR net ;
+- l'assiette de C10 sans les ménages tenus, et ses dividendes nommés à part ;
+- le diagnostic qui les nomme ;
+- un passage sans la ligne, qui garde l'assiette de D-249.
+
+Les sept ont échoué sur le code d'avant. Un, d'abord, pour une raison du test : il
+appelait le canal sans générateur aléatoire. Corrigé, il échoue encore sur le code
+d'avant, sur le diagnostic qui manque.
+
+Dans `tests/test_indices.py`, deux cas : C8 à θ et sa boîte, calculés à la main sur
+l'exemple de D-221, et la raison de chaque autre indice des entreprises. Un cas dans
+`tests/test_predictif.py` : les dividendes ne sont plus dits fermés. Les trois ont échoué
+sur le code d'avant. Deux tests écrivaient l'ancien comportement, la promesse et la
+raison périmée ; ils disent désormais le nouveau. C'est la spécification qui change, et
+cette entrée le dit.
+
+Le balayage de D-229 reçoit sept mutations écrites à la main, une par règle nouvelle,
+et `tests/test_cdhr.py` dans sa suite large. `--missing` les a toutes tuées : le
+rapport compte 226 mutations, 225 tuées, une équivalente, aucune survivante.
+
+Les tests ciblés passent : 720 dans 33 fichiers, ceux de la chaîne prédictive, de
+l'explorateur, de l'étude, du balayage, du comportement, des entreprises, du PFU, de la
+CDHR et du choc macro, et 6 sont sautés. Ceux de la population, des agrégats, des
+instruments et de la page : 423. Ceux du moteur et des cas de référence, que la ligne
+nouvelle touche, avec la charte et les dépendances : 429. `ui/check.mjs` et `ruff`
+passent.
+
+**Ce qui suit.** Les recherches, une à la fois, sur ce commit : l'IS, le PFU, puis les
+quatre contrôles. Puis D-251 : le résultat, sa section de `docs/PREDICTIF_ETUDE.md`, et
+ses gardes. La porte de M6 reste le `make full` du propriétaire.
