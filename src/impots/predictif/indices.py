@@ -149,6 +149,13 @@ NOT_ADDABLE = {
     frozenset({"revenu_disponible_deciles", "revenu_disponible_reel"}): (
         "les déciles sont le chiffre mécanique, et la ligne de Mésange contient ce même "
         "choc : leur somme compterait deux fois le transfert aux ménages."),
+    # PHASE11_SPEC §5 and §10, guard 7 (D-247).
+    frozenset({"pib_is", "investissement_entreprises"}): (
+        "l'effet de l'IS sur le PIB contient déjà l'investissement qu'il fait faire : "
+        "leur somme le compterait deux fois."),
+    frozenset({"pib_is", "creations_societes"}): (
+        "l'effet de l'IS sur le PIB contient déjà les sociétés qu'il fait naître : leur "
+        "somme les compterait deux fois."),
 }
 
 FIRM_LAYER = ("Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les "

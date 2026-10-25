@@ -1548,6 +1548,16 @@
       "licence": "IPP — accès libre",
       "description": "Rapport IPP n° 25, « Évaluation d'impact de la fiscalité des dividendes », octobre 2019. Tableau 6.3 p. 182 : effet du PFU 0,604 (0,150) centime par euro de bilan, la synthèse p. 9 imprimant « +6 centimes » ; p. 38 : s'appuie sur la version de travail de Boissel et Matray, rétractée. Phase 11, §6 (D-245) : relu, non utilisé.",
       "quarantined": false
+    },
+    "oecd_cts_etr_baseline_fra_2025.csv": {
+      "url": "https://sdmx.oecd.org/public/rest/data/OECD.CTP.TPS,DSD_ETR@DF_ETR_BASELINE,2.1/FRA.A.......?startPeriod=2025&endPeriod=2025&format=csvfilewithlabels",
+      "sha256": "ac23f9617635769bef1d6ca814262d14bee1e2b534e9dc425cf80466657c4d3d",
+      "bytes": 11934,
+      "downloaded": "2026-10-25",
+      "licence": "OCDE — Corporate Tax Statistics, réutilisation avec mention de la source",
+      "description": "OCDE, Corporate Tax Statistics, jeu DSD_ETR@DF_ETR_BASELINE (version 2.1) : les taux effectifs de la France en 2025, sur la base de référence. Par scénario (FIXED : 3 % réel et 1 % d'inflation ; CS : taux du pays) et par catégorie d'actifs (NRS bâtiments, TAN biens corporels, AWS logiciels acquis, INV stocks, COMPOSITE) : TMEI (EMTR), TMEE (EATR), coût du capital (PBAR) et valeur actuelle des amortissements (CAPITAL_ALLOWANCES, en % de l'investissement initial, publiée pour NRS, TAN et AWS). Scénario fixe : TMEI composite 14,970, TMEE 23,613. Les biens corporels n'ont qu'une valeur d'amortissement, moyenne de cinq sous-groupes. Lu pour D-247 : la condition que M0 pose à l'indice des créations (R4).",
+      "quarantined": false,
+      "provenance": "API SDMX de l'OCDE, URL de requête stable et reproductible : pays, fréquence et années dans la clé, CSV avec libellés par le paramètre format. Vérifié identique à l'octet sur deux téléchargements successifs le 2026-10-25. Une révision du jeu changera ses octets ; le refus de data fetch sera alors le signal d'un nouveau millésime, pas une panne."
     }
   }
 }

@@ -102,7 +102,11 @@ CLOSED: dict[str, str] = {
         "horizon ni ligne de solde (§5, D-219). Le rapport final du comité "
         "d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne "
         "chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il "
-        "résume une littérature, sans estimation française (§6.2, D-221)."),
+        "résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) "
+        "de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec "
+        "ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs "
+        "de référence que l'article n'imprime pas, et la seule décomposition publiée, la "
+        "figure A E.1, est une image sans valeurs (D-247)."),
     "transferts": (
         "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent "
         "0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le "
@@ -111,7 +115,13 @@ CLOSED: dict[str, str] = {
     "créations d'entreprises": (
         "C8 est un indice illustratif de la couche entreprises, en points de taux de "
         "création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une "
-        "baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221)."),
+        "baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le "
+        "niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode "
+        "de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 "
+        "contre 14,97), faute des amortissements de ses cinq sous-groupes de biens "
+        "corporels. La construction des auteurs prend aussi ce que le projet n'a pas : "
+        "les amortissements du guide fiscal d'Ernst & Young et les marges des branches "
+        "américaines (STAN) (D-247)."),
     "R&D et CIR": (
         "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais "
         "une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une "

@@ -18458,3 +18458,118 @@ l'artefact de base. Ruff aussi.
 - M4 attend l'imputation des revenus du capital.
 - M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2.
 - Les trois exceptions de D-245 restent au propriétaire.
+
+## D-247 — Phase 11, M3 : les taux effectifs de l'OCDE, et deux indices nationaux fermés
+
+**Le fait.** M3 de la phase 11 est fait : le §5 de la spec, les R3 et R4 de M0. Il n'ouvre
+aucun indice. M0 avait fixé, avant tout calcul, la condition d'ouverture de chacun. Les
+deux ont été calculées ou lues sur les fichiers, et aucune ne tient. L'indice national des
+créations est refusé ; celui de l'investissement reste fermé. Les raisons de la chaîne le
+disent, chiffres compris. C8, la ligne française de l'IPP, reste l'indice des créations.
+
+**La méthode de l'OCDE.**
+- `entreprises/taux_effectifs.py` écrit la méthode de l'annexe explicative des Corporate
+  Tax Statistics : les taux de Devereux et Griffith dans l'investissement permanent de
+  Klemm, le TMEI hors taxe, les stocks (équations A.1 à A.9, A.14 et A.15).
+- Ses paramètres sont lus dans le PDF de l'annexe : le scénario fixe (1 % d'inflation, 3 %
+  réel, 4,03 % nominal, tableau A.2), le rendement avant impôt de 20 % (§ 8), 35 % de
+  dette pour 65 % de fonds propres (§ 18), les dépréciations du tableau A.5. Le taux nominal
+  doit redonner Fisher, sans quoi le scénario est mal lu.
+- Le taux légal est celui de la couche entreprises : 25 % et la contribution sociale,
+  25,825 % en 2025. Les taux de l'OCDE omettent la contribution exceptionnelle de 2025
+  (§ 15 de l'annexe), et la méthode aussi.
+- Les taux que l'OCDE publie pour la France en 2025 entrent au manifeste :
+  `oecd_cts_etr_baseline_fra_2025.csv`. C'est une requête de son API SDMX, et ses octets
+  sont identiques sur deux téléchargements, comme pour la table d'Eurostat avant elle.
+- Chaque catégorie est chiffrée sur la valeur d'amortissement que l'OCDE publie pour elle.
+  Ce qui est éprouvé est la méthode, non une lecture du droit français. Les stocks sont
+  valorisés au premier entré, premier sorti (v = 1) : le TMEI publié le désigne parmi les
+  trois valeurs que l'annexe admet, et le TMEE le recoupe.
+
+**Ce qu'elle redonne**, en points, scénario fixe :
+
+| Catégorie | TMEI calculé | publié | TMEE calculé | publié |
+|---|---|---|---|---|
+| Bâtiments | 7,33 | 7,33 | 22,77 | 22,76 |
+| Stocks | 30,10 | 30,09 | 25,30 | 25,30 |
+| Logiciels | 12,73 | 12,64 | 23,37 | 23,35 |
+| Biens corporels | 12,31 | 9,82 | 23,32 | 23,04 |
+| Composite | 15,62 | 14,97 | 23,69 | 23,61 |
+
+- Trois catégories reviennent à un dixième de point près. L'écart des logiciels, 0,09 sur
+  le TMEI, n'a pas le profil d'un amortissement et reste inexpliqué.
+- Les biens corporels ne reviennent pas. L'OCDE chiffre cinq sous-groupes, chacun à sa
+  dépréciation économique, et ne publie qu'une valeur d'amortissement, leur moyenne.
+  Chiffrés à cette moyenne, ils donnent 12,31 au lieu de 9,82.
+- Leurs deux écarts sont pourtant dans le rapport que donne un amortissement qui varie
+  d'un sous-groupe à l'autre. Quels que soient les amortissements, leur écart à la
+  moyenne déplace le TMEI et le TMEE dans le rapport p/((1 − τ) r), soit 8,99 ; on
+  observe 8,88. Ce n'est donc pas la méthode qui échoue : ce sont les paramètres que la
+  condition demande qui ne sont pas publiés.
+
+**Les créations au niveau national (R4) : refusées.**
+- La condition de M0 demandait les deux composites à 0,1 point près. Le TMEE y est
+  (23,69 contre 23,61), mais le TMEI manque de 0,65 point (15,62 contre 14,97). Le canal
+  est refusé.
+- Même la condition remplie, l'indice ne se calculerait pas encore. Le TMEE de Da Rin, Di
+  Giacomo et Sembenelli n'est pas celui de l'OCDE : il divise par la valeur actuelle avant
+  impôt, (R* − R)/R*, et non par le revenu (tableau 1, p. 34). Il prend un financement
+  par actions nouvelles, une dépréciation de 12,5 %, les amortissements des machines selon
+  le guide fiscal d'Ernst & Young, et les marges des branches américaines (STAN). Le projet
+  n'a ni ce guide ni ces marges.
+- La raison que la chaîne donne pour les créations le dit. Un test la lie au calcul : si
+  la condition tenait un jour, ce test échouerait, et la raison devrait changer avec lui.
+
+**L'investissement (R3) : fermé.**
+- M0 ne l'ouvrait que sur l'équation (6) de Hanappi, Millot et Turban, la seule lecture du
+  taux légal qui ait ses écarts-types. Il fallait d'abord reproduire une décomposition que
+  l'OCDE publie.
+- Il n'y en a pas à reproduire. Les composantes de l'équation (6) se mesurent autour de
+  valeurs de référence que l'article nomme sans les imprimer (annexes C et E). La figure
+  A E.1, seule décomposition publiée, est une image matricielle, sans aucune valeur
+  lisible.
+- Le résidu d'interaction pèse en outre −0,576 (0,101) dans la colonne 5, plus que la
+  part du taux légal, −0,440. Une baisse de taux déplace les deux. Sans les valeurs de
+  référence, le second ne se calcule pas.
+- La raison de la chaîne pour l'IS et l'investissement le dit. Un test vérifie sur le PDF
+  ce qu'elle affirme : la page de la figure ne porte qu'une image, et aucun chiffre entre
+  son titre et sa note.
+
+**Garde 7 du §10.** L'effet de l'IS sur le PIB contient déjà l'investissement qu'il fait
+faire et les sociétés qu'il fait naître. L'indice `pib_is` ajouté à
+`investissement_entreprises` ou à `creations_societes` est refusé avec cette raison, dans
+les deux sens. La somme de deux indices était déjà refusée ; celle-ci l'est maintenant avec
+sa raison propre.
+
+**Ce qui change ailleurs.** Les raisons de deux canaux fermés portent la conclusion de M3.
+L'exemple de D-228 est rendu de nouveau, sans nouvelle passe : seules ces deux lignes
+changent.
+
+**Les tests.** `tests/test_taux_effectifs.py`, 22 cas :
+- les fichiers lus tels qu'imprimés et le taux légal de la couche ;
+- les formules : les formes fermées sans dette, le poids de la dette, aucun écart sans
+  impôt ;
+- les trois catégories qui reviennent, les biens corporels qui ne reviennent pas, la
+  condition manquée et le rapport des écarts ;
+- les refus des lecteurs, dont l'absence de pypdf ;
+- les raisons de la chaîne liées au calcul et vérifiées sur les deux articles ;
+- la garde 7 dans les deux sens.
+
+Les quatre tests de la garde 7 et des raisons ont échoué sur le code d'avant. Seize
+mutations des formules et des lectures, écrites à la main, ont toutes été tuées. Le
+balayage de D-229 reçoit le module, et quatre mutations écrites à la main : la garde 7
+deux fois, la tolérance de la condition, et le composite à quatre catégories. Le rapport
+compte 219 mutations : 218 tuées, 1 équivalente, 0 survivante. Les tests ciblés passent :
+372 dans vingt et un fichiers, ceux de la chaîne prédictive, des entreprises, de
+l'exemple, de l'étude, du manifeste et du rapport des gardes. Ruff aussi.
+
+**Ce qui reste.**
+- **Pour rouvrir les créations,** il faut les amortissements des cinq sous-groupes de biens
+  corporels de la France, d'une source stable, puis le guide d'Ernst & Young et les marges
+  STAN pour la construction des auteurs.
+- **Pour rouvrir l'investissement,** il faut les valeurs de référence de la décomposition,
+  et les paramètres de Spengel et al. (2020) sur lesquels elle est faite.
+- Ni l'un ni l'autre n'entrera dans le PIB : la garde 7 le tient d'avance.
+- M4 attend l'imputation des revenus du capital.
+- M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2.
+- Le panneau prédictif de la page n'envoie pas encore de réforme des entreprises.
