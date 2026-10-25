@@ -18701,6 +18701,158 @@ Ruff aussi.
 - La CDHR reste fermée (F1b, § 7).
 - Le rapport de réconciliation commité est produit sans imputation et ne change pas.
 
+## D-249 — Phase 11, M4 : le bouton du PFU, et la réponse des dividendes dans les recettes
+
+**Le fait.** M4 de la phase 11 est fait : le §6 de la spec, sur l'imputation de D-248. Le
+taux du PFU a son bouton, relu (garde 9). Un ménage peut déclarer des revenus du capital.
+La réponse des dividendes à leur taux net est un canal, C10, et elle entre dans les
+recettes. Le capital vieillit avec la population dans la chaîne prédictive.
+
+**Le bouton.**
+- `pfu_taux` règle la part d'impôt sur le revenu du PFU, 12,8 %. Lu dans les sources
+  d'openfisca, c'est un seul paramètre, que lisent les deux formules du PFU : hors
+  assurance-vie (dividendes, intérêts, plus-values) et sur l'assurance-vie au-delà de son
+  seuil. Les prélèvements sociaux ne sont pas ce bouton.
+- La relecture (`verify_capital`) lit le chemin du PFU lui-même, jamais la table des
+  boutons par laquelle l'écriture est passée : relue par la même table, une écriture
+  détournée vers le taux voisin se confirmerait, comme en D-042. Le kill test détourne
+  l'écriture vers le 7,5 % de l'assurance-vie, et a échoué sur le code d'avant.
+- Le cas du registre des boutons : 10 000 € de dividendes doivent 1 280 € de PFU et
+  1 720 € de prélèvements sociaux ; à 20 %, l'IR monte de 720 €. La page a le bouton, en
+  pourcent.
+
+**Le capital du ménage.** `capital` porte les quatre cases de l'imputation (2DC, 2TR, 2TS,
+3VG), et un test tient les deux listes ensemble. Les montants sont écrits sur toute
+l'histoire, comme le salaire : le RFR de N-2 les contient. La page envoie le bloc quand
+une case est remplie, et montre le PFU et les prélèvements dans un groupe discret.
+
+**La source**, au premier rang : Bach, Bozio, Guillouzouic, Leroy et Malgouyres, PSE WP
+n° 2019-70, version 2 (2024). `behavioural/dividendes.py` lit dans le PDF :
+- les élasticités au taux net : 2,5 pour les propriétaires de firme et « close to 0 » pour
+  les autres après la baisse de 2018 ; 3,2 et 2,4 après la hausse de 2013 (p. 3) ;
+- les variations du taux net des traités : +7,5 et +8,5 % en 2018, −6 % en 2013 (p. 16) ;
+- la part des dividendes déclarés reçus par les foyers qui contrôlent une société. M0 la
+  laissait à M4, faute de tableau : seule la figure 2d la dessine. La figure est
+  vectorielle, et ses points se lisent sur le tracé, axes calés sur la grille et les
+  graduations, séries nommées par la légende.
+- Deux recoupements tiennent la lecture. Les quatre séries redonnent chaque année celle
+  des déclarations du panneau (b), à 3 M€ près. Leur hausse de 2017 à 2018 est le « 9
+  billion » du texte.
+
+**Les trois lignes**, chacune dans sa fourchette, θ = 1 la réponse la plus forte :
+
+| Ligne | bas | centre | haut |
+|---|---|---|---|
+| Élasticité, propriétaires de firme | 2,5 (2018) | 2,5 | 3,2 (2013) |
+| Élasticité, autres détenteurs | 0 (2018) | 0 | 2,4 (2013) |
+| Part des propriétaires, 2018-2021 | 0,738 | 0,774 | 0,800 |
+
+- L'élasticité agrégée est la part fois l'élasticité des propriétaires, plus le reste fois
+  celle des autres : 1,85 à θ = 0, 1,94 à θ = ½, 3,04 à θ = 1.
+- Le support des deux élasticités est la plus petite des variations observées, 6 % : une
+  hausse du taux net n'a été vue qu'à 7,5 %, une baisse qu'à 6 %. La part n'est pas notée.
+- La passe adversariale rend SCOPE_PROBLEM sur les trois, chiffres, pages et citations
+  exacts. Elle a relu la figure par son propre tracé, au millième de milliard.
+- Ses réparations, appliquées :
+  - La raison du centre était à l'envers. L'erreur de mesure de 2013 sous-estime la
+    réponse des propriétaires. 2,5 est un plancher, sur les mots des auteurs (« the most
+    informative », « around 2.5 »).
+  - Les définitions sont complétées : le propriétaire, l'élasticité, l'échantillon.
+  - Les objets écartés sont dits : les élasticités au niveau des firmes, 4,2 et 2,8 ; le
+    tableau 2 B.
+  - « Close to 0 » est légèrement négatif sur la figure 3d (vers −0,4), gardé à 0 comme
+    imprimé.
+  - La fourchette de la part est une construction du projet sur quatre valeurs annuelles.
+  - Les extensions sont déclarées : aux propriétaires hors ISF, aux tranches basses.
+
+**Le canal C10.**
+- Les dividendes au PFU bougent de ε × Δln(1 − τ) × leur assiette. τ est le PFU plus les
+  prélèvements sociaux, et ce qu'ils ajoutent est taxé au nouveau τ.
+- Les intérêts et les plus-values sont tenus fixes : leurs réponses sont faibles et de
+  même signe.
+- Les prélèvements sont mesurés sur un foyer par le moteur, pas sommés dans l'arbre :
+  17,2 % en 2024, 18,6 % dès 2026 avec la hausse de la CSG sur le capital, qu'une somme
+  des paramètres de 2024 aurait manquée.
+- Sans capital imputé, C10 dit « non calculé ».
+- **Ce qu'il ne compte pas.** Les deux premiers termes réduisent ce qu'une baisse
+  rapporte, et ce sont les plus grands :
+  - Les salaires que les propriétaires se versent en moins : 0,31 € par euro de dividende
+    en plus (tableau 2 B, col. 4, dès 2019), taxés plus lourdement qu'un dividende.
+  - Les plus-values futures, dont les dividendes versés sont tirés (§ 6.2).
+  - La CEHR sur les dividendes induits, qui l'augmenterait un peu.
+  - Le retour au barème d'un foyer que le PFU relevé dépasserait, pour une hausse.
+
+**Le capital dans la chaîne.**
+- Une passe impute le capital quand on le demande, et chaque fois que la réforme bouge le
+  PFU. Sans lui, le bouton ne mord sur rien.
+- Une autre année que 2024 demande un indice déclaré (`capital_index`). Les foyers sont
+  classés sur le RFR de l'année ; l'assiette de 2024 de chaque bande est multipliée par
+  l'indice.
+- La vue vieillie de la chaîne prend l'indice des salaires, la croissance nominale dans le
+  cadre de l'étude ; la vue figée n'en prend aucun.
+- Sans indice, une autre année reste refusée.
+- `impots trajectoires` et `impots predictif` décident une fois par scénario. Contre la
+  référence indexée, un coût est la différence de deux passes, et un capital imputé dans
+  une seule mettrait tout l'impôt sur le capital dans le coût.
+
+**La passe réelle.** Le PFU de 12,8 à 11,8 % en 2024, capital imputé, puis deux contrôles :
+
+| | coût statique | C10, θ = 0 | θ = ½ | θ = 1 | repris à θ = ½ |
+|---|---|---|---|---|---|
+| 11,8 %, 2024 | 0,790 Md€ | 0,379 | 0,398 | 0,625 | 50 % |
+| 0 %, 2024 | 10,12 Md€ | 2,66 | 2,79 | 4,38 | 28 % |
+| 11,8 %, 2026 vieilli | 0,842 Md€ | 0,431 | 0,452 | 0,710 | 54 % |
+
+- Palier léger, 80 000 ménages : le PFU dû passe de 10,27 à 9,47 Md€, l'IR baisse de
+  0,790 Md€, et les dividendes au PFU font 49,9 Md€.
+- Palier complet, 20 000 ménages : le coût par le revenu disponible, 0,792 Md€, est le Δ
+  de l'IR. Ni les prestations ni le RFR ne bougent.
+- La baisse d'un point bouge le taux net de 1,4 %, dans le support. Le PFU à zéro le
+  bouge de 18 % : C10 y est noté illustratif.
+- En 2026 (salaires à 3 %, prix à 2 %, 20 000 ménages, palier léger), l'assiette suit
+  l'indice, 53,1 Md€, et les prélèvements de 18,6 % reprennent davantage.
+- Toute la population au palier léger avec une réforme dépasse la mémoire du conteneur
+  (15 Go) : deux simulations y tiennent pour 80 000 ménages, et au palier complet pour
+  20 000, celui de l'API.
+
+**Recoupements.**
+- La note IPP n° 46 (tableau 1, p. 8) chiffre le PFU de 2018 à 900 M€ en statique et
+  400 M€ en dynamique : la réponse en reprend 500. Ce n'est qu'un ordre de grandeur. La
+  réforme était grande et de signe variable selon les tranches, sa base le PFU entier, et
+  sa réponse une hausse des dividendes versés, au niveau des firmes, sur une seule année.
+- Les 50 % de C10 se mesurent sur l'assiette entière, dont les intérêts et les
+  plus-values tenus fixes. Sur les seuls dividendes, la reprise est de 80 % à θ = ½. À
+  θ = 1 elle dépasse 100 % : une élasticité de 3,04 à un taux de 30 % autofinance une
+  baisse, avant le déplacement des salaires que le canal ne compte pas.
+- La hausse brute de la figure 2d de 2017 à 2018, ln(23,23 / 14,25) = 0,49, rapportée à
+  la variation du taux supérieur, 0,157, donne 3,1 : près de θ = 1. Le centre en explique
+  62 %.
+- Chetty et Saez n'entrent pas : la ligne française existe, et une ligne américaine de
+  rang 4 serait refusée au chargement (garde 2).
+
+**Les tests.**
+- `tests/test_pfu.py` : le bouton et sa relecture, le capital du ménage, le capital dans
+  la chaîne et ses refus.
+- `tests/test_dividendes.py` : la source et ses deux recoupements, les lignes tenues
+  contre la lecture, supports compris, C10 et ses refus, la bande et sa note, les entrées
+  de l'API, les prélèvements mesurés.
+- Les trois lignes ont leur cas de monotonie en θ, la page leurs libellés, et les harnais
+  de la page le bouchon de la fonction nouvelle.
+- Quarante mutations écrites à la main, une par garde et par règle, ont toutes été tuées.
+  La relecture du PFU et le cas du registre des boutons ont échoué sur le code d'avant.
+- Cinq comptes de lignes ouvertes passent de 15 à 18, et l'exemple prédictif est rendu de
+  nouveau : seule sa liste de θ change, aucun chiffre.
+- Les tests ciblés passent : 1 413 dans quarante fichiers, ceux du comportement, de la
+  chaîne prédictive, de l'API, de la page, de la population et des boutons, et 6 sont
+  sautés ; le cas lent du bouton aussi. Ruff et `ui/check.mjs` aussi.
+
+**Ce qui reste.**
+- Le déplacement des salaires, que C10 ne compte pas : le prochain chiffre qui peut
+  retourner la réponse d'une baisse du PFU.
+- Le sens de la réforme : les hausses ont des élasticités plus fortes, et θ ne le lit pas.
+- L'option pour le barème (2OP), absente du ménage comme de la population.
+- M5 attend le choix du propriétaire sur R5 ; M6 peut mettre le PFU au menu de l'étude.
+
 ## D-250 — L'écart de C2 : la chaîne ne lisait que 15 % des salariés
 
 **Le fait.** C2 comptait 748 emplois par milliard pour le plancher `t_min` et 1 555 pour le

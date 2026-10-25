@@ -230,6 +230,10 @@ CASES = {
     "rd_cir_multiplier": (channels.rd_response, Reform(cir_taux=0.25),
                           {"cir_margins": ((-1_009.9e6, 0.25), (-105e6, 0.05))}, 0),
     "is_croissance_pib": (_is_growth, None, {"rate_change_points": -1.0}, 0),
+    **{key: (channels.dividend_response, Reform(pfu_taux=0.118),
+             {"dividend_base_eur": 50e9, "levy_rate_baseline": 0.30,
+              "levy_rate_reform": 0.29}, 0)
+       for key in channels.C10_KEYS},
 }
 
 

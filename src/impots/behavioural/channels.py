@@ -872,6 +872,110 @@ def rd_response(
     )
 
 
+# --------------------------------------------------------------------------- #
+# C10 — dividends and the PFU: §6, the French evaluation of 2013 and 2018 (D-249)
+# --------------------------------------------------------------------------- #
+C10_ELASTICITIES = ("dividend_elasticity_firm_owners", "dividend_elasticity_other_holders")
+C10_SHARE = "dividend_share_firm_owners"
+C10_KEYS = (*C10_ELASTICITIES, C10_SHARE)
+
+NO_PFU_KNOB = (
+    "Aucun levier de cette réforme ne déplace le taux du PFU : la réponse des dividendes "
+    "est mesurée sur leur taux net, que seul ce levier bouge ici."
+)
+
+
+def dividend_response(
+    store: Store,
+    reform: Any,
+    *,
+    dividend_base_eur: float | None = None,
+    levy_rate_baseline: float | None = None,
+    levy_rate_reform: float | None = None,
+    draws: int = 1,
+    rng: Any = None,
+    **_: Any,
+) -> ChannelResult:
+    """The receipts that dividends bring back, or take away, when their net-of-tax rate
+    moves (D-249).
+
+    `dividend_base_eur` is the dividends declared at the PFU (case 2DC), weighted;
+    `levy_rate_*` the whole rate on them before and after, the PFU's income-tax part plus
+    the social levies. The aggregate elasticity is the firm-control share times the firm
+    owners' elasticity plus the rest times the others' — ε = s ε_p + (1 − s) ε_a — and the
+    dividends move by ε × Δln(1 − τ) × base. What they add is taxed at the new rate.
+    Interest and plus-values are held fixed: the authors find small responses there.
+
+    The two largest offsets left out lower what a cut brings back, and the largest is
+    named first in the diagnostics: the firm owners pay themselves 0,31 euro of wage less
+    per euro of dividend more (tableau 2 B, col. 4, from 2019), a wage being taxed more
+    heavily; then the future plus-values the dividends are drawn from.
+
+    Worked example, pinned in the tests: 50 bn of dividends, a PFU cut from 12,8 % to
+    11,8 % with the levies at 17,2 %, so τ from 0,30 to 0,29 and Δln(1 − τ) =
+    ln(0,71 / 0,70) = 0,0141846. At ε_p = 2,5, ε_a = 0 and s = 0,774, ε = 1,935: the
+    dividends rise by 1,3724 bn, and bring back 0,29 × 1,3724 = 0,3980 bn — half the static
+    cost of the cut on a PFU base of 80 bn.
+    """
+    label = "Dividendes et PFU"
+    applicable = _claimed(store, reform, C10_KEYS)
+    if not applicable:
+        return ChannelResult(key="c10_dividendes", label=label, applies=False,
+                             message=NO_PFU_KNOB)
+    missing = [key for key in C10_KEYS if key not in store]
+    if missing:
+        return ChannelResult(
+            key="c10_dividendes", label=label, applies=False,
+            message=f"Aucune réponse utilisable : {', '.join(missing)} n'a pas survécu à la "
+                    f"vérification des sources.",
+            diagnostics={"missing_parameters": missing})
+    if dividend_base_eur is None:
+        return _unsupplied("c10_dividendes", label, "EUR",
+                           "les dividendes de la population : sans l'imputation des revenus "
+                           "du capital (D-248), le PFU ne mord sur rien")
+    if dividend_base_eur <= 0:
+        raise ChannelInputMissing(
+            f"C10 needs the dividends at the PFU, strictly positive; got {dividend_base_eur}")
+    if levy_rate_baseline is None or levy_rate_reform is None:
+        raise ChannelInputMissing("C10 needs the rate on dividends before and after the "
+                                  f"reform; got {levy_rate_baseline!r} and {levy_rate_reform!r}")
+    net_before, net_after = 1.0 - levy_rate_baseline, 1.0 - levy_rate_reform
+    if net_before <= 0 or net_after <= 0:
+        raise ChannelInputMissing(
+            f"C10 needs rates strictly below 1 at both ends; got {levy_rate_baseline} and "
+            f"{levy_rate_reform}")
+    delta_log = float(np.log(net_after / net_before))
+    share = store[C10_SHARE].draw(rng, draws)
+    owners = store[C10_ELASTICITIES[0]].draw(rng, draws)
+    others = store[C10_ELASTICITIES[1]].draw(rng, draws)
+    elasticity = share * owners + (1.0 - share) * others
+    induced = elasticity * delta_log * dividend_base_eur
+    revenue = levy_rate_reform * induced
+    return ChannelResult(
+        key="c10_dividendes", label=label, applies=True, draws=revenue,
+        in_revenue_band=True,
+        message="Les dividendes répondent à leur taux net, surtout chez les foyers qui "
+                "contrôlent une société (Bach et al., 2013 et 2018) ; la réponse passe par "
+                "l'épargne des sociétés, pas par l'investissement.",
+        diagnostics={
+            "knobs": applicable,
+            "delta_log_net_of_tax": round(delta_log, 8),
+            "net_of_tax_relative_change": round(net_after / net_before - 1.0, 8),
+            "dividend_base_eur": round(float(dividend_base_eur), 2),
+            "induced_dividends_eur": {
+                "p10": round(float(np.percentile(induced, 10)), 2),
+                "p50": round(float(np.percentile(induced, 50)), 2),
+                "p90": round(float(np.percentile(induced, 90)), 2)},
+            "not_counted": (
+                "les salaires que les propriétaires se versent en moins, 0,31 € par euro "
+                "de dividende en plus (tableau 2 B), taxés plus lourdement ; les "
+                "plus-values futures dont les dividendes induits sont tirés, taxées plus "
+                "bas ; la CEHR sur les dividendes induits ; le retour au barème d'un foyer "
+                "que le PFU relevé dépasserait ; les intérêts et les plus-values"),
+        },
+    )
+
+
 CHANNELS = (
     ("c1_eti", C1_KEYS),
     ("c2_employment", C2_KEYS),
@@ -882,4 +986,5 @@ CHANNELS = (
     ("c7_labour_supply", C7_KEYS),
     ("c8_creations", C8_KEYS),
     ("c9_rd", C9_KEYS),
+    ("c10_dividendes", C10_KEYS),
 )

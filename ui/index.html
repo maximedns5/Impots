@@ -1114,6 +1114,31 @@ footer code { font-family: var(--mono); font-size: 11px; }
                  </select></div>
           </div>
 
+          <div class="lbl" style="margin:18px 0 8px">Revenus du capital — PFU</div>
+          <p class="note" style="margin:0 0 10px">
+            Ce que le foyer déclare au prélèvement forfaitaire unique, en euros par an, puis
+            le taux de la part d'impôt sur le revenu du PFU, 12,8&nbsp;% aujourd'hui. Les
+            prélèvements sociaux, 17,2&nbsp;%, ne sont pas ce levier. Sans revenus du capital
+            déclarés ici, le taux ne mord sur rien. Les montants sont recopiés sur l'historique,
+            comme le salaire : le revenu fiscal de référence de N-2 les contient (D-249).
+          </p>
+          <div class="field-row tri">
+            <div><label for="capDiv">Dividendes, case 2DC (€/an)</label>
+                 <input type="number" id="capDiv" step="1000" placeholder="0"></div>
+            <div><label for="capInt">Intérêts, case 2TR (€/an)</label>
+                 <input type="number" id="capInt" step="1000" placeholder="0"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="capAutres">Autres revenus distribués, case 2TS (€/an)</label>
+                 <input type="number" id="capAutres" step="1000" placeholder="0"></div>
+            <div><label for="capPv">Plus-values mobilières, case 3VG (€/an)</label>
+                 <input type="number" id="capPv" step="1000" placeholder="0"></div>
+          </div>
+          <div class="field-row tri">
+            <div><label for="kPfuTaux">PFU — part impôt sur le revenu (%)</label>
+                 <input type="number" id="kPfuTaux" step="0.1" placeholder="12,8"></div>
+          </div>
+
           <button type="button" class="reset" id="reset" disabled>réinitialiser au droit courant</button>
           <p class="note">
             Les valeurs affichées sont lues dans l'arbre de paramètres du moteur, pas recopiées.
@@ -1367,6 +1392,28 @@ function patrimoinePayload() {
     autres_immeubles_batis: "patAutres",
     passif_deductible: "patPassif",
     dons_organismes_interet_general: "patDons",
+  };
+  const payload = {};
+  let any = false;
+  for (const [key, id] of Object.entries(fields)) {
+    const node = document.getElementById(id);
+    if (node && node.value !== "" && Number(node.value) > 0) {
+      payload[key] = Number(node.value);
+      any = true;
+    }
+  }
+  return any ? payload : null;
+}
+
+/* The capital income the foyer declares at the PFU (D-249). Sent only when something is
+   filled, like the IFI declaration: an absent block means none, which the engine answers
+   with no PFU and no social levies on capital. */
+function capitalPayload() {
+  const fields = {
+    dividendes: "capDiv",
+    interets: "capInt",
+    autres_revenus_distribues: "capAutres",
+    plus_values: "capPv",
   };
   const payload = {};
   let any = false;
@@ -1673,6 +1720,10 @@ const KNOBS = [
   { knob: "cotisations_syndicales_taux", id: "kSyndTaux", scale: 100 },
   { knob: "plafond_global_niches",       id: "kPlafGlobal" },
 
+  /* Capital income (D-249): the income-tax part of the PFU, in per cent. It bites only on
+     a foyer that declares capital income, below the IFI. */
+  { knob: "pfu_taux",                    id: "kPfuTaux", scale: 100 },
+
   /* IFI. `ifi_obligations_declaratives` is NOT here: it is a regime, sent as a string,
      and it touches no parameter at all — disclosure requirements are not in the tax
      code, so it leaves the mechanical figure untouched and moves the behavioural band
@@ -1911,6 +1962,8 @@ function payload() {
   if (niches) household.niches = niches;
   const patrimoine = patrimoinePayload();
   if (patrimoine) household.patrimoine = patrimoine;
+  const capital = capitalPayload();
+  if (capital) household.capital = capital;
   const full = $("full").checked;
   if (full && $("statut").value) {
     household.logement = {
@@ -1958,6 +2011,12 @@ const GROUPS = [
     ["revenu_fiscal_reference", "Revenu fiscal de référence",   "flat"],
     ["ir_avant_reductions",     "IR après plafonnement du QF",  "down", true],
     ["ir",                      "Impôt sur le revenu",          "down"],
+  ]},
+  /* Shown when the foyer declares capital income (D-249). The PFU is a « dont » of the
+     income tax above, never added to it; the social levies are not in it. */
+  { title: "Revenus du capital", quiet: true, rows: [
+    ["pfu",                          "dont prélèvement forfaitaire unique (part IR)", "down"],
+    ["prelevements_sociaux_capital", "Prélèvements sociaux sur le capital",           "down"],
   ]},
   { title: "Patrimoine", tier: "full", rows: [
     ["ifi", "Impôt sur la fortune immobilière", "down"],
@@ -2885,6 +2944,9 @@ const THETA_ROWS = {
   labour_supply_single_men: "offre de travail, hommes seuls (C7)",
   firm_creation_profit_tax: "créations de sociétés, indice illustratif (C8)",
   rd_cir_multiplier: "R&D et CIR, indice illustratif (C9)",
+  dividend_elasticity_firm_owners: "dividendes et PFU, propriétaires de firme (C10)",
+  dividend_elasticity_other_holders: "dividendes et PFU, autres détenteurs (C10)",
+  dividend_share_firm_owners: "dividendes et PFU, part des propriétaires (C10)",
   multiplicateur_macro: "multiplicateur macro (Mésange ∓ un écart-type IMK)" };
 function predictifTheta(d) {
   const rows = Object.entries(d.theta || {}).map(([k, v]) =>

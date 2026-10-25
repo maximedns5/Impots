@@ -635,8 +635,11 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
 
     from impots.behavioural import emtr as emtr_module
 
+    run_households = run.households if run is not None else None
     employer = (_employer_inputs(request, run, agg)
-                if run is not None and run.households is not None else {})
+                if run_households is not None else {})
+    # C10 reads the run's households, not their marginal rates (D-249).
+    employer = {**employer, **_dividend_inputs(request, run_households)}
     emtr_result = emtr_module.cached(
         frame, POPULATION_VINTAGE, year=request.year, reform=request.reform,
         sample=BEHAVIOURAL_EMTR_HOUSEHOLDS, uprating_key=uprating_key,
@@ -670,6 +673,32 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
         "taxable_base": base, "weights": weights, "top_decile": top,
         **_labour_inputs(request, frame, agg, households),
     }, int(households.height)
+
+
+def _dividend_inputs(request: Any, households: Any) -> dict[str, Any]:
+    """C10's inputs (D-249): the dividends the run's households declare at the PFU,
+    weighted, and the whole rate on them before and after — the PFU's income-tax part,
+    read from the law and the reform, plus the social levies, measured. None when the
+    reform leaves the PFU alone, and no base when the run did not impute capital income:
+    the channel then says it was not computed, rather than pricing a response on nothing.
+    Read on the households rather than the aggregate, whose totals are a closed list of
+    instruments that the dividends, a base and not a levy, do not belong to."""
+    from impots.behavioural import channels
+    from impots.behavioural.store import load as load_store
+    from impots.population import capital as capital_module
+
+    if not channels._claimed(load_store(), request.reform, channels.C10_KEYS):
+        return {}
+    if households is None or "dividendes" not in households.columns:
+        return {}
+    base = float((households["dividendes"] * households["weight"]).sum())
+    if base <= 0:
+        return {}
+    levies = capital_module.social_levy_rate(request.year)
+    before = capital_module.pfu_rate(request.year)
+    after = request.reform.pfu_taux if request.reform.pfu_taux is not None else before
+    return {"dividend_base_eur": base, "levy_rate_baseline": before + levies,
+            "levy_rate_reform": after + levies}
 
 
 def _labour_inputs(request: Any, frame: Any, agg: Any, households: Any) -> dict[str, Any]:
@@ -706,19 +735,32 @@ def _behavioural(request: Any, frame: Any, agg: Any, run: Any = None) -> Any:
     return Behavioural(**payload)
 
 
-def _run_population(request: Any, frame: Any) -> tuple[Any, Any]:
+def imputes_capital(request: Any) -> bool:
+    """Whether a pass imputes capital income: when asked, and whenever the reform moves the
+    PFU, which bites on nothing else (D-249). A PFU reform on a population without capital
+    would cost exactly zero, and say nothing."""
+    from impots.engine.reforms import moves_capital
+
+    return bool(getattr(request, "impute_capital", False) or moves_capital(request.reform))
+
+
+def _run_population(request: Any, frame: Any,
+                    capital_index: float | None = None) -> tuple[Any, Any]:
     """The quick-tier pass and its aggregate: `(run, aggregate)`. Shared by
-    `/population/simulate` and `/predictif/simulate`."""
+    `/population/simulate` and `/predictif/simulate`. `capital_index` ages the imputed
+    capital to the year, when the frame was aged to it (D-249)."""
     from impots.population import aggregate as aggregate_module
     from impots.population.runner import run as population_run
     from impots.population.to_openfisca import WiringError
 
+    capital = imputes_capital(request)
     try:
         result = population_run(
             frame, year=request.year, reform=request.reform, tier="full",
             sample=QUICK_TIER_HOUSEHOLDS,
             impute_niches=getattr(request, "impute_niches", False),
-            impute_capital=getattr(request, "impute_capital", False),
+            impute_capital=capital,
+            capital_index=capital_index if capital else None,
         )
     except WiringError as error:  # pragma: no cover - guarded upstream
         raise HTTPException(status_code=500, detail=str(error)) from error
@@ -1363,7 +1405,12 @@ def _price_households(request: PopulationSimulateRequest, *, uprating: Any,
 
     frame = (uprating_module.uprate(_population_frame(), request.year, uprating)
              if view == FIRST_YEAR_VIEW else _population_frame())
-    result, agg = _run_population(request, frame)
+    # The imputed capital ages with the frame: on the wage index in the aged view — in the
+    # study's frame the nominal growth of the economy — and not at all in the frozen one,
+    # whose frame is the vintage's (D-249). Only a pass that imputes it is told the index.
+    index = (uprating.factor("wage", request.year) if view == FIRST_YEAR_VIEW else 1.0)
+    result, agg = _run_population(
+        request, frame, **({"capital_index": index} if imputes_capital(request) else {}))
     if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
         raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
     inputs = (_behavioural_inputs(request, frame, agg, result,
