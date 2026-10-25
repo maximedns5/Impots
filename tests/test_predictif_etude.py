@@ -504,3 +504,50 @@ def test_a_curve_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str
         (reports / "courbe_premier_tour" / "exploration_courbe_t_delta.json").unlink()
     with pytest.raises(script.EtudeError, match=needle):
         script.study(requests, reports)
+
+
+def _second_round(reports: Path, *, move: str | None = None) -> None:
+    """The study's second round as it ran: with the C2 that read 15 % of the earners
+    (D-246), here its indices changed; `move` shifts one figure of that instrument's
+    report."""
+    second = reports / "etude_second_tour"
+    second.mkdir()
+    for path in reports.glob("exploration_etude_*.json"):
+        report = json.loads(path.read_text(encoding="utf-8"))
+        report["commit"] = "f" * 40
+        for search in report["searches"]:
+            search["indices"].pop("closed", None)
+        if move and path.name == f"exploration_etude_{move}.json":
+            report["searches"][1]["evaluations"][-1]["delta_aged"] += 1e-9
+        (second / path.name).write_text(json.dumps(report, ensure_ascii=False),
+                                        encoding="utf-8")
+
+
+def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
+                                                                     tmp_path) -> None:
+    """D-248: the study replayed on its second round's code with C2's fix alone. Its
+    indices may differ from the second round's, which is the point; its costs, its Δb and
+    its corners may not, and the page names the second commit and why it was replayed."""
+    requests, reports = _study(tmp_path, script)
+    _first_round(reports)
+    _second_round(reports)
+    page = script.render(script.load(requests, reports))
+    head, _, _ = page.partition("## Le cadre")
+    assert "f" * 40 in head and "a" * 40 in head and COMMIT in head
+    assert "D-246" in head and "etude_second_tour" in head
+    assert head.count("chiffre pour chiffre") == 2
+
+
+@pytest.mark.parametrize("how, needle", [("moved", "ne redonne pas le second"),
+                                         ("missing", "second tour sans")])
+def test_a_third_round_that_is_not_the_second_is_refused(script, tmp_path, how: str,
+                                                         needle: str) -> None:
+    """D-248: the third round only corrects C2, which enters no revenue and no debt. One
+    figure moved by a billionth of a point, or an instrument missing from the second
+    round, and the replay is no longer that: refused."""
+    requests, reports = _study(tmp_path, script)
+    _second_round(reports, move="decote" if how == "moved" else None)
+    if how == "missing":
+        (reports / "etude_second_tour" / "exploration_etude_ir.json").unlink()
+    with pytest.raises(script.EtudeError, match=needle):
+        script.load(requests, reports)

@@ -38,6 +38,10 @@ REPORTS = ROOT / "reports"
 #: The first round, on the preregistration's own commit, before the reports carried what
 #: the chain lacks (D-238). The second round must give it back figure for figure.
 FIRST_ROUND = "etude_premier_tour"
+#: The second round, whose C2 read 15 % of the earners (D-246). The third is the second
+#: round's commit with C2's fix alone: it must give the second back figure for figure
+#: (D-248).
+SECOND_ROUND = "etude_second_tour"
 #: What a round computes, as against what it reports about it.
 FIGURES = ("knobs", "cost_aged_eur", "cost_frozen_eur", "delta_aged", "delta_frozen",
            "corners", "corner_low", "corner_high", "meets_target")
@@ -179,6 +183,23 @@ def load(requests: Path = REQUESTS, reports: Path = REPORTS) -> list[dict[str, A
             entry["first_commit"] = first["commit"]
         if len({e["first_commit"] for e in out}) != 1:
             raise EtudeError("premier tour de plusieurs commits.")
+    second_round = reports / SECOND_ROUND
+    if second_round.exists():
+        for entry in out:
+            path = second_round / f"exploration_etude_{entry['instrument'].key}.json"
+            if not path.exists():
+                raise EtudeError(f"second tour sans {path.name} : la comparaison des deux "
+                                 f"derniers tours ne porterait pas sur tout le menu.")
+            second = json.loads(path.read_text(encoding="utf-8"))
+            ExplorationReport.model_validate(second)
+            if not same_figures(second, entry["report"]):
+                raise EtudeError(
+                    f"le troisième tour de « {entry['instrument'].key} » ne redonne pas le "
+                    f"second : un chiffre a bougé entre les deux commits, et le troisième "
+                    f"tour n'est plus la seule correction de C2 (D-246).")
+            entry["second_commit"] = second["commit"]
+        if len({e["second_commit"] for e in out}) != 1:
+            raise EtudeError("second tour de plusieurs commits.")
     return out
 
 
@@ -638,6 +659,15 @@ def render(etudes: list[dict[str, Any]],
              f"`reports/{FIRST_ROUND}/` le garde, et le rendu refuse de tourner si un "
              f"seul chiffre diffère."]
            if etudes[0].get("first_commit") else []),
+        *(["", f"Un troisième tour a tourné sur `{report['commit']}` : le commit du second "
+               f"tour, `{etudes[0]['second_commit']}`, avec la seule correction de C2. "
+               f"L'emploi au voisinage du SMIC du second tour ne lisait que 15 % des "
+               f"salariés (D-246). C2 n'entre ni dans les recettes ni dans la dette, et le "
+               f"troisième tour redonne le second chiffre pour chiffre sur les coûts, les Δb "
+               f"et les coins de la boîte θ : `reports/{SECOND_ROUND}/` le garde, et le "
+               f"rendu refuse de tourner si un seul chiffre diffère. Les rapports lus ici "
+               f"sont ceux du troisième tour."]
+           if etudes[0].get("second_commit") else []),
         "",
         "## Le cadre",
         "",
