@@ -1225,7 +1225,6 @@ def _firm_first_year(firm_reform: Any, year: int, *, view: str = FIRST_YEAR_VIEW
     from types import SimpleNamespace
 
     from impots.entreprises import aggregate as firm_aggregate
-    from impots.entreprises import build as firm_build
     from impots.entreprises import runner as firm_runner
     from impots.predictif import firmes
 
@@ -1242,22 +1241,39 @@ def _firm_first_year(firm_reform: Any, year: int, *, view: str = FIRST_YEAR_VIEW
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     aggregates = firm_aggregate.aggregate(result.firms)
-    manifest = firm_build.PROCESSED / f"firms_{FIRM_VINTAGE}.manifest.json"
-    synthetic = (not manifest.exists() or bool(
-        json.loads(manifest.read_text(encoding="utf-8"))["cells_are_synthetic"]))
     scale = 1.0 if factor is None else factor
     note = (f"Couche entreprises : population d'entreprises du millésime {FIRM_VINTAGE}, "
             f"sous le droit de {year} ; "
             f"{firmes.note(view, FIRM_VINTAGE, year, factor)} ; l'IS est compté à "
             f"l'exercice, non à la caisse (PHASE11_SPEC §3).")
-    if synthetic:
-        note = ("ATTENTION : population d'entreprises construite à partir de cellules "
-                "synthétiques de test, pas de SIRENE × ESANE ; son chiffrage n'est pas une "
-                "affirmation sur la France. " + note)
+    if _firm_cells_are_synthetic():
+        note = FIRM_SYNTHETIC + note
     deltas = {name: value * scale for name, value in aggregates.deltas.items()
               if name != FIRM_TOTAL and value}
     return SimpleNamespace(cost=float(aggregates.reform_cost or 0.0) * scale,
                            deltas=deltas, note=note, factor=factor)
+
+
+FIRM_SYNTHETIC = ("ATTENTION : population d'entreprises construite à partir de cellules "
+                  "synthétiques de test, pas de SIRENE × ESANE ; son chiffrage n'est pas "
+                  "une affirmation sur la France. ")
+
+
+def _firm_cells_are_synthetic() -> bool:
+    from impots.entreprises import build as firm_build
+
+    manifest = firm_build.PROCESSED / f"firms_{FIRM_VINTAGE}.manifest.json"
+    return (not manifest.exists() or bool(
+        json.loads(manifest.read_text(encoding="utf-8"))["cells_are_synthetic"]))
+
+
+def _firm_report_note() -> str:
+    """The firm layer's conventions for a report that spans years (D-246): what each
+    first year's note says, without the year."""
+    from impots.predictif import firmes
+
+    note = firmes.convention(FIRM_VINTAGE)
+    return FIRM_SYNTHETIC + note if _firm_cells_are_synthetic() else note
 
 
 def _first_year_request(reform: ReformSpec, year: int, behavioural: bool) -> Any:

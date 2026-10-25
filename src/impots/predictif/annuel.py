@@ -157,6 +157,8 @@ class Rapport:
     uprating_note: str
     behavioural: bool = False
     macro: bool = False
+    firm_note: str | None = None
+    """The firm layer's conventions, when the reform has one (D-246)."""
 
     @property
     def aged(self) -> chaine.Trajectoire:
@@ -204,7 +206,7 @@ class Rapport:
                       "implicit_rate": self.start.implicit_rate,
                       "gdp_eur": self.start.gdp_eur},
             "years": rows,
-            "conventions": common,
+            "conventions": common + ([self.firm_note] if self.firm_note else []),
             "absent": dict(lead.aged.absent),
             "theta": dict(lead.aged.theta), "theta_applied": lead.aged.theta_applied,
             "closed": dict(lead.aged.closed),
@@ -231,14 +233,23 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
           uprating: Uprating, uprating_note: str,
           securities: list[Any] | None = None, reform: Any = None,
           behavioural: bool = False, macro: bool = False, persistence: str | None = None,
-          store: Any = None, macro_store: Any = None) -> Rapport:
+          store: Any = None, macro_store: Any = None,
+          firm_note: str | None = None) -> Rapport:
     """The debt paths from the priced years. No carry: every year must be priced.
 
     With `behavioural` or `macro`, every year must carry its whole pass (`YearPrice.passes`)
-    and `reform` the reform the channels claim knobs from."""
+    and `reform` the reform the channels claim knobs from. With a firm layer, `firm_note`
+    names how it was priced, and is refused without one."""
     check_coherence(uprating, growth)
     if not prices:
         raise DebtError("aucune année chiffrée : un rapport sans chiffrage n'a rien à dire")
+    layered = any(p.layers is not None for p in prices)
+    if layered and not firm_note:
+        raise DebtError("couche entreprises sans sa note : la vue vieillie et la vue figée "
+                        "se liraient sans dire ce qu'elles chiffrent (D-246)")
+    if firm_note and not layered:
+        raise DebtError("note des entreprises sans couche entreprises : un rapport des "
+                        "ménages dirait chiffrer ce qu'il ne chiffre pas")
     whole = behavioural or macro
     if whole:
         bare = [p.year for p in prices if p.passes is None]
@@ -289,4 +300,5 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
                    computed=computed, start=start, prices=tuple(prices),
                    paths=tuple(Path(persistence=p, aged=path("vieillie", p),
                                     frozen=path("figee", p)) for p in persistences),
-                   uprating_note=uprating_note, behavioural=behavioural, macro=macro)
+                   uprating_note=uprating_note, behavioural=behavioural, macro=macro,
+                   firm_note=firm_note)

@@ -152,6 +152,19 @@ def test_a_paper_missing_or_without_its_tables_is_refused(tmp_path, monkeypatch)
         el.load(tmp_path)
 
 
+def test_without_pypdf_the_paper_is_refused_by_name(tmp_path, monkeypatch) -> None:
+    """The environment's refusal: the file is there, the library that reads it is not."""
+    import importlib.util
+
+    (tmp_path / el.SOURCE_FILE).write_bytes(b"%PDF-1.4")
+    real = importlib.util.find_spec
+    monkeypatch.setattr(importlib.util, "find_spec",
+                        lambda name, *args: None if name == "pypdf" else real(name, *args))
+    monkeypatch.setattr(el, "_pages", lambda path: ("Table I.1. Elasticities\nFR 1 2\n",))
+    with pytest.raises(el.ElasticityError, match="pypdf est requis"):
+        el.load(tmp_path)
+
+
 def test_revenue_shares_that_do_not_make_a_hundred_are_refused() -> None:
     reading = _paper()
     shares = {**reading.shares, "recettes_non_fiscales": 20.0}

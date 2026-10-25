@@ -70,6 +70,15 @@ def aging_factor(year: int, growth: GrowthScenario | None, vintage: str,
         raise FirmViewError(f"PIB des comptes illisible : {error}") from error
 
 
+def convention(vintage: str) -> str:
+    """The firm layer's conventions for a report that spans years: both views named once,
+    without the factor of any one year."""
+    return (f"Couche entreprises : le millésime {vintage}, sous le droit de chaque année. "
+            f"Vue figée : le millésime tel quel ; vue vieillie : son coût suivi au PIB "
+            f"nominal du scénario depuis le millésime (M0, R7). L'IS est compté à "
+            f"l'exercice, non à la caisse (PHASE11_SPEC §3).")
+
+
 def note(view: str, vintage: str, year: int, factor: float | None) -> str:
     if view == AGED and factor is not None:
         shown = f"{factor:.4f}".replace(".", ",")

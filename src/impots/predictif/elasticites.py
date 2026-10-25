@@ -115,7 +115,7 @@ def load(raw: Path | None = None) -> Reading:
     if not path.exists():
         raise ElasticityError(f"{path} introuvable — téléchargez-le par le manifeste "
                               f"(`impots data fetch {SOURCE_FILE}`)")
-    if importlib.util.find_spec("pypdf") is None:  # pragma: no cover - environment
+    if importlib.util.find_spec("pypdf") is None:
         raise ElasticityError("pypdf est requis pour lire le document")
     pages = _pages(str(path))
     found = {}

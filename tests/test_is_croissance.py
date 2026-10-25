@@ -68,6 +68,19 @@ def test_a_range_upside_down_is_refused() -> None:
         gechert.convention(reading)
 
 
+def test_without_pypdf_the_paper_is_refused_by_name(tmp_path, monkeypatch) -> None:
+    """The environment's refusal: the file is there, the library that reads it is not."""
+    import importlib.util
+
+    (tmp_path / gechert.SOURCE_FILE).write_bytes(b"%PDF-1.4")
+    real = importlib.util.find_spec
+    monkeypatch.setattr(importlib.util, "find_spec",
+                        lambda name, *args: None if name == "pypdf" else real(name, *args))
+    monkeypatch.setattr(gechert, "_pages", lambda path: ("rien ici",))
+    with pytest.raises(gechert.GechertError, match="pypdf est requis"):
+        gechert.load(tmp_path)
+
+
 # --------------------------------------------------------------------------- #
 # Guards 1 and 2: the order of sources
 # --------------------------------------------------------------------------- #

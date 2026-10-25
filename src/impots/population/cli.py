@@ -1331,7 +1331,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             rate=rate, theta=theta, uprating=uprating,
             uprating_note=up.caveat(years[-1], uprating), securities=securities,
             reform=scenario.reform, behavioural=args.behavioural, macro=args.macro,
-            persistence=args.persistence, store=store, macro_store=macro_store)
+            persistence=args.persistence, store=store, macro_store=macro_store,
+            firm_note=api._firm_report_note() if firm_part else None)
     except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
             maturite.MaturityError, retroaction.FeedbackError) as error:
         print(str(error), file=sys.stderr)

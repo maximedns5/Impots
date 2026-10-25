@@ -86,7 +86,7 @@ def load(raw: Path | None = None) -> Reading:
     if not path.exists():
         raise GechertError(f"{path} introuvable — téléchargez-le par le manifeste "
                            f"(`impots data fetch {SOURCE_FILE}`)")
-    if importlib.util.find_spec("pypdf") is None:  # pragma: no cover - environment
+    if importlib.util.find_spec("pypdf") is None:
         raise GechertError("pypdf est requis pour lire le document de travail")
     pages = _pages(str(path))
     page = next((k for k, text in enumerate(pages) if TABLE_TITLE in text), None)

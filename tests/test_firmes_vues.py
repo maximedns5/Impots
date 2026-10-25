@@ -22,12 +22,15 @@ from impots.api import main as api_main
 from impots.api.schemas import PredictifReportYear
 from impots.dette import reference
 from impots.dette import scenarios as debt_scenarios
-from impots.dette.path import DebtError
+from impots.dette.path import SHIPPED, DebtError
 from impots.entreprises.reforms import FirmReformSpec
 from impots.population import aggregate, cli, runner
 from impots.predictif import annuel, firmes
+from impots.predictif.theta import Theta
 
 GROWTH = debt_scenarios.GrowthScenario("Croissance réelle 1 %, prix 2 %", 0.01, 0.02)
+HELD = debt_scenarios.RateScenario("Taux implicite tenu à son niveau de 2025",
+                                   "implicite_tenu")
 #: GDP of the accounts, in euros, for the years a test reads.
 ACCOUNTS = {2023: 2_800e9, 2024: 2_900e9, 2025: 3_000e9}
 
@@ -63,6 +66,10 @@ def test_an_aged_view_it_cannot_compute_is_refused(year, growth, vintage, needle
 def test_the_note_says_which_view() -> None:
     assert "×1,0800" in firmes.note(firmes.AGED, "2023", 2026, 1.08)
     assert firmes.note(firmes.FROZEN, "2023", 2026, None).startswith("vue figée")
+    convention = firmes.convention("2023")
+    for named in ("millésime 2023", "Vue figée", "vue vieillie", "PIB nominal",
+                  "à l'exercice"):
+        assert named in convention, named
 
 
 # --------------------------------------------------------------------------- #
@@ -92,6 +99,30 @@ def test_a_year_whose_layers_do_not_sum_to_its_cost_is_refused() -> None:
 
     with pytest.raises(DebtError, match="par couche et l'autre non"):
         annuel.price_years([2026], half, basis_for=lambda y: "test")
+
+
+def _report(prices, firm_note=None) -> annuel.Rapport:
+    uprating = annuel.uprating_for(GROWTH, wage=0.03, source="test", base_year=2024)
+    return annuel.build(START, prices, scenario="test", titre="Test", source="test",
+                        reference="reconduit", computed="2026-10-25",
+                        spending=SHIPPED["gele_en_volume"], growth=GROWTH, rate=HELD,
+                        theta=Theta(common=0.5), uprating=uprating, uprating_note="note",
+                        firm_note=firm_note)
+
+
+def test_a_report_names_its_firm_layer_exactly_when_it_has_one() -> None:
+    """A report with a firm layer says how it was priced — the vintage, both views, the
+    IS by exercise — and one without says nothing of it, so a household report reads as
+    it always did. Either half missing is refused before the chain is asked."""
+    layered = annuel.price_years([2026, 2027], _layered, basis_for=lambda y: "test")
+    note = firmes.convention("2023")
+    assert _report(layered, firm_note=note).payload()["conventions"][-1] == note
+    with pytest.raises(DebtError, match="sans sa note"):
+        _report(layered)
+    plain = annuel.price_years([2026, 2027], lambda y, v: 1e9, basis_for=lambda y: "test")
+    assert note not in _report(plain).payload()["conventions"]
+    with pytest.raises(DebtError, match="sans couche entreprises"):
+        _report(plain, firm_note=note)
 
 
 ROW = {"year": 2026, "basis": "test", "mechanical_frozen_eur": 4e9,
@@ -186,6 +217,9 @@ def test_the_command_prices_a_firm_scenario_by_layer_in_both_views(monkeypatch,
         "vieillie": {"menages": 0.0, "entreprises": pytest.approx(firm * 1.1)}}
     assert first["mechanical_aged_eur"] == pytest.approx(firm * 1.1)
     assert first["delta_aged"] > first["delta_frozen"] > 0
+    note = report["conventions"][-1]
+    assert note == api_main._firm_report_note()
+    assert "cellules synthétiques" in note and "vue vieillie" in note
 
 
 def test_unreadable_accounts_are_a_named_refusal() -> None:
