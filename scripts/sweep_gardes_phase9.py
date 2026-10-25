@@ -115,6 +115,8 @@ SCOPES: tuple[Scope, ...] = (
     Scope("src/impots/predictif/firmes.py", ("tests/test_firmes_vues.py",
                                              "tests/test_predictif_entreprises.py")),
     Scope("src/impots/behavioural/gechert.py", ("tests/test_is_croissance.py",)),
+    # Phase 11 M3 (D-247): the OECD's effective rates, the condition of the entry index.
+    Scope("src/impots/entreprises/taux_effectifs.py", ("tests/test_taux_effectifs.py",)),
 )
 
 #: The whole Phase 9 suite, the second tier for a survivor.
@@ -129,7 +131,7 @@ WIDE: tuple[str, ...] = (
     "tests/test_recherche.py", "tests/test_explorations_api.py",
     "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py",
     "tests/test_predictif_entreprises.py", "tests/test_is_croissance.py",
-    "tests/test_elasticites.py", "tests/test_firmes_vues.py",
+    "tests/test_elasticites.py", "tests/test_firmes_vues.py", "tests/test_taux_effectifs.py",
 )
 
 UI_CHECK = "ui/check.mjs"
