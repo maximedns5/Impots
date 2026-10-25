@@ -405,6 +405,29 @@ MANUAL: tuple[Mutation, ...] = (
              "    own = dict(knobs)\n",
              ("tests/test_predictif_entreprises.py",),
              "les boutons des entreprises n'entrent pas dans la réforme des ménages"),
+    # Phase 11 M3 (D-247).
+    Mutation("P11-G7-investissement-au-pib", "src/impots/predictif/indices.py",
+             '    frozenset({"pib_is", "investissement_entreprises"}): (\n',
+             '    frozenset({"pib_is", "investissement_entreprises", "_"}): (\n',
+             ("tests/test_taux_effectifs.py",),
+             "garde 7 : l'investissement ajouté à l'effet de l'IS sur le PIB est refusé "
+             "par son nom"),
+    Mutation("P11-G7-creations-au-pib", "src/impots/predictif/indices.py",
+             '    frozenset({"pib_is", "creations_societes"}): (\n',
+             '    frozenset({"pib_is", "creations_societes", "_"}): (\n',
+             ("tests/test_taux_effectifs.py",),
+             "garde 7 : les créations ajoutées à l'effet de l'IS sur le PIB sont refusées "
+             "par leur nom"),
+    Mutation("P11-R4-tolerance", "src/impots/entreprises/taux_effectifs.py",
+             "if abs(composite.gap(m)) > self.tolerance)",
+             "if abs(composite.gap(m)) > 10 * self.tolerance)",
+             ("tests/test_taux_effectifs.py",),
+             "la condition de M0 sur l'indice des créations : un dixième de point"),
+    Mutation("P11-R4-composite-quatre", "src/impots/entreprises/taux_effectifs.py",
+             "_average([computed[c] for c in CATEGORIES])",
+             "_average([computed[c] for c in CATEGORIES if c != \"INV\"])",
+             ("tests/test_taux_effectifs.py",),
+             "le composite est la moyenne des quatre catégories, stocks compris (§ 18)"),
 )
 
 #: Mutations no test can kill, each with why. An entry here is a finding of D-229, not
