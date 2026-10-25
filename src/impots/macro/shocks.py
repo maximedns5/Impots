@@ -90,6 +90,8 @@ UNMAPPED = {
     "cebge": "fiscalité des entreprises",
     "cvae": "fiscalité des entreprises",
     "c3s": "fiscalité des entreprises",
+    # Zero unless capital income is imputed (D-248), and no knob moves it yet.
+    "prelevements_sociaux_capital": "revenus du capital",
 }
 
 UNMAPPED_REASONS = {
@@ -109,6 +111,12 @@ UNMAPPED_REASONS = {
         "entreprises ne doivent PAS hériter du multiplicateur des cotisations "
         "employeurs : celui-ci passe par le coût du travail, celui-là par le coût du "
         "capital, et le modèle ne mesure que le premier."
+    ),
+    "revenus du capital": (
+        "Les prélèvements sociaux sur les revenus du capital n'ont pas de variante "
+        "propre dans Mésange, et aucune ne leur est encore associée : M4 dira si celle "
+        "de la CSG les porte. D'ici là, la boucle d'une réforme qui ne bouge qu'eux est "
+        "absente, pas nulle (D-248)."
     ),
 }
 

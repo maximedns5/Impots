@@ -51,7 +51,7 @@ def _net_yield_note(totals: dict[str, float]) -> str:
         f"Le PFU est imputé dans ce passage ({pfu / 1e9:.1f} md, part IR) depuis les "
         f"fractiles de la DGFiP n° 41 : cette composante est calibrée elle aussi."
         if pfu > 0.0 else
-        "Le PFU sur les revenus du capital (~7,9 md) est dans la cible et absent de "
+        "Et le PFU sur les revenus du capital (~7,9 md) est dans la cible et absent de "
         "notre côté, ce qui tire dans l'autre sens.")
     if imputed <= 0.0:
         return (

@@ -14,7 +14,7 @@ WHAT IT BUYS. A proportional tax's yield depends on the base of each cell, never
 dispersion, so the PFU and the social levies on capital income are priced right at
 twelve steps, and the income tax the population reports gains its hors-barème part.
 
-FOUR ARTEFACTS, DECLARED, BECAUSE NONE IS VISIBLE IN THE OUTPUT.
+FIVE ARTEFACTS, DECLARED, BECAUSE NONE IS VISIBLE IN THE OUTPUT.
 
 1. **Every foyer of a band gets the same base**, holders and non-holders alike. The table
    gives a mean over all foyers and no count of holders, so the share of foyers with any
@@ -32,6 +32,15 @@ FOUR ARTEFACTS, DECLARED, BECAUSE NONE IS VISIBLE IN THE OUTPUT.
    insurance levied at 7,5 % and a few other proportional taxes. Divided by 12,8 % the
    whole column gives 80,63 bn; the four national boxes sum to 80,70 bn. The two routes
    agree within 0,1 %, which is what makes the derivation usable rather than plausible.
+5. **The count of foyers.** The population holds 35,3 M foyers for 31,0 M ménages; France
+   41,6 M for 31,3 M (the reconciliation's « Foyers fiscaux » line, −15 %). The missing
+   foyers are not missing people but units the population does not split — a couple
+   living together unmarried, a grown child filing alone. A band's mean per DGFiP foyer
+   is therefore multiplied by France's foyers per ménage over the population's, ×1,17,
+   so that the capital per ménage is France's and the total comes back, as the wage bill
+   and the pensions are calibrated on their totals. Without it the PFU lands 15 % short
+   (8,79 bn instead of 10,32 on the full population). The ratio is free of scale, so a
+   frame that weighs to a share of France gets the same factor.
 
 The CEHR is printed in the same cell, in parentheses: « 2 290 (+ 476) ». It is stripped
 before any use. Counted, it would overstate the base by 19 % nationally and by a third in
@@ -51,7 +60,7 @@ from pathlib import Path
 import numpy as np
 
 from impots.donnees import RAW
-from impots.population import top_tail
+from impots.population import margins, top_tail
 
 #: DGFiP n° 41, the same workbook the top-tail rake reads.
 WORKBOOK = top_tail.WORKBOOK
@@ -72,6 +81,9 @@ AMOUNT_ROWS = {"dernier dixième": 22, "dont dernier centième": 23,
 NESTED = ("dernier dixième", "dont dernier centième", "dont dernier millième")
 #: The means are rounded to the euro and the amounts to ten million: they agree within this.
 CROSS_CHECK = 0.01
+#: The foyer-count factor of artefact 5. Measured ×1,17; outside this band the population's
+#: tax units are not France's at all, and the run stops rather than rescale them.
+FACTOR_BOUNDS = (0.8, 1.5)
 
 
 class CapitalImputationError(RuntimeError):
@@ -86,6 +98,8 @@ class Published:
     total_eur: float
     """The column's national total, CEHR stripped."""
     cehr_eur: float
+    foyers: float = 0.0
+    """The foyers the means stand for: the total over the mean per foyer (≈ 41,58 M)."""
 
 
 def _label(text: object) -> str:
@@ -148,7 +162,7 @@ def published(workbook: Path | None = None) -> Published:
             raise CapitalImputationError(
                 f"« {label} » : {computed / 1e9:.2f} md des moyennes contre "
                 f"{printed / 1e9:.2f} md imprimés — le tableau ne se recoupe pas")
-    return Published(tax=tax, total_eur=total, cehr_eur=cehr)
+    return Published(tax=tax, total_eur=total, cehr_eur=cehr, foyers=foyers)
 
 
 def composition(raw: Path | None = None, year: int = YEAR) -> dict[str, float]:
@@ -194,6 +208,21 @@ def bases(table: Published, rate: float) -> dict[str, float]:
     return {label: tax / rate for label, tax in table.tax.items()}
 
 
+def foyer_factor(table: Published, foyers: float, menages: float) -> float:
+    """France's foyers per ménage over the population's (artefact 5)."""
+    if foyers <= 0 or menages <= 0:
+        raise CapitalImputationError(f"{foyers} foyers et {menages} ménages pondérés : "
+                                     f"aucun rapport ne se calcule")
+    factor = (table.foyers / margins.HOUSEHOLDS.value) / (foyers / menages)
+    low, high = FACTOR_BOUNDS
+    if not low <= factor <= high:
+        raise CapitalImputationError(
+            f"facteur de foyers {factor:.2f} hors de [{low}, {high}] : la population ne "
+            f"découpe pas ses ménages en foyers comme la France, et la recaler ainsi "
+            f"inventerait du capital plutôt que de le répartir")
+    return factor
+
+
 def bands(rfr_per_part: np.ndarray, weights: np.ndarray) -> np.ndarray:
     """Each foyer's band index in `top_tail.BANDS`, by weighted rank of RFR per part."""
     order = np.argsort(rfr_per_part, kind="stable")
@@ -206,12 +235,15 @@ def bands(rfr_per_part: np.ndarray, weights: np.ndarray) -> np.ndarray:
     return out
 
 
-def impute(rfr_per_part: np.ndarray, weights: np.ndarray, *, year: int = YEAR,
-           raw: Path | None = None, workbook: Path | None = None) -> dict[str, np.ndarray]:
+def impute(rfr_per_part: np.ndarray, weights: np.ndarray, *, menages: float,
+           year: int = YEAR, raw: Path | None = None,
+           workbook: Path | None = None) -> dict[str, np.ndarray]:
     """The capital-income cases per foyer, in euros, aligned with `rfr_per_part`.
 
-    No draw: every foyer of a band gets the band's base (artefact 1), split in the
-    national shares (artefact 2)."""
+    No draw: every foyer of a band gets the band's base (artefact 1), times the
+    foyer-count factor (artefact 5), split in the national shares (artefact 2).
+    `menages` is the population's weighted count of ménages, which the factor needs and
+    which has no default: a guessed count would be a guessed factor."""
     if year != YEAR:
         raise CapitalImputationError(
             f"imputation des revenus du capital pour {year} : n° 41 décrit les revenus "
@@ -220,8 +252,10 @@ def impute(rfr_per_part: np.ndarray, weights: np.ndarray, *, year: int = YEAR,
     if rfr_per_part.shape != weights.shape:
         raise CapitalImputationError(
             f"rfr_per_part {rfr_per_part.shape} et weights {weights.shape} diffèrent")
-    per_band = bases(published(workbook), pfu_rate(year))
-    base = np.array([per_band[label] for label, *_ in top_tail.BANDS])
+    table = published(workbook)
+    per_band = bases(table, pfu_rate(year))
+    factor = foyer_factor(table, float(weights.sum()), menages)
+    base = np.array([per_band[label] * factor for label, *_ in top_tail.BANDS])
     index = bands(rfr_per_part, weights)
     if (index < 0).any():
         raise CapitalImputationError(f"{int((index < 0).sum())} foyers hors de toute bande")

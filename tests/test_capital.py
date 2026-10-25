@@ -149,6 +149,26 @@ def test_a_box_missing_from_the_declarations_is_refused(tmp_path: Path) -> None:
 # --------------------------------------------------------------------------- #
 # The imputation
 # --------------------------------------------------------------------------- #
+def _neutral(weights: np.ndarray) -> float:
+    """The ménages for which the foyer-count factor is exactly one."""
+    return float(weights.sum()) * margins.HOUSEHOLDS.value / capital.published().foyers
+
+
+@needs_workbook
+def test_the_foyer_factor_is_france_s_foyers_per_menage_over_the_population_s() -> None:
+    """Artefact 5. The population: 35,32 M foyers for 31,01 M ménages; France: 41,58 M
+    for 31,27 M. Each band's mean is multiplied by ×1,17, and a factor outside its band
+    is refused rather than applied."""
+    table = capital.published()
+    assert table.foyers == pytest.approx(41.58e6, rel=1e-3)
+    assert capital.foyer_factor(table, 35.32e6, 31.01e6) == pytest.approx(1.167, abs=0.002)
+    for foyers in (20e6, 60e6):
+        with pytest.raises(capital.CapitalImputationError, match="hors de"):
+            capital.foyer_factor(table, foyers, 31.01e6)
+    with pytest.raises(capital.CapitalImputationError, match="aucun rapport"):
+        capital.foyer_factor(table, 0.0, 31.01e6)
+
+
 def test_the_bands_are_weighted_ranks() -> None:
     per_part = np.arange(1000, dtype=float)[::-1]
     index = capital.bands(per_part, np.ones(1000))
@@ -161,7 +181,7 @@ def test_the_bands_are_weighted_ranks() -> None:
 def test_every_foyer_of_a_band_gets_its_base_in_the_national_shares() -> None:
     rng = np.random.default_rng(1)
     per_part, weights = rng.lognormal(10, 1, 100_000), np.full(100_000, 400.0)
-    cases = capital.impute(per_part, weights)
+    cases = capital.impute(per_part, weights, menages=_neutral(weights))
     total = sum(cases.values())
     index = capital.bands(per_part, weights)
     expected = capital.bases(capital.published(), capital.pfu_rate())
@@ -172,6 +192,9 @@ def test_every_foyer_of_a_band_gets_its_base_in_the_national_shares() -> None:
     mean = capital.imputed_total(cases, weights) / weights.sum()
     # n° 41's mean per foyer, its own total over its own foyers (≈ 41,58 M).
     assert mean == pytest.approx(capital.published().total_eur / 0.128 / 41.58e6, rel=1e-3)
+    # Fewer foyers per ménage than France: every base rises by the same factor.
+    fewer = capital.impute(per_part, weights, menages=_neutral(weights) * 1.17)
+    assert np.allclose(sum(fewer.values()), total * 1.17)
 
 
 def test_a_foyer_outside_every_band_is_refused() -> None:
@@ -179,14 +202,14 @@ def test_a_foyer_outside_every_band_is_refused() -> None:
     weights = np.ones(100)
     weights[0] = 0.0
     with pytest.raises(capital.CapitalImputationError, match="hors de toute bande"):
-        capital.impute(np.arange(100, dtype=float), weights)
+        capital.impute(np.arange(100, dtype=float), weights, menages=_neutral(weights))
 
 
 def test_another_year_and_mismatched_shapes_are_refused() -> None:
     with pytest.raises(capital.CapitalImputationError, match="vieillir l'assiette"):
-        capital.impute(np.ones(3), np.ones(3), year=2026)
+        capital.impute(np.ones(3), np.ones(3), menages=1.0, year=2026)
     with pytest.raises(capital.CapitalImputationError, match="diffèrent"):
-        capital.impute(np.ones(3), np.ones(2))
+        capital.impute(np.ones(3), np.ones(2), menages=1.0)
 
 
 # --------------------------------------------------------------------------- #
@@ -276,17 +299,19 @@ def test_the_bands_rank_rfr_per_part_on_the_foyer_mean_weight(monkeypatch) -> No
     rfr, parts = np.array([30_000.0, 90_000.0]), np.array([1.0, 3.0])
     simulation = types.SimpleNamespace(
         calculate=lambda name, period: {"rfr": rfr, "nbptr": parts}[name])
-    frame = pl.DataFrame({"foyer_id": ["a", "a", "b"], "weight": [100.0, 300.0, 50.0]})
+    frame = pl.DataFrame({"foyer_id": ["a", "a", "b"], "household_id": ["m", "m", "n"],
+                          "weight": [100.0, 300.0, 50.0]})
     seen = {}
 
-    def spy(per_part, weights, year):
-        seen.update(per_part=per_part, weights=weights, year=year)
+    def spy(per_part, weights, menages, year):
+        seen.update(per_part=per_part, weights=weights, menages=menages, year=year)
         return {}
 
     monkeypatch.setattr(capital, "impute", spy)
     runner._impute_capital(types.SimpleNamespace(simulation=simulation), frame, 2024)
     assert np.allclose(seen["per_part"], [30_000.0, 30_000.0])
     assert np.allclose(seen["weights"], [200.0, 50.0]) and seen["year"] == 2024
+    assert seen["menages"] == pytest.approx(250.0)
 
 
 def test_the_income_tax_collects_the_pfu_except_under_the_collection_threshold(
@@ -341,6 +366,17 @@ def test_the_levies_are_a_receipt_and_the_pfu_is_not_counted_twice() -> None:
     assert {"pfu", "prelevements_sociaux_capital"} <= keys
     assert "prelevements_sociaux_capital" in STATE_RECEIPTS
     assert "pfu" not in STATE_RECEIPTS
+
+
+def test_the_macro_bridge_names_the_levies_rather_than_crash_on_them() -> None:
+    """Every receipt reaches `shocks.build`, which refuses a delta it can neither map nor
+    name. The levies on capital income are named: their loop is absent, said so."""
+    from impots.guards import STATE_RECEIPTS
+    from impots.macro import shocks
+
+    assert set(STATE_RECEIPTS) <= set(shocks.INSTRUMENT_MAP) | set(shocks.UNMAPPED)
+    reason = shocks.UNMAPPED_REASONS[shocks.UNMAPPED["prelevements_sociaux_capital"]]
+    assert "absente, pas nulle" in reason
 
 
 @needs_workbook

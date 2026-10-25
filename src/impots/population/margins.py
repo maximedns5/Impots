@@ -141,7 +141,9 @@ CAPITAL_PFU_BY_FRACTILE = Figure(
            "foyer of a band gets its band's base, holders or not, in the national "
            "composition of the 2042 boxes, so the PFU comes out right at twelve steps "
            "and anything finer, or any share of holders, is an artefact. The CEHR, "
-           "printed in the same cell, is stripped (1,98 bn).",
+           "printed in the same cell, is stripped (1,98 bn). The population has 15 % "
+           "fewer foyers per ménage than France, so each band's mean is multiplied by "
+           "the ratio (×1,17) for the total to come back, as the wage bill's does.",
 )
 
 CAPITAL_BOXES_2042 = Figure(

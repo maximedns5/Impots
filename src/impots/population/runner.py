@@ -324,7 +324,9 @@ def _impute_capital(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any
     if weights.shape != rfr.shape:
         raise WiringError(
             f"foyer weights {weights.shape} do not line up with RFR {rfr.shape}")
-    return capital_module.impute(rfr / parts, weights, year=year)
+    menages = float(frame.group_by("household_id").agg(pl.col("weight").mean())
+                    ["weight"].sum())
+    return capital_module.impute(rfr / parts, weights, menages=menages, year=year)
 
 
 def _rake_top_tail(built: Any, frame: pl.DataFrame, year: int) -> tuple[pl.DataFrame, Any]:
