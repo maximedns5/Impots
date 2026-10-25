@@ -551,3 +551,51 @@ def test_a_third_round_that_is_not_the_second_is_refused(script, tmp_path, how: 
         (reports / "etude_second_tour" / "exploration_etude_ir.json").unlink()
     with pytest.raises(script.EtudeError, match=needle):
         script.load(requests, reports)
+
+
+def _complement_first_round(reports: Path, *, move: bool = False) -> None:
+    """The complement's first round as it ran: with the C2 that D-249 and D-251 corrected,
+    here its indices changed; `move` shifts one of its figures."""
+    first = reports / "complements_premier_tour"
+    first.mkdir()
+    path = reports / "exploration_complement_allegements.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["commit"] = "9" * 40
+    for search in report["searches"]:
+        search["indices"].pop("closed", None)
+    if move:
+        report["searches"][1]["evaluations"][-1]["delta_aged"] += 1e-9
+    (first / path.name).write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+
+def test_the_complement_s_first_round_is_named_and_given_back_figure_for_figure(
+        script, tmp_path) -> None:
+    """D-252: the complement replayed on its own commit with C2's fixes alone. Its indices
+    may differ from the first round's; its costs, its Δb and its corners may not, and the
+    page names the first commit and why it was replayed."""
+    requests, reports = _study(tmp_path, script)
+    _complement(requests, reports, script)
+    _complement_first_round(reports)
+    etudes, complements, _ = script.study(requests, reports)
+    page = script.render(etudes, complements)
+    _, _, tail = page.partition("## Complément, hors préenregistrement")
+    assert "9" * 40 in tail and "b" * 40 in tail
+    assert "chiffre pour chiffre" in tail and "D-249" in tail
+    assert "complements_premier_tour" in tail
+
+
+@pytest.mark.parametrize("how, needle", [("moved", "ne redonne pas le premier"),
+                                         ("missing", "premier tour des compléments sans")])
+def test_a_complement_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str,
+                                                           needle: str) -> None:
+    """D-252: the rerun only corrects C2, which enters no revenue and no debt. One figure
+    moved by a billionth of a point, or the complement missing from its first round, and
+    the rerun is no longer that: refused."""
+    requests, reports = _study(tmp_path, script)
+    _complement(requests, reports, script)
+    _complement_first_round(reports, move=how == "moved")
+    if how == "missing":
+        (reports / "complements_premier_tour"
+         / "exploration_complement_allegements.json").unlink()
+    with pytest.raises(script.EtudeError, match=needle):
+        script.study(requests, reports)

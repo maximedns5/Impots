@@ -49,6 +49,10 @@ FIGURES = ("knobs", "cost_aged_eur", "cost_frozen_eur", "delta_aged", "delta_fro
 #: an instrument's preregistered request, with only these fields changed.
 COMPLEMENTS = "complements"
 COMPLEMENT_FREE = ("name", "titre", "question")
+#: The complements' first round, whose C2 read 15 % of the earners (D-249) and lent each its
+#: household's cost change (D-251). The rerun corrects C2, which enters no revenue and no
+#: debt: it must give the first round back figure for figure (D-252).
+COMPLEMENTS_FIRST_ROUND = "complements_premier_tour"
 #: The 2026 curve, replayed in the study and preregistered apart (D-241): each request
 #: holds the frame of the study's allègement request, only these fields changed.
 COURBE = "courbe"
@@ -250,8 +254,24 @@ def load_complements(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
                 f"{report_path.name} : les coûts diffèrent de ceux de l'étude. Le "
                 f"complément ne change que le classement du choc macro ; un coût qui "
                 f"bouge dit qu'autre chose a bougé.")
-        out.append({"instrument": entry["instrument"], "report": report,
-                    "study": entry["report"]})
+        complement = {"instrument": entry["instrument"], "report": report,
+                      "study": entry["report"]}
+        first_round = reports / COMPLEMENTS_FIRST_ROUND
+        if first_round.exists():
+            first_path = first_round / report_path.name
+            if not first_path.exists():
+                raise EtudeError(f"premier tour des compléments sans {first_path.name} : "
+                                 f"la comparaison des deux tours ne porterait pas sur "
+                                 f"tous les compléments.")
+            first = json.loads(first_path.read_text(encoding="utf-8"))
+            ExplorationReport.model_validate(first)
+            if not same_figures(first, report):
+                raise EtudeError(
+                    f"le second tour de {report_path.name} ne redonne pas le premier : un "
+                    f"chiffre a bougé entre les deux commits, et le second tour n'est plus "
+                    f"la seule correction de C2 (D-249, D-251).")
+            complement["first_commit"] = first["commit"]
+        out.append(complement)
     return out
 
 
@@ -519,6 +539,17 @@ def _complement_section(complements: list[dict[str, Any]], target: float,
         instrument, r = c["instrument"], c["report"]
         out += ["", f"### {r['titre']}", "", r["question"], "",
                 f"Commit `{r['commit']}`, le {r['computed']}, ici : {r['where']}."]
+        if c.get("first_commit"):
+            out += ["", f"Un premier tour a tourné sur `{c['first_commit']}`. Son emploi au "
+                        f"voisinage du SMIC (C2) ne lisait que 15 % des salariés (D-249), et "
+                        f"prêtait à chacun le changement du coût du travail de son ménage "
+                        f"(D-251). Le second tour, sur le code du premier et les seules "
+                        f"corrections de C2, corrige les deux. C2 n'entre ni dans les "
+                        f"recettes ni dans "
+                        f"la dette, et le second tour redonne le premier chiffre pour "
+                        f"chiffre sur les coûts, les Δb et les coins de la boîte θ : "
+                        f"`reports/{COMPLEMENTS_FIRST_ROUND}/` le garde, et le rendu refuse "
+                        f"de tourner si un seul chiffre diffère."]
         for search, before in zip(r["searches"], c["study"]["searches"], strict=True):
             near = min(search["evaluations"], key=lambda e: abs(e["delta_aged"] - target))
             was = next(e for e in before["evaluations"] if e["knobs"] == near["knobs"])
