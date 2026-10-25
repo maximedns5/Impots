@@ -1407,6 +1407,12 @@ class PopulationSimulateRequest(BaseModel):
     reconciliation line stops being independent evidence for that component. It also
     costs an extra baseline pass, since the deciles are of a quantity the first pass
     has to compute."""
+    impute_capital: bool = False
+    """Hand out the base the PFU taxes from DGFiP n° 41's fractiles of RFR per part, so
+    the population carries capital income at all (D-248). Opt-in and OFF BY DEFAULT for
+    the same reason as the niches: it is a CALIBRATION, and the PFU part of the net-yield
+    line stops being evidence. It costs an extra pass, and holds for the 2024 income
+    only: another year is refused by name."""
 
     @model_validator(mode="after")
     def _check_reform(self) -> PopulationSimulateRequest:

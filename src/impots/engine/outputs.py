@@ -117,6 +117,15 @@ REGISTRY: tuple[Row, ...] = (
         label="Réductions d'impôt"),
     Row("credits_impot", "credits_impot", "foyer_fiscal", "year", "light", False,
         label="Crédits d'impôt"),
+    # Capital income (D-248). Zero unless the population is given a base, which only
+    # the opt-in imputation does. The PFU is a « dont » of `ir`, which already holds it:
+    # it is shown, never added to the receipts. The social levies on that income are not
+    # in `ir`, so they are a receipt of their own; the engine stores them negative.
+    Row("pfu", "prelevement_forfaitaire_unique_ir", "foyer_fiscal", "year", "light",
+        False, label="dont prélèvement forfaitaire unique (part IR)"),
+    Row("prelevements_sociaux_capital", "prelevements_sociaux_revenus_capital",
+        "foyer_fiscal", "year", "light", True,
+        label="Prélèvements sociaux sur les revenus du capital"),
     # --- benefits block: famille, monthly — full tier only ---------------------
     Row("af", "af", "famille", "month", "full", False,
         label="Allocations familiales"),

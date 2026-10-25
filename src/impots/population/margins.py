@@ -124,6 +124,41 @@ NICHE_CREDITS_BY_DECILE = Figure(
 )
 
 # --------------------------------------------------------------------------- #
+# Capital income — the third CALIBRATION target, spent when the imputation runs (D-248).
+#
+# The population is given the PFU's base until it reproduces n° 41's hors-barème tax by
+# fractile, so the PFU it pays matches by construction. What it costs is named on
+# IR_NET_YIELD below: the PFU part of that line is no longer independent evidence.
+# --------------------------------------------------------------------------- #
+CAPITAL_PFU_BY_FRACTILE = Figure(
+    value=10.32e9, unit="EUR", year=2024,
+    scope="Impôt hors barème hors CEHR, moyenne par foyer et total, par décile de RFR "
+          "par part, dernier centième et dernier millième, revenus 2024",
+    source="DGFiP Statistiques n° 41 (novembre 2025), « L'impôt sur le revenu 2024 », "
+           "tableau 2",
+    url="https://www.impots.gouv.fr/statistiques", use="calibration",
+    caveat="Spent when `impute_capital` runs. The base is the tax over 12,8 %; every "
+           "foyer of a band gets its band's base, holders or not, in the national "
+           "composition of the 2042 boxes, so the PFU comes out right at twelve steps "
+           "and anything finer, or any share of holders, is an artefact. The CEHR, "
+           "printed in the same cell, is stripped (1,98 bn).",
+)
+
+CAPITAL_BOXES_2042 = Figure(
+    value=80.69e9, unit="EUR", year=2024,
+    scope="Cases 2DC, 2TR, 2TS et 3VG des déclarations 2042, revenus 2024, total national",
+    source="DGFiP, « L'impôt sur le revenu : les déclarations nationales » "
+           "(data.economie.gouv.fr)",
+    url="https://data.economie.gouv.fr/explore/dataset/ir-declarations-2042-nat/",
+    use="context",
+    caveat="Its SHARES split the imputed base over the four cases; its level is the "
+           "second route to the base, against 80,63 bn derived from n° 41 (0,1 %). "
+           "Life insurance at 7,5 % and the foyers taxed at the barème on option are "
+           "on neither side the same way, which is why the agreement is closer than "
+           "either route.",
+)
+
+# --------------------------------------------------------------------------- #
 # Income tax — VALIDATION only. Never a calibration target.
 # --------------------------------------------------------------------------- #
 DGFIP_URL = "https://www.impots.gouv.fr/statistiques"
@@ -133,7 +168,9 @@ IR_NET_YIELD = Figure(
     scope="Impôt sur le revenu, recettes nettes de l'État, exécution budgétaire",
     source="budget.gouv.fr, exécution 2024", url="https://www.budget.gouv.fr/", use="validation",
     caveat="State budget outturn. Includes the prélèvement forfaitaire unique on "
-           "capital income (~7.9 bn in 2025), which Phase 1 does not model at all. "
+           "capital income (~7.9 bn in 2025), which the population carries only when "
+           "`impute_capital` runs — and then from CAPITAL_PFU_BY_FRACTILE, so that part "
+           "is calibrated too (D-248). "
            "PART-CALIBRATED SINCE B3: with niche imputation on, about 10.6 bn of the "
            "réductions and crédits separating this figure from the barème are drawn "
            "from NICHE_CREDITS_BY_DECILE, so this line is no longer independent "
