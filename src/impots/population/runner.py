@@ -301,7 +301,8 @@ def _impute_niches(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any]
     return niches_module.impute(rfr_per_part, weights, year=year)
 
 
-def _impute_capital(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any]:
+def _impute_capital(built: Any, frame: pl.DataFrame, year: int,
+                    index: float = 1.0) -> dict[str, Any]:
     """Hand out the PFU's base from DGFiP n° 41's fractiles, keyed on RFR per part (D-248).
 
     Needs a simulation that has already been built, for the same reason `_impute_niches`
@@ -309,6 +310,10 @@ def _impute_capital(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any
     capital income enters the RFR, and the niche deciles are deciles of that RFR. The
     top-tail rake is refused beside it (`run`): it fits n° 41's RFR, which holds the
     capital, by scaling earnings alone.
+
+    In another year than the table's, the foyers are ranked on that year's RFR per part,
+    and each band's 2024 base is multiplied by `index`, the base's growth since 2024
+    (D-249): the ranks move nothing, the euros follow the index.
     """
     from impots.population import capital as capital_module
 
@@ -326,7 +331,9 @@ def _impute_capital(built: Any, frame: pl.DataFrame, year: int) -> dict[str, Any
             f"foyer weights {weights.shape} do not line up with RFR {rfr.shape}")
     menages = float(frame.group_by("household_id").agg(pl.col("weight").mean())
                     ["weight"].sum())
-    return capital_module.impute(rfr / parts, weights, menages=menages, year=year)
+    bases = capital_module.impute(rfr / parts, weights, menages=menages,
+                                  year=capital_module.YEAR)
+    return {case: base * index for case, base in bases.items()}
 
 
 def _rake_top_tail(built: Any, frame: pl.DataFrame, year: int) -> tuple[pl.DataFrame, Any]:
@@ -369,6 +376,7 @@ def run(
     impute_niches: bool = False,
     rake_top_tail: bool = False,
     impute_capital: bool = False,
+    capital_index: float | None = None,
 ) -> RunResult:
     """Run the population through current law and, optionally, one reform.
 
@@ -385,19 +393,26 @@ def run(
     `impute_capital` hands out the base the PFU taxes, from n° 41's fractiles (D-248).
     It is a calibration too — `margins.CAPITAL_PFU_BY_FRACTILE` — and runs before the
     rake and the niches, which read the RFR it moves. The tables describe the 2024
-    income: another year is refused by name, before any pass. So is the top-tail rake
-    beside it: the rake fits n° 41's RFR, which holds the capital, by scaling earnings
-    alone, so with the capital imputed it takes 5,4 % off the wage bill (measured on
-    2 000 ménages) and the spent wage margin no longer holds.
+    income: another year takes `capital_index`, the base's growth since 2024, which the
+    caller declares as it declares the population's uprating (D-249), and is refused by
+    name without it, before any pass. So is the top-tail rake beside it: the rake fits
+    n° 41's RFR, which holds the capital, by scaling earnings alone, so with the capital
+    imputed it takes 5,4 % off the wage bill (measured on 2 000 ménages) and the spent
+    wage margin no longer holds.
     """
+    if capital_index is not None and (not impute_capital or not capital_index > 0):
+        raise ValueError(
+            f"indice du capital {capital_index} : il vieillit l'assiette imputée, et ne "
+            f"se donne qu'avec l'imputation, strictement positif (D-249)")
     if impute_capital:
         from impots.population import capital as capital_module
 
-        if year != capital_module.YEAR:
+        if year != capital_module.YEAR and capital_index is None:
             raise ValueError(
                 f"imputation des revenus du capital pour {year} : la DGFiP n° 41 décrit "
-                f"les revenus {capital_module.YEAR}, et une autre année demanderait de "
-                f"vieillir l'assiette, ce que l'imputation ne fait pas (D-248)")
+                f"les revenus {capital_module.YEAR}, et une autre année demande de "
+                f"vieillir l'assiette par un indice déclaré (`capital_index`), qui manque "
+                f"(D-248, D-249)")
         if rake_top_tail:
             raise ValueError(
                 "imputation du capital et recalage de la queue (L1) ensemble : le "
@@ -421,7 +436,8 @@ def run(
     capital_bases: dict[str, Any] | None = None
     if impute_capital:
         started = time.perf_counter()
-        capital_bases = _impute_capital(built, frame, year)
+        capital_bases = _impute_capital(
+            built, frame, year, 1.0 if capital_index is None else capital_index)
         built = build_simulation(frame, baseline(), year, capital_bases=capital_bases)
         timings["capital_s"] = round(time.perf_counter() - started, 2)
 

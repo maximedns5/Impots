@@ -224,6 +224,29 @@ def test_every_exposed_niche_knob_is_wired(source: str, knob: str):
     assert knob in {entry["knob"] for entry in knob_table(source)}
 
 
+# --- Capital income and the PFU (D-249) ---------------------------------------------
+
+
+@pytest.mark.parametrize("field", ["capDiv", "capInt", "capAutres", "capPv", "kPfuTaux"])
+def test_every_capital_input_exists(source: str, field: str):
+    assert f'id="{field}"' in source
+
+
+def test_the_pfu_knob_is_wired_in_per_cent(source: str):
+    entry = next(e for e in knob_table(source) if e["knob"] == "pfu_taux")
+    assert entry["id"] == "kPfuTaux" and entry["scale"] == 100
+
+
+def test_the_capital_payload_writes_the_wire_format_s_four_boxes(source: str):
+    """The page sends what the schema reads, and only when something is declared."""
+    from impots.api.schemas import CAPITAL_CASES
+
+    body = _function(source, "capitalPayload")
+    assert set(re.findall(r"^\s*(\w+): \"cap\w+\",$", body, re.M)) == set(CAPITAL_CASES)
+    assert "return any ? payload : null" in body
+    assert "household.capital = capital" in _function(source, "payload")
+
+
 def test_the_niche_payload_sends_only_what_was_declared(source: str):
     """"Declared nothing" must stay distinguishable from "declared zero"."""
     body = _function(source, "nichesPayload")
@@ -926,6 +949,7 @@ const adultPayload = () => ({});
 const childPayload = () => ({});
 const nichesPayload = () => null;
 const patrimoinePayload = () => null;
+const capitalPayload = () => null;
 const reformSpec = () => null;
 const caseTApplies = () => false;
 %(payload)s
@@ -1088,6 +1112,7 @@ const adultPayload = () => ({ salaire_brut_annuel: 40000, annee_naissance: 1985 
 const childPayload = (child) => ({ annee_naissance: child.annee_naissance });
 const nichesPayload = () => null;
 const patrimoinePayload = () => null;
+const capitalPayload = () => null;
 const reformSpec = () => null;
 %(caseTApplies)s
 %(payload)s
@@ -1141,6 +1166,7 @@ const adultPayload = () => ({ salaire_brut_annuel: 40000, annee_naissance: 1970 
 const childPayload = (child) => ({ annee_naissance: child.annee_naissance });
 const nichesPayload = () => null;
 const patrimoinePayload = () => null;
+const capitalPayload = () => null;
 const reformSpec = () => null;
 %(caseTApplies)s
 %(payload)s

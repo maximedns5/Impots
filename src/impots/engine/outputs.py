@@ -126,6 +126,10 @@ REGISTRY: tuple[Row, ...] = (
     Row("prelevements_sociaux_capital", "prelevements_sociaux_revenus_capital",
         "foyer_fiscal", "year", "light", True,
         label="Prélèvements sociaux sur les revenus du capital"),
+    # The dividends declared at the PFU, case 2DC: an input read back, not a levy. It is
+    # the base the dividend channel C10 moves (D-249), and never a receipt.
+    Row("dividendes", "f2dc", "foyer_fiscal", "year", "light", False,
+        label="Dividendes déclarés (case 2DC)"),
     # --- benefits block: famille, monthly — full tier only ---------------------
     Row("af", "af", "famille", "month", "full", False,
         label="Allocations familiales"),

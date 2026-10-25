@@ -120,6 +120,14 @@ PATH_NICHE_SCOLARITE = (*_RI, "enfants_scolarises")
 #: knob has to be verified on one that does.
 PATH_PLAFOND_GLOBAL_NICHES = (*_CI, "plaf_nich", "plafond")
 
+#: The income-tax part of the PFU (D-249). One parameter, read by both formulas that
+#: compute it — the PFU outside life insurance (dividends, interest, plus-values) and the
+#: one on life insurance above its threshold — and by nothing else: read out of
+#: openfisca's source, not assumed from the name. The 7,5 % beside it is the life
+#: insurance below the threshold, which this knob does not move.
+PATH_PFU = ("taxation_capital", "prelevement_forfaitaire", "partir_2018",
+            "taux_prelevement_forfaitaire_rev_capital_eligibles_pfu_interets_dividendes_etc")
+
 _REDUCTIONS = ("prelevements_sociaux", "reductions_cotisations_sociales")
 PATH_ALLEGEMENT_GENERAL = (*_REDUCTIONS, "allegement_general", "ensemble_des_entreprises")
 #: The maladie bandeau's parameters live under `alleg_gen.mmid`, NOT under the
@@ -247,7 +255,20 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "frais_scolarite_lycee": (*PATH_NICHE_SCOLARITE, "lycee"),
     "frais_scolarite_superieur": (*PATH_NICHE_SCOLARITE, "universite"),
     "plafond_global_niches": PATH_PLAFOND_GLOBAL_NICHES,
+    # Capital income (D-249).
+    "pfu_taux": PATH_PFU,
 }
+
+#: Knobs that move the taxation of capital income. Read back by `verify_capital`, the
+#: guard 9 of PHASE11_SPEC §10, and claimed by the dividend channel C10.
+CAPITAL_KNOBS = frozenset({"pfu_taux"})
+
+
+def moves_capital(spec: ReformSpec | None) -> bool:
+    """Whether a reform moves the taxation of capital income — the passes that price it
+    then impute the capital, which nothing else declares to them (D-249)."""
+    return spec is not None and bool(set(spec.model_dump(exclude_none=True))
+                                     & CAPITAL_KNOBS)
 
 #: Knobs that move an IR niche. Grouped for the same three reasons the prestations are:
 #: the UI panels them apart, and a reader needs to know which levers only bite on a
@@ -529,6 +550,24 @@ def verify_allegements(tax_benefit_system: Any, spec: ReformSpec, year: int) -> 
         raise AssertionError(
             "les allègements appliqués ne correspondent pas à la réforme demandée — "
             + " ; ".join(problems)
+        )
+
+
+def verify_capital(tax_benefit_system: Any, spec: ReformSpec, year: int) -> None:
+    """Read the PFU back, and refuse a system that did not take it (§10, guard 9; D-249).
+
+    The path read is `PATH_PFU` itself, never the knob table the write went through:
+    reading back through the table that wrote would confirm a write diverted to any
+    neighbouring rate — the shared-path pattern that let D-042 self-confirm.
+    """
+    wanted = spec.pfu_taux
+    if wanted is None:
+        return
+    got = float(resolve(tax_benefit_system.parameters, PATH_PFU)(f"{year}-01-01"))
+    if differs(got, wanted):
+        raise AssertionError(
+            f"le PFU appliqué ne correspond pas à la réforme demandée — pfu_taux : "
+            f"demandé {wanted}, appliqué {got} au {year}-01-01"
         )
 
 

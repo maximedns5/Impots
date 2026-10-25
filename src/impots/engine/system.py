@@ -86,7 +86,12 @@ def reformed(key: str) -> Any:
     acyclic — `reforms` needs the pydantic wire models, which live in the API layer.
     """
     from impots.api.schemas import ReformSpec
-    from impots.engine.reforms import make_reform, verify_allegements, verify_bareme
+    from impots.engine.reforms import (
+        make_reform,
+        verify_allegements,
+        verify_bareme,
+        verify_capital,
+    )
 
     decoded = json.loads(key)
     spec = ReformSpec.model_validate(decoded["spec"])
@@ -97,6 +102,7 @@ def reformed(key: str) -> Any:
     # this wrapper has.
     verify_bareme(system, spec, decoded["year"])
     verify_allegements(system, spec, decoded["year"])
+    verify_capital(system, spec, decoded["year"])
     return system
 
 

@@ -91,6 +91,9 @@ def compute(
     labour_emtr: np.ndarray | None = None,
     is_rate_change_points: float | None = None,
     cir_margins: tuple[tuple[float, float], ...] | None = None,
+    dividend_base_eur: float | None = None,
+    levy_rate_baseline: float | None = None,
+    levy_rate_reform: float | None = None,
     draws: int = DRAWS,
     seed: int = SEED,
 ) -> BehaviouralResult:
@@ -138,6 +141,12 @@ def compute(
     results.append(channel_module.rd_response(
         store, reform, cir_margins=cir_margins, draws=draws, rng=rng,
     ))
+    # C10 last, for the same reason as C7 and C8 (D-249).
+    results.append(channel_module.dividend_response(
+        store, reform, dividend_base_eur=dividend_base_eur,
+        levy_rate_baseline=levy_rate_baseline, levy_rate_reform=levy_rate_reform,
+        draws=draws, rng=rng,
+    ))
 
     metrics: dict[str, tuple[tuple[str, ...], float]] = {}
     if relative_cost_change is not None and len(relative_cost_change):
@@ -161,6 +170,13 @@ def compute(
             and cir_margins is not None):
         metrics["c9_rd"] = (channel_module.C9_KEYS,
                             abs(sum(delta for delta, _ in cir_margins)))
+    dividends = next((r for r in results if r.key == "c10_dividendes" and r.applies), None)
+    if dividends is not None:
+        # In the support's units: the relative change of the net-of-tax rate. The share
+        # row is a composition, not a response, and is not graded.
+        metrics["c10_dividendes"] = (
+            channel_module.C10_ELASTICITIES,
+            abs(dividends.diagnostics["net_of_tax_relative_change"]))
     creations = next((r for r in results if r.key == "c8_creations" and r.applies), None)
     if creations is not None:
         # In the driver's units, as the support is: points of the virtual rate.

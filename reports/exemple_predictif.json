@@ -310,6 +310,9 @@
     }
    ],
    "theta": {
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
     "employment_elasticity_smic": 0.5,
     "eti_all": 0.5,
     "eti_top_decile": 0.5,
@@ -543,6 +546,9 @@
     }
    ],
    "theta": {
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
     "employment_elasticity_smic": 0.5,
     "eti_all": 0.5,
     "eti_top_decile": 0.5,
@@ -727,6 +733,9 @@
     }
    ],
    "theta": {
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
     "employment_elasticity_smic": 0.5,
     "eti_all": 0.5,
     "eti_top_decile": 0.5,
