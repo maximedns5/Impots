@@ -49,6 +49,10 @@ COMPLEMENT_FREE = ("name", "titre", "question")
 #: holds the frame of the study's allègement request, only these fields changed.
 COURBE = "courbe"
 COURBE_FREE = ("name", "titre", "question", "bounds")
+#: The curve's first round, on its preregistration's commit, with a C2 that read 15 % of the
+#: earners (D-246). The rerun corrects C2, which enters no revenue and no debt: it must give
+#: the first round back figure for figure (D-248).
+COURBE_FIRST_ROUND = "courbe_premier_tour"
 
 
 class EtudeError(ValueError):
@@ -282,6 +286,24 @@ def load_courbe(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
     if len(commits) != 1:
         raise EtudeError(f"rapports de la courbe de {len(commits)} commits {commits} : elle "
                          f"se chiffre sur un code, celui de son préenregistrement.")
+    first_round = reports / COURBE_FIRST_ROUND
+    if first_round.exists():
+        for entry in out:
+            path = first_round / f"exploration_{COURBE}_{entry['instrument'].key}.json"
+            if not path.exists():
+                raise EtudeError(f"premier tour de la courbe sans {path.name} : la "
+                                 f"comparaison des deux tours ne porterait pas sur tout "
+                                 f"son menu.")
+            first = json.loads(path.read_text(encoding="utf-8"))
+            ExplorationReport.model_validate(first)
+            if not same_figures(first, entry["report"]):
+                raise EtudeError(
+                    f"le second tour de la courbe « {entry['instrument'].key} » ne redonne "
+                    f"pas le premier : un chiffre a bougé entre les deux commits, et le "
+                    f"second tour n'est plus la seule correction de C2 (D-246).")
+            entry["first_commit"] = first["commit"]
+        if len({e["first_commit"] for e in out}) != 1:
+            raise EtudeError("premier tour de la courbe de plusieurs commits.")
     return out
 
 
@@ -552,6 +574,14 @@ def _courbe_section(courbe: list[dict[str, Any]], target: float, first_year: int
            "grille diffèrent. Chaque rapport a joué sa requête, à l'identique, sur le même "
            f"commit : `{report['commit']}`, le {report['computed']}. Les passes ont tourné "
            f"ici : {report['where']}.",
+           *(["", f"Un premier tour a tourné sur le commit du préenregistrement, "
+                  f"`{courbe[0]['first_commit']}`. Son emploi au voisinage du SMIC (C2) "
+                  f"ne lisait que 15 % des salariés (D-246). Le second tour le corrige. "
+                  f"C2 n'entre ni dans les recettes ni dans la dette, et le second tour "
+                  f"redonne le premier chiffre pour chiffre sur les coûts, les Δb et les "
+                  f"coins de la boîte θ : `reports/{COURBE_FIRST_ROUND}/` le garde, et le "
+                  f"rendu refuse de tourner si un seul chiffre diffère."]
+              if courbe[0].get("first_commit") else []),
            "",
            f"| Instrument | Bouton | Grille | Coût {first_year}, vieillie |",
            "|---|---|---|---|"]

@@ -454,3 +454,53 @@ def test_a_curve_that_is_not_what_was_preregistered_is_refused(script, tmp_path,
             encoding="utf-8")
     with pytest.raises(script.EtudeError, match=needle):
         script.study(requests, reports)
+
+
+def _courbe_first_round(reports: Path, *, move: str | None = None) -> None:
+    """The curve's first round as it ran: on the preregistration's commit, with the C2 that
+    read 15 % of the earners (D-246), here its indices changed; `move` shifts one figure of
+    that knob's report."""
+    first = reports / "courbe_premier_tour"
+    first.mkdir()
+    for path in reports.glob("exploration_courbe_*.json"):
+        report = json.loads(path.read_text(encoding="utf-8"))
+        report["commit"] = "e" * 40
+        for search in report["searches"]:
+            search["indices"].pop("absent", None)
+            search["indices"].pop("closed", None)
+        if move and path.name == f"exploration_courbe_{move}.json":
+            report["searches"][0]["evaluations"][-1]["delta_aged"] += 1e-9
+        (first / path.name).write_text(json.dumps(report, ensure_ascii=False),
+                                       encoding="utf-8")
+
+
+def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
+        script, tmp_path) -> None:
+    """D-248: the curve replayed after C2's fix. Its indices may differ from the first
+    round's, which is the point; its costs, its Δb and its corners may not, and the page
+    names the first commit and why it was replayed."""
+    requests, reports = _study(tmp_path, script)
+    _courbe(requests, reports, script)
+    _courbe_first_round(reports)
+    etudes, complements, courbe = script.study(requests, reports)
+    page = script.render(etudes, complements, courbe)
+    _, _, tail = page.partition("## La courbe de 2026, préenregistrée à part")
+    assert "e" * 40 in tail and CURVE_COMMIT in tail
+    assert "chiffre pour chiffre" in tail and "D-246" in tail
+    assert "courbe_premier_tour" in tail
+
+
+@pytest.mark.parametrize("how, needle", [("moved", "ne redonne pas le premier"),
+                                         ("missing", "premier tour de la courbe sans")])
+def test_a_curve_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str,
+                                                      needle: str) -> None:
+    """D-248: the rerun only corrects C2, which enters no revenue and no debt. One figure
+    moved by a billionth of a point, or a knob missing from the first round, and the
+    rerun is no longer that: refused."""
+    requests, reports = _study(tmp_path, script)
+    _courbe(requests, reports, script)
+    _courbe_first_round(reports, move="t_min" if how == "moved" else None)
+    if how == "missing":
+        (reports / "courbe_premier_tour" / "exploration_courbe_t_delta.json").unlink()
+    with pytest.raises(script.EtudeError, match=needle):
+        script.study(requests, reports)
