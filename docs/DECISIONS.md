@@ -18321,3 +18321,140 @@ et sha256. `tests/test_donnees.py` passe ses 40 cas.
 - Restent à lire les versions publiées de Gechert et Heimberger (*EER*) et de Da Rin et
   al. (*JPubE*), que ScienceDirect refuse ici (403), et à trouver une source stable des
   paramètres de l'OCDE pour le taux moyen effectif.
+
+## D-246 — Phase 11, M2 : l'IS sur le PIB en indice, sa boucle refusée, la vue vieillie
+
+**Le fait.** M2 de la phase 11 est fait : le §4 de la spec et la R7 de M0. Quatre choses
+entrent dans la chaîne, chacune sur un fichier lu et non recopié :
+- l'effet de l'IS sur la croissance, une ligne du magasin et un indice tenu hors de la
+  dette ;
+- le recoupement de la boucle par élasticités de la Commission, calculé, qui la refuse ;
+- la vue vieillie des entreprises ;
+- le chemin annuel, `impots predictif`, avec une réforme des entreprises.
+
+Sur le millésime réel de 2023, un point d'IS en moins, de 25 à 24 %, seul, sans
+comportement ni boucle, coûte en 2026 3,10 Md€ en vue figée et 3,38 en vue vieillie. En
+2035, il coûte 2,73 et 3,89 Md€, et la dette est plus haute de 0,75 et de 0,93 point de
+PIB. Le scénario : dépenses gelées en volume, 1 % de croissance réelle et 2 % de prix,
+le taux implicite tenu. Les dix années, dans les deux vues, ont pris 24 secondes, sans
+aucune passe des ménages.
+
+**L'IS sur la croissance (R1).**
+- `behavioural/gechert.py` lit sur le PDF le tableau 2 de Gechert et Heimberger (IMK WP
+  210, p. 16), ligne « β0 [mean beyond bias] ». Sur 441 estimations, la moyenne brute
+  vaut −0,019 (0,010) et le centre corrigé du biais de publication 0,0001 (0,0004). Le
+  coefficient est donné pour une hausse du taux.
+- La ligne `is_croissance_pib` du magasin en est la lecture par point de baisse : θ = 0 à
+  −0,0001, θ = 1 à 0,019, et θ = ½ à leur milieu, 0,00945 point de croissance par an.
+  M0 l'arrondissait à 0,0095. Le magasin porte le chiffre exact, et un test le recalcule
+  sur le PDF.
+- La ligne dit son rang. C'est le rang 3, une méta-analyse. Ses pays : 42 études, dont
+  deux estimations sur trois portent sur des pays de l'OCDE seulement. Ses années : des
+  études publiées de 1997 à 2019. Et l'exception de D-245, qui écarte le rang 2.
+- Le magasin reçoit deux gardes, les gardes 1 et 2 du §10. Une ligne internationale qui
+  ne dit pas ses pays, ses années, ou pourquoi le rang au-dessus manque, est refusée. Une
+  ligne d'un rang inférieur sur un canal où une ligne d'un rang supérieur est chargée
+  l'est aussi, sauf exception déclarée. Le refus est `MisrankedRow`.
+- L'indice `pib_is` suit le taux normal d'IS. Après t années, l'écart de PIB vaut l'effet
+  sur la croissance, fois les points de baisse, fois t, plafonné à dix ans. À θ = ½, un
+  point de baisse donne 0,0945 % de PIB à dix ans, et la boîte θ va de −0,001 à 0,19 %.
+  Une hausse donne un écart négatif. Une réforme qui ne touche pas au taux normal n'a pas
+  d'indice, et la raison en est dite.
+- L'indice est tenu hors de la trajectoire de dette, par la règle de D-218 : un instrument
+  sans boucle ne reçoit aucun effet macro, pas même sur le PIB. Le test de bout en bout
+  le tient : la dette de la réforme est celle de son seul chiffrage mécanique. Les
+  conventions de l'indice disent la rampe, ce hors-dette, et l'inversion de court terme
+  que la méta-analyse suggère.
+
+**La boucle par élasticités, refusée par son calcul (R2).**
+- `predictif/elasticites.py` lit sur le PDF les lignes France des tableaux I.1 à I.3 du
+  DP 098, p. 41 à 43. Les trois tableaux doivent se recouper par les formules des
+  auteurs : une ligne lue dans un autre pays, ou une colonne décalée, s'arrête là.
+- La boucle vaut 0,585 point de solde par point d'écart de PIB, lue en euros, et 0,630,
+  lue en ratio. Elle est comparée au φ/y de Mésange, variante par variante, aux horizons
+  1, 2 et 3, à un quart près : la tolérance que M0 a fixée avant le calcul.
+- Mésange donne, à un, deux et trois ans :
+  - pour l'IR, 0,46, 0,60 et 0,66 ;
+  - pour la CSG, 0,46, 0,60 et 0,63 ;
+  - pour les cotisations salariés, 0,71, 0,74 et 0,81 ;
+  - pour les cotisations employeurs, 1,40, 1,05 et 0,96 ;
+  - pour la TVA, 1,19, 1,24 et 1,25.
+- Lue en euros, la boucle échoue à 9 des 15 recoupements ; lue en ratio, à 8. Les
+  cotisations employeurs et la TVA échouent aux trois horizons sous les deux lectures, de
+  34 à 58 %. L'IR et la CSG échouent à un an, de 26 ou de 36 % selon la lecture.
+- La boucle est donc refusée, et celle de l'IS reste absente, dite comme telle. Deux
+  gardes la tiennent, les gardes 5 et 6 du §10. Elle n'est jamais demandée pour un
+  instrument que Mésange couvre. Elle n'est jamais donnée sans que son recoupement passe
+  en entier sous une même lecture.
+- La raison que la chaîne donne pour les impôts des entreprises nomme ce refus. Un test
+  la lie au refus calculé : si le recoupement passait un jour, ce test échouerait, et la
+  raison devrait changer avec lui.
+
+**La vue vieillie des entreprises (R7).**
+- `predictif/firmes.py` donne le facteur : le PIB nominal de l'année sur celui du
+  millésime. Les comptes nationaux le donnent jusqu'en 2025, l'année de départ de la
+  chaîne. Au-delà, le scénario de croissance le prolonge, comme il prolonge le
+  dénominateur de la dette. Sur le millésime 2023, avec 1 % de croissance réelle et 2 %
+  de prix, le facteur vaut 1,087 en 2026 et 1,421 en 2035.
+- La vue vieillie multiplie par ce facteur le coût et chaque impôt de la couche. La vue
+  figée garde le millésime tel quel.
+- Trois refus, chacun par son nom : un millésime sans année, comme la fixture ; une année
+  avant le millésime ; une vue vieillie sans scénario de croissance. Des comptes
+  illisibles sont aussi un refus nommé. Le point d'accès renvoie ces refus en 422.
+
+**Le chemin annuel avec une réforme des entreprises.**
+- Un scénario porte un champ `firm_reform`. Il n'est écrit que s'il est non vide. Les
+  fichiers écrits avant restent identiques, et un test le vérifie sur les deux scénarios
+  commités.
+- Chaque année est chiffrée par couche, les ménages et les entreprises, dans les deux
+  vues. Une année dont les couches ne font pas le coût est refusée, dans le chemin comme
+  dans le schéma du rapport : la garde 8 du §10 vaut aussi pour lui. Une année chiffrée
+  par couche dans une vue et non dans l'autre est refusée aussi.
+- Une réforme des seules entreprises ne lance aucune passe des ménages. Le chemin entier,
+  avec comportement ou boucle, donne la croissance du scénario à la couche entreprises.
+  L'explorateur aussi.
+
+**Ce que la passe réelle a trouvé, corrigé.**
+- Le rapport annuel ne disait pas comment la couche entreprises était chiffrée. Il porte
+  désormais une convention : le millésime, les deux vues, et l'IS compté à l'exercice.
+  Un rapport avec une couche entreprises et sans cette note est refusé. Un rapport des
+  ménages qui la porterait l'est aussi.
+- Deux raisons de canaux fermés contredisaient D-244. Celle des créations disait que le
+  taux d'IS n'est pas une réforme que la trajectoire chiffre. Celle du CIR disait que la
+  trajectoire ne chiffre que les réformes de la population. Elles disent maintenant que
+  la trajectoire chiffre le coût d'une baisse d'IS, et non les sociétés qu'elle ferait
+  naître, et que le CIR reste hors d'elle.
+- L'exemple de D-228 est rendu de nouveau, sans nouvelle passe : seules ces deux lignes
+  changent. Les rapports commités des études gardent leur texte. Il était juste pour les
+  réformes des ménages qu'ils chiffrent, sur le commit qui les a chiffrées.
+
+**Les tests.** Trois fichiers nouveaux, 40 cas :
+- `tests/test_is_croissance.py` : le tableau lu tel qu'imprimé, la ligne du magasin
+  contre le PDF, les refus du lecteur et du rang, l'indice à θ, sa boîte et son absence ;
+- `tests/test_elasticites.py` : la lecture et son recoupement interne, les deux lectures
+  de la boucle, le verdict calculé, les gardes 5 et 6, et la raison liée au refus ;
+- `tests/test_firmes_vues.py` : le facteur et ses refus, les couches du chemin et du
+  rapport, le scénario, la note, et la commande de bout en bout sur la fixture.
+
+`tests/test_predictif_entreprises.py` reçoit la vue vieillie : elle suit le PIB, reçoit
+la croissance de la requête, refuse la fixture et une vue inconnue. Cinq fichiers voient
+le nombre de lignes ouvertes du magasin passer de 14 à 15 : c'est `is_croissance_pib`.
+
+Quarante mutations écrites à la main, en trois séries de 15, 7 et 18, ont toutes été
+tuées. Les quatre tests de la correction ont échoué sur le code d'avant. Le balayage de
+D-229 reçoit dans ses périmètres les trois modules nouveaux, la garde des couches du
+rapport annuel et celle de sa note. Il a trouvé deux survivantes : les gardes « pypdf
+absent » des deux lecteurs nouveaux. Chacune a reçu son test, qui l'a tuée. Le rapport
+compte 207 mutations : 206 tuées, 1 équivalente, 0 survivante.
+
+Les tests ciblés passent : 570 dans vingt-cinq fichiers, ceux de la chaîne prédictive,
+du magasin, des entreprises, de l'explorateur, de l'étude, de l'exemple et du rapport des
+gardes. Deux sont sautés, comme avant : ils attendent une distribution des TMEM dans
+l'artefact de base. Ruff aussi.
+
+**Ce qui reste.**
+- Le panneau prédictif de la page n'envoie pas encore de réforme des entreprises.
+- M3 : l'entrée, sur Da Rin et al., et l'investissement s'il passe sa conversion.
+- M4 attend l'imputation des revenus du capital.
+- M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2.
+- Les trois exceptions de D-245 restent au propriétaire.

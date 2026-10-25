@@ -1,6 +1,20 @@
-# State of the project, and the directions open — 2026-10-24 (Phase 10, M4 done; Phase 11, M0 and M1 done)
+# State of the project, and the directions open — 2026-10-25 (Phase 10, M4 done; Phase 11, M0 to M2 done)
 
-The third 2026-10-24 update adds D-245, Phase 11's M0: eleven documents manifested and
+The 2026-10-25 update adds D-246, Phase 11's M2. The IS on growth is a store row read off
+Gechert and Heimberger's PDF (θ = 0 at −0.0001, θ = 1 at 0.019, θ = ½ at 0.00945 point a
+year per IS point cut), with its rank, countries and years, and the store now refuses an
+international row without them or a lower rank beside a higher one. Its index, `pib_is`,
+is a ten-year ramp (0.0945 % of GDP at ten years at θ = ½), held outside the debt by
+D-218. The elasticity loop is refused by computation: read off DP 098, 0.585 or 0.630,
+it misses Mésange's own ratio by more than a quarter at 9 or 8 of the 15 variant-horizon
+pairs, the employer contributions and VAT at every horizon. The aged firm view follows
+nominal GDP from the 2023 vintage (×1.087 in 2026, ×1.421 in 2035 at 1 % real and 2 %
+prices); a vintage without a year is refused. `impots predictif` takes a scenario's
+`firm_reform`, by layer: one IS point alone costs 3.10 Md€ frozen and 3.38 aged in 2026,
+and leaves the debt 0.75 and 0.93 point higher in 2035, in 24 seconds. The real run found
+two defects, fixed: the annual report did not name the firm layer's conventions, and two
+closed-channel reasons still denied that the trajectory prices the IS.
+The third 2026-10-24 update added D-245, Phase 11's M0: eleven documents manifested and
 read on file, `docs/M0_PHASE11.md`, two adversarial passes. Fixed: the IS on growth
 (Gechert and Heimberger: θ = 0 at the bias-corrected centre, no effect; θ = 1 at the raw
 centre, 0.019 point of growth a year per IS point; a ten-year ramp) and firm entry (Da
@@ -340,8 +354,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **244 decision
-entries**, D-000 to D-243, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **247 decision
+entries**, D-000 to D-246, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -720,10 +734,12 @@ download list.
    mapping before any pass. M0 is done (D-245): the IS's growth ramp and firm entry
    fixed, the IS loop and the investment index closed with their reasons, the
    self-financing of targeted cuts left to the owner. M1 is done (D-244): a firm reform
-   in `/predictif/simulate` and the explorer, priced on the unaged firm population. Next,
-   M2: the IS's GDP effect as an index outside the debt path, the cross-check that
-   refuses the elasticity loop, the aged firm view and the annual path. Then Phase 12,
-   the past, and Phase 13, the online product.
+   in `/predictif/simulate` and the explorer. M2 is done (D-246): the IS's GDP effect as
+   an index outside the debt path, the computed cross-check that refuses the elasticity
+   loop, the aged firm view and the annual path by layer. Next, M3: firm entry on Da Rin
+   et al., and investment if it passes its conversion. The page's predictive panel does
+   not send a firm reform yet. Then Phase 12, the past, and Phase 13, the online
+   product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each
