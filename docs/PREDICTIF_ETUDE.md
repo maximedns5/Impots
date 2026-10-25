@@ -243,7 +243,9 @@ Joué après le résultat de l'étude, et hors de son préenregistrement. Chaque
 
 Le plafond de la réduction générale reclassé sous la variante uniforme de Mésange, qui a sa ligne de solde (D-239) : un relèvement de 3 SMIC à 3,5, 4,5, 5,5 ou 6,5 SMIC fait-il baisser la dette en 2035, et pour quels θ ? Joué après le résultat de l'étude, hors préenregistrement.
 
-Commit `cacd43af7a5a506d476cfcbc454a58439d1e614b`, le 2026-10-21, ici : un conteneur cloud de Claude Code, en tâche de fond.
+Commit `ce40f2ce0597bab77d00f919e88b88466d72add7`, le 2026-10-25, ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+Un premier tour a tourné sur `cacd43af7a5a506d476cfcbc454a58439d1e614b`. Son emploi au voisinage du SMIC (C2) ne lisait que 15 % des salariés (D-249), et prêtait à chacun le changement du coût du travail de son ménage (D-251). Le second tour, sur le code du premier et les seules corrections de C2, corrige les deux. C2 n'entre ni dans les recettes ni dans la dette, et le second tour redonne le premier chiffre pour chiffre sur les coûts, les Δb et les coins de la boîte θ : `reports/complements_premier_tour/` le garde, et le rendu refuse de tourner si un seul chiffre diffère.
 
 **Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 3,5 SMIC, laisse Δb = +0,47 pt. Elle ne baisse à aucun coin de la boîte θ. Dans l'étude, le même paquet laissait Δb = +0,55 pt.
 

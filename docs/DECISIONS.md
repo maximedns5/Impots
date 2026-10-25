@@ -18977,3 +18977,42 @@ Les messages des commits de la branche, déjà poussés, gardent les anciens num
 - Le `make full` du propriétaire, avant toute fusion.
 - Le choix du propriétaire sur R5, sur des chiffres de C2 où la chaîne n'est plus en cause.
 - Le rapport du complément du plafond porte encore l'ancien C2, que la page ne rend pas.
+
+## D-252 — Le complément du plafond rejoué avec le C2 corrigé
+
+**Le fait.** Le complément du plafond (D-239), le plafond reclassé sous la variante uniforme
+de Mésange et joué hors du préenregistrement, portait encore le C2 que D-249 et D-251 ont
+corrigé : +227 emplois au voisinage du SMIC au premier paquet, comme l'étude avant D-251. Il
+est rejoué, et C2 y vaut désormais 0.
+
+**Sur quel code.** Le complément a tourné sur `cacd43a`, le commit de D-239. Il est rejoué
+sur `ce40f2c` : `cacd43a` et les seuls changements de `src/` que C2 lit, ceux que `d77feb9`
+porte sur `e0c3d7f`. Ce sont les salariés de la passe à ses poids (D-249), le coût du
+travail de chacun et le zéro signé (D-251). Rien d'autre de ce qui a changé depuis n'y
+entre : le second tour ne diffère du premier que par C2. `ce40f2c` est fusionné dans la
+branche par la stratégie `ours`. L'arbre de la branche ne change pas, car il porte déjà ce
+code, ses commentaires renumérotés ; seul le commit que nomme le rapport devient joignable.
+
+**Le résultat.** Huit passes, sur la requête du complément, inchangée. Contre le premier
+tour, désormais sous `reports/complements_premier_tour/` : requête, coûts, Δb, coins de
+la boîte θ et candidats, chiffre pour chiffre, sous les deux persistances. Seul l'indice de
+l'emploi au voisinage du SMIC bouge : +227 [+170 ; +270] → 0, au paquet de 3,5 SMIC. Les
+réponses de D-239 tiennent. Sous « éteint », aucun paquet ne fait baisser la dette en 2035.
+Sous « tenu », Δb vaut +0,13 point à θ = ½ au premier paquet, et 8 coins sur 16 la font
+baisser, ceux où le multiplicateur macro est à θ = 1.
+
+**La page.** `docs/PREDICTIF_ETUDE.md` est rendue par son script. Elle nomme le commit du
+second tour du complément, celui du premier, et dit pourquoi il est rejoué. Le rendu refuse
+de tourner si le second ne redonne pas le premier, chiffre pour chiffre, sur les coûts, les
+Δb et les coins de la boîte θ. La section du complément ne rend pas d'indices : la page ne
+change qu'en son commit et en ce paragraphe.
+
+**Les tests.** Dans `tests/test_predictif_etude.py`, trois cas : le premier tour du
+complément nommé et redonné chiffre pour chiffre ; un chiffre bougé d'un milliardième, ou le
+rapport manquant au premier tour, refusés. Chacun a été vu échouer avant sa garde, et trois
+mutations du script ont été tuées. Les trois cas tueurs de C2 et celui des clés de cache
+passent sur le code de `ce40f2c`. Les tests de l'étude, de l'explorateur et de la charte :
+107 réussis. `ruff` passe sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.** Rien de ce qui restait de D-251 sur le complément. Restent le `make full`
+du propriétaire, avant toute fusion, et son choix sur R5.

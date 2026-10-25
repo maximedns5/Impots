@@ -2,8 +2,8 @@
   "name": "complement_allegements",
   "titre": "Relèvement du plafond de la réduction générale, sous la variante uniforme — complément hors préenregistrement",
   "question": "Le plafond de la réduction générale reclassé sous la variante uniforme de Mésange, qui a sa ligne de solde (D-239) : un relèvement de 3 SMIC à 3,5, 4,5, 5,5 ou 6,5 SMIC fait-il baisser la dette en 2035, et pour quels θ ? Joué après le résultat de l'étude, hors préenregistrement.",
-  "computed": "2026-10-21",
-  "commit": "cacd43af7a5a506d476cfcbc454a58439d1e614b",
+  "computed": "2026-10-25",
+  "commit": "ce40f2ce0597bab77d00f919e88b88466d72add7",
   "where": "un conteneur cloud de Claude Code, en tâche de fond",
   "request": {
     "name": "complement_allegements",
@@ -644,12 +644,12 @@
             "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
             "available": true,
             "values": {
-              "2026": 227.20850801675496
+              "2026": 0.0
             },
             "box": {
               "2026": [
-                170.43302299992402,
-                269.7901217793782
+                0.0,
+                0.0
               ]
             },
             "reason": "",
@@ -1478,12 +1478,12 @@
             "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
             "available": true,
             "values": {
-              "2026": 227.20850801675496
+              "2026": 0.0
             },
             "box": {
               "2026": [
-                170.43302299992402,
-                269.7901217793782
+                0.0,
+                0.0
               ]
             },
             "reason": "",
