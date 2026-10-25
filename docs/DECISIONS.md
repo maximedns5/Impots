@@ -18427,3 +18427,52 @@ n'atteignent pas `_employer_inputs`. `ruff` passe sur `src`, `tests` et `scripts
 - Rejouer les deux recherches de la courbe, et l'étude du plafond, pour que les rapports
   et la page portent le C2 corrigé.
 - Mesurer le poids des salariés dans `_narrow_band`, et le corriger s'il le faut.
+
+## D-247 — La bande étroite lit la passe rapide à ses propres poids
+
+**Le fait.** `_narrow_band`, dans `src/impots/api/main.py`, avait le défaut de C2 (D-246).
+Sa famille des salaires lisait chaque salarié de la population entière, au poids de la
+population, avec un mouvement nul hors des 20 000 ménages de la passe rapide. C'est une
+part : les zéros sortent du numérateur comme du dénominateur, et rien n'était divisé par
+la fraction tirée. Mais les ménages tirés pesaient leur propre poids, non celui de
+l'échantillon. Le tirage garde les plus lourds à leur poids et relève les autres : sur la
+population, le poids de la passe vaut de 1 à 324 fois celui du cadre selon le ménage. La
+part penchait donc vers les ménages lourds.
+
+**La correction.** Comme pour C2 : les salariés de la famille des salaires sont ceux des
+ménages que la passe a chiffrés, au poids de la passe. Le mouvement d'un ménage reste
+partagé à parts égales entre ses salariés. Sur une passe complète, rien ne change, sauf
+dans les 1,5 % de ménages dont les membres n'ont pas le même poids. La famille du revenu
+imposable lisait déjà les ménages de la passe, à leur poids. Une recherche des lectures de
+`weight` dans `src/` n'en trouve pas d'autre qui croise le cadre entier avec les ménages
+d'une passe : le taux marginal (`emtr.cached`) tire son propre échantillon et lit ses
+poids.
+
+**La mesure.** Population de 2024, passe rapide, les deux réformes à seuil des tests de
+l'API. Part du mouvement venue de moins de 15 % d'un seuil :
+
+| Réforme | Avant | Après |
+|---|---|---|
+| Bandeaux maladie à 2,25 SMIC et famille à 3,3 SMIC | 76,50 % | 77,43 % |
+| Bandeau maladie à 2,25 SMIC | 73,51 % | 74,13 % |
+
+Les deux restent signalées, au-dessus de la barre de 50 %. Après la correction,
+`_narrow_band` redonne sur la passe, à l'identique, la part recalculée à la main pour la
+première. L'écart est petit sur ces deux réformes. Il n'a pas de borne générale : le cas
+du test ci-dessous montre une part qui passe sous la barre.
+
+**Les tests.** Dans `tests/test_narrow_band.py`, un cas nouveau. 10 ménages au poids
+1 000 000, un salarié chacun à 1,2 SMIC, loin d'un plafond de 2,25 SMIC, dont le coût du
+travail baisse de 100 € ; 990 ménages au poids 1 000, un salarié chacun au plafond, dont
+le coût baisse de 2 000 €. La part de la population vaut 1,98 / 2,98, soit 66 % : signalée.
+Tirés à 100 ménages par le `subsample` du runner, les 10 lourds sont certains et gardent
+leur poids, et 90 légers pèsent 11 000 chacun : la même part. Sur le code d'avant, le cas a
+échoué à 15 %, sous la barre ; celui de la population entière passait avant et passe
+après. Les tests ciblés passent : 161 dans `tests/test_narrow_band.py`,
+`tests/test_behavioural.py`, `tests/test_api.py` et `tests/test_fiche.py`, dont 2 sautés.
+Les deux cas lents de l'API qui lisent la bande sur une passe ont tourné, l'un après
+l'autre, et passent : la réforme à seuil signalée et le barème non, et le drapeau qui ne
+touche pas au chiffre mécanique. `ruff` passe sur `src`, `tests` et `scripts`.
+
+**Ce qui reste.** Rien de ce défaut. Ce qui restait de D-246 reste : le choix du
+propriétaire sur R5, et les recherches de la courbe à rejouer pour le C2 corrigé.

@@ -93,3 +93,71 @@ def test_the_window_is_wide_enough_for_the_step_that_motivated_it() -> None:
     income = np.array([2.35 * SMIC])  # between the old 2.5 and the new 2.25
     result = measure(income, np.array([-300.0]), np.ones(1), [2.25 * SMIC])
     assert result.flagged
+
+
+def _run_households(frame):
+    """What `runner.run` hands back for `frame`, without the engine: one row per
+    household at the MEAN of its members' weights, as the runner aggregates, and a
+    labour cost moved by the frame's `move`."""
+    import polars as pl
+
+    return (
+        frame.group_by("household_id")
+        .agg(pl.col("weight").mean(),
+             pl.col("salaire_brut_annuel").sum().alias("salaire_brut"),
+             pl.col("move").sum())
+        .with_columns(
+            pl.col("salaire_brut").alias("salaire_super_brut"),
+            pl.col("salaire_brut").alias("salaire_imposable"),
+            (pl.col("salaire_brut") + pl.col("move")).alias("salaire_super_brut_reform"),
+            pl.lit(0.0).alias("revenu_disponible"),
+            pl.lit(0.0).alias("revenu_disponible_reform"))
+        .sort("household_id")
+    )
+
+
+def test_the_wage_family_reads_the_quick_tier_at_its_own_weights() -> None:
+    """D-247. The quick tier prices 20 000 households, reweighted to the population; the
+    wage family read every earner of the WHOLE frame at the frame's weight, with no
+    movement outside the subsample. A share, so the zeros cancel and nothing is divided
+    by the sampling fraction; but the households drawn weighed their own weight, not the
+    subsample's, and the light ones, which the draw scales up most, counted for too
+    little.
+
+    Worked example: 10 households of weight 1 000 000, each one earner at 1.2 SMIC,
+    far from a 2.25-SMIC plafond, whose labour cost falls 100 EUR; 990 of weight 1 000,
+    each one earner at the plafond, whose cost falls 2 000 EUR. The population's share
+    from inside the window is 990 × 1 000 × 2 000 / (that + 10 × 1 000 000 × 100) =
+    1.98 / 2.98 = 66 %: flagged. Drawn down to 100 households, the 10 heavy ones are
+    certain and keep their weight, and 90 light ones weigh 990 000 / 90 = 11 000 each:
+    the same 66 %. At the frame's weight they weigh 1 000, and the share fell to 15 %,
+    under the bar.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.api.schemas import ReformSpec
+    from impots.population.runner import subsample
+
+    smic = api_main._smic_annual(2024)
+    heavy, light = 10, 990
+    frame = pl.DataFrame({
+        "household_id": np.arange(heavy + light),
+        "person_id": np.arange(heavy + light),
+        "salaire_brut_annuel": np.r_[np.full(heavy, 1.2 * smic), np.full(light, 2.25 * smic)],
+        "weight": np.r_[np.full(heavy, 1_000_000.0), np.full(light, 1_000.0)],
+        "move": np.r_[np.full(heavy, -100.0), np.full(light, -2_000.0)],
+    })
+    request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
+    expected = 1.98 / 2.98
+
+    full = api_main._narrow_band(request, _run_households(frame), frame)
+    assert full.share == pytest.approx(expected, rel=1e-9)
+    drawn = subsample(frame, 100)
+    assert drawn.height == 100
+    quick = api_main._narrow_band(request, _run_households(drawn), frame)
+    assert quick.share == pytest.approx(expected, rel=1e-9), (
+        "the quick tier must measure the share of the population it was reweighted to")
+    assert quick.flagged

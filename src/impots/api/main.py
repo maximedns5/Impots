@@ -442,24 +442,26 @@ def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
     wage_income, wage_move, wage_weights = (
         households["salaire_brut"].to_numpy(), cost_move, weights
     )
+    # The earners are those of the households the run priced, at the run's weight, as
+    # C2's are (D-247): the frame's weight on the quick tier's households tilted the
+    # share towards the heavy ones, which the draw keeps at their own weight.
     if frame is not None:
         import polars as pl
 
-        earners = frame.filter(pl.col("salaire_brut_annuel") > 0)
-        by_household = dict(zip(households["household_id"].to_list(), cost_move,
-                                strict=False))
-        counts = (
-            earners.group_by("household_id").len()
-            .rename({"len": "n"}).to_dicts()
+        priced = pl.DataFrame({
+            "household_id": households["household_id"],
+            "_run_weight": households["weight"],
+            "_move": cost_move,
+        })
+        earners = (
+            frame.filter(pl.col("salaire_brut_annuel") > 0)
+            .with_columns(pl.len().over("household_id").alias("_earners"))
+            .join(priced, on="household_id", how="inner")
         )
-        per_household_count = {row["household_id"]: row["n"] for row in counts}
-        ids = earners["household_id"].to_list()
         wage_income = earners["salaire_brut_annuel"].to_numpy()
         # Each earner carries their household's movement, split evenly among them.
-        wage_move = np.array([
-            by_household.get(h, 0.0) / max(per_household_count.get(h, 1), 1) for h in ids
-        ])
-        wage_weights = earners["weight"].to_numpy()
+        wage_move = (earners["_move"] / earners["_earners"]).to_numpy()
+        wage_weights = earners["_run_weight"].to_numpy()
 
     families = [
         ({k: v for k, v in spec.items() if k in taxable_knobs},
