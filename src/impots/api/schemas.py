@@ -1082,6 +1082,12 @@ class ResultRows(BaseModel):
     which is every household in the synthetic population — the 19.53 bn of niches
     nationally is why the population's IR is validated against the barème line and not
     against net receipts."""
+    pfu: float
+    """The prélèvement forfaitaire unique owed on capital income, income-tax part: a
+    « dont » of `ir`, never added to it (D-248). Zero for a household, which declares no
+    capital income here; non-zero in a population run with `impute_capital`."""
+    prelevements_sociaux_capital: float
+    """The social levies on that income, which `ir` does not hold (D-248)."""
     # benefits block (famille) — full tier only
     af: float | None = None
     aeeh: float | None = None

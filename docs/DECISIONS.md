@@ -18573,3 +18573,130 @@ l'exemple, de l'étude, du manifeste et du rapport des gardes. Ruff aussi.
 - M4 attend l'imputation des revenus du capital.
 - M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2.
 - Le panneau prédictif de la page n'envoie pas encore de réforme des entreprises.
+
+## D-248 — Les revenus du capital imputés : l'assiette du PFU par fractile de RFR
+
+**Le fait.** Le propriétaire a décidé de construire l'imputation que la porte F1b lui
+laissait (D-097, `docs/F1B_CAPITAL_GATE.md`, § 4). C'est le préalable de M4 dans la phase
+11. `population/capital.py` pose sur les foyers l'assiette que le PFU taxe, fractile par
+fractile, depuis les tableaux publiés de la DGFiP. L'imputation est opt-in :
+`impute_capital` dans le runner et dans `/population/simulate`, `--impute-capital` pour
+`impots population run` et `reconcile`. C'est une calibration, et sa cible est dépensée
+(`margins.CAPITAL_PFU_BY_FRACTILE`).
+
+**Ce qu'elle lit.**
+- Le tableau 2 de la DGFiP n° 41 : l'impôt hors barème moyen par foyer, par décile de RFR
+  par part, puis pour le dernier centième et le dernier millième. La CEHR, imprimée dans
+  la même cellule entre parenthèses, est retirée (1,98 Md€ au total).
+- Les lignes emboîtées deviennent des bandes disjointes, comme pour le recalage L1 : 386 €
+  de 90 à 99 %, 6 494 € de 99 à 99,9 %, 135 784 € au dernier millième.
+- Le tableau doit se recouper : les moyennes, multipliées par les foyers que donne son
+  total, redonnent à 1 % près les montants imprimés sous lui. Sinon il est refusé.
+- L'assiette est cet impôt sur le taux du PFU que porte la loi, 12,8 %, lu dans openfisca.
+  Elle va de 31 € par foyer au premier décile à 3 018 € de 90 à 99 %, 50 734 € de 99 à
+  99,9 % et 1,06 M€ au dernier millième.
+- La composition vient des cases 2042 nationales, au manifeste depuis D-210 : 62,1 % de
+  dividendes (2DC), 12,9 % d'intérêts (2TR), 1,7 % d'autres revenus distribués (2TS),
+  23,3 % de plus-values (3VG).
+- Les quatre cases totalisent 80,69 Md€ ; le tableau 2, divisé par 12,8 %, donne 80,63
+  Md€. Les deux routes du gate s'accordent à 0,1 %.
+
+**Cinq artefacts, déclarés dans le module.**
+- Chaque foyer d'une bande reçoit la base de la bande, qu'il détienne du capital ou non.
+  La part des foyers qui en ont vaut donc 100 % par construction. L'ERFS la mesure (axe
+  A4) et reste un comparateur : bâtir dessus la dépenserait (gate, § 8).
+- La composition est nationale dans chaque bande. Le haut réel est plus riche en
+  dividendes et en plus-values, le bas en intérêts. Le PFU et les prélèvements sociaux ne
+  voient pas ce partage ; la réponse des dividendes de M4 le verra.
+- Les bandes se rangent sur le RFR par part d'avant l'imputation, qui le déplace. Une
+  passe, sans reclassement, comme pour le recalage L1.
+- Le reste de l'impôt hors barème, l'assurance-vie à 7,5 % notamment, est lu comme du PFU.
+- Le compte des foyers. La population compte 35,3 M de foyers pour 31,0 M de ménages ; la
+  France, 41,6 M pour 31,3 M. C'est la ligne « Foyers fiscaux » de la réconciliation, à
+  −15 %. Les foyers manquants ne sont pas des personnes manquantes, mais des unités que
+  la population ne sépare pas : un couple de concubins, un enfant majeur qui déclare seul.
+  La moyenne de chaque bande, celle d'un foyer de la DGFiP, est donc multipliée par le
+  rapport des foyers par ménage de la France à ceux de la population, ×1,17. Le total
+  revient alors, comme celui de la masse salariale et des pensions, calées sur leurs
+  totaux. Le rapport est sans échelle : une population qui pèse une part de la France
+  reçoit le même. Il est borné entre 0,8 et 1,5, et refusé au-delà.
+
+**Ce que fait la passe.**
+- L'imputation tourne avant les niches, dont les déciles sont ceux du RFR qu'elle déplace.
+- Elle écrit le capital sur toute l'histoire, de N-2 à N, comme les revenus d'activité :
+  le RFR de N-2, qui fixe le taux de CSG d'une pension, le contient. La passe de la
+  réforme reçoit les mêmes bases.
+- Deux refus, avant toute passe. Une autre année que 2024 : la base n'est pas vieillie.
+  Et le recalage L1 à côté d'elle (voir plus bas).
+- Le registre gagne deux lignes. `pfu`, le PFU dû, est un « dont » de `ir`, jamais ajouté
+  aux recettes. `prelevements_sociaux_capital` n'est pas dans `ir` : il entre aux recettes
+  de l'État (`STATE_RECEIPTS`), que la garde de partie double et le pont vers Mésange
+  lisent.
+- La note de la ligne d'IR net de la réconciliation dit, d'après le passage, si le PFU
+  est imputé. Sans imputation, elle reste mot pour mot celle du rapport commité.
+
+**Deux choses que la loi ajoute, et que la passe montre.**
+- **Le seuil de recouvrement.** Le PFU est de l'impôt sur le revenu, et un impôt sur le
+  revenu sous 61 € n'est pas recouvré. Un foyer non imposé qui doit quelques euros de PFU
+  ne paie donc rien. La ligne `pfu` dit le PFU dû ; la ligne `ir`, ce qui en est recouvré.
+  Le premier test supposait le contraire : c'est lui qui se trompait.
+- **La CEHR.** Le RFR contient désormais le capital, et la CEHR mord en haut.
+
+**La passe réelle.** Sur toute la population, au palier léger, sans et avec
+l'imputation :
+
+| | sans | avec | écart |
+|---|---|---|---|
+| PFU dû (`pfu`) | 0 | 10,26 Md€ | +10,26 |
+| Prélèvements sociaux sur le capital | 0 | 13,79 Md€ | +13,79 |
+| RFR | 1 182,0 Md€ | 1 262,2 Md€ | +80,2 |
+| IR (`ir`) | 103,5 Md€ | 115,3 Md€ | +11,8 |
+| IR après décote, avant niches | 103,3 Md€ | 103,3 Md€ | 0 |
+
+- Le PFU dû revient à 0,6 % de la cible, 10,32 Md€. L'assiette, 80,2 Md€, est celle que
+  le tableau 2 donne, 80,6 Md€. Sans le correctif des foyers, le PFU tombait à 8,79 Md€.
+- L'IR monte de 11,8 Md€ : le PFU dû, moins ce que le seuil de 61 € n'en recouvre pas,
+  plus la CEHR que le RFR complet déclenche (publiée : 1,98 Md€). L'impôt au barème ne
+  bouge pas, ni la masse salariale.
+- La passe coûte 33 secondes de plus : 199 au lieu de 166.
+- Sur 20 000 ménages, au palier complet, les prestations baissent de 0,73 Md€, le capital
+  entrant dans les ressources. La prime d'activité perd 0,43 Md€, le RSA 0,15, l'ASPA 0,08
+  et les aides au logement 0,07. Le revenu disponible monte de 54,0 Md€.
+- Le palier complet sur toute la population dépasse la mémoire du conteneur (15 Go), avec
+  ou sans imputation : le processus est tué à la première passe. Ces chiffres-là sont donc
+  ceux d'un échantillon.
+
+**Le recalage L1, refusé à côté.** Il vise le RFR moyen par part de la DGFiP, qui
+contient le capital, en ne touchant qu'aux salaires, aux pensions et au chômage. Mesuré
+sur 2 000 ménages, avant le correctif des foyers : sans le capital, il ajoute 1,2 % à la
+masse salariale ; avec, il en retire 5,4 %. Il change le capital imputé en baisse des
+salaires, et la marge des salaires, dépensée, ne tient plus. Le correctif, qui grossit
+le capital, ne peut qu'aggraver l'écart. Les faire tourner ensemble demande un recalage qui
+sépare le capital des revenus d'activité. C'est au propriétaire d'en décider.
+
+**Les tests.** `tests/test_capital.py`, 32 cas :
+- le tableau lu tel qu'imprimé, la CEHR retirée, les bandes disjointes, et ses refus ;
+- le taux de la loi, l'assiette, la composition et la seconde route ;
+- le correctif des foyers, ses bornes, et les bandes au rang pondéré ;
+- l'imputation uniforme par bande, ses refus, et le foyer hors de toute bande ;
+- le runner : l'option coupée par défaut, l'ordre avant les niches, les deux refus avant
+  toute passe, le classement sur le RFR par part au poids moyen du foyer ;
+- une passe de la fixture : le PFU, les prélèvements, le RFR, la passe de la réforme, et
+  le capital écrit sur toute l'histoire ;
+- le seuil de recouvrement au foyer ;
+- le registre, les recettes, le pont macro, la marge dépensée et la note de l'IR net.
+
+Vingt-huit mutations écrites à la main, une par garde et par règle, ont toutes été tuées.
+Le test du pont macro a échoué sur le code d'avant. La réponse du calculateur de ménage
+porte les deux lignes nouvelles : la page ne montre que les lignes qu'elle nomme, et ne
+change pas. Les tests ciblés passent : 804 dans dix-huit fichiers, ceux de la population,
+du moteur, des niches, des prestations, de l'API et du pont macro, et 58 sont sautés.
+Ruff aussi.
+
+**Ce qui reste.**
+- M4 : le bouton du taux du PFU, relu comme tout bouton, et la réponse des dividendes,
+  l'évaluation de l'IPP d'abord, Chetty et Saez en référence.
+- Le capital n'est pas vieilli : la chaîne prédictive, de 2026 à 2035, ne le porte pas.
+- Le recalage L1 avec le capital, à la décision du propriétaire.
+- La CDHR reste fermée (F1b, § 7).
+- Le rapport de réconciliation commité est produit sans imputation et ne change pas.
