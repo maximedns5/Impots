@@ -268,7 +268,8 @@ def cmd_run(args: argparse.Namespace) -> int:
         return 1
     reform = _load_reform(args.reform)
     result = run(population, year=args.year, reform=reform, tier=args.tier,
-                 sample=args.sample, impute_niches=args.impute_niches)
+                 sample=args.sample, impute_niches=args.impute_niches,
+                 impute_capital=args.impute_capital)
     print(f"ran {result.n_households:,} households / {result.n_persons:,} persons "
           f"({result.tier} tier{f', sample {result.sampled:,}' if result.sampled else ''})")
     print(f"  timings {result.timings} · guards {result.guards}")
@@ -344,7 +345,7 @@ def cmd_reconcile(args: argparse.Namespace) -> int:
     # zero-masked sweep (D-073) measured the second at 6.4 points. There was no way to
     # produce the other reading at all until this flag existed.
     result = run(population, year=args.year, tier="full", sample=args.sample,
-                 impute_niches=args.impute_niches)
+                 impute_niches=args.impute_niches, impute_capital=args.impute_capital)
     agg = aggregate_module.aggregate(result.households)
 
     path = reconcile_module.write(
@@ -1271,7 +1272,11 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     indexation = (tj.Indexation(rate=growth.prices, source=args.hypothesis_source)
                   if args.reference == "indexe" else None)
 
-    def price(year: int, view: str) -> float:
+    from impots.api import main as api
+
+    firm_part = api._firm_part(scenario.firm_reform, growth=growth)
+
+    def price(year: int, view: str) -> float | annuel.Layered:
         pop = frame if view == "figee" else up.uprate(frame, year, uprating)
 
         def run(spec: dict[str, Any] | None) -> float:
@@ -1283,14 +1288,20 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
 
         print(f"  {year} · {view}…", flush=True)
-        return tj.price(year, args.reference, reform=reform,
-                        law=read_ir_parameters(tbs, year), run=run,
-                        indexation=indexation).mechanical_eur
+        households = tj.price(year, args.reference, reform=reform,
+                              law=read_ir_parameters(tbs, year), run=run,
+                              indexation=indexation).mechanical_eur
+        if not firm_part:
+            return households
+        # The firm layer beside the households' (D-246): its own pass, its own view.
+        firms = api._firm_first_year(scenario.firm_reform, year, view=view,
+                                     growth=growth).cost
+        return annuel.Layered(cost=households + firms,
+                              layers={"menages": households, "entreprises": firms})
 
     years = list(range(start.year + 1, start.year + 1 + args.horizon))
     store = macro_store = None
     if whole:
-        from impots.api import main as api
         from impots.behavioural.store import load as load_store
         from impots.predictif.exploration import Priced
 
@@ -1307,9 +1318,10 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             first = api._price_first_year(
                 api.YearPass(reform=scenario.reform, year=year,
                              behavioural=args.behavioural),
-                uprating=uprating, macro=args.macro, view=view)
+                uprating=uprating, macro=args.macro, view=view, **firm_part)
             return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
-                          uncovered=dict(first.uncovered))
+                          uncovered=dict(first.uncovered),
+                          layers=getattr(first, "layers", None))
     try:
         prices = annuel.price_years(years, price,
                                     basis_for=lambda y: tj.basis_for("menages", y))
@@ -1320,7 +1332,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             rate=rate, theta=theta, uprating=uprating,
             uprating_note=up.caveat(years[-1], uprating), securities=securities,
             reform=scenario.reform, behavioural=args.behavioural, macro=args.macro,
-            persistence=args.persistence, store=store, macro_store=macro_store)
+            persistence=args.persistence, store=store, macro_store=macro_store,
+            firm_note=api._firm_report_note() if firm_part else None)
     except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
             maturite.MaturityError, retroaction.FeedbackError) as error:
         print(str(error), file=sys.stderr)
@@ -1443,7 +1456,7 @@ def cmd_exploration(args: argparse.Namespace) -> int:
         first = api._price_first_year(
             api._first_year_request(reform, year, request.behavioural),
             uprating=hypotheses.uprating, macro=request.macro, view=view,
-            **api._firm_part(firm))
+            **api._firm_part(firm, growth=hypotheses.growth))
         return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
                       uncovered=dict(first.uncovered), deciles=list(first.deciles))
 
@@ -1568,6 +1581,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="draw réduction and crédit d'impôt bases from the published DGFiP decile "
              "table before taking the figures (D-066). It is a CALIBRATION: the national "
              "niche total then matches DGFiP by construction")
+    runner_parser.add_argument(
+        "--impute-capital", action="store_true",
+        help="hand out the base the PFU taxes from DGFiP n° 41's fractiles before taking "
+             "the figures (D-248). A CALIBRATION too: the PFU then matches n° 41 by "
+             "construction. Revenus 2024 only")
     runner_parser.set_defaults(func=cmd_run)
 
     reconciler = actions.add_parser("reconcile", help="generate reports/reconciliation.md")
@@ -1579,6 +1597,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="draw réduction and crédit d'impôt bases from the published decile table "
              "(D-066). Off by default, which leaves the net-IR and foyers-imposés "
              "lines comparing a gross figure against a net target (D-073)")
+    reconciler.add_argument(
+        "--impute-capital", action="store_true",
+        help="hand out the PFU's base from DGFiP n° 41's fractiles (D-248). Off by "
+             "default, which leaves the PFU in the net-IR target and out of the model")
     reconciler.add_argument("--compare-unraked", action="store_true",
                             help="also build and run the population without raking, and "
                                  "show every line before and after (D-017)")

@@ -1,6 +1,43 @@
-# State of the project, and the directions open — 2026-10-24 (Phase 10, M4 done; Phase 11, M0 and M1 done)
+# State of the project, and the directions open — 2026-10-25 (Phase 11, M0 to M3; capital imputed)
 
-The third 2026-10-24 update adds D-245, Phase 11's M0: eleven documents manifested and
+The third 2026-10-25 update adds D-248: the owner had F1b built, and capital income is
+imputed, opt-in (`impute_capital`, `--impute-capital`). The PFU's base comes from DGFiP n°
+41's hors-barème tax by fractile of RFR per part, CEHR stripped, over the law's 12.8 %;
+the 2042 boxes split it (62 % dividends, 23 % gains) and their total, 80.69 bn, gives
+back the derived 80.63. Every foyer of a band gets the band's base, times France's foyers
+per ménage over the population's (×1.17): the population holds 15 % fewer foyers. On the
+full population the PFU owed is 10.26 bn against 10.32, the social levies 13.79 bn (a
+new receipt), the IR +11.8 bn with the CEHR; benefits fall 0.73 bn on 20 000 ménages. A
+foyer under the 61 € collection threshold pays none of its PFU. Refused beside it: another
+year (the base is not aged) and the top-tail rake, which would cut wages 5.4 % to make room
+for the capital. 28 hand mutants killed. M4 can now give the PFU its knob.
+The second 2026-10-25 update added D-247, Phase 11's M3: it opens no index. Both conditions
+M0 fixed were computed or read on the files, and neither holds. The OECD's effective-rate
+method (`entreprises/taux_effectifs.py`, parameters read off the annex, France's 2025
+rates manifested from the OECD's API) gives back buildings, inventories and software
+within a tenth of a point, but not the tangibles, whose five subgroups share one
+published allowance: the composite EMTR comes out 15.62 against 14.97, so the national
+entry index (Da Rin et al.) is refused. The two gaps stand in the ratio a varying
+allowance gives (8.88 against 8.99): the parameters are missing, not the method. The
+authors' own EATR needs the EY guide and STAN margins, which the project lacks. The
+investment index stays closed: equation (6) sits around reference values the paper does
+not print, and figure A E.1 is a picture. Guard 7 is in: the IS's GDP effect plus
+investment or entry is refused by name. The sweep holds 219 mutations, 218 killed.
+The first 2026-10-25 update added D-246, Phase 11's M2. The IS on growth is a store row
+read off Gechert and Heimberger's PDF (θ = 0 at −0.0001, θ = 1 at 0.019, θ = ½ at 0.00945 point a
+year per IS point cut), with its rank, countries and years, and the store now refuses an
+international row without them or a lower rank beside a higher one. Its index, `pib_is`,
+is a ten-year ramp (0.0945 % of GDP at ten years at θ = ½), held outside the debt by
+D-218. The elasticity loop is refused by computation: read off DP 098, 0.585 or 0.630,
+it misses Mésange's own ratio by more than a quarter at 9 or 8 of the 15 variant-horizon
+pairs, the employer contributions and VAT at every horizon. The aged firm view follows
+nominal GDP from the 2023 vintage (×1.087 in 2026, ×1.421 in 2035 at 1 % real and 2 %
+prices); a vintage without a year is refused. `impots predictif` takes a scenario's
+`firm_reform`, by layer: one IS point alone costs 3.10 Md€ frozen and 3.38 aged in 2026,
+and leaves the debt 0.75 and 0.93 point higher in 2035, in 24 seconds. The real run found
+two defects, fixed: the annual report did not name the firm layer's conventions, and two
+closed-channel reasons still denied that the trajectory prices the IS.
+The third 2026-10-24 update added D-245, Phase 11's M0: eleven documents manifested and
 read on file, `docs/M0_PHASE11.md`, two adversarial passes. Fixed: the IS on growth
 (Gechert and Heimberger: θ = 0 at the bias-corrected centre, no effect; θ = 1 at the raw
 centre, 0.019 point of growth a year per IS point; a ten-year ramp) and firm entry (Da
@@ -340,8 +377,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **244 decision
-entries**, D-000 to D-243, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **249 decision
+entries**, D-000 to D-248, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -651,8 +688,9 @@ download list.
 * **Finish M3** the day the files land: the CIR verdict and the TH/TF recon.
 * **TVA per-rate and the accises' bases**, blocked on COICOP and the volume series.
 * **§6.1 beyond 2021**, if a current-vintage source for 2019–2020 appears.
-* **F1b's build: the RCM imputation.** Gate cleared; building it is a judgement
-  about how much imputed capital income to carry.
+* **F1b's build: the RCM imputation.** Built (D-248), opt-in. Left: the top-tail rake
+  beside it, which needs capital and earnings raked apart, and the base aged for years
+  after 2024.
 * **F7 — succession/DMTG.** Gate only, never past it without the owner.
 * **F8 — aggregate VAT.** Still waiting on Budget de Famille 2026 (~2027-28).
 * **The CAF cross-check.** 30 minutes at a browser, owner-only. **No reCAPTCHA
@@ -720,10 +758,16 @@ download list.
    mapping before any pass. M0 is done (D-245): the IS's growth ramp and firm entry
    fixed, the IS loop and the investment index closed with their reasons, the
    self-financing of targeted cuts left to the owner. M1 is done (D-244): a firm reform
-   in `/predictif/simulate` and the explorer, priced on the unaged firm population. Next,
-   M2: the IS's GDP effect as an index outside the debt path, the cross-check that
-   refuses the elasticity loop, the aged firm view and the annual path. Then Phase 12,
-   the past, and Phase 13, the online product.
+   in `/predictif/simulate` and the explorer. M2 is done (D-246): the IS's GDP effect as
+   an index outside the debt path, the computed cross-check that refuses the elasticity
+   loop, the aged firm view and the annual path by layer. M3 is done (D-247) and opens
+   nothing: national entry is refused, the OECD's method missing France's composite EMTR
+   for want of the tangible subgroups' allowances, and investment stays closed on
+   reference values the paper does not print; C8 remains the entry index. The capital
+   income is imputed (D-248), so M4 can open: the PFU knob and the dividends' response.
+   M5 waits on the owner's R5 choice. The page's
+   predictive panel does not send a firm reform yet. Then Phase 12, the past, and
+   Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
    bumps, vintage refreshes on the nine-source calendar, full passes, and each

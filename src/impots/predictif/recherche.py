@@ -45,6 +45,7 @@ from impots import explorer
 from impots.api.schemas import ExplorationRequest, ReformSpec
 from impots.dette.path import BANNER as DEBT_BANNER
 from impots.dette.reference import Start
+from impots.entreprises import system as firm_system
 from impots.entreprises.reforms import FirmReformSpec
 from impots.predictif import chaine, exploration, retroaction, transformations
 from impots.predictif import indices as indices_module
@@ -241,7 +242,9 @@ def run(request: ExplorationRequest, *, price: Callable[..., Priced],
                 mechanical=-aged.cost, inputs=aged.inputs, year=first,
                 firm_reason=(indices_module.FIRM_PENDING
                              if firm_of(request.firm_base, knobs) is not None
-                             else indices_module.FIRM_LAYER))
+                             else indices_module.FIRM_LAYER),
+                is_rate_change=firm_system.normal_rate_change_points(
+                    firm_of(request.firm_base, knobs), first))
             return {"knobs": dict(knobs), "delta_aged": nearest["delta_aged"],
                     "absent": dict(path.absent), "closed": dict(path.closed),
                     "rows": [row.payload() for row in rows]}

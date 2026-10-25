@@ -1082,6 +1082,12 @@ class ResultRows(BaseModel):
     which is every household in the synthetic population — the 19.53 bn of niches
     nationally is why the population's IR is validated against the barème line and not
     against net receipts."""
+    pfu: float
+    """The prélèvement forfaitaire unique owed on capital income, income-tax part: a
+    « dont » of `ir`, never added to it (D-248). Zero for a household, which declares no
+    capital income here; non-zero in a population run with `impute_capital`."""
+    prelevements_sociaux_capital: float
+    """The social levies on that income, which `ir` does not hold (D-248)."""
     # benefits block (famille) — full tier only
     af: float | None = None
     aeeh: float | None = None
@@ -1407,6 +1413,12 @@ class PopulationSimulateRequest(BaseModel):
     reconciliation line stops being independent evidence for that component. It also
     costs an extra baseline pass, since the deciles are of a quantity the first pass
     has to compute."""
+    impute_capital: bool = False
+    """Hand out the base the PFU taxes from DGFiP n° 41's fractiles of RFR per part, so
+    the population carries capital income at all (D-248). Opt-in and OFF BY DEFAULT for
+    the same reason as the niches: it is a CALIBRATION, and the PFU part of the net-yield
+    line stops being evidence. It costs an extra pass, and holds for the 2024 income
+    only: another year is refused by name."""
 
     @model_validator(mode="after")
     def _check_reform(self) -> PopulationSimulateRequest:
@@ -2103,6 +2115,26 @@ class PredictifReportYear(BaseModel):
     delta_aged: float | None
     reform_frozen: float | None
     delta_frozen: float | None
+    mechanical_by_layer: dict[str, dict[str, float]] | None = None
+    """By view, the cost by layer, when a firm reform is priced (D-246); absent from the
+    reports of household reforms."""
+
+    @model_validator(mode="after")
+    def _layers_sum_to_the_cost(self) -> PredictifReportYear:
+        if self.mechanical_by_layer is None:
+            return self
+        totals = {"figee": self.mechanical_frozen_eur, "vieillie": self.mechanical_aged_eur}
+        if set(self.mechanical_by_layer) != set(totals):
+            raise ValueError(f"{self.year} : couches pour {sorted(self.mechanical_by_layer)},"
+                             f" les vues sont {sorted(totals)}")
+        for view, layers in self.mechanical_by_layer.items():
+            unknown = sorted(set(layers) - set(FIRST_YEAR_LAYERS))
+            total = sum(layers.values())
+            if unknown or not math.isclose(total, totals[view], rel_tol=1e-9, abs_tol=1.0):
+                raise ValueError(
+                    f"{self.year}, vue « {view} » : coût {totals[view]:.0f} € qui n'est pas "
+                    f"la somme de ses couches {layers} (PHASE11_SPEC §10)")
+        return self
 
 
 class PredictifReportPathYear(BaseModel):

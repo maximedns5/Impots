@@ -72,7 +72,8 @@ SCOPES: tuple[Scope, ...] = (
           ("tests/test_theta.py", "tests/test_predictif.py")),
     Scope("src/impots/predictif/exploration.py",
           ("tests/test_exploration.py", "tests/test_recherche_indices.py")),
-    Scope("src/impots/predictif/indices.py", ("tests/test_indices.py",)),
+    Scope("src/impots/predictif/indices.py", ("tests/test_indices.py",
+                                              "tests/test_is_croissance.py")),
     Scope("src/impots/predictif/macro.py", ("tests/test_theta.py", "tests/test_indices.py")),
     Scope("src/impots/predictif/retroaction.py", ("tests/test_retroaction.py",)),
     Scope("src/impots/predictif/theta.py", ("tests/test_theta.py",)),
@@ -107,7 +108,15 @@ SCOPES: tuple[Scope, ...] = (
           functions=("_check_exploration_bounds", "_check_exploration_search",
                      "_check_exploration_report", "_check_report_paths",
                      "_check_exploration_indices", "_refuse_firm_knobs_out_of_chain",
-                     "_cost_is_the_sum_of_its_layers")),
+                     "_cost_is_the_sum_of_its_layers", "_layers_sum_to_the_cost")),
+    # Phase 11 M2 (D-246): the IS on growth, the elasticity loop's cross-check, the firm
+    # layer's two views.
+    Scope("src/impots/predictif/elasticites.py", ("tests/test_elasticites.py",)),
+    Scope("src/impots/predictif/firmes.py", ("tests/test_firmes_vues.py",
+                                             "tests/test_predictif_entreprises.py")),
+    Scope("src/impots/behavioural/gechert.py", ("tests/test_is_croissance.py",)),
+    # Phase 11 M3 (D-247): the OECD's effective rates, the condition of the entry index.
+    Scope("src/impots/entreprises/taux_effectifs.py", ("tests/test_taux_effectifs.py",)),
 )
 
 #: The whole Phase 9 suite, the second tier for a survivor.
@@ -121,7 +130,8 @@ WIDE: tuple[str, ...] = (
     "tests/test_offre_travail.py", "tests/test_creations.py", "tests/test_cir.py",
     "tests/test_recherche.py", "tests/test_explorations_api.py",
     "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py",
-    "tests/test_predictif_entreprises.py",
+    "tests/test_predictif_entreprises.py", "tests/test_is_croissance.py",
+    "tests/test_elasticites.py", "tests/test_firmes_vues.py", "tests/test_taux_effectifs.py",
 )
 
 UI_CHECK = "ui/check.mjs"
@@ -395,6 +405,29 @@ MANUAL: tuple[Mutation, ...] = (
              "    own = dict(knobs)\n",
              ("tests/test_predictif_entreprises.py",),
              "les boutons des entreprises n'entrent pas dans la réforme des ménages"),
+    # Phase 11 M3 (D-247).
+    Mutation("P11-G7-investissement-au-pib", "src/impots/predictif/indices.py",
+             '    frozenset({"pib_is", "investissement_entreprises"}): (\n',
+             '    frozenset({"pib_is", "investissement_entreprises", "_"}): (\n',
+             ("tests/test_taux_effectifs.py",),
+             "garde 7 : l'investissement ajouté à l'effet de l'IS sur le PIB est refusé "
+             "par son nom"),
+    Mutation("P11-G7-creations-au-pib", "src/impots/predictif/indices.py",
+             '    frozenset({"pib_is", "creations_societes"}): (\n',
+             '    frozenset({"pib_is", "creations_societes", "_"}): (\n',
+             ("tests/test_taux_effectifs.py",),
+             "garde 7 : les créations ajoutées à l'effet de l'IS sur le PIB sont refusées "
+             "par leur nom"),
+    Mutation("P11-R4-tolerance", "src/impots/entreprises/taux_effectifs.py",
+             "if abs(composite.gap(m)) > self.tolerance)",
+             "if abs(composite.gap(m)) > 10 * self.tolerance)",
+             ("tests/test_taux_effectifs.py",),
+             "la condition de M0 sur l'indice des créations : un dixième de point"),
+    Mutation("P11-R4-composite-quatre", "src/impots/entreprises/taux_effectifs.py",
+             "_average([computed[c] for c in CATEGORIES])",
+             "_average([computed[c] for c in CATEGORIES if c != \"INV\"])",
+             ("tests/test_taux_effectifs.py",),
+             "le composite est la moyenne des quatre catégories, stocks compris (§ 18)"),
 )
 
 #: Mutations no test can kill, each with why. An entry here is a finding of D-229, not

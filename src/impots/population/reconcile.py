@@ -44,6 +44,15 @@ def _net_yield_note(totals: dict[str, float]) -> str:
     So the note is derived rather than declared. It cannot drift from its own report.
     """
     imputed = totals.get("reductions", 0.0) + totals.get("credits_impot", 0.0)
+    pfu = totals.get("pfu", 0.0)
+    # The PFU, said from the run as well (D-248): imputed, it is in `ir` and calibrated;
+    # not imputed, it is in the target and absent from our side.
+    capital = (
+        f"Le PFU est imputé dans ce passage ({pfu / 1e9:.1f} md, part IR) depuis les "
+        f"fractiles de la DGFiP n° 41 : cette composante est calibrée elle aussi."
+        if pfu > 0.0 else
+        "Et le PFU sur les revenus du capital (~7,9 md) est dans la cible et absent de "
+        "notre côté, ce qui tire dans l'autre sens.")
     if imputed <= 0.0:
         return (
             "AUCUNE niche n'est imputée dans ce passage : `reductions` et "
@@ -51,16 +60,13 @@ def _net_yield_note(totals: dict[str, float]) -> str:
             "réductions et de crédits face à une cible qui en est NETTE. L'écart "
             "imprimé sous-estime donc l'écart réel de l'ordre de 10,7 md. Relancer "
             "avec `impute_niches=True` pour une comparaison de même nature ; la ligne "
-            "barème ci-dessus est celle qui vaut en l'état. Et le PFU sur les revenus "
-            "du capital (~7,9 md) est dans la cible et absent de notre côté, ce qui "
-            "tire dans l'autre sens."
+            "barème ci-dessus est celle qui vaut en l'état. " + capital
         )
     return (
         f"Niches imputées dans ce passage : {imputed / 1e9:.1f} md de réductions et "
         f"crédits. CETTE LIGNE EST DONC PARTIELLEMENT CALIBRÉE et n'est plus une "
         f"preuve indépendante pour cette composante ; la ligne barème ci-dessus est la "
-        f"propre. Environ 45 % des niches restent non modélisées, et le PFU sur les "
-        f"revenus du capital est absent de notre côté."
+        f"propre. Environ 45 % des niches restent non modélisées. " + capital
     )
 
 

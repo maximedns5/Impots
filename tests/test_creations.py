@@ -189,8 +189,11 @@ def test_c8_opens_for_the_normal_rate_only() -> None:
                                          is_rate_change_points=1.0, draws=1,
                                          rng=np.random.default_rng(0))
         assert not result.applies and result.message == channels.NO_CREATION_KNOB, knob
+    # The IS on growth answers the same knob (D-246); C8 reads its own keys only.
     assert sorted(p.key for p in store.for_knob("is_taux_normal")) == [
-        "firm_creation_exposure_per_is_point", "firm_creation_profit_tax"]
+        "firm_creation_exposure_per_is_point", "firm_creation_profit_tax",
+        "is_croissance_pib"]
+    assert channels.C8_KEYS == ("firm_creation_profit_tax",)
 
 
 def test_c8_never_enters_the_revenue_band_and_is_always_illustrative() -> None:

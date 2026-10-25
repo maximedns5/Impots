@@ -111,6 +111,10 @@ class Scenario:
     """What this encodes — «PLF 2027, art. 3», «notre variante», «LFSS 2025 art. 6»."""
     note: str = ""
     tags: tuple[str, ...] = ()
+    firm_reform: Any = None
+    """A `FirmReformSpec` beside the households' reform, or None (Phase 11, D-246). Left
+    out of the file when there is none, so that every scenario written before reads and
+    writes back to the byte."""
 
     def __post_init__(self) -> None:
         _check_name(self.name)
@@ -129,7 +133,7 @@ class Scenario:
             ) from error
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        out = {
             "name": self.name,
             "year": self.year,
             "created": self.created,
@@ -138,6 +142,9 @@ class Scenario:
             "tags": list(self.tags),
             "reform": self.reform.model_dump(exclude_none=True, mode="json"),
         }
+        if self.firm_reform is not None and not self.firm_reform.is_empty():
+            out["firm_reform"] = self.firm_reform.model_dump(exclude_none=True, mode="json")
+        return out
 
     def save(self, directory: Path | None = None) -> Path:
         """Write the scenario. Refuses to overwrite — a pre-registration is immutable.
@@ -172,6 +179,7 @@ def load(name: str, directory: Path | None = None) -> Scenario:
     that out at load time is the point.
     """
     from impots.api.schemas import ReformSpec
+    from impots.entreprises.reforms import FirmReformSpec
 
     directory = directory or SCENARIOS
     path = _scenario_path(directory, name)
@@ -197,6 +205,8 @@ def load(name: str, directory: Path | None = None) -> Scenario:
         raise ScenarioError(f"« {name} » ne contient pas un objet JSON")
     try:
         reform = ReformSpec.model_validate(raw.get("reform") or {})
+        firm_reform = (FirmReformSpec.model_validate(raw["firm_reform"])
+                       if raw.get("firm_reform") else None)
     except Exception as error:
         raise ScenarioError(
             f"« {name} » ne valide plus : {error}. Un bouton a été renommé ou ses bornes "
@@ -214,6 +224,7 @@ def load(name: str, directory: Path | None = None) -> Scenario:
         scenario = Scenario(
             name=raw["name"], reform=reform, year=int(raw["year"]),
             created=raw["created"], source=raw["source"], note=note, tags=tuple(tags),
+            firm_reform=firm_reform,
         )
     except ScenarioError:
         raise

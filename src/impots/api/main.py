@@ -718,6 +718,7 @@ def _run_population(request: Any, frame: Any) -> tuple[Any, Any]:
             frame, year=request.year, reform=request.reform, tier="full",
             sample=QUICK_TIER_HOUSEHOLDS,
             impute_niches=getattr(request, "impute_niches", False),
+            impute_capital=getattr(request, "impute_capital", False),
         )
     except WiringError as error:  # pragma: no cover - guarded upstream
         raise HTTPException(status_code=500, detail=str(error)) from error
@@ -940,11 +941,7 @@ def _is_rate_change_points(request: Any) -> float | None:
     C8 reads (D-221). None when the reform leaves the normal rate alone."""
     from impots.entreprises import system as firm_system
 
-    rate = getattr(request.reform, "is_taux_normal", None)
-    if rate is None:
-        return None
-    current = firm_system.baseline().parameters(f"{request.year}-01-01").impot_societes
-    return 100.0 * (rate - float(current.taux_normal))
+    return firm_system.normal_rate_change_points(request.reform, request.year)
 
 
 @app.post("/entreprises/simulate", response_model=FirmResponse)
@@ -1214,28 +1211,46 @@ def _frozen_year_note(year: int) -> str:
               f"population {POPULATION_VINTAGE} telle quelle, sans vieillissement.")
 
 
-#: Why the firm layer's taxes have no macro effect in the chain yet (PHASE11_SPEC §4).
+#: Why the firm layer's taxes have no macro effect in the chain (PHASE11_SPEC §4, D-246).
 FIRM_NO_VARIANT = (
-    "impôt des entreprises, sans variante dans Mésange (D-214) : ni effet sur le PIB ni "
-    "rétroaction lue ici, plutôt qu'un multiplicateur emprunté ; la phase 11 les ouvre "
-    "sur des sources internationales (D-243, PHASE11_SPEC §4)")
+    "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par "
+    "élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son "
+    "solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB "
+    "dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice")
 #: The firm totals that are the sum of the others, not an instrument.
 FIRM_TOTAL = "prelevements_entreprise"
 
 
-def _firm_first_year(firm_reform: Any, year: int) -> Any:
-    """The firm layer's part of a predictive first year (PHASE11_SPEC §3, M1).
+def _firm_aging_factor(year: int, growth: Any) -> float:
+    """The aged view's multiplier: GDP of `year` over GDP of the vintage's — the seam the
+    tests stub, so that no test needs the national accounts (D-246)."""
+    from impots.predictif import firmes
+
+    return firmes.aging_factor(year, growth, FIRM_VINTAGE)
+
+
+def _firm_first_year(firm_reform: Any, year: int, *, view: str = FIRST_YEAR_VIEW,
+                     growth: Any = None) -> Any:
+    """The firm layer's part of a predictive first year (PHASE11_SPEC §3, D-244, D-246).
 
     The firm population is the one the layer is built from, of its own vintage, under
-    the law of `year`: it is not aged, and the same figure stands in both views. The IS
-    is counted by exercise, not by cash: the note says both, and M0 settles them.
+    the law of `year`. In the frozen view that is the cost; in the aged view it is
+    followed at the pace of the scenario's nominal GDP from the vintage (M0, R7), which
+    needs the scenario's growth and a vintage that names its year. The IS is counted by
+    exercise, not by cash, and the note says so.
     """
     from types import SimpleNamespace
 
     from impots.entreprises import aggregate as firm_aggregate
-    from impots.entreprises import build as firm_build
     from impots.entreprises import runner as firm_runner
+    from impots.predictif import firmes
 
+    if view not in (FIRST_YEAR_VIEW, FROZEN_VIEW):
+        raise ValueError(f"vue « {view} » inconnue : {FIRST_YEAR_VIEW} ou {FROZEN_VIEW}")
+    try:
+        factor = _firm_aging_factor(year, growth) if view == FIRST_YEAR_VIEW else None
+    except firmes.FirmViewError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
     try:
         result = firm_runner.run(_firm_population(), year=year, reform=firm_reform)
     except firm_runner.FirmRunError as error:
@@ -1243,20 +1258,39 @@ def _firm_first_year(firm_reform: Any, year: int) -> Any:
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     aggregates = firm_aggregate.aggregate(result.firms)
-    manifest = firm_build.PROCESSED / f"firms_{FIRM_VINTAGE}.manifest.json"
-    synthetic = (not manifest.exists() or bool(
-        json.loads(manifest.read_text(encoding="utf-8"))["cells_are_synthetic"]))
+    scale = 1.0 if factor is None else factor
     note = (f"Couche entreprises : population d'entreprises du millésime {FIRM_VINTAGE}, "
-            f"non vieillie, sous le droit de {year}, la même dans les deux vues ; l'IS est "
-            f"compté à l'exercice, non à la caisse (PHASE11_SPEC §3).")
-    if synthetic:
-        note = ("ATTENTION : population d'entreprises construite à partir de cellules "
-                "synthétiques de test, pas de SIRENE × ESANE ; son chiffrage n'est pas une "
-                "affirmation sur la France. " + note)
-    deltas = {name: value for name, value in aggregates.deltas.items()
+            f"sous le droit de {year} ; "
+            f"{firmes.note(view, FIRM_VINTAGE, year, factor)} ; l'IS est compté à "
+            f"l'exercice, non à la caisse (PHASE11_SPEC §3).")
+    if _firm_cells_are_synthetic():
+        note = FIRM_SYNTHETIC + note
+    deltas = {name: value * scale for name, value in aggregates.deltas.items()
               if name != FIRM_TOTAL and value}
-    return SimpleNamespace(cost=float(aggregates.reform_cost or 0.0), deltas=deltas,
-                           note=note)
+    return SimpleNamespace(cost=float(aggregates.reform_cost or 0.0) * scale,
+                           deltas=deltas, note=note, factor=factor)
+
+
+FIRM_SYNTHETIC = ("ATTENTION : population d'entreprises construite à partir de cellules "
+                  "synthétiques de test, pas de SIRENE × ESANE ; son chiffrage n'est pas "
+                  "une affirmation sur la France. ")
+
+
+def _firm_cells_are_synthetic() -> bool:
+    from impots.entreprises import build as firm_build
+
+    manifest = firm_build.PROCESSED / f"firms_{FIRM_VINTAGE}.manifest.json"
+    return (not manifest.exists() or bool(
+        json.loads(manifest.read_text(encoding="utf-8"))["cells_are_synthetic"]))
+
+
+def _firm_report_note() -> str:
+    """The firm layer's conventions for a report that spans years (D-246): what each
+    first year's note says, without the year."""
+    from impots.predictif import firmes
+
+    note = firmes.convention(FIRM_VINTAGE)
+    return FIRM_SYNTHETIC + note if _firm_cells_are_synthetic() else note
 
 
 def _first_year_request(reform: ReformSpec, year: int, behavioural: bool) -> Any:
@@ -1268,16 +1302,17 @@ def _first_year_request(reform: ReformSpec, year: int, behavioural: bool) -> Any
     return PopulationSimulateRequest(reform=reform, year=year, behavioural=behavioural)
 
 
-def _firm_part(firm_reform: Any) -> dict[str, Any]:
-    """The keyword a predictive pass takes for a firm reform: none when there is none, so
-    a household reform goes through the very call it always did."""
-    return ({"firm_reform": firm_reform}
+def _firm_part(firm_reform: Any, growth: Any = None) -> dict[str, Any]:
+    """The keywords a predictive pass takes for a firm reform — the reform, and the growth
+    scenario its aged view follows (D-246): none when there is none, so a household
+    reform goes through the very call it always did."""
+    return ({"firm_reform": firm_reform, "growth": growth}
             if firm_reform is not None and not firm_reform.is_empty() else {})
 
 
 def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
                       macro: bool = False, view: str = FIRST_YEAR_VIEW,
-                      firm_reform: Any = None) -> Any:
+                      firm_reform: Any = None, growth: Any = None) -> Any:
     """One quick-tier pass for the predictive path's first year — the seam its tests stub.
 
     The population is aged to the year with `uprating` first (D-226), and everything
@@ -1299,7 +1334,7 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
 
     if view not in (FIRST_YEAR_VIEW, FROZEN_VIEW):
         raise ValueError(f"vue « {view} » inconnue : {FIRST_YEAR_VIEW} ou {FROZEN_VIEW}")
-    firm = (_firm_first_year(firm_reform, request.year)
+    firm = (_firm_first_year(firm_reform, request.year, view=view, growth=growth)
             if firm_reform is not None and not firm_reform.is_empty() else None)
     if firm is None:
         return _price_households(request, uprating=uprating, macro=macro, view=view)
@@ -1432,6 +1467,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
     from impots.dette import reference as reference_module
     from impots.dette.path import BANNER as DEBT_BANNER
     from impots.dette.path import DebtError
+    from impots.entreprises import system as firm_system
     from impots.predictif import chaine, comportement, retroaction
     from impots.predictif import indices as indices_module
     from impots.predictif.theta import ThetaError
@@ -1472,7 +1508,8 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
                    f"population sert ({MIN_YEAR}–{MAX_YEAR}).")
     first = _price_first_year(
         _first_year_request(request.reform, year, request.behavioural),
-        uprating=uprating, macro=request.macro, **_firm_part(request.firm_reform))
+        uprating=uprating, macro=request.macro,
+        **_firm_part(request.firm_reform, growth=growth))
     try:
         at = (comportement.evaluate(theta, mechanical=-first.cost, reform=request.reform,
                                     store=store, **first.inputs)
@@ -1495,7 +1532,9 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             store=store, reform=request.reform, mechanical=-first.cost,
             inputs=first.inputs, year=year,
             firm_reason=(indices_module.FIRM_PENDING if _firm_part(request.firm_reform)
-                         else indices_module.FIRM_LAYER))
+                         else indices_module.FIRM_LAYER),
+            is_rate_change=firm_system.normal_rate_change_points(request.firm_reform,
+                                                                 year))
         side = len(results) > 1
         # Side by side, the chain-stage indices (balance, debt, interest) belong to each
         # path; the response lists them as such rather than pick one path's.

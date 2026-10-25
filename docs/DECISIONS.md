@@ -18322,6 +18322,385 @@ et sha256. `tests/test_donnees.py` passe ses 40 cas.
   al. (*JPubE*), que ScienceDirect refuse ici (403), et à trouver une source stable des
   paramètres de l'OCDE pour le taux moyen effectif.
 
+## D-246 — Phase 11, M2 : l'IS sur le PIB en indice, sa boucle refusée, la vue vieillie
+
+**Le fait.** M2 de la phase 11 est fait : le §4 de la spec et la R7 de M0. Quatre choses
+entrent dans la chaîne, chacune sur un fichier lu et non recopié :
+- l'effet de l'IS sur la croissance, une ligne du magasin et un indice tenu hors de la
+  dette ;
+- le recoupement de la boucle par élasticités de la Commission, calculé, qui la refuse ;
+- la vue vieillie des entreprises ;
+- le chemin annuel, `impots predictif`, avec une réforme des entreprises.
+
+Sur le millésime réel de 2023, un point d'IS en moins, de 25 à 24 %, seul, sans
+comportement ni boucle, coûte en 2026 3,10 Md€ en vue figée et 3,38 en vue vieillie. En
+2035, il coûte 2,73 et 3,89 Md€, et la dette est plus haute de 0,75 et de 0,93 point de
+PIB. Le scénario : dépenses gelées en volume, 1 % de croissance réelle et 2 % de prix,
+le taux implicite tenu. Les dix années, dans les deux vues, ont pris 24 secondes, sans
+aucune passe des ménages.
+
+**L'IS sur la croissance (R1).**
+- `behavioural/gechert.py` lit sur le PDF le tableau 2 de Gechert et Heimberger (IMK WP
+  210, p. 16), ligne « β0 [mean beyond bias] ». Sur 441 estimations, la moyenne brute
+  vaut −0,019 (0,010) et le centre corrigé du biais de publication 0,0001 (0,0004). Le
+  coefficient est donné pour une hausse du taux.
+- La ligne `is_croissance_pib` du magasin en est la lecture par point de baisse : θ = 0 à
+  −0,0001, θ = 1 à 0,019, et θ = ½ à leur milieu, 0,00945 point de croissance par an.
+  M0 l'arrondissait à 0,0095. Le magasin porte le chiffre exact, et un test le recalcule
+  sur le PDF.
+- La ligne dit son rang. C'est le rang 3, une méta-analyse. Ses pays : 42 études, dont
+  deux estimations sur trois portent sur des pays de l'OCDE seulement. Ses années : des
+  études publiées de 1997 à 2019. Et l'exception de D-245, qui écarte le rang 2.
+- Le magasin reçoit deux gardes, les gardes 1 et 2 du §10. Une ligne internationale qui
+  ne dit pas ses pays, ses années, ou pourquoi le rang au-dessus manque, est refusée. Une
+  ligne d'un rang inférieur sur un canal où une ligne d'un rang supérieur est chargée
+  l'est aussi, sauf exception déclarée. Le refus est `MisrankedRow`.
+- L'indice `pib_is` suit le taux normal d'IS. Après t années, l'écart de PIB vaut l'effet
+  sur la croissance, fois les points de baisse, fois t, plafonné à dix ans. À θ = ½, un
+  point de baisse donne 0,0945 % de PIB à dix ans, et la boîte θ va de −0,001 à 0,19 %.
+  Une hausse donne un écart négatif. Une réforme qui ne touche pas au taux normal n'a pas
+  d'indice, et la raison en est dite.
+- L'indice est tenu hors de la trajectoire de dette, par la règle de D-218 : un instrument
+  sans boucle ne reçoit aucun effet macro, pas même sur le PIB. Le test de bout en bout
+  le tient : la dette de la réforme est celle de son seul chiffrage mécanique. Les
+  conventions de l'indice disent la rampe, ce hors-dette, et l'inversion de court terme
+  que la méta-analyse suggère.
+
+**La boucle par élasticités, refusée par son calcul (R2).**
+- `predictif/elasticites.py` lit sur le PDF les lignes France des tableaux I.1 à I.3 du
+  DP 098, p. 41 à 43. Les trois tableaux doivent se recouper par les formules des
+  auteurs : une ligne lue dans un autre pays, ou une colonne décalée, s'arrête là.
+- La boucle vaut 0,585 point de solde par point d'écart de PIB, lue en euros, et 0,630,
+  lue en ratio. Elle est comparée au φ/y de Mésange, variante par variante, aux horizons
+  1, 2 et 3, à un quart près : la tolérance que M0 a fixée avant le calcul.
+- Mésange donne, à un, deux et trois ans :
+  - pour l'IR, 0,46, 0,60 et 0,66 ;
+  - pour la CSG, 0,46, 0,60 et 0,63 ;
+  - pour les cotisations salariés, 0,71, 0,74 et 0,81 ;
+  - pour les cotisations employeurs, 1,40, 1,05 et 0,96 ;
+  - pour la TVA, 1,19, 1,24 et 1,25.
+- Lue en euros, la boucle échoue à 9 des 15 recoupements ; lue en ratio, à 8. Les
+  cotisations employeurs et la TVA échouent aux trois horizons sous les deux lectures, de
+  34 à 58 %. L'IR et la CSG échouent à un an, de 26 ou de 36 % selon la lecture.
+- La boucle est donc refusée, et celle de l'IS reste absente, dite comme telle. Deux
+  gardes la tiennent, les gardes 5 et 6 du §10. Elle n'est jamais demandée pour un
+  instrument que Mésange couvre. Elle n'est jamais donnée sans que son recoupement passe
+  en entier sous une même lecture.
+- La raison que la chaîne donne pour les impôts des entreprises nomme ce refus. Un test
+  la lie au refus calculé : si le recoupement passait un jour, ce test échouerait, et la
+  raison devrait changer avec lui.
+
+**La vue vieillie des entreprises (R7).**
+- `predictif/firmes.py` donne le facteur : le PIB nominal de l'année sur celui du
+  millésime. Les comptes nationaux le donnent jusqu'en 2025, l'année de départ de la
+  chaîne. Au-delà, le scénario de croissance le prolonge, comme il prolonge le
+  dénominateur de la dette. Sur le millésime 2023, avec 1 % de croissance réelle et 2 %
+  de prix, le facteur vaut 1,087 en 2026 et 1,421 en 2035.
+- La vue vieillie multiplie par ce facteur le coût et chaque impôt de la couche. La vue
+  figée garde le millésime tel quel.
+- Trois refus, chacun par son nom : un millésime sans année, comme la fixture ; une année
+  avant le millésime ; une vue vieillie sans scénario de croissance. Des comptes
+  illisibles sont aussi un refus nommé. Le point d'accès renvoie ces refus en 422.
+
+**Le chemin annuel avec une réforme des entreprises.**
+- Un scénario porte un champ `firm_reform`. Il n'est écrit que s'il est non vide. Les
+  fichiers écrits avant restent identiques, et un test le vérifie sur les deux scénarios
+  commités.
+- Chaque année est chiffrée par couche, les ménages et les entreprises, dans les deux
+  vues. Une année dont les couches ne font pas le coût est refusée, dans le chemin comme
+  dans le schéma du rapport : la garde 8 du §10 vaut aussi pour lui. Une année chiffrée
+  par couche dans une vue et non dans l'autre est refusée aussi.
+- Une réforme des seules entreprises ne lance aucune passe des ménages. Le chemin entier,
+  avec comportement ou boucle, donne la croissance du scénario à la couche entreprises.
+  L'explorateur aussi.
+
+**Ce que la passe réelle a trouvé, corrigé.**
+- Le rapport annuel ne disait pas comment la couche entreprises était chiffrée. Il porte
+  désormais une convention : le millésime, les deux vues, et l'IS compté à l'exercice.
+  Un rapport avec une couche entreprises et sans cette note est refusé. Un rapport des
+  ménages qui la porterait l'est aussi.
+- Deux raisons de canaux fermés contredisaient D-244. Celle des créations disait que le
+  taux d'IS n'est pas une réforme que la trajectoire chiffre. Celle du CIR disait que la
+  trajectoire ne chiffre que les réformes de la population. Elles disent maintenant que
+  la trajectoire chiffre le coût d'une baisse d'IS, et non les sociétés qu'elle ferait
+  naître, et que le CIR reste hors d'elle.
+- L'exemple de D-228 est rendu de nouveau, sans nouvelle passe : seules ces deux lignes
+  changent. Les rapports commités des études gardent leur texte. Il était juste pour les
+  réformes des ménages qu'ils chiffrent, sur le commit qui les a chiffrées.
+
+**Les tests.** Trois fichiers nouveaux, 40 cas :
+- `tests/test_is_croissance.py` : le tableau lu tel qu'imprimé, la ligne du magasin
+  contre le PDF, les refus du lecteur et du rang, l'indice à θ, sa boîte et son absence ;
+- `tests/test_elasticites.py` : la lecture et son recoupement interne, les deux lectures
+  de la boucle, le verdict calculé, les gardes 5 et 6, et la raison liée au refus ;
+- `tests/test_firmes_vues.py` : le facteur et ses refus, les couches du chemin et du
+  rapport, le scénario, la note, et la commande de bout en bout sur la fixture.
+
+`tests/test_predictif_entreprises.py` reçoit la vue vieillie : elle suit le PIB, reçoit
+la croissance de la requête, refuse la fixture et une vue inconnue. Cinq fichiers voient
+le nombre de lignes ouvertes du magasin passer de 14 à 15 : c'est `is_croissance_pib`.
+
+Quarante mutations écrites à la main, en trois séries de 15, 7 et 18, ont toutes été
+tuées. Les quatre tests de la correction ont échoué sur le code d'avant. Le balayage de
+D-229 reçoit dans ses périmètres les trois modules nouveaux, la garde des couches du
+rapport annuel et celle de sa note. Il a trouvé deux survivantes : les gardes « pypdf
+absent » des deux lecteurs nouveaux. Chacune a reçu son test, qui l'a tuée. Le rapport
+compte 207 mutations : 206 tuées, 1 équivalente, 0 survivante.
+
+Les tests ciblés passent : 570 dans vingt-cinq fichiers, ceux de la chaîne prédictive,
+du magasin, des entreprises, de l'explorateur, de l'étude, de l'exemple et du rapport des
+gardes. Deux sont sautés, comme avant : ils attendent une distribution des TMEM dans
+l'artefact de base. Ruff aussi.
+
+**Ce qui reste.**
+- Le panneau prédictif de la page n'envoie pas encore de réforme des entreprises.
+- M3 : l'entrée, sur Da Rin et al., et l'investissement s'il passe sa conversion.
+- M4 attend l'imputation des revenus du capital.
+- M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2.
+- Les trois exceptions de D-245 restent au propriétaire.
+
+## D-247 — Phase 11, M3 : les taux effectifs de l'OCDE, et deux indices nationaux fermés
+
+**Le fait.** M3 de la phase 11 est fait : le §5 de la spec, les R3 et R4 de M0. Il n'ouvre
+aucun indice. M0 avait fixé, avant tout calcul, la condition d'ouverture de chacun. Les
+deux ont été calculées ou lues sur les fichiers, et aucune ne tient. L'indice national des
+créations est refusé ; celui de l'investissement reste fermé. Les raisons de la chaîne le
+disent, chiffres compris. C8, la ligne française de l'IPP, reste l'indice des créations.
+
+**La méthode de l'OCDE.**
+- `entreprises/taux_effectifs.py` écrit la méthode de l'annexe explicative des Corporate
+  Tax Statistics : les taux de Devereux et Griffith dans l'investissement permanent de
+  Klemm, le TMEI hors taxe, les stocks (équations A.1 à A.9, A.14 et A.15).
+- Ses paramètres sont lus dans le PDF de l'annexe : le scénario fixe (1 % d'inflation, 3 %
+  réel, 4,03 % nominal, tableau A.2), le rendement avant impôt de 20 % (§ 8), 35 % de
+  dette pour 65 % de fonds propres (§ 18), les dépréciations du tableau A.5. Le taux nominal
+  doit redonner Fisher, sans quoi le scénario est mal lu.
+- Le taux légal est celui de la couche entreprises : 25 % et la contribution sociale,
+  25,825 % en 2025. Les taux de l'OCDE omettent la contribution exceptionnelle de 2025
+  (§ 15 de l'annexe), et la méthode aussi.
+- Les taux que l'OCDE publie pour la France en 2025 entrent au manifeste :
+  `oecd_cts_etr_baseline_fra_2025.csv`. C'est une requête de son API SDMX, et ses octets
+  sont identiques sur deux téléchargements, comme pour la table d'Eurostat avant elle.
+- Chaque catégorie est chiffrée sur la valeur d'amortissement que l'OCDE publie pour elle.
+  Ce qui est éprouvé est la méthode, non une lecture du droit français. Les stocks sont
+  valorisés au premier entré, premier sorti (v = 1) : le TMEI publié le désigne parmi les
+  trois valeurs que l'annexe admet, et le TMEE le recoupe.
+
+**Ce qu'elle redonne**, en points, scénario fixe :
+
+| Catégorie | TMEI calculé | publié | TMEE calculé | publié |
+|---|---|---|---|---|
+| Bâtiments | 7,33 | 7,33 | 22,77 | 22,76 |
+| Stocks | 30,10 | 30,09 | 25,30 | 25,30 |
+| Logiciels | 12,73 | 12,64 | 23,37 | 23,35 |
+| Biens corporels | 12,31 | 9,82 | 23,32 | 23,04 |
+| Composite | 15,62 | 14,97 | 23,69 | 23,61 |
+
+- Trois catégories reviennent à un dixième de point près. L'écart des logiciels, 0,09 sur
+  le TMEI, n'a pas le profil d'un amortissement et reste inexpliqué.
+- Les biens corporels ne reviennent pas. L'OCDE chiffre cinq sous-groupes, chacun à sa
+  dépréciation économique, et ne publie qu'une valeur d'amortissement, leur moyenne.
+  Chiffrés à cette moyenne, ils donnent 12,31 au lieu de 9,82.
+- Leurs deux écarts sont pourtant dans le rapport que donne un amortissement qui varie
+  d'un sous-groupe à l'autre. Quels que soient les amortissements, leur écart à la
+  moyenne déplace le TMEI et le TMEE dans le rapport p/((1 − τ) r), soit 8,99 ; on
+  observe 8,88. Ce n'est donc pas la méthode qui échoue : ce sont les paramètres que la
+  condition demande qui ne sont pas publiés.
+
+**Les créations au niveau national (R4) : refusées.**
+- La condition de M0 demandait les deux composites à 0,1 point près. Le TMEE y est
+  (23,69 contre 23,61), mais le TMEI manque de 0,65 point (15,62 contre 14,97). Le canal
+  est refusé.
+- Même la condition remplie, l'indice ne se calculerait pas encore. Le TMEE de Da Rin, Di
+  Giacomo et Sembenelli n'est pas celui de l'OCDE : il divise par la valeur actuelle avant
+  impôt, (R* − R)/R*, et non par le revenu (tableau 1, p. 34). Il prend un financement
+  par actions nouvelles, une dépréciation de 12,5 %, les amortissements des machines selon
+  le guide fiscal d'Ernst & Young, et les marges des branches américaines (STAN). Le projet
+  n'a ni ce guide ni ces marges.
+- La raison que la chaîne donne pour les créations le dit. Un test la lie au calcul : si
+  la condition tenait un jour, ce test échouerait, et la raison devrait changer avec lui.
+
+**L'investissement (R3) : fermé.**
+- M0 ne l'ouvrait que sur l'équation (6) de Hanappi, Millot et Turban, la seule lecture du
+  taux légal qui ait ses écarts-types. Il fallait d'abord reproduire une décomposition que
+  l'OCDE publie.
+- Il n'y en a pas à reproduire. Les composantes de l'équation (6) se mesurent autour de
+  valeurs de référence que l'article nomme sans les imprimer (annexes C et E). La figure
+  A E.1, seule décomposition publiée, est une image matricielle, sans aucune valeur
+  lisible.
+- Le résidu d'interaction pèse en outre −0,576 (0,101) dans la colonne 5, plus que la
+  part du taux légal, −0,440. Une baisse de taux déplace les deux. Sans les valeurs de
+  référence, le second ne se calcule pas.
+- La raison de la chaîne pour l'IS et l'investissement le dit. Un test vérifie sur le PDF
+  ce qu'elle affirme : la page de la figure ne porte qu'une image, et aucun chiffre entre
+  son titre et sa note.
+
+**Garde 7 du §10.** L'effet de l'IS sur le PIB contient déjà l'investissement qu'il fait
+faire et les sociétés qu'il fait naître. L'indice `pib_is` ajouté à
+`investissement_entreprises` ou à `creations_societes` est refusé avec cette raison, dans
+les deux sens. La somme de deux indices était déjà refusée ; celle-ci l'est maintenant avec
+sa raison propre.
+
+**Ce qui change ailleurs.** Les raisons de deux canaux fermés portent la conclusion de M3.
+L'exemple de D-228 est rendu de nouveau, sans nouvelle passe : seules ces deux lignes
+changent.
+
+**Les tests.** `tests/test_taux_effectifs.py`, 22 cas :
+- les fichiers lus tels qu'imprimés et le taux légal de la couche ;
+- les formules : les formes fermées sans dette, le poids de la dette, aucun écart sans
+  impôt ;
+- les trois catégories qui reviennent, les biens corporels qui ne reviennent pas, la
+  condition manquée et le rapport des écarts ;
+- les refus des lecteurs, dont l'absence de pypdf ;
+- les raisons de la chaîne liées au calcul et vérifiées sur les deux articles ;
+- la garde 7 dans les deux sens.
+
+Les quatre tests de la garde 7 et des raisons ont échoué sur le code d'avant. Seize
+mutations des formules et des lectures, écrites à la main, ont toutes été tuées. Le
+balayage de D-229 reçoit le module, et quatre mutations écrites à la main : la garde 7
+deux fois, la tolérance de la condition, et le composite à quatre catégories. Le rapport
+compte 219 mutations : 218 tuées, 1 équivalente, 0 survivante. Les tests ciblés passent :
+372 dans vingt et un fichiers, ceux de la chaîne prédictive, des entreprises, de
+l'exemple, de l'étude, du manifeste et du rapport des gardes. Ruff aussi.
+
+**Ce qui reste.**
+- **Pour rouvrir les créations,** il faut les amortissements des cinq sous-groupes de biens
+  corporels de la France, d'une source stable, puis le guide d'Ernst & Young et les marges
+  STAN pour la construction des auteurs.
+- **Pour rouvrir l'investissement,** il faut les valeurs de référence de la décomposition,
+  et les paramètres de Spengel et al. (2020) sur lesquels elle est faite.
+- Ni l'un ni l'autre n'entrera dans le PIB : la garde 7 le tient d'avance.
+- M4 attend l'imputation des revenus du capital.
+- M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2.
+- Le panneau prédictif de la page n'envoie pas encore de réforme des entreprises.
+
+## D-248 — Les revenus du capital imputés : l'assiette du PFU par fractile de RFR
+
+**Le fait.** Le propriétaire a décidé de construire l'imputation que la porte F1b lui
+laissait (D-097, `docs/F1B_CAPITAL_GATE.md`, § 4). C'est le préalable de M4 dans la phase
+11. `population/capital.py` pose sur les foyers l'assiette que le PFU taxe, fractile par
+fractile, depuis les tableaux publiés de la DGFiP. L'imputation est opt-in :
+`impute_capital` dans le runner et dans `/population/simulate`, `--impute-capital` pour
+`impots population run` et `reconcile`. C'est une calibration, et sa cible est dépensée
+(`margins.CAPITAL_PFU_BY_FRACTILE`).
+
+**Ce qu'elle lit.**
+- Le tableau 2 de la DGFiP n° 41 : l'impôt hors barème moyen par foyer, par décile de RFR
+  par part, puis pour le dernier centième et le dernier millième. La CEHR, imprimée dans
+  la même cellule entre parenthèses, est retirée (1,98 Md€ au total).
+- Les lignes emboîtées deviennent des bandes disjointes, comme pour le recalage L1 : 386 €
+  de 90 à 99 %, 6 494 € de 99 à 99,9 %, 135 784 € au dernier millième.
+- Le tableau doit se recouper : les moyennes, multipliées par les foyers que donne son
+  total, redonnent à 1 % près les montants imprimés sous lui. Sinon il est refusé.
+- L'assiette est cet impôt sur le taux du PFU que porte la loi, 12,8 %, lu dans openfisca.
+  Elle va de 31 € par foyer au premier décile à 3 018 € de 90 à 99 %, 50 734 € de 99 à
+  99,9 % et 1,06 M€ au dernier millième.
+- La composition vient des cases 2042 nationales, au manifeste depuis D-210 : 62,1 % de
+  dividendes (2DC), 12,9 % d'intérêts (2TR), 1,7 % d'autres revenus distribués (2TS),
+  23,3 % de plus-values (3VG).
+- Les quatre cases totalisent 80,69 Md€ ; le tableau 2, divisé par 12,8 %, donne 80,63
+  Md€. Les deux routes du gate s'accordent à 0,1 %.
+
+**Cinq artefacts, déclarés dans le module.**
+- Chaque foyer d'une bande reçoit la base de la bande, qu'il détienne du capital ou non.
+  La part des foyers qui en ont vaut donc 100 % par construction. L'ERFS la mesure (axe
+  A4) et reste un comparateur : bâtir dessus la dépenserait (gate, § 8).
+- La composition est nationale dans chaque bande. Le haut réel est plus riche en
+  dividendes et en plus-values, le bas en intérêts. Le PFU et les prélèvements sociaux ne
+  voient pas ce partage ; la réponse des dividendes de M4 le verra.
+- Les bandes se rangent sur le RFR par part d'avant l'imputation, qui le déplace. Une
+  passe, sans reclassement, comme pour le recalage L1.
+- Le reste de l'impôt hors barème, l'assurance-vie à 7,5 % notamment, est lu comme du PFU.
+- Le compte des foyers. La population compte 35,3 M de foyers pour 31,0 M de ménages ; la
+  France, 41,6 M pour 31,3 M. C'est la ligne « Foyers fiscaux » de la réconciliation, à
+  −15 %. Les foyers manquants ne sont pas des personnes manquantes, mais des unités que
+  la population ne sépare pas : un couple de concubins, un enfant majeur qui déclare seul.
+  La moyenne de chaque bande, celle d'un foyer de la DGFiP, est donc multipliée par le
+  rapport des foyers par ménage de la France à ceux de la population, ×1,17. Le total
+  revient alors, comme celui de la masse salariale et des pensions, calées sur leurs
+  totaux. Le rapport est sans échelle : une population qui pèse une part de la France
+  reçoit le même. Il est borné entre 0,8 et 1,5, et refusé au-delà.
+
+**Ce que fait la passe.**
+- L'imputation tourne avant les niches, dont les déciles sont ceux du RFR qu'elle déplace.
+- Elle écrit le capital sur toute l'histoire, de N-2 à N, comme les revenus d'activité :
+  le RFR de N-2, qui fixe le taux de CSG d'une pension, le contient. La passe de la
+  réforme reçoit les mêmes bases.
+- Deux refus, avant toute passe. Une autre année que 2024 : la base n'est pas vieillie.
+  Et le recalage L1 à côté d'elle (voir plus bas).
+- Le registre gagne deux lignes. `pfu`, le PFU dû, est un « dont » de `ir`, jamais ajouté
+  aux recettes. `prelevements_sociaux_capital` n'est pas dans `ir` : il entre aux recettes
+  de l'État (`STATE_RECEIPTS`), que la garde de partie double et le pont vers Mésange
+  lisent.
+- La note de la ligne d'IR net de la réconciliation dit, d'après le passage, si le PFU
+  est imputé. Sans imputation, elle reste mot pour mot celle du rapport commité.
+
+**Deux choses que la loi ajoute, et que la passe montre.**
+- **Le seuil de recouvrement.** Le PFU est de l'impôt sur le revenu, et un impôt sur le
+  revenu sous 61 € n'est pas recouvré. Un foyer non imposé qui doit quelques euros de PFU
+  ne paie donc rien. La ligne `pfu` dit le PFU dû ; la ligne `ir`, ce qui en est recouvré.
+  Le premier test supposait le contraire : c'est lui qui se trompait.
+- **La CEHR.** Le RFR contient désormais le capital, et la CEHR mord en haut.
+
+**La passe réelle.** Sur toute la population, au palier léger, sans et avec
+l'imputation :
+
+| | sans | avec | écart |
+|---|---|---|---|
+| PFU dû (`pfu`) | 0 | 10,26 Md€ | +10,26 |
+| Prélèvements sociaux sur le capital | 0 | 13,79 Md€ | +13,79 |
+| RFR | 1 182,0 Md€ | 1 262,2 Md€ | +80,2 |
+| IR (`ir`) | 103,5 Md€ | 115,3 Md€ | +11,8 |
+| IR après décote, avant niches | 103,3 Md€ | 103,3 Md€ | 0 |
+
+- Le PFU dû revient à 0,6 % de la cible, 10,32 Md€. L'assiette, 80,2 Md€, est celle que
+  le tableau 2 donne, 80,6 Md€. Sans le correctif des foyers, le PFU tombait à 8,79 Md€.
+- L'IR monte de 11,8 Md€ : le PFU dû, moins ce que le seuil de 61 € n'en recouvre pas,
+  plus la CEHR que le RFR complet déclenche (publiée : 1,98 Md€). L'impôt au barème ne
+  bouge pas, ni la masse salariale.
+- La passe coûte 33 secondes de plus : 199 au lieu de 166.
+- Sur 20 000 ménages, au palier complet, les prestations baissent de 0,73 Md€, le capital
+  entrant dans les ressources. La prime d'activité perd 0,43 Md€, le RSA 0,15, l'ASPA 0,08
+  et les aides au logement 0,07. Le revenu disponible monte de 54,0 Md€.
+- Le palier complet sur toute la population dépasse la mémoire du conteneur (15 Go), avec
+  ou sans imputation : le processus est tué à la première passe. Ces chiffres-là sont donc
+  ceux d'un échantillon.
+
+**Le recalage L1, refusé à côté.** Il vise le RFR moyen par part de la DGFiP, qui
+contient le capital, en ne touchant qu'aux salaires, aux pensions et au chômage. Mesuré
+sur 2 000 ménages, avant le correctif des foyers : sans le capital, il ajoute 1,2 % à la
+masse salariale ; avec, il en retire 5,4 %. Il change le capital imputé en baisse des
+salaires, et la marge des salaires, dépensée, ne tient plus. Le correctif, qui grossit
+le capital, ne peut qu'aggraver l'écart. Les faire tourner ensemble demande un recalage qui
+sépare le capital des revenus d'activité. C'est au propriétaire d'en décider.
+
+**Les tests.** `tests/test_capital.py`, 32 cas :
+- le tableau lu tel qu'imprimé, la CEHR retirée, les bandes disjointes, et ses refus ;
+- le taux de la loi, l'assiette, la composition et la seconde route ;
+- le correctif des foyers, ses bornes, et les bandes au rang pondéré ;
+- l'imputation uniforme par bande, ses refus, et le foyer hors de toute bande ;
+- le runner : l'option coupée par défaut, l'ordre avant les niches, les deux refus avant
+  toute passe, le classement sur le RFR par part au poids moyen du foyer ;
+- une passe de la fixture : le PFU, les prélèvements, le RFR, la passe de la réforme, et
+  le capital écrit sur toute l'histoire ;
+- le seuil de recouvrement au foyer ;
+- le registre, les recettes, le pont macro, la marge dépensée et la note de l'IR net.
+
+Vingt-huit mutations écrites à la main, une par garde et par règle, ont toutes été tuées.
+Le test du pont macro a échoué sur le code d'avant. La réponse du calculateur de ménage
+porte les deux lignes nouvelles : la page ne montre que les lignes qu'elle nomme, et ne
+change pas. Les tests ciblés passent : 804 dans dix-huit fichiers, ceux de la population,
+du moteur, des niches, des prestations, de l'API et du pont macro, et 58 sont sautés.
+Ruff aussi.
+
+**Ce qui reste.**
+- M4 : le bouton du taux du PFU, relu comme tout bouton, et la réponse des dividendes,
+  l'évaluation de l'IPP d'abord, Chetty et Saez en référence.
+- Le capital n'est pas vieilli : la chaîne prédictive, de 2026 à 2035, ne le porte pas.
+- Le recalage L1 avec le capital, à la décision du propriétaire.
+- La CDHR reste fermée (F1b, § 7).
+- Le rapport de réconciliation commité est produit sans imputation et ne change pas.
+
 ## D-249 — L'écart de C2 : la chaîne ne lisait que 15 % des salariés
 
 **Le fait.** C2 comptait 748 emplois par milliard pour le plancher `t_min` et 1 555 pour le

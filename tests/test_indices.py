@@ -288,9 +288,10 @@ def test_the_firm_layer_is_listed_and_not_computed_here() -> None:
 def test_every_index_has_a_unit_a_stage_and_a_source() -> None:
     assert len(indices.KEYS) == len(indices.CATALOGUE)
     for spec in indices.CATALOGUE:
+        # META: the IS's GDP index, on Gechert and Heimberger's meta-analysis (D-246).
         assert spec.unit and spec.source and spec.stage in (
             indices.MECANIQUE, indices.COMPORTEMENT, indices.MACRO, indices.CHAINE,
-            indices.FIRMES), spec.key
+            indices.FIRMES, indices.META), spec.key
         assert all(k in STORE or k == indices.MACRO_ROW for k in spec.theta), spec.key
     assert set(indices.MESANGE_FIXED.values()) == {"real_income_by_instrument"}
     assert set(indices.MESANGE_SCALED.values()) == {
