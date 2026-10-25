@@ -134,6 +134,10 @@ STATE_RECEIPTS = (
     # Not in `ir`, and zero unless capital income is imputed (D-248). `pfu` is NOT here:
     # it is a part of `ir`, and counting it twice is the failure this ledger catches.
     "prelevements_sociaux_capital",
+    # Not in `ir` either, from 2025: the CDHR tops a high income's tax up to 20 % of its
+    # RFR, PFU included, and takes back part of a PFU cut. Zero without capital income;
+    # with it, a PFU cut moved disposable income by 17,7 % less than `ir` (D-250).
+    "cdhr",
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.

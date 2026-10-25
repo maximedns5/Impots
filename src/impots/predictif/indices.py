@@ -28,8 +28,11 @@ WHERE EACH COMES FROM, AND WHICH θ MOVES IT.
   only, whatever the debt path's spending scenario.
 * The chain: the primary balance, the debt and the interest on the extra debt, in points
   of GDP, year by year.
-* The firm layer — production taxes, company creations (C8), R&D (C9) — is listed, and
-  says it is not computed here: the trajectory prices the population's reforms.
+* The firm layer — production taxes, company creations (C8), R&D (C9). Without a firm
+  reform in the path, each says the trajectory prices the population's reforms only.
+  With one (D-250), company creations are C8 at the θ of its own row, with its box, when
+  the reform moves the IS normal rate: an index, never a receipt. The R&D waits on a CIR
+  the chain refuses, and the production burden is the Phase 8 panel's: each says so.
 * The IS on GDP (Phase 11, D-246): Gechert and Heimberger's growth effect of a point of
   the normal rate, read as a ten-year ramp, at the θ of its own row. SHOWN, NEVER ADDED
   TO THE DEBT: the IS has no loop to the receipts (M0, R2), and D-218 gives an instrument
@@ -128,6 +131,7 @@ CATALOGUE: tuple[Spec, ...] = (
          "% de la valeur ajoutée", FIRMES, "panneau de la phase 8"),
     Spec("creations_societes", STARTUPS, "Créations de sociétés",
          "points de taux de création", FIRMES, "C8, rapport IPP n° 47 (D-221)",
+         theta=("firm_creation_profit_tax",),
          note="Un nombre attend le stock de sociétés au manifeste."),
     Spec("depense_rd", ENTREPRISES, "Dépense de R&D", "EUR de R&D", FIRMES,
          "C9, rapport IPP n° 22 (D-222)"),
@@ -160,10 +164,20 @@ NOT_ADDABLE = {
 
 FIRM_LAYER = ("Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les "
               "réformes de la population, et cet indice ne s'y calcule pas.")
-#: Why a firm-layer index is absent when a firm reform IS in the path (PHASE11_SPEC §3).
-FIRM_PENDING = ("Couche entreprises : la réforme des entreprises est chiffrée dans la "
-                "trajectoire, mais cet indice ne s'y lit pas encore ; la phase 11 l'y fait "
-                "entrer (PHASE11_SPEC §5).")
+#: Why the two other firm-layer indices stay absent when a firm reform IS in the path
+#: (D-250). Company creations are computed there: C8, `creations`.
+CIR_OUT_OF_CHAIN = ("Le CIR reste hors de la chaîne : sa créance, induite comprise, n'est "
+                    "pas la recette d'une année, et ses boutons y sont refusés (D-222, "
+                    "D-244). La R&D de C9 se lit sur `/entreprises/simulate`.")
+PANEL_OUT_OF_CHAIN = ("Panneau de la phase 8 (`impots.reindustrialisation`) : il rapporte "
+                      "la charge à la valeur ajoutée sur un périmètre lu dans une table "
+                      "générée à part, que la trajectoire ne lit pas. L'indice ne s'y "
+                      "calcule pas.")
+#: C8's row, and the one key of its value: the mean of the first six years after the cut.
+C8_ROW = "firm_creation_profit_tax"
+CREATIONS_KEY = "1-6"
+CREATIONS_MEAN = ("« 1-6 » : moyenne des six premières années après la baisse, d'un effet "
+                  "encore croissant en fin de période (IPP n° 47, années 2017 à 2022).")
 NO_BEHAVIOUR = "Comportement non demandé : le canal ne tourne pas."
 NO_IMPULSE = ("Impulsion macro non demandée : sans elle, aucune variante de Mésange n'a "
               "de choc à lire.")
@@ -423,6 +437,47 @@ def is_growth(spec: Spec, *, theta: Any, store: Any, rate_change_points: float |
                                                label) if c))
 
 
+def creations(spec: Spec, *, theta: Any, store: Any, firm_reform: Any,
+              rate_change_points: float | None) -> Index:
+    """C8 at the θ of its own row, with its box at the row's two ends: the change of the
+    companies' creation rate an IS normal-rate change would bring if the IPP's relative
+    estimate held nationwide (D-221). An index of the firm layer, never a receipt."""
+    from impots.behavioural.channels import NO_CREATION_KNOB, firm_creations
+    from impots.predictif.theta import corners, pinned
+
+    if not rate_change_points:
+        return absent(spec, NO_CREATION_KNOB)
+
+    def at(t: Any) -> Any:
+        return firm_creations(pinned(store, t), firm_reform,
+                              is_rate_change_points=rate_change_points, draws=1)
+
+    first = at(theta)
+    if not first.applies:
+        return absent(spec, first.message)
+    rows = [k for k in spec.theta if k in store and store[k].is_open]
+    values = [float(c.central) for corner in corners(rows, theta)
+              if (c := at(corner)).applies]
+    value = float(first.central)
+    low, high = min(values or [value]), max(values or [value])
+    return Index(spec=spec, available=True, values={CREATIONS_KEY: value},
+                 box={CREATIONS_KEY: (low, high)}, conventions=(first.message,
+                                                                 CREATIONS_MEAN))
+
+
+def firm_layer(spec: Spec, *, theta: Any, store: Any, firm_reform: Any,
+               rate_change_points: float | None, reason: str) -> Index:
+    """An index of the firm layer: absent with `reason` when no firm reform is in the
+    path; with one, C8 for the creations and each other index's own reason (D-250)."""
+    if firm_reform is None:
+        return absent(spec, reason)
+    if spec.key == "creations_societes":
+        return creations(spec, theta=theta, store=store, firm_reform=firm_reform,
+                         rate_change_points=rate_change_points)
+    return absent(spec, {"depense_rd": CIR_OUT_OF_CHAIN,
+                         "charge_fiscale_production": PANEL_OUT_OF_CHAIN}[spec.key])
+
+
 def deciles(spec: Spec, rows: Iterable[Any] | None) -> Index:
     rows = [r for r in (rows or []) if r.mean_delta is not None]
     if not rows:
@@ -448,9 +503,11 @@ def compute(specs: Iterable[Spec], *, trajectory: Any, deciles_rows: Iterable[An
             mechanical: float, inputs: Mapping[str, Any] | None, year: int,
             macro_reason: str = NO_IMPULSE,
             firm_reason: str = FIRM_LAYER,
-            is_rate_change: float | None = None) -> tuple[Index, ...]:
+            is_rate_change: float | None = None,
+            firm_reform: Any = None) -> tuple[Index, ...]:
     """Every index asked for, computed or said not to be, in catalogue order.
-    `is_rate_change` is the firm reform's IS normal rate minus the law's, in points."""
+    `is_rate_change` is the firm reform's IS normal rate minus the law's, in points, and
+    `firm_reform` the firm part of the path, None when there is none."""
     out = []
     for spec in specs:
         if spec.stage == META:
@@ -458,7 +515,8 @@ def compute(specs: Iterable[Spec], *, trajectory: Any, deciles_rows: Iterable[An
                                  rate_change_points=is_rate_change,
                                  years=trajectory.years))
         elif spec.stage == FIRMES:
-            out.append(absent(spec, firm_reason))
+            out.append(firm_layer(spec, theta=theta, store=store, firm_reform=firm_reform,
+                                  rate_change_points=is_rate_change, reason=firm_reason))
         elif spec.stage == CHAINE:
             out.append(chain(spec, trajectory))
         elif spec.stage == MECANIQUE:
