@@ -1,0 +1,12 @@
+{
+  "name": "cvae_suppression_2026",
+  "year": 2026,
+  "created": "2026-10-26",
+  "source": "LF 2025 (loi n° 2025-127 du 14 février 2025), art. 62 : la suppression de la CVAE reportée, son barème relevé à 0,28 % en 2026 et 2027, ramené à 0,19 % en 2028 et 0,09 % en 2029, la CVAE abrogée au 1er janvier 2030. Variante : la suppression avancée au 1er janvier 2026, en une fois.",
+  "note": "cvae_echelle = 0 : le barème entier de chaque année à zéro, plafond, tranches et dégrèvement (D-254). La CFE n'est pas simulée.",
+  "tags": [],
+  "reform": {},
+  "firm_reform": {
+    "cvae_echelle": 0.0
+  }
+}

@@ -25,7 +25,7 @@ parameters:
       Variation de l'investissement corporel des entreprises en réponse à une baisse
       proportionnelle des impôts de production (CET : CVAE + CFE), par unité de
       variation du log de l'impôt. Évaluée sur la réforme de 2021.
-    responds_to_knobs: [cvae_taux_max, cvae_degrevement]
+    responds_to_knobs: [cvae_taux_max, cvae_degrevement, cvae_echelle]
     support:
       estimated_on: >
         Différence en différences synthétique, deux comparaisons de groupes de

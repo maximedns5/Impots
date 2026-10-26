@@ -19373,6 +19373,150 @@ réussis. `ruff` et `ui/check.mjs` passent.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - La porte de M6 : le `make full` du propriétaire.
 
+## D-254 — La CVAE au barème entier, sur le chemin annuel
+
+**Le fait.** D-250 laissait la CVAE hors du menu élargi, pour deux raisons.
+- Son seul bouton de taux, `cvae_taux_max`, ne règle que la tranche au-dessus de 50 M€ :
+  le baisser ouvre une marche à ce seuil. Sur la population d'entreprises, à 0,10 %, il
+  coûte 1,52 Md€ en 2026 et devient une hausse en 2029, où la loi est à 0,09 %. En 2030,
+  il refuse : la loi a abrogé la CVAE, et le paramètre n'existe plus.
+- L'explorateur et `/predictif/simulate` chiffrent la première année et la reportent dix
+  ans. Or la loi de finances pour 2025 ramène la CVAE de 0,28 % à 0,19 % en 2028, à
+  0,09 % en 2029, et l'abroge en 2030.
+
+Ce commit lui donne un bouton du barème entier, refuse le report à un bouton dont la loi
+bouge dans l'horizon, et la chiffre sur le chemin annuel, année par année.
+
+**Le bouton.** `cvae_echelle` multiplie le barème de la CVAE de l'année tout entier :
+- le taux plafond ;
+- les pentes et les ordonnées des tranches du dessous ;
+- le dégrèvement complémentaire.
+
+La loi les fait bouger ensemble : le plafond passe de 0,19 à 0,28 %, la pente de la
+première tranche de 0,063 à 0,094 %, le dégrèvement de 125 à 188 €. Les seuils, les
+plafonds de valeur ajoutée et la franchise de 63 € ne sont pas des taux, et la loi les
+laisse en place. À 0,5, le barème est à moitié ; à 0, il n'y a plus de CVAE. Le
+plafond et le dégrèvement étant déjà réglés par le facteur, `cvae_taux_max` et
+`cvae_degrevement` ne se combinent pas avec lui : lequel l'emporterait serait l'ordre des
+écritures, pas une politique.
+
+La loi arrondit le taux de la tranche au centième de point, et elle arrondit le taux mis à
+l'échelle, comme quand elle bouge le sien. Le test le fait à la main :
+- une firme de 1,9 M€ de chiffre d'affaires et de 1,2 M€ de valeur ajoutée paie 412 € au
+  droit de 2026 ;
+- elle paie 266 € à moitié, pas 206 : le taux de 0,02632 % s'arrondit à 0,03 %, et le
+  dégrèvement passe à 94 €.
+
+**La relecture.** D-007, appliqué au barème qu'il annonçait. `verify_scales` relit chaque
+taux du barème réformé contre le facteur fois celui de la loi. La loi est lue sur
+l'arbre de base, pas sur l'arbre réformé : une réforme qui bougerait la loi définirait
+sa propre réponse. Elle refuse :
+- une réforme qui n'aurait mis à l'échelle que le plafond, la marche de D-250 ;
+- une CVAE créée là où la loi n'en a plus.
+
+L'année où la loi l'a abrogée, le facteur ne trouve rien à régler et n'écrit rien. La
+couche n'y coûte rien, et le rapport du chemin annuel le dit, l'année lue sur l'arbre.
+
+**Le report refusé.** `law_moves` lit sur l'arbre des entreprises, bouton par bouton,
+la première année de l'horizon où la loi d'un paramètre qu'il écrit n'est plus celle de
+la première année. Le refus s'applique :
+- à `/predictif/simulate` ;
+- à l'explorateur, sur la base et sur la grille.
+
+Les deux refusent un tel bouton, l'année nommée, et renvoient à `impots predictif`. Pour
+la CVAE, c'est 2028 dès que l'horizon dépasse deux ans. Le taux normal de l'IS ne bouge
+pas d'ici 2035 : l'étude de D-250 tient.
+
+**C4.** Son régresseur est le log de l'impôt de production, et la baisse de 2021 que
+l'IPP évalue était proportionnelle : C4 lit `cvae_echelle`. Deux bords étaient muets.
+- Une suppression est une baisse infinie du log, hors de toute mesure. C4 le dit au lieu
+  de la chiffrer ; `/entreprises/simulate` répondait 500 à `cvae_echelle = 0`.
+- Une année sans CVAE dans la loi n'a rien à faire répondre, et C4 le dit aussi.
+
+C4 sans ses entrées échoue toujours bruyamment : une erreur d'entrée et une année sans
+CVAE ne se lisent pas pareil.
+
+**Le chemin annuel.** `impots scenario save` prend une réforme des entreprises
+(`--firm-reform`). Deux scénarios sont enregistrés le 2026-10-26 :
+- `cvae_suppression_2026` : la suppression avancée au 1er janvier 2026, `cvae_echelle`
+  à 0 ;
+- `cvae_moitie_2026` : le barème de la loi divisé par deux chaque année, comme la LF 2021
+  l'avait divisé.
+
+Les deux passes ont tourné sur le commit `1813567`, en quelques minutes. Le cadre est
+celui de l'étude :
+- dépenses gelées en volume ;
+- croissance réelle de 1 % et prix de 2 % ;
+- taux implicite tenu ;
+- boucle demandée ;
+- millésime d'entreprises 2023.
+
+**Le résultat.** Le coût, en Md€, vue vieillie (vue figée).
+
+| Année | suppression | moitié |
+|---|---|---|
+| 2026 | 3,57 (3,28) | 1,79 (1,64) |
+| 2027 | 3,68 (3,28) | 1,84 (1,64) |
+| 2028 | 2,57 (2,22) | 1,28 (1,11) |
+| 2029 | 1,27 (1,07) | 0,64 (0,54) |
+| 2030 à 2035 | 0 | 0 |
+
+- La suppression avancée coûte 11,08 Md€ en tout, vue vieillie, et 9,85 en vue figée.
+  Elle laisse la dette plus haute de 0,32 point de PIB en 2035, et de 0,28 en vue figée.
+  L'écart culmine à 0,34 point en 2029, puis décroît avec le PIB.
+- La moitié coûte 5,55 Md€ et laisse +0,16 point en 2035.
+- Le report de 2026 aurait dit +1,10 et +0,55 point : 3,5 fois trop. C'est l'erreur que
+  le refus empêche.
+- La boucle est absente : la CVAE n'a pas de variante dans Mésange (D-214), et la boucle
+  par élasticités est refusée (D-246). Les deux persistances donnent les mêmes chiffres.
+  C4 est un indice de l'investissement, hors de la dette, et la commande ne le chiffre
+  pas.
+
+**Ce que ces chiffres ne disent pas.**
+- **Ils sont sans doute bas.** Le rapprochement de la couche
+  (`reports/reconciliation_entreprises.md`) met la CVAE simulée de 2026, 3,3 Md€ à
+  0,28 %, en face des 4,0 Md€ publiés pour 2025, à 0,19 %. À taux égal, le publié
+  ferait environ 5,9 Md€, et la couche en donne 44 % de moins. Les deux années ne sont
+  pas les mêmes. La valeur ajoutée comptable de l'Ésane n'ajoute pas les loyers et le
+  crédit-bail que l'assiette de la CVAE réintègre (D-021).
+- **La CFE**, l'autre moitié de la CET, n'est pas simulée.
+- **Le calendrier.** La CVAE est comptée l'année de son barème, non à la caisse, où les
+  acomptes la décalent.
+
+**Les tests.** Dans `tests/test_cvae_echelle.py`, 21 cas :
+- le barème entier de 2026 et de 2029 mis à l'échelle, les seuils en place ;
+- deux firmes calculées à la main ;
+- la suppression ;
+- 2030 sans rien à régler ;
+- le mélange refusé, deux cas ;
+- les deux refus de la relecture ;
+- `law_moves` lu sur l'arbre ;
+- le report refusé sur la voie rapide, deux cas, et accepté à deux ans ou pour l'IS ;
+- l'explorateur, sur sa grille et sa base ;
+- C4 qui lit le bouton ;
+- la note du chemin annuel ;
+- les deux bords de C4, C4 sans entrées, et la bande qui prend une suppression.
+
+Dans `tests/test_scenarios.py`, quatre de plus : un scénario des entreprises enregistré
+et relu, et trois fichiers refusés.
+
+Seize mutations écrites à la main, une par garde et par terme, ont toutes été tuées.
+Les deux tests du mélange passaient d'abord pour une mauvaise raison : le champ
+n'existait pas encore. Ils ont été vus échouer par mutation une fois le champ en place.
+
+Les tests des entreprises, de leurs vues, de la recherche, des explorations, de l'API
+prédictive, du chemin annuel, de la commande, du comportement, de θ, du CIR, des
+créations, de l'étude, de la précision et des indices : 527 réussis ; ceux des
+scénarios, 93. `ruff` et `ui/check.mjs` passent. La page des entreprises gagne le
+bouton.
+
+**Ce qui reste.**
+- L'autofinancement des baisses ciblées, qui attend le choix du propriétaire sur R5.
+- Les deux libellés de D-251.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail.
+- La porte de M6 : le `make full` du propriétaire.
+
 ## D-255 — L'écart de C2 : la chaîne ne lisait que 15 % des salariés
 
 **Le fait.** C2 comptait 748 emplois par milliard pour le plancher `t_min` et 1 555 pour le

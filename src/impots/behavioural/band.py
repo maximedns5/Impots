@@ -82,8 +82,8 @@ def compute(
     relative_cost_change: np.ndarray | None = None,
     earner_weights: np.ndarray | None = None,
     contribution_delta: float | None = None,
-    production_tax_baseline: float = 0.0,
-    production_tax_reform: float = 0.0,
+    production_tax_baseline: float | None = None,
+    production_tax_reform: float | None = None,
     labour_group: np.ndarray | None = None,
     labour_earnings: np.ndarray | None = None,
     labour_delta_log_net: np.ndarray | None = None,
@@ -126,7 +126,7 @@ def compute(
     results.append(channel_module.contribution_incidence(
         store, reform, contribution_delta=contribution_delta, draws=draws, rng=rng,
     ))
-    if production_tax_baseline and production_tax_reform:
+    if production_tax_baseline is not None and production_tax_reform is not None:
         results.append(channel_module.production_tax_investment(
             store, reform, production_tax_baseline=production_tax_baseline,
             production_tax_reform=production_tax_reform, draws=draws, rng=rng,

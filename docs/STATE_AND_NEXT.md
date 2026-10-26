@@ -1,6 +1,6 @@
 # State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M6)
 
-The seventh 2026-10-26 update adds D-263: the floor replayed with C11 has run on its
+The eighth 2026-10-26 update adds D-263: the floor replayed with C11 has run on its
 preregistration commit, `2002304`, and the page renders it in its own section after the
 `t_delta`'s, which is unchanged to the byte. Self-financing shrinks the curve's answer for
 the floor too without turning it: Δb is 0.6679 times the curve's, +0.157 to +1.573 point
@@ -8,13 +8,13 @@ at θ = ½, and no corner falls below zero, the lowest +0.094 to +0.942. Per bil
 θ = ½, the floor leaves 0.206 point of debt in 2035 and the `t_delta` 0.191. The control
 gives the curve back (largest gap 8.9e-17). Every point of D-262's prognosis held, to the
 thousandth. Thirty-three hand mutants of the page script killed.
-The sixth 2026-10-26 update added D-262: the curve's floor `t_min` replayed with C11,
+The seventh 2026-10-26 update added D-262: the curve's floor `t_min` replayed with C11,
 preregistered before its passes, under its own directory,
 `etude/courbe_autofinancement_plancher/`. The prognosis: C11 brings back 33.2 % of each
 bundle at θ = ½, so Δb is 0.668 times the curve's, +0.157 to +1.573 point, and no corner
 falls below zero, the lowest, at the Trésor-Éco's 60 %, +0.094 to +0.942. The control is
 the `t_delta`'s. The replay runs next, then D-263 renders both replays.
-The fifth 2026-10-26 update added D-261: the curve's `t_delta` replayed with C11 has run on
+The sixth 2026-10-26 update added D-261: the curve's `t_delta` replayed with C11 has run on
 its preregistration commit, `847f519`, and `docs/PREDICTIF_ETUDE.md` renders it in its
 own section. Self-financing shrinks D-242's answer without turning it: Δb is 0.6197 times
 the curve's at each bundle, +0.192 to +1.343 point at θ = ½, and none of the 32 corners
@@ -23,14 +23,14 @@ gives the curve back: its costs to the euro, 0.4 times its Δb at the sixteen co
 where the weight is 1 (largest gap 1.3e-16), C2's and Mésange's jobs alike. Every point
 of D-260's prognosis held, to the thousandth. Twenty-five hand mutants of the page script
 killed.
-The fourth 2026-10-26 update added D-260: the curve's `t_delta` replayed with C11, its
+The fifth 2026-10-26 update added D-260: the curve's `t_delta` replayed with C11, its
 self-financing, preregistered before its passes. The request is the curve's, field for
 field, under `etude/courbe_autofinancement/`; only the code differs. The prognosis: C11
 brings back 38.0 % of each bundle at θ = ½, so Δb is 0.620 times the curve's, +0.192 to
 +1.343 point, and no bundle lowers the debt at any θ: at most 60 % comes back. The
 control: the curve's costs to the euro, and at the sixteen corners where the weight is 1,
 0.4 times the curve's Δb. The replay runs next, then D-261.
-The third 2026-10-26 update added D-255 to D-259. C2's gap to the CAE came from the chain:
+The fourth 2026-10-26 update added D-255 to D-259. C2's gap to the CAE came from the chain:
 it read 15 % of the employees, the quick tier's households at the whole frame's weights
 (D-255), and lent each employee the change in their household's labour cost, which gave
 the 2026 ceiling 1 317 jobs for a cut above 3 SMIC where C2 does not respond (D-257). Each
@@ -47,6 +47,17 @@ receipts, only where Mésange's targeted variant has no balance row. On the stud
 the floor. No more than 60 % ever comes back: without a loop, a targeted cut does not pay
 for itself at any θ. Its three rows were read on the PDF by an adversarial pass, which
 added a refusal for a negative reading.
+The third 2026-10-26 update added D-254: the CVAE has a knob for its whole schedule, and
+is priced on the annual path. `cvae_echelle` scales the year's ceiling, brackets and
+dégrèvement together, as the law moves them; it is read back against the law, and finds
+nothing to scale once the CVAE is abolished in 2030. The carried path — `/predictif/
+simulate` and the explorer — now refuses a firm knob whose law moves within its horizon,
+the CVAE from 2028, and points to `impots predictif`. Advancing the abolition to 2026
+costs 11.1 bn over 2026–2029 and leaves the 2035 debt 0.32 point higher (aged view); the
+carry would have said 1.10. Halving the schedule: 5.6 bn, +0.16 point. No loop: the CVAE
+has no Mésange variant. The firm layer likely understates the CVAE by about two fifths.
+C4 now says an abolition and a year without the tax instead of failing. Sixteen hand
+mutants killed.
 The second 2026-10-26 update added D-253: the PFU replay has run on its preregistration
 commit, `80a7405`, and `docs/PREDICTIF_ETUDE.md` renders it in its own section. With the
 wage shift, no PFU bundle lowers the 2035 debt at θ = ½ any more: +0.05 to +0.22 point
@@ -879,8 +890,9 @@ download list.
    the PFU replayed with it turns that sign (D-253): no cut on the menu lowers the debt at
    θ = ½. The curve replayed with its self-financing does not lower it either: C11
    brings back 38 % of a `t_delta` cut at θ = ½ (D-260, D-261) and 33 % of a floor cut
-   (D-262, D-263), 60 % at most. Next: the CVAE on the annual path. The page's predictive panel does not send a firm
-   reform yet. Then Phase 12, the past, and
+   (D-262, D-263), 60 % at most. The CVAE is priced on the annual path with a knob for its
+   whole schedule, and the carry refuses it (D-254). The page's predictive panel does not
+   send a firm reform yet. Then Phase 12, the past, and
    Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin
