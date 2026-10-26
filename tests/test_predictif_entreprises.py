@@ -128,7 +128,7 @@ def test_the_two_layers_add_up_and_the_households_keep_their_loop(monkeypatch,
 
 
 def test_a_firm_reform_alone_says_whether_behaviour_was_asked(monkeypatch) -> None:
-    """D-251's first label (D-264): the seam says behaviour was asked for a firm reform
+    """D-251's first label (D-265): the seam says behaviour was asked for a firm reform
     alone, which no household channel reads; never for a household reform, whose pass
     carries what the channels read."""
     monkeypatch.setattr(main, "_price_households", _no_household_pass)
@@ -196,7 +196,7 @@ def test_a_firm_reform_has_its_debt_path_and_says_the_loop_absent(chain) -> None
 
 
 def test_behaviour_asked_for_a_firm_reform_is_not_said_unasked(chain) -> None:
-    """D-251's first label (D-264): behaviour asked for a firm reform alone is not « non
+    """D-251's first label (D-265): behaviour asked for a firm reform alone is not « non
     demandé ». No household channel reads a firm knob, and the firm layer's channels
     enter no receipts: the band, its θ and the household channels' indices say that.
     Unasked, they say unasked, as before."""
@@ -418,7 +418,7 @@ def test_the_explorer_command_gives_the_firm_pass_its_growth(monkeypatch,
 
 def test_the_explorer_says_behaviour_asked_for_a_firm_search(monkeypatch,
                                                              tmp_path) -> None:
-    """D-251's first label (D-264), in the explorer: a firm search with behaviour asked
+    """D-251's first label (D-265), in the explorer: a firm search with behaviour asked
     reports the band and the household channels' indices as unread by the reform, not
     as unasked — from the pass, through `Priced`, to the report."""
     import json

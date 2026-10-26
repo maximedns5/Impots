@@ -411,7 +411,7 @@ Soit de 23 000 à 57 000 emplois par milliard (calcul de M0).
   valorisés un par un. C2 comptait alors 748 emplois par milliard pour le plancher `t_min`
   et 1 555 pour le `t_delta` (D-242) : à 12 000 € par emploi, 0,9 à 1,9 %
   d'autofinancement (calcul de M0), dix fois moins que toutes les lectures ci-dessus. Ces
-  chiffres tenaient à deux défauts de la chaîne, corrigés depuis (D-255, D-257) : C2 lit
+  chiffres tenaient à deux défauts de la chaîne, corrigés depuis (D-256, D-258) : C2 lit
   désormais 6,4 à 16,1 %, encore sous les autres lectures. La note de vérification de C2
   dit d'ailleurs que son élasticité, estimée sur un panel équilibré d'établissements,
   « couvre la marge intensive des survivants, pas l'emploi total ».
@@ -421,7 +421,7 @@ voisinage du SMIC :
 
 | Lecture | Emplois | Autofinancement |
 |---|---|---|
-| C2, marge intensive des survivants (D-257) | 5 348 à 13 380 | 6,4 à 16,1 % |
+| C2, marge intensive des survivants (D-258) | 5 348 à 13 380 | 6,4 à 16,1 % |
 | Mésange, à trois ans (D-242) | 13 079 ETP | — |
 | Bozio et Wasmer (Mésange), à un an | — | environ 35 % |
 | CAE n° 49, 2019 | 23 000 à 57 000 | — |
@@ -431,12 +431,12 @@ La ligne de C2 donne ses deux boutons, le plancher `t_min` puis le `t_delta`, au
 paquet de chaque grille, à l'élasticité du centre et à 12 000 € par emploi. À M0, avant ses
 deux corrections, elle disait 748 à 1 555 emplois et 0,9 à 1,9 %.
 
-**L'écart de C2, vérifié (D-255, D-257).** À M0, l'élasticité de C2, −0,43 au centre,
+**L'écart de C2, vérifié (D-256, D-258).** À M0, l'élasticité de C2, −0,43 au centre,
 proche du −0,5 du CAE, donnait quinze fois moins d'emplois par milliard : l'écart ne
 pouvait tenir à la seule source. Une passe de population l'a montré, il tenait d'abord à la
 chaîne, par deux défauts. C2 ne lisait que 15 % des salariés, ceux des ménages de la passe
-rapide, au poids de toute la population (D-255). Et il prêtait à chacun le changement du
-coût du travail de son ménage (D-257). Corrigé, C2 compte 5 348 emplois par milliard pour le
+rapide, au poids de toute la population (D-256). Et il prêtait à chacun le changement du
+coût du travail de son ménage (D-258). Corrigé, C2 compte 5 348 emplois par milliard pour le
 plancher et 13 380 pour le `t_delta`. Le reste de l'écart au bas du CAE, un facteur 1,7, se
 décompose sur la passe : l'élasticité, −0,43 contre −0,5 ; les euros que le bouton porte
 au-dessus du SMIC ; le profil de C2, qui s'éteint à 2 SMIC. Au-delà, jusqu'au haut du CAE et
@@ -456,7 +456,7 @@ voies ouvertes, chacune à déclarer dans sa propre entrée :
   années 1990, sur une économie et un barème qui ne sont plus ceux de 2026 ;
 - ou rien de plus que D-242, tant que l'écart de C2 n'est pas expliqué.
 
-**Le choix du propriétaire, le 2026-10-26 (D-259).** La première voie : θ = 0 à la lecture
+**Le choix du propriétaire, le 2026-10-26 (D-260).** La première voie : θ = 0 à la lecture
 de C2, ses emplois valorisés à 12 000 € l'un, θ = 1 au Trésor-Éco, 60 %, θ = ½ entre les
 deux. C'est le canal C11 de M5, dans les recettes, pour les seules baisses que Mésange range
 sous sa variante ciblée. Sur la passe de l'étude, au premier paquet, il rend 11,8 %, 38,0 %
@@ -544,8 +544,8 @@ M1 a livré le même chiffre dans les deux vues (D-244). M2 y met le vieillissem
   0,1 point.
 - **§6** : la source est fixée. L'élasticité agrégée attend M4.
 - **§7** : pas d'appariement. Les lectures vont de 6 % à 60 %, de 1 % à M0 avant les
-  corrections de C2 (D-255, D-257). Le choix était au propriétaire, et D-242 tenait d'ici
-  là. Il a choisi la plage de C2 au Trésor-Éco : le canal C11 de M5 (D-259).
+  corrections de C2 (D-256, D-258). Le choix était au propriétaire, et D-242 tenait d'ici
+  là. Il a choisi la plage de C2 au Trésor-Éco : le canal C11 de M5 (D-260).
 
 ## Le gel de conception
 
@@ -553,4 +553,4 @@ M2 peut se figer sur ce qui précède : la rampe de l'IS en indice, le recoupeme
 la boucle, la vue vieillie des entreprises et le chemin annuel. M3 aussi : l'entrée, et
 l'investissement s'il passe sa conversion. M4 attend l'imputation des revenus du capital.
 M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2, faite depuis
-(D-255). Les deux passes adversariales sont consignées en D-245.
+(D-256). Les deux passes adversariales sont consignées en D-245.

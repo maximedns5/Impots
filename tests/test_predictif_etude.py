@@ -111,7 +111,7 @@ def test_the_committed_study_is_preregistered(script) -> None:
     salaires = script.load_salaires(phase11)
     assert salaires["control"]["given_back"]
     assert salaires["report"]["commit"] in script.OUT.read_text(encoding="utf-8")
-    # D-261, D-263: the curve's knobs replayed with C11, giving it back at full weight.
+    # D-262, D-264: the curve's knobs replayed with C11, giving it back at full weight.
     for replay in script.AUTOFINANCEMENT_MENU:
         auto = script.load_autofinancement(courbe, replay)
         assert auto["control"]["given_back"]
@@ -473,7 +473,7 @@ def test_a_curve_that_is_not_what_was_preregistered_is_refused(script, tmp_path,
 
 def _courbe_first_round(reports: Path, *, move: str | None = None) -> None:
     """The curve's first round as it ran: on the preregistration's commit, with the C2 that
-    read 15 % of the earners (D-255), here its indices changed; `move` shifts one figure of
+    read 15 % of the earners (D-256), here its indices changed; `move` shifts one figure of
     that knob's report."""
     first = reports / "courbe_premier_tour"
     first.mkdir()
@@ -491,7 +491,7 @@ def _courbe_first_round(reports: Path, *, move: str | None = None) -> None:
 
 def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
         script, tmp_path) -> None:
-    """D-257: the curve replayed after C2's fix. Its indices may differ from the first
+    """D-258: the curve replayed after C2's fix. Its indices may differ from the first
     round's, which is the point; its costs, its Δb and its corners may not, and the page
     names the first commit and why it was replayed."""
     requests, reports = _study(tmp_path, script)
@@ -501,7 +501,7 @@ def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
     page = script.render(etudes, complements, courbe)
     _, _, tail = page.partition("## La courbe de 2026, préenregistrée à part")
     assert "e" * 40 in tail and CURVE_COMMIT in tail
-    assert "chiffre pour chiffre" in tail and "D-255" in tail
+    assert "chiffre pour chiffre" in tail and "D-256" in tail
     assert "courbe_premier_tour" in tail
 
 
@@ -509,7 +509,7 @@ def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
                                          ("missing", "premier tour de la courbe sans")])
 def test_a_curve_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str,
                                                       needle: str) -> None:
-    """D-257: the rerun only corrects C2, which enters no revenue and no debt. One figure
+    """D-258: the rerun only corrects C2, which enters no revenue and no debt. One figure
     moved by a billionth of a point, or a knob missing from the first round, and the
     rerun is no longer that: refused."""
     requests, reports = _study(tmp_path, script)
@@ -523,7 +523,7 @@ def test_a_curve_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str
 
 def _second_round(reports: Path, *, move: str | None = None) -> None:
     """The study's second round as it ran: with the C2 that read 15 % of the earners
-    (D-255), here its indices changed; `move` shifts one figure of that instrument's
+    (D-256), here its indices changed; `move` shifts one figure of that instrument's
     report."""
     second = reports / "etude_second_tour"
     second.mkdir()
@@ -540,7 +540,7 @@ def _second_round(reports: Path, *, move: str | None = None) -> None:
 
 def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
                                                                      tmp_path) -> None:
-    """D-257: the study replayed on its second round's code with C2's fix alone. Its
+    """D-258: the study replayed on its second round's code with C2's fix alone. Its
     indices may differ from the second round's, which is the point; its costs, its Δb and
     its corners may not, and the page names the second commit and why it was replayed."""
     requests, reports = _study(tmp_path, script)
@@ -549,7 +549,7 @@ def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
     page = script.render(script.load(requests, reports))
     head, _, _ = page.partition("## Le cadre")
     assert "f" * 40 in head and "a" * 40 in head and COMMIT in head
-    assert "D-255" in head and "etude_second_tour" in head
+    assert "D-256" in head and "etude_second_tour" in head
     assert head.count("chiffre pour chiffre") == 2
 
 
@@ -557,7 +557,7 @@ def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
                                          ("missing", "second tour sans")])
 def test_a_third_round_that_is_not_the_second_is_refused(script, tmp_path, how: str,
                                                          needle: str) -> None:
-    """D-257: the third round only corrects C2, which enters no revenue and no debt. One
+    """D-258: the third round only corrects C2, which enters no revenue and no debt. One
     figure moved by a billionth of a point, or an instrument missing from the second
     round, and the replay is no longer that: refused."""
     requests, reports = _study(tmp_path, script)
@@ -569,7 +569,7 @@ def test_a_third_round_that_is_not_the_second_is_refused(script, tmp_path, how: 
 
 
 def _complement_first_round(reports: Path, *, move: bool = False) -> None:
-    """The complement's first round as it ran: with the C2 that D-255 and D-257 corrected,
+    """The complement's first round as it ran: with the C2 that D-256 and D-258 corrected,
     here its indices changed; `move` shifts one of its figures."""
     first = reports / "complements_premier_tour"
     first.mkdir()
@@ -585,7 +585,7 @@ def _complement_first_round(reports: Path, *, move: bool = False) -> None:
 
 def test_the_complement_s_first_round_is_named_and_given_back_figure_for_figure(
         script, tmp_path) -> None:
-    """D-258: the complement replayed on its own commit with C2's fixes alone. Its indices
+    """D-259: the complement replayed on its own commit with C2's fixes alone. Its indices
     may differ from the first round's; its costs, its Δb and its corners may not, and the
     page names the first commit and why it was replayed."""
     requests, reports = _study(tmp_path, script)
@@ -595,7 +595,7 @@ def test_the_complement_s_first_round_is_named_and_given_back_figure_for_figure(
     page = script.render(etudes, complements)
     _, _, tail = page.partition("## Complément, hors préenregistrement")
     assert "9" * 40 in tail and "b" * 40 in tail
-    assert "chiffre pour chiffre" in tail and "D-255" in tail
+    assert "chiffre pour chiffre" in tail and "D-256" in tail
     assert "complements_premier_tour" in tail
 
 
@@ -603,7 +603,7 @@ def test_the_complement_s_first_round_is_named_and_given_back_figure_for_figure(
                                          ("missing", "premier tour des compléments sans")])
 def test_a_complement_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str,
                                                            needle: str) -> None:
-    """D-258: the rerun only corrects C2, which enters no revenue and no debt. One figure
+    """D-259: the rerun only corrects C2, which enters no revenue and no debt. One figure
     moved by a billionth of a point, or the complement missing from its first round, and
     the rerun is no longer that: refused."""
     requests, reports = _study(tmp_path, script)
@@ -968,7 +968,7 @@ def test_a_replay_that_is_not_the_menu_s_pfu_with_the_shift_is_refused(script, t
 
 
 # --------------------------------------------------------------------------- #
-# the curve's knobs, replayed with their self-financing (D-260, D-262)
+# the curve's knobs, replayed with their self-financing (D-261, D-263)
 # --------------------------------------------------------------------------- #
 AUTO_COMMIT = "a" * 40
 #: Each replay its own commit, as each ran on its own preregistration's.
@@ -1052,7 +1052,7 @@ def _with_autofinancement(tmp_path: Path, script, *keys: str,
 
 def test_the_t_delta_replayed_with_its_self_financing_is_rendered_apart(script,
                                                                         tmp_path) -> None:
-    """D-260: the replay has its own section, with its commit, its answer under each
+    """D-261: the replay has its own section, with its commit, its answer under each
     persistence beside the curve's, and its control: where C11's weight is 1, every corner
     what the Trésor-Éco's share leaves of the curve's; every cost and index the curve's."""
     requests, reports = _with_autofinancement(tmp_path, script)
@@ -1066,7 +1066,7 @@ def test_the_t_delta_replayed_with_its_self_financing_is_rendered_apart(script,
                                    "autofinancement")
     assert tail and AUTO_COMMIT in tail and AUTO_COMMIT not in head
     assert "## La courbe de 2026, préenregistrée à part" in head
-    assert "D-260" in tail and "## Ce que l'étude ne dit pas" in tail
+    assert "D-261" in tail and "## Ce que l'étude ne dit pas" in tail
     for search in auto["report"]["searches"]:
         assert script.verdict(search, auto["instrument"], 0.0) in tail
     assert tail.count("Sans l'autofinancement, à la courbe") == 2
@@ -1094,7 +1094,7 @@ def test_the_t_delta_replayed_with_its_self_financing_is_rendered_apart(script,
 @pytest.mark.parametrize("how", ["coin", "cout", "indice"])
 def test_a_replay_that_does_not_give_the_curve_back_at_full_weight_is_said_so(
         script, tmp_path, how: str) -> None:
-    """D-260: a corner at full weight off the curve's share by more than a ten-thousandth
+    """D-261: a corner at full weight off the curve's share by more than a ten-thousandth
     of a point, a cost off by more than a euro, or an index off: a result, said with its
     gap, not a refusal."""
     requests, reports = _with_autofinancement(tmp_path, script)
@@ -1207,7 +1207,7 @@ def test_a_replay_that_is_not_the_curve_s_knob_with_c11_is_refused(script, tmp_p
 
 def test_the_floor_replayed_with_its_self_financing_has_its_own_section(script,
                                                                         tmp_path) -> None:
-    """D-262: the floor's replay, under its own directory, has its own section after the
+    """D-263: the floor's replay, under its own directory, has its own section after the
     `t_delta`'s, with its own commit and entry, and what it leaves out beyond what both
     do; the `t_delta`'s section does not change for it."""
     requests, reports = _with_autofinancement(tmp_path, script, "t_delta", "t_min")
@@ -1222,7 +1222,7 @@ def test_the_floor_replayed_with_its_self_financing_has_its_own_section(script,
     t_delta = t_delta.partition(t_delta_title)[2]
     assert AUTO_COMMITS["t_min"] in floor and AUTO_COMMITS["t_min"] not in t_delta
     assert AUTO_COMMITS["t_delta"] in t_delta and AUTO_COMMITS["t_delta"] not in floor
-    assert "D-262" in floor and "`etude/courbe_autofinancement_plancher/`" in floor
+    assert "D-263" in floor and "`etude/courbe_autofinancement_plancher/`" in floor
     assert "dès 2 SMIC" in floor and "dès 2 SMIC" not in t_delta
     for search in replays["t_min"]["report"]["searches"]:
         assert script.verdict(search, replays["t_min"]["instrument"], 0.0) in floor

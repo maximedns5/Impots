@@ -283,7 +283,7 @@ def test_the_firm_layer_is_listed_and_not_computed_here() -> None:
     assert [i.spec.key for i in computed] == ["charge_fiscale_production",
                                               "creations_societes", "depense_rd"]
     assert all(not i.available and i.reason == indices.FIRM_LAYER for i in computed)
-    # D-251's second label (D-264): the path prices firm reforms too since D-244; the
+    # D-251's second label (D-265): the path prices firm reforms too since D-244; the
     # index is absent because this reform sets no firm knob.
     assert "aucun bouton des entreprises" in indices.FIRM_LAYER
     assert "réformes de la population" not in indices.FIRM_LAYER

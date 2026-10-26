@@ -152,7 +152,7 @@ def test_every_open_row_of_the_shipped_store_declares_its_direction() -> None:
     open_rows = [p for p in store.parameters.values() if p.is_open]
     # + labour supply (D-220), creations (D-221), R&D (D-222), the IS on growth (D-246),
     # the three rows of the dividends (D-249), their wage shift (D-252), and the
-    # self-financing's weight (D-259)
+    # self-financing's weight (D-260)
     assert len(open_rows) == 20
     assert all(p.theta_one in ("low", "high") and p.theta_reason for p in open_rows)
     assert store["employment_elasticity_smic"].theta_one == "low"
@@ -666,7 +666,7 @@ def test_no_employment_response_is_applied_above_the_fade_out() -> None:
 
 
 def test_c2_counts_no_jobs_as_zero_not_minus_zero() -> None:
-    """D-257. The plafond's shape: an earner at the SMIC whose labour cost does not move,
+    """D-258. The plafond's shape: an earner at the SMIC whose labour cost does not move,
     and one at 3.2 SMIC, above the fade-out, whose cost falls. No job either way, but
     the products summed to +0.0 and the negative elasticity made it −0.0, which the
     study's page printed « −0,00 » emplois."""
@@ -771,7 +771,7 @@ def _run(frame, cost_cut: float = 0.0):
 
 
 def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
-    """D-255. The quick tier prices 20 000 of the 199 451 households, reweighted to the
+    """D-256. The quick tier prices 20 000 of the 199 451 households, reweighted to the
     population; `_employer_inputs` read every earner of the WHOLE frame at the frame's
     weight, and gave a cost change only to those whose household the run had priced.
     The others counted at zero, and the survivors at their own weight, not the
@@ -827,7 +827,7 @@ def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
 
 
 def test_c2_gives_each_earner_their_own_cost_change() -> None:
-    """D-257. Every earner carried their household's change in labour cost, so an earner
+    """D-258. Every earner carried their household's change in labour cost, so an earner
     at the SMIC took a share of a partner's cut at 3 SMIC. Raising the plafond relieves
     only wages above 3 SMIC, where C2 does not respond, and C2 still counted 1 317 jobs
     for its first bundle of the study: every one of them from a household with an earner
@@ -971,7 +971,7 @@ def test_the_emtr_caches_do_not_serve_the_vintage_s_rates_to_an_aged_population(
 
 
 # --------------------------------------------------------------------------- #
-# C11 — the self-financing of a targeted contribution cut (M5, D-259)
+# C11 — the self-financing of a targeted contribution cut (M5, D-260)
 # --------------------------------------------------------------------------- #
 def _c11_store(weight: float = 0.5, *, open_weight: bool = False) -> Store:
     """C2's three rows and C11's three, each at one value; the weight open on demand."""
@@ -1006,7 +1006,7 @@ def _c11(store: Store, **inputs) -> channels.ChannelResult:
 
 
 def test_c11_brings_back_a_share_of_the_cut_between_c2_and_the_tresor_eco() -> None:
-    """D-259, the owner's choice on R5. Worked example: a 1 bn cut that C2 reads as
+    """D-260, the owner's choice on R5. Worked example: a 1 bn cut that C2 reads as
     10 000 jobs. C2's own reading is 10 000 × 12 000 / 1 bn = 12 %; the Trésor-Éco's is
     12 000 / 20 000 = 60 %. At p = ½, s = 0,5 × 12 % + 0,5 × 60 % = 36 %: 0,36 bn comes
     back. At p = 0 it is C2's 0,12 bn, at p = 1 the Trésor-Éco's 0,60 bn."""
@@ -1023,7 +1023,7 @@ def test_c11_brings_back_a_share_of_the_cut_between_c2_and_the_tresor_eco() -> N
 
 
 def test_c11_never_carries_a_return_the_loop_already_carries() -> None:
-    """D-259. Where the shock builder routes the cut to Mésange's uniform variant — the
+    """D-260. Where the shock builder routes the cut to Mésange's uniform variant — the
     ceiling from 2026 (D-239) — its balance row is the loop, and C11 would count the same
     return twice: the channel does not open, and says why."""
     result = _c11(_c11_store(0.5), jobs=np.array([10_000.0]), contribution_delta=-1.0e9,
@@ -1033,7 +1033,7 @@ def test_c11_never_carries_a_return_the_loop_already_carries() -> None:
 
 
 def test_c11_refuses_a_c2_reading_above_the_tresor_eco() -> None:
-    """D-259. θ = 1 designates the strongest response only while C2 reads less than the
+    """D-260. θ = 1 designates the strongest response only while C2 reads less than the
     Trésor-Éco. C2 counts persons and 12 000 € is a full-time job's return, so a cut on
     part-time earners could read above 60 %: refused rather than boxed at the wrong
     corners. 60 000 jobs for 1 bn is 72 %."""
@@ -1048,7 +1048,7 @@ def test_c11_says_it_was_not_computed_without_its_inputs() -> None:
 
 
 def test_c11_enters_the_band_on_c2_s_own_draws_and_moves_no_other_channel() -> None:
-    """D-259. C11 reads C2's draws of the jobs rather than drawing them again, and comes
+    """D-260. C11 reads C2's draws of the jobs rather than drawing them again, and comes
     last, so every other channel's draws are the ones they were. One earner cell at the
     SMIC, 1 000 000 weighted, whose labour cost falls 1 %, on a 1 bn cut: C2 counts
     1 000 000 × 0,43 × 0,01 = 4 300 jobs, read as 4 300 × 12 000 / 1 bn = 5,16 %; at
@@ -1072,7 +1072,7 @@ def test_c11_enters_the_band_on_c2_s_own_draws_and_moves_no_other_channel() -> N
 
 
 def test_the_employer_inputs_say_whether_the_cut_is_targeted_as_the_shocks_do() -> None:
-    """D-259. C11 opens on the shock builder's own test, `shocks.targets_low_wages`, so the
+    """D-260. C11 opens on the shock builder's own test, `shocks.targets_low_wages`, so the
     loop and C11 never both carry the return: the `t_delta` is targeted in 2026, the
     ceiling is not from 2026 (D-239), and was before."""
     from types import SimpleNamespace
@@ -1097,7 +1097,7 @@ def test_the_employer_inputs_say_whether_the_cut_is_targeted_as_the_shocks_do() 
 
 
 def test_c11_moves_the_receipts_at_theta_and_its_row_opens_the_box() -> None:
-    """D-259. In the predictive chain, the receipts at θ carry C11, and the weight row is
+    """D-260. In the predictive chain, the receipts at θ carry C11, and the weight row is
     one the reform claims, so the θ box runs from C2's reading (θ = 0) to the
     Trésor-Éco's (θ = 1). Same cell as above, a 1 bn cut: 5,16 %, 32,58 % and 60 %."""
     from impots.predictif import comportement
@@ -1115,7 +1115,7 @@ def test_c11_moves_the_receipts_at_theta_and_its_row_opens_the_box() -> None:
 
 
 def test_c11_refuses_a_negative_c2_reading() -> None:
-    """D-259, from the verifier's pass. A reform that cuts at the SMIC and raises above it
+    """D-260, from the verifier's pass. A reform that cuts at the SMIC and raises above it
     can leave the employers' bill higher while C2 still counts jobs: C2's reading is then
     negative, and θ = 1 (60 % of a rise, a loss) is no longer the strongest response.
     Refused, as a reading above the Trésor-Éco's is."""
@@ -1125,7 +1125,7 @@ def test_c11_refuses_a_negative_c2_reading() -> None:
 
 
 def test_c11_comes_last_and_leaves_every_other_channel_s_draws_as_they_were() -> None:
-    """D-259, on the shipped store, whose rows are ranges: C11 draws its weight from the
+    """D-260, on the shipped store, whose rows are ranges: C11 draws its weight from the
     shared generator, so it comes after every other channel and the draws of C1 to C10 —
     and the golden band of D-217 — are the ones they were without it. The same cell as
     above, a 1 bn cut, a thousand draws."""

@@ -285,7 +285,7 @@ def employment_at_the_smic(
     tail = float(np.sum(exposure * profile_at_fade)) * at_fadeout
     # `+ 0.0` turns a signed zero into zero. With every moved euro above the fade-out,
     # the products sum to +0.0 and the negative elasticity makes it −0.0, which a page
-    # prints « −0,00 » emplois (D-257). Exact for any other value.
+    # prints « −0,00 » emplois (D-258). Exact for any other value.
     jobs = smic_draws * anchor + tail + 0.0
 
     below = float(weights[smic_multiple <= fadeout].sum() / weights.sum()) if weights.sum() else 0.0
@@ -1030,7 +1030,7 @@ def dividend_response(
 
 
 # --------------------------------------------------------------------------- #
-# C11 — the self-financing of a targeted contribution cut: §7 (M5, D-259)
+# C11 — the self-financing of a targeted contribution cut: §7 (M5, D-260)
 # --------------------------------------------------------------------------- #
 C11_RETURN = "autofinancement_retour_par_emploi"
 C11_COST = "autofinancement_cout_par_emploi"
@@ -1047,7 +1047,7 @@ NOT_TARGETED = (
 class SelfFinancingOutOfRange(RuntimeError):
     """C2's reading of a cut's self-financing exceeds the Trésor-Éco's, so θ = 1 would no
     longer designate the strongest response and the θ box would be read at the wrong
-    corners. Refused rather than computed (D-259)."""
+    corners. Refused rather than computed (D-260)."""
 
 
 def targeted_self_financing(
@@ -1062,7 +1062,7 @@ def targeted_self_financing(
     **_: Any,
 ) -> ChannelResult:
     """What a cut targeted on low wages brings back to public finances, through the jobs
-    it creates: their contributions, and the RSA they no longer draw (M5, D-259).
+    it creates: their contributions, and the RSA they no longer draw (M5, D-260).
 
     Only where Mésange has no balance row: a cut its shock builder routes to the targeted
     variant (`shocks.targets_low_wages`). Anywhere else the loop already carries the
