@@ -4,8 +4,8 @@
 # ciblées » de Mésange, qui n'imprime pas de ligne de solde : la boucle y est absente
 # (D-240, D-242). Ce qui en revient aux finances publiques, ce sont les cotisations et le
 # RSA évité des emplois que la baisse crée. Les sources françaises le lisent de quelques
-# pour cent, C2 depuis D-256, à 60 % (R5 de `docs/M0_PHASE11.md`). Le propriétaire a
-# choisi (D-258) : θ = 0 à la lecture de C2, ses emplois valorisés à 12 000 € l'un ;
+# pour cent, C2 depuis D-257, à 60 % (R5 de `docs/M0_PHASE11.md`). Le propriétaire a
+# choisi (D-259) : θ = 0 à la lecture de C2, ses emplois valorisés à 12 000 € l'un ;
 # θ = 1 à celle du Trésor-Éco n° 97, 60 % ; θ = ½ entre les deux.
 
 parameters:
@@ -38,7 +38,7 @@ parameters:
     verifier:
       verdict: SCOPE_PROBLEM
       date: 2026-10-26
-      ref: D-258
+      ref: D-259
       note: >
         Citation trouvée mot pour mot, aux espaces près, p. 4, note 5 ; 6 500 € de
         cotisations (employeurs et salariés, SMIC à temps complet, 2009) et 5 500 € de RSA
@@ -81,7 +81,7 @@ parameters:
     verifier:
       verdict: SCOPE_PROBLEM
       date: 2026-10-26
-      ref: D-258
+      ref: D-259
       note: >
         Citation trouvée mot pour mot p. 4 ; 20 000 € est bien le bas de la fourchette de
         20 000 à 40 000 € (euros de 2009, actualisés par la valeur ajoutée par tête, p. 5,
@@ -113,7 +113,7 @@ parameters:
     applies_to: >
       Poids de la lecture du Trésor-Éco n° 97 contre celle de C2 dans l'autofinancement
       d'une baisse ciblée de cotisations : s = (1 − p) × s_C2 + p × 60 %. Pas une
-      estimation : le choix du propriétaire sur R5 (D-258), qui place θ = 0 à C2, θ = 1 au
+      estimation : le choix du propriétaire sur R5 (D-259), qui place θ = 0 à C2, θ = 1 au
       Trésor-Éco et θ = ½ entre les deux. La plage est large parce que les sources sont en
       désaccord, et elle le dit.
     responds_to_knobs: *knobs
@@ -123,12 +123,12 @@ parameters:
     source:
       citation: >
         Choix du propriétaire sur R5 de `docs/M0_PHASE11.md`, le 2026-10-26 : « θ range
-        C2 → Trésor-Éco ». Consigné en D-258.
+        C2 → Trésor-Éco ». Consigné en D-259.
       vintage: "2026"
     verifier:
       verdict: SCOPE_PROBLEM
       date: 2026-10-26
-      ref: D-258
+      ref: D-259
       note: >
         Le poids est dit choix du propriétaire, et 0,52 × 12 000 / 22 239 = 28 % est juste
         pour une baisse posée sur des SMIC à temps complet. Réparation appliquée : la

@@ -155,7 +155,7 @@ def compute(
         corporate_rate=corporate_rate, draws=draws, rng=rng,
     ))
     # C11 after C10, for the same reason; it reads C2's own draws of the jobs rather than
-    # drawing them again (D-258).
+    # drawing them again (D-259).
     employment = next((r for r in results if r.key == "c2_employment" and r.applies), None)
     results.append(channel_module.targeted_self_financing(
         store, reform, jobs=None if employment is None else employment.draws,

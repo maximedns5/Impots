@@ -23,7 +23,7 @@ de l'étude est refusé ; un contrôle qui ne redonne pas sa référence ne l'es
 le dit, avec son écart, parce que c'est un résultat.
 
 LE `t_delta` ET LE PLANCHER DE LA COURBE sont rejoués avec leur autofinancement, C11
-(D-258), chacun préenregistré à part (D-259 à D-262) : la requête de la courbe sous son
+(D-259), chacun préenregistré à part (D-260 à D-263) : la requête de la courbe sous son
 propre répertoire, `etude/courbe_autofinancement/` puis
 `etude/courbe_autofinancement_plancher/`, nom, titre et question exceptés. Le contrôle est
 dans le rejeu : aux coins où le poids de C11 vaut 1, C11 rend la part du Trésor-Éco quelle
@@ -53,8 +53,8 @@ REPORTS = ROOT / "reports"
 #: The first round, on the preregistration's own commit, before the reports carried what
 #: the chain lacks (D-238). The second round must give it back figure for figure.
 FIRST_ROUND = "etude_premier_tour"
-#: The second round, whose C2 read 15 % of the earners (D-254) and lent each its household's
-#: cost change (D-256). The third is the second round's commit with C2's fixes alone: it
+#: The second round, whose C2 read 15 % of the earners (D-255) and lent each its household's
+#: cost change (D-257). The third is the second round's commit with C2's fixes alone: it
 #: must give the second back figure for figure.
 SECOND_ROUND = "etude_second_tour"
 #: What a round computes, as against what it reports about it.
@@ -64,16 +64,16 @@ FIGURES = ("knobs", "cost_aged_eur", "cost_frozen_eur", "delta_aged", "delta_fro
 #: an instrument's preregistered request, with only these fields changed.
 COMPLEMENTS = "complements"
 COMPLEMENT_FREE = ("name", "titre", "question")
-#: The complements' first round, whose C2 read 15 % of the earners (D-254) and lent each its
-#: household's cost change (D-256). The rerun corrects C2, which enters no revenue and no
-#: debt: it must give the first round back figure for figure (D-257).
+#: The complements' first round, whose C2 read 15 % of the earners (D-255) and lent each its
+#: household's cost change (D-257). The rerun corrects C2, which enters no revenue and no
+#: debt: it must give the first round back figure for figure (D-258).
 COMPLEMENTS_FIRST_ROUND = "complements_premier_tour"
 #: The 2026 curve, replayed in the study and preregistered apart (D-241): each request
 #: holds the frame of the study's allègement request, only these fields changed.
 COURBE = "courbe"
 COURBE_FREE = ("name", "titre", "question", "bounds")
 #: The curve's first round, on its preregistration's commit, with a C2 that read 15 % of the
-#: earners (D-254) and lent each its household's cost change (D-256). The rerun corrects C2,
+#: earners (D-255) and lent each its household's cost change (D-257). The rerun corrects C2,
 #: which enters no revenue and no debt: it must give the first round back figure for figure.
 COURBE_FIRST_ROUND = "courbe_premier_tour"
 #: The wider menu of Phase 11, preregistered apart (D-250): each request holds the frame
@@ -88,7 +88,7 @@ CONTROLS = Path("etude_phase11") / "controles"
 SALAIRES = "phase11_salaires"
 SALAIRES_FREE = ("name", "titre", "question")
 WAGE_SHIFT = "dividend_wage_shift_firm_owners"
-#: The curve's knobs replayed with their self-financing, C11 (D-259, D-261): each request
+#: The curve's knobs replayed with their self-financing, C11 (D-260, D-262): each request
 #: holds the curve's own, only these fields changed; C11's weight is varied at its corners,
 #: and where it is 1, C11 brings back the Trésor-Éco's share of the cut whatever C2 reads.
 #: The `t_delta`'s request is under this directory, and every replay's report is named
@@ -166,10 +166,10 @@ class Replay:
 
 #: The curve's knobs replayed with their self-financing, in the order preregistered. Each
 #: has its own directory: one replay's request beside another's, before its report, would
-#: be refused, and the committed page could not be rendered until its passes (D-261).
+#: be refused, and the committed page could not be rendered until its passes (D-262).
 AUTOFINANCEMENT_MENU: tuple[Replay, ...] = (
-    Replay("t_delta", AUTOFINANCEMENT, "`t_delta`", "D-259"),
-    Replay("t_min", "courbe_autofinancement_plancher", "plancher `t_min`", "D-261",
+    Replay("t_delta", AUTOFINANCEMENT, "`t_delta`", "D-260"),
+    Replay("t_min", "courbe_autofinancement_plancher", "plancher `t_min`", "D-262",
            " Le Trésor-Éco n° 97 lit des allègements sur les bas salaires, quand le "
            "plancher porte la baisse jusqu'à 3 SMIC, où C2 ne répond plus dès 2 SMIC : ses "
            "60 % y sont sans doute plus loin encore de ce que la baisse rend, vers une "
@@ -275,7 +275,7 @@ def load(requests: Path = REQUESTS, reports: Path = REPORTS) -> list[dict[str, A
                 raise EtudeError(
                     f"le troisième tour de « {entry['instrument'].key} » ne redonne pas le "
                     f"second : un chiffre a bougé entre les deux commits, et le troisième "
-                    f"tour n'est plus la seule correction de C2 (D-254, D-256).")
+                    f"tour n'est plus la seule correction de C2 (D-255, D-257).")
             entry["second_commit"] = second["commit"]
         if len({e["second_commit"] for e in out}) != 1:
             raise EtudeError("second tour de plusieurs commits.")
@@ -344,7 +344,7 @@ def load_complements(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
                 raise EtudeError(
                     f"le second tour de {report_path.name} ne redonne pas le premier : un "
                     f"chiffre a bougé entre les deux commits, et le second tour n'est plus "
-                    f"la seule correction de C2 (D-254, D-256).")
+                    f"la seule correction de C2 (D-255, D-257).")
             complement["first_commit"] = first["commit"]
         out.append(complement)
     return out
@@ -416,7 +416,7 @@ def load_courbe(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
                 raise EtudeError(
                     f"le second tour de la courbe « {entry['instrument'].key} » ne redonne "
                     f"pas le premier : un chiffre a bougé entre les deux commits, et le "
-                    f"second tour n'est plus la seule correction de C2 (D-254, D-256).")
+                    f"second tour n'est plus la seule correction de C2 (D-255, D-257).")
             entry["first_commit"] = first["commit"]
         if len({e["first_commit"] for e in out}) != 1:
             raise EtudeError("premier tour de la courbe de plusieurs commits.")
@@ -609,7 +609,7 @@ def load_salaires(phase11: dict[str, Any] | None, requests: Path = REQUESTS,
 
 
 def tresor_eco_share() -> float:
-    """C11's share at θ = 1, read off the store as the channel reads it (D-258)."""
+    """C11's share at θ = 1, read off the store as the channel reads it (D-259)."""
     from impots.behavioural import channels
     from impots.behavioural.store import load as load_store
 
@@ -678,7 +678,7 @@ def load_autofinancement(courbe: list[dict[str, Any]], replay: Replay,
                          reports: Path = REPORTS) -> dict[str, Any] | None:
     """One knob of the curve replayed with its self-financing under its directory, and the
     report that played it, checked like the curve; with its control, the corners where
-    C11's weight is 1 against the curve's (D-259, D-261)."""
+    C11's weight is 1 against the curve's (D-260, D-262)."""
     from impots.api.schemas import ExplorationReport, ExplorationRequest
 
     key, where = replay.key, replay.directory
@@ -940,9 +940,9 @@ def _complement_section(complements: list[dict[str, Any]], target: float,
                 f"Commit `{r['commit']}`, le {r['computed']}, ici : {r['where']}."]
         if c.get("first_commit"):
             out += ["", f"Un premier tour a tourné sur `{c['first_commit']}`. Son emploi au "
-                        f"voisinage du SMIC (C2) ne lisait que 15 % des salariés (D-254), et "
+                        f"voisinage du SMIC (C2) ne lisait que 15 % des salariés (D-255), et "
                         f"prêtait à chacun le changement du coût du travail de son ménage "
-                        f"(D-256). Le second tour, sur le code du premier et les seules "
+                        f"(D-257). Le second tour, sur le code du premier et les seules "
                         f"corrections de C2, corrige les deux. C2 n'entre ni dans les "
                         f"recettes ni dans "
                         f"la dette, et le second tour redonne le premier chiffre pour "
@@ -1027,8 +1027,8 @@ def _courbe_section(courbe: list[dict[str, Any]], target: float, first_year: int
            f"ici : {report['where']}.",
            *(["", f"Un premier tour a tourné sur le commit du préenregistrement, "
                   f"`{courbe[0]['first_commit']}`. Son emploi au voisinage du SMIC (C2) "
-                  f"ne lisait que 15 % des salariés (D-254), et prêtait à chacun le "
-                  f"changement du coût du travail de son ménage (D-256). Le second tour "
+                  f"ne lisait que 15 % des salariés (D-255), et prêtait à chacun le "
+                  f"changement du coût du travail de son ménage (D-257). Le second tour "
                   f"corrige les deux. "
                   f"C2 n'entre ni dans les recettes ni dans la dette, et le second tour "
                   f"redonne le premier chiffre pour chiffre sur les coûts, les Δb et les "
@@ -1119,7 +1119,7 @@ def _salaires_section(salaires: dict[str, Any], target: float, first_year: int,
     return out
 
 
-#: What every knob replayed with its self-financing leaves out, and which way (D-259).
+#: What every knob replayed with its self-financing leaves out, and which way (D-260).
 AUTOFINANCEMENT_LEAVES_OUT = (
     "C2 compte des personnes, au coût annuel de leur propre travail, quand les 12 000 € du "
     "Trésor-Éco n° 97 sont le retour d'un emploi à temps plein : à θ = 0, la part est sans "
@@ -1141,7 +1141,7 @@ def _autofinancement_section(auto: dict[str, Any], target: float, first_year: in
     out = ["", f"## Le {replay.name} de la courbe rejoué avec son autofinancement", "",
            f"La courbe rejouée plus haut chiffrait le {replay.name} sans rien de ce qu'une "
            "baisse ciblée rend : Mésange n'a pas de ligne de solde pour sa variante ciblée, et "
-           "les emplois de C2 n'entraient pas dans les recettes. D-258 y fait entrer C11 : "
+           "les emplois de C2 n'entraient pas dans les recettes. D-259 y fait entrer C11 : "
            "une part de la baisse revient, de la lecture de C2, ses emplois valorisés à "
            f"12 000 € l'un, à θ = 0, à {_pct(share)} à θ = 1, celle du Trésor-Éco n° 97. "
            f"La requête sous `etude/{replay.directory}/` rejoue celle du {replay.name} de la "
@@ -1278,8 +1278,8 @@ def render(etudes: list[dict[str, Any]],
         *(["", f"Un troisième tour a tourné sur `{report['commit']}` : le commit du second "
                f"tour, `{etudes[0]['second_commit']}`, avec les seules corrections de C2. "
                f"L'emploi au voisinage du SMIC du second tour ne lisait que 15 % des "
-               f"salariés (D-254), et prêtait à chacun le changement du coût du travail de "
-               f"son ménage (D-256). C2 n'entre ni dans les recettes ni dans la dette, et le "
+               f"salariés (D-255), et prêtait à chacun le changement du coût du travail de "
+               f"son ménage (D-257). C2 n'entre ni dans les recettes ni dans la dette, et le "
                f"troisième tour redonne le second chiffre pour chiffre sur les coûts, les Δb "
                f"et les coins de la boîte θ : `reports/{SECOND_ROUND}/` le garde, et le "
                f"rendu refuse de tourner si un seul chiffre diffère. Les rapports lus ici "
