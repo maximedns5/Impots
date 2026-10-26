@@ -19160,3 +19160,127 @@ dividendes, du balayage, de la charte, des dépendances et de l'exemple : 264 r�
 - L'autofinancement des baisses ciblées, qui attend le choix du propriétaire sur R5.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - La porte de M6 : le `make full` du propriétaire.
+
+## D-252 — Le salaire que les propriétaires cessent de se verser, dans C10, et le PFU rejoué
+
+**Le fait.** C10 ne comptait pas le salaire que les propriétaires de firme cessent de se
+verser quand leurs dividendes montent (D-249), et D-251 a montré que la réponse du PFU
+sous « tenu » tenait à cet oubli : un écart de quelques centièmes de point, que ce salaire
+retournerait s'il coûtait plus de 29 à 10 % de son montant. Ce commit le fait entrer dans
+C10, et préenregistre, avant sa passe, le PFU du menu élargi rejoué avec lui.
+
+**La ligne.** `dividend_wage_shift_firm_owners`, la quatrième de C10, en euros de salaire
+imposable par euro de dividende en plus. `dividendes.table_2b` lit le panneau B du
+tableau 2 de Bach et al. (p. 37) dans le texte du PDF, coefficients et écarts-types, et
+refuse une lecture où les dividendes ne baissent pas en 2013 et ne montent pas en 2018 :
+ses colonnes seraient croisées. Le panneau oppose les propriétaires aux autres foyers,
+parmi les assujettis à l'ISF, sur les salaires et pensions et sur les dividendes, chacun
+rapporté au patrimoine d'avant la réforme.
+- Le centre, 0,309 : 0,00100 de salaire en moins pour 0,00324 de dividendes en plus, en
+  2018 sur toute la période (col. 4). Les auteurs ne calculent aucun rapport.
+- Le haut, 0,519 : les années 2020 et 2021, une fois passées 2018, que l'année blanche a
+  tenue, et 2019, où le déplacement commence. Le panel est cylindré et les colonnes 3 et 4
+  partagent leurs années d'avant, donc ces deux années valent deux fois la colonne 4 moins
+  la colonne 3. La figure D5 (d) le confirme.
+- Le bas, 0 : la réforme de 2013 sur toute la période, dont le salaire ne bouge pas,
+  −0,00002 pour un écart-type de 0,00014. La convention refuse ce zéro si le coefficient
+  sort de son intervalle à 95 %.
+- θ = 1 au haut, le déplacement le plus fort. Le support est celui de l'élasticité des
+  propriétaires, 6 %. La confiance est basse.
+
+Le magasin tient la ligne contre la lecture (D-026), et C10 la note avec les élasticités :
+elle répond à la même variation du taux net, mesurée sur les mêmes réformes.
+
+**La vérification.** Deux passes d'un vérificateur indépendant, sur le PDF.
+- La première a rendu WRONG. Les chiffres étaient exacts, mais j'avais lu le « top 1 % »
+  du tableau 2 comme le haut du revenu stable, qui est la coupe de la figure D2. C'est
+  celui du patrimoine : les assujettis à l'ISF (p. 14). Elle a aussi montré que le haut,
+  alors la borne à 95 % de la moyenne des quatre années (0,387), ne lisait pas la réponse
+  la plus forte. Il est passé à 0,519.
+- La seconde, sur la ligne réparée, a rendu SCOPE_PROBLEM. Les chiffres, l'échantillon,
+  l'identité des colonnes et l'arithmétique sont confirmés. Ses cinq réparations de
+  formulation sont appliquées, et la note les dit.
+
+La note garde ce qui tire dans l'autre sens :
+- la tendance d'avant la réforme de la figure D5 (d) ;
+- la hausse de 2018 qui vient tout entière de l'épargne des sociétés (p. 22) ;
+- le rapport à l'élasticité du tableau 2 A, 0,19, à titre indicatif ;
+- les cotisations des gérants de SARL, travailleurs non salariés.
+
+**Ce qu'un euro déplacé rapportait.** `capital.wage_wedge` le mesure sur le moteur, au cas
+que trace la figure A2 du papier : un salarié célibataire entre quatre et huit plafonds de
+la sécurité sociale, pris au milieu, à six. La mesure porte sur les mille derniers euros du
+brut, une marge et pas une moyenne. En 2026, un euro de salaire imposable rapporte 1,1406 €
+de cotisations des deux côtés, de CSG, de CRDS et d'impôt sur le revenu, et coûte 1,6559 €
+à l'employeur. Le profit qu'il devient paie l'IS au taux normal, celui de la réforme quand
+elle en fixe un, 25 % sinon. Chaque euro déplacé reprend donc 1,1406 − 0,25 × 1,6559 =
+0,7266 €.
+- Entre quatre et huit plafonds, de 0,69 à 0,73 € ; au-delà de huit, les cotisations
+  retraite s'arrêtent, et la reprise avec elles.
+- Les cotisations retraite en font 0,327 € ; seule la part contractuelle de l'AGIRC-ARRCO,
+  environ 0,20 €, ouvre des droits, hors de l'horizon de la dette.
+
+**L'arithmétique.** La part des propriétaires dans la réponse, s ε_p Δln(1 − τ) × base,
+déplace σ fois autant de salaire, et C10 reprend σ × (prélèvements − t_IS × coût) sur
+chaque euro. Les autres foyers ne contrôlent aucune société et ne déplacent rien. Sur
+l'exemple de D-249 (50 Md€, le PFU de 12,8 à 11,8 %), à σ = 0,309 avec 1,14 et 1,66 : les
+propriétaires déplacent 0,4241 Md€, la reprise vaut 0,3074 Md€, et C10 rend 0,0905 Md€
+au lieu de 0,3980. Le tirage de σ vient après ceux de D-249, qui restent intacts. C10
+refuse un coin fiscal absent, des prélèvements nuls ou au-dessus du coût, un taux d'IS
+hors de [0, 1). Une ligne de plus est ouverte : 19.
+
+**Le rejeu, préenregistré.** `etude/phase11_salaires/pfu.json` rejoue la requête du PFU du
+menu élargi champ pour champ ; seuls son nom, son titre et sa question diffèrent. Il
+tourne sur ce commit : quatre paquets, huit passes. Rien d'autre n'est rejoué : le
+déplacement n'entre que dans C10, que seul le bouton du PFU ouvre, et
+`_dividend_inputs` ne mesure rien pour une autre réforme. Le contrôle est dans le rejeu
+lui-même : à ses seize coins où le déplacement vaut 0, il doit redonner les seize coins
+du menu élargi, et ses coûts les siens.
+
+**Le dimensionnement.** Huit passes avant ce commit, le seul coût de 2026, sans réponse :
+l'assiette de C10 et ses taux, aux quatre paquets et dans les deux vues. Les coûts sont
+ceux de D-251. La part des propriétaires dans les dividendes induits, à θ = ½, vue
+vieillie : 1,20, 2,10, 3,03 et 3,73 Md€ de un à quatre points. Leurs salaires déplacés :
+0,37 à 1,15 Md€. La reprise : 0,27 à 0,84 Md€, portée comme le coût de l'IS, à 0,30887
+point par milliard, sans boucle : la boucle lit le coût statique.
+
+**Le pronostic**, écrit avant la passe.
+1. Sous « tenu », à θ = ½, aucun paquet ne fait plus baisser la dette. Δb 2035 va de
+   +0,05 point à un point de baisse à +0,22 à quatre, vue vieillie (de −0,03 à −0,05 en
+   D-251) ; de +0,05 à +0,21 en vue figée. Le signe de D-251 se retourne.
+2. Sous « éteint », de +0,16 à +0,61, et de +0,15 à +0,56 en vue figée.
+3. Les coins, vue vieillie, trente-deux par paquet.
+   - Sous « tenu », 13 sous zéro au premier paquet, 12 aux trois autres. Tous ont le
+     multiplicateur à 1, et 5 au premier, 4 aux autres, ont le déplacement à son haut.
+   - Sous « éteint », les 2 coins de D-251 au premier paquet, le déplacement à 0, et
+     aucun aux autres.
+   La réponse reste « dépend de θ » : non à θ = ½, oui à des coins.
+4. Le contrôle redonne le menu élargi à l'écart nul, coins et coûts.
+5. Les indices du paquet le plus proche, le PFU à 11,8 %, sont ceux de D-251 : le
+   déplacement ne touche que la recette de C10.
+
+**Les tests.** Dans `tests/test_dividendes.py` :
+- le panneau B lu, et les deux refus du lecteur ;
+- la convention, son arithmétique et son refus du zéro de 2013 ;
+- la ligne du magasin contre la lecture ;
+- l'exemple de C10 avec le déplacement, et le déplacement des seuls propriétaires ;
+- sept refus du coin fiscal ;
+- la ligne manquante ;
+- la bande et sa note ;
+- l'IS de la loi et celui de la réforme ;
+- le coin mesuré sur le moteur.
+
+Les tests de θ, de la CDHR et les cinq comptes de lignes ouvertes passent à la ligne
+nouvelle. `docs/PREDICTIF_EXEMPLE.md` est régénéré depuis sa première année : seule sa
+liste des θ gagne la ligne, ses chiffres sont ceux d'avant, une baisse de l'IR n'ouvrant
+pas C10. Dix-huit mutations écrites à la main, une par garde et par terme, ont toutes été
+tuées, chacune vue échouer. Les tests du comportement, des dividendes, de θ, de la
+CDHR, de la recherche, de la chaîne, des explorations, des indices et des entreprises, de
+l'étude et de l'API : 414 réussis. `ruff` et `ui/check.mjs` passent.
+
+**Ce qui reste.**
+- La passe du rejeu, sur ce commit, et son rendu dans `docs/PREDICTIF_ETUDE.md`, avec ses
+  gardes : D-253.
+- La CVAE, sur le chemin annuel, avec un bouton du barème entier.
+- L'autofinancement des baisses ciblées, qui attend le choix du propriétaire sur R5.
+- Les deux libellés de D-251.
