@@ -1,6 +1,17 @@
 # State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M4 and M6)
 
-The second 2026-10-26 update adds D-253: the PFU replay has run on its preregistration
+The third 2026-10-26 update adds D-254: the CVAE has a knob for its whole schedule, and
+is priced on the annual path. `cvae_echelle` scales the year's ceiling, brackets and
+dégrèvement together, as the law moves them; it is read back against the law, and finds
+nothing to scale once the CVAE is abolished in 2030. The carried path — `/predictif/
+simulate` and the explorer — now refuses a firm knob whose law moves within its horizon,
+the CVAE from 2028, and points to `impots predictif`. Advancing the abolition to 2026
+costs 11.1 bn over 2026–2029 and leaves the 2035 debt 0.32 point higher (aged view); the
+carry would have said 1.10. Halving the schedule: 5.6 bn, +0.16 point. No loop: the CVAE
+has no Mésange variant. The firm layer likely understates the CVAE by about two fifths.
+C4 now says an abolition and a year without the tax instead of failing. Sixteen hand
+mutants killed.
+The second 2026-10-26 update added D-253: the PFU replay has run on its preregistration
 commit, `80a7405`, and `docs/PREDICTIF_ETUDE.md` renders it in its own section. With the
 wage shift, no PFU bundle lowers the 2035 debt at θ = ½ any more: +0.05 to +0.22 point
 under « tenu », against −0.03 to −0.05 in D-251, and +0.16 to +0.61 under « éteint ».
@@ -828,7 +839,8 @@ download list.
    does under « tenu » at θ = ½, by a few hundredths of a point, on a sign the wage shift
    could turn. Its gate is the owner's `make full`. The wage shift is in C10 (D-252), and
    the PFU replayed with it turns that sign (D-253): no cut on the menu lowers the debt at
-   θ = ½. Next: the CVAE on the annual path. The page's predictive panel does not send a firm reform yet. Then Phase 12, the past, and
+   θ = ½. The CVAE is priced on the annual path with a knob for its whole schedule, and
+   the carry refuses it (D-254). The page's predictive panel does not send a firm reform yet. Then Phase 12, the past, and
    Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin

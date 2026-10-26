@@ -638,16 +638,33 @@ def cmd_scenario_save(args: argparse.Namespace) -> int:
         print("--reform is required: a scenario is a reform with provenance attached",
               file=sys.stderr)
         return 1
+    firm_reform = None
+    if args.firm_reform is not None:
+        from impots.entreprises.reforms import FirmReformSpec
+
+        try:
+            firm_reform = FirmReformSpec.model_validate(
+                json.loads(Path(args.firm_reform).read_text(encoding="utf-8")))
+        except OSError as error:
+            print(f"--firm-reform illisible : {error}", file=sys.stderr)
+            return 1
+        except json.JSONDecodeError as error:
+            print(f"--firm-reform n'est pas du JSON : {error}", file=sys.stderr)
+            return 1
+        except Exception as error:  # pydantic ValidationError, a ValueError subclass
+            print(f"--firm-reform ne valide pas : {error}", file=sys.stderr)
+            return 1
     try:
         scenario = scenarios_module.Scenario(
             name=args.name, reform=reform, year=args.year,
             created=_date.today().isoformat(), source=args.source,
-            note=args.note or "", tags=tuple(args.tag or ()))
+            note=args.note or "", tags=tuple(args.tag or ()), firm_reform=firm_reform)
         path = scenario.save(_scenario_dir(args))
     except scenarios_module.ScenarioError as error:
         print(str(error), file=sys.stderr)
         return 1
-    knobs = sorted(reform.model_dump(exclude_none=True))
+    knobs = sorted([*reform.model_dump(exclude_none=True),
+                    *(firm_reform.model_dump(exclude_none=True) if firm_reform else {})])
     print(f"enregistré {path}")
     print(f"  {len(knobs)} bouton(s) : {', '.join(knobs)}")
     print(f"  daté du {scenario.created} — le fichier ne sera pas réécrit")
@@ -1350,7 +1367,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             uprating_note=up.caveat(years[-1], uprating), securities=securities,
             reform=scenario.reform, behavioural=args.behavioural, macro=args.macro,
             persistence=args.persistence, store=store, macro_store=macro_store,
-            firm_note=api._firm_report_note() if firm_part else None)
+            firm_note=(api._firm_report_note(scenario.firm_reform, years) if firm_part
+                       else None))
     except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
             maturite.MaturityError, retroaction.FeedbackError) as error:
         print(str(error), file=sys.stderr)
@@ -1686,6 +1704,9 @@ def build_parser() -> argparse.ArgumentParser:
     saver = scenario_actions.add_parser("save", help="register a dated scenario")
     saver.add_argument("name")
     saver.add_argument("--reform", required=True, help="path to a ReformSpec JSON file")
+    saver.add_argument("--firm-reform", dest="firm_reform",
+                       help="path to a FirmReformSpec JSON file, beside the households' "
+                            "reform (D-254)")
     saver.add_argument("--source", required=True,
                        help="the article or proposal this encodes — required, because a "
                             "chiffrage without one cannot be graded later")

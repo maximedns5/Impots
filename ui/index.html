@@ -1345,11 +1345,15 @@ footer code { font-family: var(--mono); font-size: 11px; }
                <input type="number" id="fC3sAbat" step="1000000" placeholder="19000000"></div>
           <div><label for="fCvaeTaux">Taux maximal CVAE (%)</label>
                <input type="number" id="fCvaeTaux" step="0.01" placeholder="0.28"></div>
+          <div><label for="fCvaeEchelle">Barème CVAE entier (% du droit)</label>
+               <input type="number" id="fCvaeEchelle" step="5" placeholder="100"></div>
         </div>
         <p class="note" style="margin-top:0">
           Laissez un champ vide pour le maintenir au droit courant. Les réformes portent sur
           l'IS, ses contributions additionnelles, la CVAE et la C3S ; la CFE n'est pas
-          simulée. La CEBGE se réforme par paires seuil/taux, hors de ce panneau.
+          simulée. Le barème CVAE entier règle ensemble son plafond, ses tranches et son
+          dégrèvement, en part du droit de l'année : 50 le divise par deux, 0 la supprime.
+          Il ne se combine pas avec le taux maximal. La CEBGE se réforme par paires seuil/taux, hors de ce panneau.
         </p>
         <div class="action" style="position:static; padding:14px 0 22px">
           <button class="go" id="goFirms">Chiffrer sur les entreprises</button>
@@ -2687,6 +2691,7 @@ const FIRM_KNOBS = [
   ["fC3sTaux",    "c3s_taux", 100],
   ["fC3sAbat",    "c3s_abattement", 1],
   ["fCvaeTaux",   "cvae_taux_max", 100],
+  ["fCvaeEchelle", "cvae_echelle", 100],
 ];
 
 function firmReformSpec() {

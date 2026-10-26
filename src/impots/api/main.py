@@ -1333,12 +1333,16 @@ def _firm_cells_are_synthetic() -> bool:
         json.loads(manifest.read_text(encoding="utf-8"))["cells_are_synthetic"]))
 
 
-def _firm_report_note() -> str:
+def _firm_report_note(firm_reform: Any = None, years: list[int] | tuple = ()) -> str:
     """The firm layer's conventions for a report that spans years (D-246): what each
-    first year's note says, without the year."""
+    first year's note says, without the year; and, for a factor on the CVAE's schedule,
+    the year the law abolishes it within `years` (D-254)."""
     from impots.predictif import firmes
 
     note = firmes.convention(FIRM_VINTAGE)
+    gone = firmes.extinction(firm_reform, list(years))
+    if gone:
+        note += " " + gone
     return FIRM_SYNTHETIC + note if _firm_cells_are_synthetic() else note
 
 

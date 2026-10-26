@@ -387,8 +387,9 @@ C4_KEYS = ("production_tax_investment",)
 
 
 def production_tax_investment(
-    store: Store, reform: Any, *, production_tax_baseline: float = 0.0,
-    production_tax_reform: float = 0.0, draws: int = 1, rng: Any = None, **_: Any,
+    store: Store, reform: Any, *, production_tax_baseline: float | None = None,
+    production_tax_reform: float | None = None, draws: int = 1, rng: Any = None,
+    **_: Any,
 ) -> ChannelResult:
     """Investment response to a production-tax cut — the band centred on zero.
 
@@ -419,7 +420,22 @@ def production_tax_investment(
             message="Aucune élasticité utilisable : la ligne n'a pas survécu à la "
                     "vérification des sources.",
         )
-    if production_tax_baseline <= 0 or production_tax_reform <= 0:
+    if production_tax_baseline == 0.0 and production_tax_reform == 0.0:
+        return ChannelResult(
+            key="c4_investment", label="Investissement et impôts de production",
+            applies=False, unit="%",
+            message="La loi n'a plus de CVAE cette année — elle est abrogée en 2030 — et "
+                    "la réforme n'en crée pas : il n'y a rien à faire répondre (D-254).")
+    if (production_tax_baseline is not None and production_tax_baseline > 0
+            and production_tax_reform == 0.0):
+        return ChannelResult(
+            key="c4_investment", label="Investissement et impôts de production",
+            applies=False, unit="%",
+            message="Une suppression de l'impôt de production est une baisse infinie de "
+                    "son log, le régresseur de l'étude, qui n'a vu qu'une baisse de 47 % : "
+                    "hors de toute mesure, elle n'est pas chiffrée (D-254).")
+    if (production_tax_baseline is None or production_tax_reform is None
+            or production_tax_baseline <= 0 or production_tax_reform <= 0):
         raise ChannelInputMissing(
             "C4 needs the production tax before and after, both strictly positive; "
             f"got {production_tax_baseline} and {production_tax_reform}"
