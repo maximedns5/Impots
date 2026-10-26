@@ -38,8 +38,8 @@ REPORTS = ROOT / "reports"
 #: The first round, on the preregistration's own commit, before the reports carried what
 #: the chain lacks (D-238). The second round must give it back figure for figure.
 FIRST_ROUND = "etude_premier_tour"
-#: The second round, whose C2 read 15 % of the earners (D-250) and lent each its household's
-#: cost change (D-252). The third is the second round's commit with C2's fixes alone: it
+#: The second round, whose C2 read 15 % of the earners (D-252) and lent each its household's
+#: cost change (D-254). The third is the second round's commit with C2's fixes alone: it
 #: must give the second back figure for figure.
 SECOND_ROUND = "etude_second_tour"
 #: What a round computes, as against what it reports about it.
@@ -49,16 +49,16 @@ FIGURES = ("knobs", "cost_aged_eur", "cost_frozen_eur", "delta_aged", "delta_fro
 #: an instrument's preregistered request, with only these fields changed.
 COMPLEMENTS = "complements"
 COMPLEMENT_FREE = ("name", "titre", "question")
-#: The complements' first round, whose C2 read 15 % of the earners (D-250) and lent each its
-#: household's cost change (D-252). The rerun corrects C2, which enters no revenue and no
-#: debt: it must give the first round back figure for figure (D-253).
+#: The complements' first round, whose C2 read 15 % of the earners (D-252) and lent each its
+#: household's cost change (D-254). The rerun corrects C2, which enters no revenue and no
+#: debt: it must give the first round back figure for figure (D-255).
 COMPLEMENTS_FIRST_ROUND = "complements_premier_tour"
 #: The 2026 curve, replayed in the study and preregistered apart (D-241): each request
 #: holds the frame of the study's allègement request, only these fields changed.
 COURBE = "courbe"
 COURBE_FREE = ("name", "titre", "question", "bounds")
 #: The curve's first round, on its preregistration's commit, with a C2 that read 15 % of the
-#: earners (D-250) and lent each its household's cost change (D-252). The rerun corrects C2,
+#: earners (D-252) and lent each its household's cost change (D-254). The rerun corrects C2,
 #: which enters no revenue and no debt: it must give the first round back figure for figure.
 COURBE_FIRST_ROUND = "courbe_premier_tour"
 
@@ -200,7 +200,7 @@ def load(requests: Path = REQUESTS, reports: Path = REPORTS) -> list[dict[str, A
                 raise EtudeError(
                     f"le troisième tour de « {entry['instrument'].key} » ne redonne pas le "
                     f"second : un chiffre a bougé entre les deux commits, et le troisième "
-                    f"tour n'est plus la seule correction de C2 (D-250, D-252).")
+                    f"tour n'est plus la seule correction de C2 (D-252, D-254).")
             entry["second_commit"] = second["commit"]
         if len({e["second_commit"] for e in out}) != 1:
             raise EtudeError("second tour de plusieurs commits.")
@@ -269,7 +269,7 @@ def load_complements(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
                 raise EtudeError(
                     f"le second tour de {report_path.name} ne redonne pas le premier : un "
                     f"chiffre a bougé entre les deux commits, et le second tour n'est plus "
-                    f"la seule correction de C2 (D-250, D-252).")
+                    f"la seule correction de C2 (D-252, D-254).")
             complement["first_commit"] = first["commit"]
         out.append(complement)
     return out
@@ -341,7 +341,7 @@ def load_courbe(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
                 raise EtudeError(
                     f"le second tour de la courbe « {entry['instrument'].key} » ne redonne "
                     f"pas le premier : un chiffre a bougé entre les deux commits, et le "
-                    f"second tour n'est plus la seule correction de C2 (D-250, D-252).")
+                    f"second tour n'est plus la seule correction de C2 (D-252, D-254).")
             entry["first_commit"] = first["commit"]
         if len({e["first_commit"] for e in out}) != 1:
             raise EtudeError("premier tour de la courbe de plusieurs commits.")
@@ -541,9 +541,9 @@ def _complement_section(complements: list[dict[str, Any]], target: float,
                 f"Commit `{r['commit']}`, le {r['computed']}, ici : {r['where']}."]
         if c.get("first_commit"):
             out += ["", f"Un premier tour a tourné sur `{c['first_commit']}`. Son emploi au "
-                        f"voisinage du SMIC (C2) ne lisait que 15 % des salariés (D-250), et "
+                        f"voisinage du SMIC (C2) ne lisait que 15 % des salariés (D-252), et "
                         f"prêtait à chacun le changement du coût du travail de son ménage "
-                        f"(D-252). Le second tour, sur le code du premier et les seules "
+                        f"(D-254). Le second tour, sur le code du premier et les seules "
                         f"corrections de C2, corrige les deux. C2 n'entre ni dans les "
                         f"recettes ni dans "
                         f"la dette, et le second tour redonne le premier chiffre pour "
@@ -628,8 +628,8 @@ def _courbe_section(courbe: list[dict[str, Any]], target: float, first_year: int
            f"ici : {report['where']}.",
            *(["", f"Un premier tour a tourné sur le commit du préenregistrement, "
                   f"`{courbe[0]['first_commit']}`. Son emploi au voisinage du SMIC (C2) "
-                  f"ne lisait que 15 % des salariés (D-250), et prêtait à chacun le "
-                  f"changement du coût du travail de son ménage (D-252). Le second tour "
+                  f"ne lisait que 15 % des salariés (D-252), et prêtait à chacun le "
+                  f"changement du coût du travail de son ménage (D-254). Le second tour "
                   f"corrige les deux. "
                   f"C2 n'entre ni dans les recettes ni dans la dette, et le second tour "
                   f"redonne le premier chiffre pour chiffre sur les coûts, les Δb et les "
@@ -695,8 +695,8 @@ def render(etudes: list[dict[str, Any]],
         *(["", f"Un troisième tour a tourné sur `{report['commit']}` : le commit du second "
                f"tour, `{etudes[0]['second_commit']}`, avec les seules corrections de C2. "
                f"L'emploi au voisinage du SMIC du second tour ne lisait que 15 % des "
-               f"salariés (D-250), et prêtait à chacun le changement du coût du travail de "
-               f"son ménage (D-252). C2 n'entre ni dans les recettes ni dans la dette, et le "
+               f"salariés (D-252), et prêtait à chacun le changement du coût du travail de "
+               f"son ménage (D-254). C2 n'entre ni dans les recettes ni dans la dette, et le "
                f"troisième tour redonne le second chiffre pour chiffre sur les coûts, les Δb "
                f"et les coins de la boîte θ : `reports/{SECOND_ROUND}/` le garde, et le "
                f"rendu refuse de tourner si un seul chiffre diffère. Les rapports lus ici "

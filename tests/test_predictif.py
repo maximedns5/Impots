@@ -247,7 +247,7 @@ def test_a_theta_for_a_row_the_store_does_not_hold_is_refused() -> None:
 def test_the_result_lists_every_open_row_even_in_the_mechanical_view() -> None:
     result = _run(_carried(5e9), theta=Theta(rows={"eti_all": 0.2}, common=0.7))
     assert sorted(result.theta) == sorted(result.open_rows)
-    # + D-220's four rows, D-221's, D-222's, D-246's, D-249's three and D-254's
+    # + D-220's four rows, D-221's, D-222's, D-246's, D-249's three and D-256's
     assert len(result.open_rows) == 19
     assert result.theta["eti_all"] == 0.2 and result.theta["eti_top_decile"] == 0.7
     assert "θ" in result.absent and not result.theta_applied

@@ -432,7 +432,7 @@ ne tient donc pas seulement à la source. Il peut tenir à la façon dont la cha
 l'élasticité : les poids, la variation du coût, le profil qui s'éteint à 2 SMIC. Cela se
 vérifie sur une passe de population, hors de M0.
 
-**L'écart vérifié, depuis (D-250).** Il tenait d'abord aux poids. La passe rapide chiffre
+**L'écart vérifié, depuis (D-252).** Il tenait d'abord aux poids. La passe rapide chiffre
 20 000 ménages repondérés, et C2 lisait les salariés de toute la population au poids de la
 population, avec une variation nulle hors de l'échantillon : 15 % des salariés. Corrigé, C2
 compte 4 832 emplois par milliard pour le plancher et 9 939 pour le `t_delta`, soit de 5,8
@@ -440,7 +440,7 @@ compte 4 832 emplois par milliard pour le plancher et 9 939 pour le `t_delta`, s
 facteur 2,3, tient à l'élasticité, aux euros que chaque bouton porte au-dessus du SMIC et au
 profil de C2. Le tableau ci-dessus garde les chiffres de M0.
 
-**Revu en D-252.** C2 prêtait aussi à chaque salarié le changement du coût du travail de son
+**Revu en D-254.** C2 prêtait aussi à chaque salarié le changement du coût du travail de son
 ménage. Chacun répond désormais au sien : 5 348 emplois par milliard pour le plancher et
 13 380 pour le `t_delta`, soit de 6,4 à 16,1 % d'autofinancement à 12 000 € par emploi. Le
 reste de l'écart au bas du CAE tombe à un facteur 1,7.
@@ -457,6 +457,11 @@ propre entrée :
 - la seule plage publiée du Trésor-Éco, 30 à 60 %, dite lecture des allègements des
   années 1990, sur une économie et un barème qui ne sont plus ceux de 2026 ;
 - ou rien de plus que D-242, tant que l'écart de C2 n'est pas expliqué.
+
+**Le choix du propriétaire, le 2026-10-26 (D-256).** La première voie : θ = 0 à la lecture
+de C2, ses emplois valorisés à 12 000 € l'un, θ = 1 au Trésor-Éco, 60 %, θ = ½ entre les
+deux. C'est le canal C11 de M5, dans les recettes, pour les seules baisses que Mésange range
+sous sa variante ciblée.
 
 ---
 
@@ -546,4 +551,4 @@ M2 peut se figer sur ce qui précède : la rampe de l'IS en indice, le recoupeme
 la boucle, la vue vieillie des entreprises et le chemin annuel. M3 aussi : l'entrée, et
 l'investissement s'il passe sa conversion. M4 attend l'imputation des revenus du capital.
 M5 attend le choix du propriétaire sur R5, et la vérification de l'écart de C2, faite depuis
-(D-250). Les deux passes adversariales sont consignées en D-245.
+(D-252). Les deux passes adversariales sont consignées en D-245.

@@ -234,7 +234,7 @@ CASES = {
              {"dividend_base_eur": 50e9, "levy_rate_baseline": 0.30,
               "levy_rate_reform": 0.29}, 0)
        for key in channels.C10_KEYS},
-    # D-254: a 1 bn cut that C2 reads as 10 000 jobs, 12 %, against the Trésor-Éco's 60 %.
+    # D-256: a 1 bn cut that C2 reads as 10 000 jobs, 12 %, against the Trésor-Éco's 60 %.
     "autofinancement_poids_tresor_eco": (channels.targeted_self_financing, EMPLOYER,
                                          {"jobs": np.full(2, 10_000.0),
                                           "contribution_delta": -1e9,

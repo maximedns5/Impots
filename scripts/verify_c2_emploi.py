@@ -1,13 +1,13 @@
-"""C2's jobs per Md€ on the study's own pass, and what remains of the gap to the CAE (D-250, D-252).
+"""C2's jobs per Md€ on the study's own pass, and what remains of the gap to the CAE (D-252, D-254).
 
 Prices the FIRST bundle of a study request (its knob at `low`) the way `impots exploration`
 does: the population aged to the first projected year, the quick tier of 20 000 households,
 C2 at θ = ½ and at the two ends of its row. Then four readings of the same pass:
 
   - the chain's, through `api.main._employer_inputs`;
-  - the reading before D-250, rebuilt here: every earner of the whole frame at the frame's
+  - the reading before D-252, rebuilt here: every earner of the whole frame at the frame's
     weight, with no cost change outside the subsample;
-  - the reading before D-252: the run's earners at the run's weight, each carrying their
+  - the reading before D-254: the run's earners at the run's weight, each carrying their
     household's change in labour cost rather than their own;
   - what remains of the gap to a cut placed whole at the SMIC: where the knob puts its
     euros (the labour cost per job they reach) and C2's profile (its fade-out to 2 SMIC).
@@ -75,7 +75,7 @@ def main(path: str, view: str) -> dict[str, object]:
     smic = api._smic_annual(year)
     by_household = dict(zip(households["household_id"].to_list(), rate, strict=False))
 
-    # The reading before D-250, rebuilt: the whole frame, at its weight, household rates.
+    # The reading before D-252, rebuilt: the whole frame, at its weight, household rates.
     everyone = frame.filter(pl.col("salaire_brut_annuel") > 0)
     jobs_old = c2({
         "smic_multiple": everyone["salaire_brut_annuel"].to_numpy() / smic,
@@ -87,7 +87,7 @@ def main(path: str, view: str) -> dict[str, object]:
         pl.col("household_id").is_in(households["household_id"].to_list()))
 
     # Each earner of the run, at the run's weight, with their own cost and their
-    # household's rate, which is the reading before D-252.
+    # household's rate, which is the reading before D-254.
     earners = run.persons.filter(pl.col("salaire_brut_annuel") > 0).join(
         households.select("household_id", "weight"), on="household_id", how="inner")
     weights = earners["weight"].to_numpy()
@@ -117,8 +117,8 @@ def main(path: str, view: str) -> dict[str, object]:
         "knob": knob, "value": value, "view": view, "year": year, "cost_eur": cost,
         "jobs": jobs, "jobs_per_bn": jobs * per_bn,
         "box_per_bn": [b * per_bn for b in box],
-        "before_d250_jobs_per_bn": jobs_old * per_bn,
-        "before_d252_jobs_per_bn": jobs_household_rate * per_bn,
+        "before_d252_jobs_per_bn": jobs_old * per_bn,
+        "before_d254_jobs_per_bn": jobs_household_rate * per_bn,
         "earners_frame_M": float(everyone["weight"].sum() / 1e6),
         "earners_sampled_at_frame_weight_M": float(sampled["weight"].sum() / 1e6),
         "earners_sampled_at_run_weight_M": float(weights.sum() / 1e6),
