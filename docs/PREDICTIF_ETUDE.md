@@ -129,7 +129,7 @@ Paquet le plus proche de la cible : **3,5 SMIC**.
 | Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
 | Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
 | Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +227 [+170 ; +270] |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +227 [+170 ; +270] ; compté avant D-255, sur des entrées que le sous-échantillon diluait : de 5,8 à 6,5 fois trop bas selon le paquet. La dette n'en dépend pas |
 | Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +5,83 [−12,49 ; +24,16] ; à 2 ans : +16,28 [−2,25 ; +34,81] ; à 3 ans : +23,27 [+4,07 ; +42,46] |
 | Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
 | Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
@@ -314,7 +314,7 @@ Paquet le plus proche de la cible : **2,1 %**.
 | Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
 | Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
 | Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +570 [+430 ; +676] |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +570 [+430 ; +676] ; compté avant D-255, sur des entrées que le sous-échantillon diluait : de 5,8 à 6,5 fois trop bas selon le paquet. La dette n'en dépend pas |
 | Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +2,50 [−5,35 ; +10,35] ; à 2 ans : +6,98 [−0,96 ; +14,91] ; à 3 ans : +9,97 [+1,74 ; +18,19] |
 | Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
 | Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
@@ -363,7 +363,7 @@ Paquet le plus proche de la cible : **38,31 %**.
 | Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
 | Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
 | Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +1 558 [+1 150 ; +1 864] |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +1 558 [+1 150 ; +1 864] ; compté avant D-255, sur des entrées que le sous-échantillon diluait : de 5,8 à 6,5 fois trop bas selon le paquet. La dette n'en dépend pas |
 | Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +3,28 [−7,04 ; +13,61] ; à 2 ans : +9,17 [−1,26 ; +19,61] ; à 3 ans : +13,11 [+2,29 ; +23,92] |
 | Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
 | Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |

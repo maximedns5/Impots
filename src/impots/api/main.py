@@ -361,6 +361,13 @@ def _employer_inputs(request: Any, frame: Any, households: Any, agg: Any) -> dic
     in labour cost is only available per household, so every earner in a household
     carries their household's rate. Exact for the single-earner households that are
     most of them, an approximation otherwise, and stated.
+
+    The earners are those of the households the run priced, at the weights the run gave
+    them: `frame` is the whole population, `households` the subsample. An earner the run
+    never priced has no rate, and counting them at 0 with the frame's weight diluted the
+    jobs by the subsample, 6,5 times on 20 000 households (D-255). The subsample scales
+    every member of a household by its weight over the frame's mean, so each earner keeps
+    their own share of it, as the subsampled frame does.
     """
     import numpy as np
     import polars as pl
@@ -374,15 +381,19 @@ def _employer_inputs(request: Any, frame: Any, households: Any, agg: Any) -> dic
     if not np.any(np.abs(rate) > 1e-12):
         return {}
 
-    by_household = dict(zip(households["household_id"].to_list(), rate, strict=False))
-    earners = frame.filter(pl.col("salaire_brut_annuel") > 0)
+    priced = pl.DataFrame({"household_id": households["household_id"],
+                           "_rate": rate, "_run_weight": households["weight"]})
+    frame_weight = (frame.group_by("household_id")
+                    .agg(pl.col("weight").mean().alias("_frame_weight")))
+    earners = (frame.filter(pl.col("salaire_brut_annuel") > 0)
+               .join(priced, on="household_id", how="inner")
+               .join(frame_weight, on="household_id", how="inner"))
     smic = _smic_annual(request.year)
     return {
         "smic_multiple": earners["salaire_brut_annuel"].to_numpy() / max(smic, 1.0),
-        "relative_cost_change": np.array(
-            [by_household.get(h, 0.0) for h in earners["household_id"].to_list()]
-        ),
-        "earner_weights": earners["weight"].to_numpy(),
+        "relative_cost_change": earners["_rate"].to_numpy(),
+        "earner_weights": (earners["weight"] * earners["_run_weight"]
+                           / earners["_frame_weight"]).to_numpy(),
         # NOT deltas["cotisations_employeur"] — that figure is gross of the
         # allègements and reported exactly zero for a reform costing 17.7 bn (D-039).
         "contribution_delta": agg.employer_contribution_delta,

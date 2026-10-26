@@ -1,6 +1,17 @@
 # State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M4 and M6)
 
-The third 2026-10-26 update adds D-254: the CVAE has a knob for its whole schedule, and
+The fourth 2026-10-26 update adds D-255: C2's gap is explained, and it was the chain's.
+`_employer_inputs` took every earner of the whole frame at the frame's weights, with a cost
+change only for the households the pass had priced, one in ten on the quick tier: the jobs
+near the SMIC came out 5.8 to 6.5 times too low. The earners are now those of the run's
+households, each at the weight the subsample gives them. At the study's first bundles the
+`t_delta` counts 9 936 jobs per bn (1 555 before), the floor 4 830 (748), the plafond 738
+(128); costs and debt do not move, C2 being an index. What is left of the gap with the
+CAE is C2's own profile: at −0.5, a cut landing wholly at the SMIC gives 22 480 jobs per
+bn, the CAE's figure. At 12 000 € per job, C2 now says 5.8 to 11.9 % self-financing, not
+0.9 to 1.9 %; R5 is still the owner's. The study page keeps its passes' C2 figures and says
+beside each that they were counted before D-255. Nine hand mutants killed.
+The third 2026-10-26 update added D-254: the CVAE has a knob for its whole schedule, and
 is priced on the annual path. `cvae_echelle` scales the year's ceiling, brackets and
 dégrèvement together, as the law moves them; it is read back against the law, and finds
 nothing to scale once the CVAE is abolished in 2030. The carried path — `/predictif/
@@ -114,8 +125,9 @@ the IS has no loop and, by D-218, its GDP effect stays an index outside the debt
 investment index opens in M3 only on the OECD's equation (6), once its decomposition is
 reproduced for France. Left to the owner: the self-financing of targeted cuts, which
 French sources put anywhere from 1 % (C2's jobs) to 60 % (Trésor-Éco n° 97); D-242 holds
-until then. C2's job count, fifteen times below the CAE's at a similar elasticity, is to
-be checked on a population pass.
+until then. C2's job count, fifteen times below the CAE's at a similar elasticity, was
+checked on a population pass and was diluted by the subsample (D-255): corrected, C2 says
+5.8 to 11.9 %.
 The second 2026-10-24 update adds D-244, Phase 11's M1: a firm reform enters the
 predictive chain. `/predictif/simulate` takes a `firm_reform`, and `impots exploration` a
 `firm_base` and firm knobs in its grid, alone or beside the households' reform. The first
@@ -444,8 +456,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **252 decision
-entries**, D-000 to D-251, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **256 decision
+entries**, D-000 to D-255, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -834,7 +846,8 @@ download list.
    reference values the paper does not print; C8 remains the entry index. The capital
    income is imputed (D-248). M4 is done (D-249): the PFU knob, read back, and the
    dividends' response C10 in the receipts; the wage shift it leaves out is the next
-   number that could turn a PFU cut's answer. M5 waits on the owner's R5 choice. M6 is
+   number that could turn a PFU cut's answer. M5 waits on the owner's R5 choice, now on
+   a corrected C2 (D-255). M6 is
    done (D-250, D-251): the study on the wider menu. No IS cut lowers the debt; a PFU cut
    does under « tenu » at θ = ½, by a few hundredths of a point, on a sign the wage shift
    could turn. Its gate is the owner's `make full`. The wage shift is in C10 (D-252), and
