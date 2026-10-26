@@ -19477,3 +19477,98 @@ passent sur le code de `ce40f2c`. Les tests de l'étude, de l'explorateur et de 
 
 **Ce qui reste.** Rien de ce qui restait de D-254 sur le complément. Restent le `make full`
 du propriétaire, avant toute fusion, et son choix sur R5.
+
+## D-256 — Phase 11, M5 : l'autofinancement d'une baisse ciblée de cotisations (C11)
+
+**Le fait.** R5 de `docs/M0_PHASE11.md` laissait au propriétaire l'autofinancement d'une
+baisse ciblée de cotisations, que les sources françaises lisent de quelques pour cent à
+60 % selon l'emploi qu'elles retiennent. Les chiffres de C2 corrigés (D-252, D-254), il a
+choisi le 2026-10-26 la première des trois voies de R5 : θ = 0 à la lecture de C2, ses
+emplois valorisés à 12 000 € l'un ; θ = 1 au Trésor-Éco n° 97, 60 % ; θ = ½ entre les
+deux. C'est C11, un canal de recettes.
+
+**Le canal.** s = (1 − p) × s_C2 + p × s_TE, où s_C2 vaut les emplois de C2 fois 12 000 €
+sur la baisse, et s_TE 12 000 / 20 000 = 60 %. Le poids p est une ligne ouverte du
+magasin, à 0, ½ et 1 pour θ = 0, ½ et 1. La recette vaut s fois la baisse de la facture
+des employeurs (`contribution_delta`), non le coût de toute la réforme. C11 lit les
+tirages de C2, sans les retirer, et vient après C10 : les tirages des autres canaux, et
+la bande dorée de D-217, ne bougent pas. Il est noté illustratif, comme C2 : aucune de ses
+lignes n'a de borne de support.
+
+**Où il s'ouvre.** Seulement là où le constructeur de chocs range la baisse sous la
+variante ciblée de Mésange (`shocks.targets_low_wages`), qui n'a pas de ligne de solde :
+la boucle y est absente. Ailleurs, la boucle porte déjà le retour, et C11 le compterait
+deux fois. Le plafond, depuis 2026, tombe sous la variante uniforme (D-239) : C11 ne s'y
+ouvre pas. Les entrées de l'employeur portent le test même du constructeur de chocs, et
+un cas le tient.
+
+**Les lignes.** Trois, dans `self_financing.yaml`. Les 12 000 € par emploi (p. 4, note 5)
+et les 20 000 € de coût brut par emploi (p. 4, le bas de 20 000 à 40 000 €) sont lus sur
+le PDF manifesté. Le poids est le choix du propriétaire, et la ligne le dit. Une passe
+adversariale indépendante a relu les trois sur le fichier : trois SCOPE_PROBLEM, les
+valeurs justes. Réparations appliquées :
+- l'ordre des auteurs, Nouveau et Ourliac, comme le PDF les signe et le manifeste ;
+- la note du coût prêtait aux auteurs une lecture divisée par deux, qui est un calcul de
+  M0 ;
+- la raison du sens de θ disait que C2 n'atteint jamais 30 %.
+
+**Les gardes.** C2 compte des personnes au coût annuel de leur propre travail. Une baisse
+portée par des temps partiels peut lui faire lire plus de 60 % ; une baisse et une hausse
+mêlées, une lecture négative. θ = 1 n'y serait plus la réponse la plus forte, et la boîte
+θ serait lue aux mauvais coins : C11 refuse les deux (`SelfFinancingOutOfRange`). La
+seconde garde vient de la passe adversariale.
+
+**La mesure.** Sur la passe de l'étude, vue vieillie de 2026, premier paquet de chaque
+grille, la part de la baisse qui revient :
+
+| Bouton | Baisse | θ = 0 | θ = ½ | θ = 1 |
+|---|---|---|---|---|
+| `t_delta`, 38,31 % | 1,00 Md€ | 11,8 % | 38,0 % | 60 % |
+| `t_min`, 2,1 % | 0,76 Md€ | 4,8 % | 33,2 % | 60 % |
+
+À θ = 0, C2 est aussi à son élasticité la plus faible, −0,31 : 11,8 % pour le `t_delta`,
+et non les 16,1 % de son centre. Les recettes à θ = ½, mécanique comprise :
+- `t_delta` : −0,621 Md€, dont 0,381 Md€ revenus ; boîte de −0,884 à −0,401 Md€ ;
+- `t_min` : −0,509 Md€, dont 0,253 Md€ revenus ; boîte de −0,725 à −0,305 Md€.
+
+La boîte bouge quatre lignes : le poids, l'élasticité de C2 et les deux incidences de C3.
+
+**Ce que cela change.** Rien dans les rapports commités : ils ont tourné avant C11, et la
+page les rend tels. L'étude de M6 (D-250, D-251) a laissé de côté le `t_delta` avec son
+autofinancement, faute de M5 : c'est le jalon suivant. Au plus 60 % de la baisse revient.
+Sans boucle et sans autre recette, une baisse ciblée ne se finance donc pas en entier, à
+aucun θ.
+
+**Ce qui n'est pas compté.**
+- L'impôt sur le revenu des emplois créés.
+- Leurs autres prestations, et l'allocation chômage évitée au-delà du RSA.
+- Les effets sur le PIB, que Mésange ne chiffre pas pour cette variante.
+
+Les 12 000 € sont de 2009, tenus tels quels comme le propriétaire l'a choisi : au SMIC de
+2026, la réduction générale laisse peu de cotisations patronales, et le RSA a été
+revalorisé. C2 compte des personnes, quand 12 000 € est le retour d'un temps plein.
+
+**Les tests.**
+- Dans `tests/test_behavioural.py`, neuf cas :
+  - l'exemple à la main : 0,36 Md€ pour 10 000 emplois sur 1 Md€ à p = ½, 0,12 et
+    0,60 Md€ aux bouts ;
+  - aucun C11 sous la variante uniforme ;
+  - le refus au-dessus de 60 %, et sous zéro ;
+  - le canal dit non calculé sans ses entrées ;
+  - C11 dans la bande sur les tirages de C2, sur un magasin construit ;
+  - C11 dernier, sans bouger les tirages d'aucun autre canal, sur le magasin livré ;
+  - les recettes à θ et la boîte dans la chaîne prédictive ;
+  - les entrées de l'employeur, qui portent le test des chocs.
+- Dans `tests/test_theta.py`, le cas de monotonie de la ligne nouvelle (garde 7).
+- Six mutations des gardes, six tuées : le test du classement retiré, chacun des deux
+  refus retiré, la formule inversée, l'année ôtée au test des entrées, C11 avant C3.
+- Quatre comptes de lignes ouvertes passent de 18 à 19.
+- Les tests ciblés, sur l'arbre fusionné avec `main` jusqu'à #79 : 908 réussis et 48
+  sautés dans 28 fichiers. Quatre échouent faute de données, ici comme sur `main` : trois
+  fichiers de la DGFiP ne correspondent plus au manifeste. `ruff` passe sur `src`,
+  `tests` et `scripts`.
+
+**Ce qui reste.**
+- Le `t_delta` avec son autofinancement dans l'étude, que M6 a laissé à M5 : une requête
+  préenregistrée à part, et son pronostic avant les passes.
+- Le `make full` du propriétaire.

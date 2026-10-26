@@ -1,5 +1,22 @@
-# State of the project, and the directions open — 2026-10-25 (Phase 11, M0 to M4 and M6)
+# State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M6)
 
+The first 2026-10-26 update adds D-252 to D-256. C2's gap to the CAE came from the chain:
+it read 15 % of the employees, the quick tier's households at the whole frame's weights
+(D-252), and lent each employee the change in their household's labour cost, which gave
+the 2026 ceiling 1 317 jobs for a cut above 3 SMIC where C2 does not respond (D-254). Each
+employee now reads their own labour cost, off the run's persons; the narrow band reads
+the same, and flags both threshold cases at 100 % (D-253, D-254). C2 counts 13 380 jobs
+per billion for the `t_delta` and 5 348 for the floor, against 1 555 and 748; the rest of
+the gap to the CAE, a factor 1.7, is the elasticity, the knob's spread and C2's profile.
+The curve, the study and the ceiling's complement were replayed on their own commits with
+C2's fixes alone, and give back every cost, Δb and corner; only the jobs index moves
+(D-254, D-255). Then M5 (D-256): the owner chose C2's reading at θ = 0 and the Trésor-Éco
+n° 97's 60 % at θ = 1, and C11 brings that share of a targeted cut back into the
+receipts, only where Mésange's targeted variant has no balance row. On the study's pass,
+11.8 %, 38.0 % and 60 % of a `t_delta` cut at θ = 0, ½ and 1; 4.8 %, 33.2 % and 60 % for
+the floor. No more than 60 % ever comes back: without a loop, a targeted cut does not pay
+for itself at any θ. Its three rows were read on the PDF by an adversarial pass, which
+added a refusal for a negative reading.
 The sixth 2026-10-25 update adds D-251, the second step of M6: the study on the wider
 menu has run on its preregistration commit, `ca6288d`, and `docs/PREDICTIF_ETUDE.md`
 renders it in its own section. An IS cut lowers the 2035 debt for no θ: 0.30887 point per
@@ -804,10 +821,13 @@ download list.
    reference values the paper does not print; C8 remains the entry index. The capital
    income is imputed (D-248). M4 is done (D-249): the PFU knob, read back, and the
    dividends' response C10 in the receipts; the wage shift it leaves out is the next
-   number that could turn a PFU cut's answer. M5 waits on the owner's R5 choice. M6 is
-   done (D-250, D-251): the study on the wider menu. No IS cut lowers the debt; a PFU cut
+   number that could turn a PFU cut's answer. M5 is done (D-256): C11, the self-financing
+   of a targeted contribution cut, from C2's reading at θ = 0 to the Trésor-Éco's 60 % at
+   θ = 1, the owner's choice on R5. M6 is done (D-250, D-251): the study on the wider
+   menu. No IS cut lowers the debt; a PFU cut
    does under « tenu » at θ = ½, by a few hundredths of a point, on a sign the wage shift
-   could turn. Its gate is the owner's `make full`. Next: the wage shift in C10, then the
+   could turn. Its gate is the owner's `make full`. Next: the `t_delta` with its
+   self-financing in the study, which M6 left to M5; the wage shift in C10; then the
    CVAE on the annual path. The page's predictive panel does not send a firm reform yet. Then Phase 12, the past, and
    Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
