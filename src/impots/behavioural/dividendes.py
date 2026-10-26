@@ -24,9 +24,17 @@ WHAT IT PUBLISHES, AND WHAT THE STORE TAKES.
   rise from 2017 to 2018 is the « year-to-year variation of 9 billion euros » the text
   prints (p. 10).
 
+- The wages the firm owners stop paying themselves (D-252). Panel B of Table 2 (p. 37)
+  sets the firm owners against the others among the wealth-tax payers — the « top 1 % »
+  of its header is that of wealth (p. 14) — on the dividends and on the wages and
+  pensions, both over the pre-reform taxable wealth: the ratio of the two coefficients is
+  euros of wage per euro of dividend, each household weighted by its wealth's inverse.
+  Read from the table's text, with its standard errors.
+
 THE AGGREGATE. ε = s ε_owners + (1 − s) ε_others, with s the firm-control share. The store
 holds the three as rows, each in its published range, and the dividend channel C10
-composes them: that keeps each number tied to the place it is printed.
+composes them: that keeps each number tied to the place it is printed. The fourth row, the
+wage shift, takes back from the owners' response the levies on the wages it replaces.
 """
 
 from __future__ import annotations
@@ -59,6 +67,20 @@ PFU_YEARS = (2018, 2019, 2020, 2021)
 #: Stroke width of a plotted series in the figure's own units: the gridlines are thinner.
 SERIES_WIDTH = 60.0
 GRID_GREY = (0.81569, 0.81569, 0.81569)
+
+#: Table 2 is on this page (1-based, p. 37 as printed).
+TABLE_PAGE = 40
+_COEFFICIENT, _ERROR = r"(-?\d\.\d{5})\**", r"\((\d\.\d{5})\)"
+_ROW = " ".join([_COEFFICIENT] * 4 + [_ERROR] * 4)
+#: Panel B as printed: the strategy, the sample, the four columns, then its two rows.
+PANEL_B = re.compile(
+    r"B\. Wages and pensions Strategy: firm-owners vs non firm-owners Sample: top 1% "
+    r"2013 reform \(tax hike\) 2018 reform \(tax cut\) Short-run All Short-run All "
+    rf"\(1\) \(2\) \(3\) \(4\) Dividends {_ROW} Wages and pensions {_ROW}")
+#: Columns, 0-based: 2013 over all years, and 2018 in the short run and over all years.
+ALL_2013, SHORT_2018, ALL_2018 = 1, 2, 3
+#: A two-sided 95 % interval.
+Z95 = 1.96
 
 ELASTICITY_2018 = re.compile(
     r"implied elasticity to the net-of-tax rate of (\d\.\d) for firm-owners, while it is "
@@ -104,6 +126,17 @@ class Figure2d:
         return sum(self.series[name][year] for name in WITH_CONTROL) / self.total(year)
 
 
+@dataclass(frozen=True)
+class Table2B:
+    """Panel B of Table 2, columns (1) to (4): 2013 in the short run and over all years,
+    then 2018. Coefficients over the pre-reform taxable wealth, and their standard
+    errors."""
+    dividends: tuple[float, ...]
+    dividends_se: tuple[float, ...]
+    wages: tuple[float, ...]
+    wages_se: tuple[float, ...]
+
+
 def _reader(raw: Path | None):
     path = (raw or RAW) / SOURCE_FILE
     if not path.exists():
@@ -139,6 +172,48 @@ def elasticities(raw: Path | None = None) -> Elasticities:
         variation_others_2018=found["v2018"][0] / 100,
         variation_owners_2018=found["v2018"][1] / 100,
         variation_2013=found["v2013"][0] / 100)
+
+
+def table_2b(raw: Path | None = None) -> Table2B:
+    """Panel B of Table 2, from the table's text, its columns checked by the reforms'
+    signs."""
+    match = PANEL_B.search(_text(_reader(raw).pages[TABLE_PAGE - 1]))
+    if match is None:
+        raise DividendSourceError(
+            f"le panneau B du tableau 2 est introuvable p. {TABLE_PAGE} : le document a "
+            f"changé, ou ce n'est pas la version 2")
+    values = tuple(float(group) for group in match.groups())
+    table = Table2B(dividends=values[0:4], dividends_se=values[4:8], wages=values[8:12],
+                    wages_se=values[12:16])
+    # The 2013 reform raised the tax on dividends and the 2018 one cut it.
+    if not max(table.dividends[:2]) < 0.0 < min(table.dividends[2:]):
+        raise DividendSourceError(
+            f"tableau 2 B : les dividendes devraient baisser en 2013 et monter en 2018, "
+            f"ils valent {table.dividends} : les colonnes sont mal lues")
+    return table
+
+
+def wage_shift(table: Table2B) -> Range:
+    """Euros of wage the firm owners stop paying themselves per euro of dividend more.
+
+    - The centre: 2018 over all years (col. 4), the wage coefficient over the dividend one.
+      The authors compute no ratio: the centre is the project's.
+    - The top: 2020 and 2021, the two years after the short run, once the 2018 wages the
+      blank year held are past. The panel is balanced and both columns share their
+      pre-reform years, so those two years' coefficient is twice col. 4 less col. 3.
+    - The bottom: 0, the 2013 reform over all years (col. 2), whose wage coefficient is
+      not different from zero. Were it, 0 would not be its reading: refused.
+    """
+    moved, error = table.wages[ALL_2013], table.wages_se[ALL_2013]
+    if abs(moved) > Z95 * error:
+        raise DividendSourceError(
+            f"tableau 2 B : le salaire de 2013 bouge ({moved} pour un écart-type de "
+            f"{error}) ; le bas de la plage, 0, ne le lit plus")
+    dividends, wages = table.dividends[ALL_2018], table.wages[ALL_2018]
+    late_dividends = 2.0 * dividends - table.dividends[SHORT_2018]
+    late_wages = 2.0 * wages - table.wages[SHORT_2018]
+    return Range(low=0.0, central=round(-wages / dividends, 3),
+                 high=round(-late_wages / late_dividends, 3))
 
 
 def _forms(reader) -> dict[tuple[float, float], object]:
@@ -282,14 +357,15 @@ class Range:
     high: float
 
 
-def convention(found: Elasticities, figure: Figure2d) -> dict[str, Range]:
-    """The three store rows of D-249, from the readings.
+def convention(found: Elasticities, figure: Figure2d, table: Table2B) -> dict[str, Range]:
+    """The three store rows of D-249 and the wage shift of D-252, from the readings.
 
     - Firm owners: 2,5 (2018, the authors' preferred) to 3,2 (2013), centred on 2,5.
     - The others: 0 (2018) to 2,4 (2013), centred on 0 — the 2013 figure is the one the
       authors say measurement error inflates.
     - The firm-control share: the four PFU years of Figure 2d, from the lowest to the
       highest, centred on their mean.
+    - The wage shift: `wage_shift`, 0 to 0,519, centred on 0,309.
     """
     shares = [figure.share_with_control(year) for year in PFU_YEARS]
     return {
@@ -300,4 +376,5 @@ def convention(found: Elasticities, figure: Figure2d) -> dict[str, Range]:
         "dividend_share_firm_owners": Range(
             low=round(min(shares), 3), central=round(sum(shares) / len(shares), 3),
             high=round(max(shares), 3)),
+        "dividend_wage_shift_firm_owners": wage_shift(table),
     }

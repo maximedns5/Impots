@@ -232,7 +232,8 @@ CASES = {
     "is_croissance_pib": (_is_growth, None, {"rate_change_points": -1.0}, 0),
     **{key: (channels.dividend_response, Reform(pfu_taux=0.118),
              {"dividend_base_eur": 50e9, "levy_rate_baseline": 0.30,
-              "levy_rate_reform": 0.29}, 0)
+              "levy_rate_reform": 0.29, "wage_levy_rate": 1.14, "wage_cost_rate": 1.66,
+              "corporate_rate": 0.25}, 0)
        for key in channels.C10_KEYS},
 }
 

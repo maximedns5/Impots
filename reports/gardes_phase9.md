@@ -2,7 +2,7 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-25 sur le commit `71f9e65f532b` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-26 sur le commit `7cce10c81ab9` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
 **226 mutations** : 225 tuées, 1 équivalente avec sa raison, 0 survivante.
 

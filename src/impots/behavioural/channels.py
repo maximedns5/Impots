@@ -874,12 +874,17 @@ def rd_response(
 # --------------------------------------------------------------------------- #
 C10_ELASTICITIES = ("dividend_elasticity_firm_owners", "dividend_elasticity_other_holders")
 C10_SHARE = "dividend_share_firm_owners"
-C10_KEYS = (*C10_ELASTICITIES, C10_SHARE)
+C10_WAGE_SHIFT = "dividend_wage_shift_firm_owners"
+C10_KEYS = (*C10_ELASTICITIES, C10_SHARE, C10_WAGE_SHIFT)
 
 NO_PFU_KNOB = (
     "Aucun levier de cette réforme ne déplace le taux du PFU : la réponse des dividendes "
     "est mesurée sur leur taux net, que seul ce levier bouge ici."
 )
+
+
+def _percentiles(values: Any) -> dict[str, float]:
+    return {f"p{q}": round(float(np.percentile(values, q)), 2) for q in (10, 50, 90)}
 
 
 def dividend_response(
@@ -890,12 +895,15 @@ def dividend_response(
     dividend_base_cdhr_eur: float = 0.0,
     levy_rate_baseline: float | None = None,
     levy_rate_reform: float | None = None,
+    wage_levy_rate: float | None = None,
+    wage_cost_rate: float | None = None,
+    corporate_rate: float | None = None,
     draws: int = 1,
     rng: Any = None,
     **_: Any,
 ) -> ChannelResult:
     """The receipts that dividends bring back, or take away, when their net-of-tax rate
-    moves (D-249).
+    moves (D-249), less the wages the firm owners stop paying themselves (D-252).
 
     `dividend_base_eur` is the dividends declared at the PFU (case 2DC), weighted, of the
     households the CDHR does not hold; `dividend_base_cdhr_eur` those it holds, before or
@@ -907,16 +915,21 @@ def dividend_response(
     dividends move by ε × Δln(1 − τ) × base. What they add is taxed at the new rate.
     Interest and plus-values are held fixed: the authors find small responses there.
 
-    The two largest offsets left out lower what a cut brings back, and the largest is
-    named first in the diagnostics: the firm owners pay themselves 0,31 euro of wage less
-    per euro of dividend more (tableau 2 B, col. 4, from 2019), a wage being taxed more
-    heavily; then the future plus-values the dividends are drawn from.
+    The firm owners' part of the response, s ε_p Δln(1 − τ) × base, comes with wages they
+    stop paying themselves, the shift: euros of net taxable wage per euro of dividend
+    (tableau 2 B). `wage_levy_rate` is what a euro of that wage brought the state at the
+    margin, the contributions on both sides, the CSG, the CRDS and the income tax;
+    `wage_cost_rate` what it cost the firm, which keeps it as a profit and pays
+    `corporate_rate` of IS on it. Each euro shifted takes back levy − t_IS × cost. The others control no firm and
+    shift nothing. The future plus-values the dividends are drawn from stay left out.
 
     Worked example, pinned in the tests: 50 bn of dividends, a PFU cut from 12,8 % to
     11,8 % with the levies at 17,2 %, so τ from 0,30 to 0,29 and Δln(1 − τ) =
     ln(0,71 / 0,70) = 0,0141846. At ε_p = 2,5, ε_a = 0 and s = 0,774, ε = 1,935: the
     dividends rise by 1,3724 bn, and bring back 0,29 × 1,3724 = 0,3980 bn — half the static
-    cost of the cut on a PFU base of 80 bn.
+    cost of the cut on a PFU base of 80 bn. At a shift of 0,309, with a wage that brought
+    1,14 and cost 1,66, under an IS at 25 %, the owners shift 0,4241 bn of wage, and take
+    back 0,4241 × (1,14 − 0,25 × 1,66) = 0,3074 bn: C10 brings back 0,0905 bn.
     """
     label = "Dividendes et PFU"
     applicable = _claimed(store, reform, C10_KEYS)
@@ -945,13 +958,27 @@ def dividend_response(
         raise ChannelInputMissing(
             f"C10 needs rates strictly below 1 at both ends; got {levy_rate_baseline} and "
             f"{levy_rate_reform}")
+    if wage_levy_rate is None or wage_cost_rate is None or corporate_rate is None:
+        raise ChannelInputMissing(
+            f"C10 needs what a euro of wage brings the state and costs the firm, and the "
+            f"IS rate, to price the wages the owners shift; got {wage_levy_rate!r}, "
+            f"{wage_cost_rate!r} and {corporate_rate!r}")
+    if not 0.0 < wage_levy_rate < wage_cost_rate or not 0.0 <= corporate_rate < 1.0:
+        raise ChannelInputMissing(
+            f"C10 needs 0 < levies < cost on a euro of wage and an IS rate in [0, 1); got "
+            f"{wage_levy_rate}, {wage_cost_rate} and {corporate_rate}")
     delta_log = float(np.log(net_after / net_before))
     share = store[C10_SHARE].draw(rng, draws)
     owners = store[C10_ELASTICITIES[0]].draw(rng, draws)
     others = store[C10_ELASTICITIES[1]].draw(rng, draws)
     elasticity = share * owners + (1.0 - share) * others
     induced = elasticity * delta_log * dividend_base_eur
-    revenue = levy_rate_reform * induced
+    # Drawn after the three rows of D-249, so that their draws are untouched (D-252).
+    shifted = store[C10_WAGE_SHIFT].draw(rng, draws) * share * owners * delta_log * (
+        dividend_base_eur)
+    lost_per_eur = wage_levy_rate - corporate_rate * wage_cost_rate
+    offset = shifted * lost_per_eur
+    revenue = levy_rate_reform * induced - offset
     return ChannelResult(
         key="c10_dividendes", label=label, applies=True, draws=revenue,
         in_revenue_band=True,
@@ -964,18 +991,21 @@ def dividend_response(
             "net_of_tax_relative_change": round(net_after / net_before - 1.0, 8),
             "dividend_base_eur": round(float(dividend_base_eur), 2),
             "dividends_held_by_cdhr_eur": round(float(dividend_base_cdhr_eur), 2),
-            "induced_dividends_eur": {
-                "p10": round(float(np.percentile(induced, 10)), 2),
-                "p50": round(float(np.percentile(induced, 50)), 2),
-                "p90": round(float(np.percentile(induced, 90)), 2)},
+            "induced_dividends_eur": _percentiles(induced),
+            "wage_shift_eur": _percentiles(shifted),
+            "wage_shift_offset_eur": _percentiles(offset),
+            "wage_wedge": {"levies_per_eur": wage_levy_rate, "cost_per_eur": wage_cost_rate,
+                           "corporate_rate": corporate_rate,
+                           "lost_per_eur": round(lost_per_eur, 6)},
             "not_counted": (
-                "les salaires que les propriétaires se versent en moins, 0,31 € par euro "
-                "de dividende en plus (tableau 2 B), taxés plus lourdement ; les "
-                "plus-values futures dont les dividendes induits sont tirés, taxées plus "
-                "bas ; la CEHR sur les dividendes induits ; la CDHR que des dividendes "
+                "les plus-values futures dont les dividendes induits sont tirés, taxées "
+                "plus bas ; la CEHR sur les dividendes induits ; la CDHR que des dividendes "
                 "induits feraient naître, d'un foyer qu'elle ne tenait pas ; le retour au "
                 "barème d'un foyer que le PFU relevé dépasserait ; les intérêts et les "
-                "plus-values"),
+                "plus-values ; pour les salaires déplacés, l'année de retard que les "
+                "auteurs leur trouvent, les droits à retraite que leurs cotisations "
+                "ouvraient, et un propriétaire dont le salaire n'est pas celui du cas de la "
+                "figure A2"),
         },
     )
 

@@ -151,8 +151,8 @@ def test_every_open_row_of_the_shipped_store_declares_its_direction() -> None:
     store = load()
     open_rows = [p for p in store.parameters.values() if p.is_open]
     # + labour supply (D-220), creations (D-221), R&D (D-222), the IS on growth (D-246),
-    # and the three rows of the dividends (D-249)
-    assert len(open_rows) == 18
+    # the three rows of the dividends (D-249) and their wage shift (D-252)
+    assert len(open_rows) == 19
     assert all(p.theta_one in ("low", "high") and p.theta_reason for p in open_rows)
     assert store["employment_elasticity_smic"].theta_one == "low"
 

@@ -1,0 +1,39 @@
+{
+  "name": "phase11_salaires_pfu",
+  "titre": "Baisse du taux du PFU, part impôt sur le revenu, avec les salaires déplacés",
+  "question": "Avec les salaires que les propriétaires de firme cessent de se verser, une baisse du taux du PFU, part impôt sur le revenu, de 12,8 % à 11,8, 10,8, 9,8 ou 8,8 %, fait-elle baisser la dette en 2035, et pour quels θ ?",
+  "bounds": [
+    {
+      "knob": "pfu_taux",
+      "low": 0.088,
+      "high": 0.118,
+      "step": 0.01
+    }
+  ],
+  "target": {
+    "year": 2035,
+    "at_most_points": 0.0
+  },
+  "spending": {
+    "rule": "gele_en_volume"
+  },
+  "growth": {
+    "name": "Croissance réelle 1 %, prix 2 %",
+    "real": 0.01,
+    "prices": 0.02
+  },
+  "rate": {
+    "name": "Taux implicite tenu à son niveau de 2025",
+    "kind": "implicite_tenu"
+  },
+  "horizon": 10,
+  "uprating": {
+    "wage": 0.03,
+    "source": "3 % ronds, le rythme du PIB nominal du scénario"
+  },
+  "theta": {
+    "common": 0.5
+  },
+  "behavioural": true,
+  "macro": true
+}

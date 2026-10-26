@@ -1,6 +1,25 @@
-# State of the project, and the directions open — 2026-10-25 (Phase 11, M0 to M4 and M6)
+# State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M4 and M6)
 
-The sixth 2026-10-25 update adds D-251, the second step of M6: the study on the wider
+The second 2026-10-26 update adds D-253: the PFU replay has run on its preregistration
+commit, `80a7405`, and `docs/PREDICTIF_ETUDE.md` renders it in its own section. With the
+wage shift, no PFU bundle lowers the 2035 debt at θ = ½ any more: +0.05 to +0.22 point
+under « tenu », against −0.03 to −0.05 in D-251, and +0.16 to +0.61 under « éteint ».
+D-251's sign has turned: at one point, the shifted wages take back 0.27 of C10's 0.37 bn.
+Only the corners where the multiplier is 1 still fall, 12 or 13 of 32 under « tenu ». At
+no shift, the replay gives the wider menu back to the last figure. Every point of D-252's
+prognosis held, to the thousandth. Thirteen hand mutants of the page script killed.
+So no cut on the study's menu lowers the debt at θ = ½ under these hypotheses.
+The first 2026-10-26 update added D-252: C10 now counts the wage the firm owners stop paying
+themselves when their dividends rise, and the wider menu's PFU is replayed with it,
+preregistered before its pass. The shift is a new row, 0 to 0.519 euro of taxable wage
+per euro of dividend, centred on 0.309, read from Table 2B of Bach et al. Each euro
+shifted takes back 0.7266 € in 2026: 1.1406 € of levies less the IS on the profit it
+becomes, both measured on the engine at six PASS. The verifier first returned WRONG, on
+the table's sample (the wealth-tax payers, not the top of the stable income), then
+SCOPE_PROBLEM on the repaired row. The prognosis: under « tenu », no PFU bundle lowers the
+debt at θ = ½ any more, +0.05 to +0.22 point, and D-251's sign turns; only corners where
+the multiplier is 1 still fall. Eighteen hand mutants killed. The replay runs next (D-253).
+The sixth 2026-10-25 update added D-251, the second step of M6: the study on the wider
 menu has run on its preregistration commit, `ca6288d`, and `docs/PREDICTIF_ETUDE.md`
 renders it in its own section. An IS cut lowers the 2035 debt for no θ: 0.30887 point per
 billion of first-year cost, +0.26 to +3.39 points, no loop, the GDP effect beside it. A
@@ -807,8 +826,9 @@ download list.
    number that could turn a PFU cut's answer. M5 waits on the owner's R5 choice. M6 is
    done (D-250, D-251): the study on the wider menu. No IS cut lowers the debt; a PFU cut
    does under « tenu » at θ = ½, by a few hundredths of a point, on a sign the wage shift
-   could turn. Its gate is the owner's `make full`. Next: the wage shift in C10, then the
-   CVAE on the annual path. The page's predictive panel does not send a firm reform yet. Then Phase 12, the past, and
+   could turn. Its gate is the owner's `make full`. The wage shift is in C10 (D-252), and
+   the PFU replayed with it turns that sign (D-253): no cut on the menu lowers the debt at
+   θ = ½. Next: the CVAE on the annual path. The page's predictive panel does not send a firm reform yet. Then Phase 12, the past, and
    Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
    and on the ERFS E2 table are pending. Maintenance per `docs/CHARTER.md`: pin

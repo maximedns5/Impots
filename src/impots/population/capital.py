@@ -227,6 +227,46 @@ def social_levy_rate(year: int) -> float:
     return float(rows["prelevements_sociaux_capital"]) / LEVY_PROBE_EUR
 
 
+#: The wage the shifted euro is measured on (D-252): the case Figure A2 of Bach et al.
+#: draws the gap between a wage and a dividend for, a single employee without children
+#: between four and eight PASS, taken in the middle.
+WEDGE_PASS_MULTIPLE = 6.0
+#: The last euros of gross wage the wedge is measured over: a margin, not an average.
+WEDGE_STEP_EUR = 1_000.0
+
+
+@lru_cache(maxsize=16)
+def wage_wedge(year: int) -> tuple[float, float]:
+    """What a euro of net taxable wage brings the state, and what it costs the employer,
+    at the margin, in `year`, MEASURED (D-252).
+
+    `(levies, cost)`, each per euro of `salaire_imposable`: the levies are the employer's
+    cost less the disposable income — the contributions on both sides, the CSG and the
+    CRDS, the income tax — and the cost is the super-gross wage. Measured on one foyer by
+    the engine for the reason `social_levy_rate` is. 1,14 and 1,66 in 2026: the last band
+    of the income tax, the pension contributions of the second band, the 10 % deduction
+    capped. Above eight PASS the pension contributions stop, and the wedge with them.
+    """
+    from impots.api.schemas import HouseholdInput
+    from impots.engine import compute
+    from impots.engine.system import baseline
+
+    ceiling = float(baseline().parameters(f"{year}-01-01")
+                    .prelevements_sociaux.pss.plafond_securite_sociale_annuel)
+
+    def rows(gross: float) -> dict[str, float]:
+        household = HouseholdInput.model_validate({
+            "adults": [{"salaire_brut_annuel": gross, "annee_naissance": 1975}]})
+        return compute(household, year, tier="full").baseline
+
+    top = rows(WEDGE_PASS_MULTIPLE * ceiling)
+    below = rows(WEDGE_PASS_MULTIPLE * ceiling - WEDGE_STEP_EUR)
+    cost = top["salaire_super_brut"] - below["salaire_super_brut"]
+    taxable = top["salaire_imposable"] - below["salaire_imposable"]
+    kept = top["revenu_disponible"] - below["revenu_disponible"]
+    return (cost - kept) / taxable, cost / taxable
+
+
 def bases(table: Published, rate: float) -> dict[str, float]:
     """The base per foyer of each band: its mean tax over the PFU's income-tax rate."""
     if not 0.0 < rate < 1.0:

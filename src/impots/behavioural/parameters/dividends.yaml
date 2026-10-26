@@ -14,14 +14,17 @@
 # the new τ. Interest and plus-values are held fixed: the authors find small responses
 # of the other capital incomes, of the same sign (tableau 2 A).
 #
-# WHAT THE CHANNEL DOES NOT COUNT. The two largest items lower the receipts it brings back
-# from a cut. The wages the firm owners pay themselves fall as their dividends rise:
-# 0,00100 of pre-reform wealth against 0,00324 (tableau 2 B, col. 4, firm owners against
-# the others, from 2019), 0,31 euro of wage per euro of dividend, taxed more heavily than a
-# dividend. The dividends paid are drawn from corporate saving, at the expense of future
-# plus-values (section 6.2). The CEHR on the induced dividends, which would add a little,
-# and the return to the barème of a foyer a higher PFU would overtake, are not counted
-# either.
+# THE WAGES THE OWNERS SHIFT (D-252). The wages the firm owners pay themselves fall as their
+# dividends rise: 0,00100 of pre-reform wealth against 0,00324 (tableau 2 B, col. 4, firm
+# owners against the others, 2018 to 2021, the wages moving from 2019), 0,309 euro of wage
+# per euro of dividend. The fourth row holds that ratio; the channel takes back, on each
+# euro shifted, the levies a wage brought less the IS on the profit it becomes, both
+# measured on the engine.
+#
+# WHAT THE CHANNEL DOES NOT COUNT. The dividends paid are drawn from corporate saving, at
+# the expense of future plus-values (section 6.2). The CEHR on the induced dividends, which
+# would add a little, and the return to the barème of a foyer a higher PFU would overtake,
+# are not counted either.
 
 parameters:
   dividend_elasticity_firm_owners:
@@ -203,3 +206,109 @@ parameters:
       rebond (les dividendes des foyers hors ISF sans contrôle passent de 3,38 à
       6,20 Md€), et la part baisse sur la période. Celle de 2024 est hors de l'échantillon
       et pourrait passer sous 0,738.
+
+  dividend_wage_shift_firm_owners:
+    value: {central: 0.309, low: 0.0, high: 0.519, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Un déplacement plus grand est une réponse plus forte : les propriétaires changent
+        davantage la forme du revenu qu'ils tirent de leur société.
+    rang:
+      niveau: 1
+      canal: dividendes_pfu
+    applies_to: >
+      Euros de salaire que les foyers qui contrôlent une société cessent de se verser, par
+      euro de dividende en plus. Le rapport de deux coefficients du même panneau du
+      tableau 2, une différence de différences entre les foyers propriétaires de firme et
+      les autres, parmi les assujettis à l'ISF des deux tranches (le « top 1 % » du
+      tableau est celui du patrimoine, p. 14), du panel cylindré de ceux qui ont reçu au
+      moins une fois plus de 1 500 € de dividendes avant la réforme : l'un sur les
+      salaires et pensions, l'autre sur les dividendes, chacun rapporté au patrimoine
+      imposable d'avant la réforme. Leur rapport est en euros par euro, chaque foyer pesant
+      l'inverse de son patrimoine : pas un rapport d'agrégats. Le salaire est le revenu net
+      imposable des deux conjoints, avant la déduction de 10 % (cases 1AJ et 1BJ),
+      rémunération des gérants majoritaires de SARL et des autres dirigeants qui contrôlent
+      leur société comprise (annexe B.1) ; les pensions sont dans la même ligne ; le
+      dividende est brut (case 2DC).
+    responds_to_knobs: *knobs
+    support:
+      estimated_on: >
+        Les deux réformes de l'élasticité des propriétaires. En 2018, sur toute la période
+        (col. 4), 0,00100 de salaires en moins pour 0,00324 de dividendes en plus ; en 2013
+        (col. 2), −0,00002 de salaires pour −0,00709 de dividendes, un salaire qui ne bouge
+        pas. Le déplacement répond à la même variation du taux net que les dividendes, et
+        le support est celui de leur élasticité : la plus petite des deux variations
+        observées, 6 %. Un rapport nettement non nul n'a été vu qu'en 2018, quand l'écart de
+        taxation entre un salaire et un dividende a changé de signe, de −1,7 à +6,4 points
+        (p. A-8, figure A2) ; en 2013, 0,049 à court terme et zéro sur toute la période. En
+        2026, l'IS est à 25 % contre 33,33 % en 2018, et cet écart n'est plus le même.
+      max_variation_graded_in_support: 0.06
+    source:
+      citation: >
+        Bach et al., PSE WP n° 2019-70 v2 : introduction, p. 3 ; section 4.1, p. 14
+        (l'échantillon) ; section 4.2, p. 16-17, notes 22 et 23 ; tableau 1, p. 36 ;
+        tableau 2, panneau B, p. 37 ; figure D5 (d), p. A-23, dont les titres des panneaux
+        (b) et (c) sont intervertis ; annexe A, p. A-6 à A-10 (A.3 sur les gérants de SARL,
+        A.5.2 sur les cotisations retraite), et figure A2, p. A-9 (le cas sur lequel le
+        canal mesure ce qu'un euro de salaire rapporte) ; annexe B.1, p. A-15 (le salaire).
+      url: https://shs.hal.science/halshs-02415470v2/file/wp1970_2.pdf
+      vintage: "2024"
+      quote: >-
+        In 2018, we find a significant labor income response, though still much smaller
+        than the dividend response and that only starts in 2019
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-26
+      ref: D-252
+      note: >
+        Deux passes. La première a rendu WRONG : les chiffres étaient exacts, mais le « top
+        1 % » du tableau 2 avait été lu comme le haut du revenu stable, la coupe de la
+        figure D2 ; c'est celui du patrimoine, les assujettis à l'ISF (p. 14). Le haut, la
+        borne à 95 % de la moyenne des quatre années (0,387), ne lisait pas la réponse la
+        plus forte : il est passé aux années 2020 et 2021, 0,519. La seconde, sur la ligne
+        réparée, a rendu SCOPE_PROBLEM : chiffres, échantillon, identité des colonnes 3 et
+        4 et arithmétique confirmés. Réparations appliquées : les droits à retraite (seule
+        la part contractuelle de l'AGIRC-ARRCO en ouvre), le support accordé à la note sur
+        2013, la source de l'élasticité des propriétaires et le 0,19 dit indicatif, la
+        raison du haut (2018 tenue par l'année blanche, 2019 où le déplacement commence),
+        la page A-8 de l'écart de taxation, l'échantillon des 43 et 24 %, la référence 2016
+        de la figure D5 (d), et le haut dit sans écart-type.
+    confidence: low
+    note: >
+      Les auteurs ne calculent aucun rapport, et parlent d'une « slight reduction in wage
+      payments » (p. 3) : le centre et les bornes sont une construction du projet. Le
+      centre est le rapport des deux coefficients de 2018 sur toute la période, 0,00100 /
+      0,00324 = 0,309. Le haut, les années 2020 et 2021, une fois passées 2018, que
+      l'année blanche a tenue (note 23), et 2019, où le déplacement commence : le panel
+      est cylindré et les colonnes 3 et 4 partagent leurs années d'avant la réforme, donc
+      ces deux années valent deux fois la colonne 4 moins la colonne 3, (2 × 0,00100 −
+      0,00046) / (2 × 0,00324 − 0,00351) = 0,519, un point sans écart-type, le papier
+      n'imprimant pas la covariance ; la figure D5 (d) le confirme (−0,00155 et −0,00134
+      en 2020 et 2021 par rapport à 2016, lus sur le tracé). La borne à 95 % de la moyenne
+      des quatre années, 0,387, et la méthode delta sans covariance, 0,392, sont en deçà.
+      Le bas, 0 : la réforme de 2013 sur toute la période, dont le salaire ne bouge pas
+      (−0,00002 pour un écart-type de 0,00014) ; à court terme, 0,049 en 2013 (+0,00033
+      contre −0,00673), quand l'écart de taxation était petit, et 0,131 en 2018. La figure
+      D5 (d) montre une tendance avant la réforme (2013 au-dessus de 2016), qui plaide
+      pour un bas bas. Les deux groupes mêlent tranches hautes et basses, les
+      propriétaires plus souvent hautes (43 % contre 24 % en 2018, dans l'échantillon du
+      tableau 1, plus petit que celui du panneau B : 70 334 foyers contre 76 905) : la
+      différence mêle exposition et sensibilité. Le canal applique le rapport à
+      l'élasticité des propriétaires, estimée entre tranches parmi eux (p. 16), dont le
+      tableau 2 A donne l'équivalent statique, 0,00534 : il suppose le déplacement
+      proportionnel à la réponse des dividendes ; rapporté à ce dividende-là, d'un autre
+      échantillon, le même salaire donnerait, à titre indicatif, 0,19. θ ne lit pas le
+      sens de la réforme, et θ = 1 marie l'élasticité de la hausse de 2013 au déplacement
+      de la baisse de 2018, deux mesures jamais vues ensemble. Au niveau des firmes, la
+      hausse de 2018 vient tout entière de l'épargne des sociétés (p. 22), pas d'un
+      surcroît de bénéfice, quand 0,309 € de salaire en moins en ferait un. Ce qu'un euro
+      déplacé rapportait est mesuré sur le cas salarié de la figure A2 ; les cotisations
+      retraite en font 0,33 € ; seule la part contractuelle de l'AGIRC-ARRCO, environ 0,20
+      € (100/127 de 0,26, le taux d'appel), ouvre des droits, la CEG, la CET et la
+      vieillesse déplafonnée n'en ouvrent pas (annexe A.5.2, p. A-8 ; note 22) ; elles
+      peuvent se lire, disent les auteurs, comme une épargne plutôt qu'un impôt ; un
+      gérant majoritaire de SARL, travailleur non salarié, cotise moins, et ses dividendes
+      au-delà de 10 % du capital supportent des cotisations depuis 2013 (annexe A) ; une
+      PME paie 15 % d'IS sur ses premiers bénéfices. Le canal compte le déplacement dès la
+      première année.
