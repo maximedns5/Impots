@@ -19274,7 +19274,8 @@ Les tests de θ, de la CDHR et les cinq comptes de lignes ouvertes passent à la
 nouvelle. `docs/PREDICTIF_EXEMPLE.md` est régénéré depuis sa première année : seule sa
 liste des θ gagne la ligne, ses chiffres sont ceux d'avant, une baisse de l'IR n'ouvrant
 pas C10. Dix-huit mutations écrites à la main, une par garde et par terme, ont toutes été
-tuées, chacune vue échouer. Les tests du comportement, des dividendes, de θ, de la
+tuées, chacune vue échouer. Le balayage des gardes de la phase 9, `--missing`, n'a rien à
+traiter : ses périmètres sont ceux de la chaîne, et C10 et son lecteur n'y sont pas. Les tests du comportement, des dividendes, de θ, de la
 CDHR, de la recherche, de la chaîne, des explorations, des indices et des entreprises, de
 l'étude et de l'API : 414 réussis. `ruff` et `ui/check.mjs` passent.
 
