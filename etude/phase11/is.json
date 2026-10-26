@@ -1,0 +1,39 @@
+{
+  "name": "phase11_is",
+  "titre": "Baisse du taux normal de l'IS",
+  "question": "Une baisse du taux normal de l'IS, de 25 % à 24,75, 23,75, 22,75 ou 21,75 %, fait-elle baisser la dette en 2035, et pour quels θ ?",
+  "bounds": [
+    {
+      "knob": "is_taux_normal",
+      "low": 0.2175,
+      "high": 0.2475,
+      "step": 0.01
+    }
+  ],
+  "target": {
+    "year": 2035,
+    "at_most_points": 0.0
+  },
+  "spending": {
+    "rule": "gele_en_volume"
+  },
+  "growth": {
+    "name": "Croissance réelle 1 %, prix 2 %",
+    "real": 0.01,
+    "prices": 0.02
+  },
+  "rate": {
+    "name": "Taux implicite tenu à son niveau de 2025",
+    "kind": "implicite_tenu"
+  },
+  "horizon": 10,
+  "uprating": {
+    "wage": 0.03,
+    "source": "3 % ronds, le rythme du PIB nominal du scénario"
+  },
+  "theta": {
+    "common": 0.5
+  },
+  "behavioural": true,
+  "macro": true
+}

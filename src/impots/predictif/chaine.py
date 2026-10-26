@@ -93,7 +93,9 @@ MACRO_CHANNELS = ("rétroaction PIB → recettes", "multiplicateur macro")
 #: earnings and saying why it does not open for anything else. Firm creations and R&D
 #: stay on it although C8 and C9 are open: they are indices of the firm layer. The chain
 #: prices the cost of an IS cut since D-244, not the firms or the R&D it would bring, and
-#: the CIR stays out of it (D-221, D-222, D-244).
+#: the CIR stays out of it (D-221, D-222, D-244). The dividends left it in D-250: since
+#: D-249 they are C10, in the receipts of a PFU reform, saying why it opens for nothing
+#: else; the reason they kept, « no capital income », had been false since D-248.
 CLOSED: dict[str, str] = {
     "IS et investissement des entreprises": (
         "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; "
@@ -126,7 +128,6 @@ CLOSED: dict[str, str] = {
         "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais "
         "une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une "
         "année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."),
-    "dividendes": "la population ne porte aucun revenu du capital (§6.5).",
 }
 ABSENT_GRID = ("Une seule combinaison de scénarios : chaque autre combinaison est un autre "
                "calcul, sous ses propres noms.")

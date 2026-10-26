@@ -1,0 +1,1153 @@
+{
+  "name": "phase11_is",
+  "titre": "Baisse du taux normal de l'IS",
+  "question": "Une baisse du taux normal de l'IS, de 25 % à 24,75, 23,75, 22,75 ou 21,75 %, fait-elle baisser la dette en 2035, et pour quels θ ?",
+  "computed": "2026-10-25",
+  "commit": "ca6288d1834bcb816de84f3ff8e9e8a3d6bf6c37",
+  "where": "un conteneur cloud de Claude Code, en tâche de fond",
+  "request": {
+    "name": "phase11_is",
+    "titre": "Baisse du taux normal de l'IS",
+    "question": "Une baisse du taux normal de l'IS, de 25 % à 24,75, 23,75, 22,75 ou 21,75 %, fait-elle baisser la dette en 2035, et pour quels θ ?",
+    "base": {},
+    "bounds": [
+      {
+        "knob": "is_taux_normal",
+        "low": 0.2175,
+        "high": 0.2475,
+        "step": 0.01
+      }
+    ],
+    "target": {
+      "year": 2035,
+      "at_most_points": 0.0
+    },
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "theta": {
+      "common": 0.5,
+      "rows": {}
+    },
+    "behavioural": true,
+    "macro": true
+  },
+  "hypotheses": {
+    "spending_name": "Dépenses gelées en volume",
+    "growth_name": "Croissance réelle 1 %, prix 2 %",
+    "rate_name": "Taux implicite tenu à son niveau de 2025",
+    "horizon": 10,
+    "target_year": 2035,
+    "target_points": 0.0,
+    "target_share": 0.0,
+    "theta": {
+      "common": 0.5,
+      "rows": {}
+    },
+    "uprating": {
+      "wage": 0.03,
+      "prices": 0.02,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": true,
+    "macro": true,
+    "looped": true,
+    "transformations": []
+  },
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "unit": "part du PIB : Δb, la dette de la réforme moins celle de la référence ; négatif, la réforme allège la dette",
+  "views": {
+    "vieillie": "la population de 2024 vieillie jusqu'à la première année projetée, la vue de tête (D-216, D-226)",
+    "figee": "la population de 2024 telle quelle, le droit de l'année appliqué à ses revenus ; un paquet qui ne tient que là n'est pas un plan (D-155)"
+  },
+  "conventions": [
+    "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)",
+    "à θ fixé, la trajectoire est un nombre : sa dispersion est la boîte θ, relue aux coins (« robuste » ou « dépend de θ »)"
+  ],
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "bundles": 4,
+  "passes": 8,
+  "searches": [
+    {
+      "persistence": "eteint",
+      "persistence_label": "Effet macro éteint après trois ans",
+      "digest": "60b994d8b9d2d3ce4cda99ea1ffda95084216dc03ab305f70c80e38fe36d2b39",
+      "log": {
+        "seed": 0,
+        "order": [
+          [
+            [
+              "is_taux_normal",
+              0.2175
+            ]
+          ],
+          [
+            [
+              "is_taux_normal",
+              0.2275
+            ]
+          ],
+          [
+            [
+              "is_taux_normal",
+              0.2375
+            ]
+          ],
+          [
+            [
+              "is_taux_normal",
+              0.2475
+            ]
+          ]
+        ],
+        "values_aged": [
+          0.033882,
+          0.023458,
+          0.013032,
+          0.002607
+        ],
+        "excluded": [],
+        "theta": {
+          "rows": [],
+          "common": 0.5
+        }
+      },
+      "evaluations": [
+        {
+          "knobs": {
+            "is_taux_normal": 0.2175
+          },
+          "cost_aged_eur": 10969497343.202318,
+          "cost_frozen_eur": 10088203125.377396,
+          "delta_aged": 0.03388198366753459,
+          "delta_frozen": 0.03115989026977828,
+          "corners": [
+            [
+              "multiplicateur_macro = 0",
+              0.03388198366753459
+            ],
+            [
+              "multiplicateur_macro = 1",
+              0.03388198366753459
+            ]
+          ],
+          "corner_low": 0.03388198366753459,
+          "corner_high": 0.03388198366753459,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "is_taux_normal": 0.2275
+          },
+          "cost_aged_eur": 7594516024.22633,
+          "cost_frozen_eur": 6984369282.77359,
+          "delta_aged": 0.023457525887010888,
+          "delta_frozen": 0.021572937990053997,
+          "corners": [
+            [
+              "multiplicateur_macro = 0",
+              0.023457525887010888
+            ],
+            [
+              "multiplicateur_macro = 1",
+              0.023457525887010888
+            ]
+          ],
+          "corner_low": 0.023457525887010888,
+          "corner_high": 0.023457525887010888,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "is_taux_normal": 0.2375
+          },
+          "cost_aged_eur": 4219305485.441467,
+          "cost_frozen_eur": 3880324635.9806824,
+          "delta_aged": 0.01303236010487363,
+          "delta_frozen": 0.011985334589875496,
+          "corners": [
+            [
+              "multiplicateur_macro = 0",
+              0.01303236010487363
+            ],
+            [
+              "multiplicateur_macro = 1",
+              0.01303236010487363
+            ]
+          ],
+          "corner_low": 0.01303236010487363,
+          "corner_high": 0.01303236010487363,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "is_taux_normal": 0.2475
+          },
+          "cost_aged_eur": 844021534.6968529,
+          "cost_frozen_eur": 776212475.177002,
+          "delta_aged": 0.0026069675718884966,
+          "delta_frozen": 0.002397522656111706,
+          "corners": [
+            [
+              "multiplicateur_macro = 0",
+              0.0026069675718884966
+            ],
+            [
+              "multiplicateur_macro = 1",
+              0.0026069675718884966
+            ]
+          ],
+          "corner_low": 0.0026069675718884966,
+          "corner_high": 0.0026069675718884966,
+          "meets_target": false
+        }
+      ],
+      "candidates": [],
+      "excluded": [],
+      "closest": {
+        "knobs": {
+          "is_taux_normal": 0.2475
+        },
+        "cost_aged_eur": 844021534.6968529,
+        "cost_frozen_eur": 776212475.177002,
+        "delta_aged": 0.0026069675718884966,
+        "delta_frozen": 0.002397522656111706,
+        "corners": [
+          [
+            "multiplicateur_macro = 0",
+            0.0026069675718884966
+          ],
+          [
+            "multiplicateur_macro = 1",
+            0.0026069675718884966
+          ]
+        ],
+        "corner_low": 0.0026069675718884966,
+        "corner_high": 0.0026069675718884966,
+        "meets_target": false
+      },
+      "indices": {
+        "knobs": {
+          "is_taux_normal": 0.2475
+        },
+        "delta_aged": 0.0026069675718884966,
+        "absent": {
+          "rétroaction": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'contribution_sociale_is': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cebge': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}",
+          "bande": "Comportement non demandé : seul le chiffre mécanique est porté.",
+          "θ": "Vue mécanique : les θ sont listés parce que la requête les nomme, mais aucun canal de comportement ne les lit."
+        },
+        "closed": {
+          "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+          "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+          "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+          "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244).",
+          "rétroaction PIB → recettes": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'contribution_sociale_is': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cebge': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}",
+          "multiplicateur macro": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'contribution_sociale_is': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cebge': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}"
+        },
+        "rows": [
+          {
+            "key": "revenu_disponible_deciles",
+            "pour": "Les gens",
+            "label": "Revenu disponible, par décile de niveau de vie",
+            "unit": "EUR par ménage et par an",
+            "stage": "mécanique",
+            "source": "population, passe de la première année chiffrée",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun décile chiffré par la passe",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "revenu_disponible_reel",
+            "pour": "Les gens",
+            "label": "Revenu disponible brut réel des ménages (pouvoir d'achat)",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4, au centre",
+            "theta": [],
+            "note": "Contient le choc lui-même, en revenu pour l'IR et la CSG, en prix pour la TVA et les cotisations employeurs. Ne s'ajoute pas aux déciles.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun instrument de la réforme n'a cette ligne dans Mésange",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "consommation",
+            "pour": "Les gens",
+            "label": "Consommation des ménages, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Proportionnelle au multiplicateur à θ : négative si le multiplicateur l'est à θ = 0.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun instrument de la réforme n'a cette ligne dans Mésange",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_smic",
+            "pour": "Les gens",
+            "label": "Emploi au voisinage du SMIC",
+            "unit": "emplois",
+            "stage": "comportement",
+            "source": "C2, élasticité de l'emploi au coût du travail",
+            "theta": [
+              "employment_elasticity_smic"
+            ],
+            "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Comportement non demandé : le canal ne tourne pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_marchand",
+            "pour": "Les gens",
+            "label": "Emploi salarié marchand",
+            "unit": "milliers d'ETP",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Des équivalents temps plein, proportionnels au multiplicateur à θ (D-059). Ne s'additionne pas à l'emploi de C2.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun instrument de la réforme n'a cette ligne dans Mésange",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "offre_de_travail",
+            "pour": "Les gens",
+            "label": "Revenus d'activité bruts que déplacent les heures",
+            "unit": "EUR par an",
+            "stage": "comportement",
+            "source": "C7, offre de travail (Bargain, Orsini et Peichl)",
+            "theta": [
+              "labour_supply_married_women",
+              "labour_supply_married_men",
+              "labour_supply_single_women",
+              "labour_supply_single_men"
+            ],
+            "note": "Les heures valorisées au salaire : l'article ne sépare pas heures et participants, et l'indice non plus.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Comportement non demandé : le canal ne tourne pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "investissement_entreprises",
+            "pour": "Les entreprises",
+            "label": "Investissement des entreprises non financières, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Un accélérateur, proportionnel au multiplicateur à θ ; hors investissement public et des ménages.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun instrument de la réforme n'a cette ligne dans Mésange",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "pib_is",
+            "pour": "Les entreprises",
+            "label": "PIB, effet du taux normal d'IS",
+            "unit": "% d'écart de PIB",
+            "stage": "méta-analyse",
+            "source": "Gechert et Heimberger, méta-analyse de 441 estimations (D-246)",
+            "theta": [
+              "is_croissance_pib"
+            ],
+            "note": "Rampe de dix ans sur la croissance. Hors de la trajectoire de dette : l'IS n'a pas de boucle vers les recettes, et un PIB sans elle serait la moitié d'une variante (D-218).",
+            "available": true,
+            "values": {
+              "2026": 0.002362500000000002,
+              "2027": 0.004725000000000004,
+              "2028": 0.007087500000000007,
+              "2029": 0.009450000000000009,
+              "2030": 0.01181250000000001,
+              "2031": 0.014175000000000014,
+              "2032": 0.016537500000000014,
+              "2033": 0.018900000000000017,
+              "2034": 0.02126250000000002,
+              "2035": 0.02362500000000002
+            },
+            "box": {
+              "2026": [
+                -2.4999999999999872e-05,
+                0.004750000000000004
+              ],
+              "2027": [
+                -4.9999999999999745e-05,
+                0.009500000000000008
+              ],
+              "2028": [
+                -7.499999999999961e-05,
+                0.014250000000000013
+              ],
+              "2029": [
+                -9.999999999999949e-05,
+                0.019000000000000017
+              ],
+              "2030": [
+                -0.00012499999999999935,
+                0.02375000000000002
+              ],
+              "2031": [
+                -0.00014999999999999923,
+                0.028500000000000025
+              ],
+              "2032": [
+                -0.0001749999999999991,
+                0.03325000000000003
+              ],
+              "2033": [
+                -0.00019999999999999898,
+                0.038000000000000034
+              ],
+              "2034": [
+                -0.00022499999999999886,
+                0.04275000000000004
+              ],
+              "2035": [
+                -0.0002499999999999987,
+                0.04750000000000004
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Rampe de dix ans : après t années, l'écart de PIB vaut l'effet sur la croissance de la ligne à θ, fois les points de baisse, fois t, tenu après dix ans. Convention de ce projet sur la conversion des auteurs (p. 31), pas un scénario de persistance de Mésange.",
+              "Hors de la trajectoire de dette : ni dans les recettes ni au dénominateur. La boucle de l'IS est refusée (M0, R2), et D-218 ne donne aucun effet macro à un instrument sans boucle, pas même sur le PIB.",
+              "À court terme, la méta-analyse dit une baisse « even less growth enhancing » (p. 21) ; la rampe ne le suit pas, et sa première année est plus favorable que ce modérateur.",
+              "International : 42 études ; deux estimations sur trois portent sur des pays de l'OCDE seulement (tableau 1, p. 11), aucune étude n'est propre à la France ; études publiées de 1997 à 2019 (annexe A, p. 28)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_fiscale_production",
+            "pour": "Les entreprises",
+            "label": "Charge fiscale de production",
+            "unit": "% de la valeur ajoutée",
+            "stage": "couche entreprises",
+            "source": "panneau de la phase 8",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Panneau de la phase 8 (`impots.reindustrialisation`) : il rapporte la charge à la valeur ajoutée sur un périmètre lu dans une table générée à part, que la trajectoire ne lit pas. L'indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "creations_societes",
+            "pour": "Les startups",
+            "label": "Créations de sociétés",
+            "unit": "points de taux de création",
+            "stage": "couche entreprises",
+            "source": "C8, rapport IPP n° 47 (D-221)",
+            "theta": [
+              "firm_creation_profit_tax"
+            ],
+            "note": "Un nombre attend le stock de sociétés au manifeste.",
+            "available": true,
+            "values": {
+              "1-6": 0.04311100000000004
+            },
+            "box": {
+              "1-6": [
+                0.0,
+                0.07759980000000007
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Indice illustratif : effet relatif entre secteurs, étendu à toute l'économie, que l'étude n'identifie pas au niveau national et ne sépare pas du PFU. Moyenne des six premières années ; sociétés seules, hors entreprises individuelles et auto-entrepreneurs.",
+              "« 1-6 » : moyenne des six premières années après la baisse, d'un effet encore croissant en fin de période (IPP n° 47, années 2017 à 2022)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "depense_rd",
+            "pour": "Les entreprises",
+            "label": "Dépense de R&D",
+            "unit": "EUR de R&D",
+            "stage": "couche entreprises",
+            "source": "C9, rapport IPP n° 22 (D-222)",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Le CIR reste hors de la chaîne : sa créance, induite comprise, n'est pas la recette d'une année, et ses boutons y sont refusés (D-222, D-244). La R&D de C9 se lit sur `/entreprises/simulate`.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "solde_primaire",
+            "pour": "L'État",
+            "label": "Solde primaire, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": -0.00027390971611418696,
+              "2027": -0.00027390971611418696,
+              "2028": -0.00027390971611418696,
+              "2029": -0.00027390971611418696,
+              "2030": -0.00027390971611418696,
+              "2031": -0.00027390971611418696,
+              "2032": -0.00027390971611418696,
+              "2033": -0.00027390971611418696,
+              "2034": -0.00027390971611418696,
+              "2035": -0.00027390971611418696
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "dette",
+            "pour": "L'État",
+            "label": "Dette, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0002739097161141846,
+              "2027": 0.00054479591665757,
+              "2028": 0.0008126919763000728,
+              "2029": 0.0010776309013103003,
+              "2030": 0.0013396453336209646,
+              "2031": 0.0015987675548514435,
+              "2032": 0.0018550294902852649,
+              "2033": 0.002108462712802295,
+              "2034": 0.002359098446769625,
+              "2035": 0.0026069675718884966
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_interets",
+            "pour": "L'État",
+            "label": "Charge d'intérêts de la dette supplémentaire",
+            "unit": "pts du PIB de référence",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0,
+              "2027": 5.006064536571393e-06,
+              "2028": 9.95687030288211e-06,
+              "2029": 1.4853027265437463e-05,
+              "2030": 1.96951386577095e-05,
+              "2031": 2.4483801054458723e-05,
+              "2032": 2.9219604445235328e-05,
+              "2033": 3.390313230706922e-05,
+              "2034": 3.8534961676357546e-05,
+              "2035": 4.311566321995878e-05
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          }
+        ]
+      }
+    },
+    {
+      "persistence": "tenu",
+      "persistence_label": "Effet macro tenu au niveau de la troisième année",
+      "digest": "60b994d8b9d2d3ce4cda99ea1ffda95084216dc03ab305f70c80e38fe36d2b39",
+      "log": {
+        "seed": 0,
+        "order": [
+          [
+            [
+              "is_taux_normal",
+              0.2175
+            ]
+          ],
+          [
+            [
+              "is_taux_normal",
+              0.2275
+            ]
+          ],
+          [
+            [
+              "is_taux_normal",
+              0.2375
+            ]
+          ],
+          [
+            [
+              "is_taux_normal",
+              0.2475
+            ]
+          ]
+        ],
+        "values_aged": [
+          0.033882,
+          0.023458,
+          0.013032,
+          0.002607
+        ],
+        "excluded": [],
+        "theta": {
+          "rows": [],
+          "common": 0.5
+        }
+      },
+      "evaluations": [
+        {
+          "knobs": {
+            "is_taux_normal": 0.2175
+          },
+          "cost_aged_eur": 10969497343.202318,
+          "cost_frozen_eur": 10088203125.377396,
+          "delta_aged": 0.03388198366753459,
+          "delta_frozen": 0.03115989026977828,
+          "corners": [
+            [
+              "multiplicateur_macro = 0",
+              0.03388198366753459
+            ],
+            [
+              "multiplicateur_macro = 1",
+              0.03388198366753459
+            ]
+          ],
+          "corner_low": 0.03388198366753459,
+          "corner_high": 0.03388198366753459,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "is_taux_normal": 0.2275
+          },
+          "cost_aged_eur": 7594516024.22633,
+          "cost_frozen_eur": 6984369282.77359,
+          "delta_aged": 0.023457525887010888,
+          "delta_frozen": 0.021572937990053997,
+          "corners": [
+            [
+              "multiplicateur_macro = 0",
+              0.023457525887010888
+            ],
+            [
+              "multiplicateur_macro = 1",
+              0.023457525887010888
+            ]
+          ],
+          "corner_low": 0.023457525887010888,
+          "corner_high": 0.023457525887010888,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "is_taux_normal": 0.2375
+          },
+          "cost_aged_eur": 4219305485.441467,
+          "cost_frozen_eur": 3880324635.9806824,
+          "delta_aged": 0.01303236010487363,
+          "delta_frozen": 0.011985334589875496,
+          "corners": [
+            [
+              "multiplicateur_macro = 0",
+              0.01303236010487363
+            ],
+            [
+              "multiplicateur_macro = 1",
+              0.01303236010487363
+            ]
+          ],
+          "corner_low": 0.01303236010487363,
+          "corner_high": 0.01303236010487363,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "is_taux_normal": 0.2475
+          },
+          "cost_aged_eur": 844021534.6968529,
+          "cost_frozen_eur": 776212475.177002,
+          "delta_aged": 0.0026069675718884966,
+          "delta_frozen": 0.002397522656111706,
+          "corners": [
+            [
+              "multiplicateur_macro = 0",
+              0.0026069675718884966
+            ],
+            [
+              "multiplicateur_macro = 1",
+              0.0026069675718884966
+            ]
+          ],
+          "corner_low": 0.0026069675718884966,
+          "corner_high": 0.0026069675718884966,
+          "meets_target": false
+        }
+      ],
+      "candidates": [],
+      "excluded": [],
+      "closest": {
+        "knobs": {
+          "is_taux_normal": 0.2475
+        },
+        "cost_aged_eur": 844021534.6968529,
+        "cost_frozen_eur": 776212475.177002,
+        "delta_aged": 0.0026069675718884966,
+        "delta_frozen": 0.002397522656111706,
+        "corners": [
+          [
+            "multiplicateur_macro = 0",
+            0.0026069675718884966
+          ],
+          [
+            "multiplicateur_macro = 1",
+            0.0026069675718884966
+          ]
+        ],
+        "corner_low": 0.0026069675718884966,
+        "corner_high": 0.0026069675718884966,
+        "meets_target": false
+      },
+      "indices": {
+        "knobs": {
+          "is_taux_normal": 0.2475
+        },
+        "delta_aged": 0.0026069675718884966,
+        "absent": {
+          "rétroaction": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'contribution_sociale_is': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cebge': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}",
+          "bande": "Comportement non demandé : seul le chiffre mécanique est porté.",
+          "θ": "Vue mécanique : les θ sont listés parce que la requête les nomme, mais aucun canal de comportement ne les lit."
+        },
+        "closed": {
+          "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+          "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+          "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+          "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244).",
+          "rétroaction PIB → recettes": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'contribution_sociale_is': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cebge': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}",
+          "multiplicateur macro": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'impot_societes': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'contribution_sociale_is': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\", 'cebge': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}"
+        },
+        "rows": [
+          {
+            "key": "revenu_disponible_deciles",
+            "pour": "Les gens",
+            "label": "Revenu disponible, par décile de niveau de vie",
+            "unit": "EUR par ménage et par an",
+            "stage": "mécanique",
+            "source": "population, passe de la première année chiffrée",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun décile chiffré par la passe",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "revenu_disponible_reel",
+            "pour": "Les gens",
+            "label": "Revenu disponible brut réel des ménages (pouvoir d'achat)",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4, au centre",
+            "theta": [],
+            "note": "Contient le choc lui-même, en revenu pour l'IR et la CSG, en prix pour la TVA et les cotisations employeurs. Ne s'ajoute pas aux déciles.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun instrument de la réforme n'a cette ligne dans Mésange",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "consommation",
+            "pour": "Les gens",
+            "label": "Consommation des ménages, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Proportionnelle au multiplicateur à θ : négative si le multiplicateur l'est à θ = 0.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun instrument de la réforme n'a cette ligne dans Mésange",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_smic",
+            "pour": "Les gens",
+            "label": "Emploi au voisinage du SMIC",
+            "unit": "emplois",
+            "stage": "comportement",
+            "source": "C2, élasticité de l'emploi au coût du travail",
+            "theta": [
+              "employment_elasticity_smic"
+            ],
+            "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Comportement non demandé : le canal ne tourne pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_marchand",
+            "pour": "Les gens",
+            "label": "Emploi salarié marchand",
+            "unit": "milliers d'ETP",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Des équivalents temps plein, proportionnels au multiplicateur à θ (D-059). Ne s'additionne pas à l'emploi de C2.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun instrument de la réforme n'a cette ligne dans Mésange",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "offre_de_travail",
+            "pour": "Les gens",
+            "label": "Revenus d'activité bruts que déplacent les heures",
+            "unit": "EUR par an",
+            "stage": "comportement",
+            "source": "C7, offre de travail (Bargain, Orsini et Peichl)",
+            "theta": [
+              "labour_supply_married_women",
+              "labour_supply_married_men",
+              "labour_supply_single_women",
+              "labour_supply_single_men"
+            ],
+            "note": "Les heures valorisées au salaire : l'article ne sépare pas heures et participants, et l'indice non plus.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Comportement non demandé : le canal ne tourne pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "investissement_entreprises",
+            "pour": "Les entreprises",
+            "label": "Investissement des entreprises non financières, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Un accélérateur, proportionnel au multiplicateur à θ ; hors investissement public et des ménages.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "aucun instrument de la réforme n'a cette ligne dans Mésange",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "pib_is",
+            "pour": "Les entreprises",
+            "label": "PIB, effet du taux normal d'IS",
+            "unit": "% d'écart de PIB",
+            "stage": "méta-analyse",
+            "source": "Gechert et Heimberger, méta-analyse de 441 estimations (D-246)",
+            "theta": [
+              "is_croissance_pib"
+            ],
+            "note": "Rampe de dix ans sur la croissance. Hors de la trajectoire de dette : l'IS n'a pas de boucle vers les recettes, et un PIB sans elle serait la moitié d'une variante (D-218).",
+            "available": true,
+            "values": {
+              "2026": 0.002362500000000002,
+              "2027": 0.004725000000000004,
+              "2028": 0.007087500000000007,
+              "2029": 0.009450000000000009,
+              "2030": 0.01181250000000001,
+              "2031": 0.014175000000000014,
+              "2032": 0.016537500000000014,
+              "2033": 0.018900000000000017,
+              "2034": 0.02126250000000002,
+              "2035": 0.02362500000000002
+            },
+            "box": {
+              "2026": [
+                -2.4999999999999872e-05,
+                0.004750000000000004
+              ],
+              "2027": [
+                -4.9999999999999745e-05,
+                0.009500000000000008
+              ],
+              "2028": [
+                -7.499999999999961e-05,
+                0.014250000000000013
+              ],
+              "2029": [
+                -9.999999999999949e-05,
+                0.019000000000000017
+              ],
+              "2030": [
+                -0.00012499999999999935,
+                0.02375000000000002
+              ],
+              "2031": [
+                -0.00014999999999999923,
+                0.028500000000000025
+              ],
+              "2032": [
+                -0.0001749999999999991,
+                0.03325000000000003
+              ],
+              "2033": [
+                -0.00019999999999999898,
+                0.038000000000000034
+              ],
+              "2034": [
+                -0.00022499999999999886,
+                0.04275000000000004
+              ],
+              "2035": [
+                -0.0002499999999999987,
+                0.04750000000000004
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Rampe de dix ans : après t années, l'écart de PIB vaut l'effet sur la croissance de la ligne à θ, fois les points de baisse, fois t, tenu après dix ans. Convention de ce projet sur la conversion des auteurs (p. 31), pas un scénario de persistance de Mésange.",
+              "Hors de la trajectoire de dette : ni dans les recettes ni au dénominateur. La boucle de l'IS est refusée (M0, R2), et D-218 ne donne aucun effet macro à un instrument sans boucle, pas même sur le PIB.",
+              "À court terme, la méta-analyse dit une baisse « even less growth enhancing » (p. 21) ; la rampe ne le suit pas, et sa première année est plus favorable que ce modérateur.",
+              "International : 42 études ; deux estimations sur trois portent sur des pays de l'OCDE seulement (tableau 1, p. 11), aucune étude n'est propre à la France ; études publiées de 1997 à 2019 (annexe A, p. 28)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_fiscale_production",
+            "pour": "Les entreprises",
+            "label": "Charge fiscale de production",
+            "unit": "% de la valeur ajoutée",
+            "stage": "couche entreprises",
+            "source": "panneau de la phase 8",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Panneau de la phase 8 (`impots.reindustrialisation`) : il rapporte la charge à la valeur ajoutée sur un périmètre lu dans une table générée à part, que la trajectoire ne lit pas. L'indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "creations_societes",
+            "pour": "Les startups",
+            "label": "Créations de sociétés",
+            "unit": "points de taux de création",
+            "stage": "couche entreprises",
+            "source": "C8, rapport IPP n° 47 (D-221)",
+            "theta": [
+              "firm_creation_profit_tax"
+            ],
+            "note": "Un nombre attend le stock de sociétés au manifeste.",
+            "available": true,
+            "values": {
+              "1-6": 0.04311100000000004
+            },
+            "box": {
+              "1-6": [
+                0.0,
+                0.07759980000000007
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Indice illustratif : effet relatif entre secteurs, étendu à toute l'économie, que l'étude n'identifie pas au niveau national et ne sépare pas du PFU. Moyenne des six premières années ; sociétés seules, hors entreprises individuelles et auto-entrepreneurs.",
+              "« 1-6 » : moyenne des six premières années après la baisse, d'un effet encore croissant en fin de période (IPP n° 47, années 2017 à 2022)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "depense_rd",
+            "pour": "Les entreprises",
+            "label": "Dépense de R&D",
+            "unit": "EUR de R&D",
+            "stage": "couche entreprises",
+            "source": "C9, rapport IPP n° 22 (D-222)",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Le CIR reste hors de la chaîne : sa créance, induite comprise, n'est pas la recette d'une année, et ses boutons y sont refusés (D-222, D-244). La R&D de C9 se lit sur `/entreprises/simulate`.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "solde_primaire",
+            "pour": "L'État",
+            "label": "Solde primaire, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": -0.00027390971611418696,
+              "2027": -0.00027390971611418696,
+              "2028": -0.00027390971611418696,
+              "2029": -0.00027390971611418696,
+              "2030": -0.00027390971611418696,
+              "2031": -0.00027390971611418696,
+              "2032": -0.00027390971611418696,
+              "2033": -0.00027390971611418696,
+              "2034": -0.00027390971611418696,
+              "2035": -0.00027390971611418696
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "dette",
+            "pour": "L'État",
+            "label": "Dette, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0002739097161141846,
+              "2027": 0.00054479591665757,
+              "2028": 0.0008126919763000728,
+              "2029": 0.0010776309013103003,
+              "2030": 0.0013396453336209646,
+              "2031": 0.0015987675548514435,
+              "2032": 0.0018550294902852649,
+              "2033": 0.002108462712802295,
+              "2034": 0.002359098446769625,
+              "2035": 0.0026069675718884966
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_interets",
+            "pour": "L'État",
+            "label": "Charge d'intérêts de la dette supplémentaire",
+            "unit": "pts du PIB de référence",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0,
+              "2027": 5.006064536571393e-06,
+              "2028": 9.95687030288211e-06,
+              "2029": 1.4853027265437463e-05,
+              "2030": 1.96951386577095e-05,
+              "2031": 2.4483801054458723e-05,
+              "2032": 2.9219604445235328e-05,
+              "2033": 3.390313230706922e-05,
+              "2034": 3.8534961676357546e-05,
+              "2035": 4.311566321995878e-05
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          }
+        ]
+      }
+    }
+  ]
+}

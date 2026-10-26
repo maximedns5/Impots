@@ -665,7 +665,14 @@ def _dividend_inputs(request: Any, households: Any) -> dict[str, Any]:
     reform leaves the PFU alone, and no base when the run did not impute capital income:
     the channel then says it was not computed, rather than pricing a response on nothing.
     Read on the households rather than the aggregate, whose totals are a closed list of
-    instruments that the dividends, a base and not a levy, do not belong to."""
+    instruments that the dividends, a base and not a levy, do not belong to.
+
+    A household the CDHR holds, before or after the reform, is left out of the base and
+    named apart (D-250): the CDHR tops its tax up to 20 % of its RFR, PFU included, so a
+    PFU cut is taken back and its net-of-tax rate does not move. A run without the row —
+    a year before 2025 — has none to leave out."""
+    import polars as pl
+
     from impots.behavioural import channels
     from impots.behavioural.store import load as load_store
     from impots.population import capital as capital_module
@@ -674,14 +681,20 @@ def _dividend_inputs(request: Any, households: Any) -> dict[str, Any]:
         return {}
     if households is None or "dividendes" not in households.columns:
         return {}
-    base = float((households["dividendes"] * households["weight"]).sum())
-    if base <= 0:
+    weighted = households["dividendes"] * households["weight"]
+    if float(weighted.sum()) <= 0:
         return {}
+    held = pl.lit(False)
+    for column in ("cdhr", "cdhr_reform"):
+        if column in households.columns:
+            held = held | (pl.col(column) != 0)
+    is_held = households.select(held.alias("held"))["held"]
     levies = capital_module.social_levy_rate(request.year)
     before = capital_module.pfu_rate(request.year)
     after = request.reform.pfu_taux if request.reform.pfu_taux is not None else before
-    return {"dividend_base_eur": base, "levy_rate_baseline": before + levies,
-            "levy_rate_reform": after + levies}
+    return {"dividend_base_eur": float(weighted.filter(~is_held).sum()),
+            "dividend_base_cdhr_eur": float(weighted.filter(is_held).sum()),
+            "levy_rate_baseline": before + levies, "levy_rate_reform": after + levies}
 
 
 def _labour_inputs(request: Any, frame: Any, agg: Any, households: Any) -> dict[str, Any]:
@@ -1561,8 +1574,7 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             macro_store=indices_store, macro_reason=indices_reason, theta=theta,
             store=store, reform=request.reform, mechanical=-first.cost,
             inputs=first.inputs, year=year,
-            firm_reason=(indices_module.FIRM_PENDING if _firm_part(request.firm_reform)
-                         else indices_module.FIRM_LAYER),
+            firm_reform=(request.firm_reform if _firm_part(request.firm_reform) else None),
             is_rate_change=firm_system.normal_rate_change_points(request.firm_reform,
                                                                  year))
         side = len(results) > 1

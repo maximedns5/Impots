@@ -240,9 +240,7 @@ def run(request: ExplorationRequest, *, price: Callable[..., Priced],
                 macro_store=macro_store, macro_reason=MACRO_UNREAD,
                 theta=hypotheses.theta, store=hypotheses.store, reform=reform,
                 mechanical=-aged.cost, inputs=aged.inputs, year=first,
-                firm_reason=(indices_module.FIRM_PENDING
-                             if firm_of(request.firm_base, knobs) is not None
-                             else indices_module.FIRM_LAYER),
+                firm_reform=firm_of(request.firm_base, knobs),
                 is_rate_change=firm_system.normal_rate_change_points(
                     firm_of(request.firm_base, knobs), first))
             return {"knobs": dict(knobs), "delta_aged": nearest["delta_aged"],

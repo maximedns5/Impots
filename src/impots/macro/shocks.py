@@ -62,6 +62,9 @@ EXIT_THRESHOLD_KNOBS = ("allegement_general_plafond",)
 
 INSTRUMENT_MAP = {
     "ir": "impot_sur_le_revenu",
+    # Levied with the income tax, on the same declaration, from 2025 (D-250): the
+    # variant reads it net of `ir`, so a PFU cut the CDHR takes back lends no impulse.
+    "cdhr": "impot_sur_le_revenu",
     "csg_imposable": "csg",
     "csg_deductible": "csg",
     "crds": "csg",
