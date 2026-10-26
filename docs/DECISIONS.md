@@ -19285,3 +19285,90 @@ l'étude et de l'API : 414 réussis. `ruff` et `ui/check.mjs` passent.
 - La CVAE, sur le chemin annuel, avec un bouton du barème entier.
 - L'autofinancement des baisses ciblées, qui attend le choix du propriétaire sur R5.
 - Les deux libellés de D-251.
+
+## D-253 — Le PFU rejoué avec les salaires déplacés : le signe de D-251 se retourne
+
+**Le fait.** Le rejeu préenregistré dans D-252 a tourné sur le commit de son
+préenregistrement, `80a7405`, en dix-sept minutes : quatre paquets et huit passes. La
+page `docs/PREDICTIF_ETUDE.md` le rend dans sa propre section, « Le PFU rejoué avec les
+salaires déplacés », après le menu élargi, gardée contre la dérive comme le reste.
+
+**Le résultat.** Δb 2035 à θ = ½, vue vieillie, en points de PIB, sans le déplacement
+(D-251) puis avec, et les coins sous zéro sur 32 avec le déplacement.
+
+| Paquet | « éteint », D-251 | avec | « tenu », D-251 | avec | coins, « tenu » |
+|---|---|---|---|---|---|
+| PFU à 11,8 % | +0,075 | +0,158 | −0,034 | +0,049 | 13 |
+| PFU à 10,8 % | +0,169 | +0,315 | −0,040 | +0,106 | 12 |
+| PFU à 9,8 % | +0,254 | +0,464 | −0,047 | +0,163 | 12 |
+| PFU à 8,8 % | +0,351 | +0,610 | −0,036 | +0,223 | 12 |
+
+- En vue figée, de +0,148 à +0,563 sous « éteint », de +0,047 à +0,206 sous « tenu ».
+- Les coûts sont ceux du menu élargi à l'euro, de 0,69 à 2,46 Md€.
+- Aucun paquet ne tient la cible à θ = ½, sous aucune persistance et dans aucune vue.
+- Sous « tenu », les coins sous zéro ont tous le multiplicateur à 1 ; 5, puis 4 d'entre
+  eux ont le déplacement à son haut.
+- Sous « éteint », seuls les 2 coins de D-251 au premier paquet, le déplacement à 0.
+
+**Contre le pronostic.** Les cinq points tiennent, au millième.
+1. Sous « tenu », de +0,05 à +0,22 en vue vieillie, de +0,05 à +0,21 en vue figée : les
+   chiffres sont ceux annoncés, +0,049, +0,106, +0,163, +0,223.
+2. Sous « éteint », de +0,16 à +0,61, et de +0,15 à +0,56 en vue figée.
+3. Les coins : 13 puis 12 sous zéro sous « tenu », 5 puis 4 avec le déplacement à son
+   haut ; sous « éteint », les 2 de D-251.
+4. Le contrôle : aux seize coins où le déplacement vaut 0, le rejeu redonne ceux du menu
+   élargi à l'écart nul, et ses coûts à l'euro.
+5. Les indices de §7 du paquet le plus proche, le PFU à 11,8 %, sont ceux de D-251 :
+   déciles, revenu disponible réel, consommation, emploi, investissement. Seules les
+   lignes de la chaîne, le solde, la dette et la charge d'intérêts, changent : elles sont
+   l'écart lui-même.
+
+**Ce que la réponse veut dire.** Sous ces hypothèses, aucune baisse du menu ne fait plus
+baisser la dette en 2035 à θ = ½. D-251 disait le PFU la seule exception, de quelques
+centièmes de point, sur un signe que le salaire déplacé pouvait retourner. Il le
+retourne. À un point de baisse, les propriétaires cessent de se verser 0,37 Md€ de
+salaire, qui reprennent 0,27 Md€ à C10, quand C10 en rendait 0,37 : un quart seulement de
+la recette des dividendes induits reste.
+- La réponse dépend toujours de θ, et d'abord du multiplicateur : les coins où il vaut 1
+  font encore baisser la dette, à chaque paquet sous « tenu ».
+- Ce que le chiffre laisse hors de lui va dans les deux sens. Les plus-values futures et
+  la boucle de la variante de l'IR, qui rend sans doute trop, vers une dette plus haute.
+  Un gérant non salarié, qui cotise moins, et les droits à retraite des cotisations
+  perdues, vers une dette plus basse. La page le dit à côté du chiffre.
+- Le haut du déplacement, 0,519, et son centre sont une construction du projet sur le
+  tableau 2 B ; les auteurs ne calculent aucun rapport (D-252).
+
+L'étude le montre sans le trancher, et ne recommande rien.
+
+**Les tests.** `scripts/write_predictif_etude.py` lit `etude/phase11_salaires/` et le
+rapport du rejeu, et rend la section. Les parties d'avant sont inchangées, à l'octet. Le
+chargement refuse :
+- un rejeu dont la requête n'est pas celle du PFU du menu élargi, nom, titre et question
+  exceptés, ou d'un menu élargi que le dépôt n'a pas ;
+- un rejeu sans requête, ou sans rapport, ou une requête de plus ;
+- une requête retouchée après sa passe ;
+- un rapport muet sur le lieu de sa passe ;
+- un rapport dont les coins ne font pas varier le déplacement ;
+- un coin sans pendant dans le menu, ou des persistances dans un autre ordre.
+
+Un contrôle qui ne redonne pas le menu n'est pas refusé : la page le dit, avec son écart.
+Une garde écrite d'abord, un paquet du rejeu que le menu n'aurait pas, est retirée :
+inatteignable, une requête étant une grille dont le schéma veut chaque paquet au rapport.
+
+Dans `tests/test_predictif_etude.py`, treize cas nouveaux :
+- la section rendue à part, avec le Δb du menu à côté de chaque verdict ;
+- le contrôle qui ne redonne pas le menu ;
+- onze refus.
+
+Le test de l'étude commitée tient aussi le rejeu, qui redonne le menu.
+
+Treize mutations écrites à la main du script, une par refus et par lecture, ont toutes
+été tuées. Les tests de l'étude, des dividendes, de la CDHR et des explorations : 122
+réussis. `ruff` et `ui/check.mjs` passent.
+
+**Ce qui reste.**
+- La CVAE, sur le chemin annuel, avec un bouton du barème entier.
+- L'autofinancement des baisses ciblées, qui attend le choix du propriétaire sur R5.
+- Les deux libellés de D-251.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- La porte de M6 : le `make full` du propriétaire.
