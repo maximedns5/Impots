@@ -310,6 +310,7 @@
     }
    ],
    "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
     "dividend_elasticity_firm_owners": 0.5,
     "dividend_elasticity_other_holders": 0.5,
     "dividend_share_firm_owners": 0.5,
@@ -546,6 +547,7 @@
     }
    ],
    "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
     "dividend_elasticity_firm_owners": 0.5,
     "dividend_elasticity_other_holders": 0.5,
     "dividend_share_firm_owners": 0.5,
@@ -733,6 +735,7 @@
     }
    ],
    "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
     "dividend_elasticity_firm_owners": 0.5,
     "dividend_elasticity_other_holders": 0.5,
     "dividend_share_firm_owners": 0.5,

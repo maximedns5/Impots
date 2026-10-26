@@ -20295,3 +20295,70 @@ fichier.
 - Les deux libellés de D-251.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - Le `make full` du propriétaire.
+
+## D-264 — Les deux libellés de D-251 : le comportement demandé, et la couche entreprises
+
+**Le fait.** D-251 avait relevé deux libellés faux dans les rapports, venus de M1 (D-244),
+et les avait laissés à leur propre entrée, pour ne pas changer le texte de rapports déjà
+tirés. Ils sont corrigés dans le code. Les rapports tirés gardent le texte de leur commit,
+et la page de l'étude, qui les rend, ne change pas.
+- **Le comportement demandé pour une réforme des seules entreprises.** La chaîne disait
+  « Comportement non demandé : seul le chiffre mécanique est porté », alors qu'il l'était.
+  Aucun canal des ménages ne lit un bouton des entreprises, et ceux de la couche
+  entreprises n'entrent pas dans les recettes : c'est pour cela que la bande manque. Le
+  même faux libellé revenait dans la ligne θ, « Vue mécanique », et dans les indices de C2
+  et de C7, « Comportement non demandé : le canal ne tourne pas ».
+- **La raison des indices des entreprises pour une réforme des ménages.** Elle disait que
+  la trajectoire « chiffre les réformes de la population » : vrai de cette réforme, faux de
+  la chaîne depuis D-244. Elle dit désormais que la réforme ne règle aucun bouton des
+  entreprises, et que l'indice ne se calcule qu'avec un.
+
+**Le code.** Seule la passe de la première année sait qu'une réforme est des seules
+entreprises et que le comportement était demandé : elle le dit, `behaviour_asked`. Le
+drapeau passe par `Priced` et la trajectoire de l'explorateur, par `ReformCosts` dans la
+chaîne, et par `indices.compute`. Il ne vaut que pour une réforme des seules entreprises :
+une réforme des ménages, ou mixte, porte les entrées de ses canaux.
+- La chaîne : `NO_HOUSEHOLD_CHANNEL` pour la bande et sa tranche,
+  `THETA_NO_HOUSEHOLD_CHANNEL` pour la ligne θ.
+- Les indices : `NO_HOUSEHOLD_CHANNEL` pour l'emploi au voisinage du SMIC et l'offre de
+  travail, et `FIRM_LAYER` reformulé.
+
+Sans comportement demandé, rien ne change : « non demandé » reste le libellé d'une requête
+qui ne l'a pas demandé.
+
+**Une régression de la branche, corrigée.** `reports/exemple_predictif.json` et
+`docs/PREDICTIF_EXEMPLE.md` ne listaient pas la ligne ouverte de C11 (D-259). Le test qui
+les tient, `tests/test_predictif_exemple.py`, ne tourne qu'avec les comptes APU et le
+document de Mésange ; il échouait depuis D-259, et n'avait pas été lancé alors. L'exemple
+est rendu de nouveau depuis sa première année, sans passe de population. Seule sa liste
+des θ gagne la ligne ; ses chiffres sont ceux d'avant, une baisse de l'IR n'ouvrant pas
+C11.
+
+**Les tests.**
+- Dans `tests/test_predictif_entreprises.py`, trois cas :
+  - la passe dit le comportement demandé pour une réforme des seules entreprises, jamais
+    pour une réforme mixte ;
+  - `/predictif/simulate` le dit dans la bande, sa tranche, la ligne θ et les indices de
+    C2 et de C7, et garde « non demandé » quand il ne l'est pas ;
+  - la commande `impots exploration` le porte de la passe au rapport.
+- Dans `tests/test_indices.py`, la raison de la couche entreprises.
+
+Les quatre ont échoué sur le code d'avant, deux d'abord faute des constantes nouvelles.
+Douze mutations écrites à la main, une par maillon, ont toutes été tuées : la passe,
+deux fois, la bande, sa tranche, la ligne θ, l'indice, `compute`, l'API, deux fois, la
+trajectoire, `Priced` et la recherche.
+
+Les tests de la chaîne, de l'API prédictive, des commandes, du chemin annuel, de
+l'exemple, de l'étude, des explorations, de la recherche et de ses indices, du
+comportement, de θ, de la charte, des dépendances, de la CVAE, des scénarios, des
+entreprises et des indices : 731 réussis et 4 sautés. `ruff` passe.
+
+**Ce qui reste.**
+- Le chemin annuel refuse une réforme des seules entreprises quand le comportement est
+  demandé : ses années n'ont pas les entrées des canaux, et le refus le dit. Il pourrait
+  la chiffrer en disant ce que dit désormais la chaîne.
+- La boucle de la variante ciblée de Mésange, et l'impôt sur le revenu des emplois créés :
+  ce qui pourrait encore retourner la réponse de la courbe.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- Le `make full` du propriétaire.

@@ -29,8 +29,8 @@ from impots.dette import reference
 from impots.entreprises import aggregate as firm_aggregate
 from impots.entreprises import runner as firm_runner
 from impots.entreprises.reforms import FirmReformSpec
+from impots.predictif import chaine, recherche
 from impots.predictif import indices as indices_module
-from impots.predictif import recherche
 from impots.predictif.exploration import Priced
 from macro_cases import synthetic_macro_store
 
@@ -127,6 +127,24 @@ def test_the_two_layers_add_up_and_the_households_keep_their_loop(monkeypatch,
     assert first.note.startswith("ménages")
 
 
+def test_a_firm_reform_alone_says_whether_behaviour_was_asked(monkeypatch) -> None:
+    """D-251's first label (D-264): the seam says behaviour was asked for a firm reform
+    alone, which no household channel reads; never for a household reform, whose pass
+    carries what the channels read."""
+    monkeypatch.setattr(main, "_price_households", _no_household_pass)
+    asked = main._price_first_year(main._first_year_request(ReformSpec(), 2026, True),
+                                   uprating=None, macro=False, firm_reform=IS_24)
+    unasked = main._price_first_year(main._first_year_request(ReformSpec(), 2026, False),
+                                     uprating=None, macro=False, firm_reform=IS_24)
+    assert asked.behaviour_asked is True and asked.inputs is None
+    assert unasked.behaviour_asked is False
+    monkeypatch.setattr(main, "_price_households", _households(5e9))
+    mixed = main._price_first_year(
+        main._first_year_request(ReformSpec(decote_taux=0.4), 2026, True),
+        uprating=None, macro=False, firm_reform=IS_24)
+    assert mixed.behaviour_asked is False
+
+
 def test_a_household_reform_goes_through_the_call_it_always_did(monkeypatch) -> None:
     """No firm part, no keyword: the seam's stubs in every other test are called exactly
     as before, and an empty firm reform is no firm reform."""
@@ -175,6 +193,33 @@ def test_a_firm_reform_has_its_debt_path_and_says_the_loop_absent(chain) -> None
     assert firm_rows["depense_rd"]["reason"] == indices_module.CIR_OUT_OF_CHAIN
     assert (firm_rows["charge_fiscale_production"]["reason"]
             == indices_module.PANEL_OUT_OF_CHAIN)
+
+
+def test_behaviour_asked_for_a_firm_reform_is_not_said_unasked(chain) -> None:
+    """D-251's first label (D-264): behaviour asked for a firm reform alone is not « non
+    demandé ». No household channel reads a firm knob, and the firm layer's channels
+    enter no receipts: the band, its θ and the household channels' indices say that.
+    Unasked, they say unasked, as before."""
+    def posted(behavioural: bool) -> dict:
+        response = chain.post("/predictif/simulate", json={
+            **PAYLOAD, "firm_reform": {"is_taux_normal": 0.24},
+            "behavioural": behavioural})
+        assert response.status_code == 200, response.text
+        return response.json()
+
+    def said(body: dict) -> tuple:
+        rows = {i["key"]: i for i in body["indices"]}
+        band = next(s for s in body["slices"] if s["source"] == "bande")
+        return (body["absent"]["bande"], band["reason"], body["absent"]["θ"],
+                rows["emploi_smic"]["reason"], rows["offre_de_travail"]["reason"])
+
+    assert said(posted(True)) == (
+        chaine.NO_HOUSEHOLD_CHANNEL, chaine.NO_HOUSEHOLD_CHANNEL,
+        chaine.THETA_NO_HOUSEHOLD_CHANNEL, indices_module.NO_HOUSEHOLD_CHANNEL,
+        indices_module.NO_HOUSEHOLD_CHANNEL)
+    assert said(posted(False)) == (
+        chaine.ABSENT_BAND, chaine.ABSENT_BAND, chaine.THETA_UNREAD,
+        indices_module.NO_BEHAVIOUR, indices_module.NO_BEHAVIOUR)
 
 
 @pytest.mark.parametrize("payload, needle", [
@@ -369,6 +414,38 @@ def test_the_explorer_command_gives_the_firm_pass_its_growth(monkeypatch,
     assert seen and all(f is not None for _, f, _ in seen)
     assert {(g.real, g.prices) for _, _, g in seen} == {
         (payload["growth"]["real"], payload["growth"]["prices"])}
+
+
+def test_the_explorer_says_behaviour_asked_for_a_firm_search(monkeypatch,
+                                                             tmp_path) -> None:
+    """D-251's first label (D-264), in the explorer: a firm search with behaviour asked
+    reports the band and the household channels' indices as unread by the reform, not
+    as unasked — from the pass, through `Priced`, to the report."""
+    import json
+
+    from impots.population import cli
+
+    def stub(request, *, uprating, macro=False, view="vieillie", firm_reform=None,
+             growth=None):
+        return SimpleNamespace(cost=1e9, inputs=None, impulse=None, uncovered={},
+                               deciles=[], view=view, note="",
+                               behaviour_asked=request.behavioural)
+
+    monkeypatch.setattr(main, "_price_first_year", stub)
+    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+    monkeypatch.setattr(recherche, "code_state", lambda: ("c" * 40, False))
+    payload = _request(bounds=SEARCH_IS, macro=False, behavioural=True)
+    path = tmp_path / "requete.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    assert cli.main(["exploration", str(path), "--out-dir", str(tmp_path)]) == 0
+    report = json.loads((tmp_path / f"exploration_{payload['name']}.json").read_text(
+        encoding="utf-8"))
+    for search in report["searches"]:
+        indices = search["indices"]
+        rows = {r["key"]: r for r in indices["rows"]}
+        assert indices["absent"]["bande"] == chaine.NO_HOUSEHOLD_CHANNEL
+        assert rows["emploi_smic"]["reason"] == indices_module.NO_HOUSEHOLD_CHANNEL
 
 
 def test_a_firm_pass_in_a_view_that_does_not_exist_is_refused() -> None:

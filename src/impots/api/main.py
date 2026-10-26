@@ -1405,7 +1405,8 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
     A FIRM REFORM (`firm_reform`, PHASE11_SPEC §3) adds the firm layer's cost for the
     year, and its deltas join `uncovered`: no Mésange variant reads them. `layers` then
     names each layer's cost. A firm reform alone runs no population pass at all: the
-    households are untouched, their cost is zero, and nothing of theirs is read.
+    households are untouched, their cost is zero, and nothing of theirs is read; with
+    behaviour asked, `behaviour_asked` says so, for no household channel reads it (D-264).
     """
     from types import SimpleNamespace
 
@@ -1427,7 +1428,8 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
                    if macro else {}),
         view=view, note=" ".join(n for n in (households.note, firm.note) if n),
         deciles=households.deciles,
-        layers={"menages": households.cost, "entreprises": firm.cost})
+        layers={"menages": households.cost, "entreprises": firm.cost},
+        behaviour_asked=bool(request.behavioural) and request.reform.is_empty())
 
 
 def _price_households(request: PopulationSimulateRequest, *, uprating: Any,
@@ -1600,7 +1602,8 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             by_year={year: first.cost}, carry=chaine.CARRY,
             behavioural=({year: at} if at is not None else None),
             impulses=({year: first.impulse} if first.impulse is not None else None),
-            uncovered=dict(first.uncovered))
+            uncovered=dict(first.uncovered),
+            behaviour_asked=getattr(first, "behaviour_asked", False))
         results = [chaine.run(start, horizon=request.horizon, costs=costs,
                               spending=spending, growth=growth, rate=rate, theta=theta,
                               securities=securities, store=store, persistence=persistence,
@@ -1615,7 +1618,8 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             inputs=first.inputs, year=year,
             firm_reform=(request.firm_reform if _firm_part(request.firm_reform) else None),
             is_rate_change=firm_system.normal_rate_change_points(request.firm_reform,
-                                                                 year))
+                                                                 year),
+            behaviour_asked=getattr(first, "behaviour_asked", False))
         side = len(results) > 1
         # Side by side, the chain-stage indices (balance, debt, interest) belong to each
         # path; the response lists them as such rather than pick one path's.

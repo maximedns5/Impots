@@ -1,6 +1,13 @@
 # State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M6)
 
-The eighth 2026-10-26 update adds D-263: the floor replayed with C11 has run on its
+The ninth 2026-10-26 update adds D-264: D-251's two labels. A firm reform alone with
+behaviour asked no longer reads « Comportement non demandé » in the band, its θ line and
+the C2 and C7 indices: the first-year pass says behaviour was asked, and the chain and the
+indices say no household channel reads a firm knob. The firm-layer indices of a household
+reform say the reform sets no firm knob, not that the path prices only the population's.
+Reports already drawn keep their text. The predictive example, which missed C11's open
+row since D-259, is re-rendered: its θ list alone changes. Twelve hand mutants killed.
+The eighth 2026-10-26 update added D-263: the floor replayed with C11 has run on its
 preregistration commit, `2002304`, and the page renders it in its own section after the
 `t_delta`'s, which is unchanged to the byte. Self-financing shrinks the curve's answer for
 the floor too without turning it: Δb is 0.6679 times the curve's, +0.157 to +1.573 point
