@@ -49,9 +49,11 @@ class RunResult:
     guards: dict[str, Any] = field(default_factory=dict)
     persons: pl.DataFrame | None = None
     """One row per person of the run: `person_id`, `household_id`,
-    `salaire_brut_annuel`, then `salaire_super_brut` and, with a reform,
+    `salaire_brut_annuel`, `weight`, then `salaire_super_brut` and, with a reform,
     `salaire_super_brut_reform`. Each person's own labour cost, which C2 reads: a
     household's would lend an earner at the SMIC the cut of a partner at 3 SMIC (D-258).
+    And each person's own weight in the run's frame, as the quick tier's subsample scales
+    it: the household's mean would miscount members whose weights differ (D-255, D-266).
     """
 
 
@@ -472,7 +474,8 @@ def run(
 
     # Per person, in the frame's order, as the simulation was built. Already computed
     # for the registry's household row, so this reads openfisca's cache.
-    persons = frame.select("person_id", "household_id", "salaire_brut_annuel").with_columns(
+    persons = frame.select("person_id", "household_id", "salaire_brut_annuel",
+                           "weight").with_columns(
         pl.Series("salaire_super_brut",
                   built.calculate("salaire_super_brut", add=True).astype(np.float64)))
     columns: dict[str, np.ndarray] = dict(baseline_rows)

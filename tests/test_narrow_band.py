@@ -105,7 +105,7 @@ def _run(frame):
     import polars as pl
 
     persons = frame.select(
-        "person_id", "household_id", "salaire_brut_annuel",
+        "person_id", "household_id", "salaire_brut_annuel", "weight",
         pl.col("salaire_brut_annuel").alias("salaire_super_brut"),
         (pl.col("salaire_brut_annuel") + pl.col("move")).alias("salaire_super_brut_reform"))
     households = (
@@ -200,3 +200,36 @@ def test_the_wage_family_reads_each_earner_s_own_movement() -> None:
     assert flag.share == pytest.approx(400 / 1_400, rel=1e-9), (
         "an earner's movement is their own, not a share of their household's")
     assert not flag.flagged
+
+
+def test_the_wage_family_reads_each_earner_at_their_own_weight() -> None:
+    """D-266. Each earner counted at their household's weight, the mean of its members'.
+    Members' weights can differ, and the quick tier's subsample scales each by the same
+    factor, so the mean miscounts the heavier member and the lighter one (D-255).
+
+    Worked example, one household weighing 300 on average: an earner at a 2.25-SMIC
+    plafond weighing 360, whose labour cost falls 1 000 EUR, and a partner at 1.2 SMIC,
+    far below it, weighing 240, whose cost falls 1 000 EUR too. At their own weights,
+    360 000 of 600 000 come from inside the window: 60 %, flagged. At the household's
+    300 each, 50 %: under the bar.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.api.schemas import ReformSpec
+
+    smic = api_main._smic_annual(2024)
+    frame = pl.DataFrame({
+        "household_id": [0, 0],
+        "person_id": [0, 1],
+        "salaire_brut_annuel": [2.25 * smic, 1.2 * smic],
+        "weight": [360.0, 240.0],
+        "move": [-1_000.0, -1_000.0],
+    })
+    request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
+    flag = api_main._narrow_band(request, _run(frame))
+    assert flag.share == pytest.approx(0.6, rel=1e-9), (
+        "an earner must count at their own weight in the run, not their household's")
+    assert flag.flagged

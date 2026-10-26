@@ -435,13 +435,14 @@ deux corrections, elle disait 748 à 1 555 emplois et 0,9 à 1,9 %.
 proche du −0,5 du CAE, donnait quinze fois moins d'emplois par milliard : l'écart ne
 pouvait tenir à la seule source. Une passe de population l'a montré, il tenait d'abord à la
 chaîne, par deux défauts. C2 ne lisait que 15 % des salariés, ceux des ménages de la passe
-rapide, au poids de toute la population (D-256). Et il prêtait à chacun le changement du
-coût du travail de son ménage (D-258). Corrigé, C2 compte 5 348 emplois par milliard pour le
-plancher et 13 380 pour le `t_delta`. Le reste de l'écart au bas du CAE, un facteur 1,7, se
-décompose sur la passe : l'élasticité, −0,43 contre −0,5 ; les euros que le bouton porte
-au-dessus du SMIC ; le profil de C2, qui s'éteint à 2 SMIC. Au-delà, jusqu'au haut du CAE et
-au Trésor-Éco, c'est l'élasticité, donc la source : la marge intensive des survivants, non
-l'emploi total.
+rapide, au poids de toute la population (D-256) ; D-255 a trouvé le même défaut à part, et
+chiffrait ce seul correctif à 4 830 et 9 936 emplois par milliard. Et il prêtait à chacun
+le changement du coût du travail de son ménage (D-258). Corrigé, C2 compte 5 348 emplois par
+milliard pour le plancher et 13 380 pour le `t_delta`. Le reste de l'écart au bas du CAE, un
+facteur 1,7, se décompose sur la passe : l'élasticité, −0,43 contre −0,5 ; les euros que le
+bouton porte au-dessus du SMIC ; le profil de C2, qui s'éteint à 2 SMIC. Au-delà, jusqu'au
+haut du CAE et au Trésor-Éco, c'est l'élasticité, donc la source : la marge intensive des
+survivants, non l'emploi total.
 
 **La décision : aucune, et c'est au propriétaire.** Les lectures françaises de premier rang
 disent de 6 % à 60 %, de 1 % à M0 avant les corrections de C2, selon l'emploi qu'on

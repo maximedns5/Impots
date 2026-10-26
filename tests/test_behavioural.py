@@ -758,7 +758,7 @@ def _run(frame, cost_cut: float = 0.0):
 
     cut = pl.col("cut") if "cut" in frame.columns else pl.lit(cost_cut)
     persons = frame.select(
-        "person_id", "household_id", "salaire_brut_annuel",
+        "person_id", "household_id", "salaire_brut_annuel", "weight",
         pl.col("salaire_brut_annuel").alias("salaire_super_brut"),
         (pl.col("salaire_brut_annuel") * (1.0 - cut)).alias("salaire_super_brut_reform"))
     households = (
@@ -874,6 +874,93 @@ def test_c2_gives_each_earner_their_own_cost_change() -> None:
     ).central
     assert jobs == pytest.approx(4_300.0, rel=1e-9), (
         "an earner must respond to their own labour cost, not to their household's")
+
+def _employer_case(monkeypatch, persons: dict, households: dict) -> dict:
+    """C2's inputs off a hand-built run, its persons and its households, the SMIC at
+    20 000 € a year. The run's persons are its own since D-258: the households it priced,
+    each person at the weight the run gave them."""
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main
+
+    monkeypatch.setattr(main, "_smic_annual", lambda year: 20_000.0)
+    return main._employer_inputs(
+        SimpleNamespace(year=2026, reform=FakeReform(allegement_general_t_min=0.03)),
+        SimpleNamespace(persons=pl.DataFrame(persons), households=pl.DataFrame(households)),
+        SimpleNamespace(employer_contribution_delta=-1_000.0))
+
+
+def test_c2_counts_the_run_s_households_at_the_run_s_weights(monkeypatch) -> None:
+    """The pass priced 1 household of the frame's 3, and weighted it for all three: 300
+    against 100 in the frame. Its two earners, at 1,25 and 2 SMIC, each carry a rate of
+    −0,01, at 300: Σ w × Δc/c = −6. Earners of the households the pass never priced have
+    no rate, not a zero one; counted at 0 with the frame's weights they gave −2, a jobs
+    figure diluted by the subsample (D-255). The run's persons are its own (D-258): the
+    unpriced households are not in them."""
+    inputs = _employer_case(
+        monkeypatch,
+        persons={"person_id": [1, 2], "household_id": [1, 1],
+                 "salaire_brut_annuel": [25_000.0, 40_000.0], "weight": [300.0, 300.0],
+                 "salaire_super_brut": [50_000.0, 50_000.0],
+                 "salaire_super_brut_reform": [49_500.0, 49_500.0]},
+        households={"household_id": [1], "weight": [300.0]},
+    )
+    order = np.argsort(inputs["smic_multiple"])
+    assert inputs["smic_multiple"][order] == pytest.approx([1.25, 2.0])
+    assert inputs["relative_cost_change"][order] == pytest.approx([-0.01, -0.01])
+    assert inputs["earner_weights"][order] == pytest.approx([300.0, 300.0])
+    assert float(np.sum(inputs["earner_weights"] * inputs["relative_cost_change"])) \
+        == pytest.approx(-6.0)
+
+
+def test_c2_keeps_each_earner_s_weight_as_the_subsample_scales_it(monkeypatch) -> None:
+    """The subsample scales every member of a household by the same factor, the run's
+    household weight over the frame's mean (`runner.subsample`). Here 120 and 80, mean
+    100, at 300: 360 and 240, what the subsampled frame itself carries, and the run's
+    persons with it. The household's 300 for each would count one earner a sixth too few
+    and the other a quarter too many (D-255, D-256)."""
+    inputs = _employer_case(
+        monkeypatch,
+        persons={"person_id": [1, 2], "household_id": [1, 1],
+                 "salaire_brut_annuel": [25_000.0, 40_000.0], "weight": [360.0, 240.0],
+                 "salaire_super_brut": [50_000.0, 50_000.0],
+                 "salaire_super_brut_reform": [49_500.0, 49_500.0]},
+        households={"household_id": [1], "weight": [300.0]},
+    )
+    order = np.argsort(inputs["smic_multiple"])
+    assert inputs["earner_weights"][order] == pytest.approx([360.0, 240.0])
+
+
+def test_c2_s_weights_are_the_subsampled_frame_s(monkeypatch) -> None:
+    """Against `runner.subsample` itself, on a frame whose weights are skewed as PPS
+    draws them and unequal inside a household: the earners are those of the subsampled
+    frame, and their weights sum to what they weigh there."""
+    import polars as pl
+
+    from impots.population.runner import subsample
+
+    rng = np.random.default_rng(3)
+    ids = np.repeat(np.arange(200), 2)
+    frame = pl.DataFrame({
+        "household_id": ids,
+        "salaire_brut_annuel": rng.choice([0.0, 22_000.0, 35_000.0], size=ids.size),
+        "weight": np.repeat(rng.lognormal(5.0, 0.8, size=200), 2)
+        * rng.choice([0.8, 1.0, 1.2], size=ids.size),
+    })
+    sub = subsample(frame, 30).with_columns(person_id=pl.int_range(pl.len()))
+    # The run's persons as the runner builds them from the subsampled frame, each with
+    # their own weight and a labour cost that falls 1 %; its households at the mean.
+    persons = sub.with_columns(salaire_super_brut=pl.lit(50_000.0),
+                               salaire_super_brut_reform=pl.lit(49_500.0))
+    households = sub.group_by("household_id").agg(pl.col("weight").mean())
+    inputs = _employer_case(monkeypatch, persons.to_dict(as_series=False),
+                            households.to_dict(as_series=False))
+    earners = sub.filter(pl.col("salaire_brut_annuel") > 0)
+    assert len(inputs["earner_weights"]) == earners.height
+    assert float(inputs["earner_weights"].sum()) == pytest.approx(
+        float(earners["weight"].sum()), rel=1e-12)
 
 
 def test_the_reform_cache_keeps_a_bounded_number_of_files(tmp_path, monkeypatch):

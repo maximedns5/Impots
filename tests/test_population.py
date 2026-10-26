@@ -111,6 +111,20 @@ def test_nbptr_guard_holds_over_the_population(population: pl.DataFrame) -> None
     assert result.guards["nbptr_min"] >= 1.0
 
 
+def test_the_run_s_persons_carry_their_own_weight(population: pl.DataFrame) -> None:
+    """C2 and the narrow band read each earner at the weight the run gave them (D-266).
+    A household's members need not share one: the survey leaves 1.5 % of households
+    with unequal members, and the quick tier's subsample scales each member by the
+    same factor, so the household's mean would count some earners too few and others
+    too many (D-255). The run's persons carry the run frame's own weight, person by
+    person, in its order."""
+    result = run(population, 2024, tier="light")
+    persons = result.persons
+    assert persons is not None and "weight" in persons.columns
+    assert persons["person_id"].to_list() == population["person_id"].to_list()
+    assert persons["weight"].to_numpy() == pytest.approx(population["weight"].to_numpy())
+
+
 def test_no_nan_anywhere(population: pl.DataFrame) -> None:
     """Zero-income households make openfisca emit divide-by-zero RuntimeWarnings,
     which are expected noise. A NaN is not noise; it is how a wiring bug appears."""

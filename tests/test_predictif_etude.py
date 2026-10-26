@@ -91,6 +91,58 @@ def test_the_committed_page_is_what_the_script_renders(script) -> None:
     assert script.OUT.read_text(encoding="utf-8") == script.render(*script.study())
 
 
+def _shows_c2(report: dict) -> bool:
+    return any(row["key"] == "emploi_smic" and row["available"]
+               for search in report.get("searches", [])
+               for row in (search.get("indices") or {}).get("rows", []))
+
+
+def test_every_c2_figure_counted_before_d255_says_so(script) -> None:
+    """D-255, D-266. Every committed report that shows C2's jobs and ran before C2's fix
+    is named among the commits whose figure the page marks; each named commit is one of
+    them, so a mistyped hash cannot silence the note. The fix came twice: D-255 on main,
+    and before it the replays of D-256 to D-259, run with it on 2026-10-25. Those replays
+    are the rounds the page renders, so a report ran before the fix exactly when it is
+    not one of them; and no C2 figure on the committed page carries the note, every one
+    being a replay's."""
+    etudes = script.load()
+    courbe = script.load_courbe(etudes)
+    rendered = ({e["report"]["commit"] for e in etudes}
+                | {e["report"]["commit"] for e in courbe}
+                | {c["report"]["commit"] for c in script.load_complements(etudes)}
+                | {script.load_autofinancement(courbe, replay)["report"]["commit"]
+                   for replay in script.AUTOFINANCEMENT_MENU})
+    shown = {r["commit"] for r in (json.loads(p.read_text(encoding="utf-8"))
+                                   for p in script.REPORTS.rglob("exploration_*.json"))
+             if _shows_c2(r)}
+    before = shown - rendered
+    assert before and before == script.C2_BEFORE_D255
+    figures = [line for line in script.OUT.read_text(encoding="utf-8").splitlines()
+               if "| Emploi au voisinage du SMIC |" in line and "| absent :" not in line]
+    assert figures and not any(script.C2_NOTE in line for line in figures)
+
+
+@pytest.mark.parametrize("before", [True, False])
+def test_the_c2_note_follows_the_commit_of_the_pass(script, before: bool) -> None:
+    """The note is the pass's, not the page's: a report run after the fix shows C2's
+    figure as it is. And it is C2's: Mésange's jobs, beside it, never carry it."""
+    instrument = next(i for i in script.MENU if i.key == "allegements")
+    row = {"key": "emploi_smic", "pour": "Les gens", "label": "Emploi au voisinage du SMIC",
+           "unit": "emplois", "stage": "comportement", "available": True,
+           "values": {"2026": 227.0}, "box": {"2026": [170.0, 270.0]}}
+    other = {**row, "key": "emploi_marchand", "label": "Emploi salarié marchand",
+             "stage": "macro", "values": {"1": 5.8}, "box": None}
+    commit = min(script.C2_BEFORE_D255) if before else "f" * 40
+    report = {"commit": commit, "searches": [
+        {"indices": {"knobs": {instrument.knob: 3.5}, "rows": [row, other]}}]}
+    lines = script._indices({"instrument": instrument, "report": report}, 2035)
+    line = next(line for line in lines if "Emploi au voisinage du SMIC" in line)
+    assert "+227" in line
+    assert (script.C2_NOTE in line) is before
+    assert not any(script.C2_NOTE in line for line in lines
+                   if "Emploi salarié marchand" in line)
+
+
 def test_the_committed_study_is_preregistered(script) -> None:
     """Every instrument of the menu has its committed request and the report that played
     it, all from one commit, each saying where its passes ran (`load` refuses otherwise),

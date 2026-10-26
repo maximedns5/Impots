@@ -368,7 +368,9 @@ def _employer_inputs(request: Any, run: Any, agg: Any) -> dict[str, Any]:
     the population (`runner.subsample`): its `persons` are that subsample's. Every earner
     of the whole frame at the frame's weight, with no cost change outside the
     subsample, counted 15 % of the earners: C2 gave 1 558 jobs for 1 Md€ of `t_delta`
-    where the run holds 9 960 (D-256).
+    where the run holds 9 960 (D-256; D-255 found the same dilution apart). Each earner
+    counts at THEIR OWN weight in the run, as the subsample scales it, not at their
+    household's mean: members' weights can differ (D-255, D-266).
     """
     import numpy as np
     import polars as pl
@@ -380,9 +382,7 @@ def _employer_inputs(request: Any, run: Any, agg: Any) -> dict[str, Any]:
         raise ChannelInputMissing("C2 needs the run's persons; this run has none")
     if "salaire_super_brut_reform" not in persons.columns:
         return {}
-    earners = (persons.filter(pl.col("salaire_brut_annuel") > 0)
-               .join(run.households.select("household_id", "weight"),
-                     on="household_id", how="inner"))
+    earners = persons.filter(pl.col("salaire_brut_annuel") > 0)
     cost = earners["salaire_super_brut"].to_numpy()
     cost_reform = earners["salaire_super_brut_reform"].to_numpy()
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -452,19 +452,16 @@ def _narrow_band(request: Any, run: Any) -> Any:
     wage_income, wage_move, wage_weights = (
         households["salaire_brut"].to_numpy(), cost_move, weights
     )
-    # The earners are those of the households the run priced, at the run's weight, as
-    # C2's are (D-257): the frame's weight on the quick tier's households tilted the
-    # share towards the heavy ones, which the draw keeps at their own weight. Each moves
-    # by their OWN labour cost, from the run's persons (D-258): split evenly, a partner
-    # sitting at a plafond who did not move took half of a cut far below it.
+    # The earners are those of the households the run priced, each at their own weight
+    # in the run, as C2's are (D-257, D-266): the frame's weight on the quick tier's
+    # households tilted the share towards the heavy ones, which the draw keeps at their
+    # own weight. Each moves by their OWN labour cost, from the run's persons (D-258):
+    # split evenly, a partner sitting at a plafond who did not move took half of a cut
+    # far below it.
     if run.persons is not None:
         import polars as pl
 
-        earners = (
-            run.persons.filter(pl.col("salaire_brut_annuel") > 0)
-            .join(households.select("household_id", "weight"),
-                  on="household_id", how="inner")
-        )
+        earners = run.persons.filter(pl.col("salaire_brut_annuel") > 0)
         wage_income = earners["salaire_brut_annuel"].to_numpy()
         wage_move = (
             (earners["salaire_super_brut_reform"] - earners["salaire_super_brut"]).to_numpy()
