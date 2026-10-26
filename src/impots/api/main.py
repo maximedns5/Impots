@@ -390,6 +390,8 @@ def _employer_inputs(request: Any, run: Any, agg: Any) -> dict[str, Any]:
     if not np.any(np.abs(rate) > 1e-12):
         return {}
 
+    from impots.macro import shocks
+
     smic = _smic_annual(request.year)
     return {
         "smic_multiple": earners["salaire_brut_annuel"].to_numpy() / max(smic, 1.0),
@@ -398,6 +400,11 @@ def _employer_inputs(request: Any, run: Any, agg: Any) -> dict[str, Any]:
         # NOT deltas["cotisations_employeur"] — that figure is gross of the
         # allègements and reported exactly zero for a reform costing 17.7 bn (D-039).
         "contribution_delta": agg.employer_contribution_delta,
+        # C11 reads the cut's self-financing only where the shock builder routes it to
+        # Mésange's targeted variant, which has no balance row: the same test, so the loop
+        # and C11 never both carry the return (D-254).
+        "targets_low_wages": shocks.targets_low_wages(
+            tuple(request.reform.model_dump(exclude_none=True)), request.year),
     }
 
 

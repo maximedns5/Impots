@@ -976,6 +976,127 @@ def dividend_response(
     )
 
 
+# --------------------------------------------------------------------------- #
+# C11 — the self-financing of a targeted contribution cut: §7 (M5, D-254)
+# --------------------------------------------------------------------------- #
+C11_RETURN = "autofinancement_retour_par_emploi"
+C11_COST = "autofinancement_cout_par_emploi"
+C11_WEIGHT = "autofinancement_poids_tresor_eco"
+C11_KEYS = (C11_RETURN, C11_COST, C11_WEIGHT)
+
+NOT_TARGETED = (
+    "Cette baisse de cotisations n'est pas ciblée sur les bas salaires cette année : elle "
+    "tombe sous la variante uniforme de Mésange, dont la ligne de solde porte déjà ce qui "
+    "en revient. Un autofinancement ici compterait deux fois le même retour (D-239)."
+)
+
+
+class SelfFinancingOutOfRange(RuntimeError):
+    """C2's reading of a cut's self-financing exceeds the Trésor-Éco's, so θ = 1 would no
+    longer designate the strongest response and the θ box would be read at the wrong
+    corners. Refused rather than computed (D-254)."""
+
+
+def targeted_self_financing(
+    store: Store,
+    reform: Any,
+    *,
+    jobs: np.ndarray | None = None,
+    contribution_delta: float | None = None,
+    targets_low_wages: bool | None = None,
+    draws: int = 1,
+    rng: Any = None,
+    **_: Any,
+) -> ChannelResult:
+    """What a cut targeted on low wages brings back to public finances, through the jobs
+    it creates: their contributions, and the RSA they no longer draw (M5, D-254).
+
+    Only where Mésange has no balance row: a cut its shock builder routes to the targeted
+    variant (`shocks.targets_low_wages`). Anywhere else the loop already carries the
+    return, and this channel would count it twice. The base is the employer's bill,
+    `contribution_delta`, negative for a cut.
+
+    The owner's choice on R5: the share s of the cut that comes back is
+    s = (1 − p) × s_C2 + p × s_TE. At θ = 0, p = 0 and s is C2's own reading, its `jobs`
+    times 12 000 € each over the cut; at θ = 1, p = 1 and s is the Trésor-Éco n° 97's,
+    12 000 € over a gross cost of 20 000 € per job, 60 %; at θ = ½, half of each.
+
+    Worked example, pinned in the tests: a 1 bn cut that C2 reads as 10 000 jobs. s_C2 =
+    10 000 × 12 000 / 1 bn = 12 %; at p = ½, s = 0,5 × 12 % + 0,5 × 60 % = 36 %, and
+    0,36 bn comes back.
+
+    C2 counts persons, and 12 000 € is the return of a full-time job at the SMIC: a cut
+    landing on part-time earners would read high. θ = 1 is the strongest response only
+    while 0 ≤ s_C2 ≤ s_TE: above, or below zero (a cut and a rise mixed, whose jobs and
+    bill move in opposite directions), the channel refuses.
+    """
+    label = "Autofinancement d'une baisse ciblée de cotisations"
+    applicable = _claimed(store, reform, C11_KEYS)
+    if not applicable:
+        return ChannelResult(key="c11_autofinancement", label=label, applies=False,
+                             message=NO_EMPLOYER_KNOB)
+    missing = [key for key in C11_KEYS if key not in store]
+    if missing:
+        return ChannelResult(
+            key="c11_autofinancement", label=label, applies=False,
+            message=f"Aucune lecture utilisable : {', '.join(missing)} n'a pas survécu à la "
+                    f"vérification des sources.",
+            diagnostics={"missing_parameters": missing})
+    if targets_low_wages is None or contribution_delta is None:
+        return _unsupplied("c11_autofinancement", label, "EUR",
+                           "la variation des cotisations patronales ni le classement de la "
+                           "baisse")
+    if not targets_low_wages:
+        return ChannelResult(key="c11_autofinancement", label=label, applies=False,
+                             message=NOT_TARGETED)
+    if not contribution_delta:
+        return ChannelResult(
+            key="c11_autofinancement", label=label, applies=False,
+            message="Cette réforme ne déplace aucune cotisation patronale : rien n'en "
+                    "revient.")
+    if jobs is None or not len(jobs):
+        raise ChannelInputMissing("C11 needs C2's jobs; C2 did not compute them")
+    cut = -float(contribution_delta)
+    per_job = store[C11_RETURN].central
+    tresor_eco = per_job / store[C11_COST].central
+    reading_c2 = np.asarray(jobs, dtype=float) * per_job / cut
+    if np.any(reading_c2 > tresor_eco):
+        raise SelfFinancingOutOfRange(
+            f"C2 lit un autofinancement de {float(np.max(reading_c2)):.1%}, au-dessus des "
+            f"{tresor_eco:.0%} du Trésor-Éco : θ = 1 ne désignerait plus la réponse la plus "
+            f"forte, et la boîte θ serait lue aux mauvais coins.")
+    if np.any(reading_c2 < 0.0):
+        raise SelfFinancingOutOfRange(
+            f"C2 lit un autofinancement négatif ({float(np.min(reading_c2)):.1%}) : ses "
+            f"emplois et la variation de la facture des employeurs vont en sens contraires, "
+            f"une baisse et une hausse mêlées. θ = 1 ne désignerait plus la réponse la plus "
+            f"forte.")
+    weight = store[C11_WEIGHT].draw(rng, draws)
+    share = (1.0 - weight) * reading_c2 + weight * tresor_eco
+    revenue = share * cut
+    return ChannelResult(
+        key="c11_autofinancement", label=label, applies=True, draws=revenue,
+        in_revenue_band=True,
+        message="Les emplois qu'une baisse ciblée crée rapportent leurs cotisations et le RSA "
+                "qu'ils ne touchent plus : de la lecture de C2 (θ = 0) à celle du "
+                "Trésor-Éco n° 97 (θ = 1), au choix du propriétaire.",
+        diagnostics={
+            "knobs": applicable,
+            "cut_eur": round(cut, 2),
+            "share": {"p10": round(float(np.percentile(share, 10)), 6),
+                      "p50": round(float(np.percentile(share, 50)), 6),
+                      "p90": round(float(np.percentile(share, 90)), 6)},
+            "share_c2": round(float(np.median(reading_c2)), 6),
+            "share_tresor_eco": round(tresor_eco, 6),
+            "return_per_job_eur": per_job,
+            "not_counted": (
+                "l'impôt sur le revenu des emplois créés ; leurs autres prestations ; "
+                "l'allocation chômage évitée, au-delà du RSA ; les effets sur le PIB, "
+                "que Mésange ne chiffre pas pour cette variante"),
+        },
+    )
+
+
 CHANNELS = (
     ("c1_eti", C1_KEYS),
     ("c2_employment", C2_KEYS),
@@ -987,4 +1108,5 @@ CHANNELS = (
     ("c8_creations", C8_KEYS),
     ("c9_rd", C9_KEYS),
     ("c10_dividendes", C10_KEYS),
+    ("c11_autofinancement", C11_KEYS),
 )

@@ -120,7 +120,7 @@ def test_the_theta_is_listed_for_every_open_row_and_the_closed_say_why(
         client, priced) -> None:
     body = client.post("/predictif/simulate", json=_payload(
         theta={"common": 0.5, "rows": {"eti_all": 0.1}})).json()
-    assert len(body["theta"]) == 18 and body["theta"]["eti_all"] == 0.1  # D-246, D-249
+    assert len(body["theta"]) == 19 and body["theta"]["eti_all"] == 0.1  # D-246, D-249, D-254
     assert body["theta_applied"] is False and "θ" in body["absent"]
     assert "dividendes" in body["closed"] and all(body["closed"].values())
     assert body["behaviour"] is None

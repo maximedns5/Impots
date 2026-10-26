@@ -94,6 +94,7 @@ def compute(
     dividend_base_eur: float | None = None,
     levy_rate_baseline: float | None = None,
     levy_rate_reform: float | None = None,
+    targets_low_wages: bool | None = None,
     draws: int = DRAWS,
     seed: int = SEED,
 ) -> BehaviouralResult:
@@ -147,6 +148,14 @@ def compute(
         levy_rate_baseline=levy_rate_baseline, levy_rate_reform=levy_rate_reform,
         draws=draws, rng=rng,
     ))
+    # C11 after C10, for the same reason; it reads C2's own draws of the jobs rather than
+    # drawing them again (D-254).
+    employment = next((r for r in results if r.key == "c2_employment" and r.applies), None)
+    results.append(channel_module.targeted_self_financing(
+        store, reform, jobs=None if employment is None else employment.draws,
+        contribution_delta=contribution_delta, targets_low_wages=targets_low_wages,
+        draws=draws, rng=rng,
+    ))
 
     metrics: dict[str, tuple[tuple[str, ...], float]] = {}
     if relative_cost_change is not None and len(relative_cost_change):
@@ -177,6 +186,10 @@ def compute(
         metrics["c10_dividendes"] = (
             channel_module.C10_ELASTICITIES,
             abs(dividends.diagnostics["net_of_tax_relative_change"]))
+    if any(r.key == "c11_autofinancement" and r.applies for r in results):
+        # The weight is a choice and the two amounts are published, not estimated: no
+        # support bound, so the channel is graded illustrative, as C2 is.
+        metrics["c11_autofinancement"] = (channel_module.C11_KEYS, 0.0)
     creations = next((r for r in results if r.key == "c8_creations" and r.applies), None)
     if creations is not None:
         # In the driver's units, as the support is: points of the virtual rate.

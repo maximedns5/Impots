@@ -151,8 +151,8 @@ def test_every_open_row_of_the_shipped_store_declares_its_direction() -> None:
     store = load()
     open_rows = [p for p in store.parameters.values() if p.is_open]
     # + labour supply (D-220), creations (D-221), R&D (D-222), the IS on growth (D-246),
-    # and the three rows of the dividends (D-249)
-    assert len(open_rows) == 18
+    # the three rows of the dividends (D-249), and the self-financing's weight (D-254)
+    assert len(open_rows) == 19
     assert all(p.theta_one in ("low", "high") and p.theta_reason for p in open_rows)
     assert store["employment_elasticity_smic"].theta_one == "low"
 
@@ -967,3 +967,176 @@ def test_the_emtr_caches_do_not_serve_the_vintage_s_rates_to_an_aged_population(
     before = json.dumps({"vintage": "2024", "year": 2026, "sample": None, "reform": None,
                          "wiring": to_openfisca.WIRING}, sort_keys=True, default=str)
     assert emtr.cache_key("2024", 2026) == hashlib.sha256(before.encode()).hexdigest()[:16]
+
+
+# --------------------------------------------------------------------------- #
+# C11 — the self-financing of a targeted contribution cut (M5, D-254)
+# --------------------------------------------------------------------------- #
+def _c11_store(weight: float = 0.5, *, open_weight: bool = False) -> Store:
+    """C2's three rows and C11's three, each at one value; the weight open on demand."""
+    import dataclasses
+
+    knobs = ("allegement_general_*", "bandeau_maladie_*", "bandeau_famille_*")
+    rows = {
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=knobs),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=knobs),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=knobs),
+        "autofinancement_retour_par_emploi": parameter(
+            "autofinancement_retour_par_emploi", 12_000.0, 12_000.0, 12_000.0, knobs=knobs),
+        "autofinancement_cout_par_emploi": parameter(
+            "autofinancement_cout_par_emploi", 20_000.0, 20_000.0, 20_000.0, knobs=knobs),
+        "autofinancement_poids_tresor_eco": (
+            dataclasses.replace(parameter("autofinancement_poids_tresor_eco", 0.5, 0.0, 1.0,
+                                          knobs=knobs), theta_one="high",
+                                theta_reason="le poids 1 est la réponse la plus forte")
+            if open_weight else parameter("autofinancement_poids_tresor_eco", weight,
+                                          weight, weight, knobs=knobs)),
+    }
+    return Store(parameters=rows)
+
+
+def _c11(store: Store, **inputs) -> channels.ChannelResult:
+    return channels.targeted_self_financing(
+        store, FakeReform(allegement_general_t_delta_moins_de_50=0.40),
+        draws=1, rng=np.random.default_rng(0), **inputs)
+
+
+def test_c11_brings_back_a_share_of_the_cut_between_c2_and_the_tresor_eco() -> None:
+    """D-254, the owner's choice on R5. Worked example: a 1 bn cut that C2 reads as
+    10 000 jobs. C2's own reading is 10 000 × 12 000 / 1 bn = 12 %; the Trésor-Éco's is
+    12 000 / 20 000 = 60 %. At p = ½, s = 0,5 × 12 % + 0,5 × 60 % = 36 %: 0,36 bn comes
+    back. At p = 0 it is C2's 0,12 bn, at p = 1 the Trésor-Éco's 0,60 bn."""
+    inputs = {"jobs": np.array([10_000.0]), "contribution_delta": -1.0e9,
+              "targets_low_wages": True}
+    half = _c11(_c11_store(0.5), **inputs)
+    assert half.applies and half.in_revenue_band and half.unit == "EUR"
+    assert half.central == pytest.approx(0.36e9, rel=1e-12)
+    assert _c11(_c11_store(0.0), **inputs).central == pytest.approx(0.12e9, rel=1e-12)
+    assert _c11(_c11_store(1.0), **inputs).central == pytest.approx(0.60e9, rel=1e-12)
+    rise = _c11(_c11_store(0.5), **{**inputs, "jobs": np.array([-10_000.0]),
+                                    "contribution_delta": 1.0e9})
+    assert rise.central == pytest.approx(-0.36e9, rel=1e-12), "a rise loses as much"
+
+
+def test_c11_never_carries_a_return_the_loop_already_carries() -> None:
+    """D-254. Where the shock builder routes the cut to Mésange's uniform variant — the
+    ceiling from 2026 (D-239) — its balance row is the loop, and C11 would count the same
+    return twice: the channel does not open, and says why."""
+    result = _c11(_c11_store(0.5), jobs=np.array([10_000.0]), contribution_delta=-1.0e9,
+                  targets_low_wages=False)
+    assert not result.applies and result.draws is None
+    assert "variante uniforme" in result.message
+
+
+def test_c11_refuses_a_c2_reading_above_the_tresor_eco() -> None:
+    """D-254. θ = 1 designates the strongest response only while C2 reads less than the
+    Trésor-Éco. C2 counts persons and 12 000 € is a full-time job's return, so a cut on
+    part-time earners could read above 60 %: refused rather than boxed at the wrong
+    corners. 60 000 jobs for 1 bn is 72 %."""
+    with pytest.raises(channels.SelfFinancingOutOfRange, match="72"):
+        _c11(_c11_store(0.5), jobs=np.array([60_000.0]), contribution_delta=-1.0e9,
+             targets_low_wages=True)
+
+
+def test_c11_says_it_was_not_computed_without_its_inputs() -> None:
+    result = _c11(_c11_store(0.5))
+    assert not result.applies and "Non calculé" in result.message
+
+
+def test_c11_enters_the_band_on_c2_s_own_draws_and_moves_no_other_channel() -> None:
+    """D-254. C11 reads C2's draws of the jobs rather than drawing them again, and comes
+    last, so every other channel's draws are the ones they were. One earner cell at the
+    SMIC, 1 000 000 weighted, whose labour cost falls 1 %, on a 1 bn cut: C2 counts
+    1 000 000 × 0,43 × 0,01 = 4 300 jobs, read as 4 300 × 12 000 / 1 bn = 5,16 %; at
+    p = ½, s = 32,58 % and 0,3258 bn comes back."""
+    inputs = {"smic_multiple": np.array([1.0]), "relative_cost_change": np.array([-0.01]),
+              "earner_weights": np.array([1_000_000.0]), "contribution_delta": -1.0e9}
+    reform = FakeReform(allegement_general_t_delta_moins_de_50=0.40)
+    store = _c11_store(0.5)
+    with_c11 = band_module.compute(mechanical=-1.0e9, reform=reform, store=store,
+                                   targets_low_wages=True, draws=1, **inputs)
+    without = band_module.compute(mechanical=-1.0e9, reform=reform, store=store,
+                                  targets_low_wages=False, draws=1, **inputs)
+    by_key = {c["key"]: c for c in with_c11.channels}
+    assert by_key["c2_employment"]["central"] == pytest.approx(4_300.0, rel=1e-12)
+    assert by_key["c11_autofinancement"]["central"] == pytest.approx(0.3258e9, rel=1e-12)
+    assert with_c11.band is not None
+    assert with_c11.band.p50 == pytest.approx(-1.0e9 + 0.3258e9, rel=1e-9)
+    others = {c["key"]: c["central"] for c in without.channels}
+    assert {k: c["central"] for k, c in by_key.items() if k != "c11_autofinancement"} \
+        == {k: v for k, v in others.items() if k != "c11_autofinancement"}
+
+
+def test_the_employer_inputs_say_whether_the_cut_is_targeted_as_the_shocks_do() -> None:
+    """D-254. C11 opens on the shock builder's own test, `shocks.targets_low_wages`, so the
+    loop and C11 never both carry the return: the `t_delta` is targeted in 2026, the
+    ceiling is not from 2026 (D-239), and was before."""
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.api.schemas import ReformSpec
+
+    frame = pl.DataFrame({"household_id": [0], "person_id": [0],
+                          "salaire_brut_annuel": [25_000.0], "weight": [1.0],
+                          "cut": [0.01]})
+    agg = SimpleNamespace(employer_contribution_delta=-1.0e9)
+
+    def targeted(year: int, **knobs) -> bool:
+        request = SimpleNamespace(year=year, reform=ReformSpec(**knobs))
+        return api_main._employer_inputs(request, _run(frame), agg)["targets_low_wages"]
+
+    assert targeted(2026, allegement_general_t_delta_moins_de_50=0.40) is True
+    assert targeted(2026, allegement_general_plafond=3.5) is False
+    assert targeted(2025, allegement_general_plafond=1.8) is True
+
+
+def test_c11_moves_the_receipts_at_theta_and_its_row_opens_the_box() -> None:
+    """D-254. In the predictive chain, the receipts at θ carry C11, and the weight row is
+    one the reform claims, so the θ box runs from C2's reading (θ = 0) to the
+    Trésor-Éco's (θ = 1). Same cell as above, a 1 bn cut: 5,16 %, 32,58 % and 60 %."""
+    from impots.predictif import comportement
+    from impots.predictif.theta import Theta
+
+    inputs = {"smic_multiple": np.array([1.0]), "relative_cost_change": np.array([-0.01]),
+              "earner_weights": np.array([1_000_000.0]), "contribution_delta": -1.0e9,
+              "targets_low_wages": True}
+    at = comportement.evaluate(Theta(rows={}, common=0.5), mechanical=-1.0e9,
+                               reform=FakeReform(allegement_general_t_delta_moins_de_50=0.40),
+                               store=_c11_store(open_weight=True), **inputs)
+    assert at.claimed == ("autofinancement_poids_tresor_eco",)
+    assert at.receipts == pytest.approx(-1.0e9 + 0.3258e9, rel=1e-9)
+    assert at.box == pytest.approx((-1.0e9 + 0.0516e9, -1.0e9 + 0.60e9), rel=1e-9)
+
+
+def test_c11_refuses_a_negative_c2_reading() -> None:
+    """D-254, from the verifier's pass. A reform that cuts at the SMIC and raises above it
+    can leave the employers' bill higher while C2 still counts jobs: C2's reading is then
+    negative, and θ = 1 (60 % of a rise, a loss) is no longer the strongest response.
+    Refused, as a reading above the Trésor-Éco's is."""
+    with pytest.raises(channels.SelfFinancingOutOfRange, match="négatif"):
+        _c11(_c11_store(0.5), jobs=np.array([10_000.0]), contribution_delta=0.2e9,
+             targets_low_wages=True)
+
+
+def test_c11_comes_last_and_leaves_every_other_channel_s_draws_as_they_were() -> None:
+    """D-254, on the shipped store, whose rows are ranges: C11 draws its weight from the
+    shared generator, so it comes after every other channel and the draws of C1 to C10 —
+    and the golden band of D-217 — are the ones they were without it. The same cell as
+    above, a 1 bn cut, a thousand draws."""
+    inputs = {"smic_multiple": np.array([1.0]), "relative_cost_change": np.array([-0.01]),
+              "earner_weights": np.array([1_000_000.0]), "contribution_delta": -1.0e9}
+    reform = FakeReform(allegement_general_t_delta_moins_de_50=0.40)
+    with_c11 = band_module.compute(mechanical=-1.0e9, reform=reform, store=employer_store(),
+                                   targets_low_wages=True, draws=1000, **inputs)
+    without = band_module.compute(mechanical=-1.0e9, reform=reform, store=employer_store(),
+                                  targets_low_wages=False, draws=1000, **inputs)
+    live = {c["key"]: c for c in with_c11.channels if c["applies"]}
+    assert "c11_autofinancement" in live and "c3_incidence" in live
+    for channel in without.channels:
+        if channel["key"] != "c11_autofinancement" and channel["applies"]:
+            assert live[channel["key"]]["band"] == channel["band"], channel["key"]
