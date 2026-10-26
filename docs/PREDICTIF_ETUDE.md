@@ -542,6 +542,38 @@ Avec les salaires que les propriétaires de firme cessent de se verser, une bais
 
 **Ce que ce chiffre ne compte pas.** Les plus-values futures dont les dividendes induits sont tirés, taxées plus bas que le dividende : vers une dette plus haute. Le salaire déplacé est mesuré sur le cas de la figure A2 de Bach et al., un salarié célibataire à six plafonds de la sécurité sociale ; un gérant majoritaire de SARL, travailleur non salarié, cotise moins, et chaque euro qu'il déplace reprend moins : vers une dette plus basse. Le canal compte le déplacement dès la première année, quand les auteurs ne le trouvent qu'à partir de la deuxième, et les droits à retraite que les cotisations perdues ouvraient sont hors de l'horizon. La variante de l'IR de Mésange et la CDHR, comme au menu élargi.
 
+## Le `t_delta` de la courbe rejoué avec son autofinancement
+
+La courbe rejouée plus haut chiffrait le `t_delta` sans rien de ce qu'une baisse ciblée rend : Mésange n'a pas de ligne de solde pour sa variante ciblée, et les emplois de C2 n'entraient pas dans les recettes. D-258 y fait entrer C11 : une part de la baisse revient, de la lecture de C2, ses emplois valorisés à 12 000 € l'un, à θ = 0, à 60 % à θ = 1, celle du Trésor-Éco n° 97. La requête sous `etude/courbe_autofinancement/` rejoue celle du `t_delta` de la courbe champ pour champ ; seuls son nom, son titre et sa question diffèrent. Elle a été commitée avant ses passes, avec le pronostic écrit dans D-259. Le rapport a joué sa requête, à l'identique, sur le commit `847f51903e0969e061c8558c3c48169c6b3f515b`, le 2026-10-26. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+Avec l'autofinancement d'une baisse ciblée de cotisations (C11), un relèvement du t_delta de la courbe de 2026, de 37,81 % à 38,31, 39,31, 40,31 ou 41,31 %, fait-il baisser la dette en 2035, et pour quels θ ?
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,19 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 38,31 %, +0,31 pt ; 39,31 %, +0,93 pt ; 40,31 %, +1,55 pt ; 41,31 %, +2,17 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,19 pt | +0,21 pt | [+0,12 pt ; +0,27 pt] | aucun des 32 |
+| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,58 pt | +0,63 pt | [+0,37 pt ; +0,82 pt] | aucun des 32 |
+| 40,31 % | 5,01 Md€ | 5,48 Md€ | +0,96 pt | +1,04 pt | [+0,62 pt ; +1,37 pt] | aucun des 32 |
+| 41,31 % | 7,01 Md€ | 7,67 Md€ | +1,34 pt | +1,46 pt | [+0,87 pt ; +1,91 pt] | aucun des 32 |
+
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,19 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 38,31 %, +0,31 pt ; 39,31 %, +0,93 pt ; 40,31 %, +1,55 pt ; 41,31 %, +2,17 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,19 pt | +0,21 pt | [+0,12 pt ; +0,27 pt] | aucun des 32 |
+| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,58 pt | +0,63 pt | [+0,37 pt ; +0,82 pt] | aucun des 32 |
+| 40,31 % | 5,01 Md€ | 5,48 Md€ | +0,96 pt | +1,04 pt | [+0,62 pt ; +1,37 pt] | aucun des 32 |
+| 41,31 % | 7,01 Md€ | 7,67 Md€ | +1,34 pt | +1,46 pt | [+0,87 pt ; +1,91 pt] | aucun des 32 |
+
+**Ce qui manque à la chaîne**, pour le paquet le plus proche : absent, et non nul.
+
+- rétroaction : aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cotisations_employeurs_ciblees': "pas de ligne de solde dans Mésange (variante ciblée, encadré 14) : ni rétroaction ni effet sur le PIB, plutôt que la moitié d'une variante"}
+
+**Le contrôle.** Aux coins où le poids de C11 vaut 1, C11 rend 60 % de la baisse quelle que soit l'élasticité de C2 : le rejeu doit y redonner 0,40 fois l'écart de la courbe, ses coûts les siens, et les indices du paquet le plus proche hors de la chaîne, l'emploi de C2 et de Mésange compris, les siens. Il les redonne. L'écart le plus grand vaut 0,000000 pt sur les coins, 0 € sur les coûts et 0,000000 sur les indices, dans leur unité.
+
+**Ce que ce chiffre ne compte pas.** C2 compte des personnes, au coût annuel de leur propre travail, quand les 12 000 € du Trésor-Éco n° 97 sont le retour d'un emploi à temps plein : à θ = 0, la part est sans doute trop haute. θ = 1 lit le bas du coût brut par emploi des allègements de 1993 à 1997, 20 000 € sur 20 000 à 40 000 €, et la note envisage elle-même un coût doublé pour la seconde vague. Les deux vont vers une dette plus basse. Les 12 000 € sont de 2009, tenus tels : au SMIC de 2026, la réduction générale laisse peu de cotisations patronales, et le RSA a été revalorisé, dans un sens que le projet ne mesure pas. C11 ne compte ni l'impôt sur le revenu des emplois créés, ni leurs autres prestations, ni l'allocation chômage évitée au-delà du RSA, ni l'effet sur le PIB, que Mésange ne chiffre pas pour sa variante ciblée : vers une dette plus haute. Un tour seulement : les recettes de C11 ne relancent rien.
+
 ## Ce que l'étude ne dit pas
 
 - Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de θ ; un autre scénario donne une autre réponse.

@@ -19875,3 +19875,99 @@ viendra avec le rendu, dans D-260.
 **Ce qui suit.** La recherche, seule et en tâche de fond, sur ce commit. Puis D-260 : le
 résultat, sa section de `docs/PREDICTIF_ETUDE.md`, et ses gardes. La porte reste le
 `make full` du propriétaire.
+
+## D-260 — Le `t_delta` rejoué avec son autofinancement, second temps : la réponse
+
+**Le fait.** La recherche préenregistrée dans D-259 a tourné sur le commit de son
+préenregistrement, `847f519`, en quatorze minutes : quatre paquets et huit passes. La
+réponse, sous les hypothèses de l'étude : avec son autofinancement, aucun relèvement du
+`t_delta` ne fait baisser la dette en 2035, ni à θ = ½ ni pour aucun θ. C11 réduit l'écart
+de D-242 de 38 % à θ = ½, et de 60 % au plus. La page `docs/PREDICTIF_ETUDE.md` le rend
+dans sa propre section, « Le `t_delta` de la courbe rejoué avec son autofinancement »,
+gardée contre la dérive comme le reste.
+
+**Le résultat.** Δb 2035 en points de PIB, vue vieillie : la courbe sans C11 (D-256), puis
+avec, à θ = ½ et dans la boîte θ. Les deux persistances donnent les mêmes chiffres.
+
+| Paquet | coût 2026 | courbe | avec C11 | boîte θ, avec C11 |
+|---|---|---|---|---|
+| `t_delta` à 38,31 % | 1,00 Md€ | +0,310 | +0,192 | +0,124 à +0,273 |
+| à 39,31 % | 3,01 Md€ | +0,928 | +0,575 | +0,371 à +0,819 |
+| à 40,31 % | 5,01 Md€ | +1,547 | +0,959 | +0,619 à +1,365 |
+| à 41,31 % | 7,01 Md€ | +2,166 | +1,343 | +0,867 à +1,911 |
+
+- C11 rend 38,0 % de chaque paquet à θ = ½ : Δb vaut 0,6197 fois celui de la courbe, au
+  même dix-millième à chaque paquet.
+- Aucun des 32 coins d'aucun paquet ne passe sous zéro.
+- En vue figée, de +0,208 à +1,459 point, 0,6159 fois la courbe : C11 y rend 38,4 %.
+- Les coûts sont ceux de la courbe à l'euro près, dans les deux vues.
+
+**Contre le pronostic.** Les six points tiennent.
+1. À θ = ½ : +0,192, +0,575, +0,959 et +1,343 point, les chiffres annoncés au millième, à
+   0,620 fois la courbe. Aucun paquet sous zéro, sous aucune persistance et dans aucune vue.
+2. Pour aucun θ : aucun coin sous zéro. Le plus bas, le poids à 1, de +0,124 à +0,867 ; le
+   plus haut, le poids à 0 et l'élasticité à −0,31, de +0,273 à +1,911 ; le poids à 0 et
+   l'élasticité à −0,52, 0,807 fois la courbe, +0,250 au premier paquet. Les incidences de
+   C3 et le multiplicateur ne bougent aucun coin.
+3. Les deux persistances donnent les mêmes chiffres, et la page dit la boucle absente.
+4. Le contrôle. Les coûts sont ceux du second tour de la courbe, sur `3ba628c`, à l'écart
+   nul. Aux seize coins du poids à 1, le rejeu redonne 0,4 fois l'écart de la courbe : le
+   plus grand écart vaut 1,3 × 10⁻¹⁶ en part de PIB.
+5. Les indices du premier paquet hors de la chaîne sont ceux de la courbe, à l'écart nul :
+   l'emploi au voisinage du SMIC (C2), +13 408 [+9 840 ; +16 083] ; l'emploi marchand de
+   Mésange, 3,28, 9,17 et 13,11 milliers d'ETP à un, deux et trois ans ; les déciles,
+   nuls. Le solde, la dette et la charge d'intérêts valent 0,6197 fois ceux de la courbe.
+6. La vue figée donne les mêmes signes : de +0,208 à +1,459, pour « de +0,21 à +1,47 si
+   C11 y rend la même part ». Il y rend un peu plus, 38,4 % contre 38,0 %.
+
+**Ce que la réponse veut dire.** Sous ces hypothèses, l'autofinancement que R5 permet
+réduit la réponse de D-242 sans la retourner. D-242 disait l'écart « ce que coûte la
+baisse avant tout retour » : c'est désormais ce qu'il en reste après le retour des
+emplois, en un tour. Même à θ = 1, au Trésor-Éco n° 97, 40 % de la baisse reste porté dix
+ans. Ce qui pourrait encore la retourner manque toujours, et la page le dit : la boucle
+PIB → recettes, que Mésange n'imprime pas pour sa variante ciblée, et l'impôt sur le
+revenu des emplois créés. L'un et l'autre vont vers une dette plus basse. Les deux biais
+déclarés de C11 vont dans le même sens : des personnes comptées comme des temps pleins, et
+le bas du coût par emploi du Trésor-Éco. L'étude ne recommande rien.
+
+**Les tests.** `scripts/write_predictif_etude.py` lit `etude/courbe_autofinancement/` et
+le rapport du rejeu, et rend la section après celle du PFU rejoué. Les parties d'avant
+sont inchangées, à l'octet. Celle du menu élargi dit encore que le `t_delta` attendait le
+choix du propriétaire : c'était sa raison, à son commit. La part du Trésor-Éco que lit le
+contrôle vient du magasin, comme C11 la lit : aucun chiffre n'est saisi. Le chargement
+refuse :
+- un rejeu dont la requête n'est pas celle du `t_delta` de la courbe, nom, titre et
+  question exceptés, ou d'une courbe que le dépôt n'a pas ;
+- un rejeu sans requête, ou sans rapport, ou une requête de plus ;
+- une requête retouchée après ses passes ;
+- un rapport muet sur le lieu de ses passes ;
+- un rapport dont les coins ne font pas varier le poids de C11 ;
+- un coin sans pendant dans la courbe, ou des persistances dans un autre ordre ;
+- des indices hors de la chaîne qui ne sont pas ceux de la courbe à comparer : une ligne
+  de plus ou de moins, une année, une boîte que la courbe n'a pas.
+
+Un contrôle qui ne redonne pas la courbe n'est pas refusé : la page le dit, avec son
+écart, sur les coins, les coûts ou les indices.
+
+Dans `tests/test_predictif_etude.py`, dix-huit cas nouveaux : la section rendue à part,
+avec le Δb de la courbe à côté de chaque verdict ; trois contrôles qui ne redonnent pas la
+courbe, un par mesure ; quatorze refus. Les dix-huit ont échoué sur le script d'avant. Le
+test de l'étude commitée tient aussi le rejeu, qui redonne la courbe. Vingt-cinq
+mutations écrites à la main du script, une par refus et par lecture, ont toutes été
+tuées. La dernière retirait la liste de ce qui manque à la chaîne, que le verdict
+renvoie lire : la section ne l'avait pas d'abord, et elle l'a reçue avec son test.
+
+Les tests de l'étude : 85 réussis. Ceux des explorations et de leur API, de la recherche
+et de ses indices, du comportement, de θ, de la chaîne, de la charte et des dépendances :
+249 réussis et 2 sautés. `ui/check.mjs` passe ses 59 contrôles, et `ruff` passe sur
+`scripts` et `tests`. La passe a tourné depuis une copie de travail figée sur `847f519`,
+les données liées fichier par fichier : le rapport nomme ce seul commit.
+
+**Ce qui reste.**
+- Le plancher `t_min` rejoué de même, avec son autofinancement, s'il est voulu.
+- La boucle de la variante ciblée de Mésange, et l'impôt sur le revenu des emplois créés :
+  ce qui pourrait encore retourner la réponse.
+- La CVAE, sur le chemin annuel, avec un bouton du barème entier.
+- Les deux libellés de D-251.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- Le `make full` du propriétaire.
