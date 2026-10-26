@@ -69,6 +69,7 @@ def _levies(monkeypatch):
     from impots.population import capital as capital_module
 
     monkeypatch.setattr(capital_module, "social_levy_rate", lambda year: 0.186)
+    monkeypatch.setattr(capital_module, "wage_wedge", lambda year: (1.14, 1.66))
 
 
 def test_c10_leaves_out_the_dividends_the_cdhr_holds(_levies):
@@ -97,6 +98,7 @@ def test_c10_names_the_dividends_it_left_to_the_cdhr():
     result = channels.dividend_response(
         load(), ReformSpec(pfu_taux=0.118), dividend_base_eur=40e9,
         dividend_base_cdhr_eur=13e9, levy_rate_baseline=0.314, levy_rate_reform=0.304,
+        wage_levy_rate=1.14, wage_cost_rate=1.66, corporate_rate=0.25,
         rng=np.random.default_rng(0))
     assert result.applies
     assert result.diagnostics["dividends_held_by_cdhr_eur"] == pytest.approx(13e9)

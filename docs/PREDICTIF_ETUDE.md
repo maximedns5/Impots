@@ -514,6 +514,34 @@ Les quatre requêtes de l'étude, rejouées telles quelles sur le même commit. 
 | Le taux de la décote de l'IR | D-238 | 0,000000 pt | 0 € | la redonne |
 | Les taux du barème de l'IR, mis à l'échelle | D-238 | 0,000000 pt | 0 € | la redonne |
 
+## Le PFU rejoué avec les salaires déplacés
+
+Le menu élargi laissait hors de C10 le salaire que les propriétaires de firme cessent de se verser quand leurs dividendes montent, et le disait à côté de son chiffre. D-252 le fait entrer : 0,309 € de salaire imposable par euro de dividende en plus, de 0 à 0,519 (tableau 2 B de Bach et al.), et sur chaque euro déplacé, ce qu'il rapportait moins l'IS que l'entreprise paie sur le profit qu'il devient. La requête sous `etude/phase11_salaires/` rejoue celle du PFU du menu élargi champ pour champ ; seuls son nom, son titre et sa question diffèrent. Elle a été commitée avant sa passe, avec le pronostic écrit dans D-252. Le rapport a joué sa requête, à l'identique, sur le commit `80a7405c831bc77a051972641cbd69d75ba8e45b`, le 2026-10-26. La passe a tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+Avec les salaires que les propriétaires de firme cessent de se verser, une baisse du taux du PFU, part impôt sur le revenu, de 12,8 % à 11,8, 10,8, 9,8 ou 8,8 %, fait-elle baisser la dette en 2035, et pour quels θ ?
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 11,8 %, laisse Δb = +0,16 pt. Elle baisse à 2 coins sur 32, à 1 paquets sur 4 : ceux où dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_wage_shift_firm_owners = 0, multiplicateur_macro = 1. Sans les salaires déplacés, au menu élargi, Δb valait, vue vieillie : 8,8 %, +0,35 pt ; 9,8 %, +0,25 pt ; 10,8 %, +0,17 pt ; 11,8 %, +0,08 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 8,8 % | 2,46 Md€ | 2,28 Md€ | +0,61 pt | +0,56 pt | [+0,09 pt ; +0,91 pt] | aucun des 32 |
+| 9,8 % | 1,92 Md€ | 1,77 Md€ | +0,46 pt | +0,43 pt | [+0,04 pt ; +0,70 pt] | aucun des 32 |
+| 10,8 % | 1,33 Md€ | 1,23 Md€ | +0,31 pt | +0,29 pt | [+0,01 pt ; +0,48 pt] | aucun des 32 |
+| 11,8 % | 0,69 Md€ | 0,65 Md€ | +0,16 pt | +0,15 pt | [−0,01 pt ; +0,25 pt] | 2 sur 32 (dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_wage_shift_firm_owners = 0, multiplicateur_macro = 1) |
+
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 11,8 %, laisse Δb = +0,05 pt. Elle baisse à de 12 à 13 coins sur 32, à chaque paquet : ceux où multiplicateur_macro = 1. Sans les salaires déplacés, au menu élargi, Δb valait, vue vieillie : 8,8 %, −0,04 pt ; 9,8 %, −0,05 pt ; 10,8 %, −0,04 pt ; 11,8 %, −0,03 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 8,8 % | 2,46 Md€ | 2,28 Md€ | +0,22 pt | +0,21 pt | [−0,59 pt ; +0,81 pt] | 12 sur 32 (multiplicateur_macro = 1) |
+| 9,8 % | 1,92 Md€ | 1,77 Md€ | +0,16 pt | +0,15 pt | [−0,49 pt ; +0,62 pt] | 12 sur 32 (multiplicateur_macro = 1) |
+| 10,8 % | 1,33 Md€ | 1,23 Md€ | +0,11 pt | +0,10 pt | [−0,35 pt ; +0,42 pt] | 12 sur 32 (multiplicateur_macro = 1) |
+| 11,8 % | 0,69 Md€ | 0,65 Md€ | +0,05 pt | +0,05 pt | [−0,20 pt ; +0,22 pt] | 13 sur 32 (multiplicateur_macro = 1) |
+
+**Le contrôle.** Aux coins où le déplacement vaut 0, le rejeu doit redonner ceux du menu élargi, et ses coûts les siens : il les redonne. L'écart le plus grand vaut 0,000000 pt sur les coins et 0 € sur les coûts.
+
+**Ce que ce chiffre ne compte pas.** Les plus-values futures dont les dividendes induits sont tirés, taxées plus bas que le dividende : vers une dette plus haute. Le salaire déplacé est mesuré sur le cas de la figure A2 de Bach et al., un salarié célibataire à six plafonds de la sécurité sociale ; un gérant majoritaire de SARL, travailleur non salarié, cotise moins, et chaque euro qu'il déplace reprend moins : vers une dette plus basse. Le canal compte le déplacement dès la première année, quand les auteurs ne le trouvent qu'à partir de la deuxième, et les droits à retraite que les cotisations perdues ouvraient sont hors de l'horizon. La variante de l'IR de Mésange et la CDHR, comme au menu élargi.
+
 ## Ce que l'étude ne dit pas
 
 - Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de θ ; un autre scénario donne une autre réponse.

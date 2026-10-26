@@ -694,11 +694,16 @@ def _dividend_inputs(request: Any, households: Any) -> dict[str, Any]:
     A household the CDHR holds, before or after the reform, is left out of the base and
     named apart (D-250): the CDHR tops its tax up to 20 % of its RFR, PFU included, so a
     PFU cut is taken back and its net-of-tax rate does not move. A run without the row —
-    a year before 2025 — has none to leave out."""
+    a year before 2025 — has none to leave out.
+
+    With them, the wage the firm owners shift (D-252): what a euro of it brings the state
+    and costs the firm, measured on the engine, and the IS rate the profit it becomes
+    pays — the reform's when it sets one, the law's otherwise."""
     import polars as pl
 
     from impots.behavioural import channels
     from impots.behavioural.store import load as load_store
+    from impots.entreprises import system as firm_system
     from impots.population import capital as capital_module
 
     if not channels._claimed(load_store(), request.reform, channels.C10_KEYS):
@@ -716,9 +721,15 @@ def _dividend_inputs(request: Any, households: Any) -> dict[str, Any]:
     levies = capital_module.social_levy_rate(request.year)
     before = capital_module.pfu_rate(request.year)
     after = request.reform.pfu_taux if request.reform.pfu_taux is not None else before
+    wage_levy, wage_cost = capital_module.wage_wedge(request.year)
+    firm = getattr(request, "firm_reform", None)
+    corporate = getattr(firm, "is_taux_normal", None) if firm is not None else None
     return {"dividend_base_eur": float(weighted.filter(~is_held).sum()),
             "dividend_base_cdhr_eur": float(weighted.filter(is_held).sum()),
-            "levy_rate_baseline": before + levies, "levy_rate_reform": after + levies}
+            "levy_rate_baseline": before + levies, "levy_rate_reform": after + levies,
+            "wage_levy_rate": wage_levy, "wage_cost_rate": wage_cost,
+            "corporate_rate": (corporate if corporate is not None
+                               else firm_system.normal_rate(request.year))}
 
 
 def _labour_inputs(request: Any, frame: Any, agg: Any, households: Any) -> dict[str, Any]:

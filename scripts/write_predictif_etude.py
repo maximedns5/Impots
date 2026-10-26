@@ -74,6 +74,12 @@ COURBE_FIRST_ROUND = "courbe_premier_tour"
 PHASE11 = "phase11"
 PHASE11_FREE = ("name", "titre", "question", "bounds")
 CONTROLS = Path("etude_phase11") / "controles"
+#: The PFU of the wider menu replayed with the wages its firm owners shift (D-252): the
+#: request holds the PFU's own, only these fields changed; the row the replay adds is
+#: varied at its corners, and those where it is 0 are the wider menu's.
+SALAIRES = "phase11_salaires"
+SALAIRES_FREE = ("name", "titre", "question")
+WAGE_SHIFT = "dividend_wage_shift_firm_owners"
 #: How near a control must give back its reference to be said to: a ten-thousandth of a
 #: point of GDP on every Δb and every corner, a euro on every cost (D-250).
 CONTROL_SHARE = 1e-6
@@ -475,14 +481,99 @@ def load_phase11(etudes: list[dict[str, Any]], complements: list[dict[str, Any]]
     return {"entries": entries, "controls": controls}
 
 
+def shift_control(report: dict[str, Any], menu: dict[str, Any]) -> dict[str, Any]:
+    """The replay where the wage shift is at its low end, 0, against the wider menu: each
+    such corner must be the menu's corner with the other rows set alike, and each cost the
+    menu's. The largest gap, in share of GDP and in euros, as `control_gaps` reads it."""
+    share, eur = 0.0, 0.0
+    nil = (WAGE_SHIFT, "0")
+    for search, before in zip(report["searches"], menu["searches"], strict=True):
+        if search["persistence"] != before["persistence"]:
+            raise EtudeError("le rejeu du PFU et le menu élargi n'ont pas les mêmes "
+                             "persistances")
+        # One request, so one grid, every bundle of which a report carries.
+        was = {json.dumps(e["knobs"], sort_keys=True): e for e in before["evaluations"]}
+        for e in search["evaluations"]:
+            b = was[json.dumps(e["knobs"], sort_keys=True)]
+            corners = {frozenset(_settings(label)): v for label, v in b["corners"]}
+            for label, value in e["corners"]:
+                settings = _settings(label)
+                if nil not in settings:
+                    continue
+                reference = corners.get(frozenset(settings - {nil}))
+                if reference is None:
+                    raise EtudeError(f"le coin « {label} » du rejeu n'a pas son pendant "
+                                     f"dans le menu élargi.")
+                share = max(share, abs(value - reference))
+            eur = max(eur, abs(e["cost_aged_eur"] - b["cost_aged_eur"]),
+                      abs(e["cost_frozen_eur"] - b["cost_frozen_eur"]))
+    return {"share": share, "eur": eur,
+            "given_back": share <= CONTROL_SHARE and eur <= CONTROL_EUR}
+
+
+def load_salaires(phase11: dict[str, Any] | None, requests: Path = REQUESTS,
+                  reports: Path = REPORTS) -> dict[str, Any] | None:
+    """The PFU of the wider menu replayed with the wage shift under `etude/phase11_salaires/`,
+    and the report that played it, checked like the menu; with its control, the corners
+    where the shift is 0 against the menu's (D-252)."""
+    from impots.api.schemas import ExplorationReport, ExplorationRequest
+
+    directory = requests / SALAIRES
+    if not directory.exists():
+        return None
+    if phase11 is None:
+        raise EtudeError(f"etude/{SALAIRES}/ rejoue le PFU d'un menu élargi que le dépôt "
+                         f"n'a pas.")
+    strays = sorted(p.name for p in directory.glob("*.json") if p.name != "pfu.json")
+    if strays:
+        raise EtudeError(f"etude/{SALAIRES}/ porte {strays} : seul le PFU s'y rejoue, et "
+                         f"une requête que la page ne rendrait pas se lirait comme non "
+                         f"jouée.")
+    request_path = directory / "pfu.json"
+    report_path = reports / f"exploration_{SALAIRES}_pfu.json"
+    if not request_path.exists():
+        raise EtudeError(f"etude/{SALAIRES}/ sans la requête du PFU.")
+    if not report_path.exists():
+        raise EtudeError(f"le rejeu du PFU sans rapport : {report_path.name}.")
+    menu = next(e for e in phase11["entries"] if e["instrument"].key == "pfu")
+    request = ExplorationRequest.model_validate_json(request_path.read_text(encoding="utf-8"))
+    dump = request.model_dump(mode="json", exclude_none=True)
+
+    def held(payload: dict[str, Any]) -> dict[str, Any]:
+        return {k: v for k, v in payload.items() if k not in SALAIRES_FREE}
+
+    if held(dump) != held(menu["report"]["request"]):
+        raise EtudeError(f"etude/{SALAIRES}/pfu.json ne rejoue pas la requête du PFU du "
+                         f"menu élargi : seuls {list(SALAIRES_FREE)} peuvent différer.")
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    ExplorationReport.model_validate(report)
+    if report["request"] != dump:
+        raise EtudeError(f"{report_path.name} n'a pas joué sa requête, "
+                         f"etude/{SALAIRES}/pfu.json.")
+    if not (report.get("where") or "").strip():
+        raise EtudeError(f"{report_path.name} ne dit pas où ses passes ont tourné.")
+    unshifted = [label for s in report["searches"] for e in s["evaluations"]
+                 for label, _ in e["corners"]
+                 if WAGE_SHIFT not in {name for name, _ in _settings(label)}]
+    if unshifted:
+        raise EtudeError(f"{report_path.name} ne fait pas varier {WAGE_SHIFT} à ses coins "
+                         f"(« {unshifted[0]} ») : il n'a pas tourné avec les salaires "
+                         f"déplacés.")
+    return {"instrument": menu["instrument"], "report": report, "menu": menu["report"],
+            "control": shift_control(report, menu["report"])}
+
+
 def study(requests: Path = REQUESTS,
           reports: Path = REPORTS) -> tuple[list, list, list, dict[str, Any] | None]:
-    """The study, its complements, the curve replayed and the wider menu of Phase 11,
-    all checked: what the page renders."""
+    """The study, its complements, the curve replayed and the wider menu of Phase 11 with
+    its PFU replayed, all checked: what the page renders."""
     etudes = load(requests, reports)
     complements = load_complements(etudes, requests, reports)
-    return (etudes, complements, load_courbe(etudes, requests, reports),
-            load_phase11(etudes, complements, requests, reports))
+    phase11 = load_phase11(etudes, complements, requests, reports)
+    salaires = load_salaires(phase11, requests, reports)
+    if salaires is not None:
+        phase11["salaires"] = salaires
+    return etudes, complements, load_courbe(etudes, requests, reports), phase11
 
 
 # --------------------------------------------------------------------------- #
@@ -809,6 +900,54 @@ PHASE11_LEAVES_OUT = {
 }
 
 
+#: What the PFU replayed with the wage shift still leaves out (D-252).
+SALAIRES_LEAVES_OUT = (
+    "Les plus-values futures dont les dividendes induits sont tirés, taxées plus bas que "
+    "le dividende : vers une dette plus haute. Le salaire déplacé est mesuré sur le cas de "
+    "la figure A2 de Bach et al., un salarié célibataire à six plafonds de la sécurité "
+    "sociale ; un gérant majoritaire de SARL, travailleur non salarié, cotise moins, et "
+    "chaque euro qu'il déplace reprend moins : vers une dette plus basse. Le canal compte "
+    "le déplacement dès la première année, quand les auteurs ne le trouvent qu'à partir de "
+    "la deuxième, et les droits à retraite que les cotisations perdues ouvraient sont hors "
+    "de l'horizon. La variante de l'IR de Mésange et la CDHR, comme au menu élargi.")
+
+
+def _salaires_section(salaires: dict[str, Any], target: float, first_year: int,
+                      target_year: int, theta: str) -> list[str]:
+    instrument, r, menu = salaires["instrument"], salaires["report"], salaires["menu"]
+    control = salaires["control"]
+    out = ["", "## Le PFU rejoué avec les salaires déplacés", "",
+           "Le menu élargi laissait hors de C10 le salaire que les propriétaires de firme "
+           "cessent de se verser quand leurs dividendes montent, et le disait à côté de son "
+           "chiffre. D-252 le fait entrer : 0,309 € de salaire imposable par euro de "
+           "dividende en plus, de 0 à 0,519 (tableau 2 B de Bach et al.), et sur chaque "
+           "euro déplacé, ce qu'il rapportait moins l'IS que l'entreprise paie sur le profit "
+           f"qu'il devient. La requête sous `etude/{SALAIRES}/` rejoue celle du PFU du menu "
+           "élargi champ pour champ ; seuls son nom, son titre et sa question diffèrent. "
+           "Elle a été commitée avant sa passe, avec le pronostic écrit dans D-252. Le "
+           f"rapport a joué sa requête, à l'identique, sur le commit `{r['commit']}`, le "
+           f"{r['computed']}. La passe a tourné ici : {r['where']}.",
+           "", r["question"]]
+    for search, before in zip(r["searches"], menu["searches"], strict=True):
+        was = {json.dumps(e["knobs"], sort_keys=True): e for e in before["evaluations"]}
+        then = " ; ".join(
+            f"{instrument.show(e['knobs'][instrument.knob])}, "
+            f"{_pt(was[json.dumps(e['knobs'], sort_keys=True)]['delta_aged'])}"
+            for e in search["evaluations"])
+        out += ["", f"**{search['persistence_label']}.** "
+                    f"{verdict(search, instrument, target, theta)} Sans les salaires "
+                    f"déplacés, au menu élargi, Δb valait, vue vieillie : {then}.", ""]
+        out += _search_table(search, instrument, target, first_year=first_year,
+                             target_year=target_year, theta=theta)
+    said = ("les redonne" if control["given_back"] else "ne les redonne pas")
+    out += ["", f"**Le contrôle.** Aux coins où le déplacement vaut 0, le rejeu doit redonner "
+                f"ceux du menu élargi, et ses coûts les siens : il {said}. L'écart le plus "
+                f"grand vaut {_fr(control['share'] * 100, 6, sign=False)} pt sur les coins "
+                f"et {_fr(control['eur'], 0, sign=False)} € sur les coûts.",
+            "", f"**Ce que ce chiffre ne compte pas.** {SALAIRES_LEAVES_OUT}"]
+    return out
+
+
 def _control_row(control: dict[str, Any]) -> str:
     gaps = control["gaps"]
     said = ("la redonne" if gaps["given_back"] else
@@ -957,6 +1096,9 @@ def render(etudes: list[dict[str, Any]],
         out += _courbe_section(list(courbe), target, first_year, target_year, theta)
     if phase11:
         out += _phase11_section(phase11, target, first_year, target_year, theta)
+    if phase11 and phase11.get("salaires"):
+        out += _salaires_section(phase11["salaires"], target, first_year, target_year,
+                                 theta)
     out += ["", "## Ce que l'étude ne dit pas", "",
             "- Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de "
             "θ ; un autre scénario donne une autre réponse.",

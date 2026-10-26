@@ -95,6 +95,9 @@ def compute(
     dividend_base_cdhr_eur: float = 0.0,
     levy_rate_baseline: float | None = None,
     levy_rate_reform: float | None = None,
+    wage_levy_rate: float | None = None,
+    wage_cost_rate: float | None = None,
+    corporate_rate: float | None = None,
     targets_low_wages: bool | None = None,
     draws: int = DRAWS,
     seed: int = SEED,
@@ -148,7 +151,8 @@ def compute(
         store, reform, dividend_base_eur=dividend_base_eur,
         dividend_base_cdhr_eur=dividend_base_cdhr_eur,
         levy_rate_baseline=levy_rate_baseline, levy_rate_reform=levy_rate_reform,
-        draws=draws, rng=rng,
+        wage_levy_rate=wage_levy_rate, wage_cost_rate=wage_cost_rate,
+        corporate_rate=corporate_rate, draws=draws, rng=rng,
     ))
     # C11 after C10, for the same reason; it reads C2's own draws of the jobs rather than
     # drawing them again (D-258).
@@ -184,9 +188,10 @@ def compute(
     dividends = next((r for r in results if r.key == "c10_dividendes" and r.applies), None)
     if dividends is not None:
         # In the support's units: the relative change of the net-of-tax rate. The share
-        # row is a composition, not a response, and is not graded.
+        # row is a composition, not a response, and is not graded; the wage shift answers
+        # the same variation, measured on the same reforms, and is (D-252).
         metrics["c10_dividendes"] = (
-            channel_module.C10_ELASTICITIES,
+            (*channel_module.C10_ELASTICITIES, channel_module.C10_WAGE_SHIFT),
             abs(dividends.diagnostics["net_of_tax_relative_change"]))
     if any(r.key == "c11_autofinancement" and r.applies for r in results):
         # The weight is a choice and the two amounts are published, not estimated: no

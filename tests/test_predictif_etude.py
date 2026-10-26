@@ -107,6 +107,10 @@ def test_the_committed_study_is_preregistered(script) -> None:
     assert phase11["entries"][0]["report"]["commit"] in script.OUT.read_text(
         encoding="utf-8")
     assert all(c["gaps"]["given_back"] for c in phase11["controls"])
+    # D-253: the PFU replayed with the wage shift, giving the menu back at no shift.
+    salaires = script.load_salaires(phase11)
+    assert salaires["control"]["given_back"]
+    assert salaires["report"]["commit"] in script.OUT.read_text(encoding="utf-8")
 
 
 # --------------------------------------------------------------------------- #
@@ -794,5 +798,165 @@ def test_a_wider_menu_that_is_not_what_was_preregistered_is_refused(script, tmp_
         else:
             report["request"]["horizon"] = 9
         control.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(script.EtudeError, match=needle):
+        script.study(requests, reports)
+
+
+# --------------------------------------------------------------------------- #
+# the PFU of the wider menu, replayed with the wages its owners shift (D-252)
+# --------------------------------------------------------------------------- #
+SALAIRES_COMMIT = "f" * 40
+#: What the wage shift adds to a corner where it is at its high end, in share of GDP.
+SHIFTED = 4e-4
+
+
+def _salaires(requests: Path, reports: Path, script, **request_overrides) -> None:
+    """The wider menu's PFU replayed: its request with name, title and question changed,
+    and a report whose corners vary the wage shift — at 0 the menu's own, at 1 higher."""
+    payload = json.loads((requests / "phase11" / "pfu.json").read_text(encoding="utf-8"))
+    payload.update(name="phase11_salaires_pfu", titre="Le PFU, avec les salaires déplacés",
+                   question="Avec les salaires déplacés, le PFU fait-il baisser la dette ?")
+    payload.update(request_overrides)
+    (requests / script.SALAIRES).mkdir()
+    (requests / script.SALAIRES / "pfu.json").write_text(json.dumps(payload),
+                                                         encoding="utf-8")
+    report = json.loads((reports / "exploration_phase11_pfu.json").read_text(
+        encoding="utf-8"))
+    report.update(name=payload["name"], titre=payload["titre"],
+                  question=payload["question"], commit=SALAIRES_COMMIT,
+                  computed="2026-10-26",
+                  request=ExplorationRequest.model_validate(payload).model_dump(
+                      mode="json", exclude_none=True))
+    for search in report["searches"]:
+        # The shift raises Δb at θ = ½ too, wherever the report carries it.
+        for e in (*search["evaluations"], *search["candidates"], search["indices"],
+                  search["closest"] or {}):
+            if "delta_aged" in e:
+                e["delta_aged"] += SHIFTED / 2
+        for e in search["evaluations"]:
+            e["corners"] = [pair for label, value in e["corners"] for pair in (
+                [f"{label}, {script.WAGE_SHIFT} = 0", value],
+                [f"{label}, {script.WAGE_SHIFT} = 1", value + SHIFTED])]
+            e["corner_high"] = max(value for _, value in e["corners"])
+    (reports / f"exploration_{script.SALAIRES}_pfu.json").write_text(
+        json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+
+def _with_salaires(tmp_path: Path, script, **request_overrides) -> tuple[Path, Path]:
+    requests, reports = _study(tmp_path, script)
+    _phase11(requests, reports, script)
+    _salaires(requests, reports, script, **request_overrides)
+    return requests, reports
+
+
+def test_the_pfu_replayed_with_the_wage_shift_is_rendered_apart(script, tmp_path) -> None:
+    """D-252: the replay has its own section after the wider menu's, with its commit, its
+    answer under each persistence beside the menu's, and its control: at a wage shift of
+    0, every corner and every cost the menu's."""
+    requests, reports = _with_salaires(tmp_path, script)
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    salaires = phase11["salaires"]
+    assert salaires["control"] == {"share": 0.0, "eur": 0.0, "given_back": True}
+    page = script.render(etudes, complements, courbe, phase11)
+    menu, _, tail = page.partition("## Le PFU rejoué avec les salaires déplacés")
+    assert tail and SALAIRES_COMMIT in tail and SALAIRES_COMMIT not in menu
+    assert "## Le menu élargi de la phase 11" in menu and "D-252" in tail
+    for search in salaires["report"]["searches"]:
+        assert script.verdict(search, salaires["instrument"], 0.0) in tail
+    assert tail.count("Sans les salaires déplacés, au menu élargi") == 2
+    # Beside each verdict, the menu's Δb, not the replay's.
+    for search, before in zip(salaires["report"]["searches"],
+                              salaires["menu"]["searches"], strict=True):
+        line = next(x for x in tail.splitlines()
+                    if x.startswith(f"**{search['persistence_label']}.**"))
+        then = line.partition("Sans les salaires déplacés")[2]
+        for e in before["evaluations"]:
+            assert script._pt(e["delta_aged"]) in then
+        assert all(script._pt(e["delta_aged"]) not in then
+                   for e in search["evaluations"])
+    assert "il les redonne" in tail and "**Ce que ce chiffre ne compte pas.**" in tail
+    assert "figure A2" in tail
+
+
+def test_a_replay_that_does_not_give_the_menu_back_at_no_shift_is_said_so(script,
+                                                                          tmp_path) -> None:
+    """D-252: a corner at no shift off the menu's by more than a ten-thousandth of a point
+    is a result, said with its gap, not a refusal."""
+    requests, reports = _with_salaires(tmp_path, script)
+    path = reports / f"exploration_{script.SALAIRES}_pfu.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["searches"][1]["evaluations"][0]["corners"][0][1] += 3e-6
+    path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    control = phase11["salaires"]["control"]
+    assert control["share"] == pytest.approx(3e-6) and not control["given_back"]
+    assert "il ne les redonne pas" in script.render(etudes, complements, courbe, phase11)
+
+
+#: Each way a replay could read as the wider menu's PFU played with the wage shift
+#: without being so.
+SALAIRES_REFUSALS = [
+    ("cadre", "ne rejoue pas la requête du PFU"),
+    ("grille", "ne rejoue pas la requête du PFU"),
+    ("sans_rapport", "le rejeu du PFU sans rapport"),
+    ("sans_requete", "sans la requête du PFU"),
+    ("retouchee", "n'a pas joué sa requête, etude/phase11_salaires"),
+    ("ou", "ne dit pas où"),
+    ("hors_menu", "seul le PFU s'y rejoue"),
+    ("sans_salaires", "ne fait pas varier"),
+    ("sans_menu", "que le dépôt n'a pas"),
+    ("pendant", "n'a pas son pendant"),
+    ("persistances", "pas les mêmes persistances"),
+]
+
+
+@pytest.mark.parametrize("how, needle", SALAIRES_REFUSALS,
+                         ids=[how for how, _ in SALAIRES_REFUSALS])
+def test_a_replay_that_is_not_the_menu_s_pfu_with_the_shift_is_refused(script, tmp_path,
+                                                                       how: str,
+                                                                       needle: str) -> None:
+    """Another frame or grid than the menu's PFU, a replay without its report or its
+    request, a request touched after its pass, a report silent on where it ran, a request
+    the page would not render, corners that do not vary the shift, a replay of a menu the
+    repository does not have, a corner the menu has no counterpart for, or persistences
+    out of order: each would read as the PFU replayed with the wage shift, and is
+    refused. A bundle the menu lacks cannot be: one request is one grid, and the schema
+    has a report carry each of its bundles."""
+    overrides = {"cadre": {"horizon": 9},
+                 "grille": {"bounds": [{"knob": "pfu_taux", "low": 0.098, "high": 0.118,
+                                        "step": 0.01}]}}.get(how, {})
+    requests, reports = _with_salaires(tmp_path, script, **overrides)
+    path = reports / f"exploration_{script.SALAIRES}_pfu.json"
+    request_path = requests / script.SALAIRES / "pfu.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    if how == "sans_rapport":
+        path.unlink()
+    elif how == "sans_requete":
+        request_path.unlink()
+    elif how == "retouchee":
+        payload = json.loads(request_path.read_text(encoding="utf-8"))
+        payload["question"] = payload["question"] + " (retouchée)"
+        payload["titre"] = "retouchée"
+        request_path.write_text(json.dumps(payload), encoding="utf-8")
+    elif how == "hors_menu":
+        (requests / script.SALAIRES / "is.json").write_text(
+            request_path.read_text(encoding="utf-8"), encoding="utf-8")
+    elif how == "sans_menu":
+        import shutil
+
+        shutil.rmtree(requests / "phase11")
+    if how in ("ou", "sans_salaires", "pendant", "persistances"):
+        evaluation = report["searches"][0]["evaluations"][0]
+        if how == "ou":
+            report["where"] = " "
+        elif how == "sans_salaires":
+            evaluation["corners"] = [[label.split(f", {script.WAGE_SHIFT}")[0], value]
+                                     for label, value in evaluation["corners"]]
+        elif how == "pendant":
+            label, value = evaluation["corners"][0]
+            evaluation["corners"][0] = [f"{label}, une_autre_ligne = 0", value]
+        else:
+            report["searches"].reverse()
+        path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
     with pytest.raises(script.EtudeError, match=needle):
         script.study(requests, reports)
