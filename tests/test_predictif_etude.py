@@ -464,7 +464,7 @@ def test_a_curve_that_is_not_what_was_preregistered_is_refused(script, tmp_path,
 
 def _courbe_first_round(reports: Path, *, move: str | None = None) -> None:
     """The curve's first round as it ran: on the preregistration's commit, with the C2 that
-    read 15 % of the earners (D-252), here its indices changed; `move` shifts one figure of
+    read 15 % of the earners (D-254), here its indices changed; `move` shifts one figure of
     that knob's report."""
     first = reports / "courbe_premier_tour"
     first.mkdir()
@@ -482,7 +482,7 @@ def _courbe_first_round(reports: Path, *, move: str | None = None) -> None:
 
 def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
         script, tmp_path) -> None:
-    """D-254: the curve replayed after C2's fix. Its indices may differ from the first
+    """D-256: the curve replayed after C2's fix. Its indices may differ from the first
     round's, which is the point; its costs, its Δb and its corners may not, and the page
     names the first commit and why it was replayed."""
     requests, reports = _study(tmp_path, script)
@@ -492,7 +492,7 @@ def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
     page = script.render(etudes, complements, courbe)
     _, _, tail = page.partition("## La courbe de 2026, préenregistrée à part")
     assert "e" * 40 in tail and CURVE_COMMIT in tail
-    assert "chiffre pour chiffre" in tail and "D-252" in tail
+    assert "chiffre pour chiffre" in tail and "D-254" in tail
     assert "courbe_premier_tour" in tail
 
 
@@ -500,7 +500,7 @@ def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
                                          ("missing", "premier tour de la courbe sans")])
 def test_a_curve_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str,
                                                       needle: str) -> None:
-    """D-254: the rerun only corrects C2, which enters no revenue and no debt. One figure
+    """D-256: the rerun only corrects C2, which enters no revenue and no debt. One figure
     moved by a billionth of a point, or a knob missing from the first round, and the
     rerun is no longer that: refused."""
     requests, reports = _study(tmp_path, script)
@@ -514,7 +514,7 @@ def test_a_curve_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str
 
 def _second_round(reports: Path, *, move: str | None = None) -> None:
     """The study's second round as it ran: with the C2 that read 15 % of the earners
-    (D-252), here its indices changed; `move` shifts one figure of that instrument's
+    (D-254), here its indices changed; `move` shifts one figure of that instrument's
     report."""
     second = reports / "etude_second_tour"
     second.mkdir()
@@ -531,7 +531,7 @@ def _second_round(reports: Path, *, move: str | None = None) -> None:
 
 def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
                                                                      tmp_path) -> None:
-    """D-254: the study replayed on its second round's code with C2's fix alone. Its
+    """D-256: the study replayed on its second round's code with C2's fix alone. Its
     indices may differ from the second round's, which is the point; its costs, its Δb and
     its corners may not, and the page names the second commit and why it was replayed."""
     requests, reports = _study(tmp_path, script)
@@ -540,7 +540,7 @@ def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
     page = script.render(script.load(requests, reports))
     head, _, _ = page.partition("## Le cadre")
     assert "f" * 40 in head and "a" * 40 in head and COMMIT in head
-    assert "D-252" in head and "etude_second_tour" in head
+    assert "D-254" in head and "etude_second_tour" in head
     assert head.count("chiffre pour chiffre") == 2
 
 
@@ -548,7 +548,7 @@ def test_the_second_round_is_named_and_given_back_figure_for_figure(script,
                                          ("missing", "second tour sans")])
 def test_a_third_round_that_is_not_the_second_is_refused(script, tmp_path, how: str,
                                                          needle: str) -> None:
-    """D-254: the third round only corrects C2, which enters no revenue and no debt. One
+    """D-256: the third round only corrects C2, which enters no revenue and no debt. One
     figure moved by a billionth of a point, or an instrument missing from the second
     round, and the replay is no longer that: refused."""
     requests, reports = _study(tmp_path, script)
@@ -560,7 +560,7 @@ def test_a_third_round_that_is_not_the_second_is_refused(script, tmp_path, how: 
 
 
 def _complement_first_round(reports: Path, *, move: bool = False) -> None:
-    """The complement's first round as it ran: with the C2 that D-252 and D-254 corrected,
+    """The complement's first round as it ran: with the C2 that D-254 and D-256 corrected,
     here its indices changed; `move` shifts one of its figures."""
     first = reports / "complements_premier_tour"
     first.mkdir()
@@ -576,7 +576,7 @@ def _complement_first_round(reports: Path, *, move: bool = False) -> None:
 
 def test_the_complement_s_first_round_is_named_and_given_back_figure_for_figure(
         script, tmp_path) -> None:
-    """D-255: the complement replayed on its own commit with C2's fixes alone. Its indices
+    """D-257: the complement replayed on its own commit with C2's fixes alone. Its indices
     may differ from the first round's; its costs, its Δb and its corners may not, and the
     page names the first commit and why it was replayed."""
     requests, reports = _study(tmp_path, script)
@@ -586,7 +586,7 @@ def test_the_complement_s_first_round_is_named_and_given_back_figure_for_figure(
     page = script.render(etudes, complements)
     _, _, tail = page.partition("## Complément, hors préenregistrement")
     assert "9" * 40 in tail and "b" * 40 in tail
-    assert "chiffre pour chiffre" in tail and "D-252" in tail
+    assert "chiffre pour chiffre" in tail and "D-254" in tail
     assert "complements_premier_tour" in tail
 
 
@@ -594,7 +594,7 @@ def test_the_complement_s_first_round_is_named_and_given_back_figure_for_figure(
                                          ("missing", "premier tour des compléments sans")])
 def test_a_complement_rerun_that_moves_a_figure_is_refused(script, tmp_path, how: str,
                                                            needle: str) -> None:
-    """D-255: the rerun only corrects C2, which enters no revenue and no debt. One figure
+    """D-257: the rerun only corrects C2, which enters no revenue and no debt. One figure
     moved by a billionth of a point, or the complement missing from its first round, and
     the rerun is no longer that: refused."""
     requests, reports = _study(tmp_path, script)
