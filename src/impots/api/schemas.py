@@ -1836,6 +1836,29 @@ def _refuse_firm_knobs_out_of_chain(spec: FirmReformSpec | None) -> None:
             f"rôle de `/entreprises/simulate`.")
 
 
+def _refuse_a_law_the_carry_cannot_see(specs: list[FirmReformSpec | None],
+                                       horizon: int) -> None:
+    """The carried path prices its first year and holds it as a share of GDP to the end of
+    the horizon. A firm knob whose law moves within the horizon would be held at its first
+    year's law: the CVAE's is cut in 2028 and abolished in 2030 (D-254). Refused, pointing
+    to the path that prices each year under its own law."""
+    from impots.entreprises import system as firm_system
+    from impots.entreprises.reforms import law_moves
+    from impots.predictif.chaine import START_YEAR
+
+    first, last = START_YEAR + 1, START_YEAR + horizon
+    moves: dict[str, int] = {}
+    for spec in specs:
+        if spec is not None and not spec.is_empty():
+            moves.update(law_moves(spec, firm_system.baseline().parameters, first, last))
+    if moves:
+        named = ", ".join(f"« {knob} » en {year}" for knob, year in sorted(moves.items()))
+        raise ValueError(
+            f"le droit que règle {named} change dans l'horizon : ce chemin chiffre {first} "
+            f"et le reporte, et le tiendrait à son droit de {first} jusqu'en {last}. "
+            f"`impots predictif` chiffre chaque année sous le sien (D-254).")
+
+
 class PredictifRequest(BaseModel):
     model_config = INPUT_CONFIG
 
@@ -1868,6 +1891,7 @@ class PredictifRequest(BaseModel):
             raise ValueError("Une réforme est requise : sans réforme, la trajectoire de "
                              "la réforme est celle de la référence.")
         _refuse_firm_knobs_out_of_chain(self.firm_reform)
+        _refuse_a_law_the_carry_cannot_see([self.firm_reform], self.horizon)
         return self
 
 
@@ -1987,6 +2011,11 @@ class ExplorationRequest(BaseModel):
                     f"bouton « {bound.knob} » fixé aussi dans la base : la grille "
                     f"l'écraserait, et le rapport afficherait une base que rien n'a "
                     f"chiffrée.")
+        # Knob by knob for the grid: whether its law moves does not depend on the value.
+        _refuse_a_law_the_carry_cannot_see(
+            [self.firm_base, *(FirmReformSpec.model_validate({b.knob: b.low})
+                               for b in self.bounds if b.knob in FirmReformSpec.model_fields)],
+            self.horizon)
         return self
 
 

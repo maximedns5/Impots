@@ -57,6 +57,20 @@ CEBGE_TRANCHE_PATHS: tuple[tuple[tuple[str, ...], tuple[str, ...], tuple[str, ..
 )
 
 
+#: The CVAE's whole schedule, as the law moves it from one year to the next (D-254): the
+#: ceiling rate, the slopes and intercepts of the brackets below it, and the
+#: complementary dégrèvement, which the law scales with them (188, 125, 63 €). The
+#: thresholds, the caps on value added and the franchise are not rates, and the law
+#: leaves them where they are.
+CVAE_SCHEDULE: tuple[tuple[str, ...], ...] = (
+    ("cvae", "taux_max"),
+    ("cvae", "bareme", "pente_t1"), ("cvae", "bareme", "pente_t2"),
+    ("cvae", "bareme", "pente_t3"),
+    ("cvae", "bareme", "base_t2"), ("cvae", "bareme", "base_t3"),
+    ("cvae", "degrevement", "montant"),
+)
+
+
 class CebgeTranche(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)  # D-173
 
@@ -79,6 +93,13 @@ class FirmReformSpec(BaseModel):
     c3s_abattement: Annotated[float, Field(ge=0, le=1_000_000_000)] | None = None
     cvae_taux_max: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     cvae_degrevement: Annotated[float, Field(ge=0, le=1_000_000)] | None = None
+    cvae_echelle: Annotated[float, Field(ge=0.0, le=3.0)] | None = Field(
+        default=None,
+        description="The CVAE's whole schedule of the year, scaled: the ceiling, the "
+        "brackets below it and the dégrèvement, as the law moves them itself (D-254). 0 "
+        "abolishes it, 0.5 halves it. In a year where the law has abolished it, there is "
+        "nothing to scale. Not with `cvae_taux_max` or `cvae_degrevement`, which it "
+        "already moves.")
     cir_taux: Annotated[float, Field(ge=0.0, le=1.0)] | None = Field(
         default=None,
         description="The CIR research rate on each declarant's expenses up to 100 M€. "
@@ -122,6 +143,14 @@ class FirmReformSpec(BaseModel):
                 raise ValueError(
                     f"les seuils de CA doivent être strictement croissants ; reçu {seuils}"
                 )
+        if self.cvae_echelle is not None:
+            moved = [knob for knob in ("cvae_taux_max", "cvae_degrevement")
+                     if getattr(self, knob) is not None]
+            if moved:
+                raise ValueError(
+                    f"cvae_echelle avec {moved} : le facteur règle déjà le barème entier, "
+                    f"ce plafond et ce dégrèvement compris ; lequel l'emporterait serait "
+                    f"l'ordre des écritures, pas une politique.")
         if self.cebge_prorogation_largeur is not None and len(
                 self.cebge_seuils_et_taux or ()) != len(CEBGE_TRANCHE_PATHS):
             raise ValueError(
@@ -181,6 +210,19 @@ def _retablir_cebge(parameters: Any, spec: FirmReformSpec, start: Any, instant: 
                          value=tranche.seuil_ca + largeur)
 
 
+def _scale_cvae(parameters: Any, factor: float, start: Any, instant: str) -> None:
+    """The year's whole CVAE schedule times `factor`, read on the tree being reformed —
+    the law of that year, cloned. Where the law has abolished the CVAE its schedule is
+    null, and there is nothing to scale: nothing is written, and the year costs
+    nothing (D-254)."""
+    for path in CVAE_SCHEDULE:
+        law = resolve(parameters, path)(instant)
+        if law is None:
+            continue
+        update_existing(parameters, path, start=start, value=factor * float(law),
+                        instant=instant)
+
+
 def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
     """The `Reform` applying `spec` from `{year}-01-01`.
 
@@ -202,6 +244,8 @@ def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
                     if value is not None:
                         update_existing(parameters, path, start=start, value=value,
                                         instant=instant)
+                if spec.cvae_echelle is not None:
+                    _scale_cvae(parameters, spec.cvae_echelle, start, instant)
                 if spec.cebge_prorogation_largeur is not None:
                     _retablir_cebge(parameters, spec, start, instant)
                     return parameters
@@ -223,6 +267,60 @@ def make_reform(spec: FirmReformSpec, year: int, name: str) -> type[Reform]:
     return FirmReform
 
 
+def _cvae_read_back(system: Any, factor: float, instant: str) -> list[str]:
+    """Each rate of the schedule against `factor` times the BASELINE's, not the reformed
+    tree's: a reform that moved the law it is checked against would define its own
+    answer. Where the baseline has no CVAE, the reformed tree must have none either."""
+    from impots.entreprises.system import baseline as _baseline
+
+    problems = []
+    for path in CVAE_SCHEDULE:
+        law = resolve(_baseline().parameters, path)(instant)
+        got = resolve(system.parameters, path)(instant)
+        name = ".".join(path)
+        if law is None:
+            if got is not None:
+                problems.append(f"cvae_echelle: {name} vaut {got} là où la loi n'a plus de "
+                                f"CVAE")
+            continue
+        wanted = factor * float(law)
+        if got is None or differs(float(got), wanted):
+            problems.append(f"cvae_echelle: {name} demandé {wanted}, appliqué {got}")
+    return problems
+
+
+def _knob_paths(knob: str) -> tuple[tuple[str, ...], ...]:
+    """The parameters a knob writes, for `law_moves`. The CIR's knobs write none: they
+    are priced on the créance flow, outside the tree (D-222)."""
+    if knob in SCALAR_KNOBS:
+        return (SCALAR_KNOBS[knob],)
+    if knob == "cvae_echelle":
+        return CVAE_SCHEDULE
+    if knob in ("cebge_seuils_et_taux", "cebge_prorogation_largeur"):
+        return (*(path for paths in CEBGE_TRANCHE_PATHS for path in paths),
+                ("cebge", "lissage", "largeur"))
+    return ()
+
+
+def law_moves(spec: FirmReformSpec, parameters: Any, first: int, last: int) -> dict[str, int]:
+    """For each knob `spec` sets, the first year after `first`, up to `last`, in which the
+    law of a parameter it writes is not that of `first`; knobs whose law holds are left
+    out. What a path that carries `first` over the years cannot see (D-254)."""
+    def law(path: tuple[str, ...], year: int) -> Any:
+        try:
+            return resolve(parameters, path)(f"{year}-01-01")
+        except (AttributeError, KeyError):
+            return None
+
+    out: dict[str, int] = {}
+    for knob in spec.model_dump(exclude_none=True):
+        for year in range(first + 1, last + 1):
+            if any(law(path, year) != law(path, first) for path in _knob_paths(knob)):
+                out[knob] = year
+                break
+    return out
+
+
 def verify_scales(system: Any, spec: FirmReformSpec, year: int) -> None:
     """Read the reformed parameters back and refuse anything that is not what was asked.
 
@@ -241,6 +339,8 @@ def verify_scales(system: Any, spec: FirmReformSpec, year: int) -> None:
         got = float(resolve(system.parameters, path)(instant))
         if differs(got, wanted):
             problems.append(f"{knob}: demandé {wanted}, appliqué {got}")
+    if spec.cvae_echelle is not None:
+        problems += _cvae_read_back(system, spec.cvae_echelle, instant)
     if not spec.cebge_seuils_et_taux:
         if problems:
             raise AssertionError(

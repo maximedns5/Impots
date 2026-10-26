@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Callable
+from typing import Any
 
 from impots.dette import comptes
 from impots.dette.path import DebtError
@@ -85,3 +86,23 @@ def note(view: str, vintage: str, year: int, factor: float | None) -> str:
         return (f"vue vieillie : le coût du millésime {vintage} suivi au PIB nominal du "
                 f"scénario, ×{shown} jusqu'à {year} (M0, R7)")
     return f"vue figée : le millésime {vintage} tel quel"
+
+
+def extinction(spec: Any, years: list[int]) -> str | None:
+    """What a report says when a factor on the CVAE's schedule meets a year where the
+    law has abolished it (D-254): from then on the layer costs nothing, which is the law,
+    not a missing figure. Read on the tree; None when no such year is in `years`."""
+    from impots.entreprises import system as firm_system
+    from impots.entreprises.reforms import CVAE_SCHEDULE, resolve
+
+    if spec is None or getattr(spec, "cvae_echelle", None) is None:
+        return None
+    parameters = firm_system.baseline().parameters
+    gone = next((year for year in years
+                 if all(resolve(parameters, path)(f"{year}-01-01") is None
+                        for path in CVAE_SCHEDULE)), None)
+    if gone is None:
+        return None
+    return (f"La CVAE est abrogée au 1er janvier {gone} : à partir de cette année, le "
+            f"facteur sur son barème n'a plus rien à régler, et la couche entreprises n'y "
+            f"coûte rien. C'est le droit, pas un chiffre manquant (D-254).")

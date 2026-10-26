@@ -795,3 +795,43 @@ def test_the_committed_trajectory_artefact_validates(client_with_scenarios):
     # The uprating class must widen with the horizon — the fact M5 asks to make visible.
     widths = [abs(y.uprating_aged_eur - y.uprating_frozen_eur) for y in payload.years]
     assert widths[-1] > widths[0], "la classe vieillissement doit s'élargir avec l'horizon"
+
+
+# --- D-254: a firm reform beside the households' -------------------------------------
+
+
+def test_the_cli_saves_a_firm_reform_beside_the_households(tmp_path, capsys):
+    """A scenario that moves only the firms — the CVAE's schedule — keeps an empty
+    households' reform and its firm reform, and reads back the same."""
+    from impots import scenarios as scenarios_module
+
+    (tmp_path / "menages.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "entreprises.json").write_text('{"cvae_echelle": 0.0}', encoding="utf-8")
+    code = run_cli(["scenario", "save", "cvae", "--reform", str(tmp_path / "menages.json"),
+                    "--firm-reform", str(tmp_path / "entreprises.json"),
+                    "--source", "LF 2025 art. 62", "--year", "2026",
+                    "--dir", str(tmp_path)])
+    assert code == 0, capsys.readouterr().err
+    assert "cvae_echelle" in capsys.readouterr().out
+    scenario = scenarios_module.load("cvae", tmp_path)
+    assert scenario.reform.is_empty()
+    assert scenario.firm_reform.model_dump(exclude_none=True) == {"cvae_echelle": 0.0}
+
+
+@pytest.mark.parametrize("payload,fragment", [
+    (None, "illisible"),
+    ('{"cvae_echelle": 0.5, "cvae_taux_max": 0.002}', "ne valide pas"),
+    ("pas du json", "pas du JSON"),
+])
+def test_the_cli_turns_a_bad_firm_reform_file_into_a_refusal(tmp_path, capsys, payload,
+                                                             fragment):
+    (tmp_path / "menages.json").write_text("{}", encoding="utf-8")
+    path = tmp_path / "entreprises.json"
+    if payload is not None:
+        path.write_text(payload, encoding="utf-8")
+    code = run_cli(["scenario", "save", "cvae", "--reform", str(tmp_path / "menages.json"),
+                    "--firm-reform", str(path), "--source", "LF 2025 art. 62",
+                    "--dir", str(tmp_path)])
+    assert code == 1
+    assert fragment in capsys.readouterr().err
+    assert not (tmp_path / "cvae.json").exists()

@@ -1,0 +1,12 @@
+{
+  "name": "cvae_moitie_2026",
+  "year": 2026,
+  "created": "2026-10-26",
+  "source": "LF 2025 (loi n° 2025-127 du 14 février 2025), art. 62 : le barème de la CVAE de 2026 à 2029, abrogée au 1er janvier 2030. Variante : chaque année, le barème de la loi divisé par deux, comme la LF 2021 l'avait divisé par deux.",
+  "note": "cvae_echelle = 0,5 : le barème entier de chaque année à moitié, plafond, tranches et dégrèvement (D-254). La baisse de 2021, que l'IPP évalue (C4), était de cet ordre. La CFE n'est pas simulée.",
+  "tags": [],
+  "reform": {},
+  "firm_reform": {
+    "cvae_echelle": 0.5
+  }
+}
