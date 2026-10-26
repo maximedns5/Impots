@@ -1,0 +1,432 @@
+{
+  "scenario": "cvae_suppression_2026",
+  "titre": "cvae_suppression_2026",
+  "source": "LF 2025 (loi n° 2025-127 du 14 février 2025), art. 62 : la suppression de la CVAE reportée, son barème relevé à 0,28 % en 2026 et 2027, ramené à 0,19 % en 2028 et 0,09 % en 2029, la CVAE abrogée au 1er janvier 2030. Variante : la suppression avancée au 1er janvier 2026, en une fois.",
+  "reference": "reconduit",
+  "computed": "2026-10-26",
+  "spending_name": "Dépenses gelées en volume",
+  "growth_name": "Croissance réelle 1 %, prix 2 %",
+  "rate_name": "Taux implicite tenu à son niveau de 2025",
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "years": [
+    {
+      "year": 2026,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 3281788622.2292175,
+      "mechanical_aged_eur": 3568482030.455574,
+      "reference": 1.168580725548546,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 3281788622.2292175
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 3568482030.455574
+        }
+      }
+    },
+    {
+      "year": 2027,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 3281788572.5838165,
+      "mechanical_aged_eur": 3676250132.1626973,
+      "reference": 1.1746928799602263,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 3281788572.5838165
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 3676250132.1626973
+        }
+      }
+    },
+    {
+      "year": 2028,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 2222227731.6674957,
+      "mechanical_aged_eur": 2564510982.0032096,
+      "reference": 1.1753885794969483,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 2222227731.6674957
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 2564510982.0032096
+        }
+      }
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 1065801741.2487335,
+      "mechanical_aged_eur": 1267108987.1215637,
+      "reference": 1.1707805732317031,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 1065801741.2487335
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 1267108987.1215637
+        }
+      }
+    },
+    {
+      "year": 2030,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 0.0,
+      "mechanical_aged_eur": 0.0,
+      "reference": 1.1609798413129486,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        }
+      }
+    },
+    {
+      "year": 2031,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 0.0,
+      "mechanical_aged_eur": 0.0,
+      "reference": 1.146095619682319,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        }
+      }
+    },
+    {
+      "year": 2032,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 0.0,
+      "mechanical_aged_eur": 0.0,
+      "reference": 1.1262354244680892,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        }
+      }
+    },
+    {
+      "year": 2033,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 0.0,
+      "mechanical_aged_eur": 0.0,
+      "reference": 1.1015050760584795,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        }
+      }
+    },
+    {
+      "year": 2034,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 0.0,
+      "mechanical_aged_eur": 0.0,
+      "reference": 1.0720087228588424,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        }
+      }
+    },
+    {
+      "year": 2035,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 0.0,
+      "mechanical_aged_eur": 0.0,
+      "reference": 1.0378488647367168,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null,
+      "mechanical_by_layer": {
+        "figee": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        },
+        "vieillie": {
+          "menages": 0.0,
+          "entreprises": 0.0
+        }
+      }
+    }
+  ],
+  "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Couche entreprises : le millésime 2023, sous le droit de chaque année. Vue figée : le millésime tel quel ; vue vieillie : son coût suivi au PIB nominal du scénario depuis le millésime (M0, R7). L'IS est compté à l'exercice, non à la caisse (PHASE11_SPEC §3). La CVAE est abrogée au 1er janvier 2030 : à partir de cette année, le facteur sur son barème n'a plus rien à régler, et la couche entreprises n'y coûte rien. C'est le droit, pas un chiffre manquant (D-254)."
+  ],
+  "absent": {
+    "rétroaction": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cvae': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}",
+    "bande": "Comportement non demandé : seul le chiffre mécanique est porté.",
+    "θ": "Vue mécanique : les θ sont listés parce que la requête les nomme, mais aucun canal de comportement ne les lit."
+  },
+  "theta": {
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
+    "dividend_wage_shift_firm_owners": 0.5,
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "is_croissance_pib": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5
+  },
+  "theta_applied": false,
+  "closed": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244).",
+    "rétroaction PIB → recettes": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cvae': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}",
+    "multiplicateur macro": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cvae': \"impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice\"}"
+  },
+  "uprating_note": "Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "behavioural": false,
+  "macro": true,
+  "persistence": null,
+  "side_by_side": [
+    {
+      "persistence": "eteint",
+      "label": "Effet macro éteint après trois ans",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1697388025166553,
+          "delta_aged": 0.0011580769681092118,
+          "reform_frozen": 1.1696457621061553,
+          "delta_frozen": 0.0010650365576092558
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.176996250602031,
+          "delta_aged": 0.0023033706418047473,
+          "reform_frozen": 1.1767799755738695,
+          "delta_frozen": 0.002087095613643175
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1784507040066956,
+          "delta_aged": 0.0030621245097472993,
+          "reform_frozen": 1.1781321525090391,
+          "delta_frozen": 0.0027435730120908275
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1741849968150906,
+          "delta_aged": 0.0034044235833874392,
+          "reform_frozen": 1.1738102101233894,
+          "delta_frozen": 0.003029636891686227
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.164346685624377,
+          "delta_aged": 0.0033668443114283075,
+          "reform_frozen": 1.1639760359651774,
+          "delta_frozen": 0.0029961946522287786
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.149425299535529,
+          "delta_aged": 0.003329679853209866,
+          "reform_frozen": 1.1490587412427542,
+          "delta_frozen": 0.0029631215604351002
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1295283500979554,
+          "delta_aged": 0.0032929256298661613,
+          "reform_frozen": 1.1291658380096072,
+          "delta_frozen": 0.0029304135415180177
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1047616531715543,
+          "delta_aged": 0.00325657711307481,
+          "reform_frozen": 1.1044031426241492,
+          "delta_frozen": 0.00289806656566971
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.075229352683341,
+          "delta_aged": 0.0032206298244985554,
+          "reform_frozen": 1.0748747995064072,
+          "delta_frozen": 0.0028660766475647748
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0410339440719503,
+          "delta_aged": 0.003185079335233487,
+          "reform_frozen": 1.0406833045825863,
+          "delta_frozen": 0.0028344398458695075
+        }
+      ],
+      "conventions": [],
+      "gdp_gap_aged": []
+    },
+    {
+      "persistence": "tenu",
+      "label": "Effet macro tenu au niveau de la troisième année",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1697388025166553,
+          "delta_aged": 0.0011580769681092118,
+          "reform_frozen": 1.1696457621061553,
+          "delta_frozen": 0.0010650365576092558
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.176996250602031,
+          "delta_aged": 0.0023033706418047473,
+          "reform_frozen": 1.1767799755738695,
+          "delta_frozen": 0.002087095613643175
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1784507040066956,
+          "delta_aged": 0.0030621245097472993,
+          "reform_frozen": 1.1781321525090391,
+          "delta_frozen": 0.0027435730120908275
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1741849968150906,
+          "delta_aged": 0.0034044235833874392,
+          "reform_frozen": 1.1738102101233894,
+          "delta_frozen": 0.003029636891686227
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.164346685624377,
+          "delta_aged": 0.0033668443114283075,
+          "reform_frozen": 1.1639760359651774,
+          "delta_frozen": 0.0029961946522287786
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.149425299535529,
+          "delta_aged": 0.003329679853209866,
+          "reform_frozen": 1.1490587412427542,
+          "delta_frozen": 0.0029631215604351002
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1295283500979554,
+          "delta_aged": 0.0032929256298661613,
+          "reform_frozen": 1.1291658380096072,
+          "delta_frozen": 0.0029304135415180177
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1047616531715543,
+          "delta_aged": 0.00325657711307481,
+          "reform_frozen": 1.1044031426241492,
+          "delta_frozen": 0.00289806656566971
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.075229352683341,
+          "delta_aged": 0.0032206298244985554,
+          "reform_frozen": 1.0748747995064072,
+          "delta_frozen": 0.0028660766475647748
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0410339440719503,
+          "delta_aged": 0.003185079335233487,
+          "reform_frozen": 1.0406833045825863,
+          "delta_frozen": 0.0028344398458695075
+        }
+      ],
+      "conventions": [],
+      "gdp_gap_aged": []
+    }
+  ]
+}
