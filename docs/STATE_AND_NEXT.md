@@ -1,6 +1,12 @@
 # State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M6)
 
-The fifth 2026-10-26 update adds D-260: the curve's `t_delta` replayed with C11 has run on
+The sixth 2026-10-26 update adds D-261: the curve's floor `t_min` replayed with C11,
+preregistered before its passes, under its own directory,
+`etude/courbe_autofinancement_plancher/`. The prognosis: C11 brings back 33.2 % of each
+bundle at θ = ½, so Δb is 0.668 times the curve's, +0.157 to +1.573 point, and no corner
+falls below zero, the lowest, at the Trésor-Éco's 60 %, +0.094 to +0.942. The control is
+the `t_delta`'s. The replay runs next, then D-262 renders both replays.
+The fifth 2026-10-26 update added D-260: the curve's `t_delta` replayed with C11 has run on
 its preregistration commit, `847f519`, and `docs/PREDICTIF_ETUDE.md` renders it in its
 own section. Self-financing shrinks D-242's answer without turning it: Δb is 0.6197 times
 the curve's at each bundle, +0.192 to +1.343 point at θ = ½, and none of the 32 corners

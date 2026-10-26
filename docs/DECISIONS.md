@@ -19971,3 +19971,84 @@ les données liées fichier par fichier : le rapport nomme ce seul commit.
 - Les deux libellés de D-251.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - Le `make full` du propriétaire.
+
+## D-261 — Le plancher rejoué avec son autofinancement, premier temps : avant ses passes
+
+**Le fait.** D-260 a rejoué le `t_delta` de la courbe avec C11 et laissé le plancher, à qui
+C11 s'ouvre aussi, à sa propre entrée. Le propriétaire l'a demandée. Ce commit
+préenregistre le rejeu du plancher `t_min` avec C11, et son pronostic, avant toute passe.
+Le rapport nommera ce commit. Le résultat sera une autre entrée, D-262.
+
+**La requête.** `etude/courbe_autofinancement_plancher/t_min.json` rejoue celle de la
+courbe, `etude/courbe/t_min.json`, champ pour champ ; seuls son nom, son titre et sa
+question diffèrent. Le cadre est celui de l'étude, et la grille celle de la courbe : le
+plancher de 2 % à 2,1, 2,4, 2,7 et 3 %, quatre paquets et huit passes. Seul le code la
+distingue : C11 s'ouvre pour le plancher comme pour le `t_delta`, et son poids porte la
+boîte θ de 16 à 32 coins.
+
+**Pourquoi un répertoire à part.** Le rendu refuse sous `etude/courbe_autofinancement/`
+toute requête autre que celle du `t_delta`, et refuserait une requête du plancher sans
+son rapport. Poser celle-ci à côté rendrait la page commitée impossible à rendre jusqu'à
+la passe. Elle a son propre répertoire, comme la courbe, le menu élargi et le PFU rejoué
+avant elle ; D-262 apprendra au rendu à le lire.
+
+**Ce qu'on savait déjà.** Le pronostic n'est pas aveugle, et il le dit.
+- Sans boucle ni recette, Δb 2035 vaut 0,3088745 point par milliard de coût de la première
+  année, à chaque paquet du plancher et dans les deux vues (D-242, D-256).
+- Le coût est linéaire dans le plancher, 7,6226 Md€ par point à chaque paquet, et la
+  baisse de la facture des employeurs est ce coût, à l'euro : 762 261 899 € au premier
+  paquet (D-258).
+- Sur ce paquet, la mesure de D-258 : s vaut 4,8 %, 33,2 % et 60 % à θ = 0, ½ et 1. La
+  recette à θ = ½ fait 0,253 Md€, et la boîte des recettes, mécanique comprise, va de
+  −0,725 à −0,305 Md€.
+- Le plancher abaisse le coefficient d'une même quantité à chaque salaire sous 3 SMIC, et
+  C2 est linéaire dans la variation du coût du travail : la part de C2 est la même à chaque
+  paquet, et s aussi.
+- C2 en lit moins que pour le `t_delta`, 5 348 emplois par milliard contre 13 380 (D-256) :
+  le plancher répand la baisse jusqu'à 3 SMIC, au-delà des 2 SMIC où C2 s'éteint. D'où une
+  part de C2 de 6,4 % au centre, contre 16,1 %.
+- Le rejeu du `t_delta` a tenu chacun de ces points (D-260).
+
+**Le pronostic**, écrit avant les passes.
+1. À θ = ½, aucun paquet ne fait baisser la dette en 2035, sous aucune persistance et dans
+   aucune vue. C11 rend 33,2 % de chaque paquet, et Δb vaut 0,668 fois celui de la
+   courbe : +0,157, +0,629, +1,101 et +1,573 point en vue vieillie, contre +0,235 à
+   +2,354.
+2. Pour aucun θ : les 32 coins de chaque paquet sont au-dessus de zéro. Le plus bas, le
+   poids à 1, vaut 0,4 fois l'écart de la courbe, de +0,094 à +0,942 point. Le plus haut, le
+   poids à 0 et l'élasticité à −0,31, vaut 0,952 fois, de +0,224 à +2,241. Le poids à 0 et
+   l'élasticité à −0,52 : 0,924 fois, +0,218 au premier paquet. Les incidences de C3 et le
+   multiplicateur ne bougent aucun coin.
+3. Les deux persistances donnent les mêmes chiffres, et la page dit la boucle absente.
+4. Le contrôle. Les coûts sont ceux du second tour de la courbe, sur `3ba628c`, à l'euro et
+   dans les deux vues. Aux seize coins du poids à 1, le rejeu redonne 0,4 fois l'écart de
+   la courbe, à l'arrondi des flottants près.
+5. Les indices du premier paquet hors de la chaîne sont ceux de la courbe : l'emploi au
+   voisinage du SMIC (C2), +4 077 [+3 068 ; +4 833] ; l'emploi marchand de Mésange, 2,50,
+   6,98 et 9,97 milliers d'ETP à un, deux et trois ans ; les déciles, nuls. Le solde, la
+   dette et la charge d'intérêts valent 0,668 fois ceux de la courbe.
+6. La vue figée donne les mêmes signes. Si C11 y rend la même part, Δb va de +0,156 à
+   +1,560 point ; cette part n'y a pas été mesurée. Pour le `t_delta`, elle y était un peu
+   plus haute (D-260).
+7. Par point de baisse, le plancher reste moins autofinancé que le `t_delta` à chaque θ
+   sous 1 : 33,2 % contre 38,0 % à θ = ½, 4,8 % contre 11,8 % à θ = 0. À θ = 1, les deux
+   rendent 60 %.
+
+**Les biais déclarés.** Ceux de D-259, dans le même sens. Les personnes que C2 compte comme
+des temps pleins et le bas du coût par emploi du Trésor-Éco poussent vers une dette plus
+basse. L'impôt sur le revenu des emplois créés, leurs autres prestations et l'effet sur le
+PIB, absents, poussent vers une dette plus haute. Un de plus pour le plancher : à θ = 1, le
+Trésor-Éco n° 97 lit des allègements sur les bas salaires, quand le plancher porte la
+baisse jusqu'à 3 SMIC, où C2 ne répond plus dès 2 SMIC. Ses 60 % y sont sans doute plus
+loin encore de ce que la baisse rend que pour le `t_delta` : vers une dette plus basse.
+
+**Les tests.** Ce commit ne touche pas au code. La requête a été lue par
+`ExplorationRequest`, et sa grille passe `recherche.check_grid` : quatre paquets. Elle ne
+diffère de `etude/courbe/t_min.json` que par son nom, son titre et sa question, vérifié
+champ pour champ. Les lignes que le bouton réclame, lues sur le magasin : le poids de C11,
+l'élasticité de C2 et les deux incidences de C3. Aucune passe de dimensionnement : les
+coûts sont ceux de la courbe, et le contrôle le vérifiera.
+
+**Ce qui suit.** La recherche, seule et en tâche de fond, sur ce commit. Puis D-262 : le
+résultat, le rendu des deux rejeux dans `docs/PREDICTIF_ETUDE.md`, et leurs gardes. La
+porte reste le `make full` du propriétaire.
