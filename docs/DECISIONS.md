@@ -19785,3 +19785,93 @@ revalorisé. C2 compte des personnes, quand 12 000 € est le retour d'un temps 
 - Le `t_delta` avec son autofinancement dans l'étude, que M6 a laissé à M5 : une requête
   préenregistrée à part, et son pronostic avant les passes.
 - Le `make full` du propriétaire.
+
+## D-259 — Le `t_delta` rejoué avec son autofinancement, premier temps : avant ses passes
+
+**Le fait.** L'étude a chiffré le `t_delta` de la courbe de 2026 sans rien de ce qu'une
+baisse ciblée rend : Δb y était le coût porté dix ans (D-242), et le second tour, C2
+corrigé, l'a redonné tel (D-256). Le menu élargi l'avait laissé de côté faute de M5
+(D-250). M5 est fait : C11 rend aux recettes une part de la baisse, de la lecture de C2 à
+θ = 0 aux 60 % du Trésor-Éco n° 97 à θ = 1 (D-258). Ce commit préenregistre le rejeu du
+`t_delta` avec C11, et son pronostic, avant toute passe. Le rapport nommera ce commit. Le
+résultat sera une autre entrée, D-260.
+
+**La requête.** `etude/courbe_autofinancement/t_delta.json` rejoue celle de la courbe,
+`etude/courbe/t_delta.json`, champ pour champ ; seuls son nom, son titre et sa question
+diffèrent. Le cadre est celui de l'étude : dépenses gelées en volume, croissance réelle de
+1 % et prix de 2 %, taux implicite tenu, salaires à 3 %, comportement et boucle chiffrés,
+θ = ½ partout, les deux persistances côte à côte, dix ans. Cible : Δb 2035 ≤ 0. La grille
+est la même : le `t_delta` des moins de 50, de 37,81 % à 38,31, 39,31, 40,31 et 41,31 %,
+quatre paquets et huit passes. Seul le code les distingue : C11 s'ouvre de lui-même pour
+un bouton que le constructeur de chocs range sous la variante ciblée, et le poids de C11
+rejoint les lignes de la boîte θ, qui passe de 16 à 32 coins.
+
+**Ce qui n'y entre pas.**
+- Le plancher `t_min`. C11 s'y ouvre aussi, de 4,8 à 60 % de la baisse (D-258), mais le
+  jalon laissé à M5 était le `t_delta`, le bouton qui porte la baisse au SMIC. Le plancher
+  se rejouerait de même, dans sa propre entrée.
+- Les quatre instruments de l'étude et le menu élargi. Aucun n'est rangé sous la variante
+  ciblée : C11 ne s'y ouvre pas, et un cas le tient (D-258).
+
+**Ce qu'on savait déjà.** Le pronostic n'est pas aveugle, et il le dit.
+- Sans boucle ni recette, Δb 2035 vaut 0,3088745 point par milliard de coût de la première
+  année, à chaque paquet de la courbe et dans les deux vues (D-242, D-256). Sans ligne de
+  solde, rien ne boucle la chaîne : elle est linéaire dans ce coût.
+- C11 rend s fois la baisse de la facture des employeurs. Pour le `t_delta`, cette baisse
+  est le coût de la réforme, à l'euro : 1 002 040 766 € au premier paquet (D-258).
+- Sur ce paquet, la mesure de D-258 : s vaut 11,8 %, 38,0 % et 60 % à θ = 0, ½ et 1. La
+  recette à θ = ½ fait 0,381 Md€, et la boîte des recettes, mécanique comprise, va de
+  −0,884 à −0,401 Md€.
+- C2 est linéaire dans la variation du coût du travail, et la baisse du `t_delta` l'est
+  aussi, salaire par salaire. La part de C2 est donc la même à chaque paquet, et s aussi.
+- Ni C2 ni C11 ne lisent les deux incidences de C3, qui ne sont pas des recettes. Dans la
+  boîte, seuls le poids de C11 et l'élasticité de C2 bougent Δb.
+
+**Le pronostic**, écrit avant les passes.
+1. À θ = ½, aucun paquet ne fait baisser la dette en 2035, sous aucune persistance et dans
+   aucune vue. C11 rend 38,0 % de chaque paquet, et Δb vaut 0,620 fois celui de la
+   courbe : +0,192, +0,575, +0,959 et +1,343 point en vue vieillie, contre +0,310 à
+   +2,166.
+2. Pour aucun θ. Au plus 60 % de la baisse revient : les 32 coins de chaque paquet sont
+   au-dessus de zéro. Le plus bas, le poids à 1, vaut 0,4 fois l'écart de la courbe, de
+   +0,124 à +0,867 point. Le plus haut, le poids à 0 et l'élasticité la plus faible,
+   −0,31, vaut 0,882 fois, de +0,273 à +1,911. Le poids à 0 et l'élasticité la plus forte,
+   −0,52 : 0,807 fois.
+3. Les deux persistances donnent les mêmes chiffres, et la page dit la boucle absente.
+4. Le contrôle. Les coûts sont ceux du second tour de la courbe, sur `3ba628c`, à l'euro
+   et dans les deux vues. Aux seize coins où le poids vaut 1, C11 rend 60 % de la baisse,
+   quelle que soit l'élasticité : chacun redonne 0,4 fois l'écart de la courbe, à l'arrondi
+   des flottants près.
+5. Les indices du premier paquet. L'emploi au voisinage du SMIC (C2), +13 408 [+9 840 ;
+   +16 083], et l'emploi marchand de Mésange sont ceux du second tour de la courbe : C11
+   lit les tirages de C2 sans les changer. Seules les lignes de la chaîne bougent, le
+   solde, la dette et la charge d'intérêts, de 0,620 fois.
+6. La vue figée donne les mêmes signes. Si C11 y rend la même part, Δb va de +0,21 à
+   +1,47 point ; cette part n'y a pas été mesurée.
+
+**Les biais déclarés.**
+- C2 compte des personnes, au coût annuel de leur propre travail, quand les 12 000 € sont
+  le retour d'un emploi à temps plein. À θ = 0, la part est sans doute trop haute : vers
+  une dette plus basse.
+- θ = 1 lit le bas du coût brut par emploi du Trésor-Éco, 20 000 € sur 20 000 à 40 000 €,
+  pour les allègements de 1993 à 1997. La note envisage elle-même, à titre illustratif, un
+  coût par emploi doublé pour la seconde vague (p. 4). Vers une dette plus basse.
+- Les 12 000 € sont de 2009, tenus tels (D-258). Au SMIC de 2026, la réduction générale
+  laisse peu de cotisations patronales, et le RSA a été revalorisé : le sens n'est pas
+  mesuré.
+- Ce que C11 ne compte pas : l'impôt sur le revenu des emplois créés, leurs autres
+  prestations, l'allocation chômage évitée au-delà du RSA, et l'effet sur le PIB, que
+  Mésange ne chiffre pas pour cette variante. Vers une dette plus haute.
+- Un tour seulement : les recettes de C11 ne relancent rien.
+
+**Les tests.** Ce commit ne touche pas au code. La requête a été lue par
+`ExplorationRequest`, et sa grille passe `recherche.check_grid` : quatre paquets. Elle ne
+diffère de `etude/courbe/t_delta.json` que par son nom, son titre et sa question, vérifié
+champ pour champ. Les lignes que le bouton réclame, lues sur le magasin : le poids de C11,
+l'élasticité de C2 et les deux incidences de C3. Aucune passe de dimensionnement : les
+coûts sont ceux de la courbe, et le contrôle le vérifiera. La garde qui tiendra le rejeu
+viendra avec le rendu, dans D-260.
+
+**Ce qui suit.** La recherche, seule et en tâche de fond, sur ce commit. Puis D-260 : le
+résultat, sa section de `docs/PREDICTIF_ETUDE.md`, et ses gardes. La porte reste le
+`make full` du propriétaire.

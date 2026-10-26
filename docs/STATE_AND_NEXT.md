@@ -1,6 +1,13 @@
 # State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M6)
 
-The third 2026-10-26 update adds D-254 to D-258. C2's gap to the CAE came from the chain:
+The fourth 2026-10-26 update adds D-259: the curve's `t_delta` replayed with C11, its
+self-financing, preregistered before its passes. The request is the curve's, field for
+field, under `etude/courbe_autofinancement/`; only the code differs. The prognosis: C11
+brings back 38.0 % of each bundle at θ = ½, so Δb is 0.620 times the curve's, +0.192 to
++1.343 point, and no bundle lowers the debt at any θ: at most 60 % comes back. The
+control: the curve's costs to the euro, and at the sixteen corners where the weight is 1,
+0.4 times the curve's Δb. The replay runs next, then D-260.
+The third 2026-10-26 update added D-254 to D-258. C2's gap to the CAE came from the chain:
 it read 15 % of the employees, the quick tier's households at the whole frame's weights
 (D-254), and lent each employee the change in their household's labour cost, which gave
 the 2026 ceiling 1 317 jobs for a cut above 3 SMIC where C2 does not respond (D-256). Each
@@ -847,8 +854,8 @@ download list.
    does under « tenu » at θ = ½, by a few hundredths of a point, on a sign the wage shift
    could turn. Its gate is the owner's `make full`. The wage shift is in C10 (D-252), and
    the PFU replayed with it turns that sign (D-253): no cut on the menu lowers the debt at
-   θ = ½. Next: the `t_delta` with its self-financing in the study, which M6 left to M5;
-   then the CVAE on the annual path. The page's predictive panel does not send a firm
+   θ = ½. Next: the `t_delta` replayed with its self-financing, preregistered (D-259),
+   runs and renders (D-260); then the CVAE on the annual path. The page's predictive panel does not send a firm
    reform yet. Then Phase 12, the past, and
    Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
