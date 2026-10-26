@@ -408,50 +408,48 @@ Soit de 23 000 à 57 000 emplois par milliard (calcul de M0).
   d'autofinancement. La borne basse, 30 %, était en outre au-dessus des lectures plus
   basses que ces sources permettent : 15 % et 28 % (calculs de M0).
 - La deuxième version faisait venir l'autofinancement des emplois que C2 compte déjà,
-  valorisés un par un. Mais C2 compte 748 emplois par milliard pour le plancher `t_min` et
-  1 555 pour le `t_delta` (D-242). À 12 000 € par emploi, cela fait 0,9 à 1,9 %
-  d'autofinancement (calcul de M0). C'est dix fois moins que toutes les lectures
-  ci-dessus. La note de vérification de C2 dit d'ailleurs que son élasticité, estimée sur
-  un panel équilibré d'établissements, « couvre la marge intensive des survivants, pas
-  l'emploi total ».
+  valorisés un par un. C2 comptait alors 748 emplois par milliard pour le plancher `t_min`
+  et 1 555 pour le `t_delta` (D-242) : à 12 000 € par emploi, 0,9 à 1,9 %
+  d'autofinancement (calcul de M0), dix fois moins que toutes les lectures ci-dessus. Ces
+  chiffres tenaient à deux défauts de la chaîne, corrigés depuis (D-252, D-254) : C2 lit
+  désormais 6,4 à 16,1 %, encore sous les autres lectures. La note de vérification de C2
+  dit d'ailleurs que son élasticité, estimée sur un panel équilibré d'établissements,
+  « couvre la marge intensive des survivants, pas l'emploi total ».
 
 **Ce que les sources disent, côte à côte.** Par milliard de baisse, de cotisations au
 voisinage du SMIC :
 
 | Lecture | Emplois | Autofinancement |
 |---|---|---|
-| C2, marge intensive des survivants (D-242) | 748 à 1 555 | 0,9 à 1,9 % |
+| C2, marge intensive des survivants (D-254) | 5 348 à 13 380 | 6,4 à 16,1 % |
 | Mésange, à trois ans (D-242) | 13 079 ETP | — |
 | Bozio et Wasmer (Mésange), à un an | — | environ 35 % |
 | CAE n° 49, 2019 | 23 000 à 57 000 | — |
 | Trésor-Éco n° 97, 1993-1997 | 25 000 à 50 000 | 30 à 60 % ; 15 à 30 % si le coût double |
 
-**Un écart à vérifier avant tout usage.** L'élasticité de C2, −0,43 au centre, n'est pas
-loin du −0,5 du CAE. Elle donne pourtant quinze fois moins d'emplois par milliard. L'écart
-ne tient donc pas seulement à la source. Il peut tenir à la façon dont la chaîne applique
-l'élasticité : les poids, la variation du coût, le profil qui s'éteint à 2 SMIC. Cela se
-vérifie sur une passe de population, hors de M0.
+La ligne de C2 donne ses deux boutons, le plancher `t_min` puis le `t_delta`, au premier
+paquet de chaque grille, à l'élasticité du centre et à 12 000 € par emploi. À M0, avant ses
+deux corrections, elle disait 748 à 1 555 emplois et 0,9 à 1,9 %.
 
-**L'écart vérifié, depuis (D-252).** Il tenait d'abord aux poids. La passe rapide chiffre
-20 000 ménages repondérés, et C2 lisait les salariés de toute la population au poids de la
-population, avec une variation nulle hors de l'échantillon : 15 % des salariés. Corrigé, C2
-compte 4 832 emplois par milliard pour le plancher et 9 939 pour le `t_delta`, soit de 5,8
-à 11,9 % d'autofinancement à 12 000 € par emploi. Le reste de l'écart au bas du CAE, un
-facteur 2,3, tient à l'élasticité, aux euros que chaque bouton porte au-dessus du SMIC et au
-profil de C2. Le tableau ci-dessus garde les chiffres de M0.
-
-**Revu en D-254.** C2 prêtait aussi à chaque salarié le changement du coût du travail de son
-ménage. Chacun répond désormais au sien : 5 348 emplois par milliard pour le plancher et
-13 380 pour le `t_delta`, soit de 6,4 à 16,1 % d'autofinancement à 12 000 € par emploi. Le
-reste de l'écart au bas du CAE tombe à un facteur 1,7.
+**L'écart de C2, vérifié (D-252, D-254).** À M0, l'élasticité de C2, −0,43 au centre,
+proche du −0,5 du CAE, donnait quinze fois moins d'emplois par milliard : l'écart ne
+pouvait tenir à la seule source. Une passe de population l'a montré, il tenait d'abord à la
+chaîne, par deux défauts. C2 ne lisait que 15 % des salariés, ceux des ménages de la passe
+rapide, au poids de toute la population (D-252). Et il prêtait à chacun le changement du
+coût du travail de son ménage (D-254). Corrigé, C2 compte 5 348 emplois par milliard pour le
+plancher et 13 380 pour le `t_delta`. Le reste de l'écart au bas du CAE, un facteur 1,7, se
+décompose sur la passe : l'élasticité, −0,43 contre −0,5 ; les euros que le bouton porte
+au-dessus du SMIC ; le profil de C2, qui s'éteint à 2 SMIC. Au-delà, jusqu'au haut du CAE et
+au Trésor-Éco, c'est l'élasticité, donc la source : la marge intensive des survivants, non
+l'emploi total.
 
 **La décision : aucune, et c'est au propriétaire.** Les lectures françaises de premier rang
-disent de 1 % à 60 % selon l'emploi qu'on retient : la marge intensive des survivants, ou
-l'emploi total des évaluations des années 1990. Choisir entre elles n'est pas une question
-de source mais de modèle, et elle peut changer la réponse de D-242. M0 ne la tranche pas.
-Jusqu'au choix du propriétaire, D-242 tient : les recettes des emplois restent absentes,
-dites telles, et M5 ne commence pas. Les voies ouvertes, chacune à déclarer dans sa
-propre entrée :
+disent de 6 % à 60 %, de 1 % à M0 avant les corrections de C2, selon l'emploi qu'on
+retient : la marge intensive des survivants, ou l'emploi total des évaluations des années
+1990. Choisir entre elles n'est pas une question de source mais de modèle, et elle peut
+changer la réponse de D-242. M0 ne la tranche pas. Jusqu'au choix du propriétaire, D-242
+tient : les recettes des emplois restent absentes, dites telles, et M5 ne commence pas. Les
+voies ouvertes, chacune à déclarer dans sa propre entrée :
 - une plage θ qui irait de la lecture de C2 (θ = 0) à celle du Trésor-Éco (θ = 1), large
   mais honnête sur le désaccord ;
 - la seule plage publiée du Trésor-Éco, 30 à 60 %, dite lecture des allègements des
@@ -461,7 +459,10 @@ propre entrée :
 **Le choix du propriétaire, le 2026-10-26 (D-256).** La première voie : θ = 0 à la lecture
 de C2, ses emplois valorisés à 12 000 € l'un, θ = 1 au Trésor-Éco, 60 %, θ = ½ entre les
 deux. C'est le canal C11 de M5, dans les recettes, pour les seules baisses que Mésange range
-sous sa variante ciblée.
+sous sa variante ciblée. Sur la passe de l'étude, au premier paquet, il rend 11,8 %, 38,0 %
+et 60 % d'une baisse du `t_delta` à θ = 0, ½ et 1, et 4,8 %, 33,2 % et 60 % d'une baisse du
+plancher. À θ = 0, C2 est aussi à son élasticité la plus faible, −0,31 : d'où une part sous
+celle du tableau.
 
 ---
 
@@ -542,8 +543,9 @@ M1 a livré le même chiffre dans les deux vues (D-244). M2 y met le vieillissem
   construction des auteurs, par une méthode qui redonne d'abord le publié de l'OCDE à
   0,1 point.
 - **§6** : la source est fixée. L'élasticité agrégée attend M4.
-- **§7** : pas d'appariement. Les lectures vont de 1 % à 60 %, et le choix est au
-  propriétaire. D'ici là, D-242 tient.
+- **§7** : pas d'appariement. Les lectures vont de 6 % à 60 %, de 1 % à M0 avant les
+  corrections de C2 (D-252, D-254). Le choix était au propriétaire, et D-242 tenait d'ici
+  là. Il a choisi la plage de C2 au Trésor-Éco : le canal C11 de M5 (D-256).
 
 ## Le gel de conception
 
