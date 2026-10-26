@@ -72,6 +72,19 @@ WAGE_SHIFT = "dividend_wage_shift_firm_owners"
 #: point of GDP on every Δb and every corner, a euro on every cost (D-250).
 CONTROL_SHARE = 1e-6
 CONTROL_EUR = 1.0
+#: The commits of the committed reports that counted C2's jobs near the SMIC on diluted
+#: inputs (D-255): every earner of the whole frame at the frame's weight, a rate only for
+#: the households the pass priced. The page says so beside the figure, which no other
+#: number reads.
+C2_BEFORE_D255 = frozenset({
+    "6dab3a404722c57f53f3f2cc60c9cc98b2dc6f7f",
+    "e0c3d7fe901b320e9b0b3c8ed1e39f8c678223d5",
+    "cacd43af7a5a506d476cfcbc454a58439d1e614b",
+    "893e4de1f8908f6b2d15af6192250494e386a065",
+    "ca6288d1834bcb816de84f3ff8e9e8a3d6bf6c37",
+})
+C2_NOTE = ("compté avant D-255, sur des entrées que le sous-échantillon diluait : de 5,8 à "
+           "6,5 fois trop bas selon le paquet. La dette n'en dépend pas")
 
 
 class EtudeError(ValueError):
@@ -682,6 +695,8 @@ def _indices(entry: dict[str, Any], target_year: int) -> list[str]:
                          f"| absent : {row['reason']} |")
             continue
         shown = " ; ".join(f"{_key(k)} : {_value(row, k)}" for k in row["values"])
+        if row["key"] == "emploi_smic" and report["commit"] in C2_BEFORE_D255:
+            shown += f" ; {C2_NOTE}"
         lines.append(f"| {row['pour']} | {row['label']} | {row['unit']} | {shown} |")
     for search in searches:
         for row in search["indices"]["rows"]:

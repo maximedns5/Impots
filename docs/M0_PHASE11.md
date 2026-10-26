@@ -421,6 +421,7 @@ voisinage du SMIC :
 | Lecture | Emplois | Autofinancement |
 |---|---|---|
 | C2, marge intensive des survivants (D-242) | 748 à 1 555 | 0,9 à 1,9 % |
+| C2 corrigé (D-255) | 4 830 à 9 936 | 5,8 à 11,9 % |
 | Mésange, à trois ans (D-242) | 13 079 ETP | — |
 | Bozio et Wasmer (Mésange), à un an | — | environ 35 % |
 | CAE n° 49, 2019 | 23 000 à 57 000 | — |
@@ -431,6 +432,13 @@ loin du −0,5 du CAE. Elle donne pourtant quinze fois moins d'emplois par milli
 ne tient donc pas seulement à la source. Il peut tenir à la façon dont la chaîne applique
 l'élasticité : les poids, la variation du coût, le profil qui s'éteint à 2 SMIC. Cela se
 vérifie sur une passe de population, hors de M0.
+
+**Vérifié depuis (D-255).** C'étaient les poids. C2 comptait les salariés du cadre entier,
+à ses poids, quand la variation du coût ne se lisait que sur les ménages de la passe, un
+sur dix : ses emplois étaient 6,4 fois trop bas. Corrigé, C2 compte 4 830 emplois par
+milliard pour le plancher et 9 936 pour le `t_delta`. Le reste de l'écart au CAE est le
+profil : à −0,5, une baisse portée tout entière au SMIC donne 22 480 emplois par milliard,
+le chiffre du CAE, et C2 fait décroître son élasticité et monter le coût avec le salaire.
 
 **La décision : aucune, et c'est au propriétaire.** Les lectures françaises de premier rang
 disent de 1 % à 60 % selon l'emploi qu'on retient : la marge intensive des survivants, ou

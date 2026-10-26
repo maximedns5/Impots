@@ -19516,3 +19516,130 @@ bouton.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail.
 - La porte de M6 : le `make full` du propriétaire.
+
+## D-255 — C2 comptait les emplois sur un ménage sur dix : l'écart de D-245 expliqué
+
+**Le fait.** D-245 laissait un écart à vérifier avant tout choix sur R5. L'élasticité de C2
+au SMIC, −0,43 au centre, est proche du −0,5 du CAE, et C2 comptait pourtant quinze fois
+moins d'emplois par milliard : 748 à 1 555, contre 23 000 à 57 000. Le propriétaire a
+choisi de le vérifier d'abord sur une passe de population : un défaut de la chaîne se
+corrige avec ses tests, et la plage ne se choisit qu'ensuite. C'en était un, et ce commit
+le corrige. Ce qui reste de l'écart tient à la construction de C2, et se lit sur le moteur.
+
+**La cause.** `_employer_inputs` donne à C2 trois tableaux par salarié : le multiple du
+SMIC, la variation relative du coût du travail, le poids.
+- Les salariés venaient du cadre entier, 199 451 ménages, à leurs poids du cadre.
+- La variation du coût ne se lit que sur les ménages que la passe a chiffrés : 20 000 sur
+  la voie rapide. Les autres recevaient 0.
+- Neuf salariés sur dix ne comptaient donc pour rien. Le dixième comptait à son poids du
+  cadre, et non à celui que la passe lui donne pour représenter les autres.
+
+C7 joint déjà les ménages de sa passe, à leurs poids (D-220). C2 ne le faisait pas, et rien
+ne le voyait : un indice d'emplois dilué ressemble à un indice d'emplois.
+
+**Pourquoi 6,4 fois, et non 10.** Le sous-échantillon tire les ménages en proportion de
+leur poids (`runner.subsample`), et les ménages tirés sont plus lourds que la moyenne.
+Leurs poids du cadre font 4,29 millions, contre 31,01 dans la passe : 7,23 fois moins.
+C'est le rapport des tailles, 9,97, divisé par 1 + CV² des poids, 1,385 (calcul de D-255).
+Sur les seuls salariés, le rapport est de 6,55. Sur les emplois, il est de 6,39 pour le
+`t_delta`, de 6,46 pour le plancher et de 5,78 pour le plafond : le reste tient à la façon
+dont le taux se répartit le long des salaires.
+
+**La correction.** Les salariés sont ceux des ménages de la passe. Chacun garde son poids
+du cadre, multiplié par le rapport du poids de son ménage dans la passe à son poids moyen
+dans le cadre. C'est le poids que le sous-échantillon lui donne : il met à l'échelle chaque
+membre d'un ménage par le même facteur.
+- Le poids du ménage pour chacun, comme C7 le prend, aurait été faux sur 2 903 ménages,
+  1,5 % du cadre, dont les membres ne pèsent pas pareil, jusqu'à 87,5 % d'écart.
+- Une passe sans sous-échantillon garde les poids du cadre.
+- A0 (`accuracy_behavioural.inputs_for`) lit la même fonction, sur 4 000 ménages, et la
+  correction le touche aussi. C2 n'est pas dans la bande des recettes : l'attribution de
+  sa largeur ne change pas.
+
+**Ce que la correction change.** Trois recherches d'un seul paquet ont tourné sur le commit
+de la correction, `390c3b0`, en quinze minutes. Chacune rejoue le premier paquet d'une
+recherche de l'étude, dans son cadre et au même coût. L'emploi au voisinage du SMIC en
+2026, à θ = ½, vue vieillie, boîte θ entre crochets :
+
+| Paquet | Coût 2026 | Avant | Après | Par Md€, après |
+|---|---|---|---|---|
+| `t_delta` à 38,31 % | 1,00 Md€ | +1 558 | +9 956 [+7 351 ; +11 910] | 9 936 |
+| plancher `t_min` à 2,1 % | 0,76 Md€ | +570 | +3 682 [+2 776 ; +4 360] | 4 830 |
+| plafond à 3,5 SMIC | 1,78 Md€ | +227 | +1 314 [+989 ; +1 558] | 738 |
+
+- Les coûts, la dette et les verdicts ne bougent pas, au dernier chiffre : C2 est un
+  indice, jamais une recette (D-242, point 2). Pour le plafond, la dette est celle du
+  complément de D-239, qui l'a reclassé en variante uniforme ; l'écart à l'étude de D-238
+  vient de ce reclassement, non de C2. Les réponses de D-238 et de D-242 tiennent.
+- Le `t_delta` fait 2,06 fois les emplois du plancher par milliard, et non 2,08 : « de
+  l'ordre du double » tient.
+- La page de l'étude garde les chiffres de ses passes, et le dit à côté de chacun :
+  compté avant D-255, de 5,8 à 6,5 fois trop bas selon le paquet, la dette n'en dépend
+  pas. Les commits dont les rapports ont compté C2 avant la correction sont nommés dans
+  le script, et un test les retrouve dans les rapports commités. L'étude n'est pas
+  rejouée : aucune de ses réponses n'en dépend.
+
+**L'écart qui reste.** Il tient à la construction de C2. Une baisse de 1 € du coût d'un
+emploi qui coûte C € en donne ε / C. En 2026, un SMIC à temps plein coûte 22 239 € à
+l'employeur (le moteur, un célibataire).
+- À −0,5, ε / C donne 22 480 emplois par milliard : le chiffre du CAE, celui d'une baisse
+  dont chaque euro porterait au SMIC.
+- C2 met −0,43 au SMIC, soit 19 335 par milliard. Son élasticité décroît ensuite vers −0,1
+  à 2 SMIC, sur des coûts qui montent : 11 988 par milliard à 1,2 SMIC, 9 643 à 1,3, 1 682
+  à 2, et rien au-delà.
+- Le `t_delta` porte d'abord au SMIC, 109 € par emploi, puis de moins en moins : 44 € à
+  1,6 SMIC, 22 € à 2, rien vers 3. Ses 9 936 par milliard sont une moyenne de ces lectures,
+  pesée par les euros.
+- Le plancher porte à l'inverse de plus en plus haut, de 22 € au SMIC à 63 € à 2,9 SMIC,
+  au-delà des 2 SMIC où C2 ne répond plus : 4 830.
+- Le plafond porte au-dessus de 3 SMIC, où C2 ne répond pas. Ses 738 par milliard viennent
+  tout entiers des ménages de deux salariés, où celui qui gagne moins de 2 SMIC prend le
+  taux du ménage : l'approximation que `_employer_inputs` dit, ici tout le chiffre.
+
+La droite que C2 construit entre ses deux points, que son docstring dit propre au projet,
+fait le reste de l'écart : un choix dit, et non un défaut de plus.
+
+**R5, avec C2 corrigé.** À 12 000 € de dépenses évitées par emploi (Trésor-Éco n° 97,
+D-245), C2 dit désormais de 5,8 à 11,9 % d'autofinancement, et non de 0,9 à 1,9 % (calcul de
+D-255). Les lectures de premier rang restent au-dessus. Le Trésor-Éco dit de 30 à 60 %, et
+de 15 à 30 % si le coût par emploi a doublé. Bozio et Wasmer disent environ 35 %, et 28 %
+en équilibre partiel. Le désaccord passe d'un facteur dix à un facteur de 1,3 à 10. La
+troisième voie de D-245, rien de plus que D-242 tant que l'écart n'est pas expliqué, perd
+sa condition. Le choix reste au propriétaire.
+
+**Les tests.** Dans `tests/test_behavioural.py`, trois cas.
+- Un cadre de trois ménages, dont la passe n'en a chiffré qu'un, pesé pour trois. Ses
+  deux salariés comptent à 300 : Σ w × Δc/c vaut −6, calculé à la main, et non −2.
+- Deux membres de poids 120 et 80 au cadre, dans un ménage pesé 300 : 360 et 240.
+- Contre `runner.subsample` lui-même, sur des poids inégaux : les salariés sont ceux du
+  cadre sous-échantillonné, et pèsent ce qu'ils y pèsent.
+
+Les trois ont été vus échouer sur le code d'avant. Quatre mutations écrites à la main ont
+toutes été tuées : le poids du ménage pour chacun, le poids du cadre gardé, les salariés
+non chiffrés gardés à 0, le poids moyen du cadre pris en somme.
+
+Dans `tests/test_predictif_etude.py`, trois cas.
+- Chaque chiffre de C2 de la page commitée porte la note.
+- Les commits nommés sont ceux des rapports commités qui montrent C2 et ont tourné avant
+  le 2026-10-26, ni plus ni moins.
+- La note suit le commit de la passe : un rapport d'après la correction n'en a pas.
+
+Les deux premiers ont été vus échouer. La page d'avant n'avait pas la note. L'ensemble
+d'abord écrit oubliait les commits du premier tour et des contrôles de la phase 11, dont
+les rapports comptent C2 sans que la page en montre l'indice. Cinq mutations du script ont
+toutes été tuées : la note sur toute passe, jamais, sur toute ligne, un commit retiré, un
+commit mal écrit. La troisième survivait d'abord : le troisième test a gagné une ligne de
+l'emploi de Mésange, qui ne porte jamais la note.
+
+Les tests du comportement, des indices, de la recherche, de la précision, de l'API, de
+l'API prédictive et de l'étude : 294 réussis, 2 sautés. `ruff` passe.
+
+**Ce qui reste.**
+- R5 : le choix du propriétaire, sur C2 corrigé.
+- C7 pèse chaque membre au poids du ménage. C'est faux sur les mêmes 1,5 % des ménages,
+  et c'est à mesurer, dans sa propre entrée : C7 entre dans les recettes.
+- Le taux de C2 est celui du ménage, faute du coût de chaque salarié dans la passe. Pour
+  le plafond, c'est tout son chiffre.
+- Les deux libellés de D-251.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- La porte de M6 : le `make full` du propriétaire.
