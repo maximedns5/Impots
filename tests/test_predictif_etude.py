@@ -101,6 +101,12 @@ def test_the_committed_study_is_preregistered(script) -> None:
     courbe = script.load_courbe(etudes)
     assert [e["instrument"].key for e in courbe] == ["t_min", "t_delta"]
     assert courbe[0]["report"]["commit"] in script.OUT.read_text(encoding="utf-8")
+    # D-251: the wider menu, its four controls each giving its reference back.
+    phase11 = script.load_phase11(etudes, script.load_complements(etudes))
+    assert [e["instrument"].key for e in phase11["entries"]] == ["is", "pfu"]
+    assert phase11["entries"][0]["report"]["commit"] in script.OUT.read_text(
+        encoding="utf-8")
+    assert all(c["gaps"]["given_back"] for c in phase11["controls"])
 
 
 # --------------------------------------------------------------------------- #
@@ -308,8 +314,8 @@ def test_a_complement_is_rendered_apart_and_said_unregistered(script, tmp_path) 
     said to be outside the preregistration, with its own commit."""
     requests, reports = _study(tmp_path, script)
     _complement(requests, reports, script)
-    etudes, complements, courbe = script.study(requests, reports)
-    assert courbe == []
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    assert courbe == [] and phase11 is None
     page = script.render(etudes, complements)
     assert [c["instrument"].key for c in complements] == ["allegements"]
     head, _, tail = page.partition("## Complément, hors préenregistrement")
@@ -390,7 +396,7 @@ def test_the_curve_is_rendered_apart_and_said_preregistered(script, tmp_path) ->
     persistence, and the firm size the population lacks said."""
     requests, reports = _study(tmp_path, script)
     _courbe(requests, reports, script)
-    etudes, complements, courbe = script.study(requests, reports)
+    etudes, complements, courbe, _ = script.study(requests, reports)
     page = script.render(etudes, complements, courbe)
     assert [e["instrument"].key for e in courbe] == ["t_min", "t_delta"]
     head, _, tail = page.partition("## La courbe de 2026, préenregistrée à part")
@@ -482,7 +488,7 @@ def test_the_curve_s_first_round_is_named_and_given_back_figure_for_figure(
     requests, reports = _study(tmp_path, script)
     _courbe(requests, reports, script)
     _courbe_first_round(reports)
-    etudes, complements, courbe = script.study(requests, reports)
+    etudes, complements, courbe, _ = script.study(requests, reports)
     page = script.render(etudes, complements, courbe)
     _, _, tail = page.partition("## La courbe de 2026, préenregistrée à part")
     assert "e" * 40 in tail and CURVE_COMMIT in tail
@@ -576,7 +582,7 @@ def test_the_complement_s_first_round_is_named_and_given_back_figure_for_figure(
     requests, reports = _study(tmp_path, script)
     _complement(requests, reports, script)
     _complement_first_round(reports)
-    etudes, complements, _ = script.study(requests, reports)
+    etudes, complements, _, _ = script.study(requests, reports)
     page = script.render(etudes, complements)
     _, _, tail = page.partition("## Complément, hors préenregistrement")
     assert "9" * 40 in tail and "b" * 40 in tail
@@ -597,5 +603,196 @@ def test_a_complement_rerun_that_moves_a_figure_is_refused(script, tmp_path, how
     if how == "missing":
         (reports / "complements_premier_tour"
          / "exploration_complement_allegements.json").unlink()
+
+
+# --------------------------------------------------------------------------- #
+# the wider menu of Phase 11, preregistered apart (D-250, D-251)
+# --------------------------------------------------------------------------- #
+#: Two bundles per instrument of the wider menu, enough to read an answer.
+PHASE11_GRIDS = {"is_taux_normal": (0.24, 0.245, 0.005), "pfu_taux": (0.108, 0.118, 0.01)}
+PHASE11_COMMIT = "e" * 40
+
+
+def _price_with_firms():
+    """`_price`, which also takes the firm part a search over a firm knob hands it."""
+    inner = _price()
+
+    def price(reform, view, firm=None):
+        if firm is None:
+            return inner(reform, view)
+        return inner(reform.model_copy(update={"decote_taux": firm.is_taux_normal}), view)
+    return price
+
+
+def _phase11(requests: Path, reports: Path, script, *, key: str | None = None,
+             **request_overrides) -> None:
+    """The wider menu on the study's frame: for each instrument, the study's IR request
+    with its name, title, question and grid changed, and the report that played it; then
+    the study's four reports replayed as controls, on the same commit. `key`'s request
+    also takes `request_overrides`."""
+    frame = json.loads((requests / "ir.json").read_text(encoding="utf-8"))
+    (requests / "phase11").mkdir()
+    for instrument in script.PHASE11_MENU:
+        low, high, step = PHASE11_GRIDS[instrument.knob]
+        payload = {**frame, "name": f"phase11_{instrument.key}", "titre": instrument.label,
+                   "question": f"Le {instrument.key} fait-il baisser la dette ?",
+                   "bounds": [{"knob": instrument.knob, "low": low, "high": high,
+                               "step": step}]}
+        if instrument.key == key:
+            payload.update(request_overrides)
+        request = ExplorationRequest.model_validate(payload)
+        report = recherche.run(request, price=_price_with_firms(),
+                               hypotheses=main._predictif_hypotheses(request), start=START,
+                               macro_store=synthetic_macro_store(), law=LAW,
+                               commit=PHASE11_COMMIT, computed="2026-10-25", where=WHERE)
+        (requests / "phase11" / f"{instrument.key}.json").write_text(json.dumps(payload),
+                                                                     encoding="utf-8")
+        (reports / f"exploration_phase11_{instrument.key}.json").write_text(
+            json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    controls = reports / script.CONTROLS
+    controls.mkdir(parents=True)
+    for instrument in script.MENU:
+        name = f"exploration_etude_{instrument.key}.json"
+        report = json.loads((reports / name).read_text(encoding="utf-8"))
+        report.update(commit=PHASE11_COMMIT, computed="2026-10-25")
+        (controls / name).write_text(json.dumps(report, ensure_ascii=False),
+                                     encoding="utf-8")
+
+
+def test_the_wider_menu_is_rendered_apart_with_its_controls(script, tmp_path) -> None:
+    """D-250: the IS and the PFU are on the page in their own section, said preregistered
+    apart, with their own commit, each answered under each persistence with what its
+    figure leaves out; the study's four requests replayed beside them give it back."""
+    requests, reports = _study(tmp_path, script)
+    _phase11(requests, reports, script)
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    page = script.render(etudes, complements, courbe, phase11)
+    head, _, tail = page.partition("## Le menu élargi de la phase 11, préenregistré à part")
+    assert tail and PHASE11_COMMIT in tail and PHASE11_COMMIT not in head
+    assert "D-250" in tail and "La CVAE" in tail and "`t_delta`" in tail
+    for entry in phase11["entries"]:
+        assert f"### {entry['instrument'].label}" in tail
+        assert f"`{entry['instrument'].knob}`" in tail
+        for search in entry["report"]["searches"]:
+            assert script.verdict(search, entry["instrument"], 0.0) in tail
+    assert tail.count("**Ce que ce chiffre ne compte pas.**") == 2
+    assert "0,31 €" in tail and "CEBGE" in tail
+    assert [c["instrument"].key for c in phase11["controls"]] == [
+        "csg", "allegements", "decote", "ir"]
+    assert all(c["gaps"]["given_back"] and c["against"] == "D-238"
+               for c in phase11["controls"])
+    assert tail.count("| la redonne |") == 4
+    assert "Dans l'étude de D-237, ni l'IS" in tail
+
+
+def test_a_control_that_does_not_give_its_reference_back_is_said_so(script,
+                                                                     tmp_path) -> None:
+    """D-250: a control off by more than a ten-thousandth of a point is a result, not a
+    refusal. The page says it does not give its reference back, and by how much."""
+    requests, reports = _study(tmp_path, script)
+    _phase11(requests, reports, script)
+    path = reports / script.CONTROLS / "exploration_etude_decote.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    search = report["searches"][0]
+    other = next(e for e in search["evaluations"]
+                 if e["knobs"] != search["indices"]["knobs"])
+    other["delta_frozen"] += 3e-6
+    path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    control = next(c for c in phase11["controls"] if c["instrument"].key == "decote")
+    assert control["gaps"]["share"] == pytest.approx(3e-6)
+    assert not control["gaps"]["given_back"] and control["gaps"]["same_verdicts"]
+    page = script.render(etudes, complements, courbe, phase11)
+    assert page.count("| la redonne |") == 3 and "| ne la redonne pas |" in page
+
+
+def test_the_reclassified_instrument_is_controlled_against_its_complement(script,
+                                                                          tmp_path) -> None:
+    """D-239 reclassified the ceiling after the study: its control is read against the
+    complement that replayed it, not against the study."""
+    requests, reports = _study(tmp_path, script)
+    _complement(requests, reports, script)
+    _phase11(requests, reports, script)
+    _, _, _, phase11 = script.study(requests, reports)
+    against = {c["instrument"].key: c["against"] for c in phase11["controls"]}
+    assert against == {"csg": "D-238", "allegements": "D-239", "decote": "D-238",
+                       "ir": "D-238"}
+    # The complement moved a figure the study had: a control that gives the study back
+    # does not give the complement back, and is read against the latter.
+    path = reports / "exploration_complement_allegements.json"
+    complement = json.loads(path.read_text(encoding="utf-8"))
+    search = complement["searches"][0]
+    other = next(e for e in search["evaluations"]
+                 if e["knobs"] != search["indices"]["knobs"])
+    other["delta_frozen"] += 5e-6
+    path.write_text(json.dumps(complement, ensure_ascii=False), encoding="utf-8")
+    _, _, _, phase11 = script.study(requests, reports)
+    ceiling = next(c for c in phase11["controls"] if c["instrument"].key == "allegements")
+    assert ceiling["gaps"]["share"] == pytest.approx(5e-6)
+    assert not ceiling["gaps"]["given_back"]
+
+
+#: Each way the wider menu could read as preregistered in the study's frame without being so.
+PHASE11_REFUSALS = [
+    ("cadre", "ne tient pas le cadre de l'étude"),
+    ("bouton", "parcourt"),
+    ("sans_rapport", "de la phase 11 sans rapport"),
+    ("sans_requete", "de la phase 11 sans requête"),
+    ("retouchee", "n'a pas joué sa requête"),
+    ("ou", "ne dit pas où"),
+    ("commits", "de 2 commits"),
+    ("hors_menu", "hors du menu de la phase 11"),
+    ("controle_sans_rapport", "contrôle « ir » sans rapport"),
+    ("controle_autre_requete", "n'a pas joué sa requête, etude/csg.json"),
+    ("controle_commit", "de 2 commits"),
+]
+
+
+@pytest.mark.parametrize("how, needle", PHASE11_REFUSALS,
+                         ids=[how for how, _ in PHASE11_REFUSALS])
+def test_a_wider_menu_that_is_not_what_was_preregistered_is_refused(script, tmp_path,
+                                                                    how: str,
+                                                                    needle: str) -> None:
+    """Another θ than the study's, a request over another knob than its own, an
+    instrument without its report or its request, a request touched after its passes, a
+    report silent on where it ran, reports of two commits, a request the page would not
+    render, a control without its report or that replayed another request: each would
+    read as the wider menu played in the study's frame, and is refused."""
+    requests, reports = _study(tmp_path, script)
+    if how == "cadre":
+        _phase11(requests, reports, script, key="pfu", theta={"common": 0.25})
+    elif how == "bouton":
+        _phase11(requests, reports, script, key="pfu", bounds=[
+            {"knob": "decote_taux", "low": 0.30, "high": 0.40, "step": 0.05}])
+    else:
+        _phase11(requests, reports, script)
+    pfu_report = reports / "exploration_phase11_pfu.json"
+    control = reports / script.CONTROLS / "exploration_etude_csg.json"
+    if how == "sans_rapport":
+        pfu_report.unlink()
+    elif how == "sans_requete":
+        (requests / "phase11" / "pfu.json").unlink()
+    elif how == "retouchee":
+        path = requests / "phase11" / "pfu.json"
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload["bounds"][0]["step"] = 0.005
+        path.write_text(json.dumps(payload), encoding="utf-8")
+    elif how in ("ou", "commits"):
+        report = json.loads(pfu_report.read_text(encoding="utf-8"))
+        report.update({"where": " "} if how == "ou" else {"commit": "d" * 40})
+        pfu_report.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    elif how == "hors_menu":
+        (requests / "phase11" / "cvae.json").write_text(
+            (requests / "phase11" / "pfu.json").read_text(encoding="utf-8"),
+            encoding="utf-8")
+    elif how == "controle_sans_rapport":
+        (reports / script.CONTROLS / "exploration_etude_ir.json").unlink()
+    elif how in ("controle_autre_requete", "controle_commit"):
+        report = json.loads(control.read_text(encoding="utf-8"))
+        if how == "controle_commit":
+            report["commit"] = "d" * 40
+        else:
+            report["request"]["horizon"] = 9
+        control.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
     with pytest.raises(script.EtudeError, match=needle):
         script.study(requests, reports)

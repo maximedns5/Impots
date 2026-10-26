@@ -132,6 +132,7 @@ WIDE: tuple[str, ...] = (
     "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py",
     "tests/test_predictif_entreprises.py", "tests/test_is_croissance.py",
     "tests/test_elasticites.py", "tests/test_firmes_vues.py", "tests/test_taux_effectifs.py",
+    "tests/test_cdhr.py",
 )
 
 UI_CHECK = "ui/check.mjs"
@@ -428,6 +429,46 @@ MANUAL: tuple[Mutation, ...] = (
              "_average([computed[c] for c in CATEGORIES if c != \"INV\"])",
              ("tests/test_taux_effectifs.py",),
              "le composite est la moyenne des quatre catégories, stocks compris (§ 18)"),
+    # Phase 11 M6 (D-250): the firm indices in the chain, and the CDHR in the ledger.
+    Mutation("P11-C8-dans-la-chaine", "src/impots/predictif/indices.py",
+             '    if spec.key == "creations_societes":\n',
+             '    if False:\n',
+             ("tests/test_indices.py", "tests/test_predictif_entreprises.py"),
+             "les créations d'une baisse d'IS se lisent dans la chaîne, C8 à θ"),
+    Mutation("P11-C8-boite", "src/impots/predictif/indices.py",
+             "    rows = [k for k in spec.theta if k in store and store[k].is_open]\n"
+             "    values = [float(c.central)",
+             "    rows = []\n"
+             "    values = [float(c.central)",
+             ("tests/test_indices.py",),
+             "les créations portent leur boîte θ, aux deux bouts de leur ligne"),
+    Mutation("P11-raison-rd", "src/impots/predictif/indices.py",
+             '    return absent(spec, {"depense_rd": CIR_OUT_OF_CHAIN,',
+             '    return absent(spec, {"depense_rd": PANEL_OUT_OF_CHAIN,',
+             ("tests/test_indices.py", "tests/test_predictif_entreprises.py"),
+             "chaque indice des entreprises dit sa propre raison"),
+    Mutation("P11-cdhr-recette", "src/impots/guards.py",
+             '    "cdhr",\n)',
+             ')',
+             ("tests/test_cdhr.py",),
+             "la CDHR est une recette du grand livre : sans elle, une baisse du PFU est "
+             "refusée"),
+    Mutation("P11-cdhr-impulsion", "src/impots/macro/shocks.py",
+             '    "cdhr": "impot_sur_le_revenu",\n',
+             '',
+             ("tests/test_cdhr.py",),
+             "l'impulsion lit l'IR net de la CDHR"),
+    Mutation("P11-cdhr-assiette-c10", "src/impots/api/main.py",
+             '    for column in ("cdhr", "cdhr_reform"):\n',
+             '    for column in ():\n',
+             ("tests/test_cdhr.py",),
+             "les dividendes que la CDHR tient sortent de l'assiette de C10"),
+    Mutation("P11-dividendes-fermes", "src/impots/predictif/chaine.py",
+             '        "année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."),\n}',
+             '        "année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."),\n'
+             '    "dividendes": "la population ne porte aucun revenu du capital (§6.5).",\n}',
+             ("tests/test_predictif.py", "tests/test_api_predictif.py"),
+             "les dividendes ne sont plus dits fermés : C10 est ouvert depuis D-249"),
 )
 
 #: Mutations no test can kill, each with why. An entry here is a finding of D-229, not

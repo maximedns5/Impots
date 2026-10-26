@@ -33,7 +33,7 @@ INSTRUMENTS = (
     "cotisations_salariales", "cotisations_employeur",
     "retraite_imposable", "chomage_brut",
     "csg_deductible", "csg_imposable", "crds", "ir",
-    "ir_avant_niches", "reductions", "credits_impot",
+    "ir_avant_niches", "reductions", "credits_impot", "cdhr",
     "af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
 )

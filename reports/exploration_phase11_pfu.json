@@ -1,0 +1,1753 @@
+{
+  "name": "phase11_pfu",
+  "titre": "Baisse du taux du PFU, part impôt sur le revenu",
+  "question": "Une baisse du taux du PFU, part impôt sur le revenu, de 12,8 % à 11,8, 10,8, 9,8 ou 8,8 %, fait-elle baisser la dette en 2035, et pour quels θ ?",
+  "computed": "2026-10-25",
+  "commit": "ca6288d1834bcb816de84f3ff8e9e8a3d6bf6c37",
+  "where": "un conteneur cloud de Claude Code, en tâche de fond",
+  "request": {
+    "name": "phase11_pfu",
+    "titre": "Baisse du taux du PFU, part impôt sur le revenu",
+    "question": "Une baisse du taux du PFU, part impôt sur le revenu, de 12,8 % à 11,8, 10,8, 9,8 ou 8,8 %, fait-elle baisser la dette en 2035, et pour quels θ ?",
+    "base": {},
+    "bounds": [
+      {
+        "knob": "pfu_taux",
+        "low": 0.088,
+        "high": 0.118,
+        "step": 0.01
+      }
+    ],
+    "target": {
+      "year": 2035,
+      "at_most_points": 0.0
+    },
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "theta": {
+      "common": 0.5,
+      "rows": {}
+    },
+    "behavioural": true,
+    "macro": true
+  },
+  "hypotheses": {
+    "spending_name": "Dépenses gelées en volume",
+    "growth_name": "Croissance réelle 1 %, prix 2 %",
+    "rate_name": "Taux implicite tenu à son niveau de 2025",
+    "horizon": 10,
+    "target_year": 2035,
+    "target_points": 0.0,
+    "target_share": 0.0,
+    "theta": {
+      "common": 0.5,
+      "rows": {}
+    },
+    "uprating": {
+      "wage": 0.03,
+      "prices": 0.02,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": true,
+    "macro": true,
+    "looped": true,
+    "transformations": []
+  },
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "unit": "part du PIB : Δb, la dette de la réforme moins celle de la référence ; négatif, la réforme allège la dette",
+  "views": {
+    "vieillie": "la population de 2024 vieillie jusqu'à la première année projetée, la vue de tête (D-216, D-226)",
+    "figee": "la population de 2024 telle quelle, le droit de l'année appliqué à ses revenus ; un paquet qui ne tient que là n'est pas un plan (D-155)"
+  },
+  "conventions": [
+    "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)",
+    "à θ fixé, la trajectoire est un nombre : sa dispersion est la boîte θ, relue aux coins (« robuste » ou « dépend de θ »)"
+  ],
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "bundles": 4,
+  "passes": 8,
+  "searches": [
+    {
+      "persistence": "eteint",
+      "persistence_label": "Effet macro éteint après trois ans",
+      "digest": "1f2c1066503b14cf61d2f315c51e23a0dbfe4fe95c09c61fb8aa2d77a96d4650",
+      "log": {
+        "seed": 0,
+        "order": [
+          [
+            [
+              "pfu_taux",
+              0.088
+            ]
+          ],
+          [
+            [
+              "pfu_taux",
+              0.098
+            ]
+          ],
+          [
+            [
+              "pfu_taux",
+              0.108
+            ]
+          ],
+          [
+            [
+              "pfu_taux",
+              0.118
+            ]
+          ]
+        ],
+        "values_aged": [
+          0.003509,
+          0.002541,
+          0.001688,
+          0.000751
+        ],
+        "excluded": [],
+        "theta": {
+          "rows": [],
+          "common": 0.5
+        }
+      },
+      "evaluations": [
+        {
+          "knobs": {
+            "pfu_taux": 0.088
+          },
+          "cost_aged_eur": 2459234315.739746,
+          "cost_frozen_eur": 2276982082.5822754,
+          "delta_aged": 0.0035085543871000713,
+          "delta_frozen": 0.003196124786596588,
+          "corners": [
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.004487842322939528
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0028229169600340054
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0042349766070510775
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.002570051244145777
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0034620232122906103
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0017970978493850875
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0034519085836550722
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.0017869832207495495
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0036450653627593255
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0019801399998540248
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0033213972464223307
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.00165647188351703
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0026192462521104076
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0009543208892051069
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0025383292230263255
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.0008734038601208027
+            ]
+          ],
+          "corner_low": 0.0008734038601208027,
+          "corner_high": 0.004487842322939528,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "pfu_taux": 0.098
+          },
+          "cost_aged_eur": 1917199466.8293457,
+          "cost_frozen_eur": 1773808773.644287,
+          "delta_aged": 0.0025405665878519557,
+          "delta_frozen": 0.002478500826207597,
+          "corners": [
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0033130680488151487
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.002015101778831907
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.003100342042975157
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.0018023757729919154
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0024500866780265973
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0011521204080433556
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0024415776377930687
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.001143611367809827
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0026040728577378935
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0013061065877546518
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0023317835702625356
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.001033817300279516
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0017410914869493421
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.00044312521696632245
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0016730191650804471
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.00037505289509742745
+            ]
+          ],
+          "corner_low": 0.00037505289509742745,
+          "corner_high": 0.0033130680488151487,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "pfu_taux": 0.108
+          },
+          "cost_aged_eur": 1327532324.1062012,
+          "cost_frozen_eur": 1226878091.3654785,
+          "delta_aged": 0.0016881446764458463,
+          "delta_frozen": 0.0015251509582268064,
+          "corners": [
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0022263535334494655
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0013275994273636016
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.002073365426628282
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.001174611320542418
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0016057153297774907
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0007069612236916267
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0015995958055046167
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.0007008416994187527
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0017164589787150852
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0008177048726292213
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0015206342019840058
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.0006218800958981419
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0010958207750431104
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.00019706666895724645
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0010468645808603405
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.00014811047477447659
+            ]
+          ],
+          "corner_low": 0.00014811047477447659,
+          "corner_high": 0.0022263535334494655,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "pfu_taux": 0.118
+          },
+          "cost_aged_eur": 693265314.9909668,
+          "cost_frozen_eur": 646254346.2458496,
+          "delta_aged": 0.0007509131142451331,
+          "delta_frozen": 0.0007198064946360994,
+          "corners": [
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0010380540516756742
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0005687074331492958
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0009476931364986729
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.0004783465179720725
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0006714802228797723
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.00020213360435317185
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0006678657862726478
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.00019851916774626943
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0007368898659949608
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              0.0002675432474685824
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0006212278945683103
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              0.0001518812760419319
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0003703160371990588
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -9.903058132731957e-05
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.00034140054434228517
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.0001279460741840932
+            ]
+          ],
+          "corner_low": -0.0001279460741840932,
+          "corner_high": 0.0010380540516756742,
+          "meets_target": false
+        }
+      ],
+      "candidates": [],
+      "excluded": [],
+      "closest": {
+        "knobs": {
+          "pfu_taux": 0.118
+        },
+        "cost_aged_eur": 693265314.9909668,
+        "cost_frozen_eur": 646254346.2458496,
+        "delta_aged": 0.0007509131142451331,
+        "delta_frozen": 0.0007198064946360994,
+        "corners": [
+          [
+            "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+            0.0010380540516756742
+          ],
+          [
+            "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+            0.0005687074331492958
+          ],
+          [
+            "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+            0.0009476931364986729
+          ],
+          [
+            "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+            0.0004783465179720725
+          ],
+          [
+            "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+            0.0006714802228797723
+          ],
+          [
+            "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+            0.00020213360435317185
+          ],
+          [
+            "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+            0.0006678657862726478
+          ],
+          [
+            "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+            0.00019851916774626943
+          ],
+          [
+            "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+            0.0007368898659949608
+          ],
+          [
+            "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+            0.0002675432474685824
+          ],
+          [
+            "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+            0.0006212278945683103
+          ],
+          [
+            "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+            0.0001518812760419319
+          ],
+          [
+            "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+            0.0003703160371990588
+          ],
+          [
+            "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+            -9.903058132731957e-05
+          ],
+          [
+            "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+            0.00034140054434228517
+          ],
+          [
+            "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+            -0.0001279460741840932
+          ]
+        ],
+        "corner_low": -0.0001279460741840932,
+        "corner_high": 0.0010380540516756742,
+        "meets_target": false
+      },
+      "indices": {
+        "knobs": {
+          "pfu_taux": 0.118
+        },
+        "delta_aged": 0.0007509131142451331,
+        "absent": {},
+        "closed": {
+          "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+          "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+          "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+          "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
+        },
+        "rows": [
+          {
+            "key": "revenu_disponible_deciles",
+            "pour": "Les gens",
+            "label": "Revenu disponible, par décile de niveau de vie",
+            "unit": "EUR par ménage et par an",
+            "stage": "mécanique",
+            "source": "population, passe de la première année chiffrée",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "D1": 0.0017376958409325526,
+              "D2": 0.013504828991523828,
+              "D3": 0.046743303580695186,
+              "D4": 0.609304803078049,
+              "D5": 1.4717626953125005,
+              "D6": 2.3467320026892073,
+              "D7": 3.3436100151569454,
+              "D8": 5.132301057922361,
+              "D9": 13.185335467658506,
+              "D10": 197.3724743833076
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "revenu_disponible_reel",
+            "pour": "Les gens",
+            "label": "Revenu disponible brut réel des ménages (pouvoir d'achat)",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4, au centre",
+            "theta": [],
+            "note": "Contient le choc lui-même, en revenu pour l'IR et la CSG, en prix pour la TVA et les cotisations employeurs. Ne s'ajoute pas aux déciles.",
+            "available": true,
+            "values": {
+              "1": 0.03824736164859961,
+              "2": 0.040947175412030176,
+              "3": 0.04319702021488897
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Au centre de Mésange, fixe : la ligne contient le choc, en revenu ou en prix, et la dispersion des multiplicateurs que θ parcourt ne le décrit pas.",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "consommation",
+            "pour": "Les gens",
+            "label": "Consommation des ménages, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Proportionnelle au multiplicateur à θ : négative si le multiplicateur l'est à θ = 0.",
+            "available": true,
+            "values": {
+              "1": 0.018223742903156287,
+              "2": 0.03734742372745609,
+              "3": 0.042747051254317214
+            },
+            "box": {
+              "1": [
+                -0.011112038355583106,
+                0.047559524161895676
+              ],
+              "2": [
+                0.007649472329719921,
+                0.06704537512519226
+              ],
+              "3": [
+                0.010686762813579302,
+                0.07480733969505513
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_smic",
+            "pour": "Les gens",
+            "label": "Emploi au voisinage du SMIC",
+            "unit": "emplois",
+            "stage": "comportement",
+            "source": "C2, élasticité de l'emploi au coût du travail",
+            "theta": [
+              "employment_elasticity_smic"
+            ],
+            "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "le canal ne s'ouvre pas pour cette réforme",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_marchand",
+            "pour": "Les gens",
+            "label": "Emploi salarié marchand",
+            "unit": "milliers d'ETP",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Des équivalents temps plein, proportionnels au multiplicateur à θ (D-059). Ne s'additionne pas à l'emploi de C2.",
+            "available": true,
+            "values": {
+              "1": 0.5399627526861122,
+              "2": 2.4523308351160926,
+              "3": 3.9147299569743135
+            },
+            "box": {
+              "1": [
+                -0.32924558090616607,
+                1.4091710862783904
+              ],
+              "2": [
+                0.5022846288791996,
+                4.4023770413529855
+              ],
+              "3": [
+                0.9786824892435783,
+                6.850777424705049
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "offre_de_travail",
+            "pour": "Les gens",
+            "label": "Revenus d'activité bruts que déplacent les heures",
+            "unit": "EUR par an",
+            "stage": "comportement",
+            "source": "C7, offre de travail (Bargain, Orsini et Peichl)",
+            "theta": [
+              "labour_supply_married_women",
+              "labour_supply_married_men",
+              "labour_supply_single_women",
+              "labour_supply_single_men"
+            ],
+            "note": "Les heures valorisées au salaire : l'article ne sépare pas heures et participants, et l'indice non plus.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "le canal ne s'ouvre pas pour cette réforme",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "investissement_entreprises",
+            "pour": "Les entreprises",
+            "label": "Investissement des entreprises non financières, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Un accélérateur, proportionnel au multiplicateur à θ ; hors investissement public et des ménages.",
+            "available": true,
+            "values": {
+              "1": 0.018223742903156287,
+              "2": 0.04522188053746189,
+              "3": 0.04454692709660425
+            },
+            "box": {
+              "1": [
+                -0.011112038355583106,
+                0.047559524161895676
+              ],
+              "2": [
+                0.009262312881166891,
+                0.0811814481937569
+              ],
+              "3": [
+                0.011136731774151061,
+                0.07795712241905745
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "pib_is",
+            "pour": "Les entreprises",
+            "label": "PIB, effet du taux normal d'IS",
+            "unit": "% d'écart de PIB",
+            "stage": "méta-analyse",
+            "source": "Gechert et Heimberger, méta-analyse de 441 estimations (D-246)",
+            "theta": [
+              "is_croissance_pib"
+            ],
+            "note": "Rampe de dix ans sur la croissance. Hors de la trajectoire de dette : l'IS n'a pas de boucle vers les recettes, et un PIB sans elle serait la moitié d'une variante (D-218).",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "La réforme ne touche pas au taux normal d'IS : la méta-analyse chiffre ce taux, et aucun autre bouton des entreprises ne s'y lit.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_fiscale_production",
+            "pour": "Les entreprises",
+            "label": "Charge fiscale de production",
+            "unit": "% de la valeur ajoutée",
+            "stage": "couche entreprises",
+            "source": "panneau de la phase 8",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "creations_societes",
+            "pour": "Les startups",
+            "label": "Créations de sociétés",
+            "unit": "points de taux de création",
+            "stage": "couche entreprises",
+            "source": "C8, rapport IPP n° 47 (D-221)",
+            "theta": [
+              "firm_creation_profit_tax"
+            ],
+            "note": "Un nombre attend le stock de sociétés au manifeste.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "depense_rd",
+            "pour": "Les entreprises",
+            "label": "Dépense de R&D",
+            "unit": "EUR de R&D",
+            "stage": "couche entreprises",
+            "source": "C9, rapport IPP n° 22 (D-222)",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "solde_primaire",
+            "pour": "L'État",
+            "label": "Solde primaire, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": -6.371510983574838e-05,
+              "2027": 6.030079052874471e-06,
+              "2028": 2.4028837475744875e-05,
+              "2029": -0.00010646216109006557,
+              "2030": -0.00010646216109006556,
+              "2031": -0.00010646216109006557,
+              "2032": -0.00010646216109006556,
+              "2033": -0.00010646216109006556,
+              "2034": -0.00010646216109006559,
+              "2035": -0.00010646216109006557
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro éteint après trois ans.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "dette",
+            "pour": "L'État",
+            "label": "Dette, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": -4.407496068559169e-05,
+              "2027": -0.00016234672741721745,
+              "2028": -0.000200347322436345,
+              "2029": 0.00013842925567186803,
+              "2030": 0.00024336338403663227,
+              "2031": 0.00034713921113538326,
+              "2032": 0.00044976952272035575,
+              "2033": 0.0005512669634109013,
+              "2034": 0.000651644038249799,
+              "2035": 0.0007509131142451331
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro éteint après trois ans.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_interets",
+            "pour": "L'État",
+            "label": "Charge d'intérêts de la dette supplémentaire",
+            "unit": "pts du PIB de référence",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0,
+              "2027": 1.1644784139731752e-06,
+              "2028": 1.0414167570372373e-06,
+              "2029": 5.907622396504422e-07,
+              "2030": 2.529978846585449e-06,
+              "2031": 4.447789671756064e-06,
+              "2032": 6.344431000006026e-06,
+              "2033": 8.220136507980596e-06,
+              "2034": 1.0075137292916808e-05,
+              "2035": 1.1909661901115922e-05
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro éteint après trois ans.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          }
+        ]
+      }
+    },
+    {
+      "persistence": "tenu",
+      "persistence_label": "Effet macro tenu au niveau de la troisième année",
+      "digest": "69f13aa14bd8a39bab7405ee60d6a96691ace8fb9fb5e9dee337c8af9476080b",
+      "log": {
+        "seed": 0,
+        "order": [
+          [
+            [
+              "pfu_taux",
+              0.088
+            ]
+          ],
+          [
+            [
+              "pfu_taux",
+              0.098
+            ]
+          ],
+          [
+            [
+              "pfu_taux",
+              0.108
+            ]
+          ],
+          [
+            [
+              "pfu_taux",
+              0.118
+            ]
+          ]
+        ],
+        "values_aged": [
+          -0.000355,
+          -0.000471,
+          -0.000397,
+          -0.000338
+        ],
+        "excluded": [],
+        "theta": {
+          "rows": [],
+          "common": 0.5
+        }
+      },
+      "evaluations": [
+        {
+          "knobs": {
+            "pfu_taux": 0.088
+          },
+          "cost_aged_eur": 2459234315.739746,
+          "cost_frozen_eur": 2276982082.5822754,
+          "delta_aged": -0.00035500995422443893,
+          "delta_frozen": -0.000381097710917766,
+          "corners": [
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0035212706382670156
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.003933921926840389
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.003268449312876953
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.004186477236190367
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0024956316098465603
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.004958481788254865
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0024855187568308956
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.0049685840006288284
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0026786416273221203
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.004775664332067331
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0023550303308232934
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.005098935128035276
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.001653002598901887
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.005800224193481807
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0015720997747770138
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.005881041892473515
+            ]
+          ],
+          "corner_low": -0.005881041892473515,
+          "corner_high": 0.0035212706382670156,
+          "meets_target": true
+        },
+        {
+          "knobs": {
+            "pfu_taux": 0.098
+          },
+          "cost_aged_eur": 1917199466.8293457,
+          "cost_frozen_eur": 1773808773.644287,
+          "delta_aged": -0.00047138231073495795,
+          "delta_frozen": -0.0003082626362049812,
+          "corners": [
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0025596659295481494
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.003253143391065638
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0023469690379909203
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.003465665764143644
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.001696802668831321
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.00411529866972038
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0016882947931688985
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.00412379956464326
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.001850767773558637
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.003961459893853547
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0015785157523653393
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.00423348853139327
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0009879045128415864
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.004823615172508067
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0009198415075433175
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.0048916223318931085
+            ]
+          ],
+          "corner_low": -0.0048916223318931085,
+          "corner_high": 0.0025596659295481494,
+          "meets_target": true
+        },
+        {
+          "knobs": {
+            "pfu_taux": 0.108
+          },
+          "cost_aged_eur": 1327532324.1062012,
+          "cost_frozen_eur": 1226878091.3654785,
+          "delta_aged": -0.00039745483535091886,
+          "delta_frozen": -0.00040231263668433215,
+          "corners": [
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0017047544054786812
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.0023209235568806275
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0015517807976874742
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.0024738102281722796
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0010841750210970336
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.002941150259513803
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0010780560767853498
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.002947265726365389
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0011949081746078782
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.0028304800368110783
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0009991019566348847
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.0030261749760642775
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0005743287902262306
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.0034507067394442537
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0005253772357329822
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.003499630474257609
+            ]
+          ],
+          "corner_low": -0.003499630474257609,
+          "corner_high": 0.0017047544054786812,
+          "meets_target": true
+        },
+        {
+          "knobs": {
+            "pfu_taux": 0.118
+          },
+          "cost_aged_eur": 693265314.9909668,
+          "cost_frozen_eur": 646254346.2458496,
+          "delta_aged": -0.00033823864464443965,
+          "delta_frozen": -0.00029550552710566613,
+          "corners": [
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0007657114701917767
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.0013369621110963514
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0006753550273501663
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.0014272917292195153
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.00039915578465077317
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.0017034089748120262
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0003955415269369933
+            ],
+            [
+              "dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.0017070221595369972
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              0.0004645621903722752
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.0016380219867255796
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              0.0003489059435348718
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.0017536438979233182
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 0",
+              9.800650483104967e-05
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 0, multiplicateur_macro = 1",
+              -0.0020044688504412544
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 0",
+              6.909244312169882e-05
+            ],
+            [
+              "dividend_elasticity_firm_owners = 1, dividend_elasticity_other_holders = 1, dividend_share_firm_owners = 1, multiplicateur_macro = 1",
+              -0.002033374328241022
+            ]
+          ],
+          "corner_low": -0.002033374328241022,
+          "corner_high": 0.0007657114701917767,
+          "meets_target": true
+        }
+      ],
+      "candidates": [
+        {
+          "knobs": {
+            "pfu_taux": 0.118
+          },
+          "delta_aged": -0.00033823864464443965,
+          "delta_frozen": -0.00029550552710566613,
+          "meets_target": true,
+          "frozen_only": false,
+          "robust": false,
+          "verdict": "dépend de θ : au coin dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0, l'écart vaut +0.077 pt de PIB et la cible de +0.000 pt de PIB tombe."
+        },
+        {
+          "knobs": {
+            "pfu_taux": 0.088
+          },
+          "delta_aged": -0.00035500995422443893,
+          "delta_frozen": -0.000381097710917766,
+          "meets_target": true,
+          "frozen_only": false,
+          "robust": false,
+          "verdict": "dépend de θ : au coin dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0, l'écart vaut +0.352 pt de PIB et la cible de +0.000 pt de PIB tombe."
+        },
+        {
+          "knobs": {
+            "pfu_taux": 0.108
+          },
+          "delta_aged": -0.00039745483535091886,
+          "delta_frozen": -0.00040231263668433215,
+          "meets_target": true,
+          "frozen_only": false,
+          "robust": false,
+          "verdict": "dépend de θ : au coin dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0, l'écart vaut +0.170 pt de PIB et la cible de +0.000 pt de PIB tombe."
+        },
+        {
+          "knobs": {
+            "pfu_taux": 0.098
+          },
+          "delta_aged": -0.00047138231073495795,
+          "delta_frozen": -0.0003082626362049812,
+          "meets_target": true,
+          "frozen_only": false,
+          "robust": false,
+          "verdict": "dépend de θ : au coin dividend_elasticity_firm_owners = 0, dividend_elasticity_other_holders = 0, dividend_share_firm_owners = 0, multiplicateur_macro = 0, l'écart vaut +0.256 pt de PIB et la cible de +0.000 pt de PIB tombe."
+        }
+      ],
+      "excluded": [],
+      "closest": null,
+      "indices": {
+        "knobs": {
+          "pfu_taux": 0.118
+        },
+        "delta_aged": -0.00033823864464443965,
+        "absent": {},
+        "closed": {
+          "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+          "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+          "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+          "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
+        },
+        "rows": [
+          {
+            "key": "revenu_disponible_deciles",
+            "pour": "Les gens",
+            "label": "Revenu disponible, par décile de niveau de vie",
+            "unit": "EUR par ménage et par an",
+            "stage": "mécanique",
+            "source": "population, passe de la première année chiffrée",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "D1": 0.0017376958409325526,
+              "D2": 0.013504828991523828,
+              "D3": 0.046743303580695186,
+              "D4": 0.609304803078049,
+              "D5": 1.4717626953125005,
+              "D6": 2.3467320026892073,
+              "D7": 3.3436100151569454,
+              "D8": 5.132301057922361,
+              "D9": 13.185335467658506,
+              "D10": 197.3724743833076
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "revenu_disponible_reel",
+            "pour": "Les gens",
+            "label": "Revenu disponible brut réel des ménages (pouvoir d'achat)",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4, au centre",
+            "theta": [],
+            "note": "Contient le choc lui-même, en revenu pour l'IR et la CSG, en prix pour la TVA et les cotisations employeurs. Ne s'ajoute pas aux déciles.",
+            "available": true,
+            "values": {
+              "1": 0.03824736164859961,
+              "2": 0.040947175412030176,
+              "3": 0.04319702021488897
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Au centre de Mésange, fixe : la ligne contient le choc, en revenu ou en prix, et la dispersion des multiplicateurs que θ parcourt ne le décrit pas.",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "consommation",
+            "pour": "Les gens",
+            "label": "Consommation des ménages, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Proportionnelle au multiplicateur à θ : négative si le multiplicateur l'est à θ = 0.",
+            "available": true,
+            "values": {
+              "1": 0.018223742903156287,
+              "2": 0.03734742372745609,
+              "3": 0.042747051254317214
+            },
+            "box": {
+              "1": [
+                -0.011112038355583106,
+                0.047559524161895676
+              ],
+              "2": [
+                0.007649472329719921,
+                0.06704537512519226
+              ],
+              "3": [
+                0.010686762813579302,
+                0.07480733969505513
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_smic",
+            "pour": "Les gens",
+            "label": "Emploi au voisinage du SMIC",
+            "unit": "emplois",
+            "stage": "comportement",
+            "source": "C2, élasticité de l'emploi au coût du travail",
+            "theta": [
+              "employment_elasticity_smic"
+            ],
+            "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "le canal ne s'ouvre pas pour cette réforme",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_marchand",
+            "pour": "Les gens",
+            "label": "Emploi salarié marchand",
+            "unit": "milliers d'ETP",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Des équivalents temps plein, proportionnels au multiplicateur à θ (D-059). Ne s'additionne pas à l'emploi de C2.",
+            "available": true,
+            "values": {
+              "1": 0.5399627526861122,
+              "2": 2.4523308351160926,
+              "3": 3.9147299569743135
+            },
+            "box": {
+              "1": [
+                -0.32924558090616607,
+                1.4091710862783904
+              ],
+              "2": [
+                0.5022846288791996,
+                4.4023770413529855
+              ],
+              "3": [
+                0.9786824892435783,
+                6.850777424705049
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "offre_de_travail",
+            "pour": "Les gens",
+            "label": "Revenus d'activité bruts que déplacent les heures",
+            "unit": "EUR par an",
+            "stage": "comportement",
+            "source": "C7, offre de travail (Bargain, Orsini et Peichl)",
+            "theta": [
+              "labour_supply_married_women",
+              "labour_supply_married_men",
+              "labour_supply_single_women",
+              "labour_supply_single_men"
+            ],
+            "note": "Les heures valorisées au salaire : l'article ne sépare pas heures et participants, et l'indice non plus.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "le canal ne s'ouvre pas pour cette réforme",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "investissement_entreprises",
+            "pour": "Les entreprises",
+            "label": "Investissement des entreprises non financières, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Un accélérateur, proportionnel au multiplicateur à θ ; hors investissement public et des ménages.",
+            "available": true,
+            "values": {
+              "1": 0.018223742903156287,
+              "2": 0.04522188053746189,
+              "3": 0.04454692709660425
+            },
+            "box": {
+              "1": [
+                -0.011112038355583106,
+                0.047559524161895676
+              ],
+              "2": [
+                0.009262312881166891,
+                0.0811814481937569
+              ],
+              "3": [
+                0.011136731774151061,
+                0.07795712241905745
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "pib_is",
+            "pour": "Les entreprises",
+            "label": "PIB, effet du taux normal d'IS",
+            "unit": "% d'écart de PIB",
+            "stage": "méta-analyse",
+            "source": "Gechert et Heimberger, méta-analyse de 441 estimations (D-246)",
+            "theta": [
+              "is_croissance_pib"
+            ],
+            "note": "Rampe de dix ans sur la croissance. Hors de la trajectoire de dette : l'IS n'a pas de boucle vers les recettes, et un PIB sans elle serait la moitié d'une variante (D-218).",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "La réforme ne touche pas au taux normal d'IS : la méta-analyse chiffre ce taux, et aucun autre bouton des entreprises ne s'y lit.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_fiscale_production",
+            "pour": "Les entreprises",
+            "label": "Charge fiscale de production",
+            "unit": "% de la valeur ajoutée",
+            "stage": "couche entreprises",
+            "source": "panneau de la phase 8",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "creations_societes",
+            "pour": "Les startups",
+            "label": "Créations de sociétés",
+            "unit": "points de taux de création",
+            "stage": "couche entreprises",
+            "source": "C8, rapport IPP n° 47 (D-221)",
+            "theta": [
+              "firm_creation_profit_tax"
+            ],
+            "note": "Un nombre attend le stock de sociétés au manifeste.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "depense_rd",
+            "pour": "Les entreprises",
+            "label": "Dépense de R&D",
+            "unit": "EUR de R&D",
+            "stage": "couche entreprises",
+            "source": "C9, rapport IPP n° 22 (D-222)",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "solde_primaire",
+            "pour": "L'État",
+            "label": "Solde primaire, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": -6.371510983574838e-05,
+              "2027": 6.030079052874471e-06,
+              "2028": 2.4028837475744875e-05,
+              "2029": 2.4028837475744875e-05,
+              "2030": 2.4028837475744888e-05,
+              "2031": 2.4028837475744875e-05,
+              "2032": 2.4028837475744902e-05,
+              "2033": 2.4028837475744888e-05,
+              "2034": 2.4028837475744875e-05,
+              "2035": 2.4028837475744875e-05
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "dette",
+            "pour": "L'État",
+            "label": "Dette, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": -4.407496068559169e-05,
+              "2027": -0.00016234672741721745,
+              "2028": -0.000200347322436345,
+              "2029": -0.0002238159941254647,
+              "2030": -0.00024598765623062846,
+              "2031": -0.00026688690238829693,
+              "2032": -0.0002865379530112566,
+              "2033": -0.0003049646604147416,
+              "2034": -0.00032219051387971653,
+              "2035": -0.00033823864464443965
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_interets",
+            "pour": "L'État",
+            "label": "Charge d'intérêts de la dette supplémentaire",
+            "unit": "pts du PIB de référence",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0,
+              "2027": 1.1644784139731752e-06,
+              "2028": 1.0414167570372373e-06,
+              "2029": 5.907622396504422e-07,
+              "2030": 1.4508221155783962e-07,
+              "2031": -2.956782374717637e-07,
+              "2032": -7.315734115503571e-07,
+              "2033": -1.1626570153612927e-06,
+              "2034": -1.5889821607759947e-06,
+              "2035": -2.010601373397638e-06
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          }
+        ]
+      }
+    }
+  ]
+}

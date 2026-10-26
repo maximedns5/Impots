@@ -166,9 +166,15 @@ def test_a_firm_reform_has_its_debt_path_and_says_the_loop_absent(chain) -> None
     assert "impot_societes" in body["absent"]["rétroaction"]
     assert "sans variante dans Mésange" in body["absent"]["rétroaction"]
     assert "vue vieillie" in body["population_note"]
-    firm_rows = [i for i in body["indices"] if i["stage"] == indices_module.FIRMES]
-    assert firm_rows and all(i["reason"] == indices_module.FIRM_PENDING
-                             for i in firm_rows)
+    # D-250: the creations are C8 at θ for a cut of the normal rate; the two others say
+    # their own reason, no longer a promise that the phase would bring them.
+    firm_rows = {i["key"]: i for i in body["indices"]
+                 if i["stage"] == indices_module.FIRMES}
+    assert firm_rows["creations_societes"]["available"]
+    assert firm_rows["creations_societes"]["values"][indices_module.CREATIONS_KEY] > 0
+    assert firm_rows["depense_rd"]["reason"] == indices_module.CIR_OUT_OF_CHAIN
+    assert (firm_rows["charge_fiscale_production"]["reason"]
+            == indices_module.PANEL_OUT_OF_CHAIN)
 
 
 @pytest.mark.parametrize("payload, needle", [

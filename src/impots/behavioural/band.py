@@ -92,6 +92,7 @@ def compute(
     is_rate_change_points: float | None = None,
     cir_margins: tuple[tuple[float, float], ...] | None = None,
     dividend_base_eur: float | None = None,
+    dividend_base_cdhr_eur: float = 0.0,
     levy_rate_baseline: float | None = None,
     levy_rate_reform: float | None = None,
     targets_low_wages: bool | None = None,
@@ -145,6 +146,7 @@ def compute(
     # C10 last, for the same reason as C7 and C8 (D-249).
     results.append(channel_module.dividend_response(
         store, reform, dividend_base_eur=dividend_base_eur,
+        dividend_base_cdhr_eur=dividend_base_cdhr_eur,
         levy_rate_baseline=levy_rate_baseline, levy_rate_reform=levy_rate_reform,
         draws=draws, rng=rng,
     ))

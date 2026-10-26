@@ -130,6 +130,12 @@ REGISTRY: tuple[Row, ...] = (
     # the base the dividend channel C10 moves (D-249), and never a receipt.
     Row("dividendes", "f2dc", "foyer_fiscal", "year", "light", False,
         label="Dividendes déclarés (case 2DC)"),
+    # The CDHR, from 2025 (D-250): it tops a high income's tax up to 20 % of its RFR, PFU
+    # included. Not in `ir` — openfisca takes it out of disposable income beside it — so a
+    # receipt of its own, stored negative. Zero without capital income: it is the levy
+    # that takes a PFU cut back from the foyers it holds.
+    Row("cdhr", "contribution_differentielle_hauts_revenus", "foyer_fiscal", "year",
+        "light", True, label="Contribution différentielle sur les hauts revenus"),
     # --- benefits block: famille, monthly — full tier only ---------------------
     Row("af", "af", "famille", "month", "full", False,
         label="Allocations familiales"),

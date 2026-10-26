@@ -1,0 +1,1799 @@
+{
+  "name": "etude_allegements",
+  "titre": "Relèvement du plafond de la réduction générale des cotisations employeurs",
+  "question": "Un relèvement du plafond de la réduction générale, de 3 SMIC à 3,5, 4,5, 5,5 ou 6,5 SMIC, fait-elle baisser la dette en 2035, et pour quels θ ?",
+  "computed": "2026-10-25",
+  "commit": "ca6288d1834bcb816de84f3ff8e9e8a3d6bf6c37",
+  "where": "un conteneur cloud de Claude Code, en tâche de fond",
+  "request": {
+    "name": "etude_allegements",
+    "titre": "Relèvement du plafond de la réduction générale des cotisations employeurs",
+    "question": "Un relèvement du plafond de la réduction générale, de 3 SMIC à 3,5, 4,5, 5,5 ou 6,5 SMIC, fait-elle baisser la dette en 2035, et pour quels θ ?",
+    "base": {},
+    "bounds": [
+      {
+        "knob": "allegement_general_plafond",
+        "low": 3.5,
+        "high": 6.5,
+        "step": 1.0
+      }
+    ],
+    "target": {
+      "year": 2035,
+      "at_most_points": 0.0
+    },
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "theta": {
+      "common": 0.5,
+      "rows": {}
+    },
+    "behavioural": true,
+    "macro": true
+  },
+  "hypotheses": {
+    "spending_name": "Dépenses gelées en volume",
+    "growth_name": "Croissance réelle 1 %, prix 2 %",
+    "rate_name": "Taux implicite tenu à son niveau de 2025",
+    "horizon": 10,
+    "target_year": 2035,
+    "target_points": 0.0,
+    "target_share": 0.0,
+    "theta": {
+      "common": 0.5,
+      "rows": {}
+    },
+    "uprating": {
+      "wage": 0.03,
+      "prices": 0.02,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": true,
+    "macro": true,
+    "looped": true,
+    "transformations": []
+  },
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "unit": "part du PIB : Δb, la dette de la réforme moins celle de la référence ; négatif, la réforme allège la dette",
+  "views": {
+    "vieillie": "la population de 2024 vieillie jusqu'à la première année projetée, la vue de tête (D-216, D-226)",
+    "figee": "la population de 2024 telle quelle, le droit de l'année appliqué à ses revenus ; un paquet qui ne tient que là n'est pas un plan (D-155)"
+  },
+  "conventions": [
+    "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)",
+    "à θ fixé, la trajectoire est un nombre : sa dispersion est la boîte θ, relue aux coins (« robuste » ou « dépend de θ »)"
+  ],
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "bundles": 4,
+  "passes": 8,
+  "searches": [
+    {
+      "persistence": "eteint",
+      "persistence_label": "Effet macro éteint après trois ans",
+      "digest": "67c8f4345d3b285d9ea5d3ef8198b81261437485ba84c3919bab376765f43bfa",
+      "log": {
+        "seed": 0,
+        "order": [
+          [
+            [
+              "allegement_general_plafond",
+              3.5
+            ]
+          ],
+          [
+            [
+              "allegement_general_plafond",
+              4.5
+            ]
+          ],
+          [
+            [
+              "allegement_general_plafond",
+              5.5
+            ]
+          ],
+          [
+            [
+              "allegement_general_plafond",
+              6.5
+            ]
+          ]
+        ],
+        "values_aged": [
+          0.004652,
+          0.008852,
+          0.012254,
+          0.014765
+        ],
+        "excluded": [],
+        "theta": {
+          "rows": [],
+          "common": 0.5
+        }
+      },
+      "evaluations": [
+        {
+          "knobs": {
+            "allegement_general_plafond": 3.5
+          },
+          "cost_aged_eur": 1778941221.724121,
+          "cost_frozen_eur": 1462944437.4350586,
+          "delta_aged": 0.004652084999595907,
+          "delta_frozen": 0.00382572610580012,
+          "corners": [
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.005841114290949134
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.005841114290949134
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.005841114290949134
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.005841114290949134
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.0034630557082429014
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.0034630557082429014
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.0034630557082429014
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.0034630557082429014
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.005841114290949134
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.005841114290949134
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.005841114290949134
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.005841114290949134
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.0034630557082429014
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.0034630557082429014
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.0034630557082429014
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.0034630557082429014
+            ]
+          ],
+          "corner_low": 0.0034630557082429014,
+          "corner_high": 0.005841114290949134,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "allegement_general_plafond": 4.5
+          },
+          "cost_aged_eur": 3384854916.8825684,
+          "cost_frozen_eur": 2703235159.903076,
+          "delta_aged": 0.00885168806722958,
+          "delta_frozen": 0.007069193509146698,
+          "corners": [
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.011114096512210736
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.011114096512210736
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.011114096512210736
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.011114096512210736
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.006589279622248201
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.006589279622248201
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.006589279622248201
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.006589279622248201
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.011114096512210736
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.011114096512210736
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.011114096512210736
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.011114096512210736
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.006589279622248201
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.006589279622248201
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.006589279622248201
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.006589279622248201
+            ]
+          ],
+          "corner_low": 0.006589279622248201,
+          "corner_high": 0.011114096512210736,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "allegement_general_plafond": 5.5
+          },
+          "cost_aged_eur": 4685862677.941406,
+          "cost_frozen_eur": 4057531429.583008,
+          "delta_aged": 0.012253935772588598,
+          "delta_frozen": 0.010610795268804818,
+          "corners": [
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.015385926819448947
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.015385926819448947
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.015385926819448947
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.015385926819448947
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.00912194472572847
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.00912194472572847
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.00912194472572847
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.00912194472572847
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.015385926819448947
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.015385926819448947
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.015385926819448947
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.015385926819448947
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.00912194472572847
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.00912194472572847
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.00912194472572847
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.00912194472572847
+            ]
+          ],
+          "corner_low": 0.00912194472572847,
+          "corner_high": 0.015385926819448947,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "allegement_general_plafond": 6.5
+          },
+          "cost_aged_eur": 5646173650.3671875,
+          "cost_frozen_eur": 4824624154.67334,
+          "delta_aged": 0.014765231938652867,
+          "delta_frozen": 0.012616809023566988,
+          "corners": [
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.018539086730688048
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.018539086730688048
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.018539086730688048
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.018539086730688048
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.010991377146617687
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.010991377146617687
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.010991377146617687
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.010991377146617687
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.018539086730688048
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.018539086730688048
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.018539086730688048
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.018539086730688048
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.010991377146617687
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.010991377146617687
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              0.010991377146617687
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              0.010991377146617687
+            ]
+          ],
+          "corner_low": 0.010991377146617687,
+          "corner_high": 0.018539086730688048,
+          "meets_target": false
+        }
+      ],
+      "candidates": [],
+      "excluded": [],
+      "closest": {
+        "knobs": {
+          "allegement_general_plafond": 3.5
+        },
+        "cost_aged_eur": 1778941221.724121,
+        "cost_frozen_eur": 1462944437.4350586,
+        "delta_aged": 0.004652084999595907,
+        "delta_frozen": 0.00382572610580012,
+        "corners": [
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+            0.005841114290949134
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+            0.005841114290949134
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+            0.005841114290949134
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+            0.005841114290949134
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+            0.0034630557082429014
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+            0.0034630557082429014
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+            0.0034630557082429014
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+            0.0034630557082429014
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+            0.005841114290949134
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+            0.005841114290949134
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+            0.005841114290949134
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+            0.005841114290949134
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+            0.0034630557082429014
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+            0.0034630557082429014
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+            0.0034630557082429014
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+            0.0034630557082429014
+          ]
+        ],
+        "corner_low": 0.0034630557082429014,
+        "corner_high": 0.005841114290949134,
+        "meets_target": false
+      },
+      "indices": {
+        "knobs": {
+          "allegement_general_plafond": 3.5
+        },
+        "delta_aged": 0.004652084999595907,
+        "absent": {},
+        "closed": {
+          "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+          "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+          "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+          "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
+        },
+        "rows": [
+          {
+            "key": "revenu_disponible_deciles",
+            "pour": "Les gens",
+            "label": "Revenu disponible, par décile de niveau de vie",
+            "unit": "EUR par ménage et par an",
+            "stage": "mécanique",
+            "source": "population, passe de la première année chiffrée",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "D1": 0.0,
+              "D2": 0.0,
+              "D3": 0.0,
+              "D4": 0.0,
+              "D5": 0.0,
+              "D6": 0.0,
+              "D7": 0.0,
+              "D8": 0.0,
+              "D9": 0.0,
+              "D10": 0.0
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "revenu_disponible_reel",
+            "pour": "Les gens",
+            "label": "Revenu disponible brut réel des ménages (pouvoir d'achat)",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4, au centre",
+            "theta": [],
+            "note": "Contient le choc lui-même, en revenu pour l'IR et la CSG, en prix pour la TVA et les cotisations employeurs. Ne s'ajoute pas aux déciles.",
+            "available": true,
+            "values": {
+              "1": 0.023092741831583306,
+              "2": 0.03752570547632287,
+              "3": 0.04907207639211452
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Au centre de Mésange, fixe : la ligne contient le choc, en revenu ou en prix, et la dispersion des multiplicateurs que θ parcourt ne le décrit pas.",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "consommation",
+            "pour": "Les gens",
+            "label": "Consommation des ménages, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Proportionnelle au multiplicateur à θ : négative si le multiplicateur l'est à θ = 0.",
+            "available": true,
+            "values": {
+              "1": 0.017319556373687477,
+              "2": 0.04214425384263953,
+              "3": 0.053113306212641605
+            },
+            "box": {
+              "1": [
+                -0.03983497965948119,
+                0.07447409240685615
+              ],
+              "2": [
+                -0.008428850768527904,
+                0.09271735845380695
+              ],
+              "3": [
+                0.006988592922715999,
+                0.09923801950256719
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_smic",
+            "pour": "Les gens",
+            "label": "Emploi au voisinage du SMIC",
+            "unit": "emplois",
+            "stage": "comportement",
+            "source": "C2, élasticité de l'emploi au coût du travail",
+            "theta": [
+              "employment_elasticity_smic"
+            ],
+            "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
+            "available": true,
+            "values": {
+              "2026": 227.20850801675496
+            },
+            "box": {
+              "2026": [
+                170.43302299992402,
+                269.7901217793782
+              ]
+            },
+            "reason": "",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_marchand",
+            "pour": "Les gens",
+            "label": "Emploi salarié marchand",
+            "unit": "milliers d'ETP",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Des équivalents temps plein, proportionnels au multiplicateur à θ (D-059). Ne s'additionne pas à l'emploi de C2.",
+            "available": true,
+            "values": {
+              "1": 4.791743930053536,
+              "2": 12.123689461581234,
+              "3": 16.742237827897895
+            },
+            "box": {
+              "1": [
+                -11.021011039123131,
+                20.604498899230205
+              ],
+              "2": [
+                -2.424737892316246,
+                26.672116815478713
+              ],
+              "3": [
+                2.2029260299865645,
+                31.281549625809223
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "offre_de_travail",
+            "pour": "Les gens",
+            "label": "Revenus d'activité bruts que déplacent les heures",
+            "unit": "EUR par an",
+            "stage": "comportement",
+            "source": "C7, offre de travail (Bargain, Orsini et Peichl)",
+            "theta": [
+              "labour_supply_married_women",
+              "labour_supply_married_men",
+              "labour_supply_single_women",
+              "labour_supply_single_men"
+            ],
+            "note": "Les heures valorisées au salaire : l'article ne sépare pas heures et participants, et l'indice non plus.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "le canal ne s'ouvre pas pour cette réforme",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "investissement_entreprises",
+            "pour": "Les entreprises",
+            "label": "Investissement des entreprises non financières, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Un accélérateur, proportionnel au multiplicateur à θ ; hors investissement public et des ménages.",
+            "available": true,
+            "values": {
+              "1": 0.023670060377372886,
+              "2": 0.07678336659001449,
+              "3": 0.10507197533370403
+            },
+            "box": {
+              "1": [
+                -0.054441138867957636,
+                0.1017812596227034
+              ],
+              "2": [
+                -0.015356673318002894,
+                0.16892340649803186
+              ],
+              "3": [
+                0.013825259912329475,
+                0.19631869075507857
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "pib_is",
+            "pour": "Les entreprises",
+            "label": "PIB, effet du taux normal d'IS",
+            "unit": "% d'écart de PIB",
+            "stage": "méta-analyse",
+            "source": "Gechert et Heimberger, méta-analyse de 441 estimations (D-246)",
+            "theta": [
+              "is_croissance_pib"
+            ],
+            "note": "Rampe de dix ans sur la croissance. Hors de la trajectoire de dette : l'IS n'a pas de boucle vers les recettes, et un PIB sans elle serait la moitié d'une variante (D-218).",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "La réforme ne touche pas au taux normal d'IS : la méta-analyse chiffre ce taux, et aucun autre bouton des entreprises ne s'y lit.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_fiscale_production",
+            "pour": "Les entreprises",
+            "label": "Charge fiscale de production",
+            "unit": "% de la valeur ajoutée",
+            "stage": "couche entreprises",
+            "source": "panneau de la phase 8",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "creations_societes",
+            "pour": "Les startups",
+            "label": "Créations de sociétés",
+            "unit": "points de taux de création",
+            "stage": "couche entreprises",
+            "source": "C8, rapport IPP n° 47 (D-221)",
+            "theta": [
+              "firm_creation_profit_tax"
+            ],
+            "note": "Un nombre attend le stock de sociétés au manifeste.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "depense_rd",
+            "pour": "Les entreprises",
+            "label": "Dépense de R&D",
+            "unit": "EUR de R&D",
+            "stage": "couche entreprises",
+            "source": "C9, rapport IPP n° 22 (D-222)",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "solde_primaire",
+            "pour": "L'État",
+            "label": "Solde primaire, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": -0.0004156693529684995,
+              "2027": -0.00024247378923162466,
+              "2028": -0.0001558760073631873,
+              "2029": -0.0005773185457895826,
+              "2030": -0.0005773185457895826,
+              "2031": -0.0005773185457895826,
+              "2032": -0.0005773185457895825,
+              "2033": -0.0005773185457895826,
+              "2034": -0.0005773185457895826,
+              "2035": -0.0005773185457895826
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro éteint après trois ans.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "dette",
+            "pour": "L'État",
+            "label": "Dette, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0002807082763274238,
+              "2027": 0.00028047118340590593,
+              "2028": 0.0002863750563046885,
+              "2029": 0.0013706800472004232,
+              "2030": 0.0019328685255934897,
+              "2031": 0.0024888513620611175,
+              "2032": 0.003038697056746864,
+              "2033": 0.0035824733536653497,
+              "2034": 0.004120247249047582,
+              "2035": 0.004652084999595907
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro éteint après trois ans.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_interets",
+            "pour": "L'État",
+            "label": "Charge d'intérêts de la dette supplémentaire",
+            "unit": "pts du PIB de référence",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0,
+              "2027": 7.596910530795898e-06,
+              "2028": 1.1944584198363006e-05,
+              "2029": 1.4661576960832472e-05,
+              "2030": 2.5051001741083095e-05,
+              "2031": 3.5325744252881456e-05,
+              "2032": 4.548707040102744e-05,
+              "2033": 5.553623211680101e-05,
+              "2034": 6.547446751220705e-05,
+              "2035": 7.53030010325175e-05
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro éteint après trois ans.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          }
+        ]
+      }
+    },
+    {
+      "persistence": "tenu",
+      "persistence_label": "Effet macro tenu au niveau de la troisième année",
+      "digest": "cc7d80d0beff795153e85f3271cf4005e17e4bc24d64dc3ba1fe266c008326c7",
+      "log": {
+        "seed": 0,
+        "order": [
+          [
+            [
+              "allegement_general_plafond",
+              3.5
+            ]
+          ],
+          [
+            [
+              "allegement_general_plafond",
+              4.5
+            ]
+          ],
+          [
+            [
+              "allegement_general_plafond",
+              5.5
+            ]
+          ],
+          [
+            [
+              "allegement_general_plafond",
+              6.5
+            ]
+          ]
+        ],
+        "values_aged": [
+          0.001342,
+          0.002552,
+          0.003532,
+          0.004255
+        ],
+        "excluded": [],
+        "theta": {
+          "rows": [],
+          "common": 0.5
+        }
+      },
+      "evaluations": [
+        {
+          "knobs": {
+            "allegement_general_plafond": 3.5
+          },
+          "cost_aged_eur": 1778941221.724121,
+          "cost_frozen_eur": 1462944437.4350586,
+          "delta_aged": 0.001341944893960223,
+          "delta_frozen": 0.0011036585955088718,
+          "corners": [
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.005405334953163532
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.005405334953163532
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.005405334953163532
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.005405334953163532
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.002718351152710019
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.002718351152710019
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.002718351152710019
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.002718351152710019
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.005405334953163532
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.005405334953163532
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.005405334953163532
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.005405334953163532
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.002718351152710019
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.002718351152710019
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.002718351152710019
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.002718351152710019
+            ]
+          ],
+          "corner_low": -0.002718351152710019,
+          "corner_high": 0.005405334953163532,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "allegement_general_plafond": 4.5
+          },
+          "cost_aged_eur": 3384854916.8825684,
+          "cost_frozen_eur": 2703235159.903076,
+          "delta_aged": 0.002552355906954018,
+          "delta_frozen": 0.0020387217658515144,
+          "corners": [
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.010284387665664196
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.010284387665664196
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.010284387665664196
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.010284387665664196
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.0051684818692578904
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.0051684818692578904
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.0051684818692578904
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.0051684818692578904
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.010284387665664196
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.010284387665664196
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.010284387665664196
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.010284387665664196
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.0051684818692578904
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.0051684818692578904
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.0051684818692578904
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.0051684818692578904
+            ]
+          ],
+          "corner_low": -0.0051684818692578904,
+          "corner_high": 0.010284387665664196,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "allegement_general_plafond": 5.5
+          },
+          "cost_aged_eur": 4685862677.941406,
+          "cost_frozen_eur": 4057531429.583008,
+          "delta_aged": 0.003532250641714363,
+          "delta_frozen": 0.0030590817247519997,
+          "corners": [
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.014236708843985202
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.014236708843985202
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.014236708843985202
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.014236708843985202
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.007150766548168042
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.007150766548168042
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.007150766548168042
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.007150766548168042
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.014236708843985202
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.014236708843985202
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.014236708843985202
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.014236708843985202
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.007150766548168042
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.007150766548168042
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.007150766548168042
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.007150766548168042
+            ]
+          ],
+          "corner_low": -0.007150766548168042,
+          "corner_high": 0.014236708843985202,
+          "meets_target": false
+        },
+        {
+          "knobs": {
+            "allegement_general_plafond": 6.5
+          },
+          "cost_aged_eur": 5646173650.3671875,
+          "cost_frozen_eur": 4824624154.67334,
+          "delta_aged": 0.004255136078117783,
+          "delta_frozen": 0.0036367261239393933,
+          "corners": [
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.01715381589260745
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.01715381589260745
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.01715381589260745
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.01715381589260745
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.008612426659253769
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.008612426659253769
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.008612426659253769
+            ],
+            [
+              "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.008612426659253769
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.01715381589260745
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.01715381589260745
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+              0.01715381589260745
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+              0.01715381589260745
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.008612426659253769
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.008612426659253769
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+              -0.008612426659253769
+            ],
+            [
+              "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+              -0.008612426659253769
+            ]
+          ],
+          "corner_low": -0.008612426659253769,
+          "corner_high": 0.01715381589260745,
+          "meets_target": false
+        }
+      ],
+      "candidates": [],
+      "excluded": [],
+      "closest": {
+        "knobs": {
+          "allegement_general_plafond": 3.5
+        },
+        "cost_aged_eur": 1778941221.724121,
+        "cost_frozen_eur": 1462944437.4350586,
+        "delta_aged": 0.001341944893960223,
+        "delta_frozen": 0.0011036585955088718,
+        "corners": [
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+            0.005405334953163532
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+            0.005405334953163532
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+            0.005405334953163532
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+            0.005405334953163532
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+            -0.002718351152710019
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+            -0.002718351152710019
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+            -0.002718351152710019
+          ],
+          [
+            "employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+            -0.002718351152710019
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
+            0.005405334953163532
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
+            0.005405334953163532
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
+            0.005405334953163532
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
+            0.005405334953163532
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
+            -0.002718351152710019
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
+            -0.002718351152710019
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
+            -0.002718351152710019
+          ],
+          [
+            "employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
+            -0.002718351152710019
+          ]
+        ],
+        "corner_low": -0.002718351152710019,
+        "corner_high": 0.005405334953163532,
+        "meets_target": false
+      },
+      "indices": {
+        "knobs": {
+          "allegement_general_plafond": 3.5
+        },
+        "delta_aged": 0.001341944893960223,
+        "absent": {},
+        "closed": {
+          "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+          "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+          "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+          "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
+        },
+        "rows": [
+          {
+            "key": "revenu_disponible_deciles",
+            "pour": "Les gens",
+            "label": "Revenu disponible, par décile de niveau de vie",
+            "unit": "EUR par ménage et par an",
+            "stage": "mécanique",
+            "source": "population, passe de la première année chiffrée",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "D1": 0.0,
+              "D2": 0.0,
+              "D3": 0.0,
+              "D4": 0.0,
+              "D5": 0.0,
+              "D6": 0.0,
+              "D7": 0.0,
+              "D8": 0.0,
+              "D9": 0.0,
+              "D10": 0.0
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "revenu_disponible_reel",
+            "pour": "Les gens",
+            "label": "Revenu disponible brut réel des ménages (pouvoir d'achat)",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4, au centre",
+            "theta": [],
+            "note": "Contient le choc lui-même, en revenu pour l'IR et la CSG, en prix pour la TVA et les cotisations employeurs. Ne s'ajoute pas aux déciles.",
+            "available": true,
+            "values": {
+              "1": 0.023092741831583306,
+              "2": 0.03752570547632287,
+              "3": 0.04907207639211452
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Au centre de Mésange, fixe : la ligne contient le choc, en revenu ou en prix, et la dispersion des multiplicateurs que θ parcourt ne le décrit pas.",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "consommation",
+            "pour": "Les gens",
+            "label": "Consommation des ménages, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Proportionnelle au multiplicateur à θ : négative si le multiplicateur l'est à θ = 0.",
+            "available": true,
+            "values": {
+              "1": 0.017319556373687477,
+              "2": 0.04214425384263953,
+              "3": 0.053113306212641605
+            },
+            "box": {
+              "1": [
+                -0.03983497965948119,
+                0.07447409240685615
+              ],
+              "2": [
+                -0.008428850768527904,
+                0.09271735845380695
+              ],
+              "3": [
+                0.006988592922715999,
+                0.09923801950256719
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_smic",
+            "pour": "Les gens",
+            "label": "Emploi au voisinage du SMIC",
+            "unit": "emplois",
+            "stage": "comportement",
+            "source": "C2, élasticité de l'emploi au coût du travail",
+            "theta": [
+              "employment_elasticity_smic"
+            ],
+            "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
+            "available": true,
+            "values": {
+              "2026": 227.20850801675496
+            },
+            "box": {
+              "2026": [
+                170.43302299992402,
+                269.7901217793782
+              ]
+            },
+            "reason": "",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "emploi_marchand",
+            "pour": "Les gens",
+            "label": "Emploi salarié marchand",
+            "unit": "milliers d'ETP",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Des équivalents temps plein, proportionnels au multiplicateur à θ (D-059). Ne s'additionne pas à l'emploi de C2.",
+            "available": true,
+            "values": {
+              "1": 4.791743930053536,
+              "2": 12.123689461581234,
+              "3": 16.742237827897895
+            },
+            "box": {
+              "1": [
+                -11.021011039123131,
+                20.604498899230205
+              ],
+              "2": [
+                -2.424737892316246,
+                26.672116815478713
+              ],
+              "3": [
+                2.2029260299865645,
+                31.281549625809223
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "offre_de_travail",
+            "pour": "Les gens",
+            "label": "Revenus d'activité bruts que déplacent les heures",
+            "unit": "EUR par an",
+            "stage": "comportement",
+            "source": "C7, offre de travail (Bargain, Orsini et Peichl)",
+            "theta": [
+              "labour_supply_married_women",
+              "labour_supply_married_men",
+              "labour_supply_single_women",
+              "labour_supply_single_men"
+            ],
+            "note": "Les heures valorisées au salaire : l'article ne sépare pas heures et participants, et l'indice non plus.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "le canal ne s'ouvre pas pour cette réforme",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "investissement_entreprises",
+            "pour": "Les entreprises",
+            "label": "Investissement des entreprises non financières, en volume",
+            "unit": "% d'écart au compte central",
+            "stage": "macro",
+            "source": "Mésange, variantes de la section 4",
+            "theta": [
+              "multiplicateur_macro"
+            ],
+            "note": "Un accélérateur, proportionnel au multiplicateur à θ ; hors investissement public et des ménages.",
+            "available": true,
+            "values": {
+              "1": 0.023670060377372886,
+              "2": 0.07678336659001449,
+              "3": 0.10507197533370403
+            },
+            "box": {
+              "1": [
+                -0.054441138867957636,
+                0.1017812596227034
+              ],
+              "2": [
+                -0.015356673318002894,
+                0.16892340649803186
+              ],
+              "3": [
+                0.013825259912329475,
+                0.19631869075507857
+              ]
+            },
+            "reason": "",
+            "conventions": [
+              "Choc permanent égal à l'impulsion de la première année, tenue en part de PIB comme la trajectoire. Conditions de simulation de Mésange : la dépense publique ne réagit qu'en prix, quel que soit le scénario de la trajectoire.",
+              "Proportionnelle au multiplicateur à θ (centre de Mésange ∓ un écart-type IMK), comme l'emploi (D-059) et la rétroaction (§4.1).",
+              "« 1 an » : moyenne de la première année (tableau 12, folio 119)."
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "pib_is",
+            "pour": "Les entreprises",
+            "label": "PIB, effet du taux normal d'IS",
+            "unit": "% d'écart de PIB",
+            "stage": "méta-analyse",
+            "source": "Gechert et Heimberger, méta-analyse de 441 estimations (D-246)",
+            "theta": [
+              "is_croissance_pib"
+            ],
+            "note": "Rampe de dix ans sur la croissance. Hors de la trajectoire de dette : l'IS n'a pas de boucle vers les recettes, et un PIB sans elle serait la moitié d'une variante (D-218).",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "La réforme ne touche pas au taux normal d'IS : la méta-analyse chiffre ce taux, et aucun autre bouton des entreprises ne s'y lit.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_fiscale_production",
+            "pour": "Les entreprises",
+            "label": "Charge fiscale de production",
+            "unit": "% de la valeur ajoutée",
+            "stage": "couche entreprises",
+            "source": "panneau de la phase 8",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "creations_societes",
+            "pour": "Les startups",
+            "label": "Créations de sociétés",
+            "unit": "points de taux de création",
+            "stage": "couche entreprises",
+            "source": "C8, rapport IPP n° 47 (D-221)",
+            "theta": [
+              "firm_creation_profit_tax"
+            ],
+            "note": "Un nombre attend le stock de sociétés au manifeste.",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "depense_rd",
+            "pour": "Les entreprises",
+            "label": "Dépense de R&D",
+            "unit": "EUR de R&D",
+            "stage": "couche entreprises",
+            "source": "C9, rapport IPP n° 22 (D-222)",
+            "theta": [],
+            "note": "",
+            "available": false,
+            "values": {},
+            "box": null,
+            "reason": "Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas.",
+            "conventions": [],
+            "uncovered": {}
+          },
+          {
+            "key": "solde_primaire",
+            "pour": "L'État",
+            "label": "Solde primaire, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": -0.0004156693529684995,
+              "2027": -0.00024247378923162466,
+              "2028": -0.0001558760073631873,
+              "2029": -0.00015587600736318737,
+              "2030": -0.00015587600736318737,
+              "2031": -0.00015587600736318737,
+              "2032": -0.00015587600736318737,
+              "2033": -0.00015587600736318737,
+              "2034": -0.00015587600736318737,
+              "2035": -0.00015587600736318737
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "dette",
+            "pour": "L'État",
+            "label": "Dette, écart de la réforme",
+            "unit": "pts de PIB",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0002807082763274238,
+              "2027": 0.00028047118340590593,
+              "2028": 0.0002863750563046885,
+              "2029": 0.00043535235580005605,
+              "2030": 0.0005849848691514836,
+              "2031": 0.0007352425947622088,
+              "2032": 0.0008860960876415636,
+              "2033": 0.0010375164510272317,
+              "2034": 0.001189475328124967,
+              "2035": 0.001341944893960223
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          },
+          {
+            "key": "charge_interets",
+            "pour": "L'État",
+            "label": "Charge d'intérêts de la dette supplémentaire",
+            "unit": "pts du PIB de référence",
+            "stage": "chaîne",
+            "source": "chaîne de §3",
+            "theta": [],
+            "note": "",
+            "available": true,
+            "values": {
+              "2026": 0.0,
+              "2027": 7.596910530795898e-06,
+              "2028": 1.1944584198363006e-05,
+              "2029": 1.4661576960832472e-05,
+              "2030": 1.7348578564026143e-05,
+              "2031": 2.0005920061323016e-05,
+              "2032": 2.2633928851813855e-05,
+              "2033": 2.5232928720638613e-05,
+              "2034": 2.7803239878878494e-05,
+              "2035": 3.034517900300774e-05
+            },
+            "box": null,
+            "reason": "",
+            "conventions": [
+              "Prélèvements constants en % du PIB",
+              "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+              "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+              "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+              "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+              "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+              "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+              "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+              "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+              "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.",
+              "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+            ],
+            "uncovered": {}
+          }
+        ]
+      }
+    }
+  ]
+}

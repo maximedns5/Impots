@@ -890,6 +890,7 @@ def dividend_response(
     reform: Any,
     *,
     dividend_base_eur: float | None = None,
+    dividend_base_cdhr_eur: float = 0.0,
     levy_rate_baseline: float | None = None,
     levy_rate_reform: float | None = None,
     draws: int = 1,
@@ -899,7 +900,10 @@ def dividend_response(
     """The receipts that dividends bring back, or take away, when their net-of-tax rate
     moves (D-249).
 
-    `dividend_base_eur` is the dividends declared at the PFU (case 2DC), weighted;
+    `dividend_base_eur` is the dividends declared at the PFU (case 2DC), weighted, of the
+    households the CDHR does not hold; `dividend_base_cdhr_eur` those it holds, before or
+    after the reform, whose net-of-tax rate the CDHR keeps where it was: named, not moved
+    (D-250);
     `levy_rate_*` the whole rate on them before and after, the PFU's income-tax part plus
     the social levies. The aggregate elasticity is the firm-control share times the firm
     owners' elasticity plus the rest times the others' — ε = s ε_p + (1 − s) ε_a — and the
@@ -962,6 +966,7 @@ def dividend_response(
             "delta_log_net_of_tax": round(delta_log, 8),
             "net_of_tax_relative_change": round(net_after / net_before - 1.0, 8),
             "dividend_base_eur": round(float(dividend_base_eur), 2),
+            "dividends_held_by_cdhr_eur": round(float(dividend_base_cdhr_eur), 2),
             "induced_dividends_eur": {
                 "p10": round(float(np.percentile(induced, 10)), 2),
                 "p50": round(float(np.percentile(induced, 50)), 2),
@@ -970,8 +975,10 @@ def dividend_response(
                 "les salaires que les propriétaires se versent en moins, 0,31 € par euro "
                 "de dividende en plus (tableau 2 B), taxés plus lourdement ; les "
                 "plus-values futures dont les dividendes induits sont tirés, taxées plus "
-                "bas ; la CEHR sur les dividendes induits ; le retour au barème d'un foyer "
-                "que le PFU relevé dépasserait ; les intérêts et les plus-values"),
+                "bas ; la CEHR sur les dividendes induits ; la CDHR que des dividendes "
+                "induits feraient naître, d'un foyer qu'elle ne tenait pas ; le retour au "
+                "barème d'un foyer que le PFU relevé dépasserait ; les intérêts et les "
+                "plus-values"),
         },
     )
 

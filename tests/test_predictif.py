@@ -405,3 +405,13 @@ def test_the_transfers_and_the_corporate_tax_are_shown_closed_with_what_was_foun
     result = _run(_carried(5e9), horizon=2)
     assert "2,5" in result.closed["transferts"]
     assert "Mésange 2017" in result.closed["IS et investissement des entreprises"]
+
+
+def test_the_dividends_are_not_said_closed_for_want_of_capital_income() -> None:
+    """D-250. The population carries capital income since D-248, and the dividends'
+    response is C10, in the receipts of a PFU reform, since D-249. A result that still
+    says the channel closed because the population carries none says what is no longer
+    true. Like labour supply in D-220, C10 says itself why it does not open."""
+    result = _run(_carried(5e9), horizon=2)
+    assert "dividendes" not in result.closed
+    assert not any("revenu du capital" in reason for reason in result.closed.values())

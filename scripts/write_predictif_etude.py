@@ -15,6 +15,13 @@ requête par bouton de la courbe sous `etude/courbe/`, qui tient le cadre de l'�
 pour champ, jouée en `reports/exploration_courbe_<bouton>.json`. Les mêmes refus valent
 pour elle, et un de plus : une requête hors de son menu.
 
+LE MENU ÉLARGI DE LA PHASE 11 est préenregistré à part (D-250, D-251) : l'IS et le PFU
+sous `etude/phase11/`, joués en `reports/exploration_phase11_<instrument>.json`, avec les
+refus de la courbe. Les quatre requêtes de l'étude y sont rejouées telles quelles, pour
+contrôle, en `reports/etude_phase11/controles/`. Un contrôle qui ne rejoue pas la requête
+de l'étude est refusé ; un contrôle qui ne redonne pas sa référence ne l'est pas : la page
+le dit, avec son écart, parce que c'est un résultat.
+
 AUCUN CHIFFRE N'EST SAISI DANS LA PAGE : tout vient des rapports. `render(études)` est ce
 que rejoue `tests/test_predictif_etude.py`, sans `data/` : la page commitée est le rendu
 des fichiers commités (la garde de D-228).
@@ -61,6 +68,16 @@ COURBE_FREE = ("name", "titre", "question", "bounds")
 #: earners (D-252) and lent each its household's cost change (D-254). The rerun corrects C2,
 #: which enters no revenue and no debt: it must give the first round back figure for figure.
 COURBE_FIRST_ROUND = "courbe_premier_tour"
+#: The wider menu of Phase 11, preregistered apart (D-250): each request holds the frame
+#: of the study's IR request, only these fields changed; the study's own four requests
+#: are replayed as they are, as controls, under this directory of `reports/`.
+PHASE11 = "phase11"
+PHASE11_FREE = ("name", "titre", "question", "bounds")
+CONTROLS = Path("etude_phase11") / "controles"
+#: How near a control must give back its reference to be said to: a ten-thousandth of a
+#: point of GDP on every Δb and every corner, a euro on every cost (D-250).
+CONTROL_SHARE = 1e-6
+CONTROL_EUR = 1.0
 
 
 class EtudeError(ValueError):
@@ -106,6 +123,13 @@ COURBE_MENU: tuple[Instrument, ...] = (
                "allegement_general_t_min", _pct),
     Instrument("t_delta", "Le t_delta de la réduction générale de 2026",
                "allegement_general_t_delta_moins_de_50", _pct),
+)
+
+#: The two instruments Phase 11 adds to the menu (D-250). The CVAE is not one: the law
+#: abolishes it in 2030, which the first year's carry would not see.
+PHASE11_MENU: tuple[Instrument, ...] = (
+    Instrument("is", "Le taux normal de l'IS", "is_taux_normal", _pct),
+    Instrument("pfu", "Le taux du PFU, part impôt sur le revenu", "pfu_taux", _pct),
 )
 
 
@@ -348,13 +372,117 @@ def load_courbe(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
     return out
 
 
+def control_gaps(report: dict[str, Any], reference: dict[str, Any]) -> dict[str, Any]:
+    """How far a control is from its reference: the largest gap on a Δb or a corner, in
+    share of GDP, and on a cost, in euros, bundle by bundle and persistence by persistence;
+    and whether every bundle meets the target, or not, as it did."""
+    share, eur, same = 0.0, 0.0, True
+    for search, before in zip(report["searches"], reference["searches"], strict=True):
+        if search["persistence"] != before["persistence"]:
+            raise EtudeError("un contrôle et sa référence n'ont pas les mêmes persistances")
+        was = {json.dumps(e["knobs"], sort_keys=True): e for e in before["evaluations"]}
+        for e in search["evaluations"]:
+            b = was.get(json.dumps(e["knobs"], sort_keys=True))
+            if b is None:
+                raise EtudeError(f"un contrôle chiffre {e['knobs']}, que sa référence n'a "
+                                 f"pas : ce n'est pas la même grille.")
+            corners = dict(b["corners"])
+            share = max([share, *(abs(e[k] - b[k]) for k in
+                                  ("delta_aged", "delta_frozen", "corner_low",
+                                   "corner_high")),
+                         *(abs(v - corners[label]) for label, v in e["corners"])])
+            eur = max(eur, abs(e["cost_aged_eur"] - b["cost_aged_eur"]),
+                      abs(e["cost_frozen_eur"] - b["cost_frozen_eur"]))
+            same = same and e["meets_target"] == b["meets_target"]
+    return {"share": share, "eur": eur, "same_verdicts": same,
+            "given_back": same and share <= CONTROL_SHARE and eur <= CONTROL_EUR}
+
+
+def load_phase11(etudes: list[dict[str, Any]], complements: list[dict[str, Any]],
+                 requests: Path = REQUESTS, reports: Path = REPORTS) -> dict[str, Any] | None:
+    """The wider menu of Phase 11 under `etude/phase11/` and the reports that played it,
+    checked like the curve; and the study's four requests replayed as controls, each with
+    its gap to its reference — the study's report, or the complement that replayed it
+    after its instrument was reclassified (D-239). One commit for all."""
+    from impots.api.schemas import ExplorationReport, ExplorationRequest
+
+    directory = requests / PHASE11
+    if not directory.exists():
+        return None
+    known = {f"{instrument.key}.json" for instrument in PHASE11_MENU}
+    strays = sorted(p.name for p in directory.glob("*.json") if p.name not in known)
+    if strays:
+        raise EtudeError(f"etude/{PHASE11}/ porte {strays}, hors du menu de la phase 11 : "
+                         f"une requête que la page ne rendrait pas se lirait comme non "
+                         f"jouée.")
+    frame = next(e for e in etudes if e["instrument"].key == "ir")["report"]["request"]
+
+    def held(payload: dict[str, Any]) -> dict[str, Any]:
+        return {k: v for k, v in payload.items() if k not in PHASE11_FREE}
+
+    def played(path: Path, dump: dict[str, Any], what: str) -> dict[str, Any]:
+        report = json.loads(path.read_text(encoding="utf-8"))
+        ExplorationReport.model_validate(report)
+        if report["request"] != dump:
+            raise EtudeError(f"{path.name} n'a pas joué sa requête, {what}.")
+        if not (report.get("where") or "").strip():
+            raise EtudeError(f"{path.name} ne dit pas où ses passes ont tourné.")
+        return report
+
+    entries = []
+    for instrument in PHASE11_MENU:
+        request_path = directory / f"{instrument.key}.json"
+        report_path = reports / f"exploration_{PHASE11}_{instrument.key}.json"
+        if not request_path.exists():
+            raise EtudeError(f"instrument « {instrument.key} » de la phase 11 sans requête "
+                             f"sous etude/{PHASE11}/ : le menu préenregistré n'est pas "
+                             f"entier.")
+        if not report_path.exists():
+            raise EtudeError(f"instrument « {instrument.key} » de la phase 11 sans "
+                             f"rapport : {report_path.name}.")
+        request = ExplorationRequest.model_validate_json(
+            request_path.read_text(encoding="utf-8"))
+        dump = request.model_dump(mode="json", exclude_none=True)
+        if held(dump) != held(frame):
+            raise EtudeError(
+                f"etude/{PHASE11}/{request_path.name} ne tient pas le cadre de l'étude : "
+                f"seuls {list(PHASE11_FREE)} peuvent différer de sa requête de l'IR, sans "
+                f"quoi le menu élargi ne se lirait plus à côté de l'étude.")
+        if [b.knob for b in request.bounds] != [instrument.knob]:
+            raise EtudeError(f"etude/{PHASE11}/{request_path.name} parcourt "
+                             f"{[b.knob for b in request.bounds]}, pas {instrument.knob}.")
+        entries.append({"instrument": instrument, "report": played(
+            report_path, dump, f"etude/{PHASE11}/{request_path.name}")})
+    reclassified = {c["instrument"].key: c["report"] for c in complements}
+    controls = []
+    for entry in etudes:
+        key = entry["instrument"].key
+        path = reports / CONTROLS / f"exploration_etude_{key}.json"
+        if not path.exists():
+            raise EtudeError(f"contrôle « {key} » sans rapport : {CONTROLS / path.name}. "
+                             f"Sans lui, rien ne dit que le code du menu élargi chiffre "
+                             f"encore l'étude comme elle a été chiffrée.")
+        report = played(path, entry["report"]["request"], f"etude/{key}.json")
+        reference = reclassified.get(key, entry["report"])
+        controls.append({"instrument": entry["instrument"], "report": report,
+                         "against": "D-239" if key in reclassified else "D-238",
+                         "gaps": control_gaps(report, reference)})
+    commits = sorted({e["report"]["commit"] for e in entries + controls})
+    if len(commits) != 1:
+        raise EtudeError(f"rapports de la phase 11 de {len(commits)} commits {commits} : le "
+                         f"menu élargi et ses contrôles se chiffrent sur un code, celui de "
+                         f"leur préenregistrement.")
+    return {"entries": entries, "controls": controls}
+
+
 def study(requests: Path = REQUESTS,
-          reports: Path = REPORTS) -> tuple[list, list, list]:
-    """The study, its complements and the curve replayed, all checked: what the page
-    renders."""
+          reports: Path = REPORTS) -> tuple[list, list, list, dict[str, Any] | None]:
+    """The study, its complements, the curve replayed and the wider menu of Phase 11,
+    all checked: what the page renders."""
     etudes = load(requests, reports)
-    return (etudes, load_complements(etudes, requests, reports),
-            load_courbe(etudes, requests, reports))
+    complements = load_complements(etudes, requests, reports)
+    return (etudes, complements, load_courbe(etudes, requests, reports),
+            load_phase11(etudes, complements, requests, reports))
 
 
 # --------------------------------------------------------------------------- #
@@ -488,13 +616,22 @@ def _key(key: str) -> str:
     return {"1": "à 1 an", "2": "à 2 ans", "3": "à 3 ans"}.get(key, key)
 
 
+#: The two firm indices of the wider menu (D-250), a few hundredths at most: shown to the
+#: thousandth, where two decimals would print an IS cut's GDP gap as « +0,02 ».
+FINE = ("pib_is", "creations_societes")
+
+
 def _value(row: dict[str, Any], key: str) -> str:
     value = row["values"][key]
     share = row["unit"].startswith("pts d")
-    text = _fr(value * 100, 3) + " pt" if share else _number(value)
+
+    def shown(x: float) -> str:
+        return _fr(x, 3) if row["key"] in FINE else _number(x)
+
+    text = _fr(value * 100, 3) + " pt" if share else shown(value)
     box = (row.get("box") or {}).get(key)
     if box is not None and box[0] != box[1]:
-        text += f" [{_number(box[0])} ; {_number(box[1])}]"
+        text += f" [{shown(box[0])} ; {shown(box[1])}]"
     return text
 
 
@@ -652,9 +789,83 @@ def _courbe_section(courbe: list[dict[str, Any]], target: float, first_year: int
     return out
 
 
+#: What each instrument of the wider menu leaves out, on the page beside its answer
+#: (D-250). Text, no figure: the figures are the reports'.
+PHASE11_LEAVES_OUT = {
+    "is": ("Le report tient le coût de la première année dix ans, et celui de 2026 compte "
+           "la CEBGE, assise sur l'IS, que le droit éteint en 2027 : l'écart est surestimé "
+           "d'environ un dixième. L'effet de l'IS sur le PIB reste hors de la dette, faute "
+           "de boucle (D-218, D-246). L'un et l'autre vont vers une dette plus haute."),
+    "pfu": ("La part de 12,8 % du PFU est l'impôt sur le revenu, et la baisse tombe dans la "
+            "variante de l'IR de Mésange, qui la répartit sur tous les ménages quand elle "
+            "va aux plus hauts déciles : la boucle rend sans doute trop. C10 ne compte pas "
+            "le salaire que les propriétaires de firme se versent en moins, 0,31 € par euro "
+            "de dividende en plus (tableau 2 B de Bach et al.), ni l'IS que l'entreprise "
+            "paie sur le profit qu'il devient, ni les plus-values futures. Ces trois termes "
+            "vont vers une dette plus haute : un écart qui ne passe sous zéro que de "
+            "quelques centièmes de point peut s'y retourner (D-250). La CDHR reprend une "
+            "part de la baisse aux foyers qu'elle tient, et leurs dividendes sortent de "
+            "l'assiette de C10 : leur taux net ne bouge pas (D-250)."),
+}
+
+
+def _control_row(control: dict[str, Any]) -> str:
+    gaps = control["gaps"]
+    said = ("la redonne" if gaps["given_back"] else
+            "ne la redonne pas" + ("" if gaps["same_verdicts"]
+                                   else ", et un paquet change de verdict"))
+    return (f"| {control['instrument'].label} | {control['against']} "
+            f"| {_fr(gaps['share'] * 100, 6, sign=False)} pt "
+            f"| {_fr(gaps['eur'], 0, sign=False)} € | {said} |")
+
+
+def _phase11_section(phase11: dict[str, Any], target: float, first_year: int,
+                     target_year: int, theta: str) -> list[str]:
+    entries, controls = phase11["entries"], phase11["controls"]
+    report = entries[0]["report"]
+    out = ["", "## Le menu élargi de la phase 11, préenregistré à part", "",
+           "La phase 11 fait entrer les entreprises et le capital dans la chaîne, et repose "
+           "la question de l'étude sur le menu élargi (PHASE11_SPEC §8). Les requêtes sous "
+           f"`etude/{PHASE11}/` ont été commitées avant toute passe, avec le pronostic écrit "
+           "dans D-250. Chacune tient le cadre de l'étude champ pour champ ; seuls son nom, "
+           "son titre, sa question et sa grille diffèrent. Chaque rapport a joué sa requête, "
+           f"à l'identique, sur le même commit : `{report['commit']}`, le "
+           f"{report['computed']}. Les passes ont tourné ici : {report['where']}.",
+           "",
+           f"| Instrument | Bouton | Grille | Coût {first_year}, vieillie |",
+           "|---|---|---|---|"]
+    out += [_menu_row(entry) for entry in entries]
+    out += ["", "Deux instruments du §8 n'y entrent pas (D-250). La CVAE : le droit l'abroge "
+                "en 2030, et le report du coût de la première année chiffrerait six années "
+                "d'un impôt qui n'existe plus ; son seul bouton de taux ne règle de plus que "
+                "la tranche au-dessus de 50 M€. Le `t_delta` avec son autofinancement : M5 "
+                "attend le choix du propriétaire, et sans lui la courbe rejouée ci-dessus "
+                "redonnerait D-242.",
+            "", "### La réponse du menu élargi", ""]
+    out += _answer_table(entries, target, theta)
+    for entry in entries:
+        out += _entry_section(entry, target, first_year=first_year,
+                              target_year=target_year, theta=theta)
+        out += ["", f"**Ce que ce chiffre ne compte pas.** "
+                    f"{PHASE11_LEAVES_OUT[entry['instrument'].key]}"]
+    out += ["", "### Les contrôles", "",
+            "Les quatre requêtes de l'étude, rejouées telles quelles sur le même commit. "
+            "Chacune doit redonner sa référence au dix-millième de point sur chaque écart et "
+            "chaque coin, et à l'euro sur chaque coût, sous chaque persistance et dans "
+            "chaque vue : l'étude de D-238, ou le complément de D-239 pour l'instrument "
+            "reclassé depuis. L'écart est le plus grand, paquet par paquet.",
+            "",
+            "| Instrument | Référence | Écart sur Δb et les coins | Écart sur les coûts "
+            "| Le contrôle |",
+            "|---|---|---|---|---|"]
+    out += [_control_row(c) for c in controls]
+    return out
+
+
 def render(etudes: list[dict[str, Any]],
            complements: list[dict[str, Any]] | tuple = (),
-           courbe: list[dict[str, Any]] | tuple = ()) -> str:
+           courbe: list[dict[str, Any]] | tuple = (),
+           phase11: dict[str, Any] | None = None) -> str:
     report = etudes[0]["report"]
     h = report["hypotheses"]
     target, target_year = h["target_share"], h["target_year"]
@@ -744,6 +955,8 @@ def render(etudes: list[dict[str, Any]],
                                    theta)
     if courbe:
         out += _courbe_section(list(courbe), target, first_year, target_year, theta)
+    if phase11:
+        out += _phase11_section(phase11, target, first_year, target_year, theta)
     out += ["", "## Ce que l'étude ne dit pas", "",
             "- Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de "
             "θ ; un autre scénario donne une autre réponse.",
@@ -751,8 +964,11 @@ def render(etudes: list[dict[str, Any]],
             "ni une somme de tranches ni un intervalle de probabilité.",
             "- La première année est chiffrée, les suivantes reportées en part de PIB : une "
             "convention, que `impots predictif` lève année par année (D-236).",
-            "- Ni l'IS, ni les dividendes, ni la couche entreprises : la chaîne ne les "
-            "porte pas. Ce qu'elle ferme, et pourquoi :",
+            ("- Dans l'étude de D-237, ni l'IS, ni les dividendes, ni la couche entreprises : "
+             "la chaîne ne les portait pas, et le menu élargi de la phase 11 les y fait "
+             "entrer. Ce qu'elle fermait alors, et pourquoi :" if phase11 else
+             "- Ni l'IS, ni les dividendes, ni la couche entreprises : la chaîne ne les "
+             "porte pas. Ce qu'elle ferme, et pourquoi :"),
             *[f"  - {name} : {why}"
               for name, why in report["searches"][0]["indices"]["closed"].items()],
             "- Elle ne recommande rien. Elle dit ce que la machine répond, sous ces "
@@ -762,11 +978,11 @@ def render(etudes: list[dict[str, Any]],
 
 def main(argv: list[str] | None = None) -> int:
     try:
-        etudes, complements, courbe = study()
+        etudes, complements, courbe, phase11 = study()
     except EtudeError as error:
         print(str(error), file=sys.stderr)
         return 1
-    OUT.write_text(render(etudes, complements, courbe), encoding="utf-8")
+    OUT.write_text(render(etudes, complements, courbe, phase11), encoding="utf-8")
     print(f"-> {OUT}")
     return 0
 

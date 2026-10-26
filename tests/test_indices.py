@@ -285,6 +285,47 @@ def test_the_firm_layer_is_listed_and_not_computed_here() -> None:
     assert all(not i.available and i.reason == indices.FIRM_LAYER for i in computed)
 
 
+def _firm_indices(firm_reform, is_rate_change, theta=None):
+    return {i.spec.key: i for i in indices.compute(
+        [s for s in indices.CATALOGUE if s.stage == indices.FIRMES], trajectory=None,
+        deciles_rows=None, impulse=None, gdp_eur=GDP, macro_store=None,
+        theta=theta if theta is not None else Theta(common=0.5),
+        store=STORE, reform=None, mechanical=0.0, inputs=None, year=2026,
+        firm_reform=firm_reform, is_rate_change=is_rate_change)}
+
+
+def test_an_is_cut_in_the_path_reads_the_creations_at_theta_with_their_box() -> None:
+    """D-250. Derived by hand on C8's worked example: one point of normal rate cut is
+    0,4538 point of virtual rate, times the row at θ — 0,38 at ½, 0 and 0,684 at the box's
+    two ends. An index of the firm layer, never a receipt, and illustrative at any size."""
+    from impots.entreprises.reforms import FirmReformSpec
+
+    conversion = STORE[channels.C8_CONVERSION].central
+    got = _firm_indices(FirmReformSpec(is_taux_normal=0.24), -1.0)["creations_societes"]
+    assert got.available and list(got.values) == [indices.CREATIONS_KEY]
+    assert got.values[indices.CREATIONS_KEY] == pytest.approx(0.38 * conversion)
+    assert got.box[indices.CREATIONS_KEY] == pytest.approx((0.0, 0.684 * conversion))
+    assert got.spec.theta == (indices.C8_ROW,)
+    assert any("illustratif" in c.lower() for c in got.conventions)
+    at_one = _firm_indices(FirmReformSpec(is_taux_normal=0.24), -1.0,
+                           Theta(common=1.0))["creations_societes"]
+    assert at_one.values[indices.CREATIONS_KEY] == pytest.approx(0.684 * conversion)
+
+
+def test_a_firm_reform_says_why_each_other_firm_index_stays_out() -> None:
+    """D-250. The pending promise is gone: each index says its own reason. A firm reform
+    that leaves the normal rate alone gets C8's own; the R&D waits on a CIR the chain
+    refuses; the production burden is the Phase 8 panel's."""
+    from impots.entreprises.reforms import FirmReformSpec
+
+    got = _firm_indices(FirmReformSpec(is_taux_reduit=0.14), None)
+    assert not got["creations_societes"].available
+    assert got["creations_societes"].reason == channels.NO_CREATION_KNOB
+    assert got["depense_rd"].reason == indices.CIR_OUT_OF_CHAIN
+    assert got["charge_fiscale_production"].reason == indices.PANEL_OUT_OF_CHAIN
+    assert not hasattr(indices, "FIRM_PENDING")
+
+
 def test_every_index_has_a_unit_a_stage_and_a_source() -> None:
     assert len(indices.KEYS) == len(indices.CATALOGUE)
     for spec in indices.CATALOGUE:

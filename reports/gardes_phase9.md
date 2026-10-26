@@ -2,9 +2,9 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-25 sur le commit `2ab12df19ddd` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-25 sur le commit `71f9e65f532b` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
-**219 mutations** : 218 tuées, 1 équivalente avec sa raison, 0 survivante.
+**226 mutations** : 225 tuées, 1 équivalente avec sa raison, 0 survivante.
 
 | Mutation | Garde | Verdict | Étage | Tuée par |
 |---|---|---|---|---|
@@ -227,3 +227,10 @@ Balayé le 2026-10-25 sur le commit `2ab12df19ddd` (D-229). Chaque garde est mut
 | `P11-G7-creations-au-pib` | garde 7 : les créations ajoutées à l'effet de l'IS sur le PIB sont refusées par leur nom | tuée | ciblé | tests/test_taux_effectifs.py::test_investment_or_entry_added_to_the_gdp_effect_is_refused[creations_societes] |
 | `P11-R4-tolerance` | la condition de M0 sur l'indice des créations : un dixième de point | tuée | ciblé | tests/test_taux_effectifs.py::test_the_composite_emtr_misses_the_condition_so_the_index_is_refused |
 | `P11-R4-composite-quatre` | le composite est la moyenne des quatre catégories, stocks compris (§ 18) | tuée | ciblé | tests/test_taux_effectifs.py::test_the_composite_emtr_misses_the_condition_so_the_index_is_refused |
+| `P11-C8-dans-la-chaine` | les créations d'une baisse d'IS se lisent dans la chaîne, C8 à θ | tuée | ciblé | tests/test_indices.py::test_an_is_cut_in_the_path_reads_the_creations_at_theta_with_their_box |
+| `P11-C8-boite` | les créations portent leur boîte θ, aux deux bouts de leur ligne | tuée | ciblé | tests/test_indices.py::test_an_is_cut_in_the_path_reads_the_creations_at_theta_with_their_box |
+| `P11-raison-rd` | chaque indice des entreprises dit sa propre raison | tuée | ciblé | tests/test_indices.py::test_a_firm_reform_says_why_each_other_firm_index_stays_out |
+| `P11-cdhr-recette` | la CDHR est une recette du grand livre : sans elle, une baisse du PFU est refusée | tuée | ciblé | tests/test_cdhr.py::test_the_cdhr_is_a_row_an_instrument_and_a_receipt |
+| `P11-cdhr-impulsion` | l'impulsion lit l'IR net de la CDHR | tuée | ciblé | tests/test_cdhr.py::test_the_impulse_nets_the_cdhr_against_the_income_tax |
+| `P11-cdhr-assiette-c10` | les dividendes que la CDHR tient sortent de l'assiette de C10 | tuée | ciblé | tests/test_cdhr.py::test_c10_leaves_out_the_dividends_the_cdhr_holds |
+| `P11-dividendes-fermes` | les dividendes ne sont plus dits fermés : C10 est ouvert depuis D-249 | tuée | ciblé | tests/test_predictif.py::test_the_dividends_are_not_said_closed_for_want_of_capital_income |

@@ -122,7 +122,9 @@ def test_the_theta_is_listed_for_every_open_row_and_the_closed_say_why(
         theta={"common": 0.5, "rows": {"eti_all": 0.1}})).json()
     assert len(body["theta"]) == 19 and body["theta"]["eti_all"] == 0.1  # D-246, D-249, D-256
     assert body["theta_applied"] is False and "θ" in body["absent"]
-    assert "dividendes" in body["closed"] and all(body["closed"].values())
+    # The dividends left the closed list in D-250: C10 is open since D-249.
+    assert "transferts" in body["closed"] and all(body["closed"].values())
+    assert "dividendes" not in body["closed"]
     assert body["behaviour"] is None
 
 

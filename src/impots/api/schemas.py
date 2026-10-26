@@ -1139,6 +1139,10 @@ class ResultRows(BaseModel):
     dividendes: float
     """The dividends declared at the PFU, case 2DC: the base of the dividend channel C10,
     read back from the engine, never a receipt (D-249)."""
+    cdhr: float
+    """The contribution différentielle sur les hauts revenus, from 2025: a high income's
+    tax topped up to 20 % of its RFR, PFU included. Not in `ir`, a receipt of its own;
+    zero without capital income (D-250)."""
     # benefits block (famille) — full tier only
     af: float | None = None
     aeeh: float | None = None
