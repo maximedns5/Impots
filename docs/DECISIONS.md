@@ -19964,7 +19964,8 @@ et de ses indices, du comportement, de θ, de la chaîne, de la charte et des d�
 les données liées fichier par fichier : le rapport nomme ce seul commit.
 
 **Ce qui reste.**
-- Le plancher `t_min` rejoué de même, avec son autofinancement, s'il est voulu.
+- Le plancher `t_min` rejoué de même, avec son autofinancement, s'il est voulu : fait
+  depuis, D-261 et D-262.
 - La boucle de la variante ciblée de Mésange, et l'impôt sur le revenu des emplois créés :
   ce qui pourrait encore retourner la réponse.
 - La CVAE, sur le chemin annuel, avec un bouton du barème entier.
@@ -20052,3 +20053,101 @@ coûts sont ceux de la courbe, et le contrôle le vérifiera.
 **Ce qui suit.** La recherche, seule et en tâche de fond, sur ce commit. Puis D-262 : le
 résultat, le rendu des deux rejeux dans `docs/PREDICTIF_ETUDE.md`, et leurs gardes. La
 porte reste le `make full` du propriétaire.
+
+## D-262 — Le plancher rejoué avec son autofinancement, second temps : la réponse
+
+**Le fait.** La recherche préenregistrée dans D-261 a tourné sur le commit de son
+préenregistrement, `2002304`, en onze minutes : quatre paquets et huit passes. La
+réponse, sous les hypothèses de l'étude : avec son autofinancement, aucun relèvement du
+plancher ne fait baisser la dette en 2035, ni à θ = ½ ni pour aucun θ. C11 réduit l'écart
+de la courbe de 33 % à θ = ½, et de 60 % au plus. La page `docs/PREDICTIF_ETUDE.md` rend
+le rejeu dans sa propre section, après celle du `t_delta`, gardée contre la dérive comme le
+reste.
+
+**Le résultat.** Δb 2035 en points de PIB, vue vieillie : la courbe sans C11 (D-256), puis
+avec, à θ = ½ et dans la boîte θ. Les deux persistances donnent les mêmes chiffres.
+
+| Paquet | coût 2026 | courbe | avec C11 | boîte θ, avec C11 |
+|---|---|---|---|---|
+| plancher à 2,1 % | 0,76 Md€ | +0,235 | +0,157 | +0,094 à +0,224 |
+| à 2,4 % | 3,05 Md€ | +0,942 | +0,629 | +0,377 à +0,896 |
+| à 2,7 % | 5,34 Md€ | +1,648 | +1,101 | +0,659 à +1,568 |
+| à 3 % | 7,62 Md€ | +2,354 | +1,573 | +0,942 à +2,241 |
+
+- C11 rend 33,2 % de chaque paquet à θ = ½ : Δb vaut 0,6679 fois celui de la courbe, au
+  même dix-millième à chaque paquet.
+- Aucun des 32 coins d'aucun paquet ne passe sous zéro.
+- En vue figée, de +0,155 à +1,551 point, 0,6642 fois la courbe : C11 y rend 33,6 %.
+- Les coûts sont ceux de la courbe à l'euro près, dans les deux vues.
+- Par milliard de coût de la première année, à θ = ½, le plancher laisse 0,206 point de
+  dette en 2035 et le `t_delta` 0,191 : la même baisse, portée jusqu'à 3 SMIC, rend moins.
+
+**Contre le pronostic.** Les sept points tiennent.
+1. À θ = ½ : +0,157, +0,629, +1,101 et +1,573 point, les chiffres annoncés au millième, à
+   0,668 fois la courbe. Aucun paquet sous zéro, sous aucune persistance et dans aucune vue.
+2. Pour aucun θ : aucun coin sous zéro. Le plus bas, le poids à 1, de +0,094 à +0,942 ; le
+   plus haut, le poids à 0 et l'élasticité à −0,31, de +0,224 à +2,241 ; le poids à 0 et
+   l'élasticité à −0,52, +0,218 au premier paquet. Les incidences de C3 et le
+   multiplicateur ne bougent aucun coin.
+3. Les deux persistances donnent les mêmes chiffres, et la page dit la boucle absente.
+4. Le contrôle. Les coûts sont ceux du second tour de la courbe, sur `3ba628c`, à l'écart
+   nul. Aux seize coins du poids à 1, le rejeu redonne 0,4 fois l'écart de la courbe : le
+   plus grand écart vaut 8,9 × 10⁻¹⁷ en part de PIB.
+5. Les indices du premier paquet hors de la chaîne sont ceux de la courbe, à l'écart nul :
+   l'emploi au voisinage du SMIC (C2), +4 077 [+3 068 ; +4 833] ; l'emploi marchand de
+   Mésange, 2,50, 6,98 et 9,97 milliers d'ETP à un, deux et trois ans ; les déciles,
+   nuls. Le solde et la dette valent 0,6679 fois ceux de la courbe.
+6. La vue figée donne les mêmes signes : de +0,155 à +1,551, pour « de +0,156 à +1,560 si
+   C11 y rend la même part ». Il y rend un peu plus, 33,6 % contre 33,2 %, comme pour le
+   `t_delta`.
+7. Le plancher reste moins autofinancé que le `t_delta` à chaque θ sous 1 : 33,2 % contre
+   38,0 % à θ = ½, 4,8 % contre 11,8 % à θ = 0.
+
+**Ce que la réponse veut dire.** Sous ces hypothèses, l'autofinancement ne retourne la
+réponse de D-242 pour aucun des deux boutons de la courbe. Il la réduit, d'un tiers pour
+le plancher et de près de deux cinquièmes pour le `t_delta` à θ = ½, et au mieux de 60 %.
+Le plancher en rend moins parce qu'il répand la baisse jusqu'à 3 SMIC, au-delà des 2 SMIC
+où C2 s'éteint ; à θ = 1, les deux rendent les 60 % du Trésor-Éco, et la page dit que
+cette lecture, faite sur des allègements de bas salaires, est plus généreuse encore pour
+le plancher. Ce qui pourrait retourner la réponse manque toujours : la boucle de la
+variante ciblée de Mésange, et l'impôt sur le revenu des emplois créés. L'étude ne
+recommande rien.
+
+**Les tests.** `scripts/write_predictif_etude.py` lit chaque rejeu sous son répertoire,
+dans l'ordre de leur préenregistrement : `etude/courbe_autofinancement/` pour le
+`t_delta`, `etude/courbe_autofinancement_plancher/` pour le plancher. Chacun a sa section,
+son commit, son entrée et ce qu'il laisse en plus ; leur contrôle est le même. Les parties
+d'avant sont inchangées, à l'octet, la section du `t_delta` comprise : rendue avec et sans
+le plancher, elle est la même. Les refus de D-260 valent pour chaque rejeu, nommé dans le
+message.
+
+Dans `tests/test_predictif_etude.py`, quinze cas nouveaux : les quatorze refus, rejoués
+pour le plancher, et la section du plancher, après celle du `t_delta`, avec son commit,
+son entrée, son répertoire et ce qu'il laisse en plus, la section du `t_delta` inchangée.
+Les quinze ont échoué sur le script de D-261. Le test de l'étude commitée tient les deux
+rejeux, qui redonnent la courbe.
+
+Trente-trois mutations écrites à la main du script ont toutes été tuées. Vingt-trois
+sont celles de D-260 sur le chargement, le contrôle et la lecture, reprises sur le code
+devenu commun. Dix portent sur ce qui distingue les rejeux :
+- le plancher hors du menu, et les sections dans l'ordre de la courbe ;
+- le rejeu rattaché au seul `t_delta`, et la section d'un seul rejeu ;
+- ce que le plancher laisse en plus ;
+- l'entrée, le titre et le répertoire écrits pour le `t_delta` ;
+- la clé du contrôle, et le rapport nommé d'après le répertoire.
+Elles remplacent les deux de D-260 qui retiraient la section et son rattachement.
+
+Les tests de l'étude : 100 réussis. Avec ceux des explorations et de leur API, de la
+recherche et de ses indices, du comportement, de θ, de la chaîne, de la charte et des
+dépendances : 349 réussis et 2 sautés. `ui/check.mjs` passe ses 59 contrôles, et `ruff`
+passe sur `scripts` et `tests`. La page gagne 32 lignes et n'en change aucune. La passe a
+tourné depuis une copie de travail figée sur `2002304`, les données liées fichier par
+fichier.
+
+**Ce qui reste.**
+- La boucle de la variante ciblée de Mésange, et l'impôt sur le revenu des emplois créés :
+  ce qui pourrait encore retourner la réponse de la courbe.
+- La CVAE, sur le chemin annuel, avec un bouton du barème entier.
+- Les deux libellés de D-251.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- Le `make full` du propriétaire.

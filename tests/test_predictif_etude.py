@@ -111,10 +111,11 @@ def test_the_committed_study_is_preregistered(script) -> None:
     salaires = script.load_salaires(phase11)
     assert salaires["control"]["given_back"]
     assert salaires["report"]["commit"] in script.OUT.read_text(encoding="utf-8")
-    # D-260: the curve's t_delta replayed with C11, giving the curve back at full weight.
-    auto = script.load_autofinancement(courbe)
-    assert auto["control"]["given_back"]
-    assert auto["report"]["commit"] in script.OUT.read_text(encoding="utf-8")
+    # D-260, D-262: the curve's knobs replayed with C11, giving it back at full weight.
+    for replay in script.AUTOFINANCEMENT_MENU:
+        auto = script.load_autofinancement(courbe, replay)
+        assert auto["control"]["given_back"]
+        assert auto["report"]["commit"] in script.OUT.read_text(encoding="utf-8")
 
 
 # --------------------------------------------------------------------------- #
@@ -967,31 +968,43 @@ def test_a_replay_that_is_not_the_menu_s_pfu_with_the_shift_is_refused(script, t
 
 
 # --------------------------------------------------------------------------- #
-# the curve's t_delta, replayed with its self-financing (D-259)
+# the curve's knobs, replayed with their self-financing (D-259, D-261)
 # --------------------------------------------------------------------------- #
 AUTO_COMMIT = "a" * 40
+#: Each replay its own commit, as each ran on its own preregistration's.
+AUTO_COMMITS = {"t_delta": AUTO_COMMIT, "t_min": "b" * 40}
+#: A one-bundle grid of each knob, other than the curve's.
+OTHER_GRIDS = {"t_delta": {"knob": "allegement_general_t_delta_moins_de_50",
+                           "low": 0.3931, "high": 0.3931, "step": 0.01},
+               "t_min": {"knob": "allegement_general_t_min", "low": 0.024,
+                         "high": 0.024, "step": 0.003}}
 #: C11's share at θ = ½ in the replay built here: what comes back of the cut.
 AUTO_HALF = 0.38
 #: C11's share at θ = 0, where the weight is 0 and C2 reads its weakest elasticity.
 AUTO_LOW = 0.12
 
 
-def _autofinancement(requests: Path, reports: Path, script, **request_overrides) -> None:
-    """The curve's `t_delta` replayed: its request with name, title and question changed,
+def _replay(script, key: str):
+    return next(r for r in script.AUTOFINANCEMENT_MENU if r.key == key)
+
+
+def _autofinancement(requests: Path, reports: Path, script, key: str = "t_delta",
+                     **request_overrides) -> None:
+    """One knob of the curve replayed: its request with name, title and question changed,
     and a report whose corners vary C11's weight — at 1 what the Trésor-Éco's share leaves
     of the curve's Δb, at 0 what C2's reading leaves."""
-    payload = json.loads((requests / "courbe" / "t_delta.json").read_text(encoding="utf-8"))
-    payload.update(name="courbe_autofinancement_t_delta",
-                   titre="Le t_delta, avec son autofinancement",
-                   question="Avec son autofinancement, le t_delta fait-il baisser la dette ?")
+    payload = json.loads((requests / "courbe" / f"{key}.json").read_text(encoding="utf-8"))
+    payload.update(name=f"courbe_autofinancement_{key}",
+                   titre=f"Le {key}, avec son autofinancement",
+                   question=f"Avec son autofinancement, le {key} fait-il baisser la dette ?")
     payload.update(request_overrides)
-    (requests / script.AUTOFINANCEMENT).mkdir()
-    (requests / script.AUTOFINANCEMENT / "t_delta.json").write_text(json.dumps(payload),
-                                                                    encoding="utf-8")
-    report = json.loads((reports / "exploration_courbe_t_delta.json").read_text(
+    directory = requests / _replay(script, key).directory
+    directory.mkdir()
+    (directory / f"{key}.json").write_text(json.dumps(payload), encoding="utf-8")
+    report = json.loads((reports / f"exploration_courbe_{key}.json").read_text(
         encoding="utf-8"))
     report.update(name=payload["name"], titre=payload["titre"],
-                  question=payload["question"], commit=AUTO_COMMIT,
+                  question=payload["question"], commit=AUTO_COMMITS[key],
                   computed="2026-10-26",
                   request=ExplorationRequest.model_validate(payload).model_dump(
                       mode="json", exclude_none=True))
@@ -1000,23 +1013,23 @@ def _autofinancement(requests: Path, reports: Path, script, **request_overrides)
         # C11 lowers Δb at θ = ½ too, wherever the report carries it.
         for e in (*search["evaluations"], *search["candidates"], search["indices"],
                   search["closest"] or {}):
-            for key in ("delta_aged", "delta_frozen"):
-                if key in e:
-                    e[key] *= 1 - AUTO_HALF
+            for delta in ("delta_aged", "delta_frozen"):
+                if delta in e:
+                    e[delta] *= 1 - AUTO_HALF
         for e in search["evaluations"]:
             e["corners"] = [pair for label, value in e["corners"] for pair in (
                 [f"{label}, {script.SELF_FINANCING_WEIGHT} = 0", value * (1 - AUTO_LOW)],
                 [f"{label}, {script.SELF_FINANCING_WEIGHT} = 1", value * (1 - share)])]
             e["corner_low"] = min(value for _, value in e["corners"])
             e["corner_high"] = max(value for _, value in e["corners"])
-    (reports / f"exploration_{script.AUTOFINANCEMENT}_t_delta.json").write_text(
+    (reports / f"exploration_{script.AUTOFINANCEMENT}_{key}.json").write_text(
         json.dumps(report, ensure_ascii=False), encoding="utf-8")
 
 
-def _courbe_jobs(reports: Path) -> None:
-    """The curve's `t_delta` with C2's jobs among its indices, as the passes carry them: the
+def _courbe_jobs(reports: Path, key: str = "t_delta") -> None:
+    """One knob of the curve with C2's jobs among its indices, as the passes carry them: the
     stubbed pass reads no behaviour, and a control on the indices needs one."""
-    path = reports / "exploration_courbe_t_delta.json"
+    path = reports / f"exploration_courbe_{key}.json"
     report = json.loads(path.read_text(encoding="utf-8"))
     for search in report["searches"]:
         row = next(r for r in search["indices"]["rows"] if r["key"] == "emploi_smic")
@@ -1025,12 +1038,15 @@ def _courbe_jobs(reports: Path) -> None:
     path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
 
 
-def _with_autofinancement(tmp_path: Path, script,
+def _with_autofinancement(tmp_path: Path, script, *keys: str,
                           **request_overrides) -> tuple[Path, Path]:
+    """The study and its curve, with each of `keys` replayed (the `t_delta` alone by
+    default); `request_overrides` go to every replay's request."""
     requests, reports = _study(tmp_path, script)
     _courbe(requests, reports, script)
-    _courbe_jobs(reports)
-    _autofinancement(requests, reports, script, **request_overrides)
+    for key in keys or ("t_delta",):
+        _courbe_jobs(reports, key)
+        _autofinancement(requests, reports, script, key, **request_overrides)
     return requests, reports
 
 
@@ -1103,43 +1119,45 @@ def test_a_replay_that_does_not_give_the_curve_back_at_full_weight_is_said_so(
     assert "Il ne les redonne pas." in script.render(etudes, complements, courbe, phase11)
 
 
-#: Each way a replay could read as the curve's t_delta played with C11 without being so.
+#: Each way a replay could read as a knob of the curve played with C11 without being so;
+#: `{key}` and `{directory}` are the replay's.
 AUTOFINANCEMENT_REFUSALS = [
-    ("cadre", "ne rejoue pas la requête du t_delta"),
-    ("grille", "ne rejoue pas la requête du t_delta"),
-    ("sans_rapport", "le rejeu du t_delta sans rapport"),
-    ("sans_requete", "sans la requête du t_delta"),
-    ("retouchee", "n'a pas joué sa requête, etude/courbe_autofinancement"),
+    ("cadre", "ne rejoue pas la requête du {key}"),
+    ("grille", "ne rejoue pas la requête du {key}"),
+    ("sans_rapport", "le rejeu du {key} sans rapport"),
+    ("sans_requete", "sans la requête du {key}"),
+    ("retouchee", "n'a pas joué sa requête, etude/{directory}/"),
     ("ou", "ne dit pas où"),
-    ("hors_menu", "seul le t_delta s'y rejoue"),
+    ("hors_menu", "seul le {key} s'y rejoue"),
     ("sans_poids", "ne fait pas varier"),
-    ("sans_courbe", "que le dépôt n'a pas"),
+    ("sans_courbe", "rejoue le {key} d'une courbe que le dépôt n'a pas"),
     ("pendant", "n'a pas son pendant"),
-    ("persistances", "pas les mêmes persistances"),
-    ("indices", "pas les mêmes indices"),
+    ("persistances", "le rejeu du {key} et la courbe n'ont pas les mêmes persistances"),
+    ("indices", "le rejeu du {key} et la courbe n'ont pas les mêmes indices"),
     ("annees", "n'a pas les années"),
     ("boite", "a une boîte que la courbe n'a pas"),
 ]
 
 
+@pytest.mark.parametrize("key", ["t_delta", "t_min"])
 @pytest.mark.parametrize("how, needle", AUTOFINANCEMENT_REFUSALS,
                          ids=[how for how, _ in AUTOFINANCEMENT_REFUSALS])
-def test_a_replay_that_is_not_the_curve_s_t_delta_with_c11_is_refused(script, tmp_path,
-                                                                      how: str,
-                                                                      needle: str) -> None:
-    """Another frame or grid than the curve's `t_delta`, a replay without its report or
-    its request, a request touched after its passes, a report silent on where it ran, a
+def test_a_replay_that_is_not_the_curve_s_knob_with_c11_is_refused(script, tmp_path,
+                                                                   how: str, needle: str,
+                                                                   key: str) -> None:
+    """Another frame or grid than the curve's knob, a replay without its report or its
+    request, a request touched after its passes, a report silent on where it ran, a
     request the page would not render, corners that do not vary C11's weight, a replay of
     a curve the repository does not have, a corner the curve has no counterpart for,
     persistences out of order, or indices that are not the curve's to compare: each would
-    read as the `t_delta` replayed with its self-financing, and is refused."""
+    read as the knob replayed with its self-financing, and is refused — for the `t_delta`
+    and for the floor alike."""
     overrides = {"cadre": {"horizon": 9},
-                 "grille": {"bounds": [{"knob": "allegement_general_t_delta_moins_de_50",
-                                        "low": 0.3931, "high": 0.3931,
-                                        "step": 0.01}]}}.get(how, {})
-    requests, reports = _with_autofinancement(tmp_path, script, **overrides)
-    path = reports / f"exploration_{script.AUTOFINANCEMENT}_t_delta.json"
-    request_path = requests / script.AUTOFINANCEMENT / "t_delta.json"
+                 "grille": {"bounds": [OTHER_GRIDS[key]]}}.get(how, {})
+    requests, reports = _with_autofinancement(tmp_path, script, key, **overrides)
+    directory = _replay(script, key).directory
+    path = reports / f"exploration_{script.AUTOFINANCEMENT}_{key}.json"
+    request_path = requests / directory / f"{key}.json"
     report = json.loads(path.read_text(encoding="utf-8"))
     if how == "sans_rapport":
         path.unlink()
@@ -1150,7 +1168,8 @@ def test_a_replay_that_is_not_the_curve_s_t_delta_with_c11_is_refused(script, tm
         payload["titre"] = "retouchée"
         request_path.write_text(json.dumps(payload), encoding="utf-8")
     elif how == "hors_menu":
-        (requests / script.AUTOFINANCEMENT / "t_min.json").write_text(
+        other = "t_min" if key == "t_delta" else "t_delta"
+        (requests / directory / f"{other}.json").write_text(
             request_path.read_text(encoding="utf-8"), encoding="utf-8")
     elif how == "sans_courbe":
         import shutil
@@ -1182,5 +1201,33 @@ def test_a_replay_that_is_not_the_curve_s_t_delta_with_c11_is_refused(script, tm
     if how in ("ou", "sans_poids", "pendant", "persistances", "indices", "annees",
                "boite"):
         path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
-    with pytest.raises(script.EtudeError, match=needle):
+    with pytest.raises(script.EtudeError, match=needle.format(key=key, directory=directory)):
         script.study(requests, reports)
+
+
+def test_the_floor_replayed_with_its_self_financing_has_its_own_section(script,
+                                                                        tmp_path) -> None:
+    """D-261: the floor's replay, under its own directory, has its own section after the
+    `t_delta`'s, with its own commit and entry, and what it leaves out beyond what both
+    do; the `t_delta`'s section does not change for it."""
+    requests, reports = _with_autofinancement(tmp_path, script, "t_delta", "t_min")
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    replays = {e["instrument"].key: e["autofinancement"] for e in courbe}
+    assert all(a["control"]["given_back"] for a in replays.values())
+    page = script.render(etudes, complements, courbe, phase11)
+    t_delta_title = "## Le `t_delta` de la courbe rejoué avec son autofinancement"
+    floor_title = "## Le plancher `t_min` de la courbe rejoué avec son autofinancement"
+    assert page.index(t_delta_title) < page.index(floor_title)
+    t_delta, _, floor = page.partition(floor_title)
+    t_delta = t_delta.partition(t_delta_title)[2]
+    assert AUTO_COMMITS["t_min"] in floor and AUTO_COMMITS["t_min"] not in t_delta
+    assert AUTO_COMMITS["t_delta"] in t_delta and AUTO_COMMITS["t_delta"] not in floor
+    assert "D-261" in floor and "`etude/courbe_autofinancement_plancher/`" in floor
+    assert "dès 2 SMIC" in floor and "dès 2 SMIC" not in t_delta
+    for search in replays["t_min"]["report"]["searches"]:
+        assert script.verdict(search, replays["t_min"]["instrument"], 0.0) in floor
+    # The t_delta's section is what it was without the floor's replay.
+    (tmp_path / "seul").mkdir()
+    alone = _with_autofinancement(tmp_path / "seul", script)
+    before = script.render(*script.study(*alone))
+    assert t_delta_title + t_delta in before

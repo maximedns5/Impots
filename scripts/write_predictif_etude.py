@@ -22,11 +22,13 @@ contrôle, en `reports/etude_phase11/controles/`. Un contrôle qui ne rejoue pas
 de l'étude est refusé ; un contrôle qui ne redonne pas sa référence ne l'est pas : la page
 le dit, avec son écart, parce que c'est un résultat.
 
-LE `t_delta` DE LA COURBE est rejoué avec son autofinancement, C11 (D-258), préenregistré à
-part (D-259, D-260) : la requête de la courbe sous `etude/courbe_autofinancement/`, nom,
-titre et question exceptés. Son contrôle est dans le rejeu : aux coins où le poids de C11
-vaut 1, C11 rend la part du Trésor-Éco quelle que soit l'élasticité de C2, et le rejeu doit
-y redonner ce qui reste de l'écart de la courbe ; ses coûts doivent être les siens.
+LE `t_delta` ET LE PLANCHER DE LA COURBE sont rejoués avec leur autofinancement, C11
+(D-258), chacun préenregistré à part (D-259 à D-262) : la requête de la courbe sous son
+propre répertoire, `etude/courbe_autofinancement/` puis
+`etude/courbe_autofinancement_plancher/`, nom, titre et question exceptés. Le contrôle est
+dans le rejeu : aux coins où le poids de C11 vaut 1, C11 rend la part du Trésor-Éco quelle
+que soit l'élasticité de C2, et le rejeu doit y redonner ce qui reste de l'écart de la
+courbe ; ses coûts doivent être les siens.
 
 AUCUN CHIFFRE N'EST SAISI DANS LA PAGE : tout vient des rapports. `render(études)` est ce
 que rejoue `tests/test_predictif_etude.py`, sans `data/` : la page commitée est le rendu
@@ -86,9 +88,11 @@ CONTROLS = Path("etude_phase11") / "controles"
 SALAIRES = "phase11_salaires"
 SALAIRES_FREE = ("name", "titre", "question")
 WAGE_SHIFT = "dividend_wage_shift_firm_owners"
-#: The curve's `t_delta` replayed with its self-financing, C11 (D-259): the request holds
-#: the curve's own, only these fields changed; C11's weight is varied at its corners, and
-#: where it is 1, C11 brings back the Trésor-Éco's share of the cut whatever C2 reads.
+#: The curve's knobs replayed with their self-financing, C11 (D-259, D-261): each request
+#: holds the curve's own, only these fields changed; C11's weight is varied at its corners,
+#: and where it is 1, C11 brings back the Trésor-Éco's share of the cut whatever C2 reads.
+#: The `t_delta`'s request is under this directory, and every replay's report is named
+#: after it.
 AUTOFINANCEMENT = "courbe_autofinancement"
 AUTOFINANCEMENT_FREE = ("name", "titre", "question")
 SELF_FINANCING_WEIGHT = "autofinancement_poids_tresor_eco"
@@ -143,6 +147,33 @@ COURBE_MENU: tuple[Instrument, ...] = (
                "allegement_general_t_min", _pct),
     Instrument("t_delta", "Le t_delta de la réduction générale de 2026",
                "allegement_general_t_delta_moins_de_50", _pct),
+)
+
+
+@dataclass(frozen=True)
+class Replay:
+    key: str
+    """The curve's knob replayed, as `COURBE_MENU` keys it."""
+    directory: str
+    """Its request's directory under `etude/`."""
+    name: str
+    """How the page names the knob, without its article."""
+    entry: str
+    """The entry that wrote its prognosis before its passes."""
+    leaves_out: str = ""
+    """What this replay leaves out beyond what every replay does."""
+
+
+#: The curve's knobs replayed with their self-financing, in the order preregistered. Each
+#: has its own directory: one replay's request beside another's, before its report, would
+#: be refused, and the committed page could not be rendered until its passes (D-261).
+AUTOFINANCEMENT_MENU: tuple[Replay, ...] = (
+    Replay("t_delta", AUTOFINANCEMENT, "`t_delta`", "D-259"),
+    Replay("t_min", "courbe_autofinancement_plancher", "plancher `t_min`", "D-261",
+           " Le Trésor-Éco n° 97 lit des allègements sur les bas salaires, quand le "
+           "plancher porte la baisse jusqu'à 3 SMIC, où C2 ne répond plus dès 2 SMIC : ses "
+           "60 % y sont sans doute plus loin encore de ce que la baisse rend, vers une "
+           "dette plus basse."),
 )
 
 #: The two instruments Phase 11 adds to the menu (D-250). The CVAE is not one: the law
@@ -594,7 +625,7 @@ def _non_chain(search: dict[str, Any]) -> dict[str, Any]:
 
 
 def self_financing_control(report: dict[str, Any], courbe: dict[str, Any],
-                           share: float) -> dict[str, Any]:
+                           share: float, key: str) -> dict[str, Any]:
     """The replay where C11's weight is 1, against the curve: each such corner must be the
     curve's corner with the other rows set alike, times what C11 leaves of the cut; each
     cost the curve's; and the nearest bundle's indices outside the chain the curve's. The
@@ -603,8 +634,8 @@ def self_financing_control(report: dict[str, Any], courbe: dict[str, Any],
     full = (SELF_FINANCING_WEIGHT, "1")
     for search, before in zip(report["searches"], courbe["searches"], strict=True):
         if search["persistence"] != before["persistence"]:
-            raise EtudeError("le rejeu du t_delta et la courbe n'ont pas les mêmes "
-                             "persistances")
+            raise EtudeError(f"le rejeu du {key} et la courbe n'ont pas les mêmes "
+                             f"persistances")
         # One request, so one grid, every bundle of which a report carries.
         was = {json.dumps(e["knobs"], sort_keys=True): e for e in before["evaluations"]}
         for e in search["evaluations"]:
@@ -623,18 +654,18 @@ def self_financing_control(report: dict[str, Any], courbe: dict[str, Any],
                       abs(e["cost_frozen_eur"] - b["cost_frozen_eur"]))
         now, then = _non_chain(search), _non_chain(before)
         if now.keys() != then.keys():
-            raise EtudeError(f"le rejeu du t_delta et la courbe n'ont pas les mêmes indices "
+            raise EtudeError(f"le rejeu du {key} et la courbe n'ont pas les mêmes indices "
                              f"hors de la chaîne : {sorted(now.keys() ^ then.keys())}.")
-        for key, (values, box) in now.items():
-            values_then, box_then = then[key]
+        for row, (values, box) in now.items():
+            values_then, box_then = then[row]
             if values.keys() != values_then.keys():
-                raise EtudeError(f"l'indice « {key} » du rejeu n'a pas les années de la "
+                raise EtudeError(f"l'indice « {row} » du rejeu n'a pas les années de la "
                                  f"courbe.")
             spans = [(values[k], values_then[k]) for k in values]
             spans += [(v, w) for k in (box or {}) for v, w in
                       zip(box[k], (box_then or {}).get(k, (None, None)), strict=True)]
             if any(w is None for _, w in spans):
-                raise EtudeError(f"l'indice « {key} » du rejeu a une boîte que la courbe "
+                raise EtudeError(f"l'indice « {row} » du rejeu a une boîte que la courbe "
                                  f"n'a pas.")
             indices = max(indices, *(abs(v - w) for v, w in spans))
     return {"share": gap, "eur": eur, "indices": indices,
@@ -642,47 +673,46 @@ def self_financing_control(report: dict[str, Any], courbe: dict[str, Any],
             and indices <= CONTROL_INDEX}
 
 
-def load_autofinancement(courbe: list[dict[str, Any]], requests: Path = REQUESTS,
+def load_autofinancement(courbe: list[dict[str, Any]], replay: Replay,
+                         requests: Path = REQUESTS,
                          reports: Path = REPORTS) -> dict[str, Any] | None:
-    """The curve's `t_delta` replayed with its self-financing under
-    `etude/courbe_autofinancement/`, and the report that played it, checked like the
-    curve; with its control, the corners where C11's weight is 1 against the curve's
-    (D-259)."""
+    """One knob of the curve replayed with its self-financing under its directory, and the
+    report that played it, checked like the curve; with its control, the corners where
+    C11's weight is 1 against the curve's (D-259, D-261)."""
     from impots.api.schemas import ExplorationReport, ExplorationRequest
 
-    directory = requests / AUTOFINANCEMENT
+    key, where = replay.key, replay.directory
+    directory = requests / where
     if not directory.exists():
         return None
-    t_delta = next((e for e in courbe if e["instrument"].key == "t_delta"), None)
-    if t_delta is None:
-        raise EtudeError(f"etude/{AUTOFINANCEMENT}/ rejoue le t_delta d'une courbe que le "
-                         f"dépôt n'a pas.")
-    strays = sorted(p.name for p in directory.glob("*.json") if p.name != "t_delta.json")
+    knob = next((e for e in courbe if e["instrument"].key == key), None)
+    if knob is None:
+        raise EtudeError(f"etude/{where}/ rejoue le {key} d'une courbe que le dépôt n'a "
+                         f"pas.")
+    strays = sorted(p.name for p in directory.glob("*.json") if p.name != f"{key}.json")
     if strays:
-        raise EtudeError(f"etude/{AUTOFINANCEMENT}/ porte {strays} : seul le t_delta s'y "
-                         f"rejoue, et une requête que la page ne rendrait pas se lirait "
-                         f"comme non jouée.")
-    request_path = directory / "t_delta.json"
-    report_path = reports / f"exploration_{AUTOFINANCEMENT}_t_delta.json"
+        raise EtudeError(f"etude/{where}/ porte {strays} : seul le {key} s'y rejoue, et une "
+                         f"requête que la page ne rendrait pas se lirait comme non jouée.")
+    request_path = directory / f"{key}.json"
+    report_path = reports / f"exploration_{AUTOFINANCEMENT}_{key}.json"
     if not request_path.exists():
-        raise EtudeError(f"etude/{AUTOFINANCEMENT}/ sans la requête du t_delta.")
+        raise EtudeError(f"etude/{where}/ sans la requête du {key}.")
     if not report_path.exists():
-        raise EtudeError(f"le rejeu du t_delta sans rapport : {report_path.name}.")
+        raise EtudeError(f"le rejeu du {key} sans rapport : {report_path.name}.")
     request = ExplorationRequest.model_validate_json(request_path.read_text(encoding="utf-8"))
     dump = request.model_dump(mode="json", exclude_none=True)
 
     def held(payload: dict[str, Any]) -> dict[str, Any]:
         return {k: v for k, v in payload.items() if k not in AUTOFINANCEMENT_FREE}
 
-    if held(dump) != held(t_delta["report"]["request"]):
-        raise EtudeError(f"etude/{AUTOFINANCEMENT}/t_delta.json ne rejoue pas la requête du "
-                         f"t_delta de la courbe : seuls {list(AUTOFINANCEMENT_FREE)} peuvent "
-                         f"différer.")
+    if held(dump) != held(knob["report"]["request"]):
+        raise EtudeError(f"etude/{where}/{key}.json ne rejoue pas la requête du {key} de la "
+                         f"courbe : seuls {list(AUTOFINANCEMENT_FREE)} peuvent différer.")
     report = json.loads(report_path.read_text(encoding="utf-8"))
     ExplorationReport.model_validate(report)
     if report["request"] != dump:
         raise EtudeError(f"{report_path.name} n'a pas joué sa requête, "
-                         f"etude/{AUTOFINANCEMENT}/t_delta.json.")
+                         f"etude/{where}/{key}.json.")
     if not (report.get("where") or "").strip():
         raise EtudeError(f"{report_path.name} ne dit pas où ses passes ont tourné.")
     unweighted = [label for s in report["searches"] for e in s["evaluations"]
@@ -692,15 +722,16 @@ def load_autofinancement(courbe: list[dict[str, Any]], requests: Path = REQUESTS
         raise EtudeError(f"{report_path.name} ne fait pas varier {SELF_FINANCING_WEIGHT} à "
                          f"ses coins (« {unweighted[0]} ») : il n'a pas tourné avec C11.")
     share = tresor_eco_share()
-    return {"instrument": t_delta["instrument"], "report": report,
-            "courbe": t_delta["report"], "share": share,
-            "control": self_financing_control(report, t_delta["report"], share)}
+    return {"instrument": knob["instrument"], "replay": replay, "report": report,
+            "courbe": knob["report"], "share": share,
+            "control": self_financing_control(report, knob["report"], share, key)}
 
 
 def study(requests: Path = REQUESTS,
           reports: Path = REPORTS) -> tuple[list, list, list, dict[str, Any] | None]:
-    """The study, its complements, the curve with its `t_delta` replayed, and the wider
-    menu of Phase 11 with its PFU replayed, all checked: what the page renders."""
+    """The study, its complements, the curve with its knobs replayed with their
+    self-financing, and the wider menu of Phase 11 with its PFU replayed, all checked:
+    what the page renders."""
     etudes = load(requests, reports)
     complements = load_complements(etudes, requests, reports)
     phase11 = load_phase11(etudes, complements, requests, reports)
@@ -708,10 +739,11 @@ def study(requests: Path = REQUESTS,
     if salaires is not None:
         phase11["salaires"] = salaires
     courbe = load_courbe(etudes, requests, reports)
-    autofinancement = load_autofinancement(courbe, requests, reports)
-    if autofinancement is not None:
-        next(e for e in courbe
-             if e["instrument"].key == "t_delta")["autofinancement"] = autofinancement
+    for replay in AUTOFINANCEMENT_MENU:
+        autofinancement = load_autofinancement(courbe, replay, requests, reports)
+        if autofinancement is not None:
+            next(e for e in courbe
+                 if e["instrument"].key == replay.key)["autofinancement"] = autofinancement
     return etudes, complements, courbe, phase11
 
 
@@ -1087,7 +1119,7 @@ def _salaires_section(salaires: dict[str, Any], target: float, first_year: int,
     return out
 
 
-#: What the `t_delta` replayed with its self-financing leaves out, and which way (D-259).
+#: What every knob replayed with its self-financing leaves out, and which way (D-259).
 AUTOFINANCEMENT_LEAVES_OUT = (
     "C2 compte des personnes, au coût annuel de leur propre travail, quand les 12 000 € du "
     "Trésor-Éco n° 97 sont le retour d'un emploi à temps plein : à θ = 0, la part est sans "
@@ -1105,17 +1137,17 @@ AUTOFINANCEMENT_LEAVES_OUT = (
 def _autofinancement_section(auto: dict[str, Any], target: float, first_year: int,
                              target_year: int, theta: str) -> list[str]:
     instrument, r, courbe = auto["instrument"], auto["report"], auto["courbe"]
-    control, share = auto["control"], auto["share"]
-    out = ["", "## Le `t_delta` de la courbe rejoué avec son autofinancement", "",
-           "La courbe rejouée plus haut chiffrait le `t_delta` sans rien de ce qu'une baisse "
-           "ciblée rend : Mésange n'a pas de ligne de solde pour sa variante ciblée, et les "
-           "emplois de C2 n'entraient pas dans les recettes. D-258 y fait entrer C11 : une "
-           "part de la baisse revient, de la lecture de C2, ses emplois valorisés à "
+    control, share, replay = auto["control"], auto["share"], auto["replay"]
+    out = ["", f"## Le {replay.name} de la courbe rejoué avec son autofinancement", "",
+           f"La courbe rejouée plus haut chiffrait le {replay.name} sans rien de ce qu'une "
+           "baisse ciblée rend : Mésange n'a pas de ligne de solde pour sa variante ciblée, et "
+           "les emplois de C2 n'entraient pas dans les recettes. D-258 y fait entrer C11 : "
+           "une part de la baisse revient, de la lecture de C2, ses emplois valorisés à "
            f"12 000 € l'un, à θ = 0, à {_pct(share)} à θ = 1, celle du Trésor-Éco n° 97. "
-           f"La requête sous `etude/{AUTOFINANCEMENT}/` rejoue celle du `t_delta` de la "
+           f"La requête sous `etude/{replay.directory}/` rejoue celle du {replay.name} de la "
            "courbe champ pour champ ; seuls son nom, son titre et sa question diffèrent. Elle "
-           "a été commitée avant ses passes, avec le pronostic écrit dans D-259. Le rapport "
-           f"a joué sa requête, à l'identique, sur le commit `{r['commit']}`, le "
+           f"a été commitée avant ses passes, avec le pronostic écrit dans {replay.entry}. Le "
+           f"rapport a joué sa requête, à l'identique, sur le commit `{r['commit']}`, le "
            f"{r['computed']}. Les passes ont tourné ici : {r['where']}.",
            "", r["question"]]
     for search, before in zip(r["searches"], courbe["searches"], strict=True):
@@ -1144,7 +1176,8 @@ def _autofinancement_section(auto: dict[str, Any], target: float, first_year: in
                 f"grand vaut {_fr(control['share'] * 100, 6, sign=False)} pt sur les coins, "
                 f"{_fr(control['eur'], 0, sign=False)} € sur les coûts et "
                 f"{_fr(control['indices'], 6, sign=False)} sur les indices, dans leur unité.",
-            "", f"**Ce que ce chiffre ne compte pas.** {AUTOFINANCEMENT_LEAVES_OUT}"]
+            "", f"**Ce que ce chiffre ne compte pas.** {AUTOFINANCEMENT_LEAVES_OUT}"
+                f"{replay.leaves_out}"]
     return out
 
 
@@ -1299,9 +1332,12 @@ def render(etudes: list[dict[str, Any]],
     if phase11 and phase11.get("salaires"):
         out += _salaires_section(phase11["salaires"], target, first_year, target_year,
                                  theta)
-    auto = next((e["autofinancement"] for e in courbe if e.get("autofinancement")), None)
-    if auto is not None:
-        out += _autofinancement_section(auto, target, first_year, target_year, theta)
+    replayed = {e["instrument"].key: e["autofinancement"] for e in courbe
+                if e.get("autofinancement")}
+    for replay in AUTOFINANCEMENT_MENU:
+        if replay.key in replayed:
+            out += _autofinancement_section(replayed[replay.key], target, first_year,
+                                            target_year, theta)
     out += ["", "## Ce que l'étude ne dit pas", "",
             "- Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de "
             "θ ; un autre scénario donne une autre réponse.",

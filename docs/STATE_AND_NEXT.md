@@ -1,6 +1,14 @@
 # State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M6)
 
-The sixth 2026-10-26 update adds D-261: the curve's floor `t_min` replayed with C11,
+The seventh 2026-10-26 update adds D-262: the floor replayed with C11 has run on its
+preregistration commit, `2002304`, and the page renders it in its own section after the
+`t_delta`'s, which is unchanged to the byte. Self-financing shrinks the curve's answer for
+the floor too without turning it: Δb is 0.6679 times the curve's, +0.157 to +1.573 point
+at θ = ½, and no corner falls below zero, the lowest +0.094 to +0.942. Per billion at
+θ = ½, the floor leaves 0.206 point of debt in 2035 and the `t_delta` 0.191. The control
+gives the curve back (largest gap 8.9e-17). Every point of D-261's prognosis held, to the
+thousandth. Thirty-three hand mutants of the page script killed.
+The sixth 2026-10-26 update added D-261: the curve's floor `t_min` replayed with C11,
 preregistered before its passes, under its own directory,
 `etude/courbe_autofinancement_plancher/`. The prognosis: C11 brings back 33.2 % of each
 bundle at θ = ½, so Δb is 0.668 times the curve's, +0.157 to +1.573 point, and no corner
@@ -869,9 +877,9 @@ download list.
    does under « tenu » at θ = ½, by a few hundredths of a point, on a sign the wage shift
    could turn. Its gate is the owner's `make full`. The wage shift is in C10 (D-252), and
    the PFU replayed with it turns that sign (D-253): no cut on the menu lowers the debt at
-   θ = ½. The `t_delta` replayed with its self-financing (D-259, D-260) does not lower
-   it either: C11 brings back 38 % at θ = ½, 60 % at most. Next: the CVAE on the annual
-   path. The page's predictive panel does not send a firm
+   θ = ½. The curve replayed with its self-financing does not lower it either: C11
+   brings back 38 % of a `t_delta` cut at θ = ½ (D-259, D-260) and 33 % of a floor cut
+   (D-261, D-262), 60 % at most. Next: the CVAE on the annual path. The page's predictive panel does not send a firm
    reform yet. Then Phase 12, the past, and
    Phase 13, the online product.
 5. **Otherwise, nothing new.** M2 is frozen, and the reviewer's verdicts on Phase 8
