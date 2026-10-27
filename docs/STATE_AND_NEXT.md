@@ -1,6 +1,15 @@
 # State of the project, and the directions open — 2026-10-27 (Phase 11, M0 to M6)
 
-The fifth 2026-10-27 update adds D-271: the curve's two buttons replayed with the
+The sixth 2026-10-27 update adds D-272: the curve replayed with the reconciled C11 has run
+on its preregistration commit, `fd83fce`, and `docs/PREDICTIF_ETUDE.md` renders it in its
+own section. No bundle lowers the 2035 debt, at θ = ½ or at any of its 32 corners: Δb is
++0.196 to +1.372 point for the `t_delta` and +0.159 to +1.585 for the floor, C11 bringing
+back 36.69 % and 32.68 % of the cut. Of D-271's seven points, three hold, three hold to the
+thousandth, and one misses: C2's jobs fall 0.30 % (13 368 against 13 408), measured as
+D-269's own weights, which D-269 had put at a few ten-thousandths. The committed curve and
+its first replays count C2 at the households' mean weights and are not replayed.
+Eighteen hand mutants of the page script killed, one after a test was added for it.
+The fifth 2026-10-27 update added D-271: the curve's two buttons replayed with the
 reconciled C11, preregistered before their passes under
 `etude/courbe_autofinancement_mesure/`. The prognosis, from the replays of D-265 and D-267
 and C2's reading scaled by 10 032 / 12 000: at θ = ½, C11 brings back 36.71 % of each
@@ -535,8 +544,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **272 decision
-entries**, D-000 to D-271, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **273 decision
+entries**, D-000 to D-272, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 

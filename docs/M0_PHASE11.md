@@ -469,7 +469,8 @@ celle du tableau.
 `main`, D-263 sur une branche. Le canal gardé est celui de D-263, à une différence
 près : les emplois de C2 y valent ce qu'un emploi au SMIC rapporte l'année de la
 réforme, mesuré sur le moteur comme dans D-256, 10 032 € en 2026, et non plus les
-12 000 € de 2009. Les parts ci-dessus sont comptées à 12 000 €.
+12 000 € de 2009. Les parts ci-dessus sont comptées à 12 000 €. Rejouée avec le C11
+réconcilié, la courbe rend 36,69 % du `t_delta` et 32,68 % du plancher à θ = ½ (D-272).
 
 ---
 

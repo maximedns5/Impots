@@ -30,6 +30,12 @@ dans le rejeu : aux coins où le poids de C11 vaut 1, C11 rend la part du Tréso
 que soit l'élasticité de C2, et le rejeu doit y redonner ce qui reste de l'écart de la
 courbe ; ses coûts doivent être les siens.
 
+LES DEUX BOUTONS SONT REJOUÉS UNE DERNIÈRE FOIS avec le C11 réconcilié (D-270), ses emplois
+valorisés à ce qu'un emploi au SMIC rapporte l'année de la réforme, mesuré sur le moteur :
+ensemble, sous `etude/courbe_autofinancement_mesure/`, préenregistrés avant leurs passes
+(D-271). Les refus et le contrôle des rejeux valent pour eux, et un refus de plus : des
+rapports de deux commits.
+
 AUCUN CHIFFRE N'EST SAISI DANS LA PAGE : tout vient des rapports. `render(études)` est ce
 que rejoue `tests/test_predictif_etude.py`, sans `data/` : la page commitée est le rendu
 des fichiers commités (la garde de D-228).
@@ -175,6 +181,8 @@ class Replay:
     """The entry that wrote its prognosis before its passes."""
     leaves_out: str = ""
     """What this replay leaves out beyond what every replay does."""
+    report: str = AUTOFINANCEMENT
+    """Its report's prefix: `reports/exploration_<report>_<key>.json`."""
 
 
 #: The curve's knobs replayed with their self-financing, in the order preregistered. Each
@@ -187,6 +195,15 @@ AUTOFINANCEMENT_MENU: tuple[Replay, ...] = (
            "plancher porte la baisse jusqu'à 3 SMIC, où C2 ne répond plus dès 2 SMIC : ses "
            "60 % y sont sans doute plus loin encore de ce que la baisse rend, vers une "
            "dette plus basse."),
+)
+
+#: The curve's two knobs replayed with the reconciled C11 (D-270), under one directory:
+#: preregistered together, before their passes (D-271).
+MESURE = "courbe_autofinancement_mesure"
+MESURE_MENU: tuple[Replay, ...] = (
+    Replay("t_delta", MESURE, "`t_delta`", "D-271", report=MESURE),
+    Replay("t_min", MESURE, "plancher `t_min`", "D-271", AUTOFINANCEMENT_MENU[1].leaves_out,
+           report=MESURE),
 )
 
 #: The two instruments Phase 11 adds to the menu (D-250). The CVAE is not one: the law
@@ -702,12 +719,16 @@ def load_autofinancement(courbe: list[dict[str, Any]], replay: Replay,
     if knob is None:
         raise EtudeError(f"etude/{where}/ rejoue le {key} d'une courbe que le dépôt n'a "
                          f"pas.")
-    strays = sorted(p.name for p in directory.glob("*.json") if p.name != f"{key}.json")
+    menu = sorted(r.key for r in (*AUTOFINANCEMENT_MENU, *MESURE_MENU) if r.directory == where)
+    strays = sorted(p.name for p in directory.glob("*.json")
+                    if p.name not in {f"{k}.json" for k in menu})
     if strays:
-        raise EtudeError(f"etude/{where}/ porte {strays} : seul le {key} s'y rejoue, et une "
-                         f"requête que la page ne rendrait pas se lirait comme non jouée.")
+        who = (f"seul le {key} s'y rejoue" if len(menu) == 1
+               else f"seuls {' et '.join(menu)} s'y rejouent")
+        raise EtudeError(f"etude/{where}/ porte {strays} : {who}, et une requête que la page "
+                         f"ne rendrait pas se lirait comme non jouée.")
     request_path = directory / f"{key}.json"
-    report_path = reports / f"exploration_{AUTOFINANCEMENT}_{key}.json"
+    report_path = reports / f"exploration_{replay.report}_{key}.json"
     if not request_path.exists():
         raise EtudeError(f"etude/{where}/ sans la requête du {key}.")
     if not report_path.exists():
@@ -757,6 +778,15 @@ def study(requests: Path = REQUESTS,
         if autofinancement is not None:
             next(e for e in courbe
                  if e["instrument"].key == replay.key)["autofinancement"] = autofinancement
+    mesure = [(replay, load_autofinancement(courbe, replay, requests, reports))
+              for replay in MESURE_MENU]
+    commits = {auto["report"]["commit"] for _, auto in mesure if auto is not None}
+    if len(commits) > 1:
+        raise EtudeError(f"les rejeux sous etude/{MESURE}/ ont tourné sur {sorted(commits)} : "
+                         f"préenregistrés ensemble, ils tournent sur un seul commit.")
+    for replay, auto in mesure:
+        if auto is not None:
+            next(e for e in courbe if e["instrument"].key == replay.key)["mesure"] = auto
     return etudes, complements, courbe, phase11
 
 
@@ -1196,6 +1226,142 @@ def _autofinancement_section(auto: dict[str, Any], target: float, first_year: in
     return out
 
 
+#: What the curve replayed with the reconciled C11 leaves out, and which way (D-271).
+MESURE_LEAVES_OUT = (
+    "C2 compte des personnes, au coût annuel de leur propre travail, chacune à la valeur "
+    "d'un emploi à temps plein au SMIC : à θ = 0, la part est sans doute trop haute. θ = 1 "
+    "lit le bas du coût brut par emploi des allègements de 1993 à 1997, 20 000 € sur 20 000 "
+    "à 40 000 €, et la note envisage elle-même un coût doublé pour la seconde vague. Les deux "
+    "vont vers une dette plus basse. La valeur d'un emploi est celle d'un célibataire sans "
+    "enfant ni loyer : C11 ne compte ni les prestations d'un autre ménage, ni l'allocation "
+    "chômage évitée au-delà du RSA, ni l'effet sur le PIB, que Mésange ne chiffre pas pour sa "
+    "variante ciblée, vers une dette plus haute. Un tour seulement : les recettes de C11 ne "
+    "relancent rien.")
+
+
+def tresor_eco_return() -> float:
+    """What the Trésor-Éco n° 97 says a job brings, read off the store (D-263)."""
+    from impots.behavioural import channels
+    from impots.behavioural.store import load as load_store
+
+    return load_store()[channels.C11_RETURN].central
+
+
+def returned_share(search: dict[str, Any], before: dict[str, Any]) -> float:
+    """What C11 brings back of the nearest bundle's cut at θ, in the aged view, read off
+    the two Δb: the chain is linear in the cost, so s = 1 − Δb / Δb of the curve (D-271)."""
+    return 1 - (search["evaluations"][0]["delta_aged"]
+                / before["evaluations"][0]["delta_aged"])
+
+
+#: C2's index, as the reports label it: what D-269's weights move (D-272).
+C2_INDEX_LABEL = "Emploi au voisinage du SMIC"
+
+
+def index_gaps(report: dict[str, Any], courbe: dict[str, Any]) -> list[tuple[str, str, float]]:
+    """The nearest bundle's indices outside the chain that are not the curve's: (label,
+    unit, largest gap over the searches, the values and the box), in the report's order.
+    `self_financing_control` has already refused rows, years or boxes the curve lacks."""
+    gaps: dict[str, tuple[str, str, float]] = {}
+    for search, before in zip(report["searches"], courbe["searches"], strict=True):
+        then = {row["key"]: row for row in before["indices"]["rows"]}
+        for row in search["indices"]["rows"]:
+            if not row["available"] or row["stage"] == "chaîne":
+                continue
+            was = then[row["key"]]
+            spans = [(row["values"][k], was["values"][k]) for k in row["values"]]
+            spans += [(v, w) for k in (row.get("box") or {})
+                      for v, w in zip(row["box"][k], was["box"][k], strict=True)]
+            gap = max((abs(v - w) for v, w in spans), default=0.0)
+            if gap > CONTROL_INDEX:
+                label, unit, before_gap = gaps.get(row["key"], (row["label"], row["unit"], 0.0))
+                gaps[row["key"]] = (label, unit, max(before_gap, gap))
+    return list(gaps.values())
+
+
+def _listed(instrument: Instrument, search: dict[str, Any], other: dict[str, Any]) -> str:
+    """Each bundle of `search`, with the Δb another search gave it, in the aged view."""
+    by = {json.dumps(e["knobs"], sort_keys=True): e for e in other["evaluations"]}
+    return " ; ".join(
+        f"{instrument.show(e['knobs'][instrument.knob])}, "
+        f"{_pt(by[json.dumps(e['knobs'], sort_keys=True)]['delta_aged'])}"
+        for e in search["evaluations"])
+
+
+def _mesure_section(entries: list[dict[str, Any]], target: float, first_year: int,
+                    target_year: int, theta: str) -> list[str]:
+    first = entries[0]["mesure"]
+    r, share, replay = first["report"], first["share"], first["replay"]
+    euros = f"{tresor_eco_return():,.0f} €".replace(",", " ")
+    earlier = any(e.get("autofinancement") for e in entries)
+    out = ["", "## La courbe rejouée avec l'autofinancement réconcilié", "",
+           f"{'Les rejeux qui précèdent valorisaient' if earlier else 'C11 valorisait'} les "
+           f"emplois de C2 à {euros} l'un, le retour d'un emploi selon le Trésor-Éco n° 97, en "
+           "euros de 2009. D-270 réconcilie C11 : ses emplois y valent ce qu'un emploi au "
+           "SMIC rapporte aux finances publiques l'année de la réforme, mesuré sur le moteur "
+           "(D-256), ses cotisations, sa CSG, sa CRDS, son impôt sur le revenu et le RSA qu'il "
+           "évite, moins la prime d'activité qu'il ouvre. θ = 1 reste la part du Trésor-Éco, "
+           f"{_pct(share)}. Les requêtes sous `etude/{replay.directory}/` rejouent celles de la "
+           "courbe champ pour champ ; seuls leurs noms, leurs titres et leurs questions "
+           "diffèrent. Elles ont été commitées avant leurs passes, avec le pronostic écrit "
+           f"dans {replay.entry}. Les rapports ont joué leurs requêtes, à l'identique, sur le "
+           f"commit `{r['commit']}`, le {r['computed']}. Les passes ont tourné ici : "
+           f"{r['where']}."]
+    for entry in entries:
+        auto, old = entry["mesure"], entry.get("autofinancement")
+        instrument, report, courbe = auto["instrument"], auto["report"], auto["courbe"]
+        control, replay = auto["control"], auto["replay"]
+        said = (f"À θ = {theta}, en vue vieillie, C11 rend "
+                f"{_pct(returned_share(report['searches'][0], courbe['searches'][0]))} de la "
+                f"baisse de chaque paquet")
+        if old is not None:
+            said += (f", contre "
+                     f"{_pct(returned_share(old['report']['searches'][0], courbe['searches'][0]))}"
+                     f" à {euros} l'emploi ({old['replay'].entry})")
+        out += ["", f"### Le {replay.name}", "", report["question"], "", f"{said}."]
+        olds = old["report"]["searches"] if old is not None else [None] * len(courbe["searches"])
+        for search, before, was_old in zip(report["searches"], courbe["searches"], olds,
+                                           strict=True):
+            line = (f"**{search['persistence_label']}.** "
+                    f"{verdict(search, instrument, target, theta)} Sans l'autofinancement, à "
+                    f"la courbe, Δb valait, vue vieillie : {_listed(instrument, search, before)}.")
+            if was_old is not None:
+                line += f" À {euros} l'emploi : {_listed(instrument, search, was_old)}."
+            out += ["", line, ""]
+            out += _search_table(search, instrument, target, first_year=first_year,
+                                 target_year=target_year, theta=theta)
+        lacks = {f"{name} : {compact(why)}"
+                 for s in report["searches"] for name, why in s["indices"]["absent"].items()}
+        if lacks:
+            out += ["", "**Ce qui manque à la chaîne**, pour le paquet le plus proche : "
+                        "absent, et non nul.", ""]
+            out += [f"- {line}" for line in sorted(lacks)]
+        given = ("les redonne" if control["share"] <= CONTROL_SHARE
+                 and control["eur"] <= CONTROL_EUR else "ne les redonne pas")
+        gaps = index_gaps(report, courbe)
+        if gaps:
+            moved = " ; ".join(f"{label}, de {_fr(gap, 2, sign=False)} {unit}"
+                               for label, unit, gap in gaps)
+            indices = (f"Hors de la chaîne, les indices du paquet le plus proche sont ceux de "
+                       f"la courbe, sauf : {moved}, au plus.")
+            if any(label == C2_INDEX_LABEL for label, _, _ in gaps):
+                indices += (" C2 y compte chacun à son propre poids dans la passe (D-269), "
+                            "quand la courbe le comptait au poids moyen de son ménage.")
+        else:
+            indices = ("Hors de la chaîne, les indices du paquet le plus proche sont ceux de "
+                       "la courbe.")
+        out += ["", f"**Le contrôle.** Aux coins où le poids de C11 vaut 1, C11 rend "
+                    f"{_pct(auto['share'])} de la baisse quelle que soit la valeur d'un emploi "
+                    f"et l'élasticité de C2 : le rejeu doit y redonner "
+                    f"{_fr(1 - auto['share'], sign=False)} fois l'écart de la courbe, et ses "
+                    f"coûts les siens. Il {given} : l'écart le plus grand vaut "
+                    f"{_fr(control['share'] * 100, 6, sign=False)} pt sur les coins et "
+                    f"{_fr(control['eur'], 0, sign=False)} € sur les coûts. {indices}",
+                "", f"**Ce que ce chiffre ne compte pas.** {MESURE_LEAVES_OUT}"
+                    f"{replay.leaves_out}"]
+    return out
+
+
 def _control_row(control: dict[str, Any]) -> str:
     gaps = control["gaps"]
     said = ("la redonne" if gaps["given_back"] else
@@ -1353,6 +1519,10 @@ def render(etudes: list[dict[str, Any]],
         if replay.key in replayed:
             out += _autofinancement_section(replayed[replay.key], target, first_year,
                                             target_year, theta)
+    measured = [e for replay in MESURE_MENU for e in courbe
+                if e["instrument"].key == replay.key and e.get("mesure")]
+    if measured:
+        out += _mesure_section(measured, target, first_year, target_year, theta)
     out += ["", "## Ce que l'étude ne dit pas", "",
             "- Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de "
             "θ ; un autre scénario donne une autre réponse.",

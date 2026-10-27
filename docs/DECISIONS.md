@@ -21015,3 +21015,137 @@ charte et de l'API des explorations, 122 réussis.
 **Ce qui suit.** Les deux recherches, l'une après l'autre, en tâche de fond, depuis une
 copie de travail figée sur ce commit. Puis D-272 : le résultat, son rendu dans
 `docs/PREDICTIF_ETUDE.md`, et ses gardes. La porte reste le `make full` du propriétaire.
+
+## D-272 — La courbe rejouée avec le C11 réconcilié, second temps : la réponse
+
+**Le fait.** Les deux recherches préenregistrées dans D-271 ont tourné sur le commit de leur
+préenregistrement, `fd83fce`, l'une après l'autre, en quarante-neuf minutes : huit paquets
+et seize passes, depuis une copie de travail figée sur ce commit. La réponse, sous les
+hypothèses de l'étude : avec le C11 réconcilié, aucun relèvement de la courbe ne fait
+baisser la dette en 2035, ni à θ = ½ ni à aucun des 32 coins d'aucun paquet. La page
+`docs/PREDICTIF_ETUDE.md` le rend dans sa propre section, « La courbe rejouée avec
+l'autofinancement réconcilié », après les rejeux de D-265 et D-267, gardée contre la dérive
+comme le reste.
+
+**Le résultat.** Δb 2035 en points de PIB, vue vieillie, à θ = ½ : la courbe (D-261), son
+rejeu à 12 000 € l'emploi (D-265, D-267), puis le rejeu réconcilié et sa boîte θ. Les deux
+persistances donnent les mêmes chiffres.
+
+| Paquet | courbe | à 12 000 € | réconcilié | boîte θ |
+|---|---|---|---|---|
+| `t_delta` à 38,31 % | +0,310 | +0,192 | +0,196 | +0,124 à +0,279 |
+| à 39,31 % | +0,928 | +0,575 | +0,588 | +0,371 à +0,837 |
+| à 40,31 % | +1,547 | +0,959 | +0,980 | +0,619 à +1,395 |
+| à 41,31 % | +2,166 | +1,343 | +1,372 | +0,867 à +1,954 |
+| plancher à 2,1 % | +0,235 | +0,157 | +0,159 | +0,094 à +0,226 |
+| à 2,4 % | +0,942 | +0,629 | +0,634 | +0,377 à +0,904 |
+| à 2,7 % | +1,648 | +1,101 | +1,110 | +0,659 à +1,582 |
+| à 3 % | +2,354 | +1,573 | +1,585 | +0,942 à +2,259 |
+
+- À θ = ½, C11 rend 36,69 % de chaque paquet du `t_delta`, contre 38,03 % à 12 000 € ; et
+  32,68 % de chaque paquet du plancher, contre 33,21 %.
+- En vue figée, de +0,213 à +1,492 point pour le `t_delta`, de +0,156 à +1,565 pour le
+  plancher.
+- Les coûts sont ceux de la courbe à l'écart nul, dans les deux vues. Aux coins du poids à
+  1, le rejeu redonne 0,4 fois l'écart de la courbe : le plus grand écart vaut 1,3 × 10⁻¹⁶
+  en part de PIB pour le `t_delta`, 8,9 × 10⁻¹⁷ pour le plancher.
+
+**Contre le pronostic.** Des sept points, trois tiennent, trois tiennent au millième près,
+et un manque.
+1. Tient au millième près. Aucun paquet ne passe sous zéro, sous aucune persistance et dans
+   aucune vue. Δb vaut 0,6331 fois la courbe pour le `t_delta`, contre 0,6329 annoncé, et
+   0,6732 fois pour le plancher, comme annoncé. Quatre chiffres sur huit s'écartent d'un
+   millième des chiffres annoncés : +0,980 et +1,372 contre +0,979 et +1,371 pour le
+   `t_delta`, +0,159 et +1,110 contre +0,158 et +1,109 pour le plancher. La part du
+   `t_delta` vaut 36,69 %, contre 36,71 % annoncé.
+2. Tient au millième près. Aucun coin ne passe sous zéro. Le plus bas vaut 0,4 fois la
+   courbe. Le plus haut vaut 0,9018 fois pour le `t_delta`, contre 0,9015 annoncé, de
+   +0,279 à +1,954 contre +1,953 ; et 0,9597 fois pour le plancher, contre 0,9596, de
+   +0,226 à +2,259 comme annoncé.
+3. Tient : les deux persistances donnent les mêmes chiffres, et la page dit la boucle
+   absente.
+4. Tient : les coûts à l'écart nul, les coins du poids à 1 à l'arrondi des flottants près.
+5. Manque. L'emploi marchand de Mésange et les déciles sont ceux de la courbe, au dernier
+   chiffre. Mais l'emploi au voisinage du SMIC baisse de 0,30 % pour le `t_delta`, à 13 368
+   contre 13 408, et de 0,12 % pour le plancher, à 4 072 contre 4 077 : le pronostic disait
+   « à quelques unités près ».
+6. Tient au millième près : en vue figée, de +0,213 à +1,492 pour le `t_delta`, contre
+   +1,491 annoncé au dernier paquet ; de +0,156 à +1,565 pour le plancher, comme annoncé.
+7. Tient : le plancher rend 32,68 %, moins que les 36,69 % du `t_delta`.
+
+**L'écart de l'emploi, mesuré.** D-269 avait estimé l'effet de ses poids à quelques
+dix-millièmes, sur deux mesures prises avec le taux du ménage. Il est mesuré ici, sur la
+passe du premier paquet du `t_delta`, vue vieillie, C2 à θ = ½ :
+- 13 367,81 emplois quand chaque salarié a son propre poids : l'indice du rejeu, au dernier
+  chiffre ;
+- 13 407,79 au poids moyen de son ménage : celui de la courbe, au dernier chiffre.
+
+L'écart tient à 479 salariés sur 16 190, dans 254 ménages. Avec le coût de chaque salarié
+(D-261), le poids de chacun compte plus que D-269 ne le disait : 0,30 %, non quelques
+dix-millièmes. C'est lui qui retire 0,02 point à la part de C11 et ajoute un millième à Δb
+ici ou là. L'emploi de C2 des rapports commités de la courbe et de ses deux premiers rejeux
+est compté au poids moyen du ménage, et 0,30 % trop haut pour le `t_delta`. Ces rapports ne
+sont pas rejoués ; leurs Δb sont trop bas d'un millième au plus.
+
+**Ce que la réponse veut dire.** Mesurée, la valeur d'un emploi (10 032 € et non 12 000 €)
+abaisse la lecture de C2 de 16 %. À θ = ½, la part de C11 baisse de 1,34 point pour le
+`t_delta` et de 0,53 point pour le plancher ; la dette en 2035 monte de 2,2 % au plus de ce
+que donnaient les rejeux. Les réponses de D-242, D-265 et D-267 tiennent : l'autofinancement
+réduit l'écart de la courbe d'un tiers environ à θ = ½, et de 60 % au plus, sans le
+retourner. L'impôt sur le revenu des emplois créés, que D-265 nommait parmi ce qui pourrait
+retourner la réponse, est désormais compté : il ne la retourne pas. Reste la boucle de la
+variante ciblée de Mésange, faute de source. L'étude ne recommande rien.
+
+**Les tests.** `scripts/write_predictif_etude.py` lit les deux rejeux sous
+`etude/courbe_autofinancement_mesure/` et leurs rapports,
+`reports/exploration_courbe_autofinancement_mesure_<bouton>.json`. Il rend leur section
+après celles des rejeux de D-265 et D-267. Les parties d'avant sont inchangées, à l'octet.
+Ce qui est nouveau :
+- un répertoire pour deux boutons : le rendu y refuse toute autre requête, et des rapports
+  de deux commits ;
+- la part que C11 rend, lue sur les Δb (s = 1 − Δb / Δb de la courbe), à côté de celle du
+  rejeu à 12 000 € ; et, à côté de chaque verdict, les Δb de la courbe et de ce rejeu ;
+- le contrôle sépare les coins et les coûts, tenus à la courbe, des indices. Chaque indice
+  qui s'écarte de la courbe est nommé avec son plus grand écart, et la raison de D-269 n'est
+  dite que pour celui de C2.
+
+Les refus des premiers rejeux valent pour celui-ci, le chargement étant le même. Aucun
+chiffre n'est saisi : les 12 000 € et les 60 % viennent du magasin, les parts des rapports.
+
+Dans `tests/test_predictif_etude.py`, trente-cinq cas nouveaux :
+- la section rendue à part, la page d'avant inchangée ;
+- la section sans les premiers rejeux ;
+- un coin qui ne redonne pas la courbe ;
+- les quatorze refus, pour chacun des deux boutons ;
+- des rapports de deux commits ;
+- un indice de C2 qui s'écarte de la courbe, sur ses valeurs puis sur sa seule boîte θ, et
+  un autre indice.
+
+Les trente-cinq ont échoué sur le script de `fd83fce`. La fixture des rejeux prend le rejeu
+qu'on lui donne, ses parts et son commit ; ses valeurs par défaut sont celles d'avant, et
+les cinquante cas des premiers rejeux passent sans changer. Le test de la note de D-255
+comptait parmi les tours rendus les seuls premiers rejeux ; le rejeu réconcilié, qui a
+tourné après la correction de C2, en est un. Sa liste s'allonge, et son assertion ne change
+pas.
+
+Dix-huit mutations écrites à la main du script ont toutes été tuées. Elles touchent le
+rapport lu sous le nom des premiers rejeux, une requête de plus acceptée, le répertoire dit
+d'un seul bouton, deux commits acceptés, le rejeu non rattaché, la section non rendue, et
+l'ordre de la courbe. Elles touchent aussi la part et les Δb du premier rejeu, et ceux de la
+courbe, pris ailleurs, la mise en garde propre au plancher perdue, les premiers rejeux
+toujours dits, l'entrée non nommée, et le contrôle : toujours tenu, tenu aux indices, sans
+indice nommé, la raison de D-269 pour tout indice, les boîtes ignorées. Cette dernière a
+d'abord survécu : aucun cas ne déplaçait une boîte seule. Le cas qui le fait l'a tuée.
+
+Les tests de l'étude, de la charte, des explorations et de leur API, de la recherche et de
+l'autofinancement : 202 réussis. `ruff` passe sur `src`, `tests` et `scripts`, et
+`ui/check.mjs` ses 59 contrôles.
+
+**Ce qui reste.**
+- Le chemin annuel qui chiffre une réforme des seules entreprises avec `behaviour_asked`.
+- L'étude à θ = 0 et θ = 1, et sur le chemin annuel.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
+- Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage : la courbe et
+  ses deux premiers rejeux, non rejoués.
+- Le `make full` du propriétaire.
