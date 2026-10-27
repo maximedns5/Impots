@@ -361,16 +361,16 @@ def _employer_inputs(request: Any, run: Any, agg: Any) -> dict[str, Any]:
     SMIC multiple of their own salary. Every earner used to carry their household's
     rate: an earner at the SMIC took a share of a partner's cut at 3 SMIC, and the
     study's plafond, which relieves only wages above 3 SMIC, where C2 does not respond,
-    counted 1 317 jobs, every one of them from such a household (D-258).
+    counted 1 317 jobs, every one of them from such a household (D-261).
 
     THE EARNERS ARE THOSE OF THE HOUSEHOLDS THE RUN PRICED, AT THE RUN'S WEIGHT, as C7's
     are (`labour.inputs`). `run` is the quick tier's pass, on a subsample reweighted to
     the population (`runner.subsample`): its `persons` are that subsample's. Every earner
     of the whole frame at the frame's weight, with no cost change outside the
     subsample, counted 15 % of the earners: C2 gave 1 558 jobs for 1 Md€ of `t_delta`
-    where the run holds 9 960 (D-256; D-255 found the same dilution apart). Each earner
+    where the run holds 9 960 (D-259; D-255 found the same dilution apart). Each earner
     counts at THEIR OWN weight in the run, as the subsample scales it, not at their
-    household's mean: members' weights can differ (D-255, D-266).
+    household's mean: members' weights can differ (D-255, D-269).
     """
     import numpy as np
     import polars as pl
@@ -402,7 +402,7 @@ def _employer_inputs(request: Any, run: Any, agg: Any) -> dict[str, Any]:
         "contribution_delta": agg.employer_contribution_delta,
         # C11 reads the cut's self-financing only where the shock builder routes it to
         # Mésange's targeted variant, which has no balance row: the same test, so the loop
-        # and C11 never both carry the return (D-260).
+        # and C11 never both carry the return (D-263).
         "targets_low_wages": shocks.targets_low_wages(
             tuple(request.reform.model_dump(exclude_none=True)), request.year),
     }
@@ -453,9 +453,9 @@ def _narrow_band(request: Any, run: Any) -> Any:
         households["salaire_brut"].to_numpy(), cost_move, weights
     )
     # The earners are those of the households the run priced, each at their own weight
-    # in the run, as C2's are (D-257, D-266): the frame's weight on the quick tier's
+    # in the run, as C2's are (D-260, D-269): the frame's weight on the quick tier's
     # households tilted the share towards the heavy ones, which the draw keeps at their
-    # own weight. Each moves by their OWN labour cost, from the run's persons (D-258):
+    # own weight. Each moves by their OWN labour cost, from the run's persons (D-261):
     # split evenly, a partner sitting at a plafond who did not move took half of a cut
     # far below it.
     if run.persons is not None:
@@ -1403,7 +1403,7 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
     year, and its deltas join `uncovered`: no Mésange variant reads them. `layers` then
     names each layer's cost. A firm reform alone runs no population pass at all: the
     households are untouched, their cost is zero, and nothing of theirs is read; with
-    behaviour asked, `behaviour_asked` says so, for no household channel reads it (D-265).
+    behaviour asked, `behaviour_asked` says so, for no household channel reads it (D-268).
     """
     from types import SimpleNamespace
 

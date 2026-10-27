@@ -112,7 +112,7 @@ def test_nbptr_guard_holds_over_the_population(population: pl.DataFrame) -> None
 
 
 def test_the_run_s_persons_carry_their_own_weight(population: pl.DataFrame) -> None:
-    """C2 and the narrow band read each earner at the weight the run gave them (D-266).
+    """C2 and the narrow band read each earner at the weight the run gave them (D-269).
     A household's members need not share one: the survey leaves 1.5 % of households
     with unequal members, and the quick tier's subsample scales each member by the
     same factor, so the household's mean would count some earners too few and others

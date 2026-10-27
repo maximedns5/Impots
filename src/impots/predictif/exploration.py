@@ -69,7 +69,7 @@ class Priced:
     beside the households' (D-244, D-246); None otherwise."""
     behaviour_asked: bool = False
     """Behaviour was asked for a firm reform alone, which no household channel reads: the
-    path says so where `inputs` is None, rather than « non demandé » (D-265)."""
+    path says so where `inputs` is None, rather than « non demandé » (D-268)."""
 
 
 def trajectory(at: Theta, priced: Priced, reform: Any, *, start: Start, horizon: int,

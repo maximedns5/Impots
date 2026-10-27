@@ -77,7 +77,7 @@ THETA_UNREAD = ("Vue mécanique : les θ sont listés parce que la requête les 
                 "aucun canal de comportement ne les lit.")
 THETA_MACRO_ONLY = ("Comportement non demandé : les θ des lignes de comportement sont "
                     "listés sans être lus ; seul celui du multiplicateur l'est.")
-#: Behaviour asked for a firm reform alone: not « non demandé » (D-251, D-265).
+#: Behaviour asked for a firm reform alone: not « non demandé » (D-251, D-268).
 NO_HOUSEHOLD_CHANNEL = ("Comportement demandé, mais aucun canal des ménages ne lit un "
                         "bouton des entreprises, et ceux de la couche entreprises n'entrent "
                         "pas dans les recettes : seul le chiffre mécanique est porté.")
@@ -161,7 +161,7 @@ class ReformCosts:
     """Deltas with no multiplier, and why (`shocks.Impulse.reasons()`)."""
     behaviour_asked: bool = False
     """Behaviour was asked for a reform no household channel reads, a firm reform alone
-    (D-265): where `behavioural` is None, the band says that rather than « non demandé »."""
+    (D-268): where `behavioural` is None, the band says that rather than « non demandé »."""
 
     def __post_init__(self) -> None:
         if not self.by_year:
@@ -458,7 +458,7 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
                      high=tuple(max(a, b) for a, b in zip(one, two, strict=True)))
 
     # Absent, the band says whether behaviour was asked: a firm reform alone is read by
-    # no household channel, which is not the same as not asking (D-265).
+    # no household channel, which is not the same as not asking (D-268).
     unread = NO_HOUSEHOLD_CHANNEL if costs.behaviour_asked else ABSENT_BAND
     if costs.behavioural is not None:
         base_primary = receipts(lambda at: at.receipts)

@@ -1,60 +1,60 @@
 # State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M6)
 
-The eleventh 2026-10-26 update adds D-266, the merge of main's D-255, which found C2's
+The eleventh 2026-10-26 update adds D-269, the merge of main's D-255, which found C2's
 dilution apart and fixed it at each person's own weight with the household's rate. The
-merge keeps both: each earner at their own labour cost (D-258) and their own weight in the
+merge keeps both: each earner at their own labour cost (D-261) and their own weight in the
 run, which `persons` now carries; the narrow band reads the same. The committed passes used
 the households' mean weights, a few ten-thousandths off; they are not replayed. D-255's
 page note no longer shows: the page renders the replays counted with the fix, and main's
 test of it now says so. Three hand mutants killed.
-The tenth 2026-10-26 update added D-265: D-251's two labels. A firm reform alone with
+The tenth 2026-10-26 update added D-268: D-251's two labels. A firm reform alone with
 behaviour asked no longer reads « Comportement non demandé » in the band, its θ line and
 the C2 and C7 indices: the first-year pass says behaviour was asked, and the chain and the
 indices say no household channel reads a firm knob. The firm-layer indices of a household
 reform say the reform sets no firm knob, not that the path prices only the population's.
 Reports already drawn keep their text. The predictive example, which missed C11's open
-row since D-260, is re-rendered: its θ list alone changes. Twelve hand mutants killed.
-The ninth 2026-10-26 update added D-264: the floor replayed with C11 has run on its
+row since D-263, is re-rendered: its θ list alone changes. Twelve hand mutants killed.
+The ninth 2026-10-26 update added D-267: the floor replayed with C11 has run on its
 preregistration commit, `2002304`, and the page renders it in its own section after the
 `t_delta`'s, which is unchanged to the byte. Self-financing shrinks the curve's answer for
 the floor too without turning it: Δb is 0.6679 times the curve's, +0.157 to +1.573 point
 at θ = ½, and no corner falls below zero, the lowest +0.094 to +0.942. Per billion at
 θ = ½, the floor leaves 0.206 point of debt in 2035 and the `t_delta` 0.191. The control
-gives the curve back (largest gap 8.9e-17). Every point of D-263's prognosis held, to the
+gives the curve back (largest gap 8.9e-17). Every point of D-266's prognosis held, to the
 thousandth. Thirty-three hand mutants of the page script killed.
-The eighth 2026-10-26 update added D-263: the curve's floor `t_min` replayed with C11,
+The eighth 2026-10-26 update added D-266: the curve's floor `t_min` replayed with C11,
 preregistered before its passes, under its own directory,
 `etude/courbe_autofinancement_plancher/`. The prognosis: C11 brings back 33.2 % of each
 bundle at θ = ½, so Δb is 0.668 times the curve's, +0.157 to +1.573 point, and no corner
 falls below zero, the lowest, at the Trésor-Éco's 60 %, +0.094 to +0.942. The control is
-the `t_delta`'s. The replay runs next, then D-264 renders both replays.
-The seventh 2026-10-26 update added D-262: the curve's `t_delta` replayed with C11 has run on
+the `t_delta`'s. The replay runs next, then D-267 renders both replays.
+The seventh 2026-10-26 update added D-265: the curve's `t_delta` replayed with C11 has run on
 its preregistration commit, `847f519`, and `docs/PREDICTIF_ETUDE.md` renders it in its
 own section. Self-financing shrinks D-242's answer without turning it: Δb is 0.6197 times
 the curve's at each bundle, +0.192 to +1.343 point at θ = ½, and none of the 32 corners
 falls below zero, the lowest, at the Trésor-Éco's 60 %, +0.124 to +0.867. The control
 gives the curve back: its costs to the euro, 0.4 times its Δb at the sixteen corners
 where the weight is 1 (largest gap 1.3e-16), C2's and Mésange's jobs alike. Every point
-of D-261's prognosis held, to the thousandth. Twenty-five hand mutants of the page script
+of D-264's prognosis held, to the thousandth. Twenty-five hand mutants of the page script
 killed.
-The sixth 2026-10-26 update added D-261: the curve's `t_delta` replayed with C11, its
+The sixth 2026-10-26 update added D-264: the curve's `t_delta` replayed with C11, its
 self-financing, preregistered before its passes. The request is the curve's, field for
 field, under `etude/courbe_autofinancement/`; only the code differs. The prognosis: C11
 brings back 38.0 % of each bundle at θ = ½, so Δb is 0.620 times the curve's, +0.192 to
 +1.343 point, and no bundle lowers the debt at any θ: at most 60 % comes back. The
 control: the curve's costs to the euro, and at the sixteen corners where the weight is 1,
-0.4 times the curve's Δb. The replay runs next, then D-262.
-The fifth 2026-10-26 update added D-256 to D-260. C2's gap to the CAE came from the chain:
+0.4 times the curve's Δb. The replay runs next, then D-265.
+The fifth 2026-10-26 update added D-259 to D-263. C2's gap to the CAE came from the chain:
 it read 15 % of the employees, the quick tier's households at the whole frame's weights
-(D-256), and lent each employee the change in their household's labour cost, which gave
-the 2026 ceiling 1 317 jobs for a cut above 3 SMIC where C2 does not respond (D-258). Each
+(D-259), and lent each employee the change in their household's labour cost, which gave
+the 2026 ceiling 1 317 jobs for a cut above 3 SMIC where C2 does not respond (D-261). Each
 employee now reads their own labour cost, off the run's persons; the narrow band reads
-the same, and flags both threshold cases at 100 % (D-257, D-258). C2 counts 13 380 jobs
+the same, and flags both threshold cases at 100 % (D-260, D-261). C2 counts 13 380 jobs
 per billion for the `t_delta` and 5 348 for the floor, against 1 555 and 748; the rest of
 the gap to the CAE, a factor 1.7, is the elasticity, the knob's spread and C2's profile.
 The curve, the study and the ceiling's complement were replayed on their own commits with
 C2's fixes alone, and give back every cost, Δb and corner; only the jobs index moves
-(D-258, D-259). Then M5 (D-260): the owner chose C2's reading at θ = 0 and the Trésor-Éco
+(D-261, D-262). Then M5 (D-263): the owner chose C2's reading at θ = 0 and the Trésor-Éco
 n° 97's 60 % at θ = 1, and C11 brings that share of a targeted cut back into the
 receipts, only where Mésange's targeted variant has no balance row. On the study's pass,
 11.8 %, 38.0 % and 60 % of a `t_delta` cut at θ = 0, ½ and 1; 4.8 %, 33.2 % and 60 % for
@@ -907,7 +907,7 @@ download list.
    reference values the paper does not print; C8 remains the entry index. The capital
    income is imputed (D-248). M4 is done (D-249): the PFU knob, read back, and the
    dividends' response C10 in the receipts; the wage shift it leaves out is the next
-   number that could turn a PFU cut's answer. M5 is done (D-260): C11, the self-financing
+   number that could turn a PFU cut's answer. M5 is done (D-263): C11, the self-financing
    of a targeted contribution cut, from C2's reading at θ = 0 to the Trésor-Éco's 60 % at
    θ = 1, the owner's choice on R5. M6 is done (D-250, D-251): the study on the wider
    menu. No IS cut lowers the debt; a PFU cut
@@ -915,8 +915,8 @@ download list.
    could turn. Its gate is the owner's `make full`. The wage shift is in C10 (D-252), and
    the PFU replayed with it turns that sign (D-253): no cut on the menu lowers the debt at
    θ = ½. The curve replayed with its self-financing does not lower it either: C11
-   brings back 38 % of a `t_delta` cut at θ = ½ (D-261, D-262) and 33 % of a floor cut
-   (D-263, D-264), 60 % at most. The CVAE is priced on the annual path with a knob for its
+   brings back 38 % of a `t_delta` cut at θ = ½ (D-264, D-265) and 33 % of a floor cut
+   (D-266, D-267), 60 % at most. The CVAE is priced on the annual path with a knob for its
    whole schedule, and the carry refuses it (D-254). The page's predictive panel does not
    send a firm reform yet. Then Phase 12, the past, and
    Phase 13, the online product.

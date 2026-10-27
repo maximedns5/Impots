@@ -163,7 +163,7 @@ NOT_ADDABLE = {
 }
 
 #: Why a firm-layer index is absent when the path carries no firm reform. Since D-244 the
-#: path prices firm reforms too: this one sets no firm knob (D-251, D-265).
+#: path prices firm reforms too: this one sets no firm knob (D-251, D-268).
 FIRM_LAYER = ("Couche entreprises : la réforme ne règle aucun bouton des entreprises, et "
               "cet indice ne se calcule qu'avec un ; seul, il se lit sur "
               "`/entreprises/simulate`.")
@@ -182,7 +182,7 @@ CREATIONS_KEY = "1-6"
 CREATIONS_MEAN = ("« 1-6 » : moyenne des six premières années après la baisse, d'un effet "
                   "encore croissant en fin de période (IPP n° 47, années 2017 à 2022).")
 NO_BEHAVIOUR = "Comportement non demandé : le canal ne tourne pas."
-#: Behaviour asked for a firm reform alone, which no household channel reads (D-265).
+#: Behaviour asked for a firm reform alone, which no household channel reads (D-268).
 NO_HOUSEHOLD_CHANNEL = ("Comportement demandé, mais la réforme ne règle aucun bouton des "
                         "ménages : le canal ne tourne pas.")
 NO_IMPULSE = ("Impulsion macro non demandée : sans elle, aucune variante de Mésange n'a "
@@ -394,7 +394,7 @@ BEHAVIOUR = {
 def behaviour(spec: Spec, *, theta: Any, store: Any, reform: Any, mechanical: float,
               inputs: Mapping[str, Any] | None, year: int, asked: bool = False) -> Index:
     """The channel's value at θ, and its box over the open rows of the index's own θ.
-    `asked`: behaviour was asked for a reform no household channel reads (D-265)."""
+    `asked`: behaviour was asked for a reform no household channel reads (D-268)."""
     from impots.predictif.theta import corners
 
     if inputs is None:
@@ -515,7 +515,7 @@ def compute(specs: Iterable[Spec], *, trajectory: Any, deciles_rows: Iterable[An
     """Every index asked for, computed or said not to be, in catalogue order.
     `is_rate_change` is the firm reform's IS normal rate minus the law's, in points, and
     `firm_reform` the firm part of the path, None when there is none; `behaviour_asked`,
-    that behaviour was asked for a reform no household channel reads (D-265)."""
+    that behaviour was asked for a reform no household channel reads (D-268)."""
     out = []
     for spec in specs:
         if spec.stage == META:

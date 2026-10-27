@@ -19644,7 +19644,7 @@ l'API prédictive et de l'étude : 294 réussis, 2 sautés. `ruff` passe.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - La porte de M6 : le `make full` du propriétaire.
 
-## D-256 — L'écart de C2 : la chaîne ne lisait que 15 % des salariés
+## D-259 — L'écart de C2 : la chaîne ne lisait que 15 % des salariés
 
 **Le fait.** C2 comptait 748 emplois par milliard pour le plancher `t_min` et 1 555 pour le
 `t_delta` (D-242). Son élasticité, −0,43 au centre, est proche du −0,5 de la Note du CAE
@@ -19750,9 +19750,9 @@ n'atteignent pas `_employer_inputs`. `ruff` passe sur `src`, `tests` et `scripts
   et la page portent le C2 corrigé.
 - Mesurer le poids des salariés dans `_narrow_band`, et le corriger s'il le faut.
 
-## D-257 — La bande étroite lit la passe rapide à ses propres poids
+## D-260 — La bande étroite lit la passe rapide à ses propres poids
 
-**Le fait.** `_narrow_band`, dans `src/impots/api/main.py`, avait le défaut de C2 (D-256).
+**Le fait.** `_narrow_band`, dans `src/impots/api/main.py`, avait le défaut de C2 (D-259).
 Sa famille des salaires lisait chaque salarié de la population entière, au poids de la
 population, avec un mouvement nul hors des 20 000 ménages de la passe rapide. C'est une
 part : les zéros sortent du numérateur comme du dénominateur, et rien n'était divisé par
@@ -19796,12 +19796,12 @@ Les deux cas lents de l'API qui lisent la bande sur une passe ont tourné, l'un 
 l'autre, et passent : la réforme à seuil signalée et le barème non, et le drapeau qui ne
 touche pas au chiffre mécanique. `ruff` passe sur `src`, `tests` et `scripts`.
 
-**Ce qui reste.** Rien de ce défaut. Ce qui restait de D-256 reste : le choix du
+**Ce qui reste.** Rien de ce défaut. Ce qui restait de D-259 reste : le choix du
 propriétaire sur R5, et les recherches de la courbe à rejouer pour le C2 corrigé.
 
-## D-258 — C2 au coût de chaque salarié, et la courbe et l'étude rejouées
+## D-261 — C2 au coût de chaque salarié, et la courbe et l'étude rejouées
 
-**Le fait.** Après D-256, les recherches de la courbe et l'étude du plafond ont été
+**Le fait.** Après D-259, les recherches de la courbe et l'étude du plafond ont été
 rejouées pour porter le C2 corrigé. Le plafond y a montré un second défaut. Le relever ne
 soulage que les salaires au-delà de 3 SMIC, où C2 ne répond pas. C2 lui comptait pourtant
 1 317 emplois au premier paquet de l'étude, 740 par milliard. C2 prêtait à chaque salarié
@@ -19830,23 +19830,23 @@ défaut, mineur : sans aucun emploi à compter, C2 rendait −0,0, que la page a
 **La mesure de C2.** Sur la passe de l'étude, premier paquet de chaque grille, C2 à θ = ½,
 par milliard de la première année :
 
-| Bouton | Coût | Avant D-256 | Après D-256 | Après D-258 | Boîte θ |
+| Bouton | Coût | Avant D-259 | Après D-259 | Après D-261 | Boîte θ |
 |---|---|---|---|---|---|
 | Plafond, 3,5 SMIC | 1,78 Md€ | 128 | 740 | 0 | 0 à 0 |
 | `t_delta`, 38,31 % | 1,00 Md€ | 1 555 | 9 939 | 13 380 | 9 820 à 16 051 |
 | `t_min`, 2,1 % | 0,76 Md€ | 748 | 4 832 | 5 348 | 4 025 à 6 341 |
 
-Les chiffres de D-256 sont remplacés. Le `t_delta` fait 2,50 fois les emplois du plancher
+Les chiffres de D-259 sont remplacés. Le `t_delta` fait 2,50 fois les emplois du plancher
 par milliard, contre 2,08 : plus loin du double, le sens du point 5 de D-241 tient.
 
-**Ce qui reste de l'écart, revu.** Pour le `t_delta`, les pas de D-256 deviennent : 22 480
+**Ce qui reste de l'écart, revu.** Pour le `t_delta`, les pas de D-259 deviennent : 22 480
 emplois pour un milliard posé au SMIC à −0,5 ; 19 335 à −0,43 ; 15 774 là où le bouton porte
 ses euros, qui atteignent des emplois à 27 259 €, dont 5 % au-dessus de 2 SMIC ; 13 380 avec
-le profil de C2, à une élasticité pondérée de −0,32. Les 19 % au-dessus de 2 SMIC de D-256
+le profil de C2, à une élasticité pondérée de −0,32. Les 19 % au-dessus de 2 SMIC de D-259
 étaient en partie le défaut : la baisse d'un salarié au SMIC prêtée à un conjoint mieux
 payé. Pour le plancher : 19 335, 9 751 et 5 348, des emplois à 44 097 €, dont 41 % au-dessus
 de 2 SMIC. L'écart au bas du CAE tombe d'un facteur 2,3 à 1,7. Le reste, jusqu'au haut du
-CAE et au Trésor-Éco n° 97, reste l'élasticité, donc la source (D-256).
+CAE et au Trésor-Éco n° 97, reste l'élasticité, donc la source (D-259).
 
 **Pour R5.** À 12 000 € par emploi, C2 porte un autofinancement de 6,4 % pour le plancher
 et de 16,1 % pour le `t_delta`, et non plus de 5,8 à 11,9 %. Mésange compte 13 079 ETP par
@@ -19854,7 +19854,7 @@ milliard à trois ans (D-242) : C2 en compte 13 380 personnes pour le `t_delta`,
 Le choix reste au propriétaire.
 
 **La bande étroite.** Population de 2024, passe rapide, les deux réformes à seuil des
-tests de l'API : la part passe de 77,43 et 74,13 % (D-257) à 100 %. C'est la part attendue.
+tests de l'API : la part passe de 77,43 et 74,13 % (D-260) à 100 %. C'est la part attendue.
 Ces plafonds ne bougent que les salariés entre l'ancien seuil et le nouveau, tous à moins de
 15 % du nouveau ; le partage égal en faisait fuir le mouvement vers des conjoints hors de la
 fenêtre. Les deux réformes restent signalées, plus nettement.
@@ -19866,7 +19866,7 @@ l'exige. Huit passes par bouton. Contre le premier tour, sur `893e4de`, désorma
 chiffre pour chiffre, sous les deux persistances. Seul l'indice de l'emploi au voisinage du
 SMIC bouge, au premier paquet : +1 558 → +13 408 [+9 840 ; +16 083] pour le `t_delta`,
 +570 → +4 077 [+3 068 ; +4 833] pour le plancher. Un tour intermédiaire, sur `881f41f`,
-avec la seule correction de D-256, a été commité (`88bb9af`) puis remplacé : il portait
+avec la seule correction de D-259, a été commité (`88bb9af`) puis remplacé : il portait
 encore le taux du ménage.
 
 **L'étude rejouée.** Ses quatre rapports doivent venir d'un même commit, et redonner le
@@ -19874,8 +19874,8 @@ premier tour chiffre pour chiffre. Sur le code d'aujourd'hui, le plafond prendra
 reclassement de D-239 et la boucle de la variante uniforme : Δb passerait de +0,55 à
 +0,47 point, et la réponse préenregistrée changerait. Elle est donc rejouée sur
 `d77feb9` : `e0c3d7f`, le commit de son second tour, et les seuls changements de `src/` de
-D-256 et de cette entrée, rien d'autre. Ce commit, et `0fd5c00`, qui ne portait que
-D-256, sont fusionnés dans la branche sans en changer l'arbre, pour que les rapports
+D-259 et de cette entrée, rien d'autre. Ce commit, et `0fd5c00`, qui ne portait que
+D-259, sont fusionnés dans la branche sans en changer l'arbre, pour que les rapports
 nomment un commit joignable. Les quatre instruments ont tourné sur lui, huit passes
 chacun. Contre le second tour, sur `e0c3d7f`, désormais sous `reports/etude_second_tour/`,
 et contre le premier, sur `6dab3a4` : chiffre pour chiffre. Seul l'emploi au voisinage du
@@ -19892,7 +19892,7 @@ ne change qu'en les lignes de l'emploi au voisinage du SMIC.
 **Les tests.**
 - Dans `tests/test_behavioural.py`, deux cas nouveaux, vus échouer. Le salarié au SMIC dont
   le conjoint à 3,2 SMIC voit son coût baisser : 20 681 emplois, contre 4 300 à la main. Le
-  zéro signé : quatre tirages à −0,0. Le cas de D-256 passe sur la nouvelle signature de
+  zéro signé : quatre tirages à −0,0. Le cas de D-259 passe sur la nouvelle signature de
   `_employer_inputs`, son assertion inchangée.
 - Dans `tests/test_narrow_band.py`, un cas nouveau, vu échouer : un conjoint assis sur le
   plafond, qui ne bouge pas, lisait 64 %, signalé, contre 29 % à la main.
@@ -19900,7 +19900,7 @@ ne change qu'en les lignes de l'emploi au voisinage du SMIC.
   de l'étude nommés et redonnés chiffre pour chiffre ; un chiffre bougé d'un milliardième,
   ou un rapport manquant au tour gardé, refusés. Chacun a été vu échouer avant sa garde, et
   six mutations du script ont été tuées.
-- Les trois cas tueurs de C2 passent aussi sur le code de `d77feb9` et le cas de D-256 sur
+- Les trois cas tueurs de C2 passent aussi sur le code de `d77feb9` et le cas de D-259 sur
   celui de `0fd5c00`.
 - Les tests ciblés : 500 réussis et 4 sautés dans douze fichiers, de `test_predictif_etude`
   à `test_population`. Deux échouent faute de données, ici comme sur le code d'avant : le
@@ -19913,8 +19913,8 @@ ne change qu'en les lignes de l'emploi au voisinage du SMIC.
 
 **La numérotation.** Ces trois entrées ont été écrites D-246, D-247 et D-248. Ces numéros
 ont été pris sur `main` pendant le travail, six fois : par les fusions #74 à #76, puis
-#78, #79, #80, #81 et #82, qui ont posé D-246 à D-255. Elles sont devenues D-256 à D-258,
-et les suivantes D-259 à D-265, partout dans l'arbre sauf les rapports, qui n'en citaient
+#78, #79, #80, #81 et #82, qui ont posé D-246 à D-255. Elles sont devenues D-259 à D-261,
+et les suivantes D-262 à D-268, partout dans l'arbre sauf les rapports, qui n'en citaient
 aucune. Les messages des commits de la branche, déjà poussés, gardent les numéros de leur
 moment.
 
@@ -19923,17 +19923,17 @@ moment.
 - Le choix du propriétaire sur R5, sur des chiffres de C2 où la chaîne n'est plus en cause.
 - Le rapport du complément du plafond porte encore l'ancien C2, que la page ne rend pas.
 
-## D-259 — Le complément du plafond rejoué avec le C2 corrigé
+## D-262 — Le complément du plafond rejoué avec le C2 corrigé
 
 **Le fait.** Le complément du plafond (D-239), le plafond reclassé sous la variante uniforme
-de Mésange et joué hors du préenregistrement, portait encore le C2 que D-256 et D-258 ont
-corrigé : +227 emplois au voisinage du SMIC au premier paquet, comme l'étude avant D-258. Il
+de Mésange et joué hors du préenregistrement, portait encore le C2 que D-259 et D-261 ont
+corrigé : +227 emplois au voisinage du SMIC au premier paquet, comme l'étude avant D-261. Il
 est rejoué, et C2 y vaut désormais 0.
 
 **Sur quel code.** Le complément a tourné sur `cacd43a`, le commit de D-239. Il est rejoué
 sur `ce40f2c` : `cacd43a` et les seuls changements de `src/` que C2 lit, ceux que `d77feb9`
-porte sur `e0c3d7f`. Ce sont les salariés de la passe à ses poids (D-256), le coût du
-travail de chacun et le zéro signé (D-258). Rien d'autre de ce qui a changé depuis n'y
+porte sur `e0c3d7f`. Ce sont les salariés de la passe à ses poids (D-259), le coût du
+travail de chacun et le zéro signé (D-261). Rien d'autre de ce qui a changé depuis n'y
 entre : le second tour ne diffère du premier que par C2. `ce40f2c` est fusionné dans la
 branche par la stratégie `ours`. L'arbre de la branche ne change pas, car il porte déjà ce
 code, ses commentaires renumérotés ; seul le commit que nomme le rapport devient joignable.
@@ -19959,14 +19959,14 @@ mutations du script ont été tuées. Les trois cas tueurs de C2 et celui des cl
 passent sur le code de `ce40f2c`. Les tests de l'étude, de l'explorateur et de la charte :
 107 réussis. `ruff` passe sur `src`, `tests` et `scripts`.
 
-**Ce qui reste.** Rien de ce qui restait de D-258 sur le complément. Restent le `make full`
+**Ce qui reste.** Rien de ce qui restait de D-261 sur le complément. Restent le `make full`
 du propriétaire, avant toute fusion, et son choix sur R5.
 
-## D-260 — Phase 11, M5 : l'autofinancement d'une baisse ciblée de cotisations (C11)
+## D-263 — Phase 11, M5 : l'autofinancement d'une baisse ciblée de cotisations (C11)
 
 **Le fait.** R5 de `docs/M0_PHASE11.md` laissait au propriétaire l'autofinancement d'une
 baisse ciblée de cotisations, que les sources françaises lisent de quelques pour cent à
-60 % selon l'emploi qu'elles retiennent. Les chiffres de C2 corrigés (D-256, D-258), il a
+60 % selon l'emploi qu'elles retiennent. Les chiffres de C2 corrigés (D-259, D-261), il a
 choisi le 2026-10-26 la première des trois voies de R5 : θ = 0 à la lecture de C2, ses
 emplois valorisés à 12 000 € l'un ; θ = 1 au Trésor-Éco n° 97, 60 % ; θ = ½ entre les
 deux. C'est C11, un canal de recettes.
@@ -20057,15 +20057,15 @@ revalorisé. C2 compte des personnes, quand 12 000 € est le retour d'un temps 
   préenregistrée à part, et son pronostic avant les passes.
 - Le `make full` du propriétaire.
 
-## D-261 — Le `t_delta` rejoué avec son autofinancement, premier temps : avant ses passes
+## D-264 — Le `t_delta` rejoué avec son autofinancement, premier temps : avant ses passes
 
 **Le fait.** L'étude a chiffré le `t_delta` de la courbe de 2026 sans rien de ce qu'une
 baisse ciblée rend : Δb y était le coût porté dix ans (D-242), et le second tour, C2
-corrigé, l'a redonné tel (D-258). Le menu élargi l'avait laissé de côté faute de M5
+corrigé, l'a redonné tel (D-261). Le menu élargi l'avait laissé de côté faute de M5
 (D-250). M5 est fait : C11 rend aux recettes une part de la baisse, de la lecture de C2 à
-θ = 0 aux 60 % du Trésor-Éco n° 97 à θ = 1 (D-260). Ce commit préenregistre le rejeu du
+θ = 0 aux 60 % du Trésor-Éco n° 97 à θ = 1 (D-263). Ce commit préenregistre le rejeu du
 `t_delta` avec C11, et son pronostic, avant toute passe. Le rapport nommera ce commit. Le
-résultat sera une autre entrée, D-262.
+résultat sera une autre entrée, D-265.
 
 **La requête.** `etude/courbe_autofinancement/t_delta.json` rejoue celle de la courbe,
 `etude/courbe/t_delta.json`, champ pour champ ; seuls son nom, son titre et sa question
@@ -20078,19 +20078,19 @@ un bouton que le constructeur de chocs range sous la variante ciblée, et le poi
 rejoint les lignes de la boîte θ, qui passe de 16 à 32 coins.
 
 **Ce qui n'y entre pas.**
-- Le plancher `t_min`. C11 s'y ouvre aussi, de 4,8 à 60 % de la baisse (D-260), mais le
+- Le plancher `t_min`. C11 s'y ouvre aussi, de 4,8 à 60 % de la baisse (D-263), mais le
   jalon laissé à M5 était le `t_delta`, le bouton qui porte la baisse au SMIC. Le plancher
   se rejouerait de même, dans sa propre entrée.
 - Les quatre instruments de l'étude et le menu élargi. Aucun n'est rangé sous la variante
-  ciblée : C11 ne s'y ouvre pas, et un cas le tient (D-260).
+  ciblée : C11 ne s'y ouvre pas, et un cas le tient (D-263).
 
 **Ce qu'on savait déjà.** Le pronostic n'est pas aveugle, et il le dit.
 - Sans boucle ni recette, Δb 2035 vaut 0,3088745 point par milliard de coût de la première
-  année, à chaque paquet de la courbe et dans les deux vues (D-242, D-258). Sans ligne de
+  année, à chaque paquet de la courbe et dans les deux vues (D-242, D-261). Sans ligne de
   solde, rien ne boucle la chaîne : elle est linéaire dans ce coût.
 - C11 rend s fois la baisse de la facture des employeurs. Pour le `t_delta`, cette baisse
-  est le coût de la réforme, à l'euro : 1 002 040 766 € au premier paquet (D-260).
-- Sur ce paquet, la mesure de D-260 : s vaut 11,8 %, 38,0 % et 60 % à θ = 0, ½ et 1. La
+  est le coût de la réforme, à l'euro : 1 002 040 766 € au premier paquet (D-263).
+- Sur ce paquet, la mesure de D-263 : s vaut 11,8 %, 38,0 % et 60 % à θ = 0, ½ et 1. La
   recette à θ = ½ fait 0,381 Md€, et la boîte des recettes, mécanique comprise, va de
   −0,884 à −0,401 Md€.
 - C2 est linéaire dans la variation du coût du travail, et la baisse du `t_delta` l'est
@@ -20127,7 +20127,7 @@ rejoint les lignes de la boîte θ, qui passe de 16 à 32 coins.
 - θ = 1 lit le bas du coût brut par emploi du Trésor-Éco, 20 000 € sur 20 000 à 40 000 €,
   pour les allègements de 1993 à 1997. La note envisage elle-même, à titre illustratif, un
   coût par emploi doublé pour la seconde vague (p. 4). Vers une dette plus basse.
-- Les 12 000 € sont de 2009, tenus tels (D-260). Au SMIC de 2026, la réduction générale
+- Les 12 000 € sont de 2009, tenus tels (D-263). Au SMIC de 2026, la réduction générale
   laisse peu de cotisations patronales, et le RSA a été revalorisé : le sens n'est pas
   mesuré.
 - Ce que C11 ne compte pas : l'impôt sur le revenu des emplois créés, leurs autres
@@ -20141,15 +20141,15 @@ diffère de `etude/courbe/t_delta.json` que par son nom, son titre et sa questio
 champ pour champ. Les lignes que le bouton réclame, lues sur le magasin : le poids de C11,
 l'élasticité de C2 et les deux incidences de C3. Aucune passe de dimensionnement : les
 coûts sont ceux de la courbe, et le contrôle le vérifiera. La garde qui tiendra le rejeu
-viendra avec le rendu, dans D-262.
+viendra avec le rendu, dans D-265.
 
-**Ce qui suit.** La recherche, seule et en tâche de fond, sur ce commit. Puis D-262 : le
+**Ce qui suit.** La recherche, seule et en tâche de fond, sur ce commit. Puis D-265 : le
 résultat, sa section de `docs/PREDICTIF_ETUDE.md`, et ses gardes. La porte reste le
 `make full` du propriétaire.
 
-## D-262 — Le `t_delta` rejoué avec son autofinancement, second temps : la réponse
+## D-265 — Le `t_delta` rejoué avec son autofinancement, second temps : la réponse
 
-**Le fait.** La recherche préenregistrée dans D-261 a tourné sur le commit de son
+**Le fait.** La recherche préenregistrée dans D-264 a tourné sur le commit de son
 préenregistrement, `847f519`, en quatorze minutes : quatre paquets et huit passes. La
 réponse, sous les hypothèses de l'étude : avec son autofinancement, aucun relèvement du
 `t_delta` ne fait baisser la dette en 2035, ni à θ = ½ ni pour aucun θ. C11 réduit l'écart
@@ -20157,7 +20157,7 @@ de D-242 de 38 % à θ = ½, et de 60 % au plus. La page `docs/PREDICTIF_ETUDE.m
 dans sa propre section, « Le `t_delta` de la courbe rejoué avec son autofinancement »,
 gardée contre la dérive comme le reste.
 
-**Le résultat.** Δb 2035 en points de PIB, vue vieillie : la courbe sans C11 (D-258), puis
+**Le résultat.** Δb 2035 en points de PIB, vue vieillie : la courbe sans C11 (D-261), puis
 avec, à θ = ½ et dans la boîte θ. Les deux persistances donnent les mêmes chiffres.
 
 | Paquet | coût 2026 | courbe | avec C11 | boîte θ, avec C11 |
@@ -20236,7 +20236,7 @@ les données liées fichier par fichier : le rapport nomme ce seul commit.
 
 **Ce qui reste.**
 - Le plancher `t_min` rejoué de même, avec son autofinancement, s'il est voulu : fait
-  depuis, D-263 et D-264.
+  depuis, D-266 et D-267.
 - La boucle de la variante ciblée de Mésange, et l'impôt sur le revenu des emplois créés :
   ce qui pourrait encore retourner la réponse.
 - La CVAE, sur le chemin annuel, avec un bouton du barème entier.
@@ -20244,12 +20244,12 @@ les données liées fichier par fichier : le rapport nomme ce seul commit.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - Le `make full` du propriétaire.
 
-## D-263 — Le plancher rejoué avec son autofinancement, premier temps : avant ses passes
+## D-266 — Le plancher rejoué avec son autofinancement, premier temps : avant ses passes
 
-**Le fait.** D-262 a rejoué le `t_delta` de la courbe avec C11 et laissé le plancher, à qui
+**Le fait.** D-265 a rejoué le `t_delta` de la courbe avec C11 et laissé le plancher, à qui
 C11 s'ouvre aussi, à sa propre entrée. Le propriétaire l'a demandée. Ce commit
 préenregistre le rejeu du plancher `t_min` avec C11, et son pronostic, avant toute passe.
-Le rapport nommera ce commit. Le résultat sera une autre entrée, D-264.
+Le rapport nommera ce commit. Le résultat sera une autre entrée, D-267.
 
 **La requête.** `etude/courbe_autofinancement_plancher/t_min.json` rejoue celle de la
 courbe, `etude/courbe/t_min.json`, champ pour champ ; seuls son nom, son titre et sa
@@ -20262,24 +20262,24 @@ boîte θ de 16 à 32 coins.
 toute requête autre que celle du `t_delta`, et refuserait une requête du plancher sans
 son rapport. Poser celle-ci à côté rendrait la page commitée impossible à rendre jusqu'à
 la passe. Elle a son propre répertoire, comme la courbe, le menu élargi et le PFU rejoué
-avant elle ; D-264 apprendra au rendu à le lire.
+avant elle ; D-267 apprendra au rendu à le lire.
 
 **Ce qu'on savait déjà.** Le pronostic n'est pas aveugle, et il le dit.
 - Sans boucle ni recette, Δb 2035 vaut 0,3088745 point par milliard de coût de la première
-  année, à chaque paquet du plancher et dans les deux vues (D-242, D-258).
+  année, à chaque paquet du plancher et dans les deux vues (D-242, D-261).
 - Le coût est linéaire dans le plancher, 7,6226 Md€ par point à chaque paquet, et la
   baisse de la facture des employeurs est ce coût, à l'euro : 762 261 899 € au premier
-  paquet (D-260).
-- Sur ce paquet, la mesure de D-260 : s vaut 4,8 %, 33,2 % et 60 % à θ = 0, ½ et 1. La
+  paquet (D-263).
+- Sur ce paquet, la mesure de D-263 : s vaut 4,8 %, 33,2 % et 60 % à θ = 0, ½ et 1. La
   recette à θ = ½ fait 0,253 Md€, et la boîte des recettes, mécanique comprise, va de
   −0,725 à −0,305 Md€.
 - Le plancher abaisse le coefficient d'une même quantité à chaque salaire sous 3 SMIC, et
   C2 est linéaire dans la variation du coût du travail : la part de C2 est la même à chaque
   paquet, et s aussi.
-- C2 en lit moins que pour le `t_delta`, 5 348 emplois par milliard contre 13 380 (D-258) :
+- C2 en lit moins que pour le `t_delta`, 5 348 emplois par milliard contre 13 380 (D-261) :
   le plancher répand la baisse jusqu'à 3 SMIC, au-delà des 2 SMIC où C2 s'éteint. D'où une
   part de C2 de 6,4 % au centre, contre 16,1 %.
-- Le rejeu du `t_delta` a tenu chacun de ces points (D-262).
+- Le rejeu du `t_delta` a tenu chacun de ces points (D-265).
 
 **Le pronostic**, écrit avant les passes.
 1. À θ = ½, aucun paquet ne fait baisser la dette en 2035, sous aucune persistance et dans
@@ -20301,12 +20301,12 @@ avant elle ; D-264 apprendra au rendu à le lire.
    dette et la charge d'intérêts valent 0,668 fois ceux de la courbe.
 6. La vue figée donne les mêmes signes. Si C11 y rend la même part, Δb va de +0,156 à
    +1,560 point ; cette part n'y a pas été mesurée. Pour le `t_delta`, elle y était un peu
-   plus haute (D-262).
+   plus haute (D-265).
 7. Par point de baisse, le plancher reste moins autofinancé que le `t_delta` à chaque θ
    sous 1 : 33,2 % contre 38,0 % à θ = ½, 4,8 % contre 11,8 % à θ = 0. À θ = 1, les deux
    rendent 60 %.
 
-**Les biais déclarés.** Ceux de D-261, dans le même sens. Les personnes que C2 compte comme
+**Les biais déclarés.** Ceux de D-264, dans le même sens. Les personnes que C2 compte comme
 des temps pleins et le bas du coût par emploi du Trésor-Éco poussent vers une dette plus
 basse. L'impôt sur le revenu des emplois créés, leurs autres prestations et l'effet sur le
 PIB, absents, poussent vers une dette plus haute. Un de plus pour le plancher : à θ = 1, le
@@ -20321,13 +20321,13 @@ champ pour champ. Les lignes que le bouton réclame, lues sur le magasin : le po
 l'élasticité de C2 et les deux incidences de C3. Aucune passe de dimensionnement : les
 coûts sont ceux de la courbe, et le contrôle le vérifiera.
 
-**Ce qui suit.** La recherche, seule et en tâche de fond, sur ce commit. Puis D-264 : le
+**Ce qui suit.** La recherche, seule et en tâche de fond, sur ce commit. Puis D-267 : le
 résultat, le rendu des deux rejeux dans `docs/PREDICTIF_ETUDE.md`, et leurs gardes. La
 porte reste le `make full` du propriétaire.
 
-## D-264 — Le plancher rejoué avec son autofinancement, second temps : la réponse
+## D-267 — Le plancher rejoué avec son autofinancement, second temps : la réponse
 
-**Le fait.** La recherche préenregistrée dans D-263 a tourné sur le commit de son
+**Le fait.** La recherche préenregistrée dans D-266 a tourné sur le commit de son
 préenregistrement, `2002304`, en onze minutes : quatre paquets et huit passes. La
 réponse, sous les hypothèses de l'étude : avec son autofinancement, aucun relèvement du
 plancher ne fait baisser la dette en 2035, ni à θ = ½ ni pour aucun θ. C11 réduit l'écart
@@ -20335,7 +20335,7 @@ de la courbe de 33 % à θ = ½, et de 60 % au plus. La page `docs/PREDICTIF_ETU
 le rejeu dans sa propre section, après celle du `t_delta`, gardée contre la dérive comme le
 reste.
 
-**Le résultat.** Δb 2035 en points de PIB, vue vieillie : la courbe sans C11 (D-258), puis
+**Le résultat.** Δb 2035 en points de PIB, vue vieillie : la courbe sans C11 (D-261), puis
 avec, à θ = ½ et dans la boîte θ. Les deux persistances donnent les mêmes chiffres.
 
 | Paquet | coût 2026 | courbe | avec C11 | boîte θ, avec C11 |
@@ -20389,24 +20389,24 @@ dans l'ordre de leur préenregistrement : `etude/courbe_autofinancement/` pour l
 `t_delta`, `etude/courbe_autofinancement_plancher/` pour le plancher. Chacun a sa section,
 son commit, son entrée et ce qu'il laisse en plus ; leur contrôle est le même. Les parties
 d'avant sont inchangées, à l'octet, la section du `t_delta` comprise : rendue avec et sans
-le plancher, elle est la même. Les refus de D-262 valent pour chaque rejeu, nommé dans le
+le plancher, elle est la même. Les refus de D-265 valent pour chaque rejeu, nommé dans le
 message.
 
 Dans `tests/test_predictif_etude.py`, quinze cas nouveaux : les quatorze refus, rejoués
 pour le plancher, et la section du plancher, après celle du `t_delta`, avec son commit,
 son entrée, son répertoire et ce qu'il laisse en plus, la section du `t_delta` inchangée.
-Les quinze ont échoué sur le script de D-263. Le test de l'étude commitée tient les deux
+Les quinze ont échoué sur le script de D-266. Le test de l'étude commitée tient les deux
 rejeux, qui redonnent la courbe.
 
 Trente-trois mutations écrites à la main du script ont toutes été tuées. Vingt-trois
-sont celles de D-262 sur le chargement, le contrôle et la lecture, reprises sur le code
+sont celles de D-265 sur le chargement, le contrôle et la lecture, reprises sur le code
 devenu commun. Dix portent sur ce qui distingue les rejeux :
 - le plancher hors du menu, et les sections dans l'ordre de la courbe ;
 - le rejeu rattaché au seul `t_delta`, et la section d'un seul rejeu ;
 - ce que le plancher laisse en plus ;
 - l'entrée, le titre et le répertoire écrits pour le `t_delta` ;
 - la clé du contrôle, et le rapport nommé d'après le répertoire.
-Elles remplacent les deux de D-262 qui retiraient la section et son rattachement.
+Elles remplacent les deux de D-265 qui retiraient la section et son rattachement.
 
 Les tests de l'étude : 100 réussis. Avec ceux des explorations et de leur API, de la
 recherche et de ses indices, du comportement, de θ, de la chaîne, de la charte et des
@@ -20423,7 +20423,7 @@ fichier.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - Le `make full` du propriétaire.
 
-## D-265 — Les deux libellés de D-251 : le comportement demandé, et la couche entreprises
+## D-268 — Les deux libellés de D-251 : le comportement demandé, et la couche entreprises
 
 **Le fait.** D-251 avait relevé deux libellés faux dans les rapports, venus de M1 (D-244),
 et les avait laissés à leur propre entrée, pour ne pas changer le texte de rapports déjà
@@ -20454,9 +20454,9 @@ Sans comportement demandé, rien ne change : « non demandé » reste le libell�
 qui ne l'a pas demandé.
 
 **Une régression de la branche, corrigée.** `reports/exemple_predictif.json` et
-`docs/PREDICTIF_EXEMPLE.md` ne listaient pas la ligne ouverte de C11 (D-260). Le test qui
+`docs/PREDICTIF_EXEMPLE.md` ne listaient pas la ligne ouverte de C11 (D-263). Le test qui
 les tient, `tests/test_predictif_exemple.py`, ne tourne qu'avec les comptes APU et le
-document de Mésange ; il échouait depuis D-260, et n'avait pas été lancé alors. L'exemple
+document de Mésange ; il échouait depuis D-263, et n'avait pas été lancé alors. L'exemple
 est rendu de nouveau depuis sa première année, sans passe de population. Seule sa liste
 des θ gagne la ligne ; ses chiffres sont ceux d'avant, une baisse de l'IR n'ouvrant pas
 C11.
@@ -20490,19 +20490,19 @@ entreprises et des indices : 731 réussis et 4 sautés. `ruff` passe.
 - La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
 - Le `make full` du propriétaire.
 
-## D-266 — La fusion de D-255 : chaque salarié à son propre coût et à son propre poids
+## D-269 — La fusion de D-255 : chaque salarié à son propre coût et à son propre poids
 
 **Le fait.** La fusion #82 a posé sur `main` D-255 : C2 compté sur les ménages de la passe,
-à ses poids. C'est le défaut de D-256, trouvé à part et corrigé autrement. Sur `main`,
+à ses poids. C'est le défaut de D-259, trouvé à part et corrigé autrement. Sur `main`,
 chaque salarié porte encore le taux de son ménage, mais au poids que le sous-échantillon
-lui donne, le sien. Ici, depuis D-258, chacun répond à son propre coût, mais au poids moyen
+lui donne, le sien. Ici, depuis D-261, chacun répond à son propre coût, mais au poids moyen
 de son ménage. La fusion garde les deux : chacun à son propre coût, et à son propre poids.
 
 **Ce que D-255 avait vu.** Le sous-échantillon met chaque membre d'un ménage à l'échelle du
 même facteur, le poids du ménage dans la passe sur la moyenne de ses membres dans le cadre.
 Le poids moyen compte donc le membre le plus lourd trop peu, et le plus léger trop. Le
 runner note que l'enquête laisse des poids inégaux dans 1,5 % des ménages. Sur les passes de
-l'étude, l'écart est celui de D-255 à D-256, deux mesures du même correctif des poids :
+l'étude, l'écart est celui de D-255 à D-259, deux mesures du même correctif des poids :
 4 830 contre 4 832 emplois par milliard pour le plancher, 9 936 contre 9 939 pour le
 `t_delta`. Quelques dix-millièmes.
 
@@ -20512,14 +20512,14 @@ l'étude, l'écart est celui de D-255 à D-256, deux mesures du même correctif 
 - C2 et la bande étroite le lisent, sans plus de jointure au poids du ménage. Une passe
   sans ce poids échoue sur la colonne manquante.
 
-**Les rapports.** Les passes commitées de D-256 à D-264 ont lu les poids moyens des
+**Les rapports.** Les passes commitées de D-259 à D-267 ont lu les poids moyens des
 ménages. Rejouées sur le code fusionné, l'emploi de C2 bougerait de l'ordre de quelques
 dix-millièmes, et, par C11, l'écart des deux rejeux de la courbe d'environ un
 cent-millième de point : sous ce que la page montre. Elles ne sont pas rejouées.
 
 **La page.** Le script de l'étude porte la note de D-255, qui marque l'emploi de C2 des
 rapports comptés avant la correction. Elle ne s'affiche plus : pour chaque instrument qui
-montre C2, la page rend les rejeux de D-258 et D-259, comptés avec la correction le
+montre C2, la page rend les rejeux de D-261 et D-262, comptés avec la correction le
 2026-10-25. La page fusionnée est celle de la branche, à l'octet. Le test de `main` qui
 tenait la note datait la correction du 2026-10-26, et voulait la note sur chaque chiffre de
 C2 de la page : deux prémisses que l'arbre fusionné rend fausses. Il dit désormais :
