@@ -31,6 +31,12 @@ Past three years with the loop and no persistence named, both persistence scenar
 drawn side by side from the same passes, neither in the lead (D-230). A year priced
 without what was asked of it is refused, never read as a year without behaviour or
 without a shock.
+
+A FIRM REFORM ALONE, BEHAVIOUR ASKED (D-273). No household channel reads a firm knob, so
+its passes carry no inputs, and say so (`Priced.behaviour_asked`, D-268). Every year is
+then priced, the band absent with that reason, as the chain says it for one year: never
+« non demandé », and never refused as a year without what was asked of it. A path that
+reads its channels some years and none the others is refused: one reform, one answer.
 """
 
 from __future__ import annotations
@@ -271,17 +277,26 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
         if not whole:
             return chaine.ReformCosts(by_year=by_year)
         passes = {p.year: p.passes[view] for p in prices}
+        # A firm reform alone: no household channel reads it, and its passes say so.
+        unread = sorted(y for y, one in passes.items()
+                        if behavioural and one.inputs is None
+                        and getattr(one, "behaviour_asked", False))
         missing = sorted(y for y, one in passes.items()
-                         if (behavioural and one.inputs is None)
+                         if (behavioural and one.inputs is None and y not in unread)
                          or (macro and one.impulse is None))
         if missing:
             raise DebtError(
                 f"vue « {view} » : les passes de {missing} n'ont pas ce qui était demandé "
                 f"(entrées des canaux ou impulsion) — une année sans elles se lirait comme "
                 f"une année sans comportement ou sans choc.")
+        if unread and len(unread) != len(passes):
+            raise DebtError(
+                f"vue « {view} » : aucun canal des ménages ne lit la réforme en {unread}, "
+                f"et ses canaux la lisent les autres années — une seule réforme, une seule "
+                f"réponse, chaque année.")
         at = ({y: comportement.evaluate(theta, mechanical=-by_year[y], reform=reform,
                                         store=store, **dict(one.inputs))
-               for y, one in passes.items()} if behavioural else None)
+               for y, one in passes.items()} if behavioural and not unread else None)
         uncovered: dict[str, str] = {}
         for one in passes.values():
             uncovered.update(one.uncovered)
@@ -289,7 +304,7 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
             by_year=by_year, behavioural=at,
             impulses=({y: dict(one.impulse) for y, one in passes.items()} if macro
                       else None),
-            uncovered=uncovered)
+            uncovered=uncovered, behaviour_asked=bool(unread))
 
     def path(view: str, persistence: str | None) -> chaine.Trajectoire:
         return chaine.run(start, horizon=len(prices), costs=costs(view), spending=spending,

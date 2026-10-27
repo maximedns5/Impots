@@ -1355,7 +1355,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                 uprating=uprating, macro=args.macro, view=view, **firm_part)
             return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
                           uncovered=dict(first.uncovered),
-                          layers=getattr(first, "layers", None))
+                          layers=getattr(first, "layers", None),
+                          behaviour_asked=getattr(first, "behaviour_asked", False))
     try:
         prices = annuel.price_years(years, price,
                                     basis_for=lambda y: tj.basis_for("menages", y))

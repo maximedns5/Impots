@@ -176,6 +176,56 @@ def test_a_year_without_what_was_asked_of_it_is_refused(missing: str, needle: st
             _build(price=price)
 
 
+# --------------------------------------------------------------------------- #
+# a firm reform alone, behaviour asked: no household channel reads it (D-273)
+# --------------------------------------------------------------------------- #
+def _firm(year: int, view: str, *, asked: bool = True) -> Priced:
+    """A firm reform alone's pass, as `_price_first_year` gives it: no household channel's
+    inputs, an empty impulse, its cost in the firm layer, and behaviour asked or not."""
+    cost = _cost(year, view)
+    return Priced(cost=cost, inputs=None, impulse={}, behaviour_asked=asked,
+                  layers={"menages": 0.0, "entreprises": cost})
+
+
+def _build_firm(price, *, behavioural: bool) -> annuel.Rapport:
+    prices = annuel.price_years([2026, 2027, 2028], price, basis_for=lambda y: "legislated")
+    return annuel.build(START, prices, scenario="cvae", titre="La CVAE", source="test",
+                        reference="reconduit", computed="2026-10-27", spending=FROZEN,
+                        growth=GROWTH, rate=HELD, theta=HALF, uprating=UPRATING,
+                        uprating_note="", reform=ReformSpec(), behavioural=behavioural,
+                        macro=True, macro_store=synthetic_macro_store(),
+                        firm_note="couche entreprises")
+
+
+def test_a_firm_reform_alone_with_behaviour_asked_is_priced_and_says_why_unread() -> None:
+    """D-268's flag on the annual path (D-273). A firm reform alone has no household
+    channel to read: with behaviour asked, every year is priced, and the band and its θ
+    say no household channel reads a firm knob — not « non demandé », and not refused as
+    a year without what was asked of it. The path is the mechanical one, year by year."""
+    asked = _build_firm(_firm, behavioural=True)
+    assert asked.aged.absent["bande"] == chaine.NO_HOUSEHOLD_CHANNEL
+    assert asked.aged.absent["θ"] == chaine.THETA_NO_HOUSEHOLD_CHANNEL
+    assert asked.payload()["behavioural"]
+    unasked = _build_firm(lambda y, v: _firm(y, v, asked=False), behavioural=False)
+    assert unasked.aged.absent["bande"] == chaine.ABSENT_BAND
+    for view in ("aged", "frozen"):
+        assert getattr(asked, view).delta == getattr(unasked, view).delta
+
+
+def test_years_their_channels_read_beside_years_none_reads_are_refused() -> None:
+    """A path cannot read behaviour some years and say no household channel reads the
+    reform the others: one reform is one answer, every year (D-273)."""
+    def price(year: int, view: str) -> Priced:
+        if year != 2027:
+            return _firm(year, view)
+        cost = _cost(year, view)
+        return Priced(cost=cost, inputs=households(), impulse={},
+                      layers={"menages": 0.0, "entreprises": cost})
+
+    with pytest.raises(DebtError, match="aucun canal des ménages"):
+        _build_firm(price, behavioural=True)
+
+
 def test_behaviour_or_the_loop_without_a_theta_is_refused() -> None:
     """θ is required, with no default (D-217): the annual path refuses to build without
     it, before any receipts are read at a θ nobody chose."""
@@ -298,6 +348,38 @@ def test_what_the_whole_pass_cannot_honour_is_refused_before_any_pass(
     code, report = command["launch"]("--horizon", "3", *extra, base=base)
     assert code == 1 and report is None and command["seen"] == []
     assert needle in capsys.readouterr().err
+
+
+def test_the_command_prices_a_firm_reform_alone_with_behaviour_asked(command,
+                                                                    tmp_path) -> None:
+    """D-273, end to end: the CVAE halved, a firm reform alone, `--behavioural`. Every
+    year goes through the simulator's pass with its firm part, the pass says behaviour
+    was asked, and the report says no household channel reads the reform."""
+    seen: list = []
+
+    def stub(request, *, uprating, macro=False, view="vieillie", firm_reform=None,
+             growth=None):
+        seen.append((request.year, view, firm_reform is not None))
+        cost = _cost(request.year, view)
+        return SimpleNamespace(cost=cost, view=view, note="", deciles=[], inputs=None,
+                               impulse={} if macro else None, uncovered={},
+                               layers={"menages": 0.0, "entreprises": cost},
+                               behaviour_asked=bool(request.behavioural)
+                               and request.reform.is_empty())
+
+    command["monkeypatch"].setattr(main, "_price_first_year", stub)
+    command["monkeypatch"].setattr(main, "_firm_report_note",
+                                   lambda firm_reform=None, years=(): "couche entreprises")
+    base = ["predictif", "cvae_moitie_2026", *ARGS[2:]]
+    assert cli.main([*base, "--horizon", "3", "--behavioural",
+                     "--out-dir", str(tmp_path)]) == 0
+    report = json.loads((tmp_path / "predictif_cvae_moitie_2026.json").read_text(
+        encoding="utf-8"))
+    assert sorted(seen) == sorted((y, v, True) for y in (2026, 2027, 2028)
+                                  for v in ("vieillie", "figee"))
+    assert report["behavioural"]
+    assert report["absent"]["bande"] == chaine.NO_HOUSEHOLD_CHANNEL
+    PredictifReportResponse.model_validate(report)
 
 
 def test_the_first_year_is_the_simulators(command) -> None:
