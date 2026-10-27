@@ -280,8 +280,14 @@ class Trajectoire:
             tag = " (report)" if year in self.carried_years else ""
             out.append(f"  {year} : référence {self.reference[i]:.2%}, réforme "
                        f"{self.reform[i]:.2%}, écart {self.delta[i] * 100:+.3f} pt{tag}")
+        # Unread θ: behaviour not asked, or asked for a reform no household channel reads
+        # (D-268, D-273); the absent θ line below says which.
+        unread = ("" if self.theta_applied
+                  else " (non lus : aucun canal des ménages ne lit la réforme)"
+                  if self.absent.get("θ") == THETA_NO_HOUSEHOLD_CHANNEL
+                  else " (non lus : vue mécanique)")
         out.append("  θ : " + ", ".join(f"{k} = {v:g}" for k, v in self.theta.items())
-                   + ("" if self.theta_applied else " (non lus : vue mécanique)"))
+                   + unread)
         out.extend(f"  convention : {c}" for c in self.conventions)
         out.extend(f"  absent — {k} : {v}" for k, v in self.absent.items())
         out.extend(f"  fermé — {k} : {v}" for k, v in self.closed.items())

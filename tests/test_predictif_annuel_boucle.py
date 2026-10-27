@@ -363,6 +363,9 @@ def test_a_firm_reform_alone_with_behaviour_asked_is_priced_and_said_unread(
     assert payload["behavioural"] is True
     assert payload["absent"]["bande"] == chaine.NO_HOUSEHOLD_CHANNEL
     assert payload["absent"]["θ"] == chaine.THETA_NO_HOUSEHOLD_CHANNEL
+    # The command's own lines say it too: not « vue mécanique ».
+    line = next(x for x in rapport.paths[0].aged.lines() if x.startswith("  θ : "))
+    assert line.endswith("(non lus : aucun canal des ménages ne lit la réforme)")
     # The same reform without behaviour: its whole pass for the loop, its cost alone else.
     mechanical = _build_firm(
         (lambda y, v: _firm_alone(y, v, asked=False)) if macro
