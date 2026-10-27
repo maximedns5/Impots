@@ -21149,3 +21149,58 @@ l'autofinancement : 202 réussis. `ruff` passe sur `src`, `tests` et `scripts`, 
 - Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage : la courbe et
   ses deux premiers rejeux, non rejoués.
 - Le `make full` du propriétaire.
+
+## D-273 — Le chemin annuel chiffre une réforme des entreprises avec comportement demandé
+
+**Le fait.** `impots predictif` refusait une réforme des seules entreprises quand le
+comportement était demandé. Ses passes n'ont pas d'entrées des canaux des ménages, puisque
+la réforme ne règle aucun bouton des ménages. Chaque année se lisait donc comme une année
+privée de ce qui était demandé, et le refus de la garde 9 tombait. D-268 l'avait laissé :
+« il pourrait la chiffrer en disant ce que dit désormais la chaîne ». C'est fait.
+
+**Le code.** Les passes disent depuis D-268 que le comportement est demandé pour une
+réforme des seules entreprises (`behaviour_asked`). La commande porte ce drapeau dans
+`Priced`, comme l'explorateur. `annuel.build` chiffre alors chaque année, dans les deux
+vues, et la chaîne dit la bande absente avec sa raison : aucun canal des ménages ne lit un
+bouton des entreprises. Sans recette de comportement, le chemin est celui du chiffrage
+mécanique, année par année ; seul le libellé de la bande change.
+
+Deux refus tiennent ou viennent :
+- une année sans les entrées des canaux, et sans le drapeau, reste refusée (garde 9) ;
+- un chemin dont les canaux lisent certaines années et aucun canal les autres est refusé :
+  une réforme, une réponse, chaque année.
+
+**Deux mutations périmées du balayage.** `scripts/sweep_gardes_phase9.py` tient dans
+`MANUAL` les gardes qui ne sont pas des `raise`, chacune avec le texte exact qu'elle mute.
+D-268 avait changé deux de ces lignes, la bande absente de la chaîne et le `Priced` de
+l'explorateur, sans les y suivre : `tests/test_gardes_phase9.py` échouait sur `main`
+depuis D-268. Il n'avait pas été lancé alors. Les deux mutations visent les lignes
+d'aujourd'hui, avec la même intention ; rejouées une à une, elles sont tuées.
+
+**Les tests.** Dans `tests/test_predictif_annuel_boucle.py`, trois cas :
+- une réforme des seules entreprises avec comportement demandé, chiffrée chaque année, la
+  bande et sa ligne θ disant qu'aucun canal des ménages ne la lit ; le chemin est celui de
+  la même réforme sans comportement ;
+- des années que les canaux lisent à côté d'années qu'aucun ne lit, refusées ;
+- la commande sur `scenarios/cvae_moitie_2026.json`, la CVAE à moitié, avec
+  `--behavioural` : chaque année passe par la passe du simulateur avec sa part entreprises,
+  et le rapport dit la bande absente avec sa raison.
+
+Les trois ont échoué sur le code d'avant, sur le refus même que ce commit lève. Six
+mutations écrites à la main ont toutes été tuées : le drapeau ignoré, l'année toujours dite
+manquante, le mélange admis, la bande non dite, les canaux évalués sans entrées, la commande
+sans le drapeau. Le balayage `--missing` a traité la garde nouvelle : 227 mutations, 226
+tuées, une équivalente.
+
+Les tests du chemin annuel, des vues des entreprises, de la CVAE, des scénarios, des
+entreprises dans la chaîne, des commandes, de l'API prédictive, de la chaîne, de l'exemple,
+de l'étude, du balayage, des explorations, de la recherche et de ses indices, des indices,
+du comportement, de l'autofinancement, de θ, de la charte, des dépendances et de l'API : 743
+réussis et 2 sautés. `ruff` et `ui/check.mjs` passent.
+
+**Ce qui reste.**
+- L'étude à θ = 0 et θ = 1, et sur le chemin annuel.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
+- Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage, non rejoués.
+- Le `make full` du propriétaire.

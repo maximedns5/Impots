@@ -1,6 +1,13 @@
 # State of the project, and the directions open — 2026-10-27 (Phase 11, M0 to M6)
 
-The sixth 2026-10-27 update adds D-272: the curve replayed with the reconciled C11 has run
+The seventh 2026-10-27 update adds D-273: `impots predictif` now prices a firm reform alone
+with behaviour asked, year by year, rather than refusing it. Its passes have no household
+channel's inputs and say so (D-268); the path is the mechanical one, and the band says no
+household channel reads a firm knob. A path read by its channels some years and by none
+the others is refused. Two of the guard sweep's hand-written mutations had gone stale with
+D-268, and `tests/test_gardes_phase9.py` failed on main: they target today's lines and
+are killed. Six hand mutants killed; the sweep, 227 mutations, 226 killed.
+The sixth 2026-10-27 update added D-272: the curve replayed with the reconciled C11 has run
 on its preregistration commit, `fd83fce`, and `docs/PREDICTIF_ETUDE.md` renders it in its
 own section. No bundle lowers the 2035 debt, at θ = ½ or at any of its 32 corners: Δb is
 +0.196 to +1.372 point for the `t_delta` and +0.159 to +1.585 for the floor, C11 bringing

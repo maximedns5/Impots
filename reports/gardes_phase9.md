@@ -2,9 +2,9 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-26 sur le commit `7cce10c81ab9` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-27 sur le commit `7cf73c07aef4` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
-**226 mutations** : 225 tuées, 1 équivalente avec sa raison, 0 survivante.
+**227 mutations** : 226 tuées, 1 équivalente avec sa raison, 0 survivante.
 
 | Mutation | Garde | Verdict | Étage | Tuée par |
 |---|---|---|---|---|
@@ -20,6 +20,7 @@ Balayé le 2026-10-26 sur le commit `7cce10c81ab9` (D-229). Chaque garde est mut
 | `predictif/annuel:build:si:bare` | build — si bare | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_a_year_without_what_was_asked_of_it_is_refused[cost |
 | `predictif/annuel:build:si:theta is None` | build — si theta is None | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_behaviour_or_the_loop_without_a_theta_is_refused |
 | `predictif/annuel:costs:si:missing` | costs — si missing | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_a_year_without_what_was_asked_of_it_is_refused[impulse-entr\xe9es |
+| `predictif/annuel:costs:si:unread and len(unread) != len(passes)` | costs — si unread and len(unread) != len(passes) | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_years_their_channels_read_beside_years_none_reads_are_refused |
 | `predictif/chaine:_costs_by_year:si:priced[0] != years[0] or priced != list(range(priced[0], priced[0] ...` | _costs_by_year — si priced[0] != years[0] or priced != list(range(priced[0], priced[0] ... | tuée | ciblé | tests/test_predictif.py::test_priced_years_with_a_gap_or_a_late_start_are_refused |
 | `predictif/chaine:_costs_by_year:si:priced[-1] > years[-1]` | _costs_by_year — si priced[-1] > years[-1] | tuée | ciblé | tests/test_predictif.py::test_priced_years_past_the_horizon_are_refused_rather_than_dropped |
 | `predictif/chaine:_costs_by_year:si:missing and costs.carry is None` | _costs_by_year — si missing and costs.carry is None | tuée | ciblé | tests/test_predictif.py::test_unpriced_years_are_refused_without_the_named_convention |
