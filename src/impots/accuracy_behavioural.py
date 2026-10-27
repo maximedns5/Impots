@@ -212,7 +212,7 @@ def inputs_for(reform_spec: Any, *, year: int = 2024, households: int = 4000,
     if agg.reform_cost is None:
         raise AttributionError("la réforme de référence ne rend aucun coût")
 
-    employer = api_main._employer_inputs(request, frame, run.households, agg)
+    employer = api_main._employer_inputs(request, run, agg)
     emtr_result = emtr_module.cached(frame, "a0", year=year, reform=reform_spec,
                                      sample=households)
     priced = emtr_result.with_earnings

@@ -310,6 +310,7 @@
     }
    ],
    "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
     "dividend_elasticity_firm_owners": 0.5,
     "dividend_elasticity_other_holders": 0.5,
     "dividend_share_firm_owners": 0.5,
@@ -327,7 +328,6 @@
     "passthrough_unlinked": 0.5,
     "production_tax_investment": 0.5,
     "rd_cir_multiplier": 0.5,
-    "targeted_cut_self_financing": 0.5,
     "wealth_disclosure_growth_effect_pp": 0.5,
     "wealth_tax_rate_elasticity": 0.5,
     "multiplicateur_macro": 0.5
@@ -547,6 +547,7 @@
     }
    ],
    "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
     "dividend_elasticity_firm_owners": 0.5,
     "dividend_elasticity_other_holders": 0.5,
     "dividend_share_firm_owners": 0.5,
@@ -564,7 +565,6 @@
     "passthrough_unlinked": 0.5,
     "production_tax_investment": 0.5,
     "rd_cir_multiplier": 0.5,
-    "targeted_cut_self_financing": 0.5,
     "wealth_disclosure_growth_effect_pp": 0.5,
     "wealth_tax_rate_elasticity": 0.5,
     "multiplicateur_macro": 0.5
@@ -735,6 +735,7 @@
     }
    ],
    "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
     "dividend_elasticity_firm_owners": 0.5,
     "dividend_elasticity_other_holders": 0.5,
     "dividend_share_firm_owners": 0.5,
@@ -752,7 +753,6 @@
     "passthrough_unlinked": 0.5,
     "production_tax_investment": 0.5,
     "rd_cir_multiplier": 0.5,
-    "targeted_cut_self_financing": 0.5,
     "wealth_disclosure_growth_effect_pp": 0.5,
     "wealth_tax_rate_elasticity": 0.5
    },

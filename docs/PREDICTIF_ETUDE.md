@@ -8,9 +8,11 @@
 
 ## Préenregistrée
 
-Les quatre requêtes, une par instrument, sont sous `etude/`. Elles ont été commitées avant toute passe, avec le pronostic écrit dans D-237. Chaque rapport a joué la requête commitée, à l'identique, sur le même commit : `e0c3d7fe901b320e9b0b3c8ed1e39f8c678223d5`, le 2026-10-21. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+Les quatre requêtes, une par instrument, sont sous `etude/`. Elles ont été commitées avant toute passe, avec le pronostic écrit dans D-237. Chaque rapport a joué la requête commitée, à l'identique, sur le même commit : `d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56`, le 2026-10-25. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
 
 Un premier tour a tourné sur le commit du préenregistrement, `6dab3a404722c57f53f3f2cc60c9cc98b2dc6f7f`. Ses rapports ne portaient pas ce qui manque à la chaîne : la boucle absente pour le plafond de la réduction générale des cotisations employeurs s'y serait lue comme nulle (D-238). Le second tour le porte, et redonne le premier chiffre pour chiffre : `reports/etude_premier_tour/` le garde, et le rendu refuse de tourner si un seul chiffre diffère.
+
+Un troisième tour a tourné sur `d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56` : le commit du second tour, `e0c3d7fe901b320e9b0b3c8ed1e39f8c678223d5`, avec les seules corrections de C2. L'emploi au voisinage du SMIC du second tour ne lisait que 15 % des salariés (D-259), et prêtait à chacun le changement du coût du travail de son ménage (D-261). C2 n'entre ni dans les recettes ni dans la dette, et le troisième tour redonne le second chiffre pour chiffre sur les coûts, les Δb et les coins de la boîte θ : `reports/etude_second_tour/` le garde, et le rendu refuse de tourner si un seul chiffre diffère. Les rapports lus ici sont ceux du troisième tour.
 
 ## Le cadre
 
@@ -129,7 +131,7 @@ Paquet le plus proche de la cible : **3,5 SMIC**.
 | Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
 | Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
 | Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +227 [+170 ; +270] ; compté avant D-255, sur des entrées que le sous-échantillon diluait : de 5,8 à 6,5 fois trop bas selon le paquet. La dette n'en dépend pas |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +0,00 |
 | Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +5,83 [−12,49 ; +24,16] ; à 2 ans : +16,28 [−2,25 ; +34,81] ; à 3 ans : +23,27 [+4,07 ; +42,46] |
 | Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
 | Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
@@ -241,7 +243,9 @@ Joué après le résultat de l'étude, et hors de son préenregistrement. Chaque
 
 Le plafond de la réduction générale reclassé sous la variante uniforme de Mésange, qui a sa ligne de solde (D-239) : un relèvement de 3 SMIC à 3,5, 4,5, 5,5 ou 6,5 SMIC fait-il baisser la dette en 2035, et pour quels θ ? Joué après le résultat de l'étude, hors préenregistrement.
 
-Commit `cacd43af7a5a506d476cfcbc454a58439d1e614b`, le 2026-10-21, ici : un conteneur cloud de Claude Code, en tâche de fond.
+Commit `ce40f2ce0597bab77d00f919e88b88466d72add7`, le 2026-10-25, ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+Un premier tour a tourné sur `cacd43af7a5a506d476cfcbc454a58439d1e614b`. Son emploi au voisinage du SMIC (C2) ne lisait que 15 % des salariés (D-259), et prêtait à chacun le changement du coût du travail de son ménage (D-261). Le second tour, sur le code du premier et les seules corrections de C2, corrige les deux. C2 n'entre ni dans les recettes ni dans la dette, et le second tour redonne le premier chiffre pour chiffre sur les coûts, les Δb et les coins de la boîte θ : `reports/complements_premier_tour/` le garde, et le rendu refuse de tourner si un seul chiffre diffère.
 
 **Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 3,5 SMIC, laisse Δb = +0,47 pt. Elle ne baisse à aucun coin de la boîte θ. Dans l'étude, le même paquet laissait Δb = +0,55 pt.
 
@@ -263,7 +267,9 @@ Commit `cacd43af7a5a506d476cfcbc454a58439d1e614b`, le 2026-10-21, ici : un conte
 
 ## La courbe de 2026, préenregistrée à part
 
-Depuis la refonte de 2026, la réduction générale est une courbe, et l'étude n'en chiffrait que le plafond, qui n'est plus que son seuil de sortie (D-239). Les boutons de la courbe (D-240) sont rejoués ici, après l'étude, et préenregistrés à part : les requêtes sous `etude/courbe/` ont été commitées avant toute passe, avec le pronostic écrit dans D-241. Chacune tient le cadre de l'étude champ pour champ ; seuls son nom, son titre, sa question et sa grille diffèrent. Chaque rapport a joué sa requête, à l'identique, sur le même commit : `893e4de1f8908f6b2d15af6192250494e386a065`, le 2026-10-23. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+Depuis la refonte de 2026, la réduction générale est une courbe, et l'étude n'en chiffrait que le plafond, qui n'est plus que son seuil de sortie (D-239). Les boutons de la courbe (D-240) sont rejoués ici, après l'étude, et préenregistrés à part : les requêtes sous `etude/courbe/` ont été commitées avant toute passe, avec le pronostic écrit dans D-241. Chacune tient le cadre de l'étude champ pour champ ; seuls son nom, son titre, sa question et sa grille diffèrent. Chaque rapport a joué sa requête, à l'identique, sur le même commit : `3ba628c260bbd2b1c3f6cd51d5d13af5ea3c5db5`, le 2026-10-25. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+Un premier tour a tourné sur le commit du préenregistrement, `893e4de1f8908f6b2d15af6192250494e386a065`. Son emploi au voisinage du SMIC (C2) ne lisait que 15 % des salariés (D-259), et prêtait à chacun le changement du coût du travail de son ménage (D-261). Le second tour corrige les deux. C2 n'entre ni dans les recettes ni dans la dette, et le second tour redonne le premier chiffre pour chiffre sur les coûts, les Δb et les coins de la boîte θ : `reports/courbe_premier_tour/` le garde, et le rendu refuse de tourner si un seul chiffre diffère.
 
 | Instrument | Bouton | Grille | Coût 2026, vieillie |
 |---|---|---|---|
@@ -314,7 +320,7 @@ Paquet le plus proche de la cible : **2,1 %**.
 | Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
 | Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
 | Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +570 [+430 ; +676] ; compté avant D-255, sur des entrées que le sous-échantillon diluait : de 5,8 à 6,5 fois trop bas selon le paquet. La dette n'en dépend pas |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +4 077 [+3 068 ; +4 833] |
 | Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +2,50 [−5,35 ; +10,35] ; à 2 ans : +6,98 [−0,96 ; +14,91] ; à 3 ans : +9,97 [+1,74 ; +18,19] |
 | Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
 | Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
@@ -363,7 +369,7 @@ Paquet le plus proche de la cible : **38,31 %**.
 | Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
 | Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
 | Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +1 558 [+1 150 ; +1 864] ; compté avant D-255, sur des entrées que le sous-échantillon diluait : de 5,8 à 6,5 fois trop bas selon le paquet. La dette n'en dépend pas |
+| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +13 408 [+9 840 ; +16 083] |
 | Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +3,28 [−7,04 ; +13,61] ; à 2 ans : +9,17 [−1,26 ; +19,61] ; à 3 ans : +13,11 [+2,29 ; +23,92] |
 | Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
 | Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
@@ -536,107 +542,137 @@ Avec les salaires que les propriétaires de firme cessent de se verser, une bais
 
 **Ce que ce chiffre ne compte pas.** Les plus-values futures dont les dividendes induits sont tirés, taxées plus bas que le dividende : vers une dette plus haute. Le salaire déplacé est mesuré sur le cas de la figure A2 de Bach et al., un salarié célibataire à six plafonds de la sécurité sociale ; un gérant majoritaire de SARL, travailleur non salarié, cotise moins, et chaque euro qu'il déplace reprend moins : vers une dette plus basse. Le canal compte le déplacement dès la première année, quand les auteurs ne le trouvent qu'à partir de la deuxième, et les droits à retraite que les cotisations perdues ouvraient sont hors de l'horizon. La variante de l'IR de Mésange et la CDHR, comme au menu élargi.
 
-## La courbe rejouée avec l'autofinancement des baisses ciblées
+## Le `t_delta` de la courbe rejoué avec son autofinancement
 
-La courbe de 2026 n'avait ni boucle ni retour des emplois qu'elle crée (D-242). Le choix du propriétaire pour R5 les fait entrer dans les recettes : C11 rend une part du coût statique, de la lecture de C2 à θ = 0, ses emplois valorisés chacun à ce qu'un emploi au SMIC rapporte en 2026, à celle du Trésor-Éco n° 97 à θ = 1, 60 %, par son bas, 30 %, à θ = ½ (D-256). Les requêtes sous `etude/courbe_autofinancement/` rejouent celles de la courbe champ pour champ ; seuls leurs nom, titre et question diffèrent. Elles ont été commitées avant leur passe, avec le pronostic écrit dans D-256. Chaque rapport a joué sa requête, à l'identique, sur le même commit : `23f8dc8498c741b016640685631ccb432e2210b5`, le 2026-10-27. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+La courbe rejouée plus haut chiffrait le `t_delta` sans rien de ce qu'une baisse ciblée rend : Mésange n'a pas de ligne de solde pour sa variante ciblée, et les emplois de C2 n'entraient pas dans les recettes. D-263 y fait entrer C11 : une part de la baisse revient, de la lecture de C2, ses emplois valorisés à 12 000 € l'un, à θ = 0, à 60 % à θ = 1, celle du Trésor-Éco n° 97. La requête sous `etude/courbe_autofinancement/` rejoue celle du `t_delta` de la courbe champ pour champ ; seuls son nom, son titre et sa question diffèrent. Elle a été commitée avant ses passes, avec le pronostic écrit dans D-264. Le rapport a joué sa requête, à l'identique, sur le commit `847f51903e0969e061c8558c3c48169c6b3f515b`, le 2026-10-26. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
 
-### Le plancher t_min de la réduction générale de 2026, avec l'autofinancement
+Avec l'autofinancement d'une baisse ciblée de cotisations (C11), un relèvement du t_delta de la courbe de 2026, de 37,81 % à 38,31, 39,31, 40,31 ou 41,31 %, fait-il baisser la dette en 2035, et pour quels θ ?
 
-Le plancher t_min relevé de 2 % à 2,1, 2,4, 2,7 ou 3 %, avec ce que les emplois créés rendent (C11, de la lecture de C2 à celle du Trésor-Éco n° 97), fait-il baisser la dette en 2035, et pour quels θ ?
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,19 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 38,31 %, +0,31 pt ; 39,31 %, +0,93 pt ; 40,31 %, +1,55 pt ; 41,31 %, +2,17 pt.
 
-**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,16 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, sur la courbe de D-242, Δb valait, vue vieillie : 2,1 %, +0,24 pt ; 2,4 %, +0,94 pt ; 2,7 %, +1,65 pt ; 3 %, +2,35 pt.
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,19 pt | +0,21 pt | [+0,12 pt ; +0,27 pt] | aucun des 32 |
+| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,58 pt | +0,63 pt | [+0,37 pt ; +0,82 pt] | aucun des 32 |
+| 40,31 % | 5,01 Md€ | 5,48 Md€ | +0,96 pt | +1,04 pt | [+0,62 pt ; +1,37 pt] | aucun des 32 |
+| 41,31 % | 7,01 Md€ | 7,67 Md€ | +1,34 pt | +1,46 pt | [+0,87 pt ; +1,91 pt] | aucun des 32 |
+
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,19 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 38,31 %, +0,31 pt ; 39,31 %, +0,93 pt ; 40,31 %, +1,55 pt ; 41,31 %, +2,17 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,19 pt | +0,21 pt | [+0,12 pt ; +0,27 pt] | aucun des 32 |
+| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,58 pt | +0,63 pt | [+0,37 pt ; +0,82 pt] | aucun des 32 |
+| 40,31 % | 5,01 Md€ | 5,48 Md€ | +0,96 pt | +1,04 pt | [+0,62 pt ; +1,37 pt] | aucun des 32 |
+| 41,31 % | 7,01 Md€ | 7,67 Md€ | +1,34 pt | +1,46 pt | [+0,87 pt ; +1,91 pt] | aucun des 32 |
+
+**Ce qui manque à la chaîne**, pour le paquet le plus proche : absent, et non nul.
+
+- rétroaction : aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cotisations_employeurs_ciblees': "pas de ligne de solde dans Mésange (variante ciblée, encadré 14) : ni rétroaction ni effet sur le PIB, plutôt que la moitié d'une variante"}
+
+**Le contrôle.** Aux coins où le poids de C11 vaut 1, C11 rend 60 % de la baisse quelle que soit l'élasticité de C2 : le rejeu doit y redonner 0,40 fois l'écart de la courbe, ses coûts les siens, et les indices du paquet le plus proche hors de la chaîne, l'emploi de C2 et de Mésange compris, les siens. Il les redonne. L'écart le plus grand vaut 0,000000 pt sur les coins, 0 € sur les coûts et 0,000000 sur les indices, dans leur unité.
+
+**Ce que ce chiffre ne compte pas.** C2 compte des personnes, au coût annuel de leur propre travail, quand les 12 000 € du Trésor-Éco n° 97 sont le retour d'un emploi à temps plein : à θ = 0, la part est sans doute trop haute. θ = 1 lit le bas du coût brut par emploi des allègements de 1993 à 1997, 20 000 € sur 20 000 à 40 000 €, et la note envisage elle-même un coût doublé pour la seconde vague. Les deux vont vers une dette plus basse. Les 12 000 € sont de 2009, tenus tels : au SMIC de 2026, la réduction générale laisse peu de cotisations patronales, et le RSA a été revalorisé, dans un sens que le projet ne mesure pas. C11 ne compte ni l'impôt sur le revenu des emplois créés, ni leurs autres prestations, ni l'allocation chômage évitée au-delà du RSA, ni l'effet sur le PIB, que Mésange ne chiffre pas pour sa variante ciblée : vers une dette plus haute. Un tour seulement : les recettes de C11 ne relancent rien.
+
+## Le plancher `t_min` de la courbe rejoué avec son autofinancement
+
+La courbe rejouée plus haut chiffrait le plancher `t_min` sans rien de ce qu'une baisse ciblée rend : Mésange n'a pas de ligne de solde pour sa variante ciblée, et les emplois de C2 n'entraient pas dans les recettes. D-263 y fait entrer C11 : une part de la baisse revient, de la lecture de C2, ses emplois valorisés à 12 000 € l'un, à θ = 0, à 60 % à θ = 1, celle du Trésor-Éco n° 97. La requête sous `etude/courbe_autofinancement_plancher/` rejoue celle du plancher `t_min` de la courbe champ pour champ ; seuls son nom, son titre et sa question diffèrent. Elle a été commitée avant ses passes, avec le pronostic écrit dans D-266. Le rapport a joué sa requête, à l'identique, sur le commit `2002304f2e65afb497c91a9443377a8fae3a50da`, le 2026-10-26. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+Avec l'autofinancement d'une baisse ciblée de cotisations (C11), un relèvement du plancher t_min de la courbe de 2026, de 2 % à 2,1, 2,4, 2,7 ou 3 %, fait-il baisser la dette en 2035, et pour quels θ ?
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,16 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 2,1 %, +0,24 pt ; 2,4 %, +0,94 pt ; 2,7 %, +1,65 pt ; 3 %, +2,35 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 2,1 % | 0,76 Md€ | 0,76 Md€ | +0,16 pt | +0,16 pt | [+0,09 pt ; +0,22 pt] | aucun des 32 |
+| 2,4 % | 3,05 Md€ | 3,02 Md€ | +0,63 pt | +0,62 pt | [+0,38 pt ; +0,90 pt] | aucun des 32 |
+| 2,7 % | 5,34 Md€ | 5,29 Md€ | +1,10 pt | +1,09 pt | [+0,66 pt ; +1,57 pt] | aucun des 32 |
+| 3 % | 7,62 Md€ | 7,56 Md€ | +1,57 pt | +1,55 pt | [+0,94 pt ; +2,24 pt] | aucun des 32 |
+
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,16 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 2,1 %, +0,24 pt ; 2,4 %, +0,94 pt ; 2,7 %, +1,65 pt ; 3 %, +2,35 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 2,1 % | 0,76 Md€ | 0,76 Md€ | +0,16 pt | +0,16 pt | [+0,09 pt ; +0,22 pt] | aucun des 32 |
+| 2,4 % | 3,05 Md€ | 3,02 Md€ | +0,63 pt | +0,62 pt | [+0,38 pt ; +0,90 pt] | aucun des 32 |
+| 2,7 % | 5,34 Md€ | 5,29 Md€ | +1,10 pt | +1,09 pt | [+0,66 pt ; +1,57 pt] | aucun des 32 |
+| 3 % | 7,62 Md€ | 7,56 Md€ | +1,57 pt | +1,55 pt | [+0,94 pt ; +2,24 pt] | aucun des 32 |
+
+**Ce qui manque à la chaîne**, pour le paquet le plus proche : absent, et non nul.
+
+- rétroaction : aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cotisations_employeurs_ciblees': "pas de ligne de solde dans Mésange (variante ciblée, encadré 14) : ni rétroaction ni effet sur le PIB, plutôt que la moitié d'une variante"}
+
+**Le contrôle.** Aux coins où le poids de C11 vaut 1, C11 rend 60 % de la baisse quelle que soit l'élasticité de C2 : le rejeu doit y redonner 0,40 fois l'écart de la courbe, ses coûts les siens, et les indices du paquet le plus proche hors de la chaîne, l'emploi de C2 et de Mésange compris, les siens. Il les redonne. L'écart le plus grand vaut 0,000000 pt sur les coins, 0 € sur les coûts et 0,000000 sur les indices, dans leur unité.
+
+**Ce que ce chiffre ne compte pas.** C2 compte des personnes, au coût annuel de leur propre travail, quand les 12 000 € du Trésor-Éco n° 97 sont le retour d'un emploi à temps plein : à θ = 0, la part est sans doute trop haute. θ = 1 lit le bas du coût brut par emploi des allègements de 1993 à 1997, 20 000 € sur 20 000 à 40 000 €, et la note envisage elle-même un coût doublé pour la seconde vague. Les deux vont vers une dette plus basse. Les 12 000 € sont de 2009, tenus tels : au SMIC de 2026, la réduction générale laisse peu de cotisations patronales, et le RSA a été revalorisé, dans un sens que le projet ne mesure pas. C11 ne compte ni l'impôt sur le revenu des emplois créés, ni leurs autres prestations, ni l'allocation chômage évitée au-delà du RSA, ni l'effet sur le PIB, que Mésange ne chiffre pas pour sa variante ciblée : vers une dette plus haute. Un tour seulement : les recettes de C11 ne relancent rien. Le Trésor-Éco n° 97 lit des allègements sur les bas salaires, quand le plancher porte la baisse jusqu'à 3 SMIC, où C2 ne répond plus dès 2 SMIC : ses 60 % y sont sans doute plus loin encore de ce que la baisse rend, vers une dette plus basse.
+
+## La courbe rejouée avec l'autofinancement réconcilié
+
+Les rejeux qui précèdent valorisaient les emplois de C2 à 12 000 € l'un, le retour d'un emploi selon le Trésor-Éco n° 97, en euros de 2009. D-270 réconcilie C11 : ses emplois y valent ce qu'un emploi au SMIC rapporte aux finances publiques l'année de la réforme, mesuré sur le moteur (D-256), ses cotisations, sa CSG, sa CRDS, son impôt sur le revenu et le RSA qu'il évite, moins la prime d'activité qu'il ouvre. θ = 1 reste la part du Trésor-Éco, 60 %. Les requêtes sous `etude/courbe_autofinancement_mesure/` rejouent celles de la courbe champ pour champ ; seuls leurs noms, leurs titres et leurs questions diffèrent. Elles ont été commitées avant leurs passes, avec le pronostic écrit dans D-271. Les rapports ont joué leurs requêtes, à l'identique, sur le commit `fd83fcee48db94fd774d2843d260b2bee2cfc40d`, le 2026-10-27. Les passes ont tourné ici : un conteneur cloud de Claude Code, en tâche de fond.
+
+### Le `t_delta`
+
+Avec l'autofinancement réconcilié d'une baisse ciblée de cotisations (C11), les emplois de C2 valorisés à ce qu'un emploi au SMIC rapporte en 2026, mesuré sur le moteur, un relèvement du t_delta de la courbe de 2026, de 37,81 % à 38,31, 39,31, 40,31 ou 41,31 %, fait-il baisser la dette en 2035, et pour quels θ ?
+
+À θ = ½, en vue vieillie, C11 rend 36,69 % de la baisse de chaque paquet, contre 38,03 % à 12 000 € l'emploi (D-264).
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,20 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 38,31 %, +0,31 pt ; 39,31 %, +0,93 pt ; 40,31 %, +1,55 pt ; 41,31 %, +2,17 pt. À 12 000 € l'emploi : 38,31 %, +0,19 pt ; 39,31 %, +0,58 pt ; 40,31 %, +0,96 pt ; 41,31 %, +1,34 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,20 pt | +0,21 pt | [+0,12 pt ; +0,28 pt] | aucun des 32 |
+| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,59 pt | +0,64 pt | [+0,37 pt ; +0,84 pt] | aucun des 32 |
+| 40,31 % | 5,01 Md€ | 5,48 Md€ | +0,98 pt | +1,07 pt | [+0,62 pt ; +1,40 pt] | aucun des 32 |
+| 41,31 % | 7,01 Md€ | 7,67 Md€ | +1,37 pt | +1,49 pt | [+0,87 pt ; +1,95 pt] | aucun des 32 |
+
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,20 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 38,31 %, +0,31 pt ; 39,31 %, +0,93 pt ; 40,31 %, +1,55 pt ; 41,31 %, +2,17 pt. À 12 000 € l'emploi : 38,31 %, +0,19 pt ; 39,31 %, +0,58 pt ; 40,31 %, +0,96 pt ; 41,31 %, +1,34 pt.
+
+| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
+|---|---|---|---|---|---|---|
+| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,20 pt | +0,21 pt | [+0,12 pt ; +0,28 pt] | aucun des 32 |
+| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,59 pt | +0,64 pt | [+0,37 pt ; +0,84 pt] | aucun des 32 |
+| 40,31 % | 5,01 Md€ | 5,48 Md€ | +0,98 pt | +1,07 pt | [+0,62 pt ; +1,40 pt] | aucun des 32 |
+| 41,31 % | 7,01 Md€ | 7,67 Md€ | +1,37 pt | +1,49 pt | [+0,87 pt ; +1,95 pt] | aucun des 32 |
+
+**Ce qui manque à la chaîne**, pour le paquet le plus proche : absent, et non nul.
+
+- rétroaction : aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cotisations_employeurs_ciblees': "pas de ligne de solde dans Mésange (variante ciblée, encadré 14) : ni rétroaction ni effet sur le PIB, plutôt que la moitié d'une variante"}
+
+**Le contrôle.** Aux coins où le poids de C11 vaut 1, C11 rend 60 % de la baisse quelle que soit la valeur d'un emploi et l'élasticité de C2 : le rejeu doit y redonner 0,40 fois l'écart de la courbe, et ses coûts les siens. Il les redonne : l'écart le plus grand vaut 0,000000 pt sur les coins et 0 € sur les coûts. Hors de la chaîne, les indices du paquet le plus proche sont ceux de la courbe, sauf : Emploi au voisinage du SMIC, de 48,63 emplois, au plus. C2 y compte chacun à son propre poids dans la passe (D-269), quand la courbe le comptait au poids moyen de son ménage.
+
+**Ce que ce chiffre ne compte pas.** C2 compte des personnes, au coût annuel de leur propre travail, chacune à la valeur d'un emploi à temps plein au SMIC : à θ = 0, la part est sans doute trop haute. θ = 1 lit le bas du coût brut par emploi des allègements de 1993 à 1997, 20 000 € sur 20 000 à 40 000 €, et la note envisage elle-même un coût doublé pour la seconde vague. Les deux vont vers une dette plus basse. La valeur d'un emploi est celle d'un célibataire sans enfant ni loyer : C11 ne compte ni les prestations d'un autre ménage, ni l'allocation chômage évitée au-delà du RSA, ni l'effet sur le PIB, que Mésange ne chiffre pas pour sa variante ciblée, vers une dette plus haute. Un tour seulement : les recettes de C11 ne relancent rien.
+
+### Le plancher `t_min`
+
+Avec l'autofinancement réconcilié d'une baisse ciblée de cotisations (C11), les emplois de C2 valorisés à ce qu'un emploi au SMIC rapporte en 2026, mesuré sur le moteur, un relèvement du plancher t_min de la courbe de 2026, de 2 % à 2,1, 2,4, 2,7 ou 3 %, fait-il baisser la dette en 2035, et pour quels θ ?
+
+À θ = ½, en vue vieillie, C11 rend 32,68 % de la baisse de chaque paquet, contre 33,21 % à 12 000 € l'emploi (D-266).
+
+**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,16 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 2,1 %, +0,24 pt ; 2,4 %, +0,94 pt ; 2,7 %, +1,65 pt ; 3 %, +2,35 pt. À 12 000 € l'emploi : 2,1 %, +0,16 pt ; 2,4 %, +0,63 pt ; 2,7 %, +1,10 pt ; 3 %, +1,57 pt.
 
 | Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
 |---|---|---|---|---|---|---|
 | 2,1 % | 0,76 Md€ | 0,76 Md€ | +0,16 pt | +0,16 pt | [+0,09 pt ; +0,23 pt] | aucun des 32 |
-| 2,4 % | 3,05 Md€ | 3,02 Md€ | +0,66 pt | +0,65 pt | [+0,38 pt ; +0,91 pt] | aucun des 32 |
-| 2,7 % | 5,34 Md€ | 5,29 Md€ | +1,15 pt | +1,14 pt | [+0,66 pt ; +1,59 pt] | aucun des 32 |
-| 3 % | 7,62 Md€ | 7,56 Md€ | +1,65 pt | +1,63 pt | [+0,94 pt ; +2,27 pt] | aucun des 32 |
+| 2,4 % | 3,05 Md€ | 3,02 Md€ | +0,63 pt | +0,63 pt | [+0,38 pt ; +0,90 pt] | aucun des 32 |
+| 2,7 % | 5,34 Md€ | 5,29 Md€ | +1,11 pt | +1,10 pt | [+0,66 pt ; +1,58 pt] | aucun des 32 |
+| 3 % | 7,62 Md€ | 7,56 Md€ | +1,59 pt | +1,56 pt | [+0,94 pt ; +2,26 pt] | aucun des 32 |
 
-**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,16 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, sur la courbe de D-242, Δb valait, vue vieillie : 2,1 %, +0,24 pt ; 2,4 %, +0,94 pt ; 2,7 %, +1,65 pt ; 3 %, +2,35 pt.
+**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 2,1 %, laisse Δb = +0,16 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, à la courbe, Δb valait, vue vieillie : 2,1 %, +0,24 pt ; 2,4 %, +0,94 pt ; 2,7 %, +1,65 pt ; 3 %, +2,35 pt. À 12 000 € l'emploi : 2,1 %, +0,16 pt ; 2,4 %, +0,63 pt ; 2,7 %, +1,10 pt ; 3 %, +1,57 pt.
 
 | Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
 |---|---|---|---|---|---|---|
 | 2,1 % | 0,76 Md€ | 0,76 Md€ | +0,16 pt | +0,16 pt | [+0,09 pt ; +0,23 pt] | aucun des 32 |
-| 2,4 % | 3,05 Md€ | 3,02 Md€ | +0,66 pt | +0,65 pt | [+0,38 pt ; +0,91 pt] | aucun des 32 |
-| 2,7 % | 5,34 Md€ | 5,29 Md€ | +1,15 pt | +1,14 pt | [+0,66 pt ; +1,59 pt] | aucun des 32 |
-| 3 % | 7,62 Md€ | 7,56 Md€ | +1,65 pt | +1,63 pt | [+0,94 pt ; +2,27 pt] | aucun des 32 |
+| 2,4 % | 3,05 Md€ | 3,02 Md€ | +0,63 pt | +0,63 pt | [+0,38 pt ; +0,90 pt] | aucun des 32 |
+| 2,7 % | 5,34 Md€ | 5,29 Md€ | +1,11 pt | +1,10 pt | [+0,66 pt ; +1,58 pt] | aucun des 32 |
+| 3 % | 7,62 Md€ | 7,56 Md€ | +1,59 pt | +1,56 pt | [+0,94 pt ; +2,26 pt] | aucun des 32 |
 
-**Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
+**Ce qui manque à la chaîne**, pour le paquet le plus proche : absent, et non nul.
 
-Paquet le plus proche de la cible : **2,1 %**.
+- rétroaction : aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'cotisations_employeurs_ciblees': "pas de ligne de solde dans Mésange (variante ciblée, encadré 14) : ni rétroaction ni effet sur le PIB, plutôt que la moitié d'une variante"}
 
-| Pour | Indice | Unité | Valeur à θ [boîte θ] |
-|---|---|---|---|
-| Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
-| Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +3 682 [+2 776 ; +4 360] |
-| Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +2,50 [−5,35 ; +10,35] ; à 2 ans : +6,98 [−0,96 ; +14,91] ; à 3 ans : +9,97 [+1,74 ; +18,19] |
-| Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
-| Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les entreprises | PIB, effet du taux normal d'IS | % d'écart de PIB | absent : La réforme ne touche pas au taux normal d'IS : la méta-analyse chiffre ce taux, et aucun autre bouton des entreprises ne s'y lit. |
-| Les entreprises | Charge fiscale de production | % de la valeur ajoutée | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
-| Les startups | Créations de sociétés | points de taux de création | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
-| Les entreprises | Dépense de R&D | EUR de R&D | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
-| L'État | Solde primaire, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : −0,017 pt |
-| L'État | Dette, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : +0,165 pt |
-| L'État | Charge d'intérêts de la dette supplémentaire, effet macro éteint après trois ans | pts du PIB de référence | 2035 : +0,003 pt |
-| L'État | Solde primaire, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : −0,017 pt |
-| L'État | Dette, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : +0,165 pt |
-| L'État | Charge d'intérêts de la dette supplémentaire, effet macro tenu au niveau de la troisième année | pts du PIB de référence | 2035 : +0,003 pt |
+**Le contrôle.** Aux coins où le poids de C11 vaut 1, C11 rend 60 % de la baisse quelle que soit la valeur d'un emploi et l'élasticité de C2 : le rejeu doit y redonner 0,40 fois l'écart de la courbe, et ses coûts les siens. Il les redonne : l'écart le plus grand vaut 0,000000 pt sur les coins et 0 € sur les coûts. Hors de la chaîne, les indices du paquet le plus proche sont ceux de la courbe, sauf : Emploi au voisinage du SMIC, de 6,28 emplois, au plus. C2 y compte chacun à son propre poids dans la passe (D-269), quand la courbe le comptait au poids moyen de son ménage.
 
-**Le contrôle.** C11 ajoute des recettes, jamais un coût : le rejeu doit redonner les coûts de la courbe à l'euro, dans les deux vues et à chaque paquet, et il les redonne. L'écart le plus grand vaut 0 €.
-
-### Le t_delta de la réduction générale de 2026, avec l'autofinancement
-
-Un relèvement du t_delta de la courbe de 2026, de 37,81 % à 38,31, 39,31, 40,31 ou 41,31 %, avec ce que les emplois créés rendent (C11, de la lecture de C2 à celle du Trésor-Éco n° 97), fait-il baisser la dette en 2035, et pour quels θ ?
-
-**Effet macro éteint après trois ans.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,22 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, sur la courbe de D-242, Δb valait, vue vieillie : 38,31 %, +0,31 pt ; 39,31 %, +0,93 pt ; 40,31 %, +1,55 pt ; 41,31 %, +2,17 pt.
-
-| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
-|---|---|---|---|---|---|---|
-| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,22 pt | +0,24 pt | [+0,12 pt ; +0,29 pt] | aucun des 32 |
-| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,65 pt | +0,71 pt | [+0,37 pt ; +0,86 pt] | aucun des 32 |
-| 40,31 % | 5,01 Md€ | 5,48 Md€ | +1,08 pt | +1,18 pt | [+0,62 pt ; +1,43 pt] | aucun des 32 |
-| 41,31 % | 7,01 Md€ | 7,67 Md€ | +1,52 pt | +1,66 pt | [+0,87 pt ; +2,01 pt] | aucun des 32 |
-
-**Effet macro tenu au niveau de la troisième année.** non à θ = ½ : le paquet le plus proche, 38,31 %, laisse Δb = +0,22 pt. Elle ne baisse à aucun coin de la boîte θ. Attention : la boucle PIB → recettes est absente pour ce paquet, non nulle ; voir ce qui manque à la chaîne. Sans l'autofinancement, sur la courbe de D-242, Δb valait, vue vieillie : 38,31 %, +0,31 pt ; 39,31 %, +0,93 pt ; 40,31 %, +1,55 pt ; 41,31 %, +2,17 pt.
-
-| Paquet | Coût 2026, vieillie | Coût 2026, figée | Δb 2035 à θ = ½, vieillie | Δb 2035, figée | Boîte θ, vieillie | Coins où la dette baisse |
-|---|---|---|---|---|---|---|
-| 38,31 % | 1,00 Md€ | 1,10 Md€ | +0,22 pt | +0,24 pt | [+0,12 pt ; +0,29 pt] | aucun des 32 |
-| 39,31 % | 3,01 Md€ | 3,29 Md€ | +0,65 pt | +0,71 pt | [+0,37 pt ; +0,86 pt] | aucun des 32 |
-| 40,31 % | 5,01 Md€ | 5,48 Md€ | +1,08 pt | +1,18 pt | [+0,62 pt ; +1,43 pt] | aucun des 32 |
-| 41,31 % | 7,01 Md€ | 7,67 Md€ | +1,52 pt | +1,66 pt | [+0,87 pt ; +2,01 pt] | aucun des 32 |
-
-**Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
-
-Paquet le plus proche de la cible : **38,31 %**.
-
-| Pour | Indice | Unité | Valeur à θ [boîte θ] |
-|---|---|---|---|
-| Les gens | Revenu disponible, par décile de niveau de vie | EUR par ménage et par an | D1 : +0,00 ; D2 : +0,00 ; D3 : +0,00 ; D4 : +0,00 ; D5 : +0,00 ; D6 : +0,00 ; D7 : +0,00 ; D8 : +0,00 ; D9 : +0,00 ; D10 : +0,00 |
-| Les gens | Revenu disponible brut réel des ménages (pouvoir d'achat) | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Consommation des ménages, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les gens | Emploi au voisinage du SMIC | emplois | 2026 : +9 956 [+7 351 ; +11 910] |
-| Les gens | Emploi salarié marchand | milliers d'ETP | à 1 an : +3,28 [−7,04 ; +13,61] ; à 2 ans : +9,17 [−1,26 ; +19,61] ; à 3 ans : +13,11 [+2,29 ; +23,92] |
-| Les gens | Revenus d'activité bruts que déplacent les heures | EUR par an | absent : le canal ne s'ouvre pas pour cette réforme |
-| Les entreprises | Investissement des entreprises non financières, en volume | % d'écart au compte central | absent : aucun instrument de la réforme n'a cette ligne dans Mésange |
-| Les entreprises | PIB, effet du taux normal d'IS | % d'écart de PIB | absent : La réforme ne touche pas au taux normal d'IS : la méta-analyse chiffre ce taux, et aucun autre bouton des entreprises ne s'y lit. |
-| Les entreprises | Charge fiscale de production | % de la valeur ajoutée | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
-| Les startups | Créations de sociétés | points de taux de création | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
-| Les entreprises | Dépense de R&D | EUR de R&D | absent : Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les réformes de la population, et cet indice ne s'y calcule pas. |
-| L'État | Solde primaire, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : −0,023 pt |
-| L'État | Dette, écart de la réforme, effet macro éteint après trois ans | pts de PIB | 2035 : +0,217 pt |
-| L'État | Charge d'intérêts de la dette supplémentaire, effet macro éteint après trois ans | pts du PIB de référence | 2035 : +0,004 pt |
-| L'État | Solde primaire, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : −0,023 pt |
-| L'État | Dette, écart de la réforme, effet macro tenu au niveau de la troisième année | pts de PIB | 2035 : +0,217 pt |
-| L'État | Charge d'intérêts de la dette supplémentaire, effet macro tenu au niveau de la troisième année | pts du PIB de référence | 2035 : +0,004 pt |
-
-**Le contrôle.** C11 ajoute des recettes, jamais un coût : le rejeu doit redonner les coûts de la courbe à l'euro, dans les deux vues et à chaque paquet, et il les redonne. L'écart le plus grand vaut 0 €.
-
-**Ce que ce chiffre ne compte pas.** Les emplois du Trésor-Éco n° 97 sont un stock à moyen terme, créé de 1993 à 1997 ; C11 les compte dès 2026, et la part est sans doute trop haute les premières années : vers une dette plus basse qu'elle ne serait. Le centre, 30 %, est le bas de la fourchette que les auteurs retiennent, et le haut, 60 %, son haut ; leurs sources vont jusqu'à 109 et 120 % (encadré 2). Un emploi est valorisé aux règles de 2026, sur le cas de la note 5 : un célibataire au SMIC à temps plein contre le RSA. Les allocations chômage, que la note 5 ne chiffre pas, et l'effet sur le PIB, la variante ciblée de Mésange n'ayant pas de ligne de solde, restent hors du chiffre : vers une dette plus basse.
+**Ce que ce chiffre ne compte pas.** C2 compte des personnes, au coût annuel de leur propre travail, chacune à la valeur d'un emploi à temps plein au SMIC : à θ = 0, la part est sans doute trop haute. θ = 1 lit le bas du coût brut par emploi des allègements de 1993 à 1997, 20 000 € sur 20 000 à 40 000 €, et la note envisage elle-même un coût doublé pour la seconde vague. Les deux vont vers une dette plus basse. La valeur d'un emploi est celle d'un célibataire sans enfant ni loyer : C11 ne compte ni les prestations d'un autre ménage, ni l'allocation chômage évitée au-delà du RSA, ni l'effet sur le PIB, que Mésange ne chiffre pas pour sa variante ciblée, vers une dette plus haute. Un tour seulement : les recettes de C11 ne relancent rien. Le Trésor-Éco n° 97 lit des allègements sur les bas salaires, quand le plancher porte la baisse jusqu'à 3 SMIC, où C2 ne répond plus dès 2 SMIC : ses 60 % y sont sans doute plus loin encore de ce que la baisse rend, vers une dette plus basse.
 
 ## Ce que l'étude ne dit pas
 

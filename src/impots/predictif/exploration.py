@@ -67,6 +67,9 @@ class Priced:
     layers: Mapping[str, float] | None = None
     """The cost by layer, « menages » and « entreprises », when a firm reform is priced
     beside the households' (D-244, D-246); None otherwise."""
+    behaviour_asked: bool = False
+    """Behaviour was asked for a firm reform alone, which no household channel reads: the
+    path says so where `inputs` is None, rather than « non demandé » (D-268)."""
 
 
 def trajectory(at: Theta, priced: Priced, reform: Any, *, start: Start, horizon: int,
@@ -86,7 +89,8 @@ def trajectory(at: Theta, priced: Priced, reform: Any, *, start: Start, horizon:
     costs = chaine.ReformCosts(
         by_year={first: priced.cost}, carry=chaine.CARRY, behavioural=behaviour,
         impulses=({first: dict(priced.impulse)} if priced.impulse is not None else None),
-        uncovered=dict(priced.uncovered))
+        uncovered=dict(priced.uncovered),
+        behaviour_asked=getattr(priced, "behaviour_asked", False))
     return chaine.run(start, horizon=horizon, costs=costs, spending=spending,
                       growth=growth, rate=rate, theta=at, securities=securities,
                       store=store, persistence=persistence, macro_store=macro_store)

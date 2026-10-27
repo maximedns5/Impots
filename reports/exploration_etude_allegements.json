@@ -2,8 +2,8 @@
   "name": "etude_allegements",
   "titre": "Relèvement du plafond de la réduction générale des cotisations employeurs",
   "question": "Un relèvement du plafond de la réduction générale, de 3 SMIC à 3,5, 4,5, 5,5 ou 6,5 SMIC, fait-elle baisser la dette en 2035, et pour quels θ ?",
-  "computed": "2026-10-21",
-  "commit": "e0c3d7fe901b320e9b0b3c8ed1e39f8c678223d5",
+  "computed": "2026-10-25",
+  "commit": "d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56",
   "where": "un conteneur cloud de Claude Code, en tâche de fond",
   "request": {
     "name": "etude_allegements",
@@ -623,12 +623,12 @@
             "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
             "available": true,
             "values": {
-              "2026": 227.20850801675496
+              "2026": 0.0
             },
             "box": {
               "2026": [
-                170.43302299992402,
-                269.7901217793782
+                0.0,
+                0.0
               ]
             },
             "reason": "",
@@ -1393,12 +1393,12 @@
             "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
             "available": true,
             "values": {
-              "2026": 227.20850801675496
+              "2026": 0.0
             },
             "box": {
               "2026": [
-                170.43302299992402,
-                269.7901217793782
+                0.0,
+                0.0
               ]
             },
             "reason": "",

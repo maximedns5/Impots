@@ -2,8 +2,8 @@
   "name": "etude_ir",
   "titre": "Baisse proportionnelle des taux du barème de l'IR",
   "question": "Une baisse de chaque taux du barème de l'IR en vigueur de 1, 3, 5 ou 7 %, ses seuils inchangés, fait-elle baisser la dette en 2035, et pour quels θ ?",
-  "computed": "2026-10-21",
-  "commit": "e0c3d7fe901b320e9b0b3c8ed1e39f8c678223d5",
+  "computed": "2026-10-25",
+  "commit": "d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56",
   "where": "un conteneur cloud de Claude Code, en tâche de fond",
   "request": {
     "name": "etude_ir",

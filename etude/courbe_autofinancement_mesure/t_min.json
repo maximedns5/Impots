@@ -1,7 +1,7 @@
 {
-  "name": "courbe_autofinancement_t_min",
-  "titre": "Relèvement du plancher t_min de la réduction générale de 2026, avec l'autofinancement de la baisse",
-  "question": "Le plancher t_min relevé de 2 % à 2,1, 2,4, 2,7 ou 3 %, avec ce que les emplois créés rendent (C11, de la lecture de C2 à celle du Trésor-Éco n° 97), fait-il baisser la dette en 2035, et pour quels θ ?",
+  "name": "courbe_autofinancement_mesure_t_min",
+  "titre": "Relèvement du plancher t_min de la réduction générale de 2026, avec son autofinancement réconcilié",
+  "question": "Avec l'autofinancement réconcilié d'une baisse ciblée de cotisations (C11), les emplois de C2 valorisés à ce qu'un emploi au SMIC rapporte en 2026, mesuré sur le moteur, un relèvement du plancher t_min de la courbe de 2026, de 2 % à 2,1, 2,4, 2,7 ou 3 %, fait-il baisser la dette en 2035, et pour quels θ ?",
   "bounds": [
     {
       "knob": "allegement_general_t_min",

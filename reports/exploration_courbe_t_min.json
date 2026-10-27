@@ -2,8 +2,8 @@
   "name": "courbe_t_min",
   "titre": "Relèvement du plancher t_min de la réduction générale de 2026",
   "question": "Un relèvement du plancher t_min de la courbe de 2026, de 2 % à 2,1, 2,4, 2,7 ou 3 %, fait-il baisser la dette en 2035, et pour quels θ ?",
-  "computed": "2026-10-23",
-  "commit": "893e4de1f8908f6b2d15af6192250494e386a065",
+  "computed": "2026-10-25",
+  "commit": "3ba628c260bbd2b1c3f6cd51d5d13af5ea3c5db5",
   "where": "un conteneur cloud de Claude Code, en tâche de fond",
   "request": {
     "name": "courbe_t_min",
@@ -623,12 +623,12 @@
             "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
             "available": true,
             "values": {
-              "2026": 570.3012978561949
+              "2026": 4076.9010341478397
             },
             "box": {
               "2026": [
-                429.6983523259878,
-                675.7535070038502
+                3068.133760783039,
+                4833.47648917144
               ]
             },
             "reason": "",
@@ -1393,12 +1393,12 @@
             "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
             "available": true,
             "values": {
-              "2026": 570.3012978561949
+              "2026": 4076.9010341478397
             },
             "box": {
               "2026": [
-                429.6983523259878,
-                675.7535070038502
+                3068.133760783039,
+                4833.47648917144
               ]
             },
             "reason": "",
