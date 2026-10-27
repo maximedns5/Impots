@@ -453,6 +453,12 @@ propre entrée :
   années 1990, sur une économie et un barème qui ne sont plus ceux de 2026 ;
 - ou rien de plus que D-242, tant que l'écart de C2 n'est pas expliqué.
 
+**Choisi depuis (D-256).** Le propriétaire a pris la première voie, une fois l'écart de C2
+expliqué (D-255). La ligne `targeted_cut_self_financing` et le canal C11 mettent θ = 0 sur
+la lecture de C2, θ = ½ sur le bas de la fourchette du Trésor-Éco, 30 %, et θ = 1 sur son
+haut, 60 %. Un emploi au SMIC y est valorisé l'année de la réforme, mesuré sur le moteur :
+10 032 € en 2026.
+
 ---
 
 ## R6 — Les dividendes et le PFU

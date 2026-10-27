@@ -397,7 +397,55 @@ def _employer_inputs(request: Any, frame: Any, households: Any, agg: Any) -> dic
         # NOT deltas["cotisations_employeur"] — that figure is gross of the
         # allègements and reported exactly zero for a reform costing 17.7 bn (D-039).
         "contribution_delta": agg.employer_contribution_delta,
+        **_self_financing_inputs(request),
     }
+
+
+#: Why C11 stays shut on an employer reform the targeted variant does not carry.
+NOT_TARGETED = ("{knobs} ne fait pas une baisse ciblée en {year} : le Trésor-Éco n° 97 lit "
+                "des allègements au voisinage du SMIC, et la variation des cotisations "
+                "patronales est un seul total, qui ne se partage pas entre les boutons "
+                "(D-239, D-256).")
+LOOP_AND_C11 = ("la variante ciblée de Mésange a une ligne de solde : la boucle et C11 "
+                "compteraient deux fois les mêmes emplois. C11 est refusé tant que la "
+                "boucle les porte (D-256).")
+LOOP_UNREAD = ("les lignes de solde de Mésange ne se lisent pas ({error}) : sans elles, rien "
+               "ne dit que la boucle ne compte pas déjà ces emplois, et C11 ne s'ouvre pas "
+               "(D-256).")
+
+
+def _self_financing_inputs(request: Any) -> dict[str, Any]:
+    """C11's inputs (D-256): what a full-time SMIC job brings the public finances in the
+    year, or why the channel stays shut. Only a targeted cut has a reading, and only every
+    employer knob of it: the employer contribution delta is one total. And only while
+    the targeted variant has no balance row in Mésange, where the loop would count the
+    same jobs; the loop is absent for it today (D-242), and this refuses if it is not."""
+    import fnmatch
+
+    from impots.behavioural import autofinancement, channels
+    from impots.macro import shocks
+    from impots.macro import store as macro_store
+    from impots.predictif.retroaction import BALANCE_TABLE
+
+    employer = [knob for knob in channels._knobs(request.reform)
+                if any(fnmatch.fnmatch(knob, pattern)
+                       for pattern in shocks.TARGETED_EMPLOYER_KNOBS)]
+    if not employer:
+        return {}
+    untargeted = [knob for knob in employer
+                  if not shocks.targets_low_wages((knob,), request.year)]
+    if untargeted:
+        return {"self_financing_refused": NOT_TARGETED.format(
+            knobs=", ".join(f"`{knob}`" for knob in untargeted), year=request.year)}
+    try:
+        balance = macro_store.load().tables.get(BALANCE_TABLE)
+    except (macro_store.MissingSourceTable, macro_store.UnverifiedParameter) as error:
+        return {"self_financing_refused": LOOP_UNREAD.format(error=error)}
+    if balance is None:
+        return {"self_financing_refused": LOOP_UNREAD.format(error="la table est absente")}
+    if "cotisations_employeurs_ciblees" in balance.values:
+        return {"self_financing_refused": LOOP_AND_C11}
+    return {"self_financing_value_per_job": autofinancement.job_value(request.year)}
 
 
 def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:

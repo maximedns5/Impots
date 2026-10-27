@@ -151,8 +151,9 @@ def test_every_open_row_of_the_shipped_store_declares_its_direction() -> None:
     store = load()
     open_rows = [p for p in store.parameters.values() if p.is_open]
     # + labour supply (D-220), creations (D-221), R&D (D-222), the IS on growth (D-246),
-    # the three rows of the dividends (D-249) and their wage shift (D-252)
-    assert len(open_rows) == 19
+    # the three rows of the dividends (D-249), their wage shift (D-252) and the
+    # self-financing of a targeted cut (D-256)
+    assert len(open_rows) == 20
     assert all(p.theta_one in ("low", "high") and p.theta_reason for p in open_rows)
     assert store["employment_elasticity_smic"].theta_one == "low"
 
@@ -735,8 +736,8 @@ def _employer_case(monkeypatch, frame, run) -> dict:
 
     monkeypatch.setattr(main, "_smic_annual", lambda year: 20_000.0)
     return main._employer_inputs(
-        SimpleNamespace(year=2026), pl.DataFrame(frame), pl.DataFrame(run),
-        SimpleNamespace(employer_contribution_delta=-1_000.0))
+        SimpleNamespace(year=2026, reform=FakeReform()), pl.DataFrame(frame),
+        pl.DataFrame(run), SimpleNamespace(employer_contribution_delta=-1_000.0))
 
 
 def test_c2_counts_the_run_s_households_at_the_run_s_weights(monkeypatch) -> None:

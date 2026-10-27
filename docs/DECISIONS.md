@@ -19643,3 +19643,144 @@ l'API prédictive et de l'étude : 294 réussis, 2 sautés. `ruff` passe.
 - Les deux libellés de D-251.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - La porte de M6 : le `make full` du propriétaire.
+
+## D-256 — Phase 11, M5 : l'autofinancement d'une baisse ciblée, et la courbe rejouée
+
+**Le fait.** R5 attendait le choix du propriétaire, et D-255 a d'abord corrigé C2. Le choix
+est fait : une plage θ qui va de la lecture de C2, à θ = 0, à celle du Trésor-Éco n° 97, à
+θ = 1. Ce commit l'écrit : une ligne, un canal C11 dans les recettes, et, avant sa passe, la
+courbe de 2026 rejouée avec lui.
+
+**La ligne.** `targeted_cut_self_financing` est la part du coût statique d'une baisse
+ciblée de cotisations patronales que les emplois créés rendent aux finances publiques, en
+équilibre partiel : leurs cotisations et le RSA qu'ils évitent.
+- Le haut, 0,60 : 12 000 € d'économie par emploi créé (note 5, p. 4) pour un coût brut de
+  20 000 € (p. 4), en euros de 2009. Les auteurs n'écrivent aucune part : 20 000 − 12 000 =
+  8 000 est leur coût net, et la part est un calcul de M0.
+- Le centre, 0,30 : le même rapport à 40 000 €, le bas de la fourchette que les auteurs
+  retiennent. C'est un choix du projet, déclaré. Deux autres lectures le recoupent, sur la
+  suppression de toutes les exonérations générales : Bozio et Wasmer, 28 % sur les seules
+  cotisations patronales, et environ 35 % à un an dans Mésange (calculs de M0, D-245). Le
+  milieu de la fourchette, 45 %, aurait mis θ = ½ sur un chiffre qu'aucune autre source ne
+  recoupe.
+- Le bas, 0, n'est pas une lecture. Le choix du propriétaire met θ = 0 sur la lecture de
+  C2, et C11 place la moitié basse de la ligne sur le segment qui va de cette lecture au
+  centre.
+- θ = 1 au haut, la réponse la plus forte. Rang 1, confiance basse, aucune borne de
+  support : C11 est noté illustratif, comme C2, sur lequel il repose.
+
+**Ce qu'un emploi rapporte.** La lecture de C2 est ses emplois valorisés un par un.
+`autofinancement.job_value` mesure le cas de la note 5 sur le moteur, l'année de la
+réforme, au lieu de reporter les 12 000 € de 2009. C'est un célibataire né en 1985, sans
+enfant, au SMIC à temps plein, contre le même sans salaire. Un emploi rapporte ce qu'il
+coûte à l'employeur, moins ce qu'il ajoute au revenu disponible du ménage. En 2026,
+22 239 € de coût, 12 207 € de revenu disponible en plus : 10 032 €, 45 % du coût. Le RSA
+évité en fait 7 805 €, et la prime d'activité qu'il ouvre en reprend 2 861. Depuis 2009,
+les allègements ont pris l'essentiel des cotisations patronales au SMIC.
+
+**C11.** La part vaut s(θ) = s_C2 + 2θ (0,30 − s_C2) pour θ ≤ ½, et 0,30 + (2θ − 1) × 0,30
+au-delà : `theta.value_at`, la lecture de C2 à la place du bas. s_C2 est la valeur d'un
+emploi fois les emplois de C2, tirage par tirage, sur le coût statique. Les recettes valent
+s fois ce coût : positives pour une baisse, négatives pour une hausse, dont les emplois
+perdus reprennent ce qu'ils rapportaient. C11 refuse, chacun avec sa raison :
+- un bouton patronal qui n'est pas une baisse ciblée l'année de la réforme, le plafond
+  depuis 2026 (D-239) ;
+- un mélange de boutons ciblés et non ciblés, la variation des cotisations patronales étant
+  un seul total ;
+- une variante ciblée de Mésange qui aurait une ligne de solde, où la boucle compterait les
+  mêmes emplois, et des lignes de solde qui ne se lisent pas ;
+- une réforme pour laquelle C2 ne compte pas d'emplois, où θ = 0 n'a pas de lecture ;
+- une lecture de C2 hors de [0 ; 0,30), où s ne monterait plus avec θ et où la boîte lue
+  aux coins serait fausse.
+
+C11 tire après C10 : les tirages des autres canaux restent ceux d'avant.
+
+**L'horizon.** Les emplois du Trésor-Éco sont un stock à moyen terme, créé de 1993 à 1997
+(p. 3 et 4). C11 les compte dès l'année de la réforme, ce qui suppose un emploi qui
+s'ajuste aussitôt. La part est donc sans doute trop haute les premières années. La chaîne la
+porte en part de PIB comme le coût.
+
+**La vérification.** Une passe d'un vérificateur indépendant, sur le PDF du Trésor-Éco et
+le rapport de Bozio et Wasmer, a rendu SCOPE_PROBLEM. Chiffres, pages, citation et
+arithmétique sont confirmés. Ses réparations sont appliquées :
+- l'horizon ;
+- le haut, qui est celui de la fourchette retenue et non des sources : l'encadré 2 (p. 5)
+  va de 30 à 120 % pour les maquettes simplifiées, de 43 à 109 % pour Crépon et Desplatz ;
+- les calculs de M0 dits tels, la doublure du coût ne valant que pour la seconde vague ;
+- le champ de Bozio et Wasmer ;
+- les allocations chômage, que le texte de la p. 4 dit compter et que la note 5 ne chiffre
+  pas ;
+- les bandeaux, qui portent loin au-dessus du support.
+
+**Le rejeu, préenregistré.** `etude/courbe_autofinancement/` rejoue les deux requêtes de la
+courbe de D-241 champ pour champ. Seuls leurs nom, titre et question diffèrent. Il tourne
+sur ce commit : huit paquets, seize passes. Rien d'autre n'est rejoué. C11 ne s'ouvre que
+sur une baisse ciblée, et depuis 2026 le plafond n'en est pas une. Dans l'étude, la courbe
+est donc la seule.
+
+**Le dimensionnement.** Quatre passes avant ce commit, sans réponse : le seul coût de 2026
+au premier paquet de chaque grille, dans les deux vues. Le coût y est exactement la
+variation des cotisations patronales, à l'euro : la baisse ne touche rien d'autre. Il est
+celui de D-242 : 1,0020 et 1,0956 Md€ pour le `t_delta`, 0,7623 et 0,7561 Md€ pour le
+plancher, en vue vieillie puis figée.
+
+**Le pronostic**, écrit avant la passe.
+1. Les coûts sont ceux de D-242, à l'euro, dans les deux vues et à chaque paquet.
+2. À θ = ½, s vaut 0,30 quelle que soit la lecture de C2. La chaîne étant linéaire dans le
+   coût net de la première année, Δb 2035 vaut 0,70 fois celui de D-242, à chaque paquet,
+   dans les deux vues et sous les deux persistances. En vue vieillie, de +0,165 à
+   +1,648 point pour le plancher et de +0,217 à +1,517 pour le `t_delta` ; en vue figée, de
+   +0,163 à +1,635 et de +0,237 à +1,658.
+3. Les deux persistances donnent les mêmes chiffres : la boucle reste absente.
+4. La boîte θ n'est plus un point : 32 coins par paquet. Son haut, la ligne à 1, vaut
+   0,40 fois le Δb de D-242. Son bas, la ligne et C2 à 0, vaut (1 − s_C2) fois. Aux
+   premiers paquets, vue vieillie, C2 à −0,31 compte 7 351 emplois pour le `t_delta` et
+   2 776 pour le plancher (D-255). À 10 032 € l'un, s_C2 vaut 7,36 et 3,65 %. La boîte
+   va de +0,124 à +0,287 point pour le `t_delta`, de +0,094 à +0,227 pour le plancher.
+5. Aucun paquet ne fait baisser la dette, ni à θ = ½, ni à aucun coin : la réponse de
+   D-242 tient. Même à 60 %, la baisse laisse 40 % de son coût.
+6. Les indices du paquet le plus proche, le premier de chaque grille, sont ceux de D-242,
+   sauf deux. L'emploi au voisinage du SMIC est celui de D-255, +9 956 et +3 682. Les
+   lignes de la chaîne sont l'écart lui-même.
+
+**Les tests.** Dans `tests/test_autofinancement.py`, 42 cas :
+- l'exemple de la docstring à cinq θ, et le chemin égal à `value_at` à sept, la lecture de
+  C2 pour bas ;
+- θ = 0 qui rend la lecture de C2, une hausse, les tirages du canal ;
+- les refus : une lecture de C2 hors de [0 ; 0,30), trois cas, et un emploi qui ne rapporte
+  rien, deux ;
+- le canal fermé, six cas : sans bouton patronal, sans sa ligne, une réforme non ciblée,
+  sans les emplois de C2, sans variation des cotisations, sans entrées ;
+- la bande : C2 lu à θ = 0, le centre, la note, le refus qui y arrive, la boîte lue aux
+  coins ;
+- la ligne du magasin contre la constante du canal ;
+- les entrées de l'API : la courbe, le plafond depuis 2026 et avant, le mélange, aucun
+  bouton, la ligne de solde, la table illisible, et `_employer_inputs` qui les porte ;
+- ce qu'un emploi rapporte, mesuré en 2026, et son refus.
+
+Les 42 ont été vus échouer sur le code de `main`. Un test d'abord écrit échouait pour une
+mauvaise raison, le canal pour une vraie : sans sa ligne, C11 disait la réforme sans bouton
+patronal. Il dit maintenant que sa ligne manque. Dix-huit mutations écrites à la main, une
+par garde et par terme, ont toutes été tuées.
+
+Ailleurs :
+- `tests/test_theta.py` gagne le cas de monotonie de la ligne ;
+- les cinq comptes de lignes ouvertes passent à 20 ;
+- les tests de C2 de D-255 passent une réforme à leur requête, que `_employer_inputs` lit
+  désormais ;
+- `docs/PREDICTIF_EXEMPLE.md` est régénéré : la ligne entre dans sa liste des θ, et ses
+  chiffres sont inchangés ;
+- la page gagne le libellé de la ligne.
+
+Les tests du comportement, de θ, des dividendes, de la CDHR, des élasticités, des indices,
+de référence, de la précision, du prédictif, de l'API prédictive, de la commande, du chemin
+annuel, des entreprises, de l'étude, de l'exemple, de la recherche, des explorations, de
+la validation et de l'API : 633 réussis, 2 sautés. `ruff` et `ui/check.mjs` passent.
+
+**Ce qui reste.**
+- La passe du rejeu, sur ce commit, et son rendu dans `docs/PREDICTIF_ETUDE.md`, avec ses
+  gardes : D-257.
+- C7 pèse chaque membre au poids du ménage (D-255).
+- Les deux libellés de D-251.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- La porte de M6 : le `make full` du propriétaire.

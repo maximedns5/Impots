@@ -98,6 +98,8 @@ def compute(
     wage_levy_rate: float | None = None,
     wage_cost_rate: float | None = None,
     corporate_rate: float | None = None,
+    self_financing_value_per_job: float | None = None,
+    self_financing_refused: str | None = None,
     draws: int = DRAWS,
     seed: int = SEED,
 ) -> BehaviouralResult:
@@ -153,6 +155,14 @@ def compute(
         wage_levy_rate=wage_levy_rate, wage_cost_rate=wage_cost_rate,
         corporate_rate=corporate_rate, draws=draws, rng=rng,
     ))
+    # C11 after C10, for the same reason (D-256). Its θ = 0 is C2's jobs, draw by draw.
+    jobs = next(r for r in results if r.key == "c2_employment")
+    results.append(channel_module.targeted_self_financing(
+        store, reform, contribution_delta=contribution_delta,
+        c2_jobs=jobs.draws if jobs.applies else None,
+        value_per_job=self_financing_value_per_job, not_targeted=self_financing_refused,
+        draws=draws, rng=rng,
+    ))
 
     metrics: dict[str, tuple[tuple[str, ...], float]] = {}
     if relative_cost_change is not None and len(relative_cost_change):
@@ -184,6 +194,12 @@ def compute(
         metrics["c10_dividendes"] = (
             (*channel_module.C10_ELASTICITIES, channel_module.C10_WAGE_SHIFT),
             abs(dividends.diagnostics["net_of_tax_relative_change"]))
+    if any(r.key == "c11_autofinancement" and r.applies for r in results):
+        # It rests on C2's jobs at θ = 0, and on C2's rows for its grade: they cannot say
+        # how far they carry, so neither can it (D-256).
+        metrics["c11_autofinancement"] = (
+            (*channel_module.C2_KEYS, *channel_module.C11_KEYS),
+            metrics["c2_employment"][1])
     creations = next((r for r in results if r.key == "c8_creations" and r.applies), None)
     if creations is not None:
         # In the driver's units, as the support is: points of the virtual rate.

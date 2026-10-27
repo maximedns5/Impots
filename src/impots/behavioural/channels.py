@@ -1026,6 +1026,122 @@ def dividend_response(
     )
 
 
+# --------------------------------------------------------------------------- #
+# C11 — the self-financing of a targeted cut: §7, from C2 to the Trésor-Éco (D-256)
+# --------------------------------------------------------------------------- #
+C11_ROW = "targeted_cut_self_financing"
+C11_KEYS = (C11_ROW,)
+#: The row's centre, the Trésor-Éco's low end: 12 000 € saved per job created at a gross
+#: cost of 40 000 € (n° 97, p. 4). The channel maps the row's lower half onto the segment
+#: from C2's own reading to it, so it must know where that half ends; a test holds this
+#: figure against the row's.
+C11_CENTRE = 0.30
+
+
+def targeted_self_financing(
+    store: Store,
+    reform: Any,
+    *,
+    contribution_delta: float | None = None,
+    c2_jobs: np.ndarray | None = None,
+    value_per_job: float | None = None,
+    not_targeted: str | None = None,
+    draws: int = 1,
+    rng: Any = None,
+    **_: Any,
+) -> ChannelResult:
+    """The share of a targeted cut's static cost that the jobs it creates bring back, in
+    partial equilibrium (PHASE11_SPEC §7, R5, D-256). The Trésor-Éco's jobs are a stock
+    built over the medium term; they are counted here from the reform's own year, which
+    assumes employment adjusts at once, and is said.
+
+    θ runs from C2's own reading to the Trésor-Éco's, as the owner chose. C2's reading is
+    its jobs valued one by one, `value_per_job` each, over the cut's static cost: s_C2 =
+    value × jobs / (−Δ), with Δ the employer contribution delta, negative for a cut. The
+    row holds the published end, 0 → 0,30 → 0,60 at θ = 0, ½, 1; its lower half, which
+    publishes nothing, is mapped onto the segment from s_C2 to the centre, so that
+
+        s(θ) = s_C2 + 2θ (0,30 − s_C2)       for θ ≤ ½
+        s(θ) = 0,30 + (2θ − 1) × 0,30         for θ ≥ ½
+
+    which is `theta.value_at` with C2's reading for its low end, exactly. The receipts are
+    s × (−Δ): positive for a cut, negative for a rise, the jobs lost taking back what they
+    brought. The loop does not run on this instrument, the targeted variant having no
+    balance row in Mésange (D-242); the caller refuses the channel if it ever does.
+
+    Worked example, pinned in the tests: a cut costing 1 bn, for which C2 counts 10 000
+    jobs, each bringing 10 000 €. s_C2 = 10 000 × 10 000 / 10⁹ = 0,10. At θ = 0 the
+    receipts are 0,10 bn; at θ = ¼ the row reads 0,15 and s = 0,10 + (0,15 / 0,30) ×
+    (0,30 − 0,10) = 0,20, 0,20 bn; at θ = ½, 0,30 bn; at θ = 1, 0,60 bn.
+    """
+    label = "Autofinancement d'une baisse ciblée"
+    if C11_ROW not in store and _claimed(store, reform, C2_KEYS):
+        # Its one row is what claims the knobs: without it, an employer reform would read
+        # as moving no employer contribution.
+        return ChannelResult(
+            key="c11_autofinancement", label=label, applies=False,
+            message=f"Aucune lecture utilisable : {C11_ROW} n'a pas survécu à la "
+                    f"vérification des sources.",
+            diagnostics={"missing_parameters": [C11_ROW]})
+    applicable = _claimed(store, reform, C11_KEYS)
+    if not applicable:
+        return ChannelResult(key="c11_autofinancement", label=label, applies=False,
+                             message=NO_EMPLOYER_KNOB)
+    if not_targeted:
+        return ChannelResult(key="c11_autofinancement", label=label, applies=False,
+                             message=not_targeted, diagnostics={"knobs": applicable})
+    if contribution_delta is None or value_per_job is None:
+        return _unsupplied("c11_autofinancement", label, "EUR",
+                           "la variation des cotisations patronales et ce qu'un emploi au "
+                           "SMIC rapporte l'année de la réforme")
+    if contribution_delta == 0:
+        return ChannelResult(
+            key="c11_autofinancement", label=label, applies=False,
+            message="La réforme ne bouge aucune cotisation patronale : il n'y a pas de "
+                    "coût dont une part reviendrait.", diagnostics={"knobs": applicable})
+    if c2_jobs is None:
+        return ChannelResult(
+            key="c11_autofinancement", label=label, applies=False,
+            message="C2 ne compte pas d'emplois pour cette réforme : sans eux, θ = 0 n'a pas "
+                    "de lecture, et l'autofinancement n'est pas chiffré plutôt que pris nul.",
+            diagnostics={"knobs": applicable})
+    if not value_per_job > 0:
+        raise ChannelInputMissing(
+            f"C11 needs what a SMIC job brings the state, strictly positive; got "
+            f"{value_per_job}")
+    cost = -float(contribution_delta)
+    reading = value_per_job * np.asarray(c2_jobs, dtype=float) / cost
+    if np.any(reading < 0) or np.any(reading >= C11_CENTRE):
+        raise ChannelInputMissing(
+            f"C11 reads C2 at {float(np.min(reading)):.4f} to {float(np.max(reading)):.4f} of "
+            f"the cost, outside [0 ; {C11_CENTRE}): from there to the Trésor-Éco, s(θ) would "
+            f"not rise with θ, and the box read at its corners would be wrong")
+    published = store[C11_ROW].draw(rng, draws)
+    share = np.where(published <= C11_CENTRE,
+                     reading + published / C11_CENTRE * (C11_CENTRE - reading), published)
+    return ChannelResult(
+        key="c11_autofinancement", label=label, applies=True, draws=share * cost,
+        in_revenue_band=True,
+        message="Les emplois qu'une baisse ciblée crée rapportent des cotisations et "
+                "évitent du RSA : de la lecture de C2 (θ = 0) à celle du Trésor-Éco n° 97 "
+                "(θ = 1), en équilibre partiel. Ses emplois sont un stock à moyen terme, "
+                "comptés ici dès l'année de la réforme.",
+        diagnostics={
+            "knobs": applicable,
+            "static_cost_eur": round(cost, 2),
+            "value_per_job_eur": round(float(value_per_job), 2),
+            "c2_jobs": _percentiles(c2_jobs),
+            "c2_reading": _percentiles(reading),
+            "share": _percentiles(share),
+            "not_counted": (
+                "la montée en charge des emplois, que le Trésor-Éco lit à moyen terme ; "
+                "l'effet sur le PIB, la boucle de Mésange n'ayant pas de ligne de solde pour "
+                "cet instrument ; les allocations chômage, que la note 5 du Trésor-Éco ne "
+                "chiffre pas ; les droits à retraite que les cotisations ouvrent"),
+        },
+    )
+
+
 CHANNELS = (
     ("c1_eti", C1_KEYS),
     ("c2_employment", C2_KEYS),
@@ -1037,4 +1153,5 @@ CHANNELS = (
     ("c8_creations", C8_KEYS),
     ("c9_rd", C9_KEYS),
     ("c10_dividendes", C10_KEYS),
+    ("c11_autofinancement", C11_KEYS),
 )
