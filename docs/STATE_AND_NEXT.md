@@ -1,6 +1,15 @@
 # State of the project, and the directions open — 2026-10-27 (Phase 11, M0 to M6)
 
-The sixth 2026-10-27 update adds D-272: the curve replayed with the reconciled C11 has run
+The seventh 2026-10-27 update adds D-273: the annual path, `impots predictif`, prices a
+firm reform alone with behaviour asked instead of refusing it. The command carries the
+simulator's `behaviour_asked` flag to each year, and `annuel.build` prices a flagged year
+without channel inputs, its band and θ line saying no household channel reads the reform.
+A year without inputs or flag is still refused, and years of both kinds side by side are.
+The θ line no longer says « vue mécanique » for such a report, in the command or on the
+page. On the real firm vintage, the CVAE at half over ten years runs in under a minute and
+gives D-254's mechanical paths to the last digit. Two of the guard sweep's manual mutations
+had gone stale with D-268 and are re-anchored; seven hand mutants killed.
+The sixth 2026-10-27 update added D-272: the curve replayed with the reconciled C11 has run
 on its preregistration commit, `fd83fce`, and `docs/PREDICTIF_ETUDE.md` renders it in its
 own section. No bundle lowers the 2035 debt, at θ = ½ or at any of its 32 corners: Δb is
 +0.196 to +1.372 point for the `t_delta` and +0.159 to +1.585 for the floor, C11 bringing
@@ -544,8 +553,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **273 decision
-entries**, D-000 to D-272, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **274 decision
+entries**, D-000 to D-273, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 

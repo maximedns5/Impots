@@ -78,7 +78,8 @@ globalThis.fetch = async (url, opts) => {
   if (url.includes("/explorations/illisible")) return { ok: false, status: 500, json: async () => ({
     detail: "exploration « illisible » illisible, refusée plutôt que montrée en partie : candidat sans verdict θ" }) };
   if (url.includes("/explorations/")) return { ok: true, json: async () => EXPL_REPORT };
-  if (url.endsWith("/predictif")) return { ok: true, json: async () => ({ rapports: ["a_cote", "illisible", "plf2027_art_3"] }) };
+  if (url.endsWith("/predictif")) return { ok: true, json: async () => ({ rapports: ["a_cote", "illisible", "plf2027_art_3", "cvae"] }) };
+  if (url.endsWith("/predictif/cvae")) return { ok: true, json: async () => PRED_REPORT_FIRM };
   if (url.endsWith("/predictif/a_cote")) return { ok: true, json: async () => PRED_REPORT_SIDE };
   if (url.endsWith("/predictif/illisible")) return { ok: false, status: 500, json: async () => ({ detail: "Internal Server Error" }) };
   if (url.includes("/predictif/")) return { ok: true, json: async () => PRED_REPORT };
@@ -181,6 +182,12 @@ const PRED_REPORT = { ...PRED_NAMES, scenario: "plf2027_art_3", titre: "PLF 2027
   closed: { dividendes: "la population ne porte aucun revenu du capital (§6.5)." },
   banner: "Prédictif conditionnel : ce n'est pas une prévision.",
   debt_banner: "Les dépenses publiques ne sont PAS microsimulées ici." };
+/* Phase 11 · a firm reform alone, behaviour asked: priced, its θ unread because no
+   household channel reads it (D-273). */
+const PRED_REPORT_FIRM = { ...PRED_REPORT, scenario: "cvae", titre: "La CVAE à moitié",
+  behavioural: true, macro: false, theta_applied: false,
+  absent: { bande: "Comportement demandé, mais aucun canal des ménages ne lit un bouton des entreprises.",
+            "θ": "Comportement demandé : les θ sont listés parce que la requête les nomme." } };
 /* Phase 10 · a search, as `impots exploration` writes it (D-235): under « éteint » no bundle
    meets the target, under « tenu » one is robust, one depends on θ, one holds only on the
    frozen population. */
@@ -691,6 +698,12 @@ ok("every annual report listed is drawn, not only the first", () => {
   const html = $("predHost").innerHTML;
   assert.match(html, /Hausse du taux marginal : la dette, chaque année chiffrée/);
   assert.match(html, /PLF 2027, art\. 3 : la dette, chaque année chiffrée/);
+});
+ok("a firm reform alone with behaviour asked says no household channel reads its θ", () => {
+  const html = $("predHost").innerHTML;
+  const block = html.slice(html.indexOf("La CVAE à moitié"));
+  assert.match(block, /non lus : aucun canal des ménages ne lit la réforme/);
+  assert.doesNotMatch(block, /vue mécanique/, "behaviour was asked: not the mechanical view");
 });
 ok("a report the API refuses is said refused, and hides none of the others", () => {
   const html = $("predHost").innerHTML;

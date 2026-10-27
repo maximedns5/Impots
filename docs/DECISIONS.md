@@ -21149,3 +21149,86 @@ l'autofinancement : 202 réussis. `ruff` passe sur `src`, `tests` et `scripts`, 
 - Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage : la courbe et
   ses deux premiers rejeux, non rejoués.
 - Le `make full` du propriétaire.
+
+## D-273 — Le chemin annuel chiffre une réforme des seules entreprises, comportement demandé
+
+**Le fait.** D-268 a appris à la chaîne, à l'explorateur et aux indices à dire qu'aucun
+canal des ménages ne lit une réforme des seules entreprises quand le comportement est
+demandé. Le chemin annuel, `impots predictif`, la refusait encore. Ses années n'avaient pas
+les entrées des canaux, et la garde 9 les lisait comme des années sans ce qui était demandé.
+La CVAE à moitié, par exemple, ne se chiffrait pas avec `--behavioural`.
+
+**La cause, en deux endroits.**
+- La commande construisait le `Priced` de chaque année sans le drapeau `behaviour_asked`,
+  que la passe du simulateur pose pourtant (D-268).
+- `annuel.build` comptait comme manquante toute année sans entrées des canaux, drapeau ou
+  non.
+
+**La correction.**
+- La commande porte le drapeau de la passe jusqu'à l'année.
+- `annuel.build` chiffre une année sans entrées qui porte le drapeau. Aucune recette au
+  comportement n'y est évaluée, et `ReformCosts` reçoit le drapeau : la bande et la ligne θ
+  disent alors, comme la chaîne pour la première année, qu'aucun canal des ménages ne lit la
+  réforme.
+- Une année sans entrées ni drapeau reste refusée, comme avant.
+- Un refus de plus : des années d'une réforme des seules entreprises à côté d'années qui
+  portent les entrées des canaux. Une même réforme ne change pas de nature d'une année à
+  l'autre, et la bande ne couvrirait qu'une partie du chemin. Ce refus vient après celui des
+  années incomplètes : il ne dit pas d'une année incomplète qu'elle porte des entrées.
+
+Rien ne change pour une réforme des ménages, ou mixte : ses passes portent les entrées de
+ses canaux.
+
+**Un libellé, deux fois.** Les θ non lus se disaient encore « vue mécanique » dans la ligne
+θ que la commande imprime et dans celle que la page dessine pour un rapport annuel : le faux
+libellé de D-251, que D-268 avait corrigé ailleurs. La commande lit la raison que la chaîne
+pose dans `absent`. La page lit le champ `behavioural` du rapport : comportement demandé et
+θ non lus, c'est une réforme qu'aucun canal des ménages ne lit. La passe rapide de la page,
+dont la réponse ne porte pas ce champ, garde son libellé ; ce n'est pas l'objet de cette
+entrée.
+
+**La passe réelle.** La CVAE à moitié, `cvae_moitie_2026`, sur dix ans, avec `--behavioural`
+et `--macro`, dans le cadre de D-254, sur le millésime d'entreprises de 2023 :
+cinquante-cinq secondes, aucune passe de population. Les deux persistances, les coûts et les
+chemins sont ceux du rapport mécanique commité de D-254, au dernier chiffre : Δb 2035 vaut
++0,160 point sous « éteint ». Seules changent les raisons de la bande et de θ. Le rapport
+commité n'est pas remplacé : il dit ce qu'il chiffrait.
+
+**Le balayage des gardes, recalé.** `tests/test_gardes_phase9.py` échouait déjà sur `main`.
+Deux mutations manuelles de `scripts/sweep_gardes_phase9.py` cherchaient un texte que D-268
+avait changé : « chaine-bande-absente » dans `chaine.py`, « P10-indices-deciles » dans
+`cli.py`. Leurs ancres suivent le code ; rejouées seules, l'une et l'autre sont tuées par
+les mêmes tests qu'avant. `--missing` a muté la garde nouvelle : tuée. Le rapport,
+`reports/gardes_phase9.md`, compte 227 mutations, 226 tuées et 1 équivalente.
+
+**Les tests.** Dans `tests/test_predictif_annuel_boucle.py`, cinq cas :
+- la CVAE à moitié, chiffrée année par année avec le comportement demandé, avec et sans la
+  boucle : la bande, la ligne θ du rapport et celle de la commande disent qu'aucun canal des
+  ménages ne la lit, et le chemin est le chemin mécanique, au dernier chiffre ;
+- une année sans entrées ni drapeau, toujours refusée ;
+- des années d'une réforme des entreprises à côté d'années d'une réforme des ménages,
+  refusées ;
+- la commande, sur le scénario `cvae_moitie_2026`, la passe du simulateur simulée : elle
+  porte le drapeau et écrit le rapport.
+
+Quatre ont échoué sur le code d'avant. Le cinquième, l'année sans drapeau, y passait déjà :
+il tient la garde 9 contre la correction. La ligne θ de la commande a été vue échouer sur
+l'ancien `chaine.py`. Dans `ui/check.mjs`, un rapport factice de la CVAE à moitié : son
+libellé, vu échouer sur l'ancienne page.
+
+Sept mutations écrites à la main, toutes tuées : la commande qui perd le drapeau, le drapeau
+non lu, une année marquée encore comptée manquante, une année sans drapeau pardonnée, le
+mélange accepté, les recettes lues sans entrées, la chaîne non prévenue.
+
+Les tests du chemin annuel et de sa boucle, de la commande, de la chaîne, de l'API
+prédictive, des entreprises, de la CVAE, de l'exemple, des indices, de la recherche, des
+explorations, du balayage et de la charte : 248 réussis. `ruff` passe, et `ui/check.mjs` ses
+60 contrôles. Le `make full` n'a pas tourné.
+
+**Ce qui reste.**
+- Le libellé de la passe rapide de la page pour une réforme des seules entreprises.
+- L'étude à θ = 0 et θ = 1, et sur le chemin annuel.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
+- Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
+- Le `make full` du propriétaire.

@@ -2960,7 +2960,11 @@ function predictifTheta(d) {
     `<li>${escapeHtml(THETA_ROWS[k] || k)} : θ = ${String(v).replace(".", ",")}</li>`).join("");
   const closed = Object.entries(d.closed || {}).map(([k, v]) =>
     `<li><b>${escapeHtml(k)}</b> — ${escapeHtml(v)}</li>`).join("");
-  const unread = d.theta_applied ? "" : " <b>non lus : vue mécanique</b>";
+  // An annual report with behaviour asked and its θ unread is a firm reform alone, which
+  // no household channel reads (D-273): not « vue mécanique ».
+  const unread = d.theta_applied ? ""
+    : d.behavioural ? " <b>non lus : aucun canal des ménages ne lit la réforme</b>"
+    : " <b>non lus : vue mécanique</b>";
   return `<p class="tnote">θ de ce résultat${unread} :</p><ul class="tnote">${rows}</ul>
     <p class="tnote">Canaux fermés, sans θ :</p><ul class="tnote">${closed}</ul>`;
 }
