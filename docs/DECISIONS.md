@@ -19784,3 +19784,95 @@ la validation et de l'API : 633 réussis, 2 sautés. `ruff` et `ui/check.mjs` pa
 - Les deux libellés de D-251.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - La porte de M6 : le `make full` du propriétaire.
+
+## D-257 — La courbe rejouée avec l'autofinancement : la réponse de D-242 tient
+
+**Le fait.** Le rejeu préenregistré dans D-256 a tourné sur le commit de son
+préenregistrement, `23f8dc8`, en vingt-sept minutes : huit paquets et seize passes. La page
+`docs/PREDICTIF_ETUDE.md` le rend dans sa propre section, « La courbe rejouée avec
+l'autofinancement des baisses ciblées », après le PFU rejoué, gardée contre la dérive comme
+le reste.
+
+**Le résultat.** Δb 2035 à θ = ½, vue vieillie, en points de PIB, sans l'autofinancement
+(D-242) puis avec, et la boîte θ avec.
+
+| Paquet | D-242 | avec | boîte θ |
+|---|---|---|---|
+| plancher à 2,1 % | +0,235 | +0,165 | [+0,094 ; +0,227] |
+| plancher à 2,4 % | +0,942 | +0,659 | [+0,377 ; +0,907] |
+| plancher à 2,7 % | +1,648 | +1,154 | [+0,659 ; +1,588] |
+| plancher à 3 % | +2,354 | +1,648 | [+0,942 ; +2,268] |
+| `t_delta` à 38,31 % | +0,310 | +0,217 | [+0,124 ; +0,287] |
+| `t_delta` à 39,31 % | +0,928 | +0,650 | [+0,371 ; +0,860] |
+| `t_delta` à 40,31 % | +1,547 | +1,083 | [+0,619 ; +1,433] |
+| `t_delta` à 41,31 % | +2,166 | +1,517 | [+0,867 ; +2,007] |
+
+- En vue figée, de +0,163 à +1,635 point pour le plancher, de +0,237 à +1,658 pour le
+  `t_delta`.
+- Les deux persistances donnent les mêmes chiffres, paquet pour paquet.
+- Aucun paquet ne tient la cible, et aucun des 32 coins d'aucun paquet ne fait baisser la
+  dette.
+
+**Contre le pronostic.** Les six points tiennent.
+1. Les coûts sont ceux de D-242, à l'euro, dans les deux vues et à chaque paquet : le
+   contrôle de la page dit un écart de 0 €.
+2. Δb vaut 0,700000 fois celui de D-242, à chaque paquet, dans les deux vues et sous les
+   deux persistances, au millionième ; les chiffres sont ceux annoncés.
+3. La boucle reste absente, et les deux persistances se confondent.
+4. 32 coins par paquet. Le bas de la boîte vaut 0,4000 fois le Δb de D-242, le haut
+   0,9635 fois pour le plancher et 0,9264 fois pour le `t_delta` : s_C2 vaut 3,65 et
+   7,36 % au premier paquet, ce qu'annonçait D-256, et le même rapport à chaque paquet de
+   la grille.
+5. Aucun paquet ne fait baisser la dette, ni à θ = ½, ni à aucun coin. La réponse de D-242
+   tient.
+6. Les indices du paquet le plus proche, le premier de chaque grille, sont ceux de D-242,
+   sauf deux : l'emploi au voisinage du SMIC, +3 682 et +9 956, ceux de D-255, et les
+   lignes de la chaîne. L'emploi salarié marchand de Mésange est le même, au dernier
+   chiffre.
+
+**Ce que la réponse veut dire.** Sous ces hypothèses, l'autofinancement retire 30 % du
+coût d'une baisse de la courbe à θ = ½, et jusqu'à 60 % au haut du Trésor-Éco. Une baisse
+ciblée ne ferait baisser la dette que si elle rendait plus que son coût, et aucune lecture
+retenue ne le dit. Les sources de l'encadré 2 du Trésor-Éco vont plus haut, jusqu'à 120 %
+pour une maquette simplifiée, mais les auteurs ne les retiennent pas, et le projet non
+plus.
+- La part est sans doute trop haute les premières années, les emplois du Trésor-Éco étant
+  un stock à moyen terme : vers une dette plus haute que le chiffre.
+- Les allocations chômage, que la note 5 ne chiffre pas, et l'effet sur le PIB, sans ligne
+  de solde pour la variante ciblée, vont vers une dette plus basse.
+- La page le dit à côté du chiffre.
+
+L'étude le montre sans le trancher, et ne recommande rien.
+
+**Les tests.** `scripts/write_predictif_etude.py` lit `etude/courbe_autofinancement/` et
+les rapports du rejeu, met chacun à côté de son bouton de la courbe, et rend la section. Les
+parties d'avant sont inchangées, à l'octet. Le chargement refuse :
+- un rejeu dont la requête n'est pas celle de la courbe, nom, titre et question exceptés,
+  ou une courbe que le dépôt n'a pas ;
+- un bouton sans requête ou sans rapport, ou une requête de plus ;
+- une requête retouchée après sa passe ;
+- un rapport muet sur le lieu de sa passe ;
+- un rapport dont les coins ne font pas varier la ligne de C11 ;
+- des rapports de deux commits, ou des persistances dans un autre ordre.
+
+Un rejeu qui ne redonne pas les coûts de la courbe n'est pas refusé : la page le dit, avec
+son écart.
+
+Dans `tests/test_predictif_etude.py`, treize cas nouveaux :
+- la section rendue à part, avec le Δb de la courbe à côté de chaque verdict ;
+- un coût qui ne redonne pas la courbe ;
+- onze refus.
+
+Onze mutations écrites à la main du script, une par refus et par lecture, ont toutes été
+tuées. Le test de D-255 sur la note de C2 voulait chaque chiffre de C2 de la page noté ;
+le rejeu en ajoute deux comptés après la correction, sans note. Il vérifie maintenant
+chaque chiffre contre le commit de sa passe, et tue encore les cinq mutations de D-255.
+
+Les tests de l'étude : 74 réussis. `ruff` passe.
+
+**Ce qui reste.**
+- C7 pèse chaque membre au poids du ménage (D-255).
+- Le taux de C2 est celui du ménage, faute du coût de chaque salarié dans la passe.
+- Les deux libellés de D-251.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- La porte de M6 : le `make full` du propriétaire.

@@ -101,14 +101,24 @@ def test_every_c2_figure_counted_before_d255_says_so(script) -> None:
     """D-255. Every committed report that shows C2's jobs and ran before the fix, on
     2026-10-26, is named among the commits whose figure the page marks; each named commit
     is one of them, so a mistyped hash cannot silence the note; and every C2 figure on
-    the committed page carries it."""
-    before = {r["commit"] for r in (json.loads(p.read_text(encoding="utf-8"))
-                                    for p in script.REPORTS.rglob("exploration_*.json"))
+    the committed page carries it exactly when its pass ran before the fix — the curve's
+    replay of D-256 ran after, and does not (D-257)."""
+    reports = [json.loads(p.read_text(encoding="utf-8"))
+               for p in script.REPORTS.rglob("exploration_*.json")]
+    before = {r["commit"] for r in reports
               if _shows_c2(r) and r["computed"] < "2026-10-26"}
     assert before and before == script.C2_BEFORE_D255
+    noted = {f"{script._key(k)} : {script._value(row, k)}": r["commit"] in before
+             for r in reports for s in r.get("searches", [])
+             for row in (s.get("indices") or {}).get("rows", [])
+             if row["key"] == "emploi_smic" and row["available"] for k in row["values"]}
     figures = [line for line in script.OUT.read_text(encoding="utf-8").splitlines()
                if "| Emploi au voisinage du SMIC |" in line and "| absent :" not in line]
-    assert figures and all(script.C2_NOTE in line for line in figures)
+    marks = [(script.C2_NOTE in line,
+              noted[line.split(" | ")[3].partition(" ; compté")[0].strip(" |")])
+             for line in figures]
+    assert {said for said, _ in marks} == {True, False}
+    assert all(said == ran_before for said, ran_before in marks)
 
 
 @pytest.mark.parametrize("before", [True, False])
@@ -853,6 +863,170 @@ def test_a_replay_that_is_not_the_menu_s_pfu_with_the_shift_is_refused(script, t
         elif how == "pendant":
             label, value = evaluation["corners"][0]
             evaluation["corners"][0] = [f"{label}, une_autre_ligne = 0", value]
+        else:
+            report["searches"].reverse()
+        path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(script.EtudeError, match=needle):
+        script.study(requests, reports)
+
+
+# --------------------------------------------------------------------------- #
+# the 2026 curve, replayed with the self-financing of a targeted cut (D-256)
+# --------------------------------------------------------------------------- #
+AUTOFIN_COMMIT = "e" * 40
+#: What C11 takes off a corner where its row is at its high end, in share of GDP.
+FINANCED = 2e-4
+
+
+def _autofinancement(requests: Path, reports: Path, script, *, key: str = "t_delta",
+                     **request_overrides) -> None:
+    """The curve's knobs replayed: each request with name, title and question changed,
+    and a report whose corners vary C11's row — at 1 lower — and whose Δb at θ = ½ is
+    lower too, its costs the curve's."""
+    (requests / script.AUTOFINANCEMENT).mkdir()
+    for instrument in script.COURBE_MENU:
+        payload = json.loads((requests / "courbe" / f"{instrument.key}.json").read_text(
+            encoding="utf-8"))
+        payload.update(name=f"courbe_autofinancement_{instrument.key}",
+                       titre=f"{instrument.label}, avec l'autofinancement",
+                       question="Avec l'autofinancement, fait-il baisser la dette ?")
+        if instrument.key == key:
+            payload.update(request_overrides)
+        (requests / script.AUTOFINANCEMENT / f"{instrument.key}.json").write_text(
+            json.dumps(payload), encoding="utf-8")
+        report = json.loads((reports / f"exploration_courbe_{instrument.key}.json")
+                            .read_text(encoding="utf-8"))
+        report.update(name=payload["name"], titre=payload["titre"],
+                      question=payload["question"], commit=AUTOFIN_COMMIT,
+                      computed="2026-10-27",
+                      request=ExplorationRequest.model_validate(payload).model_dump(
+                          mode="json", exclude_none=True))
+        for search in report["searches"]:
+            for e in (*search["evaluations"], *search["candidates"], search["indices"],
+                      search["closest"] or {}):
+                if "delta_aged" in e:
+                    e["delta_aged"] -= FINANCED / 2
+            for e in search["evaluations"]:
+                e["corners"] = [pair for label, value in e["corners"] for pair in (
+                    [f"{label}, {script.SELF_FINANCING} = 0", value],
+                    [f"{label}, {script.SELF_FINANCING} = 1", value - FINANCED])]
+                e["corner_low"] = min(value for _, value in e["corners"])
+        (reports / f"exploration_{script.AUTOFINANCEMENT}_{instrument.key}.json").write_text(
+            json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+
+def _with_autofinancement(tmp_path: Path, script, **overrides) -> tuple[Path, Path]:
+    requests, reports = _study(tmp_path, script)
+    _courbe(requests, reports, script)
+    _autofinancement(requests, reports, script, **overrides)
+    return requests, reports
+
+
+def test_the_curve_replayed_with_c11_is_rendered_apart(script, tmp_path) -> None:
+    """D-256: the replay has its own section after the curve's, with its commit, each
+    knob's answer under each persistence beside the curve's Δb, its indices and its
+    control: every cost the curve's."""
+    requests, reports = _with_autofinancement(tmp_path, script)
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    assert all(e["autofinancement"]["control"] == {"eur": 0.0, "given_back": True}
+               for e in courbe)
+    page = script.render(etudes, complements, courbe, phase11)
+    head, _, tail = page.partition(
+        "## La courbe rejouée avec l'autofinancement des baisses ciblées")
+    assert tail and AUTOFIN_COMMIT in tail and AUTOFIN_COMMIT not in head
+    assert "## La courbe de 2026, préenregistrée à part" in head and "D-256" in tail
+    assert tail.count("Sans l'autofinancement, sur la courbe de D-242") == 4
+    for entry in courbe:
+        replay = entry["autofinancement"]["report"]
+        assert f"### {entry['instrument'].label}, avec l'autofinancement" in tail
+        for search, before in zip(replay["searches"], entry["report"]["searches"],
+                                  strict=True):
+            assert script.verdict(search, entry["instrument"], 0.0) in tail
+            line = next(x for x in tail.splitlines()
+                        if x.startswith(f"**{search['persistence_label']}.**")
+                        and script._pt(before["evaluations"][0]["delta_aged"]) in x)
+            then = line.partition("Sans l'autofinancement")[2]
+            assert all(script._pt(e["delta_aged"]) in then for e in before["evaluations"])
+            assert all(script._pt(e["delta_aged"]) not in then
+                       for e in search["evaluations"])
+    assert tail.count("il les redonne") == 2
+    assert tail.count("Paquet le plus proche de la cible") == 2
+    assert "**Ce que ce chiffre ne compte pas.**" in tail and "moyen terme" in tail
+
+
+def test_a_replay_that_does_not_give_the_curve_s_costs_back_is_said_so(script,
+                                                                       tmp_path) -> None:
+    """A cost off the curve's by more than a euro is a result, said with its gap."""
+    requests, reports = _with_autofinancement(tmp_path, script)
+    path = reports / f"exploration_{script.AUTOFINANCEMENT}_t_min.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report["searches"][1]["evaluations"][0]["cost_frozen_eur"] += 5.0
+    path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    control = next(e for e in courbe if e["instrument"].key == "t_min")["autofinancement"][
+        "control"]
+    assert control == {"eur": pytest.approx(5.0), "given_back": False}
+    assert "il ne les redonne pas" in script.render(etudes, complements, courbe, phase11)
+
+
+#: Each way a replay could read as the curve played with C11 without being so.
+AUTOFINANCEMENT_REFUSALS = [
+    ("cadre", "ne rejoue pas la requête de la courbe"),
+    ("grille", "ne rejoue pas la requête de la courbe"),
+    ("sans_rapport", "rejoué sans rapport"),
+    ("sans_requete", "sans requête sous etude/courbe_autofinancement"),
+    ("retouchee", "n'a pas joué sa requête, etude/courbe_autofinancement"),
+    ("ou", "ne dit pas où"),
+    ("hors_courbe", "hors de la courbe"),
+    ("sans_c11", "ne fait pas varier"),
+    ("sans_courbe", "une courbe que le dépôt n'a pas"),
+    ("commits", "de 2 commits"),
+    ("persistances", "pas les mêmes persistances"),
+]
+
+
+@pytest.mark.parametrize("how, needle", AUTOFINANCEMENT_REFUSALS,
+                         ids=[how for how, _ in AUTOFINANCEMENT_REFUSALS])
+def test_a_replay_that_is_not_the_curve_with_c11_is_refused(script, tmp_path, how: str,
+                                                            needle: str) -> None:
+    """Another frame or grid than the curve's, a knob without its report or its request,
+    a request touched after its pass, a report silent on where it ran, a request the page
+    would not render, corners that do not vary C11's row, a replay of a curve the
+    repository does not have, reports of two commits, or persistences out of order: each
+    would read as the curve replayed with C11, and is refused."""
+    overrides = {"cadre": {"horizon": 9},
+                 "grille": {"bounds": [{"knob": "allegement_general_t_delta_moins_de_50",
+                                        "low": 0.3831, "high": 0.3831, "step": 0.01}]}
+                 }.get(how, {})
+    requests, reports = _with_autofinancement(tmp_path, script, **overrides)
+    path = reports / f"exploration_{script.AUTOFINANCEMENT}_t_delta.json"
+    request_path = requests / script.AUTOFINANCEMENT / "t_delta.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    if how == "sans_rapport":
+        path.unlink()
+    elif how == "sans_requete":
+        request_path.unlink()
+    elif how == "retouchee":
+        payload = json.loads(request_path.read_text(encoding="utf-8"))
+        payload["question"] = payload["question"] + " (retouchée)"
+        request_path.write_text(json.dumps(payload), encoding="utf-8")
+    elif how == "hors_courbe":
+        (requests / script.AUTOFINANCEMENT / "plafond.json").write_text(
+            request_path.read_text(encoding="utf-8"), encoding="utf-8")
+    elif how == "sans_courbe":
+        import shutil
+
+        shutil.rmtree(requests / "courbe")
+    if how in ("ou", "sans_c11", "commits", "persistances"):
+        if how == "ou":
+            report["where"] = " "
+        elif how == "sans_c11":
+            evaluation = report["searches"][0]["evaluations"][0]
+            evaluation["corners"] = [
+                [label.split(f", {script.SELF_FINANCING}")[0], value]
+                for label, value in evaluation["corners"]]
+        elif how == "commits":
+            report["commit"] = "d" * 40
         else:
             report["searches"].reverse()
         path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
