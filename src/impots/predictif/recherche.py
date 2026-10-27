@@ -242,7 +242,8 @@ def run(request: ExplorationRequest, *, price: Callable[..., Priced],
                 mechanical=-aged.cost, inputs=aged.inputs, year=first,
                 firm_reform=firm_of(request.firm_base, knobs),
                 is_rate_change=firm_system.normal_rate_change_points(
-                    firm_of(request.firm_base, knobs), first))
+                    firm_of(request.firm_base, knobs), first),
+                behaviour_asked=getattr(aged, "behaviour_asked", False))
             return {"knobs": dict(knobs), "delta_aged": nearest["delta_aged"],
                     "absent": dict(path.absent), "closed": dict(path.closed),
                     "rows": [row.payload() for row in rows]}

@@ -162,8 +162,11 @@ NOT_ADDABLE = {
         "somme les compterait deux fois."),
 }
 
-FIRM_LAYER = ("Couche entreprises (`/entreprises/simulate`) : la trajectoire chiffre les "
-              "réformes de la population, et cet indice ne s'y calcule pas.")
+#: Why a firm-layer index is absent when the path carries no firm reform. Since D-244 the
+#: path prices firm reforms too: this one sets no firm knob (D-251, D-268).
+FIRM_LAYER = ("Couche entreprises : la réforme ne règle aucun bouton des entreprises, et "
+              "cet indice ne se calcule qu'avec un ; seul, il se lit sur "
+              "`/entreprises/simulate`.")
 #: Why the two other firm-layer indices stay absent when a firm reform IS in the path
 #: (D-250). Company creations are computed there: C8, `creations`.
 CIR_OUT_OF_CHAIN = ("Le CIR reste hors de la chaîne : sa créance, induite comprise, n'est "
@@ -179,6 +182,9 @@ CREATIONS_KEY = "1-6"
 CREATIONS_MEAN = ("« 1-6 » : moyenne des six premières années après la baisse, d'un effet "
                   "encore croissant en fin de période (IPP n° 47, années 2017 à 2022).")
 NO_BEHAVIOUR = "Comportement non demandé : le canal ne tourne pas."
+#: Behaviour asked for a firm reform alone, which no household channel reads (D-268).
+NO_HOUSEHOLD_CHANNEL = ("Comportement demandé, mais la réforme ne règle aucun bouton des "
+                        "ménages : le canal ne tourne pas.")
 NO_IMPULSE = ("Impulsion macro non demandée : sans elle, aucune variante de Mésange n'a "
               "de choc à lire.")
 NO_MACRO_THETA = ("Aucun θ du multiplicateur dans la requête : l'emploi de Mésange se lit "
@@ -386,12 +392,13 @@ BEHAVIOUR = {
 
 
 def behaviour(spec: Spec, *, theta: Any, store: Any, reform: Any, mechanical: float,
-              inputs: Mapping[str, Any] | None, year: int) -> Index:
-    """The channel's value at θ, and its box over the open rows of the index's own θ."""
+              inputs: Mapping[str, Any] | None, year: int, asked: bool = False) -> Index:
+    """The channel's value at θ, and its box over the open rows of the index's own θ.
+    `asked`: behaviour was asked for a reform no household channel reads (D-268)."""
     from impots.predictif.theta import corners
 
     if inputs is None:
-        return absent(spec, NO_BEHAVIOUR)
+        return absent(spec, NO_HOUSEHOLD_CHANNEL if asked else NO_BEHAVIOUR)
     channel, read = BEHAVIOUR[spec.key]
     at = _channel(store, theta, channel, reform, mechanical, inputs)
     if at is None:
@@ -504,10 +511,11 @@ def compute(specs: Iterable[Spec], *, trajectory: Any, deciles_rows: Iterable[An
             macro_reason: str = NO_IMPULSE,
             firm_reason: str = FIRM_LAYER,
             is_rate_change: float | None = None,
-            firm_reform: Any = None) -> tuple[Index, ...]:
+            firm_reform: Any = None, behaviour_asked: bool = False) -> tuple[Index, ...]:
     """Every index asked for, computed or said not to be, in catalogue order.
     `is_rate_change` is the firm reform's IS normal rate minus the law's, in points, and
-    `firm_reform` the firm part of the path, None when there is none."""
+    `firm_reform` the firm part of the path, None when there is none; `behaviour_asked`,
+    that behaviour was asked for a reform no household channel reads (D-268)."""
     out = []
     for spec in specs:
         if spec.stage == META:
@@ -523,7 +531,8 @@ def compute(specs: Iterable[Spec], *, trajectory: Any, deciles_rows: Iterable[An
             out.append(deciles(spec, deciles_rows))
         elif spec.stage == COMPORTEMENT:
             out.append(behaviour(spec, theta=theta, store=store, reform=reform,
-                                 mechanical=mechanical, inputs=inputs, year=year))
+                                 mechanical=mechanical, inputs=inputs, year=year,
+                                 asked=behaviour_asked))
         elif impulse is None:
             out.append(absent(spec, NO_IMPULSE))
         elif macro_store is None:

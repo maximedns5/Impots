@@ -93,3 +93,143 @@ def test_the_window_is_wide_enough_for_the_step_that_motivated_it() -> None:
     income = np.array([2.35 * SMIC])  # between the old 2.5 and the new 2.25
     result = measure(income, np.array([-300.0]), np.ones(1), [2.25 * SMIC])
     assert result.flagged
+
+
+def _run(frame):
+    """What `runner.run` hands back for `frame`, without the engine. Its persons, each
+    with a labour cost equal to their gross, moved by their own `move`; and one row per
+    household at the MEAN of its members' weights, as the runner aggregates, with its
+    persons' wages and costs summed."""
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    persons = frame.select(
+        "person_id", "household_id", "salaire_brut_annuel", "weight",
+        pl.col("salaire_brut_annuel").alias("salaire_super_brut"),
+        (pl.col("salaire_brut_annuel") + pl.col("move")).alias("salaire_super_brut_reform"))
+    households = (
+        frame.group_by("household_id").agg(pl.col("weight").mean())
+        .join(persons.group_by("household_id").agg(
+            pl.col("salaire_brut_annuel").sum().alias("salaire_brut"),
+            pl.col("salaire_super_brut").sum(), pl.col("salaire_super_brut_reform").sum()),
+            on="household_id")
+        .with_columns(pl.col("salaire_brut").alias("salaire_imposable"),
+                      pl.lit(0.0).alias("revenu_disponible"),
+                      pl.lit(0.0).alias("revenu_disponible_reform"))
+        .sort("household_id"))
+    return SimpleNamespace(households=households, persons=persons)
+
+
+def test_the_wage_family_reads_the_quick_tier_at_its_own_weights() -> None:
+    """D-260. The quick tier prices 20 000 households, reweighted to the population; the
+    wage family read every earner of the WHOLE frame at the frame's weight, with no
+    movement outside the subsample. A share, so the zeros cancel and nothing is divided
+    by the sampling fraction; but the households drawn weighed their own weight, not the
+    subsample's, and the light ones, which the draw scales up most, counted for too
+    little.
+
+    Worked example: 10 households of weight 1 000 000, each one earner at 1.2 SMIC,
+    far from a 2.25-SMIC plafond, whose labour cost falls 100 EUR; 990 of weight 1 000,
+    each one earner at the plafond, whose cost falls 2 000 EUR. The population's share
+    from inside the window is 990 × 1 000 × 2 000 / (that + 10 × 1 000 000 × 100) =
+    1.98 / 2.98 = 66 %: flagged. Drawn down to 100 households, the 10 heavy ones are
+    certain and keep their weight, and 90 light ones weigh 990 000 / 90 = 11 000 each:
+    the same 66 %. At the frame's weight they weigh 1 000, and the share fell to 15 %,
+    under the bar.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.api.schemas import ReformSpec
+    from impots.population.runner import subsample
+
+    smic = api_main._smic_annual(2024)
+    heavy, light = 10, 990
+    frame = pl.DataFrame({
+        "household_id": np.arange(heavy + light),
+        "person_id": np.arange(heavy + light),
+        "salaire_brut_annuel": np.r_[np.full(heavy, 1.2 * smic), np.full(light, 2.25 * smic)],
+        "weight": np.r_[np.full(heavy, 1_000_000.0), np.full(light, 1_000.0)],
+        "move": np.r_[np.full(heavy, -100.0), np.full(light, -2_000.0)],
+    })
+    request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
+    expected = 1.98 / 2.98
+
+    full = api_main._narrow_band(request, _run(frame))
+    assert full.share == pytest.approx(expected, rel=1e-9)
+    drawn = subsample(frame, 100)
+    assert drawn.height == 100
+    quick = api_main._narrow_band(request, _run(drawn))
+    assert quick.share == pytest.approx(expected, rel=1e-9), (
+        "the quick tier must measure the share of the population it was reweighted to")
+    assert quick.flagged
+
+
+def test_the_wage_family_reads_each_earner_s_own_movement() -> None:
+    """D-261. Each earner carried their household's movement split evenly among its
+    earners, so a partner sitting at a plafond who did not move took half of a cut that
+    reached a wage far below it, and counted it inside the window.
+
+    Worked example, two households of weight 1 000. In the first, an earner at a
+    2.25-SMIC plafond whose labour cost does not move, and a partner at 1.2 SMIC, far
+    below it, whose cost falls 1 000 EUR. In the second, one earner at the plafond whose
+    cost falls 400 EUR. On their own movements, 400 of 1 400 EUR come from inside the
+    window: 29 %, under the bar. Split evenly, the first earner took 500 of the
+    partner's 1 000, and the share read 900 / 1 400 = 64 %: flagged.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.api.schemas import ReformSpec
+
+    smic = api_main._smic_annual(2024)
+    frame = pl.DataFrame({
+        "household_id": [0, 0, 1],
+        "person_id": [0, 1, 2],
+        "salaire_brut_annuel": [2.25 * smic, 1.2 * smic, 2.25 * smic],
+        "weight": [1_000.0] * 3,
+        "move": [0.0, -1_000.0, -400.0],
+    })
+    request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
+    flag = api_main._narrow_band(request, _run(frame))
+    assert flag.share == pytest.approx(400 / 1_400, rel=1e-9), (
+        "an earner's movement is their own, not a share of their household's")
+    assert not flag.flagged
+
+
+def test_the_wage_family_reads_each_earner_at_their_own_weight() -> None:
+    """D-269. Each earner counted at their household's weight, the mean of its members'.
+    Members' weights can differ, and the quick tier's subsample scales each by the same
+    factor, so the mean miscounts the heavier member and the lighter one (D-255).
+
+    Worked example, one household weighing 300 on average: an earner at a 2.25-SMIC
+    plafond weighing 360, whose labour cost falls 1 000 EUR, and a partner at 1.2 SMIC,
+    far below it, weighing 240, whose cost falls 1 000 EUR too. At their own weights,
+    360 000 of 600 000 come from inside the window: 60 %, flagged. At the household's
+    300 each, 50 %: under the bar.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.api.schemas import ReformSpec
+
+    smic = api_main._smic_annual(2024)
+    frame = pl.DataFrame({
+        "household_id": [0, 0],
+        "person_id": [0, 1],
+        "salaire_brut_annuel": [2.25 * smic, 1.2 * smic],
+        "weight": [360.0, 240.0],
+        "move": [-1_000.0, -1_000.0],
+    })
+    request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
+    flag = api_main._narrow_band(request, _run(frame))
+    assert flag.share == pytest.approx(0.6, rel=1e-9), (
+        "an earner must count at their own weight in the run, not their household's")
+    assert flag.flagged

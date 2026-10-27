@@ -98,6 +98,7 @@ def compute(
     wage_levy_rate: float | None = None,
     wage_cost_rate: float | None = None,
     corporate_rate: float | None = None,
+    targets_low_wages: bool | None = None,
     self_financing_value_per_job: float | None = None,
     self_financing_refused: str | None = None,
     draws: int = DRAWS,
@@ -155,12 +156,13 @@ def compute(
         wage_levy_rate=wage_levy_rate, wage_cost_rate=wage_cost_rate,
         corporate_rate=corporate_rate, draws=draws, rng=rng,
     ))
-    # C11 after C10, for the same reason (D-256). Its θ = 0 is C2's jobs, draw by draw.
-    jobs = next(r for r in results if r.key == "c2_employment")
+    # C11 after C10, for the same reason; it reads C2's own draws of the jobs rather than
+    # drawing them again (D-263).
+    employment = next((r for r in results if r.key == "c2_employment" and r.applies), None)
     results.append(channel_module.targeted_self_financing(
-        store, reform, contribution_delta=contribution_delta,
-        c2_jobs=jobs.draws if jobs.applies else None,
-        value_per_job=self_financing_value_per_job, not_targeted=self_financing_refused,
+        store, reform, jobs=None if employment is None else employment.draws,
+        contribution_delta=contribution_delta, targets_low_wages=targets_low_wages,
+        value_per_job=self_financing_value_per_job, refused=self_financing_refused,
         draws=draws, rng=rng,
     ))
 
@@ -195,11 +197,10 @@ def compute(
             (*channel_module.C10_ELASTICITIES, channel_module.C10_WAGE_SHIFT),
             abs(dividends.diagnostics["net_of_tax_relative_change"]))
     if any(r.key == "c11_autofinancement" and r.applies for r in results):
-        # It rests on C2's jobs at θ = 0, and on C2's rows for its grade: they cannot say
-        # how far they carry, so neither can it (D-256).
-        metrics["c11_autofinancement"] = (
-            (*channel_module.C2_KEYS, *channel_module.C11_KEYS),
-            metrics["c2_employment"][1])
+        # The weight is a choice, the Trésor-Éco's two amounts are published and the value
+        # of a job is measured, none estimated: no support bound, so the channel is graded
+        # illustrative, as C2 is.
+        metrics["c11_autofinancement"] = (channel_module.C11_KEYS, 0.0)
     creations = next((r for r in results if r.key == "c8_creations" and r.applies), None)
     if creations is not None:
         # In the driver's units, as the support is: points of the virtual rate.

@@ -235,11 +235,12 @@ CASES = {
               "levy_rate_reform": 0.29, "wage_levy_rate": 1.14, "wage_cost_rate": 1.66,
               "corporate_rate": 0.25}, 0)
        for key in channels.C10_KEYS},
-    # C2 counts 10 000 jobs for a 1 bn cut, worth 10 000 € each: from 0,10 to 0,60 (D-256).
-    channels.C11_ROW: (channels.targeted_self_financing,
-                       Reform(allegement_general_t_min=0.021),
-                       {"contribution_delta": -1e9, "c2_jobs": np.array([1e4, 1e4]),
-                        "value_per_job": 1e4}, 0),
+    # D-263: a 1 bn cut that C2 reads as 10 000 jobs, 12 %, against the Trésor-Éco's 60 %.
+    "autofinancement_poids_tresor_eco": (channels.targeted_self_financing, EMPLOYER,
+                                         {"jobs": np.full(2, 10_000.0),
+                                          "contribution_delta": -1e9,
+                                          "targets_low_wages": True,
+                                          "value_per_job": 12_000.0}, 0),
 }
 
 

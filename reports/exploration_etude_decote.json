@@ -2,8 +2,8 @@
   "name": "etude_decote",
   "titre": "Baisse du taux de la décote de l'IR",
   "question": "Une décote plus généreuse, son taux ramené de 45,25 % à 40, 30, 20 ou 10 %, fait-elle baisser la dette en 2035, et pour quels θ ?",
-  "computed": "2026-10-21",
-  "commit": "e0c3d7fe901b320e9b0b3c8ed1e39f8c678223d5",
+  "computed": "2026-10-25",
+  "commit": "d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56",
   "where": "un conteneur cloud de Claude Code, en tâche de fond",
   "request": {
     "name": "etude_decote",

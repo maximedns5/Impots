@@ -77,6 +77,14 @@ THETA_UNREAD = ("Vue mécanique : les θ sont listés parce que la requête les 
                 "aucun canal de comportement ne les lit.")
 THETA_MACRO_ONLY = ("Comportement non demandé : les θ des lignes de comportement sont "
                     "listés sans être lus ; seul celui du multiplicateur l'est.")
+#: Behaviour asked for a firm reform alone: not « non demandé » (D-251, D-268).
+NO_HOUSEHOLD_CHANNEL = ("Comportement demandé, mais aucun canal des ménages ne lit un "
+                        "bouton des entreprises, et ceux de la couche entreprises n'entrent "
+                        "pas dans les recettes : seul le chiffre mécanique est porté.")
+THETA_NO_HOUSEHOLD_CHANNEL = ("Comportement demandé : les θ sont listés parce que la "
+                              "requête les nomme, mais aucun canal des ménages ne lit "
+                              "cette réforme ; ceux des entreprises se lisent dans leurs "
+                              "indices.")
 BOX_LABEL = ("Boîte θ du comportement : chaque effet revendiqué n'importe où dans sa "
              "fourchette publiée, bornes lues aux coins")
 BOX_CONVENTION = ("Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt "
@@ -151,6 +159,9 @@ class ReformCosts:
     euros (`shocks.Impulse.by_instrument`). Given, it asks for the GDP → receipts loop."""
     uncovered: dict[str, str] = field(default_factory=dict)
     """Deltas with no multiplier, and why (`shocks.Impulse.reasons()`)."""
+    behaviour_asked: bool = False
+    """Behaviour was asked for a reform no household channel reads, a firm reform alone
+    (D-268): where `behavioural` is None, the band says that rather than « non demandé »."""
 
     def __post_init__(self) -> None:
         if not self.by_year:
@@ -446,6 +457,9 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
                      low=tuple(min(a, b) for a, b in zip(one, two, strict=True)),
                      high=tuple(max(a, b) for a, b in zip(one, two, strict=True)))
 
+    # Absent, the band says whether behaviour was asked: a firm reform alone is read by
+    # no household channel, which is not the same as not asking (D-268).
+    unread = NO_HOUSEHOLD_CHANNEL if costs.behaviour_asked else ABSENT_BAND
     if costs.behavioural is not None:
         base_primary = receipts(lambda at: at.receipts)
         behaviour = envelope(BOX_LABEL, "bande",
@@ -454,7 +468,7 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
     else:
         base_primary = {y: -cost[y] / gdp[y] for y in years}
         behaviour = Slice(source="bande", label="Boîte θ du comportement", computed=False,
-                          reason=ABSENT_BAND)
+                          reason=unread)
     reform = reform_path(base_primary, applied)
     delta = [r - b for r, b in zip(reform, ref, strict=True)]
     loop = dict(zip(years, applied.balance, strict=True)) if applied else zero
@@ -495,8 +509,9 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
         closed = {**CLOSED, **dict.fromkeys(MACRO_CHANNELS, feedback_reason)}
         absent = {"rétroaction": feedback_reason}
     if costs.behavioural is None:
-        absent.update({"bande": ABSENT_BAND,
-                       "θ": THETA_UNREAD if not applied else THETA_MACRO_ONLY})
+        absent.update({"bande": unread,
+                       "θ": (THETA_NO_HOUSEHOLD_CHANNEL if costs.behaviour_asked
+                             else THETA_UNREAD if not applied else THETA_MACRO_ONLY)})
     return Trajectoire(
         years=tuple(years), reference=tuple(ref), reform=tuple(reform),
         delta=tuple(delta),

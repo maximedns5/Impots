@@ -151,8 +151,8 @@ def test_every_open_row_of_the_shipped_store_declares_its_direction() -> None:
     store = load()
     open_rows = [p for p in store.parameters.values() if p.is_open]
     # + labour supply (D-220), creations (D-221), R&D (D-222), the IS on growth (D-246),
-    # the three rows of the dividends (D-249), their wage shift (D-252) and the
-    # self-financing of a targeted cut (D-256)
+    # the three rows of the dividends (D-249), their wage shift (D-252), and the
+    # self-financing's weight (D-263)
     assert len(open_rows) == 20
     assert all(p.theta_one in ("low", "high") and p.theta_reason for p in open_rows)
     assert store["employment_elasticity_smic"].theta_one == "low"
@@ -665,6 +665,27 @@ def test_no_employment_response_is_applied_above_the_fade_out() -> None:
     assert result.central == pytest.approx(0.0, abs=1e-9)
 
 
+def test_c2_counts_no_jobs_as_zero_not_minus_zero() -> None:
+    """D-261. The plafond's shape: an earner at the SMIC whose labour cost does not move,
+    and one at 3.2 SMIC, above the fade-out, whose cost falls. No job either way, but
+    the products summed to +0.0 and the negative elasticity made it −0.0, which the
+    study's page printed « −0,00 » emplois."""
+    store = Store(parameters={
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=("allegement_general_*",)),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=("allegement_general_*",)),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
+    })
+    result = channels.employment_at_the_smic(
+        store, FakeReform(allegement_general_plafond=3.5),
+        smic_multiple=np.array([1.0, 3.2]), relative_cost_change=np.array([0.0, -0.05]),
+        weights=np.array([1_000_000.0, 1_000_000.0]), draws=4, rng=np.random.default_rng(0),
+    )
+    assert [math.copysign(1.0, d) for d in result.draws] == [1.0] * 4
+
+
 def test_a_contribution_cut_passed_through_raises_wages() -> None:
     """The other sign. `contribution_delta` is the employer's bill, so a cut is
     negative — and a cut that passes through fully makes wages RISE by its amount."""
@@ -726,8 +747,138 @@ def test_c2_fails_loudly_without_a_wage_profile() -> None:
         )
 
 
-def _employer_case(monkeypatch, frame, run) -> dict:
-    """C2's inputs off a hand-built frame and run, the SMIC at 20 000 € a year."""
+def _run(frame, cost_cut: float = 0.0):
+    """What `runner.run` hands back for `frame`, without the engine. Its persons, each
+    with a labour cost equal to their gross that falls by `cost_cut`, or by their own
+    `cut` when the frame carries one; and one row per household at the MEAN of its
+    members' weights, as the runner aggregates, with its persons' costs summed."""
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    cut = pl.col("cut") if "cut" in frame.columns else pl.lit(cost_cut)
+    persons = frame.select(
+        "person_id", "household_id", "salaire_brut_annuel", "weight",
+        pl.col("salaire_brut_annuel").alias("salaire_super_brut"),
+        (pl.col("salaire_brut_annuel") * (1.0 - cut)).alias("salaire_super_brut_reform"))
+    households = (
+        frame.group_by("household_id").agg(pl.col("weight").mean())
+        .join(persons.group_by("household_id").agg(
+            pl.col("salaire_super_brut").sum(), pl.col("salaire_super_brut_reform").sum()),
+            on="household_id")
+        .sort("household_id"))
+    return SimpleNamespace(households=households, persons=persons)
+
+
+def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
+    """D-259. The quick tier prices 20 000 of the 199 451 households, reweighted to the
+    population; `_employer_inputs` read every earner of the WHOLE frame at the frame's
+    weight, and gave a cost change only to those whose household the run had priced.
+    The others counted at zero, and the survivors at their own weight, not the
+    subsample's: C2 counted 15 % of the earners, and 1 558 jobs for 1 Md€ of
+    `t_delta` where the same pass holds 9 960.
+
+    Worked example: 1 000 households of two, one earner at 1.2 SMIC and one adult
+    without a wage, each person weighing 25 000. Their labour cost falls 1 %. At
+    1.2 SMIC the profile gives −0.43 + 0.2 × (−0.1 + 0.43) = −0.364, so
+    25 M earners × 0.364 × 0.01 = 91 000 jobs. A tenth of the households, drawn by
+    the runner's own `subsample`, must give the same 91 000; the bug gave 9 100.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.population.runner import subsample
+
+    smic = api_main._smic_annual(2026)
+    n = 1_000
+    frame = pl.DataFrame({
+        "household_id": np.repeat(np.arange(n), 2),
+        "person_id": np.arange(2 * n),
+        "salaire_brut_annuel": np.tile([1.2 * smic, 0.0], n),
+        "weight": np.full(2 * n, 25_000.0),
+    })
+    reform = FakeReform(allegement_general_t_min=0.03)
+    request = SimpleNamespace(year=2026, reform=reform)
+    agg = SimpleNamespace(employer_contribution_delta=-1.0e9)
+    store = Store(parameters={
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=("allegement_general_*",)),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=("allegement_general_*",)),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
+    })
+
+    def jobs(run) -> float:
+        inputs = api_main._employer_inputs(request, run, agg)
+        return channels.employment_at_the_smic(
+            store, reform, smic_multiple=inputs["smic_multiple"],
+            relative_cost_change=inputs["relative_cost_change"],
+            weights=inputs["earner_weights"], draws=1, rng=np.random.default_rng(0),
+        ).central
+
+    full = jobs(_run(frame, 0.01))
+    quick = jobs(_run(subsample(frame, n // 10), 0.01))
+    assert full == pytest.approx(91_000.0, rel=1e-9)
+    assert quick == pytest.approx(91_000.0, rel=1e-9), (
+        "the quick tier must count the jobs of the population it was reweighted to")
+
+
+def test_c2_gives_each_earner_their_own_cost_change() -> None:
+    """D-261. Every earner carried their household's change in labour cost, so an earner
+    at the SMIC took a share of a partner's cut at 3 SMIC. Raising the plafond relieves
+    only wages above 3 SMIC, where C2 does not respond, and C2 still counted 1 317 jobs
+    for its first bundle of the study: every one of them from a household with an earner
+    above 3 SMIC.
+
+    Worked example, two households weighing 1 000 000 each. In the first, an earner at the
+    SMIC whose labour cost does not move, and a partner at 3.2 SMIC whose cost falls 5 %,
+    the plafond's shape. In the second, one earner at the SMIC whose cost falls 1 %. Each
+    on their own change: the partner is above the fade-out and the first earner has
+    nothing to respond to, so the jobs are the second household's,
+    1 000 000 × 0.43 × 0.01 = 4 300. The household's rate lent the first earner
+    0.05 × 3.2 / 4.2 = 3.81 % of a cut that was not theirs: 16 381 jobs more.
+    """
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+
+    smic = api_main._smic_annual(2026)
+    frame = pl.DataFrame({
+        "household_id": [0, 0, 1],
+        "person_id": [0, 1, 2],
+        "salaire_brut_annuel": [smic, 3.2 * smic, smic],
+        "weight": [1_000_000.0] * 3,
+        "cut": [0.0, 0.05, 0.01],
+    })
+    reform = FakeReform(allegement_general_plafond=3.5)
+    request = SimpleNamespace(year=2026, reform=reform)
+    agg = SimpleNamespace(employer_contribution_delta=-1.0e9)
+    store = Store(parameters={
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=("allegement_general_*",)),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=("allegement_general_*",)),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
+    })
+    inputs = api_main._employer_inputs(request, _run(frame), agg)
+    jobs = channels.employment_at_the_smic(
+        store, reform, smic_multiple=inputs["smic_multiple"],
+        relative_cost_change=inputs["relative_cost_change"],
+        weights=inputs["earner_weights"], draws=1, rng=np.random.default_rng(0),
+    ).central
+    assert jobs == pytest.approx(4_300.0, rel=1e-9), (
+        "an earner must respond to their own labour cost, not to their household's")
+
+def _employer_case(monkeypatch, persons: dict, households: dict) -> dict:
+    """C2's inputs off a hand-built run, its persons and its households, the SMIC at
+    20 000 € a year. The run's persons are its own since D-261: the households it priced,
+    each person at the weight the run gave them."""
     from types import SimpleNamespace
 
     import polars as pl
@@ -736,23 +887,25 @@ def _employer_case(monkeypatch, frame, run) -> dict:
 
     monkeypatch.setattr(main, "_smic_annual", lambda year: 20_000.0)
     return main._employer_inputs(
-        SimpleNamespace(year=2026, reform=FakeReform()), pl.DataFrame(frame),
-        pl.DataFrame(run), SimpleNamespace(employer_contribution_delta=-1_000.0))
+        SimpleNamespace(year=2026, reform=FakeReform(allegement_general_t_min=0.03)),
+        SimpleNamespace(persons=pl.DataFrame(persons), households=pl.DataFrame(households)),
+        SimpleNamespace(employer_contribution_delta=-1_000.0))
 
 
 def test_c2_counts_the_run_s_households_at_the_run_s_weights(monkeypatch) -> None:
     """The pass priced 1 household of the frame's 3, and weighted it for all three: 300
-    against 100 in the frame. Its two earners, at 1,25 and 2 SMIC, each carry its rate,
-    (99 000 − 100 000) / 100 000 = −0,01, at 300: Σ w × Δc/c = −6. Earners of the
-    households the pass never priced have no rate, not a zero one; counted at 0 with the
-    frame's weights they gave −2, a jobs figure diluted by the subsample (D-255)."""
+    against 100 in the frame. Its two earners, at 1,25 and 2 SMIC, each carry a rate of
+    −0,01, at 300: Σ w × Δc/c = −6. Earners of the households the pass never priced have
+    no rate, not a zero one; counted at 0 with the frame's weights they gave −2, a jobs
+    figure diluted by the subsample (D-255). The run's persons are its own (D-261): the
+    unpriced households are not in them."""
     inputs = _employer_case(
         monkeypatch,
-        frame={"household_id": [1, 1, 2, 3],
-               "salaire_brut_annuel": [25_000.0, 40_000.0, 30_000.0, 28_000.0],
-               "weight": [100.0, 100.0, 100.0, 100.0]},
-        run={"household_id": [1], "weight": [300.0],
-             "salaire_super_brut": [100_000.0], "salaire_super_brut_reform": [99_000.0]},
+        persons={"person_id": [1, 2], "household_id": [1, 1],
+                 "salaire_brut_annuel": [25_000.0, 40_000.0], "weight": [300.0, 300.0],
+                 "salaire_super_brut": [50_000.0, 50_000.0],
+                 "salaire_super_brut_reform": [49_500.0, 49_500.0]},
+        households={"household_id": [1], "weight": [300.0]},
     )
     order = np.argsort(inputs["smic_multiple"])
     assert inputs["smic_multiple"][order] == pytest.approx([1.25, 2.0])
@@ -765,14 +918,16 @@ def test_c2_counts_the_run_s_households_at_the_run_s_weights(monkeypatch) -> Non
 def test_c2_keeps_each_earner_s_weight_as_the_subsample_scales_it(monkeypatch) -> None:
     """The subsample scales every member of a household by the same factor, the run's
     household weight over the frame's mean (`runner.subsample`). Here 120 and 80, mean
-    100, at 300: 360 and 240, what the subsampled frame itself carries. The household's
-    300 for each would count one earner a sixth too few and the other a quarter too many."""
+    100, at 300: 360 and 240, what the subsampled frame itself carries, and the run's
+    persons with it. The household's 300 for each would count one earner a sixth too few
+    and the other a quarter too many (D-255, D-259)."""
     inputs = _employer_case(
         monkeypatch,
-        frame={"household_id": [1, 1], "salaire_brut_annuel": [25_000.0, 40_000.0],
-               "weight": [120.0, 80.0]},
-        run={"household_id": [1], "weight": [300.0],
-             "salaire_super_brut": [100_000.0], "salaire_super_brut_reform": [99_000.0]},
+        persons={"person_id": [1, 2], "household_id": [1, 1],
+                 "salaire_brut_annuel": [25_000.0, 40_000.0], "weight": [360.0, 240.0],
+                 "salaire_super_brut": [50_000.0, 50_000.0],
+                 "salaire_super_brut_reform": [49_500.0, 49_500.0]},
+        households={"household_id": [1], "weight": [300.0]},
     )
     order = np.argsort(inputs["smic_multiple"])
     assert inputs["earner_weights"][order] == pytest.approx([360.0, 240.0])
@@ -794,12 +949,14 @@ def test_c2_s_weights_are_the_subsampled_frame_s(monkeypatch) -> None:
         "weight": np.repeat(rng.lognormal(5.0, 0.8, size=200), 2)
         * rng.choice([0.8, 1.0, 1.2], size=ids.size),
     })
-    sub = subsample(frame, 30)
-    run = (sub.group_by("household_id").agg(pl.col("weight").mean())
-           .with_columns(salaire_super_brut=pl.lit(100_000.0),
-                         salaire_super_brut_reform=pl.lit(99_000.0)))
-    inputs = _employer_case(monkeypatch, frame.to_dict(as_series=False),
-                            run.to_dict(as_series=False))
+    sub = subsample(frame, 30).with_columns(person_id=pl.int_range(pl.len()))
+    # The run's persons as the runner builds them from the subsampled frame, each with
+    # their own weight and a labour cost that falls 1 %; its households at the mean.
+    persons = sub.with_columns(salaire_super_brut=pl.lit(50_000.0),
+                               salaire_super_brut_reform=pl.lit(49_500.0))
+    households = sub.group_by("household_id").agg(pl.col("weight").mean())
+    inputs = _employer_case(monkeypatch, persons.to_dict(as_series=False),
+                            households.to_dict(as_series=False))
     earners = sub.filter(pl.col("salaire_brut_annuel") > 0)
     assert len(inputs["earner_weights"]) == earners.height
     assert float(inputs["earner_weights"].sum()) == pytest.approx(
@@ -898,3 +1055,188 @@ def test_the_emtr_caches_do_not_serve_the_vintage_s_rates_to_an_aged_population(
     before = json.dumps({"vintage": "2024", "year": 2026, "sample": None, "reform": None,
                          "wiring": to_openfisca.WIRING}, sort_keys=True, default=str)
     assert emtr.cache_key("2024", 2026) == hashlib.sha256(before.encode()).hexdigest()[:16]
+
+
+# --------------------------------------------------------------------------- #
+# C11 — the self-financing of a targeted contribution cut (M5, D-263)
+# --------------------------------------------------------------------------- #
+def _c11_store(weight: float = 0.5, *, open_weight: bool = False) -> Store:
+    """C2's three rows and C11's three, each at one value; the weight open on demand."""
+    import dataclasses
+
+    knobs = ("allegement_general_*", "bandeau_maladie_*", "bandeau_famille_*")
+    rows = {
+        "employment_elasticity_smic": parameter(
+            "employment_elasticity_smic", -0.43, -0.43, -0.43, knobs=knobs),
+        "employment_elasticity_at_fadeout": parameter(
+            "employment_elasticity_at_fadeout", -0.1, -0.1, -0.1, knobs=knobs),
+        "employment_fadeout_smic_multiple": parameter(
+            "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=knobs),
+        "autofinancement_retour_par_emploi": parameter(
+            "autofinancement_retour_par_emploi", 12_000.0, 12_000.0, 12_000.0, knobs=knobs),
+        "autofinancement_cout_par_emploi": parameter(
+            "autofinancement_cout_par_emploi", 20_000.0, 20_000.0, 20_000.0, knobs=knobs),
+        "autofinancement_poids_tresor_eco": (
+            dataclasses.replace(parameter("autofinancement_poids_tresor_eco", 0.5, 0.0, 1.0,
+                                          knobs=knobs), theta_one="high",
+                                theta_reason="le poids 1 est la réponse la plus forte")
+            if open_weight else parameter("autofinancement_poids_tresor_eco", weight,
+                                          weight, weight, knobs=knobs)),
+    }
+    return Store(parameters=rows)
+
+
+def _c11(store: Store, **inputs) -> channels.ChannelResult:
+    """The Trésor-Éco's 12 000 € a job, for C2's jobs too, unless a case says otherwise:
+    these examples were worked by hand at that value (D-270)."""
+    inputs.setdefault("value_per_job", 12_000.0)
+    return channels.targeted_self_financing(
+        store, FakeReform(allegement_general_t_delta_moins_de_50=0.40),
+        draws=1, rng=np.random.default_rng(0), **inputs)
+
+
+def test_c11_brings_back_a_share_of_the_cut_between_c2_and_the_tresor_eco() -> None:
+    """D-263, the owner's choice on R5. Worked example: a 1 bn cut that C2 reads as
+    10 000 jobs. C2's own reading is 10 000 × 12 000 / 1 bn = 12 %; the Trésor-Éco's is
+    12 000 / 20 000 = 60 %. At p = ½, s = 0,5 × 12 % + 0,5 × 60 % = 36 %: 0,36 bn comes
+    back. At p = 0 it is C2's 0,12 bn, at p = 1 the Trésor-Éco's 0,60 bn."""
+    inputs = {"jobs": np.array([10_000.0]), "contribution_delta": -1.0e9,
+              "targets_low_wages": True}
+    half = _c11(_c11_store(0.5), **inputs)
+    assert half.applies and half.in_revenue_band and half.unit == "EUR"
+    assert half.central == pytest.approx(0.36e9, rel=1e-12)
+    assert _c11(_c11_store(0.0), **inputs).central == pytest.approx(0.12e9, rel=1e-12)
+    assert _c11(_c11_store(1.0), **inputs).central == pytest.approx(0.60e9, rel=1e-12)
+    rise = _c11(_c11_store(0.5), **{**inputs, "jobs": np.array([-10_000.0]),
+                                    "contribution_delta": 1.0e9})
+    assert rise.central == pytest.approx(-0.36e9, rel=1e-12), "a rise loses as much"
+
+
+def test_c11_never_carries_a_return_the_loop_already_carries() -> None:
+    """D-263. Where the shock builder routes the cut to Mésange's uniform variant — the
+    ceiling from 2026 (D-239) — its balance row is the loop, and C11 would count the same
+    return twice: the channel does not open, and says why."""
+    result = _c11(_c11_store(0.5), jobs=np.array([10_000.0]), contribution_delta=-1.0e9,
+                  targets_low_wages=False)
+    assert not result.applies and result.draws is None
+    assert "variante uniforme" in result.message
+
+
+def test_c11_refuses_a_c2_reading_above_the_tresor_eco() -> None:
+    """D-263. θ = 1 designates the strongest response only while C2 reads less than the
+    Trésor-Éco. C2 counts persons and 12 000 € is a full-time job's return, so a cut on
+    part-time earners could read above 60 %: refused rather than boxed at the wrong
+    corners. 60 000 jobs for 1 bn is 72 %."""
+    with pytest.raises(channels.SelfFinancingOutOfRange, match="72"):
+        _c11(_c11_store(0.5), jobs=np.array([60_000.0]), contribution_delta=-1.0e9,
+             targets_low_wages=True)
+
+
+def test_c11_says_it_was_not_computed_without_its_inputs() -> None:
+    result = _c11(_c11_store(0.5))
+    assert not result.applies and "Non calculé" in result.message
+
+
+def test_c11_enters_the_band_on_c2_s_own_draws_and_moves_no_other_channel() -> None:
+    """D-263. C11 reads C2's draws of the jobs rather than drawing them again, and comes
+    last, so every other channel's draws are the ones they were. One earner cell at the
+    SMIC, 1 000 000 weighted, whose labour cost falls 1 %, on a 1 bn cut: C2 counts
+    1 000 000 × 0,43 × 0,01 = 4 300 jobs, read as 4 300 × 12 000 / 1 bn = 5,16 %; at
+    p = ½, s = 32,58 % and 0,3258 bn comes back."""
+    inputs = {"smic_multiple": np.array([1.0]), "relative_cost_change": np.array([-0.01]),
+              "earner_weights": np.array([1_000_000.0]), "contribution_delta": -1.0e9}
+    reform = FakeReform(allegement_general_t_delta_moins_de_50=0.40)
+    store = _c11_store(0.5)
+    with_c11 = band_module.compute(mechanical=-1.0e9, reform=reform, store=store,
+                                   targets_low_wages=True, draws=1,
+                                   self_financing_value_per_job=12_000.0, **inputs)
+    without = band_module.compute(mechanical=-1.0e9, reform=reform, store=store,
+                                  targets_low_wages=False, draws=1,
+                                  self_financing_value_per_job=12_000.0, **inputs)
+    by_key = {c["key"]: c for c in with_c11.channels}
+    assert by_key["c2_employment"]["central"] == pytest.approx(4_300.0, rel=1e-12)
+    assert by_key["c11_autofinancement"]["central"] == pytest.approx(0.3258e9, rel=1e-12)
+    assert with_c11.band is not None
+    assert with_c11.band.p50 == pytest.approx(-1.0e9 + 0.3258e9, rel=1e-9)
+    others = {c["key"]: c["central"] for c in without.channels}
+    assert {k: c["central"] for k, c in by_key.items() if k != "c11_autofinancement"} \
+        == {k: v for k, v in others.items() if k != "c11_autofinancement"}
+
+
+def test_the_employer_inputs_say_whether_the_cut_is_targeted_as_the_shocks_do(
+        monkeypatch) -> None:
+    """D-263. C11 opens on the shock builder's own test, `shocks.targets_low_wages`, so the
+    loop and C11 never both carry the return: the `t_delta` is targeted in 2026, the
+    ceiling is not from 2026 (D-239), and was before."""
+    from types import SimpleNamespace
+
+    import polars as pl
+
+    from impots.api import main as api_main
+    from impots.api.schemas import ReformSpec
+    from impots.behavioural import autofinancement
+
+    # What a job brings is measured on the engine (D-256, D-270); not this case's question.
+    monkeypatch.setattr(autofinancement, "job_value", lambda year: 10_032.0)
+
+    frame = pl.DataFrame({"household_id": [0], "person_id": [0],
+                          "salaire_brut_annuel": [25_000.0], "weight": [1.0],
+                          "cut": [0.01]})
+    agg = SimpleNamespace(employer_contribution_delta=-1.0e9)
+
+    def targeted(year: int, **knobs) -> bool:
+        request = SimpleNamespace(year=year, reform=ReformSpec(**knobs))
+        return api_main._employer_inputs(request, _run(frame), agg)["targets_low_wages"]
+
+    assert targeted(2026, allegement_general_t_delta_moins_de_50=0.40) is True
+    assert targeted(2026, allegement_general_plafond=3.5) is False
+    assert targeted(2025, allegement_general_plafond=1.8) is True
+
+
+def test_c11_moves_the_receipts_at_theta_and_its_row_opens_the_box() -> None:
+    """D-263. In the predictive chain, the receipts at θ carry C11, and the weight row is
+    one the reform claims, so the θ box runs from C2's reading (θ = 0) to the
+    Trésor-Éco's (θ = 1). Same cell as above, a 1 bn cut: 5,16 %, 32,58 % and 60 %."""
+    from impots.predictif import comportement
+    from impots.predictif.theta import Theta
+
+    inputs = {"smic_multiple": np.array([1.0]), "relative_cost_change": np.array([-0.01]),
+              "earner_weights": np.array([1_000_000.0]), "contribution_delta": -1.0e9,
+              "targets_low_wages": True, "self_financing_value_per_job": 12_000.0}
+    at = comportement.evaluate(Theta(rows={}, common=0.5), mechanical=-1.0e9,
+                               reform=FakeReform(allegement_general_t_delta_moins_de_50=0.40),
+                               store=_c11_store(open_weight=True), **inputs)
+    assert at.claimed == ("autofinancement_poids_tresor_eco",)
+    assert at.receipts == pytest.approx(-1.0e9 + 0.3258e9, rel=1e-9)
+    assert at.box == pytest.approx((-1.0e9 + 0.0516e9, -1.0e9 + 0.60e9), rel=1e-9)
+
+
+def test_c11_refuses_a_negative_c2_reading() -> None:
+    """D-263, from the verifier's pass. A reform that cuts at the SMIC and raises above it
+    can leave the employers' bill higher while C2 still counts jobs: C2's reading is then
+    negative, and θ = 1 (60 % of a rise, a loss) is no longer the strongest response.
+    Refused, as a reading above the Trésor-Éco's is."""
+    with pytest.raises(channels.SelfFinancingOutOfRange, match="négatif"):
+        _c11(_c11_store(0.5), jobs=np.array([10_000.0]), contribution_delta=0.2e9,
+             targets_low_wages=True)
+
+
+def test_c11_comes_last_and_leaves_every_other_channel_s_draws_as_they_were() -> None:
+    """D-263, on the shipped store, whose rows are ranges: C11 draws its weight from the
+    shared generator, so it comes after every other channel and the draws of C1 to C10 —
+    and the golden band of D-217 — are the ones they were without it. The same cell as
+    above, a 1 bn cut, a thousand draws."""
+    inputs = {"smic_multiple": np.array([1.0]), "relative_cost_change": np.array([-0.01]),
+              "earner_weights": np.array([1_000_000.0]), "contribution_delta": -1.0e9}
+    reform = FakeReform(allegement_general_t_delta_moins_de_50=0.40)
+    with_c11 = band_module.compute(mechanical=-1.0e9, reform=reform, store=employer_store(),
+                                   targets_low_wages=True, draws=1000,
+                                   self_financing_value_per_job=12_000.0, **inputs)
+    without = band_module.compute(mechanical=-1.0e9, reform=reform, store=employer_store(),
+                                  targets_low_wages=False, draws=1000,
+                                  self_financing_value_per_job=12_000.0, **inputs)
+    live = {c["key"]: c for c in with_c11.channels if c["applies"]}
+    assert "c11_autofinancement" in live and "c3_incidence" in live
+    for channel in without.channels:
+        if channel["key"] != "c11_autofinancement" and channel["applies"]:
+            assert live[channel["key"]]["band"] == channel["band"], channel["key"]

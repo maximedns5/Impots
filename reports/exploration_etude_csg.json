@@ -2,8 +2,8 @@
   "name": "etude_csg",
   "titre": "Baisse de la CSG déductible sur les revenus d'activité",
   "question": "Une baisse de la CSG déductible sur les revenus d'activité, de 6,8 % à 6,7, 6,4, 6,1 ou 5,8 %, fait-elle baisser la dette en 2035, et pour quels θ ?",
-  "computed": "2026-10-21",
-  "commit": "e0c3d7fe901b320e9b0b3c8ed1e39f8c678223d5",
+  "computed": "2026-10-25",
+  "commit": "d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56",
   "where": "un conteneur cloud de Claude Code, en tâche de fond",
   "request": {
     "name": "etude_csg",

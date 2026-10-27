@@ -1493,7 +1493,8 @@ def cmd_exploration(args: argparse.Namespace) -> int:
             uprating=hypotheses.uprating, macro=request.macro, view=view,
             **api._firm_part(firm, growth=hypotheses.growth))
         return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
-                      uncovered=dict(first.uncovered), deciles=list(first.deciles))
+                      uncovered=dict(first.uncovered), deciles=list(first.deciles),
+                      behaviour_asked=getattr(first, "behaviour_asked", False))
 
     try:
         payload = recherche.run(request, price=price, hypotheses=hypotheses, start=start,

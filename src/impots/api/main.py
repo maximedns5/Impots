@@ -354,58 +354,67 @@ def _smic_annual(year: int) -> float:
     return float(smic.smic_b_horaire) * float(smic.nb_heures_travail_mensuel) * 12.0
 
 
-def _employer_inputs(request: Any, frame: Any, households: Any, agg: Any) -> dict[str, Any]:
+def _employer_inputs(request: Any, run: Any, agg: Any) -> dict[str, Any]:
     """What C2 and C3 need, or nothing when the reform moves no employer contribution.
 
-    C2 grades by wage, so the SMIC multiple comes from individual salaries; the change
-    in labour cost is only available per household, so every earner in a household
-    carries their household's rate. Exact for the single-earner households that are
-    most of them, an approximation otherwise, and stated.
+    EACH EARNER RESPONDS TO THEIR OWN LABOUR COST, read off the run's `persons`, at the
+    SMIC multiple of their own salary. Every earner used to carry their household's
+    rate: an earner at the SMIC took a share of a partner's cut at 3 SMIC, and the
+    study's plafond, which relieves only wages above 3 SMIC, where C2 does not respond,
+    counted 1 317 jobs, every one of them from such a household (D-261).
 
-    The earners are those of the households the run priced, at the weights the run gave
-    them: `frame` is the whole population, `households` the subsample. An earner the run
-    never priced has no rate, and counting them at 0 with the frame's weight diluted the
-    jobs by the subsample, 6,5 times on 20 000 households (D-255). The subsample scales
-    every member of a household by its weight over the frame's mean, so each earner keeps
-    their own share of it, as the subsampled frame does.
+    THE EARNERS ARE THOSE OF THE HOUSEHOLDS THE RUN PRICED, AT THE RUN'S WEIGHT, as C7's
+    are (`labour.inputs`). `run` is the quick tier's pass, on a subsample reweighted to
+    the population (`runner.subsample`): its `persons` are that subsample's. Every earner
+    of the whole frame at the frame's weight, with no cost change outside the
+    subsample, counted 15 % of the earners: C2 gave 1 558 jobs for 1 Md€ of `t_delta`
+    where the run holds 9 960 (D-259; D-255 found the same dilution apart). Each earner
+    counts at THEIR OWN weight in the run, as the subsample scales it, not at their
+    household's mean: members' weights can differ (D-255, D-269).
     """
     import numpy as np
     import polars as pl
 
-    if "salaire_super_brut_reform" not in households.columns:
+    persons = run.persons
+    if persons is None:
+        from impots.behavioural.channels import ChannelInputMissing
+
+        raise ChannelInputMissing("C2 needs the run's persons; this run has none")
+    if "salaire_super_brut_reform" not in persons.columns:
         return {}
-    cost = households["salaire_super_brut"].to_numpy()
-    cost_reform = households["salaire_super_brut_reform"].to_numpy()
+    earners = persons.filter(pl.col("salaire_brut_annuel") > 0)
+    cost = earners["salaire_super_brut"].to_numpy()
+    cost_reform = earners["salaire_super_brut_reform"].to_numpy()
     with np.errstate(divide="ignore", invalid="ignore"):
         rate = np.where(cost > 0, (cost_reform - cost) / np.maximum(cost, 1e-9), 0.0)
     if not np.any(np.abs(rate) > 1e-12):
         return {}
 
-    priced = pl.DataFrame({"household_id": households["household_id"],
-                           "_rate": rate, "_run_weight": households["weight"]})
-    frame_weight = (frame.group_by("household_id")
-                    .agg(pl.col("weight").mean().alias("_frame_weight")))
-    earners = (frame.filter(pl.col("salaire_brut_annuel") > 0)
-               .join(priced, on="household_id", how="inner")
-               .join(frame_weight, on="household_id", how="inner"))
+    from impots.macro import shocks
+
     smic = _smic_annual(request.year)
     return {
         "smic_multiple": earners["salaire_brut_annuel"].to_numpy() / max(smic, 1.0),
-        "relative_cost_change": earners["_rate"].to_numpy(),
-        "earner_weights": (earners["weight"] * earners["_run_weight"]
-                           / earners["_frame_weight"]).to_numpy(),
+        "relative_cost_change": rate,
+        "earner_weights": earners["weight"].to_numpy(),
         # NOT deltas["cotisations_employeur"] — that figure is gross of the
         # allègements and reported exactly zero for a reform costing 17.7 bn (D-039).
         "contribution_delta": agg.employer_contribution_delta,
+        # C11 reads the cut's self-financing only where the shock builder routes it to
+        # Mésange's targeted variant, which has no balance row: the same test, so the loop
+        # and C11 never both carry the return (D-263).
+        "targets_low_wages": shocks.targets_low_wages(
+            tuple(request.reform.model_dump(exclude_none=True)), request.year),
         **_self_financing_inputs(request),
     }
 
 
-#: Why C11 stays shut on an employer reform the targeted variant does not carry.
-NOT_TARGETED = ("{knobs} ne fait pas une baisse ciblée en {year} : le Trésor-Éco n° 97 lit "
-                "des allègements au voisinage du SMIC, et la variation des cotisations "
-                "patronales est un seul total, qui ne se partage pas entre les boutons "
-                "(D-239, D-256).")
+#: Why C11 stays shut on a targeted cut mixed with a knob the targeted variant does not
+#: carry.
+MIXED_CUT = ("{knobs} ne fait pas une baisse ciblée en {year} : le Trésor-Éco n° 97 lit "
+             "des allègements au voisinage du SMIC, et la variation des cotisations "
+             "patronales est un seul total, qui ne se partage pas entre les boutons "
+             "(D-239, D-256).")
 LOOP_AND_C11 = ("la variante ciblée de Mésange a une ligne de solde : la boucle et C11 "
                 "compteraient deux fois les mêmes emplois. C11 est refusé tant que la "
                 "boucle les porte (D-256).")
@@ -415,11 +424,14 @@ LOOP_UNREAD = ("les lignes de solde de Mésange ne se lisent pas ({error}) : san
 
 
 def _self_financing_inputs(request: Any) -> dict[str, Any]:
-    """C11's inputs (D-256): what a full-time SMIC job brings the public finances in the
-    year, or why the channel stays shut. Only a targeted cut has a reading, and only every
-    employer knob of it: the employer contribution delta is one total. And only while
-    the targeted variant has no balance row in Mésange, where the loop would count the
-    same jobs; the loop is absent for it today (D-242), and this refuses if it is not."""
+    """C11's inputs beyond C2's (D-256, D-270): what a full-time SMIC job brings the public
+    finances in the year, or why the channel stays shut on a targeted cut all the same.
+
+    Nothing for a cut the shock builder does not route to the targeted variant: C11 says
+    so itself. A targeted cut has a reading only if every employer knob of it is
+    targeted, the employer contribution delta being one total. And only while the
+    targeted variant has no balance row in Mésange, where the loop would count the same
+    jobs; the loop is absent for it today (D-242), and this refuses if it is not."""
     import fnmatch
 
     from impots.behavioural import autofinancement, channels
@@ -427,15 +439,16 @@ def _self_financing_inputs(request: Any) -> dict[str, Any]:
     from impots.macro import store as macro_store
     from impots.predictif.retroaction import BALANCE_TABLE
 
+    if not shocks.targets_low_wages(tuple(request.reform.model_dump(exclude_none=True)),
+                                    request.year):
+        return {}
     employer = [knob for knob in channels._knobs(request.reform)
                 if any(fnmatch.fnmatch(knob, pattern)
                        for pattern in shocks.TARGETED_EMPLOYER_KNOBS)]
-    if not employer:
-        return {}
     untargeted = [knob for knob in employer
                   if not shocks.targets_low_wages((knob,), request.year)]
     if untargeted:
-        return {"self_financing_refused": NOT_TARGETED.format(
+        return {"self_financing_refused": MIXED_CUT.format(
             knobs=", ".join(f"`{knob}`" for knob in untargeted), year=request.year)}
     try:
         balance = macro_store.load().tables.get(BALANCE_TABLE)
@@ -448,7 +461,7 @@ def _self_financing_inputs(request: Any) -> dict[str, Any]:
     return {"self_financing_value_per_job": autofinancement.job_value(request.year)}
 
 
-def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
+def _narrow_band(request: Any, run: Any) -> Any:
     """How much of this reform's movement comes from near its own thresholds.
 
     Measured per threshold FAMILY against the income each family is defined on — the
@@ -461,6 +474,7 @@ def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
     from impots import narrow_band as narrow_band_module
     from impots.api.schemas import NarrowBandFlag
 
+    households = run.households
     if "revenu_disponible_reform" not in households.columns:
         return None
     smic = _smic_annual(request.year)
@@ -491,23 +505,22 @@ def _narrow_band(request: Any, households: Any, frame: Any = None) -> Any:
     wage_income, wage_move, wage_weights = (
         households["salaire_brut"].to_numpy(), cost_move, weights
     )
-    if frame is not None:
+    # The earners are those of the households the run priced, each at their own weight
+    # in the run, as C2's are (D-260, D-269): the frame's weight on the quick tier's
+    # households tilted the share towards the heavy ones, which the draw keeps at their
+    # own weight. Each moves by their OWN labour cost, from the run's persons (D-261):
+    # split evenly, a partner sitting at a plafond who did not move took half of a cut
+    # far below it.
+    if run.persons is not None:
         import polars as pl
 
-        earners = frame.filter(pl.col("salaire_brut_annuel") > 0)
-        by_household = dict(zip(households["household_id"].to_list(), cost_move,
-                                strict=False))
-        counts = (
-            earners.group_by("household_id").len()
-            .rename({"len": "n"}).to_dicts()
-        )
-        per_household_count = {row["household_id"]: row["n"] for row in counts}
-        ids = earners["household_id"].to_list()
+        earners = run.persons.filter(pl.col("salaire_brut_annuel") > 0)
         wage_income = earners["salaire_brut_annuel"].to_numpy()
-        # Each earner carries their household's movement, split evenly among them.
-        wage_move = np.array([
-            by_household.get(h, 0.0) / max(per_household_count.get(h, 1), 1) for h in ids
-        ])
+        wage_move = (
+            (earners["salaire_super_brut_reform"] - earners["salaire_super_brut"]).to_numpy()
+            if "salaire_super_brut_reform" in earners.columns
+            else np.zeros(earners.height)
+        )
         wage_weights = earners["weight"].to_numpy()
 
     families = [
@@ -665,7 +678,7 @@ def _macro(request: Any, agg: Any) -> Any:
     )
 
 
-def _behavioural_inputs(request: Any, frame: Any, agg: Any, run_households: Any = None,
+def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
                         uprating_key: str | None = None) -> tuple[dict[str, Any], int | None]:
     """What `band.compute` reads besides the mechanical figure and the reform.
 
@@ -679,7 +692,9 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run_households: Any 
 
     from impots.behavioural import emtr as emtr_module
 
-    employer = _employer_inputs(request, frame, run_households, agg) if run_households is not None else {}
+    run_households = run.households if run is not None else None
+    employer = (_employer_inputs(request, run, agg)
+                if run_households is not None else {})
     # C10 reads the run's households, not their marginal rates (D-249).
     employer = {**employer, **_dividend_inputs(request, run_households)}
     emtr_result = emtr_module.cached(
@@ -787,12 +802,12 @@ def _labour_inputs(request: Any, frame: Any, agg: Any, households: Any) -> dict[
     return labour_module.inputs(frame, households, math.log(after / before))
 
 
-def _behavioural(request: Any, frame: Any, agg: Any, run_households: Any = None) -> Any:
+def _behavioural(request: Any, frame: Any, agg: Any, run: Any = None) -> Any:
     """The band for a household reform, or a mechanical-only answer with its reason."""
     from impots.api.schemas import Behavioural
     from impots.behavioural import band as band_module
 
-    inputs, households = _behavioural_inputs(request, frame, agg, run_households)
+    inputs, households = _behavioural_inputs(request, frame, agg, run)
     computed = band_module.compute(
         mechanical=-(agg.reform_cost or 0.0), reform=request.reform, **inputs)
     payload = computed.as_dict()
@@ -857,10 +872,10 @@ def population_simulate(request: PopulationSimulateRequest) -> PopulationRespons
     result, agg = _run_population(request, frame)
     summary = _baseline_summary()
     behavioural = (
-        _behavioural(request, frame, agg, result.households)
+        _behavioural(request, frame, agg, result)
         if request.behavioural else None
     )
-    narrow_band = _narrow_band(request, result.households, frame)
+    narrow_band = _narrow_band(request, result)
     blind_spot = _niche_blind_spot(request, agg)
     macro = _macro(request, agg) if getattr(request, "macro", False) else None
     return PopulationResponse(
@@ -1440,7 +1455,8 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
     A FIRM REFORM (`firm_reform`, PHASE11_SPEC §3) adds the firm layer's cost for the
     year, and its deltas join `uncovered`: no Mésange variant reads them. `layers` then
     names each layer's cost. A firm reform alone runs no population pass at all: the
-    households are untouched, their cost is zero, and nothing of theirs is read.
+    households are untouched, their cost is zero, and nothing of theirs is read; with
+    behaviour asked, `behaviour_asked` says so, for no household channel reads it (D-268).
     """
     from types import SimpleNamespace
 
@@ -1462,7 +1478,8 @@ def _price_first_year(request: PopulationSimulateRequest, *, uprating: Any,
                    if macro else {}),
         view=view, note=" ".join(n for n in (households.note, firm.note) if n),
         deciles=households.deciles,
-        layers={"menages": households.cost, "entreprises": firm.cost})
+        layers={"menages": households.cost, "entreprises": firm.cost},
+        behaviour_asked=bool(request.behavioural) and request.reform.is_empty())
 
 
 def _price_households(request: PopulationSimulateRequest, *, uprating: Any,
@@ -1483,7 +1500,7 @@ def _price_households(request: PopulationSimulateRequest, *, uprating: Any,
         request, frame, **({"capital_index": index} if imputes_capital(request) else {}))
     if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
         raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
-    inputs = (_behavioural_inputs(request, frame, agg, result.households,
+    inputs = (_behavioural_inputs(request, frame, agg, result,
                                   uprating_key=uprating.key())[0]
               if request.behavioural else None)
     impulse, uncovered = None, {}
@@ -1635,7 +1652,8 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             by_year={year: first.cost}, carry=chaine.CARRY,
             behavioural=({year: at} if at is not None else None),
             impulses=({year: first.impulse} if first.impulse is not None else None),
-            uncovered=dict(first.uncovered))
+            uncovered=dict(first.uncovered),
+            behaviour_asked=getattr(first, "behaviour_asked", False))
         results = [chaine.run(start, horizon=request.horizon, costs=costs,
                               spending=spending, growth=growth, rate=rate, theta=theta,
                               securities=securities, store=store, persistence=persistence,
@@ -1650,7 +1668,8 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
             inputs=first.inputs, year=year,
             firm_reform=(request.firm_reform if _firm_part(request.firm_reform) else None),
             is_rate_change=firm_system.normal_rate_change_points(request.firm_reform,
-                                                                 year))
+                                                                 year),
+            behaviour_asked=getattr(first, "behaviour_asked", False))
         side = len(results) > 1
         # Side by side, the chain-stage indices (balance, debt, interest) belong to each
         # path; the response lists them as such rather than pick one path's.

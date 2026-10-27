@@ -1,0 +1,138 @@
+# L'autofinancement d'une baisse ciblée de cotisations patronales (C11, phase 11, M5).
+#
+# Une baisse ciblée sur les bas salaires tombe sous la variante « cotisations employeurs
+# ciblées » de Mésange, qui n'imprime pas de ligne de solde : la boucle y est absente
+# (D-240, D-242). Ce qui en revient aux finances publiques, ce sont les cotisations et le
+# RSA évité des emplois que la baisse crée. Les sources françaises le lisent de quelques
+# pour cent, C2 depuis D-261, à 60 % (R5 de `docs/M0_PHASE11.md`). Le propriétaire a
+# choisi (D-263) : θ = 0 à la lecture de C2, ses emplois valorisés à 12 000 € l'un ;
+# θ = 1 à celle du Trésor-Éco n° 97, 60 % ; θ = ½ entre les deux.
+
+parameters:
+  autofinancement_retour_par_emploi:
+    value: {central: 12000.0, low: 12000.0, high: 12000.0, distribution: uniform}
+    applies_to: >
+      Dépense publique évitée et recette gagnée par emploi créé ou sauvegardé par une
+      baisse de cotisations sur les bas salaires, en euros de 2009 par an : les
+      cotisations sociales, employeurs et salariés, d'un salarié à temps complet au SMIC,
+      et le RSA d'une personne seule sans enfant qu'il ne touche plus. Une valeur publiée,
+      tenue telle quelle, sans revalorisation : le choix du propriétaire la nomme ainsi.
+    responds_to_knobs: &knobs
+      [allegement_general_*, bandeau_maladie_*, bandeau_famille_*]
+    support:
+      estimated_on: "Sans objet : un montant par emploi, pas une élasticité."
+      max_variation_graded_in_support: null
+    source:
+      citation: >
+        Nouveau et Ourliac, « Les allègements de cotisations sociales patronales sur les
+        bas salaires en France de 1993 à 2009 », Trésor-Éco n° 97, janvier 2012, p. 4,
+        note 5.
+      url: https://www.tresor.economie.gouv.fr/Articles/41e04a15-fd18-4b4a-b425-dc774d68eb4e/files/acbed36f-ec77-4921-a9b9-ed2d3d533151
+      vintage: "2012"
+      quote: >-
+        En 2009, les cotisations sociales (employeurs et salariés) pour un salarié à
+        temps complet rémunéré au SMIC s'élevaient à 6 500 € sur l'ensemble de l'année ;
+        le montant du RSA était de 454 € par mois pour un célibataire sans enfant, soit
+        5 500 € environ par an. Ainsi, l'économie réalisée en matière de dépenses
+        publiques peut être estimée à 12 000 €
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-26
+      ref: D-263
+      note: >
+        Citation trouvée mot pour mot, aux espaces près, p. 4, note 5 ; 6 500 € de
+        cotisations (employeurs et salariés, SMIC à temps complet, 2009) et 5 500 € de RSA
+        (454 € par mois, célibataire sans enfant) font bien 12 000 € de 2009 par an, et la
+        réserve des auteurs est citée exactement. Réparation appliquée : l'article est
+        signé « Cyril NOUVEAU, Benoît OURLIAC » (p. 7), et la citation suit cet ordre,
+        comme le manifeste.
+    confidence: medium
+    note: >
+      Les auteurs le disent : ces hypothèses « ne recouvrent bien sûr pas la diversité des
+      situations envisageables, mais donnent une approximation de l'économie moyenne
+      raisonnable ». En 2026, au SMIC, la réduction générale laisse peu de cotisations
+      patronales, et le RSA a été revalorisé : le montant d'aujourd'hui serait autre.
+
+  autofinancement_cout_par_emploi:
+    value: {central: 20000.0, low: 20000.0, high: 20000.0, distribution: uniform}
+    applies_to: >
+      Coût brut annuel, pour les finances publiques, d'un emploi créé ou sauvegardé par
+      les allègements de 1993 à 1997, en euros de 2009 par an, actualisé par la croissance
+      de la valeur ajoutée par salarié. Le bas de la fourchette publiée, 20 000 à
+      40 000 € : le coût le plus bas par emploi est la réponse la plus forte, et θ = 1 la
+      désigne. Avec le retour par emploi, il donne l'autofinancement du haut de la plage,
+      12 000 / 20 000 = 60 %.
+    responds_to_knobs: *knobs
+    support:
+      estimated_on: "Sans objet : un coût par emploi, pas une élasticité."
+      max_variation_graded_in_support: null
+    source:
+      citation: >
+        Nouveau et Ourliac, Trésor-Éco n° 97, janvier 2012, p. 4 ; la même fourchette
+        p. 5, encadré 2, dont la note a définit l'actualisation.
+      url: https://www.tresor.economie.gouv.fr/Articles/41e04a15-fd18-4b4a-b425-dc774d68eb4e/files/acbed36f-ec77-4921-a9b9-ed2d3d533151
+      vintage: "2012"
+      quote: >-
+        Les allègements décidés au début des années 1990 et ayant été mis en place avant
+        la RTT, soit de 1993 à 1997, auraient permis de créer ou sauvegarder entre
+        200 000 et 400 000 emplois. En actualisant par la croissance de la valeur ajoutée
+        par salarié, cela représente en 2009 un coût brut par emploi créé de l'ordre de
+        20 000 € à 40 000 €.
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-26
+      ref: D-263
+      note: >
+        Citation trouvée mot pour mot p. 4 ; 20 000 € est bien le bas de la fourchette de
+        20 000 à 40 000 € (euros de 2009, actualisés par la valeur ajoutée par tête, p. 5,
+        encadré 2, note a), et 12 000 / 20 000 = 60 % recoupe le coût net de 8 000 € des
+        auteurs. Réparations appliquées : la note leur prêtait une lecture divisée par deux
+        qu'ils n'écrivent pas, c'est un calcul de M0 ; l'ordre des auteurs ; « par an ».
+    confidence: low
+    note: >
+      Une lecture des années 1990, sur une économie et un barème qui ne sont plus ceux de
+      2026, et en équilibre partiel : ni autre impôt, ni effet sur le PIB. Les auteurs,
+      « à titre illustratif », supposent doublé le coût par emploi de la seconde vague,
+      Barlet et al. (2010) trouvant un rendement « diminué de moitié » ; ils en tirent
+      400 000 à 800 000 emplois détruits par une suppression totale, au lieu de 0,6 à
+      1,1 million. À 40 000 € ou 80 000 € par emploi, la lecture tomberait à 30 ou 15 %
+      (calcul de M0, R5).
+
+  autofinancement_poids_tresor_eco:
+    value: {central: 0.5, low: 0.0, high: 1.0, distribution: triangular}
+    theta:
+      un: high
+      raison: >
+        Le poids 1 donne la lecture du Trésor-Éco, 60 %, et le poids 0 celle de C2. Sur des
+        emplois au SMIC à temps complet, C2 rend au plus 0,52 × 12 000 / 22 239 = 28 %.
+        Mais C2 compte des personnes au coût annuel de leur propre travail : une baisse
+        portée par des salariés à temps partiel, ou une baisse et une hausse mêlées,
+        peuvent porter sa lecture au-dessus de 60 % ou sous zéro. Le poids le plus haut
+        n'est la réponse la plus forte que tant que 0 ≤ s_C2 ≤ 60 % : hors de là, le canal
+        refuse (`SelfFinancingOutOfRange`).
+    applies_to: >
+      Poids de la lecture du Trésor-Éco n° 97 contre celle de C2 dans l'autofinancement
+      d'une baisse ciblée de cotisations : s = (1 − p) × s_C2 + p × 60 %. Pas une
+      estimation : le choix du propriétaire sur R5 (D-263), qui place θ = 0 à C2, θ = 1 au
+      Trésor-Éco et θ = ½ entre les deux. La plage est large parce que les sources sont en
+      désaccord, et elle le dit.
+    responds_to_knobs: *knobs
+    support:
+      estimated_on: "Sans objet : un poids choisi, pas une quantité estimée."
+      max_variation_graded_in_support: null
+    source:
+      citation: >
+        Choix du propriétaire sur R5 de `docs/M0_PHASE11.md`, le 2026-10-26 : « θ range
+        C2 → Trésor-Éco ». Consigné en D-263.
+      vintage: "2026"
+    verifier:
+      verdict: SCOPE_PROBLEM
+      date: 2026-10-26
+      ref: D-263
+      note: >
+        Le poids est dit choix du propriétaire, et 0,52 × 12 000 / 22 239 = 28 % est juste
+        pour une baisse posée sur des SMIC à temps complet. Réparation appliquée : la
+        raison disait que C2 n'atteint pas 30 % pour toute réforme ; une baisse portée par
+        des salariés à temps partiel peut lire plus de 60 %, une baisse et une hausse
+        mêlées une lecture négative. Le canal refuse les deux, et la raison le dit.
+    confidence: low
