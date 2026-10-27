@@ -80,15 +80,29 @@ def inputs(frame: pl.DataFrame, households: pl.DataFrame,
     for the CSG on earnings, whose base is 98,25 % of the gross wage up to four social
     security ceilings and all of it above, so that a rate change moves every net wage by
     almost the same share.
+
+    The pass weighs a household at its members' mean; the subsample scales every member
+    by the same factor, so each person keeps their own share of it: their frame weight
+    times the household's weight in the pass over its mean in the frame. The household's
+    weight for each, as C7 first took it, was off on the households whose members weigh
+    differently, and put C7 0,4 % low (D-258).
     """
-    persons = groups(frame).join(
-        households.select("household_id", "weight", "emtr_reform"),
-        on="household_id", how="inner",
+    frame_weight = (frame.group_by("household_id")
+                    .agg(pl.col("weight").mean().alias("_frame_weight")))
+    persons = (
+        groups(frame)
+        .join(frame.select("person_id", pl.col("weight").alias("_person_weight")),
+              on="person_id", how="inner")
+        .join(households.select("household_id", "weight", "emtr_reform"),
+              on="household_id", how="inner")
+        .join(frame_weight, on="household_id", how="inner")
+        .sort("person_id")
     )
     return {
         "labour_group": persons["group"].to_numpy(),
         "labour_earnings": persons["salaire_brut_annuel"].to_numpy(),
         "labour_delta_log_net": np.full(persons.height, float(delta_log_net)),
-        "labour_weights": persons["weight"].to_numpy(),
+        "labour_weights": (persons["_person_weight"] * persons["weight"]
+                           / persons["_frame_weight"]).to_numpy(),
         "labour_emtr": persons["emtr_reform"].to_numpy(),
     }

@@ -1,6 +1,12 @@
 # State of the project, and the directions open — 2026-10-27 (Phase 11, M0 to M6)
 
-The second 2026-10-27 update adds D-257: the curve's replay with C11 has run on its
+The third 2026-10-27 update adds D-258: C7 weighed every member at the household's weight
+in the EMTR pass, where the subsample scales each member by the same factor. Measured on
+two bundles of the CSG study, C7's receipts came out 0.39 % low, from 54 persons of 2 071
+in 35 households of 1 661: under 0.0005 point on the 2035 debt, no answer moved. Each
+person now keeps their own weight, as `_employer_inputs` has since D-255, and the fix
+gives back the exact receipts to the last digit. Four hand mutants killed.
+The second 2026-10-27 update added D-257: the curve's replay with C11 has run on its
 preregistration commit, `23f8dc8`, and `docs/PREDICTIF_ETUDE.md` renders it in its own
 section. Every point of the prognosis holds: costs as D-242's to the euro; Δb 2035 at
 θ = ½ exactly 0.70 times D-242's, +0.165 to +1.648 point for the floor and +0.217 to
@@ -476,8 +482,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **258 decision
-entries**, D-000 to D-257, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **259 decision
+entries**, D-000 to D-258, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 

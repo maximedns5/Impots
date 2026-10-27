@@ -282,8 +282,11 @@ def _frame() -> pl.DataFrame:
     ]
     columns = ("household_id", "role_menage", "sex", "age", "salaire_brut_annuel",
                "pension_annuelle", "statut_activite", "is_salarie")
+    # One weight per household, as most of the frame has: the subsample's then is each
+    # member's (D-258).
     return pl.DataFrame({"person_id": list(range(1, len(rows) + 1)),
-                         **{c: [r[i] for r in rows] for i, c in enumerate(columns)}})
+                         **{c: [r[i] for r in rows] for i, c in enumerate(columns)},
+                         "weight": [1.0] * len(rows)})
 
 
 def test_earners_are_put_in_the_papers_groups_or_counted_outside_them() -> None:
@@ -310,3 +313,43 @@ def test_the_inputs_carry_the_subsample_weight_and_the_households_rate() -> None
     assert arrays["labour_weights"].tolist() == [10.0, 10.0, 10.0, 20.0, 30.0]
     assert arrays["labour_emtr"].tolist() == [0.4, 0.4, 0.4, 0.3, 0.5]
     assert np.all(arrays["labour_delta_log_net"] == -0.01)
+
+
+def test_each_member_keeps_the_weight_the_subsample_gives_them() -> None:
+    """D-258. The EMTR pass weighs a household at its members' mean, and the subsample
+    scales every member by the same factor. In A, weights 1,2, 0,9 and 0,9 in the frame,
+    mean 1, at 10 in the pass: 12, 9 and 9, what the subsampled frame carries. The
+    household's 10 for each, as C7 first took it, counts the first a sixth too few."""
+    frame = _frame().with_columns(
+        pl.when(pl.col("person_id") == 1).then(1.2)
+        .when(pl.col("person_id").is_in([2, 3])).then(0.9)
+        .otherwise(pl.col("weight")).alias("weight"))
+    households = pl.DataFrame({"household_id": ["A", "B", "E"], "weight": [10.0, 20.0, 30.0],
+                               "emtr_reform": [0.4, 0.3, 0.5]})
+    arrays = labour.inputs(frame, households, delta_log_net=-0.01)
+    assert arrays["labour_weights"] == pytest.approx([12.0, 9.0, 9.0, 20.0, 30.0])
+
+
+def test_the_persons_weigh_what_they_weigh_in_the_subsampled_frame() -> None:
+    """Against `runner.subsample` itself, on weights unequal inside households: C7's
+    persons are those of the subsampled frame, at its weights."""
+    from impots.population.runner import subsample
+
+    rng = np.random.default_rng(7)
+    base = _frame()
+    frames = []
+    for copy in range(40):
+        frames.append(base.with_columns(
+            (pl.col("person_id") + 100 * copy).alias("person_id"),
+            (pl.col("household_id") + str(copy)).alias("household_id"),
+            pl.Series("weight", rng.lognormal(3.0, 0.7) * rng.choice([0.8, 1.0, 1.25],
+                                                                      size=base.height))))
+    frame = pl.concat(frames)
+    sub = subsample(frame, 60)
+    households = (sub.group_by("household_id").agg(pl.col("weight").mean())
+                  .with_columns(emtr_reform=pl.lit(0.3)))
+    arrays = labour.inputs(frame, households, delta_log_net=-0.01)
+    expected = labour.groups(sub).join(sub.select("person_id", "weight"), on="person_id")
+    assert len(arrays["labour_weights"]) == expected.height
+    assert float(arrays["labour_weights"].sum()) == pytest.approx(
+        float(expected["weight"].sum()), rel=1e-12)

@@ -19876,3 +19876,63 @@ Les tests de l'étude : 74 réussis. `ruff` passe.
 - Les deux libellés de D-251.
 - L'étude sur le chemin annuel, et d'autres θ que ½.
 - La porte de M6 : le `make full` du propriétaire.
+
+## D-258 — C7 pesait chaque membre au poids du ménage : mesuré, 0,4 %, et corrigé
+
+**Le fait.** D-255 a corrigé les poids de C2 et laissé ceux de C7 à mesurer, dans leur
+propre entrée : C7 entre dans les recettes. `labour.inputs` donnait à chaque personne le
+poids de son ménage dans la passe des taux marginaux. Or cette passe pèse un ménage à la
+moyenne de ses membres, et le sous-échantillon met à l'échelle chaque membre par le même
+facteur. Le poids d'une personne y est donc son poids du cadre, fois le poids du ménage
+dans la passe, sur son poids moyen dans le cadre. Le poids du ménage pour chacun n'est
+exact que là où les membres pèsent pareil.
+
+**La mesure.** Deux paquets de l'étude de la CSG déductible, en 2026, vue vieillie : les
+recettes de C7 à θ = ½, au poids du ménage puis au poids de chaque personne.
+
+| CSG déductible | Coût 2026 | Au poids du ménage | Au poids de chacun | Écart |
+|---|---|---|---|---|
+| 6,7 % | 0,88 Md€ | 39,14 M€ | 39,30 M€ | −0,39 % |
+| 5,8 % | 8,81 Md€ | 383,02 M€ | 384,53 M€ | −0,39 % |
+
+- L'écart tient à 54 personnes sur 2 071, dans 35 ménages sur 1 661 de la passe.
+- Les revenus d'activité que déplacent les heures, l'indice de C7, sont trop bas de même :
+  94,17 contre 94,54 M€, et 936,5 contre 940,1 M€.
+- Sur la dette en 2035, à 0,30887 point par milliard de la première année : 0,00005 point
+  au premier paquet, 0,0005 au second. Aucune réponse de l'étude n'en dépend.
+
+**La correction.** `labour.inputs` prend le poids de chaque personne au cadre, et le met à
+l'échelle de la passe comme le sous-échantillon le fait, ainsi que `_employer_inputs` le
+fait pour C2 depuis D-255. Rejouée sur les deux paquets, elle redonne les recettes au poids
+de chacun, au dernier chiffre. C1 et C10 restent au poids du ménage : leur assiette est
+celle du ménage, et c'est leur bon poids.
+
+**Ce que la correction ne rejoue pas.** Les rapports commités où C7 compte sont ceux de la
+CSG : l'étude (D-238) et son premier tour, son contrôle de la phase 11 (D-251), la passe de
+l'explorateur (D-234) et celle du prédictif (D-236). Tous ont compté C7 au poids du
+ménage. Leurs chiffres restent ceux de leurs passes, à moins de 0,0005 point près. Un
+contrôle rejoué sur ce code pourrait s'écarter du sien de plus d'un dix-millième de point :
+la page le dirait, avec son écart, sans le refuser.
+
+**Les tests.** Dans `tests/test_offre_travail.py`, deux cas :
+- un ménage de trois membres pesés 1,2, 0,9 et 0,9, de moyenne 1, à 10 dans la passe :
+  12, 9 et 9 ;
+- contre `runner.subsample` lui-même, sur des poids inégaux dans les ménages : les
+  personnes de C7 pèsent ce qu'elles pèsent dans le cadre sous-échantillonné.
+
+Les deux ont été vus échouer sur le code d'avant. Le cadre du test existant gagne une
+colonne de poids, égale dans chaque ménage, et son assertion ne change pas : à poids
+égaux, le poids de chacun est celui du ménage. Quatre mutations écrites à la main ont toutes
+été tuées : le poids du ménage pour chacun, le poids du cadre gardé, le poids moyen du cadre
+pris en somme, les ménages de la passe joints à gauche.
+
+Les tests de l'offre de travail, du comportement, de θ, de référence, de la précision, des
+indices, du prédictif, de l'API prédictive, de l'exemple, de l'étude, de la recherche, des
+explorations, de l'API et de l'autofinancement : 512 réussis, 2 sautés. `ruff` passe.
+
+**Ce qui reste.**
+- Le taux de C2 est celui du ménage, faute du coût de chaque salarié dans la passe (D-255).
+- Le centre de C11, 30 %, est un choix du projet que le propriétaire peut revoir (D-256).
+- Les deux libellés de D-251.
+- L'étude sur le chemin annuel, et d'autres θ que ½.
+- La porte de M6 : le `make full` du propriétaire.
