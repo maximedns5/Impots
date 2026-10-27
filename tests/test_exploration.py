@@ -8,10 +8,14 @@ refusal — and its use by the explorer, end to end.
 
 from __future__ import annotations
 
+import re
+
 import numpy as np
 import pytest
 
 from impots import explorer
+from impots.behavioural import channels
+from impots.behavioural.store import load as load_store
 from impots.dette import reference, scenarios
 from impots.dette.path import SHIPPED, DebtError
 from impots.predictif import chaine, comportement, exploration
@@ -111,6 +115,40 @@ def test_the_loop_adds_the_multipliers_theta_only_where_it_applies() -> None:
                           spending=SHIPPED["part_pib_constante"],
                           macro_store=store)({"ir": 0.01})
     assert [label for label, _ in unlooped.corners] == [exploration.NO_KEY]
+
+
+def test_the_boxs_diagonal_corners_are_the_debt_at_theta_zero_and_one() -> None:
+    """D-274. The corner where every key of the box is at 0 is Δb_T at θ = 0, and the one
+    where every key is at 1 is Δb_T at θ = 1: the box moves every θ the aged view reads.
+    The study reads the debt at θ = 0 and θ = 1 off the committed corners on this."""
+    options = {"price": _price(behaviour=True, impulse=True), "persistence": "tenu",
+               "macro_store": synthetic_macro_store()}
+    corners = _evaluator(**options)({"ir": 0.01}).corners
+    at = {}
+    for value in (0, 1):
+        at[value] = _evaluator(theta=Theta(common=float(value)), **options)({"ir": 0.01})
+        [diagonal] = [v for label, v in corners
+                      if all(part.endswith(f" = {value}") for part in label.split(", "))]
+        assert at[value].aged_eur == pytest.approx(diagonal, rel=1e-12)
+    assert at[0].aged_eur != at[1].aged_eur
+    mechanical = _evaluator()({"ir": 0.01})
+    for value in (0, 1):
+        assert _evaluator(theta=Theta(common=float(value)))({"ir": 0.01}).aged_eur == (
+            pytest.approx(dict(mechanical.corners)[exploration.NO_KEY], rel=1e-12))
+
+
+def test_every_row_a_channel_reads_answers_to_the_same_knobs() -> None:
+    """D-274, on the shipped store. A channel opens when one of its rows claims a knob of
+    the reform, and reads them all; the box moves the claimed rows only. Two rows of one
+    channel answering to different knobs would leave one at the base θ in every corner,
+    and the diagonal corners would no longer be Δb at θ = 0 and θ = 1."""
+    store = load_store()
+    names = sorted(n for n in dir(channels) if re.fullmatch(r"C\d+_KEYS", n))
+    assert len(names) >= 11
+    for name in names:
+        knobs = {frozenset(store[key].responds_to_knobs) for key in getattr(channels, name)
+                 if key in store and store[key].is_open}
+        assert len(knobs) == 1, (name, knobs)
 
 
 def test_a_non_monotone_effect_is_refused_rather_than_read_at_its_corners(

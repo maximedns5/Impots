@@ -764,8 +764,8 @@ def load_autofinancement(courbe: list[dict[str, Any]], replay: Replay,
 def study(requests: Path = REQUESTS,
           reports: Path = REPORTS) -> tuple[list, list, list, dict[str, Any] | None]:
     """The study, its complements, the curve with its knobs replayed with their
-    self-financing, and the wider menu of Phase 11 with its PFU replayed, all checked:
-    what the page renders."""
+    self-financing, and the wider menu of Phase 11 with its PFU replayed, all checked, the
+    box of each bundle read at θ = 0 and θ = 1 among them: what the page renders."""
     etudes = load(requests, reports)
     complements = load_complements(etudes, requests, reports)
     phase11 = load_phase11(etudes, complements, requests, reports)
@@ -787,6 +787,7 @@ def study(requests: Path = REQUESTS,
     for replay, auto in mesure:
         if auto is not None:
             next(e for e in courbe if e["instrument"].key == replay.key)["mesure"] = auto
+    theta_rows(etudes, complements, courbe, phase11)
     return etudes, complements, courbe, phase11
 
 
@@ -1415,6 +1416,182 @@ def _phase11_section(phase11: dict[str, Any], target: float, first_year: int,
     return out
 
 
+# --------------------------------------------------------------------------- #
+# θ = 0 and θ = 1, read off the box (D-274)
+# --------------------------------------------------------------------------- #
+#: Δb at θ is said between Δb at θ = 0 and θ = 1, or the same at both, to this share of
+#: GDP: the corners and the value at θ come from runs of the chain apart.
+THETA_SLACK = 1e-12
+
+
+def diagonal(evaluation: dict[str, Any]) -> tuple[float, float]:
+    """Δb at θ = 0 and at θ = 1, aged view: the corner of the box where every row is at 0,
+    and the one where every row is at 1. The box moves every θ the aged view reads
+    (D-274); a box of one corner, θ as asked, is a bundle nothing moves. Corners that do
+    not all name the same rows, or without one of each, are refused rather than read."""
+    from impots.predictif.exploration import NO_KEY
+
+    if [label for label, _ in evaluation["corners"]] == [NO_KEY]:
+        value = evaluation["corners"][0][1]
+        return value, value
+    corners = [(_settings(label), value) for label, value in evaluation["corners"]]
+    rows = {frozenset(key for key, _ in settings) for settings, _ in corners}
+    where = f"le paquet {json.dumps(evaluation['knobs'], sort_keys=True)}"
+    if len(rows) != 1 or not next(iter(rows)):
+        raise EtudeError(f"{where} : ses coins ne nomment pas tous les mêmes lignes de la "
+                         f"boîte θ, et Δb à θ = 0 ou à θ = 1 ne s'y lit pas. Refusé plutôt "
+                         f"que lu.")
+    at = []
+    for side in ("0", "1"):
+        found = [value for settings, value in corners
+                 if all(v == side for _, v in settings)]
+        if len(found) != 1:
+            raise EtudeError(f"{where} : sa boîte θ a {len(found)} coin(s) où chaque ligne "
+                             f"vaut {side}, et non un. Refusé plutôt que lu.")
+        at.append(found[0])
+    return at[0], at[1]
+
+
+def rendered(etudes: list[dict[str, Any]], complements: list[dict[str, Any]] | tuple = (),
+             courbe: list[dict[str, Any]] | tuple = (),
+             phase11: dict[str, Any] | None = None) -> list[tuple[str, dict[str, Any]]]:
+    """Every report the page renders, in its order, with the name the θ section gives it."""
+    out = [(e["instrument"].label, e["report"]) for e in etudes]
+    out += [(f"{c['instrument'].label}, en complément hors préenregistrement", c["report"])
+            for c in complements]
+    out += [(e["instrument"].label, e["report"]) for e in courbe]
+    if phase11:
+        out += [(e["instrument"].label, e["report"]) for e in phase11["entries"]]
+        if phase11.get("salaires"):
+            salaires = phase11["salaires"]
+            out.append((f"{salaires['instrument'].label}, avec les salaires déplacés",
+                        salaires["report"]))
+    for menu, field, how in ((AUTOFINANCEMENT_MENU, "autofinancement",
+                              "avec son autofinancement"),
+                             (MESURE_MENU, "mesure", "avec l'autofinancement réconcilié")):
+        for replay in menu:
+            for e in courbe:
+                if e["instrument"].key == replay.key and e.get(field):
+                    out.append((f"{e['instrument'].label}, rejoué {how} ({replay.entry})",
+                                e[field]["report"]))
+    return out
+
+
+def _frame(report: dict[str, Any]) -> tuple[Any, list[str]]:
+    return report["hypotheses"]["theta"], [s["persistence"] for s in report["searches"]]
+
+
+def theta_rows(etudes: list[dict[str, Any]], complements: list[dict[str, Any]] | tuple = (),
+               courbe: list[dict[str, Any]] | tuple = (),
+               phase11: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    """For each search the page renders, Δb at θ = 0, at the study's θ and at θ = 1, bundle
+    by bundle. A report run at another θ, or under other persistences, than the study's
+    would put its figures in the wrong column, and is refused."""
+    frame = _frame(etudes[0]["report"])
+    rows = []
+    for name, report in rendered(etudes, complements, courbe, phase11):
+        if _frame(report) != frame:
+            raise EtudeError(f"{name} : son θ et ses persistances, {_frame(report)}, ne "
+                             f"sont pas ceux de l'étude, {frame} ; ses Δb ne se lisent pas "
+                             f"dans les mêmes colonnes. Refusé.")
+        for search in report["searches"]:
+            at = [diagonal(e) for e in search["evaluations"]]
+            rows.append({"name": name, "persistence": search["persistence"],
+                         "absent": loop_absent(search), "zero": [low for low, _ in at],
+                         "theta": [e["delta_aged"] for e in search["evaluations"]],
+                         "one": [high for _, high in at]})
+    return rows
+
+
+def _span(values: list[float]) -> str:
+    return f"{_fr(min(values) * 100)} à {_pt(max(values))}"
+
+
+def _lower(text: str) -> str:
+    return text[0].lower() + text[1:]
+
+
+def _falls(rows: list[dict[str, Any]], column: str, side: str, target: float,
+           persistences: dict[str, str]) -> list[str]:
+    found = [(row, sum(x <= target for x in row[column])) for row in rows]
+    found = [(row, n) for row, n in found if n]
+    if not found:
+        return [f"**À θ = {side}**, la dette ne baisse à aucun paquet, sous aucune "
+                f"persistance."]
+    out = [f"**À θ = {side}**, la dette baisse :", ""]
+    for persistence, label in persistences.items():
+        here = [f"{_lower(row['name'])} ({n} paquet{'s' if n > 1 else ''} sur "
+                f"{len(row[column])})" for row, n in found if row["persistence"] == persistence]
+        if here:
+            out.append(f"- {label} : " + " ; ".join(here) + ".")
+    return out
+
+
+def _listing(rows: list[dict[str, Any]], persistences: dict[str, str]) -> list[str]:
+    """The renders named, those of every persistence first, then persistence by persistence."""
+    under: dict[str, set[str]] = {}
+    for row in rows:
+        under.setdefault(row["name"], set()).add(row["persistence"])
+    every = [name for name, these in under.items() if these == set(persistences)]
+    out = [f"- Sous chaque persistance : {' ; '.join(_lower(n) for n in every)}."] if every else []
+    for persistence, label in persistences.items():
+        some = [name for name, these in under.items()
+                if name not in every and persistence in these]
+        if some:
+            out.append(f"- {label} : {' ; '.join(_lower(n) for n in some)}.")
+    return out
+
+
+def _theta_section(rows: list[dict[str, Any]], persistences: dict[str, str], target: float,
+                   target_year: int, theta: str) -> list[str]:
+    out = ["", "## La réponse à θ = 0 et à θ = 1", "",
+           "Sans passe nouvelle. À chaque paquet, la boîte θ met à 0 ou à 1 chaque ligne que "
+           "le paquet revendique, et le multiplicateur quand la boucle tourne. Son coin où "
+           "toutes valent 0 est Δb à θ = 0, celui où toutes valent 1 est Δb à θ = 1 : chaque "
+           "ligne qu'un canal lit répond aux mêmes boutons que les autres lignes de son canal, "
+           "et la chaîne ne lit pas d'autre θ que celui du multiplicateur (D-274). Chaque case "
+           f"va du plus bas des Δb {target_year} des paquets du rendu à son plus haut, en "
+           "points de PIB, vue vieillie."]
+    for persistence, label in persistences.items():
+        out += ["", f"**{label}.**", "",
+                f"| Rendu | Δb {target_year} à θ = 0 | à θ = {theta} | à θ = 1 "
+                f"| Paquets où la dette baisse, à θ = 0, {theta}, 1 |",
+                "|---|---|---|---|---|"]
+        for row in rows:
+            if row["persistence"] == persistence:
+                counts = ", ".join(str(sum(x <= target for x in row[column]))
+                                   for column in ("zero", "theta", "one"))
+                out.append(f"| {row['name']}{' †' if row['absent'] else ''} "
+                           f"| {_span(row['zero'])} | {_span(row['theta'])} "
+                           f"| {_span(row['one'])} | {counts} sur {len(row['theta'])} |")
+    if any(row["absent"] for row in rows):
+        out += ["", "† La boucle PIB → recettes est absente pour ce rendu, non nulle : voir ce "
+                    "qui manque à la chaîne dans sa section."]
+    for column, side in (("zero", "0"), ("theta", theta), ("one", "1")):
+        out += ["", *_falls(rows, column, side, target, persistences)]
+
+    flat = [row for row in rows
+            if all(abs(a - b) <= THETA_SLACK for a, b in zip(row["zero"], row["one"], strict=True))]
+    if flat:
+        out += ["", f"Δb est le même à θ = 0, à θ = {theta} et à θ = 1, à chaque paquet :", ""]
+        out += _listing(flat, persistences)
+    outside = [row for row in rows
+               if any(not min(a, b) - THETA_SLACK <= x <= max(a, b) + THETA_SLACK
+                      for a, x, b in zip(row["zero"], row["theta"], row["one"], strict=True))]
+    if outside:
+        out += ["", f"Δb à θ = {theta} n'est pas entre Δb à θ = 0 et Δb à θ = 1, à un paquet "
+                    f"au moins : leurs lignes ne poussent pas toutes du même côté.", ""]
+        out += _listing(outside, persistences)
+    else:
+        out += ["", f"À chaque paquet, Δb à θ = {theta} est entre Δb à θ = 0 et Δb à θ = 1."]
+    out += ["", f"**Ce que cette lecture ne dit pas.** La vue figée n'a pas de coins : elle "
+                f"n'est lue qu'à θ = {theta}, comme les indices hors de la chaîne. θ = 0 et "
+                f"θ = 1 sont deux coins de la boîte, ceux d'un θ commun à toutes ses lignes ; "
+                f"la boîte, qui les croise, en reste l'étendue. Aucune passe n'a tourné : "
+                f"chaque chiffre vient d'un rapport commité, au commit qu'il nomme."]
+    return out
+
+
 def render(etudes: list[dict[str, Any]],
            complements: list[dict[str, Any]] | tuple = (),
            courbe: list[dict[str, Any]] | tuple = (),
@@ -1523,6 +1700,9 @@ def render(etudes: list[dict[str, Any]],
                 if e["instrument"].key == replay.key and e.get("mesure")]
     if measured:
         out += _mesure_section(measured, target, first_year, target_year, theta)
+    out += _theta_section(theta_rows(etudes, complements, courbe, phase11),
+                          {s["persistence"]: s["persistence_label"]
+                           for s in report["searches"]}, target, target_year, theta)
     out += ["", "## Ce que l'étude ne dit pas", "",
             "- Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de "
             "θ ; un autre scénario donne une autre réponse.",

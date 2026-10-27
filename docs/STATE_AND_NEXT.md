@@ -1,6 +1,17 @@
 # State of the project, and the directions open — 2026-10-27 (Phase 11, M0 to M6)
 
-The seventh 2026-10-27 update adds D-273: the annual path, `impots predictif`, prices a
+The eighth 2026-10-27 update adds D-274: the study read at θ = 0 and θ = 1, without a
+pass. In the aged view, the box's corner where every row is at 0 is Δb at θ = 0, and the
+one where every row is at 1 is Δb at θ = 1: every row a channel reads answers to the same
+knobs as its siblings, and the chain reads no θ but the multiplier's. The study page,
+`docs/PREDICTIF_ETUDE.md`, renders both for its fourteen reports, in a new section before
+what the study does not say. At θ = 0 no bundle lowers the 2035 debt. At θ = 1 under
+« tenu », every bundle of the CSG, the décote, the IR scale, the ceiling as a uniform cut
+and both PFU readings does; under « éteint », one PFU bundle of four, the one D-253
+replaces. The targeted curve, the study's ceiling and the IS do not move with θ. The
+frozen view and the indices are not read at θ = 0 or 1: that would take passes. Twelve
+page tests and two explorer tests.
+The seventh 2026-10-27 update added D-273: the annual path, `impots predictif`, prices a
 firm reform alone with behaviour asked instead of refusing it. The command carries the
 simulator's `behaviour_asked` flag to each year, and `annuel.build` prices a flagged year
 without channel inputs, its band and θ line saying no household channel reads the reform.
@@ -553,8 +564,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **274 decision
-entries**, D-000 to D-273, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **275 decision
+entries**, D-000 to D-274, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -926,7 +937,8 @@ download list.
    curve has its knobs (D-240), and the study is replayed with it (D-241, D-242): no
    cut of the curve lowers the debt, and what a targeted cut would give back is
    missing, said so. Left: a balance row for the targeted variant, or the jobs'
-   receipts in the chain; the study on the annual path; other θ.
+   receipts in the chain; the study on the annual path; the frozen view and the indices
+   at θ = 0 and θ = 1, the aged view being read off the box's corners (D-274).
 4. **Phase 11** (`docs/PHASE11_SPEC.md`, D-243): firms, startups and capital in the
    chain, on published ranges, international where France has none. M0 first: manifest
    and re-read Gechert and Heimberger (2022), the OECD's Hanappi, Millot and Turban
