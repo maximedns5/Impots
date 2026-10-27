@@ -20933,3 +20933,85 @@ et `scripts`, et `ui/check.mjs` ses 59 contrôles. Le `make full` n'a pas tourn�
 - La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
 - La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
 - Le `make full` du propriétaire.
+
+## D-271 — La courbe rejouée avec le C11 réconcilié, premier temps : avant ses passes
+
+**Le fait.** D-270 a réconcilié les deux C11. Le canal est celui de D-263, ses emplois
+valorisés à ce qu'un emploi au SMIC rapporte l'année de la réforme, mesuré sur le moteur
+(D-256) : 10 032 € en 2026. Les deux rejeux de la courbe que la page rend, D-265 et D-267,
+les valorisaient à 12 000 €. Ce commit préenregistre le rejeu des deux boutons avec le C11
+réconcilié, et son pronostic, avant toute passe. Les rapports nommeront ce commit. Le
+résultat sera une autre entrée, D-272.
+
+**Les requêtes.** `etude/courbe_autofinancement_mesure/t_delta.json` et `t_min.json`
+rejouent celles de la courbe, `etude/courbe/`, champ pour champ ; seuls leurs noms, leurs
+titres et leurs questions diffèrent. Le cadre est celui de l'étude, et les grilles celles de
+la courbe : quatre paquets par bouton, seize passes en tout. Seul le code les distingue des
+rejeux de D-264 et D-266.
+
+**Pourquoi un répertoire à part.** Le rendu refuse, sous les répertoires de ces deux rejeux,
+toute autre requête que la leur. Celui-ci est neuf : le rendu ne le lit pas encore, et la
+page commitée reste rendable jusqu'à D-272, qui lui apprendra à le lire.
+
+**Ce qu'on savait déjà.** Le pronostic n'est pas aveugle, et il le dit.
+- Sans boucle ni recette, Δb 2035 vaut 0,3088745 point par milliard de coût de la première
+  année, à chaque paquet de la courbe et dans les deux vues (D-242, D-261).
+- C11 rend s fois la baisse, et la baisse est le coût, à l'euro (D-263) :
+  s = (1 − p) × s_C2 + p × 60 %.
+- La lecture de C2 est linéaire dans la valeur d'un emploi. À 10 032 € au lieu de 12 000 €,
+  elle vaut 0,836 fois celle des rejeux de D-265 et D-267, à chaque paquet et à chaque coin
+  du poids à 0. Aux coins du poids à 1, rien ne bouge.
+- Ces rejeux l'ont mesurée, de leurs Δb : s = 1 − Δb / Δb de la courbe, et s_C2 = 2s − 60 %
+  à θ = ½. Pour le `t_delta`, 16,06 % à θ = ½ et 11,8 % à l'élasticité la plus faible ; pour
+  le plancher, 6,42 % et 4,8 %.
+- C2 compte désormais chacun à son propre poids (D-269) : ses emplois bougent de quelques
+  dix-millièmes, sous ce que les Δb de la page montrent.
+
+**Le pronostic**, écrit avant les passes.
+1. À θ = ½, aucun paquet ne fait baisser la dette en 2035, sous aucune persistance et dans
+   aucune vue.
+   - Le `t_delta` : s vaut 36,71 %, et Δb 0,6329 fois celui de la courbe. En vue vieillie,
+     +0,196, +0,588, +0,979 et +1,371 point, contre +0,192 à +1,343 au rejeu de D-265.
+   - Le plancher : s vaut 32,68 %, et Δb 0,6732 fois. +0,158, +0,634, +1,109 et +1,585
+     point, contre +0,157 à +1,573 au rejeu de D-267.
+2. Pour aucun θ : les 32 coins de chaque paquet restent au-dessus de zéro. Le plus bas, le
+   poids à 1, vaut 0,4 fois l'écart de la courbe, comme aux rejeux. Le plus haut, le poids à
+   0 et l'élasticité la plus faible, vaut 0,9015 fois pour le `t_delta`, de +0,279 à +1,953
+   point, et 0,9596 fois pour le plancher, de +0,226 à +2,259.
+3. Les deux persistances donnent les mêmes chiffres, et la page dit la boucle absente.
+4. Le contrôle. Les coûts sont ceux de la courbe, à l'euro et dans les deux vues. Aux seize
+   coins du poids à 1, le rejeu redonne 0,4 fois l'écart de la courbe, à l'arrondi des
+   flottants près.
+5. Les indices du premier paquet hors de la chaîne. L'emploi marchand de Mésange et les
+   déciles sont ceux de la courbe, au dernier chiffre. L'emploi au voisinage du SMIC bouge
+   des quelques dix-millièmes de D-269 : +13 408 et +4 077, à quelques unités près. Le
+   contrôle le dira, avec son écart, plutôt que de le taire.
+6. La vue figée donne les mêmes signes : de +0,213 à +1,491 point pour le `t_delta`, de
+   +0,156 à +1,565 pour le plancher.
+7. Par point de baisse, le plancher reste moins autofinancé que le `t_delta` à chaque θ
+   sous 1 : 32,68 % contre 36,71 % à θ = ½.
+
+**Les biais déclarés.** Ceux de D-264 et D-266, sauf un. La valeur d'un emploi compte
+désormais l'impôt sur le revenu, la CSG et la CRDS qu'il paie, et la prime d'activité
+qu'il ouvre : ce n'est plus un biais, mais une mesure, plus basse que les 12 000 € de 2009.
+Restent :
+- C2 compte des personnes, chacune à la valeur d'un temps plein : vers une dette plus
+  basse ;
+- θ = 1 lit le bas du coût brut par emploi du Trésor-Éco, pour des allègements sur les bas
+  salaires, quand le plancher porte la baisse jusqu'à 3 SMIC : vers une dette plus basse ;
+- la valeur d'un emploi est celle d'un célibataire sans enfant ni loyer. Ni les
+  prestations d'un autre ménage, ni l'allocation chômage au-delà du RSA, ni l'effet sur le
+  PIB n'entrent : vers une dette plus haute ;
+- un tour seulement : les recettes de C11 ne relancent rien.
+
+**Les tests.** Ce commit ne touche pas au code. Les deux requêtes ont été lues par
+`ExplorationRequest`, et leurs grilles passent `recherche.check_grid` : quatre paquets
+chacune. Elles ne diffèrent de celles de la courbe que par leur nom, leur titre et leur
+question, vérifié champ pour champ. Aucune passe de dimensionnement : les coûts sont ceux de
+la courbe, et le contrôle le vérifiera.
+La page commitée se rend à l'identique, les requêtes posées : les tests de l'étude, de la
+charte et de l'API des explorations, 122 réussis.
+
+**Ce qui suit.** Les deux recherches, l'une après l'autre, en tâche de fond, depuis une
+copie de travail figée sur ce commit. Puis D-272 : le résultat, son rendu dans
+`docs/PREDICTIF_ETUDE.md`, et ses gardes. La porte reste le `make full` du propriétaire.

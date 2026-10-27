@@ -1,0 +1,39 @@
+{
+  "name": "courbe_autofinancement_mesure_t_delta",
+  "titre": "Relèvement du t_delta de la réduction générale de 2026, avec son autofinancement réconcilié",
+  "question": "Avec l'autofinancement réconcilié d'une baisse ciblée de cotisations (C11), les emplois de C2 valorisés à ce qu'un emploi au SMIC rapporte en 2026, mesuré sur le moteur, un relèvement du t_delta de la courbe de 2026, de 37,81 % à 38,31, 39,31, 40,31 ou 41,31 %, fait-il baisser la dette en 2035, et pour quels θ ?",
+  "bounds": [
+    {
+      "knob": "allegement_general_t_delta_moins_de_50",
+      "low": 0.3831,
+      "high": 0.4131,
+      "step": 0.01
+    }
+  ],
+  "target": {
+    "year": 2035,
+    "at_most_points": 0.0
+  },
+  "spending": {
+    "rule": "gele_en_volume"
+  },
+  "growth": {
+    "name": "Croissance réelle 1 %, prix 2 %",
+    "real": 0.01,
+    "prices": 0.02
+  },
+  "rate": {
+    "name": "Taux implicite tenu à son niveau de 2025",
+    "kind": "implicite_tenu"
+  },
+  "horizon": 10,
+  "uprating": {
+    "wage": 0.03,
+    "source": "3 % ronds, le rythme du PIB nominal du scénario"
+  },
+  "theta": {
+    "common": 0.5
+  },
+  "behavioural": true,
+  "macro": true
+}

@@ -1,6 +1,13 @@
 # State of the project, and the directions open — 2026-10-27 (Phase 11, M0 to M6)
 
-The fourth 2026-10-27 update adds D-270, the reconciliation of two lines of work. From
+The fifth 2026-10-27 update adds D-271: the curve's two buttons replayed with the
+reconciled C11, preregistered before their passes under
+`etude/courbe_autofinancement_mesure/`. The prognosis, from the replays of D-265 and D-267
+and C2's reading scaled by 10 032 / 12 000: at θ = ½, C11 brings back 36.71 % of each
+`t_delta` bundle and 32.68 % of each floor bundle, so Δb is 0.6329 and 0.6732 times the
+curve's, +0.196 to +1.371 and +0.158 to +1.585 point, and no corner falls below zero. The
+searches run next, then D-272 renders them.
+The fourth 2026-10-27 update added D-270, the reconciliation of two lines of work. From
 D-255 on, two sessions built Phase 11's M5 apart: main's D-256 to D-258 (C11 with a 30 %
 centre and the value of a SMIC job measured on the engine, the curve replayed with it,
 C7's weights) and a branch's D-259 to D-269, renumbered a seventh time (C2 at each
@@ -528,8 +535,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **271 decision
-entries**, D-000 to D-270, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **272 decision
+entries**, D-000 to D-271, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
