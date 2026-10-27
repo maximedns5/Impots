@@ -1,6 +1,26 @@
-# State of the project, and the directions open — 2026-10-26 (Phase 11, M0 to M4 and M6)
+# State of the project, and the directions open — 2026-10-27 (Phase 11, M0 to M6)
 
-The fourth 2026-10-26 update adds D-255: C2's gap is explained, and it was the chain's.
+The second 2026-10-27 update adds D-257: the curve's replay with C11 has run on its
+preregistration commit, `23f8dc8`, and `docs/PREDICTIF_ETUDE.md` renders it in its own
+section. Every point of the prognosis holds: costs as D-242's to the euro; Δb 2035 at
+θ = ½ exactly 0.70 times D-242's, +0.165 to +1.648 point for the floor and +0.217 to
++1.517 for the `t_delta` (aged view); the box from 0.40 times to 0.96 and 0.93 times; and
+no bundle lowering the debt at θ = ½ or at any of its 32 corners. D-242's answer holds:
+a targeted cut would lower the debt only if it brought back more than its cost, and no
+retained reading says so. Eleven hand mutants of the page's loader killed.
+The 2026-10-27 update added D-256, Phase 11's M5: the self-financing of a targeted cut of
+employer contributions, as the owner chose for R5. A new row and channel C11 put θ = 0 on
+C2's own reading (its jobs, each valued at what a full-time SMIC job brings the public
+finances in the year, measured on the engine: 10 032 € in 2026), θ = ½ on the low end of
+the Trésor-Éco n° 97's range, 30 %, and θ = 1 on its top, 60 %. C11 opens only on a cut
+that is targeted in its year, all of it, and never where Mésange's targeted variant would
+have a balance row, which would count the same jobs. The Trésor-Éco's jobs are a medium-
+term stock, counted here from the reform's year, and said. One adversarial pass,
+SCOPE_PROBLEM, its repairs applied; eighteen hand mutants killed. The curve of D-241 is
+replayed with it, preregistered: costs as D-242's to the euro, Δb at θ = ½ 0.70 times
+D-242's, the box from 0.40 times to (1 − C2's share) times, and no bundle lowering the
+debt at any corner.
+The fourth 2026-10-26 update added D-255: C2's gap is explained, and it was the chain's.
 `_employer_inputs` took every earner of the whole frame at the frame's weights, with a cost
 change only for the households the pass had priced, one in ten on the quick tier: the jobs
 near the SMIC came out 5.8 to 6.5 times too low. The earners are now those of the run's
@@ -456,8 +476,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **256 decision
-entries**, D-000 to D-255, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **258 decision
+entries**, D-000 to D-257, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -846,8 +866,9 @@ download list.
    reference values the paper does not print; C8 remains the entry index. The capital
    income is imputed (D-248). M4 is done (D-249): the PFU knob, read back, and the
    dividends' response C10 in the receipts; the wage shift it leaves out is the next
-   number that could turn a PFU cut's answer. M5 waits on the owner's R5 choice, now on
-   a corrected C2 (D-255). M6 is
+   number that could turn a PFU cut's answer. M5 is done (D-256, D-257): the owner chose
+   R5's range once C2 was corrected (D-255), C11 prices it, and the curve replayed with it
+   still lowers the debt at no corner. M6 is
    done (D-250, D-251): the study on the wider menu. No IS cut lowers the debt; a PFU cut
    does under « tenu » at θ = ½, by a few hundredths of a point, on a sign the wage shift
    could turn. Its gate is the owner's `make full`. The wage shift is in C10 (D-252), and
