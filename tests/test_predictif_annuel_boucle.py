@@ -322,3 +322,110 @@ def test_the_first_year_is_the_simulators(command) -> None:
     assert response.status_code == 200, response.text
     assert report["years"][0]["delta_aged"] == pytest.approx(response.json()["delta"][0],
                                                              rel=1e-12)
+
+
+# --------------------------------------------------------------------------- #
+# a firm reform alone, behaviour asked: priced, and said unread (D-268, D-273)
+# --------------------------------------------------------------------------- #
+FIRM_NOTE = "La couche entreprises, ses cellules et sa convention (test)."
+
+
+def _firm_alone(year: int, view: str, *, asked: bool = True, macro: bool = True) -> Priced:
+    """What the simulator's pass gives for a firm reform alone: no population pass, so
+    no channel inputs; the firm layer's cost; and, behaviour asked, the flag that says
+    no household channel reads it (D-268)."""
+    cost = _cost(year, view)
+    return Priced(cost=cost, inputs=None, impulse={} if macro else None,
+                  uncovered={"cvae": main.FIRM_NO_VARIANT} if macro else {},
+                  layers={"menages": 0.0, "entreprises": cost}, behaviour_asked=asked)
+
+
+def _build_firm(price, *, behavioural: bool = True, macro: bool = True) -> annuel.Rapport:
+    prices = annuel.price_years([2026, 2027, 2028], price, basis_for=lambda y: "legislated")
+    return annuel.build(START, prices, scenario="cvae_moitie", titre="La CVAE à moitié",
+                        source="test", reference="reconduit", computed="2026-10-27",
+                        spending=FROZEN, growth=GROWTH, rate=HELD, theta=HALF,
+                        uprating=UPRATING, uprating_note="", reform=ReformSpec(),
+                        behavioural=behavioural, macro=macro, firm_note=FIRM_NOTE,
+                        macro_store=synthetic_macro_store())
+
+
+@pytest.mark.parametrize("macro", [True, False])
+def test_a_firm_reform_alone_with_behaviour_asked_is_priced_and_said_unread(
+        macro: bool) -> None:
+    """D-273. The annual path refused a firm reform alone with behaviour asked: its years
+    have no channel inputs, and read as missing they were. The pass says behaviour was
+    asked (D-268): the path is priced, every year, and the band and the θ line say no
+    household channel reads a firm knob — not « non demandé », and not zero either. The
+    path is the mechanical one: no channel adds anything."""
+    rapport = _build_firm(lambda y, v: _firm_alone(y, v, macro=macro), macro=macro)
+    payload = rapport.payload()
+    assert payload["behavioural"] is True
+    assert payload["absent"]["bande"] == chaine.NO_HOUSEHOLD_CHANNEL
+    assert payload["absent"]["θ"] == chaine.THETA_NO_HOUSEHOLD_CHANNEL
+    # The same reform without behaviour: its whole pass for the loop, its cost alone else.
+    mechanical = _build_firm(
+        (lambda y, v: _firm_alone(y, v, asked=False)) if macro
+        else (lambda y, v: annuel.Layered(cost=_cost(y, v), layers={
+            "menages": 0.0, "entreprises": _cost(y, v)})),
+        behavioural=False, macro=macro)
+    assert rapport.aged.delta == mechanical.aged.delta
+    assert rapport.frozen.delta == mechanical.frozen.delta
+    assert [row["mechanical_by_layer"]["vieillie"]["entreprises"]
+            for row in payload["years"]] == [_cost(y, "vieillie") for y in (2026, 2027, 2028)]
+    PredictifReportResponse.model_validate(payload)
+
+
+def test_a_year_without_inputs_nor_the_flag_is_still_refused() -> None:
+    """GUARD 9 holds: a firm reform's year whose pass does not say behaviour was asked is
+    a year without what was asked of it, refused as before."""
+    with pytest.raises(DebtError, match="entrées des canaux ou impulsion"):
+        _build_firm(lambda y, v: _firm_alone(y, v, asked=y != 2027))
+
+
+def test_years_of_a_household_reform_and_of_a_firm_reform_alone_are_refused() -> None:
+    """One scenario, one reform: a year flagged as a firm reform alone beside years that
+    carry the channels' inputs is not a path, and is refused rather than drawn with a
+    band over some years only."""
+    def price(year: int, view: str) -> Priced:
+        if year == 2027:
+            return _firm_alone(year, view)
+        whole = _whole(year, view)
+        return Priced(cost=whole.cost, inputs=whole.inputs, impulse=whole.impulse,
+                      layers={"menages": 0.0, "entreprises": whole.cost})
+
+    with pytest.raises(DebtError, match="seules entreprises"):
+        _build_firm(price)
+
+
+def test_the_command_carries_the_flag_from_the_simulators_pass(command) -> None:
+    """D-273, through the command: the CVAE at half its schedule, a firm reform alone,
+    with `--behavioural` and `--macro`. The stubbed pass says behaviour was asked, as the
+    simulator's does (D-268); the command carries it, and the report says no household
+    channel reads the reform instead of refusing it."""
+    seen = command["seen"]
+
+    def stub(request, *, uprating, macro=False, view="vieillie", firm_reform=None,
+             growth=None):
+        seen.append((request.year, view, request.behavioural, macro))
+        cost = _cost(request.year, view)
+        return SimpleNamespace(
+            cost=cost, view=view, note="", deciles=[], inputs=None,
+            impulse={} if macro else None,
+            uncovered={"cvae": main.FIRM_NO_VARIANT} if macro else {},
+            layers={"menages": 0.0, "entreprises": cost},
+            behaviour_asked=bool(request.behavioural) and request.reform.is_empty())
+
+    command["monkeypatch"].setattr(main, "_price_first_year", stub)
+    command["monkeypatch"].setattr(main, "_firm_report_note", lambda *a, **k: FIRM_NOTE)
+    base = ["predictif", "cvae_moitie_2026", *ARGS[2:]]
+    code = cli.main([*base, "--horizon", "3", "--behavioural", "--macro",
+                     "--out-dir", str(command["out"])])
+    assert code == 0
+    report = json.loads((command["out"] / "predictif_cvae_moitie_2026.json").read_text(
+        encoding="utf-8"))
+    assert sorted(seen) == sorted((y, v, True, True) for y in (2026, 2027, 2028)
+                                  for v in ("vieillie", "figee"))
+    assert report["absent"]["bande"] == chaine.NO_HOUSEHOLD_CHANNEL
+    assert report["absent"]["θ"] == chaine.THETA_NO_HOUSEHOLD_CHANNEL
+    PredictifReportResponse.model_validate(report)
