@@ -5,13 +5,15 @@ commités. Et celles du préenregistrement : chaque rapport a joué la requête 
 `etude/`, à l'identique ; chaque instrument du menu a sa requête et son rapport ; tous
 viennent d'un même commit, et disent où leurs passes ont tourné. Sur une étude construite,
 sans données : ces refus, la réponse par instrument et par persistance, et les coins qui
-font baisser la dette. La courbe de 2026, rejouée à part (D-241, D-242), a les siens.
+font baisser la dette. La courbe de 2026, rejouée à part (D-241, D-242), a les siens, et
+la réponse à θ = 0 et à θ = 1, lue aux coins de la boîte (D-274), aussi.
 """
 
 from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -1296,6 +1298,8 @@ MESURE_COMMIT = "7" * 40
 #: first replays', C2's jobs being worth less.
 MESURE_HALF, MESURE_LOW = 0.367, 0.10
 MESURE_TITLE = "## La courbe rejouée avec l'autofinancement réconcilié"
+THETA_TITLE = "## La réponse à θ = 0 et à θ = 1"
+NOT_SAID = "## Ce que l'étude ne dit pas"
 
 
 def _mesure(script, key: str):
@@ -1333,7 +1337,7 @@ def test_the_curve_replayed_with_the_reconciled_c11_is_rendered_apart(script,
     floor_title = "## Le plancher `t_min` de la courbe rejoué avec son autofinancement"
     assert page.index(floor_title) < page.index(MESURE_TITLE)
     head, _, tail = page.partition(MESURE_TITLE)
-    section, _, rest = tail.partition("## Ce que l'étude ne dit pas")
+    section, _, rest = tail.partition(THETA_TITLE)
     assert MESURE_COMMIT in section and MESURE_COMMIT not in head + rest
     assert "D-271" in section and "`etude/courbe_autofinancement_mesure/`" in section
     assert "Les rejeux qui précèdent valorisaient les emplois de C2 à 12 000 €" in section
@@ -1363,11 +1367,16 @@ def test_the_curve_replayed_with_the_reconciled_c11_is_rendered_apart(script,
         assert "les indices du paquet le plus proche sont ceux de la courbe." in part
         assert "célibataire sans enfant ni loyer" in part
     assert "dès 2 SMIC" in floor and "dès 2 SMIC" not in t_delta
-    # The page before the section is the page without it.
+    # The page before the section is the page without it, the θ section aside: that one
+    # reads every report the page renders, this replay's among them (D-274).
     (tmp_path / "avant").mkdir()
     before = script.render(*script.study(*_with_autofinancement(
         tmp_path / "avant", script, "t_delta", "t_min")))
-    assert before == head + "## Ce que l'étude ne dit pas" + rest
+    above, _, below = before.partition(THETA_TITLE)
+    assert above == head
+    assert below.partition(NOT_SAID)[2] == rest.partition(NOT_SAID)[2]
+    replayed = "rejoué avec l'autofinancement réconcilié (D-271)"
+    assert replayed in rest.partition(NOT_SAID)[0] and replayed not in below
 
 
 def test_the_reconciled_replay_without_the_first_says_so(script, tmp_path) -> None:
@@ -1523,3 +1532,205 @@ def test_a_reconciled_replay_s_indices_off_the_curve_are_named(script, tmp_path,
     assert "Il les redonne :" in section
     assert f"sauf : {label}, de 40,00 " in section
     assert ("C2 y compte chacun à son propre poids dans la passe (D-269)" in section) is why
+
+
+# --------------------------------------------------------------------------- #
+# θ = 0 and θ = 1, read off the box (D-274)
+# --------------------------------------------------------------------------- #
+def _at(evaluation: dict, side: str) -> float:
+    """Built apart from the script: the one corner that sets no row to the other side."""
+    other = "1" if side == "0" else "0"
+    [value] = [v for label, v in evaluation["corners"] if f" = {other}" not in label]
+    return value
+
+
+def _theta_section(page: str) -> str:
+    return page.partition(THETA_TITLE)[2].partition(NOT_SAID)[0]
+
+
+def _table(section: str, label: str) -> str:
+    return section.partition(f"**{label}.**")[2].partition("**")[0]
+
+
+def _set_corners(evaluation: dict, corners: list) -> None:
+    """New corners, and the box shown with them: the report's schema holds them equal."""
+    values = [v for _, v in corners]
+    evaluation.update(corners=corners, corner_low=min(values), corner_high=max(values))
+
+
+def test_the_theta_section_reads_each_bundle_at_its_diagonal_corners(script,
+                                                                    tmp_path) -> None:
+    """Each instrument under each persistence: Δb at θ = 0, at θ = ½ and at θ = 1, from
+    its lowest bundle to its highest, and how many bundles meet the target at each, in the
+    table of its persistence; the section after every other, before what the study does
+    not say."""
+    etudes = script.load(*_study(tmp_path, script))
+    page = script.render(etudes)
+    section = _theta_section(page)
+    assert section and page.index(THETA_TITLE) < page.index(NOT_SAID)
+    assert page.index(THETA_TITLE) > page.index(f"### {etudes[-1]['instrument'].label}")
+    target = etudes[0]["report"]["hypotheses"]["target_share"]
+    moved = False
+    for entry in etudes:
+        for search in entry["report"]["searches"]:
+            columns = [[_at(e, "0") for e in search["evaluations"]],
+                       [e["delta_aged"] for e in search["evaluations"]],
+                       [_at(e, "1") for e in search["evaluations"]]]
+            moved |= columns[0] != columns[2]
+            counts = ", ".join(str(sum(x <= target for x in c)) for c in columns)
+            row = (f"| {entry['instrument'].label} | "
+                   + " | ".join(f"{script._fr(min(c) * 100)} à {script._pt(max(c))}"
+                                for c in columns)
+                   + f" | {counts} sur {len(columns[1])} |")
+            assert row in _table(section, search["persistence_label"])
+    assert moved
+    assert "†" not in section
+    assert "À chaque paquet, Δb à θ = ½ est entre Δb à θ = 0 et Δb à θ = 1." in section
+    assert "Δb est le même" not in section
+    assert "La vue figée n'a pas de coins" in section
+
+
+def test_the_theta_section_says_at_which_theta_the_debt_falls(script, tmp_path) -> None:
+    """Under « tenu », the multiplier at 1 makes every bundle meet the target, and at 0
+    none: the section says so for θ = 1 and θ = 0, by persistence and with its count."""
+    etudes = script.load(*_study(tmp_path, script))
+    section = _theta_section(script.render(etudes))
+    target = etudes[0]["report"]["hypotheses"]["target_share"]
+    tenu = etudes[0]["report"]["searches"][1]
+    assert not any(_at(e, "0") <= target for entry in etudes
+                   for s in entry["report"]["searches"] for e in s["evaluations"])
+    assert "**À θ = 0**, la dette ne baisse à aucun paquet, sous aucune persistance." in section
+    falls = section.partition("**À θ = 1**, la dette baisse :")[2].partition("\n\n")[2]
+    line = next(x for x in falls.splitlines() if x.startswith(f"- {tenu['persistence_label']}"))
+    for entry in etudes:
+        search = entry["report"]["searches"][1]
+        n = sum(_at(e, "1") <= target for e in search["evaluations"])
+        label = entry["instrument"].label
+        said = f"{label[0].lower() + label[1:]} ({n} paquet"
+        assert (said in line) is bool(n)
+
+
+def test_a_bundle_nothing_moves_and_one_off_its_diagonal_are_named(script, tmp_path) -> None:
+    """Where every corner gives the same Δb, the section says Δb the same at θ = 0, ½ and
+    1, under every persistence or under the one it holds for; where Δb at θ = ½ leaves the
+    interval of θ = 0 and θ = 1, it names the instrument instead of saying it never does."""
+    requests, reports = _study(tmp_path, script)
+    path = reports / "exploration_etude_decote.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    for search in report["searches"]:
+        for e in search["evaluations"]:
+            _set_corners(e, [[label, e["delta_aged"]] for label, _ in e["corners"]])
+    path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    path = reports / "exploration_etude_ir.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    tenu = report["searches"][1]
+    for e in tenu["evaluations"]:
+        _set_corners(e, [[label, e["delta_aged"]] for label, _ in e["corners"]])
+    eteint = report["searches"][0]["evaluations"][0]
+    _set_corners(eteint, [[label, eteint["delta_aged"] - (1 + i) * 1e-3]
+                          for i, (label, _) in enumerate(eteint["corners"])])
+    # One bundle of four that nothing moves does not make the instrument one.
+    still = report["searches"][0]["evaluations"][1]
+    _set_corners(still, [[label, still["delta_aged"]] for label, _ in still["corners"]])
+    path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    etudes = script.load(requests, reports)
+    section = _theta_section(script.render(etudes))
+    decote, ir = (next(e["instrument"].label for e in etudes if e["instrument"].key == k)
+                  for k in ("decote", "ir"))
+    same = section.partition("Δb est le même à θ = 0, à θ = ½ et à θ = 1")[2]
+    same = same.partition("\n\n")[2].partition("\n\n")[0]
+    assert f"- Sous chaque persistance : {decote[0].lower() + decote[1:]}." in same
+    assert f"- {tenu['persistence_label']} : {ir[0].lower() + ir[1:]}." in same
+    outside = section.partition("n'est pas entre Δb à θ = 0 et Δb à θ = 1")[2]
+    outside = outside.partition("\n\n")[2].partition("\n\n")[0]
+    assert outside == (f"- {report['searches'][0]['persistence_label']} : "
+                       f"{ir[0].lower() + ir[1:]}.")
+    assert "À chaque paquet, Δb à θ = ½ est entre" not in section
+
+
+def test_an_absent_loop_is_marked_in_the_theta_section(script, tmp_path) -> None:
+    """D-238: Δb that θ does not move because the loop is absent is not Δb that θ cannot
+    move; the row says it."""
+    requests, reports = _study(tmp_path, script)
+    path = reports / "exploration_etude_allegements.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    for search in report["searches"]:
+        search["indices"]["absent"] = {"rétroaction": "pas de ligne de solde"}
+    path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    etudes = script.load(requests, reports)
+    section = _theta_section(script.render(etudes))
+    label = next(e["instrument"].label for e in etudes if e["instrument"].key == "allegements")
+    for search in report["searches"]:
+        assert f"| {label} † |" in _table(section, search["persistence_label"])
+    assert section.count(" † |") == 2
+    assert "† La boucle PIB → recettes est absente pour ce rendu, non nulle" in section
+
+
+def test_a_box_of_one_corner_reads_the_same_at_theta_zero_and_one(script) -> None:
+    """θ as asked, nothing moving the bundle: Δb at θ = 0 and at θ = 1 is that corner's."""
+    from impots.predictif.exploration import NO_KEY
+
+    assert script.diagonal({"knobs": {}, "corners": [[NO_KEY, 0.01]]}) == (0.01, 0.01)
+
+
+def _corners(how: str):
+    def edit(corners: list) -> list:
+        if how == "sans_coin":
+            return [c for c in corners if not c[0].endswith(" = 0")]
+        if how == "deux_coins":
+            return [*corners, next(c for c in corners if c[0].endswith(" = 1"))]
+        if how == "autres_lignes":
+            return [["eti_all = 0", corners[0][1]], *corners[1:]]
+        return [["θ quelconque", corners[0][1]]]
+    return edit
+
+
+@pytest.mark.parametrize("how, needle", [
+    ("sans_coin", "a 0 coin(s) où chaque ligne vaut 0, et non un"),
+    ("deux_coins", "a 2 coin(s) où chaque ligne vaut 1, et non un"),
+    ("autres_lignes", "ne nomment pas tous les mêmes lignes"),
+    ("sans_ligne", "ne nomment pas tous les mêmes lignes"),
+    ("autre_theta", "son θ et ses persistances"),
+    ("autres_persistances", "son θ et ses persistances"),
+])
+def test_a_box_that_does_not_give_theta_zero_and_one_is_refused(script, tmp_path, how: str,
+                                                                 needle: str) -> None:
+    """GUARD. A box without a corner of each, with two, or whose corners do not name the same
+    rows, does not say Δb at θ = 0 and θ = 1; a report run at another θ, or under other
+    persistences, would put its Δb in the wrong column. Each is refused, not read."""
+    requests, reports = _study(tmp_path, script)
+    path = reports / "exploration_etude_decote.json"
+    report = json.loads(path.read_text(encoding="utf-8"))
+    if how == "autre_theta":
+        report["hypotheses"]["theta"]["common"] = 0.4
+    elif how == "autres_persistances":
+        report["searches"].reverse()
+    else:
+        evaluation = report["searches"][1]["evaluations"][2]
+        _set_corners(evaluation, _corners(how)(evaluation["corners"]))
+    path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(script.EtudeError, match=re.escape(needle)):
+        script.study(requests, reports)
+
+
+def test_the_committed_theta_section_reads_every_report_the_page_renders(script) -> None:
+    """On the committed reports: the fourteen the page renders, each read at the corners
+    built apart here, and named in the table of each persistence."""
+    etudes, complements, courbe, phase11 = script.study()
+    named = script.rendered(etudes, complements, courbe, phase11)
+    loaded = ([e["report"] for e in etudes] + [c["report"] for c in complements]
+              + [e["report"] for e in courbe]
+              + [e["report"] for e in phase11["entries"]] + [phase11["salaires"]["report"]]
+              + [e[k]["report"] for k in ("autofinancement", "mesure") for e in courbe])
+    assert len(named) == len(loaded) == 14
+    assert {id(r) for _, r in named} == {id(r) for r in loaded}
+    rows = script.theta_rows(etudes, complements, courbe, phase11)
+    assert len(rows) == 28
+    section = _theta_section(script.OUT.read_text(encoding="utf-8"))
+    for (name, report), pair in zip(named, zip(rows[::2], rows[1::2], strict=True),
+                                    strict=True):
+        for search, row in zip(report["searches"], pair, strict=True):
+            assert row["name"] == name and row["persistence"] == search["persistence"]
+            assert row["zero"] == [_at(e, "0") for e in search["evaluations"]]
+            assert row["one"] == [_at(e, "1") for e in search["evaluations"]]
+            assert f"| {name}" in _table(section, search["persistence_label"])

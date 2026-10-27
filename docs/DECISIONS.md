@@ -21232,3 +21232,125 @@ explorations, du balayage et de la charte : 248 réussis. `ruff` passe, et `ui/c
 - La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
 - Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
 - Le `make full` du propriétaire.
+
+## D-274 — L'étude à θ = 0 et à θ = 1, lue aux coins de la boîte
+
+**Le fait.** L'étude répond à θ = ½. À chaque paquet, elle donne aussi la boîte θ : Δb aux
+coins où chaque ligne que le paquet revendique, et le multiplicateur quand la boucle
+tourne, vaut 0 ou 1. La réponse à θ = 0 et à θ = 1 restait à lire (D-272, D-273). Elle
+n'appelle aucune passe. Le coin où toutes les lignes valent 0 est Δb à θ = 0, celui où
+toutes valent 1 est Δb à θ = 1, en vue vieillie. `docs/PREDICTIF_ETUDE.md` les rend dans
+une section nouvelle, « La réponse à θ = 0 et à θ = 1 », pour les quatorze rapports que la
+page rend. La section vient après toutes les autres et avant ce que l'étude ne dit pas ; le
+reste de la page est inchangé, à l'octet.
+
+**Pourquoi les coins suffisent.** Un coin met les lignes de la boîte à 0 ou à 1, et toute
+autre ligne au θ de la requête, ½. Il vaut Δb au θ commun si la vue vieillie ne lit aucune
+autre ligne. Deux faits le tiennent.
+- Un canal s'ouvre dès qu'une de ses lignes répond à un bouton de la réforme, et les lit
+  toutes. Or chaque ligne d'un canal répond aux mêmes boutons que les autres lignes du
+  canal. Aucune ligne qu'un canal lit n'est donc hors de la boîte.
+- La chaîne ne lit pas d'autre θ que celui du multiplicateur. Celui de la croissance par
+  l'IS (D-246) ne sert qu'à l'indice du PIB, hors de la dette.
+
+Les deux faits ont été vérifiés à la main sur le code de chacun des neuf commits des
+rapports rendus. Aucun canal n'y mêle les boutons, et la chaîne n'y lit que le
+multiplicateur.
+
+**Le résultat.** Δb 2035 en points de PIB, vue vieillie, du plus bas au plus haut des
+paquets.
+- À θ = 0, la dette ne baisse à aucun paquet d'aucun rendu, sous aucune persistance.
+- À θ = 1, sous l'effet tenu, elle baisse à chaque paquet de six rendus :
+  - la CSG, de −0,62 à −0,06 ;
+  - la décote, de −0,34 à −0,03 ;
+  - le barème de l'IR, de −1,08 à −0,17 ;
+  - le plafond des allègements en complément, de −0,86 à −0,27 ;
+  - le PFU du menu élargi, de −0,59 à −0,20 ;
+  - le PFU avec les salaires déplacés, de −0,03 à −0,01.
+- À θ = 1, sous l'effet éteint, elle ne baisse qu'à un paquet sur quatre du PFU du menu
+  élargi, que D-253 remplace. Avec les salaires déplacés, elle ne baisse à aucun.
+- Le plafond de l'étude, la courbe et l'IS ont le même Δb à θ = 0, ½ et 1, sous les deux
+  persistances. La boucle y est absente, et aucune recette de leurs canaux n'y dépend de θ.
+- Les quatre rejeux de la courbe avec l'autofinancement baissent de θ = 0 à θ = 1 sans
+  passer sous zéro. Le `t_delta` réconcilié va de +0,28 à +1,95 point à θ = 0, et de +0,12
+  à +0,87 à θ = 1. Le plancher réconcilié va de +0,23 à +2,26, puis de +0,09 à +0,94.
+- À chaque paquet, Δb à θ = ½ est entre Δb à θ = 0 et Δb à θ = 1. Un seul rendu voit sa
+  dette monter avec θ : le PFU avec les salaires déplacés, sous l'effet éteint, de +0,10 à
+  +0,45 point à θ = 0 et de +0,17 à +0,66 à θ = 1.
+
+**Ce que la réponse veut dire.** Au bas du support de chaque comportement et du
+multiplicateur, aucune baisse de l'étude ne se finance. En haut, c'est la persistance de
+l'effet macro qui retourne la réponse. À θ = 1 sous l'effet éteint, la CSG, la décote et le
+barème laissent encore de +0,18 à +2,49 point. Sous l'effet tenu, les trois passent sous
+zéro. Lus comme une baisse ciblée, les allègements ne la retournent à aucun θ, faute d'une
+boucle à lire pour eux. Lus sous la variante uniforme, dans le complément, ils la retournent
+à θ = 1 sous l'effet tenu, comme les impôts des ménages. L'étude ne recommande rien.
+
+**Ce que la section ne dit pas.**
+- La vue figée n'a pas de coins : l'explorateur ne l'évalue qu'au θ de la requête. Les
+  indices hors de la chaîne non plus. Les lire à θ = 0 et à θ = 1 demanderait des passes,
+  préenregistrées comme les autres.
+- θ = 0 et θ = 1 ne sont que deux coins de la boîte, ceux d'un θ commun à toutes ses lignes.
+  La boîte, qui croise les lignes, reste l'étendue.
+
+**Les gardes.** `scripts/write_predictif_etude.py` lit les deux coins de chaque paquet. Il
+refuse plutôt que lire dans trois cas :
+- une boîte sans un coin où chaque ligne vaut 0 et un où chacune vaut 1, ou avec deux ;
+- des coins qui ne nomment pas tous les mêmes lignes, ou qui n'en nomment aucune ;
+- un rapport rendu à un autre θ, ou sous d'autres persistances, que l'étude : ses Δb
+  tomberaient dans d'autres colonnes.
+
+Une boîte d'un seul coin, θ tel que demandé, se lit telle quelle, puisque rien ne déplace le
+paquet ; aucun rapport rendu n'en a. La croix marque un rendu dont la boucle est absente :
+un Δb que θ ne déplace pas faute de boucle n'est pas un Δb que θ ne peut pas déplacer. Aucun
+chiffre n'est saisi : tous viennent des rapports, aux commits qu'ils nomment.
+
+**Les tests.** Dans `tests/test_exploration.py`, deux cas :
+- Δb à θ = 0 et à θ = 1, évalué à part, est le coin diagonal de la boîte à θ = ½, sur un
+  paquet avec comportement et boucle ; sans l'un ni l'autre, il est le coin unique ;
+- sur le magasin livré, chaque ligne d'un canal répond aux mêmes boutons que les autres.
+
+Tous deux passaient sur le code, qui tenait déjà l'identité. Ils ont été vus échouer sous
+trois mutations : une ligne de C1 qui ne répond plus au barème, le multiplicateur hors de la
+boîte, une clé laissée au θ de la requête dans les coins.
+
+Dans `tests/test_predictif_etude.py`, douze cas nouveaux :
+- la section lue paquet par paquet, aux coins construits à part, dans la table de sa
+  persistance ;
+- où la dette baisse, à θ = 0 et à θ = 1 ;
+- un instrument que rien ne déplace, sous ses deux persistances ou sous une seule, et un
+  paquet hors de l'intervalle ;
+- la boucle absente ;
+- la boîte d'un seul coin ;
+- les six refus ;
+- la section commitée : ses quatorze rapports, lus aux coins construits à part.
+
+Les douze ont échoué sur le script de `664cc45`. Le test de la section de D-272 tenait que
+rien ne la suivait que « Ce que l'étude ne dit pas ». La section θ la suit désormais, et
+elle lit chaque rapport rendu, ce rejeu compris. Le test coupe donc à son titre, et tient
+la page d'avant inchangée partout ailleurs. Il tient aussi que la section θ nomme ce rejeu,
+et que la page d'avant ne le nomme pas.
+
+Vingt-cinq mutations écrites à la main du script, toutes tuées :
+- la lecture des coins : deux coins acceptés, des lignes différentes, une boîte sans ligne,
+  le coin unique refusé, θ = 0 et θ = 1 échangés ;
+- le cadre : non vérifié, sans ses persistances, sans son θ ;
+- les rapports lus : le complément, la courbe, le menu élargi, les salaires, le rejeu
+  réconcilié, la colonne θ prise au bas de la boîte ;
+- le rendu : la croix perdue, sa note toujours dite, un instrument dit immobile pour un
+  seul paquet, hors de l'intervalle seulement à chaque paquet, la baisse lue à θ = 1
+  partout, toute persistance dite chacune, θ = ½ non dit, les comptes, l'étendue inversée,
+  la section non rendue, les refus hors de `study`.
+
+Les tests de la page et de l'explorateur : 158 réussis. `ruff` passe. Le `make full` n'a
+pas tourné.
+
+**Ce qui reste.**
+- Les passes préenregistrées de la vue figée et des indices à θ = 0 et θ = 1, si on les
+  veut.
+- L'étude sur le chemin annuel.
+- Le libellé de la passe rapide de la page pour une réforme des seules entreprises.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
+- Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
+- Le `make full` du propriétaire.

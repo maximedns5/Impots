@@ -674,6 +674,69 @@ Avec l'autofinancement réconcilié d'une baisse ciblée de cotisations (C11), l
 
 **Ce que ce chiffre ne compte pas.** C2 compte des personnes, au coût annuel de leur propre travail, chacune à la valeur d'un emploi à temps plein au SMIC : à θ = 0, la part est sans doute trop haute. θ = 1 lit le bas du coût brut par emploi des allègements de 1993 à 1997, 20 000 € sur 20 000 à 40 000 €, et la note envisage elle-même un coût doublé pour la seconde vague. Les deux vont vers une dette plus basse. La valeur d'un emploi est celle d'un célibataire sans enfant ni loyer : C11 ne compte ni les prestations d'un autre ménage, ni l'allocation chômage évitée au-delà du RSA, ni l'effet sur le PIB, que Mésange ne chiffre pas pour sa variante ciblée, vers une dette plus haute. Un tour seulement : les recettes de C11 ne relancent rien. Le Trésor-Éco n° 97 lit des allègements sur les bas salaires, quand le plancher porte la baisse jusqu'à 3 SMIC, où C2 ne répond plus dès 2 SMIC : ses 60 % y sont sans doute plus loin encore de ce que la baisse rend, vers une dette plus basse.
 
+## La réponse à θ = 0 et à θ = 1
+
+Sans passe nouvelle. À chaque paquet, la boîte θ met à 0 ou à 1 chaque ligne que le paquet revendique, et le multiplicateur quand la boucle tourne. Son coin où toutes valent 0 est Δb à θ = 0, celui où toutes valent 1 est Δb à θ = 1 : chaque ligne qu'un canal lit répond aux mêmes boutons que les autres lignes de son canal, et la chaîne ne lit pas d'autre θ que celui du multiplicateur (D-274). Chaque case va du plus bas des Δb 2035 des paquets du rendu à son plus haut, en points de PIB, vue vieillie.
+
+**Effet macro éteint après trois ans.**
+
+| Rendu | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Paquets où la dette baisse, à θ = 0, ½, 1 |
+|---|---|---|---|---|
+| La CSG déductible sur les revenus d'activité | +0,27 à +2,66 pt | +0,23 à +2,26 pt | +0,18 à +1,84 pt | 0, 0, 0 sur 4 |
+| Le plafond de la réduction générale des cotisations employeurs † | +0,55 à +1,74 pt | +0,55 à +1,74 pt | +0,55 à +1,74 pt | 0, 0, 0 sur 4 |
+| Le taux de la décote de l'IR | +0,29 à +3,15 pt | +0,26 à +2,82 pt | +0,23 à +2,49 pt | 0, 0, 0 sur 4 |
+| Les taux du barème de l'IR, mis à l'échelle | +0,38 à +2,72 pt | +0,30 à +2,16 pt | +0,21 à +1,56 pt | 0, 0, 0 sur 4 |
+| Le plafond de la réduction générale des cotisations employeurs, en complément hors préenregistrement | +0,58 à +1,85 pt | +0,47 à +1,48 pt | +0,35 à +1,10 pt | 0, 0, 0 sur 4 |
+| Le plancher t_min de la réduction générale de 2026 † | +0,24 à +2,35 pt | +0,24 à +2,35 pt | +0,24 à +2,35 pt | 0, 0, 0 sur 4 |
+| Le t_delta de la réduction générale de 2026 † | +0,31 à +2,17 pt | +0,31 à +2,17 pt | +0,31 à +2,17 pt | 0, 0, 0 sur 4 |
+| Le taux normal de l'IS † | +0,26 à +3,39 pt | +0,26 à +3,39 pt | +0,26 à +3,39 pt | 0, 0, 0 sur 4 |
+| Le taux du PFU, part impôt sur le revenu | +0,10 à +0,45 pt | +0,08 à +0,35 pt | −0,01 à +0,09 pt | 0, 0, 1 sur 4 |
+| Le taux du PFU, part impôt sur le revenu, avec les salaires déplacés | +0,10 à +0,45 pt | +0,16 à +0,61 pt | +0,17 à +0,66 pt | 0, 0, 0 sur 4 |
+| Le t_delta de la réduction générale de 2026, rejoué avec son autofinancement (D-264) † | +0,27 à +1,91 pt | +0,19 à +1,34 pt | +0,12 à +0,87 pt | 0, 0, 0 sur 4 |
+| Le plancher t_min de la réduction générale de 2026, rejoué avec son autofinancement (D-266) † | +0,22 à +2,24 pt | +0,16 à +1,57 pt | +0,09 à +0,94 pt | 0, 0, 0 sur 4 |
+| Le t_delta de la réduction générale de 2026, rejoué avec l'autofinancement réconcilié (D-271) † | +0,28 à +1,95 pt | +0,20 à +1,37 pt | +0,12 à +0,87 pt | 0, 0, 0 sur 4 |
+| Le plancher t_min de la réduction générale de 2026, rejoué avec l'autofinancement réconcilié (D-271) † | +0,23 à +2,26 pt | +0,16 à +1,59 pt | +0,09 à +0,94 pt | 0, 0, 0 sur 4 |
+
+**Effet macro tenu au niveau de la troisième année.**
+
+| Rendu | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Paquets où la dette baisse, à θ = 0, ½, 1 |
+|---|---|---|---|---|
+| La CSG déductible sur les revenus d'activité | +0,23 à +2,28 pt | +0,08 à +0,83 pt | −0,62 à −0,06 pt | 0, 0, 4 sur 4 |
+| Le plafond de la réduction générale des cotisations employeurs † | +0,55 à +1,74 pt | +0,55 à +1,74 pt | +0,55 à +1,74 pt | 0, 0, 0 sur 4 |
+| Le taux de la décote de l'IR | +0,25 à +2,74 pt | +0,11 à +1,20 pt | −0,34 à −0,03 pt | 0, 0, 4 sur 4 |
+| Les taux du barème de l'IR, mis à l'échelle | +0,33 à +2,34 pt | +0,08 à +0,64 pt | −1,08 à −0,17 pt | 0, 0, 4 sur 4 |
+| Le plafond de la réduction générale des cotisations employeurs, en complément hors préenregistrement | +0,54 à +1,72 pt | +0,13 à +0,43 pt | −0,86 à −0,27 pt | 0, 0, 4 sur 4 |
+| Le plancher t_min de la réduction générale de 2026 † | +0,24 à +2,35 pt | +0,24 à +2,35 pt | +0,24 à +2,35 pt | 0, 0, 0 sur 4 |
+| Le t_delta de la réduction générale de 2026 † | +0,31 à +2,17 pt | +0,31 à +2,17 pt | +0,31 à +2,17 pt | 0, 0, 0 sur 4 |
+| Le taux normal de l'IS † | +0,26 à +3,39 pt | +0,26 à +3,39 pt | +0,26 à +3,39 pt | 0, 0, 0 sur 4 |
+| Le taux du PFU, part impôt sur le revenu | +0,08 à +0,35 pt | −0,05 à −0,03 pt | −0,59 à −0,20 pt | 0, 4, 4 sur 4 |
+| Le taux du PFU, part impôt sur le revenu, avec les salaires déplacés | +0,08 à +0,35 pt | +0,05 à +0,22 pt | −0,03 à −0,01 pt | 0, 0, 4 sur 4 |
+| Le t_delta de la réduction générale de 2026, rejoué avec son autofinancement (D-264) † | +0,27 à +1,91 pt | +0,19 à +1,34 pt | +0,12 à +0,87 pt | 0, 0, 0 sur 4 |
+| Le plancher t_min de la réduction générale de 2026, rejoué avec son autofinancement (D-266) † | +0,22 à +2,24 pt | +0,16 à +1,57 pt | +0,09 à +0,94 pt | 0, 0, 0 sur 4 |
+| Le t_delta de la réduction générale de 2026, rejoué avec l'autofinancement réconcilié (D-271) † | +0,28 à +1,95 pt | +0,20 à +1,37 pt | +0,12 à +0,87 pt | 0, 0, 0 sur 4 |
+| Le plancher t_min de la réduction générale de 2026, rejoué avec l'autofinancement réconcilié (D-271) † | +0,23 à +2,26 pt | +0,16 à +1,59 pt | +0,09 à +0,94 pt | 0, 0, 0 sur 4 |
+
+† La boucle PIB → recettes est absente pour ce rendu, non nulle : voir ce qui manque à la chaîne dans sa section.
+
+**À θ = 0**, la dette ne baisse à aucun paquet, sous aucune persistance.
+
+**À θ = ½**, la dette baisse :
+
+- Effet macro tenu au niveau de la troisième année : le taux du PFU, part impôt sur le revenu (4 paquets sur 4).
+
+**À θ = 1**, la dette baisse :
+
+- Effet macro éteint après trois ans : le taux du PFU, part impôt sur le revenu (1 paquet sur 4).
+- Effet macro tenu au niveau de la troisième année : la CSG déductible sur les revenus d'activité (4 paquets sur 4) ; le taux de la décote de l'IR (4 paquets sur 4) ; les taux du barème de l'IR, mis à l'échelle (4 paquets sur 4) ; le plafond de la réduction générale des cotisations employeurs, en complément hors préenregistrement (4 paquets sur 4) ; le taux du PFU, part impôt sur le revenu (4 paquets sur 4) ; le taux du PFU, part impôt sur le revenu, avec les salaires déplacés (4 paquets sur 4).
+
+Δb est le même à θ = 0, à θ = ½ et à θ = 1, à chaque paquet :
+
+- Sous chaque persistance : le plafond de la réduction générale des cotisations employeurs ; le plancher t_min de la réduction générale de 2026 ; le t_delta de la réduction générale de 2026 ; le taux normal de l'IS.
+
+À chaque paquet, Δb à θ = ½ est entre Δb à θ = 0 et Δb à θ = 1.
+
+**Ce que cette lecture ne dit pas.** La vue figée n'a pas de coins : elle n'est lue qu'à θ = ½, comme les indices hors de la chaîne. θ = 0 et θ = 1 sont deux coins de la boîte, ceux d'un θ commun à toutes ses lignes ; la boîte, qui les croise, en reste l'étendue. Aucune passe n'a tourné : chaque chiffre vient d'un rapport commité, au commit qu'il nomme.
+
 ## Ce que l'étude ne dit pas
 
 - Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de θ ; un autre scénario donne une autre réponse.
