@@ -22101,3 +22101,118 @@ cadre figé. D-281 le dira.
 
 **Ce qui suit.** Les huit passes, sur ce commit, en tâche de fond. Puis D-281 : le résultat
 contre ce pronostic, l'original archivé, le rejeu servi à sa place et sa garde.
+
+## D-281 — Le chemin annuel de la CSG de D-236, rechiffré : le résultat
+
+**Le fait.** La commande préenregistrée par D-280 a tourné sur `1286176`, son commit,
+depuis une copie de travail figée sur lui : huit passes, de 12 h 31 à 12 h 49 UTC, sans
+incident. Un premier lancement, douze secondes plus tôt, n'avait rien chiffré : il passait
+par `/usr/bin/time`, absent du conteneur. Le rejeu est servi sous le nom du rapport de
+D-236, `reports/predictif_csg_deductible_demi_point.json`. L'original est archivé sous
+`reports/predictif_premier_tour/`, à l'octet.
+
+**Le résultat.** Δb à θ = ½, rechiffré moins D-236, en points de PIB ; le même sous les
+deux persistances.
+- Vue vieillie : −0,00002 en 2026, −0,00006 en 2027, −0,00013 en 2028, −0,00023 en 2029.
+- Vue figée : −0,00004, −0,00006, −0,00008, −0,00010.
+
+En 2029, en vue vieillie, Δb vaut +0,3541 point sous l'effet éteint et +0,1112 sous l'effet
+tenu, au lieu de +0,3543 et +0,1114. En vue figée, +0,3296 et +0,0978, au lieu de +0,3297
+et +0,0979. Les chiffres que D-236 donne au millième ne bougent pas.
+
+**Le pronostic, point par point.**
+1. Tenu, au chiffre près. La trajectoire de référence, les coûts mécaniques des deux vues
+   et l'écart de PIB sont ceux de D-236 chaque année, sans aucun écart : la commande tapée
+   est la sienne.
+2. Tenu. En vue vieillie, Δb 2026 bouge de 0,000025 point, sous les 0,00005 annoncés. En
+   2029, il baisse de 0,00023 point, dans la fourchette de 0,0002 à 0,001, près de son bas.
+3. Tenu. En vue figée, Δb baisse dès 2026, de 0,00004 point, et de 0,00010 en 2029, dans
+   la fourchette de 0,00003 à 0,0003.
+4. Tenu. L'écart est le même sous les deux persistances, à 0,0000003 point près.
+5. Tenu. À θ = ½, la baisse n'allège la dette dans aucune année, dans aucune vue, sous
+   aucune persistance. Le Δb le plus bas vaut +0,017 point, en 2027, en vue figée.
+6. Tenu. La boîte porte les quatre lignes de l'offre de travail et le multiplicateur
+   macro. En 2029, sous l'effet éteint, elle va de +0,173 à +0,534 point en vue vieillie,
+   et de +0,172 à +0,486 en vue figée : aucun coin sous zéro. Sous l'effet tenu, elle va
+   de −0,246 à +0,468 point, et de −0,229 à +0,423. Dans chaque vue, les seize coins où le
+   multiplicateur vaut 1 font baisser la dette, et eux seuls.
+7. À moitié. En vue vieillie, Δb chaque année chiffrée vaut 1,001 fois le report sous
+   l'effet éteint, et 1,003 sous l'effet tenu : dans la fourchette. En vue figée, il vaut
+   0,964 sous l'effet tenu, dans la fourchette, mais 0,989 sous l'effet éteint, au-dessus
+   des 0,98 annoncés.
+
+**Ce que dit l'écart, année par année.**
+- En vue figée, l'écart croît d'environ 0,00002 point par an. C'est D-258 pour un
+  demi-point de baisse, soit 0,00004 point par point et par année ; D-280 l'estimait à
+  0,00005.
+- En 2026, l'écart de la vue figée dépasse celui de la vue vieillie de 0,000014 point.
+  C'est D-276 : la vue figée de 2026 avait lu, le jour de D-236, les taux du cadre vieilli.
+- En vue vieillie, l'écart de 2026 n'est que celui de D-258. L'exploration de D-235 avait
+  donc bien servi l'année 2026, comme D-280 le supposait.
+- De 2027 à 2029, l'écart de la vue vieillie croît plus vite que celui de la vue figée.
+  D-276 y ajoute environ 0,00014 point en trois ans, soit 0,00009 point par point de
+  baisse et par année. D-280 en attendait 0,00025 environ, d'après des rapports arrondis
+  au millième.
+
+**Ce que le point 7 veut dire.** Le report de la première année tient en part de PIB le
+coût, mais aussi l'impulsion. D-280 n'avait compté que le coût.
+- En vue figée, le coût de chaque année chiffrée reste à 4,16 Md€ quand le PIB croît. La
+  réforme y coûte moins que dans le report, mais elle pousse aussi moins le PIB.
+- Au coin où le multiplicateur vaut 0, il ne reste que le coût. Le rapport vaut 0,956
+  sous l'effet éteint : ce que D-280 attendait du seul coût.
+- Au coin où il vaut 1, le rapport vaut 1,068, sous le même effet. Le report rend à la
+  boucle plus qu'il ne coûte de plus.
+- À θ = ½, les deux se compensent presque, sur quatre ans. L'écart entre les deux
+  lectures vaut −0,0037 point sous les deux persistances. Rapporté à Δb, il pèse 0,011
+  sous l'effet éteint, où Δb vaut 0,33 point, et 0,036 sous l'effet tenu, où il vaut 0,10.
+- Sur dix ans (D-277), le coût l'emporte : la boucle s'éteint ou se tient après trois ans,
+  et le coût court jusqu'au bout. Le rapport y vaut 0,896 en vue figée, sous l'effet
+  éteint, pour la CSG à 6,7 %.
+
+**Ce que cela change.**
+- Le rapport que sert `GET /predictif` est le rejeu. Les chiffres de D-236, au millième, ne
+  changent pas. Le rapport porte en plus sa boîte, la première année reportée et sa
+  provenance.
+- Le verdict de D-236 tient : à θ = ½, ce demi-point n'allège la dette dans aucune année.
+  La boîte le nuance. Sous l'effet tenu, au multiplicateur le plus haut, il l'allège en
+  2029, de 0,20 à 0,25 point en vue vieillie.
+- Des rapports commités que D-276 touchait, ceux que les pages lisent sont rechiffrés : le
+  chemin annuel de l'étude (D-277), la vue figée des explorations (D-279) et ce chemin.
+  Restent l'exploration de la CSG de la phase 10 et les tours archivés de l'étude, laissés
+  tels quels (D-278).
+
+**Les tests.** Dans `tests/test_cli_predictif.py`, la garde du rapport servi. Elle tient
+que le rapport servi est l'original rechiffré :
+- le même cadre, champ pour champ : le scénario, le titre, la source, la référence, les
+  trois scénarios nommés, le point de départ, la note du vieillissement, le comportement,
+  la boucle, la persistance, les persistances côte à côte et θ ;
+- la même trajectoire de référence, chaque année avec sa base ;
+- un commit nommé, sans `src/` modifié, et le lieu des passes ;
+- un original sans commit, celui d'avant D-275.
+
+Elle a été vue échouer avec l'original servi, avant que le rejeu ne prenne sa place.
+Vingt et un cas la tiennent : chaque champ retouché seul est refusé sous son nom, et
+plusieurs champs retouchés ensemble le sont tous.
+
+Dix-huit mutations écrites à la main : douze de la garde, six des rapports.
+- Dix-sept sont tuées, après deux retouches des tests pour deux qui survivaient. La liste
+  des cas suivait celle des champs : un champ retiré des deux n'était plus vu. Elle est
+  désormais écrite à part. Une garde qui ne nommait que le premier champ refusé passait
+  les cas d'un seul champ : un cas en retouche trois.
+- La dix-huitième retire l'appel de la garde. Comme toute garde sur des rapports justes,
+  elle ne se tue qu'en faussant les rapports : les six mutations des rapports le font.
+
+Les tests de la commande et de l'API prédictives, et ceux de la charte : 82 réussis.
+`ruff` passe. `src/` ne change pas. Le `make full` n'a pas tourné.
+
+**Ce qui reste.**
+- Le bruit de C1 aux seuils, à mesurer : l'échantillon des taux marginaux et le pas de la
+  différence finie (D-279).
+- L'exploration de la CSG de la phase 10, servie par `GET /explorations`, et les tours
+  archivés de l'étude, laissés tels quels (D-278).
+- Les passes préenregistrées de la vue figée et des indices à θ = 0 et θ = 1.
+- Le libellé de la passe rapide de la page pour une réforme des seules entreprises.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
+- Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
+- Le `make full` du propriétaire.

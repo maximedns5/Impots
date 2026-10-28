@@ -1,6 +1,16 @@
 # State of the project, and the directions open — 2026-10-28 (Phase 11, M0 to M6)
 
-The fourth 2026-10-28 update adds D-279: the frozen view of the study's explorations, priced
+The fifth 2026-10-28 update adds D-280 and D-281: D-236's annual CSG path, priced again on
+D-276's fix, preregistered before its eight passes and then run on that commit. The control
+holds to the digit: the reference path, both views' mechanical costs and the GDP gap are
+D-236's. Δb 2029 at θ = ½ falls by 0.00023 points aged and 0.00010 frozen, the same under
+both persistences; the figures D-236 gives to the thousandth do not move, nor its verdict.
+The year-by-year gap separates D-258 (C7's weights) from D-276 as preregistered. The served
+report is the replay, with its θ box and its first year carried; the original is archived
+under `reports/predictif_premier_tour/`, and a guard holds the replay to its frame. The
+prognosis missed one point: frozen, every year priced is 0.989 times the carry under
+« éteint », not 0.93 to 0.98, the carry holding the impulse as a share of GDP too.
+The fourth 2026-10-28 update added D-279: the frozen view of the study's explorations, priced
 again on D-276's fix. The aged view gives the study back (costs to the euro, Δb and corners
 to 0.001 points for the CSG, to the digit elsewhere), and the nearest bundle gives back the
 annual path's carry to the digit. The frozen Δb 2035 moves by under 0.001 points for the
@@ -624,8 +634,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **280 decision
-entries**, D-000 to D-279, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **282 decision
+entries**, D-000 to D-281, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -998,8 +1008,8 @@ download list.
    cut of the curve lowers the debt, and what a targeted cut would give back is
    missing, said so. Left: a balance row for the targeted variant, or the jobs'
    receipts in the chain; C1's noise at the thresholds its 100 € step crosses (D-279);
-   D-236's annual CSG path priced again on D-276's fix; the study on the annual path and
-   its frozen view are done (D-275 to D-279); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
+   the study on the annual path, its frozen view and D-236's annual CSG path are priced
+   again on D-276's fix (D-275 to D-281); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
    read off the box's corners (D-274).
 4. **Phase 11** (`docs/PHASE11_SPEC.md`, D-243): firms, startups and capital in the
    chain, on published ranges, international where France has none. M0 first: manifest
