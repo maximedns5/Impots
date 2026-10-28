@@ -1,6 +1,15 @@
 # State of the project, and the directions open — 2026-10-28 (Phase 11, M0 to M6)
 
-The sixth 2026-10-28 update adds D-282 and D-283: C1's noise at the thresholds, measured.
+The seventh 2026-10-28 update adds D-284: C1 reads four EMTR samples, the study's and
+those of seeds 1 to 3, pooled at a quarter of each household's weight, each keeping its
+own top-decile split; its receipt is the mean of the four, which halves the noise D-283
+measured (0.043 points at most). Only reforms C1 reads pay the three extra EMTR passes;
+C7 reads the first sample; the EMTR caches carry the seed except for the study's sample,
+whose files still serve. On real data, C1 on the 6,603 households gives back the mean of
+D-283's first four replications to 2e-16 for two bundles. D-283's files say what changes:
+up to −0.078 points of Δb 2035 for the IR scale at 0.93, −0.048 for the décote at 20 %
+aged; no verdict moves. The committed reports are not re-priced: replaying them is next.
+The sixth 2026-10-28 update added D-282 and D-283: C1's noise at the thresholds, measured.
 The study's eight C1 bundles (décote, IR scale) were priced in both frames on eight EMTR
 samples of 3,000 households and at four steps, C1 through the chain's own inputs and
 channel (`scripts/bruit_c1.py`, `reports/bruit_c1/`). The study's sample gives back the
@@ -647,8 +656,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **284 decision
-entries**, D-000 to D-283, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **285 decision
+entries**, D-000 to D-284, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -1020,9 +1029,10 @@ download list.
    curve has its knobs (D-240), and the study is replayed with it (D-241, D-242): no
    cut of the curve lowers the debt, and what a targeted cut would give back is
    missing, said so. Left: a balance row for the targeted variant, or the jobs'
-   receipts in the chain; the EMTR sample's top decile, where C1's noise lives (measured
-   in D-283); the study on the annual path, its frozen view and D-236's annual CSG path
-   are priced again on D-276's fix (D-275 to D-281); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
+   receipts in the chain; C1 now reads four EMTR samples (D-284), and the committed
+   reports C1 prices (the décote and IR explorations, their frozen view, their annual
+   paths) are to be replayed on it; the study on the annual path, its frozen view and
+   D-236's annual CSG path are priced again on D-276's fix (D-275 to D-281); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
    read off the box's corners (D-274).
 4. **Phase 11** (`docs/PHASE11_SPEC.md`, D-243): firms, startups and capital in the
    chain, on published ranges, international where France has none. M0 first: manifest

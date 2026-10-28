@@ -38,7 +38,7 @@ import polars as pl
 from impots.engine.system import baseline, reformed_for
 from impots.identifiants import millesime
 from impots.population import to_openfisca
-from impots.population.runner import subsample
+from impots.population.runner import SAMPLE_SEED, subsample
 from impots.population.to_openfisca import build_simulation
 
 PROCESSED = Path(__file__).resolve().parents[3] / "data" / "processed"
@@ -56,6 +56,12 @@ EMTR_BOUNDS = (-0.2, 1.5)
 #: computed on. The keys name the vintage, the year, the sample, the reform and the
 #: uprating, never the frame, and two frames of the same rows can share them (D-276).
 FRAME = "frame_fingerprint"
+
+#: The samples C1 reads, the study's first (D-284). C1 sums the terms of a few top-decile
+#: households whose 100 € step crosses a small jump under one law only, and one sample
+#: of 3 000 carries a standard deviation of up to 0.09 point of Δb 2035 (D-283). Four
+#: samples, pooled, halve it. The other channels read the first sample alone.
+C1_SAMPLES = (SAMPLE_SEED, 1, 2, 3)
 
 
 @dataclass
@@ -106,12 +112,19 @@ def _rate(
     return clipped
 
 
-def _priced(population: pl.DataFrame | Path, sample: int | None) -> pl.DataFrame:
+def _priced(population: pl.DataFrame | Path, sample: int | None,
+            seed: int = SAMPLE_SEED) -> pl.DataFrame:
     """The frame the rates are computed on: the population, subsampled, by person."""
     frame = pl.read_parquet(population) if isinstance(population, Path) else population
     if sample is not None:
-        frame = subsample(frame, sample)
+        frame = subsample(frame, sample, seed=seed)
     return frame.sort("person_id")
+
+
+def _drawn(seed: int) -> str:
+    """What a file name says of the sample's seed: nothing for the study's, so that its
+    files keep their names (D-284)."""
+    return "" if seed == SAMPLE_SEED else f"_g{seed}"
 
 
 def fingerprint(frame: pl.DataFrame) -> str:
@@ -136,15 +149,17 @@ def compute(
     step: float = EMTR_STEP,
     vintage: str | None = None,
     uprating_key: str | None = None,
+    seed: int = SAMPLE_SEED,
 ) -> EmtrResult:
     """Marginal rates for every household, under current law and optionally a reform.
 
     Two full-tier runs per law priced (base and bumped), so four when a reform is
     given. This is the expensive input to the behavioural layer and the reason the
     caller caches it. `uprating_key` is `Uprating.key()` when the population was aged,
-    None when it is the vintage as built.
+    None when it is the vintage as built. `seed` draws the sample: another seed is another
+    sample of the same size (D-284).
     """
-    frame = _priced(population, sample)
+    frame = _priced(population, sample, seed)
     frame_print = fingerprint(frame)
 
     per_household = (
@@ -172,7 +187,7 @@ def compute(
     cache = (
         PROCESSED
         / (f"emtr_baseline_{millesime(vintage)}_{year}_{sample or 'full'}_{int(step)}"
-           f"_{to_openfisca.WIRING}{aged}.parquet")
+           f"_{to_openfisca.WIRING}{aged}{_drawn(seed)}.parquet")
         if vintage else None
     )
     cached_rates = pl.read_parquet(cache) if cache is not None and cache.exists() else None
@@ -254,7 +269,7 @@ def distribution(result: EmtrResult, deciles: int = 10) -> list[dict[str, float]
 
 def cache_key(
     vintage: str, year: int, reform: Any = None, sample: int | None = None,
-    uprating_key: str | None = None,
+    uprating_key: str | None = None, seed: int = SAMPLE_SEED,
 ) -> str:
     """A fingerprint of everything the rates depend on.
 
@@ -263,20 +278,24 @@ def cache_key(
     for a request that asked for 20 000. The population wiring is in it for the same
     reason: a file written before D-176 holds rates of a wiring that no longer exists.
     So is the uprating of an aged population (D-226), and only then, so that the
-    vintage's own keys do not move.
+    vintage's own keys do not move. So is the sample's seed, when it is not the study's
+    (D-284).
     """
     fields = {"vintage": vintage, "year": year, "sample": sample,
               "reform": None if reform is None else reform.model_dump(exclude_none=True),
               "wiring": to_openfisca.WIRING}
     if uprating_key is not None:
         fields["uprating"] = uprating_key
+    if seed != SAMPLE_SEED:
+        fields["seed"] = seed
     payload = json.dumps(fields, sort_keys=True, default=str)
     return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
 
-#: One distinct reform, one file. Unbounded, whoever chooses reforms over HTTP chooses
-#: the disk used (D-173); the most recently used are kept.
-CACHE_MAX = 64
+#: One distinct reform and sample, one file. Unbounded, whoever chooses reforms over HTTP
+#: chooses the disk used (D-173); the most recently used are kept. Sixty-four reforms,
+#: each with the samples C1 reads (D-284).
+CACHE_MAX = 64 * len(C1_SAMPLES)
 
 
 def _make_room(vintage: str) -> None:
@@ -295,7 +314,7 @@ def _make_room(vintage: str) -> None:
 
 def cached(
     population: pl.DataFrame | Path, vintage: str, year: int = 2024, reform: Any = None,
-    sample: int | None = None, uprating_key: str | None = None,
+    sample: int | None = None, uprating_key: str | None = None, seed: int = SAMPLE_SEED,
 ) -> EmtrResult:
     """`compute`, memoised on disk. A minute and a half the first time, milliseconds
     after — which matters most for the same reform priced twice, since a user
@@ -304,9 +323,9 @@ def cached(
     does not say so, and the key must. The file names the frame it was computed on, and
     serves no other (D-276)."""
     vintage = millesime(vintage)
-    key = cache_key(vintage, year, reform, sample, uprating_key)
+    key = cache_key(vintage, year, reform, sample, uprating_key, seed)
     path = PROCESSED / f"emtr_{vintage}_{key}.parquet"
-    frame_print = fingerprint(_priced(population, sample))
+    frame_print = fingerprint(_priced(population, sample, seed))
     if path.exists():
         households = pl.read_parquet(path)
         if _computed_on(households, frame_print):
@@ -314,7 +333,7 @@ def cached(
             return EmtrResult(households=households.drop(FRAME), year=year,
                               guards={"cached": True})
     result = compute(population, year=year, reform=reform, sample=sample, vintage=vintage,
-                     uprating_key=uprating_key)
+                     uprating_key=uprating_key, seed=seed)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     _make_room(vintage)
     result.households.with_columns(pl.lit(frame_print).alias(FRAME)).write_parquet(path)

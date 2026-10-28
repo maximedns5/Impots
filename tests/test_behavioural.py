@@ -1300,3 +1300,59 @@ def test_c11_comes_last_and_leaves_every_other_channel_s_draws_as_they_were() ->
     for channel in without.channels:
         if channel["key"] != "c11_autofinancement" and channel["applies"]:
             assert live[channel["key"]]["band"] == channel["band"], channel["key"]
+
+
+def test_another_seed_is_another_sample_cached_apart(tmp_path, monkeypatch):
+    """C1 reads several samples of the same size (D-284): another seed draws other
+    households, and its rates are cached apart. The study's sample keeps its keys and
+    its file names, so that the files already written still serve it."""
+    import polars as pl
+
+    from impots.behavioural import emtr
+    from impots.population.runner import SAMPLE_SEED
+
+    monkeypatch.setattr(emtr, "PROCESSED", tmp_path)
+    frame = pl.DataFrame({
+        "person_id": list(range(40)), "household_id": [f"h{i:02d}" for i in range(40)],
+        "weight": [1.0 + i for i in range(40)],
+        "salaire_brut_annuel": [20_000.0 + 1_000.0 * i for i in range(40)]})
+
+    def rate(priced, *args, **kwargs):
+        return (priced.group_by("household_id").agg(pl.col("salaire_brut_annuel").sum())
+                .sort("household_id")["salaire_brut_annuel"].to_numpy() / 1e6)
+
+    monkeypatch.setattr(emtr, "_rate", rate)
+    assert emtr.C1_SAMPLES[0] == SAMPLE_SEED and len(set(emtr.C1_SAMPLES)) == 4
+    assert emtr.cache_key("2024", 2026, None, 10, seed=SAMPLE_SEED) == emtr.cache_key(
+        "2024", 2026, None, 10)
+    assert emtr.cache_key("2024", 2026, None, 10, seed=1) != emtr.cache_key(
+        "2024", 2026, None, 10)
+
+    study = emtr.compute(frame, year=2026, sample=10, vintage="2024")
+    other = emtr.compute(frame, year=2026, sample=10, vintage="2024", seed=1)
+    assert "baseline_cached" not in other.guards
+    assert set(study.households["household_id"]) != set(other.households["household_id"])
+    names = sorted(p.name for p in tmp_path.glob("emtr_baseline_*.parquet"))
+    assert len(names) == 2 and sum(name.endswith("_g1.parquet") for name in names) == 1
+
+    first = emtr.cached(frame, "2024", year=2026, sample=10, seed=1)
+    assert first.households["household_id"].to_list() == \
+        other.households["household_id"].to_list()
+    study_cached = emtr.cached(frame, "2024", year=2026, sample=10)
+    assert study_cached.guards.get("cached") is not True
+    assert study_cached.households["household_id"].to_list() == \
+        study.households["household_id"].to_list()
+    again = emtr.cached(frame, "2024", year=2026, sample=10, seed=1)
+    assert again.guards.get("cached") is True
+    assert again.households["household_id"].to_list() == \
+        first.households["household_id"].to_list()
+
+    # A frame that differs only in a household of the other sample: its file names the
+    # frame of its own sample, not the study's, and is not served (D-276).
+    only = sorted(set(other.households["household_id"]) - set(study.households["household_id"]))
+    changed = frame.with_columns(
+        pl.when(pl.col("household_id") == only[0])
+        .then(pl.col("salaire_brut_annuel") + 7.0)
+        .otherwise(pl.col("salaire_brut_annuel")).alias("salaire_brut_annuel"))
+    stale = emtr.cached(changed, "2024", year=2026, sample=10, seed=1)
+    assert stale.guards.get("cached") is not True
