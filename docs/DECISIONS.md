@@ -22592,3 +22592,34 @@ vue figée. Les deux sont tuées depuis.
 
 **Ce qui suit.** Les quatre rejeux, sur ce commit, en tâche de fond. Puis une entrée
 nouvelle : le résultat contre ce pronostic, et son rendu.
+## D-286 — Le but du produit, et le premier `/goal`
+
+**Le fait.** Le propriétaire a fixé le but du produit, en quatre réponses. Le public : les
+journalistes et les citoyens. La question : les trois réponses à la fois, le coût et les
+gagnants (L0 à L2), le coût avec les comportements et la macro (L3 et L4), l'effet sur la
+dette à dix ans (phases 9 à 11). Le livrable : des études publiées d'abord, le
+déploiement ensuite, après la passe de sécurité. Le critère : les chiffrages officiels
+retrouvés.
+
+**Ce qui est écrit.**
+- `docs/BUT.md` : pour qui, les trois réponses, le livrable dans l'ordre, les trois
+  chiffres qui mesurent le critère (2 cas sur 3 dans la tolérance, 3 articles fiscaux
+  chiffrables sur 33 au PLF 2027, 46,4 % des euros de l'annexe au PLF 2026), ce qui n'est
+  pas le but, la règle de priorité, et quatre buts dans l'ordre.
+- `CLAUDE.md`, lu par chaque session au démarrage : il pointe vers `docs/BUT.md` et
+  reprend les règles qui ne se discutent pas.
+
+**Pourquoi un `/goal` écrit dans le dépôt.** `/goal` vaut pour une session et n'est jugé
+que sur la conversation. Son texte est gardé dans `docs/BUT.md` pour être recopié d'une
+session à l'autre, et il demande une preuve que la conversation peut montrer : la sortie
+des tests ciblés, le SHA du merge et l'URL de la PR.
+
+**Pourquoi le but 1 d'abord.** L'étude du PLF 2027 à trois réponses est le seul des
+quatre qui sert à la fois le public, les trois réponses, le livrable et le critère : elle
+publie, pour les trois articles chiffrables, ce que l'outil dit et l'écart au chiffrage
+officiel, et la liste des refus. Le but 2 (l'art. 2, hors tolérance) et le but 3 (la
+couverture en euros) suivent ; le but 4, la sécurité, précède tout déploiement.
+
+**Ce qui ne change pas.** Les règles de préenregistrement de
+`docs/PLF2027_ENREGISTREMENT.md`, les tolérances déclarées, et la décision de déployer,
+qui reste celle du propriétaire.
