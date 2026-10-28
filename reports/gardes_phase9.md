@@ -2,9 +2,9 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-27 sur le commit `128a38ecfec1` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-27 sur le commit `f83ecd35528b` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
-**227 mutations** : 226 tuées, 1 équivalente avec sa raison, 0 survivante.
+**228 mutations** : 227 tuées, 1 équivalente avec sa raison, 0 survivante.
 
 | Mutation | Garde | Verdict | Étage | Tuée par |
 |---|---|---|---|---|
@@ -21,6 +21,7 @@ Balayé le 2026-10-27 sur le commit `128a38ecfec1` (D-229). Chaque garde est mut
 | `predictif/annuel:build:si:theta is None` | build — si theta is None | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_behaviour_or_the_loop_without_a_theta_is_refused |
 | `predictif/annuel:costs:si:missing` | costs — si missing | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_a_year_without_what_was_asked_of_it_is_refused[impulse-entr\xe9es |
 | `predictif/annuel:costs:si:unread and len(unread) != len(passes)` | costs — si unread and len(unread) != len(passes) | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_years_of_a_household_reform_and_of_a_firm_reform_alone_are_refused |
+| `predictif/annuel:_theta_box:si:not min(values) - MONOTONE_SLACK <= at <= max(values) + MONOTONE_SLACK` | _theta_box — si not min(values) - MONOTONE_SLACK <= at <= max(values) + MONOTONE_SLACK | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_a_debt_at_theta_outside_its_box_is_refused |
 | `predictif/chaine:_costs_by_year:si:priced[0] != years[0] or priced != list(range(priced[0], priced[0] ...` | _costs_by_year — si priced[0] != years[0] or priced != list(range(priced[0], priced[0] ... | tuée | ciblé | tests/test_predictif.py::test_priced_years_with_a_gap_or_a_late_start_are_refused |
 | `predictif/chaine:_costs_by_year:si:priced[-1] > years[-1]` | _costs_by_year — si priced[-1] > years[-1] | tuée | ciblé | tests/test_predictif.py::test_priced_years_past_the_horizon_are_refused_rather_than_dropped |
 | `predictif/chaine:_costs_by_year:si:missing and costs.carry is None` | _costs_by_year — si missing and costs.carry is None | tuée | ciblé | tests/test_predictif.py::test_unpriced_years_are_refused_without_the_named_convention |

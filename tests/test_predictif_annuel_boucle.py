@@ -518,6 +518,8 @@ def test_a_box_reads_only_what_the_report_asked_for() -> None:
     assert [p["persistence"] for p in box["paths"]] == [None]
     assert all(len(p["every_year"][v]["corners"]) == 4 for p in box["paths"]
                for v in VIEW_KEYS)
+    assert _build(horizon=5, behavioural=False).payload()["theta_box"]["rows"] == [
+        MACRO_ROW]
 
 
 def test_a_debt_at_theta_outside_its_box_is_refused(monkeypatch) -> None:
@@ -549,6 +551,9 @@ def _box_payload() -> dict:
     ("pas le chemin", "n'est pas le chemin"),
     ("année", "dernière année"),
     ("sans lignes", "sans ligne"),
+    ("vue manquante", "il en faut deux"),
+    ("coin doublé", "chacun une fois"),
+    ("ordre", "dans le même ordre"),
 ])
 def test_a_box_a_reader_would_misread_is_refused(how: str, needle: str) -> None:
     """The report's schema holds the box to the paths: its persistences, every corner of
@@ -571,6 +576,13 @@ def test_a_box_a_reader_would_misread_is_refused(how: str, needle: str) -> None:
         one["theta"] = (min(values) + max(values)) / 2 + 1e-7
     elif how == "année":
         box["year"] = 2029
+    elif how == "vue manquante":
+        del box["paths"][1]["first_year"]["figee"]
+    elif how == "coin doublé":
+        one["corners"][1] = [one["corners"][0][0], one["corners"][1][1]]
+    elif how == "ordre":
+        corners = box["paths"][1]["first_year"]["vieillie"]["corners"]
+        corners[0], corners[1] = corners[1], corners[0]
     else:
         box["rows"] = []
     with pytest.raises(ValidationError, match=needle):
