@@ -22527,3 +22527,36 @@ couverture en euros) suivent ; le but 4, la sécurité, précède tout déploiem
 **Ce qui ne change pas.** Les règles de préenregistrement de
 `docs/PLF2027_ENREGISTREMENT.md`, les tolérances déclarées, et la décision de déployer,
 qui reste celle du propriétaire.
+
+## D-288 — Une mesure bornée aux années que le texte nomme
+
+**Le fait.** Le but 1 (D-286) demande l'effet sur la dette en 2035 des trois articles
+chiffrables du PLF 2027. L'art. 15 rétablit la CEBGE pour 2027 seulement : un troisième
+exercice, pas une contribution permanente. Le chemin annuel appliquait une réforme chaque
+année du chemin. En 2026, la CEBGE existe encore dans l'arbre, et son rétablissement est
+refusé (D-044) ; de 2028 à 2035, le chemin aurait chiffré une contribution que le texte
+ne lève pas. Aucune des deux lectures n'est l'article.
+
+**Ce qui change.**
+- Un scénario peut porter `annees`, les années où le texte applique la mesure. Elles
+  commencent à l'année du scénario, croissantes et sans doublon ; une valeur qui n'est
+  pas une liste d'années entières ne se charge pas. Vide, le fichier ne porte pas la clé
+  et se relit à l'octet, comme avant.
+- `impots predictif` chiffre la mesure ces années-là et une réforme vide les autres,
+  dans les deux vues et avec ou sans la passe du simulateur. Le rapport porte `annees`
+  et une convention qui le dit, et qui dit que la première année seule reportée ne lit
+  rien d'une mesure qui ne commence pas la première année du chemin.
+- Deux refus, avant la première passe : une mesure bornée qui touche les ménages, dont
+  les canaux lisent chaque année des entrées qu'une année sans mesure n'a pas ; et une
+  année de la mesure hors du chemin, où elle ne serait chiffrée nulle part.
+- `impots fiche` et `impots trajectoire` chiffrent une année ou une plage sans lire
+  `annees` : ils refusent les années que le texte ne couvre pas, et les nomment.
+
+**Ce qui ne change pas.** Une réforme sans `annees` passe par les appels de toujours. La
+première année d'une mesure bornée est celle du scénario : `chiffrage register` et
+`scenario compare`, qui chiffrent cette année-là, la chiffrent.
+
+**Les tests.** `tests/test_annees.py`, 18 tests, tous vus échouer avant le code. Dix-neuf
+mutations écrites à la main, toutes tuées après un cas ajouté : sans le refus d'une
+valeur qui n'est pas une liste, l'entier 2027 échouait encore, mais sans nommer `annees`.
+Le refus entre au périmètre du balayage de la phase 9 (`_annees_refusals`).
