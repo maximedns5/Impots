@@ -22504,8 +22504,8 @@ divisé par deux. Les rapports commités où C1 chiffre ont été écrits sur un
 - leur vue figée, rechiffrée sur la correction de D-276 (D-279, `6937229`) ;
 - leurs chemins annuels (D-277, `084d2c1`).
 
-Ce commit préenregistre leur rejeu et son pronostic, avant toute passe. Le résultat sera
-D-286.
+Ce commit préenregistre leur rejeu et son pronostic, avant toute passe. Le résultat
+viendra dans une entrée nouvelle : D-286 est le but du produit, pris entre-temps.
 
 **Ce qui est rejoué.**
 - `scripts/c1_quatre.py` lit sur les rapports commités de l'étude les instruments dont la
