@@ -21989,3 +21989,115 @@ et des deux lanceurs : 227 réussis. `ruff` passe. Le `make full` n'a pas tourn�
 - La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
 - Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
 - Le `make full` du propriétaire.
+
+## D-280 — Le chemin annuel de la CSG de D-236, rechiffré : préenregistré avant ses passes
+
+**Le fait.** D-276 l'a trouvé : jusqu'à sa correction, les deux vues d'une année
+partageaient leurs taux marginaux. Le chemin annuel de la CSG de D-236, commité sous
+`reports/predictif_csg_deductible_demi_point.json` et servi par `GET /predictif`, a tourné
+sous ce défaut, sur `8091fce`. Ce commit préenregistre son rejeu sur la correction, avec
+son pronostic, avant toute passe. Le résultat sera D-281.
+
+**Ce qui est rejoué.** La commande de D-236, champ pour champ, telle que son entrée la
+décrit et que son rapport la nomme. Le scénario, `scenarios/csg_deductible_demi_point.json`,
+n'a pas changé depuis.
+
+```
+python -m impots.population.cli predictif csg_deductible_demi_point \
+  --reference reconduit --spending gele_en_volume \
+  --growth-name "Croissance réelle 1 %, prix 2 %" --real 0.01 --prices 0.02 \
+  --rate-name "Taux implicite tenu à son niveau de 2025" --rate-kind implicite_tenu \
+  --horizon 4 --theta 0.5 --wage 0.03 \
+  --hypothesis-source "3 % ronds, le rythme du PIB nominal du scénario" \
+  --titre "Baisse d'un demi-point de CSG déductible — essai de M3" \
+  --behavioural --macro --out-dir reports/rejeu_d236 --ou "..."
+```
+
+Huit passes, un quart d'heure environ, en tâche de fond, depuis une copie de travail figée
+sur ce commit. Le rapport s'écrit d'abord sous `reports/rejeu_d236/`, que la liste ne lit
+pas.
+
+**Ce que devient le rapport servi.** Le rejeu prend la place du rapport de D-236, sous le
+même nom. La page dessine chaque rapport que liste `GET /predictif` : le chiffre servi doit
+être le juste. L'original est archivé sous `reports/predictif_premier_tour/`, comme les
+premiers tours de l'étude ; la liste ne lit pas les sous-répertoires. Une garde tiendra que
+le rapport servi est le chemin de D-236 rechiffré : le même cadre, champ pour champ, la même
+trajectoire de référence, et un commit nommé, sans `src/` modifié. Elle sera vue échouer
+avant que le rejeu ne prenne sa place.
+
+**Ce qui sépare le rejeu de la seule correction.** Le rejeu tourne sur le code
+d'aujourd'hui, non sur `8091fce` corrigé. Trois changements touchent ce chemin.
+- D-276 : chaque vue lit ses propres taux. Ce que le défaut a fait ce jour-là se lit sur
+  l'ordre des passes, et le chemin annuel chiffre la vue figée d'abord.
+  - De 2027 à 2029, aucun fichier de taux du cadre vieilli n'existait. La vue figée les a
+    écrits, et la vue vieillie les a lus : D-276 l'a vérifié pour la référence de 2027.
+  - En 2026, l'exploration de la CSG de la phase 10 (D-235) avait chiffré le même paquet
+    le même jour, dans le même vieillissement, la vue vieillie d'abord. La vue figée de
+    2026 a donc lu, selon toute vraisemblance, les taux du cadre vieilli ; la vue vieillie,
+    les siens.
+- D-258 : C7 pèse chaque membre à son poids, non à celui du ménage.
+- D-275 : le rapport porte désormais la boîte θ, la première année reportée et sa
+  provenance, sur les mêmes passes. Celui de D-236 n'en portait aucune.
+
+Rien d'autre ne touche le coût ni la boucle.
+- L'imputation du capital ne joue pas : la réforme ne déplace aucun revenu du capital
+  (`moves_capital`).
+- La CDHR au grand livre, C2 au coût de chaque salarié et les rangées de la phase 11 sont
+  venues entre `d77feb9`, le commit de l'étude, et `6937229`, celui du rejeu de D-279. Les
+  coûts de ce rejeu sont ceux de l'étude, à l'euro.
+
+**Ce qu'on sait déjà.** Le pronostic n'est pas aveugle, et il le dit.
+- De 2026 à 2029, la trajectoire de référence du chemin de la CSG de D-277, sur `084d2c1`,
+  est celle de D-236 au chiffre près : même cadre, même code de la dette. Le contrôle du
+  cadre ne teste donc que la commande tapée.
+- C7 n'est pas négligeable pour la CSG. Sur le chemin de D-277, les quatre lignes de
+  l'offre de travail, de 0 à 1 ensemble, abaissent Δb 2035 de 0,022 point, pour un dixième
+  de point de CSG.
+- D-258 seul se lit sur la vue vieillie des explorations de la CSG, que D-279 a rejouées :
+  −0,00047 point en 2035 pour un point de baisse, à θ = ½, sous les deux persistances.
+  Environ −0,00005 point par point de baisse et par année.
+- D-276 seul se lit sur le chemin de la CSG à 6,7 %, chiffré sous le défaut sur `46c0a5e`
+  puis rejoué sur `084d2c1` (D-277). Sa vue vieillie avait lu les taux de la vue figée de
+  2027 à 2035. La correction a abaissé Δb 2035 de 0,0002 point environ : de 0,989 à 0,988
+  fois le report sous l'effet éteint, de 1,010 à 1,008 sous l'effet tenu. Les rapports,
+  arrondis au millième, n'en disent pas plus.
+- D-258 et D-276 abaissent tous deux Δb. Pour D-276, c'est vrai dans les deux vues : dans
+  le rejeu de D-279, l'écart de la vue figée dépasse celui de la vue vieillie. Chaque vue,
+  sur ses propres taux, rend plus de recettes au comportement que sur ceux de l'autre.
+
+**Le pronostic**, écrit avant les passes. En points de PIB, à θ = ½ sauf pour la boîte, et
+rechiffré moins D-236.
+1. Contrôle. La trajectoire de référence est celle de D-236 au chiffre près, chaque année.
+   Les coûts mécaniques sont les siens à l'euro, chaque année et dans les deux vues. L'écart
+   de PIB l'est au chiffre près : l'impulsion est le coût mécanique, que le comportement ne
+   modifie pas.
+2. En vue vieillie, Δb 2026 ne bouge que par D-258 : de 0,00005 point au plus. De 2027 à
+   2029, il baisse, par D-258 et par D-276 : en 2029, de 0,0002 à 0,001 point.
+3. En vue figée, Δb baisse, par D-258 chaque année et par D-276 en 2026 seulement : en
+   2029, de 0,00003 à 0,0003 point.
+4. L'écart est le même sous les deux persistances, à 0,00001 point près : le comportement
+   n'entre pas dans la boucle.
+5. Aucun verdict ne change : à θ = ½, la baisse n'allège la dette dans aucune année, dans
+   aucune vue, sous aucune persistance.
+6. La boîte, nouvelle. Elle porte les quatre lignes de l'offre de travail et le
+   multiplicateur macro, comme le chemin de la CSG de D-277. En 2029, sous l'effet éteint,
+   aucun coin ne fait baisser la dette, dans aucune vue. Sous l'effet tenu, la boîte
+   franchit zéro dans les deux vues, aux coins où le multiplicateur vaut 1.
+7. La première année reportée, nouvelle aussi. En 2029, Δb chaque année chiffrée vaut de
+   0,97 à 1,03 fois le report en vue vieillie, sous les deux persistances : le coût y suit
+   les salaires, au rythme du PIB nominal. En vue figée, de 0,93 à 0,98 : le coût reste
+   à 4,16 Md€ quand le PIB croît.
+
+Si la vue vieillie bougeait dès 2026 de plus de 0,00005 point, l'exploration de D-235
+n'aurait pas servi l'année 2026 : la vue vieillie y aurait lu les taux de la réforme du
+cadre figé. D-281 le dira.
+
+**Les biais déclarés.**
+- Le rejeu mêle trois changements, et ne sépare D-276 de D-258 que par leur ordre de
+  grandeur, mesuré ailleurs. Les rejouer un à un coûterait huit passes de plus par
+  changement, et ne changerait pas le chiffre servi, qui est celui du code d'aujourd'hui.
+- Les fichiers de taux de 2026 du jour de D-236 ne sont plus là pour qu'on vérifie ce que
+  la vue figée a lu. Le point 3 et le paragraphe qui le suit en tiennent lieu.
+
+**Ce qui suit.** Les huit passes, sur ce commit, en tâche de fond. Puis D-281 : le résultat
+contre ce pronostic, l'original archivé, le rejeu servi à sa place et sa garde.
