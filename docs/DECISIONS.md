@@ -22560,3 +22560,63 @@ première année d'une mesure bornée est celle du scénario : `chiffrage regist
 mutations écrites à la main, toutes tuées après un cas ajouté : sans le refus d'une
 valeur qui n'est pas une liste, l'entier 2027 échouait encore, mais sans nommer `annees`.
 Le refus entre au périmètre du balayage de la phase 9 (`_annees_refusals`).
+
+## D-289 — L'étude du PLF 2027 en trois réponses : préenregistrée avant ses passes
+
+**Le fait.** Le but 1 (D-286) est une page publiée qui donne, pour chacun des trois
+articles chiffrables du PLF 2027, ce qu'il coûte et qui y gagne, ce qu'il coûte une fois
+les comportements et l'économie pris en compte, ce qu'il fait à la dette en 2035, et
+l'écart au chiffrage officiel. Cette entrée fixe les passes et leur pronostic avant qu'une
+seule ne tourne.
+
+**Ce qui tourne.** `scripts/etude_plf2027.py lancer`, depuis une copie de travail figée sur
+le commit qui porte cette entrée, une passe à la fois :
+- la première année de chaque article, par l'appel du simulateur de sa chaîne. Pour les
+  art. 2 et 3, `POST /population/simulate` en 2026, comportements et éventail macro
+  demandés, sur la population de 2024 non vieillie, comme leurs enregistrements. Pour
+  l'art. 15, `POST /entreprises/simulate` en 2027 ;
+- le chemin annuel de chaque article, de 2026 à 2035, par `impots predictif` dans le cadre
+  de l'étude de D-237, champ pour champ : dépenses gelées en volume, croissance réelle de
+  1 % et prix de 2 %, taux implicite tenu, salaires à 3 %, θ½, comportements et boucle.
+
+Les scénarios des art. 2 et 3 sont ceux du 2026-10-02 ; celui de l'art. 15 porte la
+réforme que son enregistrement a chiffrée, bornée à 2027 (D-288). Les rapports vont sous
+`reports/etude_plf2027/`, et `scripts/write_etude_plf2027.py` en fait
+`docs/ETUDE_PLF2027.md`.
+
+**Ce que la page refuse.** Un rapport manquant ou en trop, un commit absent ou un `src/`
+modifié, un lieu non dit, deux commits ; une première année qui n'a pas chiffré le
+scénario de l'étude par l'appel de sa chaîne, ou qui n'a pas de coût ; un chemin qui ne
+valide pas, ou qui n'a pas tourné dans le cadre de l'étude sur son scénario, années de la
+mesure comprises ; une bande qui n'est pas en euros autour du solde de la mesure, que la
+page lirait à l'envers ; un Δb à θ que la boîte ne porte pas.
+
+**Le pronostic.**
+1. *Première année.* Art. 2 : un coût de 2,7 à 3,3 Md€, contre 2,93 Md€ enregistrés.
+   Art. 3 : un gain de 1,0 à 1,25 Md€, contre 1,30 Md€ enregistrés : D-210 et D-211 ont
+   recalé la masse des pensions depuis, et l'art. 3 refait donnait 1,12 Md€. Art. 15 : un
+   gain de 7,0 à 7,1 Md€, le chiffre enregistré à 1 % près.
+2. *Comportements.* Art. 2 et 3 : une bande en euros, son centre à moins de 15 % du coût
+   mécanique. Art. 15 : aucune bande ; aucun canal des ménages ne lit l'IS.
+3. *Dette en 2035, vue vieillie, persistance éteinte, à θ½.* Art. 2 : de +0,5 à +0,9
+   point, à l'échelle du chemin de la décote de D-277 (+0,22 point pour 0,9 Md€ par an).
+   Art. 3 : de −0,2 à −0,45 point. Art. 15 : de −0,18 à −0,25 point, la même sous les deux
+   persistances, faute d'impulsion.
+4. *Verdicts.* Art. 15 : « baisse », partout. Art. 2 et 3 : « dépend de θ ». Sous la
+   persistance éteinte, le signe tiendrait à tous les coins ; sous la persistance tenue,
+   le multiplicateur à son coin haut le retourne, comme pour la décote et le barème de
+   l'étude.
+
+**Les biais déclarés.**
+- La première année des ménages passe par le palier rapide, 20 000 ménages, et sur le
+  code d'aujourd'hui ; l'enregistrement noté reste celui du 2026-10-14, que la page
+  donne à côté avec l'écart entre les deux.
+- Le droit est reconduit : les seuils de l'art. 2 et le plafond de l'art. 3 restent ceux
+  de 2026 en euros courants jusqu'en 2035, quand les lois de finances suivantes les
+  indexeraient.
+- L'art. 15 n'a ni bande ni boucle : aucune variante d'IS dans Mésange 2017 (D-219).
+- Les volets non chiffrés de chaque article, que leurs scénarios nomment, restent hors
+  de la page, et la page le dit.
+
+**Ce qui suit.** Les passes tournent après le rejeu de C1 (D-285), une à la fois. Le
+résultat, la page et le test qui refuse sa dérive entrent dans une nouvelle entrée.
