@@ -21900,3 +21900,92 @@ lanceurs : 223 réussis. `ruff` passe. `src/` ne change pas. Le `make full` n'a 
 
 **Ce qui suit.** Les vingt-quatre passes, sur ce commit, en tâche de fond. Puis D-279 : le
 résultat contre ce pronostic, et son rendu.
+
+## D-279 — La vue figée des explorations, rechiffrée : le résultat
+
+**Le fait.** Les trois explorations préenregistrées par D-278 ont tourné sur `6937229`, son
+commit, depuis une copie de travail figée sur lui : vingt-quatre passes, de 9 h 27 à 10 h 16
+UTC, l'une après l'autre, sans incident. Les rapports sont sous `reports/vue_figee/`.
+`docs/PREDICTIF_ETUDE.md` les rend dans une section nouvelle, « La vue figée, rechiffrée »,
+après celle du chemin annuel. La table de chaque instrument rejoué y renvoie. Le reste de
+la page est inchangé, à l'octet.
+
+**Le résultat.** Δb 2035 à θ = ½ en vue figée, rechiffré moins l'étude, en points de PIB,
+sous l'effet éteint ; l'effet tenu donne le même écart.
+- La CSG, de 5,8 % à 6,7 % : de −0,0008 à −0,0001.
+- La décote, de 10 % à 40 % : +0,032, −0,096, −0,008, −0,007.
+- Le barème, de 0,93 à 0,99 : −0,015, +0,007, +0,064, +0,024.
+
+Le plus grand écart est celui de la décote à 20 % : +1,58 point au lieu de +1,68 sous
+l'effet éteint, +0,67 au lieu de +0,77 sous l'effet tenu.
+
+**Le pronostic, point par point.**
+1. Tenu. Les coûts sont ceux de l'étude à l'euro, dans les deux vues. En vue vieillie,
+   Δb à θ et à chaque coin est le sien à 0,0000001 point près pour la décote et le
+   barème, et à 0,00094 pour la CSG.
+2. Tenu. Pour le paquet le plus proche de chaque instrument, la vue figée rechiffrée est,
+   au chiffre près, celle que le chemin annuel de D-277 reporte, sous les deux
+   persistances.
+3. Tenu. La CSG ne bouge pas de plus de 0,0008 point.
+4. Manqué. La décote baisse à trois paquets sur quatre, pas à tous : à 10 %, elle monte de
+   0,032 point, quand le pronostic disait une baisse de 0,04 à 0,15. Rapporté au coût
+   figé, l'écart va de −0,017 à +0,003 point par milliard, quand le plus proche en donne
+   −0,0075 : hors de la fourchette de la moitié au double, des deux côtés.
+5. Manqué. Le barème monte à trois paquets sur quatre : à 0,93, il baisse de 0,015 point,
+   quand le pronostic disait une hausse de 0,14 à 0,19. Rapporté au coût figé, l'écart ne
+   tient la fourchette de 0,85 à 1,15 fois le plus proche qu'à 0,97, avec 0,89. Il vaut
+   0,06 fois à 0,95, et change de signe à 0,93.
+6. À un paquet près. L'écart est le même sous les deux persistances, à 0,0001 point près, à
+   onze paquets sur douze. À la décote à 20 %, il diffère de 0,00016.
+7. Tenu. Aucune lecture ne tient la cible dans la vue figée seule, ni rechiffrée ni dans
+   l'étude, et les paquets qui tiennent la cible sont les mêmes. Aucun verdict ne change.
+
+**Ce que les points 4 et 5 veulent dire.** L'écart ne suit pas le coût parce que C1 ne le
+suit pas.
+- C1 somme, sur les 3 000 ménages de l'échantillon des taux marginaux, le poids, l'assiette,
+  la variation du log du taux net et le taux de la réforme de chaque ménage.
+- Le taux marginal est une différence finie : ce que garde le ménage de 100 € de salaire de
+  plus. Au bord d'un seuil, le pas le franchit, et le taux saute.
+- Sous une baisse du barème de 1 % à 5 %, le taux de quelques ménages passe ainsi de 53 % à
+  104 % ou 110 %. Ce n'est pas l'effet de la baisse sur le taux d'un euro de plus, mais
+  celui du pas, qui franchit un seuil.
+- Chacun de ces ménages pèse de 0,3 à 0,7 Md€ dans la somme de C1, qui vaut de 0,7 à
+  9,2 Md€ du plus petit paquet au plus grand, avant l'élasticité.
+- Les cadres vieilli et figé ne mettent pas les mêmes ménages au bord des seuils. L'étude
+  lisait les sauts du premier, le rejeu ceux du second. Leur différence n'a pas de raison
+  de suivre la taille du paquet.
+- Le pronostic supposait C1 lisse dans la taille du paquet. Il ne l'est pas à l'échelle de
+  quelques centièmes de point. Cela vaut aussi pour la vue vieillie : c'est la même mesure,
+  sur un autre cadre.
+
+**Ce que cela change.**
+- Les chiffres de la vue figée de la CSG, de la décote et du barème sont ceux de la section
+  nouvelle. L'écart à ceux de l'étude va jusqu'à 0,1 point.
+- Les verdicts de l'étude, tous en vue vieillie, ne bougent pas ; ni ses coins, ni sa
+  réponse à θ = 0 et à θ = 1.
+- C1 porte un bruit de mesure de quelques centièmes de point de Δb 2035 par paquet, dans
+  les deux vues : celui des seuils que le pas de 100 € franchit, sur 3 000 ménages. Il
+  n'est pas chiffré ici. Le mesurer demanderait de faire varier l'échantillon ou le pas.
+
+**Le rendu, après les rapports.** Trois retouches de forme, aucune de chiffre.
+- L'écart s'écrit au dix-millième, et un écart que l'arrondi mène à zéro s'écrit zéro, non
+  « −0,000 ».
+- La liste des instruments rejoués finit par « et ».
+- « Ne tiendrait à aucune » remplace « tiendrait à aucune ».
+
+Les tests le tiennent : un cas nouveau, sous quatre formes, et deux cas retouchés. Les
+quatre mutations écrites à la main de ces retouches sont toutes tuées. Les tests de la page
+et des deux lanceurs : 227 réussis. `ruff` passe. Le `make full` n'a pas tourné.
+
+**Ce qui reste.**
+- Le bruit de C1 aux seuils, à mesurer : l'échantillon des taux marginaux et le pas de la
+  différence finie.
+- Le chemin annuel de la CSG de D-236, rechiffré sur la correction de D-276.
+- L'exploration de la CSG de la phase 10, servie par `GET /explorations`, et les tours
+  archivés de l'étude, laissés tels quels (D-278).
+- Les passes préenregistrées de la vue figée et des indices à θ = 0 et θ = 1.
+- Le libellé de la passe rapide de la page pour une réforme des seules entreprises.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
+- Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
+- Le `make full` du propriétaire.

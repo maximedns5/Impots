@@ -2186,6 +2186,9 @@ def test_the_replayed_frozen_view_is_rendered_bundle_by_bundle(script, tmp_path)
     assert page.index(THETA_TITLE) < page.index(VUE_FIGEE_TITLE) < page.index(NOT_SAID)
     section = page.partition(VUE_FIGEE_TITLE)[2].partition(NOT_SAID)[0]
     assert VUE_FIGEE_COMMIT in section and WHERE in section and "D-278" in section
+    labels = [e["instrument"].label for e in etudes if e["instrument"].key in READS_RATES]
+    assert (f"pour {script._lower(labels[0])}, {script._lower(labels[1])} et "
+            f"{script._lower(labels[2])}, ont été rejouées") in section
     assert ("Ses coûts s'en écartent de 0 € au plus, dans les deux vues, et Δb à θ et à "
             "chaque coin, en vue vieillie, de 0,000000 point au plus.") in section
     for entry in etudes:
@@ -2195,7 +2198,7 @@ def test_the_replayed_frozen_view_is_rendered_bundle_by_bundle(script, tmp_path)
                 row = (f"| {instrument.label} | {instrument.show(e['knobs'][instrument.knob])} "
                        f"| {script._lower(search['persistence_label'])} "
                        f"| {script._pt(e['delta_frozen'])} "
-                       f"| {script._pt(e['delta_frozen'] - 1e-3)} | −0,100 pt |")
+                       f"| {script._pt(e['delta_frozen'] - 1e-3)} | −0,1000 pt |")
                 assert (row in section) is (instrument.key in READS_RATES), row
     (tmp_path / "avant").mkdir()
     requests, reports = _study(tmp_path / "avant", script)
@@ -2334,9 +2337,18 @@ def test_the_bundles_the_frozen_view_alone_would_hold_are_counted(script, tmp_pa
     (replayed, readings), (studied, _) = count(reports / "vue_figee"), count(reports)
     assert readings and (replayed != studied or shift > -0.5)
     section = page.partition(VUE_FIGEE_TITLE)[2].partition(NOT_SAID)[0]
-    assert (f"Rechiffrée, la vue figée seule tiendrait la cible à {replayed} des "
+    holds = "tiendrait" if replayed != "aucune" else "ne tiendrait"
+    assert (f"Rechiffrée, la vue figée seule {holds} la cible à {replayed} des "
             f"{readings} lectures d'un paquet sous une persistance ; dans l'étude, à "
             f"{studied}.") in section
+
+
+@pytest.mark.parametrize("gap, said", [(-1e-3, "−0,1000 pt"), (-4e-7, "0,0000 pt"),
+                                       (4e-7, "0,0000 pt"), (6e-7, "+0,0001 pt")])
+def test_a_gap_is_written_to_the_ten_thousandth_without_a_signed_zero(script, gap: float,
+                                                                      said: str) -> None:
+    """A gap the rounding takes to zero is zero, not « −0,0000 »."""
+    assert script._gap(gap) == said
 
 
 def test_the_nearest_bundle_s_replay_is_the_annual_path_s_carry(script, tmp_path) -> None:

@@ -1728,6 +1728,17 @@ def load_vue_figee(etudes: list[dict[str, Any]],
     return out
 
 
+def _gap(share: float) -> str:
+    """A gap between two Δb, in points to the ten-thousandth: one the rounding takes to zero
+    is written as zero, not as a signed zero."""
+    points = round(share * 100, 4)
+    return (_fr(points, 4) if points else _fr(0.0, 4, sign=False)) + " pt"
+
+
+def _and(items: list[str]) -> str:
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " et " + items[-1]
+
+
 def _alone(report: dict[str, Any], target: float) -> tuple[int, int]:
     """The readings, one bundle under one persistence, whose frozen view alone holds the
     target, and how many there are."""
@@ -1739,7 +1750,7 @@ def _alone(report: dict[str, Any], target: float) -> tuple[int, int]:
 def _vue_figee_section(entries: list[dict[str, Any]], target: float, first_year: int,
                        target_year: int, theta: str) -> list[str]:
     head = entries[0]["report"]
-    labels = ", ".join(_lower(e["instrument"].label) for e in entries)
+    labels = _and([_lower(e["instrument"].label) for e in entries])
     eur = max(e["control"]["eur"] for e in entries)
     aged = max(e["control"]["aged"] for e in entries)
     carry = [e["carry"] for e in entries if e["carry"] is not None]
@@ -1773,15 +1784,16 @@ def _vue_figee_section(entries: list[dict[str, Any]], target: float, first_year:
                            f"| {instrument.show(b['knobs'][instrument.knob])} "
                            f"| {_lower(old['persistence_label'])} | {_pt(b['delta_frozen'])} "
                            f"| {_pt(a['delta_frozen'])} "
-                           f"| {_fr((a['delta_frozen'] - b['delta_frozen']) * 100, 3)} pt |")
+                           f"| {_gap(a['delta_frozen'] - b['delta_frozen'])} |")
     replayed = [_alone(e["report"], target) for e in entries]
     studied = [_alone(e["study"], target) for e in entries]
     n_new, m = sum(n for n, _ in replayed), sum(k for _, k in replayed)
     n_old = sum(n for n, _ in studied)
     out += ["", "La vue figée n'entre dans aucun verdict de la cible : elle dit seulement si "
                 "un paquet la tiendrait dans la vue figée seule. Rechiffrée, la vue figée "
-                f"seule tiendrait la cible à {n_new or 'aucune'} des {m} lectures d'un paquet "
-                f"sous une persistance ; dans l'étude, à {n_old or 'aucune'}."]
+                f"seule {'tiendrait' if n_new else 'ne tiendrait'} la cible à "
+                f"{n_new or 'aucune'} des {m} lectures d'un paquet sous une persistance ; dans "
+                f"l'étude, à {n_old or 'aucune'}."]
     return out
 
 

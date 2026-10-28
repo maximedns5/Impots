@@ -69,6 +69,8 @@ Une baisse de la CSG déductible sur les revenus d'activité, de 6,8 % à 6,7, 6
 | 6,4 % | 3,53 Md€ | 3,34 Md€ | +0,33 pt | +0,31 pt | [−0,25 pt ; +0,91 pt] | 16 sur 32 (multiplicateur_macro = 1) |
 | 6,7 % | 0,88 Md€ | 0,83 Md€ | +0,08 pt | +0,08 pt | [−0,06 pt ; +0,23 pt] | 16 sur 32 (multiplicateur_macro = 1) |
 
+La colonne « Δb 2035, figée » lisait les taux marginaux de la vue vieillie (D-276) : elle est rechiffrée plus bas, dans « La vue figée, rechiffrée ».
+
 **Ce qui manque à la chaîne**, pour le paquet le plus proche : absent, et non nul.
 
 - rétroaction, instruments non couverts : af, aide_logement, crds_logement, crds_mini, crds_pfam, ppa, rsa : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.
@@ -167,6 +169,8 @@ Une décote plus généreuse, son taux ramené de 45,25 % à 40, 30, 20 ou 10 %,
 | 30 % | 3,14 Md€ | 3,08 Md€ | +0,36 pt | +0,36 pt | [−0,12 pt ; +0,84 pt] | 4 sur 8 (multiplicateur_macro = 1) |
 | 40 % | 0,94 Md€ | 0,93 Md€ | +0,11 pt | +0,11 pt | [−0,03 pt ; +0,26 pt] | 4 sur 8 (multiplicateur_macro = 1) |
 
+La colonne « Δb 2035, figée » lisait les taux marginaux de la vue vieillie (D-276) : elle est rechiffrée plus bas, dans « La vue figée, rechiffrée ».
+
 **Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
 
 Paquet le plus proche de la cible : **40 %**.
@@ -211,6 +215,8 @@ Une baisse de chaque taux du barème de l'IR en vigueur de 1, 3, 5 ou 7 %, ses s
 | × 0,95 | 6,88 Md€ | 6,12 Md€ | +0,45 pt | +0,38 pt | [−0,78 pt ; +1,67 pt] | 4 sur 8 (multiplicateur_macro = 1) |
 | × 0,97 | 4,13 Md€ | 3,67 Md€ | +0,26 pt | +0,22 pt | [−0,49 pt ; +0,99 pt] | 4 sur 8 (multiplicateur_macro = 1) |
 | × 0,99 | 1,38 Md€ | 1,23 Md€ | +0,08 pt | +0,07 pt | [−0,17 pt ; +0,33 pt] | 4 sur 8 (multiplicateur_macro = 1) |
+
+La colonne « Δb 2035, figée » lisait les taux marginaux de la vue vieillie (D-276) : elle est rechiffrée plus bas, dans « La vue figée, rechiffrée ».
 
 **Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
 
@@ -877,6 +883,43 @@ Vue figée, chaque année chiffrée : +0,08 pt à θ = ½, de −0,10 pt à +0,2
 - La population vieillie ne change ni de structure, ni de poids, ni d'âge.
 - Les indices hors de la chaîne ne sont pas sur le chemin annuel (D-236).
 - Le report est la convention de l'explorateur ; ni l'un ni l'autre n'est le vrai chemin, et leur écart dit ce que la convention de l'étude pèse.
+
+## La vue figée, rechiffrée
+
+Jusqu'à D-276, la vue figée prenait la clé des taux marginaux de la vue vieillie. L'explorateur chiffre la vue vieillie d'abord : sa vue figée lisait donc les taux du cadre vieilli, avec l'assiette du cadre figé. Seuls C1, la réponse du revenu imposable, et C7, l'offre de travail, lisent ces taux. Les explorations de l'étude dont la boîte porte une de leurs lignes, pour la CSG déductible sur les revenus d'activité, le taux de la décote de l'IR et les taux du barème de l'IR, mis à l'échelle, ont été rejouées telles quelles sur la correction. Le rejeu a été préenregistré dans D-278 avant ses passes, et `scripts/vue_figee.py` l'a lancé. Les rapports ont tourné sur le commit `69372292960ef043d8c45aa474723ec6a2b2a579`, le 2026-10-28, ici : dans le conteneur de la session, en tâche de fond, depuis une copie de travail figée sur 6937229. Ils sont sous `reports/vue_figee/` ; ceux de l'étude ne bougent pas, et les tables plus haut gardent leurs chiffres.
+
+**Le contrôle.** La vue vieillie ne lisait pas le défaut. Rejouée, elle se compare à l'étude. Ses coûts s'en écartent de 0 € au plus, dans les deux vues, et Δb à θ et à chaque coin, en vue vieillie, de 0,000940 point au plus. Pour le paquet le plus proche, la vue figée rechiffrée est celle que le chemin annuel reporte sur sa passe de 2026, à 0,000000 point près.
+
+**Δb 2035 à θ = ½, vue figée.**
+
+| Instrument | Paquet | Persistance | Dans l'étude | Rechiffrée | Écart |
+|---|---|---|---|---|---|
+| La CSG déductible sur les revenus d'activité | 5,8 % | effet macro éteint après trois ans | +2,14 pt | +2,14 pt | −0,0007 pt |
+| La CSG déductible sur les revenus d'activité | 6,1 % | effet macro éteint après trois ans | +1,50 pt | +1,49 pt | −0,0008 pt |
+| La CSG déductible sur les revenus d'activité | 6,4 % | effet macro éteint après trois ans | +0,85 pt | +0,85 pt | −0,0004 pt |
+| La CSG déductible sur les revenus d'activité | 6,7 % | effet macro éteint après trois ans | +0,21 pt | +0,21 pt | −0,0001 pt |
+| La CSG déductible sur les revenus d'activité | 5,8 % | effet macro tenu au niveau de la troisième année | +0,77 pt | +0,77 pt | −0,0007 pt |
+| La CSG déductible sur les revenus d'activité | 6,1 % | effet macro tenu au niveau de la troisième année | +0,54 pt | +0,54 pt | −0,0008 pt |
+| La CSG déductible sur les revenus d'activité | 6,4 % | effet macro tenu au niveau de la troisième année | +0,31 pt | +0,31 pt | −0,0004 pt |
+| La CSG déductible sur les revenus d'activité | 6,7 % | effet macro tenu au niveau de la troisième année | +0,08 pt | +0,08 pt | −0,0001 pt |
+| Le taux de la décote de l'IR | 10 % | effet macro éteint après trois ans | +2,70 pt | +2,73 pt | +0,0324 pt |
+| Le taux de la décote de l'IR | 20 % | effet macro éteint après trois ans | +1,68 pt | +1,58 pt | −0,0964 pt |
+| Le taux de la décote de l'IR | 30 % | effet macro éteint après trois ans | +0,84 pt | +0,83 pt | −0,0084 pt |
+| Le taux de la décote de l'IR | 40 % | effet macro éteint après trois ans | +0,26 pt | +0,25 pt | −0,0070 pt |
+| Le taux de la décote de l'IR | 10 % | effet macro tenu au niveau de la troisième année | +1,15 pt | +1,18 pt | +0,0323 pt |
+| Le taux de la décote de l'IR | 20 % | effet macro tenu au niveau de la troisième année | +0,77 pt | +0,67 pt | −0,0962 pt |
+| Le taux de la décote de l'IR | 30 % | effet macro tenu au niveau de la troisième année | +0,36 pt | +0,35 pt | −0,0084 pt |
+| Le taux de la décote de l'IR | 40 % | effet macro tenu au niveau de la troisième année | +0,11 pt | +0,10 pt | −0,0070 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,93 | effet macro éteint après trois ans | +1,89 pt | +1,88 pt | −0,0150 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,95 | effet macro éteint après trois ans | +1,35 pt | +1,35 pt | +0,0073 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,97 | effet macro éteint après trois ans | +0,80 pt | +0,86 pt | +0,0640 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro éteint après trois ans | +0,26 pt | +0,29 pt | +0,0240 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,93 | effet macro tenu au niveau de la troisième année | +0,55 pt | +0,53 pt | −0,0150 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,95 | effet macro tenu au niveau de la troisième année | +0,38 pt | +0,39 pt | +0,0073 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,97 | effet macro tenu au niveau de la troisième année | +0,22 pt | +0,28 pt | +0,0640 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro tenu au niveau de la troisième année | +0,07 pt | +0,09 pt | +0,0240 pt |
+
+La vue figée n'entre dans aucun verdict de la cible : elle dit seulement si un paquet la tiendrait dans la vue figée seule. Rechiffrée, la vue figée seule ne tiendrait la cible à aucune des 24 lectures d'un paquet sous une persistance ; dans l'étude, à aucune.
 
 ## Ce que l'étude ne dit pas
 
