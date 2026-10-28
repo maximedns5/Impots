@@ -1,0 +1,25 @@
+{
+  "name": "plf2027_art_15",
+  "year": 2027,
+  "created": "2026-10-28",
+  "source": "PLF 2027 (AN, texte n° 3210), art. 15 — Mise à contribution des grandes entreprises. Volet chiffré : le troisième exercice de la CEBGE, à 15,7 % et 31,4 %, seuil de 1,5 Md€ (I de l'article), la réforme que `reforms/plf2027_art_15.json` porte et que son enregistrement a chiffrée.",
+  "note": "Ne porte PAS la contribution sur le résultat d'exploitation des transporteurs maritimes (II). Le texte rétablit la CEBGE pour l'exercice 2027 seul : la mesure est bornée à cette année (D-288).",
+  "tags": [],
+  "reform": {},
+  "firm_reform": {
+    "cebge_seuils_et_taux": [
+      {
+        "seuil_ca": 1500000000.0,
+        "taux": 0.157
+      },
+      {
+        "seuil_ca": 3000000000.0,
+        "taux": 0.314
+      }
+    ],
+    "cebge_prorogation_largeur": 100000000.0
+  },
+  "annees": [
+    2027
+  ]
+}
