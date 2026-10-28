@@ -450,6 +450,39 @@ def test_the_behavioural_pass_on_the_aged_population_keys_its_caches_on_the_upra
     assert keys == ["w+0.030000_p+0.020000_b2024"]
 
 
+def test_the_frozen_view_keys_its_emtr_caches_on_the_frame_it_prices(monkeypatch) -> None:
+    """The frozen view prices the vintage as built: its caches are the vintage's, not
+    the aged view's. Under the aged key, the view priced first wrote what both read, and
+    the annual path, which prices the frozen view first, served the frozen frame's rates
+    to the aged view every year (D-276)."""
+    import polars as pl
+
+    from impots.api.schemas import ReformSpec
+    from impots.behavioural import emtr as emtr_module
+    from impots.uprating import Uprating
+
+    population = pl.DataFrame({
+        "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
+        "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
+        "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
+    seen: list = []
+
+    def cached(frame, vintage, **kwargs):
+        seen.append((kwargs.get("uprating_key"), frame["salaire_brut_annuel"][0]))
+        return SimpleNamespace(with_earnings=pl.DataFrame())
+
+    monkeypatch.setattr(main, "_population_frame", lambda: population)
+    monkeypatch.setattr(main, "_run_population", lambda request, frame: (
+        SimpleNamespace(households=None), SimpleNamespace(reform_cost=5e9, deciles=[])))
+    monkeypatch.setattr(emtr_module, "cached", cached)
+    uprating = Uprating(wage=0.03, price=0.02, source=WAGES["source"], base_year=2024)
+    year = main.YearPass(reform=ReformSpec(decote_taux=0.4), year=2027, behavioural=True)
+    for view in (main.FROZEN_VIEW, main.FIRST_YEAR_VIEW):
+        main._price_first_year(year, uprating=uprating, view=view)
+    assert seen == [(None, 30_000.0),
+                    (uprating.key(), pytest.approx(30_000.0 * 1.03 ** 3))]
+
+
 # --------------------------------------------------------------------------- #
 # The refusals the endpoint translates (D-229)
 # --------------------------------------------------------------------------- #

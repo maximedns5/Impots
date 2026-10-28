@@ -52,6 +52,11 @@ EMTR_STEP = 100.0
 #: clipped and counted, never dropped silently.
 EMTR_BOUNDS = (-0.2, 1.5)
 
+#: The column each cache file carries: the fingerprint of the frame its rates were
+#: computed on. The keys name the vintage, the year, the sample, the reform and the
+#: uprating, never the frame, and two frames of the same rows can share them (D-276).
+FRAME = "frame_fingerprint"
+
 
 @dataclass
 class EmtrResult:
@@ -101,6 +106,28 @@ def _rate(
     return clipped
 
 
+def _priced(population: pl.DataFrame | Path, sample: int | None) -> pl.DataFrame:
+    """The frame the rates are computed on: the population, subsampled, by person."""
+    frame = pl.read_parquet(population) if isinstance(population, Path) else population
+    if sample is not None:
+        frame = subsample(frame, sample)
+    return frame.sort("person_id")
+
+
+def fingerprint(frame: pl.DataFrame) -> str:
+    """What a cache file says of the frame its rates were computed on: every row, every
+    column, in order. Stable within one polars version; another recomputes."""
+    rows = frame.hash_rows(seed=0, seed_1=1, seed_2=2, seed_3=3).to_numpy()
+    columns = ",".join(f"{name}:{dtype}" for name, dtype in frame.schema.items())
+    return hashlib.sha256(columns.encode() + rows.tobytes()).hexdigest()[:16]
+
+
+def _computed_on(cached: pl.DataFrame, frame_print: str) -> bool:
+    """A cache file serves only the frame it names; one that names none, written before
+    the files said it, is not served (D-276)."""
+    return FRAME in cached.columns and bool((cached[FRAME] == frame_print).all())
+
+
 def compute(
     population: pl.DataFrame | Path,
     year: int = 2024,
@@ -117,10 +144,8 @@ def compute(
     caller caches it. `uprating_key` is `Uprating.key()` when the population was aged,
     None when it is the vintage as built.
     """
-    frame = pl.read_parquet(population) if isinstance(population, Path) else population
-    if sample is not None:
-        frame = subsample(frame, sample)
-    frame = frame.sort("person_id")
+    frame = _priced(population, sample)
+    frame_print = fingerprint(frame)
 
     per_household = (
         frame.group_by("household_id")
@@ -140,7 +165,8 @@ def compute(
     # the sample size too, because a subsample is a different population — and on the
     # population wiring, because rates computed under another one are another law's
     # rates (D-176). And on the uprating, when there is one: an aged population has the
-    # same rows as the vintage, so the height check below would not see it (D-226).
+    # same rows as the vintage, so the height check below would not see it (D-226). The
+    # file names the frame it was computed on, and serves no other (D-276).
     started = time.perf_counter()
     aged = f"_{uprating_key}" if uprating_key is not None else ""
     cache = (
@@ -149,20 +175,17 @@ def compute(
            f"_{to_openfisca.WIRING}{aged}.parquet")
         if vintage else None
     )
-    if cache is not None and cache.exists():
-        cached_rates = pl.read_parquet(cache)
-        if cached_rates.height == per_household.height:
-            columns = {"emtr": cached_rates["emtr"].to_numpy()}
-            guards["baseline_cached"] = True
-        else:  # the population moved under the cache; recompute rather than trust it
-            columns = {"emtr": _rate(frame, baseline(), year, earners, step, guards,
-                                     "baseline")}
-    else:
+    cached_rates = pl.read_parquet(cache) if cache is not None and cache.exists() else None
+    if (cached_rates is not None and cached_rates.height == per_household.height
+            and _computed_on(cached_rates, frame_print)):
+        columns = {"emtr": cached_rates["emtr"].to_numpy()}
+        guards["baseline_cached"] = True
+    else:  # none, or of another population or frame: recomputed rather than trusted
         columns = {"emtr": _rate(frame, baseline(), year, earners, step, guards,
                                  "baseline")}
-    if cache is not None and not cache.exists():
-        PROCESSED.mkdir(parents=True, exist_ok=True)
-        pl.DataFrame({"emtr": columns["emtr"]}).write_parquet(cache)
+        if cache is not None:
+            PROCESSED.mkdir(parents=True, exist_ok=True)
+            pl.DataFrame({"emtr": columns["emtr"], FRAME: frame_print}).write_parquet(cache)
     timings["baseline_s"] = round(time.perf_counter() - started, 2)
 
     if reform is not None and not reform.is_empty():
@@ -278,17 +301,21 @@ def cached(
     after — which matters most for the same reform priced twice, since a user
     adjusting one knob and re-running is the normal way this tool is used.
     `uprating_key` is `Uprating.key()` when `population` was aged: the frame alone
-    does not say so, and the key must."""
+    does not say so, and the key must. The file names the frame it was computed on, and
+    serves no other (D-276)."""
     vintage = millesime(vintage)
     key = cache_key(vintage, year, reform, sample, uprating_key)
     path = PROCESSED / f"emtr_{vintage}_{key}.parquet"
+    frame_print = fingerprint(_priced(population, sample))
     if path.exists():
-        path.touch()  # most recently USED, not most recently written, survives eviction
-        return EmtrResult(households=pl.read_parquet(path), year=year,
-                          guards={"cached": True})
+        households = pl.read_parquet(path)
+        if _computed_on(households, frame_print):
+            path.touch()  # most recently USED, not most recently written, survives eviction
+            return EmtrResult(households=households.drop(FRAME), year=year,
+                              guards={"cached": True})
     result = compute(population, year=year, reform=reform, sample=sample, vintage=vintage,
                      uprating_key=uprating_key)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     _make_room(vintage)
-    result.households.write_parquet(path)
+    result.households.with_columns(pl.lit(frame_print).alias(FRAME)).write_parquet(path)
     return result

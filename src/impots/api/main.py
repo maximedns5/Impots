@@ -1500,9 +1500,13 @@ def _price_households(request: PopulationSimulateRequest, *, uprating: Any,
         request, frame, **({"capital_index": index} if imputes_capital(request) else {}))
     if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
         raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
-    inputs = (_behavioural_inputs(request, frame, agg, result,
-                                  uprating_key=uprating.key())[0]
-              if request.behavioural else None)
+    # The EMTR caches are keyed on the frame priced: the aged view's on its uprating, the
+    # frozen view's on the vintage as built, which it prices. Under one key, the view
+    # priced first wrote the rates both read (D-276).
+    inputs = (_behavioural_inputs(
+        request, frame, agg, result,
+        uprating_key=uprating.key() if view == FIRST_YEAR_VIEW else None)[0]
+        if request.behavioural else None)
     impulse, uncovered = None, {}
     if macro:
         try:
