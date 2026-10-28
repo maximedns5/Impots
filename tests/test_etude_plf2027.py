@@ -114,11 +114,12 @@ def launcher(script, monkeypatch, tmp_path):
     out = tmp_path / "etude_plf2027"
     monkeypatch.setattr(script, "OUT", out)
     calls: list = []
+    envs: list = []
     monkeypatch.setattr(script.subprocess, "run",
-                        lambda command, **kw: calls.append(command)
+                        lambda command, **kw: calls.append(command) or envs.append(kw["env"])
                         or SimpleNamespace(returncode=0))
     monkeypatch.setattr(recherche, "code_state", lambda root=None: ("c0ffee", False))
-    return SimpleNamespace(out=out, calls=calls, monkeypatch=monkeypatch)
+    return SimpleNamespace(out=out, calls=calls, envs=envs, monkeypatch=monkeypatch)
 
 
 def test_the_launcher_runs_the_first_years_then_the_paths(script, launcher) -> None:
@@ -128,6 +129,13 @@ def test_the_launcher_runs_the_first_years_then_the_paths(script, launcher) -> N
     assert steps == [("premiere", n) for n in script.ARTICLES] + [
         ("predictif", n) for n in script.ARTICLES]
     assert all(c[c.index("--ou") + 1] == "ici" for c in launcher.calls)
+
+
+def test_every_pass_is_served_the_real_firm_vintage(script, launcher) -> None:
+    assert script.launch("ici") == 0
+    assert {env["IMPOTS_FIRM_VINTAGE"] for env in launcher.envs} == {"2023"}
+    registered = preregistration.load("plf2027_art_15").population_vintage
+    assert registered == f"entreprises-{script.FIRM_VINTAGE}"
 
 
 def test_a_pass_that_fails_stops_the_ones_after_it(script, launcher, capsys) -> None:

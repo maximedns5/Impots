@@ -15,6 +15,10 @@ enregistrement a chiffrée, et borné à 2027 (D-288) : le texte rétablit la CE
 exercice seul. Le chemin annuel reprend le cadre de la requête de l'étude (D-237) champ pour
 champ, par la commande que `scripts/etude_annuelle.py` construit pour elle.
 
+LES ENTREPRISES SUR LEUR MILLÉSIME RÉEL. Chaque passe est servie la population
+d'entreprises de 2023 (`IMPOTS_FIRM_VINTAGE`), comme l'étude de D-250 et l'enregistrement
+de l'art. 15 : la fixture n'a pas d'année.
+
 UNE PASSE À LA FOIS. Un chemin annuel occupe 6 Go (D-236) : les passes tournent l'une après
 l'autre, chacune dans son processus. Un `src/` modifié et un rapport déjà là sont refusés
 avant la première passe.
@@ -41,6 +45,9 @@ OUT = ROOT / "reports" / "etude_plf2027"
 ARTICLES = ("plf2027_art_2", "plf2027_art_3", "plf2027_art_15")
 #: The study request whose frame the annual paths take, field for field (D-237).
 FRAME = "ir"
+#: The firm vintage the passes are served (D-250): the real one, which has a year. The
+#: fixture has none, and the aged view of the art. 15 path refuses it.
+FIRM_VINTAGE = "2023"
 CREATED = "2026-10-28"
 
 
@@ -151,7 +158,7 @@ def launch(where: str) -> int:
         print(f"{OUT} porte déjà {there} : un rapport n'est pas écrasé en silence.",
               file=sys.stderr)
         return 1
-    env = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
+    env = {**os.environ, "PYTHONPATH": str(ROOT / "src"), "IMPOTS_FIRM_VINTAGE": FIRM_VINTAGE}
     for report, command in passes(where):
         print(f"== {report}", flush=True)
         code = subprocess.run([sys.executable, *command], cwd=ROOT, env=env).returncode

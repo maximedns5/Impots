@@ -22618,5 +22618,17 @@ page lirait à l'envers ; un Δb à θ que la boîte ne porte pas.
 - Les volets non chiffrés de chaque article, que leurs scénarios nomment, restent hors
   de la page, et la page le dit.
 
+**Avant les passes : un essai à blanc, et ce qu'il a changé.** Une fois ce pronostic
+poussé, le chemin de l'art. 15, le seul sans passe de population, a tourné à blanc vers le
+scratchpad. Il s'est arrêté en 2027 sur la vue vieillie : l'API servait la fixture des
+entreprises, qui n'a pas d'année. Le lanceur sert désormais à chaque passe le millésime de
+2023 (`IMPOTS_FIRM_VINTAGE`), celui de D-250 et de l'enregistrement de l'art. 15, et la page
+refuse une première année des entreprises qui ne tourne pas sur lui ou sur des cellules
+synthétiques ; trois mutations, tuées. Relancé, l'essai a donné ce que la passe officielle
+redira : 7,902 Md€ en 2027 dans la vue vieillie et 7,054 Md€ dans la vue figée, Δb 2035 de
+−0,228 et −0,203 point, les deux persistances confondues, « baisse » partout. C'est dans
+le pronostic, et c'est dit ici parce que c'est vu. Les passes tournent sur le commit qui
+porte ce paragraphe.
+
 **Ce qui suit.** Les passes tournent après le rejeu de C1 (D-285), une à la fois. Le
 résultat, la page et le test qui refuse sa dérive entrent dans une nouvelle entrée.

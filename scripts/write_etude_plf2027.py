@@ -97,6 +97,11 @@ def load(reports: Path = REPORTS) -> list[dict[str, Any]]:
                     ).model_validate(first["response"])
         if response.reform_cost is None:
             raise EtudeError(f"{name} : la première année n'a pas de coût.")
+        if kind == "entreprises" and (response.meta.vintage != launcher.FIRM_VINTAGE
+                                      or response.meta.cells_are_synthetic):
+            raise EtudeError(f"{name} : la première année n'a pas tourné sur les entreprises "
+                             f"de {launcher.FIRM_VINTAGE}, leurs cellules réelles "
+                             f"(millésime « {response.meta.vintage} »).")
         try:
             PredictifReportResponse.model_validate(path)
         except ValueError as error:
