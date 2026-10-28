@@ -36,6 +36,12 @@ ensemble, sous `etude/courbe_autofinancement_mesure/`, préenregistrés avant le
 (D-271). Les refus et le contrôle des rejeux valent pour eux, et un refus de plus : des
 rapports de deux commits.
 
+LA VUE FIGÉE DES EXPLORATIONS QUI LISENT LES TAUX MARGINAUX est rejouée sur la correction de
+D-276, préenregistrée dans D-278 : les rapports de l'étude dont la boîte porte une ligne de
+C1 ou de C7, rejoués tels quels par `scripts/vue_figee.py`, en `reports/vue_figee/`. Le
+rendu refuse un rejeu qui n'est pas l'exploration de l'étude, ou de deux commits. La vue
+vieillie, que le défaut ne touchait pas, en est le contrôle : la page dit son écart.
+
 AUCUN CHIFFRE N'EST SAISI DANS LA PAGE : tout vient des rapports. `render(études)` est ce
 que rejoue `tests/test_predictif_etude.py`, sans `data/` : la page commitée est le rendu
 des fichiers commités (la garde de D-228).
@@ -793,6 +799,9 @@ def study(requests: Path = REQUESTS,
     if annual is not None:
         for entry in etudes:
             entry["annuel"] = annual[entry["instrument"].key]
+    figee = load_vue_figee(etudes, reports)
+    for key, replay in (figee or {}).items():
+        next(e for e in etudes if e["instrument"].key == key)["vue_figee"] = replay
     return etudes, complements, courbe, phase11
 
 
@@ -1047,6 +1056,10 @@ def _entry_section(entry: dict[str, Any], target: float, *, first_year: int,
                     f"{verdict(search, instrument, target, theta)}", ""]
         out += _search_table(search, instrument, target, first_year=first_year,
                              target_year=target_year, theta=theta)
+    if entry.get("vue_figee"):
+        out += ["", f"La colonne « Δb {target_year}, figée » lisait les taux marginaux de la "
+                    f"vue vieillie (D-276) : elle est rechiffrée plus bas, dans « La vue "
+                    f"figée, rechiffrée »."]
     lacks: dict[str, list[str]] = {}
     for search in r["searches"]:
         for name, why in search["indices"]["absent"].items():
@@ -1610,6 +1623,180 @@ ANNUEL_PREREGISTERED = "46c0a5ebef92bf6c49d1db122c686bf21e5f214c"
 _LAUNCHER: list[Any] = []
 
 
+# --------------------------------------------------------------------------- #
+# the frozen view, priced again on D-276's fix (D-278)
+# --------------------------------------------------------------------------- #
+#: The study's explorations whose box reads marginal rates, replayed on the fix, under
+#: this directory of `reports/` (D-278).
+VUE_FIGEE = "vue_figee"
+_VUE_FIGEE_LAUNCHER: list[Any] = []
+
+
+def vue_figee_launcher() -> Any:
+    """`scripts/vue_figee.py`, which chose the replays: the page reads its menu and its
+    validation of a request through it, never through a copy of its logic."""
+    if not _VUE_FIGEE_LAUNCHER:
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            VUE_FIGEE, Path(__file__).resolve().parent / f"{VUE_FIGEE}.py")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        _VUE_FIGEE_LAUNCHER.append(module)
+    return _VUE_FIGEE_LAUNCHER[0]
+
+
+def _bundles(report: dict[str, Any]) -> list[tuple[str, list[dict[str, float]]]]:
+    return [(s["persistence"], [e["knobs"] for e in s["evaluations"]])
+            for s in report["searches"]]
+
+
+def vue_figee_control(name: str, report: dict[str, Any],
+                      study: dict[str, Any]) -> dict[str, float]:
+    """The aged view, which did not read the defect, against the study's: its costs in
+    both views, and Δb at θ and at each corner."""
+    eur, aged = [0.0], [0.0]
+    for new, old in zip(report["searches"], study["searches"], strict=True):
+        for a, b in zip(new["evaluations"], old["evaluations"], strict=True):
+            eur += [abs(a["cost_aged_eur"] - b["cost_aged_eur"]),
+                    abs(a["cost_frozen_eur"] - b["cost_frozen_eur"])]
+            aged.append(abs(a["delta_aged"] - b["delta_aged"]))
+            corners = dict(b["corners"])
+            if sorted(corners) != sorted(label for label, _ in a["corners"]):
+                raise EtudeError(f"{name} : sa boîte ne porte pas les coins de l'étude, pour "
+                                 f"{a['knobs']}.")
+            aged += [abs(value - corners[label]) for label, value in a["corners"]]
+    return {"eur": max(eur), "aged": max(aged)}
+
+
+def _carry(report: dict[str, Any], annual: dict[str, Any] | None) -> float | None:
+    """How far the nearest bundle's replayed frozen Δb is from the first year the annual
+    path carries in the frozen view, priced on the same fix; None without the path."""
+    if annual is None:
+        return None
+    return max(abs(_nearest(search)["delta_frozen"] - path["first_year"]["figee"]["theta"])
+               for search, path in zip(report["searches"],
+                                       annual["report"]["theta_box"]["paths"], strict=True))
+
+
+def load_vue_figee(etudes: list[dict[str, Any]],
+                   reports: Path = REPORTS) -> dict[str, dict[str, Any]] | None:
+    """The study's explorations whose box reads the marginal rates, replayed as they are on
+    D-276's fix (D-278), checked: one per instrument the launcher's menu names, nothing
+    beside them; each the study's request, its bundles under its persistences, its box's
+    corners; of one commit, not the study's, whose code it priced; and where it ran. Without
+    them, the replay is preregistered and not yet played: no section."""
+    out_dir = reports / VUE_FIGEE
+    if not out_dir.exists():
+        return None
+    run = vue_figee_launcher()
+    menu = run.menu(reports)
+    there = sorted(p.name for p in out_dir.glob("exploration_*.json"))
+    wanted = sorted(f"exploration_etude_{key}.json" for key in menu)
+    if there != wanted:
+        raise EtudeError(f"`reports/{VUE_FIGEE}/` porte {there} : un rapport par exploration "
+                         f"de l'étude dont la boîte lit les taux marginaux, ni plus ni moins, "
+                         f"{wanted}.")
+    commits: set[str] = set()
+    out: dict[str, dict[str, Any]] = {}
+    for key in menu:
+        entry = next(e for e in etudes if e["instrument"].key == key)
+        study = entry["report"]
+        path = out_dir / f"exploration_etude_{key}.json"
+        report = json.loads(path.read_text(encoding="utf-8"))
+        if run._validated(report["request"]) != run._validated(study["request"]):
+            raise EtudeError(f"{path.name} n'a pas rejoué la requête de l'étude, telle "
+                             f"qu'elle l'a jouée.")
+        if not report.get("commit"):
+            raise EtudeError(f"{path.name} ne nomme pas le commit qui l'a chiffré.")
+        if not (report.get("where") or "").strip():
+            raise EtudeError(f"{path.name} ne dit pas où ses passes ont tourné.")
+        if report["commit"] == study["commit"]:
+            raise EtudeError(f"{path.name} a tourné sur le commit de l'étude, "
+                             f"`{study['commit'][:7]}`, avant la correction de D-276.")
+        if _bundles(report) != _bundles(study):
+            raise EtudeError(f"{path.name} ne chiffre pas les paquets de l'étude, sous ses "
+                             f"persistances.")
+        commits.add(report["commit"])
+        out[key] = {"instrument": entry["instrument"], "report": report, "study": study,
+                    "control": vue_figee_control(path.name, report, study),
+                    "carry": _carry(report, entry.get("annuel"))}
+    if len(commits) != 1:
+        raise EtudeError(f"la vue figée a été rejouée sur {sorted(commits)} : préenregistrée "
+                         f"ensemble, elle tourne sur un seul commit.")
+    return out
+
+
+def _gap(share: float) -> str:
+    """A gap between two Δb, in points to the ten-thousandth: one the rounding takes to zero
+    is written as zero, not as a signed zero."""
+    points = round(share * 100, 4)
+    return (_fr(points, 4) if points else _fr(0.0, 4, sign=False)) + " pt"
+
+
+def _and(items: list[str]) -> str:
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " et " + items[-1]
+
+
+def _alone(report: dict[str, Any], target: float) -> tuple[int, int]:
+    """The readings, one bundle under one persistence, whose frozen view alone holds the
+    target, and how many there are."""
+    readings = [e for s in report["searches"] for e in s["evaluations"]]
+    return (sum(e["delta_aged"] > target and e["delta_frozen"] <= target for e in readings),
+            len(readings))
+
+
+def _vue_figee_section(entries: list[dict[str, Any]], target: float, first_year: int,
+                       target_year: int, theta: str) -> list[str]:
+    head = entries[0]["report"]
+    labels = _and([_lower(e["instrument"].label) for e in entries])
+    eur = max(e["control"]["eur"] for e in entries)
+    aged = max(e["control"]["aged"] for e in entries)
+    carry = [e["carry"] for e in entries if e["carry"] is not None]
+    out = ["", "## La vue figée, rechiffrée", "",
+           "Jusqu'à D-276, la vue figée prenait la clé des taux marginaux de la vue vieillie. "
+           "L'explorateur chiffre la vue vieillie d'abord : sa vue figée lisait donc les taux "
+           "du cadre vieilli, avec l'assiette du cadre figé. Seuls C1, la réponse du revenu "
+           "imposable, et C7, l'offre de travail, lisent ces taux. Les explorations de "
+           f"l'étude dont la boîte porte une de leurs lignes, pour {labels}, ont été rejouées "
+           "telles quelles sur la correction. Le rejeu a été préenregistré dans D-278 avant "
+           f"ses passes, et `scripts/{VUE_FIGEE}.py` l'a lancé. Les rapports ont tourné sur le "
+           f"commit `{head['commit']}`, le {head['computed']}, ici : {head['where']}. Ils sont "
+           f"sous `reports/{VUE_FIGEE}/` ; ceux de l'étude ne bougent pas, et les tables plus "
+           "haut gardent leurs chiffres.",
+           "",
+           "**Le contrôle.** La vue vieillie ne lisait pas le défaut. Rejouée, elle se compare "
+           f"à l'étude. Ses coûts s'en écartent de {_fr(eur, 0, sign=False)} € au plus, dans "
+           f"les deux vues, et Δb à θ et à chaque coin, en vue vieillie, de "
+           f"{_fr(aged * 100, 6, sign=False)} point au plus."
+           + (f" Pour le paquet le plus proche, la vue figée rechiffrée est celle que le "
+              f"chemin annuel reporte sur sa passe de {first_year}, à "
+              f"{_fr(max(carry) * 100, 6, sign=False)} point près." if carry else ""),
+           "", f"**Δb {target_year} à θ = {theta}, vue figée.**", "",
+           "| Instrument | Paquet | Persistance | Dans l'étude | Rechiffrée | Écart |",
+           "|---|---|---|---|---|---|"]
+    for e in entries:
+        instrument = e["instrument"]
+        for new, old in zip(e["report"]["searches"], e["study"]["searches"], strict=True):
+            for a, b in zip(new["evaluations"], old["evaluations"], strict=True):
+                out.append(f"| {instrument.label} "
+                           f"| {instrument.show(b['knobs'][instrument.knob])} "
+                           f"| {_lower(old['persistence_label'])} | {_pt(b['delta_frozen'])} "
+                           f"| {_pt(a['delta_frozen'])} "
+                           f"| {_gap(a['delta_frozen'] - b['delta_frozen'])} |")
+    replayed = [_alone(e["report"], target) for e in entries]
+    studied = [_alone(e["study"], target) for e in entries]
+    n_new, m = sum(n for n, _ in replayed), sum(k for _, k in replayed)
+    n_old = sum(n for n, _ in studied)
+    out += ["", "La vue figée n'entre dans aucun verdict de la cible : elle dit seulement si "
+                "un paquet la tiendrait dans la vue figée seule. Rechiffrée, la vue figée "
+                f"seule {'tiendrait' if n_new else 'ne tiendrait'} la cible à "
+                f"{n_new or 'aucune'} des {m} lectures d'un paquet sous une persistance ; dans "
+                f"l'étude, à {n_old or 'aucune'}."]
+    return out
+
+
 def launcher() -> Any:
     """`scripts/etude_annuelle.py`, which built the scenarios: the page reads them back
     through it, never through a copy of its logic."""
@@ -2039,6 +2226,9 @@ def render(etudes: list[dict[str, Any]],
     annual = [e["annuel"] for e in etudes if e.get("annuel")]
     if annual:
         out += _annuel_section(annual, target, theta)
+    figee = [e["vue_figee"] for e in etudes if e.get("vue_figee")]
+    if figee:
+        out += _vue_figee_section(figee, target, first_year, target_year, theta)
     out += ["", "## Ce que l'étude ne dit pas", "",
             "- Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de "
             "θ ; un autre scénario donne une autre réponse.",
