@@ -136,3 +136,89 @@ def test_every_name_the_list_gives_reads_back_from_the_committed_reports() -> No
         for name in names:
             response = client.get(f"/predictif/{name}")
             assert response.status_code == 200, (name, response.text[:200])
+
+
+# --------------------------------------------------------------------------- #
+# The CSG path of D-236, served re-priced (D-280, D-281)
+# --------------------------------------------------------------------------- #
+CSG_D236 = "predictif_csg_deductible_demi_point.json"
+FIRST_ROUND = api_main.TRAJECTORIES / "predictif_premier_tour"
+
+
+FRAME = ("scenario", "titre", "source", "reference", "spending_name", "growth_name",
+         "rate_name", "start", "uprating_note", "behavioural", "macro", "persistence")
+
+
+def _frame(report: dict) -> dict:
+    """What a replay keeps of the path it re-prices: the question and its frame, and the
+    reference path that frame alone gives; not the figures the code gives."""
+    return {
+        **{key: report[key] for key in FRAME},
+        "years": [(row["year"], row["basis"], row["reference"]) for row in report["years"]],
+        "side_by_side": [(path["persistence"], path["label"])
+                         for path in report["side_by_side"] or []],
+        "theta": set(report["theta"].values()),
+    }
+
+
+def _not_a_replay(original: dict, served: dict) -> list[str]:
+    """What keeps `served` from being `original` priced again on later code: the frame
+    fields it changes, a provenance it does not give, an original that already had one."""
+    found = ["original"] if "commit" in original else []
+    if not served.get("commit") or served.get("dirty") is not False or not served.get(
+            "where"):
+        found.append("provenance")
+    before, after = _frame(original), _frame(served)
+    return found + [key for key in before if before[key] != after[key]]
+
+
+def _reports() -> tuple[dict, dict]:
+    return (json.loads((FIRST_ROUND / CSG_D236).read_text(encoding="utf-8")),
+            json.loads((api_main.TRAJECTORIES / CSG_D236).read_text(encoding="utf-8")))
+
+
+def test_the_csg_path_of_d236_is_served_re_priced_in_its_own_frame() -> None:
+    """GUARD (D-281). D-236's annual CSG path ran under the defect of D-276: its two views
+    shared their marginal rates. The report served under its name is its replay on the
+    fix, which names the code that priced it; the original stays, unserved, under
+    `reports/predictif_premier_tour/`. A replay in another frame would answer another
+    question under D-236's name."""
+    assert _not_a_replay(*_reports()) == []
+
+
+@pytest.mark.parametrize("edit, named", [
+    *[(key, key) for key in ("scenario", "titre", "source", "reference", "spending_name",
+                             "growth_name", "rate_name", "start", "uprating_note",
+                             "behavioural", "macro", "persistence")],
+    ("basis", "years"), ("reference_path", "years"), ("theta", "theta"),
+    ("side_by_side", "side_by_side"), ("commit", "provenance"), ("dirty", "provenance"),
+    ("where", "provenance"), ("original", "original"),
+])
+def test_a_replay_in_another_frame_is_not_d236_s_path(edit: str, named: str) -> None:
+    """Each field, edited alone, is refused under its own name."""
+    original, served = _reports()
+    other = json.loads(json.dumps(served))
+    if edit == "basis":
+        other["years"][-1]["basis"] = "legislated"
+    elif edit == "reference_path":
+        other["years"][-1]["reference"] += 1e-9
+    elif edit == "theta":
+        other["theta"]["multiplicateur_macro"] = 0.4
+    elif edit == "side_by_side":
+        other["side_by_side"] = other["side_by_side"][:1]
+    elif edit in ("commit", "where"):
+        other[edit] = ""
+    elif edit == "dirty":
+        other["dirty"] = True
+    elif edit == "original":
+        original = served
+    else:
+        other[edit] = ("autre", other[edit])
+    assert _not_a_replay(original, other) == [named]
+
+
+def test_every_field_that_differs_is_named() -> None:
+    original, served = _reports()
+    other = json.loads(json.dumps(served))
+    other["titre"], other["growth_name"], other["dirty"] = "autre", "autre", True
+    assert _not_a_replay(original, other) == ["provenance", "titre", "growth_name"]
