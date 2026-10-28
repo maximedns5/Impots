@@ -1,6 +1,20 @@
-# State of the project, and the directions open — 2026-10-27 (Phase 11, M0 to M6)
+# State of the project, and the directions open — 2026-10-28 (Phase 11, M0 to M6)
 
-The ninth 2026-10-27 update adds D-275: the study on the annual path, its first part.
+The 2026-10-28 update adds D-276: the annual path's control failed, and found a bug. The
+four preregistered paths ran on `46c0a5e`. The carry redone on the same pass gave the study
+back for the CSG and the ceiling's complement (D-239) for the ceiling, but not for the
+décote or the IR scale: −0.061 against +0.261 points, +0.008 against +0.299. The cause:
+the frozen view passed the aged view's uprating key to the EMTR caches, so the two views of
+a year shared one file, and whichever was priced first wrote what both read. The annual
+path prices the frozen view first, so its aged view read the frozen frame's marginal rates
+every year; in 2026 the frozen view set its reform rates beside an aged baseline on disk,
+and 98 % of households' rates moved under a décote. Since `b8093f4` (D-234), it touched
+C1 and C7 only: every committed exploration's frozen view, and D-236's committed annual
+CSG path; not the explorer's aged view, corners or verdicts. Fixed: the frozen view keys
+on the vintage, and every cache file carries the fingerprint of the frame it was computed
+on and serves no other (keys unchanged, D-226). The four paths run again on D-276's
+commit; D-275's prognosis is graded on them in D-277.
+The ninth 2026-10-27 update added D-275: the study on the annual path, its first part.
 With behaviour or the loop, `impots predictif` now gives Δb at its last year at θ and at
 every corner of the θ box, in both views and under each persistence, twice: every year
 priced, and the first year alone carried as the explorer carries it, on the same pass. No
@@ -578,8 +592,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **276 decision
-entries**, D-000 to D-275, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **277 decision
+entries**, D-000 to D-276, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -951,8 +965,8 @@ download list.
    curve has its knobs (D-240), and the study is replayed with it (D-241, D-242): no
    cut of the curve lowers the debt, and what a targeted cut would give back is
    missing, said so. Left: a balance row for the targeted variant, or the jobs'
-   receipts in the chain; the study on the annual path, preregistered (D-275), its
-   passes next; the frozen view and the indices at θ = 0 and θ = 1, the aged view being
+   receipts in the chain; the study on the annual path, preregistered (D-275), run
+   again on the EMTR fix after its control found the bug (D-276); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
    read off the box's corners (D-274).
 4. **Phase 11** (`docs/PHASE11_SPEC.md`, D-243): firms, startups and capital in the
    chain, on published ranges, international where France has none. M0 first: manifest

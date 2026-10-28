@@ -21520,3 +21520,123 @@ pas tourné.
 **Ce qui suit.** Les quatre chemins, l'un après l'autre, en tâche de fond, depuis une copie
 de travail figée sur ce commit. Puis D-276 : le résultat, son rendu dans
 `docs/PREDICTIF_ETUDE.md`, et ses gardes. La porte reste le `make full` du propriétaire.
+
+## D-276 — Le contrôle du chemin annuel échoue : les deux vues partageaient leurs taux
+
+**Le fait.** Les quatre chemins préenregistrés par D-275 ont tourné sur `46c0a5e`, l'un
+après l'autre, depuis une copie de travail figée sur ce commit. Le premier point du
+pronostic est un contrôle : sur la passe du chemin annuel, la première année reportée
+redonne l'étude. Il a tenu pour la CSG. Le plafond redonne son complément, non l'étude
+(ci-dessous). Sur la décote, il a échoué :
+- les coûts de 2026 sont ceux de l'étude, à l'euro près ;
+- mais Δb 2035 à θ = ½, en vue vieillie, vaut −0,061 point reporté, contre +0,261 dans
+  l'étude, et un coin s'en écarte de 0,69 point.
+
+Le contrôle a trouvé un défaut du code, non un écart de la convention. Il est corrigé ici,
+et les quatre chemins tournent de nouveau, sur le commit de cette entrée. Le résultat sera
+D-277.
+
+**Ce que le contrôle a vu.**
+- Le coin qui s'écarte est celui de `eti_top_decile`. À 1, la dette baisse de 0,53 point
+  de plus que dans l'étude, où il ne la déplaçait que de 0,006 point. Or une décote ne
+  touche pas le taux marginal du décile du haut.
+- Sur les fichiers de cache de cette passe, la décote fait bouger en 2026 le taux marginal
+  de 98,1 % des ménages de l'échantillon. De 2027 à 2035, elle le fait bouger pour les
+  mêmes 431 ménages, 25,9 % du poids, à l'identique chaque année. Ce sont les taux de la
+  population figée, dont ni les revenus ni la loi reconduite ne bougent après 2027.
+
+**La cause.** `_price_households` passait aux caches des taux marginaux la clé du
+vieillissement, dans les deux vues. La vue figée chiffre pourtant la population du
+millésime telle quelle. D-226 le dit : la clé nomme le vieillissement quand le cadre est
+vieilli, et seulement alors. Les deux vues d'une année partageaient donc un fichier : la
+première chiffrée écrivait ce que l'autre lisait.
+- Le chemin annuel chiffre la vue figée d'abord. Sa vue vieillie lisait chaque année les
+  taux de la population figée.
+- En 2026, la référence vieillie était déjà sur le disque. La vue figée l'a lue, et l'a
+  mise à côté des taux de la réforme calculés sur son propre cadre. Recalculée à neuf, la
+  référence en cache est bien celle du cadre vieilli : aucun des 1 661 ménages ne diffère.
+  Celle du cadre figé en diffère pour 1 623 d'entre eux, jusqu'à 1,17 point de taux.
+- L'écart entre les deux cadres se lisait donc comme un effet de la réforme, et C1 le
+  faisait répondre, au décile du haut surtout.
+- L'explorateur chiffre la vue vieillie d'abord : sa vue figée lisait les taux du cadre
+  vieilli.
+
+**Depuis quand, et ce que cela touche.** La vue figée passe par `_price_households` depuis
+`b8093f4` (D-234). Le défaut ne touche que les deux canaux qui lisent les taux marginaux :
+C1, la réponse du revenu imposable, et C7, l'offre de travail. Le coût mécanique,
+l'impulsion et les autres canaux n'en dépendent pas.
+- Les explorations commitées avec comportement, l'étude et ses rejeux compris. Leur vue
+  figée a lu les taux de la vue vieillie, avec l'assiette du cadre figé. Leur vue vieillie
+  a lu ses propres taux, et avec elle leurs coins et leurs verdicts, tous en vue vieillie :
+  l'explorateur la chiffre en premier, et la référence vieillie de 2026 sur le disque est
+  celle du cadre vieilli. Le rejeu mesurera l'écart de la vue figée sur les quatre paquets.
+- Le chemin annuel de la CSG de D-236, commité dans
+  `reports/predictif_csg_deductible_demi_point.json`. La référence vieillie de 2027, écrite
+  ce jour-là, est celle du cadre figé : aucun des 1 661 ménages ne diffère. Sa vue vieillie
+  a donc lu les taux du cadre figé. Il n'est pas rechiffré, et cette entrée le dit.
+- Les deux chemins de la CVAE (D-254) n'ont pas de comportement des ménages : intacts.
+- `/predictif/simulate` ne chiffre que la vue vieillie. Il a pu lire un fichier écrit par
+  la vue figée d'un chemin annuel, pour la même réforme et la même année : c'est possible,
+  et ce n'est pas mesuré.
+
+**La correction.**
+- La vue figée nomme le cadre qu'elle chiffre. Ses caches sont ceux du millésime, comme
+  ceux de `/population/simulate` pour la même année.
+- Chaque fichier des deux caches porte l'empreinte du cadre sur lequel ses taux ont été
+  calculés, et n'en sert pas d'autre.
+- Un fichier sans empreinte, écrit avant, est recalculé : rien ne dit de quel cadre il
+  vient, et ceux de cette nuit montrent qu'il peut venir de l'autre.
+- Les clés ne bougent pas, comme le tient un test de D-226 ; les fichiers anciens sont
+  recalculés une fois.
+
+**Le rejeu.** Les mêmes quatre scénarios, le même lanceur et le même cadre, champ pour
+champ, sur le commit de cette entrée, depuis une copie de travail figée sur lui. Le
+pronostic de D-275 n'est pas réécrit : D-277 le jugera sur le rejeu, point par point.
+Il n'est plus aveugle pour autant. Les chemins de `46c0a5e` ont été vus ; les voici, pour
+qu'on juge ce qu'ils ont pu apprendre. Δb 2035 chaque année chiffrée, rapporté au report,
+à θ = ½, sous l'effet éteint puis sous l'effet tenu.
+- La CSG redonne l'étude à 0,0001 point près. En vue vieillie, 0,989 et 1,010 ; en vue
+  figée, 0,896 et 0,890. Le pronostic disait de 0,96 à 0,99, puis de 0,86 à 0,89. Elle
+  lit C7, et sa vue vieillie a lu les taux du cadre figé : le rejeu dira s'ils bougent.
+- Le plafond redonne son complément de D-239 au chiffre près, et non l'étude. Le pronostic
+  l'avait oublié : depuis D-239, le plafond est une baisse uniforme, et sa boucle tourne.
+  En vue vieillie, 1,138 et 1,163 ; en vue figée, 0,883 et 0,864. Le pronostic disait de
+  0,65 à 0,90 en vue vieillie : le coût monte de 1,78 à 3,01 Md€, et sa part de PIB de
+  30 %. Il ne lit aucun taux marginal, et doit revenir à l'identique.
+- Le barème de l'IR échoue comme la décote : le report vaut +0,008 point sous l'effet
+  éteint, contre +0,299 dans l'étude, et un coin s'en écarte de 0,64 point.
+- La décote et le barème ont été chiffrés sous le défaut : leurs rapports ne disent rien de
+  la convention. Aucun des quatre rapports de `46c0a5e` n'est commité.
+
+**Le rendu, avant le rejeu.** Deux décisions, prises après avoir vu le plafond, et commitées
+avant le rejeu (`a1664d0`) :
+- la page compare chaque paquet à sa dernière lecture, le complément pour le plafond et
+  l'étude ailleurs, et nomme le commit de chacune ;
+- la boîte peut porter une ligne que la référence n'avait pas : C11 revendique le bouton du
+  plafond depuis D-263. La ligne est nommée, avec ce qu'elle déplace à ses coins. Sur
+  `46c0a5e`, elle ne déplace rien : la ligne n'est pas ciblée pour le plafond.
+
+**Les tests.** Dans `tests/test_behavioural.py`, un cas nouveau : un cache ne sert que le
+cadre sur lequel il a été calculé. Il porte sur la référence et sur le résultat, et sur un
+fichier sans empreinte. Dans `tests/test_api_predictif.py`, un autre : la vue figée prend
+les caches du millésime, la vue vieillie ceux de son vieillissement. Les deux ont été vus
+échouer sur le code d'avant. Le test qui borne le nombre de fichiers donnait à `cached` une
+table vide : il reçoit la population minimale des autres tests de cache, puisque `cached`
+lit désormais la population. Ses assertions sont inchangées.
+
+Onze mutations écrites à la main, dix tuées. La onzième calcule l'empreinte avant
+l'échantillon : elle est équivalente pour les tests, puisque l'échantillon est
+déterministe, et le cadre entier le nomme aussi bien. L'empreinte de l'échantillon reste la
+plus sûre : elle voit aussi un changement de l'échantillonnage. Dans le rendu, vingt
+mutations de la référence et des lignes en plus, toutes tuées après deux tests durcis.
+
+Le balayage des gardes, `--missing`, n'a rien à muter : 228 mutations, aucune à traiter.
+Les tests des taux marginaux, de l'API prédictive, de la commande, de l'explorateur, du
+chemin annuel et de sa boucle, des entreprises, de la validation, du PFU, de la recherche
+et des transformations : 276 réussis, 2 sautés faute d'une distribution des taux dans
+l'artefact de référence. Ceux de la page et du lanceur : 193 réussis. `ruff` passe. Le
+`make full` n'a pas tourné.
+
+**Ce qui suit.** Les quatre chemins, sur ce commit, en tâche de fond. Puis D-277 : le
+résultat contre le pronostic de D-275, son rendu dans `docs/PREDICTIF_ETUDE.md`, et
+l'écart de la vue figée de l'étude.
