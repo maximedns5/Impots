@@ -2114,3 +2114,272 @@ def test_a_row_the_reference_did_not_have_is_named_with_what_it_moves(
     assert "Sa boîte porte aussi" not in section.partition("### Le plafond")[0]
     control = "0,010000" if shift and "first_year" in readings else "0,000000"
     assert f"en vue vieillie, Δb à θ et à chaque coin, de {control} point au plus" in section
+
+
+# --------------------------------------------------------------------------- #
+# the frozen view, priced again on D-276's fix (D-278, D-279)
+# --------------------------------------------------------------------------- #
+VUE_FIGEE_COMMIT = "8" * 40
+VUE_FIGEE_TITLE = "## La vue figée, rechiffrée"
+RATE_ROW = "eti_all"
+READS_RATES = ("csg", "decote", "ir")
+
+
+def _pointer(etudes: list[dict]) -> str:
+    year = etudes[0]["report"]["hypotheses"]["target_year"]
+    return (f"La colonne « Δb {year}, figée » lisait les taux marginaux de la vue vieillie "
+            f"(D-276) : elle est rechiffrée plus bas, dans « La vue figée, rechiffrée ».")
+
+
+def _figures(search: dict) -> list[dict]:
+    """Every bundle a search writes down: its evaluations, its candidates, its closest."""
+    return [*search["evaluations"], *search["candidates"],
+            *([search["closest"]] if search.get("closest") else [])]
+
+
+def _with_rate_row(reports: Path, keys: tuple[str, ...] = READS_RATES) -> None:
+    """The stubbed study's boxes carry the multiplier alone: give those of `keys` a row of
+    C1 that moves nothing, so that they read the marginal rates as the study's do."""
+    for key in keys:
+        path = reports / f"exploration_etude_{key}.json"
+        report = json.loads(path.read_text(encoding="utf-8"))
+        for search in report["searches"]:
+            for figure in _figures(search):
+                if figure.get("corners"):
+                    figure["corners"] = [[f"{RATE_ROW} = {w}, {label}", value]
+                                         for w in (0, 1) for label, value in figure["corners"]]
+        path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+
+def _vue_figee(reports: Path, *, shift: float = -1e-3, edit=None) -> None:
+    """The replays of D-278: each study report whose box reads the marginal rates, as the
+    explorer writes it again on the fix: the aged view the same, the frozen one moved."""
+    out = reports / "vue_figee"
+    out.mkdir()
+    for key in READS_RATES:
+        report = json.loads((reports / f"exploration_etude_{key}.json").read_text(
+            encoding="utf-8"))
+        report.update(commit=VUE_FIGEE_COMMIT, computed="2026-10-28", where=WHERE)
+        for search in report["searches"]:
+            for figure in _figures(search):
+                figure["delta_frozen"] += shift
+        if edit is not None:
+            edit(key, report)
+        (out / f"exploration_etude_{key}.json").write_text(
+            json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+
+def _replayed(tmp_path: Path, script, **kwargs) -> tuple[str, list[dict]]:
+    requests, reports = _study(tmp_path, script)
+    _with_rate_row(reports)
+    _vue_figee(reports, **kwargs)
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    return script.render(etudes, complements, courbe, phase11), etudes
+
+
+def test_the_replayed_frozen_view_is_rendered_bundle_by_bundle(script, tmp_path) -> None:
+    """D-278: after the θ section, each bundle of each study exploration whose box reads
+    the marginal rates, its frozen Δb in the study and replayed, and the gap; the commit and
+    where the replays ran; the aged control, which they give back exactly. The page before
+    is the page without the replays, but for the pointers."""
+    page, etudes = _replayed(tmp_path, script)
+    assert page.index(THETA_TITLE) < page.index(VUE_FIGEE_TITLE) < page.index(NOT_SAID)
+    section = page.partition(VUE_FIGEE_TITLE)[2].partition(NOT_SAID)[0]
+    assert VUE_FIGEE_COMMIT in section and WHERE in section and "D-278" in section
+    assert ("Ses coûts s'en écartent de 0 € au plus, dans les deux vues, et Δb à θ et à "
+            "chaque coin, en vue vieillie, de 0,000000 point au plus.") in section
+    for entry in etudes:
+        instrument = entry["instrument"]
+        for search in entry["report"]["searches"]:
+            for e in search["evaluations"]:
+                row = (f"| {instrument.label} | {instrument.show(e['knobs'][instrument.knob])} "
+                       f"| {script._lower(search['persistence_label'])} "
+                       f"| {script._pt(e['delta_frozen'])} "
+                       f"| {script._pt(e['delta_frozen'] - 1e-3)} | −0,100 pt |")
+                assert (row in section) is (instrument.key in READS_RATES), row
+    (tmp_path / "avant").mkdir()
+    requests, reports = _study(tmp_path / "avant", script)
+    _with_rate_row(reports)
+    before = script.render(*script.study(requests, reports))
+    head, _, tail = page.partition(VUE_FIGEE_TITLE)
+    assert before == (head + NOT_SAID + tail.partition(NOT_SAID)[2]).replace(
+        "\n\n" + _pointer(etudes), "")
+
+
+def test_each_instrument_whose_frozen_view_was_replayed_points_to_it(script, tmp_path) -> None:
+    """Above, the study's tables keep their figures; each instrument replayed says that its
+    frozen column read the aged view's rates, and where it is priced again; the others do
+    not, and nothing says so without the replays."""
+    page, etudes = _replayed(tmp_path, script)
+    for entry in etudes:
+        label = entry["instrument"].label
+        own = page.partition(f"\n### {label}\n")[2].partition("\n### ")[0]
+        assert own and (_pointer(etudes) in own) is (
+            entry["instrument"].key in READS_RATES), label
+    (tmp_path / "avant").mkdir()
+    requests, reports = _study(tmp_path / "avant", script)
+    _with_rate_row(reports)
+    assert "La colonne « Δb" not in script.render(*script.study(requests, reports))
+
+
+@pytest.mark.parametrize("what, needle", [
+    ("coût vieilli", "Ses coûts s'en écartent de 1234 € au plus"),
+    ("coût figé", "Ses coûts s'en écartent de 1234 € au plus"),
+    ("θ vieilli", "en vue vieillie, de 0,050000 point au plus"),
+    ("coin", "en vue vieillie, de 0,050000 point au plus"),
+])
+def test_a_replay_that_does_not_give_the_aged_view_back_is_said_with_its_gap(
+        script, tmp_path, what: str, needle: str) -> None:
+    """The aged view did not read the defect: the replay must give it back. It is a
+    result, said with its gap rather than refused."""
+
+    def move(key, report):
+        if key != "decote":
+            return
+        evaluation = report["searches"][1]["evaluations"][2]
+        if what == "coût vieilli":
+            evaluation["cost_aged_eur"] += 1234.0
+        elif what == "coût figé":
+            evaluation["cost_frozen_eur"] += 1234.0
+        elif what == "θ vieilli":
+            evaluation["delta_aged"] += 5e-4
+        else:
+            label, value = evaluation["corners"][0]
+            evaluation["corners"][0] = [label, value - 5e-4]
+
+    page, _ = _replayed(tmp_path, script, edit=move)
+    assert needle in page.partition(VUE_FIGEE_TITLE)[2]
+
+
+VUE_FIGEE_REFUSALS = [
+    ("rapport de plus", "un rapport par exploration de l'étude dont la boîte lit les taux"),
+    ("rapport manquant", "un rapport par exploration de l'étude dont la boîte lit les taux"),
+    ("requête", "n'a pas rejoué la requête de l'étude"),
+    ("sans commit", "ne nomme pas le commit qui l'a chiffré"),
+    ("sans lieu", "ne dit pas où ses passes ont tourné"),
+    ("commit de l'étude", "a tourné sur le commit de l'étude"),
+    ("paquet", "ne chiffre pas les paquets de l'étude"),
+    ("persistances", "ne chiffre pas les paquets de l'étude"),
+    ("deux commits", "sur un seul commit"),
+    ("coins", "sa boîte ne porte pas les coins de l'étude"),
+]
+
+
+@pytest.mark.parametrize("how, needle", VUE_FIGEE_REFUSALS)
+def test_a_replay_that_is_not_the_study_s_exploration_is_refused(script, tmp_path, how: str,
+                                                                needle: str) -> None:
+    requests, reports = _study(tmp_path, script)
+    _with_rate_row(reports)
+
+    def edit(key, report):
+        if key != "ir":
+            return
+        if how == "requête":
+            report["request"]["bounds"][0]["low"] += report["request"]["bounds"][0]["step"]
+        elif how == "sans commit":
+            report["commit"] = ""
+        elif how == "sans lieu":
+            report["where"] = "  "
+        elif how == "commit de l'étude":
+            report["commit"] = COMMIT
+        elif how == "paquet":
+            first = report["searches"][0]["evaluations"][0]
+            first["knobs"] = {k: v + 0.001 for k, v in first["knobs"].items()}
+        elif how == "persistances":
+            report["searches"].reverse()
+        elif how == "deux commits":
+            report["commit"] = "7" * 40
+        elif how == "coins":
+            evaluation = report["searches"][0]["evaluations"][0]
+            evaluation["corners"] = [[label.replace(RATE_ROW, "eti_top_decile"), value]
+                                     for label, value in evaluation["corners"]]
+
+    _vue_figee(reports, edit=edit)
+    out = reports / "vue_figee"
+    if how == "rapport de plus":
+        (out / "exploration_etude_allegements.json").write_text(
+            (reports / "exploration_etude_allegements.json").read_text(encoding="utf-8"),
+            encoding="utf-8")
+    elif how == "rapport manquant":
+        (out / "exploration_etude_ir.json").unlink()
+    with pytest.raises(script.EtudeError, match=re.escape(needle)):
+        script.study(requests, reports)
+
+
+@pytest.mark.parametrize("shift, aged_too", [(-1e-3, False), (-1.0, False), (-1.0, True)])
+def test_the_bundles_the_frozen_view_alone_would_hold_are_counted(script, tmp_path,
+                                                                  shift: float,
+                                                                  aged_too: bool) -> None:
+    """The frozen view enters no verdict of the target; it says only whether a bundle
+    would hold the target in the frozen view alone, under each persistence: a reading
+    the aged view holds too is not one. Counted on the replay, and in the study, read
+    apart off the files."""
+
+    def hold(key, report):
+        if aged_too and key == "decote":
+            report["searches"][0]["evaluations"][0]["delta_aged"] = -1.0
+
+    page, etudes = _replayed(tmp_path, script, shift=shift, edit=hold)
+    target = etudes[0]["report"]["hypotheses"]["target_share"]
+
+    def count(directory: Path) -> tuple[str, int]:
+        readings = [e for key in READS_RATES
+                    for search in json.loads((directory / f"exploration_etude_{key}.json")
+                                             .read_text(encoding="utf-8"))["searches"]
+                    for e in search["evaluations"]]
+        n = sum(e["delta_aged"] > target and e["delta_frozen"] <= target for e in readings)
+        return (str(n) if n else "aucune"), len(readings)
+
+    reports = tmp_path / "reports"
+    (replayed, readings), (studied, _) = count(reports / "vue_figee"), count(reports)
+    assert readings and (replayed != studied or shift > -0.5)
+    section = page.partition(VUE_FIGEE_TITLE)[2].partition(NOT_SAID)[0]
+    assert (f"Rechiffrée, la vue figée seule tiendrait la cible à {replayed} des "
+            f"{readings} lectures d'un paquet sous une persistance ; dans l'étude, à "
+            f"{studied}.") in section
+
+
+def test_the_nearest_bundle_s_replay_is_the_annual_path_s_carry(script, tmp_path) -> None:
+    """Where the annual path is on the page, its first year carried in the frozen view is
+    the nearest bundle's frozen Δb, priced on the same fix: said, with its gap."""
+    requests, reports = _study(tmp_path, script)
+    _with_rate_row(reports)
+    # The nearest bundle is not the grid's first, so that reading the first would show.
+    for key in READS_RATES:
+        path = reports / f"exploration_etude_{key}.json"
+        report = json.loads(path.read_text(encoding="utf-8"))
+        for search in report["searches"]:
+            search["evaluations"].reverse()
+            assert search["evaluations"][0]["knobs"] != search["closest"]["knobs"]
+        path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+    def add_row(key, payload):
+        if key not in READS_RATES:
+            return
+        box = payload["theta_box"]
+        box["rows"] = [RATE_ROW, *box["rows"]]
+        for path in box["paths"]:
+            for reading in ("every_year", "first_year"):
+                for one in path[reading].values():
+                    one["corners"] = [[f"{RATE_ROW} = {w}, {label}", v]
+                                      for w in (0, 1) for label, v in one["corners"]]
+
+    _annual(requests, reports, script, edit=add_row)
+    carried = {}
+    for key in READS_RATES:
+        report = json.loads((reports / "etude_annuel" / f"predictif_etude_annuel_{key}.json")
+                            .read_text(encoding="utf-8"))
+        carried[key] = [p["first_year"]["figee"]["theta"] for p in report["theta_box"]["paths"]]
+
+    def match(key, report):
+        for search, value in zip(report["searches"], carried[key], strict=True):
+            for figure in _figures(search):
+                if figure["knobs"] == search["closest"]["knobs"]:
+                    figure["delta_frozen"] = value + (2e-4 if key == "ir" else 0.0)
+
+    _vue_figee(reports, edit=match)
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    section = script.render(etudes, complements, courbe, phase11).partition(
+        VUE_FIGEE_TITLE)[2].partition(NOT_SAID)[0]
+    assert ("Pour le paquet le plus proche, la vue figée rechiffrée est celle que le chemin "
+            "annuel reporte sur sa passe de 2026, à 0,020000 point près.") in section

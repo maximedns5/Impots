@@ -1,6 +1,16 @@
 # State of the project, and the directions open — 2026-10-28 (Phase 11, M0 to M6)
 
-The second 2026-10-28 update adds D-277: the study on the annual path, its result. The
+The third 2026-10-28 update adds D-278: the frozen view of the explorations, priced again on
+D-276's fix, preregistered before its passes. The study's explorations whose box reads the
+marginal rates, the CSG (C7), the décote and the IR scale (C1), are replayed as they were
+played by `scripts/vue_figee.py`, which reads that menu off the committed reports, into
+`reports/vue_figee/`; the study's reports do not move. Twenty-four passes. The prognosis:
+the aged view gives the study back (the control), the nearest bundle gives back the annual
+path's carry, the CSG does not move, the décote's frozen Δb falls and the IR scale's rises
+in proportion to the bundle's frozen cost (+0.14 to +0.19 points at 0.93), the same under
+both persistences; no verdict changes. The page will render it in its own section, each
+replayed instrument pointing to it from its table. D-279 renders the result.
+The second 2026-10-28 update added D-277: the study on the annual path, its result. The
 four paths ran again on D-276's fix (`084d2c1`); the IR scale's alone after the container
 restarted mid-path, with the launcher's own command. The carry on the same pass gives back
 the study in the aged view to the digit (the ceiling its complement), and the study's
@@ -604,8 +614,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **278 decision
-entries**, D-000 to D-277, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **279 decision
+entries**, D-000 to D-278, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -977,9 +987,9 @@ download list.
    curve has its knobs (D-240), and the study is replayed with it (D-241, D-242): no
    cut of the curve lowers the debt, and what a targeted cut would give back is
    missing, said so. Left: a balance row for the targeted variant, or the jobs'
-   receipts in the chain; the frozen view of the committed explorations, and D-236's
-   annual CSG path, priced again on D-276's EMTR fix; the study on the annual path is done
-   (D-275 to D-277); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
+   receipts in the chain; the frozen view of the study's explorations, priced again
+   on D-276's EMTR fix, preregistered (D-278), its passes next; D-236's annual CSG path
+   priced again; the study on the annual path is done (D-275 to D-277); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
    read off the box's corners (D-274).
 4. **Phase 11** (`docs/PHASE11_SPEC.md`, D-243): firms, startups and capital in the
    chain, on published ranges, international where France has none. M0 first: manifest
