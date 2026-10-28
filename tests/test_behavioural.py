@@ -977,8 +977,11 @@ def test_the_reform_cache_keeps_a_bounded_number_of_files(tmp_path, monkeypatch)
     monkeypatch.setattr(emtr, "compute", lambda population, **k: emtr.EmtrResult(
         households=pl.DataFrame({"x": [1]}), year=k.get("year", 2024)))
     reformes = [ReformSpec(decote_taux=0.10 + i / 100) for i in range(6)]
+    # A population, which `cached` reads for the fingerprint its files carry (D-276).
+    frame = pl.DataFrame({"person_id": [0], "household_id": ["h0"], "weight": [1.0],
+                          "salaire_brut_annuel": [30_000.0]})
     for reforme in reformes:
-        emtr.cached(pl.DataFrame(), "2024", reform=reforme)
+        emtr.cached(frame, "2024", reform=reforme)
     assert len(list(tmp_path.glob("emtr_2024_*.parquet"))) == 3
     derniere = emtr.cache_key("2024", 2024, reformes[-1], None)
     assert (tmp_path / f"emtr_2024_{derniere}.parquet").exists()
@@ -1055,6 +1058,63 @@ def test_the_emtr_caches_do_not_serve_the_vintage_s_rates_to_an_aged_population(
     before = json.dumps({"vintage": "2024", "year": 2026, "sample": None, "reform": None,
                          "wiring": to_openfisca.WIRING}, sort_keys=True, default=str)
     assert emtr.cache_key("2024", 2026) == hashlib.sha256(before.encode()).hexdigest()[:16]
+
+
+def test_an_emtr_cache_serves_only_the_frame_it_was_computed_on(tmp_path, monkeypatch):
+    """The keys name the vintage, the year, the sample, the reform and the uprating, not
+    the frame itself. The frozen view of `impots predictif` priced the vintage under the
+    aged view's key: the view priced first wrote the rates both views then read, and the
+    frozen view's reform rates sat beside an aged baseline, which moved the marginal rate
+    of 98 % of the households under a décote (D-276). A file computed on another frame,
+    or written before it said which, is recomputed, not served."""
+    import polars as pl
+
+    from impots.behavioural import emtr
+    from impots.population import to_openfisca
+    from impots.uprating import Uprating
+
+    monkeypatch.setattr(emtr, "PROCESSED", tmp_path)
+    aged = Uprating(wage=0.03, price=0.02, source="une source", base_year=2024).key()
+
+    def frame(salary: float) -> pl.DataFrame:
+        return pl.DataFrame({"person_id": [0], "household_id": ["h0"], "weight": [1.0],
+                             "salaire_brut_annuel": [salary]})
+
+    vintage, priced = frame(30_000.0), frame(31_827.0)
+    # A rate that says which frame it was computed on.
+    monkeypatch.setattr(emtr, "_rate", lambda frame, *args, **kwargs: np.array(
+        [frame["salaire_brut_annuel"][0] / 1e6]))
+
+    # The baseline rates, memoised inside `compute`.
+    emtr.compute(vintage, year=2026, vintage="2024", uprating_key=aged)
+    other = emtr.compute(priced, year=2026, vintage="2024", uprating_key=aged)
+    assert "baseline_cached" not in other.guards
+    assert other.households["emtr"].to_list() == [0.031827]
+    assert emtr.compute(priced, year=2026, vintage="2024",
+                        uprating_key=aged).guards["baseline_cached"]
+
+    # The whole result, memoised by `cached`.
+    emtr.cached(vintage, "2024", year=2026, uprating_key=aged)
+    served = emtr.cached(priced, "2024", year=2026, uprating_key=aged)
+    assert served.guards.get("cached") is not True
+    assert served.households["emtr"].to_list() == [0.031827]
+    again = emtr.cached(priced, "2024", year=2026, uprating_key=aged)
+    assert again.guards.get("cached") is True
+    assert again.households.columns == served.households.columns
+
+    # Files written before the files said their frame.
+    pl.DataFrame({"emtr": [0.5]}).write_parquet(
+        tmp_path / f"emtr_baseline_2024_2027_full_100_{to_openfisca.WIRING}_{aged}.parquet")
+    old = emtr.compute(priced, year=2027, vintage="2024", uprating_key=aged)
+    assert "baseline_cached" not in old.guards
+    assert old.households["emtr"].to_list() == [0.031827]
+    key = emtr.cache_key("2024", 2028, None, None, aged)
+    pl.DataFrame({"household_id": ["h0"], "weight": [1.0], "n_earners": [1],
+                  "emtr": [0.5]}).write_parquet(tmp_path / f"emtr_2024_{key}.parquet")
+    old = emtr.cached(priced, "2024", year=2028, uprating_key=aged)
+    assert old.guards.get("cached") is not True
+    assert old.households["emtr"].to_list() == [0.031827]
+
 
 
 # --------------------------------------------------------------------------- #

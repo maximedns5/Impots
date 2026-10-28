@@ -21354,3 +21354,446 @@ pas tourné.
 - La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
 - Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
 - Le `make full` du propriétaire.
+
+## D-275 — L'étude sur le chemin annuel, premier temps : la boîte θ, et avant les passes
+
+**Le fait.** L'étude de D-237 chiffre la première année et reporte les suivantes en part de
+PIB. Sa page le dit : « une convention, que `impots predictif` lève année par année
+(D-236) ». Ce commit donne au chemin annuel ce qui lui manquait pour rejouer l'étude, puis
+préenregistre ce rejeu et son pronostic, avant toute passe. Les rapports nommeront ce
+commit. Le résultat sera une autre entrée, D-276.
+
+**Ce que le chemin annuel ne disait pas.**
+- Il ne donnait Δb qu'au θ demandé, sans la boîte θ ni θ = 0 et θ = 1. La seconde moitié
+  de la question de l'étude, « pour quels θ ? », ne s'y lisait pas.
+- Il ne disait pas ce qu'aurait donné le report sur la même passe. Comparer ses chiffres à
+  ceux de l'étude aurait mêlé deux écarts : celui de la convention, et celui du code
+  depuis `d77feb9`, le commit de l'étude.
+- Il ne nommait ni son commit ni le lieu de ses passes.
+
+**Ce qui change.** Avec le comportement ou la boucle, `annuel.build` donne Δb de la
+dernière année à θ et à chaque coin de la boîte. Les lignes de la boîte sont celles que
+la réforme revendique, et le multiplicateur quand la boucle tourne. Les valeurs sont
+données dans les deux vues, sous chaque persistance, et deux fois : chaque année chiffrée,
+puis la première année seule, reportée comme le fait l'explorateur, sur la même passe.
+Aucune passe de plus : les coins relisent les passes faites.
+- Chaque année chiffrée, Δb à θ est le chemin que le rapport trace. Le coin où toutes les
+  lignes valent 0 est le chemin à θ = 0, celui où toutes valent 1 le chemin à θ = 1,
+  comme dans l'explorateur (D-274).
+- La première année reportée redonne, au chiffre près, ce que l'évaluateur de
+  l'explorateur donne pour cette passe, à θ et à chaque coin.
+- Un Δb à θ hors de ses coins est refusé : un effet n'y serait pas monotone en son θ, et
+  relire la boîte à ses coins serait faux.
+- Le schéma du rapport tient la boîte aux chemins. Il refuse une boîte sans ligne, une vue
+  ou un coin qui manque, un coin nommé deux fois, des coins qui ne nomment pas les mêmes
+  lignes, un Δb à θ hors de ses coins ou qui n'est pas le chemin, une autre année que la
+  dernière, d'autres persistances que celles du rapport.
+- La commande nomme son commit et dit si `src/` en diffère ; `--ou` dit où ses passes ont
+  tourné. Elle ne refuse pas un `src/` modifié, que le lecteur juge sur le rapport. Le
+  lanceur de l'étude, lui, le refuse.
+
+Une réforme des seules entreprises ne revendique aucune ligne des ménages : sa boîte n'a
+que le multiplicateur. Sans comportement ni boucle, le rapport n'a pas de boîte.
+
+**L'étude, rejouée sur le chemin annuel.**
+- Les paquets. Pour chaque instrument du menu de D-237, celui que la page lit déjà : le
+  plus proche de la cible, le même sous les deux persistances. La CSG déductible à 6,7 %,
+  le plafond de la réduction générale à 3,5 SMIC, la décote à 0,4, le barème de l'IR à
+  0,99. Leurs scénarios sont sous `etude/annuel/`. `scripts/etude_annuelle.py` les
+  construit depuis les rapports commités de l'étude, et le barème de l'IR par la
+  transformation de D-237, appliquée au barème de 2026 que le rapport a lu.
+- Le cadre. Celui des requêtes de l'étude, champ pour champ : dépenses gelées en volume,
+  croissance réelle de 1 % et prix de 2 %, taux implicite tenu, salaires à 3 %, θ = ½,
+  comportement et boucle, dix ans, les deux persistances côte à côte, loi reconduite.
+- Le coût. Quatre chemins, l'un après l'autre, de vingt passes chacun : quatre-vingts
+  passes de 90 à 130 s (D-236), soit deux à trois heures. Elles tourneront ici, en tâche de
+  fond, depuis une copie de travail figée sur ce commit.
+- Pourquoi un paquet par instrument. Sans boucle ni recette, Δb est proportionnel au coût
+  de chaque année (ci-dessous). Le rapport du chemin annuel au report ne dépend donc guère
+  de la taille du paquet, et un paquet suffit à le mesurer. Les seize demanderaient onze
+  heures.
+
+**Ce qu'on savait déjà.** Le pronostic n'est pas aveugle, et il le dit.
+- La chaîne trace les deux chemins de la même façon. Seul change ce qu'elle lit après la
+  première année : le report y met le coût, les recettes à θ et l'impulsion de 2026, tenus
+  en part de PIB ; le chemin annuel, ceux de chaque année.
+- Sans boucle ni recette, Δb 2035 vaut Σ (coût_t / PIB_t) × ρ^(2035 − t), avec ρ =
+  1,019 / 1,0302 : le taux implicite tenu sur la croissance nominale. C'est le 0,309 point
+  par milliard de la première année de D-242. Le rapport du chemin annuel au report est
+  donc la moyenne, pondérée par ρ^(2035 − t), de la part du coût de chaque année rapportée
+  à celle de 2026.
+- La boucle répond à chaque marche de l'impulsion, et l'impulsion de chaque année suit son
+  coût. Sa part suit celle du coût.
+- En vue figée, ni la population ni la loi reconduite ne bougent après 2027. Le coût est
+  constant en euros : 4,164 Md€ de 2027 à 2029 pour la CSG de D-236. Sa part baisse de
+  2,9 % par an, et le rapport vaut 0,874.
+- En vue vieillie, la loi reconduite fige le barème, la décote (897 €) et le SMIC
+  (12,31 € de l'heure dès 2027), quand les salaires montent de 3 % par an et les pensions
+  de 2 %. Mesurée de 2026 à 2029 sur la CSG (D-236), la part du coût baisse de 0,5 % par
+  an.
+- Sur la même passe, le report devrait redonner l'étude. Aucun changement du moteur depuis
+  `d77feb9` ne touche ces quatre réformes : l'imputation du capital ne vaut que pour le
+  PFU (D-249). Et C7 au poids de chacun déplace Δb de 0,00005 point (D-258).
+
+**Le pronostic**, écrit avant les passes. Δb 2035 en points de PIB.
+1. Le report sur la même passe redonne l'étude. Les coûts de 2026 sont les siens à l'euro
+   dans les deux vues. Δb à θ et à chaque coin est le sien à 0,0001 point, et à 0,0005
+   pour la CSG.
+2. En vue figée, le chemin annuel vaut de 0,86 à 0,89 fois le report pour la CSG, la
+   décote et le barème, à θ, à chaque coin et sous chaque persistance. Pour le plafond,
+   de 0,85 à 1 fois : le SMIC de 2027 monte quand les salaires figés ne bougent pas, et
+   le coût de 2027 n'est pas celui de 2026.
+3. En vue vieillie, à θ = ½, la CSG vaut de 0,96 à 0,99 fois le report : de +0,216 à
+   +0,223 sous l'effet éteint (+0,225 au report), et de +0,079 à +0,082 sous l'effet tenu
+   (+0,082).
+4. Le barème de l'IR vaut plus que le report, de 1,05 à 1,15 fois. Les seuils figés font
+   monter l'impôt plus vite que les revenus, et 1 % de chaque taux avec lui. Soit de
+   +0,314 à +0,344 sous l'effet éteint (+0,299), et de +0,087 à +0,096 sous l'effet tenu
+   (+0,083).
+5. La décote vaut moins que le report, de 0,80 à 0,97 fois. Son seuil figé laisse sortir
+   de la décote les foyers dont l'impôt monte. Soit de +0,209 à +0,253 sous l'effet éteint
+   (+0,261), et de +0,090 à +0,110 sous l'effet tenu (+0,113).
+6. Le plafond vaut moins que le report, de 0,65 à 0,90 fois. Le SMIC figé fait monter
+   chaque salaire en multiples du SMIC : la réduction recule devant lui, et son extension
+   de 3 à 3,5 SMIC aussi. Soit de +0,357 à +0,495, sous les deux persistances (+0,549),
+   la boucle étant absente.
+7. Les verdicts ne changent pas.
+   - À θ = ½ et à θ = 0, aucun paquet ne fait baisser la dette, sous aucune persistance et
+     dans aucune vue.
+   - À θ = 1, sous l'effet tenu, la CSG, la décote et le barème la font baisser ; sous
+     l'effet éteint, aucun.
+   - Le plafond ne bouge pas avec θ.
+8. À chaque coin où le report dépasse 0,05 point en valeur absolue, le chemin annuel vaut
+   le report fois un rapport pris dans la fourchette de son instrument et de sa vue : les
+   recettes au comportement et l'impulsion suivent le coût de l'année. Près de zéro, où le
+   comportement et la boucle se compensent, un rapport ne dit rien, et le pronostic n'en
+   donne pas.
+
+**Les biais déclarés.**
+- La loi reconduite fige ce que la loi réelle revoit chaque année : le barème, la décote,
+  le SMIC. Le chemin annuel chiffre « cette loi, sur la France d'aujourd'hui, avec
+  l'argent de demain » (F3 M2). Son écart au report est pour partie celui de cette
+  convention, non une prévision.
+- La population vieillie ne change ni de structure ni de poids, et ses âges ne bougent pas.
+- Le report est la convention de l'explorateur. Ni l'un ni l'autre n'est le vrai chemin ;
+  l'écart dit ce que la convention de l'étude pèse.
+
+**Les tests.** Dans `tests/test_predictif_annuel_boucle.py`, dix-sept cas nouveaux :
+- la boîte à θ, qui est le chemin du rapport ; ses coins diagonaux, qui sont le chemin
+  tracé à part à θ = 0 puis à θ = 1 ;
+- la première année reportée, qui redonne l'évaluateur de l'explorateur à θ et à chaque
+  coin ;
+- un rapport mécanique, sans boîte ; sans boucle, la boîte sans le multiplicateur ; avec
+  la boucle seule, le seul multiplicateur ; une réforme des seules entreprises ;
+- un Δb à θ hors de ses coins, refusé ;
+- dix rapports que le schéma refuse ;
+- la commande qui nomme son commit, l'état de `src/` et le lieu de ses passes.
+
+Quatorze ont été vus échouer sur le code de `main`, faute de boîte. Les trois derniers refus
+du schéma viennent de mutantes qui survivaient : une vue absente, un coin nommé deux fois,
+deux coins permutés. Les vingt-cinq cas d'avant passent. Trois d'entre eux échouaient
+d'abord, le schéma contrôlant la boîte avant les chemins et rendant un autre refus. Il lit
+désormais les chemins d'abord.
+
+Dans `tests/test_etude_annuelle.py`, treize cas :
+- les scénarios commités sont ceux que le lanceur construit, et rien d'autre ;
+- chacun est le paquet le plus proche de l'étude, l'IR par la transformation, construit à
+  part ; un paquet qui diffère entre les persistances est refusé ;
+- la commande, relue par l'analyseur de la commande elle-même, sur les requêtes de l'étude
+  puis sur une requête dont chaque champ diffère ; quatre cadres refusés ;
+- les quatre chemins dans l'ordre de l'étude ; un chemin qui échoue arrête les suivants ;
+  un `src/` modifié ou un rapport déjà là, refusés avant toute passe.
+
+La garde des scénarios a été vue échouer avant qu'ils soient écrits.
+
+Le balayage des gardes, `--missing`, a muté la garde nouvelle d'`annuel` : tuée. Le rapport
+compte 228 mutations, 227 tuées et 1 équivalente. Trente-trois mutations écrites à la main,
+vingt-trois de la boîte, du schéma et de la commande, et dix du lanceur : toutes tuées,
+après quatre tests ajoutés pour celles qui survivaient. Deux autres ne survivaient qu'à
+une sélection de tests trop étroite, et le fichier entier les tue.
+
+Les tests du chemin annuel, de sa boucle et du lanceur, de la commande, de l'API
+prédictive, des entreprises, de la CVAE, des vues, de l'évaluateur, du balayage et de la
+charte : 199 réussis. `ruff` passe, et `ui/check.mjs` ses 60 contrôles. Le `make full` n'a
+pas tourné.
+
+**Ce qui suit.** Les quatre chemins, l'un après l'autre, en tâche de fond, depuis une copie
+de travail figée sur ce commit. Puis D-276 : le résultat, son rendu dans
+`docs/PREDICTIF_ETUDE.md`, et ses gardes. La porte reste le `make full` du propriétaire.
+
+## D-276 — Le contrôle du chemin annuel échoue : les deux vues partageaient leurs taux
+
+**Le fait.** Les quatre chemins préenregistrés par D-275 ont tourné sur `46c0a5e`, l'un
+après l'autre, depuis une copie de travail figée sur ce commit. Le premier point du
+pronostic est un contrôle : sur la passe du chemin annuel, la première année reportée
+redonne l'étude. Il a tenu pour la CSG. Le plafond redonne son complément, non l'étude
+(ci-dessous). Sur la décote, il a échoué :
+- les coûts de 2026 sont ceux de l'étude, à l'euro près ;
+- mais Δb 2035 à θ = ½, en vue vieillie, vaut −0,061 point reporté, contre +0,261 dans
+  l'étude, et un coin s'en écarte de 0,69 point.
+
+Le contrôle a trouvé un défaut du code, non un écart de la convention. Il est corrigé ici,
+et les quatre chemins tournent de nouveau, sur le commit de cette entrée. Le résultat sera
+D-277.
+
+**Ce que le contrôle a vu.**
+- Le coin qui s'écarte est celui de `eti_top_decile`. À 1, la dette baisse de 0,53 point
+  de plus que dans l'étude, où il ne la déplaçait que de 0,006 point. Or une décote ne
+  touche pas le taux marginal du décile du haut.
+- Sur les fichiers de cache de cette passe, la décote fait bouger en 2026 le taux marginal
+  de 98,1 % des ménages de l'échantillon. De 2027 à 2035, elle le fait bouger pour les
+  mêmes 431 ménages, 25,9 % du poids, à l'identique chaque année. Ce sont les taux de la
+  population figée, dont ni les revenus ni la loi reconduite ne bougent après 2027.
+
+**La cause.** `_price_households` passait aux caches des taux marginaux la clé du
+vieillissement, dans les deux vues. La vue figée chiffre pourtant la population du
+millésime telle quelle. D-226 le dit : la clé nomme le vieillissement quand le cadre est
+vieilli, et seulement alors. Les deux vues d'une année partageaient donc un fichier : la
+première chiffrée écrivait ce que l'autre lisait.
+- Le chemin annuel chiffre la vue figée d'abord. Sa vue vieillie lisait chaque année les
+  taux de la population figée.
+- En 2026, la référence vieillie était déjà sur le disque. La vue figée l'a lue, et l'a
+  mise à côté des taux de la réforme calculés sur son propre cadre. Recalculée à neuf, la
+  référence en cache est bien celle du cadre vieilli : aucun des 1 661 ménages ne diffère.
+  Celle du cadre figé en diffère pour 1 623 d'entre eux, jusqu'à 1,17 point de taux.
+- L'écart entre les deux cadres se lisait donc comme un effet de la réforme, et C1 le
+  faisait répondre, au décile du haut surtout.
+- L'explorateur chiffre la vue vieillie d'abord : sa vue figée lisait les taux du cadre
+  vieilli.
+
+**Depuis quand, et ce que cela touche.** La vue figée passe par `_price_households` depuis
+`b8093f4` (D-234). Le défaut ne touche que les deux canaux qui lisent les taux marginaux :
+C1, la réponse du revenu imposable, et C7, l'offre de travail. Le coût mécanique,
+l'impulsion et les autres canaux n'en dépendent pas.
+- Les explorations commitées avec comportement, l'étude et ses rejeux compris. Leur vue
+  figée a lu les taux de la vue vieillie, avec l'assiette du cadre figé. Leur vue vieillie
+  a lu ses propres taux, et avec elle leurs coins et leurs verdicts, tous en vue vieillie :
+  l'explorateur la chiffre en premier, et la référence vieillie de 2026 sur le disque est
+  celle du cadre vieilli. Le rejeu mesurera l'écart de la vue figée sur les quatre paquets.
+- Le chemin annuel de la CSG de D-236, commité dans
+  `reports/predictif_csg_deductible_demi_point.json`. La référence vieillie de 2027, écrite
+  ce jour-là, est celle du cadre figé : aucun des 1 661 ménages ne diffère. Sa vue vieillie
+  a donc lu les taux du cadre figé. Il n'est pas rechiffré, et cette entrée le dit.
+- Les deux chemins de la CVAE (D-254) n'ont pas de comportement des ménages : intacts.
+- `/predictif/simulate` ne chiffre que la vue vieillie. Il a pu lire un fichier écrit par
+  la vue figée d'un chemin annuel, pour la même réforme et la même année : c'est possible,
+  et ce n'est pas mesuré.
+
+**La correction.**
+- La vue figée nomme le cadre qu'elle chiffre. Ses caches sont ceux du millésime, comme
+  ceux de `/population/simulate` pour la même année.
+- Chaque fichier des deux caches porte l'empreinte du cadre sur lequel ses taux ont été
+  calculés, et n'en sert pas d'autre.
+- Un fichier sans empreinte, écrit avant, est recalculé : rien ne dit de quel cadre il
+  vient, et ceux de cette nuit montrent qu'il peut venir de l'autre.
+- Les clés ne bougent pas, comme le tient un test de D-226 ; les fichiers anciens sont
+  recalculés une fois.
+
+**Le rejeu.** Les mêmes quatre scénarios, le même lanceur et le même cadre, champ pour
+champ, sur le commit de cette entrée, depuis une copie de travail figée sur lui. Le
+pronostic de D-275 n'est pas réécrit : D-277 le jugera sur le rejeu, point par point.
+Il n'est plus aveugle pour autant. Les chemins de `46c0a5e` ont été vus ; les voici, pour
+qu'on juge ce qu'ils ont pu apprendre. Δb 2035 chaque année chiffrée, rapporté au report,
+à θ = ½, sous l'effet éteint puis sous l'effet tenu.
+- La CSG redonne l'étude à 0,0001 point près. En vue vieillie, 0,989 et 1,010 ; en vue
+  figée, 0,896 et 0,890. Le pronostic disait de 0,96 à 0,99, puis de 0,86 à 0,89. Elle
+  lit C7, et sa vue vieillie a lu les taux du cadre figé : le rejeu dira s'ils bougent.
+- Le plafond redonne son complément de D-239 au chiffre près, et non l'étude. Le pronostic
+  l'avait oublié : depuis D-239, le plafond est une baisse uniforme, et sa boucle tourne.
+  En vue vieillie, 1,138 et 1,163 ; en vue figée, 0,883 et 0,864. Le pronostic disait de
+  0,65 à 0,90 en vue vieillie : le coût monte de 1,78 à 3,01 Md€, et sa part de PIB de
+  30 %. Il ne lit aucun taux marginal, et doit revenir à l'identique.
+- Le barème de l'IR échoue comme la décote : le report vaut +0,008 point sous l'effet
+  éteint, contre +0,299 dans l'étude, et un coin s'en écarte de 0,64 point.
+- La décote et le barème ont été chiffrés sous le défaut : leurs rapports ne disent rien de
+  la convention. Aucun des quatre rapports de `46c0a5e` n'est commité.
+
+**Le rendu, avant le rejeu.** Deux décisions, prises après avoir vu le plafond, et commitées
+avant le rejeu (`a1664d0`) :
+- la page compare chaque paquet à sa dernière lecture, le complément pour le plafond et
+  l'étude ailleurs, et nomme le commit de chacune ;
+- la boîte peut porter une ligne que la référence n'avait pas : C11 revendique le bouton du
+  plafond depuis D-263. La ligne est nommée, avec ce qu'elle déplace à ses coins. Sur
+  `46c0a5e`, elle ne déplace rien : la ligne n'est pas ciblée pour le plafond.
+
+**Les tests.** Dans `tests/test_behavioural.py`, un cas nouveau : un cache ne sert que le
+cadre sur lequel il a été calculé. Il porte sur la référence et sur le résultat, et sur un
+fichier sans empreinte. Dans `tests/test_api_predictif.py`, un autre : la vue figée prend
+les caches du millésime, la vue vieillie ceux de son vieillissement. Les deux ont été vus
+échouer sur le code d'avant. Le test qui borne le nombre de fichiers donnait à `cached` une
+table vide : il reçoit la population minimale des autres tests de cache, puisque `cached`
+lit désormais la population. Ses assertions sont inchangées.
+
+Onze mutations écrites à la main, dix tuées. La onzième calcule l'empreinte avant
+l'échantillon : elle est équivalente pour les tests, puisque l'échantillon est
+déterministe, et le cadre entier le nomme aussi bien. L'empreinte de l'échantillon reste la
+plus sûre : elle voit aussi un changement de l'échantillonnage. Dans le rendu, vingt
+mutations de la référence et des lignes en plus, toutes tuées après deux tests durcis.
+
+Le balayage des gardes, `--missing`, n'a rien à muter : 228 mutations, aucune à traiter.
+Les tests des taux marginaux, de l'API prédictive, de la commande, de l'explorateur, du
+chemin annuel et de sa boucle, des entreprises, de la validation, du PFU, de la recherche
+et des transformations : 276 réussis, 2 sautés faute d'une distribution des taux dans
+l'artefact de référence. Ceux de la page et du lanceur : 193 réussis. `ruff` passe. Le
+`make full` n'a pas tourné.
+
+**Ce qui suit.** Les quatre chemins, sur ce commit, en tâche de fond. Puis D-277 : le
+résultat contre le pronostic de D-275, son rendu dans `docs/PREDICTIF_ETUDE.md`, et
+l'écart de la vue figée de l'étude.
+
+## D-277 — L'étude sur le chemin annuel, second temps : le résultat
+
+**Le fait.** Les quatre chemins préenregistrés par D-275 ont tourné de nouveau sur
+`084d2c1`, le commit de D-276, depuis une copie de travail figée sur lui. Les scénarios, le
+lanceur et le cadre sont ceux de D-275, champ pour champ. Le conteneur a redémarré pendant
+le chemin du barème de l'IR, après les trois premiers rapports. Le lanceur n'écrase pas un
+rapport et refusait donc de repartir : le barème a tourné seul, sur le même commit, avec la
+commande que le lanceur construit pour lui. Les quatre rapports sont sous
+`reports/etude_annuel/`. `docs/PREDICTIF_ETUDE.md` les rend dans une section nouvelle, « Le
+chemin annuel : chaque année chiffrée », après celle de θ = 0 et θ = 1. Le reste de la
+page est inchangé, à l'octet.
+
+**Le résultat.** Δb 2035 à θ = ½, en vue vieillie, en points de PIB : la référence, puis
+la première année reportée sur la passe du chemin annuel, puis chaque année chiffrée, et le
+rapport des deux derniers. Sous l'effet éteint, puis sous l'effet tenu.
+- La CSG à 6,7 % : +0,225, +0,225, +0,222, soit 0,988 ; +0,082, +0,082, +0,083, soit
+  1,008.
+- Le plafond à 3,5 SMIC, lu sur son complément : +0,465, +0,465, +0,530, soit 1,138 ;
+  +0,134, +0,134, +0,156, soit 1,163.
+- La décote à 0,4 : +0,261, +0,261, +0,223, soit 0,856 ; +0,113, +0,113, +0,095, soit
+  0,838.
+- Le barème à 0,99 : +0,299, +0,299, +0,345, soit 1,151 ; +0,083, +0,083, +0,106, soit
+  1,271.
+
+En vue figée, chaque année chiffrée vaut 0,896 et 0,890 fois le report pour la CSG, 0,883 et
+0,864 pour le plafond, 0,898 et 0,895 pour la décote, 0,894 et 0,880 pour le barème.
+
+**Le pronostic, point par point.**
+1. Le contrôle tient en vue vieillie, et sur les coûts. Les coûts de 2026 sont ceux de la
+   référence à l'euro, dans les deux vues et pour les quatre paquets. Δb à θ et à chaque
+   coin est le sien à 0,0001 point près pour la CSG, et au chiffre près pour la décote et
+   le barème. Le pronostic se trompait de référence pour le plafond : le report redonne
+   son complément de D-239, au chiffre près, et non l'étude. En vue figée, la CSG redonne
+   l'étude à 0,0001 point près, la décote s'en écarte de 0,007 point, le barème de 0,024.
+   C'est l'écart de D-276 : la vue figée de l'étude lisait les taux marginaux de sa vue
+   vieillie. Le chiffre juste est celui du report, +0,251 au lieu de +0,258 pour la décote
+   sous l'effet éteint, et +0,287 au lieu de +0,263 pour le barème.
+2. Manqué. En vue figée, le pronostic disait de 0,86 à 0,89. À θ, la CSG, la décote et le
+   barème vont de 0,880 à 0,898 ; quatre des six valeurs dépassent 0,89. Aux coins, les
+   rapports vont de 0,82 à 0,93. Le plafond reste dans sa fourchette de 0,85 à 1 à θ, avec
+   0,883 et 0,864, mais pas à tous les coins : de 0,837 à 0,850 sous l'effet tenu.
+3. À moitié. La CSG vaut 0,988 sous l'effet éteint, +0,222 point, dans la fourchette. Sous
+   l'effet tenu, elle vaut 1,008, +0,083 point : au-dessus des 0,96 à 0,99 et des +0,079 à
+   +0,082 annoncés.
+4. Manqué de peu, puis franchement. Le barème vaut 1,151 sous l'effet éteint, +0,345
+   point, à un demi-millième au-dessus de la borne de +0,344. Sous l'effet tenu, il vaut
+   1,271, +0,106 point, quand le pronostic disait de +0,087 à +0,096. Le sens était juste :
+   les seuils figés font monter le coût plus vite que le PIB, de 27 % en part.
+5. Tenu. La décote vaut 0,856 et 0,838 fois le report, +0,223 et +0,095 point, dans les
+   deux fourchettes. Son coût baisse en euros, de 0,94 à 0,82 Md€ : le seuil figé laisse
+   sortir de la décote les foyers dont l'impôt monte.
+6. Faux, dans ses prémisses et dans son sens. Le pronostic tenait la boucle pour absente,
+   oubliant D-239. Il tenait aussi que le coût du plafond reculerait devant un SMIC figé.
+   C'est l'inverse : en vue vieillie, le coût passe de 1,78 à 3,01 Md€, et sa part de PIB
+   monte de 30 %. Les salaires qui montent en multiples d'un SMIC figé entrent dans la
+   bande de 3 à 3,5 SMIC, que le paquet relève, plus nombreux qu'ils n'en sortent. Le
+   chemin annuel vaut donc 1,14 et 1,16 fois le report, non 0,65 à 0,90.
+7. Tenu, le plafond lu sur son complément.
+   - À θ = ½ et à θ = 0, aucun paquet ne fait baisser la dette en 2035, sous aucune
+     persistance et dans aucune vue.
+   - À θ = 1, sous l'effet tenu, la CSG, la décote et le barème la font baisser, dans les
+     deux vues : de −0,02 à −0,17 point en vue vieillie. Sous l'effet éteint, aucun.
+   - Le plafond, que le pronostic disait immobile en θ, bouge avec lui, la boucle tournant.
+     Sous l'effet tenu, il fait baisser la dette à θ = 1, de 0,32 point, comme le disait
+     déjà son complément (D-274).
+8. Manqué. Aux coins où le report dépasse 0,05 point, les rapports ne tiennent dans la
+   fourchette de leur instrument et de leur vue que dans trois cas sur seize : la décote
+   sous l'effet éteint en vue vieillie, et sous l'effet tenu en vue figée ; le plafond sous
+   l'effet éteint en vue figée. En vue vieillie, la CSG va de 0,895 à 0,998, la décote
+   sous l'effet tenu descend à 0,795, le barème va de 1,044 à 1,219.
+
+**Ce que l'écart veut dire.** Les coins de chaque boîte séparent les trois termes de Δb :
+le coin bas, où chaque ligne vaut 0, puis ce que le comportement ajoute en moyenne, puis ce
+que le multiplicateur déplace de 0 à 1.
+- Le terme mécanique suit l'arithmétique de D-275. En vue figée, le coin bas vaut de 0,871
+  à 0,878 fois le report pour la CSG, la décote et le barème : les 0,874 d'un coût constant
+  en euros. Le plafond, dont le coût de 2027 baisse de 1,8 %, est à 0,850 et 0,853. En vue
+  vieillie, le coin bas suit la part du coût : 0,98 pour la CSG, 0,83 pour la décote, 1,15
+  et 1,16 pour le barème, 1,17 et 1,18 pour le plafond.
+- La boucle ne suit pas le coût. Elle répond à chaque changement de la part de
+  l'impulsion : trois ans durant sous l'effet éteint, puis plus rien ; sous l'effet tenu,
+  elle monte trois ans puis se tient. Reportée, l'impulsion n'a qu'un changement, en 2026.
+  Sous l'effet éteint, sa réponse s'éteint en 2029, et en 2035 ne compte plus que la dette
+  qu'elle a laissée. Chaque année chiffrée, les changements des trois dernières années
+  répondent encore en 2035. Ils ont le signe du changement de la part du coût : négatif
+  pour la CSG, pour la décote et dans toute la vue figée, positif pour le barème et le
+  plafond en vue vieillie.
+- Sous l'effet éteint, le soulagement de la boucle se déplace donc plus que le coût. Il
+  vaut de 0,62 à 0,93 fois le report quand la part du coût baisse, et 1,30 et 1,31 quand
+  elle monte ; de 0,73 à 0,74 dans toute la vue figée. Sous l'effet tenu, il vaut de 0,81
+  à 1,18 en vue vieillie, et de 0,85 à 0,86 en vue figée.
+- Le pronostic supposait que la boucle suivrait le coût de chaque année. C'est cette
+  supposition qui manque les points 2, 3, 4 et 8.
+- Sous l'effet tenu, Δb à θ = ½ est la différence de deux termes proches, le coût et le
+  soulagement. Leur écart s'amplifie dans la différence : 1,008 pour la CSG, 1,271 pour le
+  barème, à +0,08 point.
+- Le comportement pèse peu. Pour la décote, il pèse +0,003 point reporté, et presque rien
+  chaque année chiffrée : 0,03 fois le report. Il somme deux effets de signe contraire :
+  un taux de décote plus bas abaisse le taux marginal dans la zone de la décote, et l'étend
+  à des foyers dont le taux monte. Leur somme change de signe d'une vue à l'autre. Pour le
+  barème, le comportement vaut 0,96 fois le report ; pour la CSG, 1,02.
+
+**Ce que la convention de l'étude pèse.** Δb 2035 à θ = ½, en vue vieillie : le report
+surestime la dette de 0,038 point pour la décote sous l'effet éteint, et la sous-estime de
+0,064 pour le plafond. Ailleurs, l'écart va de 0,001 à 0,045 point. En vue figée, le report
+la surestime toujours, de 0,008 à 0,045 point. Aucun verdict ne change, à θ = 0, à θ = ½
+et à θ = 1. La convention de l'explorateur est donc assez bonne pour les verdicts de
+l'étude, et trop grossière pour ses chiffres au centième de point. Ni l'un ni l'autre n'est
+une prévision : le chemin annuel chiffre la loi reconduite, qui fige le barème, la décote
+et le SMIC.
+
+**Les gardes.** `scripts/write_predictif_etude.py` lit les quatre rapports sous
+`reports/etude_annuel/`. Il les refuse :
+- s'ils ne sont pas les paquets que le lanceur construit depuis les rapports de l'étude, ou
+  s'il en manque ou en a de trop ;
+- s'ils ne nomment pas un seul commit dont ils ont chiffré le code, ou ne disent pas où
+  leurs passes ont tourné ;
+- s'ils n'ont pas tourné dans le cadre de l'étude, champ pour champ ;
+- si leur boîte ne porte pas les lignes de la lecture de la page.
+
+La référence de chaque paquet est sa dernière lecture sur la page : le complément pour le
+plafond, l'étude ailleurs. La boîte peut porter une ligne de plus que sa référence, à
+condition de la nommer avec ce qu'elle déplace à ses coins. C11 ne déplace rien pour le
+plafond : il n'y est pas ciblé. Le contrôle dit chaque vue à part, et la section dit que ses
+rapports n'ont pas tourné sur le commit du préenregistrement, et pourquoi. Aucun chiffre
+n'est saisi : tous viennent des rapports.
+
+**Les tests.** Dans `tests/test_predictif_etude.py`, trente-deux cas pour la section :
+- la section rendue après celle de θ, et la page d'avant inchangée ;
+- le contrôle, dit plutôt que refusé, dans chaque vue, pour l'ensemble et pour chaque
+  instrument ;
+- la boîte de chaque instrument, lue sur son rapport ;
+- dix-neuf refus ;
+- la référence prise au complément ;
+- une ligne de plus que la référence, nommée avec ce qu'elle déplace ;
+- un rejeu hors du commit du préenregistrement, qui le dit.
+
+Chaque cas a été vu échouer sur le script d'avant, ou sous une mutation. Cinquante-huit
+mutations écrites à la main du rendu, toutes tuées, après deux tests durcis pour quatre
+qui survivaient. La page dit désormais « elle ne baisse à aucun des coins », et non « elle
+baisse à aucun » : le test le tient.
+
+Les tests de la page et du lanceur : 195 réussis. `ruff` passe. Le `make full` n'a pas
+tourné.
+
+**Ce qui reste.**
+- La vue figée des explorations commitées avec comportement, rechiffrée sur la correction
+  de D-276. Pour les paquets les plus proches, l'écart est mesuré ici : de 0,0001 point
+  pour la CSG à 0,024 pour le barème. Pour les autres paquets, il ne l'est pas.
+- Le chemin annuel de la CSG de D-236, rechiffré de même.
+- Les passes préenregistrées de la vue figée et des indices à θ = 0 et θ = 1.
+- Le libellé de la passe rapide de la page pour une réforme des seules entreprises.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
+- Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
+- Le `make full` du propriétaire.

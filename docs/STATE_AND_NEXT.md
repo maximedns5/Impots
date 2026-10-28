@@ -1,6 +1,46 @@
-# State of the project, and the directions open — 2026-10-27 (Phase 11, M0 to M6)
+# State of the project, and the directions open — 2026-10-28 (Phase 11, M0 to M6)
 
-The eighth 2026-10-27 update adds D-274: the study read at θ = 0 and θ = 1, without a
+The second 2026-10-28 update adds D-277: the study on the annual path, its result. The
+four paths ran again on D-276's fix (`084d2c1`); the IR scale's alone after the container
+restarted mid-path, with the launcher's own command. The carry on the same pass gives back
+the study in the aged view to the digit (the ceiling its complement), and the study's
+frozen view was off by up to 0.024 points (D-276). Every year priced, Δb 2035 at θ = ½ is
+0.99 and 1.01 times the carry for the CSG, 1.14 and 1.16 for the ceiling, 0.86 and 0.84 for
+the décote, 1.15 and 1.27 for the IR scale (« éteint », « tenu », aged); 0.86 to 0.90 frozen.
+No verdict changes at θ = 0, ½ or 1. The prognosis held for the control, the décote and the
+verdicts, and missed the frozen view, the CSG under « tenu », the IR scale and the ceiling:
+the mechanical part follows D-275's arithmetic (0.874 frozen), but the loop answers each
+change in the cost's share, not its level, and under « éteint » the carry's loop is gone
+by 2029. The page renders the section after the θ = 0 and 1 one, the rest unchanged.
+The first 2026-10-28 update added D-276: the annual path's control failed, and found a bug. The
+four preregistered paths ran on `46c0a5e`. The carry redone on the same pass gave the study
+back for the CSG and the ceiling's complement (D-239) for the ceiling, but not for the
+décote or the IR scale: −0.061 against +0.261 points, +0.008 against +0.299. The cause:
+the frozen view passed the aged view's uprating key to the EMTR caches, so the two views of
+a year shared one file, and whichever was priced first wrote what both read. The annual
+path prices the frozen view first, so its aged view read the frozen frame's marginal rates
+every year; in 2026 the frozen view set its reform rates beside an aged baseline on disk,
+and 98 % of households' rates moved under a décote. Since `b8093f4` (D-234), it touched
+C1 and C7 only: every committed exploration's frozen view, and D-236's committed annual
+CSG path; not the explorer's aged view, corners or verdicts. Fixed: the frozen view keys
+on the vintage, and every cache file carries the fingerprint of the frame it was computed
+on and serves no other (keys unchanged, D-226). The four paths run again on D-276's
+commit; D-275's prognosis is graded on them in D-277.
+The ninth 2026-10-27 update added D-275: the study on the annual path, its first part.
+With behaviour or the loop, `impots predictif` now gives Δb at its last year at θ and at
+every corner of the θ box, in both views and under each persistence, twice: every year
+priced, and the first year alone carried as the explorer carries it, on the same pass. No
+pass more. Δb at θ outside its corners is refused, the report's schema holds the box to
+the paths, and the report names its commit, whether `src/` differed, and where it ran
+(`--ou`). The study's nearest bundle of each instrument of D-237 (CSG at 6.7 %, the
+ceiling at 3.5 SMIC, the décote at 0.4, the IR scale at 0.99) is preregistered on the
+annual path under `etude/annuel/`, built from the committed reports by
+`scripts/etude_annuelle.py`, in the study's frame field for field, with a prognosis
+written before its 80 passes: the carry redone on the same pass gives the study back; the
+frozen view is 0.86 to 0.89 times the carry; aged, the CSG 0.96 to 0.99, the IR scale 1.05 to
+1.15 (frozen thresholds), the décote 0.80 to 0.97 and the ceiling 0.65 to 0.90 (frozen
+SMIC); no verdict changes. The passes run next, then D-276 renders them.
+The eighth 2026-10-27 update added D-274: the study read at θ = 0 and θ = 1, without a
 pass. In the aged view, the box's corner where every row is at 0 is Δb at θ = 0, and the
 one where every row is at 1 is Δb at θ = 1: every row a channel reads answers to the same
 knobs as its siblings, and the chain reads no θ but the multiplier's. The study page,
@@ -564,8 +604,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **275 decision
-entries**, D-000 to D-274, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **278 decision
+entries**, D-000 to D-277, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -937,8 +977,10 @@ download list.
    curve has its knobs (D-240), and the study is replayed with it (D-241, D-242): no
    cut of the curve lowers the debt, and what a targeted cut would give back is
    missing, said so. Left: a balance row for the targeted variant, or the jobs'
-   receipts in the chain; the study on the annual path; the frozen view and the indices
-   at θ = 0 and θ = 1, the aged view being read off the box's corners (D-274).
+   receipts in the chain; the frozen view of the committed explorations, and D-236's
+   annual CSG path, priced again on D-276's EMTR fix; the study on the annual path is done
+   (D-275 to D-277); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
+   read off the box's corners (D-274).
 4. **Phase 11** (`docs/PHASE11_SPEC.md`, D-243): firms, startups and capital in the
    chain, on published ranges, international where France has none. M0 first: manifest
    and re-read Gechert and Heimberger (2022), the OECD's Hanappi, Millot and Turban

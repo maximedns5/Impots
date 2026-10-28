@@ -1,0 +1,13 @@
+{
+  "name": "etude_annuel_allegements",
+  "year": 2026,
+  "created": "2026-10-27",
+  "source": "l'étude sur le chemin annuel (D-275) : le paquet de « allegements » le plus proche de la cible dans l'étude (allegement_general_plafond = 3.5), rapport commité d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56",
+  "note": "",
+  "tags": [
+    "etude_annuelle"
+  ],
+  "reform": {
+    "allegement_general_plafond": 3.5
+  }
+}

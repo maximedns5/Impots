@@ -737,6 +737,147 @@ Sans passe nouvelle. À chaque paquet, la boîte θ met à 0 ou à 1 chaque lign
 
 **Ce que cette lecture ne dit pas.** La vue figée n'a pas de coins : elle n'est lue qu'à θ = ½, comme les indices hors de la chaîne. θ = 0 et θ = 1 sont deux coins de la boîte, ceux d'un θ commun à toutes ses lignes ; la boîte, qui les croise, en reste l'étendue. Aucune passe n'a tourné : chaque chiffre vient d'un rapport commité, au commit qu'il nomme.
 
+## Le chemin annuel : chaque année chiffrée
+
+L'étude chiffre la première année et reporte les suivantes en part de PIB. Le chemin annuel, `impots predictif`, chiffre chaque année de 2026 à 2035, sur la population vieillie l'année qu'il chiffre et sous la loi reconduite. Pour chaque instrument, il rejoue le paquet que la page lit déjà, le plus proche de la cible, dans le cadre de l'étude champ pour champ. Il a été préenregistré dans D-275 avant ses passes : les scénarios sont sous `etude/annuel/`, construits depuis les rapports de l'étude par `scripts/etude_annuelle.py`, et les rapports sous `reports/etude_annuel/`. Ils ont tourné sur le commit `084d2c172f843514f190a26a07b17d666198ae5f`, le 2026-10-28, ici : dans le conteneur de la session, en tâche de fond, depuis une copie de travail figée sur 084d2c1. Ce n'est pas le commit du préenregistrement, `46c0a5e` : ses passes ont trouvé un défaut, les deux vues partageant leurs taux marginaux, et le chemin a tourné de nouveau sur sa correction, sans rien changer d'autre (D-276).
+
+Chaque rapport donne aussi, sur la passe de 2026, la première année seule reportée comme le fait l'explorateur. L'écart entre ce report et chaque année chiffrée est celui de la convention, sur un même code ; l'écart entre ce report et sa référence est celui du code depuis le commit de la référence.
+
+La référence de chaque paquet est sa dernière lecture sur la page : l'étude, au commit `d77feb9`, pour la CSG déductible sur les revenus d'activité, le taux de la décote de l'IR, les taux du barème de l'IR, mis à l'échelle ; son complément, au commit `ce40f2c`, pour le plafond de la réduction générale des cotisations employeurs : la page le lit sous le classement du choc macro que le complément a rejoué.
+
+**Le contrôle.** Sur la passe de 2026, la première année reportée se compare à sa référence. Ses coûts s'en écartent de 0 € au plus ; en vue vieillie, Δb à θ et à chaque coin, de 0,000097 point au plus ; en vue figée, Δb à θ, de 0,023992 point au plus. La vue figée d'une référence chiffrée avant D-276 lisait les taux marginaux de sa vue vieillie : son écart est aussi celui-là.
+
+**Δb 2035 à θ = ½, vue vieillie.**
+
+| Instrument | Paquet | Persistance | La référence | Reporté, même passe | Chaque année | Chaque année / reporté |
+|---|---|---|---|---|---|---|
+| La CSG déductible sur les revenus d'activité | 6,7 % | effet macro éteint après trois ans | +0,23 pt | +0,23 pt | +0,22 pt | 0,988 |
+| La CSG déductible sur les revenus d'activité | 6,7 % | effet macro tenu au niveau de la troisième année | +0,08 pt | +0,08 pt | +0,08 pt | 1,008 |
+| Le plafond de la réduction générale des cotisations employeurs | 3,5 SMIC | effet macro éteint après trois ans | +0,47 pt | +0,47 pt | +0,53 pt | 1,138 |
+| Le plafond de la réduction générale des cotisations employeurs | 3,5 SMIC | effet macro tenu au niveau de la troisième année | +0,13 pt | +0,13 pt | +0,16 pt | 1,163 |
+| Le taux de la décote de l'IR | 40 % | effet macro éteint après trois ans | +0,26 pt | +0,26 pt | +0,22 pt | 0,856 |
+| Le taux de la décote de l'IR | 40 % | effet macro tenu au niveau de la troisième année | +0,11 pt | +0,11 pt | +0,09 pt | 0,838 |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro éteint après trois ans | +0,30 pt | +0,30 pt | +0,34 pt | 1,151 |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro tenu au niveau de la troisième année | +0,08 pt | +0,08 pt | +0,11 pt | 1,271 |
+
+**Δb 2035 à θ = ½, vue figée.**
+
+| Instrument | Paquet | Persistance | La référence | Reporté, même passe | Chaque année | Chaque année / reporté |
+|---|---|---|---|---|---|---|
+| La CSG déductible sur les revenus d'activité | 6,7 % | effet macro éteint après trois ans | +0,21 pt | +0,21 pt | +0,19 pt | 0,896 |
+| La CSG déductible sur les revenus d'activité | 6,7 % | effet macro tenu au niveau de la troisième année | +0,08 pt | +0,08 pt | +0,07 pt | 0,890 |
+| Le plafond de la réduction générale des cotisations employeurs | 3,5 SMIC | effet macro éteint après trois ans | +0,38 pt | +0,38 pt | +0,34 pt | 0,883 |
+| Le plafond de la réduction générale des cotisations employeurs | 3,5 SMIC | effet macro tenu au niveau de la troisième année | +0,11 pt | +0,11 pt | +0,10 pt | 0,864 |
+| Le taux de la décote de l'IR | 40 % | effet macro éteint après trois ans | +0,26 pt | +0,25 pt | +0,23 pt | 0,898 |
+| Le taux de la décote de l'IR | 40 % | effet macro tenu au niveau de la troisième année | +0,11 pt | +0,10 pt | +0,09 pt | 0,895 |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro éteint après trois ans | +0,26 pt | +0,29 pt | +0,26 pt | 0,894 |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro tenu au niveau de la troisième année | +0,07 pt | +0,09 pt | +0,08 pt | 0,880 |
+
+### La CSG déductible sur les revenus d'activité, chaque année chiffrée
+
+Le paquet : 6,7 %. Son coût, vue vieillie, vaut 0,88 Md€ en 2026 et 1,11 Md€ en 2035 ; vue figée, 0,83 Md€ puis 0,83 Md€. Rapportée au PIB de la référence, sa part de 2035 vaut 0,965 fois celle de 2026 en vue vieillie, et 0,765 fois en vue figée. Reportée sur la passe de 2026, la première année s'écarte de sa référence de 0,000097 point au plus en vue vieillie, à θ et à chaque coin, et de 0,000068 point en vue figée, à θ.
+
+**Effet macro éteint après trois ans.** Chaque année chiffrée, la dette ne baisse pas en 2035 à θ = ½, vue vieillie ; elle ne baisse à aucun des 32 coins de la boîte θ.
+
+| Lecture, vue vieillie | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Boîte θ | Coins où la dette baisse |
+|---|---|---|---|---|---|
+| La référence (`d77feb9`), reportée | +0,27 pt | +0,23 pt | +0,18 pt | [+0,18 pt ; +0,27 pt] | aucun des 32 |
+| Reportée, sur la passe du chemin annuel | +0,27 pt | +0,23 pt | +0,18 pt | [+0,18 pt ; +0,27 pt] | aucun des 32 |
+| Chaque année chiffrée | +0,26 pt | +0,22 pt | +0,18 pt | [+0,18 pt ; +0,26 pt] | aucun des 32 |
+
+Vue figée, chaque année chiffrée : +0,19 pt à θ = ½, de +0,16 pt à +0,22 pt aux coins ; reportée, +0,21 pt.
+
+**Effet macro tenu au niveau de la troisième année.** Chaque année chiffrée, la dette ne baisse pas en 2035 à θ = ½, vue vieillie ; elle baisse à 16 des 32 coins de la boîte θ.
+
+| Lecture, vue vieillie | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Boîte θ | Coins où la dette baisse |
+|---|---|---|---|---|---|
+| La référence (`d77feb9`), reportée | +0,23 pt | +0,08 pt | −0,06 pt | [−0,06 pt ; +0,23 pt] | 16 sur 32 (multiplicateur_macro = 1) |
+| Reportée, sur la passe du chemin annuel | +0,23 pt | +0,08 pt | −0,06 pt | [−0,06 pt ; +0,23 pt] | 16 sur 32 (multiplicateur_macro = 1) |
+| Chaque année chiffrée | +0,22 pt | +0,08 pt | −0,06 pt | [−0,06 pt ; +0,22 pt] | 16 sur 32 (multiplicateur_macro = 1) |
+
+Vue figée, chaque année chiffrée : +0,07 pt à θ = ½, de −0,05 pt à +0,19 pt aux coins ; reportée, +0,08 pt.
+
+### Le plafond de la réduction générale des cotisations employeurs, chaque année chiffrée
+
+Le paquet : 3,5 SMIC. Son coût, vue vieillie, vaut 1,78 Md€ en 2026 et 3,01 Md€ en 2035 ; vue figée, 1,46 Md€ puis 1,44 Md€. Rapportée au PIB de la référence, sa part de 2035 vaut 1,296 fois celle de 2026 en vue vieillie, et 0,751 fois en vue figée. Reportée sur la passe de 2026, la première année s'écarte de sa référence de 0,000000 point au plus en vue vieillie, à θ et à chaque coin, et de 0,000000 point en vue figée, à θ.
+
+Sa boîte porte aussi `autofinancement_poids_tresor_eco`, que la référence n'avait pas : à leurs coins, Δb ne bouge pas de plus de 0,000000 point.
+
+**Effet macro éteint après trois ans.** Chaque année chiffrée, la dette ne baisse pas en 2035 à θ = ½, vue vieillie ; elle ne baisse à aucun des 32 coins de la boîte θ.
+
+| Lecture, vue vieillie | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Boîte θ | Coins où la dette baisse |
+|---|---|---|---|---|---|
+| La référence (`ce40f2c`), reportée | +0,58 pt | +0,47 pt | +0,35 pt | [+0,35 pt ; +0,58 pt] | aucun des 16 |
+| Reportée, sur la passe du chemin annuel | +0,58 pt | +0,47 pt | +0,35 pt | [+0,35 pt ; +0,58 pt] | aucun des 32 |
+| Chaque année chiffrée | +0,68 pt | +0,53 pt | +0,37 pt | [+0,37 pt ; +0,68 pt] | aucun des 32 |
+
+Vue figée, chaque année chiffrée : +0,34 pt à θ = ½, de +0,27 pt à +0,41 pt aux coins ; reportée, +0,38 pt.
+
+**Effet macro tenu au niveau de la troisième année.** Chaque année chiffrée, la dette ne baisse pas en 2035 à θ = ½, vue vieillie ; elle baisse à 16 des 32 coins de la boîte θ.
+
+| Lecture, vue vieillie | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Boîte θ | Coins où la dette baisse |
+|---|---|---|---|---|---|
+| La référence (`ce40f2c`), reportée | +0,54 pt | +0,13 pt | −0,27 pt | [−0,27 pt ; +0,54 pt] | 8 sur 16 (multiplicateur_macro = 1) |
+| Reportée, sur la passe du chemin annuel | +0,54 pt | +0,13 pt | −0,27 pt | [−0,27 pt ; +0,54 pt] | 16 sur 32 (multiplicateur_macro = 1) |
+| Chaque année chiffrée | +0,64 pt | +0,16 pt | −0,32 pt | [−0,32 pt ; +0,64 pt] | 16 sur 32 (multiplicateur_macro = 1) |
+
+Vue figée, chaque année chiffrée : +0,10 pt à θ = ½, de −0,19 pt à +0,38 pt aux coins ; reportée, +0,11 pt.
+
+### Le taux de la décote de l'IR, chaque année chiffrée
+
+Le paquet : 40 %. Son coût, vue vieillie, vaut 0,94 Md€ en 2026 et 0,82 Md€ en 2035 ; vue figée, 0,93 Md€ puis 0,93 Md€. Rapportée au PIB de la référence, sa part de 2035 vaut 0,665 fois celle de 2026 en vue vieillie, et 0,765 fois en vue figée. Reportée sur la passe de 2026, la première année s'écarte de sa référence de 0,000000 point au plus en vue vieillie, à θ et à chaque coin, et de 0,006998 point en vue figée, à θ.
+
+**Effet macro éteint après trois ans.** Chaque année chiffrée, la dette ne baisse pas en 2035 à θ = ½, vue vieillie ; elle ne baisse à aucun des 8 coins de la boîte θ.
+
+| Lecture, vue vieillie | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Boîte θ | Coins où la dette baisse |
+|---|---|---|---|---|---|
+| La référence (`d77feb9`), reportée | +0,29 pt | +0,26 pt | +0,23 pt | [+0,23 pt ; +0,30 pt] | aucun des 8 |
+| Reportée, sur la passe du chemin annuel | +0,29 pt | +0,26 pt | +0,23 pt | [+0,23 pt ; +0,30 pt] | aucun des 8 |
+| Chaque année chiffrée | +0,24 pt | +0,22 pt | +0,20 pt | [+0,20 pt ; +0,24 pt] | aucun des 8 |
+
+Vue figée, chaque année chiffrée : +0,23 pt à θ = ½, de +0,19 pt à +0,25 pt aux coins ; reportée, +0,25 pt.
+
+**Effet macro tenu au niveau de la troisième année.** Chaque année chiffrée, la dette ne baisse pas en 2035 à θ = ½, vue vieillie ; elle baisse à 4 des 8 coins de la boîte θ.
+
+| Lecture, vue vieillie | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Boîte θ | Coins où la dette baisse |
+|---|---|---|---|---|---|
+| La référence (`d77feb9`), reportée | +0,25 pt | +0,11 pt | −0,03 pt | [−0,03 pt ; +0,26 pt] | 4 sur 8 (multiplicateur_macro = 1) |
+| Reportée, sur la passe du chemin annuel | +0,25 pt | +0,11 pt | −0,03 pt | [−0,03 pt ; +0,26 pt] | 4 sur 8 (multiplicateur_macro = 1) |
+| Chaque année chiffrée | +0,21 pt | +0,09 pt | −0,02 pt | [−0,03 pt ; +0,21 pt] | 4 sur 8 (multiplicateur_macro = 1) |
+
+Vue figée, chaque année chiffrée : +0,09 pt à θ = ½, de −0,04 pt à +0,22 pt aux coins ; reportée, +0,10 pt.
+
+### Les taux du barème de l'IR, mis à l'échelle, chaque année chiffrée
+
+Le paquet : × 0,99. Son coût, vue vieillie, vaut 1,38 Md€ en 2026 et 2,28 Md€ en 2035 ; vue figée, 1,23 Md€ puis 1,23 Md€. Rapportée au PIB de la référence, sa part de 2035 vaut 1,267 fois celle de 2026 en vue vieillie, et 0,765 fois en vue figée. Reportée sur la passe de 2026, la première année s'écarte de sa référence de 0,000000 point au plus en vue vieillie, à θ et à chaque coin, et de 0,023992 point en vue figée, à θ.
+
+**Effet macro éteint après trois ans.** Chaque année chiffrée, la dette ne baisse pas en 2035 à θ = ½, vue vieillie ; elle ne baisse à aucun des 8 coins de la boîte θ.
+
+| Lecture, vue vieillie | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Boîte θ | Coins où la dette baisse |
+|---|---|---|---|---|---|
+| La référence (`d77feb9`), reportée | +0,38 pt | +0,30 pt | +0,21 pt | [+0,21 pt ; +0,38 pt] | aucun des 8 |
+| Reportée, sur la passe du chemin annuel | +0,38 pt | +0,30 pt | +0,21 pt | [+0,21 pt ; +0,38 pt] | aucun des 8 |
+| Chaque année chiffrée | +0,44 pt | +0,34 pt | +0,24 pt | [+0,24 pt ; +0,44 pt] | aucun des 8 |
+
+Vue figée, chaque année chiffrée : +0,26 pt à θ = ½, de +0,20 pt à +0,31 pt aux coins ; reportée, +0,29 pt.
+
+**Effet macro tenu au niveau de la troisième année.** Chaque année chiffrée, la dette ne baisse pas en 2035 à θ = ½, vue vieillie ; elle baisse à 4 des 8 coins de la boîte θ.
+
+| Lecture, vue vieillie | Δb 2035 à θ = 0 | à θ = ½ | à θ = 1 | Boîte θ | Coins où la dette baisse |
+|---|---|---|---|---|---|
+| La référence (`d77feb9`), reportée | +0,33 pt | +0,08 pt | −0,17 pt | [−0,17 pt ; +0,33 pt] | 4 sur 8 (multiplicateur_macro = 1) |
+| Reportée, sur la passe du chemin annuel | +0,33 pt | +0,08 pt | −0,17 pt | [−0,17 pt ; +0,33 pt] | 4 sur 8 (multiplicateur_macro = 1) |
+| Chaque année chiffrée | +0,38 pt | +0,11 pt | −0,17 pt | [−0,17 pt ; +0,38 pt] | 4 sur 8 (multiplicateur_macro = 1) |
+
+Vue figée, chaque année chiffrée : +0,08 pt à θ = ½, de −0,10 pt à +0,26 pt aux coins ; reportée, +0,09 pt.
+
+**Ce que ce chemin ne dit pas.**
+
+- La loi reconduite garde à sa dernière valeur connue ce que la loi revoit chaque année. Le chemin chiffre « cette loi, sur la France d'aujourd'hui, avec l'argent de demain » (F3 M2), non une prévision : son écart au report est pour partie celui de cette convention.
+- La population vieillie ne change ni de structure, ni de poids, ni d'âge.
+- Les indices hors de la chaîne ne sont pas sur le chemin annuel (D-236).
+- Le report est la convention de l'explorateur ; ni l'un ni l'autre n'est le vrai chemin, et leur écart dit ce que la convention de l'étude pèse.
+
 ## Ce que l'étude ne dit pas
 
 - Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de θ ; un autre scénario donne une autre réponse.

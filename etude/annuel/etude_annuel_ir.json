@@ -1,0 +1,34 @@
+{
+  "name": "etude_annuel_ir",
+  "year": 2026,
+  "created": "2026-10-27",
+  "source": "l'étude sur le chemin annuel (D-275) : le paquet de « ir » le plus proche de la cible dans l'étude (ir_bareme_echelle = 0.99), rapport commité d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56",
+  "note": "",
+  "tags": [
+    "etude_annuelle"
+  ],
+  "reform": {
+    "ir_bareme": [
+      {
+        "threshold": 0.0,
+        "rate": 0.0
+      },
+      {
+        "threshold": 11600.0,
+        "rate": 0.1089
+      },
+      {
+        "threshold": 29579.0,
+        "rate": 0.297
+      },
+      {
+        "threshold": 84577.0,
+        "rate": 0.4059
+      },
+      {
+        "threshold": 181917.0,
+        "rate": 0.4455
+      }
+    ]
+  }
+}

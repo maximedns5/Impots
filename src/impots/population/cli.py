@@ -1230,6 +1230,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     loop and no `--persistence`, both persistence scenarios are drawn side by side.
     """
     import json as _json
+    import subprocess as _subprocess
     from datetime import date as _date
     from typing import Any
 
@@ -1247,10 +1248,16 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     from impots.engine.system import baseline as engine_baseline
     from impots.population import aggregate as agg_mod
     from impots.population.runner import run as population_run
-    from impots.predictif import annuel, chaine, retroaction
+    from impots.predictif import annuel, chaine, recherche, retroaction
     from impots.predictif.theta import Theta, ThetaError
 
     whole = args.behavioural or args.macro
+    # The report names the code that priced it and whether `src/` differed, as an
+    # exploration report does; it is not refused here, the reader decides (D-275).
+    try:
+        commit, dirty = recherche.code_state()
+    except (OSError, _subprocess.CalledProcessError):
+        commit = dirty = None
     directory = Path(args.dir) if args.dir else None
     try:
         scenario = scenarios_module.load(args.scenario, directory)
@@ -1371,7 +1378,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             reform=scenario.reform, behavioural=args.behavioural, macro=args.macro,
             persistence=args.persistence, store=store, macro_store=macro_store,
             firm_note=(api._firm_report_note(scenario.firm_reform, years) if firm_part
-                       else None))
+                       else None), commit=commit, dirty=dirty, where=args.ou)
     except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
             maturite.MaturityError, retroaction.FeedbackError) as error:
         print(str(error), file=sys.stderr)
@@ -1891,6 +1898,8 @@ def build_parser() -> argparse.ArgumentParser:
                            help="the receipts at θ each year, through the simulator's pass")
     predictif.add_argument("--macro", action="store_true",
                            help="the GDP → receipts loop, one impulse per year (D-236)")
+    predictif.add_argument("--ou", help="where the passes run, which the report says "
+                           "(D-275)")
     predictif.add_argument("--persistence", choices=["eteint", "tenu"],
                            help="past three years with the loop; both side by side if absent")
     predictif.set_defaults(func=cmd_predictif)

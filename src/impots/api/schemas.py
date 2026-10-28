@@ -2243,6 +2243,78 @@ class PredictifReportPath(BaseModel):
     gdp_gap_aged: list[float]
 
 
+#: Δb at θ inside its corners, and equal to the path, to float noise (a share of GDP).
+BOX_SLACK = 1e-9
+BOX_VIEWS = {"vieillie", "figee"}
+
+
+class PredictifBoxReading(BaseModel):
+    """One view of one reading of the box: Δb at θ, then at each corner (D-275)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    theta: float
+    corners: list[tuple[str, float]]
+
+
+class PredictifBoxPath(BaseModel):
+    """The box under one persistence: every year priced, and the first year carried."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    persistence: Literal["eteint", "tenu"] | None
+    every_year: dict[Literal["vieillie", "figee"], PredictifBoxReading]
+    first_year: dict[Literal["vieillie", "figee"], PredictifBoxReading]
+
+
+class PredictifThetaBox(BaseModel):
+    """Δb at an annual report's last year, at θ and at every corner of its θ box, every
+    year priced and the first year carried as the explorer carries it (D-275)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    year: int
+    rows: list[str]
+    paths: list[PredictifBoxPath]
+
+    @model_validator(mode="after")
+    def _corners_hold(self) -> PredictifThetaBox:
+        if not self.rows or len(set(self.rows)) != len(self.rows):
+            raise ValueError(f"boîte θ sans ligne, ou une ligne deux fois ({self.rows}) : "
+                             f"ses coins ne diraient pas ce qui déplace la dette.")
+        expected: list[str] | None = None
+        for path in self.paths:
+            for reading in ("every_year", "first_year"):
+                views = getattr(path, reading)
+                if set(views) != BOX_VIEWS:
+                    raise ValueError(f"boîte θ, {reading} : vues {sorted(views)}, il en faut "
+                                     f"deux, {sorted(BOX_VIEWS)}.")
+                for view, one in views.items():
+                    if len(one.corners) != 2 ** len(self.rows):
+                        raise ValueError(
+                            f"boîte θ, {reading}, vue « {view} » : {len(one.corners)} coins "
+                            f"pour {len(self.rows)} lignes, il en faut {2 ** len(self.rows)}.")
+                    labels = [label for label, _ in one.corners]
+                    if expected is None:
+                        named = {frozenset(part.split(" = ")[0] for part in label.split(", "))
+                                 for label in labels}
+                        if named != {frozenset(self.rows)} or len(set(labels)) != len(labels):
+                            raise ValueError(
+                                f"boîte θ : ses coins ne nomment pas les lignes {self.rows}, "
+                                f"chacun une fois.")
+                        expected = labels
+                    elif labels != expected:
+                        raise ValueError(
+                            f"boîte θ, {reading}, vue « {view} » : ses coins ne nomment pas "
+                            f"ceux des autres lectures, dans le même ordre.")
+                    values = [value for _, value in one.corners]
+                    if not min(values) - BOX_SLACK <= one.theta <= max(values) + BOX_SLACK:
+                        raise ValueError(
+                            f"boîte θ, {reading}, vue « {view} » : Δb à θ ({one.theta:+.5f}) "
+                            f"sort de sa boîte [{min(values):+.5f} ; {max(values):+.5f}].")
+        return self
+
+
 class PredictifReportResponse(BaseModel):
     """A full path, every year priced (`impots predictif`). Read from a file; never runs."""
 
@@ -2270,6 +2342,12 @@ class PredictifReportResponse(BaseModel):
     macro: bool = False
     persistence: Literal["eteint", "tenu"] | None = None
     side_by_side: list[PredictifReportPath] = Field(default_factory=list)
+    theta_box: PredictifThetaBox | None = None
+    """With behaviour or the loop, Δb at the last year at θ and at the box's corners
+    (D-275); absent from the reports before it."""
+    commit: str | None = None
+    dirty: bool | None = None
+    where: str | None = None
 
     @model_validator(mode="after")
     def _check_report_paths(self) -> PredictifReportResponse:
@@ -2294,6 +2372,36 @@ class PredictifReportResponse(BaseModel):
                 "côte à côte : une année sans chemin se lirait comme un écart nul.")
         return self
 
+    @model_validator(mode="after")
+    def _box_is_the_paths(self) -> PredictifReportResponse:
+        """Every year priced, the box at θ is the path the report draws, at its last year,
+        under each of its persistences. Read after the paths themselves: a box is held to
+        paths that already hold."""
+        box = self.theta_box
+        if box is None:
+            return self
+        if not self.years or box.year != self.years[-1].year:
+            raise ValueError(f"boîte θ de {box.year}, et la dernière année du rapport est "
+                             f"{self.years[-1].year if self.years else None} : elle "
+                             f"se lirait pour une autre année.")
+        drawn = ({p.persistence: (p.years[-1].delta_aged, p.years[-1].delta_frozen)
+                  for p in self.side_by_side} if self.side_by_side
+                 else {self.persistence: (self.years[-1].delta_aged,
+                                          self.years[-1].delta_frozen)})
+        if [p.persistence for p in box.paths] != list(drawn):
+            raise ValueError(f"persistances de la boîte {[p.persistence for p in box.paths]}"
+                             f", et celles du rapport {list(drawn)}.")
+        for path in box.paths:
+            aged, frozen = drawn[path.persistence]
+            for view, value in (("vieillie", aged), ("figee", frozen)):
+                at = path.every_year[view].theta
+                if value is None or not math.isclose(at, value, rel_tol=1e-12,
+                                                     abs_tol=1e-15):
+                    raise ValueError(
+                        f"boîte θ, vue « {view} », persistance {path.persistence} : Δb à θ "
+                        f"{at!r} n'est pas le chemin du rapport, {value!r}, à sa dernière "
+                        f"année.")
+        return self
 
 class PredictifReportList(BaseModel):
     model_config = ConfigDict(extra="forbid")

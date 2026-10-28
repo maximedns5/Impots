@@ -11,6 +11,7 @@ own refusals, and its first year equal to the simulator's.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from types import SimpleNamespace
 
@@ -26,9 +27,9 @@ from impots.dette import reference
 from impots.dette.path import SHIPPED, DebtError
 from impots.dette.scenarios import GrowthScenario, RateScenario
 from impots.population import aggregate, cli, runner
-from impots.predictif import annuel, chaine, comportement, retroaction
+from impots.predictif import annuel, chaine, comportement, exploration, recherche, retroaction
 from impots.predictif.exploration import Priced
-from impots.predictif.theta import Theta
+from impots.predictif.theta import MACRO_ROW, Theta, ThetaError
 from macro_cases import synthetic_macro_store
 
 START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
@@ -57,12 +58,13 @@ def _whole(year: int, view: str, *, behaviour: bool = True, impulse: bool = True
 
 
 def _build(horizon: int = 3, *, price=_whole, behavioural: bool = True, macro: bool = True,
-           persistence: str | None = None, spending=FROZEN) -> annuel.Rapport:
+           persistence: str | None = None, spending=FROZEN,
+           theta: Theta = HALF) -> annuel.Rapport:
     years = list(range(2026, 2026 + horizon))
     prices = annuel.price_years(years, price, basis_for=lambda y: "legislated")
     return annuel.build(START, prices, scenario="hausse", titre="Hausse du taux marginal",
                         source="test", reference="reconduit", computed="2026-10-21",
-                        spending=spending, growth=GROWTH, rate=HELD, theta=HALF,
+                        spending=spending, growth=GROWTH, rate=HELD, theta=theta,
                         uprating=UPRATING, uprating_note="", reform=REFORM,
                         behavioural=behavioural, macro=macro, persistence=persistence,
                         macro_store=synthetic_macro_store())
@@ -432,3 +434,180 @@ def test_the_command_carries_the_flag_from_the_simulators_pass(command) -> None:
     assert report["absent"]["bande"] == chaine.NO_HOUSEHOLD_CHANNEL
     assert report["absent"]["θ"] == chaine.THETA_NO_HOUSEHOLD_CHANNEL
     PredictifReportResponse.model_validate(report)
+
+
+# --------------------------------------------------------------------------- #
+# the θ box of the annual path, and the first year carried beside it (D-275)
+# --------------------------------------------------------------------------- #
+VIEW_KEYS = ("vieillie", "figee")
+
+
+def _diagonal(corners: list, side: int) -> float:
+    """Built apart from the code: the one corner whose every row is at `side`."""
+    [value] = [v for label, v in corners
+               if all(part.endswith(f" = {side}") for part in label.split(", "))]
+    return value
+
+
+def test_the_box_at_theta_is_the_report_s_own_path() -> None:
+    """Every year priced: Δb at θ in the box, at its last year, is the path the report
+    draws, in both views and under each persistence. Its rows are those the reform claims
+    and the multiplier's, and each reading has every corner."""
+    payload = _build(horizon=5).payload()
+    box = payload["theta_box"]
+    assert box["year"] == 2030
+    assert box["rows"] == ["eti_all", "eti_top_decile", MACRO_ROW]
+    drawn = {p["persistence"]: p["years"][-1] for p in payload["side_by_side"]}
+    assert [p["persistence"] for p in box["paths"]] == ["eteint", "tenu"]
+    for path in box["paths"]:
+        last = drawn[path["persistence"]]
+        assert path["every_year"]["vieillie"]["theta"] == pytest.approx(last["delta_aged"],
+                                                                        rel=1e-12)
+        assert path["every_year"]["figee"]["theta"] == pytest.approx(last["delta_frozen"],
+                                                                     rel=1e-12)
+        for reading in ("every_year", "first_year"):
+            for view in VIEW_KEYS:
+                values = [v for _, v in path[reading][view]["corners"]]
+                assert len(values) == 8 and min(values) < max(values)
+    PredictifReportResponse.model_validate(payload)
+
+
+def test_the_box_s_diagonal_is_the_path_at_theta_zero_and_one() -> None:
+    """Built apart: the report drawn at θ = 0, then at θ = 1, gives the box's corner where
+    every row is at 0, then at 1, in both views and under each persistence."""
+    box = _build(horizon=5).payload()["theta_box"]
+    for side in (0, 1):
+        drawn = {p["persistence"]: p["years"][-1] for p in _build(
+            horizon=5, theta=Theta(common=float(side))).payload()["side_by_side"]}
+        for path in box["paths"]:
+            last = drawn[path["persistence"]]
+            corners = path["every_year"]
+            assert _diagonal(corners["vieillie"]["corners"], side) == pytest.approx(
+                last["delta_aged"], rel=1e-12)
+            assert _diagonal(corners["figee"]["corners"], side) == pytest.approx(
+                last["delta_frozen"], rel=1e-12)
+
+
+def test_the_first_year_carried_is_the_explorer_s_own_reading() -> None:
+    """The convention the study ran on, on the same passes: the first year alone, carried,
+    gives what the explorer's evaluator gives for that year's pass — at θ in both views,
+    and at each corner of its box, aged. With a cost that grows, it is not the path."""
+    box = _build(horizon=5).payload()["theta_box"]
+    for path in box["paths"]:
+        evaluation = exploration.conditional_debt(
+            price=lambda knobs, view: _whole(2026, view), reform_of=lambda knobs: REFORM,
+            start=START, horizon=5, spending=FROZEN, growth=GROWTH, rate=HELD,
+            theta=HALF, macro_store=synthetic_macro_store(),
+            persistence=path["persistence"])({})
+        first = path["first_year"]
+        assert first["vieillie"]["theta"] == pytest.approx(evaluation.aged_eur, rel=1e-12)
+        assert first["figee"]["theta"] == pytest.approx(evaluation.frozen_eur, rel=1e-12)
+        assert [label for label, _ in first["vieillie"]["corners"]] == [
+            label for label, _ in evaluation.corners]
+        assert [v for _, v in first["vieillie"]["corners"]] == pytest.approx(
+            [v for _, v in evaluation.corners], rel=1e-12)
+        assert abs(first["vieillie"]["theta"] - path["every_year"]["vieillie"]["theta"]) > 1e-5
+
+
+def test_a_box_reads_only_what_the_report_asked_for() -> None:
+    """Mechanical, there is no box; without the loop, the multiplier is not one of its
+    rows, and one path stands where the simulator draws one."""
+    assert _build(behavioural=False, macro=False).payload()["theta_box"] is None
+    box = _build(horizon=5, spending=SHIPPED["part_pib_constante"]).payload()["theta_box"]
+    assert box["rows"] == ["eti_all", "eti_top_decile"]
+    assert [p["persistence"] for p in box["paths"]] == [None]
+    assert all(len(p["every_year"][v]["corners"]) == 4 for p in box["paths"]
+               for v in VIEW_KEYS)
+    assert _build(horizon=5, behavioural=False).payload()["theta_box"]["rows"] == [
+        MACRO_ROW]
+
+
+def test_a_debt_at_theta_outside_its_box_is_refused(monkeypatch) -> None:
+    """GUARD. The corners bound Δb only if each effect is monotone in its θ. A multiplier
+    whose feedback at θ = ½ outruns both its ends would put Δb at θ outside the box, and
+    the report is refused rather than drawn with a box that does not hold it."""
+    real = retroaction.compute
+
+    def bump(*args, theta, **kwargs):
+        out = real(*args, theta=theta, **kwargs)
+        if theta == 0.5:
+            out = dataclasses.replace(out, balance=tuple(3 * b for b in out.balance))
+        return out
+
+    monkeypatch.setattr(retroaction, "compute", bump)
+    with pytest.raises(ThetaError, match="sort de sa boîte"):
+        _build(horizon=5)
+
+
+def _box_payload() -> dict:
+    return _build(horizon=5).payload()
+
+
+@pytest.mark.parametrize("how, needle", [
+    ("persistances", "persistances de la boîte"),
+    ("coin manquant", "coins pour"),
+    ("libellés", "ne nomment pas"),
+    ("hors de la boîte", "sort de sa boîte"),
+    ("pas le chemin", "n'est pas le chemin"),
+    ("année", "dernière année"),
+    ("sans lignes", "sans ligne"),
+    ("vue manquante", "il en faut deux"),
+    ("coin doublé", "chacun une fois"),
+    ("ordre", "dans le même ordre"),
+])
+def test_a_box_a_reader_would_misread_is_refused(how: str, needle: str) -> None:
+    """The report's schema holds the box to the paths: its persistences, every corner of
+    its rows in each reading, the same corners throughout, Δb at θ inside them and, every
+    year priced, the path itself, at the last year."""
+    payload = _box_payload()
+    box = payload["theta_box"]
+    one = box["paths"][0]["every_year"]["vieillie"]
+    if how == "persistances":
+        box["paths"].pop()
+    elif how == "coin manquant":
+        box["paths"][1]["first_year"]["figee"]["corners"].pop()
+    elif how == "libellés":
+        corners = box["paths"][0]["first_year"]["figee"]["corners"]
+        corners[0] = ["eti_all = 0, eti_top_decile = 0, autre = 0", corners[0][1]]
+    elif how == "hors de la boîte":
+        box["paths"][0]["first_year"]["vieillie"]["theta"] = 1.0
+    elif how == "pas le chemin":
+        values = [v for _, v in one["corners"]]
+        one["theta"] = (min(values) + max(values)) / 2 + 1e-7
+    elif how == "année":
+        box["year"] = 2029
+    elif how == "vue manquante":
+        del box["paths"][1]["first_year"]["figee"]
+    elif how == "coin doublé":
+        one["corners"][1] = [one["corners"][0][0], one["corners"][1][1]]
+    elif how == "ordre":
+        corners = box["paths"][1]["first_year"]["vieillie"]["corners"]
+        corners[0], corners[1] = corners[1], corners[0]
+    else:
+        box["rows"] = []
+    with pytest.raises(ValidationError, match=needle):
+        PredictifReportResponse.model_validate(payload)
+
+
+def test_the_command_names_its_commit_and_where_its_passes_ran(command) -> None:
+    """The report names the code that priced it, whether `src/` differed from that commit,
+    and where the passes ran, as an exploration report does (PHASE10_SPEC §5)."""
+    command["monkeypatch"].setattr(recherche, "code_state", lambda: ("c0ffee", True))
+    code, report = command["launch"]("--horizon", "5", "--behavioural", "--macro",
+                                     "--ou", "dans le conteneur, en tâche de fond")
+    assert code == 0
+    assert (report["commit"], report["dirty"], report["where"]) == (
+        "c0ffee", True, "dans le conteneur, en tâche de fond")
+    assert report["theta_box"]["rows"][-1] == MACRO_ROW
+    PredictifReportResponse.model_validate(report)
+
+
+def test_a_firm_reform_alone_has_only_the_multiplier_in_its_box() -> None:
+    """No household channel reads a firm reform alone: its box has the multiplier's row
+    only, and with no Mésange variant to read, nothing moves at its corners."""
+    box = _build_firm(_firm_alone).payload()["theta_box"]
+    assert box["rows"] == [MACRO_ROW]
+    for path in box["paths"]:
+        for reading in ("every_year", "first_year"):
+            values = {v for _, v in path[reading]["vieillie"]["corners"]}
+            assert len(values) == 1

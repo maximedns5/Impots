@@ -32,6 +32,14 @@ drawn side by side from the same passes, neither in the lead (D-230). A year pri
 without what was asked of it is refused, never read as a year without behaviour or
 without a shock.
 
+THE θ BOX, AND THE FIRST YEAR CARRIED BESIDE IT (D-275). With behaviour or the loop, the
+report gives Δb at its last year at θ and at every corner of the box — each row the
+reform claims, and the multiplier when the loop runs, at 0 or 1 — in both views and under
+each persistence. Twice: every year priced, and the first year alone carried as a share
+of GDP, the explorer's convention, on the same pass. No pass more: the corners re-read
+the passes already made. Δb at θ outside its corners says an effect is not monotone in
+its θ, and the report is refused rather than drawn with a box that does not hold it.
+
 A FIRM REFORM ALONE, BEHAVIOUR ASKED (D-273). Its passes carry no channel inputs, for
 no household channel reads a firm knob, and say so (`Priced.behaviour_asked`, D-268):
 such a year is priced, and the band and the θ line say why they are absent, as the
@@ -49,9 +57,10 @@ from impots.dette.path import BANNER as DEBT_BANNER
 from impots.dette.path import DebtError, SpendingScenario
 from impots.dette.reference import Start
 from impots.dette.scenarios import GrowthScenario, RateScenario
-from impots.predictif import chaine, comportement, retroaction
-from impots.predictif.exploration import Priced
-from impots.predictif.theta import Theta
+from impots.predictif import chaine, comportement, exploration, retroaction
+from impots.predictif import theta as theta_module
+from impots.predictif.exploration import MONOTONE_SLACK, Priced
+from impots.predictif.theta import MACRO_ROW, Theta, ThetaError
 from impots.uprating import Uprating
 
 VIEWS = ("figee", "vieillie")
@@ -165,6 +174,14 @@ class Rapport:
     macro: bool = False
     firm_note: str | None = None
     """The firm layer's conventions, when the reform has one (D-246)."""
+    theta_box: dict[str, Any] | None = None
+    """Δb at the last year at θ and at the box's corners, every year priced and the first
+    year carried, by persistence and view (D-275); None without behaviour or the loop."""
+    commit: str | None = None
+    dirty: bool | None = None
+    where: str | None = None
+    """The code that priced the report, whether `src/` differed from it, and where the
+    passes ran (D-275); None where the caller did not say."""
 
     @property
     def aged(self) -> chaine.Trajectoire:
@@ -219,6 +236,8 @@ class Rapport:
             "uprating_note": self.uprating_note,
             "banner": lead.aged.banner, "debt_banner": DEBT_BANNER,
             "behavioural": self.behavioural, "macro": self.macro,
+            "theta_box": self.theta_box,
+            "commit": self.commit, "dirty": self.dirty, "where": self.where,
             "persistence": None if side else lead.aged.persistence,
             "side_by_side": [{
                 "persistence": p.persistence, "label": p.label,
@@ -240,7 +259,8 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
           securities: list[Any] | None = None, reform: Any = None,
           behavioural: bool = False, macro: bool = False, persistence: str | None = None,
           store: Any = None, macro_store: Any = None,
-          firm_note: str | None = None) -> Rapport:
+          firm_note: str | None = None, commit: str | None = None,
+          dirty: bool | None = None, where: str | None = None) -> Rapport:
     """The debt paths from the priced years. No carry: every year must be priced.
 
     With `behavioural` or `macro`, every year must carry its whole pass (`YearPrice.passes`)
@@ -271,7 +291,18 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
         else list(retroaction.PERSISTENCE_LABELS)
         if looped and len(prices) > retroaction.MAX_HORIZON else [None])
 
-    def costs(view: str) -> chaine.ReformCosts:
+    claimed_store = store if store is not None else comportement.load()
+
+    def receipts_at(at: Theta, cost: float, one: Priced) -> comportement.AtTheta:
+        """A corner's receipts, its box collapsed to them, as the explorer reads one."""
+        receipts, grade = comportement.receipts_at(
+            at, store=claimed_store, mechanical=-cost, reform=reform, **dict(one.inputs))
+        return comportement.AtTheta(
+            receipts=receipts, grade=grade, box=(receipts, receipts),
+            claimed=comportement.claimed_open_rows(claimed_store, reform))
+
+    def costs(view: str, at: Theta | None = None) -> chaine.ReformCosts:
+        """The view's costs, the receipts at θ with their box; at `at`, a corner's."""
         attribute = "aged_eur" if view == "vieillie" else "frozen_eur"
         by_year = {p.year: getattr(p, attribute) for p in prices}
         if not whole:
@@ -295,14 +326,20 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
                 f"entreprises, que ne lit aucun canal des ménages, et les autres portent "
                 f"les entrées des canaux. Une même réforme ne change pas de nature d'une "
                 f"année à l'autre : la bande ne couvrirait qu'une partie du chemin.")
-        at = ({y: comportement.evaluate(theta, mechanical=-by_year[y], reform=reform,
-                                        store=store, **dict(one.inputs))
-               for y, one in passes.items()} if behavioural and not unread else None)
+        if not behavioural or unread:
+            behaviour = None
+        elif at is None:
+            behaviour = {y: comportement.evaluate(theta, mechanical=-by_year[y],
+                                                  reform=reform, store=store,
+                                                  **dict(one.inputs))
+                         for y, one in passes.items()}
+        else:
+            behaviour = {y: receipts_at(at, by_year[y], one) for y, one in passes.items()}
         uncovered: dict[str, str] = {}
         for one in passes.values():
             uncovered.update(one.uncovered)
         return chaine.ReformCosts(
-            by_year=by_year, behavioural=at,
+            by_year=by_year, behavioural=behaviour,
             impulses=({y: dict(one.impulse) for y, one in passes.items()} if macro
                       else None),
             uncovered=uncovered, behaviour_asked=bool(unread))
@@ -312,9 +349,69 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
                           growth=growth, rate=rate, theta=theta, securities=securities,
                           store=store, persistence=persistence, macro_store=macro_store)
 
+    paths = tuple(Path(persistence=p, aged=path("vieillie", p), frozen=path("figee", p))
+                  for p in persistences)
+    at_corner: dict[tuple[Any, ...], chaine.ReformCosts] = {}
+
+    def debt(at: Theta, view: str, persistence: str | None, carried: bool) -> float:
+        """Δb at the last year at `at`: every year priced, or the first year carried."""
+        if carried:
+            return exploration.trajectory(
+                at, prices[0].passes[view], reform, start=start, horizon=len(prices),
+                spending=spending, growth=growth, rate=rate, store=claimed_store,
+                macro_store=macro_store, persistence=persistence,
+                securities=securities).delta[-1]
+        # A corner's costs do not depend on the persistence: priced once per view.
+        key = (view, tuple(sorted(at.rows.items())), at.common)
+        if key not in at_corner:
+            at_corner[key] = costs(view, at)
+        return chaine.run(start, horizon=len(prices), costs=at_corner[key],
+                          spending=spending, growth=growth, rate=rate, theta=at,
+                          securities=securities, store=claimed_store,
+                          persistence=persistence, macro_store=macro_store).delta[-1]
+
+    box = None
+    if whole:
+        # A firm reform alone claims no household row: its households' reform is empty.
+        keys = (list(comportement.claimed_open_rows(claimed_store, reform)) if behavioural
+                else [])
+        if macro and looped:
+            keys.append(MACRO_ROW)
+        if keys:
+            box = _theta_box(keys, paths, year=prices[-1].year, theta=theta, debt=debt)
     return Rapport(scenario=scenario, titre=titre, source=source, reference=reference,
-                   computed=computed, start=start, prices=tuple(prices),
-                   paths=tuple(Path(persistence=p, aged=path("vieillie", p),
-                                    frozen=path("figee", p)) for p in persistences),
+                   computed=computed, start=start, prices=tuple(prices), paths=paths,
                    uprating_note=uprating_note, behavioural=behavioural, macro=macro,
-                   firm_note=firm_note)
+                   firm_note=firm_note, theta_box=box, commit=commit, dirty=dirty,
+                   where=where)
+
+
+def _theta_box(keys: list[str], paths: tuple[Path, ...], *, year: int, theta: Theta,
+               debt: Callable[[Theta, str, str | None, bool], float]) -> dict[str, Any]:
+    """Δb at the last year, at θ and at every corner of the box over `keys`, every year
+    priced and the first year carried, by persistence and view. Every year priced, Δb at
+    θ is the path the report draws; a value at θ outside its corners is refused."""
+    corners = theta_module.corners(keys, theta)
+    labels = [exploration.corner_label(corner, keys) for corner in corners]
+    out = []
+    for path in paths:
+        readings: dict[str, dict[str, Any]] = {}
+        for reading, carried in (("every_year", False), ("first_year", True)):
+            readings[reading] = {}
+            for view, drawn in (("vieillie", path.aged), ("figee", path.frozen)):
+                at = (debt(theta, view, path.persistence, True) if carried
+                      else drawn.delta[-1])
+                values = [debt(corner, view, path.persistence, carried)
+                          for corner in corners]
+                if not min(values) - MONOTONE_SLACK <= at <= max(values) + MONOTONE_SLACK:
+                    raise ThetaError(
+                        f"vue « {view} », {reading}, persistance {path.persistence} : Δb "
+                        f"{year} à θ ({at:+.5f}) sort de sa boîte "
+                        f"[{min(values):+.5f} ; {max(values):+.5f}] — un effet n'est pas "
+                        f"monotone en son θ, et relire la boîte à ses coins serait faux. "
+                        f"Refusé plutôt que tracé.")
+                readings[reading][view] = {
+                    "theta": at, "corners": [[label, value] for label, value
+                                             in zip(labels, values, strict=True)]}
+        out.append({"persistence": path.persistence, **readings})
+    return {"year": year, "rows": list(keys), "paths": out}
