@@ -23,7 +23,7 @@ import pytest
 from exploration_cases import COMMIT, START
 from exploration_cases import exploration_request as _request
 from impots.api import main
-from impots.api.schemas import ExplorationRequest
+from impots.api.schemas import ExplorationRequest, ReformSpec
 from impots.predictif import recherche
 from macro_cases import synthetic_macro_store
 
@@ -1734,3 +1734,267 @@ def test_the_committed_theta_section_reads_every_report_the_page_renders(script)
             assert row["zero"] == [_at(e, "0") for e in search["evaluations"]]
             assert row["one"] == [_at(e, "1") for e in search["evaluations"]]
             assert f"| {name}" in _table(section, search["persistence_label"])
+
+
+# --------------------------------------------------------------------------- #
+# the study on the annual path (D-275, D-276)
+# --------------------------------------------------------------------------- #
+ANNUEL_COMMIT = "9" * 40
+ANNUEL_TITLE = "## Le chemin annuel : chaque année chiffrée"
+#: The aged cost of each later year grows by this much a year; the frozen one stays.
+GROW = 1.02
+
+
+def _nearest(search: dict) -> dict:
+    return next(e for e in search["evaluations"] if e["knobs"] == search["closest"]["knobs"])
+
+
+def _annual(requests: Path, reports: Path, script, *, edit=None) -> None:
+    """The four scenarios the launcher builds, and their reports, built by `annuel.build`
+    on passes stubbed so that the first year is the study's nearest bundle — its costs and
+    its impulse, as the study's stubbed pass gave them — and the aged cost then grows."""
+    from impots.dette.scenarios import GrowthScenario
+    from impots.predictif import annuel
+    from impots.predictif.exploration import Priced
+    from impots.uprating import caveat
+
+    run = script.launcher()
+    (requests / "annuel").mkdir()
+    (reports / "etude_annuel").mkdir()
+    for instrument in script.MENU:
+        key = instrument.key
+        scenario = run.scenario(key, reports)
+        (requests / "annuel" / f"{run.name(key)}.json").write_text(
+            json.dumps(scenario, ensure_ascii=False), encoding="utf-8")
+        study = json.loads((reports / f"exploration_etude_{key}.json").read_text(
+            encoding="utf-8"))
+        request = ExplorationRequest.model_validate(study["request"])
+        hyp = main._predictif_hypotheses(request)
+        nearest = _nearest(study["searches"][0])
+
+        def price(year, view, nearest=nearest):
+            cost = nearest["cost_aged_eur" if view == "vieillie" else "cost_frozen_eur"]
+            cost *= GROW ** (year - 2026) if view == "vieillie" else 1.0
+            return Priced(cost=cost, inputs=None, impulse={"impot_sur_le_revenu": cost})
+
+        years = list(range(2026, 2026 + request.horizon))
+        uprating = annuel.uprating_for(
+            GrowthScenario(request.growth.name, request.growth.real, request.growth.prices),
+            wage=request.uprating.wage, source=request.uprating.source, base_year=2024)
+        rapport = annuel.build(
+            START, annuel.price_years(years, price, basis_for=lambda y: "legislated"),
+            scenario=run.name(key), titre=instrument.label, source="test",
+            reference="reconduit", computed="2026-10-28", spending=hyp.spending,
+            growth=hyp.growth, rate=hyp.rate, theta=hyp.theta, uprating=uprating,
+            uprating_note=caveat(years[-1], uprating),
+            reform=ReformSpec.model_validate(scenario["reform"]),
+            behavioural=request.behavioural, macro=request.macro,
+            macro_store=synthetic_macro_store(), commit=ANNUEL_COMMIT, dirty=False,
+            where=WHERE)
+        payload = rapport.payload()
+        if edit is not None:
+            edit(key, payload)
+        (reports / "etude_annuel" / f"predictif_{run.name(key)}.json").write_text(
+            json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+
+def test_the_annual_path_is_rendered_after_the_theta_section(script, tmp_path) -> None:
+    """D-276: each instrument's nearest bundle, Δb at the horizon in both views under each
+    persistence — the study's, the first year carried on the annual pass, every year
+    priced, and their ratio — then each one's box; the commit and where they ran; the
+    control, which the stubbed passes give back exactly; and the page before it."""
+    requests, reports = _study(tmp_path, script)
+    _annual(requests, reports, script)
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    page = script.render(etudes, complements, courbe, phase11)
+    assert page.index(THETA_TITLE) < page.index(ANNUEL_TITLE) < page.index(NOT_SAID)
+    section = page.partition(ANNUEL_TITLE)[2].partition(NOT_SAID)[0]
+    assert ANNUEL_COMMIT in section and WHERE in section and "D-275" in section
+    assert "à 0 € près" in section and "à 0,000000 point près" in section
+    for entry in etudes:
+        instrument, report = entry["instrument"], entry["annuel"]["report"]
+        drawn = {p["persistence"]: p["years"][-1] for p in report["side_by_side"]}
+        for search in entry["report"]["searches"]:
+            nearest = _nearest(search)
+            every = drawn[search["persistence"]]["delta_aged"]
+            row = (f"| {instrument.label} | {instrument.show(nearest['knobs'][instrument.knob])}"
+                   f" | {search['persistence_label'][0].lower()}"
+                   f"{search['persistence_label'][1:]} | {script._pt(nearest['delta_aged'])} "
+                   f"| {script._pt(nearest['delta_aged'])} | {script._pt(every)} "
+                   f"| {script._fr(every / nearest['delta_aged'], 3, sign=False)} |")
+            assert row in section, row
+        horizon = len(report["years"]) - 1
+        aged = GROW ** horizon / (1.01 * 1.02) ** horizon
+        frozen = 1 / (1.01 * 1.02) ** horizon
+        assert (f"{script._fr(aged, 3, sign=False)} fois celle de 2026 en vue vieillie, et "
+                f"{script._fr(frozen, 3, sign=False)} fois en vue figée") in section
+        assert f"### {instrument.label}, chaque année chiffrée" in section
+    # The page before the section is the page without it.
+    (tmp_path / "avant").mkdir()
+    before = script.render(*script.study(*_study(tmp_path / "avant", script)))
+    head, _, tail = page.partition(ANNUEL_TITLE)
+    assert before == head + NOT_SAID + tail.partition(NOT_SAID)[2]
+
+
+@pytest.mark.parametrize("what, needle", [
+    ("coût vieilli", "à 1234 € près"),
+    ("coût figé", "à 1234 € près"),
+    ("θ vieilli", "à 0,050000 point près"),
+    ("θ figé", "à 0,050000 point près"),
+    ("coin", "à 0,050000 point près"),
+])
+def test_a_carry_that_does_not_give_the_study_back_is_said_with_its_gap(
+        script, tmp_path, what: str, needle: str) -> None:
+    """The control is said, not refused: a first year whose cost, Δb at θ in either view,
+    or one corner is not the study's shows its gap, in euros or in points."""
+    requests, reports = _study(tmp_path, script)
+
+    def move(key, payload):
+        if key != "decote":
+            return
+        carried = payload["theta_box"]["paths"][1]["first_year"]
+        if what == "coût vieilli":
+            payload["years"][0]["mechanical_aged_eur"] += 1234.0
+        elif what == "coût figé":
+            payload["years"][0]["mechanical_frozen_eur"] += 1234.0
+        elif what == "θ vieilli":
+            values = [v for _, v in carried["vieillie"]["corners"]]
+            up = carried["vieillie"]["theta"] + 5e-4 <= max(values)
+            carried["vieillie"]["theta"] += 5e-4 if up else -5e-4
+        elif what == "θ figé":
+            carried["figee"]["corners"] = [[label, v + 5e-4] for label, v
+                                           in carried["figee"]["corners"]]
+            carried["figee"]["theta"] += 5e-4
+        else:
+            label, value = carried["vieillie"]["corners"][0]
+            carried["vieillie"]["corners"][0] = [label, value - 5e-4]
+            low = min(v for _, v in carried["vieillie"]["corners"])
+            carried["vieillie"]["theta"] = max(carried["vieillie"]["theta"], low)
+
+    _annual(requests, reports, script, edit=move)
+    etudes = script.study(requests, reports)[0]
+    section = script.render(etudes).partition(ANNUEL_TITLE)[2]
+    assert needle in section
+
+
+def test_each_instrument_s_box_is_read_off_its_report(script, tmp_path) -> None:
+    """Built apart: under each persistence, the row of every year priced gives Δb at
+    θ = 0, at θ and at θ = 1, the box's ends and the corners where the debt falls, from the
+    report's own box; and the sentence says whether the debt falls at θ."""
+    requests, reports = _study(tmp_path, script)
+    _annual(requests, reports, script)
+    etudes = script.study(requests, reports)[0]
+    section = script.render(etudes).partition(ANNUEL_TITLE)[2]
+    target = etudes[0]["report"]["hypotheses"]["target_share"]
+    for entry in etudes:
+        instrument, report = entry["instrument"], entry["annuel"]["report"]
+        part = section.partition(f"### {instrument.label}, chaque année chiffrée")[2]
+        part = part.partition("### ")[0]
+        for search, path in zip(entry["report"]["searches"], report["theta_box"]["paths"],
+                                strict=True):
+            every = path["every_year"]["vieillie"]
+            values = [v for _, v in every["corners"]]
+            falls = sum(v <= target for v in values)
+            row = (f"| Chaque année chiffrée | {script._pt(_at(every, '0'))} "
+                   f"| {script._pt(every['theta'])} | {script._pt(_at(every, '1'))} "
+                   f"| [{script._pt(min(values))} ; {script._pt(max(values))}] |")
+            block = part.partition(f"**{search['persistence_label']}.**")[2]
+            assert row in block, row
+            said = "baisse en" if every["theta"] <= target else "ne baisse pas en"
+            assert said in block.partition("\n")[0]
+            assert (f"elle baisse à {falls if falls else 'aucun'} des {len(values)} coins"
+                    in block.partition("\n")[0])
+
+
+ANNUEL_REFUSALS = [
+    ("scenario retouché", "n'est pas le paquet de l'étude que le lanceur construit"),
+    ("scenario de plus", "un paquet par instrument de l'étude, ni plus ni moins"),
+    ("rapport manquant", "un rapport par scénario du chemin annuel"),
+    ("autre scénario", "chiffre « autre »"),
+    ("src modifié", "ne nomme pas un commit dont il a chiffré le code"),
+    ("sans lieu", "ne dit pas où ses passes ont tourné"),
+    ("deux commits", "sur un seul commit"),
+    ("cadre", "n'a pas tourné dans le cadre de l'étude : ['spending_name']"),
+    ("θ", "n'a pas tourné dans le cadre de l'étude : ['theta']"),
+    ("vieillissement", "n'a pas tourné dans le cadre de l'étude : ['uprating_note']"),
+    ("référence", "n'a pas tourné dans le cadre de l'étude : ['reference']"),
+    ("croissance", "n'a pas tourné dans le cadre de l'étude : ['growth_name']"),
+    ("taux", "n'a pas tourné dans le cadre de l'étude : ['rate_name']"),
+    ("comportement", "n'a pas tourné dans le cadre de l'étude : ['behavioural']"),
+    ("boucle", "n'a pas tourné dans le cadre de l'étude : ['macro']"),
+    ("années", "n'a pas tourné dans le cadre de l'étude : ['years']"),
+    ("persistances", "n'a pas tourné dans le cadre de l'étude : ['persistences']"),
+    ("sans boîte", "sa boîte θ ne porte pas les lignes de l'étude"),
+    ("autres lignes", "sa boîte θ ne porte pas les lignes de l'étude"),
+]
+
+
+@pytest.mark.parametrize("how, needle", ANNUEL_REFUSALS)
+def test_an_annual_path_that_is_not_the_study_s_is_refused(script, tmp_path, how: str,
+                                                           needle: str) -> None:
+    """GUARD. A scenario touched or added, a report missing, of another scenario, of a
+    modified `src/`, that does not say where it ran, of another commit, in another frame
+    or without the study's box: each would read as the study priced every year."""
+    requests, reports = _study(tmp_path, script)
+
+    def edit(key, payload):
+        if key != "ir":
+            return
+        if how == "autre scénario":
+            payload["scenario"] = "autre"
+        elif how == "src modifié":
+            payload["dirty"] = True
+        elif how == "sans lieu":
+            payload["where"] = None
+        elif how == "deux commits":
+            payload["commit"] = "8" * 40
+        elif how == "cadre":
+            payload["spending_name"] = "Une autre dépense"
+        elif how == "θ":
+            payload["theta"] = {k: 0.4 for k in payload["theta"]}
+        elif how == "vieillissement":
+            payload["uprating_note"] += " (retouchée)"
+        elif how == "sans boîte":
+            payload["theta_box"] = None
+        elif how == "référence":
+            payload["reference"] = "indexe"
+        elif how == "croissance":
+            payload["growth_name"] = "Une autre croissance"
+        elif how == "taux":
+            payload["rate_name"] = "Un autre taux"
+        elif how == "comportement":
+            payload["behavioural"] = not payload["behavioural"]
+        elif how == "boucle":
+            payload["macro"] = not payload["macro"]
+        elif how == "années":
+            for row in payload["years"]:
+                row["year"] += 1
+            for path in payload["side_by_side"]:
+                for row in path["years"]:
+                    row["year"] += 1
+            payload["theta_box"]["year"] += 1
+        elif how == "persistances":
+            payload["side_by_side"].reverse()
+            payload["theta_box"]["paths"].reverse()
+        elif how == "autres lignes":
+            box = payload["theta_box"]
+            box["rows"] = ["eti_all"]
+            for path in box["paths"]:
+                for reading in ("every_year", "first_year"):
+                    for one in path[reading].values():
+                        one["corners"] = [[label.replace("multiplicateur_macro", "eti_all"), v]
+                                          for label, v in one["corners"]]
+
+    _annual(requests, reports, script, edit=edit)
+    run = script.launcher()
+    if how == "scenario retouché":
+        path = requests / "annuel" / f"{run.name('csg')}.json"
+        scenario = json.loads(path.read_text(encoding="utf-8"))
+        scenario["reform"] = {"csg_activite_deductible": 0.061}
+        path.write_text(json.dumps(scenario), encoding="utf-8")
+    elif how == "scenario de plus":
+        (requests / "annuel" / "etude_annuel_pfu.json").write_text("{}", encoding="utf-8")
+    elif how == "rapport manquant":
+        (reports / "etude_annuel" / f"predictif_{run.name('ir')}.json").unlink()
+    with pytest.raises(script.EtudeError, match=re.escape(needle)):
+        script.study(requests, reports)
