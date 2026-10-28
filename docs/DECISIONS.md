@@ -22623,3 +22623,45 @@ couverture en euros) suivent ; le but 4, la sécurité, précède tout déploiem
 **Ce qui ne change pas.** Les règles de préenregistrement de
 `docs/PLF2027_ENREGISTREMENT.md`, les tolérances déclarées, et la décision de déployer,
 qui reste celle du propriétaire.
+
+## D-287 — Les rapports de C1 sur quatre échantillons : le résultat
+
+**Le fait.** Les quatre rejeux préenregistrés dans D-285 ont tourné sur `a879e87`, l'un
+après l'autre, depuis une copie de travail figée, en 3 h 17 : les explorations de la décote
+et du barème de l'étude, puis leurs chemins annuels. Ils sont sous `reports/c1_quatre/`, et
+`docs/PREDICTIF_ETUDE.md` les rend dans « C1 sur quatre échantillons ». Les rapports de
+l'étude ne bougent pas.
+
+**Le pronostic, point par point.**
+1. *Tenu.* Les coûts des seize paquets, dans les deux vues, et ceux des deux chemins,
+   chaque année, sont ceux de l'étude et de D-277 à l'euro : 0 € d'écart.
+2. *Tenu sous la persistance éteinte, manqué sous la tenue.* Sous l'éteinte, chaque écart
+   à θ½ est celui que prévoient les réplications de D-283, à 2 × 10⁻¹⁴ point près, dans
+   les deux vues. Sous la tenue, il s'en écarte de 0,000214 point au plus, quand le
+   pronostic disait 0,00001 et « le même sous les deux persistances ».
+3. *Tenu.* Aucun verdict ne change.
+4. *Tenu.* Aux coins, en vue vieillie, partout où l'écart à θ dépasse 0,005 point, il
+   garde son signe et vaut de 0,47 à 1,64 fois sa taille.
+5. *Tenu.* Les chemins annuels bougent de 0,013 point au plus : +0,005 pour la décote,
+   −0,012 et −0,013 pour le barème, sous les deux persistances.
+
+**Pourquoi le point 2 manque sous la persistance tenue.** D-283 convertit la recette de C1
+en points par κ, le Δb 2035 d'un euro de la première année reporté, que
+`scripts/bruit_c1.py` calcule sur un coût sans impulsion : le PIB de 2035 y est celui du
+chemin de référence. Sous la persistance éteinte, l'effet de la mesure sur le PIB s'est
+éteint en 2035, et la conversion est exacte. Sous la tenue, il est tenu à son niveau de la
+troisième année : le même euro de recette se rapporte à un PIB un peu différent. Les
+écarts mesurés sont ceux de D-283 multipliés par 0,9971 à 0,9997, tous vers zéro, et
+d'autant plus que le paquet est gros : 0,9973 pour le barème à 0,93, 0,9997 à 0,99. Ce
+n'est pas du bruit de C1 ; c'est le pronostic qui a lu D-283 dans un cadre où il ne vaut
+qu'à l'arrondi. La page dit l'écart le plus grand, 0,000214 point, tel qu'il est.
+
+**Ce que le rejeu change.** Rien de ce que l'étude conclut. Le bruit de C1 que D-283
+mesurait est divisé par deux, et les écarts au rapport d'un seul échantillon sont ceux
+qu'il annonçait : jusqu'à −0,078 point pour le barème à 0,93, −0,048 pour la décote à 20 %
+en vue vieillie. Les tables de l'étude gardent leurs chiffres et renvoient à la section,
+pour les seuls instruments que C1 lit.
+
+**Les tests.** La section et le lanceur sont ceux de D-285, avec leurs vingt-neuf tests ;
+la page se régénère à l'identique depuis les rapports commités, ce que tient le test de
+dérive de `tests/test_predictif_etude.py`.
