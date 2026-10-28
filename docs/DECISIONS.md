@@ -22216,3 +22216,107 @@ Les tests de la commande et de l'API prédictives, et ceux de la charte : 82 ré
 - La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
 - Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
 - Le `make full` du propriétaire.
+
+## D-282 — Le bruit de C1 aux seuils : préenregistré avant ses passes
+
+**Le fait.** D-279 l'a vu. C1 somme les termes des 3 000 ménages de l'échantillon des taux
+marginaux, et quelques-uns pèsent autant que la moitié de la somme. Le taux marginal est
+une différence finie, sur un pas de 100 € de salaire. Quand le pas franchit un seuil, le
+taux dépasse 95 %, et le taux net tombe à son plancher de 0,05 : le terme du ménage vaut
+alors plus de deux fois son assiette, à l'élasticité près. D-279 estimait ce bruit à
+quelques centièmes de point de Δb 2035 par paquet, sans le chiffrer. Ce commit préenregistre
+sa mesure et son pronostic, avant toute passe. Le résultat sera D-283.
+
+**Ce qui est mesuré.**
+- Les paquets de l'étude dont la boîte porte une ligne de C1 : la décote à 10, 20, 30 et
+  40 %, et le barème de l'IR à 0,93, 0,95, 0,97 et 0,99. `scripts/bruit_c1.py` les lit sur
+  les rapports commités de l'étude, avec le droit que le rapport de l'IR a lu.
+- En 2026, dans les deux cadres de l'étude : la population vieillie, et celle du millésime.
+- Sur huit échantillons de 3 000 ménages, au pas de 100 € : celui de l'étude, puis sept
+  autres, tirés de la même façon, avec les graines 1 à 7.
+- Sur l'échantillon de l'étude, aux pas de 50, 200 et 500 €.
+- Vingt-deux réplications, une par cadre, échantillon et pas, de huit paquets chacune. Trois
+  à la fois, en tâche de fond, depuis une copie de travail figée sur ce commit, vers
+  `reports/bruit_c1/`. Environ une heure et quart.
+
+**Comment C1 est chiffré.** Comme dans la chaîne, et C1 seulement.
+- Ses entrées sont celles que lit l'explorateur : `eti_inputs`, sorti pour cela de
+  `_behavioural_inputs` sans rien y changer.
+- Sa recette est celle du canal à θ = ½ : une élasticité de 0,02 sous le décile du haut,
+  de 0,31 dans ce décile.
+- Chaque réplication la décompose ménage par ménage, et se refuse si la décomposition ne
+  redonne pas la recette du canal.
+- κ la convertit en points de Δb 2035. Dans le cadre de l'étude, la chaîne donne 0,309
+  point par milliard de la première année, reporté. Une recette de C1 abaisse la dette
+  d'autant, sous les deux persistances : la boucle lit le coût mécanique, non C1.
+- Pour chaque paquet, la réplication donne :
+  - C1 en points ;
+  - les ménages au plancher du taux net dans une seule des deux lois, et ce qu'ils
+    portent ;
+  - les cinq plus grands termes ;
+  - l'écart-type de la somme, lu sur l'échantillon lui-même.
+
+**Ce qu'on sait déjà.** Le pronostic n'est pas aveugle, et il le dit.
+- D-279 : sous une baisse du barème de 1 à 5 %, quelques ménages passent de 53 % à 104 ou
+  110 %. Chacun pèse de 0,3 à 0,7 Md€ dans la somme de C1 avant l'élasticité. Au décile
+  du haut, cela fait de 0,03 à 0,07 point de Δb 2035.
+- D-277 : pour la décote à 40 %, l'élasticité du décile du haut, de 0 à 1, ne déplaçait
+  la dette que de 0,006 point. La décote touche peu les taux de ce décile, et son C1 propre
+  est petit.
+- D-279 : la vue figée, rechiffrée sur les taux de son propre cadre, s'écarte de l'étude de
+  −0,096 à +0,032 point pour la décote, et de −0,015 à +0,064 pour le barème.
+- Un seuil ne fait sauter le taux que des ménages dont le pas le franchit. Leur nombre
+  dépend du pas, et guère de la taille du paquet, une fois que la réforme déplace le seuil
+  de plus que le pas.
+
+**Le pronostic**, écrit avant les passes. En points de Δb 2035, à θ = ½.
+1. Contrôle. Sur l'échantillon de l'étude, au pas de 100 €, les taux de chaque paquet sont
+   ceux des fichiers de l'explorateur, au bit, partout où le fichier de ce cadre est sur le
+   disque. Les taux de référence sont les mêmes pour les huit paquets d'une réplication.
+2. Pour la décote, les ménages au plancher dans une seule loi portent plus de la moitié de
+   C1, à chaque paquet et dans les deux cadres. Pour le barème, moins de la moitié à 0,93
+   et à 0,95.
+3. D'un échantillon à l'autre, l'écart-type de C1 va de 0,01 à 0,1 point, à chaque paquet
+   et dans les deux cadres. Il ne suit pas la taille du paquet : pour chaque instrument et
+   chaque cadre, celui du plus grand paquet ne dépasse pas deux fois celui du plus petit.
+4. Un échantillon dit son propre bruit. L'écart-type de la somme, lu sur l'échantillon de
+   l'étude, est dans un facteur deux de l'écart-type entre échantillons, pour douze couples
+   de cadre et de paquet sur seize au moins.
+5. C1 dépend du pas. Entre 50 et 500 €, il bouge de plus de deux écarts-types entre
+   échantillons, à la moitié des paquets au moins : c'est un biais de la mesure, non
+   seulement du bruit.
+6. Les écarts de D-279 sont de l'ordre de ce bruit : six des huit au moins sont sous trois
+   écarts-types entre échantillons de la vue figée.
+7. Aucun verdict de l'étude ne tient à ce bruit. À θ = ½, le Δb de chaque paquet de l'IR
+   dépasse au moins trois fois l'écart-type entre échantillons de son cadre.
+
+**Les biais déclarés.**
+- Huit échantillons donnent l'écart-type à un quart près environ.
+- Les échantillons sont tirés de la même population. Le bruit mesuré est celui du
+  sous-échantillon des taux marginaux, non celui de la population elle-même.
+- Les pas ne sont mesurés que sur l'échantillon de l'étude : leur effet s'y mêle aux seuils
+  de cet échantillon.
+- C1 seul. C7 lit aussi les taux marginaux, mais pour la CSG l'écart de cadre restait sous
+  0,001 point (D-279).
+
+**Les tests.** Dans `tests/test_bruit_c1.py`, vingt-sept cas, sans données :
+- le menu, lu à part sur les rapports, et un instrument sans ligne de C1, non mesuré ;
+- les paquets avec le droit lu, et les vingt-deux réplications ;
+- C1 égal à la recette du canal, et ses termes qui la redonnent ;
+- l'exemple chiffré du canal, et le terme d'un ménage au plancher ;
+- l'écart-type, sans les ménages de l'échantillon certain ;
+- κ, linéaire ;
+- une réplication entière sur une population de six ménages ;
+- le lanceur, trois à la fois, et ses refus ;
+- le résumé, et ses deux refus ;
+- sept refus du script.
+
+Les dix-sept premiers ont échoué avant le script, les autres sous les mutations.
+Vingt-sept mutations écrites à la main : vingt-six tuées du premier coup. La vingt-septième relançait des réplications après un échec quand
+d'autres tournaient encore : un cas nouveau, où l'une échoue pendant qu'une autre tourne,
+la tue. Les tests autour des entrées de C1, de l'API prédictive, des taux marginaux, de
+l'explorateur et de la chaîne : 155 réussis, 2 sautés comme avant. `ruff` passe. Le
+`make full` n'a pas tourné.
+
+**Ce qui suit.** Les vingt-deux réplications, sur ce commit, en tâche de fond. Puis D-283 :
+le résultat contre ce pronostic.
