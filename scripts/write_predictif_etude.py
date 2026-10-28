@@ -1605,6 +1605,8 @@ ANNUEL = "annuel"
 ANNUEL_REPORTS = "etude_annuel"
 #: The population year the command ages from, its default, which the launcher keeps.
 ANNUEL_BASE_YEAR = 2024
+#: The commit of the preregistration (D-275), whose passes found the defect of D-276.
+ANNUEL_PREREGISTERED = "46c0a5ebef92bf6c49d1db122c686bf21e5f214c"
 _LAUNCHER: list[Any] = []
 
 
@@ -1822,7 +1824,12 @@ def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) ->
            f"dans D-275 avant ses passes : les scénarios sont sous `etude/{ANNUEL}/`, "
            f"construits depuis les rapports de l'étude par `scripts/etude_annuelle.py`, et les "
            f"rapports sous `reports/{ANNUEL_REPORTS}/`. Ils ont tourné sur le commit "
-           f"`{head['commit']}`, le {head['computed']}, ici : {head['where']}.",
+           f"`{head['commit']}`, le {head['computed']}, ici : {head['where']}."
+           + ("" if head["commit"] == ANNUEL_PREREGISTERED else
+              f" Ce n'est pas le commit du préenregistrement, `{ANNUEL_PREREGISTERED[:7]}` : "
+              f"ses passes ont trouvé un défaut, les deux vues partageant leurs taux "
+              f"marginaux, et le chemin a tourné de nouveau sur sa correction, sans rien "
+              f"changer d'autre (D-276)."),
            "",
            f"Chaque rapport donne aussi, sur la passe de {first}, la première année seule "
            f"reportée comme le fait l'explorateur. L'écart entre ce report et chaque année "
@@ -1888,8 +1895,9 @@ def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) ->
             falls = every["theta"] <= target
             out += ["", f"**{search['persistence_label']}.** Chaque année chiffrée, la dette "
                         f"{'baisse' if falls else 'ne baisse pas'} en {last} à θ = {theta}, "
-                        f"vue vieillie ; elle baisse à "
-                        f"{n if n else 'aucun'} des {len(every['corners'])} coins de la "
+                        f"vue vieillie ; elle "
+                        f"{f'baisse à {n}' if n else 'ne baisse à aucun'} des "
+                        f"{len(every['corners'])} coins de la "
                         f"boîte θ.", "",
                     f"| Lecture, vue vieillie | Δb {last} à θ = 0 | à θ = {theta} | à θ = 1 "
                     f"| Boîte θ | Coins où la dette baisse |",

@@ -1,0 +1,684 @@
+{
+  "scenario": "etude_annuel_decote",
+  "titre": "etude_annuel_decote",
+  "source": "l'étude sur le chemin annuel (D-275) : le paquet de « decote » le plus proche de la cible dans l'étude (decote_taux = 0.4), rapport commité d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56",
+  "reference": "reconduit",
+  "computed": "2026-10-28",
+  "spending_name": "Dépenses gelées en volume",
+  "growth_name": "Croissance réelle 1 %, prix 2 %",
+  "rate_name": "Taux implicite tenu à son niveau de 2025",
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "years": [
+    {
+      "year": 2026,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 931247717.8110352,
+      "mechanical_aged_eur": 942255231.8120117,
+      "reference": 1.168580725548546,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2027,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 931278727.4333496,
+      "mechanical_aged_eur": 941930120.9440918,
+      "reference": 1.1746928799602263,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2028,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 931263216.5656738,
+      "mechanical_aged_eur": 933077326.6020508,
+      "reference": 1.1753885794969483,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 931278727.4331055,
+      "mechanical_aged_eur": 920566320.6364746,
+      "reference": 1.1707805732317031,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2030,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 931278727.4331055,
+      "mechanical_aged_eur": 909142875.3085938,
+      "reference": 1.1609798413129486,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2031,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 931278727.4333496,
+      "mechanical_aged_eur": 895404822.4733887,
+      "reference": 1.146095619682319,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2032,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 931263216.5654297,
+      "mechanical_aged_eur": 874442356.4909668,
+      "reference": 1.1262354244680892,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2033,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 931278727.4333496,
+      "mechanical_aged_eur": 854879222.6738281,
+      "reference": 1.1015050760584795,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2034,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 931278727.4331055,
+      "mechanical_aged_eur": 838878565.5446777,
+      "reference": 1.0720087228588424,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2035,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 931278727.4333496,
+      "mechanical_aged_eur": 819242180.9414062,
+      "reference": 1.0378488647367168,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    }
+  ],
+  "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+    "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+    "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+    "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+    "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+    "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+    "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+    "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas."
+  ],
+  "absent": {},
+  "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
+    "dividend_wage_shift_firm_owners": 0.5,
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "is_croissance_pib": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5,
+    "multiplicateur_macro": 0.5
+  },
+  "theta_applied": true,
+  "closed": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
+  },
+  "uprating_note": "Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "behavioural": true,
+  "macro": true,
+  "theta_box": {
+    "year": 2035,
+    "rows": [
+      "eti_all",
+      "eti_top_decile",
+      "multiplicateur_macro"
+    ],
+    "paths": [
+      {
+        "persistence": "eteint",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.0022339109902300702,
+            "corners": [
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0024126823106358497
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+                0.002019132459599504
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.0023831146381882995
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+                0.001989563461014754
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0024441977497176026
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+                0.00205064931217791
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.0024146300772702745
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+                0.002021080313592938
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0022523160799095,
+            "corners": [
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0024874979211035875
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+                0.0020247709299967553
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.0023962306325759908
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+                0.0019335010411012377
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0025253985230124787
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+                0.002062672611761629
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.00243413123448466
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+                0.001971402722865667
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.002610734700283057,
+            "corners": [
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.002900319985050581
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+                0.0022624038267291535
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.0029639620099430886
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+                0.002326045851621439
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0029005992823500915
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+                0.0022626831240284417
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.0029642413072423768
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+                0.002326325148920949
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0025076521782561034,
+            "corners": [
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.002832743443370367
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+                0.0022022794854990035
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.002713844540229049
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+                0.0020833805823579077
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.002877237941484978
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+                0.0022467739836138367
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.00275833903834366
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+                0.002127875080472519
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "tenu",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.0009466376777869101,
+            "corners": [
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.002090811444542595
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+                -0.00023321501087303353
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.0020612453161890087
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+                -0.0002627732032174368
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.002122325237813527
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+                -0.0002017096763948789
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.0020927591094599407
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+                -0.00023126786873906013
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0009349394583175741,
+            "corners": [
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0021580904273981183
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+                -0.00028019789703526143
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.002066828214749128
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+                -0.0003714322646082291
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0021959889214449024
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+                -0.00024231096622395754
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.002104726708795912
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+                -0.0003335453337969252
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.0011300103989799748,
+            "corners": [
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0025300447242708746
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+                -0.0003281770171692511
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.002593682468018388
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+                -0.00026456494820048526
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0025303240027823026
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+                -0.00032789785133324756
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.002593961746529816
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+                -0.00026428578236448175
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0010442486549697705,
+            "corners": [
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.0024667979804064988
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
+                -0.00035802404229134943
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.0023479069820633303
+              ],
+              [
+                "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
+                -0.0004768676339090838
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
+                0.002511289520377602
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
+                -0.0003135502429250092
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
+                0.0023923985220344335
+              ],
+              [
+                "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
+                -0.00043239383454296565
+              ]
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "commit": "084d2c172f843514f190a26a07b17d666198ae5f",
+  "dirty": false,
+  "where": "dans le conteneur de la session, en tâche de fond, depuis une copie de travail figée sur 084d2c1",
+  "persistence": null,
+  "side_by_side": [
+    {
+      "persistence": "eteint",
+      "label": "Effet macro éteint après trois ans",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1686878735519928,
+          "delta_aged": 0.00010714800344668873,
+          "reform_frozen": 1.168678996694862,
+          "delta_frozen": 9.827114631599798e-05
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.174814938431383,
+          "delta_aged": 0.00012205847115676072,
+          "reform_frozen": 1.174786322256613,
+          "delta_frozen": 9.344229638674761e-05
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1756172757507464,
+          "delta_aged": 0.00022869625379806635,
+          "reform_frozen": 1.1755834995720245,
+          "delta_frozen": 0.00019492007507615483
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.171594770596027,
+          "delta_aged": 0.0008141973643238654,
+          "reform_frozen": 1.171578388638948,
+          "delta_frozen": 0.000797815407244773
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1620882206580043,
+          "delta_aged": 0.001108379345055699,
+          "reform_frozen": 1.1620468796807748,
+          "delta_frozen": 0.0010670383678261786
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1474532605456693,
+          "delta_aged": 0.001357640863350218,
+          "reform_frozen": 1.1474206576948534,
+          "delta_frozen": 0.001325038012534252
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1278271038888537,
+          "delta_aged": 0.0015916794207644358,
+          "reform_frozen": 1.1278077117090541,
+          "delta_frozen": 0.0015722872409649202
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1033279413152284,
+          "delta_aged": 0.0018228652567489068,
+          "reform_frozen": 1.103314059117499,
+          "delta_frozen": 0.0018089830590195533
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0740477057018138,
+          "delta_aged": 0.0020389828429714374,
+          "reform_frozen": 1.0740442706453583,
+          "delta_frozen": 0.0020355477865159344
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0400827757269469,
+          "delta_aged": 0.0022339109902300702,
+          "reform_frozen": 1.0401011808166263,
+          "delta_frozen": 0.0022523160799095
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro éteint après trois ans."
+      ],
+      "gdp_gap_aged": [
+        0.00012537366664445074,
+        0.0002500879456915894,
+        0.0002568932743472887,
+        -2.2396769776058177e-05,
+        -2.4694529889810715e-05,
+        -2.4731728422398237e-05,
+        -2.4850304353721646e-05,
+        -2.5921316649117162e-05,
+        -2.5908118248859946e-05,
+        -2.411649572964082e-05
+      ]
+    },
+    {
+      "persistence": "tenu",
+      "label": "Effet macro tenu au niveau de la troisième année",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1686878735519928,
+          "delta_aged": 0.00010714800344668873,
+          "reform_frozen": 1.168678996694862,
+          "delta_frozen": 9.827114631599798e-05
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.174814938431383,
+          "delta_aged": 0.00012205847115676072,
+          "reform_frozen": 1.174786322256613,
+          "delta_frozen": 9.344229638674761e-05
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1756172757507464,
+          "delta_aged": 0.00022869625379806635,
+          "reform_frozen": 1.1755834995720245,
+          "delta_frozen": 0.00019492007507615483
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1711022642841202,
+          "delta_aged": 0.0003216910524170835,
+          "reform_frozen": 1.1710916406302023,
+          "delta_frozen": 0.0003110673984991763
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1614374351190768,
+          "delta_aged": 0.0004575938061281981,
+          "reform_frozen": 1.1614035320436864,
+          "delta_frozen": 0.0004236907307377802
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1466561912999245,
+          "delta_aged": 0.0005605716176053654,
+          "reform_frozen": 1.1466284339551487,
+          "delta_frozen": 0.0005328142728295848
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.126894110793925,
+          "delta_aged": 0.0006586863258357667,
+          "reform_frozen": 1.1268739593304997,
+          "delta_frozen": 0.0006385348624105003
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.10226721057742,
+          "delta_aged": 0.0007621345189405826,
+          "reform_frozen": 1.102245813263306,
+          "delta_frozen": 0.0007407372048264804
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0728682869275445,
+          "delta_aged": 0.0008595640687021344,
+          "reform_frozen": 1.072848247692606,
+          "delta_frozen": 0.0008395248337635941
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0387955024145037,
+          "delta_aged": 0.0009466376777869101,
+          "reform_frozen": 1.0387838041950344,
+          "delta_frozen": 0.0009349394583175741
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année."
+      ],
+      "gdp_gap_aged": [
+        0.00012537366664445074,
+        0.0002500879456915894,
+        0.0002568932743472887,
+        0.00024669792936325073,
+        0.0002364216129640646,
+        0.000226347701992287,
+        0.00021560093936042233,
+        0.00020458484317454657,
+        0.0001944597559988635,
+        0.00018478353222632169
+      ]
+    }
+  ]
+}

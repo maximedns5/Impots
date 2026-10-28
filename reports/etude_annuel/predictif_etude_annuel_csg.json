@@ -1,0 +1,1456 @@
+{
+  "scenario": "etude_annuel_csg",
+  "titre": "etude_annuel_csg",
+  "source": "l'étude sur le chemin annuel (D-275) : le paquet de « csg » le plus proche de la cible dans l'étude (csg_activite_deductible = 0.067), rapport commité d77feb9d0d5f3d4a2ccbd013cf788dd443a30f56",
+  "reference": "reconduit",
+  "computed": "2026-10-28",
+  "spending_name": "Dépenses gelées en volume",
+  "growth_name": "Croissance réelle 1 %, prix 2 %",
+  "rate_name": "Taux implicite tenu à son niveau de 2025",
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "years": [
+    {
+      "year": 2026,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 833289018.3952637,
+      "mechanical_aged_eur": 879644550.7038574,
+      "reference": 1.168580725548546,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2027,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 832945079.2121582,
+      "mechanical_aged_eur": 897039519.1320801,
+      "reference": 1.1746928799602263,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2028,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 832980217.2016602,
+      "mechanical_aged_eur": 928294689.7561035,
+      "reference": 1.1753885794969483,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 833017261.3757324,
+      "mechanical_aged_eur": 951027246.6572266,
+      "reference": 1.1707805732317031,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2030,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 833017197.7817383,
+      "mechanical_aged_eur": 977597456.7851562,
+      "reference": 1.1609798413129486,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2031,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 833017222.0083008,
+      "mechanical_aged_eur": 1002668297.9685059,
+      "reference": 1.146095619682319,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2032,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 832980265.6538086,
+      "mechanical_aged_eur": 1029097770.6525879,
+      "reference": 1.1262354244680892,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2033,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 833017222.0083008,
+      "mechanical_aged_eur": 1055796702.7062988,
+      "reference": 1.1015050760584795,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2034,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 833017197.7817383,
+      "mechanical_aged_eur": 1082224661.6015625,
+      "reference": 1.0720087228588424,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2035,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 833017222.0083008,
+      "mechanical_aged_eur": 1108948790.310791,
+      "reference": 1.0378488647367168,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    }
+  ],
+  "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+    "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+    "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+    "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+    "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+    "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+    "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+    "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas."
+  ],
+  "absent": {
+    "rétroaction, instruments non couverts": "af : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; aide_logement : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; crds_logement : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; crds_mini : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; crds_pfam : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; ppa : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux. ; rsa : Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
+  },
+  "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
+    "dividend_wage_shift_firm_owners": 0.5,
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "is_croissance_pib": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5,
+    "multiplicateur_macro": 0.5
+  },
+  "theta_applied": true,
+  "closed": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
+  },
+  "uprating_note": "Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "behavioural": true,
+  "macro": true,
+  "theta_box": {
+    "year": 2035,
+    "rows": [
+      "labour_supply_married_men",
+      "labour_supply_married_women",
+      "labour_supply_single_men",
+      "labour_supply_single_women",
+      "multiplicateur_macro"
+    ],
+    "paths": [
+      {
+        "persistence": "eteint",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.002223803826651549,
+            "corners": [
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002615491658960911
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.00204909775846307
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002573775362095576
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.002007381140884501
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0025716443860426264
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0020052501484486562
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002529928089176847
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0019635335308703095
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002536385151674425
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0019699906430092895
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002494668854808868
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0019282740254307207
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0024925378787559183
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0019261430329948759
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002450821581890361
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018844264154165291
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0025552863564091144
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0019888919930557414
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0025135700595435573
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0019471753754771726
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0025114390834906075
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0019450443830413278
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0024697227866250504
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.001903327765462759
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0024761798491226283
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.001909784877601739
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002434463552256849
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018680682600233922
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0024323325762038994
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0018659372675877695
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0023906162793383423
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018242206500092006
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0019090282752021182,
+            "corners": [
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0022088290460746673
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0017841961841875698
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021735405844711675
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0017489067753524434
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0021726056445985353
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0017479718103834418
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021373171829950355
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0017126824015485376
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0021462980372872753
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.001721663496909498
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021110095756837755
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0016863740880745937
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0021100746358109213
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.001685439123105592
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0020747861742074214
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0016501497142706878
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002161223691926395
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0017365895521912478
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002125935230322895
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0017013001433561215
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002125000290450263
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0017003651783871199
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002089711828846763
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0016650757695522156
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002098692683138781
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.001674056864913176
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002063404221535503
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0016387674560782717
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002062469281662649
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.001637832491109048
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002027180820059149
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0016025430822743658
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.002251104693606898,
+            "corners": [
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0026605546989530993
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.002053171599456949
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0026183252166351867
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0020109421171390363
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0026173458120430926
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.00200996271254672
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.00257511632972518
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0019677332302290296
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0025851799927507635
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.001977796893254391
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002542950510432851
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0019355674109367005
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0025419711058405348
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0019345880063443843
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002499741623522622
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018923585240264718
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002601861501667635
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0019944784021714845
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0025596320193497224
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.001952248919853572
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0025586526147576283
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0019512695152612558
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0025164231324397157
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0019090400329435653
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002526486795465299
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0019191036959689267
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0024842573131473866
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018768742136512362
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0024832779085550705
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.00187589480905892
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002441048426237158
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018336653267410075
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.002130326195625365,
+            "corners": [
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002519993469559223
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0019401809018309013
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0024799052527721965
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.001900092685044097
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002478713433046398
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0018989008653182982
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0024386252162595934
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018588126485314937
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0024486776257679477
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.001868865058039848
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0024085894089811433
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018287768412530436
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0024073975892553445
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0018275850215272449
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.00236730937246854
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0017874968047404405
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0024655713292802695
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0018857587615521698
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002425483112493465
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018456705447653654
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0024242912927676663
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0018444787250395667
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002384203075980862
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0018043905082527623
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002394255485489216
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0018144429177611165
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0023541672687024118
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.0017743547009743121
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002352975448976613
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                0.0017731628812485134
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0023128872321895866
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                0.001733074664461487
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "tenu",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.0008304073831821857,
+            "corners": [
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002236747678586948
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0003585239237227089
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021950343315364496
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.00040022179627086096
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0021929035061678537
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00040235183116243967
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021511901591175775
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.00044404970371081376
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002157646765027499
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00043759549302357925
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021159334179770006
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004792933655721754
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0021138025926081827
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00048142340046353205
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0020720892455581286
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005231212730116841
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0021765466332328565
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00041870263614840475
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021348332861823582
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004604005086970009
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0021327024608135403
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0004625305435881355
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002090989113763264
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005042284161367316
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0020974457196729634
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0004977742054494971
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0020557323726229093
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005394720779980933
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0020536015472540914
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0005416021128892279
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002011888200203593
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.000583299985437824
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0006835604251604899,
+            "corners": [
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.001876689130566822
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00033431370751202394
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0018414027294917368
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0003695899625004717
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0018404678442109912
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0003705245789686895
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0018051814431356838
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004058008339571373
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0018141617730267345
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00039682308622812634
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0017788753719516492
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004320993412165741
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0017779404866709037
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0004330339576847919
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0017426540855958184
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004683102126732397
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0018290865561423342
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0003819025945148713
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0017938001550672489
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.000417178849503097
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0017928652697865033
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0004181134659713148
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.001757578868711196
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004533897209597626
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0017665591986024687
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00044441197323075166
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0017312727975271613
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.00047968822821919943
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0017303379122464158
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00048062284468741723
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0016950515111711084
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.000515899099675865
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.0008238179177835203,
+            "corners": [
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0022733117938920078
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00041368705686872786
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0022310854044538253
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004558968189092294
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0022301060715930188
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00045687576614006353
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021878796821548363
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004990855281805651
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002197942608119563
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0004890265646733116
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021557162186813805
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005312363267138132
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002154736885820574
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0005322152739444252
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021125104963821695
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005744250359849268
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002214622895285734
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00047235284566915503
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021723965058475514
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005145626077096566
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002171417172986745
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0005155415549404907
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021291907835485624
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005577513169809922
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002139253709513289
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0005476923534737388
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0020970273200751066
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005899021155140183
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0020960479872143
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0005908810627448524
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0020538215977761176
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0006330908247853539
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0007680527873796805,
+            "corners": [
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002150755356846501
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00041469710170538576
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0021106699384074723
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004547674566093285
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002109478201876236
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00045595874530257596
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002069392783436985
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0004960291002067407
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.002079444491239535
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00048598116969422733
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002039359072800506
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005260515245981701
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.00203816733626927
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0005272428132916396
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.001998081917830019
+              ],
+              [
+                "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005673131681955823
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0020963370154913896
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.00046909499341496463
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.002056251597052139
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005091653483191294
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0020550598605209025
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0005103566370125989
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0020149744420816518
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0005504269919163196
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0020250261498844235
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0005403790614040282
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.001984940731445173
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.000580449416307971
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+                0.0019837489949137144
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+                -0.0005816407050012184
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+                0.0019436635764746857
+              ],
+              [
+                "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+                -0.0006217110599051612
+              ]
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "commit": "084d2c172f843514f190a26a07b17d666198ae5f",
+  "dirty": false,
+  "where": "dans le conteneur de la session, en tâche de fond, depuis une copie de travail figée sur 084d2c1",
+  "persistence": null,
+  "side_by_side": [
+    {
+      "persistence": "eteint",
+      "label": "Effet macro éteint après trois ans",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1686537361668992,
+          "delta_aged": 7.301061835307543e-05,
+          "reform_frozen": 1.1686485213600124,
+          "delta_frozen": 6.779581146632019e-05
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1747330320845073,
+          "delta_aged": 4.015212428098991e-05,
+          "reform_frozen": 1.1747268559774928,
+          "delta_frozen": 3.397601726651267e-05
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1755079454005253,
+          "delta_aged": 0.00011936590357697341,
+          "reform_frozen": 1.1754935732175882,
+          "delta_frozen": 0.00010499372063987877
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1714866648407631,
+          "delta_aged": 0.0007060916090599889,
+          "reform_frozen": 1.1714391737803387,
+          "delta_frozen": 0.0006586005486355351
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1619488822015893,
+          "delta_aged": 0.0009690408886406932,
+          "reform_frozen": 1.161869894583262,
+          "delta_frozen": 0.000890053270313329
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.147323809884786,
+          "delta_aged": 0.0012281902024668945,
+          "reform_frozen": 1.1472074760700548,
+          "delta_frozen": 0.001111856387735699
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1277187527541817,
+          "delta_aged": 0.0014833282860924335,
+          "reform_frozen": 1.127559792911115,
+          "delta_frozen": 0.0013243684430257474
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1032393231680875,
+          "delta_aged": 0.0017342471096080114,
+          "reform_frozen": 1.1030329483034533,
+          "delta_frozen": 0.0015278722449738602
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0739895689316297,
+          "delta_aged": 0.0019808460727872568,
+          "reform_frozen": 1.0737313870236758,
+          "delta_frozen": 0.001722664164833354
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0400726685633683,
+          "delta_aged": 0.002223803826651549,
+          "reform_frozen": 1.039757893011919,
+          "delta_frozen": 0.0019090282752021182
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro éteint après trois ans."
+      ],
+      "gdp_gap_aged": [
+        0.0001223638453234399,
+        0.0002506238480872373,
+        0.00026764498234714193,
+        -4.238187056256318e-06,
+        -3.975843039394469e-06,
+        -3.991030967768722e-06,
+        -4.021505547088212e-06,
+        -3.917227831841818e-06,
+        -3.817423505387321e-06,
+        -4.102755910903973e-06
+      ]
+    },
+    {
+      "persistence": "tenu",
+      "label": "Effet macro tenu au niveau de la troisième année",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1686537361668992,
+          "delta_aged": 7.301061835307543e-05,
+          "reform_frozen": 1.1686485213600124,
+          "delta_frozen": 6.779581146632019e-05
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1747330320845073,
+          "delta_aged": 4.015212428098991e-05,
+          "reform_frozen": 1.1747268559774928,
+          "delta_frozen": 3.397601726651267e-05
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1755079454005253,
+          "delta_aged": 0.00011936590357697341,
+          "reform_frozen": 1.1754935732175882,
+          "delta_frozen": 0.00010499372063987877
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1710009267813744,
+          "delta_aged": 0.0002203535496712039,
+          "reform_frozen": 1.1709756878018107,
+          "delta_frozen": 0.0001951145701075685
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1613017720122611,
+          "delta_aged": 0.0003219306993125226,
+          "reform_frozen": 1.1612625905015914,
+          "delta_frozen": 0.00028274918864279464
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1465193742285396,
+          "delta_aged": 0.00042375454622045616,
+          "reform_frozen": 1.146463516376223,
+          "delta_frozen": 0.000367896693903802
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1267609968458956,
+          "delta_aged": 0.0005255723778063714,
+          "reform_frozen": 1.1266859689800126,
+          "delta_frozen": 0.00045054451192338973
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1021323979129651,
+          "delta_aged": 0.0006273218544856629,
+          "reform_frozen": 1.1020357820038942,
+          "delta_frozen": 0.0005307059454147112
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0727376890839397,
+          "delta_aged": 0.0007289662250973272,
+          "reform_frozen": 1.0726170947214773,
+          "delta_frozen": 0.0006083718626348489
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.038679272119899,
+          "delta_aged": 0.0008304073831821857,
+          "reform_frozen": 1.0385324251618773,
+          "delta_frozen": 0.0006835604251604899
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année."
+      ],
+      "gdp_gap_aged": [
+        0.0001223638453234399,
+        0.0002506238480872373,
+        0.00026764498234714193,
+        0.0002659829441085105,
+        0.0002643517997496466,
+        0.0002626379550125393,
+        0.0002610112216586139,
+        0.0002594568977991198,
+        0.00025777193177280665,
+        0.0002560256389551022
+      ]
+    }
+  ]
+}

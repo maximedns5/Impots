@@ -1912,8 +1912,32 @@ def test_each_instrument_s_box_is_read_off_its_report(script, tmp_path) -> None:
             assert row in block, row
             said = "baisse en" if every["theta"] <= target else "ne baisse pas en"
             assert said in block.partition("\n")[0]
-            assert (f"elle baisse à {falls if falls else 'aucun'} des {len(values)} coins"
-                    in block.partition("\n")[0])
+            said = f"elle baisse à {falls} des" if falls else "elle ne baisse à aucun des"
+            assert f"{said} {len(values)} coins" in block.partition("\n")[0]
+
+
+PREREGISTERED = "46c0a5ebef92bf6c49d1db122c686bf21e5f214c"
+
+
+@pytest.mark.parametrize("commit, said", [(ANNUEL_COMMIT, True), (PREREGISTERED, False)])
+def test_a_path_run_off_the_preregistration_commit_says_why(script, tmp_path, commit: str,
+                                                            said: bool) -> None:
+    """D-276: the passes of D-275's commit found a defect, and the four paths ran again on
+    its fix. A page whose reports name another commit than the preregistration's says so,
+    and why; one on the preregistration's commit has nothing to say."""
+    requests, reports = _study(tmp_path, script)
+
+    def name(key, payload):
+        payload["commit"] = commit
+
+    _annual(requests, reports, script, edit=name)
+    section = script.render(script.study(requests, reports)[0]).partition(ANNUEL_TITLE)[2]
+    sentence = ("Ce n'est pas le commit du préenregistrement, `46c0a5e` : ses passes ont "
+                "trouvé un défaut, les deux vues partageant leurs taux marginaux, et le "
+                "chemin a tourné de nouveau sur sa correction, sans rien changer d'autre "
+                "(D-276).")
+    assert (sentence in section) is said
+    assert f"Ils ont tourné sur le commit `{commit}`" in section
 
 
 ANNUEL_REFUSALS = [
