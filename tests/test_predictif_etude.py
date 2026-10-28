@@ -1924,8 +1924,8 @@ ANNUEL_REFUSALS = [
     ("boucle", "n'a pas tourné dans le cadre de l'étude : ['macro']"),
     ("années", "n'a pas tourné dans le cadre de l'étude : ['years']"),
     ("persistances", "n'a pas tourné dans le cadre de l'étude : ['persistences']"),
-    ("sans boîte", "sa boîte θ ne porte pas les lignes de l'étude"),
-    ("autres lignes", "sa boîte θ ne porte pas les lignes de l'étude"),
+    ("sans boîte", "sa boîte θ ne porte pas les lignes de la lecture de la page"),
+    ("autres lignes", "sa boîte θ ne porte pas les lignes de la lecture de la page"),
 ]
 
 
@@ -1998,3 +1998,83 @@ def test_an_annual_path_that_is_not_the_study_s_is_refused(script, tmp_path, how
         (reports / "etude_annuel" / f"predictif_{run.name('ir')}.json").unlink()
     with pytest.raises(script.EtudeError, match=re.escape(needle)):
         script.study(requests, reports)
+
+
+def test_the_reference_is_the_complement_where_the_page_has_one(script, tmp_path) -> None:
+    """D-239 replayed the ceiling under another macro classing, and the page reads it off
+    that complement: the annual path is compared to the complement there, named with its
+    commit, and to the study elsewhere."""
+    requests, reports = _study(tmp_path, script)
+    path = _complement(requests, reports, script)
+    complement = json.loads(path.read_text(encoding="utf-8"))
+    for search in complement["searches"]:
+        if search.get("indices"):
+            search["indices"]["delta_aged"] *= 0.9
+        for e in [*search["evaluations"], search["closest"]]:
+            for field in ("delta_aged", "delta_frozen"):
+                e[field] *= 0.9
+            if "corners" in e:
+                e["corners"] = [[label, v * 0.9] for label, v in e["corners"]]
+                values = [v for _, v in e["corners"]]
+                e.update(corner_low=min(values), corner_high=max(values))
+    path.write_text(json.dumps(complement, ensure_ascii=False), encoding="utf-8")
+    _annual(requests, reports, script)
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    section = script.render(etudes, complements, courbe, phase11).partition(
+        ANNUEL_TITLE)[2]
+    assert "son complément, au commit `bbbbbbb`, pour le plafond" in section
+    assert f"l'étude, au commit `{COMMIT[:7]}`, pour la CSG" in section
+    entry = next(e for e in etudes if e["instrument"].key == "allegements")
+    nearest = _nearest(entry["report"]["searches"][0])
+    row = (f"| {entry['instrument'].label} "
+           f"| {entry['instrument'].show(nearest['knobs'][entry['instrument'].knob])} "
+           f"| {entry['report']['searches'][0]['persistence_label'][0].lower()}")
+    line = next(x for x in section.splitlines() if x.startswith(row))
+    assert f"| {script._pt(0.9 * nearest['delta_aged'])} |" in line
+    ceiling = section.partition("### Le plafond de la réduction générale")[2].partition(
+        "\n### ")[0]
+    assert "| La référence (`bbbbbbb`), reportée |" in ceiling
+    assert f"`{COMMIT[:7]}`" not in ceiling
+    gap = max([0.1 * abs(nearest[f]) for s in entry["report"]["searches"]
+               for f in ("delta_aged", "delta_frozen") for nearest in [_nearest(s)]]
+              + [0.1 * abs(v) for s in entry["report"]["searches"]
+                 for _, v in _nearest(s)["corners"]])
+    assert f"à {script._fr(gap * 100, 6, sign=False)} point près" in section
+
+
+@pytest.mark.parametrize("shift, said, readings", [
+    (0.0, "0,000000", ("every_year", "first_year")),
+    (1e-4, "0,010000", ("every_year",)),
+    (1e-4, "0,010000", ("first_year",)),
+])
+def test_a_row_the_reference_did_not_have_is_named_with_what_it_moves(
+        script, tmp_path, shift: float, said: str, readings: tuple[str, ...]) -> None:
+    """C11 claims the ceiling's knob since D-263, and the study's box did not have it: the
+    annual box may carry a row its reference lacks, named, with how far Δb moves at its
+    corners in either reading; a reference row it lacks is refused (above). The control
+    reads each carried corner at the reference's corner that sets its rows alike, so a
+    corner the row moves is a gap to the reference."""
+    requests, reports = _study(tmp_path, script)
+    extra = "autofinancement_poids_tresor_eco"
+
+    def add_row(key, payload):
+        if key != "allegements":
+            return
+        box = payload["theta_box"]
+        box["rows"] = [extra, *box["rows"]]
+        for path in box["paths"]:
+            for reading in ("every_year", "first_year"):
+                moved = shift if reading in readings else 0.0
+                for one in path[reading].values():
+                    one["corners"] = [[f"{extra} = {w}, {label}", v + (moved if w else 0.0)]
+                                      for w in (0, 1) for label, v in one["corners"]]
+
+    _annual(requests, reports, script, edit=add_row)
+    etudes = script.study(requests, reports)[0]
+    section = script.render(etudes).partition(ANNUEL_TITLE)[2]
+    part = section.partition("### Le plafond de la réduction générale")[2]
+    assert (f"Sa boîte porte aussi `{extra}`, que la référence n'avait pas : à leurs coins, "
+            f"Δb ne bouge pas de plus de {said} point.") in part
+    assert "Sa boîte porte aussi" not in section.partition("### Le plafond")[0]
+    control = "0,010000" if shift and "first_year" in readings else "0,000000"
+    assert f"Δb à θ et à chaque coin à {control} point près" in section

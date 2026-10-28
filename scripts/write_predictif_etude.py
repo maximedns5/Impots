@@ -789,7 +789,7 @@ def study(requests: Path = REQUESTS,
         if auto is not None:
             next(e for e in courbe if e["instrument"].key == replay.key)["mesure"] = auto
     theta_rows(etudes, complements, courbe, phase11)
-    annual = load_annuel(etudes, requests, reports)
+    annual = load_annuel(etudes, requests, reports, complements)
     if annual is not None:
         for entry in etudes:
             entry["annuel"] = annual[entry["instrument"].key]
@@ -1662,32 +1662,56 @@ def annual_frame(report: dict[str, Any], study: dict[str, Any]) -> list[str]:
     return [name for name, ok in held.items() if not ok]
 
 
-def annual_control(report: dict[str, Any], study: dict[str, Any]) -> dict[str, float]:
-    """The first year carried on the annual path's own pass, against the study's nearest
-    bundle: its costs, and Δb at θ in both views and at each corner, aged (D-275, 1)."""
+def annual_control(report: dict[str, Any], reference: dict[str, Any]) -> dict[str, float]:
+    """The first year carried on the annual path's own pass, against the bundle as the
+    page reads it: its costs, and Δb at θ in both views and at each corner, aged, a corner
+    of the annual box read at the one of the reference that sets its rows alike
+    (D-275, 1). And how far the rows the reference did not have move Δb: the largest gap
+    between two corners that differ on those rows only."""
     first = report["years"][0]
+    rows = _rows(_nearest(reference["searches"][0]))
     eur: list[float] = []
     share: list[float] = []
-    for search, path in zip(study["searches"], report["theta_box"]["paths"], strict=True):
+    extra: list[float] = [0.0]
+    for search, path in zip(reference["searches"], report["theta_box"]["paths"],
+                            strict=True):
         evaluation = _nearest(search)
         eur += [abs(first["mechanical_aged_eur"] - evaluation["cost_aged_eur"]),
                 abs(first["mechanical_frozen_eur"] - evaluation["cost_frozen_eur"])]
         carried = path["first_year"]
         share += [abs(carried["vieillie"]["theta"] - evaluation["delta_aged"]),
                   abs(carried["figee"]["theta"] - evaluation["delta_frozen"])]
-        corners = dict(evaluation["corners"])
-        share += [abs(value - corners[label])
-                  for label, value in carried["vieillie"]["corners"]]
-    return {"eur": max(eur), "share": max(share)}
+        corners = {_on(label, rows): value for label, value in evaluation["corners"]}
+        by_shared: dict[tuple[tuple[str, str], ...], list[float]] = {}
+        for label, value in carried["vieillie"]["corners"]:
+            share.append(abs(value - corners[_on(label, rows)]))
+        for reading in ("every_year", "first_year"):
+            for one in path[reading].values():
+                by_shared.clear()
+                for label, value in one["corners"]:
+                    by_shared.setdefault(_on(label, rows), []).append(value)
+                extra += [max(values) - min(values) for values in by_shared.values()]
+    return {"eur": max(eur), "share": max(share), "extra": max(extra)}
+
+
+def _on(label: str, rows: list[str]) -> tuple[tuple[str, str], ...]:
+    """A corner's settings on `rows` alone, in their order."""
+    settings = dict(part.split(" = ") for part in label.split(", "))
+    return tuple((row, settings[row]) for row in rows)
 
 
 def load_annuel(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
-                reports: Path = REPORTS) -> dict[str, dict[str, Any]] | None:
+                reports: Path = REPORTS,
+                complements: list[dict[str, Any]] | tuple = ()
+                ) -> dict[str, dict[str, Any]] | None:
     """The study's nearest bundles priced every year (D-275), checked: the scenarios the
     launcher builds from the study's reports, nothing beside them; their reports, of one
-    commit whose `src/` they priced, in the study's frame, with the box of the study's
-    rows; and their control, the first year carried on the same pass. Without reports,
-    the scenarios are preregistered and not yet played: no section."""
+    commit whose `src/` they priced, in the study's frame, with a box that has at least
+    the rows of the bundle as the page reads it; and their control, the first year carried
+    on the same pass against that reading. The page reads a bundle off its complement
+    where it has one, the study's bundle replayed under another macro classing (D-239);
+    off the study elsewhere. Without reports, the scenarios are preregistered and not yet
+    played: no section."""
     from impots.api.schemas import PredictifReportResponse
 
     out_dir = reports / ANNUEL_REPORTS
@@ -1728,13 +1752,19 @@ def load_annuel(etudes: list[dict[str, Any]], requests: Path = REQUESTS,
         if missing:
             raise EtudeError(f"{path.name} n'a pas tourné dans le cadre de l'étude : "
                              f"{missing} diffèrent.")
-        rows = _rows(_nearest(study["searches"][0]))
-        if report.get("theta_box") is None or report["theta_box"]["rows"] != rows:
-            raise EtudeError(f"{path.name} : sa boîte θ ne porte pas les lignes de l'étude, "
-                             f"{rows}.")
+        complement = next((c for c in complements
+                           if c["instrument"].key == entry["instrument"].key), None)
+        reference = complement["report"] if complement else study
+        rows = _rows(_nearest(reference["searches"][0]))
+        box = report.get("theta_box")
+        if box is None or not set(rows) <= set(box["rows"]):
+            raise EtudeError(f"{path.name} : sa boîte θ ne porte pas les lignes de la "
+                             f"lecture de la page, {rows}.")
         commits.add(report["commit"])
         out[key] = {"instrument": entry["instrument"], "report": report, "study": study,
-                    "control": annual_control(report, study)}
+                    "reference": reference, "complement": complement is not None,
+                    "extra_rows": [row for row in box["rows"] if row not in rows],
+                    "control": annual_control(report, reference)}
     if len(commits) != 1:
         raise EtudeError(f"le chemin annuel a tourné sur {sorted(commits)} : préenregistré "
                          f"ensemble, il tourne sur un seul commit.")
@@ -1752,6 +1782,23 @@ def _box_row(name: str, reading: dict[str, Any], target: float) -> str:
             f"| {_pt(reading['theta'])} | {_pt(diagonal({'knobs': {}, 'corners': corners})[1])} "
             f"| [{_pt(low)} ; {_pt(high)}] "
             f"| {_corners({'corners': corners}, target)} |")
+
+
+def _references(entries: list[dict[str, Any]]) -> str:
+    """Which reading of each bundle the page compares the annual path to."""
+    studies = [e for e in entries if not e["complement"]]
+    complements = [e for e in entries if e["complement"]]
+    parts = []
+    if studies:
+        commit = studies[0]["reference"]["commit"]
+        parts.append(f"l'étude, au commit `{commit[:7]}`, pour "
+                     + ", ".join(_lower(e["instrument"].label) for e in studies))
+    for e in complements:
+        parts.append(f"son complément, au commit `{e['reference']['commit'][:7]}`, pour "
+                     f"{_lower(e['instrument'].label)} : la page le lit sous le classement du "
+                     f"choc macro que le complément a rejoué")
+    return "La référence de chaque paquet est sa dernière lecture sur la page : " + " ; ".join(
+        parts) + "."
 
 
 def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) -> list[str]:
@@ -1777,21 +1824,24 @@ def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) ->
            f"Chaque rapport donne aussi, sur la passe de {first}, la première année seule "
            f"reportée comme le fait l'explorateur. L'écart entre ce report et chaque année "
            f"chiffrée est celui de la convention, sur un même code ; l'écart entre ce report "
-           f"et l'étude est celui du code depuis le commit de l'étude.",
+           f"et sa référence est celui du code depuis le commit de la référence.",
            "",
-           f"**Le contrôle.** Sur la passe de {first}, le report redonne l'étude : ses coûts à "
+           _references(entries),
+           "",
+           f"**Le contrôle.** Sur la passe de {first}, le report redonne la référence : ses "
+           f"coûts à "
            f"{_fr(eur, 0, sign=False)} € près, et Δb à θ et à chaque coin à "
            f"{_fr(share * 100, 6, sign=False)} point près."]
     for view, field, title in (("vieillie", "delta_aged", "vue vieillie"),
                                ("figee", "delta_frozen", "vue figée")):
         out += ["", f"**Δb {last} à θ = {theta}, {title}.**", "",
-                "| Instrument | Paquet | Persistance | L'étude | Reporté, même passe "
+                "| Instrument | Paquet | Persistance | La référence | Reporté, même passe "
                 "| Chaque année | Chaque année / reporté |",
                 "|---|---|---|---|---|---|---|"]
         for e in entries:
             instrument = e["instrument"]
-            for search, path in zip(e["study"]["searches"], e["report"]["theta_box"]["paths"],
-                                    strict=True):
+            for search, path in zip(e["reference"]["searches"],
+                                    e["report"]["theta_box"]["paths"], strict=True):
                 nearest = _nearest(search)
                 carried = path["first_year"][view]["theta"]
                 every = path["every_year"][view]["theta"]
@@ -1801,7 +1851,7 @@ def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) ->
                            f"| {_pt(carried)} | {_pt(every)} | {_ratio(every, carried)} |")
     for e in entries:
         instrument, report = e["instrument"], e["report"]
-        nearest = _nearest(e["study"]["searches"][0])
+        nearest = _nearest(e["reference"]["searches"][0])
         rows = report["years"]
         growth_share = {v: (rows[-1][f] / rows[0][f]) / nominal ** (last - first)
                         if rows[0][f] else None
@@ -1816,7 +1866,11 @@ def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) ->
                 f"référence, sa part de {last} vaut "
                 f"{_fr(growth_share['vieillie'], 3, sign=False)} fois celle de {first} en vue "
                 f"vieillie, et {_fr(growth_share['figee'], 3, sign=False)} fois en vue figée."]
-        for search, path in zip(e["study"]["searches"], report["theta_box"]["paths"],
+        if e["extra_rows"]:
+            out += ["", f"Sa boîte porte aussi {', '.join(f'`{r}`' for r in e['extra_rows'])}, "
+                        f"que la référence n'avait pas : à leurs coins, Δb ne bouge pas de plus "
+                        f"de {_fr(e['control']['extra'] * 100, 6, sign=False)} point."]
+        for search, path in zip(e["reference"]["searches"], report["theta_box"]["paths"],
                                 strict=True):
             every = path["every_year"]["vieillie"]
             n, _ = falling({"corners": every["corners"]}, target)
@@ -1829,7 +1883,7 @@ def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) ->
                     f"| Lecture, vue vieillie | Δb {last} à θ = 0 | à θ = {theta} | à θ = 1 "
                     f"| Boîte θ | Coins où la dette baisse |",
                     "|---|---|---|---|---|---|",
-                    _box_row(f"L'étude (`{e['study']['commit'][:7]}`), reportée",
+                    _box_row(f"La référence (`{e['reference']['commit'][:7]}`), reportée",
                              {"theta": _nearest(search)["delta_aged"],
                               "corners": _nearest(search)["corners"]}, target),
                     _box_row("Reportée, sur la passe du chemin annuel",
