@@ -22418,3 +22418,80 @@ script : 28 réussis. `ruff` passe. Le `make full` n'a pas tourné.
 - La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
 - Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
 - Le `make full` du propriétaire.
+
+## D-284 — C1 sur quatre échantillons des taux marginaux
+
+**Le fait.** D-283 a chiffré le bruit de C1. D'un échantillon de 3 000 ménages à l'autre,
+son écart-type va de 0,008 à 0,086 point de Δb 2035 par paquet. Il vient de quelques
+ménages du décile du haut dont le pas franchit un petit saut sous une loi seulement. Le
+remède nommé était un décile du haut plus fourni, ou plusieurs échantillons. Ce commit
+prend le second.
+
+**Ce qui change.**
+- C1 lit quatre échantillons des taux marginaux : celui de l'étude, puis ceux des graines
+  1, 2 et 3, de même taille et tirés de la même façon (`emtr.C1_SAMPLES`).
+- Les quatre sont mis en commun, chaque ménage au quart de son poids, et chacun garde sa
+  coupe du décile du haut. La recette de C1 est alors la moyenne des quatre, à l'arrondi
+  près.
+- Seules les réformes que C1 lit paient les trois échantillons de plus : trois passes
+  des taux marginaux, environ 1 min 40 s par paquet et par vue, les références étant en
+  cache après la première fois. C7 lit le premier échantillon seul, comme avant, et la
+  CSG ne change pas.
+- Le nombre de ménages que la bande annonce compte ceux des quatre échantillons.
+- Les caches des taux marginaux portent la graine dans leur clé et dans le nom de leurs
+  fichiers, sauf pour l'échantillon de l'étude, dont les fichiers servent toujours. Leur
+  plafond passe de 64 à 256 fichiers : 64 réformes à quatre échantillons.
+
+**Pourquoi quatre, et pourquoi plusieurs.**
+- Quatre échantillons divisent l'écart-type par deux : 0,043 point au plus, au barème à
+  0,93. Huit le diviseraient par 2,8, pour deux fois plus de passes, et ne gagneraient que
+  0,013 point au plus.
+- Un seul échantillon de 12 000 ménages réduirait autant le bruit. Plusieurs gardent
+  l'échantillon de l'étude, ses fichiers et sa comparaison avec tout ce qui a été chiffré
+  dessus. Ils permettent aussi de mesurer leur écart, ce qu'un seul ne fait pas bien :
+  il sous-estime son propre bruit d'un tiers (D-283).
+
+**Le contrôle, sur données réelles.** Pour la décote à 20 % et le barème à 0,93, en vue
+vieillie, C1 sur les 6 603 ménages des quatre échantillons redonne la moyenne des quatre
+premières réplications de D-283 à 2 × 10⁻¹⁶ près : −215 088 030 € et +1 726 157 738 €.
+
+**Ce que cela change aux chiffres de l'étude.** D-283 le dit déjà, par ses fichiers : le
+C1 de chaque paquet devient la moyenne de ses quatre premiers échantillons. Changement de
+Δb 2035 à θ = ½, en points, dans l'ordre des paquets :
+- Le barème, de 0,93 à 0,99, vue vieillie : −0,078, −0,064, −0,035, +0,001. Vue figée :
+  −0,078, −0,061, −0,063, −0,017.
+- La décote, de 10 à 40 %, vue vieillie : +0,024, −0,048, +0,005, +0,009. Vue figée :
+  +0,014, +0,009, +0,026, +0,007.
+
+À la décote à 20 % en vue vieillie, le ménage `HEBX1BXK-3` ne pèse plus que le quart de
+son terme. Aucun verdict ne bouge : le plus petit Δb vaut dix écarts-types d'un seul
+échantillon. Les rapports commités ne sont pas rechiffrés. Ils nomment le commit qui les
+a chiffrés, sur un seul échantillon, et les rejouer est la suite.
+
+**Les tests.** Deux cas nouveaux, vus échouer sur le code d'avant :
+- dans `tests/test_behavioural.py`, une autre graine est un autre échantillon, mis en
+  cache à part sous sa propre clé et son propre nom ; l'échantillon de l'étude garde les
+  siens ; un fichier calculé sur un autre cadre de son échantillon n'est pas servi ;
+- dans `tests/test_api_predictif.py`, sous deux formes : C1 lit ses quatre échantillons
+  mis en commun, et sa recette est la moyenne des quatre ; C7 lit le premier ; une
+  réforme que C1 ne lit pas n'en paie qu'un.
+
+Quatorze mutations écrites à la main, toutes tuées, après un cas synthétique corrigé. Il
+tirait ses taux de la valeur de la graine, et celle de l'étude, 20 240 101, donnait un taux
+de réforme de −202 400 qui noyait toute différence : la mutation d'un seul décile du haut
+pour les quatre échantillons survivait. Les tests des taux marginaux, de l'API, de l'API
+prédictive, de l'explorateur, de la chaîne, de la commande et de la mesure du bruit : 330
+réussis, 2 sautés comme avant. `ruff` passe. Le `make full` n'a pas tourné.
+
+**Ce qui reste.**
+- Rejouer sur cette méthode ce que C1 chiffre dans les rapports commités : les
+  explorations de la décote et du barème de l'étude, leur vue figée (D-279) et leurs
+  chemins annuels (D-277). Le changement attendu est connu par D-283, paquet par paquet.
+- L'exploration de la CSG de la phase 10, servie par `GET /explorations`, et les tours
+  archivés de l'étude, laissés tels quels (D-278).
+- Les passes préenregistrées de la vue figée et des indices à θ = 0 et θ = 1.
+- Le libellé de la passe rapide de la page pour une réforme des seules entreprises.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
+- Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
+- Le `make full` du propriétaire.

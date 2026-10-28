@@ -687,27 +687,50 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
     Shared by the band (`_behavioural`) and by the receipts at θ (`/predictif/simulate`),
     so the two read the same population the same way. `uprating_key` says `frame` was
     aged, for the EMTR caches, which the frame alone does not tell (D-226).
+
+    C1 reads the rates of several samples, pooled (D-284): `households` then counts them
+    all. C7 reads the first sample alone, and a reform C1 does not read pays for one.
     """
+    from impots.behavioural import channels
     from impots.behavioural import emtr as emtr_module
+    from impots.behavioural.store import load as load_store
 
     run_households = run.households if run is not None else None
     employer = (_employer_inputs(request, run, agg)
                 if run_households is not None else {})
     # C10 reads the run's households, not their marginal rates (D-249).
     employer = {**employer, **_dividend_inputs(request, run_households)}
-    emtr_result = emtr_module.cached(
-        frame, POPULATION_VINTAGE, year=request.year, reform=request.reform,
-        sample=BEHAVIOURAL_EMTR_HOUSEHOLDS, uprating_key=uprating_key,
-    )
-    households = emtr_result.with_earnings
+
+    def rates(**seed: int) -> Any:
+        return emtr_module.cached(
+            frame, POPULATION_VINTAGE, year=request.year, reform=request.reform,
+            sample=BEHAVIOURAL_EMTR_HOUSEHOLDS, uprating_key=uprating_key, **seed,
+        ).with_earnings
+
+    households = rates()
     if households.is_empty() or "emtr_reform" not in households.columns:
         return employer, None
+    samples = [households]
+    if channels._claimed(load_store(), request.reform, channels.C1_KEYS):
+        samples += [rates(seed=seed) for seed in emtr_module.C1_SAMPLES[1:]]
 
     return {
         **employer,
-        **eti_inputs(frame, households),
+        **pooled_eti_inputs(frame, samples),
         **_labour_inputs(request, frame, agg, households),
-    }, int(households.height)
+    }, int(sum(sample.height for sample in samples))
+
+
+def pooled_eti_inputs(frame: Any, samples: list[Any]) -> dict[str, Any]:
+    """C1's inputs over several samples of households, each weighed by the share of the
+    samples it is (D-284). Each sample keeps its own top-decile split, so that C1 on the
+    pool is the mean of C1 on each sample, to the rounding."""
+    import numpy as np
+
+    parts = [eti_inputs(frame, households) for households in samples]
+    pooled = {key: np.concatenate([part[key] for part in parts]) for key in parts[0]}
+    pooled["weights"] = pooled["weights"] / len(parts)
+    return pooled
 
 
 def eti_inputs(frame: Any, households: Any) -> dict[str, Any]:

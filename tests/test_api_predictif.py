@@ -483,6 +483,73 @@ def test_the_frozen_view_keys_its_emtr_caches_on_the_frame_it_prices(monkeypatch
                     (uprating.key(), pytest.approx(30_000.0 * 1.03 ** 3))]
 
 
+def _sample(seed: int):
+    """Households with earnings as an EMTR pass gives them, different for each of the
+    samples C1 reads, by its rank among them."""
+    import polars as pl
+
+    from impots.behavioural import emtr as emtr_module
+
+    rank = emtr_module.C1_SAMPLES.index(seed)
+    ids = [f"h{(rank * 3 + i) % 12:02d}" for i in range(4)]
+    return pl.DataFrame({
+        "household_id": ids, "weight": [10.0 + rank] * 4, "n_earners": [1] * 4,
+        "emtr": [0.30, 0.41, 0.53, 0.20], "emtr_reform": [0.28 - 0.01 * rank, 0.45, 0.80,
+                                                           0.20 + 0.02 * rank]})
+
+
+@pytest.mark.parametrize("reform, read", [
+    ({"decote_taux": 0.4}, "every sample"), ({"csg_activite_deductible": 0.063}, "one")])
+def test_c1_reads_its_samples_pooled_and_c7_the_first(monkeypatch, reform, read) -> None:
+    """One sample of 3 000 households carries a standard deviation of up to 0.09 point of
+    Δb 2035 in C1, from a few top-decile households whose step crosses a small jump
+    (D-283). C1 reads four samples, pooled, and its receipt is then the mean of the four.
+    C7 reads the first, and a reform C1 does not read pays for one (D-284)."""
+    import polars as pl
+
+    from impots.api.schemas import ReformSpec
+    from impots.behavioural import channels
+    from impots.behavioural import emtr as emtr_module
+    from impots.behavioural.store import load as load_store
+    from impots.population.runner import SAMPLE_SEED
+    from impots.predictif.theta import Theta, pinned
+
+    frame = pl.DataFrame({"household_id": [f"h{i:02d}" for i in range(12)],
+                          "salaire_brut_annuel": [20_000.0 + 9_000.0 * i for i in range(12)]})
+    seen, labour = [], []
+
+    def cached(frame, vintage, *, seed=SAMPLE_SEED, **kwargs):
+        seen.append(seed)
+        return SimpleNamespace(with_earnings=_sample(seed))
+
+    monkeypatch.setattr(emtr_module, "cached", cached)
+    monkeypatch.setattr(main, "_labour_inputs",
+                        lambda request, frame, agg, households: labour.append(households)
+                        or {})
+    request = SimpleNamespace(year=2026, reform=ReformSpec(**reform))
+    inputs, households = main._behavioural_inputs(request, frame, SimpleNamespace(), None)
+
+    seeds = list(emtr_module.C1_SAMPLES) if read == "every sample" else [SAMPLE_SEED]
+    assert seen == seeds and households == 4 * len(seeds)
+    assert labour[0].equals(_sample(SAMPLE_SEED))
+    assert len(inputs["weights"]) == 4 * len(seeds)
+    assert inputs["weights"].sum() == pytest.approx(
+        np.mean([_sample(seed)["weight"].sum() for seed in seeds]))
+    if read == "every sample":
+        store = pinned(load_store(), Theta(common=0.5))
+
+        def c1(**given):
+            return float(channels.elasticity_of_taxable_income(
+                store, request.reform, **given, draws=1,
+                rng=np.random.default_rng(0)).draws[0])
+
+        pooled = c1(**{k: inputs[k] for k in ("emtr_baseline", "emtr_reform",
+                                              "taxable_base", "weights", "top_decile")})
+        each = [c1(**main.eti_inputs(frame, _sample(seed))) for seed in seeds]
+        assert pooled == pytest.approx(np.mean(each), rel=1e-12)
+        assert len(set(np.round(each, 6))) > 1, "the samples must differ for the test to bite"
+
+
 # --------------------------------------------------------------------------- #
 # The refusals the endpoint translates (D-229)
 # --------------------------------------------------------------------------- #
