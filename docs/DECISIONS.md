@@ -22495,3 +22495,100 @@ réussis, 2 sautés comme avant. `ruff` passe. Le `make full` n'a pas tourné.
 - La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
 - Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
 - Le `make full` du propriétaire.
+
+## D-285 — Les rapports de C1 sur quatre échantillons : préenregistrés avant leurs passes
+
+**Le fait.** Depuis D-284, C1 lit quatre échantillons des taux marginaux, et son bruit est
+divisé par deux. Les rapports commités où C1 chiffre ont été écrits sur un seul :
+- les explorations de la décote et du barème de l'étude (`d77feb9`) ;
+- leur vue figée, rechiffrée sur la correction de D-276 (D-279, `6937229`) ;
+- leurs chemins annuels (D-277, `084d2c1`).
+
+Ce commit préenregistre leur rejeu et son pronostic, avant toute passe. Le résultat sera
+D-286.
+
+**Ce qui est rejoué.**
+- `scripts/c1_quatre.py` lit sur les rapports commités de l'étude les instruments dont la
+  boîte porte une ligne de C1 : la décote et le barème. Il rejoue leurs explorations,
+  avec la requête commitée de l'étude telle que son rapport l'a jouée, puis leurs chemins
+  annuels, avec la commande que construit le lanceur de D-275. Il refuse un `src/`
+  modifié et un rapport déjà là.
+- Quatre rejeux, l'un après l'autre, depuis une copie de travail figée sur ce commit, vers
+  `reports/c1_quatre/`. Environ trois heures et demie : chaque passe d'un paquet que C1
+  lit paie trois échantillons de plus.
+- Une exploration rejouée chiffre les deux vues : la vue figée de D-279 n'a pas de rejeu
+  à part.
+
+**Ce qui ne l'est pas.** Les tours archivés de l'étude et ses contrôles de la phase 11,
+comme D-278 les laissait. L'exploration de la CSG et les autres : leurs boîtes ne portent
+aucune ligne de C1.
+
+**Le rendu.** `docs/PREDICTIF_ETUDE.md` rendra le rejeu dans une section nouvelle, « C1
+sur quatre échantillons », après celle de la vue figée. Les tables de la décote et du
+barème y renverront ; les rapports de l'étude ne bougent pas. La section donnera :
+- paquet par paquet, sous chaque persistance, Δb 2035 à θ = ½ sur un échantillon et sur
+  quatre, et l'écart : la vue vieillie contre l'étude, la vue figée contre D-279 ;
+- les verdicts comparés : les paquets qui tiennent la cible, les robustes, et les coins
+  de la boîte θ qui la tiennent ;
+- les chemins annuels, Δb 2035 chaque année chiffrée, contre D-277.
+
+Le rendu refuse :
+- un rapport de plus ou de moins qu'une exploration et un chemin par instrument du menu ;
+- une exploration qui n'a pas rejoué la requête de l'étude, ses paquets sous ses
+  persistances, ou les coins de sa boîte ;
+- un chemin qui n'est pas le scénario de l'étude, ou qui a tourné hors de son cadre ;
+- un rapport sans commit, sur un `src/` modifié, sans lieu ou sur le commit de l'étude ;
+- des rapports de deux commits.
+
+Le contrôle est dit, non refusé : les coûts, et chaque écart à θ contre celui que
+prévoient les réplications de D-283.
+
+**Ce qu'on sait déjà.** Le pronostic n'est pas aveugle, et l'essentiel en est connu.
+- Seul C1 change. La boucle lit le coût mécanique, et C7 lit l'échantillon de l'étude,
+  comme avant.
+- L'exploration chiffre la première année, et la reporte. Sur quatre échantillons, son C1
+  à θ = ½ est la moyenne des quatre premières réplications de D-283. D-284 l'a vérifié
+  sur deux paquets, à 2 × 10⁻¹⁶ près. L'écart de chaque paquet à θ est donc connu : de
+  −0,078 à +0,026 point selon le paquet et la vue.
+- Aux coins, C1 change avec l'élasticité du coin, que D-283 ne donne pas : seulement
+  θ = ½.
+- D-279 : sur le code d'aujourd'hui, la vue vieillie de l'étude se redonne au
+  dix-millionième de point.
+- Les chemins annuels lisent quatre échantillons chaque année ; D-283 n'a mesuré que 2026.
+
+**Le pronostic**, écrit avant les passes. En points de Δb 2035.
+1. Contrôle. Les coûts des paquets sont ceux de l'étude à l'euro, dans les deux vues. Ceux
+   des chemins sont ceux de D-277 à l'euro, chaque année.
+2. À θ = ½, l'écart de chaque paquet est celui que prévoient les réplications de D-283, à
+   0,00001 point près : contre l'étude en vue vieillie, contre D-279 en vue figée. Il est
+   le même sous les deux persistances.
+3. Aucun verdict ne change. Les mêmes paquets tiennent la cible, ou aucun ; les mêmes sont
+   robustes ; les mêmes coins de la boîte θ la tiennent.
+4. Aux coins, en vue vieillie, partout où l'écart à θ dépasse 0,005 point, l'écart garde
+   son signe et vaut de 0,4 à 1,7 fois sa taille. L'élasticité du décile du haut va de
+   0,15 à 0,5 aux coins, contre 0,31 à θ = ½.
+5. Les chemins annuels. Δb 2035 chaque année chiffrée bouge de 0,03 point au plus, dans
+   chaque vue et sous chaque persistance.
+
+**Les biais déclarés.**
+- Le rejeu tourne sur le code d'aujourd'hui, non sur celui de l'étude. Les coûts en sont
+  le contrôle : tout autre changement que C1 s'y lirait.
+- Le pronostic du point 2 lit le C1 de D-283 sur son propre pas, 100 € : c'est celui de la
+  chaîne.
+
+**Les tests.** `tests/test_c1_quatre.py`, neuf tests : le menu lu sur les rapports
+commités, un instrument sans ligne de C1 écarté, les commandes relues par l'analyseur de la
+commande, une requête retouchée refusée, l'ordre des rejeux, l'arrêt sur un échec, les refus
+d'un `src/` modifié et d'un rapport déjà là. `tests/test_predictif_etude.py`, vingt tests de
+plus, sur des rapports factices : la section paquet par paquet, la page inchangée sans elle,
+le renvoi sur les seuls instruments de C1, aucune prévision sans `reports/bruit_c1/`, le
+contrôle dit avec ses écarts, la vue figée lue contre D-279, un verdict qui change nommé,
+et douze refus. Vingt-six mutations écrites à la main sur la section et le lanceur :
+vingt-quatre tuées au premier tour. Deux survivaient. La prévision qui oubliait d'ôter le
+premier échantillon passait parce que le faux D-283 y mettait C1 à zéro ; il le met
+désormais à 0,05 point. L'écart figé lu contre l'étude plutôt que contre D-279 passait parce
+que le test faisait porter l'écart prédit aux deux vues ; il ne le fait plus porter qu'à la
+vue figée. Les deux sont tuées depuis.
+
+**Ce qui suit.** Les quatre rejeux, sur ce commit, en tâche de fond. Puis une entrée
+nouvelle : le résultat contre ce pronostic, et son rendu.
