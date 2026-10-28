@@ -401,3 +401,15 @@ def test_a_replication_refuses_before_any_pass(script, stubbed_pass, tmp_path, v
     with pytest.raises(script.BruitError, match=needle):
         script.one(view, 3, 100.0, "ici", out=tmp_path)
     assert stubbed_pass.calls == []
+
+
+def test_the_committed_measure_reads_back(script) -> None:
+    """GUARD (D-283). The figures of D-283 are those of the committed replications: all
+    twenty-two of them, on one commit, the preregistration's, without a modified `src/`."""
+    rows = script.summarise()
+    assert len(rows) == 16
+    payloads = [json.loads(p.read_text(encoding="utf-8"))
+                for p in sorted(script.OUT.glob("c1_*.json"))]
+    assert len(payloads) == 22
+    assert {p["commit"][:7] for p in payloads} == {"cc480ef"}
+    assert not any(p["dirty"] for p in payloads)

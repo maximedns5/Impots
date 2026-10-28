@@ -22320,3 +22320,101 @@ l'explorateur et de la chaîne : 155 réussis, 2 sautés comme avant. `ruff` pas
 
 **Ce qui suit.** Les vingt-deux réplications, sur ce commit, en tâche de fond. Puis D-283 :
 le résultat contre ce pronostic.
+
+## D-283 — Le bruit de C1 aux seuils : le résultat
+
+**Le fait.** Les vingt-deux réplications préenregistrées par D-282 ont tourné sur
+`cc480ef`, son commit, depuis une copie de travail figée sur lui. Elles ont tourné trois à
+la fois, de 13 h 43 à 14 h 34 UTC, sans incident. Les rapports sont sous
+`reports/bruit_c1/`. Une passe de diagnostic, hors pronostic, a suivi : les cinq plus
+grands termes de deux paquets, aux pas de 100 et de 200 €.
+
+**Le résultat.** C1 en points de Δb 2035, à θ = ½, négatif quand il abaisse la dette : sur
+l'échantillon de l'étude, puis l'écart-type entre les huit échantillons.
+- Le barème, de 0,93 à 0,99, vue vieillie : −0,455, −0,333, −0,212, −0,074 ; écarts-types
+  0,086, 0,061, 0,036, 0,031.
+- Le barème, vue figée : −0,444, −0,306, −0,136, −0,045 ; 0,086, 0,050, 0,060, 0,022.
+- La décote, de 10 à 40 %, vue vieillie : +0,031, +0,114, +0,006, +0,006 ; 0,023, 0,046,
+  0,008, 0,019.
+- La décote, vue figée : +0,062, +0,011, −0,003, −0,002 ; 0,035, 0,021, 0,022, 0,011.
+
+Pour le barème, l'échantillon de l'étude est parmi les moins rentables. Rangé parmi les
+huit du C1 le plus fort au plus faible, il est cinquième à huitième, et septième ou
+huitième à cinq couples de cadre et de paquet sur huit. Sur la moyenne des huit
+échantillons, C1 abaisserait la dette de 0,10 point de plus à 0,93 en vue vieillie, de 0,07
+à 0,95, de 0,04 à 0,97. Ce n'est pas un biais : les termes d'un échantillon sont liés d'un
+paquet à l'autre, et un tirage au bout d'une queue l'est pour tout l'instrument.
+
+**Le pronostic, point par point.**
+1. Tenu. Aux seize couples de cadre et de paquet, les fichiers de l'explorateur calculés sur
+   ce cadre redonnent au bit les taux de l'échantillon de l'étude, référence et réforme.
+   Les autres fichiers sur le disque sont d'avant D-276, et ne servent pas. Les taux de
+   référence sont les mêmes pour les huit paquets de chaque réplication.
+2. Manqué pour la décote. Les ménages au plancher du taux net dans une seule loi ne sont
+   qu'un à quatre par paquet, et ne portent jamais plus de 0,01 point. Pour la décote, ils
+   ne portent la moitié de C1 à aucun paquet. Pour le barème, moins de la moitié, comme
+   annoncé.
+3. À moitié. L'écart-type entre échantillons va de 0,008 à 0,086 point. Il est dans la
+   fourchette de 0,01 à 0,1 à quinze couples sur seize, sous elle pour la décote à 30 % en
+   vue vieillie. Mais il suit la taille du paquet, sauf pour la décote en vue vieillie. De
+   0,99 à 0,93, il est multiplié par 2,8 en vue vieillie et par 3,9 en vue figée ; pour la
+   décote en vue figée, par 3,2 de 40 à 10 %.
+4. Tenu, de peu. L'écart-type lu sur l'échantillon de l'étude est dans un facteur deux de
+   l'écart-type entre échantillons à treize couples sur seize. Il le sous-estime le plus
+   souvent : de 0,32 à 2,14 fois, 0,66 fois en médiane.
+5. Manqué. C1 ne bouge de plus de deux écarts-types entre 50 et 500 € qu'à un paquet sur
+   seize : le barème à 0,99 en vue figée. Ailleurs, l'écart entre ces deux pas va de 0,03 à
+   0,88 écart-type. Le pas n'est pas un biais d'ensemble : il déplace quelques termes,
+   ci-dessous.
+6. Tenu. Sept des huit écarts de D-279 sont sous trois écarts-types de la vue figée, de
+   0,15 à 1,09. Le huitième, la décote à 20 %, en vaut 4,7 : c'est un seul ménage,
+   ci-dessous.
+7. Tenu. À θ = ½, le Δb de chaque paquet dépasse l'écart-type de son cadre de 10 à 123
+   fois. Aucun verdict de l'étude ne tient à ce bruit.
+
+**Ce que montre le diagnostic.** Le bruit ne passe pas par le plancher du taux net, comme
+D-279 le croyait, mais par le décile du haut.
+- L'élasticité y vaut 0,31, contre 0,02 en dessous. À saut de taux égal, un terme du
+  décile du haut pèse quinze fois plus.
+- Chaque ménage de l'échantillon en représente environ 10 300. Une assiette de 140 000 €
+  y fait 1,5 Md€ de salaires.
+- Un seul ménage, `HEBX1BXK-3`, fait l'essentiel des deux cas examinés. Sous la décote à
+  20 %, en vue vieillie, son taux passe de 53,5 % à 80,0 % au pas de 100 €, et à 66,1 % au
+  pas de 200 €. C'est un saut d'environ 26 € de revenu disponible, que le pas franchit
+  sous la réforme et non sans elle. Son terme vaut +0,097 point au pas de 100 €, sur un
+  C1 de +0,114, et +0,030 au pas de 200 €.
+- Le même ménage, en vue figée, sous le barème à 0,97, passe de 47,4 % à 73,9 % au pas de
+  100 € : +0,070 point, sur un C1 de −0,136.
+- C'est lui que D-279 a vu. La vue figée de l'étude lisait les taux du cadre vieilli, et
+  donc son saut sous la décote à 20 %. L'écart de −0,096 point était, à peu près, ce terme.
+- D-279 lisait ses ménages au plancher dans la somme de C1 avant l'élasticité, où ceux du
+  bas pèsent autant que ceux du haut. Après l'élasticité, ils ne pèsent presque plus.
+
+**Ce que cela change.**
+- Le bruit de C1 est chiffré : un écart-type de 0,01 à 0,09 point de Δb 2035 par paquet,
+  d'un échantillon des taux marginaux à l'autre. Il vient de quelques ménages du décile
+  du haut dont le pas franchit un petit saut sous une loi et non sous l'autre.
+- Les verdicts de l'étude ne bougent pas : le plus petit Δb vaut dix écarts-types.
+- Les chiffres du barème portent une incertitude d'échantillonnage de l'ordre de l'écart
+  de D-279 : 0,09 point à 0,93, 4 % de Δb.
+- L'écart-type lu sur un seul échantillon sous-estime le bruit d'un tiers environ. Un
+  rapport qui le donnerait devrait le dire.
+- Le remède n'est pas un autre pas. Il est dans l'échantillon : plus de ménages au décile
+  du haut, ou plusieurs échantillons. Ce n'est pas fait ici.
+
+**Les tests.** Dans `tests/test_bruit_c1.py`, une garde nouvelle : les chiffres de cette
+entrée sont ceux des vingt-deux rapports commités, tous sur `cc480ef`, sans `src/`
+modifié. Vue échouer sur une mesure partielle, une réplication retirée. Les tests du
+script : 28 réussis. `ruff` passe. Le `make full` n'a pas tourné.
+
+**Ce qui reste.**
+- L'échantillon des taux marginaux : un décile du haut plus fourni, ou plusieurs
+  échantillons, pour C1. Ce serait une décision de méthode, à préenregistrer.
+- L'exploration de la CSG de la phase 10, servie par `GET /explorations`, et les tours
+  archivés de l'étude, laissés tels quels (D-278).
+- Les passes préenregistrées de la vue figée et des indices à θ = 0 et θ = 1.
+- Le libellé de la passe rapide de la page pour une réforme des seules entreprises.
+- La CFE, et une assiette de la CVAE qui réintègre loyers et crédit-bail (D-254).
+- La boucle de la variante ciblée de Mésange, faute d'une source qui la publie.
+- Les rapports commités qui comptent l'emploi de C2 au poids moyen du ménage (D-272).
+- Le `make full` du propriétaire.
