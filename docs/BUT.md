@@ -34,7 +34,8 @@ article refusé n'est pas un article à zéro.
 1. **Maintenant : des études publiées.** Des pages précalculées, générées depuis des
    rapports commités par un script dont un test refuse la dérive, et lisibles sans rien
    faire tourner. Le modèle existe déjà : `docs/PREDICTIF_ETUDE.md` pour les réponses 2
-   et 3, `reports/fiche_*.md` pour la réponse 1. Une étude publiée porte les trois.
+   et 3, `reports/fiche_*.md` pour la réponse 1. Une étude publiée porte les trois. La
+   première : `docs/ETUDE_PLF2027.md` (D-290).
 2. **Ensuite : le déploiement, après la passe de sécurité.** Avant toute instance
    ouverte : la CORS restreinte (elle est ouverte pour que `ui/index.html` s'ouvre depuis
    le disque), l'authentification, la limitation de débit, et un plafond de concurrence
@@ -90,7 +91,7 @@ D-entrée, ou il attend.
 Chaque but est écrit pour `/goal` : un état final que l'on vérifie dans la conversation,
 les contraintes, et une borne.
 
-### But 1 — L'étude PLF 2027, à trois réponses (en cours)
+### But 1 — L'étude PLF 2027, à trois réponses (fait : `docs/ETUDE_PLF2027.md`, D-290)
 
 ```
 /goal L'étude du PLF 2027 est publiée et mergée dans main. Une page docs/ETUDE_PLF2027.md,
@@ -111,7 +112,7 @@ passe est préenregistrée, avec son pronostic, dans une D-entrée poussée avan
 Ou s'arrêter après 40 tours, en disant ce qui manque.
 ```
 
-### But 2 — L'article 2 retrouvé, ou son écart expliqué
+### But 2 — L'article 2 retrouvé, ou son écart expliqué (en cours)
 
 L'art. 2 est hors tolérance (−30,3 % pour ±20 %). Mesurer d'où vient l'écart, volet par
 volet ; si une correction est fondée, l'enregistrer comme un nouveau cas daté, l'ancien

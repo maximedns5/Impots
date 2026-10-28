@@ -206,7 +206,7 @@ def _first(w: Any, entry: dict[str, Any]) -> None:
         w(f"La mesure {sense} **{fiche._width(cost)}** en {year}, sur les entreprises "
           f"de {response.meta.vintage} au droit de {year}.")
         w("")
-        w("| taille | entreprises | touchées | effet total |")
+        w("| taille | entreprises | touchées | impôt en plus |")
         w("|---|---|---|---|")
         for taille, n, touched, delta in _sizes(response):
             w(f"| {taille} | {fiche._num(n)} | {fiche._num(touched)} | {fiche._eur(delta)} |")
@@ -250,10 +250,22 @@ def _second(w: Any, entry: dict[str, Any]) -> None:
     w("")
     macro = getattr(entry["response"], "macro", None)
     if macro is not None and macro.available:
+        # Never without its strip, as the fiche refuses it: a fan alone reads as a forecast.
+        if macro.assumptions is None:
+            raise EtudeError(f"{entry['name']} : l'éventail macro n'a pas son bandeau "
+                             f"d'hypothèses ; il se lirait comme une prévision.")
+        a = macro.assumptions
+        w(f"**L'effet sur l'économie**, l'éventail macro de grade **{a.grade}**, couverture "
+          f"{fiche._pct(a.covered_share)}, conjoncture « {a.cycle_state} » :")
+        w("")
         for label, series in (("PIB", macro.gdp), ("emploi", macro.jobs)):
             for horizon, q in sorted(series.items()):
-                w(f"* **{label}, {horizon}** : {fiche._band(q.p10, q.p50, q.p90, q.unit)}")
+                years = f"à {horizon} an{'' if horizon == '1' else 's'}"
+                w(f"* **{label}, {years}** : {fiche._band(q.p10, q.p50, q.p90, q.unit)}")
         w("")
+        if a.banner:
+            w(f"> {a.banner}")
+            w("")
     elif macro is not None:
         w(f"**Éventail macro : refusé.** {macro.unavailable_because}")
         w("")
@@ -308,6 +320,15 @@ def _official(w: Any, entry: dict[str, Any]) -> None:
       f"l'enregistrement. Le chiffre noté reste celui de l'enregistrement : c'est lui qui a "
       f"été préenregistré.")
     w("")
+
+
+def refusal(raison: str) -> tuple[str, str]:
+    """(case, first sentence) of a triage reason, « scope. Formalité reconduite… » : the
+    case it falls in, then why, in its first sentence."""
+    kind, _, rest = raison.partition(". ")
+    if kind not in ("scope", "structure", "data"):
+        raise EtudeError(f"une raison de refus sans sa case : « {raison[:60]} »")
+    return kind, rest.split(" ; ")[0].split(". ")[0].rstrip(".") + "."
 
 
 def render(entries: list[dict[str, Any]]) -> str:
@@ -383,10 +404,11 @@ def render(entries: list[dict[str, Any]]) -> str:
       "tout chiffrage, et sa raison est dite : hors du périmètre (`scope`), hors de la "
       "structure du modèle (`structure`), ou hors de ses données (`data`).")
     w("")
-    w("| art. | intitulé | raison |")
-    w("|---|---|---|")
+    w("| art. | intitulé | case | pourquoi |")
+    w("|---|---|---|---|")
     for a in refused:
-        w(f"| {a.numero} | {a.intitule} | {a.raison.split('.')[0]} |")
+        kind, why = refusal(a.raison)
+        w(f"| {a.numero} | {a.intitule} | `{kind}` | {why} |")
     w("")
     w("## D'où viennent ces nombres")
     w("")

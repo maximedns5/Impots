@@ -22632,3 +22632,54 @@ porte ce paragraphe.
 
 **Ce qui suit.** Les passes tournent après le rejeu de C1 (D-285), une à la fois. Le
 résultat, la page et le test qui refuse sa dérive entrent dans une nouvelle entrée.
+
+## D-290 — L'étude du PLF 2027 en trois réponses : le résultat
+
+**Le fait.** Les six passes préenregistrées dans D-289 ont tourné sur `02fd623`, l'une
+après l'autre, depuis une copie de travail figée, en 2 h 16. `docs/ETUDE_PLF2027.md` les
+rend : pour les art. 2, 3 et 15, ce qu'ils coûtent et qui y gagne, ce qu'ils coûtent une
+fois les comportements et l'économie pris en compte, ce qu'ils font à la dette en 2035,
+l'écart au chiffrage officiel ; puis les trente articles refusés, chacun avec sa case et sa
+raison. C'est la première étude publiée du but 1 (D-286).
+
+**Une relance, et pourquoi.** Les premières années des art. 2 et 3 demandaient l'éventail
+macro. Il a été refusé, non par le modèle mais par le conteneur : le TES de l'INSEE et le
+tableau 6.208 de l'emploi par branche n'y étaient pas. INSEE répondant de nouveau, les deux
+fichiers ont été téléchargés par `impots data fetch`, leurs sha256 vérifiés contre le
+manifeste, et les deux premières années relancées sur le même commit. Contrôle : le coût,
+les déciles, la bande, les totaux et les écarts de la relance sont ceux de la première passe
+à l'identique ; seul l'éventail s'y ajoute. Les deux premières passes ne sont pas commitées.
+
+**Le pronostic, point par point.**
+1. *Tenu.* Première année. Art. 2 : 2,828 Md€ de coût, 99 M€ sous l'enregistrement. Art. 3 :
+   1,119 Md€ de gain, 175 M€ sous l'enregistrement, ce que D-210 et D-211 annonçaient.
+   Art. 15 : 7,054 Md€ de gain, l'enregistrement à l'euro.
+2. *Tenu pour les art. 2 et 15, manqué pour l'art. 3.* Art. 2 : une bande de 2,63 à
+   2,72 Md€, centrée 5,3 % sous le coût mécanique, de grade « in-support ». Art. 15 : aucune
+   bande. Art. 3 : aucune bande non plus, quand le pronostic en attendait une. Aucun canal
+   des ménages ne réclame le plafond de l'abattement sur les pensions : la bande est de
+   grade « no-evidence », et la boîte θ du chemin ne porte que le multiplicateur.
+3. *Tenu.* Dette en 2035, vue vieillie, persistance éteinte, à θ½ : +0,82 point pour
+   l'art. 2, −0,35 pour l'art. 3, −0,23 pour l'art. 15, le même sous les deux persistances.
+4. *Tenu.* « Baisse » partout pour l'art. 15. « Dépend de θ » pour les art. 2 et 3 : sous
+   l'éteinte, le signe tient à tous les coins ; sous la tenue, le multiplicateur à son coin
+   haut le retourne (de −0,19 à +0,83 point pour l'art. 2, de −0,34 à +0,05 pour l'art. 3).
+
+**Ce que la page ajoute que le pronostic ne disait pas.** L'éventail macro : pour l'art. 2,
+un PIB plus haut de 2,5 Md€ à trois ans, de −0,01 à +5,0 Md€, et 17 000 emplois, de 0 à
+35 000 ; pour l'art. 3, un PIB plus bas de 1,0 Md€, et 6 800 emplois de moins. Le
+coût vieilli de l'art. 2 passe de 3,07 Md€ en 2026 à 4,36 Md€ en 2035 : les seuils restent
+ceux de 2026 dans le droit reconduit, et plus de foyers les franchissent à mesure que les
+revenus montent.
+
+**Le rendu, depuis D-289.** La page lit la bande comme un coût après l'avoir vérifiée autour
+du solde, donne l'éventail avec son bandeau et ses horizons en années, nomme la colonne des
+entreprises « impôt en plus », et donne pour chaque refus sa case et la première phrase de
+sa raison. 39 tests dans `tests/test_write_etude_plf2027.py`, dont celui qui refuse la
+dérive entre la page et les rapports : vu échouer sur une page où « +2,83 Md€ » était
+devenu « +2,93 Md€ ». Les mutations de ces ajouts sont tuées.
+
+**Ce que l'étude dit du but.** Les trois réponses existent pour les trois articles
+chiffrables, avec leur absence quand il y en a une. Le critère du but ne bouge pas : deux
+cas sur trois restent dans la tolérance, l'art. 2 hors de la sienne, ce que le but 2 doit
+expliquer.

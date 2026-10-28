@@ -1,5 +1,16 @@
 # State of the project, and the directions open — 2026-10-28 (Phase 11, M0 to M6)
 
+The ninth 2026-10-28 update adds D-288 to D-290: the first study of the product's goal
+(D-286), `docs/ETUDE_PLF2027.md`, the PLF 2027's three priceable articles in three answers.
+A scenario may now bound its measure to the years its text names (`annees`, D-288): the
+annual path prices it there and an empty reform elsewhere, so the 2027 CEBGE of art. 15 is
+a one-year receipt. Preregistered in D-289, priced on `02fd623`: art. 2 costs 2.83 bn,
++0.82 points of debt in 2035 (aged, extinct persistence), « dépend de θ »; art. 3 brings
+1.12 bn, −0.35 points, « dépend de θ », with no behavioural band (no channel reads the
+pension abatement, the one prognosis miss); art. 15 brings 7.05 bn in 2027, −0.23 points,
+« baisse » everywhere. The two household first years were rerun once the TES and table
+6.208 were fetched (sha256 verified), to the euro on everything but the fan they add. The
+page is rendered from the committed reports, and a test refuses its drift.
 The seventh 2026-10-28 update adds D-284: C1 reads four EMTR samples, the study's and
 those of seeds 1 to 3, pooled at a quarter of each household's weight, each keeping its
 own top-decile split; its receipt is the mean of the four, which halves the noise D-283
@@ -657,7 +668,7 @@ D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
 PR. The project also has fourteen replayable `verify_*.py` gate scripts and **285 decision
-entries**, D-000 to D-284, recording every error in both directions.
+entries**, D-000 to D-290, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 

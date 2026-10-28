@@ -77,8 +77,9 @@ def _households(cost: float) -> dict:
 
 
 def _firms(cost: float) -> dict:
+    # A cell's delta is the tax it pays more, the reform's cost with its sign turned.
     cells = [FirmCell(naf_section=s, taille=t, n_firms=n, turnover=1e12, tax_baseline=1e10,
-                      is_brut=1e10, mean_effective_rate=0.2, mean_delta=cost * share / n,
+                      is_brut=1e10, mean_effective_rate=0.2, mean_delta=-cost * share / n,
                       share_affected=affected)
              for s, t, n, share, affected in (("C", "GE", 100.0, 0.6, 0.5),
                                               ("K", "GE", 50.0, 0.4, 1.0),
@@ -178,7 +179,8 @@ def test_a_measure_bounded_to_its_year_says_so(page, reports) -> None:
 
 def test_a_firm_article_is_read_by_size(page, reports) -> None:
     section = page.render(page.load(reports)).split("\n## Art. 15 ")[1]
-    assert "| GE | 150 | 100 | -7,10 Md€ |" in section
+    assert "| taille | entreprises | touchées | impôt en plus |" in section
+    assert "| GE | 150 | 100 | +7,10 Md€ |" in section
     assert "| PME | 1" in section and "| 0 | +0 € |" in section
 
 
@@ -201,7 +203,15 @@ def test_every_other_article_is_listed_with_its_reason(page, reports) -> None:
     refused = [a for a in plf_coverage.ARTICLES_2027 if a.bucket != "priceable_now"]
     assert f"## Les {len(refused)} autres articles" in text
     for a in refused:
-        assert f"| {a.numero} | {a.intitule} | {a.raison.split('.')[0]} |" in text
+        kind, why = page.refusal(a.raison)
+        assert f"| {a.numero} | {a.intitule} | `{kind}` | {why} |" in text
+        assert kind in ("scope", "structure", "data") and why != "."
+
+
+def test_a_reason_without_its_case_is_refused(page) -> None:
+    assert page.refusal("data. Aucune plus-value ; ni report.") == ("data", "Aucune plus-value.")
+    with pytest.raises(page.EtudeError, match="sans sa case"):
+        page.refusal("Aucune plus-value.")
 
 
 def _shift(report: dict) -> None:
@@ -295,3 +305,45 @@ def test_what_the_chain_does_not_read_is_said_in_its_first_sentence(page, report
 def test_the_views_are_named_in_words(page, reports) -> None:
     section = page.render(page.load(reports)).split("\n## Art. 2 ")[1].split("\n## Art.")[0]
     assert section.count(" | figée | ") == 2 and " | figee | " not in section
+
+
+def _fan(report: dict) -> None:
+    from impots.api.schemas import MacroAssumptions, MacroQuantiles
+
+    strip = MacroAssumptions(
+        cycle_state="normale", design="ménages", leakage=0.2, leakage_applied=True,
+        horizons=["1", "2"], parameters_vintage="2026-09", grade="in-support",
+        covered_share=1.0, instruments=["ir"], simulation_conditions="", caveats=[],
+        banner="Pas une prévision.")
+    report["response"]["macro"] = Macro(
+        available=True, assumptions=strip,
+        gdp={"1": MacroQuantiles(p10=-1e9, p50=1e9, p90=3e9, unit="EUR"),
+             "2": MacroQuantiles(p10=0.0, p50=2e9, p90=4e9, unit="EUR")},
+        jobs={"1": MacroQuantiles(p10=-2.0, p50=2.5, p90=7.0, unit="milliers ETP")},
+    ).model_dump(mode="json")
+
+
+def test_a_fan_is_read_with_its_strip_and_its_horizons_in_years(page, reports) -> None:
+    _edit(reports, "premiere_annee_plf2027_art_2.json", _fan)
+    section = page.render(page.load(reports)).split("\n## Art. 2 ")[1].split("\n## Art.")[0]
+    from impots import fiche
+
+    assert (f"éventail macro de grade **in-support**, couverture {fiche._pct(1.0)}, "
+            f"conjoncture « normale » :") in section
+    assert "* **PIB, à 1 an** : [-1,00 Md€ ; +3,00 Md€], central +1,00 Md€" in section
+    assert "* **PIB, à 2 ans** :" in section and "* **emploi, à 1 an** :" in section
+    assert "> Pas une prévision." in section
+
+
+def test_a_fan_without_its_strip_is_refused(page, reports) -> None:
+    def strip(report):
+        _fan(report)
+        report["response"]["macro"]["assumptions"] = None
+    _edit(reports, "premiere_annee_plf2027_art_2.json", strip)
+    with pytest.raises(page.EtudeError, match="bandeau"):
+        page.render(page.load(reports))
+
+
+def test_the_committed_page_is_what_its_committed_reports_render(page) -> None:
+    """The anti-drift guard: no number of `docs/ETUDE_PLF2027.md` is typed by hand."""
+    assert page.DOC.read_text(encoding="utf-8") == page.render(page.load())
