@@ -688,8 +688,6 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
     so the two read the same population the same way. `uprating_key` says `frame` was
     aged, for the EMTR caches, which the frame alone does not tell (D-226).
     """
-    import numpy as np
-
     from impots.behavioural import emtr as emtr_module
 
     run_households = run.households if run is not None else None
@@ -705,13 +703,28 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
     if households.is_empty() or "emtr_reform" not in households.columns:
         return employer, None
 
+    return {
+        **employer,
+        **eti_inputs(frame, households),
+        **_labour_inputs(request, frame, agg, households),
+    }, int(households.height)
+
+
+def eti_inputs(frame: Any, households: Any) -> dict[str, Any]:
+    """C1's inputs: the households' marginal rates before and after the reform, their
+    taxable base, their weights and the top-decile split. `households` are the EMTR
+    pass's households with earnings, `frame` the population their rates were computed
+    on. Read apart by the measure of C1's noise (`scripts/bruit_c1.py`, D-282), so that
+    it prices C1 exactly as the chain does."""
+    import numpy as np
+    import polars as pl
+
     weights = households["weight"].to_numpy()
     # Taxable base per household: what C1's response applies to. Deciles of it give
     # the top-decile split the two ETI parameters need.
-    base = households["n_earners"].to_numpy() * 0.0
     frame_base = (
         frame.group_by("household_id")
-        .agg(__import__("polars").col("salaire_brut_annuel").sum().alias("base"))
+        .agg(pl.col("salaire_brut_annuel").sum().alias("base"))
         .sort("household_id")
     )
     lookup = dict(zip(frame_base["household_id"].to_list(),
@@ -722,14 +735,11 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
     top = np.zeros(len(base), dtype=bool)
     if cumulative[-1] > 0:
         top[order[cumulative >= 0.9 * cumulative[-1]]] = True
-
     return {
-        **employer,
         "emtr_baseline": households["emtr"].to_numpy(),
         "emtr_reform": households["emtr_reform"].to_numpy(),
         "taxable_base": base, "weights": weights, "top_decile": top,
-        **_labour_inputs(request, frame, agg, households),
-    }, int(households.height)
+    }
 
 
 def _dividend_inputs(request: Any, households: Any) -> dict[str, Any]:

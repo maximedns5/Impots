@@ -1,6 +1,19 @@
 # State of the project, and the directions open — 2026-10-28 (Phase 11, M0 to M6)
 
-The fifth 2026-10-28 update adds D-280 and D-281: D-236's annual CSG path, priced again on
+The sixth 2026-10-28 update adds D-282 and D-283: C1's noise at the thresholds, measured.
+The study's eight C1 bundles (décote, IR scale) were priced in both frames on eight EMTR
+samples of 3,000 households and at four steps, C1 through the chain's own inputs and
+channel (`scripts/bruit_c1.py`, `reports/bruit_c1/`). The study's sample gives back the
+explorer's cached rates to the bit. C1's standard deviation across samples is 0.008 to
+0.086 points of Δb 2035 per bundle, growing with the IR scale's cut; every Δb at θ = ½ is
+10 to 123 of them, so no verdict moves. The study's sample is among the least favourable
+for the IR scale: the samples' mean would lower the debt by 0.10 points more at 0.93. The
+noise does not come through the net-of-tax floor, as D-279 thought, but through a few
+top-decile households (elasticity 0.31 against 0.02) whose step crosses a small notch
+under one law only; one household, a 26 € jump, is most of D-279's largest gap. The step
+is no overall bias. One sample understates its own noise by a third. The remedy, a fuller
+top decile or several samples, is a method decision, not taken.
+The fifth 2026-10-28 update added D-280 and D-281: D-236's annual CSG path, priced again on
 D-276's fix, preregistered before its eight passes and then run on that commit. The control
 holds to the digit: the reference path, both views' mechanical costs and the GDP gap are
 D-236's. Δb 2029 at θ = ½ falls by 0.00023 points aged and 0.00010 frozen, the same under
@@ -634,8 +647,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **282 decision
-entries**, D-000 to D-281, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **284 decision
+entries**, D-000 to D-283, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -1007,9 +1020,9 @@ download list.
    curve has its knobs (D-240), and the study is replayed with it (D-241, D-242): no
    cut of the curve lowers the debt, and what a targeted cut would give back is
    missing, said so. Left: a balance row for the targeted variant, or the jobs'
-   receipts in the chain; C1's noise at the thresholds its 100 € step crosses (D-279);
-   the study on the annual path, its frozen view and D-236's annual CSG path are priced
-   again on D-276's fix (D-275 to D-281); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
+   receipts in the chain; the EMTR sample's top decile, where C1's noise lives (measured
+   in D-283); the study on the annual path, its frozen view and D-236's annual CSG path
+   are priced again on D-276's fix (D-275 to D-281); the frozen view and the indices at θ = 0 and θ = 1, the aged view being
    read off the box's corners (D-274).
 4. **Phase 11** (`docs/PHASE11_SPEC.md`, D-243): firms, startups and capital in the
    chain, on published ranges, international where France has none. M0 first: manifest

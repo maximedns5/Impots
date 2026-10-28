@@ -1,0 +1,184 @@
+{
+  "view": "figee",
+  "seed": 7,
+  "step": 100.0,
+  "year": 2026,
+  "households": 3000,
+  "theta": 0.5,
+  "kappa": 3.0887453278367617e-12,
+  "frame_fingerprint": "48a048cc52b7ab9a",
+  "baseline_rates_sha": "4cf8aa1915b5829f",
+  "commit": "cc480efdf40e1f51355ee2325591fb279286113c",
+  "dirty": false,
+  "where": "dans le conteneur de la session, en tâche de fond, trois à la fois, depuis une copie de travail figée sur cc480ef",
+  "bundles": [
+    {
+      "instrument": "decote",
+      "knobs": {
+        "decote_taux": 0.1
+      },
+      "c1_eur": -183479701.69781446,
+      "households": 3000,
+      "earning": 1626,
+      "se_eur": 58123238.91239308,
+      "floor_baseline": 21,
+      "floor_reform": 20,
+      "floor_one": 3,
+      "floor_both": 19,
+      "floor_one_eur": -3507975.475882251,
+      "top_eur": -24721827.05880245,
+      "c1_points": 0.05667220713720071,
+      "floor_one_points": 0.0010835242861297243,
+      "top_points": 0.0076359427823464495,
+      "se_points": 0.0179527882629394,
+      "reform_rates_sha": "09d60408ec656aae"
+    },
+    {
+      "instrument": "decote",
+      "knobs": {
+        "decote_taux": 0.2
+      },
+      "c1_eur": -53350964.11421587,
+      "households": 3000,
+      "earning": 1626,
+      "se_eur": 47298280.403502315,
+      "floor_baseline": 21,
+      "floor_reform": 22,
+      "floor_one": 5,
+      "floor_both": 19,
+      "floor_one_eur": -27786034.295203894,
+      "top_eur": -48469815.243985996,
+      "c1_points": 0.0164787541143371,
+      "floor_one_points": 0.008582398360842305,
+      "top_points": 0.01497109153759728,
+      "se_points": 0.014609234261103084,
+      "reform_rates_sha": "5689aff01c90f3c0"
+    },
+    {
+      "instrument": "decote",
+      "knobs": {
+        "decote_taux": 0.3
+      },
+      "c1_eur": -15567212.427852528,
+      "households": 3000,
+      "earning": 1626,
+      "se_eur": 29913576.15937692,
+      "floor_baseline": 21,
+      "floor_reform": 20,
+      "floor_one": 3,
+      "floor_both": 19,
+      "floor_one_eur": -2774232.6119005717,
+      "top_eur": -18674702.242226362,
+      "c1_points": 0.004808315465397187,
+      "floor_one_points": 0.0008568898018340267,
+      "top_points": 0.005768139929941937,
+      "se_points": 0.00923954186011646,
+      "reform_rates_sha": "d4543b224346f770"
+    },
+    {
+      "instrument": "decote",
+      "knobs": {
+        "decote_taux": 0.4
+      },
+      "c1_eur": -21093736.85410614,
+      "households": 3000,
+      "earning": 1626,
+      "se_eur": 27148265.8828708,
+      "floor_baseline": 21,
+      "floor_reform": 21,
+      "floor_one": 4,
+      "floor_both": 19,
+      "floor_one_eur": -21089041.147806242,
+      "top_eur": -47119532.43253863,
+      "c1_points": 0.006515318115473845,
+      "floor_one_points": 0.0065138677313843745,
+      "top_points": 0.014554023565085646,
+      "se_points": 0.008385407940458734,
+      "reform_rates_sha": "a5923f6403fb7033"
+    },
+    {
+      "instrument": "ir",
+      "knobs": {
+        "ir_bareme_echelle": 0.93
+      },
+      "c1_eur": 1799670802.5016208,
+      "households": 3000,
+      "earning": 1626,
+      "se_eur": 239261247.5205318,
+      "floor_baseline": 21,
+      "floor_reform": 21,
+      "floor_one": 4,
+      "floor_both": 19,
+      "floor_one_eur": -15041756.00010685,
+      "top_eur": 396662806.17889535,
+      "c1_points": -0.5558724782871116,
+      "floor_one_points": 0.004646015356779061,
+      "top_points": -0.1225190389311682,
+      "se_points": 0.07390170604114375,
+      "reform_rates_sha": "9a24faad8eebda57"
+    },
+    {
+      "instrument": "ir",
+      "knobs": {
+        "ir_bareme_echelle": 0.95
+      },
+      "c1_eur": 1337673318.3353674,
+      "households": 3000,
+      "earning": 1626,
+      "se_eur": 183776082.77341914,
+      "floor_baseline": 21,
+      "floor_reform": 20,
+      "floor_one": 3,
+      "floor_both": 19,
+      "floor_one_eur": -10151622.856713679,
+      "top_eur": 303583640.5514556,
+      "c1_points": -0.41317322121802635,
+      "floor_one_points": 0.003135577766863525,
+      "top_points": -0.09376925513609834,
+      "se_points": 0.05676375170345403,
+      "reform_rates_sha": "1a418584808629f4"
+    },
+    {
+      "instrument": "ir",
+      "knobs": {
+        "ir_bareme_echelle": 0.97
+      },
+      "c1_eur": 727079418.975603,
+      "households": 3000,
+      "earning": 1626,
+      "se_eur": 113708533.34759396,
+      "floor_baseline": 21,
+      "floor_reform": 24,
+      "floor_one": 7,
+      "floor_both": 19,
+      "floor_one_eur": -67912539.01694553,
+      "top_eur": 180916369.45624682,
+      "c1_points": -0.2245763158327161,
+      "floor_one_points": 0.020976453759012227,
+      "top_points": -0.05588045908871717,
+      "se_points": 0.03512167011125515,
+      "reform_rates_sha": "611c9353d77f42d6"
+    },
+    {
+      "instrument": "ir",
+      "knobs": {
+        "ir_bareme_echelle": 0.99
+      },
+      "c1_eur": 231873825.71820712,
+      "households": 3000,
+      "earning": 1626,
+      "se_eur": 58441897.08683928,
+      "floor_baseline": 21,
+      "floor_reform": 23,
+      "floor_one": 4,
+      "floor_both": 20,
+      "floor_one_eur": -32471039.925399117,
+      "top_eur": 97144531.85799983,
+      "c1_points": -0.07161991958347477,
+      "floor_one_points": 0.010029477285957747,
+      "top_points": -0.030005471890128643,
+      "se_points": 0.01805121365768917,
+      "reform_rates_sha": "4f29962c6903ca77"
+    }
+  ]
+}
