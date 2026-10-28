@@ -1664,14 +1664,16 @@ def annual_frame(report: dict[str, Any], study: dict[str, Any]) -> list[str]:
 
 def annual_control(report: dict[str, Any], reference: dict[str, Any]) -> dict[str, float]:
     """The first year carried on the annual path's own pass, against the bundle as the
-    page reads it: its costs, and Δb at θ in both views and at each corner, aged, a corner
-    of the annual box read at the one of the reference that sets its rows alike
-    (D-275, 1). And how far the rows the reference did not have move Δb: the largest gap
-    between two corners that differ on those rows only."""
+    page reads it: its costs; Δb at θ and at each corner in the aged view, a corner of the
+    annual box read at the one of the reference that sets its rows alike; Δb at θ in the
+    frozen view, apart, since the frozen view of a reference priced before D-276 read its
+    aged view's marginal rates (D-275, 1). And how far the rows the reference did not have
+    move Δb: the largest gap between two corners that differ on those rows only."""
     first = report["years"][0]
     rows = _rows(_nearest(reference["searches"][0]))
     eur: list[float] = []
-    share: list[float] = []
+    aged: list[float] = []
+    frozen: list[float] = []
     extra: list[float] = [0.0]
     for search, path in zip(reference["searches"], report["theta_box"]["paths"],
                             strict=True):
@@ -1679,19 +1681,19 @@ def annual_control(report: dict[str, Any], reference: dict[str, Any]) -> dict[st
         eur += [abs(first["mechanical_aged_eur"] - evaluation["cost_aged_eur"]),
                 abs(first["mechanical_frozen_eur"] - evaluation["cost_frozen_eur"])]
         carried = path["first_year"]
-        share += [abs(carried["vieillie"]["theta"] - evaluation["delta_aged"]),
-                  abs(carried["figee"]["theta"] - evaluation["delta_frozen"])]
+        aged.append(abs(carried["vieillie"]["theta"] - evaluation["delta_aged"]))
+        frozen.append(abs(carried["figee"]["theta"] - evaluation["delta_frozen"]))
         corners = {_on(label, rows): value for label, value in evaluation["corners"]}
         by_shared: dict[tuple[tuple[str, str], ...], list[float]] = {}
         for label, value in carried["vieillie"]["corners"]:
-            share.append(abs(value - corners[_on(label, rows)]))
+            aged.append(abs(value - corners[_on(label, rows)]))
         for reading in ("every_year", "first_year"):
             for one in path[reading].values():
                 by_shared.clear()
                 for label, value in one["corners"]:
                     by_shared.setdefault(_on(label, rows), []).append(value)
                 extra += [max(values) - min(values) for values in by_shared.values()]
-    return {"eur": max(eur), "share": max(share), "extra": max(extra)}
+    return {"eur": max(eur), "aged": max(aged), "frozen": max(frozen), "extra": max(extra)}
 
 
 def _on(label: str, rows: list[str]) -> tuple[tuple[str, str], ...]:
@@ -1809,7 +1811,8 @@ def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) ->
     growth = study["request"]["growth"]
     nominal = (1 + growth["real"]) * (1 + growth["prices"])
     eur = max(e["control"]["eur"] for e in entries)
-    share = max(e["control"]["share"] for e in entries)
+    aged = max(e["control"]["aged"] for e in entries)
+    frozen = max(e["control"]["frozen"] for e in entries)
     out = ["", "## Le chemin annuel : chaque année chiffrée", "",
            f"L'étude chiffre la première année et reporte les suivantes en part de PIB. Le "
            f"chemin annuel, `impots predictif`, chiffre chaque année de {first} à {last}, "
@@ -1828,10 +1831,13 @@ def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) ->
            "",
            _references(entries),
            "",
-           f"**Le contrôle.** Sur la passe de {first}, le report redonne la référence : ses "
-           f"coûts à "
-           f"{_fr(eur, 0, sign=False)} € près, et Δb à θ et à chaque coin à "
-           f"{_fr(share * 100, 6, sign=False)} point près."]
+           f"**Le contrôle.** Sur la passe de {first}, la première année reportée se compare "
+           f"à sa référence. Ses coûts s'en écartent de {_fr(eur, 0, sign=False)} € au plus ; "
+           f"en vue vieillie, Δb à θ et à chaque coin, de "
+           f"{_fr(aged * 100, 6, sign=False)} point au plus ; en vue figée, Δb à θ, de "
+           f"{_fr(frozen * 100, 6, sign=False)} point au plus. La vue figée d'une référence "
+           f"chiffrée avant D-276 lisait les taux marginaux de sa vue vieillie : son écart "
+           f"est aussi celui-là."]
     for view, field, title in (("vieillie", "delta_aged", "vue vieillie"),
                                ("figee", "delta_frozen", "vue figée")):
         out += ["", f"**Δb {last} à θ = {theta}, {title}.**", "",
@@ -1865,7 +1871,12 @@ def _annuel_section(entries: list[dict[str, Any]], target: float, theta: str) ->
                 f"{_md(rows[-1]['mechanical_frozen_eur'])}. Rapportée au PIB de la "
                 f"référence, sa part de {last} vaut "
                 f"{_fr(growth_share['vieillie'], 3, sign=False)} fois celle de {first} en vue "
-                f"vieillie, et {_fr(growth_share['figee'], 3, sign=False)} fois en vue figée."]
+                f"vieillie, et {_fr(growth_share['figee'], 3, sign=False)} fois en vue figée. "
+                f"Reportée sur la passe de {first}, la première année s'écarte de sa "
+                f"référence de {_fr(e['control']['aged'] * 100, 6, sign=False)} point au plus "
+                f"en vue vieillie, à θ et à chaque coin, et de "
+                f"{_fr(e['control']['frozen'] * 100, 6, sign=False)} point en vue figée, "
+                f"à θ."]
         if e["extra_rows"]:
             out += ["", f"Sa boîte porte aussi {', '.join(f'`{r}`' for r in e['extra_rows'])}, "
                         f"que la référence n'avait pas : à leurs coins, Δb ne bouge pas de plus "

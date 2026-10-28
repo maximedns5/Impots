@@ -1810,7 +1810,9 @@ def test_the_annual_path_is_rendered_after_the_theta_section(script, tmp_path) -
     assert page.index(THETA_TITLE) < page.index(ANNUEL_TITLE) < page.index(NOT_SAID)
     section = page.partition(ANNUEL_TITLE)[2].partition(NOT_SAID)[0]
     assert ANNUEL_COMMIT in section and WHERE in section and "D-275" in section
-    assert "à 0 € près" in section and "à 0,000000 point près" in section
+    assert ("Ses coûts s'en écartent de 0 € au plus ; en vue vieillie, Δb à θ et à chaque "
+            "coin, de 0,000000 point au plus ; en vue figée, Δb à θ, de 0,000000 point au "
+            "plus.") in section
     for entry in etudes:
         instrument, report = entry["instrument"], entry["annuel"]["report"]
         drawn = {p["persistence"]: p["years"][-1] for p in report["side_by_side"]}
@@ -1837,16 +1839,18 @@ def test_the_annual_path_is_rendered_after_the_theta_section(script, tmp_path) -
 
 
 @pytest.mark.parametrize("what, needle", [
-    ("coût vieilli", "à 1234 € près"),
-    ("coût figé", "à 1234 € près"),
-    ("θ vieilli", "à 0,050000 point près"),
-    ("θ figé", "à 0,050000 point près"),
-    ("coin", "à 0,050000 point près"),
+    ("coût vieilli", "Ses coûts s'en écartent de 1234 € au plus ;"),
+    ("coût figé", "Ses coûts s'en écartent de 1234 € au plus ;"),
+    ("θ vieilli", "en vue vieillie, Δb à θ et à chaque coin, de 0,050000 point au plus ;"),
+    ("θ figé", "en vue figée, Δb à θ, de 0,050000 point au plus."),
+    ("coin", "en vue vieillie, Δb à θ et à chaque coin, de 0,050000 point au plus ;"),
 ])
 def test_a_carry_that_does_not_give_the_study_back_is_said_with_its_gap(
         script, tmp_path, what: str, needle: str) -> None:
     """The control is said, not refused: a first year whose cost, Δb at θ in either view,
-    or one corner is not the study's shows its gap, in euros or in points."""
+    or one corner is not the study's shows its gap, in euros or in points, each view apart
+    — the frozen view of a reference priced before D-276 read its aged view's rates — and
+    in the instrument's own section."""
     requests, reports = _study(tmp_path, script)
 
     def move(key, payload):
@@ -1875,6 +1879,12 @@ def test_a_carry_that_does_not_give_the_study_back_is_said_with_its_gap(
     etudes = script.study(requests, reports)[0]
     section = script.render(etudes).partition(ANNUEL_TITLE)[2]
     assert needle in section
+    own = section.partition("### Le taux de la décote de l'IR")[2].partition("\n### ")[0]
+    aged, frozen = (("0,050000", "0,000000") if what in ("θ vieilli", "coin")
+                    else ("0,000000", "0,050000") if what == "θ figé"
+                    else ("0,000000", "0,000000"))
+    assert (f"s'écarte de sa référence de {aged} point au plus en vue vieillie, à θ et à "
+            f"chaque coin, et de {frozen} point en vue figée, à θ.") in own
 
 
 def test_each_instrument_s_box_is_read_off_its_report(script, tmp_path) -> None:
@@ -2035,11 +2045,13 @@ def test_the_reference_is_the_complement_where_the_page_has_one(script, tmp_path
         "\n### ")[0]
     assert "| La référence (`bbbbbbb`), reportée |" in ceiling
     assert f"`{COMMIT[:7]}`" not in ceiling
-    gap = max([0.1 * abs(nearest[f]) for s in entry["report"]["searches"]
-               for f in ("delta_aged", "delta_frozen") for nearest in [_nearest(s)]]
-              + [0.1 * abs(v) for s in entry["report"]["searches"]
-                 for _, v in _nearest(s)["corners"]])
-    assert f"à {script._fr(gap * 100, 6, sign=False)} point près" in section
+    aged = max([0.1 * abs(_nearest(s)["delta_aged"]) for s in entry["report"]["searches"]]
+               + [0.1 * abs(v) for s in entry["report"]["searches"]
+                  for _, v in _nearest(s)["corners"]])
+    frozen = max(0.1 * abs(_nearest(s)["delta_frozen"]) for s in entry["report"]["searches"])
+    assert (f"en vue vieillie, Δb à θ et à chaque coin, de "
+            f"{script._fr(aged * 100, 6, sign=False)} point au plus ; en vue figée, Δb à θ, "
+            f"de {script._fr(frozen * 100, 6, sign=False)} point au plus.") in section
 
 
 @pytest.mark.parametrize("shift, said, readings", [
@@ -2077,4 +2089,4 @@ def test_a_row_the_reference_did_not_have_is_named_with_what_it_moves(
             f"Δb ne bouge pas de plus de {said} point.") in part
     assert "Sa boîte porte aussi" not in section.partition("### Le plafond")[0]
     control = "0,010000" if shift and "first_year" in readings else "0,000000"
-    assert f"Δb à θ et à chaque coin à {control} point près" in section
+    assert f"en vue vieillie, Δb à θ et à chaque coin, de {control} point au plus" in section
