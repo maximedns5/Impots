@@ -1,0 +1,29 @@
+case: plf2027_art_74_apl
+pre_registered: '2026-10-29T12:19:53+00:00'
+commit: c318cef8993ca43e2840bb9dd9e1187b85d9f233
+scenario: plf2027_art_74_apl
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 78244409.58105469
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.4
+  absolute_eur: 20000000.0
+  rationale: 'Aides personnelles au logement, révision du 1er octobre 2027 suspendue,
+    chiffrée en miroir (D-298). ±40 % : l''aide sort à −18,0 % d''allocataires et
+    −24,1 % de dépense, sans zone 1, sans foyers, sans accession ; droits ou versements,
+    3 ou 2 mois, un tiers d''écart ; l''IRL que suppose la fiche, 0,2 point valant
+    10 %. Plus large que pour la prime : le décompte des mois pèse un tiers et trois
+    composantes de l''aide manquent. Plancher de 20 M€.'
+note: 'Comparateur : le volet aides au logement de l''art. 74, l''effet de 2027, signé
+  en gain. Le cas chiffre la révision suspendue (2,0 %), un coût : mirror.'
+bound: two-sided
+mirror: true
+comparator: null

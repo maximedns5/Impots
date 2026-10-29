@@ -12,20 +12,26 @@ from __future__ import annotations
 from pathlib import Path
 
 from impots.plf_coverage import (
+    ARTICLE_74_2027,
     ARTICLES,
     ARTICLES_2027,
+    ARTICLES_PLFSS_2027,
     DATE_TRIAGE_2027,
+    DATE_TRIAGE_PLFSS_2027,
     MONTANTS_2027,
     NO_FICHE,
+    OUVERTURES_PLFSS_2027,
     SANS_FICHE_2027,
     SOURCE,
     SOURCE_2027,
     SOURCE_ANNEXE_2027,
+    SOURCE_PLFSS_2027,
     YIELD_AMBIGUOUS,
     articles_hors_denominateur_2027,
     engine_ready_but_blind,
     montants_2027,
     portes_2027,
+    portes_plfss_2027,
     priceable_2027,
     priceable_today,
     priceable_yield_meur,
@@ -234,6 +240,8 @@ def build() -> str:
         w(a.raison)
         w("")
     euros_2027(w)
+    plfss_2027(w)
+    article_74(w)
     return "\n".join(lines)
 
 
@@ -306,6 +314,53 @@ def euros_2027(w) -> None:
             value = f"**{value}** (chiffré)"
         w(f"| {m.article} | {m.volet or '—'} | {value} | {m.page} | « {m.citation} » | "
           f"{m.raison} |")
+    w("")
+
+
+def plfss_2027(w) -> None:
+    """The PLFSS 2027, triaged article by article, each refusal with its door (D-298)."""
+    total = len(ARTICLES_PLFSS_2027)
+    chiffrables = [a for a in ARTICLES_PLFSS_2027 if a.bucket == "priceable_now"]
+    w(f"## Le PLFSS 2027 — triage du {DATE_TRIAGE_PLFSS_2027} (D-298)")
+    w("")
+    w(f"Source : {SOURCE_PLFSS_2027}")
+    w("")
+    w(f"**{total} articles, {len(chiffrables) or 'aucun'} chiffrable"
+      f"{'s' if len(chiffrables) > 1 else ''} par l'outil.** Chaque refus porte la porte "
+      f"qui l'ouvrirait, dans le catalogue de D-293 et une porte que le PLF n'appelait "
+      f"pas, `sante`. Le PLFSS n'a pas de montants relevés : les portes y sont classées "
+      f"par nombre d'articles.")
+    w("")
+    w("| porte | ce qui l'ouvrirait | articles |")
+    w("|---|---|---|")
+    for cle, articles in portes_plfss_2027():
+        noms = ", ".join("liminaire" if n == 0 else str(n) for n in articles)
+        w(f"| `{cle}` | {OUVERTURES_PLFSS_2027[cle]} | {noms} |")
+    w("")
+    w("### Article par article")
+    w("")
+    w("| art. | intitulé | case | porte | raison |")
+    w("|---|---|---|---|---|")
+    for a in ARTICLES_PLFSS_2027:
+        numero = "liminaire" if a.numero == 0 else str(a.numero)
+        w(f"| {numero} | {a.intitule} | {CASE[a.bucket]} | `{a.porte}` | {a.raison} |")
+    w("")
+
+
+def article_74(w) -> None:
+    """The one spending measure of the PLF 2027 the tool prices, in two volets (D-298)."""
+    a = ARTICLE_74_2027
+    w(f"## L'art. {a.numero} du PLF 2027 — {a.categorie}")
+    w("")
+    w(f"*{a.intitule}*")
+    w("")
+    w(f"**{CASE[a.bucket]}** · chaîne {a.chaine} · boutons `{'`, `'.join(a.knobs)}` · "
+      f"scénarios `{'`, `'.join(r.strip() for r in a.reforme.split(','))}`")
+    w("")
+    w(a.raison)
+    w("")
+    w("Les deux volets sont préenregistrés en miroir ; leur note contre la fiche est dans "
+      "`reports/chiffrages_preregistres.md`.")
     w("")
 
 

@@ -540,3 +540,82 @@ Restent, dans les articles chiffrés, **2 325 M EUR** de volets que l'outil ne
 | 31 | 4.2.1.4 | hors | 364 | « Économie estimée pour 3 294 892 avis de 6 pages : 2 391 762 €. » | aucune année : année indéterminable (règle 5) |
 | 32 | — | 0 | 376 | « Incidences budgétaires (coûts/économies nets de la mesure proposée) Sans objet. » |  |
 | 33 | — | 0 | 382 | « Incidences budgétaires (coûts/économies nets de la mesure proposée) Sans objet. » |  |
+
+## Le PLFSS 2027 — triage du 2026-10-29 (D-298)
+
+Source : Assemblée nationale, texte n° 3211 (17e législature), projet de loi de financement de la sécurité sociale pour 2027, enregistré le 1er octobre 2026, articles avec exposé des motifs. Manifesté : plfss2027_texte_an_b3211.html, sha256 b68128d00b62. Lu à travers le masque des montants (D-297).
+
+**49 articles, aucun chiffrable par l'outil.** Chaque refus porte la porte qui l'ouvrirait, dans le catalogue de D-293 et une porte que le PLF n'appelait pas, `sante`. Le PLFSS n'a pas de montants relevés : les portes y sont classées par nombre d'articles.
+
+| porte | ce qui l'ouvrirait | articles |
+|---|---|---|
+| `hors_champ` | rien : une formalité ou une procédure | liminaire, 1, 2, 3, 13, 14, 15, 16, 17, 18, 19, 40, 41, 42, 43, 44, 45, 46, 47, 48 |
+| `sante` | un modèle des soins et de leurs financeurs : ONDAM, produits de santé, établissements, professionnels | 9, 10, 11, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 38, 39 |
+| `donnee_menages` | une donnée des ménages : plus-values, épargne, logement | 6, 7, 34, 35, 36, 37 |
+| `secteur` | l'assiette d'un secteur hors du modèle : audiovisuel, nucléaire, aérien, infrastructures, dépôts, justice | 5, 12 |
+| `dimension_entreprises` | une dimension des entreprises : territoire, département, secteur agricole | 4 |
+| `consommation` | la consommation et le parc : TVA par taux, accises, véhicules | 8 |
+
+### Article par article
+
+| art. | intitulé | case | porte | raison |
+|---|---|---|---|---|
+| liminaire | Article liminaire | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 1 | Rectification des tableaux d'équilibre | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 2 | Rectification de l'ONDAM et des sous-objectifs ONDAM | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 3 | Rectification des contributions des régimes d'assurance maladie et de la 5ème branche au FMIS et de la 5ème branche au FIR des ARS | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 4 | Aide aux cotisants affectés par les incendies et le cyclone Chido et soutien aux employeurs de sapeurs-pompiers volontaires | non chiffrable | `dimension_entreprises` | data. Un territoire sinistré et l'emploi de sapeurs-pompiers volontaires : la population des entreprises n'a ni l'un ni l'autre. |
+| 5 | Suppression des exonérations sociales applicables aux ateliers et chantiers d'insertion publics | non chiffrable | `secteur` | structure. Les employeurs publics de l'insertion par l'activité économique sont un secteur hors du modèle. |
+| 6 | Simplifier le régime social applicable aux indemnités de rupture du contrat de travail | non chiffrable | `donnee_menages` | data. La population n'a pas d'indemnité de rupture : le même refus que le volet correspondant de l'art. 2 du PLF. |
+| 7 | Rationaliser l'assiette des allègements généraux de cotisations sociales | non chiffrable | `donnee_menages` | data. L'assiette ajoute l'épargne salariale, l'intéressement, la prime de partage de la valeur et les jours de repos rachetés ; la population n'a aucun de ces compléments de salaire. |
+| 8 | Extension de la « taxe soda » à des produits sucrés et transformés | non chiffrable | `consommation` | structure. Une accise sur des produits : aucune consommation. |
+| 9 | Régulation macroéconomique des dispositifs médicaux | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 10 | Amélioration de la régulation de la chaîne de valeur de la distribution du médicament | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 11 | Régulation macro-économique des produits de santé | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 12 | Prorogation de la contribution exceptionnelle au financement du système de santé et de la couverture santé des Français les plus précaires | non chiffrable | `secteur` | structure. Une contribution des organismes complémentaires d'assurance maladie : un secteur hors du modèle. |
+| 13 | Réforme du financement des départements pour les dépenses APA/PCH | non chiffrable | `hors_champ` | scope. Un financement entre administrations. |
+| 14 | Clarifier les transferts financiers au sein de la sécurité sociale | non chiffrable | `hors_champ` | scope. Des transferts entre branches et caisses. |
+| 15 | Approbation du montant de la compensation des exonérations ciblées | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 16 | Tableau d'équilibre 2027 | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 17 | Objectif d'amortissement de la dette sociale et prévisions sur les recettes du FRR | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 18 | Liste et plafonds de trésorerie des régimes et organismes habilités à recourir à des ressources non permanentes | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 19 | Approbation du rapport sur l'évolution pluriannuelle du financement de la sécurité sociale (annexe "A") | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 20 | Renforcer la coordination entre le médecin traitant, le médecin du travail et le médecin conseil pour améliorer le suivi médical des personnes en arrêt de travail | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 21 | Renforcer l'accès aux soins : déployer une mission de solidarité territoriale pour les médecins en soutien du réseau France Santé | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 22 | Conforter le mode de rémunération de structures d'exercice coordonné pour renforcer l'accès aux soins des personnes vulnérables | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 23 | Permettre la prise en charge des actes d'assistance à la téléconsultation pour les infirmiers salariés intervenant au domicile des patients | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 24 | Renforcer l'accès aux soins des enfants pris en charge par le service d'aide sociale à l'enfance | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 25 | Renforcer la prise en charge sanitaire des mineurs victimes de violences | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 26 | Mise en place de la complémentaire santé au bénéfice des agents de la fonction publique hospitalière (FPH) | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 27 | Favoriser l'accès à la vaccination | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 28 | Préserver l'efficacité des médicaments antibiotiques et sécuriser leur disponibilité | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 29 | Renforcer l'accessibilité aux dispositifs de prévention | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 30 | Accès aux médicaments et à l'innovation : adapter le remboursement aux progrès scientifiques et sécuriser la délivrance sans prescription | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 31 | Assurer l'harmonisation et la convergence tarifaire de l'activité de radiothérapie en ville et à l'hôpital | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 32 | Sécuriser les modalités de facturation à l'assurance maladie | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 33 | Suppression de l'ANDPC et convergence des dispositifs de développement professionnel continu et de certification périodique | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 34 | Forfaitiser et harmoniser la majoration de pension pour enfants | non chiffrable | `donnee_menages` | data. Il faudrait le nombre d'enfants élevés par chaque retraité et la pension qu'il majore ; la population a la pension totale, pas ses droits. |
+| 35 | Dérogation exceptionnelle aux modalités de revalorisation des pensions de retraite pour 2027 | non chiffrable | `donnee_menages` | data. La population porte la pension totale, donc le seuil de 1 281 €, mais pas la part de base, seule revalorisée ; et le moteur prend les pensions comme une donnée, pas comme une dépense. Le plus proche d'un chiffrage (D-298). |
+| 36 | Créer une allocation de remplacement bénéficiant aux non-salariés agricoles dont un enfant est gravement malade, porteur d'un handicap ou victime d'un accident | non chiffrable | `donnee_menages` | data. Ni le statut d'exploitant agricole, ni l'état de santé d'un enfant. |
+| 37 | Restreindre l'accès aux prestations familiales pour les étrangers extra-UE | non chiffrable | `donnee_menages` | data. Une condition de durée de résidence régulière : la population n'a ni nationalité ni titre de séjour. |
+| 38 | Prolongation de l'expérimentation "fusion des sections" (réforme du modèle de financement des EHPAD) | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 39 | Intéressement à l'efficience des EHPAD et des services autonomie à domicile | non chiffrable | `sante` | structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni l'offre de soins, ni les produits de santé, ni les établissements. |
+| 40 | Dotation de l'Assurance maladie au FMIS et de la CNSA aux ARS | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 41 | Dotation aux opérateurs financés par le 6ème sous-objectif | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 42 | Objectif de dépenses de la branche maladie, maternité, invalidité et décès | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 43 | ONDAM et sous objectifs de l'ONDAM | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 44 | Dotations au FIVA et au FCAATA, transfert de la compensation de sous-déclaration ATMP | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 45 | Objectif de dépenses de la branche ATMP | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 46 | Objectif de dépenses de la branche vieillesse | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 47 | Objectif de dépenses de la branche famille | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+| 48 | Objectif de dépenses de la branche autonomie | non chiffrable | `hors_champ` | scope. Un tableau, un objectif ou une dotation que la loi de financement vote chaque année : pas une mesure sur les ménages ni sur les entreprises. |
+
+## L'art. 74 du PLF 2027 — prestations — revalorisations suspendues
+
+*Maîtrise de l'évolution des aides personnelles au logement et de la prime d'activité*
+
+****chiffrable**** · chaîne ménages · boutons `ppa_revalorisation_avril`, `al_revalorisation_octobre` · scénarios `scenarios/plf2027_art_74_ppa.json`, `scenarios/plf2027_art_74_apl.json`
+
+Deux boutons neufs, des coefficients écrits à la date légale de chaque revalorisation : le montant forfaitaire de la prime au 1er avril, les 56 paramètres de dépense des aides au logement au 1er octobre. L'arbre, figé en 2026, est déjà dans l'état que l'article produit : les deux cas chiffrent la revalorisation suspendue, en miroir. Ni la clause qui laisse au pouvoir réglementaire la faculté de revaloriser quand même, ni les paramètres de ressources, révisés au 1er janvier.
+
+Les deux volets sont préenregistrés en miroir ; leur note contre la fiche est dans `reports/chiffrages_preregistres.md`.
