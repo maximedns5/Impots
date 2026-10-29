@@ -23145,3 +23145,40 @@ fichiers de tests de l'API passent, et `ui/check.mjs` aussi.
 (insertions HTML non échappées alimentées par des constantes du serveur, lien
 `IMPOTS_SOURCE_URL` sans contrôle de schéma), le TLS et l'hébergement. La décision de
 déployer reste celle du propriétaire.
+
+## D-296 — Le but, deuxième passe : des juges, une commande, un site, la couverture
+
+**Le fait.** Les quatre premiers buts de `docs/BUT.md` (D-286) sont faits (D-288 à
+D-295). Le propriétaire a demandé une deuxième passe sur le but, pour que le développement
+continue efficacement.
+
+**Ce qui bloquait.** Le premier chiffre, les cas notés dans la tolérance, n'avait plus de
+juge : les trois cas du PLF 2027 étaient notés, et le prochain texte ne viendrait qu'avec le
+PLF 2028. La règle de priorité mettait donc en tête un chiffre qui ne pouvait plus bouger.
+Le deuxième, les études, coûtait un chantier par étude : le script de la première fait plus
+de quatre cents lignes. Et une étude « publiée » restait un fichier du dépôt, qu'aucun
+journaliste ne lit.
+
+**Ce que le propriétaire a choisi**, le 2026-10-29, sur quatre questions :
+1. Les prochains juges : le PLFSS 2027 d'abord, jamais ouvert, plutôt qu'un banc
+   rétrospectif des PLF 2023 à 2025.
+2. La publication : un site statique, servi sans serveur de calcul.
+3. Un générateur d'études d'abord : une commande, plutôt que des scripts au cas par cas.
+4. La couverture côté ménages que D-294 désigne, après les juges et les études.
+
+**Ce qui change.**
+- Le livrable : des études produites par une commande, publiées sur un site statique,
+  puis l'API en ligne si le propriétaire le décide.
+- Le critère gagne une ligne pour le livrable (1 étude, 0 en ligne), et la règle qui donne
+  du carburant au premier chiffre : chaque texte financier publié est trié dès sa
+  parution, et ses articles chiffrables sont préenregistrés avant l'ouverture de leur
+  fiche. Quand un juge attend, l'enregistrer passe avant tout.
+- Un juge de plus, trouvé en relisant le sommaire de l'annexe du PLF 2027 : l'art. 74, sur
+  les aides personnelles au logement et la prime d'activité, que le moteur calcule. Sa
+  fiche n'a pas été lue ; seuls les titres du sommaire l'ont été, sans montant, et D-174
+  avait vu un titre de presse sur ce gel, sans montant non plus.
+- Les buts 5 à 8, écrits pour `/goal` dans l'ordre choisi, avec pour contraintes celles
+  de `CLAUDE.md`, qui gagne la façon de travailler qui a rendu les quatre premiers rapides.
+
+**Ce qui ne change pas.** Le public, les trois réponses, le juge extérieur, les règles du
+préenregistrement et l'ordre de la règle de priorité.

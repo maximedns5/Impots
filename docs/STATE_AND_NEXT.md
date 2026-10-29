@@ -1,6 +1,13 @@
 # State of the project, and the directions open — 2026-10-29 (Phase 11, M0 to M6)
 
-The third 2026-10-29 update adds D-295: the goal's fourth aim, the security pass before
+The fourth 2026-10-29 update adds D-296: the goal, revised once its first four aims were
+done (`docs/BUT.md`). The owner chose the order: first new judges, since the first figure
+has none left (the PLFSS 2027, never opened, and art. 74 of the PLF 2027, on housing aid
+and the prime d'activité, whose fiche was never read); then a study per command; then the
+studies on a static site, served without a computing server; then the household coverage
+D-294 points to. Each is written for `/goal`. `CLAUDE.md` gains the working conventions
+that made the last four aims fast.
+The third 2026-10-29 update added D-295: the goal's fourth aim, the security pass before
 any deployment (`src/impots/api/securite.py`). Closed by default: no third-party CORS
 origin unless declared (`*` and `null` refused, so the page is opened through the
 server), a key for every computation (`POST`), kept by the server as SHA-256 prints,
@@ -710,8 +717,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **296 decision
-entries**, D-000 to D-295, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **297 decision
+entries**, D-000 to D-296, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -1052,6 +1059,12 @@ download list.
   per client, one population pass at a time. Deploying, and its settings, is the owner's.
 
 ## What the next session does if nobody says otherwise
+
+**The goal decides** (`docs/BUT.md`, D-286, revised in D-296). The goal in progress is the
+first one not done: But 5, the autumn's judges, the PLFSS 2027 and art. 74 of the PLF 2027,
+registered blind before their fiches are read. Then a study per command (But 6), the
+studies online on a static site (But 7), and household coverage (But 8). The list below
+predates the goal: take from it only what one of these needs.
 
 1. **The PLF 2027 is graded** (D-204), the sign guard is in (D-206), art. 3's direction
    is explained (D-207), its candidate causes measured (D-209), the pension target
