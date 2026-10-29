@@ -8,9 +8,11 @@ aucun n'est saisi à la main.
 | plf2027_art_15 | -7.054 | -5.500 | -1.554 | -28.3% | 1.650 (relative) | **within** en-dessous |
 | plf2027_art_2 | +2.927 | +4.200 | -1.273 | -30.3% | 0.840 (relative) | **outside** en-dessous |
 | plf2027_art_3 | -1.295 | -1.100 | -0.195 | -17.7% | 0.330 (relative) | **within** en-dessous |
+| plf2027_art_74_apl | -0.078 | -0.101 | +0.023 | +22.5% | 0.040 (relative) | **within** au-dessus |
+| plf2027_art_74_ppa | -0.887 | -0.332 | -0.555 | -167.1% | 0.100 (relative) | **outside** en-dessous |
 
-**2 sur 3 dans la tolérance déclarée.**
-Direction des écarts : 0 au-dessus, 3 en-dessous — un biais systématique se lit ici avant de se lire dans les moyennes.
+**3 sur 5 dans la tolérance déclarée.**
+Direction des écarts : 1 au-dessus, 4 en-dessous — un biais systématique se lit ici avant de se lire dans les moyennes.
 
 ## Révisions, écrites après l'annexe
 

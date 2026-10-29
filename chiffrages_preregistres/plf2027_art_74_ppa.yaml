@@ -27,4 +27,18 @@ note: 'Comparateur : le volet prime d''activité de l''art. 74, l''effet de 2027
   en gain. Le cas chiffre la revalorisation suspendue (2,1 %), un coût : mirror.'
 bound: two-sided
 mirror: true
-comparator: null
+comparator:
+  published_eur: -332000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 74, § 4.2.1, p. 602, tableau
+    de la prime d''activité : « État -332 -995 » (M€, 2027 et 2028 ; le total des APU, p.
+    603, est le même) ; « Le taux prévisionnel de revalorisation au 1er avril 2027 […] retenu
+    pour effectuer les analyses d''impact de la mesure est de 2,3 % »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; hypothèses du PLF pour avril 2026
+    et 2027 (§ 4.3)
+  perimeter: Le volet prime d'activité de l'art. 74 ; l'État, qui est ici toutes les APU.
+  net_of: 'L''effet de 2027 seul, le tiers de celui de 2028 (332 sur 995) : quatre mois de
+    l''année pleine, là où le cas en compte sept effectifs. Revalorisation légale supposée
+    de 2,3 %, le cas 2,1 %. Aucun effet comportemental.'
+  sign: yield
+  basis: premiere-annee
+  retrieved: '2026-10-29'

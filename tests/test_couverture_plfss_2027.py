@@ -95,3 +95,55 @@ def test_the_manifested_text_has_exactly_these_articles_and_titles():
     assert len(titles) == len(c.ARTICLES_PLFSS_2027)
     for title, article in zip(titles, c.ARTICLES_PLFSS_2027, strict=True):
         assert _norm(article.intitule)[:40] in title, (article.numero, title)
+
+
+ANNEXE_PLFSS = ROOT / "data" / "raw" / "plfss2027_evaluations_prealables.pdf"
+ANNEXE_PLF = ROOT / "data" / "raw" / "plf2027_evaluations_prealables.pdf"
+
+
+def _manifested(path: Path) -> bytes:
+    raw = path.read_bytes()
+    manifest = json.loads((ROOT / "data" / "raw" / "MANIFEST.json").read_text(
+        encoding="utf-8"))
+    assert hashlib.sha256(raw).hexdigest() == manifest["files"][path.name]["sha256"]
+    return raw
+
+
+@pytest.mark.skipif(not ANNEXE_PLFSS.exists(),
+                    reason="l'annexe 9 du PLFSS n'est pas dans data/raw (le PDF reste hors "
+                           "du dépôt)")
+def test_the_manifested_plfss_annex_is_annex_9():
+    import io
+
+    import pypdf
+
+    reader = pypdf.PdfReader(io.BytesIO(_manifested(ANNEXE_PLFSS)))
+    first = _norm(reader.pages[0].extract_text())
+    assert "ANNEXE 9" in first and "évaluation préalable" in first
+
+
+@pytest.mark.skipif(not ANNEXE_PLF.exists(),
+                    reason="l'annexe du PLF n'est pas dans data/raw (le PDF reste hors du "
+                           "dépôt)")
+@pytest.mark.parametrize("case, quote", [
+    ("plf2027_art_74_apl", "La non revalorisation des paramètres de dépenses de logement au "
+                           "1 er octobre 2027 représente une économie de 101 millions d'euros "
+                           "en 2027 et 404 millions d'euros en 2028."),
+    ("plf2027_art_74_ppa", "État -332 -995"),
+])
+def test_each_art_74_comparator_is_on_page_602_of_the_manifested_annex(case, quote):
+    """The comparators were typed from the fiche, read after 8bfd30e; this finds each
+    figure on its page, so a mistyped amount fails here and not in a reader's hands."""
+    import io
+
+    import pypdf
+
+    from impots import preregistration as ch
+
+    reader = pypdf.PdfReader(io.BytesIO(_manifested(ANNEXE_PLF)))
+    page = _norm(reader.pages[602 - 1].extract_text())
+    assert _norm(quote) in page
+    comparator = ch.load(case).comparator
+    assert "p. 602" in comparator.source
+    millions = -comparator.published_eur / 1e6
+    assert f"{millions:.0f}" in _norm(quote)

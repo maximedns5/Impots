@@ -53,22 +53,23 @@ Trois chiffres, donnés ensemble, parce que chacun seul ment :
 
 | chiffre | aujourd'hui | source |
 |---|---|---|
-| cas notés dans la tolérance déclarée | **2 sur 3** (PLF 2027 : art. 2, 3, 15) ; à part, 1 révision sur 1 (art. 2, D-292) | `reports/chiffrages_preregistres.md` |
-| articles fiscaux chiffrables | **3 sur 33** (PLF 2027) ; 1 sur 29 (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
+| cas notés dans la tolérance déclarée | **3 sur 5** (PLF 2027 : art. 2, 3, 15, et les deux volets de l'art. 74) ; à part, 1 révision sur 1 (art. 2, D-292) | `reports/chiffrages_preregistres.md` |
+| articles chiffrables | **3 sur 33** fiscaux (PLF 2027), plus l'art. 74 de dépense ; **0 sur 49** (PLFSS 2027) ; 1 sur 29 (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 | euros quantifiés par l'annexe que l'outil chiffre | **63,8 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 
 Et le livrable : **1 étude à trois réponses** (PLF 2027), **0 en ligne**.
 
-Les trois écarts de 2027 tombent du même côté : un biais systématique se lit là avant de
-se lire dans une moyenne.
+En valeur absolue, les cinq écarts ne tombent pas du même côté : trois au-dessus du
+publié (art. 3, 15 et la prime d'activité), deux en dessous (art. 2 et le logement). Le
+plus grand, la prime à +167 %, n'est expliqué ni par la base ni par la formule (D-300).
 
 **Le premier chiffre n'avance que si l'on trouve de nouveaux juges.** Chaque texte
 financier publié (PLF, PLFSS, loi de finances rectificative, et les articles de dépense
 que le moteur sait chiffrer) est trié dès sa parution, et ses articles chiffrables sont
-préenregistrés avant l'ouverture de leur fiche. Les juges disponibles aujourd'hui : le
-PLFSS 2027, jamais ouvert, et l'art. 74 du PLF 2027 (aides au logement et prime
-d'activité), dont la fiche n'a pas été lue. Le suivant viendra en octobre 2027, avec le
-PLF 2028.
+préenregistrés avant l'ouverture de leur fiche. Ceux de l'automne 2026 sont épuisés :
+le PLFSS 2027, trié sans article chiffrable, et l'art. 74 du PLF 2027, noté en deux
+volets (D-298 à D-300). Le suivant viendra avec le PLF et le PLFSS 2028, en octobre
+2027, ou une loi de finances rectificative avant.
 
 **Les règles qui font que le chiffre veut dire quelque chose.** On n'ouvre pas l'annexe
 avant le commit des enregistrements. Aucune tolérance n'est modifiée après le premier
@@ -116,24 +117,12 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
 * **But 4 — La passe de sécurité** (D-295) : la CORS restreinte, une clé par calcul, un
   débit par client, une passe sur la population à la fois. Le déploiement de l'API reste
   la décision du propriétaire.
+* **But 5 — Les juges de l'automne** (D-297 à D-300) : le PLFSS 2027 trié, 49 articles,
+  aucun chiffrable ; l'art. 74 du PLF en deux volets, en miroir. Le logement est dans sa
+  tolérance (−22,5 %), la prime hors de la sienne (+167 %) : la fiche compte quatre mois,
+  le moteur sept, et à mois et taux égaux l'écart reste de +67 %.
 
-### But 5 — Les juges de l'automne : le PLFSS 2027 et l'art. 74 du PLF 2027 (en cours)
-
-```
-/goal Le PLFSS 2027 et l'art. 74 du PLF 2027 sont notés contre leurs évaluations
-préalables, et c'est mergé dans main. Le texte du PLFSS 2027 est manifesté et trié article
-par article dans src/impots/plf_coverage.py, rendu dans docs/PLF2027_COVERAGE.md, lu
-montants masqués comme en D-174 ; chaque refus porte sa porte (D-293). Chaque article
-chiffrable, art. 74 compris, est préenregistré (scénario, tolérance et sa raison) dans un
-commit poussé AVANT que l'annexe du PLFSS ou la fiche de l'art. 74 ne soit lue ; une
-D-entrée dit tout ce qui a été vu avant. Puis l'annexe est manifestée, chaque cas noté dans
-reports/chiffrages_preregistres.md, et le résultat consigné dans une D-entrée contre le
-pronostic. Preuve attendue dans la conversation : le SHA du commit des enregistrements,
-antérieur à celui qui manifeste l'annexe ; la sortie verte des tests ciblés ; l'URL de la
-PR et le SHA du merge. Ou s'arrêter après 40 tours, en disant ce qui manque.
-```
-
-### But 6 — Une étude par commande
+### But 6 — Une étude par commande (en cours)
 
 ```
 /goal Une étude à trois réponses se produit par une commande, et c'est mergé dans main.

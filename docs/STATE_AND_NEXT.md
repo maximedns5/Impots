@@ -1,5 +1,21 @@
 # State of the project, and the directions open — 2026-10-29 (Phase 11, M0 to M6)
 
+The fifth 2026-10-29 update adds D-297 to D-300: the goal's fifth aim, the autumn's
+judges. The PLFSS 2027 (text n° 3211) was fetched, read through the amount mask and
+triaged article by article (`plf_coverage.ARTICLES_PLFSS_2027`, rendered in
+`docs/PLF2027_COVERAGE.md`): 49 articles, none the tool can price, each refusal with its
+door, one new door (`sante`). Art. 74 of the PLF 2027 suspends two revaluations; two new
+knobs write them as coefficients on their legal date (`ppa_revalorisation_avril` from
+1 April, `al_revalorisation_octobre` on the 56 housing parameters the tree revised on
+1 October 2025), read back against the baseline tree, and `grade` now honours `mirror`,
+which it stored and ignored. Both volets were registered in mirror, with their prognosis,
+and pushed (`8bfd30e`) before the fiche was read; the double entry refused the housing
+pass first and was right to (D-299): it netted the housing aid's CRDS twice. Graded: the
+housing volet is within its ±40 % (−22.5 % in magnitude), the prime d'activité outside
+its ±30 % (+167 %). The fiche counts four months of the prime in 2027, the engine seven;
+at equal months and rate the gap is still +67 %, and the engine matches the fiche's own
+single-person case to the euro, so the residual lies in the population. The blind cases
+are 3 of 5.
 The fourth 2026-10-29 update adds D-296: the goal, revised once its first four aims were
 done (`docs/BUT.md`). The owner chose the order: first new judges, since the first figure
 has none left (the PLFSS 2027, never opened, and art. 74 of the PLF 2027, on housing aid
@@ -1061,10 +1077,16 @@ download list.
 ## What the next session does if nobody says otherwise
 
 **The goal decides** (`docs/BUT.md`, D-286, revised in D-296). The goal in progress is the
-first one not done: But 5, the autumn's judges, the PLFSS 2027 and art. 74 of the PLF 2027,
-registered blind before their fiches are read. Then a study per command (But 6), the
-studies online on a static site (But 7), and household coverage (But 8). The list below
-predates the goal: take from it only what one of these needs.
+first one not done: But 6, a study per command. Then the studies online on a static site
+(But 7), and household coverage (But 8). The list below predates the goal: take from it
+only what one of these needs.
+
+0. **The prime d'activité's +67 %** (D-300). At the fiche's months and rate, art. 74's
+   PPA volet is still two thirds above the published figure, while the engine gives the
+   fiche's own 1-SMIC single case to the euro. The measure that would say why: the
+   simulated PPA recipients by family configuration and by position against the forfait,
+   against the CNAF's published counts. No revision before that measure: one that only
+   changes the basis would grade red again.
 
 1. **The PLF 2027 is graded** (D-204), the sign guard is in (D-206), art. 3's direction
    is explained (D-207), its candidate causes measured (D-209), the pension target

@@ -23363,3 +23363,54 @@ sur le commit de cette entrée, avec la tolérance et la raison que D-298 a fix�
 doit rendre les mêmes +78,24 M€, et l'écart est un contrôle. Celle de la prime reste
 sur `c05f1ee` : sa réforme ne touche pas l'aide au logement, et la garde l'a laissée
 passer.
+
+## D-300 — Les juges de l'automne : le logement dans la tolérance, la prime à +167 %
+
+**Le fait.** Les deux cas de l'art. 74 ont été enregistrés et poussés dans `8bfd30e`, le
+triage du PLFSS avec eux (D-298, D-299). Ensuite seulement, la fiche de l'art. 74 a été
+lue, p. 596 à 604 de l'annexe du PLF déjà manifestée, et l'annexe 9 du PLFSS manifestée
+(securite-sociale.fr, sha256 80e0b30b6b8b), dont seule la première page a été lue, pour
+l'identifier. Aucun article du PLFSS n'étant chiffrable, elle n'est le juge d'aucun cas.
+
+**Les notes** (`reports/chiffrages_preregistres.md`), le simulé retourné par le miroir :
+- logement : −78,2 M€ contre −101 M€ publiés, **dans** la tolérance de ±40 % ; −22,5 % en
+  valeur absolue ;
+- prime : −886,7 M€ contre −332 M€ publiés, **hors** de la tolérance de ±30 % ; +167 % en
+  valeur absolue.
+Les cas aveugles sont 3 sur 5 dans leur tolérance.
+
+**Contre le pronostic, point par point.**
+1. Le pari (la fiche compte les versements de 2027) est réfuté, et des deux côtés
+   autrement que prévu. Le logement compte les droits : 101 M€ sont le quart des 404 de
+   2028, octobre à décembre. La prime ne compte ni neuf mois ni huit, mais quatre : 332
+   M€ sont le tiers des 995 de 2028. La fiche ne dit pas pourquoi.
+2. Le logement tombe sur la branche « droits » du pronostic : −21 % annoncés, −22,5 %
+   mesurés. Le volet se conduit comme ses biais déclarés le disaient : −24,1 % de masse et
+   −18,0 % d'allocataires, sans zone 1, sans foyers, sans accession, et le même décompte
+   de mois. Le taux supposé pour 2027 n'est pas publié. Si c'était celui de 2026, 1,15 %,
+   le cas, à 2,0 %, serait gonflé par le taux, et le manque de couverture plus grand que
+   −22,5 %.
+3. La prime est réfutée. Pronostic : −2 %, entre −15 et +15 %. Mesuré : +167 %. D-298
+   avait écrit que « un logement sous le publié avec une prime au-dessus ne serait
+   expliqué par aucun des cinq biais » : c'est ce qui est arrivé.
+
+**L'écart de la prime, décomposé sans nouvelle passe.** Le rapport 886,7 / 332 vaut 2,67.
+Les mois en portent ×1,75 (sept mois-équivalents contre quatre) ; le taux ×0,91 (2,1 %
+contre 2,3 %). À mois et taux égaux, le cas reste à +67 % de la fiche, et le recours en
+explique au plus 24 points (+6,5 % d'allocataires, +23,9 % de dépense). Ce n'est pas la
+formule : sur les cas types de la fiche (§ 4.1.2), le moteur rend, à 2,3 %, 19,0 € par
+mois pour une personne seule au SMIC, comme la fiche (19 €), et 30,7 € pour un parent
+isolé de deux enfants, contre 26 €. Le reste est dans la population : qui touche la prime
+au-dessus du forfait, et avec quelle famille. Non mesuré ici.
+
+**Ce qui n'est pas fait, et pourquoi.** Aucune révision n'est écrite. Ramené aux quatre
+mois de la fiche et à son taux, le cas serait à +67 %, toujours hors tolérance : au
+contraire de l'art. 2 (D-292), la base n'explique pas l'écart, et une révision qui ne
+change que la base ne serait qu'une seconde note rouge. La suite utile est une mesure :
+les allocataires simulés de la prime, par configuration familiale et par position au
+regard du forfait, contre les données de la CNAF. Elle est inscrite dans
+`docs/STATE_AND_NEXT.md`.
+
+**Ce que cela change au premier chiffre.** De 2 sur 3, il passe à 3 sur 5. Les juges de
+l'automne sont épuisés ; le suivant viendra avec le PLF et le PLFSS 2028, ou une loi de
+finances rectificative avant.
