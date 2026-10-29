@@ -23608,3 +23608,54 @@ reconduit. La dette de la prime hérite de l'écart du volet à la fiche, dans l
 **Ce que cela clôt.** Les trois pièces du but 6 sont là : la commande (D-301), la page du
 PLF 2027 régénérée par elle à une ligne près, et l'étude du PLFSS 2027, la première qu'elle
 produit. Le but suivant met les études en ligne, sur un site statique.
+
+## D-304 — Le site des études : chaque nombre dit son étage, sans script ni serveur
+
+**Le fait.** Le but 7 veut des études lisibles en ligne sans serveur de calcul.
+`impots site construire` écrit `site/` : une page d'accueil qui liste les études, chacune
+avec son tableau « En bref », puis une page par étude. `impots site verifier` dit si le
+site commité est la construction des études. C'est du HTML et une feuille de style, sans
+aucun script ; la construction refuse un fichier qui en porterait un.
+
+**Un texte, deux formes.** Le site ne réécrit pas les études. `Etude.lines` produit les
+lignes de la page, chaque nombre un jeton qui porte son étage. La page Markdown résout le
+jeton en son texte ; le site, en son texte suivi d'un badge. Les deux pages commitées sont
+restées identiques à l'octet après ce changement. Le site ne peut donc rien dire que la
+page ne dise, et il refuse une étude dont la page dérive de ses rapports. Une étude
+préenregistrée dont les passes n'ont pas tourné est listée sans page.
+
+**Les étages.** Un nombre que l'outil calcule dit sa couche (`README.md`, les cinq) :
+- L1, la population : les ménages d'un décile, leur niveau de vie, les entreprises ;
+- L2, la simulation mécanique : le coût de la première année, les deltas, les gagnants
+  et les perdants, l'écart à l'enregistrement ;
+- L3, la bande des comportements ; L4, l'éventail macro.
+Un nombre repris dit d'où il vient : « publié » pour le chiffrage du gouvernement et sa
+citation, « texte » pour ce que la loi ou son triage compte (et les montants qu'un
+intitulé ou une raison de refus cite), « hypothèse » pour le scénario et le cadre,
+« déclaré » pour la tolérance. Un écart de dette dit l'étage le plus haut qui y entre, et
+qu'il est sous hypothèses : L4 si la boucle macro y est entrée, L3 si un canal des
+comportements, L2 sinon. Les art. 2 et 3 sont en L4 ; l'art. 15 et les deux volets de
+l'art. 74, en L2. Une année, un numéro d'article, une date ou un commit n'est pas une
+grandeur, et ne porte pas d'étage.
+
+**La garde.** Un montant (des euros, des points, une part) qui n'est pas un jeton fait
+refuser la page, en Markdown comme sur le site. À la première lecture, elle en a trouvé
+deux : les 3 000 € de l'intitulé de l'art. 3 et les 1 281 € d'une raison de refus du
+PLFSS. Tous deux sont maintenant étiquetés « texte ». Sur le site, chaque réponse absente
+est marquée avec sa raison : la bande, l'éventail, ce que la chaîne ne lit pas, chaque
+article refusé.
+
+**docs/etudes/.** La page du PLF 2027 devient `docs/etudes/plf2027.md`, là où le but place
+les études et où le site les lit. Son contenu est inchangé, et `docs/ETUDE_PLF2027.md`
+n'existe plus.
+
+**Publier.** `.github/workflows/site.yml` vérifie le site puis, si le propriétaire l'a
+décidé, le publie sur GitHub Pages. Il se lance à la main, comme `test.yml` depuis D-212.
+Publier demande deux gestes du propriétaire : régler Pages sur « GitHub Actions », et
+poser la variable de dépôt `SITE_PUBLIE` à `oui`. Sans eux, le workflow vérifie le site
+et ne publie rien.
+
+**Les tests.** 18 pour le site et 17 pour les étages. Vingt mutations, toutes tuées. La
+dérive du site a été vue échouer sur une page modifiée, sur un fichier en trop et sur un
+fichier manquant. Rendu dans Chromium sans JavaScript, à 1 200 puis 390 pixels de large :
+aucune page ne déborde, et un tableau trop large défile seul.

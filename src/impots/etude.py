@@ -200,6 +200,102 @@ def _mirrored(response: Any, sign: int) -> Any:
 
 
 # --------------------------------------------------------------------------- #
+# The numbers of a page, each with what it rests on (D-304)
+# --------------------------------------------------------------------------- #
+
+#: What a number on a page rests on. A number the tool computes says its layer
+#: (`README.md`, the five layers); a number it takes from elsewhere says where from.
+ETAGES = {
+    "L1": "population synthétique calée sur des totaux publiés : bonne sur les agrégats, "
+          "faible dans les queues",
+    "L2": "simulation mécanique : qui paie quoi le premier jour, personne ne change de "
+          "comportement ; à 1 à 3 % près sur les agrégats",
+    "L3": "réponse des comportements : une fourchette sur des élasticités publiées, "
+          "jamais un point",
+    "L4": "ordre de grandeur macroéconomique, en éventail : large par construction, et "
+          "souvent indisponible",
+    "publié": "le chiffrage du gouvernement, l'évaluation préalable publiée avec le texte",
+    "texte": "ce que le texte de loi, ou son triage, compte",
+    "hypothèse": "ce que l'étude suppose : son scénario, son cadre",
+    "déclaré": "une tolérance déclarée avant le chiffrage",
+}
+_TOKEN = re.compile("\ue000(\\d+)\ue001")
+
+
+@dataclass(frozen=True)
+class Nombre:
+    texte: str
+    etage: str
+    #: A gap in the debt: conditional on the named frame and on θ.
+    conditionnel: bool = False
+
+
+class Nombres:
+    """The numbers of one page. Each is written in the page's lines as a token; the
+    Markdown resolves it to its text, the site to its text and its étage."""
+
+    def __init__(self) -> None:
+        self.items: list[Nombre] = []
+
+    def __call__(self, texte: Any, etage: str, *, conditionnel: bool = False) -> str:
+        if etage not in ETAGES:
+            raise EtudeError(f"un nombre sans étage connu : « {texte} » ({etage})")
+        self.items.append(Nombre(str(texte), etage, conditionnel))
+        return f"\ue000{len(self.items) - 1}\ue001"
+
+    def resolve(self, line: str, form: Any = None) -> str:
+        """`line` with each token replaced by `form(nombre)`, its text by default."""
+        return _TOKEN.sub(lambda m: (form or (lambda x: x.texte))(self.items[int(m[1])]),
+                          line)
+
+
+#: An amount on a page: euros, points or a share. None may stand without its étage.
+AMOUNT = re.compile(r"\d(?:[\d\u202f\u00a0 ]*\d)?(?:,\d+)?\s?(?:Md€|M€|k€|€|pt|%)")
+
+
+def amounts(text: str, etage: str, n: Nombres) -> str:
+    """`text` with each amount it quotes made a number of `etage`: an article's title or a
+    triage's reason quotes the law's amounts, and says where they come from."""
+    return AMOUNT.sub(lambda m: n(m[0], etage), text)
+
+
+def debt_etage(path: dict[str, Any]) -> str:
+    """The highest layer a path's debt rests on: L4 when the macro loop entered it, L3
+    when a behavioural channel did, L2 when it is the mechanical path alone (D-304)."""
+    from impots.predictif.chaine import MACRO_CHANNELS
+    from impots.predictif.theta import MACRO_ROW
+
+    closed = path.get("closed") or {}
+    if not any(channel in closed for channel in MACRO_CHANNELS):
+        return "L4"
+    rows = (path.get("theta_box") or {}).get("rows") or []
+    return "L3" if any(row != MACRO_ROW for row in rows) else "L2"
+
+
+def _deciles(w: Any, n: Nombres, response: Any) -> None:
+    """The fiche's decile table (`fiche._deciles`), each number with its étage: the
+    households and their niveau de vie are the population's, the rest the simulation's."""
+    from impots import fiche
+
+    rows = getattr(response, "deciles", None) or []
+    if not rows:
+        w("*Table par décile non disponible pour cette exécution.*")
+        w("")
+        return
+    w("| décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |")
+    w("|---|---|---|---|---|---|")
+    for r in rows:
+        w(f"| {r.decile} | {n(fiche._num(r.n_households), 'L1')} | "
+          f"{n(fiche._num(r.mean_niveau_de_vie) + ' €', 'L1')} | "
+          f"{n(fiche._eur(r.mean_delta), 'L2')} | {n(fiche._pct(r.share_winners), 'L2')} | "
+          f"{n(fiche._pct(r.share_losers), 'L2')} |")
+    w("")
+    w("Les déciles sont ceux du niveau de vie de la population simulée. Toute structure")
+    w("plus fine qu'un décile est un artefact de l'imputation, pas un résultat.")
+    w("")
+
+
+# --------------------------------------------------------------------------- #
 # The texts whose refusals a study says
 # --------------------------------------------------------------------------- #
 
@@ -222,13 +318,14 @@ class _PLF2027:
 
         return _article_of(plf_coverage.ARTICLES_2027, volet.scenario)
 
-    def chapeau(self, entries: list[dict[str, Any]], last: int) -> str:
+    def chapeau(self, entries: list[dict[str, Any]], last: int, n: Nombres) -> str:
         from impots import plf_coverage
 
         every = plf_coverage.ARTICLES_2027
-        return (f"Le projet de loi de finances pour 2027 porte {len(every)} articles fiscaux. "
-                f"Cet outil en chiffre {len(entries)}, et dit pourquoi il ne chiffre pas les "
-                f"autres. Pour chacun des {len(entries)}, trois réponses : ce qu'il coûte et "
+        return (f"Le projet de loi de finances pour 2027 porte {n(len(every), 'texte')} "
+                f"articles fiscaux. Cet outil en chiffre {n(len(entries), 'texte')}, et dit "
+                f"pourquoi il ne chiffre pas les autres. Pour chacun des "
+                f"{n(len(entries), 'texte')}, trois réponses : ce qu'il coûte et "
                 f"qui y gagne ; ce qu'il coûte une fois les comportements et l'économie pris "
                 f"en compte ; ce qu'il fait à la dette en {last}. Puis l'écart au chiffrage du "
                 f"gouvernement, l'évaluation préalable publiée avec le texte.")
@@ -236,17 +333,18 @@ class _PLF2027:
     def label(self, entry: dict[str, Any]) -> str:
         return f"art. {entry['article'].numero}"
 
-    def heading(self, entry: dict[str, Any]) -> str:
-        return f"## Art. {entry['article'].numero} — {entry['article'].intitule}"
+    def heading(self, entry: dict[str, Any], n: Nombres) -> str:
+        article = entry["article"]
+        return f"## Art. {article.numero} — {amounts(article.intitule, 'texte', n)}"
 
     def first_year(self, year: int) -> str:
         return f"la première année (revenus {year})"
 
-    def refusals(self, w: Any, entries: list[dict[str, Any]]) -> None:
+    def refusals(self, w: Any, entries: list[dict[str, Any]], n: Nombres) -> None:
         from impots import plf_coverage
 
         refused = [a for a in plf_coverage.ARTICLES_2027 if a.bucket != "priceable_now"]
-        w(f"## Les {len(refused)} autres articles")
+        w(f"## Les {n(len(refused), 'texte')} autres articles")
         w("")
         w("Un article refusé n'est pas un article à zéro. Le refus est pris sur le texte, "
           "avant tout chiffrage, et sa raison est dite : hors du périmètre (`scope`), hors de "
@@ -256,7 +354,8 @@ class _PLF2027:
         w("|---|---|---|---|")
         for a in refused:
             kind, why = refusal(a.raison)
-            w(f"| {a.numero} | {a.intitule} | `{kind}` | {why} |")
+            w(f"| {a.numero} | {amounts(a.intitule, 'texte', n)} | `{kind}` | "
+              f"{amounts(why, 'texte', n)} |")
         w("")
 
 
@@ -273,7 +372,7 @@ class _PLFSS2027:
                              f"pas nommer.")
         return _article_of((plf_coverage.ARTICLE_74_2027,), volet.scenario)
 
-    def chapeau(self, entries: list[dict[str, Any]], last: int) -> str:
+    def chapeau(self, entries: list[dict[str, Any]], last: int, n: Nombres) -> str:
         from impots import plf_coverage
 
         every = plf_coverage.ARTICLES_PLFSS_2027
@@ -282,10 +381,12 @@ class _PLFSS2027:
         numeros = sorted({e["article"].numero for e in entries})
         art = ", ".join(map(str, numeros))
         return (f"Le projet de loi de financement de la sécurité sociale pour 2027 porte "
-                f"{len(every)} articles. Cet outil n'en chiffre aucun, et dit pour chacun "
+                f"{n(len(every), 'texte')} articles. Cet outil n'en chiffre aucun, et dit pour "
+                f"chacun "
                 f"pourquoi, avec la porte qui l'ouvrirait. La mesure de prestations que "
                 f"l'automne lui donne à chiffrer est dans le projet de loi de finances : "
-                f"l'art. {art}, en {len(entries)} volets. Pour chacun, trois réponses : ce "
+                f"l'art. {art}, en {n(len(entries), 'texte')} volets. Pour chacun, trois "
+                f"réponses : ce "
                 f"qu'il coûte et qui y gagne ; ce qu'il coûte une fois les comportements et "
                 f"l'économie pris en compte ; ce qu'il fait à la dette en {last}. Puis l'écart "
                 f"au chiffrage du gouvernement, l'évaluation préalable publiée avec le texte.")
@@ -293,17 +394,17 @@ class _PLFSS2027:
     def label(self, entry: dict[str, Any]) -> str:
         return f"art. {entry['article'].numero} du PLF, {entry['volet'].titre}"
 
-    def heading(self, entry: dict[str, Any]) -> str:
+    def heading(self, entry: dict[str, Any], n: Nombres) -> str:
         return f"## Art. {entry['article'].numero} du PLF 2027 — {entry['volet'].titre}"
 
     def first_year(self, year: int) -> str:
         return f"la première année, chiffrée en {year}"
 
-    def refusals(self, w: Any, entries: list[dict[str, Any]]) -> None:
+    def refusals(self, w: Any, entries: list[dict[str, Any]], n: Nombres) -> None:
         from impots import plf_coverage
 
         every = plf_coverage.ARTICLES_PLFSS_2027
-        w(f"## Les {len(every)} articles du PLFSS")
+        w(f"## Les {n(len(every), 'texte')} articles du PLFSS")
         w("")
         w("Un article refusé n'est pas un article à zéro. Le refus est pris sur le texte, "
           "avant tout chiffrage, et sa raison est dite : hors du périmètre (`scope`), hors de "
@@ -314,14 +415,15 @@ class _PLFSS2027:
         w("|---|---|---|---|---|")
         for a in every:
             kind, why = refusal(a.raison)
-            w(f"| {a.numero} | {a.intitule} | `{kind}` | `{a.porte}` | {why} |")
+            w(f"| {a.numero} | {amounts(a.intitule, 'texte', n)} | `{kind}` | `{a.porte}` | "
+              f"{amounts(why, 'texte', n)} |")
         w("")
         w("Les portes, de celle qui ouvrirait le plus d'articles à celle qui en ouvrirait le "
           "moins :")
         w("")
         for porte, numeros in plf_coverage.portes_plfss_2027():
             many = "s" if len(numeros) > 1 else ""
-            w(f"* `{porte}`, {len(numeros)} article{many} — "
+            w(f"* `{porte}`, {n(len(numeros), 'texte')} article{many} — "
               f"{plf_coverage.OUVERTURES_PLFSS_2027[porte]}.")
         w("")
 
@@ -546,6 +648,13 @@ class Etude:
     # -- the page ---------------------------------------------------------------- #
 
     def render(self, entries: list[dict[str, Any]]) -> str:
+        """The Markdown page: the lines, each number resolved to its text."""
+        lines, n = self.lines(entries)
+        return "\n".join(n.resolve(line) for line in lines)
+
+    def lines(self, entries: list[dict[str, Any]]) -> tuple[list[str], Nombres]:
+        """The page's Markdown lines, each number a token of `Nombres` that says what it
+        rests on: the page and the site are one text (D-304)."""
         from impots import fiche
 
         texte = TEXTES[self.texte]
@@ -556,12 +665,13 @@ class Etude:
         last = frame["years"][-1]
         lines: list[str] = []
         w = lines.append
+        n = Nombres()
         w(f"# {self.titre}")
         w("")
         w(f"<!-- Généré par `impots etude ecrire {self.nom}` depuis "
           f"{_relative(self.rapports)}/ ; ne pas éditer à la main. -->")
         w("")
-        w(texte.chapeau(entries, last))
+        w(texte.chapeau(entries, last, n))
         w("")
         w(f"Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année "
           f"est mécanique : personne ne change de comportement. La bande dit ce que les "
@@ -586,10 +696,12 @@ class Etude:
         for entry in entries:
             grade = entry["grade"]
             official = "—" if grade is None else (
-                f"{fiche._eur(grade.published_eur)}, "
+                f"{n(fiche._eur(grade.published_eur), 'publié')}, "
                 f"{'dans' if grade.verdict == 'within' else 'hors de'} la tolérance")
-            w(f"| {texte.label(entry)} | {fiche._eur(entry['cost'])} | {official} | "
-              f"{_points(entry['debt'][0]['theta'])} | {verdict(entry['debt'])} |")
+            lead = n(_points(entry["debt"][0]["theta"]), debt_etage(entry["path"]),
+                     conditionnel=True)
+            w(f"| {texte.label(entry)} | {n(fiche._eur(entry['cost']), 'L2')} | {official} | "
+              f"{lead} | {verdict(entry['debt'])} |")
         w("")
         w("Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en "
           "points de PIB, dans la vue vieillie et sous la première persistance de l'effet "
@@ -597,37 +709,38 @@ class Etude:
           "persistances.")
         w("")
         for entry in entries:
-            w(texte.heading(entry))
+            w(texte.heading(entry, n))
             w("")
-            w(f"*{entry['scenario'].source}*")
+            w(f"*{n(entry['scenario'].source, 'hypothèse')}*")
             w("")
             if entry["scenario"].note:
-                w(entry["scenario"].note)
+                w(n(entry["scenario"].note, "hypothèse"))
                 w("")
             w("### 1. Ce qu'il coûte, et qui y gagne")
             w("")
-            self._first(w, entry, texte)
+            self._first(w, n, entry, texte)
             w("")
             w("### 2. Avec les comportements et l'économie")
             w("")
-            self._second(w, entry)
+            self._second(w, n, entry)
             w(f"### 3. La dette en {last}")
             w("")
-            self._third(w, entry)
+            self._third(w, n, entry)
             w("### L'écart au chiffrage officiel")
             w("")
-            self._official(w, entry)
-        texte.refusals(w, entries)
+            self._official(w, n, entry)
+        texte.refusals(w, entries, n)
         w("## D'où viennent ces nombres")
         w("")
         path = entries[0]["path"]
         first = entries[0]["first"]
         w(f"Les passes ont tourné sur le commit `{first['commit'][:7]}`, {first['where']}. "
-          f"Cadre du chemin annuel : {path['growth_name']} ; {path['rate_name']} ; "
-          f"{path['spending_name']} ; droit reconduit tel qu'openfisca le porte ; θ½ sur "
+          f"Cadre du chemin annuel : {n(path['growth_name'], 'hypothèse')} ; "
+          f"{n(path['rate_name'], 'hypothèse')} ; {n(path['spending_name'], 'hypothèse')} ; "
+          f"droit reconduit tel qu'openfisca le porte ; θ½ sur "
           f"toutes les lignes ; comportements et boucle macro appliqués.")
         w("")
-        w(f"*{path['uprating_note']}*")
+        w(f"*{n(path['uprating_note'], 'hypothèse')}*")
         w("")
         where = _relative(self.rapports)
         for entry in entries:
@@ -636,7 +749,13 @@ class Etude:
             w(f"* `{where}/premiere_annee_{entry['name']}.json`, "
               f"`{where}/predictif_{entry['name']}.json`{case}")
         w("")
-        return "\n".join(lines)
+        # Every amount says what it rests on: one the page quotes without its étage is
+        # refused here, before the Markdown or the site can show it (D-304).
+        for line in lines:
+            bare = n.resolve(line, lambda _: "")
+            if found := AMOUNT.search(bare):
+                raise EtudeError(f"« {found[0]} » sans son étage : « {bare[:90]} »")
+        return lines, n
 
     @staticmethod
     def _sizes(response: Any, sign: int) -> list[tuple[str, float, float, float]]:
@@ -649,29 +768,30 @@ class Etude:
             row[2] += sign * cell.n_firms * (cell.mean_delta or 0.0)
         return [(taille, *row) for taille, row in out.items()]
 
-    def _first(self, w: Any, entry: dict[str, Any], texte: Any) -> None:
+    def _first(self, w: Any, n: Nombres, entry: dict[str, Any], texte: Any) -> None:
         from impots import fiche
 
         response, year, cost = entry["response"], entry["scenario"].year, entry["cost"]
         sense = "coûte" if cost > 0 else "rapporte"
         if entry["kind"] == "entreprises":
-            w(f"La mesure {sense} **{fiche._width(cost)}** en {year}, sur les entreprises "
-              f"de {response.meta.vintage} au droit de {year}.")
+            w(f"La mesure {sense} **{n(fiche._width(cost), 'L2')}** en {year}, sur les "
+              f"entreprises de {response.meta.vintage} au droit de {year}.")
             w("")
             w("| taille | entreprises | touchées | impôt en plus |")
             w("|---|---|---|---|")
-            for taille, n, touched, delta in self._sizes(response, entry["sign"]):
-                w(f"| {taille} | {fiche._num(n)} | {fiche._num(touched)} | "
-                  f"{fiche._eur(delta)} |")
+            for taille, count, touched, delta in self._sizes(response, entry["sign"]):
+                w(f"| {taille} | {n(fiche._num(count), 'L1')} | "
+                  f"{n(fiche._num(touched), 'L2')} | {n(fiche._eur(delta), 'L2')} |")
             w("")
             w(response.meta.note)
         else:
-            w(f"La mesure {sense} **{fiche._width(cost)}** {texte.first_year(year)}, sur la "
-              f"population de {response.meta.vintage} au droit de {year}.")
+            w(f"La mesure {sense} **{n(fiche._width(cost), 'L2')}** "
+              f"{texte.first_year(year)}, sur la population de {response.meta.vintage} au "
+              f"droit de {year}.")
             w("")
-            fiche._deciles(w, _mirrored(response, entry["sign"]))
+            _deciles(w, n, _mirrored(response, entry["sign"]))
 
-    def _second(self, w: Any, entry: dict[str, Any]) -> None:
+    def _second(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:
         from impots import fiche
 
         response, sign = entry["response"], entry["sign"]
@@ -697,9 +817,9 @@ class Etude:
             low, central, high = ((-band.p90, -band.p50, -band.p10) if sign == 1
                                   else (band.p10, band.p50, band.p90))
             w(f"**Une fois les comportements pris en compte**, la mesure coûte de "
-              f"{fiche._eur(low)} à {fiche._eur(high)}, central "
-              f"{fiche._eur(central)} (grade **{behavioural.grade}**), pour "
-              f"{fiche._eur(entry['cost'])} sans eux.")
+              f"{n(fiche._eur(low), 'L3')} à {n(fiche._eur(high), 'L3')}, central "
+              f"{n(fiche._eur(central), 'L3')} (grade **{behavioural.grade}**), pour "
+              f"{n(fiche._eur(entry['cost']), 'L2')} sans eux.")
             if behavioural.grade_reason:
                 w("")
                 w(f"*{behavioural.grade_reason}*")
@@ -713,14 +833,16 @@ class Etude:
                                  f"d'hypothèses ; il se lirait comme une prévision.")
             a = macro.assumptions
             w(f"**L'effet sur l'économie**, l'éventail macro de grade **{a.grade}**, "
-              f"couverture {fiche._pct(a.covered_share)}, conjoncture « {a.cycle_state} » :")
+              f"couverture {n(fiche._pct(a.covered_share), 'L4')}, conjoncture "
+              f"« {a.cycle_state} » :")
             w("")
             for label, series in (("PIB", macro.gdp), ("emploi", macro.jobs)):
                 for horizon, q in sorted(series.items()):
                     years = f"à {horizon} an{'' if horizon == '1' else 's'}"
                     p10, p50, p90 = ((q.p10, q.p50, q.p90) if sign == 1
                                      else (-q.p90, -q.p50, -q.p10))
-                    w(f"* **{label}, {years}** : {fiche._band(p10, p50, p90, q.unit)}")
+                    w(f"* **{label}, {years}** : "
+                      f"{n(fiche._band(p10, p50, p90, q.unit), 'L4')}")
             w("")
             if a.banner:
                 w(f"> {a.banner}")
@@ -736,9 +858,14 @@ class Etude:
                 w(f"* **{what}** — {why.split(' ; ')[0].split('. ')[0].rstrip('.')}.")
             w("")
 
-    def _third(self, w: Any, entry: dict[str, Any]) -> None:
+    def _third(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:
         path, rows = entry["path"], entry["debt"]
         year = path["years"][-1]["year"]
+        etage = debt_etage(path)
+
+        def points(value: float) -> str:
+            return n(_points(value), etage, conditionnel=True)
+
         if path.get("annees"):
             w(f"La mesure ne s'applique qu'en {', '.join(map(str, path['annees']))} : le "
               f"chemin la chiffre cette année-là et ne lui prête rien les autres (D-288).")
@@ -746,9 +873,9 @@ class Etude:
         w(f"| persistance | vue | Δ dette {year}, à θ½ | aux coins de la boîte |")
         w("|---|---|---|---|")
         for row in rows:
-            corners = (f"de {_points(min(row['corners']))} à {_points(max(row['corners']))}"
+            corners = (f"de {points(min(row['corners']))} à {points(max(row['corners']))}"
                        if row["corners"] else "—")
-            w(f"| {row['label'] or '—'} | {VIEWS[row['view']]} | {_points(row['theta'])} | "
+            w(f"| {row['label'] or '—'} | {VIEWS[row['view']]} | {points(row['theta'])} | "
               f"{corners} |")
         w("")
         w(f"En points de PIB de {year}, la dette avec la mesure moins la dette sans elle. La "
@@ -757,7 +884,7 @@ class Etude:
           f"{VERDICTS[verdict(rows)].format(year=year)}.")
         w("")
 
-    def _official(self, w: Any, entry: dict[str, Any]) -> None:
+    def _official(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:
         from impots import fiche
 
         case, grade = entry["case"], entry["grade"]
@@ -772,16 +899,17 @@ class Etude:
         within = "**dans la tolérance**" if grade.verdict == "within" else (
             "**hors de la tolérance**")
         w(f"Enregistré le {case.pre_registered[:10]}, sur le commit `{case.commit[:7]}`, "
-          f"avant l'ouverture de l'annexe : simulé {fiche._eur(grade.simulated_eur)}, publié "
-          f"{fiche._eur(grade.published_eur)} ({case.comparator.source}). Écart "
-          f"{fiche._eur(grade.gap_eur)} ({rel}), pour une tolérance déclarée de "
-          f"{fiche._width(grade.allowed_eur)} : {within}.")
+          f"avant l'ouverture de l'annexe : simulé {n(fiche._eur(grade.simulated_eur), 'L2')}, "
+          f"publié {n(fiche._eur(grade.published_eur), 'publié')} "
+          f"({n(case.comparator.source, 'publié')}). Écart "
+          f"{n(fiche._eur(grade.gap_eur), 'L2')} ({n(rel, 'L2')}), pour une tolérance "
+          f"déclarée de {n(fiche._width(grade.allowed_eur), 'déclaré')} : {within}.")
         w("")
         now = entry["cost"]
         w(f"La première année de cette étude, sur le code de l'étude, chiffre "
-          f"{fiche._eur(now)}, soit {fiche._eur(now - grade.simulated_eur)} de "
-          f"l'enregistrement. Le chiffre noté reste celui de l'enregistrement : c'est lui qui "
-          f"a été préenregistré.")
+          f"{n(fiche._eur(now), 'L2')}, soit {n(fiche._eur(now - grade.simulated_eur), 'L2')} "
+          f"de l'enregistrement. Le chiffre noté reste celui de l'enregistrement : c'est lui "
+          f"qui a été préenregistré.")
         w("")
 
     def drift(self) -> str | None:

@@ -1508,6 +1508,13 @@ def cmd_etude(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_site(args: argparse.Namespace) -> int:
+    """Le site des études (but 7, D-304) : le construire, ou vérifier qu'il est à jour."""
+    from impots import site
+
+    return site.main_args(args.action)
+
+
 def cmd_exploration(args: argparse.Namespace) -> int:
     """The bundles whose debt difference meets a target, at a fixed θ (Phase 10 M1).
 
@@ -2027,6 +2034,13 @@ def build_parser() -> argparse.ArgumentParser:
                          ("verifier", "la page commitée est-elle celle de ses rapports ?")):
         etude_actions.add_parser(action, help=text).add_argument("nom")
     etude.set_defaults(func=cmd_etude)
+
+    site = subcommands.add_parser(
+        "site", help="le site statique des études : sans calcul, sans script (but 7, D-304)")
+    site_actions = site.add_subparsers(dest="action", required=True)
+    site_actions.add_parser("construire", help="site/, depuis les études et leurs rapports")
+    site_actions.add_parser("verifier", help="le site commité est-il celui des études ?")
+    site.set_defaults(func=cmd_site)
 
     emtr_parser = subcommands.add_parser(
         "emtr", help="sweep a household type across the income range (F6)")
