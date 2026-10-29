@@ -881,7 +881,8 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
         path = chiffrages_module.register(
             args.case, mechanical_eur=priced["mechanical"], tolerance=tolerance,
             population_vintage=args.vintage, sample=args.sample,
-            scenario=args.scenario, note=args.note or "", directory=directory)
+            scenario=args.scenario, note=args.note or "", mirror=args.mirror,
+            directory=directory)
     except chiffrages_module.ChiffrageError as error:
         print(str(error), file=sys.stderr)
         return 1
@@ -1835,6 +1836,10 @@ def build_parser() -> argparse.ArgumentParser:
     registrar.add_argument("--vintage", type=millesime, default="2024")
     registrar.add_argument("--sample", type=int, default=20_000)
     registrar.add_argument("--note", default="")
+    registrar.add_argument("--mirror", action="store_true",
+                           help="the scenario prices the article's REVERSE, because the "
+                                "tree already carries its end state; graded turned back "
+                                "(D-298)")
     registrar.add_argument("--dir")
     registrar.set_defaults(func=cmd_chiffrage_register)
 

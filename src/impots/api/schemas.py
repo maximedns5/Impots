@@ -823,6 +823,17 @@ class ReformSpec(BaseModel):
     `plafond_tranche_1` / `plafond_tranche_2` are derived figures no formula consults,
     and a knob aimed at them would move nothing."""
     al_minoration_forfaitaire: Annotated[float, Field(ge=0, le=1_000)] | None = None
+    # PLF 2027 art. 74 (D-298): the two revaluations the article suspends, each a
+    # COEFFICIENT on what the tree carries on its legal date in the priced year — 1.021
+    # revalues by 2,1 % — written from that date and not from January. A level would not
+    # say the same thing: the level on that date is the tree's.
+    ppa_revalorisation_avril: Annotated[float, Field(ge=0.5, le=2.0)] | None = None
+    """The prime d'activité's montant forfaitaire, from 1 April (CSS L. 842-3, sixth
+    paragraph). The bonification is a share of it and follows."""
+    al_revalorisation_octobre: Annotated[float, Field(ge=0.5, le=2.0)] | None = None
+    """The housing-aid expense parameters, from 1 October (CCH L. 823-4): rent ceilings,
+    charge allowances, the foyers' rent equivalences and the flat minimum contribution,
+    every leaf the tree's last October revision moved."""
 
     # --- IFI (Phase 5) ---------------------------------------------------------------
     # Bounds are wide on purpose: this is a policy simulator and an IFI reform may
@@ -892,6 +903,18 @@ class ReformSpec(BaseModel):
     threshold. The social levies, 17,2 %, are not this knob. It bites only on capital
     income, which a household declares in `capital` and the population carries only
     with `impute_capital` (D-248)."""
+
+    @model_validator(mode="after")
+    def _check_revalorisations(self) -> ReformSpec:
+        """A level and a revaluation of the same amount do not compose: the level is
+        written from January, and the April coefficient would then revalue the level
+        asked for, which neither knob says on its own (D-298)."""
+        if self.ppa_montant_de_base is not None and self.ppa_revalorisation_avril is not None:
+            raise ValueError(
+                "« ppa_montant_de_base » fixe le montant forfaitaire de l'année et "
+                "« ppa_revalorisation_avril » revalorise celui que l'arbre porte au "
+                "1er avril : l'un ou l'autre, pas les deux.")
+        return self
 
     @model_validator(mode="after")
     def _check_bareme(self) -> ReformSpec:

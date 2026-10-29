@@ -415,6 +415,47 @@ def test_the_mirror_flag_survives_a_round_trip(tmp_path, monkeypatch):
     assert back.mirror is True and back.bound == "lower"
 
 
+def test_a_mirror_case_is_graded_on_the_article_not_on_the_reverse_it_priced():
+    """`mirror` says the case priced the article's REVERSE, so `grade` must turn it back.
+
+    PLF 2027 art. 74 suspends two revaluations that the frozen tree never applied: the
+    case prices the revaluation, a cost, and the article is its opposite, a yield. Graded
+    as it stood, a figure exactly right would sit twice the published amount away, red.
+    Fails if `grade` ignores `mirror`, which it did until D-298: the flag was stored,
+    round-tripped and read by nobody.
+    """
+    exact = ch.grade(case(1.0e9, -1.0e9, mirror=True))
+    assert exact.verdict == "within"
+    assert exact.simulated_eur == pytest.approx(-1.0e9)
+    assert exact.gap_eur == pytest.approx(0.0)
+    off = ch.grade(case(1.5e9, -1.0e9, mirror=True))
+    assert off.verdict == "outside" and off.direction == "en-dessous"
+    assert off.relative_gap == pytest.approx(-0.5)
+
+
+def test_the_register_command_carries_the_mirror_flag(tmp_path, monkeypatch):
+    """The command prices the scenario and registers it; a mirror case registered
+    without its flag would grade the reverse as the article, at twice the gap."""
+    import polars as pl
+
+    from impots import scenarios
+    from impots.population import cli
+
+    population = tmp_path / "population_2024.parquet"
+    pl.DataFrame({"x": [1]}).write_parquet(population)
+    monkeypatch.setattr(cli, "PROCESSED", tmp_path)
+    monkeypatch.setattr(scenarios, "load", lambda name: name)
+    monkeypatch.setattr(scenarios, "mechanical_price",
+                        lambda scenario, frame, households: {"mechanical": 2.0e8})
+    monkeypatch.setattr(ch, "head_commit", lambda: "abc1234")
+    args = cli.build_parser().parse_args([
+        "chiffrage", "register", "miroir", "--scenario", "s",
+        "--tolerance-relative", "0.3", "--tolerance-absolute", "1e7",
+        "--tolerance-rationale", "essai", "--mirror", "--dir", str(tmp_path)])
+    assert args.func(args) == 0
+    assert ch.load("miroir", tmp_path).mirror is True
+
+
 def test_saving_refuses_to_write_through_a_planted_link(tmp_path):
     """Same defect, same fix as scenarios (D-173): `exists()` is False for a dangling
     link, and `write_text` follows it out of the directory."""

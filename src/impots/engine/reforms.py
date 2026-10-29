@@ -29,6 +29,7 @@ Do not confuse the two objects: the editable node (`bareme`) exposes
 
 from __future__ import annotations
 
+import functools
 from typing import TYPE_CHECKING, Any
 
 from openfisca_core import periods
@@ -99,6 +100,20 @@ PATH_AL_MINORATION = (
     "prestations_sociales", "aides_logement", "allocations_logement", "locatif",
     "minoration_forfaitaire",
 )
+PATH_AL = ("prestations_sociales", "aides_logement")
+
+#: The two legal revaluations PLF 2027 art. 74 suspends (D-298), each with the month it
+#: falls in: the prime d'activité's montant forfaitaire on 1 April (CSS L. 842-3, sixth
+#: paragraph) and the housing-aid expense parameters on 1 October (CCH L. 823-4). A
+#: revaluation knob is a COEFFICIENT on what the tree carries at that date, written from
+#: the first of the month in the priced year, never from January: written from January,
+#: the April one would count three months too many and the October one nine. The
+#: population runner sums the twelve months, so the year priced is the year in which the
+#: revaluation falls, as the budget counts it.
+REVALORISATION_KNOBS: dict[str, int] = {
+    "ppa_revalorisation_avril": 4,
+    "al_revalorisation_octobre": 10,
+}
 
 # --------------------------------------------------------------------------- #
 # IR niches (B3) — réductions and crédits d'impôt.
@@ -362,6 +377,10 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                     value = getattr(spec, knob, None)
                     if value is not None:
                         _apply_plafond(parameters, path, value, start, instant)
+                for knob in REVALORISATION_KNOBS:
+                    coefficient = getattr(spec, knob, None)
+                    if coefficient is not None:
+                        _apply_revalorisation(parameters, knob, coefficient, year)
                 return parameters
 
             self.modify_parameters(modifier_function=modify)
@@ -569,6 +588,93 @@ def verify_capital(tax_benefit_system: Any, spec: ReformSpec, year: int) -> None
             f"le PFU appliqué ne correspond pas à la réforme demandée — pfu_taux : "
             f"demandé {wanted}, appliqué {got} au {year}-01-01"
         )
+
+
+@functools.lru_cache(maxsize=8)
+def al_parametres_revises_en_octobre(year: int) -> tuple[tuple[str, ...], ...]:
+    """The housing-aid parameters the 1 October revision moves, read off the baseline tree.
+
+    Every leaf under `aides_logement` carrying a value dated 1 October of the year before
+    `year`: the last revision the tree knows of, whose list is CCH L. 823-4's — the rent
+    ceilings, the charge allowances, the foyers' rent equivalences, the flat minimum
+    contribution. Derived rather than listed, so a leaf the tree gains is revalued with
+    the others; the test holds the derivation to the revision, every leaf moved by the IRL.
+    """
+    from openfisca_core.parameters import Parameter
+
+    from impots.engine.system import baseline as _baseline
+
+    date = f"{year - 1}-10-01"
+    found: list[tuple[str, ...]] = []
+
+    def walk(node: Any, path: tuple[str, ...]) -> None:
+        if isinstance(node, Parameter):
+            if any(value.instant_str == date for value in node.values_list):
+                found.append(path)
+            return
+        for name, child in getattr(node, "children", {}).items():
+            walk(child, (*path, name))
+
+    walk(resolve(_baseline().parameters, PATH_AL), PATH_AL)
+    return tuple(found)
+
+
+def revalorisation_paths(knob: str, year: int) -> tuple[tuple[str, ...], ...]:
+    """What a revaluation knob multiplies. The prime d'activité's bonification is a share
+    of the montant forfaitaire, so it follows it without a path of its own."""
+    if knob == "ppa_revalorisation_avril":
+        return ((*PATH_PPA, "montant_de_base"),)
+    if knob == "al_revalorisation_octobre":
+        return al_parametres_revises_en_octobre(year)
+    raise KeyError(knob)
+
+
+def _apply_revalorisation(parameters: Any, knob: str, coefficient: float, year: int) -> None:
+    """Multiply what the tree carries on the legal date by `coefficient`, from that date."""
+    date = f"{year}-{REVALORISATION_KNOBS[knob]:02d}-01"
+    for path in revalorisation_paths(knob, year):
+        current = float(resolve(parameters, path)(date))
+        update_existing(parameters, path, start=periods.instant(date),
+                        value=current * coefficient, instant=date)
+
+
+def verify_revalorisations(tax_benefit_system: Any, spec: ReformSpec, year: int) -> None:
+    """Read each revaluation back against the BASELINE tree, on its date and before it.
+
+    What it expects is derived here, from the baseline and the legal month, never from the
+    write path: the coefficient times the baseline's value on the first of the month, and
+    the baseline's value untouched in the month before. A coefficient written from
+    January — the easy mistake, since every other knob is — passes the first check and
+    fails the second; a parameter the write left out fails the first.
+    """
+    from impots.engine.system import baseline as _baseline
+
+    reference = _baseline().parameters
+    problems: list[str] = []
+    for knob, month in REVALORISATION_KNOBS.items():
+        coefficient = getattr(spec, knob, None)
+        if coefficient is None:
+            continue
+        date = f"{year}-{month:02d}-01"
+        before = f"{year}-{month - 1:02d}-28"
+        paths = revalorisation_paths(knob, year)
+        if not paths:
+            problems.append(f"{knob} : aucun paramètre à revaloriser en {year}")
+        for path in paths:
+            name = ".".join(path[len(PATH_AL):])
+            wanted = float(resolve(reference, path)(date)) * coefficient
+            got = float(resolve(tax_benefit_system.parameters, path)(date))
+            if differs(got, wanted):
+                problems.append(f"{knob} {name} au {date} : demandé {wanted}, appliqué {got}")
+            untouched = float(resolve(reference, path)(before))
+            got_before = float(resolve(tax_benefit_system.parameters, path)(before))
+            if differs(got_before, untouched):
+                problems.append(f"{knob} {name} écrit avant sa date : {got_before} au "
+                                f"{before}, au lieu de {untouched}")
+    if problems:
+        raise AssertionError(
+            "les revalorisations appliquées ne correspondent pas à la réforme demandée — "
+            + " ; ".join(problems))
 
 
 def verify_bareme(tax_benefit_system: Any, spec: ReformSpec, year: int) -> None:

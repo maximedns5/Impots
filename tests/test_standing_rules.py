@@ -237,7 +237,7 @@ def test_existence_is_read_from_the_evaluated_tree_not_the_editable_one() -> Non
 def test_every_knob_either_moves_an_outcome_or_says_why_not() -> None:
     """No knob may ship without a household on which it demonstrably moves something."""
     import knob_cases
-    from impots.engine.reforms import PLAFOND_KNOBS, SCALAR_KNOBS
+    from impots.engine.reforms import PLAFOND_KNOBS, REVALORISATION_KNOBS, SCALAR_KNOBS
 
     # PLAFOND_KNOBS autant que SCALAR_KNOBS, depuis D-151. Ne quantifier que sur les
     # leviers scalaires laissait les deux plafonds de bandeau hors de toute règle de
@@ -245,7 +245,9 @@ def test_every_knob_either_moves_an_outcome_or_says_why_not() -> None:
     # les seuls tests qui les nomment relisent l'arbre de paramètres ou vérifient quels
     # enfants ont été écrits — précisément la propriété dont D-071 a établi qu'elle ne
     # peut pas détecter un levier mort.
-    knobs = set(SCALAR_KNOBS) | set(PLAFOND_KNOBS)
+    # Et REVALORISATION_KNOBS depuis D-298 : un troisième registre, que la leçon de D-151
+    # interdit de laisser hors de la règle.
+    knobs = set(SCALAR_KNOBS) | set(PLAFOND_KNOBS) | set(REVALORISATION_KNOBS)
     covered = set(knob_cases.CASES) | set(knob_cases.EXEMPT)
     missing = sorted(knobs - covered)
     assert not missing, (

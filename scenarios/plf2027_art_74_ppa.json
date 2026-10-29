@@ -1,0 +1,11 @@
+{
+  "name": "plf2027_art_74_ppa",
+  "year": 2026,
+  "created": "2026-10-29",
+  "source": "PLF 2027 (AN, texte n° 3210), art. 74 — Maîtrise de l'évolution des aides personnelles au logement et de la prime d'activité. Volet prime d'activité : la revalorisation du sixième alinéa de l'article L. 842-3 du code de la sécurité sociale n'est pas appliquée en 2027. EN MIROIR : le scénario chiffre la revalorisation que l'article suspend, 2,1 % au 1er avril, et l'article en est l'opposé (D-298).",
+  "note": "2026 tient lieu de 2027 : l'arbre est figé et ne porte aucune revalorisation de 2027, ce qui est l'état final de l'article. 2,1 % : le coefficient de l'article L. 161-25, la moyenne des douze indices des prix hors tabac publiés avant le 1er avril 2027, pris égal à l'inflation hors tabac de 2026 que prévoit le PLF (2,1 %). La bonification est une part du montant forfaitaire et suit.",
+  "tags": [],
+  "reform": {
+    "ppa_revalorisation_avril": 1.021
+  }
+}
