@@ -171,6 +171,8 @@ Une décote plus généreuse, son taux ramené de 45,25 % à 40, 30, 20 ou 10 %,
 
 La colonne « Δb 2035, figée » lisait les taux marginaux de la vue vieillie (D-276) : elle est rechiffrée plus bas, dans « La vue figée, rechiffrée ».
 
+C1, la réponse du revenu imposable, est lu ici sur un seul échantillon des taux marginaux, dont le bruit va jusqu'à 0,09 point (D-283) : ces paquets sont rechiffrés sur quatre plus bas, dans « C1 sur quatre échantillons ».
+
 **Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
 
 Paquet le plus proche de la cible : **40 %**.
@@ -217,6 +219,8 @@ Une baisse de chaque taux du barème de l'IR en vigueur de 1, 3, 5 ou 7 %, ses s
 | × 0,99 | 1,38 Md€ | 1,23 Md€ | +0,08 pt | +0,07 pt | [−0,17 pt ; +0,33 pt] | 4 sur 8 (multiplicateur_macro = 1) |
 
 La colonne « Δb 2035, figée » lisait les taux marginaux de la vue vieillie (D-276) : elle est rechiffrée plus bas, dans « La vue figée, rechiffrée ».
+
+C1, la réponse du revenu imposable, est lu ici sur un seul échantillon des taux marginaux, dont le bruit va jusqu'à 0,09 point (D-283) : ces paquets sont rechiffrés sur quatre plus bas, dans « C1 sur quatre échantillons ».
 
 **Les indices de §7, pour le paquet le plus proche de la cible**, vue vieillie, tirés de la passe qui l'a chiffré.
 
@@ -920,6 +924,64 @@ Jusqu'à D-276, la vue figée prenait la clé des taux marginaux de la vue vieil
 | Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro tenu au niveau de la troisième année | +0,07 pt | +0,09 pt | +0,0240 pt |
 
 La vue figée n'entre dans aucun verdict de la cible : elle dit seulement si un paquet la tiendrait dans la vue figée seule. Rechiffrée, la vue figée seule ne tiendrait la cible à aucune des 24 lectures d'un paquet sous une persistance ; dans l'étude, à aucune.
+
+## C1 sur quatre échantillons
+
+D-283 a mesuré le bruit de C1, la réponse du revenu imposable, d'un échantillon de 3 000 ménages des taux marginaux à l'autre. Il vient de quelques ménages du décile du haut dont le pas franchit un petit saut sous une loi seulement. Depuis D-284, C1 lit quatre échantillons, mis en commun, et sa recette est la moyenne des quatre. Les rapports de l'étude dont la boîte porte une ligne de C1, pour le taux de la décote de l'IR et les taux du barème de l'IR, mis à l'échelle, ont été rejoués tels quels sur cette méthode : leurs explorations, puis leurs chemins annuels. Le rejeu a été préenregistré dans D-285 avant ses passes, et `scripts/c1_quatre.py` l'a lancé. Les rapports ont tourné sur le commit `a879e87c4819057e31e64c62e4b26373525b2dc9`, le 2026-10-28, ici : dans le conteneur de la session, en tâche de fond, depuis une copie de travail figée sur a879e87. Ils sont sous `reports/c1_quatre/` ; ceux de l'étude ne bougent pas, et les tables plus haut gardent leurs chiffres.
+
+**Le contrôle.** Seul C1 change. Les coûts des paquets s'écartent de ceux de l'étude de 0 € au plus, dans les deux vues, et ceux des chemins annuels de 0 € au plus. À θ, l'écart de chaque paquet est celui que prévoient les réplications de D-283, la moyenne de leurs quatre premiers échantillons moins le premier, à 0,000214 point près.
+
+**Δb 2035 à θ = ½.** La vue vieillie se lit contre l'étude ; la vue figée contre la dernière lecture qui en a corrigé les taux.
+
+| Instrument | Paquet | Persistance | Vue | Un échantillon | Quatre | Écart |
+|---|---|---|---|---|---|---|
+| Le taux de la décote de l'IR | 10 % | effet macro éteint après trois ans | vieillie | +2,82 pt | +2,84 pt | +0,0243 pt |
+| Le taux de la décote de l'IR | 10 % | effet macro éteint après trois ans | figée (D-279) | +2,73 pt | +2,75 pt | +0,0142 pt |
+| Le taux de la décote de l'IR | 20 % | effet macro éteint après trois ans | vieillie | +1,73 pt | +1,68 pt | −0,0477 pt |
+| Le taux de la décote de l'IR | 20 % | effet macro éteint après trois ans | figée (D-279) | +1,58 pt | +1,59 pt | +0,0090 pt |
+| Le taux de la décote de l'IR | 30 % | effet macro éteint après trois ans | vieillie | +0,86 pt | +0,86 pt | +0,0047 pt |
+| Le taux de la décote de l'IR | 30 % | effet macro éteint après trois ans | figée (D-279) | +0,83 pt | +0,86 pt | +0,0256 pt |
+| Le taux de la décote de l'IR | 40 % | effet macro éteint après trois ans | vieillie | +0,26 pt | +0,27 pt | +0,0088 pt |
+| Le taux de la décote de l'IR | 40 % | effet macro éteint après trois ans | figée (D-279) | +0,25 pt | +0,26 pt | +0,0065 pt |
+| Le taux de la décote de l'IR | 10 % | effet macro tenu au niveau de la troisième année | vieillie | +1,20 pt | +1,22 pt | +0,0243 pt |
+| Le taux de la décote de l'IR | 10 % | effet macro tenu au niveau de la troisième année | figée (D-279) | +1,18 pt | +1,20 pt | +0,0141 pt |
+| Le taux de la décote de l'IR | 20 % | effet macro tenu au niveau de la troisième année | vieillie | +0,79 pt | +0,74 pt | −0,0476 pt |
+| Le taux de la décote de l'IR | 20 % | effet macro tenu au niveau de la troisième année | figée (D-279) | +0,67 pt | +0,68 pt | +0,0090 pt |
+| Le taux de la décote de l'IR | 30 % | effet macro tenu au niveau de la troisième année | vieillie | +0,36 pt | +0,37 pt | +0,0047 pt |
+| Le taux de la décote de l'IR | 30 % | effet macro tenu au niveau de la troisième année | figée (D-279) | +0,35 pt | +0,37 pt | +0,0256 pt |
+| Le taux de la décote de l'IR | 40 % | effet macro tenu au niveau de la troisième année | vieillie | +0,11 pt | +0,12 pt | +0,0088 pt |
+| Le taux de la décote de l'IR | 40 % | effet macro tenu au niveau de la troisième année | figée (D-279) | +0,10 pt | +0,11 pt | +0,0065 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,93 | effet macro éteint après trois ans | vieillie | +2,16 pt | +2,08 pt | −0,0780 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,93 | effet macro éteint après trois ans | figée (D-279) | +1,88 pt | +1,80 pt | −0,0783 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,95 | effet macro éteint après trois ans | vieillie | +1,53 pt | +1,47 pt | −0,0635 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,95 | effet macro éteint après trois ans | figée (D-279) | +1,35 pt | +1,29 pt | −0,0609 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,97 | effet macro éteint après trois ans | vieillie | +0,91 pt | +0,87 pt | −0,0346 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,97 | effet macro éteint après trois ans | figée (D-279) | +0,86 pt | +0,80 pt | −0,0625 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro éteint après trois ans | vieillie | +0,30 pt | +0,30 pt | +0,0007 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro éteint après trois ans | figée (D-279) | +0,29 pt | +0,27 pt | −0,0169 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,93 | effet macro tenu au niveau de la troisième année | vieillie | +0,64 pt | +0,56 pt | −0,0778 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,93 | effet macro tenu au niveau de la troisième année | figée (D-279) | +0,53 pt | +0,45 pt | −0,0781 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,95 | effet macro tenu au niveau de la troisième année | vieillie | +0,45 pt | +0,39 pt | −0,0634 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,95 | effet macro tenu au niveau de la troisième année | figée (D-279) | +0,39 pt | +0,33 pt | −0,0608 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,97 | effet macro tenu au niveau de la troisième année | vieillie | +0,26 pt | +0,22 pt | −0,0345 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,97 | effet macro tenu au niveau de la troisième année | figée (D-279) | +0,28 pt | +0,22 pt | −0,0624 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro tenu au niveau de la troisième année | vieillie | +0,08 pt | +0,08 pt | +0,0007 pt |
+| Les taux du barème de l'IR, mis à l'échelle | × 0,99 | effet macro tenu au niveau de la troisième année | figée (D-279) | +0,09 pt | +0,08 pt | −0,0169 pt |
+
+**Les verdicts.** Aucun ne change : les mêmes paquets tiennent la cible, ou aucun, les mêmes sont robustes, et les mêmes coins de la boîte θ la tiennent.
+
+**Le chemin annuel, Δb 2035 chaque année chiffrée, à θ = ½.** Contre D-277, sur un seul échantillon.
+
+| Instrument | Persistance | Vue | Un échantillon | Quatre | Écart |
+|---|---|---|---|---|---|
+| Le taux de la décote de l'IR | effet macro éteint après trois ans | vieillie | +0,22 pt | +0,23 pt | +0,0052 pt |
+| Le taux de la décote de l'IR | effet macro éteint après trois ans | figée | +0,23 pt | +0,23 pt | +0,0054 pt |
+| Le taux de la décote de l'IR | effet macro tenu au niveau de la troisième année | vieillie | +0,09 pt | +0,10 pt | +0,0052 pt |
+| Le taux de la décote de l'IR | effet macro tenu au niveau de la troisième année | figée | +0,09 pt | +0,10 pt | +0,0054 pt |
+| Les taux du barème de l'IR, mis à l'échelle | effet macro éteint après trois ans | vieillie | +0,34 pt | +0,33 pt | −0,0117 pt |
+| Les taux du barème de l'IR, mis à l'échelle | effet macro éteint après trois ans | figée | +0,26 pt | +0,24 pt | −0,0129 pt |
+| Les taux du barème de l'IR, mis à l'échelle | effet macro tenu au niveau de la troisième année | vieillie | +0,11 pt | +0,09 pt | −0,0117 pt |
+| Les taux du barème de l'IR, mis à l'échelle | effet macro tenu au niveau de la troisième année | figée | +0,08 pt | +0,07 pt | −0,0129 pt |
 
 ## Ce que l'étude ne dit pas
 

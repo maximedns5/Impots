@@ -2395,3 +2395,304 @@ def test_the_nearest_bundle_s_replay_is_the_annual_path_s_carry(script, tmp_path
         VUE_FIGEE_TITLE)[2].partition(NOT_SAID)[0]
     assert ("Pour le paquet le plus proche, la vue figée rechiffrée est celle que le chemin "
             "annuel reporte sur sa passe de 2026, à 0,020000 point près.") in section
+
+
+# --------------------------------------------------------------------------- #
+# C1 on four samples of the marginal rates (D-284, D-285)
+# --------------------------------------------------------------------------- #
+C1_QUATRE_COMMIT = "9" * 40
+C1_QUATRE_TITLE = "## C1 sur quatre échantillons"
+C1_READS = ("decote", "ir")
+C1_POINTER = ("C1, la réponse du revenu imposable, est lu ici sur un seul échantillon des "
+              "taux marginaux, dont le bruit va jusqu'à 0,09 point (D-283) : ces paquets "
+              "sont rechiffrés sur quatre plus bas, dans « C1 sur quatre échantillons ».")
+
+
+def _c1_annual(requests: Path, reports: Path, script) -> None:
+    """D-277's annual paths, their boxes carrying the C1 row the study's do."""
+
+    def add_row(key, payload):
+        if key not in C1_READS:
+            return
+        box = payload["theta_box"]
+        box["rows"] = [RATE_ROW, *box["rows"]]
+        for path in box["paths"]:
+            for reading in ("every_year", "first_year"):
+                for one in path[reading].values():
+                    one["corners"] = [[f"{RATE_ROW} = {w}, {label}", v]
+                                      for w in (0, 1) for label, v in one["corners"]]
+
+    _annual(requests, reports, script, edit=add_row)
+
+
+#: C1 on the study's sample in D-283's stub, in points of Δb.
+BASE = 0.05
+
+
+def _bruit(reports: Path, *, shift: float, off: float = 0.0) -> None:
+    """D-283's replications, as far as the page reads them: C1 on the study's sample at
+    `BASE`, and on the three others so that their mean moves Δb by `shift` (+ `off`). Not
+    at nought: a prediction that forgot to take the first sample off would read the same."""
+    from impots.behavioural.emtr import C1_SAMPLES
+    from impots.population.runner import SAMPLE_SEED
+
+    out = reports / "bruit_c1"
+    out.mkdir()
+    for view in ("vieillie", "figee"):
+        for seed in C1_SAMPLES:
+            bundles = []
+            for key in C1_READS:
+                report = json.loads((reports / f"exploration_etude_{key}.json").read_text(
+                    encoding="utf-8"))
+                for e in report["searches"][0]["evaluations"]:
+                    points = BASE + (0.0 if seed == SAMPLE_SEED
+                                     else (shift + off) * 100 * len(C1_SAMPLES) / 3)
+                    bundles.append({"instrument": key, "knobs": e["knobs"],
+                                    "c1_points": points})
+            (out / f"c1_{view}_{seed}_100.json").write_text(
+                json.dumps({"bundles": bundles}), encoding="utf-8")
+
+
+def _c1_quatre(reports: Path, script, *, shift: float = -1e-3, edit=None) -> None:
+    """The replays of D-285: the study's explorations and annual paths that C1 prices, as
+    the commands write them again on four samples: every Δb moved by `shift`."""
+    out = reports / "c1_quatre"
+    out.mkdir()
+    run = script.launcher()
+    for key in C1_READS:
+        report = json.loads((reports / f"exploration_etude_{key}.json").read_text(
+            encoding="utf-8"))
+        report.update(commit=C1_QUATRE_COMMIT, computed="2026-10-29", where=WHERE)
+        for search in report["searches"]:
+            for figure in _figures(search):
+                figure["delta_aged"] += shift
+                figure["delta_frozen"] += shift
+        if edit is not None:
+            edit(key, "exploration", report)
+        (out / f"exploration_etude_{key}.json").write_text(
+            json.dumps(report, ensure_ascii=False), encoding="utf-8")
+        annual = json.loads((reports / "etude_annuel" / f"predictif_{run.name(key)}.json")
+                            .read_text(encoding="utf-8"))
+        annual.update(commit=C1_QUATRE_COMMIT, where=WHERE)
+        for path in annual["side_by_side"]:
+            for year in path["years"]:
+                for field in ("delta_aged", "delta_frozen", "reform_aged", "reform_frozen"):
+                    if year.get(field) is not None:
+                        year[field] += shift
+        for path in annual["theta_box"]["paths"]:
+            for reading in ("every_year", "first_year"):
+                for one in path[reading].values():
+                    one["theta"] += shift
+                    one["corners"] = [[label, v + shift] for label, v in one["corners"]]
+        if edit is not None:
+            edit(key, "annual", annual)
+        (out / f"predictif_{run.name(key)}.json").write_text(
+            json.dumps(annual, ensure_ascii=False), encoding="utf-8")
+
+
+def _quatre(tmp_path: Path, script, *, bruit: float | None = -1e-3, **kwargs):
+    requests, reports = _study(tmp_path, script)
+    _with_rate_row(reports, keys=C1_READS)
+    _c1_annual(requests, reports, script)
+    if bruit is not None:
+        _bruit(reports, shift=bruit)
+    _c1_quatre(reports, script, **kwargs)
+    etudes, complements, courbe, phase11 = script.study(requests, reports)
+    return script.render(etudes, complements, courbe, phase11), etudes, (requests, reports)
+
+
+def test_the_c1_replay_is_rendered_bundle_by_bundle(script, tmp_path) -> None:
+    """D-285: after the annual path, each bundle of each study exploration whose box
+    carries a C1 row, its Δb on one sample and on four, in both views, and the gap; each
+    annual path the same; the commit and where they ran; the control, costs untouched and
+    each gap the one D-283's replications predict. The page before is the page without
+    the replays, but for the pointers."""
+    page, etudes, _ = _quatre(tmp_path, script)
+    assert page.index(ANNUEL_TITLE) < page.index(C1_QUATRE_TITLE) < page.index(NOT_SAID)
+    section = page.partition(C1_QUATRE_TITLE)[2].partition(NOT_SAID)[0]
+    assert C1_QUATRE_COMMIT in section and WHERE in section and "D-285" in section
+    assert ("Les coûts des paquets s'écartent de ceux de l'étude de 0 € au plus, dans les "
+            "deux vues, et ceux des chemins annuels de 0 € au plus. À θ, l'écart de chaque "
+            "paquet est celui que prévoient les réplications de D-283, la moyenne de leurs "
+            "quatre premiers échantillons moins le premier, à 0,000000 point près.") in section
+    assert "**Les verdicts.** Aucun ne change" in section
+    for entry in etudes:
+        instrument = entry["instrument"]
+        for search in entry["report"]["searches"]:
+            for e in search["evaluations"]:
+                shown = instrument.show(e["knobs"][instrument.knob])
+                persistence = script._lower(search["persistence_label"])
+                rows = [f"| {instrument.label} | {shown} | {persistence} | vieillie "
+                        f"| {script._pt(e['delta_aged'])} "
+                        f"| {script._pt(e['delta_aged'] - 1e-3)} | −0,1000 pt |",
+                        f"| {instrument.label} | {shown} | {persistence} | figée (l'étude) "
+                        f"| {script._pt(e['delta_frozen'])} "
+                        f"| {script._pt(e['delta_frozen'] - 1e-3)} | −0,1000 pt |"]
+                for row in rows:
+                    assert (row in section) is (instrument.key in C1_READS), row
+        if instrument.key in C1_READS:
+            annual = entry["annuel"]["report"]
+            for path in annual["theta_box"]["paths"]:
+                before = path["every_year"]["vieillie"]["theta"]
+                label = next(s["persistence_label"] for s in entry["report"]["searches"]
+                             if s["persistence"] == path["persistence"])
+                assert (f"| {instrument.label} | {script._lower(label)} | vieillie "
+                        f"| {script._pt(before)} | {script._pt(before - 1e-3)} "
+                        f"| −0,1000 pt |") in section
+    (tmp_path / "avant").mkdir()
+    requests, reports = _study(tmp_path / "avant", script)
+    _with_rate_row(reports, keys=C1_READS)
+    _c1_annual(requests, reports, script)
+    before = script.render(*script.study(requests, reports))
+    head, _, tail = page.partition(C1_QUATRE_TITLE)
+    assert before == (head + NOT_SAID + tail.partition(NOT_SAID)[2]).replace(
+        "\n\n" + C1_POINTER, "")
+
+
+def test_each_instrument_c1_prices_points_to_its_replay(script, tmp_path) -> None:
+    page, etudes, _ = _quatre(tmp_path, script)
+    for entry in etudes:
+        label = entry["instrument"].label
+        own = page.partition(f"\n### {label}\n")[2].partition("\n### ")[0]
+        assert own and (C1_POINTER in own) is (entry["instrument"].key in C1_READS), label
+
+
+def test_without_d283_s_replications_the_prediction_is_not_said(script, tmp_path) -> None:
+    page, _, _ = _quatre(tmp_path, script, bruit=None)
+    section = page.partition(C1_QUATRE_TITLE)[2].partition(NOT_SAID)[0]
+    assert "chemins annuels de 0 € au plus." in section
+    assert "réplications de D-283" not in section
+
+
+@pytest.mark.parametrize("what, needle", [
+    ("coût", "s'écartent de ceux de l'étude de 1234 € au plus"),
+    ("coût annuel", "et ceux des chemins annuels de 1234 € au plus"),
+    ("écart", "moins le premier, à 0,050000 point près"),
+])
+def test_a_replay_c1_alone_does_not_explain_is_said_with_its_gap(script, tmp_path,
+                                                                 what: str, needle: str) -> None:
+    """Only C1 changes: the costs must be the study's, and each gap the one D-283
+    predicts. It is a result, said with its gap rather than refused."""
+
+    def move(key, kind, report):
+        if key != "decote":
+            return
+        if kind == "exploration" and what == "coût":
+            report["searches"][1]["evaluations"][2]["cost_frozen_eur"] += 1234.0
+        if kind == "exploration" and what == "écart":
+            report["searches"][0]["evaluations"][1]["delta_aged"] += 5e-4
+        if kind == "annual" and what == "coût annuel":
+            report["years"][3]["mechanical_aged_eur"] += 1234.0
+
+    page, _, _ = _quatre(tmp_path, script, edit=move)
+    assert needle in page.partition(C1_QUATRE_TITLE)[2]
+
+
+def test_the_frozen_view_reads_against_its_last_corrected_reading(script, tmp_path) -> None:
+    """Where D-279 priced the frozen view again on its own rates, the replay's frozen
+    view is read against it, not against the study's, which read the aged view's rates."""
+    requests, reports = _study(tmp_path, script)
+    _with_rate_row(reports, keys=C1_READS)
+    _c1_annual(requests, reports, script)
+    out = reports / "vue_figee"
+    out.mkdir()
+    for key in C1_READS:
+        report = json.loads((reports / f"exploration_etude_{key}.json").read_text(
+            encoding="utf-8"))
+        report.update(commit=VUE_FIGEE_COMMIT, computed="2026-10-28", where=WHERE)
+        for search in report["searches"]:
+            for figure in _figures(search):
+                figure["delta_frozen"] += 2e-3
+        (out / f"exploration_etude_{key}.json").write_text(
+            json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    # The prediction holds in the aged view: only a frozen gap read against D-279, not
+    # against the study, leaves 0,2 point between it and the replay.
+    _bruit(reports, shift=-1e-3)
+    _c1_quatre(reports, script)
+    etudes = script.study(requests, reports)[0]
+    section = script.render(etudes).partition(C1_QUATRE_TITLE)[2]
+    entry = next(e for e in etudes if e["instrument"].key == "ir")
+    e = entry["report"]["searches"][0]["evaluations"][0]
+    instrument = entry["instrument"]
+    assert (f"| {instrument.label} | {instrument.show(e['knobs'][instrument.knob])} "
+            f"| {script._lower(entry['report']['searches'][0]['persistence_label'])} "
+            f"| figée (D-279) | {script._pt(e['delta_frozen'] + 2e-3)} "
+            f"| {script._pt(e['delta_frozen'] - 1e-3)} | −0,3000 pt |") in section
+    assert "moins le premier, à 0,200000 point près" in section
+
+
+def test_a_verdict_that_changes_is_named(script, tmp_path) -> None:
+    def hold(key, kind, report):
+        if key == "ir" and kind == "exploration":
+            for search in report["searches"]:
+                for evaluation in search["evaluations"]:
+                    evaluation["corners"] = [[label, -1.0]
+                                             for label, _ in evaluation["corners"]]
+
+    page, etudes, _ = _quatre(tmp_path, script, edit=hold)
+    label = next(e["instrument"].label for e in etudes if e["instrument"].key == "ir")
+    assert (f"**Les verdicts.** Ils changent pour {script._lower(label)} :"
+            in page.partition(C1_QUATRE_TITLE)[2])
+
+
+C1_QUATRE_REFUSALS = [
+    ("rapport de plus", "une exploration et un chemin annuel par instrument"),
+    ("rapport manquant", "une exploration et un chemin annuel par instrument"),
+    ("requête", "n'a pas rejoué la requête de l'étude"),
+    ("sans commit", "ne nomme pas un commit dont il a chiffré le code"),
+    ("modifié", "ne nomme pas un commit dont il a chiffré le code"),
+    ("sans lieu", "ne dit pas où ses passes ont tourné"),
+    ("commit de l'étude", "a tourné sur le commit de l'étude"),
+    ("paquet", "ne chiffre pas les paquets de l'étude"),
+    ("coins", "sa boîte ne porte pas les coins de l'étude"),
+    ("scénario", "le chemin annuel de ir chiffre"),
+    ("cadre", "n'a pas tourné dans le cadre de l'étude"),
+    ("deux commits", "sur un seul commit"),
+]
+
+
+@pytest.mark.parametrize("how, needle", C1_QUATRE_REFUSALS)
+def test_a_c1_replay_that_is_not_the_study_s_report_is_refused(script, tmp_path, how: str,
+                                                              needle: str) -> None:
+    requests, reports = _study(tmp_path, script)
+    _with_rate_row(reports, keys=C1_READS)
+    _c1_annual(requests, reports, script)
+
+    def edit(key, kind, report):
+        if key != "ir":
+            return
+        if kind == "exploration":
+            if how == "requête":
+                report["request"]["bounds"][0]["low"] += report["request"]["bounds"][0]["step"]
+            elif how == "sans commit":
+                report["commit"] = ""
+            elif how == "sans lieu":
+                report["where"] = "  "
+            elif how == "commit de l'étude":
+                report["commit"] = COMMIT
+            elif how == "paquet":
+                first = report["searches"][0]["evaluations"][0]
+                first["knobs"] = {k: v + 0.001 for k, v in first["knobs"].items()}
+            elif how == "coins":
+                evaluation = report["searches"][0]["evaluations"][0]
+                evaluation["corners"] = [[label.replace(RATE_ROW, "eti_top_decile"), v]
+                                         for label, v in evaluation["corners"]]
+        elif how == "modifié":
+            report["dirty"] = True
+        elif how == "scénario":
+            report["scenario"] = "autre"
+        elif how == "cadre":
+            report["growth_name"] = "Une autre croissance"
+        elif how == "deux commits":
+            report["commit"] = "7" * 40
+
+    _c1_quatre(reports, script, edit=edit)
+    out = reports / "c1_quatre"
+    if how == "rapport de plus":
+        (out / "exploration_etude_csg.json").write_text(
+            (reports / "exploration_etude_csg.json").read_text(encoding="utf-8"),
+            encoding="utf-8")
+    elif how == "rapport manquant":
+        (out / f"predictif_{script.launcher().name('ir')}.json").unlink()
+    with pytest.raises(script.EtudeError, match=re.escape(needle)):
+        script.study(requests, reports)
