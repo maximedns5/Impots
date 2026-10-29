@@ -1103,3 +1103,193 @@ def portes_2027() -> tuple[Porte, ...]:
         portes.append(Porte(cle, libelle, articles, meur,
                             tuple(n for n in articles if n in out)))
     return tuple(sorted(portes, key=lambda p: (-p.meur, -len(p.articles))))
+
+
+# --------------------------------------------------------------------------- #
+# Le PLFSS 2027 — triage du 2026-10-29 (but 5, D-298)
+# --------------------------------------------------------------------------- #
+SOURCE_PLFSS_2027 = (
+    "Assemblée nationale, texte n° 3211 (17e législature), projet de loi de financement de "
+    "la sécurité sociale pour 2027, enregistré le 1er octobre 2026, articles avec exposé "
+    "des motifs. Manifesté : plfss2027_texte_an_b3211.html, sha256 b68128d00b62. Lu à "
+    "travers le masque des montants (D-297)."
+)
+
+DATE_TRIAGE_PLFSS_2027 = "2026-10-29"
+
+#: Le catalogue de D-293, plus une porte que le PLF n'appelait pas : il n'a aucun article de
+#: soins. Datée du jour du triage (D-298).
+OUVERTURES_PLFSS_2027: dict[str, str] = {
+    **OUVERTURES,
+    "sante": "un modèle des soins et de leurs financeurs : ONDAM, produits de santé, "
+             "établissements, professionnels",
+}
+
+
+@dataclass(frozen=True)
+class ArticlePLFSS2027:
+    """Un article du PLFSS 2027, sa case et la porte qui l'ouvrirait. L'article liminaire
+    porte le numéro 0."""
+
+    numero: int
+    intitule: str
+    bucket: str
+    porte: str
+    raison: str
+
+    def __post_init__(self) -> None:
+        if self.bucket not in BUCKETS:
+            raise ValueError(f"art. {self.numero} : case « {self.bucket} » inconnue")
+        if self.porte not in OUVERTURES_PLFSS_2027:
+            raise ValueError(f"art. {self.numero} : porte « {self.porte} » hors du catalogue")
+        if not self.raison.strip():
+            raise ValueError(f"art. {self.numero} : un refus sans raison")
+
+
+_P = ArticlePLFSS2027
+_HC = "not_priceable"
+_EQUILIBRE = ("scope. Un tableau, un objectif ou une dotation que la loi de financement "
+              "vote chaque année : pas une mesure sur les ménages ni sur les entreprises.")
+_SOINS = ("structure. Une dépense de soins ou du médico-social : l'outil ne modélise ni "
+          "l'offre de soins, ni les produits de santé, ni les établissements.")
+
+ARTICLES_PLFSS_2027: tuple[ArticlePLFSS2027, ...] = (
+    _P(0, "Article liminaire", _HC, "hors_champ", _EQUILIBRE),
+    _P(1, "Rectification des tableaux d'équilibre", _HC, "hors_champ", _EQUILIBRE),
+    _P(2, "Rectification de l'ONDAM et des sous-objectifs ONDAM", _HC, "hors_champ",
+       _EQUILIBRE),
+    _P(3, "Rectification des contributions des régimes d'assurance maladie et de la 5ème "
+          "branche au FMIS et de la 5ème branche au FIR des ARS", _HC, "hors_champ",
+       _EQUILIBRE),
+    _P(4, "Aide aux cotisants affectés par les incendies et le cyclone Chido et soutien aux "
+          "employeurs de sapeurs-pompiers volontaires", _HC, "dimension_entreprises",
+       "data. Un territoire sinistré et l'emploi de sapeurs-pompiers volontaires : la "
+       "population des entreprises n'a ni l'un ni l'autre."),
+    _P(5, "Suppression des exonérations sociales applicables aux ateliers et chantiers "
+          "d'insertion publics", _HC, "secteur",
+       "structure. Les employeurs publics de l'insertion par l'activité économique sont un "
+       "secteur hors du modèle."),
+    _P(6, "Simplifier le régime social applicable aux indemnités de rupture du contrat de "
+          "travail", _HC, "donnee_menages",
+       "data. La population n'a pas d'indemnité de rupture : le même refus que le volet "
+       "correspondant de l'art. 2 du PLF."),
+    _P(7, "Rationaliser l'assiette des allègements généraux de cotisations sociales", _HC,
+       "donnee_menages",
+       "data. L'assiette ajoute l'épargne salariale, l'intéressement, la prime de partage de "
+       "la valeur et les jours de repos rachetés ; la population n'a aucun de ces "
+       "compléments de salaire."),
+    _P(8, "Extension de la « taxe soda » à des produits sucrés et transformés", _HC,
+       "consommation", "structure. Une accise sur des produits : aucune consommation."),
+    _P(9, "Régulation macroéconomique des dispositifs médicaux", _HC, "sante", _SOINS),
+    _P(10, "Amélioration de la régulation de la chaîne de valeur de la distribution du "
+           "médicament", _HC, "sante", _SOINS),
+    _P(11, "Régulation macro-économique des produits de santé", _HC, "sante", _SOINS),
+    _P(12, "Prorogation de la contribution exceptionnelle au financement du système de "
+           "santé et de la couverture santé des Français les plus précaires", _HC,
+       "secteur",
+       "structure. Une contribution des organismes complémentaires d'assurance maladie : un "
+       "secteur hors du modèle."),
+    _P(13, "Réforme du financement des départements pour les dépenses APA/PCH", _HC,
+       "hors_champ", "scope. Un financement entre administrations."),
+    _P(14, "Clarifier les transferts financiers au sein de la sécurité sociale", _HC,
+       "hors_champ", "scope. Des transferts entre branches et caisses."),
+    _P(15, "Approbation du montant de la compensation des exonérations ciblées", _HC,
+       "hors_champ", _EQUILIBRE),
+    _P(16, "Tableau d'équilibre 2027", _HC, "hors_champ", _EQUILIBRE),
+    _P(17, "Objectif d'amortissement de la dette sociale et prévisions sur les recettes du "
+           "FRR", _HC, "hors_champ", _EQUILIBRE),
+    _P(18, "Liste et plafonds de trésorerie des régimes et organismes habilités à recourir "
+           "à des ressources non permanentes", _HC, "hors_champ", _EQUILIBRE),
+    _P(19, "Approbation du rapport sur l'évolution pluriannuelle du financement de la "
+           "sécurité sociale (annexe \"A\")", _HC, "hors_champ", _EQUILIBRE),
+    _P(20, "Renforcer la coordination entre le médecin traitant, le médecin du travail et le "
+           "médecin conseil pour améliorer le suivi médical des personnes en arrêt de "
+           "travail", _HC, "sante", _SOINS),
+    _P(21, "Renforcer l'accès aux soins : déployer une mission de solidarité territoriale "
+           "pour les médecins en soutien du réseau France Santé", _HC, "sante", _SOINS),
+    _P(22, "Conforter le mode de rémunération de structures d'exercice coordonné pour "
+           "renforcer l'accès aux soins des personnes vulnérables", _HC, "sante", _SOINS),
+    _P(23, "Permettre la prise en charge des actes d'assistance à la téléconsultation pour "
+           "les infirmiers salariés intervenant au domicile des patients", _HC, "sante",
+       _SOINS),
+    _P(24, "Renforcer l'accès aux soins des enfants pris en charge par le service d'aide "
+           "sociale à l'enfance", _HC, "sante", _SOINS),
+    _P(25, "Renforcer la prise en charge sanitaire des mineurs victimes de violences", _HC,
+       "sante", _SOINS),
+    _P(26, "Mise en place de la complémentaire santé au bénéfice des agents de la fonction "
+           "publique hospitalière (FPH)", _HC, "sante", _SOINS),
+    _P(27, "Favoriser l'accès à la vaccination", _HC, "sante", _SOINS),
+    _P(28, "Préserver l'efficacité des médicaments antibiotiques et sécuriser leur "
+           "disponibilité", _HC, "sante", _SOINS),
+    _P(29, "Renforcer l'accessibilité aux dispositifs de prévention", _HC, "sante", _SOINS),
+    _P(30, "Accès aux médicaments et à l'innovation : adapter le remboursement aux progrès "
+           "scientifiques et sécuriser la délivrance sans prescription", _HC, "sante",
+       _SOINS),
+    _P(31, "Assurer l'harmonisation et la convergence tarifaire de l'activité de "
+           "radiothérapie en ville et à l'hôpital", _HC, "sante", _SOINS),
+    _P(32, "Sécuriser les modalités de facturation à l'assurance maladie", _HC, "sante",
+       _SOINS),
+    _P(33, "Suppression de l'ANDPC et convergence des dispositifs de développement "
+           "professionnel continu et de certification périodique", _HC, "sante", _SOINS),
+    _P(34, "Forfaitiser et harmoniser la majoration de pension pour enfants", _HC,
+       "donnee_menages",
+       "data. Il faudrait le nombre d'enfants élevés par chaque retraité et la pension "
+       "qu'il majore ; la population a la pension totale, pas ses droits."),
+    _P(35, "Dérogation exceptionnelle aux modalités de revalorisation des pensions de "
+           "retraite pour 2027", _HC, "donnee_menages",
+       "data. La population porte la pension totale, donc le seuil de 1 281 €, mais pas la "
+       "part de base, seule revalorisée ; et le moteur prend les pensions comme une "
+       "donnée, pas comme une dépense. Le plus proche d'un chiffrage (D-298)."),
+    _P(36, "Créer une allocation de remplacement bénéficiant aux non-salariés agricoles dont "
+           "un enfant est gravement malade, porteur d'un handicap ou victime d'un accident",
+       _HC, "donnee_menages",
+       "data. Ni le statut d'exploitant agricole, ni l'état de santé d'un enfant."),
+    _P(37, "Restreindre l'accès aux prestations familiales pour les étrangers extra-UE", _HC,
+       "donnee_menages",
+       "data. Une condition de durée de résidence régulière : la population n'a ni "
+       "nationalité ni titre de séjour."),
+    _P(38, "Prolongation de l'expérimentation \"fusion des sections\" (réforme du modèle de "
+           "financement des EHPAD)", _HC, "sante", _SOINS),
+    _P(39, "Intéressement à l'efficience des EHPAD et des services autonomie à domicile",
+       _HC, "sante", _SOINS),
+    _P(40, "Dotation de l'Assurance maladie au FMIS et de la CNSA aux ARS", _HC,
+       "hors_champ", _EQUILIBRE),
+    _P(41, "Dotation aux opérateurs financés par le 6ème sous-objectif", _HC, "hors_champ",
+       _EQUILIBRE),
+    _P(42, "Objectif de dépenses de la branche maladie, maternité, invalidité et décès", _HC,
+       "hors_champ", _EQUILIBRE),
+    _P(43, "ONDAM et sous objectifs de l'ONDAM", _HC, "hors_champ", _EQUILIBRE),
+    _P(44, "Dotations au FIVA et au FCAATA, transfert de la compensation de sous-déclaration "
+           "ATMP", _HC, "hors_champ", _EQUILIBRE),
+    _P(45, "Objectif de dépenses de la branche ATMP", _HC, "hors_champ", _EQUILIBRE),
+    _P(46, "Objectif de dépenses de la branche vieillesse", _HC, "hors_champ", _EQUILIBRE),
+    _P(47, "Objectif de dépenses de la branche famille", _HC, "hors_champ", _EQUILIBRE),
+    _P(48, "Objectif de dépenses de la branche autonomie", _HC, "hors_champ", _EQUILIBRE),
+)
+
+
+def portes_plfss_2027() -> tuple[tuple[str, tuple[int, ...]], ...]:
+    """Les portes du PLFSS, de celle qui ouvrirait le plus d'articles à celle qui en
+    ouvrirait le moins ; le PLFSS n'a pas d'euros relevés, l'annexe n'étant lue qu'après."""
+    portes = []
+    for cle in OUVERTURES_PLFSS_2027:
+        articles = tuple(a.numero for a in ARTICLES_PLFSS_2027 if a.porte == cle)
+        if articles:
+            portes.append((cle, articles))
+    return tuple(sorted(portes, key=lambda p: -len(p[1])))
+
+
+#: L'art. 74 du PLF 2027, dans la seconde partie : la seule mesure de dépense que l'outil
+#: chiffre, en deux volets et en miroir (D-298).
+ARTICLE_74_2027 = Article2027(
+    74, "Maîtrise de l'évolution des aides personnelles au logement et de la prime "
+        "d'activité",
+    "prestations — revalorisations suspendues", "priceable_now", "neuve",
+    "Deux boutons neufs, des coefficients écrits à la date légale de chaque "
+    "revalorisation : le montant forfaitaire de la prime au 1er avril, les 56 paramètres de "
+    "dépense des aides au logement au 1er octobre. L'arbre, figé en 2026, est déjà dans "
+    "l'état que l'article produit : les deux cas chiffrent la revalorisation suspendue, en "
+    "miroir. Ni la clause qui laisse au pouvoir réglementaire la faculté de revaloriser "
+    "quand même, ni les paramètres de ressources, révisés au 1er janvier.",
+    knobs=("ppa_revalorisation_avril", "al_revalorisation_octobre"),
+    reforme="scenarios/plf2027_art_74_ppa.json, scenarios/plf2027_art_74_apl.json")

@@ -86,7 +86,6 @@ UNMAPPED = {
     "cf": "transfert",
     "asf": "transfert",
     "crds_pfam": "transfert",
-    "crds_logement": "transfert",
     "crds_mini": "transfert",
     "impot_societes": "fiscalité des entreprises",
     "contribution_sociale_is": "fiscalité des entreprises",

@@ -1,0 +1,11 @@
+{
+  "name": "plf2027_art_74_apl",
+  "year": 2026,
+  "created": "2026-10-29",
+  "source": "PLF 2027 (AN, texte n° 3210), art. 74 — Maîtrise de l'évolution des aides personnelles au logement et de la prime d'activité. Volet aides au logement : la révision de l'article L. 823-4 du code de la construction et de l'habitation n'est pas appliquée en 2027. EN MIROIR : le scénario chiffre la révision que l'article suspend, 2,0 % au 1er octobre, et l'article en est l'opposé (D-298).",
+  "note": "2026 tient lieu de 2027. La révision porte sur les 56 paramètres de dépense que l'arbre a révisés au 1er octobre 2025 (loyers plafonds, forfaits de charges, équivalences de loyer des foyers, participation minimale forfaitaire). 2,0 % : l'IRL du deuxième trimestre 2027 moyenne les douze mois de juillet 2026 à juin 2027, à moitié dans chaque année ; le PLF prévoit 2,1 % d'inflation hors tabac en 2026 et 1,8 % en 2027. Les paramètres de ressources, révisés au 1er janvier, ne sont pas visés.",
+  "tags": [],
+  "reform": {
+    "al_revalorisation_octobre": 1.02
+  }
+}

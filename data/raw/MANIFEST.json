@@ -1558,6 +1558,24 @@
       "description": "OCDE, Corporate Tax Statistics, jeu DSD_ETR@DF_ETR_BASELINE (version 2.1) : les taux effectifs de la France en 2025, sur la base de référence. Par scénario (FIXED : 3 % réel et 1 % d'inflation ; CS : taux du pays) et par catégorie d'actifs (NRS bâtiments, TAN biens corporels, AWS logiciels acquis, INV stocks, COMPOSITE) : TMEI (EMTR), TMEE (EATR), coût du capital (PBAR) et valeur actuelle des amortissements (CAPITAL_ALLOWANCES, en % de l'investissement initial, publiée pour NRS, TAN et AWS). Scénario fixe : TMEI composite 14,970, TMEE 23,613. Les biens corporels n'ont qu'une valeur d'amortissement, moyenne de cinq sous-groupes. Lu pour D-247 : la condition que M0 pose à l'indice des créations (R4).",
       "quarantined": false,
       "provenance": "API SDMX de l'OCDE, URL de requête stable et reproductible : pays, fréquence et années dans la clé, CSV avec libellés par le paramètre format. Vérifié identique à l'octet sur deux téléchargements successifs le 2026-10-25. Une révision du jeu changera ses octets ; le refus de data fetch sera alors le signal d'un nouveau millésime, pas une panne."
+    },
+    "plfss2027_texte_an_b3211.html": {
+      "url": "https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L17B3211.html",
+      "sha256": "b68128d00b620e25e0aece7b9697e02f1bdc43434d4f720b60e1fa888cfd1bf1",
+      "bytes": 1518300,
+      "downloaded": "2026-10-29",
+      "licence": "Assemblée nationale — open data, Licence Ouverte",
+      "description": "Assemblée nationale, texte n° 3211 (17e législature) : projet de loi de financement de la sécurité sociale pour 2027, enregistré le 1er octobre 2026, articles avec exposé des motifs. URL relevée sur la page du dossier PLFSS_2027 (le texte l17b3211_projet-loi), jamais dans un index de recherche. Lu à travers le masque des montants (D-297, D-298).\nSTRUCTURE : pas de <h6>, à la différence du PLF ; chaque article s'ouvre sur un paragraphe de classe assnat9ArticleNum qui porte le numéro ET l'intitulé (« Article 7 Rationaliser… »), suivi des paragraphes assnatLoiTexte. 49 articles : l'article liminaire et les articles 1 à 48. Le découpage du PLF (`split_plf_articles`) le refuse, faute de <h6>.\nC'est le PROJET déposé, pas la loi votée. L'annexe des évaluations préalables du PLFSS n'est pas manifestée ici.",
+      "quarantined": false
+    },
+    "plfss2027_evaluations_prealables.pdf": {
+      "url": "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/PLFSS/2027/annexe-9.pdf",
+      "sha256": "80e0b30b6b8bc7f33d6a20a2eba6edbd1927c5e1b023c55c7a69c015c549ea34",
+      "bytes": 3738420,
+      "downloaded": "2026-10-29",
+      "licence": "securite-sociale.fr — publication officielle",
+      "description": "PLFSS 2027, annexe 9, « Fiches d'évaluation préalable des articles du projet de loi » (324 p.). URL relevée sur la page « année en cours » de la loi de financement sur securite-sociale.fr (lien « Consulter l'annexe 9 ») : ni la page du dossier PLFSS_2027 de l'Assemblée ni celle du texte n° 3211 ne la lient. Manifestée le 2026-10-29, APRÈS le push des enregistrements de l'art. 74 du PLF (8bfd30e).\nLe triage du PLFSS (D-298) n'a retenu aucun article chiffrable : cette annexe ne sert de comparateur à aucun cas. Elle est manifestée pour que les euros des 49 refus puissent un jour classer leurs portes, comme D-294 l'a fait pour le PLF.",
+      "quarantined": false
     }
   }
 }

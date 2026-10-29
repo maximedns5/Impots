@@ -23182,3 +23182,235 @@ journaliste ne lit.
 
 **Ce qui ne change pas.** Le public, les trois réponses, le juge extérieur, les règles du
 préenregistrement et l'ordre de la règle de priorité.
+
+## D-297 — Les juges de l'automne : ce qui a été vu avant les enregistrements
+
+**Le fait.** Le but 5 (`docs/BUT.md`, D-296) : noter en aveugle le PLFSS 2027 et l'art. 74
+du PLF 2027. Cette entrée dit, comme D-174 l'a fait pour le PLF, tout ce que la session a
+vu avant le moindre enregistrement, et elle est poussée avant eux.
+
+**La règle de lecture.** Tout texte téléchargé est lu à travers un masque : chaque nombre
+suivi de « milliard(s) », « million(s) », « Md€ », « Mds », « M€ » ou « M d'euros » est
+remplacé par `[MONTANT]` avant affichage. Les paramètres d'une mesure (taux, seuils et
+montants par personne) restent lisibles, puisqu'il faut les coder. Le masque est
+volontairement trop large : il masque aussi « 12 millions de foyers ».
+
+**Ce qui a été vu du PLFSS 2027.**
+- La page du dossier `PLFSS_2027` de l'Assemblée, réduite aux titres de ses liens,
+  masqués : le projet est le n° 3211 ; l'Assemblée l'a rejeté le 23 octobre ; la
+  commission des finances a rendu un avis, n° 3339, qui n'a pas été ouvert.
+- Le texte du projet (`PRJLANR5L17B3211.html`, sha256 b68128d00b62) : les intitulés des
+  49 articles, et le texte entier, masqué, des art. 7 (l'assiette des allègements
+  généraux) et 35 (la revalorisation des pensions de retraite en 2027). De l'art. 35 :
+  les seuils (1 260, 1 265 à 1 281, puis 2 000 à 2 034 € par mois) et un tableau de la
+  DSS, les revalorisations des pensions (5,3 %, 2,2 %, 0,9 % en 2024, 2025 et 2026),
+  l'IPCHT (1,8 %, 0,9 %, 2,0 %) et le SMPT privé (2,9 %, 1,9 %, 2,0 %). Les montants
+  des exposés des motifs des deux articles sont sortis masqués.
+- L'annexe des évaluations préalables du PLFSS n'a pas été ouverte, ni aucune presse.
+
+**Ce qui a été vu de l'art. 74 du PLF 2027.** Son intitulé, dans le sommaire de l'annexe
+du PLF (D-296), et son texte et son exposé des motifs, masqués, dans le projet de loi
+(`PRJLANR5L17B3210.html`, sha256 7fcd191974d8, celui du manifeste) : la révision des
+paramètres des APL au 1er octobre (art. L. 823-4 du CCH) et la revalorisation de la prime
+d'activité (art. L. 842-3 du CSS) ne sont pas appliquées en 2027. L'exposé chiffre les
+deux volets ; les deux montants sont sortis masqués. Il cite les revalorisations passées
+de la prime (4,6 %, 1,7 %, 0,8 % en 2024, 2025 et 2026) et la hausse de 50 € par mois en
+moyenne de la LFI 2026. La fiche de l'art. 74 dans l'annexe n'a pas été lue. D-174
+avait vu un titre de presse sur ce gel, sans montant.
+
+**Ce qui en découle.** Les montants de l'exposé des motifs sont un chiffrage du
+Gouvernement, comme la fiche : ils sont sous le même masque jusqu'au commit des
+enregistrements.
+
+## D-298 — L'art. 74 préenregistré en deux volets, en miroir ; le PLFSS trié : rien
+
+**Le fait.** Le but 5 note en aveugle le PLFSS 2027 et l'art. 74 du PLF 2027 (D-296,
+D-297). Cette entrée est poussée avant les deux passes qui chiffrent l'art. 74, et avant
+toute lecture de l'annexe du PLFSS et de la fiche de l'art. 74.
+
+**Ce qui a été vu depuis D-297, toujours à travers le masque.**
+- Le texte entier du PLFSS, article par article, pour le trier. Outre les intitulés :
+  les ratios au PIB de l'article liminaire ; de l'art. 6, le plafond d'exonération des
+  indemnités de rupture porté au plafond annuel de la sécurité sociale (48 060 € en 2026)
+  et « 95 % de salariés » ; de l'annexe B (art. 48), des hypothèses en taux, l'inflation
+  hors tabac (0,9 %, 2,1 %, 1,7 % et 1,75 % de 2025 à 2028), les revalorisations des
+  pensions en moyenne annuelle (2,2 %, 0,9 %, 0,2 % et 2,0 %), celles des prestations
+  revalorisées au 1er avril (2,4 %, 1,0 %, 0,2 % et 1,3 %), et une note : les 0,2 % de
+  2027 incluent une « stabilisation du barème des prestations familiales au 1er avril
+  2027 ». Tous les montants sont sortis masqués.
+- Du PLF, deux paragraphes du rapport économique sur l'inflation (2,1 % en moyenne en
+  2026, 2,4 % en glissement en août, 1,8 % en 2027), et la phrase qui annonce la
+  non-revalorisation des APL, de la prime d'activité et de certaines pensions.
+- Ni l'annexe du PLFSS, ni la fiche de l'art. 74, ni l'avis n° 3339, ni aucune presse.
+
+**Le triage du PLFSS 2027.** Les 49 articles entrent dans
+`plf_coverage.ARTICLES_PLFSS_2027`, chacun avec sa porte, dans le commit des
+enregistrements. Aucun n'est chiffrable par l'outil :
+- 20 hors champ, que rien n'ouvrirait : l'article liminaire, la rectification de 2026
+  (1 à 3), le financement des départements et les transferts entre caisses (13, 14),
+  l'équilibre, la dette et la trésorerie (15 à 19), les dotations et les objectifs (40
+  à 48) ;
+- 19 sur l'offre de soins et le médico-social (9 à 11, 20 à 33, 38, 39). Une porte
+  neuve, datée de ce jour : `sante`, un modèle des soins et de leurs financeurs. Le
+  catalogue de D-293 n'en avait pas besoin : le PLF n'a pas d'article de soins ;
+- 6 attendent une donnée des ménages : les indemnités de rupture (6), l'épargne
+  salariale, la prime de partage de la valeur et les jours de repos rachetés (7), les
+  enfants élevés par les retraités (34), la part de base de chaque pension (35), l'enfant
+  gravement malade d'un exploitant agricole (36), la durée de résidence (37) ;
+- 2 un secteur hors du modèle : les ateliers d'insertion publics (5), les organismes
+  complémentaires (12) ; 1 la consommation, la taxe soda (8) ; 1 une dimension des
+  entreprises, le territoire sinistré et les sapeurs-pompiers volontaires (4).
+L'art. 35 est le plus proche d'un chiffrage. La population porte la pension totale, donc
+le seuil de 1 281 €, mais pas la part de base, seule revalorisée, et le moteur prend les
+pensions comme une donnée, pas comme une dépense. La stabilisation du barème des
+prestations familiales n'est portée par aucun article : hors du triage, et sans fiche.
+
+**L'art. 74 : deux volets, deux boutons.** L'article suspend deux revalorisations, chacune
+à sa date. Deux boutons neufs, des coefficients sur ce que l'arbre porte à la date
+légale, écrits à partir du premier jour de ce mois dans l'année chiffrée :
+- `ppa_revalorisation_avril` multiplie le montant forfaitaire de la prime d'activité au
+  1er avril ; la bonification, qui en est une part, suit ;
+- `al_revalorisation_octobre` multiplie au 1er octobre les 56 paramètres que l'arbre a
+  révisés le 1er octobre 2025, tous de l'IRL, +1,04 % : loyers plafonds, forfaits de
+  charges, équivalences de loyer des foyers, participation minimale forfaitaire.
+  L'ensemble est lu dans l'arbre, pas listé.
+`verify_revalorisations`, appelée par `system.reformed`, refuse un système dont un
+paramètre n'a pas le coefficient à sa date ou a bougé le mois d'avant ; elle tire
+ce qu'elle attend de l'arbre de référence, pas de l'écriture. Un niveau et une
+revalorisation de la prime ensemble sont refusés. `tests/test_revalorisations.py` tient
+le mois sur deux ménages et l'arbre contre quatre écritures fautives qu'il plante. Onze
+mutations, toutes tuées ; celle de l'ensemble vide a d'abord survécu, faute de test, et
+un test la tue, vu échouer.
+
+**Le miroir.** L'arbre est figé en 2026 et ne porte aucune revalorisation de 2027 : il
+est déjà dans l'état que l'article produit. Le cas chiffre donc la revalorisation, un
+coût, et l'article en est l'opposé : `mirror: true`. `grade` stockait le drapeau sans le
+lire, et un chiffre juste aurait été noté à deux fois l'écart. Il retourne désormais le
+chiffre (test vu échouer avant), et `chiffrage register --mirror` porte le drapeau (test
+vu échouer).
+
+**Les deux cas.** 2026 tient lieu de 2027, sur 20 000 ménages de la population 2024.
+- `plf2027_art_74_ppa`, coefficient 1,021. Le coefficient de l'art. L. 161-25 au 1er
+  avril 2027 moyenne les douze indices publiés avant ; il est pris égal à l'inflation
+  hors tabac de 2026 que prévoit le PLF, 2,1 %. Tolérance ±30 %, plancher 30 M€.
+- `plf2027_art_74_apl`, coefficient 1,020. L'IRL du deuxième trimestre 2027 moyenne
+  juillet 2026 à juin 2027, à moitié dans chaque année : (2,1 + 1,8) / 2. Tolérance
+  ±40 %, plancher 20 M€.
+Le comparateur sera le gain de 2027 de chaque volet, signé en gain.
+
+**Les biais, déclarés avant.**
+1. Le recours. Le moteur verse à tout ayant droit. La prime sort à +6,5 % des allocataires
+   observés et +23,9 % de la dépense ; l'aide au logement à −18,0 % et −24,1 %, sans
+   zone 1, sans foyers, sans accession (rapport de réconciliation). Une revalorisation
+   déplace chaque bénéficiaire d'un montant voisin : son effet suit le nombre plus que la
+   masse. Retenu : ×1,12 pour la prime, ×0,79 pour le logement.
+2. Le trimestre de référence, mesuré sur un ménage : le moteur fait la moyenne de la prime
+   sur son trimestre avec le forfait de chaque mois. Avril ne bouge pas, mai prend un
+   tiers, juin deux tiers : 7 mois-équivalents sur les 9 que compte la loi, ×0,78.
+   L'aide au logement n'a pas ce retard : octobre à décembre bougent en entier (mesuré).
+3. Droits ou versements. Les deux prestations sont versées à terme échu : en 2027,
+   l'État paie 8 mois de prime revalorisée (avril à novembre) et 2 d'aide (octobre et
+   novembre).
+   Le moteur compte les droits de l'année. Si la fiche compte les versements, le publié
+   est plus petit que les droits d'un neuvième et d'un tiers.
+4. Le taux. La fiche suppose son propre coefficient ; 0,2 point d'écart vaut 10 %.
+5. L'année. La population 2024 sous le droit de 2026, revenus non vieillis : un peu plus
+   d'ayants droit, vers le haut, faible.
+
+**Le pronostic.** « Pour l'État en 2027 » : une dépense budgétaire, donc des
+versements. C'est le pari. Les écarts s'entendent en valeur absolue, le simulé retourné
+contre le publié.
+- Prime : ×1,12 × 0,78 × 9/8 ≈ 0,98. Centre −2 %, entre −15 % et +15 %. Dans la
+  tolérance.
+- Logement : ×0,79 × 3/2 ≈ 1,19. Centre +19 %, entre 0 et +40 %. Dans la tolérance.
+La réfutation se lit sur le logement : s'il tombe sous le publié, vers −21 %, la fiche
+compte les droits, et la prime doit alors tomber vers −13 %. Un logement sous le publié
+avec une prime au-dessus ne serait expliqué par aucun des cinq biais.
+
+**Ce qui suit.** Les deux passes tournent sur le commit de cette entrée, dans un arbre
+de travail figé. Les deux cas, le triage du PLFSS et son rendu sont committés et poussés
+ensemble ; puis l'annexe du PLFSS est manifestée et la fiche de l'art. 74 lue.
+
+## D-299 — La double écriture comptait deux fois la CRDS des aides au logement
+
+**Le fait.** Des deux passes préenregistrées par D-298, celle de la prime d'activité a
+tourné jusqu'au bout sur `c05f1ee` et s'est enregistrée. Celle des aides au logement a
+été refusée par la double écriture (D-045) : coût rapporté +78 244 410 €, coût
+reconstitué depuis les postes +77 834 216 €, un écart de +0,52 % du net, cinq fois la
+tolérance. Le chiffre rapporté est le nôtre, sorti dans le message du refus ; aucune
+fiche n'a été lue.
+
+**La cause.** L'écart est le taux de la CRDS, 0,5 %. openfisca construit `aide_logement`
+à partir de `aide_logement_montant`, qui vaut `brut + crds_logement` : l'aide est déjà
+nette de sa CRDS, et le revenu disponible bouge exactement d'elle. Mesuré sur un ménage :
+l'aide +25,89 €, le revenu disponible +25,89 €, `crds_logement` −0,13 €. Le registre des
+transferts (`guards.STATE_TRANSFERS`) retranchait `crds_logement` une seconde fois. C'est
+la règle des allocations familiales lue à l'envers : leur montant est rapporté brut et
+leur CRDS doit être retranchée ; celui du logement est rapporté net. Aucune réforme du
+logement n'était passée sur la population : la minoration de 5 € n'a été vue que sur
+des ménages, où la tolérance absolue couvre l'écart.
+
+**La correction.** `crds_logement` sort de `STATE_TRANSFERS`, et de la table des
+instruments sans multiplicateur du module macro, qui ne le reçoit plus. Il reste parmi
+les totaux rapportés. Le test `test_the_housing_aid_is_reported_net_of_its_crds` nourrit
+la garde des écarts d'un locataire dont la minoration est supprimée ; vu échouer avant
+la correction, à +0,5 %. Les 190 tests de la population, des agrégats, de la boucle, du
+capital et de la CDHR passent.
+
+**Ce que cela change à l'enregistrement.** Rien au chiffre : la garde ne fait que
+vérifier, et le coût rapporté ne dépend pas d'elle. La passe du logement est relancée
+sur le commit de cette entrée, avec la tolérance et la raison que D-298 a fixées ; elle
+doit rendre les mêmes +78,24 M€, et l'écart est un contrôle. Celle de la prime reste
+sur `c05f1ee` : sa réforme ne touche pas l'aide au logement, et la garde l'a laissée
+passer.
+
+## D-300 — Les juges de l'automne : le logement dans la tolérance, la prime à +167 %
+
+**Le fait.** Les deux cas de l'art. 74 ont été enregistrés et poussés dans `8bfd30e`, le
+triage du PLFSS avec eux (D-298, D-299). Ensuite seulement, la fiche de l'art. 74 a été
+lue, p. 596 à 604 de l'annexe du PLF déjà manifestée, et l'annexe 9 du PLFSS manifestée
+(securite-sociale.fr, sha256 80e0b30b6b8b), dont seule la première page a été lue, pour
+l'identifier. Aucun article du PLFSS n'étant chiffrable, elle n'est le juge d'aucun cas.
+
+**Les notes** (`reports/chiffrages_preregistres.md`), le simulé retourné par le miroir :
+- logement : −78,2 M€ contre −101 M€ publiés, **dans** la tolérance de ±40 % ; −22,5 % en
+  valeur absolue ;
+- prime : −886,7 M€ contre −332 M€ publiés, **hors** de la tolérance de ±30 % ; +167 % en
+  valeur absolue.
+Les cas aveugles sont 3 sur 5 dans leur tolérance.
+
+**Contre le pronostic, point par point.**
+1. Le pari (la fiche compte les versements de 2027) est réfuté, et des deux côtés
+   autrement que prévu. Le logement compte les droits : 101 M€ sont le quart des 404 de
+   2028, octobre à décembre. La prime ne compte ni neuf mois ni huit, mais quatre : 332
+   M€ sont le tiers des 995 de 2028. La fiche ne dit pas pourquoi.
+2. Le logement tombe sur la branche « droits » du pronostic : −21 % annoncés, −22,5 %
+   mesurés. Le volet se conduit comme ses biais déclarés le disaient : −24,1 % de masse et
+   −18,0 % d'allocataires, sans zone 1, sans foyers, sans accession, et le même décompte
+   de mois. Le taux supposé pour 2027 n'est pas publié. Si c'était celui de 2026, 1,15 %,
+   le cas, à 2,0 %, serait gonflé par le taux, et le manque de couverture plus grand que
+   −22,5 %.
+3. La prime est réfutée. Pronostic : −2 %, entre −15 et +15 %. Mesuré : +167 %. D-298
+   avait écrit que « un logement sous le publié avec une prime au-dessus ne serait
+   expliqué par aucun des cinq biais » : c'est ce qui est arrivé.
+
+**L'écart de la prime, décomposé sans nouvelle passe.** Le rapport 886,7 / 332 vaut 2,67.
+Les mois en portent ×1,75 (sept mois-équivalents contre quatre) ; le taux ×0,91 (2,1 %
+contre 2,3 %). À mois et taux égaux, le cas reste à +67 % de la fiche, et le recours en
+explique au plus 24 points (+6,5 % d'allocataires, +23,9 % de dépense). Ce n'est pas la
+formule : sur les cas types de la fiche (§ 4.1.2), le moteur rend, à 2,3 %, 19,0 € par
+mois pour une personne seule au SMIC, comme la fiche (19 €), et 30,7 € pour un parent
+isolé de deux enfants, contre 26 €. Le reste est dans la population : qui touche la prime
+au-dessus du forfait, et avec quelle famille. Non mesuré ici.
+
+**Ce qui n'est pas fait, et pourquoi.** Aucune révision n'est écrite. Ramené aux quatre
+mois de la fiche et à son taux, le cas serait à +67 %, toujours hors tolérance : au
+contraire de l'art. 2 (D-292), la base n'explique pas l'écart, et une révision qui ne
+change que la base ne serait qu'une seconde note rouge. La suite utile est une mesure :
+les allocataires simulés de la prime, par configuration familiale et par position au
+regard du forfait, contre les données de la CNAF. Elle est inscrite dans
+`docs/STATE_AND_NEXT.md`.
+
+**Ce que cela change au premier chiffre.** De 2 sur 3, il passe à 3 sur 5. Les juges de
+l'automne sont épuisés ; le suivant viendra avec le PLF et le PLFSS 2028, ou une loi de
+finances rectificative avant.

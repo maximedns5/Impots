@@ -306,6 +306,11 @@ def grade(chiffrage: Chiffrage) -> Grade:
 
     published = float(chiffrage.comparator.published_eur)
     simulated = float(chiffrage.mechanical_eur)
+    if chiffrage.mirror:
+        # The case priced the article's reverse, because the tree already carries its end
+        # state: the article is the opposite figure. Stored and round-tripped since the
+        # flag was borrowed from the backtest suite, and read by nobody until D-298.
+        simulated = -simulated
     gap = simulated - published
     allowed, binding = chiffrage.tolerance.allowance(published)
     if chiffrage.bound == "lower":

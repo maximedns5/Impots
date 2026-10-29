@@ -1,0 +1,43 @@
+case: plf2027_art_74_apl
+pre_registered: '2026-10-29T12:19:53+00:00'
+commit: c318cef8993ca43e2840bb9dd9e1187b85d9f233
+scenario: plf2027_art_74_apl
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 78244409.58105469
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.4
+  absolute_eur: 20000000.0
+  rationale: 'Aides personnelles au logement, révision du 1er octobre 2027 suspendue,
+    chiffrée en miroir (D-298). ±40 % : l''aide sort à −18,0 % d''allocataires et
+    −24,1 % de dépense, sans zone 1, sans foyers, sans accession ; droits ou versements,
+    3 ou 2 mois, un tiers d''écart ; l''IRL que suppose la fiche, 0,2 point valant
+    10 %. Plus large que pour la prime : le décompte des mois pèse un tiers et trois
+    composantes de l''aide manquent. Plancher de 20 M€.'
+note: 'Comparateur : le volet aides au logement de l''art. 74, l''effet de 2027, signé
+  en gain. Le cas chiffre la révision suspendue (2,0 %), un coût : mirror.'
+bound: two-sided
+mirror: true
+comparator:
+  published_eur: -101000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 74, § 4.2.1, p. 602 : « La
+    non revalorisation des paramètres de dépenses de logement au 1er octobre 2027 représente
+    une économie de 101 millions d''euros en 2027 et 404 millions d''euros en 2028. »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; modèle de prévision des APL de
+    la DHUP (§ 4.3)
+  perimeter: Le volet aides personnelles au logement de l'art. 74 ; l'État, qui est ici toutes
+    les APU.
+  net_of: 'L''effet de 2027 seul, le quart de celui de 2028 (101 sur 404) : octobre à décembre,
+    des droits, comme le cas. Le taux de la révision de 2027 n''est pas publié ; celle du
+    1er octobre 2026 vaut 1,15 % (§ 4.1.2), le cas suppose 2,0 % en 2027. Aucun effet comportemental.'
+  sign: yield
+  basis: premiere-annee
+  retrieved: '2026-10-29'

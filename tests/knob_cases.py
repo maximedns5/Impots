@@ -55,6 +55,10 @@ LOGE_TROIS = {**LOGE_COUPLE, "children": [{"annee_naissance": 2015}]}
 LOCATAIRE_PPA = {**TEMPS_PARTIEL,
                  "logement": {"statut": "locataire_vide", "loyer_mensuel": 700,
                               "zone_apl": 1}}
+#: Seul, au-dessus du forfait de la prime d'activité : c'est là que la prime suit le montant
+#: forfaitaire. En dessous, elle ne dépend que des revenus d'activité et de la bonification,
+#: et sa revalorisation ne la déplace que de quelques centimes (mesuré, D-298).
+SEUL_PPA = {"adults": [{"salaire_brut_annuel": 15_000, "annee_naissance": 1990}]}
 NICHE_FOYER = {**AISE_2_ENFANTS}
 #: Un retraité dont l'abattement de 10 % dépasse le plafond : seul un foyer de ce genre
 #: peut faire bouger `abattement_pensions_plafond` (PLF 2027, art. 3).
@@ -167,6 +171,11 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
     "af_majoration_plafond_par_enfant": (FAMILLE_AISEE, None, "af", 50_000.0, +1),
     "al_minoration_forfaitaire": (
         LOCATAIRE_PPA, None, "aide_logement", 20.0, -1),
+    # Les deux revalorisations de l'art. 74 du PLF 2027 (D-298), des coefficients écrits à
+    # leur date légale : avril pour la prime, octobre pour le logement. Le mois exact est
+    # tenu par `test_revalorisations.py`, ménage et arbre ; ici, l'année bouge.
+    "ppa_revalorisation_avril": (SEUL_PPA, None, "ppa", 1.10, +1),
+    "al_revalorisation_octobre": (LOCATAIRE_PPA, None, "aide_logement", 1.10, +1),
     # --- IR niches ------------------------------------------------------------------
     "saldom_taux": (NICHE_FOYER, {"salarie_domicile": 5_000}, "ir", 0.30, +1),
     "saldom_plafond": (NICHE_FOYER, {"salarie_domicile": 15_000}, "ir", 6_000.0, +1),

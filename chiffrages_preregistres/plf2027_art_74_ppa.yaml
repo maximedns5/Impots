@@ -1,0 +1,44 @@
+case: plf2027_art_74_ppa
+pre_registered: '2026-10-29T12:08:32+00:00'
+commit: c05f1eec58bf17b09bb03fe59dd83f1503126c04
+scenario: plf2027_art_74_ppa
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 886654814.9313965
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 30000000.0
+  rationale: 'Prime d''activité, revalorisation du 1er avril 2027 suspendue, chiffrée
+    en miroir (D-298). ±30 % : le recours, que le moteur suppose total (+6,5 % d''allocataires,
+    +23,9 % de dépense) ; le trimestre de référence, qui ne compte que 7 mois-équivalents
+    sur les 9 de la loi (mesuré, −22 %) ; droits ou versements, 9 ou 8 mois ; le coefficient
+    que suppose la fiche, 0,2 point valant 10 %. Les deux premiers se compensent en
+    partie ; ±30 % couvre deux d''entre eux du même côté. Plancher de 30 M€ : la dispersion
+    d''un échantillon de quelques milliers de foyers allocataires.'
+note: 'Comparateur : le volet prime d''activité de l''art. 74, l''effet de 2027, signé
+  en gain. Le cas chiffre la revalorisation suspendue (2,1 %), un coût : mirror.'
+bound: two-sided
+mirror: true
+comparator:
+  published_eur: -332000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 74, § 4.2.1, p. 602, tableau
+    de la prime d''activité : « État -332 -995 » (M€, 2027 et 2028 ; le total des APU, p.
+    603, est le même) ; « Le taux prévisionnel de revalorisation au 1er avril 2027 […] retenu
+    pour effectuer les analyses d''impact de la mesure est de 2,3 % »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; hypothèses du PLF pour avril 2026
+    et 2027 (§ 4.3)
+  perimeter: Le volet prime d'activité de l'art. 74 ; l'État, qui est ici toutes les APU.
+  net_of: 'L''effet de 2027 seul, le tiers de celui de 2028 (332 sur 995) : quatre mois de
+    l''année pleine, là où le cas en compte sept effectifs. Revalorisation légale supposée
+    de 2,3 %, le cas 2,1 %. Aucun effet comportemental.'
+  sign: yield
+  basis: premiere-annee
+  retrieved: '2026-10-29'

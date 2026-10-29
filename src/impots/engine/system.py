@@ -91,6 +91,7 @@ def reformed(key: str) -> Any:
         verify_allegements,
         verify_bareme,
         verify_capital,
+        verify_revalorisations,
     )
 
     decoded = json.loads(key)
@@ -103,6 +104,7 @@ def reformed(key: str) -> Any:
     verify_bareme(system, spec, decoded["year"])
     verify_allegements(system, spec, decoded["year"])
     verify_capital(system, spec, decoded["year"])
+    verify_revalorisations(system, spec, decoded["year"])
     return system
 
 

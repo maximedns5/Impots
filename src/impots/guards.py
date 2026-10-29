@@ -151,8 +151,13 @@ STATE_RECEIPTS = (
 #: makes the reconstitution the state's actual burden. Without them a national AF
 #: reform missed by 0.50 % — five times the tolerance, and exactly 0.5 % of the AF
 #: moved, which is the CRDS rate.
+#: NOT `crds_logement`, and the reason is the same rule read the other way: openfisca
+#: builds `aide_logement` from `aide_logement_montant`, which is `brut + crds_logement`,
+#: so the aid is reported ALREADY net and disposable income moves by exactly it. Netting
+#: its CRDS here counted it twice, unseen until the first population pass of a housing
+#: reform (PLF 2027 art. 74), which missed by +0.52 % (D-299).
 STATE_TRANSFERS = ("af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",
-                   "crds_pfam", "crds_logement", "crds_mini")
+                   "crds_pfam", "crds_mini")
 
 #: The identity is checked in absolute euros against a floor, and relatively above it.
 #: A reform moving a few million is not worth a relative test; one moving billions is.
