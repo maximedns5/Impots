@@ -802,6 +802,9 @@ def study(requests: Path = REQUESTS,
     figee = load_vue_figee(etudes, reports)
     for key, replay in (figee or {}).items():
         next(e for e in etudes if e["instrument"].key == key)["vue_figee"] = replay
+    quatre = load_c1_quatre(etudes, reports)
+    for key, replay in (quatre or {}).items():
+        next(e for e in etudes if e["instrument"].key == key)["c1_quatre"] = replay
     return etudes, complements, courbe, phase11
 
 
@@ -1060,6 +1063,11 @@ def _entry_section(entry: dict[str, Any], target: float, *, first_year: int,
         out += ["", f"La colonne « Δb {target_year}, figée » lisait les taux marginaux de la "
                     f"vue vieillie (D-276) : elle est rechiffrée plus bas, dans « La vue "
                     f"figée, rechiffrée »."]
+    if entry.get("c1_quatre"):
+        out += ["", "C1, la réponse du revenu imposable, est lu ici sur un seul échantillon "
+                    "des taux marginaux, dont le bruit va jusqu'à 0,09 point (D-283) : ces "
+                    "paquets sont rechiffrés sur quatre plus bas, dans « C1 sur quatre "
+                    "échantillons »."]
     lacks: dict[str, list[str]] = {}
     for search in r["searches"]:
         for name, why in search["indices"]["absent"].items():
@@ -1797,6 +1805,246 @@ def _vue_figee_section(entries: list[dict[str, Any]], target: float, first_year:
     return out
 
 
+# --------------------------------------------------------------------------- #
+# C1 on four samples of the marginal rates (D-284, D-285)
+# --------------------------------------------------------------------------- #
+#: The study's reports C1 prices, replayed on four samples of the marginal rates, under
+#: this directory of `reports/` (D-285); the measure of D-283, which predicts the gaps.
+C1_QUATRE = "c1_quatre"
+BRUIT_C1 = "bruit_c1"
+_C1_QUATRE_LAUNCHER: list[Any] = []
+
+
+def c1_quatre_launcher() -> Any:
+    """`scripts/c1_quatre.py`, which chose the replays: the page reads its menu and its
+    validation of a request through it."""
+    if not _C1_QUATRE_LAUNCHER:
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            C1_QUATRE, Path(__file__).resolve().parent / f"{C1_QUATRE}.py")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        _C1_QUATRE_LAUNCHER.append(module)
+    return _C1_QUATRE_LAUNCHER[0]
+
+
+def _knobs(knobs: dict[str, float]) -> str:
+    return json.dumps(knobs, sort_keys=True)
+
+
+def c1_predicted(reports: Path = REPORTS) -> dict[tuple[str, str, str], float] | None:
+    """What D-283's replications say each gap must be: C1 in points of Δb on the mean of
+    the samples C1 now reads, minus C1 on the study's sample, by view, instrument and
+    bundle, at the study's step. None without them."""
+    from impots.behavioural.emtr import C1_SAMPLES, EMTR_STEP
+    from impots.population.runner import SAMPLE_SEED
+
+    out_dir = reports / BRUIT_C1
+    if not out_dir.exists():
+        return None
+    gaps = {}
+    for view in ("vieillie", "figee"):
+        runs = {seed: json.loads((out_dir / f"c1_{view}_{seed}_{int(EMTR_STEP)}.json")
+                                 .read_text(encoding="utf-8"))["bundles"]
+                for seed in C1_SAMPLES}
+        for index, bundle in enumerate(runs[SAMPLE_SEED]):
+            mean = sum(runs[seed][index]["c1_points"] for seed in C1_SAMPLES) / len(runs)
+            gaps[(view, bundle["instrument"], _knobs(bundle["knobs"]))] = (
+                (mean - bundle["c1_points"]) / 100)
+    return gaps
+
+
+def _verdicts(report: dict[str, Any], target: float) -> list[Any]:
+    """What a report says of the target, bundle by bundle, without its figures: the
+    plans, the robust ones, the frozen-only ones, and the corners that hold it."""
+    return [(sorted(_knobs(c["knobs"]) for c in s["candidates"] if c["meets_target"]),
+             sorted(_knobs(c["knobs"]) for c in s["candidates"] if c["robust"]),
+             sorted(_knobs(c["knobs"]) for c in s["candidates"] if c["frozen_only"]),
+             [falling(e, target)[0] for e in s["evaluations"]])
+            for s in report["searches"]]
+
+
+def load_c1_quatre(etudes: list[dict[str, Any]],
+                   reports: Path = REPORTS) -> dict[str, dict[str, Any]] | None:
+    """The study's reports C1 prices, replayed as they are on four samples of the marginal
+    rates (D-285), checked: an exploration and an annual path per instrument the
+    launcher's menu names, nothing beside them; each exploration the study's request and
+    bundles under its persistences, each path the study's annual scenario in its frame; of
+    one commit, not the study's, whose code they priced; and where they ran. Without them,
+    the replay is preregistered and not yet played: no section."""
+    from impots.api.schemas import PredictifReportResponse
+
+    out_dir = reports / C1_QUATRE
+    if not out_dir.exists():
+        return None
+    run = c1_quatre_launcher()
+    menu = run.menu(reports)
+    there = sorted(p.name for p in out_dir.glob("*.json"))
+    wanted = sorted([f"exploration_etude_{key}.json" for key in menu]
+                    + [f"predictif_{launcher().name(key)}.json" for key in menu])
+    if there != wanted:
+        raise EtudeError(f"`reports/{C1_QUATRE}/` porte {there} : une exploration et un chemin "
+                         f"annuel par instrument de l'étude que C1 chiffre, ni plus ni moins, "
+                         f"{wanted}.")
+    commits: set[str] = set()
+    out: dict[str, dict[str, Any]] = {}
+    for key in menu:
+        entry = next(e for e in etudes if e["instrument"].key == key)
+        study = entry["report"]
+        replayed = {}
+        for name in (f"exploration_etude_{key}.json", f"predictif_{launcher().name(key)}.json"):
+            report = json.loads((out_dir / name).read_text(encoding="utf-8"))
+            if not report.get("commit") or report.get("dirty") is True:
+                raise EtudeError(f"{name} ne nomme pas un commit dont il a chiffré le code.")
+            if not (report.get("where") or "").strip():
+                raise EtudeError(f"{name} ne dit pas où ses passes ont tourné.")
+            if report["commit"] == study["commit"]:
+                raise EtudeError(f"{name} a tourné sur le commit de l'étude, "
+                                 f"`{study['commit'][:7]}`, sur un seul échantillon.")
+            commits.add(report["commit"])
+            replayed[name.split("_")[0]] = report
+        exploration, annual = replayed["exploration"], replayed["predictif"]
+        if run._validated(exploration["request"]) != run._validated(study["request"]):
+            raise EtudeError(f"exploration_etude_{key}.json n'a pas rejoué la requête de "
+                             f"l'étude, telle qu'elle l'a jouée.")
+        if _bundles(exploration) != _bundles(study):
+            raise EtudeError(f"exploration_etude_{key}.json ne chiffre pas les paquets de "
+                             f"l'étude, sous ses persistances.")
+        for new, old in zip(exploration["searches"], study["searches"], strict=True):
+            for a, b in zip(new["evaluations"], old["evaluations"], strict=True):
+                if sorted(label for label, _ in a["corners"]) != sorted(
+                        label for label, _ in b["corners"]):
+                    raise EtudeError(f"exploration_etude_{key}.json : sa boîte ne porte pas "
+                                     f"les coins de l'étude, pour {a['knobs']}.")
+        PredictifReportResponse.model_validate(annual)
+        if annual["scenario"] != launcher().name(key):
+            raise EtudeError(f"le chemin annuel de {key} chiffre « {annual['scenario']} », "
+                             f"pas {launcher().name(key)}.")
+        missing = annual_frame(annual, study)
+        if missing:
+            raise EtudeError(f"le chemin annuel de {key} n'a pas tourné dans le cadre de "
+                             f"l'étude : {missing} diffèrent.")
+        out[key] = {"instrument": entry["instrument"], "study": study,
+                    "exploration": exploration, "annual": annual,
+                    "frozen": (entry["vue_figee"]["report"] if entry.get("vue_figee")
+                               else study),
+                    "frozen_label": "D-279" if entry.get("vue_figee") else "l'étude",
+                    "before_annual": (entry["annuel"]["report"] if entry.get("annuel")
+                                      else None)}
+    if len(commits) != 1:
+        raise EtudeError(f"les rapports de C1 ont été rejoués sur {sorted(commits)} : "
+                         f"préenregistrés ensemble, ils tournent sur un seul commit.")
+    predicted = c1_predicted(reports)
+    for e in out.values():
+        e["control"] = c1_quatre_control(e, predicted)
+    return out
+
+
+def c1_quatre_control(entry: dict[str, Any],
+                      predicted: dict[tuple[str, str, str], float] | None) -> dict[str, Any]:
+    """What C1 alone must leave: the costs of every bundle in both views, and of every
+    year of the path; and each gap at θ, against what D-283's replications predict."""
+    key = entry["instrument"].key
+    eur, gap = [0.0], [0.0]
+    for new, old, frozen in zip(entry["exploration"]["searches"],
+                                entry["study"]["searches"], entry["frozen"]["searches"],
+                                strict=True):
+        for a, b, f in zip(new["evaluations"], old["evaluations"], frozen["evaluations"],
+                           strict=True):
+            eur += [abs(a["cost_aged_eur"] - b["cost_aged_eur"]),
+                    abs(a["cost_frozen_eur"] - b["cost_frozen_eur"])]
+            if predicted is not None:
+                knobs = _knobs(a["knobs"])
+                gap += [abs(a["delta_aged"] - b["delta_aged"]
+                            - predicted[("vieillie", key, knobs)]),
+                        abs(a["delta_frozen"] - f["delta_frozen"]
+                            - predicted[("figee", key, knobs)])]
+    annual_eur = [0.0]
+    if entry["before_annual"] is not None:
+        for a, b in zip(entry["annual"]["years"], entry["before_annual"]["years"],
+                        strict=True):
+            annual_eur += [abs(a["mechanical_aged_eur"] - b["mechanical_aged_eur"]),
+                           abs(a["mechanical_frozen_eur"] - b["mechanical_frozen_eur"])]
+    return {"eur": max(eur), "annual_eur": max(annual_eur),
+            "gap": max(gap) if predicted is not None else None}
+
+
+def _c1_quatre_section(entries: list[dict[str, Any]], target: float, target_year: int,
+                       theta: str) -> list[str]:
+    head = entries[0]["exploration"]
+    labels = _and([_lower(e["instrument"].label) for e in entries])
+    eur = max(e["control"]["eur"] for e in entries)
+    annual_eur = max(e["control"]["annual_eur"] for e in entries)
+    gaps = [e["control"]["gap"] for e in entries if e["control"]["gap"] is not None]
+    out = ["", "## C1 sur quatre échantillons", "",
+           "D-283 a mesuré le bruit de C1, la réponse du revenu imposable, d'un échantillon "
+           "de 3 000 ménages des taux marginaux à l'autre. Il vient de quelques ménages du "
+           "décile du haut dont le pas franchit un petit saut sous une loi seulement. Depuis "
+           "D-284, C1 lit quatre échantillons, mis en commun, et sa recette est la moyenne "
+           "des quatre. Les rapports de l'étude dont la boîte porte une ligne de C1, pour "
+           f"{labels}, ont été rejoués tels quels sur cette méthode : leurs explorations, "
+           "puis leurs chemins annuels. Le rejeu a été préenregistré dans D-285 avant ses "
+           f"passes, et `scripts/{C1_QUATRE}.py` l'a lancé. Les rapports ont tourné sur le "
+           f"commit `{head['commit']}`, le {head['computed']}, ici : {head['where']}. Ils "
+           f"sont sous `reports/{C1_QUATRE}/` ; ceux de l'étude ne bougent pas, et les tables "
+           "plus haut gardent leurs chiffres.",
+           "",
+           "**Le contrôle.** Seul C1 change. Les coûts des paquets s'écartent de ceux de "
+           f"l'étude de {_fr(eur, 0, sign=False)} € au plus, dans les deux vues, et ceux "
+           f"des chemins annuels de {_fr(annual_eur, 0, sign=False)} € au plus."
+           + (" À θ, l'écart de chaque paquet est celui que prévoient les réplications de "
+              "D-283, la moyenne de leurs quatre premiers échantillons moins le premier, à "
+              f"{_fr(max(gaps) * 100, 6, sign=False)} point près." if gaps else ""),
+           "", f"**Δb {target_year} à θ = {theta}.** La vue vieillie se lit contre l'étude ; "
+               "la vue figée contre la dernière lecture qui en a corrigé les taux.", "",
+           "| Instrument | Paquet | Persistance | Vue | Un échantillon | Quatre | Écart |",
+           "|---|---|---|---|---|---|---|"]
+    for e in entries:
+        instrument = e["instrument"]
+        for new, old, frozen in zip(e["exploration"]["searches"], e["study"]["searches"],
+                                    e["frozen"]["searches"], strict=True):
+            for a, b, f in zip(new["evaluations"], old["evaluations"], frozen["evaluations"],
+                               strict=True):
+                shown = instrument.show(b["knobs"][instrument.knob])
+                persistence = _lower(old["persistence_label"])
+                out += [f"| {instrument.label} | {shown} | {persistence} | vieillie "
+                        f"| {_pt(b['delta_aged'])} | {_pt(a['delta_aged'])} "
+                        f"| {_gap(a['delta_aged'] - b['delta_aged'])} |",
+                        f"| {instrument.label} | {shown} | {persistence} | figée "
+                        f"({e['frozen_label']}) | {_pt(f['delta_frozen'])} "
+                        f"| {_pt(a['delta_frozen'])} "
+                        f"| {_gap(a['delta_frozen'] - f['delta_frozen'])} |"]
+    changed = [e["instrument"].label for e in entries
+               if _verdicts(e["exploration"], target) != _verdicts(e["study"], target)]
+    out += ["", "**Les verdicts.** "
+            + ("Aucun ne change : les mêmes paquets tiennent la cible, ou aucun, les mêmes "
+               "sont robustes, et les mêmes coins de la boîte θ la tiennent."
+               if not changed else
+               f"Ils changent pour {_and([_lower(c) for c in changed])} : les paquets qui "
+               f"tiennent la cible, ou les coins de la boîte θ qui la tiennent, ne sont plus "
+               f"les mêmes.")]
+    annual = [e for e in entries if e["before_annual"] is not None]
+    if annual:
+        out += ["", f"**Le chemin annuel, Δb {target_year} chaque année chiffrée, à "
+                    f"θ = {theta}.** Contre D-277, sur un seul échantillon.", "",
+                "| Instrument | Persistance | Vue | Un échantillon | Quatre | Écart |",
+                "|---|---|---|---|---|---|"]
+        for e in annual:
+            labels_by = {s["persistence"]: s["persistence_label"]
+                         for s in e["study"]["searches"]}
+            for new, old in zip(e["annual"]["theta_box"]["paths"],
+                                e["before_annual"]["theta_box"]["paths"], strict=True):
+                for view, shown in (("vieillie", "vieillie"), ("figee", "figée")):
+                    a = new["every_year"][view]["theta"]
+                    b = old["every_year"][view]["theta"]
+                    out.append(f"| {e['instrument'].label} "
+                               f"| {_lower(labels_by[new['persistence']])} | {shown} "
+                               f"| {_pt(b)} | {_pt(a)} | {_gap(a - b)} |")
+    return out
+
+
 def launcher() -> Any:
     """`scripts/etude_annuelle.py`, which built the scenarios: the page reads them back
     through it, never through a copy of its logic."""
@@ -2229,6 +2477,9 @@ def render(etudes: list[dict[str, Any]],
     figee = [e["vue_figee"] for e in etudes if e.get("vue_figee")]
     if figee:
         out += _vue_figee_section(figee, target, first_year, target_year, theta)
+    quatre = [e["c1_quatre"] for e in etudes if e.get("c1_quatre")]
+    if quatre:
+        out += _c1_quatre_section(quatre, target, target_year, theta)
     out += ["", "## Ce que l'étude ne dit pas", "",
             "- Ce n'est pas une prévision. Chaque chiffre dépend des scénarios nommés et de "
             "θ ; un autre scénario donne une autre réponse.",
