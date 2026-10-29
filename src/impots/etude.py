@@ -419,8 +419,10 @@ class Etude:
             print(f"{self.rapports} porte déjà {there} : un rapport n'est pas écrasé en "
                   f"silence.", file=sys.stderr)
             return 1
+        # The first years call the simulator in their own process, closed without a key
+        # since D-295: a pass is local, and opens it for itself.
         env = {**os.environ, "PYTHONPATH": str(ROOT / "src"),
-               "IMPOTS_FIRM_VINTAGE": self.millesime_entreprises}
+               "IMPOTS_FIRM_VINTAGE": self.millesime_entreprises, "IMPOTS_AUTH": "aucune"}
         for report, command in self.passes(where):
             print(f"== {report}", flush=True)
             code = subprocess.run([sys.executable, *command], cwd=ROOT, env=env).returncode

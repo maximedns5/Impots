@@ -23545,3 +23545,10 @@ coût négatif, une baisse de la dette un Δ négatif) :
 Le pronostic serait réfuté par : une bande ou un éventail présents ; un gagnant au-delà
 de 0,1 % d'un décile ; une dette hors de ses fourchettes, ou une vue vieillie plus grande
 que la figée en valeur absolue ; un verdict autre que « baisse ».
+
+**Ajout, avant toute passe.** Lancée sur `596fba1`, l'étude s'est arrêtée à la première
+passe sans rien écrire : l'appel du simulateur est fermé sans clé depuis D-295, et le
+lanceur ne posait pas le mode local, que `tests/conftest.py` pose pour toute la suite, ce
+qui cachait le défaut. Le lanceur ouvre désormais le simulateur pour ses passes, un test
+vu échouer le tient en fermant d'abord l'accès, et les passes tournent sur le commit de la
+correction. Rien d'autre ne change : ni scénario, ni cadre, ni pronostic.

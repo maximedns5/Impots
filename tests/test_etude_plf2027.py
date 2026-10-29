@@ -154,6 +154,15 @@ def test_every_pass_is_served_the_real_firm_vintage(launcher) -> None:
     assert registered == f"entreprises-{launcher.study.millesime_entreprises}"
 
 
+def test_every_pass_runs_the_simulator_locally(launcher) -> None:
+    """The passes call the simulator in their own process, closed without a key since
+    D-295: the launcher opens it for them. The suite's conftest opens it for every test,
+    so this one closes it first, as a terminal would have it."""
+    launcher.monkeypatch.delenv("IMPOTS_AUTH", raising=False)
+    assert launcher.study.launch("ici") == 0
+    assert {env["IMPOTS_AUTH"] for env in launcher.envs} == {"aucune"}
+
+
 def test_a_pass_that_fails_stops_the_ones_after_it(launcher, capsys) -> None:
     codes = iter([0, 3, 0, 0, 0, 0])
     launcher.monkeypatch.setattr(etude.subprocess, "run",
