@@ -5,20 +5,23 @@ rapports sont ceux de l'étude.
 construite sur les modèles de réponse de l'API, et un chemin annuel copié de celui de
 l'étude (D-277), renommé. Le rendu lit les trois réponses, l'écart à l'enregistrement noté
 et le triage ; le chargement refuse les rapports qui ne sont pas ceux de l'étude.
+
+Depuis D-301, la page est celle de `impots etude ecrire plf2027` : `page` lie le module
+générique à la définition `etudes/plf2027.json`, et les tests le lisent comme ils lisaient
+le script.
 """
 
 from __future__ import annotations
 
 import copy
-import importlib.util
 import json
 import re
-import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
-from impots import plf_coverage
+from impots import etude, plf_coverage
 from impots.api.schemas import (
     Behavioural,
     BehaviouralBand,
@@ -36,22 +39,19 @@ TEMPLATE = ROOT / "reports" / "etude_annuel" / "predictif_etude_annuel_ir.json"
 COMMIT = "a" * 40
 
 
-def _load(name: str):
-    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / f"{name}.py")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
 @pytest.fixture(scope="module")
 def page():
-    return _load("write_etude_plf2027")
+    study = etude.definition("plf2027")
+    return SimpleNamespace(load=study.load, render=study.render, debt=etude.debt,
+                           verdict=etude.verdict, refusal=etude.refusal,
+                           _points=etude._points, EtudeError=etude.EtudeError,
+                           DOC=study.page)
 
 
 @pytest.fixture(scope="module")
 def launcher():
-    return _load("etude_plf2027")
+    study = etude.definition("plf2027")
+    return SimpleNamespace(ARTICLES=study.noms, first_year_payload=etude.first_year_payload)
 
 
 COSTS = {"plf2027_art_2": 2.9e9, "plf2027_art_3": -1.3e9, "plf2027_art_15": -7.1e9}

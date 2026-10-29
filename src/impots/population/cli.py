@@ -1479,6 +1479,35 @@ def _whole_pass_refusals(args: argparse.Namespace) -> None:
             f"sur une autre population que la sienne.")
 
 
+def cmd_etude(args: argparse.Namespace) -> int:
+    """Une étude en trois réponses (but 6, D-301) : ses passes, sa page, sa dérive."""
+    from impots import etude
+
+    try:
+        study = etude.definition(args.nom)
+        if args.action == "lancer":
+            return study.launch(args.ou)
+        if args.action == "premiere":
+            print(f"  -> {study.write_first_year(args.scenario, where=args.ou)}")
+            return 0
+        if args.action == "ecrire":
+            text = study.render(study.load())
+            study.page.parent.mkdir(parents=True, exist_ok=True)
+            study.page.write_text(text, encoding="utf-8")
+            print(f"-> {study.page} ({len(text.splitlines())} lignes)")
+            return 0
+        why = study.drift()
+    except etude.EtudeError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    if why:
+        print(why, file=sys.stderr)
+        return 1
+    print(f"{study.page} : la page est celle de ses rapports." if study.page.exists() else
+          f"« {study.nom} » : ni rapports ni page, ses passes n'ont pas tourné.")
+    return 0
+
+
 def cmd_exploration(args: argparse.Namespace) -> int:
     """The bundles whose debt difference meets a target, at a fixed θ (Phase 10 M1).
 
@@ -1982,6 +2011,22 @@ def build_parser() -> argparse.ArgumentParser:
     exploration.add_argument("--ou", help="where the passes run, which the report says "
                                           "(PHASE10_SPEC §5)")
     exploration.set_defaults(func=cmd_exploration)
+
+    etude = subcommands.add_parser(
+        "etude", help="une étude en trois réponses : ses passes, sa page (but 6, D-301)")
+    etude_actions = etude.add_subparsers(dest="action", required=True)
+    lancer = etude_actions.add_parser("lancer", help="les passes, l'une après l'autre")
+    lancer.add_argument("nom", help="l'étude, etudes/<nom>.json")
+    lancer.add_argument("--ou", required=True, help="where the passes run, which each "
+                                                    "report says")
+    premiere = etude_actions.add_parser("premiere", help="la première année d'un scénario")
+    premiere.add_argument("nom")
+    premiere.add_argument("scenario")
+    premiere.add_argument("--ou", required=True)
+    for action, text in (("ecrire", "la page, depuis les seuls rapports commités"),
+                         ("verifier", "la page commitée est-elle celle de ses rapports ?")):
+        etude_actions.add_parser(action, help=text).add_argument("nom")
+    etude.set_defaults(func=cmd_etude)
 
     emtr_parser = subcommands.add_parser(
         "emtr", help="sweep a household type across the income range (F6)")

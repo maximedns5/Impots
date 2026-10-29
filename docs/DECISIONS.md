@@ -23414,3 +23414,77 @@ regard du forfait, contre les données de la CNAF. Elle est inscrite dans
 **Ce que cela change au premier chiffre.** De 2 sur 3, il passe à 3 sur 5. Les juges de
 l'automne sont épuisés ; le suivant viendra avec le PLF et le PLFSS 2028, ou une loi de
 finances rectificative avant.
+
+## D-301 — Une étude par une commande, et la revalorisation portée d'une année à l'autre
+
+**Le fait.** Le but 6 demande qu'une étude à trois réponses se produise par une commande,
+et que la première soit celle du PLFSS 2027. Deux pièces manquaient : la commande, et un
+chemin annuel qui sache porter une revalorisation au-delà de sa première année.
+
+**La revalorisation portée.** `impots predictif` chiffrait `scenario.reform` chaque année.
+Pour l'art. 74, le coefficient d'avril se serait récrit chaque année à sa date : chaque
+année, janvier à mars sans la mesure, une dent de scie que la loi ne connaît pas. Ce qu'une
+revalorisation laisse est un niveau, de janvier à décembre. Désormais :
+- `Scenario.reform_in(year)` rend la réforme telle qu'écrite la première année, puis, les
+  années suivantes, chaque bouton daté changé en son bouton porté
+  (`ppa_revalorisation_portee`, `al_revalorisation_portee`) ; `impots predictif`, dans
+  ses deux passes, et `impots trajectoire` la chiffrent ;
+- un bouton porté s'écrit à la date légale de l'année d'avant, et l'année chiffrée porte le
+  niveau dès janvier ; l'écriture multiplie chaque segment de l'arbre à partir de cette
+  date : la revalorisation que l'arbre porte lui-même plus tard (avril 2024 pour la prime)
+  est multipliée, pas effacée ;
+- la relecture vérifie chaque jour où l'arbre de référence change, de la date à la fin de
+  l'année chiffrée, et la veille de la date ;
+- deux boutons sur un même montant sont refusés : le niveau et l'un ou l'autre
+  coefficient, le coefficient daté et le porté ;
+- au-delà de l'arbre, l'ensemble d'octobre des aides au logement est celui de la dernière
+  révision qu'il connaît, les 56 paramètres du 1er octobre 2025. Avant, il était vide dès
+  2027, et la relecture refusait le chemin (« aucun paramètre à revaloriser en 2029 ») :
+  un test de bouton l'a montré. Le cas de bouton du logement porté est chiffré en 2027,
+  car en 2024 il lirait la révision de 2022, faite en juillet.
+
+Les tests ont été vus échouer avant le code. Dix-sept mutations : deux ont d'abord survécu.
+La première ne mutait rien (`{} or {…}` vaut le second dictionnaire), et sa forme juste est
+tuée. La seconde a montré que la borne de fin de segment était superflue : les valeurs sont
+lues avant toute écriture, et les segments écrits dans l'ordre. La borne est retirée plutôt
+que gardée sans test ; lire après écrire, écrire à rebours, n'écrire qu'à la date sont
+trois mutations tuées.
+
+**La commande.** `impots etude lancer|premiere|ecrire|verifier <nom>`, dans
+`src/impots/etude.py`, lit `etudes/<nom>.json` : le titre, le texte dont la page dit les
+refus, la D-entrée qui préenregistre les passes, le cadre (la requête de l'étude de D-237),
+le millésime des entreprises, et les scénarios, chacun avec son volet et son sens. La page
+va par défaut dans `docs/etudes/<nom>.md`, les rapports dans `reports/etudes/<nom>/`.
+- Le lanceur refuse, avant la première passe : un `src/` modifié ; une D-entrée de
+  préenregistrement absente, en titre, du `docs/DECISIONS.md` du commit (la nommer dans le
+  texte d'une autre ne suffit pas) ; un commit qu'aucune branche distante ne porte ; un
+  rapport déjà là. Une passe à la fois, chacune dans son processus.
+- Le rendu reprend celui de D-289, mot pour mot, et refuse un cadre qui n'est pas le sien
+  (θ½, comportements et boucle) : la page le dirait.
+- Deux textes : `plf2027`, les articles fiscaux du PLF et leur case, et `plfss2027`, les
+  49 articles du PLFSS avec leur case et leur porte, la mesure chiffrée étant l'art. 74 du
+  PLF, en volets.
+- En miroir, la page dit la mesure, chaque réponse changée de signe : exact pour le coût
+  et les déciles, gagnants et perdants échangés, qui sont la différence de deux passes ;
+  vrai au premier ordre pour la bande, l'éventail et la dette, calculés autour de l'état
+  de départ. Le sens est relu contre l'enregistrement du scénario, quand il en a un.
+- La dérive : chaque définition est soit préenregistrée et pas lancée (ni rapports ni
+  page), soit lancée et rendue (ses rapports, et une page qui est exactement leur rendu).
+  `impots etude verifier` rend 1 sinon, et dit la première ligne qui diffère. Le test court
+  sur chaque définition ; il a été vu échouer sur une page modifiée, une page sans ses
+  rapports, des rapports sans leur page.
+
+Vingt et une mutations du module et de la commande, toutes tuées.
+
+**Le PLF 2027, régénéré.** `etudes/plf2027.json` garde la page et les rapports de D-290 :
+`docs/ETUDE_PLF2027.md`, `reports/etude_plf2027/`. La commande la régénère à une ligne
+près, l'en-tête qui nomme ce qui l'a écrite : `scripts/write_etude_plf2027.py` devient
+`impots etude ecrire plf2027`. Les 248 autres lignes, et chaque nombre, sont identiques.
+`scripts/write_etude_plf2027.py` est retiré ; `scripts/etude_plf2027.py` ne garde que le
+scénario de l'art. 15, écrit une fois avant les passes de D-289. Les 55 tests des deux
+scripts lisent le module ; leurs assertions sont inchangées. Seul l'indice d'une étape du
+lanceur avance d'un rang, le nom de l'étude précédant le scénario dans la commande, et
+deux refus s'ajoutent : la D-entrée absente, le commit pas poussé.
+
+**Ce qui suit.** L'étude du PLFSS 2027 est préenregistrée dans l'entrée suivante, puis
+lancée par la commande sur le commit de cette entrée-là.

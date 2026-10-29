@@ -5,6 +5,9 @@ réformes que les enregistrements ont chiffrées, l'art. 15 borné à 2027 (D-28
 première année passe par l'appel du simulateur de sa chaîne ; le chemin annuel reprend la
 commande de l'étude, champ pour champ, relue par l'analyseur de la commande. Le lanceur
 refuse un `src/` modifié ou un rapport déjà là, avant toute passe.
+
+Depuis D-301, l'étude est celle de la commande, `etudes/plf2027.json` lu par
+`impots.etude` ; le script ne garde que le scénario de l'art. 15.
 """
 
 from __future__ import annotations
@@ -17,7 +20,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from impots import plf_coverage, preregistration
+from impots import etude, plf_coverage, preregistration
 from impots import scenarios as scenarios_module
 from impots.api.schemas import ReformSpec
 from impots.entreprises.reforms import FirmReformSpec
@@ -40,9 +43,14 @@ def script():
     return _load("etude_plf2027")
 
 
-def test_the_articles_are_the_ones_the_triage_says_priceable(script) -> None:
+@pytest.fixture(scope="module")
+def study():
+    return etude.definition("plf2027")
+
+
+def test_the_articles_are_the_ones_the_triage_says_priceable(study) -> None:
     priceable = [a for a in plf_coverage.ARTICLES_2027 if a.bucket == "priceable_now"]
-    assert tuple(Path(a.reforme).stem for a in priceable) == script.ARTICLES
+    assert tuple(Path(a.reforme).stem for a in priceable) == study.noms
 
 
 def test_the_art_15_scenario_is_the_one_committed(script) -> None:
@@ -53,8 +61,9 @@ def test_the_art_15_scenario_is_the_one_committed(script) -> None:
 
 
 @pytest.mark.parametrize("name", ["plf2027_art_2", "plf2027_art_3", "plf2027_art_15"])
-def test_each_scenario_prices_the_reform_its_registration_priced(script, name: str) -> None:
-    scenario = scenarios_module.load(name, script.SCENARIOS)
+def test_each_scenario_prices_the_reform_its_registration_priced(script, study,
+                                                                 name: str) -> None:
+    scenario = scenarios_module.load(name, study.scenarios)
     case = preregistration.load(name)
     reform = json.loads((script.REFORMS / f"{name}.json").read_text(encoding="utf-8"))
     if case.scenario is None:
@@ -67,11 +76,11 @@ def test_each_scenario_prices_the_reform_its_registration_priced(script, name: s
         assert scenario.reform == ReformSpec.model_validate(reform)
 
 
-def test_the_first_year_goes_to_its_chain_s_simulator(script) -> None:
-    kind, endpoint, payload = script.first_year_payload("plf2027_art_15")
+def test_the_first_year_goes_to_its_chain_s_simulator() -> None:
+    kind, endpoint, payload = etude.first_year_payload("plf2027_art_15")
     assert (kind, endpoint, payload["year"]) == ("entreprises", "/entreprises/simulate", 2027)
     for name in ("plf2027_art_2", "plf2027_art_3"):
-        kind, endpoint, payload = script.first_year_payload(name)
+        kind, endpoint, payload = etude.first_year_payload(name)
         assert (kind, endpoint) == ("menages", "/population/simulate")
         assert payload["behavioural"] is payload["macro"] is True
         assert payload["year"] == 2026
@@ -81,16 +90,16 @@ def test_a_scenario_of_both_chains_is_refused(script, tmp_path) -> None:
     both = scenarios_module.Scenario(**{**vars(script.art15()), "annees": (),
                                         "reform": ReformSpec(decote_taux=0.4)})
     both.save(tmp_path)
-    with pytest.raises(script.EtudePlf2027Error, match="deux appels"):
-        script.first_year_payload("plf2027_art_15", tmp_path)
+    with pytest.raises(etude.EtudeError, match="deux appels"):
+        etude.first_year_payload("plf2027_art_15", tmp_path)
 
 
-def test_a_first_year_the_simulator_refuses_is_not_written(script, tmp_path) -> None:
+def test_a_first_year_the_simulator_refuses_is_not_written(tmp_path) -> None:
     empty = scenarios_module.Scenario(name="plf2027_art_2", reform=ReformSpec(), year=2026,
                                       created="2026-10-28", source="vide")
     empty.save(tmp_path)
-    with pytest.raises(script.EtudePlf2027Error, match="a rendu 422"):
-        script.first_year("plf2027_art_2", where="ici", scenarios=tmp_path)
+    with pytest.raises(etude.EtudeError, match="a rendu 422"):
+        etude.first_year("plf2027_art_2", where="ici", scenarios=tmp_path)
 
 
 def _frame(args) -> dict:
@@ -98,52 +107,59 @@ def _frame(args) -> dict:
             if k not in ("scenario", "out_dir", "ou", "func")}
 
 
-def test_the_annual_paths_take_the_study_s_frame_field_for_field(script) -> None:
+def test_the_annual_paths_take_the_study_s_frame_field_for_field(study) -> None:
     annual = _load("etude_annuelle")
-    study = cli.build_parser().parse_args(annual.argv(script.FRAME, where="là"))
-    for name in script.ARTICLES:
-        args = cli.build_parser().parse_args(script.annual_argv(name, where="ici"))
+    frame = cli.build_parser().parse_args(annual.argv(study.cadre, where="là"))
+    for name in study.noms:
+        args = cli.build_parser().parse_args(study.annual_argv(name, where="ici"))
         assert args.func is cli.cmd_predictif and args.scenario == name
-        assert args.out_dir == str(script.OUT) and args.ou == "ici"
-        assert _frame(args) == {**_frame(study), "dir": str(script.SCENARIOS)}
+        assert args.out_dir == str(study.rapports) and args.ou == "ici"
+        assert _frame(args) == {**_frame(frame), "dir": str(study.scenarios)}
         assert args.behavioural and args.macro and args.horizon == 10
 
 
+#: What git says of a commit whose entry is in and which a remote branch carries.
+GIT = {("show", "HEAD:docs/DECISIONS.md"): "## D-288 — x\n## D-289 — L'étude\n",
+       ("branch", "-r", "--contains", "HEAD"): "  origin/claude/x\n"}
+
+
 @pytest.fixture
-def launcher(script, monkeypatch, tmp_path):
+def launcher(study, monkeypatch, tmp_path):
     out = tmp_path / "etude_plf2027"
-    monkeypatch.setattr(script, "OUT", out)
     calls: list = []
     envs: list = []
-    monkeypatch.setattr(script.subprocess, "run",
+    monkeypatch.setattr(etude.subprocess, "run",
                         lambda command, **kw: calls.append(command) or envs.append(kw["env"])
                         or SimpleNamespace(returncode=0))
     monkeypatch.setattr(recherche, "code_state", lambda root=None: ("c0ffee", False))
-    return SimpleNamespace(out=out, calls=calls, envs=envs, monkeypatch=monkeypatch)
+    git = dict(GIT)
+    monkeypatch.setattr(etude, "_git", lambda *args: git[args])
+    return SimpleNamespace(out=out, calls=calls, envs=envs, monkeypatch=monkeypatch,
+                           study=etude.replace(study, rapports=out), git=git)
 
 
-def test_the_launcher_runs_the_first_years_then_the_paths(script, launcher) -> None:
-    assert script.launch("ici") == 0
-    steps = [("premiere", c[c.index("premiere") + 1]) if "premiere" in c
+def test_the_launcher_runs_the_first_years_then_the_paths(launcher) -> None:
+    assert launcher.study.launch("ici") == 0
+    steps = [("premiere", c[c.index("premiere") + 2]) if "premiere" in c
              else ("predictif", c[c.index("predictif") + 1]) for c in launcher.calls]
-    assert steps == [("premiere", n) for n in script.ARTICLES] + [
-        ("predictif", n) for n in script.ARTICLES]
+    assert steps == [("premiere", n) for n in launcher.study.noms] + [
+        ("predictif", n) for n in launcher.study.noms]
     assert all(c[c.index("--ou") + 1] == "ici" for c in launcher.calls)
 
 
-def test_every_pass_is_served_the_real_firm_vintage(script, launcher) -> None:
-    assert script.launch("ici") == 0
+def test_every_pass_is_served_the_real_firm_vintage(launcher) -> None:
+    assert launcher.study.launch("ici") == 0
     assert {env["IMPOTS_FIRM_VINTAGE"] for env in launcher.envs} == {"2023"}
     registered = preregistration.load("plf2027_art_15").population_vintage
-    assert registered == f"entreprises-{script.FIRM_VINTAGE}"
+    assert registered == f"entreprises-{launcher.study.millesime_entreprises}"
 
 
-def test_a_pass_that_fails_stops_the_ones_after_it(script, launcher, capsys) -> None:
+def test_a_pass_that_fails_stops_the_ones_after_it(launcher, capsys) -> None:
     codes = iter([0, 3, 0, 0, 0, 0])
-    launcher.monkeypatch.setattr(script.subprocess, "run",
+    launcher.monkeypatch.setattr(etude.subprocess, "run",
                                  lambda command, **kw: launcher.calls.append(command)
                                  or SimpleNamespace(returncode=next(codes)))
-    assert script.launch("ici") == 3
+    assert launcher.study.launch("ici") == 3
     assert len(launcher.calls) == 2
     assert "les suivants ne tournent pas" in capsys.readouterr().err
 
@@ -151,8 +167,10 @@ def test_a_pass_that_fails_stops_the_ones_after_it(script, launcher, capsys) -> 
 @pytest.mark.parametrize("how, needle", [
     ("dirty", "modifications non commitées"),
     ("there", "un rapport n'est pas écrasé en silence"),
+    ("unregistered", "D-289 n'est pas dans docs/DECISIONS.md au commit"),
+    ("unpushed", "aucune branche distante ne porte le commit"),
 ])
-def test_the_launcher_refuses_before_any_pass(script, launcher, capsys, how: str,
+def test_the_launcher_refuses_before_any_pass(launcher, capsys, how: str,
                                               needle: str) -> None:
     launcher.monkeypatch.setattr(recherche, "code_state",
                                  lambda root=None: ("c0ffee", how == "dirty"))
@@ -160,5 +178,10 @@ def test_the_launcher_refuses_before_any_pass(script, launcher, capsys, how: str
         launcher.out.mkdir()
         (launcher.out / "premiere_annee_plf2027_art_2.json").write_text("{}",
                                                                          encoding="utf-8")
-    assert script.launch("ici") == 1
+    if how == "unregistered":
+        # The entry's number in another heading's text is not the entry.
+        launcher.git[("show", "HEAD:docs/DECISIONS.md")] = "## D-288 — avant D-289\n"
+    if how == "unpushed":
+        launcher.git[("branch", "-r", "--contains", "HEAD")] = ""
+    assert launcher.study.launch("ici") == 1
     assert launcher.calls == [] and needle in capsys.readouterr().err

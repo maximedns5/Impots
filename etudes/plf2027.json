@@ -1,0 +1,15 @@
+{
+  "nom": "plf2027",
+  "titre": "Le PLF 2027 en trois réponses",
+  "texte": "plf2027",
+  "preenregistrement": "D-289",
+  "cadre": "ir",
+  "millesime_entreprises": "2023",
+  "page": "docs/ETUDE_PLF2027.md",
+  "rapports": "reports/etude_plf2027",
+  "scenarios": [
+    {"scenario": "plf2027_art_2"},
+    {"scenario": "plf2027_art_3"},
+    {"scenario": "plf2027_art_15"}
+  ]
+}
