@@ -176,6 +176,8 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
     # tenu par `test_revalorisations.py`, ménage et arbre ; ici, l'année bouge.
     "ppa_revalorisation_avril": (SEUL_PPA, None, "ppa", 1.10, +1),
     "al_revalorisation_octobre": (LOCATAIRE_PPA, None, "aide_logement", 1.10, +1),
+    "ppa_revalorisation_portee": (SEUL_PPA, None, "ppa", 1.10, +1),
+    "al_revalorisation_portee": (LOCATAIRE_PPA, None, "aide_logement", 1.10, +1),
     # --- IR niches ------------------------------------------------------------------
     "saldom_taux": (NICHE_FOYER, {"salarie_domicile": 5_000}, "ir", 0.30, +1),
     "saldom_plafond": (NICHE_FOYER, {"salarie_domicile": 15_000}, "ir", 6_000.0, +1),
@@ -238,6 +240,11 @@ YEARS: dict[str, int] = {
     "allegement_general_t_min": 2026,
     "allegement_general_t_delta_moins_de_50": 2026,
     "allegement_general_t_delta_50_et_plus": 2026,
+    # Portés, ils écrivent la revalorisation de l'année d'avant : en 2027, celle de 2026,
+    # la première année qu'un chemin les chiffre (D-301). En 2024, le bouton du logement
+    # lirait la révision de 2022, faite en juillet, dont l'octobre ne touche pas le loyer.
+    "ppa_revalorisation_portee": 2027,
+    "al_revalorisation_portee": 2027,
 }
 
 #: Knobs with no household case, and why. An exemption needs a reason a reader can

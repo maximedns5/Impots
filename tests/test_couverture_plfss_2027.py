@@ -61,11 +61,12 @@ def test_the_doors_count_every_article_once():
 
 def test_article_74_names_knobs_that_exist_and_scenarios_that_carry_them():
     from impots.api.schemas import ReformSpec
-    from impots.engine.reforms import REVALORISATION_KNOBS
+    from impots.engine.reforms import PORTEE
 
     a = c.ARTICLE_74_2027
     assert a.numero == 74 and a.bucket == "priceable_now"
-    assert set(a.knobs) == set(REVALORISATION_KNOBS)
+    # The dated knobs: the carried ones are what a path prices after the first year.
+    assert set(a.knobs) == set(PORTEE)
     carried: set[str] = set()
     for path in (p.strip() for p in a.reforme.split(",")):
         scenario = json.loads((ROOT / path).read_text(encoding="utf-8"))

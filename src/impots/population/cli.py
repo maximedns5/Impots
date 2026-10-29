@@ -1158,8 +1158,6 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
               file=sys.stderr)
         return 1
     frame = pl.read_parquet(population)
-    reform = scenario.reform.model_dump(exclude_none=True, mode="json")
-
     from impots.engine.reforms import moves_capital, read_ir_parameters
     from impots.engine.system import baseline as engine_baseline
 
@@ -1192,6 +1190,8 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
         return run
 
     def price(pop: object, year: int, index: float) -> float:
+        # A dated revaluation is carried after the scenario's year (D-301).
+        reform = scenario.reform_in(year).model_dump(exclude_none=True, mode="json")
         return tj.price(year, args.reference, reform=reform,
                         law=read_ir_parameters(tbs, year), run=runner(pop, year, index),
                         indexation=indexation).mechanical_eur
@@ -1319,7 +1319,6 @@ def cmd_predictif(args: argparse.Namespace) -> int:
               file=sys.stderr)
         return 1
     frame = pl.read_parquet(population)
-    reform = scenario.reform.model_dump(exclude_none=True, mode="json")
     tbs = engine_baseline()
     # Against `indexe` the barème is indexed on the SAME prices the GDP grows with: a
     # third price index would be the incoherence `annuel.check_coherence` refuses.
@@ -1353,6 +1352,9 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
 
         print(f"  {year} · {view}…", flush=True)
+        # The first year writes a revaluation at its legal date, the years after carry
+        # the level it left, January to December (D-301).
+        reform = scenario.reform_in(year).model_dump(exclude_none=True, mode="json")
         households = tj.price(year, args.reference, reform=reform,
                               law=read_ir_parameters(tbs, year), run=run,
                               indexation=indexation).mechanical_eur
@@ -1387,7 +1389,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                               behaviour_asked=args.behavioural)
             print(f"  {year} · {view} · passe du simulateur…", flush=True)
             first = api._price_first_year(
-                api.YearPass(reform=scenario.reform, year=year,
+                api.YearPass(reform=scenario.reform_in(year), year=year,
                              behavioural=args.behavioural),
                 uprating=uprating, macro=args.macro, view=view, **firm_part)
             # A firm reform alone with behaviour asked says so, for no household channel

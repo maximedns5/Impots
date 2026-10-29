@@ -834,6 +834,11 @@ class ReformSpec(BaseModel):
     """The housing-aid expense parameters, from 1 October (CCH L. 823-4): rent ceilings,
     charge allowances, the foyers' rent equivalences and the flat minimum contribution,
     every leaf the tree's last October revision moved."""
+    # The same two, CARRIED (D-301): the revaluation of the year before the priced year,
+    # written at that year's legal date, so that the whole priced year carries the level
+    # it left. What a multi-year path prices after a revaluation's first year.
+    ppa_revalorisation_portee: Annotated[float, Field(ge=0.5, le=2.0)] | None = None
+    al_revalorisation_portee: Annotated[float, Field(ge=0.5, le=2.0)] | None = None
 
     # --- IFI (Phase 5) ---------------------------------------------------------------
     # Bounds are wide on purpose: this is a policy simulator and an IFI reform may
@@ -906,14 +911,17 @@ class ReformSpec(BaseModel):
 
     @model_validator(mode="after")
     def _check_revalorisations(self) -> ReformSpec:
-        """A level and a revaluation of the same amount do not compose: the level is
-        written from January, and the April coefficient would then revalue the level
-        asked for, which neither knob says on its own (D-298)."""
-        if self.ppa_montant_de_base is not None and self.ppa_revalorisation_avril is not None:
-            raise ValueError(
-                "« ppa_montant_de_base » fixe le montant forfaitaire de l'année et "
-                "« ppa_revalorisation_avril » revalorise celui que l'arbre porte au "
-                "1er avril : l'un ou l'autre, pas les deux.")
+        """Two knobs on the same amount do not compose: a level is written from January
+        and a coefficient multiplies what the tree carries, so each would read the other's
+        write, and the pair would say what neither says alone (D-298, D-301)."""
+        for first, second in (("ppa_montant_de_base", "ppa_revalorisation_avril"),
+                              ("ppa_montant_de_base", "ppa_revalorisation_portee"),
+                              ("ppa_revalorisation_avril", "ppa_revalorisation_portee"),
+                              ("al_revalorisation_octobre", "al_revalorisation_portee")):
+            if getattr(self, first) is not None and getattr(self, second) is not None:
+                raise ValueError(
+                    f"« {first} » et « {second} » portent le même montant : l'un ou "
+                    f"l'autre, pas les deux.")
         return self
 
     @model_validator(mode="after")
