@@ -23488,3 +23488,60 @@ deux refus s'ajoutent : la D-entrée absente, le commit pas poussé.
 
 **Ce qui suit.** L'étude du PLFSS 2027 est préenregistrée dans l'entrée suivante, puis
 lancée par la commande sur le commit de cette entrée-là.
+
+## D-302 — L'étude du PLFSS 2027 préenregistrée : l'art. 74 du PLF en miroir, et 49 refus
+
+**Le fait.** Le but 6 veut que l'étude du PLFSS 2027 soit la première que produit la
+commande de D-301. Aucun article du PLFSS n'est chiffrable (D-298) : une étude des seuls
+articles du PLFSS n'aurait aucune réponse à donner. Elle est donc remplacée, et le
+remplacement est dit ici, avant toute passe.
+
+**Ce que l'étude chiffre.** `etudes/plfss2027.json`, texte `plfss2027`, cadre `ir` (celui
+de D-289), entreprises de 2023 :
+- les deux volets de l'art. 74 du PLF 2027, la seule mesure de prestations de l'automne que
+  l'outil chiffre, chacun sur son scénario enregistré (`plf2027_art_74_ppa`,
+  `plf2027_art_74_apl`), lus en miroir comme leurs enregistrements (D-298) : le scénario
+  chiffre la revalorisation, la page dit sa suspension ;
+- les 49 articles du PLFSS, chacun avec sa case, sa raison et la porte qui l'ouvrirait,
+  et les portes comptées.
+Quatre passes : les deux premières années, puis les deux chemins annuels de 2026 à 2035,
+par `impots etude lancer plfss2027`, une à la fois, depuis un arbre de travail figé sur le
+commit de cette entrée. La page sera `docs/etudes/plfss2027.md`, écrite par
+`impots etude ecrire plfss2027` depuis les seuls rapports commités.
+
+**Le calendrier.** 2026 tient lieu de 2027 (D-298), et l'est sur tout le chemin : chaque
+année du moteur tient lieu de la suivante. La première année est celle de la date légale ;
+les neuf suivantes portent le niveau, de janvier à décembre (D-301). La dette « en 2035 »
+est celle de la dixième année de la mesure.
+
+**Un essai à blanc, pour l'admission seulement.** Le volet du logement a été lancé sur
+deux ans, avec comportements et boucle, pour vérifier que le cadre accepte un scénario de
+transferts avant une passe de deux heures. Seul son code de sortie a été lu ; son rapport,
+dans le répertoire de travail de la session, n'est pas lu et ne sera pas commité.
+
+**Ce que le code dit d'avance, sans passe.** Aucune ligne du magasin des comportements ne
+répond aux boutons `ppa_*` ni `al_*` : les canaux sont fermés pour ces deux volets.
+Mésange ne publie pas de variante de transfert (`macro/shocks.py`) : l'éventail est
+refusé, et la boucle est absente, faute de ligne de solde à lire.
+
+**Le pronostic**, écrit avant les passes, dans le sens de la mesure (une économie est un
+coût négatif, une baisse de la dette un Δ négatif) :
+1. La première année refait l'enregistrement, sur le même code pour elle : prime
+   −887 M€, logement −78 M€, chacun à 1 % près du simulé de D-300.
+2. Aucun gagnant : dans chaque décile, moins de 0,1 % des ménages. Les perdants de la
+   prime sont dans les déciles 2 à 6, ceux du logement dans les déciles 1 à 3.
+3. La bande est absente, raison donnée : aucun canal n'est câblé pour ces boutons.
+   L'éventail est refusé : pas de variante de transfert.
+4. La dette en 2035, sans boucle ni comportement, est le seul chemin mécanique. Prime :
+   vue figée −0,38 pt de PIB, entre −0,30 et −0,45 ; vue vieillie plus petite en valeur
+   absolue, −0,27 pt, entre −0,15 et −0,36, les salaires montant de 3 % l'an devant une
+   prime reconduite sans indexation. Logement : vue figée −0,08 pt, entre −0,05 et −0,11 ;
+   vue vieillie −0,05 pt, entre −0,03 et −0,09, plus petite en valeur absolue.
+5. θ ne bouge rien : à chaque coin, la valeur de θ½. Le verdict est « baisse » pour les
+   deux volets, dans les deux vues.
+6. L'écart à l'évaluation préalable est celui de D-300, le logement dans la tolérance, la
+   prime hors d'elle : l'étude le redit, elle ne le refait pas.
+
+Le pronostic serait réfuté par : une bande ou un éventail présents ; un gagnant au-delà
+de 0,1 % d'un décile ; une dette hors de ses fourchettes, ou une vue vieillie plus grande
+que la figée en valeur absolue ; un verdict autre que « baisse ».
