@@ -33,7 +33,7 @@ article refusé n'est pas un article à zéro.
 
 1. **Des études à trois réponses, produites par une commande.** Une page par réforme,
    générée depuis des rapports commités par un script dont un test refuse la dérive. La
-   première, `docs/ETUDE_PLF2027.md` (D-290), a demandé un script sur mesure : la suivante
+   première, `docs/etudes/plf2027.md` (D-290), a demandé un script sur mesure : la suivante
    doit coûter une commande (but 6).
 2. **Publiées sur un site statique.** Des pages HTML lisibles sans rien faire tourner,
    servies sans serveur de calcul, donc sans surface d'attaque (but 7). Où les héberger
@@ -107,7 +107,7 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
 
 ### Faits
 
-* **But 1 — L'étude PLF 2027, à trois réponses** (`docs/ETUDE_PLF2027.md`, D-288 à
+* **But 1 — L'étude PLF 2027, à trois réponses** (`docs/etudes/plf2027.md`, D-288 à
   D-290).
 * **But 2 — L'art. 2 retrouvé, ou son écart expliqué** (D-291, D-292). La base porte 77 %
   de l'écart, le millésime presque tout le reste ; la révision `plf2027_art_2_base2027`,
@@ -125,6 +125,9 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
   `etudes/<nom>.json` ; la page du PLF 2027 régénérée à une ligne près, l'en-tête ;
   l'étude du PLFSS 2027 (`docs/etudes/plfss2027.md`), la première qu'elle produit : les
   deux volets de l'art. 74 en miroir, qui baissent la dette, et les 49 refus du PLFSS.
+* **But 7 — Les études en ligne, sur un site statique** (D-304) : `impots site`, du HTML
+  sans script où chaque nombre dit son étage et chaque réponse absente sa raison ; le
+  workflow `site` publie sur GitHub Pages quand le propriétaire l'a activé.
 
 ### But 6 — Une étude par commande
 
@@ -142,7 +145,7 @@ modifiée. Preuve attendue : la commande et sa sortie, la sortie verte des tests
 l'URL de la PR et le SHA du merge. Ou s'arrêter après 40 tours, en disant ce qui manque.
 ```
 
-### But 7 — Les études en ligne, sur un site statique (en cours)
+### But 7 — Les études en ligne, sur un site statique
 
 ```
 /goal Les études se lisent en ligne sans serveur de calcul, et c'est mergé dans main.
@@ -155,7 +158,7 @@ publication est sa décision. Preuve attendue : le site construit, la sortie ver
 ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 30 tours.
 ```
 
-### But 8 — La couverture côté ménages : ce que D-294 désigne
+### But 8 — La couverture côté ménages : ce que D-294 désigne (en cours)
 
 ```
 /goal La population porte les indemnités journalières, les indemnités de rupture et

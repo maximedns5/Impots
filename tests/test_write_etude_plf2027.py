@@ -345,5 +345,5 @@ def test_a_fan_without_its_strip_is_refused(page, reports) -> None:
 
 
 def test_the_committed_page_is_what_its_committed_reports_render(page) -> None:
-    """The anti-drift guard: no number of `docs/ETUDE_PLF2027.md` is typed by hand."""
+    """The anti-drift guard: no number of `docs/etudes/plf2027.md` is typed by hand."""
     assert page.DOC.read_text(encoding="utf-8") == page.render(page.load())

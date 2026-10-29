@@ -335,6 +335,23 @@ the data is available.
 CGE. DSGE/HANK. Agent-based macro. Dynamic pension microsimulation. A third
 French rules-as-code DSL.
 
+## The studies, and their static site
+
+A study answers three questions about a reform, or the priced articles of a text: what it
+costs and who gains, what it costs once behaviour and the economy are counted, what it
+does to the debt in ten years (`docs/BUT.md`). Each is a definition, `etudes/<nom>.json`,
+whose passes `impots etude lancer <nom>` runs once preregistered, and whose page
+`impots etude ecrire <nom>` writes in `docs/etudes/` from the committed reports alone
+(D-301). Next to every number, the layer it rests on; an absent answer says why.
+
+`impots site construire` turns the studies into a static site in `site/`: plain HTML and
+one stylesheet, no script, nothing computed (D-304). `impots site verifier` says whether
+the committed site is the studies' build. To open it, read `site/index.html` in any
+browser. To publish it on GitHub Pages, which is the owner's decision: set Settings →
+Pages → Source to « GitHub Actions », set the repository variable `SITE_PUBLIE` to `oui`,
+then run the `site` workflow by hand. Without both, the workflow checks the site and
+publishes nothing.
+
 ## Before hosting it: the security pass
 
 The API is closed by default (D-295, `src/impots/api/securite.py`). Four settings, each

@@ -1,0 +1,64 @@
+name: site
+
+# Le site des études (but 7, D-304) : vérifié, puis publié sur GitHub Pages si le
+# propriétaire l'a décidé.
+#
+# LANCEMENT MANUEL SEULEMENT, comme `test.yml` depuis D-212 : les Actions n'ont plus de
+# runner, et un déclencheur automatique laisserait une croix rouge à chaque poussée. Pour
+# vérifier le site à chaque poussée sur `main`, ajouter :
+#
+#   push:
+#     branches: [main]
+#
+# LA PUBLICATION EST LA DÉCISION DU PROPRIÉTAIRE. Le job `publier` ne tourne que si la
+# variable de dépôt `SITE_PUBLIE` vaut `oui` (Settings → Secrets and variables → Actions
+# → Variables), et GitHub Pages doit être réglé sur « GitHub Actions » (Settings →
+# Pages → Source). Sans l'une ou l'autre, le workflow vérifie le site et ne publie rien.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site
+  cancel-in-progress: false
+
+jobs:
+  # Le site commité doit être la construction des études : `impots site verifier`
+  # reconstruit chaque page depuis les définitions et leurs seuls rapports commités, et
+  # refuse une page qui dérive. Aucune donnée n'est nécessaire, aucune passe ne tourne.
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Le site est celui des études
+        run: impots site verifier
+      - name: Le dossier publié
+        if: vars.SITE_PUBLIE == 'oui'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  publier:
+    needs: verifier
+    if: vars.SITE_PUBLIE == 'oui'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v4

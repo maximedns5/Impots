@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -35,7 +36,8 @@ def test_every_study_is_unrun_or_rendered_exactly(nom: str) -> None:
 
 def test_the_plf_study_is_the_command_s() -> None:
     study = etude.definition("plf2027")
-    assert study.page == etude.ROOT / "docs" / "ETUDE_PLF2027.md"
+    # In docs/etudes/ with every study since D-304, where the site reads them.
+    assert study.page == etude.ROOT / "docs" / "etudes" / "plf2027.md"
     assert study.page.read_text(encoding="utf-8").splitlines()[2] == (
         "<!-- Généré par `impots etude ecrire plf2027` depuis reports/etude_plf2027/ ; ne "
         "pas éditer à la main. -->")
@@ -250,3 +252,78 @@ def test_a_frame_that_is_not_d_289_s_is_refused_by_the_page(plfss, monkeypatch,
     monkeypatch.setattr(etude.Etude, "frame", lambda self: {**frame, **change})
     with pytest.raises(etude.EtudeError, match="n'est pas celui de D-289"):
         plfss.render(entries)
+
+
+# --- every number says what it rests on (D-304) -------------------------------------
+
+
+def test_an_amount_without_its_etage_is_refused(monkeypatch) -> None:
+    """Fails if an article's title or a triage's reason could quote an amount the page
+    shows bare: the art. 3's title quotes 3 000 €."""
+    monkeypatch.setattr(etude, "amounts", lambda text, etage, n: text)
+    study = etude.definition("plf2027")
+    with pytest.raises(etude.EtudeError, match="sans son étage"):
+        study.lines(study.load())
+
+
+def test_a_number_of_an_unknown_etage_is_refused() -> None:
+    with pytest.raises(etude.EtudeError, match="sans étage connu"):
+        etude.Nombres()("1 €", "L9")
+
+
+@pytest.mark.parametrize("report, expected", [
+    ("reports/etude_plf2027/predictif_plf2027_art_2.json", "L4"),
+    ("reports/etude_plf2027/predictif_plf2027_art_3.json", "L4"),
+    ("reports/etude_plf2027/predictif_plf2027_art_15.json", "L2"),
+    ("reports/etudes/plfss2027/predictif_plf2027_art_74_ppa.json", "L2"),
+    ("reports/etudes/plfss2027/predictif_plf2027_art_74_apl.json", "L2"),
+])
+def test_the_debt_rests_on_the_highest_layer_that_entered(report, expected) -> None:
+    path = json.loads((etude.ROOT / report).read_text(encoding="utf-8"))
+    assert etude.debt_etage(path) == expected
+
+
+def test_a_debt_with_a_channel_and_no_loop_rests_on_l3() -> None:
+    from impots.predictif.chaine import MACRO_CHANNELS
+    from impots.predictif.theta import MACRO_ROW
+
+    closed = {channel: "absente" for channel in MACRO_CHANNELS}
+    assert etude.debt_etage({"closed": closed,
+                             "theta_box": {"rows": ["eti_all", MACRO_ROW]}}) == "L3"
+    assert etude.debt_etage({"closed": closed, "theta_box": {"rows": [MACRO_ROW]}}) == "L2"
+
+
+def _etages(study: etude.Etude, start: str) -> list[tuple[str, bool]]:
+    """(étage, conditional) of each number on the page's first line opening with `start`."""
+    lines, n = study.lines(study.load())
+    line = next(text for text in lines if text.startswith(start))
+    return [(n.items[int(i)].etage, n.items[int(i)].conditionnel)
+            for i in re.findall("(\\d+)", line)]
+
+
+@pytest.mark.parametrize("nom, start, expected", [
+    ("plfss2027", "| 1 | ", ["L1", "L1", "L2", "L2", "L2"]),
+    ("plfss2027", "| art. 74 du PLF, la prime", ["L2", "publié", "L2"]),
+    ("plfss2027", "Enregistré le", ["L2", "publié", "publié", "L2", "L2", "déclaré"]),
+    ("plfss2027", "| Effet macro éteint après trois ans | figée", ["L2", "L2", "L2"]),
+    ("plfss2027", "Le projet de loi", ["texte", "texte"]),
+    ("plf2027", "**Une fois les comportements", ["L3", "L3", "L3", "L2"]),
+    ("plf2027", "* **PIB, à 1 an**", ["L4"]),
+    ("plf2027", "| Effet macro éteint après trois ans | figée", ["L4", "L4", "L4"]),
+    ("plf2027", "## Art. 3 ", ["texte"]),
+])
+def test_each_answer_says_its_layer(nom, start, expected) -> None:
+    found = _etages(etude.definition(nom), start)
+    assert [etage for etage, _ in found] == expected
+    # Only a gap in the debt is conditional, and each of its numbers is.
+    assert all(conditional == ("Effet macro" in start or ("art. 74" in start and i == 2))
+               for i, (_, conditional) in enumerate(found))
+
+
+def test_the_difference_shows_where_the_texts_part() -> None:
+    """A drift message shows the words that differ, not the start of a long line."""
+    committed, built = "x" * 100 + "AAA" + "y" * 10, "x" * 100 + "BBB" + "y" * 10
+    where = etude.difference(committed, built)
+    assert where.startswith("ligne 1 : ") and "AAA" in where and "BBB" in where
+    assert etude.difference("a\nb", "a\nb\nc") == "2 lignes au lieu de 3"
+    assert etude.difference("a", "a") is None
