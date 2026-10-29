@@ -372,8 +372,9 @@ refus improvisé est une excuse.
 
 **33 articles fiscaux, 3 chiffrables** (art. 2, 3, 15). **17 décisions sont neuves**, prises le jour de parution sur des catégories que septembre n'avait pas vues ; les 16 autres reprennent une catégorie du triage préenregistré, à la lettre, et un test le vérifie.
 
-Aucun montant de l'annexe des évaluations préalables ne figure ici. Ils ne seront
-saisis qu'après le commit des enregistrements (runbook, étape 5).
+Ce triage n'a lu aucun montant de l'annexe des évaluations préalables : il a été
+pris avant le commit des enregistrements (runbook, étape 5). Les montants viennent
+après, dans « Le PLF 2027 en euros ».
 
 | art. | intitulé | catégorie | case | décision |
 |---|---|---|---|---|
@@ -434,3 +435,108 @@ Petit bouton en septembre, câblé le 2026-10-02 (abattement_pensions_plafond, c
 ****chiffrable**** · chaîne entreprises · boutons `cebge_seuils_et_taux`, `cebge_prorogation_largeur` · réforme `reforms/plf2027_art_15.json`
 
 Chiffrable dès septembre, mais le jour J a montré deux trous, comblés le 2026-10-02 : l'arbre éteint la CEBGE après 2026 et le curseur refuse, à raison, d'écrire une année éteinte (prorogation par création délibérée, largeur de lissage prise dans le texte) ; et le registre n'enregistrait que des scénarios ménages (`chiffrage register-entreprises`). Le volet transport maritime (II) n'est pas chiffré : aucune entreprise de transport maritime n'est identifiable sous la section NAF.
+
+## Le PLF 2027 en euros
+
+> PLF 2027, évaluations préalables des articles (743 p.), annexe au projet de loi n° 3210. Manifesté : plf2027_evaluations_prealables.pdf, sha256 b1142977a5e3. La page citée est celle du PDF, qui est la page imprimée.
+
+Sur les **16 624 M EUR** d'effort de 2027 que l'annexe quantifie, l'outil en chiffre **10 600 M EUR**, soit **63,8 %** ; et **3 articles sur 33**, soit 9,1 %. **9,1 % des articles, 63,8 % des euros.** Comme en 2026, les deux chiffres disent le contraire l'un de l'autre, et c'est pourquoi ils vont ensemble.
+
+La règle qui dit quel montant compte a été écrite avant la lecture (D-293) : l'effet budgétaire de 2027 de la section 4.2 de chaque fiche, en valeur absolue, volet par volet ; un montant sans année déterminable, « non chiffrable » ou donné par un seul côté (majorant, minorant, maximum) sort du dénominateur ; un volet qui commence après 2027 vaut zéro. Le numérateur ne prend que les volets que l'outil chiffre : il dit « chiffré », pas « retrouvé », et l'écart de chacun à l'annexe est dans `reports/chiffrages_preregistres.md`.
+
+Si chaque montant écrit que la règle sort entrait au dénominateur, la part serait de 62,0 %, 1,8 point de moins : la règle la flatte de cela, puisqu'aucun de ces montants n'est un volet chiffré.
+
+### Les portes, de celle qui rapporterait le plus à celle qui ne rapporterait rien
+
+Chaque article refusé reçoit la porte qui l'ouvrirait, selon la raison de son triage (D-293) ; un article à plusieurs volets y va tout entier.
+
+| porte | ce qui l'ouvrirait | articles | euros de 2027 | hors du dénominateur |
+|---|---|---|---|---|
+| `secteur` | l'assiette d'un secteur hors du modèle : audiovisuel, nucléaire, aérien, infrastructures, dépôts, justice | 12, 20, 21, 22, 23, 27 | 2 239 M EUR | 20 |
+| `donnee_menages` | une donnée des ménages : plus-values, épargne, logement | 5, 6, 7 | 785 M EUR | — |
+| `consommation` | la consommation et le parc : TVA par taux, accises, véhicules | 16, 19, 24, 25, 32 | 373 M EUR | — |
+| `dimension_entreprises` | une dimension des entreprises : territoire, département, secteur agricole | 11, 13, 14 | 234 M EUR | — |
+| `transmission` | un module de transmission : donations et reprises | 4, 10 | 67 M EUR | 4 |
+| `hors_champ` | rien : une formalité ou une procédure | 1, 28, 29, 30, 31, 33 | 0 M EUR | 1, 30 |
+| `bilan_entreprises` | le bilan des entreprises : investissement, amortissement, provisions, capital | 9, 17, 18 | 0 M EUR | 17, 18 |
+| `bases_locales` | les bases locales : foncier, logement social, zonage | 8, 26 | 0 M EUR | — |
+
+Restent, dans les articles chiffrés, **2 325 M EUR** de volets que l'outil ne chiffre pas : art. 2, volet 4.2.1.3, 820 M EUR ; art. 2, volet 4.2.1.4 (IR), 965 M EUR ; art. 2, volet 4.2.1.4 (CSG), 540 M EUR. Le triage de leur article dit déjà ce qui leur manque.
+
+### Les articles qui sortent du dénominateur
+
+* **Art. 1** — pas de fiche dans l'annexe.
+* **Art. 4** — « non chiffrable » : l'annexe le dit elle-même (règle 5).
+* **Art. 17** — « non chiffrable » : l'annexe le dit elle-même (règle 5).
+* **Art. 18** — « non chiffrable » : l'annexe le dit elle-même (règle 5).
+* **Art. 20** — un maximum : un montant donné par un seul côté (règle 6).
+* **Art. 30** — « non chiffrable » : l'annexe le dit elle-même (règle 5).
+
+### Le relevé, ligne par ligne
+
+| art. | volet | 2027 (M EUR) | p. | citation | lecture |
+|---|---|---|---|---|---|
+| 2 | 4.2.1.1 | **4 200** (chiffré) | 29 | « le rendement de l’IR aurait été majoré d’environ 4,2 Md€ en 2027 » |  |
+| 2 | 4.2.1.2 | hors | 29 | « La mesure présente un coût majorant pour l’État de 20 M€ en 2027 » | un majorant : un montant donné par un seul côté (règle 6) |
+| 2 | 4.2.1.3 | 820 | 29 | « La mesure présente un gain total de 820 M€ en 2027 » |  |
+| 2 | 4.2.1.4 (IR) | 965 | 30 | « en 2027, de 965 M€, dont 450 M€ au titre des ALD et 515 M€ au titre des AT/MP » | l'effet de 2027 avec le PAS, que la fiche donne, et non les 620 M€ de l'année pleine |
+| 2 | 4.2.1.4 (CSG) | 540 | 30 | « générerait de l’ordre de 540 M€ de recettes supplémentaires pour les administrations de sécurité sociale pour 2027 » |  |
+| 3 | — | **1 400** (chiffré) | 36 | « Cette mesure entraîne un gain budgétaire estimé à 1,4 Md€ en 2027 » |  |
+| 4 | — | hors | 41 | « La mesure présente pour l’État un coût non chiffrable en 2027. » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 5 | — | 500 | 46 | « On estime le rendement budgétaire pour la première année d’impact, en 2027, à 500 M€ » |  |
+| 6 | — | 25 | 53 | « Total pour l’ensemble des APU +25 +50 +50 » |  |
+| 7 | 4.2.1.1 (plafond) | 0 | 62 | « La mesure de suppression du plafond annuel de dépense fiscale n’emporte pas, à elle seule, de surcoût budgétaire immédiat » | aucun surcoût immédiat |
+| 7 | 4.2.1.1 (PTZ parentalité) | 0 | 62 | « La mesure de création d’un PTZ « parentalité » devrait avoir un coût générationnel de 466 M€ » | premier effet en 2028 : une génération de prêts coûte à partir de l'année qui suit son émission (« année n+1 » ; la génération 2025 du § 4.3 ne coûte rien en 2025), et la première génération est celle de 2027, la mesure entrant en vigueur avec la loi de finances pour 2027 (§ 6.3) |
+| 7 | 4.2.1.2 | 260 | 62 | « Le gain attendu en impôt sur le revenu est évalué à 260 M€ en 2027 » |  |
+| 8 | 4.2.1.1 | 0 | 72 | « L’impact budgétaire de la mesure débutera en 2043 » | premier effet en 2043 (règle 2) |
+| 8 | 4.2.1.2 | hors | 73 | « L’impact budgétaire de la mesure n’est pas chiffrable. » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 9 | suramortissement « industrie 4.0 » | 0 | 89 | « 0 M€ en 2027 et 6,7 M€ en 2028 » |  |
+| 9 | C3IV | 0 | 89 | « décaissements limités à 0 M€ en 2027 et 6 M€ en 2028 » |  |
+| 10 | — | 67 | 102 | « Total pour l’ensemble des APU -67 -73 -74 -76 » |  |
+| 11 | — | 0 | 107 | « Le coût budgétaire de la mesure est nul en 2027 » |  |
+| 12 | 4.2.1.1 | 0 | 122 | « La chronique de coût de cette mesure (prorogation triennale de 6 dépenses fiscales) est la suivante » | la chronique commence en 2028 : premier effet après 2027 (règle 2) |
+| 12 | 4.2.1.2 | hors | 122 | « Ce chiffrage peut dès lors être perçu comme minorant. » | un minorant, les 35 M€ du tableau de 2027 : un montant donné par un seul côté (règle 6) |
+| 13 | 4.2.1.1 | 33 | 140 | « Le rendement de la mesure est évalué à 33 M€ en 2027. » |  |
+| 13 | 4.2.1.2 | 0 | 140 | « Total pour l’ensemble des APU 0 -4.7 -11 » |  |
+| 13 | 4.2.1.3 | 1 | 141 | « entraîne un coût annuel pour l’État de 1 M€ en 2027 » |  |
+| 13 | 4.2.1.4 | 0 | 141 | « entraîne un coût annuel pour l’État de 13 M€ en 2028 » | premier effet en 2028 (règle 2) |
+| 13 | 4.2.1.5 | 0,1 | 141 | « entraîne un coût pour l’État annuel de 0,1 M€ à partir de 2027 » |  |
+| 14 | TSCA | 200 | 152 | « La hausse du taux de TSCA de 18 % à 18,9 % est estimée à +200 M€ pour l’État. » | le tableau la place en 2027 |
+| 14 | taxe foncière | hors | 152 | « il s’agit d’un coût non chiffrable » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 14 | CFE | 0 | 152 | « Concernant la CFE, le coût budgétaire est estimé en ordre de grandeur à 21 M€. » | le tableau le place en 2026 : rien en 2027 |
+| 15 | I | **5 000** (chiffré) | 160 | « 5 Md€ au titre des acomptes attendus en 2027 » |  |
+| 15 | II | hors | 160 | « entreprises de transport maritime est de 0,3 Md€ » | aucune année : année indéterminable (règle 5) |
+| 16 | — | 304 | 165 | « Total pour l’ensemble des APU 304 333 333 +335 » |  |
+| 17 | — | hors | 171 | « L’impact budgétaire de la mesure n’est pas chiffrable. » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 18 | — | hors | 179 | « La mesure présente une incidence non chiffrable. » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 19 | — | 31 | 195 | « La prorogation de la dépense fiscale n° 800119 engendre un coût de 31 M€ à compter de 2027. » |  |
+| 20 | — | hors | 202 | « est estimé, au maximum, à 37 M€ au titre de l’année 2026 et à 39,5 M€ au titre de l’année 2027 » | un maximum : un montant donné par un seul côté (règle 6) |
+| 21 | sûreté des aérodromes | hors | 217 | « induisent un rendement supplémentaire maximal d’environ 53 M€ » | un maximum, sans année : un montant donné par un seul côté (règle 6) |
+| 21 | Strasbourg-Entzheim | 3,8 | 217 | « le coût prévisionnel annuel est estimé à 3,8 M€ » | un coût annuel : l'année pleine vaut pour 2027 (règle 2) |
+| 22 | — | 800 | 222 | « La mesure entraîne une augmentation estimée du produit annuel de la TEITLD de 800 M€ » | le tableau la place en 2027 |
+| 23 | — | 1 400 | 229 | « Le montant prévisionnel du gain est d’1,4 Md€ pour 2027. » |  |
+| 24 | 4.2.1.1 | hors | 255 | « Prorogation de la taxe incitative relative à l’utilisation d’énergie renouvelable dans les transports Mesure non chiffrable. » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 24 | 4.2.1.2 | 0,3 | 255 | « État -0,3 -0,3 -0,3 » |  |
+| 24 | 4.2.1.3 | 16 | 256 | « État -16 -25 -40 » |  |
+| 24 | 4.2.1.4 | 0 | 256 | « génère des revenus de l’ordre de 200 M€ sur 2030 » | premier effet en 2030 (règle 2) |
+| 25 | 4.2.1.1 | hors | 272 | « Un gain non chiffrable peut être retenu sur cette mesure. » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 25 | 4.2.1.2 | hors | 272 | « elle ne peut-être chiffrée » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 25 | 4.2.1.3 | 22 | 272 | « Le coût annuel de la mesure afférente au malus masse est évalué à 22 M€ à compter de 2027. » |  |
+| 26 | 4.2.1.1 (État) | hors | 290 | « Ce risque indemnitaire est difficilement chiffrable » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 26 | 4.2.1.1 (communes) | 0 | 290 | « la mesure est neutre financièrement » |  |
+| 26 | 4.2.1.2 (BUD et ZDP) | 0 | 290 | « le coût pour l’État est estimé à moins de 2 M€ répartis entre 2028 et 2037 » | premier effet en 2028 (règle 2) |
+| 26 | 4.2.1.2 (ZRCV) | hors | 290 | « le coût pour les collectivités n’est pas connu » | « pas connu » : non chiffrable (règle 5) |
+| 26 | 4.2.1.3 | 0 | 290 | « Elle est donc sans incidence (SI) sur les recettes fiscales. » |  |
+| 27 | — | 35,4 | 302 | « Total pour l’ensemble des APU +35,4 +85,15 +85,15 +205,7 » |  |
+| 28 | 4.2.1.1 | hors | 319 | « La mesure présente un gain non chiffrable (majorant 32 M€). » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 28 | 4.2.1.2 | 0 | 319 | « Sur la définition du champ du régime d’imposition des crypto-actifs Aucune. » |  |
+| 28 | 4.2.1.3 | hors | 319 | « La mesure présente un coût non chiffrable à compter de 2027 pour l’État » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 28 | 4.2.1.4 | 0 | 319 | « exploitées selon le mode de production biologique Aucune. » |  |
+| 29 | — | 0 | 324 | « Incidences budgétaires (coûts/économies nets de la mesure proposée) Sans incidence. » |  |
+| 30 | — | hors | 351 | « Les mesures présentent une incidence non chiffrable. » | « non chiffrable » : l'annexe le dit elle-même (règle 5) |
+| 31 | 4.2.1.1 | hors | 363 | « La perte budgétaire en retenue à la source (RAS) sera négligeable (inférieure à 0,3 M€) à compter de 2027. » | « inférieure à » : un montant donné par un seul côté (règle 6) |
+| 31 | 4.2.1.2 | 0 | 363 | « Remise des fichiers des écritures comptables et des résultats des traitements informatiques Sans objet. » |  |
+| 31 | 4.2.1.3 | hors | 363 | « permet à terme d’envisager une économie de 1 M€ » | « à terme » : année indéterminable (règle 5) |
+| 31 | 4.2.1.4 | hors | 364 | « Économie estimée pour 3 294 892 avis de 6 pages : 2 391 762 €. » | aucune année : année indéterminable (règle 5) |
+| 32 | — | 0 | 376 | « Incidences budgétaires (coûts/économies nets de la mesure proposée) Sans objet. » |  |
+| 33 | — | 0 | 382 | « Incidences budgétaires (coûts/économies nets de la mesure proposée) Sans objet. » |  |

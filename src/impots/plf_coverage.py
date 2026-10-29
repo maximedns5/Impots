@@ -790,3 +790,316 @@ ARTICLES_2027: tuple[Article2027, ...] = (
 
 def priceable_2027() -> tuple[Article2027, ...]:
     return tuple(a for a in ARTICLES_2027 if a.bucket == "priceable_now")
+
+
+# --------------------------------------------------------------------------- #
+# Le PLF 2027 en euros — la part de l'annexe que l'outil chiffre (D-293, D-294)
+# --------------------------------------------------------------------------- #
+#: L'annexe lue, par son identifiant : le PDF reste hors du dépôt, le manifeste porte son
+#: sha256 (D-204).
+SOURCE_ANNEXE_2027 = (
+    "PLF 2027, évaluations préalables des articles (743 p.), annexe au projet de loi "
+    "n° 3210. Manifesté : plf2027_evaluations_prealables.pdf, sha256 b1142977a5e3. La "
+    "page citée est celle du PDF, qui est la page imprimée."
+)
+
+
+@dataclass(frozen=True)
+class Montant2027:
+    """Une ligne du relevé : l'effet de 2027 qu'une fiche publie pour un volet.
+
+    La règle est celle de D-293, écrite avant la lecture. `meur` est la valeur absolue en
+    millions d'euros, ou None quand la ligne sort du dénominateur, et `raison` dit alors
+    pourquoi. `ecrit_meur` garde le montant qu'une ligne sortie écrit quand même (un
+    majorant, un montant sans année), pour dire de combien il bougerait la part. `chiffre`
+    marque les volets que l'outil chiffre : le numérateur.
+    """
+
+    article: int
+    volet: str
+    meur: float | None
+    page: int
+    citation: str
+    raison: str = ""
+    ecrit_meur: float | None = None
+    chiffre: bool = False
+
+    def __post_init__(self) -> None:
+        where = f"art. {self.article}, volet « {self.volet} »"
+        if self.page < 1:
+            raise ValueError(f"{where} : une page de l'annexe commence à 1.")
+        if self.meur is None and not self.raison:
+            raise ValueError(f"{where} : une ligne hors du dénominateur dit sa raison.")
+        if self.meur is not None and self.meur < 0:
+            raise ValueError(f"{where} : le relevé porte une valeur absolue, pas un signe.")
+        if self.meur is not None and self.ecrit_meur is not None:
+            raise ValueError(f"{where} : seul un montant hors du dénominateur garde un "
+                             f"montant écrit à part.")
+        if self.chiffre and self.meur is None:
+            raise ValueError(f"{where} : un volet que l'outil chiffre est au numérateur, "
+                             f"donc au dénominateur.")
+
+
+#: Les articles fiscaux de 2027 sans fiche dans l'annexe (règle 7).
+SANS_FICHE_2027: tuple[int, ...] = (1,)
+
+_M = Montant2027
+_NON_CHIFFRABLE = "« non chiffrable » : l'annexe le dit elle-même (règle 5)"
+_UN_SEUL_COTE = "un montant donné par un seul côté (règle 6)"
+_SANS_ANNEE = "aucune année : année indéterminable (règle 5)"
+
+#: Le relevé, fiche par fiche, à la main : la section 4.2.1 n'a pas de forme unique (prose,
+#: tableau par administration, chronique, sous-sections par volet), et l'unité se lit dans
+#: chaque phrase. Les volets « Aucune », « Sans objet », « Sans incidence » ou « neutre »
+#: valent zéro (règle 5).
+MONTANTS_2027: tuple[Montant2027, ...] = (
+    _M(2, "4.2.1.1", 4_200.0, 29,
+       "le rendement de l’IR aurait été majoré d’environ 4,2 Md€ en 2027",
+       chiffre=True),
+    _M(2, "4.2.1.2", None, 29,
+       "La mesure présente un coût majorant pour l’État de 20 M€ en 2027",
+       raison=f"un majorant : {_UN_SEUL_COTE}", ecrit_meur=20.0),
+    _M(2, "4.2.1.3", 820.0, 29, "La mesure présente un gain total de 820 M€ en 2027"),
+    _M(2, "4.2.1.4 (IR)", 965.0, 30,
+       "en 2027, de 965 M€, dont 450 M€ au titre des ALD et 515 M€ au titre des AT/MP",
+       raison="l'effet de 2027 avec le PAS, que la fiche donne, et non les 620 M€ de "
+              "l'année pleine"),
+    _M(2, "4.2.1.4 (CSG)", 540.0, 30,
+       "générerait de l’ordre de 540 M€ de recettes supplémentaires pour les "
+       "administrations de sécurité sociale pour 2027"),
+    _M(3, "", 1_400.0, 36, "Cette mesure entraîne un gain budgétaire estimé à 1,4 Md€ en 2027",
+       chiffre=True),
+    _M(4, "", None, 41, "La mesure présente pour l’État un coût non chiffrable en 2027.",
+       raison=_NON_CHIFFRABLE),
+    _M(5, "", 500.0, 46,
+       "On estime le rendement budgétaire pour la première année d’impact, en 2027, à "
+       "500 M€"),
+    _M(6, "", 25.0, 53, "Total pour l’ensemble des APU +25 +50 +50"),
+    _M(7, "4.2.1.1 (plafond)", 0.0, 62,
+       "La mesure de suppression du plafond annuel de dépense fiscale n’emporte pas, à elle "
+       "seule, de surcoût budgétaire immédiat",
+       raison="aucun surcoût immédiat"),
+    _M(7, "4.2.1.1 (PTZ parentalité)", 0.0, 62,
+       "La mesure de création d’un PTZ « parentalité » devrait avoir un coût générationnel "
+       "de 466 M€",
+       raison="premier effet en 2028 : une génération de prêts coûte à partir de l'année "
+              "qui suit son émission (« année n+1 » ; la génération 2025 du § 4.3 ne coûte "
+              "rien en 2025), et la première génération est celle de 2027, la mesure "
+              "entrant en vigueur avec la loi de finances pour 2027 (§ 6.3)"),
+    _M(7, "4.2.1.2", 260.0, 62,
+       "Le gain attendu en impôt sur le revenu est évalué à 260 M€ en 2027"),
+    _M(8, "4.2.1.1", 0.0, 72, "L’impact budgétaire de la mesure débutera en 2043",
+       raison="premier effet en 2043 (règle 2)"),
+    _M(8, "4.2.1.2", None, 73, "L’impact budgétaire de la mesure n’est pas chiffrable.",
+       raison=_NON_CHIFFRABLE),
+    _M(9, "suramortissement « industrie 4.0 »", 0.0, 89, "0 M€ en 2027 et 6,7 M€ en 2028"),
+    _M(9, "C3IV", 0.0, 89, "décaissements limités à 0 M€ en 2027 et 6 M€ en 2028"),
+    _M(10, "", 67.0, 102, "Total pour l’ensemble des APU -67 -73 -74 -76"),
+    _M(11, "", 0.0, 107, "Le coût budgétaire de la mesure est nul en 2027"),
+    _M(12, "4.2.1.1", 0.0, 122,
+       "La chronique de coût de cette mesure (prorogation triennale de 6 dépenses "
+       "fiscales) est la suivante",
+       raison="la chronique commence en 2028 : premier effet après 2027 (règle 2)"),
+    _M(12, "4.2.1.2", None, 122, "Ce chiffrage peut dès lors être perçu comme minorant.",
+       raison=f"un minorant, les 35 M€ du tableau de 2027 : {_UN_SEUL_COTE}",
+       ecrit_meur=35.0),
+    _M(13, "4.2.1.1", 33.0, 140, "Le rendement de la mesure est évalué à 33 M€ en 2027."),
+    _M(13, "4.2.1.2", 0.0, 140, "Total pour l’ensemble des APU 0 -4.7 -11"),
+    _M(13, "4.2.1.3", 1.0, 141, "entraîne un coût annuel pour l’État de 1 M€ en 2027"),
+    _M(13, "4.2.1.4", 0.0, 141, "entraîne un coût annuel pour l’État de 13 M€ en 2028",
+       raison="premier effet en 2028 (règle 2)"),
+    _M(13, "4.2.1.5", 0.1, 141,
+       "entraîne un coût pour l’État annuel de 0,1 M€ à partir de 2027"),
+    _M(14, "TSCA", 200.0, 152,
+       "La hausse du taux de TSCA de 18 % à 18,9 % est estimée à +200 M€ pour l’État.",
+       raison="le tableau la place en 2027"),
+    _M(14, "taxe foncière", None, 152, "il s’agit d’un coût non chiffrable",
+       raison=_NON_CHIFFRABLE),
+    _M(14, "CFE", 0.0, 152,
+       "Concernant la CFE, le coût budgétaire est estimé en ordre de grandeur à 21 M€.",
+       raison="le tableau le place en 2026 : rien en 2027"),
+    _M(15, "I", 5_000.0, 160, "5 Md€ au titre des acomptes attendus en 2027",
+       chiffre=True),
+    _M(15, "II", None, 160,
+       "entreprises de transport maritime est de 0,3 Md€",
+       raison=_SANS_ANNEE, ecrit_meur=300.0),
+    _M(16, "", 304.0, 165, "Total pour l’ensemble des APU 304 333 333 +335"),
+    _M(17, "", None, 171, "L’impact budgétaire de la mesure n’est pas chiffrable.",
+       raison=_NON_CHIFFRABLE),
+    _M(18, "", None, 179, "La mesure présente une incidence non chiffrable.",
+       raison=_NON_CHIFFRABLE),
+    _M(19, "", 31.0, 195,
+       "La prorogation de la dépense fiscale n° 800119 engendre un coût de 31 M€ à compter "
+       "de 2027."),
+    _M(20, "", None, 202,
+       "est estimé, au maximum, à 37 M€ au titre de l’année 2026 et à 39,5 M€ au titre de "
+       "l’année 2027",
+       raison=f"un maximum : {_UN_SEUL_COTE}", ecrit_meur=39.5),
+    _M(21, "sûreté des aérodromes", None, 217,
+       "induisent un rendement supplémentaire maximal d’environ 53 M€",
+       raison=f"un maximum, sans année : {_UN_SEUL_COTE}", ecrit_meur=53.0),
+    _M(21, "Strasbourg-Entzheim", 3.8, 217,
+       "le coût prévisionnel annuel est estimé à 3,8 M€",
+       raison="un coût annuel : l'année pleine vaut pour 2027 (règle 2)"),
+    _M(22, "", 800.0, 222,
+       "La mesure entraîne une augmentation estimée du produit annuel de la TEITLD de "
+       "800 M€",
+       raison="le tableau la place en 2027"),
+    _M(23, "", 1_400.0, 229, "Le montant prévisionnel du gain est d’1,4 Md€ pour 2027."),
+    _M(24, "4.2.1.1", None, 255,
+       "Prorogation de la taxe incitative relative à l’utilisation d’énergie renouvelable "
+       "dans les transports Mesure non chiffrable.",
+       raison=_NON_CHIFFRABLE),
+    _M(24, "4.2.1.2", 0.3, 255, "État -0,3 -0,3 -0,3"),
+    _M(24, "4.2.1.3", 16.0, 256, "État -16 -25 -40"),
+    _M(24, "4.2.1.4", 0.0, 256,
+       "génère des revenus de l’ordre de 200 M€ sur 2030",
+       raison="premier effet en 2030 (règle 2)"),
+    _M(25, "4.2.1.1", None, 272, "Un gain non chiffrable peut être retenu sur cette mesure.",
+       raison=_NON_CHIFFRABLE),
+    _M(25, "4.2.1.2", None, 272, "elle ne peut-être chiffrée", raison=_NON_CHIFFRABLE),
+    _M(25, "4.2.1.3", 22.0, 272,
+       "Le coût annuel de la mesure afférente au malus masse est évalué à 22 M€ à compter "
+       "de 2027."),
+    _M(26, "4.2.1.1 (État)", None, 290, "Ce risque indemnitaire est difficilement chiffrable",
+       raison=_NON_CHIFFRABLE),
+    _M(26, "4.2.1.1 (communes)", 0.0, 290, "la mesure est neutre financièrement"),
+    _M(26, "4.2.1.2 (BUD et ZDP)", 0.0, 290,
+       "le coût pour l’État est estimé à moins de 2 M€ répartis entre 2028 et 2037",
+       raison="premier effet en 2028 (règle 2)"),
+    _M(26, "4.2.1.2 (ZRCV)", None, 290,
+       "le coût pour les collectivités n’est pas connu",
+       raison="« pas connu » : non chiffrable (règle 5)"),
+    _M(26, "4.2.1.3", 0.0, 290,
+       "Elle est donc sans incidence (SI) sur les recettes fiscales."),
+    _M(27, "", 35.4, 302, "Total pour l’ensemble des APU +35,4 +85,15 +85,15 +205,7"),
+    _M(28, "4.2.1.1", None, 319, "La mesure présente un gain non chiffrable (majorant 32 M€).",
+       raison=_NON_CHIFFRABLE, ecrit_meur=32.0),
+    _M(28, "4.2.1.2", 0.0, 319,
+       "Sur la définition du champ du régime d’imposition des crypto-actifs Aucune."),
+    _M(28, "4.2.1.3", None, 319,
+       "La mesure présente un coût non chiffrable à compter de 2027 pour l’État",
+       raison=_NON_CHIFFRABLE),
+    _M(28, "4.2.1.4", 0.0, 319,
+       "exploitées selon le mode de production biologique Aucune."),
+    _M(29, "", 0.0, 324,
+       "Incidences budgétaires (coûts/économies nets de la mesure proposée) Sans "
+       "incidence."),
+    _M(30, "", None, 351, "Les mesures présentent une incidence non chiffrable.",
+       raison=_NON_CHIFFRABLE),
+    _M(31, "4.2.1.1", None, 363,
+       "La perte budgétaire en retenue à la source (RAS) sera négligeable (inférieure à "
+       "0,3 M€) à compter de 2027.",
+       raison=f"« inférieure à » : {_UN_SEUL_COTE}", ecrit_meur=0.3),
+    _M(31, "4.2.1.2", 0.0, 363,
+       "Remise des fichiers des écritures comptables et des résultats des traitements "
+       "informatiques Sans objet."),
+    _M(31, "4.2.1.3", None, 363, "permet à terme d’envisager une économie de 1 M€",
+       raison="« à terme » : année indéterminable (règle 5)", ecrit_meur=1.0),
+    _M(31, "4.2.1.4", None, 364,
+       "Économie estimée pour 3 294 892 avis de 6 pages : 2 391 762 €.",
+       raison=_SANS_ANNEE, ecrit_meur=2.391762),
+    _M(32, "", 0.0, 376,
+       "Incidences budgétaires (coûts/économies nets de la mesure proposée) Sans objet."),
+    _M(33, "", 0.0, 382,
+       "Incidences budgétaires (coûts/économies nets de la mesure proposée) Sans objet."),
+)
+
+
+def montants_2027(numero: int) -> tuple[Montant2027, ...]:
+    return tuple(m for m in MONTANTS_2027 if m.article == numero)
+
+
+def yield_2027_meur(numero: int) -> float | None:
+    """L'effort de 2027 d'un article, ou None quand aucune de ses lignes n'entre."""
+    inside = [m.meur for m in montants_2027(numero) if m.meur is not None]
+    return sum(inside) if inside else None
+
+
+def articles_hors_denominateur_2027() -> tuple[int, ...]:
+    """Les articles dont rien n'entre au dénominateur : sans fiche, ou toutes leurs lignes
+    sorties."""
+    read = sorted({m.article for m in MONTANTS_2027})
+    return tuple(sorted(set(SANS_FICHE_2027)
+                        | {n for n in read if yield_2027_meur(n) is None}))
+
+
+def quantified_yield_2027_meur() -> float:
+    """L'effort de 2027 que l'annexe quantifie, en M€ : le dénominateur."""
+    return sum(m.meur for m in MONTANTS_2027 if m.meur is not None)
+
+
+def priced_yield_2027_meur() -> float:
+    """…dont les volets que l'outil chiffre : le numérateur."""
+    return sum(m.meur for m in MONTANTS_2027 if m.chiffre)
+
+
+def share_of_yield_2027() -> float:
+    total = quantified_yield_2027_meur()
+    return priced_yield_2027_meur() / total if total else 0.0
+
+
+def share_of_yield_2027_si_ecrits() -> float:
+    """La part si chaque montant écrit d'une ligne sortie entrait au dénominateur : elle ne
+    peut que baisser, puisqu'aucune de ces lignes n'est un volet chiffré."""
+    written = sum(m.ecrit_meur for m in MONTANTS_2027 if m.ecrit_meur is not None)
+    return priced_yield_2027_meur() / (quantified_yield_2027_meur() + written)
+
+
+def volets_non_chiffres_2027() -> tuple[Montant2027, ...]:
+    """Les volets quantifiés des articles chiffrés que l'outil ne chiffre pas."""
+    priced = {a.numero for a in priceable_2027()}
+    return tuple(m for m in MONTANTS_2027
+                 if m.article in priced and m.meur is not None and not m.chiffre)
+
+
+#: Ce qui ouvrirait un article refusé : un catalogue fermé de huit portes, dans l'ordre
+#: de D-293. La porte suit la raison du triage du 2026-10-02, pas les volets.
+OUVERTURES: dict[str, str] = {
+    "hors_champ": "rien : une formalité ou une procédure",
+    "donnee_menages": "une donnée des ménages : plus-values, épargne, logement",
+    "dimension_entreprises": "une dimension des entreprises : territoire, département, "
+                             "secteur agricole",
+    "transmission": "un module de transmission : donations et reprises",
+    "bilan_entreprises": "le bilan des entreprises : investissement, amortissement, "
+                         "provisions, capital",
+    "consommation": "la consommation et le parc : TVA par taux, accises, véhicules",
+    "bases_locales": "les bases locales : foncier, logement social, zonage",
+    "secteur": "l'assiette d'un secteur hors du modèle : audiovisuel, nucléaire, aérien, "
+               "infrastructures, dépôts, justice",
+}
+
+OUVERTURE_2027: dict[int, str] = {
+    **dict.fromkeys((1, 28, 29, 30, 31, 33), "hors_champ"),
+    **dict.fromkeys((5, 6, 7), "donnee_menages"),
+    **dict.fromkeys((11, 13, 14), "dimension_entreprises"),
+    **dict.fromkeys((4, 10), "transmission"),
+    **dict.fromkeys((9, 17, 18), "bilan_entreprises"),
+    **dict.fromkeys((16, 19, 24, 25, 32), "consommation"),
+    **dict.fromkeys((8, 26), "bases_locales"),
+    **dict.fromkeys((12, 20, 21, 22, 23, 27), "secteur"),
+}
+
+
+@dataclass(frozen=True)
+class Porte:
+    """Une porte, ses articles, et l'effort de 2027 qu'elle ouvrirait."""
+
+    cle: str
+    libelle: str
+    articles: tuple[int, ...]
+    meur: float
+    articles_hors: tuple[int, ...]
+
+
+def portes_2027() -> tuple[Porte, ...]:
+    """Les portes, de celle qui ouvrirait le plus d'euros à celle qui en ouvrirait le
+    moins ; à euros égaux, par nombre d'articles."""
+    out = set(articles_hors_denominateur_2027())
+    portes = []
+    for cle, libelle in OUVERTURES.items():
+        articles = tuple(sorted(n for n, k in OUVERTURE_2027.items() if k == cle))
+        meur = sum(yield_2027_meur(n) or 0.0 for n in articles)
+        portes.append(Porte(cle, libelle, articles, meur,
+                            tuple(n for n in articles if n in out)))
+    return tuple(sorted(portes, key=lambda p: (-p.meur, -len(p.articles))))

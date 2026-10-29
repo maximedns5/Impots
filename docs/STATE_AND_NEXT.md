@@ -1,6 +1,19 @@
 # State of the project, and the directions open — 2026-10-29 (Phase 11, M0 to M6)
 
-The 2026-10-29 update adds D-291 and D-292: the goal's second aim (`docs/BUT.md`), art. 2's
+The second 2026-10-29 update adds D-293 and D-294: the goal's third aim, the PLF 2027's
+coverage in euros. The reading rule was preregistered before any amount was read (which
+year, which volets, which administrations, what leaves the denominator), then the 32
+fiches were read by hand, 64 lines each with its quote and page (`MONTANTS_2027`), a test
+finding every quote on its page of the manifested PDF. The tool prices 63.8 % of the
+16,624 M€ of 2027 effort the annex quantifies, for 3 articles of 33; 62.0 % if every
+amount the rule leaves out came in. The 30 refusals fall into eight doors ranked by
+euros: a sector's base (2.24 bn, six separate taxes), household data (0.79 bn),
+consumption and the vehicle stock (0.37 bn), a firm dimension (0.23 bn), transmission
+(0.07 bn), three at zero. The largest unpriced euros sit in art. 2's own unpriced volets
+(severance pay and sickness benefits, 2.3 bn): household data would open 3.1 bn in all.
+The prognosis held on three points of four; the heaviest door was not the one guessed.
+The first 2026-10-29 update added D-291 and D-292: the goal's second aim
+(`docs/BUT.md`), art. 2's
 gap to the annex measured volet by volet (`scripts/verify_ecart_art2.py`,
 `reports/ecart_art2.json`), preregistered with its prognosis, which held on all five points.
 The control gives back the registered euro. The basis carries 77 % of the gap: the annex
@@ -687,8 +700,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **293 decision
-entries**, D-000 to D-292, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **295 decision
+entries**, D-000 to D-294, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 

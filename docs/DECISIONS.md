@@ -22936,3 +22936,152 @@ volet, et la correction fondée est enregistrée comme un nouveau cas, l'ancien 
 noté. Ce qui reste ouvert ne tient pas à l'art. 2 : le niveau de l'impôt au barème, +6,7 %,
 pèse sur toute indexation, et le périmètre non chiffré reste un biais déclaré. Le but 3,
 la couverture du PLF 2027 en euros, vient ensuite.
+
+## D-293 — La couverture du PLF 2027 en euros : la règle de lecture, avant la lecture
+
+**Le fait.** Le but 3 (`docs/BUT.md`) : établir pour 2027 la part des euros que l'annexe
+des évaluations préalables quantifie et que l'outil chiffre, comme pour 2026 (46,4 %,
+`docs/PLF2027_COVERAGE.md`), et classer les 30 articles refusés par ce qu'il faudrait
+pour les chiffrer. La lecture se fait à la main, fiche par fiche, comme en 2026 : la
+section 4.2.1 n'a pas de forme unique. Cette entrée fixe la règle et le classement avant
+qu'un montant ne soit relevé, pour que ni l'une ni l'autre ne se choisisse sur ce
+qu'elle donne.
+
+**Ce qui est déjà vu.** L'annexe est ouverte depuis le 2026-10-14 (D-204). Ses montants
+vus avant cette entrée sont ceux des trois cas notés : l'art. 2 (4,2 Md€ pour le volet
+4.2.1.1 ; « 20 M€ » et « 820 M€ » dans d'autres volets, cités par le manifeste), l'art. 3
+(1,4 Md€ en 2027, 1,8 en 2028, 1,1 ensuite) et l'art. 15 (5 Md€ d'acomptes en 2027, 0,5 en
+2028, 0,3 pour le volet maritime). Des 29 autres fiches, seuls les intitulés des
+sous-sections 4.2.1 de cinq d'entre elles (art. 7, 8, 12, 13, 24) ont défilé, sans
+montant, pendant le repérage des pages.
+
+**La règle de lecture.** Elle reprend celle de 2026, rendue explicite là où 2026 ne
+tranchait pas.
+1. Le montant d'un article est l'effet budgétaire de 2027 que publie sa section 4.2.1, ou
+   4.2 sans sous-section, en valeur absolue et en millions d'euros : la part de l'effort
+   que l'annexe quantifie, pas un solde. L'unité est lue dans chaque phrase ou tableau.
+2. L'année est 2027. Une fiche qui ne donne qu'une année pleine, ou un montant « à compter
+   de » 2027 ou d'avant, vaut pour 2027. Une mesure dont la fiche date le premier effet
+   après 2027 vaut zéro.
+3. Une fiche qui chiffre ses volets à part est lue volet par volet, et l'article vaut la
+   somme de leurs valeurs absolues. Une fiche qui ne donne qu'un total vaut ce total.
+4. Quand un tableau distingue des administrations, la ligne totale de 2027 ; sans ligne
+   totale, la somme des lignes qu'il donne.
+5. « Sans incidence », « neutre » ou un zéro écrit valent zéro et entrent au dénominateur.
+   « Non chiffrable », « non significatif », une unité ou une année indéterminable, deux
+   montants contradictoires : l'article sort du dénominateur, avec sa raison.
+6. Une fourchette sort du dénominateur ; ses bornes sont notées, et la page donne aussi
+   la part qu'on aurait si toutes les fourchettes y entraient à leurs bornes. Un montant
+   donné par un seul côté (« plus de », « supérieur à ») sort de même.
+7. Un article sans fiche, ou dont la fiche n'a pas de section 4.2, sort du dénominateur.
+8. Le numérateur ne prend que les volets que l'outil chiffre : le volet 4.2.1.1 de l'art.
+   2, l'art. 3 entier, le volet I de l'art. 15 (la CEBGE, sans le transport maritime). Le
+   reste de ces articles reste au dénominateur.
+Chaque montant est relevé avec sa citation et sa page, et un test vérifie la citation
+dans le texte de l'annexe quand le PDF manifesté est présent.
+
+**Le classement des refus.** Un catalogue fermé de huit portes, chacune nommant ce qui
+ouvrirait l'article. La porte suit la raison du triage du 2026-10-02, pas les volets : un
+article à plusieurs volets va tout entier sous la porte de sa raison, avec ses euros.
+- **Hors champ**, rien ne l'ouvrira : une formalité ou une procédure. Art. 1, 28, 29, 30,
+  31, 33.
+- **Une donnée des ménages** : plus-values, épargne, logement dans la population. Art. 5,
+  6, 7.
+- **Une dimension des entreprises** : territoire, département, secteur agricole. Art. 11,
+  13, 14.
+- **Un module de transmission** : donations et reprises. Art. 4, 10.
+- **Le bilan des entreprises** : investissement, amortissement, provisions, capital.
+  Art. 9, 17, 18.
+- **La consommation et le parc** : TVA par taux, accises, véhicules. Art. 16, 19, 24, 25,
+  32.
+- **Les bases locales** : foncier, logement social, zonage. Art. 8, 26.
+- **L'assiette d'un secteur** hors du modèle : audiovisuel, nucléaire, aérien,
+  infrastructures, dépôts, justice. Art. 12, 20, 21, 22, 23, 27.
+Chaque porte reçoit son nombre d'articles et ses euros de 2027, ce qui classe les portes
+par ce qu'elles rapporteraient à la couverture.
+
+**Le pronostic.**
+1. Le numérateur vaut 10,6 Md€ : 4,2 pour l'art. 2, 1,4 pour l'art. 3, 5 pour l'art. 15.
+   C'est de l'arithmétique sur des montants déjà vus.
+2. La part des euros chiffrés tombe entre 40 et 75 %, au-dessus des 46,4 % de 2026.
+3. De 5 à 12 des 32 fiches sortent du dénominateur.
+4. Les deux portes de données pèsent ensemble moins de 2 Md€. La plus lourde des portes
+   est le bilan des entreprises ou la consommation et le parc.
+
+**Ce qui suit.** Le relevé dans `src/impots/plf_coverage.py`, son rendu dans
+`docs/PLF2027_COVERAGE.md` et le résultat dans une D-entrée contre ce pronostic.
+
+## D-294 — La couverture du PLF 2027 en euros : 63,8 %, et les portes classées
+
+**Le fait.** Les 32 fiches ont été relevées selon la règle de D-293, poussée avant la
+lecture (`ce5272d`). Le relevé est `MONTANTS_2027` dans `src/impots/plf_coverage.py` :
+64 lignes, une par volet chiffré à part, chacune avec sa citation et sa page. Il est rendu
+dans `docs/PLF2027_COVERAGE.md`, section « Le PLF 2027 en euros ».
+
+**Le résultat.** L'annexe quantifie 16 624 M€ d'effort pour 2027 ; l'outil en chiffre
+10 600, soit 63,8 %, pour 3 articles sur 33, soit 9,1 %. 21 lignes sortent du
+dénominateur. Les 483 M€ qu'elles écrivent quand même (majorants, minorant, maxima,
+montants sans année) y feraient tomber la part à 62,0 %. Six articles en sortent
+entiers : l'art. 1, sans fiche ; les art. 4, 17, 18 et 30, « non chiffrables » ; l'art.
+20, dont le seul montant est un maximum.
+
+**Le pronostic, point par point.**
+1. Le numérateur vaut 10,6 Md€. Tenu : c'était de l'arithmétique.
+2. La part tombe entre 40 et 75 %, au-dessus des 46,4 % de 2026. Tenu, à 63,8 %.
+3. De 5 à 12 des 32 fiches sortent. Tenu, au bord : 5 fiches, plus l'art. 1, sans fiche.
+4. Les deux portes de données pèsent moins de 2 Md€ : tenu, 1,02 Md€. La plus lourde est
+   le bilan des entreprises ou la consommation : manqué. C'est l'assiette d'un secteur,
+   2,24 Md€, portée par deux articles, le prélèvement sur les avoirs en déshérence
+   (1,4 Md€) et la taxe sur les infrastructures de transport de longue distance
+   (0,8 Md€). Le bilan des entreprises ne pèse rien en 2027 : ses trois articles
+   commencent en 2028 ou ne sont pas chiffrables.
+
+**Ce que la règle ne tranchait pas, et comment la lecture l'a tranché.**
+- Les règles 5 et 6 disent « l'article sort ». La règle 3 lit volet par volet, et la
+  règle 8 garde au dénominateur les volets non chiffrés des art. 2 et 15, ce qui n'a de
+  sens que volet par volet. Un volet non chiffrable ou donné par un seul côté sort donc
+  seul, et son article reste avec ses autres volets. Lues article par article, ces
+  règles sortiraient onze articles de plus, dont les art. 2 et 15, et le numérateur avec
+  eux.
+- « Aucune » et « Sans objet » valent zéro, comme « sans incidence ».
+- Un montant « annuel » sans année vaut année pleine, donc 2027 (art. 21, Strasbourg,
+  3,8 M€). Sans « annuel » ni année, il sort (art. 15, volet maritime, 0,3 Md€ ; deux
+  volets de l'art. 31). Le volet maritime pèse le plus : entré, la part serait de 62,6 %.
+- Deux phrases font d'un montant de tableau un montant à un seul côté : « coût
+  majorant » à l'art. 2 (20 M€), « peut être perçu comme minorant » à l'art. 12 (35 M€).
+- Le PTZ « parentalité » de l'art. 7 a un profil daté en « année n+1 ». La fiche date la
+  première génération par la loi de finances pour 2027 (§ 6.3), et son § 4.3 montre une
+  génération qui ne coûte rien l'année de son émission : zéro en 2027.
+- Art. 14 : le tableau place la CFE (21 M€) en 2026 et la TSCA (200 M€) en 2027.
+- Art. 2, volet des indemnités journalières : l'effet de 2027 avec le PAS que la fiche
+  donne (965 M€), pas les 620 M€ de l'année pleine ; la CSG (540 M€ pour les
+  administrations de sécurité sociale) s'y ajoute, une autre administration.
+
+**Les portes.** Dans l'ordre des euros de 2027 :
+- l'assiette d'un secteur, 2 239 M€ (6 articles) ;
+- une donnée des ménages, 785 M€ (3) ;
+- la consommation et le parc, 373 M€ (5) ;
+- une dimension des entreprises, 234 M€ (3) ;
+- un module de transmission, 67 M€ (2) ;
+- puis trois portes à zéro : hors champ (6), le bilan des entreprises (3) et les bases
+  locales (2).
+La première n'est pas une porte mais six, une par secteur, et ses euros ne s'ouvriraient
+pas ensemble. Les plus gros euros non chiffrés ne sont pas dans un refus : ils sont dans
+l'art. 2, que l'outil chiffre déjà en partie. Ses volets « indemnités de rupture » et
+« indemnités journalières » pèsent 2 325 M€, et le triage dit ce qui leur manque : ces
+revenus dans la population. Avec la porte des données des ménages, une donnée de plus
+côté ménages ouvrirait 3,1 Md€ ; c'est le chantier de couverture le plus payant que ce
+relevé désigne.
+
+**Les tests.** `tests/test_couverture_2027.py`, quatorze tests, vus échouer tous avant la
+table. Le test des citations lit le PDF manifesté avec pypdf, vérifie son sha256 et
+retrouve chaque citation à sa page ; une citation a été raccourcie, pypdf écrivant
+« 2030 -2033 ». Une erreur venait du test, qui cherchait le fichier à la racine du
+manifeste. Dix-sept mutations, toutes tuées. Le tri des portes a d'abord survécu : le
+catalogue était écrit dans l'ordre des euros, et le tri n'avait rien à faire. Il est
+remis dans l'ordre de D-293, et la mutation tombe. Le test de dérive de la page a été vu
+échouer sur une page modifiée à la main.
+
+**Ce qui suit.** Le but 3 est atteint : la part de 2027 est établie et les refus sont
+classés. Le chiffre entre dans le tableau de `docs/BUT.md`. Le but 4, la passe de
+sécurité, vient ensuite dans l'ordre des buts.

@@ -56,7 +56,7 @@ Trois chiffres, donnés ensemble, parce que chacun seul ment :
 |---|---|---|
 | cas notés dans la tolérance déclarée | **2 sur 3** (PLF 2027 : art. 2, 3, 15) ; à part, 1 révision sur 1 (art. 2, D-292) | `reports/chiffrages_preregistres.md` |
 | articles fiscaux chiffrables | **3 sur 33** (PLF 2027) ; 1 sur 29 (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
-| euros quantifiés par l'annexe que l'outil chiffre | **46,4 %** (PLF 2026) ; à établir pour 2027 | `docs/PLF2027_COVERAGE.md` |
+| euros quantifiés par l'annexe que l'outil chiffre | **63,8 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 
 Les trois écarts de 2027 tombent du même côté : un biais systématique se lit là avant de
 se lire dans une moyenne.
@@ -123,10 +123,15 @@ budgétaire de 2027 et l'enregistrement une année pleine ; le millésime presqu
 reste. La révision `plf2027_art_2_base2027`, écrite après l'annexe, est à −7,1 % et
 comptée à part ; l'enregistrement reste noté hors tolérance.
 
-### But 3 — La couverture du PLF 2027 en euros
+### But 3 — La couverture du PLF 2027 en euros (fait : D-293, D-294)
 
 Établir pour 2027 la part des euros quantifiés par l'annexe que l'outil chiffre, et
 classer les 30 articles refusés par ce qu'il faudrait pour les chiffrer.
+
+Relevé fiche par fiche, sur une règle écrite avant la lecture : 63,8 % des 16 624 M€
+d'effort de 2027, pour 3 articles sur 33. Les refus vont dans huit portes, classées par
+euros. Le chantier le plus payant n'est pas un refus : une donnée de plus côté ménages
+ouvrirait 3,1 Md€, dont 2,3 dans les volets non chiffrés de l'art. 2.
 
 ### But 4 — La passe de sécurité, puis le déploiement
 
