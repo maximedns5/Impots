@@ -11,3 +11,13 @@ aucun n'est saisi à la main.
 
 **2 sur 3 dans la tolérance déclarée.**
 Direction des écarts : 0 au-dessus, 3 en-dessous — un biais systématique se lit ici avant de se lire dans les moyennes.
+
+## Révisions, écrites après l'annexe
+
+Une révision ne change que la base d'un cas enregistré, après l'ouverture de l'annexe : elle n'est pas un préenregistrement aveugle, et ne compte pas dans le total ci-dessus.
+
+| cas | simulé (md) | publié (md) | écart (md) | écart rel. | toléré (md) | note | révise |
+|---|---|---|---|---|---|---|---|
+| plf2027_art_2_base2027 | +3.902 | +4.200 | -0.298 | -7.1% | 0.840 (relative) | **within** en-dessous | plf2027_art_2 |
+
+**1 sur 1 dans la tolérance, hors du compte des cas aveugles.**

@@ -22870,3 +22870,69 @@ l'impôt tire en sens inverse, sans le rouvrir au-delà de la tolérance.
 **Ce qui suit.** Si la base explique l'écart, l'enregistrement reste noté hors tolérance,
 et une révision datée du jour, sous un nouveau nom, le compare sur la base de l'annexe,
 signalée comme écrite après l'ouverture de l'annexe et comptée à part des cas aveugles.
+
+## D-292 — L'écart de l'art. 2 mesuré : la base, puis le millésime ; une révision à part
+
+**Le fait.** D-291 a préenregistré la mesure de l'écart de l'art. 2 et son pronostic.
+`scripts/verify_ecart_art2.py` a tourné sur `9dcfce9`, sans modification locale, au palier
+complet sur 20 000 ménages ; le rapport est `reports/ecart_art2.json`.
+
+**La mesure, point par point du pronostic.**
+1. Le contrôle rend l'euro enregistré, 2 926 586 879,96 €. Tenu.
+2. Sur la population d'aujourd'hui, le scénario coûte 2,828 Md€ : les tranches en portent
+   87,6 %, la décote 8,5 %, la demi-part 4,0 %, et la somme des trois, 2,832 Md€, tient le
+   tout à 0,2 % près. Tenu. La population d'aujourd'hui coûte 3,4 % de moins que celle de
+   l'enregistrement : c'est la masse des pensions recalée par D-211.
+3. Vieillie vers les revenus 2026, la mesure coûte 5,4 % de plus qu'aujourd'hui sous la
+   borne basse des indices, 8,5 % sous la haute. Tenu.
+4. Sur la base de l'annexe, l'enregistré vaut 3,902 Md€, −7,1 % du publié. Vieillie,
+   l'effet budgétaire de 2027 va de 4,000 à 4,140 Md€, de −4,8 à −1,4 % du publié. Tenu.
+5. L'impôt au barème de la population fait 105,47 Md€ contre 98,84 : +6,7 %. Tenu.
+
+Les cinq points tiennent.
+
+**Ce que l'écart devient.** Entre les 2,927 Md€ enregistrés et les 4,2 publiés, il
+manquait 1,273 Md€. La base en rend 0,976, 77 % : l'annexe publie l'effet budgétaire de
+2027, l'année pleine des revenus 2026 par l'avis et le tiers de celle des revenus 2027 par
+le PAS, et l'enregistrement chiffrait une année pleine. Le millésime rend presque tout le
+reste : la mesure chiffrée sur les revenus vieillis, l'écart tombe à −4,8 % ou −1,4 %
+selon la borne. Le niveau de l'impôt tire en sens inverse : un barème qui mord 6,7 % de
+trop coûte trop à indexer, et si le coût suivait ce niveau en proportion, l'effet vieilli
+tomberait à 3,75 – 3,88 Md€, de −10,7 à −7,6 %. Le périmètre que l'annexe chiffre et
+qu'aucun bouton n'atteint (les quatre autres plafonds du quotient familial, la pension
+alimentaire, l'enfant marié, les grilles par défaut du PAS) tire vers le haut, sans
+mesure. Ces deux derniers ne s'additionnent pas : l'un est une proportion supposée,
+l'autre un signe. L'écart de −30,3 % est donc d'abord une discordance de base, que D-204
+avait nommée en premier sans la mesurer.
+
+**La révision.** D-291 l'avait écrit avant les passes : si la base explique l'écart,
+l'enregistrement reste noté hors tolérance, et une révision le compare sur la base de
+l'annexe. `impots chiffrage revise` l'écrit : un nouveau cas, `plf2027_art_2_base2027`,
+daté du jour, qui ne change que la base, par `impots.pas`, sur le chiffre enregistré
+lui-même, sans nouvelle passe. Il garde la tolérance, le comparateur, le scénario,
+l'échantillon et le moteur de l'enregistrement, nomme le cas qu'il révise et se dit écrit
+après l'ouverture de l'annexe. Il ne prend pas le millésime : réviser sur la meilleure des
+deux bornes serait choisir après avoir vu, et les bornes ne sont pas une prévision. Il est
+noté à 3,902 Md€, −7,1 %, dans ±20 %. Le rapport le compte à part : les cas aveugles
+restent 2 sur 3, l'art. 2 hors tolérance ; la révision, 1 sur 1, dans une section à elle.
+Le premier chiffre du critère (D-286) ne bouge pas.
+
+La commande refuse un cas sans comparateur, un comparateur déjà en année pleine, un cas
+d'entreprises, une année budgétaire qui n'est pas après la première année de la mesure,
+un scénario illisible, et un nom de cas qui existe déjà.
+
+**Les tests.** `tests/test_revision.py`, douze tests. Onze mutations de la révision, de
+ses refus, de sa clé dans le registre et du rapport : toutes tuées. L'une a d'abord
+survécu, le compte de la section des révisions remplacé par leur nombre, parce que la
+seule révision essayée tombait dans sa tolérance ; un test de révision hors tolérance la
+tue, vu échouer sous la mutation. Le rapport régénéré a montré un défaut que les tests ne
+voyaient pas : le cas révisé tombait après la dernière barre du tableau, hors de toute
+colonne, et un rendu Markdown le masque. Un test exige que chaque ligne du tableau ferme
+ses cellules et en ait autant que l'en-tête ; vu échouer, puis la colonne « révise »
+ajoutée.
+
+**Ce qui suit.** Le but 2 est atteint au sens de son énoncé : l'écart est mesuré volet par
+volet, et la correction fondée est enregistrée comme un nouveau cas, l'ancien restant
+noté. Ce qui reste ouvert ne tient pas à l'art. 2 : le niveau de l'impôt au barème, +6,7 %,
+pèse sur toute indexation, et le périmètre non chiffré reste un biais déclaré. Le but 3,
+la couverture du PLF 2027 en euros, vient ensuite.

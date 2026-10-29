@@ -114,7 +114,10 @@ def test_the_report_counts_the_revision_apart_from_the_blind_cases(repo) -> None
     head, _, revisions = text.partition("## Révisions, écrites après l'annexe")
     assert "| art2 |" in head and "art2_base2027" not in head
     assert "**0 sur 1 dans la tolérance déclarée.**" in head
-    assert "| art2_base2027 |" in revisions and "révise art2" in revisions
+    rows = [line for line in revisions.splitlines() if line.startswith("|")]
+    assert all(row.endswith("|") and row.count("|") == rows[0].count("|") for row in rows)
+    assert "révise" in rows[0] and rows[-1].startswith("| art2_base2027 |")
+    assert rows[-1].endswith("| art2 |")
     assert "**1 sur 1 dans la tolérance, hors du compte des cas aveugles.**" in revisions
 
 

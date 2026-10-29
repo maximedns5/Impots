@@ -675,9 +675,9 @@ def report(directory: Path | None = None) -> str:
                   "de l'annexe : elle n'est pas un préenregistrement aveugle, et ne compte "
                   "pas dans le total ci-dessus.", "",
                   "| cas | simulé (md) | publié (md) | écart (md) | écart rel. | toléré (md) "
-                  "| note |", "|---|---|---|---|---|---|---|"]
+                  "| note | révise |", "|---|---|---|---|---|---|---|---|"]
         for verdict, case in revised:
-            lines.append(verdict.line() + f" révise {case.revision.get('de')}")
+            lines.append(verdict.line() + f" {case.revision.get('de')} |")
         ok = sum(1 for g, _ in revised if g.verdict == "within")
         lines += ["", f"**{ok} sur {len(revised)} dans la tolérance, hors du compte des cas "
                       f"aveugles.**"]
