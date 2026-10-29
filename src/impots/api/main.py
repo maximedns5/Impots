@@ -9,9 +9,10 @@ Population runs are batch jobs; only the bounded quick tier is reachable over
 HTTP, and `GET /population/baseline` reads a precomputed file rather than running
 the engine at all.
 
-CORS is wide open because Phase 0 is a local tool and `ui/index.html` is meant to
-work when opened straight off the filesystem. That is a deliberate Phase 0 choice
-and must not survive contact with a deployment.
+The security pass (D-295, `impots.api.securite`) sits in front of every route: no
+third-party CORS origin unless declared, a key for every computation, a rate per client,
+and one population pass at a time. Its defaults are closed; `IMPOTS_AUTH=aucune` opens the
+computations for local use.
 """
 
 from __future__ import annotations
@@ -31,7 +32,6 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 
 from impots.api.schemas import (
@@ -75,6 +75,7 @@ from impots.api.schemas import (
     TrajectoryListResponse,
     TrajectoryResponse,
 )
+from impots.api.securite import Cors, Securite, configuration
 from impots.engine import baseline, compute, versions, warm_up
 from impots.engine.reforms import read_ir_parameters
 from impots.identifiants import millesime
@@ -108,7 +109,18 @@ def _is_loopback_only() -> bool:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    """Pay the cold-start cost before the first request rather than inside it."""
+    """Pay the cold-start cost before the first request rather than inside it.
+
+    The security settings are read first: an unreadable one stops the server here rather
+    than closing every request later (D-295)."""
+    security = configuration()
+    log = logging.getLogger("impots")
+    if security.auth == "cle" and not security.cles_sha256:
+        log.warning("No access key configured (IMPOTS_CLES_SHA256): every computation "
+                    "answers 503. For local use, start with IMPOTS_AUTH=aucune.")
+    if security.auth == "aucune" and not _is_loopback_only():
+        log.warning("IMPOTS_AUTH=aucune while bound beyond localhost: anyone who can "
+                    "reach this server can run computations without a key.")
     _state["warm_up_ms"] = warm_up()
     _state["warm"] = True
     if SOURCE_URL is None and not _is_loopback_only():
@@ -193,13 +205,10 @@ def _json_safe(value: Any) -> Any:
 async def _validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
     return JSONResponse(status_code=422,
                         content={"detail": _json_safe(jsonable_encoder(exc.errors()))})
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Outermost last: the CORS answers preflights and labels every response, refusals
+# included; the security pass refuses before the body is read and the route runs.
+app.add_middleware(Securite)
+app.add_middleware(Cors)
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -1777,8 +1786,9 @@ def predictif_simulate(request: PredictifRequest) -> PredictifResponse:
 def index() -> FileResponse:
     """Serve the static UI so the quickstart is one command instead of two.
 
-    Opening `ui/index.html` straight off the filesystem works just as well; that is
-    what the permissive CORS policy above is for.
+    Served here, the page and the API share one origin and need no CORS. Opening
+    `ui/index.html` straight off the filesystem no longer reaches the API: its origin is
+    `null`, which the security pass never allows (D-295).
     """
     if not UI_FILE.exists():  # pragma: no cover - only if the repo is incomplete
         raise HTTPException(status_code=404, detail="ui/index.html introuvable")

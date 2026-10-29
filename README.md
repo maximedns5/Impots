@@ -102,7 +102,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 python scripts/verify_openfisca.py      # must print "All Phase 0 engine assumptions hold."
-uvicorn impots.api.main:app
+IMPOTS_AUTH=aucune uvicorn impots.api.main:app
 ```
 
 Then open **http://localhost:8000**. The first request is warm: the server builds
@@ -110,8 +110,10 @@ the tax-benefit system and runs a throwaway simulation during start-up, which
 takes about five seconds and is why `uvicorn` pauses before it says *Application
 startup complete*.
 
-`ui/index.html` also works opened straight off the filesystem — it falls back to
-`http://localhost:8000`, which is what the permissive CORS policy is for.
+`IMPOTS_AUTH=aucune` opens the computations without a key, which is what a local
+tool wants. Without it, every computation answers 503: the server is closed by default
+(D-295, below). Open the page through the server; `ui/index.html` opened straight off
+the filesystem has the origin `null`, which the API refuses.
 
 After cloning, install the data guard — `core.hooksPath` is local config and does
 not travel with the repository:
@@ -332,6 +334,27 @@ the data is available.
 
 CGE. DSGE/HANK. Agent-based macro. Dynamic pension microsimulation. A third
 French rules-as-code DSL.
+
+## Before hosting it: the security pass
+
+The API is closed by default (D-295, `src/impots/api/securite.py`). Four settings, each
+an environment variable, each refusing to start the server when it cannot be read:
+
+* **Keys.** Every computation (every `POST`) needs `Authorization: Bearer <key>`. The
+  server keeps only SHA-256 prints of the keys: `IMPOTS_CLES_SHA256=<print>,<print>`,
+  where a print is `python -c "from impots.api.securite import empreinte; print(empreinte('<key>'))"`.
+  With no print configured, computations answer 503. Reads (`GET`) are public: they serve
+  precomputed reports. The page has a field for the key; it is kept for the tab only.
+* **CORS.** No third-party origin is allowed unless declared:
+  `IMPOTS_CORS_ORIGINS=https://example.org`. `*` and `null` are refused.
+* **Rate.** Per client, per minute: `IMPOTS_DEBIT` requests (120) and
+  `IMPOTS_DEBIT_CALCULS` computations (20); `0` lifts a limit. Behind a reverse proxy,
+  start uvicorn with `--proxy-headers --forwarded-allow-ips=<proxy>`, or every visitor
+  shares the proxy's quota.
+* **Concurrency.** The two routes that run a population pass share a cap,
+  `IMPOTS_CALCULS_LOURDS` at a time (1); beyond it, 503 at once.
+
+The limits live in the process: with several workers, each holds its own.
 
 ## Licence
 

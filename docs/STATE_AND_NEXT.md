@@ -1,6 +1,16 @@
 # State of the project, and the directions open — 2026-10-29 (Phase 11, M0 to M6)
 
-The second 2026-10-29 update adds D-293 and D-294: the goal's third aim, the PLF 2027's
+The third 2026-10-29 update adds D-295: the goal's fourth aim, the security pass before
+any deployment (`src/impots/api/securite.py`). Closed by default: no third-party CORS
+origin unless declared (`*` and `null` refused, so the page is opened through the
+server), a key for every computation (`POST`), kept by the server as SHA-256 prints,
+with computations answering 503 when none is configured and `IMPOTS_AUTH=aucune` opening
+them for local use; a sliding one-minute rate per client (120 requests, 20 computations);
+one population pass at a time across `/population/simulate` and `/predictif/simulate`.
+An unreadable setting closes every request and stops the server at start. 34 tests
+through the real app, 29 of the first 32 seen failing on the code before; 27 mutations
+killed. The page sends a key when one is typed. Deploying is the owner's decision.
+The second 2026-10-29 update added D-293 and D-294: the goal's third aim, the PLF 2027's
 coverage in euros. The reading rule was preregistered before any amount was read (which
 year, which volets, which administrations, what leaves the denominator), then the 32
 fiches were read by hand, 64 lines each with its quote and page (`MONTANTS_2027`), a test
@@ -700,8 +710,8 @@ fresh clone does not fetch (D-204, D-231). It covers everything on `main`, Phase
 D-205 to D-212 included. The CI `fast` job counted 1 781 passed,
 120 skipped and 223 deselected on `50932a7` (D-200), and D-201 to D-203 add 98 tests. D-198 to D-203 ran
 their own tests only, at the owner's request, and the CI `fast` job ran the suite on each
-PR. The project also has fourteen replayable `verify_*.py` gate scripts and **295 decision
-entries**, D-000 to D-294, recording every error in both directions.
+PR. The project also has fourteen replayable `verify_*.py` gate scripts and **296 decision
+entries**, D-000 to D-295, recording every error in both directions.
 
 ## The household calculator, D-176 to D-203
 
@@ -1037,9 +1047,9 @@ download list.
     situation de famille (D-195).
 * **The upstream dossier** and **all publication and deployment**: owner's,
   deferred. The input-hardening pass the reviewer made a precondition is done for
-  strings, paths and reform JSON (D-173). What it leaves is the owner's, at deployment
-  time: the open CORS policy (it is what lets `ui/index.html` open from disk),
-  authentication, rate limiting, and a concurrency cap on `POST /population/simulate`.
+  strings, paths and reform JSON (D-173). The four points it left are done and closed
+  by default (D-295): no third-party CORS origin, a key for every computation, a rate
+  per client, one population pass at a time. Deploying, and its settings, is the owner's.
 
 ## What the next session does if nobody says otherwise
 
