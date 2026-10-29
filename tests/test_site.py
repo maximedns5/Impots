@@ -44,7 +44,7 @@ def test_the_committed_site_is_the_studies_build() -> None:
 @pytest.mark.parametrize("change, needle", [
     (lambda d: (d / "plfss2027.html").write_text(
         (d / "plfss2027.html").read_text(encoding="utf-8").replace("-0,39 pt", "-0,29 pt", 1),
-        encoding="utf-8"), "plfss2027.html, ligne"),
+        encoding="utf-8"), "-0,29 pt"),
     (lambda d: (d / "plf2027.html").unlink(), "manque ['plf2027.html']"),
     (lambda d: (d / "vieux.html").write_text("x", encoding="utf-8"), "['vieux.html'] en trop"),
 ])

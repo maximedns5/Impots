@@ -440,6 +440,21 @@ def _read(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def difference(committed: str, built: str) -> str | None:
+    """Where two texts first part, line and words around it, or None if they are one."""
+    if committed == built:
+        return None
+    a, b = committed.splitlines(), built.splitlines()
+    for number, (x, y) in enumerate(zip(a, b, strict=False), start=1):
+        if x != y:
+            at = next(i for i, (u, v) in enumerate(zip(x, y, strict=False)) if u != v) \
+                if any(u != v for u, v in zip(x, y, strict=False)) else min(len(x), len(y))
+            start = max(at - 40, 0)
+            return (f"ligne {number} : « …{x[start:at + 40]}… » au lieu de "
+                    f"« …{y[start:at + 40]}… »")
+    return f"{len(a)} lignes au lieu de {len(b)}"
+
+
 def _relative(path: Path) -> str:
     try:
         return str(path.relative_to(ROOT))
@@ -923,17 +938,8 @@ class Etude:
         if not reports:
             return (f"{_relative(self.page)} existe sans les rapports de "
                     f"{_relative(self.rapports)} : la page dirait ce qu'aucun rapport ne dit.")
-        rendered = self.render(self.load())
-        committed = self.page.read_text(encoding="utf-8")
-        if committed == rendered:
-            return None
-        for number, (a, b) in enumerate(zip(committed.splitlines(), rendered.splitlines(),
-                                            strict=False), start=1):
-            if a != b:
-                return (f"{_relative(self.page)}, ligne {number} : « {a[:80]} » au lieu de "
-                        f"« {b[:80]} ».")
-        return (f"{_relative(self.page)} : {len(committed.splitlines())} lignes au lieu de "
-                f"{len(rendered.splitlines())}.")
+        where = difference(self.page.read_text(encoding="utf-8"), self.render(self.load()))
+        return None if where is None else f"{_relative(self.page)}, {where}."
 
 
 def definition(nom: str, directory: Path | None = None) -> Etude:

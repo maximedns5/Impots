@@ -244,14 +244,9 @@ def drift(site: Path | None = None) -> str | None:
         return (f"{etude._relative(site)} porte {sorted(there - set(files))} en trop et "
                 f"manque {sorted(set(files) - there)} : `impots site construire`.")
     for name, text in sorted(files.items()):
-        committed = (site / name).read_text(encoding="utf-8")
-        if committed != text:
-            for number, (a, b) in enumerate(zip(committed.splitlines(), text.splitlines(),
-                                                strict=False), start=1):
-                if a != b:
-                    return (f"{etude._relative(site / name)}, ligne {number} : "
-                            f"« {a[:80]} » au lieu de « {b[:80]} ».")
-            return f"{etude._relative(site / name)} : la longueur diffère."
+        where = etude.difference((site / name).read_text(encoding="utf-8"), text)
+        if where is not None:
+            return f"{etude._relative(site / name)}, {where}."
     return None
 
 

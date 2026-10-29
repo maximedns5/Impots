@@ -318,3 +318,12 @@ def test_each_answer_says_its_layer(nom, start, expected) -> None:
     # Only a gap in the debt is conditional, and each of its numbers is.
     assert all(conditional == ("Effet macro" in start or ("art. 74" in start and i == 2))
                for i, (_, conditional) in enumerate(found))
+
+
+def test_the_difference_shows_where_the_texts_part() -> None:
+    """A drift message shows the words that differ, not the start of a long line."""
+    committed, built = "x" * 100 + "AAA" + "y" * 10, "x" * 100 + "BBB" + "y" * 10
+    where = etude.difference(committed, built)
+    assert where.startswith("ligne 1 : ") and "AAA" in where and "BBB" in where
+    assert etude.difference("a\nb", "a\nb\nc") == "2 lignes au lieu de 3"
+    assert etude.difference("a", "a") is None
