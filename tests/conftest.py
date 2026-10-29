@@ -14,6 +14,15 @@ import pytest
 from impots.engine import system, warm_up
 
 
+def pytest_configure(config) -> None:
+    """The suite runs the API as a local tool: computations open without a key and no
+    rate limit (D-295). Set here, before any fixture of any scope makes a request.
+    `tests/test_securite.py` clears these per test to check the closed defaults."""
+    os.environ.setdefault("IMPOTS_AUTH", "aucune")
+    os.environ.setdefault("IMPOTS_DEBIT", "0")
+    os.environ.setdefault("IMPOTS_DEBIT_CALCULS", "0")
+
+
 @pytest.fixture(scope="session", autouse=True)
 def warm_engine() -> None:
     """Load the TBS and run one throwaway simulation before any test asserts timing."""

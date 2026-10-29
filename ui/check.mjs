@@ -772,3 +772,35 @@ await (async () => {
     assert.match(html, /sans verdict θ/);
   });
 })();
+/* The access key (D-295): a deployed server asks for one on every computation. Kept for
+   the tab only, and sent on computations only. */
+await (async () => {
+  const stored = new Map();
+  globalThis.sessionStorage = { getItem: (k) => stored.get(k) ?? null,
+                                setItem: (k, v) => stored.set(k, String(v)),
+                                removeItem: (k) => stored.delete(k) };
+  $("accessKey").value = "  cle-de-test  ";
+  $("accessKey").fire("change", {});
+  $("go").onclick();
+  await new Promise((r) => setTimeout(r, 10));
+  const lastPost = () => calls.filter((c) => c.opts && c.opts.method === "POST").at(-1);
+  ok("the key typed is kept for the tab and sent on a computation", () => {
+    assert.equal(stored.get("impots_cle"), "cle-de-test");
+    assert.equal(lastPost().opts.headers.Authorization, "Bearer cle-de-test");
+    assert.equal(lastPost().opts.headers["Content-Type"], "application/json");
+  });
+  $("accessKey").value = "";
+  $("accessKey").fire("change", {});
+  $("go").onclick();
+  await new Promise((r) => setTimeout(r, 10));
+  ok("an emptied key is forgotten and no longer sent", () => {
+    assert.equal(stored.has("impots_cle"), false);
+    assert.equal(lastPost().opts.headers.Authorization, undefined);
+  });
+  delete globalThis.sessionStorage;
+  $("go").onclick();
+  await new Promise((r) => setTimeout(r, 10));
+  ok("a page without session storage still computes, without a key", () => {
+    assert.equal(lastPost().opts.headers.Authorization, undefined);
+  });
+})();

@@ -133,7 +133,11 @@ d'effort de 2027, pour 3 articles sur 33. Les refus vont dans huit portes, class
 euros. Le chantier le plus payant n'est pas un refus : une donnée de plus côté ménages
 ouvrirait 3,1 Md€, dont 2,3 dans les volets non chiffrés de l'art. 2.
 
-### But 4 — La passe de sécurité, puis le déploiement
+### But 4 — La passe de sécurité, puis le déploiement (passe faite : D-295)
 
 Les quatre points de « Le livrable », chacun avec un test vu échouer ; puis la décision
 du propriétaire.
+
+La passe est faite, fermée par défaut : aucune origine tierce, une clé pour chaque
+calcul, un débit par client, une passe sur la population à la fois. Reste la décision de
+déployer, et les réglages qu'elle demande (les clés, les origines, les limites).

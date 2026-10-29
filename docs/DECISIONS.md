@@ -23085,3 +23085,63 @@ remis dans l'ordre de D-293, et la mutation tombe. Le test de dérive de la page
 **Ce qui suit.** Le but 3 est atteint : la part de 2027 est établie et les refus sont
 classés. Le chiffre entre dans le tableau de `docs/BUT.md`. Le but 4, la passe de
 sécurité, vient ensuite dans l'ordre des buts.
+
+## D-295 — La passe de sécurité : la CORS, les clés, le débit, la concurrence
+
+**Le fait.** Le but 4 (`docs/BUT.md`) : les quatre points de « Le livrable », chacun avec
+un test vu échouer, puis la décision du propriétaire. D-173 les avait laissés au
+propriétaire, comme des choix d'hébergement. Ils sont faits dans
+`src/impots/api/securite.py`, fermés par défaut et réglés par l'environnement.
+
+**Ce qui est fait.**
+1. **La CORS restreinte.** Aucune origine tierce par défaut : l'interface est servie par
+   l'API (`/`), à la même origine, et n'a pas besoin de CORS. `IMPOTS_CORS_ORIGINS` en
+   déclare ; `*` et `null` sont refusés, `null` étant aussi l'origine d'une iframe isolée
+   de n'importe quel site. Le prix : `ui/index.html` ouvert depuis le disque ne joint plus
+   l'API, on l'ouvre par le serveur. Constaté en passant : FastAPI refuse déjà un corps
+   JSON envoyé en `text/plain` (422), si bien qu'une page tierce ne peut pas lancer un
+   calcul par une requête « simple », qui échappe à la pré-vérification.
+2. **Les clés.** Toute requête POST est un calcul et exige `Authorization: Bearer <clé>`.
+   Le serveur ne garde que les empreintes SHA-256 (`IMPOTS_CLES_SHA256`), comparées à
+   temps constant ; l'empreinte d'une clé vide est refusée. Sans clé configurée, les
+   calculs répondent 503 : un oubli ferme. `IMPOTS_AUTH=aucune` les ouvre sans clé, pour
+   l'usage local, et le démarrage avertit s'il écoute au-delà de la boucle locale. Les
+   lectures restent publiques : ce sont des rapports précalculés, et le débit les borne.
+   La page a un champ pour la clé, gardée pour l'onglet et envoyée sur les seuls calculs.
+3. **Le débit.** Par client, sur une fenêtre glissante d'une minute : 120 requêtes et 20
+   calculs par défaut, 0 retirant une limite ; au-delà, 429 et `Retry-After`. Les
+   tentatives sans clé comptent. Derrière un mandataire, uvicorn doit recevoir
+   `--proxy-headers`, ou tous les visiteurs partagent le quota du mandataire.
+4. **La concurrence.** `/population/simulate` et `/predictif/simulate`, les deux routes
+   qui font une passe sur la population, partagent un plafond d'un calcul à la fois
+   (`IMPOTS_CALCULS_LOURDS`). Au-delà, 503 et `Retry-After` tout de suite, plutôt qu'une
+   file qui tiendrait des fils du serveur pendant des minutes.
+Une valeur illisible ferme (500) à chaque requête, et empêche le serveur de démarrer.
+
+**Les choix faits ici, que le propriétaire peut reprendre en déployant.** Les clés
+protègent les calculs, pas les lectures : une instance pour les journalistes et les
+citoyens sert les études à tous, et les calculs à qui a une clé. Les valeurs par défaut
+(120, 20, 1) sont des ordres de grandeur, pas des mesures. Les limites vivent dans le
+processus : plusieurs workers les multiplient.
+
+**Ce que cela change pour l'usage local.** `IMPOTS_AUTH=aucune uvicorn
+impots.api.main:app`, dans le README et dans la commande que la page affiche quand le
+moteur est injoignable. La suite de tests tourne en mode local : `tests/conftest.py` pose
+`IMPOTS_AUTH=aucune` et retire le débit avant toute fixture, et `tests/test_securite.py`
+efface ces réglages à chaque test pour vérifier les défauts fermés.
+
+**Les tests.** `tests/test_securite.py` passe par l'application réelle. Ses 32 premiers
+tests ont été écrits avant le code : 29 échouaient, chacun pour sa raison (`*` pour toute
+origine, 422 au lieu de 401 ou 503, aucun 429, un démarrage qui ne lisait rien, une
+deuxième passe acceptée pendant la première), et les 3 autres sont les compléments (la
+bonne clé passe, les lectures restent publiques, `aucune` ouvre). `ui/check.mjs` porte
+trois contrôles de la clé, vus échouer sur la page d'avant. 27 mutations, toutes tuées.
+Deux ont d'abord survécu, et chacune a reçu son test. Un jeton vide n'ouvrait rien, sauf
+si l'empreinte de la clé vide était configurée : elle est désormais refusée. La garde de
+configuration de la passe était doublée par la CORS en amont : elle est testée seule. Les
+fichiers de tests de l'API passent, et `ui/check.mjs` aussi.
+
+**Ce qui n'est pas fait.** La défense en profondeur de la page que D-173 consignait
+(insertions HTML non échappées alimentées par des constantes du serveur, lien
+`IMPOTS_SOURCE_URL` sans contrôle de schéma), le TLS et l'hébergement. La décision de
+déployer reste celle du propriétaire.
