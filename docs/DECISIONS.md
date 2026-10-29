@@ -23182,3 +23182,42 @@ journaliste ne lit.
 
 **Ce qui ne change pas.** Le public, les trois réponses, le juge extérieur, les règles du
 préenregistrement et l'ordre de la règle de priorité.
+
+## D-297 — Les juges de l'automne : ce qui a été vu avant les enregistrements
+
+**Le fait.** Le but 5 (`docs/BUT.md`, D-296) : noter en aveugle le PLFSS 2027 et l'art. 74
+du PLF 2027. Cette entrée dit, comme D-174 l'a fait pour le PLF, tout ce que la session a
+vu avant le moindre enregistrement, et elle est poussée avant eux.
+
+**La règle de lecture.** Tout texte téléchargé est lu à travers un masque : chaque nombre
+suivi de « milliard(s) », « million(s) », « Md€ », « Mds », « M€ » ou « M d'euros » est
+remplacé par `[MONTANT]` avant affichage. Les paramètres d'une mesure (taux, seuils et
+montants par personne) restent lisibles, puisqu'il faut les coder. Le masque est
+volontairement trop large : il masque aussi « 12 millions de foyers ».
+
+**Ce qui a été vu du PLFSS 2027.**
+- La page du dossier `PLFSS_2027` de l'Assemblée, réduite aux titres de ses liens,
+  masqués : le projet est le n° 3211 ; l'Assemblée l'a rejeté le 23 octobre ; la
+  commission des finances a rendu un avis, n° 3339, qui n'a pas été ouvert.
+- Le texte du projet (`PRJLANR5L17B3211.html`, sha256 b68128d00b62) : les intitulés des
+  49 articles, et le texte entier, masqué, des art. 7 (l'assiette des allègements
+  généraux) et 35 (la revalorisation des pensions de retraite en 2027). De l'art. 35 :
+  les seuils (1 260, 1 265 à 1 281, puis 2 000 à 2 034 € par mois) et un tableau de la
+  DSS, les revalorisations des pensions (5,3 %, 2,2 %, 0,9 % en 2024, 2025 et 2026),
+  l'IPCHT (1,8 %, 0,9 %, 2,0 %) et le SMPT privé (2,9 %, 1,9 %, 2,0 %). Les montants
+  des exposés des motifs des deux articles sont sortis masqués.
+- L'annexe des évaluations préalables du PLFSS n'a pas été ouverte, ni aucune presse.
+
+**Ce qui a été vu de l'art. 74 du PLF 2027.** Son intitulé, dans le sommaire de l'annexe
+du PLF (D-296), et son texte et son exposé des motifs, masqués, dans le projet de loi
+(`PRJLANR5L17B3210.html`, sha256 7fcd191974d8, celui du manifeste) : la révision des
+paramètres des APL au 1er octobre (art. L. 823-4 du CCH) et la revalorisation de la prime
+d'activité (art. L. 842-3 du CSS) ne sont pas appliquées en 2027. L'exposé chiffre les
+deux volets ; les deux montants sont sortis masqués. Il cite les revalorisations passées
+de la prime (4,6 %, 1,7 %, 0,8 % en 2024, 2025 et 2026) et la hausse de 50 € par mois en
+moyenne de la LFI 2026. La fiche de l'art. 74 dans l'annexe n'a pas été lue. D-174
+avait vu un titre de presse sur ce gel, sans montant.
+
+**Ce qui en découle.** Les montants de l'exposé des motifs sont un chiffrage du
+Gouvernement, comme la fiche : ils sont sous le même masque jusqu'au commit des
+enregistrements.
