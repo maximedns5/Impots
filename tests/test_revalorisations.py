@@ -39,11 +39,12 @@ LOCATAIRE = HouseholdInput.model_validate(
 BOTH = {"ppa_revalorisation_avril": 1.021, "al_revalorisation_octobre": 1.020}
 
 
-def _months(household: HouseholdInput, spec: ReformSpec | None, variable: str):
-    system = reformed_for(spec, YEAR) if spec is not None else baseline()
-    situation = situations.build_situation(household, YEAR, True)
-    simulation = _build(system, situation, YEAR, "full")
-    return [float(simulation.calculate(variable, f"{YEAR}-{m:02d}").sum())
+def _months(household: HouseholdInput, spec: ReformSpec | None, variable: str,
+            year: int = YEAR):
+    system = reformed_for(spec, year) if spec is not None else baseline()
+    situation = situations.build_situation(household, year, True)
+    simulation = _build(system, situation, year, "full")
+    return [float(simulation.calculate(variable, f"{year}-{m:02d}").sum())
             for m in range(1, 13)]
 
 
@@ -77,6 +78,21 @@ def test_the_october_set_is_read_off_the_tree_and_moved_by_the_irl():
     assert tuple(reforms.PATH_AL_MINORATION) not in paths
 
 
+def test_past_the_tree_the_october_set_is_the_last_revision_it_knows():
+    """The tree stops at the October 2025 revision. A path priced past it carries that
+    revision's leaves, never an empty set, which would revalue nothing and say nothing
+    (D-301)."""
+    last = reforms.al_parametres_revises_en_octobre(YEAR)
+    for year in (YEAR + 1, YEAR + 2, 2035):
+        assert reforms.al_parametres_revises_en_octobre(year) == last
+    assert reforms.revalorisation_paths("al_revalorisation_portee", 2035) == last
+
+
+def test_a_year_before_any_october_revision_is_refused():
+    with pytest.raises(ValueError, match="aucune révision d'octobre"):
+        reforms.al_parametres_revises_en_octobre(1990)
+
+
 # --- what a household sees, month by month ------------------------------------------
 
 
@@ -102,6 +118,23 @@ def test_the_ppa_coefficient_moves_nothing_before_april_and_all_of_it_from_july(
     assert 0 < moved[4] < moved[5] < full
 
 
+@pytest.mark.parametrize("year", [YEAR, 2029])
+@pytest.mark.parametrize("household, knob, variable", [
+    (SEUL_AU_DESSUS_DU_FORFAIT, "ppa_revalorisation_portee", "ppa"),
+    (LOCATAIRE, "al_revalorisation_portee", "aide_logement"),
+])
+def test_the_carried_coefficient_moves_every_month_of_the_year(household, knob, variable,
+                                                                year):
+    """The level an earlier year's revaluation left: every month moves by the full amount,
+    January to March included, the prime's reference quarter being carried too (D-301);
+    and so in a year past the tree, which a path prices (2029)."""
+    before = _months(household, None, variable, year)
+    after = _months(household, ReformSpec(**{knob: 1.02}), variable, year)
+    moved = [a - b for a, b in zip(after, before, strict=True)]
+    assert moved[0] > 0.5
+    assert moved == pytest.approx([moved[0]] * 12, rel=0.02)
+
+
 def test_the_housing_coefficient_moves_october_to_december_and_nothing_before():
     before = _months(LOCATAIRE, None, "aide_logement")
     after = _months(LOCATAIRE, ReformSpec(al_revalorisation_octobre=1.020),
@@ -117,13 +150,28 @@ def test_the_housing_coefficient_moves_october_to_december_and_nothing_before():
 def test_the_coefficient_multiplies_what_the_tree_carries_at_its_date_and_only_then():
     system = reformed_for(ReformSpec(**BOTH), YEAR)
     reference = baseline().parameters
-    for knob, month in reforms.REVALORISATION_KNOBS.items():
-        date = f"{YEAR}-{month:02d}-01"
+    for knob, month in ((k, reforms.REVALORISATION_KNOBS[k]) for k in BOTH):
+        date = reforms.revalorisation_date(knob, YEAR)
         for path in reforms.revalorisation_paths(knob, YEAR):
             want = float(resolve(reference, path)(date)) * BOTH[knob]
             assert float(resolve(system.parameters, path)(date)) == pytest.approx(want)
             assert float(resolve(system.parameters, path)(_day_before(YEAR, month))) \
                 == float(resolve(reference, path)(_day_before(YEAR, month)))
+
+
+def test_the_carried_coefficient_is_written_at_the_legal_date_of_the_year_before():
+    """D-301. 2024 has an April revaluation of its own in the tree (622,63 EUR): the carried
+    coefficient, written from 1 April 2023, must scale it, not wipe it with 2023's level."""
+    spec = ReformSpec(ppa_revalorisation_portee=1.021)
+    system = reformed_for(spec, 2024)
+    reference = baseline().parameters
+    path = reforms.revalorisation_paths("ppa_revalorisation_portee", 2024)[0]
+    assert reforms.revalorisation_date("ppa_revalorisation_portee", 2024) == "2023-04-01"
+    for date in ("2023-04-01", "2024-01-01", "2024-04-01", "2024-12-01"):
+        assert float(resolve(system.parameters, path)(date)) == pytest.approx(
+            float(resolve(reference, path)(date)) * 1.021), date
+    assert float(resolve(system.parameters, path)("2023-03-31")) == float(
+        resolve(reference, path)("2023-03-31"))
 
 
 def _write(parameters, path, date, value):
@@ -132,41 +180,49 @@ def _write(parameters, path, date, value):
 
 
 def _from_january(parameters, knob, coefficient, year):
-    month = reforms.REVALORISATION_KNOBS[knob]
+    date = reforms.revalorisation_date(knob, year)
     for path in reforms.revalorisation_paths(knob, year):
-        value = float(resolve(parameters, path)(f"{year}-{month:02d}-01"))
+        value = float(resolve(parameters, path)(date))
         _write(parameters, path, f"{year}-01-01", value * coefficient)
 
 
 def _one_left_out(parameters, knob, coefficient, year):
-    month = reforms.REVALORISATION_KNOBS[knob]
-    date = f"{year}-{month:02d}-01"
+    date = reforms.revalorisation_date(knob, year)
     for path in reforms.revalorisation_paths(knob, year)[:-1]:
         _write(parameters, path, date, float(resolve(parameters, path)(date)) * coefficient)
 
 
 def _squared(parameters, knob, coefficient, year):
-    month = reforms.REVALORISATION_KNOBS[knob]
-    date = f"{year}-{month:02d}-01"
+    date = reforms.revalorisation_date(knob, year)
     for path in reforms.revalorisation_paths(knob, year):
         _write(parameters, path, date,
                float(resolve(parameters, path)(date)) * coefficient ** 2)
 
 
-@pytest.mark.parametrize("writer, knob, needle", [
-    (_from_january, "ppa_revalorisation_avril", "avant"),
-    (_from_january, "al_revalorisation_octobre", "avant"),
-    (_one_left_out, "al_revalorisation_octobre", "al_revalorisation_octobre"),
-    (_squared, "ppa_revalorisation_avril", "demandé"),
+def _wiping(parameters, knob, coefficient, year):
+    """One constant from the date on: the tree's later revaluation is lost."""
+    date = reforms.revalorisation_date(knob, year)
+    for path in reforms.revalorisation_paths(knob, year):
+        _write(parameters, path, date, float(resolve(parameters, path)(date)) * coefficient)
+
+
+@pytest.mark.parametrize("writer, knob, year, needle", [
+    (_from_january, "ppa_revalorisation_avril", YEAR, "avant"),
+    (_from_january, "al_revalorisation_octobre", YEAR, "avant"),
+    (_one_left_out, "al_revalorisation_octobre", YEAR, "al_revalorisation_octobre"),
+    (_squared, "ppa_revalorisation_avril", YEAR, "demandé"),
+    (_from_january, "ppa_revalorisation_portee", YEAR, "demandé"),
+    (_one_left_out, "al_revalorisation_portee", YEAR, "al_revalorisation_portee"),
+    (_wiping, "ppa_revalorisation_portee", 2024, "2024-04-01"),
 ])
-def test_the_read_back_refuses_a_faulty_write(monkeypatch, writer, knob, needle):
+def test_the_read_back_refuses_a_faulty_write(monkeypatch, writer, knob, year, needle):
     """Each fault is planted in the writer; the read-back, which derives what it expects
-    from the baseline tree and the legal month on its own, must refuse every one."""
+    from the baseline tree and the legal date on its own, must refuse every one."""
     monkeypatch.setattr(reforms, "_apply_revalorisation", writer)
-    spec = ReformSpec(**{knob: BOTH[knob]})
-    system = reforms.make_reform(spec, YEAR, "faute")(baseline())
+    spec = ReformSpec(**{knob: 1.02})
+    system = reforms.make_reform(spec, year, "faute")(baseline())
     with pytest.raises(AssertionError, match=needle):
-        reforms.verify_revalorisations(system, spec, YEAR)
+        reforms.verify_revalorisations(system, spec, year)
 
 
 def test_the_read_back_refuses_a_revaluation_with_nothing_to_revalue(monkeypatch):
@@ -194,12 +250,22 @@ def test_the_reformed_system_runs_the_read_back(monkeypatch):
 # --- the wire model ------------------------------------------------------------------
 
 
+@pytest.mark.parametrize("knob", sorted(reforms.REVALORISATION_KNOBS))
 @pytest.mark.parametrize("value", [0.0, 0.4, 2.5])
-def test_a_coefficient_outside_its_bounds_is_refused(value):
+def test_a_coefficient_outside_its_bounds_is_refused(knob, value):
     with pytest.raises(pydantic.ValidationError):
-        ReformSpec(ppa_revalorisation_avril=value)
-    with pytest.raises(pydantic.ValidationError):
-        ReformSpec(al_revalorisation_octobre=value)
+        ReformSpec(**{knob: value})
+
+
+@pytest.mark.parametrize("pair", [
+    ("ppa_montant_de_base", "ppa_revalorisation_portee"),
+    ("ppa_revalorisation_avril", "ppa_revalorisation_portee"),
+    ("al_revalorisation_octobre", "al_revalorisation_portee"),
+])
+def test_two_knobs_on_the_same_amount_are_refused(pair):
+    values = {"ppa_montant_de_base": 650.0}
+    with pytest.raises(pydantic.ValidationError, match=pair[1]):
+        ReformSpec(**{k: values.get(k, 1.02) for k in pair})
 
 
 def test_a_level_and_an_april_revaluation_of_the_ppa_together_are_refused():

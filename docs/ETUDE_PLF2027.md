@@ -1,6 +1,6 @@
 # Le PLF 2027 en trois réponses
 
-<!-- Généré par scripts/write_etude_plf2027.py depuis reports/etude_plf2027/ ; ne pas éditer à la main. -->
+<!-- Généré par `impots etude ecrire plf2027` depuis reports/etude_plf2027/ ; ne pas éditer à la main. -->
 
 Le projet de loi de finances pour 2027 porte 33 articles fiscaux. Cet outil en chiffre 3, et dit pourquoi il ne chiffre pas les autres. Pour chacun des 3, trois réponses : ce qu'il coûte et qui y gagne ; ce qu'il coûte une fois les comportements et l'économie pris en compte ; ce qu'il fait à la dette en 2035. Puis l'écart au chiffrage du gouvernement, l'évaluation préalable publiée avec le texte.
 

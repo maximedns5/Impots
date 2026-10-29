@@ -1,0 +1,461 @@
+{
+  "scenario": "plf2027_art_74_apl",
+  "titre": "plf2027_art_74_apl",
+  "source": "PLF 2027 (AN, texte n° 3210), art. 74 — Maîtrise de l'évolution des aides personnelles au logement et de la prime d'activité. Volet aides au logement : la révision de l'article L. 823-4 du code de la construction et de l'habitation n'est pas appliquée en 2027. EN MIROIR : le scénario chiffre la révision que l'article suspend, 2,0 % au 1er octobre, et l'article en est l'opposé (D-298).",
+  "reference": "reconduit",
+  "computed": "2026-10-29",
+  "spending_name": "Dépenses gelées en volume",
+  "growth_name": "Croissance réelle 1 %, prix 2 %",
+  "rate_name": "Taux implicite tenu à son niveau de 2025",
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "years": [
+    {
+      "year": 2026,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 78244409.58105469,
+      "mechanical_aged_eur": 77095740.64672852,
+      "reference": 1.168580725548546,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2027,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 286350447.24243164,
+      "mechanical_aged_eur": 286310262.2067871,
+      "reference": 1.1746928799602263,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2028,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 286423260.80322266,
+      "mechanical_aged_eur": 295301234.80615234,
+      "reference": 1.1753885794969483,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 286421098.6086426,
+      "mechanical_aged_eur": 293383418.7626953,
+      "reference": 1.1707805732317031,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2030,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 286152611.00024414,
+      "mechanical_aged_eur": 286939657.93310547,
+      "reference": 1.1609798413129486,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2031,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 286152611.0004883,
+      "mechanical_aged_eur": 279881910.9807129,
+      "reference": 1.146095619682319,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2032,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 286152598.88720703,
+      "mechanical_aged_eur": 272607504.2531738,
+      "reference": 1.1262354244680892,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2033,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 286152611.0004883,
+      "mechanical_aged_eur": 279407806.10913086,
+      "reference": 1.1015050760584795,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2034,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 286152611.00024414,
+      "mechanical_aged_eur": 279300188.04125977,
+      "reference": 1.0720087228588424,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2035,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 286152611.0004883,
+      "mechanical_aged_eur": 274566906.15478516,
+      "reference": 1.0378488647367168,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    }
+  ],
+  "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité."
+  ],
+  "absent": {
+    "rétroaction": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'ppa': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'rsa': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'aide_logement': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'crds_mini': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'aefa': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\"}"
+  },
+  "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
+    "dividend_wage_shift_firm_owners": 0.5,
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "is_croissance_pib": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5
+  },
+  "theta_applied": true,
+  "closed": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244).",
+    "rétroaction PIB → recettes": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'ppa': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'rsa': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'aide_logement': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'crds_mini': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'aefa': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\"}",
+    "multiplicateur macro": "aucun instrument de cette réforme n'a de ligne de solde dans Mésange : il n'y a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un constat. Non couverts : {'ppa': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'rsa': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'aide_logement': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'crds_mini': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\", 'aefa': \"Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.\"}"
+  },
+  "uprating_note": "Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "behavioural": true,
+  "macro": true,
+  "theta_box": {
+    "year": 2035,
+    "rows": [
+      "multiplicateur_macro"
+    ],
+    "paths": [
+      {
+        "persistence": "eteint",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.0007056903194209152,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.0007056903194209152
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.0007056903194209152
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0007129621742041348,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.0007129621742041348
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.0007129621742041348
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.00023812910871878756,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.00023812910871878756
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.00023812910871878756
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0002416770545228264,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.0002416770545228264
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.0002416770545228264
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "tenu",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.0007056903194209152,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.0007056903194209152
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.0007056903194209152
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0007129621742041348,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.0007129621742041348
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.0007129621742041348
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.00023812910871878756,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.00023812910871878756
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.00023812910871878756
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0002416770545228264,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.0002416770545228264
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.0002416770545228264
+              ]
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "commit": "b73ffcfd4534ed795b980ab255f47c1257105877",
+  "dirty": false,
+  "where": "conteneur Claude Code (session 019zRZBP), arbre figé /home/user/wt/but6-run sur b73ffcf",
+  "annees": null,
+  "persistence": null,
+  "side_by_side": [
+    {
+      "persistence": "eteint",
+      "label": "Effet macro éteint après trois ans",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1686057453751335,
+          "delta_aged": 2.5019826587424632e-05,
+          "reform_frozen": 1.1686061181518563,
+          "delta_frozen": 2.5392603310248063e-05
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1748078158708988,
+          "delta_aged": 0.00011493591067246456,
+          "reform_frozen": 1.174808197191698,
+          "delta_frozen": 0.00011531723147162332
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1755925442769763,
+          "delta_aged": 0.00020396478002804308,
+          "reform_frozen": 1.175590206670832,
+          "delta_frozen": 0.00020162717388361173
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1710693678608743,
+          "delta_aged": 0.00028879462917119625,
+          "reform_frozen": 1.1710649895207095,
+          "delta_frozen": 0.0002844162890063284
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1613481200948133,
+          "delta_aged": 0.00036827878186462826,
+          "reform_frozen": 1.16134356332337,
+          "delta_frozen": 0.0003637220104213412
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1465381078965091,
+          "delta_aged": 0.0004424882141900177,
+          "reform_frozen": 1.1465353551522612,
+          "delta_frozen": 0.0004397354699421374
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1267470335709229,
+          "delta_aged": 0.0005116091028336545,
+          "reform_frozen": 1.1267479883229694,
+          "delta_frozen": 0.0005125638548801881
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.102084665599593,
+          "delta_aged": 0.0005795895411135898,
+          "reform_frozen": 1.1020873871607901,
+          "delta_frozen": 0.000582311102310662
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0726533565422038,
+          "delta_aged": 0.0006446336833614286,
+          "reform_frozen": 1.0726578008349459,
+          "delta_frozen": 0.0006490779761034737
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0385545550561377,
+          "delta_aged": 0.0007056903194209152,
+          "reform_frozen": 1.038561826910921,
+          "delta_frozen": 0.0007129621742041348
+        }
+      ],
+      "conventions": [],
+      "gdp_gap_aged": []
+    },
+    {
+      "persistence": "tenu",
+      "label": "Effet macro tenu au niveau de la troisième année",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1686057453751335,
+          "delta_aged": 2.5019826587424632e-05,
+          "reform_frozen": 1.1686061181518563,
+          "delta_frozen": 2.5392603310248063e-05
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1748078158708988,
+          "delta_aged": 0.00011493591067246456,
+          "reform_frozen": 1.174808197191698,
+          "delta_frozen": 0.00011531723147162332
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1755925442769763,
+          "delta_aged": 0.00020396478002804308,
+          "reform_frozen": 1.175590206670832,
+          "delta_frozen": 0.00020162717388361173
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1710693678608743,
+          "delta_aged": 0.00028879462917119625,
+          "reform_frozen": 1.1710649895207095,
+          "delta_frozen": 0.0002844162890063284
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1613481200948133,
+          "delta_aged": 0.00036827878186462826,
+          "reform_frozen": 1.16134356332337,
+          "delta_frozen": 0.0003637220104213412
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1465381078965091,
+          "delta_aged": 0.0004424882141900177,
+          "reform_frozen": 1.1465353551522612,
+          "delta_frozen": 0.0004397354699421374
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1267470335709229,
+          "delta_aged": 0.0005116091028336545,
+          "reform_frozen": 1.1267479883229694,
+          "delta_frozen": 0.0005125638548801881
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.102084665599593,
+          "delta_aged": 0.0005795895411135898,
+          "reform_frozen": 1.1020873871607901,
+          "delta_frozen": 0.000582311102310662
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0726533565422038,
+          "delta_aged": 0.0006446336833614286,
+          "reform_frozen": 1.0726578008349459,
+          "delta_frozen": 0.0006490779761034737
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0385545550561377,
+          "delta_aged": 0.0007056903194209152,
+          "reform_frozen": 1.038561826910921,
+          "delta_frozen": 0.0007129621742041348
+        }
+      ],
+      "conventions": [],
+      "gdp_gap_aged": []
+    }
+  ]
+}

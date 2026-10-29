@@ -121,8 +121,12 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
   aucun chiffrable ; l'art. 74 du PLF en deux volets, en miroir. Le logement est dans sa
   tolérance (−22,5 %), la prime hors de la sienne (+167 %) : la fiche compte quatre mois,
   le moteur sept, et à mois et taux égaux l'écart reste de +67 %.
+* **But 6 — Une étude par commande** (D-301 à D-303) : `impots etude`, sur des définitions
+  `etudes/<nom>.json` ; la page du PLF 2027 régénérée à une ligne près, l'en-tête ;
+  l'étude du PLFSS 2027 (`docs/etudes/plfss2027.md`), la première qu'elle produit : les
+  deux volets de l'art. 74 en miroir, qui baissent la dette, et les 49 refus du PLFSS.
 
-### But 6 — Une étude par commande (en cours)
+### But 6 — Une étude par commande
 
 ```
 /goal Une étude à trois réponses se produit par une commande, et c'est mergé dans main.
@@ -138,7 +142,7 @@ modifiée. Preuve attendue : la commande et sa sortie, la sortie verte des tests
 l'URL de la PR et le SHA du merge. Ou s'arrêter après 40 tours, en disant ce qui manque.
 ```
 
-### But 7 — Les études en ligne, sur un site statique
+### But 7 — Les études en ligne, sur un site statique (en cours)
 
 ```
 /goal Les études se lisent en ligne sans serveur de calcul, et c'est mergé dans main.

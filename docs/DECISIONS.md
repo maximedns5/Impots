@@ -23414,3 +23414,197 @@ regard du forfait, contre les données de la CNAF. Elle est inscrite dans
 **Ce que cela change au premier chiffre.** De 2 sur 3, il passe à 3 sur 5. Les juges de
 l'automne sont épuisés ; le suivant viendra avec le PLF et le PLFSS 2028, ou une loi de
 finances rectificative avant.
+
+## D-301 — Une étude par une commande, et la revalorisation portée d'une année à l'autre
+
+**Le fait.** Le but 6 demande qu'une étude à trois réponses se produise par une commande,
+et que la première soit celle du PLFSS 2027. Deux pièces manquaient : la commande, et un
+chemin annuel qui sache porter une revalorisation au-delà de sa première année.
+
+**La revalorisation portée.** `impots predictif` chiffrait `scenario.reform` chaque année.
+Pour l'art. 74, le coefficient d'avril se serait récrit chaque année à sa date : chaque
+année, janvier à mars sans la mesure, une dent de scie que la loi ne connaît pas. Ce qu'une
+revalorisation laisse est un niveau, de janvier à décembre. Désormais :
+- `Scenario.reform_in(year)` rend la réforme telle qu'écrite la première année, puis, les
+  années suivantes, chaque bouton daté changé en son bouton porté
+  (`ppa_revalorisation_portee`, `al_revalorisation_portee`) ; `impots predictif`, dans
+  ses deux passes, et `impots trajectoire` la chiffrent ;
+- un bouton porté s'écrit à la date légale de l'année d'avant, et l'année chiffrée porte le
+  niveau dès janvier ; l'écriture multiplie chaque segment de l'arbre à partir de cette
+  date : la revalorisation que l'arbre porte lui-même plus tard (avril 2024 pour la prime)
+  est multipliée, pas effacée ;
+- la relecture vérifie chaque jour où l'arbre de référence change, de la date à la fin de
+  l'année chiffrée, et la veille de la date ;
+- deux boutons sur un même montant sont refusés : le niveau et l'un ou l'autre
+  coefficient, le coefficient daté et le porté ;
+- au-delà de l'arbre, l'ensemble d'octobre des aides au logement est celui de la dernière
+  révision qu'il connaît, les 56 paramètres du 1er octobre 2025. Avant, il était vide dès
+  2027, et la relecture refusait le chemin (« aucun paramètre à revaloriser en 2029 ») :
+  un test de bouton l'a montré. Le cas de bouton du logement porté est chiffré en 2027,
+  car en 2024 il lirait la révision de 2022, faite en juillet.
+
+Les tests ont été vus échouer avant le code. Dix-sept mutations : deux ont d'abord survécu.
+La première ne mutait rien (`{} or {…}` vaut le second dictionnaire), et sa forme juste est
+tuée. La seconde a montré que la borne de fin de segment était superflue : les valeurs sont
+lues avant toute écriture, et les segments écrits dans l'ordre. La borne est retirée plutôt
+que gardée sans test ; lire après écrire, écrire à rebours, n'écrire qu'à la date sont
+trois mutations tuées.
+
+**La commande.** `impots etude lancer|premiere|ecrire|verifier <nom>`, dans
+`src/impots/etude.py`, lit `etudes/<nom>.json` : le titre, le texte dont la page dit les
+refus, la D-entrée qui préenregistre les passes, le cadre (la requête de l'étude de D-237),
+le millésime des entreprises, et les scénarios, chacun avec son volet et son sens. La page
+va par défaut dans `docs/etudes/<nom>.md`, les rapports dans `reports/etudes/<nom>/`.
+- Le lanceur refuse, avant la première passe : un `src/` modifié ; une D-entrée de
+  préenregistrement absente, en titre, du `docs/DECISIONS.md` du commit (la nommer dans le
+  texte d'une autre ne suffit pas) ; un commit qu'aucune branche distante ne porte ; un
+  rapport déjà là. Une passe à la fois, chacune dans son processus.
+- Le rendu reprend celui de D-289, mot pour mot, et refuse un cadre qui n'est pas le sien
+  (θ½, comportements et boucle) : la page le dirait.
+- Deux textes : `plf2027`, les articles fiscaux du PLF et leur case, et `plfss2027`, les
+  49 articles du PLFSS avec leur case et leur porte, la mesure chiffrée étant l'art. 74 du
+  PLF, en volets.
+- En miroir, la page dit la mesure, chaque réponse changée de signe : exact pour le coût
+  et les déciles, gagnants et perdants échangés, qui sont la différence de deux passes ;
+  vrai au premier ordre pour la bande, l'éventail et la dette, calculés autour de l'état
+  de départ. Le sens est relu contre l'enregistrement du scénario, quand il en a un.
+- La dérive : chaque définition est soit préenregistrée et pas lancée (ni rapports ni
+  page), soit lancée et rendue (ses rapports, et une page qui est exactement leur rendu).
+  `impots etude verifier` rend 1 sinon, et dit la première ligne qui diffère. Le test court
+  sur chaque définition ; il a été vu échouer sur une page modifiée, une page sans ses
+  rapports, des rapports sans leur page.
+
+Vingt et une mutations du module et de la commande, toutes tuées.
+
+**Le PLF 2027, régénéré.** `etudes/plf2027.json` garde la page et les rapports de D-290 :
+`docs/ETUDE_PLF2027.md`, `reports/etude_plf2027/`. La commande la régénère à une ligne
+près, l'en-tête qui nomme ce qui l'a écrite : `scripts/write_etude_plf2027.py` devient
+`impots etude ecrire plf2027`. Les 248 autres lignes, et chaque nombre, sont identiques.
+`scripts/write_etude_plf2027.py` est retiré ; `scripts/etude_plf2027.py` ne garde que le
+scénario de l'art. 15, écrit une fois avant les passes de D-289. Les 55 tests des deux
+scripts lisent le module ; leurs assertions sont inchangées. Seul l'indice d'une étape du
+lanceur avance d'un rang, le nom de l'étude précédant le scénario dans la commande, et
+deux refus s'ajoutent : la D-entrée absente, le commit pas poussé.
+
+**Ce qui suit.** L'étude du PLFSS 2027 est préenregistrée dans l'entrée suivante, puis
+lancée par la commande sur le commit de cette entrée-là.
+
+## D-302 — L'étude du PLFSS 2027 préenregistrée : l'art. 74 du PLF en miroir, et 49 refus
+
+**Le fait.** Le but 6 veut que l'étude du PLFSS 2027 soit la première que produit la
+commande de D-301. Aucun article du PLFSS n'est chiffrable (D-298) : une étude des seuls
+articles du PLFSS n'aurait aucune réponse à donner. Elle est donc remplacée, et le
+remplacement est dit ici, avant toute passe.
+
+**Ce que l'étude chiffre.** `etudes/plfss2027.json`, texte `plfss2027`, cadre `ir` (celui
+de D-289), entreprises de 2023 :
+- les deux volets de l'art. 74 du PLF 2027, la seule mesure de prestations de l'automne que
+  l'outil chiffre, chacun sur son scénario enregistré (`plf2027_art_74_ppa`,
+  `plf2027_art_74_apl`), lus en miroir comme leurs enregistrements (D-298) : le scénario
+  chiffre la revalorisation, la page dit sa suspension ;
+- les 49 articles du PLFSS, chacun avec sa case, sa raison et la porte qui l'ouvrirait,
+  et les portes comptées.
+Quatre passes : les deux premières années, puis les deux chemins annuels de 2026 à 2035,
+par `impots etude lancer plfss2027`, une à la fois, depuis un arbre de travail figé sur le
+commit de cette entrée. La page sera `docs/etudes/plfss2027.md`, écrite par
+`impots etude ecrire plfss2027` depuis les seuls rapports commités.
+
+**Le calendrier.** 2026 tient lieu de 2027 (D-298), et l'est sur tout le chemin : chaque
+année du moteur tient lieu de la suivante. La première année est celle de la date légale ;
+les neuf suivantes portent le niveau, de janvier à décembre (D-301). La dette « en 2035 »
+est celle de la dixième année de la mesure.
+
+**Un essai à blanc, pour l'admission seulement.** Le volet du logement a été lancé sur
+deux ans, avec comportements et boucle, pour vérifier que le cadre accepte un scénario de
+transferts avant une passe de deux heures. Seul son code de sortie a été lu ; son rapport,
+dans le répertoire de travail de la session, n'est pas lu et ne sera pas commité.
+
+**Ce que le code dit d'avance, sans passe.** Aucune ligne du magasin des comportements ne
+répond aux boutons `ppa_*` ni `al_*` : les canaux sont fermés pour ces deux volets.
+Mésange ne publie pas de variante de transfert (`macro/shocks.py`) : l'éventail est
+refusé, et la boucle est absente, faute de ligne de solde à lire.
+
+**Le pronostic**, écrit avant les passes, dans le sens de la mesure (une économie est un
+coût négatif, une baisse de la dette un Δ négatif) :
+1. La première année refait l'enregistrement, sur le même code pour elle : prime
+   −887 M€, logement −78 M€, chacun à 1 % près du simulé de D-300.
+2. Aucun gagnant : dans chaque décile, moins de 0,1 % des ménages. Les perdants de la
+   prime sont dans les déciles 2 à 6, ceux du logement dans les déciles 1 à 3.
+3. La bande est absente, raison donnée : aucun canal n'est câblé pour ces boutons.
+   L'éventail est refusé : pas de variante de transfert.
+4. La dette en 2035, sans boucle ni comportement, est le seul chemin mécanique. Prime :
+   vue figée −0,38 pt de PIB, entre −0,30 et −0,45 ; vue vieillie plus petite en valeur
+   absolue, −0,27 pt, entre −0,15 et −0,36, les salaires montant de 3 % l'an devant une
+   prime reconduite sans indexation. Logement : vue figée −0,08 pt, entre −0,05 et −0,11 ;
+   vue vieillie −0,05 pt, entre −0,03 et −0,09, plus petite en valeur absolue.
+5. θ ne bouge rien : à chaque coin, la valeur de θ½. Le verdict est « baisse » pour les
+   deux volets, dans les deux vues.
+6. L'écart à l'évaluation préalable est celui de D-300, le logement dans la tolérance, la
+   prime hors d'elle : l'étude le redit, elle ne le refait pas.
+
+Le pronostic serait réfuté par : une bande ou un éventail présents ; un gagnant au-delà
+de 0,1 % d'un décile ; une dette hors de ses fourchettes, ou une vue vieillie plus grande
+que la figée en valeur absolue ; un verdict autre que « baisse ».
+
+**Ajout, avant toute passe.** Lancée sur `596fba1`, l'étude s'est arrêtée à la première
+passe sans rien écrire : l'appel du simulateur est fermé sans clé depuis D-295, et le
+lanceur ne posait pas le mode local, que `tests/conftest.py` pose pour toute la suite, ce
+qui cachait le défaut. Le lanceur ouvre désormais le simulateur pour ses passes, un test
+vu échouer le tient en fermant d'abord l'accès, et les passes tournent sur le commit de la
+correction. Rien d'autre ne change : ni scénario, ni cadre, ni pronostic.
+
+## D-303 — Le PLFSS 2027 en trois réponses : les deux volets de l'art. 74 baissent la dette
+
+**Le fait.** Les quatre passes de D-302 ont tourné par `impots etude lancer plfss2027`, sur
+`b73ffcf`, depuis un arbre de travail figé, l'une après l'autre, en 1 h 23. La
+page `docs/etudes/plfss2027.md` est écrite par `impots etude ecrire plfss2027` depuis les
+seuls rapports commités de `reports/etudes/plfss2027/`, et `impots etude verifier` la dit
+identique à leur rendu. C'est la première étude que produit la commande.
+
+**Les trois réponses, dans le sens de la mesure.**
+- La prime d'activité : −887 M€ la première année ; aucun gagnant ; la dette en 2035 à
+  −0,39 pt de PIB en vue figée, −0,27 pt en vue vieillie ; verdict « baisse ».
+- Les aides au logement : −78 M€ ; aucun gagnant ; −0,071 pt dans les deux vues
+  (−0,0713 figée, −0,0706 vieillie) ; verdict « baisse ».
+- Ni bande, ni éventail, ni boucle, chacun avec sa raison ; θ ne bouge rien.
+
+**Contre le pronostic, point par point.**
+1. Tenu, au-delà de sa marge : chaque première année refait son enregistrement à l'euro.
+2. Tenu pour les gagnants : aucun, dans aucun décile. À moitié pour les perdants. Ils
+   sont concentrés là où ils étaient attendus : 86 % de ceux de la prime dans les déciles
+   2 à 6, 70 % de ceux du logement dans les déciles 1 à 3. Mais il y en a dans chaque
+   décile, près de 7 % des ménages des déciles 7 et 8 pour la prime. Lu strictement, le
+   pronostic les enfermait dans ces déciles : il est réfuté sur ce point.
+3. Tenu : la bande est absente (« Aucun canal fondé sur des preuves ne couvre cet
+   instrument »), l'éventail refusé (« Aucun instrument de cette réforme n'a de
+   multiplicateur publié »).
+4. Tenu dans les quatre fourchettes. La prime : −0,39 pt pour −0,38 annoncé en vue figée,
+   −0,27 pt pour −0,27 en vue vieillie. Le logement : −0,071 pt pour −0,08 en vue figée,
+   −0,071 pt pour −0,05 en vue vieillie. Le pronostic attendait pour le logement une
+   érosion qui n'est pas venue. En vue vieillie, l'économie de la prime passe de 1,27 Md€
+   en 2027 à 0,78 Md€ en 2035, −39 %, les salaires montant de 3 % l'an devant une prime
+   reconduite sans indexation ; celle du logement de 286 à 275 M€, −4 %. Pourquoi l'aide
+   au logement s'érode si peu n'est pas mesuré ici.
+5. Tenu : chaque coin de la boîte vaut θ½ ; « baisse » pour les deux volets, dans les deux
+   vues et sous les deux persistances.
+6. Tenu : l'écart à l'évaluation préalable est celui de D-300, et la première année de
+   l'étude est à 0 € de l'enregistrement.
+Aucun des critères de réfutation de D-302 n'est atteint.
+
+**Une lecture, pas une note.** La fiche publie aussi 2028 : 995 M€ pour la prime, 404 M€
+pour le logement. L'année du moteur qui en tient lieu, 2027, est la première année pleine
+du niveau porté : 1 513 M€ pour la prime en vue figée, 1 272 M€ en vue vieillie, soit +52 %
+et +28 % ; 286 M€ pour le logement dans les deux vues, −29 %. Sur une année pleine, le
+décompte des mois sort de l'écart de la prime, qui tombe de +167 % à moins d'un tiers en
+vue vieillie, comme D-300 le décomposait ; le logement reste sous la fiche, comme ses
+biais déclarés le disaient. Aucun cas n'est enregistré pour 2028 : ce n'est pas une note,
+et aucune n'est écrite après coup.
+
+**Ce que l'étude ne dit pas.** La dette « en 2035 » compte dix années de mesure, l'année du
+moteur tenant lieu de la suivante ; le texte en porte neuf, de 2027 à 2035. Les deux
+volets ne s'additionnent pas sur la page : ce sont deux scénarios, chacun contre le droit
+reconduit. La dette de la prime hérite de l'écart du volet à la fiche, dans le même sens.
+
+**Ce que cela clôt.** Les trois pièces du but 6 sont là : la commande (D-301), la page du
+PLF 2027 régénérée par elle à une ligne près, et l'étude du PLFSS 2027, la première qu'elle
+produit. Le but suivant met les études en ligne, sur un site statique.

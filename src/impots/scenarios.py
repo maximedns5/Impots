@@ -143,6 +143,16 @@ class Scenario:
                 f"croissantes et sans doublon, et la première est celle du scénario "
                 f"({self.year}) : la mesure commence l'année qu'il chiffre.")
 
+    def reform_in(self, year: int) -> Any:
+        """The reform a path prices in `year`: as written in the scenario's first year,
+        and after it with each dated revaluation carried, for what a revaluation leaves
+        is a level, January to December (D-301)."""
+        if year <= self.year:
+            return self.reform
+        from impots.engine.reforms import carried
+
+        return carried(self.reform)
+
     def applies(self, year: int) -> bool:
         """Whether the text applies the measure in `year`."""
         return not self.annees or year in self.annees

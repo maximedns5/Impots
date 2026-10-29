@@ -113,6 +113,21 @@ PATH_AL = ("prestations_sociales", "aides_logement")
 REVALORISATION_KNOBS: dict[str, int] = {
     "ppa_revalorisation_avril": 4,
     "al_revalorisation_octobre": 10,
+    "ppa_revalorisation_portee": 4,
+    "al_revalorisation_portee": 10,
+}
+#: The CARRIED knobs (D-301): the revaluation of the year before the priced year, written
+#: at that year's legal date, so that every month of the priced year carries it — and the
+#: months before it that a benefit reads, the prime's reference quarter among them. What a
+#: revaluation leaves in the years after it falls: a level, not a date.
+REVALORISATION_DECALAGE: dict[str, int] = {
+    "ppa_revalorisation_portee": -1,
+    "al_revalorisation_portee": -1,
+}
+#: Each dated knob and the carried one a path prices in the years after its first.
+PORTEE: dict[str, str] = {
+    "ppa_revalorisation_avril": "ppa_revalorisation_portee",
+    "al_revalorisation_octobre": "al_revalorisation_portee",
 }
 
 # --------------------------------------------------------------------------- #
@@ -599,73 +614,115 @@ def al_parametres_revises_en_octobre(year: int) -> tuple[tuple[str, ...], ...]:
     ceilings, the charge allowances, the foyers' rent equivalences, the flat minimum
     contribution. Derived rather than listed, so a leaf the tree gains is revalued with
     the others; the test holds the derivation to the revision, every leaf moved by the IRL.
+    Past the tree's last October revision, that revision's leaves: a path priced to 2035
+    revalues what the law revalues, not nothing (D-301).
     """
     from openfisca_core.parameters import Parameter
 
     from impots.engine.system import baseline as _baseline
 
-    date = f"{year - 1}-10-01"
-    found: list[tuple[str, ...]] = []
+    leaves: list[tuple[tuple[str, ...], set[str]]] = []
 
     def walk(node: Any, path: tuple[str, ...]) -> None:
         if isinstance(node, Parameter):
-            if any(value.instant_str == date for value in node.values_list):
-                found.append(path)
+            leaves.append((path, {value.instant_str for value in node.values_list}))
             return
         for name, child in getattr(node, "children", {}).items():
             walk(child, (*path, name))
 
     walk(resolve(_baseline().parameters, PATH_AL), PATH_AL)
-    return tuple(found)
+    octobers = {d for _, dates in leaves for d in dates
+                if d.endswith("-10-01") and d <= f"{year - 1}-10-01"}
+    if not octobers:
+        raise ValueError(f"aucune révision d'octobre des aides au logement dans l'arbre "
+                         f"avant le 1er octobre {year - 1}")
+    date = max(octobers)
+    return tuple(path for path, dates in leaves if date in dates)
+
+
+def revalorisation_date(knob: str, year: int) -> str:
+    """The day a revaluation knob is written from, for `year` priced."""
+    return f"{year + REVALORISATION_DECALAGE.get(knob, 0)}-{REVALORISATION_KNOBS[knob]:02d}-01"
 
 
 def revalorisation_paths(knob: str, year: int) -> tuple[tuple[str, ...], ...]:
     """What a revaluation knob multiplies. The prime d'activité's bonification is a share
     of the montant forfaitaire, so it follows it without a path of its own."""
-    if knob == "ppa_revalorisation_avril":
+    if knob in ("ppa_revalorisation_avril", "ppa_revalorisation_portee"):
         return ((*PATH_PPA, "montant_de_base"),)
-    if knob == "al_revalorisation_octobre":
-        return al_parametres_revises_en_octobre(year)
+    if knob in ("al_revalorisation_octobre", "al_revalorisation_portee"):
+        return al_parametres_revises_en_octobre(year + REVALORISATION_DECALAGE.get(knob, 0))
     raise KeyError(knob)
 
 
+def carried(spec: ReformSpec) -> ReformSpec:
+    """`spec` as a path prices it in the years after its first: each dated revaluation
+    turned into its carried knob, every other knob as it is (D-301)."""
+    fields = spec.model_dump(exclude_none=True)
+    for dated, carry in PORTEE.items():
+        if dated in fields:
+            fields[carry] = fields.pop(dated)
+    return type(spec).model_validate(fields)
+
+
+def _breakpoints(parameters: Any, path: tuple[str, ...], date: str, until: str) -> list[str]:
+    """`date`, then every day after it and up to `until` on which the tree's value changes."""
+    node = resolve(parameters, path)
+    later = sorted({v.instant_str for v in node.values_list if date < v.instant_str <= until})
+    return [date, *later]
+
+
 def _apply_revalorisation(parameters: Any, knob: str, coefficient: float, year: int) -> None:
-    """Multiply what the tree carries on the legal date by `coefficient`, from that date."""
-    date = f"{year}-{REVALORISATION_KNOBS[knob]:02d}-01"
+    """Multiply every value the tree carries from the knob's date on by `coefficient`,
+    segment by segment: a revaluation the tree already holds later is scaled, not wiped —
+    a carried knob is written in the year before, and the priced year may have its own.
+
+    Every value is read before the first write, and the segments are written in order:
+    each write runs to the end of time, and the next one takes over at its own start."""
+    date = revalorisation_date(knob, year)
     for path in revalorisation_paths(knob, year):
-        current = float(resolve(parameters, path)(date))
-        update_existing(parameters, path, start=periods.instant(date),
-                        value=current * coefficient, instant=date)
+        starts = _breakpoints(parameters, path, date, "9999-12-31")
+        values = [resolve(parameters, path)(start) for start in starts]
+        for start, value in zip(starts, values, strict=True):
+            if value is not None:
+                update_existing(parameters, path, start=periods.instant(start),
+                                value=float(value) * coefficient, instant=start)
 
 
 def verify_revalorisations(tax_benefit_system: Any, spec: ReformSpec, year: int) -> None:
     """Read each revaluation back against the BASELINE tree, on its date and before it.
 
     What it expects is derived here, from the baseline and the legal month, never from the
-    write path: the coefficient times the baseline's value on the first of the month, and
-    the baseline's value untouched in the month before. A coefficient written from
-    January — the easy mistake, since every other knob is — passes the first check and
-    fails the second; a parameter the write left out fails the first.
+    write path: the coefficient times the baseline's value on the first of the month and
+    on every later day of the priced year the baseline changes, and the baseline's value
+    untouched the day before. A coefficient written from January — the easy mistake, since
+    every other knob is — passes the first check and fails the last; a parameter the write
+    left out fails the first; a carried write that wipes the priced year's own revaluation
+    fails the middle one (D-301).
     """
     from impots.engine.system import baseline as _baseline
 
     reference = _baseline().parameters
     problems: list[str] = []
-    for knob, month in REVALORISATION_KNOBS.items():
+    for knob in REVALORISATION_KNOBS:
         coefficient = getattr(spec, knob, None)
         if coefficient is None:
             continue
-        date = f"{year}-{month:02d}-01"
-        before = f"{year}-{month - 1:02d}-28"
+        date = revalorisation_date(knob, year)
+        before = str(periods.instant(date).offset(-1, "day"))
         paths = revalorisation_paths(knob, year)
         if not paths:
             problems.append(f"{knob} : aucun paramètre à revaloriser en {year}")
         for path in paths:
             name = ".".join(path[len(PATH_AL):])
-            wanted = float(resolve(reference, path)(date)) * coefficient
-            got = float(resolve(tax_benefit_system.parameters, path)(date))
-            if differs(got, wanted):
-                problems.append(f"{knob} {name} au {date} : demandé {wanted}, appliqué {got}")
+            # Every day the BASELINE changes from the date to the end of the priced year:
+            # a later revaluation wiped by the write fails here (D-301).
+            for point in _breakpoints(reference, path, date, f"{year}-12-31"):
+                wanted = float(resolve(reference, path)(point)) * coefficient
+                got = float(resolve(tax_benefit_system.parameters, path)(point))
+                if differs(got, wanted):
+                    problems.append(f"{knob} {name} au {point} : demandé {wanted}, "
+                                    f"appliqué {got}")
             untouched = float(resolve(reference, path)(before))
             got_before = float(resolve(tax_benefit_system.parameters, path)(before))
             if differs(got_before, untouched):
