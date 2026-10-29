@@ -1,0 +1,63 @@
+case: plf2027_art_2_base2027
+pre_registered: '2026-10-29T09:05:37+00:00'
+commit: 66e997ec00ef01a86dfb005306584022245c48b9
+scenario: plf2027_art_2
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 3902115839.9518228
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.2
+  absolute_eur: 200000000.0
+  rationale: 'Revalorisation de 2,1 % des tranches, de la décote et du plafond général
+    de la demi-part, contre un arbre gelé aux paramètres des revenus 2025. Plus ou
+    moins 20 % parce que : la ligne IR au barème de cette population sort à +8,8 %
+    de la DGFiP, et le coût d''une revalorisation suit le niveau de l''impôt ; les
+    revenus sont ceux de 2024, non vieillis, ce qui place moins de foyers au-dessus
+    des seuils 2026 ; le scénario ne porte ni les quatre autres plafonds de quotient
+    familial, ni le 196 B, ni l''indexation des limites de déductions ; la base n''a
+    ni revenu du capital ni revenu d''indépendant ; et le sous-échantillon de 20 000
+    ménages ajoute un bruit de l''ordre du pour cent. Les trois biais du milieu tirent
+    vers le bas, le premier vers le haut : la direction nette n''est pas connue d''avance,
+    d''où une fenêtre symétrique. Plancher de 200 M EUR pour le cas où le chiffre
+    publié serait petit.'
+note: 'Révision de « plf2027_art_2 », écrite après l''ouverture de l''annexe : pas
+  un préenregistrement aveugle. D-291 et D-292 : l''annexe publie l''effet budgétaire
+  de 2027 (avis sur les revenus 2026 et PAS de 2027, § 4.2.1.1), l''enregistrement
+  chiffrait une année pleine. Seule la base change, sur le chiffre enregistré.'
+bound: two-sided
+mirror: false
+comparator:
+  published_eur: 4200000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 2, § 4.2.1.1, p. 29
+    : « le rendement de l''IR aurait été majoré d''environ 4,2 Md€ en 2027 »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; mesure estimée au titre
+    des revenus 2025 (§ 4.3.1)
+  perimeter: 'Le volet 4.2.1.1 seul : indexation de 2,1 % des tranches et des seuils
+    associés, des plafonds du quotient familial, de la décote, du plafond de déduction
+    des pensions alimentaires et de l''abattement pour enfant marié, et grilles de
+    taux par défaut du PAS ; État. Le scénario ne porte que les tranches, la décote
+    et le plafond général de la demi-part.'
+  net_of: 'Effet budgétaire de 2027 : somme de l''avis sur les revenus 2026 et de
+    l''effet sur le PAS de 2027. Hors volets carburant, indemnités de rupture et indemnités
+    journalières ; aucun effet comportemental.'
+  sign: cost
+  basis: premiere-annee
+  retrieved: '2026-10-14'
+revision:
+  de: plf2027_art_2
+  apres_annexe: true
+  annee_budgetaire: 2027
+  premiere_annee_de_revenus: 2026
+  annee_pleine_eur: 2926586879.963867
+  methode: impots.pas.budget_effects, 4 mois de taux mis à jour
+  raison: 'D-291 et D-292 : l''annexe publie l''effet budgétaire de 2027 (avis sur
+    les revenus 2026 et PAS de 2027, § 4.2.1.1), l''enregistrement chiffrait une année
+    pleine. Seule la base change, sur le chiffre enregistré.'
