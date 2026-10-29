@@ -337,6 +337,27 @@ def test_the_guard_would_still_fail_without_the_new_lines():
                               reform_cost=cost)
 
 
+def test_the_housing_aid_is_reported_net_of_its_crds():
+    """The opposite of the AF: `aide_logement` is ALREADY net of its CRDS.
+
+    openfisca builds it from `aide_logement_montant`, which is `round(brut + crds_logement)`,
+    so disposable income moves by exactly the aid, and `crds_logement` is the CRDS that
+    has already left it. The ledger netted it a second time, and the first population
+    pass of a housing reform — PLF 2027 art. 74, D-299 — tripped the guard by +0,52 %, the
+    CRDS rate. Fed this household's own deltas, the guard must balance.
+    """
+    from impots import guards
+
+    before = _run(LOCATAIRE)
+    after = _run(LOCATAIRE, "al_minoration_forfaitaire", 0.0)
+    cost = after["revenu_disponible"] - before["revenu_disponible"]
+    assert after["aide_logement"] - before["aide_logement"] == pytest.approx(cost, abs=0.01)
+    assert after["crds_logement"] - before["crds_logement"] < 0
+    moved = {k: after[k] - before[k]
+             for k in (*guards.STATE_RECEIPTS, *guards.STATE_TRANSFERS) if k in after}
+    guards.sector_balance(moved, reform_cost=cost, floor=0.0)
+
+
 # --- the three things the prestations handoff said to watch --------------------------
 
 

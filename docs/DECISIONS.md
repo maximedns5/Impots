@@ -23330,3 +23330,36 @@ avec une prime au-dessus ne serait expliqué par aucun des cinq biais.
 **Ce qui suit.** Les deux passes tournent sur le commit de cette entrée, dans un arbre
 de travail figé. Les deux cas, le triage du PLFSS et son rendu sont committés et poussés
 ensemble ; puis l'annexe du PLFSS est manifestée et la fiche de l'art. 74 lue.
+
+## D-299 — La double écriture comptait deux fois la CRDS des aides au logement
+
+**Le fait.** Des deux passes préenregistrées par D-298, celle de la prime d'activité a
+tourné jusqu'au bout sur `c05f1ee` et s'est enregistrée. Celle des aides au logement a
+été refusée par la double écriture (D-045) : coût rapporté +78 244 410 €, coût
+reconstitué depuis les postes +77 834 216 €, un écart de +0,52 % du net, cinq fois la
+tolérance. Le chiffre rapporté est le nôtre, sorti dans le message du refus ; aucune
+fiche n'a été lue.
+
+**La cause.** L'écart est le taux de la CRDS, 0,5 %. openfisca construit `aide_logement`
+à partir de `aide_logement_montant`, qui vaut `brut + crds_logement` : l'aide est déjà
+nette de sa CRDS, et le revenu disponible bouge exactement d'elle. Mesuré sur un ménage :
+l'aide +25,89 €, le revenu disponible +25,89 €, `crds_logement` −0,13 €. Le registre des
+transferts (`guards.STATE_TRANSFERS`) retranchait `crds_logement` une seconde fois. C'est
+la règle des allocations familiales lue à l'envers : leur montant est rapporté brut et
+leur CRDS doit être retranchée ; celui du logement est rapporté net. Aucune réforme du
+logement n'était passée sur la population : la minoration de 5 € n'a été vue que sur
+des ménages, où la tolérance absolue couvre l'écart.
+
+**La correction.** `crds_logement` sort de `STATE_TRANSFERS`, et de la table des
+instruments sans multiplicateur du module macro, qui ne le reçoit plus. Il reste parmi
+les totaux rapportés. Le test `test_the_housing_aid_is_reported_net_of_its_crds` nourrit
+la garde des écarts d'un locataire dont la minoration est supprimée ; vu échouer avant
+la correction, à +0,5 %. Les 190 tests de la population, des agrégats, de la boucle, du
+capital et de la CDHR passent.
+
+**Ce que cela change à l'enregistrement.** Rien au chiffre : la garde ne fait que
+vérifier, et le coût rapporté ne dépend pas d'elle. La passe du logement est relancée
+sur le commit de cette entrée, avec la tolérance et la raison que D-298 a fixées ; elle
+doit rendre les mêmes +78,24 M€, et l'écart est un contrôle. Celle de la prime reste
+sur `c05f1ee` : sa réforme ne touche pas l'aide au logement, et la garde l'a laissée
+passer.
