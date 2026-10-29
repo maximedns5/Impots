@@ -115,6 +115,10 @@ class Scenario:
     """A `FirmReformSpec` beside the households' reform, or None (Phase 11, D-246). Left
     out of the file when there is none, so that every scenario written before reads and
     writes back to the byte."""
+    annees: tuple[int, ...] = ()
+    """The years the text applies the measure, when it names them: PLF 2027 art. 15
+    revives the CEBGE for 2027 alone (D-288). Empty, every year it is priced. They start
+    at `year`, and are left out of the file when empty, as `firm_reform` is."""
 
     def __post_init__(self) -> None:
         _check_name(self.name)
@@ -132,6 +136,28 @@ class Scenario:
                 f"préenregistrement non daté n'en est pas un"
             ) from error
 
+        if self.annees and (self.annees[0] != self.year or any(
+                a >= b for a, b in zip(self.annees, self.annees[1:], strict=False))):
+            raise ScenarioError(
+                f"« {self.name} » : années {list(self.annees)}. Elles doivent être "
+                f"croissantes et sans doublon, et la première est celle du scénario "
+                f"({self.year}) : la mesure commence l'année qu'il chiffre.")
+
+    def applies(self, year: int) -> bool:
+        """Whether the text applies the measure in `year`."""
+        return not self.annees or year in self.annees
+
+    def check_years(self, years: Any) -> None:
+        """Refuse the years the text does not apply the measure in, for a command that
+        prices them without reading `annees`: it would price the measure in a year the
+        law does not carry it (D-288)."""
+        outside = [y for y in years if self.annees and y not in self.annees]
+        if outside:
+            raise ScenarioError(
+                f"« {self.name} » ne s'applique qu'en {list(self.annees)} : les années "
+                f"{outside} chiffreraient la mesure là où le texte ne la porte pas. Seul "
+                f"le chemin annuel (`impots predictif`) lit ces années.")
+
     def to_dict(self) -> dict[str, Any]:
         out = {
             "name": self.name,
@@ -144,6 +170,8 @@ class Scenario:
         }
         if self.firm_reform is not None and not self.firm_reform.is_empty():
             out["firm_reform"] = self.firm_reform.model_dump(exclude_none=True, mode="json")
+        if self.annees:
+            out["annees"] = list(self.annees)
         return out
 
     def save(self, directory: Path | None = None) -> Path:
@@ -221,10 +249,14 @@ def load(name: str, directory: Path | None = None) -> Scenario:
         if (not isinstance(note, str) or isinstance(tags, str)
                 or not all(isinstance(tag, str) for tag in tags)):
             raise TypeError("la note et les étiquettes doivent être du texte")
+        annees = raw.get("annees", [])
+        if not isinstance(annees, list) or not all(
+                type(a) is int for a in annees):  # a bool is not a year
+            raise TypeError(f"annees doit être une liste d'années entières : {annees!r}")
         scenario = Scenario(
             name=raw["name"], reform=reform, year=int(raw["year"]),
             created=raw["created"], source=raw["source"], note=note, tags=tuple(tags),
-            firm_reform=firm_reform,
+            firm_reform=firm_reform, annees=tuple(annees),
         )
     except ScenarioError:
         raise

@@ -1050,6 +1050,7 @@ def cmd_fiche(args: argparse.Namespace) -> int:
     directory = Path(args.dir) if args.dir else None
     try:
         scenario = scenarios_module.load(args.scenario, directory)
+        scenario.check_years([args.year])
     except scenarios_module.ScenarioError as error:
         print(str(error), file=sys.stderr)
         return 1
@@ -1124,6 +1125,7 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
     directory = Path(args.dir) if args.dir else None
     try:
         scenario = scenarios_module.load(args.scenario, directory)
+        scenario.check_years(range(args.start, args.end + 1))
         tj.require_reference(args.reference)
         hypothesis = up.Uprating(wage=args.wage, price=args.price,
                                  source=args.hypothesis_source, base_year=args.base_year)
@@ -1278,6 +1280,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                                        source=args.hypothesis_source,
                                        base_year=args.base_year)
         start = reference_module.start_from_accounts(chaine.START_YEAR)
+        if scenario.annees:
+            _annees_refusals(scenario, range(start.year + 1, start.year + 1 + args.horizon))
         securities = maturite.load_block1() if rate.kind == "marche" else None
         looped = args.macro and spending.rule == retroaction.SPENDING_RULE
         if args.persistence is not None and not looped:
@@ -1313,6 +1317,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     capital = moves_capital(scenario.reform)
 
     def price(year: int, view: str) -> float | annuel.Layered:
+        if not scenario.applies(year):
+            return annuel.Layered(cost=0.0, layers={"menages": 0.0, "entreprises": 0.0})
         pop = frame if view == "figee" else up.uprate(frame, year, uprating)
         # The imputed capital ages with the frame, on the wage index, or not at all in
         # the frozen view (D-249).
@@ -1355,6 +1361,12 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             return 1
 
         def price(year: int, view: str) -> Priced:
+            if not scenario.applies(year):
+                # A year the text does not cover: the reform is empty, and its pass is
+                # of the measure's kind, a firm reform alone (D-288).
+                return Priced(cost=0.0, impulse={} if args.macro else None,
+                              layers={"menages": 0.0, "entreprises": 0.0},
+                              behaviour_asked=args.behavioural)
             print(f"  {year} · {view} · passe du simulateur…", flush=True)
             first = api._price_first_year(
                 api.YearPass(reform=scenario.reform, year=year,
@@ -1378,7 +1390,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             reform=scenario.reform, behavioural=args.behavioural, macro=args.macro,
             persistence=args.persistence, store=store, macro_store=macro_store,
             firm_note=(api._firm_report_note(scenario.firm_reform, years) if firm_part
-                       else None), commit=commit, dirty=dirty, where=args.ou)
+                       else None), commit=commit, dirty=dirty, where=args.ou,
+            annees=scenario.annees)
     except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
             maturite.MaturityError, retroaction.FeedbackError) as error:
         print(str(error), file=sys.stderr)
@@ -1400,6 +1413,25 @@ def cmd_predictif(args: argparse.Namespace) -> int:
         for line in path.aged.lines():
             print(f"     {line}")
     return 0
+
+
+def _annees_refusals(scenario: object, path: range) -> None:
+    """What a measure bounded to its years cannot be on the annual path (D-288), refused
+    before the first pass: a household reform, whose channels read inputs each year that a
+    year without the measure does not have; and a year the path does not reach."""
+    from impots.dette.path import DebtError
+
+    if not scenario.reform.is_empty() or scenario.firm_reform is None or (
+            scenario.firm_reform.is_empty()):
+        raise DebtError(
+            f"« {scenario.name} » borne sa mesure à {list(scenario.annees)} : le chemin "
+            f"annuel ne le lit que pour une réforme des seules entreprises. Les canaux des "
+            f"ménages lisent chaque année des entrées qu'une année sans mesure n'a pas.")
+    outside = [y for y in scenario.annees if y not in path]
+    if outside:
+        raise DebtError(
+            f"« {scenario.name} » s'applique en {outside}, hors du chemin "
+            f"({path.start}–{path.stop - 1}) : la mesure n'y serait chiffrée nulle part.")
 
 
 def _whole_pass_refusals(args: argparse.Namespace) -> None:

@@ -2348,6 +2348,9 @@ class PredictifReportResponse(BaseModel):
     commit: str | None = None
     dirty: bool | None = None
     where: str | None = None
+    annees: list[int] | None = None
+    """The years the text applies the measure in, when it names them (D-288); absent
+    from the reports before it."""
 
     @model_validator(mode="after")
     def _check_report_paths(self) -> PredictifReportResponse:

@@ -94,8 +94,10 @@ SCOPES: tuple[Scope, ...] = (
                      "explorations_show", "explorations_list")),
     Scope("src/impots/population/cli.py",
           ("tests/test_cli_predictif.py", "tests/test_recherche.py",
-           "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py"),
-          functions=("cmd_predictif", "cmd_exploration", "_whole_pass_refusals")),
+           "tests/test_predictif_annuel_boucle.py", "tests/test_transformations.py", "tests/test_recherche_indices.py",
+           "tests/test_annees.py"),
+          functions=("cmd_predictif", "cmd_exploration", "_whole_pass_refusals",
+                     "_annees_refusals")),
     # Phase 10 M1 (D-234): the explorer made askable, its request and its command.
     Scope("src/impots/predictif/recherche.py", ("tests/test_recherche.py", "tests/test_transformations.py", "tests/test_recherche_indices.py",
                                                 "tests/test_predictif_entreprises.py")),

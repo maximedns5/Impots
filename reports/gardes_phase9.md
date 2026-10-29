@@ -2,9 +2,9 @@
 
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
-Balayé le 2026-10-28 sur le commit `7acee2d0dc2c` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
+Balayé le 2026-10-28 sur le commit `bbbaa9f71c69` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
 
-**228 mutations** : 227 tuées, 1 équivalente avec sa raison, 0 survivante.
+**230 mutations** : 229 tuées, 1 équivalente avec sa raison, 0 survivante.
 
 | Mutation | Garde | Verdict | Étage | Tuée par |
 |---|---|---|---|---|
@@ -111,6 +111,8 @@ Balayé le 2026-10-28 sur le commit `7acee2d0dc2c` (D-229). Chaque garde est mut
 | `api/main:predictif_simulate:sauf:(DebtError, maturite.MaturityError, OSError, MacroSourceError)` | predictif_simulate — sauf (DebtError, maturite.MaturityError, OSError, MacroSourceError) | tuée | ciblé | tests/test_api_predictif.py::test_the_market_scenario_without_the_aft_file_is_refused_by_name |
 | `api/main:predictif_simulate:sauf:(DebtError, ThetaError, retroaction.FeedbackError, maturite.Maturit...` | predictif_simulate — sauf (DebtError, ThetaError, retroaction.FeedbackError, maturite.Maturit... | tuée | ciblé | tests/test_api_predictif.py::test_a_refusal_inside_the_chain_is_a_422_with_its_reason |
 | `api/main:_price_households:sauf:shocks.ShockError` | _price_households — sauf shocks.ShockError | tuée | ciblé | tests/test_api_predictif.py::test_a_shock_the_builder_refuses_is_a_422_with_its_reason |
+| `population/cli:_annees_refusals:si:not scenario.reform.is_empty() or scenario.firm_reform is None or s...` | _annees_refusals — si not scenario.reform.is_empty() or scenario.firm_reform is None or s... | tuée | ciblé | tests/test_annees.py::test_a_household_measure_bounded_in_years_is_refused_before_any_pass |
+| `population/cli:_annees_refusals:si:outside` | _annees_refusals — si outside | tuée | ciblé | tests/test_annees.py::test_years_outside_the_path_are_refused_before_any_pass |
 | `population/cli:_whole_pass_refusals:si:args.reference != 'reconduit'` | _whole_pass_refusals — si args.reference != 'reconduit' | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_what_the_whole_pass_cannot_honour_is_refused_before_any_pass[base0-extra0-contre |
 | `population/cli:_whole_pass_refusals:si:args.sample != QUICK_TIER_HOUSEHOLDS or args.vintage != POPULATION_...` | _whole_pass_refusals — si args.sample != QUICK_TIER_HOUSEHOLDS or args.vintage != POPULATION_... | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_what_the_whole_pass_cannot_honour_is_refused_before_any_pass[base1-extra1-chiffreraient |
 | `population/cli:cmd_predictif:si:args.persistence is not None and (not looped)` | cmd_predictif — si args.persistence is not None and (not looped) | tuée | ciblé | tests/test_predictif_annuel_boucle.py::test_what_the_whole_pass_cannot_honour_is_refused_before_any_pass[base2-extra2-sans |

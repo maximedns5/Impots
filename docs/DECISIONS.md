@@ -22665,3 +22665,159 @@ pour les seuls instruments que C1 lit.
 **Les tests.** La section et le lanceur sont ceux de D-285, avec leurs vingt-neuf tests ;
 la page se régénère à l'identique depuis les rapports commités, ce que tient le test de
 dérive de `tests/test_predictif_etude.py`.
+
+## D-288 — Une mesure bornée aux années que le texte nomme
+
+**Le fait.** Le but 1 (D-286) demande l'effet sur la dette en 2035 des trois articles
+chiffrables du PLF 2027. L'art. 15 rétablit la CEBGE pour 2027 seulement : un troisième
+exercice, pas une contribution permanente. Le chemin annuel appliquait une réforme chaque
+année du chemin. En 2026, la CEBGE existe encore dans l'arbre, et son rétablissement est
+refusé (D-044) ; de 2028 à 2035, le chemin aurait chiffré une contribution que le texte
+ne lève pas. Aucune des deux lectures n'est l'article.
+
+**Ce qui change.**
+- Un scénario peut porter `annees`, les années où le texte applique la mesure. Elles
+  commencent à l'année du scénario, croissantes et sans doublon ; une valeur qui n'est
+  pas une liste d'années entières ne se charge pas. Vide, le fichier ne porte pas la clé
+  et se relit à l'octet, comme avant.
+- `impots predictif` chiffre la mesure ces années-là et une réforme vide les autres,
+  dans les deux vues et avec ou sans la passe du simulateur. Le rapport porte `annees`
+  et une convention qui le dit, et qui dit que la première année seule reportée ne lit
+  rien d'une mesure qui ne commence pas la première année du chemin.
+- Deux refus, avant la première passe : une mesure bornée qui touche les ménages, dont
+  les canaux lisent chaque année des entrées qu'une année sans mesure n'a pas ; et une
+  année de la mesure hors du chemin, où elle ne serait chiffrée nulle part.
+- `impots fiche` et `impots trajectoire` chiffrent une année ou une plage sans lire
+  `annees` : ils refusent les années que le texte ne couvre pas, et les nomment.
+
+**Ce qui ne change pas.** Une réforme sans `annees` passe par les appels de toujours. La
+première année d'une mesure bornée est celle du scénario : `chiffrage register` et
+`scenario compare`, qui chiffrent cette année-là, la chiffrent.
+
+**Les tests.** `tests/test_annees.py`, 18 tests, tous vus échouer avant le code. Dix-neuf
+mutations écrites à la main, toutes tuées après un cas ajouté : sans le refus d'une
+valeur qui n'est pas une liste, l'entier 2027 échouait encore, mais sans nommer `annees`.
+Le refus entre au périmètre du balayage de la phase 9 (`_annees_refusals`).
+
+## D-289 — L'étude du PLF 2027 en trois réponses : préenregistrée avant ses passes
+
+**Le fait.** Le but 1 (D-286) est une page publiée qui donne, pour chacun des trois
+articles chiffrables du PLF 2027, ce qu'il coûte et qui y gagne, ce qu'il coûte une fois
+les comportements et l'économie pris en compte, ce qu'il fait à la dette en 2035, et
+l'écart au chiffrage officiel. Cette entrée fixe les passes et leur pronostic avant qu'une
+seule ne tourne.
+
+**Ce qui tourne.** `scripts/etude_plf2027.py lancer`, depuis une copie de travail figée sur
+le commit qui porte cette entrée, une passe à la fois :
+- la première année de chaque article, par l'appel du simulateur de sa chaîne. Pour les
+  art. 2 et 3, `POST /population/simulate` en 2026, comportements et éventail macro
+  demandés, sur la population de 2024 non vieillie, comme leurs enregistrements. Pour
+  l'art. 15, `POST /entreprises/simulate` en 2027 ;
+- le chemin annuel de chaque article, de 2026 à 2035, par `impots predictif` dans le cadre
+  de l'étude de D-237, champ pour champ : dépenses gelées en volume, croissance réelle de
+  1 % et prix de 2 %, taux implicite tenu, salaires à 3 %, θ½, comportements et boucle.
+
+Les scénarios des art. 2 et 3 sont ceux du 2026-10-02 ; celui de l'art. 15 porte la
+réforme que son enregistrement a chiffrée, bornée à 2027 (D-288). Les rapports vont sous
+`reports/etude_plf2027/`, et `scripts/write_etude_plf2027.py` en fait
+`docs/ETUDE_PLF2027.md`.
+
+**Ce que la page refuse.** Un rapport manquant ou en trop, un commit absent ou un `src/`
+modifié, un lieu non dit, deux commits ; une première année qui n'a pas chiffré le
+scénario de l'étude par l'appel de sa chaîne, ou qui n'a pas de coût ; un chemin qui ne
+valide pas, ou qui n'a pas tourné dans le cadre de l'étude sur son scénario, années de la
+mesure comprises ; une bande qui n'est pas en euros autour du solde de la mesure, que la
+page lirait à l'envers ; un Δb à θ que la boîte ne porte pas.
+
+**Le pronostic.**
+1. *Première année.* Art. 2 : un coût de 2,7 à 3,3 Md€, contre 2,93 Md€ enregistrés.
+   Art. 3 : un gain de 1,0 à 1,25 Md€, contre 1,30 Md€ enregistrés : D-210 et D-211 ont
+   recalé la masse des pensions depuis, et l'art. 3 refait donnait 1,12 Md€. Art. 15 : un
+   gain de 7,0 à 7,1 Md€, le chiffre enregistré à 1 % près.
+2. *Comportements.* Art. 2 et 3 : une bande en euros, son centre à moins de 15 % du coût
+   mécanique. Art. 15 : aucune bande ; aucun canal des ménages ne lit l'IS.
+3. *Dette en 2035, vue vieillie, persistance éteinte, à θ½.* Art. 2 : de +0,5 à +0,9
+   point, à l'échelle du chemin de la décote de D-277 (+0,22 point pour 0,9 Md€ par an).
+   Art. 3 : de −0,2 à −0,45 point. Art. 15 : de −0,18 à −0,25 point, la même sous les deux
+   persistances, faute d'impulsion.
+4. *Verdicts.* Art. 15 : « baisse », partout. Art. 2 et 3 : « dépend de θ ». Sous la
+   persistance éteinte, le signe tiendrait à tous les coins ; sous la persistance tenue,
+   le multiplicateur à son coin haut le retourne, comme pour la décote et le barème de
+   l'étude.
+
+**Les biais déclarés.**
+- La première année des ménages passe par le palier rapide, 20 000 ménages, et sur le
+  code d'aujourd'hui ; l'enregistrement noté reste celui du 2026-10-14, que la page
+  donne à côté avec l'écart entre les deux.
+- Le droit est reconduit : les seuils de l'art. 2 et le plafond de l'art. 3 restent ceux
+  de 2026 en euros courants jusqu'en 2035, quand les lois de finances suivantes les
+  indexeraient.
+- L'art. 15 n'a ni bande ni boucle : aucune variante d'IS dans Mésange 2017 (D-219).
+- Les volets non chiffrés de chaque article, que leurs scénarios nomment, restent hors
+  de la page, et la page le dit.
+
+**Avant les passes : un essai à blanc, et ce qu'il a changé.** Une fois ce pronostic
+poussé, le chemin de l'art. 15, le seul sans passe de population, a tourné à blanc vers le
+scratchpad. Il s'est arrêté en 2027 sur la vue vieillie : l'API servait la fixture des
+entreprises, qui n'a pas d'année. Le lanceur sert désormais à chaque passe le millésime de
+2023 (`IMPOTS_FIRM_VINTAGE`), celui de D-250 et de l'enregistrement de l'art. 15, et la page
+refuse une première année des entreprises qui ne tourne pas sur lui ou sur des cellules
+synthétiques ; trois mutations, tuées. Relancé, l'essai a donné ce que la passe officielle
+redira : 7,902 Md€ en 2027 dans la vue vieillie et 7,054 Md€ dans la vue figée, Δb 2035 de
+−0,228 et −0,203 point, les deux persistances confondues, « baisse » partout. C'est dans
+le pronostic, et c'est dit ici parce que c'est vu. Les passes tournent sur le commit qui
+porte ce paragraphe.
+
+**Ce qui suit.** Les passes tournent après le rejeu de C1 (D-285), une à la fois. Le
+résultat, la page et le test qui refuse sa dérive entrent dans une nouvelle entrée.
+
+## D-290 — L'étude du PLF 2027 en trois réponses : le résultat
+
+**Le fait.** Les six passes préenregistrées dans D-289 ont tourné sur `02fd623`, l'une
+après l'autre, depuis une copie de travail figée, en 2 h 16. `docs/ETUDE_PLF2027.md` les
+rend : pour les art. 2, 3 et 15, ce qu'ils coûtent et qui y gagne, ce qu'ils coûtent une
+fois les comportements et l'économie pris en compte, ce qu'ils font à la dette en 2035,
+l'écart au chiffrage officiel ; puis les trente articles refusés, chacun avec sa case et sa
+raison. C'est la première étude publiée du but 1 (D-286).
+
+**Une relance, et pourquoi.** Les premières années des art. 2 et 3 demandaient l'éventail
+macro. Il a été refusé, non par le modèle mais par le conteneur : le TES de l'INSEE et le
+tableau 6.208 de l'emploi par branche n'y étaient pas. INSEE répondant de nouveau, les deux
+fichiers ont été téléchargés par `impots data fetch`, leurs sha256 vérifiés contre le
+manifeste, et les deux premières années relancées sur le même commit. Contrôle : le coût,
+les déciles, la bande, les totaux et les écarts de la relance sont ceux de la première passe
+à l'identique ; seul l'éventail s'y ajoute. Les deux premières passes ne sont pas commitées.
+
+**Le pronostic, point par point.**
+1. *Tenu.* Première année. Art. 2 : 2,828 Md€ de coût, 99 M€ sous l'enregistrement. Art. 3 :
+   1,119 Md€ de gain, 175 M€ sous l'enregistrement, ce que D-210 et D-211 annonçaient.
+   Art. 15 : 7,054 Md€ de gain, l'enregistrement à l'euro.
+2. *Tenu pour les art. 2 et 15, manqué pour l'art. 3.* Art. 2 : une bande de 2,63 à
+   2,72 Md€, centrée 5,3 % sous le coût mécanique, de grade « in-support ». Art. 15 : aucune
+   bande. Art. 3 : aucune bande non plus, quand le pronostic en attendait une. Aucun canal
+   des ménages ne réclame le plafond de l'abattement sur les pensions : la bande est de
+   grade « no-evidence », et la boîte θ du chemin ne porte que le multiplicateur.
+3. *Tenu.* Dette en 2035, vue vieillie, persistance éteinte, à θ½ : +0,82 point pour
+   l'art. 2, −0,35 pour l'art. 3, −0,23 pour l'art. 15, le même sous les deux persistances.
+4. *Tenu.* « Baisse » partout pour l'art. 15. « Dépend de θ » pour les art. 2 et 3 : sous
+   l'éteinte, le signe tient à tous les coins ; sous la tenue, le multiplicateur à son coin
+   haut le retourne (de −0,19 à +0,83 point pour l'art. 2, de −0,34 à +0,05 pour l'art. 3).
+
+**Ce que la page ajoute que le pronostic ne disait pas.** L'éventail macro : pour l'art. 2,
+un PIB plus haut de 2,5 Md€ à trois ans, de −0,01 à +5,0 Md€, et 17 000 emplois, de 0 à
+35 000 ; pour l'art. 3, un PIB plus bas de 1,0 Md€, et 6 800 emplois de moins. Le
+coût vieilli de l'art. 2 passe de 3,07 Md€ en 2026 à 4,36 Md€ en 2035 : les seuils restent
+ceux de 2026 dans le droit reconduit, et plus de foyers les franchissent à mesure que les
+revenus montent.
+
+**Le rendu, depuis D-289.** La page lit la bande comme un coût après l'avoir vérifiée autour
+du solde, donne l'éventail avec son bandeau et ses horizons en années, nomme la colonne des
+entreprises « impôt en plus », et donne pour chaque refus sa case et la première phrase de
+sa raison. 39 tests dans `tests/test_write_etude_plf2027.py`, dont celui qui refuse la
+dérive entre la page et les rapports : vu échouer sur une page où « +2,83 Md€ » était
+devenu « +2,93 Md€ ». Les mutations de ces ajouts sont tuées.
+
+**Ce que l'étude dit du but.** Les trois réponses existent pour les trois articles
+chiffrables, avec leur absence quand il y en a une. Le critère du but ne bouge pas : deux
+cas sur trois restent dans la tolérance, l'art. 2 hors de la sienne, ce que le but 2 doit
+expliquer.

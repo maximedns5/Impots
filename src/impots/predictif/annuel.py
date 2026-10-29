@@ -182,6 +182,9 @@ class Rapport:
     where: str | None = None
     """The code that priced the report, whether `src/` differed from it, and where the
     passes ran (D-275); None where the caller did not say."""
+    annees: tuple[int, ...] = ()
+    """The years the text applies the measure in, when it names them; the reform is
+    empty the others (D-288). Empty, every year."""
 
     @property
     def aged(self) -> chaine.Trajectoire:
@@ -229,7 +232,8 @@ class Rapport:
                       "implicit_rate": self.start.implicit_rate,
                       "gdp_eur": self.start.gdp_eur},
             "years": rows,
-            "conventions": common + ([self.firm_note] if self.firm_note else []),
+            "conventions": common + ([self.firm_note] if self.firm_note else [])
+            + ([annees_note(self.annees)] if self.annees else []),
             "absent": dict(lead.aged.absent),
             "theta": dict(lead.aged.theta), "theta_applied": lead.aged.theta_applied,
             "closed": dict(lead.aged.closed),
@@ -238,6 +242,7 @@ class Rapport:
             "behavioural": self.behavioural, "macro": self.macro,
             "theta_box": self.theta_box,
             "commit": self.commit, "dirty": self.dirty, "where": self.where,
+            "annees": list(self.annees) or None,
             "persistence": None if side else lead.aged.persistence,
             "side_by_side": [{
                 "persistence": p.persistence, "label": p.label,
@@ -260,7 +265,8 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
           behavioural: bool = False, macro: bool = False, persistence: str | None = None,
           store: Any = None, macro_store: Any = None,
           firm_note: str | None = None, commit: str | None = None,
-          dirty: bool | None = None, where: str | None = None) -> Rapport:
+          dirty: bool | None = None, where: str | None = None,
+          annees: tuple[int, ...] = ()) -> Rapport:
     """The debt paths from the priced years. No carry: every year must be priced.
 
     With `behavioural` or `macro`, every year must carry its whole pass (`YearPrice.passes`)
@@ -383,7 +389,16 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
                    computed=computed, start=start, prices=tuple(prices), paths=paths,
                    uprating_note=uprating_note, behavioural=behavioural, macro=macro,
                    firm_note=firm_note, theta_box=box, commit=commit, dirty=dirty,
-                   where=where)
+                   where=where, annees=tuple(annees))
+
+
+def annees_note(annees: tuple[int, ...]) -> str:
+    """The convention of a measure the text bounds to its years (D-288)."""
+    years = ", ".join(str(y) for y in annees)
+    return (f"La mesure ne s'applique qu'en {years}, les années que le texte nomme : les "
+            f"autres années, la réforme est vide et ne coûte rien. La première année "
+            f"seule reportée ne dit donc rien d'une mesure qui ne commence pas la "
+            f"première année du chemin.")
 
 
 def _theta_box(keys: list[str], paths: tuple[Path, ...], *, year: int, theta: Theta,
