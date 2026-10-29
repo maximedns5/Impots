@@ -22821,3 +22821,52 @@ devenu « +2,93 Md€ ». Les mutations de ces ajouts sont tuées.
 chiffrables, avec leur absence quand il y en a une. Le critère du but ne bouge pas : deux
 cas sur trois restent dans la tolérance, l'art. 2 hors de la sienne, ce que le but 2 doit
 expliquer.
+
+## D-291 — L'écart de l'art. 2, volet par volet : préenregistré avant ses passes
+
+**Le fait.** Le but 2 (D-286) : l'art. 2 du PLF 2027 est noté hors de sa tolérance, −30,3 %
+pour ±20 % (D-204). D-204 a nommé quatre explications mécaniques, dans l'ordre que D-029
+impose, et n'en a mesuré aucune. Cette entrée fixe leur mesure et son pronostic avant
+qu'une passe ne tourne.
+
+**Ce qui est écrit avant les passes.**
+- `impots.pas` : le calendrier du prélèvement à la source. Une mesure en vigueur à partir
+  des revenus N0 pèse sur l'année Y par le solde des avis sur les revenus Y−1, et par le PAS
+  de Y, dont le taux de janvier à août vient des revenus Y−2 et celui de septembre à
+  décembre des revenus Y−1 (CGI, art. 204 H). La première année pèse donc l'année pleine
+  des revenus N0 et un tiers de celle des revenus N0+1 ; la deuxième, les deux tiers de
+  celle-ci et l'année pleine suivante ; ensuite, l'année pleine. Validé hors échantillon sur
+  la seule chronique que l'annexe publie pour une mesure de ce calendrier, l'art. 3 : pour
+  1,1 Md€ en année pleine, le modèle rend 1,47, 1,83 et 1,1 Md€, l'annexe 1,4, 1,8 et 1,1,
+  à 5 % près. Huit tests, six mutations tuées, dont un test faux corrigé : la troisième
+  année de la mesure pèse 5/3, et le régime de croisière commence à la quatrième.
+- `scripts/verify_ecart_art2.py`, au palier complet sur 20 000 ménages, comme
+  l'enregistrement : le contrôle, le scénario rejoué sur la population telle
+  qu'enregistrée ; ses trois volets séparés sur la population d'aujourd'hui ; le scénario
+  sur la population vieillie vers 2026 et 2027 sous deux bornes d'indices déclarées
+  (salaires 2 et 3 % par an, prix 1 et 2 %), l'effet budgétaire de 2027 qui s'en déduit ;
+  l'impôt au barème de la population contre les 98,84 Md€ de la DGFiP. Le rapport va sous
+  `reports/ecart_art2.json`.
+
+**Ce qui n'est pas mesuré.** Les quatre autres plafonds du quotient familial, le plafond
+de la pension alimentaire, l'abattement pour enfant marié et les grilles de taux par
+défaut, que l'annexe chiffre et qu'aucun bouton n'atteint. Ils restent un biais déclaré
+vers le bas.
+
+**Le pronostic.**
+1. Le contrôle rend l'euro enregistré, 2,927 Md€, à 1 € près.
+2. Sur la population d'aujourd'hui, le scénario coûte de 2,78 à 2,90 Md€. Les tranches en
+   portent de 85 à 92 %, la décote de 4 à 10 %, la demi-part de 2 à 6 %, et la somme des
+   trois tient le tout à 2 % près.
+3. Vieillie vers les revenus 2026, la mesure coûte de 4 à 10 % de plus qu'aujourd'hui.
+4. Sur la base de l'annexe, l'enregistré vaut 4/3 de lui-même, 3,902 Md€, −7,1 % du publié :
+   c'est de l'arithmétique, et c'est déjà dans la tolérance. Vieillie, l'effet budgétaire de
+   2027 va de 3,9 à 4,4 Md€, à 10 % du publié au plus.
+5. L'impôt au barème de la population dépasse celui de la DGFiP de 5 à 12 %.
+
+La base porte donc l'essentiel de l'écart, le millésime le referme presque, et le niveau de
+l'impôt tire en sens inverse, sans le rouvrir au-delà de la tolérance.
+
+**Ce qui suit.** Si la base explique l'écart, l'enregistrement reste noté hors tolérance,
+et une révision datée du jour, sous un nouveau nom, le compare sur la base de l'annexe,
+signalée comme écrite après l'ouverture de l'annexe et comptée à part des cas aveugles.
