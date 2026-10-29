@@ -463,6 +463,17 @@ Chaque article refusé reçoit la porte qui l'ouvrirait, selon la raison de son 
 
 Restent, dans les articles chiffrés, **2 325 M EUR** de volets que l'outil ne chiffre pas : art. 2, volet 4.2.1.3, 820 M EUR ; art. 2, volet 4.2.1.4 (IR), 965 M EUR ; art. 2, volet 4.2.1.4 (CSG), 540 M EUR. Le triage de leur article dit déjà ce qui leur manque.
 
+### Les refus mesurés (but 8, D-305)
+
+Le but 8 a regardé **3 110 M EUR** de volets refusés. Aucun n'entre au numérateur : chacun dit ce que la population ou les données ouvertes en portent, et ce qui manque.
+
+* **Art. 2, volet 4.2.1.3, 820 M EUR.** Aucune indemnité de rupture. La fiche cite le rapport IGF-IGAS d'octobre 2025 : 40 000 personnes au-dessus d'un PASS, soit 0,2 % des salariés du privé de la population, une queue qu'une clé par cellule étalerait sur tous. Manque : une distribution ouverte des indemnités de rupture ; imputer depuis les comptes de la fiche noterait la fiche contre elle-même.
+* **Art. 2, volet 4.2.1.4 (IR), 965 M EUR.** Depuis D-305, la population porte les IJ du régime général de 2024 (`impute_ij`) : 10 690 M€ de maladie et 4 955 M€ d'AT-MP, les totaux du CCSS de mai 2026, sur 19,24 millions de salariés du privé. Manque : le moteur : openfisca ne met les IJ ni dans l'impôt sur le revenu ni dans la CSG, et il faut une correction et deux boutons (part ALD exonérée, part AT-MP exonérée) ; puis la part des IJ versées au titre d'une ALD, qu'aucune source ouverte ne donne (Voies et moyens 2026, dépense 120204 : « Bénéficiaires : Non déterminé »).
+* **Art. 2, volet 4.2.1.4 (CSG), 540 M EUR.** Depuis D-305, la population porte les IJ du régime général de 2024 (`impute_ij`) : 10 690 M€ de maladie et 4 955 M€ d'AT-MP, les totaux du CCSS de mai 2026, sur 19,24 millions de salariés du privé. Manque : le moteur : la CSG des IJ est un TODO d'openfisca, et le taux de 6,2 % n'a pas de bouton. Trois points sur l'assiette de 2024 font 469 M€ : une multiplication, pas un chiffrage de l'outil.
+* **Art. 5, 500 M EUR.** La case 8UT porte le stock des plus-values en report : 173,27 Md€ chez 117 112 foyers en 2024. À 31,4 % de prélèvements, les 500 M€ de la fiche supposent 1,59 Md€ transmis par an, 0,92 % du stock. Manque : l'âge des détenteurs, qui fixe la part transmise par donation ou décès : aucune source ouverte ne ventile la case 8UT par âge.
+* **Art. 6, 25 M EUR.** Les cases 2CH, 2DH, 2VV et 2WW portent les produits de l'assurance-vie : 1,947 Md€ chez 1 113 493 foyers pour la seule 2CH en 2024. Manque : l'assureur étranger et la transmission au décès, qu'aucune case ne distingue ; les 100 Md€ d'encours de la fiche n'ont pas d'équivalent ouvert.
+* **Art. 7, volet 4.2.1.2, 260 M EUR.** Les cases 5ND et 5OD portent les recettes du meublé non professionnel au micro : 5,045 Md€ chez 619 711 foyers pour la 5ND en 2024. Manque : les amortissements que la réforme réintègre à la cession : ils sont dans les liasses du réel, que la fiche apparie, et dans aucune donnée publique.
+
 ### Les articles qui sortent du dénominateur
 
 * **Art. 1** — pas de fiche dans l'annexe.

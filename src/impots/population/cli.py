@@ -269,7 +269,7 @@ def cmd_run(args: argparse.Namespace) -> int:
     reform = _load_reform(args.reform)
     result = run(population, year=args.year, reform=reform, tier=args.tier,
                  sample=args.sample, impute_niches=args.impute_niches,
-                 impute_capital=args.impute_capital)
+                 impute_capital=args.impute_capital, impute_ij=args.impute_ij)
     print(f"ran {result.n_households:,} households / {result.n_persons:,} persons "
           f"({result.tier} tier{f', sample {result.sampled:,}' if result.sampled else ''})")
     print(f"  timings {result.timings} · guards {result.guards}")
@@ -1720,6 +1720,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="hand out the base the PFU taxes from DGFiP n° 41's fractiles before taking "
              "the figures (D-248). A CALIBRATION too: the PFU then matches n° 41 by "
              "construction. Revenus 2024 only")
+    runner_parser.add_argument(
+        "--impute-ij", action="store_true",
+        help="hand the régime général's sick pay (maladie, AT-MP) to the private "
+             "sector's employees from the CCSS of May 2026 (D-305). A CALIBRATION: the "
+             "totals are the CCSS's by construction. Neither the IR nor the CSG sees them "
+             "yet. 2024 only")
     runner_parser.set_defaults(func=cmd_run)
 
     reconciler = actions.add_parser("reconcile", help="generate reports/reconciliation.md")

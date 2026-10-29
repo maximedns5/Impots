@@ -146,6 +146,22 @@ CAPITAL_PFU_BY_FRACTILE = Figure(
            "the ratio (×1,17) for the total to come back, as the wage bill's does.",
 )
 
+SICK_PAY_BY_BRANCH = Figure(
+    value=15.645e9, unit="EUR", year=2024,
+    scope="Indemnités journalières du régime général (anciens affiliés RSI compris), "
+          "dépenses remboursées 2024 : 10,690 Md€ de maladie, 4,955 Md€ d'AT-MP",
+    source="Rapport à la Commission des comptes de la sécurité sociale, mai 2026, "
+           "fiche 2.3 tableau 1 et fiche 4.4 tableau 1",
+    url="https://www.securite-sociale.fr/la-secu-en-detail/comptes-de-la-securite-sociale",
+    use="calibration",
+    caveat="Spent when `impute_ij` runs (D-305). Every employee of the private sector "
+           "gets the expected sick pay of its cell (age band × PCS, the EEC's weekly "
+           "sick-leave rate) on a wage capped at 1,8 SMIC, the two branches on the same "
+           "key; the totals are the CCSS's by construction and any share of recipients "
+           "is an artefact. No ALD split: no open source gives it.",
+)
+
+
 CAPITAL_BOXES_2042 = Figure(
     value=80.69e9, unit="EUR", year=2024,
     scope="Cases 2DC, 2TR, 2TS et 3VG des déclarations 2042, revenus 2024, total national",

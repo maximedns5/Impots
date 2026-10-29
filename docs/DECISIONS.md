@@ -23662,3 +23662,101 @@ divergent. Il montrait les 80 premiers caractères de la ligne, identiques des d
 quand la différence venait plus loin. Un test le tient, vu échouer sur l'ancien message.
 Rendu dans Chromium sans JavaScript, à 1 200 puis 390 pixels de large : aucune page ne
 déborde, et un tableau trop large défile seul.
+
+## D-305 — Le but 8, première passe : les IJ portées par la population, le reste mesuré
+
+**Le fait.** Le but 8 demande que la population porte les indemnités journalières, les
+indemnités de rupture et l'épargne que D-294 désigne, chacune vérifiée contre son agrégat,
+puis que les volets 4.2.1.3 et 4.2.1.4 de l'art. 2 du PLF 2027 et les art. 5, 6 et 7
+deviennent chiffrables, ou restent refusés avec une raison mesurée. Cette passe livre les
+indemnités journalières. Le reste est refusé, chaque fois avec sa mesure, et ce qui manque
+est dit à la fin. `calibrate.py` n'est pas touché : les IJ ne sont pas dans la masse des
+salaires des comptes nationaux sur laquelle la population est calée, elles s'ajoutent
+donc à côté, et aucun poids ne bouge.
+
+**La source.** Le rapport à la Commission des comptes de la sécurité sociale de mai 2026
+est manifesté. Le fichier manquait au disque ; il a été retéléchargé depuis l'URL du
+manifeste, et son empreinte est conforme. `population/ij.py` y lit deux lignes. La fiche
+2.3, tableau 1, page 94 du PDF, donne les IJ du régime général, anciens affiliés du RSI
+compris : 15 645 M€ en 2024 et 16 445 M€ en 2025. La fiche 4.4, tableau 1, page 161,
+donne celles de la CNAM AT-MP : 4 955 M€ en 2024 et 5 480 M€ en 2025. La maladie en est
+la différence, 10 690 M€ en 2024. La lecture est gardée par le texte de la fiche 2.3, qui
+dit que les AT-MP font 34 % des dépenses de 2025. Les deux tableaux en donnent 33,3 %, et
+un écart de plus d'un point fait refuser la lecture. La première lecture, avec un motif
+des milliers trop lâche, rendait 1 231 %, et la garde l'a refusée.
+
+**La clé.** L'enquête Emploi 2024 dit qui était en congé maladie la semaine de référence
+(`RABS` = 2, « y compris arrêt après un accident au travail »). Chez les salariés du privé,
+la part pondérée va de 0,12 % à 8,62 % selon les vingt cellules de tranche d'âge et de
+PCS : 1,43 % chez les cadres de 25 à 49 ans, 8,62 % chez les ouvriers de 50 à 64 ans. La
+clé d'un salarié du privé est cette part, fois son salaire brut plafonné à 1,8 SMIC
+(38 166 € en 2024). Chaque masse est répartie au prorata de la clé.
+
+**Ce que la population porte.** 19,24 millions de salariés du privé reçoivent en moyenne
+556 € de maladie et 258 € d'AT-MP par an. Les totaux pondérés sont ceux du CCSS à un
+millionième près, et `verify` refuse une colonne qui s'en écarte ou qui passe sous zéro.
+C'est une calibration qui dépense sa source : `margins.SICK_PAY_BY_BRANCH` porte
+`use="calibration"`. Le module déclare cinq artefacts. Chaque salarié reçoit l'espérance
+de sa cellule. Les deux branches ont la même clé. La masse est celle du régime général,
+versée aux seuls salariés du privé. Le plafond est celui de la maladie. Enfin, la colonne
+maladie ne sépare pas l'ALD.
+
+**Le branchement.** `run(..., impute_ij=True)` et `impots population run --impute-ij`
+ajoutent les deux colonnes avant toute passe, puisque la clé ne dépend d'aucune sortie.
+`to_openfisca` les écrit dans `indemnites_journalieres_maladie` et
+`indemnites_journalieres_accident_travail`, chaque mois. openfisca les lit dans les
+ressources du RSA, de la prime d'activité, de l'ASS et de l'ASPA, mais ni dans l'impôt sur
+le revenu ni dans la CSG : la CSG des IJ y est un TODO. Sans le drapeau, rien ne change.
+Une autre année que 2024 est refusée par son nom, avant toute passe.
+
+**Ce qui reste refusé, et sa mesure.**
+- **Art. 2, volet 4.2.1.4** (IR, 965 M€ ; CSG, 540 M€). L'assiette est désormais dans la
+  population, mais le moteur ne la taxe pas. Il manque une correction qui range les IJ
+  dans les salaires (sauf l'ALD et la moitié des AT-MP), une CSG à 6,2 % sur les IJ, et
+  trois boutons : la part ALD exonérée, la part AT-MP exonérée, le taux de CSG des IJ. Il
+  manque aussi une donnée. Aucune source ouverte ne donne la part des IJ versées au titre
+  d'une ALD. Pour la dépense 120204, les Voies et moyens 2026 écrivent « Bénéficiaires :
+  Non déterminé ». Pour mesure, le volet CSG est proportionnel : trois points sur
+  l'assiette de 2024 font 469 M€. C'est une multiplication, pas un chiffrage de l'outil,
+  et elle ne compte pas au numérateur.
+- **Art. 2, volet 4.2.1.3** (ruptures, 820 M€). Aucune source ouverte ne donne la
+  distribution des indemnités de rupture. La fiche cite le rapport IGF-IGAS d'octobre
+  2025 : 40 000 personnes au-dessus d'un PASS, 10 % des bénéficiaires qui reçoivent 80 %
+  des montants. Ce sont ses propres comptes, et imputer depuis eux noterait la fiche
+  contre elle-même. 40 000 personnes font 0,2 % des 19,24 millions de salariés du privé :
+  une queue qu'une clé par cellule étalerait sur tous, comme elle étale les IJ.
+- **Art. 5** (500 M€). La case 8UT porte le stock des plus-values en report : 173,27 Md€
+  chez 117 112 foyers en 2024. La réforme impose la part transmise par donation ou décès.
+  À 31,4 % (12,8 % d'IR et 18,6 % de prélèvements sociaux), 500 M€ supposent 1,59 Md€
+  transmis par an, soit 0,92 % du stock. Ce taux dépend de l'âge des détenteurs, et
+  aucune source ouverte ne ventile la case 8UT par âge.
+- **Art. 6** (25 M€). Les cases 2CH, 2DH, 2VV et 2WW portent les produits des contrats
+  d'assurance-vie : 1,947 Md€ chez 1 113 493 foyers pour 2CH. Aucune case ne distingue un
+  assureur étranger, ni une transmission au décès. Les 100 Md€ d'encours que cite la fiche
+  n'ont pas d'équivalent ouvert.
+- **Art. 7** (260 M€). Les cases 5ND et 5OD portent les recettes du meublé non
+  professionnel au micro : 5,045 Md€ chez 619 711 foyers pour 5ND. La réforme réintègre
+  les amortissements à la cession. Les amortissements sont dans les liasses du réel, que
+  la fiche apparie, et dans aucune donnée publique.
+
+**La part en euros.** Elle ne bouge pas : 10 600 M€ sur 16 624, soit 63,8 %. Aucun volet
+n'entre au numérateur. La seule assiette nouvelle, les IJ, attend le moteur.
+
+**Ce qui manque au but 8.** Dans l'ordre où cela ouvrirait des euros :
+1. la correction et les boutons des IJ, avec leurs tests vus échouer ; puis deux cas
+   préenregistrés pour l'IR des AT-MP et la CSG, révisions comptées à part (D-292) ;
+2. une source ouverte de la part ALD des IJ, sans laquelle l'IR de l'ALD reste refusé ;
+3. une distribution des indemnités de rupture ;
+4. l'épargne imputée depuis les cases 2042. Ce sont des totaux nationaux, sans clé de
+   répartition publiée, et l'imputer n'ouvrirait aucun des art. 5, 6 et 7 ;
+5. le partage de la clé entre maladie et AT-MP, et un appariement qui ne donnerait pas des
+   IJ à tous les salariés.
+
+**Les tests.** `tests/test_ij.py` compte quinze tests, et `test_couverture_2027.py` en
+gagne cinq pour les refus mesurés : chacun nomme une ligne du dénominateur que l'outil ne
+chiffre pas, et chaque nombre qu'il cite est celui de sa source, relu dans les cases 2042
+et dans le CCSS. Dix-sept mutations ont été essayées sur le module, l'écriture dans
+openfisca, le drapeau et la garde des refus. Seize sont tuées. L'appel à `verify` dans
+`impute` a survécu : la mise à l'échelle le rend vrai par construction. C'est un mutant
+équivalent, et l'appel a été retiré. Les tests appellent `verify` sur la population
+réelle.

@@ -173,3 +173,9 @@ Preuve attendue : chaque imputation contre son agrégat, la nouvelle part en eur
 sortie verte des tests ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 60
 tours, en disant ce qui manque.
 ```
+
+Première passe, D-305 : la population porte les indemnités journalières du régime général,
+vérifiées contre le CCSS de mai 2026. Les volets 4.2.1.3 et 4.2.1.4 de l'art. 2 et les
+art. 5, 6 et 7 restent refusés, chacun avec sa mesure ; la part en euros reste à 63,8 %.
+Ce qui manque est listé à la fin de D-305 : le câblage des IJ dans l'impôt et la CSG,
+la part ALD, une distribution des indemnités de rupture, l'épargne imputée.
