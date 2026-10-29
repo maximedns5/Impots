@@ -23552,3 +23552,59 @@ lanceur ne posait pas le mode local, que `tests/conftest.py` pose pour toute la 
 qui cachait le défaut. Le lanceur ouvre désormais le simulateur pour ses passes, un test
 vu échouer le tient en fermant d'abord l'accès, et les passes tournent sur le commit de la
 correction. Rien d'autre ne change : ni scénario, ni cadre, ni pronostic.
+
+## D-303 — Le PLFSS 2027 en trois réponses : les deux volets de l'art. 74 baissent la dette
+
+**Le fait.** Les quatre passes de D-302 ont tourné par `impots etude lancer plfss2027`, sur
+`b73ffcf`, depuis un arbre de travail figé, l'une après l'autre, en 1 h 23. La
+page `docs/etudes/plfss2027.md` est écrite par `impots etude ecrire plfss2027` depuis les
+seuls rapports commités de `reports/etudes/plfss2027/`, et `impots etude verifier` la dit
+identique à leur rendu. C'est la première étude que produit la commande.
+
+**Les trois réponses, dans le sens de la mesure.**
+- La prime d'activité : −887 M€ la première année ; aucun gagnant ; la dette en 2035 à
+  −0,39 pt de PIB en vue figée, −0,27 pt en vue vieillie ; verdict « baisse ».
+- Les aides au logement : −78 M€ ; aucun gagnant ; −0,071 pt dans les deux vues
+  (−0,0713 figée, −0,0706 vieillie) ; verdict « baisse ».
+- Ni bande, ni éventail, ni boucle, chacun avec sa raison ; θ ne bouge rien.
+
+**Contre le pronostic, point par point.**
+1. Tenu, au-delà de sa marge : chaque première année refait son enregistrement à l'euro.
+2. Tenu pour les gagnants : aucun, dans aucun décile. À moitié pour les perdants. Ils
+   sont concentrés là où ils étaient attendus : 86 % de ceux de la prime dans les déciles
+   2 à 6, 70 % de ceux du logement dans les déciles 1 à 3. Mais il y en a dans chaque
+   décile, près de 7 % des ménages des déciles 7 et 8 pour la prime. Lu strictement, le
+   pronostic les enfermait dans ces déciles : il est réfuté sur ce point.
+3. Tenu : la bande est absente (« Aucun canal fondé sur des preuves ne couvre cet
+   instrument »), l'éventail refusé (« Aucun instrument de cette réforme n'a de
+   multiplicateur publié »).
+4. Tenu dans les quatre fourchettes. La prime : −0,39 pt pour −0,38 annoncé en vue figée,
+   −0,27 pt pour −0,27 en vue vieillie. Le logement : −0,071 pt pour −0,08 en vue figée,
+   −0,071 pt pour −0,05 en vue vieillie. Le pronostic attendait pour le logement une
+   érosion qui n'est pas venue. En vue vieillie, l'économie de la prime passe de 1,27 Md€
+   en 2027 à 0,78 Md€ en 2035, −39 %, les salaires montant de 3 % l'an devant une prime
+   reconduite sans indexation ; celle du logement de 286 à 275 M€, −4 %. Pourquoi l'aide
+   au logement s'érode si peu n'est pas mesuré ici.
+5. Tenu : chaque coin de la boîte vaut θ½ ; « baisse » pour les deux volets, dans les deux
+   vues et sous les deux persistances.
+6. Tenu : l'écart à l'évaluation préalable est celui de D-300, et la première année de
+   l'étude est à 0 € de l'enregistrement.
+Aucun des critères de réfutation de D-302 n'est atteint.
+
+**Une lecture, pas une note.** La fiche publie aussi 2028 : 995 M€ pour la prime, 404 M€
+pour le logement. L'année du moteur qui en tient lieu, 2027, est la première année pleine
+du niveau porté : 1 513 M€ pour la prime en vue figée, 1 272 M€ en vue vieillie, soit +52 %
+et +28 % ; 286 M€ pour le logement dans les deux vues, −29 %. Sur une année pleine, le
+décompte des mois sort de l'écart de la prime, qui tombe de +167 % à moins d'un tiers en
+vue vieillie, comme D-300 le décomposait ; le logement reste sous la fiche, comme ses
+biais déclarés le disaient. Aucun cas n'est enregistré pour 2028 : ce n'est pas une note,
+et aucune n'est écrite après coup.
+
+**Ce que l'étude ne dit pas.** La dette « en 2035 » compte dix années de mesure, l'année du
+moteur tenant lieu de la suivante ; le texte en porte neuf, de 2027 à 2035. Les deux
+volets ne s'additionnent pas sur la page : ce sont deux scénarios, chacun contre le droit
+reconduit. La dette de la prime hérite de l'écart du volet à la fiche, dans le même sens.
+
+**Ce que cela clôt.** Les trois pièces du but 6 sont là : la commande (D-301), la page du
+PLF 2027 régénérée par elle à une ligne près, et l'étude du PLFSS 2027, la première qu'elle
+produit. Le but suivant met les études en ligne, sur un site statique.
