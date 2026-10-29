@@ -23657,5 +23657,8 @@ et ne publie rien.
 
 **Les tests.** 18 pour le site et 17 pour les étages. Vingt mutations, toutes tuées. La
 dérive du site a été vue échouer sur une page modifiée, sur un fichier en trop et sur un
-fichier manquant. Rendu dans Chromium sans JavaScript, à 1 200 puis 390 pixels de large :
-aucune page ne déborde, et un tableau trop large défile seul.
+fichier manquant. Son message montre maintenant les mots où la page et sa construction
+divergent. Il montrait les 80 premiers caractères de la ligne, identiques des deux côtés
+quand la différence venait plus loin. Un test le tient, vu échouer sur l'ancien message.
+Rendu dans Chromium sans JavaScript, à 1 200 puis 390 pixels de large : aucune page ne
+déborde, et un tableau trop large défile seul.
