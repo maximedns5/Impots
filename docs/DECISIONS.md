@@ -22936,3 +22936,77 @@ volet, et la correction fondée est enregistrée comme un nouveau cas, l'ancien 
 noté. Ce qui reste ouvert ne tient pas à l'art. 2 : le niveau de l'impôt au barème, +6,7 %,
 pèse sur toute indexation, et le périmètre non chiffré reste un biais déclaré. Le but 3,
 la couverture du PLF 2027 en euros, vient ensuite.
+
+## D-293 — La couverture du PLF 2027 en euros : la règle de lecture, avant la lecture
+
+**Le fait.** Le but 3 (`docs/BUT.md`) : établir pour 2027 la part des euros que l'annexe
+des évaluations préalables quantifie et que l'outil chiffre, comme pour 2026 (46,4 %,
+`docs/PLF2027_COVERAGE.md`), et classer les 30 articles refusés par ce qu'il faudrait
+pour les chiffrer. La lecture se fait à la main, fiche par fiche, comme en 2026 : la
+section 4.2.1 n'a pas de forme unique. Cette entrée fixe la règle et le classement avant
+qu'un montant ne soit relevé, pour que ni l'une ni l'autre ne se choisisse sur ce
+qu'elle donne.
+
+**Ce qui est déjà vu.** L'annexe est ouverte depuis le 2026-10-14 (D-204). Ses montants
+vus avant cette entrée sont ceux des trois cas notés : l'art. 2 (4,2 Md€ pour le volet
+4.2.1.1 ; « 20 M€ » et « 820 M€ » dans d'autres volets, cités par le manifeste), l'art. 3
+(1,4 Md€ en 2027, 1,8 en 2028, 1,1 ensuite) et l'art. 15 (5 Md€ d'acomptes en 2027, 0,5 en
+2028, 0,3 pour le volet maritime). Des 29 autres fiches, seuls les intitulés des
+sous-sections 4.2.1 de cinq d'entre elles (art. 7, 8, 12, 13, 24) ont défilé, sans
+montant, pendant le repérage des pages.
+
+**La règle de lecture.** Elle reprend celle de 2026, rendue explicite là où 2026 ne
+tranchait pas.
+1. Le montant d'un article est l'effet budgétaire de 2027 que publie sa section 4.2.1, ou
+   4.2 sans sous-section, en valeur absolue et en millions d'euros : la part de l'effort
+   que l'annexe quantifie, pas un solde. L'unité est lue dans chaque phrase ou tableau.
+2. L'année est 2027. Une fiche qui ne donne qu'une année pleine, ou un montant « à compter
+   de » 2027 ou d'avant, vaut pour 2027. Une mesure dont la fiche date le premier effet
+   après 2027 vaut zéro.
+3. Une fiche qui chiffre ses volets à part est lue volet par volet, et l'article vaut la
+   somme de leurs valeurs absolues. Une fiche qui ne donne qu'un total vaut ce total.
+4. Quand un tableau distingue des administrations, la ligne totale de 2027 ; sans ligne
+   totale, la somme des lignes qu'il donne.
+5. « Sans incidence », « neutre » ou un zéro écrit valent zéro et entrent au dénominateur.
+   « Non chiffrable », « non significatif », une unité ou une année indéterminable, deux
+   montants contradictoires : l'article sort du dénominateur, avec sa raison.
+6. Une fourchette sort du dénominateur ; ses bornes sont notées, et la page donne aussi
+   la part qu'on aurait si toutes les fourchettes y entraient à leurs bornes. Un montant
+   donné par un seul côté (« plus de », « supérieur à ») sort de même.
+7. Un article sans fiche, ou dont la fiche n'a pas de section 4.2, sort du dénominateur.
+8. Le numérateur ne prend que les volets que l'outil chiffre : le volet 4.2.1.1 de l'art.
+   2, l'art. 3 entier, le volet I de l'art. 15 (la CEBGE, sans le transport maritime). Le
+   reste de ces articles reste au dénominateur.
+Chaque montant est relevé avec sa citation et sa page, et un test vérifie la citation
+dans le texte de l'annexe quand le PDF manifesté est présent.
+
+**Le classement des refus.** Un catalogue fermé de huit portes, chacune nommant ce qui
+ouvrirait l'article. La porte suit la raison du triage du 2026-10-02, pas les volets : un
+article à plusieurs volets va tout entier sous la porte de sa raison, avec ses euros.
+- **Hors champ**, rien ne l'ouvrira : une formalité ou une procédure. Art. 1, 28, 29, 30,
+  31, 33.
+- **Une donnée des ménages** : plus-values, épargne, logement dans la population. Art. 5,
+  6, 7.
+- **Une dimension des entreprises** : territoire, département, secteur agricole. Art. 11,
+  13, 14.
+- **Un module de transmission** : donations et reprises. Art. 4, 10.
+- **Le bilan des entreprises** : investissement, amortissement, provisions, capital.
+  Art. 9, 17, 18.
+- **La consommation et le parc** : TVA par taux, accises, véhicules. Art. 16, 19, 24, 25,
+  32.
+- **Les bases locales** : foncier, logement social, zonage. Art. 8, 26.
+- **L'assiette d'un secteur** hors du modèle : audiovisuel, nucléaire, aérien,
+  infrastructures, dépôts, justice. Art. 12, 20, 21, 22, 23, 27.
+Chaque porte reçoit son nombre d'articles et ses euros de 2027, ce qui classe les portes
+par ce qu'elles rapporteraient à la couverture.
+
+**Le pronostic.**
+1. Le numérateur vaut 10,6 Md€ : 4,2 pour l'art. 2, 1,4 pour l'art. 3, 5 pour l'art. 15.
+   C'est de l'arithmétique sur des montants déjà vus.
+2. La part des euros chiffrés tombe entre 40 et 75 %, au-dessus des 46,4 % de 2026.
+3. De 5 à 12 des 32 fiches sortent du dénominateur.
+4. Les deux portes de données pèsent ensemble moins de 2 Md€. La plus lourde des portes
+   est le bilan des entreprises ou la consommation et le parc.
+
+**Ce qui suit.** Le relevé dans `src/impots/plf_coverage.py`, son rendu dans
+`docs/PLF2027_COVERAGE.md` et le résultat dans une D-entrée contre ce pronostic.
