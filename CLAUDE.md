@@ -19,3 +19,21 @@
   le style des entrées existantes (lignes de 92 caractères au plus).
 * On n'ouvre pas une annexe d'évaluations préalables avant le commit des enregistrements,
   et aucune tolérance n'est modifiée après le premier calcul.
+
+## Comment on travaille, pour aller vite
+
+* **Un but à la fois**, dans son propre worktree, sur une branche `claude/<but>` partie
+  de `origin/main`. Une PR par but ; le propriétaire décide du merge.
+* **Les données** ne sont jamais dans git : `make data` les prépare dans un checkout
+  neuf. Le code se lance avec le venv du dépôt et `PYTHONPATH=src`.
+* **Les tests ciblés** : ceux du module touché et des modules qui l'importent, plus
+  `node ui/check.mjs` si la page change.
+* **Une passe longue** se lance détachée (`setsid nohup … &`) : les tâches de fond d'une
+  session peuvent être tuées en route. On ne modifie ni `src` ni `scripts` dans un
+  worktree où une passe ou un banc de mutations tourne.
+* **Une garde neuve** se vérifie aussi par mutation : chaque mutation est tuée par un
+  test, ou nommée comme équivalente dans la D-entrée.
+* **L'API en local** : `IMPOTS_AUTH=aucune uvicorn impots.api.main:app`. Sans cela, les
+  calculs sont fermés (D-295).
+* **Le compte rendu** au propriétaire est en français : ce qui est fait, ce qui ne l'est
+  pas, ce qui reste à décider.

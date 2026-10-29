@@ -31,16 +31,15 @@ article refusé n'est pas un article à zéro.
 
 ## Le livrable, dans l'ordre
 
-1. **Maintenant : des études publiées.** Des pages précalculées, générées depuis des
-   rapports commités par un script dont un test refuse la dérive, et lisibles sans rien
-   faire tourner. Le modèle existe déjà : `docs/PREDICTIF_ETUDE.md` pour les réponses 2
-   et 3, `reports/fiche_*.md` pour la réponse 1. Une étude publiée porte les trois. La
-   première : `docs/ETUDE_PLF2027.md` (D-290).
-2. **Ensuite : le déploiement, après la passe de sécurité.** Avant toute instance
-   ouverte : la CORS restreinte (elle est ouverte pour que `ui/index.html` s'ouvre depuis
-   le disque), l'authentification, la limitation de débit, et un plafond de concurrence
-   sur `POST /population/simulate` (D-173). La décision de déployer est celle du
-   propriétaire.
+1. **Des études à trois réponses, produites par une commande.** Une page par réforme,
+   générée depuis des rapports commités par un script dont un test refuse la dérive. La
+   première, `docs/ETUDE_PLF2027.md` (D-290), a demandé un script sur mesure : la suivante
+   doit coûter une commande (but 6).
+2. **Publiées sur un site statique.** Des pages HTML lisibles sans rien faire tourner,
+   servies sans serveur de calcul, donc sans surface d'attaque (but 7). Où les héberger
+   est la décision du propriétaire.
+3. **Puis, si le propriétaire le décide, l'API en ligne.** La passe de sécurité est faite
+   (D-295) : restent les clés, les origines, les limites et l'hébergement.
 
 ## Comment on sait que ça marche : les chiffrages officiels retrouvés
 
@@ -58,8 +57,18 @@ Trois chiffres, donnés ensemble, parce que chacun seul ment :
 | articles fiscaux chiffrables | **3 sur 33** (PLF 2027) ; 1 sur 29 (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 | euros quantifiés par l'annexe que l'outil chiffre | **63,8 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 
+Et le livrable : **1 étude à trois réponses** (PLF 2027), **0 en ligne**.
+
 Les trois écarts de 2027 tombent du même côté : un biais systématique se lit là avant de
 se lire dans une moyenne.
+
+**Le premier chiffre n'avance que si l'on trouve de nouveaux juges.** Chaque texte
+financier publié (PLF, PLFSS, loi de finances rectificative, et les articles de dépense
+que le moteur sait chiffrer) est trié dès sa parution, et ses articles chiffrables sont
+préenregistrés avant l'ouverture de leur fiche. Les juges disponibles aujourd'hui : le
+PLFSS 2027, jamais ouvert, et l'art. 74 du PLF 2027 (aides au logement et prime
+d'activité), dont la fiche n'a pas été lue. Le suivant viendra en octobre 2027, avec le
+PLF 2028.
 
 **Les règles qui font que le chiffre veut dire quelque chose.** On n'ouvre pas l'annexe
 avant le commit des enregistrements. Aucune tolérance n'est modifiée après le premier
@@ -72,7 +81,8 @@ reste noté. Un refus préenregistré est une limite ; un refus improvisé est u
   dit ce que chaque étage permet de croire.
 * Chiffrer tout un PLF. Refuser un article hors de la structure ou des données est une
   réponse ; un zéro confiant n'en est pas une.
-* Une instance publique avant la passe de sécurité.
+* Une instance publique de l'API sans la décision du propriétaire et ses réglages : la
+  passe de sécurité est faite (D-295), le choix de servir reste le sien.
 
 ## La règle de priorité
 
@@ -84,60 +94,86 @@ Entre deux travaux, prendre celui qui fait monter, dans cet ordre :
 
 Un travail qui n'en fait monter aucun (un canal de plus, une précision de plus sur une
 étude déjà publiée) se justifie par ce qu'il débloque pour l'un des trois, dans sa
-D-entrée, ou il attend.
+D-entrée, ou il attend. Quand un juge attend (un texte publié dont l'annexe n'est pas
+ouverte), l'enregistrer passe avant tout le reste : chaque jour qui passe est un jour où
+ses montants peuvent être vus.
 
 ## Les buts, dans l'ordre
 
 Chaque but est écrit pour `/goal` : un état final que l'on vérifie dans la conversation,
-les contraintes, et une borne.
+la preuve attendue, et une borne. Les contraintes sont celles de `CLAUDE.md`, que chaque
+session lit en premier. Le but en cours est le premier qui n'est pas fait.
 
-### But 1 — L'étude PLF 2027, à trois réponses (fait : `docs/ETUDE_PLF2027.md`, D-290)
+### Faits
+
+* **But 1 — L'étude PLF 2027, à trois réponses** (`docs/ETUDE_PLF2027.md`, D-288 à
+  D-290).
+* **But 2 — L'art. 2 retrouvé, ou son écart expliqué** (D-291, D-292). La base porte 77 %
+  de l'écart, le millésime presque tout le reste ; la révision `plf2027_art_2_base2027`,
+  écrite après l'annexe, est à −7,1 % et comptée à part.
+* **But 3 — La couverture du PLF 2027 en euros** (D-293, D-294) : 63,8 % des 16 624 M€
+  d'effort de 2027, les 30 refus classés en huit portes.
+* **But 4 — La passe de sécurité** (D-295) : la CORS restreinte, une clé par calcul, un
+  débit par client, une passe sur la population à la fois. Le déploiement de l'API reste
+  la décision du propriétaire.
+
+### But 5 — Les juges de l'automne : le PLFSS 2027 et l'art. 74 du PLF 2027 (en cours)
 
 ```
-/goal L'étude du PLF 2027 est publiée et mergée dans main. Une page docs/ETUDE_PLF2027.md,
-générée par un script depuis des rapports commités, porte pour chacun des articles 2, 3
-et 15 : (1) le coût mécanique de la première année et les gagnants et perdants par décile
-ou par taille d'entreprise ; (2) la bande comportementale et macro, ou son absence avec la
-raison ; (3) l'écart de dette rapportée au PIB en 2035 à θ½ et aux coins de la boîte, dans
-les deux vues, avec le verdict ; et l'écart à l'évaluation préalable avec la tolérance
-déclarée et la note « dans » ou « hors ». Elle liste les 30 autres articles fiscaux avec la
-raison de leur refus. Aucun nombre de la page n'est saisi à la main : un test refuse la
-dérive entre la page et les rapports, et je l'ai vu échouer sur une page modifiée. Le
-résultat est consigné dans une D-entrée en français. Preuve attendue dans la conversation :
-la sortie verte des tests ciblés, le SHA du commit de merge et l'URL de la PR.
-Contraintes : ne pas toucher src/impots/population/calibrate.py ; chaque garde a un test
-vu échouer avant le correctif ; aucune assertion, tolérance ou valeur modifiée pour faire
-passer ; les données n'entrent pas dans git ; pas de `make full` sans demander ; chaque
-passe est préenregistrée, avec son pronostic, dans une D-entrée poussée avant de tourner.
-Ou s'arrêter après 40 tours, en disant ce qui manque.
+/goal Le PLFSS 2027 et l'art. 74 du PLF 2027 sont notés contre leurs évaluations
+préalables, et c'est mergé dans main. Le texte du PLFSS 2027 est manifesté et trié article
+par article dans src/impots/plf_coverage.py, rendu dans docs/PLF2027_COVERAGE.md, lu
+montants masqués comme en D-174 ; chaque refus porte sa porte (D-293). Chaque article
+chiffrable, art. 74 compris, est préenregistré (scénario, tolérance et sa raison) dans un
+commit poussé AVANT que l'annexe du PLFSS ou la fiche de l'art. 74 ne soit lue ; une
+D-entrée dit tout ce qui a été vu avant. Puis l'annexe est manifestée, chaque cas noté dans
+reports/chiffrages_preregistres.md, et le résultat consigné dans une D-entrée contre le
+pronostic. Preuve attendue dans la conversation : le SHA du commit des enregistrements,
+antérieur à celui qui manifeste l'annexe ; la sortie verte des tests ciblés ; l'URL de la
+PR et le SHA du merge. Ou s'arrêter après 40 tours, en disant ce qui manque.
 ```
 
-### But 2 — L'article 2 retrouvé, ou son écart expliqué (fait : D-291, D-292)
+### But 6 — Une étude par commande
 
-L'art. 2 est hors tolérance (−30,3 % pour ±20 %). Mesurer d'où vient l'écart, volet par
-volet ; si une correction est fondée, l'enregistrer comme un nouveau cas daté, l'ancien
-restant noté hors tolérance.
+```
+/goal Une étude à trois réponses se produit par une commande, et c'est mergé dans main.
+`impots etude` lance les passes d'un ou plusieurs scénarios, ménages ou entreprises,
+préenregistrées comme toute passe, et écrit docs/etudes/<nom>.md depuis les seuls rapports
+commités, dans le cadre de D-289 : le coût mécanique et les gagnants et perdants ; la bande
+ou son absence avec la raison ; l'écart de dette en 2035 à θ½ et aux coins de la boîte,
+dans les deux vues, avec le verdict ; l'écart à l'évaluation préalable quand le scénario a
+un cas noté. docs/ETUDE_PLF2027.md est régénérée par la commande, à l'identique ou avec
+ses différences expliquées dans la D-entrée, et l'étude du PLFSS 2027 est la première
+produite par elle. Un test refuse la dérive de chaque page, vu échouer sur une page
+modifiée. Preuve attendue : la commande et sa sortie, la sortie verte des tests ciblés,
+l'URL de la PR et le SHA du merge. Ou s'arrêter après 40 tours, en disant ce qui manque.
+```
 
-Mesuré (`reports/ecart_art2.json`) : la base en porte 77 %, l'annexe publiant l'effet
-budgétaire de 2027 et l'enregistrement une année pleine ; le millésime presque tout le
-reste. La révision `plf2027_art_2_base2027`, écrite après l'annexe, est à −7,1 % et
-comptée à part ; l'enregistrement reste noté hors tolérance.
+### But 7 — Les études en ligne, sur un site statique
 
-### But 3 — La couverture du PLF 2027 en euros (fait : D-293, D-294)
+```
+/goal Les études se lisent en ligne sans serveur de calcul, et c'est mergé dans main.
+`impots site` construit un site statique depuis docs/etudes/ : une page d'accueil qui liste
+les études, une page par étude, lisible sans JavaScript, avec à côté de chaque nombre son
+étage de confiance et, pour chaque réponse absente, sa raison. Un test refuse la dérive
+entre le site et les études, vu échouer sur une page modifiée. Un workflow construit le site
+et le publie (GitHub Pages par défaut) une fois que le propriétaire l'active ; la
+publication est sa décision. Preuve attendue : le site construit, la sortie verte des tests
+ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 30 tours.
+```
 
-Établir pour 2027 la part des euros quantifiés par l'annexe que l'outil chiffre, et
-classer les 30 articles refusés par ce qu'il faudrait pour les chiffrer.
+### But 8 — La couverture côté ménages : ce que D-294 désigne
 
-Relevé fiche par fiche, sur une règle écrite avant la lecture : 63,8 % des 16 624 M€
-d'effort de 2027, pour 3 articles sur 33. Les refus vont dans huit portes, classées par
-euros. Le chantier le plus payant n'est pas un refus : une donnée de plus côté ménages
-ouvrirait 3,1 Md€, dont 2,3 dans les volets non chiffrés de l'art. 2.
-
-### But 4 — La passe de sécurité, puis le déploiement (passe faite : D-295)
-
-Les quatre points de « Le livrable », chacun avec un test vu échouer ; puis la décision
-du propriétaire.
-
-La passe est faite, fermée par défaut : aucune origine tierce, une clé pour chaque
-calcul, un débit par client, une passe sur la population à la fois. Reste la décision de
-déployer, et les réglages qu'elle demande (les clés, les origines, les limites).
+```
+/goal La population porte les indemnités journalières, les indemnités de rupture et
+l'épargne (assurance-vie, location meublée, plus-values en report) que D-294 désigne,
+imputées depuis des sources ouvertes manifestées et chacune vérifiée contre son agrégat
+publié. Les volets 4.2.1.3 et 4.2.1.4 de l'art. 2 du PLF 2027 et les art. 5, 6 et 7
+deviennent chiffrables, ou restent refusés avec une raison mesurée ; la part des euros de
+2027 chiffrés est recalculée dans docs/PLF2027_COVERAGE.md. Écrits après l'annexe, ces
+chiffrages sont des révisions comptées à part (D-292), jamais des cas aveugles. Si la
+calibration de la population doit changer, s'arrêter et demander : calibrate.py est fermé.
+Preuve attendue : chaque imputation contre son agrégat, la nouvelle part en euros, la
+sortie verte des tests ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 60
+tours, en disant ce qui manque.
+```
