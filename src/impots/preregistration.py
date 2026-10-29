@@ -80,7 +80,7 @@ and is recorded as an option rather than taken here.
 from __future__ import annotations
 
 import subprocess
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -217,6 +217,9 @@ class Chiffrage:
     """The reform encodes the article's REVERSE, because its end state is already the
     law the tree carries. PLF 2026 article 9 is the live case."""
     comparator: Comparator | None = None
+    revision: dict[str, Any] | None = None
+    """The case this one revises, when it is a revision written after the annex was opened
+    (D-292): never a blind registration, and counted apart from them."""
 
     def to_dict(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
@@ -240,6 +243,9 @@ class Chiffrage:
             "mirror": self.mirror,
             "comparator": asdict(self.comparator) if self.comparator else None,
         }
+        # Only on a revision: every case written before reads and writes back as it was.
+        if self.revision is not None:
+            payload["revision"] = dict(self.revision)
         return payload
 
 
@@ -473,6 +479,7 @@ def load(case: str, directory: Path | None = None) -> Chiffrage:
             bound=document.get("bound", "two-sided"),
             mirror=bool(document.get("mirror", False)),
             comparator=Comparator(**comparator) if comparator else None,
+            revision=document.get("revision"),
         )
     except ChiffrageError:
         raise
@@ -563,6 +570,57 @@ def register_firm(
         note=note, directory=directory)
 
 
+def revise_to_budget_year(case: str, new_case: str, *, year: int, raison: str,
+                          directory: Path | None = None, scenarios_dir: Path | None = None,
+                          now: str | None = None) -> Path:
+    """A new case, the registered `case` turned from its full year to the budget effect of
+    `year` that its comparator publishes, by the PAS calendar (`impots.pas`, D-292).
+
+    Only the basis changes: the figure is the registered one, on its population and its
+    engine, and its tolerance and comparator are kept. The full year is held constant from
+    one income year to the next, as the registered population does not age. The revision
+    says the case it revises and that it was written after the annex was opened: it is
+    never a blind registration, and the report counts it apart.
+    """
+    from impots import pas
+    from impots import scenarios as scenarios_module
+
+    original = load(case, directory)
+    if original.comparator is None:
+        raise ChiffrageError(f"« {case} » n'a pas de comparateur : il n'y a pas de base à "
+                             f"rejoindre.")
+    if original.comparator.basis != "premiere-annee":
+        raise ChiffrageError(
+            f"« {case} » est noté contre un chiffre en année pleine, « "
+            f"{original.comparator.basis} » : la base est déjà celle du simulateur.")
+    if original.scenario is None:
+        raise ChiffrageError(
+            f"« {case} » n'est pas un scénario des ménages : le calendrier du PAS ne vaut "
+            f"que pour l'impôt sur le revenu.")
+    try:
+        first = scenarios_module.load(original.scenario, scenarios_dir).year
+    except scenarios_module.ScenarioError as error:
+        raise ChiffrageError(f"« {case} » : son scénario ne se lit pas : {error}") from error
+    if year <= first:
+        raise ChiffrageError(
+            f"année budgétaire {year} : la mesure vaut à partir des revenus {first}, et "
+            f"ne pèse sur le budget qu'à partir de {first + 1}.")
+    full_year = {y: original.mechanical_eur for y in range(first, year + 1)}
+    budget = pas.budget_effects(full_year, first_income_year=first, years=(year,))[year]
+    stamp = now or datetime.now(UTC).isoformat(timespec="seconds")
+    revised = replace(
+        original, case=new_case, pre_registered=stamp, commit=head_commit(),
+        mechanical_eur=float(budget),
+        note=(f"Révision de « {case} », écrite après l'ouverture de l'annexe : pas un "
+              f"préenregistrement aveugle. {raison}"),
+        revision={"de": case, "apres_annexe": True, "annee_budgetaire": year,
+                  "premiere_annee_de_revenus": first,
+                  "annee_pleine_eur": original.mechanical_eur,
+                  "methode": f"impots.pas.budget_effects, {pas.MONTHS_UPDATED} mois de "
+                             f"taux mis à jour", "raison": raison})
+    return save(revised, directory)
+
+
 def report(directory: Path | None = None) -> str:
     """The scoreboard, every number computed from the cases rather than typed.
 
@@ -580,7 +638,7 @@ def report(directory: Path | None = None) -> str:
         "| cas | simulé (md) | publié (md) | écart (md) | écart rel. | toléré (md) | note |",
         "|---|---|---|---|---|---|---|",
     ]
-    graded, pending, refused = [], [], []
+    graded, revised, pending, refused = [], [], [], []
     for name in names:
         try:
             case = load(name, directory)
@@ -595,22 +653,34 @@ def report(directory: Path | None = None) -> str:
             continue
         try:
             verify_tolerance_unchanged(name, directory)
-            graded.append(grade(case))
+            (revised if case.revision else graded).append((grade(case), case))
         except ChiffrageError as error:
             refused.append((name, str(error)))
 
-    for verdict in graded:
+    for verdict, _ in graded:
         lines.append(verdict.line())
     if not graded:
         lines.append("| _aucun cas noté_ | | | | | | |")
 
-    within = sum(1 for g in graded if g.verdict == "within")
+    within = sum(1 for g, _ in graded if g.verdict == "within")
     lines += ["", f"**{within} sur {len(graded)} dans la tolérance déclarée.**"]
     if graded:
-        high = sum(1 for g in graded if g.gap_eur > 0)
+        high = sum(1 for g, _ in graded if g.gap_eur > 0)
         lines.append(
             f"Direction des écarts : {high} au-dessus, {len(graded) - high} en-dessous — "
             f"un biais systématique se lit ici avant de se lire dans les moyennes.")
+    if revised:
+        lines += ["", "## Révisions, écrites après l'annexe", "",
+                  "Une révision ne change que la base d'un cas enregistré, après l'ouverture "
+                  "de l'annexe : elle n'est pas un préenregistrement aveugle, et ne compte "
+                  "pas dans le total ci-dessus.", "",
+                  "| cas | simulé (md) | publié (md) | écart (md) | écart rel. | toléré (md) "
+                  "| note | révise |", "|---|---|---|---|---|---|---|---|"]
+        for verdict, case in revised:
+            lines.append(verdict.line() + f" {case.revision.get('de')} |")
+        ok = sum(1 for g, _ in revised if g.verdict == "within")
+        lines += ["", f"**{ok} sur {len(revised)} dans la tolérance, hors du compte des cas "
+                      f"aveugles.**"]
     if pending:
         lines += ["", "## En attente d'un comparateur", ""]
         for case in pending:

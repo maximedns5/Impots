@@ -1020,6 +1020,23 @@ def cmd_chiffrage_grade(args: argparse.Namespace) -> int:
     return 0 if verdict.verdict == "within" else 2
 
 
+def cmd_chiffrage_revise(args: argparse.Namespace) -> int:
+    """A new case on the published basis, written after the annex (D-292)."""
+    from impots import preregistration as chiffrages_module
+
+    directory = Path(args.dir) if args.dir else None
+    try:
+        path = chiffrages_module.revise_to_budget_year(
+            args.case, args.new, year=args.annee, raison=args.raison, directory=directory)
+        case = chiffrages_module.load(args.new, directory)
+    except chiffrages_module.ChiffrageError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    print(f"  -> {path} : {case.mechanical_eur / 1e9:+.3f} md, l'effet budgétaire de "
+          f"{args.annee}, révision de « {args.case} » écrite après l'annexe")
+    return 0
+
+
 def cmd_chiffrage_report(args: argparse.Namespace) -> int:
     from impots import preregistration as chiffrages_module
 
@@ -1848,6 +1865,16 @@ def build_parser() -> argparse.ArgumentParser:
     grader.add_argument("case")
     grader.add_argument("--dir")
     grader.set_defaults(func=cmd_chiffrage_grade)
+
+    reviser = chiffrage_actions.add_parser(
+        "revise", help="a new case on the published basis, after the annex (D-292)")
+    reviser.add_argument("case")
+    reviser.add_argument("--as", dest="new", required=True)
+    reviser.add_argument("--annee", type=int, required=True,
+                         help="the budget year the comparator publishes")
+    reviser.add_argument("--raison", required=True)
+    reviser.add_argument("--dir")
+    reviser.set_defaults(func=cmd_chiffrage_revise)
 
     reporter = chiffrage_actions.add_parser(
         "report", help="regenerate reports/chiffrages.md")
