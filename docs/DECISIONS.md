@@ -23010,3 +23010,78 @@ par ce qu'elles rapporteraient à la couverture.
 
 **Ce qui suit.** Le relevé dans `src/impots/plf_coverage.py`, son rendu dans
 `docs/PLF2027_COVERAGE.md` et le résultat dans une D-entrée contre ce pronostic.
+
+## D-294 — La couverture du PLF 2027 en euros : 63,8 %, et les portes classées
+
+**Le fait.** Les 32 fiches ont été relevées selon la règle de D-293, poussée avant la
+lecture (`ce5272d`). Le relevé est `MONTANTS_2027` dans `src/impots/plf_coverage.py` :
+64 lignes, une par volet chiffré à part, chacune avec sa citation et sa page. Il est rendu
+dans `docs/PLF2027_COVERAGE.md`, section « Le PLF 2027 en euros ».
+
+**Le résultat.** L'annexe quantifie 16 624 M€ d'effort pour 2027 ; l'outil en chiffre
+10 600, soit 63,8 %, pour 3 articles sur 33, soit 9,1 %. 21 lignes sortent du
+dénominateur. Les 483 M€ qu'elles écrivent quand même (majorants, minorant, maxima,
+montants sans année) y feraient tomber la part à 62,0 %. Six articles en sortent
+entiers : l'art. 1, sans fiche ; les art. 4, 17, 18 et 30, « non chiffrables » ; l'art.
+20, dont le seul montant est un maximum.
+
+**Le pronostic, point par point.**
+1. Le numérateur vaut 10,6 Md€. Tenu : c'était de l'arithmétique.
+2. La part tombe entre 40 et 75 %, au-dessus des 46,4 % de 2026. Tenu, à 63,8 %.
+3. De 5 à 12 des 32 fiches sortent. Tenu, au bord : 5 fiches, plus l'art. 1, sans fiche.
+4. Les deux portes de données pèsent moins de 2 Md€ : tenu, 1,02 Md€. La plus lourde est
+   le bilan des entreprises ou la consommation : manqué. C'est l'assiette d'un secteur,
+   2,24 Md€, portée par deux articles, le prélèvement sur les avoirs en déshérence
+   (1,4 Md€) et la taxe sur les infrastructures de transport de longue distance
+   (0,8 Md€). Le bilan des entreprises ne pèse rien en 2027 : ses trois articles
+   commencent en 2028 ou ne sont pas chiffrables.
+
+**Ce que la règle ne tranchait pas, et comment la lecture l'a tranché.**
+- Les règles 5 et 6 disent « l'article sort ». La règle 3 lit volet par volet, et la
+  règle 8 garde au dénominateur les volets non chiffrés des art. 2 et 15, ce qui n'a de
+  sens que volet par volet. Un volet non chiffrable ou donné par un seul côté sort donc
+  seul, et son article reste avec ses autres volets. Lues article par article, ces
+  règles sortiraient onze articles de plus, dont les art. 2 et 15, et le numérateur avec
+  eux.
+- « Aucune » et « Sans objet » valent zéro, comme « sans incidence ».
+- Un montant « annuel » sans année vaut année pleine, donc 2027 (art. 21, Strasbourg,
+  3,8 M€). Sans « annuel » ni année, il sort (art. 15, volet maritime, 0,3 Md€ ; deux
+  volets de l'art. 31). Le volet maritime pèse le plus : entré, la part serait de 62,6 %.
+- Deux phrases font d'un montant de tableau un montant à un seul côté : « coût
+  majorant » à l'art. 2 (20 M€), « peut être perçu comme minorant » à l'art. 12 (35 M€).
+- Le PTZ « parentalité » de l'art. 7 a un profil daté en « année n+1 ». La fiche date la
+  première génération par la loi de finances pour 2027 (§ 6.3), et son § 4.3 montre une
+  génération qui ne coûte rien l'année de son émission : zéro en 2027.
+- Art. 14 : le tableau place la CFE (21 M€) en 2026 et la TSCA (200 M€) en 2027.
+- Art. 2, volet des indemnités journalières : l'effet de 2027 avec le PAS que la fiche
+  donne (965 M€), pas les 620 M€ de l'année pleine ; la CSG (540 M€ pour les
+  administrations de sécurité sociale) s'y ajoute, une autre administration.
+
+**Les portes.** Dans l'ordre des euros de 2027 :
+- l'assiette d'un secteur, 2 239 M€ (6 articles) ;
+- une donnée des ménages, 785 M€ (3) ;
+- la consommation et le parc, 373 M€ (5) ;
+- une dimension des entreprises, 234 M€ (3) ;
+- un module de transmission, 67 M€ (2) ;
+- puis trois portes à zéro : hors champ (6), le bilan des entreprises (3) et les bases
+  locales (2).
+La première n'est pas une porte mais six, une par secteur, et ses euros ne s'ouvriraient
+pas ensemble. Les plus gros euros non chiffrés ne sont pas dans un refus : ils sont dans
+l'art. 2, que l'outil chiffre déjà en partie. Ses volets « indemnités de rupture » et
+« indemnités journalières » pèsent 2 325 M€, et le triage dit ce qui leur manque : ces
+revenus dans la population. Avec la porte des données des ménages, une donnée de plus
+côté ménages ouvrirait 3,1 Md€ ; c'est le chantier de couverture le plus payant que ce
+relevé désigne.
+
+**Les tests.** `tests/test_couverture_2027.py`, quatorze tests, vus échouer tous avant la
+table. Le test des citations lit le PDF manifesté avec pypdf, vérifie son sha256 et
+retrouve chaque citation à sa page ; une citation a été raccourcie, pypdf écrivant
+« 2030 -2033 ». Une erreur venait du test, qui cherchait le fichier à la racine du
+manifeste. Dix-sept mutations, toutes tuées. Le tri des portes a d'abord survécu : le
+catalogue était écrit dans l'ordre des euros, et le tri n'avait rien à faire. Il est
+remis dans l'ordre de D-293, et la mutation tombe. Le test de dérive de la page a été vu
+échouer sur une page modifiée à la main.
+
+**Ce qui suit.** Le but 3 est atteint : la part de 2027 est établie et les refus sont
+classés. Le chiffre entre dans le tableau de `docs/BUT.md`. Le but 4, la passe de
+sécurité, vient ensuite dans l'ordre des buts.

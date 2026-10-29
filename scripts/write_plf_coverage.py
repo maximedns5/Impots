@@ -15,17 +15,28 @@ from impots.plf_coverage import (
     ARTICLES,
     ARTICLES_2027,
     DATE_TRIAGE_2027,
+    MONTANTS_2027,
     NO_FICHE,
+    SANS_FICHE_2027,
     SOURCE,
     SOURCE_2027,
+    SOURCE_ANNEXE_2027,
     YIELD_AMBIGUOUS,
+    articles_hors_denominateur_2027,
     engine_ready_but_blind,
+    montants_2027,
+    portes_2027,
     priceable_2027,
     priceable_today,
     priceable_yield_meur,
+    priced_yield_2027_meur,
+    quantified_yield_2027_meur,
     quantified_yield_meur,
     share_of_yield,
+    share_of_yield_2027,
+    share_of_yield_2027_si_ecrits,
     share_priceable,
+    volets_non_chiffres_2027,
 )
 
 CASE = {"priceable_now": "**chiffrable**", "small_knob": "petit bouton",
@@ -41,6 +52,12 @@ def pct(x: float) -> str:
 def meur(x: float) -> str:
     """Millions of euros with French thousands separators."""
     return f"{x:,.0f}".replace(",", "\u00a0") + "\u00a0M EUR"
+
+
+def m2027(x: float) -> str:
+    """A 2027 amount in millions: no decimal when whole, one otherwise."""
+    text = f"{x:,.0f}" if x == round(x) else f"{x:,.1f}"
+    return text.replace(",", "\u00a0").replace(".", ",")
 
 
 def french(count: int) -> str:
@@ -196,8 +213,9 @@ def build() -> str:
       f"{len(ARTICLES_2027) - len(neuves)} autres reprennent une catégorie du triage "
       f"préenregistré, à la lettre, et un test le vérifie.")
     w("")
-    w("Aucun montant de l'annexe des évaluations préalables ne figure ici. Ils ne seront")
-    w("saisis qu'après le commit des enregistrements (runbook, étape 5).")
+    w("Ce triage n'a lu aucun montant de l'annexe des évaluations préalables : il a été")
+    w("pris avant le commit des enregistrements (runbook, étape 5). Les montants viennent")
+    w("après, dans « Le PLF 2027 en euros ».")
     w("")
     w("| art. | intitulé | catégorie | case | décision |")
     w("|---|---|---|---|---|")
@@ -215,7 +233,80 @@ def build() -> str:
         w("")
         w(a.raison)
         w("")
+    euros_2027(w)
     return "\n".join(lines)
+
+
+def euros_2027(w) -> None:
+    """The 2027 euro share, the lines it is read from, and the doors (D-293, D-294)."""
+    numerator, total = priced_yield_2027_meur(), quantified_yield_2027_meur()
+    priced = priceable_2027()
+    out = articles_hors_denominateur_2027()
+    w("## Le PLF 2027 en euros")
+    w("")
+    w(f"> {SOURCE_ANNEXE_2027}")
+    w("")
+    w(f"Sur les **{meur(total)}** d'effort de 2027 que l'annexe quantifie, l'outil en "
+      f"chiffre **{meur(numerator)}**, soit **{pct(share_of_yield_2027())}** ; et "
+      f"**{len(priced)} articles sur {len(ARTICLES_2027)}**, soit "
+      f"{pct(len(priced) / len(ARTICLES_2027))}. "
+      f"**{pct(len(priced) / len(ARTICLES_2027))} des articles, "
+      f"{pct(share_of_yield_2027())} des euros.** Comme en 2026, les deux chiffres disent "
+      f"le contraire l'un de l'autre, et c'est pourquoi ils vont ensemble.")
+    w("")
+    w("La règle qui dit quel montant compte a été écrite avant la lecture (D-293) : "
+      "l'effet budgétaire de 2027 de la section 4.2 de chaque fiche, en valeur absolue, "
+      "volet par volet ; un montant sans année déterminable, « non chiffrable » ou donné "
+      "par un seul côté (majorant, minorant, maximum) sort du dénominateur ; un volet qui "
+      "commence après 2027 vaut zéro. Le numérateur ne prend que les volets que l'outil "
+      "chiffre : il dit « chiffré », pas « retrouvé », et l'écart de chacun à l'annexe "
+      "est dans `reports/chiffrages_preregistres.md`.")
+    w("")
+    gap = (share_of_yield_2027() - share_of_yield_2027_si_ecrits()) * 100
+    w(f"Si chaque montant écrit que la règle sort entrait au dénominateur, la part "
+      f"serait de {pct(share_of_yield_2027_si_ecrits())}, "
+      f"{f'{gap:.1f}'.replace('.', ',')} point de moins : la règle la flatte de cela, "
+      f"puisqu'aucun de ces montants n'est un volet chiffré.")
+    w("")
+    w("### Les portes, de celle qui rapporterait le plus à celle qui ne rapporterait rien")
+    w("")
+    w("Chaque article refusé reçoit la porte qui l'ouvrirait, selon la raison de son "
+      "triage (D-293) ; un article à plusieurs volets y va tout entier.")
+    w("")
+    w("| porte | ce qui l'ouvrirait | articles | euros de 2027 | hors du dénominateur |")
+    w("|---|---|---|---|---|")
+    for porte in portes_2027():
+        hors = ", ".join(str(n) for n in porte.articles_hors) or "—"
+        w(f"| `{porte.cle}` | {porte.libelle} | "
+          f"{', '.join(str(n) for n in porte.articles)} | {meur(porte.meur)} | {hors} |")
+    w("")
+    rest = volets_non_chiffres_2027()
+    w(f"Restent, dans les articles chiffrés, **{meur(sum(m.meur for m in rest))}** de "
+      f"volets que l'outil ne chiffre pas : "
+      + " ; ".join(f"art. {m.article}, volet {m.volet}, {m2027(m.meur)}\u00a0M EUR"
+                   for m in rest)
+      + ". Le triage de leur article dit déjà ce qui leur manque.")
+    w("")
+    w("### Les articles qui sortent du dénominateur")
+    w("")
+    for numero in out:
+        if numero in SANS_FICHE_2027:
+            w(f"* **Art. {numero}** — pas de fiche dans l'annexe.")
+            continue
+        raisons = sorted({m.raison for m in montants_2027(numero)})
+        w(f"* **Art. {numero}** — {' ; '.join(raisons)}.")
+    w("")
+    w("### Le relevé, ligne par ligne")
+    w("")
+    w("| art. | volet | 2027 (M EUR) | p. | citation | lecture |")
+    w("|---|---|---|---|---|---|")
+    for m in MONTANTS_2027:
+        value = "hors" if m.meur is None else m2027(m.meur)
+        if m.chiffre:
+            value = f"**{value}** (chiffré)"
+        w(f"| {m.article} | {m.volet or '—'} | {value} | {m.page} | « {m.citation} » | "
+          f"{m.raison} |")
+    w("")
 
 
 if __name__ == "__main__":
