@@ -361,10 +361,66 @@ def test_the_memory_of_a_heavy_test_is_seen_even_after_another_one(pytester) -> 
                                "    time.sleep(0.5)\n"
                                "def test_a():\n    _gros()\n"
                                "def test_b():\n    _gros()\n"
-                               "def test_c():\n    pass\n")
+                               "def test_c():\n    pass\n"
+                               "def test_d():\n"
+                               "    import os, signal\n"
+                               "    os.kill(os.getpid(), signal.SIGKILL)\n")
     pytester.runpytest_subprocess("-p", "no:cacheprovider", "--memoire")
     import json
 
     hausses = json.loads((pytester.path / ".cache/impact/memoire.seul.json").read_text())
     assert hausses["test_m.py::test_a"] > 300 and hausses["test_m.py::test_b"] > 300
     assert hausses["test_m.py::test_c"] < 100
+    assert "test_m.py::test_d" not in hausses  # killed, and the three before it kept
+
+
+def test_a_test_is_heavy_above_the_threshold_only() -> None:
+    import memoire
+
+    seuil = memoire.SEUIL_LOURD_MO
+    assert memoire.proposes({"a": seuil + 1, "b": seuil, "c": 12.0}) == ["a"]
+
+
+def test_memory_a_test_keeps_is_seen_even_between_two_samples(pytester) -> None:
+    """A cache a short test fills is still held when it ends: the reading taken then sees
+    it, whatever the sampler saw."""
+    pytester.makeconftest(f"import sys\nsys.path.insert(0, {str(TESTS)!r})\n"
+                          "import memoire\nmemoire.PERIODE = 3600\n"
+                          "def pytest_addoption(parser):\n    memoire.ajouter_options(parser)\n"
+                          "def pytest_configure(config):\n    memoire.configurer(config)\n")
+    pytester.makepyfile(test_k="GARDE = []\n"
+                               "def test_k():\n"
+                               "    b = bytearray(300 * 1024 * 1024)\n"
+                               "    b[::4096] = b'x' * len(b[::4096])\n"
+                               "    GARDE.append(b)\n")
+    pytester.runpytest_subprocess("-p", "no:cacheprovider", "--memoire")
+    import json
+
+    hausses = json.loads((pytester.path / ".cache/impact/memoire.seul.json").read_text())
+    assert hausses["test_k.py::test_k"] > 250
+
+
+def test_a_record_written_halfway_keeps_the_previous_one(tmp_path, monkeypatch) -> None:
+    import json
+    import types
+
+    import memoire
+
+    releve = memoire.Releve(types.SimpleNamespace(rootpath=tmp_path))
+    try:
+        releve.hausses["t::a"] = 12.0
+        releve._ecrire()
+
+        def broken(self, text, *args, **kwargs):
+            Path.write_bytes(self, text[:5].encode())
+            raise OSError("disque plein")
+
+        monkeypatch.setattr(Path, "write_text", broken)
+        releve.hausses["t::b"] = 3.0
+        with pytest.raises(OSError, match="disque plein"):
+            releve._ecrire()
+    finally:
+        releve.arret.set()
+    assert json.loads(releve.cible.read_bytes()) == {"t::a": 12.0}
+    assert [f.name for f in releve.cible.parent.iterdir()] == [releve.cible.name]
+

@@ -26,6 +26,8 @@ FICHIER_LOURDS = Path(__file__).with_name("lourds.txt")
 #: Ce qui fait d'un test un lourd : sa hausse de mémoire résidente pendant son passage.
 SEUIL_LOURD_MO = 1024
 PAGE = os.sysconf("SC_PAGE_SIZE") if hasattr(os, "sysconf") else 4096
+#: Le pas de l'échantillonnage, en secondes.
+PERIODE = 0.1
 
 
 def ajouter_options(parser) -> None:
@@ -51,6 +53,11 @@ def grouper(items) -> None:
             item.add_marker(pytest.mark.xdist_group("lourd"))
 
 
+def proposes(hausses: dict[str, float]) -> list[str]:
+    """Les tests qu'un relevé range lourds : ceux qui montent de plus de `SEUIL_LOURD_MO`."""
+    return sorted(test for test, hausse in hausses.items() if hausse > SEUIL_LOURD_MO)
+
+
 def residente_mo() -> float:
     """La mémoire résidente du processus maintenant, en Mo."""
     with open("/proc/self/statm", encoding="ascii") as statm:
@@ -73,7 +80,7 @@ class Releve:
         threading.Thread(target=self._echantillonner, daemon=True).start()
 
     def _echantillonner(self) -> None:
-        while not self.arret.wait(0.1):
+        while not self.arret.wait(PERIODE):
             self.pic = max(self.pic, residente_mo())
 
     @pytest.hookimpl(hookwrapper=True)
@@ -88,9 +95,22 @@ class Releve:
     def _ecrire(self) -> None:
         self.cible.parent.mkdir(parents=True, exist_ok=True)
         provisoire = self.cible.with_name(f".{self.cible.name}.{os.getpid()}.tmp")
-        provisoire.write_text(json.dumps(self.hausses, indent=1, sort_keys=True),
-                              encoding="utf-8")
-        os.replace(provisoire, self.cible)
+        try:
+            provisoire.write_text(json.dumps(self.hausses, indent=1, sort_keys=True),
+                                  encoding="utf-8")
+            os.replace(provisoire, self.cible)
+        finally:
+            provisoire.unlink(missing_ok=True)
 
     def pytest_sessionfinish(self, session, exitstatus) -> None:
         self.arret.set()
+
+
+if __name__ == "__main__":
+    import sys
+
+    releves: dict[str, float] = {}
+    for chemin in sys.argv[1:]:
+        releves.update(json.loads(Path(chemin).read_text(encoding="utf-8")))
+    for test in proposes(releves):
+        print(f"{test}  # {releves[test]:.0f} Mo")
