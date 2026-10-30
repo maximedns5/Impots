@@ -1,0 +1,32 @@
+# Les tests lourds (D-309) : un seul worker xdist les exécute, l'un après l'autre.
+#
+# Un test est lourd quand il monte de plus de SEUIL_LOURD_MO (1 024 Mo) au-dessus de la
+# mémoire où il commence, mesuré à froid : chaque test dans un processus neuf, en série,
+# avec `pytest -m "" --memoire <test>`. Dans un processus qui a déjà fait une passe, le
+# test suivant paraît léger : la mémoire est déjà prise. Sur un worker neuf, il la reprend.
+#
+# Mesuré le 30 octobre 2026 sur les 119 tests lents hors test_knobs, test_engine et
+# test_prestations. Le plus gros des autres monte de 508 Mo. Les tests de ménage et les
+# rapides n'y sont pas : quatre workers sur les 526 tests de ménage tiennent 4,6 Go.
+# `python tests/memoire.py <relevés…>` liste les lourds d'un relevé. Un test qui lance
+# une passe de population sur les données réelles s'ajoute ici.
+
+tests/test_api.py::test_a_cliff_reform_is_flagged_and_a_broad_one_is_not  # 6796 Mo à froid
+tests/test_api.py::test_a_dead_channel_says_so_rather_than_reporting_zero  # 6235 Mo à froid
+tests/test_api.py::test_population_simulate_prices_a_reform  # 6058 Mo à froid
+tests/test_api.py::test_population_simulate_says_it_sampled  # 6054 Mo à froid
+tests/test_api.py::test_the_band_is_absent_unless_asked_for  # 6057 Mo à froid
+tests/test_api.py::test_the_band_never_moves_the_mechanical_number  # 6834 Mo à froid
+tests/test_api.py::test_the_band_prices_the_response_to_a_top_rate_rise  # 6233 Mo à froid
+tests/test_api.py::test_the_band_reports_its_grade_and_its_provenance  # 6238 Mo à froid
+tests/test_api.py::test_the_flag_does_not_touch_the_mechanical_number  # 6057 Mo à froid
+tests/test_population.py::test_a_household_reform_is_unaffected_by_the_employer_term  # 6040 Mo à froid
+tests/test_population.py::test_an_employer_contribution_reform_has_a_cost_at_all  # 6039 Mo à froid
+tests/test_population.py::test_every_reform_shape_balances_on_the_real_population  # 7047 Mo à froid
+tests/test_scenarios.py::test_the_solver_neutralises_a_real_reform_on_the_population  # 2133 Mo à froid
+tests/test_zero_masked.py::test_every_benefit_line_carries_its_zero_annotation  # 3224 Mo à froid
+tests/test_zero_masked.py::test_every_validation_figure_that_is_printed_has_a_line  # 3224 Mo à froid
+tests/test_zero_masked.py::test_no_line_claims_a_verdict_without_a_comparison  # 3223 Mo à froid
+tests/test_zero_masked.py::test_the_allocataire_counts_are_families_in_december  # 3224 Mo à froid
+tests/test_zero_masked.py::test_the_decile_table_itself_is_still_household_weighted  # 3224 Mo à froid
+tests/test_zero_masked.py::test_the_distribution_lines_read_quantiles_not_decile_means  # 3224 Mo à froid

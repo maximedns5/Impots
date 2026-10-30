@@ -447,3 +447,16 @@ def test_a_record_is_replaced_whole_never_rewritten_in_place(tmp_path) -> None:
         releve.arret.set()
     assert json.loads(releve.cible.read_bytes()) == {"t::a": 12.0, "t::b": 3.0}
 
+
+
+def test_every_test_listed_heavy_still_exists() -> None:
+    """A heavy test renamed would leave the list in silence, and run beside another one."""
+    import re
+
+    import memoire
+
+    assert memoire.lourds(), "tests/lourds.txt est vide ou absent"
+    for test in memoire.lourds():
+        fichier, nom = test.split("::")[0], test.split("::")[-1].split("[")[0]
+        source = (TESTS.parent / fichier).read_text(encoding="utf-8")
+        assert re.search(rf"^def {re.escape(nom)}\(", source, re.M), test
