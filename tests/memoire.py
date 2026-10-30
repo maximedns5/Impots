@@ -87,7 +87,9 @@ def configurer(config) -> None:
 
 class Releve:
     def __init__(self, config) -> None:
-        travailleur = os.environ.get("PYTEST_XDIST_WORKER", "seul")
+        # Le nom vient de xdist, pas de l'environnement : un pytest lancé par un test sous
+        # xdist hérite de PYTEST_XDIST_WORKER sans être un worker.
+        travailleur = getattr(config, "workerinput", {}).get("workerid", "seul")
         racine = Path(str(config.rootpath))
         self.cible = racine / ".cache" / "impact" / f"memoire.{travailleur}.json"
         self.hausses: dict[str, float] = {}

@@ -347,11 +347,14 @@ def test_only_the_tests_listed_heavy_join_the_heavy_group(tmp_path, monkeypatch)
     assert memoire.lourds() == frozenset()
 
 
-def test_the_memory_of_a_heavy_test_is_seen_even_after_another_one(pytester) -> None:
+def test_the_memory_of_a_heavy_test_is_seen_even_after_another_one(pytester,
+                                                                    monkeypatch) -> None:
     """The process peak climbs once, at the first heavy test, and would hide the next: the
     rise is sampled during each test, from where the test starts: the 300 MB the conftest
     holds are no test's. The record is written after each one, so a worker the kernel kills
-    does not take it with it."""
+    does not take it with it. A pytest run from a test under xdist inherits the worker's
+    name in its environment without being a worker: its record is still its own."""
+    monkeypatch.setenv("PYTEST_XDIST_WORKER", "gw7")
     pytester.makeconftest(f"import sys\nsys.path.insert(0, {str(TESTS)!r})\n"
                           "import memoire\n"
                           "TENU = bytearray(300 * 1024 * 1024)\n"
