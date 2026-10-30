@@ -24047,7 +24047,31 @@ xdist et que `-m lourd` les garde ; il a été vu échouer sans la marque. Le gr
 reste : une passe parallèle lancée à la main avec `--dist loadgroup` les met encore sur un
 seul worker.
 
-@@VERIF@@
+**Vérifié à `-n 4`, sur la suite moins `test_knobs` et `test_engine` (3 170 tests).** La
+passe a duré 36 min 28 s, et a trouvé deux défauts de l'outillage, corrigés depuis :
+- deux tests du relevé de mémoire lancent un pytest, qui héritait de `PYTEST_XDIST_WORKER`
+  sans être un worker : son relevé partait sous un autre nom. Le nom vient désormais de
+  `config.workerinput`, et le test pose la variable ; il a été vu échouer avant ;
+- `test_dependances` prenait `memoire` et `impact_fichiers`, que le conftest importe, pour
+  des dépendances non déclarées. Ils rejoignent les modules locaux de `dependances.py`.
+
+@@LOURDS@@
+
+**Neuf tests rouges sur main, qui ne sont pas de cette branche.** Ils échouent à l'identique
+sur main (8804916), dans un worktree neuf :
+- six de `test_fan` : le faux agrégat de ces tests n'a pas `employer_contribution_delta`,
+  que `api.main._macro` lit (cinq tests), et l'allègement ciblé ne crée pas plus d'emplois
+  que l'uniforme (deux p50 égaux, 50,9) ;
+- `test_gardes_phase9` : la mutation `P11-cdhr-recette` ne s'applique plus, depuis que D-307
+  a mis `csg_ij` après `cdhr` dans `guards.py` ;
+- le test de bande que D-308 nomme déjà ;
+- `test_dependances`, pour `test_write_etude_plf2027`, que `test_etude` importe.
+
+Le dernier rejoint ici les modules locaux, à côté de l'outillage, et passe. Les huit autres
+ne sont pas réparés ici : c'est un chantier à part. La dernière passe complète journalisée
+date du 20 octobre (D-231). Ces tests ont rougi depuis, sans qu'une passe complète les voie.
+C'est ce que `make impact` doit éviter : il rejoue ce qui dépend du changement, et pas
+seulement ce que l'auteur pense toucher.
 
 **2. Seulement ce qui a changé : pytest-testmon, essayé et écarté.** testmon relance un
 test quand une ligne Python qu'il exécute a changé. Rejoué sur six changements réels, sur

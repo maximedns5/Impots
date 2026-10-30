@@ -1,5 +1,20 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The second 2026-10-30 update adds D-309: faster tests, nothing lost. `make impact` reruns
+only the tests whose dependencies changed since their last green pass: the files their
+module imports, even indirectly (read in the source, so no process cache can hide one), the
+files they read, the library versions. It runs them on `JOBS` xdist workers (4 by default).
+A test never passed, red or skipped, and a module that launches a subprocess always rerun.
+pytest-testmon was tried and rejected: it let D-306's bug through, because the tax system
+is built once per process. Replayed on six real changes over 505 tests: nothing changed,
+20 s instead of 459 s; a docs line, 21 s; both reintroduced bugs caught. Nineteen tests
+climb 2 to 7 GB cold (`tests/lourds.txt`, measured one process per test). Two at once, or
+one beside the workers, overflowed the 16 GB machine, so `make impact` runs them alone after
+the parallel pass. The EMTR caches are now written atomically. `make full` is unchanged.
+Eight tests are red on main and not from this branch: six in `test_fan`, a guard-sweep
+mutation broken by D-307, and D-308's band test. They are left for a separate fix. The
+CLAUDE.md rule on targeted tests is rewritten, as a proposal that holds if the PR merges.
+
 The first 2026-10-30 update adds D-306 to D-308: the goal's eighth aim, a second pass.
 Corrections 22 and 23 (`engine/corrections.py`) put the sick pay in the IR (maladie whole,
 AT-MP net of its 50 % exemption, a parameter the project adds) and levy its CSG

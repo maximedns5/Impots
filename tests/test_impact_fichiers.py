@@ -509,3 +509,15 @@ def test_the_heavy_tests_leave_the_parallel_pass_and_run_alone(pytester) -> None
     seuls = pytester.runpytest_subprocess("-p", "no:cacheprovider", "-v", "-m", "lourd")
     seuls.assert_outcomes(passed=1, deselected=1)
     assert "test_l.py::test_lourd PASSED" in seuls.stdout.str()
+
+
+def test_nothing_to_rerun_is_a_success_alone_and_under_xdist(projet) -> None:
+    """With every test up to date, pytest says « no tests ran » and exits 5. `make impact`
+    then stopped there, before the heavy pass and the timers: in the usual case, where a
+    change touches no heavy test, the run ended red. Under `--impact`, nothing to rerun is
+    a success, in a single process and on the xdist controller alike."""
+    assert _run(projet).ret == 0
+    seul = _run(projet, "-m", "lent")
+    assert _ran(seul) == set() and seul.ret == 0
+    parallele = _run(projet, "-m", "lent", "-n", "2")
+    assert parallele.ret == 0

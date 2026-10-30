@@ -336,13 +336,27 @@ def ajouter_options(parser) -> None:
                           "(D-309)")
 
 
+class RienARejouer:
+    """Sous `--impact`, n'avoir rien à rejouer est un succès. pytest sort en 5 quand aucun
+    test ne tourne, et `make impact` s'arrêtait là, avant les lourds et les chronomètres :
+    le cas ordinaire, un changement qui ne touche aucun test lourd, finissait en rouge. Sur
+    le maître de xdist aussi, qui compte les tests de ses workers."""
+
+    @pytest.hookimpl(trylast=True)
+    def pytest_sessionfinish(self, session, exitstatus) -> None:
+        if session.exitstatus == pytest.ExitCode.NO_TESTS_COLLECTED:
+            session.exitstatus = pytest.ExitCode.OK
+
+
 def configurer(config) -> None:
     """Appelé par le `pytest_configure` du conftest, qui a déjà le sien. Le maître de
     xdist ne fait tourner aucun test : il ne sélectionne ni ne relève rien."""
     maitre_xdist = (getattr(config.option, "dist", "no") != "no"
                     and not hasattr(config, "workerinput"))
-    if config.getoption(OPTION) and not maitre_xdist:
-        config.pluginmanager.register(Greffon(config), "impact_fichiers")
+    if config.getoption(OPTION):
+        config.pluginmanager.register(RienARejouer(), "impact_rien")
+        if not maitre_xdist:
+            config.pluginmanager.register(Greffon(config), "impact_fichiers")
 
 
 def module_de(nodeid: str) -> str:
