@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from types import SimpleNamespace
 
 import pytest
 
@@ -62,12 +63,9 @@ def test_the_mechanical_pricing_hands_the_population_its_ij(monkeypatch) -> None
         seen.update(kwargs)
         return _Result()
 
-    class _Agg:
-        reform_cost = -1.0
-        deltas = {}
-
     monkeypatch.setattr(runner, "run", run)
-    monkeypatch.setattr(aggregate, "aggregate", lambda households: _Agg())
+    monkeypatch.setattr(aggregate, "aggregate",
+                        lambda households: SimpleNamespace(reform_cost=-1.0, deltas={}))
     sc.mechanical_price(_scenario(), frame=object(), households=10)
     assert seen["impute_ij"] is True
     sc.mechanical_price(_scenario(imputations=()), frame=object(), households=10)

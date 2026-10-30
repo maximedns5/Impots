@@ -28,6 +28,7 @@ from impots.plf_coverage import (
     SOURCE_PLFSS_2027,
     YIELD_AMBIGUOUS,
     articles_hors_denominateur_2027,
+    chiffres_apres_annexe_2027,
     engine_ready_but_blind,
     montants_2027,
     portes_2027,
@@ -38,11 +39,11 @@ from impots.plf_coverage import (
     priced_yield_2027_meur,
     quantified_yield_2027_meur,
     quantified_yield_meur,
+    refus_mesures_2027,
     share_of_yield,
     share_of_yield_2027,
     share_of_yield_2027_si_ecrits,
     share_priceable,
-    refus_mesures_2027,
     volets_non_chiffres_2027,
 )
 
@@ -296,6 +297,18 @@ def euros_2027(w) -> None:
                    for m in rest)
       + ". Le triage de leur article dit déjà ce qui leur manque.")
     w("")
+    late = chiffres_apres_annexe_2027()
+    w("### Les volets chiffrés après l'annexe (but 8, D-306)")
+    w("")
+    w(f"**{meur(sum(line.meur for line, _ in late))}** du numérateur viennent de volets "
+      f"chiffrés par des cas écrits après la lecture de l'annexe. Ce sont des révisions "
+      f"au sens de D-292 : le rapport les compte à part des cas aveugles, jamais parmi "
+      f"eux.")
+    w("")
+    for line, cases in late:
+        w(f"* **Art. {line.article}, volet {line.volet}, {m2027(line.meur)}\u00a0M EUR** "
+          f"— " + ", ".join(f"`{case}`" for case in cases) + ".")
+    w("")
     w("### Les refus mesurés (but 8, D-305)")
     w("")
     measured = refus_mesures_2027()
@@ -321,10 +334,12 @@ def euros_2027(w) -> None:
     w("")
     w("| art. | volet | 2027 (M EUR) | p. | citation | lecture |")
     w("|---|---|---|---|---|---|")
+    after = {(line.article, line.volet) for line, _ in late}
     for m in MONTANTS_2027:
         value = "hors" if m.meur is None else m2027(m.meur)
         if m.chiffre:
-            value = f"**{value}** (chiffré)"
+            value = f"**{value}** (chiffré" + (
+                " après l'annexe)" if (m.article, m.volet) in after else ")")
         w(f"| {m.article} | {m.volet or '—'} | {value} | {m.page} | « {m.citation} » | "
           f"{m.raison} |")
     w("")

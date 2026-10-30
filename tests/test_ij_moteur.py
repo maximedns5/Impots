@@ -201,3 +201,43 @@ def test_a_pass_that_raises_the_csg_on_sick_pay_balances_its_ledger(frames) -> N
     agg = aggregate.aggregate(result.households)
     assert agg.reform_cost < 0
     assert agg.deltas["csg_ij"] == pytest.approx(-agg.reform_cost, rel=1e-3)
+
+
+# --- la ligne d'une variable du projet, lue sur openfisca brut (D-308) ----------------
+
+
+def _raw_light():
+    from openfisca_core.simulation_builder import SimulationBuilder
+
+    from impots.api.schemas import HouseholdInput
+    from impots.engine.outputs import extract
+    from impots.engine.situations import build_situation
+
+    household = HouseholdInput.model_validate(
+        {"adults": [{"salaire_brut_annuel": 30_000, "annee_naissance": 1980}]})
+    simulation = SimulationBuilder().build_from_entities(
+        uncorrected_baseline(), build_situation(household, YEAR))
+    return extract(simulation, YEAR, "light")
+
+
+def test_raw_openfisca_reads_the_registry_and_levies_no_csg_on_sick_pay() -> None:
+    """Kill tests read raw openfisca through the registry, correction 19's for one. The CSG on
+    the sick pay is a variable of the project: raw openfisca has none and levies none, so its
+    row reads zero there (D-308)."""
+    assert _raw_light()["csg_ij"] == 0.0
+
+
+def test_only_a_row_of_the_project_may_be_missing_from_the_engine(monkeypatch) -> None:
+    """GUARD (D-308). A row openfisca should carry and does not — a renamed variable — still
+    raises: only a variable the corrections add reads zero where they are not applied."""
+    from openfisca_core.errors import VariableNotFoundError
+
+    from impots.engine import outputs
+
+    missing = outputs.Row("absente", "variable_absente", "individu", "month", "light", True)
+    monkeypatch.setattr(outputs, "LIGHT_ROWS", (missing,))
+    with pytest.raises(VariableNotFoundError):
+        _raw_light()
+    monkeypatch.setattr(outputs, "LIGHT_ROWS", (outputs.Row(
+        "absente", "variable_absente", "individu", "month", "light", True, projet=True),))
+    assert _raw_light() == {"absente": 0.0}

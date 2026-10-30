@@ -860,13 +860,18 @@ MONTANTS_2027: tuple[Montant2027, ...] = (
        "La mesure présente un coût majorant pour l’État de 20 M€ en 2027",
        raison=f"un majorant : {_UN_SEUL_COTE}", ecrit_meur=20.0),
     _M(2, "4.2.1.3", 820.0, 29, "La mesure présente un gain total de 820 M€ en 2027"),
-    _M(2, "4.2.1.4 (IR)", 965.0, 30,
-       "en 2027, de 965 M€, dont 450 M€ au titre des ALD et 515 M€ au titre des AT/MP",
-       raison="l'effet de 2027 avec le PAS, que la fiche donne, et non les 620 M€ de "
+    # Les 965 M€ de 2027 en leurs deux parts, que donne la même phrase (D-306).
+    _M(2, "4.2.1.4 (IR ALD)", 450.0, 30, "dont 450 M€ au titre des ALD",
+       raison="l'effet de 2027 avec le PAS, que la fiche donne, et non les 290 M€ de "
               "l'année pleine"),
+    _M(2, "4.2.1.4 (IR AT-MP)", 515.0, 30, "515 M€ au titre des AT/MP",
+       raison="l'effet de 2027 avec le PAS, que la fiche donne, et non les 330 M€ de "
+              "l'année pleine",
+       chiffre=True),
     _M(2, "4.2.1.4 (CSG)", 540.0, 30,
        "générerait de l’ordre de 540 M€ de recettes supplémentaires pour les "
-       "administrations de sécurité sociale pour 2027"),
+       "administrations de sécurité sociale pour 2027",
+       chiffre=True),
     _M(3, "", 1_400.0, 36, "Cette mesure entraîne un gain budgétaire estimé à 1,4 Md€ en 2027",
        chiffre=True),
     _M(4, "", None, 41, "La mesure présente pour l’État un coût non chiffrable en 2027.",
@@ -1081,17 +1086,12 @@ REFUS_MESURES_2027: tuple[RefusMesure, ...] = (
         "une distribution ouverte des indemnités de rupture ; imputer depuis les comptes "
         "de la fiche noterait la fiche contre elle-même."),
     RefusMesure(
-        2, "4.2.1.4 (IR)", _IJ_PORTEES,
-        "le moteur : openfisca ne met les IJ ni dans l'impôt sur le revenu ni dans la "
-        "CSG, et il faut une correction et deux boutons (part ALD exonérée, part AT-MP "
-        "exonérée) ; puis la part des IJ versées au titre d'une ALD, qu'aucune source "
-        "ouverte ne donne (Voies et moyens 2026, dépense 120204 : « Bénéficiaires : Non "
-        "déterminé »)."),
-    RefusMesure(
-        2, "4.2.1.4 (CSG)", _IJ_PORTEES,
-        "le moteur : la CSG des IJ est un TODO d'openfisca, et le taux de 6,2 % n'a pas de "
-        "bouton. Trois points sur l'assiette de 2024 font 469 M€ : une multiplication, "
-        "pas un chiffrage de l'outil."),
+        2, "4.2.1.4 (IR ALD)",
+        _IJ_PORTEES + " Depuis D-306, le moteur les impose : toutes les IJ maladie, "
+        "faute de savoir lesquelles relèvent d'une ALD.",
+        "la part des IJ versées au titre d'une ALD, qu'aucune source ouverte ne donne "
+        "(Voies et moyens 2026, dépense 120204 : « Bénéficiaires : Non déterminé ») ; "
+        "la dépense fiscale, 597 M€ en 2024, dit son coût, pas son assiette."),
     RefusMesure(
         5, "",
         "La case 8UT porte le stock des plus-values en report : 173,27 Md€ chez 117 112 "
@@ -1112,6 +1112,28 @@ REFUS_MESURES_2027: tuple[RefusMesure, ...] = (
         "les amortissements que la réforme réintègre à la cession : ils sont dans les "
         "liasses du réel, que la fiche apparie, et dans aucune donnée publique."),
 )
+
+
+#: Les volets chiffrés par un cas écrit après l'annexe : des révisions au sens de D-292,
+#: comptées à part des cas aveugles (D-306). Chacun nomme ses cas.
+CHIFFRES_APRES_ANNEXE_2027: dict[tuple[int, str], tuple[str, ...]] = {
+    (2, "4.2.1.4 (IR AT-MP)"): ("plf2027_art_2_ij_atmp",),
+    (2, "4.2.1.4 (CSG)"): ("plf2027_art_2_csg_ij",),
+}
+
+
+def chiffres_apres_annexe_2027() -> tuple[tuple[Montant2027, tuple[str, ...]], ...]:
+    """Chaque volet chiffré après l'annexe avec sa ligne du relevé ; refusé s'il n'en a
+    pas, ou si la ligne n'est pas au numérateur."""
+    lines = {(m.article, m.volet): m for m in MONTANTS_2027}
+    out = []
+    for key, cases in CHIFFRES_APRES_ANNEXE_2027.items():
+        line = lines.get(key)
+        if line is None or not line.chiffre or not cases:
+            raise ValueError(f"art. {key[0]}, volet « {key[1]} » : un volet chiffré après "
+                             f"l'annexe nomme une ligne du numérateur, et ses cas")
+        out.append((line, cases))
+    return tuple(out)
 
 
 def refus_mesures_2027() -> tuple[tuple[RefusMesure, Montant2027], ...]:
