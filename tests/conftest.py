@@ -11,7 +11,20 @@ import os
 
 import pytest
 
+import impact_fichiers
+import memoire
 from impots.engine import system, warm_up
+
+
+def pytest_addoption(parser) -> None:
+    """La sélection par impact et le relevé de mémoire (D-309)."""
+    impact_fichiers.ajouter_options(parser)
+    memoire.ajouter_options(parser)
+
+
+def pytest_collection_modifyitems(config, items) -> None:
+    """Les tests lourds dans un seul groupe xdist (D-309)."""
+    memoire.grouper(items)
 
 
 def pytest_configure(config) -> None:
@@ -21,6 +34,8 @@ def pytest_configure(config) -> None:
     os.environ.setdefault("IMPOTS_AUTH", "aucune")
     os.environ.setdefault("IMPOTS_DEBIT", "0")
     os.environ.setdefault("IMPOTS_DEBIT_CALCULS", "0")
+    impact_fichiers.configurer(config)
+    memoire.configurer(config)
 
 
 @pytest.fixture(scope="session", autouse=True)

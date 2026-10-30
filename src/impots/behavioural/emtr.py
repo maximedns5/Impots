@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import time
 from dataclasses import dataclass, field
@@ -200,7 +201,8 @@ def compute(
                                  "baseline")}
         if cache is not None:
             PROCESSED.mkdir(parents=True, exist_ok=True)
-            pl.DataFrame({"emtr": columns["emtr"], FRAME: frame_print}).write_parquet(cache)
+            _write_atomically(pl.DataFrame({"emtr": columns["emtr"], FRAME: frame_print}),
+                              cache)
     timings["baseline_s"] = round(time.perf_counter() - started, 2)
 
     if reform is not None and not reform.is_empty():
@@ -298,6 +300,24 @@ def cache_key(
 CACHE_MAX = 64 * len(C1_SAMPLES)
 
 
+def _temporary(path: Path) -> Path:
+    """Where `path` is written before it takes its name: same directory, so the rename
+    stays on one file system, and a name no reader or eviction takes for a cache."""
+    return path.with_name(f".{path.name}.{os.getpid()}.tmp")
+
+
+def _write_atomically(frame: pl.DataFrame, path: Path) -> None:
+    """Write a cache whole or not at all (D-309). Two processes share `data/processed` —
+    two API requests, two pytest-xdist workers — and a file written in place could be read
+    half-written. `os.replace` gives it its name in one step."""
+    temporary = _temporary(path)
+    try:
+        frame.write_parquet(temporary)
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def _make_room(vintage: str) -> None:
     """Keep at most `CACHE_MAX - 1` reform files, so the one about to be written fits.
 
@@ -336,5 +356,5 @@ def cached(
                      uprating_key=uprating_key, seed=seed)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     _make_room(vintage)
-    result.households.with_columns(pl.lit(frame_print).alias(FRAME)).write_parquet(path)
+    _write_atomically(result.households.with_columns(pl.lit(frame_print).alias(FRAME)), path)
     return result

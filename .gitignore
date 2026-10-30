@@ -60,3 +60,7 @@ data/raw/erfs_*.pdf
 data/raw/erfs_*.xlsx
 data/raw/erfs_*.txt
 data/raw/cerfa_*.pdf
+
+# Sélection par impact (D-309) : la base de testmon et le relevé des fichiers lus.
+.testmondata*
+.cache/
