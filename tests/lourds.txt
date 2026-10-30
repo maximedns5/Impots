@@ -1,5 +1,6 @@
-# Les tests lourds (D-309) : `make impact` les lance seuls, dans un seul processus, après la
-# passe parallèle. Deux à la fois, ou un à côté des workers, dépassent la mémoire.
+# Les tests lourds (D-309) : `make impact` lance chacun dans un processus neuf, l'un après
+# l'autre, après la passe parallèle. Deux à la fois, un à côté des workers, ou plusieurs dans
+# un même processus dépassent la mémoire.
 #
 # Un test est lourd quand il monte de plus de SEUIL_LOURD_MO (1 024 Mo) au-dessus de la
 # mémoire où il commence, mesuré à froid : chaque test dans un processus neuf, en série,

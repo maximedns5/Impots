@@ -112,8 +112,9 @@ report:
 # (D-entrées, cas, scénarios, data/) a changé depuis ; jamais vert, rouge ou sauté, il est
 # rejoué. Les lents compris (`-m ""` moins les chronomètres) : c'est la sélection qui les
 # rend abordables. En parallèle sur JOBS workers, sans les tests de tests/lourds.txt :
-# ceux-là tournent ensuite seuls, dans un seul processus, car deux passes de population à
-# la fois, ou une à côté des workers, dépassent la mémoire. Puis les chronomètres, seuls.
+# ceux-là tournent ensuite chacun dans un processus neuf, l'un après l'autre. Deux passes
+# de population à la fois, une à côté des workers, ou plusieurs dans un même processus
+# dépassent la mémoire. Puis les chronomètres, seuls.
 # La première fois, TOUT tourne.
 # Ce n'est pas `make full` : il ne journalise rien, et ne remplace pas la passe complète
 # qu'une revue demande. pytest-testmon a été essayé et écarté : sa couverture ne voit pas
@@ -123,5 +124,5 @@ JOBS ?= 4
 impact:
 	$(VENV)/ruff check src tests scripts
 	$(VENV)/python -m pytest -q -m "not chrono and not lourd" -n $(JOBS) --impact
-	$(VENV)/python -m pytest -q -m "lourd" --impact
+	$(VENV)/python tests/memoire.py lancer --impact
 	$(VENV)/python -m pytest -q -m "chrono" --impact

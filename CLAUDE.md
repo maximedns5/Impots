@@ -31,8 +31,8 @@
   `JOBS` workers. La première fois, tout tourne. Plus `node ui/check.mjs` si la page
   change. Une sélection n'est pas une passe complète : avant une revue, `make full`, avec
   l'accord du propriétaire. Un test neuf qui lance une passe de population sur les données
-  réelles s'ajoute à `tests/lourds.txt` : il tourne seul, deux à la fois dépassent la
-  mémoire.
+  réelles s'ajoute à `tests/lourds.txt` : il tourne seul, dans son propre processus. Deux
+  à la fois, ou plusieurs dans un même processus, dépassent la mémoire.
 * **Une passe longue** se lance détachée (`setsid nohup … &`) : les tâches de fond d'une
   session peuvent être tuées en route. On ne modifie ni `src` ni `scripts` dans un
   worktree où une passe ou un banc de mutations tourne.

@@ -521,3 +521,36 @@ def test_nothing_to_rerun_is_a_success_alone_and_under_xdist(projet) -> None:
     assert _ran(seul) == set() and seul.ret == 0
     parallele = _run(projet, "-m", "lent", "-n", "2")
     assert parallele.ret == 0
+
+
+def test_each_heavy_test_runs_in_a_process_of_its_own(pytester) -> None:
+    """One process that chains the heavy tests keeps what each pass leaves: it reached
+    13,6 GB at the third, and the kernel killed it. `memoire.py lancer` gives each its own,
+    runs only the heavy ones, and says which were red."""
+    import subprocess
+    import sys
+
+    pytester.makeconftest(f"import sys\nsys.path.insert(0, {str(TESTS)!r})\n"
+                          "from pathlib import Path\n"
+                          "import memoire\n"
+                          "memoire.FICHIER_LOURDS = Path(__file__).with_name('lourds.txt')\n"
+                          "def pytest_addoption(parser):\n    memoire.ajouter_options(parser)\n"
+                          "def pytest_configure(config):\n    memoire.configurer(config)\n")
+    pytester.makeini("[pytest]\nmarkers =\n    lourd: lourd\n")
+    pytester.path.joinpath("lourds.txt").write_text(
+        "".join(f"test_p.py::test_lourd_{i}  # 6 000 Mo\n" for i in range(3)), encoding="utf-8")
+    corps = "def test_{0}():\n    import os\n    open('pid_{0}', 'w').write(str(os.getpid()))\n"
+    pytester.makepyfile(test_p="".join(corps.format(n) for n in
+                                       ("lourd_0", "lourd_1", "lourd_2", "leger"))
+                        + "def test_lourd_3():\n    pass\n")
+    lancer = [sys.executable, str(TESTS / "memoire.py"), "lancer", "-p", "no:cacheprovider"]
+    vert = subprocess.run(lancer, cwd=pytester.path, capture_output=True, text=True)
+    assert vert.returncode == 0, vert.stdout
+    pids = {pytester.path.joinpath(f"pid_lourd_{i}").read_text() for i in range(3)}
+    assert len(pids) == 3 and str(os.getpid()) not in pids
+    assert not pytester.path.joinpath("pid_leger").exists()
+    pytester.path.joinpath("lourds.txt").write_text("test_r.py::test_rouge  # 6 000 Mo\n",
+                                                    encoding="utf-8")
+    pytester.path.joinpath("test_r.py").write_text("def test_rouge():\n    assert False\n")
+    rouge = subprocess.run(lancer, cwd=pytester.path, capture_output=True, text=True)
+    assert rouge.returncode == 1 and "ROUGE test_r.py::test_rouge" in rouge.stdout

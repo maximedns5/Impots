@@ -24038,14 +24038,26 @@ enregistré. Avec xdist 3.8, ce mutant est donc équivalent. `tryfirst` garde l'
 l'enregistrement change.
 
 **Groupés, ils débordaient encore.** Sur un seul worker, les lourds ne tournaient plus deux
-à la fois. Mais un processus qui les enchaîne garde ce que chacun laisse : le worker des
-lourds est monté à 9,0 Go, et les trois autres, à force de tests, à 1,3-1,9 Go. Le pic a
-touché 14,1 Go, et le noyau a tué le worker des lourds à 95 % de la passe. `make impact`
-lance donc la passe parallèle sans eux (`-m "not lourd"`), puis les lourds seuls, dans un
-seul processus, puis les chronomètres. Un test vérifie que `-m "not lourd"` les écarte sous
-xdist et que `-m lourd` les garde ; il a été vu échouer sans la marque. Le groupe xdist
-reste : une passe parallèle lancée à la main avec `--dist loadgroup` les met encore sur un
-seul worker.
+à la fois. Mais un processus qui les enchaîne garde ce que chaque passe laisse : le worker
+des lourds est monté à 9,0 Go, et les trois autres, à force de tests, à 1,3-1,9 Go. Le pic a
+touché 14,1 Go, et le noyau a tué le worker des lourds à 95 % de la passe. Lancés ensuite
+seuls, mais dans un même processus, ils ont atteint 13,6 Go au troisième, et le noyau l'a
+tué aussi : le premier passage par l'API laisse 6,0 Go, le suivant par le runner 5,7 Go de
+plus. `make impact` lance donc la passe parallèle sans eux (`-m "not lourd"`), puis chaque
+lourd dans un processus neuf, l'un après l'autre (`python tests/memoire.py lancer
+--impact`), puis les chronomètres. C'est la mesure à froid elle-même : les dix-neuf y ont
+tourné ainsi, en 45 minutes, sans dépasser 7,05 Go. Deux tests vérifient que `-m "not
+lourd"` les écarte sous xdist, que chacun a son processus, et qu'un lourd rouge rend la
+commande rouge ; trois mutants du lanceur sont tués. Le groupe xdist reste : une passe
+parallèle lancée à la main avec `--dist loadgroup` les met encore sur un seul worker.
+
+**Rien à rejouer était un échec.** Quand tout est à jour, pytest dit « no tests ran » et
+sort en 5. `make impact` s'arrêtait alors avant les lourds et les chronomètres : un
+changement qui ne touche aucun test lourd, le cas ordinaire, finissait en rouge. Sous
+`--impact`, ce code devient 0, seul et sur le maître de xdist, qui compte les tests de ses
+workers. Un test le vérifie dans les deux cas ; il a été vu échouer avant, et encore sans le
+greffon du maître. Le prix : sous `--impact`, une commande qui ne collecte aucun test passe
+aussi en vert.
 
 **Vérifié à `-n 4`, sur la suite moins `test_knobs` et `test_engine` (3 170 tests).** La
 passe a duré 36 min 28 s, et a trouvé deux défauts de l'outillage, corrigés depuis :

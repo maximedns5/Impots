@@ -8,9 +8,10 @@ A test never passed, red or skipped, and a module that launches a subprocess alw
 pytest-testmon was tried and rejected: it let D-306's bug through, because the tax system
 is built once per process. Replayed on six real changes over 505 tests: nothing changed,
 20 s instead of 459 s; a docs line, 21 s; both reintroduced bugs caught. Nineteen tests
-climb 2 to 7 GB cold (`tests/lourds.txt`, measured one process per test). Two at once, or
-one beside the workers, overflowed the 16 GB machine, so `make impact` runs them alone after
-the parallel pass. The EMTR caches are now written atomically. `make full` is unchanged.
+climb 2 to 7 GB cold (`tests/lourds.txt`, measured one process per test). Two at once, one
+beside the workers, or several in one process overflowed the 16 GB machine, so `make
+impact` runs each in a fresh process after the parallel pass (45 min when all must rerun).
+The EMTR caches are now written atomically. `make full` is unchanged.
 Eight tests are red on main and not from this branch: six in `test_fan`, a guard-sweep
 mutation broken by D-307, and D-308's band test. They are left for a separate fix. The
 CLAUDE.md rule on targeted tests is rewritten, as a proposal that holds if the PR merges.

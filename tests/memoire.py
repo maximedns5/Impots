@@ -1,13 +1,14 @@
-"""La mémoire de chaque test, pour tenir les lourds à l'écart de la passe parallèle (D-309).
+"""La mémoire de chaque test, pour tenir les lourds à l'écart les uns des autres (D-309).
 
 Un passage de 20 000 ménages au palier complet tient plusieurs Go. Deux workers xdist qui en
 lancent chacun un ont dépassé les 15 Go de la machine, et le noyau a tué trois workers :
 leurs tests sont tombés en échec sans avoir rien testé. Groupés sur un seul worker, ils y
-ont accumulé 9 Go, et ce worker a été tué à son tour, à côté des trois autres. `--memoire`
-relève, par test, de combien la mémoire résidente du processus est montée au-dessus de ce
-qu'elle était au départ du test. Un test qui monte de plus de `SEUIL_LOURD_MO` est lourd :
-`tests/lourds.txt` le marque `lourd`, et `make impact` lance ces tests seuls, dans un seul
-processus, après la passe parallèle.
+ont accumulé 9 Go, et ce worker a été tué à son tour, à côté des trois autres. Seuls, dans
+un seul processus, ils ont atteint 13,6 Go au troisième : un processus garde ce que chaque
+passe laisse. `--memoire` relève, par test, de combien la mémoire résidente du processus
+est montée au-dessus de ce qu'elle était au départ du test. Un test qui monte de plus de
+`SEUIL_LOURD_MO` est lourd : `tests/lourds.txt` le marque `lourd`, et `make impact` lance
+chacun dans un processus neuf, l'un après l'autre, après la passe parallèle (`lancer`).
 
 La mémoire est échantillonnée pendant le test : le pic du processus (`ru_maxrss`) ne monte
 qu'une fois, au premier test lourd, et tairait les suivants. Le relevé s'écrit après chaque
@@ -18,6 +19,8 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
+import sys
 import threading
 from pathlib import Path
 
@@ -124,9 +127,32 @@ class Releve:
         self.arret.set()
 
 
-if __name__ == "__main__":
-    import sys
+def lancer(options: list[str]) -> int:
+    """Chaque test lourd dans un processus neuf, l'un après l'autre ; 1 si l'un est rouge.
 
+    Les options vont à chaque pytest, `--impact` compris : la liste est celle qu'il garde.
+    Seul, aucun lourd n'a dépassé 7,05 Go ; enchaînés, ils ont atteint 13,6 Go."""
+    commande = [sys.executable, "-m", "pytest", "-m", "lourd", *options]
+    liste = subprocess.run([*commande, "--collect-only", "-q"], capture_output=True,
+                           text=True)
+    if liste.returncode not in (0, 5):
+        sys.stdout.write(liste.stdout + liste.stderr)
+        return liste.returncode
+    tests = [ligne.strip() for ligne in liste.stdout.splitlines() if "::" in ligne]
+    rouges = []
+    for rang, test in enumerate(tests, 1):
+        print(f"lourd {rang}/{len(tests)} : {test}", flush=True)
+        if subprocess.run([*commande, "-q", test]).returncode != 0:
+            rouges.append(test)
+    print(f"{len(tests) - len(rouges)} lourds verts, {len(rouges)} rouges", flush=True)
+    for test in rouges:
+        print(f"ROUGE {test}", flush=True)
+    return 1 if rouges else 0
+
+
+if __name__ == "__main__":
+    if sys.argv[1:2] == ["lancer"]:
+        sys.exit(lancer(sys.argv[2:]))
     releves: dict[str, float] = {}
     for chemin in sys.argv[1:]:
         releves.update(json.loads(Path(chemin).read_text(encoding="utf-8")))
