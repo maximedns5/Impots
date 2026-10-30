@@ -43,6 +43,9 @@ MODULES_LOCAUX: frozenset[str] = frozenset({
     "knob_cases", "macro_cases",
     # et `tests/exploration_cases.py`, la passe simulée des tests de l'exploration (D-235)
     "exploration_cases",
+    # et l'outillage des tests, que le conftest importe : la sélection par impact et le
+    # relevé de mémoire (D-309) ; `tests/test_write_etude_plf2027.py`, que test_etude lit
+    "impact_fichiers", "memoire", "test_write_etude_plf2027",
 })
 
 #: Les racines que l'on scanne par défaut. `src/` est le minimum ; `tests/` et `scripts/`

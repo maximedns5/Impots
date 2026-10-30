@@ -34,7 +34,7 @@ VENV ?= .venv/bin
 LOG  := reports/full_pass_log.md
 DURATIONS := reports/full_pass_durations.md
 
-.PHONY: gate full lint report data data-check ci-local ci-deps
+.PHONY: gate full impact lint report data data-check ci-local ci-deps
 
 gate:
 	$(VENV)/ruff check src tests scripts
@@ -106,3 +106,23 @@ full: data-check
 
 report:
 	@tail -5 $(LOG)
+
+# CE QUI A CHANGÉ, ET SEULEMENT ÇA (D-309). `--impact` (tests/impact_fichiers.py) ne
+# rejoue un test vert que si un fichier qu'il importe, même indirectement, ou qu'il lit
+# (D-entrées, cas, scénarios, data/) a changé depuis ; jamais vert, rouge ou sauté, il est
+# rejoué. Les lents compris (`-m ""` moins les chronomètres) : c'est la sélection qui les
+# rend abordables. En parallèle sur JOBS workers, sans les tests de tests/lourds.txt :
+# ceux-là tournent ensuite chacun dans un processus neuf, l'un après l'autre. Deux passes
+# de population à la fois, une à côté des workers, ou plusieurs dans un même processus
+# dépassent la mémoire. Puis les chronomètres, seuls.
+# La première fois, TOUT tourne.
+# Ce n'est pas `make full` : il ne journalise rien, et ne remplace pas la passe complète
+# qu'une revue demande. pytest-testmon a été essayé et écarté : sa couverture ne voit pas
+# ce qu'un cache de processus n'exécute qu'une fois, et il laissait passer le bug de D-306.
+JOBS ?= 4
+
+impact:
+	$(VENV)/ruff check src tests scripts
+	$(VENV)/python -m pytest -q -m "not chrono and not lourd" -n $(JOBS) --impact
+	$(VENV)/python tests/memoire.py lancer --impact
+	$(VENV)/python -m pytest -q -m "chrono" --impact

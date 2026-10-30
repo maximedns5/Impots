@@ -43,7 +43,9 @@ dependencies = [
 impots = "impots.population.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest", "pyyaml", "httpx", "ruff"]
+# pytest-xdist : `make impact` en parallèle (D-309). La suite ne l'exige pas : sans lui,
+# `make gate` et `make full` tournent.
+dev = ["pytest", "pyyaml", "httpx", "ruff", "pytest-xdist"]
 # Dataframe/ML stack for phases 1+. Deliberately NOT a Phase 0 dependency:
 # nothing in the household calculator needs a dataframe (spec §1).
 data = ["pandas", "dbnomics", "scikit-learn"]
@@ -72,6 +74,11 @@ holding the data is where they run; CI runs them only when the workflow is \
 dispatched by hand, and no full-suite run has yet finished on a runner. An earlier \
 text said 'always run in CI', which was false in the dangerous direction: it would \
 let a reader skip the local hour. See D-114.""",
+  """chrono: a wall-clock budget (`quiet_machine`). It skips on a loaded machine, which \
+parallel workers make: `make impact` runs these alone, after the parallel pass (D-309).""",
+  """lourd: listed in tests/lourds.txt, a test that climbs past 1 GB cold. Two at once, or \
+several in one process, overflow the memory: `make impact` runs each in a fresh process \
+(D-309).""",
 ]
 filterwarnings = [
   "ignore::DeprecationWarning",

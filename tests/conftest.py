@@ -11,7 +11,26 @@ import os
 
 import pytest
 
+import impact_fichiers
+import memoire
 from impots.engine import system, warm_up
+
+
+def pytest_addoption(parser) -> None:
+    """La sélection par impact et le relevé de mémoire (D-309)."""
+    impact_fichiers.ajouter_options(parser)
+    memoire.ajouter_options(parser)
+
+
+def pytest_collection_modifyitems(config, items) -> None:
+    """Les chronomètres marqués (D-309). Les lourds sont groupés par `memoire.configurer`.
+
+    Un test de durée (`quiet_machine`) se saute quand la machine est chargée, ce que des
+    workers xdist font d'eux-mêmes. `make impact` les écarte de la passe parallèle et les
+    lance ensuite seuls, sur une machine au repos."""
+    for item in items:
+        if "quiet_machine" in getattr(item, "fixturenames", ()):
+            item.add_marker(pytest.mark.chrono)
 
 
 def pytest_configure(config) -> None:
@@ -21,6 +40,8 @@ def pytest_configure(config) -> None:
     os.environ.setdefault("IMPOTS_AUTH", "aucune")
     os.environ.setdefault("IMPOTS_DEBIT", "0")
     os.environ.setdefault("IMPOTS_DEBIT_CALCULS", "0")
+    impact_fichiers.configurer(config)
+    memoire.configurer(config)
 
 
 @pytest.fixture(scope="session", autouse=True)

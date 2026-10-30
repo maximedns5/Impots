@@ -26,8 +26,13 @@
   de `origin/main`. Une PR par but ; le propriétaire décide du merge.
 * **Les données** ne sont jamais dans git : `make data` les prépare dans un checkout
   neuf. Le code se lance avec le venv du dépôt et `PYTHONPATH=src`.
-* **Les tests ciblés** : ceux du module touché et des modules qui l'importent, plus
-  `node ui/check.mjs` si la page change.
+* **Les tests ciblés** : `make impact` (D-309). Un test vert n'est rejoué que si un fichier
+  qu'il importe, même indirectement, ou qu'il lit a changé depuis ; en parallèle sur
+  `JOBS` workers. La première fois, tout tourne. Plus `node ui/check.mjs` si la page
+  change. Une sélection n'est pas une passe complète : avant une revue, `make full`, avec
+  l'accord du propriétaire. Un test neuf qui lance une passe de population sur les données
+  réelles s'ajoute à `tests/lourds.txt` : il tourne seul, dans son propre processus. Deux
+  à la fois, ou plusieurs dans un même processus, dépassent la mémoire.
 * **Une passe longue** se lance détachée (`setsid nohup … &`) : les tâches de fond d'une
   session peuvent être tuées en route. On ne modifie ni `src` ni `scripts` dans un
   worktree où une passe ou un banc de mutations tourne.

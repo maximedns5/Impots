@@ -60,3 +60,6 @@ data/raw/erfs_*.pdf
 data/raw/erfs_*.xlsx
 data/raw/erfs_*.txt
 data/raw/cerfa_*.pdf
+
+# Sélection par impact et relevé de mémoire (D-309) : ce que chaque test a lu, et sa mémoire.
+.cache/

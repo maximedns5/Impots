@@ -23978,3 +23978,186 @@ qu'openfisca brut lève. Toute autre variable absente lève encore. Deux tests o
 top_rate_rise` (`tests/test_api.py`) échoue : le p10 de la bande vaut −333 493 323 €, et
 le test le veut positif. Il échoue à l'identique sur main (8b5f05e), au même euro. Il
 n'est donc pas de cette branche, et il n'est pas réparé ici.
+
+## D-309 — Des tests plus rapides sans rien perdre : en parallèle, et ce qui a changé
+
+**La demande.** Le propriétaire veut des tests ciblés, comme d'autres équipes en font :
+moins de temps perdu, et la même véracité.
+
+**Où passe le temps, mesuré.** Ce matin, `test_knobs`, `test_prestations` et `test_engine`
+(526 tests) ont pris 80 minutes en série. Un test de bouton prend 23 à 34 s. Son profil :
+- `pin_benefit_history` prend 47 s sur 69 (sous le profileur) : l'historique N-1 et N-2
+  des prestations, calculé pour chaque simulation ;
+- `get_parameters_at_instant` prend 28 s : un système réformé neuf recalcule l'arbre des
+  paramètres à chaque instant qu'il lit ;
+- `modify_parameters` copie tout l'arbre, 2,8 s par appel.
+
+Ce sont des coûts du moteur, pas des tests. Les baisser accélérerait aussi l'API ; c'est
+un chantier à part.
+
+**1. En parallèle.** Avec pytest-xdist, les mêmes 526 tests passent en 21 minutes sur
+quatre workers, au lieu de 80 : 3,8 fois plus vite. Le pic de mémoire est de 4,6 Go. Deux
+choses le permettent sans rien perdre :
+- les caches EMTR de `data/processed` s'écrivent à côté, puis prennent leur nom d'un
+  `os.replace`. Écrits en place, deux workers, ou deux requêtes de l'API, pouvaient lire
+  un parquet à moitié écrit. Quatre tests ont été vus échouer avant le correctif ;
+- les cinq tests de durée (`quiet_machine`) se sautent sous la charge que des workers
+  font. Ils portent la marque `chrono` : `make impact` les écarte de la passe parallèle et
+  les lance ensuite seuls.
+
+**Les tests lourds, à part.** Une passe de population au palier complet, sur les 20 000
+ménages, tient de 6 à 7 Go. Deux workers qui en lancent une chacun dépassent les
+15 Go de la machine. À `-n 2` déjà, le noyau a tué trois workers (pic de 14,3 Go), et leurs
+tests sont tombés en échec sans avoir rien testé. L'échec se voit, mais la passe est perdue.
+
+`--memoire` (`tests/memoire.py`) relève de combien chaque test fait monter la mémoire du
+processus. Mesurée dans un même processus, cette hausse trompe : le premier test de
+population montait de 5,9 Go, les suivants de 140 à 740 Mo, parce que la mémoire était déjà
+prise. Sur un worker neuf, chacun la reprend. La mesure retenue est donc à froid : chaque
+test dans un processus neuf, en série. Sur les 119 tests lents hors ménage, en 67 minutes :
+- douze montent de 6,0 à 7,0 Go : les passes de population de `test_api` et de
+  `test_population` ;
+- six montent de 3,2 Go : ceux de `test_zero_masked` ;
+- un monte de 2,1 Go : le solveur de `test_scenarios` ;
+- le suivant monte de 508 Mo, les autres de moins de 300 Mo.
+
+Ces dix-neuf tests sont listés dans `tests/lourds.txt`, chacun avec sa mesure, et portent la
+marque `lourd`. Un test vérifie que chaque test listé existe encore : renommé, il sortirait
+de la liste en silence. Les tests de ménage n'ont pas été mesurés un à un : sur les 526,
+quatre workers tenaient 4,6 Go en tout.
+
+**La marque arrivait trop tard.** Le premier essai à `-n 4` montrait les quatre workers à
+3,1-3,5 Go dès la deuxième minute : les lourds tournaient partout à la fois. Le
+`pytest_collection_modifyitems` d'un worker xdist lit le groupe de chaque test, et celui du
+conftest, enregistré avant lui, passe après. La marque est désormais posée par un greffon
+que `memoire.configurer` enregistre, avec `tryfirst`. Un test lance xdist sur six lourds et
+six légers, et veut les six lourds sur un seul worker. Il a été vu échouer avant le
+correctif : les lourds étaient sur trois workers. Retirer `tryfirst` ne le fait pas
+échouer : le greffon s'enregistre après celui de xdist, et pluggy appelle d'abord le dernier
+enregistré. Avec xdist 3.8, ce mutant est donc équivalent. `tryfirst` garde l'ordre si
+l'enregistrement change.
+
+**Groupés, ils débordaient encore.** Sur un seul worker, les lourds ne tournaient plus deux
+à la fois. Mais un processus qui les enchaîne garde ce que chaque passe laisse : le worker
+des lourds est monté à 9,0 Go, et les trois autres, à force de tests, à 1,3-1,9 Go. Le pic a
+touché 14,1 Go, et le noyau a tué le worker des lourds à 95 % de la passe. Lancés ensuite
+seuls, mais dans un même processus, ils ont atteint 13,6 Go au troisième, et le noyau l'a
+tué aussi : le premier passage par l'API laisse 6,0 Go, le suivant par le runner 5,7 Go de
+plus. `make impact` lance donc la passe parallèle sans eux (`-m "not lourd"`), puis chaque
+lourd dans un processus neuf, l'un après l'autre (`python tests/memoire.py lancer
+--impact`), puis les chronomètres. C'est la mesure à froid elle-même : les dix-neuf y ont
+tourné ainsi, en 45 minutes, sans dépasser 7,05 Go. Deux tests vérifient que `-m "not
+lourd"` les écarte sous xdist, que chacun a son processus, et qu'un lourd rouge rend la
+commande rouge ; trois mutants du lanceur sont tués. Le groupe xdist reste : une passe
+parallèle lancée à la main avec `--dist loadgroup` les met encore sur un seul worker.
+
+**Rien à rejouer était un échec.** Quand tout est à jour, pytest dit « no tests ran » et
+sort en 5. `make impact` s'arrêtait alors avant les lourds et les chronomètres : un
+changement qui ne touche aucun test lourd, le cas ordinaire, finissait en rouge. Sous
+`--impact`, ce code devient 0, seul et sur le maître de xdist, qui compte les tests de ses
+workers. Un test le vérifie dans les deux cas ; il a été vu échouer avant, et encore sans le
+greffon du maître. Le prix : sous `--impact`, une commande qui ne collecte aucun test passe
+aussi en vert.
+
+**Vérifié à `-n 4`, sur la suite moins `test_knobs` et `test_engine` (3 170 tests).** La
+passe a duré 36 min 28 s, et a trouvé deux défauts de l'outillage, corrigés depuis :
+- deux tests du relevé de mémoire lancent un pytest, qui héritait de `PYTEST_XDIST_WORKER`
+  sans être un worker : son relevé partait sous un autre nom. Le nom vient désormais de
+  `config.workerinput`, et le test pose la variable ; il a été vu échouer avant ;
+- `test_dependances` prenait `memoire` et `impact_fichiers`, que le conftest importe, pour
+  des dépendances non déclarées. Ils rejoignent les modules locaux de `dependances.py`.
+
+Les lourds, chacun dans son processus, c'est la mesure à froid : 45 minutes pour les
+dix-neuf, 7,05 Go au plus. Le lanceur a été passé sur deux tests réels de
+`test_zero_masked` : chacun dans son processus, 52 s chacun, verts. Relancé sans rien
+changer, il n'a rien rejoué, et a rendu 0 en 4 s.
+
+**Neuf tests rouges sur main, qui ne sont pas de cette branche.** Ils échouent à l'identique
+sur main (8804916), dans un worktree neuf :
+- six de `test_fan` : le faux agrégat de ces tests n'a pas `employer_contribution_delta`,
+  que `api.main._macro` lit (cinq tests), et l'allègement ciblé ne crée pas plus d'emplois
+  que l'uniforme (deux p50 égaux, 50,9) ;
+- `test_gardes_phase9` : la mutation `P11-cdhr-recette` ne s'applique plus, depuis que D-307
+  a mis `csg_ij` après `cdhr` dans `guards.py` ;
+- le test de bande que D-308 nomme déjà ;
+- `test_dependances`, pour `test_write_etude_plf2027`, que `test_etude` importe.
+
+Le dernier rejoint ici les modules locaux, à côté de l'outillage, et passe. Les huit autres
+ne sont pas réparés ici : c'est un chantier à part. La dernière passe complète journalisée
+date du 20 octobre (D-231). Ces tests ont rougi depuis, sans qu'une passe complète les voie.
+C'est ce que `make impact` doit éviter : il rejoue ce qui dépend du changement, et pas
+seulement ce que l'auteur pense toucher.
+
+**2. Seulement ce qui a changé : pytest-testmon, essayé et écarté.** testmon relance un
+test quand une ligne Python qu'il exécute a changé. Rejoué sur six changements réels, sur
+huit fichiers de tests (505 tests), il a laissé passer le bug de D-306 : le second
+`modify_parameters` réintroduit, 82 tests sélectionnés, tous verts. Le système fiscal se
+construit une fois par processus, puis sort d'un cache. La couverture n'attribue donc ce
+code qu'au premier test de chaque worker. Le code compte une vingtaine de tels caches.
+
+**Le sélecteur retenu : `--impact` (`tests/impact_fichiers.py`).** Un test vert n'est rejoué
+que si l'une de ses dépendances a changé depuis son dernier passage vert :
+- un fichier Python qu'importe son fichier de tests, même indirectement. Le graphe est lu
+  dans le source, imports dans les fonctions compris, et non dans l'exécution : un cache
+  ne retire jamais un import ;
+- un fichier qu'il lit (crochet d'audit de Python, et lecteurs de polars, qui ouvrent en
+  Rust), ou un script qu'il exécute par son chemin ;
+- les versions d'openfisca, numpy, polars, pydantic, pytest, pyyaml et pypdf.
+
+Sont toujours rejoués : un test jamais passé, rouge ou sauté, et un fichier de tests qui
+lance un sous-processus. Une lecture faite pendant la collecte vaut pour tous. Le conftest
+compte par son texte et par l'outillage des tests : son import du moteur ne sert qu'à le
+chauffer.
+
+**Rejoué sur les mêmes six changements, sur les mêmes 505 tests :**
+
+| changement | rejoués | durée | issue |
+|---|---|---|---|
+| référence (tout) | 505 | 459 s | vert |
+| rien | 85 | 20 s | vert |
+| bug 1 de D-306 réintroduit | 497 | 492 s | **9 échecs**, dont les 7 de D-306 |
+| bug 2 de D-308 réintroduit | 497 | 437 s | **3 échecs**, ceux de D-308 |
+| une ligne de `DECISIONS.md` | 93 | 21 s | vert |
+| un montant du relevé de 2027 | 133 | 77 s | **1 échec**, le bon |
+
+Les deux bugs sont vus. Le gain dépend du changement :
+- un changement du cœur du moteur rejoue presque tout, puisque presque tout en dépend ;
+- un changement de documentation, de relevé, d'étude ou de script en rejoue peu.
+
+Les 85 tests rejoués quand rien ne change sont ceux qui lancent un sous-processus, et ceux
+qui se sautent.
+
+Un test du sélecteur a échoué une fois sur deux sous la charge. La cause était le test : il
+modifiait un fichier dans la seconde de son import, à la même taille, et Python reprenait
+son bytecode périmé. Ses projets tournent désormais sans bytecode.
+
+**Ce qui reste hors de vue, dit et non deviné :**
+- ce qu'exécute un sous-processus : ces tests sont toujours rejoués ;
+- les variables d'environnement, la date, le réseau ;
+- un fichier qu'un module en C ouvrirait seul, hors polars ;
+- l'existence d'un fichier (`os.stat`). Un test sauté faute de fichier est toujours
+  rejoué : il tourne dès que le fichier existe.
+
+**Les mutants.** Treize mutants ont été lancés sur les caches atomiques, le relevé des
+lectures et le regroupement : tous tués. Seize ont été lancés sur le sélecteur : quinze
+tués. Le seizième est équivalent : il retire le retour à « personne » en fin de collecte, et
+aucune lecture ne tombe dans cette fenêtre dans cette suite. Onze ont été lancés sur le
+relevé de mémoire et la liste des lourds : neuf tués au premier passage. Les deux survivants
+montraient deux tests manquants : une écriture du relevé en place, et une hausse comptée
+depuis zéro. Les deux tests sont ajoutés, et les onze mutants sont tués. Le test des noms
+listés a été vu échouer sur un nom changé et sur une liste absente.
+
+**Ruff de nouveau propre.** `make impact` commence par ruff, qui relevait trois remarques
+venues de But 8 : un `zip` sans `strict`, un bloc d'imports, un motif non échappé. Elles
+sont corrigées, sans rien changer à ce qui est calculé.
+
+**Ce que le propriétaire décide.** `make full` ne change pas : il reste la passe complète,
+journalisée, avant une revue. `make impact` s'y ajoute pour le travail courant. Sa première
+passe fait tout tourner, et n'a pas été lancée en entier ici. Sa passe parallèle, sans les
+lourds, est contenue dans la vérification ci-dessus, où les workers légers tenaient de 1,3 à
+1,9 Go ; ses lourds, c'est la mesure à froid. Elle coûte donc 45 minutes de lourds, plus la
+passe parallèle ; ensuite, elle ne rejoue que ce qui dépend du changement. La règle des
+tests ciblés de CLAUDE.md est réécrite en ce sens, et c'est une proposition : elle vaut si
+la PR est mergée. Deux chantiers restent ouverts : les huit tests rouges sur main, et le
+coût du moteur (`pin_benefit_history`, `get_parameters_at_instant`), qui accélérerait aussi
+l'API.
