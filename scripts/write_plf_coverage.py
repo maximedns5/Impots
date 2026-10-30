@@ -42,6 +42,7 @@ from impots.plf_coverage import (
     share_of_yield_2027,
     share_of_yield_2027_si_ecrits,
     share_priceable,
+    refus_mesures_2027,
     volets_non_chiffres_2027,
 )
 
@@ -294,6 +295,18 @@ def euros_2027(w) -> None:
       + " ; ".join(f"art. {m.article}, volet {m.volet}, {m2027(m.meur)}\u00a0M EUR"
                    for m in rest)
       + ". Le triage de leur article dit déjà ce qui leur manque.")
+    w("")
+    w("### Les refus mesurés (but 8, D-305)")
+    w("")
+    measured = refus_mesures_2027()
+    w(f"Le but 8 a regardé **{meur(sum(line.meur for _, line in measured))}** de volets "
+      f"refusés. Aucun n'entre au numérateur : chacun dit ce "
+      f"que la population ou les données ouvertes en portent, et ce qui manque.")
+    w("")
+    for refus, line in measured:
+        volet = f", volet {refus.volet}" if refus.volet else ""
+        w(f"* **Art. {refus.article}{volet}, {m2027(line.meur)}\u00a0M EUR.** "
+          f"{refus.porte} Manque : {refus.manque}")
     w("")
     w("### Les articles qui sortent du dénominateur")
     w("")

@@ -266,6 +266,13 @@ def _set_niche_inputs(
                 )
 
 
+#: openfisca variable -> the frame column `population.ij` writes (D-305).
+IJ_INPUTS: dict[str, str] = {
+    "indemnites_journalieres_maladie": "ij_maladie_annuel",
+    "indemnites_journalieres_accident_travail": "ij_atmp_annuel",
+}
+
+
 def build_simulation(
     frame: pl.DataFrame, tax_benefit_system: Any, year: int,
     niche_bases: dict[str, Any] | None = None,
@@ -335,6 +342,15 @@ def build_simulation(
     # three steps away as an RSA bill three times the published one.
     monthly_pension = (frame["pension_annuelle"].to_numpy() / 12.0).astype(np.float64)
     monthly_chomage = (frame["chomage_annuel"].to_numpy() / 12.0).astype(np.float64)
+    # The sick pay `population.ij` imputes, when the run asked for it (D-305): openfisca
+    # reads it in the RSA's, the prime's, the ASS's and the ASPA's resources only.
+    monthly_ij = {
+        variable: (frame[column].to_numpy() / 12.0).astype(np.float64)
+        for variable, column in IJ_INPUTS.items() if column in frame.columns
+    }
+    if monthly_ij and len(monthly_ij) != len(IJ_INPUTS):
+        raise WiringError(f"population frame carries only part of the sick pay "
+                          f"{sorted(IJ_INPUTS.values())}")
 
     # ---- ménage inputs, ordered to match `household_ids` -------------------
     menage = _group_frame(
@@ -355,6 +371,8 @@ def build_simulation(
             # so it is pinned on the declared box as well; see the module docstring.
             simulation.set_input("retraite_imposable", period, monthly_pension)
             simulation.set_input("chomage_brut", period, monthly_chomage)
+            for variable, values in monthly_ij.items():
+                simulation.set_input(variable, period, values)
             simulation.set_input("statut_occupation_logement", period, statut)
             simulation.set_input("zone_apl", period, zone)
             simulation.set_input("loyer", period, loyer)

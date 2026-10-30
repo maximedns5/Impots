@@ -1,6 +1,19 @@
 # State of the project, and the directions open — 2026-10-29 (Phase 11, M0 to M6)
 
-The seventh 2026-10-29 update adds D-304: the goal's seventh aim, the studies online.
+The eighth 2026-10-29 update adds D-305: the goal's eighth aim, a first pass. The
+population can carry the régime général's sick pay of 2024 (`run(..., impute_ij=True)`,
+`impots population run --impute-ij`, `src/impots/population/ij.py`): 10 690 M€ of maladie
+and 4 955 M€ of AT-MP read in the CCSS of May 2026 (the reading is refused when the tables
+contradict the text), handed to the private sector's 19,24 M employees on the EEC's weekly
+sick-leave rate by age band and PCS, on a wage capped at 1,8 SMIC; a calibration,
+`margins.SICK_PAY_BY_BRANCH`. openfisca reads it in the RSA, the prime, the ASS and the
+ASPA, not in the IR nor the CSG. The art. 2 volets 4.2.1.3 and 4.2.1.4 and the art. 5, 6
+and 7 stay refused, each with its measure (`plf_coverage.REFUS_MESURES_2027`, a new
+section of `docs/PLF2027_COVERAGE.md`); the euro share stays at 63,8 %. What is missing is
+at the end of D-305: the sick pay in the IR and the CSG (a correction, three knobs), an
+open source for the ALD share, a distribution of severance pay, the savings imputed.
+
+The seventh 2026-10-29 update added D-304: the goal's seventh aim, the studies online.
 `impots site construire` writes `site/` (`src/impots/site.py`): an index listing every
 study with its « En bref » table, and a page per study, plain HTML and one stylesheet, no
 script. The text is the study page's own: `Etude.lines` now writes every number as a token

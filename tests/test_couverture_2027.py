@@ -122,3 +122,67 @@ def test_every_citation_is_on_its_page_of_the_manifested_annex() -> None:
         if m.page not in pages:
             pages[m.page] = _norm(reader.pages[m.page - 1].extract_text())
         assert _norm(m.citation) in pages[m.page], (m.article, m.volet, m.page)
+
+
+# --- les refus mesurés du but 8 (D-305) ----------------------------------------------
+
+
+def test_the_measured_refusals_name_lines_left_out_of_the_numerator() -> None:
+    from impots.plf_coverage import refus_mesures_2027, share_of_yield_2027
+
+    measured = refus_mesures_2027()
+    assert [(r.article, r.volet) for r, _ in measured] == [
+        (2, "4.2.1.3"), (2, "4.2.1.4 (IR)"), (2, "4.2.1.4 (CSG)"), (5, ""), (6, ""),
+        (7, "4.2.1.2")]
+    assert sum(line.meur for _, line in measured) == 3_110.0
+    assert f"{share_of_yield_2027() * 100:.1f}" == "63.8"
+
+
+@pytest.mark.parametrize("article, volet", [(2, "4.2.1.1"), (2, "4.2.1.2"), (5, "x")])
+def test_a_measured_refusal_off_the_denominator_or_priced_is_refused(
+        monkeypatch, article, volet) -> None:
+    from impots import plf_coverage
+
+    bogus = plf_coverage.RefusMesure(article, volet, "porte", "manque")
+    monkeypatch.setattr(plf_coverage, "REFUS_MESURES_2027", (bogus,))
+    with pytest.raises(ValueError, match="refus mesuré"):
+        plf_coverage.refus_mesures_2027()
+
+
+def _box(code: str) -> tuple[float, float]:
+    import csv
+
+    from impots.donnees import RAW
+
+    with open(RAW / "dgfip_ir_2042_nat_export_2026-10-15.csv", encoding="utf-8") as f:
+        for row in csv.reader(f, delimiter=";"):
+            if row[0] == "2024" and row[2] == code:
+                return float(row[3]), float(row[4])
+    raise AssertionError(code)
+
+
+def test_the_measured_refusals_quote_their_sources() -> None:
+    """Each number a measured refusal quotes is its source's: the 2042 boxes, the CCSS,
+    and the arithmetic on them."""
+    from impots.plf_coverage import REFUS_MESURES_2027
+    from impots.population import ij
+
+    text = {(r.article, r.volet): r.porte + " " + r.manque for r in REFUS_MESURES_2027}
+
+    def fr(x: float, digits: int) -> str:
+        return f"{x:,.{digits}f}".replace(",", " ").replace(".", ",")
+
+    for (article, volet), code, digits in (((5, ""), "8UT", 2), ((6, ""), "2CH", 3),
+                                           ((7, "4.2.1.2"), "5ND", 3)):
+        count, amount = _box(code)
+        assert f"{fr(amount / 1e9, digits)} Md€ chez {fr(count, 0)} foyers" \
+            in text[(article, volet)]
+    count, stock = _box("8UT")
+    transmitted = 500e6 / (0.128 + 0.186)
+    assert f"{fr(transmitted / 1e9, 2)} Md€ transmis par an, " \
+           f"{fr(transmitted / stock * 100, 2)} % du stock" in text[(5, "")]
+    source = ij.published()
+    assert f"{fr(source.maladie_2024, 0)} M€ de maladie et {fr(source.atmp_2024, 0)} M€" \
+        in text[(2, "4.2.1.4 (IR)")]
+    assert f"Trois points sur l'assiette de 2024 font {fr(0.03 * source.total_2024, 0)} M€" \
+        in text[(2, "4.2.1.4 (CSG)")]

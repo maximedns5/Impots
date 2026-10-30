@@ -385,6 +385,7 @@ def run(
     rake_top_tail: bool = False,
     impute_capital: bool = False,
     capital_index: float | None = None,
+    impute_ij: bool = False,
 ) -> RunResult:
     """Run the population through current law and, optionally, one reform.
 
@@ -407,6 +408,11 @@ def run(
     n° 41's RFR, which holds the capital, by scaling earnings alone, so with the capital
     imputed it takes 5,4 % off the wage bill (measured on 2 000 ménages) and the spent
     wage margin no longer holds.
+
+    `impute_ij` hands the régime général's sick pay of 2024 to the private sector's
+    employees, from the CCSS of May 2026 (D-305). A calibration again —
+    `margins.SICK_PAY_BY_BRANCH` — and a frame transformation, so it costs no pass. It is
+    refused for another year, by `population.ij`, before any pass.
     """
     if capital_index is not None and (not impute_capital or not capital_index > 0):
         raise ValueError(
@@ -432,6 +438,10 @@ def run(
     if sample is not None:
         frame = subsample(frame, sample)
     frame = frame.sort("person_id")
+    if impute_ij:
+        from impots.population import ij as ij_module
+
+        frame = ij_module.impute(frame, year)
 
     guards: dict[str, Any] = {}
     timings: dict[str, float] = {}

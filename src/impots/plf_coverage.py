@@ -1053,6 +1053,82 @@ def volets_non_chiffres_2027() -> tuple[Montant2027, ...]:
                  if m.article in priced and m.meur is not None and not m.chiffre)
 
 
+@dataclass(frozen=True)
+class RefusMesure:
+    """Un volet que le but 8 a regardé et qui reste refusé, avec sa mesure (D-305).
+
+    `porte` dit ce que la population porte désormais de l'assiette, ou ce que les données
+    ouvertes en disent ; `manque`, ce qui manque pour chiffrer. Les raisons du triage
+    restent ce qu'elles étaient à leur date : celle-ci les complète, elle ne les réécrit pas.
+    """
+
+    article: int
+    volet: str
+    porte: str
+    manque: str
+
+
+_IJ_PORTEES = ("Depuis D-305, la population porte les IJ du régime général de 2024 "
+               "(`impute_ij`) : 10 690 M€ de maladie et 4 955 M€ d'AT-MP, les totaux du "
+               "CCSS de mai 2026, sur 19,24 millions de salariés du privé.")
+
+REFUS_MESURES_2027: tuple[RefusMesure, ...] = (
+    RefusMesure(
+        2, "4.2.1.3",
+        "Aucune indemnité de rupture. La fiche cite le rapport IGF-IGAS d'octobre 2025 : "
+        "40 000 personnes au-dessus d'un PASS, soit 0,2 % des salariés du privé de la "
+        "population, une queue qu'une clé par cellule étalerait sur tous.",
+        "une distribution ouverte des indemnités de rupture ; imputer depuis les comptes "
+        "de la fiche noterait la fiche contre elle-même."),
+    RefusMesure(
+        2, "4.2.1.4 (IR)", _IJ_PORTEES,
+        "le moteur : openfisca ne met les IJ ni dans l'impôt sur le revenu ni dans la "
+        "CSG, et il faut une correction et deux boutons (part ALD exonérée, part AT-MP "
+        "exonérée) ; puis la part des IJ versées au titre d'une ALD, qu'aucune source "
+        "ouverte ne donne (Voies et moyens 2026, dépense 120204 : « Bénéficiaires : Non "
+        "déterminé »)."),
+    RefusMesure(
+        2, "4.2.1.4 (CSG)", _IJ_PORTEES,
+        "le moteur : la CSG des IJ est un TODO d'openfisca, et le taux de 6,2 % n'a pas de "
+        "bouton. Trois points sur l'assiette de 2024 font 469 M€ : une multiplication, "
+        "pas un chiffrage de l'outil."),
+    RefusMesure(
+        5, "",
+        "La case 8UT porte le stock des plus-values en report : 173,27 Md€ chez 117 112 "
+        "foyers en 2024. À 31,4 % de prélèvements, les 500 M€ de la fiche supposent "
+        "1,59 Md€ transmis par an, 0,92 % du stock.",
+        "l'âge des détenteurs, qui fixe la part transmise par donation ou décès : aucune "
+        "source ouverte ne ventile la case 8UT par âge."),
+    RefusMesure(
+        6, "",
+        "Les cases 2CH, 2DH, 2VV et 2WW portent les produits de l'assurance-vie : "
+        "1,947 Md€ chez 1 113 493 foyers pour la seule 2CH en 2024.",
+        "l'assureur étranger et la transmission au décès, qu'aucune case ne distingue ; "
+        "les 100 Md€ d'encours de la fiche n'ont pas d'équivalent ouvert."),
+    RefusMesure(
+        7, "4.2.1.2",
+        "Les cases 5ND et 5OD portent les recettes du meublé non professionnel au micro : "
+        "5,045 Md€ chez 619 711 foyers pour la 5ND en 2024.",
+        "les amortissements que la réforme réintègre à la cession : ils sont dans les "
+        "liasses du réel, que la fiche apparie, et dans aucune donnée publique."),
+)
+
+
+def refus_mesures_2027() -> tuple[tuple[RefusMesure, Montant2027], ...]:
+    """Chaque refus mesuré avec sa ligne du relevé ; refusé s'il n'en a pas, ou si la ligne
+    est chiffrée ou hors du dénominateur."""
+    lines = {(m.article, m.volet): m for m in MONTANTS_2027}
+    out = []
+    for refus in REFUS_MESURES_2027:
+        line = lines.get((refus.article, refus.volet))
+        if line is None or line.meur is None or line.chiffre:
+            raise ValueError(f"art. {refus.article}, volet « {refus.volet} » : un refus "
+                             f"mesuré nomme une ligne du dénominateur que l'outil ne "
+                             f"chiffre pas")
+        out.append((refus, line))
+    return tuple(out)
+
+
 #: Ce qui ouvrirait un article refusé : un catalogue fermé de huit portes, dans l'ordre
 #: de D-293. La porte suit la raison du triage du 2026-10-02, pas les volets.
 OUVERTURES: dict[str, str] = {
