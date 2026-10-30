@@ -1,0 +1,45 @@
+case: plf2027_art_2_ij_atmp
+pre_registered: '2026-10-30T12:40:47+00:00'
+commit: d2e9066fc465c52d1b25dbfe6d016b36aa9cc1e4
+scenario: plf2027_art_2_ij_atmp
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -365694337.7211914
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 50000000.0
+  rationale: 'Un volet de quelques centaines de M€, une assiette calibrée sur 2024,
+    un comparateur de 2027 ou 2029 : 25 % couvre le millésime de l''assiette, pas
+    une erreur de distribution (D-306).'
+note: ''
+bound: two-sided
+mirror: false
+comparator:
+  published_eur: -330000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 2, § 4.2.1.4, p. 30
+    : « et à compter de 2029, de 620 M€ dont 290 M€ au titre des ALD et 330 M€ au
+    titre des AT/MP »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01)
+  perimeter: 'La part AT-MP du volet 4.2.1.4 (IR) : suppression de l''exonération
+    de 50 % des IJ AT-MP (CGI art. 81, 8°) ; État. Le tableau des dépenses fiscales
+    de la même page y range aussi les IJ des exploitants agricoles (3 M€), que la
+    population ne porte pas.'
+  net_of: Année pleine, « à compter de 2029 », sans le décalage du PAS de 2027 et
+    2028 ; aucun effet comportemental. Le scénario chiffre l'assiette du régime général
+    de 2024.
+  sign: yield
+  basis: annee-pleine
+  retrieved: '2026-10-14'
+revision:
+  de: null
+  apres_annexe: true
+  raison: 'Le volet IJ de l''art. 2 n''avait pas de cas aveugle : il est chiffré après
+    la lecture de l''annexe, révision comptée à part (D-292, D-306).'

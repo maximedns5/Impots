@@ -48,9 +48,10 @@ def test_a_line_that_breaks_the_rule_is_refused(change, needle) -> None:
 
 def test_the_numerator_is_exactly_the_volets_the_tool_prices() -> None:
     priced = {(m.article, m.volet) for m in c.MONTANTS_2027 if m.chiffre}
-    assert priced == {(2, "4.2.1.1"), (3, ""), (15, "I")}
+    assert priced == {(2, "4.2.1.1"), (2, "4.2.1.4 (IR AT-MP)"), (2, "4.2.1.4 (CSG)"),
+                      (3, ""), (15, "I")}
     assert {n for n, _ in priced} == {a.numero for a in c.priceable_2027()}
-    assert c.priced_yield_2027_meur() == pytest.approx(10_600.0)
+    assert c.priced_yield_2027_meur() == pytest.approx(11_655.0)
 
 
 def test_the_share_is_computed_from_the_lines_not_typed() -> None:
@@ -132,10 +133,9 @@ def test_the_measured_refusals_name_lines_left_out_of_the_numerator() -> None:
 
     measured = refus_mesures_2027()
     assert [(r.article, r.volet) for r, _ in measured] == [
-        (2, "4.2.1.3"), (2, "4.2.1.4 (IR)"), (2, "4.2.1.4 (CSG)"), (5, ""), (6, ""),
-        (7, "4.2.1.2")]
-    assert sum(line.meur for _, line in measured) == 3_110.0
-    assert f"{share_of_yield_2027() * 100:.1f}" == "63.8"
+        (2, "4.2.1.3"), (2, "4.2.1.4 (IR ALD)"), (5, ""), (6, ""), (7, "4.2.1.2")]
+    assert sum(line.meur for _, line in measured) == 2_055.0
+    assert f"{share_of_yield_2027() * 100:.1f}" == "70.1"
 
 
 @pytest.mark.parametrize("article, volet", [(2, "4.2.1.1"), (2, "4.2.1.2"), (5, "x")])
@@ -183,6 +183,37 @@ def test_the_measured_refusals_quote_their_sources() -> None:
            f"{fr(transmitted / stock * 100, 2)} % du stock" in text[(5, "")]
     source = ij.published()
     assert f"{fr(source.maladie_2024, 0)} M€ de maladie et {fr(source.atmp_2024, 0)} M€" \
-        in text[(2, "4.2.1.4 (IR)")]
-    assert f"Trois points sur l'assiette de 2024 font {fr(0.03 * source.total_2024, 0)} M€" \
-        in text[(2, "4.2.1.4 (CSG)")]
+        in text[(2, "4.2.1.4 (IR ALD)")]
+
+
+# --- les volets chiffrés après l'annexe (D-306) ---------------------------------------
+
+
+def test_the_965_of_2027_split_in_the_two_parts_its_sentence_gives() -> None:
+    lines = {m.volet: m.meur for m in _lines(2)}
+    assert lines["4.2.1.4 (IR ALD)"] + lines["4.2.1.4 (IR AT-MP)"] == 965.0
+    assert "4.2.1.4 (IR)" not in lines
+
+
+def test_a_volet_priced_after_the_annex_names_registered_revisions() -> None:
+    """Each volet the tool prices after reading the annex names its cases, and each case is
+    on file as written after the annex: a revision, counted apart (D-292, D-306)."""
+    from impots import preregistration as ch
+
+    late = c.chiffres_apres_annexe_2027()
+    assert {(line.article, line.volet) for line, _ in late} == {
+        (2, "4.2.1.4 (IR AT-MP)"), (2, "4.2.1.4 (CSG)")}
+    for _, cases in late:
+        for name in cases:
+            case = ch.load(name)
+            assert case.revision is not None and case.revision.get("apres_annexe") is True
+            assert case.scenario == name
+
+
+@pytest.mark.parametrize("key, cases", [((2, "4.2.1.3"), ("x",)), ((2, "zz"), ("x",)),
+                                        ((2, "4.2.1.4 (CSG)"), ())])
+def test_a_late_volet_off_the_numerator_or_without_cases_is_refused(
+        monkeypatch, key, cases) -> None:
+    monkeypatch.setattr(c, "CHIFFRES_APRES_ANNEXE_2027", {key: cases})
+    with pytest.raises(ValueError, match="après l'annexe"):
+        c.chiffres_apres_annexe_2027()

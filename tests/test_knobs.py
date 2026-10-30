@@ -20,6 +20,9 @@ from impots.engine import compute
 from impots.engine.reforms import SCALAR_KNOBS
 from knob_cases import CASES, EXEMPT, YEARS
 
+#: The daily-allowance knobs (D-306), with a value far from the law's.
+IJ_KNOBS = {"ij_at_mp_part_exoneree": 0.0, "csg_ij_taux": 0.15}
+
 pytestmark = pytest.mark.slow
 
 
@@ -69,10 +72,19 @@ def test_each_exempt_knob_really_cannot_be_moved(knob: str):
     employer. If that ever changes this test fails, which is the correct moment to
     turn the exemption into a case.
     """
+    smic = {"adults": [{"salaire_brut_annuel": 22_000, "annee_naissance": 1990}]}
+    if knob in IJ_KNOBS:
+        # The wire carries no daily allowance (D-306): the knob moves nothing it can say.
+        before = _rows(smic, None, None)
+        after = _rows(smic, None, ReformSpec(**{knob: IJ_KNOBS[knob]}))
+        for row in ("ir", "revenu_disponible"):
+            assert after[row] == pytest.approx(before[row]), (
+                f"{knob} now moves a household — the wire format must carry daily "
+                f"allowances, so replace the exemption with a real case")
+        return
     if knob not in ("allegement_general_taux_50_et_plus",
                     "allegement_general_t_delta_50_et_plus"):
         pytest.skip(f"no negative check written for {knob}")
-    smic = {"adults": [{"salaire_brut_annuel": 22_000, "annee_naissance": 1990}]}
     year = YEARS.get(knob, 2024)
     before = _rows(smic, None, None, year)["allegement_general"]
     after = _rows(smic, None, ReformSpec(**{knob: 0.42}), year)["allegement_general"]

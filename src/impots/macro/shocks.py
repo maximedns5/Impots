@@ -68,6 +68,8 @@ INSTRUMENT_MAP = {
     "csg_imposable": "csg",
     "csg_deductible": "csg",
     "crds": "csg",
+    # The CSG on the sick pay (D-307): a CSG like the salary's, on a replacement income.
+    "csg_ij": "csg",
     "cotisations_salariales": "cotisations_salaries",
     "employer_contributions": "cotisations_employeurs",
 }

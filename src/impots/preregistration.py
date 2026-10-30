@@ -515,10 +515,15 @@ def register(
     note: str = "",
     bound: str = "two-sided",
     mirror: bool = False,
+    apres_annexe: str | None = None,
     directory: Path | None = None,
     now: str | None = None,
 ) -> Path:
     """Stamp a chiffrage with the moment and the tree it was computed on.
+
+    `apres_annexe` says why a NEW case is written after its annex was opened, and makes it
+    a revision in D-292's sense: counted apart from the blind cases, never among them. It
+    revises no earlier case (« de » is empty), and the reason is required (D-306).
 
     The timestamp is taken here, not passed by a caller: a pre-registration whose date its
     author chooses is not one. `now` exists so tests are deterministic and for no other
@@ -530,6 +535,10 @@ def register(
         raise ChiffrageError(
             f"« {case} » ne dit pas ce qui a été chiffré : donner soit un scénario "
             f"enregistré, soit la réforme elle-même.")
+    if apres_annexe is not None and not apres_annexe.strip():
+        raise ChiffrageError(
+            f"« {case} » est écrit après l'annexe sans dire pourquoi : une révision dit sa "
+            f"raison (D-292, D-306)")
     stamp = now or datetime.now(UTC).isoformat(timespec="seconds")
     chiffrage = Chiffrage(
         case=case, pre_registered=stamp, commit=head_commit(),
@@ -538,6 +547,8 @@ def register(
         scenario=scenario, reform=reform, behavioural=behavioural,
         intervals=intervals or {}, fan=fan, note=note,
         bound=bound, mirror=mirror,
+        revision=(None if apres_annexe is None else
+                  {"de": None, "apres_annexe": True, "raison": apres_annexe}),
     )
     return save(chiffrage, directory)
 
@@ -682,7 +693,8 @@ def report(directory: Path | None = None) -> str:
                   "| cas | simulé (md) | publié (md) | écart (md) | écart rel. | toléré (md) "
                   "| note | révise |", "|---|---|---|---|---|---|---|---|"]
         for verdict, case in revised:
-            lines.append(verdict.line() + f" {case.revision.get('de')} |")
+            lines.append(verdict.line()
+                         + f" {case.revision.get('de') or 'aucun, cas neuf'} |")
         ok = sum(1 for g, _ in revised if g.verdict == "within")
         lines += ["", f"**{ok} sur {len(revised)} dans la tolérance, hors du compte des cas "
                       f"aveugles.**"]

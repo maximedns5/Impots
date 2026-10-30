@@ -21,5 +21,7 @@ Une révision ne change que la base d'un cas enregistré, après l'ouverture de 
 | cas | simulé (md) | publié (md) | écart (md) | écart rel. | toléré (md) | note | révise |
 |---|---|---|---|---|---|---|---|
 | plf2027_art_2_base2027 | +3.902 | +4.200 | -0.298 | -7.1% | 0.840 (relative) | **within** en-dessous | plf2027_art_2 |
+| plf2027_art_2_csg_ij | -0.468 | -0.540 | +0.072 | +13.4% | 0.135 (relative) | **within** au-dessus | aucun, cas neuf |
+| plf2027_art_2_ij_atmp | -0.366 | -0.330 | -0.036 | -10.8% | 0.083 (relative) | **within** en-dessous | aucun, cas neuf |
 
-**1 sur 1 dans la tolérance, hors du compte des cas aveugles.**
+**3 sur 3 dans la tolérance, hors du compte des cas aveugles.**

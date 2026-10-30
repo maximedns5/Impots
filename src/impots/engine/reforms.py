@@ -196,6 +196,13 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "abattement_pensions_plafond": (*PATH_ABATTEMENT_PENSIONS, "max"),
     "csg_activite_imposable": (*PATH_CSG_ACTIVITE, "imposable"),
     "csg_activite_deductible": (*PATH_CSG_ACTIVITE, "deductible"),
+    # The daily allowances (D-306): the share of the work-accident ones the income tax
+    # exempts, which correction 22 brings into the tree, and openfisca's CSG rate on them,
+    # which correction 23 levies. They move nothing on a household without an allowance.
+    "ij_at_mp_part_exoneree": ("impot_revenu", "indemnites_journalieres",
+                               "part_exoneree_at_mp"),
+    "csg_ij_taux": ("prelevements_sociaux", "contributions_sociales", "csg", "remplacement",
+                    "indemnites_journalieres", "taux_global"),
     # Employer social contributions. The channels that price these (C2, C3) were
     # written in Phase 3 against a knob that did not exist — a spec error on the
     # record (D-032). These are it.

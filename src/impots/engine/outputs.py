@@ -42,6 +42,10 @@ class Row:
     """False for counts such as `nbptr`, which must not be formatted as EUR."""
     label: str = ""
     """French label for the UI."""
+    projet: bool = False
+    """True for a variable the project's corrections add. Raw openfisca, which kill tests
+    read through the registry, has none: the row reads zero there, which is what raw
+    openfisca levies or pays. Any other missing variable still raises (D-308)."""
 
 
 REGISTRY: tuple[Row, ...] = (
@@ -90,6 +94,11 @@ REGISTRY: tuple[Row, ...] = (
         label="CSG imposable"),
     Row("crds", "crds_salaire", "individu", "month", "light", True,
         label="CRDS"),
+    # The CSG on the sick pay, which correction 23 levies (D-306). A receipt of its own:
+    # `csg_deductible` and `csg_imposable` are the salary's. Zero for a household that
+    # carries no allowance, which is every one the wire format builds (D-307).
+    Row("csg_ij", "csg_indemnites_journalieres", "individu", "month", "light", True,
+        label="CSG des indemnités journalières", projet=True),
     # --- tax block: foyer fiscal, annual --------------------------------------
     Row("ir", "impot_revenu_restant_a_payer", "foyer_fiscal", "year", "light", True,
         label="Impôt sur le revenu"),
@@ -248,7 +257,12 @@ def extract(simulation: Any, year: int, tier: Tier, debug: bool = False) -> dict
     values: dict[str, Any] = {}
     raw: dict[str, float] = {}
 
+    variables = simulation.tax_benefit_system.variables
     for row in rows_for(tier):
+        if row.projet and row.variable not in variables:
+            raw[row.key] = 0.0
+            values[row.key] = 0.0
+            continue
         array = (
             simulation.calculate_add(row.variable, period)
             if row.period == "month"

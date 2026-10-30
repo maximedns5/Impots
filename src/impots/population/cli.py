@@ -882,7 +882,7 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
             args.case, mechanical_eur=priced["mechanical"], tolerance=tolerance,
             population_vintage=args.vintage, sample=args.sample,
             scenario=args.scenario, note=args.note or "", mirror=args.mirror,
-            directory=directory)
+            apres_annexe=args.apres_annexe, directory=directory)
     except chiffrages_module.ChiffrageError as error:
         print(str(error), file=sys.stderr)
         return 1
@@ -1884,6 +1884,10 @@ def build_parser() -> argparse.ArgumentParser:
                            help="the scenario prices the article's REVERSE, because the "
                                 "tree already carries its end state; graded turned back "
                                 "(D-298)")
+    registrar.add_argument("--apres-annexe", metavar="RAISON", default=None,
+                           help="a new case written after its annex was opened: a revision "
+                                "in D-292's sense, counted apart from the blind cases, with "
+                                "its reason (D-306)")
     registrar.add_argument("--dir")
     registrar.set_defaults(func=cmd_chiffrage_register)
 

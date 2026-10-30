@@ -772,6 +772,11 @@ class ReformSpec(BaseModel):
     abattement_pensions_plafond: Annotated[float, Field(ge=0, le=100_000)] | None = None
     csg_activite_imposable: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     csg_activite_deductible: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    # The daily allowances (D-306): the share of the work-accident ones exempt from the
+    # income tax (CGI art. 81, 8°: 0.5 since 2010) and their CSG rate (CSS art. L. 136-8:
+    # 6.2 %). The wire carries no allowance; the population does when `impute_ij` runs.
+    ij_at_mp_part_exoneree: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    csg_ij_taux: Annotated[float, Field(ge=0.0, le=0.2)] | None = None
     # Employer social contributions (D-038). Plafonds are in multiples of the SMIC,
     # which is why their ceiling is 10 and not 1: 1.6 is today's réduction générale.
     allegement_general_plafond: Annotated[float, Field(ge=0.0, le=10.0)] | None = None
@@ -1134,6 +1139,10 @@ class ResultRows(BaseModel):
     cotisations_employeur: float
     retraite_imposable: float
     chomage_brut: float
+    csg_ij: float
+    """The CSG on the sick pay, levied by correction 23 (D-306). Zero for a household the
+    wire format builds, which carries no allowance; a receipt of its own in the ledger
+    (D-307)."""
     pension_invalidite: float
     """The invalidity pension as declared, box 1AZ. Zero for a household that declares none.
     Its CSG imposable, CRDS and CASA have no row, like a retirement pension's: they are inside

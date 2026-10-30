@@ -612,6 +612,44 @@ hand and in both orders.
 a dwelling with a housing aid, and the other is eligible to the ASPA or the ASI. On the wire, the
 disability field without a pension, beside a spouse at the ASPA's age or with an invalidity
 pension, with a dwelling. The population carries no disability, and nothing in it moves.
+
+---
+
+**Correction 22 — sick pay is taxed as a salary (CGI art. 80 quinquies and 81, 8°), D-306.**
+
+The law, as the PLF 2027's own fiche states it (annex, art. 2, pp. 18 and 20): the daily
+allowances of the sickness insurance are taxable « au même titre que le complément de salaire
+versé par l'employeur », except those of an « affection comportant un traitement prolongé et
+une thérapeutique particulièrement coûteuse » (art. 80 quinquies); those of a work accident or
+an occupational disease have been « exonérées d'IR à hauteur de 50 % de leur montant, en
+application du 8° de l'article 81 du CGI » since the finance law for 2010. openfisca taxes
+none of them: no allowance reaches `revenu_assimile_salaire`, and
+`indemnites_journalieres_imposables` is read by the AAH alone.
+
+The correction adds, to each member's salaries, the sickness allowances and the taxable share
+of the work-accident ones, net of their deductible CSG, through openfisca's own deduction, as
+correction 12 does with the ASS. The exempt share is a parameter this project brings into the
+tree, `impot_revenu.indemnites_journalieres.part_exoneree_at_mp` (0,5 from 2010), so that a
+knob can move it. **The ALD exemption is not applied:** no open source splits the ALD
+allowances from the others (D-305), so every sickness allowance is taxed, and the income tax
+of a population that carries them is too high by what that exemption costs.
+
+---
+
+**Correction 23 — the CSG on sick pay, and sick pay among the replacement incomes (CSS art.
+L. 136-8), D-306.**
+
+openfisca carries the rate, `csg.remplacement.indemnites_journalieres.taux_global` (6,2 %),
+and nothing that levies it: « TODO: manque CSG sur IJ » (`csg_crds.py`). The correction adds
+`csg_indemnites_journalieres`, the rate on the sickness and work-accident allowances of the
+month, negative as openfisca's levies are. Maternity and paternity allowances are left out:
+the population carries none, and the PLF 2027's measure does not move them. Nor is the CRDS
+levied on them. Then `pensions_nettes`, openfisca's « pensions et revenus de remplacement »,
+gains the allowances net of that CSG, so that they are in the disposable income and a change
+of their rate or of their tax shows in it. Wrapped around correction 7's formula.
+
+**Blast radius of both:** a person with a daily allowance. The wire carries none; the
+population carries them only when `impute_ij` runs (D-305). Elsewhere nothing moves.
 """
 
 from __future__ import annotations
@@ -906,6 +944,22 @@ ASF_ELIGIBILITY = "asf_elig_enfant"
 CASE_T = "caseT"
 
 
+#: The daily allowances corrections 22 and 23 read, sickness first, then work accidents and
+#: occupational diseases, whose taxable share is the one the exemption leaves.
+SICK_PAY_SICKNESS = "indemnites_journalieres_maladie"
+SICK_PAY_WORK = ("indemnites_journalieres_accident_travail",
+                 "indemnites_journalieres_maladie_professionnelle")
+#: The share of the work-accident allowances the income tax exempts (CGI art. 81, 8°): a
+#: parameter this project brings into the tree, so that a knob can move it (D-306).
+PATH_IJ_AT_MP_EXONEREE = ("impot_revenu", "indemnites_journalieres", "part_exoneree_at_mp")
+IJ_AT_MP_EXONEREE = 0.5
+IJ_AT_MP_EXONEREE_DEPUIS = "2010-01-01"
+#: openfisca's CSG on the allowances, which nothing levies (correction 23).
+PATH_CSG_IJ = ("prelevements_sociaux", "contributions_sociales", "csg", "remplacement",
+               "indemnites_journalieres")
+CSG_IJ = "csg_indemnites_journalieres"
+
+
 def apply_to(system: Any) -> Any:
     """Return `system` with the benefit corrections applied, as a Reform (the system handed
     in is untouched)."""
@@ -919,7 +973,9 @@ def apply_to(system: Any) -> Any:
             self.update_variable(_capped_deduction_base(openfisca_formula))
             mva_formula = self.get_variable(MVA_ELIGIBILITY).get_formula("2015-07-01")
             self.update_variable(_mva_full_rate_or_complement(mva_formula))
-            self.modify_parameters(modifier_function=_inaptitude_age)
+            # One call for every parameter: openfisca's `modify_parameters` starts again from
+            # the baseline's tree, so a second call would undo the first (D-306).
+            self.modify_parameters(modifier_function=_parameter_corrections)
             aah_formula = self.get_variable(AAH_ELIGIBILITY).get_formula("2011-01-01")
             self.update_variable(_aah_ends_at_the_inaptitude_age(aah_formula))
             aspa_formula = self.get_variable(ASPA_ELIGIBILITY).get_formula("0001-01-01")
@@ -973,6 +1029,14 @@ def apply_to(system: Any) -> Any:
             # variable keeps both.
             pensioner_base = self.get_variable(ASI_ASPA_BASE).get_formula("0001-01-01")
             self.update_variable(_aah_complements_counted_as_the_aah(pensioner_base))
+            # Corrections 22 and 23 (D-306). Read after correction 12's update and correction
+            # 7's: each wraps the formula those left, so the variables keep both.
+            self.add_variable(_csg_on_sick_pay())
+            category_corrected = self.get_variable(SALARY_CATEGORY).get_formula("0001-01-01")
+            self.update_variable(_sick_pay_taxed_as_a_salary(category_corrected,
+                                                             deduction.get_formula))
+            nettes_corrected = self.get_variable(PENSIONS_NETTES).get_formula(LEVIES_SINCE)
+            self.update_variable(_sick_pay_among_the_replacement_incomes(nettes_corrected))
 
     return BenefitCorrections(system)
 
@@ -1044,6 +1108,12 @@ def _mva_full_rate_or_complement(openfisca_formula: Any) -> Any:
                     * ((taux_plein + en_complement + asi) > 0))
 
     return eligibilite_caah
+
+
+def _parameter_corrections(parameters: Any) -> Any:
+    """The parameters the corrections change or add, in one modifier: correction 6's age,
+    then correction 22's exempt share."""
+    return _at_mp_exempt_share(_inaptitude_age(parameters))
 
 
 def _inaptitude_age(parameters: Any) -> Any:
@@ -1820,3 +1890,121 @@ def _aah_complements_counted_as_the_aah(pensioner_formula: Any) -> Any:
             return base + complements * lus / 3
 
     return asi_aspa_base_ressources_individu
+
+
+def _at_mp_exempt_share(parameters: Any) -> Any:
+    """Bring `impot_revenu.indemnites_journalieres.part_exoneree_at_mp` into the tree: 0,5 from
+    2010 (CGI art. 81, 8°). Refused if openfisca has grown a node of that name, which is the
+    day this correction must be read again."""
+    from openfisca_core.parameters import ParameterNode
+
+    parent, node, leaf = PATH_IJ_AT_MP_EXONEREE
+    if node in getattr(parameters, parent).children:
+        raise RuntimeError(f"openfisca carries {parent}.{node} now: correction 22 must be read "
+                           f"again before it adds its own (D-306)")
+    getattr(parameters, parent).add_child(node, ParameterNode(f"{parent}.{node}", data={
+        "description": "Indemnités journalières de sécurité sociale (correction 22, D-306)",
+        leaf: {
+            "description": "Part des indemnités journalières AT-MP exonérée d'impôt sur le "
+                           "revenu (CGI art. 81, 8°)",
+            "values": {IJ_AT_MP_EXONEREE_DEPUIS: {"value": IJ_AT_MP_EXONEREE}},
+            "metadata": {"unit": "/1"},
+        },
+    }))
+    return parameters
+
+
+def _sick_pay(individu: Any, period: Any, options: Any = None) -> tuple[Any, Any]:
+    """The sickness allowances and the work-accident ones, of the period."""
+    sickness = individu(SICK_PAY_SICKNESS, period, options=options)
+    work = sum(individu(name, period, options=options) for name in SICK_PAY_WORK)
+    return sickness, work
+
+
+class _SalariesWithTheSickPay(_SalariesWithTheAss):
+    """The individuals as openfisca's deduction formula sees them, with the taxable sick pay of
+    the year among each one's salaries (correction 22)."""
+
+
+def _sick_pay_taxed_as_a_salary(openfisca_formula: Any, deduction_formula: Any) -> Any:
+    """`revenu_categoriel_tspr`, with the taxable sick pay among each member's salaries (CGI
+    art. 80 quinquies and 81, 8°): the formula it wraps, plus what openfisca's own deduction
+    leaves of a member's salaries and taxable allowances together, less what it leaves of the
+    salaries alone. The taxable allowances are the sickness ones and the share of the
+    work-accident ones the exemption leaves, net of their deductible CSG. Nothing is read when
+    nobody in the simulation has an allowance that year."""
+    from openfisca_core.model_api import ADD, YEAR, Variable
+    from openfisca_france.entities import FoyerFiscal
+
+    class revenu_categoriel_tspr(Variable):  # openfisca's naming
+        value_type = float
+        entity = FoyerFiscal
+        label = ("Revenu catégoriel - Traitements, salaires, pensions et rentes, les indemnités "
+                 "journalières imposables comprises (CGI art. 80 quinquies et 81, 8°)")
+        # The law as the PLF 2027 annex states it (art. 2, pp. 18 and 20).
+        reference = ("https://www.assemblee-nationale.fr/dyn/contenu/visualisation/1128179/"
+                     "file/PLF%202027%20-%20Evaluations%20pr%C3%A9alables.pdf")
+        definition_period = YEAR
+
+        def formula(foyer_fiscal, period, parameters):
+            montant = openfisca_formula(foyer_fiscal, period, parameters)
+            individus = foyer_fiscal.members
+            sickness, work = _sick_pay(individus, period, options=[ADD])
+            if not ((sickness + work) > 0).any():
+                return montant
+            tree = parameters(period.start)
+            exempt = tree.impot_revenu.indemnites_journalieres.part_exoneree_at_mp
+            deductible = tree.prelevements_sociaux.contributions_sociales.csg.remplacement \
+                .indemnites_journalieres.deductible.taux
+            taxable = (1 - deductible) * (sickness + (1 - exempt) * work)
+            avec = deduction_formula(period)(_SalariesWithTheSickPay(individus, taxable),
+                                             period, parameters)
+            sans = individus(SALARIES_AFTER_DEDUCTION, period)
+            return montant + foyer_fiscal.sum(avec - sans)
+
+    return revenu_categoriel_tspr
+
+
+def _csg_on_sick_pay() -> Any:
+    """`csg_indemnites_journalieres`: openfisca's rate on the sickness and work-accident
+    allowances of the month (CSS art. L. 136-8), negative as its levies are."""
+    from openfisca_core.model_api import MONTH, Variable
+    from openfisca_france.entities import Individu
+
+    class csg_indemnites_journalieres(Variable):
+        value_type = float
+        entity = Individu
+        label = ("CSG sur les indemnités journalières maladie et AT-MP (CSS art. L. 136-8), "
+                 "correction 23 (D-306)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006740335"
+        definition_period = MONTH
+
+        def formula(individu, period, parameters):
+            rate = parameters(period).prelevements_sociaux.contributions_sociales.csg \
+                .remplacement.indemnites_journalieres.taux_global
+            sickness, work = _sick_pay(individu, period)
+            return -rate * (sickness + work)
+
+    return csg_indemnites_journalieres
+
+
+def _sick_pay_among_the_replacement_incomes(openfisca_formula: Any) -> Any:
+    """`pensions_nettes`, with the year's sickness and work-accident allowances net of their
+    CSG: the formula it wraps (correction 7's) for the rest."""
+    from openfisca_core.model_api import ADD, YEAR, Variable
+    from openfisca_france.entities import Individu
+
+    class pensions_nettes(Variable):  # openfisca's naming
+        value_type = float
+        entity = Individu
+        label = ("Pensions et revenus de remplacement, les indemnités journalières nettes de "
+                 "leur CSG comprises (correction 23, D-306)")
+        reference = "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006740335"
+        definition_period = YEAR
+
+        def formula_2019_01_01(individu, period, parameters):
+            sickness, work = _sick_pay(individu, period, options=[ADD])
+            levied = individu(CSG_IJ, period, options=[ADD])
+            return openfisca_formula(individu, period, parameters) + sickness + work + levied
+
+    return pensions_nettes

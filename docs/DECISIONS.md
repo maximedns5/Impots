@@ -23760,3 +23760,221 @@ openfisca, le drapeau et la garde des refus. Seize sont tuées. L'appel à `veri
 `impute` a survécu : la mise à l'échelle le rend vrai par construction. C'est un mutant
 équivalent, et l'appel a été retiré. Les tests appellent `verify` sur la population
 réelle.
+
+## D-306 — Les IJ dans l'impôt et la CSG, et deux cas écrits après l'annexe, préenregistrés
+
+**Le fait.** D-305 a mis l'assiette des IJ dans la population, mais le moteur ne la voyait
+pas. Cette entrée câble le moteur, puis préenregistre deux chiffrages de l'art. 2 du PLF
+2027 (volet 4.2.1.4), avant toute passe. Ils sont écrits après l'ouverture de l'annexe :
+ce sont des révisions au sens de D-292. Elles sont comptées à part des cas aveugles, et
+jamais parmi eux.
+
+**Le droit.** Il est lu dans la fiche de l'art. 2, dans l'annexe manifestée (p. 18 et 20).
+- Les IJ maladie sont imposables comme un salaire, sauf celles d'une affection de longue
+  durée (CGI art. 80 quinquies).
+- Les IJ AT-MP sont exonérées « à hauteur de 50 % de leur montant » depuis la loi de
+  finances pour 2010 (art. 81, 8°).
+- Le taux de CSG des IJ est de 6,2 % (p. 22) ; l'arbre d'openfisca en tient 3,8 % pour
+  déductibles.
+
+Les adresses Légifrance essayées n'ont pas répondu. La référence de la correction 22 est
+donc l'annexe.
+
+**Correction 22.** openfisca n'impose aucune IJ. La correction ajoute aux salaires de
+chaque membre deux montants, nets de leur CSG déductible :
+- les IJ maladie ;
+- la part des IJ AT-MP que l'exonération laisse.
+
+Elle passe par la déduction de 10 % d'openfisca elle-même, comme la correction 12 le fait
+pour l'ASS. La part exonérée est un paramètre que le projet ajoute à l'arbre :
+`impot_revenu.indemnites_journalieres.part_exoneree_at_mp`, qui vaut 0,5 depuis 2010.
+
+L'exonération ALD n'est pas appliquée. Aucune source ne sépare les IJ ALD des autres :
+toutes les IJ maladie sont donc imposées. L'impôt d'une population qui les porte est trop
+haut de ce que coûte cette exonération : 597 M€ pour 2024, selon les Voies et moyens 2026
+(dépense 120204).
+
+**Correction 23.** openfisca porte le taux de CSG des IJ, mais ne le lève pas : son code
+dit « TODO: manque CSG sur IJ ». La correction fait deux choses :
+- elle ajoute `csg_indemnites_journalieres`, ce taux appliqué aux IJ maladie et AT-MP du
+  mois ;
+- elle ajoute à `pensions_nettes`, que lit le revenu disponible, les IJ nettes de cette
+  CSG.
+
+Ni la CRDS des IJ ni les IJ de maternité n'y entrent. Sans IJ, rien ne bouge : le format
+d'entrée n'en porte pas, et la population n'en porte que quand `impute_ij` tourne.
+
+**Un seul appel pour les paramètres.** `modify_parameters` d'openfisca repart chaque fois
+de l'arbre de base. Un second appel, pour la part exonérée, défaisait donc l'âge de 62 ans
+de la correction 6 (D-185). Sept tests du moteur l'ont vu : l'AAH durait jusqu'à 64 ans,
+et l'ASPA n'ouvrait pas à 62. Les deux modifications passent désormais par un seul appel.
+Un test vérifie que l'arbre corrigé porte les deux ; il a été vu échouer avant le
+correctif.
+
+**Les boutons.** `ij_at_mp_part_exoneree` va de 0 à 1, et `csg_ij_taux` de 0 à 0,2. Le
+format d'entrée ne porte pas d'IJ : les deux boutons sont donc exemptés du registre des
+cas de ménage, chacun avec sa raison et un test négatif. Ils sont vus bouger sur 40 ménages
+de la population, aux IJ imputées :
+- le premier, porté à 0, coûte 660 € d'impôt, retrouvés à l'euro dans le revenu
+  disponible ;
+- le second, porté à 9,2 %, prend exactement trois points des IJ.
+
+**Les scénarios et l'enregistrement.** Un scénario peut demander `imputations: ["ij"]`.
+Seul le chiffrage mécanique fait cette imputation ; le chemin annuel refuse un tel scénario
+par son nom. `impots chiffrage register --apres-annexe RAISON` écrit un cas neuf, avec
+`revision: {de: null, apres_annexe: true, raison}`, et le rapport le range avec les
+révisions.
+
+**Les deux cas.** Chacun est chiffré au palier complet sur 20 000 ménages, en 2024, avec les
+IJ imputées. Le comparateur est chaque fois un gain lu dans l'annexe (p. 30) :
+1. `plf2027_art_2_ij_atmp` porte la part exonérée des IJ AT-MP à 0. Comparateur : 330 M€,
+   l'année pleine que la fiche donne pour les AT-MP « à compter de 2029 ».
+2. `plf2027_art_2_csg_ij` porte le taux à 9,2 %. Comparateur : 540 M€ pour 2027, en
+   droits constatés. Une CSG se prélève sur l'IJ du mois : il n'y a pas de décalage.
+
+La tolérance de chacun est de 25 % ou de 50 M€, la plus large des deux. Ce sont des volets
+de quelques centaines de millions, sur une assiette calibrée sur 2024, contre un
+comparateur de 2027 ou de 2029. Une tolérance de 25 % couvre le millésime de l'assiette,
+pas une erreur de distribution.
+
+**Le pronostic, avant toute passe.**
+1. **La CSG.** L'imputation rend la masse du CCSS sur l'échantillon même. Le résultat est
+   donc trois points de 15 645 M€ : 469 M€, à un million près. C'est −13 % du publié, dans
+   la tolérance. L'écart dit le millésime (2024 contre 2027) et le champ (le régime général
+   seul). Il ne dit rien de la distribution.
+2. **L'IR des AT-MP.** La moitié de 4 955 M€, nette de 3,8 %, fait 2 383 M€ de revenu
+   imposable en plus, soit 2 145 M€ après la déduction de 10 %. À un taux marginal moyen
+   de 7 à 12 %, cela donne 150 à 260 M€, de −55 % à −21 % du publié. Le cas tombera
+   probablement hors tolérance, par le bas. Trois raisons :
+   - le millésime : les IJ AT-MP croissent de 10 % l'an (4 955 M€ en 2024, 5 480 en 2025) ;
+   - l'espérance par cellule, qui étale les IJ sur tous les salariés et prive le barème
+     de taux marginaux élevés ;
+   - le champ.
+
+   Un résultat au-dessus du publié contredirait le pronostic.
+
+**Ce qui reste refusé.** L'IR des IJ ALD (450 M€ en 2027), les indemnités de rupture
+(820 M€) et les art. 5, 6 et 7, pour les raisons mesurées de D-305.
+
+**La part en euros, quand les deux cas auront tourné.** Le relevé sépare la ligne IR de
+965 M€ en ses deux parts, celles que donne la phrase citée : 450 M€ pour l'ALD et 515 M€
+pour les AT-MP. Les 515 M€ et les 540 M€ de CSG entrent alors au numérateur : 11 655 M€
+sur 16 624, soit 70,1 %. C'est une part de ce que l'outil sait chiffrer. Elle ne dépend
+pas des notes.
+
+## D-307 — La CSG des IJ dans le registre des recettes, et le cas de la CSG repassé
+
+**Le fait.** Les deux cas de D-306 ont tourné au commit d2e9066, depuis un worktree figé.
+- `plf2027_art_2_ij_atmp` s'est enregistré : −366 M€.
+- `plf2027_art_2_csg_ij` a été refusé avant d'être écrit. Le garde de `sector_balance` a
+  vu −467 747 115 € de coût par le revenu disponible, et aucun instrument pour les tenir :
+  « coût rapporté -467,747,115 EUR contre -0 EUR reconstitué depuis les postes ».
+
+Le garde avait raison. La correction 23 lève la CSG des IJ dans une variable à elle, et
+D-306 ne l'avait déclarée nulle part : ni ligne de résultat, ni recette, ni instrument. Le
+cas de l'AT-MP n'en souffre pas : sa réforme ne bouge pas cette CSG, et son coût tient
+dans l'IR.
+
+**La réparation.** `csg_ij` devient une ligne du registre (`csg_indemnites_journalieres`,
+signe inversé), un champ du schéma, une recette de `STATE_RECEIPTS`, un instrument de
+`aggregate.INSTRUMENTS`, et une CSG pour le pont macro. Deux tests ont été vus échouer
+avant elle :
+- l'un exige la ligne, la recette et l'instrument ;
+- l'autre fait passer 40 ménages aux IJ imputées sous un taux de 9,2 %. Avant la
+  réparation, il reproduisait le refus : −556 M€ contre zéro reconstitué.
+
+**Le cas repassé.** `plf2027_art_2_csg_ij` tourne une seconde fois, au commit qui porte
+cette entrée, avec la même commande, la même tolérance et le même pronostic que D-306. Il
+n'a jamais été enregistré : ce n'est donc pas une révision de lui-même.
+
+**Le pronostic de ce second passage.** Le coût est celui que le refus a imprimé :
+−467 747 115 €, à l'euro près. La réparation ne touche que le registre, pas le calcul.
+Si un autre nombre sortait, la réparation aurait changé ce qu'elle ne devait pas toucher.
+
+Ce coût est à 0,3 % des 469 M€ de D-306. Ce pronostic disait « à un million près » ;
+l'écart est de 1,3 M€, il le manque donc d'un peu. Le résultat et ce qu'il dit du
+pronostic iront dans D-308, avec la note des deux cas.
+
+## D-308 — Les deux cas IJ notés, contre le pronostic de D-306, et la part de 2027 à 70,1 %
+
+**Les notes.** Les deux comparateurs sont lus p. 30 de l'annexe et écrits dans les fichiers
+des cas après leur enregistrement. Les tolérances n'ont pas bougé.
+- `plf2027_art_2_csg_ij` : −467,7 M€ contre −540 M€, soit +13,4 %. C'est dans la
+  tolérance de 135 M€.
+- `plf2027_art_2_ij_atmp` : −365,7 M€ contre −330 M€, l'année pleine « à compter de
+  2029 », soit −10,8 %. C'est dans la tolérance de 82,5 M€.
+
+Ce sont des révisions au sens de D-292. Le rapport les range à part : « 3 sur 3 dans la
+tolérance, hors du compte des cas aveugles », avec `plf2027_art_2_base2027`. Le compte
+des cas aveugles ne bouge pas.
+
+**La CSG, contre son pronostic.** D-306 annonçait 469 M€ à un million près, soit −13 % du
+publié, dans la tolérance. La note et le signe tiennent, mais pas le million : il manque
+1,6 M€ aux 469,35 M€ de trois points de 15 645 M€. Une passe de diagnostic, non notée, au
+commit du cas, en donne la cause :
+- l'imputation cale la masse du CCSS sur les poids des personnes ;
+- l'agrégat lit le poids du ménage, moyenne de ceux de ses membres.
+
+Dans 276 des 20 000 ménages tirés (2 903 de la population), les membres n'ont pas le même
+poids. La passe voit donc 15 591,5 M€ d'IJ, 0,34 % de moins que le CCSS. Trois points de
+cette masse font 467,7 M€, à l'euro le coût enregistré.
+
+La calibration n'y est pour rien et n'est pas touchée. Caler l'imputation sur le poids
+que lit l'agrégat est une suite à faire ; ce n'est pas fait ici. `ij.verify` dit donc
+vrai sur les poids des personnes, et la passe voit 0,34 % de moins.
+
+**L'AT-MP, contre son pronostic.** D-306 annonçait 150 à 260 M€, probablement hors
+tolérance par le bas, et écrivait : « Un résultat au-dessus du publié contredirait le
+pronostic. » Le résultat est au-dessus du publié : **le pronostic est contredit.** La
+passe de diagnostic retrouve −365,7 M€. Tout le coût est de l'IR : aucune prestation ne
+bouge.
+
+Sur 2 375 M€ de base imposable ajoutée (avant la déduction de 10 %), l'impôt prend
+15,4 %, soit 17 % après la déduction. Le pronostic supposait 7 à 12 %. Par tranche
+d'impôt d'avant la réforme :
+- foyers non imposés : 473 M€ de base, 2 M€ d'impôt (0,5 %) ;
+- impôt de 1 à 1 500 € : 454 M€ de base, 62 M€ (13,7 %). C'est la zone de la décote, où
+  le taux de 11 % en vaut 16 ;
+- de 1 500 à 5 000 € : 857 M€ de base, 144 M€ (16,7 %) ;
+- au-delà de 5 000 € : 592 M€ de base, 158 M€ (26,7 %), dans la tranche à 30 %.
+
+L'erreur du pronostic est de sens. Il croyait que l'espérance par cellule étalerait les
+IJ sur les bas salaires, et priverait le barème de ses taux élevés. Or la clé est le
+salaire plafonné à 1,8 SMIC : elle met 80 % de la base chez des foyers déjà imposés.
+
+Le résultat, sur l'assiette de 2024, dépasse un publié de 2029. Le taux que la population
+applique à la base est donc plus haut que celui que la fiche suppose. La fiche ne donne
+pas sa base, et l'écart reste sans explication mesurée. La dépense 120117 des Voies et
+moyens 2026 (533 M€ en 2025) n'est pas un comparateur : elle couvre aussi les rentes
+AT-MP exonérées en totalité.
+
+**La part en euros de 2027.** Le relevé sépare les 965 M€ d'IR en leurs deux parts : 450 M€
+pour l'ALD, refusés, et 515 M€ pour l'AT-MP, chiffrés. Les 540 M€ de CSG sont chiffrés
+aussi. Le numérateur passe de 10 600 à 11 655 M€, sur 16 624 : **70,1 %**, contre 63,8 %.
+Si chaque montant écrit hors du dénominateur y entrait, ce serait 68,1 %.
+
+La page le dit dans une section à part : ces 1 055 M€ viennent de cas écrits après
+l'annexe. Un test lie chaque volet à son cas, enregistré avec `apres_annexe`. La part dit
+« chiffré », pas « retrouvé » (D-293) : elle ne dépend pas des notes.
+
+**Ce qui reste refusé, mesuré.** Les refus mesurés font 2 055 M€ :
+- l'IR des IJ ALD, 450 M€ : aucune source ouverte ne sépare les IJ ALD ;
+- les indemnités de rupture, 820 M€ ;
+- l'art. 5, 500 M€ ;
+- l'art. 6, 25 M€ ;
+- l'art. 7, volet 4.2.1.2, 260 M€.
+
+Chacun garde sa raison de D-305.
+
+**La ligne d'une variable du projet.** La ligne `csg_ij` lit une variable que seule la
+correction 23 crée. Or des tests de mort lisent openfisca brut par le registre, celui de
+la correction 19 par exemple. Le lot ciblé l'a vu échouer : « variable
+'csg_indemnites_journalieres' [...] not found ». Une ligne porte désormais `projet=True`
+quand sa variable vient des corrections. Sur openfisca brut, elle lit zéro, ce
+qu'openfisca brut lève. Toute autre variable absente lève encore. Deux tests ont été vus
+échouer avant ; trois mutants sont tués.
+
+**Un test rouge qui n'est pas de cette branche.** `test_the_band_prices_the_response_to_a_
+top_rate_rise` (`tests/test_api.py`) échoue : le p10 de la bande vaut −333 493 323 €, et
+le test le veut positif. Il échoue à l'identique sur main (8b5f05e), au même euro. Il
+n'est donc pas de cette branche, et il n'est pas réparé ici.

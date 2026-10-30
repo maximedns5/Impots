@@ -53,9 +53,9 @@ Trois chiffres, donnés ensemble, parce que chacun seul ment :
 
 | chiffre | aujourd'hui | source |
 |---|---|---|
-| cas notés dans la tolérance déclarée | **3 sur 5** (PLF 2027 : art. 2, 3, 15, et les deux volets de l'art. 74) ; à part, 1 révision sur 1 (art. 2, D-292) | `reports/chiffrages_preregistres.md` |
+| cas notés dans la tolérance déclarée | **3 sur 5** (PLF 2027 : art. 2, 3, 15, et les deux volets de l'art. 74) ; à part, 3 révisions sur 3 (art. 2 : D-292, et ses deux volets IJ, D-308) | `reports/chiffrages_preregistres.md` |
 | articles chiffrables | **3 sur 33** fiscaux (PLF 2027), plus l'art. 74 de dépense ; **0 sur 49** (PLFSS 2027) ; 1 sur 29 (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
-| euros quantifiés par l'annexe que l'outil chiffre | **63,8 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
+| euros quantifiés par l'annexe que l'outil chiffre | **70,1 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 
 Et le livrable : **1 étude à trois réponses** (PLF 2027), **0 en ligne**.
 
@@ -179,3 +179,14 @@ vérifiées contre le CCSS de mai 2026. Les volets 4.2.1.3 et 4.2.1.4 de l'art. 
 art. 5, 6 et 7 restent refusés, chacun avec sa mesure ; la part en euros reste à 63,8 %.
 Ce qui manque est listé à la fin de D-305 : le câblage des IJ dans l'impôt et la CSG,
 la part ALD, une distribution des indemnités de rupture, l'épargne imputée.
+
+Deuxième passe, D-306 à D-308 : le moteur impose les IJ et lève leur CSG (corrections 22
+et 23, deux boutons). Deux cas écrits après l'annexe sont des révisions comptées à part :
+- l'IR des IJ AT-MP, −366 M€ contre −330 M€ publiés, dans la tolérance. Le pronostic
+  annonçait 150 à 260 M€ : il est contredit, et D-308 dit pourquoi ;
+- la CSG des IJ, −468 M€ contre −540 M€, dans la tolérance, comme annoncé.
+
+La part en euros de 2027 passe à 70,1 %. Restent refusés, avec leur mesure : l'IR des IJ
+ALD (450 M€), les indemnités de rupture (820 M€) et les art. 5, 6 et 7. Il manque une
+source ouverte de la part ALD, une distribution des indemnités de rupture et l'épargne
+imputée. L'imputation est à caler sur le poids des ménages, que lit l'agrégat (D-308).

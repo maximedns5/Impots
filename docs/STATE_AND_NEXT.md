@@ -1,4 +1,19 @@
-# State of the project, and the directions open — 2026-10-29 (Phase 11, M0 to M6)
+# State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
+
+The first 2026-10-30 update adds D-306 to D-308: the goal's eighth aim, a second pass.
+Corrections 22 and 23 (`engine/corrections.py`) put the sick pay in the IR (maladie whole,
+AT-MP net of its 50 % exemption, a parameter the project adds) and levy its CSG
+(`csg_indemnites_journalieres`, now a row `csg_ij` and a receipt of the ledger, D-307);
+knobs `ij_at_mp_part_exoneree` and `csg_ij_taux`. The corrections' parameters go through
+one `modify_parameters` call: a second one undid correction 6's age of 62, which seven
+engine tests caught. A scenario may ask `imputations: ["ij"]`; `impots chiffrage register
+--apres-annexe RAISON` writes a case counted with the revisions. Two such cases, graded:
+the AT-MP IR at -366 M€ against -330 M€ (within; the prognosis said 150-260 M€ and is
+contradicted: 80 % of the added base lands on foyers already taxed), the CSG at -468 M€
+against -540 M€ (within, as forecast). The 2027 euro share is 70,1 % (was 63,8 %). Still
+refused, each measured: the ALD part of the IR (450 M€), severance pay (820 M€), art. 5,
+6 and 7. Open: an ALD source, a severance distribution, the savings, and scaling the IJ
+imputation on the household weight the aggregate reads (the run sees 0,34 % less, D-308).
 
 The eighth 2026-10-29 update adds D-305: the goal's eighth aim, a first pass. The
 population can carry the régime général's sick pay of 2024 (`run(..., impute_ij=True)`,

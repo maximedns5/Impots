@@ -138,6 +138,10 @@ STATE_RECEIPTS = (
     # RFR, PFU included, and takes back part of a PFU cut. Zero without capital income;
     # with it, a PFU cut moved disposable income by 17,7 % less than `ir` (D-250).
     "cdhr",
+    # The CSG on the sick pay, which correction 23 levies (D-306): not in the salary's CSG
+    # rows. Without it the first pass of a CSG rate on the allowances was refused, its
+    # 467,7 M€ held by no instrument (D-307).
+    "csg_ij",
 )
 
 #: Household-side instruments the state PAYS. Positive delta = the state pays more.
