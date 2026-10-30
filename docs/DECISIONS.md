@@ -24005,8 +24005,8 @@ choses le permettent sans rien perdre :
   font. Ils portent la marque `chrono` : `make impact` les écarte de la passe parallèle et
   les lance ensuite seuls.
 
-**Les tests lourds, sur un seul worker.** Une passe de population au palier complet, sur les
-20 000 ménages, tient de 6 à 7 Go. Deux workers qui en lancent une chacun dépassent les
+**Les tests lourds, à part.** Une passe de population au palier complet, sur les 20 000
+ménages, tient de 6 à 7 Go. Deux workers qui en lancent une chacun dépassent les
 15 Go de la machine. À `-n 2` déjà, le noyau a tué trois workers (pic de 14,3 Go), et leurs
 tests sont tombés en échec sans avoir rien testé. L'échec se voit, mais la passe est perdue.
 
@@ -24067,7 +24067,10 @@ passe a duré 36 min 28 s, et a trouvé deux défauts de l'outillage, corrigés 
 - `test_dependances` prenait `memoire` et `impact_fichiers`, que le conftest importe, pour
   des dépendances non déclarées. Ils rejoignent les modules locaux de `dependances.py`.
 
-@@LOURDS@@
+Les lourds, chacun dans son processus, c'est la mesure à froid : 45 minutes pour les
+dix-neuf, 7,05 Go au plus. Le lanceur a été passé sur deux tests réels de
+`test_zero_masked` : chacun dans son processus, 52 s chacun, verts. Relancé sans rien
+changer, il n'a rien rejoué, et a rendu 0 en 4 s.
 
 **Neuf tests rouges sur main, qui ne sont pas de cette branche.** Ils échouent à l'identique
 sur main (8804916), dans un worktree neuf :
@@ -24149,6 +24152,12 @@ venues de But 8 : un `zip` sans `strict`, un bloc d'imports, un motif non échap
 sont corrigées, sans rien changer à ce qui est calculé.
 
 **Ce que le propriétaire décide.** `make full` ne change pas : il reste la passe complète,
-journalisée, avant une revue. `make impact` s'y ajoute pour le travail courant. La règle des
+journalisée, avant une revue. `make impact` s'y ajoute pour le travail courant. Sa première
+passe fait tout tourner, et n'a pas été lancée en entier ici. Sa passe parallèle, sans les
+lourds, est contenue dans la vérification ci-dessus, où les workers légers tenaient de 1,3 à
+1,9 Go ; ses lourds, c'est la mesure à froid. Elle coûte donc 45 minutes de lourds, plus la
+passe parallèle ; ensuite, elle ne rejoue que ce qui dépend du changement. La règle des
 tests ciblés de CLAUDE.md est réécrite en ce sens, et c'est une proposition : elle vaut si
-la PR est mergée.
+la PR est mergée. Deux chantiers restent ouverts : les huit tests rouges sur main, et le
+coût du moteur (`pin_benefit_history`, `get_parameters_at_instant`), qui accélérerait aussi
+l'API.
