@@ -348,10 +348,13 @@ def test_only_the_tests_listed_heavy_join_the_heavy_group(tmp_path, monkeypatch)
 
 def test_the_memory_of_a_heavy_test_is_seen_even_after_another_one(pytester) -> None:
     """The process peak climbs once, at the first heavy test, and would hide the next: the
-    rise is sampled during each test. The record is written after each one, so a worker the
-    kernel kills does not take it with it."""
+    rise is sampled during each test, from where the test starts: the 300 MB the conftest
+    holds are no test's. The record is written after each one, so a worker the kernel kills
+    does not take it with it."""
     pytester.makeconftest(f"import sys\nsys.path.insert(0, {str(TESTS)!r})\n"
                           "import memoire\n"
+                          "TENU = bytearray(300 * 1024 * 1024)\n"
+                          "TENU[::4096] = b'x' * len(TENU[::4096])\n"
                           "def pytest_addoption(parser):\n    memoire.ajouter_options(parser)\n"
                           "def pytest_configure(config):\n    memoire.configurer(config)\n")
     pytester.makepyfile(test_m="import time\n"
@@ -423,4 +426,24 @@ def test_a_record_written_halfway_keeps_the_previous_one(tmp_path, monkeypatch) 
         releve.arret.set()
     assert json.loads(releve.cible.read_bytes()) == {"t::a": 12.0}
     assert [f.name for f in releve.cible.parent.iterdir()] == [releve.cible.name]
+
+
+def test_a_record_is_replaced_whole_never_rewritten_in_place(tmp_path) -> None:
+    """A reader that opened the record before a write still reads the whole of the old one."""
+    import json
+    import types
+
+    import memoire
+
+    releve = memoire.Releve(types.SimpleNamespace(rootpath=tmp_path))
+    try:
+        releve.hausses["t::a"] = 12.0
+        releve._ecrire()
+        with releve.cible.open("rb") as lecteur:
+            releve.hausses["t::b"] = 3.0
+            releve._ecrire()
+            assert json.loads(lecteur.read()) == {"t::a": 12.0}
+    finally:
+        releve.arret.set()
+    assert json.loads(releve.cible.read_bytes()) == {"t::a": 12.0, "t::b": 3.0}
 
