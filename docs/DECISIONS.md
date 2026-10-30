@@ -23861,3 +23861,36 @@ pas une erreur de distribution.
 pour les AT-MP. Les 515 M€ et les 540 M€ de CSG entrent alors au numérateur : 11 655 M€
 sur 16 624, soit 70,1 %. C'est une part de ce que l'outil sait chiffrer. Elle ne dépend
 pas des notes.
+
+## D-307 — La CSG des IJ dans le registre des recettes, et le cas de la CSG repassé
+
+**Le fait.** Les deux cas de D-306 ont tourné au commit d2e9066, depuis un worktree figé.
+- `plf2027_art_2_ij_atmp` s'est enregistré : −366 M€.
+- `plf2027_art_2_csg_ij` a été refusé avant d'être écrit. Le garde de `sector_balance` a
+  vu −467 747 115 € de coût par le revenu disponible, et aucun instrument pour les tenir :
+  « coût rapporté -467,747,115 EUR contre -0 EUR reconstitué depuis les postes ».
+
+Le garde avait raison. La correction 23 lève la CSG des IJ dans une variable à elle, et
+D-306 ne l'avait déclarée nulle part : ni ligne de résultat, ni recette, ni instrument. Le
+cas de l'AT-MP n'en souffre pas : sa réforme ne bouge pas cette CSG, et son coût tient
+dans l'IR.
+
+**La réparation.** `csg_ij` devient une ligne du registre (`csg_indemnites_journalieres`,
+signe inversé), un champ du schéma, une recette de `STATE_RECEIPTS`, un instrument de
+`aggregate.INSTRUMENTS`, et une CSG pour le pont macro. Deux tests ont été vus échouer
+avant elle :
+- l'un exige la ligne, la recette et l'instrument ;
+- l'autre fait passer 40 ménages aux IJ imputées sous un taux de 9,2 %. Avant la
+  réparation, il reproduisait le refus : −556 M€ contre zéro reconstitué.
+
+**Le cas repassé.** `plf2027_art_2_csg_ij` tourne une seconde fois, au commit qui porte
+cette entrée, avec la même commande, la même tolérance et le même pronostic que D-306. Il
+n'a jamais été enregistré : ce n'est donc pas une révision de lui-même.
+
+**Le pronostic de ce second passage.** Le coût est celui que le refus a imprimé :
+−467 747 115 €, à l'euro près. La réparation ne touche que le registre, pas le calcul.
+Si un autre nombre sortait, la réparation aurait changé ce qu'elle ne devait pas toucher.
+
+Ce coût est à 0,3 % des 469 M€ de D-306. Ce pronostic disait « à un million près » ;
+l'écart est de 1,3 M€, il le manque donc d'un peu. Le résultat et ce qu'il dit du
+pronostic iront dans D-308, avec la note des deux cas.

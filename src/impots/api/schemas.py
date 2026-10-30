@@ -1139,6 +1139,10 @@ class ResultRows(BaseModel):
     cotisations_employeur: float
     retraite_imposable: float
     chomage_brut: float
+    csg_ij: float
+    """The CSG on the sick pay, levied by correction 23 (D-306). Zero for a household the
+    wire format builds, which carries no allowance; a receipt of its own in the ledger
+    (D-307)."""
     pension_invalidite: float
     """The invalidity pension as declared, box 1AZ. Zero for a household that declares none.
     Its CSG imposable, CRDS and CASA have no row, like a retirement pension's: they are inside

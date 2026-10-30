@@ -172,3 +172,32 @@ def test_each_knob_is_read_back_from_the_tree(knob, value) -> None:
 
     tree = reformed_for(ReformSpec(**{knob: value}), YEAR).parameters
     assert float(resolve(tree, SCALAR_KNOBS[knob])(f"{YEAR}-07-01")) == pytest.approx(value)
+
+
+# --- la CSG des IJ dans le registre des recettes (D-307) -------------------------------
+
+
+def test_the_csg_on_sick_pay_is_a_row_an_instrument_and_a_receipt() -> None:
+    """GUARD (D-307). The first pass of the CSG case was refused by the ledger: the cost
+    by disposable income was a yield of 467,7 M€, and no instrument held it."""
+    from impots import guards
+    from impots.engine.outputs import REGISTRY
+    from impots.macro import shocks
+    from impots.population import aggregate
+
+    row = next(r for r in REGISTRY if r.key == "csg_ij")
+    assert row.variable == corrections.CSG_IJ and row.entity == "individu" and row.negate
+    assert "csg_ij" in aggregate.INSTRUMENTS and "csg_ij" in guards.STATE_RECEIPTS
+    assert shocks.INSTRUMENT_MAP["csg_ij"] == shocks.INSTRUMENT_MAP["csg_deductible"]
+    guards.sector_balance({"csg_ij": 467.7e6}, reform_cost=-467.7e6)
+
+
+def test_a_pass_that_raises_the_csg_on_sick_pay_balances_its_ledger(frames) -> None:
+    from impots.population import aggregate
+
+    with_ij, _ = frames
+    result = runner.run(with_ij, year=YEAR, reform=ReformSpec(csg_ij_taux=0.092),
+                        tier="full")
+    agg = aggregate.aggregate(result.households)
+    assert agg.reform_cost < 0
+    assert agg.deltas["csg_ij"] == pytest.approx(-agg.reform_cost, rel=1e-3)

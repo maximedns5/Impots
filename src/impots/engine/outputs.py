@@ -90,6 +90,11 @@ REGISTRY: tuple[Row, ...] = (
         label="CSG imposable"),
     Row("crds", "crds_salaire", "individu", "month", "light", True,
         label="CRDS"),
+    # The CSG on the sick pay, which correction 23 levies (D-306). A receipt of its own:
+    # `csg_deductible` and `csg_imposable` are the salary's. Zero for a household that
+    # carries no allowance, which is every one the wire format builds (D-307).
+    Row("csg_ij", "csg_indemnites_journalieres", "individu", "month", "light", True,
+        label="CSG des indemnités journalières"),
     # --- tax block: foyer fiscal, annual --------------------------------------
     Row("ir", "impot_revenu_restant_a_payer", "foyer_fiscal", "year", "light", True,
         label="Impôt sur le revenu"),
