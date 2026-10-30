@@ -23978,3 +23978,89 @@ qu'openfisca brut lève. Toute autre variable absente lève encore. Deux tests o
 top_rate_rise` (`tests/test_api.py`) échoue : le p10 de la bande vaut −333 493 323 €, et
 le test le veut positif. Il échoue à l'identique sur main (8b5f05e), au même euro. Il
 n'est donc pas de cette branche, et il n'est pas réparé ici.
+
+## D-309 — Des tests plus rapides sans rien perdre : en parallèle, et ce qui a changé
+
+**La demande.** Le propriétaire veut des tests ciblés, comme d'autres équipes en font :
+moins de temps perdu, et la même véracité.
+
+**Où passe le temps, mesuré.** Ce matin, `test_knobs`, `test_prestations` et `test_engine`
+(526 tests) ont pris 80 minutes en série. Un test de bouton prend 23 à 34 s. Son profil :
+- `pin_benefit_history` prend 47 s sur 69 (sous le profileur) : l'historique N-1 et N-2
+  des prestations, calculé pour chaque simulation ;
+- `get_parameters_at_instant` prend 28 s : un système réformé neuf recalcule l'arbre des
+  paramètres à chaque instant qu'il lit ;
+- `modify_parameters` copie tout l'arbre, 2,8 s par appel.
+
+Ce sont des coûts du moteur, pas des tests. Les baisser accélérerait aussi l'API ; c'est
+un chantier à part.
+
+**1. En parallèle.** Avec pytest-xdist, les mêmes 526 tests passent en 21 minutes sur
+quatre workers, au lieu de 80 : 3,8 fois plus vite. Le pic de mémoire est de 4,6 Go. Deux
+choses le permettent sans rien perdre :
+- les caches EMTR de `data/processed` s'écrivent à côté, puis prennent leur nom d'un
+  `os.replace`. Écrits en place, deux workers, ou deux requêtes de l'API, pouvaient lire
+  un parquet à moitié écrit. Quatre tests ont été vus échouer avant le correctif ;
+- les cinq tests de durée (`quiet_machine`) se sautent sous la charge que des workers
+  font. Ils portent la marque `chrono` : `make impact` les écarte de la passe parallèle et
+  les lance ensuite seuls.
+
+**2. Seulement ce qui a changé : pytest-testmon, essayé et écarté.** testmon relance un
+test quand une ligne Python qu'il exécute a changé. Rejoué sur six changements réels, sur
+huit fichiers de tests (505 tests), il a laissé passer le bug de D-306 : le second
+`modify_parameters` réintroduit, 82 tests sélectionnés, tous verts. Le système fiscal se
+construit une fois par processus, puis sort d'un cache. La couverture n'attribue donc ce
+code qu'au premier test de chaque worker. Le code compte une vingtaine de tels caches.
+
+**Le sélecteur retenu : `--impact` (`tests/impact_fichiers.py`).** Un test vert n'est rejoué
+que si l'une de ses dépendances a changé depuis son dernier passage vert :
+- un fichier Python qu'importe son fichier de tests, même indirectement. Le graphe est lu
+  dans le source, imports dans les fonctions compris, et non dans l'exécution : un cache
+  ne retire jamais un import ;
+- un fichier qu'il lit (crochet d'audit de Python, et lecteurs de polars, qui ouvrent en
+  Rust), ou un script qu'il exécute par son chemin ;
+- les versions d'openfisca, numpy, polars, pydantic, pytest, pyyaml et pypdf.
+
+Sont toujours rejoués : un test jamais passé, rouge ou sauté, et un fichier de tests qui
+lance un sous-processus. Une lecture faite pendant la collecte vaut pour tous. Le conftest
+compte par son texte et par l'outillage des tests : son import du moteur ne sert qu'à le
+chauffer.
+
+**Rejoué sur les mêmes six changements, sur les mêmes 505 tests :**
+
+| changement | rejoués | durée | issue |
+|---|---|---|---|
+| référence (tout) | 505 | 459 s | vert |
+| rien | 85 | 20 s | vert |
+| bug 1 de D-306 réintroduit | 497 | 492 s | **9 échecs**, dont les 7 de D-306 |
+| bug 2 de D-308 réintroduit | 497 | 437 s | **3 échecs**, ceux de D-308 |
+| une ligne de `DECISIONS.md` | 93 | 21 s | vert |
+| un montant du relevé de 2027 | 133 | 77 s | **1 échec**, le bon |
+
+Les deux bugs sont vus. Le gain dépend du changement :
+- un changement du cœur du moteur rejoue presque tout, puisque presque tout en dépend ;
+- un changement de documentation, de relevé, d'étude ou de script en rejoue peu.
+
+Les 85 tests rejoués quand rien ne change sont ceux qui lancent un sous-processus, et ceux
+qui se sautent.
+
+Un test du sélecteur a échoué une fois sur deux sous la charge. La cause était le test : il
+modifiait un fichier dans la seconde de son import, à la même taille, et Python reprenait
+son bytecode périmé. Ses projets tournent désormais sans bytecode.
+
+**Ce qui reste hors de vue, dit et non deviné :**
+- ce qu'exécute un sous-processus : ces tests sont toujours rejoués ;
+- les variables d'environnement, la date, le réseau ;
+- un fichier qu'un module en C ouvrirait seul, hors polars ;
+- l'existence d'un fichier (`os.stat`). Un test sauté faute de fichier est toujours
+  rejoué : il tourne dès que le fichier existe.
+
+**Les mutants.** Treize mutants ont été lancés sur les caches atomiques, le relevé et le
+regroupement : tous tués. Seize ont été lancés sur le sélecteur : quinze tués. Le seizième
+est équivalent : il retire le retour à « personne » en fin de collecte, et aucune lecture
+ne tombe dans cette fenêtre dans cette suite.
+
+**Ce que le propriétaire décide.** `make full` ne change pas : il reste la passe complète,
+journalisée, avant une revue. `make impact` s'y ajoute pour le travail courant. La règle des
+tests ciblés de CLAUDE.md est réécrite en ce sens, et c'est une proposition : elle vaut si
+la PR est mergée.

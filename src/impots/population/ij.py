@@ -184,7 +184,7 @@ def keys(frame: pl.DataFrame, cap: float, cells: dict[tuple[str, str], float]) -
     ages = _age_band(frame["age"].to_numpy())
     pcs = frame["pcs"].fill_null(NO_PCS).to_numpy()
     freq = np.array([cells.get((a, p), np.nan) if ok else 0.0
-                     for a, p, ok in zip(ages, pcs, eligible)], dtype=np.float64)
+                     for a, p, ok in zip(ages, pcs, eligible, strict=True)], dtype=np.float64)
     if np.isnan(freq).any():
         raise SickPayError("un salarié du privé tombe dans une cellule que l'enquête n'a pas")
     wage = np.minimum(frame["salaire_brut_annuel"].to_numpy().astype(np.float64), cap)

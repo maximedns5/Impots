@@ -16,6 +16,7 @@ from impots.engine.system import baseline
 from impots.population import ij, runner
 from impots.population.to_openfisca import IJ_INPUTS, WiringError, build_simulation
 
+
 @pytest.fixture(scope="module")
 def population() -> pl.DataFrame:
     from impots.population.cli import PROCESSED
@@ -55,7 +56,7 @@ def test_a_reading_that_contradicts_the_text_is_refused(monkeypatch) -> None:
 
 def test_a_missing_line_is_refused(monkeypatch) -> None:
     monkeypatch.setattr(ij, "TOTAL_PAGE", ij.TOTAL_PAGE + 1)
-    with pytest.raises(ij.SickPayError, match="fiche 2.3"):
+    with pytest.raises(ij.SickPayError, match=r"fiche 2\.3"):
         ij.published()
 
 

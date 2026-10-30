@@ -88,10 +88,30 @@ def test_the_closure_follows_packages_and_submodules(tmp_path) -> None:
     }.items():
         (tmp_path / chemin).parent.mkdir(parents=True, exist_ok=True)
         (tmp_path / chemin).write_text(texte)
+    (tmp_path / "src/pkg/sous").mkdir()
+    (tmp_path / "src/pkg/sous/__init__.py").write_text("REGLE = 1\n")
+    (tmp_path / "src/pkg/sous/mod.py").write_text("")
+    (tmp_path / "tests/test_s.py").write_text("import pkg.sous.mod\n")
     graphe = impact.Graphe.lire(tmp_path)
+    # Importer `pkg.sous.mod` exécute `pkg/__init__.py` et `pkg/sous/__init__.py`, que rien
+    # ne nomme ailleurs.
+    assert graphe.fermeture("tests/test_s.py") == {
+        "tests/test_s.py", "src/pkg/sous/mod.py", "src/pkg/sous/__init__.py",
+        "src/pkg/__init__.py"}
     assert graphe.fermeture("tests/test_f.py") == {
         "tests/test_f.py", "src/pkg/feuille.py", "src/pkg/__init__.py", "src/pkg/socle.py"}
     assert "scripts/outil.py" in graphe.fermeture("tests/test_o.py")
+
+
+def test_another_library_version_changes_every_fingerprint(tmp_path, monkeypatch) -> None:
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests" / "test_x.py").write_text("")
+    dependances = lambda: impact.Dependances(  # noqa: E731
+        impact.Graphe.lire(tmp_path), {}, [], impact.Empreintes(tmp_path), ())
+    monkeypatch.setattr(impact, "versions", lambda: "openfisca-france==176.0.8")
+    avant = dependances().digest("tests/test_x.py")
+    monkeypatch.setattr(impact, "versions", lambda: "openfisca-france==177.0.0")
+    assert dependances().digest("tests/test_x.py") != avant
 
 
 # --- le relevé ----------------------------------------------------------------------------
@@ -126,8 +146,14 @@ def test_only_a_test_green_on_its_three_phases_is_recorded_green(phases, issue) 
 
 
 @pytest.fixture
-def projet(pytester):
-    """Un dépôt comme celui-ci : `src/`, `tests/`, un conftest, un résultat en cache."""
+def projet(pytester, monkeypatch):
+    """Un dépôt comme celui-ci : `src/`, `tests/`, un conftest, un résultat en cache.
+
+    Sans bytecode : ces tests modifient un fichier dans la seconde qui suit son import, à
+    la même taille, et Python reprendrait le `.pyc` de l'ancien (son en-tête ne porte que
+    la seconde et la taille). La sélection rejouait bien le test ; Python exécutait
+    l'ancien code."""
+    monkeypatch.setenv("PYTHONDONTWRITEBYTECODE", "1")
     pytester.makeini("[pytest]\npythonpath = src\ntestpaths = tests\n"
                      "markers =\n    lent: lent\n")
     fichiers = {
@@ -140,6 +166,7 @@ def projet(pytester):
         "donnees.json": '{"v": 1}',
         "tests/conftest.py": f"import sys\nsys.path.insert(0, {str(TESTS)!r})\n"
                              "import impact_fichiers\n"
+                             "import pkg.autre  # chauffe, comme le moteur du vrai conftest\n"
                              "def pytest_addoption(parser):\n"
                              "    impact_fichiers.ajouter_options(parser)\n"
                              "def pytest_configure(config):\n"
@@ -194,6 +221,27 @@ def test_a_cached_result_whose_code_changed_reruns_every_test_that_imports_it(pr
     result = _run(projet)
     assert _ran(result) == {"test_age", "test_feuille"}
     result.assert_outcomes(failed=2)
+
+
+def test_the_conftest_warming_a_module_does_not_make_every_test_depend_on_it(projet) -> None:
+    """The real conftest imports the engine to warm it up. A test that computes imports it
+    itself; the others do not depend on it for that."""
+    _run(projet)
+    _edit(projet, "src/pkg/autre.py", "return 1", "return 2")
+    assert _ran(_run(projet)) == {"test_autre"}
+
+
+def test_a_file_read_at_import_reruns_every_test(projet) -> None:
+    """Read while modules are imported, before any test: who read it first is an accident
+    of order, so it counts for all."""
+    _ajouter(projet, "src/pkg/config.py", "import json\nCONF = json.load(open('config.json'))\n")
+    _ajouter(projet, "config.json", '{"a": 1}')
+    _ajouter(projet, "tests/test_conf.py",
+             "from pkg.config import CONF\ndef test_conf():\n    assert CONF['a'] == 1\n")
+    _run(projet)
+    assert _ran(_run(projet)) == set()
+    _ajouter(projet, "config.json", '{"a": 1, "b": 2}')
+    assert _ran(_run(projet)) == TOUS | {"test_conf"}
 
 
 def test_a_failed_test_runs_again_until_it_is_green(projet) -> None:
@@ -261,9 +309,7 @@ def test_a_script_loaded_by_its_path_is_a_dependency(projet) -> None:
              "    spec.loader.exec_module(m)\n"
              "    assert m.VALEUR == 1\n")
     _run(projet)
-    # Une autre taille : à la même seconde et à la même taille, Python reprendrait son
-    # bytecode en cache, et le test ne verrait pas le changement que la sélection a vu.
-    _ajouter(projet, "scripts/outil.py", "VALEUR = 22\n")
+    _ajouter(projet, "scripts/outil.py", "VALEUR = 2\n")
     result = _run(projet)
     assert _ran(result) == {"test_charge"}
     result.assert_outcomes(failed=1)
@@ -298,3 +344,27 @@ def test_only_the_tests_listed_heavy_join_the_heavy_group(tmp_path, monkeypatch)
     assert leger.marques == []
     monkeypatch.setattr(memoire, "FICHIER_LOURDS", tmp_path / "absent.txt")
     assert memoire.lourds() == frozenset()
+
+
+def test_the_memory_of_a_heavy_test_is_seen_even_after_another_one(pytester) -> None:
+    """The process peak climbs once, at the first heavy test, and would hide the next: the
+    rise is sampled during each test. The record is written after each one, so a worker the
+    kernel kills does not take it with it."""
+    pytester.makeconftest(f"import sys\nsys.path.insert(0, {str(TESTS)!r})\n"
+                          "import memoire\n"
+                          "def pytest_addoption(parser):\n    memoire.ajouter_options(parser)\n"
+                          "def pytest_configure(config):\n    memoire.configurer(config)\n")
+    pytester.makepyfile(test_m="import time\n"
+                               "def _gros():\n"
+                               "    b = bytearray(400 * 1024 * 1024)\n"
+                               "    b[::4096] = b'x' * len(b[::4096])\n"
+                               "    time.sleep(0.5)\n"
+                               "def test_a():\n    _gros()\n"
+                               "def test_b():\n    _gros()\n"
+                               "def test_c():\n    pass\n")
+    pytester.runpytest_subprocess("-p", "no:cacheprovider", "--memoire")
+    import json
+
+    hausses = json.loads((pytester.path / ".cache/impact/memoire.seul.json").read_text())
+    assert hausses["test_m.py::test_a"] > 300 and hausses["test_m.py::test_b"] > 300
+    assert hausses["test_m.py::test_c"] < 100

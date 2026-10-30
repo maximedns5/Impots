@@ -1,30 +1,36 @@
-"""Le pic de mémoire de chaque test, pour regrouper les lourds sous xdist (D-309).
+"""La mémoire de chaque test, pour regrouper les lourds sous xdist (D-309).
 
-Un passage de 20 000 ménages au palier complet tient plusieurs Go. Quatre workers xdist
-qui en lancent chacun un dépassent la machine, et le noyau tue un worker. `--memoire`
-relève, par test, de combien il a fait monter le pic du processus : un test qui monte de
-plus de `SEUIL_LOURD_MO` est lourd, et `tests/lourds.txt` le range dans le groupe xdist
-« lourd », qu'un seul worker exécute.
+Un passage de 20 000 ménages au palier complet tient plusieurs Go. Deux workers xdist qui en
+lancent chacun un ont dépassé les 15 Go de la machine, et le noyau a tué trois workers :
+leurs tests sont tombés en échec sans avoir rien testé. `--memoire` relève, par test, de
+combien la mémoire résidente du processus est montée au-dessus de ce qu'elle était au départ
+du test. Un test qui monte de plus de `SEUIL_LOURD_MO` est lourd : `tests/lourds.txt` le
+range dans le groupe xdist « lourd », qu'un seul worker exécute.
+
+La mémoire est échantillonnée pendant le test : le pic du processus (`ru_maxrss`) ne monte
+qu'une fois, au premier test lourd, et tairait les suivants. Le relevé s'écrit après chaque
+test : un worker tué ne l'emporte pas avec lui.
 """
 
 from __future__ import annotations
 
 import json
 import os
-import resource
+import threading
 from pathlib import Path
 
 import pytest
 
 OPTION = "--memoire"
 FICHIER_LOURDS = Path(__file__).with_name("lourds.txt")
-#: Ce qui fait d'un test un lourd : la hausse du pic du processus pendant son passage.
+#: Ce qui fait d'un test un lourd : sa hausse de mémoire résidente pendant son passage.
 SEUIL_LOURD_MO = 1024
+PAGE = os.sysconf("SC_PAGE_SIZE") if hasattr(os, "sysconf") else 4096
 
 
 def ajouter_options(parser) -> None:
     parser.addoption(OPTION, action="store_true", default=False,
-                     help="relever la hausse du pic de mémoire de chaque test (D-309)")
+                     help="relever la hausse de mémoire de chaque test (D-309)")
 
 
 def lourds() -> frozenset[str]:
@@ -45,9 +51,10 @@ def grouper(items) -> None:
             item.add_marker(pytest.mark.xdist_group("lourd"))
 
 
-def pic_mo() -> float:
-    """Le pic de mémoire résidente du processus, en Mo (Linux compte en Ko)."""
-    return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024
+def residente_mo() -> float:
+    """La mémoire résidente du processus maintenant, en Mo."""
+    with open("/proc/self/statm", encoding="ascii") as statm:
+        return int(statm.read().split()[1]) * PAGE / (1024 * 1024)
 
 
 def configurer(config) -> None:
@@ -57,20 +64,33 @@ def configurer(config) -> None:
 
 class Releve:
     def __init__(self, config) -> None:
-        self.racine = Path(str(config.rootpath))
+        travailleur = os.environ.get("PYTEST_XDIST_WORKER", "seul")
+        racine = Path(str(config.rootpath))
+        self.cible = racine / ".cache" / "impact" / f"memoire.{travailleur}.json"
         self.hausses: dict[str, float] = {}
+        self.pic = 0.0
+        self.arret = threading.Event()
+        threading.Thread(target=self._echantillonner, daemon=True).start()
+
+    def _echantillonner(self) -> None:
+        while not self.arret.wait(0.1):
+            self.pic = max(self.pic, residente_mo())
 
     @pytest.hookimpl(hookwrapper=True)
     def pytest_runtest_protocol(self, item, nextitem):
-        avant = pic_mo()
+        depart = residente_mo()
+        self.pic = depart
         yield
-        hausse = pic_mo() - avant
-        if hausse > 0:
-            self.hausses[item.nodeid] = round(hausse, 1)
+        self.pic = max(self.pic, residente_mo())
+        self.hausses[item.nodeid] = round(self.pic - depart, 1)
+        self._ecrire()
+
+    def _ecrire(self) -> None:
+        self.cible.parent.mkdir(parents=True, exist_ok=True)
+        provisoire = self.cible.with_name(f".{self.cible.name}.{os.getpid()}.tmp")
+        provisoire.write_text(json.dumps(self.hausses, indent=1, sort_keys=True),
+                              encoding="utf-8")
+        os.replace(provisoire, self.cible)
 
     def pytest_sessionfinish(self, session, exitstatus) -> None:
-        travailleur = os.environ.get("PYTEST_XDIST_WORKER", "maitre")
-        cible = self.racine / ".cache" / "impact" / f"memoire.{travailleur}.json"
-        cible.parent.mkdir(parents=True, exist_ok=True)
-        cible.write_text(json.dumps(self.hausses, indent=1, sort_keys=True),
-                         encoding="utf-8")
+        self.arret.set()
