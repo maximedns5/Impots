@@ -23,8 +23,15 @@ def pytest_addoption(parser) -> None:
 
 
 def pytest_collection_modifyitems(config, items) -> None:
-    """Les tests lourds dans un seul groupe xdist (D-309)."""
+    """Les tests lourds dans un seul groupe xdist, et les chronomètres marqués (D-309).
+
+    Un test de durée (`quiet_machine`) se saute quand la machine est chargée, ce que des
+    workers xdist font d'eux-mêmes. `make impact` les écarte de la passe parallèle et les
+    lance ensuite seuls, sur une machine au repos."""
     memoire.grouper(items)
+    for item in items:
+        if "quiet_machine" in getattr(item, "fixturenames", ()):
+            item.add_marker(pytest.mark.chrono)
 
 
 def pytest_configure(config) -> None:
