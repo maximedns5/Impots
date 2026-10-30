@@ -24005,6 +24005,50 @@ choses le permettent sans rien perdre :
   font. Ils portent la marque `chrono` : `make impact` les écarte de la passe parallèle et
   les lance ensuite seuls.
 
+**Les tests lourds, sur un seul worker.** Une passe de population au palier complet, sur les
+20 000 ménages, tient de 6 à 7 Go. Deux workers qui en lancent une chacun dépassent les
+15 Go de la machine. À `-n 2` déjà, le noyau a tué trois workers (pic de 14,3 Go), et leurs
+tests sont tombés en échec sans avoir rien testé. L'échec se voit, mais la passe est perdue.
+
+`--memoire` (`tests/memoire.py`) relève de combien chaque test fait monter la mémoire du
+processus. Mesurée dans un même processus, cette hausse trompe : le premier test de
+population montait de 5,9 Go, les suivants de 140 à 740 Mo, parce que la mémoire était déjà
+prise. Sur un worker neuf, chacun la reprend. La mesure retenue est donc à froid : chaque
+test dans un processus neuf, en série. Sur les 119 tests lents hors ménage, en 67 minutes :
+- douze montent de 6,0 à 7,0 Go : les passes de population de `test_api` et de
+  `test_population` ;
+- six montent de 3,2 Go : ceux de `test_zero_masked` ;
+- un monte de 2,1 Go : le solveur de `test_scenarios` ;
+- le suivant monte de 508 Mo, les autres de moins de 300 Mo.
+
+Ces dix-neuf tests sont listés dans `tests/lourds.txt`, chacun avec sa mesure, et portent la
+marque `lourd`. Un test vérifie que chaque test listé existe encore : renommé, il sortirait
+de la liste en silence. Les tests de ménage n'ont pas été mesurés un à un : sur les 526,
+quatre workers tenaient 4,6 Go en tout.
+
+**La marque arrivait trop tard.** Le premier essai à `-n 4` montrait les quatre workers à
+3,1-3,5 Go dès la deuxième minute : les lourds tournaient partout à la fois. Le
+`pytest_collection_modifyitems` d'un worker xdist lit le groupe de chaque test, et celui du
+conftest, enregistré avant lui, passe après. La marque est désormais posée par un greffon
+que `memoire.configurer` enregistre, avec `tryfirst`. Un test lance xdist sur six lourds et
+six légers, et veut les six lourds sur un seul worker. Il a été vu échouer avant le
+correctif : les lourds étaient sur trois workers. Retirer `tryfirst` ne le fait pas
+échouer : le greffon s'enregistre après celui de xdist, et pluggy appelle d'abord le dernier
+enregistré. Avec xdist 3.8, ce mutant est donc équivalent. `tryfirst` garde l'ordre si
+l'enregistrement change.
+
+**Groupés, ils débordaient encore.** Sur un seul worker, les lourds ne tournaient plus deux
+à la fois. Mais un processus qui les enchaîne garde ce que chacun laisse : le worker des
+lourds est monté à 9,0 Go, et les trois autres, à force de tests, à 1,3-1,9 Go. Le pic a
+touché 14,1 Go, et le noyau a tué le worker des lourds à 95 % de la passe. `make impact`
+lance donc la passe parallèle sans eux (`-m "not lourd"`), puis les lourds seuls, dans un
+seul processus, puis les chronomètres. Un test vérifie que `-m "not lourd"` les écarte sous
+xdist et que `-m lourd` les garde ; il a été vu échouer sans la marque. Le groupe xdist
+reste : une passe parallèle lancée à la main avec `--dist loadgroup` les met encore sur un
+seul worker.
+
+@@VERIF@@
+
 **2. Seulement ce qui a changé : pytest-testmon, essayé et écarté.** testmon relance un
 test quand une ligne Python qu'il exécute a changé. Rejoué sur six changements réels, sur
 huit fichiers de tests (505 tests), il a laissé passer le bug de D-306 : le second
@@ -24055,10 +24099,18 @@ son bytecode périmé. Ses projets tournent désormais sans bytecode.
 - l'existence d'un fichier (`os.stat`). Un test sauté faute de fichier est toujours
   rejoué : il tourne dès que le fichier existe.
 
-**Les mutants.** Treize mutants ont été lancés sur les caches atomiques, le relevé et le
-regroupement : tous tués. Seize ont été lancés sur le sélecteur : quinze tués. Le seizième
-est équivalent : il retire le retour à « personne » en fin de collecte, et aucune lecture
-ne tombe dans cette fenêtre dans cette suite.
+**Les mutants.** Treize mutants ont été lancés sur les caches atomiques, le relevé des
+lectures et le regroupement : tous tués. Seize ont été lancés sur le sélecteur : quinze
+tués. Le seizième est équivalent : il retire le retour à « personne » en fin de collecte, et
+aucune lecture ne tombe dans cette fenêtre dans cette suite. Onze ont été lancés sur le
+relevé de mémoire et la liste des lourds : neuf tués au premier passage. Les deux survivants
+montraient deux tests manquants : une écriture du relevé en place, et une hausse comptée
+depuis zéro. Les deux tests sont ajoutés, et les onze mutants sont tués. Le test des noms
+listés a été vu échouer sur un nom changé et sur une liste absente.
+
+**Ruff de nouveau propre.** `make impact` commence par ruff, qui relevait trois remarques
+venues de But 8 : un `zip` sans `strict`, un bloc d'imports, un motif non échappé. Elles
+sont corrigées, sans rien changer à ce qui est calculé.
 
 **Ce que le propriétaire décide.** `make full` ne change pas : il reste la passe complète,
 journalisée, avant une revue. `make impact` s'y ajoute pour le travail courant. La règle des

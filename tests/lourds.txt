@@ -1,4 +1,5 @@
-# Les tests lourds (D-309) : un seul worker xdist les exécute, l'un après l'autre.
+# Les tests lourds (D-309) : `make impact` les lance seuls, dans un seul processus, après la
+# passe parallèle. Deux à la fois, ou un à côté des workers, dépassent la mémoire.
 #
 # Un test est lourd quand il monte de plus de SEUIL_LOURD_MO (1 024 Mo) au-dessus de la
 # mémoire où il commence, mesuré à froid : chaque test dans un processus neuf, en série,

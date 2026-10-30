@@ -340,7 +340,8 @@ def test_only_the_tests_listed_heavy_join_the_heavy_group(tmp_path, monkeypatch)
 
     lourd, leger = Item("tests/test_a.py::test_lourd"), Item("tests/test_a.py::test_leger")
     memoire.grouper([lourd, leger])
-    assert [(m.name, m.args) for m in lourd.marques] == [("xdist_group", ("lourd",))]
+    assert [(m.name, m.args) for m in lourd.marques] == [("lourd", ()),
+                                                          ("xdist_group", ("lourd",))]
     assert leger.marques == []
     monkeypatch.setattr(memoire, "FICHIER_LOURDS", tmp_path / "absent.txt")
     assert memoire.lourds() == frozenset()
@@ -483,3 +484,25 @@ def test_the_heavy_tests_run_on_one_worker_under_xdist(pytester) -> None:
     resultat.assert_outcomes(passed=12)
     workers = {i: pytester.path.joinpath(f"qui_lourd_{i}").read_text() for i in range(6)}
     assert len(set(workers.values())) == 1, workers
+
+
+def test_the_heavy_tests_leave_the_parallel_pass_and_run_alone(pytester) -> None:
+    """`make impact` runs `-m "not lourd"` on the workers, then `-m lourd` in one process."""
+    pytester.makeconftest(f"import sys\nsys.path.insert(0, {str(TESTS)!r})\n"
+                          "from pathlib import Path\n"
+                          "import memoire\n"
+                          "memoire.FICHIER_LOURDS = Path(__file__).with_name('lourds.txt')\n"
+                          "def pytest_addoption(parser):\n    memoire.ajouter_options(parser)\n"
+                          "def pytest_configure(config):\n    memoire.configurer(config)\n")
+    pytester.makeini("[pytest]\nmarkers =\n    lourd: lourd\n")
+    pytester.path.joinpath("lourds.txt").write_text("test_l.py::test_lourd  # 6 000 Mo\n",
+                                                    encoding="utf-8")
+    pytester.makepyfile(test_l="def test_lourd():\n    pass\ndef test_leger():\n    pass\n")
+    sans = pytester.runpytest_subprocess("-p", "no:cacheprovider", "-n", "2", "-v",
+                                         "-m", "not lourd")
+    sans.assert_outcomes(passed=1)  # xdist does not count the deselected
+    assert "PASSED test_l.py::test_leger" in sans.stdout.str()
+    assert "test_lourd" not in sans.stdout.str()
+    seuls = pytester.runpytest_subprocess("-p", "no:cacheprovider", "-v", "-m", "lourd")
+    seuls.assert_outcomes(passed=1, deselected=1)
+    assert "test_l.py::test_lourd PASSED" in seuls.stdout.str()

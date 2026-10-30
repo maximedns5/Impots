@@ -76,6 +76,8 @@ text said 'always run in CI', which was false in the dangerous direction: it wou
 let a reader skip the local hour. See D-114.""",
   """chrono: a wall-clock budget (`quiet_machine`). It skips on a loaded machine, which \
 parallel workers make: `make impact` runs these alone, after the parallel pass (D-309).""",
+  """lourd: listed in tests/lourds.txt, a test that climbs past 1 GB cold. Two at once, or \
+one beside the parallel workers, overflow the memory: `make impact` runs them alone (D-309).""",
 ]
 filterwarnings = [
   "ignore::DeprecationWarning",

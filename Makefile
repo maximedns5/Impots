@@ -111,8 +111,10 @@ report:
 # rejoue un test vert que si un fichier qu'il importe, même indirectement, ou qu'il lit
 # (D-entrées, cas, scénarios, data/) a changé depuis ; jamais vert, rouge ou sauté, il est
 # rejoué. Les lents compris (`-m ""` moins les chronomètres) : c'est la sélection qui les
-# rend abordables. En parallèle sur JOBS workers ; les tests de tests/lourds.txt sur un
-# seul d'entre eux. Les chronomètres tournent ensuite seuls. La première fois, TOUT tourne.
+# rend abordables. En parallèle sur JOBS workers, sans les tests de tests/lourds.txt :
+# ceux-là tournent ensuite seuls, dans un seul processus, car deux passes de population à
+# la fois, ou une à côté des workers, dépassent la mémoire. Puis les chronomètres, seuls.
+# La première fois, TOUT tourne.
 # Ce n'est pas `make full` : il ne journalise rien, et ne remplace pas la passe complète
 # qu'une revue demande. pytest-testmon a été essayé et écarté : sa couverture ne voit pas
 # ce qu'un cache de processus n'exécute qu'une fois, et il laissait passer le bug de D-306.
@@ -120,5 +122,6 @@ JOBS ?= 4
 
 impact:
 	$(VENV)/ruff check src tests scripts
-	$(VENV)/python -m pytest -q -m "not chrono" -n $(JOBS) --dist loadgroup --impact
+	$(VENV)/python -m pytest -q -m "not chrono and not lourd" -n $(JOBS) --impact
+	$(VENV)/python -m pytest -q -m "lourd" --impact
 	$(VENV)/python -m pytest -q -m "chrono" --impact

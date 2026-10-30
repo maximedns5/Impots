@@ -1,11 +1,13 @@
-"""La mémoire de chaque test, pour regrouper les lourds sous xdist (D-309).
+"""La mémoire de chaque test, pour tenir les lourds à l'écart de la passe parallèle (D-309).
 
 Un passage de 20 000 ménages au palier complet tient plusieurs Go. Deux workers xdist qui en
 lancent chacun un ont dépassé les 15 Go de la machine, et le noyau a tué trois workers :
-leurs tests sont tombés en échec sans avoir rien testé. `--memoire` relève, par test, de
-combien la mémoire résidente du processus est montée au-dessus de ce qu'elle était au départ
-du test. Un test qui monte de plus de `SEUIL_LOURD_MO` est lourd : `tests/lourds.txt` le
-range dans le groupe xdist « lourd », qu'un seul worker exécute.
+leurs tests sont tombés en échec sans avoir rien testé. Groupés sur un seul worker, ils y
+ont accumulé 9 Go, et ce worker a été tué à son tour, à côté des trois autres. `--memoire`
+relève, par test, de combien la mémoire résidente du processus est montée au-dessus de ce
+qu'elle était au départ du test. Un test qui monte de plus de `SEUIL_LOURD_MO` est lourd :
+`tests/lourds.txt` le marque `lourd`, et `make impact` lance ces tests seuls, dans un seul
+processus, après la passe parallèle.
 
 La mémoire est échantillonnée pendant le test : le pic du processus (`ru_maxrss`) ne monte
 qu'une fois, au premier test lourd, et tairait les suivants. Le relevé s'écrit après chaque
@@ -45,11 +47,13 @@ def lourds() -> frozenset[str]:
 
 
 def grouper(items) -> None:
-    """Range les lourds dans le groupe « lourd » : sous `--dist loadgroup`, un seul worker
-    les exécute, l'un après l'autre. Sans xdist, la marque ne fait rien."""
+    """Marque les lourds `lourd`, que `-m` écarte ou choisit. Ils sont aussi dans le groupe
+    xdist « lourd » : sous `--dist loadgroup`, une passe parallèle qui les garde les met sur
+    un seul worker, l'un après l'autre. Sans xdist, ce groupe ne fait rien."""
     connus = lourds()
     for item in items:
         if item.nodeid in connus:
+            item.add_marker(pytest.mark.lourd)
             item.add_marker(pytest.mark.xdist_group("lourd"))
 
 
@@ -65,7 +69,7 @@ def residente_mo() -> float:
 
 
 class Groupement:
-    """Range les lourds avant que xdist ne lise les groupes. Le
+    """Marque les lourds avant que xdist ne lise les groupes. Le
     `pytest_collection_modifyitems` d'un worker xdist lit `xdist_group` sur chaque test ;
     celui d'un conftest passe après lui, et une marque mise là arrivait trop tard : les
     lourds partaient sur tous les workers à la fois."""
