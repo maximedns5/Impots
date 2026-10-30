@@ -22,7 +22,22 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: -330000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 2, § 4.2.1.4, p. 30
+    : « et à compter de 2029, de 620 M€ dont 290 M€ au titre des ALD et 330 M€ au
+    titre des AT/MP »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01)
+  perimeter: 'La part AT-MP du volet 4.2.1.4 (IR) : suppression de l''exonération
+    de 50 % des IJ AT-MP (CGI art. 81, 8°) ; État. Le tableau des dépenses fiscales
+    de la même page y range aussi les IJ des exploitants agricoles (3 M€), que la
+    population ne porte pas.'
+  net_of: Année pleine, « à compter de 2029 », sans le décalage du PAS de 2027 et
+    2028 ; aucun effet comportemental. Le scénario chiffre l'assiette du régime général
+    de 2024.
+  sign: yield
+  basis: annee-pleine
+  retrieved: '2026-10-14'
 revision:
   de: null
   apres_annexe: true

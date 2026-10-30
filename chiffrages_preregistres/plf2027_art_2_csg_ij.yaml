@@ -22,7 +22,20 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: -540000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 2, § 4.2.1.4, p. 30
+    : « Cet alignement générerait de l’ordre de 540 M€ de recettes supplémentaires
+    pour les administrations de sécurité sociale pour 2027 »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01)
+  perimeter: 'Le volet 4.2.1.4 (CSG) : le taux de CSG des IJ maladie et AT-MP porté
+    de 6,2 % à 9,2 % ; ASSO (ROBSS 500 M€, CADES 40 M€).'
+  net_of: 'Droits constatés de 2027. La CSG se prélève sur l''IJ du mois : la première
+    année est une année pleine (D-306). Aucun effet comportemental ; assiette du régime
+    général de 2024.'
+  sign: yield
+  basis: annee-pleine
+  retrieved: '2026-10-14'
 revision:
   de: null
   apres_annexe: true
