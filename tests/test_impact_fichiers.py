@@ -460,3 +460,26 @@ def test_every_test_listed_heavy_still_exists() -> None:
         fichier, nom = test.split("::")[0], test.split("::")[-1].split("[")[0]
         source = (TESTS.parent / fichier).read_text(encoding="utf-8")
         assert re.search(rf"^def {re.escape(nom)}\(", source, re.M), test
+
+
+def test_the_heavy_tests_run_on_one_worker_under_xdist(pytester) -> None:
+    """xdist reads a test's group in its own `pytest_collection_modifyitems`, which runs
+    before a conftest's: a mark added there arrived too late, and the heavy tests went to
+    every worker at once. The project's conftest only calls `memoire.configurer`, as here."""
+    pytester.makeconftest(f"import sys\nsys.path.insert(0, {str(TESTS)!r})\n"
+                          "from pathlib import Path\n"
+                          "import memoire\n"
+                          "memoire.FICHIER_LOURDS = Path(__file__).with_name('lourds.txt')\n"
+                          "def pytest_addoption(parser):\n    memoire.ajouter_options(parser)\n"
+                          "def pytest_configure(config):\n    memoire.configurer(config)\n")
+    pytester.path.joinpath("lourds.txt").write_text(
+        "".join(f"test_g.py::test_lourd_{i}  # 6 000 Mo\n" for i in range(6)), encoding="utf-8")
+    corps = ("def test_{0}():\n    import os, time\n    time.sleep(0.2)\n"
+             "    open('qui_{0}', 'w').write(os.environ['PYTEST_XDIST_WORKER'])\n")
+    pytester.makepyfile(test_g="".join(corps.format(f"{nom}_{i}")
+                                       for nom in ("lourd", "leger") for i in range(6)))
+    resultat = pytester.runpytest_subprocess("-p", "no:cacheprovider", "-n", "3",
+                                             "--dist", "loadgroup")
+    resultat.assert_outcomes(passed=12)
+    workers = {i: pytester.path.joinpath(f"qui_lourd_{i}").read_text() for i in range(6)}
+    assert len(set(workers.values())) == 1, workers

@@ -64,7 +64,19 @@ def residente_mo() -> float:
         return int(statm.read().split()[1]) * PAGE / (1024 * 1024)
 
 
+class Groupement:
+    """Range les lourds avant que xdist ne lise les groupes. Le
+    `pytest_collection_modifyitems` d'un worker xdist lit `xdist_group` sur chaque test ;
+    celui d'un conftest passe après lui, et une marque mise là arrivait trop tard : les
+    lourds partaient sur tous les workers à la fois."""
+
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_collection_modifyitems(self, items) -> None:
+        grouper(items)
+
+
 def configurer(config) -> None:
+    config.pluginmanager.register(Groupement(), "memoire-groupement")
     if config.getoption(OPTION):
         config.pluginmanager.register(Releve(config), "memoire")
 
