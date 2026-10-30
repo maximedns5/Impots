@@ -1,0 +1,12 @@
+{
+  "name": "plf2027_art_2_ij_atmp",
+  "year": 2024,
+  "created": "2026-10-30",
+  "source": "PLF 2027 (AN, texte n° 3210), art. 2, volet 4.2.1.4 : les indemnités journalières AT-MP entièrement soumises à l'impôt sur le revenu (CGI art. 81, 8°). Écrit après la lecture de l'annexe (D-306).",
+  "note": "Année pleine, sur la population de 2024 et ses IJ imputées (D-305) : la part exonérée des IJ AT-MP passe de 0,5 à 0. Le volet ALD n'est pas chiffré : aucune source ouverte ne sépare ses IJ (D-305).",
+  "tags": [],
+  "reform": {
+    "ij_at_mp_part_exoneree": 0.0
+  },
+  "imputations": ["ij"]
+}

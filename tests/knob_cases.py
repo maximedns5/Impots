@@ -268,4 +268,20 @@ EXEMPT: dict[str, str] = {
         "50 le porte à 9 623,17 EUR. La formule le lit (branche effectif >= 50) ; c'est "
         "le format d'entrée qui ne l'atteint pas."
     ),
+    # Les IJ (D-306). Le format d'entrée ne porte aucune indemnité journalière : la
+    # population les porte quand `impute_ij` tourne (D-305), et c'est sur elle que
+    # `tests/test_ij_moteur.py` voit chacun des deux boutons bouger l'impôt ou le revenu
+    # disponible, à l'euro, et ne rien bouger sans IJ.
+    "ij_at_mp_part_exoneree": (
+        "La part des IJ AT-MP exonérée d'IR (CGI art. 81, 8°). `HouseholdInput` ne porte "
+        "aucune IJ, donc aucun ménage exprimable ne la fait bouger. Vérifié sur 40 ménages "
+        "de la population, IJ imputées : la porter de 0,5 à 0 coûte 660 EUR d'IR au total, "
+        "et rien sans les IJ (test_ij_moteur.py). La formule la lit (correction 22)."
+    ),
+    "csg_ij_taux": (
+        "Le taux de CSG des IJ (CSS art. L. 136-8). `HouseholdInput` ne porte aucune IJ. "
+        "Vérifié sur les mêmes 40 ménages : 9,2 % au lieu de 6,2 % prend exactement trois "
+        "points de leurs IJ au revenu disponible, et rien sans elles (test_ij_moteur.py). "
+        "La correction 23 le lit."
+    ),
 }

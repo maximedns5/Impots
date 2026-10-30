@@ -97,6 +97,10 @@ def _scenario_path(directory: Path, name: str) -> Path:
     return directory / f"{name}.json"
 
 
+#: What a scenario may ask the population to be handed before it is priced (D-306).
+IMPUTATIONS = frozenset({"ij"})
+
+
 @dataclass(frozen=True)
 class Scenario:
     """A named reform with the provenance a pre-registration needs."""
@@ -119,6 +123,12 @@ class Scenario:
     """The years the text applies the measure, when it names them: PLF 2027 art. 15
     revives the CEBGE for 2027 alone (D-288). Empty, every year it is priced. They start
     at `year`, and are left out of the file when empty, as `firm_reform` is."""
+    imputations: tuple[str, ...] = ()
+    """What the population is handed before the scenario is priced, beyond what it is built
+    with: « ij », the daily allowances of D-305, which a reform of their tax needs (D-306).
+    Only the mechanical pricing reads it; a path that would not impute refuses the scenario
+    by name rather than price it on a population without the base. Left out of the file
+    when empty."""
 
     def __post_init__(self) -> None:
         _check_name(self.name)
@@ -142,11 +152,21 @@ class Scenario:
                 f"« {self.name} » : années {list(self.annees)}. Elles doivent être "
                 f"croissantes et sans doublon, et la première est celle du scénario "
                 f"({self.year}) : la mesure commence l'année qu'il chiffre.")
+        unknown = sorted(set(self.imputations) - IMPUTATIONS)
+        if unknown:
+            raise ScenarioError(
+                f"« {self.name} » : imputations {unknown} inconnues ; le catalogue est "
+                f"{sorted(IMPUTATIONS)} (D-306)")
 
     def reform_in(self, year: int) -> Any:
         """The reform a path prices in `year`: as written in the scenario's first year,
         and after it with each dated revaluation carried, for what a revaluation leaves
         is a level, January to December (D-301)."""
+        if self.imputations:
+            raise ScenarioError(
+                f"« {self.name} » demande {list(self.imputations)} : seul le chiffrage "
+                f"mécanique les impute, et ce chemin chiffrerait la réforme sur une "
+                f"population sans son assiette (D-306)")
         if year <= self.year:
             return self.reform
         from impots.engine.reforms import carried
@@ -182,6 +202,8 @@ class Scenario:
             out["firm_reform"] = self.firm_reform.model_dump(exclude_none=True, mode="json")
         if self.annees:
             out["annees"] = list(self.annees)
+        if self.imputations:
+            out["imputations"] = list(self.imputations)
         return out
 
     def save(self, directory: Path | None = None) -> Path:
@@ -263,10 +285,14 @@ def load(name: str, directory: Path | None = None) -> Scenario:
         if not isinstance(annees, list) or not all(
                 type(a) is int for a in annees):  # a bool is not a year
             raise TypeError(f"annees doit être une liste d'années entières : {annees!r}")
+        imputations = raw.get("imputations", [])
+        if not isinstance(imputations, list) or not all(
+                isinstance(i, str) for i in imputations):
+            raise TypeError(f"imputations doit être une liste de noms : {imputations!r}")
         scenario = Scenario(
             name=raw["name"], reform=reform, year=int(raw["year"]),
             created=raw["created"], source=raw["source"], note=note, tags=tuple(tags),
-            firm_reform=firm_reform, annees=tuple(annees),
+            firm_reform=firm_reform, annees=tuple(annees), imputations=tuple(imputations),
         )
     except ScenarioError:
         raise
@@ -627,6 +653,7 @@ def mechanical_price(scenario: Scenario, *, frame: Any = None,
     result = population_run(
         frame if frame is not None else _frame(), year=scenario.year,
         reform=scenario.reform, tier="full",
-        sample=households or QUICK_TIER_HOUSEHOLDS)
+        sample=households or QUICK_TIER_HOUSEHOLDS,
+        impute_ij="ij" in scenario.imputations)
     agg = aggregate_module.aggregate(result.households)
     return {"mechanical": float(agg.reform_cost or 0.0), "deltas": dict(agg.deltas)}

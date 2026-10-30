@@ -1,0 +1,12 @@
+{
+  "name": "plf2027_art_2_csg_ij",
+  "year": 2024,
+  "created": "2026-10-30",
+  "source": "PLF 2027 (AN, texte n° 3210), art. 2, volet 4.2.1.4 : le taux de CSG des indemnités journalières maladie et AT-MP porté de 6,2 % à 9,2 % (CSS art. L. 136-8). Écrit après la lecture de l'annexe (D-306).",
+  "note": "Année pleine, sur la population de 2024 et ses IJ imputées du régime général (D-305). La part déductible de la CSG reste à 3,8 % : la fiche ne la nomme pas.",
+  "tags": [],
+  "reform": {
+    "csg_ij_taux": 0.092
+  },
+  "imputations": ["ij"]
+}

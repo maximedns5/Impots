@@ -23760,3 +23760,104 @@ openfisca, le drapeau et la garde des refus. Seize sont tuées. L'appel à `veri
 `impute` a survécu : la mise à l'échelle le rend vrai par construction. C'est un mutant
 équivalent, et l'appel a été retiré. Les tests appellent `verify` sur la population
 réelle.
+
+## D-306 — Les IJ dans l'impôt et la CSG, et deux cas écrits après l'annexe, préenregistrés
+
+**Le fait.** D-305 a mis l'assiette des IJ dans la population, mais le moteur ne la voyait
+pas. Cette entrée câble le moteur, puis préenregistre deux chiffrages de l'art. 2 du PLF
+2027 (volet 4.2.1.4), avant toute passe. Ils sont écrits après l'ouverture de l'annexe :
+ce sont des révisions au sens de D-292. Elles sont comptées à part des cas aveugles, et
+jamais parmi eux.
+
+**Le droit.** Il est lu dans la fiche de l'art. 2, dans l'annexe manifestée (p. 18 et 20).
+- Les IJ maladie sont imposables comme un salaire, sauf celles d'une affection de longue
+  durée (CGI art. 80 quinquies).
+- Les IJ AT-MP sont exonérées « à hauteur de 50 % de leur montant » depuis la loi de
+  finances pour 2010 (art. 81, 8°).
+- Le taux de CSG des IJ est de 6,2 % (p. 22) ; l'arbre d'openfisca en tient 3,8 % pour
+  déductibles.
+
+Les adresses Légifrance essayées n'ont pas répondu. La référence de la correction 22 est
+donc l'annexe.
+
+**Correction 22.** openfisca n'impose aucune IJ. La correction ajoute aux salaires de
+chaque membre deux montants, nets de leur CSG déductible :
+- les IJ maladie ;
+- la part des IJ AT-MP que l'exonération laisse.
+
+Elle passe par la déduction de 10 % d'openfisca elle-même, comme la correction 12 le fait
+pour l'ASS. La part exonérée est un paramètre que le projet ajoute à l'arbre :
+`impot_revenu.indemnites_journalieres.part_exoneree_at_mp`, qui vaut 0,5 depuis 2010.
+
+L'exonération ALD n'est pas appliquée. Aucune source ne sépare les IJ ALD des autres :
+toutes les IJ maladie sont donc imposées. L'impôt d'une population qui les porte est trop
+haut de ce que coûte cette exonération : 597 M€ pour 2024, selon les Voies et moyens 2026
+(dépense 120204).
+
+**Correction 23.** openfisca porte le taux de CSG des IJ, mais ne le lève pas : son code
+dit « TODO: manque CSG sur IJ ». La correction fait deux choses :
+- elle ajoute `csg_indemnites_journalieres`, ce taux appliqué aux IJ maladie et AT-MP du
+  mois ;
+- elle ajoute à `pensions_nettes`, que lit le revenu disponible, les IJ nettes de cette
+  CSG.
+
+Ni la CRDS des IJ ni les IJ de maternité n'y entrent. Sans IJ, rien ne bouge : le format
+d'entrée n'en porte pas, et la population n'en porte que quand `impute_ij` tourne.
+
+**Un seul appel pour les paramètres.** `modify_parameters` d'openfisca repart chaque fois
+de l'arbre de base. Un second appel, pour la part exonérée, défaisait donc l'âge de 62 ans
+de la correction 6 (D-185). Sept tests du moteur l'ont vu : l'AAH durait jusqu'à 64 ans,
+et l'ASPA n'ouvrait pas à 62. Les deux modifications passent désormais par un seul appel.
+Un test vérifie que l'arbre corrigé porte les deux ; il a été vu échouer avant le
+correctif.
+
+**Les boutons.** `ij_at_mp_part_exoneree` va de 0 à 1, et `csg_ij_taux` de 0 à 0,2. Le
+format d'entrée ne porte pas d'IJ : les deux boutons sont donc exemptés du registre des
+cas de ménage, chacun avec sa raison et un test négatif. Ils sont vus bouger sur 40 ménages
+de la population, aux IJ imputées :
+- le premier, porté à 0, coûte 660 € d'impôt, retrouvés à l'euro dans le revenu
+  disponible ;
+- le second, porté à 9,2 %, prend exactement trois points des IJ.
+
+**Les scénarios et l'enregistrement.** Un scénario peut demander `imputations: ["ij"]`.
+Seul le chiffrage mécanique fait cette imputation ; le chemin annuel refuse un tel scénario
+par son nom. `impots chiffrage register --apres-annexe RAISON` écrit un cas neuf, avec
+`revision: {de: null, apres_annexe: true, raison}`, et le rapport le range avec les
+révisions.
+
+**Les deux cas.** Chacun est chiffré au palier complet sur 20 000 ménages, en 2024, avec les
+IJ imputées. Le comparateur est chaque fois un gain lu dans l'annexe (p. 30) :
+1. `plf2027_art_2_ij_atmp` porte la part exonérée des IJ AT-MP à 0. Comparateur : 330 M€,
+   l'année pleine que la fiche donne pour les AT-MP « à compter de 2029 ».
+2. `plf2027_art_2_csg_ij` porte le taux à 9,2 %. Comparateur : 540 M€ pour 2027, en
+   droits constatés. Une CSG se prélève sur l'IJ du mois : il n'y a pas de décalage.
+
+La tolérance de chacun est de 25 % ou de 50 M€, la plus large des deux. Ce sont des volets
+de quelques centaines de millions, sur une assiette calibrée sur 2024, contre un
+comparateur de 2027 ou de 2029. Une tolérance de 25 % couvre le millésime de l'assiette,
+pas une erreur de distribution.
+
+**Le pronostic, avant toute passe.**
+1. **La CSG.** L'imputation rend la masse du CCSS sur l'échantillon même. Le résultat est
+   donc trois points de 15 645 M€ : 469 M€, à un million près. C'est −13 % du publié, dans
+   la tolérance. L'écart dit le millésime (2024 contre 2027) et le champ (le régime général
+   seul). Il ne dit rien de la distribution.
+2. **L'IR des AT-MP.** La moitié de 4 955 M€, nette de 3,8 %, fait 2 383 M€ de revenu
+   imposable en plus, soit 2 145 M€ après la déduction de 10 %. À un taux marginal moyen
+   de 7 à 12 %, cela donne 150 à 260 M€, de −55 % à −21 % du publié. Le cas tombera
+   probablement hors tolérance, par le bas. Trois raisons :
+   - le millésime : les IJ AT-MP croissent de 10 % l'an (4 955 M€ en 2024, 5 480 en 2025) ;
+   - l'espérance par cellule, qui étale les IJ sur tous les salariés et prive le barème
+     de taux marginaux élevés ;
+   - le champ.
+
+   Un résultat au-dessus du publié contredirait le pronostic.
+
+**Ce qui reste refusé.** L'IR des IJ ALD (450 M€ en 2027), les indemnités de rupture
+(820 M€) et les art. 5, 6 et 7, pour les raisons mesurées de D-305.
+
+**La part en euros, quand les deux cas auront tourné.** Le relevé sépare la ligne IR de
+965 M€ en ses deux parts, celles que donne la phrase citée : 450 M€ pour l'ALD et 515 M€
+pour les AT-MP. Les 515 M€ et les 540 M€ de CSG entrent alors au numérateur : 11 655 M€
+sur 16 624, soit 70,1 %. C'est une part de ce que l'outil sait chiffrer. Elle ne dépend
+pas des notes.
