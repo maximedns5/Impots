@@ -128,6 +128,11 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
 * **But 7 — Les études en ligne, sur un site statique** (D-304) : `impots site`, du HTML
   sans script où chaque nombre dit son étage et chaque réponse absente sa raison ; le
   workflow `site` publie sur GitHub Pages quand le propriétaire l'a activé.
+* **But 8 — La couverture côté ménages, clos sans être complet** (D-305 à D-314) : les IJ
+  du régime général imputées, imposées et soumises à la CSG, leur part ALD exonérée ; trois
+  volets de l'art. 2 chiffrés après l'annexe, dans leur tolérance ; la part de 2027 passée
+  de 63,8 % à 72,8 %. Restent refusés, faute de source ouverte : les indemnités de rupture
+  et l'épargne (art. 5, 6 et 7).
 
 ### But 6 — Une étude par commande
 
@@ -158,7 +163,7 @@ publication est sa décision. Preuve attendue : le site construit, la sortie ver
 ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 30 tours.
 ```
 
-### But 8 — La couverture côté ménages : ce que D-294 désigne (en cours)
+### But 8 — La couverture côté ménages : ce que D-294 désigne (clos, D-314)
 
 ```
 /goal La population porte les indemnités journalières, les indemnités de rupture et
@@ -201,3 +206,29 @@ tolérance). La révision comptée à part :
 La part en euros de 2027 passe à 72,8 %. Restent refusés, avec leur mesure : les
 indemnités de rupture (820 M€) et les art. 5, 6 et 7. Il manque une distribution ouverte
 des indemnités de rupture et l'épargne imputée ; la part ALD est la même à tout âge.
+
+Clôture, D-314 : les IJ sont calées sur le poids que lit l'agrégat, et le but est clos sans
+être complet. Les indemnités de rupture et l'épargne ne sont pas imputées : aucune source
+ouverte ne donne la distribution des premières au-delà d'un PASS, ni de clé de répartition
+pour la seconde qui ouvrirait l'un des art. 5, 6 et 7.
+
+### But 9 — L'écart de la prime d'activité expliqué (proposé, à valider)
+
+Le plus grand écart noté : le volet prime d'activité de l'art. 74 du PLF 2027, +167 % au
+cas, +67 % à mois et taux égaux (D-300). D-300 interdit toute révision avant la mesure qui
+dirait pourquoi, et STATE_AND_NEXT la met en tête. Ce but ne fait monter aucun des trois
+chiffres tout de suite : il prépare le premier, puisque les juges de l'automne 2026 sont
+épuisés et que les suivants viendront avec le PLF 2028.
+
+```
+/goal L'écart du volet prime d'activité de l'art. 74 du PLF 2027 (+167 % au cas, +67 % à mois
+et taux égaux, D-300) est expliqué par une mesure, et c'est mergé dans main. Les foyers
+bénéficiaires de la prime simulés en 2024 sont comparés, par configuration familiale et par
+tranche de revenu d'activité, aux effectifs publiés de la CNAF, chacun manifesté ; la part de
+l'écart que porte chaque différence est mesurée, ou dite non mesurable avec sa raison. Aucune
+révision du cas avant cette mesure ; si une révision suit, c'est un nouveau cas daté, compté à
+part (D-292). Si la calibration de la population doit changer, s'arrêter et demander :
+calibrate.py est fermé. Preuve attendue : le tableau des écarts par configuration, la sortie
+verte des tests ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 40 tours, en
+disant ce qui manque.
+```

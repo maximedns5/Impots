@@ -52,6 +52,11 @@ d'activité, de l'ASS et de l'ASPA. Il ne les met ni dans l'impôt sur le revenu
 CSG : les corrections 22 et 23 le font (D-306), et la 22 exonère la part ALD depuis D-312,
 que le projet écrit dans `indemnites_journalieres_maladie_ald`, une partie de la maladie.
 
+LE POIDS. La masse est répartie sous le poids que lit l'agrégat : celui du ménage, moyenne
+des poids de ses membres (`runner`). Calée sur le poids de chaque personne, elle laissait
+voir à une passe 0,34 % d'IJ de moins que le CCSS, là où les membres d'un ménage n'ont pas
+le même poids (D-308, D-314).
+
 Les montants sont ceux de 2024. Une autre année demanderait de vieillir la masse, ce qui
 n'est pas fait ici : elle est refusée par son nom.
 """
@@ -233,12 +238,20 @@ def keys(frame: pl.DataFrame, cap: float, cells: dict[tuple[str, str], float]) -
     return freq * np.maximum(wage, 0.0)
 
 
+def household_weights(frame: pl.DataFrame) -> np.ndarray:
+    """Le poids que l'agrégat lit pour chaque personne : la moyenne des poids des membres de
+    son ménage, comme `runner` en fait le poids du ménage (D-314)."""
+    return (frame.select(pl.col("weight").mean().over("household_id")).to_series()
+            .to_numpy().astype(np.float64))
+
+
 def impute(frame: pl.DataFrame, year: int = YEAR, *, source: Published | None = None,
            cells: dict[tuple[str, str], float] | None = None,
            ald: AldShare | None = None) -> pl.DataFrame:
     """La population avec `ij_maladie_annuel` et `ij_atmp_annuel`, en euros par personne,
-    dont les totaux pondérés sont ceux du CCSS, et `ij_maladie_ald_annuel`, la part de la
-    maladie que l'annexe 9 du PLFSS 2026 range en ALD (D-312) ; refusé hors de 2024."""
+    dont les totaux sous les poids des ménages sont ceux du CCSS (D-314), et
+    `ij_maladie_ald_annuel`, la part de la maladie que l'annexe 9 du PLFSS 2026 range en ALD
+    (D-312) ; refusé hors de 2024."""
     if year != YEAR:
         raise SickPayError(
             f"IJ imputées pour {year} : le CCSS de mai 2026 est lu pour {YEAR}, et une "
@@ -246,7 +259,7 @@ def impute(frame: pl.DataFrame, year: int = YEAR, *, source: Published | None = 
     source = published() if source is None else source
     ald = ald_share() if ald is None else ald
     key = keys(frame, reference_wage_cap(year), frequencies() if cells is None else cells)
-    weights = frame["weight"].to_numpy().astype(np.float64)
+    weights = household_weights(frame)
     mass = float(weights @ key)
     if not mass > 0:
         raise SickPayError("aucun salarié du privé dans la population : rien à répartir")
@@ -263,10 +276,10 @@ def impute(frame: pl.DataFrame, year: int = YEAR, *, source: Published | None = 
 
 def verify(frame: pl.DataFrame, source: Published,
            ald: AldShare | None = None) -> dict[str, float]:
-    """Chaque colonne contre son agrégat : les totaux pondérés, en M€, à 1e-6 près, la part
-    ALD comprise ; et l'ALD de chacun dans sa maladie."""
+    """Chaque colonne contre son agrégat : les totaux sous les poids que lit l'agrégat, en
+    M€, à 1e-6 près, la part ALD comprise ; et l'ALD de chacun dans sa maladie."""
     ald = ald_share() if ald is None else ald
-    weights = frame["weight"].to_numpy().astype(np.float64)
+    weights = household_weights(frame)
     totals = {"maladie": float(weights @ frame["ij_maladie_annuel"].to_numpy()) / 1e6,
               "atmp": float(weights @ frame["ij_atmp_annuel"].to_numpy()) / 1e6,
               "ald": float(weights @ frame["ij_maladie_ald_annuel"].to_numpy()) / 1e6}

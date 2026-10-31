@@ -24494,3 +24494,59 @@ volet ALD au numérateur et parmi les volets chiffrés après l'annexe, 12 105 M
 quatre refus mesurés pour 1 605 M€. Une assertion est retirée, avec son objet : elle
 vérifiait les chiffres du CCSS que citait le refus ALD, qui n'existe plus. Le lot de la
 couverture, des scénarios, du registre et de la provenance passe.
+
+## D-314 — Le but 8 clos : les IJ sous le poids des ménages, et ce que les sources laissent
+
+**Le dernier point faisable.** D-308 l'avait mesuré : l'imputation calait la masse du CCSS
+sur le poids de chaque personne, et l'agrégat lit le poids du ménage, la moyenne de ceux de
+ses membres (`runner`). Là où les membres d'un ménage n'ont pas le même poids, une passe
+voyait donc 0,34 % d'IJ de moins que le CCSS. `ij.impute` et `ij.verify` lisent désormais le
+poids du ménage (`ij.household_weights`). Sur un sous-échantillon de 20 000 ménages, tiré
+comme une passe le tire, les trois colonnes rendent leur total sous ce poids : 10 690 M€ de
+maladie, 4 955 M€ d'AT-MP et 3 527,7 M€ d'ALD. Le test qui le veut a été vu échouer avant :
+10 653,5 M€ de maladie, les −0,34 % de D-308.
+
+Les trois cas IJ déjà notés ne sont pas repassés. Repassé, le cas de la CSG rendrait trois
+points de 15 645 M€, soit 469,35 M€ au lieu de 467,7. Les cas de l'IR bougeraient de la même
+proportion, à peu près. Leurs notes restent celles de D-308 et D-313.
+
+**Le but 8 est clos sans être complet.** Son `/goal` voulait une population qui porte les
+IJ, les indemnités de rupture et l'épargne, chacune imputée depuis une source ouverte et
+vérifiée contre son agrégat. Il acceptait aussi des volets qui « restent refusés avec une
+raison mesurée ». Voici ce qui est fait.
+
+- les IJ du régime général, imputées et vérifiées contre le CCSS (D-305), imposées et
+  soumises à la CSG (D-306), leur part ALD exonérée (D-312), sous le poids que lit l'agrégat
+  (ici) ;
+- trois volets de l'art. 2 chiffrés après l'annexe, révisions comptées à part, tous dans
+  leur tolérance : l'IR des IJ AT-MP, celui des IJ ALD et la CSG des IJ (D-308, D-313) ;
+- la part des euros de 2027 que l'outil chiffre, passée de 63,8 % à 72,8 %.
+
+Ce qui manque reste refusé, chacun avec sa mesure (D-305).
+
+- **les indemnités de rupture** (art. 2, volet 4.2.1.3, 820 M€). Une nouvelle recherche n'a
+  rien trouvé d'ouvert au-delà d'un PASS. Pour les ruptures conventionnelles, la DARES donne
+  des médianes (1 500 € en 2024, telle que des amendements la citent), loin du seuil. Les
+  montants moyens que la presse tire de la DSN viennent d'un rapport IGF-IGAS, comme les
+  comptes que la fiche cite : imputer depuis eux noterait la fiche contre ses sources ;
+- **l'épargne** : assurance-vie (art. 6), meublé (art. 7) et plus-values en report (art. 5).
+  Les cases 2042 en donnent des totaux nationaux, sans clé de répartition. Une clé inventée
+  ne serait pas une imputation, et l'imputation n'ouvrirait aucun des trois articles. Il
+  leur manque l'âge des détenteurs de la case 8UT, l'assureur étranger et la transmission au
+  décès, et les amortissements du meublé au réel ;
+- la part ALD par âge, et un appariement qui ne donnerait pas des IJ à tous les salariés du
+  privé.
+
+**Le but suivant est proposé, pas lancé.** `docs/BUT.md` range le but 8 parmi les buts
+faits, avec ce qui lui manque, et propose un but 9 que le propriétaire valide ou réécrit :
+expliquer l'écart du volet prime d'activité de l'art. 74. C'est le plus grand écart noté :
++167 % au cas, +67 % à mois et taux égaux (D-300). STATE_AND_NEXT le met en tête, et D-300
+interdit toute révision avant la mesure qui dirait pourquoi. Les trois chiffres de BUT.md ne
+bougent pas d'ici octobre 2027 sans nouveau juge. Ce but est celui qui prépare le mieux le
+premier d'entre eux.
+
+**Les tests.** `tests/test_ij.py` gagne le test des totaux sous le poids des ménages, vu
+échouer avant le correctif. Les trois tests qui perturbent une colonne en gardant son total
+lisent désormais le poids que lit `verify`. Deux mutants, l'imputation puis la vérification
+remises sur le poids des personnes, sont tués. Les tests des IJ, de la population, des
+révisions, de la couverture, de la provenance et des scénarios passent : 270.
