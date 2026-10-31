@@ -682,9 +682,14 @@ def test_the_band_never_moves_the_mechanical_number(client: TestClient) -> None:
 @population_test
 def test_the_band_prices_the_response_to_a_top_rate_rise(client: TestClient) -> None:
     """A 45 % -> 50 % top rate. The mechanical yield is positive; the taxable-income
-    response gives part of it back, so the band must sit BELOW the mechanical figure
-    and still be positive — a response that reversed the sign of a five-point rate
-    rise would be a modelling error, not a finding."""
+    response gives part of it back, at every draw, so the whole band sits BELOW the
+    mechanical figure.
+
+    Its sign is the model's finding, not a modelling error (D-310). The test used to want
+    it positive, and passed on a sample that drew three of the top bracket's households.
+    On every household of the top, which each sample now holds, the response at the
+    store's top-decile elasticity (0,31) is about the yield: the marginal rate goes from
+    55,5 % to 60,5 %, near the rate that maximises the receipts at that elasticity."""
     body = client.post(
         "/population/simulate", json={**TOP_RATE_50_REFORM, "behavioural": True}
     ).json()
@@ -692,8 +697,7 @@ def test_the_band_prices_the_response_to_a_top_rate_rise(client: TestClient) -> 
     band = behavioural["band"]
     assert band is not None, "the store has verified elasticities; a band must appear"
     assert band["p10"] < band["p50"] < band["p90"]
-    assert band["p50"] < behavioural["mechanical"]
-    assert band["p10"] > 0
+    assert band["p90"] < behavioural["mechanical"]
 
 
 @population_test

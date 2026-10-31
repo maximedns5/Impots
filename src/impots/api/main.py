@@ -697,8 +697,9 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
     so the two read the same population the same way. `uprating_key` says `frame` was
     aged, for the EMTR caches, which the frame alone does not tell (D-226).
 
-    C1 reads the rates of several samples, pooled (D-284): `households` then counts them
-    all. C7 reads the first sample alone, and a reform C1 does not read pays for one.
+    C1 reads the rates of several samples, pooled (D-284): `households` then counts the
+    distinct households of them all, since every sample holds the whole top (D-310). C7
+    reads the first sample alone, and a reform C1 does not read pays for one.
     """
     from impots.behavioural import channels
     from impots.behavioural import emtr as emtr_module
@@ -727,7 +728,7 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
         **employer,
         **pooled_eti_inputs(frame, samples),
         **_labour_inputs(request, frame, agg, households),
-    }, int(sum(sample.height for sample in samples))
+    }, len(set().union(*(sample["household_id"].to_list() for sample in samples)))
 
 
 def pooled_eti_inputs(frame: Any, samples: list[Any]) -> dict[str, Any]:

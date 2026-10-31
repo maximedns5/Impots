@@ -113,12 +113,29 @@ def _rate(
     return clipped
 
 
+#: Every household whose salaries reach this is in every sample, at its own weight
+#: (D-310). A draw of 3 000 households keeps 1,5 % of the population, so of its top only a
+#: handful, each carried at 10 338: for a top rate of the IR at 50 %, three to seven
+#: households made the whole of C1, from −297 to −1 493 M€ from one sample to the next,
+#: where every household of the top gives −570 M€. The least of the households a rise of
+#: the top rate touches earns 235 310 €; 2 294 households reach this threshold in 2024.
+HAUT_CERTAIN = 200_000.0
+
+
 def _priced(population: pl.DataFrame | Path, sample: int | None,
             seed: int = SAMPLE_SEED) -> pl.DataFrame:
-    """The frame the rates are computed on: the population, subsampled, by person."""
+    """The frame the rates are computed on: the population, subsampled, by person.
+
+    A sample is every household whose salaries reach `HAUT_CERTAIN`, at its own weight,
+    plus `sample` households drawn from the rest as the runner draws them. The draw's
+    weights carry the rest's total, so the two together estimate the population's."""
     frame = pl.read_parquet(population) if isinstance(population, Path) else population
     if sample is not None:
-        frame = subsample(frame, sample, seed=seed)
+        base = frame.group_by("household_id").agg(pl.col("salaire_brut_annuel").sum())
+        hauts = base.filter(pl.col("salaire_brut_annuel") >= HAUT_CERTAIN)["household_id"]
+        dedans = frame["household_id"].is_in(hauts)
+        frame = pl.concat([frame.filter(dedans),
+                           subsample(frame.filter(~dedans), sample, seed=seed)])
     return frame.sort("person_id")
 
 
@@ -281,11 +298,13 @@ def cache_key(
     reason: a file written before D-176 holds rates of a wiring that no longer exists.
     So is the uprating of an aged population (D-226), and only then, so that the
     vintage's own keys do not move. So is the sample's seed, when it is not the study's
-    (D-284).
+    (D-284). And the threshold above which a sample keeps every household (D-310).
     """
     fields = {"vintage": vintage, "year": year, "sample": sample,
               "reform": None if reform is None else reform.model_dump(exclude_none=True),
               "wiring": to_openfisca.WIRING}
+    if sample is not None:
+        fields["haut_certain"] = HAUT_CERTAIN
     if uprating_key is not None:
         fields["uprating"] = uprating_key
     if seed != SAMPLE_SEED:
