@@ -6,8 +6,8 @@ them in one cache shared by every system: a full-tier household rebuilt 32 of th
 each time, and a new reformed system rebuilt all of its own. `engine/parametres.py` gives
 the baseline its own unbounded cache and gives each reformed system the baseline's tree with
 only the branches its reform changes rebuilt, checked against the whole tree at build time
-(`GreffeError`). A household with a new reform: 12.3 s to 6.7 s; the same reform again, 14.9
-s to 6.3 s; the 61 knob cases, 257 s to 129 s on four processes, their rows identical byte
+(`GreffeError`). A household with a new reform: 12.3 s to 6.2 s; the same reform again, 14.9
+s to 7.0 s; the 61 knob cases, 257 s to 129 s on four processes, their rows identical byte
 for byte. A 20 000-household population pass is identical and barely faster (123 s to 119
 s): it reads each instant once, for all its households. Still costly: the reform's deep copy
 in `modify_parameters` (about 1 s) and the month-by-month housing-aid history.
