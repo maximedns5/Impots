@@ -270,7 +270,14 @@ def _set_niche_inputs(
 IJ_INPUTS: dict[str, str] = {
     "indemnites_journalieres_maladie": "ij_maladie_annuel",
     "indemnites_journalieres_accident_travail": "ij_atmp_annuel",
+    # The part of the sickness allowances served for an ALD, which correction 22 adds and
+    # exempts (D-312): written beside the sickness allowances that contain it.
+    "indemnites_journalieres_maladie_ald": "ij_maladie_ald_annuel",
 }
+#: The inputs of `IJ_INPUTS` that the corrections add, not openfisca. Raw openfisca, which
+#: kill tests run, has none of them and taxes no allowance: they are not written there, as a
+#: row of the project reads zero there (D-308). Any other missing variable still raises.
+IJ_PROJECT_INPUTS = frozenset({"indemnites_journalieres_maladie_ald"})
 
 
 def build_simulation(
@@ -351,6 +358,9 @@ def build_simulation(
     if monthly_ij and len(monthly_ij) != len(IJ_INPUTS):
         raise WiringError(f"population frame carries only part of the sick pay "
                           f"{sorted(IJ_INPUTS.values())}")
+    for variable in IJ_PROJECT_INPUTS & set(monthly_ij):
+        if variable not in tax_benefit_system.variables:
+            del monthly_ij[variable]
 
     # ---- ménage inputs, ordered to match `household_ids` -------------------
     menage = _group_frame(

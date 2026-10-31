@@ -1,0 +1,12 @@
+{
+  "name": "plf2027_art_2_ij_ald",
+  "year": 2024,
+  "created": "2026-10-31",
+  "source": "PLF 2027 (AN, texte n° 3210), art. 2, volet 4.2.1.4 : les indemnités journalières servies au titre d'une ALD exonérées d'impôt sur le revenu à hauteur de 50 % de leur montant, et non plus en totalité (CGI art. 80 quinquies). Écrit après la lecture de l'annexe (D-312).",
+  "note": "Année pleine, sur la population de 2024 et ses IJ imputées (D-305) : la part exonérée des IJ ALD passe de 1 à 0,5. La part ALD est 33 % des IJ maladie de chacun, la part des jours que l'annexe 9 du PLFSS 2026 donne pour 2024 (D-312).",
+  "tags": [],
+  "reform": {
+    "ij_ald_part_exoneree": 0.5
+  },
+  "imputations": ["ij"]
+}

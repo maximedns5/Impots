@@ -776,6 +776,9 @@ class ReformSpec(BaseModel):
     # income tax (CGI art. 81, 8°: 0.5 since 2010) and their CSG rate (CSS art. L. 136-8:
     # 6.2 %). The wire carries no allowance; the population does when `impute_ij` runs.
     ij_at_mp_part_exoneree: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
+    # The share of the sickness allowances served for an ALD exempt from the income tax
+    # (CGI art. 80 quinquies: 1; the PLF 2027's art. 2 halves it), D-312.
+    ij_ald_part_exoneree: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
     csg_ij_taux: Annotated[float, Field(ge=0.0, le=0.2)] | None = None
     # Employer social contributions (D-038). Plafonds are in multiples of the SMIC,
     # which is why their ceiling is 10 and not 1: 1.6 is today's réduction générale.

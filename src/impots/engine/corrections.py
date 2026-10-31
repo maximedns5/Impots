@@ -630,9 +630,17 @@ The correction adds, to each member's salaries, the sickness allowances and the 
 of the work-accident ones, net of their deductible CSG, through openfisca's own deduction, as
 correction 12 does with the ASS. The exempt share is a parameter this project brings into the
 tree, `impot_revenu.indemnites_journalieres.part_exoneree_at_mp` (0,5 from 2010), so that a
-knob can move it. **The ALD exemption is not applied:** no open source splits the ALD
-allowances from the others (D-305), so every sickness allowance is taxed, and the income tax
-of a population that carries them is too high by what that exemption costs.
+knob can move it.
+
+**The ALD exemption, since D-312.** The sickness allowances of a person in ALD, in the sense of
+the 3° and 4° of CSS art. L. 160-14, are exempt (art. 80 quinquies). openfisca has no variable
+for them: the correction adds one, `indemnites_journalieres_maladie_ald`, the part of
+`indemnites_journalieres_maladie` served for an ALD, an input that `population.ij` writes (33 %
+of each person's sickness allowances, the share of the days the PLFSS 2026's annex gives for
+2024). Its exempt share is a second parameter, `part_exoneree_ald`, 1 since the exemption's
+creation in 1978 (Voies et moyens 2026, dépense 120204), so that the PLF 2027's halving is a
+knob. Before D-312 every sickness allowance was taxed, and the income tax of a population that
+carried them was too high by what that exemption costs.
 
 ---
 
@@ -954,6 +962,13 @@ SICK_PAY_WORK = ("indemnites_journalieres_accident_travail",
 PATH_IJ_AT_MP_EXONEREE = ("impot_revenu", "indemnites_journalieres", "part_exoneree_at_mp")
 IJ_AT_MP_EXONEREE = 0.5
 IJ_AT_MP_EXONEREE_DEPUIS = "2010-01-01"
+#: The part of the sickness allowances served for an ALD (CSS art. L. 160-14, 3° and 4°), an
+#: input this project adds, and the share of it the income tax exempts (CGI art. 80
+#: quinquies): 1 since 1978 (D-312).
+SICK_PAY_ALD = "indemnites_journalieres_maladie_ald"
+PATH_IJ_ALD_EXONEREE = ("impot_revenu", "indemnites_journalieres", "part_exoneree_ald")
+IJ_ALD_EXONEREE = 1.0
+IJ_ALD_EXONEREE_DEPUIS = "1978-01-01"
 #: openfisca's CSG on the allowances, which nothing levies (correction 23).
 PATH_CSG_IJ = ("prelevements_sociaux", "contributions_sociales", "csg", "remplacement",
                "indemnites_journalieres")
@@ -1032,6 +1047,7 @@ def apply_to(system: Any) -> Any:
             # Corrections 22 and 23 (D-306). Read after correction 12's update and correction
             # 7's: each wraps the formula those left, so the variables keep both.
             self.add_variable(_csg_on_sick_pay())
+            self.add_variable(_ald_sick_pay())
             category_corrected = self.get_variable(SALARY_CATEGORY).get_formula("0001-01-01")
             self.update_variable(_sick_pay_taxed_as_a_salary(category_corrected,
                                                              deduction.get_formula))
@@ -1112,8 +1128,8 @@ def _mva_full_rate_or_complement(openfisca_formula: Any) -> Any:
 
 def _parameter_corrections(parameters: Any) -> Any:
     """The parameters the corrections change or add, in one modifier: correction 6's age,
-    then correction 22's exempt share."""
-    return _at_mp_exempt_share(_inaptitude_age(parameters))
+    then correction 22's two exempt shares."""
+    return _sick_pay_exempt_shares(_inaptitude_age(parameters))
 
 
 def _inaptitude_age(parameters: Any) -> Any:
@@ -1892,13 +1908,16 @@ def _aah_complements_counted_as_the_aah(pensioner_formula: Any) -> Any:
     return asi_aspa_base_ressources_individu
 
 
-def _at_mp_exempt_share(parameters: Any) -> Any:
-    """Bring `impot_revenu.indemnites_journalieres.part_exoneree_at_mp` into the tree: 0,5 from
-    2010 (CGI art. 81, 8°). Refused if openfisca has grown a node of that name, which is the
-    day this correction must be read again."""
+def _sick_pay_exempt_shares(parameters: Any) -> Any:
+    """Bring `impot_revenu.indemnites_journalieres` into the tree: the exempt share of the
+    work-accident allowances, 0,5 from 2010 (CGI art. 81, 8°), and that of the sickness
+    allowances served for an ALD, 1 from 1978 (art. 80 quinquies, D-312). Refused if openfisca
+    has grown a node of that name, which is the day this correction must be read again."""
     from openfisca_core.parameters import ParameterNode
 
     parent, node, leaf = PATH_IJ_AT_MP_EXONEREE
+    ald_parent, ald_node, ald_leaf = PATH_IJ_ALD_EXONEREE
+    assert (ald_parent, ald_node) == (parent, node)
     if node in getattr(parameters, parent).children:
         raise RuntimeError(f"openfisca carries {parent}.{node} now: correction 22 must be read "
                            f"again before it adds its own (D-306)")
@@ -1910,8 +1929,36 @@ def _at_mp_exempt_share(parameters: Any) -> Any:
             "values": {IJ_AT_MP_EXONEREE_DEPUIS: {"value": IJ_AT_MP_EXONEREE}},
             "metadata": {"unit": "/1"},
         },
+        ald_leaf: {
+            "description": "Part des indemnités journalières maladie servies au titre d'une "
+                           "ALD exonérée d'impôt sur le revenu (CGI art. 80 quinquies)",
+            "values": {IJ_ALD_EXONEREE_DEPUIS: {"value": IJ_ALD_EXONEREE}},
+            "metadata": {"unit": "/1"},
+        },
     }))
     return parameters
+
+
+def _ald_sick_pay() -> Any:
+    """`indemnites_journalieres_maladie_ald`: the part of a person's sickness allowances served
+    for an ALD (CSS art. L. 160-14, 3° and 4°), an input; zero unless the population writes it
+    (D-312)."""
+    from openfisca_core.model_api import MONTH, Variable, set_input_divide_by_period
+    from openfisca_france.entities import Individu
+
+    class indemnites_journalieres_maladie_ald(Variable):
+        value_type = float
+        entity = Individu
+        label = ("Dont indemnités journalières de maladie servies au titre d'une affection de "
+                 "longue durée (CSS art. L. 160-14, 3° et 4°), correction 22 (D-312)")
+        # The law as the PLF 2027 annex states it (art. 2, p. 18), the share as the PLFSS
+        # 2026's annex 9 gives it (art. 29, p. 228).
+        reference = ("https://www.assemblee-nationale.fr/dyn/contenu/visualisation/1128179/"
+                     "file/PLF%202027%20-%20Evaluations%20pr%C3%A9alables.pdf")
+        definition_period = MONTH
+        set_input = set_input_divide_by_period
+
+    return indemnites_journalieres_maladie_ald
 
 
 def _sick_pay(individu: Any, period: Any, options: Any = None) -> tuple[Any, Any]:
@@ -1931,8 +1978,9 @@ def _sick_pay_taxed_as_a_salary(openfisca_formula: Any, deduction_formula: Any) 
     art. 80 quinquies and 81, 8°): the formula it wraps, plus what openfisca's own deduction
     leaves of a member's salaries and taxable allowances together, less what it leaves of the
     salaries alone. The taxable allowances are the sickness ones and the share of the
-    work-accident ones the exemption leaves, net of their deductible CSG. Nothing is read when
-    nobody in the simulation has an allowance that year."""
+    work-accident ones the exemption leaves, less the exempt share of the sickness ones served
+    for an ALD (D-312), net of their deductible CSG. Nothing is read when nobody in the
+    simulation has an allowance that year."""
     from openfisca_core.model_api import ADD, YEAR, Variable
     from openfisca_france.entities import FoyerFiscal
 
@@ -1952,11 +2000,13 @@ def _sick_pay_taxed_as_a_salary(openfisca_formula: Any, deduction_formula: Any) 
             sickness, work = _sick_pay(individus, period, options=[ADD])
             if not ((sickness + work) > 0).any():
                 return montant
+            ald = individus(SICK_PAY_ALD, period, options=[ADD])
             tree = parameters(period.start)
             exempt = tree.impot_revenu.indemnites_journalieres.part_exoneree_at_mp
+            exempt_ald = tree.impot_revenu.indemnites_journalieres.part_exoneree_ald
             deductible = tree.prelevements_sociaux.contributions_sociales.csg.remplacement \
                 .indemnites_journalieres.deductible.taux
-            taxable = (1 - deductible) * (sickness + (1 - exempt) * work)
+            taxable = (1 - deductible) * (sickness - exempt_ald * ald + (1 - exempt) * work)
             avec = deduction_formula(period)(_SalariesWithTheSickPay(individus, taxable),
                                              period, parameters)
             sans = individus(SALARIES_AFTER_DEDUCTION, period)

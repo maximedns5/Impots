@@ -24332,3 +24332,107 @@ du temps d'un ménage au palier complet est le calcul lui-même, surtout l'histo
 aides au logement mois par mois (`pin_benefit_history`). Les tests de boutons calculent deux
 ou trois fois le même ménage de référence ; un mémo des résultats l'éviterait, au prix d'une
 invalidation à prouver : il n'est pas fait.
+
+## D-312 — Le but 8, troisième passe : l'exonération des IJ ALD, et un cas préenregistré
+
+**Ce qui manquait.** L'impôt des IJ ALD (art. 2 du PLF 2027, volet 4.2.1.4, 450 M€ en 2027)
+restait refusé faute d'une source ouverte qui sépare les IJ versées au titre d'une ALD
+(D-305, D-308). Depuis D-306, le moteur imposait donc toutes les IJ maladie : l'impôt d'une
+population qui les porte était trop haut de ce que coûte l'exonération de l'art. 80
+quinquies du CGI.
+
+**La source.** L'annexe 9 du PLFSS 2026, fiche de l'article 29, p. 228 (p. 229 du PDF),
+d'après la DREES (Études et résultats n° 1321, décembre 2024) : « en 2013 le nombre de jours
+indemnisés des personnes en ALD représentait 40% des indemnités journalières contre 33% en
+2024 ». Les personnes en ALD y sont celles des 3° et 4° de l'art. L. 160-14 du CSS, dont
+l'art. 80 quinquies exonère les IJ (la fiche du PLF 2027 le rappelle p. 18). Le PDF est
+manifesté (sha256 ef666d68…, 6 492 022 octets) et `ij.ald_share` lit la phrase dans la page.
+La lecture est refusée si la phrase manque, si ses années ne sont pas 2013 et 2024, ou si la
+part n'a pas baissé, comme le texte le dit.
+
+Ce n'est pas l'évaluation préalable que le cas note. C'est la fiche d'un autre texte, celle
+d'un article qui limitait la durée des arrêts, et la DREES en est la source. C'est une part
+de jours, pas l'assiette de la fiche du PLF 2027.
+
+La même page écrit aussi que les IJ des ALD « non exonérantes » « représentent, en 2023
+selon la CNAM, trois fois celles des personnes en ALD : 3,17Md€ ». Prise au mot, la phrase
+donne 1,06 Md€ d'IJ en ALD. Les 33 % des jours en donnent 3,53 Md€, et la dépense fiscale
+120204 (621 M€ sur les revenus 2024) supposerait, sur 1,06 Md€, un taux moyen de 59 %. La
+phrase n'est pas lue, et le manifeste le dit.
+
+**Ce qui change.** Quatre choses.
+
+- `population.ij` écrit `ij_maladie_ald_annuel` : 33 % de la maladie de chacun, soit
+  3 527,7 M€ sur les 10 690 M€ du CCSS. `verify` le refuse hors de ce total, négatif, ou
+  au-dessus de la maladie qui le contient.
+- La correction 22 ajoute l'entrée `indemnites_journalieres_maladie_ald`, que la population
+  écrit, et le paramètre `impot_revenu.indemnites_journalieres.part_exoneree_ald`, 1 depuis
+  1978 (création de la dépense 120204). Les salaires reçoivent désormais la maladie moins la
+  part exonérée de l'ALD.
+- Le bouton `ij_ald_part_exoneree`, de 0 à 1, relu dans l'arbre comme les autres. Le format
+  d'entrée ne porte pas d'IJ : il est exempté du registre des cas de ménage, avec sa raison
+  et un test négatif, comme `ij_at_mp_part_exoneree`.
+- Openfisca brut, que les tests de mort lancent, n'a pas cette variable : l'entrée n'y est
+  pas écrite, comme une ligne du projet y lit zéro (D-308). Toute autre variable absente
+  lève encore.
+
+**Les artefacts, déclarés.** Une part de jours est appliquée aux euros, et la même à tous,
+alors que l'ALD est plus fréquente chez les plus âgés et que ses arrêts sont plus longs. La
+phrase compte les jours « des personnes en ALD » : leurs arrêts sans lien avec l'ALD y sont
+peut-être, et l'exonération ne les couvre pas. Aucune source ouverte ne ventile ces jours
+par âge ni ne les donne en euros.
+
+**Les cas déjà notés ne sont pas repassés.** `plf2027_art_2_ij_atmp` et
+`plf2027_art_2_csg_ij` ont été chiffrés sur une référence qui imposait les IJ ALD. Repassé,
+le premier bougerait un peu, puisque la base AT-MP s'ajouterait à un revenu plus bas : ce
+n'est pas mesuré ici, et leurs notes restent celles de D-308.
+
+**Le contrôle, préenregistré.** Le coût de l'exonération sur les revenus 2024 : l'impôt avec
+`ij_ald_part_exoneree` = 0, moins celui de la référence, au palier complet, sur 20 000
+ménages, IJ imputées (`impots population run --impute-ij`, réforme
+`reforms/controle_dfi_120204.json`). Comparateur : la dépense fiscale 120204 des Voies et
+moyens 2026, colonne 2025, celle des revenus 2024 : 621 M€, fiabilité « ordre de grandeur ».
+Tolérance : 25 %. Ce contrôle n'est pas un cas du registre, et il ne compte pas dans les
+notes. Il dit si la part des jours donne une assiette que la dépense fiscale ne dément pas.
+
+**Le cas, préenregistré.** `plf2027_art_2_ij_ald` : la part exonérée passe de 1 à 0,5, sur
+la population de 2024 et ses IJ imputées, au palier complet, sur 20 000 ménages. Il est
+écrit après la lecture de l'annexe : c'est une révision comptée à part (D-292), sous
+`--apres-annexe`.
+
+- Comparateur : 267 M€, l'économie en année pleine que le tableau de la p. 30 donne pour la
+  dépense 120204, celle des salariés. La population ne porte que les IJ des salariés du
+  régime général : les 22 M€ des indépendants (dépense 190212) n'y sont pas, et à 8 % du
+  volet ils ne se négligent pas comme les 3 M€ agricoles de l'AT-MP.
+- Tolérance : 25 % ou 50 M€, la plus large des deux, comme les deux cas IJ et pour la même
+  raison : une assiette calibrée sur 2024 contre un comparateur d'une autre année.
+
+**Le pronostic, avant toute passe.** Il porte sur les deux passes.
+
+- **Le contrôle.** 3 527,7 M€ d'IJ ALD, nets de 3,8 % de CSG déductible, font 3 394 M€, et
+  3 054 M€ après la déduction de 10 %. Sur la base AT-MP, D-308 a mesuré 15,4 % de la base
+  nette. Le coût tombera donc entre 450 et 600 M€, soit de −28 % à −3 % de 621 M€ : dans la
+  tolérance, par le bas. Le millésime n'y est pour rien : la colonne 2025 des Voies et
+  moyens porte les revenus 2024, ceux de la population.
+- **Le cas.** La moitié de l'assiette, dans le bas du barème de chacun, rapporte un peu
+  moins que la moitié du contrôle : de 220 à 290 M€, soit de −18 % à +9 % de 267 M€, dans la
+  tolérance. Le cas et le contrôle ne sont pas indépendants : la fiche tire ses 267 M€ de la
+  même dépense fiscale, divisée par deux (p. 30, § 4.3.4), et un contrôle au-dessus de
+  621 M€ mettrait le cas au-dessus de 267 M€. Un cas hors de 200 à 334 M€, les bornes de la
+  tolérance, contredirait le pronostic.
+
+**La part en euros, quand le cas aura tourné.** Les 450 M€ du volet ALD entrent au
+numérateur, chiffrés après l'annexe comme les deux autres volets IJ : 12 105 M€ sur 16 624,
+soit 72,8 % au lieu de 70,1 %. La part dit « chiffré », pas « retrouvé » : elle ne dépend
+pas de la note.
+
+**Les tests.** `tests/test_ij.py` gagne neuf tests : la lecture de la phrase, son refus si
+elle manque ou si la part monte, la part de chacun et son total, et les trois refus de
+`verify`, ainsi que les deux règles de l'entrée du projet sur openfisca brut.
+`tests/test_ij_moteur.py` en gagne quatre : la part ALD hors des salaires, la variable que
+openfisca n'a pas, la part exonérée entière dans l'arbre, et le bouton à 0,5 qui fait entrer
+la moitié de la part ALD ; le bouton est aussi relu dans l'arbre. Le test qui voulait toute
+la maladie dans les salaires garde son assertion : il tourne sur les mêmes ménages, leur
+part ALD mise à zéro. Douze mutants de la lecture, de l'imputation, de la vérification, de
+la correction et du branchement sont tous tués ; un, la part ALD négative, a d'abord
+survécu, et le test qui le tue a été vu échouer sur lui.
