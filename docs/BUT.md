@@ -212,7 +212,7 @@ Clôture, D-314 : les IJ sont calées sur le poids que lit l'agrégat, et le but
 ouverte ne donne la distribution des premières au-delà d'un PASS, ni de clé de répartition
 pour la seconde qui ouvrirait l'un des art. 5, 6 et 7.
 
-### But 9 — L'écart de la prime d'activité expliqué (proposé, à valider)
+### But 9 — L'écart de la prime d'activité expliqué (validé, en cours, D-315)
 
 Le plus grand écart noté : le volet prime d'activité de l'art. 74 du PLF 2027, +167 % au
 cas, +67 % à mois et taux égaux (D-300). D-300 interdit toute révision avant la mesure qui
@@ -232,3 +232,9 @@ calibrate.py est fermé. Preuve attendue : le tableau des écarts par configurat
 verte des tests ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 40 tours, en
 disant ce qui manque.
 ```
+
+Validé par le propriétaire le 31 octobre 2026. Préenregistrement, D-315 : la base que coûte
+un point de forfait, celle du moteur contre celle de la Cnaf (PA Conjoncture n° 32 et
+Analyses statistiques n° 5, manifestées), décomposée en effectifs, montants et élasticité,
+par configuration familiale et par âge. Aucune distribution publiée par tranche de revenu
+d'activité n'a été trouvée : le revenu est comparé sur les deux tranches que la Cnaf publie.
