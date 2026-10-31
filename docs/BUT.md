@@ -53,9 +53,9 @@ Trois chiffres, donnés ensemble, parce que chacun seul ment :
 
 | chiffre | aujourd'hui | source |
 |---|---|---|
-| cas notés dans la tolérance déclarée | **3 sur 5** (PLF 2027 : art. 2, 3, 15, et les deux volets de l'art. 74) ; à part, 3 révisions sur 3 (art. 2 : D-292, et ses deux volets IJ, D-308) | `reports/chiffrages_preregistres.md` |
+| cas notés dans la tolérance déclarée | **3 sur 5** (PLF 2027 : art. 2, 3, 15, et les deux volets de l'art. 74) ; à part, 4 révisions sur 4 (art. 2 : D-292, et ses trois volets IJ, D-308 et D-313) | `reports/chiffrages_preregistres.md` |
 | articles chiffrables | **3 sur 33** fiscaux (PLF 2027), plus l'art. 74 de dépense ; **0 sur 49** (PLFSS 2027) ; 1 sur 29 (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
-| euros quantifiés par l'annexe que l'outil chiffre | **70,1 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
+| euros quantifiés par l'annexe que l'outil chiffre | **72,8 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 
 Et le livrable : **1 étude à trois réponses** (PLF 2027), **0 en ligne**.
 
@@ -190,3 +190,14 @@ La part en euros de 2027 passe à 70,1 %. Restent refusés, avec leur mesure : l
 ALD (450 M€), les indemnités de rupture (820 M€) et les art. 5, 6 et 7. Il manque une
 source ouverte de la part ALD, une distribution des indemnités de rupture et l'épargne
 imputée. L'imputation est à caler sur le poids des ménages, que lit l'agrégat (D-308).
+
+Troisième passe, D-312 et D-313 : la part ALD des IJ, 33 % des jours en 2024 d'après
+l'annexe 9 du PLFSS 2026 (art. 29, p. 228, source DREES), et son exonération dans le moteur.
+Le contrôle contre la dépense fiscale 120204 donne 516,7 M€ contre 621 M€ (−16,8 %, dans sa
+tolérance). La révision comptée à part :
+- l'IR des IJ ALD exonérées à 50 %, −258 M€ contre −267 M€ publiés, dans la tolérance,
+  comme annoncé.
+
+La part en euros de 2027 passe à 72,8 %. Restent refusés, avec leur mesure : les
+indemnités de rupture (820 M€) et les art. 5, 6 et 7. Il manque une distribution ouverte
+des indemnités de rupture et l'épargne imputée ; la part ALD est la même à tout âge.

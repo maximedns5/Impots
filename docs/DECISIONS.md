@@ -24436,3 +24436,61 @@ la maladie dans les salaires garde son assertion : il tourne sur les mêmes mén
 part ALD mise à zéro. Douze mutants de la lecture, de l'imputation, de la vérification, de
 la correction et du branchement sont tous tués ; un, la part ALD négative, a d'abord
 survécu, et le test qui le tue a été vu échouer sur lui.
+
+## D-313 — Le cas des IJ ALD noté, son contrôle, et la part de 2027 à 72,8 %
+
+**Les deux passes.** Elles ont tourné sur le commit du préenregistrement (277cdeb), poussé
+avant, depuis un worktree figé, l'une après l'autre : 20 000 ménages au palier complet, en
+2024, IJ imputées, part ALD à 33 % de la maladie de chacun.
+
+**Le contrôle : 516,7 M€ contre 621 M€.** Exonérer en entier les IJ ALD des revenus 2024
+coûte 516,7 M€ d'impôt dans la population, contre les 621 M€ de la dépense fiscale 120204
+(Voies et moyens 2026, colonne 2025). C'est −16,8 % : dans la tolérance de 25 % et dans la
+fourchette du pronostic, 450 à 600 M€. La part des jours donne donc une assiette que la
+dépense fiscale ne dément pas. L'écart va dans le sens que les artefacts de D-312 laissent
+attendre : une part de jours appliquée aux euros ignore que les titulaires d'une ALD sont
+plus âgés, donc souvent mieux payés, et que leur IJ d'un jour est plus haute. Rien ici ne le
+mesure.
+
+**Le cas : −258,1 M€ contre −267 M€, dans la tolérance.** Exonérer les IJ ALD à 50 %
+seulement rapporte 258,1 M€ en année pleine. Le tableau de la p. 30 donne 267 M€ pour la
+dépense 120204. L'écart est de 9 M€, soit 3,3 %, pour une tolérance de 67 M€. Le pronostic
+annonçait 220 à 290 M€ : il tient. La moitié de l'assiette rapporte 49,96 % du contrôle : la
+part qui reste exonérée ne change presque pas les taux marginaux de la part imposée.
+
+**Ce que disent les deux ensemble.** La fiche tire ses 267 M€ de la même dépense fiscale,
+mais pas de ses 621 M€ : leur moitié ferait 310 M€. La fiche part donc d'une dépense
+d'environ 534 M€, plus proche des 516,7 M€ du contrôle que des Voies et moyens. Le cas et le
+contrôle ne sont pas indépendants, D-312 le disait : le premier vaut à peu près la moitié du
+second. Le cas tombe près de la fiche parce que la base de la population tombe près de celle
+de la fiche, et les deux sous la dépense de 2025.
+
+**Le rapport.** `reports/chiffrages_preregistres.md` est régénéré par `impots chiffrage
+report`. Les cas aveugles restent à 3 sur 5. Les révisions, écrites après l'annexe et
+comptées à part, sont désormais 4 sur 4 dans la tolérance : la base 2027 de l'art. 2 et ses
+trois volets IJ. Le comparateur a été ajouté dans un commit à part, après l'enregistrement,
+comme pour les deux autres cas IJ ; la tolérance est celle de l'historique.
+
+**La part de 2027 : 72,8 %.** Le volet 4.2.1.4 (IR ALD) entre au numérateur, chiffré après
+l'annexe. Il est lié à son cas dans `CHIFFRES_APRES_ANNEXE_2027`, et sort des refus mesurés.
+L'outil chiffre 12 105 M€ sur 16 624, contre 11 655 M€ (70,1 %) depuis D-308. Si chaque
+montant écrit hors du dénominateur y entrait, ce serait 70,8 %. `docs/PLF2027_COVERAGE.md`
+est régénéré par son script.
+
+**Ce qui reste refusé : 1 605 M€.** Ce sont les indemnités de rupture (820 M€) et les art. 5
+(500 M€), 6 (25 M€) et 7, volet 4.2.1.2 (260 M€). Chacun garde la raison mesurée de D-305 :
+aucune distribution ouverte des indemnités de rupture qui ne soit pas celle de la fiche ; ni
+l'âge des détenteurs de la case 8UT ; ni l'assureur étranger de l'assurance-vie ; ni les
+amortissements du meublé.
+
+**Ce qui n'est pas fait.** - Les cas `plf2027_art_2_ij_atmp` et `plf2027_art_2_csg_ij` ne
+sont pas repassés sur la référence qui exonère l'ALD. Leurs notes restent celles de D-308. -
+La part ALD est la même pour tous ; une ventilation par âge, que rien d'ouvert ne donne, la
+remplacerait. - L'imputation reste calée sur les poids des personnes, et l'agrégat lit ceux
+des ménages (D-308) : la passe voit 0,34 % d'IJ en moins.
+
+**Les tests.** Les épingles de `tests/test_couverture_2027.py` suivent le changement : le
+volet ALD au numérateur et parmi les volets chiffrés après l'annexe, 12 105 M€, 72,8 %,
+quatre refus mesurés pour 1 605 M€. Une assertion est retirée, avec son objet : elle
+vérifiait les chiffres du CCSS que citait le refus ALD, qui n'existe plus. Le lot de la
+couverture, des scénarios, du registre et de la provenance passe.

@@ -863,7 +863,8 @@ MONTANTS_2027: tuple[Montant2027, ...] = (
     # Les 965 M€ de 2027 en leurs deux parts, que donne la même phrase (D-306).
     _M(2, "4.2.1.4 (IR ALD)", 450.0, 30, "dont 450 M€ au titre des ALD",
        raison="l'effet de 2027 avec le PAS, que la fiche donne, et non les 290 M€ de "
-              "l'année pleine"),
+              "l'année pleine",
+       chiffre=True),
     _M(2, "4.2.1.4 (IR AT-MP)", 515.0, 30, "515 M€ au titre des AT/MP",
        raison="l'effet de 2027 avec le PAS, que la fiche donne, et non les 330 M€ de "
               "l'année pleine",
@@ -1073,10 +1074,6 @@ class RefusMesure:
     manque: str
 
 
-_IJ_PORTEES = ("Depuis D-305, la population porte les IJ du régime général de 2024 "
-               "(`impute_ij`) : 10 690 M€ de maladie et 4 955 M€ d'AT-MP, les totaux du "
-               "CCSS de mai 2026, sur 19,24 millions de salariés du privé.")
-
 REFUS_MESURES_2027: tuple[RefusMesure, ...] = (
     RefusMesure(
         2, "4.2.1.3",
@@ -1085,13 +1082,6 @@ REFUS_MESURES_2027: tuple[RefusMesure, ...] = (
         "population, une queue qu'une clé par cellule étalerait sur tous.",
         "une distribution ouverte des indemnités de rupture ; imputer depuis les comptes "
         "de la fiche noterait la fiche contre elle-même."),
-    RefusMesure(
-        2, "4.2.1.4 (IR ALD)",
-        _IJ_PORTEES + " Depuis D-306, le moteur les impose : toutes les IJ maladie, "
-        "faute de savoir lesquelles relèvent d'une ALD.",
-        "la part des IJ versées au titre d'une ALD, qu'aucune source ouverte ne donne "
-        "(Voies et moyens 2026, dépense 120204 : « Bénéficiaires : Non déterminé ») ; "
-        "la dépense fiscale, 597 M€ en 2024, dit son coût, pas son assiette."),
     RefusMesure(
         5, "",
         "La case 8UT porte le stock des plus-values en report : 173,27 Md€ chez 117 112 "
@@ -1117,6 +1107,8 @@ REFUS_MESURES_2027: tuple[RefusMesure, ...] = (
 #: Les volets chiffrés par un cas écrit après l'annexe : des révisions au sens de D-292,
 #: comptées à part des cas aveugles (D-306). Chacun nomme ses cas.
 CHIFFRES_APRES_ANNEXE_2027: dict[tuple[int, str], tuple[str, ...]] = {
+    # Depuis D-312 : la part ALD des IJ, 33 % des jours d'après l'annexe 9 du PLFSS 2026.
+    (2, "4.2.1.4 (IR ALD)"): ("plf2027_art_2_ij_ald",),
     (2, "4.2.1.4 (IR AT-MP)"): ("plf2027_art_2_ij_atmp",),
     (2, "4.2.1.4 (CSG)"): ("plf2027_art_2_csg_ij",),
 }
