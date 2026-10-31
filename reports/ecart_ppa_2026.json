@@ -1,0 +1,213 @@
+{
+  "annee": 2026,
+  "commit": "280f091ff6fc6d34b9e90de5b16f34a3fbdf20f1",
+  "dirty": false,
+  "echantillon": 20000,
+  "point": 1.01,
+  "smic_brut_mensuel": 1867.0166666666667,
+  "timings": {
+    "reference_s": 52.4,
+    "forfait_s": 38.5
+  },
+  "totaux": {
+    "beneficiaires": 5652543.808057565,
+    "depense": 1316650131.6177962,
+    "hausse": 59892889.979246624,
+    "hausse_analytique": 56159773.99237498,
+    "entrants": 161250.0356960559,
+    "depense_annuelle": 14811809517.341629,
+    "hausse_annuelle": 665967736.0308505
+  },
+  "configurations": {
+    "homme_seul": {
+      "beneficiaires": 1236491.5022610342,
+      "depense": 197570457.80395368,
+      "hausse": 10373400.613685803,
+      "montant_moyen": 159.78311006802602,
+      "elasticite": 5.250481640316479
+    },
+    "femme_seule": {
+      "beneficiaires": 1663948.3311763455,
+      "depense": 299120190.375255,
+      "hausse": 13121382.208637739,
+      "montant_moyen": 179.7653116811559,
+      "elasticite": 4.38665881837551
+    },
+    "seul_avec_enfants": {
+      "beneficiaires": 823305.4707173624,
+      "depense": 208360790.48527604,
+      "hausse": 10064848.119475376,
+      "montant_moyen": 253.078350498178,
+      "elasticite": 4.83049046609689
+    },
+    "couple_sans_enfant": {
+      "beneficiaires": 572127.530498506,
+      "depense": 155783391.52073026,
+      "hausse": 6398002.057521181,
+      "montant_moyen": 272.28787851721296,
+      "elasticite": 4.106985985518098
+    },
+    "couple_avec_enfants": {
+      "beneficiaires": 1356670.9734043167,
+      "depense": 455815301.4325813,
+      "hausse": 19935256.979926527,
+      "montant_moyen": 335.9807280970982,
+      "elasticite": 4.373538342673455
+    }
+  },
+  "ages": {
+    "moins_25": {
+      "beneficiaires": 1045291.6176805061,
+      "depense": 224320859.2512177,
+      "hausse": 7825886.1894128155,
+      "montant_moyen": 214.60122271810036,
+      "elasticite": 3.4887019493129614
+    },
+    "25_34": {
+      "beneficiaires": 1217334.598096369,
+      "depense": 292510871.8719981,
+      "hausse": 14273153.563899653,
+      "montant_moyen": 240.2879802557306,
+      "elasticite": 4.8795292539230966
+    },
+    "35_44": {
+      "beneficiaires": 1170613.2399088675,
+      "depense": 288237540.9577627,
+      "hausse": 13992231.398272716,
+      "montant_moyen": 246.22781558510485,
+      "elasticite": 4.854409787073186
+    },
+    "45_54": {
+      "beneficiaires": 1154070.7347544627,
+      "depense": 277146459.99172485,
+      "hausse": 12602964.235060716,
+      "montant_moyen": 240.14685724674393,
+      "elasticite": 4.547402205836228
+    },
+    "55_plus": {
+      "beneficiaires": 1065233.6176173596,
+      "depense": 234434399.54509294,
+      "hausse": 11198654.592600724,
+      "montant_moyen": 220.07792062501696,
+      "elasticite": 4.7768819824782955
+    }
+  },
+  "tranches_revenu": {
+    "0_025": {
+      "beneficiaires": 35661.06558662775,
+      "depense": 8956179.830572661,
+      "hausse": 0.0,
+      "montant_moyen": 251.14728579313862,
+      "elasticite": 0.0
+    },
+    "025_05": {
+      "beneficiaires": 498144.98127220385,
+      "depense": 155181447.11298877,
+      "hausse": 2333656.0763464505,
+      "montant_moyen": 311.5186400486733,
+      "elasticite": 1.5038241489314752
+    },
+    "05_08": {
+      "beneficiaires": 1338310.4686008533,
+      "depense": 374199022.5128318,
+      "hausse": 11275005.85512518,
+      "montant_moyen": 279.60554093553566,
+      "elasticite": 3.013104037367854
+    },
+    "08_1": {
+      "beneficiaires": 1598700.033162685,
+      "depense": 383473860.78285164,
+      "hausse": 15975508.075484475,
+      "montant_moyen": 239.86604918261673,
+      "elasticite": 4.165996619136152
+    },
+    "1_12": {
+      "beneficiaires": 1144455.3951980658,
+      "depense": 205011860.9240417,
+      "hausse": 14104396.297005158,
+      "montant_moyen": 179.13486343306653,
+      "elasticite": 6.879795263275492
+    },
+    "12_15": {
+      "beneficiaires": 590733.3038480511,
+      "depense": 127069886.06290534,
+      "hausse": 8220038.352463976,
+      "montant_moyen": 215.10533642706278,
+      "elasticite": 6.468911405488067
+    },
+    "15_plus": {
+      "beneficiaires": 446538.5603890779,
+      "depense": 62757874.39160439,
+      "hausse": 7984285.322821384,
+      "montant_moyen": 140.54301231437262,
+      "elasticite": 12.722364165809772
+    }
+  },
+  "tranches_montant": {
+    "0_50": {
+      "beneficiaires": 442087.4512527451,
+      "depense": 14273590.189440489,
+      "hausse": 7971137.327978237,
+      "montant_moyen": 32.28680241656567,
+      "elasticite": 55.84535650936113
+    },
+    "50_100": {
+      "beneficiaires": 612440.0394225201,
+      "depense": 46250919.53776765,
+      "hausse": 6293997.035556815,
+      "montant_moyen": 75.51909829634654,
+      "elasticite": 13.608371678788467
+    },
+    "100_200": {
+      "beneficiaires": 1440396.9534772686,
+      "depense": 218107407.21823296,
+      "hausse": 14522994.1682478,
+      "montant_moyen": 151.4217359955524,
+      "elasticite": 6.658643259060177
+    },
+    "200_300": {
+      "beneficiaires": 1788544.5416010176,
+      "depense": 430553347.5738799,
+      "hausse": 15641293.962272478,
+      "montant_moyen": 240.72833388229157,
+      "elasticite": 3.6328352921674925
+    },
+    "300_plus": {
+      "beneficiaires": 1369074.8223040132,
+      "depense": 607464867.0984752,
+      "hausse": 15463467.485191293,
+      "montant_moyen": 443.7046516392536,
+      "elasticite": 2.545573962005696
+    }
+  },
+  "position": {
+    "au_dessus": {
+      "beneficiaires": 5486642.329024123,
+      "depense": 1253905043.7803235,
+      "hausse": 59875008.77002291,
+      "montant_moyen": 228.53777749411785,
+      "elasticite": 4.775083174520881
+    },
+    "en_dessous": {
+      "beneficiaires": 165901.47903344219,
+      "depense": 62745087.83747253,
+      "hausse": 17881.20922371692,
+      "montant_moyen": 378.20692258460497,
+      "elasticite": 0.028498181833826252
+    }
+  },
+  "sous_populations": {
+    "bonification": {
+      "beneficiaires": 5416870.67896333,
+      "depense": 1244813100.1366088
+    },
+    "cumul_rsa": {
+      "beneficiaires": 110084.15898480739,
+      "depense": 49238849.20900333
+    },
+    "majoration_isolement": {
+      "beneficiaires": 130240.41344681437,
+      "depense": 25635562.95409441
+    }
+  }
+}

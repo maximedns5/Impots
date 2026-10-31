@@ -213,6 +213,22 @@ def _pct(x: float, d: int = 1) -> str:
     return f"{'+' if x > 0 else ''}{_n(100 * x, d)} %"
 
 
+#: Les libellés des cellules que la Cnaf ne publie pas.
+LIBELLES = {
+    "0_025": "moins de 0,25 Smic", "025_05": "0,25 à 0,5 Smic", "05_08": "0,5 à 0,8 Smic",
+    "08_1": "0,8 à 1 Smic", "1_12": "1 à 1,2 Smic", "12_15": "1,2 à 1,5 Smic",
+    "15_plus": "1,5 Smic et plus",
+    "0_50": "moins de 50 €", "50_100": "50 à 100 €", "100_200": "100 à 200 €",
+    "200_300": "200 à 300 €", "300_plus": "300 € et plus",
+    "au_dessus": "au-dessus du forfait", "en_dessous": "en dessous",
+}
+
+
+def _part(x: float, d: int = 1) -> str:
+    """Une part, sans signe."""
+    return f"{_n(100 * x, d)} %"
+
+
 def _cells(report: Mapping[str, object], key: str) -> dict[str, Cellule]:
     return {k: Cellule(v["beneficiaires"], v["depense"], v["hausse"])
             for k, v in report[key].items()}
@@ -251,6 +267,7 @@ def _terms(d: Decomposition) -> list[str]:
                        ("composition", "L'élasticité : composition"),
                        ("interne", "L'élasticité : interne aux cellules")):
         lines.append(f"| {label} | {_n(getattr(d, key), 3)} | {_pct(parts[key], 0)} |")
+    # La part est celle du logarithme : un terme négatif réduit l'écart.
     lines.append(f"| **Le rapport des bases** | **{_n(math.log(d.rapport), 3)}** "
                  f"| **{_n(d.rapport, 2)}** |")
     return lines
@@ -264,10 +281,10 @@ def _engine_only(titre: str, cells: Mapping[str, Mapping[str, float]], total_hau
              "|---|---:|---:|---:|---:|---:|"]
     for key, v in cells.items():
         lines.append(
-            f"| {key} | {_n(v['beneficiaires'] / 1e3, 0)} "
-            f"| {_pct(v['beneficiaires'] / total if total else 0)} "
+            f"| {LIBELLES.get(key, key)} | {_n(v['beneficiaires'] / 1e3, 0)} "
+            f"| {_part(v['beneficiaires'] / total if total else 0)} "
             f"| {_n(v['montant_moyen'], 0)} | {_n(v['elasticite'], 2)} "
-            f"| {_pct(v['hausse'] / total_hausse if total_hausse else 0)} |")
+            f"| {_part(v['hausse'] / total_hausse if total_hausse else 0)} |")
     lines.append("")
     return lines
 
@@ -322,8 +339,8 @@ def rendre(r2024: Mapping[str, object], r2026: Mapping[str, object],
     for key, label in ppa_cnaf.SOUS_POPULATIONS:
         c, m = conj.sous_populations[key], r2024["sous_populations"][key]
         lines.append(
-            f"| {label} | {_pct(c.beneficiaires / conj.ensemble.beneficiaires)} "
-            f"| {_pct(m['beneficiaires'] / t24['beneficiaires'])} | {_n(c.montant_moyen, 0)}"
+            f"| {label} | {_part(c.beneficiaires / conj.ensemble.beneficiaires)} "
+            f"| {_part(m['beneficiaires'] / t24['beneficiaires'])} | {_n(c.montant_moyen, 0)}"
             f" | {_n(m['depense'] / m['beneficiaires'] if m['beneficiaires'] else 0, 0)} |")
     lines += [
         "",
@@ -350,5 +367,38 @@ def rendre(r2024: Mapping[str, object], r2026: Mapping[str, object],
         f"{_n(FICHE_POINTS)} points, suppose une base de {_n(base_fiche / 1e6)} M€ par "
         f"point et par mois : le moteur en a **{_n(t26['hausse'] / base_fiche, 2)}** fois "
         "plus.", "",
+        *_entier(par_config, t24["hausse"], t26["hausse"], base_fiche),
     ]
     return "\n".join(lines)
+
+
+def ecart_entier(d: Decomposition, hausse_2024: float, hausse_2026: float,
+                 base_fiche: float) -> dict[str, float]:
+    """L'écart de D-300 à mois et taux égaux, le rapport de la base du moteur en 2026 à
+    celle de la fiche, en six logarithmes : l'année du moteur, les quatre termes de 2024,
+    et la base de la Cnaf en 2024 contre celle de la fiche. Leur somme est exacte."""
+    if abs(d.base_moteur - hausse_2024) > 1e-6 * hausse_2024:
+        raise EcartPpaError("la décomposition de 2024 ne porte pas sur la hausse de 2024")
+    return {"annee": math.log(hausse_2026 / hausse_2024), "effectifs": d.effectifs,
+            "montants": d.montants, "composition": d.composition, "interne": d.interne,
+            "cnaf_fiche": math.log(d.base_cnaf / base_fiche)}
+
+
+def _entier(d: Decomposition, h24: float, h26: float, base_fiche: float) -> list[str]:
+    terms = ecart_entier(d, h24, h26, base_fiche)
+    total = math.log(h26 / base_fiche)
+    labels = (("annee", "L'année : la base du moteur de 2024 à 2026"),
+              ("effectifs", "Les effectifs, en 2024"), ("montants", "Les montants, en 2024"),
+              ("composition", "L'élasticité, en 2024 : composition"),
+              ("interne", "L'élasticité, en 2024 : interne aux cellules"),
+              ("cnaf_fiche", "La base de la Cnaf en 2024 contre celle de la fiche"))
+    lines = ["## L'écart de D-300, terme à terme", "",
+             "Le rapport de la base du moteur en 2026 à celle de la fiche, à mois et taux "
+             "égaux, en six termes dont la somme est exacte. La part est celle du "
+             "logarithme : un terme négatif réduit l'écart.", "",
+             "| Terme | Logarithme | Part de l'écart |", "|---|---:|---:|"]
+    for key, label in labels:
+        lines.append(f"| {label} | {_n(terms[key], 3)} | {_pct(terms[key] / total, 0)} |")
+    lines += [f"| **Le rapport à la fiche, en 2026** | **{_n(total, 3)}** "
+              f"| **{_n(h26 / base_fiche, 2)}** |", ""]
+    return lines

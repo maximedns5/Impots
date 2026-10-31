@@ -373,3 +373,20 @@ def test_a_family_without_one_demandeur_is_refused() -> None:
                            "famille_ids": np.array(["f1", "f2"])})()
     with pytest.raises(RuntimeError, match="demandeur"):
         _script().familles(_frame(["demandeur", "demandeur", "demandeur"]), built)
+
+
+def test_the_whole_gap_is_six_terms() -> None:
+    moteur = {"a": ecart_ppa.Cellule(120.0, 120.0 * 110, 120.0 * 110 * 0.05),
+              "b": ecart_ppa.Cellule(60.0, 60.0 * 250, 60.0 * 250 * 0.03)}
+    cnaf = {"a": _cnaf(97.0, 100.0), "b": _cnaf(48.5, 240.0)}
+    d = ecart_ppa.decompose(moteur, cnaf, part_caf=0.97, elasticite_cnaf=3.0)
+    terms = ecart_ppa.ecart_entier(d, d.base_moteur, 1.3 * d.base_moteur, 500.0)
+    assert sum(terms.values()) == pytest.approx(math.log(1.3 * d.base_moteur / 500.0))
+    assert terms["annee"] == pytest.approx(math.log(1.3))
+
+
+def test_a_whole_gap_on_another_rise_is_refused() -> None:
+    moteur = {"a": ecart_ppa.Cellule(100.0, 1e4, 400.0)}
+    d = ecart_ppa.decompose(moteur, {"a": _cnaf(100.0, 100.0)}, 1.0, 3.8)
+    with pytest.raises(ecart_ppa.EcartPpaError, match="hausse de 2024"):
+        ecart_ppa.ecart_entier(d, 500.0, 600.0, 300.0)
