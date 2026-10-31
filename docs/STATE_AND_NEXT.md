@@ -1,5 +1,19 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-10-31 update adds D-310: the eight tests red on main, fixed at their causes.
+Five `test_fan` tests used a stub aggregate that lacked the field `_macro` reads since
+D-218; they now use the real `Aggregates`. A sixth used the allègement ceiling in 2026,
+which D-239 routes to the uniform variant; it is dated 2025, the law it describes. A
+guard-sweep mutation lost its text when D-307 put `csg_ij` after `cdhr`. The band test
+(top rate 45 % to 50 %) was red because C1 rested on three to seven sample households,
+each weighing 10 338 (from -297 to -1 493 M€ across the four samples, D-284). On every
+household of the top, C1 is -570 M€ against a mechanical +549 M€: at the store's top
+elasticity (0,31) the rise sits near the revenue-maximising rate. The owner chose to put
+every household whose salaries reach 200 000 € in each EMTR sample, at its own weight
+(`emtr.HAUT_CERTAIN`, 2 294 households), and to have the test assert the band sits below
+the mechanical yield; its sign is a finding. The band is now -227 to +133 M€, the same C1
+in every sample. Committed studies do not move; a rerun would change C1 at the top.
+
 The second 2026-10-30 update adds D-309: faster tests, nothing lost. `make impact` reruns
 only the tests whose dependencies changed since their last green pass: the files their
 module imports, even indirectly (read in the source, so no process cache can hide one), the
