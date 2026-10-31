@@ -67,3 +67,12 @@ def test_on_the_population_the_four_samples_share_the_whole_top() -> None:
     for graine in emtr.C1_SAMPLES:
         tire = emtr._priced(population, 3_000, seed=graine)
         assert hauts <= set(tire["household_id"].to_list()), graine
+
+
+def test_the_threshold_is_in_the_key_of_the_cached_rates(monkeypatch) -> None:
+    """Rates drawn with another threshold are rates of another sample: the key says so,
+    beside the frame's fingerprint (D-276), which would also tell them apart."""
+    avant = emtr.cache_key("2024", 2024, sample=3_000)
+    monkeypatch.setattr(emtr, "HAUT_CERTAIN", 250_000.0)
+    assert emtr.cache_key("2024", 2024, sample=3_000) != avant
+    assert emtr.cache_key("2024", 2024) == emtr.cache_key("2024", 2024)
