@@ -1,5 +1,18 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The fifth 2026-10-31 update adds D-315 and D-316: goal 9, validated by the owner, done.
+The prime d'activité's +67 % (D-300) is explained by a measure, against two CNAF
+publications now manifested (PA Conjoncture n° 32, Analyses statistiques n° 5): what one
+point of forfait adds to the December prime, the engine's against the CNAF's, split in
+six exact log terms (`population.ecart_ppa`, `scripts/verify_ecart_ppa.py`, preregistered
+in D-315). In 2026 the engine's base is 1.66 times the fiche's. A third is the year: the
+base grows 19 % from 2024 to 2026 on unaged 2024 incomes, and D-303's aged view removes
+exactly that. Two thirds are the 2024 population against the CNAF (1.39): counts 15 %
+(too many couples and over-55s, too few single men and lone parents), amounts 23 %,
+elasticity 26 % (4.35 against 3.8; almost no RSA cumulants, many small amounts). Take-up
+is not measurable: the DREES's non-take-up study was unreachable. No revision is written:
+ageing the incomes alone would leave the case at +40 %, outside its ±30 %.
+
 The fourth 2026-10-31 update adds D-314: goal 8 closed. The sick pay is now scaled on the
 weight the aggregate reads, each household's mean (`ij.household_weights`): a pass saw 0.34
 % less than the CCSS (D-308), and now sees its totals. The graded IJ cases are not rerun.
@@ -1206,21 +1219,22 @@ download list.
 ## What the next session does if nobody says otherwise
 
 **The goal decides** (`docs/BUT.md`, D-286, revised in D-296). Goal 8, household coverage,
-is closed without being complete (D-314); goal 9, the prime d'activité's gap (item 0 below,
-D-300), is proposed in BUT.md and waits for the owner's validation before any session starts
-it. The list below predates the goal: take from it only what that aim needs. Publishing the
-site (D-304) is the owner's decision, two settings away: Pages on « GitHub Actions »,
+is closed without being complete (D-314); goal 9, the prime d'activité's gap (item 0 below),
+is done (D-315, D-316). No goal 10 is written: the next one is the owner's choice. The
+list below predates the goal: take from it only what that aim needs. Publishing the site
+(D-304) is the owner's decision, two settings away: Pages on « GitHub Actions »,
 `SITE_PUBLIE=oui`.
 
-0. **The prime d'activité's +67 %** (D-300). At the fiche's months and rate, art. 74's
-   PPA volet is still two thirds above the published figure, while the engine gives the
-   fiche's own 1-SMIC single case to the euro. The measure that would say why: the
-   simulated PPA recipients by family configuration and by position against the forfait,
-   against the CNAF's published counts. No revision before that measure: one that only
-   changes the basis would grade red again. On a full year (D-303) the gap is +28 % in
-   the aged view and +52 % frozen, against the fiche's 2028 figure. And the housing
-   volet barely erodes in the aged view (−4 % to 2035, against −39 % for the prime):
-   why is not measured.
+0. **The prime d'activité's +67 %** (D-300), explained (D-316): a third the year (unaged
+   incomes), two thirds the population against the CNAF. What is left: take-up, once the
+   DREES's ER n° 1379 is reachable, would split the population's two thirds; the lone-parent
+   majoration (2.5 % of the engine's recipients against 4.7 %) and the RSA cumul (2.0 %
+   against 9.0 %) are gaps of the population or its wiring, to find; the engine's
+   activity-income elasticity (−2.23) is weaker than the CNAF's (−2.4), unexplained.
+   On a full year (D-303) the gap is +28 % in the aged view and +52 % frozen, against the
+   fiche's 2028 figure at the case's rate; their ratio is D-316's year term. And the
+   housing volet barely erodes in the aged view (−4 % to 2035, against −39 % for the
+   prime): why is not measured.
 
 1. **The PLF 2027 is graded** (D-204), the sign guard is in (D-206), art. 3's direction
    is explained (D-207), its candidate causes measured (D-209), the pension target

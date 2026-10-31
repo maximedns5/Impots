@@ -24550,3 +24550,240 @@ premier d'entre eux.
 lisent désormais le poids que lit `verify`. Deux mutants, l'imputation puis la vérification
 remises sur le poids des personnes, sont tués. Les tests des IJ, de la population, des
 révisions, de la couverture, de la provenance et des scénarios passent : 270.
+
+## D-315 — Le but 9 : l'écart de la prime d'activité, mesure préenregistrée contre la Cnaf
+
+**Le fait.** Le propriétaire a validé le but 9 le 31 octobre 2026, tel que D-314 l'écrit
+dans `docs/BUT.md`. D-300 a noté le cas `plf2027_art_74_ppa` à +167 %, et à +67 % à mois et
+taux égaux. Elle désignait la mesure qui dirait pourquoi : les allocataires simulés de la
+prime, par configuration familiale et par position au regard du forfait, contre les données
+de la Cnaf. Cette entrée fixe la mesure, ses comparateurs, son découpage et son pronostic.
+Elle est poussée avant toute passe.
+
+**Ce qu'un point de forfait coûte.** Le cas chiffre une revalorisation du montant
+forfaitaire. Ce qu'elle coûte par mois et par point est une base : la somme, sur les foyers,
+de ce qu'un point de forfait leur ajoute. Au-dessus du forfait, quand les ressources et le
+forfait logement le dépassent, le forfait ne s'annule plus dans la formule : un point de
+forfait ajoute un point de forfait net du forfait logement, plus un point de bonification.
+En dessous, seule la bonification bouge. La base dépend donc de qui touche la prime, de
+combien, et d'où chacun se tient au regard du forfait.
+
+**Les sources, manifestées.** Deux publications de la Cnaf, lues par `population.ppa_cnaf`,
+qui refuse une ligne absente ou des lignes qui ne font pas l'ensemble imprimé.
+
+- PA Conjoncture n° 32 (mars 2025), tableau 1, p. 4 : les foyers bénéficiaires du quatrième
+  trimestre 2024 (moyenne du trimestre), leur montant moyen et la dépense, par configuration
+  familiale, par âge du responsable du dossier, et pour trois sous-populations (majoration
+  pour isolement, au moins une bonification, cumul avec le RSA). Données provisoires. Le
+  champ est celui des Caf : 97,0 % des bénéficiaires et 96,4 % des dépenses de tous les
+  régimes en 2023 (p. 2).
+- Analyses statistiques n° 5 (2025), encadré 2, p. 3 : les élasticités de la dépense de
+  2024, estimées avec le modèle César-PA de la Cnaf sur ses fichiers d'allocataires. Un
+  point de forfait, forfait logement compris, fait 3,8 % de dépense en plus ; un point de
+  revenus d'activité, 2,4 % de moins.
+
+**Ce qui manque.** Aucune distribution publiée des foyers par tranche de revenu d'activité
+n'a été trouvée. Les deux publications de la Cnaf ne la donnent pas. Le site de la DREES, où
+la fiche 30 des Minima sociaux 2025 et le n° 1379 des Études et résultats, sur le
+non-recours, la donneraient peut-être, a refusé la connexion depuis ce conteneur le 31
+octobre. Les fichiers de la DREES du manifeste, de septembre, n'ont pas d'URL et ne sont pas
+sur le disque. Le revenu est donc comparé sur les deux tranches que la Cnaf publie : un
+actif au-dessus de 0,5 Smic (la bonification) et les ressources sous le RSA (le cumul). La
+distribution complète est donnée pour le moteur seul, sans comparaison.
+
+**Ce qui a été vu avant cette entrée.** Le texte entier des deux publications de la Cnaf, et
+ses chiffres. Aucun chiffre du moteur : l'essai du script sur 300 ménages, en 2024 et en
+2026, n'en a imprimé aucun, seulement les clés du rapport et leur finitude.
+
+**La mesure.** `scripts/verify_ecart_ppa.py` tourne sur le tirage du cas : 20 000 ménages,
+la graine de `runner`, la population de 2024 au palier complet, sans IJ ni niches, comme le
+cas. Pour une année, trois passes, l'une après l'autre.
+
+- La référence : la prime de décembre de chaque famille, stock comparable à la moyenne du
+  quatrième trimestre, et ce qui la compose en novembre.
+- Le forfait à +1 % toute l'année, par `ppa_revalorisation_portee` à 1,01 (D-301) ; la
+  bonification et le forfait logement le suivent, comme dans l'élasticité de la Cnaf.
+- En 2024 seulement, les salaires à +1 %, pour l'élasticité aux revenus d'activité. Les
+  autres prestations suivent le salaire, ce que César-PA ne fait peut-être pas.
+
+Le poids d'une famille est celui de son ménage (D-314). Les découpages : la configuration de
+la Cnaf (l'enfant y est toute personne à charge au sens de la prime, ce que `rsa_nb_enfants`
+compte) ; l'âge du demandeur ; le revenu d'activité du foyer en part du Smic brut à temps
+plein ; le montant de décembre ; la position au regard du forfait. Deux années : 2024, celle
+de la Cnaf, et 2026, celle que le cas chiffre, qui relie la base mesurée au cas et à la
+fiche. `--rendre` écrit `reports/ecart_ppa.md` depuis les deux rapports, refusés s'ils ne
+viennent pas du même commit propre.
+
+**La décomposition, fixée ici.** La base de la Cnaf est son élasticité, 3,8 %, fois sa
+dépense du mois : ses effectifs portés à tous les régimes par 0,970, fois ses montants
+moyens, configuration par configuration. Celle du moteur est mesurée. Leur rapport se
+décompose en trois logarithmes, dans cet ordre (`population.ecart_ppa`).
+
+- Les effectifs : ceux du moteur au montant moyen de la Cnaf.
+- Les montants : ceux du moteur à la place.
+- L'élasticité : celle du moteur à la place, coupée en un effet de composition (les
+  élasticités du moteur pondérées par les dépenses de la Cnaf, puis par les siennes) et un
+  effet interne aux configurations.
+
+Leur somme est exactement le logarithme du rapport. Un autre ordre donnerait d'autres
+parts : celui-ci est déclaré avant la mesure. La même décomposition est faite par âge.
+
+**Ce que la mesure ne peut pas dire.**
+
+- Le recours. Le moteur verse à tout ayant droit, la Cnaf compte ceux qui demandent. Sans le
+  non-recours par configuration ou par montant, l'écart ne se partage pas entre un moteur
+  qui donne à trop de foyers et des foyers qui ne demandent pas. Le terme interne le porte,
+  avec les défauts connus de la population : le forfait logement des accédants, et l'absence
+  d'indépendants (rapport de réconciliation).
+- L'élasticité de la Cnaf est un agrégat. Par configuration, seule celle du moteur est
+  connue.
+- La Cnaf donne une moyenne du trimestre, provisoire ; le moteur, décembre. La part des Caf
+  est la même pour toutes les configurations.
+
+**Le pronostic, avant toute passe.**
+
+- Les effectifs : le moteur entre 0 et +15 % des 4 771 milliers de foyers de la Cnaf portés
+  à tous les régimes, comme les +6,5 % du rapport de réconciliation.
+- Les configurations : les couples, avec ou sans enfant, sont celles où le moteur dépasse le
+  plus la Cnaf ; les personnes seules sans enfant, celles où il en est le plus près, ou en
+  dessous. Les moins de 25 ans sont sous la Cnaf.
+- Les montants : le montant moyen du moteur de 5 à 20 % au-dessus de celui de la Cnaf.
+- L'élasticité au forfait : de 4,8 à 6,0 dans le moteur, contre 3,8.
+- Le rapport des bases de 2024 : de 1,45 à 1,85. L'élasticité en porte plus de la moitié du
+  logarithme, et son effet interne plus que sa composition. Les effectifs en portent le
+  moins, moins d'un quart.
+- Les sous-populations : la part des foyers à bonification au moins égale aux 92,2 % de la
+  Cnaf, celle du cumul avec le RSA au-dessus de ses 9,0 %.
+- Les revenus d'activité : une élasticité plus forte que celle de la Cnaf, entre −3,5 et
+  −2,6 contre −2,4. C'est la même raison que pour le forfait : plus de foyers loin au-dessus
+  du forfait, où la prime baisse avec le revenu.
+- En 2026, le cas vaut de 6,5 à 7,5 mois de la hausse de décembre pour 2,1 points (D-298 en
+  comptait sept). La base du moteur vaut de 1,5 à 1,85 fois celle que suppose la fiche,
+  995 M€ en année pleine pour 2,3 points, soit 36,05 M€ par point et par mois (D-300 :
+  +67 %).
+
+**Ce qui suit.** Les deux années tournent sur le commit de cette entrée, depuis un worktree
+figé, l'une après l'autre. Les rapports, le rendu et le résultat entrent dans une nouvelle
+entrée. Aucune révision du cas n'est écrite avant ; si une révision suit, c'est un nouveau
+cas daté, compté à part (D-292).
+
+**Les tests.** `tests/test_ppa_cnaf.py`, trente-sept cas. La lecture des deux publications,
+et ses refus : une ligne absente, des configurations, des âges ou des dépenses qui ne font
+pas l'ensemble, le champ absent ou hors bornes, une élasticité absente, de deux années, trop
+faible ou nulle, la dépense ou les bénéficiaires de l'année absents ou d'une autre année, un
+PDF trop court. La décomposition sur des cellules faites main : les trois termes font le
+rapport, un écart de composition seul, ses refus. Le rendu et ses refus, les constantes du
+cas contre le registre, le poids et le demandeur des familles du script. Trente mutants des
+gardes du lecteur, de la décomposition, du rendu et du script sont tous tués.
+
+## D-316 — L'écart de la prime mesuré : un tiers l'année, deux tiers la population
+
+**Les passes.** Les deux années ont tourné sur le commit de D-315 (`280f091`), depuis un
+worktree figé, l'une après l'autre : 2 min 18 s pour 2024, 1 min 31 s pour 2026. Les
+rapports sont `reports/ecart_ppa_2024.json` et `reports/ecart_ppa_2026.json` ;
+`reports/ecart_ppa.md` est écrit depuis eux par `--rendre`. Après les passes, le rendu a
+gagné des libellés et la décomposition entière ci-dessous, qui lisent les mêmes rapports :
+aucun chiffre mesuré n'a changé.
+
+**L'écart de D-300, retrouvé.** En 2026, un point de forfait ajoute 59,9 M€ à la prime de
+décembre. La fiche suppose 36,05 M€ par point et par mois (995 M€ en année pleine pour 2,3
+points) : le moteur en a 1,66 fois plus, les +67 % de D-300. Le cas, 886,7 M€ pour 2,1
+points, vaut 7,05 mois de cette hausse : les sept mois-équivalents de D-298 tiennent.
+
+**Six termes.** Leur somme est exacte : c'est le logarithme du rapport, 0,508. La part de
+chacun est celle du logarithme.
+
+- L'année : la base du moteur de 2024 à 2026, 0,173, soit 34 %.
+- Les effectifs de 2024, configuration par configuration : 0,078, soit 15 %.
+- Les montants de 2024 : 0,119, soit 23 %.
+- L'élasticité de 2024, composition : −0,034, soit −7 %.
+- L'élasticité de 2024, interne aux configurations : 0,169, soit 33 %.
+- La base de la Cnaf en 2024 contre celle de la fiche : 0,003, soit 1 %.
+
+**L'année, un tiers.** De 2024 à 2026, la base du moteur croît de 19 % (50,4 à 59,9 M€), ses
+bénéficiaires de 12 % (5,04 à 5,65 millions de familles), sa dépense de décembre de 14 %.
+C'est le droit de 2026 appliqué aux revenus de 2024, que la population ne vieillit pas. La
+base publiée, elle, ne croît pas : celle de la fiche pour 2028, 36,05 M€, est celle de la
+Cnaf au quatrième trimestre 2024, 36,2 M€. D-303 en donne la cause sans l'avoir nommée. En
+année pleine, au taux de la fiche, la vue figée de l'étude est à 1,665 fois la fiche et la
+vue vieillie, qui fait monter les salaires, à 1,400. Le rapport des deux, 0,1735 en
+logarithme, est le terme de l'année mesuré ici, 0,173. Vieillir les revenus ôte ce terme, et
+ce qui reste, 1,40, est l'écart de 2024 à la Cnaf, 1,39.
+
+**La population, deux tiers.** En 2024, la base du moteur vaut 1,39 fois celle de la Cnaf
+(50,4 M€ par point, contre 36,2 M€). Trois différences la portent, chacune mesurée.
+
+- Les effectifs. Le moteur compte 5,04 millions de familles, 5,7 % de plus que les 4,77
+  millions de la Cnaf portés à tous les régimes, mais pas les mêmes. Il a 91 % de couples
+  sans enfant de plus, 52 % de couples avec enfants, 9 % de femmes seules ; 23 % d'hommes
+  seuls de moins, 22 % de parents isolés. Par âge : 74 % de plus à 55 ans et au-delà, 26 %
+  sous 25 ans, 21 % de moins de 25 à 34 ans. Le terme pèse plus que les 5,7 % (0,078 contre
+  0,055) : les foyers en trop sont des couples, aux montants plus hauts.
+- Les montants. 230 € par mois en moyenne contre 200 € (+15 %), plus haut dans chaque
+  configuration sauf chez les parents isolés (234 € contre 271 €). Le moteur verse la
+  majoration pour isolement à 2,5 % de ses foyers, à 179 € en moyenne ; la Cnaf à 4,7 %, à
+  329 €.
+- L'élasticité. 4,35 dans le moteur (4,39 sur l'année), contre 3,8. La composition la baisse
+  un peu : les configurations où le moteur dépense trop, les couples, sont parmi les moins
+  élastiques (3,94 et 4,28). L'effet interne la monte d'un tiers de l'écart : dans chaque
+  configuration, les foyers du moteur sont plus sensibles au forfait. Deux faits mesurés
+  vont dans ce sens. Le moteur n'a que 2,0 % de foyers qui cumulent la prime et le RSA, la
+  Cnaf 9,0 % ; or sous le forfait la prime ne bouge pas avec lui, et 3,0 % des foyers du
+  moteur seulement y sont. Et 9,2 % de ses foyers touchent moins de 50 € en décembre, mais
+  portent 13,9 % de la hausse, à une élasticité de 45,6.
+
+**Ce qui n'est pas mesurable, et pourquoi.** Le recours. Le moteur verse à tout ayant droit,
+la Cnaf compte ceux qui demandent. Là où le moteur dépasse la Cnaf (les couples, les plus de
+55 ans, les petits montants), le non-recours peut porter l'écart ; là où il est en dessous
+(les hommes seuls, les parents isolés, les 25 à 34 ans), c'est la population qui manque.
+Sans le non-recours par configuration ou par montant, les deux ne se séparent pas. La source
+qui le donnerait, le n° 1379 des Études et résultats de la DREES, n'était pas joignable le
+31 octobre (D-315). La distribution des foyers par tranche de revenu d'activité n'est
+publiée dans aucune des deux sources lues : seules les deux tranches de la Cnaf sont
+comparées. Pour la bonification, 95,9 % des foyers du moteur contre 92,2 %.
+
+**Contre le pronostic.** Il en tient la moitié. Il avait mis tout l'écart de D-300 dans la
+population de 2024 ; un tiers est l'année. L'écart de 2024 en est plus petit, et son
+élasticité aussi.
+
+- Les effectifs, +5,7 % : dans la fourchette de 0 à +15 %.
+- Les configurations : les couples sont bien les plus au-dessus, les personnes seules sans
+  enfant près de la Cnaf ou en dessous (femmes +9 %, hommes −23 %). Non annoncés : les
+  parents isolés à −22 %, les moins de 25 ans à +26 % au lieu de sous la Cnaf.
+- Les montants, +15 % : dans la fourchette de 5 à 20 %.
+- L'élasticité, 4,35 : sous la fourchette de 4,8 à 6,0.
+- Le rapport de 2024, 1,39 : sous la fourchette de 1,45 à 1,85. L'élasticité en porte 41 %
+  du logarithme, pas plus de la moitié ; son effet interne dépasse bien sa composition ; les
+  effectifs en portent bien le moins, 23 %.
+- La bonification, 95,9 % : au moins les 92,2 % de la Cnaf. Le cumul avec le RSA, 2,0 % :
+  sous ses 9,0 %, pas au-dessus.
+- Les revenus d'activité : −2,23, moins que la Cnaf (−2,4), au lieu de plus, entre −3,5 et
+  −2,6. Ce n'est pas expliqué ici. Une piste, non mesurée : 54 % des foyers du moteur
+  gagnent de 0,5 à 1 Smic, là où la bonification monte avec le salaire.
+- En 2026 : 7,05 mois, dans la fourchette de 6,5 à 7,5 ; 1,66 fois la fiche, dans celle de
+  1,5 à 1,85.
+
+**Ce que cela dit du cas.** Aucune révision n'est écrite. Une révision qui ne vieillirait
+que les revenus ôterait le terme de l'année et laisserait le cas, ramené aux mois et au taux
+de la fiche, à +40 % : toujours hors de ±30 %, comme D-300 le disait d'une révision de la
+base. Ce qui reste est la population : trop de couples et de foyers âgés, trop peu d'hommes
+seuls et de parents isolés, des montants trop hauts, presque pas de majoration pour
+isolement ni de cumul avec le RSA, et de petits montants qu'en vrai une partie des ayants
+droit ne demande pas.
+
+**Le but 9.** L'écart est expliqué par une mesure. L'année, les effectifs, les montants et
+l'élasticité sont mesurés ; le recours est dit non mesurable, avec sa raison. Le but est
+fait quand c'est mergé.
+
+**Ce qui n'est pas fait.**
+
+- Le recours, quand le n° 1379 des Études et résultats sera joignable : il partagerait les
+  effectifs et l'effet interne entre la population et le non-recours.
+- La majoration pour isolement (2,5 % contre 4,7 %, 179 € contre 329 €) et le cumul avec le
+  RSA (2,0 % contre 9,0 %) : deux écarts de la population ou de son câblage, à chercher.
+- L'élasticité aux revenus d'activité, plus faible que celle de la Cnaf.
+
+**Les tests.** `tests/test_ppa_cnaf.py`, trente-neuf cas : ceux de D-315, et la
+décomposition entière en six termes, dont la somme refait le rapport, avec le refus d'une
+décomposition de 2024 qui ne porterait pas sur la hausse de 2024. Ce refus est tué par
+mutation, comme les trente gardes de D-315.

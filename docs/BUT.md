@@ -133,6 +133,11 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
   volets de l'art. 2 chiffrés après l'annexe, dans leur tolérance ; la part de 2027 passée
   de 63,8 % à 72,8 %. Restent refusés, faute de source ouverte : les indemnités de rupture
   et l'épargne (art. 5, 6 et 7).
+* **But 9 — L'écart de la prime d'activité expliqué** (D-315, D-316) : la base que coûte un
+  point de forfait vaut 1,66 fois celle de la fiche. Un tiers de l'écart est l'année, le
+  droit de 2026 sur les revenus de 2024 ; deux tiers sont la population contre la Cnaf :
+  les effectifs (15 %), les montants (23 %), l'élasticité (26 %). Le recours n'est pas
+  mesurable, faute d'une source joignable ; aucune révision n'entrerait dans la tolérance.
 
 ### But 6 — Une étude par commande
 
@@ -212,7 +217,7 @@ Clôture, D-314 : les IJ sont calées sur le poids que lit l'agrégat, et le but
 ouverte ne donne la distribution des premières au-delà d'un PASS, ni de clé de répartition
 pour la seconde qui ouvrirait l'un des art. 5, 6 et 7.
 
-### But 9 — L'écart de la prime d'activité expliqué (proposé, à valider)
+### But 9 — L'écart de la prime d'activité expliqué (fait, D-315, D-316)
 
 Le plus grand écart noté : le volet prime d'activité de l'art. 74 du PLF 2027, +167 % au
 cas, +67 % à mois et taux égaux (D-300). D-300 interdit toute révision avant la mesure qui
@@ -232,3 +237,19 @@ calibrate.py est fermé. Preuve attendue : le tableau des écarts par configurat
 verte des tests ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 40 tours, en
 disant ce qui manque.
 ```
+
+Validé par le propriétaire le 31 octobre 2026. Préenregistrement, D-315 : la base que coûte
+un point de forfait, celle du moteur contre celle de la Cnaf (PA Conjoncture n° 32 et
+Analyses statistiques n° 5, manifestées), décomposée en effectifs, montants et élasticité,
+par configuration familiale et par âge. Aucune distribution publiée par tranche de revenu
+d'activité n'a été trouvée : le revenu est comparé sur les deux tranches que la Cnaf publie.
+
+Résultat, D-316 : en 2026, un point de forfait ajoute 59,9 M€ à la prime de décembre,
+1,66 fois les 36,05 M€ que suppose la fiche. Un tiers de l'écart est l'année : la base du
+moteur croît de 19 % de 2024 à 2026 sur des revenus non vieillis, et la vue vieillie de
+D-303 l'ôte. Deux tiers sont la population de 2024 contre la Cnaf (1,39) : trop de
+couples et de foyers âgés, trop peu d'hommes seuls et de parents isolés, des montants trop
+hauts, presque pas de majoration pour isolement ni de cumul avec le RSA, des foyers plus
+sensibles au forfait. Le recours, qui partagerait ces deux tiers, n'est pas mesurable sans
+le non-recours par configuration. Aucune révision n'est écrite : celle qui vieillirait les
+revenus laisserait le cas à +40 %, hors de sa tolérance.

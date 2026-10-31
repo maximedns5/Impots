@@ -1585,6 +1585,24 @@
       "licence": "Licence Ouverte / Etalab 2.0",
       "description": "PLFSS 2026, annexe 9 : fiches d'évaluation préalable des articles du projet de loi, 453 p. Source de la part ALD des IJ maladie (D-312) : fiche de l'article 29, p. 228 imprimée (p. 229 du PDF) : « en 2013 le nombre de jours indemnisés des personnes en ALD représentait 40% des indemnités journalières contre 33% en 2024 », d'après la DREES (Études et résultats n° 1321, décembre 2024). C'est une part en JOURS, des personnes en ALD au sens des 3° et 4° de l'art. L. 160-14 du CSS : celles dont l'art. 80 quinquies du CGI exonère les IJ. Ce n'est pas l'évaluation préalable du PLF 2027 que le cas plf2027_art_2_ij_ald note. La même page dit aussi des IJ des ALD « non exonérantes » qu'elles « représentent, en 2023 selon la CNAM, trois fois celles des personnes en ALD : 3,17Md€ pour 401 000 arrêts », phrase que les 33 % des jours démentent et qui n'est pas lue.",
       "quarantined": false
+    },
+    "cnaf_pa_conjoncture_32_2024t4.pdf": {
+      "url": "https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/PPA%20Conjoncture/PA%20Conjoncture_2024T4.pdf",
+      "sha256": "890bd8ed0879c97c027e9105dd0755974cbb88651c6cb8dc1028d3330b767847",
+      "bytes": 521497,
+      "downloaded": "2026-10-31",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, PA Conjoncture n° 32, mars 2025 : « La prime d'activité au 4ème trimestre 2024 », 10 p. Tableau 1, p. 4 : bénéficiaires (moyenne du trimestre, en milliers), montants moyens et dépenses du trimestre, par configuration familiale (hommes seuls, femmes seules, personnes seules avec enfant(s), couples sans enfant, couples avec enfant(s)), par âge du responsable du dossier, et pour trois sous-populations (majoration pour isolement, au moins une bonification, cumul prime d'activité/RSA). Données provisoires. Champ : Caf, France entière, soit 97,0 % des bénéficiaires et 96,4 % des dépenses tous régimes en 2023 (p. 2). Comparateur de la mesure de l'écart de la prime (D-315) ; source d'aucune imputation.",
+      "quarantined": false
+    },
+    "cnaf_analyses_statistiques_5_2025_pa.pdf": {
+      "url": "https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Analyses_statistiques/CNAF_n%C2%B05_Analyses_statistiques_PA.pdf",
+      "sha256": "75649c7eb75d50d2d041c30ec1fd00f9200bee1b0593c7f59ac6e4ac3539db7d",
+      "bytes": 4083547,
+      "downloaded": "2026-10-31",
+      "licence": "publication de la Cnaf, réutilisation avec mention de la source",
+      "description": "Cnaf, Analyses statistiques n° 5, 2025 (S. Cazain, C. Chantel) : « En 2024, les dépenses de prime d'activité augmentent de 1,4 % », 8 p. P. 1 : 4,52 millions de foyers en moyenne en 2024, 190 € par mois, 10,31 Md€ versés par les Caf. Encadré 2, p. 3 : les élasticités de la dépense, estimées avec le modèle César-PA sur les fichiers Allstat FR6 : +1 % des montants forfaitaires (y compris forfait logement) fait +3,8 % de dépense en 2024 ; +1 % des revenus d'activité, −2,4 % ; +1 % des prestations familiales, −0,3 %. P. 2 : la revalorisation monte en charge sur cinq mois (DTR). Comparateur de la mesure de l'écart de la prime (D-315) ; source d'aucune imputation.",
+      "quarantined": false
     }
   }
 }
