@@ -109,6 +109,21 @@ def test_the_imputed_totals_are_the_ccss_s(imputed) -> None:
     assert totals["atmp"] == pytest.approx(4_955.0, rel=1e-9)
 
 
+def test_the_totals_the_aggregate_reads_are_the_ccss_s(population) -> None:
+    """GUARD (D-314). The aggregate weighs each ménage by the mean of its members' weights
+    (`runner`), and D-308's pass saw 0,34 % less sick pay than the CCSS: the imputation
+    was scaled on the persons' own weights. On a subsample, as a pass draws it, the totals
+    under the household weights are the CCSS's."""
+    frame = ij.impute(runner.subsample(population, 20_000).sort("person_id"))
+    household = frame.select(pl.col("weight").mean().over("household_id")).to_series()
+    differ = frame.group_by("household_id").agg(pl.col("weight").n_unique() > 1)
+    assert differ["weight"].sum() > 100
+    for column, expected in (("ij_maladie_annuel", 10_690.0), ("ij_atmp_annuel", 4_955.0),
+                             ("ij_maladie_ald_annuel", 0.33 * 10_690.0)):
+        total = float(household.to_numpy() @ frame[column].to_numpy()) / 1e6
+        assert total == pytest.approx(expected, rel=1e-9), column
+
+
 def test_only_the_private_sector_s_employees_receive_it(imputed) -> None:
     private = (imputed["is_salarie"] & ~imputed["secteur_public"]
                & (imputed["statut_activite"] == "employed"))
@@ -163,7 +178,7 @@ def test_an_ald_part_above_its_sickness_is_refused(imputed) -> None:
     now has more ALD than sickness."""
     ald = imputed["ij_maladie_ald_annuel"].to_numpy().copy()
     maladie = imputed["ij_maladie_annuel"].to_numpy()
-    weights = imputed["weight"].to_numpy()
+    weights = ij.household_weights(imputed)  # the weights `verify` reads
     paid = np.flatnonzero(maladie > 0)
     low, high = paid[np.argmin(maladie[paid])], paid[np.argmax(maladie[paid])]
     moved = ald[high] * weights[high] / weights[low]
@@ -176,7 +191,7 @@ def test_an_ald_part_above_its_sickness_is_refused(imputed) -> None:
 def test_a_negative_sick_pay_is_refused(imputed) -> None:
     """One person below zero, another raised to keep the total: only the sign is wrong."""
     values = imputed["ij_maladie_annuel"].to_numpy().copy()
-    weights = imputed["weight"].to_numpy()
+    weights = ij.household_weights(imputed)  # the weights `verify` reads
     i, j = np.flatnonzero(values > 0)[:2]
     shift = (-1.0 - values[i]) * weights[i]
     values[i] = -1.0
@@ -191,7 +206,7 @@ def test_a_negative_ald_part_is_refused(imputed) -> None:
     the sign is wrong, and no other check sees it."""
     ald = imputed["ij_maladie_ald_annuel"].to_numpy().copy()
     maladie = imputed["ij_maladie_annuel"].to_numpy()
-    weights = imputed["weight"].to_numpy()
+    weights = ij.household_weights(imputed)  # the weights `verify` reads
     paid = np.flatnonzero(maladie > 0)
     low = paid[np.argmin((ald * weights)[paid])]
     high = paid[np.argmax((maladie * weights)[paid])]

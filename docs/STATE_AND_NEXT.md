@@ -1,5 +1,13 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The fourth 2026-10-31 update adds D-314: goal 8 closed. The sick pay is now scaled on the
+weight the aggregate reads, each household's mean (`ij.household_weights`): a pass saw 0.34
+% less than the CCSS (D-308), and now sees its totals. The graded IJ cases are not rerun.
+The goal is closed without being complete: no open source gives the severance pay above one
+PASS, nor a key for the savings that would open arts 5, 6 or 7. BUT.md lists goal 8 among
+those done, with what it lacks, and proposes goal 9, the prime d'activité's +67 % (D-300),
+for the owner to validate or rewrite.
+
 The third 2026-10-31 update adds D-312 and D-313: goal 8, third pass. The share of the
 sickness allowances served for an ALD, 33 % of the days in 2024 by the PLFSS 2026's annex 9
 (art. 29, p. 228, after the DREES), now sits in the population (`ij_maladie_ald_annuel`,
@@ -1197,10 +1205,12 @@ download list.
 
 ## What the next session does if nobody says otherwise
 
-**The goal decides** (`docs/BUT.md`, D-286, revised in D-296). The goal in progress is the
-first one not done: But 8, household coverage, what D-294 points to. The list below
-predates the goal: take from it only what that aim needs. Publishing the site (D-304) is
-the owner's decision, two settings away: Pages on « GitHub Actions », `SITE_PUBLIE=oui`.
+**The goal decides** (`docs/BUT.md`, D-286, revised in D-296). Goal 8, household coverage,
+is closed without being complete (D-314); goal 9, the prime d'activité's gap (item 0 below,
+D-300), is proposed in BUT.md and waits for the owner's validation before any session starts
+it. The list below predates the goal: take from it only what that aim needs. Publishing the
+site (D-304) is the owner's decision, two settings away: Pages on « GitHub Actions »,
+`SITE_PUBLIE=oui`.
 
 0. **The prime d'activité's +67 %** (D-300). At the fiche's months and rate, art. 74's
    PPA volet is still two thirds above the published figure, while the engine gives the
