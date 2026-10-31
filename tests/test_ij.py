@@ -32,8 +32,10 @@ def imputed(population) -> pl.DataFrame:
 @pytest.fixture(autouse=True)
 def _fresh_reading():
     ij.published.cache_clear()
+    ij.ald_share.cache_clear()
     yield
     ij.published.cache_clear()
+    ij.ald_share.cache_clear()
 
 
 # --- la source -----------------------------------------------------------------------
@@ -58,6 +60,37 @@ def test_a_missing_line_is_refused(monkeypatch) -> None:
     monkeypatch.setattr(ij, "TOTAL_PAGE", ij.TOTAL_PAGE + 1)
     with pytest.raises(ij.SickPayError, match=r"fiche 2\.3"):
         ij.published()
+
+
+def test_the_ald_share_of_the_days_is_read() -> None:
+    """PLFSS 2026, annexe 9, p. 228 : « en 2013 le nombre de jours indemnisés des personnes en
+    ALD représentait 40% des indemnités journalières contre 33% en 2024 » (D-312)."""
+    assert ij.ald_share() == ij.AldShare(share_2013=0.40, share_2024=0.33)
+
+
+def test_a_missing_ald_sentence_is_refused(monkeypatch) -> None:
+    monkeypatch.setattr(ij, "ALD_PAGE", ij.ALD_PAGE + 1)
+    with pytest.raises(ij.SickPayError, match="ALD manque"):
+        ij.ald_share()
+
+
+def test_an_ald_share_that_rose_is_refused(monkeypatch) -> None:
+    """The annex says the share fell, and why: a reading that found it rising read the
+    wrong figures."""
+    import pypdf
+
+    class _Page:
+        def extract_text(self) -> str:
+            return ("En effet, en 2013 le nombre de jours indemnisés des personnes en ALD "
+                    "représentait 30% des indemnités journalières contre \n33% en 2024.")
+
+    class _Reader:
+        def __init__(self, _path) -> None:
+            self.pages = [_Page()] * ij.ALD_PAGE
+
+    monkeypatch.setattr(pypdf, "PdfReader", _Reader)
+    with pytest.raises(ij.SickPayError, match="la lecture est fausse"):
+        ij.ald_share()
 
 
 def test_the_frequencies_are_the_eec_weekly_rates() -> None:
@@ -108,11 +141,36 @@ def test_a_cell_the_survey_lacks_is_refused() -> None:
         ij.keys(frame, 40_000.0, {("50", "cadre"): 0.02})
 
 
-@pytest.mark.parametrize("column", ["ij_maladie_annuel", "ij_atmp_annuel"])
-def test_a_column_off_its_aggregate_is_refused(imputed, column) -> None:
+def test_the_ald_part_is_a_third_of_each_sickness_allowance(imputed) -> None:
+    """33 % of each person's sickness allowances, the share of the days (D-312): 3 527,7 M€."""
+    assert imputed["ij_maladie_ald_annuel"].to_numpy() == pytest.approx(
+        0.33 * imputed["ij_maladie_annuel"].to_numpy(), rel=1e-12)
+    totals = ij.verify(imputed, ij.published())
+    assert totals["ald"] == pytest.approx(0.33 * 10_690.0, rel=1e-9)
+
+
+@pytest.mark.parametrize("column, origin", [("ij_maladie_annuel", "publiés par le CCSS"),
+                                            ("ij_atmp_annuel", "publiés par le CCSS"),
+                                            ("ij_maladie_ald_annuel", "PLFSS 2026")])
+def test_a_column_off_its_aggregate_is_refused(imputed, column, origin) -> None:
     off = imputed.with_columns(pl.col(column) * 1.001)
-    with pytest.raises(ij.SickPayError, match="publiés par le CCSS"):
+    with pytest.raises(ij.SickPayError, match=origin):
         ij.verify(off, ij.published())
+
+
+def test_an_ald_part_above_its_sickness_is_refused(imputed) -> None:
+    """Two people swap their ALD parts at equal weight: the total holds, but one of them
+    now has more ALD than sickness."""
+    ald = imputed["ij_maladie_ald_annuel"].to_numpy().copy()
+    maladie = imputed["ij_maladie_annuel"].to_numpy()
+    weights = imputed["weight"].to_numpy()
+    paid = np.flatnonzero(maladie > 0)
+    low, high = paid[np.argmin(maladie[paid])], paid[np.argmax(maladie[paid])]
+    moved = ald[high] * weights[high] / weights[low]
+    ald[low], ald[high] = ald[low] + moved, 0.0
+    with pytest.raises(ij.SickPayError, match="dépasse la maladie"):
+        ij.verify(imputed.with_columns(pl.Series("ij_maladie_ald_annuel", ald)),
+                  ij.published())
 
 
 def test_a_negative_sick_pay_is_refused(imputed) -> None:
@@ -125,6 +183,23 @@ def test_a_negative_sick_pay_is_refused(imputed) -> None:
     values[j] -= shift / weights[j]
     with pytest.raises(ij.SickPayError, match="négative"):
         ij.verify(imputed.with_columns(pl.Series("ij_maladie_annuel", values)),
+                  ij.published())
+
+
+def test_a_negative_ald_part_is_refused(imputed) -> None:
+    """One ALD part below zero, another raised within its sickness to keep the total: only
+    the sign is wrong, and no other check sees it."""
+    ald = imputed["ij_maladie_ald_annuel"].to_numpy().copy()
+    maladie = imputed["ij_maladie_annuel"].to_numpy()
+    weights = imputed["weight"].to_numpy()
+    paid = np.flatnonzero(maladie > 0)
+    low = paid[np.argmin((ald * weights)[paid])]
+    high = paid[np.argmax((maladie * weights)[paid])]
+    ald[high] += (ald[low] + 1.0) * weights[low] / weights[high]
+    ald[low] = -1.0
+    assert ald[high] <= maladie[high]
+    with pytest.raises(ij.SickPayError, match="négative"):
+        ij.verify(imputed.with_columns(pl.Series("ij_maladie_ald_annuel", ald)),
                   ij.published())
 
 
@@ -145,6 +220,31 @@ def test_the_sick_pay_reaches_openfisca(imputed) -> None:
         got = np.asarray(built.simulation.calculate(variable, "2024-03"))
         assert got == pytest.approx(frame[column].to_numpy() / 12.0)
     assert frame["ij_maladie_annuel"].sum() > 0
+
+
+def test_raw_openfisca_gets_no_ald_input_and_runs(imputed) -> None:
+    """Kill tests run raw openfisca, which has no ALD variable and taxes no allowance: the
+    project's input is not written there (D-312), the others are."""
+    from impots.engine.system import uncorrected_baseline
+
+    frame = runner.subsample(imputed, 4).sort("person_id")
+    built = build_simulation(frame, uncorrected_baseline(), 2024)
+    got = np.asarray(built.simulation.calculate("indemnites_journalieres_maladie", "2024-03"))
+    assert got == pytest.approx(frame["ij_maladie_annuel"].to_numpy() / 12.0)
+
+
+def test_an_input_openfisca_should_carry_still_raises(imputed, monkeypatch) -> None:
+    """GUARD (D-312). Only a variable the corrections add may be missing: a renamed
+    openfisca variable is refused, not dropped."""
+    from openfisca_core.errors import VariableNotFoundError
+
+    from impots.population import to_openfisca
+
+    inputs = {**IJ_INPUTS, "variable_absente": "ij_maladie_ald_annuel"}
+    monkeypatch.setattr(to_openfisca, "IJ_INPUTS", inputs)
+    frame = runner.subsample(imputed, 4).sort("person_id")
+    with pytest.raises(VariableNotFoundError):
+        build_simulation(frame, baseline(), 2024)
 
 
 def test_a_frame_with_half_the_sick_pay_is_refused(imputed) -> None:

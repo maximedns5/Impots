@@ -1,5 +1,17 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The third 2026-10-31 update adds D-312 and D-313: goal 8, third pass. The share of the
+sickness allowances served for an ALD, 33 % of the days in 2024 by the PLFSS 2026's annex 9
+(art. 29, p. 228, after the DREES), now sits in the population (`ij_maladie_ald_annuel`,
+each person's 33 %), and correction 22 exempts it (CGI art. 80 quinquies; before, every
+sickness allowance was taxed). Knob `ij_ald_part_exoneree`. Preregistered and pushed before
+any pass: the exemption's cost, 516.7 M€ against the 621 M€ of tax expenditure 120204 (−16.8
+%, within 25 %), and the revision case `plf2027_art_2_ij_ald`, the exemption halved: −258 M€
+against −267 M€ (+3.3 %, within), as forecast. Revisions: 4 of 4 within, apart from the
+blind cases (3 of 5). The 2027 euro share is 72.8 % (was 70.1 %). Still refused: the
+severance pay (820 M€) and arts 5, 6 and 7; the AT-MP and CSG cases are not rerun on the new
+baseline.
+
 The second 2026-10-31 update adds D-311: the engine's cost. openfisca rebuilds the whole
 parameter tree at each instant a formula reads (19 ms for the 2024 law) and keeps 128 of
 them in one cache shared by every system: a full-tier household rebuilt 32 of the baseline's

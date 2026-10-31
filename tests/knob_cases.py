@@ -278,6 +278,12 @@ EXEMPT: dict[str, str] = {
         "de la population, IJ imputées : la porter de 0,5 à 0 coûte 660 EUR d'IR au total, "
         "et rien sans les IJ (test_ij_moteur.py). La formule la lit (correction 22)."
     ),
+    "ij_ald_part_exoneree": (
+        "La part des IJ maladie servies au titre d'une ALD exonérée d'IR (CGI art. 80 "
+        "quinquies, 1). `HouseholdInput` ne porte aucune IJ. Vérifié sur les mêmes 40 "
+        "ménages : la porter à 0,5 fait entrer dans les salaires la moitié de leur part ALD, "
+        "nette de CSG, et rien sans elles (test_ij_moteur.py). La correction 22 la lit (D-312)."
+    ),
     "csg_ij_taux": (
         "Le taux de CSG des IJ (CSS art. L. 136-8). `HouseholdInput` ne porte aucune IJ. "
         "Vérifié sur les mêmes 40 ménages : 9,2 % au lieu de 6,2 % prend exactement trois "

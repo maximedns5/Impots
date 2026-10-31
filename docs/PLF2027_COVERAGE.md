@@ -440,11 +440,11 @@ Chiffrable dès septembre, mais le jour J a montré deux trous, comblés le 2026
 
 > PLF 2027, évaluations préalables des articles (743 p.), annexe au projet de loi n° 3210. Manifesté : plf2027_evaluations_prealables.pdf, sha256 b1142977a5e3. La page citée est celle du PDF, qui est la page imprimée.
 
-Sur les **16 624 M EUR** d'effort de 2027 que l'annexe quantifie, l'outil en chiffre **11 655 M EUR**, soit **70,1 %** ; et **3 articles sur 33**, soit 9,1 %. **9,1 % des articles, 70,1 % des euros.** Comme en 2026, les deux chiffres disent le contraire l'un de l'autre, et c'est pourquoi ils vont ensemble.
+Sur les **16 624 M EUR** d'effort de 2027 que l'annexe quantifie, l'outil en chiffre **12 105 M EUR**, soit **72,8 %** ; et **3 articles sur 33**, soit 9,1 %. **9,1 % des articles, 72,8 % des euros.** Comme en 2026, les deux chiffres disent le contraire l'un de l'autre, et c'est pourquoi ils vont ensemble.
 
 La règle qui dit quel montant compte a été écrite avant la lecture (D-293) : l'effet budgétaire de 2027 de la section 4.2 de chaque fiche, en valeur absolue, volet par volet ; un montant sans année déterminable, « non chiffrable » ou donné par un seul côté (majorant, minorant, maximum) sort du dénominateur ; un volet qui commence après 2027 vaut zéro. Le numérateur ne prend que les volets que l'outil chiffre : il dit « chiffré », pas « retrouvé », et l'écart de chacun à l'annexe est dans `reports/chiffrages_preregistres.md`.
 
-Si chaque montant écrit que la règle sort entrait au dénominateur, la part serait de 68,1 %, 2,0 point de moins : la règle la flatte de cela, puisqu'aucun de ces montants n'est un volet chiffré.
+Si chaque montant écrit que la règle sort entrait au dénominateur, la part serait de 70,8 %, 2,1 point de moins : la règle la flatte de cela, puisqu'aucun de ces montants n'est un volet chiffré.
 
 ### Les portes, de celle qui rapporterait le plus à celle qui ne rapporterait rien
 
@@ -461,21 +461,21 @@ Chaque article refusé reçoit la porte qui l'ouvrirait, selon la raison de son 
 | `bilan_entreprises` | le bilan des entreprises : investissement, amortissement, provisions, capital | 9, 17, 18 | 0 M EUR | 17, 18 |
 | `bases_locales` | les bases locales : foncier, logement social, zonage | 8, 26 | 0 M EUR | — |
 
-Restent, dans les articles chiffrés, **1 270 M EUR** de volets que l'outil ne chiffre pas : art. 2, volet 4.2.1.3, 820 M EUR ; art. 2, volet 4.2.1.4 (IR ALD), 450 M EUR. Le triage de leur article dit déjà ce qui leur manque.
+Restent, dans les articles chiffrés, **820 M EUR** de volets que l'outil ne chiffre pas : art. 2, volet 4.2.1.3, 820 M EUR. Le triage de leur article dit déjà ce qui leur manque.
 
 ### Les volets chiffrés après l'annexe (but 8, D-306)
 
-**1 055 M EUR** du numérateur viennent de volets chiffrés par des cas écrits après la lecture de l'annexe. Ce sont des révisions au sens de D-292 : le rapport les compte à part des cas aveugles, jamais parmi eux.
+**1 505 M EUR** du numérateur viennent de volets chiffrés par des cas écrits après la lecture de l'annexe. Ce sont des révisions au sens de D-292 : le rapport les compte à part des cas aveugles, jamais parmi eux.
 
+* **Art. 2, volet 4.2.1.4 (IR ALD), 450 M EUR** — `plf2027_art_2_ij_ald`.
 * **Art. 2, volet 4.2.1.4 (IR AT-MP), 515 M EUR** — `plf2027_art_2_ij_atmp`.
 * **Art. 2, volet 4.2.1.4 (CSG), 540 M EUR** — `plf2027_art_2_csg_ij`.
 
 ### Les refus mesurés (but 8, D-305)
 
-Le but 8 a regardé **2 055 M EUR** de volets refusés. Aucun n'entre au numérateur : chacun dit ce que la population ou les données ouvertes en portent, et ce qui manque.
+Le but 8 a regardé **1 605 M EUR** de volets refusés. Aucun n'entre au numérateur : chacun dit ce que la population ou les données ouvertes en portent, et ce qui manque.
 
 * **Art. 2, volet 4.2.1.3, 820 M EUR.** Aucune indemnité de rupture. La fiche cite le rapport IGF-IGAS d'octobre 2025 : 40 000 personnes au-dessus d'un PASS, soit 0,2 % des salariés du privé de la population, une queue qu'une clé par cellule étalerait sur tous. Manque : une distribution ouverte des indemnités de rupture ; imputer depuis les comptes de la fiche noterait la fiche contre elle-même.
-* **Art. 2, volet 4.2.1.4 (IR ALD), 450 M EUR.** Depuis D-305, la population porte les IJ du régime général de 2024 (`impute_ij`) : 10 690 M€ de maladie et 4 955 M€ d'AT-MP, les totaux du CCSS de mai 2026, sur 19,24 millions de salariés du privé. Depuis D-306, le moteur les impose : toutes les IJ maladie, faute de savoir lesquelles relèvent d'une ALD. Manque : la part des IJ versées au titre d'une ALD, qu'aucune source ouverte ne donne (Voies et moyens 2026, dépense 120204 : « Bénéficiaires : Non déterminé ») ; la dépense fiscale, 597 M€ en 2024, dit son coût, pas son assiette.
 * **Art. 5, 500 M EUR.** La case 8UT porte le stock des plus-values en report : 173,27 Md€ chez 117 112 foyers en 2024. À 31,4 % de prélèvements, les 500 M€ de la fiche supposent 1,59 Md€ transmis par an, 0,92 % du stock. Manque : l'âge des détenteurs, qui fixe la part transmise par donation ou décès : aucune source ouverte ne ventile la case 8UT par âge.
 * **Art. 6, 25 M EUR.** Les cases 2CH, 2DH, 2VV et 2WW portent les produits de l'assurance-vie : 1,947 Md€ chez 1 113 493 foyers pour la seule 2CH en 2024. Manque : l'assureur étranger et la transmission au décès, qu'aucune case ne distingue ; les 100 Md€ d'encours de la fiche n'ont pas d'équivalent ouvert.
 * **Art. 7, volet 4.2.1.2, 260 M EUR.** Les cases 5ND et 5OD portent les recettes du meublé non professionnel au micro : 5,045 Md€ chez 619 711 foyers pour la 5ND en 2024. Manque : les amortissements que la réforme réintègre à la cession : ils sont dans les liasses du réel, que la fiche apparie, et dans aucune donnée publique.
@@ -496,7 +496,7 @@ Le but 8 a regardé **2 055 M EUR** de volets refusés. Aucun n'entre au numé
 | 2 | 4.2.1.1 | **4 200** (chiffré) | 29 | « le rendement de l’IR aurait été majoré d’environ 4,2 Md€ en 2027 » |  |
 | 2 | 4.2.1.2 | hors | 29 | « La mesure présente un coût majorant pour l’État de 20 M€ en 2027 » | un majorant : un montant donné par un seul côté (règle 6) |
 | 2 | 4.2.1.3 | 820 | 29 | « La mesure présente un gain total de 820 M€ en 2027 » |  |
-| 2 | 4.2.1.4 (IR ALD) | 450 | 30 | « dont 450 M€ au titre des ALD » | l'effet de 2027 avec le PAS, que la fiche donne, et non les 290 M€ de l'année pleine |
+| 2 | 4.2.1.4 (IR ALD) | **450** (chiffré après l'annexe) | 30 | « dont 450 M€ au titre des ALD » | l'effet de 2027 avec le PAS, que la fiche donne, et non les 290 M€ de l'année pleine |
 | 2 | 4.2.1.4 (IR AT-MP) | **515** (chiffré après l'annexe) | 30 | « 515 M€ au titre des AT/MP » | l'effet de 2027 avec le PAS, que la fiche donne, et non les 330 M€ de l'année pleine |
 | 2 | 4.2.1.4 (CSG) | **540** (chiffré après l'annexe) | 30 | « générerait de l’ordre de 540 M€ de recettes supplémentaires pour les administrations de sécurité sociale pour 2027 » |  |
 | 3 | — | **1 400** (chiffré) | 36 | « Cette mesure entraîne un gain budgétaire estimé à 1,4 Md€ en 2027 » |  |

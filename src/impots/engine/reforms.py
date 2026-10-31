@@ -201,6 +201,9 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     # which correction 23 levies. They move nothing on a household without an allowance.
     "ij_at_mp_part_exoneree": ("impot_revenu", "indemnites_journalieres",
                                "part_exoneree_at_mp"),
+    # The share of the sickness allowances served for an ALD that the income tax exempts
+    # (CGI art. 80 quinquies, 1), which correction 22 also brings in (D-312).
+    "ij_ald_part_exoneree": ("impot_revenu", "indemnites_journalieres", "part_exoneree_ald"),
     "csg_ij_taux": ("prelevements_sociaux", "contributions_sociales", "csg", "remplacement",
                     "indemnites_journalieres", "taux_global"),
     # Employer social contributions. The channels that price these (C2, C3) were

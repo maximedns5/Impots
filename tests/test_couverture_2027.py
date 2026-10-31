@@ -48,10 +48,10 @@ def test_a_line_that_breaks_the_rule_is_refused(change, needle) -> None:
 
 def test_the_numerator_is_exactly_the_volets_the_tool_prices() -> None:
     priced = {(m.article, m.volet) for m in c.MONTANTS_2027 if m.chiffre}
-    assert priced == {(2, "4.2.1.1"), (2, "4.2.1.4 (IR AT-MP)"), (2, "4.2.1.4 (CSG)"),
-                      (3, ""), (15, "I")}
+    assert priced == {(2, "4.2.1.1"), (2, "4.2.1.4 (IR ALD)"), (2, "4.2.1.4 (IR AT-MP)"),
+                      (2, "4.2.1.4 (CSG)"), (3, ""), (15, "I")}
     assert {n for n, _ in priced} == {a.numero for a in c.priceable_2027()}
-    assert c.priced_yield_2027_meur() == pytest.approx(11_655.0)
+    assert c.priced_yield_2027_meur() == pytest.approx(12_105.0)
 
 
 def test_the_share_is_computed_from_the_lines_not_typed() -> None:
@@ -133,9 +133,9 @@ def test_the_measured_refusals_name_lines_left_out_of_the_numerator() -> None:
 
     measured = refus_mesures_2027()
     assert [(r.article, r.volet) for r, _ in measured] == [
-        (2, "4.2.1.3"), (2, "4.2.1.4 (IR ALD)"), (5, ""), (6, ""), (7, "4.2.1.2")]
-    assert sum(line.meur for _, line in measured) == 2_055.0
-    assert f"{share_of_yield_2027() * 100:.1f}" == "70.1"
+        (2, "4.2.1.3"), (5, ""), (6, ""), (7, "4.2.1.2")]
+    assert sum(line.meur for _, line in measured) == 1_605.0
+    assert f"{share_of_yield_2027() * 100:.1f}" == "72.8"
 
 
 @pytest.mark.parametrize("article, volet", [(2, "4.2.1.1"), (2, "4.2.1.2"), (5, "x")])
@@ -162,10 +162,9 @@ def _box(code: str) -> tuple[float, float]:
 
 
 def test_the_measured_refusals_quote_their_sources() -> None:
-    """Each number a measured refusal quotes is its source's: the 2042 boxes, the CCSS,
-    and the arithmetic on them."""
+    """Each number a measured refusal quotes is its source's: the 2042 boxes and the
+    arithmetic on them. The ALD refusal, which quoted the CCSS, is gone since D-312."""
     from impots.plf_coverage import REFUS_MESURES_2027
-    from impots.population import ij
 
     text = {(r.article, r.volet): r.porte + " " + r.manque for r in REFUS_MESURES_2027}
 
@@ -181,9 +180,6 @@ def test_the_measured_refusals_quote_their_sources() -> None:
     transmitted = 500e6 / (0.128 + 0.186)
     assert f"{fr(transmitted / 1e9, 2)} Md€ transmis par an, " \
            f"{fr(transmitted / stock * 100, 2)} % du stock" in text[(5, "")]
-    source = ij.published()
-    assert f"{fr(source.maladie_2024, 0)} M€ de maladie et {fr(source.atmp_2024, 0)} M€" \
-        in text[(2, "4.2.1.4 (IR ALD)")]
 
 
 # --- les volets chiffrés après l'annexe (D-306) ---------------------------------------
@@ -202,7 +198,7 @@ def test_a_volet_priced_after_the_annex_names_registered_revisions() -> None:
 
     late = c.chiffres_apres_annexe_2027()
     assert {(line.article, line.volet) for line, _ in late} == {
-        (2, "4.2.1.4 (IR AT-MP)"), (2, "4.2.1.4 (CSG)")}
+        (2, "4.2.1.4 (IR ALD)"), (2, "4.2.1.4 (IR AT-MP)"), (2, "4.2.1.4 (CSG)")}
     for _, cases in late:
         for name in cases:
             case = ch.load(name)

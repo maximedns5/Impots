@@ -18,7 +18,7 @@ chez les ouvriers de 50 à 64 ans. Chaque salarié du privé reçoit cette fréq
 salaire brut, plafonné au salaire de référence des IJ maladie de 2024 (1,8 SMIC), puis la
 masse de chaque branche est répartie au prorata.
 
-CINQ ARTEFACTS, DÉCLARÉS, PARCE QU'AUCUN NE SE VOIT DANS LA SORTIE.
+SIX ARTEFACTS, DÉCLARÉS, PARCE QU'AUCUN NE SE VOIT DANS LA SORTIE.
 
 1. **Chaque salarié du privé reçoit l'espérance de sa cellule**, arrêté ou non. Tous en
    ont donc un peu, alors qu'une année n'en voit qu'une partie. Un impôt proportionnel ne
@@ -34,18 +34,23 @@ CINQ ARTEFACTS, DÉCLARÉS, PARCE QU'AUCUN NE SE VOIT DANS LA SORTIE.
    sont pas dans la masse.
 4. **Le plafond est celui de la maladie.** Le salaire de référence des AT-MP a son propre
    plafond, plus haut ; la clé n'en tient pas compte.
-5. **Ni l'ALD, ni la durée.** Le CCSS sépare les arrêts de moins et de plus de trois mois
-   (37 % et 29 % des dépenses de 2025, les AT-MP 34 %), mais aucune source ouverte ne
-   donne la part des IJ versées au titre d'une affection de longue durée : les Voies et
-   moyens disent de la dépense fiscale 120204 « Bénéficiaires : non déterminé ». La
-   colonne maladie ne se scinde donc pas, et c'est ce qui manque au volet ALD de l'art. 2
-   du PLF 2027.
+5. **Pas la durée.** Le CCSS sépare les arrêts de moins et de plus de trois mois (37 %
+   et 29 % des dépenses de 2025, les AT-MP 34 %) ; la clé ne le fait pas.
+6. **L'ALD est une part des jours, la même pour tous** (D-312). L'évaluation préalable
+   de l'article 29 du PLFSS 2026 (annexe 9, p. 228) écrit qu'« en 2013 le nombre de jours
+   indemnisés des personnes en ALD représentait 40% des indemnités journalières contre
+   33% en 2024 », d'après la DREES. `ij_maladie_ald_annuel` est 33 % de la maladie de
+   chacun : une part en jours appliquée aux euros, et la même à tout âge, alors que l'ALD
+   est plus fréquente chez les plus âgés et que ses arrêts sont plus longs. La phrase dit
+   « des personnes en ALD » : leurs arrêts sans lien avec l'ALD y sont peut-être, et
+   l'exonération de l'art. 80 quinquies du CGI ne les couvre pas. Aucune source ouverte
+   ne ventile ces jours par âge ni ne les donne en euros.
 
 Ce que la population en fait : openfisca lit `indemnites_journalieres_maladie` et
 `indemnites_journalieres_accident_travail` dans les ressources du RSA, de la prime
 d'activité, de l'ASS et de l'ASPA. Il ne les met ni dans l'impôt sur le revenu ni dans la
-CSG (la CSG sur les IJ est un TODO du modèle) : le volet 4.2.1.4 de l'art. 2 demande ce
-câblage, qui n'est pas fait ici (D-305).
+CSG : les corrections 22 et 23 le font (D-306), et la 22 exonère la part ALD depuis D-312,
+que le projet écrit dans `indemnites_journalieres_maladie_ald`, une partie de la maladie.
 
 Les montants sont ceux de 2024. Une autre année demanderait de vieillir la masse, ce qui
 n'est pas fait ici : elle est refusée par son nom.
@@ -65,6 +70,8 @@ from impots.donnees import RAW
 
 CCSS = RAW / "ccss_mai2026_comptes_secu_resultats2025.pdf"
 EEC = RAW / "FD_EEC_2024.parquet"
+#: L'annexe 9 du PLFSS 2026 : la part des jours d'IJ des personnes en ALD (D-312).
+ALD_SOURCE = RAW / "plfss2026_annexe9_evaluations_prealables.pdf"
 YEAR = 2024
 
 #: Les deux lignes lues, par page du PDF (comptée à partir de 1) : la fiche 2.3 (soins de
@@ -77,6 +84,12 @@ TOTAL_LINE = re.compile(r"^Indemnités journalières (\d{1,3}(?: \d{3})*) "
 #: « Indemnités journalières 4 955 10,1 5 480 10,6 5 877 7,3 » : 2024, %, 2025, %...
 ATMP_LINE = re.compile(r"^Indemnités journalières (\d{1,3}(?: \d{3})*) -?\d+,\d "
                        r"(\d{1,3}(?: \d{3})*) -?\d+,\d", re.M)
+
+#: La phrase de la fiche de l'article 29, p. 228 imprimée, p. 229 du PDF.
+ALD_PAGE = 229
+ALD_LINE = re.compile(r"en (2013) le nombre de jours indemnisés des personnes en ALD\s+"
+                      r"représentait (\d+) ?% des indemnités journalières contre\s+"
+                      r"(\d+) ?% en (2024)")
 
 #: Ce que le texte de la fiche 2.3 dit de 2025 : les AT-MP font 34 % des dépenses d'IJ.
 #: Les deux tableaux lus doivent le redire, à l'arrondi près.
@@ -141,6 +154,35 @@ def published(pdf: Path = CCSS) -> Published:
     return out
 
 
+@dataclass(frozen=True)
+class AldShare:
+    """La part des jours d'IJ maladie des personnes en ALD, telle que l'annexe la publie."""
+
+    share_2013: float
+    share_2024: float
+
+
+@lru_cache(maxsize=4)
+def ald_share(pdf: Path = ALD_SOURCE) -> AldShare:
+    """La phrase de l'annexe 9 du PLFSS 2026, lue dans le PDF ; refusée si elle manque, si
+    ses années ne sont pas 2013 et 2024, ou si la part n'a pas baissé comme le texte le
+    dit (« Ce dynamisme... »)."""
+    from pypdf import PdfReader
+
+    if not pdf.exists():
+        raise SickPayError(f"{pdf.name} absent : `impots donnees` le télécharge (manifeste)")
+    text = PdfReader(str(pdf)).pages[ALD_PAGE - 1].extract_text() or ""
+    found = ALD_LINE.search(text)
+    if found is None:
+        raise SickPayError("PLFSS 2026, annexe 9, p. 228 : la part des jours des personnes "
+                           "en ALD manque")
+    out = AldShare(int(found[2]) / 100, int(found[3]) / 100)
+    if not 0 < out.share_2024 < out.share_2013 < 1:
+        raise SickPayError(f"PLFSS 2026, annexe 9 : {out.share_2013:.0%} en 2013 et "
+                           f"{out.share_2024:.0%} en 2024 ; la lecture est fausse")
+    return out
+
+
 def _age_band(age: np.ndarray) -> np.ndarray:
     out = np.full(age.shape, "", dtype=object)
     for low, code in AGE_BANDS:
@@ -192,39 +234,54 @@ def keys(frame: pl.DataFrame, cap: float, cells: dict[tuple[str, str], float]) -
 
 
 def impute(frame: pl.DataFrame, year: int = YEAR, *, source: Published | None = None,
-           cells: dict[tuple[str, str], float] | None = None) -> pl.DataFrame:
+           cells: dict[tuple[str, str], float] | None = None,
+           ald: AldShare | None = None) -> pl.DataFrame:
     """La population avec `ij_maladie_annuel` et `ij_atmp_annuel`, en euros par personne,
-    dont les totaux pondérés sont ceux du CCSS ; refusé hors de 2024."""
+    dont les totaux pondérés sont ceux du CCSS, et `ij_maladie_ald_annuel`, la part de la
+    maladie que l'annexe 9 du PLFSS 2026 range en ALD (D-312) ; refusé hors de 2024."""
     if year != YEAR:
         raise SickPayError(
             f"IJ imputées pour {year} : le CCSS de mai 2026 est lu pour {YEAR}, et une "
             f"autre année demanderait de vieillir la masse, ce qui n'est pas fait (D-305)")
     source = published() if source is None else source
+    ald = ald_share() if ald is None else ald
     key = keys(frame, reference_wage_cap(year), frequencies() if cells is None else cells)
     weights = frame["weight"].to_numpy().astype(np.float64)
     mass = float(weights @ key)
     if not mass > 0:
         raise SickPayError("aucun salarié du privé dans la population : rien à répartir")
+    maladie = key * (source.maladie_2024 * 1e6 / mass)
     out = frame.with_columns(
-        pl.Series("ij_maladie_annuel", key * (source.maladie_2024 * 1e6 / mass)),
+        pl.Series("ij_maladie_annuel", maladie),
         pl.Series("ij_atmp_annuel", key * (source.atmp_2024 * 1e6 / mass)),
+        pl.Series("ij_maladie_ald_annuel", maladie * ald.share_2024),
     )
     # Not `verify` here: the scaling makes it true by construction (D-305, an
     # equivalent mutant). The tests run it on the real population.
     return out
 
 
-def verify(frame: pl.DataFrame, source: Published) -> dict[str, float]:
-    """Chaque colonne contre son agrégat : les totaux pondérés, en M€, à 1e-6 près."""
+def verify(frame: pl.DataFrame, source: Published,
+           ald: AldShare | None = None) -> dict[str, float]:
+    """Chaque colonne contre son agrégat : les totaux pondérés, en M€, à 1e-6 près, la part
+    ALD comprise ; et l'ALD de chacun dans sa maladie."""
+    ald = ald_share() if ald is None else ald
     weights = frame["weight"].to_numpy().astype(np.float64)
     totals = {"maladie": float(weights @ frame["ij_maladie_annuel"].to_numpy()) / 1e6,
-              "atmp": float(weights @ frame["ij_atmp_annuel"].to_numpy()) / 1e6}
-    expected = {"maladie": source.maladie_2024, "atmp": source.atmp_2024}
+              "atmp": float(weights @ frame["ij_atmp_annuel"].to_numpy()) / 1e6,
+              "ald": float(weights @ frame["ij_maladie_ald_annuel"].to_numpy()) / 1e6}
+    expected = {"maladie": source.maladie_2024, "atmp": source.atmp_2024,
+                "ald": source.maladie_2024 * ald.share_2024}
+    origin = {"maladie": "publiés par le CCSS", "atmp": "publiés par le CCSS",
+              "ald": "que donne la part des jours en ALD (PLFSS 2026, annexe 9)"}
     for branch, total in totals.items():
         if abs(total / expected[branch] - 1) > TOTAL_TOLERANCE:
             raise SickPayError(
                 f"IJ {branch} : {total:,.1f} M€ imputés contre {expected[branch]:,.1f} "
-                f"publiés par le CCSS")
-    if (frame["ij_maladie_annuel"] < 0).any() or (frame["ij_atmp_annuel"] < 0).any():
+                f"{origin[branch]}")
+    if (frame["ij_maladie_annuel"] < 0).any() or (frame["ij_atmp_annuel"] < 0).any() \
+            or (frame["ij_maladie_ald_annuel"] < 0).any():
         raise SickPayError("une IJ imputée est négative")
+    if (frame["ij_maladie_ald_annuel"] > frame["ij_maladie_annuel"] * (1 + 1e-12)).any():
+        raise SickPayError("une part ALD dépasse la maladie qui la contient")
     return totals

@@ -27,7 +27,15 @@ YEAR = 2024
 def frames() -> tuple[pl.DataFrame, pl.DataFrame]:
     population = pl.read_parquet(PROCESSED / "population_2024.parquet").sort("person_id")
     with_ij = runner.subsample(ij.impute(population), 40).sort("person_id")
-    return with_ij, with_ij.drop("ij_maladie_annuel", "ij_atmp_annuel")
+    return with_ij, with_ij.drop("ij_maladie_annuel", "ij_atmp_annuel",
+                                 "ij_maladie_ald_annuel")
+
+
+@pytest.fixture(scope="module")
+def frames_sans_ald(frames) -> tuple[pl.DataFrame, pl.DataFrame]:
+    """The same households, none of whose sickness allowances is served for an ALD."""
+    with_ij, without = frames
+    return with_ij.with_columns(pl.lit(0.0).alias("ij_maladie_ald_annuel")), without
 
 
 def _calc(frame: pl.DataFrame, system, variable: str, **kwargs) -> np.ndarray:
@@ -67,10 +75,11 @@ def test_openfisca_does_not_carry_the_exempt_share() -> None:
 # --- correction 22 : les IJ dans les salaires -------------------------------------------
 
 
-def test_the_taxable_sick_pay_joins_the_salaries(frames) -> None:
+def test_the_taxable_sick_pay_joins_the_salaries(frames_sans_ald) -> None:
     """A foyer of one earner between the deduction's floor and ceiling gains 90 % of its
-    taxable allowances: the sickness ones and half the work-accident ones, net of 3,8 %."""
-    with_ij, without = frames
+    taxable allowances: the sickness ones and half the work-accident ones, net of 3,8 %.
+    None of these is served for an ALD (D-312)."""
+    with_ij, without = frames_sans_ald
     gained = (_calc(with_ij, baseline(), "revenu_categoriel_tspr")
               - _calc(without, baseline(), "revenu_categoriel_tspr"))
     members = with_ij.group_by("foyer_id").agg(
@@ -83,6 +92,41 @@ def test_the_taxable_sick_pay_joins_the_salaries(frames) -> None:
     taxable = (1 - 0.038) * (members["m"].to_numpy() + 0.5 * members["a"].to_numpy())
     assert gained[plain] == pytest.approx(0.9 * taxable[plain], rel=2e-3, abs=2.0)
     assert (gained >= -0.5).all() and gained.sum() > 0
+
+
+def test_the_ald_part_stays_out_of_the_salaries(frames) -> None:
+    """GUARD (D-312). The sickness allowances served for an ALD are exempt (CGI art. 80
+    quinquies): the same foyers gain 90 % of what is left once the ALD part is taken out. Before
+    D-312 every sickness allowance joined the salaries."""
+    with_ij, without = frames
+    gained = (_calc(with_ij, baseline(), "revenu_categoriel_tspr")
+              - _calc(without, baseline(), "revenu_categoriel_tspr"))
+    members = with_ij.group_by("foyer_id").agg(
+        pl.len().alias("n"), pl.col("salaire_brut_annuel").sum().alias("salaire"),
+        pl.col("ij_maladie_annuel").sum().alias("m"),
+        pl.col("ij_maladie_ald_annuel").sum().alias("ald"),
+        pl.col("ij_atmp_annuel").sum().alias("a")).sort("foyer_id")
+    plain = ((members["n"] == 1) & (members["salaire"] > 20_000)
+             & (members["salaire"] < 80_000)).to_numpy()
+    assert (members["ald"].to_numpy()[plain] > 0).sum() >= 3
+    taxable = (1 - 0.038) * (members["m"].to_numpy() - members["ald"].to_numpy()
+                             + 0.5 * members["a"].to_numpy())
+    assert gained[plain] == pytest.approx(0.9 * taxable[plain], rel=2e-3, abs=2.0)
+
+
+def test_openfisca_carries_no_ald_sick_pay() -> None:
+    """The day openfisca grows a variable for the ALD allowances, correction 22's must go."""
+    system = uncorrected_baseline()
+    assert corrections.SICK_PAY_ALD not in system.variables
+    assert corrections.SICK_PAY_ALD in baseline().variables
+
+
+def test_the_ald_exemption_is_whole_in_the_tree() -> None:
+    parameters = baseline().parameters
+    assert parameters(f"{YEAR}-01-01").impot_revenu.indemnites_journalieres \
+        .part_exoneree_ald == 1.0
+    assert corrections.PATH_IJ_ALD_EXONEREE == ("impot_revenu", "indemnites_journalieres",
+                                                "part_exoneree_ald")
 
 
 def test_without_sick_pay_the_salaries_are_openfisca_s(frames) -> None:
@@ -110,9 +154,9 @@ def test_the_exempt_share_keeps_the_inaptitude_age() -> None:
 
 def test_a_node_openfisca_grew_is_refused() -> None:
     parameters = uncorrected_baseline().parameters.clone()
-    corrections._at_mp_exempt_share(parameters)
+    corrections._sick_pay_exempt_shares(parameters)
     with pytest.raises(RuntimeError, match="read again"):
-        corrections._at_mp_exempt_share(parameters)
+        corrections._sick_pay_exempt_shares(parameters)
 
 
 # --- correction 23 : la CSG des IJ, et les IJ dans le revenu disponible ---------------
@@ -153,6 +197,26 @@ def test_taxing_all_the_work_accident_allowances_raises_the_income_tax(frames) -
         assert cost == pytest.approx(after - before, rel=1e-5, abs=1.0)
 
 
+def test_halving_the_ald_exemption_taxes_half_the_ald_part(frames) -> None:
+    """The PLF 2027's art. 2: the ALD allowances exempt at 50 % only (D-312). The salaries
+    gain 90 % of half the ALD part, net of 3,8 %; nothing moves without allowances."""
+    with_ij, without = frames
+    reform = reformed_for(ReformSpec(ij_ald_part_exoneree=0.5), YEAR)
+    gained = (_calc(with_ij, reform, "revenu_categoriel_tspr")
+              - _calc(with_ij, baseline(), "revenu_categoriel_tspr"))
+    members = with_ij.group_by("foyer_id").agg(
+        pl.len().alias("n"), pl.col("salaire_brut_annuel").sum().alias("salaire"),
+        pl.col("ij_maladie_ald_annuel").sum().alias("ald")).sort("foyer_id")
+    plain = ((members["n"] == 1) & (members["salaire"] > 20_000)
+             & (members["salaire"] < 80_000)).to_numpy()
+    expected = 0.9 * (1 - 0.038) * 0.5 * members["ald"].to_numpy()
+    assert gained[plain] == pytest.approx(expected[plain], rel=2e-3, abs=2.0)
+    for frame, moves in ((with_ij, True), (without, False)):
+        before = _calc(frame, baseline(), "impot_revenu_restant_a_payer").sum()
+        after = _calc(frame, reform, "impot_revenu_restant_a_payer").sum()
+        assert bool(after < before) is moves
+
+
 def test_the_csg_rate_takes_three_points_of_the_sick_pay(frames) -> None:
     with_ij, without = frames
     reform = reformed_for(ReformSpec(csg_ij_taux=0.092), YEAR)
@@ -165,6 +229,7 @@ def test_the_csg_rate_takes_three_points_of_the_sick_pay(frames) -> None:
 
 
 @pytest.mark.parametrize("knob, value", [("ij_at_mp_part_exoneree", 0.25),
+                                         ("ij_ald_part_exoneree", 0.5),
                                          ("csg_ij_taux", 0.08)])
 def test_each_knob_is_read_back_from_the_tree(knob, value) -> None:
     from impots.engine.reforms import SCALAR_KNOBS

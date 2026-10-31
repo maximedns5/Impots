@@ -150,6 +150,12 @@ KNOWN_SOURCES: dict[str, tuple[str, str]] = {
         "CCSS%20mai%202026_assembl%c3%a9_V2.pdf",
         "Rapport à la Commission des comptes de la Sécurité sociale, mai 2026 — C3S",
     ),
+    "plfss2026_annexe9_evaluations_prealables.pdf": (
+        "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/PLFSS/2026/"
+        "PLFSS2026-Annexe09-GenerationXBOOK_avec%20couverture.pdf",
+        "PLFSS 2026, annexe 9 : évaluations préalables des articles — la part des jours "
+        "d'IJ des personnes en ALD, p. 228 (D-312)",
+    ),
     "insee_cn2025_t3217_principaux_impots_par_categorie.xlsx": (
         "https://www.insee.fr/fr/statistiques/fichier/8988845/t_3217_fr.xlsx",
         "INSEE comptes nationaux, tableau 3.217 — principaux impôts par catégorie",

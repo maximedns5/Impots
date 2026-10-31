@@ -21,7 +21,8 @@ from impots.engine.reforms import SCALAR_KNOBS
 from knob_cases import CASES, EXEMPT, YEARS
 
 #: The daily-allowance knobs (D-306), with a value far from the law's.
-IJ_KNOBS = {"ij_at_mp_part_exoneree": 0.0, "csg_ij_taux": 0.15}
+IJ_KNOBS = {"ij_at_mp_part_exoneree": 0.0, "ij_ald_part_exoneree": 0.5,
+            "csg_ij_taux": 0.15}
 
 pytestmark = pytest.mark.slow
 

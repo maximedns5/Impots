@@ -22,6 +22,7 @@ Une révision ne change que la base d'un cas enregistré, après l'ouverture de 
 |---|---|---|---|---|---|---|---|
 | plf2027_art_2_base2027 | +3.902 | +4.200 | -0.298 | -7.1% | 0.840 (relative) | **within** en-dessous | plf2027_art_2 |
 | plf2027_art_2_csg_ij | -0.468 | -0.540 | +0.072 | +13.4% | 0.135 (relative) | **within** au-dessus | aucun, cas neuf |
+| plf2027_art_2_ij_ald | -0.258 | -0.267 | +0.009 | +3.3% | 0.067 (relative) | **within** au-dessus | aucun, cas neuf |
 | plf2027_art_2_ij_atmp | -0.366 | -0.330 | -0.036 | -10.8% | 0.083 (relative) | **within** en-dessous | aucun, cas neuf |
 
-**3 sur 3 dans la tolérance, hors du compte des cas aveugles.**
+**4 sur 4 dans la tolérance, hors du compte des cas aveugles.**
