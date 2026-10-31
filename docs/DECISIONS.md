@@ -24161,3 +24161,87 @@ tests ciblés de CLAUDE.md est réécrite en ce sens, et c'est une proposition :
 la PR est mergée. Deux chantiers restent ouverts : les huit tests rouges sur main, et le
 coût du moteur (`pin_benefit_history`, `get_parameters_at_instant`), qui accélérerait aussi
 l'API.
+
+## D-310 — Les tests rouges de main : un faux agrégat, une loi de 2026, C1 sur trois ménages
+
+**La demande.** D-309 a trouvé huit tests rouges sur main (8804916), qu'aucune passe
+complète n'avait vus depuis le 20 octobre. Le propriétaire a lancé leur chantier. Ils ont
+trois causes, et aucun n'est réparé en retouchant une assertion sans sa décision.
+
+**1. `test_fan`, six tests.**
+
+- Cinq échouaient sur « '_Agg' object has no attribute 'employer_contribution_delta' ».
+  Depuis D-218, `api.main._macro` lit les cotisations patronales payées dans ce champ de
+  l'agrégat, et non plus dans ses deltas. Le faux agrégat des tests ne l'avait pas. Il est
+  remplacé par le vrai, `Aggregates` : un champ ajouté ne le laissera plus en arrière. Les
+  cas d'allègement passent leurs cotisations par ce champ, comme une vraie passe.
+- Le sixième voulait l'allègement ciblé plus riche en emplois que l'uniforme, avec le bouton
+  du plafond, en 2026. Depuis D-239, ce bouton n'est plus une baisse ciblée à partir de la
+  refonte de 2026 : il va à la variante uniforme, et les deux médianes étaient égales (50,9
+  milliers à trois ans). Le cas est daté de 2025, la loi qu'il décrit, comme D-239 l'a fait
+  pour `test_shocks`. Le rapport y vaut 1,389, pour 403/290 = 1,390 attendu.
+
+Ces tests se sautent sans les sources brutes du TES et de Mésange. C'est sans doute ainsi
+que les cinq premiers ont rougi sans qu'on le voie, depuis D-218.
+
+**2. `test_gardes_phase9` : la mutation de la CDHR.** La mutation `P11-cdhr-recette`
+cherchait la CDHR en dernière ligne des recettes. D-307 a mis `csg_ij` après elle, et le
+texte n'existait plus. La mutation retire désormais la seule ligne de la CDHR, quoi qui la
+suive. Rejouée seule, elle est tuée par `test_cdhr`. Le rapport du balayage n'est pas
+réécrit : une mutation rejouée ne date pas un balayage entier.
+
+**3. Le test de bande : C1 tenait sur trois à sept ménages.** Pour un taux supérieur de l'IR
+porté de 45 % à 50 %, le rendement mécanique vaut +549 M€, et la bande sortait de −333 à
++76 M€ : C1, la réponse de la base imposable, y coûtait −662 M€.
+
+La bissection, sur les merges de main, une passe de population par étape :
+
+- au 20 octobre (7cce463), et encore après `bruit-c1` (1772933), C1 coûte −304 M€ et la
+  bande va de +144 à +332 M€ ;
+- après `c1-echantillons` (605722c, maximedns5/Impots#93, D-284), C1 coûte −662 M€.
+
+D-284 n'a pas de faute : C1 y devient la moyenne de quatre échantillons, ce que son contrôle
+vérifie. Mais échantillon par échantillon, C1 vaut −297, −325, −1 493 et −477 M€. Dans
+chacun, trois à sept ménages seulement sont touchés par le taux supérieur, et chacun pèse
+10 338 : un tirage de 3 000 ménages proportionnel au poids garde 1,5 % de la population.
+Dans le troisième, un seul ménage à 3,6 M€ de salaires fait −836 M€. Le test passait le 20
+octobre parce que l'échantillon de l'étude en tirait trois.
+
+Sur tous les ménages du haut de la population, sans tirage, C1 vaut −570 M€ : 364 ménages
+touchés, de poids 157 à 462. C'est la réponse du modèle, et elle égale à peu près le
+rendement : à l'élasticité du haut du magasin (0,31), un taux marginal qui passe de 55,5 % à
+60,5 % arrive près de celui qui maximise la recette. Le signe de la bande n'est donc pas une
+erreur de modélisation : c'est ce que le modèle soutient, avec ses élasticités vérifiées.
+
+**La décision du propriétaire.** Le haut entre dans chaque échantillon, et le test affirme
+ce que le modèle soutient.
+
+- `emtr.HAUT_CERTAIN` = 200 000 € : chaque ménage dont les salaires l'atteignent est dans
+  chaque échantillon des taux marginaux, à son propre poids ; 3 000 ménages sont tirés du
+  reste comme avant. Il y en a 2 294 en 2024. Le moins payé des ménages touchés par le taux
+  supérieur gagne 235 310 €, et le seuil prend tout le C1 exact ; 250 000 € n'en prendrait
+  que 95,9 %.
+- Le seuil entre dans la clé des caches, à côté de l'empreinte du cadre (D-276), qui
+  suffisait déjà à écarter un fichier tiré sans lui.
+- Le nombre de ménages que la bande annonce reste celui de D-284, la somme des quatre
+  échantillons : la strate y figure dans chacun.
+- Le test veut la bande ordonnée et tout entière sous le rendement mécanique. Il ne veut
+  plus son p10 positif.
+
+**Le résultat.** Avec la strate, les quatre échantillons donnent le même C1 à l'élasticité
+centrale, −570 M€, sur les mêmes 364 ménages touchés : il ne dépend plus du tirage. La bande
+va de −227 à +133 M€, p50 −33 M€, pour un rendement mécanique de +549 M€. Les neuf tests
+lourds de `test_api` passent, chacun dans son processus, dont celui de la bande, et 522
+tests légers voisins aussi. Le 523e, celui de D-284, a rappelé que le nombre de ménages
+annoncé est la somme des échantillons : ce compte est resté le sien.
+
+**Ce que cela change.** Les taux marginaux de toute réforme lus par C1 et C7, pour les hauts
+revenus : une passe compte 2 294 ménages de plus par échantillon. Les rapports et les études
+commités ne bougent pas. Une étude rejouée donnerait d'autres C1 pour les paquets qui
+touchent le haut, sans qu'on l'ait mesuré ici.
+
+**Les tests.** Quatre cas dans `tests/test_strate_haut.py` : le haut dans chaque échantillon
+à son poids, le reste tiré et portant son total, les quatre échantillons réels partageant
+tout le haut, et le seuil dans la clé. Les trois premiers ont été vus échouer avant, la
+constante seule posée ; le quatrième sans le seuil dans la clé. Cinq mutants de la strate
+sont tués. `test_fan`, `test_gardes_phase9` et `test_dependances` passent.
