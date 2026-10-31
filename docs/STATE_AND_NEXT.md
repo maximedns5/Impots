@@ -1,6 +1,17 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
-The 2026-10-31 update adds D-310: the eight tests red on main, fixed at their causes.
+The second 2026-10-31 update adds D-311: the engine's cost. openfisca rebuilds the whole
+parameter tree at each instant a formula reads (19 ms for the 2024 law) and keeps 128 of
+them in one cache shared by every system: a full-tier household rebuilt 32 of the baseline's
+each time, and a new reformed system rebuilt all of its own. `engine/parametres.py` gives
+the baseline its own unbounded cache and gives each reformed system the baseline's tree with
+only the branches its reform changes rebuilt, checked against the whole tree at build time
+(`GreffeError`). A household with a new reform: 12.3 s to 6.7 s; the same reform again, 14.9
+s to 6.3 s; the 61 knob cases, 257 s to 129 s on four processes, their rows identical byte
+for byte. Still costly: the reform's deep copy in `modify_parameters` (about 1 s) and the
+month-by-month housing-aid history.
+
+The first 2026-10-31 update adds D-310: the eight tests red on main, fixed at their causes.
 Five `test_fan` tests used a stub aggregate that lacked the field `_macro` reads since
 D-218; they now use the real `Aggregates`. A sixth used the allègement ceiling in 2026,
 which D-239 routes to the uniform variant; it is dated 2025, the law it describes. A

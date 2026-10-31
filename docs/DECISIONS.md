@@ -24245,3 +24245,90 @@ touchent le haut, sans qu'on l'ait mesuré ici.
 tout le haut, et le seuil dans la clé. Les trois premiers ont été vus échouer avant, la
 constante seule posée ; le quatrième sans le seuil dans la clé. Cinq mutants de la strate
 sont tués. `test_fan`, `test_gardes_phase9` et `test_dependances` passent.
+
+## D-311 — Le coût du moteur : les paramètres de la loi greffés plutôt que reconstruits
+
+**Le constat.** Un ménage au palier complet, avec une réforme neuve, coûtait 12 à 15 s ; la
+référence seule, 6 s. Sous cProfile, la moitié du temps passait dans
+`get_parameters_at_instant` : 15,4 s sur 31, en 258 appels. openfisca construit, pour chaque
+instant qu'une formule lit, l'arbre entier des paramètres à cet instant, soit 19 ms pour la
+loi de 2024. Il les garde dans un `functools.lru_cache` de 128 entrées, posé sur la classe
+et partagé par tous les systèmes. Un calcul de référence lit quelque 130 instants : il en
+reconstruisait 32 à chaque fois, chassés par les siens. Un système réformé neuf les
+reconstruisait tous, alors qu'une réforme ne change que quelques feuilles. Un système
+réformé déjà construit ne faisait pas mieux : la référence et lui se chassaient l'un l'autre
+du cache (14,9 s la deuxième fois, contre 12,3 s la première).
+
+**Le remède.** `engine/parametres.py`, deux fonctions qui ne changent aucune valeur lue.
+
+- `memoriser` donne à la référence son propre cache, sans limite de taille : un arbre par
+  instant lu, quelques centaines au plus. Un cache plus grand sur la classe aurait suffi au
+  temps, pas à la mémoire : 529 Mo contre 331, chaque système réformé gardant ses arbres
+  entiers.
+- `greffer_sur` donne à chaque système réformé, à chaque instant, l'arbre de la référence où
+  seules les branches que la réforme change sont refaites. Les chemins de ces branches sont
+  calculés une fois, à la construction : une feuille diffère si une de ses valeurs datées
+  diffère ; un barème, si son type, le nombre de ses tranches ou une de leurs valeurs
+  diffère, et il est refait entier ; un nœud dont les enfants ne sont pas les mêmes, dans le
+  même ordre, est refait entier aussi. Une feuille que la référence n'a pas à cet instant
+  prend sa place parmi les enfants, dans l'ordre de l'arbre complet. Rien de l'arbre de la
+  référence n'est modifié : les nœuds sur le chemin sont des copies.
+- Avant que quiconque calcule avec, l'arbre greffé est comparé, par sa représentation
+  entière, à l'arbre complet au 1er janvier et au 1er décembre de l'année de la réforme. Une
+  différence que les chemins auraient manquée lève `GreffeError` à la construction, et non
+  dans un chiffre.
+
+Les objets partagés entre la référence et un système réformé le sont déjà, chez openfisca,
+entre toutes les simulations d'un même système : aucune formule d'openfisca-france ne
+modifie un barème en place (`inplace=True` n'y paraît nulle part), et l'arbre de la
+référence refuse toute écriture depuis D-095. Deux fils de l'API qui manquent le même
+instant à la fois bâtissent chacun leur arbre, égaux, et la greffe ne travaille que sur des
+copies. Le système des entreprises, qui a son propre petit arbre, n'est pas touché.
+
+**Les mesures.** Le ménage `LOCATAIRE_PPA`, au palier complet, dans un processus chaud :
+
+- la référence seule : 5,8 s avant, 4,8 s après ;
+- une réforme neuve (`ppa_montant_de_base` à 650 €) : 12,3 s avant, 6,2 s après ;
+- la même réforme une deuxième fois : 14,9 s avant, 7,0 s après ;
+- une autre réforme neuve (`rsa_montant_de_base` à 620 €) : 14,9 s avant, 7,8 s après ;
+- la mémoire au plus haut : 331 Mo avant, 314 Mo après.
+
+Une mesure à une seconde près : un premier passage sur la greffe avait donné 5,0, 6,7, 6,3
+et 6,9 s. Les quatre résultats sont identiques, octet pour octet, à ceux de main.
+
+Le témoin : les 61 cas de `tests/knob_cases.py`, chacun calculé, référence et réforme, au
+palier complet, sur quatre processus. Avant : 257 s en tout, 985 s de calcul. Après : 129 s
+en tout, 496 s de calcul, soit 8 s par cas au lieu de 16. Les lignes de la référence et de
+la réforme des 61 cas sont identiques, octet pour octet, entre main (86394d3) et le commit
+de la greffe (3e18018).
+
+Une passe de population : 20 000 ménages au palier complet, en 2024, avec une réforme qui
+touche une aide et l'impôt (`ppa_montant_de_base` à 650 €, `plafond_qf_demi_part` à
+1 000 €). La table des ménages est identique entre main et la greffe, colonne par colonne.
+Le temps, lui, ne bouge presque pas : 123 s avant, 119 s après, 6,1 Go dans les deux cas.
+Une passe calcule tous ses ménages ensemble, dans une simulation par système : elle lit
+chaque instant une fois, et c'est le calcul vectorisé qui coûte. Le gain est celui des
+ménages un à un, ceux de l'API et des tests.
+
+**Les tests.** `tests/test_parametres.py`, quatorze cas. Sur un petit arbre fait main : une
+feuille changée, un barème changé, un barème dont seul le type change, une feuille absente
+de la référence à un instant et insérée à sa place, une valeur retirée, un enfant ajouté à
+un nœud, des enfants dans un autre ordre, un enfant ajouté à la racine, un arbre inchangé ;
+chaque fois l'arbre greffé est l'arbre complet, et celui de la référence ne bouge pas. Une
+différence manquée lève. Le cache rend le même arbre pour un instant sous ses trois formes.
+La référence garde ses 168 arbres. Un système réformé du moteur partage toutes les branches
+que sa réforme laisse. Le cas lent compare l'arbre greffé à l'arbre complet pour chacun des
+61 boutons, à six instants autour de son année (185 chemins changés en tout). Seize mutants
+de la greffe et deux du câblage (sans `memoriser`, sans `greffer_sur`) sont tous tués ;
+quatre ont d'abord survécu (le type du barème, l'ordre des enfants, la racine, l'insertion
+en fin), et les quatre cas qui les tuent ont été ajoutés. Les tests légers des 27 fichiers
+qui touchent le moteur, `test_knobs`, `test_engine`, `test_prestations`, `test_reforms`,
+`test_patrimoine`, `test_population` et `test_api` compris : 1 483 passent, 19 sautés, en
+18 min 24 s sur quatre workers.
+
+**Ce qui reste.** Une réforme neuve coûte encore environ 1 s de construction : la copie
+profonde de l'arbre dans `Reform.modify_parameters`, que la greffe ne touche pas. Le reste
+du temps d'un ménage au palier complet est le calcul lui-même, surtout l'historique des
+aides au logement mois par mois (`pin_benefit_history`). Les tests de boutons calculent deux
+ou trois fois le même ménage de référence ; un mémo des résultats l'éviterait, au prix d'une
+invalidation à prouver : il n'est pas fait.
