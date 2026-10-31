@@ -49,8 +49,8 @@ def composition(table):
                                 use="consommation_finale")
 
 
-def _run(loaded, gdp, deltas, **kwargs):
-    impulse = shocks.build(deltas, year=2026, **kwargs)
+def _run(loaded, gdp, deltas, year=2026, **kwargs):
+    impulse = shocks.build(deltas, year=year, **kwargs)
     return fan.run(impulse, loaded, gdp_eur=gdp)
 
 
@@ -143,9 +143,11 @@ def test_the_vat_basis_divides_by_its_own_ex_ante_factor(loaded, gdp):
 
 
 def test_a_targeted_allegement_creates_more_jobs_than_a_uniform_one(loaded, gdp):
-    """The verification's headline finding, carried all the way to an output."""
-    uniform = _run(loaded, gdp, {"employer_contributions": -5.0e9})
-    targeted = _run(loaded, gdp, {"employer_contributions": -5.0e9},
+    """The verification's headline finding, carried all the way to an output. Dated 2025,
+    the law it describes: from the 2026 refonte the ceiling is only the exit threshold of
+    the 2 % floor, and routes to the uniform variant (D-239)."""
+    uniform = _run(loaded, gdp, {"employer_contributions": -5.0e9}, year=2025)
+    targeted = _run(loaded, gdp, {"employer_contributions": -5.0e9}, year=2025,
                     knobs=("allegement_general_plafond",))
     assert targeted.jobs_thousands_etp["3"].p50 > uniform.jobs_thousands_etp["3"].p50
     ratio = targeted.jobs_thousands_etp["3"].p50 / uniform.jobs_thousands_etp["3"].p50
@@ -240,9 +242,14 @@ def _request(**knobs):
     return types.SimpleNamespace(reform=ReformSpec(**knobs), year=2024, macro=True)
 
 
-class _Agg:
-    def __init__(self, deltas, cost):
-        self.deltas, self.reform_cost = deltas, cost
+def _Agg(deltas, cost, employer_contribution_delta=0.0):
+    """The population layer's own aggregate, not a stand-in that drifts from it: since
+    D-218 `_macro` reads the employer contributions paid from their own field, and a stub
+    without it raised in five tests (D-310)."""
+    from impots.population.aggregate import Aggregates
+
+    return Aggregates(totals={}, deltas=deltas, reform_cost=cost,
+                      employer_contribution_delta=employer_contribution_delta)
 
 
 def test_the_api_block_carries_the_whole_strip():
@@ -287,9 +294,9 @@ def test_an_allegement_reform_routes_to_the_targeted_variant_through_the_api():
     from impots.api import main
 
     uniform = main._macro(_request(csg_activite_imposable=0.08),
-                          _Agg({"employer_contributions": -5.0e9}, -5.0e9))
+                          _Agg({}, -5.0e9, employer_contribution_delta=-5.0e9))
     targeted = main._macro(_request(allegement_general_plafond=1.8),
-                           _Agg({"employer_contributions": -5.0e9}, -5.0e9))
+                           _Agg({}, -5.0e9, employer_contribution_delta=-5.0e9))
     assert uniform.assumptions.instruments == ["cotisations_employeurs"]
     assert targeted.assumptions.instruments == ["cotisations_employeurs_ciblees"]
     assert targeted.jobs["3"].p50 > uniform.jobs["3"].p50

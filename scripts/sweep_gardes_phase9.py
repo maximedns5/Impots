@@ -450,8 +450,8 @@ MANUAL: tuple[Mutation, ...] = (
              ("tests/test_indices.py", "tests/test_predictif_entreprises.py"),
              "chaque indice des entreprises dit sa propre raison"),
     Mutation("P11-cdhr-recette", "src/impots/guards.py",
-             '    "cdhr",\n)',
-             ')',
+             '    "cdhr",\n',
+             '',
              ("tests/test_cdhr.py",),
              "la CDHR est une recette du grand livre : sans elle, une baisse du PFU est "
              "refusée"),
