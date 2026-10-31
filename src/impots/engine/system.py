@@ -50,10 +50,14 @@ def baseline() -> FranceTaxBenefitSystem:
     """
     global _TBS
     if _TBS is None:
+        from impots.engine import parametres
         from impots.engine.corrections import apply_to as apply_benefit_corrections
         from impots.patrimoine.corrections import apply_to
 
         _TBS = apply_benefit_corrections(apply_to(FranceTaxBenefitSystem()))
+        # Its own cache of the parameters at each instant: openfisca's holds 128, shared by
+        # every system, and a full-tier household reads more than that (D-311).
+        parametres.memoriser(_TBS)
     return _TBS
 
 
@@ -86,6 +90,7 @@ def reformed(key: str) -> Any:
     acyclic — `reforms` needs the pydantic wire models, which live in the API layer.
     """
     from impots.api.schemas import ReformSpec
+    from impots.engine import parametres
     from impots.engine.reforms import (
         make_reform,
         verify_allegements,
@@ -98,6 +103,10 @@ def reformed(key: str) -> Any:
     spec = ReformSpec.model_validate(decoded["spec"])
     reform_class = make_reform(spec, decoded["year"], key)
     system = reform_class(baseline())
+    # Its parameters at each instant are the baseline's, with only the branches the reform
+    # changes rebuilt, checked against the whole tree twice in the reform's year (D-311).
+    year = decoded["year"]
+    parametres.greffer_sur(system, baseline(), (f"{year}-01-01", f"{year}-12-01"))
     # Read the reformed scale back before anyone computes with it: a barème that
     # silently differs from the one requested is the most dangerous failure mode
     # this wrapper has.
