@@ -22,7 +22,23 @@ tolerance:
 note: ''
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: -267000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 2, § 4.2.1.4, p. 30,
+    tableau « Économie par dépense fiscale (DFi) » : « DFi n° 120204 Exonération des
+    indemnités journalières de sécurité sociale servies au titre des maladies « longues
+    et coûteuses » (salariés) » : 267 (M€, économie en année pleine)'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01)
+  perimeter: 'La part ALD du volet 4.2.1.4 (IR), celle des salariés : l''exonération
+    des IJ servies au titre d''une ALD ramenée de 100 % à 50 % (CGI art. 80 quinquies)
+    ; État. Les 22 M€ des indépendants (DFi 190212), que la population ne porte pas,
+    n''y sont pas.'
+  net_of: Année pleine, sans le décalage du PAS de 2027 et 2028 ; aucun effet comportemental.
+    Le scénario chiffre l'assiette du régime général de 2024, la part ALD à 33 % des
+    IJ maladie (D-312).
+  sign: yield
+  basis: annee-pleine
+  retrieved: '2026-10-14'
 revision:
   de: null
   apres_annexe: true
