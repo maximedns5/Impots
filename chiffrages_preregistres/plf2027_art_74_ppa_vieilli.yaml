@@ -1,0 +1,56 @@
+case: plf2027_art_74_ppa_vieilli
+pre_registered: '2026-11-01T11:15:09+00:00'
+commit: fe7b9c125fc50f72cd4b16c334ce02031b58dc5b
+scenario: plf2027_art_74_ppa
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 818875709.1940918
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 30000000.0
+  rationale: 'Celle du cas aveugle plf2027_art_74_ppa, inchangée (D-292). Prime d''activité,
+    revalorisation du 1er avril 2027 suspendue, chiffrée en miroir (D-298). ±30 %
+    : le recours, que le moteur suppose total (+6,5 % d''allocataires, +23,9 % de
+    dépense) ; le trimestre de référence, qui ne compte que 7 mois-équivalents sur
+    les 9 de la loi (mesuré, −22 %) ; droits ou versements, 9 ou 8 mois ; le coefficient
+    que suppose la fiche, 0,2 point valant 10 %. Les deux premiers se compensent en
+    partie ; ±30 % couvre deux d''entre eux du même côté. Plancher de 30 M€ : la dispersion
+    d''un échantillon de quelques milliers de foyers allocataires.'
+note: 'Révision de plf2027_art_74_ppa sur la population vieillie (D-317). Comparateur
+  : le volet prime d''activité de l''art. 74, l''effet de 2027, signé en gain. Le
+  cas chiffre la revalorisation suspendue (2,1 %), un coût : mirror.'
+bound: two-sided
+mirror: true
+comparator: null
+revision:
+  de: null
+  apres_annexe: true
+  raison: 'but 10 : le cas aveugle rechiffré sur la population vieillie jusqu''à son
+    année, aux hypothèses du PLF 2027 et de son PLFSS (D-317)'
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price

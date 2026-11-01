@@ -1,0 +1,31 @@
+{
+  "commit": "fe7b9c125fc50f72cd4b16c334ce02031b58dc5b",
+  "dirty": false,
+  "cas": {
+    "plf2027_art_2": {
+      "enregistre_eur": 2926586879.963867,
+      "fige_aujourd_hui_eur": 2827976287.2680664,
+      "commit_enregistrement": "b24de2111321f0da8de3b3409f2107c2ffe891a3"
+    },
+    "plf2027_art_3": {
+      "enregistre_eur": -1294878105.204834,
+      "fige_aujourd_hui_eur": -1119484580.8007812,
+      "commit_enregistrement": "be5b5f60245e30d35496fc3f56738f34b3ce1a69"
+    },
+    "plf2027_art_74_ppa": {
+      "enregistre_eur": 886654814.9313965,
+      "fige_aujourd_hui_eur": 886654814.9313965,
+      "commit_enregistrement": "c05f1eec58bf17b09bb03fe59dd83f1503126c04"
+    },
+    "plf2027_art_74_apl": {
+      "enregistre_eur": 78244409.58105469,
+      "fige_aujourd_hui_eur": 78244409.58105469,
+      "commit_enregistrement": "c318cef8993ca43e2840bb9dd9e1187b85d9f233"
+    },
+    "plf2027_art_15": {
+      "enregistre_eur": -7054329155.676697,
+      "fige_aujourd_hui_eur": -7054329155.676697,
+      "commit_enregistrement": "e449490d08b285bebbf5f0ae5b234fde066cf1a1"
+    }
+  }
+}
