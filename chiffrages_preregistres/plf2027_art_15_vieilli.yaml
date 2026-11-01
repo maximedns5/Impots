@@ -41,7 +41,21 @@ note: 'Révision de plf2027_art_15 sur la population vieillie (D-317). Comparate
   2023, pas les cellules de test.'
 bound: two-sided
 mirror: false
-comparator: null
+comparator:
+  published_eur: -5500000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 15, § 4.2.1, p. 160 : « 5 Md€
+    au titre des acomptes attendus en 2027. Un rendement de 500 M€ est attendu en 2028 au
+    titre du paiement de la contribution par les entreprises dont la clôture de l''exercice
+    comptable est décalée »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; liasses fiscales 2024 et 2025
+    (§ 4.3)
+  perimeter: 'Le volet CEBGE (I) seul, troisième exercice, toutes les entreprises redevables
+    : 5 Md€ d''acomptes en 2027 et 0,5 Md€ en 2028 pour les clôtures décalées. Hors II, la
+    contribution des transporteurs maritimes (0,3 Md€).'
+  net_of: Le rendement de l'exercice entier, payé sur 2027 et 2028 ; aucun effet comportemental.
+  sign: yield
+  basis: annee-pleine
+  retrieved: '2026-10-14'
 revision:
   de: null
   apres_annexe: true
