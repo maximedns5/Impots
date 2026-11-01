@@ -1,0 +1,816 @@
+{
+  "candidat": "Bruno Retailleau",
+  "slug": "retailleau",
+  "parti": "Les Républicains",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Pas de citation directe. L'inventaire relève : déclaré le 12 févr. 2026 (entretien au Figaro), puis investi par les adhérents LR (73,8 %) le 19 avr. 2026.",
+    "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-bruno-retailleau-designe-candidat-par-les-adherents-lr",
+    "date": "2026-04-19",
+    "type": "presse"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "r1_plan_economies_197_md",
+      "categorie": "depense_publique",
+      "libelle": "Plan d'économies sur cinq ans (État, social, collectivités)",
+      "parametre": "197 Md€ jusqu'en 2032 (96 / 91 / 10)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Sa trajectoire prévoit un effort « inédit » de 197 milliards d'euros sur cinq ans » (texte de l'article)",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario de la chaîne de la dette."
+      }
+    },
+    {
+      "id": "r2_trajectoire_deficit",
+      "categorie": "regle_budgetaire",
+      "libelle": "Trajectoire : excédent primaire en 2030, déficit sous 3 % en 2031, 2,2 % en 2032, sans impôt nouveau",
+      "parametre": "3 % en 2031 ; 2,2 % en 2032",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Il n'y aura pas d'impôt nouveau »",
+          "url": "https://lcp.fr/actualites/face-a-une-france-quasiment-en-faillite-bruno-retailleau-presente-un-plan-d-economies-de",
+          "date": "2026-10-12",
+          "type": "discours"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une trajectoire de déficit est une hypothèse de la chaîne de la dette, pas une réforme : aucun bouton ne la règle."
+      }
+    },
+    {
+      "id": "r3_regle_or_constitution",
+      "categorie": "regle_budgetaire",
+      "libelle": "Règle d'or dans la Constitution : soumettre au référendum le projet de loi « relatif à l'équilibre des finances publiques » de juillet 2011",
+      "parametre": "lois-cadres de trajectoire ; plafonds annuels de dépenses",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Bruno Retailleau s'engage à soumettre par référendum le projet de loi « relatif à l'équilibre des finances publiques » adopté par les deux chambres du Parlement en juillet 2011 » (texte de l'article)",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Des lois-cadres et des plafonds sans montant."
+      }
+    },
+    {
+      "id": "r4_non_remplacement_400000",
+      "categorie": "depense_publique",
+      "libelle": "Non-remplacement d'agents publics partant à la retraite, d'ici 2032",
+      "parametre": "400 000 agents (200 000 à 250 000 évoqués en début d'année)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Le candidat s'engage sur le non-remplacement à la retraite de 400 000 agents publics » (texte de l'article)",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement un scénario de dépense de la chaîne."
+      },
+      "declare": {
+        "montant_eur": 25000000000.0,
+        "sens": "economie_depense",
+        "horizon": "sur cinq ans, jusqu'en 2032 (plan du 12/10/2026)",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : 25 Md€ pour le non-remplacement de 400 000 agents (plan du 12/10/2026).",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "r5_base_zero_operateurs",
+      "categorie": "depense_publique",
+      "libelle": "Budgets « base zéro » ; suppression ou rapatriement d'opérateurs de l'État",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« La suppression sera la règle, la prolongation d'activité sera l'exception »",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni opérateur désigné ni dépense chiffrée une à une."
+      },
+      "declare": {
+        "montant_eur": 24000000000.0,
+        "sens": "economie_depense",
+        "horizon": "sur cinq ans, jusqu'en 2032 (plan du 12/10/2026) ; 11,5 Md€ (base zéro) et 5 + 7,5 Md€ (opérateurs), additionnés",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : 11,5 Md€ (base zéro) ; 5 Md€ + 7,5 Md€ (opérateurs).",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "r6_politiques_au_tamis",
+      "categorie": "depense_publique",
+      "libelle": "Fin de MaPrimeRénov', du SNU et du soutien aux nouvelles installations photovoltaïques et éoliennes ; baisse de l'aide au développement ; recentrage culture, audiovisuel public et contrats aidés",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Je passerai plusieurs politiques publiques au tamis »",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Des politiques désignées sans montant chacune."
+      },
+      "declare": {
+        "montant_eur": 23000000000.0,
+        "sens": "economie_depense",
+        "horizon": "sur cinq ans, jusqu'en 2032 (plan du 12/10/2026) ; montant agrégé",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : 23 Md€ (agrégé).",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "r7_cinq_ans_prestations",
+      "categorie": "prestations",
+      "libelle": "Cinq ans de séjour et de travail avant toute prestation non contributive (révision constitutionnelle par référendum)",
+      "parametre": "5 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« impossible d'imposer cinq années de séjour et de travail pour bénéficier des prestations non contributives » (texte de l'article)",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La durée de séjour et de travail en France n'est pas dans la population : le moteur ne sait pas qui perdrait ses prestations."
+      }
+    },
+    {
+      "id": "r8_jour_carence",
+      "categorie": "depense_publique",
+      "libelle": "Arrêts maladie : réexamens périodiques et jour de carence « d'ordre public », non remboursable, dans le privé",
+      "parametre": "1 jour non rachetable",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "un jour de carence « d'ordre public » dans le privé, « que personne ne pourra racheter »",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le moteur porte l'impôt des indemnités journalières, pas les arrêts ni leur carence : c'est une dépense qu'il ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 4000000000.0,
+        "sens": "economie_depense",
+        "horizon": "sur cinq ans, jusqu'en 2032 (plan du 12/10/2026)",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : 4 Md€ pour les arrêts maladie (plan du 12/10/2026).",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "r9_effort_collectivites",
+      "categorie": "depense_publique",
+      "libelle": "Effort demandé aux collectivités de plus de 10 M€ de budget, sur leur fonctionnement",
+      "parametre": "10 Md€ ; 2 232 collectivités",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Il attend aussi des collectivités un effort de dix milliards d'euros » (texte de l'article)",
+          "url": "https://lcp.fr/actualites/face-a-une-france-quasiment-en-faillite-bruno-retailleau-presente-un-plan-d-economies-de",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La dépense des collectivités n'est pas microsimulée : seulement un scénario de dépense de la chaîne."
+      },
+      "declare": {
+        "montant_eur": 10000000000.0,
+        "sens": "economie_depense",
+        "horizon": "sur cinq ans, jusqu'en 2032 (plan du 12/10/2026)",
+        "source": {
+          "citation": "« Il attend aussi des collectivités un effort de dix milliards d'euros » (texte de l'article)",
+          "url": "https://lcp.fr/actualites/face-a-une-france-quasiment-en-faillite-bruno-retailleau-presente-un-plan-d-economies-de",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "r10_age_minimal_63_ans",
+      "categorie": "retraites",
+      "libelle": "Âge minimal de départ à 63 ans avec décote",
+      "parametre": "63 ans ; décote de 7 %/an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« L'âge minimal de départ, c'est 63 ans » ; départ à 63 ans avec « une décote de 7 % par an »",
+          "url": "https://lcp.fr/actualites/retraites-bruno-retailleau-veut-un-age-minimal-de-depart-a-63-ans-et-un-taux-plein-a-65",
+          "date": "2026-09-23",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge de départ et la décote ne se règlent pas : la population ne vieillit pas et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "r11_taux_plein_65_ans",
+      "categorie": "retraites",
+      "libelle": "Taux plein automatique à 65 ans au lieu de 67, même sans tous les trimestres ; âge indexé sur l'espérance de vie",
+      "parametre": "65 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« même si vous n'avez pas toutes vos annuités, tous vos trimestres »",
+          "url": "https://lcp.fr/actualites/retraites-bruno-retailleau-veut-un-age-minimal-de-depart-a-63-ans-et-un-taux-plein-a-65",
+          "date": "2026-09-23",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge du taux plein ne se règle pas : la population ne vieillit pas et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "r12_capitalisation_jeunes",
+      "categorie": "retraites",
+      "libelle": "Capitalisation « pour les jeunes » entrants",
+      "parametre": "25 à 30 % de leurs retraites ; rendement ≥ 4 % ; piste : cotisation de 1 % du brut",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« représente à peu près un quart, soit 25 à 30% des retraites des jeunes qui rentrent sur le marché du travail »",
+          "url": "https://lcp.fr/actualites/retraites-bruno-retailleau-veut-un-age-minimal-de-depart-a-63-ans-et-un-taux-plein-a-65",
+          "date": "2026-09-23",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Un régime par capitalisation pour les entrants : la population n'en porte aucun, et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "r13_zero_cotisation_1623_h",
+      "categorie": "csg_cotisations",
+      "libelle": "Seuil « zéro cotisation » : aucune cotisation sociale (salariale ou patronale) au-delà de 1 623 h par an ; CSG et CRDS maintenues ; exonération d'IR des heures supplémentaires maintenue",
+      "parametre": "seuil de 1 623 h/an (contre 1 607 h) ; « Au-delà de ce seuil de 1607 heures » selon Public Sénat (07/01/2026)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous proposons de libérer le temps de travail en supprimant toutes les cotisations sociales au‑delà de 1 623 heures par an »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf",
+          "date": "2026-01-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les heures travaillées dans l'année ne sont pas dans la population : le moteur ne sait pas quelle part du salaire passe 1 623 heures."
+      }
+    },
+    {
+      "id": "r14_annualisation_35_heures",
+      "categorie": "autre",
+      "libelle": "Sortie des 35 heures par annualisation",
+      "parametre": "1 607 → 1 623 h/an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« c'est 4 min de plus par jour »",
+          "url": "https://www.publicsenat.fr/actualites/politique/la-fete-est-finie-bruno-retailleau-veut-supprimer-les-35-heures-inciter-a-la-reprise-dactivite-et-plafonner-les-aides-sociales-pour-relancer-lemploi",
+          "date": "2026-01-07",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La durée du travail n'est pas dans la population : ni les heures ni leur annualisation ne s'y lisent."
+      }
+    },
+    {
+      "id": "r15_revenu_incitation_activite",
+      "categorie": "prestations",
+      "libelle": "Revenu d'incitation à l'activité (RIA), qui fusionne RSA, prime d'activité et ASS ; activité de 15 h/semaine",
+      "parametre": "« RIA Socle » de 300 €/mois + « RIA Insertion » de 250 €/mois ; 30 % du salaire déduit ; extinction au-delà de 1 833 €/mois de revenus d'activité",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un « RIA Socle » de 300 euros par mois »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf",
+          "date": "2026-01-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Une prestation qui fusionne RSA, prime d'activité et ASS sous condition d'activité est neuve : le moteur n'a ni l'ASS ni la condition de 15 heures."
+      }
+    },
+    {
+      "id": "r16_compte_social_unique",
+      "categorie": "prestations",
+      "libelle": "Compte social unique : plafond du cumul des aides non contributives (RSA, aides au logement, aides locales), hors dépendance et handicap",
+      "parametre": "70 % du SMIC net par adulte",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« afin que leur cumul ne dépasse jamais 70 % du SMIC net par adulte »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf",
+          "date": "2026-01-09",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Un plafond du cumul des aides par adulte est une règle neuve, et les aides locales qu'il compte ne sont pas dans le moteur."
+      }
+    },
+    {
+      "id": "r17_assurance_chomage",
+      "categorie": "prestations",
+      "libelle": "Assurance chômage : arrêt de l'allocation au 3e refus d'offre ; ruptures conventionnelles indemnisées 6 mois au plus et plafonnées ; frontaliers alignés sur les salaires français ; dégressivité pour l'alternance emploi-chômage ; alignement sur « les standards européens »",
+      "parametre": "6 mois max (ruptures conventionnelles)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Limiter à six mois et plafonner l'indemnisation des ruptures conventionnelles »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf",
+          "date": "2026-01-09",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "L'assurance chômage n'est pas dans le moteur : ni ses règles d'indemnisation ni ses allocataires."
+      },
+      "declare": {
+        "montant_eur": 13000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : ≈ 13 Md€/an (brochure Le travail gagnant).",
+          "url": "https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf",
+          "date": "2026-01-09",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "r18_seniors_cumul_emploi_retraite",
+      "categorie": "csg_cotisations",
+      "libelle": "Seniors : seuil « zéro cotisation senior anticipé » (pas de cotisations retraite ni chômage avant l'âge légal si tous les trimestres sont acquis) ; cumul emploi-retraite sans cotisations hors CSG-CRDS, pension minorée de 30 % du revenu d'activité",
+      "parametre": "pension − 30 % du revenu d'activité",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« celle‑ci étant minorée de 30 % du revenu d'activité »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf",
+          "date": "2026-01-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Le cumul emploi-retraite et les trimestres acquis relèvent des droits à la retraite : les âges ne bougent pas et les pensions sont des données."
+      }
+    },
+    {
+      "id": "r19_gains_rendus_moitie",
+      "categorie": "csg_cotisations",
+      "libelle": "Gains rendus pour moitié aux salariés, pour moitié aux entreprises",
+      "parametre": "≥ 30 Md€ ; ≈ 500 € par an au salaire médian (TG), « 500 euros par mois » selon Public Sénat : les deux se contredisent",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« les 30 milliards d'euros seront redonnés pour moitié aux salariés, sous forme de pouvoir d'achat supplémentaire (environ 500 euros par an au niveau du salaire médian) »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf",
+          "date": "2026-01-09",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "bouton_ce_but",
+        "raison": "Cotisations salariales en baisse : 15 Md€ rendus aux salariés, environ 500 € par an au salaire médian, l'autre moitié allant aux entreprises sans taux énoncé."
+      }
+    },
+    {
+      "id": "r20_choc_fiscal_40_md",
+      "categorie": "entreprises",
+      "libelle": "« Choc fiscal » : > 25 Md€ sur le coût du travail (zéro cotisation et baisse des cotisations patronales non contributives) + ≈ 15 Md€ sur la fiscalité de production",
+      "parametre": "40 Md€ dès le début du quinquennat ; stabilité garantie au moins 5 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Dès l'entame du quinquennat, nous réduirons de 40 milliards d'euros notre handicap fiscal »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/02/LR_Produire_Plus_LIVRET.pdf",
+          "date": "2026-02-18",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Une enveloppe de 40 Md€ sans taux : sa part travail passe par le « zéro cotisation » au-delà d'un seuil d'heures, absent de la population, et sa part production ne nomme pas ses impôts."
+      }
+    },
+    {
+      "id": "r21_c3s_cvae_forfait_social_cfe",
+      "categorie": "entreprises",
+      "libelle": "Suppression de la C3S et de la CVAE ; forfait social maintenu à 20 % sur la participation légale, supprimé sur l'intéressement, la participation supra-légale et l'épargne retraite individuelle ; part industrielle de la CFE exonérée ; CIR sanctuarisé",
+      "parametre": "C3S = 0 ; CVAE = 0 ; forfait social 20 % / 0 % ; CFE industrielle = 0",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Contribution sociale de solidarité des sociétés (C3S, 5,3 milliards d'euros) : suppression intégrale »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/02/LR_Produire_Plus_LIVRET.pdf",
+          "date": "2026-02-18",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "entreprises",
+        "reforme": {
+          "c3s_taux": 0.0,
+          "cvae_echelle": 0.0
+        },
+        "plages": [
+          {
+            "champ": "c3s_taux",
+            "min": 0.0,
+            "max": 0.0016
+          },
+          {
+            "champ": "cvae_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "La C3S (0,16 % en 2026) et la CVAE sont supprimées sur le droit de 2026, comme dans la mesure L4 de Lisnard, avec les mêmes plages. Le forfait social « maintenu » à 20 % est le droit de 2026 : il ne change rien. La CFE n'a pas de bouton et n'est pas dans la mesure énoncée."
+      }
+    },
+    {
+      "id": "r22_impots_production_30_md",
+      "categorie": "entreprises",
+      "libelle": "Baisse de la fiscalité des entreprises dans le plan du 12/10 (suppression d'impôts de production)",
+      "parametre": "30 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Les entreprises bénéficieraient, elles, des 30 milliards restants, grâce notamment à la suppression d'impôts de production » (texte de l'article)",
+          "url": "https://lcp.fr/actualites/face-a-une-france-quasiment-en-faillite-bruno-retailleau-presente-un-plan-d-economies-de",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "bases_locales",
+        "raison": "Une enveloppe de 30 Md€ sans impôt nommé ni taux : au-delà de la C3S et de la CVAE, les impôts de production sont locaux (CFE, foncier), que le moteur ne porte pas."
+      },
+      "declare": {
+        "montant_eur": 30000000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "sur cinq ans, jusqu'en 2032 (plan du 12/10/2026)",
+        "source": {
+          "citation": "« Les entreprises bénéficieraient, elles, des 30 milliards restants, grâce notamment à la suppression d'impôts de production » (texte de l'article)",
+          "url": "https://lcp.fr/actualites/face-a-une-france-quasiment-en-faillite-bruno-retailleau-presente-un-plan-d-economies-de",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "r23_prelevements_menages_21_md",
+      "categorie": "csg_cotisations",
+      "libelle": "Baisse des prélèvements des ménages (cotisations sur les heures supplémentaires, facture d'électricité)",
+      "parametre": "21 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 21 milliards iraient aux ménages, via notamment la diminution de cotisations fiscales ou la facture d'électricité » (texte de l'article)",
+          "url": "https://lcp.fr/actualites/face-a-une-france-quasiment-en-faillite-bruno-retailleau-presente-un-plan-d-economies-de",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Une enveloppe de 21 Md€ sans taux, qui passe par les heures supplémentaires, absentes de la population, et par la facture d'électricité, que le moteur ne porte pas."
+      },
+      "declare": {
+        "montant_eur": 21000000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "sur cinq ans, jusqu'en 2032 (plan du 12/10/2026)",
+        "source": {
+          "citation": "« 21 milliards iraient aux ménages, via notamment la diminution de cotisations fiscales ou la facture d'électricité » (texte de l'article)",
+          "url": "https://lcp.fr/actualites/face-a-une-france-quasiment-en-faillite-bruno-retailleau-presente-un-plan-d-economies-de",
+          "date": "2026-10-12",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "r24_transmission_capital_productif",
+      "categorie": "patrimoine_capital",
+      "libelle": "Transmission du capital productif : droits de mutation calculés à la transmission mais exigibles seulement à la cession",
+      "parametre": "0 € tant qu'il n'y a pas de cession",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« tant qu'il n'y a pas de cession, il n'y a pas d'imposition »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/02/LR_Produire_Plus_LIVRET.pdf",
+          "date": "2026-02-18",
+          "type": "programme"
+        },
+        {
+          "citation": "« tant que les enfants ne vendront pas, ils ne paieront pas d'impôt de succession » (L'Opinion)",
+          "url": "https://republicains.fr/actualites/2026/08/26/je-serai-le-president-qui-baissera-les-impots-de-succession/",
+          "date": "2026-08-26",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Les droits de succession et leur report à la cession demandent un module de transmission."
+      }
+    },
+    {
+      "id": "r25_choc_transmission",
+      "categorie": "patrimoine_capital",
+      "libelle": "« Choc de transmission » pendant 3 ans : dons familiaux exonérés, aussi pour l'immobilier",
+      "parametre": "150 000 € par parent (bénéficiaire < 30 ans) ; 100 000 € (< 40 ans), contre 31 865 €",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« pendant trois ans, les parents pourront donner chacun à leurs enfants de moins de 30 ans jusqu'à 150 000 euros, sans un seul euro d'impôt à payer »",
+          "url": "https://republicains.fr/actualites/2026/08/26/je-serai-le-president-qui-baissera-les-impots-de-succession/",
+          "date": "2026-08-26",
+          "type": "entretien"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf",
+          "date": "2026-04-28",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Les abattements sur les donations demandent un module de transmission."
+      }
+    },
+    {
+      "id": "r26_baisse_droits_succession",
+      "categorie": "patrimoine_capital",
+      "libelle": "Baisse des droits de succession au cours du quinquennat",
+      "parametre": "« au maximum du possible »",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Je ne serai pas le président qui augmentera les droits de succession mais celui qui les baissera »",
+          "url": "https://republicains.fr/actualites/2026/08/26/je-serai-le-president-qui-baissera-les-impots-de-succession/",
+          "date": "2026-08-26",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni barème ni abattement énoncés."
+      }
+    },
+    {
+      "id": "r27_revenu_familial",
+      "categorie": "prestations",
+      "libelle": "Revenu familial remplaçant 12 dispositifs, dont le quotient familial ; conditionné à 5 ans de résidence régulière et d'activité",
+      "parametre": "240 €/mois par enfant de 0 à 18 ans, dès le 1er ; 480 € pour le 3e",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un Revenu familial (RF) de 240 euros versé chaque mois à tous, dès le premier enfant, de la naissance jusqu'à 18 ans »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf",
+          "date": "2026-04-28",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Un revenu familial qui remplace douze dispositifs, dont le quotient familial, est une prestation neuve : le moteur n'a ni allocation dès le premier enfant ni condition de résidence."
+      },
+      "declare": {
+        "montant_eur": 700000000.0,
+        "sens": "economie_depense",
+        "horizon": "non énoncé ; coût de 40,3 Md€ contre 41 Md€ pour les dispositifs remplacés, l'écart retenu",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : coût de 40,3 Md€, contre 41 Md€ pour les dispositifs remplacés (document).",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf",
+          "date": "2026-04-28",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "r28_reduction_ir_interets_emprunt",
+      "categorie": "ir",
+      "libelle": "Réduction d'IR sur les intérêts d'emprunt de la résidence principale",
+      "parametre": "50 % (1 enfant), 75 % (2), 100 % (3 et plus) ; plafond de 400 € + 400 € par enfant",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 50 % des intérêts annuels lorsque le foyer fiscal compte un enfant mineur, 75 % s'il en compte deux, et 100 % s'il en compte trois ou plus »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf",
+          "date": "2026-04-28",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Logement.pdf",
+          "date": "2026-05-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les intérêts d'emprunt de la résidence principale ne sont pas dans la population, et aucun bouton ne crée la réduction."
+      }
+    },
+    {
+      "id": "r29_conge_naissance",
+      "categorie": "prestations",
+      "libelle": "Congé de naissance étendu jusqu'aux 6 mois de l'enfant, facultatif, ouvert à l'un ou l'autre parent",
+      "parametre": "indemnisé à 70 % de la rémunération, sous le plafond de la Sécurité sociale",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Le parent qui y recourt serait indemnisé à 70 % de sa rémunération antérieure, dans la limite du plafond de la Sécurité sociale »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf",
+          "date": "2026-04-28",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Un congé de naissance indemnisé à 70 % est une prestation neuve, et la population ne dit pas qui le prendrait."
+      },
+      "declare": {
+        "montant_eur": 700000000.0,
+        "sens": "depense",
+        "horizon": "non énoncé",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : ≈ 700 M€ (document).",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf",
+          "date": "2026-04-28",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "r30_garde_enfants",
+      "categorie": "csg_cotisations",
+      "libelle": "Garde d'enfants : suppression du plafond de 500 000 € du crédit d'impôt famille ; plafond d'exonération de la participation employeur aux frais de garde relevé",
+      "parametre": "2 421 € → 7 000 €/an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Relever de 2 421 euros à 7 000 euros par an le plafond d'exonération de cotisations sociales et d'impôt sur le revenu »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf",
+          "date": "2026-04-28",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La participation de l'employeur aux frais de garde n'est pas dans la population, et le crédit d'impôt famille des entreprises n'a pas de bouton."
+      },
+      "declare": {
+        "montant_eur": 800000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "non énoncé ; pour les deux mesures",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : 800 M€ pour les deux mesures (document).",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Famille_vFinale.pdf",
+          "date": "2026-04-28",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "r31_amortissement_bailleur",
+      "categorie": "patrimoine_capital",
+      "libelle": "Statut du bailleur privé : amortissement universel",
+      "parametre": "4 %/an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« L'amortissement universel à 4% par an »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Logement.pdf",
+          "date": "2026-05-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les logements loués et leur valeur ne sont pas dans la population : rien à amortir."
+      }
+    },
+    {
+      "id": "r32_tva_communes_logement_neuf",
+      "categorie": "tva_consommation",
+      "libelle": "Reversement aux communes d'une part de TVA par logement neuf",
+      "parametre": "9 000 € par logement",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 9 000 euros de TVA reversés à la commune pour chaque logement neuf »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Logement.pdf",
+          "date": "2026-05-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "bases_locales",
+        "raison": "Un reversement aux communes par logement neuf demande les finances locales et la construction, que le moteur ne porte pas."
+      }
+    },
+    {
+      "id": "r33_photovoltaique_tva",
+      "categorie": "energie_carburants",
+      "libelle": "Abrogation du volet électricité de la PPE 3 ; plus d'appels d'offres photovoltaïques ni éoliens en mer ; nouveau photovoltaïque privé de ses avantages fiscaux",
+      "parametre": "TVA ramenée au taux normal de 20 % (nouveau PV)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« retour au taux normal de TVA à 20 %, suppression des exonérations de taxes pour l'autoconsommation avec revente de surplus »",
+          "url": "https://republicains.fr/wp-content/uploads/2026/05/LR_Electricite_vFF070626.pdf",
+          "date": "2026-06-07",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "La TVA par taux et les installations photovoltaïques ne sont pas dans le moteur."
+      }
+    }
+  ]
+}

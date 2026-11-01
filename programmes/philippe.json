@@ -1,0 +1,392 @@
+{
+  "candidat": "Édouard Philippe",
+  "slug": "philippe",
+  "parti": "Horizons",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Pas de citation directe. L'inventaire relève : déclaré le 3 sept. 2024, dans un entretien au Point ; il refuse une primaire.",
+    "url": "https://www.thelocal.fr/20240904/ex-french-pm-edouard-philippe-launches-2027-presidential-bid-amid-political-turmoil",
+    "date": "2024-09-04",
+    "type": "entretien"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "p1_deficit_2_pct_2032",
+      "categorie": "regle_budgetaire",
+      "libelle": "Déficit public à 2 % du PIB en 2032",
+      "parametre": "2 % du PIB en fin de quinquennat (2032), contre 5 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« retour du déficit public à 2% à l'issue du prochain quinquennat en 2032, contre 5% actuellement » (texte de l'article)",
+          "url": "https://www.lagazettefrance.fr/article/edouard-philippe-refute-promettre-aux-francais-du-sang-et-des-larmes",
+          "date": "2026-06-30",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une trajectoire de déficit est une hypothèse de la chaîne de la dette, pas une réforme : aucun bouton ne la règle."
+      }
+    },
+    {
+      "id": "p2_regle_or_securite_sociale",
+      "categorie": "regle_budgetaire",
+      "libelle": "Règle d'or étendue à la Sécurité sociale, adoptée par référendum en début de quinquennat",
+      "parametre": "non chiffrée",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« une règle d'or budgétaire qui s'applique aussi au budget de la Sécurité sociale » (texte de l'article)",
+          "url": "https://www.lagazettefrance.fr/article/edouard-philippe-refute-promettre-aux-francais-du-sang-et-des-larmes",
+          "date": "2026-06-30",
+          "type": "entretien"
+        },
+        {
+          "citation": "Pour le référendum en début de quinquennat ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.moneyvox.fr/impot/actualites/109548/attal-veut-100-000-departs-volontaires-de-fonctionnaires-et-impunite-budgetaire-zero",
+          "date": "2026-07-03",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni plafond de dépense ni solde chiffré : une règle d'or sans paramètre."
+      }
+    },
+    {
+      "id": "p3_deal_impots_production",
+      "categorie": "entreprises",
+      "libelle": "« Deal » : 50 Md€ par an de baisse des impôts de production (CVAE, C3S et CFE citées), contre 50 Md€ de baisse des aides aux entreprises",
+      "parametre": "50 Md€ par an, soit 250 Md€ sur le quinquennat ; « en un coup » dès le premier PLF (selon un conseiller)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un deal à 50 milliards d'euros de baisse d'impôts d'un côté et de baisse de dépenses de l'autre », soit « 250 milliards pour un quinquennat »",
+          "url": "https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe",
+          "date": "2025-11-06",
+          "type": "reseau_social"
+        }
+      ],
+      "refus": {
+        "porte": "enveloppe",
+        "raison": "Une enveloppe de 50 Md€ par an de baisse des impôts de production, sans dire quels impôts baissent ni de combien chacun."
+      }
+    },
+    {
+      "id": "p4_pacte_stabilite_fiscale",
+      "categorie": "entreprises",
+      "libelle": "Pacte pluriannuel de stabilité fiscale et réglementaire sur 5 ans",
+      "parametre": "5 ans",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« un pilier du pacte pluriannuel de stabilité fiscale et réglementaire »",
+          "url": "https://www.publicsenat.fr/actualites/economie/entreprises-un-deal-a-250-milliards-deuros-sur-un-quinquennat-que-represente-la-proposition-dedouard-philippe",
+          "date": "2025-11-06",
+          "type": "reseau_social"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une durée sans taux ni montant : la stabilité promise ne règle aucun paramètre."
+      }
+    },
+    {
+      "id": "p5_retraite_65_ans_45_annuites",
+      "categorie": "retraites",
+      "libelle": "Âge légal porté à 65 ans et durée de cotisation à 45 annuités, d'abord en reprenant le calendrier 2023 (64 ans, 43 ans)",
+      "parametre": "65 ans et 45 annuités « en moins de 10 ans »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Il est temps de parler des retraites sans faux semblants » ; 65 ans et 45 annuités « en moins de 10 ans »",
+          "url": "https://www.publicsenat.fr/actualites/politique/retraites-edouard-philippe-sort-du-bois-et-propose-un-age-de-depart-a-65-ans",
+          "date": "2026-09-29",
+          "type": "reseau_social"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge légal et la durée de cotisation ne se règlent pas : la population ne vieillit pas et ses pensions sont des données."
+      },
+      "declare": {
+        "montant_eur": 30000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an, une fois 65 ans et 45 annuités atteints (« en moins de 10 ans ») ; dont 10 Md€ pour le système de retraite et 20 Md€ pour les finances publiques",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : ses équipes estiment environ 30 Md€ par an, dont 10 Md€ pour le système de retraite et 20 Md€ pour les finances publiques (JDN).",
+          "url": "https://www.journaldunet.com/business/action-publique/1555605-edouard-philippe-devoile-son-projet-de-reforme-des-retraites-pour-la-presidentielle-2027-prevoyant-un-depart-a-65-ans-et-45-annuites/",
+          "date": "2026-09-30",
+          "type": "presse"
+        }
+      }
+    },
+    {
+      "id": "p6_departs_anticipes",
+      "categorie": "retraites",
+      "libelle": "Départs anticipés entre 60 et 64 ans pour un Français sur trois ; âges handicap, incapacité et invalidité inchangés ; âge d'annulation de la décote (67 ans) inchangé",
+      "parametre": "1 sur 3 entre 60 et 64 ans ; 55, 60, 62 et 67 ans maintenus",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Un Français sur trois » pourra partir avant 65 ans, entre 60 et 64 ans",
+          "url": "https://www.publicsenat.fr/actualites/politique/retraites-edouard-philippe-sort-du-bois-et-propose-un-age-de-depart-a-65-ans",
+          "date": "2026-09-29",
+          "type": "reseau_social"
+        },
+        {
+          "citation": "« je n'y toucherai pas » (sur l'âge d'annulation de la décote ; entretien au Parisien, cité par le JDN)",
+          "url": "https://www.journaldunet.com/business/action-publique/1555605-edouard-philippe-devoile-son-projet-de-reforme-des-retraites-pour-la-presidentielle-2027-prevoyant-un-depart-a-65-ans-et-45-annuites/",
+          "date": "2026-09-30",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Les départs anticipés et l'âge d'annulation de la décote ne se règlent pas : la population ne vieillit pas et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "p7_capitalisation_collective",
+      "categorie": "retraites",
+      "libelle": "Capitalisation collective obligatoire alimentée par les excédents de l'Agirc-Arrco, plan d'épargne retraite généralisé, versement de l'État à la signature du premier contrat de travail",
+      "parametre": "500 € au premier contrat de travail",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« une dose de capitalisation pour tous » (citation rapportée par le JDN, non vérifiée mot à mot : page en 403 en accès direct)",
+          "url": "https://www.journaldunet.com/business/action-publique/1555605-edouard-philippe-devoile-son-projet-de-reforme-des-retraites-pour-la-presidentielle-2027-prevoyant-un-depart-a-65-ans-et-45-annuites/",
+          "date": "2026-09-30",
+          "type": "reseau_social"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Un pilier par capitalisation et un versement de 500 € sur un plan d'épargne retraite : la population ne porte ni régime par capitalisation ni épargne retraite."
+      }
+    },
+    {
+      "id": "p8_part_capitalisation",
+      "categorie": "retraites",
+      "libelle": "Objectif de part de la capitalisation dans les pensions",
+      "parametre": "10 à 15 % des pensions versées dans 15 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Si on arrive à faire en sorte que la retraite par capitalisation représente 10% à 15% des pensions versées dans quinze ans »",
+          "url": "https://www.lagazettefrance.fr/article/edouard-philippe-refute-promettre-aux-francais-du-sang-et-des-larmes",
+          "date": "2026-06-30",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Une part cible des pensions servie par capitalisation : les pensions de la population sont des données, sans régime par capitalisation."
+      }
+    },
+    {
+      "id": "p9_contribution_retraites",
+      "categorie": "retraites",
+      "libelle": "Les retraités contribuent davantage au financement de la protection sociale",
+      "parametre": "non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« J'assume de dire aux retraités qu'il faudra contribuer davantage au financement de notre système social »",
+          "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-pour-son-premier-meeting-edouard-philippe-joue-la-carte-du-bon-pere-de-famille-qui-veut-preparer-lavenir-de-nos-enfants",
+          "date": "2026-07-05",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni taux ni montant : l'instrument de la contribution des retraités n'est pas dit."
+      }
+    },
+    {
+      "id": "p10_exoneration_deux_heures",
+      "categorie": "csg_cotisations",
+      "libelle": "Exonération de cotisations pour les salariés qui travaillent deux heures de plus par semaine",
+      "parametre": "+2 h/semaine exonérées",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« exonérer de cotisations sociales les salariés qui accepteraient de travailler deux heures supplémentaires par semaine » (texte de l'article)",
+          "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
+          "date": "2026-10-09",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les heures travaillées ne sont pas dans la population : le moteur ne sait pas qui ferait deux heures de plus, ni comment les exonérer."
+      }
+    },
+    {
+      "id": "p11_allocation_familiale_unique",
+      "categorie": "prestations",
+      "libelle": "Allocation familiale unique dès le premier enfant, dégressive selon l'IR",
+      "parametre": "350 €/mois",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« une allocation familiale unique de 350 euros par mois dès le premier enfant, dont le montant serait ensuite dégressif en fonction de l'impôt sur le revenu » (texte de l'article)",
+          "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
+          "date": "2026-10-08",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Une allocation unique dès le premier enfant, dégressive selon l'impôt, est une prestation neuve : les allocations familiales du moteur commencent au deuxième enfant et se modulent par plafonds de ressources."
+      }
+    },
+    {
+      "id": "p12_reduction_impot_familles",
+      "categorie": "ir",
+      "libelle": "Réduction d'impôt pour les familles actives avec enfants (selon le JDN : au deuxième, puis au troisième enfant)",
+      "parametre": "≈ 3 000 €",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« une réduction d'impôt d'environ 3 000 euros pour les familles qui travaillent et ont des enfants » (texte de l'article)",
+          "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
+          "date": "2026-10-08",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "bouton_hors_but",
+        "raison": "Une réduction d'impôt neuve pour les familles actives avec enfants, que le moteur n'a pas."
+      }
+    },
+    {
+      "id": "p13_ptz_logement",
+      "categorie": "autre",
+      "libelle": "Prêt à taux zéro pour acheter un logement plus grand à l'arrivée d'un enfant",
+      "parametre": "aucun plafond ni montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« la possibilité de bénéficier d'un prêt à taux zéro pour l'achat d'un logement plus grand à l'arrivée d'un enfant » (texte de l'article)",
+          "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
+          "date": "2026-10-08",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni plafond ni montant de prêt."
+      }
+    },
+    {
+      "id": "p14_chomage_12_mois",
+      "categorie": "prestations",
+      "libelle": "Durée maximale d'indemnisation chômage ramenée de 18 à 12 mois pour les moins de 50 ans",
+      "parametre": "18 → 12 mois (moins de 50 ans)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« ramener la durée maximale d'indemnisation du chômage de 18 à 12 mois, pour les moins de 50 ans » (texte de l'article)",
+          "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
+          "date": "2026-10-08",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "L'assurance chômage n'est pas dans le moteur : ni sa durée d'indemnisation ni ses allocataires."
+      }
+    },
+    {
+      "id": "p15_non_remplacement_un_sur_trois",
+      "categorie": "depense_publique",
+      "libelle": "Non-remplacement d'un départ sur trois dans la fonction publique",
+      "parametre": "1 départ sur 3 non remplacé, pendant le quinquennat",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« en ne remplaçant pas un agent sur trois partant à la retraite » (texte de l'article)",
+          "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
+          "date": "2026-10-08",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement un scénario de dépense de la chaîne."
+      }
+    },
+    {
+      "id": "p16_effort_depenses_sociales",
+      "categorie": "depense_publique",
+      "libelle": "Moitié de l'effort budgétaire portée par les dépenses sociales",
+      "parametre": "50 % de l'effort",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« les dépenses sociales, sur lesquelles il entend concentrer la moitié de l'effort budgétaire » (texte de l'article)",
+          "url": "https://fr.euronews.com/2026/10/09/presidentielle-2027-edouard-philippe-mise-sur-le-travail-et-la-reduction-des-depenses-publ",
+          "date": "2026-10-08",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une part de l'effort sans montant ni prestation désignée : la dépense n'est qu'un scénario de la chaîne."
+      }
+    },
+    {
+      "id": "p17_baisser_depenses",
+      "categorie": "depense_publique",
+      "libelle": "Baisser les dépenses plutôt qu'augmenter les impôts ; baisser les dépenses sociales ; supprimer des niches fiscales ; faire contribuer les plus aisés",
+      "parametre": "non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "il veut « baisser les dépenses plutôt qu'augmenter les impôts et en travaillant plus » ; « supprimer des niches fiscales »",
+          "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-pour-son-premier-meeting-edouard-philippe-joue-la-carte-du-bon-pere-de-famille-qui-veut-preparer-lavenir-de-nos-enfants",
+          "date": "2026-07-05",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucune niche, aucune dépense ni aucun montant désignés."
+      }
+    },
+    {
+      "id": "p18_fonds_adaptation_climat",
+      "categorie": "energie_carburants",
+      "libelle": "Fonds unique d'adaptation au changement climatique, qui fusionne le Fonds Barnier et le Fonds vert",
+      "parametre": "2 Md€/an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Deux milliards, c'est une somme importante. Mais rapportée aux 5 milliards d'euros que coûtent chaque année les catastrophes naturelles, c'est de l'argent bien investi »",
+          "url": "https://www.linfodurable.fr/entre-le-deni-du-rn-et-le-dogme-de-lfi-le-plan-dedouard-philippe-pour-une-politique-de-securite",
+          "date": "2026-09-17",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un fonds public de 2 Md€ par an est une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 2000000000.0,
+        "sens": "depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "« Deux milliards, c'est une somme importante. Mais rapportée aux 5 milliards d'euros que coûtent chaque année les catastrophes naturelles, c'est de l'argent bien investi »",
+          "url": "https://www.linfodurable.fr/entre-le-deni-du-rn-et-le-dogme-de-lfi-le-plan-dedouard-philippe-pour-une-politique-de-securite",
+          "date": "2026-09-17",
+          "type": "discours"
+        }
+      }
+    }
+  ]
+}

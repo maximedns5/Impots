@@ -542,8 +542,8 @@
         }
       ],
       "refus": {
-        "porte": "donnee_menages",
-        "raison": "Supprimer le PFU renvoie les revenus du capital au barème de l'IR, ce qu'aucun bouton ne fait et que l'assiette imputée, de composition nationale par bande, ne porte pas foyer par foyer ; pfu_taux à 0 les exonérerait au lieu de les imposer comme le travail."
+        "porte": "bouton_hors_but",
+        "raison": "Supprimer le PFU renvoie les revenus du capital au barème de l'IR : le moteur n'a pas le bouton qui impose ce choix à tous les foyers."
       },
       "declare": {
         "montant_eur": 9000000000.0,

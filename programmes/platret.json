@@ -1,0 +1,35 @@
+{
+  "candidat": "Gilles Platret",
+  "slug": "platret",
+  "parti": "Divers droite",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Pas de citation directe. L'inventaire relève : déclaré le 8 oct. 2026, en réunion publique à Chalon-sur-Saône.",
+    "url": "https://www.lyoncapitale.fr/?p=521848",
+    "date": "2026-10-09",
+    "type": "discours"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "g1_abrogation_35_heures",
+      "categorie": "autre",
+      "libelle": "Abrogation des 35 heures",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Parmi les propositions avancées figurent l'abrogation des 35 heures » (texte de l'article)",
+          "url": "https://www.lyoncapitale.fr/?p=521848",
+          "date": "2026-10-09",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une abrogation sans durée du travail ni paramètre de remplacement."
+      }
+    }
+  ]
+}

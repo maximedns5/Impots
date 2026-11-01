@@ -33,8 +33,8 @@
         }
       ],
       "refus": {
-        "porte": "transmission",
-        "raison": "Le candidat donne une enveloppe, les 15 Md€ attendus de la taxe sur les méga-héritages, et non le taux de CSG qu'elle paierait : sans ce taux, et sans module des transmissions pour en lire le produit, la baisse ne se traduit pas."
+        "porte": "enveloppe",
+        "raison": "Le candidat donne l'enveloppe de la baisse de CSG (les 15 Md€ attendus de la taxe sur les héritages), pas son taux ni son assiette."
       },
       "declare": {
         "montant_eur": 15000000000.0,

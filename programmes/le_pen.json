@@ -316,8 +316,8 @@
         }
       ],
       "refus": {
-        "porte": "chaine",
-        "raison": "Un montant de baisses d'impôts qui ne dit pas lesquels : sans règle, il n'est qu'une hypothèse de recettes pour la chaîne."
+        "porte": "enveloppe",
+        "raison": "Un montant de baisses d'impôts sur le quinquennat, sans dire lesquelles ni de combien."
       }
     },
     {
@@ -452,8 +452,8 @@
         }
       ],
       "refus": {
-        "porte": "bases_locales",
-        "raison": "Un montant de 20 Md€ qui ne dit pas quels impôts baissent : la CVAE et la C3S du moteur n'y suffisent pas, et la CFE, assise sur des bases locales, lui manque."
+        "porte": "enveloppe",
+        "raison": "Un montant de 20 Md€ sans dire quels impôts de production baissent, ni de combien chacun."
       },
       "declare": {
         "montant_eur": 20000000000.0,
@@ -507,8 +507,8 @@
         }
       ],
       "refus": {
-        "porte": "donnee_menages",
-        "raison": "L'IR se calcule au foyer : exonérer les seuls revenus des moins de 30 ans, jusqu'à 4 SMIC, demande de les isoler dans le foyer, ce que le moteur ne sait pas faire."
+        "porte": "bouton_hors_but",
+        "raison": "Exonérer d'IR les revenus des moins de 30 ans demande une exonération par âge au sein du foyer, que le moteur n'a pas."
       }
     },
     {
@@ -635,8 +635,8 @@
         }
       ],
       "refus": {
-        "porte": "donnee_menages",
-        "raison": "La CVEC, 105 € par étudiant inscrit, n'est pas dans le moteur, et la population ne dit pas qui est inscrit dans le supérieur."
+        "porte": "bouton_hors_but",
+        "raison": "La CVEC, contribution des étudiants, n'est pas un prélèvement que le moteur calcule."
       }
     },
     {

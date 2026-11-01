@@ -55,6 +55,12 @@ PORTES: dict[str, str] = {
                                "chômage, prestation fusionnée ou neuve",
     "chaine": "une hypothèse de la chaîne de la dette, pas une réforme : règle budgétaire, "
               "trajectoire de déficit",
+    "enveloppe": "une règle : le candidat dit combien (un montant global), pas comment (un "
+                 "taux, un seuil, une assiette)",
+    "bouton_hors_but": "un bouton du moteur à écrire, hors des cinq de ce but (l'imposition "
+                       "du capital au barème, une exonération par âge…)",
+    "pensions_declarees": "la part déductible de la CSG des pensions : la population porte "
+                          "des pensions déclarées, déjà nettes de cette part (D-176)",
     # Provisoire : une mesure fiscale qui attend l'un des boutons que le but 11 ajoute. À la
     # fin du but, aucune ne reste derrière cette porte (test_no_measure_waits_on_a_knob).
     "bouton_ce_but": "un bouton que le but 11 ajoute au moteur : 6e tranche de l'IR, "
