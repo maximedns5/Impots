@@ -101,7 +101,7 @@ ignore = ["E501"]  # line length is handled by the formatter, not the linter
 # "age x sex", a real minus in "-0.4 %" and a typographic apostrophe in "branch A'"
 # are the correct characters, not homoglyph mistakes — RUF001/2 flags them because
 # they *can* be used to disguise identifiers, which docstrings and messages cannot.
-allowed-confusables = ["×", "−", "’", "–"]
+allowed-confusables = ["×", "−", "’", "–", "ρ"]  # ρ : la réalisation des annonces (D-319)
 
 [tool.ruff.lint.per-file-ignores]
 # The verify_* scripts are reference gates published alongside the phase specs and
