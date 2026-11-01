@@ -1,0 +1,582 @@
+{
+  "candidat": "David Lisnard",
+  "slug": "lisnard",
+  "parti": "Nouvelle Énergie",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Pas de citation directe. L'inventaire relève : déclaré le 31 mars 2026 sur France 2 ; il quitte LR.",
+    "url": "https://lcp.fr/actualites/je-suis-candidat-david-lisnard-quitte-lr-et-relance-le-debat-sur-une-primaire-a-droite",
+    "date": "2026-03-31",
+    "type": "entretien"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "l1_csg_activite_6_6",
+      "categorie": "csg_cotisations",
+      "libelle": "Baisse de la CSG sur les revenus d'activité",
+      "parametre": "9,2 % → 6,6 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Il propose d'abaisser la contribution sociale généralisée (CSG) sur les revenus d'activité de 9,2 % à 6,6 % » (texte de la page) ; « Cotiser moins pour gagner plus. »",
+          "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
+          "date": "2026-10-27",
+          "type": "entretien"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "csg_activite_deductible": 0.0488,
+          "csg_activite_imposable": 0.0172
+        },
+        "plages": [
+          {
+            "champ": "csg_activite_deductible",
+            "min": 0.0392,
+            "max": 0.068
+          },
+          {
+            "champ": "csg_activite_imposable",
+            "min": 0.0,
+            "max": 0.024
+          }
+        ],
+        "note": "Le candidat ne dit pas comment répartir la baisse de 2,6 points entre la part déductible (6,8 %) et la part imposable (2,4 %). Le choix retenu est la répartition proportionnelle, qui garde à chaque part son poids dans le taux : 4,88 % et 1,72 %, soit 6,6 %. Chaque plage va du droit de 2026 à la valeur retenue prolongée de la moitié de l'écart ; celle de la part imposable descend jusqu'à 0 pour couvrir l'autre répartition extrême (6,6 % et 0 %), et celle de la part déductible contient la baisse portée sur elle seule (4,2 % et 2,4 %). La CSG des revenus de remplacement et du capital n'est pas touchée."
+      }
+    },
+    {
+      "id": "l2_cotisations_salaire_net",
+      "categorie": "csg_cotisations",
+      "libelle": "Baisse des cotisations rendue en salaire net",
+      "parametre": "120 Md€ ; environ 400 €/mois nets par salarié",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« c'est ce qui va permettre de rehausser le salaire net tout en baissant l'extra brut. Parce qu'on va cotiser moins pour gagner plus »",
+          "url": "https://www.unenouvelleenergie.fr/questions/david-lisnard-veut-il-baisser-les-impots/",
+          "date": "2026-06-11",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Environ 400 € nets par mois au salaire médian dépassent les cotisations retraite salariales, qui n'en pèsent que 320 € : la baisse passe aussi par des cotisations patronales rendues en salaire, ce qui déplace la distribution des salaires."
+      },
+      "declare": {
+        "montant_eur": 120000000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "à l'horizon 2032 (sur les 200 Md€ d'économies)",
+        "source": {
+          "citation": "Pas de citation directe. L'inventaire relève : 120 Md€ de baisse des cotisations, environ 400 € nets par mois et par salarié (vidéo du 21/01/2026).",
+          "url": "https://www.unenouvelleenergie.fr/questions/david-lisnard-veut-il-baisser-les-impots/",
+          "date": "2026-01-21",
+          "type": "entretien"
+        }
+      }
+    },
+    {
+      "id": "l3_impots_production_40_md",
+      "categorie": "entreprises",
+      "libelle": "Baisse des impôts de production, à commencer par la C3S",
+      "parametre": "40 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« David Lisnard propose de baisser les impôts de production de 40 milliards d'euros, en commençant par la suppression de la C3S » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/questions/david-lisnard-veut-il-baisser-les-impots/",
+          "date": "2026-01-21",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "bases_locales",
+        "raison": "Une enveloppe de 40 Md€ sans taux : la C3S et la CVAE n'en font qu'une part (L4), le reste passe par des impôts de production locaux que le moteur ne porte pas."
+      },
+      "declare": {
+        "montant_eur": 40000000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "à l'horizon 2032 (sur les 200 Md€ d'économies)",
+        "source": {
+          "citation": "« David Lisnard propose de baisser les impôts de production de 40 milliards d'euros, en commençant par la suppression de la C3S » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/questions/david-lisnard-veut-il-baisser-les-impots/",
+          "date": "2026-01-21",
+          "type": "entretien"
+        }
+      }
+    },
+    {
+      "id": "l4_suppression_c3s_cvae",
+      "categorie": "entreprises",
+      "libelle": "Suppression de la C3S et, « le cas échéant », de la CVAE",
+      "parametre": "impôts de production de 2 % à 1 % du PIB",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« La suppression de la C3S […] et, le cas échéant, de la CVAE […] représenterait 11,5 milliards d'euros »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/",
+          "date": "2026-11-01",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "entreprises",
+        "reforme": {
+          "c3s_taux": 0.0,
+          "cvae_echelle": 0.0
+        },
+        "plages": [
+          {
+            "champ": "c3s_taux",
+            "min": 0.0,
+            "max": 0.0016
+          },
+          {
+            "champ": "cvae_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "La C3S est supprimée (taux de 0,16 % en 2026 ramené à 0) et la CVAE aussi, sur le droit de 2026. Le candidat ne supprime la CVAE que « le cas échéant » : le choix retenu suit son chiffrage de 11,5 Md€, qui compte les deux impôts, et la plage de cvae_echelle couvre son maintien (1). La plage de la C3S va du droit de 2026 à 0, la borne du schéma. L'objectif d'impôts de production ramenés de 2 % à 1 % du PIB va au-delà de ces deux impôts (L3) et n'est pas chiffré ici."
+      }
+    },
+    {
+      "id": "l5_tva_competitivite",
+      "categorie": "tva_consommation",
+      "libelle": "TVA « compétitivité / relocalisation » pour baisser les charges sur les salaires : question non tranchée",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« La question de la TVA « Compétitivité / Relocalisation » afin de baisser les charges sur les salaires reste posée »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/",
+          "date": "2026-11-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une question laissée ouverte : ni taux de TVA ni baisse de charges."
+      }
+    },
+    {
+      "id": "l6_economies_200_md",
+      "categorie": "depense_publique",
+      "libelle": "Économies : 80 Md€ dès la première année, 200 Md€ à l'horizon 2032 ; −7 points de dépense publique dans le PIB",
+      "parametre": "80 Md€ en an 1 ; 200 Md€ en 2032 ; ≈ 50 % du PIB",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 80 milliards d'euros d'économies dès la première année, puis 200 milliards d'euros à l'horizon 2032 » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
+          "date": "2026-10-27",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 200000000000.0,
+        "sens": "economie_depense",
+        "horizon": "à l'horizon 2032 (80 Md€ dès la première année)",
+        "source": {
+          "citation": "« 80 milliards d'euros d'économies dès la première année, puis 200 milliards d'euros à l'horizon 2032 » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
+          "date": "2026-10-27",
+          "type": "entretien"
+        }
+      }
+    },
+    {
+      "id": "l7_pensions_non_revalorisees",
+      "categorie": "retraites",
+      "libelle": "Pas de revalorisation des pensions au-dessus d'un seuil",
+      "parametre": "> 2 200 € (27/10/2026) ; > 2 000 €/mois (29/11/2025) : les deux se contredisent",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Ne pas revaloriser, à titre d'exemple, les pensions de retraite supérieures à 2 200 euros » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
+          "date": "2026-10-27",
+          "type": "entretien"
+        },
+        {
+          "citation": "Pour le seuil de 2 000 € par mois ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-age-de-depart-a-la-retraite-david-lisnard-defend-il/",
+          "date": "2025-11-29",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "indexation",
+        "raison": "La revalorisation des pensions année par année, et sa coupure au-dessus d'un seuil, n'est pas dans le moteur : les pensions de la population sont des données."
+      }
+    },
+    {
+      "id": "l8_prestations_etrangers",
+      "categorie": "prestations",
+      "libelle": "Réduction des prestations non contributives versées aux ressortissants étrangers",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Réduire les prestations non contributives versées à des ressortissants étrangers, pour un objectif annoncé de 2 à 3 milliards d'euros d'économies dès la première année » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
+          "date": "2026-10-27",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni prestation désignée ni règle d'accès énoncée."
+      },
+      "declare": {
+        "montant_eur": 2500000000.0,
+        "sens": "economie_depense",
+        "horizon": "dès la première année ; 2 à 3 Md€ annoncés, le milieu retenu",
+        "source": {
+          "citation": "« Réduire les prestations non contributives versées à des ressortissants étrangers, pour un objectif annoncé de 2 à 3 milliards d'euros d'économies dès la première année » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
+          "date": "2026-10-27",
+          "type": "entretien"
+        }
+      }
+    },
+    {
+      "id": "l9_allocation_unique",
+      "categorie": "prestations",
+      "libelle": "Allocation unique regroupant toutes les aides, plafonnée à un pourcentage (non fixé) du SMIC",
+      "parametre": "« un pourcentage du SMIC » (non fixé)",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« regroupant l'ensemble des aides en une allocation unique, plafonner […] un pourcentage du SMIC »",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-regrouper-les-aides-sociales-en-une-allocation-unique/",
+          "date": "2026-07-03",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le pourcentage du SMIC qui plafonnerait l'allocation n'est pas fixé."
+      }
+    },
+    {
+      "id": "l10_ecart_travail_inactivite",
+      "categorie": "salaires_smic",
+      "libelle": "Écart minimal entre travail à temps plein et inactivité",
+      "parametre": "≥ 500 €",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Quelqu'un qui travaille à temps plein doit gagner au moins 500€ de plus que quelqu'un qui ne travaille pas »",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-regrouper-les-aides-sociales-en-une-allocation-unique/",
+          "date": "2026-09-26",
+          "type": "reseau_social"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Un écart cible entre travail et inactivité n'est pas un paramètre : il faudrait l'allocation unique qui le produirait, que le moteur ne porte pas."
+      }
+    },
+    {
+      "id": "l11_effectifs_publics",
+      "categorie": "depense_publique",
+      "libelle": "Effectifs publics : environ −12 %, plus de 400 000 suppressions de postes, 200 000 à 300 000 agents redéployés vers le terrain ; statut réservé à terme aux fonctions régaliennes",
+      "parametre": "> 400 000 postes ; ≈ 12 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« il envisage plus de 400 000 suppressions de postes et le redéploiement de 200 000 à 300 000 agents vers les missions de terrain » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
+          "date": "2026-10-27",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement un scénario de dépense de la chaîne."
+      }
+    },
+    {
+      "id": "l12_agences_operateurs",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de l'« essentiel » des quelque 1 200 agences et opérateurs ; budgets base zéro ; moratoire sur les normes",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Les départs à la retraite, on ne renouvellera pas. On réorientera, on supprimera l'essentiel de ces machins »",
+          "url": "https://www.unenouvelleenergie.fr/questions/quelles-economies-david-lisnard-propose-t-il-et-ou-exactement/",
+          "date": "2026-10-11",
+          "type": "entretien"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/",
+          "date": "2026-10-27",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni agence désignée ni économie chiffrée."
+      }
+    },
+    {
+      "id": "l13_regle_or_fonctionnement",
+      "categorie": "regle_budgetaire",
+      "libelle": "Règle d'or sur les dépenses de fonctionnement, pas sur l'investissement",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« cette « règle d'or » s'appliquerait aux dépenses de fonctionnement mais pas à l'investissement »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/etre-maitre-de-notre-destin/",
+          "date": "2026-11-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni plafond ni solde chiffré : une règle d'or sans paramètre."
+      }
+    },
+    {
+      "id": "l14_depense_moins_8_points",
+      "categorie": "depense_publique",
+      "libelle": "Baisse de la dépense publique de 8 points de PIB en 10 ans, puis maintien sous 50 %",
+      "parametre": "−8 points en 10 ans ; < 50 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« il est possible de les réduire de 8 points de PIB en 10 ans et de les maintenir en-deçà de 50% »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/etre-maitre-de-notre-destin/",
+          "date": "2026-11-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une baisse de la dépense en points de PIB est un scénario de dépense de la chaîne, pas une réforme que le moteur microsimule."
+      }
+    },
+    {
+      "id": "l15_age_legal_65_ans",
+      "categorie": "retraites",
+      "libelle": "Âge légal à 65 ans comme préalable",
+      "parametre": "65 ans ; la FAQ du 16/10/2026 dit qu'il « ne fait pas de l'âge sa réponse » : les deux se contredisent",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« la norme de l'âge légal de 65 ans est un impératif national urgent pour des raisons d'équilibre financier »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/",
+          "date": "2026-11-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge légal ne se règle pas : la population ne vieillit pas et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "l16_pension_minimale_1000",
+      "categorie": "retraites",
+      "libelle": "Socle de pension minimale par répartition dès 65 ans, complété par un minimum vieillesse",
+      "parametre": "1 000 €/mois",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« complété par un minimum-vieillesse à hauteur de 1000 euros par mois »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/",
+          "date": "2026-11-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Un socle de pension dès 65 ans refait le système de retraite : les pensions de la population sont des données, et le minimum vieillesse n'a pas de bouton."
+      }
+    },
+    {
+      "id": "l17_capitalisation_obligatoire",
+      "categorie": "retraites",
+      "libelle": "Capitalisation obligatoire : bascule progressive des autres régimes, par environ 8 tranches",
+      "parametre": "≈ 40 % du montant total des retraites",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« pour atteindre un montant de capitalisation évalué à 116 milliards d'euros, soit environ 40% du montant total des retraites »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/",
+          "date": "2026-11-01",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-age-de-depart-a-la-retraite-david-lisnard-defend-il/",
+          "date": "2026-10-16",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Un régime obligatoire par capitalisation : la population n'en porte aucun, et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "l18_transmission_entreprise",
+      "categorie": "patrimoine_capital",
+      "libelle": "Transmission d'entreprise « totalement libérée » des droits de succession",
+      "parametre": "0 € sur la transmission d'entreprise",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Évidemment que la transmission des entreprises doit être totalement libérée des droits de succession. »",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-supprimer-les-droits-de-succession/",
+          "date": "2026-09-25",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Les droits de succession sur les entreprises demandent un module de transmission."
+      }
+    },
+    {
+      "id": "l19_bareme_successions",
+      "categorie": "patrimoine_capital",
+      "libelle": "Barème des successions allégé, abattements unifiés quel que soit le lien de parenté",
+      "parametre": "taux marginal supérieur à 20 % (contre 45 %) ; 100 000 € transmissibles d'un grand-parent à un petit-enfant en franchise",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« de ramener le taux marginal supérieur à 20 %, son niveau d'avant 1984, et d'unifier abattements et barèmes quel que soit le lien de parenté » (texte de la page)",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-supprimer-les-droits-de-succession/",
+          "date": "2026-10-16",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Le barème et les abattements des successions demandent un module de transmission."
+      }
+    },
+    {
+      "id": "l20_deplafonnement_qf",
+      "categorie": "ir",
+      "libelle": "Déplafonnement du quotient familial",
+      "parametre": "plafond supprimé",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« des allocations financières, notamment par le déplafonnement du quotient familial »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/",
+          "date": "2026-11-01",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "plafond_qf_demi_part": 100000.0,
+          "plafond_qf_parent_isole": 100000.0
+        },
+        "plages": [
+          {
+            "champ": "plafond_qf_demi_part",
+            "min": 1807.0,
+            "max": 100000.0
+          },
+          {
+            "champ": "plafond_qf_parent_isole",
+            "min": 4262.0,
+            "max": 100000.0
+          }
+        ],
+        "note": "« Plafond supprimé » : le plafond général et celui du premier enfant d'un parent isolé passent à 100 000 €, la borne du schéma, que nul foyer n'atteint. Les autres plafonds particuliers (personne seule sans enfant à charge, réduction complémentaire des veufs) ne sont pas des boutons et restent ceux de 2026. Plages du droit de 2026 à la borne."
+      }
+    },
+    {
+      "id": "l21_particuliers_employeurs",
+      "categorie": "csg_cotisations",
+      "libelle": "Suppression des charges des particuliers employeurs au niveau du SMIC ; « charges patronales négatives » pour l'embauche d'un allocataire du RSA depuis plus de 2 ans",
+      "parametre": "charges = 0 au SMIC (emploi à domicile) ; charges négatives (sans montant)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« les charges pour les employeurs à domicile au niveau du SMIC seront supprimées »",
+          "url": "https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/",
+          "date": "2026-11-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les cotisations des particuliers employeurs n'ont pas de bouton, la population ne porte pas le salaire de leurs employés à domicile, et les « charges négatives » n'ont pas de montant."
+      }
+    },
+    {
+      "id": "l22_cee_carburants",
+      "categorie": "energie_carburants",
+      "libelle": "Suspension pendant 6 mois de l'obligation de certificats d'économies d'énergie (CEE) sur les carburants",
+      "parametre": "6 mois ; « 17 centimes par litre » selon lui",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Suspendre pendant six mois l'obligation CEE sur les carburants est la meilleure solution, pour baisser pour tous le prix du carburant, pour les finances publiques »",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-faire-baisser-le-prix-du-carburant/",
+          "date": "2026-09-22",
+          "type": "reseau_social"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Les certificats d'économies d'énergie et le prix des carburants ne sont pas dans le moteur : ni accises ni consommation de carburant."
+      }
+    },
+    {
+      "id": "l23_temps_travail_accords",
+      "categorie": "autre",
+      "libelle": "Temps de travail fixé par accord d'entreprise ; « 37 heures payées 37 » au choix du salarié",
+      "parametre": "37 h",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Laisser les accords d'entreprise libérer le temps de travail, libérer la création de valeur. »",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-assouplir-les-35-heures/",
+          "date": "2026-08-29",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une durée laissée aux accords d'entreprise, sans taux ni montant."
+      }
+    },
+    {
+      "id": "l24_chomage_degressivite",
+      "categorie": "prestations",
+      "libelle": "Assurance chômage : dégressivité",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Dégressivité, et puis parallèlement renforcer la vraie formation des personnes en difficulté »",
+          "url": "https://www.unenouvelleenergie.fr/questions/quel-candidat-veut-reformer-l-assurance-chomage/",
+          "date": "2024-02-29",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni taux ni calendrier de dégressivité."
+      }
+    }
+  ]
+}

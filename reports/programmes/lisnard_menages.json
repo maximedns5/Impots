@@ -1,0 +1,836 @@
+{
+  "programme": "lisnard",
+  "candidat": "David Lisnard",
+  "parti": "Nouvelle Énergie",
+  "releve": "2026-11-01",
+  "annee_du_droit": 2026,
+  "couverture": {
+    "mesures": 24,
+    "parametrees": 17,
+    "vagues": 7,
+    "chiffrees": 3,
+    "part_des_parametrees": 0.17647058823529413,
+    "refus_par_porte": {
+      "bases_locales": 1,
+      "consommation": 1,
+      "depense_publique": 3,
+      "donnee_menages": 1,
+      "indexation": 1,
+      "prestations_hors_modele": 1,
+      "retraites": 3,
+      "salaires": 1,
+      "transmission": 2,
+      "vague": 7
+    }
+  },
+  "mesures": [
+    {
+      "id": "l1_csg_activite_6_6",
+      "categorie": "csg_cotisations",
+      "libelle": "Baisse de la CSG sur les revenus d'activité",
+      "parametre": "9,2 % → 6,6 %",
+      "precision": "parametree",
+      "sort": "chiffrée",
+      "couche": "menages",
+      "reforme": {
+        "csg_activite_deductible": 0.0488,
+        "csg_activite_imposable": 0.0172
+      },
+      "note": "Le candidat ne dit pas comment répartir la baisse de 2,6 points entre la part déductible (6,8 %) et la part imposable (2,4 %). Le choix retenu est la répartition proportionnelle, qui garde à chaque part son poids dans le taux : 4,88 % et 1,72 %, soit 6,6 %. Chaque plage va du droit de 2026 à la valeur retenue prolongée de la moitié de l'écart ; celle de la part imposable descend jusqu'à 0 pour couvrir l'autre répartition extrême (6,6 % et 0 %), et celle de la part déductible contient la baisse portée sur elle seule (4,2 % et 2,4 %). La CSG des revenus de remplacement et du capital n'est pas touchée."
+    },
+    {
+      "id": "l2_cotisations_salaire_net",
+      "categorie": "csg_cotisations",
+      "libelle": "Baisse des cotisations rendue en salaire net",
+      "parametre": "120 Md€ ; environ 400 €/mois nets par salarié",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "salaires",
+      "raison": "Environ 400 € nets par mois au salaire médian dépassent les cotisations retraite salariales, qui n'en pèsent que 320 € : la baisse passe aussi par des cotisations patronales rendues en salaire, ce qui déplace la distribution des salaires.",
+      "ouvrirait": "la distribution des salaires : SMIC, point d'indice, indexation des salaires"
+    },
+    {
+      "id": "l3_impots_production_40_md",
+      "categorie": "entreprises",
+      "libelle": "Baisse des impôts de production, à commencer par la C3S",
+      "parametre": "40 Md€",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "bases_locales",
+      "raison": "Une enveloppe de 40 Md€ sans taux : la C3S et la CVAE n'en font qu'une part (L4), le reste passe par des impôts de production locaux que le moteur ne porte pas.",
+      "ouvrirait": "les bases locales : foncier, logement social, zonage"
+    },
+    {
+      "id": "l4_suppression_c3s_cvae",
+      "categorie": "entreprises",
+      "libelle": "Suppression de la C3S et, « le cas échéant », de la CVAE",
+      "parametre": "impôts de production de 2 % à 1 % du PIB",
+      "precision": "parametree",
+      "sort": "chiffrée",
+      "couche": "entreprises",
+      "reforme": {
+        "c3s_taux": 0.0,
+        "cvae_echelle": 0.0
+      },
+      "note": "La C3S est supprimée (taux de 0,16 % en 2026 ramené à 0) et la CVAE aussi, sur le droit de 2026. Le candidat ne supprime la CVAE que « le cas échéant » : le choix retenu suit son chiffrage de 11,5 Md€, qui compte les deux impôts, et la plage de cvae_echelle couvre son maintien (1). La plage de la C3S va du droit de 2026 à 0, la borne du schéma. L'objectif d'impôts de production ramenés de 2 % à 1 % du PIB va au-delà de ces deux impôts (L3) et n'est pas chiffré ici."
+    },
+    {
+      "id": "l5_tva_competitivite",
+      "categorie": "tva_consommation",
+      "libelle": "TVA « compétitivité / relocalisation » pour baisser les charges sur les salaires : question non tranchée",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sort": "refusée",
+      "porte": "vague",
+      "raison": "Une question laissée ouverte : ni taux de TVA ni baisse de charges.",
+      "ouvrirait": "un paramètre : le candidat énonce une intention, pas un taux ni un montant"
+    },
+    {
+      "id": "l6_economies_200_md",
+      "categorie": "depense_publique",
+      "libelle": "Économies : 80 Md€ dès la première année, 200 Md€ à l'horizon 2032 ; −7 points de dépense publique dans le PIB",
+      "parametre": "80 Md€ en an 1 ; 200 Md€ en 2032 ; ≈ 50 % du PIB",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "depense_publique",
+      "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario de la chaîne de la dette.",
+      "ouvrirait": "la dépense publique, que le moteur ne microsimule pas : elle n'est qu'un scénario de la chaîne de la dette"
+    },
+    {
+      "id": "l7_pensions_non_revalorisees",
+      "categorie": "retraites",
+      "libelle": "Pas de revalorisation des pensions au-dessus d'un seuil",
+      "parametre": "> 2 200 € (27/10/2026) ; > 2 000 €/mois (29/11/2025) : les deux se contredisent",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "indexation",
+      "raison": "La revalorisation des pensions année par année, et sa coupure au-dessus d'un seuil, n'est pas dans le moteur : les pensions de la population sont des données.",
+      "ouvrirait": "l'indexation des pensions et des prestations année par année"
+    },
+    {
+      "id": "l8_prestations_etrangers",
+      "categorie": "prestations",
+      "libelle": "Réduction des prestations non contributives versées aux ressortissants étrangers",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sort": "refusée",
+      "porte": "vague",
+      "raison": "Ni prestation désignée ni règle d'accès énoncée.",
+      "ouvrirait": "un paramètre : le candidat énonce une intention, pas un taux ni un montant"
+    },
+    {
+      "id": "l9_allocation_unique",
+      "categorie": "prestations",
+      "libelle": "Allocation unique regroupant toutes les aides, plafonnée à un pourcentage (non fixé) du SMIC",
+      "parametre": "« un pourcentage du SMIC » (non fixé)",
+      "precision": "vague",
+      "sort": "refusée",
+      "porte": "vague",
+      "raison": "Le pourcentage du SMIC qui plafonnerait l'allocation n'est pas fixé.",
+      "ouvrirait": "un paramètre : le candidat énonce une intention, pas un taux ni un montant"
+    },
+    {
+      "id": "l10_ecart_travail_inactivite",
+      "categorie": "salaires_smic",
+      "libelle": "Écart minimal entre travail à temps plein et inactivité",
+      "parametre": "≥ 500 €",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "prestations_hors_modele",
+      "raison": "Un écart cible entre travail et inactivité n'est pas un paramètre : il faudrait l'allocation unique qui le produirait, que le moteur ne porte pas.",
+      "ouvrirait": "une prestation que le moteur ne porte pas : assurance chômage, prestation fusionnée ou neuve"
+    },
+    {
+      "id": "l11_effectifs_publics",
+      "categorie": "depense_publique",
+      "libelle": "Effectifs publics : environ −12 %, plus de 400 000 suppressions de postes, 200 000 à 300 000 agents redéployés vers le terrain ; statut réservé à terme aux fonctions régaliennes",
+      "parametre": "> 400 000 postes ; ≈ 12 %",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "depense_publique",
+      "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement un scénario de dépense de la chaîne.",
+      "ouvrirait": "la dépense publique, que le moteur ne microsimule pas : elle n'est qu'un scénario de la chaîne de la dette"
+    },
+    {
+      "id": "l12_agences_operateurs",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de l'« essentiel » des quelque 1 200 agences et opérateurs ; budgets base zéro ; moratoire sur les normes",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sort": "refusée",
+      "porte": "vague",
+      "raison": "Ni agence désignée ni économie chiffrée.",
+      "ouvrirait": "un paramètre : le candidat énonce une intention, pas un taux ni un montant"
+    },
+    {
+      "id": "l13_regle_or_fonctionnement",
+      "categorie": "regle_budgetaire",
+      "libelle": "Règle d'or sur les dépenses de fonctionnement, pas sur l'investissement",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sort": "refusée",
+      "porte": "vague",
+      "raison": "Ni plafond ni solde chiffré : une règle d'or sans paramètre.",
+      "ouvrirait": "un paramètre : le candidat énonce une intention, pas un taux ni un montant"
+    },
+    {
+      "id": "l14_depense_moins_8_points",
+      "categorie": "depense_publique",
+      "libelle": "Baisse de la dépense publique de 8 points de PIB en 10 ans, puis maintien sous 50 %",
+      "parametre": "−8 points en 10 ans ; < 50 %",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "depense_publique",
+      "raison": "Une baisse de la dépense en points de PIB est un scénario de dépense de la chaîne, pas une réforme que le moteur microsimule.",
+      "ouvrirait": "la dépense publique, que le moteur ne microsimule pas : elle n'est qu'un scénario de la chaîne de la dette"
+    },
+    {
+      "id": "l15_age_legal_65_ans",
+      "categorie": "retraites",
+      "libelle": "Âge légal à 65 ans comme préalable",
+      "parametre": "65 ans ; la FAQ du 16/10/2026 dit qu'il « ne fait pas de l'âge sa réponse » : les deux se contredisent",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "retraites",
+      "raison": "L'âge légal ne se règle pas : la population ne vieillit pas et ses pensions sont des données.",
+      "ouvrirait": "les droits à la retraite (âges, durées, régimes) : la population ne vieillit pas en âge et ses pensions sont des données"
+    },
+    {
+      "id": "l16_pension_minimale_1000",
+      "categorie": "retraites",
+      "libelle": "Socle de pension minimale par répartition dès 65 ans, complété par un minimum vieillesse",
+      "parametre": "1 000 €/mois",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "retraites",
+      "raison": "Un socle de pension dès 65 ans refait le système de retraite : les pensions de la population sont des données, et le minimum vieillesse n'a pas de bouton.",
+      "ouvrirait": "les droits à la retraite (âges, durées, régimes) : la population ne vieillit pas en âge et ses pensions sont des données"
+    },
+    {
+      "id": "l17_capitalisation_obligatoire",
+      "categorie": "retraites",
+      "libelle": "Capitalisation obligatoire : bascule progressive des autres régimes, par environ 8 tranches",
+      "parametre": "≈ 40 % du montant total des retraites",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "retraites",
+      "raison": "Un régime obligatoire par capitalisation : la population n'en porte aucun, et ses pensions sont des données.",
+      "ouvrirait": "les droits à la retraite (âges, durées, régimes) : la population ne vieillit pas en âge et ses pensions sont des données"
+    },
+    {
+      "id": "l18_transmission_entreprise",
+      "categorie": "patrimoine_capital",
+      "libelle": "Transmission d'entreprise « totalement libérée » des droits de succession",
+      "parametre": "0 € sur la transmission d'entreprise",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "transmission",
+      "raison": "Les droits de succession sur les entreprises demandent un module de transmission.",
+      "ouvrirait": "un module de transmission : donations et reprises"
+    },
+    {
+      "id": "l19_bareme_successions",
+      "categorie": "patrimoine_capital",
+      "libelle": "Barème des successions allégé, abattements unifiés quel que soit le lien de parenté",
+      "parametre": "taux marginal supérieur à 20 % (contre 45 %) ; 100 000 € transmissibles d'un grand-parent à un petit-enfant en franchise",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "transmission",
+      "raison": "Le barème et les abattements des successions demandent un module de transmission.",
+      "ouvrirait": "un module de transmission : donations et reprises"
+    },
+    {
+      "id": "l20_deplafonnement_qf",
+      "categorie": "ir",
+      "libelle": "Déplafonnement du quotient familial",
+      "parametre": "plafond supprimé",
+      "precision": "parametree",
+      "sort": "chiffrée",
+      "couche": "menages",
+      "reforme": {
+        "plafond_qf_demi_part": 100000.0,
+        "plafond_qf_parent_isole": 100000.0
+      },
+      "note": "« Plafond supprimé » : le plafond général et celui du premier enfant d'un parent isolé passent à 100 000 €, la borne du schéma, que nul foyer n'atteint. Les autres plafonds particuliers (personne seule sans enfant à charge, réduction complémentaire des veufs) ne sont pas des boutons et restent ceux de 2026. Plages du droit de 2026 à la borne."
+    },
+    {
+      "id": "l21_particuliers_employeurs",
+      "categorie": "csg_cotisations",
+      "libelle": "Suppression des charges des particuliers employeurs au niveau du SMIC ; « charges patronales négatives » pour l'embauche d'un allocataire du RSA depuis plus de 2 ans",
+      "parametre": "charges = 0 au SMIC (emploi à domicile) ; charges négatives (sans montant)",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "donnee_menages",
+      "raison": "Les cotisations des particuliers employeurs n'ont pas de bouton, la population ne porte pas le salaire de leurs employés à domicile, et les « charges négatives » n'ont pas de montant.",
+      "ouvrirait": "une donnée des ménages : plus-values, épargne, logement"
+    },
+    {
+      "id": "l22_cee_carburants",
+      "categorie": "energie_carburants",
+      "libelle": "Suspension pendant 6 mois de l'obligation de certificats d'économies d'énergie (CEE) sur les carburants",
+      "parametre": "6 mois ; « 17 centimes par litre » selon lui",
+      "precision": "parametree",
+      "sort": "refusée",
+      "porte": "consommation",
+      "raison": "Les certificats d'économies d'énergie et le prix des carburants ne sont pas dans le moteur : ni accises ni consommation de carburant.",
+      "ouvrirait": "la consommation et le parc : TVA par taux, accises, véhicules"
+    },
+    {
+      "id": "l23_temps_travail_accords",
+      "categorie": "autre",
+      "libelle": "Temps de travail fixé par accord d'entreprise ; « 37 heures payées 37 » au choix du salarié",
+      "parametre": "37 h",
+      "precision": "vague",
+      "sort": "refusée",
+      "porte": "vague",
+      "raison": "Une durée laissée aux accords d'entreprise, sans taux ni montant.",
+      "ouvrirait": "un paramètre : le candidat énonce une intention, pas un taux ni un montant"
+    },
+    {
+      "id": "l24_chomage_degressivite",
+      "categorie": "prestations",
+      "libelle": "Assurance chômage : dégressivité",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sort": "refusée",
+      "porte": "vague",
+      "raison": "Ni taux ni calendrier de dégressivité.",
+      "ouvrirait": "un paramètre : le candidat énonce une intention, pas un taux ni un montant"
+    }
+  ],
+  "valeurs": {},
+  "mesures_chiffrees_retenues": [
+    "l1_csg_activite_6_6",
+    "l20_deplafonnement_qf"
+  ],
+  "reforme_menages": {
+    "plafond_qf_demi_part": 100000.0,
+    "csg_activite_imposable": 0.0172,
+    "csg_activite_deductible": 0.0488,
+    "plafond_qf_parent_isole": 100000.0
+  },
+  "reforme_entreprises": null,
+  "avertissement": "La trajectoire de la dette porte sur la seule part du programme que le moteur chiffre, pas sur le programme : les mesures refusées (voir « mesures » et « couverture ») n'y sont pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour une raison qui tient au moteur (D-319).",
+  "couche_declaree": {
+    "rho": 0.5,
+    "mesures": [
+      "l2_cotisations_salaire_net",
+      "l3_impots_production_40_md",
+      "l6_economies_200_md",
+      "l8_prestations_etrangers"
+    ],
+    "par_sens_eur": {
+      "baisse_prelevements": 80000000000.0,
+      "economie_depense": 101250000000.0
+    },
+    "solde_eur": 21250000000.0,
+    "statut": "déclaré par le candidat, non vérifié ; jamais additionné au chiffrage du moteur (D-319)"
+  },
+  "hypotheses": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "central_etudes",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "taux_tenu",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "hypothèse des études (D-289) : salaires +3 % par an"
+    }
+  },
+  "chiffrage": {
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "reference": [
+      1.168580725548546,
+      1.1746928799602263,
+      1.1753885794969483,
+      1.1707805732317031,
+      1.1609798413129486,
+      1.146095619682319,
+      1.1262354244680892,
+      1.1015050760584795,
+      1.0720087228588424,
+      1.0378488647367168
+    ],
+    "reform": [
+      1.1786049383570316,
+      1.1946306546519885,
+      1.2051304865521373,
+      1.2102183910535103,
+      1.2100065428941096,
+      1.2046053594187984,
+      1.194123525118319,
+      1.1786680158465483,
+      1.1583441227200422,
+      1.1332554757038789
+    ],
+    "delta": [
+      0.010024212808485533,
+      0.019937774691762167,
+      0.029741907055188976,
+      0.03943781782180711,
+      0.04902670158116096,
+      0.05850973973647933,
+      0.06788810065022988,
+      0.07716293978806887,
+      0.08633539986119976,
+      0.09540661096716208
+    ],
+    "reference_primary": [
+      -0.02441385216789682,
+      -0.019011375620755278,
+      -0.013662388940417047,
+      -0.008366362524240611,
+      -0.0031227720131747905,
+      0.0020689017601577264,
+      0.007209172822863152,
+      0.012298550112670448,
+      0.017337537528321234,
+      0.022326633979460664
+    ],
+    "delta_primary": [
+      -0.0100242128084856,
+      -0.0100242128084856,
+      -0.0100242128084856,
+      -0.0100242128084856,
+      -0.0100242128084856,
+      -0.0100242128084856,
+      -0.010024212808485602,
+      -0.0100242128084856,
+      -0.0100242128084856,
+      -0.0100242128084856
+    ],
+    "priced_years": [
+      2026
+    ],
+    "carried_years": [
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "spending_name": "Dépenses gelées en volume",
+    "growth_name": "central_etudes",
+    "rate_name": "taux_tenu",
+    "conventions": [
+      "Prélèvements constants en % du PIB",
+      "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+    ],
+    "absent": {
+      "rétroaction": "Retour du PIB sur les recettes non demandé. Absent, pas nul : le solde de la réforme ne compte ni l'activité qu'elle crée ni celle qu'elle détruit.",
+      "bande": "Comportement non demandé : seul le chiffre mécanique est porté.",
+      "θ": "Vue mécanique : les θ sont listés parce que la requête les nomme, mais aucun canal de comportement ne les lit."
+    },
+    "slices": [
+      {
+        "source": "bande",
+        "label": "Boîte θ du comportement",
+        "computed": false,
+        "reason": "Comportement non demandé : seul le chiffre mécanique est porté.",
+        "low": [],
+        "high": []
+      },
+      {
+        "source": "eventail",
+        "label": "Rétroaction macro",
+        "computed": false,
+        "reason": "Retour du PIB sur les recettes non demandé. Absent, pas nul : le solde de la réforme ne compte ni l'activité qu'elle crée ni celle qu'elle détruit.",
+        "low": [],
+        "high": []
+      },
+      {
+        "source": "scenario",
+        "label": "Grille de scénarios",
+        "computed": false,
+        "reason": "Une seule combinaison de scénarios : chaque autre combinaison est un autre calcul, sous ses propres noms.",
+        "low": [],
+        "high": []
+      }
+    ],
+    "start": {
+      "year": 2025,
+      "debt_ratio": 1.15693757321829,
+      "primary_balance": -0.029870353480509815,
+      "implicit_rate": 0.01882827582292081,
+      "gdp_eur": 2991056000000.0
+    },
+    "mechanical_first_year_eur": 30888467918.453857,
+    "mechanical_first_year_by_layer": {
+      "menages": 30888467918.453857
+    },
+    "delta_mechanical": [
+      0.0100242128084856,
+      0.019937774691762077,
+      0.029741907055188983,
+      0.039437817821807046,
+      0.04902670158116094,
+      0.05850973973647926,
+      0.06788810065022993,
+      0.07716293978806886,
+      0.08633539986119969,
+      0.09540661096716208
+    ],
+    "theta": {
+      "autofinancement_poids_tresor_eco": 0.5,
+      "dividend_elasticity_firm_owners": 0.5,
+      "dividend_elasticity_other_holders": 0.5,
+      "dividend_share_firm_owners": 0.5,
+      "dividend_wage_shift_firm_owners": 0.5,
+      "employment_elasticity_smic": 0.5,
+      "eti_all": 0.5,
+      "eti_top_decile": 0.5,
+      "firm_creation_profit_tax": 0.5,
+      "is_croissance_pib": 0.5,
+      "labour_supply_married_men": 0.5,
+      "labour_supply_married_women": 0.5,
+      "labour_supply_single_men": 0.5,
+      "labour_supply_single_women": 0.5,
+      "passthrough_benefit_linked": 0.5,
+      "passthrough_unlinked": 0.5,
+      "production_tax_investment": 0.5,
+      "rd_cir_multiplier": 0.5,
+      "wealth_disclosure_growth_effect_pp": 0.5,
+      "wealth_tax_rate_elasticity": 0.5
+    },
+    "theta_applied": false,
+    "closed": {
+      "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+      "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+      "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+      "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244).",
+      "rétroaction PIB → recettes": "Retour du PIB sur les recettes non demandé. Absent, pas nul : le solde de la réforme ne compte ni l'activité qu'elle crée ni celle qu'elle détruit.",
+      "multiplicateur macro": "Retour du PIB sur les recettes non demandé. Absent, pas nul : le solde de la réforme ne compte ni l'activité qu'elle crée ni celle qu'elle détruit."
+    },
+    "behaviour": null,
+    "gdp_gap": null,
+    "feedback_primary": null,
+    "persistence": null,
+    "side_by_side": [],
+    "indices": [
+      {
+        "key": "revenu_disponible_deciles",
+        "pour": "Les gens",
+        "label": "Revenu disponible, par décile de niveau de vie",
+        "unit": "EUR par ménage et par an",
+        "stage": "mécanique",
+        "source": "population, passe de la première année chiffrée",
+        "theta": [],
+        "note": "",
+        "available": true,
+        "values": {
+          "D1": 17.839447496091474,
+          "D2": 110.8213613450879,
+          "D3": 297.9739550107738,
+          "D4": 400.1733144635769,
+          "D5": 571.7338115234376,
+          "D6": 754.1342370384851,
+          "D7": 915.7175358294203,
+          "D8": 1288.2424756999244,
+          "D9": 1884.7377516865404,
+          "D10": 3718.142994018995
+        },
+        "box": null,
+        "reason": "",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "revenu_disponible_reel",
+        "pour": "Les gens",
+        "label": "Revenu disponible brut réel des ménages (pouvoir d'achat)",
+        "unit": "% d'écart au compte central",
+        "stage": "macro",
+        "source": "Mésange, variantes de la section 4, au centre",
+        "theta": [],
+        "note": "Contient le choc lui-même, en revenu pour l'IR et la CSG, en prix pour la TVA et les cotisations employeurs. Ne s'ajoute pas aux déciles.",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "Impulsion macro non demandée : sans elle, aucune variante de Mésange n'a de choc à lire.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "consommation",
+        "pour": "Les gens",
+        "label": "Consommation des ménages, en volume",
+        "unit": "% d'écart au compte central",
+        "stage": "macro",
+        "source": "Mésange, variantes de la section 4",
+        "theta": [
+          "multiplicateur_macro"
+        ],
+        "note": "Proportionnelle au multiplicateur à θ : négative si le multiplicateur l'est à θ = 0.",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "Impulsion macro non demandée : sans elle, aucune variante de Mésange n'a de choc à lire.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "emploi_smic",
+        "pour": "Les gens",
+        "label": "Emploi au voisinage du SMIC",
+        "unit": "emplois",
+        "stage": "comportement",
+        "source": "C2, élasticité de l'emploi au coût du travail",
+        "theta": [
+          "employment_elasticity_smic"
+        ],
+        "note": "Des personnes. Ne s'additionne pas à l'emploi de Mésange.",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "Comportement non demandé : le canal ne tourne pas.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "emploi_marchand",
+        "pour": "Les gens",
+        "label": "Emploi salarié marchand",
+        "unit": "milliers d'ETP",
+        "stage": "macro",
+        "source": "Mésange, variantes de la section 4",
+        "theta": [
+          "multiplicateur_macro"
+        ],
+        "note": "Des équivalents temps plein, proportionnels au multiplicateur à θ (D-059). Ne s'additionne pas à l'emploi de C2.",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "Impulsion macro non demandée : sans elle, aucune variante de Mésange n'a de choc à lire.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "offre_de_travail",
+        "pour": "Les gens",
+        "label": "Revenus d'activité bruts que déplacent les heures",
+        "unit": "EUR par an",
+        "stage": "comportement",
+        "source": "C7, offre de travail (Bargain, Orsini et Peichl)",
+        "theta": [
+          "labour_supply_married_women",
+          "labour_supply_married_men",
+          "labour_supply_single_women",
+          "labour_supply_single_men"
+        ],
+        "note": "Les heures valorisées au salaire : l'article ne sépare pas heures et participants, et l'indice non plus.",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "Comportement non demandé : le canal ne tourne pas.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "investissement_entreprises",
+        "pour": "Les entreprises",
+        "label": "Investissement des entreprises non financières, en volume",
+        "unit": "% d'écart au compte central",
+        "stage": "macro",
+        "source": "Mésange, variantes de la section 4",
+        "theta": [
+          "multiplicateur_macro"
+        ],
+        "note": "Un accélérateur, proportionnel au multiplicateur à θ ; hors investissement public et des ménages.",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "Impulsion macro non demandée : sans elle, aucune variante de Mésange n'a de choc à lire.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "pib_is",
+        "pour": "Les entreprises",
+        "label": "PIB, effet du taux normal d'IS",
+        "unit": "% d'écart de PIB",
+        "stage": "méta-analyse",
+        "source": "Gechert et Heimberger, méta-analyse de 441 estimations (D-246)",
+        "theta": [
+          "is_croissance_pib"
+        ],
+        "note": "Rampe de dix ans sur la croissance. Hors de la trajectoire de dette : l'IS n'a pas de boucle vers les recettes, et un PIB sans elle serait la moitié d'une variante (D-218).",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "La réforme ne touche pas au taux normal d'IS : la méta-analyse chiffre ce taux, et aucun autre bouton des entreprises ne s'y lit.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "charge_fiscale_production",
+        "pour": "Les entreprises",
+        "label": "Charge fiscale de production",
+        "unit": "% de la valeur ajoutée",
+        "stage": "couche entreprises",
+        "source": "panneau de la phase 8",
+        "theta": [],
+        "note": "",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "Couche entreprises : la réforme ne règle aucun bouton des entreprises, et cet indice ne se calcule qu'avec un ; seul, il se lit sur `/entreprises/simulate`.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "creations_societes",
+        "pour": "Les startups",
+        "label": "Créations de sociétés",
+        "unit": "points de taux de création",
+        "stage": "couche entreprises",
+        "source": "C8, rapport IPP n° 47 (D-221)",
+        "theta": [
+          "firm_creation_profit_tax"
+        ],
+        "note": "Un nombre attend le stock de sociétés au manifeste.",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "Couche entreprises : la réforme ne règle aucun bouton des entreprises, et cet indice ne se calcule qu'avec un ; seul, il se lit sur `/entreprises/simulate`.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "depense_rd",
+        "pour": "Les entreprises",
+        "label": "Dépense de R&D",
+        "unit": "EUR de R&D",
+        "stage": "couche entreprises",
+        "source": "C9, rapport IPP n° 22 (D-222)",
+        "theta": [],
+        "note": "",
+        "available": false,
+        "values": {},
+        "box": null,
+        "reason": "Couche entreprises : la réforme ne règle aucun bouton des entreprises, et cet indice ne se calcule qu'avec un ; seul, il se lit sur `/entreprises/simulate`.",
+        "conventions": [],
+        "uncovered": {}
+      },
+      {
+        "key": "solde_primaire",
+        "pour": "L'État",
+        "label": "Solde primaire, écart de la réforme",
+        "unit": "pts de PIB",
+        "stage": "chaîne",
+        "source": "chaîne de §3",
+        "theta": [],
+        "note": "",
+        "available": true,
+        "values": {
+          "2026": -0.0100242128084856,
+          "2027": -0.0100242128084856,
+          "2028": -0.0100242128084856,
+          "2029": -0.0100242128084856,
+          "2030": -0.0100242128084856,
+          "2031": -0.0100242128084856,
+          "2032": -0.010024212808485602,
+          "2033": -0.0100242128084856,
+          "2034": -0.0100242128084856,
+          "2035": -0.0100242128084856
+        },
+        "box": null,
+        "reason": "",
+        "conventions": [
+          "Prélèvements constants en % du PIB",
+          "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+        ],
+        "uncovered": {}
+      },
+      {
+        "key": "dette",
+        "pour": "L'État",
+        "label": "Dette, écart de la réforme",
+        "unit": "pts de PIB",
+        "stage": "chaîne",
+        "source": "chaîne de §3",
+        "theta": [],
+        "note": "",
+        "available": true,
+        "values": {
+          "2026": 0.010024212808485533,
+          "2027": 0.019937774691762167,
+          "2028": 0.029741907055188976,
+          "2029": 0.03943781782180711,
+          "2030": 0.04902670158116096,
+          "2031": 0.05850973973647933,
+          "2032": 0.06788810065022988,
+          "2033": 0.07716293978806887,
+          "2034": 0.08633539986119976,
+          "2035": 0.09540661096716208
+        },
+        "box": null,
+        "reason": "",
+        "conventions": [
+          "Prélèvements constants en % du PIB",
+          "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+        ],
+        "uncovered": {}
+      },
+      {
+        "key": "charge_interets",
+        "pour": "L'État",
+        "label": "Charge d'intérêts de la dette supplémentaire",
+        "unit": "pts du PIB de référence",
+        "stage": "chaîne",
+        "source": "chaîne de §3",
+        "theta": [],
+        "note": "",
+        "available": true,
+        "values": {
+          "2026": 0.0,
+          "2027": 0.00018320582767018302,
+          "2028": 0.0003643893624458807,
+          "2029": 0.0005435729271352869,
+          "2030": 0.0007207785981392788,
+          "2031": 0.0008960282081713511,
+          "2032": 0.001069343348947526,
+          "2033": 0.0012407453738465723,
+          "2034": 0.0014102554005408572,
+          "2035": 0.0015778943135981622
+        },
+        "box": null,
+        "reason": "",
+        "conventions": [
+          "Prélèvements constants en % du PIB",
+          "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
+        ],
+        "uncovered": {}
+      }
+    ],
+    "population_view": "vieillie",
+    "population_note": "Population synthétique construite à partir de données ouvertes : structure des ménages observée dans l'enquête Emploi, revenus entièrement simulés à partir de distributions publiées. Les écarts aux totaux publiés sont dans reports/reconciliation.md. Les niveaux de RSA, de prime d'activité et de la distribution des niveaux de vie ne sont pas publiables en l'état (D-015) ; les écarts entre droit courant et réforme le sont. Ce résultat porte sur un sous-échantillon déterministe de 20 000 ménages repondérés, pas sur la population complète : attendez-vous à un bruit d'échantillonnage de l'ordre du pour cent sur les agrégats. Vue « vieillie » : l'année 2026 est chiffrée avec sa législation sur la population 2024 vieillie jusqu'à elle, la vue de tête de la commande `impots predictif` (D-216, D-226) ; la vue « figée », que la commande donne à côté, n'est pas chiffrée ici. Population vieillie mécaniquement de 2024 à 2026 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (hypothèse des études (D-289) : salaires +3 % par an). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+    "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+    "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable."
+  }
+}

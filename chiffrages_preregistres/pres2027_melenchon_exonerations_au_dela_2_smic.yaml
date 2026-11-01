@@ -1,0 +1,55 @@
+case: pres2027_melenchon_exonerations_au_dela_2_smic
+pre_registered: '2026-11-01T21:37:30+00:00'
+commit: 97e5a293135e6437e8a749df88049efdb0303f05
+scenario: pres2027_melenchon_exonerations_au_dela_2_smic
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -9291744512.297852
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 200000000.0
+  rationale: 'Classe « menages » (D-321). Mesure des ménages sur une large assiette
+    (salaires, CSG, quotient familial) : le moteur retrouve ses agrégats à quelques
+    pour cent. Le juge chiffre peut-être une autre année que 2026 (la croissance nominale
+    en écarte de 3 % par an) et contre la continuité des politiques, pas le droit
+    gelé.'
+note: 'Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-01 —
+  Fin des exonérations de cotisations au-dessus de 2 SMIC : « « Aussi proposons-nous
+  d''interrompre cette subvention au-dessus de 2 SMIC, où les exonérations ne sont
+  plus qu''un effet d''aubaine sans aucun effet sur l''emploi. » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf,
+  2026-10-14). Sur le droit de 2026, les bandeaux maladie et famille ont disparu et
+  la réduction générale est la seule exonération générale ; son seuil de sortie, 3
+  SMIC (allegement_general_plafond), est ramené à 2 SMIC. Le candidat ne dit rien
+  de la courbe sous 2 SMIC : elle reste celle de 2026, et la réduction s''arrête net
+  à 2 SMIC, ce que dit « interrompre ». Plage : de 3 SMIC (le droit de 2026) à 1,5
+  SMIC (2 SMIC prolongé de la moitié de l''écart).'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price

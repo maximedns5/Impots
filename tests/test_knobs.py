@@ -106,10 +106,11 @@ def test_the_registry_and_the_knob_list_agree():
     voit pas. Deux registres d'un seul contrat, dont un invisible à la porte : c'est
     exactement la forme décrite par D-151, rencontrée en la corrigeant.
     """
-    from impots.engine.reforms import PLAFOND_KNOBS, REVALORISATION_KNOBS
+    from impots.engine.reforms import ECHELLE_KNOBS, PLAFOND_KNOBS, REVALORISATION_KNOBS
 
     assert set(CASES) | set(EXEMPT) == (
-        set(SCALAR_KNOBS) | set(PLAFOND_KNOBS) | set(REVALORISATION_KNOBS))
+        set(SCALAR_KNOBS) | set(PLAFOND_KNOBS) | set(REVALORISATION_KNOBS)
+        | set(ECHELLE_KNOBS))
 
 
 def test_the_allegement_rows_exist_because_the_gross_row_hides_them():

@@ -1,0 +1,340 @@
+{
+  "candidat": "Florian Philippot",
+  "slug": "philippot",
+  "parti": "Les Patriotes",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Pas de citation directe. L'inventaire relève : déclaré le 09/05/2026 sur France 2 ; il se rangera « derrière Philippe de Villiers » si celui-ci se présente.",
+    "url": "https://www.franceinfo.fr/elections/presidentielle/presidentielle-2027-le-souverainiste-florian-philippot-annonce-sa-candidature-a-l-elysee_7993346.html",
+    "date": "2026-05-09",
+    "type": "entretien"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "fp01_frexit_contribution",
+      "categorie": "depense_publique",
+      "libelle": "Frexit : fin de la contribution nette à l'UE",
+      "parametre": "15 Md€ par an dans le tableau ; le texte annonce 20 Md€, en anticipant une hausse future du différentiel",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Économiser 20 milliards d'euros par an par le Frexit.",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La contribution au budget de l'Union est une dépense de l'État, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an (montant du tableau ; le texte annonce 20 Md€ avec la hausse attendue du différentiel)",
+        "source": {
+          "citation": "Pas de citation directe du tableau : l'inventaire y relève 15 Md€ par an pour le Frexit ; le texte annonce « environ 20 milliards d'euros de différentiel net » à venir.",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "fp02_doublons_fonction_publique_territoriale",
+      "categorie": "depense_publique",
+      "libelle": "Suppression des doublons dans la fonction publique territoriale",
+      "parametre": "Potentiel de 30 Md€ par an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression des doublons dans la fonction publique territoriale",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La dépense des collectivités n'est pas microsimulée : elle n'entre qu'en scénario de la chaîne."
+      },
+      "declare": {
+        "montant_eur": 30000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Suppression des doublons dans la fonction publique territoriale",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "fp03_cout_immigration",
+      "categorie": "depense_publique",
+      "libelle": "Baisse du coût de l'immigration",
+      "parametre": "10 Md€ par an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Baisse du coût lié à l'immigration",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une enveloppe d'économies sans règle de calcul, sur une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 10000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Baisse du coût lié à l'immigration",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "fp04_bouclier_energetique",
+      "categorie": "energie_carburants",
+      "libelle": "Soutien aux énergies alternatives et « bouclier énergétique »",
+      "parametre": "5 Md€ par an d'économies",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Soutien aux énergies électriques alt. et bouclier énergétique",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une enveloppe d'économies sur le soutien à l'énergie, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 5000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Soutien aux énergies électriques alt. et bouclier énergétique",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "fp05_droits_douane",
+      "categorie": "tva_consommation",
+      "libelle": "Droits de douane après la sortie de l'UE",
+      "parametre": "Récupération des droits de douane perçus par l'UE (3,5 Md€) ; +10 % sur la Chine, le Mercosur, etc. (7 Md€)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Sortie UE - Droits de Douane 10% suppl. (Chine, Mercosur, etc.)",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Les droits de douane portent sur des importations que le moteur n'a pas."
+      },
+      "declare": {
+        "montant_eur": 10500000000.0,
+        "sens": "recette",
+        "horizon": "par an (3,5 + 7 Md€)",
+        "source": {
+          "citation": "Sortie UE - Droits de Douane 10% suppl. (Chine, Mercosur, etc.)",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "fp06_fraude_fiscale_sociale",
+      "categorie": "autre",
+      "libelle": "Lutte contre la fraude fiscale et sociale",
+      "parametre": "40 % de la fraude estimée",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Baisse Fraude Fiscale » ; « Baisse Fraude sociale »",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Le moteur calcule l'impôt et les droits dus, pas la fraude : un objectif de recouvrement n'est qu'une hypothèse de la chaîne."
+      },
+      "declare": {
+        "montant_eur": 25000000000.0,
+        "sens": "recette",
+        "horizon": "par an (20 Md€ de fraude fiscale et 5 Md€ de fraude sociale)",
+        "source": {
+          "citation": "« Baisse Fraude Fiscale » ; « Baisse Fraude sociale »",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "fp07_recettes_croissance",
+      "categorie": "autre",
+      "libelle": "Recettes induites par la croissance, la baisse du chômage et l'IS",
+      "parametre": "10 Md€ par point de croissance, avec 3 % visés ; chômage ; IS",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Croissance Economique (PIB) entrainant une augmentation des recettes fiscales et une réduction des dépenses sociales",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "La croissance est une hypothèse de la chaîne de la dette, pas une réforme."
+      },
+      "declare": {
+        "montant_eur": 39300000000.0,
+        "sens": "recette",
+        "horizon": "par an (30 + 5 + 4,3 Md€)",
+        "source": {
+          "citation": "Croissance Economique (PIB) entrainant une augmentation des recettes fiscales et une réduction des dépenses sociales",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "fp08_electricite_divisee_par_trois",
+      "categorie": "energie_carburants",
+      "libelle": "Sortie du marché européen de l'électricité ; monopole public d'EDF",
+      "parametre": "Prix de l'électricité divisé par trois",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "En quittant le marché européen de l'électricité, la France pourra réduire le prix de l'électricité par trois",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Un prix de l'énergie fixé hors du moteur, qui n'a pas la consommation d'énergie des ménages."
+      }
+    },
+    {
+      "id": "fp09_age_depart",
+      "categorie": "retraites",
+      "libelle": "Baisse de l'âge de départ",
+      "parametre": "Non chiffrée",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Baisser l'âge de départ à la retraite.",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une baisse de l'âge qui ne dit pas jusqu'à quel âge."
+      }
+    },
+    {
+      "id": "fp10_sortie_euro",
+      "categorie": "autre",
+      "libelle": "Sortie de l'euro et nouveau franc",
+      "parametre": "« 1 nouveau franc = 1€ »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Une parité initiale simple : par exemple 1 euro = 1 nouveau franc au départ.",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Le change d'une monnaie nouvelle est une hypothèse macroéconomique de la chaîne, pas un paramètre fiscal."
+      }
+    },
+    {
+      "id": "fp11_lex_monetae",
+      "categorie": "regle_budgetaire",
+      "libelle": "Conversion de la dette en francs (Lex Monetae) ; emprunt direct auprès de la Banque de France",
+      "parametre": "aucun",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "En vertu de la Lex Monetae, la France pourra convertir en Francs la dette contractée en Euros",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une conversion de la dette sans taux de change ni montant."
+      }
+    },
+    {
+      "id": "fp12_principes_fiscaux",
+      "categorie": "patrimoine_capital",
+      "libelle": "Principes fiscaux",
+      "parametre": "Non chiffrés",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "l'allègement des taxes et impôts pour les indépendants et les petites entreprises, la lutte contre l'optimisation fiscale des grands groupes, une moindre taxation des petits héritages",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Des principes, sans taux ni seuil."
+      }
+    },
+    {
+      "id": "fp13_ukraine",
+      "categorie": "depense_publique",
+      "libelle": "Arrêt du financement de la guerre en Ukraine",
+      "parametre": "aucun",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Couper les financements de la guerre en Ukraine",
+          "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+          "date": "2026-09-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Un arrêt sans montant ni calendrier."
+      }
+    }
+  ]
+}

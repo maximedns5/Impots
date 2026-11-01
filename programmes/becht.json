@@ -1,0 +1,54 @@
+{
+  "candidat": "Olivier Becht",
+  "slug": "becht",
+  "parti": "Sans étiquette",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Pas de citation directe. L'inventaire relève : déclaré le 24 sept. 2026 dans Paris Match, se dit d'« extrême centre ».",
+    "url": "https://www.sudradio.fr/politique/olivier-becht-je-suis-candidat-a-lelection-presidentielle-et-jirai-jusquau-bout",
+    "date": "2026-10-11",
+    "type": "entretien"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "o1_contrat_unique_portable",
+      "categorie": "prestations",
+      "libelle": "Contrat de travail unique « portable », avec un « salaire socle » pendant les périodes sans emploi : emploi accepté, formation, ou 25 h de bénévolat",
+      "parametre": "25 h de bénévolat (montant du salaire socle non donné)",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Ce contrat serait portable d'une entreprise à l'autre et resterait attaché à la personne pendant les périodes sans emploi, avec un salaire socle. »",
+          "url": "https://www.sudradio.fr/politique/olivier-becht-je-suis-candidat-a-lelection-presidentielle-et-jirai-jusquau-bout",
+          "date": "2026-10-11",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le montant du salaire socle n'est pas donné."
+      }
+    },
+    {
+      "id": "o2_revolution_energetique",
+      "categorie": "energie_carburants",
+      "libelle": "« Révolution énergétique », dont les carburants de synthèse",
+      "parametre": "non énoncé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Je souhaite notamment engager une révolution énergétique, avec le développement des carburants de synthèse, pour réduire notre dépendance aux importations pétrolières. »",
+          "url": "https://www.sudradio.fr/politique/olivier-becht-je-suis-candidat-a-lelection-presidentielle-et-jirai-jusquau-bout",
+          "date": "2026-10-11",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni taux, ni montant, ni objectif chiffré."
+      }
+    }
+  ]
+}

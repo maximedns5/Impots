@@ -1,0 +1,529 @@
+{
+  "candidat": "Marine Tondelier",
+  "slug": "tondelier",
+  "parti": "Les Écologistes",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Candidate du parti (désignée en décembre 2025 pour la primaire unitaire) ; maintien soumis à un vote des adhérents du 10 au 13/12/2026 (candidature propre ou ralliement)",
+    "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-2027-les-ecologistes-reportent-lheure-du-choix-a-decembre-marine-tondelier-toujours-en-lice",
+    "date": "2026-09-21",
+    "type": "presse"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "taxe_zucman",
+      "categorie": "patrimoine_capital",
+      "libelle": "Taxe Zucman",
+      "parametre": "2 % au-delà de 100 M€ de patrimoine",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« une taxe Zucman de 2 % au-delà de 100 millions d'euros de patrimoine » (programme, cité par RT)",
+          "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
+          "date": "2026-07-14",
+          "type": "programme"
+        },
+        {
+          "citation": "pas de citation verbatim relevée",
+          "url": "https://www.parlons-politique.fr/elections/ce-que-le-programme-ecologiste-de-marine-tondelier-changerait-pour-les-retraites-le-nucleaire-et-les-impots_23570/",
+          "date": "2026-07-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "patrimoine",
+        "raison": "La population ne porte pas le patrimoine des ménages, ni a fortiori celui qui dépasse 100 M€."
+      }
+    },
+    {
+      "id": "isf_climatique",
+      "categorie": "patrimoine_capital",
+      "libelle": "Rétablir l'impôt sur la fortune, « ISF climatique »",
+      "parametre": "aucun barème",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« rétablir la fiscalité sur la grande fortune » (programme, cité par RT)",
+          "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
+          "date": "2026-07-14",
+          "type": "programme"
+        },
+        {
+          "citation": "« ISF climatique »",
+          "url": "https://entrevue.fr/elections/marine-tondelier-presente-le-programme-des-ecologistes-pour-2027/",
+          "date": "2026-07-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni barème ni seuil de l'impôt sur la fortune ne sont énoncés."
+      }
+    },
+    {
+      "id": "impot_minimal_benefices",
+      "categorie": "entreprises",
+      "libelle": "Impôt minimal sur les bénéfices des sociétés",
+      "parametre": "sociétés de plus de 1 Md€ de chiffre d'affaires, au prorata de l'activité en France",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« impôt minimal sur les bénéfices des sociétés » (programme, cité par RT)",
+          "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
+          "date": "2026-07-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "dimension_entreprises",
+        "raison": "Un impôt au prorata de l'activité en France demande les bénéfices mondiaux des groupes et leur partage par territoire, que le modèle des entreprises ne porte pas, et son taux n'est pas cité."
+      }
+    },
+    {
+      "id": "superprofits_petrogaziers_maritimes",
+      "categorie": "entreprises",
+      "libelle": "Taxe exceptionnelle sur les superprofits pétroliers, gaziers et maritimes",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« une taxe exceptionnelle sur les superprofits de l'industrie pétrogazière et du commerce maritime » (programme, cité par RT)",
+          "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
+          "date": "2026-07-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni la définition du superprofit ni le taux ne sont énoncés."
+      }
+    },
+    {
+      "id": "taxe_ca_additionnel_petroliers",
+      "categorie": "entreprises",
+      "libelle": "Taxe sur le chiffre d'affaires additionnel des groupes pétroliers",
+      "parametre": "33 % du chiffre d'affaires additionnel réalisé en France en 2026 et 2027 par rapport à 2025",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« une taxe de 33% sur le chiffre d'affaires additionnel » (Eva Sas)",
+          "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
+          "date": "2026-09-30",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "Le chiffre d'affaires des groupes pétroliers en France et sa hausse depuis 2025 ne sont pas une assiette du modèle des entreprises."
+      },
+      "declare": {
+        "montant_eur": 2800000000.0,
+        "sens": "recette",
+        "horizon": "contre-budget pour 2027 (chiffre d'affaires additionnel de 2026 et 2027)",
+        "source": {
+          "citation": "« une taxe de 33% sur le chiffre d'affaires additionnel » (Eva Sas)",
+          "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
+          "date": "2026-09-30",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "cheque_carburant",
+      "categorie": "energie_carburants",
+      "libelle": "Chèque carburant financé par la taxe pétrolière",
+      "parametre": "450 € pour environ 6 millions de ménages",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim (paraphrase AFP)",
+          "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
+          "date": "2026-09-30",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Un chèque carburant est une prestation neuve, dont le moteur ne porte ni le montant ni le ciblage des quelque 6 millions de ménages."
+      }
+    },
+    {
+      "id": "contribution_gros_heritages",
+      "categorie": "patrimoine_capital",
+      "libelle": "Contribution additionnelle sur les gros héritages",
+      "parametre": "10 % au-delà de 4 M€ ; 10 points de plus au-delà de 13 M€ (le programme parle de deux tranches, top 1 % et top 0,1 %)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« contribution exceptionnelle de 10% sur les héritages supérieurs à 4 millions d'euros »",
+          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
+          "date": "2026-08-27",
+          "type": "discours"
+        },
+        {
+          "citation": "pas de citation verbatim relevée",
+          "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
+          "date": "2026-09-30",
+          "type": "discours"
+        },
+        {
+          "citation": "pas de citation verbatim relevée (le programme parle de deux tranches, top 1 % et top 0,1 %)",
+          "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
+          "date": "2026-07-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Le moteur n'a pas de module des transmissions."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "recette",
+        "horizon": "par an, pour la contribution, le pacte Dutreil et le démembrement ensemble",
+        "source": {
+          "citation": "« 15 milliards d'euros par an »",
+          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
+          "date": "2026-08-27",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "pacte_dutreil_50",
+      "categorie": "patrimoine_capital",
+      "libelle": "Pacte Dutreil",
+      "parametre": "exonération ramenée de 75 % à 50 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim (paraphrase AFP)",
+          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
+          "date": "2026-08-27",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Le pacte Dutreil exonère des transmissions d'entreprises, que le moteur ne porte pas."
+      }
+    },
+    {
+      "id": "demembrement_propriete",
+      "categorie": "patrimoine_capital",
+      "libelle": "Fin des avantages fiscaux du démembrement de propriété",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim (paraphrase AFP)",
+          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
+          "date": "2026-08-27",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun avantage visé ni barème n'est énoncé."
+      }
+    },
+    {
+      "id": "abattement_assurance_vie",
+      "categorie": "patrimoine_capital",
+      "libelle": "Suppression de l'abattement spécifique de l'assurance-vie",
+      "parametre": "suppression",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« supprimer l'abattement spécifique aux assurances-vie » (programme, cité par RT)",
+          "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
+          "date": "2026-07-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "L'abattement de l'assurance-vie, lu ici à la transmission comme le reste du volet héritages, n'est pas porté par le moteur, qui n'a pas de module des transmissions."
+      }
+    },
+    {
+      "id": "plus_values_latentes",
+      "categorie": "patrimoine_capital",
+      "libelle": "Taxation des plus-values latentes",
+      "parametre": "au-delà de 4 M€ ; taux non donné",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim (paraphrase AFP)",
+          "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
+          "date": "2026-09-30",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "patrimoine",
+        "raison": "Les plus-values latentes demandent le patrimoine des ménages, que la population ne porte pas, et le taux n'est pas donné."
+      }
+    },
+    {
+      "id": "tranche_ir_60",
+      "categorie": "ir",
+      "libelle": "Nouvelle tranche d'impôt sur le revenu à 60 %",
+      "parametre": "60 % « au-delà de 250 000 € annuels »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« au-delà de 250 000 € annuels » (programme, cité par RT)",
+          "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
+          "date": "2026-07-14",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "ir_bareme": [
+            {
+              "threshold": 0,
+              "rate": 0.0
+            },
+            {
+              "threshold": 11600,
+              "rate": 0.11
+            },
+            {
+              "threshold": 29579,
+              "rate": 0.3
+            },
+            {
+              "threshold": 84577,
+              "rate": 0.41
+            },
+            {
+              "threshold": 181917,
+              "rate": 0.45
+            },
+            {
+              "threshold": 250000,
+              "rate": 0.6
+            }
+          ]
+        },
+        "plages": [
+          {
+            "champ": "ir_bareme.5.rate",
+            "min": 0.45,
+            "max": 0.675
+          }
+        ],
+        "note": "Barème de 2026 et une 6e tranche à 60 % au-delà de 250 000 €. Le seuil s'applique au revenu par part, comme tous les seuils du barème : le candidat ne dit pas s'il l'entend par foyer. La plage va du taux de la tranche supérieure actuelle, 45 % (la mesure retirée), à 67,5 %."
+      }
+    },
+    {
+      "id": "exit_tax",
+      "categorie": "patrimoine_capital",
+      "libelle": "Extension de l'exit tax",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« étendre les conditions de l'exit tax afin de maintenir une contribution fiscale des émigrés fiscaux » (programme, cité par RT)",
+          "url": "https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution",
+          "date": "2026-07-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni seuil, ni durée, ni taux de l'exit tax étendue ne sont énoncés."
+      }
+    },
+    {
+      "id": "tva_verte",
+      "categorie": "tva_consommation",
+      "libelle": "« TVA verte »",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« TVA verte »",
+          "url": "https://entrevue.fr/elections/marine-tondelier-presente-le-programme-des-ecologistes-pour-2027/",
+          "date": "2026-07-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun taux ni produit visé n'est énoncé."
+      }
+    },
+    {
+      "id": "fiscalite_transports",
+      "categorie": "tva_consommation",
+      "libelle": "Fiscalité des transports : renchérir l'aérien, favoriser le rail",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim relevée dans cet article ; résumé d'un blog non daté (biosphere.ouvaton.org), cité en appui : « Hausse de la fiscalité des billets d'avion »",
+          "url": "https://entrevue.fr/elections/marine-tondelier-presente-le-programme-des-ecologistes-pour-2027/",
+          "date": "2026-07-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun taux ni tarif n'est énoncé."
+      }
+    },
+    {
+      "id": "retraite_62_60_penibilite",
+      "categorie": "retraites",
+      "libelle": "Retour à 62 ans, 60 ans selon la pénibilité",
+      "parametre": "62 ans « immédiat » ; viser 60 ans pour carrières longues et métiers pénibles",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim relevée dans cet article ; résumé d'un blog non daté (biosphere.ouvaton.org), cité en appui : « viser les 60 ans en fonction de la pénibilité du travail »",
+          "url": "https://www.parlons-politique.fr/elections/ce-que-le-programme-ecologiste-de-marine-tondelier-changerait-pour-les-retraites-le-nucleaire-et-les-impots_23570/",
+          "date": "2026-07-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge légal n'est pas un paramètre du moteur : la population ne vieillit pas en âge et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "blocage_prix_inflation_anormale",
+      "categorie": "energie_carburants",
+      "libelle": "Blocage des prix réservé à l'« inflation anormale »",
+      "parametre": "aucun seuil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« inflation anormale »",
+          "url": "https://www.parlons-politique.fr/elections/ce-que-le-programme-ecologiste-de-marine-tondelier-changerait-pour-les-retraites-le-nucleaire-et-les-impots_23570/",
+          "date": "2026-07-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun seuil d'inflation ni prix bloqué n'est énoncé."
+      }
+    },
+    {
+      "id": "sortie_nucleaire",
+      "categorie": "energie_carburants",
+      "libelle": "Sortie progressive du nucléaire",
+      "parametre": "environ vingt ans ; neutralité carbone en 2040",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim relevée dans cet article ; résumé d'un blog non daté (biosphere.ouvaton.org), cité en appui : « sortie du nucléaire d'ici à vingt ans »",
+          "url": "https://www.parlons-politique.fr/elections/ce-que-le-programme-ecologiste-de-marine-tondelier-changerait-pour-les-retraites-le-nucleaire-et-les-impots_23570/",
+          "date": "2026-07-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "Le nucléaire et la production d'électricité sont hors du modèle."
+      }
+    },
+    {
+      "id": "plan_climat",
+      "categorie": "depense_publique",
+      "libelle": "Plan climat",
+      "parametre": "environ 10 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un plan climat à hauteur de l'urgence et donc de l'ordre de dix milliards d'euros » (Eva Sas)",
+          "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
+          "date": "2026-09-30",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 10000000000.0,
+        "sens": "depense",
+        "horizon": "contre-budget pour 2027",
+        "source": {
+          "citation": "« un plan climat à hauteur de l'urgence et donc de l'ordre de dix milliards d'euros » (Eva Sas)",
+          "url": "https://www.connaissancedesenergies.org/afp/budget-les-ecologistes-veulent-taxer-les-superprofits-des-entreprises-petro-gazieres-260930",
+          "date": "2026-09-30",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "renovation_ecoles",
+      "categorie": "depense_publique",
+      "libelle": "Rénovation thermique des écoles",
+      "parametre": "4 Md€ par an pendant 10 ans dès 2027, moitié État, moitié collectivités",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Une 'grande transmission' qui doit financer la 'grande transition' » (Tondelier)",
+          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
+          "date": "2026-08-27",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 4000000000.0,
+        "sens": "depense",
+        "horizon": "par an pendant 10 ans dès 2027, moitié État, moitié collectivités",
+        "source": {
+          "citation": "« Une 'grande transmission' qui doit financer la 'grande transition' » (Tondelier)",
+          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
+          "date": "2026-08-27",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "fonds_vert_maprimerenov",
+      "categorie": "depense_publique",
+      "libelle": "Fonds vert et MaPrimeRénov'",
+      "parametre": "fonds vert +1,9 Md€ ; MaPrimeRénov' +1,4 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Ces dépenses publiques ne peuvent pas être baissées en 2027 » (Eva Sas)",
+          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
+          "date": "2026-08-27",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 3300000000.0,
+        "sens": "depense",
+        "horizon": "2027 : 1,9 Md€ de fonds vert et 1,4 Md€ de MaPrimeRénov'",
+        "source": {
+          "citation": "« Ces dépenses publiques ne peuvent pas être baissées en 2027 » (Eva Sas)",
+          "url": "https://www.linfodurable.fr/politique/les-ecologistes-veulent-taxer-davantage-les-heritages-des-plus-fortunes-58714",
+          "date": "2026-08-27",
+          "type": "discours"
+        }
+      }
+    }
+  ]
+}

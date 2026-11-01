@@ -96,6 +96,7 @@ def reformed(key: str) -> Any:
         verify_allegements,
         verify_bareme,
         verify_capital,
+        verify_echelles,
         verify_revalorisations,
     )
 
@@ -114,6 +115,7 @@ def reformed(key: str) -> Any:
     verify_allegements(system, spec, decoded["year"])
     verify_capital(system, spec, decoded["year"])
     verify_revalorisations(system, spec, decoded["year"])
+    verify_echelles(system, baseline(), spec, decoded["year"])
     return system
 
 

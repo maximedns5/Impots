@@ -31,3 +31,16 @@ Une révision ne change que la base d'un cas enregistré, après l'ouverture de 
 | plf2027_art_74_ppa_vieilli | -0.819 | -0.332 | -0.487 | -146.6% | 0.100 (relative) | **outside** en-dessous | aucun, cas neuf |
 
 **6 sur 9 dans la tolérance, hors du compte des cas aveugles.**
+
+## En attente d'un comparateur
+
+* **pres2027_attal_a16_droit_au_brut** — préenregistré le 2026-11-01T21:28:03+00:00, mécanique +75.661 md, toléré 25% ou 200 M au choix du plus large.
+* **pres2027_attal_a18_suppression_cvae** — préenregistré le 2026-11-01T21:28:33+00:00, mécanique +3.533 md, toléré 30% ou 200 M au choix du plus large.
+* **pres2027_le_pen_lp22_part_pleine_2e_enfant** — préenregistré le 2026-11-01T21:30:32+00:00, mécanique +2.832 md, toléré 25% ou 200 M au choix du plus large.
+* **pres2027_lisnard_l1_csg_activite_6_6** — préenregistré le 2026-11-01T21:32:32+00:00, mécanique +24.162 md, toléré 25% ou 200 M au choix du plus large.
+* **pres2027_lisnard_l20_deplafonnement_qf** — préenregistré le 2026-11-01T21:35:24+00:00, mécanique +5.671 md, toléré 40% ou 200 M au choix du plus large.
+* **pres2027_lisnard_l4_suppression_c3s_cvae** — préenregistré le 2026-11-01T21:32:32+00:00, mécanique +9.228 md, toléré 30% ou 200 M au choix du plus large.
+* **pres2027_melenchon_exonerations_au_dela_2_smic** — préenregistré le 2026-11-01T21:37:30+00:00, mécanique -9.292 md, toléré 25% ou 200 M au choix du plus large.
+* **pres2027_retailleau_r19_gains_rendus_moitie** — préenregistré le 2026-11-01T21:39:31+00:00, mécanique +12.669 md, toléré 25% ou 200 M au choix du plus large.
+* **pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe** — préenregistré le 2026-11-01T21:39:35+00:00, mécanique +9.228 md, toléré 30% ou 200 M au choix du plus large.
+* **pres2027_tondelier_tranche_ir_60** — préenregistré le 2026-11-01T21:41:34+00:00, mécanique -0.975 md, toléré 40% ou 200 M au choix du plus large.

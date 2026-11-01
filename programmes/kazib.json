@@ -1,0 +1,130 @@
+{
+  "candidat": "Anasse Kazib",
+  "slug": "kazib",
+  "parti": "Révolution permanente",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Candidature annoncée le 01/06/2026, lancée le 12/09/2026 (Fête de l'Humanité)",
+    "url": "https://www.revolutionpermanente.fr/Anasse-Kazib-2027-une-candidature-ouvriere-communiste-et-revolutionnaire-a-la-presidentielle",
+    "date": "2026-06-01",
+    "type": "presse"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "smic_2000",
+      "categorie": "salaires_smic",
+      "libelle": "SMIC à 2 000 € et indexation des salaires sur les prix",
+      "parametre": "2 000 € (net ou brut non précisé)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« il entend exiger l'augmentation du SMIC à 2000 euros et de l'ensemble des salaires, indexés sur les prix. »",
+          "url": "https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature",
+          "date": "2026-09-16",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le moteur ne déplace pas la distribution des salaires, et le SMIC n'est pas un de ses boutons."
+      }
+    },
+    {
+      "id": "semaine_28_heures",
+      "categorie": "autre",
+      "libelle": "Semaine de 28 heures",
+      "parametre": "28 heures",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« le candidat a posé comme revendications centrales la semaine de 28 heures et la retraite à 60 ans, 55 ans pour les métiers pénibles, sans condition d'annuités. »",
+          "url": "https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature",
+          "date": "2026-09-16",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le moteur ne porte ni les heures travaillées ni la distribution des salaires qu'une semaine de 28 heures déplacerait."
+      }
+    },
+    {
+      "id": "retraite_60_55_sans_annuites",
+      "categorie": "retraites",
+      "libelle": "Retraite à 60 ans, 55 ans pour les métiers pénibles, sans condition d'annuités",
+      "parametre": "60 ans ; 55 ans ; pas de durée requise",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« le candidat a posé comme revendications centrales la semaine de 28 heures et la retraite à 60 ans, 55 ans pour les métiers pénibles, sans condition d'annuités. »",
+          "url": "https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature",
+          "date": "2026-09-16",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge légal n'est pas un paramètre du moteur : la population ne vieillit pas en âge et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "interdiction_licenciements",
+      "categorie": "autre",
+      "libelle": "Interdiction des licenciements et des suppressions de postes",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« il s'agit d'interdire les licenciements et les suppressions de postes, et surtout de répartir le temps de travail entre toutes et tous. »",
+          "url": "https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature",
+          "date": "2026-09-16",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une interdiction, sans paramètre fiscal ni social."
+      }
+    },
+    {
+      "id": "expropriation_secteurs_strategiques",
+      "categorie": "autre",
+      "libelle": "Expropriation sans indemnité des secteurs stratégiques",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« exproprier sans indemnité ni rachat, sous contrôle des travailleurs, les entreprises qui refuseraient ces mesures comme les secteurs stratégiques, de l'énergie à la santé. »",
+          "url": "https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature",
+          "date": "2026-09-16",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun périmètre chiffré ni paramètre fiscal n'est énoncé."
+      }
+    },
+    {
+      "id": "fin_sous_traitance_cdi",
+      "categorie": "autre",
+      "libelle": "Fin de la sous-traitance, CDI pour tous",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« imposer la fin de la sous-traitance, le CDI pour toutes et tous, l'embauche des précaires, des intérimaires et des contractuels »",
+          "url": "https://www.revolutionpermanente.fr/28h-expropriation-des-secteurs-strategiques-RP-presente-les-premieres-mesures-de-sa-candidature",
+          "date": "2026-09-16",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une règle du contrat de travail, sans paramètre fiscal ni social."
+      }
+    }
+  ]
+}

@@ -245,9 +245,10 @@ def test_emtr_on_the_light_tier_is_rejected_with_a_reason(client: TestClient) ->
         (
             {
                 "household": {"adults": [{"salaire_brut_annuel": 1, "annee_naissance": 1990}]},
-                "reform": {"ir_bareme": [{"threshold": i * 1000, "rate": 0.1} for i in range(6)]},
+                # Six tranches since D-320 (the owner's goal 11): seven are refused.
+                "reform": {"ir_bareme": [{"threshold": i * 1000, "rate": 0.1} for i in range(7)]},
             },
-            "5 tranches",
+            "6 tranches",
         ),
         (
             {

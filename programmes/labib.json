@@ -1,0 +1,149 @@
+{
+  "candidat": "Selma Labib",
+  "slug": "labib",
+  "parti": "NPA-Révolutionnaires",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Désignée par le comité politique national des 6-7/06/2026, communiqué du 17/06/2026",
+    "url": "https://npa-revolutionnaires.org/articles/communique-presidentielle-2027-selma-labib-une-candidature-ouvriere-et-revolutionnaire-soutenue-par-gael-quirante",
+    "date": "2026-06-17",
+    "type": "presse"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "annulation_dette",
+      "categorie": "regle_budgetaire",
+      "libelle": "Annulation de la dette",
+      "parametre": "aucun périmètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« annulation de la dette pour mettre fin à la rente des financiers »",
+          "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le périmètre ni le montant de la dette annulée ne sont énoncés."
+      }
+    },
+    {
+      "id": "socialisation_banques",
+      "categorie": "autre",
+      "libelle": "Socialisation des banques et institutions financières",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« socialisation des banques et institutions financières, pour reprendre la main sur le financement de l'économie et des services publics »",
+          "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun périmètre ni montant n'est énoncé."
+      }
+    },
+    {
+      "id": "socialisation_grandes_entreprises",
+      "categorie": "autre",
+      "libelle": "Socialisation des grandes entreprises sans indemnité",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« socialisation des grandes entreprises, sans indemnité ni rachat »",
+          "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le seuil des grandes entreprises ni aucun paramètre fiscal ne sont énoncés."
+      }
+    },
+    {
+      "id": "suppression_allegements_niches",
+      "categorie": "entreprises",
+      "libelle": "Suppression des allègements de cotisations et des niches pour entreprises et grandes fortunes",
+      "parametre": "périmètre des niches non défini",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« suppression des allègements de cotisations sociales et autres niches fiscales et sociales pour les entreprises et les grandes fortunes »",
+          "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le périmètre des niches supprimées n'est pas défini."
+      }
+    },
+    {
+      "id": "controle_capitaux",
+      "categorie": "autre",
+      "libelle": "Contrôle des capitaux",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« contrôle des capitaux pour mettre fin à l'évasion et l'optimisation fiscale »",
+          "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une règle des mouvements de capitaux, sans paramètre fiscal."
+      }
+    },
+    {
+      "id": "suppression_tva_taxes_carburants",
+      "categorie": "tva_consommation",
+      "libelle": "Suppression de la TVA et des taxes sur les carburants",
+      "parametre": "suppression",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« suppression de la TVA et des taxes sur les carburants »",
+          "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Le moteur n'a ni TVA ni accise sur les carburants, ni la consommation des ménages."
+      }
+    },
+    {
+      "id": "impot_progressif_revenus_benefices",
+      "categorie": "ir",
+      "libelle": "Impôt « fortement progressif » sur les revenus et les bénéfices des grandes entreprises, en remplacement",
+      "parametre": "aucun barème",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« remplacées par un impôt fortement progressif sur les revenus et les bénéfices des grandes entreprises »",
+          "url": "https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances",
+          "date": "2026-10-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun barème n'est énoncé."
+      }
+    }
+  ]
+}

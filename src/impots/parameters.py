@@ -163,6 +163,28 @@ def update_bracket(
         scale.brackets[index].threshold.update(start=start, value=threshold)
 
 
+def reactivate_bracket(
+    scale: Any, index: int, *, active: int, start: Any, rate: float, threshold: float,
+) -> None:
+    """Wake the first dormant bracket of a scale: the one right after the active ones.
+
+    A scale carries every bracket it has ever had; the IR scale has fourteen, five of
+    them active since 2015. Writing a rate and a threshold from `start` on the bracket at
+    `index == active` makes it active again, and nothing is created: the bracket is one
+    the formula already iterates over, empty at this date (D-320). Any other index is
+    refused, the same way `update_bracket` refuses an inactive one: a gap would leave a
+    bracket without a value between two that have one.
+    """
+    if index != active or index >= len(scale.brackets):
+        raise ParameterWriteError(
+            f"la tranche {index} ne peut pas être réveillée : seule la première tranche "
+            f"dormante, la {active}, peut l'être, et le barème n'en porte que "
+            f"{len(scale.brackets)}"
+        )
+    scale.brackets[index].rate.update(start=start, value=rate)
+    scale.brackets[index].threshold.update(start=start, value=threshold)
+
+
 def create_parameter(
     parameters: Any, path: tuple[str, ...], *, start: Any, value: float
 ) -> None:

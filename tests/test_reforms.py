@@ -140,8 +140,11 @@ THREE_BRACKETS = ReformSpec.model_validate(
         [(0, 0.00), (15000, 0.20), (60000, 0.40)],
         [(0, 0.00), (12000, 0.10), (40000, 0.30), (150000, 0.45)],
         [(0, 0.00), (11497, 0.11), (29315, 0.30), (83823, 0.41), (180294, 0.50)],
+        # A sixth wakes the first dormant bracket of the scale (D-320).
+        [(0, 0.00), (11497, 0.11), (29315, 0.30), (83823, 0.41), (180294, 0.45),
+         (250000, 0.60)],
     ],
-    ids=["2-bracket", "3-bracket", "4-bracket", "5-bracket"],
+    ids=["2-bracket", "3-bracket", "4-bracket", "5-bracket", "6-bracket"],
 )
 def test_user_bareme_is_applied_exactly(brackets: list[tuple[float, float]]) -> None:
     """Whatever the user asks for, the evaluated scale must be exactly that.
@@ -285,11 +288,57 @@ def test_read_ir_parameters_matches_current_law() -> None:
     assert params["csg_activite"]["deductible"] == pytest.approx(0.068)
 
 
-def test_bareme_over_five_brackets_is_rejected() -> None:
-    with pytest.raises(ValueError, match="5 tranches"):
+def test_bareme_over_six_brackets_is_rejected() -> None:
+    """Six since D-320, by the owner's goal 11 (a sixth bracket in the programmes of
+    2027); five before. One dormant bracket can be woken, not two."""
+    with pytest.raises(ValueError, match="6 tranches"):
         ReformSpec.model_validate(
-            {"ir_bareme": [{"threshold": i * 10000, "rate": 0.1 * i} for i in range(6)]}
+            {"ir_bareme": [{"threshold": i * 10000, "rate": 0.1 * i} for i in range(7)]}
         )
+
+
+def test_a_sixth_bracket_taxes_above_it_and_nothing_below() -> None:
+    """60 % above 250 000 EUR (D-320): the top earner pays more, the median one the same."""
+    bareme = [{"threshold": 0, "rate": 0.0}, {"threshold": 11_600, "rate": 0.11},
+              {"threshold": 29_579, "rate": 0.30}, {"threshold": 84_577, "rate": 0.41},
+              {"threshold": 181_917, "rate": 0.45}, {"threshold": 250_000, "rate": 0.60}]
+    spec = ReformSpec.model_validate({"ir_bareme": bareme})
+    for salaire, hausse in ((600_000, True), (40_000, False)):
+        h = HouseholdInput.model_validate(
+            {"adults": [{"salaire_brut_annuel": salaire, "annee_naissance": 1975}]})
+        result = compute(h, 2026, reform=spec, tier="light")
+        moved = result.reform["ir"] - result.baseline["ir"]
+        assert (moved > 1_000) if hausse else (moved == pytest.approx(0.0)), (salaire, moved)
+
+
+def test_only_the_first_dormant_bracket_can_be_woken() -> None:
+    from openfisca_core import periods
+    from openfisca_france import FranceTaxBenefitSystem
+
+    from impots.parameters import ParameterWriteError, reactivate_bracket
+
+    tbs = FranceTaxBenefitSystem()
+    node = resolve(tbs.parameters, PATH_BAREME)
+    start = periods.instant("2026-01-01")
+    with pytest.raises(ParameterWriteError, match="seule la première tranche dormante"):
+        reactivate_bracket(node, 6, active=5, start=start, rate=0.6, threshold=300_000)
+    with pytest.raises(ParameterWriteError, match="seule la première tranche dormante"):
+        reactivate_bracket(node, 4, active=5, start=start, rate=0.6, threshold=300_000)
+
+
+def test_the_retirement_contribution_factor_is_read_back() -> None:
+    """A factor the tree does not carry is refused before anyone computes (D-320)."""
+    from impots.engine.reforms import ECHELLE_KNOBS, verify_echelles
+
+    spec = ReformSpec.model_validate({"cotisations_salariales_retraite_echelle": 0.5})
+    system = reformed_for(spec, 2026)
+    verify_echelles(system, baseline(), spec, 2026)
+    path = ECHELLE_KNOBS["cotisations_salariales_retraite_echelle"][0]
+    got = [float(r) for r in resolve(system.parameters, path)("2026-01-01").rates]
+    base = [float(r) for r in resolve(baseline().parameters, path)("2026-01-01").rates]
+    assert got == pytest.approx([0.5 * r for r in base]) and base[0] > 0
+    with pytest.raises(AssertionError, match="cotisations_salariales_retraite_echelle"):
+        verify_echelles(baseline(), baseline(), spec, 2026)
 
 
 # --------------------------------------------------------------------------- #
@@ -581,3 +630,32 @@ def test_the_pension_cap_spares_a_pensioner_below_it() -> None:
     apres = compute(foyer, 2024, tier="light",
                     reform=ReformSpec(abattement_pensions_plafond=3_000.0)).reform["ir"]
     assert apres == pytest.approx(avant)
+
+
+def test_a_factor_on_a_scale_with_no_active_bracket_is_refused() -> None:
+    """The AGFF was folded into Agirc-Arrco in 2019: a factor on it would land nowhere."""
+    from openfisca_core import periods
+    from openfisca_france import FranceTaxBenefitSystem
+
+    from impots.engine.reforms import _apply_echelle
+
+    tbs = FranceTaxBenefitSystem()
+    path = ("prelevements_sociaux", "regimes_complementaires_retraite_secteur_prive", "agff",
+            "salarie", "noncadre", "agff")
+    with pytest.raises(ValueError, match="aucune tranche active"):
+        _apply_echelle(tbs.parameters.clone(), (path,), 0.5, periods.instant("2026-01-01"),
+                       "2026-01-01")
+
+
+def test_the_engine_wakes_one_dormant_bracket_not_two() -> None:
+    """Behind the schema's limit, the engine's own: seven brackets on a five-bracket year."""
+    from openfisca_core import periods
+    from openfisca_france import FranceTaxBenefitSystem
+
+    from impots.api.schemas import IRBracket
+    from impots.engine.reforms import _apply_bareme
+
+    brackets = [IRBracket(threshold=i * 50_000.0, rate=0.05 * i) for i in range(7)]
+    with pytest.raises(ValueError, match="une seule tranche dormante"):
+        _apply_bareme(FranceTaxBenefitSystem().parameters.clone(), brackets,
+                      periods.instant("2026-01-01"))

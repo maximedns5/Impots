@@ -25002,3 +25002,231 @@ bougent pas. Le rapport donne l'écart avant et après, et la part du millésime
 deux contre la dérive de la page (la page commitée est le rendu, et un contrôle changé la
 change), et un qui refuse un contrôle et des révisions de deux commits. Chacun a été vu
 échouer : la page retouchée d'un chiffre, et la garde du commit mutée en `if False`.
+
+## D-319 — Le but 11 : les programmes de la présidentielle 2027, et ce qui les garde justes
+
+**Le fait.** Le propriétaire a validé le but 11 le 1er novembre 2026, avec deux choix : les
+candidats déclarés seulement, et une couche « déclaré, non vérifié » avec un paramètre de
+réalisation ρ. La recherche est commitée avant tout code, dans `docs/presidentielle/` : les
+mesures de chaque candidat, relevées par trois agents avec la même consigne (une par
+périmètre politique), les juges possibles, et ce que le moteur sait paramétrer. 360 mesures,
+233 paramétrées, 127 vagues ; le moteur en chiffre une trentaine, ou avec un petit ajout.
+
+**Une mesure est celle du candidat.**
+
+- Elle porte sa citation, son URL, sa date et son paramètre tel qu'il est énoncé. Aucun
+  paramètre n'est ajouté : une intention sans paramètre est refusée comme vague, pas
+  complétée.
+- Une mesure que seul un agrégateur rapporte n'entre pas avant d'être retrouvée chez le
+  candidat, son parti, ou un média qui le cite.
+- Un programme est daté. Le fichier d'un candidat porte la date de son relevé ; quand le
+  programme change, une nouvelle version datée s'écrit, et l'ancienne reste.
+- Même schéma, même méthode, même profondeur pour chaque candidat. Un pressenti est listé,
+  pas chiffré, tant qu'il ne s'est pas déclaré.
+
+**La dette n'est jamais celle du programme.** Un programme chiffré en partie ment : les
+baisses d'impôts d'un programme financées par des économies de dépense, que le moteur ne
+voit pas, le feraient paraître creuser la dette ; les hausses d'impôts d'un autre, qu'il
+voit, financent des dépenses qu'il ne voit pas, et le feraient paraître la baisser. Le biais
+ne tombe pas du même côté d'un bord à l'autre. La réponse sur la dette porte donc sur la
+part chiffrée, dite comme telle, avec à côté la part du programme qu'elle couvre et chaque
+refus, avec sa porte et sa raison.
+
+**La couche déclarée.** Ce que le candidat annonce lui-même (une économie, une recette, une
+dépense, avec sa source) s'affiche à part, multiplié par ρ, que l'utilisateur choisit dans
+[0, 1] sans valeur par défaut. Elle ne s'ajoute jamais au chiffrage du moteur, ni dans un
+même nombre ni dans le verdict.
+
+**Les juges.** L'Institut Montaigne chiffrera les programmes au premier trimestre 2027
+(communiqué du 6 octobre 2026). Chaque mesure chiffrable est préenregistrée avant, avec sa
+tolérance et sa raison, et aucun chiffrage de tiers n'est lu avant le commit des
+enregistrements. « Déchiffrer 2027 », qui publie déjà un chiffrage par mesure, n'est pas lu
+tant que son éditeur et son indépendance ne sont pas établis : ce pourrait être un juge. Les
+211 mesures de 2022 chiffrées par l'Institut Montaigne et la Fondation iFRAP sont listées
+par leur seul libellé ; elles ne sont pas des cas de ce but, le droit de référence ayant
+changé depuis.
+
+**Le plan du but.**
+
+- Le schéma d'un programme, son chargeur et ses refus, testés.
+- Les fichiers des candidats déclarés, depuis les inventaires.
+- Les boutons qui manquent : la 6e tranche de l'IR, le quotient familial, la CSG des
+  pensions et du capital, la part sociale du PFU, les cotisations salariales.
+- `impots programme <candidat>` : les trois réponses sur la part chiffrée, la couverture, la
+  couche déclarée.
+- Le préenregistrement des mesures chiffrables, dans une D-entrée poussée avant les passes.
+
+`calibrate.py` reste fermé.
+
+## D-320 — Les boutons des programmes, et la part de CSG qui ne peut pas en être un
+
+**Le fait.** Le but 11 nomme cinq boutons qui manquaient aux mesures fiscales des
+programmes. Ils sont ajoutés, chacun vu bouger sa ligne sur un ménage de 2026.
+
+- **La 6e tranche de l'IR.** Le barème d'openfisca porte quatorze tranches, dont cinq
+  actives depuis 2015. `ir_bareme` en accepte désormais six : la sixième réveille la
+  première tranche dormante (`reactivate_bracket`), à partir de l'année de la réforme, et
+  rien n'est créé dans l'arbre. Une seule peut l'être, et seulement la première : une lacune
+  laisserait une tranche sans valeur entre deux qui en ont. La relecture du barème, qui
+  compare les longueurs, vaut pour six. À 60 % au-delà de 250 000 € par part, l'IR d'un
+  salaire de 600 000 € monte de 38 131 € ; celui d'un salaire de 40 000 € ne bouge pas.
+- **Le quotient familial.** `qf_parts_enf1`, `qf_parts_enf2`, `qf_parts_enf3_et_sup` (les
+  parts d'un enfant, cas général) et `plafond_qf_parent_isole` (le plafond du premier enfant
+  d'un parent isolé, 4 262 € en 2026).
+- **La CSG des pensions, sa part imposable seulement.** `csg_pensions_imposable_taux_plein`
+  et `_median`. La part déductible n'est pas un bouton : les deux constructeurs posent la
+  pension déclarée sur la case 1AS, déjà nette d'elle (D-176). Un taux déductible neuf ne
+  bouge rien : mesuré sur trois retraités, un par bande, les trois boutons écrits d'abord
+  laissaient le revenu disponible au centime. Ils ont été retirés plutôt que gardés morts.
+  Une mesure qui vise cette part est refusée sous une porte qui le dit,
+  `pensions_declarees`.
+- **La part sociale du PFU.** `csg_capital_taux_global` (10,6 % depuis la LFSS 2026, sur
+  tout revenu du capital hors produits « allégés ») et `prelevement_solidarite_capital`
+  (7,5 %). La CRDS et le taux de 9,2 % des produits allégés ne bougent pas. Les deux boutons
+  entrent dans `CAPITAL_KNOBS` : une passe qui les règle impute le capital.
+- **Les cotisations salariales.** `cotisations_salariales_retraite_echelle` multiplie chaque
+  taux actif de cinq barèmes salariés (Cnav plafonnée et déplafonnée, Agirc-Arrco, CEG,
+  CET). Un candidat qui dit « baisser les cotisations salariales » n'en nomme aucun : un
+  facteur sur les cinq est la traduction qui ne choisit pas entre eux. C'est un nouveau
+  registre, `ECHELLE_KNOBS`, relu contre l'arbre de base (`verify_echelles`) et refusé sur
+  un barème sans tranche active.
+
+**Les deux registres.** `test_knobs` et `test_standing_rules` exigent un cas pour chaque
+bouton de chaque registre. Ils ne comptaient pas le registre neuf : vus ignorer le bouton
+d'échelle, ils le comptent désormais, comme D-151 et D-298 l'avaient appris pour les deux
+précédents.
+
+**Un test change, par la décision du propriétaire.**
+`test_bareme_over_five_brackets_is_rejected` refusait six tranches : c'est la limite que le
+but 11 lève. Il devient `test_bareme_over_six_brackets_is_rejected`, qui refuse sept. Le
+barème à six tranches entre dans les barèmes « appliqués exactement ».
+
+**Les mutations.** Vingt-six mutants, sur les gardes du schéma des programmes et sur celles
+de ces boutons. Vingt-cinq sont tués. Le survivant, une plage qui ne nomme pas un nombre,
+l'est désormais par un test vu échouer sur lui.
+
+## D-321 — Les mesures chiffrables des programmes, préenregistrées avant le juge
+
+**Le fait.** Les programmes des 24 candidats déclarés sont commités : 321 mesures, dont dix
+chiffrées. Les autres sont refusées, chacune avec sa porte, ou vagues. Les dix sont
+préenregistrées ici, avec leur tolérance et leur pronostic, avant toute passe et avant que
+le juge ne publie.
+
+**Le juge.** Le chiffrage des programmes de l'Institut Montaigne, annoncé au premier
+trimestre 2027. Aucun chiffrage de tiers n'est lu avant le commit des enregistrements. Un
+cas que le juge ne chiffre pas reste sans note, et le dit.
+
+**Les cas.** Chacun s'appelle `pres2027_<candidat>_<mesure>`. Il est enregistré par `impots
+chiffrage register` (ménages) ou `register-entreprises`, sur le droit de 2026, la population
+vieillie jusqu'en 2026 aux hypothèses du PLF 2027 (`--vieillir plf2027`, but 10), 20 000
+ménages ou le millésime des entreprises de 2023. Ses fichiers sont tirés du programme par
+`scripts/preenregistrer_programmes.py --ecrire`, sans rien y ajouter, et un test refuse leur
+dérive.
+
+- Mélenchon, la fin des exonérations au-dessus de 2 SMIC (`allegement_general_plafond` à 2).
+- Tondelier, une 6e tranche à 60 % au-delà de 250 000 € par part.
+- Le Pen, une part entière dès le deuxième enfant.
+- Attal, le « droit au brut » : les cotisations retraite salariales à l'échelle 0,22, calée
+  sur les +250 € nets par mois qu'il énonce au salaire médian ; et la suppression de la
+  CVAE.
+- Retailleau, la moitié des gains rendue aux salariés : l'échelle 0,87, calée sur ses 500 €
+  par an au salaire médian (une autre source dit par mois, qui ne se chiffrerait pas) ; et
+  la suppression de la C3S et de la CVAE.
+- Lisnard, la CSG sur l'activité de 9,2 % à 6,6 %, répartie en proportion entre ses deux
+  parts ; la suppression de la C3S et de la CVAE ; le quotient familial déplafonné.
+
+**Les tolérances, une règle par classe, la même pour chaque candidat.**
+
+- Ménages, sur une large assiette : 25 % ou 200 M€, le plus large des deux. Le moteur
+  retrouve ses agrégats à quelques pour cent ; le juge chiffre peut-être une autre année et
+  contre la continuité des politiques.
+- Le haut de la distribution (la 6e tranche, le déplafonnement) : 40 % ou 200 M€. La
+  population a de bons agrégats et des queues faibles.
+- Entreprises : 30 % ou 200 M€, la tolérance de l'art. 15 du PLF 2027. La CVAE disparaît du
+  droit en 2028 : un juge qui la chiffre contre ce droit-là la comptera pour moins.
+
+**Le pronostic, avant toute passe.** Coût mécanique de 2026, positif quand l'État perd.
+
+- Mélenchon, 2 SMIC : une recette de 2 à 8 Md€ (de −2 à −8).
+- Tondelier, 60 % : une recette de 0,5 à 4 Md€.
+- Le Pen, le deuxième enfant : un coût de 1 à 4 Md€.
+- Attal, droit au brut : un coût de 35 à 55 Md€ ; l'IR en reprend une part, les cotisations
+  étant déductibles.
+- Retailleau, la moitié rendue : un coût de 5 à 10 Md€.
+- Lisnard, CSG : un coût de 15 à 25 Md€.
+- Lisnard, quotient familial : un coût de 2 à 8 Md€.
+- La CVAE seule (Attal) : un coût de 3 à 7 Md€.
+- La C3S et la CVAE (Retailleau, Lisnard) : le même montant pour les deux, au centime, de 4
+  à 11 Md€.
+
+La réfutation qui se lirait : les deux mesures C3S et CVAE à deux montants différents, ou
+une mesure de ménages à zéro, signe d'un bouton qui ne mord pas sur la population.
+
+## D-322 — Les dix mesures des programmes : sept dans leur pronostic, trois au-dessus
+
+**Les passes.** Les dix cas sont enregistrés sur le commit de D-321 (`97e5a29`), depuis un
+worktree figé, sur 20 000 ménages vieillis jusqu'en 2026 et sur le millésime des entreprises
+de 2023 vieilli par le PIB nominal. Deux interruptions, sans qu'aucun fichier du worktree
+change. La passe des entreprises s'est d'abord arrêtée sur un fichier absent du conteneur
+neuf, les comptes nationaux de l'INSEE, récupéré par son entrée du manifeste. Puis la passe
+du quotient familial a été tuée faute de mémoire : les cas tournaient dans un seul
+processus, ce que CLAUDE.md interdit. Les cas restants ont tourné chacun dans le sien.
+
+**Contre le pronostic de D-321.** Coût de 2026 en milliards d'euros, positif quand l'État
+perd.
+
+- Mélenchon, la fin des exonérations au-delà de 2 SMIC : −9,29, hors de la fourchette de −2
+  à −8. La courbe de 2026 rend plus entre 2 et 3 SMIC que le pronostic ne le supposait.
+- Tondelier, 60 % au-delà de 250 000 € par part : −0,98, dans celle de −0,5 à −4.
+- Le Pen, le deuxième enfant : +2,83, dans celle de 1 à 4.
+- Attal, le droit au brut : +75,66, hors de celle de 35 à 55.
+- Attal, la CVAE : +3,53, dans celle de 3 à 7.
+- Retailleau, la moitié rendue aux salariés : +12,67, hors de celle de 5 à 10.
+- Retailleau, la C3S et la CVAE : +9,23, dans celle de 4 à 11.
+- Lisnard, la CSG à 6,6 % : +24,16, dans celle de 15 à 25.
+- Lisnard, la C3S et la CVAE : +9,23, au centime de Retailleau, comme annoncé.
+- Lisnard, le quotient familial déplafonné : +5,67, dans celle de 2 à 8.
+
+Sept sur dix. La réfutation nommée n'est pas venue : les deux mesures C3S et CVAE ont le
+même montant, et aucune mesure des ménages n'est à zéro.
+
+**Les deux écarts des cotisations salariales.** Les deux cas d'échelle disent la même
+chose : 75,7 Md€ pour 78 % des cotisations retraite salariales, 12,7 Md€ pour 13 %, soit
+environ 97 Md€ pour le tout. Le pronostic en supposait 70. L'écart n'est pas mesuré ici. Une
+piste à vérifier : le moteur applique-t-il les barèmes du privé à tous les salariés, agents
+publics compris ? Le calage de l'échelle sur le gain que le candidat énonce au salaire
+médian, lui, tient : il est mesuré par le moteur.
+
+**La commande, de bout en bout.** `impots programme lisnard`, sur ses deux mesures des
+ménages, avec les hypothèses des études (θ½, dépense gelée en volume, 1 % de croissance
+réelle, 2 % de prix, taux tenu, salaires +3 %), et ρ = 0,5. La part chiffrée coûte 30,9 Md€
+la première année et monte la dette de 9,5 points de PIB en 2035 contre la référence. La
+couche déclarée annonce +21,3 Md€ par an au solde, à part. Le rapport le dit à côté : c'est
+la dette de la part chiffrée, pas du programme. La mesure des entreprises n'y est pas : le
+chemin rapide refuse la CVAE, dont le droit change dans l'horizon (D-254). Le premier essai
+imprimait « +0,10 pt » : la trajectoire est une fraction du PIB, et la ligne imprimée ne la
+convertissait pas. Un test l'a vu échouer, puis la ligne a été corrigée ; le rapport JSON
+était juste.
+
+**Le but 11.** Les 24 candidats déclarés ont leur programme : 321 mesures sourcées, 212
+paramétrées, 109 vagues, dont dix chiffrées (4,7 % des paramétrées). Le reste est refusé,
+chaque fois avec sa porte : la dépense publique, les retraites, l'énergie et la TVA, les
+successions et le patrimoine pèsent le plus. Les cinq boutons sont ajoutés. `impots
+programme` donne les trois réponses sur la part chiffrée, la couverture et la couche
+déclarée. Les dix mesures attendent leur juge. Aucun chiffrage de tiers n'a été lu.
+`calibrate.py` n'a pas été touché.
+
+**Ce qui n'est pas fait.**
+
+- Le juge : les dix cas reçoivent leur comparateur quand l'Institut Montaigne publie, dans
+  un commit à part, puis sont notés.
+- Les programmes sont datés du 1er novembre 2026 ; *L'Avenir en commun* sort en 5e édition
+  le 6 novembre, et le RN publie sa réforme des retraites le 17. Une nouvelle version datée
+  s'écrira.
+- Les modules qui ouvriraient le plus de mesures, dans l'ordre des euros : l'indexation des
+  pensions et des prestations, la consommation (TVA, carburants), les successions et le
+  patrimoine, la dépense par candidat, l'âge de la retraite.
+- La couche de précalcul pour les curseurs, puis l'interface.
+- 25 fichiers du manifeste restent absents de ce conteneur : livraisons sous licence,
+  fichiers en quarantaine, un serveur qui coupe la connexion. Aucune passe de ce but ne les
+  lit.

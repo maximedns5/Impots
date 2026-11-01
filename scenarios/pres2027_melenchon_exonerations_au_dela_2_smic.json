@@ -1,0 +1,14 @@
+{
+  "name": "pres2027_melenchon_exonerations_au_dela_2_smic",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-01 — Fin des exonérations de cotisations au-dessus de 2 SMIC : « « Aussi proposons-nous d'interrompre cette subvention au-dessus de 2 SMIC, où les exonérations ne sont plus qu'un effet d'aubaine sans aucun effet sur l'emploi. » » (https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf, 2026-10-14)",
+  "note": "Sur le droit de 2026, les bandeaux maladie et famille ont disparu et la réduction générale est la seule exonération générale ; son seuil de sortie, 3 SMIC (allegement_general_plafond), est ramené à 2 SMIC. Le candidat ne dit rien de la courbe sous 2 SMIC : elle reste celle de 2026, et la réduction s'arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de 3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l'écart).",
+  "tags": [
+    "presidentielle_2027",
+    "melenchon"
+  ],
+  "reform": {
+    "allegement_general_plafond": 2.0
+  }
+}

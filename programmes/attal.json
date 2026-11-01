@@ -1,0 +1,698 @@
+{
+  "candidat": "Gabriel Attal",
+  "slug": "attal",
+  "parti": "Renaissance",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Pas de citation directe. L'inventaire relève : déclaré le 22 mai 2026 à Mur-de-Barrez (Aveyron), où il officialise sa candidature.",
+    "url": "https://lcp.fr/actualites/presidentielle-2027-gabriel-attal-officialise-sa-candidature-436721",
+    "date": "2026-05-22",
+    "type": "discours"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "a1_plan_economies_150_md",
+      "categorie": "depense_publique",
+      "libelle": "Plan d'économies sur le quinquennat, deux tiers sur le social",
+      "parametre": "150 Md€ sur 5 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 150 milliards d'euros d'économies sur le quinquennat, dont deux tiers sur les dépenses sociales » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques",
+          "date": "2026-10-15",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un plan d'économies sans dépense désignée une à une : la dépense n'est qu'un scénario de la chaîne de la dette."
+      }
+    },
+    {
+      "id": "a2_frein_urgence_20_md",
+      "categorie": "depense_publique",
+      "libelle": "« Frein d'urgence » dès l'arrivée à l'Élysée",
+      "parametre": "20 Md€ dès 2027",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Un frein d'urgence de 20 milliards d'euros d'économies dès son arrivée à l'Élysée » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques",
+          "date": "2026-10-15",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://attalpresident.fr/programme/mesures/deficit-sous-trois-pour-cent",
+          "date": "2026-07-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Des économies sans dépense désignée : la dépense n'est qu'un scénario de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 20000000000.0,
+        "sens": "economie_depense",
+        "horizon": "dès 2027",
+        "source": {
+          "citation": "« Un frein d'urgence de 20 milliards d'euros d'économies dès son arrivée à l'Élysée » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques",
+          "date": "2026-10-15",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "a3_deficit_sous_3_pct",
+      "categorie": "regle_budgetaire",
+      "libelle": "Déficit public sous 3 % avant 2032",
+      "parametre": "< 3 % du PIB avant 2032",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Ramener le déficit public sous la barre des 3 % du PIB avant 2032, première étape avant l'équilibre » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/deficit-sous-trois-pour-cent",
+          "date": "2026-07-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une trajectoire de déficit est une hypothèse de la chaîne de la dette, pas une réforme : aucun bouton ne la règle."
+      }
+    },
+    {
+      "id": "a4_zero_deficit_2037",
+      "categorie": "regle_budgetaire",
+      "libelle": "Zéro déficit en 2037, inscrit dans une loi de programmation sur dix ans",
+      "parametre": "0 % du PIB en 2037",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "un « cap » de « 0% du PIB en deux quinquennats, donc en 2037 »",
+          "url": "https://www.moneyvox.fr/impot/actualites/109548/attal-veut-100-000-departs-volontaires-de-fonctionnaires-et-impunite-budgetaire-zero",
+          "date": "2026-07-03",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une trajectoire de déficit est une hypothèse de la chaîne de la dette, pas une réforme : aucun bouton ne la règle."
+      }
+    },
+    {
+      "id": "a5_equilibre_securite_sociale",
+      "categorie": "regle_budgetaire",
+      "libelle": "Équilibre strict de la Sécurité sociale",
+      "parametre": "équilibre en 2032 (page mesure) ; « en trois ans » (lettre du 15/10/2026) : les deux se contredisent",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« l'équilibre strict de la Sécurité sociale en 2032, quand l'équilibre de l'ensemble des comptes publics est visé en 2037 » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/equilibre-securite-sociale",
+          "date": "2026-07-03",
+          "type": "programme"
+        },
+        {
+          "citation": "« rétablir l'équilibre des comptes de la Sécurité sociale en trois ans »",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques",
+          "date": "2026-10-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Un solde cible de la Sécurité sociale est une hypothèse de la chaîne de la dette, pas une réforme : aucun bouton ne le règle."
+      }
+    },
+    {
+      "id": "a6_double_regle_or",
+      "categorie": "regle_budgetaire",
+      "libelle": "Double règle d'or (budgets à l'équilibre d'ici dix ans ; dépenses courantes au plus égales aux dépenses d'avenir), par référendum, instaurée en sept ans",
+      "parametre": "équilibre d'ici 10 ans ; règle en 7 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« imposer des budgets à l'équilibre d'ici dix ans, sauf crise exceptionnelle, et empêcher que les dépenses courantes dépassent les dépenses d'avenir » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-lettre-aux-francais-plan-finances-publiques",
+          "date": "2026-10-15",
+          "type": "programme"
+        },
+        {
+          "citation": "Pour le référendum et l'instauration en sept ans ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.moneyvox.fr/impot/actualites/109548/attal-veut-100-000-departs-volontaires-de-fonctionnaires-et-impunite-budgetaire-zero",
+          "date": "2026-07-03",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une règle d'or est une hypothèse de la chaîne de la dette (un solde et une dépense cibles), pas une réforme."
+      }
+    },
+    {
+      "id": "a7_impunite_zero",
+      "categorie": "regle_budgetaire",
+      "libelle": "« Impunité zéro » : départ des ministres qui ne tiennent pas leur budget ; démission du gouvernement après 3 ans de dérive sans crise",
+      "parametre": "3 ans",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« si la trajectoire n'est pas respectée pendant trois ans sans qu'une crise ne le justifie, c'est le Premier ministre et le gouvernement qui devront démissionner »",
+          "url": "https://www.moneyvox.fr/impot/actualites/109548/attal-veut-100-000-departs-volontaires-de-fonctionnaires-et-impunite-budgetaire-zero",
+          "date": "2026-07-03",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une sanction politique, sans taux ni montant."
+      }
+    },
+    {
+      "id": "a8_cent_mille_postes",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de postes dans l'État et les collectivités, par départs volontaires avec prime et non-remplacement, sans licenciement ; Éducation, Armées, Justice et Intérieur épargnés",
+      "parametre": "100 000 postes",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Gabriel Attal propose de supprimer 100 000 postes dans l'État et les collectivités, sans aucun licenciement » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/cent-mille-postes-en-moins",
+          "date": "2026-07-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas : seulement un scénario de dépense de la chaîne."
+      }
+    },
+    {
+      "id": "a9_big_bang_territorial",
+      "categorie": "depense_publique",
+      "libelle": "Suppression d'un échelon de collectivité (« big bang territorial »)",
+      "parametre": "1 échelon",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« supprimer un échelon de collectivité territoriale et faire disparaître définitivement les doublons administratifs » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/big-bang-territorial",
+          "date": "2026-08-02",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni l'échelon supprimé ni l'économie ne sont chiffrés."
+      }
+    },
+    {
+      "id": "a10_annee_blanche_2028",
+      "categorie": "prestations",
+      "libelle": "« Année blanche » sur l'ensemble des prestations sociales au budget 2028, petites retraites épargnées",
+      "parametre": "gel en 2028",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Pour mon premier budget 2028, il faudra faire une année blanche sur l'ensemble des prestations sociales, en épargnant toutefois les petites retraites »",
+          "url": "https://www.moneyvox.fr/impot/actualites/109548/attal-veut-100-000-departs-volontaires-de-fonctionnaires-et-impunite-budgetaire-zero",
+          "date": "2026-07-03",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "indexation",
+        "raison": "Un gel de toutes les prestations en 2028 demande leur indexation année par année, que le moteur n'a que pour la prime d'activité et les aides au logement, sur le droit de 2026."
+      }
+    },
+    {
+      "id": "a11_assurance_chomage",
+      "categorie": "prestations",
+      "libelle": "Réforme de l'assurance chômage dès le début du mandat ; économies réaffectées à la baisse des cotisations",
+      "parametre": "5 Md€ d'économies ; ≥ 100 000 emplois",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Gabriel Attal veut la reprendre dès le début du mandat, avec deux objectifs : remettre les Français en emploi et dégager 5 milliards d'euros d'économies » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/reforme-assurance-chomage-cinq-milliards",
+          "date": "2026-07-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "L'assurance chômage n'est pas dans le moteur, et la baisse de cotisations qu'elle financerait n'a pas de taux."
+      }
+    },
+    {
+      "id": "a12_arrets_maladie",
+      "categorie": "depense_publique",
+      "libelle": "Plan contre la dérive des arrêts maladie",
+      "parametre": "non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« plan d'action contre la dérive des arrêts maladie » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/equilibre-securite-sociale",
+          "date": "2026-07-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni mesure ni montant : un plan annoncé."
+      }
+    },
+    {
+      "id": "a13_retraite_sans_age_legal",
+      "categorie": "retraites",
+      "libelle": "Système universel sans âge légal : départ selon la durée de cotisation, avec décote et surcote",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Il propose un système universel, avec les mêmes règles pour tous, ainsi qu'un système plus libre, sans âge légal de départ » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-sur-cnews-et-europe-1-il-faut-proposer-aux-francais-un-projet-d-espoir",
+          "date": "2026-09-30",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni durée de cotisation, ni taux de décote ou de surcote."
+      }
+    },
+    {
+      "id": "a14_epargne_retraite_naissance",
+      "categorie": "retraites",
+      "libelle": "Pilier de capitalisation et plan d'épargne retraite ouvert par l'État à chaque naissance, abondable jusqu'à 18 ans avec avantage fiscal",
+      "parametre": "1 000 € à la naissance",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« À la naissance de chaque enfant, l'État ouvrira un plan d'épargne retraite de 1 000 euros » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/capitalisation-startups",
+          "date": "2026-06-18",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Un plan d'épargne retraite doté de 1 000 € à la naissance : la population ne porte ni épargne retraite ni régime par capitalisation."
+      }
+    },
+    {
+      "id": "a15_interessement_epargne_retraite",
+      "categorie": "retraites",
+      "libelle": "Fléchage obligatoire de l'intéressement et de la participation vers l'épargne retraite",
+      "parametre": "50 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« rendre obligatoire le fléchage de 50 % de l'intéressement et de la participation vers des plans d'épargne retraite » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/interessement-vers-epargne-retraite",
+          "date": "2026-06-17",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "L'intéressement, la participation et l'épargne retraite ne sont pas dans la population."
+      }
+    },
+    {
+      "id": "a16_droit_au_brut",
+      "categorie": "csg_cotisations",
+      "libelle": "« Droit au brut » : hausse du net par suppression de cotisations, financée par des économies sur le modèle social",
+      "parametre": "+250 € nets/mois au salaire médian (2 200 € nets), dès début 2027",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Gabriel Attal propose une hausse de 250 € nets mensuels à ce niveau de rémunération, dès le début 2027. Elle passe par la suppression de cotisations qui pèsent sur le travail » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/droit-au-brut",
+          "date": "2026-07-22",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "cotisations_salariales_retraite_echelle": 0.22
+        },
+        "plages": [
+          {
+            "champ": "cotisations_salariales_retraite_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Au salaire médian de 2026 (34 000 € brut par an, 2 243 € nets par mois), supprimer toutes les cotisations retraite salariales rend 3 845 € nets par an (mesuré par le moteur). Le candidat énonce un gain, +250 € nets par mois au salaire médian, pas un taux : l'échelle de 0,22 rend 3 000 € par an. Elle s'applique à tous les salaires, ce que la mesure ne précise pas. Plage de 0 (toutes supprimées) à 1 (la mesure retirée)."
+      }
+    },
+    {
+      "id": "a17_aucune_hausse_impots",
+      "categorie": "autre",
+      "libelle": "Aucune hausse d'impôts pendant 5 ans ; retour sur « plusieurs taxes décidées depuis la dissolution »",
+      "parametre": "0 hausse sur 5 ans",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Aucune hausse d'impôts pendant les cinq ans du mandat : le redressement passe par les économies, pas par les impôts » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/aucune-hausse-impots",
+          "date": "2026-07-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucune taxe nommée ni chiffrée : un engagement, pas un paramètre."
+      }
+    },
+    {
+      "id": "a18_suppression_cvae",
+      "categorie": "entreprises",
+      "libelle": "Suppression de la CVAE ; IS maintenu à 25 % ; poursuite de la baisse des impôts de production",
+      "parametre": "CVAE = 0 ; IS à 25 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Le taux de l'impôt sur les sociétés reste à 25 %. Il veut mener enfin à terme la suppression de la CVAE » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/loi-de-stabilite-fiscale",
+          "date": "2026-08-27",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "entreprises",
+        "reforme": {
+          "cvae_echelle": 0.0
+        },
+        "plages": [
+          {
+            "champ": "cvae_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "La CVAE est supprimée sur le droit de 2026 (son barème mis à l'échelle 0). L'IS reste à 25 %, son taux de 2026 : aucun bouton à régler. La « poursuite de la baisse des impôts de production » n'a pas de taux et n'est pas chiffrée. La plage va de la suppression (0) au droit de 2026 (1)."
+      }
+    },
+    {
+      "id": "a19_loi_programmation_dix_ans",
+      "categorie": "autre",
+      "libelle": "Loi de programmation économique, fiscale et énergétique sur dix ans, qui garantit le CIR et le pacte Dutreil",
+      "parametre": "10 ans",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Une loi qui fixe dès 2027, pour dix ans, les règles fiscales, économiques et énergétiques » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/loi-de-stabilite-fiscale",
+          "date": "2026-08-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une durée sans taux ni montant : la stabilité promise ne règle aucun paramètre."
+      }
+    },
+    {
+      "id": "a20_credit_impot_ia",
+      "categorie": "entreprises",
+      "libelle": "Crédit d'impôt productivité pour l'adoption de l'IA par les PME et ETI",
+      "parametre": "non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« un crédit d'impôt productivité pour aider les PME et les ETI à adopter l'IA » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/plan-france-2040",
+          "date": "2026-06-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni taux ni assiette du crédit d'impôt."
+      }
+    },
+    {
+      "id": "a21_successions_donations",
+      "categorie": "patrimoine_capital",
+      "libelle": "Pas de hausse des droits de succession ni de la fiscalité de l'assurance-vie ; faciliter les donations aux petits-enfants comme aux enfants",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Il veut même permettre aux grands-parents de transmettre à leurs petits-enfants comme ils le font avec leurs enfants » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/aucune-hausse-impots",
+          "date": "2026-07-03",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni abattement ni barème énoncés."
+      }
+    },
+    {
+      "id": "a22_pensions_alimentaires",
+      "categorie": "ir",
+      "libelle": "Défiscaliser les pensions alimentaires perçues pour les enfants",
+      "parametre": "exclusion du revenu imposable",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Gabriel Attal veut sortir les pensions alimentaires reçues pour les enfants du revenu imposable du parent qui en a la charge » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/defiscaliser-pensions-alimentaires",
+          "date": "2026-08-28",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Les pensions alimentaires reçues ne sont ni dans la population ni dans le foyer décrit, et aucun bouton ne les sort du revenu imposable."
+      }
+    },
+    {
+      "id": "a23_revalorisation_enseignants",
+      "categorie": "depense_publique",
+      "libelle": "Revalorisation des enseignants",
+      "parametre": "+200 € nets/mois dès la rentrée 2027, jusqu'à +500 € en milieu de carrière",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« une nouvelle revalorisation de 200 euros nets par mois pour les professeurs dès la rentrée 2027 » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/revalorisation-salaires-professeurs",
+          "date": "2026-09-01",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le traitement des enseignants est un salaire public : la population ne les distingue pas, et ses salaires sont des données."
+      }
+    },
+    {
+      "id": "a24_plan_ia_france_2040",
+      "categorie": "depense_publique",
+      "libelle": "Plan IA « France 2040 », à parité public et privé ; part publique financée par des économies (arrêts maladie, gel des prestations)",
+      "parametre": "200 Md€ sur 10 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Gabriel Attal veut porter l'effort à 200 milliards d'euros, partagés à égalité entre financement public et privé » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/plan-france-2040",
+          "date": "2026-06-19",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un investissement public sur dix ans est une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "a25_plan_eau",
+      "categorie": "depense_publique",
+      "libelle": "Plan Eau financé par redéploiement de crédits",
+      "parametre": "600 M€ (400 du Plan eau, 200 du Fonds vert)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Le plan proposé par Gabriel Attal redéploie 600 millions d'euros de crédits existants » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/plan-eau-a-euro-constant",
+          "date": "2026-08-10",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Un redéploiement de 600 M€ de crédits est une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "a26_bouclier_eau",
+      "categorie": "autre",
+      "libelle": "Bouclier tarifaire sur le prix de l'eau du quotidien",
+      "parametre": "non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« un bouclier tarifaire qui garantit aux familles un prix bas sur l'eau du quotidien » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/bouclier-tarifaire-eau",
+          "date": "2026-08-10",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni prix plafond ni montant."
+      }
+    },
+    {
+      "id": "a27_aides_carburant",
+      "categorie": "energie_carburants",
+      "libelle": "Carburant : aides directes ciblées sur les travailleurs dépendants de leur véhicule, plutôt qu'une baisse générale de taxes",
+      "parametre": "non chiffré, aide « temporaire et ciblée »",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Une baisse de taxe générale coûte très cher, et rien ne garantit qu'elle se retrouve dans le prix payé à la pompe » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/aide-professionnels-vehicule",
+          "date": "2026-05-23",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://attalpresident.fr/programme/mesures/aides-directes-plutot-que-baisses-de-taxes",
+          "date": "2026-06-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni montant de l'aide ni public chiffré."
+      }
+    },
+    {
+      "id": "a28_stabilite_prix_electricite",
+      "categorie": "energie_carburants",
+      "libelle": "Stabilité des prix de l'électricité sur cinq ans",
+      "parametre": "5 ans (pas de niveau de prix)",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Gabriel Attal prend un engagement de stabilité des prix de l'électricité pour les cinq prochaines années » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/stabilite-prix-electricite",
+          "date": "2026-06-17",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une durée sans niveau de prix."
+      }
+    },
+    {
+      "id": "a29_plan_messmer_2",
+      "categorie": "energie_carburants",
+      "libelle": "Plan « Messmer II » : 14 EPR, part des fossiles à 30 % en 2035, prix cibles de l'électricité",
+      "parametre": "≈ 75 €/MWh (nouveau nucléaire) ; < 50 €/MWh (industriels exposés) ; fossiles 40 % en 2030 et 30 % en 2035",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Le plan vise environ 75 euros pour le nouveau nucléaire et moins de 50 euros pour les industriels exposés à la concurrence internationale » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/plan-messmer-2",
+          "date": "2026-09-23",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "Le nucléaire et le prix de l'électricité sont un secteur hors du modèle : ni parc, ni prix de gros, ni facture des ménages."
+      }
+    },
+    {
+      "id": "a30_leasing_social_occasion",
+      "categorie": "energie_carburants",
+      "libelle": "Leasing social élargi aux voitures électriques d'occasion, bonus électrique sur l'occasion",
+      "parametre": "non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Gabriel Attal veut amplifier le leasing social et l'ouvrir aux voitures électriques d'occasion, il veut étendre le bonus électrique aux véhicules d'occasion » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/plan-messmer-2",
+          "date": "2026-09-23",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni montant du bonus ni loyer du leasing."
+      }
+    },
+    {
+      "id": "a31_geoenergie",
+      "categorie": "energie_carburants",
+      "libelle": "Doublement des subventions à la géoénergie, financé sur des budgets sous-consommés (biomasse)",
+      "parametre": "160 M€/an dès début 2027",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Doubler les subventions à la géoénergie, pour les porter à 160 millions d'euros par an dès 2027 » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/doubler-subventions-geoenergie",
+          "date": "2026-06-25",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une subvention de 160 M€ par an est une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "a32_interessement_petites_structures",
+      "categorie": "salaires_smic",
+      "libelle": "Extension de l'intéressement aux petites structures",
+      "parametre": "non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Gabriel Attal veut étendre l'intéressement aux petites structures » (texte de la page)",
+          "url": "https://attalpresident.fr/programme/mesures/interessement-petites-structures",
+          "date": "2026-07-23",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni seuil d'effectif ni régime fiscal ou social énoncés."
+      }
+    },
+    {
+      "id": "a33_charge_administrative",
+      "categorie": "autre",
+      "libelle": "Réduire d'un quart la charge administrative des entreprises",
+      "parametre": "−25 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« réduire d'un quart la charge administrative des entreprises, avec un gain estimé à 20 milliards d'euros par an » (texte de la page)",
+          "url": "https://attalpresident.fr/actualites/gabriel-attal-vision-economique-liberer-innover-independance-france",
+          "date": "2026-10-28",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "hors_champ",
+        "raison": "La charge administrative est une formalité : ni impôt ni prestation que le moteur porte."
+      }
+    }
+  ]
+}

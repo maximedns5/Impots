@@ -1,0 +1,14 @@
+{
+  "name": "pres2027_retailleau_r19_gains_rendus_moitie",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-01 — Gains rendus pour moitié aux salariés, pour moitié aux entreprises : « « les 30 milliards d'euros seront redonnés pour moitié aux salariés, sous forme de pouvoir d'achat supplémentaire (environ 500 euros par an au niveau du salaire médian) » » (https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf, 2026-01-09)",
+  "note": "Au salaire médian de 2026 (34 000 € brut par an, 2 243 € nets par mois), supprimer toutes les cotisations retraite salariales rend 3 845 € nets par an (mesuré par le moteur). La moitié des gains rendue aux salariés, environ 500 € par an au salaire médian : l'échelle de 0,87 les rend. La moitié rendue aux entreprises n'a pas de règle (R20, R22). Plage de 1 (la mesure retirée) à 0,805, la règle commune. Les sources se contredisent : 500 € par an (TG), « 500 euros par mois » (Public Sénat). Par mois, ils dépasseraient les 320 € de cotisations retraite salariales au médian : seule la lecture par an se chiffre, et c'est elle qui l'est.",
+  "tags": [
+    "presidentielle_2027",
+    "retailleau"
+  ],
+  "reform": {
+    "cotisations_salariales_retraite_echelle": 0.87
+  }
+}

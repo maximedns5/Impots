@@ -1,0 +1,8 @@
+{
+  "spending": {"rule": "gele_en_volume"},
+  "growth": {"name": "central_etudes", "real": 0.01, "prices": 0.02},
+  "rate": {"name": "taux_tenu", "kind": "implicite_tenu"},
+  "horizon": 10,
+  "theta": {"common": 0.5},
+  "uprating": {"wage": 0.03, "source": "hypothèse des études (D-289) : salaires +3 % par an"}
+}

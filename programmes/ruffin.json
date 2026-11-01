@@ -1,0 +1,602 @@
+{
+  "candidat": "François Ruffin",
+  "slug": "ruffin",
+  "parti": "Debout !",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Déclaré, hors primaire (« s'il n'y a pas de primaire, moi j'y vais », 12/05/2026) ; « candidat déclaré » (AFP 16/09/2026) ; écarté de la primaire PS-PP",
+    "url": "https://lcp.fr/index%2ephp/actualites/presidentielle-2027-s-il-n-y-a-pas-de-primaire-moi-j-y-vais-annonce-francois-ruffin",
+    "date": "2026-05-12",
+    "type": "presse"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "taxe_zucman",
+      "categorie": "patrimoine_capital",
+      "libelle": "Taxe Zucman",
+      "parametre": "2 % par an au-delà de 100 M€, après déduction des impôts acquittés",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Taxe Zucman (18,5 Md€) : Gabriel Zucman propose une taxe annuelle de 2 % sur les patrimoines supérieurs à 100 M€, après déduction des impôts déjà acquittés. »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "patrimoine",
+        "raison": "La population ne porte pas le patrimoine des ménages, ni a fortiori celui qui dépasse 100 M€."
+      },
+      "declare": {
+        "montant_eur": 18500000000.0,
+        "sens": "recette",
+        "horizon": "budget 2027 (plan de redressement)",
+        "source": {
+          "citation": "« Taxe Zucman (18,5 Md€) : Gabriel Zucman propose une taxe annuelle de 2 % sur les patrimoines supérieurs à 100 M€, après déduction des impôts déjà acquittés. »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "refonte_successions",
+      "categorie": "patrimoine_capital",
+      "libelle": "Refonte des droits de succession",
+      "parametre": "abattement de 100 000 à 200 000 € ; assiette étendue aux transmissions reçues au cours de la vie ; réduction des avantages assurance-vie, démembrement, Dutreil ; taux marginal 50 % au-delà de 6 M€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« L'abattement passerait de 100 000 à 200 000 € et serait accompagné d'un élargissement de l'assiette aux transmissions patrimoniales reçues au cours de la vie »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Le moteur n'a pas de module des transmissions."
+      },
+      "declare": {
+        "montant_eur": 20000000000.0,
+        "sens": "recette",
+        "horizon": "« 20 Md€ en 2026 » (titre du plan), avec les plus-values latentes à la transmission",
+        "source": {
+          "citation": "« 20 Md€ en 2026 »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "pfu_plus_values_latentes_transmission",
+      "categorie": "patrimoine_capital",
+      "libelle": "PFU sur les plus-values latentes à la transmission",
+      "parametre": "top 1 % des successions (celles supérieures à 4 M€) ; report jusqu'à la vente",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« taxer au prélèvement forfaitaire unique les plus-values latentes au moment de la transmission pour ce même top 1 % »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Taxer à la transmission les plus-values latentes demande les patrimoines transmis et leurs plus-values, que le moteur ne porte pas."
+      }
+    },
+    {
+      "id": "dividende_climatique",
+      "categorie": "entreprises",
+      "libelle": "« Dividende climatique »",
+      "parametre": "2 % des dividendes, toutes entreprises",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous proposons de mettre en place ce dividende à hauteur à 2 % pour toutes les entreprises. »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "bilan_entreprises",
+        "raison": "Les dividendes que versent les entreprises ne sont pas une assiette du modèle des entreprises."
+      },
+      "declare": {
+        "montant_eur": 6000000000.0,
+        "sens": "recette",
+        "horizon": "budget 2027 (« plus de 6 Md€ »)",
+        "source": {
+          "citation": "« nous proposons de mettre en place ce dividende à hauteur à 2 % pour toutes les entreprises. »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "cir_tpe_pme_eti",
+      "categorie": "entreprises",
+      "libelle": "CIR recentré sur TPE, PME, ETI",
+      "parametre": "aucun seuil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Ajustement du CIR aux TPE, PME et ETI (3 Md€) »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni seuil de taille ni taux du CIR recentré ne sont énoncés."
+      },
+      "declare": {
+        "montant_eur": 3000000000.0,
+        "sens": "economie_depense",
+        "horizon": "budget 2027 (plan de redressement)",
+        "source": {
+          "citation": "« Ajustement du CIR aux TPE, PME et ETI (3 Md€) »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "aides_entreprises",
+      "categorie": "entreprises",
+      "libelle": "Rationalisation des aides aux entreprises",
+      "parametre": "aucun paramètre ; déclassement de niches",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Rationnaliser la politique d'aide aux entreprises (10 Md€ dans l'immédiat) »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucune aide ni niche n'est nommée, ni aucun montant par dispositif."
+      },
+      "declare": {
+        "montant_eur": 10000000000.0,
+        "sens": "economie_depense",
+        "horizon": "« dans l'immédiat » (budget 2027)",
+        "source": {
+          "citation": "« Rationnaliser la politique d'aide aux entreprises (10 Md€ dans l'immédiat) »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "allegements_lisses_geles",
+      "categorie": "entreprises",
+      "libelle": "Allègements de cotisations patronales lissés et gelés",
+      "parametre": "gel au niveau de 2026",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous proposons de mieux lisser les réductions de cotisations patronales et les geler à leur niveau actuel »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "indexation",
+        "raison": "Sur le droit de 2026, un gel à leur niveau de 2026 ne change rien : il ne mord que d'une année à l'autre, ce que le moteur ne fait pas, et le lissage n'a pas de paramètre."
+      }
+    },
+    {
+      "id": "apprentissage_superieur",
+      "categorie": "depense_publique",
+      "libelle": "Apprentissage dans le supérieur",
+      "parametre": "réduction d'environ 30 % des contrats ; recentrage secondaire et BTS",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Avec une réduction ciblée d'environ 30% des contrats et les moins efficaces et/ou les plus coûteux et un recentrage sur l'apprentissage dans le secondaire et les BTS »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 6000000000.0,
+        "sens": "economie_depense",
+        "horizon": "budget 2027 (plan de redressement)",
+        "source": {
+          "citation": "« Avec une réduction ciblée d'environ 30% des contrats et les moins efficaces et/ou les plus coûteux et un recentrage sur l'apprentissage dans le secondaire et les BTS »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "produits_sante_prevention",
+      "categorie": "depense_publique",
+      "libelle": "Produits de santé, prévention, tarifs des secteurs très rentables",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Tarifs des produits de santé et amélioration de la prévention (9 Mds€ en 2030, 3 Mds€ en 2027) »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun tarif ni taux n'est énoncé."
+      },
+      "declare": {
+        "montant_eur": 3000000000.0,
+        "sens": "economie_depense",
+        "horizon": "2027 (9 Md€ en 2030)",
+        "source": {
+          "citation": "« Tarifs des produits de santé et amélioration de la prévention (9 Mds€ en 2030, 3 Mds€ en 2027) »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "surprofits_raffinage",
+      "categorie": "entreprises",
+      "libelle": "Contribution exceptionnelle sur les surprofits du raffinage",
+      "parametre": "périmètre élargi (raffinage, stockage, commercialisation) ; taux non fixé",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« nous proposons donc de mettre en place une contribution exceptionnelle sur les surprofits des entreprises pétrolières et du raffinage »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le taux de la contribution n'est pas fixé."
+      }
+    },
+    {
+      "id": "fraude_fiscale_sociale",
+      "categorie": "autre",
+      "libelle": "Lutte contre la fraude fiscale et sociale",
+      "parametre": "horizon 3 à 5 ans",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« la lutte contre la fraude fiscale, dont le rendement est par nature très incertain et ne peut donc constituer le socle d'un programme de rétablissement des finances publiques »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Un horizon, sans paramètre de contrôle ni de sanction."
+      }
+    },
+    {
+      "id": "etats_generaux_fiscalite",
+      "categorie": "autre",
+      "libelle": "États généraux de la fiscalité",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« nous proposons de convoquer des États généraux de la fiscalité »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une procédure, sans paramètre."
+      }
+    },
+    {
+      "id": "effort_budgetaire_2027",
+      "categorie": "regle_budgetaire",
+      "libelle": "Effort budgétaire 2027",
+      "parametre": "48 à 62 Md€ par rapport à 2026 (1,5 à 2 points de PIB)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« les mesures proposées pour le budget 2027 généreraient entre 48 Md€ et 62 Md€ par rapport à 2026, soit entre 1,5 et 2 points de PIB »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Un effort budgétaire d'ensemble est une hypothèse de la chaîne de la dette, pas une réforme."
+      }
+    },
+    {
+      "id": "taxe_flottante_carburants",
+      "categorie": "energie_carburants",
+      "libelle": "Taxe flottante sur les carburants",
+      "parametre": "accise ajustée pour un prix « autour de 2€/litre en 2027 jusqu'à 2,2€/litre en 2032 »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« ajuster l'accise sur les carburants pour garantir un prix prévisible et légèrement progressif dans le temps »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Le moteur ne porte ni l'accise ni la consommation de carburants des ménages."
+      }
+    },
+    {
+      "id": "credit_impot_domicile_travail",
+      "categorie": "ir",
+      "libelle": "Crédit d'impôt pour les trajets domicile-travail, remise à plat des frais kilométriques et avantages véhicules",
+      "parametre": "couverture « autour de 30% » des frais ; environ 700 € pour un gros rouleur",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Avec un taux de couverture des déplacements autour de 30%, ce crédit d'impôt permettrait à des gros rouleurs aux revenus moyens d'être remboursés d'environ 700€en 2026 »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte ni les trajets domicile-travail ni les frais kilométriques des foyers."
+      },
+      "declare": {
+        "montant_eur": 500000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "par an ; 0,5 Md€ en 2027 et en moyenne avec la taxe flottante sur les carburants",
+        "source": {
+          "citation": "« n'excèderait pas 500 millions d'euros par an »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "leasing_social_public",
+      "categorie": "energie_carburants",
+      "libelle": "Leasing social public",
+      "parametre": "3 millions de voitures électriques en 5 ans ; 100 à 200 € par mois ; durées de 7 à 11 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« déployant une flotte publique de 3 millions de voitures électriques en 5 ans. Les mensualités seront modérées (100 à 200€/mois selon le type de véhicule) »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Le moteur ne porte ni le parc automobile des ménages ni leurs dépenses de transport."
+      },
+      "declare": {
+        "montant_eur": 800000000.0,
+        "sens": "depense",
+        "horizon": "2027 (2,5 Md€ par an en moyenne)",
+        "source": {
+          "citation": "« déployant une flotte publique de 3 millions de voitures électriques en 5 ans. Les mensualités seront modérées (100 à 200€/mois selon le type de véhicule) »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "renovation_logements",
+      "categorie": "depense_publique",
+      "libelle": "Rénovation des logements",
+      "parametre": "3 millions de rénovations d'ampleur en 5 ans + au moins 2 millions de rénovations ciblées",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Cette nouvelle stratégie permettra d'engager 3 millions de rénovations d'ampleur sur 5 ans, complétées par au moins 2 millions de rénovations de logements déjà isolés »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 1900000000.0,
+        "sens": "depense",
+        "horizon": "2027 (5,8 Md€ par an en moyenne)",
+        "source": {
+          "citation": "« Cette nouvelle stratégie permettra d'engager 3 millions de rénovations d'ampleur sur 5 ans, complétées par au moins 2 millions de rénovations de logements déjà isolés »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "cee_contribution_anah",
+      "categorie": "energie_carburants",
+      "libelle": "Certificats d'économie d'énergie remplacés par une contribution budgétaire à l'Anah",
+      "parametre": "6 Md€ par an réorientés ; coût pour les consommateurs réduit de 3 Md€ par an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« La transformation des CEE en contribution directe au budget de l'Anah va permettre de simplifier le système (une seule aide à demander) et de réorienter au moins 6 Mds€/an »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Les certificats d'économie d'énergie se lisent dans les prix et la consommation d'énergie des ménages, que le moteur ne porte pas."
+      }
+    },
+    {
+      "id": "renovation_batiments_publics",
+      "categorie": "depense_publique",
+      "libelle": "Rénovation et adaptation des bâtiments publics (écoles, hôpitaux, Ehpad)",
+      "parametre": "subvention de 40 % du coût, travaux sur 2 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Avec une subvention de 40% du coût et des travaux étalés sur 2 ans, le besoin de soutiens d'urgence par l'Etat est d'environ 600 millions d'euros par an »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 1600000000.0,
+        "sens": "depense",
+        "horizon": "2027 (2,4 Md€ par an en moyenne)",
+        "source": {
+          "citation": "« Avec une subvention de 40% du coût et des travaux étalés sur 2 ans, le besoin de soutiens d'urgence par l'Etat est d'environ 600 millions d'euros par an »",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "securite_civile_canadair",
+      "categorie": "depense_publique",
+      "libelle": "Sécurité civile : flotte aérienne, pompiers",
+      "parametre": "16 Canadair",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Taxe Zucman, imposition des grandes successions, dividende climatique, rénovation de 3 millions de logements, 16 Canadair, leasing social pour 3 millions de gros rouleurs »",
+          "url": "https://nouspresident.fr/notre-programme/",
+          "date": "2026-10-12",
+          "type": "programme"
+        },
+        {
+          "citation": "pas de citation verbatim relevée",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 900000000.0,
+        "sens": "depense",
+        "horizon": "2027 (1,3 Md€ par an en moyenne)",
+        "source": {
+          "citation": "pas de citation verbatim relevée",
+          "url": "https://nouspresident.fr/wp-content/uploads/2026/10/Plan-de-redressement-2026-mise-en-page.pdf",
+          "date": "2026-10-21",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "plan_salles_des_fetes",
+      "categorie": "depense_publique",
+      "libelle": "Plan « Salle des fêtes et maisons du peuple »",
+      "parametre": "1 Md€ par an pendant 5 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous lancerons un grand Plan « Salle des Fêtes et maisons du peuple » doté d'un milliard d'euros par an pendant cinq ans »",
+          "url": "https://nouspresident.fr/temps-loisirs/",
+          "date": "2026-07-17",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 1000000000.0,
+        "sens": "depense",
+        "horizon": "par an pendant cinq ans",
+        "source": {
+          "citation": "« Nous lancerons un grand Plan « Salle des Fêtes et maisons du peuple » doté d'un milliard d'euros par an pendant cinq ans »",
+          "url": "https://nouspresident.fr/temps-loisirs/",
+          "date": "2026-07-17",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "fonjep_bafa",
+      "categorie": "depense_publique",
+      "libelle": "Postes FONJEP doublés, BAFA gratuit",
+      "parametre": "aide de 15 000 € par poste ; BAFA gratuit",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous doublerons le nombre de postes FONJEP et nous porterons l'aide à 15 000 € par poste » ; « Nous rendrons le BAFA gratuit. »",
+          "url": "https://nouspresident.fr/temps-loisirs/",
+          "date": "2026-07-17",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      }
+    },
+    {
+      "id": "trimestres_penibilite",
+      "categorie": "retraites",
+      "libelle": "Trimestres supplémentaires pour les métiers pénibles (« travailleurs essentiels »)",
+      "parametre": "aucun nombre de trimestres",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Reconnaître la pénibilité, accorder des trimestres supplémentaires pour la retraite, ouvrir de vraies possibilités de formation et de reconversion. »",
+          "url": "https://nouspresident.fr/statut-travailleurs-essentiels/",
+          "date": "2026-04-13",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni nombre de trimestres ni critère de pénibilité ne sont énoncés."
+      }
+    }
+  ]
+}

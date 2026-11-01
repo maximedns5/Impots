@@ -1,0 +1,48 @@
+case: pres2027_attal_a18_suppression_cvae
+pre_registered: '2026-11-01T21:28:33+00:00'
+commit: 97e5a293135e6437e8a749df88049efdb0303f05
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2026
+  spec:
+    cvae_echelle: 0.0
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 3533150525.203539
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 200000000.0
+  rationale: 'Classe « entreprises » (D-321). Mesure des entreprises sur le millésime
+    synthétique de 2023 vieilli par le PIB nominal (D-246), la tolérance de l''art.
+    15 du PLF 2027. La CVAE disparaît du droit en 2028 : un juge qui chiffre contre
+    ce droit-là la compte pour moins que le droit de 2026.'
+note: 'Gabriel Attal (Renaissance), programme relevé le 2026-11-01 — Suppression de
+  la CVAE ; IS maintenu à 25 % ; poursuite de la baisse des impôts de production :
+  « « Le taux de l''impôt sur les sociétés reste à 25 %. Il veut mener enfin à terme
+  la suppression de la CVAE » (texte de la page) » (https://attalpresident.fr/programme/mesures/loi-de-stabilite-fiscale,
+  2026-08-27). La CVAE est supprimée sur le droit de 2026 (son barème mis à l''échelle
+  0). L''IS reste à 25 %, son taux de 2026 : aucun bouton à régler. La « poursuite
+  de la baisse des impôts de production » n''a pas de taux et n''est pas chiffrée.
+  La plage va de la suppression (0) au droit de 2026 (1).'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  de: 2023
+  vers: 2026
+  facteur: 1.0765929594830452
+  source: 'comptes nationaux (INSEE) de 2023 à 2025, puis PLF 2027 (AN n° 3210), exposé
+    général des motifs : salaires par tête ; PLFSS 2027 (AN n° 3211), annexe B : inflation
+    hors tabac et PIB en valeur'
+  pib_valeur:
+    '2026': 0.02
+  convention: le coût du millésime suit le PIB nominal (D-246)

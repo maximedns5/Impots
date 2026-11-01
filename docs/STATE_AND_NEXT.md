@@ -1,5 +1,23 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The second 2026-11-01 update adds D-319 to D-322: goal 11, validated by the owner,
+done once merged. The presidential programmes of 2027 are reforms the engine prices.
+`docs/presidentielle/` holds the research (four sourced inventories, the judges listed
+without any of their amounts, the engine's knobs); `programmes/<slug>.json` holds one
+programme per declared candidate, 24 of them, 321 measures, each priced into engine knobs
+or refused behind a door (`impots.programmes`). Five knobs were added (D-320): a sixth IR
+bracket that wakes a dormant one, the quotient familial's parts and lone-parent ceiling, the
+taxable part of the pension CSG (the deductible part cannot be one: declared pensions are
+net of it, D-176), the social part of the PFU, and a factor on employees' retirement
+contributions. Ten measures are priced and preregistered (D-321) before the Institut
+Montaigne's costing, announced for Q1 2027; seven landed in their prognosis (D-322).
+`impots programme <slug>` gives the three answers on the priced part, never as the
+programme's debt, with the candidate's own announced amounts in a separate layer at a
+realisation ρ the user sets. Next: the judge when it publishes; then, by euros opened,
+indexation, consumption taxes, successions and wealth, spending, the retirement age; then a
+precomputation layer for live sliders, then the UI. A fresh container needs `impots data
+fetch` for 136 manifest files the « tests » profile does not bring (D-322).
+
 The 2026-11-01 update adds D-317 and D-318: goal 10, validated by the owner, done. A case
 is now priced on the population aged to its year. `impots chiffrage register --vieillir
 plf2027` ages the 2024 incomes (wages and unemployment by wages per head, pensions and
@@ -1239,7 +1257,7 @@ download list.
 **The goal decides** (`docs/BUT.md`, D-286, revised in D-296). Goal 8, household coverage,
 is closed without being complete (D-314); goal 9, the prime d'activité's gap (item 0 below),
 is done (D-315, D-316); goal 10, cases priced on the population of their year, is done
-(D-317, D-318). No goal 11 is written: the next one is the owner's choice. Any new case
+(D-317, D-318); goal 11, the presidential programmes, is done (D-319 to D-322). No goal 12 is written: the next one is the owner's choice. Any new case
 whose year is not its population's now needs an indices set (`--vieillir`); the PLF 2028's
 set, `plf2028`, is to be read from its own text when it is tabled. The
 list below predates the goal: take from it only what that aim needs. Publishing the site

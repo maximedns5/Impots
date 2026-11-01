@@ -1,0 +1,14 @@
+{
+  "name": "pres2027_le_pen_lp22_part_pleine_2e_enfant",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-01 — Part fiscale pleine dès le deuxième enfant : « Pas de citation directe. Texte de LCP : « octroyer une part fiscale pleine dès le deuxième enfant » » (https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut, 2026-10-06)",
+  "note": "Le deuxième enfant apporte une part entière au lieu d'une demi-part, dans le cas général ; le premier et le troisième ne bougent pas. Plage de 0,5 (la mesure retirée) à 1,25.",
+  "tags": [
+    "presidentielle_2027",
+    "le_pen"
+  ],
+  "reform": {
+    "qf_parts_enf2": 1.0
+  }
+}

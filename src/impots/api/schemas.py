@@ -29,9 +29,10 @@ MAX_YEAR = 2026
 MIN_BIRTH_YEAR = 1920
 MAX_SALARY = 10_000_000.0
 MAX_CHILDREN = 8
-# v1 replaces the active brackets of the IR scale in place; it never adds brackets
-# to the ParameterScale (spec §3.4).
-MAX_BAREME_BRACKETS = 5
+# The active brackets of the IR scale are replaced in place. One more may be asked for:
+# it wakes the first dormant bracket the ParameterScale already carries (the 1990s scale
+# had thirteen), so nothing is added to the tree (spec §3.4, D-320). The IFI keeps five.
+MAX_BAREME_BRACKETS = 6
 MIN_BAREME_BRACKETS = 2
 
 
@@ -916,6 +917,26 @@ class ReformSpec(BaseModel):
     threshold. The social levies, 17,2 %, are not this knob. It bites only on capital
     income, which a household declares in `capital` and the population carries only
     with `impute_capital` (D-248)."""
+    # The social part of the PFU (D-320): the CSG on capital income at its general rate
+    # (10,6 % from 2026, LFSS 2026) and the prélèvement de solidarité (7,5 %). The CRDS
+    # (0,5 %) and the CSG kept at 9,2 % on the « allégés » products are not moved.
+    csg_capital_taux_global: Annotated[float, Field(ge=0.0, le=0.3)] | None = None
+    prelevement_solidarite_capital: Annotated[float, Field(ge=0.0, le=0.3)] | None = None
+    # The CSG on retirement and invalidity pensions (D-320): its TAXABLE part, at the full
+    # and the median rate. The deductible part is not a knob: both builders pin the declared
+    # pension on box 1AS, already net of it (D-176), so no formula would read a new rate.
+    csg_pensions_imposable_taux_plein: Annotated[float, Field(ge=0.0, le=0.2)] | None = None
+    csg_pensions_imposable_taux_median: Annotated[float, Field(ge=0.0, le=0.2)] | None = None
+    # The quotient familial (D-320): the parts a child brings in the general case, and the
+    # ceiling of the advantage for the first child of a lone parent (case T).
+    qf_parts_enf1: Annotated[float, Field(ge=0.0, le=3.0)] | None = None
+    qf_parts_enf2: Annotated[float, Field(ge=0.0, le=3.0)] | None = None
+    qf_parts_enf3_et_sup: Annotated[float, Field(ge=0.0, le=3.0)] | None = None
+    plafond_qf_parent_isole: Annotated[float, Field(ge=0, le=100_000)] | None = None
+    # The employee's retirement contributions (D-320), all at once: the Cnav's capped and
+    # uncapped rates, Agirc-Arrco, the CEG and the CET, each multiplied by this factor (1
+    # leaves them, 0 removes them). Not the employer's.
+    cotisations_salariales_retraite_echelle: Annotated[float, Field(ge=0.0, le=2.0)] | None = None
 
     @model_validator(mode="after")
     def _check_revalorisations(self) -> ReformSpec:
@@ -941,9 +962,9 @@ class ReformSpec(BaseModel):
             raise ValueError(f"Le barème doit compter au moins {MIN_BAREME_BRACKETS} tranches.")
         if n > MAX_BAREME_BRACKETS:
             raise ValueError(
-                f"Le barème est limité à {MAX_BAREME_BRACKETS} tranches en v1 : les tranches "
-                "actives du barème légal sont remplacées sur place, aucune tranche n'est ajoutée "
-                "au ParameterScale."
+                f"Le barème est limité à {MAX_BAREME_BRACKETS} tranches : les tranches "
+                "actives du barème légal sont remplacées sur place, et une seule tranche "
+                "dormante du ParameterScale peut être réveillée (D-320)."
             )
         if self.ir_bareme[0].threshold != 0:
             raise ValueError(
