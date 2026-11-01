@@ -64,6 +64,22 @@ NICHE_FOYER = {**AISE_2_ENFANTS}
 #: peut faire bouger `abattement_pensions_plafond` (PLF 2027, art. 3).
 RETRAITE_AISE = {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1955,
                              "pension_annuelle": 50_000}]}
+#: Un retraité au taux médian de la CSG (D-320) : 21 000 EUR déclarés le placent dans la
+#: bande médiane en 2026, où le taux imposable vaut 2,4 %.
+RETRAITE_MEDIAN = {"adults": [{"salaire_brut_annuel": 0, "annee_naissance": 1955,
+                               "pension_annuelle": 21_000}]}
+#: Un couple à trois enfants : le troisième seul apporte une part entière (D-320).
+COUPLE_3_ENFANTS = {
+    "adults": [{"salaire_brut_annuel": 90_000, "annee_naissance": 1980},
+               {"salaire_brut_annuel": 60_000, "annee_naissance": 1981}],
+    "couple_marie_ou_pacse": True,
+    "children": [{"annee_naissance": 2010}, {"annee_naissance": 2012},
+                 {"annee_naissance": 2015}],
+}
+#: Un parent isolé aisé : la demi-part du premier enfant (case T) bute sur son plafond de
+#: 4 262 EUR en 2026, qu'il faut donc atteindre pour qu'en abaisser le plafond compte.
+PARENT_ISOLE_AISE = {"adults": [{"salaire_brut_annuel": 80_000, "annee_naissance": 1980}],
+                     "children": [{"annee_naissance": 2012}]}
 #: Un foyer qui déclare des dividendes : sans revenus du capital, le PFU ne mord sur rien
 #: (D-249). 10 000 EUR doivent 1 280 EUR de PFU, que le bouton porte à 2 000.
 RENTIER = {"adults": [{"salaire_brut_annuel": 30_000, "annee_naissance": 1975}],
@@ -225,6 +241,19 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
     "ifi_non_bati_taux_bois_forets": (IFI_NON_BATI, None, "ifi", 0.5, +1),
     # --- capital income (D-249) -------------------------------------------------------
     "pfu_taux": (RENTIER, None, "ir", 0.20, +1),
+    # --- the programmes of 2027 (D-320) -----------------------------------------------
+    "csg_capital_taux_global": (RENTIER, None, "prelevements_sociaux_capital", 0.12, +1),
+    "prelevement_solidarite_capital": (RENTIER, None, "prelevements_sociaux_capital", 0.09,
+                                       +1),
+    "csg_pensions_imposable_taux_plein": (RETRAITE_AISE, None, "revenu_disponible", 0.04,
+                                          -1),
+    "csg_pensions_imposable_taux_median": (RETRAITE_MEDIAN, None, "revenu_disponible", 0.04,
+                                           -1),
+    "qf_parts_enf1": (AISE_2_ENFANTS, None, "ir", 1.0, -1),
+    "qf_parts_enf2": (AISE_2_ENFANTS, None, "ir", 1.0, -1),
+    "qf_parts_enf3_et_sup": (COUPLE_3_ENFANTS, None, "ir", 1.5, -1),
+    "plafond_qf_parent_isole": (PARENT_ISOLE_AISE, None, "ir", 2_000.0, +1),
+    "cotisations_salariales_retraite_echelle": (MODESTE, None, "revenu_disponible", 0.5, +1),
     "plafond_global_niches": (
         {**NICHE_FOYER, "children": [{"annee_naissance": 2019},
                                      {"annee_naissance": 2021},
@@ -237,6 +266,12 @@ CASES: dict[str, tuple[dict, dict | None, str, float, int]] = {
 #: The year a case runs in, when not 2024: a knob of the 2026 curve does not exist
 #: before it, and is refused there by name (D-042, D-240).
 YEARS: dict[str, int] = {
+    # The programmes of 2027 are priced on the law of 2026 (D-320).
+    **dict.fromkeys((
+        "csg_capital_taux_global", "prelevement_solidarite_capital",
+        "csg_pensions_imposable_taux_plein", "csg_pensions_imposable_taux_median",
+        "qf_parts_enf1", "qf_parts_enf2", "qf_parts_enf3_et_sup", "plafond_qf_parent_isole",
+        "cotisations_salariales_retraite_echelle"), 2026),
     "allegement_general_t_min": 2026,
     "allegement_general_t_delta_moins_de_50": 2026,
     "allegement_general_t_delta_50_et_plus": 2026,

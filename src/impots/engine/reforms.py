@@ -35,7 +35,13 @@ from typing import TYPE_CHECKING, Any
 from openfisca_core import periods
 from openfisca_core.reforms import Reform
 
-from impots.parameters import differs, resolve, update_bracket, update_existing
+from impots.parameters import (
+    differs,
+    reactivate_bracket,
+    resolve,
+    update_bracket,
+    update_existing,
+)
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
     from impots.api.schemas import ReformSpec
@@ -47,6 +53,15 @@ PATH_PLAFOND_QF_DEMI_PART = (
     "plafond_avantages_procures_par_demi_part", "general",
 )
 PATH_CSG_ACTIVITE = ("prelevements_sociaux", "contributions_sociales", "csg", "activite")
+#: The CSG on pensions (D-320): openfisca's levies read the `deductible` and `imposable`
+#: children, by RFR band. Only the taxable part is a knob: the deductible part is already
+#: off the declared pension both builders pin on box 1AS (D-176), so moving it moves
+#: nothing (measured on three pensioners, one per band). The `taux_*` at the node's root,
+#: the sum of the two, is read by no formula.
+PATH_CSG_PENSIONS = ("prelevements_sociaux", "contributions_sociales", "csg", "remplacement",
+                     "pensions_retraite_invalidite")
+_QF = ("impot_revenu", "calcul_impot_revenu", "plaf_qf")
+_PS_CAPITAL = ("taxation_capital", "prelevements_sociaux")
 PATH_ABATTEMENT_PENSIONS = (
     "impot_revenu", "calcul_revenus_imposables", "deductions", "abatpen")
 
@@ -196,6 +211,21 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
     "abattement_pensions_plafond": (*PATH_ABATTEMENT_PENSIONS, "max"),
     "csg_activite_imposable": (*PATH_CSG_ACTIVITE, "imposable"),
     "csg_activite_deductible": (*PATH_CSG_ACTIVITE, "deductible"),
+    # The programmes of 2027 (D-320). The taxable part of the CSG on pensions, by band;
+    # the deductible part is off the declared pension both builders pin (D-176).
+    "csg_pensions_imposable_taux_plein": (*PATH_CSG_PENSIONS, "imposable", "taux_plein"),
+    "csg_pensions_imposable_taux_median": (*PATH_CSG_PENSIONS, "imposable", "taux_median"),
+    # The social part of the PFU: the 2026 formula levies the general rate on every
+    # capital income but the « allégés » products, and the solidarity levy on all of it.
+    "csg_capital_taux_global": (*_PS_CAPITAL, "csg", "taux_global", "produits_de_placement"),
+    "prelevement_solidarite_capital": (*_PS_CAPITAL, "prelevements_solidarite",
+                                       "produits_de_placement"),
+    # The quotient familial: the parts a child brings in the general case, and the
+    # ceiling of the first child of a lone parent.
+    "qf_parts_enf1": (*_QF, "quotient_familial", "cas_general", "enf1"),
+    "qf_parts_enf2": (*_QF, "quotient_familial", "cas_general", "enf2"),
+    "qf_parts_enf3_et_sup": (*_QF, "quotient_familial", "cas_general", "enf3_et_sup"),
+    "plafond_qf_parent_isole": (*_QF, "plafond_avantages_procures_par_demi_part", "celib_enf"),
     # The daily allowances (D-306): the share of the work-accident ones the income tax
     # exempts, which correction 22 brings into the tree, and openfisca's CSG rate on them,
     # which correction 23 levies. They move nothing on a household without an allowance.
@@ -301,7 +331,61 @@ SCALAR_KNOBS: dict[str, tuple[str, ...]] = {
 
 #: Knobs that move the taxation of capital income. Read back by `verify_capital`, the
 #: guard 9 of PHASE11_SPEC §10, and claimed by the dividend channel C10.
-CAPITAL_KNOBS = frozenset({"pfu_taux"})
+CAPITAL_KNOBS = frozenset({"pfu_taux", "csg_capital_taux_global",
+                           "prelevement_solidarite_capital"})
+
+#: Knobs that multiply every active rate of a set of scales by one factor (D-320). The
+#: employee's retirement contributions are five scales, each by tranche of the PSS; a
+#: candidate who says « baisser les cotisations salariales » names none of them, and a
+#: factor on all five is the one translation that does not choose between them.
+_CNAV_SALARIE = ("prelevements_sociaux", "cotisations_securite_sociale_regime_general",
+                 "cnav", "salarie")
+_COMPLEMENTAIRE = ("prelevements_sociaux", "regimes_complementaires_retraite_secteur_prive")
+ECHELLE_KNOBS: dict[str, tuple[tuple[str, ...], ...]] = {
+    "cotisations_salariales_retraite_echelle": (
+        (*_CNAV_SALARIE, "vieillesse_plafonnee"),
+        (*_CNAV_SALARIE, "vieillesse_deplafonnee"),
+        (*_COMPLEMENTAIRE, "agirc_arrco", "salarie", "agirc_arrco"),
+        (*_COMPLEMENTAIRE, "ceg", "salarie", "ceg"),
+        (*_COMPLEMENTAIRE, "cet2019", "salarie", "cet2019"),
+    ),
+}
+
+
+def _apply_echelle(parameters: Any, paths: tuple[tuple[str, ...], ...], factor: float,
+                   start: Any, instant: str) -> None:
+    """Multiply every active rate of each scale by `factor`, from `start`.
+
+    A scale with no active bracket at the instant is refused: the factor would land
+    nowhere, and the read-back would find nothing to disagree with."""
+    for path in paths:
+        node = resolve(parameters, path)
+        active = active_bracket_count(node, instant)
+        if active == 0:
+            raise ValueError(f"le barème {'.'.join(path)} n'a aucune tranche active au "
+                             f"{instant} : le facteur ne porterait sur rien")
+        for i in range(active):
+            rate = node.brackets[i].rate.get_at_instant(instant)
+            update_bracket(node, i, active=active, start=start, rate=rate * factor)
+
+
+def verify_echelles(tax_benefit_system: Any, baseline: Any, spec: ReformSpec,
+                    year: int) -> None:
+    """Read every scaled rate back against the baseline's, times the factor (D-320)."""
+    instant = f"{year}-01-01"
+    for knob, paths in ECHELLE_KNOBS.items():
+        factor = getattr(spec, knob, None)
+        if factor is None:
+            continue
+        for path in paths:
+            got = [float(r) for r in resolve(tax_benefit_system.parameters, path)(instant).rates]
+            base = [float(r) for r in resolve(baseline.parameters, path)(instant).rates]
+            wanted = [r * factor for r in base]
+            if len(got) != len(wanted) or any(differs(g, w) for g, w in zip(got, wanted,
+                                                                            strict=False)):
+                raise AssertionError(
+                    f"{knob} : le barème {'.'.join(path)} appliqué vaut {got}, pas "
+                    f"{wanted} ({factor} × {base})")
 
 
 def moves_capital(spec: ReformSpec | None) -> bool:
@@ -402,6 +486,10 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                     value = getattr(spec, knob, None)
                     if value is not None:
                         _apply_plafond(parameters, path, value, start, instant)
+                for knob, paths in ECHELLE_KNOBS.items():
+                    factor = getattr(spec, knob, None)
+                    if factor is not None:
+                        _apply_echelle(parameters, paths, factor, start, instant)
                 for knob in REVALORISATION_KNOBS:
                     coefficient = getattr(spec, knob, None)
                     if coefficient is not None:
@@ -483,14 +571,19 @@ def _apply_bareme(parameters: Any, brackets: list[Any], start: Any,
     """
     node = resolve(parameters, path)
     active = active_bracket_count(node, start)
-    if len(brackets) > active:
+    if len(brackets) > active + 1 or len(brackets) > len(node.brackets):
         raise ValueError(
             f"le barème fourni compte {len(brackets)} tranches, le barème légal n'en a que "
-            f"{active} d'actives à cette date ; v1 ne crée pas de tranche supplémentaire"
+            f"{active} d'actives à cette date : une seule tranche dormante peut être "
+            f"réveillée, aucune n'est créée (D-320)"
         )
     for i, bracket in enumerate(brackets):
-        update_bracket(node, i, active=active, start=start,
-                       rate=bracket.rate, threshold=bracket.threshold)
+        if i < active:
+            update_bracket(node, i, active=active, start=start,
+                           rate=bracket.rate, threshold=bracket.threshold)
+        else:
+            reactivate_bracket(node, i, active=active, start=start,
+                               rate=bracket.rate, threshold=bracket.threshold)
     # Neutralise the leftover active brackets. They take the top threshold and a
     # rate of ZERO: brackets sharing a threshold are merged by *summing* their
     # rates, so 0 leaves the top rate untouched while repeating the top rate would
