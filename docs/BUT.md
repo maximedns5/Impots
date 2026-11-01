@@ -138,6 +138,12 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
   droit de 2026 sur les revenus de 2024 ; deux tiers sont la population contre la Cnaf :
   les effectifs (15 %), les montants (23 %), l'élasticité (26 %). Le recours n'est pas
   mesurable, faute d'une source joignable ; aucune révision n'entrerait dans la tolérance.
+* **But 10 — Les cas chiffrés sur la population de leur année** (D-317, D-318) : `impots
+  chiffrage register` vieillit les revenus jusqu'à l'année du cas, aux indices du PLF 2027
+  et de son PLFSS ; sans indices, le cas est refusé. Les cinq cas notés, rechiffrés en
+  révisions comptées à part : deux sur cinq dans leur tolérance, contre trois des cas
+  aveugles. Le millésime referme 12 % de l'écart de l'art. 2 et de la prime ; il éloigne
+  l'art. 3 et l'art. 15, déjà au-dessus de leur fiche, et sort l'art. 15 de la sienne.
 
 ### But 6 — Une étude par commande
 
@@ -254,7 +260,7 @@ sensibles au forfait. Le recours, qui partagerait ces deux tiers, n'est pas mesu
 le non-recours par configuration. Aucune révision n'est écrite : celle qui vieillirait les
 revenus laisserait le cas à +40 %, hors de sa tolérance.
 
-### But 10 — Les cas chiffrés sur la population de leur année (validé, en cours)
+### But 10 — Les cas chiffrés sur la population de leur année (fait, D-317, D-318)
 
 Le premier chiffre ne bougera pas avant les juges de l'automne 2027. Ce qui les servira le
 mieux est d'ôter une erreur systématique déjà mesurée deux fois : le millésime. Vieillie
@@ -277,4 +283,26 @@ des tests ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 40 to
 disant ce qui manque.
 ```
 
-Validé par le propriétaire le 1er novembre 2026.
+Validé par le propriétaire le 1er novembre 2026. Préenregistrement, D-317 : les indices
+lus dans le PLF 2027 (salaires par tête, exposé général des motifs) et le PLFSS 2027
+(inflation hors tabac et PIB en valeur, annexe B), manifestés ; de 2024 à 2026, les
+salaires et le chômage multipliés par 1,0404, les pensions et les loyers par 1,0302 ; les
+entreprises par le PIB nominal, 1,106 de 2023 à 2027. Un contrôle sans vieillissement, sur
+le même commit, sépare la dérive du moteur du millésime.
+
+Résultat, D-318 (`reports/revisions_vieillies.md`), tenu point par point :
+
+| cas | figé | vieilli | fiche | écart figé | écart vieilli | note vieillie |
+|---|---:|---:|---:|---:|---:|---|
+| art. 2 | 2,828 | 2,994 | 4,200 | −32,7 % | −28,7 % | hors |
+| art. 3 | 1,119 | 1,196 | 1,100 | +1,8 % | +8,7 % | dedans |
+| art. 74, prime | 0,887 | 0,819 | 0,332 | +167,1 % | +146,6 % | hors |
+| art. 74, logement | 0,078 | 0,078 | 0,101 | −22,5 % | −23,1 % | dedans |
+| art. 15 | 7,054 | 7,800 | 5,500 | +28,3 % | +41,8 % | hors |
+
+En milliards d'euros et en valeur absolue. Deux révisions sur cinq dans leur tolérance,
+contre trois des cas aveugles, dont les notes ne bougent pas. Le millésime rapproche
+l'art. 2 et la prime de leur fiche, d'un huitième de l'écart chacun ; il éloigne les deux
+cas déjà chiffrés trop haut. La note aveugle de l'art. 15 tenait en partie à ce que sa
+population était de 2023. Et la lecture de D-316 est corrigée : vieillir les revenus de
+deux ans n'ôte que 0,080 du terme de l'année de la prime (0,173), pas tout.
