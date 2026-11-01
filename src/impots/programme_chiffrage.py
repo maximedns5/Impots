@@ -141,6 +141,6 @@ def resume(r: dict[str, Any]) -> list[str]:
                       f"{ch['mechanical_first_year_eur'] / 1e9:+.3f} Md€ (coût positif)")
         if ch.get("delta"):
             lignes.append(f"  part chiffrée, dette en {ch['years'][-1]} : "
-                          f"{ch['delta'][-1]:+.2f} pt de PIB contre la référence")
+                          f"{ch['delta'][-1] * 100:+.2f} pt de PIB contre la référence")
         lignes.append(f"  {r['avertissement']}")
     return lignes

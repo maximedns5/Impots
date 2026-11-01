@@ -166,3 +166,25 @@ def test_a_priced_measure_without_a_tolerance_class_is_refused(monkeypatch) -> N
     monkeypatch.setattr(s, "CLASSE", classe)
     with pytest.raises(SystemExit, match="aucune classe de tolérance"):
         s.cas()
+
+
+def test_a_tolerance_class_for_a_measure_no_longer_priced_is_refused(monkeypatch) -> None:
+    s = _script()
+    monkeypatch.setattr(s, "CLASSE", {**s.CLASSE, "mesure_disparue": "menages"})
+    with pytest.raises(SystemExit, match="ne sont plus chiffrées"):
+        s.cas()
+
+
+def test_the_committed_table_is_the_rendered_one() -> None:
+    """La page du but 11 ne dérive pas de ses programmes ni de son registre."""
+    s = _script()
+    assert s.TABLEAU.read_text(encoding="utf-8") == s.tableau()
+
+
+def test_the_printed_debt_is_in_points_of_gdp() -> None:
+    """La trajectoire est une fraction du PIB : 0,0954 s'imprime +9,54 pt, pas +0,10."""
+    r = pc.rapport(_prog())
+    r["chiffrage"] = {"mechanical_first_year_eur": 30.9e9, "years": [2026, 2035],
+                      "delta": [0.01, 0.0954]}
+    ligne = next(x for x in pc.resume(r) if "dette en 2035" in x)
+    assert "+9.54 pt de PIB" in ligne, ligne

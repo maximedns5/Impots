@@ -83,7 +83,8 @@ def cas() -> list[tuple[str, object, object]]:
     connus = {m.id for _, _, m in out}
     orphelines = sorted(set(CLASSE) - connus)
     if orphelines:
-        raise SystemExit(f"des classes pour des mesures qui ne sont plus chiffrées : {orphelines}")
+        raise SystemExit(f"des classes pour des mesures qui ne sont plus chiffrées : "
+                         f"{orphelines}")
     return out
 
 
@@ -124,13 +125,70 @@ def arguments(nom: str, p, m) -> list[str]:
             "--vintage", VINTAGE_ENTREPRISES]
 
 
+TABLEAU = ROOT / "reports" / "programmes_presidentielle.md"
+
+
+def tableau(directory: Path | None = None) -> str:
+    """Le tableau du but 11, candidat par candidat : les mesures, ce qui est chiffré, ce qui
+    est refusé et par quelle porte, ce qui est préenregistré et son coût. Rien n'y est
+    saisi : tout vient des programmes et du registre."""
+    from impots import preregistration as ch
+    from impots import programmes as pg
+
+    def md(x: float) -> str:
+        return f"{x / 1e9:+.3f}".replace(".", ",")
+
+    lignes = [
+        "# Les programmes de la présidentielle 2027 dans le moteur (D-319 à D-322)", "",
+        "Candidats déclarés au 1er novembre 2026, mesures relevées et sourcées dans "
+        "`programmes/`. Une mesure est chiffrée (traduite en paramètres du moteur), refusée "
+        "(avec la porte qui l'ouvrirait) ou vague (sans paramètre). Les mesures chiffrées sont "
+        "préenregistrées avant le chiffrage de l'Institut Montaigne ; leur coût est celui de "
+        "2026, sur la population vieillie, en milliards d'euros, positif quand l'État perd.",
+        "", "| candidat | mesures | paramétrées | vagues | chiffrées | préenregistrées | "
+        "refusées, par porte |", "|---|---:|---:|---:|---:|---:|---|"]
+    detail = ["", "## Les cas préenregistrés", "",
+              "| cas | classe | tolérance | coût 2026 | juge |", "|---|---|---:|---:|---|"]
+    totaux = [0, 0, 0, 0, 0]
+    registre = set(ch.CHIFFRAGES.glob("*.yaml")) if directory is None else set(
+        directory.glob("*.yaml"))
+    noms = {f.stem for f in registre}
+    for slug in pg.lister():
+        p = pg.charger(slug)
+        c = p.couverture()
+        cases = [f"{PREFIXE}_{slug}_{m.id}" for m in p.chiffrees()]
+        faits = [n for n in cases if n in noms]
+        portes = ", ".join(f"{k} {v}" for k, v in c["refus_par_porte"].items()
+                           if k != "vague") or "—"
+        lignes.append(f"| {p.candidat} | {c['mesures']} | {c['parametrees']} | {c['vagues']} "
+                      f"| {c['chiffrees']} | {len(faits)} | {portes} |")
+        for i, v in enumerate((c["mesures"], c["parametrees"], c["vagues"], c["chiffrees"],
+                               len(faits))):
+            totaux[i] += v
+        for n in faits:
+            cas_ = ch.load(n, directory)
+            m = next(x for x in p.chiffrees() if n.endswith(x.id))
+            juge = ("à venir" if cas_.comparator is None else
+                    ch.grade(cas_).verdict)
+            detail.append(f"| `{n}` | {CLASSE[m.id]} | {cas_.tolerance.relative:.0%} | "
+                          f"{md(cas_.mechanical_eur)} | {juge} |")
+    lignes.append(f"| **total** | **{totaux[0]}** | **{totaux[1]}** | **{totaux[2]}** | "
+                  f"**{totaux[3]}** | **{totaux[4]}** | |")
+    return "\n".join(lignes + detail + [""])
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--ecrire", action="store_true")
     group.add_argument("--enregistrer", action="store_true")
     group.add_argument("--lister", action="store_true")
+    group.add_argument("--rendre", action="store_true")
     args = parser.parse_args()
+    if args.rendre:
+        TABLEAU.write_text(tableau(), encoding="utf-8")
+        print(f"-> {TABLEAU.relative_to(ROOT)}")
+        return 0
     if args.ecrire:
         for path in ecrire():
             print(f"-> {path.relative_to(ROOT)}")

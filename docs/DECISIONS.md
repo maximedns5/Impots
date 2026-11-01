@@ -25161,3 +25161,72 @@ dérive.
 
 La réfutation qui se lirait : les deux mesures C3S et CVAE à deux montants différents, ou
 une mesure de ménages à zéro, signe d'un bouton qui ne mord pas sur la population.
+
+## D-322 — Les dix mesures des programmes : sept dans leur pronostic, trois au-dessus
+
+**Les passes.** Les dix cas sont enregistrés sur le commit de D-321 (`97e5a29`), depuis un
+worktree figé, sur 20 000 ménages vieillis jusqu'en 2026 et sur le millésime des entreprises
+de 2023 vieilli par le PIB nominal. Deux interruptions, sans qu'aucun fichier du worktree
+change. La passe des entreprises s'est d'abord arrêtée sur un fichier absent du conteneur
+neuf, les comptes nationaux de l'INSEE, récupéré par son entrée du manifeste. Puis la passe
+du quotient familial a été tuée faute de mémoire : les cas tournaient dans un seul
+processus, ce que CLAUDE.md interdit. Les cas restants ont tourné chacun dans le sien.
+
+**Contre le pronostic de D-321.** Coût de 2026 en milliards d'euros, positif quand l'État
+perd.
+
+- Mélenchon, la fin des exonérations au-delà de 2 SMIC : −9,29, hors de la fourchette de −2
+  à −8. La courbe de 2026 rend plus entre 2 et 3 SMIC que le pronostic ne le supposait.
+- Tondelier, 60 % au-delà de 250 000 € par part : −0,98, dans celle de −0,5 à −4.
+- Le Pen, le deuxième enfant : +2,83, dans celle de 1 à 4.
+- Attal, le droit au brut : +75,66, hors de celle de 35 à 55.
+- Attal, la CVAE : +3,53, dans celle de 3 à 7.
+- Retailleau, la moitié rendue aux salariés : +12,67, hors de celle de 5 à 10.
+- Retailleau, la C3S et la CVAE : +9,23, dans celle de 4 à 11.
+- Lisnard, la CSG à 6,6 % : +24,16, dans celle de 15 à 25.
+- Lisnard, la C3S et la CVAE : +9,23, au centime de Retailleau, comme annoncé.
+- Lisnard, le quotient familial déplafonné : +5,67, dans celle de 2 à 8.
+
+Sept sur dix. La réfutation nommée n'est pas venue : les deux mesures C3S et CVAE ont le
+même montant, et aucune mesure des ménages n'est à zéro.
+
+**Les deux écarts des cotisations salariales.** Les deux cas d'échelle disent la même
+chose : 75,7 Md€ pour 78 % des cotisations retraite salariales, 12,7 Md€ pour 13 %, soit
+environ 97 Md€ pour le tout. Le pronostic en supposait 70. L'écart n'est pas mesuré ici. Une
+piste à vérifier : le moteur applique-t-il les barèmes du privé à tous les salariés, agents
+publics compris ? Le calage de l'échelle sur le gain que le candidat énonce au salaire
+médian, lui, tient : il est mesuré par le moteur.
+
+**La commande, de bout en bout.** `impots programme lisnard`, sur ses deux mesures des
+ménages, avec les hypothèses des études (θ½, dépense gelée en volume, 1 % de croissance
+réelle, 2 % de prix, taux tenu, salaires +3 %), et ρ = 0,5. La part chiffrée coûte 30,9 Md€
+la première année et monte la dette de 9,5 points de PIB en 2035 contre la référence. La
+couche déclarée annonce +21,3 Md€ par an au solde, à part. Le rapport le dit à côté : c'est
+la dette de la part chiffrée, pas du programme. La mesure des entreprises n'y est pas : le
+chemin rapide refuse la CVAE, dont le droit change dans l'horizon (D-254). Le premier essai
+imprimait « +0,10 pt » : la trajectoire est une fraction du PIB, et la ligne imprimée ne la
+convertissait pas. Un test l'a vu échouer, puis la ligne a été corrigée ; le rapport JSON
+était juste.
+
+**Le but 11.** Les 24 candidats déclarés ont leur programme : 321 mesures sourcées, 212
+paramétrées, 109 vagues, dont dix chiffrées (4,7 % des paramétrées). Le reste est refusé,
+chaque fois avec sa porte : la dépense publique, les retraites, l'énergie et la TVA, les
+successions et le patrimoine pèsent le plus. Les cinq boutons sont ajoutés. `impots
+programme` donne les trois réponses sur la part chiffrée, la couverture et la couche
+déclarée. Les dix mesures attendent leur juge. Aucun chiffrage de tiers n'a été lu.
+`calibrate.py` n'a pas été touché.
+
+**Ce qui n'est pas fait.**
+
+- Le juge : les dix cas reçoivent leur comparateur quand l'Institut Montaigne publie, dans
+  un commit à part, puis sont notés.
+- Les programmes sont datés du 1er novembre 2026 ; *L'Avenir en commun* sort en 5e édition
+  le 6 novembre, et le RN publie sa réforme des retraites le 17. Une nouvelle version datée
+  s'écrira.
+- Les modules qui ouvriraient le plus de mesures, dans l'ordre des euros : l'indexation des
+  pensions et des prestations, la consommation (TVA, carburants), les successions et le
+  patrimoine, la dépense par candidat, l'âge de la retraite.
+- La couche de précalcul pour les curseurs, puis l'interface.
+- 25 fichiers du manifeste restent absents de ce conteneur : livraisons sous licence,
+  fichiers en quarantaine, un serveur qui coupe la connexion. Aucune passe de ce but ne les
+  lit.
