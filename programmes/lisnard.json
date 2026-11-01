@@ -62,8 +62,8 @@
         }
       ],
       "refus": {
-        "porte": "bouton_ce_but",
-        "raison": "Cotisations salariales en baisse : 120 Md€, environ 400 € nets par mois et par salarié, sans que la répartition entre cotisations salariales et patronales soit dite."
+        "porte": "salaires",
+        "raison": "Environ 400 € nets par mois au salaire médian dépassent les cotisations retraite salariales, qui n'en pèsent que 320 € : la baisse passe aussi par des cotisations patronales rendues en salaire, ce qui déplace la distribution des salaires."
       },
       "declare": {
         "montant_eur": 120000000000.0,
@@ -481,9 +481,25 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "bouton_ce_but",
-        "raison": "Quotient familial déplafonné : le plafond général de 1 807 € par demi-part, déjà réglable, et les plafonds particuliers (parent isolé, demi-parts spécifiques), qui attendent le bouton, levés ensemble."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "plafond_qf_demi_part": 100000.0,
+          "plafond_qf_parent_isole": 100000.0
+        },
+        "plages": [
+          {
+            "champ": "plafond_qf_demi_part",
+            "min": 1807.0,
+            "max": 100000.0
+          },
+          {
+            "champ": "plafond_qf_parent_isole",
+            "min": 4262.0,
+            "max": 100000.0
+          }
+        ],
+        "note": "« Plafond supprimé » : le plafond général et celui du premier enfant d'un parent isolé passent à 100 000 €, la borne du schéma, que nul foyer n'atteint. Les autres plafonds particuliers (personne seule sans enfant à charge, réduction complémentaire des veufs) ne sont pas des boutons et restent ceux de 2026. Plages du droit de 2026 à la borne."
       }
     },
     {

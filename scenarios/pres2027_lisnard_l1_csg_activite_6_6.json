@@ -1,0 +1,15 @@
+{
+  "name": "pres2027_lisnard_l1_csg_activite_6_6",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "David Lisnard (Nouvelle Énergie), programme relevé le 2026-11-01 — Baisse de la CSG sur les revenus d'activité : « « Il propose d'abaisser la contribution sociale généralisée (CSG) sur les revenus d'activité de 9,2 % à 6,6 % » (texte de la page) ; « Cotiser moins pour gagner plus. » » (https://www.unenouvelleenergie.fr/david-lisnard-sur-cnews-et-europe-1-je-ne-suis-pas-candidat-pour-un-poste-je-viens-pour-redresser-le-pays/, 2026-10-27)",
+  "note": "Le candidat ne dit pas comment répartir la baisse de 2,6 points entre la part déductible (6,8 %) et la part imposable (2,4 %). Le choix retenu est la répartition proportionnelle, qui garde à chaque part son poids dans le taux : 4,88 % et 1,72 %, soit 6,6 %. Chaque plage va du droit de 2026 à la valeur retenue prolongée de la moitié de l'écart ; celle de la part imposable descend jusqu'à 0 pour couvrir l'autre répartition extrême (6,6 % et 0 %), et celle de la part déductible contient la baisse portée sur elle seule (4,2 % et 2,4 %). La CSG des revenus de remplacement et du capital n'est pas touchée.",
+  "tags": [
+    "presidentielle_2027",
+    "lisnard"
+  ],
+  "reform": {
+    "csg_activite_deductible": 0.0488,
+    "csg_activite_imposable": 0.0172
+  }
+}

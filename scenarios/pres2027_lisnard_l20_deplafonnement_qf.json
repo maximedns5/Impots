@@ -1,0 +1,15 @@
+{
+  "name": "pres2027_lisnard_l20_deplafonnement_qf",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "David Lisnard (Nouvelle Énergie), programme relevé le 2026-11-01 — Déplafonnement du quotient familial : « « des allocations financières, notamment par le déplafonnement du quotient familial » » (https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/, 2026-11-01)",
+  "note": "« Plafond supprimé » : le plafond général et celui du premier enfant d'un parent isolé passent à 100 000 €, la borne du schéma, que nul foyer n'atteint. Les autres plafonds particuliers (personne seule sans enfant à charge, réduction complémentaire des veufs) ne sont pas des boutons et restent ceux de 2026. Plages du droit de 2026 à la borne.",
+  "tags": [
+    "presidentielle_2027",
+    "lisnard"
+  ],
+  "reform": {
+    "plafond_qf_demi_part": 100000.0,
+    "plafond_qf_parent_isole": 100000.0
+  }
+}

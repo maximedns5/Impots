@@ -61,11 +61,8 @@ PORTES: dict[str, str] = {
                        "du capital au barème, une exonération par âge…)",
     "pensions_declarees": "la part déductible de la CSG des pensions : la population porte "
                           "des pensions déclarées, déjà nettes de cette part (D-176)",
-    # Provisoire : une mesure fiscale qui attend l'un des boutons que le but 11 ajoute. À la
-    # fin du but, aucune ne reste derrière cette porte (test_no_measure_waits_on_a_knob).
-    "bouton_ce_but": "un bouton que le but 11 ajoute au moteur : 6e tranche de l'IR, "
-                     "quotient familial, CSG des pensions et du capital, part sociale du PFU, "
-                     "cotisations salariales",
+    # « bouton_ce_but », la porte provisoire des mesures qui attendaient les boutons de
+    # D-320, est fermée : elles sont toutes chiffrées ou refusées ailleurs.
 }
 
 TYPES_SOURCE = ("programme", "proposition_de_loi", "entretien", "discours", "reseau_social",

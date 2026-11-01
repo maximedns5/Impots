@@ -25057,3 +25057,107 @@ changé depuis.
 - Le préenregistrement des mesures chiffrables, dans une D-entrée poussée avant les passes.
 
 `calibrate.py` reste fermé.
+
+## D-320 — Les boutons des programmes, et la part de CSG qui ne peut pas en être un
+
+**Le fait.** Le but 11 nomme cinq boutons qui manquaient aux mesures fiscales des
+programmes. Ils sont ajoutés, chacun vu bouger sa ligne sur un ménage de 2026.
+
+- **La 6e tranche de l'IR.** Le barème d'openfisca porte quatorze tranches, dont cinq
+  actives depuis 2015. `ir_bareme` en accepte désormais six : la sixième réveille la
+  première tranche dormante (`reactivate_bracket`), à partir de l'année de la réforme, et
+  rien n'est créé dans l'arbre. Une seule peut l'être, et seulement la première : une lacune
+  laisserait une tranche sans valeur entre deux qui en ont. La relecture du barème, qui
+  compare les longueurs, vaut pour six. À 60 % au-delà de 250 000 € par part, l'IR d'un
+  salaire de 600 000 € monte de 38 131 € ; celui d'un salaire de 40 000 € ne bouge pas.
+- **Le quotient familial.** `qf_parts_enf1`, `qf_parts_enf2`, `qf_parts_enf3_et_sup` (les
+  parts d'un enfant, cas général) et `plafond_qf_parent_isole` (le plafond du premier enfant
+  d'un parent isolé, 4 262 € en 2026).
+- **La CSG des pensions, sa part imposable seulement.** `csg_pensions_imposable_taux_plein`
+  et `_median`. La part déductible n'est pas un bouton : les deux constructeurs posent la
+  pension déclarée sur la case 1AS, déjà nette d'elle (D-176). Un taux déductible neuf ne
+  bouge rien : mesuré sur trois retraités, un par bande, les trois boutons écrits d'abord
+  laissaient le revenu disponible au centime. Ils ont été retirés plutôt que gardés morts.
+  Une mesure qui vise cette part est refusée sous une porte qui le dit,
+  `pensions_declarees`.
+- **La part sociale du PFU.** `csg_capital_taux_global` (10,6 % depuis la LFSS 2026, sur
+  tout revenu du capital hors produits « allégés ») et `prelevement_solidarite_capital`
+  (7,5 %). La CRDS et le taux de 9,2 % des produits allégés ne bougent pas. Les deux boutons
+  entrent dans `CAPITAL_KNOBS` : une passe qui les règle impute le capital.
+- **Les cotisations salariales.** `cotisations_salariales_retraite_echelle` multiplie chaque
+  taux actif de cinq barèmes salariés (Cnav plafonnée et déplafonnée, Agirc-Arrco, CEG,
+  CET). Un candidat qui dit « baisser les cotisations salariales » n'en nomme aucun : un
+  facteur sur les cinq est la traduction qui ne choisit pas entre eux. C'est un nouveau
+  registre, `ECHELLE_KNOBS`, relu contre l'arbre de base (`verify_echelles`) et refusé sur
+  un barème sans tranche active.
+
+**Les deux registres.** `test_knobs` et `test_standing_rules` exigent un cas pour chaque
+bouton de chaque registre. Ils ne comptaient pas le registre neuf : vus ignorer le bouton
+d'échelle, ils le comptent désormais, comme D-151 et D-298 l'avaient appris pour les deux
+précédents.
+
+**Un test change, par la décision du propriétaire.**
+`test_bareme_over_five_brackets_is_rejected` refusait six tranches : c'est la limite que le
+but 11 lève. Il devient `test_bareme_over_six_brackets_is_rejected`, qui refuse sept. Le
+barème à six tranches entre dans les barèmes « appliqués exactement ».
+
+**Les mutations.** Vingt-six mutants, sur les gardes du schéma des programmes et sur celles
+de ces boutons. Vingt-cinq sont tués. Le survivant, une plage qui ne nomme pas un nombre,
+l'est désormais par un test vu échouer sur lui.
+
+## D-321 — Les mesures chiffrables des programmes, préenregistrées avant le juge
+
+**Le fait.** Les programmes des 24 candidats déclarés sont commités : 321 mesures, dont dix
+chiffrées. Les autres sont refusées, chacune avec sa porte, ou vagues. Les dix sont
+préenregistrées ici, avec leur tolérance et leur pronostic, avant toute passe et avant que
+le juge ne publie.
+
+**Le juge.** Le chiffrage des programmes de l'Institut Montaigne, annoncé au premier
+trimestre 2027. Aucun chiffrage de tiers n'est lu avant le commit des enregistrements. Un
+cas que le juge ne chiffre pas reste sans note, et le dit.
+
+**Les cas.** Chacun s'appelle `pres2027_<candidat>_<mesure>`. Il est enregistré par `impots
+chiffrage register` (ménages) ou `register-entreprises`, sur le droit de 2026, la population
+vieillie jusqu'en 2026 aux hypothèses du PLF 2027 (`--vieillir plf2027`, but 10), 20 000
+ménages ou le millésime des entreprises de 2023. Ses fichiers sont tirés du programme par
+`scripts/preenregistrer_programmes.py --ecrire`, sans rien y ajouter, et un test refuse leur
+dérive.
+
+- Mélenchon, la fin des exonérations au-dessus de 2 SMIC (`allegement_general_plafond` à 2).
+- Tondelier, une 6e tranche à 60 % au-delà de 250 000 € par part.
+- Le Pen, une part entière dès le deuxième enfant.
+- Attal, le « droit au brut » : les cotisations retraite salariales à l'échelle 0,22, calée
+  sur les +250 € nets par mois qu'il énonce au salaire médian ; et la suppression de la
+  CVAE.
+- Retailleau, la moitié des gains rendue aux salariés : l'échelle 0,87, calée sur ses 500 €
+  par an au salaire médian (une autre source dit par mois, qui ne se chiffrerait pas) ; et
+  la suppression de la C3S et de la CVAE.
+- Lisnard, la CSG sur l'activité de 9,2 % à 6,6 %, répartie en proportion entre ses deux
+  parts ; la suppression de la C3S et de la CVAE ; le quotient familial déplafonné.
+
+**Les tolérances, une règle par classe, la même pour chaque candidat.**
+
+- Ménages, sur une large assiette : 25 % ou 200 M€, le plus large des deux. Le moteur
+  retrouve ses agrégats à quelques pour cent ; le juge chiffre peut-être une autre année et
+  contre la continuité des politiques.
+- Le haut de la distribution (la 6e tranche, le déplafonnement) : 40 % ou 200 M€. La
+  population a de bons agrégats et des queues faibles.
+- Entreprises : 30 % ou 200 M€, la tolérance de l'art. 15 du PLF 2027. La CVAE disparaît du
+  droit en 2028 : un juge qui la chiffre contre ce droit-là la comptera pour moins.
+
+**Le pronostic, avant toute passe.** Coût mécanique de 2026, positif quand l'État perd.
+
+- Mélenchon, 2 SMIC : une recette de 2 à 8 Md€ (de −2 à −8).
+- Tondelier, 60 % : une recette de 0,5 à 4 Md€.
+- Le Pen, le deuxième enfant : un coût de 1 à 4 Md€.
+- Attal, droit au brut : un coût de 35 à 55 Md€ ; l'IR en reprend une part, les cotisations
+  étant déductibles.
+- Retailleau, la moitié rendue : un coût de 5 à 10 Md€.
+- Lisnard, CSG : un coût de 15 à 25 Md€.
+- Lisnard, quotient familial : un coût de 2 à 8 Md€.
+- La CVAE seule (Attal) : un coût de 3 à 7 Md€.
+- La C3S et la CVAE (Retailleau, Lisnard) : le même montant pour les deux, au centime, de 4
+  à 11 Md€.
+
+La réfutation qui se lirait : les deux mesures C3S et CVAE à deux montants différents, ou
+une mesure de ménages à zéro, signe d'un bouton qui ne mord pas sur la population.

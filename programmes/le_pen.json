@@ -525,10 +525,6 @@
           "type": "discours"
         }
       ],
-      "refus": {
-        "porte": "bouton_ce_but",
-        "raison": "quotient familial, nombre de parts : le deuxième enfant compte une part entière au lieu d'une demi-part."
-      },
       "declare": {
         "montant_eur": 3500000000.0,
         "sens": "baisse_prelevements",
@@ -539,6 +535,20 @@
           "date": "2026-10-06",
           "type": "discours"
         }
+      },
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "qf_parts_enf2": 1.0
+        },
+        "plages": [
+          {
+            "champ": "qf_parts_enf2",
+            "min": 0.5,
+            "max": 1.25
+          }
+        ],
+        "note": "Le deuxième enfant apporte une part entière au lieu d'une demi-part, dans le cas général ; le premier et le troisième ne bougent pas. Plage de 0,5 (la mesure retirée) à 1,25."
       }
     },
     {

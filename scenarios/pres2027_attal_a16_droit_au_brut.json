@@ -1,0 +1,14 @@
+{
+  "name": "pres2027_attal_a16_droit_au_brut",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Gabriel Attal (Renaissance), programme relevé le 2026-11-01 — « Droit au brut » : hausse du net par suppression de cotisations, financée par des économies sur le modèle social : « « Gabriel Attal propose une hausse de 250 € nets mensuels à ce niveau de rémunération, dès le début 2027. Elle passe par la suppression de cotisations qui pèsent sur le travail » (texte de la page) » (https://attalpresident.fr/programme/mesures/droit-au-brut, 2026-07-22)",
+  "note": "Au salaire médian de 2026 (34 000 € brut par an, 2 243 € nets par mois), supprimer toutes les cotisations retraite salariales rend 3 845 € nets par an (mesuré par le moteur). Le candidat énonce un gain, +250 € nets par mois au salaire médian, pas un taux : l'échelle de 0,22 rend 3 000 € par an. Elle s'applique à tous les salaires, ce que la mesure ne précise pas. Plage de 0 (toutes supprimées) à 1 (la mesure retirée).",
+  "tags": [
+    "presidentielle_2027",
+    "attal"
+  ],
+  "reform": {
+    "cotisations_salariales_retraite_echelle": 0.22
+  }
+}

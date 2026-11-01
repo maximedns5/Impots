@@ -340,9 +340,19 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "bouton_ce_but",
-        "raison": "Cotisations salariales en baisse : +250 € nets par mois au salaire médian (2 200 € nets) dès début 2027, les cotisations supprimées et leur taux n'étant pas nommés."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "cotisations_salariales_retraite_echelle": 0.22
+        },
+        "plages": [
+          {
+            "champ": "cotisations_salariales_retraite_echelle",
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "note": "Au salaire médian de 2026 (34 000 € brut par an, 2 243 € nets par mois), supprimer toutes les cotisations retraite salariales rend 3 845 € nets par an (mesuré par le moteur). Le candidat énonce un gain, +250 € nets par mois au salaire médian, pas un taux : l'échelle de 0,22 rend 3 000 € par an. Elle s'applique à tous les salaires, ce que la mesure ne précise pas. Plage de 0 (toutes supprimées) à 1 (la mesure retirée)."
       }
     },
     {

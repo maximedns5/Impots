@@ -1,0 +1,39 @@
+{
+  "name": "pres2027_tondelier_tranche_ir_60",
+  "year": 2026,
+  "created": "2026-11-01",
+  "source": "Marine Tondelier (Les Écologistes), programme relevé le 2026-11-01 — Nouvelle tranche d'impôt sur le revenu à 60 % : « « au-delà de 250 000 € annuels » (programme, cité par RT) » (https://francais.rt.com/france/136196-tva-verte-isf-climatique-contribution, 2026-07-14)",
+  "note": "Barème de 2026 et une 6e tranche à 60 % au-delà de 250 000 €. Le seuil s'applique au revenu par part, comme tous les seuils du barème : le candidat ne dit pas s'il l'entend par foyer. La plage va du taux de la tranche supérieure actuelle, 45 % (la mesure retirée), à 67,5 %.",
+  "tags": [
+    "presidentielle_2027",
+    "tondelier"
+  ],
+  "reform": {
+    "ir_bareme": [
+      {
+        "threshold": 0,
+        "rate": 0.0
+      },
+      {
+        "threshold": 11600,
+        "rate": 0.11
+      },
+      {
+        "threshold": 29579,
+        "rate": 0.3
+      },
+      {
+        "threshold": 84577,
+        "rate": 0.41
+      },
+      {
+        "threshold": 181917,
+        "rate": 0.45
+      },
+      {
+        "threshold": 250000,
+        "rate": 0.6
+      }
+    ]
+  }
+}

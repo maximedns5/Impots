@@ -127,3 +127,42 @@ def test_the_command_lists_reports_and_refuses(tmp_path, monkeypatch, capsys) ->
     assert cli.main(["programme", "essai", "--rho", "2"]) == 1
     assert "dans [0, 1]" in capsys.readouterr().err
     assert cli.main(["programme", "absent"]) == 1
+
+
+def _script():
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[1] / "scripts" / "preenregistrer_programmes.py"
+    spec = importlib.util.spec_from_file_location("preenregistrer_programmes", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_every_priced_measure_has_its_case_files_as_committed() -> None:
+    """Le scénario ou la réforme d'un cas est la mesure du programme, sans rien d'autre ;
+    chaque mesure chiffrée a sa classe de tolérance (D-321)."""
+    from impots import scenarios
+    from impots.entreprises.reforms import FirmReformSpec
+
+    s = _script()
+    for nom, p, m in s.cas():
+        assert m.id in s.CLASSE
+        if m.chiffrage.couche == "menages":
+            scen = scenarios.load(nom)
+            assert scen.year == p.annee
+            assert scen.reform == pg._spec("menages", m.chiffrage.reforme)
+        else:
+            path = s.ROOT / "reforms" / f"{nom}.json"
+            assert FirmReformSpec.model_validate_json(path.read_text(encoding="utf-8")) == \
+                pg._spec("entreprises", m.chiffrage.reforme)
+
+
+def test_a_priced_measure_without_a_tolerance_class_is_refused(monkeypatch) -> None:
+    s = _script()
+    classe = dict(s.CLASSE)
+    classe.pop("tranche_ir_60")
+    monkeypatch.setattr(s, "CLASSE", classe)
+    with pytest.raises(SystemExit, match="aucune classe de tolérance"):
+        s.cas()
