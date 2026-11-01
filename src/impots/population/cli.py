@@ -844,6 +844,59 @@ def cmd_scenario_solve(args: argparse.Namespace) -> int:
 # --------------------------------------------------------------------------- #
 
 
+def _vieillir_menages(args: argparse.Namespace, year: int, frame):
+    """The household population aged from its vintage to the case's year, and what the
+    registry keeps of it (D-317). A case whose year is not its population's, without
+    declared indices, is refused: it would apply that year's law to another year's
+    incomes."""
+    from impots import hypotheses
+    from impots import uprating as up
+
+    base = int(args.vintage) if args.vintage.isdigit() else None
+    if args.vieillir is None:
+        if base is None or year != base:
+            raise ValueError(
+                f"« {args.case} » chiffre {year} sur la population « {args.vintage} » : "
+                f"sans indices déclarés (--vieillir), le droit de {year} s'appliquerait aux "
+                f"revenus de {args.vintage} (but 10, D-317). Jeux connus : "
+                f"{', '.join(sorted(hypotheses.JEUX))}")
+        return frame, None
+    if base is None:
+        raise ValueError(f"le millésime « {args.vintage} » n'a pas d'année : il ne se "
+                         "vieillit pas")
+    try:
+        uprating, record = hypotheses.vieillissement_menages(args.vieillir, base, year)
+    except hypotheses.HypothesesError as error:
+        raise ValueError(str(error)) from error
+    return (frame if uprating is None else up.uprate(frame, year, uprating)), record
+
+
+def _vieillir_entreprises(args: argparse.Namespace) -> tuple[float, dict | None]:
+    """The firm cost's ageing factor from the vintage to the case's year (D-246, D-317).
+    A vintage with a year that is not the case's, without declared indices, is refused.
+    A vintage with no year, the tests' populations, has nothing to age from: it is
+    registered as it is, and refused only if indices are asked for."""
+    from impots import hypotheses
+
+    base = int(args.vintage) if args.vintage.isdigit() else None
+    if base is None:
+        if args.vieillir is not None:
+            raise ValueError(f"le millésime « {args.vintage} » n'a pas d'année : il ne se "
+                             "vieillit pas")
+        return 1.0, None
+    if args.vieillir is None:
+        if args.year != base:
+            raise ValueError(
+                f"« {args.case} » chiffre {args.year} sur les entreprises de {base} : sans "
+                f"indices déclarés (--vieillir), leur coût resterait celui de {base} (but "
+                f"10, D-317). Jeux connus : {', '.join(sorted(hypotheses.JEUX))}")
+        return 1.0, None
+    try:
+        return hypotheses.vieillissement_entreprises(args.vieillir, base, args.year)
+    except hypotheses.HypothesesError as error:
+        raise ValueError(str(error)) from error
+
+
 def cmd_chiffrage_register(args: argparse.Namespace) -> int:
     """Price a registered scenario and pre-register the result.
 
@@ -878,17 +931,25 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
               file=sys.stderr)
         return 1
 
+    frame = pl.read_parquet(population)
+    try:
+        frame, vieillissement = _vieillir_menages(args, scenario.year, frame)
+    except ValueError as error:
+        print(f"refusé : {error}", file=sys.stderr)
+        return 1
+
     print(f"  chiffrage de « {args.scenario} » sur {args.sample:,} ménages…"
           .replace(",", " "), flush=True)
     priced = scenarios_module.mechanical_price(
-        scenario, frame=pl.read_parquet(population), households=args.sample)
+        scenario, frame=frame, households=args.sample)
 
     try:
         path = chiffrages_module.register(
             args.case, mechanical_eur=priced["mechanical"], tolerance=tolerance,
             population_vintage=args.vintage, sample=args.sample,
             scenario=args.scenario, note=args.note or "", mirror=args.mirror,
-            apres_annexe=args.apres_annexe, directory=directory)
+            apres_annexe=args.apres_annexe, vieillissement=vieillissement,
+            directory=directory)
     except chiffrages_module.ChiffrageError as error:
         print(str(error), file=sys.stderr)
         return 1
@@ -961,12 +1022,20 @@ def cmd_chiffrage_register_entreprises(args: argparse.Namespace) -> int:
               file=sys.stderr)
         return 1
 
+    try:
+        facteur, vieillissement = _vieillir_entreprises(args)
+    except ValueError as error:
+        print(f"refusé : {error}", file=sys.stderr)
+        return 1
+
     print(f"  chiffrage entreprises de « {args.case} » pour {args.year}…", flush=True)
     try:
         path = chiffrages_module.register_firm(
             args.case, spec=spec, year=args.year, frame=pl.read_parquet(population),
             tolerance=tolerance, population_vintage=f"entreprises-{args.vintage}",
-            note=args.note or "", directory=Path(args.dir) if args.dir else None)
+            note=args.note or "", facteur=facteur, vieillissement=vieillissement,
+            apres_annexe=args.apres_annexe,
+            directory=Path(args.dir) if args.dir else None)
     except chiffrages_module.ChiffrageError as error:
         print(str(error), file=sys.stderr)
         return 1
@@ -1894,6 +1963,10 @@ def build_parser() -> argparse.ArgumentParser:
                            help="a new case written after its annex was opened: a revision "
                                 "in D-292's sense, counted apart from the blind cases, with "
                                 "its reason (D-306)")
+    registrar.add_argument("--vieillir", metavar="JEU", default=None,
+                           help="the declared indices that age the population from its "
+                                "vintage to the case's year, e.g. plf2027 (D-317); "
+                                "required when the two years differ")
     registrar.add_argument("--dir")
     registrar.set_defaults(func=cmd_chiffrage_register)
 
@@ -1912,6 +1985,12 @@ def build_parser() -> argparse.ArgumentParser:
                                 help="why THIS tolerance, stated before the answer is known")
     firm_registrar.add_argument("--vintage", type=millesime, default="2023")
     firm_registrar.add_argument("--note", default="")
+    firm_registrar.add_argument("--apres-annexe", metavar="RAISON", default=None,
+                                help="a revision written after the annex was opened (D-292)")
+    firm_registrar.add_argument("--vieillir", metavar="JEU", default=None,
+                                help="the declared indices that age the vintage's cost to "
+                                     "the case's year, e.g. plf2027 (D-246, D-317); "
+                                     "required when the two years differ")
     firm_registrar.add_argument("--dir")
     firm_registrar.set_defaults(func=cmd_chiffrage_register_entreprises)
 

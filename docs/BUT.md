@@ -253,3 +253,28 @@ hauts, presque pas de majoration pour isolement ni de cumul avec le RSA, des foy
 sensibles au forfait. Le recours, qui partagerait ces deux tiers, n'est pas mesurable sans
 le non-recours par configuration. Aucune révision n'est écrite : celle qui vieillirait les
 revenus laisserait le cas à +40 %, hors de sa tolérance.
+
+### But 10 — Les cas chiffrés sur la population de leur année (validé, en cours)
+
+Le premier chiffre ne bougera pas avant les juges de l'automne 2027. Ce qui les servira le
+mieux est d'ôter une erreur systématique déjà mesurée deux fois : le millésime. Vieillie
+vers les revenus de 2026, la mesure de l'art. 2 coûte de 4 à 10 % de plus, ce qui referme
+presque l'écart que la base laissait (D-291) ; la prime d'activité en tire un tiers de son
+écart (D-316). Chaque cas applique aujourd'hui le droit de l'année aux revenus de 2024.
+
+```
+/goal Un cas se chiffre sur la population vieillie jusqu'à l'année qu'il chiffre, et c'est
+mergé dans main. `impots chiffrage register` vieillit les revenus de 2024 (salaires,
+pensions, chômage) jusqu'à l'année du cas, avec des indices déclarés et manifestés : les
+hypothèses du rapport économique du texte noté, jamais sa fiche ; un cas sans indices est
+refusé, et le registre dit lesquels il a pris. Les cinq cas notés du PLF 2027 sont
+rechiffrés sur cette base : ce sont des révisions datées, comptées à part (D-292),
+préenregistrées avec leur pronostic avant toute passe ; les notes aveugles ne bougent pas.
+Le rapport donne, cas par cas, l'écart à la fiche avant et après, donc la part que portait
+le millésime. Si la calibration de la population doit changer, s'arrêter et demander :
+calibrate.py est fermé. Preuve attendue : le tableau des cinq révisions, la sortie verte
+des tests ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 40 tours, en
+disant ce qui manque.
+```
+
+Validé par le propriétaire le 1er novembre 2026.

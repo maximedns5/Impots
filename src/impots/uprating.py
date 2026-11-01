@@ -80,6 +80,27 @@ class Uprating:
     price: float
     source: str
     base_year: int
+    wage_by_year: tuple[tuple[int, float], ...] = ()
+    """Année par année, quand le texte noté donne ses taux ainsi (D-317) : `factor` les
+    enchaîne et refuse une année qui manque. Vides, les taux constants valent."""
+    price_by_year: tuple[tuple[int, float], ...] = ()
+
+    @classmethod
+    def par_annee(cls, wage: dict[int, float], price: dict[int, float], source: str,
+                  base_year: int) -> Uprating:
+        """Des indices année par année. `wage` et `price` gardent leur moyenne
+        géométrique, pour qui lit un taux annuel ; `factor` lit les années."""
+        def mean(rates: dict[int, float]) -> float:
+            product = 1.0
+            for rate in rates.values():
+                product *= 1.0 + rate
+            return product ** (1.0 / len(rates)) - 1.0 if rates else 0.0
+
+        if not wage or not price:
+            raise UpratingError("des indices par année sans année : rien à enchaîner")
+        return cls(wage=mean(wage), price=mean(price), source=source, base_year=base_year,
+                   wage_by_year=tuple(sorted(wage.items())),
+                   price_by_year=tuple(sorted(price.items())))
 
     def __post_init__(self) -> None:
         if not self.source.strip():
@@ -89,7 +110,14 @@ class Uprating:
                 "« 2 % ronds, choisis pour être lisibles » — est ce qui permet d'en "
                 "discuter. Ce projet ne prévoit ni les salaires ni les prix : il chiffre "
                 "« si les salaires montent de X et les prix de Y ».")
-        for name, rate in (("wage", self.wage), ("price", self.price)):
+        if bool(self.wage_by_year) != bool(self.price_by_year):
+            raise UpratingError(
+                "des salaires par année et des prix constants, ou l'inverse : les deux "
+                "indices se donnent de la même façon")
+        rates = [("wage", self.wage), ("price", self.price),
+                 *((f"wage {y}", r) for y, r in self.wage_by_year),
+                 *((f"price {y}", r) for y, r in self.price_by_year)]
+        for name, rate in rates:
             if not -0.5 < rate < 0.5:
                 raise UpratingError(
                     f"indice {name} = {rate} hors de ]-50 %, +50 %[ : ce n'est "
@@ -105,6 +133,17 @@ class Uprating:
                 f"la population. Ce module ne fait pas cela : reculer demanderait des "
                 f"indices constatés année par année et une population qui n'a pas déjà "
                 f"été calibrée sur l'année d'arrivée.")
+        by_year = dict(self.wage_by_year if kind == "wage" else self.price_by_year)
+        if by_year:
+            missing = [y for y in range(self.base_year + 1, year + 1) if y not in by_year]
+            if missing:
+                raise UpratingError(
+                    f"vieillir vers {year} depuis {self.base_year} : l'indice {kind} n'a "
+                    f"pas de taux pour {missing}, et l'outil n'en invente pas")
+            factor = 1.0
+            for y in range(self.base_year + 1, year + 1):
+                factor *= 1.0 + by_year[y]
+            return factor
         rate = self.wage if kind == "wage" else self.price
         return (1.0 + rate) ** (year - self.base_year)
 
@@ -112,7 +151,12 @@ class Uprating:
         """What an aged population's numbers depend on, for a cache key: the two indices
         and the base year, the target year being keyed already. The source is a label and
         stays out — two names for the same rates are the same population (D-226)."""
-        return f"w{self.wage:+.6f}_p{self.price:+.6f}_b{self.base_year}"
+        key = f"w{self.wage:+.6f}_p{self.price:+.6f}_b{self.base_year}"
+        if self.wage_by_year:
+            years = "".join(f"_{y}w{w:+.6f}" for y, w in self.wage_by_year)
+            years += "".join(f"_{y}p{p:+.6f}" for y, p in self.price_by_year)
+            key += years
+        return key
 
 
 def uprate(frame: Any, year: int, uprating: Uprating) -> Any:
@@ -140,9 +184,17 @@ def caveat(year: int, uprating: Uprating) -> str:
     """The sentence that must travel with any figure computed on an aged population."""
     from impots.reporting import pct_fr
 
+    if uprating.wage_by_year:
+        years = range(uprating.base_year + 1, year + 1)
+        wages, prices = dict(uprating.wage_by_year), dict(uprating.price_by_year)
+        rates = (f"salaires {', '.join(f'{pct_fr(wages[y], 1)} en {y}' for y in years)}, "
+                 f"prix {', '.join(f'{pct_fr(prices[y], 1)} en {y}' for y in years)}")
+    else:
+        rates = (f"salaires {pct_fr(uprating.wage, 1)} par an, prix "
+                 f"{pct_fr(uprating.price, 1)} par an")
     return (
-        f"Population vieillie mécaniquement de {uprating.base_year} à {year} — salaires "
-        f"{pct_fr(uprating.wage, 1)} par an, prix {pct_fr(uprating.price, 1)} par an, hypothèses "
+        f"Population vieillie mécaniquement de {uprating.base_year} à {year} — {rates}, "
+        f"hypothèses "
         f"DÉCLARÉES et non prévues ({uprating.source}). "
         "La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la "
         "France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise "
