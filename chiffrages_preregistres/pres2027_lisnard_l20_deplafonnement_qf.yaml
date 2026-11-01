@@ -1,0 +1,52 @@
+case: pres2027_lisnard_l20_deplafonnement_qf
+pre_registered: '2026-11-01T21:35:24+00:00'
+commit: 97e5a293135e6437e8a749df88049efdb0303f05
+scenario: pres2027_lisnard_l20_deplafonnement_qf
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 5671321886.3342285
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.4
+  absolute_eur: 200000000.0
+  rationale: 'Classe « haut » (D-321). Mesure qui ne touche que le haut de la distribution
+    (au-delà de 250 000 € par part, ou le plafond du quotient familial) : la population
+    a de bons agrégats et des queues faibles (README, L1), et le juge chiffre peut-être
+    une autre année.'
+note: 'David Lisnard (Nouvelle Énergie), programme relevé le 2026-11-01 — Déplafonnement
+  du quotient familial : « « des allocations financières, notamment par le déplafonnement
+  du quotient familial » » (https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/,
+  2026-11-01). « Plafond supprimé » : le plafond général et celui du premier enfant
+  d''un parent isolé passent à 100 000 €, la borne du schéma, que nul foyer n''atteint.
+  Les autres plafonds particuliers (personne seule sans enfant à charge, réduction
+  complémentaire des veufs) ne sont pas des boutons et restent ceux de 2026. Plages
+  du droit de 2026 à la borne.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price

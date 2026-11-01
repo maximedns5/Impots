@@ -1,0 +1,57 @@
+case: pres2027_retailleau_r19_gains_rendus_moitie
+pre_registered: '2026-11-01T21:39:31+00:00'
+commit: 97e5a293135e6437e8a749df88049efdb0303f05
+scenario: pres2027_retailleau_r19_gains_rendus_moitie
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 12669114416.190186
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 200000000.0
+  rationale: 'Classe « menages » (D-321). Mesure des ménages sur une large assiette
+    (salaires, CSG, quotient familial) : le moteur retrouve ses agrégats à quelques
+    pour cent. Le juge chiffre peut-être une autre année que 2026 (la croissance nominale
+    en écarte de 3 % par an) et contre la continuité des politiques, pas le droit
+    gelé.'
+note: 'Bruno Retailleau (Les Républicains), programme relevé le 2026-11-01 — Gains
+  rendus pour moitié aux salariés, pour moitié aux entreprises : « « les 30 milliards
+  d''euros seront redonnés pour moitié aux salariés, sous forme de pouvoir d''achat
+  supplémentaire (environ 500 euros par an au niveau du salaire médian) » » (https://republicains.fr/wp-content/uploads/2026/01/51705_LesRepublicains_Brochures_A5-40P_DEF.pdf,
+  2026-01-09). Au salaire médian de 2026 (34 000 € brut par an, 2 243 € nets par mois),
+  supprimer toutes les cotisations retraite salariales rend 3 845 € nets par an (mesuré
+  par le moteur). La moitié des gains rendue aux salariés, environ 500 € par an au
+  salaire médian : l''échelle de 0,87 les rend. La moitié rendue aux entreprises n''a
+  pas de règle (R20, R22). Plage de 1 (la mesure retirée) à 0,805, la règle commune.
+  Les sources se contredisent : 500 € par an (TG), « 500 euros par mois » (Public
+  Sénat). Par mois, ils dépasseraient les 320 € de cotisations retraite salariales
+  au médian : seule la lecture par an se chiffre, et c''est elle qui l''est.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price

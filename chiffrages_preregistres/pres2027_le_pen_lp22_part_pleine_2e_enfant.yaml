@@ -1,0 +1,51 @@
+case: pres2027_le_pen_lp22_part_pleine_2e_enfant
+pre_registered: '2026-11-01T21:30:32+00:00'
+commit: 97e5a293135e6437e8a749df88049efdb0303f05
+scenario: pres2027_le_pen_lp22_part_pleine_2e_enfant
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 2832358421.4257812
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.25
+  absolute_eur: 200000000.0
+  rationale: 'Classe « menages » (D-321). Mesure des ménages sur une large assiette
+    (salaires, CSG, quotient familial) : le moteur retrouve ses agrégats à quelques
+    pour cent. Le juge chiffre peut-être une autre année que 2026 (la croissance nominale
+    en écarte de 3 % par an) et contre la continuité des politiques, pas le droit
+    gelé.'
+note: 'Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-01
+  — Part fiscale pleine dès le deuxième enfant : « Pas de citation directe. Texte
+  de LCP : « octroyer une part fiscale pleine dès le deuxième enfant » » (https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut,
+  2026-10-06). Le deuxième enfant apporte une part entière au lieu d''une demi-part,
+  dans le cas général ; le premier et le troisième ne bougent pas. Plage de 0,5 (la
+  mesure retirée) à 1,25.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price

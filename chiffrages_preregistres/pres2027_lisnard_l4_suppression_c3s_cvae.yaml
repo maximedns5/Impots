@@ -1,0 +1,50 @@
+case: pres2027_lisnard_l4_suppression_c3s_cvae
+pre_registered: '2026-11-01T21:32:32+00:00'
+commit: 97e5a293135e6437e8a749df88049efdb0303f05
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2026
+  spec:
+    c3s_taux: 0.0
+    cvae_echelle: 0.0
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 9227545006.313131
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 200000000.0
+  rationale: 'Classe « entreprises » (D-321). Mesure des entreprises sur le millésime
+    synthétique de 2023 vieilli par le PIB nominal (D-246), la tolérance de l''art.
+    15 du PLF 2027. La CVAE disparaît du droit en 2028 : un juge qui chiffre contre
+    ce droit-là la compte pour moins que le droit de 2026.'
+note: 'David Lisnard (Nouvelle Énergie), programme relevé le 2026-11-01 — Suppression
+  de la C3S et, « le cas échéant », de la CVAE : « « La suppression de la C3S […]
+  et, le cas échéant, de la CVAE […] représenterait 11,5 milliards d''euros » » (https://www.unenouvelleenergie.fr/notre-programme/reussir-une-nouvelle-ambition-francaise/,
+  2026-11-01). La C3S est supprimée (taux de 0,16 % en 2026 ramené à 0) et la CVAE
+  aussi, sur le droit de 2026. Le candidat ne supprime la CVAE que « le cas échéant
+  » : le choix retenu suit son chiffrage de 11,5 Md€, qui compte les deux impôts,
+  et la plage de cvae_echelle couvre son maintien (1). La plage de la C3S va du droit
+  de 2026 à 0, la borne du schéma. L''objectif d''impôts de production ramenés de
+  2 % à 1 % du PIB va au-delà de ces deux impôts (L3) et n''est pas chiffré ici.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  de: 2023
+  vers: 2026
+  facteur: 1.0765929594830452
+  source: 'comptes nationaux (INSEE) de 2023 à 2025, puis PLF 2027 (AN n° 3210), exposé
+    général des motifs : salaires par tête ; PLFSS 2027 (AN n° 3211), annexe B : inflation
+    hors tabac et PIB en valeur'
+  pib_valeur:
+    '2026': 0.02
+  convention: le coût du millésime suit le PIB nominal (D-246)

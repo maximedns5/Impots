@@ -1,0 +1,51 @@
+case: pres2027_retailleau_r21_c3s_cvae_forfait_social_cfe
+pre_registered: '2026-11-01T21:39:35+00:00'
+commit: 97e5a293135e6437e8a749df88049efdb0303f05
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2026
+  spec:
+    c3s_taux: 0.0
+    cvae_echelle: 0.0
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 9227545006.313131
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 200000000.0
+  rationale: 'Classe « entreprises » (D-321). Mesure des entreprises sur le millésime
+    synthétique de 2023 vieilli par le PIB nominal (D-246), la tolérance de l''art.
+    15 du PLF 2027. La CVAE disparaît du droit en 2028 : un juge qui chiffre contre
+    ce droit-là la compte pour moins que le droit de 2026.'
+note: 'Bruno Retailleau (Les Républicains), programme relevé le 2026-11-01 — Suppression
+  de la C3S et de la CVAE ; forfait social maintenu à 20 % sur la participation légale,
+  supprimé sur l''intéressement, la participation supra-légale et l''épargne retraite
+  individuelle ; part industrielle de la CFE exonérée ; CIR sanctuarisé : « « Contribution
+  sociale de solidarité des sociétés (C3S, 5,3 milliards d''euros) : suppression intégrale
+  » » (https://republicains.fr/wp-content/uploads/2026/02/LR_Produire_Plus_LIVRET.pdf,
+  2026-02-18). La C3S (0,16 % en 2026) et la CVAE sont supprimées sur le droit de
+  2026, comme dans la mesure L4 de Lisnard, avec les mêmes plages. Le forfait social
+  « maintenu » à 20 % est le droit de 2026 : il ne change rien. La CFE n''a pas de
+  bouton et n''est pas dans la mesure énoncée.'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  de: 2023
+  vers: 2026
+  facteur: 1.0765929594830452
+  source: 'comptes nationaux (INSEE) de 2023 à 2025, puis PLF 2027 (AN n° 3210), exposé
+    général des motifs : salaires par tête ; PLFSS 2027 (AN n° 3211), annexe B : inflation
+    hors tabac et PIB en valeur'
+  pib_valeur:
+    '2026': 0.02
+  convention: le coût du millésime suit le PIB nominal (D-246)
