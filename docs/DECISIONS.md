@@ -24787,3 +24787,218 @@ fait quand c'est mergé.
 décomposition entière en six termes, dont la somme refait le rapport, avec le refus d'une
 décomposition de 2024 qui ne porterait pas sur la hausse de 2024. Ce refus est tué par
 mutation, comme les trente gardes de D-315.
+
+## D-317 — Le but 10 : les cas chiffrés sur la population de leur année, préenregistré
+
+**Le fait.** Le propriétaire a validé le but 10 le 1er novembre 2026. Chaque cas appliquait
+le droit de son année aux revenus de 2024, que la population ne vieillit pas. Le millésime a
+déjà été mesuré deux fois : il referme presque l'écart que la base laissait à l'art. 2
+(D-292), et il porte un tiers de celui de la prime d'activité (D-316). Cette entrée fait du
+vieillissement la règle de l'enregistrement, et préenregistre les cinq révisions et leur
+pronostic avant toute passe.
+
+**Les indices, ceux du texte noté.** `impots.hypotheses` les lit dans deux textes déposés le
+même jour et manifestés. Il refuse une phrase ou une ligne qui manque.
+
+- Les salaires par tête : +2,0 % en 2025 et en 2026, +2,7 % en 2027 (PLF 2027, exposé
+  général des motifs). Par tête et pas en masse : la population garde ses emplois, et la
+  masse compterait la croissance de l'emploi une seconde fois.
+- Les prix : l'inflation hors tabac, 0,9 %, 2,1 % et 1,7 % (PLFSS 2027, annexe B). Le PLF ne
+  donne pas 2025 ; le PLFSS donne la série entière, et le même 2,1 % pour 2026.
+- Le PIB en valeur : 2,0 %, 2,0 % et 2,7 % (PLFSS 2027, annexe B), pour les entreprises.
+
+Aucune fiche d'évaluation préalable n'est lue pour cela. De 2024 à 2026, les salaires et le
+chômage sont multipliés par 1,0404, les pensions et les loyers par 1,0302. Les pensions
+suivent les prix, la convention de `impots.uprating`. Leurs revalorisations légales (2,2 %
+puis 0,9 %, D-298) feraient 1,0312 : 0,1 % d'écart, déclaré.
+
+**Ce qui change.**
+
+- `Uprating` prend des indices année par année (`par_annee`) et refuse une année qui manque.
+  Sa clé de cache les distingue des taux constants.
+- `impots chiffrage register --vieillir plf2027` vieillit la population de son millésime
+  jusqu'à l'année du scénario. Un cas dont l'année n'est pas celle de sa population, sans
+  indices, est refusé. Le registre garde le jeu, sa source, les années, les taux et les
+  facteurs (champ `vieillissement`). Les cas déjà écrits se relisent et se réécrivent comme
+  avant.
+- `impots chiffrage register-entreprises --vieillir plf2027` multiplie le coût du millésime
+  par le PIB nominal de l'année sur le sien, la convention de la vue vieillie (D-246) : les
+  comptes nationaux jusqu'en 2025, puis le PIB en valeur du texte. De 2023 à 2027, le
+  facteur vaut 1,106. La commande prend aussi `--apres-annexe`. Un millésime sans année,
+  comme ceux des tests, n'a pas d'année d'où vieillir : il est enregistré tel quel, et
+  refusé s'il demande des indices.
+- `scripts/revisions_vieillies.py` mène les révisions en trois temps : le contrôle, les
+  enregistrements, puis les comparateurs.
+
+Un test existant change, sans que son assertion change : celui du drapeau miroir donnait un
+scénario sans année, et la commande lit désormais l'année du scénario. Il reçoit un scénario
+de 2024.
+
+**Les cinq révisions.** Chaque cas aveugle est rechiffré sous un nouveau nom,
+`<cas>_vieilli`, par la même commande, sur le même tirage de 20 000 ménages. Ce sont des
+révisions écrites après l'annexe, comptées à part (D-292), sous `--apres-annexe`. Leur
+tolérance et leur comparateur sont ceux du cas aveugle, inchangés. Le comparateur est
+recopié dans un commit à part, après celui des enregistrements. Les notes aveugles ne
+bougent pas.
+
+- `plf2027_art_2_vieilli`, `plf2027_art_3_vieilli`, `plf2027_art_74_ppa_vieilli` et
+  `plf2027_art_74_apl_vieilli` : les ménages, de 2024 à 2026, l'année que chaque scénario
+  chiffre.
+- `plf2027_art_15_vieilli` : les entreprises, de 2023 à 2027.
+
+**Le contrôle.** Avant les enregistrements, chaque cas est repassé sans vieillissement sur
+le même commit (`reports/revisions_vieillies_controle.json`). Il sépare ce que le moteur a
+changé depuis l'enregistrement de ce que le millésime change : l'art. 2 et l'art. 3 ont été
+enregistrés avant que les pensions soient recalées (D-211). Ce n'est pas un cas, et il ne
+compte pas dans les notes.
+
+**Ce que la mesure ne dit pas.** La structure des ménages, leurs poids et leurs âges ne
+bougent pas, et la population vieillie n'est plus calibrée (`uprating`). Les entreprises
+sont vieillies par leur coût, pas par leurs seuils : la CEBGE se déclenche sur le chiffre
+d'affaires, et des entreprises qui croissent franchiraient le seuil de 1,5 Md€. Le facteur
+ne le voit pas.
+
+**Le pronostic, avant toute passe.** Le contrôle d'abord.
+
+- L'art. 2 rend les 2,828 Md€ de D-292, et non les 2,927 enregistrés, à 0,5 % près.
+- L'art. 3 rend 1,12 Md€, comme D-210 le disait après le recalage des pensions, et non les
+  1,295 enregistrés.
+- La prime, le logement et l'art. 15 rendent leur chiffre enregistré, à l'euro près.
+
+Puis les révisions, chacune contre son contrôle et contre la fiche.
+
+- L'art. 2 : de 2,95 à 3,02 Md€, de 4 à 7 % au-dessus du contrôle (D-292 donnait 5,4 % sous
+  les bornes basses, aux taux voisins de ceux-ci). Contre les 4,2 Md€ publiés, de −30 % à
+  −28 % : toujours hors de la tolérance de 20 %. Le millésime referme de 9 à 14 % de l'écart
+  du contrôle.
+- L'art. 3 : de 1,16 à 1,20 Md€, de 4 à 7 % au-dessus du contrôle. Contre les 1,1 Md€
+  publiés, de +5 % à +9 % : dans la tolérance de 30 %, un peu plus loin que le contrôle.
+- La prime : de 0,78 à 0,86 Md€, de 3 à 12 % sous le contrôle. Contre les 0,332 Md€ publiés,
+  de +135 % à +159 % : toujours hors de la tolérance de 30 %. La vue vieillie de D-303 l'a
+  montré : le millésime ne porte qu'une part de l'écart, et la population le reste (D-316).
+- Le logement : de 0,074 à 0,080 Md€, à 5 % du contrôle. Contre les 0,101 Md€ publiés, de
+  −27 % à −21 % : dans la tolérance de 40 %. D-303 trouvait le logement presque égal dans
+  les deux vues.
+- L'art. 15 : 1,106 fois le contrôle, soit −7,80 Md€. Contre les −5,5 Md€ publiés, +42 % :
+  hors de la tolérance de 30 %, où le cas aveugle était dedans. Le niveau de la CEBGE de
+  cette population est déjà biaisé vers le haut de 23 %, et le vieillir l'éloigne encore.
+
+Deux révisions sur cinq dans leur tolérance, contre trois des cas aveugles. Le millésime
+rapproche les deux cas que le moteur chiffrait trop bas ou dont la base croissait à tort
+(l'art. 2, la prime). Il éloigne les deux qu'il chiffrait déjà trop haut (l'art. 3, l'art.
+15). C'est la réfutation qui se lirait : si toutes les révisions se rapprochaient de leur
+fiche, le millésime serait un biais d'un seul sens, que ce pronostic ne voit pas.
+
+**Les tests.** `tests/test_vieillissement.py`, trente-deux cas. La lecture des deux textes,
+et ses refus : une phrase des salaires absente, l'année de 2027 changée, le tableau absent,
+un taux hors bornes, un jeu inconnu. Les indices année par année : l'enchaînement, une année
+manquante, deux modes mêlés, un taux hors bornes sous une moyenne qui ne le trahit pas, une
+série vide. Le vieillissement des ménages et des entreprises, avec leurs refus. Les deux
+commandes : le refus sans indices, la population vieillie passée au chiffrage, le registre
+qui le garde, un millésime sans année. Le script des révisions : les tolérances recopiées,
+le comparateur recopié. Vingt-cinq mutants des gardes sont tués. Deux ont d'abord survécu,
+faute de test : la phrase de 2027 absente, et un taux annuel hors bornes. Les deux tests qui
+les tuent ont été vus échouer sur eux. Un test écrivait, sous un mutant, dans le vrai
+registre : il écrit désormais dans un dossier temporaire.
+
+## D-318 — Le but 10 fait : le millésime rapproche deux cas de leur fiche, en éloigne deux
+
+**Les passes.** Sur le commit de D-317 (`fe7b9c1`), depuis un worktree figé, par
+`scripts/revisions_vieillies.py` : le contrôle d'abord, puis les cinq enregistrements
+(commit `5ec9ed6`). Les comparateurs des cas aveugles ont été recopiés ensuite, dans un
+commit à part (`3f30409`). Le tableau des cinq révisions, `reports/revisions_vieillies.md`,
+est rendu par `--rendre` depuis le contrôle et le registre : rien n'y est saisi, la note est
+celle de `grade`, et le rendu refuse un contrôle et des révisions de deux commits.
+
+**Le contrôle, tenu.**
+
+- L'art. 2 rend 2,828 Md€, les 2,828 de D-292, et non les 2,927 enregistrés (−3,4 %).
+- L'art. 3 rend 1,119 Md€, les 1,12 de D-210, et non les 1,295 enregistrés (−13,5 %).
+- La prime, le logement et l'art. 15 rendent leur chiffre enregistré, à l'euro près.
+
+Les deux premiers ont été enregistrés avant le recalage des pensions (D-211). C'est cette
+dérive du moteur que le contrôle sépare du millésime : le millésime est le vieilli moins le
+figé d'aujourd'hui, sur le même commit.
+
+**Les cinq révisions.** En valeur absolue, comme le pronostic ; le tableau les donne au
+signe de la note.
+
+- L'art. 2 : 2,994 Md€, +5,9 % sur le contrôle. Contre les 4,2 Md€ publiés, −28,7 % au lieu
+  de −32,7 % : toujours hors de la tolérance de 20 %. Le millésime referme 12 % de l'écart
+  du contrôle.
+- L'art. 3 : 1,196 Md€, +6,8 % sur le contrôle. Contre les 1,1 Md€ publiés, +8,7 % au lieu
+  de +1,8 % : dans la tolérance de 30 %, plus loin que le contrôle.
+- La prime : 0,819 Md€, 7,6 % sous le contrôle. Contre les 0,332 Md€ publiés, +146,6 % au
+  lieu de +167,1 % : toujours hors de la tolérance de 30 %. Le millésime referme 12 % de
+  l'écart.
+- Le logement : 0,078 Md€, 0,8 % sous le contrôle. Contre les 0,101 Md€ publiés, −23,1 % au
+  lieu de −22,5 % : dans la tolérance de 40 %.
+- L'art. 15 : 1,1057 fois le contrôle, 7,800 Md€. Contre les 5,5 Md€ publiés, +41,8 % au
+  lieu de +28,3 % : hors de la tolérance de 30 %, où le cas aveugle était dedans.
+
+Deux révisions sur cinq dans leur tolérance, l'art. 3 et le logement, contre trois des cas
+aveugles. Les notes aveugles ne bougent pas : 3 sur 5. Le registre compte les révisions à
+part (D-292) : 6 sur 9.
+
+**Contre le pronostic : tenu, point par point.**
+
+- L'art. 2 : 2,994 dans la fourchette de 2,95 à 3,02 ; +5,9 % dans celle de 4 à 7 % ;
+  −28,7 % dans celle de −30 à −28 % ; 12 % de l'écart refermé, dans celle de 9 à 14 %.
+- L'art. 3 : 1,196 dans la fourchette de 1,16 à 1,20 ; +6,8 % dans celle de 4 à 7 %, près de
+  son bord ; +8,7 % dans celle de +5 à +9 %.
+- La prime : 0,819 dans la fourchette de 0,78 à 0,86 ; 7,6 % sous le contrôle, dans celle de
+  3 à 12 % ; +146,6 % dans celle de +135 à +159 %.
+- Le logement : 0,078 dans la fourchette de 0,074 à 0,080 ; à 0,8 % du contrôle, sous les
+  5 % ; −23,1 % dans celle de −27 à −21 %.
+- L'art. 15 : un facteur de 1,1057 pour 1,106 annoncé, 7,800 Md€ pour 7,80, +41,8 % pour
+  +42 %.
+
+La réfutation que D-317 nommait, toutes les révisions plus près de leur fiche, n'est pas
+venue : deux s'en rapprochent, deux s'en éloignent, le logement ne bouge pas.
+
+**La part que portait le millésime, cas par cas.** Dans l'art. 2 et la prime, 12 % de
+l'écart du contrôle : l'essentiel du reste est la base de l'art. 2 (D-291, D-292) et la
+population de la prime (D-316). Dans le logement, rien. Dans l'art. 3 et l'art. 15, le
+millésime ne portait aucune part de l'écart : il en masquait une. Les deux cas étaient déjà
+chiffrés au-dessus de leur fiche ; sur les revenus de leur année, ils le sont davantage. La
+note aveugle de l'art. 15, dans sa tolérance, tenait en partie à ce que la population était
+de 2023 : sur la base de son année, le cas en sort.
+
+**Une lecture de D-316, corrigée.** D-316 rapprochait le terme de l'année de la prime, 0,173
+en logarithme (la base du moteur de 2024 à 2026), du rapport des deux vues de D-303, 0,1735,
+et en tirait que vieillir les revenus ôte ce terme. La révision le dément en partie.
+Vieillie jusqu'en 2026 aux indices du texte, +4,0 % de salaires, la prime perd 0,080 en
+logarithme : moins de la moitié du terme. La vue vieillie de D-303 portait 2027, à 3 % l'an
+de salaires depuis 2024, soit +9,3 %. Dans les deux, la prime perd environ deux points par
+point de salaire : l'égalité de D-316 tenait à ces trois années à 3 %, ce n'était pas une
+identité. Le terme de l'année reste mesuré ; la part que vieillir les revenus en ôte dépend
+des indices et de l'année. Si la base suivait le cas, la révision ramenée aux mois et au
+taux de la fiche serait vers +53 %, et non les +40 % de D-316 ; ce n'est pas mesuré.
+
+**Le but 10.** `impots chiffrage register` vieillit les revenus de 2024 jusqu'à l'année du
+cas, et `register-entreprises` le coût du millésime, aux indices du texte noté, lus dans le
+PLF 2027 et son PLFSS manifestés, jamais dans la fiche. Un cas sans indices dont l'année
+n'est pas celle de sa population est refusé, et le registre garde le jeu, sa source, les
+taux et les facteurs. Les cinq cas notés sont rechiffrés en révisions datées, comptées à
+part, préenregistrées avec leur pronostic avant toute passe (D-317) ; les notes aveugles ne
+bougent pas. Le rapport donne l'écart avant et après, et la part du millésime.
+`calibrate.py` n'a pas été touché. Le but est fait quand c'est mergé.
+
+**Ce qui n'est pas fait.**
+
+- L'art. 2 sur la base de 2027 et vieilli à la fois : la révision `plf2027_art_2_base2027`
+  (−7,1 %) ne vieillit pas, et celle-ci ne change pas de base. Les deux ensemble ne sont pas
+  chiffrés.
+- Les entreprises sont vieillies par leur coût, pas par leurs seuils : la CEBGE se déclenche
+  à 1,5 Md€ de chiffre d'affaires, et des entreprises qui croissent le franchiraient.
+- La population vieillie n'est pas recalée : ses poids, ses âges et sa structure sont ceux
+  de 2024.
+- Pourquoi la base de la prime croît de 19 % de 2024 à 2026 quand vieillir les revenus de
+  deux ans n'en ôte que 8 %.
+- Le PLF 2028 : un cas qui ne chiffre pas l'année de sa population y sera refusé sans
+  indices. Son jeu, `plf2028`, s'écrira sur son texte, comme `plf2027`.
+
+**Les tests.** `tests/test_vieillissement.py`, trente-cinq cas : les trente-deux de D-317,
+deux contre la dérive de la page (la page commitée est le rendu, et un contrôle changé la
+change), et un qui refuse un contrôle et des révisions de deux commits. Chacun a été vu
+échouer : la page retouchée d'un chiffre, et la garde du commit mutée en `if False`.

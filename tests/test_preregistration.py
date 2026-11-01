@@ -14,6 +14,7 @@ pre-registration mean anything at all).
 from __future__ import annotations
 
 import subprocess
+from types import SimpleNamespace
 
 import pytest
 
@@ -444,7 +445,9 @@ def test_the_register_command_carries_the_mirror_flag(tmp_path, monkeypatch):
     population = tmp_path / "population_2024.parquet"
     pl.DataFrame({"x": [1]}).write_parquet(population)
     monkeypatch.setattr(cli, "PROCESSED", tmp_path)
-    monkeypatch.setattr(scenarios, "load", lambda name: name)
+    # The command reads the scenario's year since D-317, to age the population to it: a
+    # 2024 scenario on the 2024 population needs no indices.
+    monkeypatch.setattr(scenarios, "load", lambda name: SimpleNamespace(year=2024))
     monkeypatch.setattr(scenarios, "mechanical_price",
                         lambda scenario, frame, households: {"mechanical": 2.0e8})
     monkeypatch.setattr(ch, "head_commit", lambda: "abc1234")

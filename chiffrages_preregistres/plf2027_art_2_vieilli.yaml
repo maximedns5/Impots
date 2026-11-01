@@ -1,0 +1,78 @@
+case: plf2027_art_2_vieilli
+pre_registered: '2026-11-01T11:11:48+00:00'
+commit: fe7b9c125fc50f72cd4b16c334ce02031b58dc5b
+scenario: plf2027_art_2
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 2993998716.692627
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.2
+  absolute_eur: 200000000.0
+  rationale: 'Celle du cas aveugle plf2027_art_2, inchangée (D-292). Revalorisation
+    de 2,1 % des tranches, de la décote et du plafond général de la demi-part, contre
+    un arbre gelé aux paramètres des revenus 2025. Plus ou moins 20 % parce que :
+    la ligne IR au barème de cette population sort à +8,8 % de la DGFiP, et le coût
+    d''une revalorisation suit le niveau de l''impôt ; les revenus sont ceux de 2024,
+    non vieillis, ce qui place moins de foyers au-dessus des seuils 2026 ; le scénario
+    ne porte ni les quatre autres plafonds de quotient familial, ni le 196 B, ni l''indexation
+    des limites de déductions ; la base n''a ni revenu du capital ni revenu d''indépendant
+    ; et le sous-échantillon de 20 000 ménages ajoute un bruit de l''ordre du pour
+    cent. Les trois biais du milieu tirent vers le bas, le premier vers le haut :
+    la direction nette n''est pas connue d''avance, d''où une fenêtre symétrique.
+    Plancher de 200 M EUR pour le cas où le chiffre publié serait petit.'
+note: 'Révision de plf2027_art_2 sur la population vieillie (D-317). Comparateur :
+  le seul volet revalorisation du barème si l''annexe le sépare. Sinon l''article
+  entier, et le cas devient un minorant connu : les volets indemnités de rupture,
+  indemnités journalières, prime carburant et CSG des IJ ne sont pas chiffrés. Le
+  compte d''environ 500 000 foyers qui évitent l''entrée dans l''impôt est déjà vu
+  (exposé des motifs) et ne sert pas de test.'
+bound: two-sided
+mirror: false
+comparator:
+  published_eur: 4200000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 2, § 4.2.1.1, p. 29 : « le
+    rendement de l''IR aurait été majoré d''environ 4,2 Md€ en 2027 »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; mesure estimée au titre des revenus
+    2025 (§ 4.3.1)
+  perimeter: 'Le volet 4.2.1.1 seul : indexation de 2,1 % des tranches et des seuils associés,
+    des plafonds du quotient familial, de la décote, du plafond de déduction des pensions
+    alimentaires et de l''abattement pour enfant marié, et grilles de taux par défaut du PAS
+    ; État. Le scénario ne porte que les tranches, la décote et le plafond général de la demi-part.'
+  net_of: 'Effet budgétaire de 2027 : somme de l''avis sur les revenus 2026 et de l''effet
+    sur le PAS de 2027. Hors volets carburant, indemnités de rupture et indemnités journalières
+    ; aucun effet comportemental.'
+  sign: cost
+  basis: premiere-annee
+  retrieved: '2026-10-14'
+revision:
+  de: null
+  apres_annexe: true
+  raison: 'but 10 : le cas aveugle rechiffré sur la population vieillie jusqu''à son
+    année, aux hypothèses du PLF 2027 et de son PLFSS (D-317)'
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price

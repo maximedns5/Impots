@@ -220,6 +220,9 @@ class Chiffrage:
     revision: dict[str, Any] | None = None
     """The case this one revises, when it is a revision written after the annex was opened
     (D-292): never a blind registration, and counted apart from them."""
+    vieillissement: dict[str, Any] | None = None
+    """How the population was aged to the case's year, and on which declared indices
+    (D-317). None on every case written before."""
 
     def to_dict(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
@@ -246,6 +249,8 @@ class Chiffrage:
         # Only on a revision: every case written before reads and writes back as it was.
         if self.revision is not None:
             payload["revision"] = dict(self.revision)
+        if self.vieillissement is not None:
+            payload["vieillissement"] = dict(self.vieillissement)
         return payload
 
 
@@ -485,6 +490,7 @@ def load(case: str, directory: Path | None = None) -> Chiffrage:
             mirror=bool(document.get("mirror", False)),
             comparator=Comparator(**comparator) if comparator else None,
             revision=document.get("revision"),
+            vieillissement=document.get("vieillissement"),
         )
     except ChiffrageError:
         raise
@@ -516,6 +522,7 @@ def register(
     bound: str = "two-sided",
     mirror: bool = False,
     apres_annexe: str | None = None,
+    vieillissement: dict[str, Any] | None = None,
     directory: Path | None = None,
     now: str | None = None,
 ) -> Path:
@@ -549,6 +556,7 @@ def register(
         bound=bound, mirror=mirror,
         revision=(None if apres_annexe is None else
                   {"de": None, "apres_annexe": True, "raison": apres_annexe}),
+        vieillissement=vieillissement,
     )
     return save(chiffrage, directory)
 
@@ -562,6 +570,9 @@ def register_firm(
     tolerance: Tolerance,
     population_vintage: str,
     note: str = "",
+    facteur: float = 1.0,
+    vieillissement: dict[str, Any] | None = None,
+    apres_annexe: str | None = None,
     directory: Path | None = None,
 ) -> Path:
     """Price a FIRM reform over a firm population, and pre-register the figure.
@@ -576,14 +587,21 @@ def register_firm(
     from impots.entreprises import aggregate as firm_aggregate
     from impots.entreprises import runner as firm_runner
 
+    if not facteur > 0:
+        raise ChiffrageError(f"« {case} » : facteur de vieillissement {facteur}")
+    declared = 1.0 if vieillissement is None else vieillissement.get("facteur")
+    if declared is None or abs(facteur - float(declared)) > 1e-12:
+        raise ChiffrageError(f"« {case} » : un facteur de {facteur} quand le vieillissement "
+                             f"déclaré dit {declared} (D-317)")
     result = firm_runner.run(frame, year=year, reform=spec)
     cost = firm_aggregate.aggregate(result.firms).reform_cost
     return register(
-        case, mechanical_eur=float(cost or 0.0), tolerance=tolerance,
+        case, mechanical_eur=float(cost or 0.0) * facteur, tolerance=tolerance,
         population_vintage=population_vintage, sample="population complète",
         reform={"chaine": "entreprises", "annee": year,
                 "spec": spec.model_dump(exclude_none=True, mode="json")},
-        note=note, directory=directory)
+        note=note, apres_annexe=apres_annexe, vieillissement=vieillissement,
+        directory=directory)
 
 
 def revise_to_budget_year(case: str, new_case: str, *, year: int, raison: str,

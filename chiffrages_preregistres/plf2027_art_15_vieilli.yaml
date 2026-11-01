@@ -1,0 +1,75 @@
+case: plf2027_art_15_vieilli
+pre_registered: '2026-11-01T11:16:53+00:00'
+commit: fe7b9c125fc50f72cd4b16c334ce02031b58dc5b
+scenario: null
+reform:
+  chaine: entreprises
+  annee: 2027
+  spec:
+    cebge_seuils_et_taux:
+    - seuil_ca: 1500000000.0
+      taux: 0.157
+    - seuil_ca: 3000000000.0
+      taux: 0.314
+    cebge_prorogation_largeur: 100000000.0
+population_vintage: entreprises-2023
+sample: population complète
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: -7799696412.655198
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 200000000.0
+  rationale: 'Celle du cas aveugle plf2027_art_15, inchangée (D-292). Troisième exercice
+    de la CEBGE (2027) à 15,7 % et 31,4 %, seuil de 1,5 Md EUR, contre un droit courant
+    où elle s''est éteinte. La CEBGE de cette population est réconciliée à +23,1 %
+    du rendement publié de son premier exercice (9,3 contre 7,5 Md EUR) : le niveau
+    est biaisé vers le haut, et ce biais se reporte. S''y ajoutent l''absence de report
+    déficitaire et d''intégration fiscale (IS simulé vers le haut), un seul exercice
+    au lieu de deux pour l''assiette et les tests de seuil, et un ratio fiscal/comptable
+    national unique. Direction attendue : au-dessus. Plus ou moins 30 % : assez pour
+    contenir le biais déjà mesuré, pas assez pour qu''un défaut de structure passe
+    inaperçu. Plancher de 200 M EUR.'
+note: 'Révision de plf2027_art_15 sur la population vieillie (D-317). Comparateur
+  : le seul volet CEBGE (I de l''article). La contribution sur le résultat d''exploitation
+  des transporteurs maritimes (II) n''est pas chiffrée. Population : SIRENE x ESANE
+  2023, pas les cellules de test.'
+bound: two-sided
+mirror: false
+comparator:
+  published_eur: -5500000000.0
+  source: 'PLF 2027, évaluations préalables des articles, art. 15, § 4.2.1, p. 160 : « 5 Md€
+    au titre des acomptes attendus en 2027. Un rendement de 500 M€ est attendu en 2028 au
+    titre du paiement de la contribution par les entreprises dont la clôture de l''exercice
+    comptable est décalée »'
+  vintage: PLF 2027 (texte n° 3210, déposé le 2026-10-01) ; liasses fiscales 2024 et 2025
+    (§ 4.3)
+  perimeter: 'Le volet CEBGE (I) seul, troisième exercice, toutes les entreprises redevables
+    : 5 Md€ d''acomptes en 2027 et 0,5 Md€ en 2028 pour les clôtures décalées. Hors II, la
+    contribution des transporteurs maritimes (0,3 Md€).'
+  net_of: Le rendement de l'exercice entier, payé sur 2027 et 2028 ; aucun effet comportemental.
+  sign: yield
+  basis: annee-pleine
+  retrieved: '2026-10-14'
+revision:
+  de: null
+  apres_annexe: true
+  raison: 'but 10 : le cas aveugle rechiffré sur la population vieillie jusqu''à son
+    année, aux hypothèses du PLF 2027 et de son PLFSS (D-317)'
+vieillissement:
+  jeu: plf2027
+  de: 2023
+  vers: 2027
+  facteur: 1.1056609693890873
+  source: 'comptes nationaux (INSEE) de 2023 à 2025, puis PLF 2027 (AN n° 3210), exposé
+    général des motifs : salaires par tête ; PLFSS 2027 (AN n° 3211), annexe B : inflation
+    hors tabac et PIB en valeur'
+  pib_valeur:
+    '2026': 0.02
+    '2027': 0.027000000000000003
+  convention: le coût du millésime suit le PIB nominal (D-246)

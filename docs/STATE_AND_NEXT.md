@@ -1,5 +1,23 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-01 update adds D-317 and D-318: goal 10, validated by the owner, done. A case
+is now priced on the population aged to its year. `impots chiffrage register --vieillir
+plf2027` ages the 2024 incomes (wages and unemployment by wages per head, pensions and
+rents by prices) with the rates of the graded text itself, read from the PLF 2027's exposé
+général and the PLFSS 2027's annex B, both manifested (`impots.hypotheses`), never from
+its fiche; `register-entreprises` scales the firm cost by nominal GDP (D-246's convention).
+A case whose year is not its population's, without indices, is refused; the registry keeps
+the set, its source, the rates and the factors (field `vieillissement`). `Uprating` takes
+rates year by year (`par_annee`). The five graded PLF 2027 cases were repriced as dated
+revisions counted apart (`<case>_vieilli`), preregistered in D-317 with a prognosis that
+held on every point, beside a frozen control on the same commit that separates engine
+drift (D-211 moved art. 2 by −3.4 % and art. 3 by −13.5 %) from the vintage. Two of five
+revisions are within tolerance, against three blind cases, whose grades do not move. The
+vintage closes 12 % of the gap for art. 2 and the prime, widens it for art. 3 and art. 15
+(already above their fiche; art. 15 leaves its tolerance), and leaves housing flat
+(`reports/revisions_vieillies.md`). D-316's reading is corrected: ageing incomes two years
+removes 0.080 of the prime's year term (0.173), not all of it.
+
 The fifth 2026-10-31 update adds D-315 and D-316: goal 9, validated by the owner, done.
 The prime d'activité's +67 % (D-300) is explained by a measure, against two CNAF
 publications now manifested (PA Conjoncture n° 32, Analyses statistiques n° 5): what one
@@ -1220,7 +1238,10 @@ download list.
 
 **The goal decides** (`docs/BUT.md`, D-286, revised in D-296). Goal 8, household coverage,
 is closed without being complete (D-314); goal 9, the prime d'activité's gap (item 0 below),
-is done (D-315, D-316). No goal 10 is written: the next one is the owner's choice. The
+is done (D-315, D-316); goal 10, cases priced on the population of their year, is done
+(D-317, D-318). No goal 11 is written: the next one is the owner's choice. Any new case
+whose year is not its population's now needs an indices set (`--vieillir`); the PLF 2028's
+set, `plf2028`, is to be read from its own text when it is tabled. The
 list below predates the goal: take from it only what that aim needs. Publishing the site
 (D-304) is the owner's decision, two settings away: Pages on « GitHub Actions »,
 `SITE_PUBLIE=oui`.
