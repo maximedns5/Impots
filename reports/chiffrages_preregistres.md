@@ -20,9 +20,14 @@ Une révision ne change que la base d'un cas enregistré, après l'ouverture de 
 
 | cas | simulé (md) | publié (md) | écart (md) | écart rel. | toléré (md) | note | révise |
 |---|---|---|---|---|---|---|---|
+| plf2027_art_15_vieilli | -7.800 | -5.500 | -2.300 | -41.8% | 1.650 (relative) | **outside** en-dessous | aucun, cas neuf |
 | plf2027_art_2_base2027 | +3.902 | +4.200 | -0.298 | -7.1% | 0.840 (relative) | **within** en-dessous | plf2027_art_2 |
 | plf2027_art_2_csg_ij | -0.468 | -0.540 | +0.072 | +13.4% | 0.135 (relative) | **within** au-dessus | aucun, cas neuf |
 | plf2027_art_2_ij_ald | -0.258 | -0.267 | +0.009 | +3.3% | 0.067 (relative) | **within** au-dessus | aucun, cas neuf |
 | plf2027_art_2_ij_atmp | -0.366 | -0.330 | -0.036 | -10.8% | 0.083 (relative) | **within** en-dessous | aucun, cas neuf |
+| plf2027_art_2_vieilli | +2.994 | +4.200 | -1.206 | -28.7% | 0.840 (relative) | **outside** en-dessous | aucun, cas neuf |
+| plf2027_art_3_vieilli | -1.196 | -1.100 | -0.096 | -8.7% | 0.330 (relative) | **within** en-dessous | aucun, cas neuf |
+| plf2027_art_74_apl_vieilli | -0.078 | -0.101 | +0.023 | +23.1% | 0.040 (relative) | **within** au-dessus | aucun, cas neuf |
+| plf2027_art_74_ppa_vieilli | -0.819 | -0.332 | -0.487 | -146.6% | 0.100 (relative) | **outside** en-dessous | aucun, cas neuf |
 
-**4 sur 4 dans la tolérance, hors du compte des cas aveugles.**
+**6 sur 9 dans la tolérance, hors du compte des cas aveugles.**

@@ -12,6 +12,8 @@ aveugle, inchangée. Trois temps, chacun sur un commit propre :
 * `--enregistrer` : les cinq révisions, par la commande `impots chiffrage register`.
 * `--comparateurs` : le comparateur de chaque cas aveugle, recopié dans sa révision, dans
   un commit à part, après celui des enregistrements.
+* `--rendre` : `reports/revisions_vieillies.md`, le tableau avant et après, depuis le
+  contrôle et le registre.
 
 Usage : `.venv/bin/python scripts/revisions_vieillies.py --controle` (puis les deux
 autres). Les passes des ménages tirent 20 000 ménages, comme les cas aveugles.
@@ -124,13 +126,68 @@ def comparateur(case: str, directory: Path | None = None) -> Path:
     return path
 
 
+TABLEAU = ROOT / "reports" / "revisions_vieillies.md"
+
+
+def tableau(controle: dict, directory: Path | None = None) -> str:
+    """Le tableau des cinq révisions : l'enregistré, le figé d'aujourd'hui, le vieilli, la
+    fiche, et l'écart avant et après. Rien n'y est saisi : tout vient du contrôle et du
+    registre, et la note est celle de `grade`."""
+    from impots import preregistration as ch
+
+    def fr(x: float, d: int = 3) -> str:
+        return f"{x:+.{d}f}".replace(".", ",")
+
+    lines = [
+        "# Les cinq cas du PLF 2027 sur la population vieillie (D-317, D-318)", "",
+        f"Contrôle et révisions sur `{controle['commit'][:7]}`. En milliards d'euros, au "
+        "signe de la note (un cas miroir est retourné, D-298). L'écart est rapporté à la "
+        "fiche ; le millésime est ce que le vieillissement déplace, le vieilli moins le figé "
+        "d'aujourd'hui, sur le même commit.", "",
+        "| cas | enregistré | figé aujourd'hui | vieilli | fiche | écart figé | écart vieilli "
+        "| millésime | note vieillie |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---|"]
+    for case in CASES:
+        original = ch.load(case, directory)
+        revision = ch.load(f"{case}{SUFFIX}", directory)
+        if revision.commit != controle["commit"]:
+            raise SystemExit(f"{case}{SUFFIX} chiffré sur {revision.commit[:7]}, le contrôle "
+                             f"sur {controle['commit'][:7]} : le millésime ne se lit que sur "
+                             "le même commit")
+        aged = ch.grade(revision)
+        sign = -1.0 if original.mirror else 1.0
+        registered = sign * original.mechanical_eur
+        frozen = sign * controle["cas"][case]["fige_aujourd_hui_eur"]
+        published = aged.published_eur
+        lines.append(
+            f"| {case} | {fr(registered / 1e9)} | {fr(frozen / 1e9)} | "
+            f"{fr(aged.simulated_eur / 1e9)} | {fr(published / 1e9)} | "
+            f"{fr((frozen - published) / abs(published) * 100, 1)} % | "
+            f"{fr((aged.simulated_eur - published) / abs(published) * 100, 1)} % | "
+            f"{fr((aged.simulated_eur - frozen) / 1e9)} | **{aged.verdict}** |")
+    within = sum(ch.grade(ch.load(f"{c}{SUFFIX}", directory)).verdict == "within"
+                 for c in CASES)
+    blind = sum(ch.grade(ch.load(c, directory)).verdict == "within" for c in CASES)
+    lines += ["", f"**{within} sur {len(CASES)} révisions vieillies dans la tolérance**, "
+              f"contre {blind} sur {len(CASES)} cas aveugles, dont la note ne bouge pas.", ""]
+    return "\n".join(lines)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--controle", action="store_true")
     group.add_argument("--enregistrer", action="store_true")
     group.add_argument("--comparateurs", action="store_true")
+    group.add_argument("--rendre", action="store_true")
     args = parser.parse_args()
+    if args.rendre:
+        found = json.loads(CONTROLE.read_text(encoding="utf-8"))
+        if found["dirty"]:
+            raise SystemExit("le contrôle a tourné sur un arbre modifié")
+        TABLEAU.write_text(tableau(found), encoding="utf-8")
+        print(f"-> {TABLEAU}")
+        return 0
     if args.controle:
         found = controle()
         CONTROLE.write_text(json.dumps(found, indent=2, ensure_ascii=False) + "\n",

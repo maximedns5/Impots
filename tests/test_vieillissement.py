@@ -411,3 +411,26 @@ def test_each_revision_keeps_its_blind_case_tolerance() -> None:
             original.tolerance.relative, original.tolerance.absolute_eur)
         assert args.vieillir == "plf2027" and args.apres_annexe
         assert getattr(args, "mirror", False) == original.mirror
+
+
+def test_the_committed_table_is_the_rendered_one() -> None:
+    """La page des révisions ne dérive pas de ce que le contrôle et le registre disent."""
+    script = _revisions_script()
+    controle = json.loads(script.CONTROLE.read_text(encoding="utf-8"))
+    assert script.TABLEAU.read_text(encoding="utf-8") == script.tableau(controle)
+
+
+def test_a_table_drawn_from_another_control_differs() -> None:
+    script = _revisions_script()
+    controle = json.loads(script.CONTROLE.read_text(encoding="utf-8"))
+    controle["cas"]["plf2027_art_2"]["fige_aujourd_hui_eur"] *= 1.01
+    assert script.TABLEAU.read_text(encoding="utf-8") != script.tableau(controle)
+
+
+def test_a_control_from_another_commit_is_refused() -> None:
+    """Le millésime est le vieilli moins le figé : les deux doivent venir du même commit."""
+    script = _revisions_script()
+    controle = json.loads(script.CONTROLE.read_text(encoding="utf-8"))
+    controle["commit"] = "0" * 40
+    with pytest.raises(SystemExit, match="même commit"):
+        script.tableau(controle)
