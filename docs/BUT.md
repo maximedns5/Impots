@@ -53,7 +53,7 @@ Trois chiffres, donnés ensemble, parce que chacun seul ment :
 
 | chiffre | aujourd'hui | source |
 |---|---|---|
-| cas notés dans la tolérance déclarée | **3 sur 5** (PLF 2027 : art. 2, 3, 15, et les deux volets de l'art. 74) ; à part, 4 révisions sur 4 (art. 2 : D-292, et ses trois volets IJ, D-308 et D-313) | `reports/chiffrages_preregistres.md` |
+| cas notés dans la tolérance déclarée | **3 sur 5** (PLF 2027 : art. 2, 3, 15, et les deux volets de l'art. 74) ; à part, 6 révisions sur 9 (art. 2 : D-292, ses trois volets IJ, D-308 et D-313, et les cinq cas vieillis, D-318) | `reports/chiffrages_preregistres.md` |
 | articles chiffrables | **3 sur 33** fiscaux (PLF 2027), plus l'art. 74 de dépense ; **0 sur 49** (PLFSS 2027) ; 1 sur 29 (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 | euros quantifiés par l'annexe que l'outil chiffre | **72,8 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 
@@ -306,3 +306,39 @@ l'art. 2 et la prime de leur fiche, d'un huitième de l'écart chacun ; il éloi
 cas déjà chiffrés trop haut. La note aveugle de l'art. 15 tenait en partie à ce que sa
 population était de 2023. Et la lecture de D-316 est corrigée : vieillir les revenus de
 deux ans n'ôte que 0,080 du terme de l'année de la prime (0,173), pas tout.
+
+### But 11 — Les programmes de la présidentielle 2027, chiffrés comme des réformes (validé, en cours)
+
+Les juges de l'automne 2026 sont épuisés, et le suivant s'annonce : l'Institut Montaigne
+chiffrera les programmes présidentiels au premier trimestre 2027. Chaque mesure que le
+moteur sait chiffrer peut être préenregistrée avant, comme une fiche du PLF. Et la question
+que posent les lecteurs pour qui l'outil existe est celle-là : ce qu'un programme coûte, à
+qui, et ce qu'il fait à la dette. La recherche est dans `docs/presidentielle/` : 360 mesures
+relevées et sourcées, 233 paramétrées, dont le moteur chiffre une trentaine.
+
+```
+/goal Les programmes de la présidentielle 2027 sont des réformes que le moteur chiffre, et
+c'est mergé dans main. Chaque candidat déclaré a un fichier `programmes/<candidat>.json` :
+chaque mesure sourcée (citation, URL, date) y est traduite en paramètres du moteur tels que
+le candidat les énonce, avec la plage que l'utilisateur peut faire varier, ou refusée avec
+sa porte et sa raison ; une mesure vague est refusée comme telle. Les boutons qui manquent
+aux mesures fiscales les plus fréquentes sont ajoutés (6e tranche de l'IR, quotient
+familial, CSG des pensions et du capital, part sociale du PFU, cotisations salariales).
+`impots programme <candidat>` donne les trois réponses sur la part chiffrée, avec θ et les
+hypothèses de la chaîne, et la part du programme qu'elle couvre ; la dette n'est jamais
+donnée comme celle du programme entier. Même méthode pour chaque candidat. Chaque mesure
+chiffrable est préenregistrée, avec sa tolérance et sa raison, avant la publication de
+l'Institut Montaigne, et aucun chiffrage de tiers n'est lu avant. Si la calibration de la
+population doit changer, s'arrêter et demander. Preuve attendue : le tableau, candidat par
+candidat, des mesures chiffrées, refusées et préenregistrées ; la sortie verte des tests
+ciblés ; l'URL de la PR et le SHA du merge. Ou s'arrêter après 60 tours, en disant ce qui
+manque.
+```
+
+Validé par le propriétaire le 1er novembre 2026, avec deux choix :
+
+* **Les candidats déclarés seulement.** Un pressenti est listé, pas chiffré, tant qu'il ne
+  s'est pas déclaré.
+* **Une couche « déclaré, non vérifié ».** Ce que le candidat annonce lui-même (ses
+  économies, ses recettes) s'affiche à part, avec un paramètre de réalisation ρ dans [0, 1]
+  que l'utilisateur fait varier. Elle ne se mêle jamais au verdict du moteur.

@@ -25002,3 +25002,58 @@ bougent pas. Le rapport donne l'écart avant et après, et la part du millésime
 deux contre la dérive de la page (la page commitée est le rendu, et un contrôle changé la
 change), et un qui refuse un contrôle et des révisions de deux commits. Chacun a été vu
 échouer : la page retouchée d'un chiffre, et la garde du commit mutée en `if False`.
+
+## D-319 — Le but 11 : les programmes de la présidentielle 2027, et ce qui les garde justes
+
+**Le fait.** Le propriétaire a validé le but 11 le 1er novembre 2026, avec deux choix : les
+candidats déclarés seulement, et une couche « déclaré, non vérifié » avec un paramètre de
+réalisation ρ. La recherche est commitée avant tout code, dans `docs/presidentielle/` : les
+mesures de chaque candidat, relevées par trois agents avec la même consigne (une par
+périmètre politique), les juges possibles, et ce que le moteur sait paramétrer. 360 mesures,
+233 paramétrées, 127 vagues ; le moteur en chiffre une trentaine, ou avec un petit ajout.
+
+**Une mesure est celle du candidat.**
+
+- Elle porte sa citation, son URL, sa date et son paramètre tel qu'il est énoncé. Aucun
+  paramètre n'est ajouté : une intention sans paramètre est refusée comme vague, pas
+  complétée.
+- Une mesure que seul un agrégateur rapporte n'entre pas avant d'être retrouvée chez le
+  candidat, son parti, ou un média qui le cite.
+- Un programme est daté. Le fichier d'un candidat porte la date de son relevé ; quand le
+  programme change, une nouvelle version datée s'écrit, et l'ancienne reste.
+- Même schéma, même méthode, même profondeur pour chaque candidat. Un pressenti est listé,
+  pas chiffré, tant qu'il ne s'est pas déclaré.
+
+**La dette n'est jamais celle du programme.** Un programme chiffré en partie ment : les
+baisses d'impôts d'un programme financées par des économies de dépense, que le moteur ne
+voit pas, le feraient paraître creuser la dette ; les hausses d'impôts d'un autre, qu'il
+voit, financent des dépenses qu'il ne voit pas, et le feraient paraître la baisser. Le biais
+ne tombe pas du même côté d'un bord à l'autre. La réponse sur la dette porte donc sur la
+part chiffrée, dite comme telle, avec à côté la part du programme qu'elle couvre et chaque
+refus, avec sa porte et sa raison.
+
+**La couche déclarée.** Ce que le candidat annonce lui-même (une économie, une recette, une
+dépense, avec sa source) s'affiche à part, multiplié par ρ, que l'utilisateur choisit dans
+[0, 1] sans valeur par défaut. Elle ne s'ajoute jamais au chiffrage du moteur, ni dans un
+même nombre ni dans le verdict.
+
+**Les juges.** L'Institut Montaigne chiffrera les programmes au premier trimestre 2027
+(communiqué du 6 octobre 2026). Chaque mesure chiffrable est préenregistrée avant, avec sa
+tolérance et sa raison, et aucun chiffrage de tiers n'est lu avant le commit des
+enregistrements. « Déchiffrer 2027 », qui publie déjà un chiffrage par mesure, n'est pas lu
+tant que son éditeur et son indépendance ne sont pas établis : ce pourrait être un juge. Les
+211 mesures de 2022 chiffrées par l'Institut Montaigne et la Fondation iFRAP sont listées
+par leur seul libellé ; elles ne sont pas des cas de ce but, le droit de référence ayant
+changé depuis.
+
+**Le plan du but.**
+
+- Le schéma d'un programme, son chargeur et ses refus, testés.
+- Les fichiers des candidats déclarés, depuis les inventaires.
+- Les boutons qui manquent : la 6e tranche de l'IR, le quotient familial, la CSG des
+  pensions et du capital, la part sociale du PFU, les cotisations salariales.
+- `impots programme <candidat>` : les trois réponses sur la part chiffrée, la couverture, la
+  couche déclarée.
+- Le préenregistrement des mesures chiffrables, dans une D-entrée poussée avant les passes.
+
+`calibrate.py` reste fermé.
