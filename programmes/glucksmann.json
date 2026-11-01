@@ -1,0 +1,259 @@
+{
+  "candidat": "Raphaël Glucksmann",
+  "slug": "glucksmann",
+  "parti": "Place publique",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Déclaré le 23/08/2026 (TF1) ; investi par la primaire sociale-démocrate PS-Place publique, gagnée au 1er tour le 11/10/2026 (66,17 %, 79 613 voix)",
+    "url": "https://lcp.fr/actualites/primaire-socialiste-vainqueur-des-le-1er-tour-raphael-glucksmann-sera-le-candidat-de-la",
+    "date": "2026-10-11",
+    "type": "presse"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "csg_salaires_megaheritages",
+      "categorie": "csg_cotisations",
+      "libelle": "Hausse du salaire net par baisse de la CSG sur les salaires, financée par les « méga-héritages »",
+      "parametre": "baisse de CSG (taux non donné) ; financement par « les 1% des plus gros héritages » ; 15 Md€ « directement sur la fiche de paie »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous augmenterons la rémunération nette des travailleurs français et nous le financerons en taxant les méga héritages »",
+          "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann",
+          "date": "2026-08-24",
+          "type": "entretien"
+        },
+        {
+          "citation": "« rapprocher le salaire net du salaire brut »",
+          "url": "https://lcp.fr/actualites/glucksmann-faure-royal-maurel-guedj-quelles-differences-entre-les-candidats-a-la",
+          "date": "2026-10-09",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Le candidat donne une enveloppe, les 15 Md€ attendus de la taxe sur les méga-héritages, et non le taux de CSG qu'elle paierait : sans ce taux, et sans module des transmissions pour en lire le produit, la baisse ne se traduit pas."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "non précisé par le candidat",
+        "source": {
+          "citation": "« permettre de récupérer 15 milliards d'euros »",
+          "url": "https://lcp.fr/actualites/heritages-et-droits-de-succession-que-proposent-les-candidats-a-l-election",
+          "date": "2026-08-27",
+          "type": "entretien"
+        }
+      }
+    },
+    {
+      "id": "taxe_tres_grands_heritages",
+      "categorie": "patrimoine_capital",
+      "libelle": "Taxation des très grands héritages",
+      "parametre": "« les 1% les plus gros » ; « au-delà de deux millions d'euros » (paraphrase LCP, débat du 04/10)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 99% des héritages ne seront pas affectés »",
+          "url": "https://lcp.fr/actualites/heritages-et-droits-de-succession-que-proposent-les-candidats-a-l-election",
+          "date": "2026-08-27",
+          "type": "entretien"
+        },
+        {
+          "citation": "pas de citation verbatim (paraphrase de LCP : « au-delà de deux millions d'euros », débat du 04/10/2026)",
+          "url": "https://lcp.fr/actualites/glucksmann-face-a-royal-divisions-sur-lfi-lycees-ce-qu-il-faut-retenir-du-dernier-debat",
+          "date": "2026-10-05",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Le moteur n'a pas de module des transmissions, et ni le taux ni le seuil exact ne sont établis par une source primaire."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "recette",
+        "horizon": "non précisé par le candidat",
+        "source": {
+          "citation": "« permettre de récupérer 15 milliards d'euros »",
+          "url": "https://lcp.fr/actualites/heritages-et-droits-de-succession-que-proposent-les-candidats-a-l-election",
+          "date": "2026-08-27",
+          "type": "entretien"
+        }
+      }
+    },
+    {
+      "id": "abrogation_2023_62_ans",
+      "categorie": "retraites",
+      "libelle": "Abrogation de la réforme de 2023, âge légal à 62 ans",
+      "parametre": "62 ans ; pas de retour général à 60 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous abrogerons la réforme injuste de 2023. (...) On ne pourra pas faire 60 ans, ce sera 62 ans »",
+          "url": "https://lcp.fr/actualites/glucksmann-face-a-royal-divisions-sur-lfi-lycees-ce-qu-il-faut-retenir-du-dernier-debat",
+          "date": "2026-10-05",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge légal n'est pas un paramètre du moteur : la population ne vieillit pas en âge et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "depart_esperance_vie_penibilite",
+      "categorie": "retraites",
+      "libelle": "Départ modulé selon l'espérance de vie en bonne santé et la pénibilité",
+      "parametre": "aucun âge ni seuil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« ceux qui ont une espérance de vie en bonne santé plus longue - les cadres - devront en revanche partir plus tard »",
+          "url": "https://lcp.fr/actualites/presidentielle-raphael-glucksmann-devoile-les-premieres-lignes-de-son-possible-programme",
+          "date": "2026-05-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun âge ni seuil d'espérance de vie ou de pénibilité n'est énoncé."
+      }
+    },
+    {
+      "id": "contrat_social_fiscal",
+      "categorie": "patrimoine_capital",
+      "libelle": "« Nouveau contrat social et fiscal » : rééquilibrer la taxation travail, capital, retraites, héritage ; fin de la « sécession des ultrariches »",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« mettre fin à toute forme de sécession des ultrariches »",
+          "url": "https://lcp.fr/actualites/presidentielle-raphael-glucksmann-devoile-les-premieres-lignes-de-son-possible-programme",
+          "date": "2026-05-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun taux ni aucune assiette n'est énoncé."
+      }
+    },
+    {
+      "id": "service_civique_obligatoire",
+      "categorie": "depense_publique",
+      "libelle": "Service civique obligatoire",
+      "parametre": "10 mois pour tous les jeunes ; volet militaire volontaire",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Tous les jeunes Français et toutes les jeunes Françaises consacreront dix mois de leur vie à la nation. »",
+          "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann",
+          "date": "2026-08-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      }
+    },
+    {
+      "id": "plan_ecole_5_ans",
+      "categorie": "depense_publique",
+      "libelle": "Plan pour l'école sur cinq ans (salaires des enseignants, effectifs, bâti)",
+      "parametre": "5 ans ; aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Je propose un plan sur 5 ans »",
+          "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann",
+          "date": "2026-08-24",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une durée de cinq ans, sans montant ni barème des salaires."
+      }
+    },
+    {
+      "id": "sejour_collectif",
+      "categorie": "depense_publique",
+      "libelle": "Séjour collectif garanti pour chaque enfant",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« garantissant à chaque enfant un séjour collectif »",
+          "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann",
+          "date": "2026-08-24",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun montant n'est énoncé."
+      }
+    },
+    {
+      "id": "grand_emprunt_europeen",
+      "categorie": "regle_budgetaire",
+      "libelle": "Grand emprunt européen",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim (paraphrase de LCP)",
+          "url": "https://lcp.fr/actualites/presidentielle-raphael-glucksmann-devoile-les-premieres-lignes-de-son-possible-programme",
+          "date": "2026-05-26",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun montant d'emprunt n'est énoncé."
+      }
+    },
+    {
+      "id": "avoirs_russes_ukraine",
+      "categorie": "autre",
+      "libelle": "Saisie des avoirs publics russes pour l'aide à l'Ukraine",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim (paraphrase de LCP)",
+          "url": "https://lcp.fr/actualites/glucksmann-faure-royal-maurel-guedj-quelles-differences-entre-les-candidats-a-la",
+          "date": "2026-10-09",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun montant n'est énoncé."
+      }
+    },
+    {
+      "id": "nucleaire_renouvelables",
+      "categorie": "energie_carburants",
+      "libelle": "Nucléaire et renouvelables",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« La France a besoin des deux »",
+          "url": "https://lcp.fr/actualites/glucksmann-face-a-royal-divisions-sur-lfi-lycees-ce-qu-il-faut-retenir-du-dernier-debat",
+          "date": "2026-10-05",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une orientation, sans capacité, montant ni date."
+      }
+    }
+  ]
+}

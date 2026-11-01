@@ -1,0 +1,130 @@
+{
+  "candidat": "Nathalie Arthaud",
+  "slug": "arthaud",
+  "parti": "Lutte ouvrière",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Candidate (brochure « Nathalie Arthaud, Présidentielle 2027 », fête de LO, mai 2026 ; journal LO n° 3030)",
+    "url": "https://lutte-ouvriere.org/portail/journal/presidentielle-2027-soutenez-campagne-nathalie-arthaud-196575.html",
+    "date": "2026-08-26",
+    "type": "presse"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "revenu_minimum_2200_net",
+      "categorie": "salaires_smic",
+      "libelle": "Revenu minimum de 2 200 € net",
+      "parametre": "2 200 € net par mois",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Aujourd'hui il faut gagner au moins 2 200 euros net par mois pour s'en sortir. Eh bien voilà ce que nous devons exiger ! »",
+          "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
+          "date": "2026-07-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le moteur ne déplace pas la distribution des salaires, et le SMIC n'est pas un de ses boutons."
+      }
+    },
+    {
+      "id": "hausse_indexation_salaires",
+      "categorie": "salaires_smic",
+      "libelle": "Hausse et indexation des salaires, allocations et pensions",
+      "parametre": "indexation sur la hausse « réelle » des prix, pas sur l'inflation officielle",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Nous devons imposer une augmentation massive des salaires, des allocations et des pensions et leur indexation sur la hausse des prix : quand les prix montent, notre salaire doit suivre ! »",
+          "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
+          "date": "2026-07-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni montant de la hausse ni indice des prix « réels » ne sont énoncés."
+      }
+    },
+    {
+      "id": "baisse_temps_travail",
+      "categorie": "autre",
+      "libelle": "Répartition du travail, baisse du temps de travail sans perte de salaire",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Il faut baisser le temps et la charge de travail sans perte de salaire pour permettre à tous de vivre. »",
+          "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
+          "date": "2026-07-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucune durée du travail n'est énoncée."
+      }
+    },
+    {
+      "id": "levee_secret_affaires",
+      "categorie": "autre",
+      "libelle": "Levée du secret commercial et du secret des affaires",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Levée du secret commercial et du secret des affaires pour rendre publics les comptes de ces grandes entreprises, y compris ceux qui sont cachés ! »",
+          "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
+          "date": "2026-07-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une mesure de publicité des comptes, sans paramètre fiscal."
+      }
+    },
+    {
+      "id": "confiscation_profiteurs_guerre",
+      "categorie": "entreprises",
+      "libelle": "Confiscation des bénéfices des « profiteurs de guerre »",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Confiscation des bénéfices de ces profiteurs de guerre : les milliards pour les hôpitaux, les écoles, pas pour la guerre ! »",
+          "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
+          "date": "2026-07-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni les entreprises visées ni le taux de confiscation ne sont énoncés."
+      }
+    },
+    {
+      "id": "expropriation_sans_indemnite",
+      "categorie": "autre",
+      "libelle": "Expropriation sans indemnité (pétrole, armement)",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Expropriation sans indemnité ni rachat de leurs actionnaires en commençant par ceux de l'industrie pétrolière et des industries de guerre ! »",
+          "url": "https://www.lutte-ouvriere.org/medias/document/fichiers/2026/06/brochure-ete-2026.pdf",
+          "date": "2026-07-06",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun périmètre chiffré ni paramètre fiscal n'est énoncé."
+      }
+    }
+  ]
+}

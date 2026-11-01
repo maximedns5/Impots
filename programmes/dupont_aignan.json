@@ -1,0 +1,794 @@
+{
+  "candidat": "Nicolas Dupont-Aignan",
+  "slug": "dupont_aignan",
+  "parti": "Debout la France (DLF)",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Pas de citation directe. L'inventaire relève : candidature officialisée à Yerres le 19/09/2026, au discours de rentrée.",
+    "url": "https://www.dupontaignan.fr/actualite/liberons-la-france-%c2%b7-discours-de-rentree-de-nicolas-dupont-aignan/",
+    "date": "2026-09-19",
+    "type": "discours"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "nd01_carburants_40_centimes",
+      "categorie": "energie_carburants",
+      "libelle": "Baisse de 40 centimes par litre du prix des carburants",
+      "parametre": "CEE −17 c ; suppression de la TVA sur la TICPE −13 c ; plafonnement des marges des raffineurs −10 c",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Baisser de 40 centimes le prix des carburants (suppression des certificats d'économies d'énergie (CEE) : 17 centimes ; suppression de la TVA sur la taxe (6 milliards d'euros de coût) : 13 centimes ; plafonnement des marges des raffineurs : 10 centimes)",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.dupontaignan.fr/actualite/20-mesures-pour-retablir-lordre-et-defendre-la-justice-sociale/",
+          "date": "2026-10-23",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Les CEE, la TVA sur la taxe et les marges pèsent sur des volumes de carburant que le moteur n'a pas."
+      },
+      "declare": {
+        "montant_eur": 6000000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "non énoncé (coût de la seule suppression de la TVA sur la TICPE)",
+        "source": {
+          "citation": "Baisser de 40 centimes le prix des carburants (suppression des certificats d'économies d'énergie (CEE) : 17 centimes ; suppression de la TVA sur la taxe (6 milliards d'euros de coût) : 13 centimes ; plafonnement des marges des raffineurs : 10 centimes)",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd02_electricite_moitie",
+      "categorie": "energie_carburants",
+      "libelle": "Prix de l'électricité divisé par deux par la sortie du marché européen",
+      "parametre": "−50 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Réduction de 50 % du prix de l'électricité par la sortie du marché européen",
+          "url": "https://www.dupontaignan.fr/actualite/20-mesures-pour-retablir-lordre-et-defendre-la-justice-sociale/",
+          "date": "2026-10-23",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Un prix de l'énergie fixé hors du moteur, qui n'a pas la consommation d'énergie des ménages."
+      }
+    },
+    {
+      "id": "nd03_gaz_moins_20_pct",
+      "categorie": "energie_carburants",
+      "libelle": "Baisse du prix du gaz",
+      "parametre": "−20 % (monopole public de distribution, suppression des CEE, réouverture au gaz russe)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Réduire de 20 % le prix du gaz en rétablissant un monopole public de distribution et en supprimant les CEE.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Un prix de l'énergie fixé hors du moteur, qui n'a pas la consommation d'énergie des ménages."
+      }
+    },
+    {
+      "id": "nd04_tva_zero_premiere_necessite",
+      "categorie": "tva_consommation",
+      "libelle": "TVA à 0 % sur les produits de première nécessité",
+      "parametre": "0 % ; liste de 50 produits selon la page Économie",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "TVA à 0 % pour les produits de première nécessité",
+          "url": "https://www.dupontaignan.fr/actualite/20-mesures-pour-retablir-lordre-et-defendre-la-justice-sociale/",
+          "date": "2026-10-23",
+          "type": "programme"
+        },
+        {
+          "citation": "Abroger la TVA sur une liste de 50 produits de première nécessité",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "La TVA par produit : le moteur n'a ni ce bouton ni l'assiette de la consommation des ménages."
+      }
+    },
+    {
+      "id": "nd05_capital_nouveau_ne",
+      "categorie": "retraites",
+      "libelle": "Capital de 10 000 € par nouveau-né français, placé dans un fonds souverain de capitalisation et bloqué jusqu'à 60 ans",
+      "parametre": "10 000 € ; rendement net de 4 % ; à 60 ans, 500 € par mois et un capital de 100 000 €",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Doter chaque nouveau-né français d'un capital de 10 000 euros qui sera bloqué jusqu'à sa retraite et qui sera géré par un fonds public de capitalisation français",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.dupontaignan.fr/actualite/20-mesures-pour-retablir-lordre-et-defendre-la-justice-sociale/",
+          "date": "2026-10-23",
+          "type": "programme"
+        },
+        {
+          "citation": "financé par la moitié de notre contribution nette à l'Union européenne",
+          "url": "https://www.dupontaignan.fr/actualite/liberons-la-france-%c2%b7-discours-de-rentree-de-nicolas-dupont-aignan/",
+          "date": "2026-09-19",
+          "type": "discours"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.cnews.fr/france/2026-09-19/presidentielle-2027-depuis-son-fief-de-yerres-nicolas-dupont-aignan-se-lance-dans",
+          "date": "2026-09-19",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Une dotation neuve à la naissance, que le moteur ne porte pas."
+      },
+      "declare": {
+        "montant_eur": 6000000000.0,
+        "sens": "depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Cette mesure coûtera environ 6 milliards d'euros par an à l'État.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd06_exoneration_premier_emploi",
+      "categorie": "csg_cotisations",
+      "libelle": "Exonération de charges pour le premier emploi d'un jeune de moins de 26 ans",
+      "parametre": "Un an (20 mesures) ; trois mois de charges patronales sur un CDI (page Économie)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Exonération des charges sociales pendant un an pour le premier emploi d'un jeune de moins de 26 ans",
+          "url": "https://www.dupontaignan.fr/actualite/20-mesures-pour-retablir-lordre-et-defendre-la-justice-sociale/",
+          "date": "2026-10-23",
+          "type": "programme"
+        },
+        {
+          "citation": "Pas de citation relevée par l'inventaire : la page Économie dit trois mois de charges patronales sur un CDI.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne dit pas quel emploi est un premier emploi, ni quand il a commencé."
+      }
+    },
+    {
+      "id": "nd07_exoneration_chomeur_longue_duree",
+      "categorie": "csg_cotisations",
+      "libelle": "Exonération de charges pour le CDI d'un chômeur de longue durée",
+      "parametre": "« pendant deux ans, le CDI d'un chômeur de longue durée (5 ans) » ; ailleurs, sur la même page : « exonérer de charges pendant 5 ans »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "exonérer de charges pendant 5 ans le CDI d'un chômeur de longue durée",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne dit pas quel salarié a été embauché après un chômage de longue durée."
+      }
+    },
+    {
+      "id": "nd08_heures_supplementaires",
+      "categorie": "csg_cotisations",
+      "libelle": "Défiscalisation des heures supplémentaires",
+      "parametre": "Au-delà de 1 607 h par an, dans la limite de 100 h par an, sur les cotisations salariales",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "au-delà de 1 607 h/an pour un temps plein, chaque heure effectuée sera défiscalisée dans la limite de 100 heures/an. Cette défiscalisation concernera les cotisations salariales (le net sera égal au brut).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte pas les heures travaillées au-delà de 1 607 h par an."
+      }
+    },
+    {
+      "id": "nd09_successions_donations",
+      "categorie": "patrimoine_capital",
+      "libelle": "Successions et donations",
+      "parametre": "Exonération de la résidence principale et des 100 premiers hectares agricoles ; plafonds de donation doublés ; exonération de 90 % des titres d'entreprise transmis (75 % aujourd'hui)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Supprimer les droits de succession sur la résidence principale et sur les 100 premiers hectares de terres agricoles, doubler les plafonds d'exonération des donations, exonérer de 90 % la valeur des titres d'une entreprise transmise",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.dupontaignan.fr/actualite/liberons-la-france-%c2%b7-discours-de-rentree-de-nicolas-dupont-aignan/",
+          "date": "2026-09-19",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Les droits de succession et de donation demandent un module de transmission que le moteur n'a pas."
+      }
+    },
+    {
+      "id": "nd10_participation_gaullienne",
+      "categorie": "entreprises",
+      "libelle": "« Participation gaullienne »",
+      "parametre": "IS −1 point par tranche de 5 % d'actionnariat salarié, dans la limite de 10 points ; participation exonérée de forfait social",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "baisser le taux d'IS de 1 % pour 5 % d'actionnariat salarié supplémentaire, dans une limite de 10 points de baisse d'IS",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "bilan_entreprises",
+        "raison": "Le taux d'IS dépendrait de la part du capital détenue par les salariés, que les données des entreprises ne portent pas."
+      },
+      "declare": {
+        "montant_eur": 1000000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "non énoncé",
+        "source": {
+          "citation": "coût : 1 milliard d'euros",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd11_is_benefices_reinvestis",
+      "categorie": "entreprises",
+      "libelle": "IS divisé par deux sur les bénéfices réinvestis en France",
+      "parametre": "÷2, ou suramortissement",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "division par 2 de l'IS pour les bénéfices réinvestis en France ou suramortissement",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "bilan_entreprises",
+        "raison": "La part du bénéfice réinvestie en France n'est pas dans les données des entreprises."
+      }
+    },
+    {
+      "id": "nd12_impots_production",
+      "categorie": "entreprises",
+      "libelle": "Baisse des impôts de production",
+      "parametre": "Non chiffrée",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Baisser les impôts de production",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        },
+        {
+          "citation": "Même mesure ; l'inventaire ne relève pas de texte propre à cette source.",
+          "url": "https://www.dupontaignan.fr/actualite/liberons-la-france-%c2%b7-discours-de-rentree-de-nicolas-dupont-aignan/",
+          "date": "2026-09-19",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une baisse qui ne dit ni quels impôts ni de combien."
+      }
+    },
+    {
+      "id": "nd13_fonds_relocalisation",
+      "categorie": "depense_publique",
+      "libelle": "Fonds d'investissement et de relocalisation",
+      "parametre": "4 Md€ par an, piloté par la Caisse des dépôts",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Créer un grand fonds d'investissement et de relocalisation doté de 4 milliards d'euros par an et piloté par la Caisse des dépôts et consignations",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense d'investissement public, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 4000000000.0,
+        "sens": "depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Créer un grand fonds d'investissement et de relocalisation doté de 4 milliards d'euros par an et piloté par la Caisse des dépôts et consignations",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd14_plafond_cumul_aides",
+      "categorie": "prestations",
+      "libelle": "Plafonnement du cumul des aides sociales",
+      "parametre": "Sous le SMIC",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Plafonner le cumul des aides sociales en dessous du SMIC.",
+          "url": "https://www.dupontaignan.fr/actualite/liberons-la-france-%c2%b7-discours-de-rentree-de-nicolas-dupont-aignan/",
+          "date": "2026-09-19",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Un plafond commun à la somme des aides est une règle que le moteur ne porte pas."
+      }
+    },
+    {
+      "id": "nd15_indexation_pensions",
+      "categorie": "retraites",
+      "libelle": "Maintien de l'indexation des pensions",
+      "parametre": "Indexation sur l'inflation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "en maintenant l'indexation de leur pension sur l'inflation",
+          "url": "https://www.dupontaignan.fr/actualite/liberons-la-france-%c2%b7-discours-de-rentree-de-nicolas-dupont-aignan/",
+          "date": "2026-09-19",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "indexation",
+        "raison": "L'indexation des pensions d'année en année n'est pas dans le moteur, dont les pensions sont des données."
+      }
+    },
+    {
+      "id": "nd16_aides_etrangers_ame",
+      "categorie": "prestations",
+      "libelle": "Aides non contributives aux étrangers ; suppression de l'AME",
+      "parametre": "Suppression (20 mesures), ou condition de 5 ans de résidence (page Économie)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Suppression des aides sociales non contributives aux étrangers",
+          "url": "https://www.dupontaignan.fr/actualite/20-mesures-pour-retablir-lordre-et-defendre-la-justice-sociale/",
+          "date": "2026-10-23",
+          "type": "programme"
+        },
+        {
+          "citation": "Pas de citation relevée par l'inventaire : la page Économie pose une condition de 5 ans de résidence et chiffre la mesure à 5 Md€.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte ni la nationalité ni la durée de résidence, et l'AME, une dépense de soins, n'est pas dans le moteur."
+      },
+      "declare": {
+        "montant_eur": 5000000000.0,
+        "sens": "economie_depense",
+        "horizon": "non énoncé",
+        "source": {
+          "citation": "Pas de citation relevée par l'inventaire : la page Économie pose une condition de 5 ans de résidence et chiffre la mesure à 5 Md€.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd17_sortie_ue_contribution",
+      "categorie": "depense_publique",
+      "libelle": "Sortie de l'UE : fin de la contribution nette",
+      "parametre": "15 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Sortir de l'UE et économiser ainsi les 15 milliards d'euros de notre solde contributeur.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La contribution au budget de l'Union est une dépense de l'État, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "economie_depense",
+        "horizon": "non énoncé",
+        "source": {
+          "citation": "Sortir de l'UE et économiser ainsi les 15 milliards d'euros de notre solde contributeur.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd18_aides_ukraine",
+      "categorie": "depense_publique",
+      "libelle": "Fin des aides à l'Ukraine",
+      "parametre": "7 Md€ par an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Mettre fin aux aides à l'Ukraine (7 milliards d'euros par an en comptant les aides de la France et la quote-part des aides de l'UE dues par la France).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense de l'État, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 7000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Mettre fin aux aides à l'Ukraine (7 milliards d'euros par an en comptant les aides de la France et la quote-part des aides de l'UE dues par la France).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd19_fraude_sociale",
+      "categorie": "prestations",
+      "libelle": "Lutte contre la fraude sociale",
+      "parametre": "20 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Mettre fin au scandale de la fraude sociale avec les millions de cartes Vitale excédentaires et les retraites payées à des morts à l'étranger pour économiser 20 milliards d'euros.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le moteur calcule les droits, pas la fraude : un objectif d'économies sans règle n'est qu'un scénario de dépense."
+      },
+      "declare": {
+        "montant_eur": 20000000000.0,
+        "sens": "economie_depense",
+        "horizon": "non énoncé",
+        "source": {
+          "citation": "Mettre fin au scandale de la fraude sociale avec les millions de cartes Vitale excédentaires et les retraites payées à des morts à l'étranger pour économiser 20 milliards d'euros.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd20_aides_eolien_solaire",
+      "categorie": "energie_carburants",
+      "libelle": "Suppression des aides à l'éolien et au solaire (annulation du décret PPE3)",
+      "parametre": "12 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Supprimer les aides de l'État à l'installation des éoliennes et des panneaux solaires en annulant le décret sur la PPE3 (12 milliards d'euros économisés).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Le soutien aux renouvelables est une dépense publique que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 12000000000.0,
+        "sens": "economie_depense",
+        "horizon": "non énoncé",
+        "source": {
+          "citation": "Supprimer les aides de l'État à l'installation des éoliennes et des panneaux solaires en annulant le décret sur la PPE3 (12 milliards d'euros économisés).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd21_millefeuille_agences",
+      "categorie": "depense_publique",
+      "libelle": "Millefeuille administratif et agences",
+      "parametre": "40 Md€ par an au bout de 5 ans, dont agences 20 Md€ au bout de 3 ans, échelon régional, intercommunalités et CESE 10 Md€, associations 10 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "il est possible d'économiser 40 milliards par an au terme de 5 ans, soit un peu plus de 2 %.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une enveloppe d'économies de fonctionnement, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 40000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an au terme de 5 ans",
+        "source": {
+          "citation": "il est possible d'économiser 40 milliards par an au terme de 5 ans, soit un peu plus de 2 %.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd22_fraude_tva",
+      "categorie": "tva_consommation",
+      "libelle": "Lutte contre la fraude fiscale (carrousels de TVA)",
+      "parametre": "20 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Renforcer le pôle financier de Bercy de lutte contre la fraude fiscale, principalement les carrousels sur la TVA, avec un objectif de 20 milliards d'euros.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Le moteur calcule l'impôt dû, pas la fraude : un objectif de recouvrement n'est qu'une hypothèse de recettes pour la chaîne."
+      },
+      "declare": {
+        "montant_eur": 20000000000.0,
+        "sens": "recette",
+        "horizon": "non énoncé",
+        "source": {
+          "citation": "Renforcer le pôle financier de Bercy de lutte contre la fraude fiscale, principalement les carrousels sur la TVA, avec un objectif de 20 milliards d'euros.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd23_multinationales_chiffre_affaires",
+      "categorie": "entreprises",
+      "libelle": "Imposition des multinationales au prorata du chiffre d'affaires réalisé en France",
+      "parametre": "+15 Md€ au bout de 5 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Imposant le bénéfice consolidé des multinationales au prorata du chiffre d'affaires réalisé dans le pays (recettes supplémentaires de 15 milliards d'euros au bout de 5 ans).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "dimension_entreprises",
+        "raison": "Le bénéfice consolidé mondial et la part du chiffre d'affaires réalisée en France ne sont pas dans les données des entreprises."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "recette",
+        "horizon": "au bout de 5 ans",
+        "source": {
+          "citation": "Imposant le bénéfice consolidé des multinationales au prorata du chiffre d'affaires réalisé dans le pays (recettes supplémentaires de 15 milliards d'euros au bout de 5 ans).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd24_taxe_antidumping",
+      "categorie": "tva_consommation",
+      "libelle": "Taxe antidumping",
+      "parametre": "+5 Md€ au bout de 5 ans ; pas de taux",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Créant une taxe antidumping (recettes supplémentaires de 5 milliards d'euros au bout de 5 ans).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Une taxe sans taux, sur des importations que le moteur n'a pas."
+      },
+      "declare": {
+        "montant_eur": 5000000000.0,
+        "sens": "recette",
+        "horizon": "au bout de 5 ans",
+        "source": {
+          "citation": "Créant une taxe antidumping (recettes supplémentaires de 5 milliards d'euros au bout de 5 ans).",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd25_emprunt_banque_de_france",
+      "categorie": "regle_budgetaire",
+      "libelle": "Emprunt à taux zéro auprès de la Banque de France ; grand emprunt national avec avantage fiscal",
+      "parametre": "−10 Md€ d'intérêts par an au bout de 5 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Cet emprunt à 0 % pour nos investissements publics permettra d'économiser au terme des 5 ans 10 milliards d'euros par an des intérêts d'emprunt.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Le taux de la dette est une hypothèse de la chaîne, pas une réforme du moteur."
+      },
+      "declare": {
+        "montant_eur": 10000000000.0,
+        "sens": "economie_depense",
+        "horizon": "par an au terme des 5 ans",
+        "source": {
+          "citation": "Cet emprunt à 0 % pour nos investissements publics permettra d'économiser au terme des 5 ans 10 milliards d'euros par an des intérêts d'emprunt.",
+          "url": "https://www.debout-la-france.fr/projet/economie-travail/",
+          "date": "2026-10-27",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "nd26_places_prison",
+      "categorie": "depense_publique",
+      "libelle": "Places de prison",
+      "parametre": "40 000 places",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Construction de 40 000 places de prison",
+          "url": "https://www.dupontaignan.fr/actualite/20-mesures-pour-retablir-lordre-et-defendre-la-justice-sociale/",
+          "date": "2026-10-23",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense d'investissement public, que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "nd27_autoroutes_peages",
+      "categorie": "autre",
+      "libelle": "Autoroutes et péages",
+      "parametre": "Renationalisation « sans verser aucune indemnité » ; suppression des péages « à l'horizon 2030 » ; taxe sur les camions étrangers",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Renationaliser les autoroutes […] stopper les hausses des péages, les supprimer à l'horizon 2030 et financer l'entretien du réseau par une taxe sur les camions étrangers",
+          "url": "https://www.debout-la-france.fr/projet/transport-automobilistes/",
+          "date": "2026-10-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "Les concessions, les péages et le trafic des camions sont un secteur d'infrastructures hors du modèle."
+      }
+    },
+    {
+      "id": "nd28_permis_moitie",
+      "categorie": "depense_publique",
+      "libelle": "Prise en charge de la moitié du permis de conduire contre un travail d'intérêt général",
+      "parametre": "50 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Financer la moitié du coût du permis de conduire en échange d'un travail d'intérêt général dans une collectivité",
+          "url": "https://www.debout-la-france.fr/projet/transport-automobilistes/",
+          "date": "2026-10-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense nouvelle des collectivités, que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "nd29_taxe_vehicules_societe",
+      "categorie": "entreprises",
+      "libelle": "Suppression de la taxe sur les véhicules de société produits en France",
+      "parametre": "Suppression",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Supprimer la taxe sur les véhicules de société produits en France.",
+          "url": "https://www.debout-la-france.fr/projet/transport-automobilistes/",
+          "date": "2026-10-15",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "La taxe porte sur un parc de véhicules, selon leur pays de production, que le moteur n'a pas."
+      }
+    },
+    {
+      "id": "nd30_taxe_assurance",
+      "categorie": "autre",
+      "libelle": "Retrait du projet de taxe de 0,8 % sur les contrats d'assurance",
+      "parametre": "Contre une taxe de 0,8 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Le retrait de tout projet de taxe de 0,8 % sur les contrats d'assurance destiné à financer ces dégâts.",
+          "url": "https://www.dupontaignan.fr/actualite/petition-non-a-la-taxe-de-08-sur-nos-assurances/",
+          "date": "2026-10-28",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "hors_champ",
+        "raison": "La taxe n'est qu'un projet : la retirer ne change rien au droit de 2026, sur lequel le moteur chiffre."
+      }
+    }
+  ]
+}

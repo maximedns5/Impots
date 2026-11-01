@@ -1,0 +1,282 @@
+{
+  "candidat": "Fabien Roussel",
+  "slug": "roussel",
+  "parti": "PCF",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Déclaré le 06/09/2026 (TF1), investi par 72,06 % des votants (vote du 3 au 6/09)",
+    "url": "https://www.france24.com/fr/france/20260906-pr%C3%A9sidentielle-2027-fabien-roussel-officialise-sa-candidature-avec-le-pcf",
+    "date": "2026-09-06",
+    "type": "presse"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "retablissement_isf",
+      "categorie": "patrimoine_capital",
+      "libelle": "Rétablissement de l'ISF",
+      "parametre": "aucun barème",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Oui, nous rétablirons l'impôt de solidarité sur la fortune. »",
+          "url": "https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html",
+          "date": "2026-09-15",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni barème ni seuil de l'ISF rétabli ne sont énoncés."
+      }
+    },
+    {
+      "id": "cotisations_revenus_financiers",
+      "categorie": "csg_cotisations",
+      "libelle": "Cotisations sur les revenus financiers et les dividendes",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Oui, nous mettrons des cotisations sur les revenus financiers et sur les dividendes pour financer la Sécurité sociale et notre système de retraite par répartition. »",
+          "url": "https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html",
+          "date": "2026-09-15",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun taux des cotisations sur les revenus financiers n'est énoncé."
+      }
+    },
+    {
+      "id": "taxation_gros_heritages",
+      "categorie": "patrimoine_capital",
+      "libelle": "Taxation des plus gros héritages",
+      "parametre": "aucun seuil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Oui, nous taxerons les héritages les plus riches et nous exonérerons les héritages des classes populaires »",
+          "url": "https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html",
+          "date": "2026-09-15",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni seuil ni taux des héritages taxés ne sont énoncés."
+      }
+    },
+    {
+      "id": "exoneration_heritages_200000",
+      "categorie": "patrimoine_capital",
+      "libelle": "Exonération des héritages de moins de 200 000 €",
+      "parametre": "seuil 200 000 €",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous exonérerons les héritages en-dessous de 200 000 €, je suis pour un héritage populaire et solidaire. »",
+          "url": "https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html",
+          "date": "2026-09-15",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Le moteur n'a pas de module des transmissions."
+      }
+    },
+    {
+      "id": "tva_carburants_5_5",
+      "categorie": "tva_consommation",
+      "libelle": "TVA sur les carburants",
+      "parametre": "de 20 % à 5,5 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 30 centimes en moins sur le prix du litre d'essence »",
+          "url": "https://www.connaissancedesenergies.org/afp/prix-de-lenergie-roussel-pcf-appelle-a-se-mobiliser-sur-les-ronds-points-260911",
+          "date": "2026-09-11",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Le moteur n'a ni TVA par taux ni consommation de carburants des ménages."
+      }
+    },
+    {
+      "id": "suppression_cee_essence",
+      "categorie": "energie_carburants",
+      "libelle": "Suppression des certificats d'économie d'énergie sur l'essence",
+      "parametre": "suppression « tout de suite »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 15 centimes d'euros par litre »",
+          "url": "https://www.connaissancedesenergies.org/afp/prix-de-lenergie-roussel-pcf-appelle-a-se-mobiliser-sur-les-ronds-points-260911",
+          "date": "2026-09-11",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Les certificats d'économie d'énergie se lisent dans le prix et la consommation de carburants, que le moteur ne porte pas."
+      }
+    },
+    {
+      "id": "baisse_prix_essence_total",
+      "categorie": "energie_carburants",
+      "libelle": "Baisse du prix de l'essence exigée de TotalEnergies, sinon « nationalisation-sanction »",
+      "parametre": "30 à 50 centimes",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« baisser de 30 à 50 centimes le prix de l'essence » ; « alors il faudra la nationaliser »",
+          "url": "https://lcp.fr/actualites/presidentielle-a-la-fete-de-l-huma-fabien-roussel-au-defi-de-prouver-l-utilite-d-une",
+          "date": "2026-09-11",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Le moteur ne porte ni le prix de l'essence ni la consommation de carburants, et une nationalisation n'est pas un de ses paramètres."
+      }
+    },
+    {
+      "id": "confiscation_profits_total",
+      "categorie": "entreprises",
+      "libelle": "Confiscation des profits de Total",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« exiger la baisse des taxes sur l'essence, la confiscation des profits de Total »",
+          "url": "https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html",
+          "date": "2026-09-15",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni montant ni taux de la confiscation ne sont énoncés."
+      }
+    },
+    {
+      "id": "nationalisation_banque",
+      "categorie": "autre",
+      "libelle": "Nationaliser une grande banque, pôle public bancaire",
+      "parametre": "prêts « à taux bonifiés, à taux zéro, voire négatifs »",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« nous mettons à l'ordre du jour l'impérieuse nécessité de nationaliser une grande banque »",
+          "url": "https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html",
+          "date": "2026-09-15",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni la banque, ni le montant des prêts, ni leurs taux ne sont énoncés."
+      }
+    },
+    {
+      "id": "credits_armees_services_publics",
+      "categorie": "depense_publique",
+      "libelle": "Réorienter des crédits des armées vers les services publics",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« réorienter l'argent du ministère de la guerre vers les services publics »",
+          "url": "https://lcp.fr/actualites/presidentielle-a-la-fete-de-l-huma-fabien-roussel-au-defi-de-prouver-l-utilite-d-une",
+          "date": "2026-09-11",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun montant réorienté n'est énoncé."
+      }
+    },
+    {
+      "id": "doubler_industrie_pib",
+      "categorie": "autre",
+      "libelle": "Doubler la part de l'industrie dans le PIB",
+      "parametre": "×2",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« doubler la part d'industrie dans le PIB »",
+          "url": "https://www.france24.com/fr/france/20260906-pr%C3%A9sidentielle-2027-fabien-roussel-officialise-sa-candidature-avec-le-pcf",
+          "date": "2026-09-06",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Doubler la part de l'industrie dans le PIB est un objectif de croissance, une hypothèse de la chaîne, pas une réforme."
+      }
+    },
+    {
+      "id": "doubler_production_electricite",
+      "categorie": "energie_carburants",
+      "libelle": "Doubler la production d'électricité nucléaire, renouvelable et hydraulique",
+      "parametre": "×2",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "pas de citation verbatim (paraphrase France 24)",
+          "url": "https://www.france24.com/fr/france/20260906-pr%C3%A9sidentielle-2027-fabien-roussel-officialise-sa-candidature-avec-le-pcf",
+          "date": "2026-09-06",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "La production d'électricité, nucléaire comprise, est hors du modèle."
+      }
+    },
+    {
+      "id": "hausse_salaires_pensions",
+      "categorie": "salaires_smic",
+      "libelle": "Hausse des salaires et des pensions",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« exiger enfin les hausses de salaires et des pensions que nous demandons depuis tant de temps »",
+          "url": "https://www.pcf74.fr/2026/09/fete-de-l-humanite-2026-discours-de-fabien-roussel.html",
+          "date": "2026-09-15",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun montant ni taux de hausse n'est énoncé."
+      }
+    },
+    {
+      "id": "fraude_fiscale_prison",
+      "categorie": "autre",
+      "libelle": "Lutte contre la fraude fiscale : prison",
+      "parametre": "aucun paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Il faut que les fraudeurs passent par la case prison »",
+          "url": "https://lcp.fr/actualites/fabien-roussel-officiellement-candidat-du-pcf-a-l-election-presidentielle-de-2027-441389",
+          "date": "2026-09-06",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une sanction pénale, sans paramètre fiscal."
+      }
+    }
+  ]
+}

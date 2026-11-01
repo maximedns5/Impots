@@ -1,0 +1,1106 @@
+{
+  "candidat": "Jean-Luc Mélenchon",
+  "slug": "melenchon",
+  "parti": "La France insoumise",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Déclaré le 03/05/2026 au 20 h de TF1 (« Oui, je suis candidat »)",
+    "url": "https://www.lalibre.be/international/europe/2026/05/03/jean-luc-melenchon-officialise-sa-candidature-a-la-presidentielle-2027-62WVGQMVUREGHCOMM2PKZ2DE7M/",
+    "date": "2026-05-03",
+    "type": "presse"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "point_indice_10",
+      "categorie": "salaires_smic",
+      "libelle": "Point d'indice des fonctionnaires +10 %",
+      "parametre": "+10 %, loi de finances 2027",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« en augmentant de 10% les fonctionnaires, dont le point d'indice a été gelé huit années sur dix durant les deux quinquennats d'Emmanuel Macron (17 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le moteur ne déplace pas la distribution des salaires, et le point d'indice des fonctionnaires n'est pas un de ses boutons."
+      },
+      "declare": {
+        "montant_eur": 17000000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« en augmentant de 10% les fonctionnaires, dont le point d'indice a été gelé huit années sur dix durant les deux quinquennats d'Emmanuel Macron (17 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "indexation_pensions_prestations_10",
+      "categorie": "prestations",
+      "libelle": "Indexation des pensions, allocations familiales et APL, hausse de 10 %",
+      "parametre": "indexation sur l'inflation ; +10 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous indexerons toutes les pensions, allocations familiales et APL, qui seront rehaussées de 10 % (8 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "indexation",
+        "raison": "La hausse porte d'un bloc sur les pensions, données de la population que le moteur ne revalorise pas, et sur les AF et les APL : n'en chiffrer que la part familiale et logement ne serait pas la mesure."
+      },
+      "declare": {
+        "montant_eur": 8000000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« nous indexerons toutes les pensions, allocations familiales et APL, qui seront rehaussées de 10 % (8 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "smic_1700_net",
+      "categorie": "salaires_smic",
+      "libelle": "SMIC à 1 700 € net",
+      "parametre": "1 700 € net",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Ces mesures d'urgence sociale doivent être complétées par une hausse du SMIC à 1 700 euros net. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "salaires",
+        "raison": "Le moteur ne déplace pas la distribution des salaires, et le SMIC n'est pas un de ses boutons."
+      }
+    },
+    {
+      "id": "conference_indexation_salaires",
+      "categorie": "salaires_smic",
+      "libelle": "Conférence sur les salaires et indexation générale des salaires",
+      "parametre": "indexation sur l'inflation, sans autre paramètre",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« la convocation d'une conférence exceptionnelle sur les salaires et d'une indexation généralisée de ceux-ci sur l'inflation »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une conférence et une indexation sur l'inflation, sans taux ni date d'effet."
+      }
+    },
+    {
+      "id": "garantie_autonomie_jeunes",
+      "categorie": "prestations",
+      "libelle": "Garantie d'autonomie des jeunes",
+      "parametre": "aucun jeune sous le seuil de pauvreté « fixé à 1 337 euros par mois »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« plus aucun jeune ne doit vivre sous le seuil de pauvreté, fixé à 1 337 euros par mois, ce qui coûtera 9,5 milliards d'euros »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "La garantie d'autonomie des jeunes est une prestation neuve, que le moteur ne porte pas."
+      },
+      "declare": {
+        "montant_eur": 9500000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« plus aucun jeune ne doit vivre sous le seuil de pauvreté, fixé à 1 337 euros par mois, ce qui coûtera 9,5 milliards d'euros »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "logements_urgence",
+      "categorie": "depense_publique",
+      "libelle": "Logements d'urgence, réquisition de logements vacants",
+      "parametre": "3 Md€ budgétés",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« en budgétant 3 milliards d'euros dans la création de logements d'urgence et la réquisition de logements vacants »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 3000000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« en budgétant 3 milliards d'euros dans la création de logements d'urgence et la réquisition de logements vacants »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "blocage_prix_carburants",
+      "categorie": "energie_carburants",
+      "libelle": "Blocage du prix des carburants",
+      "parametre": "1,70 € le litre, par décret",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un décret de blocage des prix du carburant sera pris pour ramener le prix à la pompe à 1,70 euro par litre »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "Le moteur ne porte ni les prix ni la consommation de carburants des ménages."
+      }
+    },
+    {
+      "id": "postes_education",
+      "categorie": "depense_publique",
+      "libelle": "10 000 postes dans l'éducation",
+      "parametre": "10 000 postes « pour l'année prochaine »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous proposons donc d'ouvrir 10 000 postes pour l'année prochaine, ce qui annule les suppressions de postes d'Emmanuel Macron depuis 2017 et représente 500 millions d'euros. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 500000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« Nous proposons donc d'ouvrir 10 000 postes pour l'année prochaine, ce qui annule les suppressions de postes d'Emmanuel Macron depuis 2017 et représente 500 millions d'euros. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "cantine_gratuite",
+      "categorie": "depense_publique",
+      "libelle": "Cantine scolaire gratuite",
+      "parametre": "gratuité",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous mettrons en place la gratuité de la cantine scolaire, pour 3,6 milliards d'euros. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 3600000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« Nous mettrons en place la gratuité de la cantine scolaire, pour 3,6 milliards d'euros. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "places_universite",
+      "categorie": "depense_publique",
+      "libelle": "250 000 places à l'université",
+      "parametre": "250 000 places",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous voulons adapter l'université aux besoins des étudiants en créant 250 000 places pour 3,5 milliards d'euros »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 3500000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« nous voulons adapter l'université aux besoins des étudiants en créant 250 000 places pour 3,5 milliards d'euros »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "hopitaux",
+      "categorie": "depense_publique",
+      "libelle": "Hôpitaux : budget +3 Md€, 10 000 postes",
+      "parametre": "+3 Md€ ; au moins 10 000 postes",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous proposons une hausse globale de 3 milliards d'euros du budget des hôpitaux avec au moins 10 000 créations de postes de personnel soignant. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 3000000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« Nous proposons une hausse globale de 3 milliards d'euros du budget des hôpitaux avec au moins 10 000 créations de postes de personnel soignant. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "plan_violences_sexistes",
+      "categorie": "depense_publique",
+      "libelle": "Plan contre les violences sexistes et sexuelles",
+      "parametre": "budget porté à 3 Md€ (+2,6 Md€)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un plan d'urgence pour atteindre les 3 milliards d'euros de budget demandés par les associations (soit 2,6 milliards d'euros supplémentaires pour y parvenir) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 2600000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« un plan d'urgence pour atteindre les 3 milliards d'euros de budget demandés par les associations (soit 2,6 milliards d'euros supplémentaires pour y parvenir) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "violences_enfants",
+      "categorie": "depense_publique",
+      "libelle": "Lutte contre les violences faites aux enfants",
+      "parametre": "+2 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous ajouterons 2 milliard d'euros sur la lutte contre les violences faites aux enfants. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 2000000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« Nous ajouterons 2 milliard d'euros sur la lutte contre les violences faites aux enfants. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "annulation_coupes_indexation",
+      "categorie": "depense_publique",
+      "libelle": "Annulation des coupes depuis 2026, budgets 2027 indexés",
+      "parametre": "indexation 2027 sur l'inflation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous reviendrons sur les coupes budgétaires subies depuis 2026 et indexerons leur budget 2027 sur l'inflation, pour un coût de 7 milliards d'euros. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 7000000000.0,
+        "sens": "depense",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« Nous reviendrons sur les coupes budgétaires subies depuis 2026 et indexerons leur budget 2027 sur l'inflation, pour un coût de 7 milliards d'euros. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "planification_ecologique",
+      "categorie": "depense_publique",
+      "libelle": "Planification écologique d'urgence, rénovation",
+      "parametre": "10 Md€ « dès 2026 » ; 700 000 rénovations par an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 10 milliards devront être investis dès 2026 pour permettre au pays de faire face plus efficacement aux effets du dérèglement climatique » ; « il faut passer à 700 000 rénovations par an »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense publique, que le moteur ne microsimule pas : elle n'entre que par le scénario de dépense de la chaîne de la dette."
+      },
+      "declare": {
+        "montant_eur": 10000000000.0,
+        "sens": "depense",
+        "horizon": "« dès 2026 », dans le budget pour 2027",
+        "source": {
+          "citation": "« 10 milliards devront être investis dès 2026 pour permettre au pays de faire face plus efficacement aux effets du dérèglement climatique » ; « il faut passer à 700 000 rénovations par an »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "abrogation_reforme_2023",
+      "categorie": "retraites",
+      "libelle": "Abrogation de la réforme de 2023 (64 ans)",
+      "parametre": "abrogation, dès 2027",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« nous abrogerons la réforme Borne qui a porté la retraite à 64 ans, ce qui occasionnera une dépense de 9 milliards d'euros »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge légal n'est pas un paramètre du moteur : la population ne vieillit pas en âge et ses pensions sont des données."
+      },
+      "declare": {
+        "montant_eur": 9000000000.0,
+        "sens": "depense",
+        "horizon": "dès 2027 (loi de finances 2027)",
+        "source": {
+          "citation": "« nous abrogerons la réforme Borne qui a porté la retraite à 64 ans, ce qui occasionnera une dépense de 9 milliards d'euros »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "retraite_60_ans_40_annuites",
+      "categorie": "retraites",
+      "libelle": "Retraite à 60 ans avec 40 annuités",
+      "parametre": "60 ans, 40 annuités, « objectif sur un mandat »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« un premier pas vers le retour à la retraite à 60 ans avec 40 annuités, objectif sur un mandat »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Ni l'âge ni la durée d'assurance ne sont des paramètres du moteur, dont les pensions sont des données."
+      }
+    },
+    {
+      "id": "pension_minimum_smic",
+      "categorie": "retraites",
+      "libelle": "Pension minimum au SMIC, refus de la désindexation",
+      "parametre": "pension minimum = SMIC (carrière complète)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« refusant la désindexation des pensions et porter la pension minimum au niveau du SMIC pour une carrière complète »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Les pensions sont des données de la population : le moteur n'a ni minimum de pension ni durée de carrière."
+      }
+    },
+    {
+      "id": "abrogation_assurance_chomage",
+      "categorie": "prestations",
+      "libelle": "Abrogation des réformes de l'assurance chômage",
+      "parametre": "abrogation « dès l'année prochaine »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous proposons, dès l'année prochaine, d'abroger ces réformes pour un coût de 3 milliards d'euros. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "prestations_hors_modele",
+        "raison": "Le moteur ne porte pas l'assurance chômage."
+      },
+      "declare": {
+        "montant_eur": 3000000000.0,
+        "sens": "depense",
+        "horizon": "« dès l'année prochaine » (loi de finances 2027)",
+        "source": {
+          "citation": "« Nous proposons, dès l'année prochaine, d'abroger ces réformes pour un coût de 3 milliards d'euros. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "suppression_pfu",
+      "categorie": "patrimoine_capital",
+      "libelle": "Suppression du PFU (« flat tax »)",
+      "parametre": "suppression",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« suppression de la flat tax pour que le capital ne soit pas moins imposé que le travail (9 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "Supprimer le PFU renvoie les revenus du capital au barème de l'IR, ce qu'aucun bouton ne fait et que l'assiette imputée, de composition nationale par bande, ne porte pas foyer par foyer ; pfu_taux à 0 les exonérerait au lieu de les imposer comme le travail."
+      },
+      "declare": {
+        "montant_eur": 9000000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« suppression de la flat tax pour que le capital ne soit pas moins imposé que le travail (9 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "impot_fortune_renforce",
+      "categorie": "patrimoine_capital",
+      "libelle": "Impôt sur la fortune renforcé",
+      "parametre": "aucun taux ni seuil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« rétablissement d'un impôt sur la fortune renforcé (10 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni barème ni seuil de l'impôt sur la fortune ne sont énoncés."
+      },
+      "declare": {
+        "montant_eur": 10000000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« rétablissement d'un impôt sur la fortune renforcé (10 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "niches_fiscales_sociales",
+      "categorie": "autre",
+      "libelle": "Rabot et suppression de niches fiscales et sociales",
+      "parametre": "aucune liste dans le document ; la presse cite le CIR et le pacte Dutreil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« rabotage et suppression des niches fiscales et sociales les plus injustes dont le coût a explosé (22 milliards d'euros en 2027) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "pas de citation verbatim (liste citée : CIR, pacte Dutreil)",
+          "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-2027-jean-luc-melenchon-table-sur-106-milliards-de-recettes-supplementaires-et-82-milliards-de-depenses-nouvelles-pour-2027",
+          "date": "2026-10-14",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le document ne nomme aucune niche ni aucun taux de rabot."
+      },
+      "declare": {
+        "montant_eur": 22000000000.0,
+        "sens": "recette",
+        "horizon": "2027",
+        "source": {
+          "citation": "« rabotage et suppression des niches fiscales et sociales les plus injustes dont le coût a explosé (22 milliards d'euros en 2027) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "cvae_grandes_entreprises",
+      "categorie": "entreprises",
+      "libelle": "Rétablissement de la CVAE sur les plus grandes entreprises",
+      "parametre": "aucun taux ni seuil",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« rétablissement de la CVAE sur les plus grandes entreprises (3 milliards) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni le taux ni le seuil des entreprises visées ne sont énoncés."
+      },
+      "declare": {
+        "montant_eur": 3000000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« rétablissement de la CVAE sur les plus grandes entreprises (3 milliards) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "taxe_zucman",
+      "categorie": "patrimoine_capital",
+      "libelle": "Taxe Zucman",
+      "parametre": "patrimoines de plus de 100 M€ (taux non écrit)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« l'instauration de la taxe Zucman pour les personnes possédant plus de 100 millions d'euros de patrimoine (15 milliards d'euros de recettes) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "patrimoine",
+        "raison": "La population ne porte pas le patrimoine des ménages, et le taux de la taxe n'est pas écrit."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« l'instauration de la taxe Zucman pour les personnes possédant plus de 100 millions d'euros de patrimoine (15 milliards d'euros de recettes) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "droits_succession",
+      "categorie": "patrimoine_capital",
+      "libelle": "Réforme des droits de succession",
+      "parametre": "aucun barème dans le document",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« une réforme des droits de succession (20 milliards d'euros la première année) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Le document ne donne ni barème ni abattement des droits de succession."
+      },
+      "declare": {
+        "montant_eur": 20000000000.0,
+        "sens": "recette",
+        "horizon": "la première année (loi de finances 2027)",
+        "source": {
+          "citation": "« une réforme des droits de succession (20 milliards d'euros la première année) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "plafond_heritage",
+      "categorie": "patrimoine_capital",
+      "libelle": "Plafond d'héritage",
+      "parametre": "au-delà de 12 M€, « prendre tout »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« prendre tout » (Mathilde Panot, BFMTV, 25/08/2026, rapporté par LCP)",
+          "url": "https://lcp.fr/actualites/heritages-et-droits-de-succession-que-proposent-les-candidats-a-l-election",
+          "date": "2026-08-27",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "transmission",
+        "raison": "Le moteur n'a pas de module des transmissions ; la mesure est d'ailleurs portée par Mathilde Panot, présidente du groupe LFI, non par le candidat."
+      }
+    },
+    {
+      "id": "ir_14_tranches",
+      "categorie": "ir",
+      "libelle": "Impôt sur le revenu à 14 tranches",
+      "parametre": "14 tranches ; taux non donnés ; « au cours du mandat »",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« Nous réformerons l'impôt sur le revenu au cours du mandat pour le rendre plus progressif avec l'instauration de 14 tranches. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Seul le nombre de tranches est donné, ni leurs seuils ni leurs taux."
+      }
+    },
+    {
+      "id": "reforme_is",
+      "categorie": "entreprises",
+      "libelle": "Réforme de l'IS",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« une réforme de l'impôt sur les sociétés (3 milliards) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni taux ni assiette de l'impôt sur les sociétés ne sont énoncés."
+      },
+      "declare": {
+        "montant_eur": 3000000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« une réforme de l'impôt sur les sociétés (3 milliards) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "taxe_multinationales",
+      "categorie": "entreprises",
+      "libelle": "Taxe universelle sur les multinationales",
+      "parametre": "imposition selon l'activité en France",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« une taxe universelle sur les multinationales (5 milliards la première année) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni taux ni seuil de la taxe ne sont énoncés."
+      },
+      "declare": {
+        "montant_eur": 5000000000.0,
+        "sens": "recette",
+        "horizon": "la première année (loi de finances 2027)",
+        "source": {
+          "citation": "« une taxe universelle sur les multinationales (5 milliards la première année) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "taxe_gafam",
+      "categorie": "entreprises",
+      "libelle": "Renforcement de la taxe sur les services numériques (« Gafam »)",
+      "parametre": "document : pas de taux ; Public Sénat : taux porté à 15 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« le renforcement de la taxe Gafam (3,9 milliards) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        },
+        {
+          "citation": "pas de citation verbatim (taux porté à 15 %, selon Public Sénat)",
+          "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-2027-jean-luc-melenchon-table-sur-106-milliards-de-recettes-supplementaires-et-82-milliards-de-depenses-nouvelles-pour-2027",
+          "date": "2026-10-14",
+          "type": "presse"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "Les services numériques ne sont pas une assiette du modèle des entreprises, et le taux de 15 % n'est donné que par la presse."
+      },
+      "declare": {
+        "montant_eur": 3900000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« le renforcement de la taxe Gafam (3,9 milliards) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "taxe_superprofits",
+      "categorie": "entreprises",
+      "libelle": "Taxe sur les superprofits",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« en instaurant une véritable taxe sur les superprofits (5 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni la définition du superprofit ni le taux ne sont énoncés."
+      },
+      "declare": {
+        "montant_eur": 5000000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« en instaurant une véritable taxe sur les superprofits (5 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "taxe_transactions_financieres",
+      "categorie": "patrimoine_capital",
+      "libelle": "Hausse de la taxe sur les transactions financières",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« en augmentant les taxes sur les transactions financières (5 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun taux de la taxe sur les transactions financières n'est énoncé."
+      },
+      "declare": {
+        "montant_eur": 5000000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« en augmentant les taxes sur les transactions financières (5 milliards d'euros) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "taxe_rachats_actions",
+      "categorie": "patrimoine_capital",
+      "libelle": "Taxe sur les rachats d'actions",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« les rachats d'actions (2,5 milliards) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun taux de la taxe sur les rachats d'actions n'est énoncé."
+      },
+      "declare": {
+        "montant_eur": 2500000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« les rachats d'actions (2,5 milliards) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "taxe_crypto_actifs",
+      "categorie": "patrimoine_capital",
+      "libelle": "Taxe sur les crypto-actifs",
+      "parametre": "aucun taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« et les crypto-actifs (1 milliard) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun taux de la taxe sur les crypto-actifs n'est énoncé."
+      },
+      "declare": {
+        "montant_eur": 1000000000.0,
+        "sens": "recette",
+        "horizon": "loi de finances 2027",
+        "source": {
+          "citation": "« et les crypto-actifs (1 milliard) »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "fraude_fiscale",
+      "categorie": "autre",
+      "libelle": "Lutte contre la fraude fiscale",
+      "parametre": "reconstruction des effectifs",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« La lutte contre la fraude fiscale sera également renforcée grâce à la reconstruction des effectifs de fonctionnaires et pourra rapporter 2 milliards d'euros la première année. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Ni effectifs ni paramètre de contrôle ne sont énoncés."
+      },
+      "declare": {
+        "montant_eur": 2000000000.0,
+        "sens": "recette",
+        "horizon": "la première année (loi de finances 2027)",
+        "source": {
+          "citation": "« La lutte contre la fraude fiscale sera également renforcée grâce à la reconstruction des effectifs de fonctionnaires et pourra rapporter 2 milliards d'euros la première année. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      }
+    },
+    {
+      "id": "exonerations_au_dela_2_smic",
+      "categorie": "entreprises",
+      "libelle": "Fin des exonérations de cotisations au-dessus de 2 SMIC",
+      "parametre": "seuil : 2 SMIC",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Aussi proposons-nous d'interrompre cette subvention au-dessus de 2 SMIC, où les exonérations ne sont plus qu'un effet d'aubaine sans aucun effet sur l'emploi. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "allegement_general_plafond": 2.0
+        },
+        "plages": [
+          {
+            "champ": "allegement_general_plafond",
+            "min": 1.5,
+            "max": 3.0
+          }
+        ],
+        "note": "Sur le droit de 2026, les bandeaux maladie et famille ont disparu et la réduction générale est la seule exonération générale ; son seuil de sortie, 3 SMIC (allegement_general_plafond), est ramené à 2 SMIC. Le candidat ne dit rien de la courbe sous 2 SMIC : elle reste celle de 2026, et la réduction s'arrête net à 2 SMIC, ce que dit « interrompre ». Plage : de 3 SMIC (le droit de 2026) à 1,5 SMIC (2 SMIC prolongé de la moitié de l'écart)."
+      }
+    },
+    {
+      "id": "trajectoire_2027",
+      "categorie": "regle_budgetaire",
+      "libelle": "Trajectoire : ajustement de 25 Md€ en 2027, dette/PIB stabilisée en un quinquennat",
+      "parametre": "25 Md€ en 2027 ; stabilisation en 5 ans",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Cette loi de finances, si elle était adoptée pour 2027, permettrait un ajustement de 25 milliards d'euros l'année prochaine, nous mettant sur une trajectoire crédible pour stabiliser notre dette par rapport au PIB en un quinquennat »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une trajectoire de déficit et de dette est une hypothèse de la chaîne de la dette, pas une réforme."
+      }
+    },
+    {
+      "id": "bce_dettes_publiques",
+      "categorie": "regle_budgetaire",
+      "libelle": "Gel ou annulation par la BCE des dettes publiques qu'elle détient",
+      "parametre": "aucun montant",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "« geler ou annuler la part des dettes publiques qu'elle possède »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Aucun montant de dette gelée ou annulée n'est énoncé."
+      }
+    },
+    {
+      "id": "pole_public_bancaire",
+      "categorie": "autre",
+      "libelle": "Pôle public bancaire : 100 Md€ d'investissements par an",
+      "parametre": "100 Md€ par an",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 100 milliards d'euros de plus par an peuvent être mobilisés en investissements pour la planification écologique et notre souveraineté »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Un investissement hors budget de l'État par un pôle public bancaire n'est ni un impôt ni une prestation : il n'entrerait dans la chaîne de la dette que comme hypothèse de croissance."
+      }
+    },
+    {
+      "id": "centralisation_livret_b",
+      "categorie": "autre",
+      "libelle": "Centralisation de l'épargne réglementée, « livret B »",
+      "parametre": "taux de centralisation porté « par exemple » à 80 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Augmenter ce taux de centralisation, par exemple en le passant progressivement à 80 %, permettrait d'augmenter les fonds du pôle public bancaire. »",
+          "url": "https://melenchon2027.fr/wp-content/uploads/2026/10/Comment-nous-allons-remettre-de-l-ordre-dans-les-comptes-publics.pdf",
+          "date": "2026-10-14",
+          "type": "programme"
+        }
+      ],
+      "refus": {
+        "porte": "secteur",
+        "raison": "L'épargne réglementée et sa centralisation, des dépôts, sont hors du modèle."
+      }
+    }
+  ]
+}

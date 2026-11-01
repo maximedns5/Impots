@@ -1,0 +1,73 @@
+{
+  "candidat": "François Asselineau",
+  "slug": "asselineau",
+  "parti": "UPR",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "candidat à l'élection présidentielle de 2027",
+    "url": "https://upr.fr/actualites/francois-asselineau-invite-dandre-bercoff-sur-sud-radio-30-10-2026",
+    "date": "2026-10-30",
+    "type": "entretien"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "fa1_renationalisation_dette",
+      "categorie": "regle_budgetaire",
+      "libelle": "« Renationalisation de la dette » : titres souscrits en priorité par l'épargne nationale",
+      "parametre": "aucun",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de l'UPR : « émettre de nouveaux titres de dette prioritairement souscrits par l'épargne nationale (sur le modèle de la politique gaullienne) »",
+          "url": "https://upr.fr/actualites/francois-asselineau-invite-dandre-bercoff-sur-sud-radio-30-10-2026",
+          "date": "2026-10-30",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une intention sur la détention de la dette, sans taux ni montant."
+      }
+    },
+    {
+      "id": "fa2_frexit",
+      "categorie": "autre",
+      "libelle": "Frexit (UE, euro, OTAN), présenté comme préalable",
+      "parametre": "aucun",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de l'UPR : « il est illusoire d'espérer redresser la France sans se libérer préalablement de l'Union européenne, de l'euro et de l'OTAN »",
+          "url": "https://upr.fr/actualites/francois-asselineau-invite-dandre-bercoff-sur-sud-radio-30-10-2026",
+          "date": "2026-10-30",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une sortie sans calendrier ni paramètre fiscal."
+      }
+    },
+    {
+      "id": "fa3_controle_capitaux",
+      "categorie": "autre",
+      "libelle": "Rétablissement du contrôle des mouvements de capitaux",
+      "parametre": "aucun",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "rétablir le contrôle des mouvements de capitaux",
+          "url": "https://www.sudradio.fr/sud-radio/asselineau-nous-ne-sommes-pas-des-souverainistes",
+          "date": "2025-09-18",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une intention sans règle ni paramètre."
+      }
+    }
+  ]
+}

@@ -192,3 +192,11 @@ def test_every_committed_programme_follows_the_one_schema() -> None:
         prog = pg.charger(slug)
         assert prog.statut == "declare"
         prog.reformes()
+
+
+def test_a_range_must_name_a_number_not_a_list() -> None:
+    bareme = [{"threshold": 0, "rate": 0.0}, {"threshold": 11_497, "rate": 0.11}]
+    with pytest.raises(ValidationError, match="n'est pas un nombre"):
+        pg.Mesure.model_validate(_mesure(chiffrage={
+            "couche": "menages", "reforme": {"ir_bareme": bareme},
+            "plages": [{"champ": "ir_bareme", "min": 0.0, "max": 1.0}]}))

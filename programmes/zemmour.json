@@ -1,0 +1,73 @@
+{
+  "candidat": "Éric Zemmour",
+  "slug": "zemmour",
+  "parti": "Reconquête",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Je suis candidat à la présidence de la République, je serai candidat à l'élection présidentielle",
+    "url": "https://lcp.fr/actualites/presidentielle-2027-eric-zemmour-officialise-sa-candidature-441871",
+    "date": "2026-09-17",
+    "type": "entretien"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "ez1_age_legal_64_65",
+      "categorie": "retraites",
+      "libelle": "Report de l'âge légal",
+      "parametre": "« 64, voire 65 ans », progressivement jusqu'en 2030",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 64, voire 65 ans » ; le système par répartition est « mort et condamné »",
+          "url": "https://www.europe1.fr/politique/le-pen-retailleau-attal-que-proposent-les-principaux-candidats-a-la-presidentielle-pour-les-retraites-1114199",
+          "date": "2026-09-30",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge légal : la population ne vieillit pas en âge et ses pensions sont des données."
+      }
+    },
+    {
+      "id": "ez2_alignement_regimes",
+      "categorie": "retraites",
+      "libelle": "Alignement des régimes public et privé",
+      "parametre": "« sans toucher aux régimes spéciaux »",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte d'Europe 1 : « Il suggère également d'aligner les différents régimes entre le public et le privé sans toucher aux régimes spéciaux »",
+          "url": "https://www.europe1.fr/politique/le-pen-retailleau-attal-que-proposent-les-principaux-candidats-a-la-presidentielle-pour-les-retraites-1114199",
+          "date": "2026-09-30",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Un alignement qui ne dit ni quelles règles ni à quel niveau."
+      }
+    },
+    {
+      "id": "ez3_expulsion_apres_chomage",
+      "categorie": "autre",
+      "libelle": "Expulsion des étrangers, même en situation régulière, après un an de chômage ; vise aussi les « bénéficiaires exclusifs des aides sociales »",
+      "parametre": "1 an de chômage",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Il y a un article du code des étrangers qui date, je pense, de 1945, et qui dit que tout étranger qui pèse sur les finances publiques doit être expulsé.",
+          "url": "https://www.publicsenat.fr/actualites/politique/eric-zemmour-officialise-sa-candidature-a-la-presidentielle-2027",
+          "date": "2026-09-18",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La population ne porte ni la nationalité ni le titre de séjour, et le moteur ne retire pas de ménages de son échantillon."
+      }
+    }
+  ]
+}

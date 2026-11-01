@@ -1,0 +1,776 @@
+{
+  "candidat": "Marine Le Pen",
+  "slug": "le_pen",
+  "parti": "Rassemblement national (RN)",
+  "statut": "declare",
+  "statut_source": {
+    "citation": "Rien ne peut m'empêcher depuis le 7 juillet d'être candidate à l'élection présidentielle",
+    "url": "https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948",
+    "date": "2026-10-15",
+    "type": "entretien"
+  },
+  "releve": "2026-11-01",
+  "annee": 2026,
+  "mesures": [
+    {
+      "id": "lp01_economies_nettes",
+      "categorie": "regle_budgetaire",
+      "libelle": "Plan d'économies nettes",
+      "parametre": "140 Md€ nets d'ici 2032 par rapport à 2026",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "140 milliards d'euros net d'économies d'ici 2032",
+          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Un effort d'ensemble, sans règle de calcul, est une trajectoire de solde pour la chaîne de la dette, pas une réforme que le moteur chiffre."
+      }
+    },
+    {
+      "id": "lp02_deficit_sous_3_pct",
+      "categorie": "regle_budgetaire",
+      "libelle": "Déficit sous 3 %",
+      "parametre": "Sous 3 % du PIB en 2030, l'essentiel de l'effort sur les 3 premières années",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "déficit inférieur à 3% en 2030",
+          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Un objectif de solde est une trajectoire de la chaîne de la dette, pas une réforme que le moteur chiffre."
+      }
+    },
+    {
+      "id": "lp03_equilibre_primaire",
+      "categorie": "regle_budgetaire",
+      "libelle": "Équilibre primaire",
+      "parametre": "En 18 mois",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "l'équilibre primaire en 18 mois",
+          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Un objectif de solde est une trajectoire de la chaîne de la dette, pas une réforme que le moteur chiffre."
+      }
+    },
+    {
+      "id": "lp04_trajectoire_dette",
+      "categorie": "regle_budgetaire",
+      "libelle": "Trajectoire de dette",
+      "parametre": "121 % du PIB en 2027, 112 % en 2032",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "121 % en 2027 à 112 % en 2032",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une cible de dette est ce que la chaîne calcule, pas une réforme qu'elle prend en entrée."
+      }
+    },
+    {
+      "id": "lp05_regle_or",
+      "categorie": "regle_budgetaire",
+      "libelle": "Règle d'or constitutionnelle par référendum",
+      "parametre": "Le déficit doit rester sous le « seuil stabilisant de la dette ». Plafonds : 4,9 % (2027), 4,4 % (2028), 3,9 % (2030), 3,4 % (2031), 2,9 % (2032), 2,4 % (2033), maintenus jusqu'à une dette sous 60 % du PIB. Dérogation possible à la majorité des 3/5 du Parlement. Référendum « dans les douze mois »",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Notre règle d'or imposera un déficit systématiquement inférieur au seuil stabilisant de la dette, soit le niveau permettant de diminuer chaque année la dette en proportion du PIB",
+          "url": "https://lcp.fr/actualites/budget-comment-fonctionnerait-la-regle-d-or-que-marine-le-pen-veut-faire-adopter-par",
+          "date": "2026-10-02",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Une règle budgétaire est une hypothèse de la chaîne de la dette, qui ne porte qu'un scénario de dépense à la fois."
+      }
+    },
+    {
+      "id": "lp06_immigration_priorite_nationale",
+      "categorie": "depense_publique",
+      "libelle": "Économies sur l'immigration et « priorité nationale »",
+      "parametre": "15 Md€ la première année, 29 Md€ en année pleine (environ 20 % du plan)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "15 milliards la première année (puis) 29 milliards en année pleine",
+          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une enveloppe d'économies sans règle de calcul, sur une dépense que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 29000000000.0,
+        "sens": "economie_depense",
+        "horizon": "année pleine (15 Md€ la première année)",
+        "source": {
+          "citation": "15 milliards la première année (puis) 29 milliards en année pleine",
+          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp07_contribution_ue",
+      "categorie": "depense_publique",
+      "libelle": "Baisse de la contribution française à l'UE",
+      "parametre": "−8,9 Md€ nets (AFP) ; « 9 milliards » (J. Bardella)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 9 milliards d'euros sur notre contribution à l'Union européenne » (J. Bardella)",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        },
+        {
+          "citation": "« 9 milliards d'euros sur notre contribution à l'Union européenne » (J. Bardella)",
+          "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La contribution au budget de l'Union est une dépense de l'État, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 9000000000.0,
+        "sens": "economie_depense",
+        "horizon": "non énoncé",
+        "source": {
+          "citation": "« 9 milliards d'euros sur notre contribution à l'Union européenne » (J. Bardella)",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp08_reorganisation_etat",
+      "categorie": "depense_publique",
+      "libelle": "« Réorganisation de l'État »",
+      "parametre": "20,7 Md€ d'économies dès 2027",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe sur le montant. Texte de Public Sénat : « la \"réorganisation de l'Etat\" qui permettrait d'économiser 20,7 milliards d'euros dès 2027 »",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une enveloppe d'économies de fonctionnement de l'État, sans règle de calcul, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 20700000000.0,
+        "sens": "economie_depense",
+        "horizon": "dès 2027",
+        "source": {
+          "citation": "Pas de citation directe sur le montant. Texte de Public Sénat : « la \"réorganisation de l'Etat\" qui permettrait d'économiser 20,7 milliards d'euros dès 2027 »",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp09_agences",
+      "categorie": "depense_publique",
+      "libelle": "Suppression de la quasi-totalité des agences",
+      "parametre": "3,4 Md€ d'économies en 2027",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "la fin de la quasi-totalité des agences et autres organismes parasites",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La dépense des agences n'est pas microsimulée : elle n'entre qu'en scénario de la chaîne."
+      },
+      "declare": {
+        "montant_eur": 3400000000.0,
+        "sens": "economie_depense",
+        "horizon": "2027",
+        "source": {
+          "citation": "la fin de la quasi-totalité des agences et autres organismes parasites",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp10_collectivites",
+      "categorie": "depense_publique",
+      "libelle": "Collectivités : fin du « millefeuille », suppression des EPCI et des métropoles",
+      "parametre": "8,2 Md€ en 2027, dont 250 M€ (EPCI et métropoles) et 800 M€ (ajustement des effectifs)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "une simplification radicale qui clarifiera définitivement les compétences",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "La dépense des collectivités n'est pas microsimulée : elle n'entre qu'en scénario de la chaîne."
+      },
+      "declare": {
+        "montant_eur": 8200000000.0,
+        "sens": "economie_depense",
+        "horizon": "2027",
+        "source": {
+          "citation": "une simplification radicale qui clarifiera définitivement les compétences",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp11_effectifs_publics",
+      "categorie": "depense_publique",
+      "libelle": "Réduction des effectifs publics",
+      "parametre": "Au moins 200 000 postes en cinq ans (collectivités, agences, organismes)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de l'AFP : « réduits d'au moins 200.000 postes en cinq ans, a précisé Jean-Philippe Tanguy »",
+          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Les effectifs publics sont une dépense que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "lp12_centralisation_tva",
+      "categorie": "regle_budgetaire",
+      "libelle": "Centralisation des recettes de TVA ; pas de dépense reconduite sans visa",
+      "parametre": "Non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Chaque année, l'Etat transférera aux collectivités territoriales et à la Sécurité Sociale les ressources que le Parlement estime nécessaire à leur équilibre",
+          "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une organisation des finances publiques, sans taux ni montant."
+      }
+    },
+    {
+      "id": "lp13_baisse_impots_30_md",
+      "categorie": "autre",
+      "libelle": "Baisse nette d'impôts sur le quinquennat",
+      "parametre": "30 Md€ ; pas de ventilation officielle publiée",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« 30 milliards » (de baisse d'impôts)",
+          "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "chaine",
+        "raison": "Un montant de baisses d'impôts qui ne dit pas lesquels : sans règle, il n'est qu'une hypothèse de recettes pour la chaîne."
+      }
+    },
+    {
+      "id": "lp14_droits_nouveaux",
+      "categorie": "depense_publique",
+      "libelle": "« Droits nouveaux »",
+      "parametre": "15 Md€ provisionnés, plus des hausses pour l'outre-mer, la recherche et l'éducation",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "dépenses provisionnées pour des droits nouveaux",
+          "url": "https://www.sudradio.fr/societe/presidentielle-en-quete-de-credibilite-budgetaire-le-pen-promet-un-effort-radical-de-140-milliards-net",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une provision de dépense sans règle de calcul, que le moteur ne microsimule pas."
+      }
+    },
+    {
+      "id": "lp15_age_legal_60_62",
+      "categorie": "retraites",
+      "libelle": "Âge légal à 60 ou 62 ans selon le début de carrière",
+      "parametre": "Début avant 20 ans : départ à 60 ans avec 40 annuités. Après 20 ans : montée progressive jusqu'à 62 ans avec 42 annuités. Détails attendus le 17/11/2026",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "permettrait à ceux qui ont commencé à travailler avant 20 ans de bénéficier d'un âge légal de départ à 60 ans avec 40 annuités. Et ceux qui ont commencé après 20 ans iraient progressivement jusqu'à 62 ans avec 42 annuités",
+          "url": "https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948",
+          "date": "2026-10-15",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "L'âge légal et la durée d'assurance : la population ne vieillit pas en âge et ses pensions sont des données."
+      },
+      "declare": {
+        "montant_eur": 9000000000.0,
+        "sens": "depense",
+        "horizon": "année pleine",
+        "source": {
+          "citation": "9 milliards d'euros en année pleine",
+          "url": "https://www.lagazettefrance.fr/article/marine-le-pen-et-la-delicate-operation-seduction-du-monde-economique",
+          "date": "2026-08-28",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp16_cotisations_seniors_cumul",
+      "categorie": "csg_cotisations",
+      "libelle": "Suppression des cotisations retraite et chômage des seniors qui continuent à travailler",
+      "parametre": "Seniors ayant dépassé l'âge de la retraite et ayant tous leurs trimestres",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "« Nous mettrons en place des incitations pour que ceux qui ont dépassé l'âge de la retraite et ont leurs trimestres puissent continuer à travailler » ; « supprimer les cotisations retraite et les cotisations chômage »",
+          "url": "https://www.lagazettefrance.fr/article/marine-le-pen-et-la-delicate-operation-seduction-du-monde-economique",
+          "date": "2026-08-28",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "La cible, qui a passé l'âge légal avec tous ses trimestres, demande des durées d'assurance que la population ne porte pas."
+      }
+    },
+    {
+      "id": "lp17_economies_retraites",
+      "categorie": "retraites",
+      "libelle": "Économies sur les retraites",
+      "parametre": "15 à 20 Md€ « à terme », par des « corrections de mesures injustes » (non détaillées)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "entre 15 et 20 milliards d'économies à terme",
+          "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "retraites",
+        "raison": "Une enveloppe d'économies sur des pensions, que la population porte comme des données, sans dire quelles règles changent."
+      },
+      "declare": {
+        "montant_eur": 15000000000.0,
+        "sens": "economie_depense",
+        "horizon": "à terme (fourchette de 15 à 20 Md€ ; le bas est retenu)",
+        "source": {
+          "citation": "entre 15 et 20 milliards d'économies à terme",
+          "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp18_capitalisation",
+      "categorie": "retraites",
+      "libelle": "Pilier de capitalisation",
+      "parametre": "Non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "je proposerai bientôt la création d'un véritable pilier de capitalisation",
+          "url": "https://www.europe1.fr/politique/140-milliards-deuros-deconomies-deficit-public-sous-les-3-ce-quil-faut-retenir-du-discours-de-marine-le-pen-qui-a-presente-le-contre-budget-2027-du-rn-1126400",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une intention, sans taux, ni montant, ni règle."
+      }
+    },
+    {
+      "id": "lp19_impots_production",
+      "categorie": "entreprises",
+      "libelle": "Baisse des impôts de production",
+      "parametre": "20 Md€",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte d'Europe 1 : « défend notamment une baisse de 20 milliards d'euros des impôts de production »",
+          "url": "https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948",
+          "date": "2026-10-15",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "bases_locales",
+        "raison": "Un montant de 20 Md€ qui ne dit pas quels impôts baissent : la CVAE et la C3S du moteur n'y suffisent pas, et la CFE, assise sur des bases locales, lui manque."
+      },
+      "declare": {
+        "montant_eur": 20000000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "non énoncé",
+        "source": {
+          "citation": "Pas de citation directe. Texte d'Europe 1 : « défend notamment une baisse de 20 milliards d'euros des impôts de production »",
+          "url": "https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948",
+          "date": "2026-10-15",
+          "type": "entretien"
+        }
+      }
+    },
+    {
+      "id": "lp20_tva_energie",
+      "categorie": "tva_consommation",
+      "libelle": "Baisse de la TVA sur l'énergie et les carburants",
+      "parametre": "De 20 % à 5,5 %",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Il faut baisser la TVA sur l'énergie. L'énergie est un bien de première nécessité.",
+          "url": "https://www.europe1.fr/politique/des-choix-a-faire-entre-baisse-de-la-tva-sur-lenergie-et-reduction-des-depenses-marine-le-pen-detaille-son-projet-economique-1083380",
+          "date": "2026-09-17",
+          "type": "entretien"
+        },
+        {
+          "citation": "Pas de citation relevée par l'inventaire : la source donne le taux, de 20 % à 5,5 %.",
+          "url": "https://www.sudradio.fr/politique/presidentielle-2027-que-proposent-les-candidats-pour-lutter-contre-la-flambee-des-prix-du-carburant",
+          "date": "2026-09-16",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "consommation",
+        "raison": "La TVA par taux : le moteur n'a ni ce bouton ni l'assiette de la consommation d'énergie des ménages."
+      }
+    },
+    {
+      "id": "lp21_ir_moins_30_ans",
+      "categorie": "ir",
+      "libelle": "Exonération d'impôt sur le revenu des moins de 30 ans",
+      "parametre": "Jusqu'à 4 SMIC",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de LCP : « propose d'exonérer les jeunes de moins de 30 ans d'impôt sur le revenu, jusqu'à quatre fois le Smic »",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "L'IR se calcule au foyer : exonérer les seuls revenus des moins de 30 ans, jusqu'à 4 SMIC, demande de les isoler dans le foyer, ce que le moteur ne sait pas faire."
+      }
+    },
+    {
+      "id": "lp22_part_pleine_2e_enfant",
+      "categorie": "ir",
+      "libelle": "Part fiscale pleine dès le deuxième enfant",
+      "parametre": "Une part au lieu d'une demi-part",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de LCP : « octroyer une part fiscale pleine dès le deuxième enfant »",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "bouton_ce_but",
+        "raison": "quotient familial, nombre de parts : le deuxième enfant compte une part entière au lieu d'une demi-part."
+      },
+      "declare": {
+        "montant_eur": 3500000000.0,
+        "sens": "baisse_prelevements",
+        "horizon": "2027",
+        "source": {
+          "citation": "Pas de citation directe. Texte de LCP : « mesure estimée à » 3,5 Md€ pour 2027.",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp23_dons_familiaux",
+      "categorie": "patrimoine_capital",
+      "libelle": "Relèvement du plafond d'exonération des dons familiaux de sommes d'argent",
+      "parametre": "Non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Pas de citation directe. Texte de LCP : « en relevant le plafond des exonérations prévues pour les dons familiaux de sommes d'argent »",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Un relèvement de plafond qui ne dit pas jusqu'où."
+      }
+    },
+    {
+      "id": "lp24_prime_activite_etudiante",
+      "categorie": "prestations",
+      "libelle": "« Prime d'activité étudiante »",
+      "parametre": "Paramètres non donnés",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Pas de citation directe (paraphrase LCP)",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une prestation nommée, sans montant ni règle d'éligibilité."
+      },
+      "declare": {
+        "montant_eur": 600000000.0,
+        "sens": "depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Pas de citation directe. Texte de LCP : « impact calculé » de 600 M€ par an.",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp25_permis_gratuit",
+      "categorie": "depense_publique",
+      "libelle": "Permis de conduire gratuit",
+      "parametre": "Jeunes au casier judiciaire vierge, demande faite dans leur dix-huitième année",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe (paraphrase LCP)",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "depense_publique",
+        "raison": "Une dépense nouvelle de l'État, que le moteur ne microsimule pas."
+      },
+      "declare": {
+        "montant_eur": 700000000.0,
+        "sens": "depense",
+        "horizon": "par an",
+        "source": {
+          "citation": "Pas de citation directe. Texte de LCP : environ 700 000 personnes par an et 700 M€ par an, « estimations du parti ».",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      }
+    },
+    {
+      "id": "lp26_suppression_cvec",
+      "categorie": "autre",
+      "libelle": "Suppression de la CVEC",
+      "parametre": "Suppression (105 €)",
+      "precision": "parametree",
+      "sources": [
+        {
+          "citation": "Pas de citation directe (paraphrase LCP)",
+          "url": "https://lcp.fr/actualites/permis-de-conduire-gratuit-exoneration-d-impot-jusqu-a-30-ans-comment-le-rn-veut",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "donnee_menages",
+        "raison": "La CVEC, 105 € par étudiant inscrit, n'est pas dans le moteur, et la population ne dit pas qui est inscrit dans le supérieur."
+      }
+    },
+    {
+      "id": "lp27_energies_intermittentes",
+      "categorie": "energie_carburants",
+      "libelle": "Fin des subventions aux énergies intermittentes",
+      "parametre": "Non chiffré par la candidate",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "cesser les subventionnements à perte des énergies intermittentes",
+          "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une intention sans montant ni calendrier."
+      }
+    },
+    {
+      "id": "lp28_ptz_voitures_propres",
+      "categorie": "energie_carburants",
+      "libelle": "Prêt à taux zéro pour les voitures propres (piste)",
+      "parametre": "« réfléchissant »",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "au financement des voitures propres",
+          "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une piste à l'étude, sans taux ni montant."
+      }
+    },
+    {
+      "id": "lp29_surprofits",
+      "categorie": "entreprises",
+      "libelle": "Taxation exceptionnelle des surprofits (TotalEnergies)",
+      "parametre": "Temporaire, liée à une crise ; pas de taux",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "il est normal qu'elle puisse contribuer à l'effort national par une taxation exceptionnelle sur les surprofits qu'elle a réalisés",
+          "url": "https://www.sudradio.fr/societe/surtaxe-des-surprofits-de-totalenergies-normale-pour-le-pen-pas-la-priorite-pour-bardella",
+          "date": "2026-04-29",
+          "type": "reseau_social"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une taxe exceptionnelle sans taux ni assiette."
+      }
+    },
+    {
+      "id": "lp30_priorite_nationale_logement",
+      "categorie": "prestations",
+      "libelle": "APL réservées aux Français ; priorité nationale dans le logement social",
+      "parametre": "Non chiffré",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "donner la priorité d'accès au logement social aux Français",
+          "url": "https://www.sudradio.fr/societe/le-pen-a-henin-beaumont-pour-reprendre-le-fil-dune-campagne-a-deux-visages",
+          "date": "2026-09-13",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une priorité d'accès sans règle chiffrée."
+      }
+    },
+    {
+      "id": "lp31_aides_non_contributives_etrangers",
+      "categorie": "prestations",
+      "libelle": "Fin du financement des aides non contributives pour les étrangers",
+      "parametre": "Non chiffré dans la source 2026",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "l'arrêt du financement des aides non-contributives pour les étrangers",
+          "url": "https://www.europe1.fr/politique/des-choix-a-faire-entre-baisse-de-la-tva-sur-lenergie-et-reduction-des-depenses-marine-le-pen-detaille-son-projet-economique-1083380",
+          "date": "2026-09-17",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Une intention qui ne dit ni quelles aides ni quels étrangers."
+      }
+    },
+    {
+      "id": "lp32_aide_ukraine",
+      "categorie": "depense_publique",
+      "libelle": "Fin de l'aide financière à l'Ukraine",
+      "parametre": "Arrêt ; aucun calendrier vérifié",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "Nous n'avons plus les moyens d'apporter une aide qui nous a coûté, en engagement, 6 milliards d'euros par an",
+          "url": "https://www.europe1.fr/politique/en-direct-objectif-elysee-2027-emmanuel-macron-a-fait-plus-de-dettes-que-tous-les-presidents-reunis-estime-marine-le-pen-1151948",
+          "date": "2026-10-15",
+          "type": "entretien"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Un arrêt sans calendrier ni montant."
+      }
+    },
+    {
+      "id": "lp33_bce_taux",
+      "categorie": "regle_budgetaire",
+      "libelle": "Appel à une intervention de la BCE sur les taux",
+      "parametre": "aucun",
+      "precision": "vague",
+      "sources": [
+        {
+          "citation": "La BCE doit intervenir pour que les pays de l'Eurozone dégagent des marges de manœuvre financières",
+          "url": "https://www.france24.com/fr/info-en-continu/20261006-140-milliards-d-%C3%A9conomies-ce-qu-il-faut-retenir-de-l-intervention-de-marine-le-pen",
+          "date": "2026-10-06",
+          "type": "discours"
+        }
+      ],
+      "refus": {
+        "porte": "vague",
+        "raison": "Un appel à la BCE, sans paramètre."
+      }
+    }
+  ]
+}

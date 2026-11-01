@@ -1583,6 +1583,43 @@ def cmd_etude(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_programme(args: argparse.Namespace) -> int:
+    """Un programme présidentiel (but 11, D-319) : ce que le moteur en chiffre, ce qu'il en
+    refuse, et, avec des hypothèses, les trois réponses sur la part chiffrée."""
+    from fastapi import HTTPException
+    from pydantic import ValidationError
+
+    from impots import programme_chiffrage as pc
+    from impots import programmes as pg
+
+    if args.slug is None:
+        for slug in pg.lister():
+            print(slug)
+        return 0
+    try:
+        programme = pg.charger(args.slug)
+        hypotheses = pc.lire_hypotheses(Path(args.hypotheses)) if args.hypotheses else None
+        mesures = tuple(args.mesures.split(",")) if args.mesures else None
+        report = pc.rapport(programme, valeurs=pc.lire_valeurs(args.valeur),
+                            mesures=mesures, rho=args.rho, hypotheses=hypotheses)
+    except (pg.ProgrammeError, pc.ChiffrageError, ValidationError, OSError,
+            json.JSONDecodeError) as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    except HTTPException as error:
+        print(f"chiffrage refusé ({error.status_code}) : {error.detail}", file=sys.stderr)
+        return 1
+    if args.sortie:
+        out = Path(args.sortie)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
+                       encoding="utf-8")
+        print(f"-> {out}")
+    for line in pc.resume(report):
+        print(line)
+    return 0
+
+
 def cmd_site(args: argparse.Namespace) -> int:
     """Le site des études (but 7, D-304) : le construire, ou vérifier qu'il est à jour."""
     from impots import site
@@ -2129,6 +2166,24 @@ def build_parser() -> argparse.ArgumentParser:
                          ("verifier", "la page commitée est-elle celle de ses rapports ?")):
         etude_actions.add_parser(action, help=text).add_argument("nom")
     etude.set_defaults(func=cmd_etude)
+
+    programme = subcommands.add_parser(
+        "programme", help="un programme présidentiel : sa part chiffrée, ses refus, et ses "
+                          "trois réponses (but 11, D-319)")
+    programme.add_argument("slug", nargs="?", help="programmes/<slug>.json ; sans lui, la "
+                                                   "liste des programmes")
+    programme.add_argument("--valeur", action="append", metavar="MESURE:CHAMP=VALEUR",
+                           help="un paramètre réglé dans sa plage, autant que voulu")
+    programme.add_argument("--mesures", help="les seules mesures chiffrées retenues, par id, "
+                                             "séparées par des virgules")
+    programme.add_argument("--rho", type=float, help="la réalisation des annonces du "
+                                                      "candidat, dans [0, 1] : la couche "
+                                                      "déclarée, à part (D-319)")
+    programme.add_argument("--hypotheses", help="un JSON des hypothèses de la chaîne (θ, "
+                                                "croissance, taux, dépense, horizon, "
+                                                "salaires) : sans lui, rien n'est simulé")
+    programme.add_argument("--sortie", help="où écrire le rapport JSON")
+    programme.set_defaults(func=cmd_programme)
 
     site = subcommands.add_parser(
         "site", help="le site statique des études : sans calcul, sans script (but 7, D-304)")
