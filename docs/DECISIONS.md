@@ -25635,7 +25635,7 @@ le bas de Le Pen, portaient des valeurs décimales : ils avaient rendu 0 € et 
 diffère est greffée, et l'arbre greffé est celui de la réforme. Un test, vu échouer sur le
 code de D-328, le tient.
 
-**Les passes.** Une étude se lit sur un seul code : les 73 passes reprennent au début, sur le
-commit qui porte cette entrée, depuis un worktree figé neuf. Les 46 rapports du commit
+**Les passes.** Une étude se lit sur un seul code : les 73 passes reprennent au début, sur
+le commit qui porte cette entrée, depuis un worktree figé neuf. Les 46 rapports du commit
 `3b02ae4` ne sont pas gardés ; la reprise doit les redonner à l'identique, et le résultat
 le dira. La méthode et le pronostic de D-328 ne changent pas.
