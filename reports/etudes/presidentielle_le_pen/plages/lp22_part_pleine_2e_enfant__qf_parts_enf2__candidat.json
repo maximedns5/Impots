@@ -1,0 +1,68 @@
+{
+  "programme": "le_pen",
+  "mesure": "lp22_part_pleine_2e_enfant",
+  "champ": "qf_parts_enf2",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "qf_parts_enf2": 1.0
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 2916033217.4521484,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.0009463382128735986,
+      0.0018822303986310018,
+      0.002807791864338105,
+      0.003723136644259162,
+      0.00462837751390599,
+      0.005523626003933968,
+      0.006408992413881931,
+      0.007284585825761747,
+      0.008150514117498897,
+      0.00900688397622229
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-02",
+  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "dirty": false,
+  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre"
+}

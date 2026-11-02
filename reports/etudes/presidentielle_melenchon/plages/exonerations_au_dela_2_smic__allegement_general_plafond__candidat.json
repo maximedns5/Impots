@@ -1,0 +1,68 @@
+{
+  "programme": "melenchon",
+  "mesure": "exonerations_au_dela_2_smic",
+  "champ": "allegement_general_plafond",
+  "point": "candidat",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "allegement_general_plafond": 2.0
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": -9524466860.632324,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      -0.0030909685436779633,
+      -0.006147817846704928,
+      -0.009170924529730895,
+      -0.012160661056129785,
+      -0.01511739577788851,
+      -0.018041492980990004,
+      -0.020933312930295545,
+      -0.0237932119139308,
+      -0.02662154228718361,
+      -0.0294186525159148
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-02",
+  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "dirty": false,
+  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre"
+}

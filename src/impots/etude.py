@@ -575,8 +575,9 @@ class _Programme:
         p, c = self.programme, self.programme.couverture()
         many = "s" if c["chiffrees"] > 1 else ""
         part = f"{c['part_des_parametrees'] * 100:.0f} %"
-        return (f"{p.candidat} ({p.parti}) est candidat déclaré à l'élection présidentielle "
-                f"de 2027. Son programme, relevé le {p.releve.strftime('%d/%m/%Y')}, porte "
+        return (f"{p.candidat}, {p.parti}, a déclaré sa candidature à l'élection "
+                f"présidentielle de 2027. Son programme, relevé le "
+                f"{p.releve.strftime('%d/%m/%Y')}, porte "
                 f"{n(c['mesures'], 'programme')} mesures, dont "
                 f"{n(c['parametrees'], 'programme')} énoncent un paramètre. Cet outil en "
                 f"chiffre {n(c['chiffrees'], 'texte')}, soit {n(part, 'texte')} des mesures "
@@ -603,7 +604,7 @@ class _Programme:
 
         w("La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une, "
           "avant que le juge ne publie. Le juge est le chiffrage des programmes de "
-          "l'Institut Montaigne, annoncé au premier trimestre 2027.")
+          "l'Institut Montaigne, attendu au premier trimestre 2027.")
         w("")
         for m in self.programme.chiffrees():
             name = f"pres2027_{self.programme.slug}_{m.id}"
