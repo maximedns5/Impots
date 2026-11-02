@@ -940,8 +940,15 @@ def cmd_chiffrage_register(args: argparse.Namespace) -> int:
 
     print(f"  chiffrage de « {args.scenario} » sur {args.sample:,} ménages…"
           .replace(",", " "), flush=True)
+    # The consumption imputed for a year past the national accounts follows the prices
+    # of the same set that ages the incomes (D-323).
+    prix_au_dela = None
+    if vieillissement is not None:
+        from impots import hypotheses
+
+        prix_au_dela = dict(hypotheses.jeu(vieillissement["jeu"]).prix)
     priced = scenarios_module.mechanical_price(
-        scenario, frame=frame, households=args.sample)
+        scenario, frame=frame, households=args.sample, prix_au_dela=prix_au_dela)
 
     try:
         path = chiffrages_module.register(

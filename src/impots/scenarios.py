@@ -98,7 +98,7 @@ def _scenario_path(directory: Path, name: str) -> Path:
 
 
 #: What a scenario may ask the population to be handed before it is priced (D-306).
-IMPUTATIONS = frozenset({"ij"})
+IMPUTATIONS = frozenset({"ij", "consommation"})
 
 
 @dataclass(frozen=True)
@@ -639,7 +639,8 @@ def _frame() -> Any:
 
 
 def mechanical_price(scenario: Scenario, *, frame: Any = None,
-                     households: int | None = None) -> dict[str, Any]:
+                     households: int | None = None,
+                     prix_au_dela: dict[int, float] | None = None) -> dict[str, Any]:
     """Price one scenario's MECHANICAL cost. The `price` argument `compare` expects.
 
     Returns only the mechanical layer. The banded layers are deliberately absent rather
@@ -654,6 +655,8 @@ def mechanical_price(scenario: Scenario, *, frame: Any = None,
         frame if frame is not None else _frame(), year=scenario.year,
         reform=scenario.reform, tier="full",
         sample=households or QUICK_TIER_HOUSEHOLDS,
-        impute_ij="ij" in scenario.imputations)
+        impute_ij="ij" in scenario.imputations,
+        impute_consommation="consommation" in scenario.imputations,
+        prix_au_dela=prix_au_dela)
     agg = aggregate_module.aggregate(result.households)
     return {"mechanical": float(agg.reform_cost or 0.0), "deltas": dict(agg.deltas)}

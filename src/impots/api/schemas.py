@@ -937,6 +937,39 @@ class ReformSpec(BaseModel):
     # uncapped rates, Agirc-Arrco, the CEG and the CET, each multiplied by this factor (1
     # leaves them, 0 removes them). Not the employer's.
     cotisations_salariales_retraite_echelle: Annotated[float, Field(ge=0.0, le=2.0)] | None = None
+    # The consumption taxes paid by households (D-323, but 12). They move nothing in the
+    # tax-benefit tree: the population pass prices them on the consumption it imputes
+    # (`impots.consommation`), at constant volumes. A scenario that sets one must ask for
+    # the « consommation » imputation, or the pass refuses.
+    tva_taux_normal: Annotated[float, Field(ge=0.0, le=0.5)] | None = None
+    tva_taux_intermediaire: Annotated[float, Field(ge=0.0, le=0.5)] | None = None
+    tva_taux_reduit: Annotated[float, Field(ge=0.0, le=0.5)] | None = None
+    tva_taux_super_reduit: Annotated[float, Field(ge=0.0, le=0.5)] | None = None
+    tva_postes: dict[str, Annotated[float, Field(ge=0.0, le=0.5)]] | None = None
+    """A rate for one poste of the Budget de famille survey (its five-position COICOP
+    code) or a named group (`impots.consommation.GROUPES`: energie, carburants,
+    electricite, gaz, fioul, restauration). Applied after the four rate knobs."""
+    accise_gazole: Annotated[float, Field(ge=0.0, le=3.0)] | None = None
+    accise_essence: Annotated[float, Field(ge=0.0, le=3.0)] | None = None
+    accise_fioul: Annotated[float, Field(ge=0.0, le=3.0)] | None = None
+    """EUR per litre."""
+    accise_electricite: Annotated[float, Field(ge=0.0, le=200.0)] | None = None
+    accise_gaz: Annotated[float, Field(ge=0.0, le=200.0)] | None = None
+    """EUR per MWh."""
+
+    @field_validator("tva_postes")
+    @classmethod
+    def _check_tva_postes(cls, value: dict[str, float] | None) -> dict[str, float] | None:
+        if value is None:
+            return value
+        from impots.consommation import GROUPES, postes
+
+        connus = set(GROUPES) | {p.code for p in postes()}
+        inconnus = sorted(set(value) - connus)
+        if inconnus or not value:
+            raise ValueError(f"tva_postes : {inconnus or 'aucun'} ; postes et groupes connus "
+                             f"dans impots.consommation")
+        return value
 
     @model_validator(mode="after")
     def _check_revalorisations(self) -> ReformSpec:

@@ -386,6 +386,8 @@ def run(
     impute_capital: bool = False,
     capital_index: float | None = None,
     impute_ij: bool = False,
+    impute_consommation: bool = False,
+    prix_au_dela: dict[int, float] | None = None,
 ) -> RunResult:
     """Run the population through current law and, optionally, one reform.
 
@@ -414,6 +416,15 @@ def run(
     `margins.SICK_PAY_BY_BRANCH` — and a frame transformation, so it costs no pass. It is
     refused for another year, by `population.ij`, before any pass.
     """
+    from impots import consommation as conso_module
+
+    if conso_module.touche(reform) and not impute_consommation:
+        raise WiringError(
+            "la réforme règle la TVA ou une accise, que seule la consommation imputée "
+            "porte : demander l'imputation « consommation » (D-323)")
+    conso_reform = reform
+    if reform is not None and conso_module.touche(reform):
+        reform = conso_module.sans_consommation(reform)
     if capital_index is not None and (not impute_capital or not capital_index > 0):
         raise ValueError(
             f"indice du capital {capital_index} : il vieillit l'assiette imputée, et ne "
@@ -535,6 +546,20 @@ def run(
         "n_dependants": persons_per_household["n_dependants"].to_numpy(),
         **{key: values for key, values in columns.items()},
     })
+
+    if conso_reform is not None and not conso_reform.is_empty() and (
+            reform is None or reform.is_empty()):
+        # A reform of consumption taxes alone moves nothing in the tree: its rows are the
+        # baseline's, and the consumption layer below carries the whole of it (D-323).
+        households = households.with_columns(
+            [pl.col(key).alias(f"{key}_reform") for key in baseline_rows])
+    if impute_consommation:
+        started = time.perf_counter()
+        couche = conso_module.colonnes(households, year, conso_reform, prix_au_dela)
+        households = households.with_columns(
+            [pl.Series(key, values) for key, values in couche.items()])
+        columns.update(couche)
+        timings["consommation_s"] = round(time.perf_counter() - started, 2)
 
     guards["nan_columns"] = [
         key for key in columns if not np.isfinite(columns[key]).all()

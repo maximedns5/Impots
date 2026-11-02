@@ -36,7 +36,13 @@ INSTRUMENTS = (
     "ir_avant_niches", "reductions", "credits_impot", "cdhr",
     "af", "ppa", "rsa", "aide_logement", "aefa", "cf", "asf",
     "crds_pfam", "crds_logement", "crds_mini", "revenu_disponible",
+    # The consumption taxes, only when the consumption is imputed (D-323): receipts the
+    # state collects that disposable income, taken before indirect taxes, does not show.
+    "tva_menages", "accises_energie", "consommation_imputee",
 )
+#: The receipts on consumption: a fall in them is a cost, and a loss of purchasing power
+#: for the household that pays them.
+CONSOMMATION = ("tva_menages", "accises_energie")
 
 #: Weighted counts rather than euro totals — reported alongside, never summed in.
 COUNTS = ("n_foyers", "n_foyers_imposes", "n_persons", "n_dependants",
@@ -181,9 +187,11 @@ def _public_cost(deltas: dict[str, float], employer_delta: float) -> float | Non
     employer delta is also a cost — hence the subtraction.
     """
     household = deltas.get("revenu_disponible")
-    if household is None and not employer_delta:
+    conso = sum(deltas.get(name, 0.0) for name in CONSOMMATION)
+    if household is None and not employer_delta and not any(
+            name in deltas for name in CONSOMMATION):
         return None
-    return (household or 0.0) - employer_delta
+    return (household or 0.0) - employer_delta - conso
 
 
 def aggregate(result_households: pl.DataFrame) -> Aggregates:
@@ -246,6 +254,15 @@ def aggregate(result_households: pl.DataFrame) -> Aggregates:
         else None
     )
     delta = None if reform_values is None else reform_values - baseline
+    if delta is not None:
+        # What the household loses in consumption taxes, at constant volumes (D-323):
+        # its purchasing power moves by disposable income less those taxes.
+        for name in CONSOMMATION:
+            if f"{name}_reform" in frame.columns:
+                paid = (frame[f"{name}_reform"].to_numpy().astype(np.float64)
+                        - frame[name].to_numpy().astype(np.float64))
+                delta = delta - paid
+                reform_values = reform_values - paid
 
     rows: list[DecileRow] = []
     for index in range(N_DECILES):

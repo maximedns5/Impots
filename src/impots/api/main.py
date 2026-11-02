@@ -872,6 +872,7 @@ def _run_population(request: Any, frame: Any,
     """The quick-tier pass and its aggregate: `(run, aggregate)`. Shared by
     `/population/simulate` and `/predictif/simulate`. `capital_index` ages the imputed
     capital to the year, when the frame was aged to it (D-249)."""
+    from impots import consommation
     from impots.population import aggregate as aggregate_module
     from impots.population.runner import run as population_run
     from impots.population.to_openfisca import WiringError
@@ -884,6 +885,9 @@ def _run_population(request: Any, frame: Any,
             impute_niches=getattr(request, "impute_niches", False),
             impute_capital=capital,
             capital_index=capital_index if capital else None,
+            # Whenever the reform moves a consumption tax, which bites on nothing else
+            # (D-323), as the capital is imputed whenever it moves the PFU (D-249).
+            impute_consommation=consommation.touche(request.reform),
         )
     except WiringError as error:  # pragma: no cover - guarded upstream
         raise HTTPException(status_code=500, detail=str(error)) from error

@@ -1,0 +1,131 @@
+code,libelle,euros_2017,taux,taux_bas,taux_haut,mixte,energie,raison,reference
+01111,Riz sous toutes ses formes et produits à base de riz,29,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01112,Pain et autres produits de boulangerie et de viennoiserie yc biscui…,498,0.055,0.055,0.055,0,,,"5,5 [A1 ; BOFiP §210 : biscuits et viennoiseries à 50 % de chocolat au plus]"
+01113,Pâtes alimentaires sous toutes leurs formes et plats à base de pâtes,62,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01114,"Préparations telles que pâte à pâtisser, gâteau industriel, tarte,…",146,0.055,0.055,0.1,1,,"vendu à emporter, sauf consommation immédiate","5,5 [A1] ; 10 si vendu pour consommation immédiate [279 n]"
+01115,"Autres céréales et produits à base de céréales yc farine, semoule,…",54,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01121,Viande bovine fraîche ou surgelée,258,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01122,Viande porcine fraîche ou surgelée,75,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01123,Viande ovine ou caprine fraîche ou surgelée,32,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01124,Viande de volaille fraîche ou surgelée,158,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01125,"Viande séchée salée ou fumée, charcuterie et abats, frais ou surgel…",318,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01126,"Conserve de viande, produit de transformation des viandes, plat pré…",111,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01127,"Autres viandes comestibles fraîches ou surgelées (cheval, lapin, gi…",12,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01130,Poissons frais,110,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01131,Poissons surgelés ou congelés (hors poissons panés ou cuisinés),18,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01132,"Fruits de mer frais ou surgelés (yc cuits, nc cuisinés )",59,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01133,"Poissons et fruits de mer salés, fumés, séchés yc surgelé",24,0.055,0.055,0.2,1,,le caviar seul à 20 %,"5,5 [A1] ; caviar 20 [A1, exclusion]"
+01134,Conserves de poisson et de fruits de mer et plats préparés à base d…,85,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01145,Fromage et lait caillé,282,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01147,Œufs,45,0.055,0.055,0.055,0,,,"5,5 [A1]"
+0114A,"Lait frais, condensé, en poudre",72,0.055,0.055,0.055,0,,,"5,5 [A1]"
+0114B,Yaourts et produits laitiers,177,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01151,Beurre,42,0.055,0.055,0.055,0,,,"5,5 [A1]"
+0115A,Huiles alimentaires,35,0.055,0.055,0.055,0,,,"5,5 [A1]"
+0115B,Margarine et autres graisses alimentaires,13,0.2,0.055,0.2,1,,"margarines et graisses végétales, l'essentiel du poste","MIXTE : 20 margarines et graisses végétales [A1 ; BOFiP §230] ; 5,5 graisses animales [A1]"
+01161,Agrumes frais,63,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01162,Bananes fraîches,27,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01168,Fruits séchés,48,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01169,Fruits au sirop et fruits surgelés,7,0.055,0.055,0.055,0,,,"5,5 [A1]"
+0116A,Autres fruits frais,194,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01175,Légumes secs,7,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01176,Légumes surgelés non cuisinés,12,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01177,"Légumes et plats à base de légume,  en conserve (sans pommes de terre)",53,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01178,"Légumes préparés et plats à base de légumes,  frais et surgelés (sa…",41,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01179,"Pomme de terre, autres tubercules, produits à base de pommes de ter…",82,0.055,0.055,0.055,0,,,"5,5 [A1]"
+0117A,Legumes frais,255,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01181,Sucre yc édulcorants,15,0.055,0.055,0.055,0,,,"5,5 [A1 ; BOFiP §170]"
+0118A,Produits à base de sucre et cacao,246,0.055,0.055,0.2,1,,"confitures, miel, glaces, chocolat au lait ; le reste à 20 %","MIXTE : 5,5 confitures, miel, glaces, chocolat et chocolat de ménage au lait, pâtes à tartiner [A1 ; BOFiP §190, §210] ; 20 confiserie, chocolat au lait ou blanc, chocolats fourrés [A1 ; BOFiP §150-160, §200-220]"
+0119Z,Autres produits alimentaires,152,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01213,Cacao et chocolat en poudre,6,0.055,0.055,0.055,0,,,"5,5 préparations pour petit déjeuner [BOFiP §210] ; cacao en poudre pur : non trouvé"
+0121A,"Café, thé, plantes à infusion",121,0.055,0.055,0.055,0,,,"5,5 [A1]"
+01221,Eaux minérales,66,0.055,0.055,0.055,0,,,"5,5 [A1 ; BOFiP §140, §330]"
+01222,Boissons gazeuses,48,0.055,0.055,0.055,0,,,"5,5 [A1 ; BOFiP §140 : « autres boissons » de 1,2 % vol. au plus, sodas non nommés]"
+0122A,Jus de fruits et de légumes,101,0.055,0.055,0.055,0,,,"5,5 [A1 ; BOFiP §140]"
+0131Z,Autres dépenses d alimentation,169,0.055,0.055,0.055,0,,,"5,5 par défaut [A1] (cérémonies, séjours hors domicile, cadeaux : contenu non décrit)"
+02111,Spiritueux et liqueurs,100,0.2,0.2,0.2,0,,,20 [278 ; exclusion de A1] + droits sur les alcools (hors but)
+0212A,"Vins, apéritifs à base de vin, champagne",228,0.2,0.2,0.2,0,,,20 [278] + droits sur les alcools (hors but)
+02131,Bière et boissons à base de bière,62,0.2,0.2,0.2,0,,,20 [278] + droits sur les alcools (hors but)
+02411,"Dépenses de boissons alcoolisées, tabac et stupéfiants : cadeau off…",4,0.2,0.2,0.2,0,,,20 [278]
+03111,Tissus pour vêtements,4,0.2,0.2,0.2,0,,,20 [278]
+0312Z,"Vêtements homme, femme, enfant",897,0.2,0.2,0.2,0,,,20 [278]
+03131,Accessoires du vêtement et mercerie,42,0.2,0.2,0.2,0,,,20 [278]
+03141,"Nettoyage, réparation et location de vêtements",17,0.2,0.2,0.2,0,,,20 [278]
+0331Z,Autres dépenses d habillement,130,0.2,0.2,0.2,0,,,20 [278]
+04111,Loyers nets des aides au logement (hors charges ou avec charges non…,1984,0,0,0,0,,,EXONÉRÉ [261 D 2° : location de logements nus]
+04121,Loyers (hors charges ou avec charges non isolables) des locataires…,48,0,0,0.1,1,,loyers d'habitation exonérés ; meublés de tourisme à 10 %,"EXONÉRÉ [261 D 2°, 4°] ; 10 meublés de tourisme avec services [279 a]"
+0431Z,Produits destinés aux travaux courants d’entretien et de réparation…,176,0.2,0.1,0.2,1,,fournitures achetées par le ménage ; travaux facturés à 10 %,"MIXTE : 20 fournitures achetées par le ménage [278] ; 10 travaux d'entretien facturés par une entreprise, logement de plus de deux ans [279-0 bis] ; 5,5 rénovation énergétique [278-0 bis A]"
+04431,"Factures d’eau résidence principale, autre logement, dépendance, te…",252,0.055,0.055,0.1,1,,eau potable ; assainissement à 10 %,"MIXTE : 5,5 eau potable, abonnement et redevances compris [A1 ; BOFiP §100] ; 10 assainissement [279 b] ; 10 frais d'accès au réseau [BOFiP §100]"
+04441,Charges collectives relatives au logement (payées isolément du loye…,589,0.1,0,0.2,1,,"charges collectives : entretien à 10 %, personnel hors TVA, chauffage à 20 % ; composition non publiée","MIXTE : chauffage collectif 20 ou 5,5 [278 ; B], eau 5,5, entretien 10 [279-0 bis], personnel hors TVA ; composition non publiée"
+04500,Facture électricité + gaz (non dissociables),182,0.2,0.2,0.2,0,,,20 [278] depuis le 1/8/2025 + accises électricité et gaz
+04511,"Facture d électricité résidence principale, autre logement, garage,…",751,0.2,0.055,0.2,1,electricite,"20 % sur toute la facture depuis le 1/8/2025 ; l'abonnement était à 5,5 % avant","20 [278] depuis le 1/8/2025 + accise électricité ; avant : abonnement (≤ 36 kVA) et CTA à 5,5"
+0452Z,"Gaz et combustibles liquéfiés (gaz de ville, butane...)",258,0.2,0.055,0.2,1,gaz,"20 % sur toute la facture depuis le 1/8/2025 ; l'abonnement était à 5,5 % avant","20 [278] + accise gaz naturel ou GPL combustible ; abonnement gaz à 5,5 jusqu'au 31/7/2025"
+0453Z,Combustibles liquides,124,0.2,0.2,0.2,0,fioul,,20 [278] + accise fioul domestique
+04611,Autres dépenses d’habitation : cadeau offert (à destination d’un au…,69,0,0,0.2,1,,cadeau d'un loyer exonéré ou d'un bien à 20 %,INDÉTERMINÉ (cadeau à un autre ménage : loyer exonéré ou bien à 20)
+0511Z,"Meubles, articles d’ameublement et de décoration",413,0.2,0.2,0.2,0,,,20 [278]
+0521Z,Articles de literie et autres articles de ménage en textile,86,0.2,0.2,0.2,0,,,20 [278]
+0531Z,Gros appareils ménagers électriques,171,0.2,0.055,0.2,1,,"pompes à chaleur posées à 5,5 % depuis 2026","20 [278] ; 5,5 PAC air/air fournie et posée [278-0 bis A, LFI 2026 art. 92]"
+05321,Petit électroménager,25,0.2,0.2,0.2,0,,,20 [278]
+0541Z,"Verrerie, vaisselle, ustensiles de cuisine et article de ménage ou…",80,0.2,0.2,0.2,0,,,20 [278]
+0551Z,"Gros outillage de bricolage, de jardinage et leur réparation",75,0.2,0.2,0.2,0,,,20 [278]
+0552Z,"Petit outillage et accessoires de bricolage et jardinage, matériaux…",134,0.2,0.2,0.2,0,,,20 [278]
+0561Z,Articles de ménage non durables,234,0.2,0.2,0.2,0,,,20 [278]
+0562Z,Services domestiques et autres services pour le logement,282,0,0,0.1,1,,emploi direct hors TVA ; organismes déclarés à 10 %,"MIXTE : hors TVA emploi direct d'un salarié ; 10 organismes de services à la personne déclarés [279 i] ; 5,5 aide aux personnes âgées ou handicapées [D] ; 20 blanchisserie et autres services [278]"
+0571Z,Autres dépenses en équipement,48,0.2,0.2,0.2,0,,,20 [278]
+0611Z,"Produits pharmaceutiques, appareils et matériels thérapeutiques",255,0.021,0.021,0.2,1,,"médicaments remboursables ; non remboursables à 10 %, appareillages à 5,5 %, le reste à 20 %","MIXTE : 2,1 médicaments remboursables [281 octies] ; 10 médicaments non remboursables [278 quater] ; 5,5 appareillages pour handicapés [A 2°], compléments alimentaires nutritionnels [BOFiP §280] ; 20 lunettes et lentilles [BOI-TVA-LIQ-30-10-50], parapharmacie"
+06211,Consultations des médecins généralistes ou spécialistes hors hospit…,103,0,0,0,0,,,EXONÉRÉ [261 4 1°]
+06221,"Dentiste, orthodontie",62,0,0,0,0,,,EXONÉRÉ [261 4 1°]
+0623Z,"Services paramédicaux (labo, radio, soins des auxiliaires médicaux…",55,0,0,0,0,,,"EXONÉRÉ [261 4 1°] (laboratoires, auxiliaires médicaux) ; location de matériel taxable"
+06311,Services et soins hospitaliers,26,0,0,0,0,,,EXONÉRÉ ou HORS CHAMP (hôpital public [256 B])
+0641Z,Autres dépenses de santé,9,0,0,0,0,,,EXONÉRÉ par défaut [261 4 1°] (contenu non décrit)
+0711Z,Achats d automobiles,1814,0.2,0.2,0.2,0,,,"MIXTE : 20 sur le neuf [278] ; occasion : TVA sur la marge du professionnel [297 A], aucune entre particuliers"
+07121,Achats de motocycles neufs et occasion,75,0.2,0.2,0.2,0,,,MIXTE : 20 neuf [278] ; occasion comme 0711Z
+07131,Achats de cycles neufs et occasion,36,0.2,0.2,0.2,0,,,MIXTE : 20 neuf [278] ; occasion comme 0711Z
+07211,"Pièces détachées, pneus et accessoires pour les véhicules personnel…",132,0.2,0.2,0.2,0,,,20 [278]
+07221,"Carburants, électricité, huiles, lubrifiants…",1108,0.2,0.2,0.2,0,carburants,,20 [278] + accises carburants ; Corse 13 [297]
+07231,"Réparations, dépannages, révisions, lavage, entretien et contrôle t…",289,0.2,0.2,0.2,0,,,20 [278]
+0724Z,Autres services liés à l’utilisation de véhicules personnels,136,0.2,0.2,0.2,0,,,"20 [278] (parking, péages, auto-école, location)"
+07361,Autres services de transport (yc déménagement),15,0.2,0.2,0.2,0,,,20 [278] (déménagement)
+0741Z,Autres dépenses de transport,363,0.2,0,0.2,1,,"séjours et cadeaux, contenu non décrit","INDÉTERMINÉ (séjours hors domicile, cadeaux)"
+08111,"Services postaux (yc timbres, enveloppes)",23,0,0,0.2,1,,service universel postal exonéré ; autres envois à 20 %,"EXONÉRÉ service universel postal [261 4, alinéa non vérifié] ; autres envois 20"
+08121,"Achats et réparation téléphones fixes ou portables, télécopieurs et…",86,0.2,0.2,0.2,0,,,20 [278]
+08131,"Services de téléphone et fax, internet, recharges téléphoniques",626,0.2,0.2,0.2,0,,,20 [278]
+0911Z,"Appareils de réception, d’enregistrement et de reproduction, du son…",93,0.2,0.2,0.2,0,,,20 [278]
+09131,"Micro-ordinateurs, tablettes, matériels et accessoires informatique…",90,0.2,0.2,0.2,0,,,20 [278]
+09141,Supports vierges ou enregistrés pour l’image et le son (yc téléchar…,49,0.2,0.2,0.2,0,,,20 [278]
+0931Z,"Jeux, jouets et passe temps, articles de sport, de camping et de lo…",168,0.2,0.2,0.2,0,,,20 [278]
+09321,"Horticulture, accessoires et frais de livraison",146,0.1,0.1,0.2,1,,plantes et fleurs ; accessoires et livraison à 20 %,MIXTE : 10 plantes et fleurs [278 bis ; BOI-TVA-LIQ-30-10-35] ; 20 accessoires et livraison [278]
+09411,"Services sportifs et récréatifs (spectacles sportifs, participation…",329,0.1,0,0.1,1,,"droits d'admission ; spectacles sportifs à 5,5 %, cotisations d'associations exonérées","MIXTE : 5,5 spectacles sportifs [J], équitation [O] ; 10 droits d'admission [279 b nonies] ; EXONÉRÉ cotisations d'associations [261 7 1°] ; 20 salles de sport, location, jeux vidéo [278]"
+0942Z,Services culturels,466,0.055,0.021,0.1,1,,"cinéma, théâtre, concerts ; musées à 10 %, premières représentations à 2,1 %","MIXTE : 5,5 cinéma [G], théâtre et concerts [F], zoos [L] ; 2,1 140 premières représentations [281 quater] ; 10 musées et expositions [279 b nonies], abonnements TV [279 b octies] ; 20 smartbox et autres [278]"
+09431,"jeux de hasard (loto, tiercé …)",38,0,0,0,0,,,EXONÉRÉ [261 E] (jeux de hasard)
+09511,Livres yc e-books,118,0.055,0.055,0.055,0,,,"5,5 [A 3°] (livres, numériques compris)"
+09521,Journaux et périodiques yc par abonnement,117,0.021,0.021,0.2,1,,publications de presse ; autres périodiques à 20 %,"2,1 [298 septies] (publications de presse) ; 20 autres périodiques"
+09531,"Imprimés divers (carte postale, de visite, poster, calendrier, cart…",13,0.2,0.2,0.2,0,,,20 [278]
+09541,Articles de papeterie et de dessin (yc toner pour imprimante),72,0.2,0.2,0.2,0,,,20 [278]
+09611,"Voyages à forfait, week-end, excursions… yc voyage scolaire",367,0,0,0.2,1,,régime de la marge : 20 % sur la seule marge de l'agence,"MARGE : TVA à 20 sur la marge de l'agence, part hors UE exonérée [266 1 e, à vérifier]"
+0971Z,Autres dépenses de loisirs,239,0.2,0,0.2,1,,"séjours et cadeaux, contenu non décrit","INDÉTERMINÉ (séjours hors domicile, cadeaux)"
+10111,Enseignement maternel et primaire (scolarité et cours d’alphabétisa…,22,0,0,0,0,,,EXONÉRÉ [261 4 4° a] ou HORS CHAMP (public [256 B])
+10121,Enseignement secondaire (scolarité et inscription aux concours de n…,25,0,0,0,0,,,EXONÉRÉ [261 4 4° a] ou HORS CHAMP (public [256 B])
+10131,Enseignement supérieur et frais d’inscription aux concours des gran…,116,0,0,0,0,,,EXONÉRÉ [261 4 4° a] ou HORS CHAMP (public [256 B])
+10141,Enseignement ne correspondant à aucun niveau particulier (cours par…,24,0,0,0.1,1,,enseignement exonéré ; soutien scolaire déclaré à 10 %,"MIXTE : EXONÉRÉ [261 4 4° a, b] ; 10 soutien scolaire par un organisme de services à la personne déclaré [279 i]"
+1015Z,Autres dépenses d’enseignement,28,0,0,0,0,,,EXONÉRÉ par défaut [261 4 4° a]
+11111,Repas pris dans un restaurant,582,0.1,0.1,0.2,1,,repas et boissons sans alcool ; alcool à 20 %,MIXTE : 10 repas et boissons sans alcool [279 m] ; 20 boissons alcooliques [278]
+11112,"Repas pris dans un café, bars ou assimilé",449,0.1,0.1,0.2,1,,consommations sans alcool ; alcool à 20 %,MIXTE : 10 consommations sans alcool sur place [279 m] ; 20 boissons alcooliques [278]
+11121,Cantines scolaire et professionnelle,361,0.055,0,0.1,1,,repas fournis par un prestataire ; cantine gérée par l'établissement exonérée,"MIXTE : 5,5 repas fournis dans les écoles par un prestataire [E] ; EXONÉRÉ cantine gérée par l'établissement d'enseignement [261 4 4°] ; 10 cantines d'entreprise [279 a bis] ; HORS CHAMP régie publique [256 B]"
+1113Z,Autres dépenses de restauration,257,0.1,0.1,0.1,0,,,"INDÉTERMINÉ (séjours hors domicile, cadeaux) ; 10 par défaut [279 m]"
+11211,Services d hébergement,343,0.1,0,0.1,1,,hôtellerie ; location meublée sans services exonérée,10 [279 a] ; EXONÉRÉ location meublée sans services [261 D 4°]
+12111,"Salons de coiffure et esthétique corporelle (yc cures thermales, ta…",339,0.2,0.1,0.2,1,,coiffure et esthétique ; soins thermaux à 10 %,"MIXTE : 20 coiffure, esthétique [278] ; 10 soins thermaux [279 a quinquies]"
+1212Z,"Appareils, articles et produits pour les soins personnels",418,0.2,0.055,0.2,1,,"le poste ; protections hygiéniques et préservatifs à 5,5 %","MIXTE : 20 [278] ; 5,5 protections hygiéniques [A 1° bis], préservatifs [A 1° ter]"
+12311,"Articles de bijouterie, de joaillerie et d’horlogerie (yc leur répa…",55,0.2,0.2,0.2,0,,,20 [278]
+1232Z,"Autres effets personnels : maroquinerie, accessoires (briquet, para…",71,0.2,0.2,0.2,0,,,20 [278]
+12331,Autres biens et services offerts  (à des personnes extérieures au m…,45,0.2,0.2,0.2,0,,,INDÉTERMINÉ (cadeaux) ; 20 par défaut
+12411,"Services de protection sociale (assistante maternelle, crèche, mais…",313,0,0,0.1,1,,assistantes maternelles salariées et établissements publics hors TVA,"MIXTE : HORS TVA assistante maternelle salariée, établissements publics [256 B] ; EXONÉRÉ organismes sans but lucratif [261 7 1°] ; 5,5 hébergement en établissement pour personnes âgées ou handicapées [C]"
+12511,"Assurances vie, décès",38,0,0,0,0,,,EXONÉRÉ [261 C 2°] + taxe sur les conventions d'assurance (hors but)
+12521,Assurances liées au logement,375,0,0,0,0,,,EXONÉRÉ [261 C 2°] + taxe sur les conventions d'assurance (hors but)
+12531,Assurances liées à la santé,1101,0,0,0,0,,,EXONÉRÉ [261 C 2°] + taxe sur les conventions d'assurance (hors but)
+12541,Assurances liées aux transports (yc assurance voyage),676,0,0,0,0,,,EXONÉRÉ [261 C 2°] + taxe sur les conventions d'assurance (hors but)
+12551,"Autres assurances (pack assurance, scolaire, dépendance, prévoyance…",148,0,0,0,0,,,EXONÉRÉ [261 C 2°] + taxe sur les conventions d'assurance (hors but)
+12611,Services financiers,147,0,0,0,0,,,EXONÉRÉ [261 C 1°] ; certains frais taxables
+1271Z,Autres services,597,0.2,0.2,0.2,0,,,20 [278] ; la caution de location (12712) n'est pas une consommation
+12811,Autres dépenses occasionnées par une cérémonie,26,0.2,0.2,0.2,0,,,20 par défaut [278]
+12911,Dépenses SAI des personnes vivant hors du domicile au moins un jour…,22,0.2,0.2,0.2,0,,,INDÉTERMINÉ ; 20 par défaut
