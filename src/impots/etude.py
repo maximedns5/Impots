@@ -333,6 +333,10 @@ ETAGES = {
     "texte": "ce que le texte de loi, ou son triage, compte",
     "hypothèse": "ce que l'étude suppose : son scénario, son cadre",
     "déclaré": "une tolérance déclarée avant le chiffrage",
+    "programme": "ce que le programme du candidat énonce, relevé et sourcé dans "
+                 "`programmes/`",
+    "annoncé": "un montant que le candidat annonce lui-même, que le moteur ne vérifie pas "
+               "et n'additionne jamais à son chiffrage (D-319)",
 }
 _TOKEN = re.compile("\ue000(\\d+)\ue001")
 
@@ -559,7 +563,21 @@ class _Programme:
         return self.programme
 
     def chapeau(self, entries: list[dict[str, Any]], last: int, n: Nombres) -> str:
-        raise EtudeError("la page d'un programme s'écrit au but 13, après ses passes.")
+        from impots import programme_chiffrage as pc
+
+        p, c = self.programme, self.programme.couverture()
+        many = "s" if c["chiffrees"] > 1 else ""
+        part = f"{c['part_des_parametrees'] * 100:.0f} %"
+        return (f"{p.candidat} ({p.parti}) est candidat déclaré à l'élection présidentielle "
+                f"de 2027. Son programme, relevé le {p.releve.strftime('%d/%m/%Y')}, porte "
+                f"{n(c['mesures'], 'programme')} mesures, dont "
+                f"{n(c['parametrees'], 'programme')} énoncent un paramètre. Cet outil en "
+                f"chiffre {n(c['chiffrees'], 'texte')}, soit {n(part, 'texte')} des mesures "
+                f"paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part "
+                f"chiffrée, ces {n(c['chiffrees'], 'texte')} mesure{many} ensemble, trois "
+                f"réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les "
+                f"comportements et l'économie pris en compte ; ce qu'elle fait à la dette en "
+                f"{last}. **{pc.AVERTISSEMENT}**")
 
     def label(self, entry: dict[str, Any]) -> str:
         return "la part chiffrée"
@@ -570,8 +588,168 @@ class _Programme:
     def first_year(self, year: int) -> str:
         return f"la première année ({year})"
 
+    # -- what the law texts do not have ------------------------------------------ #
+
+    def official(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:
+        """Each priced measure's own case, preregistered before the judge (D-321, D-326)."""
+        from impots import fiche, preregistration
+
+        w("La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une, "
+          "avant que le juge ne publie. Le juge est le chiffrage des programmes de "
+          "l'Institut Montaigne, annoncé au premier trimestre 2027.")
+        w("")
+        for m in self.programme.chiffrees():
+            name = f"pres2027_{self.programme.slug}_{m.id}"
+            case = preregistration.load(name)
+            tol = case.tolerance
+            state = ("le juge n'a pas publié" if case.comparator is None else
+                     f"noté : {preregistration.grade(case).verdict}")
+            w(f"* `{name}`, enregistré le {case.pre_registered[:10]} : "
+              f"{n(fiche._eur(case.mechanical_eur), 'L2')} en {case_year(case)}, tolérance "
+              f"de {n(f'{tol.relative * 100:.0f} %', 'déclaré')} ou "
+              f"{n(fiche._width(tol.absolute_eur), 'déclaré')} ; {state}.")
+        w("")
+
     def refusals(self, w: Any, entries: list[dict[str, Any]], n: Nombres) -> None:
-        raise EtudeError("la page d'un programme s'écrit au but 13, après ses passes.")
+        commit = entries[0]["first"]["commit"]
+        self._plages(w, n, self.study.load_plages(commit))
+        self._mesures(w, n)
+        self._annonce(w, n)
+
+    def sources(self, w: Any, where: str) -> None:
+        count = len(self.study.points())
+        w(f"* `{where}/{PLAGES}/`, les {count} points des plages")
+
+    def _plages(self, w: Any, n: Nombres, reports: list[dict[str, Any]]) -> None:
+        from impots import fiche
+        from impots import programmes as pg
+
+        w("## Ce que bouge chaque paramètre")
+        w("")
+        w("Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. "
+          "Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point "
+          "est la mesure seule, mécanique (personne ne change de comportement), sur la "
+          "population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de "
+          "PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus "
+          "haut, que le chemin annuel chiffre année par année avec les comportements et la "
+          "boucle.")
+        w("")
+        by_key = {(r["mesure"], r["champ"], r["point"]): r for r in reports}
+        for m in self.programme.chiffrees():
+            w(f"### {amounts(m.libelle, 'programme', n)}")
+            w("")
+            w(f"*Le candidat : {amounts(m.parametre, 'programme', n)}.*")
+            w("")
+            for plage in m.chiffrage.plages:
+                w(f"| `{plage.champ}` | valeur | coût {START_PLUS_ONE} | dette en {LAST_YEAR} |")
+                w("|---|---|---|---|")
+                absente = None
+                for point in POINTS:
+                    r = by_key[(m.id, plage.champ, point)]
+                    valeur = (pg._lire(m.chiffrage.reforme, plage.champ) if point == "candidat"
+                              else plage.min if point == "bas" else plage.max)
+                    etage = "programme" if point == "candidat" else "hypothèse"
+                    cost = n(fiche._eur(r["response"]["mechanical_first_year_eur"]), "L2")
+                    if r["dette_absente"] is None:
+                        debt = n(_points(r["response"]["delta"][-1]), "L2", conditionnel=True)
+                    else:
+                        debt, absente = "absente", r["dette_absente"]
+                    w(f"| {POINT_LABELS[point]} | {n(valeur_lue(plage.champ, valeur), etage)} "
+                      f"| {cost} | {debt} |")
+                w("")
+                if absente is not None:
+                    w(f"**Dette : absente, et la raison est donnée.** "
+                      f"{amounts(absente.split(' : ')[0], 'texte', n)} : le chemin rapide la "
+                      f"tiendrait à son droit de 2026 jusqu'en {LAST_YEAR}. La dette de la "
+                      f"valeur du candidat est celle de la part chiffrée, que le chemin annuel "
+                      f"chiffre chaque année sous son droit (D-254).")
+                    w("")
+
+    def _mesures(self, w: Any, n: Nombres) -> None:
+        from impots import programmes as pg
+
+        p, c = self.programme, self.programme.couverture()
+        w("## Le programme, mesure par mesure")
+        w("")
+        w("Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure "
+          "à zéro : la porte dit ce que l'outil devrait savoir faire pour la chiffrer. Une "
+          "mesure vague n'énonce ni taux ni montant.")
+        w("")
+        w("| mesure | ce que dit le candidat | sort | pourquoi |")
+        w("|---|---|---|---|")
+        for m in p.mesures:
+            if m.chiffrage is not None:
+                sort, why = "chiffrée", amounts(m.chiffrage.note, "hypothèse", n)
+            else:
+                sort = ("vague" if m.refus.porte == "vague"
+                        else f"refusée, porte `{m.refus.porte}`")
+                why = amounts(m.refus.raison, "texte", n)
+            w(f"| {amounts(m.libelle, 'programme', n)} | "
+              f"{amounts(m.parametre, 'programme', n)} | {sort} | {why} |")
+        w("")
+        portes = {k: v for k, v in c["refus_par_porte"].items() if k != "vague"}
+        if portes:
+            w("Les portes, de celle qui ouvrirait le plus de mesures à celle qui en "
+              "ouvrirait le moins :")
+            w("")
+            for porte, count in sorted(portes.items(), key=lambda kv: (-kv[1], kv[0])):
+                w(f"* `{porte}`, {n(count, 'texte')} — {amounts(pg.PORTES[porte], 'texte', n)}.")
+            w("")
+
+    def _annonce(self, w: Any, n: Nombres) -> None:
+        from impots import fiche
+
+        w("## Ce que le candidat annonce, à part")
+        w("")
+        couches = [self.programme.couche_declaree(rho) for rho in (0.0, 0.5, 1.0)]
+        if not couches[-1]["mesures"]:
+            w("Le candidat n'annonce, pour aucune de ses mesures, un montant que le relevé ait "
+              "trouvé.")
+            w("")
+            return
+        w(f"Le candidat annonce lui-même un montant pour "
+          f"{n(len(couches[-1]['mesures']), 'programme')} de ses mesures. Ces montants ne "
+          f"sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part "
+          f"qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes "
+          f"publics, positif quand ils s'améliorent.")
+        w("")
+        w("| ρ | solde annoncé |")
+        w("|---|---|")
+        for couche in couches:
+            rho = f"{couche['rho']:g}".replace(".", ",")
+            w(f"| {n(rho, 'hypothèse')} | {n(fiche._eur(couche['solde_eur']), 'annoncé')} |")
+        w("")
+        w(f"*{couches[-1]['statut']}*")
+        w("")
+
+
+START_PLUS_ONE = 2026
+LAST_YEAR = 2035
+POINT_LABELS = {"bas": "le bas", "candidat": "le candidat", "haut": "le haut"}
+
+
+def case_year(case: Any) -> int:
+    from impots import scenarios as scenarios_module
+
+    return scenarios_module.load(case.scenario).year
+
+
+def valeur_lue(champ: str, valeur: float) -> str:
+    """A knob's value as a reader reads it: a rate in per cent, an excise in its unit, a
+    ceiling in euros, a factor as it is."""
+    leaf = champ.split(".")[-1]
+    if champ.startswith("accise_electricite") or champ.startswith("accise_gaz"):
+        text = f"{valeur:g} €/MWh"
+    elif champ.startswith("accise_"):
+        text = f"{valeur:g} €/L"
+    elif "plafond" in champ and valeur >= 100:
+        text = f"{valeur:,.0f} €".replace(",", "\u202f")
+    elif (champ.startswith(("tva", "csg")) or leaf in ("rate", "taux")
+          or champ.endswith("_taux")):
+        text = f"{valeur * 100:g} %"
+    else:
+        text = f"{valeur:g}"
+    return text.replace(".", ",")
 
 
 TEXTES: dict[str, Any] = {"plf2027": _PLF2027(), "plfss2027": _PLFSS2027(),
@@ -921,8 +1099,8 @@ class Etude:
             w("")
         w("## En bref")
         w("")
-        w(f"| article | la première année | le chiffrage officiel | dette en {last}, à θ½ |"
-          f" selon θ |")
+        w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
+          f"officiel | dette en {last}, à θ½ | selon θ |")
         w("|---|---|---|---|---|")
         for entry in entries:
             grade = entry["grade"]
@@ -959,7 +1137,10 @@ class Etude:
             self._third(w, n, entry)
             w("### L'écart au chiffrage officiel")
             w("")
-            self._official(w, n, entry)
+            if hasattr(texte, "official"):
+                texte.official(w, n, entry)
+            else:
+                self._official(w, n, entry)
         texte.refusals(w, entries, n)
         w("## D'où viennent ces nombres")
         w("")
@@ -979,6 +1160,8 @@ class Etude:
                     else "")
             w(f"* `{where}/premiere_annee_{entry['name']}.json`, "
               f"`{where}/predictif_{entry['name']}.json`{case}")
+        if hasattr(texte, "sources"):
+            texte.sources(w, where)
         w("")
         # Every amount says what it rests on: one the page quotes without its étage is
         # refused here, before the Markdown or the site can show it (D-304).
@@ -1004,6 +1187,23 @@ class Etude:
 
         response, year, cost = entry["response"], entry["scenario"].year, entry["cost"]
         sense = "coûte" if cost > 0 else "rapporte"
+        if entry["kind"] == "mixte":
+            firms, sign = entry["firms"], entry["sign"]
+            w(f"La part chiffrée {sense} **{n(fiche._width(cost), 'L2')}** "
+              f"{texte.first_year(year)} : {n(fiche._eur(sign * response.reform_cost), 'L2')} "
+              f"pour les ménages, sur la population de {response.meta.vintage} au droit de "
+              f"{year}, et {n(fiche._eur(sign * firms.reform_cost), 'L2')} pour les "
+              f"entreprises, sur celles de {firms.meta.vintage}.")
+            w("")
+            _deciles(w, n, _mirrored(response, sign))
+            w("| taille | entreprises | touchées | impôt en plus |")
+            w("|---|---|---|---|")
+            for taille, count, touched, delta in self._sizes(firms, sign):
+                w(f"| {taille} | {n(fiche._num(count), 'L1')} | "
+                  f"{n(fiche._num(touched), 'L2')} | {n(fiche._eur(delta), 'L2')} |")
+            w("")
+            w(firms.meta.note)
+            return
         if entry["kind"] == "entreprises":
             w(f"La mesure {sense} **{n(fiche._width(cost), 'L2')}** en {year}, sur les "
               f"entreprises de {response.meta.vintage} au droit de {year}.")
@@ -1026,6 +1226,11 @@ class Etude:
         from impots import fiche
 
         response, sign = entry["response"], entry["sign"]
+        if entry["kind"] == "mixte":
+            w("La bande et l'éventail ne lisent que la part des ménages : aucun canal des "
+              "comportements ne lit une réforme des entreprises, et aucune variante de "
+              "Mésange ne porte leurs impôts. La dette, plus bas, compte les deux parts.")
+            w("")
         behavioural = response.behavioural
         if behavioural is None:
             w("**Bande comportementale : aucune.** " + (
@@ -1156,6 +1361,59 @@ class Etude:
                     f"{_relative(self.rapports)} : la page dirait ce qu'aucun rapport ne dit.")
         where = difference(self.page.read_text(encoding="utf-8"), self.render(self.load()))
         return None if where is None else f"{_relative(self.page)}, {where}."
+
+
+def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
+    """The page of the 24 declared candidates (D-328): each programme's coverage, its
+    refusals by door, and whether it has a study. No number for a programme of which
+    nothing is priced: its doors say what would open it."""
+    from impots import programmes as pg
+
+    n = Nombres()
+    lines: list[str] = []
+    w = lines.append
+    slugs = pg.lister()
+    studied = {e.programme for e in etudes if e.programme is not None}
+    releves = sorted({pg.charger(slug).releve for slug in slugs})
+    w("# Les programmes de la présidentielle 2027")
+    w("")
+    w(f"Les {n(len(slugs), 'programme')} candidats déclarés, programmes relevés au "
+      f"{releves[-1].strftime('%d/%m/%Y')}. Pour chacun : ses mesures relevées et sourcées, "
+      f"celles qui énoncent un paramètre, celles que l'outil chiffre, et pourquoi il refuse "
+      f"les autres. Un candidat dont une mesure se chiffre a son étude, en trois réponses, "
+      f"sur cette part et elle seule. Les autres n'ont pas de chiffre : la porte de chaque "
+      f"refus dit ce que l'outil devrait savoir faire pour l'ouvrir.")
+    w("")
+    w("| candidat | mesures | paramétrées | chiffrées | étude | refusées, par porte |")
+    w("|---|---|---|---|---|---|")
+    totals = [0, 0, 0]
+    for slug in slugs:
+        p = pg.charger(slug)
+        c = p.couverture()
+        portes = ", ".join(f"`{k}` {n(v, 'texte')}" for k, v in sorted(
+            c["refus_par_porte"].items(), key=lambda kv: (-kv[1], kv[0]))
+            if k != "vague") or "—"
+        etude_ = "oui" if slug in studied else "—"
+        w(f"| {p.candidat} ({p.parti}) | {n(c['mesures'], 'programme')} | "
+          f"{n(c['parametrees'], 'programme')} | {n(c['chiffrees'], 'texte')} | {etude_} | "
+          f"{portes} |")
+        for i, key in enumerate(("mesures", "parametrees", "chiffrees")):
+            totals[i] += c[key]
+    w(f"| **total** | {n(totals[0], 'programme')} | {n(totals[1], 'programme')} | "
+      f"{n(totals[2], 'texte')} | {n(len(studied), 'texte')} | |")
+    w("")
+    w("Les portes :")
+    w("")
+    used = sorted({k for slug in slugs for k in pg.charger(slug).couverture()[
+        "refus_par_porte"] if k != "vague"})
+    for porte in used:
+        w(f"* `{porte}` — {amounts(pg.PORTES[porte], 'texte', n)}.")
+    w("")
+    for line in lines:
+        bare = n.resolve(line, lambda _: "")
+        if found := AMOUNT.search(bare):
+            raise EtudeError(f"« {found[0]} » sans son étage : « {bare[:90]} »")
+    return lines, n
 
 
 def definition(nom: str, directory: Path | None = None) -> Etude:

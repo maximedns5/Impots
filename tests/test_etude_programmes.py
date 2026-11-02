@@ -38,7 +38,9 @@ def test_every_programme_with_a_priced_measure_has_its_study() -> None:
 def test_the_committed_scenarios_and_studies_are_the_generated_ones() -> None:
     """GARDE. Le scénario d'une part chiffrée est le programme, sans rien d'autre ; sa
     définition, celle du générateur."""
-    for slug, scenario, definition in _script().etudes():
+    generated = _script().etudes()
+    assert sorted(d["nom"] for _, _, d in generated) == sorted(s.nom for s in _studies())
+    for slug, scenario, definition in generated:
         path = ROOT / "scenarios" / f"{scenario['name']}.json"
         assert json.loads(path.read_text(encoding="utf-8")) == scenario, slug
         path = ROOT / "etudes" / f"{definition['nom']}.json"
@@ -164,3 +166,26 @@ def test_a_range_report_that_is_not_the_study_s_is_refused(tmp_path) -> None:
     (tmp_path / etude.PLAGES / "en_trop.json").write_text("{}", encoding="utf-8")
     with pytest.raises(etude.EtudeError, match="en_trop"):
         study.load_plages("abc")
+
+
+def test_the_candidates_page_lists_the_24_with_their_coverage() -> None:
+    """La page des 24 candidats : chacun avec sa couverture, ses portes, et son étude s'il
+    en a une ; aucun chiffre de coût pour ceux dont rien ne se chiffre."""
+    lines, n = etude.presidentielle(etude.definitions())
+    text = "\n".join(n.resolve(line) for line in lines)
+    for slug in pg.lister():
+        p = pg.charger(slug)
+        row = next(line for line in text.splitlines() if line.startswith(f"| {p.candidat} ("))
+        c = p.couverture()
+        assert f"| {c['mesures']} | {c['parametrees']} | {c['chiffrees']} |" in row
+        assert ("| oui |" in row) == bool(p.chiffrees())
+    assert "Md€" not in text
+
+
+def test_an_amount_on_the_candidates_page_without_its_etage_is_refused(monkeypatch) -> None:
+    """GARDE. Un montant que la page cite sans son étage n'atteint ni la page ni le site."""
+    monkeypatch.setitem(pg.PORTES, "salaires", "le SMIC à 1 600 €")
+    etude.presidentielle(etude.definitions())
+    monkeypatch.setattr(etude, "amounts", lambda text, etage, n: text)
+    with pytest.raises(etude.EtudeError, match="sans son étage"):
+        etude.presidentielle(etude.definitions())

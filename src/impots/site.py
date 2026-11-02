@@ -214,6 +214,14 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
              "coûte une fois les comportements et l'économie pris en compte ; ce qu'elle "
              "fait à la dette dans dix ans. À côté de chaque nombre, son étage de confiance ; "
              "une réponse absente est dite absente, avec sa raison.</p>")
+    if any(study.programme for study in studies):
+        # The 24 declared candidates, each with its coverage and its doors (D-328).
+        lines, n = etude.presidentielle(studies)
+        files["presidentielle.html"] = _page(f"Les programmes de la présidentielle 2027 — "
+                                             f"{TITLE}", body(lines, n))
+        intro += ('\n<p><a href="presidentielle.html">Les programmes de la présidentielle '
+                  "2027</a> : les 24 candidats déclarés, ce que l'outil chiffre de chacun, et "
+                  "pourquoi pas le reste.</p>")
     files["index.html"] = _page(TITLE, intro + "\n<ul class=\"etudes\">\n"
                                 + "\n".join(listed) + "\n</ul>")
     for name, text in files.items():
