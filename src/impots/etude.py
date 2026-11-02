@@ -547,11 +547,20 @@ class _PLFSS2027:
         w("")
 
 
+#: Ce que la page d'un programme dit en tête, à côté de sa couverture (D-319) : la page
+#: renvoie à ses sections, là où la commande renvoie à ses clés.
+AVERTISSEMENT_PROGRAMME = (
+    "La dette porte sur la seule part du programme que l'outil chiffre, pas sur le "
+    "programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont "
+    "pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour "
+    "une raison qui tient à l'outil (D-319).")
+
+
 class _Programme:
     """Un programme présidentiel (D-319, D-328) : l'étude porte sur sa part chiffrée, et dit
     à côté de chaque nombre la couverture et chaque refus avec sa porte."""
 
-    colonne = "la part chiffrée"
+    colonne = "programme"
 
     def __init__(self, study: Etude) -> None:
         from impots import programmes as pg
@@ -563,8 +572,6 @@ class _Programme:
         return self.programme
 
     def chapeau(self, entries: list[dict[str, Any]], last: int, n: Nombres) -> str:
-        from impots import programme_chiffrage as pc
-
         p, c = self.programme, self.programme.couverture()
         many = "s" if c["chiffrees"] > 1 else ""
         part = f"{c['part_des_parametrees'] * 100:.0f} %"
@@ -577,7 +584,7 @@ class _Programme:
                 f"chiffrée, ces {n(c['chiffrees'], 'texte')} mesure{many} ensemble, trois "
                 f"réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les "
                 f"comportements et l'économie pris en compte ; ce qu'elle fait à la dette en "
-                f"{last}. **{pc.AVERTISSEMENT}**")
+                f"{last}. **{AVERTISSEMENT_PROGRAMME}**")
 
     def label(self, entry: dict[str, Any]) -> str:
         return "la part chiffrée"
@@ -658,8 +665,10 @@ class _Programme:
                       f"| {cost} | {debt} |")
                 w("")
                 if absente is not None:
+                    raison = absente.split(" : ")[0]
                     w(f"**Dette : absente, et la raison est donnée.** "
-                      f"{amounts(absente.split(' : ')[0], 'texte', n)} : le chemin rapide la "
+                      f"{amounts(raison[:1].upper() + raison[1:], 'texte', n)} : le chemin "
+                      f"rapide la "
                       f"tiendrait à son droit de 2026 jusqu'en {LAST_YEAR}. La dette de la "
                       f"valeur du candidat est celle de la part chiffrée, que le chemin annuel "
                       f"chiffre chaque année sous son droit (D-254).")
@@ -729,9 +738,13 @@ POINT_LABELS = {"bas": "le bas", "candidat": "le candidat", "haut": "le haut"}
 
 
 def case_year(case: Any) -> int:
+    """The year a case priced: its scenario's, or, for a firm case registered on a reform
+    file, the year its registration names."""
     from impots import scenarios as scenarios_module
 
-    return scenarios_module.load(case.scenario).year
+    if case.scenario is not None:
+        return scenarios_module.load(case.scenario).year
+    return int(case.reform["annee"])
 
 
 def valeur_lue(champ: str, valeur: float) -> str:
