@@ -25503,15 +25503,15 @@ c'est le pouvoir d'achat, pas le seul revenu disponible.
 forme de ses classes ; la classe « consommation » est écrite dans D-326. Les cas
 enregistrés ne sont pas réécrits ; le script nomme désormais l'entrée de chaque classe.
 
-**Le pont macro.** Un test existant l'a vu : `shocks.build` refuse un delta de recette qu'il
-ne sait ni placer ni nommer, et les deux recettes neuves n'étaient nulle part. Une réforme de
-la TVA qui demandait l'impulsion macro aurait été refusée. La TVA des ménages va désormais à
-la variante TVA de Mésange, son instrument, ex ante comme elle ; les accises sur l'énergie à
-la variante taxe carbone, qui est une accise sur les volumes d'énergie, avec sa réserve :
-son calibrage en euros se fait hors modèle (p121), et sa boucle sur le solde reste absente
-(`retroaction.NOT_ACTIVITY`).
+**Le pont macro.** Un test existant l'a vu : `shocks.build` refuse un delta de recette
+qu'il ne sait ni placer ni nommer, et les deux recettes neuves n'étaient nulle part. Une
+réforme de la TVA qui demandait l'impulsion macro aurait été refusée. La TVA des ménages
+va désormais à la variante TVA de Mésange, son instrument, ex ante comme elle ; les accises
+sur l'énergie à la variante taxe carbone, qui est une accise sur les volumes d'énergie,
+avec sa réserve : son calibrage en euros se fait hors modèle (p121), et sa boucle sur le
+solde reste absente (`retroaction.NOT_ACTIVITY`).
 
-**Les tests qui ne tournent pas ici.** Quatorze tests ciblés lisent deux fichiers manifestés
+**Les tests qui ne tournent pas ici.** Treize tests ciblés lisent deux fichiers manifestés
 absents de ce conteneur, dont les hôtes n'y répondent pas : l'export des cases 2042
 (`data.economie.gouv.fr`) et les comptes de la sécurité sociale de mai 2026
 (`www.securite-sociale.fr`). Ils ne sont ni sautés ni retouchés : ils échouent faute de
