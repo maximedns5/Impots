@@ -121,9 +121,33 @@
           "type": "programme"
         }
       ],
-      "refus": {
-        "porte": "consommation",
-        "raison": "Le moteur n'a ni TVA ni accise sur les carburants, ni la consommation des ménages."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "tva_postes": {
+            "carburants": 0.0
+          },
+          "accise_gazole": 0.0,
+          "accise_essence": 0.0
+        },
+        "plages": [
+          {
+            "champ": "tva_postes.carburants",
+            "min": 0.0,
+            "max": 0.2
+          },
+          {
+            "champ": "accise_gazole",
+            "min": 0.0,
+            "max": 0.6075
+          },
+          {
+            "champ": "accise_essence",
+            "min": 0.0,
+            "max": 0.6702
+          }
+        ],
+        "note": "La TVA et l'accise des carburants des ménages tombent à zéro, à volumes constants et répercutées en entier dans les prix (D-323). « Les taxes » sont lues comme l'accise sur le gazole et l'essence ; la majoration régionale et la taxe incitative sur les biocarburants ne sont pas dans le moteur. Plages jusqu'au droit de 2026 (la mesure retirée)."
       }
     },
     {

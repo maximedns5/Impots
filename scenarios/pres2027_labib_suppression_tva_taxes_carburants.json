@@ -1,0 +1,21 @@
+{
+  "name": "pres2027_labib_suppression_tva_taxes_carburants",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Selma Labib (NPA-Révolutionnaires), programme relevé le 2026-11-01 — Suppression de la TVA et des taxes sur les carburants : « « suppression de la TVA et des taxes sur les carburants » » (https://npa-revolutionnaires.org/articles/reponse-de-selma-labib-a-philippe-juvin-rapporteur-general-de-la-commission-des-finances, 2026-10-19)",
+  "note": "La TVA et l'accise des carburants des ménages tombent à zéro, à volumes constants et répercutées en entier dans les prix (D-323). « Les taxes » sont lues comme l'accise sur le gazole et l'essence ; la majoration régionale et la taxe incitative sur les biocarburants ne sont pas dans le moteur. Plages jusqu'au droit de 2026 (la mesure retirée).",
+  "tags": [
+    "presidentielle_2027",
+    "labib"
+  ],
+  "reform": {
+    "tva_postes": {
+      "carburants": 0.0
+    },
+    "accise_gazole": 0.0,
+    "accise_essence": 0.0
+  },
+  "imputations": [
+    "consommation"
+  ]
+}

@@ -1061,7 +1061,8 @@ def volets_non_chiffres_2027() -> tuple[Montant2027, ...]:
 
 @dataclass(frozen=True)
 class RefusMesure:
-    """Un volet que le but 8 a regardé et qui reste refusé, avec sa mesure (D-305).
+    """Un volet que le but 8 ou le but 12 a regardé et qui reste refusé, avec sa mesure
+    (D-305, D-326).
 
     `porte` dit ce que la population porte désormais de l'assiette, ou ce que les données
     ouvertes en disent ; `manque`, ce qui manque pour chiffrer. Les raisons du triage
@@ -1101,6 +1102,37 @@ REFUS_MESURES_2027: tuple[RefusMesure, ...] = (
         "5,045 Md€ chez 619 711 foyers pour la 5ND en 2024.",
         "les amortissements que la réforme réintègre à la cession : ils sont dans les "
         "liasses du réel, que la fiche apparie, et dans aucune donnée publique."),
+    # Le but 12 ouvre la porte « consommation » pour les ménages : la TVA par poste et les
+    # accises sur l'énergie (D-323). Aucun de ses articles ne s'en chiffre (D-326).
+    RefusMesure(
+        16, "",
+        "La consommation par poste du Budget de famille (D-323). Les abonnements de "
+        "télévision sont dans les services culturels (0942Z, 466 € par ménage de 2017), "
+        "mêlés au cinéma, au spectacle et aux musées, et dans les offres groupées "
+        "d'internet (08131, 626 €).",
+        "la part des services de télévision dans ces deux postes : aucun tableau public ne "
+        "la donne, et la microdonnée de l'enquête n'est pas ouverte."),
+    RefusMesure(
+        19, "",
+        "Rien : l'accise porte sur les carburants des essais de l'industrie aéronautique et "
+        "navale, pas sur la consommation des ménages.",
+        "l'énergie consommée par secteur des entreprises."),
+    RefusMesure(
+        24, "4.2.1.2",
+        "Rien : l'électricité fournie aux navires à quai n'est pas une consommation des "
+        "ménages.",
+        "l'énergie consommée par secteur des entreprises."),
+    RefusMesure(
+        24, "4.2.1.3",
+        "Rien : la recharge des poids lourds électriques est une consommation des "
+        "transporteurs, pas des ménages.",
+        "l'énergie consommée par secteur des entreprises et le parc de poids lourds."),
+    RefusMesure(
+        25, "4.2.1.3",
+        "Rien : le malus sur la masse porte sur l'achat de véhicules, par véhicule, et la "
+        "dépense d'automobiles du Budget de famille (0711Z) n'en donne ni le nombre ni la "
+        "masse.",
+        "le parc et les immatriculations de véhicules par masse."),
 )
 
 

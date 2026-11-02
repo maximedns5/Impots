@@ -309,12 +309,15 @@ def euros_2027(w) -> None:
         w(f"* **Art. {line.article}, volet {line.volet}, {m2027(line.meur)}\u00a0M EUR** "
           f"— " + ", ".join(f"`{case}`" for case in cases) + ".")
     w("")
-    w("### Les refus mesurés (but 8, D-305)")
+    w("### Les refus mesurés (but 8, D-305 ; but 12, D-326)")
     w("")
     measured = refus_mesures_2027()
-    w(f"Le but 8 a regardé **{meur(sum(line.meur for _, line in measured))}** de volets "
-      f"refusés. Aucun n'entre au numérateur : chacun dit ce "
-      f"que la population ou les données ouvertes en portent, et ce qui manque.")
+    w(f"Les buts 8 et 12 ont regardé **{meur(sum(line.meur for _, line in measured))}** de "
+      f"volets refusés. Aucun n'entre au numérateur : chacun dit ce "
+      f"que la population ou les données ouvertes en portent, et ce qui manque. Les cinq "
+      f"derniers sont les articles derrière la porte « consommation », que le but 12 a "
+      f"ouverte pour les ménages (la TVA par poste et les accises sur l'énergie) : aucun "
+      f"ne s'en chiffre.")
     w("")
     for refus, line in measured:
         volet = f", volet {refus.volet}" if refus.volet else ""

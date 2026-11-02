@@ -53,6 +53,12 @@ CLASSES: dict[str, tuple[float, float, str]] = {
                     "le PIB nominal (D-246), la tolérance de l'art. 15 du PLF 2027. La CVAE "
                     "disparaît du droit en 2028 : un juge qui chiffre contre ce droit-là la "
                     "compte pour moins que le droit de 2026."),
+    "consommation": (0.30, 200e6,
+                     "Mesure de TVA ou d'accise sur la consommation imputée du Budget de "
+                     "famille 2017 vieillie (D-323), à volumes constants et répercutée en "
+                     "entier dans les prix : le juge peut compter une réaction de la "
+                     "consommation, une répercussion partielle, une autre année, et la "
+                     "vérification des agrégats (D-325) dit l'écart de l'assiette."),
 }
 #: La classe de chaque mesure chiffrée, par id ; une mesure sans classe est refusée.
 CLASSE = {
@@ -66,6 +72,9 @@ CLASSE = {
     "l1_csg_activite_6_6": "menages",
     "l4_suppression_c3s_cvae": "entreprises",
     "l20_deplafonnement_qf": "haut",
+    "lp20_tva_energie": "consommation",
+    "tva_carburants_5_5": "consommation",
+    "suppression_tva_taxes_carburants": "consommation",
 }
 
 
@@ -96,6 +105,9 @@ def source(p, m) -> str:
 
 def ecrire() -> list[Path]:
     """Les scénarios et les réformes, tirés des programmes sans rien y ajouter."""
+    from impots import consommation
+    from impots import programmes as pg
+
     ecrits = []
     for nom, p, m in cas():
         if m.chiffrage.couche == "menages":
@@ -103,6 +115,10 @@ def ecrire() -> list[Path]:
             doc = {"name": nom, "year": p.annee, "created": "2026-11-01",
                    "source": source(p, m), "note": m.chiffrage.note,
                    "tags": ["presidentielle_2027", p.slug], "reform": m.chiffrage.reforme}
+            if consommation.touche(pg._spec("menages", m.chiffrage.reforme)):
+                # La TVA et les accises ne mordent que sur la consommation imputée (D-323).
+                doc["imputations"] = ["consommation"]
+                doc["created"] = "2026-11-02"
         else:
             path = ROOT / "reforms" / f"{nom}.json"
             doc = dict(m.chiffrage.reforme)

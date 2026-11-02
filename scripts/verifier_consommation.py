@@ -200,8 +200,9 @@ def rendre(r: dict) -> str:
     t, c, a, p, cv = r["tva"], r["carburants"], r["accises"], r["profil"], r["couverture"]
     lignes = [
         "# La consommation imputée contre les agrégats publiés, 2024 (D-323, D-324)", "",
-        f"Passe de la population de {r['annee']}, {r['menages_echantillon']:,} ménages "
-        f"tirés.".replace(",", " "),
+        f"Passe de la population de {r['annee']}, "
+        + f"{r['menages_echantillon']:,}".replace(",", " ")
+        + " ménages tirés, graine par défaut.",
         "", f"**Verdict : {r['verdict']}.**", "",
         "| vérification | moteur (Md€) | cible (Md€) | écart | tolérance | pronostic |",
         "|---|---:|---:|---:|---|---|",
@@ -219,23 +220,34 @@ def rendre(r: dict) -> str:
         f"{pc(a['ecart'])} | {'tenue' if a['tenue'] else '**hors**'} | "
         f"{'dans' if a['dans_pronostic'] else 'hors'} |",
         f"| consommation imputée / comptes | {md(cv['imputee_eur'])} | {md(cv['comptes_eur'])} "
-        f"| {cv['part']:.1%} de la cible | mesure | "
-        f"{'dans' if cv['dans_pronostic'] else 'hors'} |",
+        + f"| {cv['part'] * 100:.1f} % de la cible | mesure | ".replace(".", ",")
+        + f"{'dans' if cv['dans_pronostic'] else 'hors'} |",
         "", "Le rendement d'un point de TVA, ménages contre Trésor-Éco n° 371 (net des APU) :",
         "", "| taux | ménages (Md€) | Trésor (Md€) | rapport | pronostic 0,55–0,95 |",
         "|---:|---:|---:|---:|---|"]
     for taux, v in r["point"]["taux"].items():
-        lignes.append(f"| {taux} | {md(v['menages_eur'])} | {md(v['tresor_eur'])} | "
-                      f"{v['rapport']:.2f} | {'dans' if v['dans_pronostic'] else 'hors'} |")
+        nom = f"{float(taux) * 100:g} %".replace(".", ",")
+        lignes.append(f"| {nom} | {md(v['menages_eur'])} | {md(v['tresor_eur'])} | "
+                      f"{v['rapport']:.2f} | ".replace(".", ",")
+                      + f"{'dans' if v['dans_pronostic'] else 'hors'} |")
     lignes += ["", f"Le profil des accises : D10 / D1 = {p['rapport_d10_d1']:.2f} (Budget vert "
-               f"{p['budget_vert']:.2f}, pronostic 1,5–2,5 : "
+               f"{p['budget_vert']:.2f}, pronostic 1,5–2,5 : ".replace(".", ",") +
                f"{'dans' if p['dans_pronostic'] else 'hors'}). Par décile, en euros par "
                "ménage : " + ", ".join(f"{x:.0f}" for x in p["accises_par_decile_eur"]) + ".",
                ""]
     return "\n".join(lignes)
 
 
+def rendre_le_rapport() -> None:
+    """Réécrit le `.md` depuis le `.json`, sans rien recalculer."""
+    r = json.loads(SORTIE.with_suffix(".json").read_text(encoding="utf-8"))
+    SORTIE.with_suffix(".md").write_text(rendre(r), encoding="utf-8")
+
+
 def main() -> int:
+    if sys.argv[1:] == ["--rendre"]:
+        rendre_le_rapport()
+        return 0
     import polars as pl
 
     from impots.population.build import PROCESSED

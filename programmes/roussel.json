@@ -102,9 +102,21 @@
           "type": "entretien"
         }
       ],
-      "refus": {
-        "porte": "consommation",
-        "raison": "Le moteur n'a ni TVA par taux ni consommation de carburants des ménages."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "tva_postes": {
+            "carburants": 0.055
+          }
+        },
+        "plages": [
+          {
+            "champ": "tva_postes.carburants",
+            "min": 0.0,
+            "max": 0.2
+          }
+        ],
+        "note": "La TVA du poste des carburants (07221) passe de 20 % à 5,5 %, à volumes constants et répercutée en entier dans les prix (D-323). Plage de 0 à 20 % (la mesure retirée)."
       }
     },
     {
@@ -122,8 +134,8 @@
         }
       ],
       "refus": {
-        "porte": "consommation",
-        "raison": "Les certificats d'économie d'énergie se lisent dans le prix et la consommation de carburants, que le moteur ne porte pas."
+        "porte": "prix",
+        "raison": "Les certificats d'économies d'énergie sont une obligation des fournisseurs, lue dans les prix : ni une taxe que la couche consommation chiffre, ni une recette de l'État."
       }
     },
     {
@@ -141,8 +153,8 @@
         }
       ],
       "refus": {
-        "porte": "consommation",
-        "raison": "Le moteur ne porte ni le prix de l'essence ni la consommation de carburants, et une nationalisation n'est pas un de ses paramètres."
+        "porte": "prix",
+        "raison": "Un prix exigé d'une entreprise, sous menace de nationalisation : ni une taxe ni un paramètre du moteur."
       }
     },
     {

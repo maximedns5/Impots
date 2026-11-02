@@ -132,9 +132,12 @@ def test_the_measured_refusals_name_lines_left_out_of_the_numerator() -> None:
     from impots.plf_coverage import refus_mesures_2027, share_of_yield_2027
 
     measured = refus_mesures_2027()
+    # Les quatre du but 8 (D-305), puis les cinq du but 12 (D-326) ; la part ne bouge pas.
     assert [(r.article, r.volet) for r, _ in measured] == [
-        (2, "4.2.1.3"), (5, ""), (6, ""), (7, "4.2.1.2")]
-    assert sum(line.meur for _, line in measured) == 1_605.0
+        (2, "4.2.1.3"), (5, ""), (6, ""), (7, "4.2.1.2"),
+        (16, ""), (19, ""), (24, "4.2.1.2"), (24, "4.2.1.3"), (25, "4.2.1.3")]
+    assert sum(line.meur for _, line in measured[:4]) == 1_605.0
+    assert sum(line.meur for _, line in measured[4:]) == 373.3
     assert f"{share_of_yield_2027() * 100:.1f}" == "72.8"
 
 

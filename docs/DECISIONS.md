@@ -25361,3 +25361,112 @@ Trois vérifications ont une tolérance et arrêtent le but si elles en sortent 
 carburants, les accises. Les trois autres sont des mesures, avec le pronostic de D-323.
 L'accise sur le charbon, dans `045AZ`, n'est pas comptée : elle est négligeable chez les
 ménages, et la loi de 2024 n'en a pas été relevée.
+
+## D-325 — La consommation imputée tient ses trois tolérances ; deux pronostics sur six
+
+**Le fait.** La vérification préenregistrée par D-323 et D-324 a tourné le 2 novembre 2026,
+détachée, depuis un worktree figé sur `1d83f78` : la population de 2024, 20 000 ménages
+tirés, 31,0 millions de ménages pondérés. Les trois vérifications à tolérance la tiennent :
+le but continue. Le rapport est `reports/consommation_verification_2024.md`, et son `.json`.
+
+| vérification | moteur | cible | écart | tolérance | pronostic |
+|---|---:|---:|---:|---|---|
+| TVA des ménages, taux principal | 100,7 Md€ | 136,1 Md€ | −26,0 % | tenue | hors |
+| TVA, postes mêlés au plus bas | 66,8 Md€ | | −50,9 % | | |
+| TVA, postes mêlés au plus haut | 117,3 Md€ | | −13,8 % | | |
+| carburants | 43,0 Md€ | 52,7 Md€ | −18,4 % | tenue | hors |
+| accises sur l'énergie | 20,3 Md€ | 23,8 Md€ | −14,8 % | tenue | dans |
+| consommation / comptes | 1 070,8 Md€ | 1 527,1 Md€ | 70,1 % | mesure | hors |
+| profil D10 / D1 des accises | 2,17 | 2,05 | | mesure | dans |
+
+Le rendement d'un point, ménages sur Trésor net des APU : 0,34 à 2,1 %, 1,06 à 5,5 %, 0,81
+à 10 %, 0,50 à 20 %. Un seul des quatre est dans le pronostic de 0,55 à 0,95.
+
+**Ce que disent les pronostics manqués.** Aucun ne change la méthode ni une tolérance : ils
+disent où l'assiette est courte, et c'est ce qu'il faut lire à côté d'un chiffrage.
+
+- **La couverture, 70,1 % contre 75 à 92 %.** Les comptes comptent les loyers imputés des
+  propriétaires (ligne `CP042`, 220,5 Md€ en 2024), que l'enquête n'a pas par construction.
+  Sans eux, la couverture est de 82,0 %, dans le pronostic : il les comptait sans le dire.
+- **La TVA, −26,0 % pour un pronostic de −25 à −5 %.** La part de 65,1 % est celle de 2022
+  et compte la TVA des ménages sur leur investissement : les gros travaux et le logement
+  neuf, hors du champ de la consommation (la division 13, écartée par D-323), où
+  `regles.md` note « hors consommation INSEE mais taxé ». L'écart n'a pas été décomposé.
+- **L'intervalle des postes mêlés, 37 points pour un pronostic de 8.** La borne basse met à
+  zéro les automobiles, neuves comprises, les charges collectives, l'hôtellerie et les
+  services de transport, et l'énergie du logement à 5,5 % ; la haute met à 20 % la
+  pharmacie, la presse, la restauration, les charges et les voyages à forfait. Il dit que
+  la dépense mêlée, le tiers du total, n'a pas de clé publiée : un chiffrage qui en dépend
+  porte cette incertitude. Le pronostic était écrit pour trente postes, avant D-324.
+- **Le rendement d'un point.** À 5,5 %, les ménages dépassent tous les agents nets des
+  APU : les postes mêlés pris à 5,5 % (le sucre et le cacao, l'eau, les cantines, les
+  services culturels) en sont la piste, non décomposée. À 2,1 %, l'écart n'est pas
+  tranché : la pharmacie de l'enquête n'est que la part que le ménage paie lui-même. À
+  20 %, 0,50, au bord du pronostic.
+- **Les carburants, −18,4 % pour un pronostic de −15 à +5 %.** L'enquête sous-déclare le
+  carburant : les comptes nationaux en donnent 52,0 Md€ en 2024 (ligne `CP0722`, avec les
+  lubrifiants), le moteur 43,0. Une mesure sur les carburants est chiffrée sur une assiette
+  courte d'environ un sixième.
+
+**Le reste.** Les accises sont dans leur pronostic, et leur profil par décile aussi : 388 €
+par ménage au premier décile, 843 € au dernier, contre 490 € et 1 005 € au Budget vert pour
+2025. Un test prenait `tva_taux_normal` pour exemple d'un bouton que le moteur n'a pas ;
+l'exemple est désormais `droits_douane_taux`, l'assertion est la même. Le test qui relit les
+cases 2042 des refus du but 8 ne tourne pas dans ce conteneur : son fichier manque, et
+`data.economie.gouv.fr` n'y répond pas.
+
+## D-326 — Les trois mesures de consommation des programmes, préenregistrées avant le juge
+
+**Le fait.** La vérification tient (D-325). Trois mesures des programmes, refusées par le
+but 11 derrière la porte « consommation », se chiffrent avec les boutons du but 12. Elles
+sont préenregistrées ici, avant toute passe et avant que le juge ne publie, comme D-321.
+
+**Les cas.** Mêmes règles que D-321 : le droit de 2026, la population vieillie jusqu'en 2026
+aux hypothèses du PLF 2027 (`--vieillir plf2027`), 20 000 ménages. Le scénario demande
+l'imputation « consommation » : la consommation de 2017 est portée en 2025 par les comptes,
+puis en 2026 par les prix du même jeu ; les accises et les prix de l'énergie sont ceux de
+2026 (`regles.md`, § 5, R8, R9). Volumes constants, taxe répercutée en entier.
+
+- `pres2027_le_pen_lp20_tva_energie` : la TVA de l'électricité, du gaz, du fioul et des
+  carburants à 5,5 %.
+- `pres2027_roussel_tva_carburants_5_5` : la TVA des carburants à 5,5 %.
+- `pres2027_labib_suppression_tva_taxes_carburants` : la TVA des carburants à zéro, et
+  l'accise sur le gazole et l'essence à zéro. « Les taxes » sont lues comme cette accise.
+
+**La tolérance.** Une classe neuve, « consommation » : 30 % ou 200 M€, le plus large des
+deux. Le juge peut compter une réaction de la consommation, une répercussion partielle,
+une autre année ; et l'assiette des carburants est courte d'environ un sixième (D-325).
+
+**Le pronostic, avant toute passe.** Coût mécanique de 2026, positif quand l'État perd.
+
+- Roussel : un coût de 4,5 à 6,5 Md€.
+- Le Pen : un coût de 9 à 14 Md€.
+- Labib : un coût de 17 à 26 Md€.
+
+La réfutation qui se lirait : Le Pen sous Roussel, alors que l'énergie contient les
+carburants ; ou Labib sous 0,20 / 0,145 fois Roussel, ce que sa seule TVA donne déjà.
+
+**Les autres mesures derrière la porte.** Seize restent refusées ; leurs raisons disaient
+que le moteur n'avait pas la consommation, ce qui n'est plus vrai. Elles sont réécrites,
+et deux portes s'ajoutent à celles du but 11 :
+
+- « prix » : un prix fixé hors du marché, ou une obligation des fournisseurs lue dans les
+  prix (énergie, carburants, certificats d'économies d'énergie). Dix mesures : la baisse de
+  40 centimes, l'électricité à moitié prix et le gaz à −20 % (Dupont-Aignan), l'électricité
+  divisée par trois (Philippot), les CEE (Lisnard, Roussel, Ruffin), le blocage à 1,70 €
+  (Mélenchon), le prix exigé de TotalEnergies (Roussel), la taxe flottante (Ruffin).
+- « importations » : les droits de douane et l'antidumping (Philippot, Dupont-Aignan).
+- Le leasing social (Ruffin) passe à « dépense publique ». Trois restent à « consommation »,
+  pour une raison qui tient : la TVA à zéro sur cinquante produits, que les postes de
+  l'enquête ne donnent pas ; la taxe sur les véhicules de société et le photovoltaïque, qui
+  sont le parc et les gros travaux, que ce but n'ouvre pas.
+
+**Le PLF 2027.** Aucun des cinq articles derrière la porte ne se chiffre par la couche des
+ménages. L'art. 16 (la TVA des services de télévision de 10 à 20 %, 304 M€) est le seul
+payé par les ménages, mais les abonnements n'ont pas de poste : ils sont dans les services
+culturels et dans les offres groupées d'internet, sans clé publique. Les art. 19 et 24
+taxent l'énergie d'entreprises (essais aéronautiques, navires à quai, poids lourds), l'art.
+25 le parc de véhicules, l'art. 32 n'a pas d'incidence. Cinq refus mesurés s'ajoutent aux
+quatre du but 8, pour 373,3 M€. La part en euros est la même avant et après : 72,8 %
+(12 105 M€ sur 16 623,6), et les révisions comptées à part restent les trois volets des
+indemnités journalières (D-312).

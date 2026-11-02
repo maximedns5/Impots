@@ -33,8 +33,8 @@
         }
       ],
       "refus": {
-        "porte": "consommation",
-        "raison": "Les CEE, la TVA sur la taxe et les marges pèsent sur des volumes de carburant que le moteur n'a pas."
+        "porte": "prix",
+        "raison": "Un bouquet de prix : les certificats d'économies d'énergie et les marges des distributeurs ne sont pas des taxes. Seule la TVA sur l'accise en est une, et la couche consommation la calcule sur le prix accise comprise (R2) sans bouton pour l'en retirer ; le bouquet ne se chiffre pas en partie."
       },
       "declare": {
         "montant_eur": 6000000000.0,
@@ -63,8 +63,8 @@
         }
       ],
       "refus": {
-        "porte": "consommation",
-        "raison": "Un prix de l'énergie fixé hors du moteur, qui n'a pas la consommation d'énergie des ménages."
+        "porte": "prix",
+        "raison": "Un prix de l'énergie fixé hors du marché, pas une taxe : la couche consommation porte la dépense d'énergie des ménages, mais le coût d'un prix administré tombe sur le fournisseur ou sur l'État par des canaux que le moteur ne modèle pas, et la consommation imputée ne réagit pas aux prix."
       }
     },
     {
@@ -82,8 +82,8 @@
         }
       ],
       "refus": {
-        "porte": "consommation",
-        "raison": "Un prix de l'énergie fixé hors du moteur, qui n'a pas la consommation d'énergie des ménages."
+        "porte": "prix",
+        "raison": "Un prix de l'énergie fixé hors du marché, pas une taxe : la couche consommation porte la dépense d'énergie des ménages, mais le coût d'un prix administré tombe sur le fournisseur ou sur l'État par des canaux que le moteur ne modèle pas, et la consommation imputée ne réagit pas aux prix."
       }
     },
     {
@@ -108,7 +108,7 @@
       ],
       "refus": {
         "porte": "consommation",
-        "raison": "La TVA par produit : le moteur n'a ni ce bouton ni l'assiette de la consommation des ménages."
+        "raison": "La couche consommation a la TVA par poste de l'enquête Budget de famille, pas par produit : la liste de cinquante produits n'est pas donnée poste par poste, et la traduire en postes serait une hypothèse que le candidat ne fait pas."
       }
     },
     {
@@ -650,8 +650,8 @@
         }
       ],
       "refus": {
-        "porte": "consommation",
-        "raison": "Une taxe sans taux, sur des importations que le moteur n'a pas."
+        "porte": "importations",
+        "raison": "Une taxe sans taux, sur des importations par origine que le moteur n'a pas."
       },
       "declare": {
         "montant_eur": 5000000000.0,
@@ -768,7 +768,7 @@
       ],
       "refus": {
         "porte": "consommation",
-        "raison": "La taxe porte sur un parc de véhicules, selon leur pays de production, que le moteur n'a pas."
+        "raison": "La taxe porte sur le parc de véhicules des entreprises, selon leur pays de production : le parc n'est pas dans le moteur, et le but 12 ne l'ouvre pas."
       }
     },
     {

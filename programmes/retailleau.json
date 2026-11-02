@@ -819,7 +819,7 @@
       ],
       "refus": {
         "porte": "consommation",
-        "raison": "La TVA par taux et les installations photovoltaïques ne sont pas dans le moteur."
+        "raison": "Les installations photovoltaïques ne sont pas un poste de la consommation dans l'enquête Budget de famille : elles sont dans les gros travaux, hors de son champ (division 13), et la TVA par poste ne les isole pas."
       }
     }
   ]

@@ -487,9 +487,21 @@
           "type": "entretien"
         }
       ],
-      "refus": {
-        "porte": "consommation",
-        "raison": "La TVA par taux : le moteur n'a ni ce bouton ni l'assiette de la consommation d'énergie des ménages."
+      "chiffrage": {
+        "couche": "menages",
+        "reforme": {
+          "tva_postes": {
+            "energie": 0.055
+          }
+        },
+        "plages": [
+          {
+            "champ": "tva_postes.energie",
+            "min": 0.0,
+            "max": 0.2
+          }
+        ],
+        "note": "La TVA de l'électricité, du gaz, du fioul et des carburants (le groupe « energie » de la couche consommation) passe de 20 % à 5,5 %, à volumes constants et répercutée en entier dans les prix (D-323). Le bois de chauffage, déjà à 10 %, et la chaleur de réseau ne bougent pas. Plage de 0 à 20 % (la mesure retirée)."
       }
     },
     {
