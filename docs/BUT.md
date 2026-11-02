@@ -53,7 +53,7 @@ Trois chiffres, donnés ensemble, parce que chacun seul ment :
 
 | chiffre | aujourd'hui | source |
 |---|---|---|
-| cas notés dans la tolérance déclarée | **3 sur 5** (PLF 2027 : art. 2, 3, 15, et les deux volets de l'art. 74) ; à part, 6 révisions sur 9 (art. 2 : D-292, ses trois volets IJ, D-308 et D-313, et les cinq cas vieillis, D-318) ; en attente de leur juge, 10 mesures des programmes présidentiels (D-321) | `reports/chiffrages_preregistres.md` |
+| cas notés dans la tolérance déclarée | **3 sur 5** (PLF 2027 : art. 2, 3, 15, et les deux volets de l'art. 74) ; à part, 6 révisions sur 9 (art. 2 : D-292, ses trois volets IJ, D-308 et D-313, et les cinq cas vieillis, D-318) ; en attente de leur juge, 13 mesures des programmes présidentiels (D-321, D-326) | `reports/chiffrages_preregistres.md` |
 | articles chiffrables | **3 sur 33** fiscaux (PLF 2027), plus l'art. 74 de dépense ; **0 sur 49** (PLFSS 2027) ; 1 sur 29 (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 | euros quantifiés par l'annexe que l'outil chiffre | **72,8 %** (PLF 2027) ; 46,4 % (PLF 2026) | `docs/PLF2027_COVERAGE.md` |
 
@@ -408,3 +408,47 @@ préenregistrées et chiffrées dans leur pronostic : Roussel +5,3 Md€, Le Pen
 +21,2 ; seize restent refusées, deux portes neuves (« prix », « importations ») disant
 pourquoi. Aucun des cinq articles du PLF 2027 derrière la porte ne se chiffre côté ménages :
 la part en euros reste à 72,8 %. Les réactions de la consommation aux prix sont absentes.
+
+### But 13 — Une étude par candidat, publiée sur le site statique (validé, en cours)
+
+Treize mesures de huit candidats se chiffrent (buts 11 et 12), mais seulement en ligne de
+commande : `impots programme` les donne, aucune page ne les montre. Or le livrable est une
+étude à trois réponses par réforme, lisible sans rien faire tourner (buts 6 et 7), et la
+question des lecteurs est celle-là : ce que coûte la part chiffrée d'un programme, à qui,
+et ce qu'elle fait à la dette. Il manque une étude qui parte d'un programme et non d'un
+article de loi, qui dise la couverture à côté de chaque nombre et ce que bouge chaque
+paramètre. C'est le deuxième chiffre de la règle de priorité : deux études publiées
+aujourd'hui, dix à la fin.
+
+```
+/goal Chaque candidat dont le moteur chiffre au moins une mesure a son étude à trois
+réponses, construite sur le site statique, et c'est mergé dans main. `impots etude` accepte
+un programme : l'étude porte sur sa part chiffrée, ménages et entreprises ensemble, et dit
+à côté de chaque nombre la couverture (mesures chiffrées sur mesures paramétrées) et chaque
+refus avec sa porte ; la dette n'est jamais donnée comme celle du programme entier. Les
+trois réponses : le coût de 2026 et l'effet par décile de niveau de vie, pouvoir d'achat
+compris ; la bande, ou son absence avec sa raison ; l'écart de dette en 2035 à θ½ et aux
+coins de la boîte, dans les deux vues, avec le verdict. Chaque mesure chiffrée est parcourue
+en trois points de sa plage (le bas, la valeur du candidat, le haut), coût et dette, pour
+que le lecteur voie ce que le paramètre déplace. La couche déclarée du candidat s'affiche à
+part, à ρ = 0, ½ et 1, jamais additionnée. Les mêmes hypothèses pour tous, écrites une
+fois. Chaque passe est préenregistrée avec son pronostic avant de tourner, et un test
+refuse la dérive de chaque page. Si la calibration de la population doit changer,
+s'arrêter et demander. Preuve attendue : les huit études et le site construit, la sortie
+verte des tests ciblés, l'URL de la PR et le SHA du merge. Ou s'arrêter après 60 tours, en
+disant ce qui manque.
+```
+
+Validé par le propriétaire le 2 novembre 2026, avec les trois choix proposés :
+
+* **Huit études, une page d'accueil pour les 24.** Les huit candidats dont une mesure se
+  chiffre ont leur étude ; la page des programmes liste les 24 candidats déclarés avec leur
+  couverture et leurs refus par porte, sans chiffre pour ceux dont rien ne se chiffre.
+* **Les plages en trois points.** Le bas, la valeur du candidat, le haut de chaque mesure
+  chiffrée : un premier pas, statique, vers les curseurs.
+* **Les hypothèses des études.** Celles de D-289, écrites une fois pour les huit : θ = ½,
+  croissance réelle de 1 %, prix de 2 %, salaires de 3 %, dépense gelée en volume, taux
+  implicite tenu, horizon de dix ans.
+
+La publication en ligne reste la décision du propriétaire : le site est construit, pas
+activé.
