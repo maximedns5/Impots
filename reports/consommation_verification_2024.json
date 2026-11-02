@@ -1,0 +1,119 @@
+{
+  "annee": 2024,
+  "menages_echantillon": 20000,
+  "menages_ponderes": 31013363.85187342,
+  "couverture": {
+    "imputee_eur": 1070800111195.6228,
+    "comptes_eur": 1527122900000.0,
+    "part": 0.7011879077942075,
+    "pronostic": [
+      0.75,
+      0.92
+    ],
+    "dans_pronostic": false
+  },
+  "tva": {
+    "principal_eur": 100650158929.98558,
+    "bas_eur": 66818711556.96648,
+    "haut_eur": 117274048175.03856,
+    "cible_eur": 136059000000.0,
+    "ecart": -0.2602462245791489,
+    "ecart_bas": -0.5088989956050942,
+    "ecart_haut": -0.13806475003462793,
+    "largeur_points": 0.37083424557046635,
+    "tolerance": [
+      -0.3,
+      0.1
+    ],
+    "tenue": true,
+    "pronostic": [
+      -0.25,
+      -0.05
+    ],
+    "dans_pronostic": false
+  },
+  "point": {
+    "taux": {
+      "0.021": {
+        "menages_eur": 137168345.31832886,
+        "tresor_eur": 400000000.0,
+        "rapport": 0.34292086329582216,
+        "dans_pronostic": false
+      },
+      "0.055": {
+        "menages_eur": 2124327939.6708527,
+        "tresor_eur": 2000000000.0,
+        "rapport": 1.0621639698354264,
+        "dans_pronostic": false
+      },
+      "0.1": {
+        "menages_eur": 1294843144.261856,
+        "tresor_eur": 1600000000.0,
+        "rapport": 0.8092769651636601,
+        "dans_pronostic": true
+      },
+      "0.2": {
+        "menages_eur": 3786493514.7005463,
+        "tresor_eur": 7500000000.0,
+        "rapport": 0.5048658019600728,
+        "dans_pronostic": false
+      }
+    },
+    "pronostic": [
+      0.55,
+      0.95
+    ]
+  },
+  "carburants": {
+    "imputee_eur": 42967516659.68734,
+    "sdes_eur": 52652909390.68666,
+    "ecart": -0.18394791176938252,
+    "tolerance": [
+      -0.2,
+      0.2
+    ],
+    "tenue": true,
+    "pronostic": [
+      -0.15,
+      0.05
+    ],
+    "dans_pronostic": false
+  },
+  "accises": {
+    "menages_eur": 20305814736.03784,
+    "cible_eur": 23820000000.0,
+    "ecart": -0.14753086750470856,
+    "tolerance": [
+      -0.3,
+      0.3
+    ],
+    "tenue": true,
+    "pronostic": [
+      -0.25,
+      0.05
+    ],
+    "dans_pronostic": true
+  },
+  "profil": {
+    "accises_par_decile_eur": [
+      388.3427488942916,
+      468.71332835872323,
+      528.7649707300818,
+      602.6219466170273,
+      677.3057321223941,
+      693.6626191746774,
+      767.467488702984,
+      744.4462435561375,
+      832.9116459712941,
+      843.2309763637876
+    ],
+    "rapport_d10_d1": 2.1713575926541075,
+    "budget_vert": 2.0510204081632653,
+    "pronostic": [
+      1.5,
+      2.5
+    ],
+    "dans_pronostic": true
+  },
+  "verdict": "tenue"
+}

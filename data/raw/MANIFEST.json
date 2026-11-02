@@ -1603,6 +1603,69 @@
       "licence": "publication de la Cnaf, réutilisation avec mention de la source",
       "description": "Cnaf, Analyses statistiques n° 5, 2025 (S. Cazain, C. Chantel) : « En 2024, les dépenses de prime d'activité augmentent de 1,4 % », 8 p. P. 1 : 4,52 millions de foyers en moyenne en 2024, 190 € par mois, 10,31 Md€ versés par les Caf. Encadré 2, p. 3 : les élasticités de la dépense, estimées avec le modèle César-PA sur les fichiers Allstat FR6 : +1 % des montants forfaitaires (y compris forfait logement) fait +3,8 % de dépense en 2024 ; +1 % des revenus d'activité, −2,4 % ; +1 % des prestations familiales, −0,3 %. P. 2 : la revalorisation monte en charge sur cinq mois (DTR). Comparateur de la mesure de l'écart de la prime (D-315) ; source d'aucune imputation.",
       "quarantined": false
+    },
+    "dgfip_statistiques_37_2025_tva_2024.xlsx": {
+      "url": "https://www.impots.gouv.fr/sites/default/files/media/9_statistiques/0_etudes_et_stats/0_publications/dgfip_statistiques/2025/num37_09/dgfip_stat_37_2025.xlsx",
+      "sha256": "454b74964e8c736b74eedd59ad94f3ba5e9eef1b3596c80a5dfe8cdff42bad8f",
+      "bytes": 53480,
+      "downloaded": "2026-11-02",
+      "licence": "Licence Ouverte 2.0 (DGFiP)",
+      "description": "DGFiP Statistiques n° 37 (2025), « La TVA économique augmente de 1,1 % en 2024 » : bases imposables et TVA par taux (20 %, 10 %, 5,5 %, 2,1 %) pour 2024. Agrégat de la vérification de l'imputation (but 12), jamais une source d'imputation.",
+      "quarantined": false
+    },
+    "insee_bdf2017_france_entiere_csv.zip": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/4648335/bdf2017fe_csv.zip",
+      "sha256": "f6d4a3344031f4acb6037a2a370deb7774d7b2e3d2192f600b38d75e3627169d",
+      "bytes": 87411,
+      "downloaded": "2026-11-02",
+      "licence": "Licence Ouverte 2.0 (Insee)",
+      "description": "Insee Résultats, « Les dépenses des ménages en France en 2017 », enquête Budget de famille 2017, France entière, parue le 15/09/2020. Archive des tableaux en CSV ; TF106 : dépense moyenne par ménage en euros, 326 postes de la COICOP jusqu'à 5 chiffres, par décile de niveau de vie. Source de l'imputation de la consommation par poste et par décile (but 12).",
+      "quarantined": false
+    },
+    "insee_cn2025_conso_effective_fonction.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988813/T_CONSO_EFF_FONCTION_fr.xlsx",
+      "sha256": "e7a0b42f2b572c7b92a42ce4f02b616df22410d7781d806c350dbe4ab9f7396d",
+      "bytes": 546600,
+      "downloaded": "2026-11-02",
+      "licence": "Licence Ouverte 2.0 (Insee)",
+      "description": "Insee Résultats, « Consommation des ménages en 2025 » (base 2020), paru le 29/05/2026 : consommation effective des ménages par fonction (COICOP 2018, jusqu'à 4 chiffres), en valeur, de 1959 à 2025. Cale les montants de 2017 de l'enquête Budget de famille sur l'année de la population (but 12).",
+      "quarantined": false
+    },
+    "plf2027_jaune_budget_vert.pdf": {
+      "url": "https://www.assemblee-nationale.fr/dyn/contenu/visualisation/1129732/file/4-Jaune%202027%20-%20Budget%20vert.pdf",
+      "sha256": "db144c8a202c50553520d3cdc4d4c7124deca39ad06d67caa0729be5789f0600",
+      "bytes": 6506495,
+      "downloaded": "2026-11-02",
+      "licence": "Licence Ouverte 2.0 (Assemblée nationale)",
+      "description": "PLF 2027, rapport sur l'impact environnemental du budget (« Budget vert »), octobre 2026, partie II, section C (p. 249-262) : 39,7 Md€ d'accise sur les énergies en 2025, payée à 60 % par les ménages ; 750 € par ménage, 490 € au premier décile, 1 005 € au dernier. Agrégat de la vérification des accises (but 12).",
+      "quarantined": false
+    },
+    "sdes_bilan_energetique_2024_publication.pdf": {
+      "url": "https://www.statistiques.developpement-durable.gouv.fr/media/9087/download?inline",
+      "sha256": "42a090baa16d0e3873995af0c3066dd5cda20b39c010db5f1ce64fa072d79028",
+      "bytes": 8592722,
+      "downloaded": "2026-11-02",
+      "licence": "Licence Ouverte 2.0 (SDES)",
+      "description": "SDES, « Bilan énergétique de la France pour 2024 », publication du 03/03/2026 : part des taxes dans la dépense de carburant des ménages (36,5 %), produit de l'accise sur les produits énergétiques et de la TVA sur les produits pétroliers. Agrégat de la vérification (but 12).",
+      "quarantined": false
+    },
+    "sdes_bilan_energetique_2024_series_longues.xlsx": {
+      "url": "https://www.statistiques.developpement-durable.gouv.fr/media/8958/download?inline",
+      "sha256": "10f6c43b574c28726a542831419ff484c0321cf86fdb2ce5fdf73816ef7ebdb9",
+      "bytes": 947562,
+      "downloaded": "2026-11-02",
+      "licence": "Licence Ouverte 2.0 (SDES)",
+      "description": "SDES, « Bilan énergétique de la France pour 2024 », séries longues 1960-2024 : consommation et dépense des ménages par carburant (gazole, supercarburants, GPL), en Mtep et en M€. Agrégat de la vérification des carburants (but 12).",
+      "quarantined": false
+    },
+    "tresor_eco_371_2025_composition_tva.pdf": {
+      "url": "https://www.tresor.economie.gouv.fr/Articles/c462ac7f-76db-4c33-9bb3-dcc6886ed898/files/f4d0d1ac-fc61-4cf3-ab3f-094385b218bd",
+      "sha256": "d3daa52ccfdc05978c7939d97ece4018803c0d0a868191c5c538699dc6bcadfb",
+      "bytes": 544891,
+      "downloaded": "2026-11-02",
+      "licence": "publication de la DG Trésor, réutilisation avec mention de la source",
+      "description": "DG Trésor, Trésor-Éco n° 371, 25/09/2025, « Analyse de la composition des recettes de TVA » : 65,1 % de la TVA nette payée par les ménages en 2022 ; rendement d'un point de chaque taux en 2025 (tableaux 1 et 2). Agrégat de la vérification (but 12).",
+      "quarantined": false
     }
   }
 }

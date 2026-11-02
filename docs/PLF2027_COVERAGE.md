@@ -471,14 +471,19 @@ Restent, dans les articles chiffrés, **820 M EUR** de volets que l'outil ne ch
 * **Art. 2, volet 4.2.1.4 (IR AT-MP), 515 M EUR** — `plf2027_art_2_ij_atmp`.
 * **Art. 2, volet 4.2.1.4 (CSG), 540 M EUR** — `plf2027_art_2_csg_ij`.
 
-### Les refus mesurés (but 8, D-305)
+### Les refus mesurés (but 8, D-305 ; but 12, D-326)
 
-Le but 8 a regardé **1 605 M EUR** de volets refusés. Aucun n'entre au numérateur : chacun dit ce que la population ou les données ouvertes en portent, et ce qui manque.
+Les buts 8 et 12 ont regardé **1 978 M EUR** de volets refusés. Aucun n'entre au numérateur : chacun dit ce que la population ou les données ouvertes en portent, et ce qui manque. Les cinq derniers sont les articles derrière la porte « consommation », que le but 12 a ouverte pour les ménages (la TVA par poste et les accises sur l'énergie) : aucun ne s'en chiffre.
 
 * **Art. 2, volet 4.2.1.3, 820 M EUR.** Aucune indemnité de rupture. La fiche cite le rapport IGF-IGAS d'octobre 2025 : 40 000 personnes au-dessus d'un PASS, soit 0,2 % des salariés du privé de la population, une queue qu'une clé par cellule étalerait sur tous. Manque : une distribution ouverte des indemnités de rupture ; imputer depuis les comptes de la fiche noterait la fiche contre elle-même.
 * **Art. 5, 500 M EUR.** La case 8UT porte le stock des plus-values en report : 173,27 Md€ chez 117 112 foyers en 2024. À 31,4 % de prélèvements, les 500 M€ de la fiche supposent 1,59 Md€ transmis par an, 0,92 % du stock. Manque : l'âge des détenteurs, qui fixe la part transmise par donation ou décès : aucune source ouverte ne ventile la case 8UT par âge.
 * **Art. 6, 25 M EUR.** Les cases 2CH, 2DH, 2VV et 2WW portent les produits de l'assurance-vie : 1,947 Md€ chez 1 113 493 foyers pour la seule 2CH en 2024. Manque : l'assureur étranger et la transmission au décès, qu'aucune case ne distingue ; les 100 Md€ d'encours de la fiche n'ont pas d'équivalent ouvert.
 * **Art. 7, volet 4.2.1.2, 260 M EUR.** Les cases 5ND et 5OD portent les recettes du meublé non professionnel au micro : 5,045 Md€ chez 619 711 foyers pour la 5ND en 2024. Manque : les amortissements que la réforme réintègre à la cession : ils sont dans les liasses du réel, que la fiche apparie, et dans aucune donnée publique.
+* **Art. 16, 304 M EUR.** La consommation par poste du Budget de famille (D-323). Les abonnements de télévision sont dans les services culturels (0942Z, 466 € par ménage de 2017), mêlés au cinéma, au spectacle et aux musées, et dans les offres groupées d'internet (08131, 626 €). Manque : la part des services de télévision dans ces deux postes : aucun tableau public ne la donne, et la microdonnée de l'enquête n'est pas ouverte.
+* **Art. 19, 31 M EUR.** Rien : l'accise porte sur les carburants des essais de l'industrie aéronautique et navale, pas sur la consommation des ménages. Manque : l'énergie consommée par secteur des entreprises.
+* **Art. 24, volet 4.2.1.2, 0,3 M EUR.** Rien : l'électricité fournie aux navires à quai n'est pas une consommation des ménages. Manque : l'énergie consommée par secteur des entreprises.
+* **Art. 24, volet 4.2.1.3, 16 M EUR.** Rien : la recharge des poids lourds électriques est une consommation des transporteurs, pas des ménages. Manque : l'énergie consommée par secteur des entreprises et le parc de poids lourds.
+* **Art. 25, volet 4.2.1.3, 22 M EUR.** Rien : le malus sur la masse porte sur l'achat de véhicules, par véhicule, et la dépense d'automobiles du Budget de famille (0711Z) n'en donne ni le nombre ni la masse. Manque : le parc et les immatriculations de véhicules par masse.
 
 ### Les articles qui sortent du dénominateur
 

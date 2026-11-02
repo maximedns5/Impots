@@ -143,7 +143,7 @@ def _script():
 def test_every_priced_measure_has_its_case_files_as_committed() -> None:
     """Le scénario ou la réforme d'un cas est la mesure du programme, sans rien d'autre ;
     chaque mesure chiffrée a sa classe de tolérance (D-321)."""
-    from impots import scenarios
+    from impots import consommation, scenarios
     from impots.entreprises.reforms import FirmReformSpec
 
     s = _script()
@@ -153,6 +153,8 @@ def test_every_priced_measure_has_its_case_files_as_committed() -> None:
             scen = scenarios.load(nom)
             assert scen.year == p.annee
             assert scen.reform == pg._spec("menages", m.chiffrage.reforme)
+            # La TVA et les accises ne mordent que sur la consommation imputée (D-326).
+            assert ("consommation" in scen.imputations) == consommation.touche(scen.reform)
         else:
             path = s.ROOT / "reforms" / f"{nom}.json"
             assert FirmReformSpec.model_validate_json(path.read_text(encoding="utf-8")) == \

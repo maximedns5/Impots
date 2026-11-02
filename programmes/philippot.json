@@ -147,8 +147,8 @@
         }
       ],
       "refus": {
-        "porte": "consommation",
-        "raison": "Les droits de douane portent sur des importations que le moteur n'a pas."
+        "porte": "importations",
+        "raison": "Les droits de douane portent sur des importations par origine que le moteur n'a pas."
       },
       "declare": {
         "montant_eur": 10500000000.0,
@@ -237,8 +237,8 @@
         }
       ],
       "refus": {
-        "porte": "consommation",
-        "raison": "Un prix de l'énergie fixé hors du moteur, qui n'a pas la consommation d'énergie des ménages."
+        "porte": "prix",
+        "raison": "Un prix de l'énergie fixé hors du marché, pas une taxe : la couche consommation porte la dépense d'énergie des ménages, mais le coût d'un prix administré tombe sur le fournisseur ou sur l'État par des canaux que le moteur ne modèle pas, et la consommation imputée ne réagit pas aux prix."
       }
     },
     {

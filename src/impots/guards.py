@@ -131,6 +131,8 @@ def not_greater(
 #: way round here.
 STATE_RECEIPTS = (
     "ir", "csg_imposable", "csg_deductible", "crds", "cotisations_salariales",
+    # The consumption taxes, when the consumption is imputed (D-323).
+    "tva_menages", "accises_energie",
     # Not in `ir`, and zero unless capital income is imputed (D-248). `pfu` is NOT here:
     # it is a part of `ir`, and counting it twice is the failure this ledger catches.
     "prelevements_sociaux_capital",

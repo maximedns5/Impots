@@ -63,6 +63,12 @@ PORTES: dict[str, str] = {
                           "des pensions déclarées, déjà nettes de cette part (D-176)",
     # « bouton_ce_but », la porte provisoire des mesures qui attendaient les boutons de
     # D-320, est fermée : elles sont toutes chiffrées ou refusées ailleurs.
+    # Depuis le but 12, la porte « consommation » est ouverte pour la TVA par poste et les
+    # accises sur l'énergie ; ce qu'elle ne couvre pas passe par ces deux portes (D-325).
+    "prix": "un prix fixé hors du marché, ou une obligation des fournisseurs lue dans les "
+            "prix (énergie, carburants, certificats d'économies d'énergie) : ni une taxe ni "
+            "une prestation, et la consommation imputée ne réagit pas aux prix (D-323)",
+    "importations": "les importations par origine : droits de douane, antidumping",
 }
 
 TYPES_SOURCE = ("programme", "proposition_de_loi", "entretien", "discours", "reseau_social",

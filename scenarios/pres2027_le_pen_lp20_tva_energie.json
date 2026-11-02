@@ -1,0 +1,19 @@
+{
+  "name": "pres2027_le_pen_lp20_tva_energie",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-01 — Baisse de la TVA sur l'énergie et les carburants : « Il faut baisser la TVA sur l'énergie. L'énergie est un bien de première nécessité. » (https://www.europe1.fr/politique/des-choix-a-faire-entre-baisse-de-la-tva-sur-lenergie-et-reduction-des-depenses-marine-le-pen-detaille-son-projet-economique-1083380, 2026-09-17)",
+  "note": "La TVA de l'électricité, du gaz, du fioul et des carburants (le groupe « energie » de la couche consommation) passe de 20 % à 5,5 %, à volumes constants et répercutée en entier dans les prix (D-323). Le bois de chauffage, déjà à 10 %, et la chaleur de réseau ne bougent pas. Plage de 0 à 20 % (la mesure retirée).",
+  "tags": [
+    "presidentielle_2027",
+    "le_pen"
+  ],
+  "reform": {
+    "tva_postes": {
+      "energie": 0.055
+    }
+  },
+  "imputations": [
+    "consommation"
+  ]
+}

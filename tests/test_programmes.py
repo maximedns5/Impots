@@ -78,9 +78,10 @@ def test_an_unknown_door_is_refused() -> None:
 
 
 def test_a_knob_the_engine_does_not_have_is_refused() -> None:
+    # `tva_taux_normal` était l'exemple jusqu'au but 12, qui en a fait un bouton (D-324).
     with pytest.raises(ValidationError, match="pas un menages valide"):
         pg.Mesure.model_validate(_mesure(chiffrage={"couche": "menages",
-                                                    "reforme": {"tva_taux_normal": 0.24}}))
+                                                    "reforme": {"droits_douane_taux": 0.1}}))
 
 
 def test_a_firm_reform_is_validated_as_one() -> None:

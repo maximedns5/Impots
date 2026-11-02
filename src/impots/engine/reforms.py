@@ -461,7 +461,18 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
 
     `Reform(tbs)` clones the parameter tree, so the baseline system is untouched —
     `test_no_mutation` is the standing proof of that.
+
+    The consumption knobs move nothing in the tree: the population pass prices them on
+    the consumption it imputes, and strips them before this point (D-323). Anywhere else
+    — one household, which has no consumption — they would be dead, so they are refused.
     """
+    from impots import consommation
+
+    if consommation.touche(spec):
+        raise ValueError(
+            "la TVA et les accises se chiffrent sur la population, avec la consommation "
+            "imputée : un ménage seul n'a pas de consommation, et ces boutons n'y "
+            "bougeraient rien (D-323)")
     start = periods.instant(f"{year}-01-01")
     instant = f"{year}-01-01"
     reform_name = f"impots-user-reform:{name}"

@@ -1,0 +1,19 @@
+{
+  "name": "pres2027_roussel_tva_carburants_5_5",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Fabien Roussel (PCF), programme relevé le 2026-11-01 — TVA sur les carburants : « « 30 centimes en moins sur le prix du litre d'essence » » (https://www.connaissancedesenergies.org/afp/prix-de-lenergie-roussel-pcf-appelle-a-se-mobiliser-sur-les-ronds-points-260911, 2026-09-11)",
+  "note": "La TVA du poste des carburants (07221) passe de 20 % à 5,5 %, à volumes constants et répercutée en entier dans les prix (D-323). Plage de 0 à 20 % (la mesure retirée).",
+  "tags": [
+    "presidentielle_2027",
+    "roussel"
+  ],
+  "reform": {
+    "tva_postes": {
+      "carburants": 0.055
+    }
+  },
+  "imputations": [
+    "consommation"
+  ]
+}

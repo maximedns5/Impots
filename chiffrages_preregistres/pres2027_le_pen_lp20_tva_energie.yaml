@@ -1,0 +1,52 @@
+case: pres2027_le_pen_lp20_tva_energie
+pre_registered: '2026-11-02T10:21:55+00:00'
+commit: 1cfa67ea64384a9d1bf3952c0afbb6bec332419b
+scenario: pres2027_le_pen_lp20_tva_energie
+reform: null
+population_vintage: '2024'
+sample: 20000
+engine:
+  openfisca_france: 176.0.8
+  openfisca_core: 44.7.0
+chiffrage:
+  mechanical_eur: 11636530854.618362
+  behavioural: null
+  intervals: null
+  fan: null
+tolerance:
+  relative: 0.3
+  absolute_eur: 200000000.0
+  rationale: 'Classe « consommation » (D-321). Mesure de TVA ou d''accise sur la consommation
+    imputée du Budget de famille 2017 vieillie (D-323), à volumes constants et répercutée
+    en entier dans les prix : le juge peut compter une réaction de la consommation,
+    une répercussion partielle, une autre année, et la vérification des agrégats (D-325)
+    dit l''écart de l''assiette.'
+note: 'Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-01
+  — Baisse de la TVA sur l''énergie et les carburants : « Il faut baisser la TVA sur
+  l''énergie. L''énergie est un bien de première nécessité. » (https://www.europe1.fr/politique/des-choix-a-faire-entre-baisse-de-la-tva-sur-lenergie-et-reduction-des-depenses-marine-le-pen-detaille-son-projet-economique-1083380,
+  2026-09-17). La TVA de l''électricité, du gaz, du fioul et des carburants (le groupe
+  « energie » de la couche consommation) passe de 20 % à 5,5 %, à volumes constants
+  et répercutée en entier dans les prix (D-323). Le bois de chauffage, déjà à 10 %,
+  et la chaleur de réseau ne bougent pas. Plage de 0 à 20 % (la mesure retirée).'
+bound: two-sided
+mirror: false
+comparator: null
+vieillissement:
+  jeu: plf2027
+  source: 'PLF 2027 (AN n° 3210), exposé général des motifs : salaires par tête ;
+    PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur'
+  de: 2024
+  vers: 2026
+  salaires:
+    '2025': 0.02
+    '2026': 0.02
+  prix:
+    '2025': 0.009000000000000001
+    '2026': 0.021
+  facteur_salaires: 1.0404
+  facteur_prix: 1.0301889999999998
+  colonnes:
+    salaire_brut_annuel: wage
+    pension_annuelle: price
+    chomage_annuel: wage
+    loyer_mensuel: price
