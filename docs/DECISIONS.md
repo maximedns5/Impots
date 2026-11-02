@@ -25639,3 +25639,26 @@ code de D-328, le tient.
 le commit qui porte cette entrée, depuis un worktree figé neuf. Les 46 rapports du commit
 `3b02ae4` ne sont pas gardés ; la reprise doit les redonner à l'identique, et le résultat
 le dira. La méthode et le pronostic de D-328 ne changent pas.
+
+## D-330 — Les chemins du but 13 tués faute de mémoire ; les passes reprennent encore
+
+**Le fait.** La reprise de D-329 a redonné les 46 rapports de `3b02ae4` à l'identique
+(seules leurs durées diffèrent), puis les 65 passes courtes sans échec. Le premier chemin
+annuel, celui d'Attal, a été tué par le noyau à 13,9 Go, la limite du conteneur étant de 14
+Go. Un chemin de trois ans, mesuré toutes les dix secondes, montait de 2 Go par année et
+vue, et mourait dans sa deuxième année.
+
+**La cause.** Un chemin enchaîne vingt passes dans un processus. Il gardait deux choses que
+la passe suivante ne lit pas : les systèmes réformés de chaque année, dans deux caches de
+32, avec leurs arbres par instant ; et les arbres de la référence à chaque instant, dans un
+cache sans borne que chaque année remplit de ses mois.
+
+**Le correctif.** Chaque passe du chemin libère d'abord les deux caches, et refait à vide
+celui de la référence (`cli._liberer`). Un chemin de trois ans du programme d'Attal reste à
+6,2 Go de bout en bout, au lieu de 14. Un test tient la fonction ; son appel dans le chemin
+est tenu par un test de structure, qui lit le code de la commande, seul moyen de le tenir
+sans une passe.
+
+**Les passes.** Elles reprennent encore au début, toutes, sur le commit qui porte cette
+entrée : une étude se lit sur un seul code. La méthode et le pronostic de D-328 ne changent
+pas, et la reprise devra redonner les 65 rapports courts de `07783a4` à l'identique.

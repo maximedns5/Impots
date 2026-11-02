@@ -1475,6 +1475,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                               layers={"menages": 0.0, "entreprises": 0.0},
                               behaviour_asked=args.behavioural)
             print(f"  {year} · {view} · passe du simulateur…", flush=True)
+            _liberer()
             first = api._price_first_year(
                 api.YearPass(reform=scenario.reform_in(year), year=year,
                              behavioural=args.behavioural),
@@ -1520,6 +1521,26 @@ def cmd_predictif(args: argparse.Namespace) -> int:
         for line in path.aged.lines():
             print(f"     {line}")
     return 0
+
+
+def _liberer() -> None:
+    """Free what a pass of the annual path keeps and the next one does not read: the
+    reformed systems of the year before, each with its trees by instant, held by two caches
+    of 32, and the baseline's trees by instant (D-330). Kept, a ten-year path of a large
+    reform grew by two gigabytes a pass and was killed in its second year on a 15-gigabyte
+    machine."""
+    import gc
+
+    from impots.engine import parametres
+    from impots.engine import system as engine_system
+    from impots.entreprises import system as firm_system
+
+    engine_system.reformed.cache_clear()
+    firm_system.reformed.cache_clear()
+    # And the baseline's trees by instant: a cache without bound, which a path filled with
+    # every month of every year it priced. The next pass rebuilds the ones it reads.
+    parametres.memoriser(engine_system.baseline())
+    gc.collect()
 
 
 def _consommation(reform: object, year: int, view: str, uprating: object,

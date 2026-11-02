@@ -189,3 +189,28 @@ def test_an_amount_on_the_candidates_page_without_its_etage_is_refused(monkeypat
     monkeypatch.setattr(etude, "amounts", lambda text, etage, n: text)
     with pytest.raises(etude.EtudeError, match="sans son étage"):
         etude.presidentielle(etude.definitions())
+
+
+def test_a_pass_of_the_path_frees_what_the_years_before_kept() -> None:
+    """GARDE (D-330). Un chemin de dix ans gardait les systèmes réformés de chaque année et
+    les arbres de la référence à chaque instant : celui d'Attal montait de 2 Go par passe et
+    était tué dans sa deuxième année. Chaque passe libère ce que la suivante ne lit pas."""
+    import inspect
+
+    from impots.api.schemas import ReformSpec
+    from impots.engine import system
+    from impots.population import cli
+
+    system.reformed_for(ReformSpec(decote_taux=0.4), 2026)
+    assert system.reformed.cache_info().currsize >= 1
+    base = system.baseline()
+    base.get_parameters_at_instant("2026-01-01")
+    before = base.get_parameters_at_instant
+    cli._liberer()
+    assert system.reformed.cache_info().currsize == 0
+    assert base.get_parameters_at_instant is not before
+    assert base.get_parameters_at_instant("2026-01-01") is not None
+    # Structural: the whole pass of the path frees before it prices.
+    source = inspect.getsource(cli.cmd_predictif)
+    assert source.index("passe du simulateur") < source.index("_liberer()") < source.index(
+        "api._price_first_year(")
