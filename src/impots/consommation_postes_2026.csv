@@ -46,23 +46,27 @@ code,libelle,euros_2017,taux,taux_bas,taux_haut,mixte,energie,raison,reference
 02111,Spiritueux et liqueurs,100,0.2,0.2,0.2,0,,,20 [278 ; exclusion de A1] + droits sur les alcools (hors but)
 0212A,"Vins, apéritifs à base de vin, champagne",228,0.2,0.2,0.2,0,,,20 [278] + droits sur les alcools (hors but)
 02131,Bière et boissons à base de bière,62,0.2,0.2,0.2,0,,,20 [278] + droits sur les alcools (hors but)
+022ZZ,Tabac et produits connexes,402,0.2,0.2,0.2,0,,,"20 [278 ; base : prix de détail, BOI-TVA-BASE-10-20-60] + accise tabacs (hors but)"
 02411,"Dépenses de boissons alcoolisées, tabac et stupéfiants : cadeau off…",4,0.2,0.2,0.2,0,,,20 [278]
 03111,Tissus pour vêtements,4,0.2,0.2,0.2,0,,,20 [278]
 0312Z,"Vêtements homme, femme, enfant",897,0.2,0.2,0.2,0,,,20 [278]
 03131,Accessoires du vêtement et mercerie,42,0.2,0.2,0.2,0,,,20 [278]
 03141,"Nettoyage, réparation et location de vêtements",17,0.2,0.2,0.2,0,,,20 [278]
+032ZZ,"Chaussures, yc location et réparation",288,0.2,0.2,0.2,0,,,20 [278]
 0331Z,Autres dépenses d habillement,130,0.2,0.2,0.2,0,,,20 [278]
 04111,Loyers nets des aides au logement (hors charges ou avec charges non…,1984,0,0,0,0,,,EXONÉRÉ [261 D 2° : location de logements nus]
 04121,Loyers (hors charges ou avec charges non isolables) des locataires…,48,0,0,0.1,1,,loyers d'habitation exonérés ; meublés de tourisme à 10 %,"EXONÉRÉ [261 D 2°, 4°] ; 10 meublés de tourisme avec services [279 a]"
 0431Z,Produits destinés aux travaux courants d’entretien et de réparation…,176,0.2,0.1,0.2,1,,fournitures achetées par le ménage ; travaux facturés à 10 %,"MIXTE : 20 fournitures achetées par le ménage [278] ; 10 travaux d'entretien facturés par une entreprise, logement de plus de deux ans [279-0 bis] ; 5,5 rénovation énergétique [278-0 bis A]"
 04431,"Factures d’eau résidence principale, autre logement, dépendance, te…",252,0.055,0.055,0.1,1,,eau potable ; assainissement à 10 %,"MIXTE : 5,5 eau potable, abonnement et redevances compris [A1 ; BOFiP §100] ; 10 assainissement [279 b] ; 10 frais d'accès au réseau [BOFiP §100]"
 04441,Charges collectives relatives au logement (payées isolément du loye…,589,0.1,0,0.2,1,,"charges collectives : entretien à 10 %, personnel hors TVA, chauffage à 20 % ; composition non publiée","MIXTE : chauffage collectif 20 ou 5,5 [278 ; B], eau 5,5, entretien 10 [279-0 bis], personnel hors TVA ; composition non publiée"
-04500,Facture électricité + gaz (non dissociables),182,0.2,0.2,0.2,0,,,20 [278] depuis le 1/8/2025 + accises électricité et gaz
+04500,Facture électricité + gaz (non dissociables),182,0.2,0.2,0.2,0,electricite_gaz,,20 [278] depuis le 1/8/2025 + accises électricité et gaz
 04511,"Facture d électricité résidence principale, autre logement, garage,…",751,0.2,0.055,0.2,1,electricite,"20 % sur toute la facture depuis le 1/8/2025 ; l'abonnement était à 5,5 % avant","20 [278] depuis le 1/8/2025 + accise électricité ; avant : abonnement (≤ 36 kVA) et CTA à 5,5"
 0452Z,"Gaz et combustibles liquéfiés (gaz de ville, butane...)",258,0.2,0.055,0.2,1,gaz,"20 % sur toute la facture depuis le 1/8/2025 ; l'abonnement était à 5,5 % avant","20 [278] + accise gaz naturel ou GPL combustible ; abonnement gaz à 5,5 jusqu'au 31/7/2025"
 0453Z,Combustibles liquides,124,0.2,0.2,0.2,0,fioul,,20 [278] + accise fioul domestique
+045AZ,Combustibles solides,56,0.1,0.055,0.2,1,,"bois de chauffage ; charbon à 20 %, réseau de chaleur à 5,5 % ou 20 %","MIXTE : 10 bois de chauffage [278 bis 3° bis] ; 20 charbon [278] + accise charbons ; réseau de chaleur 5,5 abonnement et chaleur à 50 % EnR et plus [B], sinon 20"
 04611,Autres dépenses d’habitation : cadeau offert (à destination d’un au…,69,0,0,0.2,1,,cadeau d'un loyer exonéré ou d'un bien à 20 %,INDÉTERMINÉ (cadeau à un autre ménage : loyer exonéré ou bien à 20)
 0511Z,"Meubles, articles d’ameublement et de décoration",413,0.2,0.2,0.2,0,,,20 [278]
+051AZ,"Tapis et autres revêtements, pose et réparation",14,0.2,0.1,0.2,1,,tapis et revêtements ; pose par une entreprise à 10 %,20 [278] ; 10 pose par une entreprise dans un logement de plus de deux ans [279-0 bis]
 0521Z,Articles de literie et autres articles de ménage en textile,86,0.2,0.2,0.2,0,,,20 [278]
 0531Z,Gros appareils ménagers électriques,171,0.2,0.055,0.2,1,,"pompes à chaleur posées à 5,5 % depuis 2026","20 [278] ; 5,5 PAC air/air fournie et posée [278-0 bis A, LFI 2026 art. 92]"
 05321,Petit électroménager,25,0.2,0.2,0.2,0,,,20 [278]
@@ -78,14 +82,15 @@ code,libelle,euros_2017,taux,taux_bas,taux_haut,mixte,energie,raison,reference
 0623Z,"Services paramédicaux (labo, radio, soins des auxiliaires médicaux…",55,0,0,0,0,,,"EXONÉRÉ [261 4 1°] (laboratoires, auxiliaires médicaux) ; location de matériel taxable"
 06311,Services et soins hospitaliers,26,0,0,0,0,,,EXONÉRÉ ou HORS CHAMP (hôpital public [256 B])
 0641Z,Autres dépenses de santé,9,0,0,0,0,,,EXONÉRÉ par défaut [261 4 1°] (contenu non décrit)
-0711Z,Achats d automobiles,1814,0.2,0.2,0.2,0,,,"MIXTE : 20 sur le neuf [278] ; occasion : TVA sur la marge du professionnel [297 A], aucune entre particuliers"
-07121,Achats de motocycles neufs et occasion,75,0.2,0.2,0.2,0,,,MIXTE : 20 neuf [278] ; occasion comme 0711Z
-07131,Achats de cycles neufs et occasion,36,0.2,0.2,0.2,0,,,MIXTE : 20 neuf [278] ; occasion comme 0711Z
+0711Z,Achats d automobiles,1814,0.2,0,0.2,1,,"le neuf ; l'occasion paie sur la marge du professionnel, ou rien entre particuliers","MIXTE : 20 sur le neuf [278] ; occasion : TVA sur la marge du professionnel [297 A], aucune entre particuliers"
+07121,Achats de motocycles neufs et occasion,75,0.2,0,0.2,1,,le neuf ; l'occasion comme 0711Z,MIXTE : 20 neuf [278] ; occasion comme 0711Z
+07131,Achats de cycles neufs et occasion,36,0.2,0,0.2,1,,le neuf ; l'occasion comme 0711Z,MIXTE : 20 neuf [278] ; occasion comme 0711Z
 07211,"Pièces détachées, pneus et accessoires pour les véhicules personnel…",132,0.2,0.2,0.2,0,,,20 [278]
 07221,"Carburants, électricité, huiles, lubrifiants…",1108,0.2,0.2,0.2,0,carburants,,20 [278] + accises carburants ; Corse 13 [297]
 07231,"Réparations, dépannages, révisions, lavage, entretien et contrôle t…",289,0.2,0.2,0.2,0,,,20 [278]
 0724Z,Autres services liés à l’utilisation de véhicules personnels,136,0.2,0.2,0.2,0,,,"20 [278] (parking, péages, auto-école, location)"
 07361,Autres services de transport (yc déménagement),15,0.2,0.2,0.2,0,,,20 [278] (déménagement)
+073ZZ,Services de transport,519,0.1,0,0.1,1,,transport intérieur de voyageurs ; aérien international exonéré,"MIXTE : 10 transport intérieur de voyageurs, taxi compris [279 b quater] ; EXONÉRÉ transport aérien international [262 II 8°]"
 0741Z,Autres dépenses de transport,363,0.2,0,0.2,1,,"séjours et cadeaux, contenu non décrit","INDÉTERMINÉ (séjours hors domicile, cadeaux)"
 08111,"Services postaux (yc timbres, enveloppes)",23,0,0,0.2,1,,service universel postal exonéré ; autres envois à 20 %,"EXONÉRÉ service universel postal [261 4, alinéa non vérifié] ; autres envois 20"
 08121,"Achats et réparation téléphones fixes ou portables, télécopieurs et…",86,0.2,0.2,0.2,0,,,20 [278]
@@ -93,8 +98,11 @@ code,libelle,euros_2017,taux,taux_bas,taux_haut,mixte,energie,raison,reference
 0911Z,"Appareils de réception, d’enregistrement et de reproduction, du son…",93,0.2,0.2,0.2,0,,,20 [278]
 09131,"Micro-ordinateurs, tablettes, matériels et accessoires informatique…",90,0.2,0.2,0.2,0,,,20 [278]
 09141,Supports vierges ou enregistrés pour l’image et le son (yc téléchar…,49,0.2,0.2,0.2,0,,,20 [278]
+091AZ,"Equipement photo, cinéma, optique",26,0.2,0.2,0.2,0,,,20 [278]
+092ZZ,Autres biens durables importants du domaine des loisirs et de la cu…,96,0.2,0.2,0.2,0,,,20 [278]
 0931Z,"Jeux, jouets et passe temps, articles de sport, de camping et de lo…",168,0.2,0.2,0.2,0,,,20 [278]
 09321,"Horticulture, accessoires et frais de livraison",146,0.1,0.1,0.2,1,,plantes et fleurs ; accessoires et livraison à 20 %,MIXTE : 10 plantes et fleurs [278 bis ; BOI-TVA-LIQ-30-10-35] ; 20 accessoires et livraison [278]
+093AZ,Animaux d’agrément,163,0.2,0.2,0.2,0,,,"20 par défaut [278] (animaux de compagnie, aliments, vétérinaire : aucun taux réduit trouvé)"
 09411,"Services sportifs et récréatifs (spectacles sportifs, participation…",329,0.1,0,0.1,1,,"droits d'admission ; spectacles sportifs à 5,5 %, cotisations d'associations exonérées","MIXTE : 5,5 spectacles sportifs [J], équitation [O] ; 10 droits d'admission [279 b nonies] ; EXONÉRÉ cotisations d'associations [261 7 1°] ; 20 salles de sport, location, jeux vidéo [278]"
 0942Z,Services culturels,466,0.055,0.021,0.1,1,,"cinéma, théâtre, concerts ; musées à 10 %, premières représentations à 2,1 %","MIXTE : 5,5 cinéma [G], théâtre et concerts [F], zoos [L] ; 2,1 140 premières représentations [281 quater] ; 10 musées et expositions [279 b nonies], abonnements TV [279 b octies] ; 20 smartbox et autres [278]"
 09431,"jeux de hasard (loto, tiercé …)",38,0,0,0,0,,,EXONÉRÉ [261 E] (jeux de hasard)

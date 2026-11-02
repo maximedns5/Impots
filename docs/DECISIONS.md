@@ -25287,3 +25287,77 @@ d'un décile dépensent pareil à unités de consommation égales, quelle que so
 composition. L'outre-mer est dans la France entière de l'enquête, mais ses taux propres
 (8,5 % et 2,1 % aux Antilles et à La Réunion, aucune TVA en Guyane et à Mayotte) ne sont pas
 appliqués : la population est celle de la métropole.
+
+## D-324 — Avant la vérification : la table et l'imputation ramenées à D-323 et à regles.md
+
+**Le fait.** En écrivant les tests de la couche, avant tout calcul de la vérification de
+D-323, cinq écarts sont apparus entre le code et ce que D-323 et `regles.md` écrivent. Ils
+sont corrigés, chacun avec un test vu échouer sur le code d'avant. Les tolérances et les
+pronostics de D-323 ne bougent pas.
+
+1. **Huit postes oubliés.** Le motif du script de la table ne lisait que les codes à quatre
+   chiffres et une lettre. Les feuilles à trois chiffres et deux lettres des divisions 01 à
+   12 étaient écartées sans un mot : `022ZZ` le tabac, `032ZZ` les chaussures, `045AZ` les
+   combustibles solides, `051AZ` les tapis, `073ZZ` les services de transport, `091AZ`,
+   `092ZZ` et `093AZ`. Soit 1 549 € par ménage de 2017, 5,7 % de la dépense, jamais taxés.
+   La table a désormais les 138 postes de consommation de `regles.md` ; la division 13 est
+   écartée comme division, et `tf106` refuse une feuille hors de la division 13 que la
+   table oublierait.
+2. **Trois postes mêlés lus comme simples.** Une cellule « MIXTE » qui ne nomme qu'un taux
+   passait pour un taux unique : `0711Z` les automobiles, `07121` et `07131` (20 % sur le
+   neuf, la marge du professionnel sur l'occasion, rien entre particuliers). Le script
+   refuse désormais une cellule « MIXTE » ou « MARGE » sans décision, et une décision dont
+   le taux n'est pas entre ses bornes. Les postes mêlés sont 36, et non trente :
+
+   | poste | taux | bornes | raison |
+   |---|---:|---|---|
+   | `045AZ` | 10 % | 5,5 – 20 % | le bois de chauffage ; charbon, réseau de chaleur |
+   | `051AZ` | 20 % | 10 – 20 % | tapis et revêtements ; pose par une entreprise |
+   | `0711Z` | 20 % | 0 – 20 % | le neuf ; la marge, ou rien entre particuliers |
+   | `07121` | 20 % | 0 – 20 % | comme `0711Z` |
+   | `07131` | 20 % | 0 – 20 % | comme `0711Z` |
+   | `073ZZ` | 10 % | 0 – 10 % | transport intérieur ; aérien international exonéré |
+
+3. **La croissance par sous-classe.** D-323 dit que les euros de 2017 suivent leur
+   division. Le code suivait la sous-classe des comptes, puis la classe. Or les numéros
+   des classes ne se répondent pas d'une nomenclature à l'autre : le tabac est 02.2 dans la
+   COICOP de 1998 et 02.3 dans celle de 2018, où 02.4 sont les stupéfiants. Ramenée à la
+   division.
+4. **La facture commune sans accise.** Le poste `04500`, l'électricité et le gaz sur une
+   seule facture (182 € par ménage de 2017), ne portait aucune accise. R11 le répartit
+   entre les deux factures séparées : c'est fait au prorata de chaque décile, et
+   `tva_postes` refuse ce code, qui n'a plus de dépense propre.
+5. **Un bouton mort hors de la passe.** Un ménage seul, sans consommation, recevait les
+   boutons de TVA et d'accises sans rien en faire. Le moteur les refuse désormais.
+
+**Ce qui a été vu avant.** Un essai du câblage sur 5 000 ménages, avant ces correctifs, a
+imprimé une TVA des ménages de 91,2 Md€ et des accises de 19,9 Md€ en 2024. Ce n'est pas la
+vérification : la table oubliait 5,7 % de la dépense et la facture commune. C'est écrit ici
+parce que ces deux nombres ont été lus avant que la méthode ne soit corrigée.
+
+**La vérification, précisée avant son calcul.**
+
+- **La passe.** La population de 2024, 20 000 ménages (l'échantillon des cas, D-321), la
+  graine par défaut, une seule passe, lancée détachée par `scripts/verifier_consommation.py`
+  depuis un worktree figé sur le commit qui porte cette entrée.
+- **Le droit.** Les taux de la table, ceux de 2026, comme D-323 l'écrit. Seul l'abonnement
+  de l'électricité et du gaz, à 5,5 % jusqu'au 31 juillet 2025, diffère de 2024, et la borne
+  basse de ces deux postes le couvre. Les accises et les prix sont ceux de 2024 (R8, R9).
+- **La TVA.** La cible est 65,1 % de la ligne « TVA économique totale (e + f) » du tableau
+  1 de DGFiP Statistiques n° 37, colonne 2024, lue par le script dans le fichier manifesté.
+  Le verdict porte sur la TVA au taux principal des postes mêlés ; les deux bornes donnent
+  l'intervalle, dont D-323 pronostique la largeur.
+- **La couverture.** Contre la ligne `CPDEP` du tableau des comptes (la dépense de
+  consommation des ménages), en 2024.
+- **Le rendement d'un point.** La TVA en plus, à volumes constants, quand chacun des quatre
+  boutons de taux monte d'un point, contre 0,4, 2,0, 1,6 et 7,5 Md€ (2,1, 5,5, 10 et 20 %).
+- **Les carburants.** Le poste `07221` contre 29,901 + 22,752 Md€ (séries N149MFR et
+  N150MFR du SDES, 2024).
+- **Les accises.** Contre 60 % de 39,7 Md€, soit 23,82 Md€.
+- **Le profil.** Les accises moyennes par ménage du dixième décile de niveau de vie sur
+  celles du premier, les déciles de l'agrégat, contre 1 005 / 490.
+
+Trois vérifications ont une tolérance et arrêtent le but si elles en sortent : la TVA, les
+carburants, les accises. Les trois autres sont des mesures, avec le pronostic de D-323.
+L'accise sur le charbon, dans `045AZ`, n'est pas comptée : elle est négligeable chez les
+ménages, et la loi de 2024 n'en a pas été relevée.

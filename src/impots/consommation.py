@@ -6,8 +6,9 @@ positions de la COICOP, par décile de niveau de vie. Un ménage reçoit, pour c
 la dépense de son décile au prorata de ses unités de consommation sur la moyenne de son
 décile : la moyenne du décile est gardée, et rien d'autre n'est supposé. Les euros de 2017
 sont portés à l'année par la croissance de la consommation des ménages de leur division
-dans les comptes nationaux. La calibration de la population n'est pas touchée : ce module
-ajoute des colonnes, il ne change aucun poids.
+dans les comptes nationaux ; une division que les deux nomenclatures découpent autrement
+suit le total. La calibration de la population n'est pas touchée : ce module ajoute des
+colonnes, il ne change aucun poids.
 
 La TVA et les accises se calculent à volumes constants, la taxe répercutée en entier dans
 les prix (`regles.md`, R1 à R5) : la consommation ne réagit pas aux prix, et c'est dit.
@@ -31,9 +32,13 @@ CN = RAW / "insee_cn2025_conso_effective_fonction.xlsx"
 POSTES = Path(__file__).with_name("consommation_postes_2026.csv")
 ANNEE_ENQUETE = 2017
 #: Les divisions que la COICOP de l'enquête (1998) et celle des comptes (2018) découpent de
-#: même : un poste y suit sa sous-classe, sa classe ou sa division dans les comptes. Les
-#: autres (08, 09, 10, 12) ont été redécoupées : leurs postes suivent le total (D-323).
+#: même : un poste y suit sa division dans les comptes, et elle seule. Leurs classes ne se
+#: répondent pas toujours (le tabac est 02.2 dans l'une, 02.3 dans l'autre). Les autres
+#: divisions (08, 09, 10, 12) ont été redécoupées : leurs postes suivent le total (D-323).
 DIVISIONS_COMMUNES = frozenset({"01", "02", "03", "04", "05", "06", "07", "11"})
+#: Les postes que l'imputation répartit entre d'autres, et entre lesquels (R11) : la facture
+#: commune d'électricité et de gaz, au prorata des factures séparées du même décile.
+REPARTIS: dict[str, tuple[str, str]] = {"04500": ("04511", "0452Z")}
 #: La dernière année des comptes nationaux lus.
 DERNIERE_ANNEE_CN = 2025
 
@@ -91,7 +96,11 @@ def postes(path: Path = POSTES) -> tuple[Poste, ...]:
 
 @lru_cache(maxsize=1)
 def tf106(path: Path = BDF) -> dict[str, np.ndarray]:
-    """La dépense moyenne par ménage de 2017 de chaque poste de la table, par décile."""
+    """La dépense moyenne par ménage de 2017 de chaque poste de la table, par décile, les
+    postes de `REPARTIS` répartis entre les leurs.
+
+    Refusé si un poste de la table manque à TF106, ou si une feuille de TF106 hors de la
+    division 13 manque à la table : une dépense que la table oublie n'est jamais taxée."""
     if not path.exists():
         raise ConsommationError(f"{path.name} absent : `impots data fetch {path.name}`")
     with zipfile.ZipFile(path) as z:
@@ -102,10 +111,21 @@ def tf106(path: Path = BDF) -> dict[str, np.ndarray]:
         if r["DECUC"] in {str(d) for d in range(1, 11)}:
             valeurs.setdefault(r["NOMENCLATURE"], np.zeros(10))[int(r["DECUC"]) - 1] = float(
                 r["CONSO"])
-    manquants = [p.code for p in postes() if p.code not in valeurs]
+    table = {p.code for p in postes()}
+    manquants = sorted(table - set(valeurs))
     if manquants:
         raise ConsommationError(f"TF106 ne donne pas les postes {manquants} de la table")
-    return {p.code: valeurs[p.code] for p in postes()}
+    feuilles = {c for c in valeurs if len(c) == 5 and not c.startswith("13")}
+    oublies = sorted(feuilles - table)
+    if oublies:
+        raise ConsommationError(f"la table oublie les postes {oublies} de TF106")
+    out = {code: valeurs[code].copy() for code in sorted(table)}
+    for code, (a, b) in REPARTIS.items():
+        commun = out.pop(code)
+        part = out[a] / (out[a] + out[b])
+        out[a] = out[a] + commun * part
+        out[b] = out[b] + commun * (1.0 - part)
+    return out
 
 
 @lru_cache(maxsize=1)
@@ -146,13 +166,11 @@ def croissance(annee: int, prix_au_dela: dict[int, float] | None = None) -> dict
     total = _total(cn, derniere) / _total(cn, ANNEE_ENQUETE)
     out = {}
     for p in postes():
+        division = p.code[:2]
         facteur = total
-        if p.code[:2] in DIVISIONS_COMMUNES:
-            for n in (4, 3, 2):
-                cle = "CP" + p.code[:n]
-                if cle in cn and ANNEE_ENQUETE in cn[cle] and derniere in cn[cle]:
-                    facteur = cn[cle][derniere] / cn[cle][ANNEE_ENQUETE]
-                    break
+        if division in DIVISIONS_COMMUNES:
+            ligne = cn["CP" + division]
+            facteur = ligne[derniere] / ligne[ANNEE_ENQUETE]
         out[p.code] = facteur * au_dela
     return out
 
@@ -275,10 +293,10 @@ def sans_consommation(spec):
     return spec.model_copy(update=dict.fromkeys(BOUTONS))
 
 
-def colonnes(households, annee: int, spec=None,
-             prix_au_dela: dict[int, float] | None = None) -> dict[str, np.ndarray]:
-    """La TVA et les accises de chaque ménage d'une passe, au droit de `annee` et, si une
-    réforme est donnée, sous elle : les colonnes que le registre des recettes lit."""
+def imputer_menages(households, annee: int, prix_au_dela: dict[int, float] | None = None,
+                    ) -> tuple[dict[str, np.ndarray], np.ndarray, np.ndarray]:
+    """La consommation de chaque ménage d'une passe, poste par poste, avec ses poids et son
+    niveau de vie (le revenu disponible de référence par unité de consommation)."""
     from impots.population.aggregate import consumption_units, weighted_decile_index
 
     uc = consumption_units(households["n_aged_14_plus"].to_numpy(),
@@ -292,7 +310,14 @@ def colonnes(households, annee: int, spec=None,
         from impots import hypotheses
 
         prix_au_dela = dict(hypotheses.jeu("plf2027").prix)
-    conso = imputer(deciles, uc, poids, annee, prix_au_dela)
+    return imputer(deciles, uc, poids, annee, prix_au_dela), poids, niveau
+
+
+def colonnes(households, annee: int, spec=None,
+             prix_au_dela: dict[int, float] | None = None) -> dict[str, np.ndarray]:
+    """La TVA et les accises de chaque ménage d'une passe, au droit de `annee` et, si une
+    réforme est donnée, sous elle : les colonnes que le registre des recettes lit."""
+    conso, _, _ = imputer_menages(households, annee, prix_au_dela)
     droit = Fiscalite.droit(annee)
     base = taxes(conso, droit)
     out = {"tva_menages": base["tva"], "accises_energie": base["accises"],

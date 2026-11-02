@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 """La table poste → taux de TVA de 2026, tirée de docs/consommation/regles.md (D-323).
 
-Chaque poste à cinq positions de l'enquête Budget de famille reçoit son taux de 2026, tel
-que la table de la recherche le lit dans la loi. Les postes hors du champ de la
-consommation (impôts, remboursements, transferts) sont écartés. Les trente postes qui mêlent
-plusieurs taux sans clé publiée prennent le taux de leur contenu principal, écrit ici avec
-sa raison, et leurs bornes : chaque vérification est faite aussi au taux le plus bas et au
-plus haut (D-323). Écrit `src/impots/consommation_postes_2026.csv` ; un test refuse que
+Chaque poste feuille de l'enquête Budget de famille (cinq positions, chiffres ou lettres :
+`01111`, `0114A`, `022ZZ`) reçoit son taux de 2026, tel que la table de la recherche le lit
+dans la loi. La division 13, hors du champ de la consommation (impôts, remboursements,
+transferts, gros travaux), est écartée. Les postes qui mêlent plusieurs taux, ou un régime
+de marge, sans clé publiée prennent le taux de leur contenu principal, écrit ici avec sa
+raison, et leurs bornes : chaque vérification est faite aussi au taux le plus bas et au plus
+haut (D-323, D-324). Écrit `src/impots/consommation_postes_2026.csv` ; un test refuse que
 la table commitée dérive de ce script.
 """
 
@@ -30,6 +31,15 @@ MIXTES: dict[str, tuple[float, float, float, str]] = {
     "04121": (0.0, 0.0, 0.10, "loyers d'habitation exonérés ; meublés de tourisme à 10 %"),
     "0431Z": (0.20, 0.10, 0.20, "fournitures achetées par le ménage ; travaux facturés à 10 %"),
     "04431": (0.055, 0.055, 0.10, "eau potable ; assainissement à 10 %"),
+    "045AZ": (0.10, 0.055, 0.20, "bois de chauffage ; charbon à 20 %, réseau de chaleur à "
+                                  "5,5 % ou 20 %"),
+    "051AZ": (0.20, 0.10, 0.20, "tapis et revêtements ; pose par une entreprise à 10 %"),
+    "0711Z": (0.20, 0.0, 0.20, "le neuf ; l'occasion paie sur la marge du professionnel, ou "
+                               "rien entre particuliers"),
+    "07121": (0.20, 0.0, 0.20, "le neuf ; l'occasion comme 0711Z"),
+    "07131": (0.20, 0.0, 0.20, "le neuf ; l'occasion comme 0711Z"),
+    "073ZZ": (0.10, 0.0, 0.10, "transport intérieur de voyageurs ; aérien international "
+                               "exonéré"),
     "04441": (0.10, 0.0, 0.20, "charges collectives : entretien à 10 %, personnel hors TVA, "
                                "chauffage à 20 % ; composition non publiée"),
     "04511": (0.20, 0.055, 0.20, "20 % sur toute la facture depuis le 1/8/2025 ; "
@@ -63,8 +73,10 @@ MIXTES: dict[str, tuple[float, float, float, str]] = {
                               "hors TVA"),
 }
 
-#: Les postes qui portent une accise sur l'énergie, et laquelle.
-ENERGIE = {"04511": "electricite", "0452Z": "gaz", "0453Z": "fioul", "07221": "carburants"}
+#: Les postes qui portent une accise sur l'énergie, et laquelle. La facture commune
+#: d'électricité et de gaz (04500) est répartie entre les deux par l'imputation (R11).
+ENERGIE = {"04500": "electricite_gaz", "04511": "electricite", "0452Z": "gaz",
+           "0453Z": "fioul", "07221": "carburants"}
 
 TAUX = {"20": 0.20, "10": 0.10, "5,5": 0.055, "2,1": 0.021}
 
@@ -72,14 +84,21 @@ TAUX = {"20": 0.20, "10": 0.10, "5,5": 0.055, "2,1": 0.021}
 def lire() -> list[dict[str, str]]:
     lignes = []
     for line in REGLES.read_text(encoding="utf-8").splitlines():
-        if not re.match(r"^\| [0-9]{4}[0-9A-Z] \|", line):
+        if not re.match(r"^\| [0-9]{3}[0-9A-Z]{2} \|", line):
             continue
         code, libelle, euros, cellule, _ = (c.strip() for c in line.strip().strip("|")
                                             .split(" | "))
-        if cellule.upper().startswith("HORS CHAMP"):
+        if code.startswith("13"):
             continue
+        if cellule.upper().startswith("HORS CHAMP"):
+            raise SystemExit(f"{code} : hors champ hors de la division 13, sans décision")
         if code in MIXTES:
             taux, bas, haut, raison = MIXTES[code]
+            if not bas <= taux <= haut:
+                raise SystemExit(f"{code} : le taux {taux} n'est pas entre ses bornes "
+                                 f"{bas} et {haut}")
+        elif re.search(r"MIXTE|MARGE", cellule, re.IGNORECASE):
+            raise SystemExit(f"{code} : poste mêlé sans décision ({cellule[:80]})")
         else:
             sans_refs = re.sub(r"\[[^\]]*\]", "", cellule)
             trouves = re.findall(r"(?<![\d,])(20|10|5,5|2,1)(?![\d,])", sans_refs)

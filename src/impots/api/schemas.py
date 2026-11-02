@@ -962,9 +962,10 @@ class ReformSpec(BaseModel):
     def _check_tva_postes(cls, value: dict[str, float] | None) -> dict[str, float] | None:
         if value is None:
             return value
-        from impots.consommation import GROUPES, postes
+        from impots.consommation import GROUPES, REPARTIS, postes
 
-        connus = set(GROUPES) | {p.code for p in postes()}
+        # A poste the imputation splits between others has no spending of its own (R11).
+        connus = set(GROUPES) | ({p.code for p in postes()} - set(REPARTIS))
         inconnus = sorted(set(value) - connus)
         if inconnus or not value:
             raise ValueError(f"tva_postes : {inconnus or 'aucun'} ; postes et groupes connus "
