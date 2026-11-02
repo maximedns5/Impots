@@ -25230,3 +25230,60 @@ déclarée. Les dix mesures attendent leur juge. Aucun chiffrage de tiers n'a é
 - 25 fichiers du manifeste restent absents de ce conteneur : livraisons sous licence,
   fichiers en quarantaine, un serveur qui coupe la connexion. Aucune passe de ce but ne les
   lit.
+
+## D-323 — Le but 12 : la consommation imputée, et sa vérification préenregistrée
+
+**Le fait.** Le propriétaire a validé le but 12 le 2 novembre 2026 : la TVA et les accises
+sur l'énergie payées par les ménages. La recherche est commitée
+(`docs/consommation/sources.md`, `regles.md`), et ses sept sources sont au manifeste. Cette
+entrée fixe la méthode de l'imputation et les agrégats qui la vérifient, avec leurs
+tolérances et le pronostic, avant que l'imputation ne soit écrite ni calculée.
+
+**L'imputation.** La source est le tableau TF106 de l'enquête Budget de famille 2017, France
+entière (Insee) : la dépense moyenne par ménage, en euros de 2017, de chaque poste à cinq
+positions de la COICOP, par décile de niveau de vie. Un ménage de la population reçoit, pour
+chaque poste, la dépense de son décile, au prorata de ses unités de consommation sur la
+moyenne de son décile dans la population. La moyenne du décile est ainsi gardée ; les
+tableaux publics ne croisent pas le décile avec la taille du ménage, et rien d'autre n'est
+supposé. Les euros de 2017 sont portés à l'année de la population par la croissance de la
+consommation des ménages de leur division de la COICOP dans les comptes nationaux (base
+2020, tableau de mai 2026) ; une division que les deux nomenclatures ne découpent pas de
+même suit le total. Les carburants, que l'enquête ne sépare pas, sont partagés entre gazole
+et essence selon la dépense des ménages du SDES en 2024. Les volumes s'en déduisent par les
+prix moyens publiés. La calibration de la population n'est pas touchée : l'imputation ajoute
+des colonnes, elle ne change aucun poids.
+
+**Les taux.** La table de `regles.md` donne le taux de 2026 de chaque poste. Trente postes
+mêlent plusieurs taux sans clé publiée (les restaurants, l'eau, les services culturels, la
+pharmacie…). Chacun prend le taux de son contenu principal, écrit poste par poste avec sa
+raison, et chaque vérification de la TVA est aussi faite avec ces trente postes à leur taux
+le plus bas, puis le plus haut : un intervalle, pas une clé inventée.
+
+**Les vérifications, sur la population de 2024, avant tout chiffrage de mesure.**
+
+- La consommation imputée contre la dépense de consommation des ménages des comptes
+  nationaux de 2024. L'enquête en couvre moins que les comptes : pronostic de 75 à 92 %. Ce
+  n'est pas une note, c'est la mesure de cette couverture, qui explique les suivantes.
+- La TVA payée par les ménages contre 65,1 % de la TVA nette de 2024 (DGFiP Statistiques n°
+  37 ; part des ménages du Trésor-Éco n° 371, sur 2022). Tolérance de −30 % à +10 %.
+  Pronostic de −25 % à −5 %, l'intervalle des postes mêlés tenant dans 8 points.
+- Le rendement d'un point de chaque taux contre celui du Trésor-Éco n° 371, net de la part
+  des administrations (2025). Les ménages n'en sont qu'une partie : pronostic d'un rapport
+  de 0,55 à 0,95 pour chacun des quatre taux. Ce n'est pas une note : une forme.
+- La dépense de carburants contre celle des ménages du SDES en 2024 (gazole et
+  supercarburants). Tolérance de ±20 %. Pronostic de −15 % à +5 %.
+- Les accises sur l'énergie payées par les ménages contre 60 % des 39,7 Md€ de 2025 (Budget
+  vert du PLF 2027). Tolérance de ±30 %. Pronostic de −25 % à +5 %.
+- Le profil par décile : les accises du dixième décile sur celles du premier, contre 1 005 €
+  sur 490 € (Budget vert, 2025, métropole). Pronostic d'un rapport de 1,5 à 2,5.
+
+Une vérification hors de sa tolérance arrête le but, qui le dit : aucune mesure n'est alors
+préenregistrée sur cette imputation, et ni la tolérance ni la méthode ne sont changées après
+le calcul.
+
+**Ce que l'imputation ne dit pas.** La consommation ne réagit pas aux prix : une baisse de
+TVA est chiffrée à volumes constants, la TVA répercutée en entier dans les prix. Les ménages
+d'un décile dépensent pareil à unités de consommation égales, quelle que soit leur
+composition. L'outre-mer est dans la France entière de l'enquête, mais ses taux propres
+(8,5 % et 2,1 % aux Antilles et à La Réunion, aucune TVA en Guyane et à Mayotte) ne sont pas
+appliqués : la population est celle de la métropole.
