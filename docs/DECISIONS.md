@@ -25470,3 +25470,52 @@ taxent l'énergie d'entreprises (essais aéronautiques, navires à quai, poids l
 quatre du but 8, pour 373,3 M€. La part en euros est la même avant et après : 72,8 %
 (12 105 M€ sur 16 623,6), et les révisions comptées à part restent les trois volets des
 indemnités journalières (D-312).
+
+## D-327 — Les trois mesures de consommation des programmes, toutes dans leur pronostic
+
+**Le fait.** Les trois cas de D-326 sont enregistrés le 2 novembre 2026, détachés, un
+processus chacun, depuis un worktree figé sur `1cfa67e`, le commit qui les préenregistre.
+Coût mécanique de 2026, positif quand l'État perd, en milliards d'euros :
+
+| cas | pronostic | coût |
+|---|---:|---:|
+| `pres2027_roussel_tva_carburants_5_5` | 4,5 à 6,5 | +5,286 |
+| `pres2027_le_pen_lp20_tva_energie` | 9 à 14 | +11,637 |
+| `pres2027_labib_suppression_tva_taxes_carburants` | 17 à 26 | +21,187 |
+
+Les deux réfutations ne se lisent pas. Le Pen passe Roussel de 6,35 Md€ : l'électricité, le
+gaz et le fioul. Labib passe 0,20 / 0,145 fois Roussel, soit 7,29 Md€, ce que sa TVA seule
+donne au centime, puisque les deux mesures portent sur la même assiette ; les 13,90 Md€ qui
+restent sont l'accise du gazole et de l'essence.
+
+**Les trois réponses.** `impots programme le_pen --mesures lp20_tva_energie`, aux hypothèses
+des études (θ = 0,5, croissance réelle de 1 %, prix de 2 %, salaires de 3 %), donne
++11,637 Md€ la première année, un gain de 243 € par ménage et par an au premier décile de
+niveau de vie et de 506 € au dixième, et une dette plus haute de 3,59 points de PIB en 2035
+contre la référence (`reports/programmes/le_pen_energie.json`). Le coût est celui du cas,
+à l'euro : la consommation imputée ne dépend du revenu que par le rang du décile, que les
+deux vieillissements des revenus laissent ici le même, et elle vieillit par les prix du
+même jeu.
+L'effet par décile est désormais dit net de la TVA et des accises, à volumes constants :
+c'est le pouvoir d'achat, pas le seul revenu disponible.
+
+**Une écriture à corriger.** La raison de tolérance des trois cas nomme D-321, d'où vient la
+forme de ses classes ; la classe « consommation » est écrite dans D-326. Les cas
+enregistrés ne sont pas réécrits ; le script nomme désormais l'entrée de chaque classe.
+
+**Le pont macro.** Un test existant l'a vu : `shocks.build` refuse un delta de recette qu'il
+ne sait ni placer ni nommer, et les deux recettes neuves n'étaient nulle part. Une réforme de
+la TVA qui demandait l'impulsion macro aurait été refusée. La TVA des ménages va désormais à
+la variante TVA de Mésange, son instrument, ex ante comme elle ; les accises sur l'énergie à
+la variante taxe carbone, qui est une accise sur les volumes d'énergie, avec sa réserve :
+son calibrage en euros se fait hors modèle (p121), et sa boucle sur le solde reste absente
+(`retroaction.NOT_ACTIVITY`).
+
+**Les tests qui ne tournent pas ici.** Quatorze tests ciblés lisent deux fichiers manifestés
+absents de ce conteneur, dont les hôtes n'y répondent pas : l'export des cases 2042
+(`data.economie.gouv.fr`) et les comptes de la sécurité sociale de mai 2026
+(`www.securite-sociale.fr`). Ils ne sont ni sautés ni retouchés : ils échouent faute de
+données, et restent à jouer dans un checkout qui les a.
+
+**Le juge.** L'Institut Montaigne n'a pas publié, et aucun chiffrage de tiers n'a été lu.
+Treize mesures des programmes sont désormais préenregistrées, sur 212 paramétrées.

@@ -72,6 +72,12 @@ INSTRUMENT_MAP = {
     "csg_ij": "csg",
     "cotisations_salariales": "cotisations_salaries",
     "employer_contributions": "cotisations_employeurs",
+    # The consumption taxes, when the consumption is imputed (D-323, D-327): the household
+    # VAT is the VAT variant's own instrument, ex ante like it; the energy excises are the
+    # tax the carbon variant raises, on the volumes of energy, whose calibration p121
+    # leaves outside the model, as that variant's caveat says.
+    "tva_menages": "tva",
+    "accises_energie": "taxe_carbone",
 }
 
 #: Deltas that reach B1 with NO multiplier, and why. Each entry kills the macro path for

@@ -358,7 +358,7 @@ sont enregistrées sur le commit de leur préenregistrement, sept dans leur pron
 cotisations salariales pèsent environ 97 Md€ dans la population, pas les 70 supposés. Le
 juge, l'Institut Montaigne, n'a pas publié ; aucun chiffrage de tiers n'a été lu.
 
-### But 12 — La TVA et les accises sur l'énergie, côté ménages (validé, en cours)
+### But 12 — La TVA et les accises sur l'énergie, côté ménages (fait, D-323 à D-327)
 
 Des 24 programmes du but 11, 19 mesures chez neuf candidats de tous les bords attendent la
 porte « consommation » : la TVA par taux, les accises sur les carburants et l'électricité.
@@ -391,3 +391,20 @@ publics de l'enquête Budget de famille donnent la consommation par poste et par
 ménage par ménage ; l'imputation se fera par cellule, comme celle des indemnités
 journalières (but 8). Si ces tableaux ne suffisent pas, le but s'arrête et le dit, plutôt que
 d'inventer une répartition.
+
+Résultat, D-323 à D-327. La consommation de 138 postes est imputée du tableau TF106 de
+l'enquête Budget de famille 2017 (par décile, au prorata des unités de consommation),
+vieillie par les comptes nationaux ; la calibration n'est pas touchée. Avant tout chiffrage,
+cinq écarts entre le code et sa méthode ont été corrigés (D-324), puis la vérification
+préenregistrée a tenu ses trois tolérances (D-325) : la TVA des ménages à −26,0 % de sa
+cible, les carburants à −18,4 %, les accises à −14,8 %. Deux pronostics sur six seulement :
+l'enquête n'a ni les loyers imputés ni l'investissement des ménages, sous-déclare le
+carburant, et le tiers de la dépense mêlée n'a pas de clé. Les rendements d'un point de taux
+remplacent les dépenses fiscales du /goal : le tome II n'en compte que la part de l'État et
+laisse hors de lui les taux réduits les plus coûteux (`docs/consommation/sources.md`, § 3.5).
+Dix boutons (quatre taux, la TVA par poste ou par groupe, cinq accises) donnent les trois
+réponses, l'effet par décile net des taxes payées. Trois mesures des programmes sont
+préenregistrées et chiffrées dans leur pronostic : Roussel +5,3 Md€, Le Pen +11,6, Labib
++21,2 ; seize restent refusées, deux portes neuves (« prix », « importations ») disant
+pourquoi. Aucun des cinq articles du PLF 2027 derrière la porte ne se chiffre côté ménages :
+la part en euros reste à 72,8 %. Les réactions de la consommation aux prix sont absentes.

@@ -60,6 +60,10 @@ CLASSES: dict[str, tuple[float, float, str]] = {
                      "consommation, une répercussion partielle, une autre année, et la "
                      "vérification des agrégats (D-325) dit l'écart de l'assiette."),
 }
+#: L'entrée qui écrit une classe, quand ce n'est pas D-321. Les trois cas de D-326 portent
+#: « (D-321) » dans leur raison, enregistrée avant cette correction : la règle de leur
+#: classe est dans D-326.
+ENTREE_DE_LA_CLASSE = {"consommation": "D-326"}
 #: La classe de chaque mesure chiffrée, par id ; une mesure sans classe est refusée.
 CLASSE = {
     "exonerations_au_dela_2_smic": "menages",
@@ -130,7 +134,8 @@ def ecrire() -> list[Path]:
 def arguments(nom: str, p, m) -> list[str]:
     relative, absolute, raison = CLASSES[CLASSE[m.id]]
     common = [nom, "--tolerance-relative", repr(relative), "--tolerance-absolute",
-              repr(absolute), "--tolerance-rationale", f"Classe « {CLASSE[m.id]} » (D-321). "
+              repr(absolute), "--tolerance-rationale", f"Classe « {CLASSE[m.id]} » "
+              f"({ENTREE_DE_LA_CLASSE.get(CLASSE[m.id], 'D-321')}). "
               f"{raison}", "--note", f"{source(p, m)}. {m.chiffrage.note}",
               "--vieillir", JEU]
     if m.chiffrage.couche == "menages":

@@ -1,5 +1,24 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-02 update adds D-323 to D-327: goal 12, validated by the owner, done once
+merged. The population now carries a consumption by poste (`impots.consommation`): the 138
+postes of the Budget de famille 2017's TF106 table, by decile of niveau de vie, prorated by
+consumption units within the decile, aged by the national accounts' division growth and,
+past 2025, by the prices of the PLF 2027 set. The calibration is untouched: the layer adds
+columns, it changes no weight. VAT is priced poste by poste at the 2026 rates of
+`docs/consommation/regles.md`, 36 mixed postes at a principal rate with low and high
+bounds; the energy excises at constant volumes, fully passed on. Ten knobs on `ReformSpec`
+(the four rates, `tva_postes` by poste or group, five excises) reach only a population pass
+that imputes consumption, which a scenario asks for with `imputations: ["consommation"]`
+and the API does by itself; one household refuses them. The public cost and the deciles
+count the taxes paid. Before any measure, the preregistered check held its three
+tolerances (household VAT −26.0 %, fuels −18.4 %, excises −14.8 %; D-325), two prognoses of
+six. Three programme measures are priced and preregistered, all in their prognosis: Roussel
++5.3 bn€, Le Pen +11.6, Labib +21.2 (D-327). No PLF 2027 article behind the door prices on
+the household side; the euro share stays at 72.8 %. Price responses are absent. Next: the
+judge when it publishes; then indexation, successions and wealth, spending, the retirement
+age; then a precomputation layer for live sliders, then the UI.
+
 The second 2026-11-01 update adds D-319 to D-322: goal 11, validated by the owner,
 done once merged. The presidential programmes of 2027 are reforms the engine prices.
 `docs/presidentielle/` holds the research (four sourced inventories, the judges listed

@@ -89,7 +89,10 @@ MESANGE_SCALED = {
 CATALOGUE: tuple[Spec, ...] = (
     Spec("revenu_disponible_deciles", GENS, "Revenu disponible, par décile de niveau de vie",
          "EUR par ménage et par an", MECANIQUE,
-         "population, passe de la première année chiffrée"),
+         "population, passe de la première année chiffrée",
+         note="Net de la TVA et des accises sur l'énergie payées en plus ou en moins quand "
+              "la réforme les règle, à volumes constants (D-323) : le pouvoir d'achat, pas "
+              "le seul revenu."),
     Spec("revenu_disponible_reel", GENS,
          "Revenu disponible brut réel des ménages (pouvoir d'achat)",
          "% d'écart au compte central", MACRO,
