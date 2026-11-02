@@ -148,7 +148,14 @@ def _drawn(seed: int) -> str:
 def fingerprint(frame: pl.DataFrame) -> str:
     """What a cache file says of the frame its rates were computed on: every row, every
     column, in order. Stable within one polars version; another recomputes."""
-    rows = frame.hash_rows(seed=0, seed_1=1, seed_2=2, seed_3=3).to_numpy()
+    # polars 2 hashes a row with one seed, where polars 1 took four (D-328): the print is
+    # the version's own, and a file written under the other recomputes, as said above.
+    import inspect
+
+    seeds = ({"seed": 0, "seed_1": 1, "seed_2": 2, "seed_3": 3}
+             if "seed_1" in inspect.signature(pl.DataFrame.hash_rows).parameters
+             else {"seed": 0})
+    rows = frame.hash_rows(**seeds).to_numpy()
     columns = ",".join(f"{name}:{dtype}" for name, dtype in frame.schema.items())
     return hashlib.sha256(columns.encode() + rows.tobytes()).hexdigest()[:16]
 
@@ -177,6 +184,13 @@ def compute(
     None when it is the vintage as built. `seed` draws the sample: another seed is another
     sample of the same size (D-284).
     """
+    # The tree's marginal rates do not see a consumption tax, priced at constant volumes on
+    # the imputed consumption: the reform the tree reads is the spec without those knobs,
+    # as the runner hands it (D-323, D-328). Built with them, the tree refused the reform.
+    from impots import consommation
+
+    if consommation.touche(reform):
+        reform = consommation.sans_consommation(reform)
     frame = _priced(population, sample, seed)
     frame_print = fingerprint(frame)
 

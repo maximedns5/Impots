@@ -868,7 +868,9 @@ def imputes_capital(request: Any) -> bool:
 
 
 def _run_population(request: Any, frame: Any,
-                    capital_index: float | None = None) -> tuple[Any, Any]:
+                    capital_index: float | None = None,
+                    annee_consommation: int | None = None,
+                    prix_consommation: dict[int, float] | None = None) -> tuple[Any, Any]:
     """The quick-tier pass and its aggregate: `(run, aggregate)`. Shared by
     `/population/simulate` and `/predictif/simulate`. `capital_index` ages the imputed
     capital to the year, when the frame was aged to it (D-249)."""
@@ -886,8 +888,13 @@ def _run_population(request: Any, frame: Any,
             impute_capital=capital,
             capital_index=capital_index if capital else None,
             # Whenever the reform moves a consumption tax, which bites on nothing else
-            # (D-323), as the capital is imputed whenever it moves the PFU (D-249).
+            # (D-323), as the capital is imputed whenever it moves the PFU (D-249). Its
+            # euros follow the frame: the year it was aged to, at the frame's prices, or
+            # the vintage when it was not (D-328).
             impute_consommation=consommation.touche(request.reform),
+            annee_consommation=(int(POPULATION_VINTAGE) if annee_consommation is None
+                                else annee_consommation),
+            prix_au_dela=prix_consommation,
         )
     except WiringError as error:  # pragma: no cover - guarded upstream
         raise HTTPException(status_code=500, detail=str(error)) from error
@@ -1542,8 +1549,18 @@ def _price_households(request: PopulationSimulateRequest, *, uprating: Any,
     # study's frame the nominal growth of the economy — and not at all in the frozen one,
     # whose frame is the vintage's (D-249). Only a pass that imputes it is told the index.
     index = (uprating.factor("wage", request.year) if view == FIRST_YEAR_VIEW else 1.0)
+    # The imputed consumption follows the frame too: the year's euros at the frame's own
+    # price index in the aged view, the vintage's in the frozen one (D-328).
+    from impots import consommation
+
+    aged = view == FIRST_YEAR_VIEW
+    conso = ({"annee_consommation": request.year if aged else int(POPULATION_VINTAGE),
+              "prix_consommation": (consommation.prix_du_cadre(uprating, request.year)
+                                    if aged else None)}
+             if consommation.touche(request.reform) else {})
     result, agg = _run_population(
-        request, frame, **({"capital_index": index} if imputes_capital(request) else {}))
+        request, frame, **({"capital_index": index} if imputes_capital(request) else {}),
+        **conso)
     if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
         raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
     # The EMTR caches are keyed on the frame priced: the aged view's on its uprating, the

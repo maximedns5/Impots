@@ -1,0 +1,14 @@
+{
+  "nom": "presidentielle_attal",
+  "titre": "Gabriel Attal : la part chiffrée du programme, en trois réponses",
+  "texte": "programme",
+  "programme": "attal",
+  "preenregistrement": "D-328",
+  "cadre": "ir",
+  "millesime_entreprises": "2023",
+  "scenarios": [
+    {
+      "scenario": "pres2027_attal_programme"
+    }
+  ]
+}

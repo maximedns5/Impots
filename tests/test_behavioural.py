@@ -1356,3 +1356,19 @@ def test_another_seed_is_another_sample_cached_apart(tmp_path, monkeypatch):
         .otherwise(pl.col("salaire_brut_annuel")).alias("salaire_brut_annuel"))
     stale = emtr.cached(changed, "2024", year=2026, sample=10, seed=1)
     assert stale.guards.get("cached") is not True
+
+
+def test_the_frame_fingerprint_runs_on_the_installed_polars() -> None:
+    """GARDE (D-328). polars 2 a retiré trois des quatre graines de `hash_rows` : toute passe
+    avec comportements tombait sur l'empreinte du cache des taux marginaux. L'empreinte
+    tient toujours à chaque ligne, chaque colonne, dans l'ordre."""
+    import polars as pl
+
+    from impots.behavioural import emtr
+
+    frame = pl.DataFrame({"a": [1, 2, 3], "b": [0.5, 1.5, 2.5]})
+    print_ = emtr.fingerprint(frame)
+    assert print_ == emtr.fingerprint(frame.clone())
+    assert print_ != emtr.fingerprint(frame.with_columns(pl.col("a") + 1))
+    assert print_ != emtr.fingerprint(frame.reverse())
+    assert print_ != emtr.fingerprint(frame.rename({"b": "c"}))

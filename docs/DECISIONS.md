@@ -25519,3 +25519,104 @@ données, et restent à jouer dans un checkout qui les a.
 
 **Le juge.** L'Institut Montaigne n'a pas publié, et aucun chiffrage de tiers n'a été lu.
 Treize mesures des programmes sont désormais préenregistrées, sur 212 paramétrées.
+
+## D-328 — Le but 13 préenregistré : huit études de programmes, leurs passes, leur pronostic
+
+**Le fait.** Le propriétaire a validé le but 13 le 2 novembre 2026, avec les trois choix
+proposés : huit études et une page pour les 24 candidats, les plages en trois points, les
+hypothèses des études. Cette entrée fixe la méthode, les passes et le pronostic avant que
+les passes ne tournent.
+
+**L'étude d'un programme.** `etudes/presidentielle_<slug>.json`, texte « programme ». Elle a
+un scénario, `pres2027_<slug>_programme` : toutes les mesures chiffrées du programme
+ensemble, à la valeur du candidat, ménages et entreprises, avec l'imputation de la
+consommation quand une mesure la règle. Scénarios et définitions sont tirés des programmes
+par `scripts/preenregistrer_programmes.py --etudes`, et un test refuse leur dérive. Le
+cadre est celui de D-289 (`etude/ir.json`) : θ½, croissance réelle de 1 %, prix de 2 %,
+salaires de 3 %, dépense gelée en volume, taux implicite tenu, dix ans, comportements et
+boucle macro. Les passes sont celles de toute étude (D-301) : la première année par
+l'appel du simulateur, le chemin annuel par `impots predictif`, de 2026 à 2035, dans les
+deux vues, avec la boîte de θ.
+
+**Ce qui change dans le moteur, avant toute passe.** Chaque point a un test vu échouer sur
+`main`.
+
+1. **Une première année mixte.** La part d'Attal, de Lisnard et de Retailleau mêle ménages
+   et entreprises : sa première année est deux appels côte à côte, `/population/simulate`
+   et `/entreprises/simulate`. Le coût est leur somme ; les déciles, la bande et
+   l'éventail sont ceux des ménages, l'éventail ne lisant pas les entreprises. Un texte de
+   loi refuse toujours un tel scénario.
+2. **La consommation sur le chemin annuel.** D-306 la refusait. Ses euros suivent la
+   population. Dans la vue vieillie, ce sont ceux de l'année, portés par les comptes
+   jusqu'en 2025, puis par l'indice des prix du cadre. Dans la vue figée et la première
+   année, sur la population telle quelle, ce sont ceux du millésime, 2024. Les prix de
+   l'énergie sont ceux de l'année des euros : relevés en 2024 et 2026, portés au-delà par
+   le même indice, pour que les volumes ne bougent pas d'eux-mêmes. Le droit est celui de
+   l'année : les accises de 2026 reconduites au-delà, les taux de TVA de la table. Les
+   indemnités journalières restent refusées sur le chemin.
+   `/population/simulate` lisait jusqu'ici la consommation de 2026 sur les revenus de
+   2024 ; il lit celle de 2024. Les cas enregistrés, chiffrés sur la population vieillie
+   (D-326), ne bougent pas.
+3. **Les taux marginaux d'une réforme de consommation.** Le calcul des taux marginaux, qui
+   nourrit la bande, construisait l'arbre avec les boutons de TVA, que le moteur refuse
+   (D-324) : toute passe avec comportements d'une réforme de consommation tombait. L'arbre
+   en reçoit désormais la part qu'il lit, comme dans la passe elle-même.
+4. **polars 2.** Le conteneur installe polars 2.1.0, et le projet demande `>=1.0`. polars
+   2 a retiré trois des quatre graines de `hash_rows`, et toute passe avec comportements
+   tombait sur l'empreinte du cache des taux marginaux. L'empreinte prend une graine sous
+   polars 2 ; un cache écrit sous polars 1 se recalcule, comme sa docstring le prévoit.
+
+**Les plages en trois points.** Pour chaque mesure chiffrée et chaque champ de sa plage, il
+y a trois points : le bas, la valeur du candidat, le haut. Chaque point est la mesure seule,
+dans le cadre de l'étude, mécanique (sans comportements ni boucle), par le chemin rapide de
+`POST /predictif/simulate`. Il donne le coût de 2026 sur la population vieillie, et la
+dette de 2035 à θ½, la première année reportée en part de PIB, convention dite sur la page.
+Cela fait 57 points sur 19 plages. Les mesures des entreprises dont le droit change dans
+l'horizon (la CVAE, que le droit en vigueur supprime en 2030) sont refusées par ce chemin
+(D-254). Leurs points donnent le coût seul, par `/entreprises/simulate` en 2026, et disent
+pourquoi la dette manque : 15 points, chez Attal, Lisnard et Retailleau.
+
+**Le reste de la page.** La couche déclarée du candidat à ρ = 0, ½ et 1, à part, jamais
+additionnée. Le site a une page des 24 candidats, avec leur couverture et leurs refus par
+porte, sans chiffre pour ceux dont rien ne se chiffre.
+
+**L'ordre des passes.** Une passe par processus, l'une après l'autre, depuis un worktree
+figé sur le commit qui porte cette entrée. Viennent d'abord les huit premières années, puis
+les 57 points, puis les huit chemins, d'une demi-heure chacun environ. Une passe interrompue
+reprend où elle s'est arrêtée, et un rapport écrit ne l'est pas deux fois.
+
+**Ce qu'un essai a imprimé avant cette entrée.** Pour vérifier les chemins neufs, un essai
+hors rapports a imprimé :
+
+- la première année d'Attal : 73,1 Md€ pour les ménages, 3,3 pour les entreprises ;
+- le point du candidat de Roussel : 5,28 Md€, +1,63 pt de dette en 2035 ;
+- le point du candidat de la CVAE d'Attal : 3,28 Md€ ;
+- un chemin d'un an du programme de Roussel.
+
+Les fourchettes ci-dessous étaient écrites avant l'essai, d'après les cas de D-321 et
+D-326 ; elles ne sont pas retouchées.
+
+**Le pronostic, avant les passes.** Le coût de la première année est celui de 2026, sur la
+population de 2024 et le droit de 2026, positif quand l'État perd. La somme des cas
+enregistrés, chiffrés sur la population vieillie, est réduite de 5 à 8 % pour les revenus
+de 2024.
+
+- Attal : un coût de 65 à 80 Md€.
+- Lisnard : un coût de 31 à 41 Md€.
+- Retailleau : un coût de 18 à 24 Md€.
+- Labib : un coût de 18 à 26 Md€.
+- Le Pen : un coût de 12 à 16 Md€.
+- Roussel : un coût de 4,5 à 5,8 Md€.
+- Tondelier : une recette de 0,6 à 1,3 Md€.
+- Mélenchon : une recette de 7 à 11 Md€.
+
+La dette en 2035, vue vieillie, à θ½, est du signe du coût : de 0,2 à 0,4 point de PIB par
+milliard de coût de la première année pour la part des ménages (le chemin rapide donnait
+0,31 pour la TVA de Le Pen, D-327). Elle est plus faible pour celle des entreprises, la CVAE
+sortant du droit en 2030. Le verdict est « hausse » pour les six parts qui coûtent, et
+« baisse » pour Mélenchon et Tondelier. Chaque plage est monotone : le coût va dans un
+seul sens d'un bout à l'autre.
+
+**La réfutation qui se lirait.** Une part dont le coût s'écarte de plus de 15 % de la somme
+de ses cas, une fois l'année de la population comptée. Ou une plage qui n'est pas
+monotone.

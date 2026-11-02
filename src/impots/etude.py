@@ -48,7 +48,12 @@ SCENARIOS = ROOT / "scenarios"
 REQUESTS = ROOT / "etude"
 DECISIONS = "docs/DECISIONS.md"
 FIELDS = {"nom", "titre", "texte", "preenregistrement", "cadre", "millesime_entreprises",
-          "page", "rapports", "scenarios"}
+          "page", "rapports", "scenarios", "programme"}
+#: The points of a measure's range the study of a programme prices (D-328): its bottom,
+#: the candidate's value, its top.
+POINTS = ("bas", "candidat", "haut")
+#: Where a programme study keeps its ranges' reports, beside the two of its part.
+PLAGES = "plages"
 
 
 class EtudeError(ValueError):
@@ -80,42 +85,152 @@ def _script(name: str) -> Any:
     return module
 
 
-def first_year_payload(name: str, scenarios: Path = SCENARIOS) -> tuple[str, str, dict]:
+#: The two calls of a first year that prices households and firms together (D-328).
+MIXTE = {"menages": "/population/simulate", "entreprises": "/entreprises/simulate"}
+
+
+def first_year_payload(name: str, scenarios: Path = SCENARIOS,
+                       mixte: bool = False) -> tuple[str, str, dict]:
     """(kind, endpoint, payload) of `name`'s first year: the firms' simulator for a firm
-    reform alone, the households' otherwise, with behaviour and the loop asked."""
+    reform alone, the households' otherwise, with behaviour and the loop asked. A reform of
+    both is refused, unless `mixte`: a programme's priced part, whose first year is the two
+    calls, side by side (D-328)."""
     from impots import scenarios as scenarios_module
 
     scenario = scenarios_module.load(name, scenarios)
     firm = scenario.firm_reform is not None and not scenario.firm_reform.is_empty()
+    households = {"year": scenario.year,
+                  "reform": scenario.reform.model_dump(exclude_none=True, mode="json"),
+                  "behavioural": True, "macro": True}
+    firms = ({"reform": scenario.firm_reform.model_dump(exclude_none=True, mode="json"),
+              "year": scenario.year} if firm else None)
     if firm and not scenario.reform.is_empty():
-        raise EtudeError(f"{name} : une réforme des ménages et des entreprises, que la "
-                         f"première année chiffrerait sur deux appels.")
+        if not mixte:
+            raise EtudeError(f"{name} : une réforme des ménages et des entreprises, que la "
+                             f"première année chiffrerait sur deux appels.")
+        return "mixte", " + ".join(MIXTE.values()), {"menages": households,
+                                                     "entreprises": firms}
     if firm:
-        return "entreprises", "/entreprises/simulate", {
-            "reform": scenario.firm_reform.model_dump(exclude_none=True, mode="json"),
-            "year": scenario.year}
-    return "menages", "/population/simulate", {
-        "year": scenario.year,
-        "reform": scenario.reform.model_dump(exclude_none=True, mode="json"),
-        "behavioural": True, "macro": True}
+        return "entreprises", "/entreprises/simulate", firms
+    return "menages", "/population/simulate", households
 
 
-def first_year(name: str, *, where: str, scenarios: Path = SCENARIOS) -> dict[str, Any]:
+def first_year(name: str, *, where: str, scenarios: Path = SCENARIOS,
+               mixte: bool = False) -> dict[str, Any]:
     """The first year's report: the simulator's reply, the code that priced it, where."""
     from fastapi.testclient import TestClient
 
     from impots.api.main import app
     from impots.predictif import recherche
 
-    kind, endpoint, payload = first_year_payload(name, scenarios)
+    kind, endpoint, payload = first_year_payload(name, scenarios, mixte)
     commit, dirty = recherche.code_state(ROOT)
-    reply = TestClient(app).post(endpoint, json=payload)
-    if reply.status_code != 200:
-        raise EtudeError(f"{name} : {endpoint} a rendu {reply.status_code} : "
-                         f"{reply.text[:300]}")
+    client = TestClient(app)
+    calls = ([(MIXTE[layer], payload[layer], layer) for layer in MIXTE] if kind == "mixte"
+             else [(endpoint, payload, None)])
+    replies = {}
+    for url, body, layer in calls:
+        reply = client.post(url, json=body)
+        if reply.status_code != 200:
+            raise EtudeError(f"{name} : {url} a rendu {reply.status_code} : "
+                             f"{reply.text[:300]}")
+        replies[layer] = reply.json()
+    response = replies if kind == "mixte" else replies[None]
     return {"scenario": name, "kind": kind, "endpoint": endpoint, "request": payload,
-            "response": reply.json(), "computed": date.today().isoformat(),
+            "response": response, "computed": date.today().isoformat(),
             "commit": commit, "dirty": dirty, "where": where}
+
+
+def plage_request(cadre: str, programme: str, mesure: str, champ: str,
+                  point: str) -> dict[str, Any]:
+    """The predictive request of one point of a measure's range (D-328): the measure alone,
+    `champ` at the range's bottom, the candidate's value or its top, in the study's frame,
+    mechanical (no behaviour, no loop). Its first year is carried as a share of GDP: the
+    fast convention of `POST /predictif/simulate`, said on the page."""
+    from impots import programmes as pg
+
+    p = pg.charger(programme)
+    plages = p.plages()
+    cle = f"{mesure}:{champ}"
+    if cle not in plages or point not in POINTS:
+        raise EtudeError(f"{programme} : pas de plage « {cle} », ou de point « {point} » "
+                         f"({sorted(plages)}, {POINTS}).")
+    _, plage = plages[cle]
+    m = next(x for x in p.chiffrees() if x.id == mesure)
+    valeur = {"bas": plage.min, "haut": plage.max,
+              "candidat": pg._lire(m.chiffrage.reforme, champ)}[point]
+    menages, entreprises = p.reformes({cle: valeur}, (mesure,))
+    request = _read(REQUESTS / f"{cadre}.json")
+    return {"spending": request["spending"], "growth": request["growth"],
+            "rate": request["rate"], "horizon": request["horizon"],
+            "theta": request["theta"], "uprating": request["uprating"],
+            "behavioural": False, "macro": False,
+            "reform": menages.model_dump(exclude_none=True, mode="json") if menages else {},
+            "firm_reform": (entreprises.model_dump(exclude_none=True, mode="json")
+                            if entreprises else None)}
+
+
+#: What a range's report keeps of the predictive reply: the first year's cost, the path.
+PLAGE_REPONSE = ("mechanical_first_year_eur", "years", "delta", "population_view")
+
+
+def plage(cadre: str, programme: str, mesure: str, champ: str, point: str, *,
+          where: str) -> dict[str, Any]:
+    """The report of one point of a measure's range: its request, what the reply says of
+    the cost and the debt, the code that priced it, where."""
+    from fastapi.testclient import TestClient
+
+    from impots.api.main import app
+    from impots.predictif import recherche
+
+    request = plage_request(cadre, programme, mesure, champ, point)
+    commit, dirty = recherche.code_state(ROOT)
+    client = TestClient(app)
+    absente = dette_absente(request)
+    if absente is None:
+        reply = client.post("/predictif/simulate", json=request)
+        url = "/predictif/simulate"
+    else:
+        # A firm law that moves within the horizon (the CVAE): the carried path refuses
+        # it (D-254). The cost of the year is the firms' simulator's; the debt is absent,
+        # with that reason, and the study's annual path gives the candidate's (D-328).
+        from impots.predictif.chaine import START_YEAR
+
+        url = "/entreprises/simulate"
+        reply = client.post(url, json={"reform": request["firm_reform"],
+                                       "year": START_YEAR + 1})
+    if reply.status_code != 200:
+        raise EtudeError(f"{programme}/{mesure}/{champ}/{point} : {url} a rendu "
+                         f"{reply.status_code} : {reply.text[:300]}")
+    body = reply.json()
+    response = ({k: body[k] for k in PLAGE_REPONSE} if absente is None else
+                {"mechanical_first_year_eur": body["reform_cost"], "years": None,
+                 "delta": None, "population_view": None})
+    return {"programme": programme, "mesure": mesure, "champ": champ, "point": point,
+            "request": request, "appel": url, "dette_absente": absente,
+            "response": response, "computed": date.today().isoformat(), "commit": commit,
+            "dirty": dirty, "where": where}
+
+
+def dette_absente(request: dict[str, Any]) -> str | None:
+    """Why the carried path cannot give a range point's debt, or None: a firm law that
+    moves within its horizon (D-254), the one refusal the frame's request can meet."""
+    from impots.api.schemas import _refuse_a_law_the_carry_cannot_see
+    from impots.entreprises.reforms import FirmReformSpec
+
+    firm = request.get("firm_reform")
+    if not firm:
+        return None
+    try:
+        _refuse_a_law_the_carry_cannot_see([FirmReformSpec.model_validate(firm)],
+                                           request["horizon"])
+    except ValueError as error:
+        return str(error)
+    return None
+
+
+def plage_name(mesure: str, champ: str, point: str) -> str:
+    return f"{mesure}__{champ}__{point}.json"
 
 
 def _git(*args: str) -> str:
@@ -428,7 +543,39 @@ class _PLFSS2027:
         w("")
 
 
-TEXTES: dict[str, Any] = {"plf2027": _PLF2027(), "plfss2027": _PLFSS2027()}
+class _Programme:
+    """Un programme présidentiel (D-319, D-328) : l'étude porte sur sa part chiffrée, et dit
+    à côté de chaque nombre la couverture et chaque refus avec sa porte."""
+
+    colonne = "la part chiffrée"
+
+    def __init__(self, study: Etude) -> None:
+        from impots import programmes as pg
+
+        self.study = study
+        self.programme = pg.charger(study.programme)
+
+    def article(self, volet: Volet) -> Any:
+        return self.programme
+
+    def chapeau(self, entries: list[dict[str, Any]], last: int, n: Nombres) -> str:
+        raise EtudeError("la page d'un programme s'écrit au but 13, après ses passes.")
+
+    def label(self, entry: dict[str, Any]) -> str:
+        return "la part chiffrée"
+
+    def heading(self, entry: dict[str, Any], n: Nombres) -> str:
+        return "## La part chiffrée"
+
+    def first_year(self, year: int) -> str:
+        return f"la première année ({year})"
+
+    def refusals(self, w: Any, entries: list[dict[str, Any]], n: Nombres) -> None:
+        raise EtudeError("la page d'un programme s'écrit au but 13, après ses passes.")
+
+
+TEXTES: dict[str, Any] = {"plf2027": _PLF2027(), "plfss2027": _PLFSS2027(),
+                          "programme": _Programme}
 
 
 # --------------------------------------------------------------------------- #
@@ -474,10 +621,33 @@ class Etude:
     page: Path
     rapports: Path
     scenarios: Path = SCENARIOS
+    #: The programme a study of a presidential programme reads (D-328), or None.
+    programme: str | None = None
 
     @property
     def noms(self) -> tuple[str, ...]:
         return tuple(v.scenario for v in self.volets)
+
+    @property
+    def mixte(self) -> bool:
+        """Whether a scenario may price households and firms together: a programme's
+        priced part, whose first year is two calls (D-328)."""
+        return self.programme is not None
+
+    def texte_lu(self) -> Any:
+        """What the page says of its text: a law's, shared, or this study's programme."""
+        texte = TEXTES[self.texte]
+        return texte(self) if isinstance(texte, type) else texte
+
+    def points(self) -> list[tuple[str, str, str]]:
+        """(measure, field, point) of every range point the study prices, in order."""
+        if self.programme is None:
+            return []
+        from impots import programmes as pg
+
+        p = pg.charger(self.programme)
+        return [(m.id, plage.champ, point) for m in p.chiffrees()
+                for plage in m.chiffrage.plages for point in POINTS]
 
     # -- the passes -------------------------------------------------------------- #
 
@@ -493,11 +663,15 @@ class Etude:
         return [command[0], name, *command[2:]]
 
     def passes(self, where: str) -> list[tuple[str, list[str]]]:
-        """(report, command): the first years, then the annual paths, in the study's order."""
+        """(report, command): the first years, the range points of a programme, then the
+        annual paths, the longest, in the study's order."""
         cli = ["-m", "impots.population.cli"]
         return ([(f"premiere_annee_{name}.json",
                   [*cli, "etude", "premiere", self.nom, name, "--ou", where])
                  for name in self.noms]
+                + [(f"{PLAGES}/{plage_name(mesure, champ, point)}",
+                    [*cli, "etude", "plage", self.nom, mesure, champ, point, "--ou", where])
+                   for mesure, champ, point in self.points()]
                 + [(f"predictif_{name}.json", [*cli, *self.annual_argv(name, where=where)])
                    for name in self.noms])
 
@@ -531,7 +705,8 @@ class Etude:
         if why:
             print(why, file=sys.stderr)
             return 1
-        there = [p.name for p in self.rapports.glob("*.json")] if self.rapports.exists() else []
+        there = ([str(p.relative_to(self.rapports)) for p in self.rapports.rglob("*.json")]
+                 if self.rapports.exists() else [])
         if there:
             print(f"{self.rapports} porte déjà {there} : un rapport n'est pas écrasé en "
                   f"silence.", file=sys.stderr)
@@ -553,12 +728,45 @@ class Etude:
         if name not in self.noms:
             raise EtudeError(f"{name} n'est pas un scénario de l'étude « {self.nom} » : "
                              f"{list(self.noms)}")
-        report = first_year(name, where=where, scenarios=self.scenarios)
+        report = first_year(name, where=where, scenarios=self.scenarios, mixte=self.mixte)
         self.rapports.mkdir(parents=True, exist_ok=True)
         path = self.rapports / f"premiere_annee_{name}.json"
         path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
                         encoding="utf-8")
         return path
+
+    def write_plage(self, mesure: str, champ: str, point: str, *, where: str) -> Path:
+        if (mesure, champ, point) not in self.points():
+            raise EtudeError(f"{mesure}/{champ}/{point} n'est pas un point de l'étude "
+                             f"« {self.nom} ».")
+        report = plage(self.cadre, self.programme, mesure, champ, point, where=where)
+        path = self.rapports / PLAGES / plage_name(mesure, champ, point)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
+                        encoding="utf-8")
+        return path
+
+    def load_plages(self, commit: str, reports: Path | None = None) -> list[dict[str, Any]]:
+        """Each range point's report, refused unless it is the study's: its request as the
+        programme and the frame give it now, on the study's commit, said where."""
+        reports = (reports or self.rapports) / PLAGES
+        wanted = {plage_name(*point) for point in self.points()}
+        there = {p.name for p in reports.glob("*.json")} if reports.exists() else set()
+        if there != wanted:
+            raise EtudeError(f"les plages de l'étude : il manque {sorted(wanted - there)}, "
+                             f"et {sorted(there - wanted)} n'en est pas.")
+        out = []
+        for mesure, champ, point in self.points():
+            report = _read(reports / plage_name(mesure, champ, point))
+            request = plage_request(self.cadre, self.programme, mesure, champ, point)
+            if (report.get("request") != request or report.get("commit") != commit
+                    or report.get("dirty") is not False or not report.get("where")
+                    or (report.get("programme"), report.get("mesure"), report.get("champ"),
+                        report.get("point")) != (self.programme, mesure, champ, point)):
+                raise EtudeError(f"{mesure}/{champ}/{point} : le rapport n'est pas le point "
+                                 f"de l'étude, sur son commit `{commit[:7]}`, dit où.")
+            out.append(report)
+        return out
 
     # -- the reports ------------------------------------------------------------- #
 
@@ -586,7 +794,7 @@ class Etude:
         )
 
         reports = reports or self.rapports
-        texte = TEXTES[self.texte]
+        texte = self.texte_lu()
         wanted = {f"{kind}_{name}.json" for name in self.noms
                   for kind in ("premiere_annee", "predictif")}
         there = {p.name for p in reports.glob("*.json")} if reports.exists() else set()
@@ -608,21 +816,28 @@ class Etude:
                     raise EtudeError(f"{name}, {label} : ne dit pas où ses passes ont "
                                      f"tourné.")
                 commits.add(report["commit"])
-            kind, endpoint, payload = first_year_payload(name, self.scenarios)
+            kind, endpoint, payload = first_year_payload(name, self.scenarios, self.mixte)
             if (first.get("scenario"), first.get("kind"), first.get("endpoint"),
                     first.get("request")) != (name, kind, endpoint, payload):
                 raise EtudeError(f"{name} : la première année n'a pas chiffré le scénario "
                                  f"de l'étude, par l'appel de sa chaîne.")
-            response = (FirmResponse if kind == "entreprises" else PopulationResponse
-                        ).model_validate(first["response"])
-            if response.reform_cost is None:
+            firms = None
+            if kind == "mixte":
+                response = PopulationResponse.model_validate(first["response"]["menages"])
+                firms = FirmResponse.model_validate(first["response"]["entreprises"])
+            else:
+                response = (FirmResponse if kind == "entreprises" else PopulationResponse
+                            ).model_validate(first["response"])
+            if response.reform_cost is None or (firms is not None
+                                                and firms.reform_cost is None):
                 raise EtudeError(f"{name} : la première année n'a pas de coût.")
-            if kind == "entreprises" and (
-                    response.meta.vintage != self.millesime_entreprises
-                    or response.meta.cells_are_synthetic):
+            firm_reply = response if kind == "entreprises" else firms
+            if firm_reply is not None and (
+                    firm_reply.meta.vintage != self.millesime_entreprises
+                    or firm_reply.meta.cells_are_synthetic):
                 raise EtudeError(f"{name} : la première année n'a pas tourné sur les "
                                  f"entreprises de {self.millesime_entreprises}, leurs "
-                                 f"cellules réelles (millésime « {response.meta.vintage} »).")
+                                 f"cellules réelles (millésime « {firm_reply.meta.vintage} »).")
             try:
                 PredictifReportResponse.model_validate(path)
             except ValueError as error:
@@ -649,8 +864,9 @@ class Etude:
             entries.append({
                 "name": name, "volet": volet, "article": texte.article(volet),
                 "scenario": scenario, "kind": kind, "first": first, "response": response,
-                "path": path, "case": case, "grade": grade, "sign": sign,
-                "cost": sign * float(response.reform_cost),
+                "firms": firms, "path": path, "case": case, "grade": grade, "sign": sign,
+                "cost": sign * (float(response.reform_cost)
+                                + (float(firms.reform_cost) if firms is not None else 0.0)),
                 "debt": [{**row, "theta": sign * row["theta"],
                           "corners": [sign * c for c in row["corners"]]}
                          for row in debt(path)]})
@@ -672,7 +888,7 @@ class Etude:
         rests on: the page and the site are one text (D-304)."""
         from impots import fiche
 
-        texte = TEXTES[self.texte]
+        texte = self.texte_lu()
         frame = self.frame()
         if frame["theta"] != 0.5 or not (frame["behavioural"] and frame["macro"]):
             raise EtudeError(f"le cadre « {self.cadre} » n'est pas celui de D-289 (θ½, "
@@ -959,6 +1175,9 @@ def definition(nom: str, directory: Path | None = None) -> Etude:
         raise EtudeError(f"{_relative(path)} nomme l'étude « {raw['nom']} ».")
     if raw["texte"] not in TEXTES:
         raise EtudeError(f"{nom} : texte « {raw['texte']} » inconnu ({sorted(TEXTES)}).")
+    if (raw["texte"] == "programme") != ("programme" in raw):
+        raise EtudeError(f"{nom} : une étude de programme nomme son programme, et elle "
+                         f"seule (D-328).")
     if not re.fullmatch(r"D-\d+", raw["preenregistrement"]):
         raise EtudeError(f"{nom} : « {raw['preenregistrement']} » n'est pas une D-entrée.")
     try:
@@ -967,11 +1186,32 @@ def definition(nom: str, directory: Path | None = None) -> Etude:
         raise EtudeError(f"{nom} : un scénario mal dit : {error}") from error
     if not volets or len({v.scenario for v in volets}) != len(volets):
         raise EtudeError(f"{nom} : des scénarios, chacun une fois.")
+    if "programme" in raw:
+        from impots import programmes as pg
+
+        try:
+            programme = pg.charger(raw["programme"])
+        except Exception as error:
+            raise EtudeError(f"{nom} : le programme « {raw['programme']} » ne se lit pas : "
+                             f"{error}") from error
+        if not programme.chiffrees():
+            raise EtudeError(f"{nom} : « {raw['programme']} » n'a aucune mesure chiffrée, "
+                             f"rien à étudier.")
+        if [v.scenario for v in volets] != [scenario_du_programme(raw["programme"])]:
+            raise EtudeError(f"{nom} : une étude de programme a un scénario, sa part "
+                             f"chiffrée, « {scenario_du_programme(raw['programme'])} ».")
     return Etude(nom=nom, titre=raw["titre"], texte=raw["texte"],
                  preenregistrement=raw["preenregistrement"], volets=volets,
                  cadre=raw["cadre"], millesime_entreprises=raw["millesime_entreprises"],
                  page=ROOT / raw.get("page", f"docs/etudes/{nom}.md"),
-                 rapports=ROOT / raw.get("rapports", f"reports/etudes/{nom}"))
+                 rapports=ROOT / raw.get("rapports", f"reports/etudes/{nom}"),
+                 programme=raw.get("programme"))
+
+
+def scenario_du_programme(slug: str) -> str:
+    """The scenario of a programme's priced part: every priced measure, households and
+    firms together, as the programme gives them (D-328)."""
+    return f"pres2027_{slug}_programme"
 
 
 def definitions(directory: Path | None = None) -> list[Etude]:

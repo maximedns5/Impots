@@ -99,6 +99,9 @@ def _scenario_path(directory: Path, name: str) -> Path:
 
 #: What a scenario may ask the population to be handed before it is priced (D-306).
 IMPUTATIONS = frozenset({"ij", "consommation"})
+#: What the annual path imputes itself: every pass whose reform moves the consumption
+#: imputes it (D-328).
+CHEMIN_IMPUTE = frozenset({"consommation"})
 
 
 @dataclass(frozen=True)
@@ -162,7 +165,9 @@ class Scenario:
         """The reform a path prices in `year`: as written in the scenario's first year,
         and after it with each dated revaluation carried, for what a revaluation leaves
         is a level, January to December (D-301)."""
-        if self.imputations:
+        # The consumption is imputed by every pass whose reform moves it, on the path as
+        # anywhere (D-328); the sick pay only by the mechanical pricing (D-306).
+        if set(self.imputations) - CHEMIN_IMPUTE:
             raise ScenarioError(
                 f"« {self.name} » demande {list(self.imputations)} : seul le chiffrage "
                 f"mécanique les impute, et ce chemin chiffrerait la réforme sur une "

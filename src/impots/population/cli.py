@@ -1263,11 +1263,14 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
         def run(spec: dict[str, Any] | None) -> float:
             if not spec:
                 return 0.0
-            result = population_run(pop, year=year,
-                                    reform=ReformSpec.model_validate(spec),
+            reform = ReformSpec.model_validate(spec)
+            result = population_run(pop, year=year, reform=reform,
                                     tier="full", sample=args.sample,
                                     **({"impute_capital": True, "capital_index": index}
-                                       if capital else {}))
+                                       if capital else {}),
+                                    **_consommation(reform, year,
+                                                    "figee" if pop is frame else "vieillie",
+                                                    hypothesis, args.vintage))
             return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
         return run
 
@@ -1426,11 +1429,13 @@ def cmd_predictif(args: argparse.Namespace) -> int:
         def run(spec: dict[str, Any] | None) -> float:
             if not spec:
                 return 0.0
-            result = population_run(pop, year=year,
-                                    reform=ReformSpec.model_validate(spec),
+            reform = ReformSpec.model_validate(spec)
+            result = population_run(pop, year=year, reform=reform,
                                     tier="full", sample=args.sample,
                                     **({"impute_capital": True, "capital_index": index}
-                                       if capital else {}))
+                                       if capital else {}),
+                                    **_consommation(reform, year, view, uprating,
+                                                    args.vintage))
             return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
 
         print(f"  {year} · {view}…", flush=True)
@@ -1517,6 +1522,21 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     return 0
 
 
+def _consommation(reform: object, year: int, view: str, uprating: object,
+                  vintage: str) -> dict[str, object]:
+    """What a pass of the annual path tells the runner of the consumption, when its reform
+    moves a consumption tax (D-328): the aged view's euros are the year's, at the frame's
+    own price index ; the frozen view's, the vintage's."""
+    from impots import consommation
+
+    if not consommation.touche(reform):
+        return {}
+    if view == "figee":
+        return {"impute_consommation": True, "annee_consommation": int(vintage)}
+    return {"impute_consommation": True, "annee_consommation": year,
+            "prix_au_dela": consommation.prix_du_cadre(uprating, year)}
+
+
 def _annees_refusals(scenario: object, path: range) -> None:
     """What a measure bounded to its years cannot be on the annual path (D-288), refused
     before the first pass: a household reform, whose channels read inputs each year that a
@@ -1571,6 +1591,9 @@ def cmd_etude(args: argparse.Namespace) -> int:
             return study.launch(args.ou)
         if args.action == "premiere":
             print(f"  -> {study.write_first_year(args.scenario, where=args.ou)}")
+            return 0
+        if args.action == "plage":
+            print(f"  -> {study.write_plage(args.mesure, args.champ, args.point, where=args.ou)}")
             return 0
         if args.action == "ecrire":
             text = study.render(study.load())
@@ -2169,6 +2192,11 @@ def build_parser() -> argparse.ArgumentParser:
     premiere.add_argument("nom")
     premiere.add_argument("scenario")
     premiere.add_argument("--ou", required=True)
+    point = etude_actions.add_parser("plage", help="un point de la plage d'une mesure d'un "
+                                                   "programme (D-328)")
+    for arg in ("nom", "mesure", "champ", "point"):
+        point.add_argument(arg)
+    point.add_argument("--ou", required=True)
     for action, text in (("ecrire", "la page, depuis les seuls rapports commités"),
                          ("verifier", "la page commitée est-elle celle de ses rapports ?")):
         etude_actions.add_parser(action, help=text).add_argument("nom")

@@ -66,6 +66,46 @@ LOI_ENERGIE: dict[int, dict[str, dict[str, float]]] = {
                  "gaz": 134.0},
     },
 }
+def loi_energie(annee: int) -> dict[str, float]:
+    """Les accises de `annee` : celles de la loi relevée, ou, au-delà de la dernière, les
+    tarifs de celle-ci reconduits tels quels, le droit tel qu'il est écrit (D-328). Les
+    tarifs des accises sont des montants en euros, que la loi ne revalorise pas d'elle-même."""
+    connues = sorted(LOI_ENERGIE)
+    if annee in LOI_ENERGIE:
+        return dict(LOI_ENERGIE[annee]["accise"])
+    if annee > connues[-1]:
+        return dict(LOI_ENERGIE[connues[-1]]["accise"])
+    raise ConsommationError(f"les accises de {annee} ne sont pas écrites (connues : {connues})")
+
+
+def prix_energie(annee: int, prix_au_dela: dict[int, float] | None = None) -> dict[str, float]:
+    """Les prix TTC de l'énergie de `annee`, l'année des euros qu'ils convertissent en
+    volumes : ceux relevés, ou, au-delà du dernier, les siens portés par l'indice des prix
+    qui porte aussi les euros, pour que les volumes ne bougent pas d'eux-mêmes (D-328)."""
+    connues = sorted(LOI_ENERGIE)
+    if annee in LOI_ENERGIE:
+        return dict(LOI_ENERGIE[annee]["prix"])
+    if annee < connues[-1]:
+        raise ConsommationError(f"les prix de l'énergie de {annee} ne sont pas écrits "
+                                f"(connus : {connues})")
+    facteur = 1.0
+    for a in range(connues[-1] + 1, annee + 1):
+        if not prix_au_dela or a not in prix_au_dela:
+            raise ConsommationError(f"pas de prix de l'énergie en {a} : donner l'indice des "
+                                    "prix de cette année")
+        facteur *= 1.0 + prix_au_dela[a]
+    return {k: v * facteur for k, v in LOI_ENERGIE[connues[-1]]["prix"].items()}
+
+
+def prix_du_cadre(uprating, annee: int) -> dict[int, float]:
+    """L'indice des prix d'un cadre (`Uprating`), année par année, de la première année
+    après les comptes jusqu'à `annee` : ce qui porte la consommation d'une population
+    vieillie par ce cadre (D-328)."""
+    par_annee = dict(uprating.price_by_year)
+    return {a: par_annee.get(a, uprating.price) if par_annee else uprating.price
+            for a in range(DERNIERE_ANNEE_CN + 1, annee + 1)}
+
+
 #: La part du gazole dans la dépense de carburants des ménages, SDES 2024 (29,9 Md€ de
 #: gazole, 22,75 de supercarburants) : l'enquête ne sépare pas les carburants (D-323).
 PART_GAZOLE = 29.901 / (29.901 + 22.752)
@@ -204,15 +244,13 @@ class Fiscalite:
     prix: dict[str, float] = field(default_factory=dict)
 
     @classmethod
-    def droit(cls, annee: int, borne: str = "taux") -> Fiscalite:
+    def droit(cls, annee: int, borne: str = "taux", *, annee_prix: int | None = None,
+              prix_au_dela: dict[int, float] | None = None) -> Fiscalite:
         """Le droit de `annee` ; `borne` prend le taux principal des postes mêlés, ou leur
-        taux le plus bas (`taux_bas`) ou le plus haut (`taux_haut`) : D-323."""
-        if annee not in LOI_ENERGIE:
-            raise ConsommationError(f"les accises et les prix de {annee} ne sont pas écrits "
-                                    f"(connues : {sorted(LOI_ENERGIE)})")
-        loi = LOI_ENERGIE[annee]
-        return cls(annee, {p.code: getattr(p, borne) for p in postes()},
-                   dict(loi["accise"]), dict(loi["prix"]))
+        taux le plus bas (`taux_bas`) ou le plus haut (`taux_haut`) : D-323. Les prix sont
+        ceux de `annee_prix`, l'année des euros de la consommation, `annee` par défaut."""
+        return cls(annee, {p.code: getattr(p, borne) for p in postes()}, loi_energie(annee),
+                   prix_energie(annee if annee_prix is None else annee_prix, prix_au_dela))
 
     def reformee(self, spec) -> Fiscalite:
         """Le même droit, sous les boutons de consommation d'une `ReformSpec`."""
@@ -295,6 +333,7 @@ def sans_consommation(spec):
 
 def imputer_menages(households, annee: int, prix_au_dela: dict[int, float] | None = None,
                     ) -> tuple[dict[str, np.ndarray], np.ndarray, np.ndarray]:
+    # `annee` est celle des euros de la consommation, qui suit la population (D-328).
     """La consommation de chaque ménage d'une passe, poste par poste, avec ses poids et son
     niveau de vie (le revenu disponible de référence par unité de consommation)."""
     from impots.population.aggregate import consumption_units, weighted_decile_index
@@ -314,11 +353,22 @@ def imputer_menages(households, annee: int, prix_au_dela: dict[int, float] | Non
 
 
 def colonnes(households, annee: int, spec=None,
-             prix_au_dela: dict[int, float] | None = None) -> dict[str, np.ndarray]:
+             prix_au_dela: dict[int, float] | None = None,
+             annee_consommation: int | None = None) -> dict[str, np.ndarray]:
     """La TVA et les accises de chaque ménage d'une passe, au droit de `annee` et, si une
-    réforme est donnée, sous elle : les colonnes que le registre des recettes lit."""
-    conso, _, _ = imputer_menages(households, annee, prix_au_dela)
-    droit = Fiscalite.droit(annee)
+    réforme est donnée, sous elle : les colonnes que le registre des recettes lit.
+
+    La consommation suit la population (D-328) : ses euros sont ceux de
+    `annee_consommation`, l'année où la population a été vieillie, ou son millésime quand
+    elle ne l'est pas ; `annee` par défaut. Les prix qui en tirent les volumes sont ceux de
+    la même année ; le droit, celui de `annee`."""
+    euros = annee if annee_consommation is None else annee_consommation
+    if euros > DERNIERE_ANNEE_CN and prix_au_dela is None:
+        from impots import hypotheses
+
+        prix_au_dela = dict(hypotheses.jeu("plf2027").prix)
+    conso, _, _ = imputer_menages(households, euros, prix_au_dela)
+    droit = Fiscalite.droit(annee, annee_prix=euros, prix_au_dela=prix_au_dela)
     base = taxes(conso, droit)
     out = {"tva_menages": base["tva"], "accises_energie": base["accises"],
            "consommation_imputee": sum(conso.values())}

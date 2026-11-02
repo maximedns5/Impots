@@ -388,6 +388,7 @@ def run(
     impute_ij: bool = False,
     impute_consommation: bool = False,
     prix_au_dela: dict[int, float] | None = None,
+    annee_consommation: int | None = None,
 ) -> RunResult:
     """Run the population through current law and, optionally, one reform.
 
@@ -555,7 +556,8 @@ def run(
             [pl.col(key).alias(f"{key}_reform") for key in baseline_rows])
     if impute_consommation:
         started = time.perf_counter()
-        couche = conso_module.colonnes(households, year, conso_reform, prix_au_dela)
+        couche = conso_module.colonnes(households, year, conso_reform, prix_au_dela,
+                                       annee_consommation)
         households = households.with_columns(
             [pl.Series(key, values) for key, values in couche.items()])
         columns.update(couche)
