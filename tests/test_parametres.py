@@ -196,3 +196,19 @@ def test_every_knob_of_the_cases_grafts_to_its_whole_tree() -> None:
         assert base.get_parameters_at_instant(f"{annee}-01-01") is not \
             reforme.get_parameters_at_instant(f"{annee}-01-01")
         system.clear_cache()
+
+
+def test_a_knob_written_back_at_its_law_s_integer_value_is_not_refused() -> None:
+    """GARDE (D-329). Le plafond de la réduction générale vaut 3 dans l'arbre de 2026 ; la
+    réforme l'écrit 3.0. `==` les dit égaux, le contrôle de la greffe lit le texte des
+    arbres et refusait la réforme : le haut de la plage de Mélenchon, le droit de 2026,
+    tombait. Greffée, la feuille rend l'arbre de la réforme, et rien ne bouge."""
+    reformed = system.reformed_for(ReformSpec(allegement_general_plafond=3.0), 2026)
+    base = system.baseline()
+    for instant in ("2026-01-01", "2026-12-01"):
+        assert float(reformed.get_parameters_at_instant(instant).prelevements_sociaux
+                     .reductions_cotisations_sociales.allegement_general
+                     .ensemble_des_entreprises.plafond) == float(
+            base.get_parameters_at_instant(instant).prelevements_sociaux
+            .reductions_cotisations_sociales.allegement_general
+            .ensemble_des_entreprises.plafond) == 3.0

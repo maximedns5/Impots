@@ -25620,3 +25620,22 @@ seul sens d'un bout à l'autre.
 **La réfutation qui se lirait.** Une part dont le coût s'écarte de plus de 15 % de la somme
 de ses cas, une fois l'année de la population comptée. Ou une plage qui n'est pas
 monotone.
+
+## D-329 — Les passes du but 13 reprises : la greffe distinguait 3 de 3,0
+
+**Le fait.** La 47e des 73 passes de D-328 est tombée : le haut de la plage de Mélenchon,
+le plafond de la réduction générale à 3 SMIC, qui est le droit de 2026. La greffe des
+paramètres (D-311) refusait la réforme. Le moteur écrit 3.0 là où l'arbre porte 3 : `==`
+les dit égaux, et `differences` ne trouvait aucun chemin changé ; le contrôle, qui compare
+le texte des deux arbres, voyait « 3 » et « 3.0 ». Tout bouton remis à la valeur entière du
+droit tombait ainsi. Les deux autres bouts de plage qui sont le droit, le haut d'Attal et
+le bas de Le Pen, portaient des valeurs décimales : ils avaient rendu 0 € et 0 point.
+
+**Le correctif.** `differences` voit ce que le contrôle voit : une feuille dont le texte
+diffère est greffée, et l'arbre greffé est celui de la réforme. Un test, vu échouer sur le
+code de D-328, le tient.
+
+**Les passes.** Une étude se lit sur un seul code : les 73 passes reprennent au début, sur le
+commit qui porte cette entrée, depuis un worktree figé neuf. Les 46 rapports du commit
+`3b02ae4` ne sont pas gardés ; la reprise doit les redonner à l'identique, et le résultat
+le dira. La méthode et le pronostic de D-328 ne changent pas.
