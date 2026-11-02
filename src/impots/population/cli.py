@@ -1476,7 +1476,9 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                               behaviour_asked=args.behavioural)
             print(f"  {year} · {view} · passe du simulateur…", flush=True)
             _liberer()
-            first = api._price_first_year(
+            # In a fresh process, which gives back all it took when it ends (D-331).
+            first = _isole(
+                api._price_first_year,
                 api.YearPass(reform=scenario.reform_in(year), year=year,
                              behavioural=args.behavioural),
                 uprating=uprating, macro=args.macro, view=view, **firm_part)
@@ -1521,6 +1523,22 @@ def cmd_predictif(args: argparse.Namespace) -> int:
         for line in path.aged.lines():
             print(f"     {line}")
     return 0
+
+
+def _isole(function: object, *args: object, **kwargs: object) -> object:
+    """`function(*args, **kwargs)` in a fresh process, its value returned (D-331).
+
+    A pass of the annual path takes up to ten gigabytes, and a process does not give all
+    of it back: freed caches and a tuned allocator left the paths of Tondelier and of
+    Lisnard killed on a 15-gigabyte machine. A process that ends gives everything back.
+    The child is spawned, not forked: it starts clean, and computes what the parent would
+    have, on the same code, the same files and the same environment."""
+    import multiprocessing
+    from concurrent.futures import ProcessPoolExecutor
+
+    with ProcessPoolExecutor(max_workers=1,
+                             mp_context=multiprocessing.get_context("spawn")) as pool:
+        return pool.submit(function, *args, **kwargs).result()
 
 
 def _liberer() -> None:

@@ -213,4 +213,75 @@ def test_a_pass_of_the_path_frees_what_the_years_before_kept() -> None:
     # Structural: the whole pass of the path frees before it prices.
     source = inspect.getsource(cli.cmd_predictif)
     assert source.index("passe du simulateur") < source.index("_liberer()") < source.index(
-        "api._price_first_year(")
+        "api._price_first_year,")
+
+
+# --- les pages, sur les rapports commités (D-328, D-329) ------------------------------
+
+
+@pytest.fixture(scope="module")
+def pages() -> dict[str, tuple[etude.Etude, str]]:
+    return {s.programme: (s, s.render(s.load())) for s in _studies()}
+
+
+def test_every_page_says_its_debt_is_not_the_programme_s(pages) -> None:
+    """GARDE (D-319). La dette d'une page est celle de la part chiffrée, jamais celle du
+    programme : l'avertissement est en tête, avec la couverture."""
+    for slug, (_, text) in pages.items():
+        head = text.split("## En bref")[0]
+        assert etude.AVERTISSEMENT_PROGRAMME in head, slug
+        c = pg.charger(slug).couverture()
+        assert f"porte {c['mesures']} mesures, dont {c['parametrees']} énoncent" in head
+
+
+def test_every_measure_is_on_its_page_with_its_door(pages) -> None:
+    for slug, (_, text) in pages.items():
+        mesures = text.split("## Le programme, mesure par mesure")[1]
+        for m in pg.charger(slug).mesures:
+            row = next(line for line in mesures.splitlines() if line.startswith("| ")
+                       and m.libelle.split(" ")[0] in line)
+            assert row
+            if m.refus is not None and m.refus.porte != "vague":
+                assert f"porte `{m.refus.porte}`" in mesures, (slug, m.id)
+
+
+def test_every_range_point_is_on_the_page(pages) -> None:
+    for slug, (study, text) in pages.items():
+        plages = text.split("## Ce que bouge chaque paramètre")[1].split("## Le programme")[0]
+        for m in pg.charger(slug).chiffrees():
+            for plage in m.chiffrage.plages:
+                assert f"| `{plage.champ}` |" in plages, (slug, plage.champ)
+        rows = [line for line in plages.splitlines()
+                if line.startswith(("| le bas |", "| le candidat |", "| le haut |"))]
+        assert len(rows) == len(study.points()), slug
+
+
+def test_the_announced_layer_stays_apart(pages) -> None:
+    """La couche annoncée a sa section, et ni l'en-bref ni la part chiffrée ne la lisent."""
+    for slug, (_, text) in pages.items():
+        assert "## Ce que le candidat annonce, à part" in text
+        assert "annonc" not in text.split("## La part chiffrée")[1].split(
+            "## Ce que bouge")[0].lower(), slug
+
+
+def test_a_mixed_part_shows_both_layers(pages) -> None:
+    for slug in ("attal", "lisnard", "retailleau"):
+        text = pages[slug][1]
+        assert "pour les ménages, sur la population de 2024" in text
+        assert "| taille | entreprises | touchées | impôt en plus |" in text
+        assert "La bande et l'éventail ne lisent que la part des ménages" in text
+
+
+def test_a_pass_of_the_path_runs_in_a_process_of_its_own() -> None:
+    """GARDE (D-331). Une passe du chemin prend jusqu'à dix gigaoctets, qu'un processus ne
+    rend pas tous : les chemins de Tondelier et de Lisnard étaient tués. Chaque passe
+    tourne dans un processus neuf, qui rend tout en finissant, et sa valeur revient."""
+    import inspect
+    import os
+
+    from impots.population import cli
+
+    assert cli._isole(os.getpid) != os.getpid()
+    assert cli._isole(divmod, 17, 5) == (3, 2)
+    source = inspect.getsource(cli.cmd_predictif)
+    assert "_isole(\n                api._price_first_year," in source

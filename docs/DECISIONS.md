@@ -25662,3 +25662,29 @@ sans une passe.
 **Les passes.** Elles reprennent encore au début, toutes, sur le commit qui porte cette
 entrée : une étude se lit sur un seul code. La méthode et le pronostic de D-328 ne changent
 pas, et la reprise devra redonner les 65 rapports courts de `07783a4` à l'identique.
+
+## D-331 — Chaque passe du chemin dans son processus ; Tondelier et Lisnard repassent
+
+**Le fait.** Sur `82f4926`, les 65 passes courtes ont redonné celles de `07783a4` à
+l'identique, seules leurs durées différant. Cinq chemins sont allés au bout : Attal, Labib
+et Le Pen tels quels, avec un pic de 11,8 Go pour Attal ; Mélenchon et Retailleau avec
+l'allocateur réglé. Les chemins de Lisnard puis de Tondelier ont été tués par le noyau à
+13,9 Go, après dix et dix-sept minutes.
+
+**L'allocateur, essayé d'abord.** `MALLOC_MMAP_THRESHOLD_=131072` fait rendre au système les
+grands tableaux libérés ; `MALLOC_ARENA_MAX=2` limite l'éparpillement entre fils. Aucun
+nombre n'en dépend, et le code ne change pas : les chemins de Mélenchon, de Retailleau et de
+Roussel ont tourné ainsi, ce que leur rapport dit à la clé `where`. Celui de Tondelier est
+mort quand même : une seule de ses passes monte à 12,7 Go.
+
+**Le correctif.** Chaque passe du chemin tourne dans un processus neuf, lancé à vide
+(`spawn`), qui rend toute sa mémoire en finissant (`cli._isole`) ; sa valeur revient au
+chemin. Le parent ne garde que 356 Mo. Un chemin de deux ans de Tondelier, ainsi, va au
+bout, avec un pic de 13,1 Go pour tout le conteneur. Un test tient la fonction, un test de
+structure son appel.
+
+**Les passes.** Une étude se lit sur un seul code, et chacune peut avoir le sien. Les six
+études dont les passes sont allées au bout gardent `82f4926`. Celles de Tondelier et de
+Lisnard repassent entières (première année, plages et chemin) sur le commit qui porte
+cette entrée, l'allocateur réglé. Leurs passes courtes devront redonner celles de
+`82f4926` à l'identique. La méthode et le pronostic de D-328 ne changent pas.
