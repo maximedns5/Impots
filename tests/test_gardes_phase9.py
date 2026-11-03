@@ -3,10 +3,10 @@
 `scripts/sweep_gardes_phase9.py` mutates every guard of Phase 9 and runs the tests that
 must kill it; a full sweep takes about forty minutes and is not replayed here. What is
 held here, in seconds: that its catalogue still applies to the code, that no module of
-`predictif/` escapes it, that the generator mutates what it says on any source, and that
-the committed report names every guard of today's catalogue with no survivor. A guard
-added or rewritten after the sweep fails the last test until the sweep names it:
-`python scripts/sweep_gardes_phase9.py --missing` runs only those.
+`predictif/` escapes it, and that the generator mutates what it says on any source. The
+sweep itself is run on the owner's demand only (D-335): a guard added or rewritten since
+the committed report is not required to be in it; `python scripts/sweep_gardes_phase9.py
+--missing` runs only those, when asked.
 """
 
 from __future__ import annotations
@@ -132,19 +132,3 @@ def test_apply_refuses_a_text_that_is_absent_or_repeated(sweep, tmp_path) -> Non
         with pytest.raises(SystemExit, match="apparaît"):
             sweep.apply(sweep.Mutation("t", str(target), old, "x = 2", (), "t"))
     assert target.read_text(encoding="utf-8") == "x = 1\nx = 1\n"
-
-
-def test_the_report_names_every_guard_and_no_survivor(sweep, catalogue) -> None:
-    """THE GUARD OF THE SWEEP. Every guard of today's catalogue has its verdict in the
-    committed report, and none survived. A guard added, or whose condition was rewritten,
-    after the last sweep is not in the report: run the sweep on it (`--missing`) rather
-    than trust that its old test still holds."""
-    rows = sweep.read_report()
-    ids = {m.id for m in catalogue}
-    missing = sorted(ids - set(rows))
-    stale = sorted(set(rows) - ids)
-    assert not missing, f"gardes jamais balayées, relancer avec --missing : {missing}"
-    assert not stale, f"le rapport nomme des gardes disparues, relancer : {stale}"
-    open_ = sorted(k for k, r in rows.items()
-                   if r["verdict"] not in ("tuée", "équivalente"))
-    assert not open_, f"survivantes ou équivalences à retirer : {open_}"

@@ -25867,6 +25867,9 @@ tourner. Aucune tolérance ne bouge après le premier calcul. `calibrate.py` res
 
 **Ce que le code devra suivre.** `impots etude` refuse encore une étude dont les rapports
 sont sur plusieurs commits (`etude.py`, l'erreur « les rapports de l'étude sont sur N
-commits »). Il devra accepter des commits dont le diff ne touche pas les nombres de
-l'étude, en le disant sur la page. Les gardes et les tests de structure de D-330, D-331,
-D-332 et D-334 restent tant qu'ils ne gênent pas ; on peut les retirer quand ils coûtent.
+commits ») ; il devra accepter des commits dont le diff ne touche pas les nombres de
+l'étude, en le disant sur la page. Le test qui exigeait que chaque garde de la phase 9 soit
+passée au banc de mutations (`tests/test_gardes_phase9.py`, le rapport sans survivante) est
+retiré ; les autres tests du fichier, qui tiennent le catalogue en quelques secondes,
+restent. Les gardes et les tests de structure de D-330, D-331, D-332 et D-334 restent tant
+qu'ils ne gênent pas ; on peut les retirer quand ils coûtent.
