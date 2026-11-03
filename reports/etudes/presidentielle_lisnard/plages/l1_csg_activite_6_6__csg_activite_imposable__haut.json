@@ -1,0 +1,69 @@
+{
+  "programme": "lisnard",
+  "mesure": "l1_csg_activite_6_6",
+  "champ": "csg_activite_imposable",
+  "point": "haut",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "csg_activite_imposable": 0.024,
+      "csg_activite_deductible": 0.0488
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 16894751441.405273,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.005482841824405726,
+      0.010905162036567662,
+      0.016267628696164493,
+      0.021570902488588173,
+      0.026815636806343912,
+      0.032002477829551346,
+      0.03713206460555818,
+      0.04220502912767321,
+      0.04722199641303271,
+      0.052183584579605036
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-03",
+  "commit": "c36984d9f6e3423cc8ad446f16c287617f3ea148",
+  "dirty": false,
+  "where": "conteneur cloud de la session, worktree figé sur c36984d, une passe par processus, l'une après l'autre ; allocateur réglé (MALLOC_MMAP_THRESHOLD_=131072, MALLOC_ARENA_MAX=2) pour tenir en mémoire, chaque passe du chemin dans son processus (D-331), les taux marginaux libérant leurs simulations (D-332)"
+}

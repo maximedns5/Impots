@@ -573,7 +573,8 @@ class _Programme:
 
     def chapeau(self, entries: list[dict[str, Any]], last: int, n: Nombres) -> str:
         p, c = self.programme, self.programme.couverture()
-        many = "s" if c["chiffrees"] > 1 else ""
+        together = (f"ces {n(c['chiffrees'], 'texte')} mesures ensemble"
+                    if c["chiffrees"] > 1 else "cette seule mesure")
         part = f"{c['part_des_parametrees'] * 100:.0f} %"
         return (f"{p.candidat}, {p.parti}, a déclaré sa candidature à l'élection "
                 f"présidentielle de 2027. Son programme, relevé le "
@@ -582,10 +583,9 @@ class _Programme:
                 f"{n(c['parametrees'], 'programme')} énoncent un paramètre. Cet outil en "
                 f"chiffre {n(c['chiffrees'], 'texte')}, soit {n(part, 'texte')} des mesures "
                 f"paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part "
-                f"chiffrée, ces {n(c['chiffrees'], 'texte')} mesure{many} ensemble, trois "
-                f"réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle coûte une fois les "
-                f"comportements et l'économie pris en compte ; ce qu'elle fait à la dette en "
-                f"{last}. **{AVERTISSEMENT_PROGRAMME}**")
+                f"chiffrée, {together}, trois réponses : ce qu'elle coûte et qui y gagne ; "
+                f"ce qu'elle coûte une fois les comportements et l'économie pris en compte ; "
+                f"ce qu'elle fait à la dette en {last}. **{AVERTISSEMENT_PROGRAMME}**")
 
     def label(self, entry: dict[str, Any]) -> str:
         return "la part chiffrée"

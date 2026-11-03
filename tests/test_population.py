@@ -1355,6 +1355,38 @@ def test_the_simulation_a_marginal_rate_reads_is_freed_once_read(monkeypatch) ->
     assert (disposable > 0).all()
 
 
+def test_the_simulations_of_a_run_are_freed_when_it_returns(monkeypatch) -> None:
+    """GARDE (D-334). The same cycle, in the runner: the baseline's and the reform's
+    simulations outlived the run that built them. Four runs in one process, the four reform
+    shapes on the real population, went past the container's 14,3 Go, on `main` too. When
+    the run returns, every simulation it built is freed; what it returns is unchanged."""
+    import gc
+    import weakref
+
+    from impots.population import runner
+
+    built: list[weakref.ref] = []
+    real = runner.build_simulation
+
+    def recording(*args: Any, **kwargs: Any) -> Any:
+        simulation = real(*args, **kwargs)
+        built.append(weakref.ref(simulation.simulation))
+        return simulation
+
+    monkeypatch.setattr(runner, "build_simulation", recording)
+    frame = _pensioners_only()
+    gc.disable()
+    try:
+        result = run(frame, 2024, reform=ReformSpec(decote_taux=0.5), tier="full")
+        alive = [ref() is not None for ref in built]
+    finally:
+        gc.enable()
+    assert len(alive) >= 2
+    assert not any(alive)
+    assert result.n_households == frame["household_id"].n_unique()
+    assert result.n_persons == frame.height
+
+
 # --------------------------------------------------------------------------- #
 # unemployment benefit — the same spiral, and the RFR of N-2 (D-177)
 # --------------------------------------------------------------------------- #

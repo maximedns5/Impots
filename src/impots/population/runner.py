@@ -13,6 +13,7 @@ variables over the units inside the household.
 
 from __future__ import annotations
 
+import gc
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -569,12 +570,18 @@ def run(
     if guards["nan_columns"]:
         raise WiringError(f"non-finite values in {guards['nan_columns']}")
 
+    # A simulation is a cycle, its holders and populations pointing back at it, that only a
+    # full collection frees: kept, the run's outlived it, and four runs in one process went
+    # past the container (D-334). What the run returns no longer needs them.
+    n_households, n_persons = built.household_ids.size, built.n_persons
+    built = reformed_built = None
+    gc.collect()
     return RunResult(
         households=households,
         year=year,
         tier=tier,
-        n_households=built.household_ids.size,
-        n_persons=built.n_persons,
+        n_households=n_households,
+        n_persons=n_persons,
         sampled=sample,
         timings=timings,
         guards=guards,

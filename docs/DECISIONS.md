@@ -25722,3 +25722,115 @@ marginaux suivent, comme dans les reprises précédentes ; chacun ne sert que la
 laquelle il a été calculé (D-276). Les six autres études gardent `82f4926`. Les 23 passes
 courtes devront redonner celles de `82f4926` à l'identique. La méthode et le pronostic de
 D-328 ne changent pas.
+
+## D-333 — Les huit études du but 13 : les coûts tenus, six verdicts manqués
+
+**Le fait.** Les passes de D-328 sont allées au bout : six études sur `82f4926` (D-330),
+celles de Tondelier et de Lisnard sur `c36984d` (D-332), chaque rapport disant son commit
+et son allocateur à la clé `where`. Les 23 passes courtes de `c36984d` ont redonné celles de
+`82f4926` à l'identique, seules leurs durées différant. Le conteneur a redémarré une fois
+encore, pendant la 6e des 25 passes, la mémoire à 6,7 Go : la série a repris où elle
+s'était arrêtée, les cinq rapports écrits gardés. Le chemin de Tondelier a duré 86 minutes,
+celui de Lisnard 96 ; la mémoire du conteneur a culminé à 8,4 Go, contre 13,9 Go avant
+D-332. Les huit pages sont écrites depuis les seuls rapports, et le site construit.
+
+**Le coût de la première année.** 2026, population de 2024, positif quand l'État perd, en
+milliards d'euros. L'écart est celui de la part à la somme de ses cas, ceux-ci réduits de
+6,5 %, le milieu des 5 à 8 % que D-328 donne pour les revenus de 2024.
+
+| part | pronostic | coût | écart aux cas |
+|---|---:|---:|---:|
+| Attal | 65 à 80 | +76,42 | +3,2 % |
+| Lisnard | 31 à 41 | +37,24 | +2,0 % |
+| Retailleau | 18 à 24 | +20,81 | +1,6 % |
+| Labib | 18 à 26 | +22,89 | +15,5 % |
+| Le Pen | 12 à 16 | +13,92 | +2,9 % |
+| Roussel | 4,5 à 5,8 | +5,19 | +5,0 % |
+| Tondelier | −1,3 à −0,6 | −0,85 | −7,0 % |
+| Mélenchon | −11 à −7 | −8,73 | +0,5 % |
+
+Les huit coûts sont dans leur fourchette.
+
+**La réfutation se lit pour Labib.** Sa part s'écarte de ses cas de 15,5 %, au-delà des 15 %
+que D-328 se donnait : la réfutation écrite se lit, et elle reste lue. Sans la réduction,
+l'écart est de +8,0 %. La réduction valait pour des revenus ; la part de Labib est une
+accise sur des litres et une TVA sur des euros de carburant. La première année lit la
+dépense de 2024 au prix de 2024 (gazole 1,694 €/L), le cas celle de 2026 au prix de 2026
+(2,051 €/L) : les euros de 2024 achètent plus de litres, et l'accise suit les litres. La
+réduction ne se transposait pas à une mesure de consommation, ce que D-328 n'avait pas vu.
+
+**La dette en 2035.** Vue vieillie, θ½, en points de PIB contre la référence :
+
+| part | Δb 2035 | par Md€ de 2026 | verdict | pronostic |
+|---|---:|---:|---|---|
+| Attal | +20,29 | +0,265 | dépend de θ | hausse |
+| Lisnard | +9,55 | +0,256 | dépend de θ | hausse |
+| Retailleau | +5,44 | +0,261 | hausse | hausse |
+| Labib | +5,55 | +0,243 | hausse | hausse |
+| Le Pen | +3,71 | +0,267 | dépend de θ | hausse |
+| Roussel | +1,30 | +0,251 | dépend de θ | hausse |
+| Tondelier | +0,26 | −0,304 | dépend de θ | baisse |
+| Mélenchon | −2,55 | +0,292 | dépend de θ | baisse |
+
+Le rapport au coût est de 0,2 à 0,4 en valeur absolue pour les huit. Il est du signe du coût
+pour sept : celle de Tondelier rapporte la première année et monte la dette. Le verdict
+manque son pronostic pour six parts sur huit, pour deux raisons.
+
+* **Le multiplicateur tenu.** Sous la persistance « tenu », le coin de la boîte où le
+  multiplicateur macro vaut 1 renverse le signe, dans les deux vues : Attal passe à −6,93
+  points, Lisnard à −1,13, Le Pen à −1,95, Roussel à −0,83 ; la recette de Mélenchon monte
+  la dette de 1,51 point. Sous « éteint », chaque coin garde le signe de θ½. D-328 avait
+  pensé le verdict sur la persistance qui s'éteint ; un effet sur l'activité tenu dix ans,
+  au multiplicateur plein, finance la part, ou défait la recette.
+* **L'élasticité du haut.** La tranche de 60 % de Tondelier rapporte 848 M€ sans
+  comportements. Avec eux, elle coûte 437 M€ au centre (de +71 à +864 M€) : l'élasticité du
+  revenu imposable du dernier décile (C1) passe la recette. La dette de 2035 baisse de 0,13
+  point au bas de cette élasticité et monte jusqu'à 1,08 point au haut. D-328 avait pensé
+  le signe de la dette sur celui du coût mécanique.
+
+Le verdict de chaque page dit ce que la boîte dit, et le lecteur y lit le coin qui renverse.
+
+**Les plages.** Les 57 points sont faits ; chaque plage est monotone au sens large. La
+valeur du candidat est le bout de plusieurs plages (la suppression chez Labib, le bas de la
+CVAE chez Attal, le haut des plafonds du quotient chez Lisnard), et le coût y est celui du
+bout. Les 15 points des entreprises dont le droit
+change dans l'horizon disent pourquoi leur dette manque (D-254).
+
+**Ce que les pages ont demandé.** La garde qui tient la couche annoncée hors de la part
+chiffrée relevait « annoncé » dans la phrase du juge, la date de l'Institut Montaigne : le
+mot désigne, sur ces pages, la couche du candidat, et la phrase dit désormais « attendu ».
+Le chapeau dit « a déclaré sa candidature », sans genre, et « cette seule mesure » quand il
+n'y en a qu'une. La note des scénarios dit « 1 mesures chiffrées » : elle est celle des
+scénarios préenregistrés, que les rapports lisent, et n'est pas réécrite.
+
+**Les gardes, par mutation.** Les gardes des pages : dix mutations (l'avertissement ôté, la
+couverture fausse, une porte ou une mesure tue, un point ou une plage tus, l'annonce dans la
+part ou absente, les entreprises ou la note mixte tues), toutes tuées. Celles de la mémoire
+et du processus : six mutations de `_liberer` et de `_isole`, toutes tuées, après que la
+garde de D-330 a appris à lire aussi le cache des entreprises, qu'une mutation laissait
+vivre. Celle de D-332 : deux mutations, tuées.
+
+**Les tests ciblés.** `ruff` sur `src`, `tests` et `scripts`. La passe parallèle des 18
+fichiers de tests que le but touche, ou qui lisent le code qu'il change : 867 verts, 4
+sautés faute de données (la distribution des taux de l'artefact de référence ; les agrégats
+de la 2042, D-327). Les 19 tests lourds, un par processus : LOURDS. `make impact` n'avait
+pas de relevé dans ce worktree et aurait tout lancé : la sélection est faite à la main, et
+la passe complète reste la décision du propriétaire.
+
+## D-334 — Un test lourd tué sur main aussi : le runner libère ses simulations
+
+**Le fait.** Des 19 tests lourds, un tombait : celui des quatre formes de réforme sur la
+population réelle (`test_every_reform_shape_balances_on_the_real_population`), tué par le
+noyau à 14,1 Go. Il tombe de même sur `main` (`4faf17c`), dans ce conteneur, à 14,2 Go : le
+but 13 n'y est pour rien. Le relevé de D-309 le donnait à 7 Go à froid.
+
+**La cause.** Celle de D-332, dans le runner. Le test enchaîne quatre passes de la
+population dans un processus ; les simulations de la référence et de la réforme, des cycles
+que seule une collecte complète libère, survivaient à la passe qui les avait construites.
+
+**Le correctif.** La passe libère ses simulations quand elle rend son résultat, qui ne
+change pas. Le test, essayé ainsi sur `main`, passe en six minutes et demie, avec un pic de
+6,7 Go. Une garde, vue échouer sur le code d'avant, le tient : le collecteur coupé, chaque
+simulation d'une passe est morte à son retour. Ses deux mutations, la collecte ôtée ou les
+références gardées, sont tuées. Aucune passe des études ne l'a lu : elles ont tourné avant,
+et chacune dit son commit.

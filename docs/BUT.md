@@ -150,6 +150,14 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
   l'Institut Montaigne, les autres refusées avec leur porte. `impots programme` donne les
   trois réponses sur la part chiffrée, jamais comme la dette du programme entier, et la
   couche déclarée à ρ, à part.
+* **But 12 — La TVA et les accises sur l'énergie, côté ménages** (D-323 à D-327) : une
+  consommation par poste imputée à la population, dix boutons de TVA et d'accises, l'effet
+  par décile net des taxes payées ; trois mesures des programmes chiffrées dans leur
+  pronostic.
+* **But 13 — Une étude par candidat, publiée sur le site statique** (D-328 à D-333) : les
+  huit candidats dont une mesure se chiffre ont leur étude à trois réponses, chaque mesure
+  parcourue en trois points de sa plage, la couche déclarée à part ; la page des 24. Les
+  coûts tiennent leur pronostic, six verdicts de dette sur huit le manquent.
 
 ### But 6 — Une étude par commande
 
@@ -409,7 +417,7 @@ préenregistrées et chiffrées dans leur pronostic : Roussel +5,3 Md€, Le Pen
 pourquoi. Aucun des cinq articles du PLF 2027 derrière la porte ne se chiffre côté ménages :
 la part en euros reste à 72,8 %. Les réactions de la consommation aux prix sont absentes.
 
-### But 13 — Une étude par candidat, publiée sur le site statique (validé, en cours)
+### But 13 — Une étude par candidat, publiée sur le site statique (fait, D-328 à D-333)
 
 Treize mesures de huit candidats se chiffrent (buts 11 et 12), mais seulement en ligne de
 commande : `impots programme` les donne, aucune page ne les montre. Or le livrable est une
@@ -452,3 +460,15 @@ Validé par le propriétaire le 2 novembre 2026, avec les trois choix proposés 
 
 La publication en ligne reste la décision du propriétaire : le site est construit, pas
 activé.
+
+Les huit études sont écrites (`docs/etudes/presidentielle_<slug>.md`), et le site les
+publie avec la page des 24 candidats (`site/presidentielle.html`) : dix études à trois
+réponses en tout. Les huit coûts de 2026 tombent dans leur pronostic, d'Attal (+76,4 Md€)
+à Mélenchon (−8,7). La réfutation se lit pour Labib : sa part passe ses cas de 15,5 %, la
+réduction des revenus de 2024 ne valant pas pour des litres. Le verdict de la dette manque
+son pronostic six fois sur huit : un multiplicateur plein, tenu dix ans, renverse le signe
+chez Attal, Lisnard, Le Pen, Roussel et Mélenchon ; chez Tondelier, l'élasticité du dernier
+décile fait coûter une tranche qui rapporte sans comportements (D-333). Deux correctifs du
+moteur, sans effet sur les nombres, ont fait tenir les chemins dans le conteneur : chaque
+passe dans son processus (D-331), les taux marginaux qui libèrent leurs simulations
+(D-332).
