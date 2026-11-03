@@ -25986,3 +25986,54 @@ de Mélenchon passe de 32 à 8 coins, aux mêmes bornes.
 troncature stricte) ; 2 000 tirages, graine 20261103. Sous « lue » : P(Δb₂₀₃₅ > 0) = 0,82
 pour le point d'IR, 0,62 pour Attal, 0,40 pour Mélenchon. Les quantiles à 5 et 95 %
 dépassent les coins : la normale a des queues que θ ne parcourt pas.
+
+## D-338 — La série du but 14 : les dix études relancées, préenregistrées
+
+**Ce qui tourne.** Les dix études (`plf2027`, `plfss2027` et les huit
+`presidentielle_<slug>`), toutes leurs passes, par `impots etude lancer`, une étude après
+l'autre, sur le commit qui porte cette entrée, `src/` propre : 13 premières années, 57
+points de plage et 13 chemins de 2026 à 2035, dans les deux vues. Le cadre est
+`etudes/cadres/central.json` (D-336, décision 7), persistance « lue » en tête, « éteint » et
+« tenu » à côté comme sensibilités. Chaque chemin écrit ses statistiques, son rejeu et son
+Monte-Carlo (D-337). Les pages sont réécrites depuis les seuls rapports neufs.
+
+**Le profil de mémoire, avant.** La passe d'essai de la première année de Mélenchon, sur le
+code du but 14 : 177 s, 7,4 Go au pic du conteneur (15 Go), et le coût publié redonné au
+centime, −8 731 860 249 €. Une passe à la fois.
+
+**Le pronostic.** Écrit avant toute passe de la série. Les dettes sont reconstruites des
+rapports d'aujourd'hui par la fonction pure, sans les comportements
+(`scripts/but14_effets_modele.py`, étendu aux huit) : vue vieillie, Δb en 2035, en points.
+
+1. **Les coûts de la première année.** Ceux des huit programmes redonnent leur page
+   d'aujourd'hui à 0,1 % près : aucune décision de D-336 ne touche le mécanique. Ceux du
+   PLF et du PLFSS, chiffrés avant les IJ et D-310, à 3 % près de leur page (art. 2
+   +2,83 Md€, art. 3 −1,12, art. 15 −7,05, prime −887 M€, logement −78 M€).
+2. **La bande de Tondelier** change de centre : C1 au taux de l'IR vaut environ 0,68 fois
+   l'ancien. Le centre de la bande tombe entre −300 et +300 M€ (−437 aujourd'hui), et sa
+   note est « illustrative » (« in-support » aujourd'hui).
+3. **Les dettes sous « lue », à θ½**, à 25 % ou 0,5 point près, le plus large :
+
+| étude | θ = 0 | θ½ | θ = 1 | verdict |
+|---|---:|---:|---:|---|
+| Attal | +17,8 | +4,2 | −5,5 | dépend de θ |
+| Lisnard | +10,9 | +6,3 | +1,6 | hausse |
+| Retailleau | +5,1 | +2,7 | +1,1 | hausse |
+| Labib | +5,9 | +5,9 | +5,9 | hausse |
+| Le Pen | +4,3 | +3,9 | +3,5 | hausse |
+| Roussel | +1,6 | +1,6 | +1,6 | hausse |
+| Tondelier | −0,4 | −0,2 | 0,0 | dépend de θ |
+| Mélenchon | −2,1 | −0,4 | +0,7 | dépend de θ |
+
+   Les comportements, absents de la reconstruction, peuvent déplacer Lisnard (C7) et
+   Tondelier (C1) ; le pronostic de Tondelier est donc le seul qui puisse changer de signe à
+   θ½. Pour le PLF : art. 2 et art. 3 « dépend de θ » (le coin θ = 1 renverse une mesure
+   d'IR, comme le point d'IR de D-337), art. 15 « baisse ». Pour le PLFSS : les deux volets
+   « baisse », des transferts sans boucle.
+4. **Le Monte-Carlo**, P(Δb₂₀₃₅ > 0), vue vieillie : Attal entre 0,5 et 0,75 ; Mélenchon
+   entre 0,3 et 0,5 ; Lisnard, Retailleau, Labib, Le Pen et Roussel au-dessus de 0,95 ;
+   Tondelier entre 0,2 et 0,8.
+
+**Ce qui réfute.** Un coût de programme qui bouge de plus de 0,1 % : la restructuration
+aurait touché un nombre. Un verdict autre que celui du tableau. Une dette hors de sa
+tolérance. Chaque écart est dit dans la D-entrée du résultat ; aucun pronostic ne bouge.
