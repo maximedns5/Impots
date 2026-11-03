@@ -15,6 +15,7 @@ import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
+from impots import service
 from impots.api import main
 from impots.dette import maturite, reference
 from impots.predictif import chaine
@@ -72,8 +73,8 @@ def priced(monkeypatch) -> list:
                                impulse={"impot_sur_le_revenu": 5e9} if macro else None,
                                uncovered={"rsa": "transfert"} if macro else {})
 
-    monkeypatch.setattr(main, "_price_first_year", stub)
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "price_first_year", stub)
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     return seen
 
@@ -318,7 +319,7 @@ def test_the_indices_ride_along_each_computed_or_saying_why(client, priced,
     1,02 Md€, is 0,1618 point of the variant; consumption at θ = 1/2 is 0,81 × that in
     year one. The State's three indices are the path's own; the firm layer is listed and
     not computed; the deciles the stub does not carry are said to be missing."""
-    monkeypatch.setattr(main, "_predictif_macro_store", _with_index_rows)
+    monkeypatch.setattr(service, "predictif_macro_store", _with_index_rows)
     body = client.post("/predictif/simulate",
                        json=_payload(macro=True, persistence="tenu")).json()
     got = _indices(body)
@@ -339,7 +340,7 @@ def test_the_mesange_indices_read_without_the_loop_and_say_so_without_the_impuls
         client, priced, monkeypatch) -> None:
     """The indices are read under Mésange's own conditions, whatever the path's spending
     rule; without the impulse there is no shock to read."""
-    monkeypatch.setattr(main, "_predictif_macro_store", _with_index_rows)
+    monkeypatch.setattr(service, "predictif_macro_store", _with_index_rows)
     looped_off = _indices(client.post("/predictif/simulate", json=_payload(
         macro=True, spending={"rule": "part_pib_constante"})).json())
     assert looped_off["investissement_entreprises"]["available"]
@@ -353,9 +354,9 @@ def test_an_unreadable_macro_store_the_loop_does_not_need_leaves_the_indices_abs
     """Without the loop, the macro store serves the indices only: a checkout without the
     Mésange PDF says why they are missing, rather than refusing the whole path."""
     def unreadable():
-        raise main.MacroSourceError("insee_G2017-04_mesange.pdf introuvable")
+        raise service.MacroSourceError("insee_G2017-04_mesange.pdf introuvable")
 
-    monkeypatch.setattr(main, "_predictif_macro_store", unreadable)
+    monkeypatch.setattr(service, "predictif_macro_store", unreadable)
     response = client.post("/predictif/simulate", json=_payload(
         macro=True, spending={"rule": "part_pib_constante"}))
     assert response.status_code == 200, response.text
@@ -388,8 +389,8 @@ def test_the_first_year_is_priced_on_the_aged_population_and_says_so(
         return (SimpleNamespace(households=None),
                 SimpleNamespace(reform_cost=5e9, deciles=[]))
 
-    monkeypatch.setattr(main, "_population_frame", lambda: population)
-    monkeypatch.setattr(main, "_run_population", run)
+    monkeypatch.setattr(service, "population_frame", lambda: population)
+    monkeypatch.setattr(service, "run_population", run)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     response = client.post("/predictif/simulate", json=_payload())
     assert response.status_code == 200, response.text
@@ -441,8 +442,8 @@ def test_the_behavioural_pass_on_the_aged_population_keys_its_caches_on_the_upra
         keys.append(kwargs.get("uprating_key"))
         return SimpleNamespace(with_earnings=pl.DataFrame())
 
-    monkeypatch.setattr(main, "_population_frame", lambda: population)
-    monkeypatch.setattr(main, "_run_population", lambda request, frame: (
+    monkeypatch.setattr(service, "population_frame", lambda: population)
+    monkeypatch.setattr(service, "run_population", lambda request, frame: (
         SimpleNamespace(households=None), SimpleNamespace(reform_cost=5e9, deciles=[])))
     monkeypatch.setattr(emtr_module, "cached", cached)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
@@ -472,14 +473,14 @@ def test_the_frozen_view_keys_its_emtr_caches_on_the_frame_it_prices(monkeypatch
         seen.append((kwargs.get("uprating_key"), frame["salaire_brut_annuel"][0]))
         return SimpleNamespace(with_earnings=pl.DataFrame())
 
-    monkeypatch.setattr(main, "_population_frame", lambda: population)
-    monkeypatch.setattr(main, "_run_population", lambda request, frame: (
+    monkeypatch.setattr(service, "population_frame", lambda: population)
+    monkeypatch.setattr(service, "run_population", lambda request, frame: (
         SimpleNamespace(households=None), SimpleNamespace(reform_cost=5e9, deciles=[])))
     monkeypatch.setattr(emtr_module, "cached", cached)
     uprating = Uprating(wage=0.03, price=0.02, source=WAGES["source"], base_year=2024)
-    year = main.YearPass(reform=ReformSpec(decote_taux=0.4), year=2027, behavioural=True)
-    for view in (main.FROZEN_VIEW, main.FIRST_YEAR_VIEW):
-        main._price_first_year(year, uprating=uprating, view=view)
+    year = service.YearPass(reform=ReformSpec(decote_taux=0.4), year=2027, behavioural=True)
+    for view in (service.FROZEN_VIEW, service.FIRST_YEAR_VIEW):
+        service.price_first_year(year, uprating=uprating, view=view)
     assert seen == [(None, 30_000.0),
                     (uprating.key(), pytest.approx(30_000.0 * 1.03 ** 3))]
 
@@ -526,11 +527,11 @@ def test_c1_reads_its_samples_pooled_and_c7_the_first(monkeypatch, reform, read)
         return SimpleNamespace(with_earnings=_sample(seed))
 
     monkeypatch.setattr(emtr_module, "cached", cached)
-    monkeypatch.setattr(main, "_labour_inputs",
+    monkeypatch.setattr(service, "labour_inputs",
                         lambda request, frame, agg, households: labour.append(households)
                         or {})
     request = SimpleNamespace(year=2026, reform=ReformSpec(**reform))
-    inputs, households = main._behavioural_inputs(request, frame, SimpleNamespace(), None)
+    inputs, households = service.behavioural_inputs(request, frame, SimpleNamespace(), None)
 
     seeds = list(emtr_module.C1_SAMPLES) if read == "every sample" else [SAMPLE_SEED]
     assert seen == seeds and households == 4 * len(seeds)
@@ -549,7 +550,7 @@ def test_c1_reads_its_samples_pooled_and_c7_the_first(monkeypatch, reform, read)
         pooled = c1(**{k: inputs[k] for k in ("emtr_baseline", "emtr_reform",
                                               "emtr_ir_baseline", "emtr_ir_reform",
                                               "taxable_base", "weights", "top_decile")})
-        each = [c1(**main.eti_inputs(frame, _sample(seed))) for seed in seeds]
+        each = [c1(**service.eti_inputs(frame, _sample(seed))) for seed in seeds]
         assert pooled == pytest.approx(np.mean(each), rel=1e-12)
         assert len(set(np.round(each, 6))) > 1, "the samples must differ for the test to bite"
 
@@ -559,7 +560,7 @@ def test_c1_reads_its_samples_pooled_and_c7_the_first(monkeypatch, reform, read)
 # --------------------------------------------------------------------------- #
 def test_a_first_year_outside_the_population_window_is_refused(client, priced,
                                                                monkeypatch) -> None:
-    monkeypatch.setattr(main, "MAX_YEAR", 2025)
+    monkeypatch.setattr(service, "MAX_YEAR", 2025)
     response = client.post("/predictif/simulate", json=_payload())
     assert response.status_code == 422 and "sort de la fenêtre" in response.json()["detail"]
     assert priced == []
@@ -580,13 +581,13 @@ def test_a_shock_the_builder_refuses_is_a_422_with_its_reason(client,
         "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
         "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
         "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
-    monkeypatch.setattr(main, "_population_frame", lambda: population)
-    monkeypatch.setattr(main, "_run_population", lambda request, frame: (
+    monkeypatch.setattr(service, "population_frame", lambda: population)
+    monkeypatch.setattr(service, "run_population", lambda request, frame: (
         SimpleNamespace(households=None),
         SimpleNamespace(reform_cost=5e9, deciles=[], deltas={},
                         employer_contribution_delta=0.0)))
     monkeypatch.setattr(shocks, "build", refuse)
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     response = client.post("/predictif/simulate", json=_payload(macro=True,
                                                                 persistence="tenu"))
@@ -625,8 +626,8 @@ def test_an_unreadable_macro_store_is_a_named_refusal(monkeypatch) -> None:
         raise macro_store_module.MissingSourceTable("multiplier_by_instrument (test)")
 
     monkeypatch.setattr(macro_store_module, "load", missing)
-    with pytest.raises(main.MacroSourceError, match="magasin macro illisible"):
-        main._predictif_macro_store()
+    with pytest.raises(service.MacroSourceError, match="magasin macro illisible"):
+        service.predictif_macro_store()
 
 
 def test_a_pass_without_a_cost_is_a_server_error_with_its_reason(client,
@@ -639,8 +640,8 @@ def test_a_pass_without_a_cost_is_a_server_error_with_its_reason(client,
         "person_id": [0], "household_id": ["h0"], "weight": [1.0], "age": [40],
         "salaire_brut_annuel": [30_000.0], "chomage_annuel": [0.0],
         "pension_annuelle": [0.0], "loyer_mensuel": [0.0]})
-    monkeypatch.setattr(main, "_population_frame", lambda: population)
-    monkeypatch.setattr(main, "_run_population", lambda request, frame: (
+    monkeypatch.setattr(service, "population_frame", lambda: population)
+    monkeypatch.setattr(service, "run_population", lambda request, frame: (
         SimpleNamespace(households=None), SimpleNamespace(reform_cost=None, deciles=[])))
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     response = client.post("/predictif/simulate", json=_payload())

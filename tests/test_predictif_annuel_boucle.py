@@ -21,6 +21,7 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from exploration_cases import households
+from impots import service
 from impots.api import main
 from impots.api.schemas import PredictifReportResponse, ReformSpec
 from impots.dette import reference
@@ -251,7 +252,8 @@ def command(monkeypatch, tmp_path) -> dict:
     monkeypatch.setattr(runner, "run", lambda pop, **kw: SimpleNamespace(
         households=SimpleNamespace(cost=5e9)))
     monkeypatch.setattr(aggregate, "aggregate",
-                        lambda households: SimpleNamespace(reform_cost=households.cost))
+                        lambda households: SimpleNamespace(reform_cost=households.cost,
+                                                           totals={}))
 
     def stub(request, *, uprating, macro=False, view="vieillie"):
         seen.append((request.year, view, request.behavioural, macro))
@@ -261,8 +263,8 @@ def command(monkeypatch, tmp_path) -> dict:
                                impulse={"impot_sur_le_revenu": cost} if macro else None,
                                uncovered={})
 
-    monkeypatch.setattr(main, "_price_first_year", stub)
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "price_first_year", stub)
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
 
     def launch(*extra: str, base: list[str] = ARGS) -> tuple[int, dict | None]:
@@ -339,7 +341,7 @@ def _firm_alone(year: int, view: str, *, asked: bool = True, macro: bool = True)
     no household channel reads it (D-268)."""
     cost = _cost(year, view)
     return Priced(cost=cost, inputs=None, impulse={} if macro else None,
-                  uncovered={"cvae": main.FIRM_NO_VARIANT} if macro else {},
+                  uncovered={"cvae": service.FIRM_NO_VARIANT} if macro else {},
                   layers={"menages": 0.0, "entreprises": cost}, behaviour_asked=asked)
 
 
@@ -418,12 +420,12 @@ def test_the_command_carries_the_flag_from_the_simulators_pass(command) -> None:
         return SimpleNamespace(
             cost=cost, view=view, note="", deciles=[], inputs=None,
             impulse={} if macro else None,
-            uncovered={"cvae": main.FIRM_NO_VARIANT} if macro else {},
+            uncovered={"cvae": service.FIRM_NO_VARIANT} if macro else {},
             layers={"menages": 0.0, "entreprises": cost},
             behaviour_asked=bool(request.behavioural) and request.reform.is_empty())
 
-    command["monkeypatch"].setattr(main, "_price_first_year", stub)
-    command["monkeypatch"].setattr(main, "_firm_report_note", lambda *a, **k: FIRM_NOTE)
+    command["monkeypatch"].setattr(service, "price_first_year", stub)
+    command["monkeypatch"].setattr(service, "firm_report_note", lambda *a, **k: FIRM_NOTE)
     base = ["predictif", "cvae_moitie_2026", *ARGS[2:]]
     code = cli.main([*base, "--horizon", "3", "--behavioural", "--macro",
                      "--out-dir", str(command["out"])])

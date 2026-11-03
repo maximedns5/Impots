@@ -16,7 +16,7 @@ import polars as pl
 import pytest
 
 from impots import scenarios as sc
-from impots.api import main as api_main
+from impots import service
 from impots.api.schemas import ReformSpec
 from impots.dette import reference
 from impots.entreprises.reforms import FirmReformSpec
@@ -104,9 +104,10 @@ def stubbed(monkeypatch, tmp_path) -> SimpleNamespace:
 
     monkeypatch.setattr(runner, "run", run)
     monkeypatch.setattr(aggregate, "aggregate",
-                        lambda households: SimpleNamespace(reform_cost=households.cost))
-    monkeypatch.setattr(api_main, "_firm_first_year", firm_year)
-    monkeypatch.setattr(api_main, "_firm_report_note", lambda reform, years: "la note")
+                        lambda households: SimpleNamespace(reform_cost=households.cost,
+                                                           totals={}))
+    monkeypatch.setattr(service, "firm_first_year", firm_year)
+    monkeypatch.setattr(service, "firm_report_note", lambda reform, years: "la note")
     scenarios = tmp_path / "scenarios"
     make().save(scenarios)
     return SimpleNamespace(households=households, firms=firms, scenarios=scenarios,
@@ -151,7 +152,7 @@ def test_the_whole_pass_runs_in_the_measure_s_years_only(stubbed, monkeypatch) -
                                layers={"menages": 0.0, "entreprises": cost},
                                behaviour_asked=True)
 
-    monkeypatch.setattr(api_main, "_price_first_year", first)
+    monkeypatch.setattr(service, "price_first_year", first)
     assert _main(stubbed, "--behavioural") == 0
     assert sorted(seen) == [(2027, "figee", True), (2027, "vieillie", True)]
     report = json.loads((stubbed.out / "predictif_art15.json").read_text(encoding="utf-8"))

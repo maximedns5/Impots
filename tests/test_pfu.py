@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import pytest
 
+from impots import service
 from impots.api.schemas import CAPITAL_CASES, HouseholdInput, ReformSpec
 from impots.engine import compute, reforms, system
 from impots.engine.situations import build_situation
@@ -138,14 +139,13 @@ def test_a_pfu_reform_imputes_the_capital_it_bites_on():
     """Without the capital the PFU knob would cost exactly zero, and say nothing."""
     from types import SimpleNamespace
 
-    from impots.api import main
 
-    assert main.imputes_capital(SimpleNamespace(reform=ReformSpec(pfu_taux=0.2),
-                                                impute_capital=False))
-    assert not main.imputes_capital(SimpleNamespace(reform=ReformSpec(decote_taux=0.3),
-                                                    impute_capital=False))
-    assert main.imputes_capital(SimpleNamespace(reform=ReformSpec(decote_taux=0.3),
-                                                impute_capital=True))
+    assert service.imputes_capital(SimpleNamespace(reform=ReformSpec(pfu_taux=0.2),
+                                                impute_capital=False, year=2024))
+    assert not service.imputes_capital(SimpleNamespace(reform=ReformSpec(decote_taux=0.3),
+                                                    impute_capital=False, year=2024))
+    assert service.imputes_capital(SimpleNamespace(reform=ReformSpec(decote_taux=0.3),
+                                                impute_capital=True, year=2024))
     assert not reforms.moves_capital(None)
 
 
@@ -156,7 +156,6 @@ def test_the_first_year_ages_the_capital_with_the_frame(monkeypatch, view, expec
     from types import SimpleNamespace
 
     from impots import uprating as uprating_module
-    from impots.api import main
 
     seen = {}
 
@@ -164,14 +163,14 @@ def test_the_first_year_ages_the_capital_with_the_frame(monkeypatch, view, expec
         seen["index"] = capital_index
         raise RuntimeError("arrêt après le passage de l'indice")
 
-    monkeypatch.setattr(main, "_run_population", run_population)
-    monkeypatch.setattr(main, "_population_frame", lambda: "frame")
+    monkeypatch.setattr(service, "run_population", run_population)
+    monkeypatch.setattr(service, "population_frame", lambda: "frame")
     monkeypatch.setattr(uprating_module, "uprate", lambda frame, year, uprating: frame)
     uprating = uprating_module.Uprating(wage=0.03, price=0.02, source="test",
                                         base_year=2024)
     request = SimpleNamespace(year=2026, reform=ReformSpec(pfu_taux=0.2))
     with pytest.raises(RuntimeError, match="arrêt"):
-        main._price_households(request, uprating=uprating, macro=False,
-                               view=main.FIRST_YEAR_VIEW if view == "vieillie"
-                               else main.FROZEN_VIEW)
+        service.price_households(request, uprating=uprating, macro=False,
+                               view=service.FIRST_YEAR_VIEW if view == "vieillie"
+                               else service.FROZEN_VIEW)
     assert seen["index"] == pytest.approx(expected)

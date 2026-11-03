@@ -16,6 +16,7 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
+from impots import service
 from impots.behavioural import band as band_module
 from impots.behavioural import channels
 from impots.behavioural.store import Parameter, Source, Store, Support, Verifier
@@ -198,9 +199,8 @@ def no_targeted_balance_row(monkeypatch):
 
 
 def test_a_curve_cut_gets_what_a_job_brings(a_job_brings, no_targeted_balance_row) -> None:
-    from impots.api import main
 
-    inputs = main._self_financing_inputs(
+    inputs = service.self_financing_inputs(
         _request(2026, allegement_general_t_delta_moins_de_50=0.3831))
     assert inputs == {"self_financing_value_per_job": 10_032.0}
 
@@ -209,11 +209,10 @@ def test_a_cut_the_shocks_do_not_target_gets_nothing(a_job_brings,
                                                      no_targeted_balance_row) -> None:
     """D-239: from 2026 the plafond relieves the wages above 3 SMIC, under the uniform
     variant; C11 says so itself (`NOT_TARGETED`). Before 2026 it was targeted."""
-    from impots.api import main
 
-    assert main._self_financing_inputs(_request(2026, allegement_general_plafond=3.5)) == {}
-    assert main._self_financing_inputs(_request(2026, ir_bareme=1.0)) == {}
-    assert main._self_financing_inputs(_request(2025, allegement_general_plafond=1.7)) == {
+    assert service.self_financing_inputs(_request(2026, allegement_general_plafond=3.5)) == {}
+    assert service.self_financing_inputs(_request(2026, ir_bareme=1.0)) == {}
+    assert service.self_financing_inputs(_request(2025, allegement_general_plafond=1.7)) == {
         "self_financing_value_per_job": 10_032.0}
 
 
@@ -222,9 +221,8 @@ def test_a_targeted_cut_mixed_with_the_plafond_is_refused(a_job_brings,
     """The shocks route the whole employer delta to the targeted variant as soon as one
     knob is targeted, but the delta is one total: no share of it can be said to be the
     curve's, and the plafond's is not the Trésor-Éco's."""
-    from impots.api import main
 
-    inputs = main._self_financing_inputs(_request(
+    inputs = service.self_financing_inputs(_request(
         2026, allegement_general_t_min=0.021, allegement_general_plafond=3.5))
     assert "`allegement_general_plafond`" in inputs["self_financing_refused"]
     assert "2026" in inputs["self_financing_refused"]
@@ -233,27 +231,25 @@ def test_a_targeted_cut_mixed_with_the_plafond_is_refused(a_job_brings,
 def test_a_balance_row_for_the_targeted_variant_shuts_c11(a_job_brings, monkeypatch) -> None:
     """Were Mésange's targeted variant to gain a balance row, the loop would count the
     same jobs: C11 is refused, not added."""
-    from impots.api import main
     from impots.predictif.retroaction import BALANCE_TABLE
 
     _macro_with(monkeypatch, {BALANCE_TABLE: SimpleNamespace(
         values={"cotisations_employeurs_ciblees": {}, "impot_sur_le_revenu": {}})})
-    inputs = main._self_financing_inputs(_request(2026, allegement_general_t_min=0.021))
-    assert inputs == {"self_financing_refused": main.LOOP_AND_C11}
+    inputs = service.self_financing_inputs(_request(2026, allegement_general_t_min=0.021))
+    assert inputs == {"self_financing_refused": service.LOOP_AND_C11}
 
 
 def test_an_unread_balance_table_shuts_c11(a_job_brings, monkeypatch) -> None:
-    from impots.api import main
     from impots.macro import store as macro_store
 
     def unreadable():
         raise macro_store.MissingSourceTable("le classeur de Mésange")
 
     monkeypatch.setattr(macro_store, "load", unreadable)
-    inputs = main._self_financing_inputs(_request(2026, allegement_general_t_min=0.021))
+    inputs = service.self_financing_inputs(_request(2026, allegement_general_t_min=0.021))
     assert "le classeur de Mésange" in inputs["self_financing_refused"]
     _macro_with(monkeypatch, {})
-    inputs = main._self_financing_inputs(_request(2026, allegement_general_t_min=0.021))
+    inputs = service.self_financing_inputs(_request(2026, allegement_general_t_min=0.021))
     assert "la table est absente" in inputs["self_financing_refused"]
 
 
@@ -262,14 +258,13 @@ def test_the_employer_inputs_carry_c11_s(a_job_brings, no_targeted_balance_row,
     """Merged with C2's, so every caller of `_employer_inputs` hands them to the band."""
     import polars as pl
 
-    from impots.api import main
 
-    monkeypatch.setattr(main, "_smic_annual", lambda year: 20_000.0)
+    monkeypatch.setattr(service, "smic_annual", lambda year: 20_000.0)
     persons = pl.DataFrame({"person_id": [1], "household_id": [1],
                             "salaire_brut_annuel": [20_000.0], "weight": [100.0],
                             "salaire_super_brut": [21_000.0],
                             "salaire_super_brut_reform": [20_900.0]})
-    inputs = main._employer_inputs(
+    inputs = service.employer_inputs(
         _request(2026, allegement_general_t_min=0.021), SimpleNamespace(persons=persons),
         SimpleNamespace(employer_contribution_delta=-1e4))
     assert inputs["targets_low_wages"] is True

@@ -192,7 +192,7 @@ def run(request: ExplorationRequest, *, price: Callable[..., Priced],
         where: str | None = None) -> dict[str, Any]:
     """The search, once per persistence, from one pass per bundle and view; the report.
 
-    `hypotheses` is what `api.main._predictif_hypotheses` builds for the request, and
+    `hypotheses` is what `service.predictif_hypotheses` builds for the request, and
     `price(reform, view)` is one pass of the first projected year in that view, called
     `price(reform, view, firm)` when the bundle has a firm part. `law` is
     the law in force at that year (`law_in_force`), read when a transformation asks.

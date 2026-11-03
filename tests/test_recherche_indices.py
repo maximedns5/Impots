@@ -19,6 +19,7 @@ from pydantic import ValidationError
 
 from exploration_cases import COMMIT, START, pass_stub, run_search
 from exploration_cases import exploration_request as _request
+from impots import service
 from impots.api import main
 from impots.api.schemas import ExplorationReport, ExplorationRequest
 from impots.dette import reference
@@ -80,8 +81,8 @@ def test_the_indices_are_the_simulators(monkeypatch, tmp_path) -> None:
     """GUARD 6, for the indices: the same reform, hypotheses and stubbed pass give the
     search's indices and `/predictif/simulate`'s, row for row, deciles included."""
     seen: list = []
-    monkeypatch.setattr(main, "_price_first_year", _with_deciles(pass_stub(seen)))
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "price_first_year", _with_deciles(pass_stub(seen)))
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     monkeypatch.setattr(recherche, "code_state", lambda: (COMMIT, False))
     payload = _request(bounds=[{"knob": "decote_taux", "low": 0.45, "high": 0.45,
@@ -127,7 +128,7 @@ def test_a_law_read_for_another_year_is_refused() -> None:
                                               {"threshold": 11_600.0, "rate": 0.11}]}
     with pytest.raises(recherche.RechercheError, match="première année projetée"):
         recherche.run(request, price=lambda reform, view: None,
-                      hypotheses=main._predictif_hypotheses(request), start=START, law=law)
+                      hypotheses=service.predictif_hypotheses(request), start=START, law=law)
 
 
 def test_the_report_says_what_the_chain_lacks() -> None:

@@ -34,6 +34,8 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+from impots import service
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "PREDICTIF_EXEMPLE.md"
 SNAPSHOT = ROOT / "reports" / "exemple_predictif.json"
@@ -97,7 +99,6 @@ def _commit() -> str:
 
 
 def price() -> dict[str, Any]:
-    from impots.api import main as api
     from impots.api.schemas import PopulationSimulateRequest, ReformSpec
     from impots.behavioural.store import load as load_store
     from impots.engine import baseline
@@ -116,9 +117,9 @@ def price() -> dict[str, Any]:
     bareme[first_taxed]["rate"] = TO_RATE
     reform = ReformSpec(ir_bareme=bareme)
     uprating = annuel.uprating_for(growth, wage=growth.nominal, source=WAGE_SOURCE,
-                                   base_year=int(api.POPULATION_VINTAGE))
+                                   base_year=int(service.POPULATION_VINTAGE))
     commit = _commit()
-    first = api._price_first_year(
+    first = service.price_first_year(
         PopulationSimulateRequest(reform=reform, year=year, behavioural=True),
         uprating=uprating, macro=True)
     store = load_store()

@@ -173,7 +173,7 @@ def attribute(case: str, inputs: dict[str, Any], *, store: Any = None,
 
 @dataclass(frozen=True)
 class _Request:
-    """The three fields `api.main._employer_inputs` reads off a request.
+    """The three fields `service.employer_inputs` reads off a request.
 
     A shim rather than a copy of that function: duplicating forty lines of array assembly
     would let A0's inputs drift away from the ones the API actually prices, and an
@@ -195,7 +195,7 @@ def inputs_for(reform_spec: Any, *, year: int = 2024, households: int = 4000,
     """
     import polars as pl
 
-    from impots.api import main as api_main
+    from impots import service
     from impots.behavioural import emtr as emtr_module
     from impots.behavioural.eti import eti_inputs
     from impots.population import aggregate as aggregate_module
@@ -212,7 +212,7 @@ def inputs_for(reform_spec: Any, *, year: int = 2024, households: int = 4000,
     if agg.reform_cost is None:
         raise AttributionError("la réforme de référence ne rend aucun coût")
 
-    employer = api_main._employer_inputs(request, run, agg)
+    employer = service.employer_inputs(request, run, agg)
     emtr_result = emtr_module.cached(frame, "a0", year=year, reform=reform_spec,
                                      sample=households)
     priced = emtr_result.with_earnings

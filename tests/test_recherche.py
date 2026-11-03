@@ -19,6 +19,7 @@ from pydantic import ValidationError
 
 from exploration_cases import COMMIT, START, pass_stub, run_search
 from exploration_cases import exploration_request as _request
+from impots import service
 from impots.api import main
 from impots.api.schemas import ExplorationRequest
 from impots.dette import reference
@@ -154,8 +155,8 @@ def test_a_candidate_reads_robust_or_dependent_on_theta() -> None:
 def command(monkeypatch, tmp_path) -> dict:
     """The command with its pass stubbed, the start constructed and the tree clean."""
     seen: list = []
-    monkeypatch.setattr(main, "_price_first_year", pass_stub(seen))
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "price_first_year", pass_stub(seen))
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     monkeypatch.setattr(recherche, "code_state", lambda: (COMMIT, False))
 
@@ -228,15 +229,15 @@ def test_the_frozen_view_is_priced_on_the_population_as_it_is(monkeypatch) -> No
         return (SimpleNamespace(households=None),
                 SimpleNamespace(reform_cost=1e9, deciles=[]))
 
-    monkeypatch.setattr(main, "_population_frame", lambda: population)
-    monkeypatch.setattr(main, "_run_population", run)
+    monkeypatch.setattr(service, "population_frame", lambda: population)
+    monkeypatch.setattr(service, "run_population", run)
     request = PopulationSimulateRequest(reform={"decote_taux": 0.45}, year=2026)
-    hypotheses = main._predictif_hypotheses(ExplorationRequest.model_validate(_request()))
-    frozen = main._price_first_year(request, uprating=hypotheses.uprating, view="figee")
-    aged = main._price_first_year(request, uprating=hypotheses.uprating)
+    hypotheses = service.predictif_hypotheses(ExplorationRequest.model_validate(_request()))
+    frozen = service.price_first_year(request, uprating=hypotheses.uprating, view="figee")
+    aged = service.price_first_year(request, uprating=hypotheses.uprating)
     assert passed[0].equals(population)
     assert passed[1]["salaire_brut_annuel"].to_list() == pytest.approx([30_000 * 1.03 ** 2])
     assert frozen.view == "figee" and "Vue « figée »" in frozen.note
     assert aged.view == "vieillie" and "Vue « vieillie »" in aged.note
     with pytest.raises(ValueError, match="vue « gelee » inconnue"):
-        main._price_first_year(request, uprating=hypotheses.uprating, view="gelee")
+        service.price_first_year(request, uprating=hypotheses.uprating, view="gelee")
