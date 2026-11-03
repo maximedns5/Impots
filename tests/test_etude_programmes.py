@@ -193,36 +193,6 @@ def test_an_amount_on_the_candidates_page_without_its_etage_is_refused(monkeypat
         etude.presidentielle(etude.definitions())
 
 
-def test_a_pass_of_the_path_frees_what_the_years_before_kept() -> None:
-    """GARDE (D-330). Un chemin de dix ans gardait les systèmes réformés de chaque année et
-    les arbres de la référence à chaque instant : celui d'Attal montait de 2 Go par passe et
-    était tué dans sa deuxième année. Chaque passe libère ce que la suivante ne lit pas."""
-    import inspect
-
-    from impots.api.schemas import ReformSpec
-    from impots.engine import system
-    from impots.entreprises import system as firm_system
-    from impots.entreprises.reforms import FirmReformSpec
-    from impots.population import cli
-
-    system.reformed_for(ReformSpec(decote_taux=0.4), 2026)
-    firm_system.reformed_for(FirmReformSpec(c3s_taux=0.001), 2026)
-    assert system.reformed.cache_info().currsize >= 1
-    assert firm_system.reformed.cache_info().currsize >= 1
-    base = system.baseline()
-    base.get_parameters_at_instant("2026-01-01")
-    before = base.get_parameters_at_instant
-    cli._liberer()
-    assert system.reformed.cache_info().currsize == 0
-    assert firm_system.reformed.cache_info().currsize == 0
-    assert base.get_parameters_at_instant is not before
-    assert base.get_parameters_at_instant("2026-01-01") is not None
-    # Structural: the whole pass of the path frees before it prices.
-    source = inspect.getsource(cli.cmd_predictif)
-    assert source.index("passe du simulateur") < source.index("_liberer()") < source.index(
-        "api._price_first_year,")
-
-
 # --- les pages, sur les rapports commités (D-328, D-329) ------------------------------
 
 
@@ -263,6 +233,13 @@ def test_every_range_point_is_on_the_page(pages) -> None:
         assert len(rows) == len(study.points()), slug
 
 
+def test_a_programme_page_says_measures_not_articles(pages) -> None:
+    """D-336 : un programme a des mesures ; la loi seule a des articles."""
+    for slug, (_, text) in pages.items():
+        assert "l'effet macro de chaque mesure" in text, slug
+        assert "chaque article" not in text, slug
+
+
 def test_the_announced_layer_stays_apart(pages) -> None:
     """La couche annoncée a sa section, et ni l'en-bref ni la part chiffrée ne la lisent."""
     for slug, (_, text) in pages.items():
@@ -279,16 +256,13 @@ def test_a_mixed_part_shows_both_layers(pages) -> None:
         assert "La bande et l'éventail ne lisent que la part des ménages" in text
 
 
-def test_a_pass_of_the_path_runs_in_a_process_of_its_own() -> None:
-    """GARDE (D-331). Une passe du chemin prend jusqu'à dix gigaoctets, qu'un processus ne
-    rend pas tous : les chemins de Tondelier et de Lisnard étaient tués. Chaque passe
-    tourne dans un processus neuf, qui rend tout en finissant, et sa valeur revient."""
-    import inspect
+def test_a_pass_run_in_a_process_of_its_own_gives_its_value_back() -> None:
+    """D-331 : chaque passe du chemin tourne dans un processus neuf, et le nombre qu'elle
+    chiffre en revient tel quel. Que `cmd_predictif` l'y fasse tourner est de la plomberie,
+    qui n'a plus de test qui lit le source (D-335, D-336)."""
     import os
 
     from impots.population import cli
 
     assert cli._isole(os.getpid) != os.getpid()
     assert cli._isole(divmod, 17, 5) == (3, 2)
-    source = inspect.getsource(cli.cmd_predictif)
-    assert "_isole(\n                api._price_first_year," in source

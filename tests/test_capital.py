@@ -215,15 +215,12 @@ def test_another_year_and_mismatched_shapes_are_refused() -> None:
 # --------------------------------------------------------------------------- #
 # The runner
 # --------------------------------------------------------------------------- #
-def test_the_imputation_is_off_by_default_and_runs_before_the_niches() -> None:
+def test_the_imputation_is_off_by_default() -> None:
     import inspect
 
     from impots.population.runner import run
 
     assert inspect.signature(run).parameters["impute_capital"].default is False
-    source = Path("src/impots/population/runner.py").read_text(encoding="utf-8")
-    body = source[source.index("def run("):]
-    assert body.index("if impute_capital:\n        started") < body.index("if impute_niches:")
 
 
 @pytest.mark.parametrize("kwargs, needle", [

@@ -1,5 +1,9 @@
 # Le balayage des gardes de la phase 9
 
+**Figé le 3 novembre 2026 (D-335, D-336).** Ce rapport n'est plus tenu à jour : aucun test
+n'exige plus qu'une garde ajoutée ou réécrite y figure, tuée. Il dit le balayage du
+2026-10-28, et lui seul.
+
 <!-- Écrit par scripts/sweep_gardes_phase9.py. Ne pas éditer à la main : tests/test_gardes_phase9.py refuse un rapport qui ne nomme pas chaque garde du catalogue. -->
 
 Balayé le 2026-10-28 sur le commit `bbbaa9f71c69` (D-229). Chaque garde est mutée — sa condition forcée à faux, son refus remplacé — et doit faire échouer un test : d'abord ceux de son périmètre (« ciblé »), puis toute la suite de la phase 9 (« large »).
