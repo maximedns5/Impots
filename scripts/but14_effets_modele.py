@@ -36,7 +36,10 @@ CONFIGS = [("avant : éteint, non borné", "eteint", False),
 MAP = {"ir": "impot_sur_le_revenu", "cdhr": "impot_sur_le_revenu", "csg_imposable": "csg",
        "csg_deductible": "csg", "crds": "csg", "csg_ij": "csg",
        "cotisations_salariales": "cotisations_salaries",
-       "cotisations_employeur": "cotisations_employeurs"}
+       "cotisations_employeur": "cotisations_employeurs",
+       # Absente du pronostic de D-338 : Roussel, Le Pen et Labib y ont perdu leur
+       # impulsion de TVA, et leurs pronostics ont manqué (D-339).
+       "tva_menages": "tva"}
 
 
 def _interp(row: dict, h: int) -> float:

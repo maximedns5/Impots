@@ -119,8 +119,10 @@ def test_the_annual_paths_take_the_study_s_frame_field_for_field(study) -> None:
         assert args.behavioural and args.macro and args.horizon == 10
 
 
+#: The entry the study names: D-289 at first, D-338 since the series of but 14.
+ENTREE = etude.definition("plf2027").preenregistrement
 #: What git says of a commit whose entry is in and which a remote branch carries.
-GIT = {("show", "HEAD:docs/DECISIONS.md"): "## D-288 — x\n## D-289 — L'étude\n",
+GIT = {("show", "HEAD:docs/DECISIONS.md"): f"## D-288 — x\n## {ENTREE} — L'étude\n",
        ("branch", "-r", "--contains", "HEAD"): "  origin/claude/x\n"}
 
 
@@ -177,7 +179,7 @@ def test_a_pass_that_fails_stops_the_ones_after_it(launcher, capsys) -> None:
 @pytest.mark.parametrize("how, needle", [
     ("dirty", "modifications non commitées"),
     ("there", "un rapport n'est pas écrasé en silence"),
-    ("unregistered", "D-289 n'est pas dans docs/DECISIONS.md au commit"),
+    ("unregistered", f"{ENTREE} n'est pas dans docs/DECISIONS.md au commit"),
     ("unpushed", "aucune branche distante ne porte le commit"),
 ])
 def test_the_launcher_refuses_before_any_pass(launcher, capsys, how: str,
@@ -190,7 +192,7 @@ def test_the_launcher_refuses_before_any_pass(launcher, capsys, how: str,
                                                                          encoding="utf-8")
     if how == "unregistered":
         # The entry's number in another heading's text is not the entry.
-        launcher.git[("show", "HEAD:docs/DECISIONS.md")] = "## D-288 — avant D-289\n"
+        launcher.git[("show", "HEAD:docs/DECISIONS.md")] = f"## D-288 — avant {ENTREE}\n"
     if how == "unpushed":
         launcher.git[("branch", "-r", "--contains", "HEAD")] = ""
     assert launcher.study.launch("ici") == 1
