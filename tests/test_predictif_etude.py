@@ -47,6 +47,12 @@ def script():
     return module
 
 
+def _under(searches: list[dict], persistence: str) -> dict:
+    """The search, or the path, under one persistence: since D-336 a report has three,
+    « lue » first, and a test reads the one it means by its name, not by its rank."""
+    return next(s for s in searches if s["persistence"] == persistence)
+
+
 def _price():
     """A pass, stubbed: each bundle 1 Md€ more than the last one priced, 90 % frozen, its
     cost as an income-tax impulse."""
@@ -184,6 +190,10 @@ def test_the_page_answers_each_instrument_under_each_persistence(script, tmp_pat
             assert script.verdict(search, entry["instrument"], 0.0) in page
     assert "Effet macro éteint après trois ans" in page
     assert "Effet macro tenu au niveau de la troisième année" in page
+    # Since D-336 a report draws « lue » first, and the frame says the verdict reads it.
+    assert [s["persistence"] for s in etudes[0]["report"]["searches"]] == [
+        "lue", "eteint", "tenu"]
+    assert "3 persistances de l'effet macro côte à côte, « lue » en tête" in page
     assert "Elle ne recommande rien" in page and "Ce n'est pas une prévision" in page
     assert "L'IS n'y entre pas" in page
     assert WHERE in page and COMMIT in page
@@ -345,7 +355,7 @@ def test_the_answer_says_for_which_theta_the_debt_falls(script, tmp_path) -> Non
     """The question's second half, in the answer itself: under « tenu », the corners where
     the debt falls, with the θ they all share; under « éteint », none."""
     etudes = script.load(*_study(tmp_path, script))
-    eteint, tenu = etudes[0]["report"]["searches"]
+    eteint, tenu = (_under(etudes[0]["report"]["searches"], p) for p in ("eteint", "tenu"))
     instrument = etudes[0]["instrument"]
     assert "ne baisse à aucun coin" in script.verdict(eteint, instrument, 0.0)
     said = script.verdict(tenu, instrument, 0.0)
@@ -922,7 +932,8 @@ def test_the_pfu_replayed_with_the_wage_shift_is_rendered_apart(script, tmp_path
     assert "## Le menu élargi de la phase 11" in menu and "D-252" in tail
     for search in salaires["report"]["searches"]:
         assert script.verdict(search, salaires["instrument"], 0.0) in tail
-    assert tail.count("Sans les salaires déplacés, au menu élargi") == 2
+    assert (tail.count("Sans les salaires déplacés, au menu élargi")
+            == len(salaires["report"]["searches"]))
     # Beside each verdict, the menu's Δb, not the replay's.
     for search, before in zip(salaires["report"]["searches"],
                               salaires["menu"]["searches"], strict=True):
@@ -1126,7 +1137,7 @@ def test_the_t_delta_replayed_with_its_self_financing_is_rendered_apart(script,
     assert "D-264" in tail and "## Ce que l'étude ne dit pas" in tail
     for search in auto["report"]["searches"]:
         assert script.verdict(search, auto["instrument"], 0.0) in tail
-    assert tail.count("Sans l'autofinancement, à la courbe") == 2
+    assert tail.count("Sans l'autofinancement, à la courbe") == len(auto["report"]["searches"])
     # Beside each verdict, the curve's Δb, not the replay's.
     for search, before in zip(auto["report"]["searches"], auto["courbe"]["searches"],
                               strict=True):
@@ -1596,14 +1607,14 @@ def test_the_theta_section_says_at_which_theta_the_debt_falls(script, tmp_path) 
     etudes = script.load(*_study(tmp_path, script))
     section = _theta_section(script.render(etudes))
     target = etudes[0]["report"]["hypotheses"]["target_share"]
-    tenu = etudes[0]["report"]["searches"][1]
+    tenu = _under(etudes[0]["report"]["searches"], "tenu")
     assert not any(_at(e, "0") <= target for entry in etudes
                    for s in entry["report"]["searches"] for e in s["evaluations"])
     assert "**À θ = 0**, la dette ne baisse à aucun paquet, sous aucune persistance." in section
     falls = section.partition("**À θ = 1**, la dette baisse :")[2].partition("\n\n")[2]
     line = next(x for x in falls.splitlines() if x.startswith(f"- {tenu['persistence_label']}"))
     for entry in etudes:
-        search = entry["report"]["searches"][1]
+        search = _under(entry["report"]["searches"], "tenu")
         n = sum(_at(e, "1") <= target for e in search["evaluations"])
         label = entry["instrument"].label
         said = f"{label[0].lower() + label[1:]} ({n} paquet"
@@ -1662,7 +1673,7 @@ def test_an_absent_loop_is_marked_in_the_theta_section(script, tmp_path) -> None
     label = next(e["instrument"].label for e in etudes if e["instrument"].key == "allegements")
     for search in report["searches"]:
         assert f"| {label} † |" in _table(section, search["persistence_label"])
-    assert section.count(" † |") == 2
+    assert section.count(" † |") == len(report["searches"])
     assert "† La boucle PIB → recettes est absente pour ce rendu, non nulle" in section
 
 
@@ -1856,7 +1867,7 @@ def test_a_carry_that_does_not_give_the_study_back_is_said_with_its_gap(
     def move(key, payload):
         if key != "decote":
             return
-        carried = payload["theta_box"]["paths"][1]["first_year"]
+        carried = _under(payload["theta_box"]["paths"], "tenu")["first_year"]
         if what == "coût vieilli":
             payload["years"][0]["mechanical_aged_eur"] += 1234.0
         elif what == "coût figé":

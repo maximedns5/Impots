@@ -146,6 +146,26 @@ def test_a_frame_the_launcher_does_not_carry_is_refused(script, tmp_path, how: s
         script.argv("csg", where="ici", requests=tmp_path)
 
 
+def test_the_frame_s_lue_draws_every_persistence_lue_first(script, tmp_path) -> None:
+    """The studies' frame says « lue » (D-336, decision 1): the command runs without
+    `--persistence`, which would draw « lue » alone, and draws the three side by side, « lue »
+    first, the two others the sensitivities the page gives apart. Any other value, or
+    « lue » without the loop, is refused rather than dropped."""
+    from impots import etude
+    from impots.predictif import retroaction
+
+    assert next(iter(retroaction.PERSISTENCE_LABELS)) == "lue"
+    args = cli.build_parser().parse_args(script.argv("central", where="ici",
+                                                     requests=etude.CADRES))
+    assert args.persistence is None and args.macro
+    request = json.loads((etude.CADRES / "central.json").read_text(encoding="utf-8"))
+    for change in ({"persistance": "tenu"}, {"macro": False}):
+        (tmp_path / "x.json").write_text(json.dumps({**request, **change}),
+                                         encoding="utf-8")
+        with pytest.raises(script.EtudeAnnuelleError, match="ne peut dire que « lue »"):
+            script.argv("x", where="ici", requests=tmp_path)
+
+
 @pytest.fixture
 def launcher(script, monkeypatch, tmp_path):
     out = tmp_path / "etude_annuel"
