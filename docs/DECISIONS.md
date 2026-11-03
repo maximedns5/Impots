@@ -25688,3 +25688,37 @@ structure son appel.
 Lisnard repassent entières (première année, plages et chemin) sur le commit qui porte
 cette entrée, l'allocateur réglé. Leurs passes courtes devront redonner celles de
 `82f4926` à l'identique. La méthode et le pronostic de D-328 ne changent pas.
+
+## D-332 — Tondelier tué en 2035 : les taux marginaux gardaient leurs simulations
+
+**Le fait.** Sur `ac36508`, les 23 passes courtes de Tondelier et de Lisnard ont redonné
+celles de `82f4926` à l'identique, seules leurs durées différant. Le conteneur a redémarré
+pendant la 20e des 25 passes ; la série a repris où elle s'était arrêtée, comme D-328 le
+prévoit, les 19 rapports écrits gardés tels quels. Le chemin de Tondelier est mort après 82
+minutes : le noyau a tué le processus d'une passe, le conteneur étant à 13,9 Go, sous une
+limite de 14,3 Go. L'isolement de D-331 tenait le chemin ; une passe seule ne tenait plus.
+
+**La cause.** La passe de 2035, vue vieillie, a été mesurée seule, toutes les 0,3 seconde,
+la pile relevée à chaque pic. La passe de la population finit à 6 Go. Les taux marginaux en
+ajoutent 7, sans rien rendre, et la passe meurt avant le deuxième échantillon de C1.
+`emtr._disposable` construit une simulation entière, en lit le revenu disponible et la
+laisse. Une simulation est un cycle : ses détenteurs et ses populations pointent vers elle.
+Seule une collecte complète la libère, et un grand tas en lance rarement une. Les seize
+simulations d'une passe, quatre par échantillon, restaient donc en mémoire. L'échantillon
+garde chaque ménage dont les salaires atteignent 200 000 € (D-310) ; en 2035, vieillis, ils
+sont plus nombreux, et chaque simulation pèse plus. Libérer les simulations du runner,
+essayé d'abord, ne changeait pas le pic.
+
+**Le correctif.** `_disposable` libère sa simulation dès qu'il l'a lue (`gc.collect`).
+Aucun nombre n'en dépend. Un test, vu échouer sur `ac36508`, le tient : le collecteur coupé,
+la simulation lue est morte au retour. Ses deux mutations, la collecte ôtée ou la référence
+gardée, sont tuées. La même passe de 2035, mesurée sans aucun cache des taux, culmine à 7,4
+Go et va au bout en 490 secondes.
+
+**Les passes.** Une étude se lit sur un seul code. Celles de Tondelier et de Lisnard
+repassent entières (première année, plages et chemin) sur le commit qui porte cette entrée,
+depuis un worktree figé neuf, l'allocateur réglé comme en D-331. Les caches des taux
+marginaux suivent, comme dans les reprises précédentes ; chacun ne sert que la trame sur
+laquelle il a été calculé (D-276). Les six autres études gardent `82f4926`. Les 23 passes
+courtes devront redonner celles de `82f4926` à l'identique. La méthode et le pronostic de
+D-328 ne changent pas.

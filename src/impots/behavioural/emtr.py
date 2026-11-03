@@ -24,6 +24,7 @@ because zero here would say "keeps every euro", which is a claim.
 
 from __future__ import annotations
 
+import gc
 import hashlib
 import json
 import os
@@ -89,7 +90,17 @@ def _bump(frame: pl.DataFrame, step: float) -> pl.DataFrame:
 
 
 def _disposable(frame: pl.DataFrame, system: Any, year: int) -> np.ndarray:
-    return build_simulation(frame, system, year).calculate("revenu_disponible").astype(np.float64)
+    """The households' disposable income, and the simulation it was read from freed.
+
+    A simulation is a cycle, its holders and populations pointing back at it, that only a
+    full collection frees; a large heap seldom runs one. A pass of the path builds sixteen
+    here, four per sample, and kept them all: in 2035, the sample's top households more
+    numerous, it grew past the container (D-332)."""
+    simulation = build_simulation(frame, system, year)
+    disposable = simulation.calculate("revenu_disponible").astype(np.float64)
+    del simulation
+    gc.collect()
+    return disposable
 
 
 def _rate(
