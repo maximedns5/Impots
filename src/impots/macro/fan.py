@@ -209,7 +209,9 @@ def run(impulse: Impulse, store: Store, *, gdp_eur: float,
         raise FanError("GDP must be positive to express an impulse in points of it")
 
     rng = np.random.default_rng(seed)
-    horizons = multipliers.usable_horizons
+    # The horizons both rows read: the multiplier's reach 5 and 10 years for the loop's
+    # « lue » persistence (D-336), the jobs' stop at three.
+    horizons = tuple(h for h in multipliers.usable_horizons if h in jobs.usable_horizons)
     gdp_draws = {h: np.zeros(draws) for h in horizons}
     job_draws = {h: np.zeros(draws) for h in horizons}
     caveats: list[str] = []

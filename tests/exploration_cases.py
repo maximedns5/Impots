@@ -43,7 +43,8 @@ def households() -> dict:
     base = rng.uniform(10_000, 200_000, 40)
     emtr = rng.uniform(0.1, 0.45, 40)
     return {"taxable_base": base, "weights": np.full(40, 1_000.0), "emtr_baseline": emtr,
-            "emtr_reform": emtr + 0.03, "top_decile": base > np.quantile(base, 0.9)}
+            "emtr_reform": emtr + 0.03, "emtr_ir_baseline": emtr,
+            "emtr_ir_reform": emtr + 0.03, "top_decile": base > np.quantile(base, 0.9)}
 
 
 def cost_of(reform, view: str) -> float:

@@ -80,8 +80,8 @@ def test_a_grid_larger_than_the_cap_is_refused_not_truncated() -> None:
 # the search, from one pass per bundle and view
 # --------------------------------------------------------------------------- #
 def test_both_persistences_are_two_searches_from_the_same_passes() -> None:
-    """GUARD 3. Past three years with the loop and none named, « éteint » and « tenu » are
-    searched side by side (D-230), from six passes — three bundles, two views — not
+    """GUARD 3. Past three years with the loop and none named, « lue », « éteint » and
+    « tenu » are searched side by side (D-230, D-336), from six passes — three bundles, two views — not
     twelve. The two differ past the third year, which is the point of showing both."""
     seen: list = []
     report = run_search(_request(), seen=seen)
@@ -90,10 +90,11 @@ def test_both_persistences_are_two_searches_from_the_same_passes() -> None:
         str(({"decote_taux": r}, v)) for r in (0.40, 0.45, 0.50) for v in ("vieillie", "figee"))
     persistences = [s["persistence"] for s in report["searches"]]
     assert persistences == list(retroaction.PERSISTENCE_LABELS)
-    off, held = (s["evaluations"] for s in report["searches"])
+    read, off, held = (s["evaluations"] for s in report["searches"])
+    assert [e["knobs"] for e in read] == [e["knobs"] for e in off]
     assert [e["knobs"] for e in off] == [e["knobs"] for e in held]
     assert all(a["delta_aged"] != b["delta_aged"] for a, b in zip(off, held, strict=True))
-    assert report["searches"][0]["persistence_label"] == retroaction.PERSISTENCE_LABELS[
+    assert report["searches"][1]["persistence_label"] == retroaction.PERSISTENCE_LABELS[
         "eteint"]
 
 

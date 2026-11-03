@@ -214,6 +214,7 @@ def test_c1_reproduces_the_worked_example() -> None:
     result = channels.elasticity_of_taxable_income(
         store, FakeReform(ir_bareme=[{"threshold": 0, "rate": 0.45}]),
         emtr_baseline=np.array([0.41]), emtr_reform=np.array([0.45]),
+        emtr_ir_baseline=np.array([0.41]), emtr_ir_reform=np.array([0.45]),
         taxable_base=np.array([100_000.0]), weights=np.array([1.0]),
         top_decile=np.array([False]), draws=16, rng=np.random.default_rng(1),
     )
@@ -231,6 +232,7 @@ def test_c1_returns_revenue_when_a_rate_is_cut() -> None:
     cut = channels.elasticity_of_taxable_income(
         store, FakeReform(ir_bareme=[]),
         emtr_baseline=np.array([0.45]), emtr_reform=np.array([0.41]),
+        emtr_ir_baseline=np.array([0.45]), emtr_ir_reform=np.array([0.41]),
         taxable_base=np.array([100_000.0]), weights=np.array([1.0]),
         top_decile=np.array([False]), draws=8, rng=np.random.default_rng(1),
     )
@@ -245,6 +247,7 @@ def test_c1_uses_the_top_decile_elasticity_where_it_belongs() -> None:
     })
     common = dict(
         emtr_baseline=np.array([0.41]), emtr_reform=np.array([0.45]),
+        emtr_ir_baseline=np.array([0.41]), emtr_ir_reform=np.array([0.45]),
         taxable_base=np.array([100_000.0]), weights=np.array([1.0]),
         draws=8, rng=np.random.default_rng(1),
     )
@@ -262,6 +265,7 @@ def test_c1_says_so_when_no_elasticity_survived_verification() -> None:
     result = channels.elasticity_of_taxable_income(
         store, FakeReform(ir_bareme=[]),
         emtr_baseline=np.array([0.41]), emtr_reform=np.array([0.45]),
+        emtr_ir_baseline=np.array([0.41]), emtr_ir_reform=np.array([0.45]),
         taxable_base=np.array([100.0]), weights=np.array([1.0]),
         top_decile=np.array([False]), draws=4, rng=np.random.default_rng(0),
     )
@@ -281,6 +285,7 @@ def test_c1_fails_loudly_on_missing_inputs() -> None:
         channels.elasticity_of_taxable_income(
             store, FakeReform(ir_bareme=[]),
             emtr_baseline=np.array([]), emtr_reform=np.array([]),
+        emtr_ir_baseline=np.array([]), emtr_ir_reform=np.array([]),
             taxable_base=np.array([]), weights=np.array([]),
             top_decile=np.array([]), draws=4, rng=np.random.default_rng(0),
         )
@@ -296,6 +301,7 @@ def test_an_unclaimed_knob_yields_a_sentence_not_a_zero() -> None:
     result = channels.elasticity_of_taxable_income(
         store, FakeReform(csg_activite_imposable=0.1),
         emtr_baseline=np.array([0.41]), emtr_reform=np.array([0.41]),
+        emtr_ir_baseline=np.array([0.41]), emtr_ir_reform=np.array([0.41]),
         taxable_base=np.array([100.0]), weights=np.array([1.0]),
         top_decile=np.array([False]), draws=4, rng=np.random.default_rng(0),
     )
@@ -365,7 +371,79 @@ def test_the_induced_variation_is_robust_to_a_single_household() -> None:
     reform = np.full(1000, 0.01)
     reform[0] = 5.0
     weights = np.ones(1000)
-    assert grading.induced_variation(baseline, reform, weights) == pytest.approx(0.01, abs=1e-6)
+    assert grading.induced_variation(baseline, reform, weights, np.ones(1000)) == \
+        pytest.approx(0.01, abs=1e-6)
+
+
+def _top_only(n: int = 1000) -> dict[str, np.ndarray]:
+    """A rise of the income tax's top rate: 1 % of the households, the top, see their
+    income-tax rate go from 45 % to 60 %; nobody else moves. Their total rate goes from
+    60 % to 75 %."""
+    top = np.arange(n) >= n - 10
+    base = np.where(top, 400_000.0, 40_000.0)
+    ir0 = np.where(top, 0.45, 0.11)
+    total0 = ir0 + 0.15
+    return {"emtr_ir_baseline": ir0, "emtr_ir_reform": np.where(top, 0.60, ir0),
+            "emtr_baseline": total0, "emtr_reform": np.where(top, 0.75, total0),
+            "taxable_base": base, "weights": np.full(n, 1_000.0),
+            "top_decile": np.arange(n) >= int(0.9 * n)}
+
+
+def test_a_reform_of_the_top_alone_is_graded_on_the_top() -> None:
+    """D-336, decision 4: C1's support metric is the median of |Δ(1 − τ_IR)| weighted by
+    each household's contribution to C1, not the 95th percentile of the households. A
+    tranche that moves the top percentile alone left that percentile at zero, and the
+    reform C1 bites hardest on came out « in-support » (Tondelier, D-333). Now 0,15, five
+    times the top elasticity's support of 0,03: illustrative, and widened."""
+    inputs = _top_only()
+    assert grading.induced_variation(inputs["emtr_ir_baseline"], inputs["emtr_ir_reform"],
+                                     inputs["weights"], inputs["taxable_base"]) == \
+        pytest.approx(0.15)
+    result = band_module.compute(mechanical=1.0e9, reform=FakeReform(ir_bareme=[]),
+                                 store=load_store(), **inputs)
+    assert result.grade == "illustrative"
+    assert next(c for c in result.channels if c["key"] == "c1_eti")["grade"] == \
+        "illustrative"
+
+
+def test_c1_reads_the_income_tax_s_rate_and_loses_at_the_total_one() -> None:
+    """D-336, decision 4: Δln(1 − τ_IR) on the income tax's own rate, the receipt at the
+    total rate τ¹. For the top above: ln(0,40 / 0,55) on the IR, against ln(0,25 / 0,40)
+    on the total rate before — a smaller response, still lost at 75 %."""
+    inputs = _top_only()
+    store = Store(parameters={
+        "eti_all": parameter("eti_all", 0.02, 0.02, 0.02),
+        "eti_top_decile": parameter("eti_top_decile", 0.31, 0.31, 0.31),
+    })
+    result = channels.elasticity_of_taxable_income(
+        store, FakeReform(ir_bareme=[]), draws=1, rng=np.random.default_rng(0), **inputs)
+    expected = 0.31 * 10 * 1_000.0 * 400_000.0 * np.log(0.40 / 0.55) * 0.75
+    assert result.central == pytest.approx(expected, rel=1e-12)
+    assert result.diagnostics["statistics"]["A_haut"] == pytest.approx(expected / 0.31)
+    assert result.diagnostics["statistics"]["A_bas"] == 0.0
+    # Not the total rate's Δln, which C1 read before: 1,5 times larger here.
+    assert abs(expected) < abs(0.31 * 10 * 1_000.0 * 400_000.0 * np.log(0.25 / 0.40) * 0.75)
+
+
+def test_c1_publishes_the_share_its_floored_households_carry() -> None:
+    """The floor 0,05 stays, and the share of C1 carried by the households at it is
+    published (D-336, decision 4). Two households: one floored by the reform (IR rate to
+    97 %), one not; the share is the floored one's term over both, at the centres."""
+    store = Store(parameters={
+        "eti_all": parameter("eti_all", 0.02, 0.02, 0.02),
+        "eti_top_decile": parameter("eti_top_decile", 0.31, 0.31, 0.31),
+    })
+    result = channels.elasticity_of_taxable_income(
+        store, FakeReform(ir_bareme=[]), emtr_baseline=np.array([0.5, 0.5]),
+        emtr_reform=np.array([0.9, 0.6]), emtr_ir_baseline=np.array([0.4, 0.4]),
+        emtr_ir_reform=np.array([0.97, 0.5]), taxable_base=np.array([1e5, 1e5]),
+        weights=np.array([1.0, 1.0]), top_decile=np.array([False, False]), draws=1,
+        rng=np.random.default_rng(0))
+    floored = abs(np.log(0.05 / 0.6) * 0.9)
+    other = abs(np.log(0.5 / 0.6) * 0.6)
+    assert result.diagnostics["households_at_the_net_of_tax_floor"] == 1
+    assert result.diagnostics["share_at_the_net_of_tax_floor"] == pytest.approx(
+        floored / (floored + other))
 
 
 def test_widening_stretches_about_the_median_without_moving_it() -> None:
@@ -395,6 +473,8 @@ def household_inputs(n: int = 500) -> dict[str, np.ndarray]:
     return {
         "emtr_baseline": np.full(n, 0.41),
         "emtr_reform": np.full(n, 0.43),
+        "emtr_ir_baseline": np.full(n, 0.41),
+        "emtr_ir_reform": np.full(n, 0.43),
         "taxable_base": rng.uniform(20_000, 90_000, n),
         "weights": np.full(n, 1_000.0),
         "top_decile": np.arange(n) >= int(0.9 * n),
@@ -448,6 +528,7 @@ def test_widening_a_parameter_range_cannot_narrow_the_band() -> None:
 def test_a_reform_beyond_the_evidence_comes_back_widened_and_labelled() -> None:
     inputs = household_inputs()
     inputs["emtr_reform"] = np.full(len(inputs["weights"]), 0.71)  # +30 points
+    inputs["emtr_ir_reform"] = np.full(len(inputs["weights"]), 0.71)
     result = band_module.compute(mechanical=1.0e9, reform=FakeReform(ir_bareme=[]),
                                  store=household_store(), **inputs)
     assert result.grade == "illustrative"
@@ -1002,7 +1083,7 @@ def test_the_emtr_caches_do_not_outlive_a_change_of_population_wiring(tmp_path, 
                           "salaire_brut_annuel": [30_000.0]})
 
     # The baseline rates, memoised inside `compute`.
-    monkeypatch.setattr(emtr, "_rate", lambda *args, **kwargs: np.zeros(1))
+    monkeypatch.setattr(emtr, "_rate", lambda *args, **kwargs: (np.zeros(1), np.zeros(1)))
     monkeypatch.setattr(to_openfisca, "WIRING", "before", raising=False)
     emtr.compute(frame, vintage="2024")
     monkeypatch.setattr(to_openfisca, "WIRING", "after", raising=False)
@@ -1041,7 +1122,7 @@ def test_the_emtr_caches_do_not_serve_the_vintage_s_rates_to_an_aged_population(
                             base_year=2024).key(), "the source is a label, not a rate"
 
     # The baseline rates, memoised inside `compute`.
-    monkeypatch.setattr(emtr, "_rate", lambda *args, **kwargs: np.zeros(1))
+    monkeypatch.setattr(emtr, "_rate", lambda *args, **kwargs: (np.zeros(1), np.zeros(1)))
     emtr.compute(frame, year=2026, vintage="2024")
     assert "baseline_cached" not in emtr.compute(
         frame, year=2026, vintage="2024", uprating_key=aged).guards
@@ -1055,8 +1136,10 @@ def test_the_emtr_caches_do_not_serve_the_vintage_s_rates_to_an_aged_population(
                        uprating_key=aged).guards.get("cached") is not True
     assert emtr.cached(frame, "2024", year=2026).guards.get("cached") is True
 
+    # Since D-336 the files carry the income tax's own rate, and the key says so.
     before = json.dumps({"vintage": "2024", "year": 2026, "sample": None, "reform": None,
-                         "wiring": to_openfisca.WIRING}, sort_keys=True, default=str)
+                         "wiring": to_openfisca.WIRING, "columns": emtr.COLUMNS_VERSION},
+                        sort_keys=True, default=str)
     assert emtr.cache_key("2024", 2026) == hashlib.sha256(before.encode()).hexdigest()[:16]
 
 
@@ -1082,8 +1165,8 @@ def test_an_emtr_cache_serves_only_the_frame_it_was_computed_on(tmp_path, monkey
 
     vintage, priced = frame(30_000.0), frame(31_827.0)
     # A rate that says which frame it was computed on.
-    monkeypatch.setattr(emtr, "_rate", lambda frame, *args, **kwargs: np.array(
-        [frame["salaire_brut_annuel"][0] / 1e6]))
+    monkeypatch.setattr(emtr, "_rate", lambda frame, *args, **kwargs: (np.array(
+        [frame["salaire_brut_annuel"][0] / 1e6]),) * 2)
 
     # The baseline rates, memoised inside `compute`.
     emtr.compute(vintage, year=2026, vintage="2024", uprating_key=aged)
@@ -1319,7 +1402,7 @@ def test_another_seed_is_another_sample_cached_apart(tmp_path, monkeypatch):
 
     def rate(priced, *args, **kwargs):
         return (priced.group_by("household_id").agg(pl.col("salaire_brut_annuel").sum())
-                .sort("household_id")["salaire_brut_annuel"].to_numpy() / 1e6)
+                .sort("household_id")["salaire_brut_annuel"].to_numpy() / 1e6,) * 2
 
     monkeypatch.setattr(emtr, "_rate", rate)
     assert emtr.C1_SAMPLES[0] == SAMPLE_SEED and len(set(emtr.C1_SAMPLES)) == 4
@@ -1333,7 +1416,7 @@ def test_another_seed_is_another_sample_cached_apart(tmp_path, monkeypatch):
     assert "baseline_cached" not in other.guards
     assert set(study.households["household_id"]) != set(other.households["household_id"])
     names = sorted(p.name for p in tmp_path.glob("emtr_baseline_*.parquet"))
-    assert len(names) == 2 and sum(name.endswith("_g1.parquet") for name in names) == 1
+    assert len(names) == 2 and sum(name.endswith("_g1_ir.parquet") for name in names) == 1
 
     first = emtr.cached(frame, "2024", year=2026, sample=10, seed=1)
     assert first.households["household_id"].to_list() == \

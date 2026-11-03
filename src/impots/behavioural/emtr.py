@@ -89,39 +89,64 @@ def _bump(frame: pl.DataFrame, step: float) -> pl.DataFrame:
     )
 
 
-def _disposable(frame: pl.DataFrame, system: Any, year: int) -> np.ndarray:
-    """The households' disposable income, and the simulation it was read from freed.
+#: The household's income tax as the engine computes it, per foyer: NEGATIVE when paid
+#: (`engine.outputs`, measured on openfisca-france 176.0.8).
+IR_VARIABLE = "impot_revenu_restant_a_payer"
+
+#: What the cache files of the rates carry since D-336: the income tax's own marginal rate
+#: beside the total one. In every file name and key, so that a file written before, which
+#: has no IR column, is never served (D-276).
+COLUMNS_VERSION = "ir"
+
+
+def _disposable(frame: pl.DataFrame, system: Any, year: int) -> tuple[np.ndarray, np.ndarray]:
+    """The households' disposable income and the income tax they pay (positive when
+    paid), and the simulation they were read from freed.
 
     A simulation is a cycle, its holders and populations pointing back at it, that only a
     full collection frees; a large heap seldom runs one. A pass of the path builds sixteen
     here, four per sample, and kept them all: in 2035, the sample's top households more
     numerous, it grew past the container (D-332)."""
+    from impots.population.runner import _household_index, _to_households
+
     simulation = build_simulation(frame, system, year)
     disposable = simulation.calculate("revenu_disponible").astype(np.float64)
+    # Per foyer and negative when paid: summed into the ménages, sign turned once, here.
+    index = _household_index(frame.sort("person_id"), "foyer_id", simulation.household_ids)
+    tax = -_to_households(simulation.calculate(IR_VARIABLE).astype(np.float64), index,
+                          simulation.household_ids.size)
     del simulation
     gc.collect()
-    return disposable
+    return disposable, tax
 
 
 def _rate(
     frame: pl.DataFrame, system: Any, year: int, earners: np.ndarray, step: float,
     guards: dict[str, Any], label: str,
-) -> np.ndarray:
-    base = _disposable(frame, system, year)
-    bumped = _disposable(_bump(frame, step), system, year)
+) -> tuple[np.ndarray, np.ndarray]:
+    """(The total marginal rate, the income tax's alone), by the same finite difference
+    in the same simulations (D-336, decision 4): τ = 1 − Δ disposable / step, and
+    τ_IR = Δ income tax paid / step."""
+    base, tax_base = _disposable(frame, system, year)
+    bumped, tax_bumped = _disposable(_bump(frame, step), system, year)
     extra = step * earners
     with np.errstate(divide="ignore", invalid="ignore"):
         rate = 1.0 - (bumped - base) / extra
+        rate_ir = (tax_bumped - tax_base) / extra
     # A household with no earner received no extra euro; the ratio is 0/0. It has no
     # marginal rate on labour, which is not the same as a rate of zero.
     rate = np.where(earners > 0, rate, np.nan)
+    rate_ir = np.where(earners > 0, rate_ir, np.nan)
     guards[f"{label}_nan"] = int(np.isnan(rate[earners > 0]).sum())
     low, high = EMTR_BOUNDS
     clipped = np.clip(rate, low, high)
     guards[f"{label}_clipped"] = int(
         np.count_nonzero((rate < low) | (rate > high) & ~np.isnan(rate))
     )
-    return clipped
+    guards[f"{label}_ir_clipped"] = int(
+        np.count_nonzero((rate_ir < low) | (rate_ir > high) & ~np.isnan(rate_ir))
+    )
+    return clipped, np.clip(rate_ir, low, high)
 
 
 #: Every household whose salaries reach this is in every sample, at its own weight
@@ -230,26 +255,26 @@ def compute(
     cache = (
         PROCESSED
         / (f"emtr_baseline_{millesime(vintage)}_{year}_{sample or 'full'}_{int(step)}"
-           f"_{to_openfisca.WIRING}{aged}{_drawn(seed)}.parquet")
+           f"_{to_openfisca.WIRING}{aged}{_drawn(seed)}_{COLUMNS_VERSION}.parquet")
         if vintage else None
     )
     cached_rates = pl.read_parquet(cache) if cache is not None and cache.exists() else None
     if (cached_rates is not None and cached_rates.height == per_household.height
-            and _computed_on(cached_rates, frame_print)):
-        columns = {"emtr": cached_rates["emtr"].to_numpy()}
+            and _computed_on(cached_rates, frame_print) and "emtr_ir" in cached_rates.columns):
+        columns = {"emtr": cached_rates["emtr"].to_numpy(),
+                   "emtr_ir": cached_rates["emtr_ir"].to_numpy()}
         guards["baseline_cached"] = True
     else:  # none, or of another population or frame: recomputed rather than trusted
-        columns = {"emtr": _rate(frame, baseline(), year, earners, step, guards,
-                                 "baseline")}
+        total, ir = _rate(frame, baseline(), year, earners, step, guards, "baseline")
+        columns = {"emtr": total, "emtr_ir": ir}
         if cache is not None:
             PROCESSED.mkdir(parents=True, exist_ok=True)
-            _write_atomically(pl.DataFrame({"emtr": columns["emtr"], FRAME: frame_print}),
-                              cache)
+            _write_atomically(pl.DataFrame({**columns, FRAME: frame_print}), cache)
     timings["baseline_s"] = round(time.perf_counter() - started, 2)
 
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
-        columns["emtr_reform"] = _rate(
+        columns["emtr_reform"], columns["emtr_ir_reform"] = _rate(
             frame, reformed_for(reform, year), year, earners, step, guards, "reform"
         )
         timings["reform_s"] = round(time.perf_counter() - started, 2)
@@ -327,7 +352,7 @@ def cache_key(
     """
     fields = {"vintage": vintage, "year": year, "sample": sample,
               "reform": None if reform is None else reform.model_dump(exclude_none=True),
-              "wiring": to_openfisca.WIRING}
+              "wiring": to_openfisca.WIRING, "columns": COLUMNS_VERSION}
     if sample is not None:
         fields["haut_certain"] = HAUT_CERTAIN
     if uprating_key is not None:

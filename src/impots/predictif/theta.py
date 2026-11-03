@@ -19,8 +19,9 @@ TWO CLASSES OF SOURCE. A behavioural row publishes bounds; θ reads them as they
 macro multiplier publishes a centre (Mésange) and a cross-study dispersion (IMK); θ reads
 centre ∓ ONE published standard deviation, never the triangular draw’s ± sd·√6, which is a
 shape convention (D-059). It inherits that dispersion's scope problem — countries,
-horizons and methods pooled — and can put a multiplier below zero at θ = 0, as the fan
-already does.
+horizons and methods pooled — and is floored at zero: centre − sd falls below it for the
+first year of every tax variant, and a negative multiplier is in none of IMK's studies
+(D-336, decision 2).
 
 WHAT θ IS NOT. Not a probability: the box θ ∈ [0, 1] is not a confidence interval, and the
 probability vocabulary of `dette.path.PROBABILITY_WORDS` stays forbidden. Not chosen by the
@@ -77,12 +78,13 @@ def value_at(parameter: Parameter, theta: float) -> float:
 
 
 def multiplier_at(centre: float, sd: float, theta: float) -> float:
-    """A multiplier at θ: centre ∓ one published cross-study standard deviation."""
+    """A multiplier at θ: centre ∓ one published cross-study standard deviation, floored
+    at zero — a negative multiplier is in none of IMK's studies (D-336, decision 2)."""
     theta = _check(theta, "le multiplicateur")
     if sd <= 0:
         raise ThetaError("un multiplicateur sans dispersion publiée n'a pas de fourchette "
                          "à parcourir : θ n'a rien à placer")
-    return centre + (2.0 * theta - 1.0) * sd
+    return max(0.0, centre + (2.0 * theta - 1.0) * sd)
 
 
 @dataclass(frozen=True)

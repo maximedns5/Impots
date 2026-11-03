@@ -40,13 +40,13 @@ Le taux de la première tranche du barème de l'IR passe de 11 % à 10 %, les 
 
 | Scénario | Δb 2035 à θ = ½ | Boîte θ, aux coins | Le signe tient-il ? |
 |---|---:|---:|---|
-| Dépenses gelées en volume · effet macro éteint après trois ans | +1,30 pt | +1,13 pt à +1,47 pt | oui, à chaque coin |
-| Dépenses gelées en volume · effet macro tenu au niveau de la troisième année | +0,54 pt | −0,20 pt à +1,28 pt | non : dépend de θ |
+| Dépenses gelées en volume · effet macro éteint après trois ans | +1,30 pt | +1,14 pt à +1,45 pt | oui, à chaque coin |
+| Dépenses gelées en volume · effet macro tenu au niveau de la troisième année | +0,54 pt | −0,18 pt à +1,26 pt | non : dépend de θ |
 | Dépenses constantes en % du PIB (sans boucle : persistance sans objet) | +1,48 pt | +1,48 pt à +1,49 pt | oui, à chaque coin |
 
 La boîte est l'étendue de Δb quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie : ni un intervalle de probabilité, ni une somme de tranches.
 
-Sous « Dépenses gelées en volume · effet macro tenu au niveau de la troisième année », le signe de Δb change d'un coin à l'autre : −0,20 pt au coin (eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1), +1,28 pt au coin (eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0). La réforme y alourdit ou allège la dette selon où l'on place les effets dans leurs fourchettes publiées : la chaîne ne tranche pas, et le dit.
+Sous « Dépenses gelées en volume · effet macro tenu au niveau de la troisième année », le signe de Δb change d'un coin à l'autre : −0,18 pt au coin (eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1), +1,26 pt au coin (eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0). La réforme y alourdit ou allège la dette selon où l'on place les effets dans leurs fourchettes publiées : la chaîne ne tranche pas, et le dit.
 
 ## La décomposition par source, en 2035
 
@@ -62,11 +62,11 @@ Les tranches de la chaîne, chacune sur son seul axe, au même horizon — à ne
 
 - **Dépenses gelées en volume · effet macro éteint après trois ans**
   - Boîte θ du comportement : chaque effet revendiqué n'importe où dans sa fourchette publiée, bornes lues aux coins : dette de la réforme de 105,08 % à 105,09 % du PIB.
-  - Éventail macro : θ du multiplicateur de 0 à 1, comportement à sa valeur, bornes lues aux deux bouts : dette de la réforme de 104,92 % à 105,25 % du PIB.
+  - Éventail macro : θ du multiplicateur de 0 à 1, comportement à sa valeur, bornes lues aux deux bouts : dette de la réforme de 104,92 % à 105,23 % du PIB.
   - Grille de scénarios : non calculée. Une seule combinaison de scénarios : chaque autre combinaison est un autre calcul, sous ses propres noms.
 - **Dépenses gelées en volume · effet macro tenu au niveau de la troisième année**
   - Boîte θ du comportement : chaque effet revendiqué n'importe où dans sa fourchette publiée, bornes lues aux coins : dette de la réforme de 104,32 % à 104,33 % du PIB.
-  - Éventail macro : θ du multiplicateur de 0 à 1, comportement à sa valeur, bornes lues aux deux bouts : dette de la réforme de 103,59 % à 105,06 % du PIB.
+  - Éventail macro : θ du multiplicateur de 0 à 1, comportement à sa valeur, bornes lues aux deux bouts : dette de la réforme de 103,61 % à 105,04 % du PIB.
   - Grille de scénarios : non calculée. Une seule combinaison de scénarios : chaque autre combinaison est un autre calcul, sous ses propres noms.
 - **Dépenses constantes en % du PIB (sans boucle : persistance sans objet)**
   - Boîte θ du comportement : chaque effet revendiqué n'importe où dans sa fourchette publiée, bornes lues aux coins : dette de la réforme de 133,45 % à 133,46 % du PIB.
@@ -75,8 +75,8 @@ Les tranches de la chaîne, chacune sur son seul axe, au même horizon — à ne
 
 ## Les coins de la boîte θ
 
-- **Dépenses gelées en volume · effet macro éteint après trois ans** : eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0 → +1,47 pt ; eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1 → +1,14 pt ; eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0 → +1,47 pt ; eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1 → +1,14 pt ; eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0 → +1,47 pt ; eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1 → +1,14 pt ; eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0 → +1,46 pt ; eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1 → +1,13 pt.
-- **Dépenses gelées en volume · effet macro tenu au niveau de la troisième année** : eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0 → +1,28 pt ; eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1 → −0,19 pt ; eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0 → +1,28 pt ; eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1 → −0,19 pt ; eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0 → +1,27 pt ; eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1 → −0,19 pt ; eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0 → +1,27 pt ; eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1 → −0,20 pt.
+- **Dépenses gelées en volume · effet macro éteint après trois ans** : eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0 → +1,45 pt ; eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1 → +1,14 pt ; eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0 → +1,45 pt ; eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1 → +1,14 pt ; eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0 → +1,45 pt ; eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1 → +1,14 pt ; eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0 → +1,45 pt ; eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1 → +1,14 pt.
+- **Dépenses gelées en volume · effet macro tenu au niveau de la troisième année** : eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0 → +1,26 pt ; eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1 → −0,17 pt ; eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0 → +1,26 pt ; eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1 → −0,17 pt ; eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0 → +1,26 pt ; eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1 → −0,17 pt ; eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0 → +1,26 pt ; eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1 → −0,18 pt.
 - **Dépenses constantes en % du PIB (sans boucle : persistance sans objet)** : eti_all = 0, eti_top_decile = 0 → +1,49 pt ; eti_all = 0, eti_top_decile = 1 → +1,49 pt ; eti_all = 1, eti_top_decile = 0 → +1,48 pt ; eti_all = 1, eti_top_decile = 1 → +1,48 pt.
 
 ## Année par année, à θ = ½
@@ -117,6 +117,7 @@ Les niveaux, en 2035 : Dépenses gelées en volume · effet macro éteint après
 - Convention, sous « Dépenses gelées en volume » : Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.
 - Convention, sous « Dépenses gelées en volume » : Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.
 - Convention, sous « Dépenses gelées en volume » : La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.
+- Convention, sous « Dépenses gelées en volume » : Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange dit « erroné » (folio 108, D-336).
 - Convention, sous « Dépenses gelées en volume · effet macro éteint après trois ans » : Au-delà de trois ans : Effet macro éteint après trois ans.
 - Convention : Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)
 - Convention, sous « Dépenses gelées en volume · effet macro tenu au niveau de la troisième année » : Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.

@@ -436,10 +436,14 @@ def max_fan_horizon_years() -> int:
     # BOTH containers: a row carrying `from_source_table` — which every multiplier does —
     # lands in `store.tables`, not `store.parameters`. Reading only the latter returned an
     # empty set and this function raised, claiming no horizon was usable when three were.
+    # The fan's horizons, those the multiplier and the jobs rows both read: the multiplier
+    # reaches 5 and 10 years for the loop's « lue » persistence alone (D-336).
     store = store_module.load()
-    rows = list(store.tables.values()) + list(store.parameters.values())
-    horizons = {int(h) for row in rows
-                for h in getattr(row, "usable_horizons", ()) if str(h).isdigit()}
+    rows = [store.tables.get(key) or store.parameters.get(key)
+            for key in ("multiplier_by_instrument", "employment_by_instrument")]
+    readable = [{int(h) for h in getattr(row, "usable_horizons", ()) if str(h).isdigit()}
+                for row in rows if row is not None]
+    horizons = set.intersection(*readable) if len(readable) == len(rows) else set()
     if not horizons:
         raise TrajectoryError(
             "aucun horizon utilisable dans le magasin macro : l'éventail ne peut être "

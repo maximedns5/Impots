@@ -48,7 +48,8 @@ def _households() -> dict:
     base = rng.uniform(10_000, 200_000, 40)
     emtr = rng.uniform(0.1, 0.45, 40)
     return {"taxable_base": base, "weights": np.full(40, 1_000.0), "emtr_baseline": emtr,
-            "emtr_reform": emtr + 0.03, "top_decile": base > np.quantile(base, 0.9)}
+            "emtr_reform": emtr + 0.03, "emtr_ir_baseline": emtr,
+            "emtr_ir_reform": emtr + 0.03, "top_decile": base > np.quantile(base, 0.9)}
 
 
 @pytest.fixture(scope="module")
@@ -209,7 +210,7 @@ def test_past_three_years_without_a_persistence_both_stand_side_by_side(
     body = response.json()
     assert len(priced) == 1, "both scenarios must come from the same population pass"
     both = {p["persistence"]: p for p in body["side_by_side"]}
-    assert sorted(both) == ["eteint", "tenu"]
+    assert sorted(both) == ["eteint", "lue", "tenu"]
     assert both["eteint"]["label"] == "Effet macro éteint après trois ans"
     for field in ("reform", "delta", "delta_primary", "gdp_gap", "feedback_primary",
                   "persistence"):
@@ -495,7 +496,9 @@ def _sample(seed: int):
     return pl.DataFrame({
         "household_id": ids, "weight": [10.0 + rank] * 4, "n_earners": [1] * 4,
         "emtr": [0.30, 0.41, 0.53, 0.20], "emtr_reform": [0.28 - 0.01 * rank, 0.45, 0.80,
-                                                           0.20 + 0.02 * rank]})
+                                                           0.20 + 0.02 * rank],
+        "emtr_ir": [0.11, 0.30, 0.41, 0.0], "emtr_ir_reform": [0.10 - 0.01 * rank, 0.30, 0.45,
+                                                              0.01 * rank]})
 
 
 @pytest.mark.parametrize("reform, read", [
@@ -544,6 +547,7 @@ def test_c1_reads_its_samples_pooled_and_c7_the_first(monkeypatch, reform, read)
                 rng=np.random.default_rng(0)).draws[0])
 
         pooled = c1(**{k: inputs[k] for k in ("emtr_baseline", "emtr_reform",
+                                              "emtr_ir_baseline", "emtr_ir_reform",
                                               "taxable_base", "weights", "top_decile")})
         each = [c1(**main.eti_inputs(frame, _sample(seed))) for seed in seeds]
         assert pooled == pytest.approx(np.mean(each), rel=1e-12)

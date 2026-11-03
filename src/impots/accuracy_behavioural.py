@@ -193,11 +193,11 @@ def inputs_for(reform_spec: Any, *, year: int = 2024, households: int = 4000,
     the PPA and RSA tapers are most of the marginal rate at low wages, and a light-tier
     EMTR would be tidy and wrong exactly where the ETI channel bites.
     """
-    import numpy as np
     import polars as pl
 
     from impots.api import main as api_main
     from impots.behavioural import emtr as emtr_module
+    from impots.behavioural.eti import eti_inputs
     from impots.population import aggregate as aggregate_module
     from impots.population.build import PROCESSED
     from impots.population.runner import run as population_run
@@ -222,20 +222,6 @@ def inputs_for(reform_spec: Any, *, year: int = 2024, households: int = 4000,
     if priced.is_empty() or "emtr_reform" not in priced.columns:
         return inputs
 
-    weights = priced["weight"].to_numpy()
-    by_household = dict(zip(
-        *(frame.group_by("household_id")
-          .agg(pl.col("salaire_brut_annuel").sum().alias("base")).sort("household_id")
-          [col].to_list() for col in ("household_id", "base")), strict=False))
-    base = np.array([by_household.get(h, 0.0)
-                     for h in priced["household_id"].to_list()])
-    order = np.argsort(base)
-    cumulative = np.cumsum(weights[order])
-    top = np.zeros(len(base), dtype=bool)
-    if cumulative[-1] > 0:
-        top[order[cumulative >= 0.9 * cumulative[-1]]] = True
-
-    inputs.update(emtr_baseline=priced["emtr"].to_numpy(),
-                  emtr_reform=priced["emtr_reform"].to_numpy(),
-                  taxable_base=base, weights=weights, top_decile=top)
+    # The chain's own C1 inputs, built in one place (D-336): rates total and of the IR.
+    inputs.update(eti_inputs(frame, priced))
     return inputs

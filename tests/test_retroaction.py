@@ -31,7 +31,7 @@ def _table(key: str, values: dict, horizons=H, usable=("1", "2", "3")) -> TableP
                           verifier=Verifier(verdict="CONFIRMED", date="2026-10-19"))
 
 
-def _store(**balance_overrides) -> Store:
+def _store(usable=("1", "2", "3"), **balance_overrides) -> Store:
     """IR, CSG and VAT as Mésange prints them (expansionary convention), and the targeted
     variant without a balance row."""
     gdp = {"impot_sur_le_revenu": (0.41, 0.83, 0.88, 0.81, 0.87, 1.05),
@@ -42,8 +42,8 @@ def _store(**balance_overrides) -> Store:
                "csg": (-0.81, -0.50, -0.43, -0.52, -0.54, -0.51),
                "tva": (-0.80, -0.36, -0.28, -0.37, -0.44, -0.47), **balance_overrides}
     return Store(tables={
-        "multiplier_by_instrument": _table("multiplier_by_instrument", gdp),
-        retroaction.BALANCE_TABLE: _table(retroaction.BALANCE_TABLE, balance),
+        "multiplier_by_instrument": _table("multiplier_by_instrument", gdp, usable=usable),
+        retroaction.BALANCE_TABLE: _table(retroaction.BALANCE_TABLE, balance, usable=usable),
         "multiplier_dispersion": _table("multiplier_dispersion", {"TAX": (0.66,)},
                                         horizons=("all",), usable=("all",)),
     })
@@ -109,10 +109,50 @@ def test_theta_moves_the_multiplier_by_one_sd_and_the_feedback_with_it() -> None
     low, mid, high = (_run(_cut(one_point, years=YEARS[:1]), theta=t) for t in (0, 0.5, 1))
     assert mid.gdp_gap[0] == pytest.approx(0.0041)
     assert high.gdp_gap[0] == pytest.approx(0.0041 + 0.0066)
-    assert low.gdp_gap[0] == pytest.approx(0.0041 - 0.0066)
+    # Floored at zero (D-336, decision 2): 0,41 − 0,66 would contract GDP on a tax cut,
+    # which none of IMK's studies does. Before, −0,0025.
+    assert low.gdp_gap[0] == 0.0
     # Proportional: the feedback at θ = 1 is 0,19 × 1,07 / 0,41.
     assert high.balance[0] == pytest.approx(0.0019 * 1.07 / 0.41)
-    assert low.balance[0] < 0 < mid.balance[0] < high.balance[0]
+    assert low.balance[0] == 0.0 < mid.balance[0] < high.balance[0]
+
+
+def test_the_feedback_never_finances_the_shock_past_its_gross_cost() -> None:
+    """D-336, decision 2: at θ = 1, held, the income tax's third year gives back
+    (−0,42 + 1) × 1,54 / 0,88 = 1,015 point per point of shock — a cut that pays for
+    itself at 101,5 %, which Mésange calls « erroné » (folio 108). Bounded at the gross
+    cost, one point; before, 0,01015 of GDP."""
+    one_point = GDP[2026] / 100.0
+    held = _run(_cut(one_point), persistence="tenu", theta=1.0)
+    assert held.balance[2:] == pytest.approx((0.01,) * 8, abs=1e-15)
+    # VAT is bounded at its own gross cost, 1,18 points per variant point: one point of
+    # gross shock is 1/1,18 of a variant, and gives back at most one point.
+    vat = _run(_cut(one_point, "tva"), persistence="tenu", theta=1.0)
+    assert max(vat.balance) <= 0.01 + 1e-15
+
+
+def test_the_read_persistence_reads_five_and_ten_years_and_interpolates() -> None:
+    """D-336, decision 1: « lue » reads Mésange at 1, 2, 3, 5 and 10 years and
+    interpolates linearly between them — year 4 halfway between 3 and 5, years 6 to 9
+    between 5 and 10. Before, « lue » was an unknown persistence."""
+    one_point = GDP[2026] / 100.0
+    store = _store(usable=("1", "2", "3", "5", "10"))
+    read = _run(_cut(one_point), persistence="lue", store=store)
+    m = {1: 0.41, 2: 0.83, 3: 0.88, 4: (0.88 + 0.81) / 2, 5: 0.81,
+         **{h: 0.81 + (h - 5) / 5 * (0.87 - 0.81) for h in range(6, 11)}}
+    s = {1: -0.81, 2: -0.50, 3: -0.42, 4: (-0.42 - 0.51) / 2, 5: -0.51,
+         **{h: -0.51 + (h - 5) / 5 * (-0.50 + 0.51) for h in range(6, 11)}}
+    assert read.gdp_gap == pytest.approx(tuple(m[h] / 100 for h in range(1, 11)), abs=1e-12)
+    assert read.balance == pytest.approx(tuple((s[h] + 1) / 100 for h in range(1, 11)),
+                                         abs=1e-12)
+    assert retroaction.READ_SCOPE in read.conventions
+    # The short horizon is read from the store, not written: three years here.
+    assert retroaction.short_horizon(store) == 3
+    with pytest.raises(FeedbackError, match="persistance"):
+        _run(_cut(one_point), persistence=None, store=store)
+    # A store that does not make 5 and 10 usable cannot read them.
+    with pytest.raises(FeedbackError, match="long terme reste refusé"):
+        _run(_cut(one_point), persistence="lue")
 
 
 # --------------------------------------------------------------------------- #
