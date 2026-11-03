@@ -8,17 +8,36 @@
 ## Les règles qui ne se discutent pas
 
 * Ne pas toucher `src/impots/population/calibrate.py` (fermé jusqu'à la phase 7).
-* Chaque garde a un test qui la tue, vu échouer sur le code d'avant le correctif. Un test
-  qui échoue de façon inattendue : soupçonner le test d'abord.
-* Ne jamais masquer un échec : pas d'assertion retouchée, pas de saut générique, pas de
-  valeur substituée. Les fichiers de données n'entrent pas dans git.
-* Pas de `make full` sans l'accord du propriétaire. Lancer les tests ciblés, pas toute la
-  suite.
-* Chaque passe longue est préenregistrée, avec son pronostic, dans une D-entrée commitée
-  et poussée avant de tourner. Son résultat va dans une nouvelle D-entrée, en français, dans
-  le style des entrées existantes (lignes de 92 caractères au plus).
+* Ne jamais masquer un échec : pas d'assertion retouchée pour passer, pas de saut
+  générique, pas de valeur substituée. Un test qui échoue de façon inattendue : soupçonner
+  le test d'abord. Les fichiers de données n'entrent pas dans git.
+* Un chiffrage comparé à un juge officiel, ou publié dans une étude, est préenregistré avec
+  son pronostic dans une D-entrée commitée et poussée avant de tourner. Son résultat va dans
+  une nouvelle D-entrée, en français, dans le style des entrées existantes (lignes de 92
+  caractères au plus).
 * On n'ouvre pas une annexe d'évaluations préalables avant le commit des enregistrements,
   et aucune tolérance n'est modifiée après le premier calcul.
+* Pas de `make full` sans l'accord du propriétaire.
+
+## Les tests, proportionnés (D-335)
+
+Le développement passe d'abord ; les tests tiennent les nombres, pas la plomberie.
+
+* **Un correctif qui change un nombre** a un test qui le tient. On le voit échouer sur le
+  code d'avant quand c'est léger, quelques secondes ; sinon, le commit le dit.
+* **La plomberie** (mémoire, temps, rendu, structure du code) n'a pas de test dédié, ni de
+  test qui lit le source : son effet se mesure une fois et se dit dans le commit ou la
+  D-entrée.
+* **Pas de banc de mutations**, sauf à la demande du propriétaire.
+* **Pendant le développement**, les tests légers des fichiers touchés, quelques minutes au
+  plus : `pytest -m "not lourd and not chrono" -n $JOBS <fichiers>`. `make impact` (D-309)
+  et les lourds (`tests/lourds.txt`, chacun dans son processus) tournent une fois, avant la
+  PR du but. On évite d'écrire un test qui lance une passe sur la population réelle ; s'il
+  le faut, il va dans `tests/lourds.txt`. Plus `node ui/check.mjs` si la page change.
+* **Un correctif qui ne change aucun nombre** ne fait pas relancer les passes déjà faites :
+  la D-entrée le dit, et chaque rapport garde son commit.
+* **Une passe d'essai** (un profil de mémoire, une mesure de temps, un essai hors rapports)
+  n'a pas besoin de D-entrée.
 
 ## Comment on travaille, pour aller vite
 
@@ -26,18 +45,9 @@
   de `origin/main`. Une PR par but ; le propriétaire décide du merge.
 * **Les données** ne sont jamais dans git : `make data` les prépare dans un checkout
   neuf. Le code se lance avec le venv du dépôt et `PYTHONPATH=src`.
-* **Les tests ciblés** : `make impact` (D-309). Un test vert n'est rejoué que si un fichier
-  qu'il importe, même indirectement, ou qu'il lit a changé depuis ; en parallèle sur
-  `JOBS` workers. La première fois, tout tourne. Plus `node ui/check.mjs` si la page
-  change. Une sélection n'est pas une passe complète : avant une revue, `make full`, avec
-  l'accord du propriétaire. Un test neuf qui lance une passe de population sur les données
-  réelles s'ajoute à `tests/lourds.txt` : il tourne seul, dans son propre processus. Deux
-  à la fois, ou plusieurs dans un même processus, dépassent la mémoire.
 * **Une passe longue** se lance détachée (`setsid nohup … &`) : les tâches de fond d'une
   session peuvent être tuées en route. On ne modifie ni `src` ni `scripts` dans un
-  worktree où une passe ou un banc de mutations tourne.
-* **Une garde neuve** se vérifie aussi par mutation : chaque mutation est tuée par un
-  test, ou nommée comme équivalente dans la D-entrée.
+  worktree où une passe tourne.
 * **L'API en local** : `IMPOTS_AUTH=aucune uvicorn impots.api.main:app`. Sans cela, les
   calculs sont fermés (D-295).
 * **Le compte rendu** au propriétaire est en français : ce qui est fait, ce qui ne l'est
