@@ -50,7 +50,8 @@ def stubbed(monkeypatch, tmp_path) -> dict:
 
     monkeypatch.setattr(runner, "run", run)
     monkeypatch.setattr(aggregate, "aggregate",
-                        lambda households: SimpleNamespace(reform_cost=households.cost))
+                        lambda households: SimpleNamespace(reform_cost=households.cost,
+                                                           totals={}))
     return {"seen": seen, "out": tmp_path / "reports"}
 
 

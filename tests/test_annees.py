@@ -104,7 +104,8 @@ def stubbed(monkeypatch, tmp_path) -> SimpleNamespace:
 
     monkeypatch.setattr(runner, "run", run)
     monkeypatch.setattr(aggregate, "aggregate",
-                        lambda households: SimpleNamespace(reform_cost=households.cost))
+                        lambda households: SimpleNamespace(reform_cost=households.cost,
+                                                           totals={}))
     monkeypatch.setattr(api_main, "_firm_first_year", firm_year)
     monkeypatch.setattr(api_main, "_firm_report_note", lambda reform, years: "la note")
     scenarios = tmp_path / "scenarios"

@@ -1219,18 +1219,22 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
     from impots import trajectoires as tj
     from impots import uprating as up
     from impots.api.schemas import ReformSpec
-    from impots.population import aggregate as agg_mod
-    from impots.population.runner import run as population_run
+    from impots.engine.reforms import moves_capital
+    from impots.population import imputations as imp
 
     directory = Path(args.dir) if args.dir else None
     try:
         scenario = scenarios_module.load(args.scenario, directory)
         scenario.check_years(range(args.start, args.end + 1))
         tj.require_reference(args.reference)
+        # What the passes cannot impute, refused before the first one (but 14).
+        for year in range(args.start, args.end + 1):
+            imp.imputations(scenario.reform_in(year), year, possibles=CHEMIN_POSSIBLES,
+                            chemin="la trajectoire")
         hypothesis = up.Uprating(wage=args.wage, price=args.price,
                                  source=args.hypothesis_source, base_year=args.base_year)
     except (scenarios_module.ScenarioError, tj.TrajectoryError,
-            up.UpratingError) as error:
+            up.UpratingError, imp.ImputationRefusee) as error:
         print(str(error), file=sys.stderr)
         return 1
 
@@ -1240,7 +1244,7 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
               file=sys.stderr)
         return 1
     frame = pl.read_parquet(population)
-    from impots.engine.reforms import moves_capital, read_ir_parameters
+    from impots.engine.reforms import read_ir_parameters
     from impots.engine.system import baseline as engine_baseline
 
     tbs = engine_baseline()
@@ -1264,14 +1268,11 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
             if not spec:
                 return 0.0
             reform = ReformSpec.model_validate(spec)
-            result = population_run(pop, year=year, reform=reform,
-                                    tier="full", sample=args.sample,
-                                    **({"impute_capital": True, "capital_index": index}
-                                       if capital else {}),
-                                    **_consommation(reform, year,
-                                                    "figee" if pop is frame else "vieillie",
-                                                    hypothesis, args.vintage))
-            return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
+            return _chemin_pass(pop, year, reform, capital=capital, index=index,
+                                sample=args.sample,
+                                view="figee" if pop is frame else "vieillie",
+                                uprating=hypothesis, vintage=args.vintage,
+                                chemin="la trajectoire")
         return run
 
     def price(pop: object, year: int, index: float) -> float:
@@ -1351,8 +1352,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     from impots.dette.scenarios import GrowthScenario, RateScenario
     from impots.engine.reforms import read_ir_parameters
     from impots.engine.system import baseline as engine_baseline
-    from impots.population import aggregate as agg_mod
-    from impots.population.runner import run as population_run
+    from impots.population import imputations as imp
     from impots.predictif import annuel, chaine, recherche, retroaction
     from impots.predictif.theta import Theta, ThetaError
 
@@ -1393,8 +1393,14 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                 f"demandé, ou absente sous « {spending.name} ») : elle serait ignorée.")
         if whole:
             _whole_pass_refusals(args)
+        # What the passes cannot impute, refused before the first one (but 14).
+        for year in range(start.year + 1, start.year + 1 + args.horizon):
+            if scenario.applies(year):
+                imp.imputations(scenario.reform_in(year), year,
+                                possibles=CHEMIN_POSSIBLES, chemin="le chemin annuel")
     except (scenarios_module.ScenarioError, tj.TrajectoryError, up.UpratingError,
-            DebtError, ThetaError, maturite.MaturityError, OSError) as error:
+            DebtError, ThetaError, maturite.MaturityError, OSError,
+            imp.ImputationRefusee) as error:
         print(str(error), file=sys.stderr)
         return 1
 
@@ -1430,13 +1436,9 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             if not spec:
                 return 0.0
             reform = ReformSpec.model_validate(spec)
-            result = population_run(pop, year=year, reform=reform,
-                                    tier="full", sample=args.sample,
-                                    **({"impute_capital": True, "capital_index": index}
-                                       if capital else {}),
-                                    **_consommation(reform, year, view, uprating,
-                                                    args.vintage))
-            return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
+            return _chemin_pass(pop, year, reform, capital=capital, index=index,
+                                sample=args.sample, view=view, uprating=uprating,
+                                vintage=args.vintage, chemin="le chemin annuel")
 
         print(f"  {year} · {view}…", flush=True)
         # The first year writes a revaluation at its legal date, the years after carry
@@ -1559,6 +1561,42 @@ def _liberer() -> None:
     # every month of every year it priced. The next pass rebuilds the ones it reads.
     parametres.memoriser(engine_system.baseline())
     gc.collect()
+
+
+#: What the passes of the trajectory and of the annual path can impute: the capital and the
+#: consumption, each whenever the reform moves it. Not the sick pay, which the CCSS gives for
+#: 2024 alone (D-305, D-306), nor the niches, a calibration these paths never ran.
+CHEMIN_POSSIBLES = ("capital", "consommation")
+
+
+def _chemin_pass(pop: object, year: int, reform: object, *, capital: bool, index: float,
+                 sample: int, view: str, uprating: object, vintage: str,
+                 chemin: str) -> float:
+    """One pass of the trajectory or of the annual path: its mechanical cost.
+
+    What it imputes is the one policy's (`population.imputations`): the consumption
+    whenever the reform moves it (D-328), the capital whenever the SCENARIO's reform moves
+    it — `capital`, decided once for both passes of a difference, for against `indexe` a
+    capital imputed in one of them only would put the whole tax on capital into the cost
+    (D-249). What the path cannot impute is refused with its reason before the pass, and
+    the confident-zero guard reads the pass after it (but 14)."""
+    from impots import guards
+    from impots.population import aggregate as agg_mod
+    from impots.population import imputations as imp
+    from impots.population.runner import run as population_run
+
+    imputed = imp.imputations(reform, year, demandees=(imp.CAPITAL,) if capital else (),
+                              possibles=CHEMIN_POSSIBLES, chemin=chemin)
+    # Where the consumption's euros come from follows the view (D-328); whether it is
+    # imputed at all is the policy's, which `_consommation` agrees with.
+    kwargs = {**imputed.runner(), **_consommation(reform, year, view, uprating, vintage),
+              **({"capital_index": index} if imputed.capital else {})}
+    result = population_run(pop, year=year, reform=reform, tier="full", sample=sample,
+                            **kwargs)
+    agg = agg_mod.aggregate(result.households)
+    guards.refuse_zero_confiant(reform.model_dump(exclude_none=True), imputed.noms(),
+                                agg.totals, chemin=chemin)
+    return guards.cout_calcule(agg.reform_cost, chemin=chemin)
 
 
 def _consommation(reform: object, year: int, view: str, uprating: object,

@@ -591,10 +591,7 @@ def knob_pricer(
     or a value outside the schema's range, fails in milliseconds — before the first
     population run rather than after it.
     """
-    from impots.api.main import QUICK_TIER_HOUSEHOLDS
-    from impots.api.schemas import ReformSpec
-    from impots.population import aggregate as aggregate_module
-    from impots.population.runner import run as population_run
+    from impots.api.schemas import QUICK_TIER_HOUSEHOLDS, ReformSpec
 
     if knob not in ReformSpec.model_fields:
         raise ScenarioError(
@@ -628,10 +625,8 @@ def knob_pricer(
 
     def price(value: float) -> float:
         reform = ReformSpec.model_validate({**base_fields, knob: value})
-        result = population_run(
-            frame if frame is not None else _frame(), year=year, reform=reform,
-            tier="full", sample=households)
-        return float(aggregate_module.aggregate(result.households).reform_cost or 0.0)
+        return _priced(reform, year, frame=frame, households=households,
+                       chemin="le solveur")["mechanical"]
 
     price.validate = validate  # type: ignore[attr-defined]
     return price
@@ -652,16 +647,35 @@ def mechanical_price(scenario: Scenario, *, frame: Any = None,
     than present-and-uncomparable: a caller who wants them can pass their own pricing
     function, and `compare` will then show them side by side without differencing.
     """
-    from impots.api.main import QUICK_TIER_HOUSEHOLDS
+    return _priced(scenario.reform, scenario.year, demandees=scenario.imputations,
+                   frame=frame, households=households, prix_au_dela=prix_au_dela,
+                   chemin=f"le chiffrage mécanique de « {scenario.name} »")
+
+
+def _priced(reform: Any, year: int, *, demandees: Any = (), frame: Any = None,
+            households: int | None = None, prix_au_dela: dict[int, float] | None = None,
+            chemin: str) -> dict[str, Any]:
+    """One quick-tier pass of the solver or of the mechanical pricing: its cost and deltas.
+
+    What it imputes is the one policy's (`population.imputations`): what the scenario asks
+    for, and what the reform needs to move — the capital, the consumption, the sick pay
+    (but 14). The mechanical pricing imputed only what the scenario asked, and never the
+    capital; the solver imputed nothing, and a consumption knob raised there. What cannot
+    be imputed is refused before the pass, and the confident-zero guard reads the pass after
+    it."""
+    from impots import guards
+    from impots.api.schemas import QUICK_TIER_HOUSEHOLDS
     from impots.population import aggregate as aggregate_module
+    from impots.population import imputations as imp
     from impots.population.runner import run as population_run
 
+    imputed = imp.imputations(reform, year, demandees=demandees, chemin=chemin)
     result = population_run(
-        frame if frame is not None else _frame(), year=scenario.year,
-        reform=scenario.reform, tier="full",
-        sample=households or QUICK_TIER_HOUSEHOLDS,
-        impute_ij="ij" in scenario.imputations,
-        impute_consommation="consommation" in scenario.imputations,
+        frame if frame is not None else _frame(), year=year, reform=reform, tier="full",
+        sample=households or QUICK_TIER_HOUSEHOLDS, **imputed.runner(),
         prix_au_dela=prix_au_dela)
     agg = aggregate_module.aggregate(result.households)
-    return {"mechanical": float(agg.reform_cost or 0.0), "deltas": dict(agg.deltas)}
+    guards.refuse_zero_confiant(reform.model_dump(exclude_none=True), imputed.noms(),
+                                agg.totals, chemin=chemin)
+    return {"mechanical": guards.cout_calcule(agg.reform_cost, chemin=chemin),
+            "deltas": dict(agg.deltas)}

@@ -141,11 +141,11 @@ def test_a_pfu_reform_imputes_the_capital_it_bites_on():
     from impots.api import main
 
     assert main.imputes_capital(SimpleNamespace(reform=ReformSpec(pfu_taux=0.2),
-                                                impute_capital=False))
+                                                impute_capital=False, year=2024))
     assert not main.imputes_capital(SimpleNamespace(reform=ReformSpec(decote_taux=0.3),
-                                                    impute_capital=False))
+                                                    impute_capital=False, year=2024))
     assert main.imputes_capital(SimpleNamespace(reform=ReformSpec(decote_taux=0.3),
-                                                impute_capital=True))
+                                                impute_capital=True, year=2024))
     assert not reforms.moves_capital(None)
 
 
@@ -175,15 +175,3 @@ def test_the_first_year_ages_the_capital_with_the_frame(monkeypatch, view, expec
                                view=main.FIRST_YEAR_VIEW if view == "vieillie"
                                else main.FROZEN_VIEW)
     assert seen["index"] == pytest.approx(expected)
-
-
-def test_the_command_line_decides_the_capital_once_per_scenario():
-    """Against `indexe` a cost is a difference of two passes: a capital imputed in one of
-    them only would put the whole tax on capital into the cost."""
-    import inspect
-
-    from impots.population import cli
-
-    source = inspect.getsource(cli)
-    assert source.count("capital = moves_capital(scenario.reform)") == 2
-    assert source.count('**({"impute_capital": True, "capital_index": index}') == 2

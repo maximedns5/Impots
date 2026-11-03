@@ -34,6 +34,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 
+from impots import guards
 from impots.api.schemas import (
     MAX_YEAR,
     MIN_YEAR,
@@ -565,11 +566,13 @@ def _niche_blind_spot(request: Any, agg: Any) -> Any:
     """
     from impots.api.schemas import NicheBlindSpot
     from impots.engine.reforms import NICHE_KNOBS
-    from impots.guards import niche_blind_spot
+    from impots.guards import zero_confiant
+    from impots.population import imputations as imp
 
     knobs = tuple(request.reform.model_dump(exclude_none=True))
     imputed = getattr(request, "impute_niches", False)
-    blind = niche_blind_spot(knobs, agg.totals, NICHE_KNOBS, bases_are_imputed=imputed)
+    blind = sorted(set(zero_confiant(knobs, (imp.NICHES,) if imputed else (), agg.totals))
+                   & NICHE_KNOBS)
     if not blind:
         return None
     if imputed:
@@ -851,20 +854,36 @@ def _behavioural(request: Any, frame: Any, agg: Any, run: Any = None) -> Any:
 
     inputs, households = _behavioural_inputs(request, frame, agg, run)
     computed = band_module.compute(
-        mechanical=-(agg.reform_cost or 0.0), reform=request.reform, **inputs)
+        mechanical=-guards.cout_calcule(agg.reform_cost, chemin="la bande des ménages"),
+        reform=request.reform, **inputs)
     payload = computed.as_dict()
     if households is not None:
         payload["emtr_households"] = households
     return Behavioural(**payload)
 
 
+def imputations_of(request: Any) -> Any:
+    """What a pass of `request` imputes: the one policy every path reads
+    (`population.imputations`), with what the request asks for — the niches, the capital —
+    and what its reform needs to move. A knob the population cannot move on is refused
+    here, before the pass, with its reason: a 422, never a zero."""
+    from impots.population import imputations as imp
+
+    asked = [name for name, flag in ((imp.NICHES, getattr(request, "impute_niches", False)),
+                                     (imp.CAPITAL, getattr(request, "impute_capital", False)))
+             if flag]
+    try:
+        return imp.imputations(request.reform, request.year, demandees=asked,
+                               chemin="l'API")
+    except imp.ImputationRefusee as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+
+
 def imputes_capital(request: Any) -> bool:
     """Whether a pass imputes capital income: when asked, and whenever the reform moves the
     PFU, which bites on nothing else (D-249). A PFU reform on a population without capital
     would cost exactly zero, and say nothing."""
-    from impots.engine.reforms import moves_capital
-
-    return bool(getattr(request, "impute_capital", False) or moves_capital(request.reform))
+    return imputations_of(request).capital
 
 
 def _run_population(request: Any, frame: Any,
@@ -874,24 +893,22 @@ def _run_population(request: Any, frame: Any,
     """The quick-tier pass and its aggregate: `(run, aggregate)`. Shared by
     `/population/simulate` and `/predictif/simulate`. `capital_index` ages the imputed
     capital to the year, when the frame was aged to it (D-249)."""
-    from impots import consommation
     from impots.population import aggregate as aggregate_module
     from impots.population.runner import run as population_run
     from impots.population.to_openfisca import WiringError
 
-    capital = imputes_capital(request)
+    imputed = imputations_of(request)
     try:
         result = population_run(
             frame, year=request.year, reform=request.reform, tier="full",
             sample=QUICK_TIER_HOUSEHOLDS,
-            impute_niches=getattr(request, "impute_niches", False),
-            impute_capital=capital,
-            capital_index=capital_index if capital else None,
-            # Whenever the reform moves a consumption tax, which bites on nothing else
-            # (D-323), as the capital is imputed whenever it moves the PFU (D-249). Its
-            # euros follow the frame: the year it was aged to, at the frame's prices, or
-            # the vintage when it was not (D-328).
-            impute_consommation=consommation.touche(request.reform),
+            # The capital whenever the reform moves the PFU (D-249), the consumption
+            # whenever it moves a consumption tax (D-323), the sick pay whenever it moves
+            # their tax (D-306): each bites on nothing else. The consumption's euros follow
+            # the frame: the year it was aged to, at the frame's prices, or the vintage
+            # when it was not (D-328).
+            **imputed.runner(),
+            capital_index=capital_index if imputed.capital else None,
             annee_consommation=(int(POPULATION_VINTAGE) if annee_consommation is None
                                 else annee_consommation),
             prix_au_dela=prix_consommation,
@@ -900,7 +917,19 @@ def _run_population(request: Any, frame: Any,
         raise HTTPException(status_code=500, detail=str(error)) from error
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    return result, aggregate_module.aggregate(result.households)
+    agg = aggregate_module.aggregate(result.households)
+    # The confident-zero guard, on every path (but 14): a niche the population declares no
+    # base for is flagged in the response (`_niche_blind_spot`); anything else is a pass
+    # the policy should have refused, and is refused here.
+    from impots.engine.reforms import NICHE_KNOBS
+
+    try:
+        guards.refuse_zero_confiant(
+            set(request.reform.model_dump(exclude_none=True)) - NICHE_KNOBS,
+            imputed.noms(), agg.totals, chemin="l'API")
+    except guards.ZeroConfiantError as error:  # pragma: no cover - refused before the pass
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    return result, agg
 
 
 def _quick_tier_note() -> str:
@@ -1089,7 +1118,8 @@ def _firm_behavioural(request: Any, agg: Any) -> Any:
     baseline_tax = agg.totals.get("cvae", 0.0)
     reformed_tax = agg.totals_reform.get("cvae", baseline_tax)
     computed = band_module.compute(
-        mechanical=-(agg.reform_cost or 0.0), reform=request.reform,
+        mechanical=-guards.cout_calcule(agg.reform_cost, chemin="la bande des entreprises"),
+        reform=request.reform,
         production_tax_baseline=baseline_tax, production_tax_reform=reformed_tax,
         is_rate_change_points=_is_rate_change_points(request),
         cir_margins=_cir_margins(request),
@@ -1443,7 +1473,8 @@ def _firm_first_year(firm_reform: Any, year: int, *, view: str = FIRST_YEAR_VIEW
         note = FIRM_SYNTHETIC + note
     deltas = {name: value * scale for name, value in aggregates.deltas.items()
               if name != FIRM_TOTAL and value}
-    return SimpleNamespace(cost=float(aggregates.reform_cost or 0.0) * scale,
+    cost = guards.cout_calcule(aggregates.reform_cost, chemin="la couche entreprises")
+    return SimpleNamespace(cost=cost * scale,
                            deltas=deltas, note=note, factor=factor)
 
 
@@ -1554,13 +1585,13 @@ def _price_households(request: PopulationSimulateRequest, *, uprating: Any,
     from impots import consommation
 
     aged = view == FIRST_YEAR_VIEW
+    imputed = imputations_of(request)
     conso = ({"annee_consommation": request.year if aged else int(POPULATION_VINTAGE),
               "prix_consommation": (consommation.prix_du_cadre(uprating, request.year)
                                     if aged else None)}
-             if consommation.touche(request.reform) else {})
+             if imputed.consommation else {})
     result, agg = _run_population(
-        request, frame, **({"capital_index": index} if imputes_capital(request) else {}),
-        **conso)
+        request, frame, **({"capital_index": index} if imputed.capital else {}), **conso)
     if agg.reform_cost is None:  # pragma: no cover - a reform always has a cost
         raise HTTPException(status_code=500, detail="la réforme n'a pas de coût calculé")
     # The EMTR caches are keyed on the frame priced: the aged view's on its uprating, the

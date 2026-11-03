@@ -289,6 +289,76 @@ def niche_blind_spot(
     return ()
 
 
+class ZeroConfiantError(GuardError, ValueError):
+    """Une passe a chiffré un bouton qui ne pouvait pas bouger sur elle."""
+
+
+def zero_confiant(knobs: Iterable[str], imputees: Iterable[str],
+                  totals: dict[str, float]) -> dict[str, str]:
+    """Les boutons d'une réforme qu'une passe de population ne peut pas chiffrer, chacun
+    avec sa raison ; vide quand il n'y a rien à dire.
+
+    La garde des niches (`niche_blind_spot`), généralisée à tout ce que la population ne
+    porte qu'imputé (but 14) : un bouton du capital sans le capital imputé, de la
+    consommation sans la consommation, des IJ sans les IJ, et l'IFI toujours, puisque la
+    population ne porte aucun patrimoine. Chacun y coûterait un zéro confiant. `imputees`
+    sont les noms de ce que la passe a imputé (`imputations.Imputations.noms`), `totals`
+    ses agrégats de référence, où les niches lisent leurs bases déclarées. Une fonction
+    pure : chaque chemin décide de ce qu'il en fait, l'API un drapeau pour les niches, les
+    autres un refus (`refuse_zero_confiant`)."""
+    from impots import consommation
+    from impots.engine.reforms import CAPITAL_KNOBS, NICHE_KNOBS
+    from impots.population import imputations as imp
+
+    knobs = frozenset(knobs)
+    imputees = frozenset(imputees)
+    aveugles: dict[str, str] = {}
+    sans = {imp.CAPITAL: (knobs & CAPITAL_KNOBS, "le capital n'est pas imputé (D-249)"),
+            imp.CONSOMMATION: (knobs & set(consommation.BOUTONS),
+                               "la consommation n'est pas imputée (D-323)"),
+            imp.IJ: (knobs & imp.IJ_KNOBS, "les IJ ne sont pas imputées (D-305)")}
+    for nom, (touches, raison) in sans.items():
+        if nom not in imputees:
+            aveugles.update(dict.fromkeys(sorted(touches), raison))
+    aveugles.update(dict.fromkeys(
+        sorted(knobs & imp.ifi_knobs()),
+        "la population ne porte aucun patrimoine (porte « patrimoine »)"))
+    niches = niche_blind_spot(knobs, totals, NICHE_KNOBS,
+                              bases_are_imputed=imp.NICHES in imputees)
+    aveugles.update(dict.fromkeys(
+        niches, "la population ne déclare pas cette base, ou la dispersion que le "
+                "plafond lit (D-064, D-075)"))
+    return aveugles
+
+
+def refuse_zero_confiant(knobs: Iterable[str], imputees: Iterable[str],
+                         totals: dict[str, float], *, chemin: str) -> None:
+    """Refuse, avec chaque raison, une passe dont un bouton ne pouvait pas bouger."""
+    aveugles = zero_confiant(knobs, imputees, totals)
+    if aveugles:
+        raise ZeroConfiantError(
+            f"{chemin} : " + " ; ".join(f"`{knob}` ne bouge pas, {raison}"
+                                        for knob, raison in aveugles.items())
+            + ". Son coût serait un zéro par absence d'assiette, non par absence d'effet.")
+
+
+class CoutAbsentError(GuardError):
+    """Une passe chiffrée n'a pas de coût calculé."""
+
+
+def cout_calcule(reform_cost: float | None, *, chemin: str) -> float:
+    """Le coût d'une passe chiffrée, ou un refus : jamais un `None` changé en zéro.
+
+    `reform_cost` n'est `None` que pour une passe sans réforme ; un chemin qui attend un
+    coût et le trouve absent a un défaut de câblage, que `reform_cost or 0.0` cachait
+    derrière un coût nul (audit du but 14, annexe 2, § 4.6)."""
+    if reform_cost is None:
+        raise CoutAbsentError(
+            f"{chemin} : la passe n'a pas de coût calculé (aucune réforme n'y a tourné) ; "
+            f"un coût absent n'est pas un coût nul.")
+    return float(reform_cost)
+
+
 class SectorBalanceError(RuntimeError):
     """A reform's reported cost does not match what the instruments say moved."""
 

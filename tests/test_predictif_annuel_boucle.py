@@ -250,7 +250,8 @@ def command(monkeypatch, tmp_path) -> dict:
     monkeypatch.setattr(runner, "run", lambda pop, **kw: SimpleNamespace(
         households=SimpleNamespace(cost=5e9)))
     monkeypatch.setattr(aggregate, "aggregate",
-                        lambda households: SimpleNamespace(reform_cost=households.cost))
+                        lambda households: SimpleNamespace(reform_cost=households.cost,
+                                                           totals={}))
 
     def stub(request, *, uprating, macro=False, view="vieillie"):
         seen.append((request.year, view, request.behavioural, macro))
