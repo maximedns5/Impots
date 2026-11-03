@@ -219,6 +219,32 @@ def test_a_year_without_its_excises_is_refused() -> None:
         co.Fiscalite.droit(2019)
 
 
+def test_2025_is_refused_with_its_reason_not_served_with_another_year_s_law() -> None:
+    """GARDE (but 14). 2025 change de droit au 1er août (abonnements, accises) et sa moyenne
+    n'est pas relevée : refusée en le disant, pour les accises comme pour les prix."""
+    for appel in (lambda: co.Fiscalite.droit(2025), lambda: co.loi_energie(2025),
+                  lambda: co.prix_energie(2025)):
+        with pytest.raises(co.ConsommationError, match="1er août 2025"):
+            appel()
+
+
+def test_the_subscriptions_are_dated_and_only_their_low_bound_moves() -> None:
+    """GARDE (but 14). L'abonnement d'électricité et de gaz était à 5,5 % jusqu'au 31/7/2025 :
+    en 2024 le poste est mêlé (20 % principal, 5,5 % en borne basse) ; depuis 2026 toute la
+    facture est à 20 %, et la borne basse aussi. Avant, la table de 2026 servait la borne
+    basse de 5,5 % à toutes les années. Le taux principal, celui des chiffrages, ne bouge
+    pas."""
+    for code in co.ABONNEMENTS:
+        assert co.Fiscalite.droit(2024, "taux_bas").taux[code] == 0.055
+        assert co.Fiscalite.droit(2026, "taux_bas").taux[code] == 0.2
+        assert co.Fiscalite.droit(2030, "taux_bas", prix_au_dela={
+            a: 0.02 for a in range(2027, 2031)}).taux[code] == 0.2
+        for annee in (2024, 2026):
+            assert co.Fiscalite.droit(annee).taux[code] == 0.2
+    # Les autres postes mêlés gardent leur borne basse.
+    assert co.Fiscalite.droit(2026, "taux_bas").taux["04431"] == 0.055
+
+
 def test_the_knobs_of_the_layer_are_the_spec_s_consumption_fields() -> None:
     """Un bouton de consommation hors de BOUTONS irait à openfisca, qui ne le lit pas."""
     champs = {f for f in ReformSpec.model_fields if f.startswith(("tva_", "accise_"))}

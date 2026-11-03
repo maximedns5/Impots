@@ -66,28 +66,63 @@ LOI_ENERGIE: dict[int, dict[str, dict[str, float]]] = {
                  "gaz": 134.0},
     },
 }
+
+#: Les abonnements d'électricité (≤ 36 kVA) et de gaz naturel : à 5,5 % jusqu'au 31 juillet
+#: 2025, au taux normal depuis le 1er août (loi n° 2025-127, art. 20 ; regles.md, § 4). La
+#: table les écrit en postes mêlés, taux principal 20 %, borne basse 5,5 % : c'est le droit
+#: d'avant août 2025, où l'abonnement et la consommation n'avaient pas le même taux, sans clé
+#: publiée pour la part de l'abonnement (§ 3.1). Depuis la première année pleine au taux
+#: normal, toute la facture est à 20 % : le poste n'est plus mêlé, et ses trois bornes sont
+#: son taux. Le taux principal ne change pas ; seule la borne basse de 2026 et après.
+ABONNEMENTS = ("04511", "0452Z")
+ABONNEMENTS_AU_TAUX_NORMAL = 2026
+
+#: Pourquoi 2025 n'est pas servie : l'année où l'accise de l'électricité et du gaz et la TVA
+#: des abonnements ont changé au 1er août (regles.md, § 4 et § 5), et dont ni la moyenne
+#: annuelle des accises ni les prix TTC ne sont relevés (l'accise de l'électricité de
+#: janvier à juillet 2025 y est même « à vérifier »).
+REFUS_2025 = ("la consommation de 2025 n'est pas servie : la TVA des abonnements "
+              "d'électricité et de gaz et les accises de l'électricité et du gaz ont changé au "
+              "1er août 2025, et ni leur moyenne annuelle ni les prix TTC de l'énergie de "
+              "cette année ne sont relevés (docs/consommation/regles.md, § 4 et § 5). Elle "
+              "est refusée plutôt que servie avec le droit d'une autre année.")
+
+
+def annee_servie(annee: int) -> None:
+    """Refuse, avec sa raison, une année dont la table des taux et `LOI_ENERGIE` ne savent
+    pas servir le droit : avant 2024, dont les accises ne sont pas relevées, et 2025.
+    Servies : 2024, en postes mêlés pour les abonnements, et 2026 et après, les tarifs de
+    2026 reconduits (D-328)."""
+    connues = sorted(LOI_ENERGIE)
+    if annee == 2025:
+        raise ConsommationError(REFUS_2025)
+    if annee < connues[0]:
+        raise ConsommationError(
+            f"la consommation de {annee} n'est pas servie : les accises et les prix de "
+            f"l'énergie ne sont relevés que pour {connues} (regles.md, § 5), et la table "
+            f"des taux décrit le droit de 2024 à 2026.")
+
+
 def loi_energie(annee: int) -> dict[str, float]:
     """Les accises de `annee` : celles de la loi relevée, ou, au-delà de la dernière, les
     tarifs de celle-ci reconduits tels quels, le droit tel qu'il est écrit (D-328). Les
-    tarifs des accises sont des montants en euros, que la loi ne revalorise pas d'elle-même."""
+    tarifs des accises sont des montants en euros, que la loi ne revalorise pas d'elle-même.
+    Une année que `annee_servie` refuse l'est avec sa raison."""
+    annee_servie(annee)
     connues = sorted(LOI_ENERGIE)
     if annee in LOI_ENERGIE:
         return dict(LOI_ENERGIE[annee]["accise"])
-    if annee > connues[-1]:
-        return dict(LOI_ENERGIE[connues[-1]]["accise"])
-    raise ConsommationError(f"les accises de {annee} ne sont pas écrites (connues : {connues})")
+    return dict(LOI_ENERGIE[connues[-1]]["accise"])
 
 
 def prix_energie(annee: int, prix_au_dela: dict[int, float] | None = None) -> dict[str, float]:
     """Les prix TTC de l'énergie de `annee`, l'année des euros qu'ils convertissent en
     volumes : ceux relevés, ou, au-delà du dernier, les siens portés par l'indice des prix
     qui porte aussi les euros, pour que les volumes ne bougent pas d'eux-mêmes (D-328)."""
+    annee_servie(annee)
     connues = sorted(LOI_ENERGIE)
     if annee in LOI_ENERGIE:
         return dict(LOI_ENERGIE[annee]["prix"])
-    if annee < connues[-1]:
-        raise ConsommationError(f"les prix de l'énergie de {annee} ne sont pas écrits "
-                                f"(connus : {connues})")
     facteur = 1.0
     for a in range(connues[-1] + 1, annee + 1):
         if not prix_au_dela or a not in prix_au_dela:
@@ -248,8 +283,13 @@ class Fiscalite:
               prix_au_dela: dict[int, float] | None = None) -> Fiscalite:
         """Le droit de `annee` ; `borne` prend le taux principal des postes mêlés, ou leur
         taux le plus bas (`taux_bas`) ou le plus haut (`taux_haut`) : D-323. Les prix sont
-        ceux de `annee_prix`, l'année des euros de la consommation, `annee` par défaut."""
-        return cls(annee, {p.code: getattr(p, borne) for p in postes()}, loi_energie(annee),
+        ceux de `annee_prix`, l'année des euros de la consommation, `annee` par défaut.
+        Les abonnements d'électricité et de gaz sont datés (`ABONNEMENTS`)."""
+        taux = {p.code: getattr(p, borne) for p in postes()}
+        if annee >= ABONNEMENTS_AU_TAUX_NORMAL:
+            principal = {p.code: p.taux for p in postes()}
+            taux.update({code: principal[code] for code in ABONNEMENTS})
+        return cls(annee, taux, loi_energie(annee),
                    prix_energie(annee if annee_prix is None else annee_prix, prix_au_dela))
 
     def reformee(self, spec) -> Fiscalite:
