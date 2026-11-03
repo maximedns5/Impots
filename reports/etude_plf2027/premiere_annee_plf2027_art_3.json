@@ -42,6 +42,7 @@
       "csg_deductible": 74915951980.22165,
       "csg_imposable": 26440924188.66414,
       "crds": 5508525874.636528,
+      "csg_ij": 0.0,
       "ir": 104306217685.98679,
       "ir_avant_niches": 104137644727.99658,
       "reductions": 0.0,
@@ -71,6 +72,7 @@
       "csg_deductible": 74915951980.22165,
       "csg_imposable": 26440924188.66414,
       "crds": 5508525874.636528,
+      "csg_ij": 0.0,
       "ir": 105425702260.73111,
       "ir_avant_niches": 105257673521.61139,
       "reductions": 0.0,
@@ -100,6 +102,7 @@
       "csg_deductible": 0.0,
       "csg_imposable": 0.0,
       "crds": 0.0,
+      "csg_ij": 0.0,
       "ir": 1119484574.7443237,
       "ir_avant_niches": 1120028793.6148071,
       "reductions": 0.0,
@@ -533,7 +536,7 @@
       "draws": 1000,
       "parameters_vintage": "25 rows [autofinancement_cout_par_emploi,autofinancement_poids_tresor_eco,autofinancement_retour_par_emploi,dividend_elasticity_firm_owners,dividend_elasticity_other_holders,dividend_share_firm_owners,dividend_wage_shift_firm_owners,employment_elasticity_at_fadeout,employment_elasticity_smic,employment_fadeout_smic_multiple,eti_all,eti_top_decile,firm_creation_exposure_per_is_point,firm_creation_profit_tax,is_croissance_pib,labour_supply_married_men,labour_supply_married_women,labour_supply_single_men,labour_supply_single_women,passthrough_benefit_linked,passthrough_unlinked,production_tax_investment,rd_cir_multiplier,wealth_disclosure_growth_effect_pp,wealth_tax_rate_elasticity]",
       "notes": [],
-      "emtr_households": 1661
+      "emtr_households": 3956
     },
     "macro": {
       "available": true,
@@ -706,14 +709,14 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "build_s": 7.11,
-      "baseline_s": 43.54,
-      "reform_s": 58.18,
-      "total_s": 119.11
+      "build_s": 5.21,
+      "baseline_s": 34.96,
+      "reform_s": 36.08,
+      "total_s": 105.67
     }
   },
-  "computed": "2026-10-28",
-  "commit": "02fd6235cf4b79d0f107be411c82141c3cf0a921",
+  "computed": "2026-11-03",
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
   "dirty": false,
-  "where": "dans le conteneur de la session, en tâche de fond, depuis une copie de travail figée sur 02fd623"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
 }

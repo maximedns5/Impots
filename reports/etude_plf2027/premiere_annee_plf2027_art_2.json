@@ -66,6 +66,7 @@
       "csg_deductible": 74915951980.22165,
       "csg_imposable": 26440924188.66414,
       "crds": 5508525874.636528,
+      "csg_ij": 0.0,
       "ir": 104306217685.98679,
       "ir_avant_niches": 104137644727.99658,
       "reductions": 0.0,
@@ -95,6 +96,7 @@
       "csg_deductible": 74915951980.22165,
       "csg_imposable": 26440924188.66414,
       "crds": 5508525874.636528,
+      "csg_ij": 0.0,
       "ir": 101478241429.00168,
       "ir_avant_niches": 101308549023.64827,
       "reductions": 0.0,
@@ -124,6 +126,7 @@
       "csg_deductible": 0.0,
       "csg_imposable": 0.0,
       "crds": 0.0,
+      "csg_ij": 0.0,
       "ir": -2827976256.9851074,
       "ir_avant_niches": -2829095704.3483124,
       "reductions": 0.0,
@@ -465,28 +468,28 @@
     "behavioural": {
       "mechanical": -2827976287.2680664,
       "band": {
-        "p10": -2720214781.0725217,
-        "p50": -2678160556.2746086,
-        "p90": -2630062986.155241,
+        "p10": -2782411048.3813477,
+        "p50": -2737519835.2548013,
+        "p90": -2684834704.0498724,
         "unit": "EUR"
       },
-      "grade": "in-support",
-      "grade_reason": "La variation induite par cette réforme reste dans l'intervalle sur lequel les élasticités ont été estimées.",
+      "grade": "illustrative",
+      "grade_reason": "Cette réforme est plus grande que celles sur lesquelles les élasticités ont été estimées : la bande est une extrapolation, élargie et signalée comme telle.",
       "channels": [
         {
           "key": "c1_eti",
           "label": "Réponse du revenu imposable",
           "applies": true,
-          "central": 149815730.99345782,
+          "central": 90456452.01326522,
           "band": {
-            "p10": 107761506.19554457,
-            "p50": 149815730.99345782,
-            "p90": 197913301.11282533,
+            "p10": 68010845.449992,
+            "p50": 90456452.01326522,
+            "p90": 116799017.61572987,
             "unit": "EUR"
           },
           "unit": "EUR",
           "message": "La base imposable réagit au taux marginal ; l'effet est un retour (ou une perte) sur le rendement mécanique.",
-          "grade": "in-support",
+          "grade": "illustrative",
           "diagnostics": {
             "knobs": [
               "decote_seuil_celib",
@@ -494,8 +497,14 @@
               "ir_bareme",
               "plafond_qf_demi_part"
             ],
-            "mean_delta_log_net_of_tax": 0.0035754597427726602,
-            "households_at_the_net_of_tax_floor": 85
+            "mean_delta_log_net_of_tax": 0.0032061091378505573,
+            "households_at_the_net_of_tax_floor": 0,
+            "share_at_the_net_of_tax_floor": 0.0,
+            "rate_read": "taux marginal de l'IR seul (D-336) ; recette au taux total",
+            "statistics": {
+              "A_bas": 614176645.4614635,
+              "A_haut": 253099618.76511824
+            }
           }
         },
         {
@@ -591,7 +600,7 @@
       "draws": 1000,
       "parameters_vintage": "25 rows [autofinancement_cout_par_emploi,autofinancement_poids_tresor_eco,autofinancement_retour_par_emploi,dividend_elasticity_firm_owners,dividend_elasticity_other_holders,dividend_share_firm_owners,dividend_wage_shift_firm_owners,employment_elasticity_at_fadeout,employment_elasticity_smic,employment_fadeout_smic_multiple,eti_all,eti_top_decile,firm_creation_exposure_per_is_point,firm_creation_profit_tax,is_croissance_pib,labour_supply_married_men,labour_supply_married_women,labour_supply_single_men,labour_supply_single_women,passthrough_benefit_linked,passthrough_unlinked,production_tax_investment,rd_cir_multiplier,wealth_disclosure_growth_effect_pp,wealth_tax_rate_elasticity]",
       "notes": [],
-      "emtr_households": 6603
+      "emtr_households": 15823
     },
     "macro": {
       "available": true,
@@ -764,14 +773,14 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "build_s": 6.77,
-      "baseline_s": 41.95,
-      "reform_s": 56.07,
-      "total_s": 116.93
+      "build_s": 4.98,
+      "baseline_s": 36.42,
+      "reform_s": 37.55,
+      "total_s": 177.75
     }
   },
-  "computed": "2026-10-28",
-  "commit": "02fd6235cf4b79d0f107be411c82141c3cf0a921",
+  "computed": "2026-11-03",
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
   "dirty": false,
-  "where": "dans le conteneur de la session, en tâche de fond, depuis une copie de travail figée sur 02fd623"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
 }

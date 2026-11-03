@@ -474,7 +474,7 @@ passe dans son processus (D-331), les taux marginaux qui libèrent leurs simulat
 (D-332) ; le runner fait de même (D-334), sans quoi un test lourd tombait, sur `main`
 aussi.
 
-### But 14 — Consolider : un moteur cohérent de bout en bout (validé le 3 novembre 2026, D-336)
+### But 14 — Consolider : un moteur cohérent de bout en bout (fait, D-336 à D-339 ; à merger)
 
 L'audit (`docs/AUDIT_BUT14.md`) trouve un socle solide et une architecture empilée but par
 but : cinq chemins de passe qui n'imputent pas la même population, une couche de service
@@ -505,3 +505,13 @@ Ou s'arrêter après 60 tours, en disant ce qui manque.
 
 Validé par le propriétaire le 3 novembre 2026 (« fais-moi tout ça ») : les douze décisions
 de l'audit sont prises comme il les recommande (D-336).
+
+Résultat, D-337 à D-339. Les décisions de modèle sont mesurées sans passe (D-337) ; la
+décision 3 n'est pas appliquée, le texte du PLF 2027 ne donnant pas de taux à dix ans. Les
+dix études ont tourné sur un seul commit, `7235bd8`, préenregistrées (D-338) : coûts 13 sur
+13 redonnés à l'euro, verdicts 11 sur 13, θ½ des programmes 5 sur 8, Monte-Carlo 4 sur 8.
+Les trois programmes qui manquent (Roussel, Le Pen, Labib) manquent par le pronostic, dont
+la reconstruction perdait l'impulsion de TVA ; la clé ajoutée, il redonne les passes à 0,2
+point près (D-339). Sous la persistance « lue », Attal passe de +20,3 à +4,4 points de dette
+en 2035, et la falaise de l'an 4 a disparu ; trois programmes montent la dette à chaque coin
+(Lisnard, Retailleau, Labib), cinq en dépendent de θ. Les pages publient « éteint » et « tenu » à côté, comme sensibilités.

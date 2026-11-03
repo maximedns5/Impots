@@ -472,7 +472,11 @@
             ],
             "share_of_workers_below_fadeout": 0.6567,
             "fadeout_smic_multiple": 2.0,
-            "interpolation": "linéaire entre le SMIC et le seuil — construction de ce projet, pas de la littérature"
+            "interpolation": "linéaire entre le SMIC et le seuil — construction de ce projet, pas de la littérature",
+            "statistics": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
           }
         },
         {
@@ -741,14 +745,14 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "build_s": 7.5,
-      "baseline_s": 44.33,
-      "reform_s": 57.23,
-      "total_s": 159.11
+      "build_s": 4.57,
+      "baseline_s": 35.2,
+      "reform_s": 44.89,
+      "total_s": 91.94
     }
   },
-  "computed": "2026-11-02",
-  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "computed": "2026-11-03",
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
   "dirty": false,
-  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
 }

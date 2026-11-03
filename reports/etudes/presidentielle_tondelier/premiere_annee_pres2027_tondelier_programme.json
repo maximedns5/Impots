@@ -467,34 +467,40 @@
     "behavioural": {
       "mechanical": 847648024.1828613,
       "band": {
-        "p10": -863567353.8427129,
-        "p50": -436515414.11546326,
-        "p90": -70500254.25826348,
+        "p10": -731621791.7419785,
+        "p50": -100802405.74286914,
+        "p90": 439856556.1505005,
         "unit": "EUR"
       },
-      "grade": "in-support",
-      "grade_reason": "La variation induite par cette réforme reste dans l'intervalle sur lequel les élasticités ont été estimées.",
+      "grade": "illustrative",
+      "grade_reason": "Cette réforme est plus grande que celles sur lesquelles les élasticités ont été estimées : la bande est une extrapolation, élargie et signalée comme telle.",
       "channels": [
         {
           "key": "c1_eti",
           "label": "Réponse du revenu imposable",
           "applies": true,
-          "central": -1284163438.2983246,
+          "central": -948450429.9257305,
           "band": {
-            "p10": -1711215378.0255742,
-            "p50": -1284163438.2983246,
-            "p90": -918148278.4411248,
+            "p10": -1263860122.925285,
+            "p50": -948450429.9257305,
+            "p90": -678120948.9790456,
             "unit": "EUR"
           },
           "unit": "EUR",
           "message": "La base imposable réagit au taux marginal ; l'effet est un retour (ou une perte) sur le rendement mécanique.",
-          "grade": "in-support",
+          "grade": "illustrative",
           "diagnostics": {
             "knobs": [
               "ir_bareme"
             ],
-            "mean_delta_log_net_of_tax": -0.0005236306368001396,
-            "households_at_the_net_of_tax_floor": 90
+            "mean_delta_log_net_of_tax": -0.0003814305187007822,
+            "households_at_the_net_of_tax_floor": 0,
+            "share_at_the_net_of_tax_floor": 0.0,
+            "rate_read": "taux marginal de l'IR seul (D-336) ; recette au taux total",
+            "statistics": {
+              "A_bas": 0.0,
+              "A_haut": -2993667729.027994
+            }
           }
         },
         {
@@ -763,14 +769,14 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "build_s": 8.42,
-      "baseline_s": 68.64,
-      "reform_s": 85.73,
-      "total_s": 177.63
+      "build_s": 5.08,
+      "baseline_s": 38.18,
+      "reform_s": 43.27,
+      "total_s": 246.8
     }
   },
   "computed": "2026-11-03",
-  "commit": "c36984d9f6e3423cc8ad446f16c287617f3ea148",
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
   "dirty": false,
-  "where": "conteneur cloud de la session, worktree figé sur c36984d, une passe par processus, l'une après l'autre ; allocateur réglé (MALLOC_MMAP_THRESHOLD_=131072, MALLOC_ARENA_MAX=2) pour tenir en mémoire, chaque passe du chemin dans son processus (D-331), les taux marginaux libérant leurs simulations (D-332)"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
 }

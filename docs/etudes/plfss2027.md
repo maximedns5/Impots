@@ -15,7 +15,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 | art. 74 du PLF, la prime d'activité | -887 M€ | -332 M€, hors de la tolérance | -0,27 pt | baisse |
 | art. 74 du PLF, les aides au logement | -78 M€ | -101 M€, dans la tolérance | -0,07 pt | baisse |
 
-Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en points de PIB, dans la vue vieillie et sous la première persistance de l'effet macro de chaque article ; « selon θ » lit toutes les vues et toutes les persistances.
+Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en points de PIB, dans la vue vieillie et sous la persistance « lue » de l'effet macro de chaque article, Mésange lu à ses horizons ; « selon θ » lit les deux vues sous cette persistance seule (D-336). « Éteint » et « tenu » sont des sensibilités, données plus bas, hors du verdict.
 
 ## Art. 74 du PLF 2027 — la prime d'activité
 
@@ -63,12 +63,26 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | vieillie | -0,27 pt | de -0,27 pt à -0,27 pt |
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | -0,39 pt | de -0,39 pt à -0,39 pt |
+
+En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sous cette persistance, elle **baisse la dette** en 2035, à θ½ comme à chaque coin de la boîte, dans les deux vues.
+
+**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
+
+| persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
+|---|---|---|---|
 | Effet macro éteint après trois ans | vieillie | -0,27 pt | de -0,27 pt à -0,27 pt |
 | Effet macro éteint après trois ans | figée | -0,39 pt | de -0,39 pt à -0,39 pt |
 | Effet macro tenu au niveau de la troisième année | vieillie | -0,27 pt | de -0,27 pt à -0,27 pt |
 | Effet macro tenu au niveau de la troisième année | figée | -0,39 pt | de -0,39 pt à -0,39 pt |
 
-En points de PIB de 2035, la dette avec la mesure moins la dette sans elle. La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sur ces passes, elle **baisse la dette** en 2035, à θ½ comme à chaque coin de la boîte, dans les deux vues.
+**La distribution, à côté de la boîte.** La boîte dit jusqu'où Δb va quand chaque effet parcourt sa fourchette publiée : ce n'est pas une probabilité. Le Monte-Carlo en est une, sous des lois déclarées : Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes. (ρ = 0,8, 2000 tirages, persistance « lue », D-336). D'autres lois donneraient une autre réponse.
+
+| vue | P(hausse de la dette en 2035) | quantile 5 % | médiane | quantile 95 % | ce qui pèse le plus (Sobol, total) |
+|---|---|---|---|---|---|
+| vieillie | 0 % | -0,27 pt | -0,27 pt | -0,27 pt | — |
+| figée | 0 % | -0,39 pt | -0,39 pt | -0,39 pt | — |
 
 ### L'écart au chiffrage officiel
 
@@ -122,12 +136,26 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | vieillie | -0,07 pt | de -0,07 pt à -0,07 pt |
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | -0,07 pt | de -0,07 pt à -0,07 pt |
+
+En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sous cette persistance, elle **baisse la dette** en 2035, à θ½ comme à chaque coin de la boîte, dans les deux vues.
+
+**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
+
+| persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
+|---|---|---|---|
 | Effet macro éteint après trois ans | vieillie | -0,07 pt | de -0,07 pt à -0,07 pt |
 | Effet macro éteint après trois ans | figée | -0,07 pt | de -0,07 pt à -0,07 pt |
 | Effet macro tenu au niveau de la troisième année | vieillie | -0,07 pt | de -0,07 pt à -0,07 pt |
 | Effet macro tenu au niveau de la troisième année | figée | -0,07 pt | de -0,07 pt à -0,07 pt |
 
-En points de PIB de 2035, la dette avec la mesure moins la dette sans elle. La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sur ces passes, elle **baisse la dette** en 2035, à θ½ comme à chaque coin de la boîte, dans les deux vues.
+**La distribution, à côté de la boîte.** La boîte dit jusqu'où Δb va quand chaque effet parcourt sa fourchette publiée : ce n'est pas une probabilité. Le Monte-Carlo en est une, sous des lois déclarées : Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes. (ρ = 0,8, 2000 tirages, persistance « lue », D-336). D'autres lois donneraient une autre réponse.
+
+| vue | P(hausse de la dette en 2035) | quantile 5 % | médiane | quantile 95 % | ce qui pèse le plus (Sobol, total) |
+|---|---|---|---|---|---|
+| vieillie | 0 % | -0,07 pt | -0,07 pt | -0,07 pt | — |
+| figée | 0 % | -0,07 pt | -0,07 pt | -0,07 pt | — |
 
 ### L'écart au chiffrage officiel
 
@@ -202,7 +230,7 @@ Les portes, de celle qui ouvrirait le plus d'articles à celle qui en ouvrirait 
 
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `b73ffcf`, conteneur Claude Code (session 019zRZBP), arbre figé /home/user/wt/but6-run sur b73ffcf. Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `7235bd8`, conteneur cloud 15 Go, 4 cœurs, but 14 (D-338). Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
 

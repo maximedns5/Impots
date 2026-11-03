@@ -26037,3 +26037,102 @@ rapports d'aujourd'hui par la fonction pure, sans les comportements
 **Ce qui réfute.** Un coût de programme qui bouge de plus de 0,1 % : la restructuration
 aurait touché un nombre. Un verdict autre que celui du tableau. Une dette hors de sa
 tolérance. Chaque écart est dit dans la D-entrée du résultat ; aucun pronostic ne bouge.
+
+## D-339 — La série du but 14 : les dix études sur un commit, et ce qu'en dit le pronostic
+
+**Ce qui a tourné.** Les dix études de D-338, toutes leurs passes, sur `7235bd8`, `src/`
+propre (`dirty` faux dans chaque rapport), une étude après l'autre, du 3 novembre 13 h 06
+à 22 h 34 (UTC), dans un conteneur de 15 Go et 4 cœurs : 9 h 23 de passes en tout
+(Mélenchon 52 min, Roussel 18, Tondelier 93, Le Pen 44, Labib 22, Attal 42, Lisnard 80,
+PLFSS 73, PLF 100, Retailleau 39). Les pages et le site sont réécrits depuis ces seuls
+rapports ; l'accueil ne dit plus que les études ont tourné sur des codes différents,
+puisqu'elles tiennent toutes sur un commit.
+
+**Retailleau, relancé.** Sa première passe est tombée en une minute :
+`/entreprises/simulate` a rendu 503, `data/processed/firms_2023.parquet` n'existait pas
+dans ce conteneur. `make data` construisait la table de cellules, pas la population
+d'entreprises tirée d'elle. Construite à 17 h 05 (`impots entreprises cells --vintage
+2023`, puis `impots entreprises build --cells data/processed/firm_cells_2023.json`) : 57
+cellules, 15 954 entreprises tirées pour 2,72 M, le compte des rapports d'avant
+(2 718 376). Aucun rapport n'avait été écrit ; l'étude a été relancée après la série, sur
+le même commit. Attal, Lisnard et le PLF, lancés après la construction, l'ont lue sans
+échec. `make data` la construit désormais (`donnees.py`, un artefact dérivé de plus, refusé
+s'il vient de cellules synthétiques) : plomberie, aucun nombre ne bouge.
+
+**Le compte, contre D-338.**
+
+1. **Les coûts : tenus, tous.** Les huit programmes redonnent le coût de leurs rapports
+   d'avant à l'euro, chaque année et dans les deux vues (écart relatif au plus 3 × 10⁻¹⁵).
+   Le PLF et le PLFSS redonnent leur page : art. 2 +2,828 Md€, art. 3 −1,119, art. 15
+   −7,054, prime d'activité 887 M€, aides au logement 78 M€. La restructuration n'a touché
+   aucun nombre mécanique.
+2. **Tondelier : tenu.** Le centre de la bande passe de −437 à −101 M€ (p10 −732, p90
+   +440), dans [−300 ; +300] ; la note passe à « illustrative ».
+3. **Les dettes sous « lue », vue vieillie, Δb en 2035, en points :**
+
+| étude | coins (pronostic) | θ½ (pronostic) | θ½ dans la tolérance | verdict (pronostic) |
+|---|---|---:|---|---|
+| Attal | −5,14 à +17,86 (−5,5 à +17,8) | +4,36 (+4,2) | oui | dépend (dépend) |
+| Lisnard | +1,01 à +10,82 (+1,6 à +10,9) | +5,95 (+6,3) | oui | hausse (hausse) |
+| Retailleau | +1,12 à +5,06 (+1,1 à +5,1) | +2,78 (+2,7) | oui | hausse (hausse) |
+| Labib | +3,47 à +5,70 (+5,9) | +4,36 (+5,9) | **non**, 1,54 pt | hausse (hausse) |
+| Le Pen | −0,47 à +3,95 (+3,5 à +4,3) | +1,38 (+3,9) | **non** | **dépend** (hausse) |
+| Roussel | −0,20 à +1,41 (+1,6) | +0,44 (+1,6) | **non** | **dépend** (hausse) |
+| Tondelier | −0,17 à +0,78 (−0,4 à 0) | +0,28 (−0,2) | oui, 0,48 pt | dépend (dépend) |
+| Mélenchon | −2,14 à +0,65 (−2,1 à +0,7) | −0,44 (−0,4) | oui | dépend (dépend) |
+
+   Le PLF et le PLFSS : tenus. Art. 2 de −0,09 à +0,85, θ½ +0,39, « dépend » ; art. 3 de
+   −0,35 à +0,02, θ½ −0,17, « dépend » ; art. 15 −0,23 à tous les coins, « baisse ». Les
+   deux volets de l'art. 74, lus en miroir, « baisse » à tous les coins : prime d'activité
+   −0,27, aides au logement −0,07 ; aucune impulsion n'y est couverte, la boîte est plate et
+   les trois persistances se confondent.
+4. **Le Monte-Carlo, P(Δb₂₀₃₅ > 0), vue vieillie.** Tenus : Attal 0,630 (0,5 à 0,75),
+   Mélenchon 0,425 (0,3 à 0,5), Retailleau et Labib 1,000 (> 0,95). Manqués : Lisnard 0,907,
+   Le Pen 0,713, Roussel 0,679 (tous trois annoncés > 0,95) ; Tondelier 0,931 (annoncé entre
+   0,2 et 0,8).
+
+**Bilan.** Coûts 13 sur 13 ; bande de Tondelier tenue ; verdicts 11 sur 13 ; θ½ des
+programmes 5 sur 8 ; Monte-Carlo 4 sur 8. Aucun pronostic n'a bougé, aucune tolérance non
+plus.
+
+**Pourquoi trois programmes manquent : le pronostic, pas les passes.** La reconstruction de
+D-338 (`scripts/but14_effets_modele.py`) traduisait les deltas de la première année en
+impulsions par instrument par une table, `MAP`, qui n'avait pas `tva_menages`. Roussel, Le
+Pen et Labib baissent la TVA : leur impulsion de TVA était perdue, et le pronostic les
+traitait comme sans boucle (plats pour Roussel et Labib). La passe, elle, la porte
+(Roussel : 5,28 Md€ d'impulsion de TVA la première année). Vérifié après coup, sur les
+rapports d'avant et la même fonction, avec la seule clé ajoutée : Roussel +1,41 / +0,44 /
+−0,20, Le Pen +3,95 / +1,36 / −0,48, Labib +5,72 / +4,58 / +3,83 — les passes à 0,2 point
+près. La clé est ajoutée au script pour la suite ; le pronostic de D-338 reste tel quel, et
+ces trois écarts restent des écarts.
+
+**Les autres manques du Monte-Carlo.** Lisnard : tous ses coins sont au-dessus de zéro,
+mais la normale du multiplicateur a des queues au-delà de ± 1σ, que θ ne parcourt pas
+(D-337) ; 9 % des tirages descendent sous zéro. Tondelier : le pronostic, sans les
+comportements, plaçait θ½ sous zéro ; C1 au taux de l'IR (D-336, décision 4) relève le
+centre à +0,28, et la probabilité suit.
+
+**Ce que la persistance « lue » change aux têtes de page** (θ½, vieillie ; avant : éteint) :
+Attal +20,29 → +4,36, Lisnard +10,31 → +5,95, Labib +5,55 → +4,36, Retailleau +5,44 → +2,78,
+Le Pen +3,71 → +1,38, Roussel +1,30 → +0,44, Tondelier +0,09 → +0,28, Mélenchon −2,55 →
+−0,44. « Éteint » et « tenu » restent publiés à côté, hors du verdict.
+
+**Le reste, dit ici.**
+
+* **Décision 3 de D-336, non appliquée** (D-337) : la dette ajoutée reste chargée au taux
+  implicite net, 1,883 %.
+* **pypdf borné sous 6** (`pyproject.toml`) : pypdf 6 lève `LimitReachedError` sur un PDF
+  du manifeste et ne trouve plus les panneaux de la figure 2 de Bach et al. ; 5.9 les lit.
+* **Des tests rouges faute de données, non masqués** : `test_ij`, `test_ij_moteur`,
+  `test_capital`, `test_couverture_2027` et `test_dette_comptes` lisent des fichiers que ce
+  conteneur n'a pas pu télécharger. Aucun n'est lu par la série.
+* **Des hôtes injoignables d'ici** : data.economie.gouv.fr, www.securite-sociale.fr,
+  www.urssaf.fr, et www.aft.gouv.fr (403). **Des sommes de contrôle changées** à la
+  source, fichiers non remplacés : la table SFA d'Eurostat, `insee_rpm2023`, la note de
+  méthode de la Banque de France et le rapport n° 47 de l'IPP. Le propriétaire décide
+  s'ils sont remanifestés.
+* **Trois tests suivaient l'état d'avant la série** et le figeaient : la doublure de git
+  de `test_etude_plf2027.py` (D-289, l'étude nomme D-338), et dans `test_site.py` le
+  numéro de préenregistrement du PLFSS et l'avertissement des commits multiples. Ils
+  lisent maintenant l'état réel : l'avertissement doit paraître si et seulement si les
+  études tiennent sur plusieurs commits.
