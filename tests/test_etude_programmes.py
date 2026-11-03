@@ -199,15 +199,20 @@ def test_a_pass_of_the_path_frees_what_the_years_before_kept() -> None:
 
     from impots.api.schemas import ReformSpec
     from impots.engine import system
+    from impots.entreprises import system as firm_system
+    from impots.entreprises.reforms import FirmReformSpec
     from impots.population import cli
 
     system.reformed_for(ReformSpec(decote_taux=0.4), 2026)
+    firm_system.reformed_for(FirmReformSpec(c3s_taux=0.001), 2026)
     assert system.reformed.cache_info().currsize >= 1
+    assert firm_system.reformed.cache_info().currsize >= 1
     base = system.baseline()
     base.get_parameters_at_instant("2026-01-01")
     before = base.get_parameters_at_instant
     cli._liberer()
     assert system.reformed.cache_info().currsize == 0
+    assert firm_system.reformed.cache_info().currsize == 0
     assert base.get_parameters_at_instant is not before
     assert base.get_parameters_at_instant("2026-01-01") is not None
     # Structural: the whole pass of the path frees before it prices.
