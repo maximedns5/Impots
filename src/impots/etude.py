@@ -601,6 +601,7 @@ class _Programme:
     à côté de chaque nombre la couverture et chaque refus avec sa porte."""
 
     colonne = "programme"
+    unite = "mesure"
 
     def __init__(self, study: Etude) -> None:
         from impots import programmes as pg
@@ -1341,10 +1342,12 @@ class Etude:
             w(f"| {texte.label(entry)} | {n(fiche._eur(entry['cost']), 'L2')} | {official} | "
               f"{lead} | {verdict(entry['debt'])} |")
         w("")
-        w("Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en "
-          "points de PIB, dans la vue vieillie et sous la première persistance de l'effet "
-          "macro de chaque article ; « selon θ » lit toutes les vues et toutes les "
-          "persistances.")
+        # A law has articles; a programme has measures (D-336).
+        unit = getattr(texte, "unite", "article")
+        w(f"Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en "
+          f"points de PIB, dans la vue vieillie et sous la première persistance de l'effet "
+          f"macro de chaque {unit} ; « selon θ » lit toutes les vues et toutes les "
+          f"persistances.")
         w("")
         for entry in entries:
             w(texte.heading(entry, n))

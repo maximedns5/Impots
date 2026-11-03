@@ -83,6 +83,18 @@ def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
             in built["index.html"]
 
 
+def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(built) -> None:
+    """D-336 : les études ont tourné sur des commits et des moteurs différents ; l'accueil
+    le dit avant toute comparaison, et chaque entrée donne son commit."""
+    index = built["index.html"]
+    assert "Les études n'ont pas été chiffrées sur le même code" in index
+    assert "ne se compare donc pas à celui d'une autre" in index
+    for study in etude.definitions():
+        entry = index.split(f'<a href="{study.nom}.html">')[1].split("</li>")[0]
+        commit = study.load()[0]["first"]["commit"]
+        assert f"sur le commit <code>{commit[:7]}</code>" in entry, study.nom
+
+
 def test_no_page_runs_a_script(built, monkeypatch) -> None:
     assert not any("<script" in text.lower() for text in built.values())
     monkeypatch.setattr(site, "STYLE", "<script>alert(1)</script>")

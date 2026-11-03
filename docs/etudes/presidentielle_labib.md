@@ -12,7 +12,7 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 |---|---|---|---|---|
 | la part chiffrée | +22,89 Md€ | — | +5,55 pt | hausse |
 
-Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en points de PIB, dans la vue vieillie et sous la première persistance de l'effet macro de chaque article ; « selon θ » lit toutes les vues et toutes les persistances.
+Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en points de PIB, dans la vue vieillie et sous la première persistance de l'effet macro de chaque mesure ; « selon θ » lit toutes les vues et toutes les persistances.
 
 ## La part chiffrée
 

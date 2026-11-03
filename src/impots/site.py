@@ -196,6 +196,7 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
     studies = etude.definitions() if studies is None else studies
     files: dict[str, str] = {"style.css": STYLE, ".nojekyll": ""}
     listed: list[str] = []
+    codes: set[str] = set()
     for study in studies:
         why = study.drift()
         if why:
@@ -205,15 +206,30 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
                           f"préenregistrée ({html.escape(study.preenregistrement)}), ses "
                           f"passes n'ont pas tourné.</li>")
             continue
-        lines, n = study.lines(study.load())
+        entries = study.load()
+        lines, n = study.lines(entries)
         files[f"{study.nom}.html"] = _page(f"{study.titre} — {TITLE}", body(lines, n))
+        commits = [commit for commit, _ in entries[0]["commits"]]
+        codes |= set(commits)
+        shown = ", ".join(f"<code>{c[:7]}</code>" for c in commits)
+        code = (f"sur le commit {shown}" if len(commits) == 1 else
+                f"sur les commits {shown}, joints par une passe témoin")
         listed.append(f'<li><h2><a href="{study.nom}.html">{html.escape(study.titre)}</a>'
-                      f"</h2>\n{body(_bref(lines), n)}</li>")
+                      f"</h2>\n<p>Chiffrée le {html.escape(entries[0]['first']['computed'])}, "
+                      f"{code}.</p>\n{body(_bref(lines), n)}</li>")
     intro = ("<h1>Les études</h1>\n<p>Chaque étude prend une réforme, ou les articles d'un "
              "texte, et donne trois réponses : ce qu'elle coûte et qui y gagne ; ce qu'elle "
              "coûte une fois les comportements et l'économie pris en compte ; ce qu'elle "
              "fait à la dette dans dix ans. À côté de chaque nombre, son étage de confiance ; "
              "une réponse absente est dite absente, avec sa raison.</p>")
+    if len(codes) > 1:
+        # The studies ran on different code (D-336): a reader is told before comparing.
+        intro += (f"\n<p><strong>Les études n'ont pas été chiffrées sur le même code</strong>"
+                  f" : {len(codes)} commits, chacun dit sous son étude. Le moteur a changé "
+                  f"entre elles : celles du PLF 2027 et du PLFSS 2027 ont tourné avant que "
+                  f"la population ne porte les indemnités journalières (D-305 à D-314) et "
+                  f"avant les corrections de D-310, celles des programmes après. Le coût "
+                  f"d'une page ne se compare donc pas à celui d'une autre.</p>")
     if any(study.programme for study in studies):
         # The 24 declared candidates, each with its coverage and its doors (D-328).
         lines, n = etude.presidentielle(studies)
