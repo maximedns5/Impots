@@ -264,13 +264,27 @@ def command(monkeypatch, tmp_path) -> dict:
     monkeypatch.setattr(main, "_price_first_year", stub)
     monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+    # The command runs each pass in a fresh, spawned process (`cli._isole`, D-331): the
+    # child imports the modules anew and would see neither the stub nor `seen`, and a
+    # closure does not pickle. Here the pass runs in this process instead, the call
+    # otherwise the same; `isolated` records that every pass still went through `_isole`,
+    # with the simulator's pass, so a pass that skipped the isolation fails below. That the
+    # child computes what the parent would is plumbing, measured once in D-331.
+    isolated: list = []
+
+    def in_process(function, *args, **kwargs):
+        isolated.append(function)
+        return function(*args, **kwargs)
+
+    monkeypatch.setattr(cli, "_isole", in_process)
 
     def launch(*extra: str, base: list[str] = ARGS) -> tuple[int, dict | None]:
         code = cli.main([*base, *extra, "--out-dir", str(tmp_path)])
         out = tmp_path / "predictif_gel_bareme.json"
         return code, json.loads(out.read_text(encoding="utf-8")) if out.exists() else None
 
-    return {"seen": seen, "launch": launch, "out": tmp_path, "monkeypatch": monkeypatch}
+    return {"seen": seen, "launch": launch, "out": tmp_path, "monkeypatch": monkeypatch,
+            "isolated": isolated}
 
 
 def test_the_command_prices_every_year_through_the_simulators_pass(command) -> None:
@@ -281,6 +295,8 @@ def test_the_command_prices_every_year_through_the_simulators_pass(command) -> N
     assert code == 0
     assert sorted(command["seen"]) == sorted(
         (y, v, True, True) for y in (2026, 2027, 2028, 2029) for v in ("vieillie", "figee"))
+    # Each of the eight passes went through the isolation (D-331), none beside it.
+    assert command["isolated"] == [main._price_first_year] * 8
     assert [p["persistence"] for p in report["side_by_side"]] == ["lue", "eteint", "tenu"]
     assert report["behavioural"] and report["macro"] and report["theta_applied"]
     PredictifReportResponse.model_validate(report)
