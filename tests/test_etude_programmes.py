@@ -153,19 +153,21 @@ def test_a_range_report_that_is_not_the_study_s_is_refused(tmp_path) -> None:
         reports[point] = report
         (tmp_path / etude.PLAGES / etude.plage_name(mesure, champ, point)).write_text(
             json.dumps(report), encoding="utf-8")
-    assert len(study.load_plages("abc")) == 3
-    with pytest.raises(etude.EtudeError, match="sur son commit"):
-        study.load_plages("autre")
+    assert len(study.load_plages()) == 3
+    # A point on another commit is read only if a witness joins it to the first (D-335).
+    assert study.commits({"abc"}) == [("abc", None)]
+    with pytest.raises(etude.EtudeError, match="impots etude temoin"):
+        study.commits({"abc", "autre"})
     mesure, champ, _ = study.points()[0]
     faux = {**reports["bas"], "request": {**reports["bas"]["request"], "theta":
                                           {"common": 0.9}}}
     (tmp_path / etude.PLAGES / etude.plage_name(mesure, champ, "bas")).write_text(
         json.dumps(faux), encoding="utf-8")
     with pytest.raises(etude.EtudeError, match="pas le point de l'étude"):
-        study.load_plages("abc")
+        study.load_plages()
     (tmp_path / etude.PLAGES / "en_trop.json").write_text("{}", encoding="utf-8")
     with pytest.raises(etude.EtudeError, match="en_trop"):
-        study.load_plages("abc")
+        study.load_plages()
 
 
 def test_the_candidates_page_lists_the_24_with_their_coverage() -> None:

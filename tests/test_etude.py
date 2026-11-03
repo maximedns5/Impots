@@ -15,6 +15,7 @@ import json
 import re
 import shutil
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -270,6 +271,157 @@ def test_a_plfss_volet_without_a_title_is_refused(plfss) -> None:
         etude.Volet(v.scenario, None, v.miroir) for v in plfss.volets))
     with pytest.raises(etude.EtudeError, match="sans titre"):
         bare.load()
+
+
+# --- several commits, joined by a witness pass (D-335, D-336) ------------------------
+
+LATER = "b" * 40
+
+
+def _on(path: Path, commit: str, **changes) -> dict:
+    report = json.loads(path.read_text(encoding="utf-8"))
+    report.update(commit=commit, **changes)
+    path.write_text(json.dumps(report), encoding="utf-8")
+    return report
+
+
+def _witness(study: etude.Etude, report: dict, identique: bool = True) -> Path:
+    path = study.rapports / etude.TEMOINS / f"{LATER[:7]}.json"
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(json.dumps({
+        "etude": study.nom, "passe": study.witness_pass(), "reference": COMMIT,
+        "commit": LATER, "dirty": False, "where": "là", "computed": "2026-11-04",
+        "identique": identique, "ecarts": [], "rapport": report}), encoding="utf-8")
+    return path
+
+
+def _replayed(study: etude.Etude, **changes) -> dict:
+    """The witness pass's report as a replay on LATER gives it: another day, another place,
+    the same request and reply unless `changes` says otherwise."""
+    report = json.loads((study.rapports / study.witness_pass()).read_text(encoding="utf-8"))
+    return {**report, "commit": LATER, "computed": "2026-11-04", "where": "là", **changes}
+
+
+def test_a_second_commit_without_its_witness_is_refused_with_the_command(plfss) -> None:
+    _on(plfss.rapports / "predictif_plf2027_art_74_apl.json", LATER)
+    with pytest.raises(etude.EtudeError, match="sont sur 2 commits") as error:
+        plfss.load()
+    assert f"impots etude temoin {plfss.nom}" in str(error.value)
+
+
+def test_a_second_commit_with_an_identical_witness_is_read_and_said(plfss) -> None:
+    """Fails on the code before D-335's rule: two commits were refused, witness or not."""
+    assert plfss.witness_pass() == "premiere_annee_plf2027_art_74_ppa.json"
+    _on(plfss.rapports / "predictif_plf2027_art_74_apl.json", LATER)
+    _witness(plfss, _replayed(plfss))
+    entries = plfss.load()
+    assert entries[0]["commits"][0] == (COMMIT, None)
+    assert [c for c, _ in entries[0]["commits"]] == [COMMIT, LATER]
+    text = plfss.render(entries)
+    assert "Les passes ont tourné sur 2 commits, ici" in text
+    assert f"* `{COMMIT[:7]}`, le premier." in text
+    assert (f"* `{LATER[:7]}`, rejoint par `{etude._relative(plfss.rapports)}/temoins/"
+            f"{LATER[:7]}.json`, témoin du 2026-11-04.") in text
+
+
+@pytest.mark.parametrize("how", ["autre-cout", "dit-different", "autre-passe",
+                                 "autre-reference", "rapport-sur-un-autre-commit"])
+def test_a_witness_that_does_not_give_the_report_again_is_refused(plfss, how) -> None:
+    """A witness is compared anew, not believed: one that says « identique » over another
+    reply, or names another pass or another first commit, joins nothing."""
+    _on(plfss.rapports / "predictif_plf2027_art_74_apl.json", LATER)
+    report = _replayed(plfss)
+    if how == "autre-cout":
+        report["response"] = {**report["response"],
+                              "reform_cost": report["response"]["reform_cost"] + 1.0}
+    if how == "rapport-sur-un-autre-commit":
+        report["commit"] = COMMIT
+    path = _witness(plfss, report, identique=how != "dit-different")
+    witness = json.loads(path.read_text(encoding="utf-8"))
+    if how == "autre-passe":
+        witness["passe"] = "premiere_annee_plf2027_art_74_apl.json"
+    if how == "autre-reference":
+        witness["reference"] = "c" * 40
+    path.write_text(json.dumps(witness), encoding="utf-8")
+    with pytest.raises(etude.EtudeError, match="n'a pas de passe témoin"):
+        plfss.load()
+
+
+def test_the_differences_are_value_and_type_outside_date_commit_and_place() -> None:
+    a = {"commit": "x", "computed": "1", "where": "ici", "dirty": False,
+         "response": {"cost": 3, "rows": [1.0, 2.0]}}
+    assert etude.ecarts(a, {**a, "commit": "y", "computed": "2", "where": "là"}) == []
+    assert etude.ecarts(a, {**a, "response": {"cost": 3.0, "rows": [1.0, 2.0]}}) == [
+        "/response/cost"]
+    assert etude.ecarts(a, {**a, "response": {"cost": 3, "rows": [1.0]}}) == [
+        "/response/rows (2 éléments au lieu de 1)"]
+    assert etude.ecarts(a, {**a, "extra": 1}) == ["/extra"]
+
+
+@pytest.fixture
+def witnessing(plfss, monkeypatch):
+    """`impots etude temoin` on LATER, its pass replayed by a stand-in that writes the
+    report `replay` holds where the command says."""
+    from impots.predictif import recherche
+
+    replay: dict = {"report": _replayed(plfss)}
+    commands: list = []
+
+    def run(command, **kw):
+        commands.append(command)
+        out = Path(command[command.index("--sortie") + 1])
+        out.write_text(json.dumps(replay["report"]), encoding="utf-8")
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(etude.subprocess, "run", run)
+    monkeypatch.setattr(recherche, "code_state", lambda root=None: (LATER, False))
+    return SimpleNamespace(study=plfss, replay=replay, commands=commands,
+                           out=plfss.rapports / etude.TEMOINS / f"{LATER[:7]}.json")
+
+
+def test_the_witness_replays_the_shortest_pass_and_says_identical(witnessing) -> None:
+    assert witnessing.study.witness("là") == 0
+    command = witnessing.commands[0]
+    assert command[command.index("etude") + 1:command.index("etude") + 4] == [
+        "premiere", "plfss2027", "plf2027_art_74_ppa"]
+    witness = json.loads(witnessing.out.read_text(encoding="utf-8"))
+    assert witness["identique"] is True and witness["ecarts"] == []
+    assert (witness["reference"], witness["commit"]) == (COMMIT, LATER)
+    # The committed report is not touched; a second witness is not written over the first.
+    assert json.loads((witnessing.study.rapports / witnessing.study.witness_pass())
+                      .read_text(encoding="utf-8"))["commit"] == COMMIT
+    assert witnessing.study.witness("là") == 1
+
+
+def test_a_witness_that_differs_is_written_as_such_and_fails(witnessing, capsys) -> None:
+    report = witnessing.replay["report"]
+    report["response"] = {**report["response"],
+                          "reform_cost": report["response"]["reform_cost"] * 2}
+    assert witnessing.study.witness("là") == 1
+    witness = json.loads(witnessing.out.read_text(encoding="utf-8"))
+    assert witness["identique"] is False and witness["ecarts"] == ["/response/reform_cost"]
+    assert "n'est PAS redonné à l'identique" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("how, needle", [
+    ("dirty", "modifications non commitées"),
+    ("same", "est déjà sur le commit"),
+    ("absent", "le témoin rejoue une passe déjà faite"),
+])
+def test_the_witness_refuses_before_its_pass(witnessing, monkeypatch, capsys, how,
+                                             needle) -> None:
+    from impots.predictif import recherche
+
+    if how == "dirty":
+        monkeypatch.setattr(recherche, "code_state", lambda root=None: (LATER, True))
+    if how == "same":
+        monkeypatch.setattr(recherche, "code_state", lambda root=None: (COMMIT, False))
+    if how == "absent":
+        for path in witnessing.study.rapports.glob("premiere_annee_*.json"):
+            path.unlink()
+    assert witnessing.study.witness("là") == 1
+    assert witnessing.commands == [] and needle in capsys.readouterr().err
+    assert not witnessing.out.exists()
 
 
 def test_in_mirror_a_firm_s_tax_turns_over() -> None:

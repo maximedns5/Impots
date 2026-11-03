@@ -195,3 +195,44 @@ def test_the_launcher_refuses_before_any_pass(launcher, capsys, how: str,
         launcher.git[("branch", "-r", "--contains", "HEAD")] = ""
     assert launcher.study.launch("ici") == 1
     assert launcher.calls == [] and needle in capsys.readouterr().err
+
+
+def _report_on(launcher, name: str, commit: str) -> dict:
+    launcher.out.mkdir(exist_ok=True)
+    report = {"scenario": name, "commit": commit, "dirty": False, "where": "avant"}
+    (launcher.out / f"premiere_annee_{name}.json").write_text(json.dumps(report),
+                                                              encoding="utf-8")
+    return report
+
+
+def _steps(launcher) -> list:
+    return [("premiere", c[c.index("premiere") + 2]) if "premiere" in c
+            else ("predictif", c[c.index("predictif") + 1]) for c in launcher.calls]
+
+
+def test_an_interrupted_series_resumes_after_the_reports_on_its_commit(launcher,
+                                                                       capsys) -> None:
+    """D-335 : une série arrêtée après sa première année reprend à la deuxième, sur le
+    même commit ; le rapport déjà là n'est pas réécrit."""
+    first = launcher.study.noms[0]
+    _report_on(launcher, first, "c0ffee")
+    assert launcher.study.launch("ici") == 0
+    assert _steps(launcher) == [("premiere", n) for n in launcher.study.noms[1:]] + [
+        ("predictif", n) for n in launcher.study.noms]
+    assert f"premiere_annee_{first}.json : déjà là" in capsys.readouterr().out
+
+
+def test_a_series_resumes_on_a_commit_a_witness_joins_and_not_on_another(launcher,
+                                                                          capsys) -> None:
+    first = launcher.study.noms[0]
+    report = _report_on(launcher, first, "a" * 40)
+    assert launcher.study.launch("ici") == 1
+    assert launcher.calls == []
+    assert "impots etude temoin plf2027" in capsys.readouterr().err
+    (launcher.out / etude.TEMOINS).mkdir()
+    (launcher.out / etude.TEMOINS / "c0ffee.json").write_text(json.dumps({
+        "passe": f"premiere_annee_{first}.json", "reference": "a" * 40, "commit": "c0ffee",
+        "identique": True, "where": "là", "computed": "2026-11-04",
+        "rapport": {**report, "commit": "c0ffee", "where": "là"}}), encoding="utf-8")
+    assert launcher.study.launch("ici") == 0
+    assert _steps(launcher)[0] == ("premiere", launcher.study.noms[1])

@@ -3,24 +3,34 @@
     impots etude lancer <nom> --ou "..."   # les passes, l'une après l'autre
     impots etude ecrire <nom>              # la page, depuis les seuls rapports commités
     impots etude verifier <nom>            # la page commitée est-elle celle des rapports ?
+    impots etude temoin <nom> --ou "..."   # la passe témoin, rejouée sur ce commit (D-335)
 
 Une étude est un fichier `etudes/<nom>.json` : les scénarios qu'elle chiffre, ménages ou
 entreprises, chacun avec son volet et son sens ; le texte dont elle dit les refus ; la
 D-entrée qui préenregistre ses passes. Pour chaque scénario, dans le cadre de D-289 : la
 première année, que chiffre l'appel du simulateur de sa chaîne (le coût, les gagnants et
 les perdants, la bande des comportements, l'éventail macro) ; le chemin annuel
-(`impots predictif`), dans le cadre des études (`etudes/cadres/`, D-336), qui donne la dette en
-fin de chemin à θ½ et aux coins de la boîte, dans les deux vues ; l'écart à l'évaluation
+(`impots predictif`), dans le cadre des études (`etudes/cadres/`, D-336), qui donne la
+dette en fin de chemin à θ½ et aux coins de la boîte, dans les deux vues ; l'écart à l'évaluation
 préalable quand le scénario a un cas noté.
 
 PRÉENREGISTRÉE COMME TOUTE PASSE. Avant la première passe, le lanceur refuse un `src/`
 modifié, une D-entrée de préenregistrement absente du commit, un commit qu'aucune branche
-distante ne porte, un rapport déjà là. Une passe à la fois : un chemin annuel occupe 6 Go
+distante ne porte. Une série interrompue reprend : les rapports déjà là sont sautés,
+s'ils sont sur ce commit ou sur un commit qu'une passe témoin y joint ; aucun n'est
+écrasé. Une passe à la fois : un chemin annuel occupe 6 Go
 (D-236), et chacune tourne dans son processus.
 
 RIEN N'EST SAISI. Chaque nombre de la page se lit dans un rapport, un enregistrement ou un
 triage, et `Etude.load` refuse les rapports qui ne sont pas ceux de l'étude : un autre
-scénario, un autre cadre, un `src/` modifié, un lieu non dit, deux commits.
+scénario, un autre cadre, un `src/` modifié, un lieu non dit, un deuxième commit sans
+témoin.
+
+UN CODE, OU DES COMMITS QUI NE CHANGENT AUCUN NOMBRE (D-335, D-336). Un rapport sur un
+autre commit que le premier est lu quand la passe témoin, la plus courte de l'étude
+rejouée sur ce commit, redonne son rapport à l'identique, hors date, commit et lieu. Le
+témoin est écrit sous `temoins/<sha>.json`, et relu, pas cru : `load` le compare de
+nouveau. La page dit chaque commit et le témoin qui le joint au premier.
 
 EN MIROIR. Un scénario en miroir chiffre l'opposé de la mesure (D-298) : la page dit la
 mesure, chaque réponse changée de signe. C'est exact pour ce qui est la différence de deux
@@ -56,6 +66,12 @@ FIELDS = {"nom", "titre", "texte", "preenregistrement", "cadre", "millesime_entr
 POINTS = ("bas", "candidat", "haut")
 #: Where a programme study keeps its ranges' reports, beside the two of its part.
 PLAGES = "plages"
+#: Where a study keeps its witness passes (D-335, D-336): one per commit after the first,
+#: `temoins/<short sha>.json`.
+TEMOINS = "temoins"
+#: What a witness does not compare: the day it ran, the code it named, where it ran. Every
+#: other field of the report, its request and its reply, must be the same, value and type.
+HORS_TEMOIN = ("computed", "commit", "dirty", "where")
 
 
 class EtudeError(ValueError):
@@ -237,6 +253,28 @@ def plage_name(mesure: str, champ: str, point: str) -> str:
 
 def _git(*args: str) -> str:
     return subprocess.check_output(["git", *args], cwd=ROOT, text=True)
+
+
+def ecarts(a: Any, b: Any, at: str = "") -> list[str]:
+    """Where two reports part, each a path in them; none if they are the same, value and
+    type (3 is not 3.0), outside `HORS_TEMOIN` at their top."""
+    if not at and isinstance(a, dict) and isinstance(b, dict):
+        a = {k: v for k, v in a.items() if k not in HORS_TEMOIN}
+        b = {k: v for k, v in b.items() if k not in HORS_TEMOIN}
+    if isinstance(a, dict) and isinstance(b, dict):
+        out: list[str] = []
+        for key in sorted(set(a) | set(b), key=str):
+            if key not in a or key not in b:
+                out.append(f"{at}/{key}")
+            else:
+                out += ecarts(a[key], b[key], f"{at}/{key}")
+        return out
+    if isinstance(a, list) and isinstance(b, list):
+        if len(a) != len(b):
+            return [f"{at} ({len(a)} éléments au lieu de {len(b)})"]
+        return [x for i, (u, v) in enumerate(zip(a, b, strict=True))
+                for x in ecarts(u, v, f"{at}[{i}]")]
+    return [] if type(a) is type(b) and a == b else [at or "/"]
 
 
 # --------------------------------------------------------------------------- #
@@ -621,8 +659,7 @@ class _Programme:
         w("")
 
     def refusals(self, w: Any, entries: list[dict[str, Any]], n: Nombres) -> None:
-        commit = entries[0]["first"]["commit"]
-        self._plages(w, n, self.study.load_plages(commit))
+        self._plages(w, n, entries[0]["plages"])
         self._mesures(w, n)
         self._annonce(w, n)
 
@@ -916,10 +953,41 @@ class Etude:
                     "préenregistrement poussé.")
         return None
 
+    def _env(self) -> dict[str, str]:
+        # The first years call the simulator in their own process, closed without a key
+        # since D-295: a pass is local, and opens it for itself.
+        return {**os.environ, "PYTHONPATH": str(ROOT / "src"),
+                "IMPOTS_FIRM_VINTAGE": self.millesime_entreprises, "IMPOTS_AUTH": "aucune"}
+
+    def resume(self, commit: str, passes: list[str]) -> str | None:
+        """Why the reports already there may not stand beside the passes still to run on
+        `commit`, or None. A report stands when it is on `commit`, or on a commit a witness
+        joins to it (D-335): a series resumes, and no report is written over."""
+        there = ({str(p.relative_to(self.rapports)) for p in self.rapports.rglob("*.json")
+                  if p.parent.name != TEMOINS} if self.rapports.exists() else set())
+        if there - set(passes):
+            return (f"{self.rapports} porte {sorted(there - set(passes))}, qui n'est pas une "
+                    f"passe de l'étude : un rapport n'est pas écrasé en silence.")
+        if not there:
+            return None
+        joined = self.joined()
+        for name in sorted(there):
+            report = _read(self.rapports / name)
+            on = report.get("commit")
+            if not on or report.get("dirty") is not False:
+                return (f"{name} ne nomme pas un commit dont il a chiffré le code : un rapport "
+                        f"n'est pas écrasé en silence.")
+            if on != commit and not {on, commit} <= joined:
+                return (f"{name} est sur le commit `{on[:7]}`, et la série reprendrait sur "
+                        f"`{commit[:7]}`, qu'aucune passe témoin ne joint à lui : un rapport "
+                        f"n'est pas écrasé en silence. Sur ce commit, `impots etude temoin "
+                        f"{self.nom} --ou \"…\"` rejoue la passe témoin (D-335).")
+        return None
+
     def launch(self, where: str) -> int:
         from impots.predictif import recherche
 
-        _, dirty = recherche.code_state(ROOT)
+        commit, dirty = recherche.code_state(ROOT)
         if dirty:
             print("src/ a des modifications non commitées : les rapports nommeraient un "
                   "commit dont ils n'ont pas chiffré le code. Commiter d'abord.",
@@ -929,17 +997,16 @@ class Etude:
         if why:
             print(why, file=sys.stderr)
             return 1
-        there = ([str(p.relative_to(self.rapports)) for p in self.rapports.rglob("*.json")]
-                 if self.rapports.exists() else [])
-        if there:
-            print(f"{self.rapports} porte déjà {there} : un rapport n'est pas écrasé en "
-                  f"silence.", file=sys.stderr)
+        passes = self.passes(where)
+        why = self.resume(commit, [report for report, _ in passes])
+        if why:
+            print(why, file=sys.stderr)
             return 1
-        # The first years call the simulator in their own process, closed without a key
-        # since D-295: a pass is local, and opens it for itself.
-        env = {**os.environ, "PYTHONPATH": str(ROOT / "src"),
-               "IMPOTS_FIRM_VINTAGE": self.millesime_entreprises, "IMPOTS_AUTH": "aucune"}
-        for report, command in self.passes(where):
+        env = self._env()
+        for report, command in passes:
+            if (self.rapports / report).exists():
+                print(f"== {report} : déjà là, la série reprend après lui", flush=True)
+                continue
             print(f"== {report}", flush=True)
             code = subprocess.run([sys.executable, *command], cwd=ROOT, env=env).returncode
             if code:
@@ -948,31 +1015,144 @@ class Etude:
                 return code
         return 0
 
-    def write_first_year(self, name: str, *, where: str) -> Path:
-        if name not in self.noms:
-            raise EtudeError(f"{name} n'est pas un scénario de l'étude « {self.nom} » : "
-                             f"{list(self.noms)}")
-        report = first_year(name, where=where, scenarios=self.scenarios, mixte=self.mixte)
-        self.rapports.mkdir(parents=True, exist_ok=True)
-        path = self.rapports / f"premiere_annee_{name}.json"
-        path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
-                        encoding="utf-8")
-        return path
+    # -- the witness (D-335, D-336) ---------------------------------------------- #
 
-    def write_plage(self, mesure: str, champ: str, point: str, *, where: str) -> Path:
-        if (mesure, champ, point) not in self.points():
-            raise EtudeError(f"{mesure}/{champ}/{point} n'est pas un point de l'étude "
-                             f"« {self.nom} ».")
-        report = plage(self.cadre, self.programme, mesure, champ, point, where=where)
-        path = self.rapports / PLAGES / plage_name(mesure, champ, point)
+    def witness_pass(self, reports: Path | None = None) -> str:
+        """The study's shortest pass, which a witness replays: a range point by the fast
+        path, or a first year when the study has no range; the first of them it has."""
+        reports = reports or self.rapports
+        candidates = ([f"{PLAGES}/{plage_name(*point)}" for point in self.points()]
+                      + [f"premiere_annee_{name}.json" for name in self.noms])
+        return next((c for c in candidates if (reports / c).exists()), candidates[0])
+
+    def witnesses(self, reports: Path | None = None) -> tuple[str | None, dict[str, dict]]:
+        """(C0, {Ck: witness}): C0 the commit of the witness pass's report, each Ck a commit
+        on which that pass, replayed, gave the report again, outside `HORS_TEMOIN`. A
+        witness is read again here, not believed: its report is compared anew."""
+        reports = reports or self.rapports
+        name = self.witness_pass(reports)
+        if not (reports / name).exists():
+            return None, {}
+        reference = _read(reports / name)
+        first = reference.get("commit")
+        out: dict[str, dict] = {}
+        folder = reports / TEMOINS
+        for path in sorted(folder.glob("*.json")) if folder.exists() else []:
+            witness = _read(path)
+            commit = witness.get("commit") or ""
+            report = witness.get("rapport") or {}
+            if (witness.get("passe") == name and witness.get("reference") == first
+                    and witness.get("identique") is True and commit and commit != first
+                    and path.name == f"{commit[:7]}.json" and witness.get("where")
+                    and report.get("commit") == commit and report.get("dirty") is False
+                    and not ecarts(report, reference)):
+                out[commit] = witness
+        return first, out
+
+    def joined(self, reports: Path | None = None) -> set[str]:
+        """The commits whose reports read as one study's: C0 and every commit a witness
+        joins to it."""
+        first, covered = self.witnesses(reports)
+        return ({first} | set(covered)) if first else set()
+
+    def commits(self, used: set[str],
+                reports: Path | None = None) -> list[tuple[str, dict | None]]:
+        """The study's commits, in order, each after the first with the witness that joins
+        it to the first; refused when one has none (D-335)."""
+        first, covered = self.witnesses(reports)
+        name = self.witness_pass(reports)
+        alone = sorted(c for c in used if c != first and c not in covered)
+        if first not in used or alone:
+            raise EtudeError(
+                f"les rapports de l'étude sont sur {len(used)} commits "
+                f"({sorted(c[:7] for c in used)}) : {sorted(c[:7] for c in alone)} n'a pas "
+                f"de passe témoin qui redonne `{name}` à l'identique. Sur chacun, "
+                f"`impots etude temoin {self.nom} --ou \"…\"` la rejoue (D-335).")
+        later = sorted(used - {first}, key=lambda c: (covered[c].get("computed") or "", c))
+        return [(first, None)] + [(c, covered[c]) for c in later]
+
+    def witness(self, where: str) -> int:
+        """`impots etude temoin` : replay the witness pass on this commit, and write what it
+        gave beside the report it replays, `temoins/<sha>.json`, identical or not."""
+        import tempfile
+
+        from impots.predictif import recherche
+
+        commit, dirty = recherche.code_state(ROOT)
+        if dirty:
+            print("src/ a des modifications non commitées : le témoin nommerait un commit "
+                  "dont il n'a pas chiffré le code. Commiter d'abord.", file=sys.stderr)
+            return 1
+        name = self.witness_pass()
+        if not (self.rapports / name).exists():
+            print(f"{_relative(self.rapports)} n'a pas `{name}` : le témoin rejoue une passe "
+                  f"déjà faite.", file=sys.stderr)
+            return 1
+        reference = _read(self.rapports / name)
+        if reference.get("commit") == commit:
+            print(f"`{name}` est déjà sur le commit `{commit[:7]}` : un témoin y serait la "
+                  f"même passe.", file=sys.stderr)
+            return 1
+        out = self.rapports / TEMOINS / f"{commit[:7]}.json"
+        if out.exists():
+            print(f"{_relative(out)} existe : un témoin n'est pas écrasé.", file=sys.stderr)
+            return 1
+        command = dict(self.passes(where))[name]
+        with tempfile.TemporaryDirectory() as folder:
+            replayed = Path(folder) / "rapport.json"
+            print(f"== {name}, témoin sur `{commit[:7]}`", flush=True)
+            code = subprocess.run([sys.executable, *command, "--sortie", str(replayed)],
+                                  cwd=ROOT, env=self._env()).returncode
+            if code:
+                print(f"{name} : la commande a rendu {code}, aucun témoin n'est écrit.",
+                      file=sys.stderr)
+                return code
+            report = _read(replayed)
+        found = ecarts(report, reference)
+        same = (not found and report.get("commit") == commit
+                and report.get("dirty") is False)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps({
+            "etude": self.nom, "passe": name, "reference": reference.get("commit"),
+            "commit": commit, "dirty": False, "where": where,
+            "computed": date.today().isoformat(), "identique": same,
+            "ecarts": found[:50], "rapport": report}, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8")
+        if same:
+            print(f"-> {_relative(out)} : `{name}` redonné à l'identique sur `{commit[:7]}`, "
+                  f"hors {', '.join(HORS_TEMOIN)}.")
+            return 0
+        print(f"-> {_relative(out)} : `{name}` n'est PAS redonné à l'identique sur "
+              f"`{commit[:7]}` ({len(found)} écarts : {found[:5]}). Ce commit ne rejoint pas "
+              f"l'étude : sa série se rejoue.", file=sys.stderr)
+        return 1
+
+    def _write(self, path: Path, report: dict[str, Any]) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
                         encoding="utf-8")
         return path
 
-    def load_plages(self, commit: str, reports: Path | None = None) -> list[dict[str, Any]]:
+    def write_first_year(self, name: str, *, where: str, sortie: Path | None = None) -> Path:
+        if name not in self.noms:
+            raise EtudeError(f"{name} n'est pas un scénario de l'étude « {self.nom} » : "
+                             f"{list(self.noms)}")
+        report = first_year(name, where=where, scenarios=self.scenarios, mixte=self.mixte)
+        return self._write(sortie or self.rapports / f"premiere_annee_{name}.json", report)
+
+    def write_plage(self, mesure: str, champ: str, point: str, *, where: str,
+                    sortie: Path | None = None) -> Path:
+        if (mesure, champ, point) not in self.points():
+            raise EtudeError(f"{mesure}/{champ}/{point} n'est pas un point de l'étude "
+                             f"« {self.nom} ».")
+        report = plage(self.cadre, self.programme, mesure, champ, point, where=where)
+        return self._write(sortie or self.rapports / PLAGES / plage_name(mesure, champ, point),
+                           report)
+
+    def load_plages(self, reports: Path | None = None) -> list[dict[str, Any]]:
         """Each range point's report, refused unless it is the study's: its request as the
-        programme and the frame give it now, on the study's commit, said where."""
+        programme and the frame give it now, on a clean commit, said where. Its commit is
+        one of the study's, which `load` checks."""
         reports = (reports or self.rapports) / PLAGES
         wanted = {plage_name(*point) for point in self.points()}
         there = {p.name for p in reports.glob("*.json")} if reports.exists() else set()
@@ -983,12 +1163,12 @@ class Etude:
         for mesure, champ, point in self.points():
             report = _read(reports / plage_name(mesure, champ, point))
             request = plage_request(self.cadre, self.programme, mesure, champ, point)
-            if (report.get("request") != request or report.get("commit") != commit
+            if (report.get("request") != request or not report.get("commit")
                     or report.get("dirty") is not False or not report.get("where")
                     or (report.get("programme"), report.get("mesure"), report.get("champ"),
                         report.get("point")) != (self.programme, mesure, champ, point)):
                 raise EtudeError(f"{mesure}/{champ}/{point} : le rapport n'est pas le point "
-                                 f"de l'étude, sur son commit `{commit[:7]}`, dit où.")
+                                 f"de l'étude, sur un commit propre, dit où.")
             out.append(report)
         return out
 
@@ -1094,10 +1274,13 @@ class Etude:
                 "debt": [{**row, "theta": sign * row["theta"],
                           "corners": [sign * c for c in row["corners"]]}
                          for row in debt(path)]})
-        if len(commits) != 1:
-            raise EtudeError(f"les rapports de l'étude sont sur {len(commits)} commits "
-                             f"({sorted(c[:7] for c in commits)}) : une seule étude se lit "
-                             f"sur un seul code.")
+        plages = self.load_plages(reports) if self.programme is not None else []
+        commits |= {r["commit"] for r in plages}
+        # One study reads on one code, or on commits a witness pass joins to the first: on
+        # each, the pass replayed gave its report again (D-335, D-336).
+        joined = self.commits(commits, reports)
+        for entry in entries:
+            entry.update(commits=joined, plages=plages)
         return entries
 
     # -- the page ---------------------------------------------------------------- #
@@ -1192,8 +1375,25 @@ class Etude:
         w("")
         path = entries[0]["path"]
         first = entries[0]["first"]
-        w(f"Les passes ont tourné sur le commit `{first['commit'][:7]}`, {first['where']}. "
-          f"Cadre du chemin annuel : {n(path['growth_name'], 'hypothèse')} ; "
+        commits = entries[0]["commits"]
+        if len(commits) > 1:
+            # Several commits, each after the first joined to it by its witness (D-335).
+            w(f"Les passes ont tourné sur {len(commits)} commits, {first['where']} ; chaque "
+              f"rapport nomme le sien. Un commit après le premier rejoint l'étude quand sa "
+              f"passe témoin, `{self.witness_pass()}` rejouée sur lui, redonne son rapport à "
+              f"l'identique, hors date, commit et lieu (D-335) :")
+            w("")
+            for commit, witness in commits:
+                w(f"* `{commit[:7]}`, le premier." if witness is None else
+                  f"* `{commit[:7]}`, rejoint par "
+                  f"`{_relative(self.rapports)}/{TEMOINS}/{commit[:7]}.json`, témoin du "
+                  f"{witness['computed']}.")
+            w("")
+            opening = "Cadre"
+        else:
+            opening = (f"Les passes ont tourné sur le commit `{first['commit'][:7]}`, "
+                       f"{first['where']}. Cadre")
+        w(f"{opening} du chemin annuel : {n(path['growth_name'], 'hypothèse')} ; "
           f"{n(path['rate_name'], 'hypothèse')} ; {n(path['spending_name'], 'hypothèse')} ; "
           f"droit reconduit tel qu'openfisca le porte ; θ½ sur "
           f"toutes les lignes ; comportements et boucle macro appliqués.")

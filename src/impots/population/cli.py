@@ -1628,12 +1628,17 @@ def cmd_etude(args: argparse.Namespace) -> int:
         study = etude.definition(args.nom)
         if args.action == "lancer":
             return study.launch(args.ou)
+        sortie = Path(args.sortie) if getattr(args, "sortie", None) else None
         if args.action == "premiere":
-            print(f"  -> {study.write_first_year(args.scenario, where=args.ou)}")
+            print(f"  -> {study.write_first_year(args.scenario, where=args.ou, sortie=sortie)}")
             return 0
         if args.action == "plage":
-            print(f"  -> {study.write_plage(args.mesure, args.champ, args.point, where=args.ou)}")
+            written = study.write_plage(args.mesure, args.champ, args.point, where=args.ou,
+                                        sortie=sortie)
+            print(f"  -> {written}")
             return 0
+        if args.action == "temoin":
+            return study.witness(args.ou)
         if args.action == "ecrire":
             text = study.render(study.load())
             study.page.parent.mkdir(parents=True, exist_ok=True)
@@ -2236,6 +2241,14 @@ def build_parser() -> argparse.ArgumentParser:
     for arg in ("nom", "mesure", "champ", "point"):
         point.add_argument(arg)
     point.add_argument("--ou", required=True)
+    for passe in (premiere, point):
+        passe.add_argument("--sortie", help="écrire le rapport là, et non sous les rapports "
+                                            "de l'étude : la passe témoin (D-335)")
+    temoin = etude_actions.add_parser(
+        "temoin", help="rejouer la passe la plus courte de l'étude sur ce commit, et dire si "
+                       "elle redonne son rapport à l'identique (D-335, D-336)")
+    temoin.add_argument("nom")
+    temoin.add_argument("--ou", required=True)
     for action, text in (("ecrire", "la page, depuis les seuls rapports commités"),
                          ("verifier", "la page commitée est-elle celle de ses rapports ?")):
         etude_actions.add_parser(action, help=text).add_argument("nom")
