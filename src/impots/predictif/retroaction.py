@@ -64,7 +64,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import Any, Literal
 
 from impots.macro import mesange
 from impots.macro.fan import MULTIPLIER_FAMILY, _require
@@ -244,6 +244,36 @@ def read_horizon(horizon: int, persistence: str | None, read: tuple[int, ...],
     # `compute` refuses a path past the short horizon without a persistence scenario.
     assert persistence is not None
     return None if persistence == "eteint" else short
+
+
+def covers(store: Store, instrument: str) -> bool:
+    """Whether the loop reads `instrument`: a uniform fiscal variant with a balance row."""
+    spec = mesange.VARIANTS.get(instrument)
+    return (instrument not in NOT_ACTIVITY and spec is not None and not spec.targeted
+            and is_fiscal(instrument)
+            and instrument in _require(store, BALANCE_TABLE).values)
+
+
+def replay_tables(store: Store, instruments: Sequence[str]) -> dict[str, Any]:
+    """The numbers the loop reads for `instruments`, written out so that a report can be
+    replayed without the store (D-336, decision 6, `predictif.rejouer`): the horizons
+    read, the short one, and for each instrument the loop covers its GDP and balance rows
+    at those horizons, its IMK standard deviation and its gross ex ante cost per point."""
+    read = read_horizons(store)
+    multipliers = _require(store, MULTIPLIER_TABLE)
+    balance = _require(store, BALANCE_TABLE)
+    dispersion = _require(store, "multiplier_dispersion")
+    tables = {}
+    for instrument in sorted(set(instruments)):
+        if not covers(store, instrument):
+            continue
+        tables[instrument] = {
+            "pib": {str(h): multipliers.at(instrument, str(h)) for h in read},
+            "solde": {str(h): balance.at(instrument, str(h)) for h in read},
+            "sd": dispersion.at(MULTIPLIER_FAMILY[instrument], "all"),
+            "brut": mesange.VARIANTS[instrument].ex_ante_points,
+        }
+    return {"horizons": list(read), "court": short_horizon(store), "instruments": tables}
 
 
 def _response(store: Store, instrument: str, horizon: int, theta: float,

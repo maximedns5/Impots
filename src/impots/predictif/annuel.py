@@ -185,6 +185,17 @@ class Rapport:
     annees: tuple[int, ...] = ()
     """The years the text applies the measure in, when it names them; the reform is
     empty the others (D-288). Empty, every year."""
+    statistiques: dict[int, dict[str, Any]] | None = None
+    """By year and view, what the chain read of each pass: the impulse by instrument,
+    what it could not map, the receipts channels' sufficient statistics and the share of
+    C1 at the floor (D-336, decision 6); None without behaviour or the loop."""
+    rejeu: dict[str, Any] | None = None
+    """What a replay reads besides them, once: the frame's numbers, the reference's
+    rates and the marginal rate, the claimed rows with their bounds, the Mésange and IMK
+    tables of the instruments the loop reads, the box's rows (`rejouer`)."""
+    monte_carlo: dict[str, Any] | None = None
+    """The distribution of Δb at the last year under declared laws, beside the box
+    (D-336, decision 6, `montecarlo`); None without behaviour or the loop."""
 
     @property
     def aged(self) -> chaine.Trajectoire:
@@ -219,10 +230,19 @@ class Rapport:
             # Only with a firm reform: a household report reads as it always did.
             if price.layers is not None:
                 row["mechanical_by_layer"] = {v: dict(c) for v, c in price.layers.items()}
+            # Only with behaviour or the loop: what a replay reads (D-336, decision 6).
+            if self.statistiques is not None:
+                row["statistiques"] = self.statistiques[price.year]
             rows.append(row)
         common = [c for c in lead.aged.conventions
                   if all(c in p.aged.conventions for p in self.paths)]
+        extra: dict[str, Any] = {}
+        if self.rejeu is not None:
+            extra["rejeu"] = self.rejeu
+        if self.monte_carlo is not None:
+            extra["monte_carlo"] = self.monte_carlo
         return {
+            **extra,
             "scenario": self.scenario, "titre": self.titre, "source": self.source,
             "reference": self.reference, "computed": self.computed,
             "spending_name": lead.aged.spending_name,
@@ -350,8 +370,16 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
                       else None),
             uncovered=uncovered, behaviour_asked=bool(unread))
 
+    central: dict[str, chaine.ReformCosts] = {}
+
+    def at_theta(view: str) -> chaine.ReformCosts:
+        """The view's costs at θ, evaluated once for every persistence and the replay."""
+        if view not in central:
+            central[view] = costs(view)
+        return central[view]
+
     def path(view: str, persistence: str | None) -> chaine.Trajectoire:
-        return chaine.run(start, horizon=len(prices), costs=costs(view), spending=spending,
+        return chaine.run(start, horizon=len(prices), costs=at_theta(view), spending=spending,
                           growth=growth, rate=rate, theta=theta, securities=securities,
                           store=store, persistence=persistence, macro_store=macro_store)
 
@@ -385,11 +413,102 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
             keys.append(MACRO_ROW)
         if keys:
             box = _theta_box(keys, paths, year=prices[-1].year, theta=theta, debt=debt)
+    statistiques = rejeu = monte = None
+    if whole:
+        statistiques = _statistics(prices, {v: at_theta(v) for v in VIEWS})
+        rejeu = _replay_frame(
+            start, prices, spending=spending, growth=growth, rate=rate,
+            securities=securities, looped=looped, behavioural=behavioural,
+            claimed=(comportement.claimed_open_rows(claimed_store, reform)
+                     if behavioural else ()),
+            store=claimed_store, macro_store=macro_store, statistiques=statistiques,
+            box_rows=box["rows"] if box else [])
+        if box:
+            from impots.predictif import montecarlo
+
+            monte = montecarlo.run({"years": [{"year": p.year, "basis": p.basis,
+                                                "mechanical_frozen_eur": p.frozen_eur,
+                                                "mechanical_aged_eur": p.aged_eur,
+                                                "statistiques": statistiques[p.year]}
+                                               for p in prices],
+                                    "rejeu": rejeu})
     return Rapport(scenario=scenario, titre=titre, source=source, reference=reference,
                    computed=computed, start=start, prices=tuple(prices), paths=paths,
                    uprating_note=uprating_note, behavioural=behavioural, macro=macro,
                    firm_note=firm_note, theta_box=box, commit=commit, dirty=dirty,
-                   where=where, annees=tuple(annees))
+                   where=where, annees=tuple(annees), statistiques=statistiques,
+                   rejeu=rejeu, monte_carlo=monte)
+
+
+def _start(start: Start) -> dict[str, Any]:
+    return {"year": start.year, "debt_ratio": start.debt_ratio,
+            "primary_balance": start.primary_balance, "implicit_rate": start.implicit_rate,
+            "gdp_eur": start.gdp_eur, "receipts_ratio": start.receipts_ratio,
+            "spending_ratio": start.spending_ratio}
+
+
+def _statistics(prices: list[YearPrice],
+                at_theta: dict[str, chaine.ReformCosts]) -> dict[int, dict[str, Any]]:
+    """By year and view, what the chain read of each pass (D-336, decision 6)."""
+    out: dict[int, dict[str, Any]] = {}
+    for price in prices:
+        out[price.year] = {}
+        for view, costs in at_theta.items():
+            one = price.passes[view]
+            at = costs.behavioural[price.year] if costs.behavioural else None
+            stats = dict(at.statistics or {}) if at is not None else None
+            floor = stats.pop("c1_floor_share", None) if stats is not None else None
+            out[price.year][view] = {
+                "cost_eur": float(one.cost),
+                "impulses": ({k: float(v) for k, v in one.impulse.items()}
+                             if one.impulse is not None else None),
+                "uncovered": dict(one.uncovered),
+                "canaux": stats,
+                "c1_floor_share": floor,
+            }
+    return out
+
+
+def _replay_frame(start: Start, prices: list[YearPrice], *, spending: SpendingScenario,
+                  growth: GrowthScenario, rate: RateScenario, securities: list[Any] | None,
+                  looped: bool, behavioural: bool, claimed: tuple[str, ...], store: Any,
+                  macro_store: Any, statistiques: dict[int, dict[str, Any]],
+                  box_rows: list[str]) -> dict[str, Any]:
+    """What `rejouer` reads besides the years' statistics: the frame's numbers, the
+    reference's rates and the marginal rate, the claimed rows with their bounds and the
+    file each comes from, and the tables of the instruments the loop reads."""
+    from impots.dette.reference import reference_years
+    from impots.predictif import montecarlo
+
+    reference = reference_years(start, len(prices), spending=spending, growth=growth)
+    rates, marginal, _ = chaine._rate_path(start, rate, reference, spending, growth,
+                                           securities)
+    files = montecarlo.row_files()
+    lignes = {key: {"low": store[key].low, "central": store[key].central,
+                    "high": store[key].high, "un": store[key].theta_one,
+                    "loi": store[key].distribution, "fichier": files.get(key, key)}
+              for key in claimed}
+    macro: dict[str, Any] | None = None
+    if looped:
+        macro_store = macro_store if macro_store is not None else chaine_macro_store()
+        instruments = sorted({i for year in statistiques.values() for view in year.values()
+                              for i, v in (view["impulses"] or {}).items() if v})
+        macro = retroaction.replay_tables(macro_store, instruments)
+    return {
+        "version": 1, "start": _start(start),
+        "cadre": {"growth": {"real": growth.real, "prices": growth.prices},
+                  "spending": {"rule": spending.rule, "growth": spending.growth},
+                  "taux": {"kind": rate.kind, "market_rate": rate.market_rate,
+                           "reference": list(rates), "marginal": marginal}},
+        "looped": looped, "behavioural": behavioural, "lignes": lignes,
+        "macro": macro, "box_rows": list(box_rows),
+    }
+
+
+def chaine_macro_store() -> Any:
+    from impots.macro import store as macro_store_module
+
+    return macro_store_module.load()
 
 
 def annees_note(annees: tuple[int, ...]) -> str:

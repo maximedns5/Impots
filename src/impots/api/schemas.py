@@ -2197,6 +2197,9 @@ class PredictifPersistence(BaseModel):
 
 #: The layers a predictive first year's cost is ranged under, and sums over.
 FIRST_YEAR_LAYERS = ("menages", "entreprises")
+#: The persistences side by side: the three since D-336, or the two of a report written
+#: before it, which stays readable as it was published.
+SIDE_BY_SIDE = (["eteint", "lue", "tenu"], ["eteint", "tenu"])
 
 
 class PredictifResponse(BaseModel):
@@ -2262,7 +2265,7 @@ class PredictifResponse(BaseModel):
             raise ValueError(
                 "côte à côte, la réponse ne porte aucune trajectoire en propre : l'une des "
                 "deux en tête se lirait comme le défaut (D-230)")
-        if sorted(p.persistence for p in self.side_by_side) != ["eteint", "lue", "tenu"]:
+        if sorted(p.persistence for p in self.side_by_side) not in SIDE_BY_SIDE:
             raise ValueError("côte à côte, ce sont les trois scénarios de persistance, "
                              "chacun une fois")
         return self
@@ -2300,6 +2303,9 @@ class PredictifReportYear(BaseModel):
     mechanical_by_layer: dict[str, dict[str, float]] | None = None
     """By view, the cost by layer, when a firm reform is priced (D-246); absent from the
     reports of household reforms."""
+    statistiques: dict[str, dict[str, Any]] | None = None
+    """By view, the impulse by instrument, what it could not map, the receipts channels'
+    sufficient statistics and C1's share at the floor (D-336); absent before it."""
 
     @model_validator(mode="after")
     def _layers_sum_to_the_cost(self) -> PredictifReportYear:
@@ -2443,6 +2449,10 @@ class PredictifReportResponse(BaseModel):
     theta_box: PredictifThetaBox | None = None
     """With behaviour or the loop, Δb at the last year at θ and at the box's corners
     (D-275); absent from the reports before it."""
+    rejeu: dict[str, Any] | None = None
+    """What `predictif.rejouer` reads besides the years' statistics (D-336)."""
+    monte_carlo: dict[str, Any] | None = None
+    """The distribution of Δb at the last year under declared laws (D-336)."""
     commit: str | None = None
     dirty: bool | None = None
     where: str | None = None
@@ -2461,7 +2471,7 @@ class PredictifReportResponse(BaseModel):
                     "côte : celle en tête serait le défaut par la place qu'elle occupe "
                     "(D-230).")
             persistences = [p.persistence for p in self.side_by_side]
-            if sorted(persistences) != ["eteint", "lue", "tenu"]:
+            if sorted(persistences) not in SIDE_BY_SIDE:
                 raise ValueError(
                     f"scénarios côte à côte {persistences} : les trois persistances, chacune "
                     f"une fois (D-230).")
