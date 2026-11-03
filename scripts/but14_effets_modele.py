@@ -173,7 +173,8 @@ def main() -> None:
           impulses)
     cases = {"choc IR d'un point": payload_of(START, {"vieillie": (costs, impulses),
                                                        "figee": (costs, impulses)})}
-    for name in ("attal", "melenchon"):
+    for name in ("attal", "lisnard", "retailleau", "labib", "le_pen", "roussel",
+                 "tondelier", "melenchon"):
         start, views = candidate(name)
         cases[name.capitalize()] = payload_of(start, views)
     print("\n### Monte-Carlo sous « lue » (2 000 tirages, graine fixe), Δb 2035\n")
