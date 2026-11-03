@@ -295,7 +295,7 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
     persistences: list[str | None] = (
         [persistence] if persistence is not None
         else list(retroaction.PERSISTENCE_LABELS)
-        if looped and len(prices) > retroaction.MAX_HORIZON else [None])
+        if looped and len(prices) > retroaction.max_horizon(macro_store) else [None])
 
     claimed_store = store if store is not None else comportement.load()
 

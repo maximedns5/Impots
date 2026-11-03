@@ -43,7 +43,7 @@ parameters:
     value:
       from_source_table: gdp
       distribution: triangular
-      usable_horizons: ["1", "2", "3"]
+      usable_horizons: ["1", "2", "3", "5", "10"]
     applies_to: >
       Réponse du PIB en volume à un choc permanent de 1 point de PIB sur l'instrument,
       en écart au compte central. NEUF variantes, dont une ciblée bas salaires.
@@ -132,14 +132,24 @@ parameters:
         sauvé que parce qu'il exige toutes ses lignes sur la même page.
     confidence: medium
     note: >
-      CONFIANCE ABAISSÉE DE HIGH À MEDIUM, et les horizons longs sont retirés de
-      l'usage plutôt que pondérés. L'analyse de sensibilité §4.4 montre que les
-      colonnes 1 à 3 ans sont quasi invariantes aux quatre jeux d'hypothèses testés,
-      mais que le long terme est entièrement déterminé par un choix de spécification :
-      sous courbe de Phillips au lieu de « wage setting », le PIB LT des cotisations
-      employeurs tombe de 1,73 à 0,25, un facteur sept. `usable_horizons` s'arrête donc
-      à trois ans — ce qui coïncide avec le refus déjà posé par §0 de tout horizon
-      au-delà de trois ans, pour une raison indépendante et convergente.
+      CONFIANCE ABAISSÉE DE HIGH À MEDIUM, et le long terme est retiré de l'usage
+      plutôt que pondéré. L'analyse de sensibilité §4.4 montre que les colonnes 1 à 3
+      ans sont quasi invariantes aux quatre jeux d'hypothèses testés, mais que le long
+      terme est entièrement déterminé par un choix de spécification : sous courbe de
+      Phillips au lieu de « wage setting », le PIB LT des cotisations employeurs tombe
+      de 1,73 à 0,25, un facteur sept. La colonne LT reste donc refusée (D-055).
+
+      LES COLONNES 5 ET 10 ANS SONT LUES DEPUIS D-336 (décision 1), sur cette ligne et
+      sur la ligne de solde, et SEULEMENT par la persistance « lue » de la boucle
+      (`predictif.retroaction`), qui interpole linéairement entre les horizons imprimés
+      (4 entre 3 et 5, 6 à 9 entre 5 et 10). PORTÉE : ce sont les valeurs de la
+      spécification centrale (« wage setting ») ; sous courbe de Phillips elles tombent,
+      et la persistance « lue » le dit dans ses conventions. Les multiplicateurs
+      fiscaux de Mésange ne décroissent pas à 5 et 10 ans (IR 0,88, 0,81, 0,87) : la
+      persistance « éteint » faisait une falaise à l'an 4 que la source ne porte pas,
+      et « tenu » gelait l'an 3. Les deux restent publiées comme sensibilités, lues à 1,
+      2 et 3 ans. L'éventail et les indices, qui joignent la ligne d'emploi, restent
+      aux horizons qu'elle rend lisibles (1 à 3 ans).
 
       CONVENTION DE SIGNE, hypothèse et non lecture : les variantes publiées en hausse
       sont retournées pour ramener toutes les lignes à « réponse par point d'impulsion
@@ -213,7 +223,7 @@ parameters:
       from_source_table: solde_primaire_pts_pib
       absent_for: [cotisations_employeurs_ciblees]
       distribution: triangular
-      usable_horizons: ["1", "2", "3"]
+      usable_horizons: ["1", "2", "3", "5", "10"]
     applies_to: >
       Réponse du solde PRIMAIRE des APU, en points de PIB, à un choc permanent d'un
       point de PIB sur l'instrument, dans la même variante que `multiplier_by_instrument`
@@ -245,9 +255,12 @@ parameters:
 
       PAS D'AUTOFINANCEMENT À LIRE ICI. Le document avertit : « en conclure qu'il serait
       économiquement efficace de supprimer toutes les cotisations patronales puisque la
-      mesure serait autofinancée à terme est erroné » (folio 108). Les horizons longs,
-      où l'écart dépasse un point pour les cotisations, sont exclus pour le motif de
-      `multiplier_by_instrument`.
+      mesure serait autofinancée à terme est erroné » (folio 108). La colonne de long
+      terme, où l'écart dépasse un point pour les cotisations, est exclue pour le motif
+      de `multiplier_by_instrument`. Les colonnes 5 et 10 ans sont lues par la seule
+      persistance « lue » (D-336), interpolées entre horizons imprimés ; et la
+      rétroaction qu'en tire la boucle est bornée au coût brut du choc, pour la raison
+      du folio 108.
 
       VARIANTES LUES : les cotisations salariés et employeurs uniformes, la CSG, l'impôt
       sur le revenu et la TVA. La variante ciblée bas salaires (encadré 14, folio 109)

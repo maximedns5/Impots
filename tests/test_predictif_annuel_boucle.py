@@ -121,7 +121,8 @@ def test_past_three_years_both_persistences_stand_side_by_side() -> None:
             getattr(rapport, view)
     payload = rapport.payload()
     assert all(row["delta_aged"] is None for row in payload["years"])
-    off, held = payload["side_by_side"]
+    read, off, held = payload["side_by_side"]
+    assert read["label"] == retroaction.PERSISTENCE_LABELS["lue"]
     assert off["label"] == retroaction.PERSISTENCE_LABELS["eteint"]
     assert off["years"][:3] == held["years"][:3]
     assert off["years"][4]["delta_aged"] != held["years"][4]["delta_aged"]
@@ -201,7 +202,7 @@ def test_one_view_priced_whole_and_the_other_by_its_cost_alone_is_refused() -> N
 # --------------------------------------------------------------------------- #
 @pytest.mark.parametrize("how, needle", [
     ("own path too", "trajectoire en propre ET des scénarios"),
-    ("one scenario", "les deux persistances, chacune une fois"),
+    ("one scenario", "les trois persistances, chacune une fois"),
     ("short", "ne couvre pas toutes les années"),
     ("no path", "sans trajectoire pour certaines années"),
 ])
@@ -280,7 +281,7 @@ def test_the_command_prices_every_year_through_the_simulators_pass(command) -> N
     assert code == 0
     assert sorted(command["seen"]) == sorted(
         (y, v, True, True) for y in (2026, 2027, 2028, 2029) for v in ("vieillie", "figee"))
-    assert [p["persistence"] for p in report["side_by_side"]] == ["eteint", "tenu"]
+    assert [p["persistence"] for p in report["side_by_side"]] == ["lue", "eteint", "tenu"]
     assert report["behavioural"] and report["macro"] and report["theta_applied"]
     PredictifReportResponse.model_validate(report)
 
@@ -458,7 +459,7 @@ def test_the_box_at_theta_is_the_report_s_own_path() -> None:
     assert box["year"] == 2030
     assert box["rows"] == ["eti_all", "eti_top_decile", MACRO_ROW]
     drawn = {p["persistence"]: p["years"][-1] for p in payload["side_by_side"]}
-    assert [p["persistence"] for p in box["paths"]] == ["eteint", "tenu"]
+    assert [p["persistence"] for p in box["paths"]] == ["lue", "eteint", "tenu"]
     for path in box["paths"]:
         last = drawn[path["persistence"]]
         assert path["every_year"]["vieillie"]["theta"] == pytest.approx(last["delta_aged"],

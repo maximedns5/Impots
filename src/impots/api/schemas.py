@@ -1976,7 +1976,7 @@ class PredictifRequest(BaseModel):
     macro: bool = False
     """The GDP → receipts loop from Mésange's balance row (D-218). Off, the path is
     without it and says so; on, it reads only under « gele_en_volume »."""
-    persistence: Literal["eteint", "tenu"] | None = None
+    persistence: Literal["lue", "eteint", "tenu"] | None = None
     """Past three years, the loop needs one, and none is the default."""
     indices: list[str] | None = None
     """The §7 indices asked for, by key; all of them when omitted. The list is closed,
@@ -2055,7 +2055,7 @@ class ExplorationRequest(BaseModel):
     """Required, like the simulator's: no default, not even 1/2 (D-217)."""
     behavioural: bool = False
     macro: bool = False
-    persistence: Literal["eteint", "tenu"] | None = None
+    persistence: Literal["lue", "eteint", "tenu"] | None = None
 
     @model_validator(mode="after")
     def _check_exploration_bounds(self) -> ExplorationRequest:
@@ -2181,7 +2181,7 @@ class PredictifPersistence(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    persistence: Literal["eteint", "tenu"]
+    persistence: Literal["lue", "eteint", "tenu"]
     label: str
     reform: list[float]
     delta: list[float]
@@ -2262,8 +2262,8 @@ class PredictifResponse(BaseModel):
             raise ValueError(
                 "côte à côte, la réponse ne porte aucune trajectoire en propre : l'une des "
                 "deux en tête se lirait comme le défaut (D-230)")
-        if sorted(p.persistence for p in self.side_by_side) != ["eteint", "tenu"]:
-            raise ValueError("côte à côte, ce sont les deux scénarios de persistance, "
+        if sorted(p.persistence for p in self.side_by_side) != ["eteint", "lue", "tenu"]:
+            raise ValueError("côte à côte, ce sont les trois scénarios de persistance, "
                              "chacun une fois")
         return self
 
@@ -2334,7 +2334,7 @@ class PredictifReportPath(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    persistence: Literal["eteint", "tenu"]
+    persistence: Literal["lue", "eteint", "tenu"]
     label: str
     years: list[PredictifReportPathYear]
     conventions: list[str]
@@ -2360,7 +2360,7 @@ class PredictifBoxPath(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    persistence: Literal["eteint", "tenu"] | None
+    persistence: Literal["lue", "eteint", "tenu"] | None
     every_year: dict[Literal["vieillie", "figee"], PredictifBoxReading]
     first_year: dict[Literal["vieillie", "figee"], PredictifBoxReading]
 
@@ -2438,7 +2438,7 @@ class PredictifReportResponse(BaseModel):
     debt_banner: str
     behavioural: bool = False
     macro: bool = False
-    persistence: Literal["eteint", "tenu"] | None = None
+    persistence: Literal["lue", "eteint", "tenu"] | None = None
     side_by_side: list[PredictifReportPath] = Field(default_factory=list)
     theta_box: PredictifThetaBox | None = None
     """With behaviour or the loop, Δb at the last year at θ and at the box's corners
@@ -2461,9 +2461,9 @@ class PredictifReportResponse(BaseModel):
                     "côte : celle en tête serait le défaut par la place qu'elle occupe "
                     "(D-230).")
             persistences = [p.persistence for p in self.side_by_side]
-            if sorted(persistences) != ["eteint", "tenu"]:
+            if sorted(persistences) != ["eteint", "lue", "tenu"]:
                 raise ValueError(
-                    f"scénarios côte à côte {persistences} : les deux persistances, chacune "
+                    f"scénarios côte à côte {persistences} : les trois persistances, chacune "
                     f"une fois (D-230).")
             if any(len(p.years) != len(self.years) for p in self.side_by_side):
                 raise ValueError("un scénario côte à côte ne couvre pas toutes les années")
@@ -2568,7 +2568,7 @@ class ExplorationSearch(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    persistence: Literal["eteint", "tenu"] | None
+    persistence: Literal["lue", "eteint", "tenu"] | None
     persistence_label: str | None
     digest: str
     log: dict[str, Any]

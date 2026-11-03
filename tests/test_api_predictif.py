@@ -209,7 +209,7 @@ def test_past_three_years_without_a_persistence_both_stand_side_by_side(
     body = response.json()
     assert len(priced) == 1, "both scenarios must come from the same population pass"
     both = {p["persistence"]: p for p in body["side_by_side"]}
-    assert sorted(both) == ["eteint", "tenu"]
+    assert sorted(both) == ["eteint", "lue", "tenu"]
     assert both["eteint"]["label"] == "Effet macro éteint après trois ans"
     for field in ("reform", "delta", "delta_primary", "gdp_gap", "feedback_primary",
                   "persistence"):
@@ -223,7 +223,7 @@ def test_past_three_years_without_a_persistence_both_stand_side_by_side(
     assert off["delta"][-1] != pytest.approx(held["delta"][-1])
     # each path's own convention past three years, and none of them in the shared list
     assert any("éteint" in c for c in off["conventions"])
-    assert not any("Au-delà de trois ans" in c for c in body["conventions"])
+    assert not any("Au-delà de 3 ans" in c for c in body["conventions"])
     short = client.post("/predictif/simulate", json=_payload(macro=True, horizon=3))
     assert short.status_code == 200 and len(short.json()["gdp_gap"]) == 3
     assert short.json()["side_by_side"] == []

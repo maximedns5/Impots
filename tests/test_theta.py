@@ -112,7 +112,9 @@ def test_the_macro_multiplier_moves_by_one_published_sd_and_not_the_draw_width()
     convention (D-059), not something a study published."""
     assert theta.multiplier_at(0.41, 0.66, 0.5) == 0.41
     assert theta.multiplier_at(0.41, 0.66, 1.0) == pytest.approx(1.07)
-    assert theta.multiplier_at(0.41, 0.66, 0.0) == pytest.approx(-0.25)
+    # Floored at zero (D-336, decision 2): before, −0,25.
+    assert theta.multiplier_at(0.41, 0.66, 0.0) == 0.0
+    assert theta.multiplier_at(0.88, 0.66, 0.0) == pytest.approx(0.22)
     with pytest.raises(ThetaError, match="dispersion"):
         theta.multiplier_at(0.41, 0.0, 0.5)
 

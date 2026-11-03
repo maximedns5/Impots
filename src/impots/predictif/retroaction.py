@@ -35,16 +35,24 @@ FOUR CONDITIONS, from D-214, each a refusal rather than a footnote:
    GDP in the denominator — rather than half of a variant. It is listed, with why. The
    carbon tax is out too: its shock falls on energy volumes, so its gap holds the tax
    base shrinking as energy use falls, which is not an effect of activity (folio 121).
-3. **Horizons 1 to 3.** Beyond, a named PERSISTENCE scenario decides, and none is the
-   default: the effect extinguished after three years, or held at its third-year level.
-   A path past three years without one is refused.
+3. **A named persistence past three years.** The horizons 1 to 3 are read as printed.
+   Beyond, a named PERSISTENCE scenario decides, and none is the default: « lue » reads
+   Mésange's own columns at 5 and 10 years, under its central specification (wage
+   setting), and interpolates linearly between the horizons it prints (D-336, decision
+   1) — 4 between 3 and 5, 6 to 9 between 5 and 10; « eteint » extinguishes the effect
+   after three years, « tenu » holds it at its third-year level. The two last stay as
+   sensitivities. A path past three years without one is refused. The long-term column
+   stays refused (D-055): 1,73 under wage setting, 0,25 under a Phillips curve. Which
+   horizons are read is the store's `usable_horizons`, never a constant here.
 4. **The reform's prices held constant in g.** No table prints a GDP deflator.
 
 θ OF THE MULTIPLIER. The multiplier at θ is the Mésange centre ∓ one IMK standard
-deviation (`theta.multiplier_at`). The feedback follows it PROPORTIONALLY, the assumption
-D-059 already makes for jobs. M0 measured how far that is from true: the ratio of
-feedback to GDP effect runs from 0,46 (income tax, year one) to 1,40 (employer
-contributions, year one). Named in the conventions, not hidden.
+deviation, floored at zero (`theta.multiplier_at`, D-336 decision 2). The feedback
+follows it PROPORTIONALLY, the assumption D-059 already makes for jobs. M0 measured how
+far that is from true: the ratio of feedback to GDP effect runs from 0,46 (income tax,
+year one) to 1,40 (employer contributions, year one). Named in the conventions, not
+hidden. And it is bounded by the shock's gross cost: a tax cut does not finance itself
+past 100 %, which Mésange calls « erroné » (folio 108, D-336 decision 2).
 
 SUPERPOSITION. Mésange is linear and its variants are permanent shocks. An impulse that
 changes from one year to the next is therefore the sum of permanent shocks started in
@@ -65,11 +73,16 @@ from impots.predictif.theta import ThetaError, multiplier_at
 
 #: The one spending rule under which Mésange's balance row can be read as it is printed.
 SPENDING_RULE = "gele_en_volume"
+MULTIPLIER_TABLE = "multiplier_by_instrument"
 BALANCE_TABLE = "primary_balance_by_instrument"
-MAX_HORIZON = 3
 
-Persistence = Literal["eteint", "tenu"]
+#: The persistence the verdict reads (D-336, decision 1); the two others are published
+#: beside it as sensitivities.
+READ = "lue"
+Persistence = Literal["lue", "eteint", "tenu"]
 PERSISTENCE_LABELS: dict[str, str] = {
+    READ: ("Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), "
+           "interpolé linéairement entre eux"),
     "eteint": "Effet macro éteint après trois ans",
     "tenu": "Effet macro tenu au niveau de la troisième année",
 }
@@ -100,6 +113,14 @@ WHAT_IT_IS = ("La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : r
               "ceux de la chaîne.")
 FIRST_YEAR = ("La colonne « 1 an » est lue comme une moyenne de la première année, ce que "
               "le document dit pour le tableau 12 et que la ligne de solde ne répète pas.")
+BOUNDED = ("Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût "
+           "brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange "
+           "dit « erroné » (folio 108, D-336).")
+READ_SCOPE = ("Persistance « lue » : colonnes 5 et 10 ans de Mésange sous sa spécification "
+              "centrale (« wage setting »), interpolées linéairement entre les horizons "
+              "imprimés. Sous courbe de Phillips, les horizons longs tombent (cotisations "
+              "employeurs : 1,73 contre 0,25 à long terme) ; la colonne de long terme reste "
+              "refusée (D-055, D-336).")
 
 
 class FeedbackError(ValueError):
@@ -163,32 +184,90 @@ class Feedback:
     instruments: tuple[str, ...]
     uncovered: dict[str, str] = field(default_factory=dict)
     conventions: tuple[str, ...] = (WHAT_IT_IS, GROSS_COST, PRICES_HELD, PROPORTIONAL,
-                                    EX_ANTE, LINEAR, FIRST_YEAR)
+                                    EX_ANTE, LINEAR, FIRST_YEAR, BOUNDED)
+
+
+def read_horizons(store: Store) -> tuple[int, ...]:
+    """The horizons, in years, the loop reads as Mésange prints them: the numeric usable
+    horizons of BOTH its rows. Read from the store, never written here (D-336)."""
+    tables = (_require(store, MULTIPLIER_TABLE), _require(store, BALANCE_TABLE))
+    common = set.intersection(*({int(h) for h in t.usable_horizons if str(h).isdigit()}
+                                for t in tables))
+    if 1 not in common:
+        raise FeedbackError("aucun horizon d'un an lisible dans Mésange : la boucle n'a "
+                            "pas de première année à lire")
+    return tuple(sorted(common))
+
+
+def short_horizon(store: Store) -> int:
+    """The last horizon read without a gap from the first year on — three years in the
+    shipped store. Past it, a persistence scenario must be named."""
+    read = set(read_horizons(store))
+    horizon = 1
+    while horizon + 1 in read:
+        horizon += 1
+    return horizon
+
+
+def max_horizon(store: Store | None = None) -> int:
+    """`short_horizon` of the shipped macro store, unless one is given."""
+    if store is None:
+        from impots.macro import store as store_module
+
+        store = store_module.load()
+    return short_horizon(store)
+
+
+def interpolated(table: TableParameter, instrument: str, horizon: int,
+                 read: tuple[int, ...]) -> float:
+    """The row at `horizon`, linear between the two horizons Mésange prints around it."""
+    if horizon in read:
+        return table.at(instrument, str(horizon))
+    below = max(h for h in read if h < horizon)
+    above = min(h for h in read if h > horizon)
+    low, high = table.at(instrument, str(below)), table.at(instrument, str(above))
+    return low + (horizon - below) / (above - below) * (high - low)
+
+
+def read_horizon(horizon: int, persistence: str | None, read: tuple[int, ...],
+                 short: int) -> int | None:
+    """The horizon a persistence scenario reads at `horizon`; None when it reads nothing
+    (« eteint » past the short horizon)."""
+    if persistence == READ:
+        if horizon > read[-1]:
+            raise FeedbackError(
+                f"horizon de {horizon} ans au-delà du dernier que Mésange imprime et que la "
+                f"boucle lit ({read[-1]} ans) : le long terme reste refusé (D-055)")
+        return horizon
+    if horizon <= short:
+        return horizon
+    # `compute` refuses a path past the short horizon without a persistence scenario.
+    assert persistence is not None
+    return None if persistence == "eteint" else short
 
 
 def _response(store: Store, instrument: str, horizon: int, theta: float,
               persistence: str | None) -> tuple[float, float]:
     """(GDP in % per variant, feedback in points of GDP per variant) at a horizon."""
-    if horizon > MAX_HORIZON:
-        # `compute` refuses a path past three years without a persistence scenario.
-        assert persistence is not None
-        if persistence == "eteint":
-            return 0.0, 0.0
-        horizon = MAX_HORIZON
-    multipliers = _require(store, "multiplier_by_instrument")
+    read = read_horizons(store)
+    at = read_horizon(horizon, persistence, read, short_horizon(store))
+    if at is None:
+        return 0.0, 0.0
+    multipliers = _require(store, MULTIPLIER_TABLE)
     balance = _require(store, BALANCE_TABLE)
     dispersion = _require(store, "multiplier_dispersion")
-    key = str(horizon)
-    centre = multipliers.at(instrument, key)
+    centre = interpolated(multipliers, instrument, at, read)
     if centre == 0.0:
-        raise FeedbackError(f"multiplicateur nul pour « {instrument} » à {key} an(s) : la "
+        raise FeedbackError(f"multiplicateur nul pour « {instrument} » à {at} an(s) : la "
                             f"proportion de la rétroaction serait indéfinie")
     family = MULTIPLIER_FAMILY.get(instrument)
     if family is None:
         raise FeedbackError(f"aucune famille de dispersion pour « {instrument} »")
     gdp = multiplier_at(centre, dispersion.at(family, "all"), theta)
     gross = mesange.VARIANTS[instrument].ex_ante_points
-    return gdp, (balance.at(instrument, key) + gross) * gdp / centre
+    feedback = (interpolated(balance, instrument, at, read) + gross) * gdp / centre
+    # Bounded by the shock's gross cost, `gross` points per variant point (D-336).
+    return gdp, min(feedback, gross)
 
 
 def compute(impulses: Mapping[int, Mapping[str, float]], gdp: Mapping[int, float],
@@ -207,13 +286,13 @@ def compute(impulses: Mapping[int, Mapping[str, float]], gdp: Mapping[int, float
     if persistence is not None and persistence not in PERSISTENCE_LABELS:
         raise FeedbackError(f"persistance « {persistence} » inconnue ; seules "
                             f"{sorted(PERSISTENCE_LABELS)} existent")
-    if len(years) > MAX_HORIZON and persistence is None:
+    if len(years) > short_horizon(store) and persistence is None:
         # Decided on the horizon, not on the impulse's shape: a permanent reform's path
         # past year three depends on persistence whatever year its shocks start.
         raise FeedbackError(
-            f"trajectoire de {len(years)} ans sans scénario de persistance : Mésange n'est "
-            f"lu qu'à un, deux et trois ans (D-055), et au-delà il faut nommer « eteint » "
-            f"ou « tenu ». Aucun n'est le défaut.")
+            f"trajectoire de {len(years)} ans sans scénario de persistance : au-delà de "
+            f"{short_horizon(store)} ans, il faut nommer « lue », « eteint » ou « tenu » "
+            f"(D-055, D-336). Aucun n'est le défaut.")
     if not 0.0 <= theta <= 1.0:
         raise ThetaError(f"θ du multiplicateur = {theta}, hors de [0 ; 1] : refusé, pas écrêté")
     if sorted(impulses) != sorted(years):
@@ -261,6 +340,7 @@ def compute(impulses: Mapping[int, Mapping[str, float]], gdp: Mapping[int, float
                     phi_k += step * f / 100.0
         gap.append(y_k)
         balance.append(phi_k)
+    conventions = Feedback.conventions + ((READ_SCOPE,) if persistence == READ else ())
     return Feedback(years=tuple(years), gdp_gap=tuple(gap), balance=tuple(balance),
                     theta=float(theta), persistence=persistence,
-                    instruments=tuple(covered), uncovered=missing)
+                    instruments=tuple(covered), uncovered=missing, conventions=conventions)

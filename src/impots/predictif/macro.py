@@ -30,7 +30,7 @@ def at_theta(impulse: Impulse, store: Store, *, gdp_eur: float,
     jobs = _require(store, "employment_by_instrument")
     dispersion = _require(store, "multiplier_dispersion")
     out: dict[str, tuple[float, float]] = {}
-    for horizon in multipliers.usable_horizons:
+    for horizon in (h for h in multipliers.usable_horizons if h in jobs.usable_horizons):
         gdp_effect = jobs_effect = 0.0
         for instrument, amount in impulse.by_instrument.items():
             spec = mesange.VARIANTS[instrument]

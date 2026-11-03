@@ -1636,7 +1636,7 @@ def _predictif_hypotheses(request: Any) -> Any:
     persistences: list[str | None] = (
         [request.persistence] if request.persistence is not None
         else list(retroaction.PERSISTENCE_LABELS)
-        if looped and request.horizon > retroaction.MAX_HORIZON else [None])
+        if looped and request.horizon > retroaction.max_horizon() else [None])
     if looped:
         theta.for_row(MACRO_ROW)
     return SimpleNamespace(spending=spending, growth=growth, rate=rate, uprating=uprating,

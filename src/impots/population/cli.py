@@ -2203,8 +2203,8 @@ def build_parser() -> argparse.ArgumentParser:
                            help="the GDP → receipts loop, one impulse per year (D-236)")
     predictif.add_argument("--ou", help="where the passes run, which the report says "
                            "(D-275)")
-    predictif.add_argument("--persistence", choices=["eteint", "tenu"],
-                           help="past three years with the loop; both side by side if absent")
+    predictif.add_argument("--persistence", choices=["lue", "eteint", "tenu"],
+                           help="past three years with the loop; all three side by side if absent")
     predictif.set_defaults(func=cmd_predictif)
 
     exploration = subcommands.add_parser(

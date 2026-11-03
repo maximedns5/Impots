@@ -500,8 +500,9 @@ def run(start: Start, *, horizon: int, costs: ReformCosts,
         conventions.append(BOX_CONVENTION)
     if applied:
         conventions.extend(applied.conventions)
-        if persistence is not None and len(years) > retroaction.MAX_HORIZON:
-            conventions.append(f"Au-delà de trois ans : "
+        short = retroaction.short_horizon(macro_store)
+        if persistence is not None and len(years) > short:
+            conventions.append(f"Au-delà de {short} ans : "
                                f"{retroaction.PERSISTENCE_LABELS[persistence]}.")
     if carried:
         conventions.append(CARRY_LABEL)
