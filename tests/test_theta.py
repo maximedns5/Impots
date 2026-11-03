@@ -50,7 +50,8 @@ def _households() -> dict:
     weights = rng.uniform(50, 150, n)
     emtr0 = rng.uniform(0.2, 0.5, n)
     return {"taxable_base": base, "weights": weights, "emtr_baseline": emtr0,
-            "emtr_reform": emtr0 + 0.02, "top_decile": base > np.quantile(base, 0.9)}
+            "emtr_reform": emtr0 + 0.02, "emtr_ir_baseline": emtr0,
+            "emtr_ir_reform": emtr0 + 0.02, "top_decile": base > np.quantile(base, 0.9)}
 
 
 # --------------------------------------------------------------------------- #
@@ -246,6 +247,32 @@ CASES = {
 }
 
 
+#: C5 and C6 are unhooked (D-336, decision 5): their rows claim no knob. Their
+#: monotonicity is what a rewiring would rest on, so it is tested with the knobs they had.
+UNHOOKED = {"wealth_tax_rate_elasticity": ("ifi_bareme",),
+            "wealth_disclosure_growth_effect_pp": ("ifi_obligations_declaratives",)}
+
+
+def _wired(store):
+    parameters = {key: (dataclasses.replace(p, responds_to_knobs=UNHOOKED[key])
+                        if key in UNHOOKED else p) for key, p in store.parameters.items()}
+    return dataclasses.replace(store, parameters=parameters)
+
+
+def test_the_unhooked_rows_claim_no_knob_and_inert_rows_stay_out_of_the_box() -> None:
+    """D-336, decision 5: C5 and C6 are called by no path, so their rows claim no IFI
+    knob; and the rows of C3 and C4, which change no receipt, are not corners of the box.
+    Before, an IFI reform had two inert corners, and an allègement four rows, not two."""
+    for key in UNHOOKED:
+        assert STORE[key].responds_to_knobs == ()
+    assert comportement.claimed_open_rows(STORE, Reform(ifi_bareme=[])) == ()
+    allegement = comportement.claimed_open_rows(STORE, EMPLOYER)
+    assert "passthrough_unlinked" not in allegement
+    assert "passthrough_benefit_linked" not in allegement
+    assert set(allegement) == {"employment_elasticity_smic", "autofinancement_poids_tresor_eco"}
+    assert comportement.claimed_open_rows(STORE, Reform(cvae_taux_max=0.0)) == ()
+
+
 def test_every_open_row_has_a_monotonicity_case() -> None:
     assert sorted(CASES) == OPEN
 
@@ -257,7 +284,7 @@ def test_each_channel_is_monotone_in_its_theta(key: str) -> None:
     channel, reform, inputs, index = CASES[key]
     effects = []
     for t in GRID:
-        store = theta.pinned(STORE, Theta(rows={key: float(t)}, common=0.5))
+        store = theta.pinned(_wired(STORE), Theta(rows={key: float(t)}, common=0.5))
         result = channel(store, reform, draws=2, rng=np.random.default_rng(0), **inputs)
         assert result.applies, result.message
         effects.append(float(result.draws[index]))

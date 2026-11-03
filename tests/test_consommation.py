@@ -501,7 +501,7 @@ def test_the_marginal_rates_read_the_tree_part_of_a_consumption_reform(monkeypat
         raise RuntimeError("arrêté")
 
     monkeypatch.setattr(emtr, "reformed_for", reformed_for)
-    monkeypatch.setattr(emtr, "_rate", lambda *a, **k: np.zeros(1))
+    monkeypatch.setattr(emtr, "_rate", lambda *a, **k: (np.zeros(1), np.zeros(1)))
     monkeypatch.setattr(emtr, "_priced", lambda population, sample, seed: population)
     frame = pl.DataFrame({"household_id": [1], "weight": [1.0],
                           "salaire_brut_annuel": [20_000.0]})

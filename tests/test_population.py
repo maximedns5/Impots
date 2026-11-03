@@ -1346,7 +1346,7 @@ def test_the_simulation_a_marginal_rate_reads_is_freed_once_read(monkeypatch) ->
     frame = _pensioners_only()
     gc.disable()
     try:
-        disposable = emtr._disposable(frame, baseline(), 2024)
+        disposable, _ = emtr._disposable(frame, baseline(), 2024)
         alive = [ref() is not None for ref in built]
     finally:
         gc.enable()

@@ -99,6 +99,25 @@ def _claimed(store: Store, reform: Any, keys: tuple[str, ...]) -> list[str]:
 C1_KEYS = ("eti_all", "eti_top_decile")
 
 
+def c1_terms(*, emtr_ir_baseline: np.ndarray, emtr_ir_reform: np.ndarray,
+             emtr_reform: np.ndarray, taxable_base: np.ndarray,
+             weights: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Per household, (the term ε multiplies, Δln(1 − τ_IR)): w z Δln(1 − τ_IR) τ¹.
+
+    Δln reads the income tax's own marginal rate τ_IR, before and after, floored at
+    `NET_OF_TAX_FLOOR`; the receipts are lost at the TOTAL rate τ¹ (D-336, decision 4)."""
+    net_baseline = np.clip(1.0 - emtr_ir_baseline, NET_OF_TAX_FLOOR, None)
+    net_reform = np.clip(1.0 - emtr_ir_reform, NET_OF_TAX_FLOOR, None)
+    delta_log = np.log(net_reform) - np.log(net_baseline)
+    return weights * taxable_base * delta_log * emtr_reform, delta_log
+
+
+def at_the_floor(emtr_ir_baseline: np.ndarray, emtr_ir_reform: np.ndarray) -> np.ndarray:
+    """The households whose net-of-income-tax rate is floored, before or after."""
+    return ((1.0 - emtr_ir_baseline < NET_OF_TAX_FLOOR)
+            | (1.0 - emtr_ir_reform < NET_OF_TAX_FLOOR))
+
+
 def elasticity_of_taxable_income(
     store: Store,
     reform: Any,
@@ -110,18 +129,33 @@ def elasticity_of_taxable_income(
     top_decile: np.ndarray,
     draws: int,
     rng: np.random.Generator,
+    emtr_ir_baseline: np.ndarray | None = None,
+    emtr_ir_reform: np.ndarray | None = None,
 ) -> ChannelResult:
     """Revenue returned or lost when taxable income responds to its marginal rate.
 
+    THE RATE C1 READS IS THE INCOME TAX'S (D-336, decision 4). Cabannes, Houdré and
+    Landais estimate the elasticity on the marginal rate of the income tax, so the
+    response reads Δln(1 − τ_IR), τ_IR the income tax's own marginal rate, measured by the
+    same finite difference in the same simulations as the total rate (`emtr._rate`). The
+    receipts it moves are lost or gained at the TOTAL marginal rate of the reform, τ¹:
+    what the State loses. Before, Δln was read on the total rate, which a 15-point rise
+    of the income tax moved far more where 1 − τ_total was small (audit of goal 14, § 4.2).
+
     Worked example, derived by hand and pinned in the tests:
 
-        a household with a taxable base of 100 000 EUR whose marginal rate goes from
-        41 % to 45 %. The net-of-tax rate falls from 0.59 to 0.55, so
-        Δln(1-τ') = ln(0.55) - ln(0.59) = -0.0702043. With e = 0.30,
-        Δbase = 0.30 × 100 000 × (-0.0702043) = -2 106.13 EUR, and the revenue offset
-        is 0.45 × (-2 106.13) = -947.76 EUR. The mechanical yield of that rate rise on
-        this household is 0.04 × 100 000 = 4 000 EUR, so the response gives back 23.7 %
-        of it — which is the number this channel exists to show.
+        a household with a taxable base of 100 000 EUR whose income-tax marginal rate
+        goes from 41 % to 45 %, and whose total rate after the reform is 45 %. The
+        net-of-IR rate falls from 0.59 to 0.55, so Δln(1-τ_IR) = ln(0.55) - ln(0.59) =
+        -0.0702043. With e = 0.30, Δbase = 0.30 × 100 000 × (-0.0702043) = -2 106.13 EUR,
+        and the revenue offset is 0.45 × (-2 106.13) = -947.76 EUR. The mechanical yield
+        of that rate rise on this household is 0.04 × 100 000 = 4 000 EUR, so the response
+        gives back 23.7 % of it — which is the number this channel exists to show.
+
+    THE CHANNEL IS LINEAR IN ITS TWO ELASTICITIES: ΔR = ε_all A_bas + ε_top A_haut. The
+    two sums are written in the diagnostics, so that a report can replay C1 at any θ or
+    draw without a pass (D-336, decision 6), with the share of C1 the households at the
+    floor of the net-of-tax rate carry.
     """
     applicable = _claimed(store, reform, C1_KEYS)
     if not applicable:
@@ -139,17 +173,19 @@ def elasticity_of_taxable_income(
             diagnostics={"missing_parameters": missing},
         )
     supplied = {"emtr_baseline": emtr_baseline, "emtr_reform": emtr_reform,
-                "taxable_base": taxable_base, "weights": weights}
+                "taxable_base": taxable_base, "weights": weights,
+                "emtr_ir_baseline": emtr_ir_baseline, "emtr_ir_reform": emtr_ir_reform}
     if all(array is None for array in supplied.values()):
         return _unsupplied("c1_eti", "Réponse du revenu imposable", "EUR",
                            "les taux marginaux des ménages")
     for name, array in supplied.items():
         if array is None or not len(array):
             raise ChannelInputMissing(f"C1 needs {name}; it is empty")
+    assert emtr_ir_baseline is not None and emtr_ir_reform is not None
 
-    net_baseline = np.clip(1.0 - emtr_baseline, NET_OF_TAX_FLOOR, None)
-    net_reform = np.clip(1.0 - emtr_reform, NET_OF_TAX_FLOOR, None)
-    delta_log = np.log(net_reform) - np.log(net_baseline)
+    terms, delta_log = c1_terms(emtr_ir_baseline=emtr_ir_baseline,
+                                emtr_ir_reform=emtr_ir_reform, emtr_reform=emtr_reform,
+                                taxable_base=taxable_base, weights=weights)
 
     all_draws = store["eti_all"].draw(rng, draws)
     top_draws = store["eti_top_decile"].draw(rng, draws)
@@ -157,14 +193,16 @@ def elasticity_of_taxable_income(
     # One elasticity per household per draw, without materialising the outer product:
     # the response is linear in e, so the two groups can be summed separately.
     lower = ~top_decile
-    weighted_lower = float(
-        np.sum(weights[lower] * taxable_base[lower] * delta_log[lower] * emtr_reform[lower])
-    )
-    weighted_top = float(
-        np.sum(weights[top_decile] * taxable_base[top_decile] * delta_log[top_decile]
-               * emtr_reform[top_decile])
-    )
+    weighted_lower = float(np.sum(terms[lower]))
+    weighted_top = float(np.sum(terms[top_decile]))
     revenue = all_draws * weighted_lower + top_draws * weighted_top
+    # The share of C1 the floored households carry, at the rows' centres — the store's
+    # value at θ when it is pinned.
+    floored = at_the_floor(emtr_ir_baseline, emtr_ir_reform)
+    by_household = np.abs(terms) * np.where(top_decile, store["eti_top_decile"].central,
+                                            store["eti_all"].central)
+    total = float(by_household.sum())
+    floor_share = float(by_household[floored].sum() / total) if total > 0 else 0.0
 
     return ChannelResult(
         key="c1_eti", label="Réponse du revenu imposable", applies=True, draws=revenue,
@@ -176,9 +214,10 @@ def elasticity_of_taxable_income(
             "mean_delta_log_net_of_tax": float(
                 np.average(delta_log, weights=weights) if weights.sum() else 0.0
             ),
-            "households_at_the_net_of_tax_floor": int(
-                np.count_nonzero(1.0 - emtr_reform < NET_OF_TAX_FLOOR)
-            ),
+            "households_at_the_net_of_tax_floor": int(np.count_nonzero(floored)),
+            "share_at_the_net_of_tax_floor": floor_share,
+            "rate_read": "taux marginal de l'IR seul (D-336) ; recette au taux total",
+            "statistics": {"A_bas": weighted_lower, "A_haut": weighted_top},
         },
     )
 
@@ -300,6 +339,8 @@ def employment_at_the_smic(
             "fadeout_smic_multiple": fadeout,
             "interpolation": "linéaire entre le SMIC et le seuil — construction de ce "
                              "projet, pas de la littérature",
+            # jobs = ε_S anchor + tail, what C11's replay reads (D-336, decision 6).
+            "statistics": {"anchor": anchor, "tail": tail},
         },
     )
 
@@ -700,13 +741,16 @@ def labour_supply(
     revenue = np.zeros(draws)
     gross = np.zeros(draws)
     persons: dict[str, int] = {}
+    # S_g by row: ΔR = Σ_g ε_g S_g, what a report keeps to replay C7 (D-336, decision 6).
+    statistics: dict[str, float] = {}
     for group, key in LABOUR_GROUPS.items():
         mask = labour_group == group
         persons[group] = int(mask.sum())
         exposure = labour_weights[mask] * labour_earnings[mask] * labour_delta_log_net[mask]
         elasticity = store[key].draw(rng, draws)
         gross = gross + elasticity * float(exposure.sum())
-        revenue = revenue + elasticity * float((exposure * labour_emtr[mask]).sum())
+        statistics[key] = float((exposure * labour_emtr[mask]).sum())
+        revenue = revenue + elasticity * statistics[key]
     outside = ~np.isin(labour_group, list(LABOUR_GROUPS))
     earnings = labour_weights * labour_earnings
     return ChannelResult(
@@ -726,6 +770,7 @@ def labour_supply(
                 if earnings.sum() > 0 else 0.0),
             "gross_earnings_change_eur": round(float(np.median(gross)), 2),
             "not_added_to": "les emplois de l'éventail macro et de C2",
+            "statistics": {"S": statistics},
         },
     )
 
@@ -1016,6 +1061,10 @@ def dividend_response(
             "wage_wedge": {"levies_per_eur": wage_levy_rate, "cost_per_eur": wage_cost_rate,
                            "corporate_rate": corporate_rate,
                            "lost_per_eur": round(lost_per_eur, 6)},
+            # ΔR = τ¹ (s ε_p + (1 − s) ε_a) Δln B − ω s ε_p Δln B × lost, unrounded, what
+            # a report keeps to replay C10 (D-336, decision 6).
+            "statistics": {"B": float(dividend_base_eur), "delta_log": delta_log,
+                           "tau1": float(levy_rate_reform), "lost_per_eur": lost_per_eur},
             "not_counted": (
                 "les plus-values futures dont les dividendes induits sont tirés, taxées "
                 "plus bas ; la CEHR sur les dividendes induits ; la CDHR que des dividendes "
@@ -1158,6 +1207,10 @@ def targeted_self_financing(
             "share_c2": round(float(np.median(reading_c2)), 6),
             "share_tresor_eco": round(tresor_eco, 6),
             "return_per_job_eur": round(float(value_per_job), 2),
+            # ΔR = ((1 − p) jobs v / cut + p te) cut, jobs from C2's own statistics; what a
+            # report keeps to replay C11 (D-336, decision 6).
+            "statistics": {"cut": cut, "value_per_job": float(value_per_job),
+                           "tresor_eco": tresor_eco},
             "not_counted": (
                 "la montée en charge des emplois, que le Trésor-Éco lit à moyen terme ; "
                 "les prestations d'un ménage autre qu'un célibataire sans enfant ni loyer ; "

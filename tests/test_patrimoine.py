@@ -1062,9 +1062,21 @@ class TestWealthChannels:
 
     @staticmethod
     def _store():
+        """The store with C5 and C6 wired to the knobs they claimed before D-336: unhooked
+        since (decision 5), their rows claim none, and these tests hold the channels'
+        arithmetic for the day they are wired."""
+        import dataclasses
+
         from impots.behavioural import store
 
-        return store.load()
+        loaded = store.load()
+        wired = {"wealth_tax_rate_elasticity": ("ifi_bareme", "ifi_decote_*",
+                                                "ifi_plafonnement_taux"),
+                 "wealth_disclosure_growth_effect_pp": ("ifi_obligations_declaratives",)}
+        for key, knobs in wired.items():
+            assert loaded[key].responds_to_knobs == (), key
+            loaded.parameters[key] = dataclasses.replace(loaded[key], responds_to_knobs=knobs)
+        return loaded
 
     def test_the_brief_s_three_figures_are_not_in_the_paper(self):
         """0-for-3, and the store records the refusals rather than hiding them.

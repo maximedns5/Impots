@@ -108,7 +108,9 @@ def _households(rates: list[tuple[float, float]], weights: list[float],
     ids = list(range(1, len(weights) + 1))
     households = pl.DataFrame({
         "household_id": ids, "weight": weights, "n_earners": earners,
-        "emtr": [r[0] for r in rates], "emtr_reform": [r[1] for r in rates]})
+        "emtr": [r[0] for r in rates], "emtr_reform": [r[1] for r in rates],
+        # The income tax's own rates, equal to the total here (D-336).
+        "emtr_ir": [r[0] for r in rates], "emtr_ir_reform": [r[1] for r in rates]})
     frame = pl.DataFrame({"household_id": ids,
                           "salaire_brut_annuel": [30_000.0 * (i % 3 + 1) for i in ids]})
     return households, frame
@@ -140,19 +142,24 @@ def test_c1_is_the_channel_s_receipt_and_its_households_add_up_to_it(script,
     assert (found["floor_one"], found["floor_both"]) == (2, 1)
 
 
+def _inputs(before: float, after: float, base: float) -> dict:
+    """One household's C1 inputs, the income tax's rates equal to the total ones."""
+    return {"emtr_ir_baseline": np.array([before]), "emtr_ir_reform": np.array([after]),
+            "emtr_reform": np.array([after]), "taxable_base": np.array([base]),
+            "weights": np.array([1.0])}
+
+
 def test_a_household_s_term_is_the_worked_example_of_the_channel(script) -> None:
     """D-279's mechanism, by hand: a 41 % → 45 % rise on a 100 000 € base at e = 0.30
     gives back −947.76 € (the channel's own worked example)."""
-    terms = script.terms(np.array([0.41]), np.array([0.45]), np.array([100_000.0]),
-                         np.array([1.0]), np.array([0.30]))
+    terms = script.terms(_inputs(0.41, 0.45, 100_000.0), np.array([0.30]))
     assert terms[0] == pytest.approx(-947.76, abs=0.01)
 
 
 def test_the_floor_term_dominates_as_d279_said(script) -> None:
     """53 % → 104 %: the net-of-tax rate falls to its floor, 0.05, and the term is
     −2.24 × 1.04 of the base times e — the size D-279 read on a few households."""
-    terms = script.terms(np.array([0.53]), np.array([1.04]), np.array([30_000.0]),
-                         np.array([1.0]), np.array([1.0]))
+    terms = script.terms(_inputs(0.53, 1.04, 30_000.0), np.array([1.0]))
     assert terms[0] == pytest.approx(30_000 * (np.log(0.05) - np.log(0.47)) * 1.04)
 
 

@@ -131,15 +131,16 @@ def name(view: str, seed: int, step: float) -> str:
 # --------------------------------------------------------------------------- #
 # C1, household by household
 # --------------------------------------------------------------------------- #
-def terms(emtr_baseline: np.ndarray, emtr_reform: np.ndarray, base: np.ndarray,
-          weights: np.ndarray, elasticity: np.ndarray) -> np.ndarray:
-    """Each household's term of C1's sum, the channel's formula with its elasticity."""
-    from impots.behavioural.channels import NET_OF_TAX_FLOOR
+def terms(inputs: dict[str, np.ndarray], elasticity: np.ndarray) -> np.ndarray:
+    """Each household's term of C1's sum, the channel's formula with its elasticity: the
+    income tax's own rate in Δln, the total rate on the receipt (D-336)."""
+    from impots.behavioural.channels import c1_terms
 
-    net_baseline = np.clip(1.0 - emtr_baseline, NET_OF_TAX_FLOOR, None)
-    net_reform = np.clip(1.0 - emtr_reform, NET_OF_TAX_FLOOR, None)
-    return (weights * base * (np.log(net_reform) - np.log(net_baseline)) * emtr_reform
-            * elasticity)
+    own, _ = c1_terms(emtr_ir_baseline=inputs["emtr_ir_baseline"],
+                      emtr_ir_reform=inputs["emtr_ir_reform"],
+                      emtr_reform=inputs["emtr_reform"], taxable_base=inputs["taxable_base"],
+                      weights=inputs["weights"])
+    return own * elasticity
 
 
 def standard_error(contributions: np.ndarray, weights: np.ndarray) -> float:
@@ -178,15 +179,14 @@ def decompose(households: Any, frame: Any, reform: Any, store: Any, theta: Any,
         inputs["top_decile"],
         value_at(store["eti_top_decile"], theta.for_row("eti_top_decile")),
         value_at(store["eti_all"], theta.for_row("eti_all")))
-    own = terms(inputs["emtr_baseline"], inputs["emtr_reform"], inputs["taxable_base"],
-                inputs["weights"], elasticity)
+    own = terms(inputs, elasticity)
     if not np.isclose(own.sum(), receipt, rtol=1e-9, atol=1.0):
         raise BruitError(f"les termes des ménages somment à {own.sum():,.0f} €, le canal "
                          f"à {receipt:,.0f} € : la décomposition ne serait pas C1.")
     from impots.behavioural.channels import NET_OF_TAX_FLOOR
 
-    floor_baseline = 1.0 - inputs["emtr_baseline"] <= NET_OF_TAX_FLOOR
-    floor_reform = 1.0 - inputs["emtr_reform"] <= NET_OF_TAX_FLOOR
+    floor_baseline = 1.0 - inputs["emtr_ir_baseline"] <= NET_OF_TAX_FLOOR
+    floor_reform = 1.0 - inputs["emtr_ir_reform"] <= NET_OF_TAX_FLOOR
     one = floor_baseline ^ floor_reform
     largest = np.argsort(np.abs(own))[-top:]
     every = np.zeros(households.height)

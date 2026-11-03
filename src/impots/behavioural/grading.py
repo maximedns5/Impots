@@ -53,23 +53,33 @@ class Grading:
 
 
 def induced_variation(
-    emtr_baseline: np.ndarray, emtr_reform: np.ndarray, weights: np.ndarray
+    emtr_ir_baseline: np.ndarray, emtr_ir_reform: np.ndarray, weights: np.ndarray,
+    taxable_base: np.ndarray,
 ) -> float:
-    """C1's metric: how far the reform moves the net-of-tax marginal rate.
+    """C1's metric: how far the reform moves the net-of-income-tax marginal rate WHERE C1
+    IS MADE (D-336, decision 4).
 
-    Weighted by household, not the raw maximum. A single household at an extreme
-    marginal rate would otherwise grade every reform in the country as an
-    extrapolation, which would make the grade useless rather than strict — and a
-    guardrail that always fires is a guardrail nobody reads.
+    The median of |Δ(1 − τ_IR)| weighted by each household's contribution to C1, its
+    weight × base × |Δln(1 − τ_IR)|. Before, the 95th percentile of the households: a
+    tranche that touched the last percentile left it at zero, and the reform C1 bites
+    hardest on was graded in support (Tondelier, D-333). Weighted by contribution, a
+    reform of the top alone is graded on the top, where its C1 is; and a household with no
+    contribution weighs nothing, so a single extreme rate still cannot grade a reform.
     """
-    if not len(emtr_baseline) or weights.sum() <= 0:
+    from impots.behavioural.channels import NET_OF_TAX_FLOOR
+
+    if not len(emtr_ir_baseline):
         return 0.0
-    moved = np.abs(emtr_reform - emtr_baseline)
-    # The 95th percentile of what households actually experience: strict enough that
-    # a reform hitting a real minority is graded on it, robust to a handful of cells.
-    order = np.argsort(moved)
-    cumulative = np.cumsum(weights[order])
-    return float(np.interp(0.95 * cumulative[-1], cumulative, moved[order]))
+    net_baseline = np.clip(1.0 - emtr_ir_baseline, NET_OF_TAX_FLOOR, None)
+    net_reform = np.clip(1.0 - emtr_ir_reform, NET_OF_TAX_FLOOR, None)
+    contribution = weights * taxable_base * np.abs(np.log(net_reform) - np.log(net_baseline))
+    carries = contribution > 0
+    if not carries.any():
+        return 0.0
+    moved = np.abs(emtr_ir_reform - emtr_ir_baseline)[carries]
+    order = np.argsort(moved, kind="stable")
+    cumulative = np.cumsum(contribution[carries][order])
+    return float(np.interp(0.5 * cumulative[-1], cumulative, moved[order]))
 
 
 def grade_channel(store: Store, keys: tuple[str, ...], metric: float) -> tuple[Grade, float | None]:

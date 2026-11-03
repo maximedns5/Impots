@@ -38,7 +38,12 @@ parameters:
       seuils où le taux change SANS que les obligations déclaratives changent. Les seuils
       qui font les deux à la fois donnent des réponses bien plus grandes, et ne sont pas
       identifiants pour le taux.
-    responds_to_knobs: [ifi_bareme, ifi_decote_*, ifi_plafonnement_taux]
+    # DÉCROCHÉE PAR D-336 (décision 5). Elle revendiquait [ifi_bareme, ifi_decote_*,
+    # ifi_plafonnement_taux], alors que C5 n'est appelé par aucun chemin et que le cadre
+    # ne porte aucun patrimoine : une réforme d'IFI ajoutait à la boîte θ une dimension
+    # qui ne bougeait rien. Elle ne revendique plus aucun levier tant que C5 n'est pas
+    # câblé ; un bouton d'IFI sur la population est refusé avec sa porte.
+    responds_to_knobs: []
     support:
       estimated_on: >
         Quatre estimations, figure 1 p. 36 : statique 2e seuil 0,08 (0,06) ; dynamique
@@ -103,7 +108,9 @@ parameters:
       ce nombre de points). Un durcissement symétrique est l'hypothèse du cadran
       d'application, et c'est une hypothèse, pas une mesure : l'article n'observe que le
       relâchement.
-    responds_to_knobs: [ifi_obligations_declaratives]
+    # DÉCROCHÉE PAR D-336 (décision 5), pour la raison de la ligne du taux : elle
+    # revendiquait [ifi_obligations_declaratives], et C6 n'est appelé par aucun chemin.
+    responds_to_knobs: []
     support:
       estimated_on: >
         Réforme de simplification française de 2011-2012, qui a supprimé la déclaration

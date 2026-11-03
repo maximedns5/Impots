@@ -730,48 +730,7 @@ def _behavioural_inputs(request: Any, frame: Any, agg: Any, run: Any = None,
     }, int(sum(sample.height for sample in samples))
 
 
-def pooled_eti_inputs(frame: Any, samples: list[Any]) -> dict[str, Any]:
-    """C1's inputs over several samples of households, each weighed by the share of the
-    samples it is (D-284). Each sample keeps its own top-decile split, so that C1 on the
-    pool is the mean of C1 on each sample, to the rounding."""
-    import numpy as np
-
-    parts = [eti_inputs(frame, households) for households in samples]
-    pooled = {key: np.concatenate([part[key] for part in parts]) for key in parts[0]}
-    pooled["weights"] = pooled["weights"] / len(parts)
-    return pooled
-
-
-def eti_inputs(frame: Any, households: Any) -> dict[str, Any]:
-    """C1's inputs: the households' marginal rates before and after the reform, their
-    taxable base, their weights and the top-decile split. `households` are the EMTR
-    pass's households with earnings, `frame` the population their rates were computed
-    on. Read apart by the measure of C1's noise (`scripts/bruit_c1.py`, D-282), so that
-    it prices C1 exactly as the chain does."""
-    import numpy as np
-    import polars as pl
-
-    weights = households["weight"].to_numpy()
-    # Taxable base per household: what C1's response applies to. Deciles of it give
-    # the top-decile split the two ETI parameters need.
-    frame_base = (
-        frame.group_by("household_id")
-        .agg(pl.col("salaire_brut_annuel").sum().alias("base"))
-        .sort("household_id")
-    )
-    lookup = dict(zip(frame_base["household_id"].to_list(),
-                      frame_base["base"].to_list(), strict=False))
-    base = np.array([lookup.get(h, 0.0) for h in households["household_id"].to_list()])
-    order = np.argsort(base)
-    cumulative = np.cumsum(weights[order])
-    top = np.zeros(len(base), dtype=bool)
-    if cumulative[-1] > 0:
-        top[order[cumulative >= 0.9 * cumulative[-1]]] = True
-    return {
-        "emtr_baseline": households["emtr"].to_numpy(),
-        "emtr_reform": households["emtr_reform"].to_numpy(),
-        "taxable_base": base, "weights": weights, "top_decile": top,
-    }
+from impots.behavioural.eti import eti_inputs, pooled_eti_inputs  # noqa: E402, F401  (D-336)
 
 
 def _dividend_inputs(request: Any, households: Any) -> dict[str, Any]:
