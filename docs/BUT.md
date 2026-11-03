@@ -154,7 +154,7 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
   consommation par poste imputée à la population, dix boutons de TVA et d'accises, l'effet
   par décile net des taxes payées ; trois mesures des programmes chiffrées dans leur
   pronostic.
-* **But 13 — Une étude par candidat, publiée sur le site statique** (D-328 à D-333) : les
+* **But 13 — Une étude par candidat, publiée sur le site statique** (D-328 à D-334) : les
   huit candidats dont une mesure se chiffre ont leur étude à trois réponses, chaque mesure
   parcourue en trois points de sa plage, la couche déclarée à part ; la page des 24. Les
   coûts tiennent leur pronostic, six verdicts de dette sur huit le manquent.
@@ -417,7 +417,7 @@ préenregistrées et chiffrées dans leur pronostic : Roussel +5,3 Md€, Le Pen
 pourquoi. Aucun des cinq articles du PLF 2027 derrière la porte ne se chiffre côté ménages :
 la part en euros reste à 72,8 %. Les réactions de la consommation aux prix sont absentes.
 
-### But 13 — Une étude par candidat, publiée sur le site statique (fait, D-328 à D-333)
+### But 13 — Une étude par candidat, publiée sur le site statique (fait, D-328 à D-334)
 
 Treize mesures de huit candidats se chiffrent (buts 11 et 12), mais seulement en ligne de
 commande : `impots programme` les donne, aucune page ne les montre. Or le livrable est une
@@ -471,4 +471,5 @@ chez Attal, Lisnard, Le Pen, Roussel et Mélenchon ; chez Tondelier, l'élastici
 décile fait coûter une tranche qui rapporte sans comportements (D-333). Deux correctifs du
 moteur, sans effet sur les nombres, ont fait tenir les chemins dans le conteneur : chaque
 passe dans son processus (D-331), les taux marginaux qui libèrent leurs simulations
-(D-332).
+(D-332) ; le runner fait de même (D-334), sans quoi un test lourd tombait, sur `main`
+aussi.

@@ -1,6 +1,6 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
-The 2026-11-03 update adds D-328 to D-333: goal 13, validated by the owner, done once
+The 2026-11-03 update adds D-328 to D-334: goal 13, validated by the owner, done once
 merged. `impots etude` takes a programme: `etudes/presidentielle_<slug>.json` prices its
 whole priced part, households and firms together (a mixed first year is two calls), says
 the coverage beside each number and each refused measure with its door, never gives the
@@ -13,12 +13,13 @@ costs land in their prognosis, Attal +76.4 bn€ to Mélenchon −8.7; Labib's p
 cases by 15.5 %, a refutation read, the reduction for 2024 incomes not carrying to litres.
 Six debt verdicts of eight miss: a full multiplier held ten years flips the sign at a
 corner (Attal, Lisnard, Le Pen, Roussel, Mélenchon), and the top decile's elasticity makes
-Tondelier's 60 % bracket cost once behaviour counts (D-333). Three engine fixes move no
+Tondelier's 60 % bracket cost once behaviour counts (D-333). Four engine fixes move no
 number priced before them: a graft that told 3 from 3.0 (D-329), each pass of the path
 freeing the year before and running in its own process (D-330, D-331), and the marginal
-rates freeing their simulations (D-332), which took a pass from past 14.3 GB to 7.4. Next:
-the judge when it publishes; then indexation, successions and wealth, spending, the
-retirement age; then a precomputation layer for live sliders, then the UI.
+rates freeing their simulations (D-332), which took a pass from past 14.3 GB to 7.4, and
+the runner freeing its own (D-334), which a heavy test needed on `main` too. Next: the
+judge when it publishes; then indexation, successions and wealth, spending, the retirement
+age; then a precomputation layer for live sliders, then the UI.
 
 The 2026-11-02 update adds D-323 to D-327: goal 12, validated by the owner, done once
 merged. The population now carries a consumption by poste (`impots.consommation`): the 138

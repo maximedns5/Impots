@@ -25810,12 +25810,14 @@ et du processus : six mutations de `_liberer` et de `_isole`, toutes tuées, apr
 garde de D-330 a appris à lire aussi le cache des entreprises, qu'une mutation laissait
 vivre. Celle de D-332 : deux mutations, tuées.
 
-**Les tests ciblés.** `ruff` sur `src`, `tests` et `scripts`. La passe parallèle des 18
-fichiers de tests que le but touche, ou qui lisent le code qu'il change : 867 verts, 4
-sautés faute de données (la distribution des taux de l'artefact de référence ; les agrégats
-de la 2042, D-327). Les 19 tests lourds, un par processus : LOURDS. `make impact` n'avait
-pas de relevé dans ce worktree et aurait tout lancé : la sélection est faite à la main, et
-la passe complète reste la décision du propriétaire.
+**Les tests ciblés.** Sur `1a08562`, qui porte D-334 : `ruff` sur `src`, `tests` et
+`scripts`. La passe parallèle des 18 fichiers de tests que le but touche, ou qui lisent le
+code qu'il change : 868 verts, 4 sautés faute de données (la distribution des taux de
+l'artefact de référence ; les agrégats de la 2042, D-327). Les 19 tests lourds, un par
+processus : 19 verts ; avant D-334, l'un d'eux tombait, sur `main` aussi. Les 2 tests
+chronométrés : verts. `make impact` n'avait pas de relevé dans ce worktree et aurait tout
+lancé : la sélection est faite à la main, et la passe complète reste la décision du
+propriétaire.
 
 ## D-334 — Un test lourd tué sur main aussi : le runner libère ses simulations
 
