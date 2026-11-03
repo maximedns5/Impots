@@ -1,0 +1,70 @@
+{
+  "programme": "roussel",
+  "mesure": "tva_carburants_5_5",
+  "champ": "tva_postes.carburants",
+  "point": "bas",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "tva_postes": {
+        "carburants": 0.0
+      }
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 7283963318.813293,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.002363859502185539,
+      0.004701625859105718,
+      0.007013587096436069,
+      0.009300028060519772,
+      0.011561230453460913,
+      0.01379747286783406,
+      0.01600903082100591,
+      0.018196176789082585,
+      0.020359180240479002,
+      0.02249830766911942
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-02",
+  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "dirty": false,
+  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre"
+}

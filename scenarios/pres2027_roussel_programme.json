@@ -1,0 +1,20 @@
+{
+  "name": "pres2027_roussel_programme",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Fabien Roussel (PCF), programme relevé le 2026-11-01 — la part chiffrée : tva_carburants_5_5",
+  "note": "1 mesures chiffrées sur 6 paramétrées et 14 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "tags": [
+    "presidentielle_2027",
+    "roussel",
+    "etude"
+  ],
+  "reform": {
+    "tva_postes": {
+      "carburants": 0.055
+    }
+  },
+  "imputations": [
+    "consommation"
+  ]
+}

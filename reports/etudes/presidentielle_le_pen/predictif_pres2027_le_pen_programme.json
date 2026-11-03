@@ -1,0 +1,491 @@
+{
+  "scenario": "pres2027_le_pen_programme",
+  "titre": "pres2027_le_pen_programme",
+  "source": "Marine Le Pen (Rassemblement national (RN)), programme relevé le 2026-11-01 — la part chiffrée : lp20_tva_energie, lp22_part_pleine_2e_enfant",
+  "reference": "reconduit",
+  "computed": "2026-11-02",
+  "spending_name": "Dépenses gelées en volume",
+  "growth_name": "Croissance réelle 1 %, prix 2 %",
+  "rate_name": "Taux implicite tenu à son niveau de 2025",
+  "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0
+  },
+  "years": [
+    {
+      "year": 2026,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 13924961551.690704,
+      "mechanical_aged_eur": 14541166882.20311,
+      "reference": 1.168580725548546,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2027,
+      "basis": "legislated",
+      "mechanical_frozen_eur": 13925044304.153992,
+      "mechanical_aged_eur": 14920796325.363144,
+      "reference": 1.1746928799602263,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2028,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 13925002429.05072,
+      "mechanical_aged_eur": 15311339614.269089,
+      "reference": 1.1753885794969483,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2029,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 13925044292.04071,
+      "mechanical_aged_eur": 15706598158.068375,
+      "reference": 1.1707805732317031,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2030,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 13925044316.267014,
+      "mechanical_aged_eur": 16105674096.481476,
+      "reference": 1.1609798413129486,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2031,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 13925044292.04094,
+      "mechanical_aged_eur": 16513018782.485306,
+      "reference": 1.146095619682319,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2032,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 13925002429.050705,
+      "mechanical_aged_eur": 16929435305.398804,
+      "reference": 1.1262354244680892,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2033,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 13925044292.04094,
+      "mechanical_aged_eur": 17350587560.0347,
+      "reference": 1.1015050760584795,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2034,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 13925044316.267014,
+      "mechanical_aged_eur": 17780421819.54442,
+      "reference": 1.0720087228588424,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    },
+    {
+      "year": 2035,
+      "basis": "reconducted",
+      "mechanical_frozen_eur": 13925044292.04094,
+      "mechanical_aged_eur": 18215129204.026764,
+      "reference": 1.0378488647367168,
+      "reform_aged": null,
+      "delta_aged": null,
+      "reform_frozen": null,
+      "delta_frozen": null
+    }
+  ],
+  "conventions": [
+    "Prélèvements constants en % du PIB",
+    "Boîte θ : étendue des résultats quand chaque θ revendiqué parcourt [0 ; 1], lue aux coins après contrôle de monotonie. Ni une somme de tranches, ni un intervalle de probabilité.",
+    "La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, prestations chômage, transferts indexés sur le PIB et dépenses indexées sur les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont ceux de la chaîne.",
+    "Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent environ 15 % (folio 112).",
+    "Prix de la réforme tenus constants dans la croissance nominale : Mésange n'imprime aucun déflateur du PIB (D-214).",
+    "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
+    "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
+    "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
+    "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas."
+  ],
+  "absent": {},
+  "theta": {
+    "autofinancement_poids_tresor_eco": 0.5,
+    "dividend_elasticity_firm_owners": 0.5,
+    "dividend_elasticity_other_holders": 0.5,
+    "dividend_share_firm_owners": 0.5,
+    "dividend_wage_shift_firm_owners": 0.5,
+    "employment_elasticity_smic": 0.5,
+    "eti_all": 0.5,
+    "eti_top_decile": 0.5,
+    "firm_creation_profit_tax": 0.5,
+    "is_croissance_pib": 0.5,
+    "labour_supply_married_men": 0.5,
+    "labour_supply_married_women": 0.5,
+    "labour_supply_single_men": 0.5,
+    "labour_supply_single_women": 0.5,
+    "passthrough_benefit_linked": 0.5,
+    "passthrough_unlinked": 0.5,
+    "production_tax_investment": 0.5,
+    "rd_cir_multiplier": 0.5,
+    "wealth_disclosure_growth_effect_pp": 0.5,
+    "wealth_tax_rate_elasticity": 0.5,
+    "multiplicateur_macro": 0.5
+  },
+  "theta_applied": true,
+  "closed": {
+    "IS et investissement des entreprises": "aucune variante d'IS dans Mésange 2017, et aucune réestimation publiée depuis ; le seul chiffre localisé, un multiplicateur moyen de 0,7 pour la hausse d'IS de 2013 dans un billet de l'OFCE, n'est plus en ligne et n'aurait ni profil par horizon ni ligne de solde (§5, D-219). Le rapport final du comité d'évaluation de la fiscalité du capital (France Stratégie, 2023), lu, ne chiffre aucun effet de la baisse de l'IS à 25 % sur l'investissement : il résume une littérature, sans estimation française (§6.2, D-221). L'équation (6) de Hanappi, Millot et Turban (OCDE, 2023), la seule qui lise le taux légal avec ses écarts-types, ne s'ouvre pas : ses composantes se mesurent autour de valeurs de référence que l'article n'imprime pas, et la seule décomposition publiée, la figure A E.1, est une image sans valeurs (D-247).",
+    "transferts": "Mésange n'a pas de variante de transfert. Les deux méta-analyses IMK donnent 0,39 (écart-type 0,47) et 0,54 (écart-type 1,16) : elles divergent sur le centre, d'un facteur 2,5 sur la largeur, mêlent les horizons d'un à douze ans et n'ont ni ligne de solde ni centre français (§5, D-214, D-219).",
+    "créations d'entreprises": "C8 est un indice illustratif de la couche entreprises, en points de taux de création de sociétés, jamais une recette : la trajectoire chiffre le coût d'une baisse d'IS (D-244), pas les sociétés qu'elle ferait naître (§6.3, D-221). Le niveau national, sur Da Rin, Di Giacomo et Sembenelli, est refusé : la méthode de l'OCDE ne redonne pas le TMEI composite publié pour la France en 2025 (15,62 contre 14,97), faute des amortissements de ses cinq sous-groupes de biens corporels. La construction des auteurs prend aussi ce que le projet n'a pas : les amortissements du guide fiscal d'Ernst & Young et les marges des branches américaines (STAN) (D-247).",
+    "R&D et CIR": "C9 est un indice illustratif de la couche entreprises, en euros de R&D, jamais une recette ; la créance du CIR, induite comprise, n'est pas la recette d'une année, et le CIR reste hors de la trajectoire (§6.4, D-222, D-244)."
+  },
+  "uprating_note": "Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.",
+  "banner": "Prédictif conditionnel : chaque chiffre dépend des scénarios nommés de dépense, de croissance et de taux, et des coefficients θ qui placeront chaque effet dans sa fourchette publiée. Ce n'est pas une prévision : changer un scénario change la réponse.",
+  "debt_banner": "Les dépenses publiques (~57 % du PIB) ne sont PAS microsimulées ici ; seule la tranche des transferts l'est. Ce panneau est un scénario comptable.",
+  "behavioural": true,
+  "macro": true,
+  "theta_box": {
+    "year": 2035,
+    "rows": [
+      "multiplicateur_macro"
+    ],
+    "paths": [
+      {
+        "persistence": "eteint",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.0371158536864451,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.04472596280697405
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.02950516916574686
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0323629021825127,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.03822994684569747
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.0264936657610495
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.03764970075158747,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.04574381690928919
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.02955558459388552
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0360321343240968,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.043823045190016785
+              ],
+              [
+                "multiplicateur_macro = 1",
+                0.028241223458177034
+              ]
+            ]
+          }
+        }
+      },
+      {
+        "persistence": "tenu",
+        "every_year": {
+          "vieillie": {
+            "theta": 0.011049415972548937,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.041727715454279224
+              ],
+              [
+                "multiplicateur_macro = 1",
+                -0.019467962621706913
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.0093538390343062,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.035679769065186884
+              ],
+              [
+                "multiplicateur_macro = 1",
+                -0.01686724183387489
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": 0.011156619740950946,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.04275828466769238
+              ],
+              [
+                "multiplicateur_macro = 1",
+                -0.020273209386533653
+              ]
+            ]
+          },
+          "figee": {
+            "theta": 0.010618176438063065,
+            "corners": [
+              [
+                "multiplicateur_macro = 0",
+                0.04099944877496475
+              ],
+              [
+                "multiplicateur_macro = 1",
+                -0.019605142725308555
+              ]
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "dirty": false,
+  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre",
+  "annees": null,
+  "persistence": null,
+  "side_by_side": [
+    {
+      "persistence": "eteint",
+      "label": "Effet macro éteint après trois ans",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1702536715866922,
+          "delta_aged": 0.0016729460381461614,
+          "reform_frozen": 1.170184310682759,
+          "delta_frozen": 0.0016035851342128815
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1761915336070625,
+          "delta_aged": 0.0014986536468362122,
+          "reform_frozen": 1.1760882087092717,
+          "delta_frozen": 0.0013953287490453548
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1778335868420977,
+          "delta_aged": 0.002445007345149408,
+          "reform_frozen": 1.1776466386620286,
+          "delta_frozen": 0.0022580591650802617
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1815630434664486,
+          "delta_aged": 0.010782470234745434,
+          "reform_frozen": 1.1809475911962386,
+          "delta_frozen": 0.010167017964535452
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1763294019960693,
+          "delta_aged": 0.015349560683120655,
+          "reform_frozen": 1.1752528779100588,
+          "delta_frozen": 0.014273036597110211
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1659428784743124,
+          "delta_aged": 0.01984725879199334,
+          "reform_frozen": 1.1643046695370527,
+          "delta_frozen": 0.018209049854733594
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1505081709947529,
+          "delta_aged": 0.02427274652666367,
+          "reform_frozen": 1.1482161511058284,
+          "delta_frozen": 0.0219807266377392
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1301300330929465,
+          "delta_aged": 0.02862495703446699,
+          "reform_frozen": 1.1270985302702454,
+          "delta_frozen": 0.025593454211765954
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.1049147314994368,
+          "delta_aged": 0.03290600864059434,
+          "reform_frozen": 1.1010612077765498,
+          "delta_frozen": 0.0290524849177074
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0749647184231619,
+          "delta_aged": 0.0371158536864451,
+          "reform_frozen": 1.0702117669192295,
+          "delta_frozen": 0.0323629021825127
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro éteint après trois ans."
+      ],
+      "gdp_gap_aged": [
+        0.0014111027971067628,
+        0.002893111545391876,
+        0.003126915486438575,
+        -1.4740746251437804e-05,
+        -1.6671667550793502e-05,
+        -1.992357416831152e-05,
+        -2.2156381634993046e-05,
+        -2.3537778074641936e-05,
+        -2.528866681721362e-05,
+        -2.7582823845689786e-05
+      ]
+    },
+    {
+      "persistence": "tenu",
+      "label": "Effet macro tenu au niveau de la troisième année",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1702536715866922,
+          "delta_aged": 0.0016729460381461614,
+          "reform_frozen": 1.170184310682759,
+          "delta_frozen": 0.0016035851342128815
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.1761915336070625,
+          "delta_aged": 0.0014986536468362122,
+          "reform_frozen": 1.1760882087092717,
+          "delta_frozen": 0.0013953287490453548
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1778335868420977,
+          "delta_aged": 0.002445007345149408,
+          "reform_frozen": 1.1776466386620286,
+          "delta_frozen": 0.0022580591650802617
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.174454945524737,
+          "delta_aged": 0.0036743722930339118,
+          "reform_frozen": 1.1741467013932505,
+          "delta_frozen": 0.003366128161547355
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.165884747516036,
+          "delta_aged": 0.004904906203087478,
+          "reform_frozen": 1.1654225359545896,
+          "delta_frozen": 0.004442694641640932
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1522317429011293,
+          "delta_aged": 0.0061361232188101855,
+          "reform_frozen": 1.1515833477663915,
+          "delta_frozen": 0.005487728084072385
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1336024154475488,
+          "delta_aged": 0.007366990979459587,
+          "reform_frozen": 1.1327366699071322,
+          "delta_frozen": 0.0065012454390429575
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.1101015367712255,
+          "delta_aged": 0.008596460712746001,
+          "reform_frozen": 1.108988417291949,
+          "delta_frozen": 0.007483341233469609
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.081833079085828,
+          "delta_aged": 0.00982435622698552,
+          "reform_frozen": 1.0804428621660116,
+          "delta_frozen": 0.008434139307169186
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0488982807092657,
+          "delta_aged": 0.011049415972548937,
+          "reform_frozen": 1.047202703771023,
+          "delta_frozen": 0.0093538390343062
+        }
+      ],
+      "conventions": [
+        "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année."
+      ],
+      "gdp_gap_aged": [
+        0.0014111027971067628,
+        0.002893111545391876,
+        0.003126915486438575,
+        0.003120021172857507,
+        0.00311167127501794,
+        0.0031022360187193945,
+        0.003092345761290376,
+        0.0030816638969622715,
+        0.003070145482252543,
+        0.0030577857607059764
+      ]
+    }
+  ]
+}

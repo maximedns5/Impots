@@ -1,0 +1,19 @@
+{
+  "name": "pres2027_retailleau_programme",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Bruno Retailleau (Les Républicains), programme relevé le 2026-11-01 — la part chiffrée : r19_gains_rendus_moitie, r21_c3s_cvae_forfait_social_cfe",
+  "note": "2 mesures chiffrées sur 29 paramétrées et 33 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "tags": [
+    "presidentielle_2027",
+    "retailleau",
+    "etude"
+  ],
+  "reform": {
+    "cotisations_salariales_retraite_echelle": 0.87
+  },
+  "firm_reform": {
+    "c3s_taux": 0.0,
+    "cvae_echelle": 0.0
+  }
+}

@@ -25519,3 +25519,320 @@ données, et restent à jouer dans un checkout qui les a.
 
 **Le juge.** L'Institut Montaigne n'a pas publié, et aucun chiffrage de tiers n'a été lu.
 Treize mesures des programmes sont désormais préenregistrées, sur 212 paramétrées.
+
+## D-328 — Le but 13 préenregistré : huit études de programmes, leurs passes, leur pronostic
+
+**Le fait.** Le propriétaire a validé le but 13 le 2 novembre 2026, avec les trois choix
+proposés : huit études et une page pour les 24 candidats, les plages en trois points, les
+hypothèses des études. Cette entrée fixe la méthode, les passes et le pronostic avant que
+les passes ne tournent.
+
+**L'étude d'un programme.** `etudes/presidentielle_<slug>.json`, texte « programme ». Elle a
+un scénario, `pres2027_<slug>_programme` : toutes les mesures chiffrées du programme
+ensemble, à la valeur du candidat, ménages et entreprises, avec l'imputation de la
+consommation quand une mesure la règle. Scénarios et définitions sont tirés des programmes
+par `scripts/preenregistrer_programmes.py --etudes`, et un test refuse leur dérive. Le
+cadre est celui de D-289 (`etude/ir.json`) : θ½, croissance réelle de 1 %, prix de 2 %,
+salaires de 3 %, dépense gelée en volume, taux implicite tenu, dix ans, comportements et
+boucle macro. Les passes sont celles de toute étude (D-301) : la première année par
+l'appel du simulateur, le chemin annuel par `impots predictif`, de 2026 à 2035, dans les
+deux vues, avec la boîte de θ.
+
+**Ce qui change dans le moteur, avant toute passe.** Chaque point a un test vu échouer sur
+`main`.
+
+1. **Une première année mixte.** La part d'Attal, de Lisnard et de Retailleau mêle ménages
+   et entreprises : sa première année est deux appels côte à côte, `/population/simulate`
+   et `/entreprises/simulate`. Le coût est leur somme ; les déciles, la bande et
+   l'éventail sont ceux des ménages, l'éventail ne lisant pas les entreprises. Un texte de
+   loi refuse toujours un tel scénario.
+2. **La consommation sur le chemin annuel.** D-306 la refusait. Ses euros suivent la
+   population. Dans la vue vieillie, ce sont ceux de l'année, portés par les comptes
+   jusqu'en 2025, puis par l'indice des prix du cadre. Dans la vue figée et la première
+   année, sur la population telle quelle, ce sont ceux du millésime, 2024. Les prix de
+   l'énergie sont ceux de l'année des euros : relevés en 2024 et 2026, portés au-delà par
+   le même indice, pour que les volumes ne bougent pas d'eux-mêmes. Le droit est celui de
+   l'année : les accises de 2026 reconduites au-delà, les taux de TVA de la table. Les
+   indemnités journalières restent refusées sur le chemin.
+   `/population/simulate` lisait jusqu'ici la consommation de 2026 sur les revenus de
+   2024 ; il lit celle de 2024. Les cas enregistrés, chiffrés sur la population vieillie
+   (D-326), ne bougent pas.
+3. **Les taux marginaux d'une réforme de consommation.** Le calcul des taux marginaux, qui
+   nourrit la bande, construisait l'arbre avec les boutons de TVA, que le moteur refuse
+   (D-324) : toute passe avec comportements d'une réforme de consommation tombait. L'arbre
+   en reçoit désormais la part qu'il lit, comme dans la passe elle-même.
+4. **polars 2.** Le conteneur installe polars 2.1.0, et le projet demande `>=1.0`. polars
+   2 a retiré trois des quatre graines de `hash_rows`, et toute passe avec comportements
+   tombait sur l'empreinte du cache des taux marginaux. L'empreinte prend une graine sous
+   polars 2 ; un cache écrit sous polars 1 se recalcule, comme sa docstring le prévoit.
+
+**Les plages en trois points.** Pour chaque mesure chiffrée et chaque champ de sa plage, il
+y a trois points : le bas, la valeur du candidat, le haut. Chaque point est la mesure seule,
+dans le cadre de l'étude, mécanique (sans comportements ni boucle), par le chemin rapide de
+`POST /predictif/simulate`. Il donne le coût de 2026 sur la population vieillie, et la
+dette de 2035 à θ½, la première année reportée en part de PIB, convention dite sur la page.
+Cela fait 57 points sur 19 plages. Les mesures des entreprises dont le droit change dans
+l'horizon (la CVAE, que le droit en vigueur supprime en 2030) sont refusées par ce chemin
+(D-254). Leurs points donnent le coût seul, par `/entreprises/simulate` en 2026, et disent
+pourquoi la dette manque : 15 points, chez Attal, Lisnard et Retailleau.
+
+**Le reste de la page.** La couche déclarée du candidat à ρ = 0, ½ et 1, à part, jamais
+additionnée. Le site a une page des 24 candidats, avec leur couverture et leurs refus par
+porte, sans chiffre pour ceux dont rien ne se chiffre.
+
+**L'ordre des passes.** Une passe par processus, l'une après l'autre, depuis un worktree
+figé sur le commit qui porte cette entrée. Viennent d'abord les huit premières années, puis
+les 57 points, puis les huit chemins, d'une demi-heure chacun environ. Une passe interrompue
+reprend où elle s'est arrêtée, et un rapport écrit ne l'est pas deux fois.
+
+**Ce qu'un essai a imprimé avant cette entrée.** Pour vérifier les chemins neufs, un essai
+hors rapports a imprimé :
+
+- la première année d'Attal : 73,1 Md€ pour les ménages, 3,3 pour les entreprises ;
+- le point du candidat de Roussel : 5,28 Md€, +1,63 pt de dette en 2035 ;
+- le point du candidat de la CVAE d'Attal : 3,28 Md€ ;
+- un chemin d'un an du programme de Roussel.
+
+Les fourchettes ci-dessous étaient écrites avant l'essai, d'après les cas de D-321 et
+D-326 ; elles ne sont pas retouchées.
+
+**Le pronostic, avant les passes.** Le coût de la première année est celui de 2026, sur la
+population de 2024 et le droit de 2026, positif quand l'État perd. La somme des cas
+enregistrés, chiffrés sur la population vieillie, est réduite de 5 à 8 % pour les revenus
+de 2024.
+
+- Attal : un coût de 65 à 80 Md€.
+- Lisnard : un coût de 31 à 41 Md€.
+- Retailleau : un coût de 18 à 24 Md€.
+- Labib : un coût de 18 à 26 Md€.
+- Le Pen : un coût de 12 à 16 Md€.
+- Roussel : un coût de 4,5 à 5,8 Md€.
+- Tondelier : une recette de 0,6 à 1,3 Md€.
+- Mélenchon : une recette de 7 à 11 Md€.
+
+La dette en 2035, vue vieillie, à θ½, est du signe du coût : de 0,2 à 0,4 point de PIB par
+milliard de coût de la première année pour la part des ménages (le chemin rapide donnait
+0,31 pour la TVA de Le Pen, D-327). Elle est plus faible pour celle des entreprises, la CVAE
+sortant du droit en 2030. Le verdict est « hausse » pour les six parts qui coûtent, et
+« baisse » pour Mélenchon et Tondelier. Chaque plage est monotone : le coût va dans un
+seul sens d'un bout à l'autre.
+
+**La réfutation qui se lirait.** Une part dont le coût s'écarte de plus de 15 % de la somme
+de ses cas, une fois l'année de la population comptée. Ou une plage qui n'est pas
+monotone.
+
+## D-329 — Les passes du but 13 reprises : la greffe distinguait 3 de 3,0
+
+**Le fait.** La 47e des 73 passes de D-328 est tombée : le haut de la plage de Mélenchon,
+le plafond de la réduction générale à 3 SMIC, qui est le droit de 2026. La greffe des
+paramètres (D-311) refusait la réforme. Le moteur écrit 3.0 là où l'arbre porte 3 : `==`
+les dit égaux, et `differences` ne trouvait aucun chemin changé ; le contrôle, qui compare
+le texte des deux arbres, voyait « 3 » et « 3.0 ». Tout bouton remis à la valeur entière du
+droit tombait ainsi. Les deux autres bouts de plage qui sont le droit, le haut d'Attal et
+le bas de Le Pen, portaient des valeurs décimales : ils avaient rendu 0 € et 0 point.
+
+**Le correctif.** `differences` voit ce que le contrôle voit : une feuille dont le texte
+diffère est greffée, et l'arbre greffé est celui de la réforme. Un test, vu échouer sur le
+code de D-328, le tient.
+
+**Les passes.** Une étude se lit sur un seul code : les 73 passes reprennent au début, sur
+le commit qui porte cette entrée, depuis un worktree figé neuf. Les 46 rapports du commit
+`3b02ae4` ne sont pas gardés ; la reprise doit les redonner à l'identique, et le résultat
+le dira. La méthode et le pronostic de D-328 ne changent pas.
+
+## D-330 — Les chemins du but 13 tués faute de mémoire ; les passes reprennent encore
+
+**Le fait.** La reprise de D-329 a redonné les 46 rapports de `3b02ae4` à l'identique
+(seules leurs durées diffèrent), puis les 65 passes courtes sans échec. Le premier chemin
+annuel, celui d'Attal, a été tué par le noyau à 13,9 Go, la limite du conteneur étant de 14
+Go. Un chemin de trois ans, mesuré toutes les dix secondes, montait de 2 Go par année et
+vue, et mourait dans sa deuxième année.
+
+**La cause.** Un chemin enchaîne vingt passes dans un processus. Il gardait deux choses que
+la passe suivante ne lit pas : les systèmes réformés de chaque année, dans deux caches de
+32, avec leurs arbres par instant ; et les arbres de la référence à chaque instant, dans un
+cache sans borne que chaque année remplit de ses mois.
+
+**Le correctif.** Chaque passe du chemin libère d'abord les deux caches, et refait à vide
+celui de la référence (`cli._liberer`). Un chemin de trois ans du programme d'Attal reste à
+6,2 Go de bout en bout, au lieu de 14. Un test tient la fonction ; son appel dans le chemin
+est tenu par un test de structure, qui lit le code de la commande, seul moyen de le tenir
+sans une passe.
+
+**Les passes.** Elles reprennent encore au début, toutes, sur le commit qui porte cette
+entrée : une étude se lit sur un seul code. La méthode et le pronostic de D-328 ne changent
+pas, et la reprise devra redonner les 65 rapports courts de `07783a4` à l'identique.
+
+## D-331 — Chaque passe du chemin dans son processus ; Tondelier et Lisnard repassent
+
+**Le fait.** Sur `82f4926`, les 65 passes courtes ont redonné celles de `07783a4` à
+l'identique, seules leurs durées différant. Cinq chemins sont allés au bout : Attal, Labib
+et Le Pen tels quels, avec un pic de 11,8 Go pour Attal ; Mélenchon et Retailleau avec
+l'allocateur réglé. Les chemins de Lisnard puis de Tondelier ont été tués par le noyau à
+13,9 Go, après dix et dix-sept minutes.
+
+**L'allocateur, essayé d'abord.** `MALLOC_MMAP_THRESHOLD_=131072` fait rendre au système les
+grands tableaux libérés ; `MALLOC_ARENA_MAX=2` limite l'éparpillement entre fils. Aucun
+nombre n'en dépend, et le code ne change pas : les chemins de Mélenchon, de Retailleau et de
+Roussel ont tourné ainsi, ce que leur rapport dit à la clé `where`. Celui de Tondelier est
+mort quand même : une seule de ses passes monte à 12,7 Go.
+
+**Le correctif.** Chaque passe du chemin tourne dans un processus neuf, lancé à vide
+(`spawn`), qui rend toute sa mémoire en finissant (`cli._isole`) ; sa valeur revient au
+chemin. Le parent ne garde que 356 Mo. Un chemin de deux ans de Tondelier, ainsi, va au
+bout, avec un pic de 13,1 Go pour tout le conteneur. Un test tient la fonction, un test de
+structure son appel.
+
+**Les passes.** Une étude se lit sur un seul code, et chacune peut avoir le sien. Les six
+études dont les passes sont allées au bout gardent `82f4926`. Celles de Tondelier et de
+Lisnard repassent entières (première année, plages et chemin) sur le commit qui porte
+cette entrée, l'allocateur réglé. Leurs passes courtes devront redonner celles de
+`82f4926` à l'identique. La méthode et le pronostic de D-328 ne changent pas.
+
+## D-332 — Tondelier tué en 2035 : les taux marginaux gardaient leurs simulations
+
+**Le fait.** Sur `ac36508`, les 23 passes courtes de Tondelier et de Lisnard ont redonné
+celles de `82f4926` à l'identique, seules leurs durées différant. Le conteneur a redémarré
+pendant la 20e des 25 passes ; la série a repris où elle s'était arrêtée, comme D-328 le
+prévoit, les 19 rapports écrits gardés tels quels. Le chemin de Tondelier est mort après 82
+minutes : le noyau a tué le processus d'une passe, le conteneur étant à 13,9 Go, sous une
+limite de 14,3 Go. L'isolement de D-331 tenait le chemin ; une passe seule ne tenait plus.
+
+**La cause.** La passe de 2035, vue vieillie, a été mesurée seule, toutes les 0,3 seconde,
+la pile relevée à chaque pic. La passe de la population finit à 6 Go. Les taux marginaux en
+ajoutent 7, sans rien rendre, et la passe meurt avant le deuxième échantillon de C1.
+`emtr._disposable` construit une simulation entière, en lit le revenu disponible et la
+laisse. Une simulation est un cycle : ses détenteurs et ses populations pointent vers elle.
+Seule une collecte complète la libère, et un grand tas en lance rarement une. Les seize
+simulations d'une passe, quatre par échantillon, restaient donc en mémoire. L'échantillon
+garde chaque ménage dont les salaires atteignent 200 000 € (D-310) ; en 2035, vieillis, ils
+sont plus nombreux, et chaque simulation pèse plus. Libérer les simulations du runner,
+essayé d'abord, ne changeait pas le pic.
+
+**Le correctif.** `_disposable` libère sa simulation dès qu'il l'a lue (`gc.collect`).
+Aucun nombre n'en dépend. Un test, vu échouer sur `ac36508`, le tient : le collecteur coupé,
+la simulation lue est morte au retour. Ses deux mutations, la collecte ôtée ou la référence
+gardée, sont tuées. La même passe de 2035, mesurée sans aucun cache des taux, culmine à 7,4
+Go et va au bout en 490 secondes.
+
+**Les passes.** Une étude se lit sur un seul code. Celles de Tondelier et de Lisnard
+repassent entières (première année, plages et chemin) sur le commit qui porte cette entrée,
+depuis un worktree figé neuf, l'allocateur réglé comme en D-331. Les caches des taux
+marginaux suivent, comme dans les reprises précédentes ; chacun ne sert que la trame sur
+laquelle il a été calculé (D-276). Les six autres études gardent `82f4926`. Les 23 passes
+courtes devront redonner celles de `82f4926` à l'identique. La méthode et le pronostic de
+D-328 ne changent pas.
+
+## D-333 — Les huit études du but 13 : les coûts tenus, six verdicts manqués
+
+**Le fait.** Les passes de D-328 sont allées au bout : six études sur `82f4926` (D-330),
+celles de Tondelier et de Lisnard sur `c36984d` (D-332), chaque rapport disant son commit
+et son allocateur à la clé `where`. Les 23 passes courtes de `c36984d` ont redonné celles de
+`82f4926` à l'identique, seules leurs durées différant. Le conteneur a redémarré une fois
+encore, pendant la 6e des 25 passes, la mémoire à 6,7 Go : la série a repris où elle
+s'était arrêtée, les cinq rapports écrits gardés. Le chemin de Tondelier a duré 86 minutes,
+celui de Lisnard 96 ; la mémoire du conteneur a culminé à 8,4 Go, contre 13,9 Go avant
+D-332. Les huit pages sont écrites depuis les seuls rapports, et le site construit.
+
+**Le coût de la première année.** 2026, population de 2024, positif quand l'État perd, en
+milliards d'euros. L'écart est celui de la part à la somme de ses cas, ceux-ci réduits de
+6,5 %, le milieu des 5 à 8 % que D-328 donne pour les revenus de 2024.
+
+| part | pronostic | coût | écart aux cas |
+|---|---:|---:|---:|
+| Attal | 65 à 80 | +76,42 | +3,2 % |
+| Lisnard | 31 à 41 | +37,24 | +2,0 % |
+| Retailleau | 18 à 24 | +20,81 | +1,6 % |
+| Labib | 18 à 26 | +22,89 | +15,5 % |
+| Le Pen | 12 à 16 | +13,92 | +2,9 % |
+| Roussel | 4,5 à 5,8 | +5,19 | +5,0 % |
+| Tondelier | −1,3 à −0,6 | −0,85 | −7,0 % |
+| Mélenchon | −11 à −7 | −8,73 | +0,5 % |
+
+Les huit coûts sont dans leur fourchette.
+
+**La réfutation se lit pour Labib.** Sa part s'écarte de ses cas de 15,5 %, au-delà des 15 %
+que D-328 se donnait : la réfutation écrite se lit, et elle reste lue. Sans la réduction,
+l'écart est de +8,0 %. La réduction valait pour des revenus ; la part de Labib est une
+accise sur des litres et une TVA sur des euros de carburant. La première année lit la
+dépense de 2024 au prix de 2024 (gazole 1,694 €/L), le cas celle de 2026 au prix de 2026
+(2,051 €/L) : les euros de 2024 achètent plus de litres, et l'accise suit les litres. La
+réduction ne se transposait pas à une mesure de consommation, ce que D-328 n'avait pas vu.
+
+**La dette en 2035.** Vue vieillie, θ½, en points de PIB contre la référence :
+
+| part | Δb 2035 | par Md€ de 2026 | verdict | pronostic |
+|---|---:|---:|---|---|
+| Attal | +20,29 | +0,265 | dépend de θ | hausse |
+| Lisnard | +9,55 | +0,256 | dépend de θ | hausse |
+| Retailleau | +5,44 | +0,261 | hausse | hausse |
+| Labib | +5,55 | +0,243 | hausse | hausse |
+| Le Pen | +3,71 | +0,267 | dépend de θ | hausse |
+| Roussel | +1,30 | +0,251 | dépend de θ | hausse |
+| Tondelier | +0,26 | −0,304 | dépend de θ | baisse |
+| Mélenchon | −2,55 | +0,292 | dépend de θ | baisse |
+
+Le rapport au coût est de 0,2 à 0,4 en valeur absolue pour les huit. Il est du signe du coût
+pour sept : celle de Tondelier rapporte la première année et monte la dette. Le verdict
+manque son pronostic pour six parts sur huit, pour deux raisons.
+
+* **Le multiplicateur tenu.** Sous la persistance « tenu », le coin de la boîte où le
+  multiplicateur macro vaut 1 renverse le signe, dans les deux vues : Attal passe à −6,93
+  points, Lisnard à −1,13, Le Pen à −1,95, Roussel à −0,83 ; la recette de Mélenchon monte
+  la dette de 1,51 point. Sous « éteint », chaque coin garde le signe de θ½. D-328 avait
+  pensé le verdict sur la persistance qui s'éteint ; un effet sur l'activité tenu dix ans,
+  au multiplicateur plein, finance la part, ou défait la recette.
+* **L'élasticité du haut.** La tranche de 60 % de Tondelier rapporte 848 M€ sans
+  comportements. Avec eux, elle coûte 437 M€ au centre (de +71 à +864 M€) : l'élasticité du
+  revenu imposable du dernier décile (C1) passe la recette. La dette de 2035 baisse de 0,13
+  point au bas de cette élasticité et monte jusqu'à 1,08 point au haut. D-328 avait pensé
+  le signe de la dette sur celui du coût mécanique.
+
+Le verdict de chaque page dit ce que la boîte dit, et le lecteur y lit le coin qui renverse.
+
+**Les plages.** Les 57 points sont faits ; chaque plage est monotone au sens large. La
+valeur du candidat est le bout de plusieurs plages (la suppression chez Labib, le bas de la
+CVAE chez Attal, le haut des plafonds du quotient chez Lisnard), et le coût y est celui du
+bout. Les 15 points des entreprises dont le droit
+change dans l'horizon disent pourquoi leur dette manque (D-254).
+
+**Ce que les pages ont demandé.** La garde qui tient la couche annoncée hors de la part
+chiffrée relevait « annoncé » dans la phrase du juge, la date de l'Institut Montaigne : le
+mot désigne, sur ces pages, la couche du candidat, et la phrase dit désormais « attendu ».
+Le chapeau dit « a déclaré sa candidature », sans genre, et « cette seule mesure » quand il
+n'y en a qu'une. La note des scénarios dit « 1 mesures chiffrées » : elle est celle des
+scénarios préenregistrés, que les rapports lisent, et n'est pas réécrite.
+
+**Les gardes, par mutation.** Les gardes des pages : dix mutations (l'avertissement ôté, la
+couverture fausse, une porte ou une mesure tue, un point ou une plage tus, l'annonce dans la
+part ou absente, les entreprises ou la note mixte tues), toutes tuées. Celles de la mémoire
+et du processus : six mutations de `_liberer` et de `_isole`, toutes tuées, après que la
+garde de D-330 a appris à lire aussi le cache des entreprises, qu'une mutation laissait
+vivre. Celle de D-332 : deux mutations, tuées.
+
+**Les tests ciblés.** Sur `1a08562`, qui porte D-334 : `ruff` sur `src`, `tests` et
+`scripts`. La passe parallèle des 18 fichiers de tests que le but touche, ou qui lisent le
+code qu'il change : 868 verts, 4 sautés faute de données (la distribution des taux de
+l'artefact de référence ; les agrégats de la 2042, D-327). Les 19 tests lourds, un par
+processus : 19 verts ; avant D-334, l'un d'eux tombait, sur `main` aussi. Les 2 tests
+chronométrés : verts. `make impact` n'avait pas de relevé dans ce worktree et aurait tout
+lancé : la sélection est faite à la main, et la passe complète reste la décision du
+propriétaire.
+
+## D-334 — Un test lourd tué sur main aussi : le runner libère ses simulations
+
+**Le fait.** Des 19 tests lourds, un tombait : celui des quatre formes de réforme sur la
+population réelle (`test_every_reform_shape_balances_on_the_real_population`), tué par le
+noyau à 14,1 Go. Il tombe de même sur `main` (`4faf17c`), dans ce conteneur, à 14,2 Go : le
+but 13 n'y est pour rien. Le relevé de D-309 le donnait à 7 Go à froid.
+
+**La cause.** Celle de D-332, dans le runner. Le test enchaîne quatre passes de la
+population dans un processus ; les simulations de la référence et de la réforme, des cycles
+que seule une collecte complète libère, survivaient à la passe qui les avait construites.
+
+**Le correctif.** La passe libère ses simulations quand elle rend son résultat, qui ne
+change pas. Le test, essayé ainsi sur `main`, passe en six minutes et demie, avec un pic de
+6,7 Go. Une garde, vue échouer sur le code d'avant, le tient : le collecteur coupé, chaque
+simulation d'une passe est morte à son retour. Ses deux mutations, la collecte ôtée ou les
+références gardées, sont tuées. Aucune passe des études ne l'a lu : elles ont tourné avant,
+et chacune dit son commit.

@@ -1,0 +1,93 @@
+{
+  "programme": "tondelier",
+  "mesure": "tranche_ir_60",
+  "champ": "ir_bareme.5.rate",
+  "point": "bas",
+  "request": {
+    "spending": {
+      "rule": "gele_en_volume"
+    },
+    "growth": {
+      "name": "Croissance réelle 1 %, prix 2 %",
+      "real": 0.01,
+      "prices": 0.02
+    },
+    "rate": {
+      "name": "Taux implicite tenu à son niveau de 2025",
+      "kind": "implicite_tenu"
+    },
+    "horizon": 10,
+    "theta": {
+      "common": 0.5
+    },
+    "uprating": {
+      "wage": 0.03,
+      "source": "3 % ronds, le rythme du PIB nominal du scénario"
+    },
+    "behavioural": false,
+    "macro": false,
+    "reform": {
+      "ir_bareme": [
+        {
+          "threshold": 0.0,
+          "rate": 0.0
+        },
+        {
+          "threshold": 11600.0,
+          "rate": 0.11
+        },
+        {
+          "threshold": 29579.0,
+          "rate": 0.3
+        },
+        {
+          "threshold": 84577.0,
+          "rate": 0.41
+        },
+        {
+          "threshold": 181917.0,
+          "rate": 0.45
+        },
+        {
+          "threshold": 250000.0,
+          "rate": 0.45
+        }
+      ]
+    },
+    "firm_reform": null
+  },
+  "appel": "/predictif/simulate",
+  "dette_absente": null,
+  "response": {
+    "mechanical_first_year_eur": 0.0,
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035
+    ],
+    "delta": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "population_view": "vieillie"
+  },
+  "computed": "2026-11-03",
+  "commit": "c36984d9f6e3423cc8ad446f16c287617f3ea148",
+  "dirty": false,
+  "where": "conteneur cloud de la session, worktree figé sur c36984d, une passe par processus, l'une après l'autre ; allocateur réglé (MALLOC_MMAP_THRESHOLD_=131072, MALLOC_ARENA_MAX=2) pour tenir en mémoire, chaque passe du chemin dans son processus (D-331), les taux marginaux libérant leurs simulations (D-332)"
+}

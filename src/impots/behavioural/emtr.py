@@ -24,6 +24,7 @@ because zero here would say "keeps every euro", which is a claim.
 
 from __future__ import annotations
 
+import gc
 import hashlib
 import json
 import os
@@ -89,7 +90,17 @@ def _bump(frame: pl.DataFrame, step: float) -> pl.DataFrame:
 
 
 def _disposable(frame: pl.DataFrame, system: Any, year: int) -> np.ndarray:
-    return build_simulation(frame, system, year).calculate("revenu_disponible").astype(np.float64)
+    """The households' disposable income, and the simulation it was read from freed.
+
+    A simulation is a cycle, its holders and populations pointing back at it, that only a
+    full collection frees; a large heap seldom runs one. A pass of the path builds sixteen
+    here, four per sample, and kept them all: in 2035, the sample's top households more
+    numerous, it grew past the container (D-332)."""
+    simulation = build_simulation(frame, system, year)
+    disposable = simulation.calculate("revenu_disponible").astype(np.float64)
+    del simulation
+    gc.collect()
+    return disposable
 
 
 def _rate(
@@ -148,7 +159,14 @@ def _drawn(seed: int) -> str:
 def fingerprint(frame: pl.DataFrame) -> str:
     """What a cache file says of the frame its rates were computed on: every row, every
     column, in order. Stable within one polars version; another recomputes."""
-    rows = frame.hash_rows(seed=0, seed_1=1, seed_2=2, seed_3=3).to_numpy()
+    # polars 2 hashes a row with one seed, where polars 1 took four (D-328): the print is
+    # the version's own, and a file written under the other recomputes, as said above.
+    import inspect
+
+    seeds = ({"seed": 0, "seed_1": 1, "seed_2": 2, "seed_3": 3}
+             if "seed_1" in inspect.signature(pl.DataFrame.hash_rows).parameters
+             else {"seed": 0})
+    rows = frame.hash_rows(**seeds).to_numpy()
     columns = ",".join(f"{name}:{dtype}" for name, dtype in frame.schema.items())
     return hashlib.sha256(columns.encode() + rows.tobytes()).hexdigest()[:16]
 
@@ -177,6 +195,13 @@ def compute(
     None when it is the vintage as built. `seed` draws the sample: another seed is another
     sample of the same size (D-284).
     """
+    # The tree's marginal rates do not see a consumption tax, priced at constant volumes on
+    # the imputed consumption: the reform the tree reads is the spec without those knobs,
+    # as the runner hands it (D-323, D-328). Built with them, the tree refused the reform.
+    from impots import consommation
+
+    if consommation.touche(reform):
+        reform = consommation.sans_consommation(reform)
     frame = _priced(population, sample, seed)
     frame_print = fingerprint(frame)
 

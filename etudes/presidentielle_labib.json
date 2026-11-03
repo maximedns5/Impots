@@ -1,0 +1,14 @@
+{
+  "nom": "presidentielle_labib",
+  "titre": "Selma Labib : la part chiffrée du programme, en trois réponses",
+  "texte": "programme",
+  "programme": "labib",
+  "preenregistrement": "D-328",
+  "cadre": "ir",
+  "millesime_entreprises": "2023",
+  "scenarios": [
+    {
+      "scenario": "pres2027_labib_programme"
+    }
+  ]
+}

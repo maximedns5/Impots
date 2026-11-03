@@ -386,3 +386,127 @@ def test_the_check_refuses_a_pass_that_taxed_another_consumption() -> None:
     faux = frame.with_columns(pl.col("tva_menages") * 1.01)
     with pytest.raises(SystemExit, match="ne lisent pas la même consommation"):
         v.verifier(faux)
+
+
+# --- la consommation sur le chemin annuel (D-328) -------------------------------------
+
+
+def test_past_the_last_law_the_excises_are_carried_and_the_prices_follow_the_index() -> None:
+    """GARDE (D-328). Le chemin annuel chiffre 2027 à 2035 : les accises de 2026 y sont
+    reconduites, et les prix qui tirent les volumes suivent l'indice qui porte les euros."""
+    indice = {a: 0.02 for a in range(2026, 2031)}
+    droit = co.Fiscalite.droit(2030, prix_au_dela=indice)
+    assert droit.accise == co.LOI_ENERGIE[2026]["accise"]
+    for produit, prix in co.LOI_ENERGIE[2026]["prix"].items():
+        assert droit.prix[produit] == pytest.approx(prix * 1.02 ** 4)
+    with pytest.raises(co.ConsommationError, match="2028"):
+        co.Fiscalite.droit(2030, prix_au_dela={2027: 0.02})
+    with pytest.raises(co.ConsommationError, match="2025"):
+        co.Fiscalite.droit(2025)
+
+
+def test_the_consumption_year_is_the_population_s_not_the_law_s() -> None:
+    """GARDE (D-328). Sur une population qui n'est pas vieillie, la consommation est celle
+    de son millésime, aux prix de son millésime ; le droit reste celui de l'année."""
+    foyers = _foyers()
+    a = co.colonnes(foyers, 2026, annee_consommation=2024)
+    conso, _, _ = co.imputer_menages(foyers, 2024)
+    attendu = co.taxes(conso, co.Fiscalite.droit(2026, annee_prix=2024))
+    assert np.allclose(a["consommation_imputee"], sum(conso.values()))
+    assert np.allclose(a["accises_energie"], attendu["accises"])
+    b = co.colonnes(foyers, 2026)
+    assert b["consommation_imputee"].sum() > a["consommation_imputee"].sum()
+
+
+def test_the_frame_s_price_index_carries_the_years_past_the_accounts() -> None:
+    from impots import uprating as up
+
+    cadre = up.Uprating(wage=0.03, price=0.02, source="essai", base_year=2024)
+    assert co.prix_du_cadre(cadre, 2028) == {2026: 0.02, 2027: 0.02, 2028: 0.02}
+    par_annee = up.Uprating.par_annee({2025: 0.02, 2026: 0.03}, {2025: 0.01, 2026: 0.015},
+                                      source="essai", base_year=2024)
+    assert co.prix_du_cadre(par_annee, 2026) == {2026: 0.015}
+
+
+def test_each_view_of_the_path_imputes_its_own_consumption(monkeypatch) -> None:
+    """GARDE (D-328). La vue vieillie impute l'année, à l'indice du cadre ; la vue figée,
+    le millésime. La première année du simulateur aussi, sur sa population telle quelle."""
+    from types import SimpleNamespace
+
+    from impots import uprating as up
+    from impots.api import main
+    from impots.population import runner
+
+    seen = []
+
+    def run(frame, **kwargs):
+        seen.append(kwargs)
+        raise RuntimeError("arrêté")
+
+    monkeypatch.setattr(runner, "run", run)
+    monkeypatch.setattr(main, "_population_frame", lambda: pl.DataFrame({"x": [1]}))
+    monkeypatch.setattr(up, "uprate", lambda frame, year, hypothesis: frame)
+    cadre = up.Uprating(wage=0.03, price=0.02, source="essai", base_year=2024)
+    request = main.YearPass(reform=ReformSpec(accise_gazole=0.7), year=2028, behavioural=False)
+    for view in (main.FIRST_YEAR_VIEW, main.FROZEN_VIEW):
+        with pytest.raises(RuntimeError, match="arrêté"):
+            main._price_households(request, uprating=cadre, macro=False, view=view)
+    aged, frozen = seen
+    assert aged["annee_consommation"] == 2028
+    assert aged["prix_au_dela"] == {2026: 0.02, 2027: 0.02, 2028: 0.02}
+    assert frozen["annee_consommation"] == 2024 and frozen["prix_au_dela"] is None
+    with pytest.raises(RuntimeError, match="arrêté"):
+        main._run_population(SimpleNamespace(year=2026, reform=ReformSpec(accise_gazole=0.7)),
+                             object())
+    assert seen[-1]["annee_consommation"] == 2024
+
+
+def test_the_path_s_own_passes_impute_the_consumption_of_their_view() -> None:
+    from impots import uprating as up
+    from impots.population import cli
+
+    cadre = up.Uprating(wage=0.03, price=0.02, source="essai", base_year=2024)
+    spec = ReformSpec(tva_taux_normal=0.21)
+    assert cli._consommation(ReformSpec(pfu_taux=0.3), 2027, "vieillie", cadre, "2024") == {}
+    assert cli._consommation(spec, 2027, "figee", cadre, "2024") == {
+        "impute_consommation": True, "annee_consommation": 2024}
+    assert cli._consommation(spec, 2027, "vieillie", cadre, "2024") == {
+        "impute_consommation": True, "annee_consommation": 2027,
+        "prix_au_dela": {2026: 0.02, 2027: 0.02}}
+
+
+def test_the_path_takes_a_consumption_scenario_and_still_refuses_the_sick_pay() -> None:
+    from impots import scenarios
+
+    def scen(imputations):
+        return scenarios.Scenario(name="essai", year=2026, created="2026-11-02",
+                                  source="essai", reform=ReformSpec(tva_taux_normal=0.21),
+                                  imputations=imputations)
+
+    assert scen(("consommation",)).reform_in(2030).tva_taux_normal == 0.21
+    with pytest.raises(scenarios.ScenarioError, match="D-306"):
+        scen(("ij",)).reform_in(2026)
+
+
+def test_the_marginal_rates_read_the_tree_part_of_a_consumption_reform(monkeypatch) -> None:
+    """GARDE (D-328). Une passe avec comportements calcule les taux marginaux sous la
+    réforme : avec ses boutons de TVA, l'arbre la refusait, et toute bande d'une réforme de
+    consommation tombait. L'arbre en reçoit la part qu'il lit, et rien d'autre."""
+    from impots.behavioural import emtr
+
+    seen = []
+
+    def reformed_for(spec, year):
+        seen.append(spec)
+        raise RuntimeError("arrêté")
+
+    monkeypatch.setattr(emtr, "reformed_for", reformed_for)
+    monkeypatch.setattr(emtr, "_rate", lambda *a, **k: np.zeros(1))
+    monkeypatch.setattr(emtr, "_priced", lambda population, sample, seed: population)
+    frame = pl.DataFrame({"household_id": [1], "weight": [1.0],
+                          "salaire_brut_annuel": [20_000.0]})
+    seul = emtr.compute(frame, 2024, ReformSpec(tva_taux_normal=0.21))
+    assert "emtr_reform" not in seul.households.columns and not seen
+    with pytest.raises(RuntimeError, match="arrêté"):
+        emtr.compute(frame, 2024, ReformSpec(tva_taux_normal=0.21, pfu_taux=0.3))
+    assert seen == [ReformSpec(pfu_taux=0.3)]

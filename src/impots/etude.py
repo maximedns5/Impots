@@ -48,7 +48,12 @@ SCENARIOS = ROOT / "scenarios"
 REQUESTS = ROOT / "etude"
 DECISIONS = "docs/DECISIONS.md"
 FIELDS = {"nom", "titre", "texte", "preenregistrement", "cadre", "millesime_entreprises",
-          "page", "rapports", "scenarios"}
+          "page", "rapports", "scenarios", "programme"}
+#: The points of a measure's range the study of a programme prices (D-328): its bottom,
+#: the candidate's value, its top.
+POINTS = ("bas", "candidat", "haut")
+#: Where a programme study keeps its ranges' reports, beside the two of its part.
+PLAGES = "plages"
 
 
 class EtudeError(ValueError):
@@ -80,42 +85,152 @@ def _script(name: str) -> Any:
     return module
 
 
-def first_year_payload(name: str, scenarios: Path = SCENARIOS) -> tuple[str, str, dict]:
+#: The two calls of a first year that prices households and firms together (D-328).
+MIXTE = {"menages": "/population/simulate", "entreprises": "/entreprises/simulate"}
+
+
+def first_year_payload(name: str, scenarios: Path = SCENARIOS,
+                       mixte: bool = False) -> tuple[str, str, dict]:
     """(kind, endpoint, payload) of `name`'s first year: the firms' simulator for a firm
-    reform alone, the households' otherwise, with behaviour and the loop asked."""
+    reform alone, the households' otherwise, with behaviour and the loop asked. A reform of
+    both is refused, unless `mixte`: a programme's priced part, whose first year is the two
+    calls, side by side (D-328)."""
     from impots import scenarios as scenarios_module
 
     scenario = scenarios_module.load(name, scenarios)
     firm = scenario.firm_reform is not None and not scenario.firm_reform.is_empty()
+    households = {"year": scenario.year,
+                  "reform": scenario.reform.model_dump(exclude_none=True, mode="json"),
+                  "behavioural": True, "macro": True}
+    firms = ({"reform": scenario.firm_reform.model_dump(exclude_none=True, mode="json"),
+              "year": scenario.year} if firm else None)
     if firm and not scenario.reform.is_empty():
-        raise EtudeError(f"{name} : une réforme des ménages et des entreprises, que la "
-                         f"première année chiffrerait sur deux appels.")
+        if not mixte:
+            raise EtudeError(f"{name} : une réforme des ménages et des entreprises, que la "
+                             f"première année chiffrerait sur deux appels.")
+        return "mixte", " + ".join(MIXTE.values()), {"menages": households,
+                                                     "entreprises": firms}
     if firm:
-        return "entreprises", "/entreprises/simulate", {
-            "reform": scenario.firm_reform.model_dump(exclude_none=True, mode="json"),
-            "year": scenario.year}
-    return "menages", "/population/simulate", {
-        "year": scenario.year,
-        "reform": scenario.reform.model_dump(exclude_none=True, mode="json"),
-        "behavioural": True, "macro": True}
+        return "entreprises", "/entreprises/simulate", firms
+    return "menages", "/population/simulate", households
 
 
-def first_year(name: str, *, where: str, scenarios: Path = SCENARIOS) -> dict[str, Any]:
+def first_year(name: str, *, where: str, scenarios: Path = SCENARIOS,
+               mixte: bool = False) -> dict[str, Any]:
     """The first year's report: the simulator's reply, the code that priced it, where."""
     from fastapi.testclient import TestClient
 
     from impots.api.main import app
     from impots.predictif import recherche
 
-    kind, endpoint, payload = first_year_payload(name, scenarios)
+    kind, endpoint, payload = first_year_payload(name, scenarios, mixte)
     commit, dirty = recherche.code_state(ROOT)
-    reply = TestClient(app).post(endpoint, json=payload)
-    if reply.status_code != 200:
-        raise EtudeError(f"{name} : {endpoint} a rendu {reply.status_code} : "
-                         f"{reply.text[:300]}")
+    client = TestClient(app)
+    calls = ([(MIXTE[layer], payload[layer], layer) for layer in MIXTE] if kind == "mixte"
+             else [(endpoint, payload, None)])
+    replies = {}
+    for url, body, layer in calls:
+        reply = client.post(url, json=body)
+        if reply.status_code != 200:
+            raise EtudeError(f"{name} : {url} a rendu {reply.status_code} : "
+                             f"{reply.text[:300]}")
+        replies[layer] = reply.json()
+    response = replies if kind == "mixte" else replies[None]
     return {"scenario": name, "kind": kind, "endpoint": endpoint, "request": payload,
-            "response": reply.json(), "computed": date.today().isoformat(),
+            "response": response, "computed": date.today().isoformat(),
             "commit": commit, "dirty": dirty, "where": where}
+
+
+def plage_request(cadre: str, programme: str, mesure: str, champ: str,
+                  point: str) -> dict[str, Any]:
+    """The predictive request of one point of a measure's range (D-328): the measure alone,
+    `champ` at the range's bottom, the candidate's value or its top, in the study's frame,
+    mechanical (no behaviour, no loop). Its first year is carried as a share of GDP: the
+    fast convention of `POST /predictif/simulate`, said on the page."""
+    from impots import programmes as pg
+
+    p = pg.charger(programme)
+    plages = p.plages()
+    cle = f"{mesure}:{champ}"
+    if cle not in plages or point not in POINTS:
+        raise EtudeError(f"{programme} : pas de plage « {cle} », ou de point « {point} » "
+                         f"({sorted(plages)}, {POINTS}).")
+    _, plage = plages[cle]
+    m = next(x for x in p.chiffrees() if x.id == mesure)
+    valeur = {"bas": plage.min, "haut": plage.max,
+              "candidat": pg._lire(m.chiffrage.reforme, champ)}[point]
+    menages, entreprises = p.reformes({cle: valeur}, (mesure,))
+    request = _read(REQUESTS / f"{cadre}.json")
+    return {"spending": request["spending"], "growth": request["growth"],
+            "rate": request["rate"], "horizon": request["horizon"],
+            "theta": request["theta"], "uprating": request["uprating"],
+            "behavioural": False, "macro": False,
+            "reform": menages.model_dump(exclude_none=True, mode="json") if menages else {},
+            "firm_reform": (entreprises.model_dump(exclude_none=True, mode="json")
+                            if entreprises else None)}
+
+
+#: What a range's report keeps of the predictive reply: the first year's cost, the path.
+PLAGE_REPONSE = ("mechanical_first_year_eur", "years", "delta", "population_view")
+
+
+def plage(cadre: str, programme: str, mesure: str, champ: str, point: str, *,
+          where: str) -> dict[str, Any]:
+    """The report of one point of a measure's range: its request, what the reply says of
+    the cost and the debt, the code that priced it, where."""
+    from fastapi.testclient import TestClient
+
+    from impots.api.main import app
+    from impots.predictif import recherche
+
+    request = plage_request(cadre, programme, mesure, champ, point)
+    commit, dirty = recherche.code_state(ROOT)
+    client = TestClient(app)
+    absente = dette_absente(request)
+    if absente is None:
+        reply = client.post("/predictif/simulate", json=request)
+        url = "/predictif/simulate"
+    else:
+        # A firm law that moves within the horizon (the CVAE): the carried path refuses
+        # it (D-254). The cost of the year is the firms' simulator's; the debt is absent,
+        # with that reason, and the study's annual path gives the candidate's (D-328).
+        from impots.predictif.chaine import START_YEAR
+
+        url = "/entreprises/simulate"
+        reply = client.post(url, json={"reform": request["firm_reform"],
+                                       "year": START_YEAR + 1})
+    if reply.status_code != 200:
+        raise EtudeError(f"{programme}/{mesure}/{champ}/{point} : {url} a rendu "
+                         f"{reply.status_code} : {reply.text[:300]}")
+    body = reply.json()
+    response = ({k: body[k] for k in PLAGE_REPONSE} if absente is None else
+                {"mechanical_first_year_eur": body["reform_cost"], "years": None,
+                 "delta": None, "population_view": None})
+    return {"programme": programme, "mesure": mesure, "champ": champ, "point": point,
+            "request": request, "appel": url, "dette_absente": absente,
+            "response": response, "computed": date.today().isoformat(), "commit": commit,
+            "dirty": dirty, "where": where}
+
+
+def dette_absente(request: dict[str, Any]) -> str | None:
+    """Why the carried path cannot give a range point's debt, or None: a firm law that
+    moves within its horizon (D-254), the one refusal the frame's request can meet."""
+    from impots.api.schemas import _refuse_a_law_the_carry_cannot_see
+    from impots.entreprises.reforms import FirmReformSpec
+
+    firm = request.get("firm_reform")
+    if not firm:
+        return None
+    try:
+        _refuse_a_law_the_carry_cannot_see([FirmReformSpec.model_validate(firm)],
+                                           request["horizon"])
+    except ValueError as error:
+        return str(error)
+    return None
+
+
+def plage_name(mesure: str, champ: str, point: str) -> str:
+    return f"{mesure}__{champ}__{point}.json"
 
 
 def _git(*args: str) -> str:
@@ -218,6 +333,10 @@ ETAGES = {
     "texte": "ce que le texte de loi, ou son triage, compte",
     "hypothèse": "ce que l'étude suppose : son scénario, son cadre",
     "déclaré": "une tolérance déclarée avant le chiffrage",
+    "programme": "ce que le programme du candidat énonce, relevé et sourcé dans "
+                 "`programmes/`",
+    "annoncé": "un montant que le candidat annonce lui-même, que le moteur ne vérifie pas "
+               "et n'additionne jamais à son chiffrage (D-319)",
 }
 _TOKEN = re.compile("\ue000(\\d+)\ue001")
 
@@ -428,7 +547,227 @@ class _PLFSS2027:
         w("")
 
 
-TEXTES: dict[str, Any] = {"plf2027": _PLF2027(), "plfss2027": _PLFSS2027()}
+#: Ce que la page d'un programme dit en tête, à côté de sa couverture (D-319) : la page
+#: renvoie à ses sections, là où la commande renvoie à ses clés.
+AVERTISSEMENT_PROGRAMME = (
+    "La dette porte sur la seule part du programme que l'outil chiffre, pas sur le "
+    "programme : les mesures refusées, dites plus bas une à une avec leur porte, n'y sont "
+    "pas, et un programme chiffré en partie peut paraître creuser ou baisser la dette pour "
+    "une raison qui tient à l'outil (D-319).")
+
+
+class _Programme:
+    """Un programme présidentiel (D-319, D-328) : l'étude porte sur sa part chiffrée, et dit
+    à côté de chaque nombre la couverture et chaque refus avec sa porte."""
+
+    colonne = "programme"
+
+    def __init__(self, study: Etude) -> None:
+        from impots import programmes as pg
+
+        self.study = study
+        self.programme = pg.charger(study.programme)
+
+    def article(self, volet: Volet) -> Any:
+        return self.programme
+
+    def chapeau(self, entries: list[dict[str, Any]], last: int, n: Nombres) -> str:
+        p, c = self.programme, self.programme.couverture()
+        together = (f"ces {n(c['chiffrees'], 'texte')} mesures ensemble"
+                    if c["chiffrees"] > 1 else "cette seule mesure")
+        part = f"{c['part_des_parametrees'] * 100:.0f} %"
+        return (f"{p.candidat}, {p.parti}, a déclaré sa candidature à l'élection "
+                f"présidentielle de 2027. Son programme, relevé le "
+                f"{p.releve.strftime('%d/%m/%Y')}, porte "
+                f"{n(c['mesures'], 'programme')} mesures, dont "
+                f"{n(c['parametrees'], 'programme')} énoncent un paramètre. Cet outil en "
+                f"chiffre {n(c['chiffrees'], 'texte')}, soit {n(part, 'texte')} des mesures "
+                f"paramétrées, et dit pourquoi il ne chiffre pas les autres. Pour la part "
+                f"chiffrée, {together}, trois réponses : ce qu'elle coûte et qui y gagne ; "
+                f"ce qu'elle coûte une fois les comportements et l'économie pris en compte ; "
+                f"ce qu'elle fait à la dette en {last}. **{AVERTISSEMENT_PROGRAMME}**")
+
+    def label(self, entry: dict[str, Any]) -> str:
+        return "la part chiffrée"
+
+    def heading(self, entry: dict[str, Any], n: Nombres) -> str:
+        return "## La part chiffrée"
+
+    def first_year(self, year: int) -> str:
+        return f"la première année ({year})"
+
+    # -- what the law texts do not have ------------------------------------------ #
+
+    def official(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:
+        """Each priced measure's own case, preregistered before the judge (D-321, D-326)."""
+        from impots import fiche, preregistration
+
+        w("La part chiffrée n'est pas un cas enregistré : ses mesures le sont, une à une, "
+          "avant que le juge ne publie. Le juge est le chiffrage des programmes de "
+          "l'Institut Montaigne, attendu au premier trimestre 2027.")
+        w("")
+        for m in self.programme.chiffrees():
+            name = f"pres2027_{self.programme.slug}_{m.id}"
+            case = preregistration.load(name)
+            tol = case.tolerance
+            state = ("le juge n'a pas publié" if case.comparator is None else
+                     f"noté : {preregistration.grade(case).verdict}")
+            w(f"* `{name}`, enregistré le {case.pre_registered[:10]} : "
+              f"{n(fiche._eur(case.mechanical_eur), 'L2')} en {case_year(case)}, tolérance "
+              f"de {n(f'{tol.relative * 100:.0f} %', 'déclaré')} ou "
+              f"{n(fiche._width(tol.absolute_eur), 'déclaré')} ; {state}.")
+        w("")
+
+    def refusals(self, w: Any, entries: list[dict[str, Any]], n: Nombres) -> None:
+        commit = entries[0]["first"]["commit"]
+        self._plages(w, n, self.study.load_plages(commit))
+        self._mesures(w, n)
+        self._annonce(w, n)
+
+    def sources(self, w: Any, where: str) -> None:
+        count = len(self.study.points())
+        w(f"* `{where}/{PLAGES}/`, les {count} points des plages")
+
+    def _plages(self, w: Any, n: Nombres, reports: list[dict[str, Any]]) -> None:
+        from impots import fiche
+        from impots import programmes as pg
+
+        w("## Ce que bouge chaque paramètre")
+        w("")
+        w("Chaque mesure chiffrée a une plage : le lecteur peut la régler, du bas au haut. "
+          "Trois points la parcourent, le bas, la valeur du candidat et le haut. Chaque point "
+          "est la mesure seule, mécanique (personne ne change de comportement), sur la "
+          "population vieillie jusqu'en 2026 ; sa dette reporte la première année en part de "
+          "PIB jusqu'en 2035. Elle ne se compare donc pas à celle de la part chiffrée, plus "
+          "haut, que le chemin annuel chiffre année par année avec les comportements et la "
+          "boucle.")
+        w("")
+        by_key = {(r["mesure"], r["champ"], r["point"]): r for r in reports}
+        for m in self.programme.chiffrees():
+            w(f"### {amounts(m.libelle, 'programme', n)}")
+            w("")
+            w(f"*Le candidat : {amounts(m.parametre, 'programme', n)}.*")
+            w("")
+            for plage in m.chiffrage.plages:
+                w(f"| `{plage.champ}` | valeur | coût {START_PLUS_ONE} | dette en {LAST_YEAR} |")
+                w("|---|---|---|---|")
+                absente = None
+                for point in POINTS:
+                    r = by_key[(m.id, plage.champ, point)]
+                    valeur = (pg._lire(m.chiffrage.reforme, plage.champ) if point == "candidat"
+                              else plage.min if point == "bas" else plage.max)
+                    etage = "programme" if point == "candidat" else "hypothèse"
+                    cost = n(fiche._eur(r["response"]["mechanical_first_year_eur"]), "L2")
+                    if r["dette_absente"] is None:
+                        debt = n(_points(r["response"]["delta"][-1]), "L2", conditionnel=True)
+                    else:
+                        debt, absente = "absente", r["dette_absente"]
+                    w(f"| {POINT_LABELS[point]} | {n(valeur_lue(plage.champ, valeur), etage)} "
+                      f"| {cost} | {debt} |")
+                w("")
+                if absente is not None:
+                    raison = absente.split(" : ")[0]
+                    w(f"**Dette : absente, et la raison est donnée.** "
+                      f"{amounts(raison[:1].upper() + raison[1:], 'texte', n)} : le chemin "
+                      f"rapide la "
+                      f"tiendrait à son droit de 2026 jusqu'en {LAST_YEAR}. La dette de la "
+                      f"valeur du candidat est celle de la part chiffrée, que le chemin annuel "
+                      f"chiffre chaque année sous son droit (D-254).")
+                    w("")
+
+    def _mesures(self, w: Any, n: Nombres) -> None:
+        from impots import programmes as pg
+
+        p, c = self.programme, self.programme.couverture()
+        w("## Le programme, mesure par mesure")
+        w("")
+        w("Une mesure est chiffrée, refusée ou vague. Une mesure refusée n'est pas une mesure "
+          "à zéro : la porte dit ce que l'outil devrait savoir faire pour la chiffrer. Une "
+          "mesure vague n'énonce ni taux ni montant.")
+        w("")
+        w("| mesure | ce que dit le candidat | sort | pourquoi |")
+        w("|---|---|---|---|")
+        for m in p.mesures:
+            if m.chiffrage is not None:
+                sort, why = "chiffrée", amounts(m.chiffrage.note, "hypothèse", n)
+            else:
+                sort = ("vague" if m.refus.porte == "vague"
+                        else f"refusée, porte `{m.refus.porte}`")
+                why = amounts(m.refus.raison, "texte", n)
+            w(f"| {amounts(m.libelle, 'programme', n)} | "
+              f"{amounts(m.parametre, 'programme', n)} | {sort} | {why} |")
+        w("")
+        portes = {k: v for k, v in c["refus_par_porte"].items() if k != "vague"}
+        if portes:
+            w("Les portes, de celle qui ouvrirait le plus de mesures à celle qui en "
+              "ouvrirait le moins :")
+            w("")
+            for porte, count in sorted(portes.items(), key=lambda kv: (-kv[1], kv[0])):
+                w(f"* `{porte}`, {n(count, 'texte')} — {amounts(pg.PORTES[porte], 'texte', n)}.")
+            w("")
+
+    def _annonce(self, w: Any, n: Nombres) -> None:
+        from impots import fiche
+
+        w("## Ce que le candidat annonce, à part")
+        w("")
+        couches = [self.programme.couche_declaree(rho) for rho in (0.0, 0.5, 1.0)]
+        if not couches[-1]["mesures"]:
+            w("Le candidat n'annonce, pour aucune de ses mesures, un montant que le relevé ait "
+              "trouvé.")
+            w("")
+            return
+        w(f"Le candidat annonce lui-même un montant pour "
+          f"{n(len(couches[-1]['mesures']), 'programme')} de ses mesures. Ces montants ne "
+          f"sont pas vérifiés et ne s'ajoutent jamais au chiffrage de l'outil : ρ dit la part "
+          f"qui s'en réaliserait, de rien à tout. Le solde est l'effet annoncé sur les comptes "
+          f"publics, positif quand ils s'améliorent.")
+        w("")
+        w("| ρ | solde annoncé |")
+        w("|---|---|")
+        for couche in couches:
+            rho = f"{couche['rho']:g}".replace(".", ",")
+            w(f"| {n(rho, 'hypothèse')} | {n(fiche._eur(couche['solde_eur']), 'annoncé')} |")
+        w("")
+        w(f"*{couches[-1]['statut']}*")
+        w("")
+
+
+START_PLUS_ONE = 2026
+LAST_YEAR = 2035
+POINT_LABELS = {"bas": "le bas", "candidat": "le candidat", "haut": "le haut"}
+
+
+def case_year(case: Any) -> int:
+    """The year a case priced: its scenario's, or, for a firm case registered on a reform
+    file, the year its registration names."""
+    from impots import scenarios as scenarios_module
+
+    if case.scenario is not None:
+        return scenarios_module.load(case.scenario).year
+    return int(case.reform["annee"])
+
+
+def valeur_lue(champ: str, valeur: float) -> str:
+    """A knob's value as a reader reads it: a rate in per cent, an excise in its unit, a
+    ceiling in euros, a factor as it is."""
+    leaf = champ.split(".")[-1]
+    if champ.startswith("accise_electricite") or champ.startswith("accise_gaz"):
+        text = f"{valeur:g} €/MWh"
+    elif champ.startswith("accise_"):
+        text = f"{valeur:g} €/L"
+    elif "plafond" in champ and valeur >= 100:
+        text = f"{valeur:,.0f} €".replace(",", "\u202f")
+    elif (champ.startswith(("tva", "csg")) or leaf in ("rate", "taux")
+          or champ.endswith("_taux")):
+        text = f"{valeur * 100:g} %"
+    else:
+        text = f"{valeur:g}"
+    return text.replace(".", ",")
+
+
+TEXTES: dict[str, Any] = {"plf2027": _PLF2027(), "plfss2027": _PLFSS2027(),
+                          "programme": _Programme}
 
 
 # --------------------------------------------------------------------------- #
@@ -474,10 +813,33 @@ class Etude:
     page: Path
     rapports: Path
     scenarios: Path = SCENARIOS
+    #: The programme a study of a presidential programme reads (D-328), or None.
+    programme: str | None = None
 
     @property
     def noms(self) -> tuple[str, ...]:
         return tuple(v.scenario for v in self.volets)
+
+    @property
+    def mixte(self) -> bool:
+        """Whether a scenario may price households and firms together: a programme's
+        priced part, whose first year is two calls (D-328)."""
+        return self.programme is not None
+
+    def texte_lu(self) -> Any:
+        """What the page says of its text: a law's, shared, or this study's programme."""
+        texte = TEXTES[self.texte]
+        return texte(self) if isinstance(texte, type) else texte
+
+    def points(self) -> list[tuple[str, str, str]]:
+        """(measure, field, point) of every range point the study prices, in order."""
+        if self.programme is None:
+            return []
+        from impots import programmes as pg
+
+        p = pg.charger(self.programme)
+        return [(m.id, plage.champ, point) for m in p.chiffrees()
+                for plage in m.chiffrage.plages for point in POINTS]
 
     # -- the passes -------------------------------------------------------------- #
 
@@ -493,11 +855,15 @@ class Etude:
         return [command[0], name, *command[2:]]
 
     def passes(self, where: str) -> list[tuple[str, list[str]]]:
-        """(report, command): the first years, then the annual paths, in the study's order."""
+        """(report, command): the first years, the range points of a programme, then the
+        annual paths, the longest, in the study's order."""
         cli = ["-m", "impots.population.cli"]
         return ([(f"premiere_annee_{name}.json",
                   [*cli, "etude", "premiere", self.nom, name, "--ou", where])
                  for name in self.noms]
+                + [(f"{PLAGES}/{plage_name(mesure, champ, point)}",
+                    [*cli, "etude", "plage", self.nom, mesure, champ, point, "--ou", where])
+                   for mesure, champ, point in self.points()]
                 + [(f"predictif_{name}.json", [*cli, *self.annual_argv(name, where=where)])
                    for name in self.noms])
 
@@ -531,7 +897,8 @@ class Etude:
         if why:
             print(why, file=sys.stderr)
             return 1
-        there = [p.name for p in self.rapports.glob("*.json")] if self.rapports.exists() else []
+        there = ([str(p.relative_to(self.rapports)) for p in self.rapports.rglob("*.json")]
+                 if self.rapports.exists() else [])
         if there:
             print(f"{self.rapports} porte déjà {there} : un rapport n'est pas écrasé en "
                   f"silence.", file=sys.stderr)
@@ -553,12 +920,45 @@ class Etude:
         if name not in self.noms:
             raise EtudeError(f"{name} n'est pas un scénario de l'étude « {self.nom} » : "
                              f"{list(self.noms)}")
-        report = first_year(name, where=where, scenarios=self.scenarios)
+        report = first_year(name, where=where, scenarios=self.scenarios, mixte=self.mixte)
         self.rapports.mkdir(parents=True, exist_ok=True)
         path = self.rapports / f"premiere_annee_{name}.json"
         path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
                         encoding="utf-8")
         return path
+
+    def write_plage(self, mesure: str, champ: str, point: str, *, where: str) -> Path:
+        if (mesure, champ, point) not in self.points():
+            raise EtudeError(f"{mesure}/{champ}/{point} n'est pas un point de l'étude "
+                             f"« {self.nom} ».")
+        report = plage(self.cadre, self.programme, mesure, champ, point, where=where)
+        path = self.rapports / PLAGES / plage_name(mesure, champ, point)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
+                        encoding="utf-8")
+        return path
+
+    def load_plages(self, commit: str, reports: Path | None = None) -> list[dict[str, Any]]:
+        """Each range point's report, refused unless it is the study's: its request as the
+        programme and the frame give it now, on the study's commit, said where."""
+        reports = (reports or self.rapports) / PLAGES
+        wanted = {plage_name(*point) for point in self.points()}
+        there = {p.name for p in reports.glob("*.json")} if reports.exists() else set()
+        if there != wanted:
+            raise EtudeError(f"les plages de l'étude : il manque {sorted(wanted - there)}, "
+                             f"et {sorted(there - wanted)} n'en est pas.")
+        out = []
+        for mesure, champ, point in self.points():
+            report = _read(reports / plage_name(mesure, champ, point))
+            request = plage_request(self.cadre, self.programme, mesure, champ, point)
+            if (report.get("request") != request or report.get("commit") != commit
+                    or report.get("dirty") is not False or not report.get("where")
+                    or (report.get("programme"), report.get("mesure"), report.get("champ"),
+                        report.get("point")) != (self.programme, mesure, champ, point)):
+                raise EtudeError(f"{mesure}/{champ}/{point} : le rapport n'est pas le point "
+                                 f"de l'étude, sur son commit `{commit[:7]}`, dit où.")
+            out.append(report)
+        return out
 
     # -- the reports ------------------------------------------------------------- #
 
@@ -586,7 +986,7 @@ class Etude:
         )
 
         reports = reports or self.rapports
-        texte = TEXTES[self.texte]
+        texte = self.texte_lu()
         wanted = {f"{kind}_{name}.json" for name in self.noms
                   for kind in ("premiere_annee", "predictif")}
         there = {p.name for p in reports.glob("*.json")} if reports.exists() else set()
@@ -608,21 +1008,28 @@ class Etude:
                     raise EtudeError(f"{name}, {label} : ne dit pas où ses passes ont "
                                      f"tourné.")
                 commits.add(report["commit"])
-            kind, endpoint, payload = first_year_payload(name, self.scenarios)
+            kind, endpoint, payload = first_year_payload(name, self.scenarios, self.mixte)
             if (first.get("scenario"), first.get("kind"), first.get("endpoint"),
                     first.get("request")) != (name, kind, endpoint, payload):
                 raise EtudeError(f"{name} : la première année n'a pas chiffré le scénario "
                                  f"de l'étude, par l'appel de sa chaîne.")
-            response = (FirmResponse if kind == "entreprises" else PopulationResponse
-                        ).model_validate(first["response"])
-            if response.reform_cost is None:
+            firms = None
+            if kind == "mixte":
+                response = PopulationResponse.model_validate(first["response"]["menages"])
+                firms = FirmResponse.model_validate(first["response"]["entreprises"])
+            else:
+                response = (FirmResponse if kind == "entreprises" else PopulationResponse
+                            ).model_validate(first["response"])
+            if response.reform_cost is None or (firms is not None
+                                                and firms.reform_cost is None):
                 raise EtudeError(f"{name} : la première année n'a pas de coût.")
-            if kind == "entreprises" and (
-                    response.meta.vintage != self.millesime_entreprises
-                    or response.meta.cells_are_synthetic):
+            firm_reply = response if kind == "entreprises" else firms
+            if firm_reply is not None and (
+                    firm_reply.meta.vintage != self.millesime_entreprises
+                    or firm_reply.meta.cells_are_synthetic):
                 raise EtudeError(f"{name} : la première année n'a pas tourné sur les "
                                  f"entreprises de {self.millesime_entreprises}, leurs "
-                                 f"cellules réelles (millésime « {response.meta.vintage} »).")
+                                 f"cellules réelles (millésime « {firm_reply.meta.vintage} »).")
             try:
                 PredictifReportResponse.model_validate(path)
             except ValueError as error:
@@ -649,8 +1056,9 @@ class Etude:
             entries.append({
                 "name": name, "volet": volet, "article": texte.article(volet),
                 "scenario": scenario, "kind": kind, "first": first, "response": response,
-                "path": path, "case": case, "grade": grade, "sign": sign,
-                "cost": sign * float(response.reform_cost),
+                "firms": firms, "path": path, "case": case, "grade": grade, "sign": sign,
+                "cost": sign * (float(response.reform_cost)
+                                + (float(firms.reform_cost) if firms is not None else 0.0)),
                 "debt": [{**row, "theta": sign * row["theta"],
                           "corners": [sign * c for c in row["corners"]]}
                          for row in debt(path)]})
@@ -672,7 +1080,7 @@ class Etude:
         rests on: the page and the site are one text (D-304)."""
         from impots import fiche
 
-        texte = TEXTES[self.texte]
+        texte = self.texte_lu()
         frame = self.frame()
         if frame["theta"] != 0.5 or not (frame["behavioural"] and frame["macro"]):
             raise EtudeError(f"le cadre « {self.cadre} » n'est pas celui de D-289 (θ½, "
@@ -705,8 +1113,8 @@ class Etude:
             w("")
         w("## En bref")
         w("")
-        w(f"| article | la première année | le chiffrage officiel | dette en {last}, à θ½ |"
-          f" selon θ |")
+        w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
+          f"officiel | dette en {last}, à θ½ | selon θ |")
         w("|---|---|---|---|---|")
         for entry in entries:
             grade = entry["grade"]
@@ -743,7 +1151,10 @@ class Etude:
             self._third(w, n, entry)
             w("### L'écart au chiffrage officiel")
             w("")
-            self._official(w, n, entry)
+            if hasattr(texte, "official"):
+                texte.official(w, n, entry)
+            else:
+                self._official(w, n, entry)
         texte.refusals(w, entries, n)
         w("## D'où viennent ces nombres")
         w("")
@@ -763,6 +1174,8 @@ class Etude:
                     else "")
             w(f"* `{where}/premiere_annee_{entry['name']}.json`, "
               f"`{where}/predictif_{entry['name']}.json`{case}")
+        if hasattr(texte, "sources"):
+            texte.sources(w, where)
         w("")
         # Every amount says what it rests on: one the page quotes without its étage is
         # refused here, before the Markdown or the site can show it (D-304).
@@ -788,6 +1201,23 @@ class Etude:
 
         response, year, cost = entry["response"], entry["scenario"].year, entry["cost"]
         sense = "coûte" if cost > 0 else "rapporte"
+        if entry["kind"] == "mixte":
+            firms, sign = entry["firms"], entry["sign"]
+            w(f"La part chiffrée {sense} **{n(fiche._width(cost), 'L2')}** "
+              f"{texte.first_year(year)} : {n(fiche._eur(sign * response.reform_cost), 'L2')} "
+              f"pour les ménages, sur la population de {response.meta.vintage} au droit de "
+              f"{year}, et {n(fiche._eur(sign * firms.reform_cost), 'L2')} pour les "
+              f"entreprises, sur celles de {firms.meta.vintage}.")
+            w("")
+            _deciles(w, n, _mirrored(response, sign))
+            w("| taille | entreprises | touchées | impôt en plus |")
+            w("|---|---|---|---|")
+            for taille, count, touched, delta in self._sizes(firms, sign):
+                w(f"| {taille} | {n(fiche._num(count), 'L1')} | "
+                  f"{n(fiche._num(touched), 'L2')} | {n(fiche._eur(delta), 'L2')} |")
+            w("")
+            w(firms.meta.note)
+            return
         if entry["kind"] == "entreprises":
             w(f"La mesure {sense} **{n(fiche._width(cost), 'L2')}** en {year}, sur les "
               f"entreprises de {response.meta.vintage} au droit de {year}.")
@@ -810,6 +1240,11 @@ class Etude:
         from impots import fiche
 
         response, sign = entry["response"], entry["sign"]
+        if entry["kind"] == "mixte":
+            w("La bande et l'éventail ne lisent que la part des ménages : aucun canal des "
+              "comportements ne lit une réforme des entreprises, et aucune variante de "
+              "Mésange ne porte leurs impôts. La dette, plus bas, compte les deux parts.")
+            w("")
         behavioural = response.behavioural
         if behavioural is None:
             w("**Bande comportementale : aucune.** " + (
@@ -942,6 +1377,59 @@ class Etude:
         return None if where is None else f"{_relative(self.page)}, {where}."
 
 
+def presidentielle(etudes: list[Etude]) -> tuple[list[str], Nombres]:
+    """The page of the 24 declared candidates (D-328): each programme's coverage, its
+    refusals by door, and whether it has a study. No number for a programme of which
+    nothing is priced: its doors say what would open it."""
+    from impots import programmes as pg
+
+    n = Nombres()
+    lines: list[str] = []
+    w = lines.append
+    slugs = pg.lister()
+    studied = {e.programme for e in etudes if e.programme is not None}
+    releves = sorted({pg.charger(slug).releve for slug in slugs})
+    w("# Les programmes de la présidentielle 2027")
+    w("")
+    w(f"Les {n(len(slugs), 'programme')} candidats déclarés, programmes relevés au "
+      f"{releves[-1].strftime('%d/%m/%Y')}. Pour chacun : ses mesures relevées et sourcées, "
+      f"celles qui énoncent un paramètre, celles que l'outil chiffre, et pourquoi il refuse "
+      f"les autres. Un candidat dont une mesure se chiffre a son étude, en trois réponses, "
+      f"sur cette part et elle seule. Les autres n'ont pas de chiffre : la porte de chaque "
+      f"refus dit ce que l'outil devrait savoir faire pour l'ouvrir.")
+    w("")
+    w("| candidat | mesures | paramétrées | chiffrées | étude | refusées, par porte |")
+    w("|---|---|---|---|---|---|")
+    totals = [0, 0, 0]
+    for slug in slugs:
+        p = pg.charger(slug)
+        c = p.couverture()
+        portes = ", ".join(f"`{k}` {n(v, 'texte')}" for k, v in sorted(
+            c["refus_par_porte"].items(), key=lambda kv: (-kv[1], kv[0]))
+            if k != "vague") or "—"
+        etude_ = "oui" if slug in studied else "—"
+        w(f"| {p.candidat} ({p.parti}) | {n(c['mesures'], 'programme')} | "
+          f"{n(c['parametrees'], 'programme')} | {n(c['chiffrees'], 'texte')} | {etude_} | "
+          f"{portes} |")
+        for i, key in enumerate(("mesures", "parametrees", "chiffrees")):
+            totals[i] += c[key]
+    w(f"| **total** | {n(totals[0], 'programme')} | {n(totals[1], 'programme')} | "
+      f"{n(totals[2], 'texte')} | {n(len(studied), 'texte')} | |")
+    w("")
+    w("Les portes :")
+    w("")
+    used = sorted({k for slug in slugs for k in pg.charger(slug).couverture()[
+        "refus_par_porte"] if k != "vague"})
+    for porte in used:
+        w(f"* `{porte}` — {amounts(pg.PORTES[porte], 'texte', n)}.")
+    w("")
+    for line in lines:
+        bare = n.resolve(line, lambda _: "")
+        if found := AMOUNT.search(bare):
+            raise EtudeError(f"« {found[0]} » sans son étage : « {bare[:90]} »")
+    return lines, n
+
+
 def definition(nom: str, directory: Path | None = None) -> Etude:
     """The study `nom`, read from `etudes/<nom>.json`, refused unless every field is one a
     study has and says what the page needs."""
@@ -959,6 +1447,9 @@ def definition(nom: str, directory: Path | None = None) -> Etude:
         raise EtudeError(f"{_relative(path)} nomme l'étude « {raw['nom']} ».")
     if raw["texte"] not in TEXTES:
         raise EtudeError(f"{nom} : texte « {raw['texte']} » inconnu ({sorted(TEXTES)}).")
+    if (raw["texte"] == "programme") != ("programme" in raw):
+        raise EtudeError(f"{nom} : une étude de programme nomme son programme, et elle "
+                         f"seule (D-328).")
     if not re.fullmatch(r"D-\d+", raw["preenregistrement"]):
         raise EtudeError(f"{nom} : « {raw['preenregistrement']} » n'est pas une D-entrée.")
     try:
@@ -967,11 +1458,32 @@ def definition(nom: str, directory: Path | None = None) -> Etude:
         raise EtudeError(f"{nom} : un scénario mal dit : {error}") from error
     if not volets or len({v.scenario for v in volets}) != len(volets):
         raise EtudeError(f"{nom} : des scénarios, chacun une fois.")
+    if "programme" in raw:
+        from impots import programmes as pg
+
+        try:
+            programme = pg.charger(raw["programme"])
+        except Exception as error:
+            raise EtudeError(f"{nom} : le programme « {raw['programme']} » ne se lit pas : "
+                             f"{error}") from error
+        if not programme.chiffrees():
+            raise EtudeError(f"{nom} : « {raw['programme']} » n'a aucune mesure chiffrée, "
+                             f"rien à étudier.")
+        if [v.scenario for v in volets] != [scenario_du_programme(raw["programme"])]:
+            raise EtudeError(f"{nom} : une étude de programme a un scénario, sa part "
+                             f"chiffrée, « {scenario_du_programme(raw['programme'])} ».")
     return Etude(nom=nom, titre=raw["titre"], texte=raw["texte"],
                  preenregistrement=raw["preenregistrement"], volets=volets,
                  cadre=raw["cadre"], millesime_entreprises=raw["millesime_entreprises"],
                  page=ROOT / raw.get("page", f"docs/etudes/{nom}.md"),
-                 rapports=ROOT / raw.get("rapports", f"reports/etudes/{nom}"))
+                 rapports=ROOT / raw.get("rapports", f"reports/etudes/{nom}"),
+                 programme=raw.get("programme"))
+
+
+def scenario_du_programme(slug: str) -> str:
+    """The scenario of a programme's priced part: every priced measure, households and
+    firms together, as the programme gives them (D-328)."""
+    return f"pres2027_{slug}_programme"
 
 
 def definitions(directory: Path | None = None) -> list[Etude]:

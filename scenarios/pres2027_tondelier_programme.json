@@ -1,0 +1,40 @@
+{
+  "name": "pres2027_tondelier_programme",
+  "year": 2026,
+  "created": "2026-11-02",
+  "source": "Marine Tondelier (Les Écologistes), programme relevé le 2026-11-01 — la part chiffrée : tranche_ir_60",
+  "note": "1 mesures chiffrées sur 14 paramétrées et 21 relevées. La réforme est celle des mesures chiffrées du programme, ensemble, à la valeur du candidat ; les autres n'y sont pas.",
+  "tags": [
+    "presidentielle_2027",
+    "tondelier",
+    "etude"
+  ],
+  "reform": {
+    "ir_bareme": [
+      {
+        "threshold": 0.0,
+        "rate": 0.0
+      },
+      {
+        "threshold": 11600.0,
+        "rate": 0.11
+      },
+      {
+        "threshold": 29579.0,
+        "rate": 0.3
+      },
+      {
+        "threshold": 84577.0,
+        "rate": 0.41
+      },
+      {
+        "threshold": 181917.0,
+        "rate": 0.45
+      },
+      {
+        "threshold": 250000.0,
+        "rate": 0.6
+      }
+    ]
+  }
+}

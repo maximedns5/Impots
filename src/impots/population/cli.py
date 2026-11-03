@@ -1263,11 +1263,14 @@ def cmd_trajectoire(args: argparse.Namespace) -> int:
         def run(spec: dict[str, Any] | None) -> float:
             if not spec:
                 return 0.0
-            result = population_run(pop, year=year,
-                                    reform=ReformSpec.model_validate(spec),
+            reform = ReformSpec.model_validate(spec)
+            result = population_run(pop, year=year, reform=reform,
                                     tier="full", sample=args.sample,
                                     **({"impute_capital": True, "capital_index": index}
-                                       if capital else {}))
+                                       if capital else {}),
+                                    **_consommation(reform, year,
+                                                    "figee" if pop is frame else "vieillie",
+                                                    hypothesis, args.vintage))
             return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
         return run
 
@@ -1426,11 +1429,13 @@ def cmd_predictif(args: argparse.Namespace) -> int:
         def run(spec: dict[str, Any] | None) -> float:
             if not spec:
                 return 0.0
-            result = population_run(pop, year=year,
-                                    reform=ReformSpec.model_validate(spec),
+            reform = ReformSpec.model_validate(spec)
+            result = population_run(pop, year=year, reform=reform,
                                     tier="full", sample=args.sample,
                                     **({"impute_capital": True, "capital_index": index}
-                                       if capital else {}))
+                                       if capital else {}),
+                                    **_consommation(reform, year, view, uprating,
+                                                    args.vintage))
             return float(agg_mod.aggregate(result.households).reform_cost or 0.0)
 
         print(f"  {year} · {view}…", flush=True)
@@ -1470,7 +1475,10 @@ def cmd_predictif(args: argparse.Namespace) -> int:
                               layers={"menages": 0.0, "entreprises": 0.0},
                               behaviour_asked=args.behavioural)
             print(f"  {year} · {view} · passe du simulateur…", flush=True)
-            first = api._price_first_year(
+            _liberer()
+            # In a fresh process, which gives back all it took when it ends (D-331).
+            first = _isole(
+                api._price_first_year,
                 api.YearPass(reform=scenario.reform_in(year), year=year,
                              behavioural=args.behavioural),
                 uprating=uprating, macro=args.macro, view=view, **firm_part)
@@ -1515,6 +1523,57 @@ def cmd_predictif(args: argparse.Namespace) -> int:
         for line in path.aged.lines():
             print(f"     {line}")
     return 0
+
+
+def _isole(function: object, *args: object, **kwargs: object) -> object:
+    """`function(*args, **kwargs)` in a fresh process, its value returned (D-331).
+
+    A pass of the annual path takes up to ten gigabytes, and a process does not give all
+    of it back: freed caches and a tuned allocator left the paths of Tondelier and of
+    Lisnard killed on a 15-gigabyte machine. A process that ends gives everything back.
+    The child is spawned, not forked: it starts clean, and computes what the parent would
+    have, on the same code, the same files and the same environment."""
+    import multiprocessing
+    from concurrent.futures import ProcessPoolExecutor
+
+    with ProcessPoolExecutor(max_workers=1,
+                             mp_context=multiprocessing.get_context("spawn")) as pool:
+        return pool.submit(function, *args, **kwargs).result()
+
+
+def _liberer() -> None:
+    """Free what a pass of the annual path keeps and the next one does not read: the
+    reformed systems of the year before, each with its trees by instant, held by two caches
+    of 32, and the baseline's trees by instant (D-330). Kept, a ten-year path of a large
+    reform grew by two gigabytes a pass and was killed in its second year on a 15-gigabyte
+    machine."""
+    import gc
+
+    from impots.engine import parametres
+    from impots.engine import system as engine_system
+    from impots.entreprises import system as firm_system
+
+    engine_system.reformed.cache_clear()
+    firm_system.reformed.cache_clear()
+    # And the baseline's trees by instant: a cache without bound, which a path filled with
+    # every month of every year it priced. The next pass rebuilds the ones it reads.
+    parametres.memoriser(engine_system.baseline())
+    gc.collect()
+
+
+def _consommation(reform: object, year: int, view: str, uprating: object,
+                  vintage: str) -> dict[str, object]:
+    """What a pass of the annual path tells the runner of the consumption, when its reform
+    moves a consumption tax (D-328): the aged view's euros are the year's, at the frame's
+    own price index ; the frozen view's, the vintage's."""
+    from impots import consommation
+
+    if not consommation.touche(reform):
+        return {}
+    if view == "figee":
+        return {"impute_consommation": True, "annee_consommation": int(vintage)}
+    return {"impute_consommation": True, "annee_consommation": year,
+            "prix_au_dela": consommation.prix_du_cadre(uprating, year)}
 
 
 def _annees_refusals(scenario: object, path: range) -> None:
@@ -1571,6 +1630,9 @@ def cmd_etude(args: argparse.Namespace) -> int:
             return study.launch(args.ou)
         if args.action == "premiere":
             print(f"  -> {study.write_first_year(args.scenario, where=args.ou)}")
+            return 0
+        if args.action == "plage":
+            print(f"  -> {study.write_plage(args.mesure, args.champ, args.point, where=args.ou)}")
             return 0
         if args.action == "ecrire":
             text = study.render(study.load())
@@ -2169,6 +2231,11 @@ def build_parser() -> argparse.ArgumentParser:
     premiere.add_argument("nom")
     premiere.add_argument("scenario")
     premiere.add_argument("--ou", required=True)
+    point = etude_actions.add_parser("plage", help="un point de la plage d'une mesure d'un "
+                                                   "programme (D-328)")
+    for arg in ("nom", "mesure", "champ", "point"):
+        point.add_argument(arg)
+    point.add_argument("--ou", required=True)
     for action, text in (("ecrire", "la page, depuis les seuls rapports commités"),
                          ("verifier", "la page commitée est-elle celle de ses rapports ?")):
         etude_actions.add_parser(action, help=text).add_argument("nom")

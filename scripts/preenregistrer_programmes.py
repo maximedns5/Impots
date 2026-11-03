@@ -146,6 +146,67 @@ def arguments(nom: str, p, m) -> list[str]:
             "--vintage", VINTAGE_ENTREPRISES]
 
 
+#: Les études des programmes (but 13, D-328) : une par candidat dont une mesure se
+#: chiffre, sur le scénario de sa part chiffrée.
+ETUDES = ROOT / "etudes"
+PREENREGISTREMENT_ETUDES = "D-328"
+CADRE_ETUDES = "ir"
+
+
+def etudes() -> list[tuple[str, dict, dict]]:
+    """(slug, scénario, définition) de l'étude de chaque programme qui chiffre une mesure :
+    la part chiffrée, ménages et entreprises ensemble, sans rien y ajouter."""
+    from impots import consommation, etude
+    from impots import programmes as pg
+
+    out = []
+    for slug in pg.lister():
+        p = pg.charger(slug)
+        chiffrees = p.chiffrees()
+        if not chiffrees:
+            continue
+        menages, entreprises = p.reformes()
+        nom = etude.scenario_du_programme(slug)
+        ids = ", ".join(m.id for m in chiffrees)
+        c = p.couverture()
+        scenario = {
+            "name": nom, "year": p.annee, "created": "2026-11-02",
+            "source": (f"{p.candidat} ({p.parti}), programme relevé le "
+                       f"{p.releve.isoformat()} — la part chiffrée : {ids}"),
+            "note": (f"{c['chiffrees']} mesures chiffrées sur {c['parametrees']} "
+                     f"paramétrées et {c['mesures']} relevées. La réforme est celle des "
+                     f"mesures chiffrées du programme, ensemble, à la valeur du candidat ; "
+                     f"les autres n'y sont pas."),
+            "tags": ["presidentielle_2027", slug, "etude"],
+            "reform": menages.model_dump(exclude_none=True, mode="json") if menages else {},
+        }
+        if entreprises is not None:
+            scenario["firm_reform"] = entreprises.model_dump(exclude_none=True, mode="json")
+        if menages is not None and consommation.touche(menages):
+            scenario["imputations"] = ["consommation"]
+        definition = {
+            "nom": f"presidentielle_{slug}",
+            "titre": f"{p.candidat} : la part chiffrée du programme, en trois réponses",
+            "texte": "programme", "programme": slug,
+            "preenregistrement": PREENREGISTREMENT_ETUDES, "cadre": CADRE_ETUDES,
+            "millesime_entreprises": VINTAGE_ENTREPRISES,
+            "scenarios": [{"scenario": nom}],
+        }
+        out.append((slug, scenario, definition))
+    return out
+
+
+def ecrire_etudes() -> list[Path]:
+    ecrits = []
+    for _, scenario, definition in etudes():
+        for path, doc in ((ROOT / "scenarios" / f"{scenario['name']}.json", scenario),
+                          (ETUDES / f"{definition['nom']}.json", definition)):
+            path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n",
+                            encoding="utf-8")
+            ecrits.append(path)
+    return ecrits
+
+
 TABLEAU = ROOT / "reports" / "programmes_presidentielle.md"
 
 
@@ -205,7 +266,13 @@ def main() -> int:
     group.add_argument("--enregistrer", action="store_true")
     group.add_argument("--lister", action="store_true")
     group.add_argument("--rendre", action="store_true")
+    group.add_argument("--etudes", action="store_true",
+                       help="les scénarios et les définitions des études des programmes")
     args = parser.parse_args()
+    if args.etudes:
+        for path in ecrire_etudes():
+            print(f"-> {path.relative_to(ROOT)}")
+        return 0
     if args.rendre:
         TABLEAU.write_text(tableau(), encoding="utf-8")
         print(f"-> {TABLEAU.relative_to(ROOT)}")

@@ -1321,6 +1321,72 @@ def test_a_pensioners_disposable_income_does_not_depend_on_evaluation_order() ->
     np.testing.assert_allclose(taxable, frame["pension_annuelle"].to_numpy(), atol=0.5)
 
 
+def test_the_simulation_a_marginal_rate_reads_is_freed_once_read(monkeypatch) -> None:
+    """GARDE (D-332). A simulation is a cycle, its holders and populations pointing back at
+    it, that only a full collection frees, and a large heap seldom runs one. The sixteen
+    simulations of a pass's marginal rates were held until then, and a pass of the path in
+    2035 grew past the container. Each one is freed when its disposable income is read.
+    The collector is off here, as it may as well be in a pass: the test does not hang on
+    when it happens to run."""
+    import gc
+    import weakref
+
+    from impots.behavioural import emtr
+    from impots.engine.system import baseline
+
+    built: list[weakref.ref] = []
+    real = emtr.build_simulation
+
+    def recording(*args: Any, **kwargs: Any) -> Any:
+        simulation = real(*args, **kwargs)
+        built.append(weakref.ref(simulation.simulation))
+        return simulation
+
+    monkeypatch.setattr(emtr, "build_simulation", recording)
+    frame = _pensioners_only()
+    gc.disable()
+    try:
+        disposable = emtr._disposable(frame, baseline(), 2024)
+        alive = [ref() is not None for ref in built]
+    finally:
+        gc.enable()
+    assert alive == [False]
+    assert disposable.shape == (frame["household_id"].n_unique(),)
+    assert (disposable > 0).all()
+
+
+def test_the_simulations_of_a_run_are_freed_when_it_returns(monkeypatch) -> None:
+    """GARDE (D-334). The same cycle, in the runner: the baseline's and the reform's
+    simulations outlived the run that built them. Four runs in one process, the four reform
+    shapes on the real population, went past the container's 14,3 Go, on `main` too. When
+    the run returns, every simulation it built is freed; what it returns is unchanged."""
+    import gc
+    import weakref
+
+    from impots.population import runner
+
+    built: list[weakref.ref] = []
+    real = runner.build_simulation
+
+    def recording(*args: Any, **kwargs: Any) -> Any:
+        simulation = real(*args, **kwargs)
+        built.append(weakref.ref(simulation.simulation))
+        return simulation
+
+    monkeypatch.setattr(runner, "build_simulation", recording)
+    frame = _pensioners_only()
+    gc.disable()
+    try:
+        result = run(frame, 2024, reform=ReformSpec(decote_taux=0.5), tier="full")
+        alive = [ref() is not None for ref in built]
+    finally:
+        gc.enable()
+    assert len(alive) >= 2
+    assert not any(alive)
+    assert result.n_households == frame["household_id"].n_unique()
+    assert result.n_persons == frame.height
+
+
 # --------------------------------------------------------------------------- #
 # unemployment benefit — the same spiral, and the RFR of N-2 (D-177)
 # --------------------------------------------------------------------------- #

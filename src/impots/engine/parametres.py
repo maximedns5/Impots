@@ -48,7 +48,10 @@ def differences(base: Any, reforme: Any, chemin: tuple[str, ...] = ()) -> list[t
     if type(base) is not type(reforme):
         return [chemin]
     if isinstance(reforme, Parameter):
-        return [] if base == reforme else [chemin]
+        # The control of `greffer_sur` reads the trees' text, where a knob written back at
+        # its law's integer value (3.0 over 3) differs, though `==` says equal: such a leaf
+        # is grafted, or the control refused the reform (D-329).
+        return [] if base == reforme and repr(base) == repr(reforme) else [chemin]
     if isinstance(reforme, ParameterScale):
         pareil = (base.metadata.get("type") == reforme.metadata.get("type")
                   and len(base.brackets) == len(reforme.brackets)
