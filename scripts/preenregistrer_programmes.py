@@ -150,7 +150,7 @@ def arguments(nom: str, p, m) -> list[str]:
 #: chiffre, sur le scénario de sa part chiffrée.
 ETUDES = ROOT / "etudes"
 PREENREGISTREMENT_ETUDES = "D-328"
-CADRE_ETUDES = "ir"
+CADRE_ETUDES = "central"
 
 
 def etudes() -> list[tuple[str, dict, dict]]:

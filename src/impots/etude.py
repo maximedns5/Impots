@@ -9,7 +9,7 @@ entreprises, chacun avec son volet et son sens ; le texte dont elle dit les refu
 D-entrée qui préenregistre ses passes. Pour chaque scénario, dans le cadre de D-289 : la
 première année, que chiffre l'appel du simulateur de sa chaîne (le coût, les gagnants et
 les perdants, la bande des comportements, l'éventail macro) ; le chemin annuel
-(`impots predictif`), dans le cadre de la requête de l'étude (D-237), qui donne la dette en
+(`impots predictif`), dans le cadre des études (`etudes/cadres/`, D-336), qui donne la dette en
 fin de chemin à θ½ et aux coins de la boîte, dans les deux vues ; l'écart à l'évaluation
 préalable quand le scénario a un cas noté.
 
@@ -45,7 +45,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 DEFINITIONS = ROOT / "etudes"
 SCENARIOS = ROOT / "scenarios"
-REQUESTS = ROOT / "etude"
+#: The frames the studies read (D-336): their hypotheses, in a file of their own, apart from
+#: the requests of the phase 10 explorations under `etude/`.
+CADRES = DEFINITIONS / "cadres"
 DECISIONS = "docs/DECISIONS.md"
 FIELDS = {"nom", "titre", "texte", "preenregistrement", "cadre", "millesime_entreprises",
           "page", "rapports", "scenarios", "programme"}
@@ -160,7 +162,7 @@ def plage_request(cadre: str, programme: str, mesure: str, champ: str,
     valeur = {"bas": plage.min, "haut": plage.max,
               "candidat": pg._lire(m.chiffrage.reforme, champ)}[point]
     menages, entreprises = p.reformes({cle: valeur}, (mesure,))
-    request = _read(REQUESTS / f"{cadre}.json")
+    request = lire_cadre(cadre)
     return {"spending": request["spending"], "growth": request["growth"],
             "rate": request["rate"], "horizon": request["horizon"],
             "theta": request["theta"], "uprating": request["uprating"],
@@ -779,6 +781,35 @@ def _read(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+#: What a study's frame says (D-336), each key read by the range points, the page and the
+#: annual command, as a predictive request carries it.
+CADRE_LU = ("spending", "growth", "rate", "horizon", "uprating", "theta", "behavioural",
+            "macro")
+#: What a frame will carry, and no pass reads yet: the "read" persistence of the loop and
+#: the market rate of the added debt (D-336, decisions 1 and 3). A frame that says them is
+#: refused until every pass reads them, rather than priced as if it did not.
+CADRE_A_VENIR = ("persistance", "taux")
+
+
+def lire_cadre(nom: str, directory: Path | None = None) -> dict[str, Any]:
+    """The frame `nom` of the studies, `etudes/cadres/<nom>.json`: every key the passes
+    read, and nothing they would leave unread."""
+    path = (directory or CADRES) / f"{nom}.json"
+    if not path.exists():
+        raise EtudeError(f"{_relative(path)} n'existe pas : aucun cadre « {nom} ».")
+    raw = _read(path)
+    a_venir = sorted(set(CADRE_A_VENIR) & set(raw))
+    if a_venir:
+        raise EtudeError(f"le cadre « {nom} » porte {a_venir}, qu'aucune passe ne lit "
+                         f"encore (D-336) : il serait chiffré sans eux.")
+    unknown = set(raw) - set(CADRE_LU) - {"titre"}
+    missing = set(CADRE_LU) - set(raw)
+    if unknown or missing:
+        raise EtudeError(f"le cadre « {nom} » : champs inconnus {sorted(unknown)}, "
+                         f"manquants {sorted(missing)}.")
+    return raw
+
+
 def difference(committed: str, built: str) -> str | None:
     """Where two texts first part, line and words around it, or None if they are one."""
     if committed == built:
@@ -847,8 +878,9 @@ class Etude:
         """`impots predictif` for `name`: the annual command of the frame's request, with
         this scenario, this directory and this place."""
         annual = _script("etude_annuelle")
-        command = annual.argv(self.cadre, where=where, scenarios=self.scenarios,
-                              out=self.rapports)
+        lire_cadre(self.cadre)
+        command = annual.argv(self.cadre, where=where, requests=CADRES,
+                              scenarios=self.scenarios, out=self.rapports)
         if command[1] != annual.name(self.cadre):
             raise EtudeError(f"la commande de l'étude ne nomme pas son scénario en "
                              f"deuxième : {command[:3]}")
@@ -963,11 +995,11 @@ class Etude:
     # -- the reports ------------------------------------------------------------- #
 
     def frame(self) -> dict[str, Any]:
-        """What the annual report says of the frame the study's request names (D-237)."""
+        """What the annual report says of the study's frame (D-237, D-336)."""
         from impots.dette.path import SHIPPED
         from impots.predictif import chaine
 
-        request = _read(REQUESTS / f"{self.cadre}.json")
+        request = lire_cadre(self.cadre)
         first = chaine.START_YEAR + 1
         return {"spending_name": SHIPPED[request["spending"]["rule"]].name,
                 "growth_name": request["growth"]["name"], "rate_name": request["rate"]["name"],

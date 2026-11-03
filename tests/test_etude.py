@@ -86,7 +86,7 @@ def test_the_command_says_the_drift(tmp_path, monkeypatch, capsys) -> None:
 
 
 GOOD = {"nom": "x", "titre": "X", "texte": "plf2027", "preenregistrement": "D-1",
-        "cadre": "ir", "millesime_entreprises": "2023",
+        "cadre": "central", "millesime_entreprises": "2023",
         "scenarios": [{"scenario": "plf2027_art_2"}]}
 
 
@@ -115,6 +115,53 @@ def test_a_good_definition_is_read(tmp_path) -> None:
     assert study.rapports == etude.ROOT / "reports" / "etudes" / "x"
     with pytest.raises(etude.EtudeError, match="aucune étude"):
         etude.definition("absente", tmp_path)
+
+
+# --- the frame of the studies, in a file of its own (D-336) --------------------------
+
+
+def test_every_study_reads_the_frame_of_its_own_file() -> None:
+    """The studies' hypotheses are no longer the phase 10 IR request's (`etude/ir.json`):
+    touching that request for its exploration leaves the ten pages as they are."""
+    assert {s.cadre for s in etude.definitions()} == {"central"}
+    assert etude.CADRES == etude.ROOT / "etudes" / "cadres"
+    assert etude.lire_cadre("central")["theta"] == {"common": 0.5}
+
+
+def test_the_programmes_hypotheses_are_the_frame_s_numbers() -> None:
+    """`programmes/hypotheses/etude.json` says the frame's numbers under other names: the
+    fast path of `impots programme` and the studies cannot part. Fails on any drift."""
+    cadre = etude.lire_cadre("central")
+    hypotheses = json.loads((etude.ROOT / "programmes" / "hypotheses" / "etude.json")
+                            .read_text(encoding="utf-8"))
+
+    def numbers(frame: dict) -> dict:
+        return {"spending": frame["spending"]["rule"],
+                "growth": (frame["growth"]["real"], frame["growth"]["prices"]),
+                "rate": frame["rate"]["kind"], "horizon": frame["horizon"],
+                "theta": frame["theta"], "wage": frame["uprating"]["wage"],
+                "persistence": frame.get("persistence")}
+
+    assert numbers(hypotheses) == numbers(cadre)
+    # The comparison sees a drift: a wage of 2 % is refused.
+    drifted = {**hypotheses, "uprating": {**hypotheses["uprating"], "wage": 0.02}}
+    assert numbers(drifted) != numbers(cadre)
+
+
+@pytest.mark.parametrize("change, needle", [
+    ({"persistance": "lue"}, "qu'aucune passe ne lit encore"),
+    ({"taux": "marche"}, "qu'aucune passe ne lit encore"),
+    ({"autre": 1}, "champs inconnus"),
+    ({"horizon": None}, "manquants"),
+])
+def test_a_frame_that_says_what_no_pass_reads_is_refused(tmp_path, change, needle) -> None:
+    raw = {k: v for k, v in {**etude.lire_cadre("central"), **change}.items()
+           if v is not None}
+    (tmp_path / "x.json").write_text(json.dumps(raw), encoding="utf-8")
+    with pytest.raises(etude.EtudeError, match=needle):
+        etude.lire_cadre("x", tmp_path)
+    with pytest.raises(etude.EtudeError, match="aucun cadre"):
+        etude.lire_cadre("absent", tmp_path)
 
 
 # --- the PLFSS 2027, in mirror ------------------------------------------------------

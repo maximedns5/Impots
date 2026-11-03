@@ -109,7 +109,8 @@ def _frame(args) -> dict:
 
 def test_the_annual_paths_take_the_study_s_frame_field_for_field(study) -> None:
     annual = _load("etude_annuelle")
-    frame = cli.build_parser().parse_args(annual.argv(study.cadre, where="là"))
+    frame = cli.build_parser().parse_args(annual.argv(study.cadre, where="là",
+                                                      requests=etude.CADRES))
     for name in study.noms:
         args = cli.build_parser().parse_args(study.annual_argv(name, where="ici"))
         assert args.func is cli.cmd_predictif and args.scenario == name

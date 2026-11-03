@@ -91,29 +91,29 @@ def test_a_mixed_first_year_is_two_calls_and_only_in_a_programme_study() -> None
 def test_a_range_point_is_the_measure_alone_at_its_value(point, attendu) -> None:
     """GARDE (D-328). Le point d'une plage est la mesure seule, ce champ à sa valeur, dans
     le cadre de l'étude, mécanique."""
-    r = etude.plage_request("ir", "le_pen", "lp20_tva_energie", "tva_postes.energie", point)
+    r = etude.plage_request("central", "le_pen", "lp20_tva_energie", "tva_postes.energie", point)
     assert r["reform"] == {"tva_postes": {"energie": attendu}}
     assert r["firm_reform"] is None
     assert r["behavioural"] is r["macro"] is False
-    cadre = json.loads((ROOT / "etude" / "ir.json").read_text(encoding="utf-8"))
+    cadre = etude.lire_cadre("central")
     for key in ("spending", "growth", "rate", "horizon", "theta", "uprating"):
         assert r[key] == cadre[key]
 
 
 def test_a_range_point_outside_the_programme_is_refused() -> None:
     with pytest.raises(etude.EtudeError, match="pas de plage"):
-        etude.plage_request("ir", "le_pen", "lp20_tva_energie", "tva_taux_normal", "bas")
+        etude.plage_request("central", "le_pen", "lp20_tva_energie", "tva_taux_normal", "bas")
     with pytest.raises(etude.EtudeError, match="pas de plage"):
-        etude.plage_request("ir", "le_pen", "lp20_tva_energie", "tva_postes.energie",
+        etude.plage_request("central", "le_pen", "lp20_tva_energie", "tva_postes.energie",
                             "milieu")
 
 
 def test_a_firm_law_that_moves_in_the_horizon_has_its_debt_said_absent() -> None:
     """GARDE (D-328). La CVAE change de droit en 2028 : le chemin reporté la refuse
     (D-254), et le point dit pourquoi sa dette manque, au lieu de la reporter."""
-    r = etude.plage_request("ir", "attal", "a18_suppression_cvae", "cvae_echelle", "bas")
+    r = etude.plage_request("central", "attal", "a18_suppression_cvae", "cvae_echelle", "bas")
     assert "D-254" in etude.dette_absente(r)
-    r = etude.plage_request("ir", "le_pen", "lp20_tva_energie", "tva_postes.energie", "bas")
+    r = etude.plage_request("central", "le_pen", "lp20_tva_energie", "tva_postes.energie", "bas")
     assert etude.dette_absente(r) is None
 
 
@@ -149,7 +149,7 @@ def test_a_range_report_that_is_not_the_study_s_is_refused(tmp_path) -> None:
     for mesure, champ, point in study.points():
         report = {"programme": "roussel", "mesure": mesure, "champ": champ,
                   "point": point, "commit": "abc", "dirty": False, "where": "essai",
-                  "request": etude.plage_request("ir", "roussel", mesure, champ, point)}
+                  "request": etude.plage_request("central", "roussel", mesure, champ, point)}
         reports[point] = report
         (tmp_path / etude.PLAGES / etude.plage_name(mesure, champ, point)).write_text(
             json.dumps(report), encoding="utf-8")
