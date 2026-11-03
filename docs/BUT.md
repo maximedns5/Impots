@@ -473,3 +473,35 @@ moteur, sans effet sur les nombres, ont fait tenir les chemins dans le conteneur
 passe dans son processus (D-331), les taux marginaux qui libèrent leurs simulations
 (D-332) ; le runner fait de même (D-334), sans quoi un test lourd tombait, sur `main`
 aussi.
+
+### But 14 — Consolider : un moteur cohérent de bout en bout (validé le 3 novembre 2026, D-336)
+
+L'audit (`docs/AUDIT_BUT14.md`) trouve un socle solide et une architecture empilée but par
+but : cinq chemins de passe qui n'imputent pas la même population, une couche de service
+dans l'API, un cadre rangé dans une exploration, et six verdicts de dette sur huit portés
+par trois choix de modèle plutôt que par l'économie. Ce but ne fait monter aucun des trois
+chiffres ; il prépare le deuxième, des études justes, et le précalcul des curseurs.
+
+```
+/goal Le moteur est cohérent de bout en bout, et c'est mergé dans main. Une seule
+politique d'imputation sert tous les chemins de passe (API, CLI, scénarios, programme,
+étude), et un bouton qui ne peut pas bouger sur un chemin y est refusé, jamais rendu à zéro.
+La couche de service quitte api/main.py pour un module que les chemins appellent par des
+fonctions publiques. Le cadre des études vit dans un fichier à lui. etude.py suit D-335 :
+plusieurs commits sont acceptés quand une passe témoin rejouée sur le nouveau commit redonne
+son rapport à l'identique, et une série interrompue reprend. Chaque rapport de chemin écrit,
+par année et par vue, les impulsions par instrument et les statistiques des canaux ; une
+fonction pure en refait la dette, la boucle et la boîte de θ, égale au chemin du moteur à
+1e-9 près. Les décisions du propriétaire sur la persistance, le multiplicateur, le taux de
+la dette ajoutée, C1, C5 et C6 sont appliquées, chacune dans sa D-entrée avec son effet
+mesuré. Le code mort et les références périmées listés dans docs/AUDIT_BUT14.md sont
+retirés ou corrigés. Les dix études sont relancées une fois, sur un commit figé, après un
+profil de mémoire, préenregistrées avec leur pronostic, et chaque page dit ce qui a bougé et
+pourquoi. Si la calibration doit changer, s'arrêter et demander. Preuve attendue : le
+tableau des points de l'audit, fait ou laissé avec sa raison ; les dix études avant et
+après ; la sortie verte de make impact et des lourds ; l'URL de la PR et le SHA du merge.
+Ou s'arrêter après 60 tours, en disant ce qui manque.
+```
+
+Validé par le propriétaire le 3 novembre 2026 (« fais-moi tout ça ») : les douze décisions
+de l'audit sont prises comme il les recommande (D-336).

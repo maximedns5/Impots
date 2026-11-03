@@ -25870,3 +25870,57 @@ sont sur plusieurs commits (`etude.py`, l'erreur « les rapports de l'étude son
 commits »). Il devra accepter des commits dont le diff ne touche pas les nombres de
 l'étude, en le disant sur la page. Les gardes et les tests de structure de D-330, D-331,
 D-332 et D-334 restent tant qu'ils ne gênent pas ; on peut les retirer quand ils coûtent.
+
+## D-336 — Le but 14 validé : consolider, et les décisions de modèle de l'audit
+
+**Le fait.** Le 3 novembre 2026, le propriétaire a lu l'audit (`docs/AUDIT_BUT14.md`) et sa
+proposition de but 14, et a répondu « fais-moi tout ça ». Le but est écrit dans `BUT.md`
+tel que l'audit le propose. Les douze décisions de son § 7 sont prises comme l'audit les
+recommande ; chacune est dite ici avec sa raison, et chacune se défait par une D-entrée.
+
+**Les décisions qui bougent des nombres.**
+
+1. **La persistance « lue ».** La boucle lit Mésange aux horizons 1, 2, 3, 5 et 10 ans,
+   dans sa spécification centrale (WS), et interpole linéairement entre eux. Les
+   multiplicateurs fiscaux de Mésange ne décroissent pas à 5 et 10 ans (IR 0,88, 0,81,
+   0,87) : « éteint » faisait une falaise à l'an 4 que la source ne porte pas, « tenu »
+   gelait l'an 3. `usable_horizons` s'étend aux colonnes 5 et 10 des lignes que la boucle
+   lit ; le long terme reste refusé (D-055 : 1,73 sous WS, 0,25 sous Phillips). Le verdict
+   lit « lue » seule ; « éteint » et « tenu » restent publiées, comme sensibilités.
+2. **Le multiplicateur borné.** m(h, θ) = max(0, c(h) + (2θ − 1)σ) : un multiplicateur
+   négatif n'est dans aucune étude d'IMK. La rétroaction est bornée au coût brut de
+   l'impulsion : une baisse d'impôt ne s'autofinance pas à plus de 100 %, ce que Mésange
+   (folio 108) dit « erroné ».
+3. **Le taux de la dette ajoutée.** Le taux de marché que le PLF 2027 retient pour l'OAT à
+   dix ans, lu dans son texte manifesté, remplace le taux implicite net de 1,88 % pour la
+   dette qu'une réforme ajoute. Si le texte ne le donne pas, le taux reste l'implicite, et
+   la D-entrée du résultat le dit.
+4. **C1 au taux de l'IR.** L'élasticité de Cabannes, Houdré et Landais est estimée sur le
+   taux marginal de l'IR. C1 lit donc Δln(1 − τ_IR), le taux de l'IR seul, mesuré par la
+   même différence finie ; la recette perdue reste comptée au taux total, ce que l'État
+   perd. La base reste le salaire, et la page le dit. La garde de support lit la médiane
+   de |Δ(1 − τ_IR)| pondérée par la contribution de chaque ménage à C1, et non plus le 95e
+   centile des ménages : une réforme du seul haut n'est plus « dans le support ».
+5. **C5 et C6 décrochés.** Le cadre ne porte aucun patrimoine ; leurs lignes ne
+   revendiquent plus les leviers d'IFI, et un bouton d'IFI sur la population est refusé
+   avec sa porte, au lieu d'un zéro.
+6. **Le Monte-Carlo, à côté de la boîte.** Les lois sont celles du magasin ; une copule
+   gaussienne lie les lignes d'un même article (ρ = 0,8), les autres sont indépendantes ;
+   le multiplicateur suit une normale de centre Mésange et d'écart-type σ_IMK, tronquée à
+   0. Sorties : la probabilité d'une hausse de la dette en 2035, ses quantiles à 5, 50 et
+   95 %, les indices de Sobol. La règle de la phase 9 devient : la boîte n'est pas une
+   probabilité ; la distribution en est une, sous des lois déclarées. Les deux sont
+   publiées, nommées.
+7. **Le cadre des études** garde ses valeurs (1 %, 2 %, 3 %) et quitte `etude/ir.json`
+   pour un fichier à lui.
+
+**Les décisions d'organisation.** `calibrate.py` reste fermé. Un commit ne change aucun
+nombre quand une passe témoin, rejouée sur lui, redonne son rapport à l'identique hors
+durée. `test_gardes_phase9.py:137` est retiré, et son rapport figé. Les tests qui lisent le
+source par chaînes sont retirés. Le JavaScript attend le but 15. La consolidation ne fait
+monter aucun des trois chiffres : elle sert le deuxième, dix études justes, et le précalcul.
+
+**L'ordre.** D'abord ce qui ne change aucun nombre, prouvé par la passe témoin ; puis les
+statistiques dans les rapports et la fonction pure ; puis les décisions 1 à 6, chacune avec
+son effet mesuré ; enfin une seule série des dix études, préenregistrée avec son pronostic
+dans sa propre D-entrée avant de tourner.
