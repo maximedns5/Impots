@@ -237,7 +237,7 @@ ARGS = ["predictif", "gel_bareme", "--reference", "reconduit",
 @pytest.fixture
 def command(monkeypatch, tmp_path) -> dict:
     """The command with the simulator's pass stubbed one seam below, as the explorer's
-    tests stub it (`_price_first_year`), and a start that needs no INSEE file."""
+    tests stub it (`service.price_first_year`), and a start that needs no INSEE file."""
     seen: list = []
     # The mechanical path's pass is stubbed too, on a five-person population: a refusal
     # the guard sweep removes must fail this test in seconds, not run the real
@@ -290,7 +290,7 @@ def command(monkeypatch, tmp_path) -> dict:
 
 
 def test_the_command_prices_every_year_through_the_simulators_pass(command) -> None:
-    """Every year and both views through `_price_first_year`, past the API's window: the
+    """Every year and both views through `service.price_first_year`, past the API's window: the
     years 2027 to 2029 are not ones a request may ask for (MAX_YEAR), and the command
     prices them anyway, each with its basis, as it always has (D-216)."""
     code, report = command["launch"]("--horizon", "4", "--behavioural", "--macro")
@@ -298,7 +298,7 @@ def test_the_command_prices_every_year_through_the_simulators_pass(command) -> N
     assert sorted(command["seen"]) == sorted(
         (y, v, True, True) for y in (2026, 2027, 2028, 2029) for v in ("vieillie", "figee"))
     # Each of the eight passes went through the isolation (D-331), none beside it.
-    assert command["isolated"] == [main._price_first_year] * 8
+    assert command["isolated"] == [service.price_first_year] * 8
     assert [p["persistence"] for p in report["side_by_side"]] == ["lue", "eteint", "tenu"]
     assert report["behavioural"] and report["macro"] and report["theta_applied"]
     PredictifReportResponse.model_validate(report)
