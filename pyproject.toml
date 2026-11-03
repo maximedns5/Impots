@@ -32,7 +32,9 @@ dependencies = [
   # environnement neuf — y compris chaque runner de CI — `imk.load()` levait
   # « pypdf is required », message qui se lit comme un défaut de DONNÉES et qui a été
   # classé comme tel (D-161).
-  "pypdf>=4.0",
+  # Borné sous 6 : pypdf 6 lève « LimitReachedError » sur le PDF de la Cnaf et ne retrouve
+  # plus les panneaux de la figure 2 de Bach et al. ; 5.9 les lit (but 14, D-339).
+  "pypdf>=4.0,<6",
   # certifi complète le magasin de certificats du téléchargeur. Il n'arrivait que par
   # httpx, une dépendance de développement : sur une installation sans `[dev]`,
   # `impots data fetch` n'aurait plus démarré (D-232).

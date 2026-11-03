@@ -449,7 +449,7 @@ def test_the_register_command_carries_the_mirror_flag(tmp_path, monkeypatch):
     # 2024 scenario on the 2024 population needs no indices.
     monkeypatch.setattr(scenarios, "load", lambda name: SimpleNamespace(year=2024))
     monkeypatch.setattr(scenarios, "mechanical_price",
-                        lambda scenario, frame, households: {"mechanical": 2.0e8})
+                        lambda scenario, frame, households, **kw: {"mechanical": 2.0e8})
     monkeypatch.setattr(ch, "head_commit", lambda: "abc1234")
     args = cli.build_parser().parse_args([
         "chiffrage", "register", "miroir", "--scenario", "s",

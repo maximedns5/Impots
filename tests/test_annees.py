@@ -153,6 +153,8 @@ def test_the_whole_pass_runs_in_the_measure_s_years_only(stubbed, monkeypatch) -
                                behaviour_asked=True)
 
     monkeypatch.setattr(service, "price_first_year", first)
+    # Le stub ne passe pas dans le processus neuf de `_isole` (D-331) : la passe tourne ici.
+    monkeypatch.setattr(cli, "_isole", lambda function, *a, **k: function(*a, **k))
     assert _main(stubbed, "--behavioural") == 0
     assert sorted(seen) == [(2027, "figee", True), (2027, "vieillie", True)]
     report = json.loads((stubbed.out / "predictif_art15.json").read_text(encoding="utf-8"))

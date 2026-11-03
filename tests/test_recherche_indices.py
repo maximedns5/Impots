@@ -54,10 +54,12 @@ def test_the_nearest_bundle_carries_its_indices_from_the_passes_already_run(
 
 
 def test_side_by_side_each_search_reads_the_chain_off_its_own_path() -> None:
-    """Past three years, both persistences: the mechanical and behavioural indices are the
-    same pass's, the debt is each scenario's own."""
+    """Past three years, every persistence (« lue », « éteint », « tenu », D-336): the
+    mechanical and behavioural indices are the same pass's, the debt is each one's own."""
     report = run_search(_request(behavioural=True))
-    eteint, tenu = (s["indices"]["rows"] for s in report["searches"])
+    rows = {s["persistence"]: s["indices"]["rows"] for s in report["searches"]}
+    assert sorted(rows) == ["eteint", "lue", "tenu"]
+    eteint, tenu = rows["eteint"], rows["tenu"]
 
     def own(rows):
         return [r for r in rows if r["stage"] != indices.CHAINE]

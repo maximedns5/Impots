@@ -235,7 +235,7 @@ MANUAL: tuple[Mutation, ...] = (
              ("tests/test_api_predictif.py",),
              "côte à côte, la réponse ne porte aucune trajectoire en tête (D-230)"),
     Mutation("D230-schema-les-deux", "src/impots/api/schemas.py",
-             '        if sorted(p.persistence for p in self.side_by_side) != ["eteint", "tenu"]:',
+             '        if sorted(p.persistence for p in self.side_by_side) not in SIDE_BY_SIDE:',
              "        if False:",
              ("tests/test_api_predictif.py",),
              "côte à côte, ce sont les deux scénarios, chacun une fois (D-230)"),

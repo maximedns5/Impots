@@ -121,6 +121,8 @@ def test_the_whole_pass_prices_the_date_then_the_carried_level(stubbed, monkeypa
                                uncovered={}, layers=None, behaviour_asked=False)
 
     monkeypatch.setattr(service, "price_first_year", first)
+    # Le stub ne passe pas dans le processus neuf de `_isole` (D-331) : la passe tourne ici.
+    monkeypatch.setattr(cli, "_isole", lambda function, *a, **k: function(*a, **k))
     assert cli.main([*ARGS, "--dir", str(stubbed.scenarios), "--out-dir", str(stubbed.out),
                      "--macro"]) == 0
     assert _by_year(seen) == {2026: {"ppa_revalorisation_avril"},
