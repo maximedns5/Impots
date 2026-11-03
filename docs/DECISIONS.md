@@ -25927,3 +25927,62 @@ monter aucun des trois chiffres : elle sert le deuxième, dix études justes, et
 statistiques dans les rapports et la fonction pure ; puis les décisions 1 à 6, chacune avec
 son effet mesuré ; enfin une seule série des dix études, préenregistrée avec son pronostic
 dans sa propre D-entrée avant de tourner.
+
+## D-337 — Les décisions de modèle de D-336, appliquées et mesurées sans passe
+
+**Le fait.** Les décisions 1, 2, 4, 5 et 6 de D-336 sont dans le code (`ff8e814` à
+`9b5c372`) ; la décision 3 ne l'est pas, faute de source. Chacune a un test léger qui la
+tient. Leur effet est mesuré sans passe de population, sur la fonction pure qui refait la
+chaîne (`predictif/rejouer.py`), et écrit dans `reports/but14_effets_modele.md`, que
+`scripts/but14_effets_modele.py` refait en quelques secondes. Ce ne sont pas les études
+relancées : la série reste à faire, préenregistrée.
+
+**Le rapport d'un chemin garde de quoi refaire la chaîne.** Par année et par vue, le coût,
+les impulsions par instrument et les statistiques suffisantes des canaux de recettes
+(`statistiques`) ; le départ, le cadre, les lignes et les tables macro (`rejeu`). La
+fonction pure égale `chaine.run` et `annuel.build` à 10⁻⁹ près, trois persistances, quatre
+θ et tous les coins, après un aller-retour JSON. La dette, la boucle, θ, la boîte et le
+Monte-Carlo se refont donc sans passe.
+
+**Les décisions 1 et 2.** Δb en 2035, en points de PIB, à θ = 0, ½ et 1 ; Attal vue
+vieillie reconstruit depuis ses rapports, à ±0,3 point ; Mélenchon redonne les siens au
+centième.
+
+| cas | avant, éteint | avant, tenu | lue, bornée |
+|---|---|---|---|
+| un point d'IR, permanent | +9,39 / +8,35 / +7,31 | +8,17 / +3,48 / −1,15 | +8,33 / +4,02 / −0,31 |
+| Attal, vieillie | +23,80 / +20,22 / +16,64 | +22,67 / +7,45 / −7,30 | +17,82 / +4,20 / −5,48 |
+| Mélenchon, vieillie | −3,22 / −2,55 / −1,89 | −2,98 / −0,74 / +1,51 | −2,14 / −0,44 / +0,65 |
+
+La persistance lue tombe près de « tenu », parce que les multiplicateurs fiscaux de Mésange
+ne décroissent pas : le chiffre de tête d'Attal à θ½ passe de +20,2 à +4,2 points, et la
+falaise de l'an 4 disparaît. La borne ne touche pas θ½ ; elle resserre les coins (Attal
+tenu θ = 1 : −7,30 → −3,79). Le verdict sous « lue » seule reste « dépend de θ » pour Attal
+et Mélenchon : le coin θ = 1 renverse encore le signe, borné ou non. C'est donc
+l'incertitude du multiplicateur, et non plus un artefact de persistance, qui le porte.
+
+**La décision 3 n'est pas appliquée.** Le texte du PLF 2027 manifesté ne donne aucune
+hypothèse de taux à dix ans : « OAT » n'y est que le sigle d'une taxe, « taux d'intérêt »
+n'y est que qualitatif ; il chiffre le besoin de financement (339,7 Md€) et la charge de la
+dette (+9,6 Md€), pas un taux. L'hypothèse est dans le rapport économique, social et
+financier, hors du manifeste, et le site de l'AFT répond 403 depuis ce conteneur. La dette
+ajoutée reste au taux implicite net de 1,883 %. Manifester le rapport économique est la
+suite.
+
+**La décision 4.** C1 lit le taux de l'IR seul, mesuré dans les mêmes simulations
+(`impot_revenu_restant_a_payer`) ; la clé du cache des taux de base change (D-276). Sur le
+cas construit d'une tranche du haut (1 % des ménages, IR de 45 à 60 %, total de 60 à 75 %),
+C1 vaut 0,68 fois l'ancien, et la note passe de « in-support » à « illustrative » : la
+métrique pondérée par la contribution lit 0,15 contre un support de 0,03, quand le 95e
+centile des ménages lisait 0. La part de C1 portée par les ménages au plancher est publiée.
+Son effet sur Tondelier se lira dans la série.
+
+**La décision 5.** Aucune recette ne bouge : les coins décrochés étaient inertes. La boîte
+de Mélenchon passe de 32 à 8 coins, aux mêmes bornes.
+
+**La décision 6.** Copule gaussienne ρ = 0,8 entre les lignes d'un même fichier du magasin
+(un article par fichier), indépendance sinon ; multiplicateur normal, centre Mésange,
+écart-type IMK, censuré à 0 (un z commun à tous les instruments et horizons interdit la
+troncature stricte) ; 2 000 tirages, graine 20261103. Sous « lue » : P(Δb₂₀₃₅ > 0) = 0,82
+pour le point d'IR, 0,62 pour Attal, 0,40 pour Mélenchon. Les quantiles à 5 et 95 %
+dépassent les coins : la normale a des queues que θ ne parcourt pas.
