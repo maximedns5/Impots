@@ -25867,9 +25867,12 @@ tourner. Aucune tolérance ne bouge après le premier calcul. `calibrate.py` res
 
 **Ce que le code devra suivre.** `impots etude` refuse encore une étude dont les rapports
 sont sur plusieurs commits (`etude.py`, l'erreur « les rapports de l'étude sont sur N
-commits »). Il devra accepter des commits dont le diff ne touche pas les nombres de
-l'étude, en le disant sur la page. Les gardes et les tests de structure de D-330, D-331,
-D-332 et D-334 restent tant qu'ils ne gênent pas ; on peut les retirer quand ils coûtent.
+commits ») ; il devra accepter des commits dont le diff ne touche pas les nombres de
+l'étude, en le disant sur la page. Le test qui exigeait que chaque garde de la phase 9 soit
+passée au banc de mutations (`tests/test_gardes_phase9.py`, le rapport sans survivante) est
+retiré ; les autres tests du fichier, qui tiennent le catalogue en quelques secondes,
+restent. Les gardes et les tests de structure de D-330, D-331, D-332 et D-334 restent tant
+qu'ils ne gênent pas ; on peut les retirer quand ils coûtent.
 
 ## D-336 — Le but 14 validé : consolider, et les décisions de modèle de l'audit
 
@@ -25916,7 +25919,7 @@ recommande ; chacune est dite ici avec sa raison, et chacune se défait par une 
 
 **Les décisions d'organisation.** `calibrate.py` reste fermé. Un commit ne change aucun
 nombre quand une passe témoin, rejouée sur lui, redonne son rapport à l'identique hors
-durée. `test_gardes_phase9.py:137` est retiré, et son rapport figé. Les tests qui lisent le
+durée. `test_gardes_phase9.py:137` est retiré par D-335, et son rapport figé. Les tests qui lisent le
 source par chaînes sont retirés. Le JavaScript attend le but 15. La consolidation ne fait
 monter aucun des trois chiffres : elle sert le deuxième, dix études justes, et le précalcul.
 
