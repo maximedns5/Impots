@@ -1,6 +1,7 @@
 """ReformSpec (JSON) -> an openfisca `Reform` subclass (spec §3.4).
 
-Only the seven whitelisted knobs below can be moved. The API never accepts a raw
+Only the whitelisted knobs below can be moved (`SCALAR_KNOBS` and the registries
+beside it: plafonds, échelles, revaluations, the two barèmes). The API never accepts a raw
 parameter path: that would be an injection surface into the parameter tree, and it
 would make the reform-cache key unbounded.
 
@@ -8,8 +9,9 @@ The barème is the delicate one. `impot_revenu.bareme_ir_depuis_1945.bareme` is 
 `ParameterScale` holding 14 historical brackets, of which only the first five
 resolve to a value at a 2024 instant — the rest return `None` and are dropped from
 the evaluated scale. So a user barème of *n* brackets is written onto brackets
-0..n-1, and brackets n..4 must be neutralised. v1 never *adds* a bracket to the
-scale, which is why `ReformSpec` caps the barème at five rows.
+0..n-1, and the active brackets past n must be neutralised. A bracket is never *added*
+to the scale: a dormant one the tree already holds is woken instead, which is why
+`ReformSpec` caps the barème at `MAX_BAREME_BRACKETS` rows (six since D-320).
 
 **How the surplus brackets are neutralised, and why it is not obvious.** Building a
 `MarginalRateTaxScale` from a `ParameterScale` *merges brackets that share a
@@ -93,12 +95,6 @@ PATH_AF_TAUX = (*_AF, "af_cm", "taux")
 PATH_AF_MODULATION = (*_AF, "af_cm", "modulation")
 PATH_AF_RESSOURCES = (*_AF, "af_cond_ress")
 
-#: The 2017 flat cut to housing benefit — five euros a month, and one of the most
-#: argued-over scalars in the French welfare system. The rest of the housing formula
-#: is nested per region (métropole, DOM, Mayotte, Saint-Pierre-et-Miquelon) and per
-#: number of dependants, with a node shape that varies by year: the same trap as the
-#: bandeau plafonds (D-044), and it needs its own increment rather than a knob bolted
-#: on here.
 #: Wealth tax (Phase 5). The IFI node's children are exactly `bareme`, `decote`,
 #: `forfait_mobilier`, `plaf`, `reduc_exo` and `reduc_impot` — measured, and the
 #: absence matters: **there is no seuil d'assujettissement parameter**. The 1,3 M
@@ -108,9 +104,16 @@ PATH_AF_RESSOURCES = (*_AF, "af_cond_ress")
 #: looking rather than by assuming a parameter with the obvious name exists.
 _IFI = ("taxation_capital", "impot_fortune_immobiliere_ifi_partir_2018")
 PATH_IFI_DECOTE = (*_IFI, "decote")
+PATH_IFI_BAREME = (*_IFI, "bareme")
 PATH_IFI_DONS = (*_IFI, "reduc_impot",
                  "reduction_dons_certains_organismes_interet_general")
 
+#: The 2017 flat cut to housing benefit — five euros a month, and one of the most
+#: argued-over scalars in the French welfare system. The rest of the housing formula
+#: is nested per region (métropole, DOM, Mayotte, Saint-Pierre-et-Miquelon) and per
+#: number of dependants, with a node shape that varies by year: the same trap as the
+#: bandeau plafonds (D-044), and it needs its own increment rather than a knob bolted
+#: on here.
 PATH_AL_MINORATION = (
     "prestations_sociales", "aides_logement", "allocations_logement", "locatif",
     "minoration_forfaitaire",
@@ -394,26 +397,14 @@ def moves_capital(spec: ReformSpec | None) -> bool:
     return spec is not None and bool(set(spec.model_dump(exclude_none=True))
                                      & CAPITAL_KNOBS)
 
-#: Knobs that move an IR niche. Grouped for the same three reasons the prestations are:
-#: the UI panels them apart, and a reader needs to know which levers only bite on a
-#: household that actually declares the corresponding base.
+#: Knobs that move an IR niche: they bite only on a household that actually declares the
+#: corresponding base, which the population does not unless the bases are imputed. Read
+#: by the confident-zero guard (`guards.niche_blind_spot`).
 NICHE_KNOBS = frozenset({
     "saldom_taux", "saldom_plafond", "gardenf_taux", "gardenf_plafond",
     "dons_taux", "dons_plafond_part_rfr", "dons_coluche_taux", "dons_coluche_plafond",
     "cotisations_syndicales_taux", "frais_scolarite_college", "frais_scolarite_lycee",
     "frais_scolarite_superieur", "plafond_global_niches",
-})
-
-#: Knobs that move the IFI (Phase 5). Grouped for the same reason as the niches: the UI
-#: panels them apart, and every one of them bites only on a foyer that declares real
-#: estate AND has income — with no income the plafonnement abates the whole tax and
-#: every one of these looks dead.
-IFI_KNOBS = frozenset({
-    "ifi_decote_parametre", "ifi_decote_taux", "ifi_decote_borne_inferieure",
-    "ifi_decote_borne_superieure", "ifi_plafonnement_taux",
-    "ifi_abattement_residence_principale", "ifi_dons_taux", "ifi_dons_plafond",
-    "ifi_forfait_mobilier", "ifi_plafond_reductions", "ifi_non_bati_seuil",
-    "ifi_non_bati_taux_bois_forets",
 })
 
 #: `af_cm.modulation.taux_tranche_1` is NOT a knob, and the reason is the fourth
@@ -426,19 +417,6 @@ IFI_KNOBS = frozenset({
 #: so is `taux_tranche_1` — but only under `af_maj_dom.majoration_premier_enfant`, a
 #: different parameter that happens to reuse the leaf name. Only an outcome test settles
 #: it, which is why `test_every_knob_moves_an_outcome` replaced the grep rule.
-
-#: Knobs that move a transfer rather than a levy. Kept as a set because three
-#: different layers need to know: the double-entry guard signs them the other way, the
-#: macro layer looks for a spending instrument, and the UI groups them apart.
-PRESTATION_KNOBS = frozenset({
-    "rsa_montant_de_base", "rsa_forfait_logement_1_personne",
-    "rsa_forfait_logement_2_personnes", "rsa_forfait_logement_3_personnes_ou_plus",
-    "ppa_montant_de_base", "ppa_pente",
-    "ppa_bonification_taux_max", "bmaf", "af_taux_2_enfants", "af_taux_3_enfants",
-    "af_modulation_taux_tranche_2", "af_modulation_taux_tranche_3",
-    "af_plafond_tranche_1_base", "af_plafond_tranche_2_base",
-    "af_majoration_plafond_par_enfant", "al_minoration_forfaitaire",
-})
 
 
 def active_bracket_count(bareme_node: Any, instant: Any) -> int:
@@ -486,7 +464,7 @@ def make_reform(spec: ReformSpec, year: int, name: str) -> type[Reform]:
                     _apply_bareme(parameters, spec.ir_bareme, start)
                 if spec.ifi_bareme is not None:
                     _apply_bareme(parameters, spec.ifi_bareme, start,
-                                  path=(*_IFI, "bareme"))
+                                  path=PATH_IFI_BAREME)
                 for knob, path in SCALAR_KNOBS.items():
                     value = getattr(spec, knob)
                     if value is not None:
@@ -849,19 +827,27 @@ def verify_revalorisations(tax_benefit_system: Any, spec: ReformSpec, year: int)
 
 
 def verify_bareme(tax_benefit_system: Any, spec: ReformSpec, year: int) -> None:
-    """Refuse to serve a reformed system whose IR scale is not what was asked for.
+    """Refuse to serve a reformed system whose IR or IFI scale is not what was asked for.
 
     The `ParameterScale` -> `MarginalRateTaxScale` conversion merges brackets that
     share a threshold by summing their rates, which once turned a 40 % top bracket
     into a 120 % one without raising anything. A wrong tax number that looks
     plausible is the worst failure this project can have, so the scale is read back
-    and compared bracket for bracket.
+    and compared bracket for bracket. The IFI's scale goes through the same
+    `_apply_bareme`, and the same merge (D-082): it is read back the same way.
     """
-    if spec.ir_bareme is None:
-        return
-    scale = resolve(tax_benefit_system.parameters, PATH_BAREME)(f"{year}-01-01")
-    want_thresholds = [b.threshold for b in spec.ir_bareme]
-    want_rates = [b.rate for b in spec.ir_bareme]
+    for name, brackets, path in (("IR", spec.ir_bareme, PATH_BAREME),
+                                 ("IFI", spec.ifi_bareme, PATH_IFI_BAREME)):
+        if brackets is not None:
+            _verify_scale(tax_benefit_system, name, brackets, path, year)
+
+
+def _verify_scale(tax_benefit_system: Any, name: str, brackets: list[Any],
+                  path: tuple[str, ...], year: int) -> None:
+    """Read one scale back against the brackets asked for, bracket for bracket."""
+    scale = resolve(tax_benefit_system.parameters, path)(f"{year}-01-01")
+    want_thresholds = [b.threshold for b in brackets]
+    want_rates = [b.rate for b in brackets]
     got_thresholds = [float(t) for t in scale.thresholds]
     got_rates = [float(r) for r in scale.rates]
     # The length check runs first and short-circuits, so `strict=False` here is
@@ -876,7 +862,7 @@ def verify_bareme(tax_benefit_system: Any, spec: ReformSpec, year: int) -> None:
     )
     if not ok:
         raise AssertionError(
-            "le barème appliqué ne correspond pas au barème demandé — "
+            f"le barème {name} appliqué ne correspond pas au barème demandé — "
             f"demandé thresholds={want_thresholds} rates={want_rates}, "
             f"obtenu thresholds={got_thresholds} rates={got_rates}"
         )

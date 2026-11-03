@@ -25,10 +25,22 @@ from impots.api.schemas import (
     ReformSpec,
 )
 from impots.engine import compute
-from impots.engine.reforms import PRESTATION_KNOBS, SCALAR_KNOBS, resolve
+from impots.engine.reforms import SCALAR_KNOBS, resolve
 from impots.engine.system import baseline, clear_cache
 
 pytestmark = pytest.mark.slow
+
+#: Les boutons qui bougent un transfert plutôt qu'un prélèvement. Rien dans `src` ne les
+#: lisait (audit du but 14, annexe 2, § 4.4) : la liste vit ici, où elle sert.
+PRESTATION_KNOBS = frozenset({
+    "rsa_montant_de_base", "rsa_forfait_logement_1_personne",
+    "rsa_forfait_logement_2_personnes", "rsa_forfait_logement_3_personnes_ou_plus",
+    "ppa_montant_de_base", "ppa_pente",
+    "ppa_bonification_taux_max", "bmaf", "af_taux_2_enfants", "af_taux_3_enfants",
+    "af_modulation_taux_tranche_2", "af_modulation_taux_tranche_3",
+    "af_plafond_tranche_1_base", "af_plafond_tranche_2_base",
+    "af_majoration_plafond_par_enfant", "al_minoration_forfaitaire",
+})
 
 #: Households chosen because each actually receives the benefit under test. A knob
 #: verified on a household that gets nothing passes for the wrong reason — the mistake

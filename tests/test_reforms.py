@@ -214,6 +214,20 @@ def test_verify_bareme_rejects_a_mismatched_scale() -> None:
         verify_bareme(baseline(), THREE_BRACKETS, 2024)
 
 
+def test_verify_bareme_reads_the_ifi_scale_back_too() -> None:
+    """Le barème de l'IFI passe par le même `_apply_bareme` et la même fusion des tranches
+    (D-082) : il est relu comme celui de l'IR. Avant, `verify_bareme` ne lisait que
+    `ir_bareme`, et un barème d'IFI servi de travers passait."""
+    from impots.engine.reforms import verify_bareme
+
+    asked = ReformSpec.model_validate({"ifi_bareme": [
+        {"threshold": 1_300_000, "rate": 0.01}, {"threshold": 5_000_000, "rate": 0.02}]})
+    with pytest.raises(AssertionError, match="barème IFI"):
+        verify_bareme(baseline(), asked, 2024)
+    # Et le système réformé, lui, sert ce qui est demandé : la garde ne refuse pas tout.
+    verify_bareme(reformed_for(asked, 2024), asked, 2024)
+
+
 def test_top_rate_delta_is_checkable_by_hand() -> None:
     """+5 points above 180 294 € on a base of ~184 300 € is ~200 €."""
     result = compute(RICH_SINGLE, 2024, reform=TOP_RATE_50, tier="light")

@@ -759,7 +759,8 @@ class ReformSpec(BaseModel):
 
     ir_bareme: list[IRBracket] | None = Field(
         default=None,
-        description="Complete replacement of the active IR scale: 2 to 5 brackets, "
+        description="Complete replacement of the active IR scale: 2 to "
+        f"{MAX_BAREME_BRACKETS} brackets, "
         "first threshold 0, thresholds strictly increasing.",
     )
     decote_seuil_celib: Annotated[float, Field(ge=0, le=100_000)] | None = None
@@ -832,6 +833,7 @@ class ReformSpec(BaseModel):
     `plafond_tranche_1` / `plafond_tranche_2` are derived figures no formula consults,
     and a knob aimed at them would move nothing."""
     al_minoration_forfaitaire: Annotated[float, Field(ge=0, le=1_000)] | None = None
+    """The 2017 flat cut to housing benefit — five euros a month."""
     # PLF 2027 art. 74 (D-298): the two revaluations the article suspends, each a
     # COEFFICIENT on what the tree carries on its legal date in the priced year — 1.021
     # revalues by 2,1 % — written from that date and not from January. A level would not
@@ -884,7 +886,6 @@ class ReformSpec(BaseModel):
         "0 — the IFI's exempt band below 800 000 EUR is the ABSENCE of a bracket, not a "
         "zero-rated one, and a scale starting at 0 taxes from the first euro.",
     )
-    """The 2017 flat cut to housing benefit — five euros a month."""
     # IR niches (B3). Rates as fractions, ceilings in euros except
     # `dons_plafond_part_rfr`, which is a SHARE of the revenu fiscal de référence, and
     # `plafond_global_niches`, which caps the lot.
