@@ -1,5 +1,5 @@
 {
-  "titre": "Le cadre des études publiées (D-289, D-336) : croissance réelle 1 %, prix 2 %, salaires 3 %, dépense gelée en volume, taux implicite tenu, dix ans, θ½, comportements et boucle",
+  "titre": "Le cadre des études publiées (D-289, D-336) : croissance réelle 1 %, prix 2 %, salaires 3 %, dépense gelée en volume, taux implicite tenu, dix ans, θ½, comportements et boucle, le verdict sous la persistance « lue » (Mésange lu à ses horizons)",
   "spending": {
     "rule": "gele_en_volume"
   },
@@ -21,5 +21,6 @@
     "common": 0.5
   },
   "behavioural": true,
-  "macro": true
+  "macro": true,
+  "persistance": "lue"
 }

@@ -308,10 +308,33 @@ def debt(path: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
+#: The persistence the verdict reads, when a path carries it (D-336, decision 1): Mésange
+#: read at its horizons. « éteint » and « tenu » stand beside it, as sensitivities.
+LUE = "lue"
+
+
+def lue(rows: list[dict[str, Any]]) -> bool:
+    """Whether a path's rows carry the persistence « lue »: a report written since D-336.
+    A report before it has « éteint » and « tenu » only, and reads as it always did."""
+    return any(row.get("persistence") == LUE for row in rows)
+
+
+def verdict_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The rows the verdict reads: those under « lue » when the path has it (D-336), every
+    row of an older report otherwise."""
+    return [row for row in rows if row["persistence"] == LUE] if lue(rows) else rows
+
+
+def sensitivity_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The rows beside the verdict: the other persistences of a path that has « lue »."""
+    return [row for row in rows if row["persistence"] != LUE] if lue(rows) else []
+
+
 def verdict(rows: list[dict[str, Any]]) -> str:
     """« hausse » or « baisse » when Δb has one sign at θ and at every corner, in both
-    views and under each persistence; « dépend de θ » otherwise."""
-    values = [v for row in rows for v in (row["theta"], *row["corners"])]
+    views, under « lue » alone when the path has it (D-336), under each persistence of an
+    older report; « dépend de θ » otherwise."""
+    values = [v for row in verdict_rows(rows) for v in (row["theta"], *row["corners"])]
     if all(v > 0 for v in values):
         return "hausse"
     if all(v < 0 for v in values):
@@ -319,7 +342,28 @@ def verdict(rows: list[dict[str, Any]]) -> str:
     return "dépend de θ"
 
 
+def generation(entries: list[dict[str, Any]]) -> bool:
+    """Whether a study's paths carry « lue » (D-336): all of them, or none, an older
+    series. One page does not read half its paths under one verdict and half under the
+    other."""
+    read = {lue(entry["debt"]) for entry in entries}
+    if len(read) > 1:
+        raise EtudeError("les chemins de l'étude ne sont pas d'une même série : les uns "
+                         "portent la persistance « lue », les autres non (D-336). La série "
+                         "se relance entière.")
+    return read == {True}
+
+
 VIEWS = {"vieillie": "vieillie", "figee": "figée"}
+
+
+def sobol_group(name: str) -> str:
+    """A Sobol group of the Monte-Carlo as a reader reads it: the multiplier, or the rows
+    of one article, the store's file they live in (`montecarlo`, D-336)."""
+    from impots.predictif.rejouer import MACRO_ROW
+
+    return "le multiplicateur" if name == MACRO_ROW else f"les lignes de `{name}.yaml`"
+
 
 VERDICTS = {
     "hausse": "elle **augmente la dette** en {year}, à θ½ comme à chaque coin de la boîte, "
@@ -823,10 +867,13 @@ def _read(path: Path) -> dict[str, Any]:
 #: annual command, as a predictive request carries it.
 CADRE_LU = ("spending", "growth", "rate", "horizon", "uprating", "theta", "behavioural",
             "macro")
-#: What a frame will carry, and no pass reads yet: the "read" persistence of the loop and
-#: the market rate of the added debt (D-336, decisions 1 and 3). A frame that says them is
-#: refused until every pass reads them, rather than priced as if it did not.
-CADRE_A_VENIR = ("persistance", "taux")
+#: What a frame will carry, and no pass reads yet: the market rate of the added debt
+#: (D-336, decision 3; the PLF 2027's text gives none). A frame that says it is refused
+#: until every pass reads it, rather than priced as if it did not.
+CADRE_A_VENIR = ("taux",)
+#: The persistence the verdict reads (D-336, decision 1), the one value a frame may say.
+#: The annual command draws it beside « éteint » and « tenu », the sensitivities.
+CADRE_PERSISTANCES = (LUE,)
 
 
 def lire_cadre(nom: str, directory: Path | None = None) -> dict[str, Any]:
@@ -840,7 +887,11 @@ def lire_cadre(nom: str, directory: Path | None = None) -> dict[str, Any]:
     if a_venir:
         raise EtudeError(f"le cadre « {nom} » porte {a_venir}, qu'aucune passe ne lit "
                          f"encore (D-336) : il serait chiffré sans eux.")
-    unknown = set(raw) - set(CADRE_LU) - {"titre"}
+    if "persistance" in raw and raw["persistance"] not in CADRE_PERSISTANCES:
+        raise EtudeError(f"le cadre « {nom} » lit la persistance « {raw['persistance']} » ; "
+                         f"le verdict ne lit que {list(CADRE_PERSISTANCES)} (D-336), les "
+                         f"autres sont des sensibilités.")
+    unknown = set(raw) - set(CADRE_LU) - {"titre", "persistance"}
     missing = set(CADRE_LU) - set(raw)
     if unknown or missing:
         raise EtudeError(f"le cadre « {nom} » : champs inconnus {sorted(unknown)}, "
@@ -1186,7 +1237,8 @@ class Etude:
                 "growth_name": request["growth"]["name"], "rate_name": request["rate"]["name"],
                 "behavioural": request["behavioural"], "macro": request["macro"],
                 "theta": request["theta"]["common"],
-                "years": list(range(first, first + request["horizon"]))}
+                "years": list(range(first, first + request["horizon"])),
+                "persistance": request.get("persistance")}
 
     def load(self, reports: Path | None = None) -> list[dict[str, Any]]:
         """Each scenario's two reports, refused unless they are the study's, as it was set."""
@@ -1256,6 +1308,19 @@ class Etude:
                     or (path.get("annees") or []) != list(scenario.annees)):
                 raise EtudeError(f"{name} : le chemin n'a pas tourné dans le cadre de "
                                  f"l'étude, sur son scénario.")
+            # A frame that says « lue » wants a path that draws it (D-336). A report
+            # written before D-336 has neither « lue », nor `rejeu`, nor `monte_carlo`:
+            # it is still read, and its page is the one it always rendered, until the
+            # series runs again. That is the one field the comparison tolerates on an old
+            # report; a new report without « lue » is refused.
+            if frame["persistance"] is not None and path.get("macro"):
+                drawn = ([p["persistence"] for p in path.get("side_by_side") or []]
+                         or [path.get("persistence")])
+                old = "rejeu" not in path and "monte_carlo" not in path
+                if frame["persistance"] not in drawn and not old:
+                    raise EtudeError(f"{name} : le cadre lit la persistance "
+                                     f"« {frame['persistance']} », et le chemin ne la "
+                                     f"trace pas ({drawn}).")
             case = grade = None
             if (preregistration.CHIFFRAGES / f"{name}.yaml").exists():
                 case = preregistration.load(name)
@@ -1344,10 +1409,17 @@ class Etude:
         w("")
         # A law has articles; a programme has measures (D-336).
         unit = getattr(texte, "unite", "article")
-        w(f"Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en "
-          f"points de PIB, dans la vue vieillie et sous la première persistance de l'effet "
-          f"macro de chaque {unit} ; « selon θ » lit toutes les vues et toutes les "
-          f"persistances.")
+        if generation(entries):
+            w(f"Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est "
+              f"en points de PIB, dans la vue vieillie et sous la persistance « lue » de "
+              f"l'effet macro de chaque {unit}, Mésange lu à ses horizons ; « selon θ » lit "
+              f"les deux vues sous cette persistance seule (D-336). « Éteint » et « tenu » "
+              f"sont des sensibilités, données plus bas, hors du verdict.")
+        else:
+            w(f"Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est "
+              f"en points de PIB, dans la vue vieillie et sous la première persistance de "
+              f"l'effet macro de chaque {unit} ; « selon θ » lit toutes les vues et toutes "
+              f"les persistances.")
         w("")
         for entry in entries:
             w(texte.heading(entry, n))
@@ -1555,18 +1627,92 @@ class Etude:
             w(f"La mesure ne s'applique qu'en {', '.join(map(str, path['annees']))} : le "
               f"chemin la chiffre cette année-là et ne lui prête rien les autres (D-288).")
             w("")
-        w(f"| persistance | vue | Δ dette {year}, à θ½ | aux coins de la boîte |")
-        w("|---|---|---|---|")
-        for row in rows:
-            corners = (f"de {points(min(row['corners']))} à {points(max(row['corners']))}"
-                       if row["corners"] else "—")
-            w(f"| {row['label'] or '—'} | {VIEWS[row['view']]} | {points(row['theta'])} | "
-              f"{corners} |")
-        w("")
-        w(f"En points de PIB de {year}, la dette avec la mesure moins la dette sans elle. La "
+        def table(shown: list[dict[str, Any]]) -> None:
+            w(f"| persistance | vue | Δ dette {year}, à θ½ | aux coins de la boîte |")
+            w("|---|---|---|---|")
+            for row in shown:
+                corners = (f"de {points(min(row['corners']))} à "
+                           f"{points(max(row['corners']))}" if row["corners"] else "—")
+                w(f"| {row['label'] or '—'} | {VIEWS[row['view']]} | {points(row['theta'])} "
+                  f"| {corners} |")
+            w("")
+
+        if not lue(rows):
+            # A report before D-336: « éteint » and « tenu », both in the verdict, the page
+            # as it always was until the series is run again.
+            table(rows)
+            w(f"En points de PIB de {year}, la dette avec la mesure moins la dette sans "
+              f"elle. La vue vieillie fait vieillir la population chaque année avec les "
+              f"salaires ; la vue figée la garde telle qu'elle est. Sur ces passes, "
+              f"{VERDICTS[verdict(rows)].format(year=year)}.")
+            w("")
+            return
+        table(verdict_rows(rows))
+        w(f"En points de PIB de {year}, la dette avec la mesure moins la dette sans elle, "
+          f"l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La "
           f"vue vieillie fait vieillir la population chaque année avec les salaires ; la vue "
-          f"figée la garde telle qu'elle est. Sur ces passes, "
+          f"figée la garde telle qu'elle est. Sous cette persistance, "
           f"{VERDICTS[verdict(rows)].format(year=year)}.")
+        w("")
+        others = sensitivity_rows(rows)
+        if others:
+            w("**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, "
+              "sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au "
+              "niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles "
+              "disent ce que le choix de la persistance pèse, et n'entrent pas dans le "
+              "verdict.")
+            w("")
+            table(others)
+        self._monte_carlo(w, n, entry, etage)
+
+    def _monte_carlo(self, w: Any, n: Nombres, entry: dict[str, Any], etage: str) -> None:
+        """The distribution of Δb under declared laws, beside the box (D-336, decision 6):
+        P(hausse), its quantiles, its heaviest Sobol groups; nothing when the report has
+        none. In mirror, the measure's: Δb turned over, to the first order as the rest."""
+        monte = entry["path"].get("monte_carlo")
+        if not monte:
+            return
+        sign, year = entry["sign"], monte["annee"]
+
+        def points(value: float) -> str:
+            return n(_points(value), etage, conditionnel=True)
+
+        def share(value: float) -> str:
+            from impots.reporting import pct_fr
+
+            return n(pct_fr(value), etage, conditionnel=True)
+
+        w(f"**La distribution, à côté de la boîte.** La boîte dit jusqu'où Δb va quand "
+          f"chaque effet parcourt sa fourchette publiée : ce n'est pas une probabilité. Le "
+          f"Monte-Carlo en est une, sous des lois déclarées : {monte['lois']} "
+          f"(ρ = {n(format(monte['rho'], 'g').replace('.', ','), 'hypothèse')}, "
+          f"{n(monte['tirages'], 'hypothèse')} tirages, persistance « "
+          f"{monte.get('persistence') or 'aucune'} », D-336). D'autres lois donneraient "
+          f"une autre réponse.")
+        w("")
+        # The quantiles' levels are the declared laws' own, a choice of the study.
+        w(f"| vue | P(hausse de la dette en {year}) | quantile "
+          f"{n('5 %', 'hypothèse')} | médiane | quantile {n('95 %', 'hypothèse')} | "
+          f"ce qui pèse le plus (Sobol, total) |")
+        w("|---|---|---|---|---|---|")
+        for view, label in VIEWS.items():
+            read = (monte.get("vues") or {}).get(view)
+            if not read:
+                continue
+            q = read["quantiles"]
+            # The measure's Δb is minus the scenario's, to the first order (D-298): its
+            # rise is the scenario's fall, and its quantiles turn over.
+            rise = read["p_hausse"] if sign == 1 else 1.0 - read["p_hausse"]
+            q05, q50, q95 = ((q["q05"], q["q50"], q["q95"]) if sign == 1
+                             else (-q["q95"], -q["q50"], -q["q05"]))
+            heaviest = sorted(((name, s) for name, s in (read.get("sobol") or {}).items()
+                               if s is not None), key=lambda kv: (-kv[1]["total"], kv[0]))[:3]
+            groups = ", ".join(
+                f"{sobol_group(name)} "
+                f"{n(format(s['total'], '.2f').replace('.', ','), etage, conditionnel=True)}"
+                for name, s in heaviest) or "—"
+            w(f"| {label} | {share(rise)} | {points(q05)} | {points(q50)} | {points(q95)} | "
+              f"{groups} |")
         w("")
 
     def _official(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:

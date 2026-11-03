@@ -21,6 +21,7 @@ import pytest
 
 from impots import etude, fiche, plf_coverage, preregistration
 from impots.population import cli
+from impots.predictif import retroaction
 from test_etude_page_plf2027 import COMMIT, TEMPLATE, _fan, _households
 
 COSTS = {"plf2027_art_74_ppa": 4.0e8, "plf2027_art_74_apl": 1.2e8}
@@ -150,7 +151,8 @@ def test_the_programmes_hypotheses_are_the_frame_s_numbers() -> None:
 
 
 @pytest.mark.parametrize("change, needle", [
-    ({"persistance": "lue"}, "qu'aucune passe ne lit encore"),
+    ({"persistance": "tenu"}, "le verdict ne lit que"),
+    ({"persistance": "eteint"}, "le verdict ne lit que"),
     ({"taux": "marche"}, "qu'aucune passe ne lit encore"),
     ({"autre": 1}, "champs inconnus"),
     ({"horizon": None}, "manquants"),
@@ -237,6 +239,146 @@ def test_in_mirror_the_debt_and_its_verdict_turn_over(plfss) -> None:
     corners = rows[3]["corners"]
     assert (f"de {etude._points(-max(corners))} à {etude._points(-min(corners))}"
             in _section(text, "les aides au logement"))
+
+
+# --- a path written since D-336: « lue », its sensitivities, the Monte-Carlo ----------
+
+
+#: The distribution a report written since D-336 carries (`montecarlo.run`), by hand.
+MONTE = {"objet": "distribution sous des lois déclarées", "lois": "Les lois du test.",
+         "rho": 0.8, "tirages": 2000, "graine": 1, "persistence": "lue", "annee": 2035,
+         "vues": {view: {"p_hausse": 0.25,
+                         "quantiles": {"q05": -0.02, "q50": -0.005, "q95": 0.004},
+                         "sobol": {"multiplicateur_macro": {"premier_ordre": 0.6,
+                                                            "total": 0.7},
+                                   "eti": {"premier_ordre": 0.2, "total": 0.3},
+                                   "labour_supply": {"premier_ordre": 0.01,
+                                                     "total": 0.05},
+                                   "dividends": None}}
+                  for view in ("vieillie", "figee")},
+         "note": "pas une prévision"}
+
+
+def _turned(value: float) -> float:
+    """« lue » built off « tenu » for the test: every Δb below zero, its order turned over,
+    so that the box still holds θ. Under « lue » alone the scenario lowers the debt; read
+    with « éteint » and « tenu », whose Δb are above zero, it would depend on θ."""
+    assert value > -0.05
+    return -value - 0.05
+
+
+def _with_lue(path: dict, monte: bool = True) -> dict:
+    """An older report made a report of D-336: « lue » drawn first, beside « éteint » and
+    « tenu », in `side_by_side` and in the box; `rejeu`, and the Monte-Carlo if asked."""
+    tenu = next(p for p in path["side_by_side"] if p["persistence"] == "tenu")
+    lue = copy.deepcopy(tenu)
+    lue.update(persistence="lue", label=retroaction.PERSISTENCE_LABELS["lue"])
+    for row, reference in zip(lue["years"], path["years"], strict=True):
+        for view in ("aged", "frozen"):
+            row[f"delta_{view}"] = _turned(row[f"delta_{view}"])
+            row[f"reform_{view}"] = reference["reference"] + row[f"delta_{view}"]
+    box = copy.deepcopy(next(p for p in path["theta_box"]["paths"]
+                             if p["persistence"] == "tenu"))
+    box["persistence"] = "lue"
+    for one in box["every_year"].values():
+        one["theta"] = _turned(one["theta"])
+        one["corners"] = [[label, _turned(value)] for label, value in one["corners"]]
+    path["side_by_side"].insert(0, lue)
+    path["theta_box"]["paths"].insert(0, box)
+    path["rejeu"] = {"de quoi": "refaire la chaîne"}
+    if monte:
+        path["monte_carlo"] = copy.deepcopy(MONTE)
+    return path
+
+
+@pytest.fixture
+def lue(plfss) -> etude.Etude:
+    for name in plfss.noms:
+        file = plfss.rapports / f"predictif_{name}.json"
+        file.write_text(json.dumps(_with_lue(json.loads(file.read_text(encoding="utf-8")))),
+                        encoding="utf-8")
+    return plfss
+
+
+def test_a_path_of_d336_reads_its_verdict_under_lue_alone(lue) -> None:
+    """D-336, decision 1: the verdict reads « lue » alone, at θ½ and at the corners, in
+    both views; « éteint » and « tenu » stand apart, said outside it. Fails if the verdict
+    reads every persistence, as it did before: here it would depend on θ."""
+    entries = lue.load()
+    rows = entries[0]["debt"]
+    assert [r["persistence"] for r in rows[::2]] == ["lue", "eteint", "tenu"]
+    # In mirror, the scenario's fall is the measure's rise.
+    assert etude.verdict(rows) == "hausse"
+    every = [{**r, "persistence": "x"} for r in rows]
+    assert etude.verdict(every) == "dépend de θ"
+    text = lue.render(entries)
+    assert "sous la persistance « lue » de l'effet macro de chaque article" in text
+    assert "« Éteint » et « tenu » sont des sensibilités, données plus bas, hors du verdict" \
+        in text
+    row = next(line for line in text.splitlines()
+               if line.startswith("| art. 74 du PLF, les aides au logement |"))
+    # The rows are the measure's already, turned over by `load`: the lead is +, under « lue ».
+    assert rows[0]["theta"] > 0
+    assert row.endswith(f"| {etude._points(rows[0]['theta'])} | hausse |")
+    section = _section(text, "les aides au logement")
+    verdict, _, apart = section.partition("**Les sensibilités, hors du verdict.**")
+    assert "Sous cette persistance, elle **augmente la dette** en 2035" in verdict
+    assert "Effet macro lu dans Mésange" in verdict and "Effet macro éteint" not in verdict
+    assert "Effet macro éteint après trois ans" in apart
+    assert "Effet macro tenu au niveau de la troisième année" in apart
+    assert "n'entrent pas dans le verdict" in apart
+
+
+def test_a_path_of_d336_says_its_monte_carlo_apart_from_the_box(lue) -> None:
+    """D-336, decision 6: P(hausse en 2035), its quantiles at 5, 50 and 95 %, the two or
+    three heaviest Sobol groups, each number with its étage, and the sentence that tells
+    the box (not a probability) from the distribution (one, under declared laws). In
+    mirror, the measure's: the rise is the scenario's fall, the quantiles turned over."""
+    lines, n = lue.lines(lue.load())
+    text = "\n".join(n.resolve(line) for line in lines)
+    section = _section(text, "les aides au logement")
+    assert "ce n'est pas une probabilité. Le Monte-Carlo en est une, sous des lois " \
+           "déclarées : Les lois du test." in section
+    row = next(line for line in section.splitlines() if line.startswith("| vieillie | 75"))
+    assert row == ("| vieillie | 75\u202f% | -0,40 pt | +0,50 pt | +2,00 pt | le "
+                   "multiplicateur 0,70, les lignes de `eti.yaml` 0,30, les lignes de "
+                   "`labour_supply.yaml` 0,05 |")
+    assert "dividends" not in section
+    said = {item.texte: item for item in n.items}
+    for number in ("75\u202f%", "-0,40 pt", "+2,00 pt", "0,70"):
+        assert said[number].etage == "L4" and said[number].conditionnel
+
+
+def test_a_path_of_d336_without_its_monte_carlo_says_none(plfss) -> None:
+    for name in plfss.noms:
+        file = plfss.rapports / f"predictif_{name}.json"
+        file.write_text(json.dumps(_with_lue(json.loads(file.read_text(encoding="utf-8")),
+                                             monte=False)), encoding="utf-8")
+    text = plfss.render(plfss.load())
+    assert "**Les sensibilités, hors du verdict.**" in text and "Monte-Carlo" not in text
+
+
+def test_an_older_path_renders_the_page_it_always_did(plfss) -> None:
+    """A report before D-336 (« éteint » and « tenu », no `rejeu`, no `monte_carlo`) is
+    read under the frame that now says « lue », and its page has neither sensitivities
+    nor distribution: the committed pages stay as they are until the series runs again."""
+    assert etude.lire_cadre("central")["persistance"] == "lue"
+    text = plfss.render(plfss.load())
+    assert "sous la première persistance de l'effet macro" in text
+    assert "Sensibilités" not in text and "Monte-Carlo" not in text
+    assert "Sur ces passes, " in text
+
+
+def test_a_new_path_without_lue_and_a_study_of_two_series_are_refused(plfss) -> None:
+    first = plfss.noms[0]
+    file = plfss.rapports / f"predictif_{first}.json"
+    path = json.loads(file.read_text(encoding="utf-8"))
+    file.write_text(json.dumps({**path, "rejeu": {}}), encoding="utf-8")
+    with pytest.raises(etude.EtudeError, match="ne la trace pas"):
+        plfss.load()
+    file.write_text(json.dumps(_with_lue(path)), encoding="utf-8")
+    with pytest.raises(etude.EtudeError, match="pas d'une même série"):
+        plfss.render(plfss.load())
 
 
 def test_the_gap_is_the_registration_s_in_the_measure_s_sign(plfss) -> None:
