@@ -5,7 +5,7 @@ soit lancée et rendue (ses rapports, et une page qui est exactement leur rendu)
 modifiée est refusée, une page sans ses rapports aussi. L'étude du PLFSS 2027 lit les deux
 volets de l'art. 74 du PLF en miroir (D-298) : chaque réponse changée de signe, gagnants et
 perdants échangés, et les 49 articles du PLFSS avec leur porte. Les rapports de ces tests
-sont factices, construits comme ceux de `test_write_etude_plf2027.py`.
+sont factices, construits comme ceux de `test_etude_page_plf2027.py`.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ import pytest
 
 from impots import etude, fiche, plf_coverage, preregistration
 from impots.population import cli
-from test_write_etude_plf2027 import COMMIT, TEMPLATE, _fan, _households
+from test_etude_page_plf2027 import COMMIT, TEMPLATE, _fan, _households
 
 COSTS = {"plf2027_art_74_ppa": 4.0e8, "plf2027_art_74_apl": 1.2e8}
 
@@ -426,7 +426,7 @@ def test_the_witness_refuses_before_its_pass(witnessing, monkeypatch, capsys, ho
 
 def test_in_mirror_a_firm_s_tax_turns_over() -> None:
     from impots.api.schemas import FirmResponse
-    from test_write_etude_plf2027 import _firms
+    from test_etude_page_plf2027 import _firms
 
     response = FirmResponse.model_validate(_firms(-7.1e9))
     plain = {taille: delta for taille, *_, delta in etude.Etude._sizes(response, 1)}

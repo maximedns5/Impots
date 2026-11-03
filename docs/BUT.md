@@ -168,7 +168,7 @@ préenregistrées comme toute passe, et écrit docs/etudes/<nom>.md depuis les s
 commités, dans le cadre de D-289 : le coût mécanique et les gagnants et perdants ; la bande
 ou son absence avec la raison ; l'écart de dette en 2035 à θ½ et aux coins de la boîte,
 dans les deux vues, avec le verdict ; l'écart à l'évaluation préalable quand le scénario a
-un cas noté. docs/ETUDE_PLF2027.md est régénérée par la commande, à l'identique ou avec
+un cas noté. docs/etudes/plf2027.md est régénérée par la commande, à l'identique ou avec
 ses différences expliquées dans la D-entrée, et l'étude du PLFSS 2027 est la première
 produite par elle. Un test refuse la dérive de chaque page, vu échouer sur une page
 modifiée. Preuve attendue : la commande et sa sortie, la sortie verte des tests ciblés,

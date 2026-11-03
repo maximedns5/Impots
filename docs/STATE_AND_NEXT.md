@@ -276,7 +276,7 @@ revision, `plf2027_art_2_base2027`, written by `impots chiffrage revise`, change
 only and lands at −7.1 %, within ±20 %; it says it was written after the annex, and the
 report counts it apart. The blind cases stay 2 of 3, art. 2 outside its tolerance.
 The ninth 2026-10-28 update added D-288 to D-290: the first study of the product's goal
-(D-286), `docs/ETUDE_PLF2027.md`, the PLF 2027's three priceable articles in three answers.
+(D-286), `docs/etudes/plf2027.md`, the PLF 2027's three priceable articles in three answers.
 A scenario may now bound its measure to the years its text names (`annees`, D-288): the
 annual path prices it there and an empty reform elsewhere, so the 2027 CEBGE of art. 15 is
 a one-year receipt. Preregistered in D-289, priced on `02fd623`: art. 2 costs 2.83 bn,
