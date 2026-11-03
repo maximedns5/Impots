@@ -25836,3 +25836,40 @@ change pas. Le test, essayé ainsi sur `main`, passe en six minutes et demie, av
 simulation d'une passe est morte à son retour. Ses deux mutations, la collecte ôtée ou les
 références gardées, sont tuées. Aucune passe des études ne l'a lu : elles ont tourné avant,
 et chacune dit son commit.
+
+## D-335 — Les tests allégés : ils tiennent les nombres, pas la plomberie
+
+**Le fait.** Le 3 novembre 2026, après le but 13, le propriétaire a demandé d'alléger les
+règles de tests de `CLAUDE.md` : elles prenaient une part du temps hors de proportion avec
+ce qu'elles protégeaient. Au but 13, la plupart des heures sont allées à la plomberie. Il
+y a eu quatre correctifs de mémoire (D-330 à D-332, D-334), chacun avec sa garde vue
+échouer, un test de structure qui lisait le source, et un banc de mutations. Il y a eu
+aussi trois reprises complètes des passes : une étude se lisait sur un seul code, et des
+correctifs qui ne changeaient aucun nombre forçaient à tout relancer.
+
+**La règle.** Elle est écrite dans `CLAUDE.md`, section « Les tests, proportionnés ».
+
+* Un correctif qui change un nombre a un test qui le tient. On le voit échouer sur le code
+  d'avant quand c'est léger.
+* La plomberie (mémoire, temps, rendu, structure du code) n'a pas de test dédié : son
+  effet se mesure une fois et se dit.
+* Pas de banc de mutations, sauf à la demande du propriétaire.
+* Pendant le développement, les tests légers des fichiers touchés. `make impact` et les
+  lourds tournent une fois, avant la PR du but.
+* Un correctif qui ne change aucun nombre ne fait pas relancer les passes, et chaque rapport
+  garde son commit.
+* Une passe d'essai n'a pas besoin de D-entrée.
+
+**Ce qui ne change pas.** On ne masque jamais un échec. Un chiffrage comparé à un juge
+officiel, ou publié dans une étude, reste préenregistré avec son pronostic avant de
+tourner. Aucune tolérance ne bouge après le premier calcul. `calibrate.py` reste fermé, et
+`make full` demande l'accord du propriétaire.
+
+**Ce que le code devra suivre.** `impots etude` refuse encore une étude dont les rapports
+sont sur plusieurs commits (`etude.py`, l'erreur « les rapports de l'étude sont sur N
+commits ») ; il devra accepter des commits dont le diff ne touche pas les nombres de
+l'étude, en le disant sur la page. Le test qui exigeait que chaque garde de la phase 9 soit
+passée au banc de mutations (`tests/test_gardes_phase9.py`, le rapport sans survivante) est
+retiré ; les autres tests du fichier, qui tiennent le catalogue en quelques secondes,
+restent. Les gardes et les tests de structure de D-330, D-331, D-332 et D-334 restent tant
+qu'ils ne gênent pas ; on peut les retirer quand ils coûtent.
