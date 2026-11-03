@@ -18,7 +18,7 @@ from pydantic import ValidationError
 
 from exploration_cases import COMMIT, START, run_search
 from exploration_cases import exploration_request as _request
-from impots.api import main
+from impots import service
 from impots.api.schemas import ExplorationReport, ExplorationRequest, ReformSpec
 from impots.dette import reference
 from impots.population import cli
@@ -114,7 +114,7 @@ def test_the_report_names_the_transformation_and_the_law_it_read() -> None:
 
     request = ExplorationRequest.model_validate(_request(bounds=SCALE, macro=False))
     report = recherche.run(request, price=price,
-                           hypotheses=main._predictif_hypotheses(request), start=START,
+                           hypotheses=service.predictif_hypotheses(request), start=START,
                            law=LAW, commit=COMMIT, computed="2026-10-21")
     (named,) = report["hypotheses"]["transformations"]
     assert named["name"] == "ir_bareme_echelle" and named["writes"] == ["ir_bareme"]
@@ -145,8 +145,8 @@ def test_the_command_reads_the_law_of_the_first_projected_year(monkeypatch,
         return SimpleNamespace(cost=_cost(request.reform, view), view=view, note="",
                                deciles=[], inputs=None, impulse=None, uncovered={})
 
-    monkeypatch.setattr(main, "_price_first_year", stub)
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "price_first_year", stub)
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     monkeypatch.setattr(recherche, "code_state", lambda: (COMMIT, False))
     monkeypatch.setattr(recherche, "law_in_force", law_in_force)

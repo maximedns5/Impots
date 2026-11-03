@@ -11,6 +11,7 @@ import polars as pl
 import pytest
 
 from impots import consommation as co
+from impots import service
 from impots.api.schemas import ReformSpec
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -338,7 +339,6 @@ def test_a_scenario_asks_for_the_imputation_and_the_pass_receives_it(monkeypatch
 def test_the_api_imputes_whenever_the_reform_touches_consumption(monkeypatch) -> None:
     from types import SimpleNamespace
 
-    from impots.api import main
     from impots.population import runner
 
     seen = []
@@ -351,7 +351,7 @@ def test_the_api_imputes_whenever_the_reform_touches_consumption(monkeypatch) ->
     for reform, attendu in ((ReformSpec(accise_gazole=0.7), True),
                             (ReformSpec(pfu_taux=0.3), False)):
         with pytest.raises(RuntimeError, match="arrêté"):
-            main._run_population(SimpleNamespace(year=2024, reform=reform, sample=100),
+            service.run_population(SimpleNamespace(year=2024, reform=reform, sample=100),
                                  object())
         assert seen[-1] is attendu
 
@@ -460,7 +460,6 @@ def test_each_view_of_the_path_imputes_its_own_consumption(monkeypatch) -> None:
     from types import SimpleNamespace
 
     from impots import uprating as up
-    from impots.api import main
     from impots.population import runner
 
     seen = []
@@ -470,19 +469,19 @@ def test_each_view_of_the_path_imputes_its_own_consumption(monkeypatch) -> None:
         raise RuntimeError("arrêté")
 
     monkeypatch.setattr(runner, "run", run)
-    monkeypatch.setattr(main, "_population_frame", lambda: pl.DataFrame({"x": [1]}))
+    monkeypatch.setattr(service, "population_frame", lambda: pl.DataFrame({"x": [1]}))
     monkeypatch.setattr(up, "uprate", lambda frame, year, hypothesis: frame)
     cadre = up.Uprating(wage=0.03, price=0.02, source="essai", base_year=2024)
-    request = main.YearPass(reform=ReformSpec(accise_gazole=0.7), year=2028, behavioural=False)
-    for view in (main.FIRST_YEAR_VIEW, main.FROZEN_VIEW):
+    request = service.YearPass(reform=ReformSpec(accise_gazole=0.7), year=2028, behavioural=False)
+    for view in (service.FIRST_YEAR_VIEW, service.FROZEN_VIEW):
         with pytest.raises(RuntimeError, match="arrêté"):
-            main._price_households(request, uprating=cadre, macro=False, view=view)
+            service.price_households(request, uprating=cadre, macro=False, view=view)
     aged, frozen = seen
     assert aged["annee_consommation"] == 2028
     assert aged["prix_au_dela"] == {2026: 0.02, 2027: 0.02, 2028: 0.02}
     assert frozen["annee_consommation"] == 2024 and frozen["prix_au_dela"] is None
     with pytest.raises(RuntimeError, match="arrêté"):
-        main._run_population(SimpleNamespace(year=2026, reform=ReformSpec(accise_gazole=0.7)),
+        service.run_population(SimpleNamespace(year=2026, reform=ReformSpec(accise_gazole=0.7)),
                              object())
     assert seen[-1]["annee_consommation"] == 2024
 

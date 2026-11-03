@@ -218,7 +218,7 @@ def test_a_pass_of_the_path_frees_what_the_years_before_kept() -> None:
     # Structural: the whole pass of the path frees before it prices.
     source = inspect.getsource(cli.cmd_predictif)
     assert source.index("passe du simulateur") < source.index("_liberer()") < source.index(
-        "api._price_first_year,")
+        "service.price_first_year,")
 
 
 # --- les pages, sur les rapports commités (D-328, D-329) ------------------------------
@@ -289,4 +289,4 @@ def test_a_pass_of_the_path_runs_in_a_process_of_its_own() -> None:
     assert cli._isole(os.getpid) != os.getpid()
     assert cli._isole(divmod, 17, 5) == (3, 2)
     source = inspect.getsource(cli.cmd_predictif)
-    assert "_isole(\n                api._price_first_year," in source
+    assert "_isole(\n                service.price_first_year," in source

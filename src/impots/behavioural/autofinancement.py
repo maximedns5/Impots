@@ -27,7 +27,7 @@ class JobValueError(ValueError):
 @cache
 def job_value(year: int) -> float:
     """Euros a full-time SMIC job brings the public finances in `year` (module docstring)."""
-    from impots.api import main
+    from impots import service
     from impots.api.schemas import HouseholdInput
     from impots.engine import compute
 
@@ -36,7 +36,7 @@ def job_value(year: int) -> float:
             "adults": [{"salaire_brut_annuel": gross, "annee_naissance": 1985}]})
         return compute(household, year, tier="full").baseline
 
-    at_work, without = rows(main._smic_annual(year)), rows(0.0)
+    at_work, without = rows(service.smic_annual(year)), rows(0.0)
     cost = at_work["salaire_super_brut"]
     value = cost - (at_work["revenu_disponible"] - without["revenu_disponible"])
     if not 0.0 < value < cost:

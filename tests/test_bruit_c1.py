@@ -19,6 +19,7 @@ import numpy as np
 import polars as pl
 import pytest
 
+from impots import service
 from impots.api.schemas import ReformSpec
 from impots.behavioural import channels
 from impots.behavioural.store import load as load_store
@@ -126,8 +127,8 @@ def test_c1_is_the_channel_s_receipt_and_its_households_add_up_to_it(script,
     households, frame = _households(rates, [10.0] * 5 + [40.0], [1, 1, 1, 1, 1, 0])
     store = load_store()
     found = script.decompose(households, frame, decote, store, Theta(common=0.5))
-    from impots.api.main import eti_inputs
     from impots.predictif.theta import pinned
+    from impots.service import eti_inputs
 
     earning = households.filter(pl.col("n_earners") > 0)
     channel = channels.elasticity_of_taxable_income(
@@ -347,7 +348,6 @@ def test_requests_that_do_not_share_the_study_s_frame_are_refused(script,
 @pytest.fixture
 def stubbed_pass(script, monkeypatch):
     """`one` without data: a population of six households, the rates given per call."""
-    from impots.api import main as api
     from impots.behavioural import emtr
     from impots.population import runner
 
@@ -355,7 +355,7 @@ def stubbed_pass(script, monkeypatch):
                                      (0.20, 0.20), (0.35, 0.30), (0.10, 0.10)],
                                     [10.0] * 6, [1, 1, 1, 1, 1, 0])
     frame = frame.with_columns(pl.Series("person_id", list(range(1, 7))))
-    monkeypatch.setattr(api, "_population_frame", lambda: frame)
+    monkeypatch.setattr(service, "population_frame", lambda: frame)
     monkeypatch.setattr(runner, "subsample", lambda f, n, seed=0: f)
     monkeypatch.setattr(script, "kappa", lambda: 3e-12)
     monkeypatch.setattr(recherche, "code_state", lambda root=None: ("c0ffee", False))

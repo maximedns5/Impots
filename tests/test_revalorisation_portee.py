@@ -17,6 +17,7 @@ import polars as pl
 import pytest
 
 from impots import scenarios as sc
+from impots import service
 from impots.api.schemas import ReformSpec
 from impots.dette import reference
 from impots.engine import reforms
@@ -111,7 +112,6 @@ def _by_year(priced) -> dict[int, set[str]]:
 
 def test_the_whole_pass_prices_the_date_then_the_carried_level(stubbed, monkeypatch) -> None:
     """The same on the simulator's pass, which `--behavioural` and `--macro` take."""
-    from impots.api import main as api_main
 
     seen: list = []
 
@@ -120,7 +120,7 @@ def test_the_whole_pass_prices_the_date_then_the_carried_level(stubbed, monkeypa
         return SimpleNamespace(cost=1e9, inputs={}, impulse={} if macro else None,
                                uncovered={}, layers=None, behaviour_asked=False)
 
-    monkeypatch.setattr(api_main, "_price_first_year", first)
+    monkeypatch.setattr(service, "price_first_year", first)
     assert cli.main([*ARGS, "--dir", str(stubbed.scenarios), "--out-dir", str(stubbed.out),
                      "--macro"]) == 0
     assert _by_year(seen) == {2026: {"ppa_revalorisation_avril"},

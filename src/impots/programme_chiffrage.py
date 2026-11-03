@@ -115,7 +115,7 @@ def rapport(programme: pg.Programme, *, valeurs: dict[str, float] | None = None,
         "firm_reform": (entreprises.model_dump(exclude_none=True, mode="json")
                         if entreprises else None)})
     if simuler is None:
-        from impots.api.main import predictif_simulate as simuler
+        from impots.service import predictif_simulate as simuler
     out["hypotheses"] = hypotheses
     out["chiffrage"] = simuler(request).model_dump(mode="json")
     return out

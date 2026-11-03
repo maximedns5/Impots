@@ -18,7 +18,7 @@ import pytest
 from pydantic import ValidationError
 
 from impots import scenarios as scenarios_module
-from impots.api import main as api_main
+from impots import service
 from impots.api.schemas import PredictifReportYear
 from impots.dette import reference
 from impots.dette import scenarios as debt_scenarios
@@ -190,7 +190,7 @@ def test_the_command_prices_a_firm_scenario_by_layer_in_both_views(monkeypatch,
         processed / "population_2024.parquet")
     monkeypatch.setattr(cli, "PROCESSED", processed)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
-    monkeypatch.setattr(api_main, "_firm_aging_factor", lambda year, growth: 1.1)
+    monkeypatch.setattr(service, "firm_aging_factor", lambda year, growth: 1.1)
 
     def no_household_pass(*args, **kwargs):
         raise AssertionError("une réforme des seules entreprises ne lance aucune passe "
@@ -209,7 +209,7 @@ def test_the_command_prices_a_firm_scenario_by_layer_in_both_views(monkeypatch,
     assert code == 0
     report = json.loads((tmp_path / "out" / "predictif_is_24.json").read_text())
     firm = float(firm_aggregate.aggregate(firm_runner.run(
-        api_main._firm_population(), year=2026,
+        service.firm_population(), year=2026,
         reform=FirmReformSpec(is_taux_normal=0.24)).firms).reform_cost)
     first = report["years"][0]
     assert first["mechanical_by_layer"] == {
@@ -218,7 +218,7 @@ def test_the_command_prices_a_firm_scenario_by_layer_in_both_views(monkeypatch,
     assert first["mechanical_aged_eur"] == pytest.approx(firm * 1.1)
     assert first["delta_aged"] > first["delta_frozen"] > 0
     note = report["conventions"][-1]
-    assert note == api_main._firm_report_note()
+    assert note == service.firm_report_note()
     assert "cellules synthétiques" in note and "vue vieillie" in note
 
 

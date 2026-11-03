@@ -12,6 +12,7 @@ import json
 import sys
 from pathlib import Path
 
+from impots import service
 from impots.api.schemas import ReformSpec
 from impots.identifiants import millesime
 from impots.population import aggregate as aggregate_module
@@ -1330,7 +1331,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     command and writes a report rather than answering a request.
 
     With `--behavioural` or `--macro` (Phase 10 M3, D-236), every year and view goes
-    through the simulator's own pass, `_price_first_year`: the cost, what the channels
+    through the simulator's own pass, `service.price_first_year`: the cost, what the channels
     read, the reform's macro impulse. The receipts at θ are then evaluated year by year
     and the GDP → receipts loop reads one impulse per year. Past three years with the
     loop and no `--persistence`, both persistence scenarios are drawn side by side.
@@ -1341,7 +1342,6 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     from typing import Any
 
     import polars as pl
-    from fastapi import HTTPException
 
     from impots import scenarios as scenarios_module
     from impots import trajectoires as tj
@@ -1355,6 +1355,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     from impots.population import imputations as imp
     from impots.predictif import annuel, chaine, recherche, retroaction
     from impots.predictif.theta import Theta, ThetaError
+    from impots.service import ServiceError
 
     whole = args.behavioural or args.macro
     # The report names the code that priced it and whether `src/` differed, as an
@@ -1416,9 +1417,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
     indexation = (tj.Indexation(rate=growth.prices, source=args.hypothesis_source)
                   if args.reference == "indexe" else None)
 
-    from impots.api import main as api
 
-    firm_part = api._firm_part(scenario.firm_reform, growth=growth)
+    firm_part = service.firm_part(scenario.firm_reform, growth=growth)
     from impots.engine.reforms import moves_capital
 
     # Decided once on the scenario's reform, for both passes of a difference (D-249).
@@ -1450,7 +1450,7 @@ def cmd_predictif(args: argparse.Namespace) -> int:
         if not firm_part:
             return households
         # The firm layer beside the households' (D-246): its own pass, its own view.
-        firms = api._firm_first_year(scenario.firm_reform, year, view=view,
+        firms = service.firm_first_year(scenario.firm_reform, year, view=view,
                                      growth=growth).cost
         return annuel.Layered(cost=households + firms,
                               layers={"menages": households, "entreprises": firms})
@@ -1464,8 +1464,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
         try:
             store = load_store()
             theta.check_known(store)
-            macro_store = api._predictif_macro_store() if looped else None
-        except (ThetaError, api.MacroSourceError) as error:
+            macro_store = service.predictif_macro_store() if looped else None
+        except (ThetaError, service.MacroSourceError) as error:
             print(str(error), file=sys.stderr)
             return 1
 
@@ -1480,8 +1480,8 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             _liberer()
             # In a fresh process, which gives back all it took when it ends (D-331).
             first = _isole(
-                api._price_first_year,
-                api.YearPass(reform=scenario.reform_in(year), year=year,
+                service.price_first_year,
+                service.YearPass(reform=scenario.reform_in(year), year=year,
                              behavioural=args.behavioural),
                 uprating=uprating, macro=args.macro, view=view, **firm_part)
             # A firm reform alone with behaviour asked says so, for no household channel
@@ -1501,14 +1501,14 @@ def cmd_predictif(args: argparse.Namespace) -> int:
             uprating_note=up.caveat(years[-1], uprating), securities=securities,
             reform=scenario.reform, behavioural=args.behavioural, macro=args.macro,
             persistence=args.persistence, store=store, macro_store=macro_store,
-            firm_note=(api._firm_report_note(scenario.firm_reform, years) if firm_part
+            firm_note=(service.firm_report_note(scenario.firm_reform, years) if firm_part
                        else None), commit=commit, dirty=dirty, where=args.ou,
             annees=scenario.annees)
     except (DebtError, ThetaError, tj.TrajectoryError, up.UpratingError,
             maturite.MaturityError, retroaction.FeedbackError) as error:
         print(str(error), file=sys.stderr)
         return 1
-    except HTTPException as error:
+    except ServiceError as error:
         print(str(error.detail), file=sys.stderr)
         return 1
 
@@ -1641,9 +1641,9 @@ def _whole_pass_refusals(args: argparse.Namespace) -> None:
     passes (`trajectoires.price`), and neither the channels' inputs nor the impulse are
     built to be subtracted; another sample or vintage would price the years on one
     population and the simulator's first year on another."""
-    from impots.api.main import POPULATION_VINTAGE
     from impots.api.schemas import QUICK_TIER_HOUSEHOLDS
     from impots.dette.path import DebtError
+    from impots.service import POPULATION_VINTAGE
 
     if args.reference != "reconduit":
         raise DebtError(
@@ -1693,11 +1693,11 @@ def cmd_etude(args: argparse.Namespace) -> int:
 def cmd_programme(args: argparse.Namespace) -> int:
     """Un programme présidentiel (but 11, D-319) : ce que le moteur en chiffre, ce qu'il en
     refuse, et, avec des hypothèses, les trois réponses sur la part chiffrée."""
-    from fastapi import HTTPException
     from pydantic import ValidationError
 
     from impots import programme_chiffrage as pc
     from impots import programmes as pg
+    from impots.service import ServiceError
 
     if args.slug is None:
         for slug in pg.lister():
@@ -1713,7 +1713,7 @@ def cmd_programme(args: argparse.Namespace) -> int:
             json.JSONDecodeError) as error:
         print(str(error), file=sys.stderr)
         return 1
-    except HTTPException as error:
+    except ServiceError as error:
         print(f"chiffrage refusé ({error.status_code}) : {error.detail}", file=sys.stderr)
         return 1
     if args.sortie:
@@ -1746,12 +1746,10 @@ def cmd_exploration(args: argparse.Namespace) -> int:
     import subprocess as _subprocess
     from datetime import date as _date
 
-    from fastapi import HTTPException
     from pydantic import ValidationError
 
     from impots import explorer
     from impots import scenarios as scenarios_module
-    from impots.api import main as api
     from impots.api.schemas import ExplorationRequest
     from impots.dette import maturite
     from impots.dette import reference as reference_module
@@ -1760,6 +1758,7 @@ def cmd_exploration(args: argparse.Namespace) -> int:
     from impots.predictif import chaine, recherche, retroaction
     from impots.predictif.exploration import VIEWS, Priced
     from impots.predictif.theta import ThetaError
+    from impots.service import ServiceError
     from impots.uprating import UpratingError
 
     try:
@@ -1780,22 +1779,22 @@ def cmd_exploration(args: argparse.Namespace) -> int:
               "il n'a pas chiffré le code. Commiter d'abord.", file=sys.stderr)
         return 1
     try:
-        hypotheses = api._predictif_hypotheses(request)
+        hypotheses = service.predictif_hypotheses(request)
         start = reference_module.start_from_accounts(chaine.START_YEAR)
         year = start.year + 1
         # A transformation scales the law of the year it prices: read once, here.
         law = recherche.law_in_force(year) if recherche.needs_law(request) else None
         grid = recherche.check_grid(request, max_bundles=args.max_paquets, law=law)
         securities = maturite.load_block1() if hypotheses.rate.kind == "marche" else None
-        macro_store = api._predictif_macro_store() if hypotheses.looped else None
+        macro_store = service.predictif_macro_store() if hypotheses.looped else None
     except (DebtError, ThetaError, UpratingError, recherche.RechercheError,
-            explorer.ExplorerError, maturite.MaturityError, api.MacroSourceError,
+            explorer.ExplorerError, maturite.MaturityError, service.MacroSourceError,
             OSError) as error:
         print(str(error), file=sys.stderr)
         return 1
-    if year > api.MAX_YEAR:
+    if year > service.MAX_YEAR:
         print(f"la première année projetée, {year}, sort de la fenêtre que la couche "
-              f"population sert ({api.MIN_YEAR}–{api.MAX_YEAR}).", file=sys.stderr)
+              f"population sert ({service.MIN_YEAR}–{service.MAX_YEAR}).", file=sys.stderr)
         return 1
     print(f"  {len(grid)} paquets × {len(VIEWS)} vues = {len(grid) * len(VIEWS)} passes "
           f"rapides, {len(hypotheses.persistences)} recherche(s)", flush=True)
@@ -1805,10 +1804,10 @@ def cmd_exploration(args: argparse.Namespace) -> int:
         shown = {**reform.model_dump(exclude_none=True),
                  **(firm.model_dump(exclude_none=True) if firm is not None else {})}
         print(f"  {shown} · {view}…", flush=True)
-        first = api._price_first_year(
-            api._first_year_request(reform, year, request.behavioural),
+        first = service.price_first_year(
+            service.first_year_request(reform, year, request.behavioural),
             uprating=hypotheses.uprating, macro=request.macro, view=view,
-            **api._firm_part(firm, growth=hypotheses.growth))
+            **service.firm_part(firm, growth=hypotheses.growth))
         return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse,
                       uncovered=dict(first.uncovered), deciles=list(first.deciles),
                       behaviour_asked=getattr(first, "behaviour_asked", False))
@@ -1818,7 +1817,7 @@ def cmd_exploration(args: argparse.Namespace) -> int:
                                 macro_store=macro_store, securities=securities,
                                 max_bundles=args.max_paquets, law=law, commit=commit,
                                 computed=_date.today().isoformat(), where=args.ou)
-    except HTTPException as error:
+    except ServiceError as error:
         print(str(error.detail), file=sys.stderr)
         return 1
     except (DebtError, ThetaError, explorer.ExplorerError, recherche.RechercheError,

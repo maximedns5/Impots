@@ -12,7 +12,7 @@ from types import SimpleNamespace
 import polars as pl
 import pytest
 
-from impots import guards
+from impots import guards, service
 from impots.api.schemas import IRBracket, ReformSpec
 from impots.population import imputations as imp
 
@@ -186,19 +186,15 @@ def test_the_solver_imputes_the_consumption_a_vat_knob_needs(monkeypatch) -> Non
 
 def test_the_api_imputes_the_sick_pay_an_ij_knob_needs(monkeypatch) -> None:
     """Avant, l'API n'imputait jamais les IJ : un bouton des IJ y rendait un zéro."""
-    from fastapi import HTTPException
-
-    from impots.api import main
-
     seen = _spy(monkeypatch)
     with pytest.raises(_Arret):
-        main._run_population(SimpleNamespace(year=2024, reform=ReformSpec(csg_ij_taux=0.08)),
-                             pl.DataFrame())
+        service.run_population(
+            SimpleNamespace(year=2024, reform=ReformSpec(csg_ij_taux=0.08)), pl.DataFrame())
     assert seen[-1]["impute_ij"] is True
-    with pytest.raises(HTTPException) as refused:
-        main._run_population(SimpleNamespace(year=2024,
-                                             reform=ReformSpec(ifi_decote_taux=0.01)),
-                             pl.DataFrame())
+    with pytest.raises(service.ServiceError) as refused:
+        service.run_population(
+            SimpleNamespace(year=2024, reform=ReformSpec(ifi_decote_taux=0.01)),
+            pl.DataFrame())
     assert refused.value.status_code == 422
 
 

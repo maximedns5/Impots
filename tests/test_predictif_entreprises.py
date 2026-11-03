@@ -12,12 +12,12 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
-from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from exploration_cases import exploration_request as _request
 from exploration_cases import run_search
+from impots import service
 from impots.api import main
 from impots.api.schemas import (
     ExplorationRequest,
@@ -32,6 +32,7 @@ from impots.entreprises.reforms import FirmReformSpec
 from impots.predictif import chaine, recherche
 from impots.predictif import indices as indices_module
 from impots.predictif.exploration import Priced
+from impots.service import ServiceError
 from macro_cases import synthetic_macro_store
 
 START = reference.Start(year=2025, gdp_eur=3_000e9, receipts_ratio=0.52,
@@ -58,7 +59,7 @@ def firm_population() -> None:
 #: The aged view's multiplier in these tests: the fixture names no year, and the real
 #: factor reads the national accounts (`test_firmes_vues.py` holds it).
 AGED = 1.08
-REAL_AGING = main._firm_aging_factor
+REAL_AGING = service.firm_aging_factor
 
 
 @pytest.fixture(autouse=True)
@@ -70,12 +71,12 @@ def aged_by(monkeypatch) -> list:
         calls.append((year, growth))
         return AGED
 
-    monkeypatch.setattr(main, "_firm_aging_factor", factor)
+    monkeypatch.setattr(service, "firm_aging_factor", factor)
     return calls
 
 
 def _firm_cost(spec: FirmReformSpec, year: int = 2026) -> float:
-    result = firm_runner.run(main._firm_population(), year=year, reform=spec)
+    result = firm_runner.run(service.firm_population(), year=year, reform=spec)
     return float(firm_aggregate.aggregate(result.firms).reform_cost)
 
 
@@ -95,16 +96,16 @@ def _households(cost: float):
 
 def test_a_firm_reform_alone_is_the_firm_layers_cost_and_no_population_pass(
         monkeypatch) -> None:
-    monkeypatch.setattr(main, "_price_households", _no_household_pass)
-    first = main._price_first_year(main._first_year_request(ReformSpec(), 2026, False),
+    monkeypatch.setattr(service, "price_households", _no_household_pass)
+    first = service.price_first_year(service.first_year_request(ReformSpec(), 2026, False),
                                    uprating=None, macro=True, firm_reform=IS_24)
     cost = _firm_cost(IS_24) * AGED
     assert cost > 0
     assert first.cost == pytest.approx(cost)
     assert first.layers == {"menages": 0.0, "entreprises": pytest.approx(cost)}
     assert first.impulse == {}
-    assert first.uncovered["impot_societes"] == main.FIRM_NO_VARIANT
-    assert main.FIRM_TOTAL not in first.uncovered
+    assert first.uncovered["impot_societes"] == service.FIRM_NO_VARIANT
+    assert service.FIRM_TOTAL not in first.uncovered
     assert "vue vieillie" in first.note and "×1,0800" in first.note
     assert "exercice" in first.note
     assert "synthétiques" in first.note
@@ -115,8 +116,8 @@ def test_the_two_layers_add_up_and_the_households_keep_their_loop(monkeypatch,
                                                                   view: str) -> None:
     """A mixed reform: the households' pass as it always was, the firm cost added, the
     firm taxes listed as uncovered beside the income tax the loop reads."""
-    monkeypatch.setattr(main, "_price_households", _households(5e9))
-    first = main._price_first_year(
+    monkeypatch.setattr(service, "price_households", _households(5e9))
+    first = service.price_first_year(
         PopulationSimulateRequest(reform=ReformSpec(decote_taux=0.4), year=2026),
         uprating=None, macro=True, view=view, firm_reform=IS_24)
     cost = _firm_cost(IS_24) * (AGED if view == "vieillie" else 1.0)
@@ -131,16 +132,16 @@ def test_a_firm_reform_alone_says_whether_behaviour_was_asked(monkeypatch) -> No
     """D-251's first label (D-268): the seam says behaviour was asked for a firm reform
     alone, which no household channel reads; never for a household reform, whose pass
     carries what the channels read."""
-    monkeypatch.setattr(main, "_price_households", _no_household_pass)
-    asked = main._price_first_year(main._first_year_request(ReformSpec(), 2026, True),
+    monkeypatch.setattr(service, "price_households", _no_household_pass)
+    asked = service.price_first_year(service.first_year_request(ReformSpec(), 2026, True),
                                    uprating=None, macro=False, firm_reform=IS_24)
-    unasked = main._price_first_year(main._first_year_request(ReformSpec(), 2026, False),
+    unasked = service.price_first_year(service.first_year_request(ReformSpec(), 2026, False),
                                      uprating=None, macro=False, firm_reform=IS_24)
     assert asked.behaviour_asked is True and asked.inputs is None
     assert unasked.behaviour_asked is False
-    monkeypatch.setattr(main, "_price_households", _households(5e9))
-    mixed = main._price_first_year(
-        main._first_year_request(ReformSpec(decote_taux=0.4), 2026, True),
+    monkeypatch.setattr(service, "price_households", _households(5e9))
+    mixed = service.price_first_year(
+        service.first_year_request(ReformSpec(decote_taux=0.4), 2026, True),
         uprating=None, macro=False, firm_reform=IS_24)
     assert mixed.behaviour_asked is False
 
@@ -148,15 +149,15 @@ def test_a_firm_reform_alone_says_whether_behaviour_was_asked(monkeypatch) -> No
 def test_a_household_reform_goes_through_the_call_it_always_did(monkeypatch) -> None:
     """No firm part, no keyword: the seam's stubs in every other test are called exactly
     as before, and an empty firm reform is no firm reform."""
-    assert main._firm_part(None) == {} and main._firm_part(FirmReformSpec()) == {}
+    assert service.firm_part(None) == {} and service.firm_part(FirmReformSpec()) == {}
     seen = []
 
     def households(request, *, uprating, macro, view):
         seen.append(request.reform)
         return SimpleNamespace(cost=1e9, view=view)
 
-    monkeypatch.setattr(main, "_price_households", households)
-    first = main._price_first_year(
+    monkeypatch.setattr(service, "price_households", households)
+    first = service.price_first_year(
         PopulationSimulateRequest(reform=ReformSpec(decote_taux=0.4), year=2026),
         uprating=None, firm_reform=FirmReformSpec())
     assert first.cost == 1e9 and not hasattr(first, "layers") and len(seen) == 1
@@ -164,8 +165,8 @@ def test_a_household_reform_goes_through_the_call_it_always_did(monkeypatch) -> 
 
 @pytest.fixture
 def chain(monkeypatch):
-    monkeypatch.setattr(main, "_price_households", _no_household_pass)
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "price_households", _no_household_pass)
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     with TestClient(main.app) as client:
         yield client
@@ -253,7 +254,7 @@ def test_the_explorer_walks_firm_knobs_and_passes_only_the_firm_part() -> None:
     seen: list = []
     request = ExplorationRequest.model_validate(_request(bounds=SEARCH_IS, macro=False))
     report = recherche.run(request, price=_firm_price(seen),
-                           hypotheses=main._predictif_hypotheses(request), start=START,
+                           hypotheses=service.predictif_hypotheses(request), start=START,
                            commit="c" * 40, computed="2026-10-24")
     assert {(r == {}, f["is_taux_normal"], v) for r, f, v in seen} == {
         (True, rate, view) for rate in (0.22, 0.23, 0.24) for view in ("vieillie", "figee")}
@@ -315,8 +316,8 @@ def test_a_firm_pass_the_layer_refuses_keeps_its_status_and_reason(year: int,
     """The firm layer's own refusals reach the predictive caller as `/entreprises/simulate`
     gives them: a year it cannot price is the server's limit, a reform the law refuses
     is the request's fault, and each keeps its reason."""
-    with pytest.raises(HTTPException) as caught:
-        main._firm_first_year(spec, year)
+    with pytest.raises(ServiceError) as caught:
+        service.firm_first_year(spec, year)
     assert caught.value.status_code == status
     assert needle in str(caught.value.detail)
 
@@ -365,19 +366,19 @@ def test_the_aged_view_follows_gdp_and_a_vintage_without_a_year_has_none(
     scenario's nominal GDP over the vintage's — and the fixture, which names no year, is
     refused by name in that view rather than given one."""
     cost = _firm_cost(IS_24)
-    frozen = main._firm_first_year(IS_24, 2026, view="figee")
+    frozen = service.firm_first_year(IS_24, 2026, view="figee")
     assert frozen.cost == pytest.approx(cost) and frozen.factor is None
     assert "vue figée" in frozen.note
-    aged = main._firm_first_year(IS_24, 2026)
+    aged = service.firm_first_year(IS_24, 2026)
     assert aged.cost == pytest.approx(cost * AGED)
     assert aged.deltas["impot_societes"] == pytest.approx(
         frozen.deltas["impot_societes"] * AGED)
-    monkeypatch.setattr(main, "_firm_aging_factor", REAL_AGING)
-    with pytest.raises(HTTPException) as caught:
-        main._firm_first_year(IS_24, 2026)
+    monkeypatch.setattr(service, "firm_aging_factor", REAL_AGING)
+    with pytest.raises(ServiceError) as caught:
+        service.firm_first_year(IS_24, 2026)
     assert caught.value.status_code == 422
     assert "n'a pas d'année" in str(caught.value.detail)
-    assert main._firm_first_year(IS_24, 2026, view="figee").cost == pytest.approx(cost)
+    assert service.firm_first_year(IS_24, 2026, view="figee").cost == pytest.approx(cost)
 
 
 def test_the_aged_view_is_given_the_requests_growth(chain, aged_by) -> None:
@@ -403,8 +404,8 @@ def test_the_explorer_command_gives_the_firm_pass_its_growth(monkeypatch,
         return SimpleNamespace(cost=1e9, inputs=None, impulse=None, uncovered={},
                                deciles=[], view=view, note="")
 
-    monkeypatch.setattr(main, "_price_first_year", stub)
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "price_first_year", stub)
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     monkeypatch.setattr(recherche, "code_state", lambda: ("c" * 40, False))
     payload = _request(bounds=SEARCH_IS, macro=False)
@@ -431,8 +432,8 @@ def test_the_explorer_says_behaviour_asked_for_a_firm_search(monkeypatch,
                                deciles=[], view=view, note="",
                                behaviour_asked=request.behavioural)
 
-    monkeypatch.setattr(main, "_price_first_year", stub)
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "price_first_year", stub)
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
     monkeypatch.setattr(recherche, "code_state", lambda: ("c" * 40, False))
     payload = _request(bounds=SEARCH_IS, macro=False, behavioural=True)
@@ -450,4 +451,4 @@ def test_the_explorer_says_behaviour_asked_for_a_firm_search(monkeypatch,
 
 def test_a_firm_pass_in_a_view_that_does_not_exist_is_refused() -> None:
     with pytest.raises(ValueError, match="inconnue"):
-        main._firm_first_year(IS_24, 2026, view="gelee")
+        service.firm_first_year(IS_24, 2026, view="gelee")

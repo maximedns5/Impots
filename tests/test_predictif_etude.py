@@ -22,7 +22,7 @@ import pytest
 
 from exploration_cases import COMMIT, START
 from exploration_cases import exploration_request as _request
-from impots.api import main
+from impots import service
 from impots.api.schemas import ExplorationRequest, ReformSpec
 from impots.predictif import recherche
 from macro_cases import synthetic_macro_store
@@ -72,7 +72,7 @@ def _study(tmp_path: Path, script, **report_overrides) -> tuple[Path, Path]:
                                     "step": step}])
         request = ExplorationRequest.model_validate(payload)
         report = recherche.run(request, price=_price(),
-                               hypotheses=main._predictif_hypotheses(request), start=START,
+                               hypotheses=service.predictif_hypotheses(request), start=START,
                                macro_store=synthetic_macro_store(), law=LAW, commit=COMMIT,
                                computed="2026-10-21", where=WHERE)
         report.update(report_overrides)
@@ -361,7 +361,7 @@ def _complement(requests: Path, reports: Path, script, **request_overrides) -> P
                    **request_overrides)
     request = ExplorationRequest.model_validate(payload)
     report = recherche.run(request, price=_price(),
-                           hypotheses=main._predictif_hypotheses(request), start=START,
+                           hypotheses=service.predictif_hypotheses(request), start=START,
                            macro_store=synthetic_macro_store(), law=LAW,
                            commit="b" * 40, computed="2026-10-21", where=WHERE)
     (requests / "complements").mkdir(exist_ok=True)
@@ -444,7 +444,7 @@ def _courbe(requests: Path, reports: Path, script, *, key: str | None = None,
             payload.update(request_overrides)
         request = ExplorationRequest.model_validate(payload)
         report = recherche.run(request, price=_price(),
-                               hypotheses=main._predictif_hypotheses(request), start=START,
+                               hypotheses=service.predictif_hypotheses(request), start=START,
                                macro_store=synthetic_macro_store(), law=LAW,
                                commit=CURVE_COMMIT, computed="2026-10-23", where=WHERE)
         (requests / "courbe" / f"{instrument.key}.json").write_text(json.dumps(payload),
@@ -705,7 +705,7 @@ def _phase11(requests: Path, reports: Path, script, *, key: str | None = None,
             payload.update(request_overrides)
         request = ExplorationRequest.model_validate(payload)
         report = recherche.run(request, price=_price_with_firms(),
-                               hypotheses=main._predictif_hypotheses(request), start=START,
+                               hypotheses=service.predictif_hypotheses(request), start=START,
                                macro_store=synthetic_macro_store(), law=LAW,
                                commit=PHASE11_COMMIT, computed="2026-10-25", where=WHERE)
         (requests / "phase11" / f"{instrument.key}.json").write_text(json.dumps(payload),
@@ -1769,7 +1769,7 @@ def _annual(requests: Path, reports: Path, script, *, edit=None) -> None:
         study = json.loads((reports / f"exploration_etude_{key}.json").read_text(
             encoding="utf-8"))
         request = ExplorationRequest.model_validate(study["request"])
-        hyp = main._predictif_hypotheses(request)
+        hyp = service.predictif_hypotheses(request)
         nearest = _nearest(study["searches"][0])
 
         def price(year, view, nearest=nearest):

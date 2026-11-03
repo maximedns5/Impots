@@ -18,6 +18,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from impots import service
 from impots.behavioural import band as band_module
 from impots.behavioural import channels, grading
 from impots.behavioural.store import Parameter, Source, Store, Support, UnverifiedParameter
@@ -788,10 +789,9 @@ def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
 
     import polars as pl
 
-    from impots.api import main as api_main
     from impots.population.runner import subsample
 
-    smic = api_main._smic_annual(2026)
+    smic = service.smic_annual(2026)
     n = 1_000
     frame = pl.DataFrame({
         "household_id": np.repeat(np.arange(n), 2),
@@ -812,7 +812,7 @@ def test_c2_counts_the_population_s_jobs_on_a_quick_tier_pass() -> None:
     })
 
     def jobs(run) -> float:
-        inputs = api_main._employer_inputs(request, run, agg)
+        inputs = service.employer_inputs(request, run, agg)
         return channels.employment_at_the_smic(
             store, reform, smic_multiple=inputs["smic_multiple"],
             relative_cost_change=inputs["relative_cost_change"],
@@ -845,9 +845,8 @@ def test_c2_gives_each_earner_their_own_cost_change() -> None:
 
     import polars as pl
 
-    from impots.api import main as api_main
 
-    smic = api_main._smic_annual(2026)
+    smic = service.smic_annual(2026)
     frame = pl.DataFrame({
         "household_id": [0, 0, 1],
         "person_id": [0, 1, 2],
@@ -866,7 +865,7 @@ def test_c2_gives_each_earner_their_own_cost_change() -> None:
         "employment_fadeout_smic_multiple": parameter(
             "employment_fadeout_smic_multiple", 2.0, 2.0, 2.0, knobs=("allegement_general_*",)),
     })
-    inputs = api_main._employer_inputs(request, _run(frame), agg)
+    inputs = service.employer_inputs(request, _run(frame), agg)
     jobs = channels.employment_at_the_smic(
         store, reform, smic_multiple=inputs["smic_multiple"],
         relative_cost_change=inputs["relative_cost_change"],
@@ -883,10 +882,9 @@ def _employer_case(monkeypatch, persons: dict, households: dict) -> dict:
 
     import polars as pl
 
-    from impots.api import main
 
-    monkeypatch.setattr(main, "_smic_annual", lambda year: 20_000.0)
-    return main._employer_inputs(
+    monkeypatch.setattr(service, "smic_annual", lambda year: 20_000.0)
+    return service.employer_inputs(
         SimpleNamespace(year=2026, reform=FakeReform(allegement_general_t_min=0.03)),
         SimpleNamespace(persons=pl.DataFrame(persons), households=pl.DataFrame(households)),
         SimpleNamespace(employer_contribution_delta=-1_000.0))
@@ -1232,7 +1230,6 @@ def test_the_employer_inputs_say_whether_the_cut_is_targeted_as_the_shocks_do(
 
     import polars as pl
 
-    from impots.api import main as api_main
     from impots.api.schemas import ReformSpec
     from impots.behavioural import autofinancement
 
@@ -1246,7 +1243,7 @@ def test_the_employer_inputs_say_whether_the_cut_is_targeted_as_the_shocks_do(
 
     def targeted(year: int, **knobs) -> bool:
         request = SimpleNamespace(year=year, reform=ReformSpec(**knobs))
-        return api_main._employer_inputs(request, _run(frame), agg)["targets_low_wages"]
+        return service.employer_inputs(request, _run(frame), agg)["targets_low_wages"]
 
     assert targeted(2026, allegement_general_t_delta_moins_de_50=0.40) is True
     assert targeted(2026, allegement_general_plafond=3.5) is False

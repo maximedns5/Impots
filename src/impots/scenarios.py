@@ -633,9 +633,9 @@ def knob_pricer(
 
 
 def _frame() -> Any:
-    from impots.api.main import _population_frame
+    from impots.service import population_frame
 
-    return _population_frame()
+    return population_frame()
 
 
 def mechanical_price(scenario: Scenario, *, frame: Any = None,

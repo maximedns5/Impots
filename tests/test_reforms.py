@@ -544,9 +544,9 @@ def test_the_curve_knobs_move_labour_cost_where_the_curve_says() -> None:
     ceiling, near the SMIC and at 2,5 SMIC alike; `t_delta` lowers it most at the SMIC,
     and almost nothing at 2,9 SMIC, where its term has all but faded; neither moves a
     wage above the ceiling."""
-    from impots.api.main import _smic_annual
+    from impots.service import smic_annual
 
-    smic = _smic_annual(2026)
+    smic = smic_annual(2026)
 
     def saving(salary: float, reform: dict) -> float:
         before, after = labour_cost(salary, reform, year=2026)

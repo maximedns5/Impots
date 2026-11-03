@@ -214,12 +214,12 @@ def test_the_bareme_line_is_untouched_by_imputation():
     line. It moving is what exposed D-069. A dangling reference to a test that does not
     exist is worse than no reference: it reads as coverage.
     """
-    from impots.api.main import QUICK_TIER_HOUSEHOLDS, _population_frame
     from impots.population import aggregate as agg_module
     from impots.population import reconcile
     from impots.population import runner as run_module
+    from impots.service import QUICK_TIER_HOUSEHOLDS, population_frame
 
-    frame = _population_frame()
+    frame = population_frame()
     values = {}
     for imputed in (False, True):
         agg = agg_module.aggregate(run_module.run(

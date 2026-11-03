@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from impots.api import main
+from impots import service
 from impots.api.schemas import ExplorationRequest
 from impots.dette import reference
 from impots.predictif import recherche
@@ -77,5 +77,5 @@ def run_search(payload: dict, *, seen: list | None = None, max_bundles: int = 12
         return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse)
 
     return recherche.run(request, price=price,
-                         hypotheses=main._predictif_hypotheses(request), start=START,
+                         hypotheses=service.predictif_hypotheses(request), start=START,
                          macro_store=synthetic_macro_store(), max_bundles=max_bundles)
