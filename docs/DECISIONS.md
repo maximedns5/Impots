@@ -26136,3 +26136,61 @@ Le Pen +3,71 → +1,38, Roussel +1,30 → +0,44, Tondelier +0,09 → +0,28, Mél
   numéro de préenregistrement du PLFSS et l'avertissement des commits multiples. Ils
   lisent maintenant l'état réel : l'avertissement doit paraître si et seulement si les
   études tiennent sur plusieurs commits.
+
+## D-340 — Quatre sources changées à la source, remanifestées ; le backtest §6.1 rejoué
+
+**La demande.** Le propriétaire, le 4 novembre : remanifester les quatre fichiers dont la
+somme de contrôle a changé à la source (D-339). Aucun n'était dans `data/raw` : le
+téléchargeur les avait refusés. Téléchargés le 4 novembre dans un dossier à part, lus
+avant d'entrer au manifeste. Ce qui a changé, et ce que chacun porte :
+
+* **`insee_rpm2023_patrimoine_composition.html`** (479 695 → 477 724 octets) : la page
+  d'INSEE est régénérée ; la ligne « Supérieur à P99 » de la figure 1 lit toujours
+  27 36 5 29 3 −4 −3. Elle n'est lue que par le test de transcription : aucun nombre.
+* **`bdf_comptes_distributionnels_methodologie_2024.pdf`** (921 145 → 459 905 octets,
+  9 pages, modifié le 17 septembre 2026 à la même URL) : la phrase citée (« ne permettent
+  pas pour le moment d'aller plus finement que le top 10% ») y est toujours. Lue par un
+  test seulement : aucun nombre.
+* **`ipp_rapport_47_2023_bach_et_al_creations_entreprises.pdf`** (3 051 670 → 4 173 236
+  octets) : HAL l'a régénéré le 24 octobre 2026 (137 pages, une page de garde HAL en tête ;
+  contenu daté du 16 octobre 2023). Le tableau 2.2 passe de la p. 62 à la p. 63, et le
+  texte en sort les lignes collées : le lecteur de `behavioural/ipp.py` ne trouvait plus la
+  ligne IS-PFU. Il lit désormais le panneau (b) d'un seul tenant, quelle que soit la
+  coupure des lignes. Les cellules sont les mêmes : 0,391 (0,120), 0,380 (0,131), 0,418
+  (0,120), 0,414 (0,137), et 0,38, 5,4 % et 30 % dans le texte. C8 ne bouge pas ; seule la
+  page attendue par `test_creations.py` passe de 62 à 63.
+* **`eurostat_gov_10dd_edpt3_fr_sfa.json`** (4 337 → 4 336 octets) : la notification EDP
+  d'octobre 2026, qui remplace celle d'avril 2026 ; l'API ne sert que la dernière, l'ancien
+  fichier ne se retélécharge plus. Lu par `dette/comptes.sfa_publie`, donc par le backtest
+  noté §6.1 (D-167, D-168), et par lui seul : aucune étude, aucune page.
+
+**Les entrées du backtest, lues avant tout résidu.** Somme des cinq composantes, en points
+de PIB (PIB INSEE 2025 inchangé), contre la colonne « sfa » de D-168 : 2021 +0,0030 %
+(inchangé), 2022 +0,0545 % (+0,0005 pt), 2023 −0,1702 % (−0,0002), 2024 +1,1619 %
+(−0,0001), **2025 +0,0810 % contre +0,062 %, +0,019 pt** (2,42 md€ contre 1,86). Seule
+2025 est révisée.
+
+### Le pronostic du backtest rejoué, écrit avant de le rejouer
+
+La tolérance reste ±0,10 pt de PIB par année (`c6c5db4`), la fenêtre 2021→2025, et les
+fichiers INSEE sont ceux de D-168.
+
+1. **Cinq années dans la bande.** Les résidus de 2021 à 2024 bougent de moins de 0,001 pt
+   (+0,015, +0,039, +0,019, +0,031 dans D-168).
+2. **Le résidu de 2025 passe d'environ +0,001 à environ +0,020 pt** (entre +0,015 et
+   +0,025) : le SFA publié monte de 0,019 pt et entre tel quel dans la dette du modèle.
+3. **Le terme de millésime de 2025** (SFA implicite INSEE moins SFA publié) **tombe de
+   +0,031 à environ +0,012 pt**, et l'erreur propre de 2025 de −0,031 à environ −0,012 :
+   la notification d'octobre rapproche Eurostat du compte INSEE d'environ 60 %. Leur somme
+   reste nulle à 0,0002 pt près : la cause nommée par D-167 est toujours celle qui agit.
+4. **Ce qui casse, dit d'avance.** Dans le test du zéro de 2025 (`test_dette_comptes.py`,
+   « two errors cancel »), l'assertion d'un résidu quasi nul (< 0,0002) tombe : elle figeait
+   le constat du millésime d'avril, et son texte dit qu'il faudra alors renommer, pas
+   élargir. Elle sera remplacée par le constat du millésime d'octobre, écrit dans la
+   D-entrée du résultat ; l'erreur propre négative et la somme nulle avec le terme de
+   millésime restent assertées telles quelles. Les deux autres tests de §6.1 tiennent : r
+   et g viennent de l'INSEE.
+
+**Ce qui réfute.** Une année hors bande ; un résidu de 2021 à 2024 qui bouge de plus de
+0,001 pt ; un résidu 2025 hors de [+0,015 ; +0,025] ; une somme erreur propre + millésime
+au-delà de 0,0002 pt.
