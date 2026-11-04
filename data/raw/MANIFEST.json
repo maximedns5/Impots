@@ -1024,20 +1024,20 @@
     },
     "insee_rpm2023_patrimoine_composition.html": {
       "url": "https://www.insee.fr/fr/statistiques/7941439?sommaire=7941491",
-      "sha256": "4e2aae05bcddebe1435a3fd84f33ad6422279f87b55f4ed99938c64233442695",
-      "bytes": 479695,
-      "downloaded": "2026-09-05",
+      "sha256": "f3c80fef1f18a0b8e3232fd444b0bd07e2cddac8cef718cd5d7c28a92efc0788",
+      "bytes": 477724,
+      "downloaded": "2026-11-04",
       "licence": "Licence Ouverte / Etalab 2.0",
-      "description": "INSEE, « En vingt ans, les inégalités de patrimoine se sont accrues » (Les revenus et le patrimoine des ménages, éd. 2023). Figure 1 donne la composition du patrimoine brut par fractile, ligne « Supérieur à P99 » : 27 financier / 36 immobilier / 5 professionnel / 29 professionnel d'entreprise / 3 résiduel / -4 dette privée / -3 dette professionnelle. Enquête HVP 2020-2021, 10 250 ménages répondants. Source de la mise à l'échelle de composition (M4).",
+      "description": "INSEE, « En vingt ans, les inégalités de patrimoine se sont accrues » (Les revenus et le patrimoine des ménages, éd. 2023). Figure 1 donne la composition du patrimoine brut par fractile, ligne « Supérieur à P99 » : 27 financier / 36 immobilier / 5 professionnel / 29 professionnel d'entreprise / 3 résiduel / -4 dette privée / -3 dette professionnelle. Enquête HVP 2020-2021, 10 250 ménages répondants. Source de la mise à l'échelle de composition (M4). Remanifesté le 2026-11-04 (D-340) : page régénérée par l'INSEE, la ligne « Supérieur à P99 » inchangée.",
       "quarantined": false
     },
     "bdf_comptes_distributionnels_methodologie_2024.pdf": {
       "url": "https://www.banque-france.fr/system/files/2024-02/Donnees_et_methodologie_comptes%20distributionnels%20de%20patrimoine%20des%20m%C3%A9nages_2024_02_07.pdf",
-      "sha256": "5f16534e7f6d5d1f716d385d85622cb6f58c31997f92e96c1c575b7cd32cd39b",
-      "bytes": 921145,
-      "downloaded": "2026-09-05",
+      "sha256": "a6f7af6591f38409280e1edeb92f4b766213a6f869ca99e95b147d8cacac8321",
+      "bytes": 459905,
+      "downloaded": "2026-11-04",
       "licence": "Banque de France — usage cité",
-      "description": "Banque de France, données et méthodologie des comptes distributionnels de patrimoine des ménages (7 février 2024). MANIFESTÉ POUR SA LIMITE, pas pour ses chiffres : note 12 énonce que les données publiées « ne permettent pas pour le moment d'aller plus finement que le top 10% ou le top 5% ». C'est la pièce qui établit que la source nommée par le handoff ne peut pas porter l'échelle IFI.",
+      "description": "Banque de France, données et méthodologie des comptes distributionnels de patrimoine des ménages (7 février 2024). MANIFESTÉ POUR SA LIMITE, pas pour ses chiffres : note 12 énonce que les données publiées « ne permettent pas pour le moment d'aller plus finement que le top 10% ou le top 5% ». C'est la pièce qui établit que la source nommée par le handoff ne peut pas porter l'échelle IFI. Remanifesté le 2026-11-04 (D-340) : version du 17 septembre 2026 à la même URL, 9 pages ; la phrase citée y est toujours.",
       "quarantined": false
     },
     "ggmsz_french_wealth_tax.pdf": {
@@ -1325,11 +1325,11 @@
     },
     "eurostat_gov_10dd_edpt3_fr_sfa.json": {
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10dd_edpt3?format=JSON&geo=FR&sector=S13&unit=MIO_EUR&na_item=GD_CH&na_item=B9_T3&na_item=F_ASS&na_item=ORADJ&na_item=K61&na_item=KX&na_item=YA3",
-      "sha256": "2e05bbc7b1f375616e66c8c5de29e47c147251020a824a85b836ed1e4bec9441",
-      "bytes": 4337,
-      "downloaded": "2026-09-25",
+      "sha256": "1e5213cd1d17607a205f3ad5508b3589d20632fa84b29dfac6482e42c00ba4b4",
+      "bytes": 4336,
+      "downloaded": "2026-11-04",
       "licence": "Eurostat — réutilisation autorisée avec mention de la source",
-      "description": "Eurostat gov_10dd_edpt3 « Transition from the deficit/surplus to the change in debt », France, S13, M€. Porte B9_T3, GD_CH et les cinq composantes de l'ajustement flux-stocks (F_ASS, ORADJ, K61, KX, YA3). Millésime de la notification EDP d'avril 2026 ; champ 'updated' = 2026-04-22. COUVERTURE : 2021→2025 pour la France — 2019 et 2020 n'y figurent pas, la table EDP ne publiant qu'une fenêtre glissante (D-163, D-167).",
+      "description": "Eurostat gov_10dd_edpt3 « Transition from the deficit/surplus to the change in debt », France, S13, M€. Porte B9_T3, GD_CH et les cinq composantes de l'ajustement flux-stocks (F_ASS, ORADJ, K61, KX, YA3). Millésime de la notification EDP d'octobre 2026 ; champ 'updated' = 2026-10-21 (remanifesté le 2026-11-04, D-340 : seule 2025 révisée, SFA 1,86 → 2,42 md€ ; l'avril 2026 ne se retélécharge plus). COUVERTURE : 2021→2025 pour la France — 2019 et 2020 n'y figurent pas, la table EDP ne publiant qu'une fenêtre glissante (D-163, D-167).",
       "quarantined": false,
       "provenance": "API de diffusion Eurostat, URL de requête stable et reproductible — PAS un export personnalisé du databrowser, dont l'URL pointe un UUID de session. Vérifié byte-identique sur deux téléchargements successifs ; le champ 'updated' porte la date de publication, pas celle de la requête."
     },
@@ -1407,11 +1407,11 @@
     },
     "ipp_rapport_47_2023_bach_et_al_creations_entreprises.pdf": {
       "url": "https://shs.hal.science/halshs-04439415v1/file/Rapport_IPP_47_ISFcrea_compressed.pdf",
-      "sha256": "721aa776a1f6111b04ce4c4d470be7df46b3f64121c7f7d0ca8ca4fd2d059544",
-      "bytes": 3051670,
-      "downloaded": "2026-10-19",
+      "sha256": "3ff9d014aacff19de65d00fb82e37846dcf39468a0f6aeb4e084e1d18680ea6b",
+      "bytes": 4173236,
+      "downloaded": "2026-11-04",
       "licence": "HAL (halshs-04439415), accès ouvert",
-      "description": "Bach, Bozio, Fize, Guillouzouic et Malgouyres, « Évaluation des réformes de la fiscalité du capital — Effets sur la création d'entreprises, l'expatriation et la circulation de l'épargne », rapport IPP n° 47, octobre 2023 (136 p.). Tableau 2.2 : estimations statiques en différences de différences du taux de création de sociétés selon l'exposition sectorielle aux réformes PFU, IS et IFI. Source du canal des créations de sociétés (D-221).",
+      "description": "Bach, Bozio, Fize, Guillouzouic et Malgouyres, « Évaluation des réformes de la fiscalité du capital — Effets sur la création d'entreprises, l'expatriation et la circulation de l'épargne », rapport IPP n° 47, octobre 2023 (136 p.). Tableau 2.2 : estimations statiques en différences de différences du taux de création de sociétés selon l'exposition sectorielle aux réformes PFU, IS et IFI. Source du canal des créations de sociétés (D-221). Remanifesté le 2026-11-04 (D-340) : PDF régénéré par HAL le 24 octobre 2026, une page de garde en tête (tableau 2.2 en p. 63) ; mêmes cellules.",
       "quarantined": false
     },
     "mesr_gecir_cir_2019_semi_definitif_publication_longue.pdf": {

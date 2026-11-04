@@ -26194,3 +26194,47 @@ fichiers INSEE sont ceux de D-168.
 **Ce qui réfute.** Une année hors bande ; un résidu de 2021 à 2024 qui bouge de plus de
 0,001 pt ; un résidu 2025 hors de [+0,015 ; +0,025] ; une somme erreur propre + millésime
 au-delà de 0,0002 pt.
+
+## D-341 — §6.1 sur la notification d'octobre 2026 : dans la bande, et un test rouge
+
+**Ce qui a tourné.** Les quatre fichiers de D-340 remanifestés et posés dans `data/raw` ;
+le backtest de §6.1 rejoué sur 2021→2025, tolérance ±0,10 pt inchangée, fichiers INSEE
+de D-168, après le préenregistrement poussé en `f7a46d8`.
+
+| an | sfa | résidu (D-168) | erreur propre (D-168) |
+|---|---|---|---|
+| 2021 | +0,0030 % | +0,0155 pt (+0,015) | +0,0155 (+0,015) |
+| 2022 | +0,0545 % | +0,0389 pt (+0,039) | +0,0240 (+0,024) |
+| 2023 | −0,1702 % | +0,0190 pt (+0,019) | −0,0180 (−0,018) |
+| 2024 | +1,1619 % | +0,0314 pt (+0,031) | +0,0128 (+0,013) |
+| 2025 | +0,0810 % | **+0,0196 pt** (+0,001) | **−0,0118** (−0,031) |
+
+Terme de millésime de 2025 : +0,0118 pt (+0,031 dans D-168). Erreur propre et millésime :
+somme −0,00000 pt. Facteur de report 2025 : 0,9998.
+
+**Contre le pronostic de D-340.** Points 1 à 3 tenus : cinq années dans la bande ; 2021 à
+2024 à moins de 0,001 pt de D-168 ; 2025 à +0,0196, dans [+0,015 ; +0,025] ; millésime et
+erreur propre à ±0,012, de somme nulle. **Point 4 manqué.** J'avais lu les seuils du test
+en points de PIB ; ils sont en fractions (0,0002 = 0,02 pt). L'assertion du résidu 2025
+« quasi nul » tient encore, à 0,0196 pt sous 0,02 ; c'est l'erreur propre « nettement
+négative » (< −0,02 pt) qui tombe, à −0,0118 pt. D-340 disait qu'elle resterait assertée
+telle quelle : elle l'est, et elle est rouge.
+
+**Ce que le résultat dit.** La notification d'octobre rapproche Eurostat du compte INSEE de
+62 % (0,019 pt sur 0,031). Le zéro de 2025 que D-168 décomposait en deux erreurs opposées
+n'existe plus : 2025 montre maintenant un résidu de +0,020 pt, de l'ordre des années
+précédentes, porté pour moitié par un terme de millésime qui reste là et a toujours la
+même cause. Le constat de D-168 est vrai du millésime d'avril, pas de celui-ci.
+
+**Ce qui n'est pas fait, et pourquoi.** Le test du zéro de 2025 (`test_dette_comptes.py`,
+« two errors cancel ») est rouge, et le reste : réécrire son seuil après le résultat
+serait retoucher une assertion pour qu'elle passe. Son texte dit qu'il faudra le renommer
+s'il casse ; le propriétaire décide comment, par exemple un test du millésime d'octobre
+dont les bornes sont celles de ce pronostic (résidu 2025 dans [+0,015 ; +0,025], somme
+nulle). Les deux autres tests de §6.1 et les quatorze du module sont verts.
+
+**Le reste de D-340, sans nombre qui bouge.** INSEE et Banque de France : les tests de
+transcription et de citation passent. IPP n° 47 : le lecteur lit le panneau (b) d'un seul
+tenant ; les mêmes cellules, C8 inchangé ; `test_creations.py` attend le tableau en p. 63,
+et un test neuf tient la lecture des lignes collées (rouge sur l'ancien lecteur). 152 tests
+légers verts (créations, IS, patrimoine, données).
