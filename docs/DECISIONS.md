@@ -25873,3 +25873,266 @@ passée au banc de mutations (`tests/test_gardes_phase9.py`, le rapport sans sur
 retiré ; les autres tests du fichier, qui tiennent le catalogue en quelques secondes,
 restent. Les gardes et les tests de structure de D-330, D-331, D-332 et D-334 restent tant
 qu'ils ne gênent pas ; on peut les retirer quand ils coûtent.
+
+## D-336 — Le but 14 validé : consolider, et les décisions de modèle de l'audit
+
+**Le fait.** Le 3 novembre 2026, le propriétaire a lu l'audit (`docs/AUDIT_BUT14.md`) et sa
+proposition de but 14, et a répondu « fais-moi tout ça ». Le but est écrit dans `BUT.md`
+tel que l'audit le propose. Les douze décisions de son § 7 sont prises comme l'audit les
+recommande ; chacune est dite ici avec sa raison, et chacune se défait par une D-entrée.
+
+**Les décisions qui bougent des nombres.**
+
+1. **La persistance « lue ».** La boucle lit Mésange aux horizons 1, 2, 3, 5 et 10 ans,
+   dans sa spécification centrale (WS), et interpole linéairement entre eux. Les
+   multiplicateurs fiscaux de Mésange ne décroissent pas à 5 et 10 ans (IR 0,88, 0,81,
+   0,87) : « éteint » faisait une falaise à l'an 4 que la source ne porte pas, « tenu »
+   gelait l'an 3. `usable_horizons` s'étend aux colonnes 5 et 10 des lignes que la boucle
+   lit ; le long terme reste refusé (D-055 : 1,73 sous WS, 0,25 sous Phillips). Le verdict
+   lit « lue » seule ; « éteint » et « tenu » restent publiées, comme sensibilités.
+2. **Le multiplicateur borné.** m(h, θ) = max(0, c(h) + (2θ − 1)σ) : un multiplicateur
+   négatif n'est dans aucune étude d'IMK. La rétroaction est bornée au coût brut de
+   l'impulsion : une baisse d'impôt ne s'autofinance pas à plus de 100 %, ce que Mésange
+   (folio 108) dit « erroné ».
+3. **Le taux de la dette ajoutée.** Le taux de marché que le PLF 2027 retient pour l'OAT à
+   dix ans, lu dans son texte manifesté, remplace le taux implicite net de 1,88 % pour la
+   dette qu'une réforme ajoute. Si le texte ne le donne pas, le taux reste l'implicite, et
+   la D-entrée du résultat le dit.
+4. **C1 au taux de l'IR.** L'élasticité de Cabannes, Houdré et Landais est estimée sur le
+   taux marginal de l'IR. C1 lit donc Δln(1 − τ_IR), le taux de l'IR seul, mesuré par la
+   même différence finie ; la recette perdue reste comptée au taux total, ce que l'État
+   perd. La base reste le salaire, et la page le dit. La garde de support lit la médiane
+   de |Δ(1 − τ_IR)| pondérée par la contribution de chaque ménage à C1, et non plus le 95e
+   centile des ménages : une réforme du seul haut n'est plus « dans le support ».
+5. **C5 et C6 décrochés.** Le cadre ne porte aucun patrimoine ; leurs lignes ne
+   revendiquent plus les leviers d'IFI, et un bouton d'IFI sur la population est refusé
+   avec sa porte, au lieu d'un zéro.
+6. **Le Monte-Carlo, à côté de la boîte.** Les lois sont celles du magasin ; une copule
+   gaussienne lie les lignes d'un même article (ρ = 0,8), les autres sont indépendantes ;
+   le multiplicateur suit une normale de centre Mésange et d'écart-type σ_IMK, tronquée à
+   0. Sorties : la probabilité d'une hausse de la dette en 2035, ses quantiles à 5, 50 et
+   95 %, les indices de Sobol. La règle de la phase 9 devient : la boîte n'est pas une
+   probabilité ; la distribution en est une, sous des lois déclarées. Les deux sont
+   publiées, nommées.
+7. **Le cadre des études** garde ses valeurs (1 %, 2 %, 3 %) et quitte `etude/ir.json`
+   pour un fichier à lui.
+
+**Les décisions d'organisation.** `calibrate.py` reste fermé. Un commit ne change aucun
+nombre quand une passe témoin, rejouée sur lui, redonne son rapport à l'identique hors
+durée. `test_gardes_phase9.py:137` est retiré par D-335, et son rapport figé. Les tests qui lisent le
+source par chaînes sont retirés. Le JavaScript attend le but 15. La consolidation ne fait
+monter aucun des trois chiffres : elle sert le deuxième, dix études justes, et le précalcul.
+
+**L'ordre.** D'abord ce qui ne change aucun nombre, prouvé par la passe témoin ; puis les
+statistiques dans les rapports et la fonction pure ; puis les décisions 1 à 6, chacune avec
+son effet mesuré ; enfin une seule série des dix études, préenregistrée avec son pronostic
+dans sa propre D-entrée avant de tourner.
+
+## D-337 — Les décisions de modèle de D-336, appliquées et mesurées sans passe
+
+**Le fait.** Les décisions 1, 2, 4, 5 et 6 de D-336 sont dans le code (`ff8e814` à
+`9b5c372`) ; la décision 3 ne l'est pas, faute de source. Chacune a un test léger qui la
+tient. Leur effet est mesuré sans passe de population, sur la fonction pure qui refait la
+chaîne (`predictif/rejouer.py`), et écrit dans `reports/but14_effets_modele.md`, que
+`scripts/but14_effets_modele.py` refait en quelques secondes. Ce ne sont pas les études
+relancées : la série reste à faire, préenregistrée.
+
+**Le rapport d'un chemin garde de quoi refaire la chaîne.** Par année et par vue, le coût,
+les impulsions par instrument et les statistiques suffisantes des canaux de recettes
+(`statistiques`) ; le départ, le cadre, les lignes et les tables macro (`rejeu`). La
+fonction pure égale `chaine.run` et `annuel.build` à 10⁻⁹ près, trois persistances, quatre
+θ et tous les coins, après un aller-retour JSON. La dette, la boucle, θ, la boîte et le
+Monte-Carlo se refont donc sans passe.
+
+**Les décisions 1 et 2.** Δb en 2035, en points de PIB, à θ = 0, ½ et 1 ; Attal vue
+vieillie reconstruit depuis ses rapports, à ±0,3 point ; Mélenchon redonne les siens au
+centième.
+
+| cas | avant, éteint | avant, tenu | lue, bornée |
+|---|---|---|---|
+| un point d'IR, permanent | +9,39 / +8,35 / +7,31 | +8,17 / +3,48 / −1,15 | +8,33 / +4,02 / −0,31 |
+| Attal, vieillie | +23,80 / +20,22 / +16,64 | +22,67 / +7,45 / −7,30 | +17,82 / +4,20 / −5,48 |
+| Mélenchon, vieillie | −3,22 / −2,55 / −1,89 | −2,98 / −0,74 / +1,51 | −2,14 / −0,44 / +0,65 |
+
+La persistance lue tombe près de « tenu », parce que les multiplicateurs fiscaux de Mésange
+ne décroissent pas : le chiffre de tête d'Attal à θ½ passe de +20,2 à +4,2 points, et la
+falaise de l'an 4 disparaît. La borne ne touche pas θ½ ; elle resserre les coins (Attal
+tenu θ = 1 : −7,30 → −3,79). Le verdict sous « lue » seule reste « dépend de θ » pour Attal
+et Mélenchon : le coin θ = 1 renverse encore le signe, borné ou non. C'est donc
+l'incertitude du multiplicateur, et non plus un artefact de persistance, qui le porte.
+
+**La décision 3 n'est pas appliquée.** Le texte du PLF 2027 manifesté ne donne aucune
+hypothèse de taux à dix ans : « OAT » n'y est que le sigle d'une taxe, « taux d'intérêt »
+n'y est que qualitatif ; il chiffre le besoin de financement (339,7 Md€) et la charge de la
+dette (+9,6 Md€), pas un taux. L'hypothèse est dans le rapport économique, social et
+financier, hors du manifeste, et le site de l'AFT répond 403 depuis ce conteneur. La dette
+ajoutée reste au taux implicite net de 1,883 %. Manifester le rapport économique est la
+suite.
+
+**La décision 4.** C1 lit le taux de l'IR seul, mesuré dans les mêmes simulations
+(`impot_revenu_restant_a_payer`) ; la clé du cache des taux de base change (D-276). Sur le
+cas construit d'une tranche du haut (1 % des ménages, IR de 45 à 60 %, total de 60 à 75 %),
+C1 vaut 0,68 fois l'ancien, et la note passe de « in-support » à « illustrative » : la
+métrique pondérée par la contribution lit 0,15 contre un support de 0,03, quand le 95e
+centile des ménages lisait 0. La part de C1 portée par les ménages au plancher est publiée.
+Son effet sur Tondelier se lira dans la série.
+
+**La décision 5.** Aucune recette ne bouge : les coins décrochés étaient inertes. La boîte
+de Mélenchon passe de 32 à 8 coins, aux mêmes bornes.
+
+**La décision 6.** Copule gaussienne ρ = 0,8 entre les lignes d'un même fichier du magasin
+(un article par fichier), indépendance sinon ; multiplicateur normal, centre Mésange,
+écart-type IMK, censuré à 0 (un z commun à tous les instruments et horizons interdit la
+troncature stricte) ; 2 000 tirages, graine 20261103. Sous « lue » : P(Δb₂₀₃₅ > 0) = 0,82
+pour le point d'IR, 0,62 pour Attal, 0,40 pour Mélenchon. Les quantiles à 5 et 95 %
+dépassent les coins : la normale a des queues que θ ne parcourt pas.
+
+## D-338 — La série du but 14 : les dix études relancées, préenregistrées
+
+**Ce qui tourne.** Les dix études (`plf2027`, `plfss2027` et les huit
+`presidentielle_<slug>`), toutes leurs passes, par `impots etude lancer`, une étude après
+l'autre, sur le commit qui porte cette entrée, `src/` propre : 13 premières années, 57
+points de plage et 13 chemins de 2026 à 2035, dans les deux vues. Le cadre est
+`etudes/cadres/central.json` (D-336, décision 7), persistance « lue » en tête, « éteint » et
+« tenu » à côté comme sensibilités. Chaque chemin écrit ses statistiques, son rejeu et son
+Monte-Carlo (D-337). Les pages sont réécrites depuis les seuls rapports neufs.
+
+**Le profil de mémoire, avant.** La passe d'essai de la première année de Mélenchon, sur le
+code du but 14 : 177 s, 7,4 Go au pic du conteneur (15 Go), et le coût publié redonné au
+centime, −8 731 860 249 €. Une passe à la fois.
+
+**Le pronostic.** Écrit avant toute passe de la série. Les dettes sont reconstruites des
+rapports d'aujourd'hui par la fonction pure, sans les comportements
+(`scripts/but14_effets_modele.py`, étendu aux huit) : vue vieillie, Δb en 2035, en points.
+
+1. **Les coûts de la première année.** Ceux des huit programmes redonnent leur page
+   d'aujourd'hui à 0,1 % près : aucune décision de D-336 ne touche le mécanique. Ceux du
+   PLF et du PLFSS, chiffrés avant les IJ et D-310, à 3 % près de leur page (art. 2
+   +2,83 Md€, art. 3 −1,12, art. 15 −7,05, prime −887 M€, logement −78 M€).
+2. **La bande de Tondelier** change de centre : C1 au taux de l'IR vaut environ 0,68 fois
+   l'ancien. Le centre de la bande tombe entre −300 et +300 M€ (−437 aujourd'hui), et sa
+   note est « illustrative » (« in-support » aujourd'hui).
+3. **Les dettes sous « lue », à θ½**, à 25 % ou 0,5 point près, le plus large :
+
+| étude | θ = 0 | θ½ | θ = 1 | verdict |
+|---|---:|---:|---:|---|
+| Attal | +17,8 | +4,2 | −5,5 | dépend de θ |
+| Lisnard | +10,9 | +6,3 | +1,6 | hausse |
+| Retailleau | +5,1 | +2,7 | +1,1 | hausse |
+| Labib | +5,9 | +5,9 | +5,9 | hausse |
+| Le Pen | +4,3 | +3,9 | +3,5 | hausse |
+| Roussel | +1,6 | +1,6 | +1,6 | hausse |
+| Tondelier | −0,4 | −0,2 | 0,0 | dépend de θ |
+| Mélenchon | −2,1 | −0,4 | +0,7 | dépend de θ |
+
+   Les comportements, absents de la reconstruction, peuvent déplacer Lisnard (C7) et
+   Tondelier (C1) ; le pronostic de Tondelier est donc le seul qui puisse changer de signe à
+   θ½. Pour le PLF : art. 2 et art. 3 « dépend de θ » (le coin θ = 1 renverse une mesure
+   d'IR, comme le point d'IR de D-337), art. 15 « baisse ». Pour le PLFSS : les deux volets
+   « baisse », des transferts sans boucle.
+4. **Le Monte-Carlo**, P(Δb₂₀₃₅ > 0), vue vieillie : Attal entre 0,5 et 0,75 ; Mélenchon
+   entre 0,3 et 0,5 ; Lisnard, Retailleau, Labib, Le Pen et Roussel au-dessus de 0,95 ;
+   Tondelier entre 0,2 et 0,8.
+
+**Ce qui réfute.** Un coût de programme qui bouge de plus de 0,1 % : la restructuration
+aurait touché un nombre. Un verdict autre que celui du tableau. Une dette hors de sa
+tolérance. Chaque écart est dit dans la D-entrée du résultat ; aucun pronostic ne bouge.
+
+## D-339 — La série du but 14 : les dix études sur un commit, et ce qu'en dit le pronostic
+
+**Ce qui a tourné.** Les dix études de D-338, toutes leurs passes, sur `7235bd8`, `src/`
+propre (`dirty` faux dans chaque rapport), une étude après l'autre, du 3 novembre 13 h 06
+à 22 h 34 (UTC), dans un conteneur de 15 Go et 4 cœurs : 9 h 23 de passes en tout
+(Mélenchon 52 min, Roussel 18, Tondelier 93, Le Pen 44, Labib 22, Attal 42, Lisnard 80,
+PLFSS 73, PLF 100, Retailleau 39). Les pages et le site sont réécrits depuis ces seuls
+rapports ; l'accueil ne dit plus que les études ont tourné sur des codes différents,
+puisqu'elles tiennent toutes sur un commit.
+
+**Retailleau, relancé.** Sa première passe est tombée en une minute :
+`/entreprises/simulate` a rendu 503, `data/processed/firms_2023.parquet` n'existait pas
+dans ce conteneur. `make data` construisait la table de cellules, pas la population
+d'entreprises tirée d'elle. Construite à 17 h 05 (`impots entreprises cells --vintage
+2023`, puis `impots entreprises build --cells data/processed/firm_cells_2023.json`) : 57
+cellules, 15 954 entreprises tirées pour 2,72 M, le compte des rapports d'avant
+(2 718 376). Aucun rapport n'avait été écrit ; l'étude a été relancée après la série, sur
+le même commit. Attal, Lisnard et le PLF, lancés après la construction, l'ont lue sans
+échec. `make data` la construit désormais (`donnees.py`, un artefact dérivé de plus, refusé
+s'il vient de cellules synthétiques) : plomberie, aucun nombre ne bouge.
+
+**Le compte, contre D-338.**
+
+1. **Les coûts : tenus, tous.** Les huit programmes redonnent le coût de leurs rapports
+   d'avant à l'euro, chaque année et dans les deux vues (écart relatif au plus 3 × 10⁻¹⁵).
+   Le PLF et le PLFSS redonnent leur page : art. 2 +2,828 Md€, art. 3 −1,119, art. 15
+   −7,054, prime d'activité 887 M€, aides au logement 78 M€. La restructuration n'a touché
+   aucun nombre mécanique.
+2. **Tondelier : tenu.** Le centre de la bande passe de −437 à −101 M€ (p10 −732, p90
+   +440), dans [−300 ; +300] ; la note passe à « illustrative ».
+3. **Les dettes sous « lue », vue vieillie, Δb en 2035, en points :**
+
+| étude | coins (pronostic) | θ½ (pronostic) | θ½ dans la tolérance | verdict (pronostic) |
+|---|---|---:|---|---|
+| Attal | −5,14 à +17,86 (−5,5 à +17,8) | +4,36 (+4,2) | oui | dépend (dépend) |
+| Lisnard | +1,01 à +10,82 (+1,6 à +10,9) | +5,95 (+6,3) | oui | hausse (hausse) |
+| Retailleau | +1,12 à +5,06 (+1,1 à +5,1) | +2,78 (+2,7) | oui | hausse (hausse) |
+| Labib | +3,47 à +5,70 (+5,9) | +4,36 (+5,9) | **non**, 1,54 pt | hausse (hausse) |
+| Le Pen | −0,47 à +3,95 (+3,5 à +4,3) | +1,38 (+3,9) | **non** | **dépend** (hausse) |
+| Roussel | −0,20 à +1,41 (+1,6) | +0,44 (+1,6) | **non** | **dépend** (hausse) |
+| Tondelier | −0,17 à +0,78 (−0,4 à 0) | +0,28 (−0,2) | oui, 0,48 pt | dépend (dépend) |
+| Mélenchon | −2,14 à +0,65 (−2,1 à +0,7) | −0,44 (−0,4) | oui | dépend (dépend) |
+
+   Le PLF et le PLFSS : tenus. Art. 2 de −0,09 à +0,85, θ½ +0,39, « dépend » ; art. 3 de
+   −0,35 à +0,02, θ½ −0,17, « dépend » ; art. 15 −0,23 à tous les coins, « baisse ». Les
+   deux volets de l'art. 74, lus en miroir, « baisse » à tous les coins : prime d'activité
+   −0,27, aides au logement −0,07 ; aucune impulsion n'y est couverte, la boîte est plate et
+   les trois persistances se confondent.
+4. **Le Monte-Carlo, P(Δb₂₀₃₅ > 0), vue vieillie.** Tenus : Attal 0,630 (0,5 à 0,75),
+   Mélenchon 0,425 (0,3 à 0,5), Retailleau et Labib 1,000 (> 0,95). Manqués : Lisnard 0,907,
+   Le Pen 0,713, Roussel 0,679 (tous trois annoncés > 0,95) ; Tondelier 0,931 (annoncé entre
+   0,2 et 0,8).
+
+**Bilan.** Coûts 13 sur 13 ; bande de Tondelier tenue ; verdicts 11 sur 13 ; θ½ des
+programmes 5 sur 8 ; Monte-Carlo 4 sur 8. Aucun pronostic n'a bougé, aucune tolérance non
+plus.
+
+**Pourquoi trois programmes manquent : le pronostic, pas les passes.** La reconstruction de
+D-338 (`scripts/but14_effets_modele.py`) traduisait les deltas de la première année en
+impulsions par instrument par une table, `MAP`, qui n'avait pas `tva_menages`. Roussel, Le
+Pen et Labib baissent la TVA : leur impulsion de TVA était perdue, et le pronostic les
+traitait comme sans boucle (plats pour Roussel et Labib). La passe, elle, la porte
+(Roussel : 5,28 Md€ d'impulsion de TVA la première année). Vérifié après coup, sur les
+rapports d'avant et la même fonction, avec la seule clé ajoutée : Roussel +1,41 / +0,44 /
+−0,20, Le Pen +3,95 / +1,36 / −0,48, Labib +5,72 / +4,58 / +3,83 — les passes à 0,2 point
+près. La clé est ajoutée au script pour la suite ; le pronostic de D-338 reste tel quel, et
+ces trois écarts restent des écarts.
+
+**Les autres manques du Monte-Carlo.** Lisnard : tous ses coins sont au-dessus de zéro,
+mais la normale du multiplicateur a des queues au-delà de ± 1σ, que θ ne parcourt pas
+(D-337) ; 9 % des tirages descendent sous zéro. Tondelier : le pronostic, sans les
+comportements, plaçait θ½ sous zéro ; C1 au taux de l'IR (D-336, décision 4) relève le
+centre à +0,28, et la probabilité suit.
+
+**Ce que la persistance « lue » change aux têtes de page** (θ½, vieillie ; avant : éteint) :
+Attal +20,29 → +4,36, Lisnard +10,31 → +5,95, Labib +5,55 → +4,36, Retailleau +5,44 → +2,78,
+Le Pen +3,71 → +1,38, Roussel +1,30 → +0,44, Tondelier +0,09 → +0,28, Mélenchon −2,55 →
+−0,44. « Éteint » et « tenu » restent publiés à côté, hors du verdict.
+
+**Le reste, dit ici.**
+
+* **Décision 3 de D-336, non appliquée** (D-337) : la dette ajoutée reste chargée au taux
+  implicite net, 1,883 %.
+* **pypdf borné sous 6** (`pyproject.toml`) : pypdf 6 lève `LimitReachedError` sur un PDF
+  du manifeste et ne trouve plus les panneaux de la figure 2 de Bach et al. ; 5.9 les lit.
+* **Des tests rouges faute de données, non masqués** : `test_ij`, `test_ij_moteur`,
+  `test_capital`, `test_couverture_2027` et `test_dette_comptes` lisent des fichiers que ce
+  conteneur n'a pas pu télécharger. Aucun n'est lu par la série.
+* **Des hôtes injoignables d'ici** : data.economie.gouv.fr, www.securite-sociale.fr,
+  www.urssaf.fr, et www.aft.gouv.fr (403). **Des sommes de contrôle changées** à la
+  source, fichiers non remplacés : la table SFA d'Eurostat, `insee_rpm2023`, la note de
+  méthode de la Banque de France et le rapport n° 47 de l'IPP. Le propriétaire décide
+  s'ils sont remanifestés.
+* **Trois tests suivaient l'état d'avant la série** et le figeaient : la doublure de git
+  de `test_etude_plf2027.py` (D-289, l'étude nomme D-338), et dans `test_site.py` le
+  numéro de préenregistrement du PLFSS et l'avertissement des commits multiples. Ils
+  lisent maintenant l'état réel : l'avertissement doit paraître si et seulement si les
+  études tiennent sur plusieurs commits.

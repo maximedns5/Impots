@@ -12,7 +12,7 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from impots import guards
+from impots import guards, service
 from impots.api.schemas import HouseholdInput, ReformSpec
 from impots.engine import compute
 from impots.engine.outputs import REGISTRY
@@ -78,13 +78,12 @@ def test_c10_leaves_out_the_dividends_the_cdhr_holds(_levies):
     are named apart; the others respond as in D-249."""
     from types import SimpleNamespace
 
-    from impots.api import main
 
     households = pl.DataFrame({
         "weight": [2.0, 3.0, 1.0], "dividendes": [10_000.0, 1_000_000.0, 400_000.0],
         "cdhr": [0.0, 46_000.0, 0.0], "cdhr_reform": [0.0, 56_000.0, 2_000.0]})
     request = SimpleNamespace(reform=ReformSpec(pfu_taux=0.118), year=2026)
-    inputs = main._dividend_inputs(request, households)
+    inputs = service.dividend_inputs(request, households)
     assert inputs["dividend_base_eur"] == pytest.approx(20_000.0)
     assert inputs["dividend_base_cdhr_eur"] == pytest.approx(3_400_000.0)
 
@@ -109,10 +108,9 @@ def test_without_a_cdhr_column_c10_reads_the_base_as_before(_levies):
     """A run without the row — the light tier of a year before 2025 — keeps D-249's base."""
     from types import SimpleNamespace
 
-    from impots.api import main
 
     households = pl.DataFrame({"weight": [2.0], "dividendes": [10_000.0]})
-    inputs = main._dividend_inputs(
+    inputs = service.dividend_inputs(
         SimpleNamespace(reform=ReformSpec(pfu_taux=0.118), year=2026), households)
     assert inputs["dividend_base_eur"] == pytest.approx(20_000.0)
     assert inputs["dividend_base_cdhr_eur"] == 0.0

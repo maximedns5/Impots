@@ -138,7 +138,7 @@
         "mean_niveau_de_vie": 8273.472568511519,
         "mean_baseline": 11750.355002797725,
         "mean_reform": 11985.762880913848,
-        "mean_delta": 235.40787811612213,
+        "mean_delta": 235.40787811612222,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -160,7 +160,7 @@
         "mean_niveau_de_vie": 16595.030898424448,
         "mean_baseline": 25384.799958992353,
         "mean_reform": 25688.23660761892,
-        "mean_delta": 303.4366486265696,
+        "mean_delta": 303.43664862656954,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -171,7 +171,7 @@
         "mean_niveau_de_vie": 19725.788912354416,
         "mean_baseline": 29948.601236756902,
         "mean_reform": 30293.300310654835,
-        "mean_delta": 344.69907389793093,
+        "mean_delta": 344.6990738979309,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -182,7 +182,7 @@
         "mean_niveau_de_vie": 22589.94651151809,
         "mean_baseline": 34120.03354980469,
         "mean_reform": 34532.175992897864,
-        "mean_delta": 412.1424430931728,
+        "mean_delta": 412.142443093173,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -215,7 +215,7 @@
         "mean_niveau_de_vie": 32960.62035874472,
         "mean_baseline": 51324.42283110922,
         "mean_reform": 51878.29381645339,
-        "mean_delta": 553.8709853441663,
+        "mean_delta": 553.8709853441665,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -226,7 +226,7 @@
         "mean_niveau_de_vie": 39196.62350181876,
         "mean_baseline": 61085.0874934029,
         "mean_reform": 61720.6461567411,
-        "mean_delta": 635.5586633382164,
+        "mean_delta": 635.5586633382169,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -721,15 +721,15 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "build_s": 6.75,
-      "baseline_s": 44.71,
-      "reform_s": 56.64,
-      "consommation_s": 0.31,
-      "total_s": 157.93
+      "build_s": 4.61,
+      "baseline_s": 36.59,
+      "reform_s": 35.74,
+      "consommation_s": 0.15,
+      "total_s": 106.11
     }
   },
-  "computed": "2026-11-02",
-  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "computed": "2026-11-03",
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
   "dirty": false,
-  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
 }

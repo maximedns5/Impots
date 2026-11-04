@@ -570,10 +570,10 @@
       },
       "niche_blind_spot": null,
       "timings": {
-        "build_s": 6.97,
-        "baseline_s": 44.5,
-        "reform_s": 56.76,
-        "total_s": 196.6
+        "build_s": 5.01,
+        "baseline_s": 34.59,
+        "reform_s": 37.22,
+        "total_s": 106.64
       }
     },
     "entreprises": {
@@ -632,10 +632,10 @@
           "turnover": 677697795.1015654,
           "tax_baseline": 10539860.8658584,
           "is_brut": 10481567.508058056,
-          "mean_effective_rate": 0.09308058965175467,
+          "mean_effective_rate": 0.09308058965175464,
           "tax_reform": 10481567.508058056,
           "mean_delta": -30.972942333221436,
-          "delta_effective_rate": -6.099579903853791e-05,
+          "delta_effective_rate": -6.099579903855179e-05,
           "share_affected": 0.035
         },
         {
@@ -645,10 +645,10 @@
           "turnover": 287118985.77135956,
           "tax_baseline": 1215940.0252165666,
           "is_brut": 1164826.0687133567,
-          "mean_effective_rate": 0.10054554836111541,
+          "mean_effective_rate": 0.10054554836111536,
           "tax_reform": 1164826.0687133567,
           "mean_delta": -137.99867780530772,
-          "delta_effective_rate": -0.004266063085384797,
+          "delta_effective_rate": -0.004266063085384769,
           "share_affected": 0.09999999999999995
         },
         {
@@ -658,10 +658,10 @@
           "turnover": 1793093000.0000005,
           "tax_baseline": 18350840.003578186,
           "is_brut": 16670890.293746948,
-          "mean_effective_rate": 0.22485504200965756,
+          "mean_effective_rate": 0.2248550420096575,
           "tax_reform": 17130889.152877808,
           "mean_delta": -5700.704909814853,
-          "delta_effective_rate": -0.0484889259947176,
+          "delta_effective_rate": -0.04848892599471763,
           "share_affected": 0.8691588785046729
         },
         {
@@ -674,7 +674,7 @@
           "mean_effective_rate": 0.2514938871713934,
           "tax_reform": 53234762.239928335,
           "mean_delta": -78952.88679584707,
-          "delta_effective_rate": -0.037146464765106524,
+          "delta_effective_rate": -0.03714646476510655,
           "share_affected": 1.0
         },
         {
@@ -684,10 +684,10 @@
           "turnover": 2305584005.478618,
           "tax_baseline": 93968902.54910919,
           "is_brut": 71228316.12608498,
-          "mean_effective_rate": 0.3298158208504082,
+          "mean_effective_rate": 0.3298158208504081,
           "tax_reform": 91883944.52261308,
           "mean_delta": -2037488.0,
-          "delta_effective_rate": -0.007317869255609177,
+          "delta_effective_rate": -0.007317869255609233,
           "share_affected": 1.0
         },
         {
@@ -697,10 +697,10 @@
           "turnover": 36504519143.78461,
           "tax_baseline": 616453532.6621538,
           "is_brut": 607001259.3378998,
-          "mean_effective_rate": 0.09581265796831206,
+          "mean_effective_rate": 0.09581265796831205,
           "tax_reform": 607001259.3378998,
           "mean_delta": -76.9204529953003,
-          "delta_effective_rate": -0.00040969713408897657,
+          "delta_effective_rate": -0.00040969713408899044,
           "share_affected": 0.0275
         },
         {
@@ -710,10 +710,10 @@
           "turnover": 168051935000.0,
           "tax_baseline": 1648732798.6205986,
           "is_brut": 1482557446.4347887,
-          "mean_effective_rate": 0.22448675317459355,
+          "mean_effective_rate": 0.2244867531745935,
           "tax_reform": 1532524438.3615303,
           "mean_delta": -5008.333416328428,
-          "delta_effective_rate": -0.04617232126213383,
+          "delta_effective_rate": -0.0461723212621338,
           "share_affected": 0.8099999999999997
         },
         {
@@ -723,10 +723,10 @@
           "turnover": 376450874447.42053,
           "tax_baseline": 7602278882.559965,
           "is_brut": 6589432797.345177,
-          "mean_effective_rate": 0.3170585161381001,
+          "mean_effective_rate": 0.3170585161381,
           "tax_reform": 7328069127.827452,
           "mean_delta": -144209.69162048335,
-          "delta_effective_rate": -0.03334348099066908,
+          "delta_effective_rate": -0.03334348099066897,
           "share_affected": 1.0
         },
         {
@@ -739,7 +739,7 @@
           "mean_effective_rate": 0.33782686916673726,
           "tax_reform": 14480124309.139057,
           "mean_delta": -3699655.0291262125,
-          "delta_effective_rate": -0.01894825882724216,
+          "delta_effective_rate": -0.018948258827242215,
           "share_affected": 1.0
         },
         {
@@ -749,7 +749,7 @@
           "turnover": 2103902137.3377802,
           "tax_baseline": 49785881.1936483,
           "is_brut": 49500180.249986425,
-          "mean_effective_rate": 0.0888365558167452,
+          "mean_effective_rate": 0.08883655581674517,
           "tax_reform": 49500180.249986425,
           "mean_delta": -13.379072265625002,
           "delta_effective_rate": 0.0,
@@ -762,10 +762,10 @@
           "turnover": 6185635000.0,
           "tax_baseline": 143848236.51496863,
           "is_brut": 134929306.72525635,
-          "mean_effective_rate": 0.20591456558607324,
+          "mean_effective_rate": 0.20591456558607316,
           "tax_reform": 137493410.02835205,
           "mean_delta": -7712.168066282275,
-          "delta_effective_rate": -0.025968397254687248,
+          "delta_effective_rate": -0.025968397254687192,
           "share_affected": 0.8400000000000001
         },
         {
@@ -775,10 +775,10 @@
           "turnover": 83950120896.21063,
           "tax_baseline": 1130445151.3960986,
           "is_brut": 782183555.1105605,
-          "mean_effective_rate": 0.5079450419318008,
+          "mean_effective_rate": 0.5079450419318007,
           "tax_reform": 1079228283.65616,
           "mean_delta": -642603.3626953126,
-          "delta_effective_rate": -0.05696534956765209,
+          "delta_effective_rate": -0.0569653495676522,
           "share_affected": 1.0
         },
         {
@@ -788,7 +788,7 @@
           "turnover": 147732468103.78937,
           "tax_baseline": 1953663509.284605,
           "is_brut": 1139590576.3691185,
-          "mean_effective_rate": 0.8431886593514448,
+          "mean_effective_rate": 0.8431886593514447,
           "tax_reform": 1882841464.8953857,
           "mean_delta": -16478471.0,
           "delta_effective_rate": -0.09032854379323163,
@@ -801,10 +801,10 @@
           "turnover": 2335400311.2020316,
           "tax_baseline": 43376979.59730946,
           "is_brut": 43002442.306517765,
-          "mean_effective_rate": 0.10254363805548157,
+          "mean_effective_rate": 0.10254363805548154,
           "tax_reform": 43002442.306517765,
           "mean_delta": -64.9261602783203,
-          "delta_effective_rate": -0.00036938540114463125,
+          "delta_effective_rate": -0.0003693854011446174,
           "share_affected": 0.039999999999999994
         },
         {
@@ -814,10 +814,10 @@
           "turnover": 9376895999.999998,
           "tax_baseline": 113425575.7261995,
           "is_brut": 104726730.77494425,
-          "mean_effective_rate": 0.19769087131103644,
+          "mean_effective_rate": 0.1976908713110364,
           "tax_reform": 106853162.37059852,
           "mean_delta": -5449.762318077088,
-          "delta_effective_rate": -0.02611360048376543,
+          "delta_effective_rate": -0.026113600483765403,
           "share_affected": 0.845
         },
         {
@@ -827,7 +827,7 @@
           "turnover": 14484703526.86045,
           "tax_baseline": 270253650.501326,
           "is_brut": 228379690.23431635,
-          "mean_effective_rate": 0.36380794437585884,
+          "mean_effective_rate": 0.3638079443758587,
           "tax_reform": 255727576.30369756,
           "mean_delta": -189004.65663682015,
           "delta_effective_rate": -0.06849930742550348,
@@ -840,10 +840,10 @@
           "turnover": 25489671473.139557,
           "tax_baseline": 540793305.5879397,
           "is_brut": 332249946.13430786,
-          "mean_effective_rate": 0.2982474018743657,
+          "mean_effective_rate": 0.2982474018743656,
           "tax_reform": 520706464.67610776,
           "mean_delta": -4846791.75,
-          "delta_effective_rate": -0.043584033158210744,
+          "delta_effective_rate": -0.0435840331582108,
           "share_affected": 1.0
         },
         {
@@ -853,7 +853,7 @@
           "turnover": 110507603182.89964,
           "tax_baseline": 2110807764.37552,
           "is_brut": 2084297712.3592792,
-          "mean_effective_rate": 0.10099807456856787,
+          "mean_effective_rate": 0.1009980745685678,
           "tax_reform": 2084297712.3592792,
           "mean_delta": -92.54005908966067,
           "delta_effective_rate": -0.0005741584188844601,
@@ -866,10 +866,10 @@
           "turnover": 135249305000.0,
           "tax_baseline": 1385188556.5414414,
           "is_brut": 1312101744.6243448,
-          "mean_effective_rate": 0.1940905664793524,
+          "mean_effective_rate": 0.19409056647935236,
           "tax_reform": 1312806182.5881045,
           "mean_delta": -2789.5164927291876,
-          "delta_effective_rate": -0.034277607022189016,
+          "delta_effective_rate": -0.03427760702218899,
           "share_affected": 0.8825000000000001
         },
         {
@@ -879,10 +879,10 @@
           "turnover": 67420829481.81236,
           "tax_baseline": 1009945798.8020215,
           "is_brut": 847443756.9815478,
-          "mean_effective_rate": 0.35902159228595737,
+          "mean_effective_rate": 0.35902159228595726,
           "tax_reform": 963731729.0218993,
           "mean_delta": -108229.67161621098,
-          "delta_effective_rate": -0.04755915855792464,
+          "delta_effective_rate": -0.0475591585579247,
           "share_affected": 1.0
         },
         {
@@ -892,10 +892,10 @@
           "turnover": 89327597518.18764,
           "tax_baseline": 2473413087.0,
           "is_brut": 1572086310.625,
-          "mean_effective_rate": 0.3991774224078134,
+          "mean_effective_rate": 0.39917742240781334,
           "tax_reform": 2391315009.625,
           "mean_delta": -4320951.440789473,
-          "delta_effective_rate": -0.05230623026830933,
+          "delta_effective_rate": -0.052306230268309384,
           "share_affected": 1.0
         },
         {
@@ -905,10 +905,10 @@
           "turnover": 197309443570.11465,
           "tax_baseline": 2387706989.063798,
           "is_brut": 2267420950.506756,
-          "mean_effective_rate": 0.09021274881161571,
+          "mean_effective_rate": 0.09021274881161566,
           "tax_reform": 2306340134.099867,
           "mean_delta": -229.7291997146606,
-          "delta_effective_rate": -0.0005360690167567211,
+          "delta_effective_rate": -0.0005360690167567073,
           "share_affected": 0.049999999999999996
         },
         {
@@ -921,7 +921,7 @@
           "mean_effective_rate": 0.22231980958707923,
           "tax_reform": 2860682754.9932446,
           "mean_delta": -3964.133461837769,
-          "delta_effective_rate": -0.03712409615417703,
+          "delta_effective_rate": -0.03712409615417708,
           "share_affected": 0.95
         },
         {
@@ -931,7 +931,7 @@
           "turnover": 582003850397.8201,
           "tax_baseline": 4704092060.185546,
           "is_brut": 3515747650.9214573,
-          "mean_effective_rate": 0.602895334783462,
+          "mean_effective_rate": 0.6028953347834619,
           "tax_reform": 4501989410.751738,
           "mean_delta": -98203.42538085942,
           "delta_effective_rate": -0.05840648315791197,
@@ -944,7 +944,7 @@
           "turnover": 519003433602.1798,
           "tax_baseline": 7266540097.5625,
           "is_brut": 4313494789.5,
-          "mean_effective_rate": 0.4231788171659257,
+          "mean_effective_rate": 0.4231788171659256,
           "tax_reform": 7029722071.5625,
           "mean_delta": -3289139.25,
           "delta_effective_rate": -0.02689632133870795,
@@ -957,7 +957,7 @@
           "turnover": 17301029655.78568,
           "tax_baseline": 362279425.5963913,
           "is_brut": 346960453.5937769,
-          "mean_effective_rate": 0.08984379057355427,
+          "mean_effective_rate": 0.08984379057355424,
           "tax_reform": 350434380.99844646,
           "mean_delta": -126.25834182739263,
           "delta_effective_rate": -7.983481864186348e-05,
@@ -970,10 +970,10 @@
           "turnover": 46529535000.0,
           "tax_baseline": 333016307.09659654,
           "is_brut": 299937822.84486866,
-          "mean_effective_rate": 0.21778674350386423,
+          "mean_effective_rate": 0.21778674350386418,
           "tax_reform": 303505088.26214164,
           "mean_delta": -3351.643252067567,
-          "delta_effective_rate": -0.05644935639440077,
+          "delta_effective_rate": -0.05644935639440074,
           "share_affected": 0.8025000000000001
         },
         {
@@ -983,10 +983,10 @@
           "turnover": 61810768817.10914,
           "tax_baseline": 1080438697.9631348,
           "is_brut": 891867321.3056641,
-          "mean_effective_rate": 0.3429309193646421,
+          "mean_effective_rate": 0.34293091936464204,
           "tax_reform": 1023876779.6064453,
           "mean_delta": -146154.82779506317,
-          "delta_effective_rate": -0.048454062750218685,
+          "delta_effective_rate": -0.04845406275021874,
           "share_affected": 1.0
         },
         {
@@ -996,10 +996,10 @@
           "turnover": 141624674182.89087,
           "tax_baseline": 4258959031.5,
           "is_brut": 2754308777.3125,
-          "mean_effective_rate": 0.43358900292069097,
+          "mean_effective_rate": 0.43358900292069086,
           "tax_reform": 4092789485.3125,
           "mean_delta": -7224762.877717392,
-          "delta_effective_rate": -0.07374886890452076,
+          "delta_effective_rate": -0.0737488689045207,
           "share_affected": 1.0
         },
         {
@@ -1009,7 +1009,7 @@
           "turnover": 51667235410.57197,
           "tax_baseline": 911363976.4596364,
           "is_brut": 866236891.545528,
-          "mean_effective_rate": 0.09417897730573205,
+          "mean_effective_rate": 0.09417897730573202,
           "tax_reform": 876876285.8498237,
           "mean_delta": -241.83296726226806,
           "delta_effective_rate": -0.0005683234809685661,
@@ -1022,10 +1022,10 @@
           "turnover": 47944452000.0,
           "tax_baseline": 517087140.2019644,
           "is_brut": 485877231.6695328,
-          "mean_effective_rate": 0.18614864126264363,
+          "mean_effective_rate": 0.1861486412626436,
           "tax_reform": 485877231.6695328,
           "mean_delta": -1987.892263212204,
-          "delta_effective_rate": -0.033206220958055255,
+          "delta_effective_rate": -0.03320622095805523,
           "share_affected": 0.575
         },
         {
@@ -1035,10 +1035,10 @@
           "turnover": 19395333551.103374,
           "tax_baseline": 446150898.8812151,
           "is_brut": 390830895.8604132,
-          "mean_effective_rate": 0.29681831558955213,
+          "mean_effective_rate": 0.296818315589552,
           "tax_reform": 425360468.13933706,
           "mean_delta": -93719.52095760312,
-          "delta_effective_rate": -0.04628721713961875,
+          "delta_effective_rate": -0.0462872171396187,
           "share_affected": 1.0
         },
         {
@@ -1048,10 +1048,10 @@
           "turnover": 16581791448.896631,
           "tax_baseline": 573067203.6987238,
           "is_brut": 386211105.46427196,
-          "mean_effective_rate": 0.2672566469742781,
+          "mean_effective_rate": 0.26725664697427803,
           "tax_reform": 553316917.7780211,
           "mean_delta": -2155371.9861111105,
-          "delta_effective_rate": -0.03291563577171258,
+          "delta_effective_rate": -0.03291563577171264,
           "share_affected": 1.0
         },
         {
@@ -1061,10 +1061,10 @@
           "turnover": 20390309100.333813,
           "tax_baseline": 573053058.1413,
           "is_brut": 561267185.937655,
-          "mean_effective_rate": 0.09422684284845624,
+          "mean_effective_rate": 0.09422684284845621,
           "tax_reform": 562094414.8052423,
           "mean_delta": -102.49772651672363,
-          "delta_effective_rate": -2.5202600828985733e-05,
+          "delta_effective_rate": -2.5202600828971855e-05,
           "share_affected": 0.022500000000000003
         },
         {
@@ -1074,7 +1074,7 @@
           "turnover": 46750284000.0,
           "tax_baseline": 229867685.13999534,
           "is_brut": 178607278.85832313,
-          "mean_effective_rate": 0.289099956348822,
+          "mean_effective_rate": 0.28909995634882196,
           "tax_reform": 184207235.8234861,
           "mean_delta": -5667.177524700166,
           "delta_effective_rate": -0.12790165936452336,
@@ -1087,10 +1087,10 @@
           "turnover": 109338805650.4065,
           "tax_baseline": 1333547995.1153975,
           "is_brut": 996248520.7507179,
-          "mean_effective_rate": 0.4492669987223221,
+          "mean_effective_rate": 0.449266998722322,
           "tax_reform": 1212085170.5394075,
           "mean_delta": -281692.6970605469,
-          "delta_effective_rate": -0.10295452822080109,
+          "delta_effective_rate": -0.10295452822080103,
           "share_affected": 1.0
         },
         {
@@ -1100,10 +1100,10 @@
           "turnover": 93477808349.59352,
           "tax_baseline": 1737751400.4805503,
           "is_brut": 1037318052.6816494,
-          "mean_effective_rate": 0.37144720073380627,
+          "mean_effective_rate": 0.3714472007338061,
           "tax_reform": 1622744396.6904407,
           "mean_delta": -6457118.770833333,
-          "delta_effective_rate": -0.05538387817856755,
+          "delta_effective_rate": -0.05538387817856749,
           "share_affected": 1.0
         },
         {
@@ -1113,10 +1113,10 @@
           "turnover": 11951158646.406273,
           "tax_baseline": 2192860644.492899,
           "is_brut": 2187655618.599791,
-          "mean_effective_rate": 0.10078343300335355,
+          "mean_effective_rate": 0.10078343300335352,
           "tax_reform": 2187655618.599791,
           "mean_delta": -63.566855468749985,
-          "delta_effective_rate": -1.0855677914103912e-05,
+          "delta_effective_rate": -1.0855677914076156e-05,
           "share_affected": 0.019999999999999997
         },
         {
@@ -1126,10 +1126,10 @@
           "turnover": 26593921040.593597,
           "tax_baseline": 626466801.3737504,
           "is_brut": 600290461.7461234,
-          "mean_effective_rate": 0.09131841764874685,
+          "mean_effective_rate": 0.0913184176487468,
           "tax_reform": 600290461.7461234,
           "mean_delta": -185.8038842773437,
-          "delta_effective_rate": -1.1232112320236354e-06,
+          "delta_effective_rate": -1.1232112320097576e-06,
           "share_affected": 0.012499999999999997
         },
         {
@@ -1139,10 +1139,10 @@
           "turnover": 22048712000.0,
           "tax_baseline": 191704446.85911372,
           "is_brut": 169005792.06931984,
-          "mean_effective_rate": 0.2187996307633555,
+          "mean_effective_rate": 0.21879963076335548,
           "tax_reform": 172325022.01913887,
           "mean_delta": -5184.43682182312,
-          "delta_effective_rate": -0.0549196922355146,
+          "delta_effective_rate": -0.05491969223551463,
           "share_affected": 0.82
         },
         {
@@ -1152,7 +1152,7 @@
           "turnover": 24638357515.485878,
           "tax_baseline": 237857341.33439714,
           "is_brut": 167639464.61104384,
-          "mean_effective_rate": 0.6896340255437914,
+          "mean_effective_rate": 0.6896340255437913,
           "tax_reform": 203596611.97109404,
           "mean_delta": -157162.63432661985,
           "delta_effective_rate": -0.25081399941829846,
@@ -1165,10 +1165,10 @@
           "turnover": 21064247484.51413,
           "tax_baseline": 311838570.99979496,
           "is_brut": 185564958.776599,
-          "mean_effective_rate": 0.7593380491431497,
+          "mean_effective_rate": 0.7593380491431495,
           "tax_reform": 280739820.89524394,
           "mean_delta": -3453646.6666666665,
-          "delta_effective_rate": -0.23692743799673732,
+          "delta_effective_rate": -0.2369274379967372,
           "share_affected": 1.0
         },
         {
@@ -1178,10 +1178,10 @@
           "turnover": 73871401201.90652,
           "tax_baseline": 3449746183.28856,
           "is_brut": 3389975194.831787,
-          "mean_effective_rate": 0.09516094283843494,
+          "mean_effective_rate": 0.09516094283843492,
           "tax_reform": 3399131238.8582077,
           "mean_delta": -142.33829910278317,
-          "delta_effective_rate": -0.0004874495858367134,
+          "delta_effective_rate": -0.00048744958583668563,
           "share_affected": 0.0325
         },
         {
@@ -1191,7 +1191,7 @@
           "turnover": 81057727000.0,
           "tax_baseline": 1132911997.8122864,
           "is_brut": 1057293862.6106806,
-          "mean_effective_rate": 0.1997409398715998,
+          "mean_effective_rate": 0.19974093987159974,
           "tax_reform": 1059127291.6106806,
           "mean_delta": -4283.582362937927,
           "delta_effective_rate": -0.03378756677714567,
@@ -1204,7 +1204,7 @@
           "turnover": 46872870260.356186,
           "tax_baseline": 1679494566.410841,
           "is_brut": 1522374044.205608,
-          "mean_effective_rate": 0.2708437897028884,
+          "mean_effective_rate": 0.27084378970288836,
           "tax_reform": 1626907884.473482,
           "mean_delta": -115281.79022214889,
           "delta_effective_rate": -0.029739405376905892,
@@ -1217,10 +1217,10 @@
           "turnover": 40073358739.64382,
           "tax_baseline": 2048158902.5787017,
           "is_brut": 1482097270.1597095,
-          "mean_effective_rate": 0.36897756130677734,
+          "mean_effective_rate": 0.3689775613067772,
           "tax_reform": 1998271455.302987,
           "mean_delta": -2647637.348684211,
-          "delta_effective_rate": -0.04219827509041291,
+          "delta_effective_rate": -0.042198275090412796,
           "share_affected": 1.0
         },
         {
@@ -1230,10 +1230,10 @@
           "turnover": 24766963483.400597,
           "tax_baseline": 592025638.8237207,
           "is_brut": 576287387.838607,
-          "mean_effective_rate": 0.09567473535994703,
+          "mean_effective_rate": 0.09567473535994697,
           "tax_reform": 576287387.838607,
           "mean_delta": -98.12550231933594,
-          "delta_effective_rate": -9.844933460209648e-05,
+          "delta_effective_rate": -9.84493346020826e-05,
           "share_affected": 0.015
         },
         {
@@ -1243,10 +1243,10 @@
           "turnover": 46944782000.0,
           "tax_baseline": 510739448.71533823,
           "is_brut": 468382271.9401715,
-          "mean_effective_rate": 0.18988636667947328,
+          "mean_effective_rate": 0.18988636667947323,
           "tax_reform": 473330173.7577716,
           "mean_delta": -2979.1570405006414,
-          "delta_effective_rate": -0.02681857970162524,
+          "delta_effective_rate": -0.02681857970162521,
           "share_affected": 0.6199999999999999
         },
         {
@@ -1256,10 +1256,10 @@
           "turnover": 63116637216.41502,
           "tax_baseline": 1347938859.994473,
           "is_brut": 1139913236.8696127,
-          "mean_effective_rate": 0.30634782540988803,
+          "mean_effective_rate": 0.3063478254098879,
           "tax_reform": 1250366896.0699034,
           "mean_delta": -147249.73046295167,
-          "delta_effective_rate": -0.06113927696463059,
+          "delta_effective_rate": -0.06113927696463051,
           "share_affected": 1.0
         },
         {
@@ -1269,10 +1269,10 @@
           "turnover": 53960758783.58498,
           "tax_baseline": 1640164513.4202027,
           "is_brut": 1156311987.719352,
-          "mean_effective_rate": 0.4855923800659974,
+          "mean_effective_rate": 0.4855923800659972,
           "tax_reform": 1550045254.6544433,
           "mean_delta": -3292527.0138888876,
-          "delta_effective_rate": -0.10596434954938716,
+          "delta_effective_rate": -0.10596434954938722,
           "share_affected": 1.0
         },
         {
@@ -1282,10 +1282,10 @@
           "turnover": 9145971476.568367,
           "tax_baseline": 231853040.94988656,
           "is_brut": 229098651.97091264,
-          "mean_effective_rate": 0.09136583753352923,
+          "mean_effective_rate": 0.09136583753352921,
           "tax_reform": 229098651.97091264,
           "mean_delta": -24.409193420410165,
-          "delta_effective_rate": -0.0002994928909104966,
+          "delta_effective_rate": -0.0002994928909104827,
           "share_affected": 0.012500000000000004
         },
         {
@@ -1295,10 +1295,10 @@
           "turnover": 66758926275.39727,
           "tax_baseline": 5301166473.797374,
           "is_brut": 5019177355.554873,
-          "mean_effective_rate": 0.09445163636076506,
+          "mean_effective_rate": 0.09445163636076503,
           "tax_reform": 5188293972.551523,
           "mean_delta": -390.5373560714722,
-          "delta_effective_rate": -0.0002385492872090389,
+          "delta_effective_rate": -0.00023854928720902502,
           "share_affected": 0.012499999999999999
         },
         {
@@ -1308,7 +1308,7 @@
           "turnover": 8725164907.931274,
           "tax_baseline": 237878936.9915387,
           "is_brut": 235748079.47218043,
-          "mean_effective_rate": 0.09478280242266084,
+          "mean_effective_rate": 0.0947828024226608,
           "tax_reform": 235748079.47218043,
           "mean_delta": -23.59293886184692,
           "delta_effective_rate": -5.2958685996931654e-05,
@@ -1321,7 +1321,7 @@
           "turnover": 8362980000.000002,
           "tax_baseline": 42965282.71119915,
           "is_brut": 36391913.19653713,
-          "mean_effective_rate": 0.2043212071505532,
+          "mean_effective_rate": 0.20432120715055316,
           "tax_reform": 37105421.32416286,
           "mean_delta": -2940.2214686584466,
           "delta_effective_rate": -0.055005300030335186,
@@ -1334,7 +1334,7 @@
           "turnover": 10585209239.256678,
           "tax_baseline": 181546419.12704632,
           "is_brut": 150038052.62200546,
-          "mean_effective_rate": 0.3778609328576769,
+          "mean_effective_rate": 0.3778609328576768,
           "tax_reform": 169364674.54363713,
           "mean_delta": -214998.79725191888,
           "delta_effective_rate": -0.06779978953162535,
@@ -1347,10 +1347,10 @@
           "turnover": 9049688760.74332,
           "tax_baseline": 244831986.71217713,
           "is_brut": 151504626.8505535,
-          "mean_effective_rate": 0.4046742833397838,
+          "mean_effective_rate": 0.40467428333978367,
           "tax_reform": 233273601.94464946,
           "mean_delta": -4938624.0,
-          "delta_effective_rate": -0.0187272566929228,
+          "delta_effective_rate": -0.018727256692922745,
           "share_affected": 1.0
         },
         {
@@ -1360,7 +1360,7 @@
           "turnover": 14959462635.713972,
           "tax_baseline": 459076747.5022677,
           "is_brut": 436777777.6807528,
-          "mean_effective_rate": 0.09315564780424895,
+          "mean_effective_rate": 0.09315564780424894,
           "tax_reform": 443288309.41977865,
           "mean_delta": -86.9185400390625,
           "delta_effective_rate": 0.0,
@@ -1371,29 +1371,29 @@
         {
           "taille": "micro",
           "n_firms": 2548831.7489945083,
-          "mean_effective_rate": 0.09442976038584013,
-          "median_effective_rate": 0.15000000109256542,
+          "mean_effective_rate": 0.0944297603858401,
+          "median_effective_rate": 0.1500000010925654,
           "share_zero_tax": 0.4015608505407343
         },
         {
           "taille": "PME",
           "n_firms": 162237.99999999997,
-          "mean_effective_rate": 0.21221205768793416,
-          "median_effective_rate": 0.2286327839976109,
+          "mean_effective_rate": 0.2122120576879341,
+          "median_effective_rate": 0.22863278399761083,
           "share_zero_tax": 0.20260855964693847
         },
         {
           "taille": "ETI",
           "n_firms": 6995.467712177122,
-          "mean_effective_rate": 0.4232342687756827,
-          "median_effective_rate": 0.2845963361874773,
+          "mean_effective_rate": 0.42323426877568254,
+          "median_effective_rate": 0.28459633618747726,
           "share_zero_tax": 0.20792246115603427
         },
         {
           "taille": "GE",
           "n_firms": 310.5322878228783,
-          "mean_effective_rate": 0.4023896747473071,
-          "median_effective_rate": 0.3780064364016826,
+          "mean_effective_rate": 0.40238967474730697,
+          "median_effective_rate": 0.37800643640168247,
           "share_zero_tax": 0.270405416265539
         }
       ],
@@ -1500,14 +1500,14 @@
       },
       "cir": null,
       "timings": {
-        "baseline_s": 0.016,
-        "reform_s": 0.009,
-        "total_s": 0.121
+        "baseline_s": 0.009,
+        "reform_s": 0.006,
+        "total_s": 0.078
       }
     }
   },
-  "computed": "2026-11-02",
-  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "computed": "2026-11-03",
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
   "dirty": false,
-  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
 }

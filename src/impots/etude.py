@@ -3,24 +3,34 @@
     impots etude lancer <nom> --ou "..."   # les passes, l'une après l'autre
     impots etude ecrire <nom>              # la page, depuis les seuls rapports commités
     impots etude verifier <nom>            # la page commitée est-elle celle des rapports ?
+    impots etude temoin <nom> --ou "..."   # la passe témoin, rejouée sur ce commit (D-335)
 
 Une étude est un fichier `etudes/<nom>.json` : les scénarios qu'elle chiffre, ménages ou
 entreprises, chacun avec son volet et son sens ; le texte dont elle dit les refus ; la
 D-entrée qui préenregistre ses passes. Pour chaque scénario, dans le cadre de D-289 : la
 première année, que chiffre l'appel du simulateur de sa chaîne (le coût, les gagnants et
 les perdants, la bande des comportements, l'éventail macro) ; le chemin annuel
-(`impots predictif`), dans le cadre de la requête de l'étude (D-237), qui donne la dette en
-fin de chemin à θ½ et aux coins de la boîte, dans les deux vues ; l'écart à l'évaluation
+(`impots predictif`), dans le cadre des études (`etudes/cadres/`, D-336), qui donne la
+dette en fin de chemin à θ½ et aux coins de la boîte, dans les deux vues ; l'écart à l'évaluation
 préalable quand le scénario a un cas noté.
 
 PRÉENREGISTRÉE COMME TOUTE PASSE. Avant la première passe, le lanceur refuse un `src/`
 modifié, une D-entrée de préenregistrement absente du commit, un commit qu'aucune branche
-distante ne porte, un rapport déjà là. Une passe à la fois : un chemin annuel occupe 6 Go
+distante ne porte. Une série interrompue reprend : les rapports déjà là sont sautés,
+s'ils sont sur ce commit ou sur un commit qu'une passe témoin y joint ; aucun n'est
+écrasé. Une passe à la fois : un chemin annuel occupe 6 Go
 (D-236), et chacune tourne dans son processus.
 
 RIEN N'EST SAISI. Chaque nombre de la page se lit dans un rapport, un enregistrement ou un
 triage, et `Etude.load` refuse les rapports qui ne sont pas ceux de l'étude : un autre
-scénario, un autre cadre, un `src/` modifié, un lieu non dit, deux commits.
+scénario, un autre cadre, un `src/` modifié, un lieu non dit, un deuxième commit sans
+témoin.
+
+UN CODE, OU DES COMMITS QUI NE CHANGENT AUCUN NOMBRE (D-335, D-336). Un rapport sur un
+autre commit que le premier est lu quand la passe témoin, la plus courte de l'étude
+rejouée sur ce commit, redonne son rapport à l'identique, hors date, commit et lieu. Le
+témoin est écrit sous `temoins/<sha>.json`, et relu, pas cru : `load` le compare de
+nouveau. La page dit chaque commit et le témoin qui le joint au premier.
 
 EN MIROIR. Un scénario en miroir chiffre l'opposé de la mesure (D-298) : la page dit la
 mesure, chaque réponse changée de signe. C'est exact pour ce qui est la différence de deux
@@ -45,7 +55,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 DEFINITIONS = ROOT / "etudes"
 SCENARIOS = ROOT / "scenarios"
-REQUESTS = ROOT / "etude"
+#: The frames the studies read (D-336): their hypotheses, in a file of their own, apart from
+#: the requests of the phase 10 explorations under `etude/`.
+CADRES = DEFINITIONS / "cadres"
 DECISIONS = "docs/DECISIONS.md"
 FIELDS = {"nom", "titre", "texte", "preenregistrement", "cadre", "millesime_entreprises",
           "page", "rapports", "scenarios", "programme"}
@@ -54,6 +66,12 @@ FIELDS = {"nom", "titre", "texte", "preenregistrement", "cadre", "millesime_entr
 POINTS = ("bas", "candidat", "haut")
 #: Where a programme study keeps its ranges' reports, beside the two of its part.
 PLAGES = "plages"
+#: Where a study keeps its witness passes (D-335, D-336): one per commit after the first,
+#: `temoins/<short sha>.json`.
+TEMOINS = "temoins"
+#: What a witness does not compare: the day it ran, the code it named, where it ran. Every
+#: other field of the report, its request and its reply, must be the same, value and type.
+HORS_TEMOIN = ("computed", "commit", "dirty", "where")
 
 
 class EtudeError(ValueError):
@@ -160,7 +178,7 @@ def plage_request(cadre: str, programme: str, mesure: str, champ: str,
     valeur = {"bas": plage.min, "haut": plage.max,
               "candidat": pg._lire(m.chiffrage.reforme, champ)}[point]
     menages, entreprises = p.reformes({cle: valeur}, (mesure,))
-    request = _read(REQUESTS / f"{cadre}.json")
+    request = lire_cadre(cadre)
     return {"spending": request["spending"], "growth": request["growth"],
             "rate": request["rate"], "horizon": request["horizon"],
             "theta": request["theta"], "uprating": request["uprating"],
@@ -237,6 +255,28 @@ def _git(*args: str) -> str:
     return subprocess.check_output(["git", *args], cwd=ROOT, text=True)
 
 
+def ecarts(a: Any, b: Any, at: str = "") -> list[str]:
+    """Where two reports part, each a path in them; none if they are the same, value and
+    type (3 is not 3.0), outside `HORS_TEMOIN` at their top."""
+    if not at and isinstance(a, dict) and isinstance(b, dict):
+        a = {k: v for k, v in a.items() if k not in HORS_TEMOIN}
+        b = {k: v for k, v in b.items() if k not in HORS_TEMOIN}
+    if isinstance(a, dict) and isinstance(b, dict):
+        out: list[str] = []
+        for key in sorted(set(a) | set(b), key=str):
+            if key not in a or key not in b:
+                out.append(f"{at}/{key}")
+            else:
+                out += ecarts(a[key], b[key], f"{at}/{key}")
+        return out
+    if isinstance(a, list) and isinstance(b, list):
+        if len(a) != len(b):
+            return [f"{at} ({len(a)} éléments au lieu de {len(b)})"]
+        return [x for i, (u, v) in enumerate(zip(a, b, strict=True))
+                for x in ecarts(u, v, f"{at}[{i}]")]
+    return [] if type(a) is type(b) and a == b else [at or "/"]
+
+
 # --------------------------------------------------------------------------- #
 # The reading
 # --------------------------------------------------------------------------- #
@@ -268,10 +308,33 @@ def debt(path: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
+#: The persistence the verdict reads, when a path carries it (D-336, decision 1): Mésange
+#: read at its horizons. « éteint » and « tenu » stand beside it, as sensitivities.
+LUE = "lue"
+
+
+def lue(rows: list[dict[str, Any]]) -> bool:
+    """Whether a path's rows carry the persistence « lue »: a report written since D-336.
+    A report before it has « éteint » and « tenu » only, and reads as it always did."""
+    return any(row.get("persistence") == LUE for row in rows)
+
+
+def verdict_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The rows the verdict reads: those under « lue » when the path has it (D-336), every
+    row of an older report otherwise."""
+    return [row for row in rows if row["persistence"] == LUE] if lue(rows) else rows
+
+
+def sensitivity_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The rows beside the verdict: the other persistences of a path that has « lue »."""
+    return [row for row in rows if row["persistence"] != LUE] if lue(rows) else []
+
+
 def verdict(rows: list[dict[str, Any]]) -> str:
     """« hausse » or « baisse » when Δb has one sign at θ and at every corner, in both
-    views and under each persistence; « dépend de θ » otherwise."""
-    values = [v for row in rows for v in (row["theta"], *row["corners"])]
+    views, under « lue » alone when the path has it (D-336), under each persistence of an
+    older report; « dépend de θ » otherwise."""
+    values = [v for row in verdict_rows(rows) for v in (row["theta"], *row["corners"])]
     if all(v > 0 for v in values):
         return "hausse"
     if all(v < 0 for v in values):
@@ -279,7 +342,28 @@ def verdict(rows: list[dict[str, Any]]) -> str:
     return "dépend de θ"
 
 
+def generation(entries: list[dict[str, Any]]) -> bool:
+    """Whether a study's paths carry « lue » (D-336): all of them, or none, an older
+    series. One page does not read half its paths under one verdict and half under the
+    other."""
+    read = {lue(entry["debt"]) for entry in entries}
+    if len(read) > 1:
+        raise EtudeError("les chemins de l'étude ne sont pas d'une même série : les uns "
+                         "portent la persistance « lue », les autres non (D-336). La série "
+                         "se relance entière.")
+    return read == {True}
+
+
 VIEWS = {"vieillie": "vieillie", "figee": "figée"}
+
+
+def sobol_group(name: str) -> str:
+    """A Sobol group of the Monte-Carlo as a reader reads it: the multiplier, or the rows
+    of one article, the store's file they live in (`montecarlo`, D-336)."""
+    from impots.predictif.rejouer import MACRO_ROW
+
+    return "le multiplicateur" if name == MACRO_ROW else f"les lignes de `{name}.yaml`"
+
 
 VERDICTS = {
     "hausse": "elle **augmente la dette** en {year}, à θ½ comme à chaque coin de la boîte, "
@@ -561,6 +645,7 @@ class _Programme:
     à côté de chaque nombre la couverture et chaque refus avec sa porte."""
 
     colonne = "programme"
+    unite = "mesure"
 
     def __init__(self, study: Etude) -> None:
         from impots import programmes as pg
@@ -619,8 +704,7 @@ class _Programme:
         w("")
 
     def refusals(self, w: Any, entries: list[dict[str, Any]], n: Nombres) -> None:
-        commit = entries[0]["first"]["commit"]
-        self._plages(w, n, self.study.load_plages(commit))
+        self._plages(w, n, entries[0]["plages"])
         self._mesures(w, n)
         self._annonce(w, n)
 
@@ -779,6 +863,42 @@ def _read(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+#: What a study's frame says (D-336), each key read by the range points, the page and the
+#: annual command, as a predictive request carries it.
+CADRE_LU = ("spending", "growth", "rate", "horizon", "uprating", "theta", "behavioural",
+            "macro")
+#: What a frame will carry, and no pass reads yet: the market rate of the added debt
+#: (D-336, decision 3; the PLF 2027's text gives none). A frame that says it is refused
+#: until every pass reads it, rather than priced as if it did not.
+CADRE_A_VENIR = ("taux",)
+#: The persistence the verdict reads (D-336, decision 1), the one value a frame may say.
+#: The annual command draws it beside « éteint » and « tenu », the sensitivities.
+CADRE_PERSISTANCES = (LUE,)
+
+
+def lire_cadre(nom: str, directory: Path | None = None) -> dict[str, Any]:
+    """The frame `nom` of the studies, `etudes/cadres/<nom>.json`: every key the passes
+    read, and nothing they would leave unread."""
+    path = (directory or CADRES) / f"{nom}.json"
+    if not path.exists():
+        raise EtudeError(f"{_relative(path)} n'existe pas : aucun cadre « {nom} ».")
+    raw = _read(path)
+    a_venir = sorted(set(CADRE_A_VENIR) & set(raw))
+    if a_venir:
+        raise EtudeError(f"le cadre « {nom} » porte {a_venir}, qu'aucune passe ne lit "
+                         f"encore (D-336) : il serait chiffré sans eux.")
+    if "persistance" in raw and raw["persistance"] not in CADRE_PERSISTANCES:
+        raise EtudeError(f"le cadre « {nom} » lit la persistance « {raw['persistance']} » ; "
+                         f"le verdict ne lit que {list(CADRE_PERSISTANCES)} (D-336), les "
+                         f"autres sont des sensibilités.")
+    unknown = set(raw) - set(CADRE_LU) - {"titre", "persistance"}
+    missing = set(CADRE_LU) - set(raw)
+    if unknown or missing:
+        raise EtudeError(f"le cadre « {nom} » : champs inconnus {sorted(unknown)}, "
+                         f"manquants {sorted(missing)}.")
+    return raw
+
+
 def difference(committed: str, built: str) -> str | None:
     """Where two texts first part, line and words around it, or None if they are one."""
     if committed == built:
@@ -847,8 +967,9 @@ class Etude:
         """`impots predictif` for `name`: the annual command of the frame's request, with
         this scenario, this directory and this place."""
         annual = _script("etude_annuelle")
-        command = annual.argv(self.cadre, where=where, scenarios=self.scenarios,
-                              out=self.rapports)
+        lire_cadre(self.cadre)
+        command = annual.argv(self.cadre, where=where, requests=CADRES,
+                              scenarios=self.scenarios, out=self.rapports)
         if command[1] != annual.name(self.cadre):
             raise EtudeError(f"la commande de l'étude ne nomme pas son scénario en "
                              f"deuxième : {command[:3]}")
@@ -884,10 +1005,41 @@ class Etude:
                     "préenregistrement poussé.")
         return None
 
+    def _env(self) -> dict[str, str]:
+        # The first years call the simulator in their own process, closed without a key
+        # since D-295: a pass is local, and opens it for itself.
+        return {**os.environ, "PYTHONPATH": str(ROOT / "src"),
+                "IMPOTS_FIRM_VINTAGE": self.millesime_entreprises, "IMPOTS_AUTH": "aucune"}
+
+    def resume(self, commit: str, passes: list[str]) -> str | None:
+        """Why the reports already there may not stand beside the passes still to run on
+        `commit`, or None. A report stands when it is on `commit`, or on a commit a witness
+        joins to it (D-335): a series resumes, and no report is written over."""
+        there = ({str(p.relative_to(self.rapports)) for p in self.rapports.rglob("*.json")
+                  if p.parent.name != TEMOINS} if self.rapports.exists() else set())
+        if there - set(passes):
+            return (f"{self.rapports} porte {sorted(there - set(passes))}, qui n'est pas une "
+                    f"passe de l'étude : un rapport n'est pas écrasé en silence.")
+        if not there:
+            return None
+        joined = self.joined()
+        for name in sorted(there):
+            report = _read(self.rapports / name)
+            on = report.get("commit")
+            if not on or report.get("dirty") is not False:
+                return (f"{name} ne nomme pas un commit dont il a chiffré le code : un rapport "
+                        f"n'est pas écrasé en silence.")
+            if on != commit and not {on, commit} <= joined:
+                return (f"{name} est sur le commit `{on[:7]}`, et la série reprendrait sur "
+                        f"`{commit[:7]}`, qu'aucune passe témoin ne joint à lui : un rapport "
+                        f"n'est pas écrasé en silence. Sur ce commit, `impots etude temoin "
+                        f"{self.nom} --ou \"…\"` rejoue la passe témoin (D-335).")
+        return None
+
     def launch(self, where: str) -> int:
         from impots.predictif import recherche
 
-        _, dirty = recherche.code_state(ROOT)
+        commit, dirty = recherche.code_state(ROOT)
         if dirty:
             print("src/ a des modifications non commitées : les rapports nommeraient un "
                   "commit dont ils n'ont pas chiffré le code. Commiter d'abord.",
@@ -897,17 +1049,16 @@ class Etude:
         if why:
             print(why, file=sys.stderr)
             return 1
-        there = ([str(p.relative_to(self.rapports)) for p in self.rapports.rglob("*.json")]
-                 if self.rapports.exists() else [])
-        if there:
-            print(f"{self.rapports} porte déjà {there} : un rapport n'est pas écrasé en "
-                  f"silence.", file=sys.stderr)
+        passes = self.passes(where)
+        why = self.resume(commit, [report for report, _ in passes])
+        if why:
+            print(why, file=sys.stderr)
             return 1
-        # The first years call the simulator in their own process, closed without a key
-        # since D-295: a pass is local, and opens it for itself.
-        env = {**os.environ, "PYTHONPATH": str(ROOT / "src"),
-               "IMPOTS_FIRM_VINTAGE": self.millesime_entreprises, "IMPOTS_AUTH": "aucune"}
-        for report, command in self.passes(where):
+        env = self._env()
+        for report, command in passes:
+            if (self.rapports / report).exists():
+                print(f"== {report} : déjà là, la série reprend après lui", flush=True)
+                continue
             print(f"== {report}", flush=True)
             code = subprocess.run([sys.executable, *command], cwd=ROOT, env=env).returncode
             if code:
@@ -916,31 +1067,144 @@ class Etude:
                 return code
         return 0
 
-    def write_first_year(self, name: str, *, where: str) -> Path:
-        if name not in self.noms:
-            raise EtudeError(f"{name} n'est pas un scénario de l'étude « {self.nom} » : "
-                             f"{list(self.noms)}")
-        report = first_year(name, where=where, scenarios=self.scenarios, mixte=self.mixte)
-        self.rapports.mkdir(parents=True, exist_ok=True)
-        path = self.rapports / f"premiere_annee_{name}.json"
-        path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
-                        encoding="utf-8")
-        return path
+    # -- the witness (D-335, D-336) ---------------------------------------------- #
 
-    def write_plage(self, mesure: str, champ: str, point: str, *, where: str) -> Path:
-        if (mesure, champ, point) not in self.points():
-            raise EtudeError(f"{mesure}/{champ}/{point} n'est pas un point de l'étude "
-                             f"« {self.nom} ».")
-        report = plage(self.cadre, self.programme, mesure, champ, point, where=where)
-        path = self.rapports / PLAGES / plage_name(mesure, champ, point)
+    def witness_pass(self, reports: Path | None = None) -> str:
+        """The study's shortest pass, which a witness replays: a range point by the fast
+        path, or a first year when the study has no range; the first of them it has."""
+        reports = reports or self.rapports
+        candidates = ([f"{PLAGES}/{plage_name(*point)}" for point in self.points()]
+                      + [f"premiere_annee_{name}.json" for name in self.noms])
+        return next((c for c in candidates if (reports / c).exists()), candidates[0])
+
+    def witnesses(self, reports: Path | None = None) -> tuple[str | None, dict[str, dict]]:
+        """(C0, {Ck: witness}): C0 the commit of the witness pass's report, each Ck a commit
+        on which that pass, replayed, gave the report again, outside `HORS_TEMOIN`. A
+        witness is read again here, not believed: its report is compared anew."""
+        reports = reports or self.rapports
+        name = self.witness_pass(reports)
+        if not (reports / name).exists():
+            return None, {}
+        reference = _read(reports / name)
+        first = reference.get("commit")
+        out: dict[str, dict] = {}
+        folder = reports / TEMOINS
+        for path in sorted(folder.glob("*.json")) if folder.exists() else []:
+            witness = _read(path)
+            commit = witness.get("commit") or ""
+            report = witness.get("rapport") or {}
+            if (witness.get("passe") == name and witness.get("reference") == first
+                    and witness.get("identique") is True and commit and commit != first
+                    and path.name == f"{commit[:7]}.json" and witness.get("where")
+                    and report.get("commit") == commit and report.get("dirty") is False
+                    and not ecarts(report, reference)):
+                out[commit] = witness
+        return first, out
+
+    def joined(self, reports: Path | None = None) -> set[str]:
+        """The commits whose reports read as one study's: C0 and every commit a witness
+        joins to it."""
+        first, covered = self.witnesses(reports)
+        return ({first} | set(covered)) if first else set()
+
+    def commits(self, used: set[str],
+                reports: Path | None = None) -> list[tuple[str, dict | None]]:
+        """The study's commits, in order, each after the first with the witness that joins
+        it to the first; refused when one has none (D-335)."""
+        first, covered = self.witnesses(reports)
+        name = self.witness_pass(reports)
+        alone = sorted(c for c in used if c != first and c not in covered)
+        if first not in used or alone:
+            raise EtudeError(
+                f"les rapports de l'étude sont sur {len(used)} commits "
+                f"({sorted(c[:7] for c in used)}) : {sorted(c[:7] for c in alone)} n'a pas "
+                f"de passe témoin qui redonne `{name}` à l'identique. Sur chacun, "
+                f"`impots etude temoin {self.nom} --ou \"…\"` la rejoue (D-335).")
+        later = sorted(used - {first}, key=lambda c: (covered[c].get("computed") or "", c))
+        return [(first, None)] + [(c, covered[c]) for c in later]
+
+    def witness(self, where: str) -> int:
+        """`impots etude temoin` : replay the witness pass on this commit, and write what it
+        gave beside the report it replays, `temoins/<sha>.json`, identical or not."""
+        import tempfile
+
+        from impots.predictif import recherche
+
+        commit, dirty = recherche.code_state(ROOT)
+        if dirty:
+            print("src/ a des modifications non commitées : le témoin nommerait un commit "
+                  "dont il n'a pas chiffré le code. Commiter d'abord.", file=sys.stderr)
+            return 1
+        name = self.witness_pass()
+        if not (self.rapports / name).exists():
+            print(f"{_relative(self.rapports)} n'a pas `{name}` : le témoin rejoue une passe "
+                  f"déjà faite.", file=sys.stderr)
+            return 1
+        reference = _read(self.rapports / name)
+        if reference.get("commit") == commit:
+            print(f"`{name}` est déjà sur le commit `{commit[:7]}` : un témoin y serait la "
+                  f"même passe.", file=sys.stderr)
+            return 1
+        out = self.rapports / TEMOINS / f"{commit[:7]}.json"
+        if out.exists():
+            print(f"{_relative(out)} existe : un témoin n'est pas écrasé.", file=sys.stderr)
+            return 1
+        command = dict(self.passes(where))[name]
+        with tempfile.TemporaryDirectory() as folder:
+            replayed = Path(folder) / "rapport.json"
+            print(f"== {name}, témoin sur `{commit[:7]}`", flush=True)
+            code = subprocess.run([sys.executable, *command, "--sortie", str(replayed)],
+                                  cwd=ROOT, env=self._env()).returncode
+            if code:
+                print(f"{name} : la commande a rendu {code}, aucun témoin n'est écrit.",
+                      file=sys.stderr)
+                return code
+            report = _read(replayed)
+        found = ecarts(report, reference)
+        same = (not found and report.get("commit") == commit
+                and report.get("dirty") is False)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps({
+            "etude": self.nom, "passe": name, "reference": reference.get("commit"),
+            "commit": commit, "dirty": False, "where": where,
+            "computed": date.today().isoformat(), "identique": same,
+            "ecarts": found[:50], "rapport": report}, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8")
+        if same:
+            print(f"-> {_relative(out)} : `{name}` redonné à l'identique sur `{commit[:7]}`, "
+                  f"hors {', '.join(HORS_TEMOIN)}.")
+            return 0
+        print(f"-> {_relative(out)} : `{name}` n'est PAS redonné à l'identique sur "
+              f"`{commit[:7]}` ({len(found)} écarts : {found[:5]}). Ce commit ne rejoint pas "
+              f"l'étude : sa série se rejoue.", file=sys.stderr)
+        return 1
+
+    def _write(self, path: Path, report: dict[str, Any]) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
                         encoding="utf-8")
         return path
 
-    def load_plages(self, commit: str, reports: Path | None = None) -> list[dict[str, Any]]:
+    def write_first_year(self, name: str, *, where: str, sortie: Path | None = None) -> Path:
+        if name not in self.noms:
+            raise EtudeError(f"{name} n'est pas un scénario de l'étude « {self.nom} » : "
+                             f"{list(self.noms)}")
+        report = first_year(name, where=where, scenarios=self.scenarios, mixte=self.mixte)
+        return self._write(sortie or self.rapports / f"premiere_annee_{name}.json", report)
+
+    def write_plage(self, mesure: str, champ: str, point: str, *, where: str,
+                    sortie: Path | None = None) -> Path:
+        if (mesure, champ, point) not in self.points():
+            raise EtudeError(f"{mesure}/{champ}/{point} n'est pas un point de l'étude "
+                             f"« {self.nom} ».")
+        report = plage(self.cadre, self.programme, mesure, champ, point, where=where)
+        return self._write(sortie or self.rapports / PLAGES / plage_name(mesure, champ, point),
+                           report)
+
+    def load_plages(self, reports: Path | None = None) -> list[dict[str, Any]]:
         """Each range point's report, refused unless it is the study's: its request as the
-        programme and the frame give it now, on the study's commit, said where."""
+        programme and the frame give it now, on a clean commit, said where. Its commit is
+        one of the study's, which `load` checks."""
         reports = (reports or self.rapports) / PLAGES
         wanted = {plage_name(*point) for point in self.points()}
         there = {p.name for p in reports.glob("*.json")} if reports.exists() else set()
@@ -951,29 +1215,30 @@ class Etude:
         for mesure, champ, point in self.points():
             report = _read(reports / plage_name(mesure, champ, point))
             request = plage_request(self.cadre, self.programme, mesure, champ, point)
-            if (report.get("request") != request or report.get("commit") != commit
+            if (report.get("request") != request or not report.get("commit")
                     or report.get("dirty") is not False or not report.get("where")
                     or (report.get("programme"), report.get("mesure"), report.get("champ"),
                         report.get("point")) != (self.programme, mesure, champ, point)):
                 raise EtudeError(f"{mesure}/{champ}/{point} : le rapport n'est pas le point "
-                                 f"de l'étude, sur son commit `{commit[:7]}`, dit où.")
+                                 f"de l'étude, sur un commit propre, dit où.")
             out.append(report)
         return out
 
     # -- the reports ------------------------------------------------------------- #
 
     def frame(self) -> dict[str, Any]:
-        """What the annual report says of the frame the study's request names (D-237)."""
+        """What the annual report says of the study's frame (D-237, D-336)."""
         from impots.dette.path import SHIPPED
         from impots.predictif import chaine
 
-        request = _read(REQUESTS / f"{self.cadre}.json")
+        request = lire_cadre(self.cadre)
         first = chaine.START_YEAR + 1
         return {"spending_name": SHIPPED[request["spending"]["rule"]].name,
                 "growth_name": request["growth"]["name"], "rate_name": request["rate"]["name"],
                 "behavioural": request["behavioural"], "macro": request["macro"],
                 "theta": request["theta"]["common"],
-                "years": list(range(first, first + request["horizon"]))}
+                "years": list(range(first, first + request["horizon"])),
+                "persistance": request.get("persistance")}
 
     def load(self, reports: Path | None = None) -> list[dict[str, Any]]:
         """Each scenario's two reports, refused unless they are the study's, as it was set."""
@@ -1043,6 +1308,19 @@ class Etude:
                     or (path.get("annees") or []) != list(scenario.annees)):
                 raise EtudeError(f"{name} : le chemin n'a pas tourné dans le cadre de "
                                  f"l'étude, sur son scénario.")
+            # A frame that says « lue » wants a path that draws it (D-336). A report
+            # written before D-336 has neither « lue », nor `rejeu`, nor `monte_carlo`:
+            # it is still read, and its page is the one it always rendered, until the
+            # series runs again. That is the one field the comparison tolerates on an old
+            # report; a new report without « lue » is refused.
+            if frame["persistance"] is not None and path.get("macro"):
+                drawn = ([p["persistence"] for p in path.get("side_by_side") or []]
+                         or [path.get("persistence")])
+                old = "rejeu" not in path and "monte_carlo" not in path
+                if frame["persistance"] not in drawn and not old:
+                    raise EtudeError(f"{name} : le cadre lit la persistance "
+                                     f"« {frame['persistance']} », et le chemin ne la "
+                                     f"trace pas ({drawn}).")
             case = grade = None
             if (preregistration.CHIFFRAGES / f"{name}.yaml").exists():
                 case = preregistration.load(name)
@@ -1062,10 +1340,13 @@ class Etude:
                 "debt": [{**row, "theta": sign * row["theta"],
                           "corners": [sign * c for c in row["corners"]]}
                          for row in debt(path)]})
-        if len(commits) != 1:
-            raise EtudeError(f"les rapports de l'étude sont sur {len(commits)} commits "
-                             f"({sorted(c[:7] for c in commits)}) : une seule étude se lit "
-                             f"sur un seul code.")
+        plages = self.load_plages(reports) if self.programme is not None else []
+        commits |= {r["commit"] for r in plages}
+        # One study reads on one code, or on commits a witness pass joins to the first: on
+        # each, the pass replayed gave its report again (D-335, D-336).
+        joined = self.commits(commits, reports)
+        for entry in entries:
+            entry.update(commits=joined, plages=plages)
         return entries
 
     # -- the page ---------------------------------------------------------------- #
@@ -1126,10 +1407,19 @@ class Etude:
             w(f"| {texte.label(entry)} | {n(fiche._eur(entry['cost']), 'L2')} | {official} | "
               f"{lead} | {verdict(entry['debt'])} |")
         w("")
-        w("Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en "
-          "points de PIB, dans la vue vieillie et sous la première persistance de l'effet "
-          "macro de chaque article ; « selon θ » lit toutes les vues et toutes les "
-          "persistances.")
+        # A law has articles; a programme has measures (D-336).
+        unit = getattr(texte, "unite", "article")
+        if generation(entries):
+            w(f"Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est "
+              f"en points de PIB, dans la vue vieillie et sous la persistance « lue » de "
+              f"l'effet macro de chaque {unit}, Mésange lu à ses horizons ; « selon θ » lit "
+              f"les deux vues sous cette persistance seule (D-336). « Éteint » et « tenu » "
+              f"sont des sensibilités, données plus bas, hors du verdict.")
+        else:
+            w(f"Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est "
+              f"en points de PIB, dans la vue vieillie et sous la première persistance de "
+              f"l'effet macro de chaque {unit} ; « selon θ » lit toutes les vues et toutes "
+              f"les persistances.")
         w("")
         for entry in entries:
             w(texte.heading(entry, n))
@@ -1160,8 +1450,25 @@ class Etude:
         w("")
         path = entries[0]["path"]
         first = entries[0]["first"]
-        w(f"Les passes ont tourné sur le commit `{first['commit'][:7]}`, {first['where']}. "
-          f"Cadre du chemin annuel : {n(path['growth_name'], 'hypothèse')} ; "
+        commits = entries[0]["commits"]
+        if len(commits) > 1:
+            # Several commits, each after the first joined to it by its witness (D-335).
+            w(f"Les passes ont tourné sur {len(commits)} commits, {first['where']} ; chaque "
+              f"rapport nomme le sien. Un commit après le premier rejoint l'étude quand sa "
+              f"passe témoin, `{self.witness_pass()}` rejouée sur lui, redonne son rapport à "
+              f"l'identique, hors date, commit et lieu (D-335) :")
+            w("")
+            for commit, witness in commits:
+                w(f"* `{commit[:7]}`, le premier." if witness is None else
+                  f"* `{commit[:7]}`, rejoint par "
+                  f"`{_relative(self.rapports)}/{TEMOINS}/{commit[:7]}.json`, témoin du "
+                  f"{witness['computed']}.")
+            w("")
+            opening = "Cadre"
+        else:
+            opening = (f"Les passes ont tourné sur le commit `{first['commit'][:7]}`, "
+                       f"{first['where']}. Cadre")
+        w(f"{opening} du chemin annuel : {n(path['growth_name'], 'hypothèse')} ; "
           f"{n(path['rate_name'], 'hypothèse')} ; {n(path['spending_name'], 'hypothèse')} ; "
           f"droit reconduit tel qu'openfisca le porte ; θ½ sur "
           f"toutes les lignes ; comportements et boucle macro appliqués.")
@@ -1320,18 +1627,92 @@ class Etude:
             w(f"La mesure ne s'applique qu'en {', '.join(map(str, path['annees']))} : le "
               f"chemin la chiffre cette année-là et ne lui prête rien les autres (D-288).")
             w("")
-        w(f"| persistance | vue | Δ dette {year}, à θ½ | aux coins de la boîte |")
-        w("|---|---|---|---|")
-        for row in rows:
-            corners = (f"de {points(min(row['corners']))} à {points(max(row['corners']))}"
-                       if row["corners"] else "—")
-            w(f"| {row['label'] or '—'} | {VIEWS[row['view']]} | {points(row['theta'])} | "
-              f"{corners} |")
-        w("")
-        w(f"En points de PIB de {year}, la dette avec la mesure moins la dette sans elle. La "
+        def table(shown: list[dict[str, Any]]) -> None:
+            w(f"| persistance | vue | Δ dette {year}, à θ½ | aux coins de la boîte |")
+            w("|---|---|---|---|")
+            for row in shown:
+                corners = (f"de {points(min(row['corners']))} à "
+                           f"{points(max(row['corners']))}" if row["corners"] else "—")
+                w(f"| {row['label'] or '—'} | {VIEWS[row['view']]} | {points(row['theta'])} "
+                  f"| {corners} |")
+            w("")
+
+        if not lue(rows):
+            # A report before D-336: « éteint » and « tenu », both in the verdict, the page
+            # as it always was until the series is run again.
+            table(rows)
+            w(f"En points de PIB de {year}, la dette avec la mesure moins la dette sans "
+              f"elle. La vue vieillie fait vieillir la population chaque année avec les "
+              f"salaires ; la vue figée la garde telle qu'elle est. Sur ces passes, "
+              f"{VERDICTS[verdict(rows)].format(year=year)}.")
+            w("")
+            return
+        table(verdict_rows(rows))
+        w(f"En points de PIB de {year}, la dette avec la mesure moins la dette sans elle, "
+          f"l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La "
           f"vue vieillie fait vieillir la population chaque année avec les salaires ; la vue "
-          f"figée la garde telle qu'elle est. Sur ces passes, "
+          f"figée la garde telle qu'elle est. Sous cette persistance, "
           f"{VERDICTS[verdict(rows)].format(year=year)}.")
+        w("")
+        others = sensitivity_rows(rows)
+        if others:
+            w("**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, "
+              "sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au "
+              "niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles "
+              "disent ce que le choix de la persistance pèse, et n'entrent pas dans le "
+              "verdict.")
+            w("")
+            table(others)
+        self._monte_carlo(w, n, entry, etage)
+
+    def _monte_carlo(self, w: Any, n: Nombres, entry: dict[str, Any], etage: str) -> None:
+        """The distribution of Δb under declared laws, beside the box (D-336, decision 6):
+        P(hausse), its quantiles, its heaviest Sobol groups; nothing when the report has
+        none. In mirror, the measure's: Δb turned over, to the first order as the rest."""
+        monte = entry["path"].get("monte_carlo")
+        if not monte:
+            return
+        sign, year = entry["sign"], monte["annee"]
+
+        def points(value: float) -> str:
+            return n(_points(value), etage, conditionnel=True)
+
+        def share(value: float) -> str:
+            from impots.reporting import pct_fr
+
+            return n(pct_fr(value), etage, conditionnel=True)
+
+        w(f"**La distribution, à côté de la boîte.** La boîte dit jusqu'où Δb va quand "
+          f"chaque effet parcourt sa fourchette publiée : ce n'est pas une probabilité. Le "
+          f"Monte-Carlo en est une, sous des lois déclarées : {monte['lois']} "
+          f"(ρ = {n(format(monte['rho'], 'g').replace('.', ','), 'hypothèse')}, "
+          f"{n(monte['tirages'], 'hypothèse')} tirages, persistance « "
+          f"{monte.get('persistence') or 'aucune'} », D-336). D'autres lois donneraient "
+          f"une autre réponse.")
+        w("")
+        # The quantiles' levels are the declared laws' own, a choice of the study.
+        w(f"| vue | P(hausse de la dette en {year}) | quantile "
+          f"{n('5 %', 'hypothèse')} | médiane | quantile {n('95 %', 'hypothèse')} | "
+          f"ce qui pèse le plus (Sobol, total) |")
+        w("|---|---|---|---|---|---|")
+        for view, label in VIEWS.items():
+            read = (monte.get("vues") or {}).get(view)
+            if not read:
+                continue
+            q = read["quantiles"]
+            # The measure's Δb is minus the scenario's, to the first order (D-298): its
+            # rise is the scenario's fall, and its quantiles turn over.
+            rise = read["p_hausse"] if sign == 1 else 1.0 - read["p_hausse"]
+            q05, q50, q95 = ((q["q05"], q["q50"], q["q95"]) if sign == 1
+                             else (-q["q95"], -q["q50"], -q["q05"]))
+            heaviest = sorted(((name, s) for name, s in (read.get("sobol") or {}).items()
+                               if s is not None), key=lambda kv: (-kv[1]["total"], kv[0]))[:3]
+            groups = ", ".join(
+                f"{sobol_group(name)} "
+                f"{n(format(s['total'], '.2f').replace('.', ','), etage, conditionnel=True)}"
+                for name, s in heaviest) or "—"
+            w(f"| {label} | {share(rise)} | {points(q05)} | {points(q50)} | {points(q95)} | "
+              f"{groups} |")
         w("")
 
     def _official(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:

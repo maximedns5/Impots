@@ -1,0 +1,26 @@
+{
+  "titre": "Le cadre des études publiées (D-289, D-336) : croissance réelle 1 %, prix 2 %, salaires 3 %, dépense gelée en volume, taux implicite tenu, dix ans, θ½, comportements et boucle, le verdict sous la persistance « lue » (Mésange lu à ses horizons)",
+  "spending": {
+    "rule": "gele_en_volume"
+  },
+  "growth": {
+    "name": "Croissance réelle 1 %, prix 2 %",
+    "real": 0.01,
+    "prices": 0.02
+  },
+  "rate": {
+    "name": "Taux implicite tenu à son niveau de 2025",
+    "kind": "implicite_tenu"
+  },
+  "horizon": 10,
+  "uprating": {
+    "wage": 0.03,
+    "source": "3 % ronds, le rythme du PIB nominal du scénario"
+  },
+  "theta": {
+    "common": 0.5
+  },
+  "behavioural": true,
+  "macro": true,
+  "persistance": "lue"
+}

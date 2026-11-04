@@ -18,6 +18,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
+from impots import service
 from impots.api import main
 
 CLE = "une-cle-de-test-assez-longue"
@@ -250,7 +251,7 @@ def test_a_second_population_pass_is_refused_while_one_runs(env) -> None:
         release.wait(10)
         raise HTTPException(status_code=409, detail="fin du calcul de test")
 
-    env.setattr(main, "_population_frame", blocked_frame)
+    env.setattr(service, "population_frame", blocked_frame)
     body = {"reform": {"decote_seuil_celib": 1000.0}, "year": 2024}
 
     async def scenario():

@@ -65,11 +65,19 @@ def test_the_mechanical_pricing_hands_the_population_its_ij(monkeypatch) -> None
 
     monkeypatch.setattr(runner, "run", run)
     monkeypatch.setattr(aggregate, "aggregate",
-                        lambda households: SimpleNamespace(reform_cost=-1.0, deltas={}))
+                        lambda households: SimpleNamespace(reform_cost=-1.0, deltas={},
+                                                           totals={}))
     sc.mechanical_price(_scenario(), frame=object(), households=10)
     assert seen["impute_ij"] is True
+    # Sans demande, une réforme qui ne touche pas les IJ ne les impute pas ; une réforme
+    # qui les touche les impute toujours, demandées ou non (D-336, une seule politique).
+    seen.clear()
+    sc.mechanical_price(_scenario(imputations=(), reform=ReformSpec(decote_taux=0.4)),
+                        frame=object(), households=10)
+    assert seen.get("impute_ij", False) is False
+    seen.clear()
     sc.mechanical_price(_scenario(imputations=()), frame=object(), households=10)
-    assert seen["impute_ij"] is False
+    assert seen["impute_ij"] is True
 
 
 # --- l'enregistrement après l'annexe ---------------------------------------------------

@@ -1,9 +1,177 @@
 {
+  "rejeu": {
+    "version": 1,
+    "start": {
+      "year": 2025,
+      "debt_ratio": 1.15693757321829,
+      "primary_balance": -0.029870353480509815,
+      "implicit_rate": 0.01882827582292081,
+      "gdp_eur": 2991056000000.0,
+      "receipts_ratio": 0.5212362790934039,
+      "spending_ratio": 0.5511066325739137
+    },
+    "cadre": {
+      "growth": {
+        "real": 0.01,
+        "prices": 0.02
+      },
+      "spending": {
+        "rule": "gele_en_volume",
+        "growth": null
+      },
+      "taux": {
+        "kind": "implicite_tenu",
+        "market_rate": null,
+        "reference": [
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081,
+          0.01882827582292081
+        ],
+        "marginal": 0.01882827582292081
+      }
+    },
+    "looped": true,
+    "behavioural": true,
+    "lignes": {
+      "autofinancement_poids_tresor_eco": {
+        "low": 0.0,
+        "central": 0.5,
+        "high": 1.0,
+        "un": "high",
+        "loi": "triangular",
+        "fichier": "self_financing"
+      },
+      "employment_elasticity_smic": {
+        "low": -0.52,
+        "central": -0.43,
+        "high": -0.31,
+        "un": "low",
+        "loi": "triangular",
+        "fichier": "employer_contributions"
+      }
+    },
+    "macro": {
+      "horizons": [
+        1,
+        2,
+        3,
+        5,
+        10
+      ],
+      "court": 3,
+      "instruments": {
+        "cotisations_employeurs": {
+          "pib": {
+            "1": 0.2,
+            "2": 0.55,
+            "3": 0.76,
+            "5": 0.97,
+            "10": 1.29
+          },
+          "solde": {
+            "1": -0.72,
+            "2": -0.42,
+            "3": -0.27,
+            "5": -0.24,
+            "10": -0.17
+          },
+          "sd": 0.66,
+          "brut": 1.0
+        }
+      }
+    },
+    "box_rows": [
+      "autofinancement_poids_tresor_eco",
+      "employment_elasticity_smic",
+      "multiplicateur_macro"
+    ]
+  },
+  "monte_carlo": {
+    "objet": "distribution sous des lois déclarées",
+    "lois": "Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes.",
+    "rho": 0.8,
+    "cle_copule": "fichier YAML du magasin où vit la ligne (un article par fichier)",
+    "groupes": {
+      "self_financing": [
+        "autofinancement_poids_tresor_eco"
+      ],
+      "employer_contributions": [
+        "employment_elasticity_smic"
+      ],
+      "multiplicateur_macro": [
+        "multiplicateur_macro"
+      ]
+    },
+    "multiplicateur": {
+      "loi": "normale (centre Mésange, écart-type IMK), censurée à zéro",
+      "decalage_moyen": 0.038455142074581464
+    },
+    "tirages": 2000,
+    "graine": 20261103,
+    "persistence": "lue",
+    "annee": 2035,
+    "vues": {
+      "vieillie": {
+        "p_hausse": 0.425,
+        "quantiles": {
+          "q05": -0.028077808079794563,
+          "q50": -0.0036562370299552116,
+          "q95": 0.00802728840633179
+        },
+        "sobol": {
+          "self_financing": {
+            "premier_ordre": 0.0,
+            "total": 0.0
+          },
+          "employer_contributions": {
+            "premier_ordre": 0.0,
+            "total": 0.0
+          },
+          "multiplicateur_macro": {
+            "premier_ordre": 1.0944460188040297,
+            "total": 1.0355060236165494
+          }
+        },
+        "evaluations": 10000
+      },
+      "figee": {
+        "p_hausse": 0.425,
+        "quantiles": {
+          "q05": -0.021552996657485668,
+          "q50": -0.0027312875987257623,
+          "q95": 0.0056361267408061135
+        },
+        "sobol": {
+          "self_financing": {
+            "premier_ordre": 0.0,
+            "total": 0.0
+          },
+          "employer_contributions": {
+            "premier_ordre": 0.0,
+            "total": 0.0
+          },
+          "multiplicateur_macro": {
+            "premier_ordre": 1.0970310115026787,
+            "total": 1.0354530638463366
+          }
+        },
+        "evaluations": 10000
+      }
+    },
+    "note": "Une distribution sous des lois déclarées, à côté de la boîte θ : elle dépend de ces lois, et en changer change la réponse (D-336)."
+  },
   "scenario": "pres2027_melenchon_programme",
   "titre": "pres2027_melenchon_programme",
   "source": "Jean-Luc Mélenchon (La France insoumise), programme relevé le 2026-11-01 — la part chiffrée : exonerations_au_dela_2_smic",
   "reference": "reconduit",
-  "computed": "2026-11-02",
+  "computed": "2026-11-03",
   "spending_name": "Dépenses gelées en volume",
   "growth_name": "Croissance réelle 1 %, prix 2 %",
   "rate_name": "Taux implicite tenu à son niveau de 2025",
@@ -24,7 +192,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8731860248.831055,
+          "impulses": {
+            "cotisations_employeurs": -8731860248.831055
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -9524466860.632324,
+          "impulses": {
+            "cotisations_employeurs": -9524466860.632324
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     },
     {
       "year": 2027,
@@ -35,7 +233,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8655066166.648438,
+          "impulses": {
+            "cotisations_employeurs": -8655066166.648438
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -9876291541.249756,
+          "impulses": {
+            "cotisations_employeurs": -9876291541.249756
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     },
     {
       "year": 2028,
@@ -46,7 +274,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8655066136.365234,
+          "impulses": {
+            "cotisations_employeurs": -8655066136.365234
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -10205680918.682129,
+          "impulses": {
+            "cotisations_employeurs": -10205680918.682129
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     },
     {
       "year": 2029,
@@ -57,7 +315,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8655066166.648438,
+          "impulses": {
+            "cotisations_employeurs": -8655066166.648438
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -10537612969.651123,
+          "impulses": {
+            "cotisations_employeurs": -10537612969.651123
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     },
     {
       "year": 2030,
@@ -68,7 +356,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8655066166.648438,
+          "impulses": {
+            "cotisations_employeurs": -8655066166.648438
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -10998207424.847412,
+          "impulses": {
+            "cotisations_employeurs": -10998207424.847412
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     },
     {
       "year": 2031,
@@ -79,7 +397,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8655066166.648438,
+          "impulses": {
+            "cotisations_employeurs": -8655066166.648438
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -11487675466.944336,
+          "impulses": {
+            "cotisations_employeurs": -11487675466.944336
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     },
     {
       "year": 2032,
@@ -90,7 +438,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8655066136.365234,
+          "impulses": {
+            "cotisations_employeurs": -8655066136.365234
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -11903016147.5542,
+          "impulses": {
+            "cotisations_employeurs": -11903016147.5542
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     },
     {
       "year": 2033,
@@ -101,7 +479,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8655066166.648438,
+          "impulses": {
+            "cotisations_employeurs": -8655066166.648438
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -12302620981.951416,
+          "impulses": {
+            "cotisations_employeurs": -12302620981.951416
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     },
     {
       "year": 2034,
@@ -112,7 +520,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8655066166.648438,
+          "impulses": {
+            "cotisations_employeurs": -8655066166.648438
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -12527272152.17163,
+          "impulses": {
+            "cotisations_employeurs": -12527272152.17163
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     },
     {
       "year": 2035,
@@ -123,7 +561,37 @@
       "reform_aged": null,
       "delta_aged": null,
       "reform_frozen": null,
-      "delta_frozen": null
+      "delta_frozen": null,
+      "statistiques": {
+        "figee": {
+          "cost_eur": -8655066166.648438,
+          "impulses": {
+            "cotisations_employeurs": -8655066166.648438
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        },
+        "vieillie": {
+          "cost_eur": -12984424046.490234,
+          "impulses": {
+            "cotisations_employeurs": -12984424046.490234
+          },
+          "uncovered": {},
+          "canaux": {
+            "c2_employment": {
+              "anchor": 0.0,
+              "tail": -0.0
+            }
+          },
+          "c1_floor_share": null
+        }
+      }
     }
   ],
   "conventions": [
@@ -135,7 +603,8 @@
     "Rétroaction proportionnelle au multiplicateur quand θ macro le déplace : hypothèse de §4.1. Bonne pour l'IR et la CSG, médiocre pour les cotisations employeurs la première année, où la rétroaction vaut 1,40 fois l'effet sur le PIB contre 0,46 pour l'IR (D-214).",
     "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
     "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
-    "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas."
+    "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+    "Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange dit « erroné » (folio 108, D-336)."
   ],
   "absent": {},
   "theta": {
@@ -178,11 +647,164 @@
     "rows": [
       "autofinancement_poids_tresor_eco",
       "employment_elasticity_smic",
-      "passthrough_benefit_linked",
-      "passthrough_unlinked",
       "multiplicateur_macro"
     ],
     "paths": [
+      {
+        "persistence": "lue",
+        "every_year": {
+          "vieillie": {
+            "theta": -0.004413761587802156,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.0213510065357172
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.006528558963175168
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.0213510065357172
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.006528558963175168
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.0213510065357172
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.006528558963175168
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.0213510065357172
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.006528558963175168
+              ]
+            ]
+          },
+          "figee": {
+            "theta": -0.0032960769095837783,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.01617169373516436
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.004641199465734047
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.01617169373516436
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.004641199465734047
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.01617169373516436
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.004641199465734047
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.01617169373516436
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.004641199465734047
+              ]
+            ]
+          }
+        },
+        "first_year": {
+          "vieillie": {
+            "theta": -0.0042805364251736755,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.02072301531144527
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.006293451556833585
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.02072301531144527
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.006293451556833585
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.02072301531144527
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.006293451556833585
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.02072301531144527
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.006293451556833585
+              ]
+            ]
+          },
+          "figee": {
+            "theta": -0.003923012015466298,
+            "corners": [
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.01899540421563639
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.0057668133181771886
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.01899540421563639
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.0057668133181771886
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.01899540421563639
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.0057668133181771886
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.01899540421563639
+              ],
+              [
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.0057668133181771886
+              ]
+            ]
+          }
+        }
+      },
       {
         "persistence": "eteint",
         "every_year": {
@@ -190,132 +812,36 @@
             "theta": -0.025511022805823957,
             "corners": [
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.03215537898640508
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.029927802030023987
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.03215537898640508
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                -0.02136719396816189
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.03215537898640508
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.029927802030023987
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.03215537898640508
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                -0.02136719396816189
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.018866731738729214
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.029927802030023987
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.018866731738729214
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                -0.02136719396816189
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.018866731738729214
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.029927802030023987
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.03215537898640508
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.018866731738729214
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.018866731738729214
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                -0.02136719396816189
               ]
             ]
           },
@@ -323,132 +849,36 @@
             "theta": -0.02031262258404465,
             "corners": [
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02465900987731562
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.023233915450259213
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02465900987731562
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                -0.017668537169612142
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02465900987731562
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.023233915450259213
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02465900987731562
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                -0.017668537169612142
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.015967386114415838
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.023233915450259213
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.015967386114415838
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                -0.017668537169612142
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.015967386114415838
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.023233915450259213
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02465900987731562
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.015967386114415838
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.015967386114415838
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                -0.017668537169612142
               ]
             ]
           }
@@ -458,132 +888,36 @@
             "theta": -0.024907303777329526,
             "corners": [
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.031273377003086855
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.029143951692486736
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.031273377003086855
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                -0.020933312930295545
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.031273377003086855
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.029143951692486736
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.031273377003086855
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                -0.020933312930295545
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.01854123055157242
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.029143951692486736
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.01854123055157242
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                -0.020933312930295545
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.01854123055157242
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.029143951692486736
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.031273377003086855
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.01854123055157242
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.01854123055157242
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                -0.020933312930295545
               ]
             ]
           },
@@ -591,132 +925,36 @@
             "theta": -0.02283456900435743,
             "corners": [
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028670870663497938
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.0267186517630007
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028670870663497938
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                -0.019191285530941737
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028670870663497938
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.0267186517630007
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028670870663497938
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                -0.019191285530941737
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.016998267345216922
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.0267186517630007
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.016998267345216922
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                -0.019191285530941737
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.016998267345216922
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.0267186517630007
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028670870663497938
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                -0.016998267345216922
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                -0.016998267345216922
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                -0.019191285530941737
               ]
             ]
           }
@@ -729,132 +967,36 @@
             "theta": -0.007392622518070269,
             "corners": [
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.029778600893596074
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.02755029232019024
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.029778600893596074
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.004769855097491504
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.029778600893596074
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.02755029232019024
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.029778600893596074
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.004769855097491504
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.015089058538722888
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.02755029232019024
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.015089058538722888
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.004769855097491504
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.015089058538722888
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.02755029232019024
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.029778600893596074
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.015089058538722888
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.015089058538722888
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.004769855097491504
               ]
             ]
           },
@@ -862,132 +1004,36 @@
             "theta": -0.005747707675103797,
             "corners": [
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02274631404744465
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.021320955886730886
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02274631404744465
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.0032293427948741904
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02274631404744465
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.021320955886730886
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02274631404744465
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.0032293427948741904
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.011299267672017388
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.021320955886730886
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.011299267672017388
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.0032293427948741904
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.011299267672017388
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.021320955886730886
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.02274631404744465
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.011299267672017388
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.011299267672017388
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.0032293427948741904
               ]
             ]
           }
@@ -997,132 +1043,36 @@
             "theta": -0.007204862312884863,
             "corners": [
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028950829999551342
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.026820746286775998
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028950829999551342
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.00457538279275882
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028950829999551342
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.026820746286775998
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028950829999551342
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.00457538279275882
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.014630221776030128
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.026820746286775998
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.014630221776030128
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.00457538279275882
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.014630221776030128
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.026820746286775998
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.028950829999551342
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.014630221776030128
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.014630221776030128
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.00457538279275882
               ]
             ]
           },
@@ -1130,132 +1080,36 @@
             "theta": -0.006603994380831368,
             "corners": [
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.026540918354168275
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.024588146087908935
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.026540918354168275
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.004193090501456664
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.026540918354168275
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.024588146087908935
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.026540918354168275
+                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.004193090501456664
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.01340780580378187
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 0",
+                -0.024588146087908935
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.01340780580378187
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, multiplicateur_macro = 1",
+                0.004193090501456664
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.01340780580378187
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 0",
+                -0.024588146087908935
               ],
               [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 0, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 0, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 0",
-                -0.026540918354168275
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 0, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 0, multiplicateur_macro = 1",
-                0.01340780580378187
-              ],
-              [
-                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, passthrough_benefit_linked = 1, passthrough_unlinked = 1, multiplicateur_macro = 1",
-                0.01340780580378187
+                "autofinancement_poids_tresor_eco = 1, employment_elasticity_smic = 1, multiplicateur_macro = 1",
+                0.004193090501456664
               ]
             ]
           }
@@ -1263,12 +1117,104 @@
       }
     ]
   },
-  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
   "dirty": false,
-  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre ; allocateur réglé (MALLOC_MMAP_THRESHOLD_=131072, MALLOC_ARENA_MAX=2) pour tenir en mémoire (D-331)",
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)",
   "annees": null,
   "persistence": null,
   "side_by_side": [
+    {
+      "persistence": "lue",
+      "label": "Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux",
+      "years": [
+        {
+          "year": 2026,
+          "reform_aged": 1.1670767076753947,
+          "delta_aged": -0.0015040178731513532,
+          "reform_frozen": 1.1672019399355673,
+          "delta_frozen": -0.0013787856129787723
+        },
+        {
+          "year": 2027,
+          "reform_aged": 1.173178369421759,
+          "delta_aged": -0.0015145105384672952,
+          "reform_frozen": 1.1733657500700472,
+          "delta_frozen": -0.001327129890179135
+        },
+        {
+          "year": 2028,
+          "reform_aged": 1.1738365524178969,
+          "delta_aged": -0.0015520270790514434,
+          "reform_frozen": 1.1740704054267028,
+          "delta_frozen": -0.0013181740702454814
+        },
+        {
+          "year": 2029,
+          "reform_aged": 1.1688516423705422,
+          "delta_aged": -0.0019289308611609712,
+          "reform_frozen": 1.1691601592668655,
+          "delta_frozen": -0.001620413964837697
+        },
+        {
+          "year": 2030,
+          "reform_aged": 1.1586907368706543,
+          "delta_aged": -0.002289104442294354,
+          "reform_frozen": 1.1591029761393246,
+          "delta_frozen": -0.001876865173624065
+        },
+        {
+          "year": 2031,
+          "reform_aged": 1.1433252307963944,
+          "delta_aged": -0.002770388885924735,
+          "reform_frozen": 1.1438636346153455,
+          "delta_frozen": -0.0022319850669736407
+        },
+        {
+          "year": 2032,
+          "reform_aged": 1.1230204023035615,
+          "delta_aged": -0.0032150221645277366,
+          "reform_frozen": 1.1236877364797095,
+          "delta_frozen": -0.0025476879883796766
+        },
+        {
+          "year": 2033,
+          "reform_aged": 1.0978675539285816,
+          "delta_aged": -0.0036375221298978744,
+          "reform_frozen": 1.0986767580717385,
+          "delta_frozen": -0.0028283179867409913
+        },
+        {
+          "year": 2034,
+          "reform_aged": 1.0679890253690212,
+          "delta_aged": -0.004019697489821228,
+          "reform_frozen": 1.068931874855121,
+          "delta_frozen": -0.003076848003721322
+        },
+        {
+          "year": 2035,
+          "reform_aged": 1.0334351031489146,
+          "delta_aged": -0.004413761587802156,
+          "reform_frozen": 1.034552787827133,
+          "delta_frozen": -0.0032960769095837783
+        }
+      ],
+      "conventions": [
+        "Persistance « lue » : colonnes 5 et 10 ans de Mésange sous sa spécification centrale (« wage setting »), interpolées linéairement entre les horizons imprimés. Sous courbe de Phillips, les horizons longs tombent (cotisations employeurs : 1,73 contre 0,25 à long terme) ; la colonne de long terme reste refusée (D-055, D-336).",
+        "Au-delà de trois ans : Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux."
+      ],
+      "gdp_gap_aged": [
+        -0.0006181937087355951,
+        -0.00170407660633894,
+        -0.0023621603492576153,
+        -0.0026956974235765115,
+        -0.003035038248156195,
+        -0.003260616363794292,
+        -0.0034891981784185887,
+        -0.003711824330747696,
+        -0.00392101379716399,
+        -0.00412336954371097
+      ]
+    },
     {
       "persistence": "eteint",
       "label": "Effet macro éteint après trois ans",

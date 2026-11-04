@@ -244,26 +244,26 @@
      "low": [
       1.1673979253215419,
       1.1728668638523863,
-      1.1734229824229565,
-      1.1732031191443373,
-      1.1649343545906108,
-      1.151565189909242,
-      1.1332033278918563,
-      1.1099547735295663,
-      1.0819238577929031,
-      1.049213261099362
+      1.1734464919308287,
+      1.1732264253986413,
+      1.1649574035819605,
+      1.1515879844774,
+      1.1332258708452385,
+      1.109977067645589,
+      1.0819459058183236,
+      1.0492350657506186
      ],
      "high": [
-      1.1707813021387965,
-      1.177497710778608,
-      1.1793967236971608,
-      1.1767063297429774,
-      1.168398895470107,
-      1.1549914879200895,
-      1.1365918051728183,
-      1.1133058475596846,
-      1.0852379414429327,
-      1.0524907626826396
+      1.17013943386089,
+      1.1773177511880544,
+      1.1792187645421326,
+      1.1765302741352537,
+      1.1682247832285362,
+      1.154819297593086,
+      1.1364215155455863,
+      1.1131374376516054,
+      1.085071390504979,
+      1.0523260501948197
      ]
     },
     {
@@ -278,35 +278,35 @@
    "coins": [
     {
      "label": "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
-     "delta": 0.01470124543246687
+     "delta": 0.014536532944646963
     },
     {
      "label": "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
-     "delta": 0.011423743849189316
+     "delta": 0.011445548500445879
     },
     {
      "label": "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
-     "delta": 0.014672327822375486
+     "delta": 0.01450761533455558
     },
     {
      "label": "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
-     "delta": 0.011394826239097933
+     "delta": 0.011416630890354496
     },
     {
      "label": "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
-     "delta": 0.014655117424821729
+     "delta": 0.014490404937001822
     },
     {
      "label": "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
-     "delta": 0.011377615841544175
+     "delta": 0.01139942049280096
     },
     {
      "label": "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
-     "delta": 0.014626199814730345
+     "delta": 0.014461487326910438
     },
     {
      "label": "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
-     "delta": 0.011348698231453014
+     "delta": 0.011370502882709577
     }
    ],
    "theta": {
@@ -342,6 +342,7 @@
     "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
     "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
     "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+    "Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange dit « erroné » (folio 108, D-336).",
     "Au-delà de trois ans : Effet macro éteint après trois ans.",
     "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
    ],
@@ -481,26 +482,26 @@
      "low": [
       1.1673979253215419,
       1.1728668638523863,
-      1.1734229824229565,
-      1.1687806158405092,
-      1.1589585590408202,
-      1.1440657787671529,
-      1.1242095261615985,
-      1.0994953607796025,
-      1.0700271742891414,
-      1.0359072138585288
+      1.1734464919308287,
+      1.1688273753497125,
+      1.1590283119093412,
+      1.1441582711858864,
+      1.124324507123077,
+      1.0996325820470707,
+      1.070186390365972,
+      1.0360881819579764
      ],
      "high": [
-      1.1707813021387965,
-      1.177497710778608,
-      1.1793967236971608,
-      1.1760720233519417,
-      1.1675422435237033,
-      1.1539167385818454,
-      1.1353031419527673,
-      1.111807390203882,
-      1.0835337468114146,
-      1.050584825615965
+      1.17013943386089,
+      1.1773177511880544,
+      1.1792187645421326,
+      1.1758960285751174,
+      1.1673681914415583,
+      1.1537446077502058,
+      1.1351329111641677,
+      1.1116390384849528,
+      1.0833672534202976,
+      1.0504201700397588
      ]
     },
     {
@@ -515,35 +516,35 @@
    "coins": [
     {
      "label": "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
-     "delta": 0.012795287859992621
+     "delta": 0.012630632283786802
     },
     {
      "label": "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
-     "delta": -0.0018824466352780345
+     "delta": -0.0017014785358306916
     },
     {
      "label": "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
-     "delta": 0.012766380241541198
+     "delta": 0.012601724665335157
     },
     {
      "label": "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
-     "delta": -0.0019112944485879524
+     "delta": -0.0017303263491403875
     },
     {
      "label": "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
-     "delta": 0.012749175790540246
+     "delta": 0.012584520214334205
     },
     {
      "label": "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
-     "delta": -0.0019284633063891832
+     "delta": -0.0017474952069416183
     },
     {
      "label": "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
-     "delta": 0.012720268172088822
+     "delta": 0.012555612595882781
     },
     {
      "label": "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
-     "delta": -0.001957311119698879
+     "delta": -0.0017763430202513142
     }
    ],
    "theta": {
@@ -579,6 +580,7 @@
     "Impulsion = chiffrage mécanique, ex ante comme les variantes de Mésange. Le comportement de la phase 3 ne la modifie pas, et son recoupement avec la réponse de Mésange n'est pas mesuré.",
     "Chocs superposés : Mésange est linéaire, et une impulsion qui change d'une année à l'autre y est la somme de chocs permanents décalés.",
     "La colonne « 1 an » est lue comme une moyenne de la première année, ce que le document dit pour le tableau 12 et que la ligne de solde ne répète pas.",
+    "Multiplicateur borné à zéro, et rétroaction d'une impulsion bornée à son coût brut : une baisse d'impôt ne s'autofinance pas au-delà de 100 %, ce que Mésange dit « erroné » (folio 108, D-336).",
     "Au-delà de trois ans : Effet macro tenu au niveau de la troisième année.",
     "Δ tenu en part de PIB constante au-delà de la dernière année chiffrée (convention, pas un chiffrage)"
    ],

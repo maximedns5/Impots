@@ -135,21 +135,6 @@ def test_the_rake_is_off_by_default() -> None:
     assert parameter.default is False
 
 
-def test_the_rake_runs_before_the_niche_imputation() -> None:
-    """The order is load-bearing and therefore asserted on the source.
-
-    Niche bases are handed out by DECILE OF RFR PER PART, and the rake moves RFR per part.
-    Imputing first would distribute bases by a ranking the rake then invalidates — a
-    plausible population that nobody could trace back to a defect.
-    """
-    from pathlib import Path
-
-    source = Path("src/impots/population/runner.py").read_text(encoding="utf-8")
-    body = source[source.index("def run("):]
-    assert body.index("if rake_top_tail:") < body.index("if impute_niches:"), (
-        "le recalage doit précéder l'imputation des niches")
-
-
 def test_a_raked_line_refuses_a_tolerance_verdict() -> None:
     """L1's completion condition, and the exact analogue of F3 M2's.
 

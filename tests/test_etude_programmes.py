@@ -91,29 +91,29 @@ def test_a_mixed_first_year_is_two_calls_and_only_in_a_programme_study() -> None
 def test_a_range_point_is_the_measure_alone_at_its_value(point, attendu) -> None:
     """GARDE (D-328). Le point d'une plage est la mesure seule, ce champ à sa valeur, dans
     le cadre de l'étude, mécanique."""
-    r = etude.plage_request("ir", "le_pen", "lp20_tva_energie", "tva_postes.energie", point)
+    r = etude.plage_request("central", "le_pen", "lp20_tva_energie", "tva_postes.energie", point)
     assert r["reform"] == {"tva_postes": {"energie": attendu}}
     assert r["firm_reform"] is None
     assert r["behavioural"] is r["macro"] is False
-    cadre = json.loads((ROOT / "etude" / "ir.json").read_text(encoding="utf-8"))
+    cadre = etude.lire_cadre("central")
     for key in ("spending", "growth", "rate", "horizon", "theta", "uprating"):
         assert r[key] == cadre[key]
 
 
 def test_a_range_point_outside_the_programme_is_refused() -> None:
     with pytest.raises(etude.EtudeError, match="pas de plage"):
-        etude.plage_request("ir", "le_pen", "lp20_tva_energie", "tva_taux_normal", "bas")
+        etude.plage_request("central", "le_pen", "lp20_tva_energie", "tva_taux_normal", "bas")
     with pytest.raises(etude.EtudeError, match="pas de plage"):
-        etude.plage_request("ir", "le_pen", "lp20_tva_energie", "tva_postes.energie",
+        etude.plage_request("central", "le_pen", "lp20_tva_energie", "tva_postes.energie",
                             "milieu")
 
 
 def test_a_firm_law_that_moves_in_the_horizon_has_its_debt_said_absent() -> None:
     """GARDE (D-328). La CVAE change de droit en 2028 : le chemin reporté la refuse
     (D-254), et le point dit pourquoi sa dette manque, au lieu de la reporter."""
-    r = etude.plage_request("ir", "attal", "a18_suppression_cvae", "cvae_echelle", "bas")
+    r = etude.plage_request("central", "attal", "a18_suppression_cvae", "cvae_echelle", "bas")
     assert "D-254" in etude.dette_absente(r)
-    r = etude.plage_request("ir", "le_pen", "lp20_tva_energie", "tva_postes.energie", "bas")
+    r = etude.plage_request("central", "le_pen", "lp20_tva_energie", "tva_postes.energie", "bas")
     assert etude.dette_absente(r) is None
 
 
@@ -149,23 +149,25 @@ def test_a_range_report_that_is_not_the_study_s_is_refused(tmp_path) -> None:
     for mesure, champ, point in study.points():
         report = {"programme": "roussel", "mesure": mesure, "champ": champ,
                   "point": point, "commit": "abc", "dirty": False, "where": "essai",
-                  "request": etude.plage_request("ir", "roussel", mesure, champ, point)}
+                  "request": etude.plage_request("central", "roussel", mesure, champ, point)}
         reports[point] = report
         (tmp_path / etude.PLAGES / etude.plage_name(mesure, champ, point)).write_text(
             json.dumps(report), encoding="utf-8")
-    assert len(study.load_plages("abc")) == 3
-    with pytest.raises(etude.EtudeError, match="sur son commit"):
-        study.load_plages("autre")
+    assert len(study.load_plages()) == 3
+    # A point on another commit is read only if a witness joins it to the first (D-335).
+    assert study.commits({"abc"}) == [("abc", None)]
+    with pytest.raises(etude.EtudeError, match="impots etude temoin"):
+        study.commits({"abc", "autre"})
     mesure, champ, _ = study.points()[0]
     faux = {**reports["bas"], "request": {**reports["bas"]["request"], "theta":
                                           {"common": 0.9}}}
     (tmp_path / etude.PLAGES / etude.plage_name(mesure, champ, "bas")).write_text(
         json.dumps(faux), encoding="utf-8")
     with pytest.raises(etude.EtudeError, match="pas le point de l'étude"):
-        study.load_plages("abc")
+        study.load_plages()
     (tmp_path / etude.PLAGES / "en_trop.json").write_text("{}", encoding="utf-8")
     with pytest.raises(etude.EtudeError, match="en_trop"):
-        study.load_plages("abc")
+        study.load_plages()
 
 
 def test_the_candidates_page_lists_the_24_with_their_coverage() -> None:
@@ -189,36 +191,6 @@ def test_an_amount_on_the_candidates_page_without_its_etage_is_refused(monkeypat
     monkeypatch.setattr(etude, "amounts", lambda text, etage, n: text)
     with pytest.raises(etude.EtudeError, match="sans son étage"):
         etude.presidentielle(etude.definitions())
-
-
-def test_a_pass_of_the_path_frees_what_the_years_before_kept() -> None:
-    """GARDE (D-330). Un chemin de dix ans gardait les systèmes réformés de chaque année et
-    les arbres de la référence à chaque instant : celui d'Attal montait de 2 Go par passe et
-    était tué dans sa deuxième année. Chaque passe libère ce que la suivante ne lit pas."""
-    import inspect
-
-    from impots.api.schemas import ReformSpec
-    from impots.engine import system
-    from impots.entreprises import system as firm_system
-    from impots.entreprises.reforms import FirmReformSpec
-    from impots.population import cli
-
-    system.reformed_for(ReformSpec(decote_taux=0.4), 2026)
-    firm_system.reformed_for(FirmReformSpec(c3s_taux=0.001), 2026)
-    assert system.reformed.cache_info().currsize >= 1
-    assert firm_system.reformed.cache_info().currsize >= 1
-    base = system.baseline()
-    base.get_parameters_at_instant("2026-01-01")
-    before = base.get_parameters_at_instant
-    cli._liberer()
-    assert system.reformed.cache_info().currsize == 0
-    assert firm_system.reformed.cache_info().currsize == 0
-    assert base.get_parameters_at_instant is not before
-    assert base.get_parameters_at_instant("2026-01-01") is not None
-    # Structural: the whole pass of the path frees before it prices.
-    source = inspect.getsource(cli.cmd_predictif)
-    assert source.index("passe du simulateur") < source.index("_liberer()") < source.index(
-        "api._price_first_year,")
 
 
 # --- les pages, sur les rapports commités (D-328, D-329) ------------------------------
@@ -261,6 +233,13 @@ def test_every_range_point_is_on_the_page(pages) -> None:
         assert len(rows) == len(study.points()), slug
 
 
+def test_a_programme_page_says_measures_not_articles(pages) -> None:
+    """D-336 : un programme a des mesures ; la loi seule a des articles."""
+    for slug, (_, text) in pages.items():
+        assert "l'effet macro de chaque mesure" in text, slug
+        assert "chaque article" not in text, slug
+
+
 def test_the_announced_layer_stays_apart(pages) -> None:
     """La couche annoncée a sa section, et ni l'en-bref ni la part chiffrée ne la lisent."""
     for slug, (_, text) in pages.items():
@@ -277,16 +256,13 @@ def test_a_mixed_part_shows_both_layers(pages) -> None:
         assert "La bande et l'éventail ne lisent que la part des ménages" in text
 
 
-def test_a_pass_of_the_path_runs_in_a_process_of_its_own() -> None:
-    """GARDE (D-331). Une passe du chemin prend jusqu'à dix gigaoctets, qu'un processus ne
-    rend pas tous : les chemins de Tondelier et de Lisnard étaient tués. Chaque passe
-    tourne dans un processus neuf, qui rend tout en finissant, et sa valeur revient."""
-    import inspect
+def test_a_pass_run_in_a_process_of_its_own_gives_its_value_back() -> None:
+    """D-331 : chaque passe du chemin tourne dans un processus neuf, et le nombre qu'elle
+    chiffre en revient tel quel. Que `cmd_predictif` l'y fasse tourner est de la plomberie,
+    qui n'a plus de test qui lit le source (D-335, D-336)."""
     import os
 
     from impots.population import cli
 
     assert cli._isole(os.getpid) != os.getpid()
     assert cli._isole(divmod, 17, 5) == (3, 2)
-    source = inspect.getsource(cli.cmd_predictif)
-    assert "_isole(\n                api._price_first_year," in source

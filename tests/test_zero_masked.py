@@ -32,12 +32,12 @@ pytestmark = pytest.mark.slow
 
 @pytest.fixture(scope="module")
 def aggregates():
-    from impots.api.main import QUICK_TIER_HOUSEHOLDS, _population_frame
     from impots.population import aggregate as agg_module
     from impots.population import runner as run_module
+    from impots.service import QUICK_TIER_HOUSEHOLDS, population_frame
 
     return agg_module.aggregate(run_module.run(
-        _population_frame(), year=2024, tier="full",
+        population_frame(), year=2024, tier="full",
         sample=QUICK_TIER_HOUSEHOLDS).households)
 
 

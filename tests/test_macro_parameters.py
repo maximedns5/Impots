@@ -146,24 +146,27 @@ def test_table_values_are_the_parsed_ones(tmp_path: Path):
     table = loaded.tables["multiplier_by_instrument"]
     assert table.at("impot_sur_le_revenu", "1") == pytest.approx(0.41)
     published = mesange.load()["investissement_public"].multiplier
-    assert table.profile("investissement_public") == published[:3]
+    assert table.profile("investissement_public") == published[:3] + published[3:5]
 
 
 @needs_source
 def test_the_long_horizons_are_published_but_refused():
-    """5, 10 and LT exist in the source and must not reach a reader.
+    """LT exists in the source and must not reach a reader: §4.4 shows it is set by a
+    specification choice rather than measured — employer contributions give 1.73 at LT
+    under wage-setting and 0.25 under a Phillips curve, a factor of seven (D-055).
 
-    Two independent reasons that agree: §0 refuses any horizon past three years, and
-    §4.4 shows the long columns are set by a specification choice rather than measured
-    — employer contributions give 1.73 at LT under wage-setting and 0.25 under a
-    Phillips curve, a factor of seven.
+    The 5- and 10-year columns are read by the loop's two rows only, for the « lue »
+    persistence (D-336, decision 1); the jobs row, which the fan joins, stays at three.
     """
-    table = store.load().tables["multiplier_by_instrument"]
-    assert table.usable_horizons == ("1", "2", "3")
-    assert set(table.horizons) > set(table.usable_horizons)
-    for horizon in ("5", "10", "LT"):
+    loaded = store.load()
+    for key in ("multiplier_by_instrument", "primary_balance_by_instrument"):
+        table = loaded.tables[key]
+        assert table.usable_horizons == ("1", "2", "3", "5", "10"), key
+        assert set(table.horizons) > set(table.usable_horizons)
         with pytest.raises(KeyError, match="published but not usable"):
-            table.at("impot_sur_le_revenu", horizon)
+            table.at("impot_sur_le_revenu", "LT")
+    jobs = loaded.tables["employment_by_instrument"]
+    assert jobs.usable_horizons == ("1", "2", "3")
 
 
 @needs_source

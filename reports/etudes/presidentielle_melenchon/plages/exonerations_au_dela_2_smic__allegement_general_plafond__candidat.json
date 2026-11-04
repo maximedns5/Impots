@@ -61,8 +61,8 @@
     ],
     "population_view": "vieillie"
   },
-  "computed": "2026-11-02",
-  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "computed": "2026-11-03",
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
   "dirty": false,
-  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
 }

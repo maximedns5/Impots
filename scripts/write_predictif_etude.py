@@ -2419,8 +2419,8 @@ def render(etudes: list[dict[str, Any]],
         f"- Croissance : {h['growth_name']}. Taux : {h['rate_name']}.",
         f"- Salaires : {_pct(h['uprating']['wage'])} par an, prix "
         f"{_pct(h['uprating']['prices'])} ({h['uprating']['source']}).",
-        f"- θ = {theta} partout. Comportement et boucle "
-        "chiffrés, les deux persistances de l'effet macro côte à côte (D-230).",
+        f"- θ = {theta} partout. Comportement et boucle chiffrés, "
+        f"{_persistences_said(report['searches'])}",
         f"- Cible : Δb {target_year} ≤ {_pt(target)}, la dette de la réforme sous celle "
         f"de la référence en {target_year}. {unit}.",
         f"- Vues : vieillie, {report['views']['vieillie']} ; figée, "
@@ -2497,6 +2497,21 @@ def render(etudes: list[dict[str, Any]],
             "- Elle ne recommande rien. Elle dit ce que la machine répond, sous ces "
             "hypothèses, à la question posée."]
     return "\n".join(out) + "\n"
+
+
+def _persistences_said(searches: list[dict[str, Any]]) -> str:
+    """The frame's line on the persistences: the two of D-230 as the committed reports
+    have them; or, since D-336, « lue » with the two others beside it, in the report's
+    order, « lue » first."""
+    persistences = [s["persistence"] for s in searches]
+    if "lue" not in persistences:
+        return "les deux persistances de l'effet macro côte à côte (D-230)."
+    if persistences[0] != "lue":
+        raise EtudeError(f"les persistances {persistences} : « lue », la seule que lit le "
+                         f"verdict (D-336), n'est pas en tête ; la page la lirait après.")
+    return (f"{len(persistences)} persistances de l'effet macro côte à côte, « lue » en "
+            f"tête, Mésange lu à ses horizons ; le verdict de D-336 ne lit qu'elle, les "
+            f"autres sont des sensibilités.")
 
 
 def main(argv: list[str] | None = None) -> int:

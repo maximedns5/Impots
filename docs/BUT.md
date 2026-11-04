@@ -168,7 +168,7 @@ préenregistrées comme toute passe, et écrit docs/etudes/<nom>.md depuis les s
 commités, dans le cadre de D-289 : le coût mécanique et les gagnants et perdants ; la bande
 ou son absence avec la raison ; l'écart de dette en 2035 à θ½ et aux coins de la boîte,
 dans les deux vues, avec le verdict ; l'écart à l'évaluation préalable quand le scénario a
-un cas noté. docs/ETUDE_PLF2027.md est régénérée par la commande, à l'identique ou avec
+un cas noté. docs/etudes/plf2027.md est régénérée par la commande, à l'identique ou avec
 ses différences expliquées dans la D-entrée, et l'étude du PLFSS 2027 est la première
 produite par elle. Un test refuse la dérive de chaque page, vu échouer sur une page
 modifiée. Preuve attendue : la commande et sa sortie, la sortie verte des tests ciblés,
@@ -473,3 +473,45 @@ moteur, sans effet sur les nombres, ont fait tenir les chemins dans le conteneur
 passe dans son processus (D-331), les taux marginaux qui libèrent leurs simulations
 (D-332) ; le runner fait de même (D-334), sans quoi un test lourd tombait, sur `main`
 aussi.
+
+### But 14 — Consolider : un moteur cohérent de bout en bout (fait, D-336 à D-339 ; à merger)
+
+L'audit (`docs/AUDIT_BUT14.md`) trouve un socle solide et une architecture empilée but par
+but : cinq chemins de passe qui n'imputent pas la même population, une couche de service
+dans l'API, un cadre rangé dans une exploration, et six verdicts de dette sur huit portés
+par trois choix de modèle plutôt que par l'économie. Ce but ne fait monter aucun des trois
+chiffres ; il prépare le deuxième, des études justes, et le précalcul des curseurs.
+
+```
+/goal Le moteur est cohérent de bout en bout, et c'est mergé dans main. Une seule
+politique d'imputation sert tous les chemins de passe (API, CLI, scénarios, programme,
+étude), et un bouton qui ne peut pas bouger sur un chemin y est refusé, jamais rendu à zéro.
+La couche de service quitte api/main.py pour un module que les chemins appellent par des
+fonctions publiques. Le cadre des études vit dans un fichier à lui. etude.py suit D-335 :
+plusieurs commits sont acceptés quand une passe témoin rejouée sur le nouveau commit redonne
+son rapport à l'identique, et une série interrompue reprend. Chaque rapport de chemin écrit,
+par année et par vue, les impulsions par instrument et les statistiques des canaux ; une
+fonction pure en refait la dette, la boucle et la boîte de θ, égale au chemin du moteur à
+1e-9 près. Les décisions du propriétaire sur la persistance, le multiplicateur, le taux de
+la dette ajoutée, C1, C5 et C6 sont appliquées, chacune dans sa D-entrée avec son effet
+mesuré. Le code mort et les références périmées listés dans docs/AUDIT_BUT14.md sont
+retirés ou corrigés. Les dix études sont relancées une fois, sur un commit figé, après un
+profil de mémoire, préenregistrées avec leur pronostic, et chaque page dit ce qui a bougé et
+pourquoi. Si la calibration doit changer, s'arrêter et demander. Preuve attendue : le
+tableau des points de l'audit, fait ou laissé avec sa raison ; les dix études avant et
+après ; la sortie verte de make impact et des lourds ; l'URL de la PR et le SHA du merge.
+Ou s'arrêter après 60 tours, en disant ce qui manque.
+```
+
+Validé par le propriétaire le 3 novembre 2026 (« fais-moi tout ça ») : les douze décisions
+de l'audit sont prises comme il les recommande (D-336).
+
+Résultat, D-337 à D-339. Les décisions de modèle sont mesurées sans passe (D-337) ; la
+décision 3 n'est pas appliquée, le texte du PLF 2027 ne donnant pas de taux à dix ans. Les
+dix études ont tourné sur un seul commit, `7235bd8`, préenregistrées (D-338) : coûts 13 sur
+13 redonnés à l'euro, verdicts 11 sur 13, θ½ des programmes 5 sur 8, Monte-Carlo 4 sur 8.
+Les trois programmes qui manquent (Roussel, Le Pen, Labib) manquent par le pronostic, dont
+la reconstruction perdait l'impulsion de TVA ; la clé ajoutée, il redonne les passes à 0,2
+point près (D-339). Sous la persistance « lue », Attal passe de +20,3 à +4,4 points de dette
+en 2035, et la falaise de l'an 4 a disparu ; trois programmes montent la dette à chaque coin
+(Lisnard, Retailleau, Labib), cinq en dépendent de θ. Les pages publient « éteint » et « tenu » à côté, comme sensibilités.

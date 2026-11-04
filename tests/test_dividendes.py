@@ -13,6 +13,7 @@ import numpy as np
 import polars as pl
 import pytest
 
+from impots import service
 from impots.behavioural import channels
 from impots.behavioural.store import Parameter, Source, Store, Support, Verifier
 
@@ -402,12 +403,11 @@ def _loaded(monkeypatch):
 
 
 def test_the_api_gives_c10_the_run_s_dividends_and_both_rates(_loaded, monkeypatch) -> None:
-    from impots.api import main
     from impots.population import capital as capital_module
 
     monkeypatch.setattr(capital_module, "social_levy_rate", lambda year: 0.172)
     households = pl.DataFrame({"weight": [2.0, 3.0], "dividendes": [10_000.0, 5_000.0]})
-    inputs = main._dividend_inputs(_request(pfu_taux=0.20), households)
+    inputs = service.dividend_inputs(_request(pfu_taux=0.20), households)
     assert inputs["dividend_base_eur"] == pytest.approx(35_000.0)
     assert inputs["levy_rate_baseline"] == pytest.approx(0.128 + 0.172)
     assert inputs["levy_rate_reform"] == pytest.approx(0.20 + 0.172)
@@ -417,29 +417,27 @@ def test_the_api_gives_c10_the_wage_wedge_and_the_corporate_rate(_loaded,
                                                                   monkeypatch) -> None:
     """The wedge as measured, and the IS rate the profit pays: the law's for the year, or
     the reform's when it sets one (D-252)."""
-    from impots.api import main
     from impots.entreprises.reforms import FirmReformSpec
     from impots.population import capital as capital_module
 
     monkeypatch.setattr(capital_module, "social_levy_rate", lambda year: 0.172)
     households = pl.DataFrame({"weight": [2.0], "dividendes": [10_000.0]})
-    inputs = main._dividend_inputs(_request(pfu_taux=0.20), households)
+    inputs = service.dividend_inputs(_request(pfu_taux=0.20), households)
     assert (inputs["wage_levy_rate"], inputs["wage_cost_rate"]) == (1.14, 1.66)
     assert inputs["corporate_rate"] == pytest.approx(0.25)
     request = SimpleNamespace(reform=_request(pfu_taux=0.20).reform, year=2024,
                               firm_reform=FirmReformSpec(is_taux_normal=0.22))
-    assert main._dividend_inputs(request, households)["corporate_rate"] == pytest.approx(
+    assert service.dividend_inputs(request, households)["corporate_rate"] == pytest.approx(
         0.22)
 
 
 def test_the_api_gives_c10_nothing_without_imputed_capital(_loaded) -> None:
-    from impots.api import main
 
     nothing = pl.DataFrame({"weight": [2.0], "dividendes": [0.0]})
     some = pl.DataFrame({"weight": [2.0], "dividendes": [10_000.0]})
-    assert main._dividend_inputs(_request(pfu_taux=0.20), nothing) == {}
-    assert main._dividend_inputs(_request(pfu_taux=0.20), None) == {}
-    assert main._dividend_inputs(_request(decote_taux=0.3), some) == {}
+    assert service.dividend_inputs(_request(pfu_taux=0.20), nothing) == {}
+    assert service.dividend_inputs(_request(pfu_taux=0.20), None) == {}
+    assert service.dividend_inputs(_request(decote_taux=0.3), some) == {}
 
 
 def test_the_social_levies_are_measured_on_the_engine() -> None:

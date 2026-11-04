@@ -21,6 +21,7 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from exploration_cases import households
+from impots import service
 from impots.api import main
 from impots.api.schemas import PredictifReportResponse, ReformSpec
 from impots.dette import reference
@@ -121,7 +122,8 @@ def test_past_three_years_both_persistences_stand_side_by_side() -> None:
             getattr(rapport, view)
     payload = rapport.payload()
     assert all(row["delta_aged"] is None for row in payload["years"])
-    off, held = payload["side_by_side"]
+    read, off, held = payload["side_by_side"]
+    assert read["label"] == retroaction.PERSISTENCE_LABELS["lue"]
     assert off["label"] == retroaction.PERSISTENCE_LABELS["eteint"]
     assert off["years"][:3] == held["years"][:3]
     assert off["years"][4]["delta_aged"] != held["years"][4]["delta_aged"]
@@ -201,7 +203,7 @@ def test_one_view_priced_whole_and_the_other_by_its_cost_alone_is_refused() -> N
 # --------------------------------------------------------------------------- #
 @pytest.mark.parametrize("how, needle", [
     ("own path too", "trajectoire en propre ET des scénarios"),
-    ("one scenario", "les deux persistances, chacune une fois"),
+    ("one scenario", "les trois persistances, chacune une fois"),
     ("short", "ne couvre pas toutes les années"),
     ("no path", "sans trajectoire pour certaines années"),
 ])
@@ -235,7 +237,7 @@ ARGS = ["predictif", "gel_bareme", "--reference", "reconduit",
 @pytest.fixture
 def command(monkeypatch, tmp_path) -> dict:
     """The command with the simulator's pass stubbed one seam below, as the explorer's
-    tests stub it (`_price_first_year`), and a start that needs no INSEE file."""
+    tests stub it (`service.price_first_year`), and a start that needs no INSEE file."""
     seen: list = []
     # The mechanical path's pass is stubbed too, on a five-person population: a refusal
     # the guard sweep removes must fail this test in seconds, not run the real
@@ -250,7 +252,8 @@ def command(monkeypatch, tmp_path) -> dict:
     monkeypatch.setattr(runner, "run", lambda pop, **kw: SimpleNamespace(
         households=SimpleNamespace(cost=5e9)))
     monkeypatch.setattr(aggregate, "aggregate",
-                        lambda households: SimpleNamespace(reform_cost=households.cost))
+                        lambda households: SimpleNamespace(reform_cost=households.cost,
+                                                           totals={}))
 
     def stub(request, *, uprating, macro=False, view="vieillie"):
         seen.append((request.year, view, request.behavioural, macro))
@@ -260,27 +263,43 @@ def command(monkeypatch, tmp_path) -> dict:
                                impulse={"impot_sur_le_revenu": cost} if macro else None,
                                uncovered={})
 
-    monkeypatch.setattr(main, "_price_first_year", stub)
-    monkeypatch.setattr(main, "_predictif_macro_store", synthetic_macro_store)
+    monkeypatch.setattr(service, "price_first_year", stub)
+    monkeypatch.setattr(service, "predictif_macro_store", synthetic_macro_store)
     monkeypatch.setattr(reference, "start_from_accounts", lambda year: START)
+    # The command runs each pass in a fresh, spawned process (`cli._isole`, D-331): the
+    # child imports the modules anew and would see neither the stub nor `seen`, and a
+    # closure does not pickle. Here the pass runs in this process instead, the call
+    # otherwise the same; `isolated` records that every pass still went through `_isole`,
+    # with the simulator's pass, so a pass that skipped the isolation fails below. That the
+    # child computes what the parent would is plumbing, measured once in D-331.
+    isolated: list = []
+
+    def in_process(function, *args, **kwargs):
+        isolated.append(function)
+        return function(*args, **kwargs)
+
+    monkeypatch.setattr(cli, "_isole", in_process)
 
     def launch(*extra: str, base: list[str] = ARGS) -> tuple[int, dict | None]:
         code = cli.main([*base, *extra, "--out-dir", str(tmp_path)])
         out = tmp_path / "predictif_gel_bareme.json"
         return code, json.loads(out.read_text(encoding="utf-8")) if out.exists() else None
 
-    return {"seen": seen, "launch": launch, "out": tmp_path, "monkeypatch": monkeypatch}
+    return {"seen": seen, "launch": launch, "out": tmp_path, "monkeypatch": monkeypatch,
+            "isolated": isolated}
 
 
 def test_the_command_prices_every_year_through_the_simulators_pass(command) -> None:
-    """Every year and both views through `_price_first_year`, past the API's window: the
+    """Every year and both views through `service.price_first_year`, past the API's window: the
     years 2027 to 2029 are not ones a request may ask for (MAX_YEAR), and the command
     prices them anyway, each with its basis, as it always has (D-216)."""
     code, report = command["launch"]("--horizon", "4", "--behavioural", "--macro")
     assert code == 0
     assert sorted(command["seen"]) == sorted(
         (y, v, True, True) for y in (2026, 2027, 2028, 2029) for v in ("vieillie", "figee"))
-    assert [p["persistence"] for p in report["side_by_side"]] == ["eteint", "tenu"]
+    # Each of the eight passes went through the isolation (D-331), none beside it.
+    assert command["isolated"] == [service.price_first_year] * 8
+    assert [p["persistence"] for p in report["side_by_side"]] == ["lue", "eteint", "tenu"]
     assert report["behavioural"] and report["macro"] and report["theta_applied"]
     PredictifReportResponse.model_validate(report)
 
@@ -338,7 +357,7 @@ def _firm_alone(year: int, view: str, *, asked: bool = True, macro: bool = True)
     no household channel reads it (D-268)."""
     cost = _cost(year, view)
     return Priced(cost=cost, inputs=None, impulse={} if macro else None,
-                  uncovered={"cvae": main.FIRM_NO_VARIANT} if macro else {},
+                  uncovered={"cvae": service.FIRM_NO_VARIANT} if macro else {},
                   layers={"menages": 0.0, "entreprises": cost}, behaviour_asked=asked)
 
 
@@ -417,12 +436,12 @@ def test_the_command_carries_the_flag_from_the_simulators_pass(command) -> None:
         return SimpleNamespace(
             cost=cost, view=view, note="", deciles=[], inputs=None,
             impulse={} if macro else None,
-            uncovered={"cvae": main.FIRM_NO_VARIANT} if macro else {},
+            uncovered={"cvae": service.FIRM_NO_VARIANT} if macro else {},
             layers={"menages": 0.0, "entreprises": cost},
             behaviour_asked=bool(request.behavioural) and request.reform.is_empty())
 
-    command["monkeypatch"].setattr(main, "_price_first_year", stub)
-    command["monkeypatch"].setattr(main, "_firm_report_note", lambda *a, **k: FIRM_NOTE)
+    command["monkeypatch"].setattr(service, "price_first_year", stub)
+    command["monkeypatch"].setattr(service, "firm_report_note", lambda *a, **k: FIRM_NOTE)
     base = ["predictif", "cvae_moitie_2026", *ARGS[2:]]
     code = cli.main([*base, "--horizon", "3", "--behavioural", "--macro",
                      "--out-dir", str(command["out"])])
@@ -458,7 +477,7 @@ def test_the_box_at_theta_is_the_report_s_own_path() -> None:
     assert box["year"] == 2030
     assert box["rows"] == ["eti_all", "eti_top_decile", MACRO_ROW]
     drawn = {p["persistence"]: p["years"][-1] for p in payload["side_by_side"]}
-    assert [p["persistence"] for p in box["paths"]] == ["eteint", "tenu"]
+    assert [p["persistence"] for p in box["paths"]] == ["lue", "eteint", "tenu"]
     for path in box["paths"]:
         last = drawn[path["persistence"]]
         assert path["every_year"]["vieillie"]["theta"] == pytest.approx(last["delta_aged"],

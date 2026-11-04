@@ -109,7 +109,8 @@ def _frame(args) -> dict:
 
 def test_the_annual_paths_take_the_study_s_frame_field_for_field(study) -> None:
     annual = _load("etude_annuelle")
-    frame = cli.build_parser().parse_args(annual.argv(study.cadre, where="là"))
+    frame = cli.build_parser().parse_args(annual.argv(study.cadre, where="là",
+                                                      requests=etude.CADRES))
     for name in study.noms:
         args = cli.build_parser().parse_args(study.annual_argv(name, where="ici"))
         assert args.func is cli.cmd_predictif and args.scenario == name
@@ -118,8 +119,10 @@ def test_the_annual_paths_take_the_study_s_frame_field_for_field(study) -> None:
         assert args.behavioural and args.macro and args.horizon == 10
 
 
+#: The entry the study names: D-289 at first, D-338 since the series of but 14.
+ENTREE = etude.definition("plf2027").preenregistrement
 #: What git says of a commit whose entry is in and which a remote branch carries.
-GIT = {("show", "HEAD:docs/DECISIONS.md"): "## D-288 — x\n## D-289 — L'étude\n",
+GIT = {("show", "HEAD:docs/DECISIONS.md"): f"## D-288 — x\n## {ENTREE} — L'étude\n",
        ("branch", "-r", "--contains", "HEAD"): "  origin/claude/x\n"}
 
 
@@ -176,7 +179,7 @@ def test_a_pass_that_fails_stops_the_ones_after_it(launcher, capsys) -> None:
 @pytest.mark.parametrize("how, needle", [
     ("dirty", "modifications non commitées"),
     ("there", "un rapport n'est pas écrasé en silence"),
-    ("unregistered", "D-289 n'est pas dans docs/DECISIONS.md au commit"),
+    ("unregistered", f"{ENTREE} n'est pas dans docs/DECISIONS.md au commit"),
     ("unpushed", "aucune branche distante ne porte le commit"),
 ])
 def test_the_launcher_refuses_before_any_pass(launcher, capsys, how: str,
@@ -189,8 +192,49 @@ def test_the_launcher_refuses_before_any_pass(launcher, capsys, how: str,
                                                                          encoding="utf-8")
     if how == "unregistered":
         # The entry's number in another heading's text is not the entry.
-        launcher.git[("show", "HEAD:docs/DECISIONS.md")] = "## D-288 — avant D-289\n"
+        launcher.git[("show", "HEAD:docs/DECISIONS.md")] = f"## D-288 — avant {ENTREE}\n"
     if how == "unpushed":
         launcher.git[("branch", "-r", "--contains", "HEAD")] = ""
     assert launcher.study.launch("ici") == 1
     assert launcher.calls == [] and needle in capsys.readouterr().err
+
+
+def _report_on(launcher, name: str, commit: str) -> dict:
+    launcher.out.mkdir(exist_ok=True)
+    report = {"scenario": name, "commit": commit, "dirty": False, "where": "avant"}
+    (launcher.out / f"premiere_annee_{name}.json").write_text(json.dumps(report),
+                                                              encoding="utf-8")
+    return report
+
+
+def _steps(launcher) -> list:
+    return [("premiere", c[c.index("premiere") + 2]) if "premiere" in c
+            else ("predictif", c[c.index("predictif") + 1]) for c in launcher.calls]
+
+
+def test_an_interrupted_series_resumes_after_the_reports_on_its_commit(launcher,
+                                                                       capsys) -> None:
+    """D-335 : une série arrêtée après sa première année reprend à la deuxième, sur le
+    même commit ; le rapport déjà là n'est pas réécrit."""
+    first = launcher.study.noms[0]
+    _report_on(launcher, first, "c0ffee")
+    assert launcher.study.launch("ici") == 0
+    assert _steps(launcher) == [("premiere", n) for n in launcher.study.noms[1:]] + [
+        ("predictif", n) for n in launcher.study.noms]
+    assert f"premiere_annee_{first}.json : déjà là" in capsys.readouterr().out
+
+
+def test_a_series_resumes_on_a_commit_a_witness_joins_and_not_on_another(launcher,
+                                                                          capsys) -> None:
+    first = launcher.study.noms[0]
+    report = _report_on(launcher, first, "a" * 40)
+    assert launcher.study.launch("ici") == 1
+    assert launcher.calls == []
+    assert "impots etude temoin plf2027" in capsys.readouterr().err
+    (launcher.out / etude.TEMOINS).mkdir()
+    (launcher.out / etude.TEMOINS / "c0ffee.json").write_text(json.dumps({
+        "passe": f"premiere_annee_{first}.json", "reference": "a" * 40, "commit": "c0ffee",
+        "identique": True, "where": "là", "computed": "2026-11-04",
+        "rapport": {**report, "commit": "c0ffee", "where": "là"}}), encoding="utf-8")
+    assert launcher.study.launch("ici") == 0
+    assert _steps(launcher)[0] == ("premiere", launcher.study.noms[1])

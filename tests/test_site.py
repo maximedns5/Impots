@@ -83,6 +83,22 @@ def test_every_study_has_a_page_and_the_index_lists_it(built) -> None:
             in built["index.html"]
 
 
+def test_the_index_gives_each_study_its_commit_and_says_they_do_not_compare(built) -> None:
+    """D-336 : les études ont tourné sur des commits et des moteurs différents ; l'accueil
+    le dit avant toute comparaison, et chaque entrée donne son commit."""
+    index = built["index.html"]
+    # Le message suit les rapports : présent s'ils tiennent sur plusieurs commits, absent
+    # quand une série les a tous chiffrés sur un seul (D-338).
+    commits = {s.load()[0]["first"]["commit"] for s in etude.definitions()}
+    warned = "Les études n'ont pas été chiffrées sur le même code" in index
+    assert warned == (len(commits) > 1)
+    assert ("ne se compare donc pas à celui d'une autre" in index) == warned
+    for study in etude.definitions():
+        entry = index.split(f'<a href="{study.nom}.html">')[1].split("</li>")[0]
+        commit = study.load()[0]["first"]["commit"]
+        assert f"sur le commit <code>{commit[:7]}</code>" in entry, study.nom
+
+
 def test_no_page_runs_a_script(built, monkeypatch) -> None:
     assert not any("<script" in text.lower() for text in built.values())
     monkeypatch.setattr(site, "STYLE", "<script>alert(1)</script>")
@@ -165,7 +181,8 @@ def test_an_unrun_study_is_listed_without_a_page(tmp_path) -> None:
                           page=tmp_path / "futur.md", rapports=tmp_path / "rien")
     files = site.build([study])
     assert "futur.html" not in files
-    assert "préenregistrée (D-302), ses passes n'ont pas tourné" in files["index.html"]
+    assert (f"préenregistrée ({study.preenregistrement}), ses passes n'ont pas tourné"
+            in files["index.html"])
 
 
 def test_a_table_without_its_header_line_is_refused() -> None:

@@ -40,6 +40,8 @@ from typing import Any
 
 import numpy as np
 
+from impots import service
+
 ROOT = Path(__file__).resolve().parents[1]
 REQUESTS = ROOT / "etude"
 REPORTS = ROOT / "reports"
@@ -131,15 +133,16 @@ def name(view: str, seed: int, step: float) -> str:
 # --------------------------------------------------------------------------- #
 # C1, household by household
 # --------------------------------------------------------------------------- #
-def terms(emtr_baseline: np.ndarray, emtr_reform: np.ndarray, base: np.ndarray,
-          weights: np.ndarray, elasticity: np.ndarray) -> np.ndarray:
-    """Each household's term of C1's sum, the channel's formula with its elasticity."""
-    from impots.behavioural.channels import NET_OF_TAX_FLOOR
+def terms(inputs: dict[str, np.ndarray], elasticity: np.ndarray) -> np.ndarray:
+    """Each household's term of C1's sum, the channel's formula with its elasticity: the
+    income tax's own rate in Δln, the total rate on the receipt (D-336)."""
+    from impots.behavioural.channels import c1_terms
 
-    net_baseline = np.clip(1.0 - emtr_baseline, NET_OF_TAX_FLOOR, None)
-    net_reform = np.clip(1.0 - emtr_reform, NET_OF_TAX_FLOOR, None)
-    return (weights * base * (np.log(net_reform) - np.log(net_baseline)) * emtr_reform
-            * elasticity)
+    own, _ = c1_terms(emtr_ir_baseline=inputs["emtr_ir_baseline"],
+                      emtr_ir_reform=inputs["emtr_ir_reform"],
+                      emtr_reform=inputs["emtr_reform"], taxable_base=inputs["taxable_base"],
+                      weights=inputs["weights"])
+    return own * elasticity
 
 
 def standard_error(contributions: np.ndarray, weights: np.ndarray) -> float:
@@ -163,9 +166,9 @@ def decompose(households: Any, frame: Any, reform: Any, store: Any, theta: Any,
     standard error of the sum. `households` are the pass's households, earners or not."""
     import polars as pl
 
-    from impots.api.main import eti_inputs
     from impots.behavioural import channels
     from impots.predictif.theta import pinned, value_at
+    from impots.service import eti_inputs
 
     earning = households.filter(pl.col("n_earners") > 0)
     inputs = eti_inputs(frame, earning)
@@ -178,15 +181,14 @@ def decompose(households: Any, frame: Any, reform: Any, store: Any, theta: Any,
         inputs["top_decile"],
         value_at(store["eti_top_decile"], theta.for_row("eti_top_decile")),
         value_at(store["eti_all"], theta.for_row("eti_all")))
-    own = terms(inputs["emtr_baseline"], inputs["emtr_reform"], inputs["taxable_base"],
-                inputs["weights"], elasticity)
+    own = terms(inputs, elasticity)
     if not np.isclose(own.sum(), receipt, rtol=1e-9, atol=1.0):
         raise BruitError(f"les termes des ménages somment à {own.sum():,.0f} €, le canal "
                          f"à {receipt:,.0f} € : la décomposition ne serait pas C1.")
     from impots.behavioural.channels import NET_OF_TAX_FLOOR
 
-    floor_baseline = 1.0 - inputs["emtr_baseline"] <= NET_OF_TAX_FLOOR
-    floor_reform = 1.0 - inputs["emtr_reform"] <= NET_OF_TAX_FLOOR
+    floor_baseline = 1.0 - inputs["emtr_ir_baseline"] <= NET_OF_TAX_FLOOR
+    floor_reform = 1.0 - inputs["emtr_ir_reform"] <= NET_OF_TAX_FLOOR
     one = floor_baseline ^ floor_reform
     largest = np.argsort(np.abs(own))[-top:]
     every = np.zeros(households.height)
@@ -225,12 +227,11 @@ def kappa(cost: float = 1e9, requests: Path = REQUESTS) -> float:
     """Δb at the study's last year, a share of GDP, per euro of first-year cost carried
     at a constant share of GDP: the chain's own, in the study's frame. A receipt of C1
     lowers the debt by as much."""
-    from impots.api import main as api
     from impots.dette import reference
     from impots.predictif import chaine
 
     request = _request(requests)
-    hypotheses = api._predictif_hypotheses(request)
+    hypotheses = service.predictif_hypotheses(request)
     start = reference.start_from_accounts(chaine.START_YEAR)
     path = chaine.run(start, horizon=request.horizon,
                       costs=chaine.ReformCosts(by_year={start.year + 1: cost},
@@ -243,7 +244,6 @@ def kappa(cost: float = 1e9, requests: Path = REQUESTS) -> float:
 def one(view: str, seed: int, step: float, where: str, out: Path = OUT) -> dict[str, Any]:
     """The study's C1 bundles, on one sample at one step, in one frame."""
     from impots import uprating as up
-    from impots.api import main as api
     from impots.behavioural import emtr
     from impots.population.runner import subsample
     from impots.predictif import chaine, recherche
@@ -255,12 +255,12 @@ def one(view: str, seed: int, step: float, where: str, out: Path = OUT) -> dict[
     if path.exists():
         raise BruitError(f"{path} existe : un rapport n'est pas écrasé en silence.")
     request = _request()
-    hypotheses = api._predictif_hypotheses(request)
+    hypotheses = service.predictif_hypotheses(request)
     year = chaine.START_YEAR + 1
-    frame = api._population_frame()
+    frame = service.population_frame()
     if view == "vieillie":
         frame = up.uprate(frame, year, hypotheses.uprating)
-    drawn = subsample(frame, api.BEHAVIOURAL_EMTR_HOUSEHOLDS, seed=seed)
+    drawn = subsample(frame, service.BEHAVIOURAL_EMTR_HOUSEHOLDS, seed=seed)
     k = kappa()
     theta = Theta(common=THETA)
     rows, baseline = [], None
@@ -286,7 +286,7 @@ def one(view: str, seed: int, step: float, where: str, out: Path = OUT) -> dict[
     commit, dirty = recherche.code_state(ROOT)
     payload = {
         "view": view, "seed": seed, "step": step, "year": year,
-        "households": int(api.BEHAVIOURAL_EMTR_HOUSEHOLDS), "theta": THETA, "kappa": k,
+        "households": int(service.BEHAVIOURAL_EMTR_HOUSEHOLDS), "theta": THETA, "kappa": k,
         "frame_fingerprint": emtr.fingerprint(drawn.sort("person_id")),
         "baseline_rates_sha": hashlib.sha256(baseline.tobytes()).hexdigest()[:16],
         "commit": commit, "dirty": dirty, "where": where, "bundles": rows,

@@ -75,6 +75,8 @@ def compute(
     store: Store | None = None,
     emtr_baseline: np.ndarray | None = None,
     emtr_reform: np.ndarray | None = None,
+    emtr_ir_baseline: np.ndarray | None = None,
+    emtr_ir_reform: np.ndarray | None = None,
     taxable_base: np.ndarray | None = None,
     weights: np.ndarray | None = None,
     top_decile: np.ndarray | None = None,
@@ -115,6 +117,7 @@ def compute(
     if have_household_inputs:
         results.append(channel_module.elasticity_of_taxable_income(
             store, reform, emtr_baseline=emtr_baseline, emtr_reform=emtr_reform,
+            emtr_ir_baseline=emtr_ir_baseline, emtr_ir_reform=emtr_ir_reform,
             taxable_base=taxable_base, weights=weights,
             top_decile=(top_decile if top_decile is not None
                         else np.zeros(len(weights), dtype=bool)),
@@ -176,7 +179,8 @@ def compute(
     if have_household_inputs and any(r.key == "c1_eti" and r.applies for r in results):
         metrics["c1_eti"] = (
             channel_module.C1_KEYS,
-            grading_module.induced_variation(emtr_baseline, emtr_reform, weights),
+            grading_module.induced_variation(emtr_ir_baseline, emtr_ir_reform, weights,
+                                             taxable_base),
         )
     if any(r.key == "c4_investment" and r.applies for r in results):
         metrics["c4_investment"] = (channel_module.C4_KEYS, 0.0)

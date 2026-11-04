@@ -100,6 +100,15 @@ def argv(key: str, *, where: str, requests: Path = REQUESTS,
                                                                "firm_base")):
         raise EtudeAnnuelleError(f"{key} : un cadre que ce lanceur ne reprend pas champ pour "
                                  f"champ ; il serait chiffré dans un autre.")
+    # The frame of the studies says the persistence its verdict reads (D-336, decision
+    # 1): « lue », and only it. The command then draws every persistence side by side,
+    # « lue » first: `--persistence lue` would draw it alone, and the page would lose
+    # « éteint » and « tenu », which D-336 keeps as sensitivities beside the verdict.
+    # Without the loop the command refuses a persistence; a looped frame has all three.
+    persistance = request.get("persistance")
+    if persistance is not None and (persistance != "lue" or not request.get("macro")):
+        raise EtudeAnnuelleError(f"{key} : la persistance « {persistance} » ; le cadre ne "
+                                 f"peut dire que « lue », et avec la boucle (D-336).")
     growth, rate, uprating = request["growth"], request["rate"], request["uprating"]
     return [
         "predictif", name(key), "--dir", str(scenarios), "--reference", "reconduit",

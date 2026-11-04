@@ -1,5 +1,20 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The second 2026-11-03 update adds D-336 to D-339: goal 14, validated by the owner, done
+once merged. One imputation policy serves every pass path; the service layer left
+`api/main.py` for `impots.service`; the study frame lives in `etudes/cadres/central.json`;
+`impots etude` accepts a witness pass across commits and resumes a series (D-335). Each
+path report writes its impulses by instrument and its channel statistics, and a pure
+function (`predictif/rejouer.py`) replays the debt, the loop, the θ box and a Monte-Carlo
+from them. The macro effect now persists as read in Mésange at 1, 2, 3, 5 and 10 years
+(« lue »), the multiplier is bounded at zero and the feedback at the gross cost, C1 reads
+the IR rate, C5 and C6 are unhooked; the ten-year rate decision is not applied, the PLF
+text giving none (D-337). The ten studies ran once on `7235bd8`, preregistered (D-338):
+costs 13 of 13 to the euro, verdicts 11 of 13, θ½ 5 of 8, Monte-Carlo 4 of 8; the three
+programme misses come from the prognosis, which lost the VAT impulse (D-339). Attal's head
+moves from +20.3 to +4.4 points of debt in 2035. `make data` now builds the firm
+population. Next: the judge when it publishes; the precomputation layer for live sliders.
+
 The 2026-11-03 update adds D-328 to D-334: goal 13, validated by the owner, done once
 merged. `impots etude` takes a programme: `etudes/presidentielle_<slug>.json` prices its
 whole priced part, households and firms together (a mixed first year is two calls), says
@@ -276,7 +291,7 @@ revision, `plf2027_art_2_base2027`, written by `impots chiffrage revise`, change
 only and lands at −7.1 %, within ±20 %; it says it was written after the annex, and the
 report counts it apart. The blind cases stay 2 of 3, art. 2 outside its tolerance.
 The ninth 2026-10-28 update added D-288 to D-290: the first study of the product's goal
-(D-286), `docs/ETUDE_PLF2027.md`, the PLF 2027's three priceable articles in three answers.
+(D-286), `docs/etudes/plf2027.md`, the PLF 2027's three priceable articles in three answers.
 A scenario may now bound its measure to the years its text names (`annees`, D-288): the
 annual path prices it there and an empty reform elsewhere, so the 2027 CEBGE of art. 15 is
 a one-year receipt. Preregistered in D-289, priced on `02fd623`: art. 2 costs 2.83 bn,

@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from impots.api import main
+from impots import service
 from impots.api.schemas import ExplorationRequest
 from impots.dette import reference
 from impots.predictif import recherche
@@ -43,7 +43,8 @@ def households() -> dict:
     base = rng.uniform(10_000, 200_000, 40)
     emtr = rng.uniform(0.1, 0.45, 40)
     return {"taxable_base": base, "weights": np.full(40, 1_000.0), "emtr_baseline": emtr,
-            "emtr_reform": emtr + 0.03, "top_decile": base > np.quantile(base, 0.9)}
+            "emtr_reform": emtr + 0.03, "emtr_ir_baseline": emtr,
+            "emtr_ir_reform": emtr + 0.03, "top_decile": base > np.quantile(base, 0.9)}
 
 
 def cost_of(reform, view: str) -> float:
@@ -77,5 +78,5 @@ def run_search(payload: dict, *, seen: list | None = None, max_bundles: int = 12
         return Priced(cost=first.cost, inputs=first.inputs, impulse=first.impulse)
 
     return recherche.run(request, price=price,
-                         hypotheses=main._predictif_hypotheses(request), start=START,
+                         hypotheses=service.predictif_hypotheses(request), start=START,
                          macro_store=synthetic_macro_store(), max_bundles=max_bundles)

@@ -2,8 +2,8 @@
   "nom": "plfss2027",
   "titre": "Le PLFSS 2027 en trois réponses",
   "texte": "plfss2027",
-  "preenregistrement": "D-302",
-  "cadre": "ir",
+  "preenregistrement": "D-338",
+  "cadre": "central",
   "millesime_entreprises": "2023",
   "scenarios": [
     {"scenario": "plf2027_art_74_ppa", "titre": "la prime d'activité", "miroir": true},

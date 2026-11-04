@@ -164,6 +164,31 @@ def _valider_cellules(chemin: Path, *, millesime: str = "2023") -> str:
     return f"{len(cellules)} cellules, millésime {vintage}, ratio fiscal/comptable {ratio}"
 
 
+def _valider_entreprises(chemin: Path) -> str:
+    """La population d'entreprises servie aux études (IMPOTS_FIRM_VINTAGE=2023), construite
+    sur les vraies cellules : son manifeste le dit, sinon elle est refusée (D-339)."""
+    import json
+
+    import polars as pl
+
+    manifeste = json.loads(chemin.with_suffix(".manifest.json").read_text(encoding="utf-8"))
+    if manifeste.get("cells_are_synthetic", True):
+        raise DonneesError("construite sur des cellules synthétiques, pas sur Ésane × Focus 372")
+    lignes = pl.scan_parquet(chemin).select(pl.len()).collect().item()
+    if lignes == 0:
+        raise DonneesError("parquet vide")
+    tirees = f"{lignes:,}".replace(",", " ")
+    return (f"{tirees} entreprises tirées, pour "
+            f"{manifeste['population']['weighted_firms'] / 1e6:.2f} M")
+
+
+def _construire_entreprises() -> Path:
+    from impots.entreprises.build import build
+
+    chemin, _provenance = build(cells_path=PROCESSED / "firm_cells_2023.json")
+    return chemin
+
+
 def _construire_population() -> Path:
     from impots.population.build import build
 
@@ -206,6 +231,14 @@ def profil_tests() -> tuple[Brut | Derive, ...]:
             entrees=(cells.ESANE_FILE, cells.FOCUS_FILE, cells.DGFIP_FILE),
             pour="échantillonneur de placement des entreprises (test_accuracy)",
             valider=_valider_cellules, construire=_construire_cellules),
+        # Après les cellules, dont elle est tirée : les études la lisent (D-339), et
+        # `make data` ne la construisait pas — Retailleau est tombé sur son absence.
+        Derive(
+            chemin=PROCESSED / "firms_2023.parquet",
+            commande="impots entreprises build --cells data/processed/firm_cells_2023.json",
+            entrees=(cells.ESANE_FILE, cells.FOCUS_FILE, cells.DGFIP_FILE),
+            pour="population d'entreprises des études (IMPOTS_FIRM_VINTAGE=2023)",
+            valider=_valider_entreprises, construire=_construire_entreprises),
         Derive(
             chemin=PROCESSED / "population_2024.parquet",
             commande="impots population build",

@@ -15,6 +15,7 @@ import dataclasses
 
 import pytest
 
+from impots import service
 from impots.macro.store import Store
 from impots.predictif import elasticites as el
 from macro_cases import _table
@@ -29,11 +30,10 @@ def _paper() -> el.Reading:
 
 
 def _mesange():
-    from impots.api import main
 
     try:
-        return main._predictif_macro_store()
-    except main.MacroSourceError:
+        return service.predictif_macro_store()
+    except service.MacroSourceError:
         pytest.skip("data/raw/ n'a pas le document de Mésange")
 
 
@@ -125,12 +125,11 @@ def test_the_loop_is_never_asked_where_mesange_prints(instrument: str) -> None:
 def test_the_chains_reason_for_the_firm_taxes_is_the_computed_refusal() -> None:
     """Anti-drift: the reason the chain prints for the IS is held against the verdict.
     Should the cross-check ever pass, this fails and the text must be rewritten."""
-    from impots.api import main
 
     with pytest.raises(el.ElasticityLoopRefused):
         el.elasticity_loop("impot_societes", reading=_paper(), store=_mesange())
     for needle in ("sans variante dans Mésange", "DP 098", "refusée", "D-246", "D-218"):
-        assert needle in main.FIRM_NO_VARIANT
+        assert needle in service.FIRM_NO_VARIANT
 
 
 # --------------------------------------------------------------------------- #

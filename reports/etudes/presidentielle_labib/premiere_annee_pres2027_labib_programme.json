@@ -139,7 +139,7 @@
         "mean_niveau_de_vie": 8273.472568511519,
         "mean_baseline": 11750.355002797725,
         "mean_reform": 12164.705954290106,
-        "mean_delta": 414.35095149237856,
+        "mean_delta": 414.3509514923788,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -194,7 +194,7 @@
         "mean_niveau_de_vie": 25475.840811981554,
         "mean_baseline": 39758.66420424614,
         "mean_reform": 40555.390471102866,
-        "mean_delta": 796.7262668567283,
+        "mean_delta": 796.7262668567281,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -216,7 +216,7 @@
         "mean_niveau_de_vie": 32960.62035874472,
         "mean_baseline": 51324.42283110922,
         "mean_reform": 52182.435733877996,
-        "mean_delta": 858.0129027687836,
+        "mean_delta": 858.0129027687834,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -227,7 +227,7 @@
         "mean_niveau_de_vie": 39196.62350181876,
         "mean_baseline": 61085.0874934029,
         "mean_reform": 62059.012077135776,
-        "mean_delta": 973.9245837328893,
+        "mean_delta": 973.9245837328899,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -238,7 +238,7 @@
         "mean_niveau_de_vie": 61678.91640783809,
         "mean_baseline": 93635.48915862087,
         "mean_reform": 94551.4579018717,
-        "mean_delta": 915.9687432508372,
+        "mean_delta": 915.9687432508371,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -711,14 +711,14 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "build_s": 6.74,
-      "baseline_s": 44.09,
-      "consommation_s": 0.18,
-      "total_s": 61.8
+      "build_s": 4.96,
+      "baseline_s": 36.21,
+      "consommation_s": 0.16,
+      "total_s": 48.49
     }
   },
-  "computed": "2026-11-02",
-  "commit": "82f4926c4129a1ff82d3bd74cc5c534f0441f7e4",
+  "computed": "2026-11-03",
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
   "dirty": false,
-  "where": "conteneur cloud de la session, worktree figé sur 82f4926, une passe par processus, l'une après l'autre"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
 }

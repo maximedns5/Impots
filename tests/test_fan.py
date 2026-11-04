@@ -12,6 +12,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from impots import service
 from impots.macro import fan, io_layer, mesange, shocks, store, tes
 
 pytest.importorskip("openpyxl")
@@ -254,9 +255,8 @@ def _Agg(deltas, cost, employer_contribution_delta=0.0):
 
 def test_the_api_block_carries_the_whole_strip():
     """§4 forbids the fan to render without it, so the schema requires it."""
-    from impots.api import main
 
-    block = main._macro(_request(csg_activite_imposable=0.08),
+    block = service.macro(_request(csg_activite_imposable=0.08),
                         _Agg({"csg_imposable": -5.0e9}, -5.0e9))
     assert block.available
     strip = block.assumptions
@@ -269,9 +269,8 @@ def test_the_api_block_carries_the_whole_strip():
 
 
 def test_the_api_block_reports_uncovered_instruments_with_reasons():
-    from impots.api import main
 
-    block = main._macro(_request(csg_activite_imposable=0.08),
+    block = service.macro(_request(csg_activite_imposable=0.08),
                         _Agg({"csg_imposable": -5.0e9, "rsa": 1.0e9}, -4.0e9))
     assert "rsa" in block.uncovered
     assert "0,39" in block.uncovered["rsa"]
@@ -280,9 +279,8 @@ def test_the_api_block_reports_uncovered_instruments_with_reasons():
 
 def test_a_reform_with_no_macro_path_is_unavailable_not_an_error():
     """Most reforms this repository can express have no multiplier. That is designed."""
-    from impots.api import main
 
-    block = main._macro(_request(csg_activite_imposable=0.08),
+    block = service.macro(_request(csg_activite_imposable=0.08),
                         _Agg({"rsa": 1.0e9}, 1.0e9))
     assert block.available is False
     assert "multiplicateur publié" in block.unavailable_because
@@ -291,11 +289,10 @@ def test_a_reform_with_no_macro_path_is_unavailable_not_an_error():
 
 def test_an_allegement_reform_routes_to_the_targeted_variant_through_the_api():
     """The knobs reach the router, which is the only place the targeting is visible."""
-    from impots.api import main
 
-    uniform = main._macro(_request(csg_activite_imposable=0.08),
+    uniform = service.macro(_request(csg_activite_imposable=0.08),
                           _Agg({}, -5.0e9, employer_contribution_delta=-5.0e9))
-    targeted = main._macro(_request(allegement_general_plafond=1.8),
+    targeted = service.macro(_request(allegement_general_plafond=1.8),
                            _Agg({}, -5.0e9, employer_contribution_delta=-5.0e9))
     assert uniform.assumptions.instruments == ["cotisations_employeurs"]
     assert targeted.assumptions.instruments == ["cotisations_employeurs_ciblees"]
@@ -304,11 +301,10 @@ def test_an_allegement_reform_routes_to_the_targeted_variant_through_the_api():
 
 def test_the_api_block_never_raises_on_a_missing_source(tmp_path, monkeypatch):
     """A checkout without the primary sources gets a reason, not a 500."""
-    from impots.api import main
     from impots.macro import tes as tes_module
 
     monkeypatch.setattr(tes_module, "RAW", tmp_path)
-    block = main._macro(_request(csg_activite_imposable=0.08),
+    block = service.macro(_request(csg_activite_imposable=0.08),
                         _Agg({"csg_imposable": -5.0e9}, -5.0e9))
     assert block.available is False
     assert "indisponible" in block.unavailable_because

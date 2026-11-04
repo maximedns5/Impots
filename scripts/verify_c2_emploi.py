@@ -4,7 +4,7 @@ Prices the FIRST bundle of a study request (its knob at `low`) the way `impots e
 does: the population aged to the first projected year, the quick tier of 20 000 households,
 C2 at θ = ½ and at the two ends of its row. Then four readings of the same pass:
 
-  - the chain's, through `api.main._employer_inputs`;
+  - the chain's, through `service.employer_inputs`;
   - the reading before D-259, rebuilt here: every earner of the whole frame at the frame's
     weight, with no cost change outside the subsample;
   - the reading before D-261: the run's earners at the run's weight, each carrying their
@@ -26,8 +26,8 @@ from pathlib import Path
 import numpy as np
 import polars as pl
 
+from impots import service
 from impots import uprating as uprating_module
-from impots.api import main as api
 from impots.api.schemas import HouseholdInput, ReformSpec
 from impots.behavioural import channels
 from impots.behavioural.store import load as load_store
@@ -48,12 +48,12 @@ def main(path: str, view: str) -> dict[str, object]:
         GrowthScenario(study["growth"]["name"], study["growth"]["real"],
                        study["growth"]["prices"]),
         wage=study["uprating"]["wage"], source=study["uprating"]["source"],
-        base_year=int(api.POPULATION_VINTAGE))
+        base_year=int(service.POPULATION_VINTAGE))
     reform = ReformSpec(**{knob: value})
-    request = api._first_year_request(reform, year, True)
-    frame = (uprating_module.uprate(api._population_frame(), year, uprating)
-             if view == api.FIRST_YEAR_VIEW else api._population_frame())
-    run, agg = api._run_population(request, frame)
+    request = service.first_year_request(reform, year, True)
+    frame = (uprating_module.uprate(service.population_frame(), year, uprating)
+             if view == service.FIRST_YEAR_VIEW else service.population_frame())
+    run, agg = service.run_population(request, frame)
     cost = float(agg.reform_cost)
     store = load_store()
 
@@ -63,7 +63,7 @@ def main(path: str, view: str) -> dict[str, object]:
         return float(channel["band"]["p50"])
 
     half = Theta(rows={}, common=0.5)
-    chain = api._employer_inputs(request, run, agg)
+    chain = service.employer_inputs(request, run, agg)
     jobs = c2(chain, half)
     box = [c2(chain, Theta(rows={"employment_elasticity_smic": t}, common=0.5))
            for t in (0.0, 1.0)]
@@ -72,7 +72,7 @@ def main(path: str, view: str) -> dict[str, object]:
     before = households["salaire_super_brut"].to_numpy()
     after = households["salaire_super_brut_reform"].to_numpy()
     rate = np.where(before > 0, (after - before) / np.maximum(before, 1e-9), 0.0)
-    smic = api._smic_annual(year)
+    smic = service.smic_annual(year)
     by_household = dict(zip(households["household_id"].to_list(), rate, strict=False))
 
     # The reading before D-259, rebuilt: the whole frame, at its weight, household rates.
@@ -134,5 +134,5 @@ def main(path: str, view: str) -> dict[str, object]:
 
 
 if __name__ == "__main__":
-    view = sys.argv[2] if len(sys.argv) > 2 else api.FIRST_YEAR_VIEW
+    view = sys.argv[2] if len(sys.argv) > 2 else service.FIRST_YEAR_VIEW
     print(json.dumps(main(sys.argv[1], view), indent=1, ensure_ascii=False))

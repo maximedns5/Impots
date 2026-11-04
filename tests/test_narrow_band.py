@@ -13,6 +13,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from impots import service
 from impots.narrow_band import SHARE, WINDOW, household_thresholds, measure
 
 
@@ -142,11 +143,10 @@ def test_the_wage_family_reads_the_quick_tier_at_its_own_weights() -> None:
 
     import polars as pl
 
-    from impots.api import main as api_main
     from impots.api.schemas import ReformSpec
     from impots.population.runner import subsample
 
-    smic = api_main._smic_annual(2024)
+    smic = service.smic_annual(2024)
     heavy, light = 10, 990
     frame = pl.DataFrame({
         "household_id": np.arange(heavy + light),
@@ -158,11 +158,11 @@ def test_the_wage_family_reads_the_quick_tier_at_its_own_weights() -> None:
     request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
     expected = 1.98 / 2.98
 
-    full = api_main._narrow_band(request, _run(frame))
+    full = service.narrow_band(request, _run(frame))
     assert full.share == pytest.approx(expected, rel=1e-9)
     drawn = subsample(frame, 100)
     assert drawn.height == 100
-    quick = api_main._narrow_band(request, _run(drawn))
+    quick = service.narrow_band(request, _run(drawn))
     assert quick.share == pytest.approx(expected, rel=1e-9), (
         "the quick tier must measure the share of the population it was reweighted to")
     assert quick.flagged
@@ -184,10 +184,9 @@ def test_the_wage_family_reads_each_earner_s_own_movement() -> None:
 
     import polars as pl
 
-    from impots.api import main as api_main
     from impots.api.schemas import ReformSpec
 
-    smic = api_main._smic_annual(2024)
+    smic = service.smic_annual(2024)
     frame = pl.DataFrame({
         "household_id": [0, 0, 1],
         "person_id": [0, 1, 2],
@@ -196,7 +195,7 @@ def test_the_wage_family_reads_each_earner_s_own_movement() -> None:
         "move": [0.0, -1_000.0, -400.0],
     })
     request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
-    flag = api_main._narrow_band(request, _run(frame))
+    flag = service.narrow_band(request, _run(frame))
     assert flag.share == pytest.approx(400 / 1_400, rel=1e-9), (
         "an earner's movement is their own, not a share of their household's")
     assert not flag.flagged
@@ -217,10 +216,9 @@ def test_the_wage_family_reads_each_earner_at_their_own_weight() -> None:
 
     import polars as pl
 
-    from impots.api import main as api_main
     from impots.api.schemas import ReformSpec
 
-    smic = api_main._smic_annual(2024)
+    smic = service.smic_annual(2024)
     frame = pl.DataFrame({
         "household_id": [0, 0],
         "person_id": [0, 1],
@@ -229,7 +227,7 @@ def test_the_wage_family_reads_each_earner_at_their_own_weight() -> None:
         "move": [-1_000.0, -1_000.0],
     })
     request = SimpleNamespace(year=2024, reform=ReformSpec(bandeau_maladie_plafond=2.25))
-    flag = api_main._narrow_band(request, _run(frame))
+    flag = service.narrow_band(request, _run(frame))
     assert flag.share == pytest.approx(0.6, rel=1e-9), (
         "an earner must count at their own weight in the run, not their household's")
     assert flag.flagged

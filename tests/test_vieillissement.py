@@ -163,7 +163,7 @@ def _household_cli(tmp_path, monkeypatch, year: int, *extra: str):
                  ).write_parquet(population)
     seen = {}
 
-    def price(scenario, frame, households):
+    def price(scenario, frame, households, **kw):
         seen["frame"] = frame
         return {"mechanical": 2.0e8}
 
