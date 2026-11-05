@@ -2453,6 +2453,9 @@ class PredictifReportResponse(BaseModel):
     rejeu: dict[str, Any] | None = None
     """What `predictif.rejouer` reads besides the years' statistics (D-336)."""
     monte_carlo: dict[str, Any] | None = None
+    lectures: dict[str, Any] | None = None
+    """Beside the headline (D-349): the decomposition, the alternative wage formation,
+    the added debt at a market rate."""
     """The distribution of Δb at the last year under declared laws (D-336)."""
     commit: str | None = None
     dirty: bool | None = None

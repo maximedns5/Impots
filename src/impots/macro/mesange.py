@@ -27,6 +27,7 @@ import re
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 RAW = Path(__file__).resolve().parents[3] / "data" / "raw"
 
@@ -374,3 +375,85 @@ def table(row: str, raw: Path | None = None, absent_for: tuple[str, ...] | list[
         raise MesangeError(f"row {row!r} absent from variants {missing}")
     return {key: variant.rows[row] for key, variant in variants.items()
             if key not in declared}, HORIZONS
+
+
+# --------------------------------------------------------------------------- #
+# the wage-formation sensitivity (§4.4, folios 137 and 138), the « variante salariale »
+# --------------------------------------------------------------------------- #
+#: The two tables §4.4 prints for the wage formation, by title, and the variants each
+#: carries under the alternative (D-349). Under a Phillips curve (folio 137) the document
+#: runs the employer contributions and VAT only; for the employee contributions, the CSG
+#: and the income tax, the alternative it prints is the super-gross wage targeted in the
+#: long run (folio 138), the other half of the same question: whether a cut in the tax
+#: wedge lowers equilibrium unemployment for good.
+SENSIBILITE_TABLES = {
+    "phillips": ("Sensibilité des variantes à la forme de la négociation salariale",
+                 ("cotisations_employeurs", "tva")),
+    "super_brut": ("Sensibilité des variantes fiscales à l’élasticité des salaires au coin "
+                   "fiscalo social",
+                   ("cotisations_salaries", "csg", "impot_sur_le_revenu")),
+}
+#: The block labels as the extraction joins them, to the variant they name.
+SENSIBILITE_LABELS = {
+    "Cotisations sociales employeurs": "cotisations_employeurs",
+    "Cotisations sociales employeur": "cotisations_employeurs",
+    "TVA": "tva",
+    "Cotisations sociales salariés": "cotisations_salaries",
+    "Contribution sociale généralisée": "csg",
+    "Impôt sur le revenu": "impot_sur_le_revenu",
+}
+SENSIBILITE_HORIZONS = ("1", "5", "10")
+
+
+def sensibilite_salariale(raw: Path | None = None) -> dict[str, dict[str, Any]]:
+    """By instrument: the GDP row at 1, 5 and 10 years under the central model and under
+    the alternative wage formation, and which table it comes from (D-349).
+
+    Each table prints, per variant, a « PIB » line of eight numbers: 1A 5A 10A LT for the
+    central model, then the same for the alternative. The central half is checked
+    against the variant's own table; a block the reader cannot find, or a central column
+    that is not the variant's, is refused by name."""
+    path = (raw or RAW) / SOURCE_FILE
+    if not path.exists():
+        raise MesangeError(f"{path} not found — `impots data fetch {path.name}`")
+    pages = _pages(str(path))
+    variants = load(raw=raw)
+    out: dict[str, dict[str, Any]] = {}
+    for table_key, (title, wanted) in SENSIBILITE_TABLES.items():
+        target = _normalise(title)
+        page = next(((n, lines) for n, lines in pages if target in " ".join(lines)), None)
+        if page is None:
+            raise MesangeError(f"tableau « {title} » introuvable")
+        number, lines = page
+        label: list[str] = []
+        found: dict[str, tuple[float, ...]] = {}
+        for line in lines:
+            if line.startswith("PIB "):
+                name = SENSIBILITE_LABELS.get(" ".join(label).strip())
+                values = tuple(float(v.replace(",", "."))
+                               for v in re.findall(r"-?\d+(?:,\d+)?", line[4:]))
+                if name is not None and len(values) == 8:
+                    found[name] = values
+                label = []
+            elif line.startswith(("Emploi", "IPC", "%", "Modèle", "Négociation", "1A",
+                                  "setting", "Salaire", "β")) or re.match(r"^\d", line):
+                label = []
+            else:
+                label.append(line)
+        for name in wanted:
+            if name not in found:
+                raise MesangeError(f"« {title} » (p. {number}) : pas de ligne PIB pour "
+                                   f"{name}")
+            values = found[name]
+            sign = VARIANTS[name].expansionary_sign
+            central = {h: sign * values[i] for i, h in enumerate(SENSIBILITE_HORIZONS)}
+            alternative = {h: sign * values[4 + i]
+                           for i, h in enumerate(SENSIBILITE_HORIZONS)}
+            pib = variants[name].rows["gdp"]
+            own = {h: pib[HORIZONS.index(h)] for h in SENSIBILITE_HORIZONS}
+            if any(abs(central[h] - own[h]) > 1e-9 for h in SENSIBILITE_HORIZONS):
+                raise MesangeError(f"{name} : la colonne centrale de « {title} » {central} "
+                                   f"n'est pas la variante {own} — lecture décalée")
+            out[name] = {"table": table_key, "page": number, "central": central,
+                         "alternative": alternative}
+    return out

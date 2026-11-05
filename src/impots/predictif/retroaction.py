@@ -274,7 +274,33 @@ def replay_tables(store: Store, instruments: Sequence[str]) -> dict[str, Any]:
             "sd": dispersion.at(MULTIPLIER_FAMILY[instrument], "all"),
             "brut": mesange.points_du_cout(instrument),
         }
+    salariale = mesange.sensibilite_salariale()
+    for instrument, table in tables.items():
+        if instrument in salariale:
+            table["pib_salariale"] = variante_salariale(table["pib"],
+                                                        salariale[instrument], read)
+            table["variante_source"] = salariale[instrument]["table"]
     return {"horizons": list(read), "court": short_horizon(store), "instruments": tables}
+
+
+def variante_salariale(central: dict[str, float], sensibilite: dict[str, Any],
+                       read: Any) -> dict[str, float]:
+    """The GDP row at the read horizons under the alternative wage formation (D-349):
+    the central row times the ratio Mésange prints at 1, 5 and 10 years, interpolated
+    linearly between them. At 1, 5 and 10 years it is the alternative itself."""
+    points = [int(h) for h in mesange.SENSIBILITE_HORIZONS]
+    ratio = {h: sensibilite["alternative"][str(h)] / sensibilite["central"][str(h)]
+             for h in points}
+    out = {}
+    for h in (int(x) for x in read):
+        if h in ratio:
+            r = ratio[h]
+        else:
+            low = max(p for p in points if p < h)
+            high = min(p for p in points if p > h)
+            r = ratio[low] + (h - low) / (high - low) * (ratio[high] - ratio[low])
+        out[str(h)] = central[str(h)] * r
+    return out
 
 
 def _response(store: Store, instrument: str, horizon: int, theta: float,

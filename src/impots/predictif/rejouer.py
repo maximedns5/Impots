@@ -42,6 +42,8 @@ PERSISTENCES = ("lue", "eteint", "tenu")
 VIEWS = {"vieillie": "mechanical_aged_eur", "figee": "mechanical_frozen_eur"}
 #: The first year carried as a share of GDP: `chaine.CARRY`, the plages' and the grid's.
 CARRY = "part_pib_constante"
+#: Mésange's alternative wage formation, published beside the headline (D-349).
+SALARIALE = "salariale"
 
 
 class ReplayError(ValueError):
@@ -133,8 +135,13 @@ def _read_horizon(horizon: int, persistence: str | None, read: Sequence[int],
 
 
 def loop(impulses: Sequence[Mapping[str, float]], gdp: Sequence[float],
-         macro: Mapping[str, Any], z: Any, persistence: str | None) -> tuple[list, list]:
-    """(y_t, φ_t), year by year, at the multiplier shift z — `retroaction.compute`."""
+         macro: Mapping[str, Any], z: Any, persistence: str | None,
+         variante: str | None = None) -> tuple[list, list]:
+    """(y_t, φ_t), year by year, at the multiplier shift z — `retroaction.compute`. With
+    `variante` « salariale », the multiplier is centred on Mésange's alternative wage
+    formation (D-349) and the feedback stays proportional to the central one."""
+    if variante not in (None, SALARIALE):
+        raise ReplayError(f"variante « {variante} » inconnue")
     read = [int(h) for h in macro["horizons"]]
     short = int(macro["court"])
     tables = macro["instruments"]
@@ -155,7 +162,13 @@ def loop(impulses: Sequence[Mapping[str, float]], gdp: Sequence[float],
                 if at is None:
                     continue
                 centre = _interpolated(table["pib"], at, read)
-                m = np.maximum(0.0, centre + z * table["sd"])
+                if variante == SALARIALE and "pib_salariale" in table:
+                    # An instrument Mésange prints no alternative for keeps its central
+                    # row; the report lists it as not varied (D-349).
+                    shifted = _interpolated(table["pib_salariale"], at, read)
+                else:
+                    shifted = centre
+                m = np.maximum(0.0, shifted + z * table["sd"])
                 gross = table["brut"]
                 f = np.minimum((_interpolated(table["solde"], at, read) + gross) * m / centre,
                                gross)
@@ -209,9 +222,20 @@ def reference_path(rejeu: Mapping[str, Any], start: Mapping[str, Any],
     return gdp, refs, nominal
 
 
+#: What the loop keeps: all of it, the GDP gap alone (the denominator, no feedback), or
+#: nothing (the cost after behaviour). The three readings of the decomposition (D-349).
+BOUCLES = ("complete", "denominateur", "aucune")
+
+
 def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
-           z: Any, persistence: str | None) -> Chemin:
-    """One view's Δb path at the row values `values` and the multiplier shift `z`."""
+           z: Any, persistence: str | None, variante: str | None = None,
+           boucle: str = "complete", marginal: float | None = None) -> Chemin:
+    """One view's Δb path at the row values `values` and the multiplier shift `z`. With
+    `variante`, the multiplier reads Mésange's alternative wage formation; `boucle` keeps
+    the whole loop, its GDP gap alone, or none; `marginal` charges the added debt at
+    another rate than the report's (D-349)."""
+    if boucle not in BOUCLES:
+        raise ReplayError(f"boucle « {boucle} » inconnue ({BOUCLES})")
     rejeu = _rejeu(payload)
     rows = payload["years"]
     carried = payload.get("carry") == CARRY
@@ -224,7 +248,7 @@ def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
     years = tuple(range(first, first + horizon)) if carried else tuple(
         int(r["year"]) for r in rows)
     gdp, refs, nominal = reference_path(rejeu, rejeu["start"], horizon)
-    marginal = rejeu["cadre"]["taux"]["marginal"]
+    marginal = rejeu["cadre"]["taux"]["marginal"] if marginal is None else marginal
     stats = [r["statistiques"][view] for r in rows]
     cost = [float(r[VIEWS[view]]) for r in rows]
     if rejeu["behavioural"] and all(s.get("canaux") is not None for s in stats):
@@ -239,8 +263,10 @@ def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
         primary = primary * horizon
         impulses = [{i: v / gdp[0] * y for i, v in (impulses[0] or {}).items()}
                     for y in gdp]
-    if rejeu["looped"]:
-        gap, phi = loop(impulses, gdp, rejeu["macro"], z, persistence)
+    if rejeu["looped"] and boucle != "aucune":
+        gap, phi = loop(impulses, gdp, rejeu["macro"], z, persistence, variante)
+        if boucle == "denominateur":
+            phi = [0.0] * horizon
     else:
         gap = phi = [0.0] * horizon
     debt = 0.0
@@ -273,14 +299,28 @@ def theta_values(payload: Mapping[str, Any], theta: Mapping[str, float]) -> tupl
 
 
 def at_theta(payload: Mapping[str, Any], theta: Mapping[str, float], *, view: str,
-             persistence: str | None) -> Chemin:
-    """The view's path at θ by row."""
+             persistence: str | None, **options: Any) -> Chemin:
+    """The view's path at θ by row; `options` are `chemin`'s."""
     values, z = theta_values(payload, theta)
-    return chemin(payload, view=view, values=values, z=z, persistence=persistence)
+    return chemin(payload, view=view, values=values, z=z, persistence=persistence,
+                  **options)
+
+
+def decomposition(payload: Mapping[str, Any], theta: Mapping[str, float], *, view: str,
+                  persistence: str | None = READ, **options: Any) -> dict[str, float]:
+    """Δb at the last year in three steps (D-349): the cost after behaviour with no loop,
+    what the higher GDP takes off it as a denominator, what the induced receipts take off
+    it; the three add up to the headline."""
+    steps = {b: at_theta(payload, theta, view=view, persistence=persistence, boucle=b,
+                         **options).delta[-1] for b in BOUCLES}
+    return {"cout": float(steps["aucune"]),
+            "denominateur": float(steps["denominateur"] - steps["aucune"]),
+            "retroaction": float(steps["complete"] - steps["denominateur"]),
+            "total": float(steps["complete"])}
 
 
 def box(payload: Mapping[str, Any], theta: Mapping[str, float], *, view: str,
-        persistence: str | None) -> dict[str, Any]:
+        persistence: str | None, **options: Any) -> dict[str, Any]:
     """Δb at the last year at θ and at every corner of the box over the report's box
     rows — `annuel._theta_box`, the « every_year » reading."""
     import itertools
@@ -291,8 +331,9 @@ def box(payload: Mapping[str, Any], theta: Mapping[str, float], *, view: str,
         corner = {**theta, **dict(zip(rows, combo, strict=True))}
         label = ", ".join(f"{key} = {corner[key]:g}" for key in rows)
         corners.append([label, at_theta(payload, corner, view=view,
-                                        persistence=persistence).delta[-1]])
-    return {"theta": at_theta(payload, theta, view=view, persistence=persistence).delta[-1],
+                                        persistence=persistence, **options).delta[-1]])
+    return {"theta": at_theta(payload, theta, view=view, persistence=persistence,
+                              **options).delta[-1],
             "corners": corners}
 
 

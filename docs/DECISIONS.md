@@ -26345,9 +26345,72 @@ les indices et le macro de première année le lisent ; `elasticites` garde le 1
 compare la boucle aux variantes de Mésange elles-mêmes, choc compris.
 
 **Les tests.** Trois tests tenaient la convention de D-218 (la division par 1,18 dans
-l'éventail et dans la boucle, les rétroactions de la TVA à 0,38, 0,82 et 0,90) : ils tiennent
-maintenant la nouvelle, et disent pourquoi (0,20, 0,64 et 0,72, soit D-214 moins 0,18).
+l'éventail et dans la boucle, les rétroactions de la TVA à 0,38, 0,82 et 0,90) : ils
+tiennent maintenant la nouvelle, et disent pourquoi (0,20, 0,64 et 0,72, soit D-214 moins
+0,18).
 
 **L'effet attendu**, mesuré par l'examen de validité sur les rapports de `7235bd8` par la
 fonction pure : Δb₂₀₃₅ de Labib +4,36 → +4,47, de Le Pen +1,38 → +1,56, de Roussel
 +0,44 → +0,52 ; aucun verdict ne change. La série du but 16 le mesure sur ses passes.
+
+## D-349 — Les lectures du but 16 : décomposition, variante salariale, taux de marché
+
+**Pourquoi.** L'examen de validité a trouvé trois fragilités qui ne sont pas des erreurs
+mais des choix : la spécification salariale de Mésange, le taux implicite de 2025 sur la
+dette ajoutée, et un verdict lu sur les coins de la boîte θ. Le propriétaire a tranché (but
+16) : la variante est publiée à côté, le verdict se lit sur le Monte-Carlo. Cette entrée
+dit comment chacune est construite, avant toute passe de la série.
+
+**La décomposition.** `rejouer.decomposition` lit Δb de la dernière année en trois marches,
+sous la persistance « lue » : le coût après comportements sans boucle (`boucle="aucune"`),
+ce que le PIB plus haut en retire comme dénominateur seul (`"denominateur"`, les recettes
+induites à zéro), ce que les recettes induites en retirent (`"complete"`). Les trois
+s'additionnent au titre, par construction ; un test le tient au bit.
+
+**La variante salariale.** Mésange imprime une sensibilité à la formation des salaires
+(folios 137 et 138, p. 138 et 139 du PDF) : une courbe de Phillips pour les cotisations
+employeurs et la TVA, un super-brut visé pour les cotisations salariés, la CSG et l'IR.
+`mesange.sensibilite_salariale` lit les deux tableaux, à 1, 5 et 10 ans, et refuse de
+charger si leurs colonnes centrales ne sont pas les lignes « gdp » des variantes déjà
+manifestées. La ligne alternative du multiplicateur est la centrale multipliée par le
+rapport alternative/centrale, interpolé linéairement entre 1, 5 et 10 ans
+(`retroaction.variante_salariale`) ; elle est la ligne imprimée aux trois horizons.
+
+* **Ce qui bouge** : le centre du multiplicateur seulement. L'écart-type, la persistance et
+  le rapport des recettes induites au PIB (la rétroaction rapportée au centre) restent
+  ceux du titre : la variante dit « si les salaires se forment autrement, le PIB réagit
+  ainsi », pas « les recettes réagissent autrement à PIB donné ».
+* **Les limites** : Mésange n'imprime que le PIB de la variante, pas son solde ; prendre le
+  solde proportionnel au PIB est une hypothèse, dite sur la page. Quatre instruments n'ont
+  pas de ligne alternative (cotisations employeurs ciblées, dépense et investissement
+  publics, taxe carbone) : ils gardent leur ligne centrale, et le rapport les nomme
+  (`non_variees`). La variante d'une étude qui en porte est donc partielle, et le dit.
+* **Ce qui est publié** : Δb à θ, la boîte θ et la distribution de Monte-Carlo de la
+  variante, dans les deux vues, à côté du titre. Le titre ne change pas.
+
+**Le taux de marché.** Le titre garde le taux implicite de 2025 (D-336, décision 3). En
+sensibilité, la dette ajoutée est chargée à `TAUX_MARCHE` = 3,5 %, hypothèse déclarée (l'OAT
+à dix ans de fin 2026 autour de 3,3 à 3,5 %, aucun fichier de taux manifesté) ; la lecture
+donne Δb de la dernière année à θ, persistance « lue », dans les deux vues.
+
+**Le verdict.** `montecarlo.verdict` lit la part des tirages où la dette monte, vue
+vieillie : « hausse » si elle est d'au moins 90 %, « baisse » si elle est d'au plus 10 %,
+« dépend » entre les deux (D-345). La boîte θ reste publiée à côté. Le seuil de 0,10 est lu
+avec 1e-12 de marge, 1 − 0,9 valant 0,0999… en virgule flottante ; un test tient les
+quatre bords (0,90, 0,899, 0,10, 0,101).
+
+**Les rapports.** `annuel.build` écrit ces lectures dans le champ `lectures` du rapport
+quand la boucle tourne ; le schéma de l'API l'accepte. Aucun nombre du titre ne change :
+la décomposition et la variante à ligne centrale redonnent le titre au bit (tests).
+
+**Les tests** (`tests/test_rejouer.py`, cinq nouveaux) : la décomposition s'additionne ; la
+variante dont la ligne alternative est la centrale est le titre ; la ligne alternative est
+l'imprimée aux horizons lus et le rapport interpolé entre ; les quatre bords du verdict ;
+le rapport écrit ses lectures, la dette ajoutée plus chère pesant davantage sur Δb.
+
+**Rattrapé en route.** Deux tests tenaient encore la convention de D-218 après E3 et
+n'avaient pas tourné avant le commit de D-348 : la convention de la chaîne citait « 1,18 »,
+et l'exemple au dossier (`docs/PREDICTIF_EXEMPLE.md`) la portait. Le test lit maintenant
+« D-348 » ; l'exemple est rendu à nouveau par son script, étage rapide. Seule la phrase de
+convention change : l'exemple est une baisse d'IR, sans TVA, et aucun de ses nombres ne
+bouge.

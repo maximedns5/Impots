@@ -338,7 +338,7 @@ def test_with_the_loop_the_macro_theta_is_listed_and_the_eventail_computed() -> 
         assert low <= central <= high
     assert not any(k in result.closed for k in chaine.MACRO_CHANNELS)
     assert "rétroaction" not in result.absent
-    assert any("1,18" in c for c in result.conventions)
+    assert any("D-348" in c for c in result.conventions)  # le point net de la TVA
 
 
 def test_under_another_spending_rule_the_loop_is_absent_with_its_reason() -> None:

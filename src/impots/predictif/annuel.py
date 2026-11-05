@@ -196,6 +196,10 @@ class Rapport:
     monte_carlo: dict[str, Any] | None = None
     """The distribution of Δb at the last year under declared laws, beside the box
     (D-336, decision 6, `montecarlo`); None without behaviour or the loop."""
+    lectures: dict[str, Any] | None = None
+    """What the replay reads beside the headline (D-349): the decomposition, Mésange's
+    alternative wage formation with its box and distribution, the added debt at a
+    market rate; None without the loop."""
 
     @property
     def aged(self) -> chaine.Trajectoire:
@@ -241,6 +245,8 @@ class Rapport:
             extra["rejeu"] = self.rejeu
         if self.monte_carlo is not None:
             extra["monte_carlo"] = self.monte_carlo
+        if self.lectures is not None:
+            extra["lectures"] = self.lectures
         return {
             **extra,
             "scenario": self.scenario, "titre": self.titre, "source": self.source,
@@ -413,7 +419,7 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
             keys.append(MACRO_ROW)
         if keys:
             box = _theta_box(keys, paths, year=prices[-1].year, theta=theta, debt=debt)
-    statistiques = rejeu = monte = None
+    statistiques = rejeu = monte = lectures = None
     if whole:
         statistiques = _statistics(prices, {v: at_theta(v) for v in VIEWS})
         rejeu = _replay_frame(
@@ -426,18 +432,53 @@ def build(start: Start, prices: list[YearPrice], *, scenario: str, titre: str,
         if box:
             from impots.predictif import montecarlo
 
-            monte = montecarlo.run({"years": [{"year": p.year, "basis": p.basis,
-                                                "mechanical_frozen_eur": p.frozen_eur,
-                                                "mechanical_aged_eur": p.aged_eur,
-                                                "statistiques": statistiques[p.year]}
-                                               for p in prices],
-                                    "rejeu": rejeu})
+            payload = {"years": [{"year": p.year, "basis": p.basis,
+                                  "mechanical_frozen_eur": p.frozen_eur,
+                                  "mechanical_aged_eur": p.aged_eur,
+                                  "statistiques": statistiques[p.year]} for p in prices],
+                       "rejeu": rejeu}
+            monte = montecarlo.run(payload)
+            if looped:
+                lectures = _lectures(payload, {k: theta.for_row(k) for k in box["rows"]})
     return Rapport(scenario=scenario, titre=titre, source=source, reference=reference,
                    computed=computed, start=start, prices=tuple(prices), paths=paths,
                    uprating_note=uprating_note, behavioural=behavioural, macro=macro,
                    firm_note=firm_note, theta_box=box, commit=commit, dirty=dirty,
                    where=where, annees=tuple(annees), statistiques=statistiques,
-                   rejeu=rejeu, monte_carlo=monte)
+                   rejeu=rejeu, monte_carlo=monte, lectures=lectures)
+
+
+#: The market rate the added debt is charged at, in sensitivity: a declared hypothesis,
+#: the ten-year OAT of late 2026 being around 3,3 to 3,5 % and no file of it manifested
+#: (D-349). The headline keeps the 2025 implicit rate (D-336, decision 3).
+TAUX_MARCHE = 0.035
+
+
+def _lectures(payload: dict[str, Any], theta: dict[str, float]) -> dict[str, Any]:
+    """The replay's readings beside the headline, under the « lue » persistence (D-349):
+    the decomposition at θ, the alternative wage formation (Δb at θ, its box and its
+    distribution), and Δb at θ with the added debt at `TAUX_MARCHE`, in both views."""
+    from impots.predictif import montecarlo, rejouer
+
+    views = [v for v, key in rejouer.VIEWS.items() if key in payload["years"][0]]
+    out: dict[str, Any] = {"persistence": rejouer.READ, "theta": dict(theta),
+                           "decomposition": {}, "taux_marche": {"taux": TAUX_MARCHE},
+                           "variante_salariale": None}
+    for view in views:
+        out["decomposition"][view] = rejouer.decomposition(payload, theta, view=view)
+        out["taux_marche"][view] = float(rejouer.at_theta(
+            payload, theta, view=view, persistence=rejouer.READ,
+            marginal=TAUX_MARCHE).delta[-1])
+    tables = payload["rejeu"]["macro"]["instruments"] if payload["rejeu"]["macro"] else {}
+    if any("pib_salariale" in t for t in tables.values()):
+        out["variante_salariale"] = {
+            "sources": {i: t.get("variante_source") for i, t in tables.items()},
+            "non_variees": sorted(i for i, t in tables.items() if "pib_salariale" not in t),
+            "boite": {view: rejouer.box(payload, theta, view=view, persistence=rejouer.READ,
+                                        variante=rejouer.SALARIALE) for view in views},
+            "monte_carlo": montecarlo.run(payload, views=views,
+                                          variante=rejouer.SALARIALE)["vues"]}
+    return out
 
 
 def _start(start: Start) -> dict[str, Any]:

@@ -233,3 +233,77 @@ def test_a_carried_report_carries_one_year_only() -> None:
     with pytest.raises(rejouer.ReplayError, match="seule première année"):
         rejouer.at_theta(payload, {MACRO_ROW: 0.5, "eti_all": 0.5, "eti_top_decile": 0.5},
                          view="vieillie", persistence="lue")
+
+
+# --------------------------------------------------------------------------- #
+# D-349 — la décomposition, la variante salariale, le verdict du Monte-Carlo
+# --------------------------------------------------------------------------- #
+def test_the_wage_variant_reads_the_numbers_mesange_prints() -> None:
+    """Folio 137 (Phillips) for the employer contributions and VAT, folio 138 (super-gross
+    wage targeted) for the employee contributions, the CSG and the income tax, at 1, 5
+    and 10 years — as printed, expansionary-signed."""
+    from impots.macro import mesange
+
+    read = mesange.sensibilite_salariale()
+    assert read["cotisations_employeurs"]["alternative"] == {"1": 0.29, "5": 0.84, "10": 0.85}
+    assert read["tva"]["alternative"] == {"1": 0.31, "5": 0.81, "10": 1.04}
+    assert read["cotisations_salaries"]["alternative"] == {"1": 0.39, "5": 0.71, "10": 0.59}
+    assert read["csg"]["alternative"] == {"1": 0.41, "5": 0.77, "10": 0.65}
+    assert read["impot_sur_le_revenu"]["alternative"] == {"1": 0.41, "5": 0.77, "10": 0.65}
+    assert {v["table"] for v in read.values()} == {"phillips", "super_brut"}
+
+
+def test_the_decomposition_adds_up_and_its_first_step_is_the_chain_without_the_loop() -> None:
+    theta = Theta(rows=THETAS[0], common=0.5)
+    payload = json.loads(json.dumps(_build(theta, persistence="lue").payload()))
+    bare = _build(theta, persistence=None, macro=False)
+    for view, drawn in (("vieillie", bare.aged), ("figee", bare.frozen)):
+        d = rejouer.decomposition(payload, THETAS[0], view=view)
+        assert d["cout"] + d["denominateur"] + d["retroaction"] == pytest.approx(d["total"])
+        assert d["cout"] == pytest.approx(drawn.delta[-1], abs=1e-9)
+        assert d["denominateur"] < 0 < -d["retroaction"]
+
+
+def test_the_wage_variant_with_the_central_row_is_the_headline() -> None:
+    """The variant only moves the multiplier's centre: with the alternative row set to
+    the central one in a copy, it gives the headline to the bit."""
+    theta = Theta(rows=THETAS[1], common=0.5)
+    payload = json.loads(json.dumps(_build(theta, persistence="lue").payload()))
+    for table in payload["rejeu"]["macro"]["instruments"].values():
+        table["pib_salariale"] = dict(table["pib"])
+    mine = rejouer.at_theta(payload, THETAS[1], view="vieillie", persistence="lue",
+                            variante=rejouer.SALARIALE).delta
+    head = rejouer.at_theta(payload, THETAS[1], view="vieillie", persistence="lue").delta
+    assert mine == head
+
+
+def test_the_alternative_row_is_the_printed_one_and_the_ratio_between() -> None:
+    sensibilite = {"central": {"1": 0.4, "5": 0.8, "10": 1.0},
+                   "alternative": {"1": 0.4, "5": 0.6, "10": 0.5}}
+    central = {"1": 0.4, "2": 0.5, "3": 0.6, "5": 0.8, "10": 1.0}
+    row = retroaction.variante_salariale(central, sensibilite, ["1", "2", "3", "5", "10"])
+    assert row["1"] == pytest.approx(0.4) and row["5"] == pytest.approx(0.6)
+    assert row["10"] == pytest.approx(0.5)
+    assert row["2"] == pytest.approx(0.5 * (1.0 + (0.75 - 1.0) / 4))
+    assert row["3"] == pytest.approx(0.6 * (1.0 + 2 * (0.75 - 1.0) / 4))
+
+
+def test_the_verdict_reads_the_distribution_at_90_and_10() -> None:
+    def monte(p):
+        return {"vues": {"vieillie": {"p_hausse": p}}}
+
+    assert montecarlo.verdict(monte(0.90)) == "hausse"
+    assert montecarlo.verdict(monte(0.899)) == "dépend"
+    assert montecarlo.verdict(monte(0.10)) == "baisse"
+    assert montecarlo.verdict(monte(0.101)) == "dépend"
+
+
+def test_the_report_writes_its_readings() -> None:
+    payload = json.loads(json.dumps(_build(Theta(common=0.5), persistence="lue").payload()))
+    lectures = payload["lectures"]
+    assert set(lectures["decomposition"]) == {"vieillie", "figee"}
+    assert lectures["taux_marche"]["taux"] == 0.035
+    # A dearer added debt weighs more on Δb, whatever its sign.
+    assert (abs(lectures["taux_marche"]["vieillie"])
+            > abs(lectures["decomposition"]["vieillie"]["total"]))
+    assert set(lectures["variante_salariale"]["boite"]) == {"vieillie", "figee"}
