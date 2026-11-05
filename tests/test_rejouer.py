@@ -194,3 +194,42 @@ def test_the_verdict_reads_one_persistence() -> None:
     every = [x for v in values for x in (v["theta"], *(c for _, c in v["corners"]))]
     assert reading == ("hausse" if min(every) > 0 else "baisse" if max(every) < 0
                        else "dépend de θ")
+
+
+# --------------------------------------------------------------------------- #
+# the first year carried as a share of GDP (D-343): the plages' and the grid's
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("rows", THETAS)
+@pytest.mark.parametrize("persistence", retroaction.PERSISTENCE_LABELS)
+def test_the_carried_replay_is_the_fast_chain_to_1e_9(rows, persistence) -> None:
+    """One first-year pass, carried: `rejouer` on `annuel.carried_payload` gives
+    `exploration.trajectory`'s Δb, GDP gap and feedback every year, after a JSON trip."""
+    from impots.behavioural.store import load as load_store
+    from impots.predictif import exploration
+
+    store, macro_store = load_store(), synthetic_macro_store()
+    priced = _price(2026, "vieillie")
+    theta = Theta(rows=rows, common=0.5)
+    payload = json.loads(json.dumps(annuel.carried_payload(
+        START, priced, IR, spending=FROZEN, growth=GROWTH, rate=HELD, theta=theta,
+        horizon=len(YEARS), store=store, macro_store=macro_store)))
+    drawn = exploration.trajectory(theta, priced, IR, start=START, horizon=len(YEARS),
+                                   spending=FROZEN, growth=GROWTH, rate=HELD, store=store,
+                                   macro_store=macro_store, persistence=persistence)
+    replayed = rejouer.at_theta(payload, rows, view="vieillie", persistence=persistence)
+    assert replayed.years == tuple(YEARS)
+    assert np.max(np.abs(np.array(replayed.delta) - np.array(drawn.delta))) < 1e-9
+    assert np.max(np.abs(np.array(replayed.gdp_gap) - np.array(drawn.gdp_gap))) < 1e-9
+    assert np.max(np.abs(np.array(replayed.feedback)
+                         - np.array(drawn.feedback_primary))) < 1e-9
+
+
+def test_a_carried_report_carries_one_year_only() -> None:
+    payload = annuel.carried_payload(
+        START, _price(2026, "vieillie"), IR, spending=FROZEN, growth=GROWTH, rate=HELD,
+        theta=Theta(common=0.5), horizon=10, macro_store=synthetic_macro_store())
+    assert payload["rejeu"]["box_rows"] == ["eti_all", "eti_top_decile", MACRO_ROW]
+    payload["years"] = payload["years"] * 2
+    with pytest.raises(rejouer.ReplayError, match="seule première année"):
+        rejouer.at_theta(payload, {MACRO_ROW: 0.5, "eti_all": 0.5, "eti_top_decile": 0.5},
+                         view="vieillie", persistence="lue")

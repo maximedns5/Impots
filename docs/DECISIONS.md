@@ -26188,3 +26188,59 @@ l'interpolation et les tolérances sont préenregistrées dans l'entrée suivant
 **Le budget.** Une passe des ménages avec comportements et impulsions coûte de 3 à 8 min :
 environ 150 passes des ménages et 30 des entreprises, soit 10 à 20 heures-machine, loin
 des 150 du but, parce que la convention reportée ne demande aucun chemin annuel.
+
+## D-344 — La grille préenregistrée : 169 passes, leurs tolérances et leur pronostic
+
+**Ce qui tourne.** `etudes/grille/grille.json` au commit qui porte cette entrée, `src/`
+propre, par `impots grille lancer`, une passe par processus, sur un worktree figé : les 19
+curseurs de D-343 (14 boutons des programmes, 5 curseurs λ du PLF et du PLFSS), 158 points
+de grille, 19 témoins, 11 paires, soit 169 passes. Le cadre est `etudes/cadres/central.json`
+sous la persistance lue. Les points de chaque forme et le témoin sont ceux de `grille.py`
+(taux : 5 points, interpolation linéaire ; seuil et part : 11 points, PCHIP ; plafond sur
+plus d'une décade : 11 points géométriques, PCHIP sur le logarithme ; λ : 9 points de 0 à 2,
+PCHIP ; le témoin au milieu, géométrique pour une grille géométrique, de l'intervalle qui
+touche la loi). Une passe d'essai sur le point « CSG imposable à 0 » : 143 s, et `rejouer`
+en mode reporté redonne la chaîne au bit près, le JavaScript à 2e-16.
+
+**Les tolérances, fixées ici, avant tout calcul, et qui ne bougent plus.**
+
+1. **Le point « loi »** de chaque curseur coûte 0 € à 1 € près (19 points).
+2. **Le témoin** : le coût interpolé à moins de la tolérance de sa forme, en part de
+   l'amplitude du curseur (le plus grand |coût| de ses points), plancher 1 M€ ; et Δb₂₀₃₅ à
+   θ½, refait par `rejouer` sur les parts interpolées, à moins de la même part de
+   l'amplitude de Δb du curseur, plancher 0,002 pt. Taux 0,5 % ; seuil, part et plafond 3 %
+   ; λ 2 %. Un curseur dont la dette est absente (CVAE, art. 15) n'a que la tolérance du
+   coût.
+3. **Le rejeu** : sur chaque point de la grille, le JavaScript de la page redonne la chaîne
+   (le contrôle écrit par la passe) à 1e-9 près, à θ½ et à chaque coin de la boîte.
+
+**Le pronostic.**
+
+1. **Les points « loi » : 19 sur 19 à 0 €.** Chaque valeur de loi a été lue dans OpenFisca
+   au 1er janvier 2026 (plafond des allègements 3 SMIC, plafond du quotient 1 807 € et 4 262
+   € pour le parent isolé, 0,5 part pour le 2e enfant, CSG d'activité 6,8 % et 2,4 %, C3S
+   0,16 %), dans la loi de l'énergie de la consommation (accises de 0,6075 €/l et 0,6702
+   €/l, TVA de l'énergie à 20 % depuis que les abonnements y passent en 2026), ou est neutre
+   par construction (une échelle à 1, une revalorisation à 1, λ = 0).
+2. **Les témoins : 19 sur 19 dans leur tolérance de coût.** Les taux sont linéaires à moins
+   de 0,1 % (TVA, accises et CSG, D-336, audit § 4.1), les seuils et parts à moins de 1 % à
+   11 points, le plafond du quotient à moins de 2 % (il sature, D-336), les λ à moins de 0,5
+   %. Les dettes suivent les coûts : 17 sur 17 dans la leur.
+3. **Le rejeu : chaque point à 1e-9.**
+4. **Les termes croisés**, au point où les deux boutons sont à leur bout le plus loin de la
+   loi, contre la somme des deux points seuls : les deux paires TVA × accise d'un poste sont
+   négatives (la TVA porte sur l'accise, que la somme compte deux fois), entre 10 et 25 % du
+   coût de l'accise seule ; CSG déductible × plafond du quotient positive (le passage par
+   l'assiette de l'IR que l'audit a mesuré, +330 M€ au point de Lisnard), entre 1 et 10 % du
+   plus petit des deux coûts seuls ; parts du 2e enfant × plafond du quotient positive et
+   au-delà de 10 % du coût des parts seules (le plafond bride les parts) ; les sept autres
+   sous 2 % de la somme des deux coûts seuls.
+
+**Ce qui réfute.** Un point « loi » à plus de 1 € ; un témoin hors de sa tolérance ; un
+point dont le rejeu s'écarte de plus de 1e-9 ; un terme croisé d'un autre signe, ou hors de
+sa fourchette. Chaque écart est dit dans la D-entrée du résultat ; aucune tolérance ne
+bouge.
+
+**Ce que la grille ne dit pas.** Les crans des mesures préenregistrées gardent le nombre de
+leur rapport d'étude ; la grille sert l'exploration entre eux. Une combinaison hors des 11
+paires est supposée additive, et la page le dit à côté du nombre.

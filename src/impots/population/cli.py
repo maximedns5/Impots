@@ -1695,6 +1695,26 @@ def cmd_etude(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_grille(args: argparse.Namespace) -> int:
+    """La grille des curseurs (but 15, D-343) : ses passes, un point, sa compilation."""
+    from impots import grille
+
+    try:
+        if args.action == "lancer":
+            return grille.lancer(args.ou)
+        if args.action == "point":
+            cible = tuple(args.cible.split(",")) if args.genre == "paire" else args.cible
+            index = None if args.index < 0 else args.index
+            sortie = Path(args.sortie) if args.sortie else None
+            print(f"  -> {grille.ecrire(args.genre, cible, index, where=args.ou, sortie=sortie)}")
+            return 0
+        print(f"-> {grille.compiler()}")
+        return 0
+    except grille.GrilleError as error:
+        print(str(error), file=sys.stderr)
+        return 1
+
+
 def cmd_programme(args: argparse.Namespace) -> int:
     """Un programme présidentiel (but 11, D-319) : ce que le moteur en chiffre, ce qu'il en
     refuse, et, avec des hypothèses, les trois réponses sur la part chiffrée."""
@@ -2290,6 +2310,21 @@ def build_parser() -> argparse.ArgumentParser:
                          ("verifier", "la page commitée est-elle celle de ses rapports ?")):
         etude_actions.add_parser(action, help=text).add_argument("nom")
     etude.set_defaults(func=cmd_etude)
+
+    grille_parser = subcommands.add_parser(
+        "grille", help="la grille des curseurs : ses passes, un point, sa compilation "
+                       "(but 15, D-343)")
+    grille_actions = grille_parser.add_subparsers(dest="action", required=True)
+    grille_lancer = grille_actions.add_parser("lancer", help="toutes les passes, reprises")
+    grille_lancer.add_argument("--ou", required=True)
+    grille_point = grille_actions.add_parser("point", help="une passe de la grille")
+    grille_point.add_argument("genre", choices=("point", "temoin", "paire"))
+    grille_point.add_argument("cible", help="le curseur, ou « a,b » pour une paire")
+    grille_point.add_argument("index", type=int, help="l'index du point, -1 sinon")
+    grille_point.add_argument("--ou", required=True)
+    grille_point.add_argument("--sortie")
+    grille_actions.add_parser("compiler", help="site/grille.json, depuis les rapports")
+    grille_parser.set_defaults(func=cmd_grille)
 
     programme = subcommands.add_parser(
         "programme", help="un programme présidentiel : sa part chiffrée, ses refus, et ses "
