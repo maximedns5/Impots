@@ -119,7 +119,7 @@ def test_the_annual_paths_take_the_study_s_frame_field_for_field(study) -> None:
         assert args.behavioural and args.macro and args.horizon == 10
 
 
-#: The entry the study names: D-289 at first, D-338 since the series of but 14.
+#: The entry the study names: D-289 at first, D-338 for but 14, D-350 for but 16.
 ENTREE = etude.definition("plf2027").preenregistrement
 #: What git says of a commit whose entry is in and which a remote branch carries.
 GIT = {("show", "HEAD:docs/DECISIONS.md"): f"## D-288 — x\n## {ENTREE} — L'étude\n",

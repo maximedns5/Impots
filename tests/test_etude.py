@@ -413,6 +413,26 @@ def test_a_path_of_d349_says_the_monte_carlo_verdict_and_its_readings(lu) -> Non
     assert said["90\u202f%"].etage == "déclaré" and said["3,5\u202f%"].etage == "hypothèse"
 
 
+def test_the_page_says_what_moved_against_the_frozen_series_and_why(lu) -> None:
+    """D-350: the previous series frozen once, refused twice; the page of the new one says
+    each line then and now, and the corrections that touch it."""
+    frozen = lu.figer_avant()
+    with pytest.raises(etude.EtudeError, match="déjà figée"):
+        lu.figer_avant()
+    then = json.loads(frozen.read_text(encoding="utf-8"))
+    entry = next(e for e in lu.load() if e["name"].endswith("apl"))
+    then["scenarios"][entry["name"]].update(dette=0.012, selon_theta="dépend de θ")
+    frozen.write_text(json.dumps(then), encoding="utf-8")
+    text = lu.render(lu.load())
+    section = text.split("## Ce qui a bougé depuis la série précédente\n")[1].split("\n## ")[0]
+    row = next(line for line in section.splitlines()
+               if line.startswith("| art. 74 du PLF, les aides au logement |"))
+    assert row.endswith(f"| +1,20 pt → {etude._points(entry['debt'][0]['theta'])} | "
+                        f"dépend de θ → hausse |")
+    assert ("* **art. 74 du PLF, les aides au logement** : le secteur public câblé (D-346), "
+            "le verdict lu sur le Monte-Carlo (D-345).") in section
+
+
 def test_a_study_half_of_d349_is_refused(lu) -> None:
     file = lu.rapports / f"predictif_{lu.noms[0]}.json"
     path = json.loads(file.read_text(encoding="utf-8"))

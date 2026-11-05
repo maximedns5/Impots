@@ -26428,3 +26428,62 @@ une partie des chemins seulement porte les lectures est refusée. En miroir, cha
 est celui de la mesure, retourné comme le reste. Les pages commitées ne changent pas :
 leurs rapports n'ont pas de lectures. Deux tests (`tests/test_etude.py`) tiennent ces
 nombres, miroir compris.
+
+## D-350 — La série du but 16 préenregistrée : dix études, avant et après
+
+**Ce qui tourne.** Les dix études (`etudes/*.json`), une fois, sur le commit figé qui porte
+cette entrée, dans le cadre central (`etudes/cadres/central.json`), sur une population
+reconstruite avec les colonnes de D-346 ; puis la grille du but 15, refaite sur le même
+commit (D-345). Rien ne tourne avant la fin de la grille en cours.
+
+**L'ordre, étude par étude.** `impots etude avant <nom>` fige ce que dit la série de
+`7235bd8` (`reports/etudes/<nom>/avant/serie.json` : le coût de la première année, Δb₂₀₃₅
+à θ½, le verdict de la boîte) ; les rapports d'avant sont retirés (premières années,
+chemins, plages, témoins) ; `impots etude lancer <nom>` les refait. La page de la nouvelle
+série dit, ligne par ligne, avant → après, et les corrections qui touchent chaque ligne
+(`etude.causes` : le secteur public pour toute passe des ménages, l'IS pour une réforme de
+la CVAE ou de la C3S, la TVA quand la boucle la porte, le verdict pour toutes). Une étude
+dont la série d'avant n'a pas été figée n'a pas cette section ; le résultat le dirait.
+
+**La population d'abord.** `impots population build`, sur le même commit. Pronostic : les
+colonnes d'avant identiques au bit, les poids identiques (le calage ne lit ni
+`fonction_publique` ni `titulaire`), et `calibrate.py` non modifié. Si le calage bouge, la
+série s'arrête et le propriétaire est consulté (le `/goal` du but 16) ; l'autorisation de
+D-345 ne vaut que dite dans une D-entrée, avec l'effet mesuré.
+
+**Le pronostic**, par étude, sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance « lue ») et le
+verdict du Monte-Carlo (seuils de D-345), avec la première année en Md€ ; « avant » est la
+série de `7235bd8`, P(hausse) d'avant lue sur ses rapports.
+
+| étude | avant : coût, Δb, P | après, pronostic | verdict pronostiqué |
+|---|---|---|---|
+| PLF art. 2 | +2,83 ; +0,39 ; 0,80 | ± 3 % ; +0,36 à +0,42 | dépend |
+| PLF art. 3 | −1,12 ; −0,17 ; 0,18 | ± 3 % ; −0,19 à −0,15 | dépend |
+| PLF art. 15 | −7,05 ; −0,23 ; 0,00 | ± 2 % ; −0,24 à −0,22 | baisse |
+| PLFSS, PPA | −0,89 ; −0,27 ; 0,00 | ± 3 % ; −0,29 à −0,25 | baisse |
+| PLFSS, APL | −0,08 ; −0,07 ; 0,00 | ± 5 % ; −0,08 à −0,06 | baisse |
+| Attal | +76,4 ; +4,36 ; 0,63 | 54 à 64 ; +2,9 à +3,9 | dépend |
+| Labib | +22,9 ; +4,36 ; 1,00 | ± 3 % ; +4,3 à +4,6 | hausse |
+| Le Pen | +13,9 ; +1,38 ; 0,71 | ± 3 % ; +1,45 à +1,65 | dépend |
+| Lisnard | +37,2 ; +5,95 ; 0,91 | 34,5 à 36,5 ; +5,4 à +5,9 | hausse ou dépend |
+| Mélenchon | −8,7 ; −0,44 ; 0,43 | −7,5 à −5,5 ; −0,40 à −0,25 | dépend |
+| Retailleau | +20,8 ; +2,78 ; 1,00 | 15,5 à 17,5 ; +2,0 à +2,4 | hausse |
+| Roussel | +5,2 ; +0,44 ; 0,68 | ± 3 % ; +0,48 à +0,56 | dépend |
+| Tondelier | −0,85 ; +0,28 ; 0,93 | ± 5 % ; +0,24 à +0,32 | hausse |
+
+Les raisons : E1 retire les allègements et les barèmes privés d'un quart de la masse
+salariale, ce qui ôte un quart environ des baisses de cotisations salariales d'Attal et de
+Retailleau, et des hausses de Mélenchon (examen de validité : 56, 9,3 et −6,6 Md€ côté
+ménages) ; E2 rend environ 1,6 Md€ d'IS à Lisnard et à Retailleau, 0,6 à Attal, et en ôte
+autant à Mélenchon ; E3 ajoute de +0,1 à +0,2 point à Labib, Le Pen et Roussel. Les
+mesures d'IR et de prestations ne bougent qu'au second ordre, par les revenus nets des
+agents publics. Le verdict de Lisnard est à 0,91 pour un seuil de 0,90 : les deux issues
+sont possibles, et c'est dit. Tondelier passerait à « hausse » sous le nouveau seuil pour
+un coût de première année négatif : l'écart de signe noté par l'examen de validité y est,
+et la page le dira, sans le corriger.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/` : le chiffre noté contre un juge reste celui de son
+enregistrement. Les seuils du verdict
+sont ceux de D-345. Le résultat va dans une nouvelle D-entrée, avec les dix études avant
+et après et l'écart au pronostic.

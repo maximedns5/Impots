@@ -4,6 +4,7 @@
     impots etude ecrire <nom>              # la page, depuis les seuls rapports commités
     impots etude verifier <nom>            # la page commitée est-elle celle des rapports ?
     impots etude temoin <nom> --ou "..."   # la passe témoin, rejouée sur ce commit (D-335)
+    impots etude avant <nom>               # ce que dit la série d'avant, figé (D-350)
 
 Une étude est un fichier `etudes/<nom>.json` : les scénarios qu'elle chiffre, ménages ou
 entreprises, chacun avec son volet et son sens ; le texte dont elle dit les refus ; la
@@ -69,6 +70,9 @@ PLAGES = "plages"
 #: Where a study keeps its witness passes (D-335, D-336): one per commit after the first,
 #: `temoins/<short sha>.json`.
 TEMOINS = "temoins"
+#: What the previous series said, frozen before the next one replaces its reports (D-350):
+#: `<rapports>/avant/serie.json`. The page of the next series says what moved against it.
+AVANT = Path("avant") / "serie.json"
 #: What a witness does not compare: the day it ran, the code it named, where it ran. Every
 #: other field of the report, its request and its reply, must be the same, value and type.
 HORS_TEMOIN = ("computed", "commit", "dirty", "where")
@@ -409,6 +413,24 @@ def verdict_mc(entry: dict[str, Any], monte: dict[str, Any] | None = None) -> st
     if entry["sign"] == -1:
         reading = {"hausse": "baisse", "baisse": "hausse"}.get(reading, reading)
     return reading
+
+
+def causes(entry: dict[str, Any]) -> list[str]:
+    """The corrections of but 16 that touch an entry (D-350): the public sector for any
+    household pass, the corporate tax for a firm reform of the CVAE or the C3S, the VAT
+    coefficient when the loop carries VAT; the verdict's rule for every one."""
+    out = []
+    if entry["kind"] != "entreprises":
+        out.append("le secteur public câblé (D-346)")
+    firm = entry["scenario"].firm_reform
+    fields = firm.model_dump(exclude_none=True) if firm is not None else {}
+    if any("cvae" in k or "c3s" in k for k in fields):
+        out.append("la CVAE et la C3S déduites de l'IS (D-347)")
+    macro = (entry["path"].get("rejeu") or {}).get("macro") or {}
+    if "tva" in (macro.get("instruments") or {}):
+        out.append("la TVA des ménages au point net (D-348)")
+    out.append("le verdict lu sur le Monte-Carlo (D-345)")
+    return out
 
 
 def refusal(raison: str) -> tuple[str, str]:
@@ -1499,6 +1521,9 @@ class Etude:
             else:
                 self._official(w, n, entry)
         texte.refusals(w, entries, n)
+        if read and (self.rapports / AVANT).exists():
+            self._avant(w, n, entries, json.loads((self.rapports / AVANT).read_text(
+                encoding="utf-8")))
         w("## D'où viennent ces nombres")
         w("")
         path = entries[0]["path"]
@@ -1859,6 +1884,64 @@ class Etude:
               f"passe des ménages ne le chiffre pas ; le coût de la première année et la "
               f"dette en sont bruts, et l'effet net est plus petit.")
             w("")
+
+    def _avant(self, w: Any, n: Nombres, entries: list[dict[str, Any]],
+               avant: dict[str, Any]) -> None:
+        """What moved since the previous series (D-350): each entry's first-year cost, its
+        Δb at θ½ and its verdict, then and now, and the corrections that touch it. The
+        then is the file frozen before the series, not a memory."""
+        from impots import fiche
+
+        w("## Ce qui a bougé depuis la série précédente")
+        w("")
+        w(f"La série précédente a tourné sur `{avant['commit'][:7]}` ; ce qu'elle disait est "
+          f"figé dans `{_relative(self.rapports / AVANT)}` avant que celle-ci ne remplace "
+          f"ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le "
+          f"Monte-Carlo.")
+        w("")
+        w("| | la première année, avant → après | dette à θ½, avant → après | verdict, "
+          "avant → après |")
+        w("|---|---|---|---|")
+        texte = self.texte_lu()
+        for entry in entries:
+            then = avant["scenarios"].get(entry["name"])
+            if then is None:
+                w(f"| {texte.label(entry)} | nouveau | nouveau | nouveau |")
+                continue
+            etage = debt_etage(entry["path"])
+
+            def points(value: float, etage: str = etage) -> str:
+                return n(_points(value), etage, conditionnel=True)
+
+            w(f"| {texte.label(entry)} | {n(fiche._eur(then['cout']), 'L2')} → "
+              f"{n(fiche._eur(entry['cost']), 'L2')} | {points(then['dette'])} → "
+              f"{points(entry['debt'][0]['theta'])} | {then['selon_theta']} → "
+              f"{verdict_mc(entry)} |")
+        w("")
+        w("Ce qui touche chaque ligne :")
+        w("")
+        for entry in entries:
+            w(f"* **{texte.label(entry)}** : {', '.join(causes(entry))}.")
+        w("")
+        w("La D-entrée du résultat de la série mesure ce que chaque correction y pèse.")
+        w("")
+
+    def figer_avant(self) -> Path:
+        """`impots etude avant` : freeze what the committed series says (D-350), before
+        the next one replaces its reports. Refused if a frozen file is already there: it
+        is the previous series', not overwritten in silence."""
+        target = self.rapports / AVANT
+        if target.exists():
+            raise EtudeError(f"{_relative(target)} existe : la série d'avant est déjà "
+                             f"figée, et ne l'est pas deux fois.")
+        entries = self.load()
+        snapshot = {"commit": entries[0]["first"]["commit"], "scenarios": {
+            e["name"]: {"cout": e["cost"], "dette": e["debt"][0]["theta"],
+                        "selon_theta": verdict(e["debt"])} for e in entries}}
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
+                          encoding="utf-8")
+        return target
 
     def _official(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:
         from impots import fiche
