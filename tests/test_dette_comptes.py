@@ -239,17 +239,19 @@ def test_the_debt_identity_reproduces_the_published_path_2021_2025() -> None:
 
 
 @needs_files
-def test_the_2025_residual_is_small_only_because_two_errors_cancel() -> None:
-    """LA raison pour laquelle un résidu quasi nul se décompose avant d'être fêté.
+def test_the_2025_residual_is_the_vintage_term_left_by_the_october_notification() -> None:
+    """Ce que 2025 montre sur la notification EDP d'octobre 2026 (D-340 à D-342).
 
-    Le préenregistrement annonçait un terme de millésime d'environ 0,03 pt en 2025. Le
-    résidu de 2025 est pourtant le PLUS PETIT de la série (+0,001 pt) — parce que l'erreur
-    propre de l'année (−0,031) annule presque exactement le résidu reporté de 2024
-    (+0,031). Lire la colonne des résidus aurait fait conclure que 2025 est la meilleure
-    année, alors qu'elle porte le défaut connu.
+    Sur celle d'avril, le résidu de 2025 était quasi nul (+0,001 pt) parce que deux erreurs
+    s'annulaient : une erreur propre de −0,031 et le report de 2024 (D-168). La
+    notification d'octobre relève le SFA de 2025 de 0,019 pt et rapproche Eurostat du compte
+    INSEE de 62 % : le zéro disparaît, 2025 affiche +0,020 pt, et ce qui reste de l'écart
+    de millésime (+0,012) est toujours exactement l'opposé de l'erreur propre de l'année.
 
-    L'implémentation qui fait tomber ce test : aucune — il fige un CONSTAT. S'il casse,
-    c'est que le terme de millésime a bougé, et il faudra le renommer, pas l'élargir.
+    Les bornes sont celles du pronostic de D-340, écrit avant le calcul : résidu 2025 dans
+    [+0,015 ; +0,025] pt, erreur propre et terme de millésime de somme nulle à 0,0002 pt.
+    Ce test fige un CONSTAT de ce millésime. S'il casse, c'est que le millésime a changé :
+    on le renomme sur une D-entrée neuve, on ne l'élargit pas.
     """
     from impots.dette.path import backtest
 
@@ -270,11 +272,12 @@ def test_the_2025_residual_is_small_only_because_two_errors_cancel() -> None:
     pib = comptes.gdp([2025])[2025]
     millesime = implicite / pib - sfa[2025]
 
-    assert abs(par_an[2025].residual) < 0.0002, "2025 doit bien afficher un résidu quasi nul"
-    assert epsilon < -0.0002, "son erreur PROPRE doit être nettement négative"
-    assert abs(epsilon + millesime) < 0.0002, (
-        f"l'erreur propre de 2025 ({epsilon:+.5f}) doit être l'opposé du terme de "
-        f"millésime mesuré à part ({millesime:+.5f}) — sinon la cause nommée dans D-167 "
+    assert 0.00015 <= par_an[2025].residual <= 0.00025, (
+        f"résidu 2025 {par_an[2025].residual * 100:+.4f} pt, hors du pronostic de D-340")
+    assert epsilon < 0 < millesime, "erreur propre négative, terme de millésime positif"
+    assert abs(epsilon + millesime) < 0.000002, (
+        f"l'erreur propre de 2025 ({epsilon:+.6f}) doit être l'opposé du terme de "
+        f"millésime mesuré à part ({millesime:+.6f}) — sinon la cause nommée dans D-167 "
         f"n'est pas celle qui agit")
 
 

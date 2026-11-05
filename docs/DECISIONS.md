@@ -26238,3 +26238,17 @@ transcription et de citation passent. IPP n° 47 : le lecteur lit le panneau (b)
 tenant ; les mêmes cellules, C8 inchangé ; `test_creations.py` attend le tableau en p. 63,
 et un test neuf tient la lecture des lignes collées (rouge sur l'ancien lecteur). 152 tests
 légers verts (créations, IS, patrimoine, données).
+
+## D-342 — Le test du zéro de 2025 remplacé par le constat d'octobre, sur décision
+
+**La décision.** Le propriétaire, le 5 novembre, sur la proposition de D-341 : le test qui
+figeait le constat du millésime d'avril (« two errors cancel ») est remplacé par celui du
+millésime d'octobre (`test_dette_comptes.py`, « the vintage term left by the october
+notification »). Ses bornes sont celles du pronostic de D-340, écrites avant le calcul, et
+non lues sur le résultat : résidu 2025 dans [+0,015 ; +0,025] pt ; erreur propre négative
+et terme de millésime positif ; leur somme nulle à 0,0002 pt près.
+
+**Ce qui ne change pas.** La tolérance de §6.1 (±0,10 pt, `c6c5db4`), la fenêtre, et les
+deux autres tests du backtest. L'ancien test est rouge sur ce millésime (D-341) ; le neuf
+passe, à +0,0196 pt, −0,0118 et +0,0118. S'il casse, le millésime aura changé : il se
+renomme sur une D-entrée neuve, il ne s'élargit pas. Les 17 tests du module sont verts.
