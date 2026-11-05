@@ -26139,8 +26139,8 @@ Le Pen +3,71 → +1,38, Roussel +1,30 → +0,44, Tondelier +0,09 → +0,28, Mél
 
 ## D-345 — Le but 16 validé : trois corrections, une variante, un verdict probabiliste
 
-**La validation.** Le propriétaire, le 5 novembre : « oui aux trois, lance le but 16 », puis,
-interrogé sur ce que « oui » choisissait, trois réponses explicites :
+**La validation.** Le propriétaire, le 5 novembre : « oui aux trois, lance le but 16 »,
+puis, interrogé sur ce que « oui » choisissait, trois réponses explicites :
 
 1. **Le calage.** Si câbler le secteur public exige de toucher au calage, la règle de
    `CLAUDE.md` qui ferme `src/impots/population/calibrate.py` jusqu'à la phase 7 est levée
@@ -26157,3 +26157,40 @@ interrogé sur ce que « oui » choisissait, trois réponses explicites :
 grille du but 15 tourne sur le sien ; aucune passe du but 16 ne tourne avant la fin de la
 grille (deux passes de 7 Go ne tiennent pas ensemble dans 15 Go). Le but 15 se clôt sur sa
 grille, avec ses défauts dits ; la grille est refaite à la fin du but 16.
+
+## D-346 — E1 : le secteur public câblé
+
+**Le défaut.** Jusqu'ici, `to_openfisca` ne posait ni `categorie_salarie` ni traitement
+indiciaire : 5,8 M de salariés publics pondérés, 24,0 % de la masse salariale de la frame
+(266,5 Md€ sur 1 111,7), partaient dans OpenFisca comme « privé non cadre ». Ils
+recevaient la réduction générale, à laquelle aucun employeur public n'a droit, et les
+barèmes de la CNAV et de l'Agirc-Arrco, qui ne sont pas ceux d'un fonctionnaire. Le dépôt
+le savait (`population/reconcile.py`, D-074) ; aucune page d'étude ne le disait.
+
+**Le câblage.** La frame porte deux colonnes de plus, tirées de l'enquête emploi :
+`fonction_publique` (État, territoriale, hospitalière, d'après `PUB3FP`) et `titulaire`
+(`STATUTDET` 21, « CDI, fonctionnaire »). L'enquête ne sépare pas un titulaire d'un
+contractuel en CDI : ceux-là sont lus comme titulaires, et le dire est la limite. Un
+titulaire est envoyé à OpenFisca dans sa catégorie, payé d'un traitement indiciaire
+TIB = brut / 1,195 et des primes qu'OpenFisca calcule lui-même sur lui (`TAUX_DE_PRIME`,
+0,195 du traitement) : traitement et primes redonnent le brut de la frame. Un agent non
+titulaire garde un salaire de base, en `public_non_titulaire`. La sortie « salaire brut »
+additionne salaire de base, rémunération principale et primes. Une frame qui porte un
+salarié public sans ces deux colonnes est refusée, plutôt que lue comme toute privée.
+
+**Le calage ne change pas.** Il porte sur la masse des salaires bruts de la frame, que le
+câblage conserve ; `calibrate.py` n'est pas touché, malgré la levée de D-345. La
+population doit être reconstruite pour porter les deux colonnes (`impots population
+build`), après la grille du but 15 qui lit la frame d'aujourd'hui.
+
+**Ce que tient le test** (`tests/test_secteur_public.py`, vu échouer sur le câblage
+d'avant) : à 36 000 € brut, le titulaire de l'État reçoit 30 126 € de traitement et
+5 874 € de primes, et aucun allègement ; le contractuel public n'en reçoit pas non plus ;
+le salarié du privé en reçoit 3 760 €. À 60 000 €, la mesure de Mélenchon ne retire
+l'allègement qu'au salarié du privé (−1 343 €) ; à 36 000 €, celle d'Attal ne touche pas le
+titulaire, rend 2 070 € au contractuel (sa part de CNAV) et 3 176 € au salarié du privé.
+
+**Les nombres qui bougeront**, mesurés par la série du but 16 et préenregistrés avec elle :
+les mesures d'Attal et de Retailleau (cotisations salariales) et de Mélenchon
+(allègements), d'un quart environ selon l'examen de validité ; et, en moindre part, toute
+mesure qui passe par le net ou l'imposable d'un agent public.

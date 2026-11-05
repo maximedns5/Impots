@@ -268,7 +268,8 @@ def _extract(
             )
 
     for row in outputs.rows_for(tier):
-        array = built.calculate(row.variable, add=row.period == "month")
+        array = sum(built.calculate(name, add=row.period == "month")
+                    for name in (row.variable, *row.extra))
         if row.entity == "menage":
             values = array.astype(np.float64)
         else:

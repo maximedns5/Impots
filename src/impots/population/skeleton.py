@@ -132,6 +132,9 @@ PCS_GROUP: dict[str, str] = {
     "62": "ouvrier",
 }
 
+#: EEC `PUB3FP` -> the side of the public service (D-346).
+FONCTION_PUBLIQUE = {"1": "etat", "2": "territoriale", "3": "hospitaliere"}
+
 #: EEC `TXTPPRED` -> the fraction of a full-time job actually worked. Band
 #: midpoints; "plus de 80 %" is read as 0.9. A part-timer whose rate is unrecorded
 #: (`TPPRED` = 2 with no `TXTPPRED`) takes 0.6, near the observed average.
@@ -190,6 +193,7 @@ def _observed_persons(eec: pl.DataFrame) -> pl.DataFrame:
             pl.col("STATUT").alias("statut_emploi"),
             pl.col("PCS1Q").alias("pcs_code"),
             pl.col("PUB3FP").alias("employeur"),
+            pl.col("STATUTDET").alias("statut_detaille"),
             pl.col("TPPRED").alias("temps_partiel"),
             pl.col("TXTPPRED").alias("taux_partiel"),
         )
@@ -330,6 +334,15 @@ def build_skeleton(
         pl.col("pcs_code").replace_strict(PCS_GROUP, default=None).alias("pcs"),
         (pl.col("employeur").is_in(["1", "2", "3"])).fill_null(False)
           .alias("secteur_public"),
+        # The public employer's side and the agent's status (D-346): a titular civil
+        # servant is paid a traitement indiciaire and primes, contributes to the civil
+        # pension schemes and gives his employer no allègement. The EEC tells « CDI,
+        # fonctionnaire » (STATUTDET 21) from fixed-term and other contracts, not a
+        # titular from a contractual on a CDI: those are read as titular.
+        pl.col("employeur").replace_strict(FONCTION_PUBLIQUE, default=None)
+          .alias("fonction_publique"),
+        ((pl.col("employeur").is_in(["1", "2", "3"]))
+         & (pl.col("statut_detaille") == "21")).fill_null(False).alias("titulaire"),
         pl.when(pl.col("temps_partiel") == "2")
           .then(pl.col("taux_partiel").replace_strict(PART_TIME_FACTOR,
                                                       default=PART_TIME_DEFAULT))
@@ -417,6 +430,8 @@ def _synthesise_children(
                 "is_salarie": False,
                 "pcs": None,
                 "secteur_public": False,
+                "fonction_publique": None,
+                "titulaire": False,
                 "quotite_travail": 1.0,
                 "region": region,
                 "statut_occupation": occupation,
@@ -528,6 +543,7 @@ SKELETON_COLUMNS = [
     "age", "sex", "region",
     "role_menage", "role_foyer", "role_famille",
     "statut_activite", "statut_occupation", "zone_apl",
-    "is_salarie", "pcs", "secteur_public", "quotite_travail",
+    "is_salarie", "pcs", "secteur_public", "fonction_publique", "titulaire",
+    "quotite_travail",
     "parent_isole", "synthetic",
 ]
