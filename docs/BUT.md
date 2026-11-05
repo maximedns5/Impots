@@ -516,7 +516,7 @@ point près (D-339). Sous la persistance « lue », Attal passe de +20,3 à +4,4
 en 2035, et la falaise de l'an 4 a disparu ; trois programmes montent la dette à chaque coin
 (Lisnard, Retailleau, Labib), cinq en dépendent de θ. Les pages publient « éteint » et « tenu » à côté, comme sensibilités.
 
-### But 16 — Les chiffres des candidats, défendables (proposé le 5 novembre 2026, à valider)
+### But 16 — Les chiffres des candidats, défendables (validé le 5 novembre 2026, D-345)
 
 L'examen de validité du 5 novembre (deux relectures adverses indépendantes et des contrôles
 refaits sur les rapports de `7235bd8`) trouve la chaîne juste : la dette rejouée égale le

@@ -26136,3 +26136,24 @@ Le Pen +3,71 → +1,38, Roussel +1,30 → +0,44, Tondelier +0,09 → +0,28, Mél
   numéro de préenregistrement du PLFSS et l'avertissement des commits multiples. Ils
   lisent maintenant l'état réel : l'avertissement doit paraître si et seulement si les
   études tiennent sur plusieurs commits.
+
+## D-345 — Le but 16 validé : trois corrections, une variante, un verdict probabiliste
+
+**La validation.** Le propriétaire, le 5 novembre : « oui aux trois, lance le but 16 », puis,
+interrogé sur ce que « oui » choisissait, trois réponses explicites :
+
+1. **Le calage.** Si câbler le secteur public exige de toucher au calage, la règle de
+   `CLAUDE.md` qui ferme `src/impots/population/calibrate.py` jusqu'à la phase 7 est levée
+   pour ce but, et pour lui seul. Chaque changement du calage est dit dans sa D-entrée, avec
+   l'effet mesuré sur les totaux calés.
+2. **La spécification de Mésange.** La courbe de Phillips entre comme une variante publiée à
+   côté du chiffre de tête, avec son propre verdict, comme « éteint » et « tenu » le sont
+   aujourd'hui ; le chiffre de tête reste sous la spécification centrale (« wage setting »).
+3. **Le verdict.** Il lit le Monte-Carlo : « hausse » si P(Δb₂₀₃₅ > 0) ≥ 90 %, « baisse »
+   si P ≤ 10 %, « dépend » entre les deux ; la boîte de θ reste publiée à côté. Les seuils
+   sont fixés ici, avant toute passe, et ne bougent plus.
+
+**L'ordre.** Le code des corrections s'écrit dans le worktree du but 16 pendant que la
+grille du but 15 tourne sur le sien ; aucune passe du but 16 ne tourne avant la fin de la
+grille (deux passes de 7 Go ne tiennent pas ensemble dans 15 Go). Le but 15 se clôt sur sa
+grille, avec ses défauts dits ; la grille est refaite à la fin du but 16.
