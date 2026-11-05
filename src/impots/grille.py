@@ -540,6 +540,9 @@ def lineaire(canaux: Mapping[str, Any] | None) -> dict[str, Any] | None:
 
 
 def _feuilles(tree: Any, prefix: str = "") -> dict[str, float]:
+    """Les feuilles numériques d'un arbre ; une branche absente (`None`) n'en a aucune."""
+    if tree is None:
+        return {}
     if isinstance(tree, Mapping):
         out: dict[str, float] = {}
         for key, value in tree.items():
@@ -626,7 +629,7 @@ def ecart_temoin(curseur: Curseur, rapports: Path | None = None) -> dict[str, An
         "curseur": curseur.id, "x": x, "cout_calcule": witness["cout"]["total"],
         "cout_interpole": cost, "ecart_cout": cost - witness["cout"]["total"],
         "tolerance_cout": max(PLANCHER_COUT_EUR, share * amplitude)}
-    out["cout_tenu"] = abs(out["ecart_cout"]) <= out["tolerance_cout"]
+    out["cout_tenu"] = bool(abs(out["ecart_cout"]) <= out["tolerance_cout"])
     if witness["rejeu"] is None or any(p["part"] is None for p in points):
         out.update(dette_calculee=None, dette_interpolee=None, ecart_dette=None,
                    tolerance_dette=None, dette_tenue=None)
@@ -638,10 +641,11 @@ def ecart_temoin(curseur: Curseur, rapports: Path | None = None) -> dict[str, An
     debt = _chemin_parts(rejeu, int(witness["rejeu"]["horizon"]), [interpolated], values, z,
                          rejouer.READ)[-1]
     debts = [dette_theta(p["report"]) for p in points]
+    debt = float(debt)
     out.update(dette_calculee=dette_theta(witness), dette_interpolee=debt,
                ecart_dette=debt - dette_theta(witness),
                tolerance_dette=max(PLANCHER_DETTE, share * max(abs(d) for d in debts)))
-    out["dette_tenue"] = abs(out["ecart_dette"]) <= out["tolerance_dette"]
+    out["dette_tenue"] = bool(abs(out["ecart_dette"]) <= out["tolerance_dette"])
     return out
 
 
@@ -679,10 +683,11 @@ def _chemin_parts(rejeu: Mapping[str, Any], horizon: int, parts: list[Mapping[st
     first = 0.0
     impulse: dict[str, float] = {}
     for p in parts:
-        r = (recettes_lineaires(-p["cost"], p["canaux"], values)
-             if rejeu["behavioural"] and p["canaux"] is not None else -p["cost"])
+        # A part interpolated over points without a channel has no « canaux » key at all.
+        r = (recettes_lineaires(-p["cost"], p.get("canaux"), values)
+             if rejeu["behavioural"] and p.get("canaux") is not None else -p["cost"])
         first += r / gdp[0]
-        for i, v in (p["impulses"] or {}).items():
+        for i, v in (p.get("impulses") or {}).items():
             impulse[i] = impulse.get(i, 0.0) + v
     impulses = [{i: v / gdp[0] * y for i, v in impulse.items()} for y in gdp]
     if rejeu["looped"]:
@@ -695,3 +700,165 @@ def _chemin_parts(rejeu: Mapping[str, Any], horizon: int, parts: list[Mapping[st
         debt = debt * (1.0 + marginal) / (1.0 + nominal) - (first + phi[k])
         delta.append((refs[k] + debt) / (1.0 + gap[k]) - refs[k])
     return delta
+
+
+# --------------------------------------------------------------------------- #
+# la compilation : ce que lit la page « explorer »
+# --------------------------------------------------------------------------- #
+DECILE_CHAMPS = ("decile", "mean_delta", "share_winners", "share_losers")
+
+
+def _deciles(report: Mapping[str, Any]) -> list[dict[str, float]]:
+    return [{k: float(d[k]) for k in DECILE_CHAMPS} for d in report["deciles"]]
+
+
+def _cadre(points: list[Mapping[str, Any]]) -> dict[str, Any]:
+    """Le cadre commun des points : départ, cadre, tables des instruments réunies, lignes
+    réunies. Deux points dont le départ ou le cadre diffèrent sont refusés."""
+    frames = [p["rejeu"]["rejeu"] for p in points if p.get("rejeu")]
+    if not frames:
+        raise GrilleError("aucun point n'a de rejeu : rien à compiler")
+    first = frames[0]
+    instruments: dict[str, Any] = {}
+    lignes: dict[str, Any] = {}
+    for f in frames:
+        for key in ("start", "cadre", "looped"):
+            if f[key] != first[key]:
+                raise GrilleError(f"deux points de cadres différents ({key}) : refusé")
+        if f["macro"]:
+            if {k: v for k, v in f["macro"].items() if k != "instruments"} != {
+                    k: v for k, v in first["macro"].items() if k != "instruments"}:
+                raise GrilleError("deux points dont les tables de Mésange diffèrent")
+            instruments.update(f["macro"]["instruments"])
+        lignes.update(f["lignes"])
+    macro = ({**{k: v for k, v in first["macro"].items() if k != "instruments"},
+              "instruments": instruments} if first["macro"] else None)
+    return {"start": first["start"], "cadre": first["cadre"], "looped": first["looped"],
+            "behavioural": True, "macro": macro, "lignes": lignes}
+
+
+def _point(curseur: Curseur, x: float, report: Mapping[str, Any]) -> dict[str, Any]:
+    return {"x": x, "cout": report["cout"], "deciles": _deciles(report),
+            "part": part(report),
+            "box_rows": list(report["rejeu"]["rejeu"]["box_rows"]) if report["rejeu"] else [],
+            "dette_absente": report["dette_absente"], "dette_theta": dette_theta(report),
+            "controle": report["controle"]}
+
+
+def _croise(pair: Mapping[str, Any], a: Mapping[str, Any], b: Mapping[str, Any]
+            ) -> dict[str, Any]:
+    """Le terme croisé : la paire moins ses deux points seuls, feuille par feuille."""
+    out: dict[str, Any] = {"cout": {k: pair["cout"][k] - a["cout"][k] - b["cout"][k]
+                                    for k in pair["cout"]},
+                           "deciles": [
+                               {"decile": p["decile"],
+                                **{k: p[k] - x[k] - y[k] for k in DECILE_CHAMPS[1:]}}
+                               for p, x, y in zip(pair["deciles"], a["deciles"], b["deciles"],
+                                                  strict=True)]}
+    if pair["part"] is None or a["part"] is None or b["part"] is None:
+        out["part"] = None
+        return out
+    leaves = [_feuilles(p["part"]) for p in (pair, a, b)]
+    keys = sorted(set().union(*leaves))
+    out["part"] = _arbre({k: leaves[0].get(k, 0.0) - leaves[1].get(k, 0.0)
+                          - leaves[2].get(k, 0.0) for k in keys})
+    return out
+
+
+def crans(curseurs: dict[str, Curseur]) -> list[dict[str, Any]]:
+    """Les mesures préenregistrées, comme des crans sur les curseurs, avec le nombre de
+    leur rapport d'étude : la plage « candidat » d'une mesure de programme (la convention
+    de la grille), la première année et le chemin d'un article (D-344)."""
+    from impots import etude
+    from impots import programmes as pg
+
+    by_champ = {(c.champ, json.dumps(dict(c.contexte or {}), sort_keys=True)): c
+                for c in curseurs.values() if c.champ}
+    out: list[dict[str, Any]] = []
+    for study in etude.definitions():
+        if study.programme:
+            p = pg.charger(study.programme)
+            for m in p.chiffrees():
+                valeurs: dict[str, float] = {}
+                for plage in m.chiffrage.plages:
+                    contexte = json.dumps({"programme": study.programme, "mesure": m.id}
+                                          if plage.champ.startswith("ir_bareme.") else {},
+                                          sort_keys=True)
+                    c = by_champ.get((plage.champ, contexte))
+                    if c is not None:
+                        valeurs[c.id] = float(pg._lire(m.chiffrage.reforme, plage.champ))
+                if not valeurs:
+                    continue
+                champ = m.chiffrage.plages[0].champ
+                report = _lire(study.rapports / etude.PLAGES
+                               / etude.plage_name(m.id, champ, "candidat"))
+                delta = report["response"]["delta"]
+                out.append({"etude": study.nom, "titre": f"{study.titre} : {m.libelle}",
+                            "valeurs": valeurs, "cout": report["response"][
+                                "mechanical_first_year_eur"],
+                            "dette": delta[-1] if delta else None,
+                            "dette_absente": report["dette_absente"],
+                            "convention": "plage « candidat » de l'étude, mécanique, "
+                                          "première année reportée (D-328)",
+                            "commit": report["commit"]})
+            continue
+        for c in curseurs.values():
+            if c.forme != "lambda" or study.nom not in c.etudes:
+                continue
+            first = _lire(study.rapports / f"premiere_annee_{c.article}.json")
+            path = _lire(study.rapports / f"predictif_{c.article}.json")
+            lue = next(x for x in path["theta_box"]["paths"] if x["persistence"] == "lue")
+            response = first["response"].get("menages", first["response"])
+            out.append({"etude": study.nom, "titre": f"{study.titre} : {c.titre}",
+                        "valeurs": {c.id: 1.0},
+                        "cout": float(response.get("reform_cost",
+                                                   first["response"].get("reform_cost", 0))),
+                        "dette": lue["every_year"]["vieillie"]["theta"],
+                        "dette_absente": None,
+                        "convention": "première année publiée (population de 2024) et chemin "
+                                      "annuel de l'étude, θ½, persistance lue",
+                        "commit": first["commit"]})
+    return out
+
+
+def compiler(rapports: Path | None = None, definition: Path | None = None) -> dict[str, Any]:
+    """La grille compilée, depuis les seuls rapports écrits : refuse un point « loi » qui
+    coûte, un rapport sale, deux cadres."""
+    curseurs, paires, raw = charger(definition)
+    commits: set[str] = set()
+    all_points: list[Mapping[str, Any]] = []
+    out_c: list[dict[str, Any]] = []
+    for c in curseurs.values():
+        points = points_de(c, rapports)
+        law = next(p for p in points if math.isclose(p["x"], c.valeur_loi, abs_tol=1e-12))
+        if abs(law["report"]["cout"]["total"]) > LOI_TOLERANCE_EUR:
+            raise GrilleError(f"{c.id} : le point « loi » coûte "
+                              f"{law['report']['cout']['total']:.2f} € au lieu de 0 (D-344)")
+        for p in points:
+            if p["report"]["dirty"]:
+                raise GrilleError(f"{c.id} : un point sur un arbre sale")
+            commits.add(p["report"]["commit"])
+            all_points.append(p["report"])
+        out_c.append({"id": c.id, "titre": c.titre, "forme": c.forme,
+                      "interpolation": c.interpolation, "geometrique": c.geometrique,
+                      "bornes": list(c.bornes), "loi": c.valeur_loi, "lointain": c.lointain,
+                      "etudes": list(c.etudes),
+                      "points": [_point(c, p["x"], p["report"]) for p in points],
+                      "temoin": ecart_temoin(c, rapports)})
+    by_id = {c["id"]: c for c in out_c}
+    out_p: list[dict[str, Any]] = []
+    for a, b in paires:
+        pair = _lire((rapports or RAPPORTS) / "paires" / f"{a}__{b}.json")
+        commits.add(pair["commit"])
+        ends = []
+        for cid in (a, b):
+            far = curseurs[cid].lointain
+            ends.append(next(p for p in by_id[cid]["points"]
+                             if math.isclose(p["x"], far, abs_tol=1e-12)))
+        pp = _point(curseurs[a], 0.0, pair)
+        out_p.append({"a": a, "b": b, "xa": curseurs[a].lointain, "xb": curseurs[b].lointain,
+                      "cout_paire": pair["cout"], **_croise(pp, ends[0], ends[1])})
+    return {"titre": raw["titre"], "preenregistrement": raw["preenregistrement"],
+            "commits": sorted(commits), "rejeu": _cadre(all_points),
+            "horizon": int(next(p["rejeu"]["horizon"] for p in all_points if p["rejeu"])),
+            "curseurs": out_c, "paires": out_p, "crans": crans(curseurs)}

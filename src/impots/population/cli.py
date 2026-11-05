@@ -1708,7 +1708,17 @@ def cmd_grille(args: argparse.Namespace) -> int:
             sortie = Path(args.sortie) if args.sortie else None
             print(f"  -> {grille.ecrire(args.genre, cible, index, where=args.ou, sortie=sortie)}")
             return 0
-        print(f"-> {grille.compiler()}")
+        compiled = grille.compiler()
+        for c in compiled["curseurs"]:
+            t = c["temoin"]
+            dette = ("absente" if t["dette_tenue"] is None else
+                     f"dette {t['ecart_dette'] * 100:+.4f} pt / ±{t['tolerance_dette'] * 100:.4f}"
+                     f" {'tenue' if t['dette_tenue'] else 'MANQUÉE'}")
+            print(f"{c['id']:26s} coût {t['ecart_cout'] / 1e6:+10.2f} M€ / "
+                  f"±{t['tolerance_cout'] / 1e6:.1f} {'tenu' if t['cout_tenu'] else 'MANQUÉ'}"
+                  f" ; {dette}")
+        for p in compiled["paires"]:
+            print(f"{p['a']} × {p['b']} : terme croisé {p['cout']['total'] / 1e6:+.1f} M€")
         return 0
     except grille.GrilleError as error:
         print(str(error), file=sys.stderr)
