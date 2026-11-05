@@ -1073,8 +1073,10 @@ class Etude:
         """Why the reports already there may not stand beside the passes still to run on
         `commit`, or None. A report stands when it is on `commit`, or on a commit a witness
         joins to it (D-335): a series resumes, and no report is written over."""
+        # The frozen previous series (D-349) is read by the page, not a pass of this one.
         there = ({str(p.relative_to(self.rapports)) for p in self.rapports.rglob("*.json")
-                  if p.parent.name != TEMOINS} if self.rapports.exists() else set())
+                  if p.parent.name != TEMOINS and p != self.rapports / AVANT}
+                 if self.rapports.exists() else set())
         if there - set(passes):
             return (f"{self.rapports} porte {sorted(there - set(passes))}, qui n'est pas une "
                     f"passe de l'étude : un rapport n'est pas écrasé en silence.")
