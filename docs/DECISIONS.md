@@ -26194,3 +26194,52 @@ titulaire, rend 2 070 € au contractuel (sa part de CNAV) et 3 176 € au salar
 les mesures d'Attal et de Retailleau (cotisations salariales) et de Mélenchon
 (allègements), d'un quart environ selon l'examen de validité ; et, en moindre part, toute
 mesure qui passe par le net ou l'imposable d'un agent public.
+
+## D-347 — E2 : la CVAE et la C3S se déduisent du résultat imposable
+
+**Le défaut.** Dans la couche entreprises, `benefice_imposable` est une donnée d'entrée
+fixe : supprimer la CVAE ou la C3S, deux charges déductibles, ne relevait pas le résultat
+sur lequel l'IS se calcule. L'IS ne bougeait pas, et les suppressions de Lisnard, de
+Retailleau (CVAE et C3S, 8,57 Md€) et d'Attal (CVAE, 3,28 Md€) étaient comptées sans leur
+retour d'IS, de l'ordre de 1,6 et de 0,6 Md€ selon l'examen de validité.
+
+**La correction.** `benefice_fiscal` vaut le résultat observé plus la CVAE et la C3S de la
+loi moins celles de la réforme ; l'IS le lit. En loi, l'écart est nul ; la passe d'une
+réforme reçoit la CVAE et la C3S que la passe de la loi a calculées
+(`taxes_deductibles_loi`). Seule une entreprise bénéficiaire bouge : une entreprise en
+perte porte un résultat nul, sa perte est inconnue, et une baisse de sa CVAE n'est pas lue
+comme la rendant imposable.
+
+**Les tests.** Neuf (`test_entreprises.py`, vu échouer avant) : supprimer CVAE et C3S d'une
+grande entreprise bénéficiaire relève son IS de 25 % de ce qu'elles coûtaient, et laisse
+celle en perte à zéro. Un test existant affirmait qu'une hausse de la C3S « ne bouge pas
+l'IS » : c'était l'erreur, il dit maintenant que l'IS baisse, au plus du taux normal fois la
+hausse.
+
+**Ce qui n'est pas corrigé, et sera dit.** Les cotisations patronales vivent dans la couche
+ménages : leur variation ne passe pas dans le résultat des entreprises. Une mesure qui les
+touche (Mélenchon) est publiée « brute d'IS », et sa page le dira.
+
+## D-348 — E3 : la TVA des ménages est le point net de la variante de Mésange
+
+**Le défaut.** La variante de TVA de Mésange coûte 1,18 point ex ante pour 1 point net,
+parce que les administrations versent environ 15 % de la TVA (folio 112). D-218 avait donc
+mesuré la rétroaction contre 1,18, pour un coût de TVA compté brut — c'était juste alors,
+aucun coût de TVA n'étant encore chiffré par le moteur. Depuis D-323, le moteur chiffre la
+TVA des ménages (`tva_menages`), qui ne contient rien de celle que les administrations se
+paient : un euro en est un euro du point net. Diviser par 1,18 lisait une baisse de TVA
+15 % plus petite qu'elle n'est, et créditait en rétroaction 0,18 point que le coût ne
+portait pas.
+
+**La correction.** `mesange.points_du_cout` donne le coefficient du coût que le moteur
+chiffre : 1 pour la TVA, le facteur ex ante de la variante ailleurs. La boucle, l'éventail,
+les indices et le macro de première année le lisent ; `elasticites` garde le 1,18, car il
+compare la boucle aux variantes de Mésange elles-mêmes, choc compris.
+
+**Les tests.** Trois tests tenaient la convention de D-218 (la division par 1,18 dans
+l'éventail et dans la boucle, les rétroactions de la TVA à 0,38, 0,82 et 0,90) : ils tiennent
+maintenant la nouvelle, et disent pourquoi (0,20, 0,64 et 0,72, soit D-214 moins 0,18).
+
+**L'effet attendu**, mesuré par l'examen de validité sur les rapports de `7235bd8` par la
+fonction pure : Δb₂₀₃₅ de Labib +4,36 → +4,47, de Le Pen +1,38 → +1,56, de Roussel
++0,44 → +0,52 ; aucun verdict ne change. La série du but 16 le mesure sur ses passes.

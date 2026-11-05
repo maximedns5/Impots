@@ -201,6 +201,21 @@ class MesangeError(RuntimeError):
     """The Mésange document cannot be read as expected."""
 
 
+#: The cost the ENGINE prices for a variant's instrument, in points of the variant per
+#: point of GDP of that cost, where it is not the variant's own ex ante figure. The VAT the
+#: engine prices is the households' (`consommation`, `tva_menages`): it holds none of the
+#: ~15 % of VAT the APU pay themselves, which is the 0,18 of the variant's 1,18 gross
+#: points. One euro of it is one euro of the variant's NET point, so its coefficient is 1
+#: (D-348). Dividing it by 1,18, as the chain did until D-348, read a household VAT cut as
+#: 15 % smaller than it is, and credited as feedback 0,18 point the cost never held.
+COUT_CHIFFRE: dict[str, float] = {"tva": 1.0}
+
+
+def points_du_cout(instrument: str) -> float:
+    """Variant points per point of GDP of the cost the engine prices for `instrument`."""
+    return COUT_CHIFFRE.get(instrument, VARIANTS[instrument].ex_ante_points)
+
+
 @dataclass(frozen=True)
 class Variant:
     """One published variant, in the expansionary convention."""

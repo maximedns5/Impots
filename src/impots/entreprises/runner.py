@@ -75,7 +75,8 @@ class FirmRunResult:
     guards: dict[str, Any] = field(default_factory=dict)
 
 
-def _simulate(system: Any, frame: pl.DataFrame, year: int) -> Any:
+def _simulate(system: Any, frame: pl.DataFrame, year: int,
+              deductibles: np.ndarray | None = None) -> Any:
     builder = SimulationBuilder()
     builder.create_entities(system)
     builder.declare_person_entity("entreprise", np.arange(frame.height))
@@ -95,6 +96,10 @@ def _simulate(system: Any, frame: pl.DataFrame, year: int) -> Any:
         simulation.set_input(
             "is_avant_report", period, frame["is_avant_report"].to_numpy().astype(np.float64)
         )
+    # A reform's run deducts the law's CVAE and C3S from the observed profit, and its
+    # own: a cut in either raises the IS base (D-347).
+    if deductibles is not None:
+        simulation.set_input("taxes_deductibles_loi", period, deductibles)
     return simulation
 
 
@@ -147,7 +152,9 @@ def run(
 
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
-        reformed = _extract(_simulate(reformed_for(reform, year), population, year), year)
+        deductibles = columns["cvae"] + columns["c3s"]
+        reformed = _extract(_simulate(reformed_for(reform, year), population, year,
+                                      deductibles), year)
         timings["reform_s"] = round(time.perf_counter() - started, 3)
         for name, values in reformed.items():
             columns[f"{name}_reform"] = values

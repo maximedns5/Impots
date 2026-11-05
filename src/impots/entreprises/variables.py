@@ -109,6 +109,36 @@ class eligible_taux_reduit(Variable):
         return assez_petite * capital
 
 
+class taxes_deductibles_loi(Variable):
+    value_type = float
+    entity = Entreprise
+    definition_period = YEAR
+    label = "CVAE et C3S de la loi en vigueur, déduites du résultat observé"
+    documentation = """The observed taxable profit is net of the CVAE and the C3S the law
+    levies: both are deductible charges. Under the law this is the simulation's own
+    CVAE and C3S; a reform's run is handed the law's, so that a cut in either raises the
+    taxable profit it was deducted from (D-347)."""
+
+    def formula(entreprise, period, parameters):
+        return entreprise("cvae", period) + entreprise("c3s", period)
+
+
+class benefice_fiscal(Variable):
+    value_type = float
+    entity = Entreprise
+    definition_period = YEAR
+    label = "Résultat imposable une fois la CVAE et la C3S de la réforme déduites"
+    documentation = """`benefice_imposable` plus the law's deductible taxes less the
+    reform's (D-347). Only a profitable firm moves: a loss-maker carries zero, its loss
+    unknown, and a cut in its CVAE is not read as making it taxable."""
+
+    def formula(entreprise, period, parameters):
+        benefice = entreprise("benefice_imposable", period)
+        ecart = entreprise("taxes_deductibles_loi", period) - (
+            entreprise("cvae", period) + entreprise("c3s", period))
+        return np.where(benefice > 0, np.maximum(benefice + ecart, 0.0), 0.0)
+
+
 class impot_societes(Variable):
     value_type = float
     entity = Entreprise
@@ -117,7 +147,7 @@ class impot_societes(Variable):
 
     def formula(entreprise, period, parameters):
         p = parameters(period).impot_societes
-        benefice = entreprise("benefice_imposable", period)
+        benefice = entreprise("benefice_fiscal", period)
         eligible = entreprise("eligible_taux_reduit", period)
         # The reduced rate applies to a slice, not to the whole profit: a firm just
         # over the ceiling does not suddenly pay 25 % on its first euro.
@@ -373,6 +403,8 @@ class taux_effectif(Variable):
 VARIABLES = (
     chiffre_affaires,
     benefice_imposable,
+    taxes_deductibles_loi,
+    benefice_fiscal,
     valeur_ajoutee,
     capital_libere_detenu_personnes_physiques,
     is_avant_report,

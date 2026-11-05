@@ -10,10 +10,11 @@ IT — the engine's gross ex ante figure:
 
     rétroaction(h) = solde(h) + coût ex ante brut du choc   (points of GDP per variant)
 
-One point for the labour taxes and the CSG; 1,18 for VAT, whose variant costs 1,18 points
-gross for one net because the APU pay about 15 % of VAT (folio 112). Against a gross cost
-line, the State's own VAT that Mésange nets out is part of what comes back. The adversarial
-pass of 2026-10-19 caught the first draft adding one point for VAT too (D-218).
+One point for the labour taxes and the CSG. For VAT, the variant costs 1,18 points gross
+for one net because the APU pay about 15 % of VAT (folio 112); D-218 measured the feedback
+against 1,18, for a VAT cost counted gross. The VAT the engine prices since D-323 is the
+households', which holds none of the APU's own: it is the variant's net point, and its
+coefficient is 1 (`mesange.points_du_cout`, D-348).
 
 WHAT IT MEASURES, named exactly. Not « the receipts' response »: the row is the induced
 effect on the primary balance — receipts, unemployment benefits, the transfers Mésange
@@ -104,9 +105,9 @@ NOT_FISCAL = ("choc de dépense en volume : son coût nominal suit les prix publ
               "l'écart au coût ex ante d'un choc fiscal ne s'y lit pas")
 CARBON = ("le choc porte sur les volumes d'énergie (folio 120) : l'écart du solde contient "
           "la baisse de l'assiette énergie, qui n'est pas un effet de l'activité")
-GROSS_COST = ("Rétroaction mesurée contre le coût ex ante BRUT que la chaîne compte : un "
-              "point pour les cotisations et la CSG, 1,18 pour la TVA, dont les APU versent "
-              "environ 15 % (folio 112).")
+GROSS_COST = ("Rétroaction mesurée contre le coût que la chaîne compte : un point par "
+              "point de variante ; pour la TVA, le moteur chiffre celle des ménages, le point "
+              "net de la variante, sans les 15 % que les APU se versent (folio 112, D-348).")
 WHAT_IT_IS = ("La ligne de Mésange est l'effet induit sur le solde PRIMAIRE : recettes, "
               "prestations chômage, transferts indexés sur le PIB et dépenses indexées sur "
               "les prix (note 70, tableau 10). Les intérêts de la dette supplémentaire sont "
@@ -271,7 +272,7 @@ def replay_tables(store: Store, instruments: Sequence[str]) -> dict[str, Any]:
             "pib": {str(h): multipliers.at(instrument, str(h)) for h in read},
             "solde": {str(h): balance.at(instrument, str(h)) for h in read},
             "sd": dispersion.at(MULTIPLIER_FAMILY[instrument], "all"),
-            "brut": mesange.VARIANTS[instrument].ex_ante_points,
+            "brut": mesange.points_du_cout(instrument),
         }
     return {"horizons": list(read), "court": short_horizon(store), "instruments": tables}
 
@@ -294,7 +295,7 @@ def _response(store: Store, instrument: str, horizon: int, theta: float,
     if family is None:
         raise FeedbackError(f"aucune famille de dispersion pour « {instrument} »")
     gdp = multiplier_at(centre, dispersion.at(family, "all"), theta)
-    gross = mesange.VARIANTS[instrument].ex_ante_points
+    gross = mesange.points_du_cout(instrument)
     feedback = (interpolated(balance, instrument, at, read) + gross) * gdp / centre
     # Bounded by the shock's gross cost, `gross` points per variant point (D-336).
     return gdp, min(feedback, gross)
@@ -351,11 +352,10 @@ def compute(impulses: Mapping[int, Mapping[str, float]], gdp: Mapping[int, float
             "a pas de rétroaction à lire, et une rétroaction nulle se lirait comme un "
             f"constat. Non couverts : {missing or 'aucun instrument mappé'}")
 
-    # Variant units: the VAT variant costs 1,18 points gross for one net, so a reform
-    # costed gross is divided by that, as `fan.run` does — and its feedback per variant
-    # is then measured against the same 1,18 (`_response`).
+    # Variant units: the engine's cost per variant point (`mesange.points_du_cout`), as
+    # `fan.run` divides it, and the feedback is measured against the same (`_response`).
     units = {i: [impulses[y].get(i, 0.0) * 100.0
-                 / (mesange.VARIANTS[i].ex_ante_points * gdp[y]) for y in years]
+                 / (mesange.points_du_cout(i) * gdp[y]) for y in years]
              for i in covered}
     gap, balance = [], []
     for k in range(len(years)):

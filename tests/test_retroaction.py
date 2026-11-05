@@ -73,15 +73,15 @@ def test_a_one_point_income_tax_cut_gives_back_what_m0_pinned() -> None:
     assert result.gdp_gap == pytest.approx((0.0041, 0.0083, 0.0088), abs=1e-12)
 
 
-def test_vat_is_measured_against_the_gross_cost_the_chain_counts() -> None:
-    """The VAT variant costs 1,18 points gross for one net, and the chain's mechanical
-    line is the gross cost. Against it, what comes back is solde + 1,18 = 0,38 point per
-    variant, the State's own VAT included — not solde + 1 = 0,20, the first draft's
-    figure, which the adversarial pass caught (D-218). The GDP effect is divided by 1,18
-    as the fan divides it."""
-    gross = 1.18 * GDP[2026] / 100.0
-    result = _run(_cut(gross, "tva", years=YEARS[:1]))
-    assert result.balance[0] == pytest.approx((-0.80 + 1.18) / 100.0, abs=1e-12)
+def test_vat_is_measured_against_the_households_cost_the_chain_counts() -> None:
+    """The VAT variant costs 1,18 points gross for one net because the APU pay about 15 %
+    of VAT. D-218 measured the feedback against 1,18, for a VAT cost counted gross; the
+    VAT the engine prices since D-323 is the households', which holds none of the APU's
+    own: one point of it is the variant's net point, and what comes back is solde + 1 =
+    0,20 point per variant, not the 0,38 of a gross line (D-348)."""
+    net = 1.0 * GDP[2026] / 100.0
+    result = _run(_cut(net, "tva", years=YEARS[:1]))
+    assert result.balance[0] == pytest.approx((-0.80 + 1.0) / 100.0, abs=1e-12)
     assert result.gdp_gap[0] == pytest.approx(0.32 / 100.0, abs=1e-12)
 
 
@@ -261,15 +261,16 @@ def _shipped():
 
 
 def test_the_shipped_row_gives_back_what_m0_pinned() -> None:
-    """D-214's six feedbacks, against the gross cost: one point for the labour taxes and
-    the CSG, 1,18 for VAT; the carbon tax is not read."""
+    """D-214's six feedbacks, against the cost the chain counts: one point per variant
+    point; for VAT the households' cost, the net point, so its pins are D-214's less the
+    0,18 the APU pay themselves (D-348); the carbon tax is not read."""
     loaded = _shipped()
     pins = {"impot_sur_le_revenu": (0.19, 0.50, 0.58), "csg": (0.19, 0.50, 0.57),
             "cotisations_salaries": (0.27, 0.53, 0.61),
             "cotisations_employeurs": (0.28, 0.58, 0.73),
-            "tva": (0.38, 0.82, 0.90)}
+            "tva": (0.20, 0.64, 0.72)}
     for instrument, pinned in pins.items():
-        gross = mesange.VARIANTS[instrument].ex_ante_points
+        gross = mesange.points_du_cout(instrument)
         one = gross * GDP[2026] / 100.0
         result = _run(_cut(one, instrument, years=YEARS[:3]), store=loaded)
         assert result.balance == pytest.approx(tuple(p / 100 for p in pinned), abs=1e-12)

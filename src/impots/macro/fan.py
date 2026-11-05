@@ -222,10 +222,9 @@ def run(impulse: Impulse, store: Store, *, gdp_eur: float,
         if family is None:
             raise FanError(f"no dispersion family declared for {instrument!r}")
         spread = dispersion.at(family, "all")
-        # The impulse in points of GDP, on the basis the variant was actually run: the
-        # VAT variant costs 1.18 points ex ante for one point net, so a reform costed
-        # gross must be divided by that or it takes a multiplier 18 % too large.
-        points = (amount / gdp_eur) * 100.0 / spec.ex_ante_points
+        # The impulse in points of the variant: the engine's cost per variant point,
+        # 1 for the households' VAT it prices, the variant's net point (D-348).
+        points = (amount / gdp_eur) * 100.0 / mesange.points_du_cout(instrument)
         if spec.caveat:
             caveats.append(f"{instrument} : {spec.caveat}")
 
@@ -234,7 +233,7 @@ def run(impulse: Impulse, store: Store, *, gdp_eur: float,
             drawn = _draw_multiplier(rng, centre, spread, draws)
             # NO leakage factor here. See the module docstring: Mésange's multiplier is
             # already net of import crowding-out.
-            gdp_draws[horizon] += drawn * amount / spec.ex_ante_points
+            gdp_draws[horizon] += drawn * amount / mesange.points_du_cout(instrument)
             # Employment carries the multiplier's uncertainty proportionally: within a
             # variant, jobs and output move together at the model's own calibration, and
             # no source gives employment a dispersion of its own. An assumption, and the
@@ -244,7 +243,7 @@ def run(impulse: Impulse, store: Store, *, gdp_eur: float,
 
     support = multipliers.support.max_variation_graded_in_support
     total_points = sum(
-        abs(v / mesange.VARIANTS[k].ex_ante_points) for k, v in impulse.by_instrument.items()
+        abs(v / mesange.points_du_cout(k)) for k, v in impulse.by_instrument.items()
     ) / gdp_eur * 100.0
     grade = _grade(total_points, support)
 
