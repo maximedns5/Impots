@@ -520,7 +520,7 @@ point près (D-339). Sous la persistance « lue », Attal passe de +20,3 à +4,4
 en 2035, et la falaise de l'an 4 a disparu ; trois programmes montent la dette à chaque coin
 (Lisnard, Retailleau, Labib), cinq en dépendent de θ. Les pages publient « éteint » et « tenu » à côté, comme sensibilités.
 
-### But 15 — Les études explorables : des curseurs précalculés (proposé le 5 novembre 2026, à valider)
+### But 15 — Les études explorables : des curseurs précalculés (validé le 5 novembre 2026, D-343)
 
 Les dix études répondent pour un point : la mesure telle que le texte ou le candidat
 l'écrit, et trois points de sa plage. Un lecteur qui demande « et à 55 % au lieu de 60 % ? »
@@ -573,3 +573,7 @@ Le budget, pris dans l'audit (§ 4.6) : environ 66 heures-machine pour la grille
 conteneur actuel, une passe à la fois. Une variante mécanique seule, sans les ratios du
 chemin annuel, tient en une quinzaine d'heures ; elle donnerait le coût et la dette du
 chemin rapide, sans la vue vieillie année par année.
+
+Validé par le propriétaire le 5 novembre 2026 (« oui aux trois, lance le but 15 ») : les
+trois décisions sont prises comme proposées, et la grille porte sur les boutons, un champ à
+la fois (D-343).

@@ -26136,3 +26136,55 @@ Le Pen +3,71 → +1,38, Roussel +1,30 → +0,44, Tondelier +0,09 → +0,28, Mél
   numéro de préenregistrement du PLFSS et l'avertissement des commits multiples. Ils
   lisent maintenant l'état réel : l'avertissement doit paraître si et seulement si les
   études tiennent sur plusieurs commits.
+
+## D-343 — Le but 15 validé : la grille par bouton, et ce que porte un point
+
+**La validation.** Le propriétaire, le 5 novembre : « oui aux trois, lance le but 15 ». Les
+trois décisions de `docs/BUT.md` sont prises : une page « explorer » à part, la seule du
+site à porter du JavaScript, les pages d'étude restant sans script (D-304) ; la grille
+tourne sur un worktree figé, un seul commit ; le périmètre est celui des boutons que
+revendiquent les dix études. La parenthèse du but (« IR, CSG, cotisations, allègements, TVA
+et accises, IS et CVAE ») oubliait les prestations : l'art. 74 du PLF est dans les dix
+études, ses deux volets sont dans la grille.
+
+**La grille porte sur les boutons, pas sur les mesures.** Un curseur fait varier un champ
+de réforme seul, le reste de la loi intact ; une mesure est une combinaison de curseurs.
+C'est ce qui donne un sens au contrôle du but : au point « loi » de chaque bouton, la
+réforme est la loi, et le coût doit valoir 0 € à l'euro. Un bouton qui n'a de sens que
+dans le contexte de sa mesure le porte (le taux de la 6e tranche de Tondelier, au seuil de
+la mesure : à 45 %, la tranche ne change rien).
+
+**Les curseurs.** Les 14 champs distincts des 19 plages des huit programmes, chacun sur
+l'union de ses plages, et un curseur d'intensité λ par article du PLF et du PLFSS : à λ,
+chaque champ numérique de l'article vaut loi + λ (article − loi), de λ = 0 (la loi) à λ = 2
+(le double de l'écart) ; λ = 1 est l'article. Les articles en miroir (art. 74) se lisent
+comme leurs scénarios : λ = 1 est la révision que l'article suspend.
+
+**La convention, une seule.** Celle des plages et de `POST /predictif/simulate` : la
+première année projetée (2026), population vieillie à elle, reportée en part de PIB
+constante sur l'horizon du cadre central. Les entreprises par `/entreprises/simulate` ; une
+loi d'entreprise qui bouge dans l'horizon (CVAE, la contribution bornée de l'art. 15) a sa
+dette dite absente, avec la raison de D-254, comme ses plages.
+
+**Ce que porte un point.** Le coût par couche, les dix déciles, les impulsions par
+instrument et les statistiques suffisantes des canaux (celles que `rejouer` lit), les
+lignes du magasin que la réforme revendique avec leurs bornes. Pas les recettes à θ = 0, ½
+et 1, que le but nommait : les statistiques les donnent à tout θ, ces trois-là comprises,
+et le Monte-Carlo avec. Le cadre, les tables de Mésange et d'IMK et la référence sont
+écrits une fois pour la grille.
+
+**`rejouer` apprend le report.** Un rapport d'une seule année marqué « part_pib_constante »
+se rejoue comme `chaine.run` le fait : recettes, coût et impulsions de la première année
+tenus en part du PIB de référence. Un test le tient égal à la chaîne à 1e-9 près.
+
+**Les points.** Un taux ou une échelle : 5 points également espacés sur sa plage. Un seuil,
+une part ou un plafond : 11 points, en progression géométrique pour un plafond dont la plage
+couvre plus d'une décade. Un curseur λ : 9 points, de 0 à 2. Un point témoin par curseur, au
+milieu du plus grand intervalle. Les paires dont les deux boutons touchent l'assiette de
+l'IR ou des prestations sous condition de ressources, et les paires TVA × accise d'un même
+poste, ont leur terme croisé : le seul point neuf est celui où les deux bougent. La liste,
+l'interpolation et les tolérances sont préenregistrées dans l'entrée suivante.
+
+**Le budget.** Une passe des ménages avec comportements et impulsions coûte de 3 à 8 min :
+environ 150 passes des ménages et 30 des entreprises, soit 10 à 20 heures-machine, loin
+des 150 du but, parce que la convention reportée ne demande aucun chemin annuel.
