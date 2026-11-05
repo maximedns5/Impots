@@ -18,9 +18,12 @@ axis, so that one call prices one θ or two thousand draws alike.
 THE MULTIPLIER IS A SHIFT z. At θ, z = 2θ − 1 and m = max(0, c + z sd) (D-336, decision
 2); a draw takes z from a normal. The feedback is (solde + brut) m / c, bounded by brut.
 
-WHAT IT DOES NOT REPLAY. The first year carried as a share of GDP (the box's
-« first_year » reading), which reads the explorer's chain; and a report written before
-D-336, which has no statistics — refused by name.
+THE FIRST YEAR CARRIED (D-343). A payload with `carry` « part_pib_constante », one year and
+a `horizon` is the fast convention of the plages and the grid: that year's receipts, cost
+and impulse held as a share of reference GDP, as `chaine.run` carries them.
+
+WHAT IT DOES NOT REPLAY. A report written before D-336, which has no statistics — refused
+by name.
 """
 
 from __future__ import annotations
@@ -37,6 +40,8 @@ MACRO_ROW = "multiplicateur_macro"
 READ = "lue"
 PERSISTENCES = ("lue", "eteint", "tenu")
 VIEWS = {"vieillie": "mechanical_aged_eur", "figee": "mechanical_frozen_eur"}
+#: The first year carried as a share of GDP: `chaine.CARRY`, the plages' and the grid's.
+CARRY = "part_pib_constante"
 
 
 class ReplayError(ValueError):
@@ -209,23 +214,38 @@ def chemin(payload: Mapping[str, Any], *, view: str, values: Mapping[str, Any],
     """One view's Δb path at the row values `values` and the multiplier shift `z`."""
     rejeu = _rejeu(payload)
     rows = payload["years"]
-    years = tuple(int(r["year"]) for r in rows)
-    gdp, refs, nominal = reference_path(rejeu, rejeu["start"], len(rows))
+    carried = payload.get("carry") == CARRY
+    if payload.get("carry") not in (None, CARRY):
+        raise ReplayError(f"convention de report « {payload['carry']} » inconnue")
+    if carried and len(rows) != 1:
+        raise ReplayError("un rapport reporté porte sa seule première année")
+    horizon = int(payload["horizon"]) if carried else len(rows)
+    first = int(rows[0]["year"])
+    years = tuple(range(first, first + horizon)) if carried else tuple(
+        int(r["year"]) for r in rows)
+    gdp, refs, nominal = reference_path(rejeu, rejeu["start"], horizon)
     marginal = rejeu["cadre"]["taux"]["marginal"]
     stats = [r["statistiques"][view] for r in rows]
     cost = [float(r[VIEWS[view]]) for r in rows]
     if rejeu["behavioural"] and all(s.get("canaux") is not None for s in stats):
         primary = [receipts(-c, s["canaux"], values) / y
-                   for c, s, y in zip(cost, stats, gdp, strict=True)]
+                   for c, s, y in zip(cost, stats, gdp, strict=False)]
     else:
-        primary = [-c / y for c, y in zip(cost, gdp, strict=True)]
+        primary = [-c / y for c, y in zip(cost, gdp, strict=False)]
+    impulses = [s["impulses"] for s in stats]
+    if carried:
+        # `chaine._costs_by_year` under « part_pib_constante » (D-343): the receipts, the
+        # cost and the impulse of the first year held as a share of reference GDP.
+        primary = primary * horizon
+        impulses = [{i: v / gdp[0] * y for i, v in (impulses[0] or {}).items()}
+                    for y in gdp]
     if rejeu["looped"]:
-        gap, phi = loop([s["impulses"] for s in stats], gdp, rejeu["macro"], z, persistence)
+        gap, phi = loop(impulses, gdp, rejeu["macro"], z, persistence)
     else:
-        gap = phi = [0.0] * len(rows)
+        gap = phi = [0.0] * horizon
     debt = 0.0
     delta = []
-    for k in range(len(rows)):
+    for k in range(horizon):
         debt = debt * (1.0 + marginal) / (1.0 + nominal) - (primary[k] + phi[k])
         delta.append((refs[k] + debt) / (1.0 + gap[k]) - refs[k])
     return Chemin(years=years, reference=tuple(refs), delta=delta, gdp_gap=gap,
@@ -282,7 +302,7 @@ def verdict(payload: Mapping[str, Any], theta: Mapping[str, float],
     default, the one the verdict reads (D-336, decision 1): Δb at the last year at θ and
     at every corner, in both views, all of one sign or not."""
     signs = set()
-    for view in VIEWS:
+    for view in [v for v, key in VIEWS.items() if key in payload["years"][0]]:
         read = box(payload, theta, view=view, persistence=persistence)
         for value in [read["theta"], *(v for _, v in read["corners"])]:
             signs.add(math.copysign(1.0, value) if value else 0.0)

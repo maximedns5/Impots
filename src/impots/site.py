@@ -238,12 +238,110 @@ def build(studies: list[etude.Etude] | None = None) -> dict[str, str]:
         intro += ('\n<p><a href="presidentielle.html">Les programmes de la présidentielle '
                   "2027</a> : les 24 candidats déclarés, ce que l'outil chiffre de chacun, et "
                   "pourquoi pas le reste.</p>")
+    explorer = _explorer() if grille_present() else None
+    if explorer is not None:
+        files[EXPLORER] = explorer
+        intro += ('\n<p><a href="explorer.html">Explorer les études</a> : les boutons des dix '
+                  "études sur une grille précalculée, la dette rejouée dans le navigateur, "
+                  "chaque nombre dit calculé, interpolé ou tiré d'une étude (but 15, D-344)."
+                  "</p>")
     files["index.html"] = _page(TITLE, intro + "\n<ul class=\"etudes\">\n"
                                 + "\n".join(listed) + "\n</ul>")
     for name, text in files.items():
-        if "<script" in text.lower():
+        # The explorer is the one page that runs a script, by decision (D-343).
+        if name != EXPLORER and "<script" in text.lower():
             raise SiteError(f"{name} porte un script : le site se lit sans en exécuter.")
     return files
+
+
+EXPLORER = "explorer.html"
+EXPLORER_JS = Path(__file__).resolve().parent / "site_explorer"
+
+
+def grille_present() -> bool:
+    from impots import grille
+
+    return (grille.RAPPORTS / "paires").exists()
+
+
+def _explorer(compiled: dict | None = None) -> str:
+    """La page « explorer » : ses curseurs, ses témoins, ses crans en HTML, la grille compilée
+    et les deux scripts en ligne. La seule page du site qui exécute quelque chose (D-343)."""
+    import json
+
+    from impots import grille
+
+    g = compiled if compiled is not None else grille.compiler()
+    esc = html.escape
+    rows = []
+    for c in g["curseurs"]:
+        rows.append(
+            f'<div class="curseur"><label for="r-{c["id"]}">{esc(c["titre"])}</label>'
+            f'<input type="range" id="r-{c["id"]}" min="0" max="1" step="0.001">'
+            f'<output id="v-{c["id"]}"></output><small id="p-{c["id"]}"></small></div>')
+    options = "".join(f'<option value="{i}">{esc(cr["titre"])}</option>'
+                      for i, cr in enumerate(g["crans"]))
+    temoins = []
+    for c in g["curseurs"]:
+        t = c["temoin"]
+        dette = ("absente" if t["ecart_dette"] is None else
+                 f"{t['ecart_dette'] * 100:+.4f} pt / ± {t['tolerance_dette'] * 100:.4f} — "
+                 f"{'tenue' if t['dette_tenue'] else 'manquée'}")
+        temoins.append(f"<tr><td>{esc(c['titre'])}</td><td>{t['x']:.6g}</td>"
+                       f"<td>{t['ecart_cout'] / 1e6:+.1f} M€ / ± {t['tolerance_cout'] / 1e6:.1f}"
+                       f" — {'tenu' if t['cout_tenu'] else 'manqué'}</td><td>{dette}</td></tr>")
+    data = json.dumps(g, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    scripts = "".join(f"<script>\n{(EXPLORER_JS / name).read_text(encoding='utf-8')}</script>\n"
+                      for name in ("rejeu.js", "explorer.js"))
+    commits = ", ".join(f"<code>{c[:7]}</code>" for c in g["commits"])
+    main = (
+        "<h1>Explorer les études</h1>\n"
+        "<p>Chaque curseur fait varier un bouton seul, la loi intacte autour, sur une grille "
+        "de points chiffrés d'avance : la première année (2026, population vieillie à elle), "
+        "reportée en part de PIB constante, dans le cadre des études (croissance réelle 1 %, "
+        "prix 2 %, dépense gelée en volume, taux implicite tenu, persistance lue). La dette, "
+        "la boucle macro et la boîte de θ sont rejouées ici, par la même arithmétique que "
+        "le moteur. Entre deux points, le nombre est interpolé, et l'écart mesuré au point "
+        "témoin est dit à côté. Plusieurs curseurs s'additionnent, sauf sur les paires dont "
+        f"le terme croisé est mesuré. Grille préenregistrée ({esc(g['preenregistrement'])}), "
+        f"chiffrée sur {commits}.</p>\n"
+        '<p><label for="cran">Partir d\'une mesure des études :</label> '
+        f'<select id="cran"><option value="">la loi</option>{options}</select></p>\n'
+        '<section class="curseurs">' + "".join(rows) + "</section>\n"
+        '<p class="theta"><label for="theta">θ des comportements</label> '
+        '<input type="range" id="theta" min="0" max="1" step="0.01" value="0.5"> '
+        '<output id="theta-v">0.50</output> ; <label for="theta-macro">θ du multiplicateur'
+        '</label> <input type="range" id="theta-macro" min="0" max="1" step="0.01" '
+        'value="0.5"> <output id="theta-macro-v">0.50</output></p>\n'
+        '<section id="resultat"><noscript>Cette page rejoue la dette dans le navigateur : '
+        "sans script, les études restent lisibles sur leurs pages.</noscript></section>\n"
+        "<h2>Les points témoins</h2>\n<p>Pour chaque curseur, un point hors de la grille, "
+        "chiffré à part : l'écart entre l'interpolation et le calcul, contre la tolérance "
+        "préenregistrée.</p>\n<table><thead><tr><th>curseur</th><th>témoin</th><th>coût</th>"
+        "<th>dette en 2035, θ½</th></tr></thead><tbody>" + "".join(temoins)
+        + "</tbody></table>\n"
+        f'<script type="application/json" id="grille">{data}</script>\n' + scripts)
+    return (_page(f"Explorer les études — {TITLE}", main)
+            .replace("</head>", f"<style>{EXPLORER_STYLE}</style>\n</head>", 1)
+            .replace("rien n'y est calculé, rien n'y tourne.",
+                     "rien n'y est calculé, sauf sur cette page, qui rejoue la dette."))
+
+
+EXPLORER_STYLE = """
+.curseurs{display:grid;gap:.6rem;margin:1rem 0}
+.curseur{display:grid;grid-template-columns:minmax(0,1fr) minmax(8rem,14rem) 7rem;gap:.2rem .8rem;align-items:center}
+.curseur small{grid-column:1/-1;color:#5a6573}
+.curseur input{width:100%}
+.cout strong,.dette strong{font-variant-numeric:tabular-nums}
+.deciles{list-style:none;padding:0;margin:0;display:grid;gap:.2rem}
+.deciles li{display:grid;grid-template-columns:2.5rem minmax(0,1fr) 5rem;gap:.5rem;align-items:center}
+.barre{height:.8rem;display:block}.plus{background:#2c7a4b}.moins{background:#a23b3b}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.cran{border-left:3px solid #1f4e8c;padding-left:.6rem}
+select{max-width:100%}
+.absent,.note{color:#5a6573}
+@media (max-width:560px){.curseur{grid-template-columns:1fr}}
+"""
 
 
 def write(site: Path | None = None) -> list[Path]:
