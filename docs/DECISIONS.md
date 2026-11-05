@@ -26244,3 +26244,55 @@ bouge.
 **Ce que la grille ne dit pas.** Les crans des mesures préenregistrées gardent le nombre de
 leur rapport d'étude ; la grille sert l'exploration entre eux. Une combinaison hors des 11
 paires est supposée additive, et la page le dit à côté du nombre.
+## D-351 — La grille du but 15 : ce qu'elle a donné contre D-344
+
+**Ce qui a tourné.** Les 169 passes de D-344, par `impots grille lancer` sur un worktree
+figé au commit `2124c44`, `src/` propre, le cadre central sous la persistance lue. Environ
+5 h de machine en trois morceaux (10 h 22 à 14 h 31, puis 15 h 45 et 16 h 38 à 17 h 24
+UTC) : le conteneur a été rendu deux fois en route, quand la session n'avait plus de tâche
+de fond qui la tenait. La passe reprend après les rapports écrits sur le même commit ; les
+deux passes coupées (deux témoins) ont été refaites en entier, aucune n'a été écrasée. La
+grille pèse 1,7 Mo de rapports (`reports/grille/`), la page `site/explorer.html` 344 ko.
+
+**Le pronostic, point par point.**
+
+1. **Les points « loi » : 19 sur 19 à 0 €**, au centime près. Tenu.
+2. **Les témoins : 19 sur 19 dans leur tolérance de coût.** Tenu. Le détail, en part de
+   l'amplitude du curseur :
+
+   | Forme | Pronostic | Le plus grand écart |
+   |---|---|---|
+   | taux (10) | sous 0,1 % | 0,042 % (CVAE) |
+   | seuil et part (2) | sous 1 % | 0,032 % (plafond des allègements) |
+   | plafond (2) | sous 2 % | **2,33 %** (plafond du quotient), 0,63 % (parent isolé) |
+   | λ (5) | sous 0,5 % | 0,010 % |
+
+   Le plafond du quotient sort du pronostic, pas de sa tolérance (3 %) : 128 M€ d'écart
+   pour ±165 M€. **Les dettes : 16 sur 17, pas 17.** La tranche à 60 % manque la sienne de
+   peu, +0,0022 pt pour ±0,0021 pt. Son coût est linéaire au centime (0,000 %), mais sa
+   dette ne l'est pas : 0,056, 0,143, 0,261 et 0,421 pt aux quatre points hors de la loi,
+   les comportements du haut de l'échelle croissant plus vite que le taux ; l'interpolation
+   linéaire de la forme « taux » la surestime au témoin (0,0279 pt contre 0,0257). La
+   tolérance ne bouge pas ; la page dit l'écart mesuré à côté du nombre interpolé.
+3. **Le rejeu : tenu.** Sur les 125 points qui portent une part, le JavaScript de la page
+   redonne la chaîne à 2,2e-16 près, à θ½ et à chaque coin de la boîte (pronostic 1e-9).
+4. **Les termes croisés : neuf sur onze.**
+
+   | Paire | Terme croisé | Pronostic | Mesuré |
+   |---|---|---|---|
+   | TVA carburants × accise gazole | −1 470 M€ | −10 à −25 % de l'accise | −16,7 % |
+   | TVA carburants × accise essence | −1 306 M€ | −10 à −25 % de l'accise | −16,7 % |
+   | CSG déductible × plafond du quotient | +464 M€ | +1 à +10 % du plus petit | +8,4 % |
+   | parts du 2e enfant × plafond | +378 M€ | au-delà de +10 % des parts | **+9,0 %** |
+   | plafond × plafond parent isolé | −422 M€ | sous 2 % de la somme | **−6,6 %** |
+   | les six autres | −330 à +221 M€ | sous 2 % de la somme | 0,0 à 1,4 % |
+
+   Les deux manqués disent la même chose : deux plafonds du quotient se brident l'un
+   l'autre plus que le pronostic ne le croyait, et les parts se brident un peu moins. La
+   page n'additionne pas ces paires : elle lit leur terme mesuré.
+
+**Ce qui réfute, et ce qui tient.** Trois écarts au pronostic, une tolérance manquée (la
+dette de la tranche à 60 %), aucune tolérance modifiée. Le reste du but tient : la page
+« explorer », la seule du site qui porte un script, recalcule le coût, la bande, la boîte
+de θ, la boucle macro et Δb₂₀₃₅ comme `rejouer`, et `tests/test_page_explorer.py` la tient
+sur chaque point (27 tests de la grille et de la page, verts). `site verifier` est vert.

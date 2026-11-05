@@ -577,3 +577,10 @@ chemin rapide, sans la vue vieillie année par année.
 Validé par le propriétaire le 5 novembre 2026 (« oui aux trois, lance le but 15 ») : les
 trois décisions sont prises comme proposées, et la grille porte sur les boutons, un champ à
 la fois (D-343).
+
+**Le résultat (D-351).** Les 169 passes ont tourné sur `2124c44` : les 19 points « loi » à
+0 €, les 19 témoins dans leur tolérance de coût, le rejeu de la page à 2,2e-16 sur les 125
+points qui portent une part. La dette de la tranche à 60 % manque sa tolérance au témoin
+(+0,0022 pt pour ±0,0021) : sa dette est convexe en taux, et la forme « taux » interpole
+linéairement. Deux termes croisés sur onze sortent de leur fourchette (les deux plafonds du
+quotient). Restent make impact, les lourds, la PR et le merge.

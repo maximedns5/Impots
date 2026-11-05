@@ -1,0 +1,240 @@
+{
+ "genre": "point",
+ "valeurs": {
+  "plf_art_74_apl": 2.0
+ },
+ "request": {
+  "reform": {
+   "al_revalorisation_octobre": 1.04
+  },
+  "firm_reform": null,
+  "annee_entreprises": 2026
+ },
+ "cout": {
+  "total": 153993688.20239258,
+  "menages": 153993688.20239258,
+  "entreprises": 0.0
+ },
+ "deciles": [
+  {
+   "decile": 1,
+   "n_households": 3102006.902227004,
+   "mean_niveau_de_vie": 8348.037194262892,
+   "mean_baseline": 11920.860316328242,
+   "mean_reform": 11934.676611697161,
+   "mean_delta": 13.816295368918796,
+   "share_winners": 0.3015139059338808,
+   "share_losers": 0.0,
+   "share_unaffected": 0.6984860940661194
+  },
+  {
+   "decile": 2,
+   "n_households": 3100077.6349093816,
+   "mean_niveau_de_vie": 13578.536819918869,
+   "mean_baseline": 19247.788875695147,
+   "mean_reform": 19258.853523649654,
+   "mean_delta": 11.064647954503348,
+   "share_winners": 0.21906249043928877,
+   "share_losers": 0.0,
+   "share_unaffected": 0.7809375095607113
+  },
+  {
+   "decile": 3,
+   "n_households": 3102637.3895432744,
+   "mean_niveau_de_vie": 17157.421078288673,
+   "mean_baseline": 26170.522327705312,
+   "mean_reform": 26179.412639345603,
+   "mean_delta": 8.890311640291692,
+   "share_winners": 0.1998920167322957,
+   "share_losers": 0.0,
+   "share_unaffected": 0.8001079832677045
+  },
+  {
+   "decile": 4,
+   "n_households": 3101315.473436079,
+   "mean_niveau_de_vie": 20444.508671308256,
+   "mean_baseline": 30603.712971403027,
+   "mean_reform": 30608.537194308883,
+   "mean_delta": 4.82422290585134,
+   "share_winners": 0.08349048911631257,
+   "share_losers": 0.0,
+   "share_unaffected": 0.9165095108836876
+  },
+  {
+   "decile": 5,
+   "n_households": 3100962.224924152,
+   "mean_niveau_de_vie": 23453.173796301187,
+   "mean_baseline": 35718.90564062501,
+   "mean_reform": 35722.758902343754,
+   "mean_delta": 3.853261718750001,
+   "share_winners": 0.06350000000000004,
+   "share_losers": 0.0,
+   "share_unaffected": 0.9365000000000001
+  },
+  {
+   "decile": 6,
+   "n_households": 3101037.2228584914,
+   "mean_niveau_de_vie": 26586.152969894127,
+   "mean_baseline": 41660.915033872225,
+   "mean_reform": 41663.0550856299,
+   "mean_delta": 2.1400517576706743,
+   "share_winners": 0.04299896005402554,
+   "share_losers": 0.0,
+   "share_unaffected": 0.9570010399459744
+  },
+  {
+   "decile": 7,
+   "n_households": 3101015.3182800654,
+   "mean_niveau_de_vie": 30107.233842440604,
+   "mean_baseline": 47464.20146298526,
+   "mean_reform": 47467.02564454413,
+   "mean_delta": 2.8241815588729073,
+   "share_winners": 0.045016350823744194,
+   "share_losers": 0.0,
+   "share_unaffected": 0.9549836491762558
+  },
+  {
+   "decile": 8,
+   "n_households": 3101047.8700405816,
+   "mean_niveau_de_vie": 34426.274768990974,
+   "mean_baseline": 54057.520694210434,
+   "mean_reform": 54058.81175034977,
+   "mean_delta": 1.2910561393450624,
+   "share_winners": 0.02699925431072318,
+   "share_losers": 0.0,
+   "share_unaffected": 0.9730007456892769
+  },
+  {
+   "decile": 9,
+   "n_households": 3101711.814258905,
+   "mean_niveau_de_vie": 40922.9293252431,
+   "mean_baseline": 63713.861593432724,
+   "mean_reform": 63714.44328951433,
+   "mean_delta": 0.5816960816068779,
+   "share_winners": 0.013520028764276503,
+   "share_losers": 0.0,
+   "share_unaffected": 0.9864799712357237
+  },
+  {
+   "decile": 10,
+   "n_households": 3101552.001395485,
+   "mean_niveau_de_vie": 64626.62323740916,
+   "mean_baseline": 98147.3903582978,
+   "mean_reform": 98147.75740567602,
+   "mean_delta": 0.3670473782305402,
+   "share_winners": 0.007998478757806243,
+   "share_losers": 0.0,
+   "share_unaffected": 0.9920015212421939
+  }
+ ],
+ "rejeu": {
+  "carry": "part_pib_constante",
+  "horizon": 10,
+  "years": [
+   {
+    "year": 2026,
+    "mechanical_aged_eur": 153993688.20239258,
+    "statistiques": {
+     "vieillie": {
+      "cost_eur": 153993688.20239258,
+      "impulses": {},
+      "uncovered": {
+       "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
+      },
+      "canaux": {},
+      "c1_floor_share": null
+     }
+    }
+   }
+  ],
+  "rejeu": {
+   "version": 1,
+   "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0,
+    "receipts_ratio": 0.5212362790934039,
+    "spending_ratio": 0.5511066325739137
+   },
+   "cadre": {
+    "growth": {
+     "real": 0.01,
+     "prices": 0.02
+    },
+    "spending": {
+     "rule": "gele_en_volume",
+     "growth": null
+    },
+    "taux": {
+     "kind": "implicite_tenu",
+     "market_rate": null,
+     "reference": [
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081
+     ],
+     "marginal": 0.01882827582292081
+    }
+   },
+   "looped": true,
+   "behavioural": true,
+   "lignes": {},
+   "macro": {
+    "horizons": [
+     1,
+     2,
+     3,
+     5,
+     10
+    ],
+    "court": 3,
+    "instruments": {}
+   },
+   "box_rows": [
+    "multiplicateur_macro"
+   ]
+  }
+ },
+ "dette_absente": null,
+ "controle": {
+  "persistence": "lue",
+  "theta": [
+   4.997546352192295e-05,
+   9.939927960944672e-05,
+   0.00014827753754875772,
+   0.0001966162594100318,
+   0.00024442140078995145,
+   0.00029169885154445296,
+   0.0003384544365161446,
+   0.00038469391624973426,
+   0.0004304229877039045,
+   0.0004756472849514193
+  ],
+  "coins": [
+   [
+    "multiplicateur_macro = 0",
+    0.0004756472849514193
+   ],
+   [
+    "multiplicateur_macro = 1",
+    0.0004756472849514193
+   ]
+  ]
+ },
+ "computed": "2026-11-05",
+ "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "dirty": false,
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+}

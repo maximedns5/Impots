@@ -1,5 +1,14 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-05 update adds D-343, D-344 and D-351: goal 15, validated by the owner. A
+preregistered grid of 169 passes on `2124c44` prices the first-year cost of each knob the
+ten studies claim (19 sliders, 11 pairs), and `site/explorer.html`, the one page with a
+script, replays θ, the macro loop and the debt in the browser as `rejouer` does, held at
+2.2e-16 on each point. The 19 law points cost 0 €, the 19 witnesses hold their cost
+tolerance; the 60 % bracket misses its debt tolerance at the witness (+0.0022 pt for
+±0.0021), its debt being convex in the rate, and two cross terms of eleven leave their
+range (D-351). Next: make impact and the heavy tests, the PR; goal 16 runs beside it.
+
 The second 2026-11-03 update adds D-336 to D-339: goal 14, validated by the owner, done
 once merged. One imputation policy serves every pass path; the service layer left
 `api/main.py` for `impots.service`; the study frame lives in `etudes/cadres/central.json`;

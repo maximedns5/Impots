@@ -1,0 +1,432 @@
+{
+ "genre": "point",
+ "valeurs": {
+  "csg_imposable": 0.0
+ },
+ "request": {
+  "reform": {
+   "csg_activite_imposable": 0.0
+  },
+  "firm_reform": null,
+  "annee_entreprises": null
+ },
+ "cout": {
+  "total": 27204424519.4729,
+  "menages": 27204424519.4729,
+  "entreprises": 0.0
+ },
+ "deciles": [
+  {
+   "decile": 1,
+   "n_households": 3102006.902227004,
+   "mean_niveau_de_vie": 8348.037194262892,
+   "mean_baseline": 11920.860316328242,
+   "mean_reform": 11937.515571010366,
+   "mean_delta": 16.655254682125822,
+   "share_winners": 0.055543317233215254,
+   "share_losers": 0.0004998316126727343,
+   "share_unaffected": 0.9439568511541122
+  },
+  {
+   "decile": 2,
+   "n_households": 3100077.6349093816,
+   "mean_niveau_de_vie": 13578.536819918869,
+   "mean_baseline": 19247.788875695147,
+   "mean_reform": 19352.71256715311,
+   "mean_delta": 104.92369145795989,
+   "share_winners": 0.2522140142711681,
+   "share_losers": 0.0020005706889432767,
+   "share_unaffected": 0.7457854150398887
+  },
+  {
+   "decile": 3,
+   "n_households": 3102637.3895432744,
+   "mean_niveau_de_vie": 17157.421078288673,
+   "mean_baseline": 26170.522327705312,
+   "mean_reform": 26450.742934847956,
+   "mean_delta": 280.2206071426519,
+   "share_winners": 0.5122403488816768,
+   "share_losers": 0.0,
+   "share_unaffected": 0.4877596511183231
+  },
+  {
+   "decile": 4,
+   "n_households": 3101315.473436079,
+   "mean_niveau_de_vie": 20444.508671308256,
+   "mean_baseline": 30603.712971403027,
+   "mean_reform": 30991.283271914243,
+   "mean_delta": 387.57030051121063,
+   "share_winners": 0.5295513688708264,
+   "share_losers": 0.0004999430486006741,
+   "share_unaffected": 0.469948688080573
+  },
+  {
+   "decile": 5,
+   "n_households": 3100962.224924152,
+   "mean_niveau_de_vie": 23453.173796301187,
+   "mean_baseline": 35718.90564062501,
+   "mean_reform": 36298.60832617188,
+   "mean_delta": 579.7026855468752,
+   "share_winners": 0.647,
+   "share_losers": 0.0005000000000000001,
+   "share_unaffected": 0.35250000000000004
+  },
+  {
+   "decile": 6,
+   "n_households": 3101037.2228584914,
+   "mean_niveau_de_vie": 26586.152969894127,
+   "mean_baseline": 41660.915033872225,
+   "mean_reform": 42433.34286422078,
+   "mean_delta": 772.4278303485454,
+   "share_winners": 0.644508597692882,
+   "share_losers": 0.0,
+   "share_unaffected": 0.35549140230711807
+  },
+  {
+   "decile": 7,
+   "n_households": 3101015.3182800654,
+   "mean_niveau_de_vie": 30107.233842440604,
+   "mean_baseline": 47464.20146298526,
+   "mean_reform": 48391.194364371186,
+   "mean_delta": 926.9929013859382,
+   "share_winners": 0.662505778432475,
+   "share_losers": 0.0014999743180778887,
+   "share_unaffected": 0.33599424724944704
+  },
+  {
+   "decile": 8,
+   "n_households": 3101047.8700405816,
+   "mean_niveau_de_vie": 34426.274768990974,
+   "mean_baseline": 54057.520694210434,
+   "mean_reform": 55205.23740140385,
+   "mean_delta": 1147.7167071934114,
+   "share_winners": 0.6950084235270162,
+   "share_losers": 0.0,
+   "share_unaffected": 0.304991576472984
+  },
+  {
+   "decile": 9,
+   "n_households": 3101711.814258905,
+   "mean_niveau_de_vie": 40922.9293252431,
+   "mean_baseline": 63713.861593432724,
+   "mean_reform": 65192.465120697714,
+   "mean_delta": 1478.6035272649829,
+   "share_winners": 0.7220671841381601,
+   "share_losers": 0.0,
+   "share_unaffected": 0.2779328158618401
+  },
+  {
+   "decile": 10,
+   "n_households": 3101552.001395485,
+   "mean_niveau_de_vie": 64626.62323740916,
+   "mean_baseline": 98147.3903582978,
+   "mean_reform": 101224.2945204446,
+   "mean_delta": 3076.904162146803,
+   "share_winners": 0.8340315657755207,
+   "share_losers": 0.0,
+   "share_unaffected": 0.1659684342244795
+  }
+ ],
+ "rejeu": {
+  "carry": "part_pib_constante",
+  "horizon": 10,
+  "years": [
+   {
+    "year": 2026,
+    "mechanical_aged_eur": 27204424519.4729,
+    "statistiques": {
+     "vieillie": {
+      "cost_eur": 27204424519.4729,
+      "impulses": {
+       "csg": 28052455846.903954
+      },
+      "uncovered": {
+       "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "rsa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "aide_logement": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "aefa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "cf": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "asf": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "crds_pfam": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
+       "crds_mini": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux."
+      },
+      "canaux": {
+       "c7_labour_supply": {
+        "S": {
+         "labour_supply_married_women": 2316400616.492321,
+         "labour_supply_married_men": 3648091373.7998304,
+         "labour_supply_single_women": 1543959663.347251,
+         "labour_supply_single_men": 1822147456.553085
+        }
+       }
+      },
+      "c1_floor_share": null
+     }
+    }
+   }
+  ],
+  "rejeu": {
+   "version": 1,
+   "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0,
+    "receipts_ratio": 0.5212362790934039,
+    "spending_ratio": 0.5511066325739137
+   },
+   "cadre": {
+    "growth": {
+     "real": 0.01,
+     "prices": 0.02
+    },
+    "spending": {
+     "rule": "gele_en_volume",
+     "growth": null
+    },
+    "taux": {
+     "kind": "implicite_tenu",
+     "market_rate": null,
+     "reference": [
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081
+     ],
+     "marginal": 0.01882827582292081
+    }
+   },
+   "looped": true,
+   "behavioural": true,
+   "lignes": {
+    "labour_supply_married_men": {
+     "low": 0.0008,
+     "central": 0.065,
+     "high": 0.1292,
+     "un": "high",
+     "loi": "triangular",
+     "fichier": "labour_supply"
+    },
+    "labour_supply_married_women": {
+     "low": -0.0284,
+     "central": 0.09,
+     "high": 0.2084,
+     "un": "high",
+     "loi": "triangular",
+     "fichier": "labour_supply"
+    },
+    "labour_supply_single_men": {
+     "low": 0.0468,
+     "central": 0.14,
+     "high": 0.2332,
+     "un": "high",
+     "loi": "triangular",
+     "fichier": "labour_supply"
+    },
+    "labour_supply_single_women": {
+     "low": 0.066,
+     "central": 0.15,
+     "high": 0.2732,
+     "un": "high",
+     "loi": "triangular",
+     "fichier": "labour_supply"
+    }
+   },
+   "macro": {
+    "horizons": [
+     1,
+     2,
+     3,
+     5,
+     10
+    ],
+    "court": 3,
+    "instruments": {
+     "csg": {
+      "pib": {
+       "1": 0.41,
+       "2": 0.84,
+       "3": 0.9,
+       "5": 0.81,
+       "10": 0.8
+      },
+      "solde": {
+       "1": -0.81,
+       "2": -0.5,
+       "3": -0.43,
+       "5": -0.52,
+       "10": -0.54
+      },
+      "sd": 0.66,
+      "brut": 1.0
+     }
+    }
+   },
+   "box_rows": [
+    "labour_supply_married_men",
+    "labour_supply_married_women",
+    "labour_supply_single_men",
+    "labour_supply_single_women",
+    "multiplicateur_macro"
+   ]
+  }
+ },
+ "dette_absente": null,
+ "controle": {
+  "persistence": "lue",
+  "theta": [
+   0.0024254753180177335,
+   0.0016993372677172047,
+   0.0042489888291945554,
+   0.008329327798671793,
+   0.012814552995335182,
+   0.016871220703000622,
+   0.02095654749529463,
+   0.025069575605673577,
+   0.029209366091795586,
+   0.03337499852626857
+  ],
+  "coins": [
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+    0.0745365359428154
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+    -0.003314454578482451
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+    0.07354967802454171
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+    -0.004289608911813403
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+    0.07348878428606898
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+    -0.004349780484483423
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+    0.07250192636779529
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+    -0.005324934817814153
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+    0.07284444266969503
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+    -0.004986480568373697
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+    0.07185758475142134
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+    -0.005961634901704205
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+    0.07179669101294839
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+    -0.006021806474374447
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+    0.07080983309467515
+   ],
+   [
+    "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+    -0.006996960807705177
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+    0.07309156318177235
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+    -0.004742290767850932
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+    0.07210470526349888
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+    -0.005717445101181884
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+    0.07204381152502615
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+    -0.005777616673851904
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+    0.07105695360675246
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+    -0.006752771007182634
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
+    0.0713994699086522
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
+    -0.006414316757741956
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
+    0.07041261199037852
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
+    -0.007389471091072686
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
+    0.07035171825190578
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
+    -0.007449642663742928
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
+    0.06936486033363232
+   ],
+   [
+    "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
+    -0.008424796997073658
+   ]
+  ]
+ },
+ "computed": "2026-11-05",
+ "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "dirty": false,
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+}
