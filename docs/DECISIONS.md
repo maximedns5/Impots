@@ -26414,3 +26414,17 @@ et l'exemple au dossier (`docs/PREDICTIF_EXEMPLE.md`) la portait. Le test lit ma
 « D-348 » ; l'exemple est rendu à nouveau par son script, étage rapide. Seule la phrase de
 convention change : l'exemple est une baisse d'IR, sans TVA, et aucun de ses nombres ne
 bouge.
+
+**Les pages.** Une étude dont les chemins portent `lectures` (la série du but 16) lit son
+verdict sur le Monte-Carlo : « En bref » gagne la colonne « verdict » à côté de « selon θ »,
+qui garde la lecture de la boîte, et la section de la dette dit le verdict avec son seuil.
+Suivent la décomposition en trois marches, la ligne au taux de marché, la variante
+salariale (Δb, boîte, P(hausse), verdict, instruments non variés), et une note « brut
+d'IS » quand la boucle porte des cotisations employeurs : elles se déduisent du bénéfice,
+l'IS les compense jusqu'à 25 % au taux normal, la passe des ménages ne le chiffre pas.
+« D'où viennent ces nombres » dit la limite du câblage public : titulaire ou contractuel et
+fonction publique, pas le corps ni l'indice, une part de primes moyenne. Une étude dont
+une partie des chemins seulement porte les lectures est refusée. En miroir, chaque nombre
+est celui de la mesure, retourné comme le reste. Les pages commitées ne changent pas :
+leurs rapports n'ont pas de lectures. Deux tests (`tests/test_etude.py`) tiennent ces
+nombres, miroir compris.

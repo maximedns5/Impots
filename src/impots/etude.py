@@ -375,6 +375,42 @@ VERDICTS = {
 }
 
 
+#: The verdict of a series of but 16 (D-345, D-349), read on the Monte-Carlo: the share
+#: of the draws where the debt rises, vue vieillie, against `montecarlo.SEUIL_VERDICT`.
+VERDICTS_MC = {
+    "hausse": "elle **augmente la dette** en {year} dans au moins {haut} des tirages, vue "
+              "vieillie",
+    "baisse": "elle **baisse la dette** en {year} dans au moins {haut} des tirages, vue "
+              "vieillie",
+    "dépend": "son effet sur la dette en {year} **dépend des hypothèses** : moins de {haut} "
+              "des tirages s'accordent sur son signe, vue vieillie",
+}
+#: The instruments whose cost is gross of the corporate tax they move (D-349).
+EMPLOYEURS = ("cotisations_employeurs", "cotisations_employeurs_ciblees")
+
+
+def lectures(entries: list[dict[str, Any]]) -> bool:
+    """Whether a study's paths carry the readings of D-349 (but 16): all of them, or none,
+    an older series; one page does not read half its paths under the Monte-Carlo verdict."""
+    read = {entry["path"].get("lectures") is not None for entry in entries}
+    if len(read) > 1:
+        raise EtudeError("les chemins de l'étude ne sont pas d'une même série : les uns "
+                         "portent les lectures de D-349, les autres non. La série se "
+                         "relance entière.")
+    return read == {True}
+
+
+def verdict_mc(entry: dict[str, Any], monte: dict[str, Any] | None = None) -> str:
+    """The Monte-Carlo verdict of a path (D-345), the measure's in mirror: its rise is the
+    scenario's fall, to the first order as the rest (D-298)."""
+    from impots.predictif import montecarlo
+
+    reading = montecarlo.verdict(monte if monte is not None else entry["path"]["monte_carlo"])
+    if entry["sign"] == -1:
+        reading = {"hausse": "baisse", "baisse": "hausse"}.get(reading, reading)
+    return reading
+
+
 def refusal(raison: str) -> tuple[str, str]:
     """(case, first sentence) of a triage reason, « scope. Formalité reconduite… » : the
     case it falls in, then why, in its first sentence."""
@@ -1394,9 +1430,15 @@ class Etude:
             w("")
         w("## En bref")
         w("")
-        w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
-          f"officiel | dette en {last}, à θ½ | selon θ |")
-        w("|---|---|---|---|---|")
+        read = lectures(entries)
+        if read:
+            w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
+              f"officiel | dette en {last}, à θ½ | verdict | selon θ |")
+            w("|---|---|---|---|---|---|")
+        else:
+            w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
+              f"officiel | dette en {last}, à θ½ | selon θ |")
+            w("|---|---|---|---|---|")
         for entry in entries:
             grade = entry["grade"]
             official = "—" if grade is None else (
@@ -1404,9 +1446,20 @@ class Etude:
                 f"{'dans' if grade.verdict == 'within' else 'hors de'} la tolérance")
             lead = n(_points(entry["debt"][0]["theta"]), debt_etage(entry["path"]),
                      conditionnel=True)
+            mc = f"{verdict_mc(entry)} | " if read else ""
             w(f"| {texte.label(entry)} | {n(fiche._eur(entry['cost']), 'L2')} | {official} | "
-              f"{lead} | {verdict(entry['debt'])} |")
+              f"{lead} | {mc}{verdict(entry['debt'])} |")
         w("")
+        if read:
+            from impots.predictif import montecarlo
+
+            haut = n(f"{montecarlo.SEUIL_VERDICT:.0%}".replace("%", "\u202f%"), "déclaré")
+            w(f"Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins "
+              f"{haut} des tirages font monter la dette, vue vieillie, « baisse » quand au "
+              f"moins {haut} la font baisser, « dépend » entre les deux. « Selon θ » dit ce "
+              f"que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque "
+              f"coin, ou non.")
+            w("")
         # A law has articles; a programme has measures (D-336).
         unit = getattr(texte, "unite", "article")
         if generation(entries):
@@ -1475,6 +1528,13 @@ class Etude:
         w("")
         w(f"*{n(path['uprating_note'], 'hypothèse')}*")
         w("")
+        if read:
+            w("Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement "
+              "indiciaire et de primes, et cotise à son régime ; un contractuel cotise au "
+              "régime général, sans allègement. L'enquête Emploi dit titulaire ou "
+              "contractuel et la fonction publique, pas le corps ni l'indice : la part des "
+              "primes est la moyenne qu'openfisca porte, la même pour tous.")
+            w("")
         where = _relative(self.rapports)
         for entry in entries:
             case = (f", `chiffrages_preregistres/{entry['name']}.yaml`" if entry["case"]
@@ -1654,6 +1714,13 @@ class Etude:
           f"figée la garde telle qu'elle est. Sous cette persistance, "
           f"{VERDICTS[verdict(rows)].format(year=year)}.")
         w("")
+        if path.get("lectures") is not None and path.get("monte_carlo"):
+            from impots.predictif import montecarlo
+
+            haut = n(f"{montecarlo.SEUIL_VERDICT:.0%}".replace("%", "\u202f%"), "déclaré")
+            w(f"**Le verdict**, lu sur le Monte-Carlo (D-345) : "
+              f"{VERDICTS_MC[verdict_mc(entry)].format(year=year, haut=haut)}.")
+            w("")
         others = sensitivity_rows(rows)
         if others:
             w("**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, "
@@ -1664,6 +1731,8 @@ class Etude:
             w("")
             table(others)
         self._monte_carlo(w, n, entry, etage)
+        if path.get("lectures") is not None:
+            self._lectures(w, n, entry, etage)
 
     def _monte_carlo(self, w: Any, n: Nombres, entry: dict[str, Any], etage: str) -> None:
         """The distribution of Δb under declared laws, beside the box (D-336, decision 6):
@@ -1714,6 +1783,82 @@ class Etude:
             w(f"| {label} | {share(rise)} | {points(q05)} | {points(q50)} | {points(q95)} | "
               f"{groups} |")
         w("")
+
+    def _lectures(self, w: Any, n: Nombres, entry: dict[str, Any], etage: str) -> None:
+        """The readings of D-349 beside the headline: the decomposition of Δb, the added
+        debt at a market rate, Mésange's alternative wage formation with its box and its
+        verdict, and the corporate tax an employer-contribution measure leaves out. In
+        mirror, the measure's: every Δb turned over, as the rest."""
+        path, sign = entry["path"], entry["sign"]
+        read = path["lectures"]
+        year = path["years"][-1]["year"]
+        views = [v for v in VIEWS if v in read["decomposition"]]
+
+        def points(value: float) -> str:
+            return n(_points(sign * value), etage, conditionnel=True)
+
+        w(f"**D'où vient Δb.** La dette de {year} en trois marches, à θ½ sous la "
+          f"persistance « lue » : le coût après comportements, sans la boucle macro ; ce "
+          f"que le PIB plus haut ou plus bas change au seul ratio, comme dénominateur ; ce "
+          f"que les recettes induites par l'activité y changent. Les trois font la ligne du "
+          f"tableau (D-349).")
+        w("")
+        w("| vue | le coût, sans boucle | le PIB, dénominateur | les recettes induites | "
+          f"Δ dette {year} |")
+        w("|---|---|---|---|---|")
+        for view in views:
+            d = read["decomposition"][view]
+            w(f"| {VIEWS[view]} | {points(d['cout'])} | {points(d['denominateur'])} | "
+              f"{points(d['retroaction'])} | {points(d['total'])} |")
+        w("")
+        rate = read["taux_marche"]
+        taux = n(f"{rate['taux'] * 100:.1f}".replace(".", ",") + "\u202f%", "hypothèse")
+        w(f"**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 "
+          f"(D-336). Chargée à {taux}, hypothèse déclarée d'une OAT à dix ans de fin 2026 : "
+          + " ; ".join(f"{points(rate[v])} en vue {VIEWS[v]}, contre "
+                       f"{points(read['decomposition'][v]['total'])}" for v in views)
+          + ".")
+        w("")
+        variante = read.get("variante_salariale")
+        if variante:
+            from impots.reporting import pct_fr
+
+            w("**Si les salaires se forment autrement.** Mésange publie une sensibilité de "
+              "ses variantes à la formation des salaires (folios 137 et 138) : une courbe de "
+              "Phillips pour les cotisations employeurs et la TVA, un super-brut visé pour "
+              "les cotisations salariés, la CSG et l'IR. Le multiplicateur y est recentré, à "
+              "écart-type, persistance et recettes induites par point de PIB inchangés ; "
+              "Mésange n'imprime pas le solde de la variante, que la page suppose "
+              "proportionnel au PIB (D-349). C'est une sensibilité, hors du verdict.")
+            w("")
+            w(f"| vue | Δ dette {year}, à θ½ | aux coins de la boîte | P(hausse) | verdict |")
+            w("|---|---|---|---|---|")
+            for view in views:
+                box = variante["boite"][view]
+                corners = [sign * c for _, c in box["corners"]]
+                lo = n(_points(min(corners)), etage, conditionnel=True)
+                hi = n(_points(max(corners)), etage, conditionnel=True)
+                mc = variante["monte_carlo"][view]
+                rise = mc["p_hausse"] if sign == 1 else 1.0 - mc["p_hausse"]
+                said = verdict_mc(entry, {"vues": {"vieillie": mc}})
+                w(f"| {VIEWS[view]} | {points(box['theta'])} | de {lo} à {hi} | "
+                  f"{n(pct_fr(rise), etage, conditionnel=True)} | {said} |")
+            w("")
+            if variante.get("non_variees"):
+                names = ", ".join(f"`{i}`" for i in variante["non_variees"])
+                w(f"Mésange n'imprime pas de variante salariale pour {names} : ces "
+                  f"instruments gardent leur multiplicateur central, et la variante est "
+                  f"partielle.")
+                w("")
+        macro = (path.get("rejeu") or {}).get("macro") or {}
+        if any(i in (macro.get("instruments") or {}) for i in EMPLOYEURS):
+            normal = n("25\u202f%", "texte")
+            w(f"**Brut d'IS.** Les cotisations employeurs se déduisent du bénéfice : ce "
+              f"qu'elles changent, l'IS des entreprises bénéficiaires le change en sens "
+              f"inverse, jusqu'à {normal} du montant au taux normal. La "
+              f"passe des ménages ne le chiffre pas ; le coût de la première année et la "
+              f"dette en sont bruts, et l'effet net est plus petit.")
+            w("")
 
     def _official(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:
         from impots import fiche
