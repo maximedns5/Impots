@@ -26594,3 +26594,31 @@ pas faite.
 **Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
 `chiffrages_preregistres/`, les seuils de D-345. Reste la grille du but 15, refaite sur le
 commit de cette série (D-350), et son résultat dans une D-entrée à part.
+
+## D-353 — La grille refaite sur le but 16 : ce qu'elle redonne contre D-344
+
+**Ce qui a tourné.** Les 169 passes de D-344, par `impots grille lancer` sur `3c19f52`
+(le commit de la série de D-352 ; il n'ajoute à `12e769c` qu'une phrase de page), `src/`
+propre, en une fois : 311 min, de 3 h 38 à 8 h 49 UTC, sans redémarrage. Les rapports
+remplacent ceux de `2124c44` dans `reports/grille/` (1,7 Mo) ; `site/explorer.html` est
+reconstruite, `site verifier` est vert. D-350 ne donnait pas de pronostic chiffré pour la
+grille refaite : elle se lit contre les tolérances de D-344, qui ne bougent pas, et contre
+la grille du but 15 (D-351).
+
+**Contre D-344.** Les points « loi » : 19 sur 19 à 0 €. Les témoins : 19 sur 19 dans leur
+tolérance de coût ; le plus grand écart reste le plafond du quotient, 2,31 % de l'amplitude
+pour 3 % (2,33 % au but 15). Les dettes : 16 sur 17, comme au but 15 ; la tranche à 60 %
+manque la sienne du même +0,0022 pt pour ±0,0021, pour la même raison (sa dette est
+convexe en taux, la forme « taux » interpole linéairement). Les termes croisés : les mêmes
+neuf sur onze ; les deux plafonds du quotient (−6,7 % de la somme) et parts × plafond
+(+8,6 %) sortent encore de leur fourchette.
+
+**Ce que le but 16 y change.** Le secteur public (E1) ôte 22 % au curseur des cotisations
+de retraite (98,5 → 76,7 Md€ au point lointain) ; les curseurs d'IR, de CSG et de
+prestations bougent de 0 à 2,3 % ; ceux de TVA et d'accises, chiffrés hors de la passe des
+ménages, ne bougent pas au coût, et leur tolérance de dette grandit de 1 à 17 % par E3.
+Aucun témoin, aucune paire ne change de verdict. Le rejeu de la page reste tenu par
+`tests/test_page_explorer.py`.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun pronostic de D-344 réécrit. Les défauts
+de D-351 restent ceux de la grille, et la page les dit.

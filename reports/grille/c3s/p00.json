@@ -11,9 +11,9 @@
   "annee_entreprises": null
  },
  "cout": {
-  "total": 5751338448.289129,
+  "total": 4344466940.246342,
   "menages": 0.0,
-  "entreprises": 5751338448.289129
+  "entreprises": 4344466940.246342
  },
  "deciles": [],
  "rejeu": {
@@ -22,12 +22,15 @@
   "years": [
    {
     "year": 2026,
-    "mechanical_aged_eur": 5751338448.289129,
+    "mechanical_aged_eur": 4344466940.246342,
     "statistiques": {
      "vieillie": {
-      "cost_eur": 5751338448.289129,
+      "cost_eur": 4344466940.246342,
       "impulses": {},
       "uncovered": {
+       "impot_societes": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+       "contribution_sociale_is": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
+       "cebge": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice",
        "c3s": "impôt des entreprises, sans variante dans Mésange (D-214), et la boucle par élasticités (CE, DP 098) refusée : appliquée aux variantes où Mésange imprime son solde, elle ne redonne pas sa boucle (D-246). Ni rétroaction ni effet sur le PIB dans la dette (D-218) ; l'effet de l'IS sur le PIB s'affiche à part, en indice"
       },
       "canaux": null,
@@ -97,30 +100,30 @@
  "controle": {
   "persistence": "lue",
   "theta": [
-   0.0018664778289256834,
-   0.003712352793307394,
-   0.005537852315095071,
-   0.007343201305872071,
-   0.009128622194565672,
-   0.010894334954850926,
-   0.012640557132253205,
-   0.014367503870951204,
-   0.01607538794028307,
-   0.017764419760961436
+   0.0014099068061075304,
+   0.002804250545514808,
+   0.004183203009041181,
+   0.0055469340912157605,
+   0.006895611811210234,
+   0.008229402333538527,
+   0.009548469988530428,
+   0.010852977292577393,
+   0.012143084968155415,
+   0.013418951963627412
   ],
   "coins": [
    [
     "multiplicateur_macro = 0",
-    0.017764419760961436
+    0.013418951963627412
    ],
    [
     "multiplicateur_macro = 1",
-    0.017764419760961436
+    0.013418951963627412
    ]
   ]
  },
- "computed": "2026-11-05",
- "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "computed": "2026-11-06",
+ "commit": "3c19f52ec9809fb49ee8bd641e21f1ab96ba5a5f",
  "dirty": false,
- "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)"
 }

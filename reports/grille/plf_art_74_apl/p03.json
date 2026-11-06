@@ -11,17 +11,17 @@
   "annee_entreprises": 2026
  },
  "cout": {
-  "total": 57991437.7734375,
-  "menages": 57991437.7734375,
+  "total": 57695993.900390625,
+  "menages": 57695993.900390625,
   "entreprises": 0.0
  },
  "deciles": [
   {
    "decile": 1,
    "n_households": 3102006.902227004,
-   "mean_niveau_de_vie": 8348.037194262892,
-   "mean_baseline": 11920.860316328242,
-   "mean_reform": 11926.105722231348,
+   "mean_niveau_de_vie": 8349.241274005028,
+   "mean_baseline": 11917.251987497728,
+   "mean_reform": 11922.497393400834,
    "mean_delta": 5.245405903106569,
    "share_winners": 0.29551592658180803,
    "share_losers": 0.0,
@@ -30,43 +30,43 @@
   {
    "decile": 2,
    "n_households": 3100077.6349093816,
-   "mean_niveau_de_vie": 13578.536819918869,
-   "mean_baseline": 19247.788875695147,
-   "mean_reform": 19251.99630626517,
-   "mean_delta": 4.207430570019193,
-   "share_winners": 0.20005706889432764,
+   "mean_niveau_de_vie": 13590.064243842276,
+   "mean_baseline": 19248.042827532765,
+   "mean_reform": 19252.28060855752,
+   "mean_delta": 4.237781024758191,
+   "share_winners": 0.20205763958327094,
    "share_losers": 0.0,
-   "share_unaffected": 0.7999429311056724
+   "share_unaffected": 0.7979423604167292
   },
   {
    "decile": 3,
    "n_households": 3102637.3895432744,
-   "mean_niveau_de_vie": 17157.421078288673,
-   "mean_baseline": 26170.522327705312,
-   "mean_reform": 26173.848123857042,
-   "mean_delta": 3.325796151731175,
-   "share_winners": 0.15391685288386767,
+   "mean_niveau_de_vie": 17198.68615785082,
+   "mean_baseline": 26159.710286132504,
+   "mean_reform": 26162.936190445827,
+   "mean_delta": 3.2259043133207332,
+   "share_winners": 0.14891955246556027,
    "share_losers": 0.0,
-   "share_unaffected": 0.8460831471161324
+   "share_unaffected": 0.8510804475344397
   },
   {
    "decile": 4,
    "n_households": 3101315.473436079,
-   "mean_niveau_de_vie": 20444.508671308256,
-   "mean_baseline": 30603.712971403027,
-   "mean_reform": 30605.529541810756,
-   "mean_delta": 1.8165704077260196,
-   "share_winners": 0.06749231156109099,
+   "mean_niveau_de_vie": 20498.207232173718,
+   "mean_baseline": 30761.06216403547,
+   "mean_reform": 30762.85469518946,
+   "mean_delta": 1.792531153988715,
+   "share_winners": 0.06599248241528897,
    "share_losers": 0.0,
-   "share_unaffected": 0.9325076884389091
+   "share_unaffected": 0.9340075175847111
   },
   {
    "decile": 5,
    "n_households": 3100962.224924152,
-   "mean_niveau_de_vie": 23453.173796301187,
-   "mean_baseline": 35718.90564062501,
-   "mean_reform": 35720.343910156254,
-   "mean_delta": 1.4382695312500002,
+   "mean_niveau_de_vie": 23532.351832052882,
+   "mean_baseline": 35670.816267578135,
+   "mean_reform": 35672.248304687506,
+   "mean_delta": 1.4320371093750002,
    "share_winners": 0.05450000000000003,
    "share_losers": 0.0,
    "share_unaffected": 0.9455
@@ -74,54 +74,54 @@
   {
    "decile": 6,
    "n_households": 3101037.2228584914,
-   "mean_niveau_de_vie": 26586.152969894127,
-   "mean_baseline": 41660.915033872225,
-   "mean_reform": 41661.70316715468,
-   "mean_delta": 0.7881332824509968,
-   "share_winners": 0.03549914143995131,
+   "mean_niveau_de_vie": 26694.91084044478,
+   "mean_baseline": 42054.463520637306,
+   "mean_reform": 42055.298148889,
+   "mean_delta": 0.8346282517027285,
+   "share_winners": 0.0374990930703711,
    "share_losers": 0.0,
-   "share_unaffected": 0.9645008585600487
+   "share_unaffected": 0.962500906929629
   },
   {
    "decile": 7,
    "n_households": 3101015.3182800654,
-   "mean_niveau_de_vie": 30107.233842440604,
-   "mean_baseline": 47464.20146298526,
-   "mean_reform": 47465.24573775899,
-   "mean_delta": 1.0442747737233227,
-   "share_winners": 0.03901645355143263,
+   "mean_niveau_de_vie": 30222.08537716261,
+   "mean_baseline": 47520.000157037815,
+   "mean_reform": 47521.009016402284,
+   "mean_delta": 1.0088593644658925,
+   "share_winners": 0.03851646211207333,
    "share_losers": 0.0,
-   "share_unaffected": 0.9609835464485673
+   "share_unaffected": 0.9614835378879267
   },
   {
    "decile": 8,
    "n_households": 3101047.8700405816,
-   "mean_niveau_de_vie": 34426.274768990974,
-   "mean_baseline": 54057.520694210434,
-   "mean_reform": 54058.00124343819,
-   "mean_delta": 0.48054922776655223,
-   "share_winners": 0.025999281928844546,
+   "mean_niveau_de_vie": 34568.86682506889,
+   "mean_baseline": 54424.73364594846,
+   "mean_reform": 54425.248700082615,
+   "mean_delta": 0.5150541341545403,
+   "share_winners": 0.026499268119783863,
    "share_losers": 0.0,
-   "share_unaffected": 0.9740007180711555
+   "share_unaffected": 0.9735007318802162
   },
   {
    "decile": 9,
    "n_households": 3101711.814258905,
-   "mean_niveau_de_vie": 40922.9293252431,
-   "mean_baseline": 63713.861593432724,
-   "mean_reform": 63714.075851808535,
-   "mean_delta": 0.2142583758102998,
-   "share_winners": 0.011520512103399955,
+   "mean_niveau_de_vie": 41094.83294593116,
+   "mean_baseline": 64112.62943464932,
+   "mean_reform": 64112.80272441276,
+   "mean_delta": 0.17328976344521108,
+   "share_winners": 0.010020874607742546,
    "share_losers": 0.0,
-   "share_unaffected": 0.9884794878966001
+   "share_unaffected": 0.9899791253922576
   },
   {
    "decile": 10,
    "n_households": 3101552.001395485,
-   "mean_niveau_de_vie": 64626.62323740916,
-   "mean_baseline": 98147.3903582978,
-   "mean_reform": 98147.5280821039,
-   "mean_delta": 0.13772380611097623,
+   "mean_niveau_de_vie": 64912.26444021267,
+   "mean_baseline": 98560.31597228986,
+   "mean_reform": 98560.45369219047,
+   "mean_delta": 0.13771990060377026,
    "share_winners": 0.007998478757806243,
    "share_losers": 0.0,
    "share_unaffected": 0.9920015212421939
@@ -133,10 +133,10 @@
   "years": [
    {
     "year": 2026,
-    "mechanical_aged_eur": 57991437.7734375,
+    "mechanical_aged_eur": 57695993.900390625,
     "statistiques": {
      "vieillie": {
-      "cost_eur": 57991437.7734375,
+      "cost_eur": 57695993.900390625,
       "impulses": {},
       "uncovered": {
        "ppa": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -211,30 +211,30 @@
  "controle": {
   "persistence": "lue",
   "theta": [
-   1.8819920587942462e-05,
-   3.7432100013168323e-05,
-   5.583883139848034e-05,
-   7.404238255426243e-05,
-   9.204499625847795e-05,
-   0.00010984889053178293,
-   0.00012745625891219525,
-   0.00014486927072421274,
-   0.00016209007134682096,
-   0.00017912078247728225
+   1.8724040395268204e-05,
+   3.724139798833015e-05,
+   5.555435421955579e-05,
+   7.366516534590417e-05,
+   9.157606271870122e-05,
+   0.00010928925305919712,
+   0.0001268069187299048,
+   0.00014413121800349593,
+   0.00016126428532903248,
+   0.00017820823159464538
   ],
   "coins": [
    [
     "multiplicateur_macro = 0",
-    0.00017912078247728225
+    0.00017820823159464538
    ],
    [
     "multiplicateur_macro = 1",
-    0.00017912078247728225
+    0.00017820823159464538
    ]
   ]
  },
- "computed": "2026-11-05",
- "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "computed": "2026-11-06",
+ "commit": "3c19f52ec9809fb49ee8bd641e21f1ab96ba5a5f",
  "dirty": false,
- "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)"
 }

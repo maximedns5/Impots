@@ -13,17 +13,17 @@
   "annee_entreprises": null
  },
  "cout": {
-  "total": 5952540379.937012,
-  "menages": 5952540379.937012,
+  "total": 6082425727.152344,
+  "menages": 6082425727.152344,
   "entreprises": 0.0
  },
  "deciles": [
   {
    "decile": 1,
    "n_households": 3102006.902227004,
-   "mean_niveau_de_vie": 8348.037194262892,
-   "mean_baseline": 11920.860316328242,
-   "mean_reform": 11920.860316328242,
+   "mean_niveau_de_vie": 8349.241274005028,
+   "mean_baseline": 11917.251987497728,
+   "mean_reform": 11917.251987497728,
    "mean_delta": 0.0,
    "share_winners": 0.0,
    "share_losers": 0.0,
@@ -32,9 +32,9 @@
   {
    "decile": 2,
    "n_households": 3100077.6349093816,
-   "mean_niveau_de_vie": 13578.536819918869,
-   "mean_baseline": 19247.788875695147,
-   "mean_reform": 19247.788875695147,
+   "mean_niveau_de_vie": 13590.064243842276,
+   "mean_baseline": 19248.042827532765,
+   "mean_reform": 19248.042827532765,
    "mean_delta": 0.0,
    "share_winners": 0.0,
    "share_losers": 0.0,
@@ -43,9 +43,9 @@
   {
    "decile": 3,
    "n_households": 3102637.3895432744,
-   "mean_niveau_de_vie": 17157.421078288673,
-   "mean_baseline": 26170.522327705312,
-   "mean_reform": 26170.522327705312,
+   "mean_niveau_de_vie": 17198.68615785082,
+   "mean_baseline": 26159.710286132504,
+   "mean_reform": 26159.710286132504,
    "mean_delta": 0.0,
    "share_winners": 0.0,
    "share_losers": 0.0,
@@ -54,9 +54,9 @@
   {
    "decile": 4,
    "n_households": 3101315.473436079,
-   "mean_niveau_de_vie": 20444.508671308256,
-   "mean_baseline": 30603.712971403027,
-   "mean_reform": 30603.712971403027,
+   "mean_niveau_de_vie": 20498.207232173718,
+   "mean_baseline": 30761.06216403547,
+   "mean_reform": 30761.06216403547,
    "mean_delta": 0.0,
    "share_winners": 0.0,
    "share_losers": 0.0,
@@ -65,9 +65,9 @@
   {
    "decile": 5,
    "n_households": 3100962.224924152,
-   "mean_niveau_de_vie": 23453.173796301187,
-   "mean_baseline": 35718.90564062501,
-   "mean_reform": 35718.90564062501,
+   "mean_niveau_de_vie": 23532.351832052882,
+   "mean_baseline": 35670.816267578135,
+   "mean_reform": 35670.816267578135,
    "mean_delta": 0.0,
    "share_winners": 0.0,
    "share_losers": 0.0,
@@ -76,57 +76,57 @@
   {
    "decile": 6,
    "n_households": 3101037.2228584914,
-   "mean_niveau_de_vie": 26586.152969894127,
-   "mean_baseline": 41660.915033872225,
-   "mean_reform": 41661.49551983296,
-   "mean_delta": 0.5804859607293448,
-   "share_winners": 0.0014999637228148444,
+   "mean_niveau_de_vie": 26694.91084044478,
+   "mean_baseline": 42054.463520637306,
+   "mean_reform": 42055.9824839006,
+   "mean_delta": 1.5189632633038324,
+   "share_winners": 0.0029999274456296884,
    "share_losers": 0.0,
-   "share_unaffected": 0.9985000362771852
+   "share_unaffected": 0.9970000725543705
   },
   {
    "decile": 7,
    "n_households": 3101015.3182800654,
-   "mean_niveau_de_vie": 30107.233842440604,
-   "mean_baseline": 47464.20146298526,
-   "mean_reform": 47490.32901564042,
-   "mean_delta": 26.127552655159384,
-   "share_winners": 0.02899950348283918,
+   "mean_niveau_de_vie": 30222.08537716261,
+   "mean_baseline": 47520.000157037815,
+   "mean_reform": 47546.808198041945,
+   "mean_delta": 26.808041004127393,
+   "share_winners": 0.03149946067963566,
    "share_losers": 0.0,
-   "share_unaffected": 0.9710004965171607
+   "share_unaffected": 0.9685005393203642
   },
   {
    "decile": 8,
    "n_households": 3101047.8700405816,
-   "mean_niveau_de_vie": 34426.274768990974,
-   "mean_baseline": 54057.520694210434,
-   "mean_reform": 54249.73588348826,
-   "mean_delta": 192.21518927783134,
-   "share_winners": 0.1354962577445552,
+   "mean_niveau_de_vie": 34568.86682506889,
+   "mean_baseline": 54424.73364594846,
+   "mean_reform": 54629.29000023646,
+   "mean_delta": 204.55635428799974,
+   "share_winners": 0.14149609203582703,
    "share_losers": 0.0,
-   "share_unaffected": 0.8645037422554449
+   "share_unaffected": 0.8585039079641732
   },
   {
    "decile": 9,
    "n_households": 3101711.814258905,
-   "mean_niveau_de_vie": 40922.9293252431,
-   "mean_baseline": 63713.861593432724,
-   "mean_reform": 64262.43048702906,
-   "mean_delta": 548.5688935963235,
-   "share_winners": 0.25243897843566415,
+   "mean_niveau_de_vie": 41094.83294593116,
+   "mean_baseline": 64112.62943464932,
+   "mean_reform": 64678.89005556638,
+   "mean_delta": 566.2606209170652,
+   "share_winners": 0.2589374075835129,
    "share_losers": 0.0,
-   "share_unaffected": 0.7475610215643359
+   "share_unaffected": 0.7410625924164873
   },
   {
    "decile": 10,
    "n_households": 3101552.001395485,
-   "mean_niveau_de_vie": 64626.62323740916,
-   "mean_baseline": 98147.3903582978,
-   "mean_reform": 99299.11930149895,
-   "mean_delta": 1151.7289432011587,
-   "share_winners": 0.2779471368337669,
+   "mean_niveau_de_vie": 64912.26444021267,
+   "mean_baseline": 98560.31597228986,
+   "mean_reform": 99722.27195867621,
+   "mean_delta": 1161.955986386337,
+   "share_winners": 0.2789469466784926,
    "share_losers": 0.0,
-   "share_unaffected": 0.7220528631662332
+   "share_unaffected": 0.7210530533215075
   }
  ],
  "rejeu": {
@@ -135,18 +135,18 @@
   "years": [
    {
     "year": 2026,
-    "mechanical_aged_eur": 5952540379.937012,
+    "mechanical_aged_eur": 6082425727.152344,
     "statistiques": {
      "vieillie": {
-      "cost_eur": 5952540379.937012,
+      "cost_eur": 6082425727.152344,
       "impulses": {
-       "impot_sur_le_revenu": 5952540416.276581
+       "impot_sur_le_revenu": 6082425769.5486145
       },
       "uncovered": {},
       "canaux": {
        "c1_eti": {
-        "A_bas": 3595393285.7190685,
-        "A_haut": 2833046735.2590065
+        "A_bas": 3767620486.0859904,
+        "A_haut": 2814313565.799769
        }
       },
       "c1_floor_share": 0.0
@@ -238,7 +238,15 @@
        "10": -0.5
       },
       "sd": 0.66,
-      "brut": 1.0
+      "brut": 1.0,
+      "pib_salariale": {
+       "1": 0.41,
+       "2": 0.819753086419753,
+       "3": 0.8582716049382716,
+       "5": 0.77,
+       "10": 0.65
+      },
+      "variante_source": "super_brut"
      }
     }
    },
@@ -253,54 +261,54 @@
  "controle": {
   "persistence": "lue",
   "theta": [
-   0.000330574865361255,
-   1.655414516577025e-05,
-   0.00038330361902949583,
-   0.0010328898794524921,
-   0.0017706364503256022,
-   0.0023996791218914293,
-   0.0030265481756779344,
-   0.0036515362122413464,
-   0.004274927455316657,
-   0.004896997921495894
+   0.00034527123674599203,
+   3.1797792423793325e-05,
+   0.00041385222369072494,
+   0.0010848285896194465,
+   0.0018458089216717433,
+   0.0024956323390137314,
+   0.0031431556668082283,
+   0.0037886787510261755,
+   0.0044324928681376274,
+   0.00507488089861341
   ],
   "coins": [
    [
     "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 0",
-    0.014687063728756167
+    0.015041814271847143
    ],
    [
     "eti_all = 0, eti_top_decile = 0, multiplicateur_macro = 1",
-    -0.002029997366167935
+    -0.0020398389085587443
    ],
    [
     "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 0",
-    0.011625609722949903
+    0.01200063065933521
    ],
    [
     "eti_all = 0, eti_top_decile = 1, multiplicateur_macro = 1",
-    -0.005083667848852391
+    -0.005073122328784541
    ],
    [
     "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 0",
-    0.014576056219318678
+    0.01492549028923329
    ],
    [
     "eti_all = 1, eti_top_decile = 0, multiplicateur_macro = 1",
-    -0.002140722647123061
+    -0.002155860712170554
    ],
    [
     "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 0",
-    0.011514602213512415
+    0.011884306676721135
    ],
    [
     "eti_all = 1, eti_top_decile = 1, multiplicateur_macro = 1",
-    -0.0051943931298077395
+    -0.0051891441323961285
    ]
   ]
  },
- "computed": "2026-11-05",
- "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "computed": "2026-11-06",
+ "commit": "3c19f52ec9809fb49ee8bd641e21f1ab96ba5a5f",
  "dirty": false,
- "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)"
 }
