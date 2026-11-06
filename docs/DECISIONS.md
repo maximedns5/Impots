@@ -26487,3 +26487,57 @@ et la page le dira, sans le corriger.
 enregistrement. Les seuils du verdict
 sont ceux de D-345. Le résultat va dans une nouvelle D-entrée, avec les dix études avant
 et après et l'écart au pronostic.
+
+## D-352 — La série du but 16 : les treize lignes dans leur pronostic
+
+**Ce qui a tourné.** La population de D-350 sur `123bc6d`, puis les dix études sur
+`12e769c`, dans le cadre central. `12e769c` ne change aucun nombre : la reprise d'une
+étude refusait de partir parce qu'elle prenait `avant/serie.json` pour une passe, et ne
+le prend plus. Machine : conteneur cloud de 15 Go et 4 cœurs ; 8 h de passes, plus 1 h 30
+perdue : Retailleau est mort une fois faute de mémoire (des tests légers tournaient à
+côté) et un redémarrage du conteneur a coupé le PLFSS ; les deux ont repris après leurs
+rapports déjà écrits, sur le même commit. Les 83 rapports portent `12e769c`.
+
+**La population.** 423 347 lignes avant et après ; deux colonnes nouvelles,
+`fonction_publique` et `titulaire` ; aucune colonne d'avant ne bouge, poids compris ;
+`calibrate.py` n'est pas modifié. La part publique de la masse salariale est de 0,240.
+Le pronostic de D-350 tient : le calage n'a pas bougé, la série n'a pas eu à s'arrêter.
+
+**Le résultat**, avant (`7235bd8`) → après, sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance
+« lue »), avec la première année en Md€ et P(hausse) du Monte-Carlo.
+
+| étude | coût, avant → après | Δb, avant → après | P | verdict | pronostic |
+|---|---|---|---|---|---|
+| PLF art. 2 | +2,83 → +2,85 (+0,6 %) | +0,387 → +0,391 | 0,80 | dépend | tenu |
+| PLF art. 3 | −1,12 → −1,12 (0,0 %) | −0,169 → −0,169 | 0,18 | dépend | tenu |
+| PLF art. 15 | −7,05 → −7,05 (0,0 %) | −0,228 → −0,228 | 0,00 | baisse | tenu |
+| PLFSS, PPA | −0,89 → −0,87 (−1,9 %) | −0,268 → −0,264 | 0,00 | baisse | tenu |
+| PLFSS, APL | −0,08 → −0,08 (−0,5 %) | −0,071 → −0,070 | 0,00 | baisse | tenu |
+| Attal | +76,4 → +59,5 | +4,36 → +3,41 | 0,63 | dépend | tenu |
+| Labib | +22,9 → +22,9 (0,0 %) | +4,36 → +4,47 | 1,00 | hausse | tenu |
+| Le Pen | +13,9 → +14,0 (+0,3 %) | +1,38 → +1,56 | 0,75 | dépend | tenu |
+| Lisnard | +37,2 → +35,4 | +5,95 → +5,56 | 0,88 | dépend | tenu |
+| Mélenchon | −8,7 → −6,6 | −0,44 → −0,33 | 0,43 | dépend | tenu |
+| Retailleau | +20,8 → +16,1 | +2,78 → +2,19 | 1,00 | hausse | tenu |
+| Roussel | +5,2 → +5,2 (0,0 %) | +0,44 → +0,52 | 0,73 | dépend | tenu |
+| Tondelier | −0,85 → −0,85 (0,0 %) | +0,28 → +0,27 | 0,93 | hausse | tenu |
+
+Les trente-neuf pronostics (coût, Δb, verdict, pour treize lignes) tiennent. Le plus
+près d'un bord : Le Pen, +1,56 dans +1,45 à +1,65 ; Labib, +4,47 dans +4,3 à +4,6 ;
+Mélenchon, −0,33 dans −0,40 à −0,25. Lisnard, à 0,91 avant, tombe à 0,88 : « dépend »,
+l'une des deux issues annoncées. Tondelier passe à « hausse » pour un coût de première
+année négatif, comme annoncé ; la page le dit et ne le corrige pas.
+
+**Ce que pèse chaque correction.** La série n'a pas tourné une correction à la fois ;
+elle se lit par les études qu'une seule correction touche. E3 seule bouge Labib et
+Roussel (coût inchangé au centime, Δb +0,11 et +0,08 point) et l'essentiel de Le Pen
+(+0,18 point). E1 seule touche les mesures d'IR et de prestations : de 0 à 2 % du coût,
+le second ordre annoncé. Attal (−16,9 Md€), Retailleau (−4,7) et Mélenchon (+2,1) mêlent
+E1 et E2, dans le sens et l'ordre de grandeur de D-350 (un quart des 56, 9,3 et −6,6 Md€
+de cotisations salariales, moins ou plus l'IS) ; Lisnard (−1,8 Md€) est E2 pour
+l'essentiel. Une décomposition exacte demanderait une passe par correction ; elle n'est
+pas faite.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Reste la grille du but 15, refaite sur le
+commit de cette série (D-350), et son résultat dans une D-entrée à part.

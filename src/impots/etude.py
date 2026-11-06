@@ -1925,7 +1925,9 @@ class Etude:
         for entry in entries:
             w(f"* **{texte.label(entry)}** : {', '.join(causes(entry))}.")
         w("")
-        w("La D-entrée du résultat de la série mesure ce que chaque correction y pèse.")
+        w("Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une "
+          "seule la touche ; ailleurs, elles ne se séparent pas sans une passe par "
+          "correction, qui n'est pas faite.")
         w("")
 
     def figer_avant(self) -> Path:

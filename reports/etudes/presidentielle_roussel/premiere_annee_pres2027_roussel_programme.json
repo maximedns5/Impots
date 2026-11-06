@@ -33,69 +33,69 @@
       ]
     },
     "totals": {
-      "salaire_brut": 1120798288395.3003,
-      "salaire_super_brut": 1485986353400.46,
-      "salaire_net": 890174623579.5781,
-      "salaire_imposable": 922124074676.2063,
-      "cotisations_salariales": 123758260931.2582,
-      "cotisations_employeur": 463135693078.2323,
+      "salaire_brut": 1120798286220.2358,
+      "salaire_super_brut": 1557941538231.9634,
+      "salaire_net": 896932403644.4756,
+      "salaire_imposable": 929007555475.9319,
+      "cotisations_salariales": 120988528756.89963,
+      "cotisations_employeur": 510210792250.91376,
       "retraite_imposable": 373615387274.9176,
       "chomage_brut": 35534332746.51105,
-      "csg_deductible": 74915951980.22165,
-      "csg_imposable": 26440924188.66414,
-      "crds": 5508525874.636528,
+      "csg_deductible": 75210701519.63766,
+      "csg_imposable": 26544953452.458275,
+      "crds": 5530198638.646116,
       "csg_ij": 0.0,
-      "ir": 104306217685.98679,
-      "ir_avant_niches": 104137644727.99658,
+      "ir": 105562453794.87158,
+      "ir_avant_niches": 105393603300.76224,
       "reductions": 0.0,
       "credits_impot": 0.0,
       "cdhr": 0.0,
-      "af": 11362926876.433939,
-      "ppa": 14811809517.341629,
-      "rsa": 27710107670.492294,
-      "aide_logement": 13240195838.51468,
-      "aefa": 742665810.025698,
-      "cf": 1293706763.520797,
-      "asf": 9665785752.137257,
-      "crds_pfam": -138202237.7200983,
-      "crds_logement": -66533539.96947971,
-      "crds_mini": -74059046.01584399,
-      "revenu_disponible": 1276595738841.8833,
-      "tva_menages": 100650158929.9856,
-      "accises_energie": 21566592635.71046,
-      "consommation_imputee": 1070800111195.6223
+      "af": 11337782653.872868,
+      "ppa": 14580356651.263935,
+      "rsa": 27706201948.09897,
+      "aide_logement": 13179216734.102516,
+      "aefa": 742169431.2669828,
+      "cf": 1269325246.6464834,
+      "asf": 9662038852.894363,
+      "crds_pfam": -137723881.7177198,
+      "crds_logement": -66227111.34491043,
+      "crds_mini": -72901781.80465953,
+      "revenu_disponible": 1281722245531.7695,
+      "tva_menages": 100650550916.2912,
+      "accises_energie": 21566696118.94606,
+      "consommation_imputee": 1070804670157.7441
     },
     "totals_reform": {
-      "salaire_brut": 1120798288395.3003,
-      "salaire_super_brut": 1485986353400.46,
-      "salaire_net": 890174623579.5781,
-      "salaire_imposable": 922124074676.2063,
-      "cotisations_salariales": 123758260931.2582,
-      "cotisations_employeur": 463135693078.2323,
+      "salaire_brut": 1120798286220.2358,
+      "salaire_super_brut": 1557941538231.9634,
+      "salaire_net": 896932403644.4756,
+      "salaire_imposable": 929007555475.9319,
+      "cotisations_salariales": 120988528756.89963,
+      "cotisations_employeur": 510210792250.91376,
       "retraite_imposable": 373615387274.9176,
       "chomage_brut": 35534332746.51105,
-      "csg_deductible": 74915951980.22165,
-      "csg_imposable": 26440924188.66414,
-      "crds": 5508525874.636528,
+      "csg_deductible": 75210701519.63766,
+      "csg_imposable": 26544953452.458275,
+      "crds": 5530198638.646116,
       "csg_ij": 0.0,
-      "ir": 104306217685.98679,
-      "ir_avant_niches": 104137644727.99658,
+      "ir": 105562453794.87158,
+      "ir_avant_niches": 105393603300.76224,
       "reductions": 0.0,
       "credits_impot": 0.0,
       "cdhr": 0.0,
-      "af": 11362926876.433939,
-      "ppa": 14811809517.341629,
-      "rsa": 27710107670.492294,
-      "aide_logement": 13240195838.51468,
-      "aefa": 742665810.025698,
-      "cf": 1293706763.520797,
-      "asf": 9665785752.137257,
-      "crds_pfam": -138202237.7200983,
-      "crds_logement": -66533539.96947971,
-      "crds_mini": -74059046.01584399,
-      "revenu_disponible": 1276595738841.8833,
-      "tva_menages": 95458250666.94003,
-      "accises_energie": 21566592635.71046
+      "af": 11337782653.872868,
+      "ppa": 14580356651.263935,
+      "rsa": 27706201948.09897,
+      "aide_logement": 13179216734.102516,
+      "aefa": 742169431.2669828,
+      "cf": 1269325246.6464834,
+      "asf": 9662038852.894363,
+      "crds_pfam": -137723881.7177198,
+      "crds_logement": -66227111.34491043,
+      "crds_mini": -72901781.80465953,
+      "revenu_disponible": 1281722245531.7695,
+      "tva_menages": 95458614330.2056,
+      "accises_energie": 21566696118.94606
     },
     "deltas": {
       "salaire_brut": 0.0,
@@ -126,18 +126,18 @@
       "crds_logement": 0.0,
       "crds_mini": 0.0,
       "revenu_disponible": 0.0,
-      "tva_menages": -5191908263.045563,
+      "tva_menages": -5191936586.085602,
       "accises_energie": 0.0
     },
-    "reform_cost": 5191908263.045563,
+    "reform_cost": 5191936586.085602,
     "deciles": [
       {
         "decile": 1,
         "n_households": 3102006.9022270045,
-        "mean_niveau_de_vie": 8273.472568511519,
-        "mean_baseline": 11750.355002797725,
-        "mean_reform": 11844.35101943203,
-        "mean_delta": 93.99601663430256,
+        "mean_niveau_de_vie": 8274.603949216551,
+        "mean_baseline": 11745.619499499671,
+        "mean_reform": 11839.615516133972,
+        "mean_delta": 93.99601663430214,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -145,20 +145,20 @@
       {
         "decile": 2,
         "n_households": 3100130.553508736,
-        "mean_niveau_de_vie": 13306.345303923987,
-        "mean_baseline": 18855.69941565316,
-        "mean_reform": 18969.643139997635,
-        "mean_delta": 113.94372434447564,
+        "mean_niveau_de_vie": 13318.201915181784,
+        "mean_baseline": 18811.49618788372,
+        "mean_reform": 18925.439912228197,
+        "mean_delta": 113.94372434447597,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
       },
       {
         "decile": 3,
-        "n_households": 3102584.4709439203,
-        "mean_niveau_de_vie": 16595.030898424448,
-        "mean_baseline": 25384.799958992353,
-        "mean_reform": 25515.971249086528,
+        "n_households": 3101226.3397781854,
+        "mean_niveau_de_vie": 16631.136962480894,
+        "mean_baseline": 25405.01885039972,
+        "mean_reform": 25536.190140493894,
         "mean_delta": 131.17129009417118,
         "share_winners": 1.0,
         "share_losers": 0.0,
@@ -166,11 +166,11 @@
       },
       {
         "decile": 4,
-        "n_households": 3101315.473436079,
-        "mean_niveau_de_vie": 19725.788912354416,
-        "mean_baseline": 29948.601236756902,
-        "mean_reform": 30100.626948548077,
-        "mean_delta": 152.02571179117126,
+        "n_households": 3102673.6046018144,
+        "mean_niveau_de_vie": 19777.924834551177,
+        "mean_baseline": 30064.656968123054,
+        "mean_reform": 30216.68267991423,
+        "mean_delta": 152.02571179117066,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -178,10 +178,10 @@
       {
         "decile": 5,
         "n_households": 3100962.224924152,
-        "mean_niveau_de_vie": 22589.94651151809,
-        "mean_baseline": 34120.03354980469,
-        "mean_reform": 34297.447253226994,
-        "mean_delta": 177.41370342230076,
+        "mean_niveau_de_vie": 22665.129755849874,
+        "mean_baseline": 34111.65777539063,
+        "mean_reform": 34289.07147881293,
+        "mean_delta": 177.4137034223004,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -189,9 +189,9 @@
       {
         "decile": 6,
         "n_households": 3101037.2228584914,
-        "mean_niveau_de_vie": 25475.840811981554,
-        "mean_baseline": 39758.66420424614,
-        "mean_reform": 39939.402525620135,
+        "mean_niveau_de_vie": 25578.850925566276,
+        "mean_baseline": 40079.45627780079,
+        "mean_reform": 40260.194599174785,
         "mean_delta": 180.73832137399634,
         "share_winners": 1.0,
         "share_losers": 0.0,
@@ -200,9 +200,9 @@
       {
         "decile": 7,
         "n_households": 3101015.3182800654,
-        "mean_niveau_de_vie": 28843.09189730983,
-        "mean_baseline": 45762.81129820112,
-        "mean_reform": 45964.25292227432,
+        "mean_niveau_de_vie": 28953.082463986346,
+        "mean_baseline": 45797.92995765656,
+        "mean_reform": 45999.37158172977,
         "mean_delta": 201.44162407319126,
         "share_winners": 1.0,
         "share_losers": 0.0,
@@ -211,10 +211,10 @@
       {
         "decile": 8,
         "n_households": 3101047.8700405816,
-        "mean_niveau_de_vie": 32960.62035874472,
-        "mean_baseline": 51324.42283110922,
-        "mean_reform": 51519.06410028122,
-        "mean_delta": 194.64126917199587,
+        "mean_niveau_de_vie": 33097.212644740575,
+        "mean_baseline": 51783.417066309994,
+        "mean_reform": 51978.05833548198,
+        "mean_delta": 194.6412691719961,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -222,10 +222,10 @@
       {
         "decile": 9,
         "n_households": 3101711.814258905,
-        "mean_niveau_de_vie": 39196.62350181876,
-        "mean_baseline": 61085.0874934029,
-        "mean_reform": 61306.023468192834,
-        "mean_delta": 220.93597478995218,
+        "mean_niveau_de_vie": 39363.407976819115,
+        "mean_baseline": 61376.78913927228,
+        "mean_reform": 61597.72511406224,
+        "mean_delta": 220.9359747899513,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -233,10 +233,10 @@
       {
         "decile": 10,
         "n_households": 3101552.001395485,
-        "mean_niveau_de_vie": 61678.91640783809,
-        "mean_baseline": 93635.48915862087,
-        "mean_reform": 93843.27778060186,
-        "mean_delta": 207.78862198097383,
+        "mean_niveau_de_vie": 61951.9720956892,
+        "mean_baseline": 94100.86621436244,
+        "mean_reform": 94308.65483634341,
+        "mean_delta": 207.7886219809741,
         "share_winners": 1.0,
         "share_losers": 0.0,
         "share_unaffected": 0.0
@@ -436,7 +436,7 @@
       }
     ],
     "behavioural": {
-      "mechanical": -5191908263.045563,
+      "mechanical": -5191936586.085602,
       "band": null,
       "grade": "no-evidence",
       "grade_reason": "Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.",
@@ -541,62 +541,62 @@
       "unavailable_because": "",
       "gdp": {
         "1": {
-          "p10": -2545287935.2536235,
-          "p50": 1534246098.706149,
-          "p90": 5525280960.709482,
+          "p10": -3003456148.0460663,
+          "p50": 1810420272.673595,
+          "p90": 6519867100.800594,
           "unit": "EUR"
         },
         "2": {
-          "p10": -1050381755.8352863,
-          "p50": 3033356494.7823744,
-          "p90": 6925677729.327575,
+          "p10": -1239457233.369771,
+          "p50": 3579380190.0694485,
+          "p90": 8172344302.359619,
           "unit": "EUR"
         },
         "3": {
-          "p10": -720873330.4294326,
-          "p50": 3194665694.1208897,
-          "p90": 7114108682.508354,
+          "p10": -850635170.2896757,
+          "p50": 3769726083.663359,
+          "p90": 8394694040.074696,
           "unit": "EUR"
         }
       },
       "jobs": {
         "1": {
-          "p10": -8.863370248071496,
-          "p50": 5.342653393411393,
-          "p90": 19.24049935612038,
+          "p10": -10.458833947730286,
+          "p50": 6.304365395784462,
+          "p90": 22.70391309455443,
           "unit": "milliers ETP"
         },
         "2": {
-          "p10": -6.539540203678652,
-          "p50": 18.88528303116278,
-          "p90": 43.11836881881424,
+          "p10": -7.716699536461654,
+          "p50": 22.28475554451719,
+          "p90": 50.87995276639737,
           "unit": "milliers ETP"
         },
         "3": {
-          "p10": -5.33432983151061,
-          "p50": 23.63993755144312,
-          "p90": 52.643093547525595,
+          "p10": -6.2945435391613715,
+          "p50": 27.895278484959313,
+          "p90": 62.119189258532785,
           "unit": "milliers ETP"
         }
       },
       "decomposition": [
         {
           "horizon": "1",
-          "parameter": 8070568895.963106,
+          "parameter": 9523323248.84666,
           "scenario": 0.0,
           "scenario_available": false,
           "scenario_unavailable_because": "l'effet de régime n'est établi que du côté DÉPENSE (Gechert et Rannenberg, tableau 4 : haut de cycle non significatif), et les instruments de cette réforme sont fiscaux (tva). Le décalage n'est donc pas applicable ici."
         },
         {
           "horizon": "2",
-          "parameter": 7976059485.162861,
+          "parameter": 9411801535.72939,
           "scenario": 0.0,
           "scenario_available": false,
           "scenario_unavailable_because": "l'effet de régime n'est établi que du côté DÉPENSE (Gechert et Rannenberg, tableau 4 : haut de cycle non significatif), et les instruments de cette réforme sont fiscaux (tva). Le décalage n'est donc pas applicable ici."
         },
         {
           "horizon": "3",
-          "parameter": 7834982012.937787,
+          "parameter": 9245329210.364372,
           "scenario": 0.0,
           "scenario_available": false,
           "scenario_unavailable_because": "l'effet de régime n'est établi que du côté DÉPENSE (Gechert et Rannenberg, tableau 4 : haut de cycle non significatif), et les instruments de cette réforme sont fiscaux (tva). Le décalage n'est donc pas applicable ici."
@@ -607,79 +607,79 @@
           "code": "LZ",
           "label": "Activités Immobilières",
           "output_share": 0.1750705520382913,
-          "employment_share": 0.03569039872674911
+          "employment_share": 0.0356903987267491
         },
         {
           "code": "GZ",
           "label": "Commerce ; Réparation D'Automobiles Et De Motocycles",
-          "output_share": 0.12822410047067728,
-          "employment_share": 0.18365735132140454
+          "output_share": 0.1282241004706773,
+          "employment_share": 0.1836573513214045
         },
         {
           "code": "KZ",
           "label": "Activités Financières Et D'Assurance",
-          "output_share": 0.07789974610880909,
-          "employment_share": 0.048387096341938135
+          "output_share": 0.07789974610880912,
+          "employment_share": 0.04838709634193813
         },
         {
           "code": "CA",
           "label": "Fabrication De Denrées Alimentaires, De Boissons Et De Produits À Base De Tabac",
           "output_share": 0.07284055138639517,
-          "employment_share": 0.045053753281087607
+          "employment_share": 0.045053753281087586
         },
         {
           "code": "DZ",
           "label": "Production Et Distribution D'Électricité, De Gaz, De Vapeur Et D'Air Conditionné",
-          "output_share": 0.0680241469746127,
-          "employment_share": 0.007103413668904733
+          "output_share": 0.06802414697461269,
+          "employment_share": 0.007103413668904729
         },
         {
           "code": "IZ",
           "label": "Hébergement Et Restauration",
-          "output_share": 0.06572315644052353,
-          "employment_share": 0.12935440672735626
+          "output_share": 0.06572315644052354,
+          "employment_share": 0.1293544067273562
         },
         {
           "code": "NZ",
           "label": "Activités De Services Administratifs Et De Soutien",
           "output_share": 0.05252702186999762,
-          "employment_share": 0.08988614700982057
+          "employment_share": 0.08988614700982055
         },
         {
           "code": "HZ",
           "label": "Transports Et Entreposage",
           "output_share": 0.0515888123905878,
-          "employment_share": 0.057484538477886093
+          "employment_share": 0.057484538477886066
         },
         {
           "code": "MA",
           "label": "Activités Juridiques, Comptables, De Gestion, D'Architecture, D'Ingénierie, De Contrôle Et D'Analyses Techniques",
           "output_share": 0.04528897525494488,
-          "employment_share": 0.04483332750146779
+          "employment_share": 0.044833327501467776
         },
         {
           "code": "AZ",
           "label": "Agriculture, Sylviculture Et Pêche",
-          "output_share": 0.028750969451338006,
-          "employment_share": 0.04225166121756987
+          "output_share": 0.02875096945133801,
+          "employment_share": 0.042251661217569854
         },
         {
           "code": "FZ",
           "label": "Construction",
-          "output_share": 0.02738291434219235,
-          "employment_share": 0.027733187269394034
+          "output_share": 0.027382914342192352,
+          "employment_share": 0.02773318726939403
         },
         {
           "code": "JB",
           "label": "Télécommunications",
-          "output_share": 0.021080340744443843,
-          "employment_share": 0.0065722967864076075
+          "output_share": 0.021080340744443846,
+          "employment_share": 0.006572296786407606
         }
       ],
       "assumptions": {
         "cycle_state": "normal",
         "design": "Type I + multiplicateur de littérature ; propagation sectorielle et multiplicateur agrégé ont des rôles disjoints",
-        "leakage": 0.2743390985831149,
+        "leakage": 0.27433909858311484,
         "leakage_applied": false,
         "horizons": [
           "1",
@@ -707,14 +707,14 @@
     },
     "niche_blind_spot": null,
     "timings": {
-      "build_s": 4.56,
-      "baseline_s": 36.96,
-      "consommation_s": 0.16,
-      "total_s": 48.84
+      "build_s": 4.96,
+      "baseline_s": 33.88,
+      "consommation_s": 0.14,
+      "total_s": 45.11
     }
   },
-  "computed": "2026-11-03",
-  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
+  "computed": "2026-11-05",
+  "commit": "12e769cab051b41731adcb01c52ff67274bc9d12",
   "dirty": false,
-  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)"
 }
