@@ -1,0 +1,256 @@
+{
+ "genre": "point",
+ "valeurs": {
+  "qf_parts_enf2": 0.65
+ },
+ "request": {
+  "reform": {
+   "qf_parts_enf2": 0.65
+  },
+  "firm_reform": null,
+  "annee_entreprises": null
+ },
+ "cout": {
+  "total": 928119526.230957,
+  "menages": 928119526.230957,
+  "entreprises": 0.0
+ },
+ "deciles": [
+  {
+   "decile": 1,
+   "n_households": 3102006.902227004,
+   "mean_niveau_de_vie": 8348.037194262892,
+   "mean_baseline": 11920.860316328242,
+   "mean_reform": 11920.860316328242,
+   "mean_delta": 0.0,
+   "share_winners": 0.0,
+   "share_losers": 0.0,
+   "share_unaffected": 1.0
+  },
+  {
+   "decile": 2,
+   "n_households": 3100077.6349093816,
+   "mean_niveau_de_vie": 13578.536819918869,
+   "mean_baseline": 19247.788875695147,
+   "mean_reform": 19247.788875695147,
+   "mean_delta": 0.0,
+   "share_winners": 0.0,
+   "share_losers": 0.0,
+   "share_unaffected": 1.0
+  },
+  {
+   "decile": 3,
+   "n_households": 3102637.3895432744,
+   "mean_niveau_de_vie": 17157.421078288673,
+   "mean_baseline": 26170.522327705312,
+   "mean_reform": 26170.522327705312,
+   "mean_delta": 0.0,
+   "share_winners": 0.0,
+   "share_losers": 0.0,
+   "share_unaffected": 1.0
+  },
+  {
+   "decile": 4,
+   "n_households": 3101315.473436079,
+   "mean_niveau_de_vie": 20444.508671308256,
+   "mean_baseline": 30603.712971403027,
+   "mean_reform": 30610.84215927608,
+   "mean_delta": 7.129187873045613,
+   "share_winners": 0.02849675377023842,
+   "share_losers": 0.0,
+   "share_unaffected": 0.9715032462297617
+  },
+  {
+   "decile": 5,
+   "n_households": 3100962.224924152,
+   "mean_niveau_de_vie": 23453.173796301187,
+   "mean_baseline": 35718.90564062501,
+   "mean_reform": 35743.340140625005,
+   "mean_delta": 24.434500000000007,
+   "share_winners": 0.09150000000000004,
+   "share_losers": 0.0,
+   "share_unaffected": 0.9085000000000001
+  },
+  {
+   "decile": 6,
+   "n_households": 3101037.2228584914,
+   "mean_niveau_de_vie": 26586.152969894127,
+   "mean_baseline": 41660.915033872225,
+   "mean_reform": 41699.03910792095,
+   "mean_delta": 38.124074048721766,
+   "share_winners": 0.1414965778522003,
+   "share_losers": 0.0,
+   "share_unaffected": 0.8585034221478
+  },
+  {
+   "decile": 7,
+   "n_households": 3101015.3182800654,
+   "mean_niveau_de_vie": 30107.233842440604,
+   "mean_baseline": 47464.20146298526,
+   "mean_reform": 47508.790197602786,
+   "mean_delta": 44.588734617531124,
+   "share_winners": 0.14849745748971097,
+   "share_losers": 0.0,
+   "share_unaffected": 0.851502542510289
+  },
+  {
+   "decile": 8,
+   "n_households": 3101047.8700405816,
+   "mean_niveau_de_vie": 34426.274768990974,
+   "mean_baseline": 54057.520694210434,
+   "mean_reform": 54113.734641643925,
+   "mean_delta": 56.21394743349848,
+   "share_winners": 0.14549598156334156,
+   "share_losers": 0.0,
+   "share_unaffected": 0.8545040184366586
+  },
+  {
+   "decile": 9,
+   "n_households": 3101711.814258905,
+   "mean_niveau_de_vie": 40922.9293252431,
+   "mean_baseline": 63713.861593432724,
+   "mean_reform": 63776.3769817142,
+   "mean_delta": 62.515388281470486,
+   "share_winners": 0.12097075798303113,
+   "share_losers": 0.0,
+   "share_unaffected": 0.8790292420169691
+  },
+  {
+   "decile": 10,
+   "n_households": 3101552.001395485,
+   "mean_niveau_de_vie": 64626.62323740916,
+   "mean_baseline": 98147.3903582978,
+   "mean_reform": 98213.65325566193,
+   "mean_delta": 66.26289736412345,
+   "share_winners": 0.12247670597890804,
+   "share_losers": 0.0,
+   "share_unaffected": 0.8775232940210921
+  }
+ ],
+ "rejeu": {
+  "carry": "part_pib_constante",
+  "horizon": 10,
+  "years": [
+   {
+    "year": 2026,
+    "mechanical_aged_eur": 928119526.230957,
+    "statistiques": {
+     "vieillie": {
+      "cost_eur": 928119526.230957,
+      "impulses": {
+       "impot_sur_le_revenu": 928119544.4009094
+      },
+      "uncovered": {},
+      "canaux": {},
+      "c1_floor_share": null
+     }
+    }
+   }
+  ],
+  "rejeu": {
+   "version": 1,
+   "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0,
+    "receipts_ratio": 0.5212362790934039,
+    "spending_ratio": 0.5511066325739137
+   },
+   "cadre": {
+    "growth": {
+     "real": 0.01,
+     "prices": 0.02
+    },
+    "spending": {
+     "rule": "gele_en_volume",
+     "growth": null
+    },
+    "taux": {
+     "kind": "implicite_tenu",
+     "market_rate": null,
+     "reference": [
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081
+     ],
+     "marginal": 0.01882827582292081
+    }
+   },
+   "looped": true,
+   "behavioural": true,
+   "lignes": {},
+   "macro": {
+    "horizons": [
+     1,
+     2,
+     3,
+     5,
+     10
+    ],
+    "court": 3,
+    "instruments": {
+     "impot_sur_le_revenu": {
+      "pib": {
+       "1": 0.41,
+       "2": 0.83,
+       "3": 0.88,
+       "5": 0.81,
+       "10": 0.87
+      },
+      "solde": {
+       "1": -0.81,
+       "2": -0.5,
+       "3": -0.42,
+       "5": -0.51,
+       "10": -0.5
+      },
+      "sd": 0.66,
+      "brut": 1.0
+     }
+    }
+   },
+   "box_rows": [
+    "multiplicateur_macro"
+   ]
+  }
+ },
+ "dette_absente": null,
+ "controle": {
+  "persistence": "lue",
+  "theta": [
+   9.964997361167072e-05,
+   9.818651550230761e-05,
+   0.0002024611021664846,
+   0.00035037395602510735,
+   0.0005115271341209482,
+   0.0006552147930205532,
+   0.0007980646603475972,
+   0.0009401279472378565,
+   0.0010814544992185926,
+   0.0012220928232504757
+  ],
+  "coins": [
+   [
+    "multiplicateur_macro = 0",
+    0.00251274889098152
+   ],
+   [
+    "multiplicateur_macro = 1",
+    -9.543528636712928e-05
+   ]
+  ]
+ },
+ "computed": "2026-11-05",
+ "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "dirty": false,
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+}

@@ -1,0 +1,27 @@
+{
+ "genre": "point",
+ "valeurs": {
+  "cvae": 1.0
+ },
+ "request": {
+  "reform": {},
+  "firm_reform": {
+   "cvae_echelle": 1.0
+  },
+  "annee_entreprises": null
+ },
+ "cout": {
+  "total": -0.0,
+  "menages": 0.0,
+  "entreprises": -0.0
+ },
+ "deciles": [],
+ "rejeu": null,
+ "annee_entreprises": 2026,
+ "dette_absente": "le droit que règle « cvae_echelle » en 2028 change dans l'horizon : ce chemin chiffre 2026 et le reporte, et le tiendrait à son droit de 2026 jusqu'en 2035. `impots predictif` chiffre chaque année sous le sien (D-254).",
+ "controle": null,
+ "computed": "2026-11-05",
+ "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "dirty": false,
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+}
