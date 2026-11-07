@@ -73,6 +73,7 @@ import numpy as np
 import polars as pl
 from openfisca_core.simulation_builder import SimulationBuilder
 
+from impots import decomposition
 from impots.engine.outputs import LIGHT_ROWS
 from impots.engine.situations import pin_benefit_history, pin_rfr_n_2
 
@@ -100,7 +101,8 @@ HISTORY_YEARS = 2
 #: rate of the CSG on a lone parent's pension or unemployment benefit reads it: on the
 #: fixture, two pensioners' revenu disponible rises, by 839.58 and 104.64 EUR. The
 #: population itself does not change, and a cache written before would be served after.
-WIRING = "D-346"
+# A run without E1 wires every earner as private: its EMTR caches are not E1's (D-354).
+WIRING = "D-346" + ("_sansE1" if decomposition.sans("E1") else "")
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
 #: fiscal block, which never reaches a benefit. The ASS the income tax reads since D-192
@@ -304,6 +306,8 @@ def public_service(frame: pl.DataFrame, monthly_gross: np.ndarray, tax_benefit_s
     possible = tax_benefit_system.variables["categorie_salarie"].possible_values
     public = (frame["secteur_public"].to_numpy().astype(bool)
               if "secteur_public" in frame.columns else np.zeros(frame.height, dtype=bool))
+    if decomposition.sans("E1"):  # every earner private, as before D-346 (D-354)
+        public = np.zeros(frame.height, dtype=bool)
     names = np.full(frame.height, "prive_non_cadre", dtype=object)
     tib = np.zeros(frame.height)
     if public.any():

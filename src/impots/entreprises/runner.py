@@ -21,7 +21,7 @@ import numpy as np
 import polars as pl
 from openfisca_core.simulation_builder import SimulationBuilder
 
-from impots import guards
+from impots import decomposition, guards
 from impots.entreprises.system import baseline, reformed_for
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
@@ -152,7 +152,9 @@ def run(
 
     if reform is not None and not reform.is_empty():
         started = time.perf_counter()
-        deductibles = columns["cvae"] + columns["c3s"]
+        # Without E2 the reform's run deducts its own CVAE and C3S, as before D-347 (D-354).
+        deductibles = (None if decomposition.sans("E2")
+                       else columns["cvae"] + columns["c3s"])
         reformed = _extract(_simulate(reformed_for(reform, year), population, year,
                                       deductibles), year)
         timings["reform_s"] = round(time.perf_counter() - started, 3)

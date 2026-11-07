@@ -26622,3 +26622,54 @@ Aucun témoin, aucune paire ne change de verdict. Le rejeu de la page reste tenu
 
 **Ce qui ne bouge pas.** Aucune tolérance, aucun pronostic de D-344 réécrit. Les défauts
 de D-351 restent ceux de la grille, et la page les dit.
+
+## D-354 — La décomposition préenregistrée : E1 et E2, chacune coupée à son tour
+
+**La demande.** Le propriétaire, le 7 novembre (« oui, lance la décomposition des trois
+études ») : séparer ce que pèsent E1 (le secteur public, D-346) et E2 (la CVAE et la C3S
+déduites de l'IS, D-347) dans Attal, Retailleau et Mélenchon, que D-352 laissait mêlées.
+
+**Une correction de D-352.** Mélenchon n'est pas touché par E2 : son programme ne change ni
+la CVAE ni la C3S (ses cotisations patronales vivent dans la couche ménages, et sa page dit
+le chiffre « brut d'IS », D-347). Sa page le dit déjà (`etude.causes`) ; D-352 l'a mis à
+tort avec Attal et Retailleau. Tout son écart avant → après est donc E1.
+
+**L'interrupteur.** `IMPOTS_SANS=E1` câble chaque salarié au privé, comme avant D-346 ;
+`IMPOTS_SANS=E2` laisse la passe d'une réforme déduire sa propre CVAE et sa propre C3S,
+comme avant D-347 (`impots.decomposition`). Sans la variable, rien ne change. Les caches
+de taux marginaux d'une passe sans E1 portent un autre câblage (`WIRING`), et ne servent
+pas les passes avec E1. `tests/test_decomposition.py` tient les deux coupures, vus échouer
+sans l'interrupteur.
+
+**Ce qui tourne.** Cinq passes, sur le commit qui porte cette entrée, dans le cadre central,
+par `scripts/decomposition.py lancer` : Mélenchon sans E1 ; Attal et Retailleau sans E1,
+puis sans E2. Chaque passe refait la première année et le chemin annuel (pas les plages ni
+les témoins), et écrit sous `reports/decomposition/<étude>/sans_<correction>/`, à part des
+rapports de l'étude. E1 se lit « après − sans E1 », E2 « après − sans E2 », et le terme
+croisé est l'écart avant → après moins les deux. Environ 3 h de machine.
+
+**Le pronostic**, sur le coût de la première année (Md€) et Δb₂₀₃₅ à θ½ (point de PIB) :
+
+| coût | écart total | E1 | E2 | terme croisé |
+|---|---|---|---|---|
+| Mélenchon | +2,12 | tout l'écart | — | — |
+| Attal | −16,89 | −15,8 à −16,8 | −0,3 à −0,9 | sous 0,3 |
+| Retailleau | −4,73 | −2,7 à −3,5 | −1,2 à −2,0 | sous 0,3 |
+
+| Δb₂₀₃₅ | écart total | E1 | E2 | terme croisé |
+|---|---|---|---|---|
+| Mélenchon | +0,108 | tout l'écart | — | — |
+| Attal | −0,954 | −0,87 à −0,95 | −0,01 à −0,06 | sous 0,02 |
+| Retailleau | −0,584 | −0,28 à −0,50 | −0,08 à −0,30 | sous 0,03 |
+
+Pour Mélenchon, la passe sans E1 est le contrôle de l'interrupteur : elle doit redonner la
+série d'avant (`7235bd8`, −8,73 Md€ et −0,441 pt) à 0,5 % du coût et 0,005 pt près, ce qui
+dit aussi qu'aucune autre correction du but ne touche ce programme. Les raisons des
+fourchettes d'Attal et de Retailleau sont celles de D-350 : E1 ôte le quart public des
+baisses de cotisations salariales (56 et 9,3 Md€ côté ménages) ; E2 rend l'IS de la CVAE
+supprimée (3,28 Md€ pour Attal) et de la CVAE et de la C3S (8,57 Md€ pour Retailleau), au
+plus le quart, sur les seules entreprises bénéficiaires.
+
+**Ce qui ne bouge pas.** Aucun rapport de la série de D-352, aucune tolérance. Le résultat
+va dans une nouvelle D-entrée, et les pages d'Attal, de Retailleau et de Mélenchon y
+renverront.
