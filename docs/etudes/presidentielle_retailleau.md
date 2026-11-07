@@ -225,7 +225,12 @@ Ce qui touche chaque ligne :
 
 * **la part chiffrée** : le secteur public câblé (D-346), la CVAE et la C3S déduites de l'IS (D-347), le verdict lu sur le Monte-Carlo (D-345).
 
-Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une seule la touche ; ailleurs, elles ne se séparent pas sans une passe par correction, qui n'est pas faite.
+Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-354, D-355) : la part d'une correction est l'écart entre la ligne et sa passe sans elle. E1 est le secteur public câblé (D-346), E2 la CVAE et la C3S déduites de l'IS (D-347).
+
+| | correction | la première année | dette à θ½ |
+|---|---|---|---|
+| la part chiffrée | E1 | -2,71 Md€ | -0,15 pt |
+| la part chiffrée | E2 | -2,02 Md€ | -0,43 pt |
 
 ## D'où viennent ces nombres
 

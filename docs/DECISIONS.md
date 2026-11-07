@@ -26673,3 +26673,60 @@ plus le quart, sur les seules entreprises bénéficiaires.
 **Ce qui ne bouge pas.** Aucun rapport de la série de D-352, aucune tolérance. Le résultat
 va dans une nouvelle D-entrée, et les pages d'Attal, de Retailleau et de Mélenchon y
 renverront.
+
+## D-355 — La décomposition : E1 porte le coût, E2 la dette de Retailleau
+
+**Ce qui a tourné.** Les cinq passes de D-354, sur `329b703`, en 201 min de machine, sans
+coupure : Mélenchon sans E1 ; Attal et Retailleau sans E1, puis sans E2. Les rapports sont
+sous `reports/decomposition/`, et `scripts/decomposition.py lire` les met face à la série
+de D-352 et à la série d'avant. La lecture demandait les plages de l'étude, qu'une passe
+de décomposition ne refait pas : `Etude.load(…, plages=False)` les laisse de côté, sans
+toucher un nombre.
+
+**Le contrôle tient.** La passe de Mélenchon sans E1 redonne la série d'avant à toutes les
+décimales écrites : −8,73 Md€ et −0,441 pt. L'interrupteur coupe E1 et rien d'autre, et
+aucune autre correction du but ne touche ce programme.
+
+**Ce qui sort**, coût de la première année (Md€) et Δb₂₀₃₅ à θ½ (point de PIB), contre le
+pronostic de D-354 :
+
+| coût | écart total | E1 | E2 | terme croisé |
+|---|---|---|---|---|
+| Mélenchon | +2,12 | +2,12, tenu | — | 0,00, tenu |
+| Attal | −16,89 | −16,17, tenu | −0,73, tenu | 0,00, tenu |
+| Retailleau | −4,73 | −2,71, tenu | −2,02, manqué | 0,00, tenu |
+
+| Δb₂₀₃₅ | écart total | E1 | E2 | terme croisé |
+|---|---|---|---|---|
+| Mélenchon | +0,109 | +0,109, tenu | — | 0,000, tenu |
+| Attal | −0,955 | −0,892, tenu | −0,063, manqué | 0,000, tenu |
+| Retailleau | −0,584 | −0,155, manqué | −0,429, manqué | 0,000, tenu |
+
+Les fourchettes manquées étaient −1,2 à −2,0 Md€ (E2, Retailleau), −0,01 à −0,06 pt (E2,
+Attal), −0,28 à −0,50 et −0,08 à −0,30 pt (E1 et E2, Retailleau). Onze pronostics sur
+quinze tiennent, le contrôle compris. Le terme croisé est nul à la précision écrite : E1 vit
+dans la couche des ménages, E2 dans celle des entreprises, et les deux s'ajoutent. L'écart
+total de Mélenchon se lit +0,109 pt ici, +0,108 dans D-354 : le même nombre, arrondi une
+fois de la différence, une fois des deux bornes.
+
+**Ce que les manqués disent.** Deux sont au bord : la part E2 d'Attal sort de 0,003 pt de sa
+fourchette, celle du coût de Retailleau de 0,02 Md€. Le troisième et le quatrième n'y sont
+pas : pour Retailleau, le partage de la dette est l'inverse du pronostic. E1 pèse plus que
+E2 sur le coût (2,71 contre 2,02 Md€), et la couche mécanique le garde chaque année jusqu'en
+2035 (E1 à 2,7 Md€ ; E2 à 2,0 en 2026, 1,07 dès 2032) ; mais E2 pèse près de trois fois E1
+sur la dette (−0,429 contre −0,155 pt). L'inversion est donc dans le passage du coût à la
+dette (la boucle macro, Mésange lu, et le comportement), et elle y est dès 2026 : l'écart de
+dette de la première année vaut 0,071 pt pour E2, 0,023 pour E1. Le rapport de la dette au
+coût de E1 est le même dans les deux études (0,055 pt par Md€ pour Attal, 0,057 pour
+Retailleau) ; celui de E2 ne l'est pas (0,087 et 0,212). D-354 avait pris pour E2 le
+rapport de E1. Ce que la boucle fait d'un euro d'IS rendu, contre un euro de cotisation
+salariale, n'est pas examiné ici : c'est une question pour la suite, pas un réglage.
+
+**Les pages.** Celles d'Attal, de Retailleau et de Mélenchon portent, sous « Ce qui a bougé
+depuis la série précédente », la part de chaque correction, lue des rapports de
+décomposition commités (`Etude.decomposition`) ; `impots etude verifier` la tient comme le
+reste de la page. Les autres études n'ont pas de passe de décomposition et gardent la phrase
+de D-352.
+
+**Ce qui ne bouge pas.** Aucun rapport de la série de D-352, aucune tolérance, aucun
+pronostic.

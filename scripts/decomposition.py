@@ -88,7 +88,7 @@ def lire() -> int:
             rows = {"avant": (then["cout"], then["dette"]), "après": _ligne(entry)}
             for _, sans in (p for p in PASSES if p[0] == nom):
                 rows[f"sans {sans}"] = _ligne(next(
-                    e for e in study.load(dossier(nom, sans)) if e["name"] == entry["name"]))
+                    e for e in study.load(dossier(nom, sans), plages=False) if e["name"] == entry["name"]))
             print(json.dumps({"etude": nom, "scenario": entry["name"], **{
                 k: {"cout": c, "dette": d} for k, (c, d) in rows.items()}},
                 ensure_ascii=False))

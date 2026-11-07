@@ -1300,8 +1300,11 @@ class Etude:
                 "years": list(range(first, first + request["horizon"])),
                 "persistance": request.get("persistance")}
 
-    def load(self, reports: Path | None = None) -> list[dict[str, Any]]:
-        """Each scenario's two reports, refused unless they are the study's, as it was set."""
+    def load(self, reports: Path | None = None, *,
+             plages: bool = True) -> list[dict[str, Any]]:
+        """Each scenario's two reports, refused unless they are the study's, as it was set.
+        Without `plages`, the range points are not read: a decomposition pass (D-354) runs
+        the scenarios alone."""
         from impots import preregistration
         from impots import scenarios as scenarios_module
         from impots.api.schemas import (
@@ -1400,7 +1403,8 @@ class Etude:
                 "debt": [{**row, "theta": sign * row["theta"],
                           "corners": [sign * c for c in row["corners"]]}
                          for row in debt(path)]})
-        plages = self.load_plages(reports) if self.programme is not None else []
+        plages = (self.load_plages(reports) if plages and self.programme is not None
+                  else [])
         commits |= {r["commit"] for r in plages}
         # One study reads on one code, or on commits a witness pass joins to the first: on
         # each, the pass replayed gave its report again (D-335, D-336).
@@ -1925,10 +1929,42 @@ class Etude:
         for entry in entries:
             w(f"* **{texte.label(entry)}** : {', '.join(causes(entry))}.")
         w("")
-        w("Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une "
-          "seule la touche ; ailleurs, elles ne se séparent pas sans une passe par "
-          "correction, qui n'est pas faite.")
+        parts = self.decomposition(entries)
+        if not parts:
+            w("Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une "
+              "seule la touche ; ailleurs, elles ne se séparent pas sans une passe par "
+              "correction, qui n'est pas faite.")
+            w("")
+            return
+        w("Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-354, "
+          "D-355) : la part d'une correction est l'écart entre la ligne et sa passe sans "
+          "elle. E1 est le secteur public câblé (D-346), E2 la CVAE et la C3S déduites de "
+          "l'IS (D-347).")
         w("")
+        w("| | correction | la première année | dette à θ½ |")
+        w("|---|---|---|---|")
+        for entry in entries:
+            for sans, other in parts.get(entry["name"], []):
+                cout = entry["cost"] - other["cost"]
+                dette = entry["debt"][0]["theta"] - other["debt"][0]["theta"]
+                w(f"| {texte.label(entry)} | {sans} | {n(fiche._eur(cout), 'L2')} | "
+                  f"{n(_points(dette), debt_etage(entry['path']), conditionnel=True)} |")
+        w("")
+
+    def decomposition(self, entries: list[dict[str, Any]]
+                      ) -> dict[str, list[tuple[str, dict[str, Any]]]]:
+        """Each line's passes without one correction (D-354), from
+        `reports/decomposition/<étude>/sans_<correction>/` when the study has them."""
+        root = self.rapports.parent.parent / "decomposition" / self.nom
+        out: dict[str, list[tuple[str, dict[str, Any]]]] = {}
+        for sans in ("E1", "E2"):
+            where = root / f"sans_{sans.lower()}"
+            if not where.exists():
+                continue
+            for other in self.load(where, plages=False):
+                if any(e["name"] == other["name"] for e in entries):
+                    out.setdefault(other["name"], []).append((sans, other))
+        return out
 
     def figer_avant(self) -> Path:
         """`impots etude avant` : freeze what the committed series says (D-350), before

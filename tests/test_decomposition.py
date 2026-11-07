@@ -10,11 +10,11 @@ from __future__ import annotations
 
 import polars as pl
 import pytest
-from tests.test_secteur_public import _add, _frame, _run
 
 from impots import decomposition
 from impots.entreprises import runner as firm_runner
 from impots.entreprises.reforms import FirmReformSpec
+from test_secteur_public import _add, _frame, _run
 
 
 def test_an_unknown_correction_is_refused(monkeypatch) -> None:
