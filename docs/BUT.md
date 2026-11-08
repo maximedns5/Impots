@@ -643,6 +643,21 @@ après, la sortie verte de make impact et des lourds, l'URL de la PR et le SHA d
 s'arrêter après 60 tours, en disant ce qui manque.
 ```
 
+**Le résultat (D-352, D-353, D-355, D-356).** Les dix études ont tourné sur `12e769c` :
+les trente-neuf pronostics tiennent (coût, Δb₂₀₃₅ et verdict, pour treize lignes). Attal
+passe de +76,4 à +59,5 Md€ et de +4,36 à +3,41 points de dette ; Retailleau de +20,8 à
++16,1 Md€ et de +2,78 à +2,19 ; Mélenchon de −8,7 à −6,6 Md€ (D-352). La grille refaite
+sur `3c19f52` redonne les verdicts du but 15 : 19/19 témoins, 16/17 dettes, 9/11 termes
+croisés (D-353). La décomposition préenregistrée (D-354) sépare E1 et E2 pour Attal,
+Retailleau et Mélenchon : le terme croisé est nul, onze pronostics sur quinze tiennent.
+E1 porte le coût (−16,17 Md€ chez Attal, −2,71 chez Retailleau, +2,12 chez Mélenchon) ;
+chez Retailleau, E2 pèse pourtant trois fois E1 sur la dette (D-355). La raison est une
+règle, pas un défaut : la boucle macro ne lit que les impôts des ménages, l'IS n'ayant
+pas de variante dans Mésange ; une cotisation rendue s'autofinance aux trois quarts à θ½
+en 2035, un euro d'IS rendu va à la dette tel quel. Les pages d'Attal et de Retailleau le
+disent sous leur tableau de décomposition (D-356). Reste : le merge de la PR #120, après
+#118 et #119.
+
 Le budget : la série des dix études (environ 9 h 30, D-339) et la grille (environ 6 h,
 D-344), plus les corrections ; trois à quatre jours d'horloge dans le conteneur actuel.
 Les décisions à prendre avant de lancer : faut-il câbler le secteur public si le calage en

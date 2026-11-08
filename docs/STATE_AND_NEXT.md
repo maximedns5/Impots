@@ -1,5 +1,22 @@
 # State of the project, and the directions open — 2026-10-30 (Phase 11, M0 to M6)
 
+The 2026-11-08 update adds D-345 to D-356: goal 16, validated by the owner. The public
+sector is wired in the population (24 % of the wage bill no longer gets the private
+reliefs and scales, D-346), the firm layer deducts the CVAE and C3S from taxable profit
+(D-347), the household VAT shock takes Mésange's net point (D-348), and each debt figure
+publishes its decomposition, the wage-setting variant, the market rate and a verdict read
+on the Monte-Carlo (D-349). The ten studies reran on `12e769c`, all 39 prognoses held
+(D-352): Attal +76.4 → +59.5 bn€ and +4.36 → +3.41 points of debt, Retailleau +20.8 →
++16.1 and +2.78 → +2.19, Mélenchon −8.7 → −6.6. The goal 15 grid reran on `3c19f52` with
+the same verdicts (D-353). A preregistered decomposition (D-354, D-355) splits E1 from E2
+for Attal, Retailleau and Mélenchon: no cross term, 11 of 15 prognoses held; E1 carries
+the cost, yet E2 weighs three times E1 on Retailleau's debt. D-356 explains it: the macro
+loop reads only household instruments, the corporate tax having no Mésange variant, so a
+returned contribution self-finances about three quarters at θ½ by 2035 and a returned euro
+of IS none; the Attal and Retailleau pages say so beside their decomposition table. Next:
+the owner merges #118, #119 then #120; whether the firm layer should get a macro channel
+is open, no source giving one (D-214, D-246).
+
 The 2026-11-05 update adds D-343, D-344 and D-351: goal 15, validated by the owner. A
 preregistered grid of 169 passes on `2124c44` prices the first-year cost of each knob the
 ten studies claim (19 sliders, 11 pairs), and `site/explorer.html`, the one page with a
