@@ -38,7 +38,7 @@
   "appel": "/predictif/simulate",
   "dette_absente": null,
   "response": {
-    "mechanical_first_year_eur": 14635230617.892223,
+    "mechanical_first_year_eur": 14635230617.892242,
     "years": [
       2026,
       2027,
@@ -58,15 +58,15 @@
       0.018685988583581947,
       0.02322928692899673,
       0.027722434686527242,
-      0.032165985436694466,
-      0.036560486649395596,
+      0.03216598543669469,
+      0.03656048664939582,
       0.04090647975135453,
       0.04520450019282918
     ],
     "population_view": "vieillie"
   },
-  "computed": "2026-11-03",
-  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
+  "computed": "2026-11-05",
+  "commit": "12e769cab051b41731adcb01c52ff67274bc9d12",
   "dirty": false,
-  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)"
 }

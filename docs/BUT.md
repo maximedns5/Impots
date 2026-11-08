@@ -584,3 +584,83 @@ points qui portent une part. La dette de la tranche à 60 % manque sa tolérance
 (+0,0022 pt pour ±0,0021) : sa dette est convexe en taux, et la forme « taux » interpole
 linéairement. Deux termes croisés sur onze sortent de leur fourchette (les deux plafonds du
 quotient). Restent make impact, les lourds, la PR et le merge.
+
+### But 16 — Les chiffres des candidats, défendables (validé le 5 novembre 2026, D-345)
+
+L'examen de validité du 5 novembre (deux relectures adverses indépendantes et des contrôles
+refaits sur les rapports de `7235bd8`) trouve la chaîne juste : la dette rejouée égale le
+moteur à 1e-9, l'identité de la dette redonne 2021-2025 à 0,04 point, les programmes sont
+traduits fidèlement, aucun double compte entre couches. Il trouve aussi trois erreurs qui
+changent des nombres publiés, et une hypothèse qui porte à elle seule les chiffres de dette
+des grandes baisses d'impôt.
+
+* **E1, le secteur public n'est pas câblé.** `categorie_salarie` vaut « privé non cadre »
+  pour tous : 24,0 % de la masse salariale (266,5 Md€) reçoit les allègements et les
+  barèmes de la CNAV et de l'Agirc-Arrco. Attal ≈ 56 Md€ au lieu de 73, Retailleau ≈ 9,3
+  au lieu de 12,2, Mélenchon ≈ −6,6 au lieu de −8,7. Le dépôt le notait
+  (`population/reconcile.py`), aucune page ne le dit.
+* **E2, la CVAE et la C3S ne se déduisent pas de l'IS** dans la couche entreprises
+  (bénéfice imposable fixe) : environ 1,6 Md€ de retour d'IS manquant chez Lisnard et
+  Retailleau, 0,6 chez Attal ; la recette de Mélenchon est surestimée d'autant en sens
+  inverse.
+* **E3, le choc de TVA « 1,18 brut » de Mésange s'applique à un coût net** : le moteur
+  chiffre la TVA des ménages, que les administrations ne paient pas. Labib, Le Pen et
+  Roussel : +0,1 à +0,2 point de dette.
+* **L'hypothèse : la persistance « lue ».** Sous elle, la croissance efface 81 % de l'effet
+  mécanique d'Attal sur la dette (+23,5 points en mécanique pur, +4,4 en tête), quand les
+  évaluations dynamiques courantes compensent de 20 à 50 % d'un coût. Elle vient de la
+  spécification centrale de Mésange ; sous courbe de Phillips, le multiplicateur de long
+  terme des cotisations tombe de 1,73 à 0,25, et ni θ ni le Monte-Carlo ne couvrent cet
+  écart. S'y ajoutent : la largeur de θ, un écart-type entre études (IMK) qui décide quatre
+  verdicts ; un verdict qui quantifie environ 68 % sans le dire ; la dette ajoutée chargée
+  à 1,88 % quand l'OAT est vers 3,3 % (chiffres de tête sous-estimés de 5 à 15 %) ; un
+  écart de PIB réel qui divise une dette nominale.
+
+**Ce que ce but fait monter.** Le deuxième chiffre de la règle de priorité n'a de sens que
+si les études publiées sont justes : aucune étude ne se publie avec une erreur connue. Le
+site n'est pas en ligne ; ce but passe avant sa publication. La grille du but 15 hérite de
+la même chaîne : elle est refaite à la fin de ce but.
+
+```
+/goal Les chiffres des candidats sont défendables, et c'est mergé dans main. Le secteur
+public est câblé dans la population envoyée au moteur (catégorie de salarié, employeur
+public sans allègement, cotisations d'un fonctionnaire sur ses barèmes), et un bouton
+d'employeur ou de cotisations salariales ne touche plus que ceux qu'il vise ; si la
+calibration doit changer, s'arrêter et demander. La couche entreprises déduit du bénéfice
+imposable la variation de CVAE, de C3S et de cotisations patronales, ou publie son coût
+« brut d'IS » en le disant. Le choc de TVA prend le coefficient qui correspond au
+périmètre du coût chiffré. Chaque chiffre de dette publie sa décomposition (mécanique,
+effet du PIB plus haut, recettes induites) ; l'incertitude de spécification de Mésange
+(courbe de Phillips contre « wage setting ») entre aux horizons 5 et 10 ans, comme ligne
+de θ ou comme variante nommée ; le verdict dit ce qu'il quantifie, par un seuil
+préenregistré sur les quantiles du Monte-Carlo ou en se déclarant intervalle à ± 1 σ ;
+la dette ajoutée est chargée au taux de l'OAT à dix ans en sensibilité. Chaque correction
+qui change un nombre a son test, et sa D-entrée préenregistrée avant de tourner. Les dix
+études sont relancées une fois sur un commit figé, préenregistrées avec leur pronostic, et
+chaque page dit ce qui a bougé et pourquoi ; la grille du but 15 est refaite après. Preuve
+attendue : la D-entrée de chaque correction avec l'effet mesuré, les dix études avant et
+après, la sortie verte de make impact et des lourds, l'URL de la PR et le SHA du merge. Ou
+s'arrêter après 60 tours, en disant ce qui manque.
+```
+
+**Le résultat (D-352, D-353, D-355, D-356).** Les dix études ont tourné sur `12e769c` :
+les trente-neuf pronostics tiennent (coût, Δb₂₀₃₅ et verdict, pour treize lignes). Attal
+passe de +76,4 à +59,5 Md€ et de +4,36 à +3,41 points de dette ; Retailleau de +20,8 à
++16,1 Md€ et de +2,78 à +2,19 ; Mélenchon de −8,7 à −6,6 Md€ (D-352). La grille refaite
+sur `3c19f52` redonne les verdicts du but 15 : 19/19 témoins, 16/17 dettes, 9/11 termes
+croisés (D-353). La décomposition préenregistrée (D-354) sépare E1 et E2 pour Attal,
+Retailleau et Mélenchon : le terme croisé est nul, onze pronostics sur quinze tiennent.
+E1 porte le coût (−16,17 Md€ chez Attal, −2,71 chez Retailleau, +2,12 chez Mélenchon) ;
+chez Retailleau, E2 pèse pourtant trois fois E1 sur la dette (D-355). La raison est une
+règle, pas un défaut : la boucle macro ne lit que les impôts des ménages, l'IS n'ayant
+pas de variante dans Mésange ; une cotisation rendue s'autofinance aux trois quarts à θ½
+en 2035, un euro d'IS rendu va à la dette tel quel. Les pages d'Attal et de Retailleau le
+disent sous leur tableau de décomposition (D-356). Reste : le merge de la PR #120, après
+#118 et #119.
+
+Le budget : la série des dix études (environ 9 h 30, D-339) et la grille (environ 6 h,
+D-344), plus les corrections ; trois à quatre jours d'horloge dans le conteneur actuel.
+Les décisions à prendre avant de lancer : faut-il câbler le secteur public si le calage en
+dépend (`calibrate.py` est fermé jusqu'à la phase 7) ; quelle forme pour l'incertitude de
+spécification (une ligne de θ, ou une variante publiée à côté) ; quel seuil pour le
+verdict.

@@ -298,7 +298,7 @@ def _points(impulse: Mapping[str, float], gdp_eur: float) -> dict[str, float]:
     """Points of each variant's ex ante shock — the VAT variant costs 1,18 gross."""
     if gdp_eur <= 0:
         raise IndicesError("le PIB doit être positif pour exprimer un choc en points")
-    return {i: amount / gdp_eur * 100.0 / mesange.VARIANTS[i].ex_ante_points
+    return {i: amount / gdp_eur * 100.0 / mesange.points_du_cout(i)
             for i, amount in impulse.items() if amount}
 
 

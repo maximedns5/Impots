@@ -1677,6 +1677,9 @@ def cmd_etude(args: argparse.Namespace) -> int:
             return 0
         if args.action == "temoin":
             return study.witness(args.ou)
+        if args.action == "avant":
+            print(f"-> {study.figer_avant()}")
+            return 0
         if args.action == "ecrire":
             text = study.render(study.load())
             study.page.parent.mkdir(parents=True, exist_ok=True)
@@ -2316,7 +2319,9 @@ def build_parser() -> argparse.ArgumentParser:
                        "elle redonne son rapport à l'identique (D-335, D-336)")
     temoin.add_argument("nom")
     temoin.add_argument("--ou", required=True)
-    for action, text in (("ecrire", "la page, depuis les seuls rapports commités"),
+    for action, text in (("avant", "figer ce que dit la série commitée, avant la suivante "
+                                    "(D-350)"),
+                         ("ecrire", "la page, depuis les seuls rapports commités"),
                          ("verifier", "la page commitée est-elle celle de ses rapports ?")):
         etude_actions.add_parser(action, help=text).add_argument("nom")
     etude.set_defaults(func=cmd_etude)

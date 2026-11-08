@@ -73,6 +73,7 @@ import numpy as np
 import polars as pl
 from openfisca_core.simulation_builder import SimulationBuilder
 
+from impots import decomposition
 from impots.engine.outputs import LIGHT_ROWS
 from impots.engine.situations import pin_benefit_history, pin_rfr_n_2
 
@@ -100,7 +101,8 @@ HISTORY_YEARS = 2
 #: rate of the CSG on a lone parent's pension or unemployment benefit reads it: on the
 #: fixture, two pensioners' revenu disponible rises, by 839.58 and 104.64 EUR. The
 #: population itself does not change, and a cache written before would be served after.
-WIRING = "D-199"
+# A run without E1 wires every earner as private: its EMTR caches are not E1's (D-354).
+WIRING = "D-346" + ("_sansE1" if decomposition.sans("E1") else "")
 
 #: What the light tier, the rake and the niche imputation ask of a simulation: the
 #: fiscal block, which never reaches a benefit. The ASS the income tax reads since D-192
@@ -108,7 +110,8 @@ WIRING = "D-199"
 #: Anything else first pins the benefit history (failure mode #6), once, so the light
 #: tier never pays for it.
 FISCAL_VARIABLES = frozenset(
-    {row.variable for row in LIGHT_ROWS} | {"nbptr", "rfr", "impot_revenu_restant_a_payer"})
+    {name for row in LIGHT_ROWS for name in (row.variable, *row.extra)}
+    | {"nbptr", "rfr", "impot_revenu_restant_a_payer"})
 
 #: entity -> the flattened subrole keys it accepts. Asserted, not trusted.
 ROLE_VOCABULARY: dict[str, tuple[str, ...]] = {
@@ -280,6 +283,47 @@ IJ_INPUTS: dict[str, str] = {
 IJ_PROJECT_INPUTS = frozenset({"indemnites_journalieres_maladie_ald"})
 
 
+#: The public service's side, as the frame carries it -> openfisca's category (D-346).
+CATEGORIE_PUBLIQUE = {"etat": "public_titulaire_etat",
+                      "territoriale": "public_titulaire_territoriale",
+                      "hospitaliere": "public_titulaire_hospitaliere"}
+
+
+def public_service(frame: pl.DataFrame, monthly_gross: np.ndarray, tax_benefit_system: Any
+                   ) -> tuple[Any, np.ndarray, np.ndarray]:
+    """(categorie_salarie, salaire_de_base, traitement_indiciaire_brut), monthly, per person.
+
+    THE PUBLIC SERVICE WAS NOT WIRED until D-346: every earner went to openfisca as a
+    private non-executive, so a fifth of the wage bill received the allègements and the
+    CNAV and Agirc-Arrco scales. A titular civil servant is now paid a traitement
+    indiciaire and openfisca's own primes on it (`TAUX_DE_PRIME`, primes over the
+    traitement), so the gross pay the frame carries is split as TIB = gross / (1 + rate);
+    a non-titular agent keeps a salaire de base under `public_non_titulaire`. A frame
+    without the public columns is refused if it carries a public earner, rather than read
+    as all private (D-346)."""
+    from openfisca_france.model.base import TAUX_DE_PRIME
+
+    possible = tax_benefit_system.variables["categorie_salarie"].possible_values
+    public = (frame["secteur_public"].to_numpy().astype(bool)
+              if "secteur_public" in frame.columns else np.zeros(frame.height, dtype=bool))
+    if decomposition.sans("E1"):  # every earner private, as before D-346 (D-354)
+        public = np.zeros(frame.height, dtype=bool)
+    names = np.full(frame.height, "prive_non_cadre", dtype=object)
+    tib = np.zeros(frame.height)
+    if public.any():
+        if not {"fonction_publique", "titulaire"} <= set(frame.columns):
+            raise WiringError("population frame carries public earners without their side "
+                              "and status (fonction_publique, titulaire) : D-346")
+        side = frame["fonction_publique"].to_numpy()
+        titular = frame["titulaire"].to_numpy().astype(bool) & public
+        for key, name in CATEGORIE_PUBLIQUE.items():
+            names[titular & (side == key)] = name
+        names[public & ~titular] = "public_non_titulaire"
+        tib = np.where(titular, monthly_gross / (1.0 + TAUX_DE_PRIME), 0.0)
+        monthly_gross = np.where(titular, 0.0, monthly_gross)
+    return possible.encode(names.astype(str)), monthly_gross, tib
+
+
 def build_simulation(
     frame: pl.DataFrame, tax_benefit_system: Any, year: int,
     niche_bases: dict[str, Any] | None = None,
@@ -343,6 +387,8 @@ def build_simulation(
     )
     simulation.set_input("date_naissance", "ETERNITY", births)
     monthly_salary = (frame["salaire_brut_annuel"].to_numpy() / 12.0).astype(np.float64)
+    categorie, monthly_salary, monthly_tib = public_service(frame, monthly_salary,
+                                                            tax_benefit_system)
     # Pensions and unemployment benefit are monthly individual inputs too. Leaving
     # them out is not a visible failure: the simulation runs, every guard passes,
     # and 14 M pensioners simply appear to live on nothing — which then shows up
@@ -376,6 +422,8 @@ def build_simulation(
         for month in range(1, 13):
             period = f"{year - offset}-{month:02d}"
             simulation.set_input("salaire_de_base", period, monthly_salary)
+            simulation.set_input("traitement_indiciaire_brut", period, monthly_tib)
+            simulation.set_input("categorie_salarie", period, categorie)
             simulation.set_input("retraite_brute", period, monthly_pension)
             # Failure mode #4. `pension_annuelle` is calibrated on DECLARED pensions,
             # so it is pinned on the declared box as well; see the module docstring.

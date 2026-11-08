@@ -124,8 +124,8 @@ def test_the_fixed_income_row_is_the_row_times_the_points() -> None:
     """Derived by hand: a one-point income-tax cut is one point of the variant, so the
     index is the row itself — 1,7 · 1,82 · 1,92 %. Half a point of income tax beside the
     targeted variant gives half the row, and the targeted variant, which prints no such
-    row (encadré 14), is listed rather than borrowed. A VAT cut of 1,18 points gross is
-    one point of its variant (folio 112)."""
+    row (encadré 14), is listed rather than borrowed. A cut of one point of the
+    households' VAT is one point of its variant, the net point (folio 112, D-348)."""
     store = _store()
     spec = indices.KEYS["revenu_disponible_reel"]
     result = indices.mesange_fixed(spec, ONE_POINT_IR, gdp_eur=GDP, store=store)
@@ -137,7 +137,7 @@ def test_the_fixed_income_row_is_the_row_times_the_points() -> None:
     assert half.values == pytest.approx({"1": 0.85, "2": 0.91, "3": 0.96})
     assert set(half.uncovered) == {"cotisations_employeurs_ciblees"}
     store.tables["real_income_by_instrument"].values["tva"] = (1.1, 1.01, 1.22, 0, 0, 0)
-    vat = indices.mesange_fixed(spec, {"tva": 0.0118 * GDP}, gdp_eur=GDP, store=store)
+    vat = indices.mesange_fixed(spec, {"tva": 0.01 * GDP}, gdp_eur=GDP, store=store)
     assert vat.values["1"] == pytest.approx(1.1)
 
 

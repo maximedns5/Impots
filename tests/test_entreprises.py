@@ -493,12 +493,14 @@ def test_c3s_reform_reaches_loss_makers(
     firm_population: tuple[pl.DataFrame, object],
 ) -> None:
     """C3S is charged on turnover, so raising it touches firms that pay no IS at
-    all — the incidence a profit-tax reform cannot reproduce."""
+    all — the incidence a profit-tax reform cannot reproduce. It is also a deductible
+    charge: since D-347 the profitable firms' IS falls, by at most the normal rate on
+    the extra C3S (this test used to assert the IS did not move, which was the error)."""
     firms, _ = firm_population
     result = firm_runner.run(firms, 2026, reform=FirmReformSpec(c3s_taux=0.0032))
     agg = firm_aggregate.aggregate(result.firms)
     assert agg.deltas["c3s"] > 0
-    assert agg.deltas["impot_societes"] == 0.0, "a turnover tax does not move profit tax"
+    assert -0.25 * agg.deltas["c3s"] <= agg.deltas["impot_societes"] < 0
 
 
 # --------------------------------------------------------------------------- #
@@ -1033,3 +1035,31 @@ def test_the_read_back_fails_closed_on_a_non_finite_request() -> None:
     asked = FirmReformSpec.model_construct(cebge_seuils_et_taux=[tranche])
     with pytest.raises(AssertionError, match="ne correspondent pas"):
         verify_scales(reformed, asked, 2026)
+
+
+# --------------------------------------------------------------------------- #
+# D-347 — la CVAE et la C3S se déduisent du résultat : leur baisse rend de l'IS
+# --------------------------------------------------------------------------- #
+def test_a_cut_in_cvae_and_c3s_raises_the_is_of_a_profitable_firm_only() -> None:
+    """Deux grandes entreprises, l'une bénéficiaire, l'autre en perte : supprimer la CVAE
+    et la C3S relève le résultat imposable de la première de ce qu'elles coûtaient, et son
+    IS du taux normal fois cela ; la seconde reste à zéro. Vu échouer avant D-347 (l'IS
+    ne bougeait pas)."""
+    import polars as pl
+
+    from impots.entreprises import runner as firm_runner
+    from impots.entreprises.reforms import FirmReformSpec
+
+    firms = pl.DataFrame({
+        "firm_id": [1, 2], "weight": [1.0, 1.0],
+        "chiffre_affaires": [500e6, 500e6], "valeur_ajoutee": [200e6, 200e6],
+        "benefice_imposable": [40e6, 0.0],
+        "capital_libere_detenu_personnes_physiques": [False, False]})
+    result = firm_runner.run(firms, year=2026,
+                             reform=FirmReformSpec(cvae_echelle=0.0, c3s_taux=0.0))
+    f = result.firms
+    lost = (f["cvae"] + f["c3s"] - f["cvae_reform"] - f["c3s_reform"]).to_list()
+    gained = (f["impot_societes_reform"] - f["impot_societes"]).to_list()
+    assert lost[0] > 0 and lost[1] > 0
+    assert gained[0] == pytest.approx(0.25 * lost[0], rel=1e-9)
+    assert gained[1] == 0.0

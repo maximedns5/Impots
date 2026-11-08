@@ -149,7 +149,7 @@ def arguments(nom: str, p, m) -> list[str]:
 #: Les études des programmes (but 13, D-328) : une par candidat dont une mesure se
 #: chiffre, sur le scénario de sa part chiffrée.
 ETUDES = ROOT / "etudes"
-PREENREGISTREMENT_ETUDES = "D-338"  # la série du but 14 (D-328 au but 13)
+PREENREGISTREMENT_ETUDES = "D-350"  # la série du but 16 (D-338 au but 14, D-328 au but 13)
 CADRE_ETUDES = "central"
 
 

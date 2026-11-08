@@ -46,6 +46,8 @@ MODULES_LOCAUX: frozenset[str] = frozenset({
     # et l'outillage des tests, que le conftest importe : la sélection par impact et le
     # relevé de mémoire (D-309) ; `tests/test_etude_page_plf2027.py`, que test_etude lit
     "impact_fichiers", "memoire", "test_etude_page_plf2027",
+    # `tests/test_secteur_public.py`, dont test_decomposition reprend la population (D-354)
+    "test_secteur_public",
 })
 
 #: Les racines que l'on scanne par défaut. `src/` est le minimum ; `tests/` et `scripts/`

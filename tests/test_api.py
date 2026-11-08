@@ -604,9 +604,9 @@ def test_c3s_is_a_turnover_tax_and_its_abattement_shows(client: TestClient) -> N
         "/entreprises/simulate", json={"reform": {"c3s_taux": 0.0032}, "year": 2026}
     ).json()
     assert body["deltas"]["c3s"] > 0
-    assert body["deltas"]["impot_societes"] == pytest.approx(0.0), (
-        "C3S is not modelled as deductible from the IS base, so it must not move IS"
-    )
+    # The C3S is deductible from the IS base (D-347): a rise lowers the IS, by at most the
+    # normal rate times the rise, since only profitable firms carry it through.
+    assert -0.25 * body["deltas"]["c3s"] <= body["deltas"]["impot_societes"] < 0
     assert client.get("/entreprises/baseline").json()["meta"]["share_zero_is"] > 0.2, (
         "a population with no loss-makers cannot show what C3S does"
     )

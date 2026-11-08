@@ -11,120 +11,120 @@
   "annee_entreprises": null
  },
  "cout": {
-  "total": 6796692858.021484,
-  "menages": 6796692858.021484,
+  "total": 6827777038.157227,
+  "menages": 6827777038.157227,
   "entreprises": 0.0
  },
  "deciles": [
   {
    "decile": 1,
    "n_households": 3102006.902227004,
-   "mean_niveau_de_vie": 8348.037194262892,
-   "mean_baseline": 11920.860316328242,
-   "mean_reform": 11925.018443239303,
-   "mean_delta": 4.158126911061461,
-   "share_winners": 0.055043485620542516,
+   "mean_niveau_de_vie": 8349.241274005028,
+   "mean_baseline": 11917.251987497728,
+   "mean_reform": 11921.439421918249,
+   "mean_delta": 4.187434420522493,
+   "share_winners": 0.055543317233215254,
    "share_losers": 0.0,
-   "share_unaffected": 0.9449565143794578
+   "share_unaffected": 0.944456682766785
   },
   {
    "decile": 2,
    "n_households": 3100077.6349093816,
-   "mean_niveau_de_vie": 13578.536819918869,
-   "mean_baseline": 19247.788875695147,
-   "mean_reform": 19273.756323025842,
-   "mean_delta": 25.96744733069136,
-   "share_winners": 0.25271415694340393,
+   "mean_niveau_de_vie": 13590.064243842276,
+   "mean_baseline": 19248.042827532765,
+   "mean_reform": 19273.688225475125,
+   "mean_delta": 25.645397942361804,
+   "share_winners": 0.24971330090998897,
    "share_losers": 0.0010002853444716383,
-   "share_unaffected": 0.7462855577121245
+   "share_unaffected": 0.7492864137455394
   },
   {
    "decile": 3,
    "n_households": 3102637.3895432744,
-   "mean_niveau_de_vie": 17157.421078288673,
-   "mean_baseline": 26170.522327705312,
-   "mean_reform": 26240.45174489857,
-   "mean_delta": 69.92941719326411,
-   "share_winners": 0.5122403488816768,
-   "share_losers": 0.0,
-   "share_unaffected": 0.4877596511183231
+   "mean_niveau_de_vie": 17198.68615785082,
+   "mean_baseline": 26159.710286132504,
+   "mean_reform": 26229.224178284006,
+   "mean_delta": 69.51389215149948,
+   "share_winners": 0.5082425085470309,
+   "share_losers": 0.0004997300418307392,
+   "share_unaffected": 0.49125776141113825
   },
   {
    "decile": 4,
    "n_households": 3101315.473436079,
-   "mean_niveau_de_vie": 20444.508671308256,
-   "mean_baseline": 30603.712971403027,
-   "mean_reform": 30700.573139555352,
-   "mean_delta": 96.86016815232635,
-   "share_winners": 0.5300513119194271,
+   "mean_niveau_de_vie": 20498.207232173718,
+   "mean_baseline": 30761.06216403547,
+   "mean_reform": 30858.22684632695,
+   "mean_delta": 97.16468229148751,
+   "share_winners": 0.5290514258222258,
    "share_losers": 0.0,
-   "share_unaffected": 0.469948688080573
+   "share_unaffected": 0.4709485741777743
   },
   {
    "decile": 5,
    "n_households": 3100962.224924152,
-   "mean_niveau_de_vie": 23453.173796301187,
-   "mean_baseline": 35718.90564062501,
-   "mean_reform": 35862.12608691407,
-   "mean_delta": 143.22044628906252,
-   "share_winners": 0.647,
+   "mean_niveau_de_vie": 23532.351832052882,
+   "mean_baseline": 35670.816267578135,
+   "mean_reform": 35813.72427441407,
+   "mean_delta": 142.90800683593753,
+   "share_winners": 0.646,
    "share_losers": 0.0005000000000000001,
-   "share_unaffected": 0.35250000000000004
+   "share_unaffected": 0.3535000000000001
   },
   {
    "decile": 6,
    "n_households": 3101037.2228584914,
-   "mean_niveau_de_vie": 26586.152969894127,
-   "mean_baseline": 41660.915033872225,
-   "mean_reform": 41853.80966499254,
-   "mean_delta": 192.89463112031652,
-   "share_winners": 0.644508597692882,
-   "share_losers": 0.0,
-   "share_unaffected": 0.35549140230711807
+   "mean_niveau_de_vie": 26694.91084044478,
+   "mean_baseline": 42054.463520637306,
+   "mean_reform": 42248.34124809825,
+   "mean_delta": 193.87772746095033,
+   "share_winners": 0.6430086339700671,
+   "share_losers": 0.0004999879076049481,
+   "share_unaffected": 0.35649137812232795
   },
   {
    "decile": 7,
    "n_households": 3101015.3182800654,
-   "mean_niveau_de_vie": 30107.233842440604,
-   "mean_baseline": 47464.20146298526,
-   "mean_reform": 47696.33401905342,
-   "mean_delta": 232.13255606815943,
-   "share_winners": 0.662505778432475,
-   "share_losers": 0.0009999828787185926,
-   "share_unaffected": 0.33649423868880635
+   "mean_niveau_de_vie": 30222.08537716261,
+   "mean_baseline": 47520.000157037815,
+   "mean_reform": 47751.70658856596,
+   "mean_delta": 231.706431528145,
+   "share_winners": 0.6635057613111937,
+   "share_losers": 0.0004999914393592963,
+   "share_unaffected": 0.33599424724944704
   },
   {
    "decile": 8,
    "n_households": 3101047.8700405816,
-   "mean_niveau_de_vie": 34426.274768990974,
-   "mean_baseline": 54057.520694210434,
-   "mean_reform": 54344.81315557069,
-   "mean_delta": 287.29246136026177,
-   "share_winners": 0.6950084235270162,
+   "mean_niveau_de_vie": 34568.86682506889,
+   "mean_baseline": 54424.73364594846,
+   "mean_reform": 54715.68050833137,
+   "mean_delta": 290.9468623829083,
+   "share_winners": 0.7000082854364094,
    "share_losers": 0.0,
-   "share_unaffected": 0.304991576472984
+   "share_unaffected": 0.29999171456359086
   },
   {
    "decile": 9,
    "n_households": 3101711.814258905,
-   "mean_niveau_de_vie": 40922.9293252431,
-   "mean_baseline": 63713.861593432724,
-   "mean_reform": 64083.69357520674,
-   "mean_delta": 369.83198177399686,
-   "share_winners": 0.7220671841381601,
+   "mean_niveau_de_vie": 41094.83294593116,
+   "mean_baseline": 64112.62943464932,
+   "mean_reform": 64482.83302181845,
+   "mean_delta": 370.20358716913705,
+   "share_winners": 0.7200676674772835,
    "share_losers": 0.0,
-   "share_unaffected": 0.2779328158618401
+   "share_unaffected": 0.27993233252271665
   },
   {
    "decile": 10,
    "n_households": 3101552.001395485,
-   "mean_niveau_de_vie": 64626.62323740916,
-   "mean_baseline": 98147.3903582978,
-   "mean_reform": 98916.60928915886,
-   "mean_delta": 769.2189308610634,
-   "share_winners": 0.8340315657755207,
+   "mean_niveau_de_vie": 64912.26444021267,
+   "mean_baseline": 98560.31597228986,
+   "mean_reform": 99335.69087062326,
+   "mean_delta": 775.3748983334144,
+   "share_winners": 0.8400304248438752,
    "share_losers": 0.0,
-   "share_unaffected": 0.1659684342244795
+   "share_unaffected": 0.15996957515612478
   }
  ],
  "rejeu": {
@@ -133,12 +133,12 @@
   "years": [
    {
     "year": 2026,
-    "mechanical_aged_eur": 6796692858.021484,
+    "mechanical_aged_eur": 6827777038.157227,
     "statistiques": {
      "vieillie": {
-      "cost_eur": 6796692858.021484,
+      "cost_eur": 6827777038.157227,
       "impulses": {
-       "csg": 7013113912.335751
+       "csg": 7040396806.280502
       },
       "uncovered": {
        "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -153,10 +153,10 @@
       "canaux": {
        "c7_labour_supply": {
         "S": {
-         "labour_supply_married_women": 613242637.2719722,
-         "labour_supply_married_men": 962592238.8206639,
-         "labour_supply_single_women": 409825204.62215537,
-         "labour_supply_single_men": 485370313.69170177
+         "labour_supply_married_women": 606238186.0403683,
+         "labour_supply_married_men": 955607190.9827435,
+         "labour_supply_single_women": 407244004.8149086,
+         "labour_supply_single_men": 480263216.2342447
         }
        }
       },
@@ -265,7 +265,15 @@
        "10": -0.54
       },
       "sd": 0.66,
-      "brut": 1.0
+      "brut": 1.0,
+      "pib_salariale": {
+       "1": 0.41,
+       "2": 0.8296296296296296,
+       "3": 0.8777777777777778,
+       "5": 0.77,
+       "10": 0.65
+      },
+      "variante_source": "super_brut"
      }
     }
    },
@@ -282,150 +290,150 @@
  "controle": {
   "persistence": "lue",
   "theta": [
-   0.0006020584188053402,
-   0.00041533161303619615,
-   0.0010509605304196423,
-   0.002070858163362388,
-   0.003191974470420522,
-   0.0042060055728954104,
-   0.005227275819135402,
-   0.006255543471780811,
-   0.00729057154589241,
-   0.008332127730817485
+   0.0006069245809190438,
+   0.00042196382826475975,
+   0.0010625274937408058,
+   0.0020888272242027828,
+   0.0032167130361249185,
+   0.004237069470796273,
+   0.005264666861663159,
+   0.0062992628236164805,
+   0.007340619739201193,
+   0.008388504680208353
   ],
   "coins": [
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.01863201415632676
+    0.018719876529651458
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.0008567132838339653
+    -0.0008446793252157025
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.018369814476058233
+    0.018459328583037005
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.0011181278547220952
+    -0.0011044440833121172
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.018352655031979026
+    0.018443457182395484
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.0011352359179583882
+    -0.0011202677756567692
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.0180904553517105
+    0.01818290923578081
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.0013966504888467401
+    -0.0013800325337531838
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.018183622231166652
+    0.018276606681838947
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.0013037625807108544
+    -0.0012866167355254365
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.017921422550898125
+    0.018016058735224272
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.0015651771515989843
+    -0.0015463814936220732
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.01790426310681892
+    0.01800018733458275
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.0015822852148354993
+    -0.0015622051859665032
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.01764206342655039
+    0.017739639387968298
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.0018436997857234072
+    -0.0018219699440629178
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.018250376586448125
+    0.018341008781196155
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.001237208109237331
+    -0.0012224082242793255
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.017988176906179598
+    0.01808046083458148
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.001498622680125461
+    -0.001482172982375518
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.01797101746210039
+    0.01806458943394018
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.001515730743361754
+    -0.001497996674720392
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.017708817781831865
+    0.017804041487325506
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.0017771453142498839
+    -0.0017577614328165847
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.017801984661288017
+    0.017897738933383645
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.0016842574061142201
+    -0.0016643456345888374
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.017539784981019713
+    0.01763719098676897
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.00194567197700235
+    -0.0019241103926854741
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.017522625536940284
+    0.01762131958612745
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.001962780040238865
+    -0.001939934085029904
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.01726042585667198
+    0.017360771639512773
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.002224194611126773
+    -0.0021996988431265407
    ]
   ]
  },
- "computed": "2026-11-05",
- "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "computed": "2026-11-06",
+ "commit": "3c19f52ec9809fb49ee8bd641e21f1ab96ba5a5f",
  "dirty": false,
- "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)"
 }

@@ -8,9 +8,11 @@ Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la premiè
 
 ## En bref
 
-| programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | selon θ |
-|---|---|---|---|---|
-| la part chiffrée | +5,19 Md€ | — | +0,44 pt | dépend de θ |
+| programme | la première année | le chiffrage officiel | dette en 2035, à θ½ | verdict | selon θ |
+|---|---|---|---|---|---|
+| la part chiffrée | +5,19 Md€ | — | +0,52 pt | dépend | dépend de θ |
+
+Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins 90 % des tirages font monter la dette, vue vieillie, « baisse » quand au moins 90 % la font baisser, « dépend » entre les deux. « Selon θ » dit ce que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque coin, ou non.
 
 Un coût positif coûte au budget, un coût négatif lui rapporte. La dette est en points de PIB, dans la vue vieillie et sous la persistance « lue » de l'effet macro de chaque mesure, Mésange lu à ses horizons ; « selon θ » lit les deux vues sous cette persistance seule (D-336). « Éteint » et « tenu » sont des sensibilités, données plus bas, hors du verdict.
 
@@ -26,16 +28,16 @@ La mesure coûte **5,19 Md€** la première année (2026), sur la population de
 
 | décile | ménages | niveau de vie moyen | delta moyen | gagnants | perdants |
 |---|---|---|---|---|---|
-| 1 | 3 102 007 | 8 273 € | +94 € | 100 % | 0 % |
-| 2 | 3 100 131 | 13 306 € | +114 € | 100 % | 0 % |
-| 3 | 3 102 584 | 16 595 € | +131 € | 100 % | 0 % |
-| 4 | 3 101 315 | 19 726 € | +152 € | 100 % | 0 % |
-| 5 | 3 100 962 | 22 590 € | +177 € | 100 % | 0 % |
-| 6 | 3 101 037 | 25 476 € | +181 € | 100 % | 0 % |
-| 7 | 3 101 015 | 28 843 € | +201 € | 100 % | 0 % |
-| 8 | 3 101 048 | 32 961 € | +195 € | 100 % | 0 % |
-| 9 | 3 101 712 | 39 197 € | +221 € | 100 % | 0 % |
-| 10 | 3 101 552 | 61 679 € | +208 € | 100 % | 0 % |
+| 1 | 3 102 007 | 8 275 € | +94 € | 100 % | 0 % |
+| 2 | 3 100 131 | 13 318 € | +114 € | 100 % | 0 % |
+| 3 | 3 101 226 | 16 631 € | +131 € | 100 % | 0 % |
+| 4 | 3 102 674 | 19 778 € | +152 € | 100 % | 0 % |
+| 5 | 3 100 962 | 22 665 € | +177 € | 100 % | 0 % |
+| 6 | 3 101 037 | 25 579 € | +181 € | 100 % | 0 % |
+| 7 | 3 101 015 | 28 953 € | +201 € | 100 % | 0 % |
+| 8 | 3 101 048 | 33 097 € | +195 € | 100 % | 0 % |
+| 9 | 3 101 712 | 39 363 € | +221 € | 100 % | 0 % |
+| 10 | 3 101 552 | 61 952 € | +208 € | 100 % | 0 % |
 
 Les déciles sont ceux du niveau de vie de la population simulée. Toute structure
 plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
@@ -47,12 +49,12 @@ plus fine qu'un décile est un artefact de l'imputation, pas un résultat.
 
 **L'effet sur l'économie**, l'éventail macro de grade **in-support**, couverture 100 %, conjoncture « normal » :
 
-* **PIB, à 1 an** : [-2,55 Md€ ; +5,53 Md€], central +1,53 Md€
-* **PIB, à 2 ans** : [-1,05 Md€ ; +6,93 Md€], central +3,03 Md€
-* **PIB, à 3 ans** : [-721 M€ ; +7,11 Md€], central +3,19 Md€
-* **emploi, à 1 an** : [-8,86 ; +19,24] milliers ETP, central +5,34
-* **emploi, à 2 ans** : [-6,54 ; +43,12] milliers ETP, central +18,89
-* **emploi, à 3 ans** : [-5,33 ; +52,64] milliers ETP, central +23,64
+* **PIB, à 1 an** : [-3,00 Md€ ; +6,52 Md€], central +1,81 Md€
+* **PIB, à 2 ans** : [-1,24 Md€ ; +8,17 Md€], central +3,58 Md€
+* **PIB, à 3 ans** : [-851 M€ ; +8,39 Md€], central +3,77 Md€
+* **emploi, à 1 an** : [-10,46 ; +22,70] milliers ETP, central +6,30
+* **emploi, à 2 ans** : [-7,72 ; +50,88] milliers ETP, central +22,28
+* **emploi, à 3 ans** : [-6,29 ; +62,12] milliers ETP, central +27,90
 
 > Couche macro (L4) : ordre de grandeur et composition, pas une prévision. L'éventail des estimations crédibles pour un même choc est large — la dispersion entre études publiées est du même ordre que la valeur centrale elle-même. C'est une propriété de la littérature, pas de ce modèle.
 
@@ -67,26 +69,44 @@ Ce que la chaîne ne lit pas, et pourquoi :
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
-| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | vieillie | +0,44 pt | de -0,20 pt à +1,41 pt |
-| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | +0,40 pt | de -0,16 pt à +1,27 pt |
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | vieillie | +0,52 pt | de -0,18 pt à +1,42 pt |
+| Effet macro lu dans Mésange à 1, 2, 3, 5 et 10 ans (spécification centrale), interpolé linéairement entre eux | figée | +0,48 pt | de -0,15 pt à +1,28 pt |
 
 En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'effet macro lu dans Mésange à ses horizons (persistance « lue », D-336). La vue vieillie fait vieillir la population chaque année avec les salaires ; la vue figée la garde telle qu'elle est. Sous cette persistance, son effet sur la dette en 2035 **dépend de θ** : son signe change d'un coin de la boîte, ou d'une vue, à l'autre.
+
+**Le verdict**, lu sur le Monte-Carlo (D-345) : son effet sur la dette en 2035 **dépend des hypothèses** : moins de 90 % des tirages s'accordent sur son signe, vue vieillie.
 
 **Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, sur les mêmes passes : l'effet macro éteint après trois ans, ou tenu au niveau de la troisième année. Mésange ne porte ni l'une ni l'autre ; elles disent ce que le choix de la persistance pèse, et n'entrent pas dans le verdict.
 
 | persistance | vue | Δ dette 2035, à θ½ | aux coins de la boîte |
 |---|---|---|---|
-| Effet macro éteint après trois ans | vieillie | +1,30 pt | de +1,13 pt à +1,55 pt |
-| Effet macro éteint après trois ans | figée | +1,19 pt | de +1,06 pt à +1,40 pt |
-| Effet macro tenu au niveau de la troisième année | vieillie | +0,34 pt | de -0,19 pt à +1,47 pt |
-| Effet macro tenu au niveau de la troisième année | figée | +0,31 pt | de -0,16 pt à +1,32 pt |
+| Effet macro éteint après trois ans | vieillie | +1,34 pt | de +1,19 pt à +1,55 pt |
+| Effet macro éteint après trois ans | figée | +1,22 pt | de +1,10 pt à +1,40 pt |
+| Effet macro tenu au niveau de la troisième année | vieillie | +0,40 pt | de -0,17 pt à +1,47 pt |
+| Effet macro tenu au niveau de la troisième année | figée | +0,36 pt | de -0,14 pt à +1,33 pt |
 
 **La distribution, à côté de la boîte.** La boîte dit jusqu'où Δb va quand chaque effet parcourt sa fourchette publiée : ce n'est pas une probabilité. Le Monte-Carlo en est une, sous des lois déclarées : Lois du magasin, ligne par ligne ; copule gaussienne de corrélation ρ entre les lignes d'un même article, indépendance entre articles ; décalage du multiplicateur normal centré réduit, multiplicateur Mésange + z × écart-type IMK censuré à zéro ; indépendant des lignes. (ρ = 0,8, 2000 tirages, persistance « lue », D-336). D'autres lois donneraient une autre réponse.
 
 | vue | P(hausse de la dette en 2035) | quantile 5 % | médiane | quantile 95 % | ce qui pèse le plus (Sobol, total) |
 |---|---|---|---|---|---|
-| vieillie | 68 % | -0,26 pt | +0,48 pt | +1,56 pt | le multiplicateur 0,98 |
-| figée | 69 % | -0,21 pt | +0,43 pt | +1,40 pt | le multiplicateur 0,98 |
+| vieillie | 73 % | -0,28 pt | +0,55 pt | +1,56 pt | le multiplicateur 0,98 |
+| figée | 73 % | -0,23 pt | +0,50 pt | +1,40 pt | le multiplicateur 0,98 |
+
+**D'où vient Δb.** La dette de 2035 en trois marches, à θ½ sous la persistance « lue » : le coût après comportements, sans la boucle macro ; ce que le PIB plus haut ou plus bas change au seul ratio, comme dénominateur ; ce que les recettes induites par l'activité y changent. Les trois font la ligne du tableau (D-349).
+
+| vue | le coût, sans boucle | le PIB, dénominateur | les recettes induites | Δ dette 2035 |
+|---|---|---|---|---|
+| vieillie | +1,56 pt | -0,13 pt | -0,91 pt | +0,52 pt |
+| figée | +1,40 pt | -0,11 pt | -0,82 pt | +0,48 pt |
+
+**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 (D-336). Chargée à 3,5 %, hypothèse déclarée d'une OAT à dix ans de fin 2026 : +0,57 pt en vue vieillie, contre +0,52 pt ; +0,52 pt en vue figée, contre +0,48 pt.
+
+**Si les salaires se forment autrement.** Mésange publie une sensibilité de ses variantes à la formation des salaires (folios 137 et 138) : une courbe de Phillips pour les cotisations employeurs et la TVA, un super-brut visé pour les cotisations salariés, la CSG et l'IR. Le multiplicateur y est recentré, à écart-type, persistance et recettes induites par point de PIB inchangés ; Mésange n'imprime pas le solde de la variante, que la page suppose proportionnel au PIB (D-349). C'est une sensibilité, hors du verdict.
+
+| vue | Δ dette 2035, à θ½ | aux coins de la boîte | P(hausse) | verdict |
+|---|---|---|---|---|
+| vieillie | +0,39 pt | de -0,22 pt à +1,28 pt | 67 % | dépend |
+| figée | +0,35 pt | de -0,19 pt à +1,14 pt | 67 % | dépend |
 
 ### L'écart au chiffrage officiel
 
@@ -140,11 +160,27 @@ Les portes, de celle qui ouvrirait le plus de mesures à celle qui en ouvrirait 
 
 Le candidat n'annonce, pour aucune de ses mesures, un montant que le relevé ait trouvé.
 
+## Ce qui a bougé depuis la série précédente
+
+La série précédente a tourné sur `7235bd8` ; ce qu'elle disait est figé dans `reports/etudes/presidentielle_roussel/avant/serie.json` avant que celle-ci ne remplace ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le Monte-Carlo.
+
+| | la première année, avant → après | dette à θ½, avant → après | verdict, avant → après |
+|---|---|---|---|
+| la part chiffrée | +5,19 Md€ → +5,19 Md€ | +0,44 pt → +0,52 pt | dépend de θ → dépend |
+
+Ce qui touche chaque ligne :
+
+* **la part chiffrée** : le secteur public câblé (D-346), la TVA des ménages au point net (D-348), le verdict lu sur le Monte-Carlo (D-345).
+
+Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une seule la touche ; ailleurs, elles ne se séparent pas sans une passe par correction, qui n'est pas faite.
+
 ## D'où viennent ces nombres
 
-Les passes ont tourné sur le commit `7235bd8`, conteneur cloud 15 Go, 4 cœurs, but 14 (D-338). Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
+Les passes ont tourné sur le commit `12e769c`, conteneur cloud 15 Go, 4 cœurs, but 16 (D-350). Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
 
 *Population vieillie mécaniquement de 2024 à 2035 — salaires 3,0 % par an, prix 2,0 % par an, hypothèses DÉCLARÉES et non prévues (3 % ronds, le rythme du PIB nominal du scénario). La structure des ménages, les âges et les poids n'ont PAS bougé : c'est la France de l'année de base avec l'argent de l'année d'arrivée, et cela biaise vers l'immobilité démographique. **Cette population n'est plus calibrée** : les totaux dépensés au registre le sont sur l'année de base, et il n'existe pas de total publié pour une année future. Toute ligne de réconciliation sur cette année refuse un verdict de tolérance plutôt que d'en donner un qui se lirait comme une validation.*
+
+Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement indiciaire et de primes, et cotise à son régime ; un contractuel cotise au régime général, sans allègement. L'enquête Emploi dit titulaire ou contractuel et la fonction publique, pas le corps ni l'indice : la part des primes est la moyenne qu'openfisca porte, la même pour tous.
 
 * `reports/etudes/presidentielle_roussel/premiere_annee_pres2027_roussel_programme.json`, `reports/etudes/presidentielle_roussel/predictif_pres2027_roussel_programme.json`
 * `reports/etudes/presidentielle_roussel/plages/`, les 3 points des plages

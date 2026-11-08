@@ -358,6 +358,90 @@ def test_a_path_of_d336_without_its_monte_carlo_says_none(plfss) -> None:
     assert "**Les sensibilités, hors du verdict.**" in text and "Monte-Carlo" not in text
 
 
+LECTURES = {
+    "persistence": "lue", "theta": {},
+    "decomposition": {v: {"cout": 0.010, "denominateur": -0.002, "retroaction": -0.003,
+                          "total": 0.005} for v in ("vieillie", "figee")},
+    "taux_marche": {"taux": 0.035, "vieillie": 0.006, "figee": 0.006},
+    "variante_salariale": {
+        "sources": {"cotisations_employeurs": "phillips", "taxe_carbone": None},
+        "non_variees": ["taxe_carbone"],
+        "boite": {v: {"theta": 0.004, "corners": [["a", 0.001], ["b", 0.008]]}
+                  for v in ("vieillie", "figee")},
+        "monte_carlo": {v: {"p_hausse": 0.97} for v in ("vieillie", "figee")}}}
+
+
+@pytest.fixture
+def lu(lue) -> etude.Etude:
+    """A series of but 16: the readings of D-349 on every path, the scenario's debt
+    falling in 95 % of the draws, an employer-contribution instrument in the loop."""
+    for name in lue.noms:
+        file = lue.rapports / f"predictif_{name}.json"
+        path = json.loads(file.read_text(encoding="utf-8"))
+        path["lectures"] = copy.deepcopy(LECTURES)
+        path["monte_carlo"]["vues"]["vieillie"]["p_hausse"] = 0.05
+        path["rejeu"]["macro"] = {"instruments": {"cotisations_employeurs": {}}}
+        file.write_text(json.dumps(path), encoding="utf-8")
+    return lue
+
+
+def test_a_path_of_d349_says_the_monte_carlo_verdict_and_its_readings(lu) -> None:
+    """D-345 and D-349: the verdict reads the distribution (at most 10 % of the scenario's
+    draws raise the debt: the measure, in mirror, raises it in at least 90 %), the box
+    stands beside it; the decomposition adds up to the headline, the market rate, the wage
+    variant and its verdict, the corporate tax and the public sector are said. Every Δb is
+    the measure's, turned over."""
+    entries = lu.load()
+    assert entries[0]["sign"] == -1 and etude.verdict_mc(entries[0]) == "hausse"
+    lines, n = lu.lines(entries)
+    text = "\n".join(n.resolve(line) for line in lines)
+    row = next(line for line in text.splitlines()
+               if line.startswith("| art. 74 du PLF, les aides au logement |"))
+    assert row.endswith("| hausse | hausse |")
+    assert "« hausse » quand au moins 90\u202f% des tirages font monter la dette" in text
+    section = _section(text, "les aides au logement")
+    assert ("**Le verdict**, lu sur le Monte-Carlo (D-345) : elle **augmente la dette** en "
+            "2035 dans au moins 90\u202f% des tirages, vue vieillie.") in section
+    assert "| vieillie | -1,00 pt | +0,20 pt | +0,30 pt | -0,50 pt |" in section
+    assert "Chargée à 3,5\u202f%" in section and "-0,60 pt en vue vieillie, contre -0,50 pt" \
+        in section
+    assert "| vieillie | -0,40 pt | de -0,80 pt à -0,10 pt | 3\u202f% | baisse |" in section
+    assert "pour `taxe_carbone`" in section and "la variante est partielle" in section
+    assert "**Brut d'IS.**" in section
+    assert "Le secteur public est câblé (D-346)" in text
+    said = {item.texte: item for item in n.items}
+    assert said["90\u202f%"].etage == "déclaré" and said["3,5\u202f%"].etage == "hypothèse"
+
+
+def test_the_page_says_what_moved_against_the_frozen_series_and_why(lu) -> None:
+    """D-350: the previous series frozen once, refused twice; the page of the new one says
+    each line then and now, and the corrections that touch it."""
+    frozen = lu.figer_avant()
+    with pytest.raises(etude.EtudeError, match="déjà figée"):
+        lu.figer_avant()
+    then = json.loads(frozen.read_text(encoding="utf-8"))
+    entry = next(e for e in lu.load() if e["name"].endswith("apl"))
+    then["scenarios"][entry["name"]].update(dette=0.012, selon_theta="dépend de θ")
+    frozen.write_text(json.dumps(then), encoding="utf-8")
+    text = lu.render(lu.load())
+    section = text.split("## Ce qui a bougé depuis la série précédente\n")[1].split("\n## ")[0]
+    row = next(line for line in section.splitlines()
+               if line.startswith("| art. 74 du PLF, les aides au logement |"))
+    assert row.endswith(f"| +1,20 pt → {etude._points(entry['debt'][0]['theta'])} | "
+                        f"dépend de θ → hausse |")
+    assert ("* **art. 74 du PLF, les aides au logement** : le secteur public câblé (D-346), "
+            "le verdict lu sur le Monte-Carlo (D-345).") in section
+
+
+def test_a_study_half_of_d349_is_refused(lu) -> None:
+    file = lu.rapports / f"predictif_{lu.noms[0]}.json"
+    path = json.loads(file.read_text(encoding="utf-8"))
+    del path["lectures"]
+    file.write_text(json.dumps(path), encoding="utf-8")
+    with pytest.raises(etude.EtudeError, match="lectures de D-349"):
+        lu.render(lu.load())
+
+
 def test_an_older_path_renders_the_page_it_always_did(plfss) -> None:
     """A report before D-336 (« éteint » and « tenu », no `rejeu`, no `monte_carlo`) is
     read under the frame that now says « lue », and its page has neither sensitivities

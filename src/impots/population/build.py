@@ -48,6 +48,8 @@ SCHEMA: dict[str, pl.DataType] = {
     "is_salarie": pl.Boolean,
     "pcs": pl.String,
     "secteur_public": pl.Boolean,
+    "fonction_publique": pl.String,
+    "titulaire": pl.Boolean,
     "quotite_travail": pl.Float64,
     "parent_isole": pl.Boolean,
     "synthetic": pl.Boolean,

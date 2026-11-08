@@ -119,19 +119,20 @@ def _draw(rejeu: Mapping[str, Any], groups: Mapping[str, list[str]], n: int,
 
 
 def _last(payload: Mapping[str, Any], columns: Mapping[str, np.ndarray], *, view: str,
-          persistence: str | None, rows: Sequence[str]) -> np.ndarray:
+          persistence: str | None, rows: Sequence[str], **options: Any) -> np.ndarray:
     values = {key: columns[key] for key in rows}
     z = columns.get(rejouer.MACRO_ROW, 0.0)
     delta = rejouer.chemin(payload, view=view, values=values, z=z,
-                           persistence=persistence).delta[-1]
+                           persistence=persistence, **options).delta[-1]
     n = len(next(iter(columns.values()))) if columns else 1
     return np.broadcast_to(np.asarray(delta, dtype=float), (n,)).copy()
 
 
 def run(payload: Mapping[str, Any], *, draws: int = DRAWS, seed: int = SEED,
         rho: float = RHO, persistence: str | None = rejouer.READ,
-        views: Sequence[str] = ("vieillie", "figee")) -> dict[str, Any]:
-    """The distribution of Δb at the last year, per view, and its Sobol indices."""
+        views: Sequence[str] = ("vieillie", "figee"), **options: Any) -> dict[str, Any]:
+    """The distribution of Δb at the last year, per view, and its Sobol indices;
+    `options` are `rejouer.chemin`'s (the wage variant, D-349)."""
     rejeu = payload["rejeu"]
     if not rejeu["looped"]:
         persistence = None
@@ -145,15 +146,16 @@ def run(payload: Mapping[str, Any], *, draws: int = DRAWS, seed: int = SEED,
             a[key] = b[key] = np.full(draws, float(rejeu["lignes"][key]["central"]))
     out: dict[str, Any] = {}
     for view in views:
-        f_a = _last(payload, a, view=view, persistence=persistence, rows=rows)
-        f_b = _last(payload, b, view=view, persistence=persistence, rows=rows)
+        f_a = _last(payload, a, view=view, persistence=persistence, rows=rows, **options)
+        f_b = _last(payload, b, view=view, persistence=persistence, rows=rows, **options)
         variance = float(np.var(np.concatenate([f_a, f_b])))
         sobol: dict[str, Any] = {}
         for name, keys in groups.items():
             mixed = dict(a)
             for key in keys:
                 mixed[key] = b[key]
-            f_ab = _last(payload, mixed, view=view, persistence=persistence, rows=rows)
+            f_ab = _last(payload, mixed, view=view, persistence=persistence, rows=rows,
+                         **options)
             sobol[name] = ({"premier_ordre": float(np.mean(f_b * (f_ab - f_a)) / variance),
                             "total": float(0.5 * np.mean((f_a - f_ab) ** 2) / variance)}
                            if variance > 0 else None)
@@ -175,14 +177,19 @@ def run(payload: Mapping[str, Any], *, draws: int = DRAWS, seed: int = SEED,
     }
 
 
+#: The verdict's thresholds, fixed by D-345 before any pass: « hausse » when at least 90 %
+#: of the draws raise the debt, « baisse » when at most 10 % do, « dépend » between.
+SEUIL_VERDICT = 0.90
+
+
 def verdict(monte: Mapping[str, Any], *, view: str = "vieillie",
-            threshold: float = 0.95) -> str:
-    """A reading of the distribution, beside the box's verdict: « hausse » or « baisse »
-    when at least `threshold` of the draws agree, « dépend des lois » otherwise."""
+            threshold: float = SEUIL_VERDICT) -> str:
+    """The verdict (D-345): « hausse » when P(Δb > 0) ≥ `threshold`, « baisse » when
+    P ≤ 1 − `threshold`, « dépend » between; the θ box stays published beside it."""
     share = monte["vues"][view]["p_hausse"]
     if share >= threshold:
         return "hausse"
-    if 1.0 - share >= threshold:
+    if share <= 1.0 - threshold + 1e-12:  # 1 − 0,9 is 0,0999… in floating point
         return "baisse"
-    return "dépend des lois"
+    return "dépend"
 

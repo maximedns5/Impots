@@ -1,0 +1,10 @@
+{
+  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
+  "scenarios": {
+    "pres2027_melenchon_programme": {
+      "cout": -8731860248.831055,
+      "dette": -0.004413761587802156,
+      "selon_theta": "dépend de θ"
+    }
+  }
+}

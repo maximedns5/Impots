@@ -135,12 +135,13 @@ def test_a_tax_rise_contracts(loaded, gdp):
     assert _run(loaded, gdp, {"ir": +3.0e9}).gdp_eur["1"].p50 < 0
 
 
-def test_the_vat_basis_divides_by_its_own_ex_ante_factor(loaded, gdp):
-    """A VAT reform costed gross must not take a multiplier 18 % too large."""
+def test_the_households_vat_is_the_variants_net_point(loaded, gdp):
+    """The households' VAT the engine prices is the variant's net point: one euro of it is
+    one euro of the variant, not 1/1,18 (D-348; until then the fan divided it by 1,18)."""
     impulse = shocks.Impulse(year=2026, by_instrument={"tva": 5.0e9})
     result = fan.run(impulse, loaded, gdp_eur=gdp, draws=40_000)
     central = loaded.tables["multiplier_by_instrument"].at("tva", "1")
-    assert result.gdp_eur["1"].p50 == pytest.approx(central * 5.0e9 / 1.18, rel=0.05)
+    assert result.gdp_eur["1"].p50 == pytest.approx(central * 5.0e9 / 1.0, rel=0.05)
 
 
 def test_a_targeted_allegement_creates_more_jobs_than_a_uniform_one(loaded, gdp):

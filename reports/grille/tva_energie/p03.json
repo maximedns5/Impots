@@ -21,10 +21,10 @@
   {
    "decile": 1,
    "n_households": 3102006.902227004,
-   "mean_niveau_de_vie": 8348.037194262892,
-   "mean_baseline": 11920.860316328242,
-   "mean_reform": 12004.656353405095,
-   "mean_delta": 83.79603707685115,
+   "mean_niveau_de_vie": 8349.241274005028,
+   "mean_baseline": 11917.251987497728,
+   "mean_reform": 12001.048024574578,
+   "mean_delta": 83.79603707685132,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -32,10 +32,10 @@
   {
    "decile": 2,
    "n_households": 3100077.6349093816,
-   "mean_niveau_de_vie": 13578.536819918869,
-   "mean_baseline": 19247.788875695147,
-   "mean_reform": 19346.518111053763,
-   "mean_delta": 98.72923535861234,
+   "mean_niveau_de_vie": 13590.064243842276,
+   "mean_baseline": 19248.042827532765,
+   "mean_reform": 19346.772062891378,
+   "mean_delta": 98.72923535861246,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -43,10 +43,10 @@
   {
    "decile": 3,
    "n_households": 3102637.3895432744,
-   "mean_niveau_de_vie": 17157.421078288673,
-   "mean_baseline": 26170.522327705312,
-   "mean_reform": 26278.44687594399,
-   "mean_delta": 107.92454823868358,
+   "mean_niveau_de_vie": 17198.68615785082,
+   "mean_baseline": 26159.710286132504,
+   "mean_reform": 26267.63483437119,
+   "mean_delta": 107.924548238683,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -54,10 +54,10 @@
   {
    "decile": 4,
    "n_households": 3101315.473436079,
-   "mean_niveau_de_vie": 20444.508671308256,
-   "mean_baseline": 30603.712971403027,
-   "mean_reform": 30723.51830762484,
-   "mean_delta": 119.80533622181348,
+   "mean_niveau_de_vie": 20498.207232173718,
+   "mean_baseline": 30761.06216403547,
+   "mean_reform": 30880.867500257278,
+   "mean_delta": 119.80533622181372,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -65,10 +65,10 @@
   {
    "decile": 5,
    "n_households": 3100962.224924152,
-   "mean_niveau_de_vie": 23453.173796301187,
-   "mean_baseline": 35718.90564062501,
-   "mean_reform": 35847.61546619539,
-   "mean_delta": 128.70982557037883,
+   "mean_niveau_de_vie": 23532.351832052882,
+   "mean_baseline": 35670.816267578135,
+   "mean_reform": 35799.52609314851,
+   "mean_delta": 128.70982557037894,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -76,10 +76,10 @@
   {
    "decile": 6,
    "n_households": 3101037.2228584914,
-   "mean_niveau_de_vie": 26586.152969894127,
-   "mean_baseline": 41660.915033872225,
-   "mean_reform": 41794.10698956102,
-   "mean_delta": 133.19195568879184,
+   "mean_niveau_de_vie": 26694.91084044478,
+   "mean_baseline": 42054.463520637306,
+   "mean_reform": 42187.655476326094,
+   "mean_delta": 133.19195568879172,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -87,10 +87,10 @@
   {
    "decile": 7,
    "n_households": 3101015.3182800654,
-   "mean_niveau_de_vie": 30107.233842440604,
-   "mean_baseline": 47464.20146298526,
-   "mean_reform": 47610.254076772326,
-   "mean_delta": 146.05261378706763,
+   "mean_niveau_de_vie": 30222.08537716261,
+   "mean_baseline": 47520.000157037815,
+   "mean_reform": 47666.052770824885,
+   "mean_delta": 146.05261378706723,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -98,10 +98,10 @@
   {
    "decile": 8,
    "n_households": 3101047.8700405816,
-   "mean_niveau_de_vie": 34426.274768990974,
-   "mean_baseline": 54057.520694210434,
-   "mean_reform": 54200.15530389406,
-   "mean_delta": 142.63460968362412,
+   "mean_niveau_de_vie": 34568.86682506889,
+   "mean_baseline": 54424.73364594846,
+   "mean_reform": 54567.3682556321,
+   "mean_delta": 142.6346096836247,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -109,10 +109,10 @@
   {
    "decile": 9,
    "n_households": 3101711.814258905,
-   "mean_niveau_de_vie": 40922.9293252431,
-   "mean_baseline": 63713.861593432724,
-   "mean_reform": 63871.263607249515,
-   "mean_delta": 157.40201381678386,
+   "mean_niveau_de_vie": 41094.83294593116,
+   "mean_baseline": 64112.62943464932,
+   "mean_reform": 64270.03144846609,
+   "mean_delta": 157.40201381678366,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -120,10 +120,10 @@
   {
    "decile": 10,
    "n_households": 3101552.001395485,
-   "mean_niveau_de_vie": 64626.62323740916,
-   "mean_baseline": 98147.3903582978,
-   "mean_reform": 98321.70836707362,
-   "mean_delta": 174.31800877582185,
+   "mean_niveau_de_vie": 64912.26444021267,
+   "mean_baseline": 98560.31597228986,
+   "mean_reform": 98734.6339810657,
+   "mean_delta": 174.31800877582234,
    "share_winners": 1.0,
    "share_losers": 0.0,
    "share_unaffected": 0.0
@@ -216,7 +216,15 @@
        "10": -0.44
       },
       "sd": 0.66,
-      "brut": 1.18
+      "brut": 1.0,
+      "pib_salariale": {
+       "1": 0.31,
+       "2": 0.64453125,
+       "3": 0.70875,
+       "5": 0.81,
+       "10": 1.04
+      },
+      "variante_source": "phillips"
      }
     }
    },
@@ -229,30 +237,30 @@
  "controle": {
   "persistence": "lue",
   "theta": [
-   0.00046955177709406826,
-   0.0004140911494701083,
-   0.0006303210809823767,
-   0.0009166664440478645,
-   0.001253879506729616,
-   0.0016724459339256814,
-   0.002106226239492859,
-   0.0025549079795017526,
-   0.003018184291024628,
-   0.0034957538020843337
+   0.00055403592642711,
+   0.0004885636132985205,
+   0.0007436727025562639,
+   0.0010815023574113347,
+   0.0014793402379846832,
+   0.001973171658690598,
+   0.002484953789627653,
+   0.0030143180688679827,
+   0.0035609025172875786,
+   0.00412435163236502
   ],
   "coins": [
    [
     "multiplicateur_macro = 0",
-    0.011199090026786207
+    0.01126595747110648
    ],
    [
     "multiplicateur_macro = 1",
-    -0.0016288652125999725
+    -0.0014852757147056916
    ]
   ]
  },
- "computed": "2026-11-05",
- "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "computed": "2026-11-06",
+ "commit": "3c19f52ec9809fb49ee8bd641e21f1ab96ba5a5f",
  "dirty": false,
- "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)"
 }

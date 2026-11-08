@@ -26360,6 +26360,250 @@ bouge.
 **Ce que la grille ne dit pas.** Les crans des mesures préenregistrées gardent le nombre de
 leur rapport d'étude ; la grille sert l'exploration entre eux. Une combinaison hors des 11
 paires est supposée additive, et la page le dit à côté du nombre.
+
+## D-345 — Le but 16 validé : trois corrections, une variante, un verdict probabiliste
+
+**La validation.** Le propriétaire, le 5 novembre : « oui aux trois, lance le but 16 »,
+puis, interrogé sur ce que « oui » choisissait, trois réponses explicites :
+
+1. **Le calage.** Si câbler le secteur public exige de toucher au calage, la règle de
+   `CLAUDE.md` qui ferme `src/impots/population/calibrate.py` jusqu'à la phase 7 est levée
+   pour ce but, et pour lui seul. Chaque changement du calage est dit dans sa D-entrée, avec
+   l'effet mesuré sur les totaux calés.
+2. **La spécification de Mésange.** La courbe de Phillips entre comme une variante publiée à
+   côté du chiffre de tête, avec son propre verdict, comme « éteint » et « tenu » le sont
+   aujourd'hui ; le chiffre de tête reste sous la spécification centrale (« wage setting »).
+3. **Le verdict.** Il lit le Monte-Carlo : « hausse » si P(Δb₂₀₃₅ > 0) ≥ 90 %, « baisse »
+   si P ≤ 10 %, « dépend » entre les deux ; la boîte de θ reste publiée à côté. Les seuils
+   sont fixés ici, avant toute passe, et ne bougent plus.
+
+**L'ordre.** Le code des corrections s'écrit dans le worktree du but 16 pendant que la
+grille du but 15 tourne sur le sien ; aucune passe du but 16 ne tourne avant la fin de la
+grille (deux passes de 7 Go ne tiennent pas ensemble dans 15 Go). Le but 15 se clôt sur sa
+grille, avec ses défauts dits ; la grille est refaite à la fin du but 16.
+
+## D-346 — E1 : le secteur public câblé
+
+**Le défaut.** Jusqu'ici, `to_openfisca` ne posait ni `categorie_salarie` ni traitement
+indiciaire : 5,8 M de salariés publics pondérés, 24,0 % de la masse salariale de la frame
+(266,5 Md€ sur 1 111,7), partaient dans OpenFisca comme « privé non cadre ». Ils
+recevaient la réduction générale, à laquelle aucun employeur public n'a droit, et les
+barèmes de la CNAV et de l'Agirc-Arrco, qui ne sont pas ceux d'un fonctionnaire. Le dépôt
+le savait (`population/reconcile.py`, D-074) ; aucune page d'étude ne le disait.
+
+**Le câblage.** La frame porte deux colonnes de plus, tirées de l'enquête emploi :
+`fonction_publique` (État, territoriale, hospitalière, d'après `PUB3FP`) et `titulaire`
+(`STATUTDET` 21, « CDI, fonctionnaire »). L'enquête ne sépare pas un titulaire d'un
+contractuel en CDI : ceux-là sont lus comme titulaires, et le dire est la limite. Un
+titulaire est envoyé à OpenFisca dans sa catégorie, payé d'un traitement indiciaire
+TIB = brut / 1,195 et des primes qu'OpenFisca calcule lui-même sur lui (`TAUX_DE_PRIME`,
+0,195 du traitement) : traitement et primes redonnent le brut de la frame. Un agent non
+titulaire garde un salaire de base, en `public_non_titulaire`. La sortie « salaire brut »
+additionne salaire de base, rémunération principale et primes. Une frame qui porte un
+salarié public sans ces deux colonnes est refusée, plutôt que lue comme toute privée.
+
+**Le calage ne change pas.** Il porte sur la masse des salaires bruts de la frame, que le
+câblage conserve ; `calibrate.py` n'est pas touché, malgré la levée de D-345. La
+population doit être reconstruite pour porter les deux colonnes (`impots population
+build`), après la grille du but 15 qui lit la frame d'aujourd'hui.
+
+**Ce que tient le test** (`tests/test_secteur_public.py`, vu échouer sur le câblage
+d'avant) : à 36 000 € brut, le titulaire de l'État reçoit 30 126 € de traitement et
+5 874 € de primes, et aucun allègement ; le contractuel public n'en reçoit pas non plus ;
+le salarié du privé en reçoit 3 760 €. À 60 000 €, la mesure de Mélenchon ne retire
+l'allègement qu'au salarié du privé (−1 343 €) ; à 36 000 €, celle d'Attal ne touche pas le
+titulaire, rend 2 070 € au contractuel (sa part de CNAV) et 3 176 € au salarié du privé.
+
+**Les nombres qui bougeront**, mesurés par la série du but 16 et préenregistrés avec elle :
+les mesures d'Attal et de Retailleau (cotisations salariales) et de Mélenchon
+(allègements), d'un quart environ selon l'examen de validité ; et, en moindre part, toute
+mesure qui passe par le net ou l'imposable d'un agent public.
+
+## D-347 — E2 : la CVAE et la C3S se déduisent du résultat imposable
+
+**Le défaut.** Dans la couche entreprises, `benefice_imposable` est une donnée d'entrée
+fixe : supprimer la CVAE ou la C3S, deux charges déductibles, ne relevait pas le résultat
+sur lequel l'IS se calcule. L'IS ne bougeait pas, et les suppressions de Lisnard, de
+Retailleau (CVAE et C3S, 8,57 Md€) et d'Attal (CVAE, 3,28 Md€) étaient comptées sans leur
+retour d'IS, de l'ordre de 1,6 et de 0,6 Md€ selon l'examen de validité.
+
+**La correction.** `benefice_fiscal` vaut le résultat observé plus la CVAE et la C3S de la
+loi moins celles de la réforme ; l'IS le lit. En loi, l'écart est nul ; la passe d'une
+réforme reçoit la CVAE et la C3S que la passe de la loi a calculées
+(`taxes_deductibles_loi`). Seule une entreprise bénéficiaire bouge : une entreprise en
+perte porte un résultat nul, sa perte est inconnue, et une baisse de sa CVAE n'est pas lue
+comme la rendant imposable.
+
+**Les tests.** Neuf (`test_entreprises.py`, vu échouer avant) : supprimer CVAE et C3S d'une
+grande entreprise bénéficiaire relève son IS de 25 % de ce qu'elles coûtaient, et laisse
+celle en perte à zéro. Un test existant affirmait qu'une hausse de la C3S « ne bouge pas
+l'IS » : c'était l'erreur, il dit maintenant que l'IS baisse, au plus du taux normal fois la
+hausse.
+
+**Ce qui n'est pas corrigé, et sera dit.** Les cotisations patronales vivent dans la couche
+ménages : leur variation ne passe pas dans le résultat des entreprises. Une mesure qui les
+touche (Mélenchon) est publiée « brute d'IS », et sa page le dira.
+
+## D-348 — E3 : la TVA des ménages est le point net de la variante de Mésange
+
+**Le défaut.** La variante de TVA de Mésange coûte 1,18 point ex ante pour 1 point net,
+parce que les administrations versent environ 15 % de la TVA (folio 112). D-218 avait donc
+mesuré la rétroaction contre 1,18, pour un coût de TVA compté brut — c'était juste alors,
+aucun coût de TVA n'étant encore chiffré par le moteur. Depuis D-323, le moteur chiffre la
+TVA des ménages (`tva_menages`), qui ne contient rien de celle que les administrations se
+paient : un euro en est un euro du point net. Diviser par 1,18 lisait une baisse de TVA
+15 % plus petite qu'elle n'est, et créditait en rétroaction 0,18 point que le coût ne
+portait pas.
+
+**La correction.** `mesange.points_du_cout` donne le coefficient du coût que le moteur
+chiffre : 1 pour la TVA, le facteur ex ante de la variante ailleurs. La boucle, l'éventail,
+les indices et le macro de première année le lisent ; `elasticites` garde le 1,18, car il
+compare la boucle aux variantes de Mésange elles-mêmes, choc compris.
+
+**Les tests.** Trois tests tenaient la convention de D-218 (la division par 1,18 dans
+l'éventail et dans la boucle, les rétroactions de la TVA à 0,38, 0,82 et 0,90) : ils
+tiennent maintenant la nouvelle, et disent pourquoi (0,20, 0,64 et 0,72, soit D-214 moins
+0,18).
+
+**L'effet attendu**, mesuré par l'examen de validité sur les rapports de `7235bd8` par la
+fonction pure : Δb₂₀₃₅ de Labib +4,36 → +4,47, de Le Pen +1,38 → +1,56, de Roussel
++0,44 → +0,52 ; aucun verdict ne change. La série du but 16 le mesure sur ses passes.
+
+## D-349 — Les lectures du but 16 : décomposition, variante salariale, taux de marché
+
+**Pourquoi.** L'examen de validité a trouvé trois fragilités qui ne sont pas des erreurs
+mais des choix : la spécification salariale de Mésange, le taux implicite de 2025 sur la
+dette ajoutée, et un verdict lu sur les coins de la boîte θ. Le propriétaire a tranché (but
+16) : la variante est publiée à côté, le verdict se lit sur le Monte-Carlo. Cette entrée
+dit comment chacune est construite, avant toute passe de la série.
+
+**La décomposition.** `rejouer.decomposition` lit Δb de la dernière année en trois marches,
+sous la persistance « lue » : le coût après comportements sans boucle (`boucle="aucune"`),
+ce que le PIB plus haut en retire comme dénominateur seul (`"denominateur"`, les recettes
+induites à zéro), ce que les recettes induites en retirent (`"complete"`). Les trois
+s'additionnent au titre, par construction ; un test le tient au bit.
+
+**La variante salariale.** Mésange imprime une sensibilité à la formation des salaires
+(folios 137 et 138, p. 138 et 139 du PDF) : une courbe de Phillips pour les cotisations
+employeurs et la TVA, un super-brut visé pour les cotisations salariés, la CSG et l'IR.
+`mesange.sensibilite_salariale` lit les deux tableaux, à 1, 5 et 10 ans, et refuse de
+charger si leurs colonnes centrales ne sont pas les lignes « gdp » des variantes déjà
+manifestées. La ligne alternative du multiplicateur est la centrale multipliée par le
+rapport alternative/centrale, interpolé linéairement entre 1, 5 et 10 ans
+(`retroaction.variante_salariale`) ; elle est la ligne imprimée aux trois horizons.
+
+* **Ce qui bouge** : le centre du multiplicateur seulement. L'écart-type, la persistance et
+  le rapport des recettes induites au PIB (la rétroaction rapportée au centre) restent
+  ceux du titre : la variante dit « si les salaires se forment autrement, le PIB réagit
+  ainsi », pas « les recettes réagissent autrement à PIB donné ».
+* **Les limites** : Mésange n'imprime que le PIB de la variante, pas son solde ; prendre le
+  solde proportionnel au PIB est une hypothèse, dite sur la page. Quatre instruments n'ont
+  pas de ligne alternative (cotisations employeurs ciblées, dépense et investissement
+  publics, taxe carbone) : ils gardent leur ligne centrale, et le rapport les nomme
+  (`non_variees`). La variante d'une étude qui en porte est donc partielle, et le dit.
+* **Ce qui est publié** : Δb à θ, la boîte θ et la distribution de Monte-Carlo de la
+  variante, dans les deux vues, à côté du titre. Le titre ne change pas.
+
+**Le taux de marché.** Le titre garde le taux implicite de 2025 (D-336, décision 3). En
+sensibilité, la dette ajoutée est chargée à `TAUX_MARCHE` = 3,5 %, hypothèse déclarée (l'OAT
+à dix ans de fin 2026 autour de 3,3 à 3,5 %, aucun fichier de taux manifesté) ; la lecture
+donne Δb de la dernière année à θ, persistance « lue », dans les deux vues.
+
+**Le verdict.** `montecarlo.verdict` lit la part des tirages où la dette monte, vue
+vieillie : « hausse » si elle est d'au moins 90 %, « baisse » si elle est d'au plus 10 %,
+« dépend » entre les deux (D-345). La boîte θ reste publiée à côté. Le seuil de 0,10 est lu
+avec 1e-12 de marge, 1 − 0,9 valant 0,0999… en virgule flottante ; un test tient les
+quatre bords (0,90, 0,899, 0,10, 0,101).
+
+**Les rapports.** `annuel.build` écrit ces lectures dans le champ `lectures` du rapport
+quand la boucle tourne ; le schéma de l'API l'accepte. Aucun nombre du titre ne change :
+la décomposition et la variante à ligne centrale redonnent le titre au bit (tests).
+
+**Les tests** (`tests/test_rejouer.py`, cinq nouveaux) : la décomposition s'additionne ; la
+variante dont la ligne alternative est la centrale est le titre ; la ligne alternative est
+l'imprimée aux horizons lus et le rapport interpolé entre ; les quatre bords du verdict ;
+le rapport écrit ses lectures, la dette ajoutée plus chère pesant davantage sur Δb.
+
+**Rattrapé en route.** Deux tests tenaient encore la convention de D-218 après E3 et
+n'avaient pas tourné avant le commit de D-348 : la convention de la chaîne citait « 1,18 »,
+et l'exemple au dossier (`docs/PREDICTIF_EXEMPLE.md`) la portait. Le test lit maintenant
+« D-348 » ; l'exemple est rendu à nouveau par son script, étage rapide. Seule la phrase de
+convention change : l'exemple est une baisse d'IR, sans TVA, et aucun de ses nombres ne
+bouge.
+
+**Les pages.** Une étude dont les chemins portent `lectures` (la série du but 16) lit son
+verdict sur le Monte-Carlo : « En bref » gagne la colonne « verdict » à côté de « selon θ »,
+qui garde la lecture de la boîte, et la section de la dette dit le verdict avec son seuil.
+Suivent la décomposition en trois marches, la ligne au taux de marché, la variante
+salariale (Δb, boîte, P(hausse), verdict, instruments non variés), et une note « brut
+d'IS » quand la boucle porte des cotisations employeurs : elles se déduisent du bénéfice,
+l'IS les compense jusqu'à 25 % au taux normal, la passe des ménages ne le chiffre pas.
+« D'où viennent ces nombres » dit la limite du câblage public : titulaire ou contractuel et
+fonction publique, pas le corps ni l'indice, une part de primes moyenne. Une étude dont
+une partie des chemins seulement porte les lectures est refusée. En miroir, chaque nombre
+est celui de la mesure, retourné comme le reste. Les pages commitées ne changent pas :
+leurs rapports n'ont pas de lectures. Deux tests (`tests/test_etude.py`) tiennent ces
+nombres, miroir compris.
+
+## D-350 — La série du but 16 préenregistrée : dix études, avant et après
+
+**Ce qui tourne.** Les dix études (`etudes/*.json`), une fois, sur le commit figé qui porte
+cette entrée, dans le cadre central (`etudes/cadres/central.json`), sur une population
+reconstruite avec les colonnes de D-346 ; puis la grille du but 15, refaite sur le même
+commit (D-345). Rien ne tourne avant la fin de la grille en cours.
+
+**L'ordre, étude par étude.** `impots etude avant <nom>` fige ce que dit la série de
+`7235bd8` (`reports/etudes/<nom>/avant/serie.json` : le coût de la première année, Δb₂₀₃₅
+à θ½, le verdict de la boîte) ; les rapports d'avant sont retirés (premières années,
+chemins, plages, témoins) ; `impots etude lancer <nom>` les refait. La page de la nouvelle
+série dit, ligne par ligne, avant → après, et les corrections qui touchent chaque ligne
+(`etude.causes` : le secteur public pour toute passe des ménages, l'IS pour une réforme de
+la CVAE ou de la C3S, la TVA quand la boucle la porte, le verdict pour toutes). Une étude
+dont la série d'avant n'a pas été figée n'a pas cette section ; le résultat le dirait.
+
+**La population d'abord.** `impots population build`, sur le même commit. Pronostic : les
+colonnes d'avant identiques au bit, les poids identiques (le calage ne lit ni
+`fonction_publique` ni `titulaire`), et `calibrate.py` non modifié. Si le calage bouge, la
+série s'arrête et le propriétaire est consulté (le `/goal` du but 16) ; l'autorisation de
+D-345 ne vaut que dite dans une D-entrée, avec l'effet mesuré.
+
+**Le pronostic**, par étude, sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance « lue ») et le
+verdict du Monte-Carlo (seuils de D-345), avec la première année en Md€ ; « avant » est la
+série de `7235bd8`, P(hausse) d'avant lue sur ses rapports.
+
+| étude | avant : coût, Δb, P | après, pronostic | verdict pronostiqué |
+|---|---|---|---|
+| PLF art. 2 | +2,83 ; +0,39 ; 0,80 | ± 3 % ; +0,36 à +0,42 | dépend |
+| PLF art. 3 | −1,12 ; −0,17 ; 0,18 | ± 3 % ; −0,19 à −0,15 | dépend |
+| PLF art. 15 | −7,05 ; −0,23 ; 0,00 | ± 2 % ; −0,24 à −0,22 | baisse |
+| PLFSS, PPA | −0,89 ; −0,27 ; 0,00 | ± 3 % ; −0,29 à −0,25 | baisse |
+| PLFSS, APL | −0,08 ; −0,07 ; 0,00 | ± 5 % ; −0,08 à −0,06 | baisse |
+| Attal | +76,4 ; +4,36 ; 0,63 | 54 à 64 ; +2,9 à +3,9 | dépend |
+| Labib | +22,9 ; +4,36 ; 1,00 | ± 3 % ; +4,3 à +4,6 | hausse |
+| Le Pen | +13,9 ; +1,38 ; 0,71 | ± 3 % ; +1,45 à +1,65 | dépend |
+| Lisnard | +37,2 ; +5,95 ; 0,91 | 34,5 à 36,5 ; +5,4 à +5,9 | hausse ou dépend |
+| Mélenchon | −8,7 ; −0,44 ; 0,43 | −7,5 à −5,5 ; −0,40 à −0,25 | dépend |
+| Retailleau | +20,8 ; +2,78 ; 1,00 | 15,5 à 17,5 ; +2,0 à +2,4 | hausse |
+| Roussel | +5,2 ; +0,44 ; 0,68 | ± 3 % ; +0,48 à +0,56 | dépend |
+| Tondelier | −0,85 ; +0,28 ; 0,93 | ± 5 % ; +0,24 à +0,32 | hausse |
+
+Les raisons : E1 retire les allègements et les barèmes privés d'un quart de la masse
+salariale, ce qui ôte un quart environ des baisses de cotisations salariales d'Attal et de
+Retailleau, et des hausses de Mélenchon (examen de validité : 56, 9,3 et −6,6 Md€ côté
+ménages) ; E2 rend environ 1,6 Md€ d'IS à Lisnard et à Retailleau, 0,6 à Attal, et en ôte
+autant à Mélenchon ; E3 ajoute de +0,1 à +0,2 point à Labib, Le Pen et Roussel. Les
+mesures d'IR et de prestations ne bougent qu'au second ordre, par les revenus nets des
+agents publics. Le verdict de Lisnard est à 0,91 pour un seuil de 0,90 : les deux issues
+sont possibles, et c'est dit. Tondelier passerait à « hausse » sous le nouveau seuil pour
+un coût de première année négatif : l'écart de signe noté par l'examen de validité y est,
+et la page le dira, sans le corriger.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/` : le chiffre noté contre un juge reste celui de son
+enregistrement. Les seuils du verdict
+sont ceux de D-345. Le résultat va dans une nouvelle D-entrée, avec les dix études avant
+et après et l'écart au pronostic.
+
 ## D-351 — La grille du but 15 : ce qu'elle a donné contre D-344
 
 **Ce qui a tourné.** Les 169 passes de D-344, par `impots grille lancer` sur un worktree
@@ -26412,3 +26656,246 @@ dette de la tranche à 60 %), aucune tolérance modifiée. Le reste du but tient
 « explorer », la seule du site qui porte un script, recalcule le coût, la bande, la boîte
 de θ, la boucle macro et Δb₂₀₃₅ comme `rejouer`, et `tests/test_page_explorer.py` la tient
 sur chaque point (27 tests de la grille et de la page, verts). `site verifier` est vert.
+
+## D-352 — La série du but 16 : les treize lignes dans leur pronostic
+
+**Ce qui a tourné.** La population de D-350 sur `123bc6d`, puis les dix études sur
+`12e769c`, dans le cadre central. `12e769c` ne change aucun nombre : la reprise d'une
+étude refusait de partir parce qu'elle prenait `avant/serie.json` pour une passe, et ne
+le prend plus. Machine : conteneur cloud de 15 Go et 4 cœurs ; 8 h de passes, plus 1 h 30
+perdue : Retailleau est mort une fois faute de mémoire (des tests légers tournaient à
+côté) et un redémarrage du conteneur a coupé le PLFSS ; les deux ont repris après leurs
+rapports déjà écrits, sur le même commit. Les 83 rapports portent `12e769c`.
+
+**La population.** 423 347 lignes avant et après ; deux colonnes nouvelles,
+`fonction_publique` et `titulaire` ; aucune colonne d'avant ne bouge, poids compris ;
+`calibrate.py` n'est pas modifié. La part publique de la masse salariale est de 0,240.
+Le pronostic de D-350 tient : le calage n'a pas bougé, la série n'a pas eu à s'arrêter.
+
+**Le résultat**, avant (`7235bd8`) → après, sur Δb₂₀₃₅ à θ½ (vue vieillie, persistance
+« lue »), avec la première année en Md€ et P(hausse) du Monte-Carlo.
+
+| étude | coût, avant → après | Δb, avant → après | P | verdict | pronostic |
+|---|---|---|---|---|---|
+| PLF art. 2 | +2,83 → +2,85 (+0,6 %) | +0,387 → +0,391 | 0,80 | dépend | tenu |
+| PLF art. 3 | −1,12 → −1,12 (0,0 %) | −0,169 → −0,169 | 0,18 | dépend | tenu |
+| PLF art. 15 | −7,05 → −7,05 (0,0 %) | −0,228 → −0,228 | 0,00 | baisse | tenu |
+| PLFSS, PPA | −0,89 → −0,87 (−1,9 %) | −0,268 → −0,264 | 0,00 | baisse | tenu |
+| PLFSS, APL | −0,08 → −0,08 (−0,5 %) | −0,071 → −0,070 | 0,00 | baisse | tenu |
+| Attal | +76,4 → +59,5 | +4,36 → +3,41 | 0,63 | dépend | tenu |
+| Labib | +22,9 → +22,9 (0,0 %) | +4,36 → +4,47 | 1,00 | hausse | tenu |
+| Le Pen | +13,9 → +14,0 (+0,3 %) | +1,38 → +1,56 | 0,75 | dépend | tenu |
+| Lisnard | +37,2 → +35,4 | +5,95 → +5,56 | 0,88 | dépend | tenu |
+| Mélenchon | −8,7 → −6,6 | −0,44 → −0,33 | 0,43 | dépend | tenu |
+| Retailleau | +20,8 → +16,1 | +2,78 → +2,19 | 1,00 | hausse | tenu |
+| Roussel | +5,2 → +5,2 (0,0 %) | +0,44 → +0,52 | 0,73 | dépend | tenu |
+| Tondelier | −0,85 → −0,85 (0,0 %) | +0,28 → +0,27 | 0,93 | hausse | tenu |
+
+Les trente-neuf pronostics (coût, Δb, verdict, pour treize lignes) tiennent. Le plus
+près d'un bord : Le Pen, +1,56 dans +1,45 à +1,65 ; Labib, +4,47 dans +4,3 à +4,6 ;
+Mélenchon, −0,33 dans −0,40 à −0,25. Lisnard, à 0,91 avant, tombe à 0,88 : « dépend »,
+l'une des deux issues annoncées. Tondelier passe à « hausse » pour un coût de première
+année négatif, comme annoncé ; la page le dit et ne le corrige pas.
+
+**Ce que pèse chaque correction.** La série n'a pas tourné une correction à la fois ;
+elle se lit par les études qu'une seule correction touche. E3 seule bouge Labib et
+Roussel (coût inchangé au centime, Δb +0,11 et +0,08 point) et l'essentiel de Le Pen
+(+0,18 point). E1 seule touche les mesures d'IR et de prestations : de 0 à 2 % du coût,
+le second ordre annoncé. Attal (−16,9 Md€), Retailleau (−4,7) et Mélenchon (+2,1) mêlent
+E1 et E2, dans le sens et l'ordre de grandeur de D-350 (un quart des 56, 9,3 et −6,6 Md€
+de cotisations salariales, moins ou plus l'IS) ; Lisnard (−1,8 Md€) est E2 pour
+l'essentiel. Une décomposition exacte demanderait une passe par correction ; elle n'est
+pas faite.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun enregistrement de
+`chiffrages_preregistres/`, les seuils de D-345. Reste la grille du but 15, refaite sur le
+commit de cette série (D-350), et son résultat dans une D-entrée à part.
+
+## D-353 — La grille refaite sur le but 16 : ce qu'elle redonne contre D-344
+
+**Ce qui a tourné.** Les 169 passes de D-344, par `impots grille lancer` sur `3c19f52`
+(le commit de la série de D-352 ; il n'ajoute à `12e769c` qu'une phrase de page), `src/`
+propre, en une fois : 311 min, de 3 h 38 à 8 h 49 UTC, sans redémarrage. Les rapports
+remplacent ceux de `2124c44` dans `reports/grille/` (1,7 Mo) ; `site/explorer.html` est
+reconstruite, `site verifier` est vert. D-350 ne donnait pas de pronostic chiffré pour la
+grille refaite : elle se lit contre les tolérances de D-344, qui ne bougent pas, et contre
+la grille du but 15 (D-351).
+
+**Contre D-344.** Les points « loi » : 19 sur 19 à 0 €. Les témoins : 19 sur 19 dans leur
+tolérance de coût ; le plus grand écart reste le plafond du quotient, 2,31 % de l'amplitude
+pour 3 % (2,33 % au but 15). Les dettes : 16 sur 17, comme au but 15 ; la tranche à 60 %
+manque la sienne du même +0,0022 pt pour ±0,0021, pour la même raison (sa dette est
+convexe en taux, la forme « taux » interpole linéairement). Les termes croisés : les mêmes
+neuf sur onze ; les deux plafonds du quotient (−6,7 % de la somme) et parts × plafond
+(+8,6 %) sortent encore de leur fourchette.
+
+**Ce que le but 16 y change.** Le secteur public (E1) ôte 22 % au curseur des cotisations
+de retraite (98,5 → 76,7 Md€ au point lointain) ; les curseurs d'IR, de CSG et de
+prestations bougent de 0 à 2,3 % ; ceux de TVA et d'accises, chiffrés hors de la passe des
+ménages, ne bougent pas au coût, et leur tolérance de dette grandit de 1 à 17 % par E3.
+Aucun témoin, aucune paire ne change de verdict. Le rejeu de la page reste tenu par
+`tests/test_page_explorer.py`.
+
+**Ce qui ne bouge pas.** Aucune tolérance, aucun pronostic de D-344 réécrit. Les défauts
+de D-351 restent ceux de la grille, et la page les dit.
+
+## D-354 — La décomposition préenregistrée : E1 et E2, chacune coupée à son tour
+
+**La demande.** Le propriétaire, le 7 novembre (« oui, lance la décomposition des trois
+études ») : séparer ce que pèsent E1 (le secteur public, D-346) et E2 (la CVAE et la C3S
+déduites de l'IS, D-347) dans Attal, Retailleau et Mélenchon, que D-352 laissait mêlées.
+
+**Une correction de D-352.** Mélenchon n'est pas touché par E2 : son programme ne change ni
+la CVAE ni la C3S (ses cotisations patronales vivent dans la couche ménages, et sa page dit
+le chiffre « brut d'IS », D-347). Sa page le dit déjà (`etude.causes`) ; D-352 l'a mis à
+tort avec Attal et Retailleau. Tout son écart avant → après est donc E1.
+
+**L'interrupteur.** `IMPOTS_SANS=E1` câble chaque salarié au privé, comme avant D-346 ;
+`IMPOTS_SANS=E2` laisse la passe d'une réforme déduire sa propre CVAE et sa propre C3S,
+comme avant D-347 (`impots.decomposition`). Sans la variable, rien ne change. Les caches
+de taux marginaux d'une passe sans E1 portent un autre câblage (`WIRING`), et ne servent
+pas les passes avec E1. `tests/test_decomposition.py` tient les deux coupures, vus échouer
+sans l'interrupteur.
+
+**Ce qui tourne.** Cinq passes, sur le commit qui porte cette entrée, dans le cadre central,
+par `scripts/decomposition.py lancer` : Mélenchon sans E1 ; Attal et Retailleau sans E1,
+puis sans E2. Chaque passe refait la première année et le chemin annuel (pas les plages ni
+les témoins), et écrit sous `reports/decomposition/<étude>/sans_<correction>/`, à part des
+rapports de l'étude. E1 se lit « après − sans E1 », E2 « après − sans E2 », et le terme
+croisé est l'écart avant → après moins les deux. Environ 3 h de machine.
+
+**Le pronostic**, sur le coût de la première année (Md€) et Δb₂₀₃₅ à θ½ (point de PIB) :
+
+| coût | écart total | E1 | E2 | terme croisé |
+|---|---|---|---|---|
+| Mélenchon | +2,12 | tout l'écart | — | — |
+| Attal | −16,89 | −15,8 à −16,8 | −0,3 à −0,9 | sous 0,3 |
+| Retailleau | −4,73 | −2,7 à −3,5 | −1,2 à −2,0 | sous 0,3 |
+
+| Δb₂₀₃₅ | écart total | E1 | E2 | terme croisé |
+|---|---|---|---|---|
+| Mélenchon | +0,108 | tout l'écart | — | — |
+| Attal | −0,954 | −0,87 à −0,95 | −0,01 à −0,06 | sous 0,02 |
+| Retailleau | −0,584 | −0,28 à −0,50 | −0,08 à −0,30 | sous 0,03 |
+
+Pour Mélenchon, la passe sans E1 est le contrôle de l'interrupteur : elle doit redonner la
+série d'avant (`7235bd8`, −8,73 Md€ et −0,441 pt) à 0,5 % du coût et 0,005 pt près, ce qui
+dit aussi qu'aucune autre correction du but ne touche ce programme. Les raisons des
+fourchettes d'Attal et de Retailleau sont celles de D-350 : E1 ôte le quart public des
+baisses de cotisations salariales (56 et 9,3 Md€ côté ménages) ; E2 rend l'IS de la CVAE
+supprimée (3,28 Md€ pour Attal) et de la CVAE et de la C3S (8,57 Md€ pour Retailleau), au
+plus le quart, sur les seules entreprises bénéficiaires.
+
+**Ce qui ne bouge pas.** Aucun rapport de la série de D-352, aucune tolérance. Le résultat
+va dans une nouvelle D-entrée, et les pages d'Attal, de Retailleau et de Mélenchon y
+renverront.
+
+## D-355 — La décomposition : E1 porte le coût, E2 la dette de Retailleau
+
+**Ce qui a tourné.** Les cinq passes de D-354, sur `329b703`, en 201 min de machine, sans
+coupure : Mélenchon sans E1 ; Attal et Retailleau sans E1, puis sans E2. Les rapports sont
+sous `reports/decomposition/`, et `scripts/decomposition.py lire` les met face à la série
+de D-352 et à la série d'avant. La lecture demandait les plages de l'étude, qu'une passe
+de décomposition ne refait pas : `Etude.load(…, plages=False)` les laisse de côté, sans
+toucher un nombre.
+
+**Le contrôle tient.** La passe de Mélenchon sans E1 redonne la série d'avant à toutes les
+décimales écrites : −8,73 Md€ et −0,441 pt. L'interrupteur coupe E1 et rien d'autre, et
+aucune autre correction du but ne touche ce programme.
+
+**Ce qui sort**, coût de la première année (Md€) et Δb₂₀₃₅ à θ½ (point de PIB), contre le
+pronostic de D-354 :
+
+| coût | écart total | E1 | E2 | terme croisé |
+|---|---|---|---|---|
+| Mélenchon | +2,12 | +2,12, tenu | — | 0,00, tenu |
+| Attal | −16,89 | −16,17, tenu | −0,73, tenu | 0,00, tenu |
+| Retailleau | −4,73 | −2,71, tenu | −2,02, manqué | 0,00, tenu |
+
+| Δb₂₀₃₅ | écart total | E1 | E2 | terme croisé |
+|---|---|---|---|---|
+| Mélenchon | +0,109 | +0,109, tenu | — | 0,000, tenu |
+| Attal | −0,955 | −0,892, tenu | −0,063, manqué | 0,000, tenu |
+| Retailleau | −0,584 | −0,155, manqué | −0,429, manqué | 0,000, tenu |
+
+Les fourchettes manquées étaient −1,2 à −2,0 Md€ (E2, Retailleau), −0,01 à −0,06 pt (E2,
+Attal), −0,28 à −0,50 et −0,08 à −0,30 pt (E1 et E2, Retailleau). Onze pronostics sur
+quinze tiennent, le contrôle compris. Le terme croisé est nul à la précision écrite : E1 vit
+dans la couche des ménages, E2 dans celle des entreprises, et les deux s'ajoutent. L'écart
+total de Mélenchon se lit +0,109 pt ici, +0,108 dans D-354 : le même nombre, arrondi une
+fois de la différence, une fois des deux bornes.
+
+**Ce que les manqués disent.** Deux sont au bord : la part E2 d'Attal sort de 0,003 pt de sa
+fourchette, celle du coût de Retailleau de 0,02 Md€. Le troisième et le quatrième n'y sont
+pas : pour Retailleau, le partage de la dette est l'inverse du pronostic. E1 pèse plus que
+E2 sur le coût (2,71 contre 2,02 Md€), et la couche mécanique le garde chaque année jusqu'en
+2035 (E1 à 2,7 Md€ ; E2 à 2,0 en 2026, 1,07 dès 2032) ; mais E2 pèse près de trois fois E1
+sur la dette (−0,429 contre −0,155 pt). L'inversion est donc dans le passage du coût à la
+dette (la boucle macro, Mésange lu, et le comportement), et elle y est dès 2026 : l'écart de
+dette de la première année vaut 0,071 pt pour E2, 0,023 pour E1. Le rapport de la dette au
+coût de E1 est le même dans les deux études (0,055 pt par Md€ pour Attal, 0,057 pour
+Retailleau) ; celui de E2 ne l'est pas (0,087 et 0,212). D-354 avait pris pour E2 le
+rapport de E1. Ce que la boucle fait d'un euro d'IS rendu, contre un euro de cotisation
+salariale, n'est pas examiné ici : c'est une question pour la suite, pas un réglage.
+
+**Les pages.** Celles d'Attal, de Retailleau et de Mélenchon portent, sous « Ce qui a bougé
+depuis la série précédente », la part de chaque correction, lue des rapports de
+décomposition commités (`Etude.decomposition`) ; `impots etude verifier` la tient comme le
+reste de la page. Les autres études n'ont pas de passe de décomposition et gardent la phrase
+de D-352.
+
+**Ce qui ne bouge pas.** Aucun rapport de la série de D-352, aucune tolérance, aucun
+pronostic.
+
+## D-356 — Pourquoi l'IS pèse plus sur la dette : la boucle macro ne lit que les ménages
+
+**La question.** Le propriétaire, le 8 novembre (« oui, examine pourquoi l'IS pèse plus sur
+la dette »), sur ce que D-355 laissait ouvert : par milliard de la première année, E2 pèse
+0,212 pt sur la dette de Retailleau, E1 0,057.
+
+**La réponse, dans le code.** La boucle macro (`retroaction.compute`, `rejouer.loop`) ne
+lit que les instruments qui ont une variante et une ligne de solde dans Mésange. Chez
+Retailleau comme chez Attal, ce sont les cotisations salariales et l'IR. L'IS, sa
+contribution sociale, la CVAE et la C3S sont « non couverts » (`FIRM_NO_VARIANT`) : Mésange
+2017 n'a pas de variante d'impôt des entreprises (D-214), la boucle par élasticités est
+refusée (D-246), et la dette ne leur prête ni rétroaction ni effet sur le PIB (D-218). Un
+euro de cotisation rendu passe par la boucle ; un euro d'IS rendu va à la dette tel quel.
+Ce n'est pas un défaut : c'est la règle, et la page la dit (« aucune variante de Mésange ne
+porte leurs impôts », et le canal fermé « IS et investissement des entreprises »).
+
+**Ce que les rapports en disent.** Rien n'a tourné : les coins de la boîte θ des rapports
+de D-355 suffisent. La part de chaque correction dans Δb₂₀₃₅ (point de PIB), le
+multiplicateur macro à zéro, à ½ et à un :
+
+| | m = 0 | θ½ | m = 1 |
+|---|---|---|---|
+| Retailleau, E1 | −0,658 | −0,155 | +0,208 |
+| Retailleau, E2 | −0,430 | −0,429 | −0,429 |
+| Attal, E1 | −3,844 | −0,892 | +1,135 |
+| Attal, E2 | −0,064 | −0,063 | −0,062 |
+
+E2 ne bouge pas avec le multiplicateur ; E1 perd les trois quarts de son poids à θ½, et
+change de signe à m = 1. Boucle éteinte, le rapport de la dette au coût redevient le même
+pour les deux corrections de Retailleau (0,243 pt par Md€ pour E1, 0,212 pour E2) et pour
+E1 dans les deux études (0,238 chez Attal). Le reste de l'écart est le profil : E1 tient
+toute la période et suit les salaires ; E2 descend de 2,2 Md€ en 2026 à 1,3 en 2030 chez
+Retailleau, et s'éteint en 2030 chez Attal, avec toute sa couche des entreprises (d'où ses
+0,088 pt par Md€).
+
+**L'erreur du pronostic de D-354.** Il prêtait à E2 le rapport dette sur coût de E1, à
+θ½, donc avec la boucle. Les deux manqués de Retailleau en viennent.
+
+**Ce que cela veut dire pour les pages.** À θ½, la dette d'une mesure des ménages porte
+environ les trois quarts d'autofinancement en 2035 ; celle d'une mesure des entreprises
+n'en porte aucun. Un programme qui rend de l'IS paraît donc plus coûteux en dette qu'un
+programme qui rend autant de cotisations, sans que le modèle ait mesuré que l'IS ne rapporte
+pas de croissance : il ne le mesure pas. Les pages le disent avec la bande et les canaux
+fermés, pas à côté du tableau de décomposition.
+
+**Ce qui ne bouge pas.** Aucun rapport, aucune page, aucune tolérance. Dire l'asymétrie à
+côté du tableau de décomposition est au propriétaire.
+
+**La suite, le même jour.** Le propriétaire : « oui, ajoute la phrase à côté du tableau ».
+Les pages d'Attal et de Retailleau la portent sous le tableau de décomposition, là où une
+part E2 y figure (`Etude._avant`) ; celle de Mélenchon, sans E2, ne change pas. Aucun
+nombre ne bouge.

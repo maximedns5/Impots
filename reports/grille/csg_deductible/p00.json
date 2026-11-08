@@ -11,18 +11,18 @@
   "annee_entreprises": null
  },
  "cout": {
-  "total": 25311642942.42383,
-  "menages": 25311642942.42383,
+  "total": 25391368193.946777,
+  "menages": 25391368193.946777,
   "entreprises": 0.0
  },
  "deciles": [
   {
    "decile": 1,
    "n_households": 3102006.902227004,
-   "mean_niveau_de_vie": 8348.037194262892,
-   "mean_baseline": 11920.860316328242,
-   "mean_reform": 11940.58324139953,
-   "mean_delta": 19.722925071288405,
+   "mean_niveau_de_vie": 8349.241274005028,
+   "mean_baseline": 11917.251987497728,
+   "mean_reform": 11936.989759129887,
+   "mean_delta": 19.737771632158577,
    "share_winners": 0.055543317233215254,
    "share_losers": 0.0004998316126727343,
    "share_unaffected": 0.9439568511541122
@@ -30,101 +30,101 @@
   {
    "decile": 2,
    "n_households": 3100077.6349093816,
-   "mean_niveau_de_vie": 13578.536819918869,
-   "mean_baseline": 19247.788875695147,
-   "mean_reform": 19369.422363102818,
-   "mean_delta": 121.633487407665,
-   "share_winners": 0.25271415694340393,
+   "mean_niveau_de_vie": 13590.064243842276,
+   "mean_baseline": 19248.042827532765,
+   "mean_reform": 19368.006726852193,
+   "mean_delta": 119.96389931942942,
+   "share_winners": 0.24971330090998897,
    "share_losers": 0.0015004280167074573,
-   "share_unaffected": 0.7457854150398887
+   "share_unaffected": 0.7487862710733036
   },
   {
    "decile": 3,
    "n_households": 3102637.3895432744,
-   "mean_niveau_de_vie": 17157.421078288673,
-   "mean_baseline": 26170.522327705312,
-   "mean_reform": 26498.486376977668,
-   "mean_delta": 327.9640492723534,
-   "share_winners": 0.5117406188398461,
-   "share_losers": 0.0,
-   "share_unaffected": 0.4882593811601538
+   "mean_niveau_de_vie": 17198.68615785082,
+   "mean_baseline": 26159.710286132504,
+   "mean_reform": 26485.979176924287,
+   "mean_delta": 326.26889079178545,
+   "share_winners": 0.5082425085470309,
+   "share_losers": 0.0004997300418307392,
+   "share_unaffected": 0.49125776141113825
   },
   {
    "decile": 4,
    "n_households": 3101315.473436079,
-   "mean_niveau_de_vie": 20444.508671308256,
-   "mean_baseline": 30603.712971403027,
-   "mean_reform": 31039.02224923233,
-   "mean_delta": 435.3092778292972,
-   "share_winners": 0.5295513688708264,
+   "mean_niveau_de_vie": 20498.207232173718,
+   "mean_baseline": 30761.06216403547,
+   "mean_reform": 31198.049827818566,
+   "mean_delta": 436.9876637830997,
+   "share_winners": 0.5285514827736251,
    "share_losers": 0.0004999430486006741,
-   "share_unaffected": 0.469948688080573
+   "share_unaffected": 0.4709485741777743
   },
   {
    "decile": 5,
    "n_households": 3100962.224924152,
-   "mean_niveau_de_vie": 23453.173796301187,
-   "mean_baseline": 35718.90564062501,
-   "mean_reform": 36329.37582128907,
-   "mean_delta": 610.4701806640626,
-   "share_winners": 0.647,
+   "mean_niveau_de_vie": 23532.351832052882,
+   "mean_baseline": 35670.816267578135,
+   "mean_reform": 36278.8472060547,
+   "mean_delta": 608.0309384765627,
+   "share_winners": 0.646,
    "share_losers": 0.0005000000000000001,
-   "share_unaffected": 0.35250000000000004
+   "share_unaffected": 0.3535000000000001
   },
   {
    "decile": 6,
    "n_households": 3101037.2228584914,
-   "mean_niveau_de_vie": 26586.152969894127,
-   "mean_baseline": 41660.915033872225,
-   "mean_reform": 42461.597037196414,
-   "mean_delta": 800.6820033241821,
-   "share_winners": 0.644508597692882,
-   "share_losers": 0.0,
-   "share_unaffected": 0.35549140230711807
+   "mean_niveau_de_vie": 26694.91084044478,
+   "mean_baseline": 42054.463520637306,
+   "mean_reform": 42856.483577537656,
+   "mean_delta": 802.0200569003546,
+   "share_winners": 0.6430086339700671,
+   "share_losers": 0.0004999879076049481,
+   "share_unaffected": 0.35649137812232795
   },
   {
    "decile": 7,
    "n_households": 3101015.3182800654,
-   "mean_niveau_de_vie": 30107.233842440604,
-   "mean_baseline": 47464.20146298526,
-   "mean_reform": 48387.508511412154,
-   "mean_delta": 923.3070484269015,
-   "share_winners": 0.6620057869931157,
-   "share_losers": 0.0019999657574371853,
-   "share_unaffected": 0.33599424724944704
+   "mean_niveau_de_vie": 30222.08537716261,
+   "mean_baseline": 47520.000157037815,
+   "mean_reform": 48441.61422956833,
+   "mean_delta": 921.6140725305021,
+   "share_winners": 0.6630057698718342,
+   "share_losers": 0.0014999743180778887,
+   "share_unaffected": 0.33549425581008774
   },
   {
    "decile": 8,
    "n_households": 3101047.8700405816,
-   "mean_niveau_de_vie": 34426.274768990974,
-   "mean_baseline": 54057.520694210434,
-   "mean_reform": 55156.6293365527,
-   "mean_delta": 1099.1086423422635,
-   "share_winners": 0.6950084235270162,
+   "mean_niveau_de_vie": 34568.86682506889,
+   "mean_baseline": 54424.73364594846,
+   "mean_reform": 55536.98899745891,
+   "mean_delta": 1112.2553515104512,
+   "share_winners": 0.7000082854364094,
    "share_losers": 0.0,
-   "share_unaffected": 0.304991576472984
+   "share_unaffected": 0.29999171456359086
   },
   {
    "decile": 9,
    "n_households": 3101711.814258905,
-   "mean_niveau_de_vie": 40922.9293252431,
-   "mean_baseline": 63713.861593432724,
-   "mean_reform": 65038.21143881858,
-   "mean_delta": 1324.3498453858529,
-   "share_winners": 0.7220671841381601,
+   "mean_niveau_de_vie": 41094.83294593116,
+   "mean_baseline": 64112.62943464932,
+   "mean_reform": 65435.72486987522,
+   "mean_delta": 1323.095435225908,
+   "share_winners": 0.7200676674772835,
    "share_losers": 0.0,
-   "share_unaffected": 0.2779328158618401
+   "share_unaffected": 0.27993233252271665
   },
   {
    "decile": 10,
    "n_households": 3101552.001395485,
-   "mean_niveau_de_vie": 64626.62323740916,
-   "mean_baseline": 98147.3903582978,
-   "mean_reform": 100646.29576832136,
-   "mean_delta": 2498.9054100235703,
-   "share_winners": 0.8340315657755207,
+   "mean_niveau_de_vie": 64912.26444021267,
+   "mean_baseline": 98560.31597228986,
+   "mean_reform": 101077.50130806712,
+   "mean_delta": 2517.185335777265,
+   "share_winners": 0.8400304248438752,
    "share_losers": 0.0,
-   "share_unaffected": 0.1659684342244795
+   "share_unaffected": 0.15996957515612478
   }
  ],
  "rejeu": {
@@ -133,13 +133,13 @@
   "years": [
    {
     "year": 2026,
-    "mechanical_aged_eur": 25311642942.42383,
+    "mechanical_aged_eur": 25391368193.946777,
     "statistiques": {
      "vieillie": {
-      "cost_eur": 25311642942.42383,
+      "cost_eur": 25391368193.946777,
       "impulses": {
-       "impot_sur_le_revenu": -7280741187.84314,
-       "csg": 33662947066.070694
+       "impot_sur_le_revenu": -7349430132.614746,
+       "csg": 33793904812.79445
       },
       "uncovered": {
        "af": "Mésange ne publie pas de variante de transfert. La variante « dépense publique générique » en contient, mais c'est un COMPOSITE dont la page 106 donne la composition exacte : 8 % investissement public, 25 % rémunérations publiques, 9 % prestations en nature, 12 % consommations intermédiaires et 46 % prestations sociales en espèces — et le document dit que ces composantes se transmettent à des vitesses différentes. L'emprunter surestimerait : les méta-analyses IMK donnent 0,39 (WP117) et 0,54 (WP139) pour les transferts contre 1,01 et 0,90 pour la dépense, soit un facteur deux à trois. Un canal qui meurt vaut mieux qu'un canal qui se trompe d'un facteur deux.",
@@ -155,10 +155,10 @@
       "canaux": {
        "c7_labour_supply": {
         "S": {
-         "labour_supply_married_women": 2820042064.2192855,
-         "labour_supply_married_men": 4423089518.833288,
-         "labour_supply_single_women": 1875602218.4619236,
-         "labour_supply_single_men": 2220124356.432678
+         "labour_supply_married_women": 2796831273.162507,
+         "labour_supply_married_men": 4402933772.06018,
+         "labour_supply_single_women": 1857961625.1643367,
+         "labour_supply_single_men": 2191161609.4241276
         }
        }
       },
@@ -267,7 +267,15 @@
        "10": -0.54
       },
       "sd": 0.66,
-      "brut": 1.0
+      "brut": 1.0,
+      "pib_salariale": {
+       "1": 0.41,
+       "2": 0.8296296296296296,
+       "3": 0.8777777777777778,
+       "5": 0.77,
+       "10": 0.65
+      },
+      "variante_source": "super_brut"
      },
      "impot_sur_le_revenu": {
       "pib": {
@@ -285,7 +293,15 @@
        "10": -0.5
       },
       "sd": 0.66,
-      "brut": 1.0
+      "brut": 1.0,
+      "pib_salariale": {
+       "1": 0.41,
+       "2": 0.819753086419753,
+       "3": 0.8582716049382716,
+       "5": 0.77,
+       "10": 0.65
+      },
+      "variante_source": "super_brut"
      }
     }
    },
@@ -302,150 +318,150 @@
  "controle": {
   "persistence": "lue",
   "theta": [
-   0.0021102657374660883,
-   0.0012318278399230387,
-   0.0034599666244850003,
-   0.0071846303682217005,
-   0.011291492287486937,
-   0.015021675554167668,
-   0.018793211555664158,
-   0.022604553113260595,
-   0.026454186090270726,
-   0.030340628816018178
+   0.0021258228568172832,
+   0.0012555122419506404,
+   0.003499144143804367,
+   0.007243118366060619,
+   0.011370087521097805,
+   0.01511953682254763,
+   0.018910416729027935,
+   0.02274117322768876,
+   0.026610285517576715,
+   0.030516265430449163
   ],
   "coins": [
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.06960357569708098
+    0.06983940547489298
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.003408719319585307
+    -0.0033442972661412718
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.06840445172527687
+    0.0686515611239904
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.004594456427345683
+    -0.00451884974488026
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.06832667593610275
+    0.06857916517296347
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.004671363937726047
+    -0.00459043559168304
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.06712755196429865
+    0.0673913208220609
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.005857101045486202
+    -0.00576498807042225
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.06754308394375586
+    0.06779587550665367
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.0054462080109969335
+    -0.005364960316606382
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.06634395997195153
+    0.06660803115575109
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.006631945118757088
+    -0.00653951279534537
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.06626618418277763
+    0.06653563520472416
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.006708852629137452
+    -0.006611098642148372
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.0650670602109733
+    0.06534779085382159
    ],
    [
     "labour_supply_married_men = 0, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.007894589736897828
+    -0.007785651120887138
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.0678512115899772
+    0.06809502899403319
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.005141520261737975
+    -0.005069154330024306
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.06665208761817287
+    0.06690718464313039
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.006327257369498351
+    -0.006243706808763294
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.06657431182899898
+    0.06683478869210346
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.006404164879878715
+    -0.006315292655566296
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.06537518785719465
+    0.06564694434120089
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 0, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.00758990198763887
+    -0.007489845134305062
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.06579071983665208
+    0.06605149902579388
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.0071790089531496015
+    -0.007089817380489194
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.06459159586484775
+    0.06486365467489108
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 0, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.008364746060909756
+    -0.008264369859228404
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 0",
-    0.06451382007567386
+    0.06479125872386438
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 0, multiplicateur_macro = 1",
-    -0.00844165357129012
+    -0.008335955706031184
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 0",
-    0.06331469610386953
+    0.06360341437296158
    ],
    [
     "labour_supply_married_men = 1, labour_supply_married_women = 1, labour_supply_single_men = 1, labour_supply_single_women = 1, multiplicateur_macro = 1",
-    -0.009627390679050496
+    -0.009510508184770172
    ]
   ]
  },
- "computed": "2026-11-05",
- "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "computed": "2026-11-06",
+ "commit": "3c19f52ec9809fb49ee8bd641e21f1ab96ba5a5f",
  "dirty": false,
- "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)"
 }

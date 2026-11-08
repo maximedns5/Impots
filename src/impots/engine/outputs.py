@@ -42,6 +42,10 @@ class Row:
     """False for counts such as `nbptr`, which must not be formatted as EUR."""
     label: str = ""
     """French label for the UI."""
+    extra: tuple[str, ...] = ()
+    """Variables summed with `variable`, same entity and period: the gross salary of a
+    titular civil servant is his remuneration principale and primes, not a salaire de
+    base (D-346)."""
     projet: bool = False
     """True for a variable the project's corrections add. Raw openfisca, which kill tests
     read through the registry, has none: the row reads zero there, which is what raw
@@ -51,7 +55,7 @@ class Row:
 REGISTRY: tuple[Row, ...] = (
     # --- salary block: individu, monthly, summed over household members --------
     Row("salaire_brut", "salaire_de_base", "individu", "month", "light", False,
-        label="Salaire brut"),
+        label="Salaire brut", extra=("remuneration_principale", "primes_fonction_publique")),
     Row("salaire_super_brut", "salaire_super_brut", "individu", "month", "light", False,
         label="Coût du travail (super-brut)"),
     Row("salaire_net", "salaire_net", "individu", "month", "light", False,
@@ -263,11 +267,10 @@ def extract(simulation: Any, year: int, tier: Tier, debug: bool = False) -> dict
             raw[row.key] = 0.0
             values[row.key] = 0.0
             continue
-        array = (
-            simulation.calculate_add(row.variable, period)
-            if row.period == "month"
-            else simulation.calculate(row.variable, period)
-        )
+        array = sum(
+            (simulation.calculate_add(name, period) if row.period == "month"
+             else simulation.calculate(name, period))
+            for name in (row.variable, *row.extra))
         total = float(array.sum()) if row.entity == "individu" else float(array[0])
         raw[row.key] = round(total, 2)
         # `+ 0.0` collapses IEEE negative zero: a household that owes no tax must
@@ -288,21 +291,22 @@ def check_registry(tax_benefit_system: Any) -> list[str]:
     """
     problems: list[str] = []
     for row in REGISTRY:
-        variable = tax_benefit_system.variables.get(row.variable)
-        if variable is None:
-            problems.append(f"{row.key}: variable {row.variable!r} no longer exists")
-            continue
-        if variable.entity.key != row.entity:
-            problems.append(
-                f"{row.key}: {row.variable} is on entity {variable.entity.key!r}, "
-                f"registry says {row.entity!r}"
-            )
-        actual_period = str(variable.definition_period).lower()
-        if actual_period != row.period:
-            problems.append(
-                f"{row.key}: {row.variable} has period {actual_period!r}, "
-                f"registry says {row.period!r}"
-            )
+        for name in (row.variable, *row.extra):
+            variable = tax_benefit_system.variables.get(name)
+            if variable is None:
+                problems.append(f"{row.key}: variable {name!r} no longer exists")
+                continue
+            if variable.entity.key != row.entity:
+                problems.append(
+                    f"{row.key}: {name} is on entity {variable.entity.key!r}, "
+                    f"registry says {row.entity!r}"
+                )
+            actual_period = str(variable.definition_period).lower()
+            if actual_period != row.period:
+                problems.append(
+                    f"{row.key}: {name} has period {actual_period!r}, "
+                    f"registry says {row.period!r}"
+                )
     for dead in ("irpp", "prime_activite", "taux_marginal_imposition"):
         if tax_benefit_system.variables.get(dead) is not None:
             problems.append(f"{dead!r} exists again — the registry comment is now wrong")

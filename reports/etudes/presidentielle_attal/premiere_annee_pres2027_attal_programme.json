@@ -40,71 +40,71 @@
         ]
       },
       "totals": {
-        "salaire_brut": 1120798288395.3003,
-        "salaire_super_brut": 1485986353400.46,
-        "salaire_net": 890174623579.5781,
-        "salaire_imposable": 922124074676.2063,
-        "cotisations_salariales": 123758260931.2582,
-        "cotisations_employeur": 463135693078.2323,
+        "salaire_brut": 1120798286220.2358,
+        "salaire_super_brut": 1557941538231.9634,
+        "salaire_net": 896932403644.4756,
+        "salaire_imposable": 929007555475.9319,
+        "cotisations_salariales": 120988528756.89963,
+        "cotisations_employeur": 510210792250.91376,
         "retraite_imposable": 373615387274.9176,
         "chomage_brut": 35534332746.51105,
-        "csg_deductible": 74915951980.22165,
-        "csg_imposable": 26440924188.66414,
-        "crds": 5508525874.636528,
+        "csg_deductible": 75210701519.63766,
+        "csg_imposable": 26544953452.458275,
+        "crds": 5530198638.646116,
         "csg_ij": 0.0,
-        "ir": 104306217685.98679,
-        "ir_avant_niches": 104137644727.99658,
+        "ir": 105562453794.87158,
+        "ir_avant_niches": 105393603300.76224,
         "reductions": 0.0,
         "credits_impot": 0.0,
         "cdhr": 0.0,
-        "af": 11362926876.433939,
-        "ppa": 14811809517.341629,
-        "rsa": 27710107670.492294,
-        "aide_logement": 13240195838.51468,
-        "aefa": 742665810.025698,
-        "cf": 1293706763.520797,
-        "asf": 9665785752.137257,
-        "crds_pfam": -138202237.7200983,
-        "crds_logement": -66533539.96947971,
-        "crds_mini": -74059046.01584399,
-        "revenu_disponible": 1276595738841.8833
+        "af": 11337782653.872868,
+        "ppa": 14580356651.263935,
+        "rsa": 27706201948.09897,
+        "aide_logement": 13179216734.102516,
+        "aefa": 742169431.2669828,
+        "cf": 1269325246.6464834,
+        "asf": 9662038852.894363,
+        "crds_pfam": -137723881.7177198,
+        "crds_logement": -66227111.34491043,
+        "crds_mini": -72901781.80465953,
+        "revenu_disponible": 1281722245531.7695
       },
       "totals_reform": {
-        "salaire_brut": 1120798288395.3003,
-        "salaire_super_brut": 1485986353400.46,
-        "salaire_net": 986706085215.2861,
-        "salaire_imposable": 1018655531594.6208,
-        "cotisations_salariales": 27226802479.122597,
-        "cotisations_employeur": 463135693078.2323,
+        "salaire_brut": 1120798286220.2358,
+        "salaire_super_brut": 1557941538231.9634,
+        "salaire_net": 972156753745.3672,
+        "salaire_imposable": 1004231902013.0634,
+        "cotisations_salariales": 45764181148.23036,
+        "cotisations_employeur": 510210792250.91376,
         "retraite_imposable": 373615387274.9176,
         "chomage_brut": 35534332746.51105,
-        "csg_deductible": 74915951980.22165,
-        "csg_imposable": 26440924188.66414,
-        "crds": 5508525874.636528,
+        "csg_deductible": 75210701519.63766,
+        "csg_imposable": 26544953452.458275,
+        "crds": 5530198638.646116,
         "csg_ij": 0.0,
-        "ir": 124318569742.61514,
-        "ir_avant_niches": 124109355573.70506,
+        "ir": 121010127924.76547,
+        "ir_avant_niches": 120806225704.1467,
         "reductions": 0.0,
         "credits_impot": 0.0,
         "cdhr": 0.0,
-        "af": 11290294213.680763,
-        "ppa": 11920910500.247358,
-        "rsa": 27641782767.316776,
-        "aide_logement": 12975472663.614964,
-        "aefa": 741389407.4661102,
-        "cf": 1282251142.2244544,
-        "asf": 9608864781.860533,
-        "crds_pfam": -137471265.74705595,
-        "crds_logement": -65203270.147176504,
-        "crds_mini": -59604551.22606988,
-        "revenu_disponible": 1349738915256.0483
+        "af": 11264914628.082088,
+        "ppa": 12213712896.513733,
+        "rsa": 27643030590.995705,
+        "aide_logement": 12957770925.992748,
+        "aefa": 740893028.7073951,
+        "cf": 1257869625.3501406,
+        "asf": 9608244018.489489,
+        "crds_pfam": -137010994.50781575,
+        "crds_logement": -65114313.89022934,
+        "crds_mini": -61068563.216920584,
+        "revenu_disponible": 1338700193586.4902
       },
       "deltas": {
         "salaire_brut": 0.0,
         "salaire_super_brut": 0.0,
-        "salaire_net": 96531461635.70801,
-        "salaire_imposable": 96531456918.41455,
-        "cotisations_salariales": -96531458452.13559,
+        "salaire_net": 75224350100.8916,
+        "salaire_imposable": 75224346537.13147,
+        "cotisations_salariales": -75224347608.66927,
         "cotisations_employeur": 0.0,
         "retraite_imposable": 0.0,
         "chomage_brut": 0.0,
@@ -112,134 +112,134 @@
         "csg_imposable": 0.0,
         "crds": 0.0,
         "csg_ij": 0.0,
-        "ir": 20012352056.628357,
-        "ir_avant_niches": 19971710845.70848,
+        "ir": 15447674129.89389,
+        "ir_avant_niches": 15412622403.38446,
         "reductions": 0.0,
         "credits_impot": 0.0,
         "cdhr": 0.0,
-        "af": -72632662.75317574,
-        "ppa": -2890899017.0942707,
-        "rsa": -68324903.17551804,
-        "aide_logement": -264723174.89971733,
+        "af": -72868025.79077911,
+        "ppa": -2366643754.750202,
+        "rsa": -63171357.103263855,
+        "aide_logement": -221445808.1097679,
         "aefa": -1276402.559587717,
-        "cf": -11455621.296342611,
-        "asf": -56920970.27672386,
-        "crds_pfam": 730971.9730423391,
-        "crds_logement": 1330269.8223032057,
-        "crds_mini": 14454494.789774105,
-        "revenu_disponible": 73143176414.16504
+        "cf": -11455621.29634285,
+        "asf": -53794834.4048748,
+        "crds_pfam": 712887.2099040449,
+        "crds_logement": 1112797.454681091,
+        "crds_mini": 11833218.587738946,
+        "revenu_disponible": 56977948054.7207
       },
-      "reform_cost": 73143176414.16504,
+      "reform_cost": 56977948054.7207,
       "deciles": [
         {
           "decile": 1,
           "n_households": 3102006.9022270045,
-          "mean_niveau_de_vie": 8273.472568511519,
-          "mean_baseline": 11750.355002797725,
-          "mean_reform": 11807.704491535347,
-          "mean_delta": 57.34948873761982,
-          "share_winners": 0.05554331723321525,
+          "mean_niveau_de_vie": 8274.603949216551,
+          "mean_baseline": 11745.619499499671,
+          "mean_reform": 11797.588691420313,
+          "mean_delta": 51.96919192064523,
+          "share_winners": 0.05104483271916064,
           "share_losers": 0.0,
-          "share_unaffected": 0.9444566827667847
+          "share_unaffected": 0.9489551672808393
         },
         {
           "decile": 2,
           "n_households": 3100130.553508736,
-          "mean_niveau_de_vie": 13306.345303923987,
-          "mean_baseline": 18855.69941565316,
-          "mean_reform": 19209.028466083382,
-          "mean_delta": 353.3290504302227,
-          "share_winners": 0.2487087700848197,
-          "share_losers": 0.001000268269803823,
-          "share_unaffected": 0.7502909616453763
+          "mean_niveau_de_vie": 13318.201915181784,
+          "mean_baseline": 18811.49618788372,
+          "mean_reform": 19097.89772502191,
+          "mean_delta": 286.4015371381925,
+          "share_winners": 0.20869803929266684,
+          "share_losers": 0.0015004024047057347,
+          "share_unaffected": 0.7898015583026274
         },
         {
           "decile": 3,
-          "n_households": 3102584.4709439203,
-          "mean_niveau_de_vie": 16595.030898424448,
-          "mean_baseline": 25384.799958992353,
-          "mean_reform": 26357.868916875967,
-          "mean_delta": 973.0689578836136,
-          "share_winners": 0.5122490858047322,
-          "share_losers": 0.0004997385653742935,
-          "share_unaffected": 0.4872511756298934
+          "n_households": 3101226.3397781854,
+          "mean_niveau_de_vie": 16631.136962480894,
+          "mean_baseline": 25405.01885039972,
+          "mean_reform": 26196.17296599509,
+          "mean_delta": 791.1541155953709,
+          "share_winners": 0.4375418280651683,
+          "share_losers": 0.0004999574176752845,
+          "share_unaffected": 0.5619582145171564
         },
         {
           "decile": 4,
-          "n_households": 3101315.473436079,
-          "mean_niveau_de_vie": 19725.788912354416,
-          "mean_baseline": 29948.601236756902,
-          "mean_reform": 31297.013033715248,
-          "mean_delta": 1348.4117969583444,
-          "share_winners": 0.5415500020372426,
-          "share_losers": 0.0024997152430033705,
-          "share_unaffected": 0.455950282719754
+          "n_households": 3102673.6046018144,
+          "mean_niveau_de_vie": 19777.924834551177,
+          "mean_baseline": 30064.656968123054,
+          "mean_reform": 31147.119368415904,
+          "mean_delta": 1082.462400292845,
+          "share_winners": 0.4552983909013303,
+          "share_losers": 0.001998896835506562,
+          "share_unaffected": 0.5427027122631631
         },
         {
           "decile": 5,
           "n_households": 3100962.224924152,
-          "mean_niveau_de_vie": 22589.94651151809,
-          "mean_baseline": 34120.03354980469,
-          "mean_reform": 35907.78260253907,
-          "mean_delta": 1787.7490527343753,
-          "share_winners": 0.6555,
+          "mean_niveau_de_vie": 22665.129755849874,
+          "mean_baseline": 34111.65777539063,
+          "mean_reform": 35533.337198242196,
+          "mean_delta": 1421.6794228515628,
+          "share_winners": 0.556,
           "share_losers": 0.0,
-          "share_unaffected": 0.3445
+          "share_unaffected": 0.444
         },
         {
           "decile": 6,
           "n_households": 3101037.2228584914,
-          "mean_niveau_de_vie": 25475.840811981554,
-          "mean_baseline": 39758.66420424614,
-          "mean_reform": 42114.333102597855,
-          "mean_delta": 2355.6688983517174,
-          "share_winners": 0.653508380029771,
-          "share_losers": 0.0,
-          "share_unaffected": 0.346491619970229
+          "mean_niveau_de_vie": 25578.850925566276,
+          "mean_baseline": 40079.45627780079,
+          "mean_reform": 41942.845193456626,
+          "mean_delta": 1863.3889156558403,
+          "share_winners": 0.558510677584831,
+          "share_losers": 0.0004999879076049481,
+          "share_unaffected": 0.4409893345075642
         },
         {
           "decile": 7,
           "n_households": 3101015.3182800654,
-          "mean_niveau_de_vie": 28843.09189730983,
-          "mean_baseline": 45762.81129820112,
-          "mean_reform": 48524.99677115943,
-          "mean_delta": 2762.1854729583,
-          "share_winners": 0.6620057869931157,
-          "share_losers": 0.0004999914393592963,
-          "share_unaffected": 0.33749422156752495
+          "mean_niveau_de_vie": 28953.082463986346,
+          "mean_baseline": 45797.92995765656,
+          "mean_reform": 47971.20521876309,
+          "mean_delta": 2173.2752611065207,
+          "share_winners": 0.5720073279084423,
+          "share_losers": 0.0014999743180778887,
+          "share_unaffected": 0.42649269777347976
         },
         {
           "decile": 8,
           "n_households": 3101047.8700405816,
-          "mean_niveau_de_vie": 32960.62035874472,
-          "mean_baseline": 51324.42283110922,
-          "mean_reform": 54499.94957810842,
-          "mean_delta": 3175.526746999194,
-          "share_winners": 0.6825087687535332,
+          "mean_niveau_de_vie": 33097.212644740575,
+          "mean_baseline": 51783.417066309994,
+          "mean_reform": 54262.82208824258,
+          "mean_delta": 2479.405021932595,
+          "share_winners": 0.594511199148213,
           "share_losers": 0.0,
-          "share_unaffected": 0.317491231246467
+          "share_unaffected": 0.405488800851787
         },
         {
           "decile": 9,
           "n_households": 3101711.814258905,
-          "mean_niveau_de_vie": 39196.62350181876,
-          "mean_baseline": 61085.0874934029,
-          "mean_reform": 64978.63836241273,
-          "mean_delta": 3893.5508690098386,
-          "share_winners": 0.7210674258077219,
-          "share_losers": 0.0,
-          "share_unaffected": 0.27893257419227835
+          "mean_niveau_de_vie": 39363.407976819115,
+          "mean_baseline": 61376.78913927228,
+          "mean_reform": 64373.822469199455,
+          "mean_delta": 2997.03332992717,
+          "share_winners": 0.6255905052508666,
+          "share_losers": 0.0004998791652191368,
+          "share_unaffected": 0.37390961558391445
         },
         {
           "decile": 10,
           "n_households": 3101552.001395485,
-          "mean_niveau_de_vie": 61678.91640783809,
-          "mean_baseline": 93635.48915862087,
-          "mean_reform": 100512.87210576938,
-          "mean_delta": 6877.3829471485,
-          "share_winners": 0.8225337525611742,
+          "mean_niveau_de_vie": 61951.9720956892,
+          "mean_baseline": 94100.86621436244,
+          "mean_reform": 99325.90251902952,
+          "mean_delta": 5225.036304667078,
+          "share_winners": 0.6935582825915485,
           "share_losers": 0.0,
-          "share_unaffected": 0.17746624743882597
+          "share_unaffected": 0.30644171740845155
         }
       ],
       "emtr_deciles": [],
@@ -436,7 +436,7 @@
         }
       ],
       "behavioural": {
-        "mechanical": -73143176414.16504,
+        "mechanical": -56977948054.7207,
         "band": null,
         "grade": "no-evidence",
         "grade_reason": "Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.",
@@ -570,10 +570,10 @@
       },
       "niche_blind_spot": null,
       "timings": {
-        "build_s": 5.01,
-        "baseline_s": 34.59,
-        "reform_s": 37.22,
-        "total_s": 106.64
+        "build_s": 7.16,
+        "baseline_s": 45.01,
+        "reform_s": 50.92,
+        "total_s": 147.72
       }
     },
     "entreprises": {
@@ -608,22 +608,22 @@
         "prelevements_entreprise": 88537057420.37494
       },
       "totals_reform": {
-        "impot_societes": 69307461316.9191,
-        "contribution_sociale_is": 1402520298.013413,
-        "cebge": 9256013780.402672,
+        "impot_societes": 69928390302.64088,
+        "contribution_sociale_is": 1417229972.1047518,
+        "cebge": 9350099810.802778,
         "cvae": 0.0,
         "c3s": 5289273504.153075,
-        "prelevements_entreprise": 85255268798.14572
+        "prelevements_entreprise": 85984993690.6774
       },
       "deltas": {
-        "impot_societes": 0.0,
-        "contribution_sociale_is": 0.0,
-        "cebge": 0.0,
+        "impot_societes": 620928985.7217865,
+        "contribution_sociale_is": 14709674.091338873,
+        "cebge": 94086030.40010643,
         "cvae": -3281788479.2917786,
         "c3s": 0.0,
-        "prelevements_entreprise": -3281788622.2292175
+        "prelevements_entreprise": -2552063729.6975403
       },
-      "reform_cost": 3281788622.2292175,
+      "reform_cost": 2552063729.6975403,
       "cells": [
         {
           "naf_section": "A",
@@ -633,9 +633,9 @@
           "tax_baseline": 10539860.8658584,
           "is_brut": 10481567.508058056,
           "mean_effective_rate": 0.09308058965175464,
-          "tax_reform": 10481567.508058056,
-          "mean_delta": -30.972942333221436,
-          "delta_effective_rate": -6.099579903855179e-05,
+          "tax_reform": 10491870.445914304,
+          "mean_delta": -25.498694286346435,
+          "delta_effective_rate": -4.5746821328809806e-05,
           "share_affected": 0.035
         },
         {
@@ -646,9 +646,9 @@
           "tax_baseline": 1215940.0252165666,
           "is_brut": 1164826.0687133567,
           "mean_effective_rate": 0.10054554836111536,
-          "tax_reform": 1164826.0687133567,
-          "mean_delta": -137.99867780530772,
-          "delta_effective_rate": -0.004266063085384769,
+          "tax_reform": 1175191.5774974863,
+          "mean_delta": -110.01363018138986,
+          "delta_effective_rate": -0.0034192050405718183,
           "share_affected": 0.09999999999999995
         },
         {
@@ -659,10 +659,10 @@
           "tax_baseline": 18350840.003578186,
           "is_brut": 16670890.293746948,
           "mean_effective_rate": 0.2248550420096575,
-          "tax_reform": 17130889.152877808,
-          "mean_delta": -5700.704909814853,
-          "delta_effective_rate": -0.04848892599471763,
-          "share_affected": 0.8691588785046729
+          "tax_reform": 17351650.595230103,
+          "mean_delta": -4669.109384804128,
+          "delta_effective_rate": -0.038833574263200804,
+          "share_affected": 0.8598130841121495
         },
         {
           "naf_section": "B",
@@ -672,9 +672,9 @@
           "tax_baseline": 54733027.62023874,
           "is_brut": 50275938.935621776,
           "mean_effective_rate": 0.2514938871713934,
-          "tax_reform": 53234762.239928335,
-          "mean_delta": -78952.88679584707,
-          "delta_effective_rate": -0.03714646476510655,
+          "tax_reform": 53565255.09450192,
+          "mean_delta": -61537.170410156265,
+          "delta_effective_rate": -0.027842916233635412,
           "share_affected": 1.0
         },
         {
@@ -685,9 +685,9 @@
           "tax_baseline": 93968902.54910919,
           "is_brut": 71228316.12608498,
           "mean_effective_rate": 0.3298158208504081,
-          "tax_reform": 91883944.52261308,
-          "mean_delta": -2037488.0,
-          "delta_effective_rate": -0.007317869255609233,
+          "tax_reform": 92529752.17907721,
+          "mean_delta": -1406384.0,
+          "delta_effective_rate": -0.005051187656163247,
           "share_affected": 1.0
         },
         {
@@ -698,9 +698,9 @@
           "tax_baseline": 616453532.6621538,
           "is_brut": 607001259.3378998,
           "mean_effective_rate": 0.09581265796831205,
-          "tax_reform": 607001259.3378998,
-          "mean_delta": -76.9204529953003,
-          "delta_effective_rate": -0.00040969713408899044,
+          "tax_reform": 607265217.5070853,
+          "mean_delta": -74.77242137908937,
+          "delta_effective_rate": -0.00034750490768327424,
           "share_affected": 0.0275
         },
         {
@@ -711,10 +711,10 @@
           "tax_baseline": 1648732798.6205986,
           "is_brut": 1482557446.4347887,
           "mean_effective_rate": 0.2244867531745935,
-          "tax_reform": 1532524438.3615303,
-          "mean_delta": -5008.333416328428,
-          "delta_effective_rate": -0.0461723212621338,
-          "share_affected": 0.8099999999999997
+          "tax_reform": 1555093279.9039178,
+          "mean_delta": -4035.664298439024,
+          "delta_effective_rate": -0.03691558391142513,
+          "share_affected": 0.7999999999999998
         },
         {
           "naf_section": "C",
@@ -724,9 +724,9 @@
           "tax_baseline": 7602278882.559965,
           "is_brut": 6589432797.345177,
           "mean_effective_rate": 0.3170585161381,
-          "tax_reform": 7328069127.827452,
-          "mean_delta": -144209.69162048335,
-          "delta_effective_rate": -0.03334348099066897,
+          "tax_reform": 7383888092.482373,
+          "mean_delta": -114853.93187622067,
+          "delta_effective_rate": -0.02498195029909772,
           "share_affected": 1.0
         },
         {
@@ -737,9 +737,9 @@
           "tax_baseline": 14859466553.075706,
           "is_brut": 9422477211.218601,
           "mean_effective_rate": 0.33782686916673726,
-          "tax_reform": 14480124309.139057,
-          "mean_delta": -3699655.0291262125,
-          "delta_effective_rate": -0.018948258827242215,
+          "tax_reform": 14580442473.953312,
+          "mean_delta": -2721270.446601941,
+          "delta_effective_rate": -0.012679345278149012,
           "share_affected": 1.0
         },
         {
@@ -763,10 +763,10 @@
           "tax_baseline": 143848236.51496863,
           "is_brut": 134929306.72525635,
           "mean_effective_rate": 0.20591456558607316,
-          "tax_reform": 137493410.02835205,
-          "mean_delta": -7712.168066282275,
-          "delta_effective_rate": -0.025968397254687192,
-          "share_affected": 0.8400000000000001
+          "tax_reform": 138795899.1725049,
+          "mean_delta": -6131.477357358934,
+          "delta_effective_rate": -0.020600033217016228,
+          "share_affected": 0.8275000000000001
         },
         {
           "naf_section": "D",
@@ -776,9 +776,9 @@
           "tax_baseline": 1130445151.3960986,
           "is_brut": 782183555.1105605,
           "mean_effective_rate": 0.5079450419318007,
-          "tax_reform": 1079228283.65616,
-          "mean_delta": -642603.3626953126,
-          "delta_effective_rate": -0.0569653495676522,
+          "tax_reform": 1091334526.0563562,
+          "mean_delta": -490709.8084960937,
+          "delta_effective_rate": -0.04159118774464787,
           "share_affected": 1.0
         },
         {
@@ -789,9 +789,9 @@
           "tax_baseline": 1953663509.284605,
           "is_brut": 1139590576.3691185,
           "mean_effective_rate": 0.8431886593514447,
-          "tax_reform": 1882841464.8953857,
-          "mean_delta": -16478471.0,
-          "delta_effective_rate": -0.09032854379323163,
+          "tax_reform": 1908425899.8556418,
+          "mean_delta": -10525630.0,
+          "delta_effective_rate": -0.057697365669471146,
           "share_affected": 1.0
         },
         {
@@ -802,9 +802,9 @@
           "tax_baseline": 43376979.59730946,
           "is_brut": 43002442.306517765,
           "mean_effective_rate": 0.10254363805548154,
-          "tax_reform": 43002442.306517765,
-          "mean_delta": -64.9261602783203,
-          "delta_effective_rate": -0.0003693854011446174,
+          "tax_reform": 43034189.8309124,
+          "mean_delta": -59.42271667480467,
+          "delta_effective_rate": -0.000309095920471375,
           "share_affected": 0.039999999999999994
         },
         {
@@ -815,10 +815,10 @@
           "tax_baseline": 113425575.7261995,
           "is_brut": 104726730.77494425,
           "mean_effective_rate": 0.1976908713110364,
-          "tax_reform": 106853162.37059852,
-          "mean_delta": -5449.762318077088,
-          "delta_effective_rate": -0.026113600483765403,
-          "share_affected": 0.845
+          "tax_reform": 108087145.44552864,
+          "mean_delta": -4426.559105033875,
+          "delta_effective_rate": -0.02075797987517758,
+          "share_affected": 0.8324999999999999
         },
         {
           "naf_section": "E",
@@ -828,9 +828,9 @@
           "tax_baseline": 270253650.501326,
           "is_brut": 228379690.23431635,
           "mean_effective_rate": 0.3638079443758587,
-          "tax_reform": 255727576.30369756,
-          "mean_delta": -189004.65663682015,
-          "delta_effective_rate": -0.06849930742550348,
+          "tax_reform": 258824099.6713877,
+          "mean_delta": -148714.53227729295,
+          "delta_effective_rate": -0.0513134661758598,
           "share_affected": 1.0
         },
         {
@@ -841,9 +841,9 @@
           "tax_baseline": 540793305.5879397,
           "is_brut": 332249946.13430786,
           "mean_effective_rate": 0.2982474018743656,
-          "tax_reform": 520706464.67610776,
-          "mean_delta": -4846791.75,
-          "delta_effective_rate": -0.0435840331582108,
+          "tax_reform": 524733826.5637276,
+          "mean_delta": -3875021.9999999995,
+          "delta_effective_rate": -0.027839295937122588,
           "share_affected": 1.0
         },
         {
@@ -854,9 +854,9 @@
           "tax_baseline": 2110807764.37552,
           "is_brut": 2084297712.3592792,
           "mean_effective_rate": 0.1009980745685678,
-          "tax_reform": 2084297712.3592792,
-          "mean_delta": -92.54005908966067,
-          "delta_effective_rate": -0.0005741584188844601,
+          "tax_reform": 2088545936.714671,
+          "mean_delta": -77.7105546951294,
+          "delta_effective_rate": -0.0004392949487865977,
           "share_affected": 0.04500000000000001
         },
         {
@@ -867,10 +867,10 @@
           "tax_baseline": 1385188556.5414414,
           "is_brut": 1312101744.6243448,
           "mean_effective_rate": 0.19409056647935236,
-          "tax_reform": 1312806182.5881045,
-          "mean_delta": -2789.5164927291876,
-          "delta_effective_rate": -0.03427760702218899,
-          "share_affected": 0.8825000000000001
+          "tax_reform": 1324991266.7898488,
+          "mean_delta": -2319.920215492248,
+          "delta_effective_rate": -0.02830839655503195,
+          "share_affected": 0.875
         },
         {
           "naf_section": "F",
@@ -880,9 +880,9 @@
           "tax_baseline": 1009945798.8020215,
           "is_brut": 847443756.9815478,
           "mean_effective_rate": 0.35902159228595726,
-          "tax_reform": 963731729.0218993,
-          "mean_delta": -108229.67161621098,
-          "delta_effective_rate": -0.0475591585579247,
+          "tax_reform": 973480706.2063329,
+          "mean_delta": -85398.34331542972,
+          "delta_effective_rate": -0.035621451916737434,
           "share_affected": 1.0
         },
         {
@@ -893,9 +893,9 @@
           "tax_baseline": 2473413087.0,
           "is_brut": 1572086310.625,
           "mean_effective_rate": 0.39917742240781334,
-          "tax_reform": 2391315009.625,
-          "mean_delta": -4320951.440789473,
-          "delta_effective_rate": -0.052306230268309384,
+          "tax_reform": 2413743274.125,
+          "mean_delta": -3140516.4671052634,
+          "delta_effective_rate": -0.03488305289785132,
           "share_affected": 1.0
         },
         {
@@ -906,9 +906,9 @@
           "tax_baseline": 2387706989.063798,
           "is_brut": 2267420950.506756,
           "mean_effective_rate": 0.09021274881161566,
-          "tax_reform": 2306340134.099867,
-          "mean_delta": -229.7291997146606,
-          "delta_effective_rate": -0.0005360690167567073,
+          "tax_reform": 2317225941.9550843,
+          "mean_delta": -198.99447452545166,
+          "delta_effective_rate": -0.00042311484701172686,
           "share_affected": 0.049999999999999996
         },
         {
@@ -919,9 +919,9 @@
           "tax_baseline": 3030220814.8891225,
           "is_brut": 2771816173.075898,
           "mean_effective_rate": 0.22231980958707923,
-          "tax_reform": 2860682754.9932446,
-          "mean_delta": -3964.133461837769,
-          "delta_effective_rate": -0.03712409615417708,
+          "tax_reform": 2893197849.642971,
+          "mean_delta": -3203.866564865112,
+          "delta_effective_rate": -0.029038695770189943,
           "share_affected": 0.95
         },
         {
@@ -932,9 +932,9 @@
           "tax_baseline": 4704092060.185546,
           "is_brut": 3515747650.9214573,
           "mean_effective_rate": 0.6028953347834619,
-          "tax_reform": 4501989410.751738,
-          "mean_delta": -98203.42538085942,
-          "delta_effective_rate": -0.05840648315791197,
+          "tax_reform": 4545169327.692861,
+          "mean_delta": -77221.93026855473,
+          "delta_effective_rate": -0.04375783424727253,
           "share_affected": 1.0
         },
         {
@@ -945,9 +945,9 @@
           "tax_baseline": 7266540097.5625,
           "is_brut": 4313494789.5,
           "mean_effective_rate": 0.4231788171659256,
-          "tax_reform": 7029722071.5625,
-          "mean_delta": -3289139.25,
-          "delta_effective_rate": -0.02689632133870795,
+          "tax_reform": 7098506843.8125,
+          "mean_delta": -2333795.190972222,
+          "delta_effective_rate": -0.017522332027758936,
           "share_affected": 1.0
         },
         {
@@ -958,10 +958,10 @@
           "tax_baseline": 362279425.5963913,
           "is_brut": 346960453.5937769,
           "mean_effective_rate": 0.08984379057355424,
-          "tax_reform": 350434380.99844646,
-          "mean_delta": -126.25834182739263,
-          "delta_effective_rate": -7.983481864186348e-05,
-          "share_affected": 0.020000000000000007
+          "tax_reform": 350749208.6491985,
+          "mean_delta": -122.90254043579107,
+          "delta_effective_rate": -6.710962742709214e-05,
+          "share_affected": 0.0175
         },
         {
           "naf_section": "H",
@@ -971,10 +971,10 @@
           "tax_baseline": 333016307.09659654,
           "is_brut": 299937822.84486866,
           "mean_effective_rate": 0.21778674350386418,
-          "tax_reform": 303505088.26214164,
-          "mean_delta": -3351.643252067567,
-          "delta_effective_rate": -0.05644935639440074,
-          "share_affected": 0.8025000000000001
+          "tax_reform": 308945873.4503477,
+          "mean_delta": -2733.7232988357555,
+          "delta_effective_rate": -0.045989107090270986,
+          "share_affected": 0.7950000000000002
         },
         {
           "naf_section": "H",
@@ -984,9 +984,9 @@
           "tax_baseline": 1080438697.9631348,
           "is_brut": 891867321.3056641,
           "mean_effective_rate": 0.34293091936464204,
-          "tax_reform": 1023876779.6064453,
-          "mean_delta": -146154.82779506317,
-          "delta_effective_rate": -0.04845406275021874,
+          "tax_reform": 1034991491.0898438,
+          "mean_delta": -117434.64308343931,
+          "delta_effective_rate": -0.03629172083263904,
           "share_affected": 1.0
         },
         {
@@ -997,9 +997,9 @@
           "tax_baseline": 4258959031.5,
           "is_brut": 2754308777.3125,
           "mean_effective_rate": 0.43358900292069086,
-          "tax_reform": 4092789485.3125,
-          "mean_delta": -7224762.877717392,
-          "delta_effective_rate": -0.0737488689045207,
+          "tax_reform": 4140834251.3125,
+          "mean_delta": -5135860.008152174,
+          "delta_effective_rate": -0.04917934790124773,
           "share_affected": 1.0
         },
         {
@@ -1010,9 +1010,9 @@
           "tax_baseline": 911363976.4596364,
           "is_brut": 866236891.545528,
           "mean_effective_rate": 0.09417897730573202,
-          "tax_reform": 876876285.8498237,
-          "mean_delta": -241.83296726226806,
-          "delta_effective_rate": -0.0005683234809685661,
+          "tax_reform": 882992292.41535,
+          "mean_delta": -198.94659275054929,
+          "delta_effective_rate": -0.0004260795037633325,
           "share_affected": 0.03499999999999999
         },
         {
@@ -1023,10 +1023,10 @@
           "tax_baseline": 517087140.2019644,
           "is_brut": 485877231.6695328,
           "mean_effective_rate": 0.1861486412626436,
-          "tax_reform": 485877231.6695328,
-          "mean_delta": -1987.892263212204,
-          "delta_effective_rate": -0.03320622095805523,
-          "share_affected": 0.575
+          "tax_reform": 491957099.4387131,
+          "mean_delta": -1600.6395390605926,
+          "delta_effective_rate": -0.02769115842180217,
+          "share_affected": 0.5725
         },
         {
           "naf_section": "I",
@@ -1036,9 +1036,9 @@
           "tax_baseline": 446150898.8812151,
           "is_brut": 390830895.8604132,
           "mean_effective_rate": 0.296818315589552,
-          "tax_reform": 425360468.13933706,
-          "mean_delta": -93719.52095760312,
-          "delta_effective_rate": -0.0462872171396187,
+          "tax_reform": 429571900.2715712,
+          "mean_delta": -74735.1426694028,
+          "delta_effective_rate": -0.03487395710676505,
           "share_affected": 1.0
         },
         {
@@ -1049,9 +1049,9 @@
           "tax_baseline": 573067203.6987238,
           "is_brut": 386211105.46427196,
           "mean_effective_rate": 0.26725664697427803,
-          "tax_reform": 553316917.7780211,
-          "mean_delta": -2155371.9861111105,
-          "delta_effective_rate": -0.03291563577171264,
+          "tax_reform": 556663099.6983778,
+          "mean_delta": -1790199.208333333,
+          "delta_effective_rate": -0.024333621713377884,
           "share_affected": 1.0
         },
         {
@@ -1062,9 +1062,9 @@
           "tax_baseline": 573053058.1413,
           "is_brut": 561267185.937655,
           "mean_effective_rate": 0.09422684284845621,
-          "tax_reform": 562094414.8052423,
-          "mean_delta": -102.49772651672363,
-          "delta_effective_rate": -2.5202600828971855e-05,
+          "tax_reform": 563615847.7803501,
+          "mean_delta": -88.26755073547365,
+          "delta_effective_rate": -1.878962567798681e-05,
           "share_affected": 0.022500000000000003
         },
         {
@@ -1075,10 +1075,10 @@
           "tax_baseline": 229867685.13999534,
           "is_brut": 178607278.85832313,
           "mean_effective_rate": 0.28909995634882196,
-          "tax_reform": 184207235.8234861,
-          "mean_delta": -5667.177524700166,
-          "delta_effective_rate": -0.12790165936452336,
-          "share_affected": 0.8425
+          "tax_reform": 193161308.07387415,
+          "mean_delta": -4555.836796092988,
+          "delta_effective_rate": -0.10325620789015497,
+          "share_affected": 0.835
         },
         {
           "naf_section": "J",
@@ -1088,9 +1088,9 @@
           "tax_baseline": 1333547995.1153975,
           "is_brut": 996248520.7507179,
           "mean_effective_rate": 0.449266998722322,
-          "tax_reform": 1212085170.5394075,
-          "mean_delta": -281692.6970605469,
-          "delta_effective_rate": -0.10295452822080103,
+          "tax_reform": 1236129640.0298085,
+          "mean_delta": -225929.5326208496,
+          "delta_effective_rate": -0.07711154376663215,
           "share_affected": 1.0
         },
         {
@@ -1101,9 +1101,9 @@
           "tax_baseline": 1737751400.4805503,
           "is_brut": 1037318052.6816494,
           "mean_effective_rate": 0.3714472007338061,
-          "tax_reform": 1622744396.6904407,
-          "mean_delta": -6457118.770833333,
-          "delta_effective_rate": -0.05538387817856749,
+          "tax_reform": 1644256497.5021527,
+          "mean_delta": -5249312.416666666,
+          "delta_effective_rate": -0.03985264012766038,
           "share_affected": 1.0
         },
         {
@@ -1114,9 +1114,9 @@
           "tax_baseline": 2192860644.492899,
           "is_brut": 2187655618.599791,
           "mean_effective_rate": 0.10078343300335352,
-          "tax_reform": 2187655618.599791,
-          "mean_delta": -63.566855468749985,
-          "delta_effective_rate": -1.0855677914076156e-05,
+          "tax_reform": 2188705118.1491976,
+          "mean_delta": -50.74974609374999,
+          "delta_effective_rate": -8.14182354350046e-06,
           "share_affected": 0.019999999999999997
         },
         {
@@ -1127,9 +1127,9 @@
           "tax_baseline": 626466801.3737504,
           "is_brut": 600290461.7461234,
           "mean_effective_rate": 0.0913184176487468,
-          "tax_reform": 600290461.7461234,
-          "mean_delta": -185.8038842773437,
-          "delta_effective_rate": -1.1232112320097576e-06,
+          "tax_reform": 600386239.1888983,
+          "mean_delta": -185.1240405273437,
+          "delta_effective_rate": -8.423761515413686e-07,
           "share_affected": 0.012499999999999997
         },
         {
@@ -1140,10 +1140,10 @@
           "tax_baseline": 191704446.85911372,
           "is_brut": 169005792.06931984,
           "mean_effective_rate": 0.21879963076335548,
-          "tax_reform": 172325022.01913887,
-          "mean_delta": -5184.43682182312,
-          "delta_effective_rate": -0.05491969223551463,
-          "share_affected": 0.82
+          "tax_reform": 175600377.07674617,
+          "mean_delta": -4308.204864196778,
+          "delta_effective_rate": -0.04498651708971427,
+          "share_affected": 0.8125
         },
         {
           "naf_section": "L",
@@ -1153,9 +1153,9 @@
           "tax_baseline": 237857341.33439714,
           "is_brut": 167639464.61104384,
           "mean_effective_rate": 0.6896340255437913,
-          "tax_reform": 203596611.97109404,
-          "mean_delta": -157162.63432661985,
-          "delta_effective_rate": -0.25081399941829846,
+          "tax_reform": 211574631.42192948,
+          "mean_delta": -120565.44048680298,
+          "delta_effective_rate": -0.1880105148959038,
           "share_affected": 1.0
         },
         {
@@ -1166,9 +1166,9 @@
           "tax_baseline": 311838570.99979496,
           "is_brut": 185564958.776599,
           "mean_effective_rate": 0.7593380491431495,
-          "tax_reform": 280739820.89524394,
-          "mean_delta": -3453646.6666666665,
-          "delta_effective_rate": -0.2369274379967372,
+          "tax_reform": 288371789.0644475,
+          "mean_delta": -2606084.583333333,
+          "delta_effective_rate": -0.16368109675258957,
           "share_affected": 1.0
         },
         {
@@ -1179,9 +1179,9 @@
           "tax_baseline": 3449746183.28856,
           "is_brut": 3389975194.831787,
           "mean_effective_rate": 0.09516094283843492,
-          "tax_reform": 3399131238.8582077,
-          "mean_delta": -142.33829910278317,
-          "delta_effective_rate": -0.00048744958583668563,
+          "tax_reform": 3411276379.7955675,
+          "mean_delta": -108.18398513793943,
+          "delta_effective_rate": -0.00040934841372347597,
           "share_affected": 0.0325
         },
         {
@@ -1192,10 +1192,10 @@
           "tax_baseline": 1132911997.8122864,
           "is_brut": 1057293862.6106806,
           "mean_effective_rate": 0.19974093987159974,
-          "tax_reform": 1059127291.6106806,
-          "mean_delta": -4283.582362937927,
-          "delta_effective_rate": -0.03378756677714567,
-          "share_affected": 0.7875
+          "tax_reform": 1074235875.993661,
+          "mean_delta": -3406.451194114685,
+          "delta_effective_rate": -0.027545850636172958,
+          "share_affected": 0.7675
         },
         {
           "naf_section": "M",
@@ -1205,9 +1205,9 @@
           "tax_baseline": 1679494566.410841,
           "is_brut": 1522374044.205608,
           "mean_effective_rate": 0.27084378970288836,
-          "tax_reform": 1626907884.473482,
-          "mean_delta": -115281.79022214889,
-          "delta_effective_rate": -0.029739405376905892,
+          "tax_reform": 1637576390.4253333,
+          "mean_delta": -91894.03461912155,
+          "delta_effective_rate": -0.022305662601984827,
           "share_affected": 1.0
         },
         {
@@ -1218,9 +1218,9 @@
           "tax_baseline": 2048158902.5787017,
           "is_brut": 1482097270.1597095,
           "mean_effective_rate": 0.3689775613067772,
-          "tax_reform": 1998271455.302987,
-          "mean_delta": -2647637.348684211,
-          "delta_effective_rate": -0.042198275090412796,
+          "tax_reform": 2012590544.989622,
+          "mean_delta": -1887691.5361842103,
+          "delta_effective_rate": -0.030230477835452796,
           "share_affected": 1.0
         },
         {
@@ -1231,9 +1231,9 @@
           "tax_baseline": 592025638.8237207,
           "is_brut": 576287387.838607,
           "mean_effective_rate": 0.09567473535994697,
-          "tax_reform": 576287387.838607,
-          "mean_delta": -98.12550231933594,
-          "delta_effective_rate": -9.84493346020826e-05,
+          "tax_reform": 577597463.9494345,
+          "mean_delta": -89.95738525390622,
+          "delta_effective_rate": -8.076420759535463e-05,
           "share_affected": 0.015
         },
         {
@@ -1244,10 +1244,10 @@
           "tax_baseline": 510739448.71533823,
           "is_brut": 468382271.9401715,
           "mean_effective_rate": 0.18988636667947323,
-          "tax_reform": 473330173.7577716,
-          "mean_delta": -2979.1570405006414,
-          "delta_effective_rate": -0.02681857970162521,
-          "share_affected": 0.6199999999999999
+          "tax_reform": 481058884.89906496,
+          "mean_delta": -2363.666784763337,
+          "delta_effective_rate": -0.021888339628537617,
+          "share_affected": 0.605
         },
         {
           "naf_section": "N",
@@ -1257,9 +1257,9 @@
           "tax_baseline": 1347938859.994473,
           "is_brut": 1139913236.8696127,
           "mean_effective_rate": 0.3063478254098879,
-          "tax_reform": 1250366896.0699034,
-          "mean_delta": -147249.73046295167,
-          "delta_effective_rate": -0.06113927696463051,
+          "tax_reform": 1268383677.3684864,
+          "mean_delta": -120059.88941314699,
+          "delta_effective_rate": -0.04585558225644393,
           "share_affected": 1.0
         },
         {
@@ -1270,9 +1270,9 @@
           "tax_baseline": 1640164513.4202027,
           "is_brut": 1156311987.719352,
           "mean_effective_rate": 0.4855923800659972,
-          "tax_reform": 1550045254.6544433,
-          "mean_delta": -3292527.0138888876,
-          "delta_effective_rate": -0.10596434954938722,
+          "tax_reform": 1573858662.075646,
+          "mean_delta": -2422498.916666666,
+          "delta_effective_rate": -0.07343148504266017,
           "share_affected": 1.0
         },
         {
@@ -1283,9 +1283,9 @@
           "tax_baseline": 231853040.94988656,
           "is_brut": 229098651.97091264,
           "mean_effective_rate": 0.09136583753352921,
-          "tax_reform": 229098651.97091264,
-          "mean_delta": -24.409193420410165,
-          "delta_effective_rate": -0.0002994928909104827,
+          "tax_reform": 229439664.5845278,
+          "mean_delta": -21.38716461181641,
+          "delta_effective_rate": -0.0002540835335010788,
           "share_affected": 0.012500000000000004
         },
         {
@@ -1296,9 +1296,9 @@
           "tax_baseline": 5301166473.797374,
           "is_brut": 5019177355.554873,
           "mean_effective_rate": 0.09445163636076503,
-          "tax_reform": 5188293972.551523,
-          "mean_delta": -390.5373560714722,
-          "delta_effective_rate": -0.00023854928720902502,
+          "tax_reform": 5214173002.778544,
+          "mean_delta": -300.99625499725346,
+          "delta_effective_rate": -0.00018086706976630507,
           "share_affected": 0.012499999999999999
         },
         {
@@ -1309,9 +1309,9 @@
           "tax_baseline": 237878936.9915387,
           "is_brut": 235748079.47218043,
           "mean_effective_rate": 0.0947828024226608,
-          "tax_reform": 235748079.47218043,
-          "mean_delta": -23.59293886184692,
-          "delta_effective_rate": -5.2958685996931654e-05,
+          "tax_reform": 236107984.5079413,
+          "mean_delta": -19.608056049346917,
+          "delta_effective_rate": -3.9719030442808556e-05,
           "share_affected": 0.022499999999999996
         },
         {
@@ -1322,10 +1322,10 @@
           "tax_baseline": 42965282.71119915,
           "is_brut": 36391913.19653713,
           "mean_effective_rate": 0.20432120715055316,
-          "tax_reform": 37105421.32416286,
-          "mean_delta": -2940.2214686584466,
-          "delta_effective_rate": -0.055005300030335186,
-          "share_affected": 0.7075
+          "tax_reform": 38291533.2244564,
+          "mean_delta": -2345.082532234191,
+          "delta_effective_rate": -0.043743993156667216,
+          "share_affected": 0.6975
         },
         {
           "naf_section": "R",
@@ -1335,9 +1335,9 @@
           "tax_baseline": 181546419.12704632,
           "is_brut": 150038052.62200546,
           "mean_effective_rate": 0.3778609328576768,
-          "tax_reform": 169364674.54363713,
-          "mean_delta": -214998.79725191888,
-          "delta_effective_rate": -0.06779978953162535,
+          "tax_reform": 171759881.21784228,
+          "mean_delta": -172725.1680030154,
+          "delta_effective_rate": -0.05078746041619847,
           "share_affected": 1.0
         },
         {
@@ -1348,9 +1348,9 @@
           "tax_baseline": 244831986.71217713,
           "is_brut": 151504626.8505535,
           "mean_effective_rate": 0.40467428333978367,
-          "tax_reform": 233273601.94464946,
-          "mean_delta": -4938624.0,
-          "delta_effective_rate": -0.018727256692922745,
+          "tax_reform": 237449073.3099631,
+          "mean_delta": -3154544.0,
+          "delta_effective_rate": -0.011962028814919756,
           "share_affected": 1.0
         },
         {
@@ -1398,7 +1398,7 @@
         }
       ],
       "behavioural": {
-        "mechanical": -3281788622.2292175,
+        "mechanical": -2552063729.6975403,
         "band": null,
         "grade": "no-evidence",
         "grade_reason": "Aucun canal fondé sur des preuves ne couvre cet instrument : le chiffre reste purement mécanique.",
@@ -1500,14 +1500,14 @@
       },
       "cir": null,
       "timings": {
-        "baseline_s": 0.009,
+        "baseline_s": 0.012,
         "reform_s": 0.006,
-        "total_s": 0.078
+        "total_s": 0.075
       }
     }
   },
-  "computed": "2026-11-03",
-  "commit": "7235bd861a4975b6c4c51a27a19578632327ae78",
+  "computed": "2026-11-05",
+  "commit": "12e769cab051b41731adcb01c52ff67274bc9d12",
   "dirty": false,
-  "where": "conteneur cloud 15 Go, 4 cœurs, but 14 (D-338)"
+  "where": "conteneur cloud 15 Go, 4 cœurs, but 16 (D-350)"
 }

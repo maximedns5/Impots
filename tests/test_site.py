@@ -42,9 +42,10 @@ def test_the_committed_site_is_the_studies_build() -> None:
 
 
 @pytest.mark.parametrize("change, needle", [
+    # A figure the page carries, whichever series wrote it, made one the studies never say.
     (lambda d: (d / "plfss2027.html").write_text(
-        (d / "plfss2027.html").read_text(encoding="utf-8").replace("-0,39 pt", "-0,29 pt", 1),
-        encoding="utf-8"), "-0,29 pt"),
+        re.sub(r"-0,\d\d pt", "-9,99 pt", (d / "plfss2027.html").read_text(encoding="utf-8"),
+               count=1), encoding="utf-8"), "-9,99 pt"),
     (lambda d: (d / "plf2027.html").unlink(), "manque ['plf2027.html']"),
     (lambda d: (d / "vieux.html").write_text("x", encoding="utf-8"), "['vieux.html'] en trop"),
 ])

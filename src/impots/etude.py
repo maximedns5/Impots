@@ -4,6 +4,7 @@
     impots etude ecrire <nom>              # la page, depuis les seuls rapports commités
     impots etude verifier <nom>            # la page commitée est-elle celle des rapports ?
     impots etude temoin <nom> --ou "..."   # la passe témoin, rejouée sur ce commit (D-335)
+    impots etude avant <nom>               # ce que dit la série d'avant, figé (D-350)
 
 Une étude est un fichier `etudes/<nom>.json` : les scénarios qu'elle chiffre, ménages ou
 entreprises, chacun avec son volet et son sens ; le texte dont elle dit les refus ; la
@@ -69,6 +70,9 @@ PLAGES = "plages"
 #: Where a study keeps its witness passes (D-335, D-336): one per commit after the first,
 #: `temoins/<short sha>.json`.
 TEMOINS = "temoins"
+#: What the previous series said, frozen before the next one replaces its reports (D-350):
+#: `<rapports>/avant/serie.json`. The page of the next series says what moved against it.
+AVANT = Path("avant") / "serie.json"
 #: What a witness does not compare: the day it ran, the code it named, where it ran. Every
 #: other field of the report, its request and its reply, must be the same, value and type.
 HORS_TEMOIN = ("computed", "commit", "dirty", "where")
@@ -373,6 +377,60 @@ VERDICTS = {
     "dépend de θ": "son effet sur la dette en {year} **dépend de θ** : son signe change d'un "
                    "coin de la boîte, ou d'une vue, à l'autre",
 }
+
+
+#: The verdict of a series of but 16 (D-345, D-349), read on the Monte-Carlo: the share
+#: of the draws where the debt rises, vue vieillie, against `montecarlo.SEUIL_VERDICT`.
+VERDICTS_MC = {
+    "hausse": "elle **augmente la dette** en {year} dans au moins {haut} des tirages, vue "
+              "vieillie",
+    "baisse": "elle **baisse la dette** en {year} dans au moins {haut} des tirages, vue "
+              "vieillie",
+    "dépend": "son effet sur la dette en {year} **dépend des hypothèses** : moins de {haut} "
+              "des tirages s'accordent sur son signe, vue vieillie",
+}
+#: The instruments whose cost is gross of the corporate tax they move (D-349).
+EMPLOYEURS = ("cotisations_employeurs", "cotisations_employeurs_ciblees")
+
+
+def lectures(entries: list[dict[str, Any]]) -> bool:
+    """Whether a study's paths carry the readings of D-349 (but 16): all of them, or none,
+    an older series; one page does not read half its paths under the Monte-Carlo verdict."""
+    read = {entry["path"].get("lectures") is not None for entry in entries}
+    if len(read) > 1:
+        raise EtudeError("les chemins de l'étude ne sont pas d'une même série : les uns "
+                         "portent les lectures de D-349, les autres non. La série se "
+                         "relance entière.")
+    return read == {True}
+
+
+def verdict_mc(entry: dict[str, Any], monte: dict[str, Any] | None = None) -> str:
+    """The Monte-Carlo verdict of a path (D-345), the measure's in mirror: its rise is the
+    scenario's fall, to the first order as the rest (D-298)."""
+    from impots.predictif import montecarlo
+
+    reading = montecarlo.verdict(monte if monte is not None else entry["path"]["monte_carlo"])
+    if entry["sign"] == -1:
+        reading = {"hausse": "baisse", "baisse": "hausse"}.get(reading, reading)
+    return reading
+
+
+def causes(entry: dict[str, Any]) -> list[str]:
+    """The corrections of but 16 that touch an entry (D-350): the public sector for any
+    household pass, the corporate tax for a firm reform of the CVAE or the C3S, the VAT
+    coefficient when the loop carries VAT; the verdict's rule for every one."""
+    out = []
+    if entry["kind"] != "entreprises":
+        out.append("le secteur public câblé (D-346)")
+    firm = entry["scenario"].firm_reform
+    fields = firm.model_dump(exclude_none=True) if firm is not None else {}
+    if any("cvae" in k or "c3s" in k for k in fields):
+        out.append("la CVAE et la C3S déduites de l'IS (D-347)")
+    macro = (entry["path"].get("rejeu") or {}).get("macro") or {}
+    if "tva" in (macro.get("instruments") or {}):
+        out.append("la TVA des ménages au point net (D-348)")
+    out.append("le verdict lu sur le Monte-Carlo (D-345)")
+    return out
 
 
 def refusal(raison: str) -> tuple[str, str]:
@@ -1015,8 +1073,10 @@ class Etude:
         """Why the reports already there may not stand beside the passes still to run on
         `commit`, or None. A report stands when it is on `commit`, or on a commit a witness
         joins to it (D-335): a series resumes, and no report is written over."""
+        # The frozen previous series (D-349) is read by the page, not a pass of this one.
         there = ({str(p.relative_to(self.rapports)) for p in self.rapports.rglob("*.json")
-                  if p.parent.name != TEMOINS} if self.rapports.exists() else set())
+                  if p.parent.name != TEMOINS and p != self.rapports / AVANT}
+                 if self.rapports.exists() else set())
         if there - set(passes):
             return (f"{self.rapports} porte {sorted(there - set(passes))}, qui n'est pas une "
                     f"passe de l'étude : un rapport n'est pas écrasé en silence.")
@@ -1240,8 +1300,11 @@ class Etude:
                 "years": list(range(first, first + request["horizon"])),
                 "persistance": request.get("persistance")}
 
-    def load(self, reports: Path | None = None) -> list[dict[str, Any]]:
-        """Each scenario's two reports, refused unless they are the study's, as it was set."""
+    def load(self, reports: Path | None = None, *,
+             plages: bool = True) -> list[dict[str, Any]]:
+        """Each scenario's two reports, refused unless they are the study's, as it was set.
+        Without `plages`, the range points are not read: a decomposition pass (D-354) runs
+        the scenarios alone."""
         from impots import preregistration
         from impots import scenarios as scenarios_module
         from impots.api.schemas import (
@@ -1340,7 +1403,8 @@ class Etude:
                 "debt": [{**row, "theta": sign * row["theta"],
                           "corners": [sign * c for c in row["corners"]]}
                          for row in debt(path)]})
-        plages = self.load_plages(reports) if self.programme is not None else []
+        plages = (self.load_plages(reports) if plages and self.programme is not None
+                  else [])
         commits |= {r["commit"] for r in plages}
         # One study reads on one code, or on commits a witness pass joins to the first: on
         # each, the pass replayed gave its report again (D-335, D-336).
@@ -1394,9 +1458,15 @@ class Etude:
             w("")
         w("## En bref")
         w("")
-        w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
-          f"officiel | dette en {last}, à θ½ | selon θ |")
-        w("|---|---|---|---|---|")
+        read = lectures(entries)
+        if read:
+            w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
+              f"officiel | dette en {last}, à θ½ | verdict | selon θ |")
+            w("|---|---|---|---|---|---|")
+        else:
+            w(f"| {getattr(texte, 'colonne', 'article')} | la première année | le chiffrage "
+              f"officiel | dette en {last}, à θ½ | selon θ |")
+            w("|---|---|---|---|---|")
         for entry in entries:
             grade = entry["grade"]
             official = "—" if grade is None else (
@@ -1404,9 +1474,20 @@ class Etude:
                 f"{'dans' if grade.verdict == 'within' else 'hors de'} la tolérance")
             lead = n(_points(entry["debt"][0]["theta"]), debt_etage(entry["path"]),
                      conditionnel=True)
+            mc = f"{verdict_mc(entry)} | " if read else ""
             w(f"| {texte.label(entry)} | {n(fiche._eur(entry['cost']), 'L2')} | {official} | "
-              f"{lead} | {verdict(entry['debt'])} |")
+              f"{lead} | {mc}{verdict(entry['debt'])} |")
         w("")
+        if read:
+            from impots.predictif import montecarlo
+
+            haut = n(f"{montecarlo.SEUIL_VERDICT:.0%}".replace("%", "\u202f%"), "déclaré")
+            w(f"Le verdict se lit sur le Monte-Carlo (D-345) : « hausse » quand au moins "
+              f"{haut} des tirages font monter la dette, vue vieillie, « baisse » quand au "
+              f"moins {haut} la font baisser, « dépend » entre les deux. « Selon θ » dit ce "
+              f"que la boîte θ en dit, sans probabilité : un seul signe à θ½ et à chaque "
+              f"coin, ou non.")
+            w("")
         # A law has articles; a programme has measures (D-336).
         unit = getattr(texte, "unite", "article")
         if generation(entries):
@@ -1446,6 +1527,9 @@ class Etude:
             else:
                 self._official(w, n, entry)
         texte.refusals(w, entries, n)
+        if read and (self.rapports / AVANT).exists():
+            self._avant(w, n, entries, json.loads((self.rapports / AVANT).read_text(
+                encoding="utf-8")))
         w("## D'où viennent ces nombres")
         w("")
         path = entries[0]["path"]
@@ -1475,6 +1559,13 @@ class Etude:
         w("")
         w(f"*{n(path['uprating_note'], 'hypothèse')}*")
         w("")
+        if read:
+            w("Le secteur public est câblé (D-346) : un titulaire est payé d'un traitement "
+              "indiciaire et de primes, et cotise à son régime ; un contractuel cotise au "
+              "régime général, sans allègement. L'enquête Emploi dit titulaire ou "
+              "contractuel et la fonction publique, pas le corps ni l'indice : la part des "
+              "primes est la moyenne qu'openfisca porte, la même pour tous.")
+            w("")
         where = _relative(self.rapports)
         for entry in entries:
             case = (f", `chiffrages_preregistres/{entry['name']}.yaml`" if entry["case"]
@@ -1654,6 +1745,13 @@ class Etude:
           f"figée la garde telle qu'elle est. Sous cette persistance, "
           f"{VERDICTS[verdict(rows)].format(year=year)}.")
         w("")
+        if path.get("lectures") is not None and path.get("monte_carlo"):
+            from impots.predictif import montecarlo
+
+            haut = n(f"{montecarlo.SEUIL_VERDICT:.0%}".replace("%", "\u202f%"), "déclaré")
+            w(f"**Le verdict**, lu sur le Monte-Carlo (D-345) : "
+              f"{VERDICTS_MC[verdict_mc(entry)].format(year=year, haut=haut)}.")
+            w("")
         others = sensitivity_rows(rows)
         if others:
             w("**Les sensibilités, hors du verdict.** Les deux persistances d'avant D-336, "
@@ -1664,6 +1762,8 @@ class Etude:
             w("")
             table(others)
         self._monte_carlo(w, n, entry, etage)
+        if path.get("lectures") is not None:
+            self._lectures(w, n, entry, etage)
 
     def _monte_carlo(self, w: Any, n: Nombres, entry: dict[str, Any], etage: str) -> None:
         """The distribution of Δb under declared laws, beside the box (D-336, decision 6):
@@ -1714,6 +1814,183 @@ class Etude:
             w(f"| {label} | {share(rise)} | {points(q05)} | {points(q50)} | {points(q95)} | "
               f"{groups} |")
         w("")
+
+    def _lectures(self, w: Any, n: Nombres, entry: dict[str, Any], etage: str) -> None:
+        """The readings of D-349 beside the headline: the decomposition of Δb, the added
+        debt at a market rate, Mésange's alternative wage formation with its box and its
+        verdict, and the corporate tax an employer-contribution measure leaves out. In
+        mirror, the measure's: every Δb turned over, as the rest."""
+        path, sign = entry["path"], entry["sign"]
+        read = path["lectures"]
+        year = path["years"][-1]["year"]
+        views = [v for v in VIEWS if v in read["decomposition"]]
+
+        def points(value: float) -> str:
+            return n(_points(sign * value), etage, conditionnel=True)
+
+        w(f"**D'où vient Δb.** La dette de {year} en trois marches, à θ½ sous la "
+          f"persistance « lue » : le coût après comportements, sans la boucle macro ; ce "
+          f"que le PIB plus haut ou plus bas change au seul ratio, comme dénominateur ; ce "
+          f"que les recettes induites par l'activité y changent. Les trois font la ligne du "
+          f"tableau (D-349).")
+        w("")
+        w("| vue | le coût, sans boucle | le PIB, dénominateur | les recettes induites | "
+          f"Δ dette {year} |")
+        w("|---|---|---|---|---|")
+        for view in views:
+            d = read["decomposition"][view]
+            w(f"| {VIEWS[view]} | {points(d['cout'])} | {points(d['denominateur'])} | "
+              f"{points(d['retroaction'])} | {points(d['total'])} |")
+        w("")
+        rate = read["taux_marche"]
+        taux = n(f"{rate['taux'] * 100:.1f}".replace(".", ",") + "\u202f%", "hypothèse")
+        w(f"**Au taux de marché.** La dette ajoutée est chargée au taux implicite de 2025 "
+          f"(D-336). Chargée à {taux}, hypothèse déclarée d'une OAT à dix ans de fin 2026 : "
+          + " ; ".join(f"{points(rate[v])} en vue {VIEWS[v]}, contre "
+                       f"{points(read['decomposition'][v]['total'])}" for v in views)
+          + ".")
+        w("")
+        variante = read.get("variante_salariale")
+        if variante:
+            from impots.reporting import pct_fr
+
+            w("**Si les salaires se forment autrement.** Mésange publie une sensibilité de "
+              "ses variantes à la formation des salaires (folios 137 et 138) : une courbe de "
+              "Phillips pour les cotisations employeurs et la TVA, un super-brut visé pour "
+              "les cotisations salariés, la CSG et l'IR. Le multiplicateur y est recentré, à "
+              "écart-type, persistance et recettes induites par point de PIB inchangés ; "
+              "Mésange n'imprime pas le solde de la variante, que la page suppose "
+              "proportionnel au PIB (D-349). C'est une sensibilité, hors du verdict.")
+            w("")
+            w(f"| vue | Δ dette {year}, à θ½ | aux coins de la boîte | P(hausse) | verdict |")
+            w("|---|---|---|---|---|")
+            for view in views:
+                box = variante["boite"][view]
+                corners = [sign * c for _, c in box["corners"]]
+                lo = n(_points(min(corners)), etage, conditionnel=True)
+                hi = n(_points(max(corners)), etage, conditionnel=True)
+                mc = variante["monte_carlo"][view]
+                rise = mc["p_hausse"] if sign == 1 else 1.0 - mc["p_hausse"]
+                said = verdict_mc(entry, {"vues": {"vieillie": mc}})
+                w(f"| {VIEWS[view]} | {points(box['theta'])} | de {lo} à {hi} | "
+                  f"{n(pct_fr(rise), etage, conditionnel=True)} | {said} |")
+            w("")
+            if variante.get("non_variees"):
+                names = ", ".join(f"`{i}`" for i in variante["non_variees"])
+                w(f"Mésange n'imprime pas de variante salariale pour {names} : ces "
+                  f"instruments gardent leur multiplicateur central, et la variante est "
+                  f"partielle.")
+                w("")
+        macro = (path.get("rejeu") or {}).get("macro") or {}
+        if any(i in (macro.get("instruments") or {}) for i in EMPLOYEURS):
+            normal = n("25\u202f%", "texte")
+            w(f"**Brut d'IS.** Les cotisations employeurs se déduisent du bénéfice : ce "
+              f"qu'elles changent, l'IS des entreprises bénéficiaires le change en sens "
+              f"inverse, jusqu'à {normal} du montant au taux normal. La "
+              f"passe des ménages ne le chiffre pas ; le coût de la première année et la "
+              f"dette en sont bruts, et l'effet net est plus petit.")
+            w("")
+
+    def _avant(self, w: Any, n: Nombres, entries: list[dict[str, Any]],
+               avant: dict[str, Any]) -> None:
+        """What moved since the previous series (D-350): each entry's first-year cost, its
+        Δb at θ½ and its verdict, then and now, and the corrections that touch it. The
+        then is the file frozen before the series, not a memory."""
+        from impots import fiche
+
+        w("## Ce qui a bougé depuis la série précédente")
+        w("")
+        w(f"La série précédente a tourné sur `{avant['commit'][:7]}` ; ce qu'elle disait est "
+          f"figé dans `{_relative(self.rapports / AVANT)}` avant que celle-ci ne remplace "
+          f"ses rapports (D-350). Son verdict lisait la boîte θ ; celui-ci lit le "
+          f"Monte-Carlo.")
+        w("")
+        w("| | la première année, avant → après | dette à θ½, avant → après | verdict, "
+          "avant → après |")
+        w("|---|---|---|---|")
+        texte = self.texte_lu()
+        for entry in entries:
+            then = avant["scenarios"].get(entry["name"])
+            if then is None:
+                w(f"| {texte.label(entry)} | nouveau | nouveau | nouveau |")
+                continue
+            etage = debt_etage(entry["path"])
+
+            def points(value: float, etage: str = etage) -> str:
+                return n(_points(value), etage, conditionnel=True)
+
+            w(f"| {texte.label(entry)} | {n(fiche._eur(then['cout']), 'L2')} → "
+              f"{n(fiche._eur(entry['cost']), 'L2')} | {points(then['dette'])} → "
+              f"{points(entry['debt'][0]['theta'])} | {then['selon_theta']} → "
+              f"{verdict_mc(entry)} |")
+        w("")
+        w("Ce qui touche chaque ligne :")
+        w("")
+        for entry in entries:
+            w(f"* **{texte.label(entry)}** : {', '.join(causes(entry))}.")
+        w("")
+        parts = self.decomposition(entries)
+        if not parts:
+            w("Le résultat de la série (D-352) dit ce que chaque correction y pèse là où une "
+              "seule la touche ; ailleurs, elles ne se séparent pas sans une passe par "
+              "correction, qui n'est pas faite.")
+            w("")
+            return
+        w("Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-354, "
+          "D-355) : la part d'une correction est l'écart entre la ligne et sa passe sans "
+          "elle. E1 est le secteur public câblé (D-346), E2 la CVAE et la C3S déduites de "
+          "l'IS (D-347).")
+        w("")
+        w("| | correction | la première année | dette à θ½ |")
+        w("|---|---|---|---|")
+        for entry in entries:
+            for sans, other in parts.get(entry["name"], []):
+                cout = entry["cost"] - other["cost"]
+                dette = entry["debt"][0]["theta"] - other["debt"][0]["theta"]
+                w(f"| {texte.label(entry)} | {sans} | {n(fiche._eur(cout), 'L2')} | "
+                  f"{n(_points(dette), debt_etage(entry['path']), conditionnel=True)} |")
+        w("")
+        if any(sans == "E2" for rows in parts.values() for sans, _ in rows):
+            w("E1 et E2 ne se lisent pas de la même façon dans la dette. E1 rend des "
+              "cotisations des ménages, que la boucle macro lit dans Mésange : sa part "
+              "porte la croissance et les recettes qu'elle induit. E2 rend de l'IS, un "
+              "impôt des entreprises qu'aucune variante de Mésange ne porte : sa part va à "
+              "la dette telle quelle (D-218, D-356). Par euro, E2 paraît donc peser plus "
+              "sur la dette que E1, sans que l'outil ait mesuré que l'IS rapporte moins de "
+              "croissance : il ne le mesure pas.")
+            w("")
+
+    def decomposition(self, entries: list[dict[str, Any]]
+                      ) -> dict[str, list[tuple[str, dict[str, Any]]]]:
+        """Each line's passes without one correction (D-354), from
+        `reports/decomposition/<étude>/sans_<correction>/` when the study has them."""
+        root = self.rapports.parent.parent / "decomposition" / self.nom
+        out: dict[str, list[tuple[str, dict[str, Any]]]] = {}
+        for sans in ("E1", "E2"):
+            where = root / f"sans_{sans.lower()}"
+            if not where.exists():
+                continue
+            for other in self.load(where, plages=False):
+                if any(e["name"] == other["name"] for e in entries):
+                    out.setdefault(other["name"], []).append((sans, other))
+        return out
+
+    def figer_avant(self) -> Path:
+        """`impots etude avant` : freeze what the committed series says (D-350), before
+        the next one replaces its reports. Refused if a frozen file is already there: it
+        is the previous series', not overwritten in silence."""
+        target = self.rapports / AVANT
+        if target.exists():
+            raise EtudeError(f"{_relative(target)} existe : la série d'avant est déjà "
+                             f"figée, et ne l'est pas deux fois.")
+        entries = self.load()
+        snapshot = {"commit": entries[0]["first"]["commit"], "scenarios": {
+            e["name"]: {"cout": e["cost"], "dette": e["debt"][0]["theta"],
+                        "selon_theta": verdict(e["debt"])} for e in entries}}
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
+                          encoding="utf-8")
+        return target
 
     def _official(self, w: Any, n: Nombres, entry: dict[str, Any]) -> None:
         from impots import fiche
