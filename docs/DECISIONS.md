@@ -26730,3 +26730,51 @@ de D-352.
 
 **Ce qui ne bouge pas.** Aucun rapport de la série de D-352, aucune tolérance, aucun
 pronostic.
+
+## D-356 — Pourquoi l'IS pèse plus sur la dette : la boucle macro ne lit que les ménages
+
+**La question.** Le propriétaire, le 8 novembre (« oui, examine pourquoi l'IS pèse plus sur
+la dette »), sur ce que D-355 laissait ouvert : par milliard de la première année, E2 pèse
+0,212 pt sur la dette de Retailleau, E1 0,057.
+
+**La réponse, dans le code.** La boucle macro (`retroaction.compute`, `rejouer.loop`) ne
+lit que les instruments qui ont une variante et une ligne de solde dans Mésange. Chez
+Retailleau comme chez Attal, ce sont les cotisations salariales et l'IR. L'IS, sa
+contribution sociale, la CVAE et la C3S sont « non couverts » (`FIRM_NO_VARIANT`) : Mésange
+2017 n'a pas de variante d'impôt des entreprises (D-214), la boucle par élasticités est
+refusée (D-246), et la dette ne leur prête ni rétroaction ni effet sur le PIB (D-218). Un
+euro de cotisation rendu passe par la boucle ; un euro d'IS rendu va à la dette tel quel.
+Ce n'est pas un défaut : c'est la règle, et la page la dit (« aucune variante de Mésange ne
+porte leurs impôts », et le canal fermé « IS et investissement des entreprises »).
+
+**Ce que les rapports en disent.** Rien n'a tourné : les coins de la boîte θ des rapports
+de D-355 suffisent. La part de chaque correction dans Δb₂₀₃₅ (point de PIB), le
+multiplicateur macro à zéro, à ½ et à un :
+
+| | m = 0 | θ½ | m = 1 |
+|---|---|---|---|
+| Retailleau, E1 | −0,658 | −0,155 | +0,208 |
+| Retailleau, E2 | −0,430 | −0,429 | −0,429 |
+| Attal, E1 | −3,844 | −0,892 | +1,135 |
+| Attal, E2 | −0,064 | −0,063 | −0,062 |
+
+E2 ne bouge pas avec le multiplicateur ; E1 perd les trois quarts de son poids à θ½, et
+change de signe à m = 1. Boucle éteinte, le rapport de la dette au coût redevient le même
+pour les deux corrections de Retailleau (0,243 pt par Md€ pour E1, 0,212 pour E2) et pour
+E1 dans les deux études (0,238 chez Attal). Le reste de l'écart est le profil : E1 tient
+toute la période et suit les salaires ; E2 descend de 2,2 Md€ en 2026 à 1,3 en 2030 chez
+Retailleau, et s'éteint en 2030 chez Attal, avec toute sa couche des entreprises (d'où ses
+0,088 pt par Md€).
+
+**L'erreur du pronostic de D-354.** Il prêtait à E2 le rapport dette sur coût de E1, à
+θ½, donc avec la boucle. Les deux manqués de Retailleau en viennent.
+
+**Ce que cela veut dire pour les pages.** À θ½, la dette d'une mesure des ménages porte
+environ les trois quarts d'autofinancement en 2035 ; celle d'une mesure des entreprises
+n'en porte aucun. Un programme qui rend de l'IS paraît donc plus coûteux en dette qu'un
+programme qui rend autant de cotisations, sans que le modèle ait mesuré que l'IS ne rapporte
+pas de croissance : il ne le mesure pas. Les pages le disent avec la bande et les canaux
+fermés, pas à côté du tableau de décomposition.
+
+**Ce qui ne bouge pas.** Aucun rapport, aucune page, aucune tolérance. Dire l'asymétrie à
+côté du tableau de décomposition est au propriétaire.
