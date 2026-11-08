@@ -1950,6 +1950,15 @@ class Etude:
                 w(f"| {texte.label(entry)} | {sans} | {n(fiche._eur(cout), 'L2')} | "
                   f"{n(_points(dette), debt_etage(entry['path']), conditionnel=True)} |")
         w("")
+        if any(sans == "E2" for rows in parts.values() for sans, _ in rows):
+            w("E1 et E2 ne se lisent pas de la même façon dans la dette. E1 rend des "
+              "cotisations des ménages, que la boucle macro lit dans Mésange : sa part "
+              "porte la croissance et les recettes qu'elle induit. E2 rend de l'IS, un "
+              "impôt des entreprises qu'aucune variante de Mésange ne porte : sa part va à "
+              "la dette telle quelle (D-218, D-356). Par euro, E2 paraît donc peser plus "
+              "sur la dette que E1, sans que l'outil ait mesuré que l'IS rapporte moins de "
+              "croissance : il ne le mesure pas.")
+            w("")
 
     def decomposition(self, entries: list[dict[str, Any]]
                       ) -> dict[str, list[tuple[str, dict[str, Any]]]]:

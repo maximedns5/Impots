@@ -26778,3 +26778,8 @@ fermés, pas à côté du tableau de décomposition.
 
 **Ce qui ne bouge pas.** Aucun rapport, aucune page, aucune tolérance. Dire l'asymétrie à
 côté du tableau de décomposition est au propriétaire.
+
+**La suite, le même jour.** Le propriétaire : « oui, ajoute la phrase à côté du tableau ».
+Les pages d'Attal et de Retailleau la portent sous le tableau de décomposition, là où une
+part E2 y figure (`Etude._avant`) ; celle de Mélenchon, sans E2, ne change pas. Aucun
+nombre ne bouge.

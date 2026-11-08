@@ -232,6 +232,8 @@ Une passe sans chaque correction, à son tour, sépare ce qu'elles pèsent (D-35
 | la part chiffrée | E1 | -2,71 Md€ | -0,15 pt |
 | la part chiffrée | E2 | -2,02 Md€ | -0,43 pt |
 
+E1 et E2 ne se lisent pas de la même façon dans la dette. E1 rend des cotisations des ménages, que la boucle macro lit dans Mésange : sa part porte la croissance et les recettes qu'elle induit. E2 rend de l'IS, un impôt des entreprises qu'aucune variante de Mésange ne porte : sa part va à la dette telle quelle (D-218, D-356). Par euro, E2 paraît donc peser plus sur la dette que E1, sans que l'outil ait mesuré que l'IS rapporte moins de croissance : il ne le mesure pas.
+
 ## D'où viennent ces nombres
 
 Les passes ont tourné sur le commit `12e769c`, conteneur cloud 15 Go, 4 cœurs, but 16 (D-350). Cadre du chemin annuel : Croissance réelle 1 %, prix 2 % ; Taux implicite tenu à son niveau de 2025 ; Dépenses gelées en volume ; droit reconduit tel qu'openfisca le porte ; θ½ sur toutes les lignes ; comportements et boucle macro appliqués.
