@@ -98,16 +98,24 @@ def _joint(lines: list[str]) -> tuple[Coefficient, ...]:
         raise IppError(f"panneau « {PANEL} » introuvable dans le tableau 2.2")
     stop = next((i for i in range(start + 1, len(lines)) if NEXT_PANEL in lines[i]),
                 len(lines))
-    for i in range(start + 1, min(stop, len(lines) - 1)):
-        tokens = lines[i].split()
-        if tokens and tokens[0] == ROW:
-            estimates = [_number(t) for t in tokens[1:]]
-            errors = [_number(t) for t in lines[i + 1].split()]
-            if not estimates or len(estimates) != len(errors):
-                raise IppError(f"ligne {ROW} : {len(estimates)} estimations, "
-                               f"{len(errors)} écarts-types")
-            return tuple(Coefficient(e, s) for e, s in zip(estimates, errors, strict=True))
-    raise IppError(f"ligne {ROW} introuvable dans « {PANEL} »")
+    # The panel read as one text, not line by line: the copy HAL regenerated in October
+    # 2026 extracts its rows glued to one another (« (0.207)IS-PFU 0.391*** … (0.137)Rsq »),
+    # the earlier one a row and its errors on two lines. Same cells either way (D-340).
+    panel = " ".join(lines[start + 1:stop])
+    match = _ROW_CELLS.search(panel)
+    if match is None:
+        raise IppError(f"ligne {ROW} introuvable dans « {PANEL} »")
+    estimates = [_number(t) for t in match.group(1).split()]
+    errors = [_number(t) for t in re.findall(r"\(-?\d+\.\d+\)", match.group(2))]
+    if not estimates or len(estimates) != len(errors):
+        raise IppError(f"ligne {ROW} : {len(estimates)} estimations, "
+                       f"{len(errors)} écarts-types")
+    return tuple(Coefficient(e, s) for e, s in zip(estimates, errors, strict=True))
+
+
+#: The row's estimates, then its standard errors in brackets, however the lines fall.
+_ROW_CELLS = re.compile(
+    rf"(?<![\w-]){re.escape(ROW)}\s+((?:-?\d+\.\d+\**\s*)+)((?:\(-?\d+\.\d+\)\s*)+)")
 
 
 def _quoted_among(quoted: float, joint: tuple[Coefficient, ...]) -> float:

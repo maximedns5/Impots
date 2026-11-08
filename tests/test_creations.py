@@ -27,13 +27,14 @@ def _report() -> ipp.Reading:
 # Reading the report
 # --------------------------------------------------------------------------- #
 def test_the_joint_cells_are_the_ones_printed_in_panel_b() -> None:
-    """Pinned by eye off Tableau 2.2 (PDF p. 62). Panel (a), the binary exposure, prints
+    """Pinned by eye off Tableau 2.2 (PDF p. 63 since HAL's cover page, D-340; p. 62 in the
+    copy read before). Panel (a), the binary exposure, prints
     0,021 (0,005) in the same row: a reader one panel off is wrong by a factor of
     twenty and would still look like a coefficient."""
     reading = _report()
     assert [(c.estimate, c.se) for c in reading.joint] == [
         (0.391, 0.120), (0.380, 0.131), (0.418, 0.120), (0.414, 0.137)]
-    assert reading.table_page == 62
+    assert reading.table_page == 63
     assert reading.quoted == 0.38
     assert reading.mean_is_exposure == 5.4
     assert reading.pfu_rate == 0.30
@@ -57,6 +58,21 @@ def test_the_row_is_read_inside_panel_b_and_never_from_another() -> None:
     without = [line for line in TABLE if not line.startswith(("IS-PFU 0.39", "(0.120)"))]
     with pytest.raises(ipp.IppError, match="introuvable"):
         ipp._joint(without)
+
+
+def test_the_row_is_read_when_the_extraction_glues_the_lines() -> None:
+    """The copy HAL regenerated in October 2026 extracts panel (b)'s rows glued to one
+    another, a row's errors running into the next row's name (D-340): same cells."""
+    glued = ["TABLEAU 2.2 – Estimations statiques",
+             "tions (a) Exposition binaire aux réformes",
+             "IS-PFU 0.021*** 0.020***(0.005) (0.004)",
+             "(b) Exposition linéaire aux réformes",
+             "IS 0.571*** 0.123(0.192) (0.188)IS-PFU 0.391*** 0.380***(0.120) (0.131)Rsq 0.732",
+             "(c) Exposition linéaire pondérée par emploi",
+             "IS-PFU 0.046*** 0.053***(0.014) (0.015)"]
+    assert ipp._joint(glued) == ipp._joint(TABLE)
+    with pytest.raises(ipp.IppError, match="2 estimations, 1 écarts-types"):
+        ipp._joint([line.replace("(0.120) ", "") for line in glued])
 
 
 def test_the_quoted_figure_must_be_one_of_the_cells_read() -> None:

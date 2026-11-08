@@ -26137,6 +26137,122 @@ Le Pen +3,71 → +1,38, Roussel +1,30 → +0,44, Tondelier +0,09 → +0,28, Mél
   lisent maintenant l'état réel : l'avertissement doit paraître si et seulement si les
   études tiennent sur plusieurs commits.
 
+## D-340 — Quatre sources changées à la source, remanifestées ; le backtest §6.1 rejoué
+
+**La demande.** Le propriétaire, le 4 novembre : remanifester les quatre fichiers dont la
+somme de contrôle a changé à la source (D-339). Aucun n'était dans `data/raw` : le
+téléchargeur les avait refusés. Téléchargés le 4 novembre dans un dossier à part, lus
+avant d'entrer au manifeste. Ce qui a changé, et ce que chacun porte :
+
+* **`insee_rpm2023_patrimoine_composition.html`** (479 695 → 477 724 octets) : la page
+  d'INSEE est régénérée ; la ligne « Supérieur à P99 » de la figure 1 lit toujours
+  27 36 5 29 3 −4 −3. Elle n'est lue que par le test de transcription : aucun nombre.
+* **`bdf_comptes_distributionnels_methodologie_2024.pdf`** (921 145 → 459 905 octets,
+  9 pages, modifié le 17 septembre 2026 à la même URL) : la phrase citée (« ne permettent
+  pas pour le moment d'aller plus finement que le top 10% ») y est toujours. Lue par un
+  test seulement : aucun nombre.
+* **`ipp_rapport_47_2023_bach_et_al_creations_entreprises.pdf`** (3 051 670 → 4 173 236
+  octets) : HAL l'a régénéré le 24 octobre 2026 (137 pages, une page de garde HAL en tête ;
+  contenu daté du 16 octobre 2023). Le tableau 2.2 passe de la p. 62 à la p. 63, et le
+  texte en sort les lignes collées : le lecteur de `behavioural/ipp.py` ne trouvait plus la
+  ligne IS-PFU. Il lit désormais le panneau (b) d'un seul tenant, quelle que soit la
+  coupure des lignes. Les cellules sont les mêmes : 0,391 (0,120), 0,380 (0,131), 0,418
+  (0,120), 0,414 (0,137), et 0,38, 5,4 % et 30 % dans le texte. C8 ne bouge pas ; seule la
+  page attendue par `test_creations.py` passe de 62 à 63.
+* **`eurostat_gov_10dd_edpt3_fr_sfa.json`** (4 337 → 4 336 octets) : la notification EDP
+  d'octobre 2026, qui remplace celle d'avril 2026 ; l'API ne sert que la dernière, l'ancien
+  fichier ne se retélécharge plus. Lu par `dette/comptes.sfa_publie`, donc par le backtest
+  noté §6.1 (D-167, D-168), et par lui seul : aucune étude, aucune page.
+
+**Les entrées du backtest, lues avant tout résidu.** Somme des cinq composantes, en points
+de PIB (PIB INSEE 2025 inchangé), contre la colonne « sfa » de D-168 : 2021 +0,0030 %
+(inchangé), 2022 +0,0545 % (+0,0005 pt), 2023 −0,1702 % (−0,0002), 2024 +1,1619 %
+(−0,0001), **2025 +0,0810 % contre +0,062 %, +0,019 pt** (2,42 md€ contre 1,86). Seule
+2025 est révisée.
+
+### Le pronostic du backtest rejoué, écrit avant de le rejouer
+
+La tolérance reste ±0,10 pt de PIB par année (`c6c5db4`), la fenêtre 2021→2025, et les
+fichiers INSEE sont ceux de D-168.
+
+1. **Cinq années dans la bande.** Les résidus de 2021 à 2024 bougent de moins de 0,001 pt
+   (+0,015, +0,039, +0,019, +0,031 dans D-168).
+2. **Le résidu de 2025 passe d'environ +0,001 à environ +0,020 pt** (entre +0,015 et
+   +0,025) : le SFA publié monte de 0,019 pt et entre tel quel dans la dette du modèle.
+3. **Le terme de millésime de 2025** (SFA implicite INSEE moins SFA publié) **tombe de
+   +0,031 à environ +0,012 pt**, et l'erreur propre de 2025 de −0,031 à environ −0,012 :
+   la notification d'octobre rapproche Eurostat du compte INSEE d'environ 60 %. Leur somme
+   reste nulle à 0,0002 pt près : la cause nommée par D-167 est toujours celle qui agit.
+4. **Ce qui casse, dit d'avance.** Dans le test du zéro de 2025 (`test_dette_comptes.py`,
+   « two errors cancel »), l'assertion d'un résidu quasi nul (< 0,0002) tombe : elle figeait
+   le constat du millésime d'avril, et son texte dit qu'il faudra alors renommer, pas
+   élargir. Elle sera remplacée par le constat du millésime d'octobre, écrit dans la
+   D-entrée du résultat ; l'erreur propre négative et la somme nulle avec le terme de
+   millésime restent assertées telles quelles. Les deux autres tests de §6.1 tiennent : r
+   et g viennent de l'INSEE.
+
+**Ce qui réfute.** Une année hors bande ; un résidu de 2021 à 2024 qui bouge de plus de
+0,001 pt ; un résidu 2025 hors de [+0,015 ; +0,025] ; une somme erreur propre + millésime
+au-delà de 0,0002 pt.
+
+## D-341 — §6.1 sur la notification d'octobre 2026 : dans la bande, et un test rouge
+
+**Ce qui a tourné.** Les quatre fichiers de D-340 remanifestés et posés dans `data/raw` ;
+le backtest de §6.1 rejoué sur 2021→2025, tolérance ±0,10 pt inchangée, fichiers INSEE
+de D-168, après le préenregistrement poussé en `f7a46d8`.
+
+| an | sfa | résidu (D-168) | erreur propre (D-168) |
+|---|---|---|---|
+| 2021 | +0,0030 % | +0,0155 pt (+0,015) | +0,0155 (+0,015) |
+| 2022 | +0,0545 % | +0,0389 pt (+0,039) | +0,0240 (+0,024) |
+| 2023 | −0,1702 % | +0,0190 pt (+0,019) | −0,0180 (−0,018) |
+| 2024 | +1,1619 % | +0,0314 pt (+0,031) | +0,0128 (+0,013) |
+| 2025 | +0,0810 % | **+0,0196 pt** (+0,001) | **−0,0118** (−0,031) |
+
+Terme de millésime de 2025 : +0,0118 pt (+0,031 dans D-168). Erreur propre et millésime :
+somme −0,00000 pt. Facteur de report 2025 : 0,9998.
+
+**Contre le pronostic de D-340.** Points 1 à 3 tenus : cinq années dans la bande ; 2021 à
+2024 à moins de 0,001 pt de D-168 ; 2025 à +0,0196, dans [+0,015 ; +0,025] ; millésime et
+erreur propre à ±0,012, de somme nulle. **Point 4 manqué.** J'avais lu les seuils du test
+en points de PIB ; ils sont en fractions (0,0002 = 0,02 pt). L'assertion du résidu 2025
+« quasi nul » tient encore, à 0,0196 pt sous 0,02 ; c'est l'erreur propre « nettement
+négative » (< −0,02 pt) qui tombe, à −0,0118 pt. D-340 disait qu'elle resterait assertée
+telle quelle : elle l'est, et elle est rouge.
+
+**Ce que le résultat dit.** La notification d'octobre rapproche Eurostat du compte INSEE de
+62 % (0,019 pt sur 0,031). Le zéro de 2025 que D-168 décomposait en deux erreurs opposées
+n'existe plus : 2025 montre maintenant un résidu de +0,020 pt, de l'ordre des années
+précédentes, porté pour moitié par un terme de millésime qui reste là et a toujours la
+même cause. Le constat de D-168 est vrai du millésime d'avril, pas de celui-ci.
+
+**Ce qui n'est pas fait, et pourquoi.** Le test du zéro de 2025 (`test_dette_comptes.py`,
+« two errors cancel ») est rouge, et le reste : réécrire son seuil après le résultat
+serait retoucher une assertion pour qu'elle passe. Son texte dit qu'il faudra le renommer
+s'il casse ; le propriétaire décide comment, par exemple un test du millésime d'octobre
+dont les bornes sont celles de ce pronostic (résidu 2025 dans [+0,015 ; +0,025], somme
+nulle). Les deux autres tests de §6.1 et les quatorze du module sont verts.
+
+**Le reste de D-340, sans nombre qui bouge.** INSEE et Banque de France : les tests de
+transcription et de citation passent. IPP n° 47 : le lecteur lit le panneau (b) d'un seul
+tenant ; les mêmes cellules, C8 inchangé ; `test_creations.py` attend le tableau en p. 63,
+et un test neuf tient la lecture des lignes collées (rouge sur l'ancien lecteur). 152 tests
+légers verts (créations, IS, patrimoine, données).
+
+## D-342 — Le test du zéro de 2025 remplacé par le constat d'octobre, sur décision
+
+**La décision.** Le propriétaire, le 5 novembre, sur la proposition de D-341 : le test qui
+figeait le constat du millésime d'avril (« two errors cancel ») est remplacé par celui du
+millésime d'octobre (`test_dette_comptes.py`, « the vintage term left by the october
+notification »). Ses bornes sont celles du pronostic de D-340, écrites avant le calcul, et
+non lues sur le résultat : résidu 2025 dans [+0,015 ; +0,025] pt ; erreur propre négative
+et terme de millésime positif ; leur somme nulle à 0,0002 pt près.
+
+**Ce qui ne change pas.** La tolérance de §6.1 (±0,10 pt, `c6c5db4`), la fenêtre, et les
+deux autres tests du backtest. L'ancien test est rouge sur ce millésime (D-341) ; le neuf
+passe, à +0,0196 pt, −0,0118 et +0,0118. S'il casse, le millésime aura changé : il se
+renomme sur une D-entrée neuve, il ne s'élargit pas. Les 17 tests du module sont verts.
+
 ## D-343 — Le but 15 validé : la grille par bouton, et ce que porte un point
 
 **La validation.** Le propriétaire, le 5 novembre : « oui aux trois, lance le but 15 ». Les
