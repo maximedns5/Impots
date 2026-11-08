@@ -1,0 +1,256 @@
+{
+ "genre": "point",
+ "valeurs": {
+  "plf_art_3": 1.5
+ },
+ "request": {
+  "reform": {
+   "abattement_pensions_plafond": 2280.5
+  },
+  "firm_reform": null,
+  "annee_entreprises": 2026
+ },
+ "cout": {
+  "total": -2093357728.0803223,
+  "menages": -2093357728.0803223,
+  "entreprises": 0.0
+ },
+ "deciles": [
+  {
+   "decile": 1,
+   "n_households": 3102006.902227004,
+   "mean_niveau_de_vie": 8348.037194262892,
+   "mean_baseline": 11920.860316328242,
+   "mean_reform": 11920.860316328242,
+   "mean_delta": 0.0,
+   "share_winners": 0.0,
+   "share_losers": 0.0,
+   "share_unaffected": 1.0
+  },
+  {
+   "decile": 2,
+   "n_households": 3100077.6349093816,
+   "mean_niveau_de_vie": 13578.536819918869,
+   "mean_baseline": 19247.788875695147,
+   "mean_reform": 19247.763368418866,
+   "mean_delta": -0.025507276284026773,
+   "share_winners": 0.0,
+   "share_losers": 0.0005001426722358192,
+   "share_unaffected": 0.9994998573277643
+  },
+  {
+   "decile": 3,
+   "n_households": 3102637.3895432744,
+   "mean_niveau_de_vie": 17157.421078288673,
+   "mean_baseline": 26170.522327705312,
+   "mean_reform": 26170.357416791503,
+   "mean_delta": -0.16491091380414397,
+   "share_winners": 0.0,
+   "share_losers": 0.0024986502091536964,
+   "share_unaffected": 0.9975013497908463
+  },
+  {
+   "decile": 4,
+   "n_households": 3101315.473436079,
+   "mean_niveau_de_vie": 20444.508671308256,
+   "mean_baseline": 30603.712971403027,
+   "mean_reform": 30601.728548542604,
+   "mean_delta": -1.984422860424016,
+   "share_winners": 0.0,
+   "share_losers": 0.012000855562355589,
+   "share_unaffected": 0.9879991444376444
+  },
+  {
+   "decile": 5,
+   "n_households": 3100962.224924152,
+   "mean_niveau_de_vie": 23453.173796301187,
+   "mean_baseline": 35718.90564062501,
+   "mean_reform": 35684.426140625,
+   "mean_delta": -34.47950000000001,
+   "share_winners": 0.0,
+   "share_losers": 0.28750000000000003,
+   "share_unaffected": 0.7125000000000002
+  },
+  {
+   "decile": 6,
+   "n_households": 3101037.2228584914,
+   "mean_niveau_de_vie": 26586.152969894127,
+   "mean_baseline": 41660.915033872225,
+   "mean_reform": 41588.931774814344,
+   "mean_delta": -71.98325905788438,
+   "share_winners": 0.0,
+   "share_losers": 0.3609912692907725,
+   "share_unaffected": 0.6390087307092276
+  },
+  {
+   "decile": 7,
+   "n_households": 3101015.3182800654,
+   "mean_niveau_de_vie": 30107.233842440604,
+   "mean_baseline": 47464.20146298526,
+   "mean_reform": 47348.31044722192,
+   "mean_delta": -115.89101576333387,
+   "share_winners": 0.0,
+   "share_losers": 0.36549374217164554,
+   "share_unaffected": 0.6345062578283545
+  },
+  {
+   "decile": 8,
+   "n_households": 3101047.8700405816,
+   "mean_niveau_de_vie": 34426.274768990974,
+   "mean_baseline": 54057.520694210434,
+   "mean_reform": 53931.34267715335,
+   "mean_delta": -126.17801705709022,
+   "share_winners": 0.0,
+   "share_losers": 0.34299052698437227,
+   "share_unaffected": 0.6570094730156278
+  },
+  {
+   "decile": 9,
+   "n_households": 3101711.814258905,
+   "mean_niveau_de_vie": 40922.9293252431,
+   "mean_baseline": 63713.861593432724,
+   "mean_reform": 63522.5883314851,
+   "mean_delta": -191.27326194763236,
+   "share_winners": 0.0,
+   "share_losers": 0.32692097405331555,
+   "share_unaffected": 0.6730790259466846
+  },
+  {
+   "decile": 10,
+   "n_households": 3101552.001395485,
+   "mean_niveau_de_vie": 64626.62323740916,
+   "mean_baseline": 98147.3903582978,
+   "mean_reform": 98014.38215531946,
+   "mean_delta": -133.00820297832706,
+   "share_winners": 0.0,
+   "share_losers": 0.20696063785823648,
+   "share_unaffected": 0.7930393621417635
+  }
+ ],
+ "rejeu": {
+  "carry": "part_pib_constante",
+  "horizon": 10,
+  "years": [
+   {
+    "year": 2026,
+    "mechanical_aged_eur": -2093357728.0803223,
+    "statistiques": {
+     "vieillie": {
+      "cost_eur": -2093357728.0803223,
+      "impulses": {
+       "impot_sur_le_revenu": -2093357728.0803833
+      },
+      "uncovered": {},
+      "canaux": {},
+      "c1_floor_share": null
+     }
+    }
+   }
+  ],
+  "rejeu": {
+   "version": 1,
+   "start": {
+    "year": 2025,
+    "debt_ratio": 1.15693757321829,
+    "primary_balance": -0.029870353480509815,
+    "implicit_rate": 0.01882827582292081,
+    "gdp_eur": 2991056000000.0,
+    "receipts_ratio": 0.5212362790934039,
+    "spending_ratio": 0.5511066325739137
+   },
+   "cadre": {
+    "growth": {
+     "real": 0.01,
+     "prices": 0.02
+    },
+    "spending": {
+     "rule": "gele_en_volume",
+     "growth": null
+    },
+    "taux": {
+     "kind": "implicite_tenu",
+     "market_rate": null,
+     "reference": [
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081,
+      0.01882827582292081
+     ],
+     "marginal": 0.01882827582292081
+    }
+   },
+   "looped": true,
+   "behavioural": true,
+   "lignes": {},
+   "macro": {
+    "horizons": [
+     1,
+     2,
+     3,
+     5,
+     10
+    ],
+    "court": 3,
+    "instruments": {
+     "impot_sur_le_revenu": {
+      "pib": {
+       "1": 0.41,
+       "2": 0.83,
+       "3": 0.88,
+       "5": 0.81,
+       "10": 0.87
+      },
+      "solde": {
+       "1": -0.81,
+       "2": -0.5,
+       "3": -0.42,
+       "5": -0.51,
+       "10": -0.5
+      },
+      "sd": 0.66,
+      "brut": 1.0
+     }
+    }
+   },
+   "box_rows": [
+    "multiplicateur_macro"
+   ]
+  }
+ },
+ "dette_absente": null,
+ "controle": {
+  "persistence": "lue",
+  "theta": [
+   -0.00022484920585208457,
+   -0.00022163836782596036,
+   -0.0004570418587788172,
+   -0.0007909176711269339,
+   -0.0011546576157910327,
+   -0.0014790176360972573,
+   -0.0018014941211759172,
+   -0.002122202606146484,
+   -0.0024412555488706467,
+   -0.002758762390816294
+  ],
+  "coins": [
+   [
+    "multiplicateur_macro = 0",
+    -0.005668629385785939
+   ],
+   [
+    "multiplicateur_macro = 1",
+    0.00021557579587705433
+   ]
+  ]
+ },
+ "computed": "2026-11-05",
+ "commit": "2124c4437bcb9155307d49cdd6c0225064f4efb5",
+ "dirty": false,
+ "where": "conteneur cloud 15 Go, 4 cœurs, but 15 (D-344)"
+}

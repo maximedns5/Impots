@@ -505,6 +505,40 @@ def _replay_frame(start: Start, prices: list[YearPrice], *, spending: SpendingSc
     }
 
 
+def carried_payload(start: Start, priced: Any, reform: Any, *, spending: SpendingScenario,
+                    growth: GrowthScenario, rate: RateScenario, theta: Theta, horizon: int,
+                    store: Any = None, macro_store: Any = None,
+                    securities: list[Any] | None = None) -> dict[str, Any]:
+    """What `rejouer` reads of ONE first-year pass carried as a share of GDP (D-343): the
+    year's cost, impulses and channel statistics, the frame, the claimed rows and the box
+    rows — the convention of the plages and of `POST /predictif/simulate`, in the shape of
+    an annual report's `years` and `rejeu`, one year long, with `carry` and `horizon`."""
+    claimed_store = store if store is not None else comportement.load()
+    first = start.year + 1
+    behavioural = priced.inputs is not None
+    at = (comportement.evaluate(theta, mechanical=-priced.cost, reform=reform,
+                                store=claimed_store, **dict(priced.inputs))
+          if behavioural else None)
+    stats = dict(at.statistics or {}) if at is not None else None
+    floor = stats.pop("c1_floor_share", None) if stats is not None else None
+    statistiques = {first: {"vieillie": {
+        "cost_eur": float(priced.cost),
+        "impulses": ({k: float(v) for k, v in priced.impulse.items()}
+                     if priced.impulse is not None else None),
+        "uncovered": dict(priced.uncovered), "canaux": stats, "c1_floor_share": floor}}}
+    looped = priced.impulse is not None and spending.rule == retroaction.SPENDING_RULE
+    claimed = comportement.claimed_open_rows(claimed_store, reform) if behavioural else ()
+    rejeu = _replay_frame(
+        start, list(range(horizon)), spending=spending, growth=growth, rate=rate,
+        securities=securities, looped=looped, behavioural=behavioural, claimed=claimed,
+        store=claimed_store, macro_store=macro_store, statistiques=statistiques,
+        box_rows=[*claimed, *([MACRO_ROW] if looped else [])])
+    return {"carry": chaine.CARRY, "horizon": horizon,
+            "years": [{"year": first, "mechanical_aged_eur": float(priced.cost),
+                       "statistiques": statistiques[first]}],
+            "rejeu": rejeu}
+
+
 def chaine_macro_store() -> Any:
     from impots.macro import store as macro_store_module
 

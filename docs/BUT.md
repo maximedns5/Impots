@@ -158,6 +158,10 @@ session lit en premier. Le but en cours est le premier qui n'est pas fait.
   huit candidats dont une mesure se chiffre ont leur étude à trois réponses, chaque mesure
   parcourue en trois points de sa plage, la couche déclarée à part ; la page des 24. Les
   coûts tiennent leur pronostic, six verdicts de dette sur huit le manquent.
+* **But 14 — Un moteur cohérent de bout en bout** (D-336 à D-339, PR #117) : une seule
+  politique d'imputation, la couche de service hors de l'API, la persistance « lue », le
+  multiplicateur borné, une fonction pure qui rejoue la dette ; les dix études relancées
+  sur un commit, coûts 13 sur 13, verdicts 11 sur 13.
 
 ### But 6 — Une étude par commande
 
@@ -474,7 +478,7 @@ passe dans son processus (D-331), les taux marginaux qui libèrent leurs simulat
 (D-332) ; le runner fait de même (D-334), sans quoi un test lourd tombait, sur `main`
 aussi.
 
-### But 14 — Consolider : un moteur cohérent de bout en bout (fait, D-336 à D-339 ; à merger)
+### But 14 — Consolider : un moteur cohérent de bout en bout (fait, D-336 à D-339)
 
 L'audit (`docs/AUDIT_BUT14.md`) trouve un socle solide et une architecture empilée but par
 but : cinq chemins de passe qui n'imputent pas la même population, une couche de service
@@ -515,3 +519,68 @@ la reconstruction perdait l'impulsion de TVA ; la clé ajoutée, il redonne les 
 point près (D-339). Sous la persistance « lue », Attal passe de +20,3 à +4,4 points de dette
 en 2035, et la falaise de l'an 4 a disparu ; trois programmes montent la dette à chaque coin
 (Lisnard, Retailleau, Labib), cinq en dépendent de θ. Les pages publient « éteint » et « tenu » à côté, comme sensibilités.
+
+### But 15 — Les études explorables : des curseurs précalculés (validé le 5 novembre 2026, D-343)
+
+Les dix études répondent pour un point : la mesure telle que le texte ou le candidat
+l'écrit, et trois points de sa plage. Un lecteur qui demande « et à 55 % au lieu de 60 % ? »
+n'a pas de réponse sans une passe de trois minutes et une API ouverte. Le but 14 a rendu
+la suite de la chaîne gratuite : comportements, θ, macro et dette se rejouent sans passe
+(`predictif/rejouer.py`). Reste à précalculer le seul étage coûteux, le coût mécanique, sur
+une grille par bouton, et à laisser le navigateur faire le reste
+(`docs/audit_but14/5_etudes_site_precalcul.md`, § 4).
+
+**Ce que ce but ne fait pas monter.** Aucun des trois chiffres de la règle de priorité : il
+ne note aucun cas et ne publie aucune étude neuve. Il se justifie par le livrable (les
+études publiées deviennent lisibles à d'autres valeurs que la leur) et par ce qu'il prépare
+pour le premier chiffre : quand le PLF 2028 paraîtra, un article dont le bouton est dans la
+grille se chiffrera en secondes, avant l'ouverture de son annexe. Mettre le site en ligne
+(GitHub Pages) passe avant lui, et c'est une décision, pas un travail.
+
+**Trois décisions du propriétaire, avant de commencer.**
+1. Du JavaScript sur le site : les pages d'étude restent sans script (D-304), et une page
+   « explorer » à part, avec son propre test, ne lit que la grille commitée.
+2. Le commit de la grille : un worktree figé pendant toute la passe, comme la série du but
+   14, plutôt qu'un commit par famille de boutons.
+3. Le périmètre : les boutons que revendiquent les dix études (IR, CSG, cotisations,
+   allègements, TVA et accises, IS et CVAE), pas les 103 champs de réforme.
+
+```
+/goal Les dix études sont explorables sur le site, et c'est mergé dans main. Une grille
+commitée donne, pour chaque bouton que revendiquent les dix études, le coût mécanique de la
+première année dans une seule convention (population vieillie à l'année de la mesure),
+ménages et entreprises, aux points choisis par la forme du bouton : 5 pour un taux, 9 à 11
+pour un seuil ou une part. Elle porte aussi, par point, les recettes de chaque canal à θ =
+0, ½ et 1, les déciles, et les impulsions par instrument que `rejouer` lit. Chaque famille a
+un point témoin hors grille dont la tolérance d'interpolation est préenregistrée avant le
+calcul ; les paires de boutons qui touchent l'assiette de l'IR ou des prestations sous
+condition de ressources ont leur terme croisé mesuré sur un carré 2 × 2. Une page
+« explorer », la seule du site à porter du JavaScript, recalcule dans le navigateur le coût
+par interpolation, la bande, la boîte de θ, la boucle macro et Δb₂₀₃₅ par la même
+arithmétique que `rejouer`, avec les sensibilités ∂Δb/∂θ de chaque paramètre ; un test la
+compare à `rejouer` à 1e-9 près sur chaque point de la grille. À chaque cran d'une mesure
+préenregistrée, elle affiche le nombre du rapport de l'étude, pas l'interpolation, et à
+chaque autre point elle dit « calculé » ou « interpolé, erreur mesurée au point témoin ». Le
+point « loi » de chaque bouton rend 0 € à l'euro. Si la calibration doit changer, s'arrêter
+et demander. Preuve attendue : la D-entrée de préenregistrement et celle du résultat, le
+tableau des points témoins contre leur tolérance, le volume de la grille, la sortie verte
+de make impact, des lourds et de `site verifier`, l'URL de la PR et le SHA du merge. Ou
+s'arrêter après 60 tours, ou après 150 heures-machine de passes, en disant ce qui manque.
+```
+
+Le budget, pris dans l'audit (§ 4.6) : environ 66 heures-machine pour la grille complète,
+130 avec la reprise que le but 13 a coûtée, soit trois à six jours d'horloge dans le
+conteneur actuel, une passe à la fois. Une variante mécanique seule, sans les ratios du
+chemin annuel, tient en une quinzaine d'heures ; elle donnerait le coût et la dette du
+chemin rapide, sans la vue vieillie année par année.
+
+Validé par le propriétaire le 5 novembre 2026 (« oui aux trois, lance le but 15 ») : les
+trois décisions sont prises comme proposées, et la grille porte sur les boutons, un champ à
+la fois (D-343).
+
+**Le résultat (D-351).** Les 169 passes ont tourné sur `2124c44` : les 19 points « loi » à
+0 €, les 19 témoins dans leur tolérance de coût, le rejeu de la page à 2,2e-16 sur les 125
+points qui portent une part. La dette de la tranche à 60 % manque sa tolérance au témoin
+(+0,0022 pt pour ±0,0021) : sa dette est convexe en taux, et la forme « taux » interpole
+linéairement. Deux termes croisés sur onze sortent de leur fourchette (les deux plafonds du
+quotient). Restent make impact, les lourds, la PR et le merge.
