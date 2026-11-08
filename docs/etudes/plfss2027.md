@@ -2,9 +2,14 @@
 
 <!-- Généré par `impots etude ecrire plfss2027` depuis reports/etudes/plfss2027/ ; ne pas éditer à la main. -->
 
+## Ce que dit cette étude
+
+* **art. 74 du PLF, la prime d'activité** : la mesure rapporte 870 M€ au budget la première année, chiffrée en 2026, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de -4 € par an dans le dixième le plus modeste à -3 € dans le dixième le plus aisé, le plus touché étant le 3e dixième (-69 €). L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,26 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 0 % des tirages du calcul d'incertitude, et l'outil conclut que la mesure baisse la dette.
+* **art. 74 du PLF, les aides au logement** : la mesure rapporte 78 M€ au budget la première année, chiffrée en 2026, avant tout changement de comportement. Les ménages y voient leur revenu disponible changer en moyenne de -7 € par an dans le dixième le plus modeste à 0 € dans le dixième le plus aisé. L'outil ne dit pas ce que les comportements y changent : aucune étude publiée ne le permet ici, et la page dit pourquoi. En 2035, la dette publique serait plus basse de 0,07 point de PIB, au milieu des fourchettes publiées et sous les hypothèses de croissance, de taux et de dépense de la page ; la dette monte dans 0 % des tirages du calcul d'incertitude, et l'outil conclut que la mesure baisse la dette.
+
 Le projet de loi de financement de la sécurité sociale pour 2027 porte 49 articles. Cet outil n'en chiffre aucun, et dit pour chacun pourquoi, avec la porte qui l'ouvrirait. La mesure de prestations que l'automne lui donne à chiffrer est dans le projet de loi de finances : l'art. 74, en 2 volets. Pour chacun, trois réponses : ce qu'il coûte et qui y gagne ; ce qu'il coûte une fois les comportements et l'économie pris en compte ; ce qu'il fait à la dette en 2035. Puis l'écart au chiffrage du gouvernement, l'évaluation préalable publiée avec le texte.
 
-Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, les coins de la boîte en sont les extrêmes.
+Chaque nombre dépend de ce qui est dit à côté de lui. Le coût de la première année est mécanique : personne ne change de comportement. La bande dit ce que les comportements y changent quand une étude publiée permet de le dire. La dette en 2035 dépend d'hypothèses de croissance, de taux et de dépenses nommées en bas de page, et de θ, la position de chaque réponse dans sa fourchette publiée : θ½ est le milieu, et les coins de la boîte placent chaque réponse aux deux bornes de sa fourchette. Le calcul d'incertitude (Monte-Carlo) tire aussi l'effet sur l'activité au-delà de ces bornes, de l'écart qui sépare les études entre elles : le verdict, qui le lit, et « selon θ », qui lit la boîte, peuvent donc différer.
 
 **En miroir.** L'arbre des paramètres porte déjà l'état que la mesure produit : chaque scénario chiffre donc la mesure inverse, et la page dit la mesure, chaque réponse changée de signe (D-298). C'est exact pour le coût et les déciles, gagnants et perdants échangés, qui sont la différence de deux passes ; c'est vrai au premier ordre pour la bande des comportements, l'éventail macro et la dette, calculés autour de l'état de départ.
 
@@ -101,6 +106,8 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 
 Enregistré le 2026-10-29, sur le commit `c05f1ee`, avant l'ouverture de l'annexe : simulé -887 M€, publié -332 M€ (PLF 2027, évaluations préalables des articles, art. 74, § 4.2.1, p. 602, tableau de la prime d'activité : « État -332 -995 » (M€, 2027 et 2028 ; le total des APU, p. 603, est le même) ; « Le taux prévisionnel de revalorisation au 1er avril 2027 […] retenu pour effectuer les analyses d'impact de la mesure est de 2,3 % »). Écart -555 M€ (-167,1%), pour une tolérance déclarée de 100 M€ : **hors de la tolérance**.
 
+Ce que couvre le chiffre publié retenu, écrit avant le calcul : L'effet de 2027 seul, le tiers de celui de 2028 (332 sur 995) : quatre mois de l'année pleine, là où le cas en compte sept effectifs. Revalorisation légale supposée de 2,3 %, le cas 2,1 %. Aucun effet comportemental.
+
 La première année de cette étude, sur le code de l'étude, chiffre -870 M€, soit +17 M€ de l'enregistrement. Le chiffre noté reste celui de l'enregistrement : c'est lui qui a été préenregistré.
 
 ## Art. 74 du PLF 2027 — les aides au logement
@@ -184,6 +191,8 @@ En points de PIB de 2035, la dette avec la mesure moins la dette sans elle, l'ef
 ### L'écart au chiffrage officiel
 
 Enregistré le 2026-10-29, sur le commit `c318cef`, avant l'ouverture de l'annexe : simulé -78 M€, publié -101 M€ (PLF 2027, évaluations préalables des articles, art. 74, § 4.2.1, p. 602 : « La non revalorisation des paramètres de dépenses de logement au 1er octobre 2027 représente une économie de 101 millions d'euros en 2027 et 404 millions d'euros en 2028. »). Écart +23 M€ (+22,5%), pour une tolérance déclarée de 40 M€ : **dans la tolérance**.
+
+Ce que couvre le chiffre publié retenu, écrit avant le calcul : L'effet de 2027 seul, le quart de celui de 2028 (101 sur 404) : octobre à décembre, des droits, comme le cas. Le taux de la révision de 2027 n'est pas publié ; celle du 1er octobre 2026 vaut 1,15 % (§ 4.1.2), le cas suppose 2,0 % en 2027. Aucun effet comportemental.
 
 La première année de cette étude, sur le code de l'étude, chiffre -78 M€, soit +360 787 € de l'enregistrement. Le chiffre noté reste celui de l'enregistrement : c'est lui qui a été préenregistré.
 

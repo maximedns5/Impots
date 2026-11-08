@@ -2364,6 +2364,7 @@ def build_parser() -> argparse.ArgumentParser:
     site_actions = site.add_subparsers(dest="action", required=True)
     site_actions.add_parser("construire", help="site/, depuis les études et leurs rapports")
     site_actions.add_parser("verifier", help="le site commité est-il celui des études ?")
+    site_actions.add_parser("publiable", help="le site dit-il où signaler une erreur ? (D-357)")
     site.set_defaults(func=cmd_site)
 
     emtr_parser = subcommands.add_parser(

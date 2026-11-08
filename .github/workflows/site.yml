@@ -43,6 +43,9 @@ jobs:
           pip install -e ".[dev]"
       - name: Le site est celui des études
         run: impots site verifier
+      - name: Le site dit où signaler une erreur (D-357)
+        if: vars.SITE_PUBLIE == 'oui'
+        run: impots site publiable
       - name: Le dossier publié
         if: vars.SITE_PUBLIE == 'oui'
         uses: actions/upload-pages-artifact@v3

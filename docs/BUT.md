@@ -674,7 +674,7 @@ dépend (`calibrate.py` est fermé jusqu'à la phase 7) ; quelle forme pour l'in
 spécification (une ligne de θ, ou une variante publiée à côté) ; quel seuil pour le
 verdict.
 
-### But 17 — Les études en ligne, lisibles par qui n'a pas lu le dépôt (proposé)
+### But 17 — Les études en ligne, lisibles par qui n'a pas lu le dépôt (validé le 8 novembre 2026, D-357)
 
 Le deuxième chiffre de la règle de priorité compte les études publiées : il y en a dix,
 aucune en ligne. Le but 16 devait passer avant la publication (« aucune étude ne se publie
