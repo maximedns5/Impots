@@ -434,3 +434,31 @@ def test_a_control_from_another_commit_is_refused() -> None:
     controle["commit"] = "0" * 40
     with pytest.raises(SystemExit, match="même commit"):
         script.tableau(controle)
+
+
+# ----------------------------------------------------------------------------------------
+# But 18 : ramener la population en arrière, sur des indices constatés seulement (D-362).
+
+
+def _constate() -> hyp.Hypotheses:
+    return hyp.Hypotheses(texte="t", salaires={2023: 0.05, 2024: 0.02},
+                          prix={2023: 0.048, 2024: 0.018}, pib_valeur={}, source="t",
+                          constate=True)
+
+
+def test_a_constated_set_brings_households_back(monkeypatch) -> None:
+    """2024 ramené à 2022 divise par 2023 et 2024, jamais par 2022. Fails if the target
+    year's own rate enters, or if a forecast set is allowed to go back."""
+    monkeypatch.setitem(hyp.JEUX, "t", _constate)
+    _, record = hyp.vieillissement_menages("t", 2024, 2022)
+    assert record["facteur_salaires"] == pytest.approx(1 / (1.05 * 1.02))
+    assert record["facteur_prix"] == pytest.approx(1 / (1.048 * 1.018))
+    with pytest.raises(hyp.HypothesesError, match="rajeunir"):
+        hyp.vieillissement_menages("plf2027", 2024, 2022)
+
+
+def test_constated_firms_go_back_on_the_accounts(monkeypatch) -> None:
+    monkeypatch.setitem(hyp.JEUX, "t", _constate)
+    factor, record = hyp.vieillissement_entreprises(
+        "t", 2023, 2022, gdp_of=lambda years: {2022: 90.0, 2023: 100.0})
+    assert factor == pytest.approx(0.9) and record["vers"] == 2022

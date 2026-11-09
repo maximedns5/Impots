@@ -44,6 +44,15 @@ _TABLE = re.compile(
     rf"Inflation hors tabac {_RATE} {_RATE} {_RATE} {_RATE} {_RATE} {_RATE}")
 _YEARS = (2025, 2026, 2027, 2028, 2029, 2030)
 
+#: Les indices constatés (D-359, D-360, D-362), pour ramener une population en arrière.
+#: Les prix : l'IPC hors tabac, ensemble des ménages, France, variation annuelle (Insee,
+#: BDM 001768695), l'indice légal des pensions. Les salaires par tête : les salaires et
+#: traitements bruts (D11) sur l'emploi intérieur salarié, total des branches, comptes
+#: nationaux base 2020 (tableaux 6.205 et 6.210).
+INSEE_IPC = RAW / "insee_bdm_001768695_ipc_hors_tabac_annuel.xml"
+INSEE_D11 = RAW / "insee_cn2025_t6205_salaires_bruts_branches.xlsx"
+INSEE_EMPLOI = RAW / "insee_cn2025_t6210_emploi_salarie_branches.xlsx"
+
 
 class HypothesesError(RuntimeError):
     """Un texte ne dit pas les hypothèses qu'on lui fait dire."""
@@ -58,6 +67,9 @@ class Hypotheses:
     prix: dict[int, float]
     pib_valeur: dict[int, float]
     source: str
+    constate: bool = False
+    """Des indices constatés, et non une prévision : eux seuls ramènent une population en
+    arrière (D-359). Un jeu de prévisions ne recule jamais."""
 
 
 def _text(path: Path) -> str:
@@ -102,8 +114,61 @@ def plf2027(plf: Path = PLF_2027, plfss: Path = PLFSS_2027) -> Hypotheses:
                 "PLFSS 2027 (AN n° 3211), annexe B : inflation hors tabac et PIB en valeur"))
 
 
+def _ligne_totale(path: Path) -> dict[int, float]:
+    """La ligne « _T » (total des branches) de l'onglet « en niveau » d'un tableau des
+    comptes nationaux annuels, année par année."""
+    import openpyxl
+
+    if not path.exists():
+        raise HypothesesError(f"{path.name} absent : `impots donnees` le télécharge "
+                              "(manifeste).")
+    book = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    sheet = next((ws for ws in book.worksheets if ws.title.strip().endswith("en niveau")),
+                 None)
+    if sheet is None:
+        raise HypothesesError(f"{path.name} : pas d'onglet « en niveau »")
+    rows = list(sheet.iter_rows(values_only=True))
+    years = next((r for r in rows if r and any(str(c) == "2024" for c in r)), None)
+    total = next((r for r in rows if r and r[0] == "_T"), None)
+    if years is None or total is None:
+        raise HypothesesError(f"{path.name} : pas de ligne des années ou de total « _T »")
+    return {int(y): float(v) for y, v in zip(years, total, strict=True)
+            if y is not None and str(y).isdigit() and isinstance(v, (int, float))}
+
+
+def _ipc(path: Path) -> dict[int, float]:
+    """Les variations annuelles de l'IPC hors tabac, en taux (0,018 pour 1,8 %)."""
+    if not path.exists():
+        raise HypothesesError(f"{path.name} absent : `impots donnees` le télécharge "
+                              "(manifeste).")
+    text = path.read_text(encoding="utf-8")
+    if "Ensemble hors tabac" not in text or "Variations annuelles" not in text:
+        raise HypothesesError(f"{path.name} n'est pas la série des variations annuelles "
+                              "de l'IPC hors tabac")
+    pairs = re.findall(r'TIME_PERIOD="(\d{4})"[^>]*?OBS_VALUE="(-?[\d.]+)"', text)
+    if not pairs:
+        raise HypothesesError(f"{path.name} : aucune observation lue")
+    return {int(y): float(v) / 100.0 for y, v in pairs}
+
+
+def insee_constate(ipc: Path = INSEE_IPC, d11: Path = INSEE_D11,
+                   emploi: Path = INSEE_EMPLOI) -> Hypotheses:
+    """Les indices constatés de l'Insee (D-362) : le salaire par tête est D11 sur
+    l'emploi salarié, son taux le rapport de deux années ; les prix, l'IPC hors tabac.
+    Le PIB en valeur n'y est pas : les entreprises reculent sur les comptes eux-mêmes."""
+    masse, tetes = _ligne_totale(d11), _ligne_totale(emploi)
+    smpt = {y: masse[y] / tetes[y] for y in masse if tetes.get(y)}
+    salaires = {y: smpt[y] / smpt[y - 1] - 1.0 for y in smpt if y - 1 in smpt}
+    return Hypotheses(
+        texte="insee_constate", salaires=salaires, prix=_ipc(ipc), pib_valeur={},
+        source=("Insee, constaté : salaires par tête, D11 sur l'emploi intérieur salarié "
+                "(comptes nationaux base 2020, tableaux 6.205 et 6.210) ; prix, IPC hors "
+                "tabac, ensemble des ménages, France (BDM 001768695)"),
+        constate=True)
+
+
 #: Les jeux d'hypothèses qu'une commande peut nommer.
-JEUX = {"plf2027": plf2027}
+JEUX = {"plf2027": plf2027, "insee_constate": insee_constate}
 
 
 def jeu(nom: str) -> Hypotheses:
@@ -119,10 +184,13 @@ def vieillissement_menages(nom: str, base: int, annee: int) -> tuple[object | No
     from impots import uprating as up
 
     h = jeu(nom)
-    if annee < base:
+    if annee < base and not h.constate:
         raise HypothesesError(f"vieillir de {base} à {annee} reviendrait à rajeunir la "
                               "population")
-    years = list(range(base + 1, annee + 1))
+    # Back, the rates are those of the years after the target, the base included
+    # (`Uprating.factor`, D-359); forward, those after the base.
+    years = (list(range(annee + 1, base + 1)) if annee < base
+             else list(range(base + 1, annee + 1)))
     missing = [y for y in years if y not in h.salaires or y not in h.prix]
     if missing:
         raise HypothesesError(f"hypothèses « {nom} » : pas de taux pour {missing}")
@@ -151,8 +219,17 @@ def vieillissement_entreprises(nom: str, base: int, annee: int,
 
     gdp_of = gdp_of or comptes.gdp
     h = jeu(nom)
-    if annee < base:
+    if annee < base and not h.constate:
         raise HypothesesError(f"vieillir de {base} à {annee} remonterait le temps")
+    if annee < base:
+        # Back on the accounts alone, which are constated (D-362).
+        accounts = gdp_of(sorted({annee, base}))
+        factor = accounts[annee] / accounts[base]
+        return factor, {
+            "jeu": nom, "de": base, "vers": annee, "facteur": factor,
+            "source": f"comptes nationaux (INSEE), de {base} ramené à {annee}",
+            "pib_valeur": {},
+            "convention": "le coût du millésime suit le PIB nominal (D-246)"}
     last = min(annee, START_YEAR)
     accounts = gdp_of(sorted({base, last}))
     factor = accounts[last] / accounts[base]

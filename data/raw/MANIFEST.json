@@ -1756,6 +1756,34 @@
       "licence": "Assemblée nationale — open data, Licence Ouverte",
       "description": "Assemblée nationale, texte n° 325 (17e législature) : projet de loi de financement de la sécurité sociale pour 2025, tel que déposé, articles avec exposé des motifs. Juge rétrospectif du but 18 (D-359) : le texte seul ; l'annexe des évaluations préalables n'est pas manifestée ici, et le triage lit les exposés montants masqués.",
       "quarantined": false
+    },
+    "insee_bdm_001768695_ipc_hors_tabac_annuel.xml": {
+      "url": "https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/001768695",
+      "sha256": "028a7434e9110532f32c503bee99ced572a79b844226d4155e03485002bcabec",
+      "bytes": 3736,
+      "downloaded": "2026-11-09",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, BDM 001768695 : « Indice des prix à la consommation - Base 2015 - Variations annuelles - Ensemble des ménages - France - Ensemble hors tabac - Séries arrêtées ». Variations annuelles constatées, 2020 à 2025 (+0,2 ; +1,6 ; +5,3 ; +4,8 ; +1,8 ; +0,9 %). Les prix des indices constatés du but 18 (D-362), l'indice légal des pensions.",
+      "quarantined": false,
+      "provenance": "API SDMX de la BDM. NON reproductible à l'octet : l'en-tête de la réponse porte un identifiant et une date de préparation qui changent à chaque requête ; les observations, elles, sont celles d'une série arrêtée. Un nouveau téléchargement aura un autre sha256, et `impots data fetch` le refusera, à dessein : le fichier se compare alors observation par observation."
+    },
+    "insee_cn2025_t6205_salaires_bruts_branches.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988821/T_6205_fr.xlsx",
+      "sha256": "1e6d708aee9546c82d13d406e22a3c21cc2706a1c78c1037f58d4266ae83f454",
+      "bytes": 52496,
+      "downloaded": "2026-11-09",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, comptes nationaux annuels base 2020, tableau 6.205 « Salaires et traitements bruts des salariés par branche à prix courants », milliards d'euros ; ligne « _T » total des branches (1 111,65 en 2024, la cible de calage TOTAL_GROSS_WAGES). Numérateur du salaire par tête des indices constatés (D-362).",
+      "quarantined": false
+    },
+    "insee_cn2025_t6210_emploi_salarie_branches.xlsx": {
+      "url": "https://www.insee.fr/fr/statistiques/fichier/8988823/T_6210_fr.xlsx",
+      "sha256": "8cc073067002a3a06b7be09a469dc44944dc483e9826d3d552481aaa697d864b",
+      "bytes": 53394,
+      "downloaded": "2026-11-09",
+      "licence": "Insee — Licence Ouverte / Etalab",
+      "description": "Insee, comptes nationaux annuels base 2020, tableau 6.210 « Emploi intérieur salarié par branche en nombre de personnes », milliers ; ligne « _T ». Dénominateur du salaire par tête des indices constatés (D-362).",
+      "quarantined": false
     }
   }
 }
