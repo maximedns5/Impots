@@ -738,9 +738,9 @@ imputé), les foyers fiscaux à −15 %, les aides au logement à −24 %, et, d
 des allègements de 2025, un chiffrage à +112 % (D-076). Mais elle date du 4 septembre, avant
 les buts 8 à 17, et elle ne porte aucune ligne pour les instruments que les études chiffrent
 le plus : les cotisations salariales et patronales, la CSG, les allègements, la TVA, les
-accises. Une population peut tenir son impôt sur le revenu et manquer de 30 % la masse de
-salaires entre 1 et 1,6 SMIC, là où vivent les mesures d'Attal, de Retailleau et de
-Mélenchon.
+accises. Une population peut tenir son impôt sur le revenu et manquer la masse de salaires entre 1
+et 1,6 SMIC, là où vivent les mesures d'Attal, de Retailleau et de Mélenchon : personne ne
+l'a mesuré.
 
 Une ligne de réconciliation n'a pas le défaut des juges : c'est un total publié, pas le
 chiffrage d'une réforme, et le modèle ne l'a pas vu s'il n'a pas servi au calage. Ses
