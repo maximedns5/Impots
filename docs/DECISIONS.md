@@ -27078,3 +27078,23 @@ ont reçus, une raison de plus de tenir 2020 pour fragile.
 
 **Ce qui attend le propriétaire.** Continuer sur ces neuf cas, dont trois aveugles, ou
 changer de juge : voir le compte rendu du 9 novembre.
+
+## D-361 — Les juges du passé mis de côté : d'abord un modèle mesuré et robuste
+
+**La décision.** Le propriétaire, le 9 novembre, sur le compte rendu de D-360 : les neuf
+cas ne se chiffrent pas maintenant. « Avant de refaire les 9 cas il faut qu'on continue à
+développer et à voir la robustesse et l'intérêt de notre modèle » ; la passe se fera
+« lorsque tout est vérifié ». Puis, sur la proposition qui suivait : « oui, écris le
+nouveau but 18 dans BUT.md ».
+
+**Ce qui est gardé.** Le triage de D-360, figé dans `docs/triage_retro/` avant toute
+ouverture d'annexe : il resservira tel quel, et aucune évaluation préalable de 2021 à 2025
+n'est ouverte d'ici là. La remontée d'une population sur des indices constatés
+(`Uprating.factor`), commitée et testée ; le jeu d'indices de l'Insee n'est pas écrit, ses
+sources sont dans D-360.
+
+**Le nouveau but 18**, proposé dans `docs/BUT.md` : la grille de vérification, chaque
+instrument que les études chiffrent mesuré contre un total publié sur 2022, 2023 et 2024.
+L'ancien but 18 y reste, sous « Mis de côté », avec ses décisions. Les améliorations qui
+suivent (l'ERFS, les réductions d'impôt, le non-recours, une boucle pour les impôts des
+entreprises, l'incertitude du coût) se mesureront sur cette grille.

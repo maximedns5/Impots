@@ -723,7 +723,68 @@ paramétrées, 13 se chiffrent. La porte la plus large, la dépense publique (56
 avec un module : les retraites (22 refus chez 10 candidats, l'âge légal en tête) et les
 transmissions (13 refus chez 8 candidats).
 
-### But 18 — Les juges du passé : assez de cas notés pour que la note veuille dire quelque chose (validé le 9 novembre 2026, D-359)
+### But 18 — La grille de vérification : le modèle mesuré sur chaque instrument qu'il chiffre (proposé)
+
+Le but des juges du passé (plus bas, mis de côté par D-361) a montré qu'un banc de
+chiffrages passés ne mesure pas encore le modèle : neuf articles sur 531, dont six dont le
+rendement est connu (D-360). Le propriétaire, le 9 novembre : avant de noter le modèle, le
+rendre robuste et pertinent. Pour savoir si une amélioration en est une, il faut d'abord
+une mesure qui ne dépende d'aucun juge rare.
+
+Cette mesure existe à moitié. `reports/reconciliation.md` compare la population à des totaux
+publiés, et ses lignes disent déjà où le modèle est faux : le RSA à +113 %, les foyers au
+RSA à +96 %, l'impôt sur le revenu net à +22 % (aucune réduction ni aucun crédit d'impôt
+imputé), les foyers fiscaux à −15 %, les aides au logement à −24 %, et, dans le backtest
+des allègements de 2025, un chiffrage à +112 % (D-076). Mais elle date du 4 septembre, avant
+les buts 8 à 17, et elle ne porte aucune ligne pour les instruments que les études chiffrent
+le plus : les cotisations salariales et patronales, la CSG, les allègements, la TVA, les
+accises. Une population peut tenir son impôt sur le revenu et manquer de 30 % la masse de
+salaires entre 1 et 1,6 SMIC, là où vivent les mesures d'Attal, de Retailleau et de
+Mélenchon.
+
+Une ligne de réconciliation n'a pas le défaut des juges : c'est un total publié, pas le
+chiffrage d'une réforme, et le modèle ne l'a pas vu s'il n'a pas servi au calage. Ses
+écarts, instrument par instrument, donnent aussi une première loi d'erreur du coût
+mécanique, celle que l'audit du 8 novembre demande au Monte-Carlo.
+
+```
+/goal Chaque instrument que les études chiffrent a sa ligne de vérification contre un total
+publié, sur plusieurs années, et c'est mergé dans main. La réconciliation des ménages et
+des entreprises est régénérée sur le code de main, puis étendue : les cotisations
+salariales et patronales, la CSG par assiette, les allègements généraux, la TVA et les
+accises payées par les ménages, l'IS, la CVAE et la C3S, l'impôt sur le revenu avant et
+après réductions, les foyers par tranche, et la masse salariale par bande de SMIC. Chaque
+ligne nomme sa source publiée (Urssaf, CCSS, DGFiP, comptes nationaux, Drees, Cnaf), est
+mesurée sur 2022, 2023 et 2024 sur la population vieillie à chaque année, et dit si elle a
+servi au calage. La tolérance de chaque ligne est écrite et justifiée avant son premier
+calcul, dans une D-entrée commitée et poussée, et ne change plus. Le résultat publie, par
+instrument, l'écart, son signe et sa stabilité d'une année à l'autre, et la loi d'erreur
+qu'il donne au coût mécanique ; chaque page d'étude dit la ligne de vérification de ses
+instruments. Aucun nombre d'étude ne change dans ce but. Preuve attendue : la grille
+avant et après extension, le tableau des écarts par instrument et par année, la loi
+d'erreur, la sortie verte des tests ciblés, l'URL de la PR et le SHA du merge. Ou
+s'arrêter après 50 tours, en disant quelles lignes manquent leur source.
+```
+
+Le budget : une passe de population par année (trois), et surtout la recherche des totaux
+publiés, ligne par ligne. Deux à trois jours d'horloge.
+
+Les décisions à prendre avant de lancer : les années (2022 à 2024 proposées, celles que la
+fenêtre du moteur sert déjà) ; si une ligne sans total publié pour une année est refusée ou
+reportée à l'année qui l'a ; si les pages d'étude disent leur ligne de vérification dès ce
+but ou au suivant.
+
+**Ce qui viendrait ensuite, mesuré sur cette grille.** La population des ménages sur l'ERFS
+2022 (`docs/PHASE1C_ERFS.md`), qui porte le RSA, les foyers fiscaux, les loyers, le haut de
+la distribution et la masse de salaires près du SMIC. Les réductions et crédits d'impôt,
+imputés depuis le fichier de la DGFiP par décile déjà manifesté, et le non-recours aux
+prestations dans le coût des réformes, avec les ponts de la Drees que la réconciliation
+lit déjà. Une boucle macro pour les impôts des entreprises, tirée de la méta-analyse de
+l'IMK et de l'OCDE déjà manifestées, si le propriétaire rouvre D-246. Une incertitude qui
+tire l'erreur du coût mesurée ici. Puis les juges du passé, sur un modèle dont l'erreur est
+connue.
+
+### Mis de côté — Les juges du passé (D-359, D-360, D-361)
 
 Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
 et il repose sur cinq cas : trois dans leur tolérance, des écarts de −22 % (les aides au
