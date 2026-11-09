@@ -351,9 +351,12 @@ def cmd_reconcile(args: argparse.Namespace) -> int:
     # target that is net of them, and they do so only because this flag is off. The
     # zero-masked sweep (D-073) measured the second at 6.4 points. There was no way to
     # produce the other reading at all until this flag existed.
-    result = run(population, year=args.year, tier="full", sample=args.sample,
-                 impute_niches=args.impute_niches, impute_capital=args.impute_capital)
-    agg = aggregate_module.aggregate(result.households)
+    from impots.population.runner import households_par_lots
+
+    households = households_par_lots(
+        population, args.lots, year=args.year, tier="full", sample=args.sample,
+        impute_niches=args.impute_niches, impute_capital=args.impute_capital)
+    agg = aggregate_module.aggregate(households)
 
     path = reconcile_module.write(
         agg, vintage=args.vintage, notes=KNOWN_LIMITATIONS, unraked=unraked,
@@ -1997,6 +2000,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--impute-capital", action="store_true",
         help="hand out the PFU's base from DGFiP n° 41's fractiles (D-248). Off by "
              "default, which leaves the PFU in the net-IR target and out of the model")
+    reconciler.add_argument("--lots", type=int, default=1,
+                            help="run the population that many groups of ménages at a "
+                                 "time, to hold in memory (D-362)")
     reconciler.add_argument("--compare-unraked", action="store_true",
                             help="also build and run the population without raking, and "
                                  "show every line before and after (D-017)")

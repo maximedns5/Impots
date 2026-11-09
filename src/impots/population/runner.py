@@ -58,6 +58,32 @@ class RunResult:
     """
 
 
+def households_par_lots(population: pl.DataFrame | Path, lots: int, **kwargs: Any
+                        ) -> pl.DataFrame:
+    """`run(...).households` over the whole population, `lots` groups of ménages at a time
+    (D-362). A full-tier run over 199 451 ménages computes every benefit month by month
+    and held 14 GB, past what the container gives; its totals and its deciles are those
+    of the households frame, which concatenates. Each ménage goes to one lot by a stable
+    hash of its identifier, so a lot is a fair draw and the run is reproducible. What a
+    lot cannot see is the population around it: an imputation that ranks ménages (the
+    niches, by RFR decile) ranks them within their lot, a sampling term the caller says."""
+    import gc
+    import zlib
+
+    if lots <= 1:
+        return run(population, **kwargs).households
+    frame = pl.read_parquet(population) if isinstance(population, Path) else population
+    lot = frame["household_id"].map_elements(
+        lambda key: zlib.crc32(str(key).encode()) % lots, return_dtype=pl.Int64)
+    parts = []
+    for k in range(lots):
+        part = frame.filter(lot == k)
+        parts.append(run(part, **kwargs).households)
+        del part
+        gc.collect()
+    return pl.concat(parts, how="vertical")
+
+
 def subsample(frame: pl.DataFrame, households: int, seed: int = SAMPLE_SEED) -> pl.DataFrame:
     """A deterministic subsample of `households` ménages that estimates the same totals.
 
