@@ -27098,3 +27098,30 @@ instrument que les études chiffrent mesuré contre un total publié sur 2022, 2
 L'ancien but 18 y reste, sous « Mis de côté », avec ses décisions. Les améliorations qui
 suivent (l'ERFS, les réductions d'impôt, le non-recours, une boucle pour les impôts des
 entreprises, l'incertitude du coût) se mesureront sur cette grille.
+
+## D-362 — Le but 18 validé : la grille de vérification, sur 2022, 2023 et 2024
+
+**La demande.** Le propriétaire, le 9 novembre : « oui, lance le but 18 sur 2022 à 2024 ».
+Le but est celui de `docs/BUT.md`.
+
+**Les choix, faute d'une réponse aux deux autres questions.**
+
+* **Une ligne sans total publié pour une année est refusée pour cette année**, pas
+  reportée depuis une autre : un total d'une autre année serait une valeur substituée.
+  La grille dit le trou.
+* **Les pages d'étude disent leur ligne de vérification** dans ce but, comme le `/goal`
+  l'écrit, sans qu'aucun nombre d'étude change.
+
+**Comment chaque année se mesure.** La population est de 2024. Pour 2022 et 2023, elle est
+ramenée à l'année par les indices constatés de D-360 (les prix hors tabac de l'Insee, les
+salaires par tête des comptes nationaux), avec la règle de D-359 : la structure reste
+celle de 2024, et chaque ligne le dit. La loi est celle de l'année, dans OpenFisca. Les
+entreprises suivent le PIB nominal des comptes, à rebours comme à l'endroit (D-246).
+
+**L'ordre, et ce qui est préenregistré.** D'abord la réconciliation existante régénérée
+sur le code de la branche, telle qu'elle est, ses tolérances inchangées ; elle date du 4
+septembre et plusieurs de ses lignes ont changé de sens depuis (les réductions et crédits
+d'impôt sont imputés depuis B3). Puis les totaux publiés de chaque ligne neuve, trouvés et
+manifestés. Puis une D-entrée qui fixe, pour chaque ligne neuve, sa tolérance et sa
+raison, avant le premier calcul ; elle est commitée et poussée avant toute passe. Puis
+les passes, une par année.

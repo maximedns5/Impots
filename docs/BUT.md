@@ -723,7 +723,7 @@ paramétrées, 13 se chiffrent. La porte la plus large, la dépense publique (56
 avec un module : les retraites (22 refus chez 10 candidats, l'âge légal en tête) et les
 transmissions (13 refus chez 8 candidats).
 
-### But 18 — La grille de vérification : le modèle mesuré sur chaque instrument qu'il chiffre (proposé)
+### But 18 — La grille de vérification : le modèle mesuré sur chaque instrument qu'il chiffre (validé le 9 novembre 2026, D-362)
 
 Le but des juges du passé (plus bas, mis de côté par D-361) a montré qu'un banc de
 chiffrages passés ne mesure pas encore le modèle : neuf articles sur 531, dont six dont le
