@@ -722,3 +722,67 @@ paramétrées, 13 se chiffrent. La porte la plus large, la dépense publique (56
 11 candidats), est hors du modèle par construction. Les deux suivantes se chiffreraient
 avec un module : les retraites (22 refus chez 10 candidats, l'âge légal en tête) et les
 transmissions (13 refus chez 8 candidats).
+
+### But 18 — Les juges du passé : assez de cas notés pour que la note veuille dire quelque chose (proposé)
+
+Le premier chiffre de la règle de priorité est le seul que le projet ne règle pas lui-même,
+et il repose sur cinq cas : trois dans leur tolérance, des écarts de −22 % (les aides au
+logement) à +167 % (la prime d'activité). Avec cinq tirages, un taux de 60 % a un intervalle
+de confiance à 95 % qui va d'environ 15 % à 95 % : la note ne distingue pas un bon outil
+d'un mauvais. Les juges d'octobre 2027 sont loin, et ceux de l'automne 2026 sont épuisés.
+Ceux du passé sont là. Les évaluations préalables des PLF et des PLFSS de 2019 à 2025
+chiffrent des centaines d'articles ; le projet n'en a noté aucun article, et n'en connaît
+que quelques montants, ceux de la suite de précision (D-035 : l'indexation de 2023, l'IS à
+25 %, l'indexation du PLF 2025). Le 29 octobre, le propriétaire avait préféré le PLFSS 2027,
+jamais ouvert, à un banc rétrospectif des PLF 2023 à 2025 (D-296) ; ce juge-là est noté,
+et le banc revient avec une raison de plus. L'Insee et la Drees
+publient chaque année, dans *France, portrait social*, l'effet par décile des mesures de
+l'année : c'est un juge de « qui y gagne », qu'aucune étude n'a jamais eu.
+
+Ce but sert aussi tous les suivants. Sans lui, on ne saura pas si la population sur l'ERFS
+améliore le modèle (la note de cinq cas ne bougerait pas de façon lisible). Il donne aussi
+au Monte-Carlo ce qui lui manque le plus : la loi d'erreur du coût de la première année,
+que l'audit du 8 novembre désigne comme la plus grande incertitude non publiée.
+
+```
+/goal Le modèle est noté sur assez de chiffrages officiels pour que la note veuille dire
+quelque chose, et c'est mergé dans main. Les PLF et PLFSS de 2019 à 2025 sont triés article
+par article sur leur texte, avant toute ouverture de leurs évaluations préalables ; chaque
+article chiffrable sur la population de son année est préenregistré (cas, tolérance et sa
+raison, pronostic), commité et poussé, puis sa fiche est ouverte et il est noté. La
+population est ramenée à l'année de chaque cas par des indices observés et manifestés ; un
+cas sans indices est refusé, pas approché. Les effets par décile que l'Insee et la Drees
+publient pour les mesures de l'année servent de juge à la colonne « qui y gagne », sur les
+mesures que le moteur chiffre, préenregistrés de la même façon. La distribution des écarts
+du coût de la première année (L2) est publiée par famille d'instrument, avec son biais, sa
+dispersion et le nombre de cas qui la portent ; elle devient la loi d'erreur que le
+Monte-Carlo pourra tirer. Aucune tolérance n'est modifiée après le premier calcul, et les
+cas manqués restent notés. Preuve attendue : le nombre de cas notés avant et après, leur
+taux dans la tolérance avec son intervalle de confiance, le tableau des écarts par
+instrument, les juges par décile, la sortie verte des tests ciblés, l'URL de la PR et le SHA
+du merge. Ou s'arrêter après 60 tours, en disant combien d'articles restent à trier.
+```
+
+Le budget : le triage de sept années de textes (deux textes par an) et une passe courte par
+cas chiffrable, sur la population ramenée à son année ; aucune étude n'est refaite.
+Quelques jours d'horloge, surtout de lecture.
+
+Les décisions à prendre avant de lancer :
+
+* **Remonter le temps.** La population est de 2024, et le but 10 ne sait la vieillir que
+  vers l'avant. La ramener à 2018 demande des indices observés (salaires par tête, prix,
+  pensions) et accepte une population dont la structure est celle de 2024 : une limite à
+  dire sur chaque cas, ou une raison de commencer en 2021.
+* **L'aveugle.** Les montants des réformes les plus connues (le prélèvement forfaitaire
+  unique, la suppression de la taxe d'habitation) circulent ailleurs que dans les annexes,
+  et ceux de la suite de précision sont dans le dépôt (D-035). Un cas dont le chiffre
+  officiel est déjà connu de celui qui l'enregistre est noté à part, comme les révisions.
+* **Le périmètre.** Les articles de dépense que le moteur sait chiffrer (les prestations)
+  entrent comme les articles fiscaux, à la façon de l'art. 74 (D-298).
+
+**Ce qui viendrait ensuite**, proposé le 8 novembre et pas encore écrit en but : la
+population des ménages sur l'ERFS 2022, que le propriétaire détient depuis D-134 et dont le
+plan de migration est complet (`docs/PHASE1C_ERFS.md`), mesurée par les juges de ce but ;
+puis une incertitude qui tire l'erreur du coût et un effet sur l'activité lu dans plusieurs
+modèles publiés, impôts des entreprises compris ; puis la dépense et les retraites des
+programmes, à leur montant annoncé et sur des projections publiées.
