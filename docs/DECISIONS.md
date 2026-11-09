@@ -27263,3 +27263,12 @@ quand il bouge d'au moins 5 % du plus grand mouvement de la ligne : une baisse d
 qui touche la prime d'activité ne fait pas lister la prime. La TVA et les accises disent
 qu'elles n'ont pas de ligne. Aucun nombre d'étude ne change ; les pages et le site sont
 réécrits depuis les mêmes rapports, et `etude verifier` et `site verifier` le confirment.
+
+**Ce que le /goal demandait et que la grille n'a pas.** La TVA et les accises payées par
+les ménages, et la masse salariale par bande de SMIC : aucun total publié relevé, refusées
+(D-362) ; la réduction générale, qui ne vit que sous 1,6 SMIC, en tient lieu pour la
+masse près du SMIC. L'impôt sur le revenu après réductions et crédits : la passe est sans
+imputation, il reste à la réconciliation (+19,0 % sur les recettes nettes). L'impôt au
+barème et les foyers au RSA de 2022, la CVAE de 2022 et 2023 : refusés, faute de total ou
+de barème. La réconciliation des entreprises n'est pas régénérée : ses cibles mêlent 2024
+et 2025 ; les lignes des entreprises de la grille la remplacent sur 2022 à 2024.

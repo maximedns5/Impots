@@ -769,6 +769,13 @@ s'arrêter après 50 tours, en disant quelles lignes manquent leur source.
 Le budget : une passe de population par année (trois), et surtout la recherche des totaux
 publiés, ligne par ligne. Deux à trois jours d'horloge.
 
+**Fait, le 9 novembre 2026 (D-363, D-364), en attente de la PR.** 93 lignes, 80 notées :
+58 dans leur tolérance, 22 hors ; pronostic tenu sur 18 points de 22. L'erreur est un
+biais de structure, stable d'une année à l'autre. Le constat neuf : les cotisations des
+employeurs à +31 % de D121. Restent hors de tolérance le RSA (pont, +61 %) et ses foyers
+(+98 %), la prime d'activité (pont, −28 %), les foyers fiscaux (−14 %) et ceux au taux de
+11 % (−22 %). Chaque page d'étude dit la ligne de ses instruments.
+
 Les décisions à prendre avant de lancer : les années (2022 à 2024 proposées, celles que la
 fenêtre du moteur sert déjà) ; si une ligne sans total publié pour une année est refusée ou
 reportée à l'année qui l'a ; si les pages d'étude disent leur ligne de vérification dès ce
